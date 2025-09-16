@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-819122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195C8B59BD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:16:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6D9B59BD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC230487E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24B01BC3D72
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796C434573C;
-	Tue, 16 Sep 2025 15:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7231733471D;
+	Tue, 16 Sep 2025 15:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkI/qLdn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCz//RN0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF693451D7;
-	Tue, 16 Sep 2025 15:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5BD23D7C7;
+	Tue, 16 Sep 2025 15:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035515; cv=none; b=Rr8Db5VNWmGrBcZtayUA8gc0aoEsbPolZ9IkN6idEmtj8E7Hr767arijz6Do4nxaXBlRzz47ZCUKoELVQtDIzwB1fAP3dCfaJVxC+AVsP3J4fSdOhvcwrtDRJl70pIvIbgjP3QhqtiYLsHBF7e7gKkW0mLej+boRZAEAZuZSFBg=
+	t=1758035582; cv=none; b=n8aDAm4KJtA923nOFI9e7kauMuQAfz9laoZ6o8aBjoCvN3zVrgf+kXd3wJzvBu3EvsiGnNhqp6XMwpqClT6MNnRSOeBGhQf5XsHihKPFF3LnF77emL6T2rHWErZ0zi0APELEC69nW3dUILeMgDV0nmcDr4O4E7gkstYctxP8hRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035515; c=relaxed/simple;
-	bh=P9LnhdXVkjKLFBgWnWZR4YUF5grzcxohOzgop5eqxvM=;
+	s=arc-20240116; t=1758035582; c=relaxed/simple;
+	bh=2FZDkp0U408O78ydTVFiSxp7wUT3F2qU4yMPaoDfsgw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RrU8oyssICa3WpQpDiyR0WAqkRbocEi2dFaWUG9qtcAV8/ETkHwrPUdDcZkXNjH/aYyz08s49t4z1m/aj2fIUpWsrx4WFgDHJOcg9MvG7vpbnd/Yc12VvgJ7R8NJXXUjMd0Q6vWg+fbKgAYJd0fhiTGOvQ7Gwmn0XUBcZKaIqtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkI/qLdn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303D8C4CEEB;
-	Tue, 16 Sep 2025 15:11:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZCiXmyBKFVSgSTrKgizePMzx/jt5z6MdEZsA6zDa7X8K1TOJyE8/htzCy6tPHytWdmq28nFxYBNLDZ5+ykVE9Jynoh1s8wnwpGvoU5D14VnIqRZ+OYGLww/CUCcWy4x0BmEekMEMxH9GTWiUIG79F1XNPPjHqDUFOMa6T+SRCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCz//RN0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E21FAC4CEEB;
+	Tue, 16 Sep 2025 15:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758035515;
-	bh=P9LnhdXVkjKLFBgWnWZR4YUF5grzcxohOzgop5eqxvM=;
+	s=k20201202; t=1758035582;
+	bh=2FZDkp0U408O78ydTVFiSxp7wUT3F2qU4yMPaoDfsgw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rkI/qLdn3lnRFhp4ifuc+xerZYR35gccHlPtRyXGMRHv9ygiFyVt7Le+g1DelSLhO
-	 oxq0+WbxBRYsz3TGdMyyjy+kcfm5oeIv1Sbx2HhOA5WcVlDntTr7YFog6edXlDySwg
-	 aijCKMoGcgEI1A7AuQFsIkKDfUvpw67mJ17i4uHZ7DSWl2pouFqmWH3dHi1/kM7kcR
-	 mMdfeBq70ms6j3QWuByNXbfF88s/wgFtaoJKHBMJ5kgiBCgv9v0pTl/B7iuAVYdyf+
-	 3Uba893TrntOgvolMmspM2WqQaCjB/AP7YqPDNORyVK8KJ3jpCjxT+RcvFT5tEyB48
-	 I3qntFlC8c9Kw==
-Date: Tue, 16 Sep 2025 10:11:52 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Antony Kurniawan Soemardi <linux@smankusors.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	linux-gpio@vger.kernel.org, David Heidelberg <david@ixit.cz>, 
-	Max Shevchenko <wctrl@proton.me>, Rudraksha Gupta <guptarud@gmail.com>, 
-	Shinjo Park <peremen@gmail.com>
-Subject: Re: [PATCH 5/6] dt-bindings: pinctrl: qcom: msm8960: rename msmgpio
- node to tlmm
-Message-ID: <o23idwppfthjoivpyzjojmoakdorr43gpmo5opmeet6oeud742@qhk2j5bjg5aa>
-References: <20250915-msm8960-reorder-v1-0-84cadcd7c6e3@smankusors.com>
- <20250915-msm8960-reorder-v1-5-84cadcd7c6e3@smankusors.com>
+	b=HCz//RN0LkHuFUivOXXPVaRj/8ft84O+/GeYjUptWCTFUTPIMOZNnTAMsS3nUgdPf
+	 5cD8GgDQoJWVQA5IIiq68MW/zJsYBhoyQWeHHYpDtLJ7k+9/iy06mWFEYnRfhr6HkK
+	 EzQS1jqwyoJKP9T7Jui4w47R4w9oMJhs1soixwZQWse+oAyGlbAFY0TsUDAyA0OXPD
+	 NNJKZfiI+mjaBQVFl0rtilMiRUv1MUyzG2FUwPGn3TBkKkTBnL2kxa/dJrPlmeBpF9
+	 nulfCvUpgm4hBj9+UbDCTyNI9AUfoju+jVhgcNzHs7lxQKkdBhgcwK90GLg11ULu0c
+	 736R6LiVVzFeQ==
+Date: Tue, 16 Sep 2025 16:12:57 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
+	vikas.gupta@broadcom.com,
+	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+Subject: Re: [v7, net-next 01/10] bng_en: make bnge_alloc_ring() self-unwind
+ on failure
+Message-ID: <20250916151257.GI224143@horms.kernel.org>
+References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
+ <20250911193505.24068-2-bhargava.marreddy@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,54 +62,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250915-msm8960-reorder-v1-5-84cadcd7c6e3@smankusors.com>
+In-Reply-To: <20250911193505.24068-2-bhargava.marreddy@broadcom.com>
 
-On Sun, Sep 14, 2025 at 06:34:59PM +0000, Antony Kurniawan Soemardi wrote:
-> Rename the GPIO controller node from "msmgpio" to "tlmm" to match the
-> convention used by other Qualcomm SoCs.
+On Fri, Sep 12, 2025 at 01:04:56AM +0530, Bhargava Marreddy wrote:
+> Ensure bnge_alloc_ring() frees any intermediate allocations
+> when it fails. This enables later patches to rely on this
+> self-unwinding behavior.
 > 
-> Suggested-by: Shinjo Park <peremen@gmail.com>
-> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+> Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+> Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
+> Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Without this patch(set), does the code correctly release resources on error?
 
+If not, I think this should be considered a fix for net with appropriate
+Fixes tag(s).
 
-Note that this patch is in a different subsystem and is picked up by a
-different maintainer and there are no dependencies with the other
-patches. It would therefor have been preferable if you sent this patch
-alone.
-
-No need to do anything this time though, I expect Linus to fish out this
-patch from the series.
-
-Thank you,
-Bjorn
-
-> ---
->  Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml
-> index 46618740bd312b975321427e5ffa34811c68e652..03a3692770142048391577401869cea9a7735053 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml
-> @@ -107,12 +107,12 @@ examples:
->    - |
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
->  
-> -    msmgpio: pinctrl@800000 {
-> +    tlmm: pinctrl@800000 {
->          compatible = "qcom,msm8960-pinctrl";
->          reg = <0x800000 0x4000>;
->          #gpio-cells = <2>;
->          gpio-controller;
-> -        gpio-ranges = <&msmgpio 0 0 152>;
-> +        gpio-ranges = <&tlmm 0 0 152>;
->          interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
->          interrupt-controller;
->          #interrupt-cells = <2>;
-> 
-> -- 
-> 2.34.1
-> 
+...
 
