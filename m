@@ -1,177 +1,112 @@
-Return-Path: <linux-kernel+bounces-818709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19CFB5957E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:44:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9B4B59587
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 196227A412A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32812A5C3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98293090E8;
-	Tue, 16 Sep 2025 11:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689E330B53D;
+	Tue, 16 Sep 2025 11:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iWBEjkrK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xyXFw0Rh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNad3RKY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ACD3081C6;
-	Tue, 16 Sep 2025 11:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B945823FC49;
+	Tue, 16 Sep 2025 11:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758023018; cv=none; b=AE1nxQzINmbIOWB5Bz2V2jPu1w+CdVk/m5KyYeCCu2yhNJaG/aRMS83FHYXrVxlkCqg7xz9pWyQM6yWQVh2J4dn2xsWPM1xlw1mS0vvn5uJihbHw4YIrb4bi9r8Ivd+/RyBpA9GFpxpPhhiPxYqbwcM50JdHUbGep8pu5PxgtTw=
+	t=1758023463; cv=none; b=GpVe51IMkJWwXhDi3oJiyBZoRILYho7UAed4I8Ev4HaAvLh3lujg5e17n2vH86+yASbHAv3Yk614puAW0DY1laItTaGyMKe1Tm4Pqa+pkOfyRt7LfJxfC3aR+sYpRx3Ik7JpEqqjzI4an+XGCz1pQoa0uYAiKkE5m1UVd4PzEIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758023018; c=relaxed/simple;
-	bh=y7wR+bA/adymunU0vUcEYopnCgPkn9+PWTJtJLmZGXY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=o5SK49H1Yw9OefnvWW00QoQA9RMpUVmUwvIYkDOLcqsfOWTHCCRX0g8csghXbmZj+5bhFarToCUwV/LGT8Q6pDcHnjF6IcQYvX9EbX7M4Hvi1LiygnClTf7U1nnIA46J0oyOI4qu2XqlAfQMHl+wqEnTAdxgRO+mjzuPn7ggyh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iWBEjkrK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xyXFw0Rh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 16 Sep 2025 11:43:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758023015;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Itj3SBnxJhHFfSutMr68uiPRfYoaqS4UScE8xQGAZPg=;
-	b=iWBEjkrKfNJ+GRHYH/eJx1m6i9W2nrqXugowyT2Efor2dxju38OW71lPvmRFmLIWdbNjqm
-	lki9rgp1pHvNOG4TG39R6GvSDuROiuaOinpWhUHlNljM3OokKkrzGjFb6P1Kt2T+NiVzxv
-	hgMzAMltHjuFo2du0srLAcT6TkSeZyv3dHtkyPROWKitlrqbY/vlZEvcxqqNQyf3D/D05X
-	8UM5SeumCRAIZMW86bc97aB/ej/LkZBb/kDl6vRLjYDRsLsG64iINFQ4vNPxdumfZ5SGfh
-	WpXIsMA7jnetMNYAuP5cLMekfIF20WtsAdEE31IV+Q3SARWfzFkRsYrlaOX61w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758023015;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Itj3SBnxJhHFfSutMr68uiPRfYoaqS4UScE8xQGAZPg=;
-	b=xyXFw0RhgDmXXVSFhEt8DsyeNOA9K1kHaDqvRdDKOQw1QM+Hc9kOd28L+olU8x4y2ygM9a
-	R7UpFHEjtWEmkXCg==
-From: "tip-bot2 for Aaron Lu" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/fair: Propagate load for throttled cfs_rq
-Cc: Aaron Lu <ziqianlu@bytedance.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Chengming Zhou <chengming.zhou@linux.dev>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250910095044.278-2-ziqianlu@bytedance.com>
-References: <20250910095044.278-2-ziqianlu@bytedance.com>
+	s=arc-20240116; t=1758023463; c=relaxed/simple;
+	bh=O9kG38pgi0D/E0EHSpH0PQiWWgf3wcmCdMWQGXzMU7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNY9tN5Vkr8uIxIUHJFAE+6WNleZfvJBbfuvkiNlNE2L2Kvvl6w3puki2ynyLCZ6q8O75b2DL8Yu9GOZA7AM09/fj8eo1bPJNOGPHUtG2pQduk26tcXKVJPmSdk7y4y3+xLRhB1WXLKPlWwzz2LqTUuGxvMcaut6V/K1DqM9qE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNad3RKY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F20C4CEEB;
+	Tue, 16 Sep 2025 11:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758023463;
+	bh=O9kG38pgi0D/E0EHSpH0PQiWWgf3wcmCdMWQGXzMU7g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kNad3RKYUNxDWVNVggn8mkMBbzsSSHdr8HOOSsGLVY58B3KHr5YS3dLj8I0vphP+a
+	 rgqq1ZjQLWRFd46s7QHqK5IimfxD9xVsev36qnb6c/tA8hQmQwWWrgk1FLavTJpEaB
+	 PTa9OU9P3icuBmAJ+RzL1nDBxkCEXKv2becKF5A90bUMX1oo9i2m/nI1uW32VPOywC
+	 fKELvj+jwfexhjZLjkMkraO7Tp+Ql3wz1/a1zR7ZKf4geHkIhbPmixJ5Z77sp0GOGW
+	 WxW6pHCSF9Ahvjc68x7wqvTBbxVE/mVFUB4bKWrzkRi0KUMGshGdwC5FWhqox5p7gc
+	 cCFZWkDN4KzYg==
+Date: Tue, 16 Sep 2025 12:50:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Alex Elder <elder@riscstar.com>, lgirdwood@gmail.com,
+	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mat.jonczyk@o2.pl, dlan@gentoo.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, linux.amoon@gmail.com, troymitchell988@gmail.com,
+	guodong@riscstar.com, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v13 0/7] spacemit: introduce P1 PMIC support
+Message-ID: <c8bcfff9-9d2a-426d-9df8-100efd2af64f@sirena.org.uk>
+References: <20250825172057.163883-1-elder@riscstar.com>
+ <175690199980.2656286.5459018179105557107.b4-ty@kernel.org>
+ <ec882a78-9604-45b1-9405-8f2f958f307c@riscstar.com>
+ <7aba368e-709b-49b0-b62c-f2f8250c8628@sirena.org.uk>
+ <20250916084229.GG1637058@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175802301366.709179.16577647971292327930.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CsiSrB0XCw5iECYx"
+Content-Disposition: inline
+In-Reply-To: <20250916084229.GG1637058@google.com>
+X-Cookie: The people rule.
 
-The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     fe8d238e646e16cc431b7a5899f8dda690258ee9
-Gitweb:        https://git.kernel.org/tip/fe8d238e646e16cc431b7a5899f8dda6902=
-58ee9
-Author:        Aaron Lu <ziqianlu@bytedance.com>
-AuthorDate:    Wed, 10 Sep 2025 17:50:41 +08:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 15 Sep 2025 09:38:37 +02:00
+--CsiSrB0XCw5iECYx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-sched/fair: Propagate load for throttled cfs_rq
+On Tue, Sep 16, 2025 at 09:42:29AM +0100, Lee Jones wrote:
+> On Thu, 11 Sep 2025, Mark Brown wrote:
+> > On Thu, Sep 11, 2025 at 11:36:41AM -0500, Alex Elder wrote:
 
-Before task based throttle model, propagating load will stop at a
-throttled cfs_rq and that propagate will happen on unthrottle time by
-update_load_avg().
+> > > How should these two patches be merged?  Mark has reviewed the
+> > > regulator patch 3 and Alexandre has acked the RTC patch 4.
 
-Now that there is no update_load_avg() on unthrottle for throttled
-cfs_rq and all load tracking is done by task related operations, let the
-propagate happen immediately.
+> > We'd both have been expecting them to go via MFD.
 
-While at it, add a comment to explain why cfs_rqs that are not affected
-by throttle have to be added to leaf cfs_rq list in
-propagate_entity_cfs_rq() per my understanding of commit 0258bdfaff5b
-("sched/fair: Fix unfairness caused by missing load decay").
+> Why?  I don't see any dependencies between them (usually a shared MFD
+> header-file).  If there are no deps, it should be taken through its own
+> repo, no?
 
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
----
- kernel/sched/fair.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+I used to just apply things but at some point Linus complained about
+cases where the MFD ended up not getting merged (missing the merge
+window or whatever) so I've been treating them like they had an actual
+dependency.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index df8dc38..f993de3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5729,6 +5729,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_=
-rq)
- 	return cfs_bandwidth_used() && cfs_rq->throttled;
- }
-=20
-+static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-+{
-+	return cfs_bandwidth_used() && cfs_rq->pelt_clock_throttled;
-+}
-+
- /* check whether cfs_rq, or any parent, is throttled */
- static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
- {
-@@ -6721,6 +6726,11 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_=
-rq)
- 	return 0;
- }
-=20
-+static inline bool cfs_rq_pelt_clock_throttled(struct cfs_rq *cfs_rq)
-+{
-+	return false;
-+}
-+
- static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
- {
- 	return 0;
-@@ -13151,10 +13161,13 @@ static void propagate_entity_cfs_rq(struct sched_en=
-tity *se)
- {
- 	struct cfs_rq *cfs_rq =3D cfs_rq_of(se);
-=20
--	if (cfs_rq_throttled(cfs_rq))
--		return;
--
--	if (!throttled_hierarchy(cfs_rq))
-+	/*
-+	 * If a task gets attached to this cfs_rq and before being queued,
-+	 * it gets migrated to another CPU due to reasons like affinity
-+	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
-+	 * that removed load decayed or it can cause faireness problem.
-+	 */
-+	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
- 		list_add_leaf_cfs_rq(cfs_rq);
-=20
- 	/* Start to propagate at parent */
-@@ -13165,10 +13178,7 @@ static void propagate_entity_cfs_rq(struct sched_ent=
-ity *se)
-=20
- 		update_load_avg(cfs_rq, se, UPDATE_TG);
-=20
--		if (cfs_rq_throttled(cfs_rq))
--			break;
--
--		if (!throttled_hierarchy(cfs_rq))
-+		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
- 			list_add_leaf_cfs_rq(cfs_rq);
- 	}
- }
+--CsiSrB0XCw5iECYx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJTx8ACgkQJNaLcl1U
+h9BVtAf/Vdh8eegOI/zDdzbexE8BWvzGsLLj34YbPnkG9avqAWDdyOGlUm7qZ7dD
+gB+EXJIgXSb/6TaCBjLAgBNzsLI1B4V90Se36dcaypQXvhfZaVE6a/ASWlkIMsse
+sJN80MRTL3ycen6usUT19d43eP0GSoXOolHECjE6iZ7lGoijBNvNJf4RTIRzAEKY
+tl5AsUWUcGeNXhMvANijktnE4+kZOq/bqe6CY/qrBuSi4Ftv6gSzFwoZ0RP+GhnZ
+nDh9KEbF1AR00hzX+JnjeDDRyQupVDgf+XbJl/9hFIG4glOsERztZ6LmB77twMIF
+rIInm45SJIFTn6x7WaD9kMxf4Gkhww==
+=B/MB
+-----END PGP SIGNATURE-----
+
+--CsiSrB0XCw5iECYx--
 
