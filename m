@@ -1,151 +1,202 @@
-Return-Path: <linux-kernel+bounces-819014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5FAB59A0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:30:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A480B59A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86781177663
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:24:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FE5D4A2562
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371C03081BB;
-	Tue, 16 Sep 2025 14:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLtdruPi"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DC2329F3F;
+	Tue, 16 Sep 2025 14:21:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB2E28C84F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063C230C606;
+	Tue, 16 Sep 2025 14:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758032532; cv=none; b=UJF/+MN9YVImoeVVwel23iLHwLh21vLc3E7gP/aGzF4y4VFjBRhLuaVrG861W9yDdM9mHq16Y5mqDPcVR0bl5xC5oWrPEbmmDO4w2qkXd4P9EsHQFwy6jlyFQp2UoZ4MmUB4qZ3k///eij5y+/BLY8s5mPjzXchwYDmqgPDB75A=
+	t=1758032464; cv=none; b=Nqmg5HV2gRH+BoSviTEsFmnzjJ0/YzbMVaeMPqVmuS9dR1M+Cn+mP8kxqIVz0gZlW6RBtnZqJDkChNjBUEKrEX269v+cxzEhI322oe77y39LO8lnJ4+VhrvHTaxD/EkwLOc6NeMAjCfDQstAC8jK8hTwHtp6V8z5KRjEMvJcuS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758032532; c=relaxed/simple;
-	bh=S16ECLvytyLmOv2TFGMROw+zdnonrMQxJZVeq+GI71U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IvNxwxq/wKwTID5Xy3kog6QyTyAtDQ1TYCdvUXHoq8bZzvpu/j2e7VftSYjHyNNshCankBYSzlfAX+iX0iqcVi8Vq6nywr4sZ7VbPvVP3vPMyKyjFUCtDcfPqvc7W+ugw1v3WJvCD0MZcoIphu5NjtzUNiuwTztoYC2d0yAQuQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLtdruPi; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3eb0a50a4c3so1517713f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758032529; x=1758637329; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pl1jcFzXvRWCuO/5MhdLryyBckGIL24XMYEjQYGJmG0=;
-        b=XLtdruPi07bATKjGB7WBmahu9AXObkmiq8xWhkmB7qS1u1kL+Ksuynkxp/lnqrDf1U
-         zokSqdx0e7PmItaWHJ3VFToab/B3JfV/tgDkG4NzX7Yd+09Frv8rrhLpK6MFxlTiJt9e
-         kZJSi7oD5MmAHIVD485CnVhfPeySVMaiNtkPXw1quWBbCRgcX2FDDY5Bhq90I+1yKp2v
-         pnn2UeXTbBRAzpiAl8ACW5c88OgyCLKN3jA8Gkxh0U9NNLOpJolgA13CLla/66wxtDJW
-         CNIvw3Ez4/H+2rugt+mIrsscx/4yhw9Ltzv3200BStNZN7AzjLe4faEPam8rRCNGbt2M
-         YqKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758032529; x=1758637329;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pl1jcFzXvRWCuO/5MhdLryyBckGIL24XMYEjQYGJmG0=;
-        b=TjhZica6g4A9n0pj/i6rC8VPs7s/LC+Vdyk8Ijd8FIEBioKWvXuVQVQDWuoXjuuc2c
-         ymljt0AGbE/U3+D4yDvTiFPKwKbUEJeeVOE9HcQ1glRqz528L8rCVSQ3Q9kuZdjRYsFl
-         a+PIeZdYUO/Dusv/94Q5x8Mp2HTFlT/Cz1W59qVYCAKsj26ts9CKL2/FOJHiPKq9YVt2
-         RE64JDge+Q2JhS3z91tHgIDQ46jzzgwFBTKK/SVQfQ1yc3rSqoERhQPmEK9tpZ5TjsaE
-         PC4Gg44N4NNgbrLRYytAkFFAsBJcPMwtGgXcgt+zalgVOnybChYjDmF/8rGruo6Lo8Qr
-         vxPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvRxz8aI/KMhYYdQ/KQGOnKVf9ALdCdQQomKkQMyIuZ9Isnin2fADWu2LgfIxFEdqlUNAW9xHy6TGCF9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7GCvejAKr2XgoFa5fFMKaHiylrNO7e7Rggbwci4f3BTARSyhe
-	DFODRxIn/IdPbIY4LkZ82HHKUH2gWzGnzxsJo+mT87nSQjB/e/pSyA1X
-X-Gm-Gg: ASbGncuqvi8Pnj/UoqDFozlUw5owhbKOqLQMn3DCBSC8f5NEvDqO5lJuilPTstKAo1+
-	QLhypfalsoGNmG3VHcWRcpUn8PWfxK7EsxAri4T3P23XVLzC1RHYvslNYPnO9CE6Mllq5NaAMtt
-	sW6pAfYc9tFLMBTmgvU6kt0v8t5iXhbR4iDjPPoAxgYkBdE5fjaNGuztbXXZAITN7OHKBQrXC7P
-	Lf8yv8a0Zzr8IxRp02pdN7YrGoa1pr5WXH512Y8JAowIu4w50UES5oZ65Pb6A1FM3JIr9dRo2mU
-	x7J99nP75hlXELjwi1Cg3vi4CZTqB+vhOwN13O+fkrbbVQ/TMNI4v2qp0otCug7nIe0gzXaYQoY
-	dRPBMFTfNiCHEaFYVaHnjTyp1C1cItG0UwXYwG6mfor+c4eeBGBbtd6MD8JVtn3aP2Gd0vee1GT
-	PrXmtsoGhaOhzejgPAUKruvgTXwIuFcuAEtp909w==
-X-Google-Smtp-Source: AGHT+IEfo6dIZQgb+2KQqBaq9k8zgeodNBoQBmoTlSmN4T18NxGs2JJXZCHspCns20/kog8GcmY8rQ==
-X-Received: by 2002:a05:6000:3112:b0:3ea:e0fd:290a with SMTP id ffacd0b85a97d-3eae0fd2e16mr6354578f8f.12.1758032528799;
-        Tue, 16 Sep 2025 07:22:08 -0700 (PDT)
-Received: from emanuele-nb.corp.toradex.com (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c4490sm225090165e9.19.2025.09.16.07.22.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 07:22:07 -0700 (PDT)
-From: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
-To: 
-Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jayesh Choudhary <j-choudhary@ti.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] drm/bridge: ti-sn65dsi86: Transition to LP mode on every video line
-Date: Tue, 16 Sep 2025 16:20:43 +0200
-Message-ID: <20250916142047.3582018-1-ghidoliemanuele@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758032464; c=relaxed/simple;
+	bh=p1am+g3ifY86Lf8CB4d9hKoIsb4z7QdDsy8ownC58v4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oQcRlhV/68ktiayFVXyPO56q4WhF605lxsChq7qm3HYApT8WdVSD74diUHImNkotdla+GCGHiY/XA29+v8khDB5S3s1XnYSn6ke/nvMw+fP6kwRw3U6aBawKoDYOppnvSTtXHfFgMLjsVcfi5kxkKxx48/vM3OesFr2aQjImLxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cR3qL0yVnz6L5Dg;
+	Tue, 16 Sep 2025 22:16:30 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 758F11402F5;
+	Tue, 16 Sep 2025 22:20:59 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 16 Sep
+ 2025 16:20:58 +0200
+Date: Tue, 16 Sep 2025 15:20:57 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Nathan Lynch <nathan.lynch@amd.com>
+CC: Vinod Koul <vkoul@kernel.org>, Wei Huang <wei.huang2@amd.com>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, Bjorn Helgaas
+	<bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>, Kees Cook
+	<kees@kernel.org>
+Subject: Re: [PATCH RFC 03/13] dmaengine: sdxi: Add descriptor encoding and
+ unit tests
+Message-ID: <20250916152057.00005f7a@huawei.com>
+In-Reply-To: <87ms6va4z4.fsf@AUSNATLYNCH.amd.com>
+References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
+	<20250905-sdxi-base-v1-3-d0341a1292ba@amd.com>
+	<20250915125226.000043c1@huawei.com>
+	<87ms6va4z4.fsf@AUSNATLYNCH.amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+On Mon, 15 Sep 2025 14:30:23 -0500
+Nathan Lynch <nathan.lynch@amd.com> wrote:
 
-The component datasheet recommends, to reduce power consumption,
-transitioning to LP mode on every video line.
++CC Kees given I refer to a prior discussion Kees helped out with
+and this is a different related case.
 
-Enable the MIPI_DSI_MODE_VIDEO_NO_HFP and MIPI_DSI_MODE_VIDEO_NO_HBP
-flags so that the bridge can enter LP mode during the horizontal front
-porch and back porch periods.
+> Jonathan Cameron <jonathan.cameron@huawei.com> writes:
+> > On Fri, 05 Sep 2025 13:48:26 -0500
+> > Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org> wrote:  
+> >> +++ b/drivers/dma/sdxi/descriptor.c  
+> >  
+> >> +enum {
+> >> +	SDXI_PACKING_QUIRKS = QUIRK_LITTLE_ENDIAN | QUIRK_LSW32_IS_FIRST,
+> >> +};
+> >> +
+> >> +#define sdxi_desc_field(_high, _low, _member) \
+> >> +	PACKED_FIELD(_high, _low, struct sdxi_desc_unpacked, _member)
+> >> +#define sdxi_desc_flag(_bit, _member) \
+> >> +	sdxi_desc_field(_bit, _bit, _member)
+> >> +
+> >> +static const struct packed_field_u16 common_descriptor_fields[] = {
+> >> +	sdxi_desc_flag(0, vl),
+> >> +	sdxi_desc_flag(1, se),
+> >> +	sdxi_desc_flag(2, fe),
+> >> +	sdxi_desc_flag(3, ch),
+> >> +	sdxi_desc_flag(4, csr),
+> >> +	sdxi_desc_flag(5, rb),
+> >> +	sdxi_desc_field(15, 8, subtype),
+> >> +	sdxi_desc_field(26, 16, type),
+> >> +	sdxi_desc_flag(448, np),
+> >> +	sdxi_desc_field(511, 453, csb_ptr),  
+> >
+> > I'm not immediately seeing the advantage of dealing with unpacking in here
+> > when patch 2 introduced a bunch of field defines that can be used directly
+> > in the tests.  
+> 
+> My idea is to use the bitfield macros (GENMASK etc) for the real code
+> that encodes descriptors while using the packing API in the tests for
+> those functions.
+> 
+> By limiting what's shared between the real code and the tests I get more
+> confidence in both. If both the driver code and the tests rely on the
+> bitfield macros, and then upon adding a new descriptor field I
+> mistranslate the bit numbering from the spec, that error is more likely
+> to propagate to the tests undetected than if the test code relies on a
+> separate mechanism for decoding descriptors.
 
-Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
----
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Robert Foss <rfoss@kernel.org>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Jonas Karlman <jonas@kwiboo.se>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: Jayesh Choudhary <j-choudhary@ti.com>
-Cc: <dri-devel@lists.freedesktop.org>
-Cc: <linux-kernel@vger.kernel.org>
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+That's a fair reason.  Perhaps add a comment just above the first
+instance of this or top of file to express that?
+> 
+> I find the packing API quite convenient to use for the SDXI descriptor
+> tests since the spec defines the fields in terms of bit offsets that can
+> be directly copied to a packed_field_ array.
+> 
+> 
+> >> +};
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index ae0d08e5e960..957e9abd46c3 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -689,7 +689,8 @@ static int ti_sn_attach_host(struct auxiliary_device *adev, struct ti_sn65dsi86
- 	/* TODO: setting to 4 MIPI lanes always for now */
- 	dsi->lanes = 4;
- 	dsi->format = MIPI_DSI_FMT_RGB888;
--	dsi->mode_flags = MIPI_DSI_MODE_VIDEO;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_NO_HFP |
-+			  MIPI_DSI_MODE_VIDEO_NO_HBP;
- 
- 	/* check if continuous dsi clock is required or not */
- 	pm_runtime_get_sync(dev);
--- 
-2.43.0
+> >> +	u64 csb_ptr;
+> >> +	u32 opcode;
+> >> +
+> >> +	opcode = (FIELD_PREP(SDXI_DSC_VL, 1) |
+> >> +		  FIELD_PREP(SDXI_DSC_FE, 1) |
+> >> +		  FIELD_PREP(SDXI_DSC_SUBTYPE, SDXI_DSC_OP_SUBTYPE_CXT_STOP) |
+> >> +		  FIELD_PREP(SDXI_DSC_TYPE, SDXI_DSC_OP_TYPE_ADMIN));
+> >> +
+> >> +	cxt_start = params->range.cxt_start;
+> >> +	cxt_end = params->range.cxt_end;
+> >> +
+> >> +	csb_ptr = FIELD_PREP(SDXI_DSC_NP, 1);
+> >> +
+> >> +	desc_clear(desc);  
+> >
+> > Not particularly important, but I'd be tempted to combine these with
+> >
+> > 	*desc = (struct sdxi_desc) {
+> > 		.ctx_stop = {
+> > 			.opcode = cpu_to_le32(opcode),
+> > 			.cxt_start = cpu_to_le16(cxt_start),
+> > 			.cxt_end = cpu_to_le16(cxt_end),
+> > 			.csb_ptr = cpu_to_le64(csb_ptr),
+> > 		},
+> > 	};
+> >
+> > To me that more clearly shows what is set and that the
+> > rest is zeroed.  
+> 
+> Maybe I prefer your version too. Just mentioning in case it's not clear:
+> cxt_stop is a union member with the same size as the enclosing struct
+> sdxi_desc. Each member of struct sdxi_desc's interior anonymous union is
+> intended to completely overlay the entire object.
+> 
+> The reason for the preceding desc_clear() is that the designated
+> initializer construct does not necessarily zero padding bytes in the
+> object. Now, there *shouldn't* be any padding bytes in SDXI descriptors
+> as I've defined them, so I'm hoping the redundant stores are discarded
+> in the generated code. But I haven't checked this.
 
+So, this one is 'fun' (and I can hopefully find the references)
+The C spec has had some updates that might cover this though
+I'm not sure and too lazy to figure it out today.  Anyhow,
+that doesn't help anyway as we care about older compilers.
+
+So we cheat and just check the compiler does fill them ;)
+
+Via a reply Kees sent on a discussion of the somewhat related {}
+https://lore.kernel.org/linux-iio/202505090942.48EBF01B@keescook/
+
+https://elixir.bootlin.com/linux/v6.17-rc6/source/lib/tests/stackinit_kunit.c
+
+I think the relevant one is __dynamic_all which is used with various hole sizes
+and with both bare structures and unions.
+
++CC Kees who might have time to shout if I have this particular case wrong ;)
+
+
+
+> 
+> And it looks like I neglected to mark all the descriptor structs __packed,
+> oops.
+> 
+> I think I can add the __packed to struct sdxi_desc et al, use your
+> suggested initializer, and discard desc_clear().
+
+That would indeed work.
+
+> 
+> 
+> >> +	desc->cxt_stop = (struct sdxi_dsc_cxt_stop) {
+> >> +		.opcode = cpu_to_le32(opcode),
+> >> +		.cxt_start = cpu_to_le16(cxt_start),
+> >> +		.cxt_end = cpu_to_le16(cxt_end),
+> >> +		.csb_ptr = cpu_to_le64(csb_ptr),
+> >> +	};
 
