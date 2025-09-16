@@ -1,72 +1,44 @@
-Return-Path: <linux-kernel+bounces-818364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13389B5909E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1157AB590B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00CE322F69
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:30:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A24516B72F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB572EA46F;
-	Tue, 16 Sep 2025 08:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WmZCiYCc";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WmZCiYCc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756D92868AD;
+	Tue, 16 Sep 2025 08:32:04 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554932EC089
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3363D277CBD;
+	Tue, 16 Sep 2025 08:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758011371; cv=none; b=gnRlnKcHtG4B224TSN+/P43AiYIp4TfhNACoJJxzTvu88rrNIp+qiIT/1cn/EnEmidQ/xo7XL+Wcj5idUhKoi2kg9NNgwvzArcaVy9D5QP14SxXxP4fywtIx6ywBAGH8Ptt0Ss40ZstnAIwP29iaLoZpU1G5URqc32BKA8irW9s=
+	t=1758011523; cv=none; b=oi2/jtcFNlqePxJfZZNwM3bgPHPMx8cCxhtuo5vhtSp3GkDAV489Hs1Ee6olrJZAdwFSTuZL+VI5nFncsDRKoVIEJGleg8+ozno5VEWaHUKTJxv/jTSoV/s78mlwLVoGOQ7/+9oDF9WITYfTb4iUh+SGkvRmD9T0nGnR98d7UU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758011371; c=relaxed/simple;
-	bh=hgclWfd2Iv1YR+0SM795Q/VgpTWx5xPyhfl6zDDwctw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Jcjlkxzo5u/Yy91+R0Fu0wxqErXIpOhy8cSa4Y78cddF/Aes81RejmNXmbbIvkdH6s5EbZQK80YaT2GAzBvcG438w5PYcHXPpC2ZGK0/yQqBzsv6UGaF5yRMPoOPkVYMiDSMSybsX1GBGH3CRWiF3wvTnVKTjgpWE5m1ibG5qvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WmZCiYCc; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WmZCiYCc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7E02422815;
-	Tue, 16 Sep 2025 08:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1758011367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hgclWfd2Iv1YR+0SM795Q/VgpTWx5xPyhfl6zDDwctw=;
-	b=WmZCiYCcmGFsbbVtTZ1+6gDHkOOwYJ4QMMQOaYcg9u8MzJhomPpXmQfnUa9fPVcoSPTffm
-	h9Q4M0hMtN9jRjXHkjn+KMtWSdXgtM35RNR97JhiTOvHLAlOuJiXhG1LuSTYyCCEaU/gnm
-	k6/hRgnk2Wr82JJVuEDQg5HEfpub4mY=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1758011367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hgclWfd2Iv1YR+0SM795Q/VgpTWx5xPyhfl6zDDwctw=;
-	b=WmZCiYCcmGFsbbVtTZ1+6gDHkOOwYJ4QMMQOaYcg9u8MzJhomPpXmQfnUa9fPVcoSPTffm
-	h9Q4M0hMtN9jRjXHkjn+KMtWSdXgtM35RNR97JhiTOvHLAlOuJiXhG1LuSTYyCCEaU/gnm
-	k6/hRgnk2Wr82JJVuEDQg5HEfpub4mY=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D7D113A63;
-	Tue, 16 Sep 2025 08:29:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VZ4CFecfyWgLIAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 16 Sep 2025 08:29:27 +0000
-Message-ID: <46cc57c6-bb57-4423-9fb2-37b5563c4dee@suse.com>
-Date: Tue, 16 Sep 2025 10:29:26 +0200
+	s=arc-20240116; t=1758011523; c=relaxed/simple;
+	bh=TV2YpNqkr2/HVhtBb1Qdjz/zFEuFyZxjryfOwa4Mzos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sOzHfEcjAvki7aoROGKoeImXQIMgt6wfgj1JzBSgollocqEcQ6vOzvQju+x/+UGXgYIgGZoLpRE3KJd7NOZxiGDKyE2pSKmPzzXAYEfDaDfZMAktOOZMk2EVrqLbeDboUT9CcW+KxRwkP/eBUqpqP7JE1NXcMvmXKwbFPYnwDWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cQw9l6gg2zKHMwL;
+	Tue, 16 Sep 2025 16:31:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F49A1A1D93;
+	Tue, 16 Sep 2025 16:31:56 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgA3YJd7IMlofN+gCg--.43662S2;
+	Tue, 16 Sep 2025 16:31:56 +0800 (CST)
+Message-ID: <b7f61f22-5769-4c54-913d-302d18769db2@huaweicloud.com>
+Date: Tue, 16 Sep 2025 16:31:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,244 +46,199 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: CVE-2023-53283: xen/virtio: Fix NULL deref when a bridge of PCI
- root bus has no parent
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-References: <2025091624-CVE-2023-53283-674c@gregkh>
+Subject: Re: [PATCH v12 7/9] cgroup/cpuset: Fail if isolated and nohz_full
+ don't leave any housekeeping
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, cgroups@vger.kernel.org
+Cc: Frederic Weisbecker <frederic@kernel.org>
+References: <20250915145920.140180-11-gmonaco@redhat.com>
+ <20250915145920.140180-18-gmonaco@redhat.com>
 Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <2025091624-CVE-2023-53283-674c@gregkh>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------XOAGOVa9WZsc3sIoyGb96Xlt"
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.20 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SIGNED_PGP(-2.00)[];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-0.994];
-	MIME_BASE64_TEXT(0.10)[];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	HAS_ATTACHMENT(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -5.20
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20250915145920.140180-18-gmonaco@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgA3YJd7IMlofN+gCg--.43662S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xw17Xr1fKF4xuw1fWr4fuFg_yoW7Zw47pF
+	yUKrW3AayUtr13G343JF4kurnY9w4kJry2k3ZxG34rZF17t3WktryUC3Z0yFWru39xWry8
+	XrZ09rs2ga47ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------XOAGOVa9WZsc3sIoyGb96Xlt
-Content-Type: multipart/mixed; boundary="------------qhc6LRiSAKinzSYNKYY8IQxM";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <46cc57c6-bb57-4423-9fb2-37b5563c4dee@suse.com>
-Subject: Re: CVE-2023-53283: xen/virtio: Fix NULL deref when a bridge of PCI
- root bus has no parent
-References: <2025091624-CVE-2023-53283-674c@gregkh>
-In-Reply-To: <2025091624-CVE-2023-53283-674c@gregkh>
 
---------------qhc6LRiSAKinzSYNKYY8IQxM
-Content-Type: multipart/mixed; boundary="------------lFJT4JpI6IANTlJ4UoHIbmvZ"
 
---------------lFJT4JpI6IANTlJ4UoHIbmvZ
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+On 2025/9/15 22:59, Gabriele Monaco wrote:
+> Currently the user can set up isolated cpus via cpuset and nohz_full in
+> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
+> domain isolated nor nohz full). This can be a problem for other
+> subsystems (e.g. the timer wheel imgration).
+> 
+> Prevent this configuration by blocking any assignation that would cause
+> the union of domain isolated cpus and nohz_full to covers all CPUs.
+> 
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> ---
+>  kernel/cgroup/cpuset.c | 63 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+> 
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 81a9239053a7..3cedc3580373 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1275,6 +1275,19 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
+>  		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
+>  }
+>  
+> +/*
+> + * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
+> + * @prs: new or old partition_root_state
+> + * @parent: parent cpuset
+> + * Return: true if isolated_cpus needs modification, false otherwise
+> + */
+> +static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
+> +{
+> +	if (!parent)
+> +		parent = &top_cpuset;
+> +	return prs != parent->partition_root_state;
+> +}
+> +
 
-T24gMTYuMDkuMjUgMTA6MTEsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gRnJvbTog
-R3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAa2VybmVsLm9yZz4NCj4gDQo+IERlc2NyaXB0
-aW9uDQo+ID09PT09PT09PT09DQo+IA0KPiBJbiB0aGUgTGludXgga2VybmVsLCB0aGUgZm9s
-bG93aW5nIHZ1bG5lcmFiaWxpdHkgaGFzIGJlZW4gcmVzb2x2ZWQ6DQo+IA0KPiB4ZW4vdmly
-dGlvOiBGaXggTlVMTCBkZXJlZiB3aGVuIGEgYnJpZGdlIG9mIFBDSSByb290IGJ1cyBoYXMg
-bm8gcGFyZW50DQo+IA0KPiBXaGVuIGF0dGVtcHRpbmcgdG8gcnVuIFhlbiBvbiBhIFFFTVUv
-S1ZNIHZpcnR1YWwgbWFjaGluZSB3aXRoIHZpcnRpbw0KPiBkZXZpY2VzIChhbGwgeDg2XzY0
-KSwgZnVuY3Rpb24geGVuX2R0X2dldF9ub2RlKCkgY3Jhc2hlcyBvbiBhY2Nlc3NpbmcNCj4g
-YnVzLT5icmlkZ2UtPnBhcmVudC0+b2Zfbm9kZSBiZWNhdXNlIGEgYnJpZGdlIG9mIHRoZSBQ
-Q0kgcm9vdCBidXMgaGFzIG5vDQo+IHBhcmVudCBzZXQ6DQo+IA0KPiBbICAgIDEuNjk0MTky
-XVsgICAgVDFdIEJVRzoga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSwgYWRkcmVz
-czogMDAwMDAwMDAwMDAwMDI4OA0KPiBbICAgIDEuNjk1Njg4XVsgICAgVDFdICNQRjogc3Vw
-ZXJ2aXNvciByZWFkIGFjY2VzcyBpbiBrZXJuZWwgbW9kZQ0KPiBbICAgIDEuNjk2Mjk3XVsg
-ICAgVDFdICNQRjogZXJyb3JfY29kZSgweDAwMDApIC0gbm90LXByZXNlbnQgcGFnZQ0KPiBb
-ICAgIDEuNjk2Mjk3XVsgICAgVDFdIFBHRCAwIFA0RCAwDQo+IFsgICAgMS42OTYyOTddWyAg
-ICBUMV0gT29wczogMDAwMCBbIzFdIFBSRUVNUFQgU01QIE5PUFRJDQo+IFsgICAgMS42OTYy
-OTddWyAgICBUMV0gQ1BVOiAwIFBJRDogMSBDb21tOiBzd2FwcGVyLzAgTm90IHRhaW50ZWQg
-Ni4zLjctMS1kZWZhdWx0ICMxIG9wZW5TVVNFIFR1bWJsZXdlZWQgYTU3N2VhZTU3OTY0YmI3
-ZTgzNDc3YjVhNTY0NWExNzgxZGY5OTBmMA0KPiBbICAgIDEuNjk2Mjk3XVsgICAgVDFdIEhh
-cmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKFEzNSArIElDSDksIDIwMDkpLCBCSU9T
-IHJlbC0xLjE1LjAtMC1nMmRkNGI5Yi1yZWJ1aWx0Lm9wZW5zdXNlLm9yZyAwNC8wMS8yMDE0
-DQo+IFsgICAgMS42OTYyOTddWyAgICBUMV0gUklQOiBlMDMwOnhlbl92aXJ0aW9fcmVzdHJp
-Y3RlZF9tZW1fYWNjKzB4ZDkvMHgxYzANCj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSBDb2Rl
-OiA0NSAwYyA4MyBlOCBjOSBhMyBlYSBmZiAzMSBjMCBlYiBkNyA0OCA4YiA4NyA0MCBmZiBm
-ZiBmZiA0OCA4OSBjMiA0OCA4YiA0MCAxMCA0OCA4NSBjMCA3NSBmNCA0OCA4YiA4MiAxMCAw
-MSAwMCAwMCA0OCA4YiA0MCA0MCA8NDg+IDgzIGI4IDg4IDAyIDAwIDAwIDAwIDBmIDg0IDQ1
-IGZmIGZmIGZmIDY2IDkwIDMxIGMwIGViIGE1IDQ4IDg5DQo+IFsgICAgMS42OTYyOTddWyAg
-ICBUMV0gUlNQOiBlMDJiOmZmZmZjOTAwNDAwMTNjYzggRUZMQUdTOiAwMDAxMDI0Ng0KPiBb
-ICAgIDEuNjk2Mjk3XVsgICAgVDFdIFJBWDogMDAwMDAwMDAwMDAwMDAwMCBSQlg6IGZmZmY4
-ODgwMDZjNzUwMDAgUkNYOiAwMDAwMDAwMDAwMDAwMDI5DQo+IFsgICAgMS42OTYyOTddWyAg
-ICBUMV0gUkRYOiBmZmZmODg4MDA1ZWQxMDAwIFJTSTogZmZmZmM5MDA0MDBmMTAwYyBSREk6
-IGZmZmY4ODgwMDVlZTMwZDANCj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSBSQlA6IGZmZmY4
-ODgwMDZjNzUwMTAgUjA4OiAwMDAwMDAwMDAwMDAwMDAxIFIwOTogMDAwMDAwMDMzMDAwMDAw
-Ng0KPiBbICAgIDEuNjk2Mjk3XVsgICAgVDFdIFIxMDogZmZmZjg4ODAwNTg1MDAyOCBSMTE6
-IDAwMDAwMDAwMDAwMDAwMDIgUjEyOiBmZmZmZmZmZjgzMDQzOWEwDQo+IFsgICAgMS42OTYy
-OTddWyAgICBUMV0gUjEzOiAwMDAwMDAwMDAwMDAwMDAwIFIxNDogZmZmZjg4ODAwNTY1Nzkw
-MCBSMTU6IGZmZmY4ODgwMDZlM2UxZTgNCj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSBGUzog
-IDAwMDAwMDAwMDAwMDAwMDAoMDAwMCkgR1M6ZmZmZjg4ODA0YTAwMDAwMCgwMDAwKSBrbmxH
-UzowMDAwMDAwMDAwMDAwMDAwDQo+IFsgICAgMS42OTYyOTddWyAgICBUMV0gQ1M6ICBlMDMw
-IERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPiBbICAgIDEuNjk2
-Mjk3XVsgICAgVDFdIENSMjogMDAwMDAwMDAwMDAwMDI4OCBDUjM6IDAwMDAwMDAwMDJlMzYw
-MDAgQ1I0OiAwMDAwMDAwMDAwMDUwNjYwDQo+IFsgICAgMS42OTYyOTddWyAgICBUMV0gQ2Fs
-bCBUcmFjZToNCj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgPFRBU0s+DQo+IFsgICAgMS42
-OTYyOTddWyAgICBUMV0gIHZpcnRpb19mZWF0dXJlc19vaysweDFiLzB4ZDANCj4gWyAgICAx
-LjY5NjI5N11bICAgIFQxXSAgdmlydGlvX2Rldl9wcm9iZSsweDE5Yy8weDI3MA0KPiBbICAg
-IDEuNjk2Mjk3XVsgICAgVDFdICByZWFsbHlfcHJvYmUrMHgxOWIvMHgzZTANCj4gWyAgICAx
-LjY5NjI5N11bICAgIFQxXSAgX19kcml2ZXJfcHJvYmVfZGV2aWNlKzB4NzgvMHgxNjANCj4g
-WyAgICAxLjY5NjI5N11bICAgIFQxXSAgZHJpdmVyX3Byb2JlX2RldmljZSsweDFmLzB4OTAN
-Cj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgX19kcml2ZXJfYXR0YWNoKzB4ZDIvMHgxYzAN
-Cj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgYnVzX2Zvcl9lYWNoX2RldisweDc0LzB4YzAN
-Cj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgYnVzX2FkZF9kcml2ZXIrMHgxMTYvMHgyMjAN
-Cj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgZHJpdmVyX3JlZ2lzdGVyKzB4NTkvMHgxMDAN
-Cj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgdmlydGlvX2NvbnNvbGVfaW5pdCsweDdmLzB4
-MTEwDQo+IFsgICAgMS42OTYyOTddWyAgICBUMV0gIGRvX29uZV9pbml0Y2FsbCsweDQ3LzB4
-MjIwDQo+IFsgICAgMS42OTYyOTddWyAgICBUMV0gIGtlcm5lbF9pbml0X2ZyZWVhYmxlKzB4
-MzI4LzB4NDgwDQo+IFsgICAgMS42OTYyOTddWyAgICBUMV0gIGtlcm5lbF9pbml0KzB4MWEv
-MHgxYzANCj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgcmV0X2Zyb21fZm9yaysweDI5LzB4
-NTANCj4gWyAgICAxLjY5NjI5N11bICAgIFQxXSAgPC9UQVNLPg0KPiBbICAgIDEuNjk2Mjk3
-XVsgICAgVDFdIE1vZHVsZXMgbGlua2VkIGluOg0KPiBbICAgIDEuNjk2Mjk3XVsgICAgVDFd
-IENSMjogMDAwMDAwMDAwMDAwMDI4OA0KPiBbICAgIDEuNjk2Mjk3XVsgICAgVDFdIC0tLVsg
-ZW5kIHRyYWNlIDAwMDAwMDAwMDAwMDAwMDAgXS0tLQ0KPiANCj4gVGhlIFBDSSByb290IGJ1
-cyBpcyBpbiB0aGlzIGNhc2UgY3JlYXRlZCBmcm9tIEFDUEkgZGVzY3JpcHRpb24gdmlhDQo+
-IGFjcGlfcGNpX3Jvb3RfYWRkKCkgLT4gcGNpX2FjcGlfc2Nhbl9yb290KCkgLT4gYWNwaV9w
-Y2lfcm9vdF9jcmVhdGUoKSAtPg0KPiBwY2lfY3JlYXRlX3Jvb3RfYnVzKCkgd2hlcmUgdGhl
-IGxhc3QgZnVuY3Rpb24gaXMgY2FsbGVkIHdpdGgNCj4gcGFyZW50PU5VTEwuIEl0IGluZGlj
-YXRlcyB0aGF0IG5vIHBhcmVudCBpcyBwcmVzZW50IGFuZCB0aGVuDQo+IGJ1cy0+YnJpZGdl
-LT5wYXJlbnQgaXMgTlVMTCB0b28uDQo+IA0KPiBGaXggdGhlIHByb2JsZW0gYnkgY2hlY2tp
-bmcgYnVzLT5icmlkZ2UtPnBhcmVudCBpbiB4ZW5fZHRfZ2V0X25vZGUoKSBmb3INCj4gTlVM
-TCBmaXJzdC4NCj4gDQo+IFRoZSBMaW51eCBrZXJuZWwgQ1ZFIHRlYW0gaGFzIGFzc2lnbmVk
-IENWRS0yMDIzLTUzMjgzIHRvIHRoaXMgaXNzdWUuDQoNClBsZWFzZSByZXZva2UgdGhpcyBD
-VkUuIFRoZXJlIGlzIG5vIHdheSBhbiB1bnByaXZpbGVnZWQgdXNlciBjb3VsZCB0cmlnZ2Vy
-DQp0aGlzIGlzc3VlLg0KDQoNCkp1ZXJnZW4NCg==
---------------lFJT4JpI6IANTlJ4UoHIbmvZ
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+I'm a bit confused about the logic for updating isolated CPUs.
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+As I understand it, the isolated_cpus set should be updated in two scenarios:
+1. When changing to an isolated partition.
+2. When a valid isolated partition becomes invalid or changes its membership.
 
---------------lFJT4JpI6IANTlJ4UoHIbmvZ--
+However, I find the current approach of comparing the parent's partition_root_state with prs to
+determine whether to update the isolated CPUs somewhat difficult to follow.
 
---------------qhc6LRiSAKinzSYNKYY8IQxM--
+Wouldn't a more straightforward approach be something like this?
 
---------------XOAGOVa9WZsc3sIoyGb96Xlt
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+static bool isolated_cpus_should_update(int old_prs, int new_prs)
+{
+    if (old_prs == new_prs)
+        return false;
 
------BEGIN PGP SIGNATURE-----
+    /* Changing to an isolated partition */
+    if (new_prs == PRS_ISOLATED)
+        return true;
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjJH+YFAwAAAAAACgkQsN6d1ii/Ey+C
-YQf+JBNgRF81y9QVGNAhW5HXHAjo77Ct3O4jYjRq9/VZs9q3QZ96nH8d88x06zI/nBIHRyph7s35
-duy786+AcWMqSKi1tISlrCyOWkEc43oVmT4kDRNErrg5n4t1+vqALu8ZWFU5iBUw/LPPS+SCtgjy
-tJiE+4hJ2BDBrzIxlaXDwtaEwNshkjlLiaHflFhVR28D4b+uCqrY6oNWlY2UzqKEqsyy+hqYqlA0
-Sk54GA/3p8TeODD1zSxXjFFALvfckqbAt7MY7/RcbUtzeJFTcBFbYXlxdbWdMDvP+8pPOxC6Ua1K
-en6osf5F9CWcGZDE2RGFq55Pifwf9BMl70X9C03wNQ==
-=eOcS
------END PGP SIGNATURE-----
+    /* Isolated partition changing to another state */
+    if (old_prs == PRS_ISOLATED)
+        return true;
 
---------------XOAGOVa9WZsc3sIoyGb96Xlt--
+    return false;
+}
+
+I'd greatly appreciate it if someone could help clarify this. Thank you.
+
+>  /*
+>   * partition_xcpus_add - Add new exclusive CPUs to partition
+>   * @new_prs: new partition_root_state
+> @@ -1339,6 +1352,42 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+>  	return isolcpus_updated;
+>  }
+>  
+> +/*
+> + * isolated_cpus_can_update - check for isolated & nohz_full conflicts
+> + * @add_cpus: cpu mask for cpus that are going to be isolated
+> + * @del_cpus: cpu mask for cpus that are no longer isolated, can be NULL
+> + * Return: false if there is conflict, true otherwise
+> + *
+> + * If nohz_full is enabled and we have isolated CPUs, their combination must
+> + * still leave housekeeping CPUs.
+> + */
+> +static bool isolated_cpus_can_update(struct cpumask *add_cpus,
+> +				     struct cpumask *del_cpus)
+> +{
+> +	cpumask_var_t full_hk_cpus;
+> +	int res = true;
+> +
+> +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
+> +		return true;
+> +
+> +	if (del_cpus && cpumask_weight_and(del_cpus,
+> +			housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)))
+> +		return true;
+> +
+> +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
+> +		return false;
+> +
+> +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
+> +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
+> +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
+> +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_active_mask);
+> +	if (!cpumask_weight_andnot(full_hk_cpus, add_cpus))
+> +		res = false;
+> +
+> +	free_cpumask_var(full_hk_cpus);
+> +	return res;
+> +}
+> +
+>  static void update_exclusion_cpumasks(bool isolcpus_updated)
+>  {
+>  	int ret;
+> @@ -1464,6 +1513,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>  	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
+>  	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
+>  		return PERR_INVCPUS;
+> +	if (isolated_cpus_should_update(new_prs, NULL) &&
+> +	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
+> +		return PERR_HKEEPING;
+>  
+>  	spin_lock_irq(&callback_lock);
+>  	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+> @@ -1563,6 +1615,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+>  		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
+>  			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
+>  			cs->prs_err = PERR_NOCPUS;
+> +		else if (isolated_cpus_should_update(prs, NULL) &&
+> +			 !isolated_cpus_can_update(tmp->addmask, tmp->delmask))
+> +			cs->prs_err = PERR_HKEEPING;
+>  		if (cs->prs_err)
+>  			goto invalidate;
+>  	}
+> @@ -1914,6 +1969,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>  			return err;
+>  	}
+>  
+> +	if (deleting && isolated_cpus_should_update(new_prs, parent) &&
+> +	    !isolated_cpus_can_update(tmp->delmask, tmp->addmask)) {
+> +		cs->prs_err = PERR_HKEEPING;
+> +		return PERR_HKEEPING;
+> +	}
+> +
+>  	/*
+>  	 * Change the parent's effective_cpus & effective_xcpus (top cpuset
+>  	 * only).
+> @@ -2934,6 +2995,8 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>  		 * Need to update isolated_cpus.
+>  		 */
+>  		isolcpus_updated = true;
+> +		if (!isolated_cpus_can_update(cs->effective_xcpus, NULL))
+> +			err = PERR_HKEEPING;
+>  	} else {
+>  		/*
+>  		 * Switching back to member is always allowed even if it
+
+-- 
+Best regards,
+Ridong
+
 
