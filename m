@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-819200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9182BB59CC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39528B59CF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A697C324D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DCFD3ABE4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A3E283124;
-	Tue, 16 Sep 2025 16:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0F029B78E;
+	Tue, 16 Sep 2025 16:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UiZaIJeM"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oHYso7ip"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D707233D9C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3768F31FEFE;
+	Tue, 16 Sep 2025 16:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038476; cv=none; b=XAuzCHGGgmJtNXVDGTuyyYv4LvnFKXE07lbFmSDZAQW4OsNyJR1Zi93/SGWmlBSSOqqvPs5WMA0EiPAenU0czpzye6OyHqUrtG5RDiZo4M/ScvkIlBnZrMZnuU6BvhoxV2rBlJ7L0O9qOsP+iYI/oq7/5KXF0v42lVrK6BN/40Q=
+	t=1758038597; cv=none; b=V9Lv9er6lJM9Stq5o+ev26zNSRxC8alSPD9RGelh7pXTLya4cyEAZxZBs7UnkZ8qQ6DV8h/y9usiKIJkGgSnFrStALYqsP2q2r0yC3oiU0hlgOXZvXRbiCtXNHYdIUTjWaJYxIgy9Hh2e6VlzOLO+ssvJ0SkK2ASQVbgHIDcOpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038476; c=relaxed/simple;
-	bh=Yvu4+I+mmPd9KLgsD/Xp7B197nOWNAf2C7L4OonWZ1Y=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nPjOzUKN2/V65FZ+sdmBCleVi/UKccCP+NopHryDoIcvaJhueBqUr4+iZLji2qnLFF9ycXrrYqixXOdj85a9nbPCHgDImS9I4iB0DDtfgTOeVJ7LqudxeUmUo5o79XQN8huziB1Ud/tvEf1+fLeNswfzsv8u1CJzpI5LXMJAoGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UiZaIJeM; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-25177b75e38so66834595ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:01:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758038474; x=1758643274; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=16noxQnX0KIlK98rjBFjGAUY+DX3PGXWiRxf/Pcl2t8=;
-        b=UiZaIJeMmhIOusKhgJ35qLYeimcnIqWZaBGz6ZVsvYpe4+F45CnS7GQeRj8WephmBx
-         EmEVtADa0PTjTywD5/EO/jcBwG52UICvWriz6JdbdePahKlpB1qAETfbdAiVrFoAxWFc
-         a87vsweeVtc2bRdOaudMuuTJy3FbQiLXosjpy4ps8Gyec0MXGGDUpO+dHeFyoacY6iFJ
-         nEE9MfrkmwQ4F13cX51GFm3qSWKk2LFyAkTT4ZyzHo/6UEIHXRz8RxeYqMINmMCRurkK
-         QR9mpO3uXSWpDnv8re7u0wvYs9Tol7vML/7o8Pt3qEVbYMF6lR5+tFMEuGH4o0ZDCFJ2
-         1sAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758038474; x=1758643274;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=16noxQnX0KIlK98rjBFjGAUY+DX3PGXWiRxf/Pcl2t8=;
-        b=QTIIK0k8XkxGZ8Two5D1I0Ho5XxYnL0HRmp3riEl2BJ9UNVv2dItwrzZEKZYNOvmr1
-         XNcCGvuq5cpfPgkQQmEh41YPm+6q31kA9w2JRAhu6T9kT63+OxGju360pk7+gHPr8A9c
-         0nUvm4jkVaSHd9awe99eEjqF/a/EEKzpaGjzcdtcioReTKPkh60/38RU8QPuCA9Uo8+8
-         Vb1EjOnoZ2CkzxjyDRxD+91K17vzSBC0NRigCYKUHeYO5OI0VKX4YjJxcww/GwhnLU8e
-         OO9nzp2/07FFoPfYTets7R43aNU/XS2Y+kWl3MAD/ymLCSD/sc3Uyq1I5CFXpQfJ20/b
-         uqRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRJ8c6DvM93rKCLLaezI5UXmVybCdw8Glz2/swwrn4fHghqiIZbd3tmCXtYUYLiBbCg0KIRaJ4RbtzgT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMToFm/WocUyEneew2bgXCuvdFxwCdmLLgZMCELp64xLiu0Rhu
-	ub3JcvO4sSE5IGaP4ZlC8L+yxaIAoSHIYgrDpTLWkptKcShSi72QBrnaJ2GIu1mLBIIlj22KuQy
-	VnV7+XA==
-X-Google-Smtp-Source: AGHT+IFd7myaxOXphUd/MVgrf6Fz4tV4x05UEurwdAPSr2crZiMufGY/rfW5WckYFeXemaVy5X/Dfq/hQv4=
-X-Received: from plkv16.prod.google.com ([2002:a17:903:1a30:b0:267:ea8a:35da])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ef11:b0:235:e8da:8d1
- with SMTP id d9443c01a7336-25d24caa073mr179675535ad.8.1758038473731; Tue, 16
- Sep 2025 09:01:13 -0700 (PDT)
-Date: Tue, 16 Sep 2025 09:01:10 -0700
+	s=arc-20240116; t=1758038597; c=relaxed/simple;
+	bh=Y3oq6iu4hMkc15Bb7DayMWSnsQ4mDxaKl21fY4WENAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lZC80bhOP46tzkBI1d2gvHFVUspBfNILyFrnqHvFqsA39V2XS2SXvMmsb0j6K5w0ZlfqUpsAPxrFAVqYRiadWBZcT2h8eMNImjT1rlqhEPEimrSYfLzOBxmS3nKg6SPQFuZdUZFoSKwYGE/UrcvHA/x00d2E/KelMKWqx2dgE78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oHYso7ip; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758038585; x=1789574585;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Y3oq6iu4hMkc15Bb7DayMWSnsQ4mDxaKl21fY4WENAw=;
+  b=oHYso7ipUwKmKAl0vvI01lmhfPfnwiHc44sWcAXBIrONVWmTW7ZXEnQa
+   iw7ZWAQBmVV/7Kp0MG7xadNk5HMvys6A8RRkyNVCtalELMweKEArMXuV2
+   RN0WvrTqUJNPC6u9pODfjCEmnfeuZ5ZOzQvCbKXsYzaXZ3GOcpGUi23ZX
+   tIeORzqUBFx7xsPmNj2Wy9ub76kjK0K4YfMO5LG6311m/3lkQVr/WUy8A
+   Q1QQ8a3JLAcu+WozsgLaM1MaSCH4wI6Ge81RSwSUi+J8NRqZSCiE2KYCq
+   f5HLZWt2JvPZZ2vIjGUxUOzw4QwIw9MKrfksVP20XIXtDP7r1iHDYHFoY
+   Q==;
+X-CSE-ConnectionGUID: AE1txbitQfOgMwhkjnb8Jg==
+X-CSE-MsgGUID: hi3D1AEMSIG6f3CGW09oSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60253325"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="60253325"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 09:03:04 -0700
+X-CSE-ConnectionGUID: /NaHcznnRSKXw68qFLgrrw==
+X-CSE-MsgGUID: e06QmDa/RnS8XPbnl/BbFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="179362246"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by fmviesa005.fm.intel.com with ESMTP; 16 Sep 2025 09:03:01 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Simon Horman <horms@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	nxne.cnse.osdt.itp.upstreaming@intel.com,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] libie: fix linking with libie_{adminq,fwlog} when CONFIG_LIBIE=n
+Date: Tue, 16 Sep 2025 18:01:18 +0200
+Message-ID: <20250916160118.2209412-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250916160110.266190-1-surenb@google.com>
-Subject: [PATCH 1/1] fixup: alloc_tag: mark inaccurate allocation counters in
- /proc/allocinfo output
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org, 
-	usamaarif642@gmail.com, rientjes@google.com, roman.gushchin@linux.dev, 
-	harry.yoo@oracle.com, shakeel.butt@linux.dev, 00107082@163.com, 
-	pyyjason@gmail.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
-	surenb@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Document new "accurate:no" marker.
+Initially, libie contained only 1 module and I assumed that new modules
+in its folder would depend on it.
+However, Michał did a good job and libie_{adminq,fwlog} are completely
+independent, but libie/ is still traversed by Kbuild only under
+CONFIG_LIBIE != n.
+This results in undefined references with certain kernel configs.
 
-Fixes: 39d117e04d15 ("alloc_tag: mark inaccurate allocation counters in /proc/allocinfo output")
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Tell Kbuild to always descend to libie/ to be able to build each module
+regardless of whether the basic one is enabled.
+If none of CONFIG_LIBIE* is set, Kbuild will just create an empty
+built-in.a there with no side effects.
+
+Fixes: 641585bc978e ("ixgbe: fwlog support for e610")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/all/202509140606.j8z3rE73-lkp@intel.com
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Closes: https://lore.kernel.org/all/CA+G9fYvH8d6pJRbHpOCMZFjgDCff3zcL_AsXL-nf5eB2smS8SA@mail.gmail.com
+Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 ---
-Based on mm-new
+Sending directly to net-next to quickly unbreak net-next and
+linux-next builds.
+Also to net-next as the blamed commit landed recently and is
+not present in any other tree.
+---
+ drivers/net/ethernet/intel/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/filesystems/proc.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 1776a06571c2..17668f82ff1c 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -1014,6 +1014,14 @@ If file version is 2.0 or higher then each line may contain additional
- For example if the counters are not accurate, the line will be appended with
- "accurate:no" pair.
+diff --git a/drivers/net/ethernet/intel/Makefile b/drivers/net/ethernet/intel/Makefile
+index 04c844ef4964..9a37dc76aef0 100644
+--- a/drivers/net/ethernet/intel/Makefile
++++ b/drivers/net/ethernet/intel/Makefile
+@@ -4,7 +4,7 @@
+ #
  
-+Supported markers in v2:
-+accurate:no
-+              Absolute values of the counters in this line are not
-+              accurate because of the failure to allocate storage required
-+              to track some of the allocations made at this location.
-+              Deltas in these counters are accurate, therefore counters
-+              can be used to track allocation size and count changes.
-+
- Example output.
+ obj-$(CONFIG_LIBETH) += libeth/
+-obj-$(CONFIG_LIBIE) += libie/
++obj-y += libie/
  
- ::
-
-base-commit: 199236646ffd82b5a5bcf2bca1579ea06cb0ae74
+ obj-$(CONFIG_E100) += e100.o
+ obj-$(CONFIG_E1000) += e1000/
 -- 
-2.51.0.384.g4c02a37b29-goog
+2.51.0
 
 
