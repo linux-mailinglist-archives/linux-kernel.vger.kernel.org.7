@@ -1,104 +1,74 @@
-Return-Path: <linux-kernel+bounces-818645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C73B59496
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:01:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D4CB5949E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287651891604
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:01:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E0077AFB0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB082C0F7B;
-	Tue, 16 Sep 2025 11:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D5521CC71;
+	Tue, 16 Sep 2025 11:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hWrnFyFJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ek7aoSLP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964752609D9
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818602C21D1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758020481; cv=none; b=KjSLkc29GWfQYhwJcCcVHaIB2GmfA4iFAKuimZGULOmbLPJIUANOUfrmJzzmd+QCwpf1iNdn7Ufdhd9XHVmlmfXaJ3ds6UOkl8PTLYLW9CAbKz82iASeNeNmx1OTRtzbJmnObEIRcYwXbM1Db+tnTIANRFlwtOox6Ma3uB+YEKA=
+	t=1758020530; cv=none; b=dmZo4APA+GAQv0N4BNpnwo22+KUnyHtqXR0XANqumPGEV3MxSDX4+Ivdo0T48EUv7f8QPKpKwj3khcJN7ZQg6f9v5iwpOWkn0j97cm27uTQyeaZNMqMzA02G4Y7kbGWTbUnAd6xdaLnZj4soypN/v+KxOuLDHiHmAz3fxlsKE9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758020481; c=relaxed/simple;
-	bh=NCB9zn+1OoC3HfwDpn00j2J+X9Iiwehic5Jfs6gBc6o=;
+	s=arc-20240116; t=1758020530; c=relaxed/simple;
+	bh=4cI5ZW1WfaF24KeilFyo5z+TYKNrwKYeXEur9FwYs1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRr0DbkNKK2KHZ5lF4VhkCT/18UBczC1hZCYNSGiYajvYh3ms/RJ/9EY3aN/RjQvUlO/hKX1eqQtjuneWJ9l3S036Q6rbVBqxF6q3yyGa5hxwyi4AM1aOfjrjIxqlzFs4Jb7hyK63o9EgcyShJufEFNXqbLRqPMoEQbkIxrn+tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hWrnFyFJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GAKlu1020394
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:01:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=kVUremSztL9SXw9vrpclbs+f
-	CQ2ClcMRdwOTbzI7vMQ=; b=hWrnFyFJvxm6g+Lift+rgcEvVLmDxPebCs81lC9V
-	M1SQ2Du/4aHvWlV+iYY6FitiLKOefbQSXdy3nQ4KgUkZX1zgfKNn/5CymZVnHPQf
-	/ZDFCruMcP1nakG0b3973jNJKnLj6vH0culupLgKoSXM37wK3mhSwRXU6tnzDrpe
-	j08KJUyTXA0vp9yPWyA9+RSsuEWQAFIcdaAsJJCSWhdwUV9+5lSa8DWKelV4kcfU
-	bymx4QqGW8+HCmDYZKDZx6nbM7GxcrX56+JMfUqSgjria5FX/lMhCo9b5rgAo/Cb
-	Xz82PeTIxro8i9Ac+C90NeyZ26Ep+Fti4W4/GGeu/Dzz5g==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951chghn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:01:19 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b31bea5896so62327851cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:01:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758020478; x=1758625278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kVUremSztL9SXw9vrpclbs+fCQ2ClcMRdwOTbzI7vMQ=;
-        b=ochhAcNtiaiyxJp3ILxfiY5wazGaFuj9H7lW2EIXYAmnhdk3LwwC1QsWq7UsY66K1r
-         QO4c88CVRZ92FRcfRzxdZPEV6URC1v2VLhIGG7peljHgf6vcuW3SPye5aC1/DK1e488P
-         UesXBCV76Y7kr5MuTp00u6y1uicQJ/CdeJ+5DpwVXAxROMfM40PH7Y1PcQU2TH7aSp7n
-         YSEguwtVCzH7yo2r5XrWxqfd9Tq03z6H8RbxFE1XX7Lr27veYFilmPWc7vU1BnJJl3Ed
-         iMXAtI1nOmRAWlqtQTn+jRTNeFU6360NDjXdEPQKvN679trdzLyv9qYHZIKrzKm8cJXW
-         9qrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnOCAhXW6B9xtK/q7GrIV2TE3SG601oHJQmbvfJ5AoD9+eXH2bTUQ0zJubgnJSc2jvbpLzMiOGBdsF6t4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzDKBjj4vODyAkK9gLXx2gYDBD/p+pDvFQ4s7udydyMSOh5CmJ
-	LN5xD6hZ/aACkFQXjNthAUko5vG77t9zpWMgvUdLt7HV/7vV6RsujEw/09GNEmYz51D7C+JgBFH
-	yJr7UdNZxV9iw4kAS2ROoTxxKr1vV5o7fJIR4dzeoDDw832yfVjsrWs/PtvvVfZGAPI8=
-X-Gm-Gg: ASbGnctKd2GqeumkRBayYktWIDrgiVvylZrmO5iPeY8Cua3urvNPbmbLHPtM91xhZQl
-	q7x4Bpqow57cFsA9FO3X6CjYVFGCDrL3+1fKt0cMTGl/ubiaTW2GLP/niVbxkrtbN49eunDKQyD
-	FZSU0hNucHZ/e4A4/pwjJ9ghXFgjqbzVCN3BiMZL882NnkyJQhukcWMVP9rXJ1ZxmHS9P3ROpaU
-	4vD5GrSNSyNAgM1MaqtqOWoN6gj8rqD79ZCEYDZjJsjcBiNGBbl0lZPN4whL1cN4QNvLwF0+TF1
-	qL3JbaxbhFfhn830u+elfVTpuop5nfcHgQW+qT0FA2sXPsnpSAq3q3/X0Su7is+9d+2SdnYFJkq
-	xKwmxOgSIXvVy9F0RGny+vq56aQPm09mwQtO8nkXQ03hq3XmDA0Bq
-X-Received: by 2002:ac8:58d6:0:b0:4b7:9313:a35f with SMTP id d75a77b69052e-4b79313a964mr132544321cf.2.1758020478173;
-        Tue, 16 Sep 2025 04:01:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLAF3UeE0KRBiIqMl1GqNbWZHZDnQRL51kIuIAuObbsA7nu8iKYJBvUfO43iyEhrcGCg745Q==
-X-Received: by 2002:ac8:58d6:0:b0:4b7:9313:a35f with SMTP id d75a77b69052e-4b79313a964mr132543501cf.2.1758020477568;
-        Tue, 16 Sep 2025 04:01:17 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e63c63cc6sm4391757e87.66.2025.09.16.04.01.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 04:01:16 -0700 (PDT)
-Date: Tue, 16 Sep 2025 14:01:14 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Subject: Re: [PATCH v5 07/10] arm64: dts: qcom: lemans-evk: Enable Iris video
- codec support
-Message-ID: <uega7zdkprvk3ediiu4lykiukf7iz2wgk56c3pdloqrpzddt2c@yc37f6payhca>
-References: <20250916-lemans-evk-bu-v5-0-53d7d206669d@oss.qualcomm.com>
- <20250916-lemans-evk-bu-v5-7-53d7d206669d@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m93+aSDRmEfRfkut9w1WtroKCdbXOxyUYK5jcN1jVpiR2A2t11MTAz4TX8n0N7MOEg5WVpLHSfJ3nM2icjltQroMzb/BjXFxl1I2DKIMg3hH6ron/QkmlaqQVqgGNjz6E5+dwVuJxsi4Vlx9lBNoJQuywjlJJYcm8ZdpPuL4zbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ek7aoSLP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iPNajYTtBdqRZTL01z1Fq1iRdOFQVIaiQjITIb2SjsU=; b=Ek7aoSLP8Fu7D5uIullr6yCzao
+	mWtyNvrPDl/nNxHERlRltNT6UWgB4voUTSR3Z+CSpjX62ITOOLpwMKoi6YEriJExGXY6lZVaLthGn
+	eXVDyIii3B3gC+OCraBukowYVamZpElsXIKF1DZFq78gqrG6FEiS3UAxJRoWoImBEd1ghTEEbRKAM
+	rm0r1jtpbvsDm9lWH5UD0H7waeEsCgCQMP+XZkQDAbxo1Aatlq5K6fWH+Y2M81sdZIPBplYYGYCYM
+	St1T7eDusrXwVgL/1TH/b8tqgWFbFnwv2RLpW4uTPmXjgcjpKK9JLmCpRAoC/t3Dq/R1GZJPCAT8v
+	kveXddUw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyTRc-00000007BGF-0QHW;
+	Tue, 16 Sep 2025 11:01:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 492D1300328; Tue, 16 Sep 2025 13:01:55 +0200 (CEST)
+Date: Tue, 16 Sep 2025 13:01:55 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	kernel-team@android.com
+Subject: Re: [RFC][PATCH] sched/deadline: Fix dl_server getting stuck,
+ allowing cpu starvation
+Message-ID: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+References: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
+ <20250916052904.937276-1-jstultz@google.com>
+ <aMklFqjbmxMKszkJ@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,42 +77,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916-lemans-evk-bu-v5-7-53d7d206669d@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=eeo9f6EH c=1 sm=1 tr=0 ts=68c9437f cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=yPPeNZB_paKBOZgJB6kA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: gnsTYf0EyDvaToSoRlTFWS5C9dq6HBrr
-X-Proofpoint-GUID: gnsTYf0EyDvaToSoRlTFWS5C9dq6HBrr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAzNiBTYWx0ZWRfX8cgOGFHmm3Qx
- ZudnpIoBMqk2Avx0/QDJW3e95Scr91VxJcrIhFKPAYiJQE67qLWdrQIY66xe7mUbsPvQm7iSuRA
- orjGzXfx1u4FYeem0esT8fTb214d/tNyfYb9IxsyVjLEhZ2wsgAXCyFt4grvkWhMgH6Jv3gtpHJ
- n2DAsu6c3Dos2s1AtFFUG/3myAhhxbawflC/Am4JRvYAALLy/wyNV/8J0gSR397U+4SrL0MrzQb
- NFRxHn/VzdOKwq85vTCG1WpdiNc3numIS52yv6fJVvXeJ7jdTjcM5eb5R4d9lq6LptEkVMqykEK
- Uk91aFYQTAdz8weVeW5LLBQw8NU3DHx969j4Q2tUfwtRDtRL21ubwci4pKQUakxNXY/kUE0W7qV
- qWU7w+PM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130036
+In-Reply-To: <aMklFqjbmxMKszkJ@jlelli-thinkpadt14gen4.remote.csb>
 
-On Tue, Sep 16, 2025 at 04:16:55PM +0530, Wasim Nazir wrote:
-> From: Vikash Garodia <quic_vgarodia@quicinc.com>
+On Tue, Sep 16, 2025 at 10:51:34AM +0200, Juri Lelli wrote:
+
+> > @@ -1173,7 +1171,7 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+> >  
+> >  		if (!dl_se->server_has_tasks(dl_se)) {
+> >  			replenish_dl_entity(dl_se);
+> > -			dl_server_stopped(dl_se);
+> > +			dl_server_stop(dl_se);
+> >  			return HRTIMER_NORESTART;
+> >  		}
 > 
-> Enable the Iris video codec accelerator on the Lemans EVK board
-> and reference the appropriate firmware required for its operation.
-> This allows hardware-accelerated video encoding and decoding using
-> the Iris codec engine.
+> It looks OK for a quick testing I've done. Also, it seems to make sense
+> to me. The defer timer has fired (we are executing the callback). If the
+> server hasn't got tasks to serve we can just stop it (clearing the
+> flags) and wait for the next enqueue of fair to start it again still in
+> defer mode. hrtimer_try_to_cancel() is redundant (but harmless),
+> dequeue_dl_entity() I believe we need to call to deal with
+> task_non_contending().
 > 
+> Peter, what do you think?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Well, the problem was that we were starting/stopping the thing too
+often, and the general idea of that commit:
+
+  cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+
+was to not stop the server, unless it's not seen fair tasks for a whole
+period.
+
+Now, the case John trips seems to be that there were tasks, we ran tasks
+until budget exhausted, dequeued the server and did start_dl_timer().
+
+Then the bandwidth timer fires at a point where there are no more fair
+tasks, replenish_dl_entity() gets called, which *should* set the
+0-laxity timer, but doesn't -- because !server_has_tasks() -- and then
+nothing.
+
+So perhaps we should do something like the below. Simply continue
+as normal, until we do a whole cycle without having seen a task.
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 5b64bc621993..269ca2eb5ba9 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -875,7 +875,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+ 	 */
+ 	if (dl_se->dl_defer && !dl_se->dl_defer_running &&
+ 	    dl_time_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
+-		if (!is_dl_boosted(dl_se) && dl_se->server_has_tasks(dl_se)) {
++		if (!is_dl_boosted(dl_se)) {
+ 
+ 			/*
+ 			 * Set dl_se->dl_defer_armed and dl_throttled variables to
+@@ -1171,12 +1171,6 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+ 		if (!dl_se->dl_runtime)
+ 			return HRTIMER_NORESTART;
+ 
+-		if (!dl_se->server_has_tasks(dl_se)) {
+-			replenish_dl_entity(dl_se);
+-			dl_server_stopped(dl_se);
+-			return HRTIMER_NORESTART;
+-		}
+-
+ 		if (dl_se->dl_defer_armed) {
+ 			/*
+ 			 * First check if the server could consume runtime in background.
 
 
--- 
-With best wishes
-Dmitry
+Notably, this removes all ->server_has_tasks() users, so if this works
+and is correct, we can completely remove that callback and simplify
+more.
+
+Hmm?
 
