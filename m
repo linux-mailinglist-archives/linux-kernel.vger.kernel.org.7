@@ -1,193 +1,121 @@
-Return-Path: <linux-kernel+bounces-818878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B38B5978D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171D8B59785
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8A1C7AD845
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8BA2A2E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CCD31B110;
-	Tue, 16 Sep 2025 13:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C8C311953;
+	Tue, 16 Sep 2025 13:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IVUJhPTX"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpPPiMz4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF85F315D2F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7FE1D7E41;
+	Tue, 16 Sep 2025 13:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029119; cv=none; b=qkXxGhyKj8+NS3m5K92HT21iVDKiO3MVK4C/k7m8z/FmDvM8dR+m8N/Q5as7vRB4XMdVPDAO5ZtVRO6TIEnrtp5O0j6233fl94afUDOuTRkxvTnk9feWTyQGVDYbVWfH3wWz01WN4D5tGIdbqNZQXzLvYM1UWRkAFJsiNrAuq08=
+	t=1758029116; cv=none; b=pW1ydw5MuNFEAAUugrs1DPZ0qrWTyKWXJkR9Sgcx6DL6vjjm++CSzt2Gmx/3EhgRz4zkW+KML+8oCOun41i5MvxZjjhh81HGVX+tmkG+mc0sH6tzBNevX5wyUeDElaPU/SfbFm3/bu0vziGxUnRpj+Zmi/2UR3pCpbd+yfdCcZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029119; c=relaxed/simple;
-	bh=PRpXH+sZjdebPpC4rWrrnPimJkKolPv4aO3TWAccum0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tEFSoAD8kUmDCeJSSJx+y2tfuAnHRL4bGqrcL1ZoShH1tPQSB3SW3ABMBCAovH3iygE7yT96p0oosUuZ+TuUbeWExfhhaTK+thNOYdfMcligtGpUPqraZbHXd2PmipXuQLda8jBqfHsHVlHQkgqNIaYsabWPAE2FOzaOP0a8yrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IVUJhPTX; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b04ba3de760so691112066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:25:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758029116; x=1758633916; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cec1ryxoXhXjrqFSDj+/T+n/YhygzPX418Utr1UQ+9Q=;
-        b=IVUJhPTXbWR8QfUsBnQZUZsqv5OFAueWaiCO4FxXmaMFpwLs7Pn4IJfZI02C64cAwC
-         +RgPjPf/6I3Oinz0CfZfrNgP7pN061/hDfV7X9c9YjDJNJ3ZMEY73YBuR1O7zk2Eh+q+
-         PWWlULY8Z1Otvpz9z8SeD1zIryMmxf1/sOo/IY5drClwgKZwHO6GFxoe1kHpwzZhjccK
-         YvfRAHeYHblSiA0dTjjrXZ5VN9WoI3/KH+ADNaIBupDiMGgalOrgDpeTyLYRt//VNlPX
-         UXAuNW0mj1WnYYNdx1WB4K6sho7+aDhccOu5MqHlHEnHxdO9hQUctqvXimcR7o+I+9IH
-         08AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758029116; x=1758633916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cec1ryxoXhXjrqFSDj+/T+n/YhygzPX418Utr1UQ+9Q=;
-        b=qFiOHABjyeAXDcraqEFXfeYf9XdkSoTY0qjNg/1TykA1bKaDxVIFBGBgTnXgVhxNC+
-         Fvrslr6Eg0Nwq6unAwfB4qJKzwFpuLnyvuAS/Kek0a9UFVh41XUgmfWJZl4IVCDLlYom
-         0k0HuWCAQo3dc6wTCXcOI0jtcVq17HNiNrp9JdK8yodlVAkDZ+GNBKy2N2q1JcVLWEmx
-         YnLRlwQ3hZA7hIfzvoOaqPBTy32popmtYhfnA5Llb9+C1KUqv/LfglsoVNLKTEZ97qHP
-         6mA1dNZTD3ZEOvenY+CyDQ0zGtK0wZYWskVBp/psaXqpSr2bbRW0EAmOC6f5uTmT/FCD
-         11eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmb2zCbGx+kuafK+K7frpCpoxYvvVbQjKyo0QK7CELvuSNzUzKOwAkVfKB8zj+YYefwq7Vp2gOUzZJrs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/t2BQnrjoWLYJqZROwuo0EtUWzGX4o1414YY+lM/XII/xaK6M
-	Uw4vqCOUcwbkjLVMVJFzMSrCTrr7BYGIR4rlBqXkYtPCbXWtvcMjZZbDAKqJS9VBmlg=
-X-Gm-Gg: ASbGnctWBmLfypYl+gF8Q5xhCMm7Q+y0KG4nlfrdIkA2HtX8IoGJ4AQYD7M+JHTDId1
-	AvcooTsTo1Wzp6kuCpyrNmQ/CsNd8M1PorsvWbGpv2BNApzcCuqa9cot5BdhhMfm+B0mb4ska9v
-	2RzfihWi0B1ZdRCIW23i2CQTMNhqVoYcey5Rloyse/ihBpGb+6mYrlMdZ27bsSjp0fEndo5LbJ3
-	RJk4ufpe37vHqgmc7Hb3kBkC5N+izm5xp4VRAguBbwtc+mCIyh8Nq8ZSFNkSxYLA4ITPZ/HOJ8l
-	H+i3k862biPbvkfb15BlD/QV+ctw8yB+tJkz4ym6Oe4cGiYrrHl2hyZ19pQBx0FsYD35jcp21hw
-	O59bLEaNNlxr8hDu4Lbt7aGDRUYS4dOSK1+iOLhFt4s0rNeQ8DqZ35/XQG/TL1AqW9kzBqcddTo
-	o=
-X-Google-Smtp-Source: AGHT+IHULzH6kKOXUPbwiu6vHARKbboHWXDMpcq23vOfkgCUTSIFoBy+/FHZDfo4eSTeHnxRnGrBPQ==
-X-Received: by 2002:a17:906:eca2:b0:b12:3f5f:603b with SMTP id a640c23a62f3a-b123f5f70c4mr542368966b.3.1758029116046;
-        Tue, 16 Sep 2025 06:25:16 -0700 (PDT)
-Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32f35cdsm1135878466b.92.2025.09.16.06.25.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 06:25:15 -0700 (PDT)
-Date: Tue, 16 Sep 2025 15:25:14 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org, 
-	krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
-	kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 1/7] spmi: Implement spmi_subdevice_alloc_and_add()
- and devm variant
-Message-ID: <mr7gqhvom5soofn2oujzxtsuczsnx2yizkushar64cojwnvhd6@dt64ojgjqdxw>
-References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
- <20250916084445.96621-2-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1758029116; c=relaxed/simple;
+	bh=Gwdtq3KT3Skby34FHqWvNTPDYodseuItYXyKgLbVyOk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=t14qU/KLrxp0eUZ14Oe+xABQ+9IWcs4pE//qRfFcuuQPF4xrNXtpOvDFmbdHqXGsg23luWRl24A8dsnE8TDGcTo1OPQlgiPNdkEabrc5bKKr4aRl4QSRqZSnHVXcuI/DxhOE9IUiZOemrB8dOYPhlya9VyC01EcSSng1GXS7n2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpPPiMz4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D87C4CEFA;
+	Tue, 16 Sep 2025 13:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758029116;
+	bh=Gwdtq3KT3Skby34FHqWvNTPDYodseuItYXyKgLbVyOk=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=GpPPiMz4wyZrApHDUFCob37XMpR/vuuYPGluQ2GKX0KCzW3AX9rthjNILfrQNmQ4k
+	 wFgaixJ2KbzbQKm5ZFFHavaGE4QrJDy6K40ZMslyB37OGdbxd9OuvJoTM2YMUJNwJq
+	 zstWZ2c890fwnk5bOjI2634zzNHR0HDcW9eyC8daUiCf73fGEQ0oH/2PMH/ypMSPp+
+	 r/7dWFXTPuPfxHADjukm5U7qRyK4O4x2HVGvUdPkM97o0Ziz9cszs1mw4dQQTnK0WN
+	 XzzjlgSp4OAtsCjuNmh1Z84arpLVuDHda6RsRteYteN1TAD/1HzyTUM3KEFY18Obd7
+	 uqpQGpeyRxCBw==
+Date: Tue, 16 Sep 2025 08:25:15 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j6v4vfa6gjhs5clj"
-Content-Disposition: inline
-In-Reply-To: <20250916084445.96621-2-angelogioacchino.delregno@collabora.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+ Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Romain Gantois <romain.gantois@bootlin.com>
+In-Reply-To: <20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com>
+References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com>
+Message-Id: <175802889806.3636334.5922063165326624339.robh@kernel.org>
+Subject: Re: [PATCH 1/4] regulator: dt-bindings: Add Linear Technology
+ LTM8054 regulator
 
 
---j6v4vfa6gjhs5clj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v4 1/7] spmi: Implement spmi_subdevice_alloc_and_add()
- and devm variant
-MIME-Version: 1.0
+On Tue, 16 Sep 2025 12:24:06 +0200, Romain Gantois wrote:
+> The Linear Technology LTM8054 is a Buck-Boost voltage regulator with an
+> input range of 5V to 36V and an output range of 1.2V to 36V.
+> 
+> The LTM8054's output voltage level is typically set using a voltage divider
+> between the Vout and FB pins, the FB pin being constantly regulated to
+> 1.2V.
+> 
+> The output current limit of the LTM8054 may be statically set by placing a
+> sense resistor on a dedicated pin. This limit can then be lowered by
+> controlling the voltage level on the CTL pin.
+> 
+> Describe the LTM8054 voltage regulator.
+> 
+> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> ---
+>  .../bindings/regulator/lltc,ltm8054.yaml           | 77 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  5 ++
+>  2 files changed, 82 insertions(+)
+> 
 
-Hello AngeloGioacchino,
+My bot found errors running 'make dt_binding_check' on your patch:
 
-On Tue, Sep 16, 2025 at 10:44:39AM +0200, AngeloGioacchino Del Regno wrote:
-> +/**
-> + * spmi_subdevice_alloc_and_add(): Allocate and add a new SPMI sub-device
-> + * @sparent:	SPMI parent device with previously registered SPMI controller
-> + *
-> + * Returns:
-> + * Pointer to newly allocated SPMI sub-device for success or negative ERR_PTR.
-> + */
-> +struct spmi_subdevice *spmi_subdevice_alloc_and_add(struct spmi_device *sparent)
-> +{
-> +	struct spmi_subdevice *sub_sdev;
-> +	struct spmi_device *sdev;
-> +	int ret;
-> +
-> +	sub_sdev = kzalloc(sizeof(*sub_sdev), GFP_KERNEL);
-> +	if (!sub_sdev)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = ida_alloc(&spmi_subdevice_ida, GFP_KERNEL);
-> +	if (ret < 0) {
-> +		kfree(sub_sdev);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	sdev = &sub_sdev->sdev;
-> +	sdev->ctrl = sparent->ctrl;
-> +	device_initialize(&sdev->dev);
-> +	sdev->dev.parent = &sparent->dev;
-> +	sdev->dev.bus = &spmi_bus_type;
-> +	sdev->dev.type = &spmi_subdev_type;
-> +
-> +	sub_sdev->devid = ret;
-> +	sdev->usid = sparent->usid;
-> +
-> +	ret = dev_set_name(&sdev->dev, "%d-%02x.%d.auto",
-> +			   sdev->ctrl->nr, sdev->usid, sub_sdev->devid);
+yamllint warnings/errors:
 
-If I understand correctly sub_sdev->devid is globally unique. I wonder
-if a namespace that is specific to the parent spmi device would be more
-sensible?!
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: 'compatible' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: '#address-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: '#size-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
 
-> +	if (ret)
-> +		goto err_put_dev;
-> +
-> +	ret = device_add(&sdev->dev);
-> +	if (ret) {
-> +		dev_err(&sdev->dev, "Can't add %s, status %d\n",
+doc reference errors (make refcheckdocs):
 
-I'd use %pe instead of %d here.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com
 
-> +			dev_name(&sdev->dev), ret);
-> +		goto err_put_dev;
-> +	}
-> +
-> +	return sub_sdev;
-> +
-> +err_put_dev:
-> +	put_device(&sdev->dev);
-> +	return ERR_PTR(ret);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(spmi_subdevice_alloc_and_add, "SPMI");
-> +
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Best regards
-Uwe
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
---j6v4vfa6gjhs5clj
-Content-Type: application/pgp-signature; name="signature.asc"
+pip3 install dtschema --upgrade
 
------BEGIN PGP SIGNATURE-----
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjJZTcACgkQj4D7WH0S
-/k4DDQf9Fn1HPf8O4u3moGauabP4ZoOg+KJoOMMHiL4JAWvb+ihWLP7SpGDPBfiO
-DjMRfgEltRK7S1XHVZqjpkIAREqaRc6TQCYX7uafwyX9JXpUGPvjoVWeywhnWJU3
-5vE9b9lEeFfiRzBq8RQ0tr17GyPpmviyXdL6kimCDDWkKzCqU9mXskQiO/HYxzDV
-mJBLPPQQ6aRxVVBLLqdsggxptBQ+8BtkqUy9+yqjncsbYTwEgj4QY65d9yQXPTgL
-st+pYh7Ra8xceTMOExplwPHN/uSqPBTMTRomAsrtOz09tETIkR6mOuEOUO3fsy9q
-v/FjPX6SlBekOqw7TnPDq/t/204YwA==
-=j8SY
------END PGP SIGNATURE-----
-
---j6v4vfa6gjhs5clj--
 
