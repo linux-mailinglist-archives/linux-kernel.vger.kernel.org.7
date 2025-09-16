@@ -1,296 +1,401 @@
-Return-Path: <linux-kernel+bounces-818463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A403EB5920E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:24:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F51B59218
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDC61897A7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:24:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35BE11BC2EA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E92298CC7;
-	Tue, 16 Sep 2025 09:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3785629993F;
+	Tue, 16 Sep 2025 09:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="Ee2AC1y8"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013009.outbound.protection.outlook.com [40.107.159.9])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="AK4onXjH";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="AK4onXjH"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013032.outbound.protection.outlook.com [52.101.83.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C069321FF26;
-	Tue, 16 Sep 2025 09:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014659; cv=fail; b=boFirW5PC19ZFMmrKGLaKyrnp9OVngQr9fKuD3q+IHe+jYLEz7yo+Zc38zi0whcKpYqXdQ932ygcDi/3fXzuf6gs+Hh4VLsbIXpghFNBaiIXx1TWI8Y8w9QxXfAT+KnDI2yBJ4i+ogqeV39whO0B1CneaXO1kf3X0CisSN17bE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014659; c=relaxed/simple;
-	bh=JeNu8vCeqJRdi1tB+12drodTCn1/j+IQ3QqEv48p5EU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=d3rTg6C/jFIrs7Wlg9Ro4aU2puIDUrk4iTW9CPFXNMqt+yQw+4XpoO4CzLggzuywblRAGfp95mWdPFfpG5lrRAwcTNZM+rAQocLmUV/OTerLZ9N3WqEDN9c3S6G/L1i7LOI8c7VusBxiTkbxJJsYc3MgRvGVj8CAeOWS+othysU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=Ee2AC1y8; arc=fail smtp.client-ip=40.107.159.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D711C322A
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.32
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758014733; cv=fail; b=l1O+DlJpW8OxtQWx8Hu5BH5c/x/7D4bvbR5KTg4JDwHxlFxjBO8Fo0kZFsRbkT7Aa8M1iWtlCN0tpwfdKh54p2F7IdTbM/nzFIawWiSyV2f5KF2BnWb+nXVQT8LnlWaSt2b+gR/FTgpeWGqDKvOAfMeCfII2uH86WYBfT1pr8HE=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758014733; c=relaxed/simple;
+	bh=V4f2nn4kbA90/WnTJa1ziUq6BVGr2pHu7p72RndhtQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tRRLesXQ5aIs35ndiZS/hZoar/sKRa/ilp9Z/KCSj6eH/RNQwWCMyo+tqqsPlDCIR1o0hCXnxHtgHKZHdFPvh0BVxtyvcVv3tpFHunioZwoAZGsm2k4WL5352IkyS3gCjuyLIbftL2I1SXZDu66o8SKGQZ1GuyPwqSP3IZHEnX0=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=AK4onXjH; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=AK4onXjH; arc=fail smtp.client-ip=52.101.83.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=E45mpPB3DOzx6s1Kq0ZmQfCSZRndRFWFXo+3fEai2yKqhkpsehKNj3N5GlEkIFJjea491/PCEOifhpTlyqlXlVMraUIaCBND9L6EC3CjkkSpUFknOsVRf2CrflUH0b43Xlk/C02SoIC1faRrzWDsiwQNTbvNO0MNewcIGMfqDBRZGtitsa84fgJs7nnBv974xWwTr0e3y2521oXp+jRtjCYqP/XDMqo6w5Vs57ALVaBAWrjIBhn3T7/zOzNsCl+R7HTZfPwTjW+kfGfphVNWFmbqSdcnjNqb6hLo74DaPMpnL69n1qvU9Dri/Cu2xLQPZvEe5j5ztKcuLKlK7AVy3w==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B6oK6gNfXzAck584z8eSvHZigp3WwAUwfaQZ8XGUPTc=;
+ b=YInS4n9JKSaSWUtQ9/R9EOYrQnb6KkM3WvfBix342gUlQxoOTESeUNvJ6NO+PLjSyt/0ZZ+fMUDBjmAU9+Ua4Rau/Z+y1StuU778VjIG+s2Bog4stCeAP1IY3bfV0B/NMNydwr97GfK4b89QVYtUW48CKtTZJE2dTkyiV89wkxVnuBR8dWnh3tHImUPmP9ncflPzmHTFY2+RlA68Z9eizoE5qZnHi2wZLpGGWiOpHkrS4pKPZBOEVd80pDWXqflgUGt+t5Ff7gLovE6XZCMJ6RTp/nJttpKVYYzUdOSvDzqx/B546qyn04YyE/tk3T5KDyjaVV8t3pw4QsEd1fzqrg==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B6oK6gNfXzAck584z8eSvHZigp3WwAUwfaQZ8XGUPTc=;
+ b=AK4onXjHkFy83efCOIvYhS1EJyub8RUa34iv18Klhn1YFSAp8kEHaLGT/Sn8goA/rAUU34nH3IMX6ZqTI2SMJmMOV32+Qp3hHwIIk+KVCpWRjm9EXIq1+zJIQUmTobalgNJhqgucv0nCvCjrURtWl5bl/cpKIcLt+Y2rXxWs0Ww=
+Received: from PR1P264CA0174.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:344::18)
+ by DU0PR08MB9299.eurprd08.prod.outlook.com (2603:10a6:10:41e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Tue, 16 Sep
+ 2025 09:25:25 +0000
+Received: from AM4PEPF00025F9A.EURPRD83.prod.outlook.com
+ (2603:10a6:102:344:cafe::15) by PR1P264CA0174.outlook.office365.com
+ (2603:10a6:102:344::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Tue,
+ 16 Sep 2025 09:25:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM4PEPF00025F9A.mail.protection.outlook.com (10.167.16.9) with Microsoft SMTP
+ Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.0 via
+ Frontend Transport; Tue, 16 Sep 2025 09:25:24 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ir7hyMK3GuqQJsWIFGnAQBv1p+mhT+OpT8rK7QdopgdBLqx/7bl3vtCwCNgB2ZbiNLrT8JctMsI/cm3xhVTbBcsPxpAA6KIx6O4hZafzgBqXPhSw4MyweAUOhDveH7jwgajB8bWZccQxkNih4bSsQk2KZye2FYMJK1zrLgmNch70kghxLAWfOFNMIzfZ6Tr0t+fxa0qOQzYr01GyPXdGFy4t5DkKZoxInU7cAuSqN/t26gcN68stVcf4bQoac2IFw2Rsx1pZtrT1cyz+uVBZXNomqjZpQZBmkeNZ4NJHXQEI+F5fuKVJKpYzIGcYUrHcSAGd2vE980mVUpO//laIXw==
+ b=SNbFXTqaXx9BDA9sNJrXIFE1BMwW81SpNA54VzCUCifUO+87OBbyE36CAB8YveEMtJUySG3F++PPkN6lue4GfWB94y3SfdyITs8FSmrZMFOuIUc5S/uFPoftzZE8pc6LujflE7Mbp3HttAB6feMlJQ7n9z6lnmshUH5j16AXVYPPpFKPmta5dgIX4+uLtpVeEg9IbCG16ltJp4YaVdWpnQfofJuyzN8oHpUHTBB+yzYcjRCmZhPA236ncn0b6Mwz4Oalf0KQLcK2/UncqejERVAFC2IW1LeRezTScoVBPsCNyPIdCiqpFeABnnR7e94+2gCUfw77gsjgvtM4XL8q0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wLw2AwiM6e+G+HwMh9i9Up/raXmW2lXNLD8SxNow/fk=;
- b=x17fOElB7Cj4CleqnChGKRnz3MF3G7Lj1HsVd61hvPLxNQQCdPM9KBFajrwPmnpK3HdeFgu0urqGKCKEFhX5eI/dYrLbpFFkmDIRg3HG1Rjpo3hDPJ+o/scmL5PP4OejB8ngzT2u9Lf+xkUOPKDpw37vDHkxYJNcIk9qYdaUUsam9wTPBwgKt3Lmn5zgOWpXG81KnRPmFTWWG6BVSirAaY3KKPyv78SbLVsFH90fbVP2a1gvDVBGY5XnCRcWM3ZWciYejbz0njjS7MtKRMOlKRB9smnGVZrqUnS8Cy+rBrJjgHOtmQFA48We7wWsVKC9iPoQPOEsr+gSMm1PzmFjOA==
+ bh=B6oK6gNfXzAck584z8eSvHZigp3WwAUwfaQZ8XGUPTc=;
+ b=wWil6WPElDTAUKt+Gnwxft7GHdMBbb10LjYcsejrNMX34yCCgDRnFYP1GSwU5EMiZqFn/kRwYbC4ayd8lXlPzZF4bJJdsr5/JTTwh9lv4b6kYllNvPkilxFbuz/QF3dAunbbkkmgfNlddjlkrtvNOQ4NEXjsxWlUjfzV/knm/mWUCDRDermIXR8t+sHxLE+tf+9JlHiCBvG5xpeTD9N/OSM0S0viHwjwQje05MbVr16aU6wCFY7ibdAKTDYTrGX88r5arOpl4sja6IGhlYqZXj6HPZkGapY/6wsMOt2/p1RbW6Z3viziJJza7USQ1xSFDuhmbRiE4GMo2uVKFiD0pQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wLw2AwiM6e+G+HwMh9i9Up/raXmW2lXNLD8SxNow/fk=;
- b=Ee2AC1y8mypVPXVhtwxXYfSHTXKfnXtBadknxEofqZ9YTFYN7LD2PEJjkbLcfa5jmanp07HmD5t5CEu7cYTK/66JFi1Gl9CeYZWDi8GNWe14D1rEA8bb0dfN2GZoFgCPFd+nB9y73QgZdRfriZK8QxXnhclzXNM3SQwNw6nm8os=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by GV1PR04MB10749.eurprd04.prod.outlook.com (2603:10a6:150:204::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
- 2025 09:24:11 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::5ee:7297:93b4:a8d1%6]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
- 09:24:11 +0000
-Message-ID: <72ddffd6-bd8f-418e-996d-70267d3ca7e4@cherry.de>
-Date: Tue, 16 Sep 2025 11:24:10 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: Enable DisplayPort for rk3588-evb2
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>, Chaoyi Chen
- <kernel@airkyi.com>, Heiko Stuebner <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
- FUKAUMI Naoki <naoki@radxa.com>, Jonas Karlman <jonas@kwiboo.se>,
- Peter Robinson <pbrobinson@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250916080802.125-1-kernel@airkyi.com>
- <50379c05-c8b7-4858-98ff-da7ebdc06863@cherry.de>
- <352856bb-76b6-4861-8a3f-80f94f7c7375@rock-chips.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <352856bb-76b6-4861-8a3f-80f94f7c7375@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0070.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ce::12) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+ bh=B6oK6gNfXzAck584z8eSvHZigp3WwAUwfaQZ8XGUPTc=;
+ b=AK4onXjHkFy83efCOIvYhS1EJyub8RUa34iv18Klhn1YFSAp8kEHaLGT/Sn8goA/rAUU34nH3IMX6ZqTI2SMJmMOV32+Qp3hHwIIk+KVCpWRjm9EXIq1+zJIQUmTobalgNJhqgucv0nCvCjrURtWl5bl/cpKIcLt+Y2rXxWs0Ww=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by AS8PR08MB7743.eurprd08.prod.outlook.com
+ (2603:10a6:20b:524::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 16 Sep
+ 2025 09:24:45 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
+ 09:24:45 +0000
+Date: Tue, 16 Sep 2025 10:24:42 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
+ operation
+Message-ID: <aMks2haYCZia8LR/@e129823.arm.com>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <20250816151929.197589-5-yeoreum.yun@arm.com>
+ <aMRQIeIdyiWVR8a0@arm.com>
+ <aMfrR0vserl/hfZ3@e129823.arm.com>
+ <aMhrscd1gz_syMtL@arm.com>
+ <aMh4q4-xAPHnaOul@willie-the-truck>
+ <aMkLb6jPiSbzeRWL@arm.com>
+ <aMkqt1LMUd5QPc3S@e129823.arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMkqt1LMUd5QPc3S@e129823.arm.com>
+X-ClientProxiedBy: LO4P123CA0443.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a9::16) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|GV1PR04MB10749:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5fde7808-ace4-43c2-0bad-08ddf502cbc9
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|AS8PR08MB7743:EE_|AM4PEPF00025F9A:EE_|DU0PR08MB9299:EE_
+X-MS-Office365-Filtering-Correlation-Id: 359f9fe9-0cfc-4d8b-d7da-08ddf502f79d
+x-checkrecipientrouted: true
+NoDisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?XhiWGXT/LUoMg2wKqQ1wPqSl3fQqC8+H/a8oPB0/PWF4JOpgf6UbfmQQR9pH?=
+ =?us-ascii?Q?MBq+9ozl5J7TwapKtDV+vWLQK8jEEEYOaDPUvKo2WSzcAIDU2rOgGMEpqnLt?=
+ =?us-ascii?Q?IXRDkWAD52Ih8+GX6h2PEwvrIEkf/DFHjWzGQM/FIGMztEcw2xGNf1zoY9MG?=
+ =?us-ascii?Q?9sVe8fWWuTiwSOUR2OS7zbIG9ScDpxftS/aF/wYzplbBWvl7hVVbekkSQXtE?=
+ =?us-ascii?Q?bZ9Z8VLm+cBTr5lOjc6+4YuU14nemqN9n4ehB4/wOj+qT7ydav989BWZ5wQg?=
+ =?us-ascii?Q?dNZX/3Ywh4suKH+DDgMsRziqUKFzQG9CWaqcnkAluaV5jGXD84ifuxA35BRn?=
+ =?us-ascii?Q?WFijj0gF6DNAm4Ai6qJBXEhqAauAHEN1FA2Pk5GCR9Rjs4IrFIppV98A15gs?=
+ =?us-ascii?Q?k1pyLKHXGmCLU4lNA45JJfuGtyTxx2KG6+PU24wiwHl24EOGVJcJTSeF7A6y?=
+ =?us-ascii?Q?0ZwVbBo+Poit64jt2X14R+/0//qK9uj5tY5FakFH+x0Y9zmpL41BdwIIL9wC?=
+ =?us-ascii?Q?ZW+qd9KsACXEuC0Mo6qmH4VTj0hUVnffPot5qGyA1/IjQVaOsf4sRzsb7+PV?=
+ =?us-ascii?Q?sCTxp8XmCEiynyKKSkBK2geiko6lpr4x+Rpiy9p/vy514vomodcnixeS3goz?=
+ =?us-ascii?Q?Z9If5Kc4pC+HmwgioEPFRWMlpcdVb+1HwUiOr2hdA6NrzGfpJigJFQ8uYfl9?=
+ =?us-ascii?Q?LDAJNqVmRuwAFMZor1UFiwLTLwsUuE6KOHrl3x26LYaT5q7e1qUfIuGle2fJ?=
+ =?us-ascii?Q?GdiWiqxPKCi/H5C6rUzb6rSfugJIqUGL/0bXORFnz0z0HQY1WqOAEMJxJY9O?=
+ =?us-ascii?Q?rAh3gZcowgz8r6IMf+Nr64HPAylT6/7GbxOXbHx31N+xOtmeAIZctxGZgKnc?=
+ =?us-ascii?Q?ZyjcOcVGgCCTqzueVqOGiHNDGiiCE+48Nai/xiFAyNB4lVxLyq62kI1BIIys?=
+ =?us-ascii?Q?5eoZnCWlRX8/Fu3fUB+yKcye/4Lfjwjc9bVt/3JEfB7ZQr60SMi7mlXewXuE?=
+ =?us-ascii?Q?lstvEstuDWBtnD8Ixj/xupJ2r1VciYyet3bu3+TOm8Fc5QE9qYrAhQ+RQGeu?=
+ =?us-ascii?Q?C6lHI67iuigpDHqVWf+gasY1S9aEsIhtoCzj8mIhKpVGt7zdYVFCpBlDSICY?=
+ =?us-ascii?Q?8KRGHRUTD2ke/JpbIbQ1AA11CdptxJUhQbYtXLH70w2Rew/zwotpymd0x+3a?=
+ =?us-ascii?Q?3Q6xdJ/sO7SxgrHmgZAixBA2HTbopuLFIu0ibjVoU9FYjVyl+5KkHE3GzzTc?=
+ =?us-ascii?Q?aksz0t6KDjhoK2Zi/7mwmbM5k+NN0WniMSI+j48mtC0yHcCEwgP7N2f9Utq4?=
+ =?us-ascii?Q?NbxtWAol4gsO2xUeW1uxmV+s9KOI0Su82e/wgtNy6rxapoCVQ8fd95yUElcZ?=
+ =?us-ascii?Q?P85/41fJgNV0Jj99VdMjieaSh+XA+DRkF2hNG3Ia30L82uaSB8HNaZmvYhVF?=
+ =?us-ascii?Q?8ArCuVfWkoE=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB7743
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM4PEPF00025F9A.EURPRD83.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	02bce671-90b3-4da5-08d6-08ddf502dfc8
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+	BCL:0;ARA:13230040|1800799024|376014|7416014|14060799003|82310400026|35042699022|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dEFFYzBpbGJFcjN6aEpuVWhsQmhLMERKOXdMelkvQlJodW5RdkxMakN1VmNx?=
- =?utf-8?B?ZytDNWEvNnlMWjRrMDFtMVJBdTVJZnF2bXNENXVvamU0TDBHMkdhS3NvRzQ3?=
- =?utf-8?B?K2JTUzJsTUpPRnp5VDl0cnBvV000SFlJUC8rNHZZY3NUcy9ZazI1OVhRWHdq?=
- =?utf-8?B?SkJ0OVJTZWlIL3dWeVN4SXpZVEhLbE11dlRUQUhpa0NsVHpCMk1VWExwbVZ2?=
- =?utf-8?B?NGdwL2lDcHVLelc1bmdiZFI0aGNIVTBWSFl2aElQQ1Q1L3BGQW5VQlAxTmUr?=
- =?utf-8?B?aWc5WFZ6S0hjZlNCNFVRQjJaQnpYMzE4UXY0cWFtdzMyeVptaW1yYnNNc0Iy?=
- =?utf-8?B?WU1UVlFGMnZ2YVpQTkFZNmhhR1JmT2w2eU96WEg3cWxlTHo1Q1REMEhFZy9o?=
- =?utf-8?B?cUFaV3NiekljdEVJNEZvNWhOWlIxSktKcGI0OGVxWno1dm9hMmR0Sk1DY3Nj?=
- =?utf-8?B?UFpwNElEQVlHUlhNTGlnRGN2UmgrVEdkMmZLenhhQXVXYzNDc0tZMHFaNkRu?=
- =?utf-8?B?SjROTEdTZXNyanhna1IrazFhNTlDS1V4Y2JpVGlnaVJEODZGaW10SlVJOWp0?=
- =?utf-8?B?bmtURjIrWjZnamJKakdEMGdEKzkxRG5yUmJYZzdrMkROeC9jU21BMXVTYVlp?=
- =?utf-8?B?VjlpZlZxQnBBQzdIR3hMd0swUm1tcVJWTVVIY2JKZXNPUW14bk95c2Q1L1FC?=
- =?utf-8?B?aGU2R3pTanpNQXBITVhJRnlnK2hSTm4xWmZXY1ErTm0zTVlxMWRHV1lXNlJ5?=
- =?utf-8?B?blVObkJWRFR3WE1xbVB1YjhGTHdJbEJ3N2sxWDcxVFJtSGdMeEg5RWxHVHBI?=
- =?utf-8?B?TEttaUNBYWpvMHRZS1dnSlozYzVGU3NSWFQwQ2h5ZU1mbzlucytNcW5aWWlS?=
- =?utf-8?B?MmU5UCswZjErMTlmcDQ4RzNidEJkZVVSYXRDQm1MRm51R3EwUEJlRm4yVmNJ?=
- =?utf-8?B?NnZwcjFUVDhZcDZxazZsNCtJMkF4bU1HUk5tSFdhV3VyUnV1VlpJREZVMito?=
- =?utf-8?B?YlpWS0t0NWRseENIMjFka1h2YkhkMlAvemhYWXFtOEVXWGRpZ25YVU1vN3Jp?=
- =?utf-8?B?NlBvWnhiUkRGZDIwZlNuL01aRkdTUnVBb0JtNnpLU0ZQRHNFWG1JazhuVzRi?=
- =?utf-8?B?SG5OUDhMTDNnNjVIdUZieGNOc3Z3RGgzbEdJcmJGT2xBTlkrd0ErOElrMk9Y?=
- =?utf-8?B?MThMWVU2cHN5WUJYS2lqMUdGTFA3WDFFK25oeXFCUzFGQXg2Wml3N1dMcXdy?=
- =?utf-8?B?REF2dXNIYnJudnJPWXF5ZHFKMzg5YVZuNEp3bEl2S3JTNmhIakw0eWJrSTQ5?=
- =?utf-8?B?Y3FuVmZUbHBVT0tYck5OZWNQUjhNUHJ5M3hFalgwbW5rOHhHY2taM1lnZFJ6?=
- =?utf-8?B?MWJkclNFSW1kbGhJVjFPTlNvb1JOVGhoc3V6SFhBREsybzRhN3FFZG1NWkFL?=
- =?utf-8?B?aEsvZ01IYnJTMFNLOGZyakNDSExGY3d5dzhqbUFHV1lsYnJTMklseWNaMHZ2?=
- =?utf-8?B?UnpXR2N3bVhhcktHOXhJQXdjaVR5YkgvVlBrWjB4UzVzWEJWd1dhdVAwbWxM?=
- =?utf-8?B?QnQwdytSTzRMVXRvQmhoSjhyNjNRRElxU29YU21kNnJTeHpSTlVrSVFPWVNO?=
- =?utf-8?B?WWZNU1NVci9OWS94TktLMU1tYlY1a1VjUkFhcVlwQ1N3SEtJWmwwMi8zRk50?=
- =?utf-8?B?UVZqZEZ2eDNyUm9pVjQyVWRiS1plV0NrN2NiVEFtODRvSUdtazBtaVFIc2Ju?=
- =?utf-8?B?Mm05MEFJa1hXLytySkxEb0NOUlF3NTU3OXRBSGtCM25CdGFidWZNTUZESE9v?=
- =?utf-8?B?bU5VWVVFSW5Hd2dJK1RaRmc5R010Y2pEa3kwbkZmNWZIN0R0U3JickgvdGxn?=
- =?utf-8?B?RUR2U0txRFcrNkwrRWtWNTJpaDZzOVFQSGlvSFF0eS94ZXhKWWpkMXU0TjMr?=
- =?utf-8?Q?8V7BPdmpgX0=3D?=
+	=?us-ascii?Q?b97DbTSvQ3gXeqgljKmigfiGKb6meSyAeMxKl1VlD/TIqYcKP6evZPZ1dNW2?=
+ =?us-ascii?Q?V8YFECx16Oc4X2987CxbKFpufdZkyi22wjte4pL0EUDREsAtR5kT8kra5Mk4?=
+ =?us-ascii?Q?q1+qIh4Ipy6dRlBiShFZR7L/J9pIP68eA8nyLo0zrT5YltE+tlpmvo8mnk8m?=
+ =?us-ascii?Q?iIvGMUI1w++xc1zp3+xcnno0cY2iPb60K+W5FGal+DxFQBnYIYHKSZz2Dnfy?=
+ =?us-ascii?Q?uZrYILqt7gkR7HkcKf8HNs31PSWrMXcMEHD34AhuqRID37eOhNj6VFeknkAU?=
+ =?us-ascii?Q?Au1WYRaubpvgRnKGnoCkVgd0tZEVr1xlVIl9vOd1MEmiGqko3FDlgxrKl4PQ?=
+ =?us-ascii?Q?AUeJ0khhXrbkAGDFy3MXetSEcQnSJNuQDDZ08uyDhgqLGbGCcyaclKtiw82t?=
+ =?us-ascii?Q?7oGXmd8jnjkn9KIdIFU2Q6Qiml48chxlvx0WkOxXom8MdO5BGinIy4xQZEuN?=
+ =?us-ascii?Q?scZQNv0SdfIoGt4xx3wWO4GFxntXzqMzYeHFAezWRWv0B1eor0hBlIq93QDd?=
+ =?us-ascii?Q?5uymzHyzqXZAg8ocrAI7Ag671x/NNW/gwHKtL0gA8ZtIwp6vNEoiqke8KZ/H?=
+ =?us-ascii?Q?Slb3aAq9r81zftWYQVcg0M6famFBETwf+4zC4NQ9k+7bvm+5ogjYnTcwkiZe?=
+ =?us-ascii?Q?wsUcWcQRWfqCDW3AqiHnatEUSUtKdC3bdXXQGSnhOW1OTNeXaQ3K/JNrd1Yv?=
+ =?us-ascii?Q?oPQsLccP3fRu+OWiQvSl92Aiwdy++O4M8uUjU2noKyDRF3uIT1xr79+Kl4F0?=
+ =?us-ascii?Q?2AvmkOjgxdqGVqOpbPNCtGy2oj4003dkXUOY/djFTriWqQwqNJTm77fwcJOP?=
+ =?us-ascii?Q?t1Ms/1kP4iqQdcekF9jr5wkkfer8CvJRfL3cjKDqeKssLXyQUiYLZjFXppIA?=
+ =?us-ascii?Q?WdHWX1nv0TCvF0ic4nU1wtL/jepLDHtgnMhY1/YfJ8ewDJol+xNSIt+zAvWk?=
+ =?us-ascii?Q?ZXL+0NCyboOS1pHywGTuz4QnnmcSvgUf0LRV0wAY7pm2EySn8Hk9AOYfG6tB?=
+ =?us-ascii?Q?AlLNSyo6J8q3PFDBaZyWj0LlqAj8qjbwoMdAgLi+gHlKPP4SzOacNA2myRJd?=
+ =?us-ascii?Q?3TMJXpvWKuNRQUT2B9jIOp+Acie+8MeLtgpYdfxAQmw9ozHD8Lu6GBIJ2y/Z?=
+ =?us-ascii?Q?DeIBTeSiqzveQ/nIuTnaCC4LoZIZ98/iLAJIkBRxzlRKmxh0Hb6c1AxSeBC9?=
+ =?us-ascii?Q?hOUtYVbumwEUR7JsOwzVcL2p+TiuzkEj1lAS/vpUIo3FIV2xi/vsudTbak9O?=
+ =?us-ascii?Q?/jaO1yARCMueHGuUv72pL7zJR8qEmZAeSAR3pdAV/DLZqm6A0Ruu3N+qSrgh?=
+ =?us-ascii?Q?VAAokG8wTwkVYu3vnE5ZACI5gDAsZ68zYOgn0/K/KAaRiOh/4SU22K+//7v0?=
+ =?us-ascii?Q?isvYTXPe6ht0ca5oXvlVnk069YxjVBLAifUcAl7gSgnD53dWE2mKqh5kD3CC?=
+ =?us-ascii?Q?zNITUFQFIpBo6yVX+HD/oZIA2XfG7SliXnjMZgoD2Jrpp4vsO71FlxjVer79?=
+ =?us-ascii?Q?hkvsqD++WNm6C2XIcnP0GJoQmgz87fMfr+PG?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VFZieW12NVNZK0FEYzBhamV0VmRrdXUrcDlOUmVpK2dCb0R3NWNvWmlrc2RJ?=
- =?utf-8?B?aC9SbzluMkRVWnJiVEpYYzlibUI3Y3UxRDE2b2hKOUl5SE9XaWNaK0VNOGdu?=
- =?utf-8?B?TWxXNmJ0Y2ZiNlhpamV3c1Mya0NzSFczbk1lNWlzVTFnVUh6L0wwTm5MSUw5?=
- =?utf-8?B?ejhici9HNzZaVVg5Rkk3WFVualNxSlI2U3VVcS9EbXJiVnlFeUFnV2xRd0o1?=
- =?utf-8?B?ZkdSbzJsaXZqendqQkNvbUY2Ym5JeHlOd1J5aTNpWHJvcnNjY0cxSFg4aGRs?=
- =?utf-8?B?QjkxbkVJOHAxUHdCVDNiNWNFMFBuTGtaU2QvRVppRHBncWQzOEdmQk94OXlK?=
- =?utf-8?B?WTNORjJEUER5enJTd1R5VzI1YTJRY3F2b0tuNXdpSlp6SGFoWVBRTDl5bzN6?=
- =?utf-8?B?bFczR0U4TnJCd3pBMlZ6S0pIc1hwa2txQSsyUTBtSVdoSWlYTkl5Rm5LRzRD?=
- =?utf-8?B?M0xncy9ZY1J3bHAvSjIxNE1oaHRlQjQzRmY4S204eVh1N2trOU90dkNVZDJl?=
- =?utf-8?B?MEREYXlMSllyM3Y3eHNyK2x1MmpKMnhOeGJKZnJXUTBIVXdpV3M5NHBaM2wz?=
- =?utf-8?B?SENJTnRlSGliUjYzbW0yS0pNV2crNndJSVhpV3IxOEFEZXRuVDdYaEswbDQ4?=
- =?utf-8?B?UjVIdWM3d3dndmxDWks0U2hjNFZBdnNURk11YTFJQlAxRFYycmVDR0s4VC9X?=
- =?utf-8?B?MmRmYjcrcVFYR0lLV1dVVHVPYTIvTnB5T0dBVzR3UTN0UW1MMkhTWFRVKzRZ?=
- =?utf-8?B?NWVkeHpJdFFVclNDbDVUa2NjLy9tS3hZUURnek44TUJua2gxN3d3L2tGS09X?=
- =?utf-8?B?bjNlSE1uRFdzSFBZZnFXblpXNHpkRzVPUkx6QngwTkpHMUtmZyszbDVpT2Qw?=
- =?utf-8?B?anRjelpiTTBWMmdHbFo0TjJJZExyNUVWbHptWHVaR2pFZ0FkYzY1cmdtcE1o?=
- =?utf-8?B?MTdsd1lMWGgzeUtOVVhIQ3VaOEZCZDMwb3ZuWGdlaGtwdG53OVJUS08za2NG?=
- =?utf-8?B?UVhxQ0VOZVYxSEliSG11MU40VGVaT1JNcktlK1A2amExeldGaWFwRWVxUDRl?=
- =?utf-8?B?ckoyOGtFMHhESGNNYk9WNHFRNmxSY21sbFJzRVB2KzVFdk1Yd3c4anBkM3VK?=
- =?utf-8?B?ZlFsSjlCcjdzWlQ5Mi9WWG1TZmJscElUTGQzYzlsVmhGNlc4VEFhVUNPOFYr?=
- =?utf-8?B?aTVpNEQ3Z0xIZjJUQkw4M0tQVmowMzQwaldUOFN3WFFUYjB4ZzYvcXRtd3BN?=
- =?utf-8?B?TWFBZTJ2YVlCaFRCTFpGQytNZjhDVEFhdGY1aUFFeWs2U3d0WHZtTVRTT2VU?=
- =?utf-8?B?OC8rYUVSY1NiVUQwd2VkTGtpakJyNmZzMnYyYWlDemsvY2hSNG5oRWhLbmVm?=
- =?utf-8?B?am1GaWpzaG8rUDJRcUM1ZVdpMWJCYWJDK2VGR3ZSU1E3UTNGcFRlNjBPcFJk?=
- =?utf-8?B?cTRUNGgzOHZOQzdHZi92bWY3N1kwbDlTQ2lVYnJTWmdEbWdOVGFmT0k1MGs5?=
- =?utf-8?B?UlVqby9XU1ZvcXhJVUZrT1JGRiszUjZucTFHd0gzMm5MbkhEcVQyQW8vdm93?=
- =?utf-8?B?Q2dtWXdqOUVtMXM5MGJOckR6blUySFJERGs4MWNac1gwWExYdCtqMFMvZWhl?=
- =?utf-8?B?TFZBTEFzV3JVUUtjbEs3WkZmTjBLdHpQQzlrYTdxdGVBZ085eXlUdlNxZkpM?=
- =?utf-8?B?c3dTU3dTaU5haEVkM1pHSm9tOVZPeG15NUZEZU5EbklvRjkxU0RIMTBTSEpU?=
- =?utf-8?B?d2tCcHErV0kvUjNFYVR5NWZ4Y1R5Mmh3a3JVWGhDWiswK2J4V0djYzFJMXVI?=
- =?utf-8?B?d3ZMK0Q5QXQ2RnlCL2ZQTUZyNGcyaDhaMy9QcUpRemJBSjh6aUxDeGFqU3Vh?=
- =?utf-8?B?NFNwZG0wRHl4bkVidHRxdkJsMEhHalpnd2h6VVhKNXN0TEFRWHpIdGZpMWtt?=
- =?utf-8?B?TFFwT3RzblNWTmE1cmVVejV4ZjZIUHAveVVLeE5zcGJ6Y3FIK0JCMlR6SXdD?=
- =?utf-8?B?dTJrUWF5REMrMGkxNjlCOHExZjZWbkZSRExwcFFveGJwUFBsUHhpR3N0bzFC?=
- =?utf-8?B?dlkzT1NMOHcxR2UrbGUwNW5YT0JyYnNkeCtDbW91SEQ0c0tSTW10dDNYWXhj?=
- =?utf-8?B?U1hPYXMxN3NCbEFqY3R5NkdudnBYU0RBMnp6SFFNTnArMzNhTzQ5eXFVTzh1?=
- =?utf-8?B?aFE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fde7808-ace4-43c2-0bad-08ddf502cbc9
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 09:24:11.6358
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(14060799003)(82310400026)(35042699022)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 09:25:24.8554
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Eu7HwJdHZRicH/mx6Pse8kK4NV2505mjaWcz/vovSyOmiIsjVc1fnC0ZzhXya7p9V5JuMIuYy9xUlC6QoK/1+JZNdTN8u7PcsgiX0XJAzss=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10749
+X-MS-Exchange-CrossTenant-Network-Message-Id: 359f9fe9-0cfc-4d8b-d7da-08ddf502f79d
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00025F9A.EURPRD83.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB9299
 
-On 9/16/25 11:18 AM, Chaoyi Chen wrote:
-> Hi Quentin,
-> 
-> On 9/16/2025 4:41 PM, Quentin Schulz wrote:
->> Hi Chaoyi Chen,
->>
->> On 9/16/25 10:08 AM, Chaoyi Chen wrote:
->>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>
->>> The rk3588 evb2 board has a full size DisplayPort connector, enable
->>> for it.
->>>
->>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>> ---
->>>   .../boot/dts/rockchip/rk3588-evb2-v10.dts     | 39 +++++++++++++++++++
->>>   1 file changed, 39 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts b/arch/ 
->>> arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
->>> index 91fe810d38d8..0e5af61f66fe 100644
->>> --- a/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
->>> @@ -25,6 +25,18 @@ chosen {
->>>           stdout-path = "serial2:1500000n8";
->>>       };
->>>   +    dp-con {
->>> +        compatible = "dp-connector";
->>> +        label = "DP OUT";
->>> +        type = "full size";
->>
->> This isn't valid according to the dt binding. It should be "full-size" 
->> instead.
-> 
-> Will fix in v2.
-> 
-> 
->>
->>> +
->>> +        port {
->>> +            dp_con_in: endpoint {
->>> +                remote-endpoint = <&dp0_out_con>;
->>> +            };
->>> +        };
->>> +    };
->>> +
->>>       hdmi-con {
->>>           compatible = "hdmi-connector";
->>>           type = "a";
->>> @@ -106,6 +118,24 @@ vcc5v0_usbdcin: regulator-vcc5v0-usbdcin {
->>>       };
->>>   };
->>>   +&dp0 {
->>> +    pinctrl-0 = <&dp0m0_pins>;
->>> +    pinctrl-names = "default";
->>> +    status = "okay";
->>> +};
->>> +
->>> +&dp0_in {
->>> +    dp0_in_vp2: endpoint {
->>> +        remote-endpoint = <&vp2_out_dp0>;
->>> +    };
->>> +};
->>> +
->>> +&dp0_out {
->>> +    dp0_out_con: endpoint {
->>> +        remote-endpoint = <&dp_con_in>;
->>> +    };
->>> +};
->>> +
->>>   &gpu {
->>>       mali-supply = <&vdd_gpu_s0>;
->>>       sram-supply = <&vdd_gpu_mem_s0>;
->>> @@ -916,6 +946,8 @@ &usb_host1_xhci {
->>>   };
->>>     &vop {
->>> +    assigned-clocks = <&cru DCLK_VOP2_SRC>;
->>> +    assigned-clock-parents = <&cru PLL_V0PLL>;
->>
->> This is surprising, the only other board which has the DP0 enabled 
->> (the CoolPi 4B) doesn't set these two.
->>
->> Does HDMI still work as well as it used to with these new properties? 
->> Why are those needed? Some context in the commit log or as a comment 
->> in the DT would be most welcome!
-> 
-> Yes, HDMI and DP can work normally whether these new properties removed 
-> or not.
-> 
-> The key point is that when using V0PLL, we can get more usable 
-> resolution because DP requires a precise clock. If V0PLL is not 
-> explicitly specified here, then dclk_vop2 (VP2) may be divided down on 
-> GPLL, CPLL, etc. In this case, only a few frequency points are 
-> available. In my case, when V0PLL is not used, only resolutions such as 
-> 1024x768 and 640x480 are available.
-> 
-> For HDMI, I think it will use clk_hdmiphy_pixel0/1 as clock parent which 
-> is provided by the HDMI PHY when it work on TMDS mode so that we don't 
-> need to set it .
-> 
+Sorry, Ignore this. I've sent wrong this :(
+I'll send it again.
 
-Considering the clocks are all internal to the SoC, shouldn't all you 
-have explained be applicable to the CoolPi 4B too (and other boards with 
-DP)? I'm trying to understand if we should add something similar to 
-CoolPi 4B DTS as well?
+> Hi,
+>
+> > On Mon, Sep 15, 2025 at 09:35:55PM +0100, Will Deacon wrote:
+> > > On Mon, Sep 15, 2025 at 08:40:33PM +0100, Catalin Marinas wrote:
+> > > > On Mon, Sep 15, 2025 at 11:32:39AM +0100, Yeoreum Yun wrote:
+> > > > > So I think it would be better to keep the current LLSC implementation
+> > > > > in LSUI.
+> > > >
+> > > > I think the code would look simpler with LL/SC but you can give it a try
+> > > > and post the code sample here (not in a new series).
+> > >
+> > > If you stick the cas*t instruction in its own helper say, cmpxchg_user(),
+> > > then you can do all the shifting/masking in C and I don't reckon it's
+> > > that bad. It means we (a) get rid of exclusives, which is the whole
+> > > point of this and (b) don't have to mess around with PAN.
+> >
+> > We get rid of PAN toggling already since FEAT_LSUI introduces
+> > LDTXR/STTXR. But, I'm all for CAS if it doesn't look too bad. Easier
+> > I think if we do a get_user() of a u64 and combine it with the futex u32
+> > while taking care of CPU endianness. All in a loop. Hopefully the
+> > compiler is smart enough to reduce masking/or'ing to fewer instructions.
+> >
+>
+> Hmm, I think sure shifting/masking can be replace by single bfi
+> instruction like:
+>
+> diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
+> index 1d6d9f856ac5..30da0006c0c8 100644
+> --- a/arch/arm64/include/asm/futex.h
+> +++ b/arch/arm64/include/asm/futex.h
+> @@ -126,6 +126,59 @@ LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
+>  LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
+>  LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
+>
+> +
+> +#define LSUI_CMPXCHG_HELPER(suffix, start_bit)                                 \
+> +static __always_inline int                                                     \
+> +__lsui_cmpxchg_helper_##suffix(u64 __user *uaddr, u32 oldval, u32 newval)      \
+> +{                                                                              \
+> +       int ret = 0;                                                            \
+> +       u64 oval, nval, tmp;                                                    \
+> +                                                                               \
+> +       asm volatile("//__lsui_cmpxchg_helper_" #suffix "\n"                    \
+> +       __LSUI_PREAMBLE                                                         \
+> +"      prfm    pstl1strm, %2\n"                                                \
+> +"1:    ldtr    %x1, %2\n"                                                      \
+> +"      bfi     %x1, %x5, #" #start_bit ", #32\n"                               \
+> +"      bfi     %x1, %x6, #" #start_bit ", #32\n"                               \
+> +"      mov     %x4, %x5\n"                                                     \
+> +"2:    caslt   %x5, %x6, %2\n"                                                 \
+> +"      sub     %x4, %x4, %x5\n"                                                \
+> +"      cbz     %x4, 3f\n"                                                      \
+> +"      mov     %w0, %w7\n"                                                     \
+> +"3:\n"                                                                         \
+> +"      dmb     ish\n"                                                          \
+> +"4:\n"                                                                         \
+> +       _ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)                                   \
+> +       _ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)                                   \
+> +       : "+r" (ret), "=&r" (oval), "+Q" (*uaddr), "=&r" (nval), "=&r" (tmp)    \
+> +       : "r" (oldval), "r" (newval), "Ir" (-EAGAIN)                            \
+> +       : "memory");                                                            \
+> +                                                                               \
+> +       return ret;                                                             \
+> +}
+> +
+> +LSUI_CMPXCHG_HELPER(lo, 0)
+> +LSUI_CMPXCHG_HELPER(hi, 32)
+> +
+> +static __always_inline int
+> +__lsui_cmpxchg_helper(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+> +{
+> +       int ret;
+> +       unsigned long uaddr_al;
+> +
+> +       uaddr_al = ALIGN_DOWN((unsigned long)uaddr, sizeof(u64));
+> +
+> +       if (uaddr_al != (unsigned long)uaddr)
+> +               ret = __lsui_cmpxchg_helper_hi((u64 __user *)uaddr_al, oldval, newval);
+> +       else
+> +               ret = __lsui_cmpxchg_helper_lo((u64 __user *)uaddr_al, oldval, newval);
+> +
+> +       if (!ret)
+> +               *oval = oldval;
+> +
+> +       return ret;
+> +}
+> +
+>  static __always_inline int
+>  __lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
+>  {
+> @@ -135,71 +188,25 @@ __lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
+>  static __always_inline int
+>  __lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
+>  {
+> -       unsigned int loops = FUTEX_MAX_LOOPS;
+> -       int ret, oldval, tmp;
+> +       int ret = -EAGAIN;
+> +       u32 oldval, newval;
+>
+>         /*
+>          * there are no ldteor/stteor instructions...
+>          */
+> -       asm volatile("// __lsui_futex_atomic_eor\n"
+> -       __LSUI_PREAMBLE
+> -"      prfm    pstl1strm, %2\n"
+> -"1:    ldtxr   %w1, %2\n"
+> -"      eor     %w3, %w1, %w5\n"
+> -"2:    stltxr  %w0, %w3, %2\n"
+> -"      cbz     %w0, 3f\n"
+> -"      sub     %w4, %w4, %w0\n"
+> -"      cbnz    %w4, 1b\n"
+> -"      mov     %w0, %w6\n"
+> -"3:\n"
+> -"      dmb     ish\n"
+> -       _ASM_EXTABLE_UACCESS_ERR(1b, 3b, %w0)
+> -       _ASM_EXTABLE_UACCESS_ERR(2b, 3b, %w0)
+> -       : "=&r" (ret), "=&r" (oldval), "+Q" (*uaddr), "=&r" (tmp),
+> -         "+r" (loops)
+> -       : "r" (oparg), "Ir" (-EAGAIN)
+> -       : "memory");
+> +       unsafe_get_user(oldval, uaddr, err_fault);
+> +       newval = oldval ^ oparg;
+>
+> -       if (!ret)
+> -               *oval = oldval;
+> +       ret = __lsui_cmpxchg_helper(uaddr, oldval, newval, oval);
+>
+> +err_fault:
+>         return ret;
+>  }
+>
+>  static __always_inline int
+>  __lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+>  {
+> -       int ret = 0;
+> -       unsigned int loops = FUTEX_MAX_LOOPS;
+> -       u32 val, tmp;
+> -
+> -       /*
+> -        * cas{al}t doesn't support word size...
+> -        */
+> -       asm volatile("//__lsui_futex_cmpxchg\n"
+> -       __LSUI_PREAMBLE
+> -"      prfm    pstl1strm, %2\n"
+> -"1:    ldtxr   %w1, %2\n"
+> -"      eor     %w3, %w1, %w5\n"
+> -"      cbnz    %w3, 4f\n"
+> -"2:    stltxr  %w3, %w6, %2\n"
+> -"      cbz     %w3, 3f\n"
+> -"      sub     %w4, %w4, %w3\n"
+> -"      cbnz    %w4, 1b\n"
+> -"      mov     %w0, %w7\n"
+> -"3:\n"
+> -"      dmb     ish\n"
+> -"4:\n"
+> -       _ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)
+> -       _ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)
+> -       : "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp), "+r" (loops)
+> -       : "r" (oldval), "r" (newval), "Ir" (-EAGAIN)
+> -       : "memory");
+> -
+> -       if (!ret)
+> -               *oval = oldval;
+> -
+> -       return ret;
+> +       return __lsui_cmpxchg_helper(uaddr, oldval, newval, oval);
+>  }
+>
+>  #define __lsui_llsc_body(op, ...)                                      \
+>
+>
+> This is based on the patch #6.
+>
+> Am I missing something?
+>
+> --
+> Sincerely,
+> Yeoreum Yun
+>
 
-@Andy, you're the one who added support for DP to CoolPi 4B, without 
-these properties, is there something we need to do there as well?
-
-Thanks!
-Quentin
+--
+Sincerely,
+Yeoreum Yun
 
