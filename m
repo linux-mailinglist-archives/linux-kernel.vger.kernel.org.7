@@ -1,162 +1,211 @@
-Return-Path: <linux-kernel+bounces-818430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C97B591A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:04:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE32B5919E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E43123222C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20DCE1BC557B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3DE29AB07;
-	Tue, 16 Sep 2025 09:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF8529B214;
+	Tue, 16 Sep 2025 09:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y5Db+x4r"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="Q+E7CeTt"
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B806829A310;
-	Tue, 16 Sep 2025 09:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8F928CF42
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013331; cv=none; b=Qh8dkU36vT5++zRWQPFcFKhoVApvnlUdh1XIl4ynvAX0/0MsbcA8UfKL5pJt36cJXbEev86pQid2YKkEZnHjN3WDWLVmlz055Hc5Lr/ns/rsnkZr+yHKkhmvaJuPpwgKjTsFBFwpA+fz2Xun2lehMye0r0Zj1W/HnQ29QtSefIw=
+	t=1758013343; cv=none; b=Ry1EIgszOpdzW87TT631FZN3YEWnS6Qy4HqhWkTBvO8Z3sV6/p3girV1JAzq6bKbQ9Ya96ilXpVTgUpcH9LevKH547M4/N6uLni3QjTVwXI9fkx9B4iM5uPnyme4RgcNt6vZ13vaevuUK7TiVolryVBTijtdNlj8dAdpX2+gwwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013331; c=relaxed/simple;
-	bh=v3B0hVI686Dj3OG7cFwf+eQKcuBwiCWRRhpE80lgPZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e7VliF5eaeYBgobaev/1/0aXxpCW4m7fWdr46H3RyHEEfeBEbomPX5S/7jwDama1wT6XO1dj7dU3sfmz0tngGbnu56j4vAXAckmnei5Q/oPQX7L29YeS4JJ2MklbHXckAp8EOoY5i1aubWsKv9fqJZXhclBZZWRYtjFG1vLGTaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y5Db+x4r; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758013327;
-	bh=v3B0hVI686Dj3OG7cFwf+eQKcuBwiCWRRhpE80lgPZs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y5Db+x4rrd8V2wd6WxmV+e32jR3fQImJLjYmSDX41phsBEC2oPL5Dzzb+oxS7Z8ZY
-	 dmyfScInfaaoon3VSpS2VapUMRdR+XCDhHi/lEJ5SYLoTLyRCBprxLwfbIg4rdpr15
-	 MCgPmZ4iPJcv2DcC4ZON/skyZp1uZ1FEHm1WBwW8yzTMdeKN49Q2qlhRBdrnjJBEsU
-	 OavZs6DeuMKY7WO8cUKMRiFFVOqVY+xsApIf4SwN3QeKwln3EQzXgt04XRwNi1oNCy
-	 z1mMVP8tphFmoFT9N7agtsuO/G4OMOrhg8lWZTrN2G06WrGEXtJSXeedXyPTkgjmfn
-	 /3sWIwqnNH4pg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7EB7917E0F88;
-	Tue, 16 Sep 2025 11:02:07 +0200 (CEST)
-Message-ID: <d7a9e83d-7b79-48eb-a90a-dfe3cf26cf49@collabora.com>
-Date: Tue, 16 Sep 2025 11:02:06 +0200
+	s=arc-20240116; t=1758013343; c=relaxed/simple;
+	bh=0Vpn586g2Rf3xwgZqTtECSZVCszHpKgDLJcRU12/5Es=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xzi2/0n+W7t+44Fv2xAAgk8lGWQdJAA7ttlFfCC2kWstYIdWCM9cmbIgbVZcS1u8iCOuia/UtUbmpvM/gZ68V+vqpTL0CzyWR/qzc27h9WAaEpSzl1YbRSQ3YW8ERsybqqqLocd04xCDmbeLUfmzfYWYtk/NOwT7k8U1147QBfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=Q+E7CeTt; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=iH1qUO4aNBEKYkB0AJOgosv4x+Ue22Qn3EpBolYH968=;
+	b=Q+E7CeTtkGNAvGVlgMcuKS3tjcgH6xoKhOBp3y4LlcFeZNyDJX+ZbrmkYRcjxhw2rosgWGy6u
+	Sgn7r0OVEcD0AFTsNcsTPmvCV2xHpsrIfvr/sk2++lvLvKkHs30wJB89zvs92Amho2W26At0DXF
+	hNaOMvf0hBOLRByzDF2Q7rQ=
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cQwrF6ZhxzYl7XN;
+	Tue, 16 Sep 2025 17:01:49 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
+ 2025 17:02:09 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
+ 2025 17:02:09 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <chao@kernel.org>
+CC: <bintian.wang@honor.com>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
+	<linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<wangzijie1@honor.com>
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix infinite loop in __insert_extent_tree()
+Date: Tue, 16 Sep 2025 17:02:09 +0800
+Message-ID: <20250916090209.240852-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <71872583-0d81-48a4-a148-184963a24fd4@kernel.org>
+References: <71872583-0d81-48a4-a148-184963a24fd4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: mt65xx: add dual and quad mode for standard spi
- device
-To: Tim Kuo <Tim.Kuo@mediatek.com>, Mark Brown <broonie@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Steven Liu <Steven.Liu@mediatek.com>, Sky Huang <Skylake.Huang@mediatek.com>
-References: <20250916081515.324130-1-Tim.Kuo@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250916081515.324130-1-Tim.Kuo@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a011.hihonor.com
+ (10.68.31.243)
 
-Il 16/09/25 10:15, Tim Kuo ha scritto:
-> From: "Tim Kuo" <Tim.Kuo@mediatek.com>
-> 
-> Mediatek SPI hardware natively supports dual and quad modes, and these
-> modes are already enabled for SPI flash devices under spi-mem framework
-> in MTK SPI controller spi-mt65xx. However, other SPI devices, such as
-> touch panels, are limited to single mode because spi-mt65xx lacks SPI
-> mode argument parsing from SPI framework for these SPI devices outside
-> spi-mem framework.
-> 
-> This patch adds dual and quad mode support for these SPI devices by
-> introducing a new API, mtk_spi_set_nbits, for SPI mode argument parsing.
-> 
-> Signed-off-by: Tim Kuo <Tim.Kuo@mediatek.com>
-> ---
->   drivers/spi/spi-mt65xx.c | 33 ++++++++++++++++++++++++++++++---
->   1 file changed, 30 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-> index 8a3c00c3af42..591740805740 100644
-> --- a/drivers/spi/spi-mt65xx.c
-> +++ b/drivers/spi/spi-mt65xx.c
-> @@ -563,6 +563,27 @@ static void mtk_spi_setup_packet(struct spi_controller *host)
->   	writel(reg_val, mdata->base + SPI_CFG1_REG);
->   }
->   
-> +inline u32 mtk_spi_set_nbit(u32 nbit)
-> +{
-> +	u32 ret = 0;
+>On 9/16/25 16:26, wangzijie wrote:
+>>> On 9/16/25 15:09, wangzijie wrote:
+>>>>> On 9/16/25 13:22, wangzijie wrote:
+>>>>>>> On 09/15, wangzijie wrote:
+>>>>>>>> When we get wrong extent info data, and look up extent_node in rb tree,
+>>>>>>>> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
+>>>>>>>> return NULL.
+>>>>>>>
+>>>>>>> This is the exact buggy case which we should fix the original one. Have
+>>>>>>> you seen this error? In that case, can we consider writing some kernel
+>>>>>>> message and handle the error properly?
+>>>>>>
+>>>>>> Hi Jaegeuk,
+>>>>>> The original one is the bug I mentioned in the first patch of this patch set
+>>>>>> ("f2fs: fix zero-sized extent for precache extents"). 
+>>>>>
+>>>>> Zijie,
+>>>>>
+>>>>> Did you suffer this problem in product? right?
+>>>>
+>>>> Hi Chao,
+>>>> Yes, and I can confirm that infinite loop cases I suffered are caused by the bug I
+>>>> mentioned in the first patch of this patch set. But I'm not sure if there are
+>>>> other cases that can cause this infinite loop.
+>>>>
+>>>>>>
+>>>>>> When we use a wrong extent_info(zero-sized) to do update, and there exists a
+>>>>>> extent_node which has same fofs as the wrong one, we will skip "invalidate all extent
+>>>>>> nodes in range [fofs, fofs + len - 1]"(en->ei.fofs = end = tei->fofs + tei->len = tei->fofs),
+>>>>>> which cause the infinite loop in __insert_extent_tree().
+>>>>>>
+>>>>>> So we can add f2fs_bug_on() when there occurs zero-sized extent
+>>>>>> in f2fs_update_read_extent_cache_range(), and give up this zero-sized
+>>>>>> extent update to handle other unknown buggy cases. Do you think this will be better?
+>>>>>>
+>>>>>> And do we need to solve this infinite loop?
+>>>>>
+>>>>> IMO, it's worth to end such loop if there is any corrupted extent in rbtree to
+>>>>> avoid kernel hang, no matter it is caused by software bug or hardware flaw
+>>>>> potentially.
+>>>>>
+>>>>> Thanks,
+>>>>
+>>>> And do you think we need this?
+>>>> "add f2fs_bug_on() when there occurs zero-sized extent in f2fs_update_read_extent_cache_range(),
+>>>> and give up this zero-sized extent update to handle other unknown buggy cases".
+>>>
+>>> Oh, I was testing below patch..., does this what you want to do?
+>>>
+>>> I think we can keep all your patches, and appending below patch to detect any
+>>> potential cases who will update a zero-sized extent.
+>>>
+>>> >From 439d61ef3715fafa5c9f2d1b7f8026cdd2564ca7 Mon Sep 17 00:00:00 2001
+>>> From: Chao Yu <chao@kernel.org>
+>>> Date: Tue, 16 Sep 2025 11:52:30 +0800
+>>> Subject: [PATCH] f2fs: add sanity check on ei.len in
+>>> __update_extent_tree_range()
+>>>
+>>> Add a sanity check in __update_extent_tree_range() to detect any
+>>> zero-sized extent update.
+>>>
+>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>> ---
+>>> fs/f2fs/extent_cache.c | 9 +++++++++
+>>> 1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>>> index 199c1e7a83ef..9544323767be 100644
+>>> --- a/fs/f2fs/extent_cache.c
+>>> +++ b/fs/f2fs/extent_cache.c
+>>> @@ -664,6 +664,15 @@ static void __update_extent_tree_range(struct inode *inode,
+>>> 	if (!et)
+>>> 		return;
+>>>
+>>> +	if (unlikely(len == 0)) {
+>>> +		f2fs_bug_on(sbi, 1);
+>>> +		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
+>>> +			"extent [%u, %u, %u], age [%llu, %llu]",
+>>> +			__func__, type, tei->fofs, tei->blk, tei->len,
+>>> +			tei->age, tei->last_blocks);
+>>> +		return;
+>>> +	}
+>>> +
+>>> 	if (type == EX_READ)
+>>> 		trace_f2fs_update_read_extent_tree_range(inode, fofs, len,
+>>> 						tei->blk, 0);
+>>> -- 
+>>> 2.49.0
+>> 
+>> Yes, that's exactly what I want to do.
+>> Maybe we should relocate f2fs_bug_on()?
+>> 
+>> 	if (unlikely(len == 0)) {
+>> 		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
+>> 			"extent [%u, %u, %u], age [%llu, %llu]",
+>> 			__func__, type, tei->fofs, tei->blk, tei->len,
+>> 			tei->age, tei->last_blocks);
+>> 		f2fs_bug_on(sbi, 1);
+>> 		return;
+>> 	}
+>
+>Yeah, looks better.
+>
+>I don't see any problem in my test, will send a formal patch, let me add
+>Signed-off-by of you if you don't mind. :)
+>
+>Thanks,
 
-You don't need ret here.
+OK, thanks for your help.
 
-> +
-> +	switch (nbit) {
-
-	default:
-		pr_warn_once("Unknown nbit mode %u. Falling back to single mode\n",
-			     nbit);
-		fallthrough;
-	case SPI_NBITS_SINGLE:
-		return 0x0;
-	case SPI_NBITS_DUAL:
-		return 0x1;
-	case SPI_NBITS_QUAD:
-		return 0x2;
-
-> +	case SPI_NBITS_SINGLE:
-> +		ret = 0x0;
-> +		break;
-> +	case SPI_NBITS_DUAL:
-> +		ret = 0x1;
-> +		break;
-> +	case SPI_NBITS_QUAD:
-> +		ret = 0x2;
-> +		break;
-> +	default:
-> +		pr_info("unknown spi nbit mode, use single mode!");
-> +		break;
-> +	}
-> +	return ret;
-> +}
-> +
->   static void mtk_spi_enable_transfer(struct spi_controller *host)
->   {
->   	u32 cmd;
-> @@ -729,10 +750,16 @@ static int mtk_spi_transfer_one(struct spi_controller *host,
->   
->   	/* prepare xfer direction and duplex mode */
->   	if (mdata->dev_comp->ipm_design) {
-> -		if (!xfer->tx_buf || !xfer->rx_buf) {
-> +		if (xfer->tx_buf && xfer->rx_buf) {
-> +			reg_val &= ~SPI_CFG3_IPM_HALF_DUPLEX_EN;
-> +		} else if (xfer->tx_buf) {
-> +			reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_EN;
-> +			reg_val &= ~SPI_CFG3_IPM_HALF_DUPLEX_DIR;
-> +			reg_val |= mtk_spi_set_nbit(xfer->tx_nbits);
-> +		} else {
->   			reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_EN;
-> -			if (xfer->rx_buf)
-> -				reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_DIR;
-> +			reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_DIR;
-> +			reg_val |= mtk_spi_set_nbit(xfer->rx_nbits);
->   		}
->   		writel(reg_val, mdata->base + SPI_CFG3_IPM_REG);
->   	}
-
-Everything else LGTM. So, after adding the requested changes
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> 
+>>>>
+>>>>
+>>>>
+>>>>>>
+>>>>>>
+>>>>>>>>
+>>>>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>>>>>>> ---
+>>>>>>>>  fs/f2fs/extent_cache.c | 1 +
+>>>>>>>>  1 file changed, 1 insertion(+)
+>>>>>>>>
+>>>>>>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>>>>>>>> index 199c1e7a8..6ed6f3d1d 100644
+>>>>>>>> --- a/fs/f2fs/extent_cache.c
+>>>>>>>> +++ b/fs/f2fs/extent_cache.c
+>>>>>>>> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+>>>>>>>>  			leftmost = false;
+>>>>>>>>  		} else {
+>>>>>>>>  			f2fs_bug_on(sbi, 1);
+>>>>>>>> +			return NULL;
+>>>>>>>>  		}
+>>>>>>>>  	}
+>>>>>>>>  
+>>>>>>>> -- 
+>>>>>>>> 2.25.1
+>>>>
+>> 
 
