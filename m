@@ -1,164 +1,138 @@
-Return-Path: <linux-kernel+bounces-818550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A03B5933A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:18:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8FEB59344
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2563B98D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293591BC4713
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A160A298CA5;
-	Tue, 16 Sep 2025 10:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CIKH2PUe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBBB29E114
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC583043A0;
+	Tue, 16 Sep 2025 10:19:29 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3A524338F;
+	Tue, 16 Sep 2025 10:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758017875; cv=none; b=qpTRH6Ae+EAg8LBteSSLn9j2rZeAuP3WBW5ZfBu1ezLa0AI9QGuAJg5COUbCgPJ1Z6EoznagVCqfEzAejMdLYgvPgg7fqrgmWnKbfZhOTXwCn8DD4dh1ZePU+GQacCbR88WKi7U2fwZpFKLnz7gjBkTVMuxddsYTvO/ry4v7y3c=
+	t=1758017969; cv=none; b=QD4u6b3m+bfMoKxOgTYwZeS1F40p9509TF/87oYH8DKkCVQ2UCsmGGcMWLwhuCk+SdrMgz3Xm2amZDDrUEsD4E3kZOBEr3Q3xPswvnQSHvH9J15LL/HRfbb0IOIWcqF1DNcYIUpGXsrkRELynRNDTVm+5J07c/trU6T8T+Ajeqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758017875; c=relaxed/simple;
-	bh=/cvaAE2HoDQnjzYGy471yA14D/oJLdLlepOzXO6YJTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cBrOq2eYYmcCSgjP1F7YZxPFtHIMsSrNm4W1+IYi0CXz2//PbDzaAEXWhcO1plDn8SazSJjvNeY1aoN/iZ6ERWVEPhdKnXgAFIw/rImUSEigG51R+/InBGCBsGMZPlOnmNECbTVDPj/YnguL1NO6W/WG156l974NIjgBF2q0kvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CIKH2PUe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9sFW2014169
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:17:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=2Er1pNum/WmhMsDVwFK5vpTl
-	0bY+Xaqs3dc/o+OSOUw=; b=CIKH2PUeyqmm4yHUnP0Kod6NjJwBKmeJCzMVunQ9
-	ukcYme1sv6tyUgnK0nE0u0OMV5O2J2JJSVJ70Bz9KNKmYT54hQlIfnN1g7coe+Ph
-	bOzmveFKp6mqhPqPZttgo9XLwoKAfcYIrXdkbhKWvUWSjuajFCTNhva2CJZ6J0m5
-	3jHsG0/vf88kLi9wbCBrOAGn440ViPnLuhrxA+KH03faI7jE35Fgry5emKhxfm+8
-	VzwIgVD9HVXqMZM8rhtSGoBsMjEFgN3KHxaP+NLvxkjvaHjINiKeR7daN60R5MmX
-	pnEGAZli1y4uEdV8OduZHz7QulKGFv7KZPxs+xwzTBT9cQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496x5asm5m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:17:53 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b7ad72bc9dso32772501cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:17:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758017872; x=1758622672;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Er1pNum/WmhMsDVwFK5vpTl0bY+Xaqs3dc/o+OSOUw=;
-        b=gfV5gfGowtUzHORNNm/OhFsk7x9bqgUYowBKJYBsL7x53fKYMF8pNUTgcA/fvB/o20
-         QDFD482VkmnIwoFTYwXpzeSfrmQ/ey+/PecUgtIQANWf2nCMuVdGjWqOuU/KYFSjOuyZ
-         5MyuEoHXCcKqvM+Q8QzvqvZjquSOJPNH/G59L0r27YXfaIj96p+F/IVTlawWJWXq2gOk
-         MuXWwfOoIfezaInaroPb0GHqgcp1S76gBigL88l494KibmX9mhlS1MbeJK0wMBD1Uk3m
-         jMVJnUKwSZGGVdFVpyACv6OhX7TMAAf5Nl/1HvyHsUjdcwCZ1YnpEKp6Xnb5cU0uPN/Y
-         6ChA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZZE/Z03AVLn1wxOPB4B58g/PD5pv8KNaPyNafrC+dB6gmyB0MVVq/wjfFxlto1B3cOUECSapA5C2hLzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIwzqRU9IhAgJ62sArz3Z3YDWWYDUzPfqbDxTKOHHCeXKX8RqY
-	U6ZsnmuksNfXz7MqXfBxt9/1DXGzVvRSI9TUpHP9Nmf/dsg0VkcVPYk/E9z3EzQRGRxL1+HisU4
-	+PCg9MIT4MBRRbPVX4xbz/pDxNfPlfld/8Mg0vPPuW++kxCKmMSav17S4plsuUgphQ54=
-X-Gm-Gg: ASbGncs52P/1lXI4eHqgUfPmyN2l6x39Z3TM/Bp4J0TMrn90ytj6AeHWnUFe6DmoiuV
-	tPjGfdQUUmxstksKJUBOWQ/HM3m6xfwL/vO/AVB1CUOV0x6K8UdBfQ2XVmf9yy5qDqhVWwnWUfL
-	agFJ+UnPw5MhEuZzg0KCh0bbrzpNwIrlstdvj2JuOltmd0PGLao547tTswUUHmSfwnSWsBsDrNW
-	uOX94P4xWqNbuPeNm7kpWHxVujaMpfjtus2wM4ePeTQhGcsNOGJ3Deyo82/G0MoVYcF9RhBkJOB
-	KQkhx74r4qFaWwlbdPDX+nbVdih5zIVqAri4kV6/fJ0dcAkta/eAswABug58LswuoVXg89J9LXH
-	J9AwGVXDgwgIwQYqkY7tjibF/7i6pT6tIjOgOg9oLqt6DIBkG2F+D
-X-Received: by 2002:a05:622a:1f16:b0:4b1:247f:4e0f with SMTP id d75a77b69052e-4b77d0e8accmr201211381cf.57.1758017872325;
-        Tue, 16 Sep 2025 03:17:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGG3/RyuWQfRZW1mY1j1shvOvp1blH44FZkzAOAV9d+81uzHG2LCJYhHB+EHzub9I/8NxYxnA==
-X-Received: by 2002:a05:622a:1f16:b0:4b1:247f:4e0f with SMTP id d75a77b69052e-4b77d0e8accmr201210971cf.57.1758017871659;
-        Tue, 16 Sep 2025 03:17:51 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e5d5e70c8sm4310701e87.52.2025.09.16.03.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 03:17:50 -0700 (PDT)
-Date: Tue, 16 Sep 2025 13:17:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: rpmh-regulator: Update pmic-id property
- info
-Message-ID: <le4fsudu7fh6q5sstz5zndizfssgiycswzhmzuoioccxvth5mo@weyftlxiohlz>
-References: <20250916-glymur-rpmh-regulator-driver-v1-0-bb9b00e93a61@oss.qualcomm.com>
- <20250916-glymur-rpmh-regulator-driver-v1-2-bb9b00e93a61@oss.qualcomm.com>
+	s=arc-20240116; t=1758017969; c=relaxed/simple;
+	bh=W5YIT3+BDwsaliPJO5D4/+GpNuefOW/D5AS/xsXGfms=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=QmHSpXLRm96k0ddiZGknVvfTl+97N8L4tDR97dFlw4bVtO7Ypa7Iv+UEvg1ky0sOFGIiKbGopPGEyDpEx25U/hmTVMozHspxZuktCcJ/M+A047xSrZotFNNADw+PM8wP/dXNO1m3ZWTe1h1tBoNhA8bRSV0ynv4zoflrfVwmbbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [106.117.98.100])
+	by mtasvr (Coremail) with SMTP id _____wD34GqZOclo2ro9Ag--.591S3;
+	Tue, 16 Sep 2025 18:19:06 +0800 (CST)
+Received: from duoming$zju.edu.cn ( [106.117.98.100] ) by
+ ajax-webmail-mail-app2 (Coremail) ; Tue, 16 Sep 2025 18:19:04 +0800
+ (GMT+08:00)
+Date: Tue, 16 Sep 2025 18:19:04 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: duoming@zju.edu.cn
+To: "Jakub Kicinski" <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com,
+	edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch
+Subject: Re: [PATCH net] cnic: Fix use-after-free bugs in cnic_delete_task
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.3-cmXT6 build
+ 20250620(94335109) Copyright (c) 2002-2025 www.mailtech.cn zju.edu.cn
+In-Reply-To: <20250915182235.77a556c4@kernel.org>
+References: <20250914034335.35643-1-duoming@zju.edu.cn>
+ <20250915182235.77a556c4@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-glymur-rpmh-regulator-driver-v1-2-bb9b00e93a61@oss.qualcomm.com>
-X-Proofpoint-GUID: ShCEn1s3lCI6_wvkalDxFpSv_hH_akvr
-X-Proofpoint-ORIG-GUID: ShCEn1s3lCI6_wvkalDxFpSv_hH_akvr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDAxMCBTYWx0ZWRfX/iC3Jz3aGk1g
- V4tS12CAOX2eKmGC92+jUgwv/cefbdjKzhX369X7HIqzxfY8Ire7nO5buri1li0GynoHikhNSP5
- tSr4ZpsLsvRVcXDQ/IyXMGXEQ84kc0k02TasMjQqRaOoUXIzqIFP/2k1eAnQ+pDU4I1pgaC5Fd8
- rU6CTeZ1sA5MvjEtKK0JW0jldP3Zdq0a3qpofXamUVTtp0aeHkmyChQ2pyJTjPsGxcTvnpKkRrK
- c7c11rU1E2qL0KykFnqez1T6cSTM211H/pdbMhF985+5KuzfSuL7inb5rNTbcT0K/yecsxMVUk8
- fK7nIbhJfNopK2oCrGBaTJY5Jm5+JmWhe2SaX6aEmOpMjuU1hzJ7+YtkAPm6rO/QUFJhPEgqmZ2
- HnwCg3GO
-X-Authority-Analysis: v=2.4 cv=WpQrMcfv c=1 sm=1 tr=0 ts=68c93951 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=8Yl64O_mmtZwUmTP7D0A:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 adultscore=0 phishscore=0 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160010
+Message-ID: <1bb984a1.4455.1995208fc7b.Coremail.duoming@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:zC_KCgAHIUWYOclo47sEAg--.52277W
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwELAWjIa-sOCQAIs3
+X-CM-DELIVERINFO: =?B?ejjX0AXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR1/7cgVV3ofNmrvLphm9h9KSdQ6gWx4m7N3E1IpYaFopor/Utk1b8mb/TyWa9iv/7g5Ij
+	NyuI6fTO1uy65bQUXPJDvr+MbXTmyfN4WXPfTHGra/VIiW8Xv3q7tH0yCShV1w==
+X-Coremail-Antispam: 1Uk129KBj93XoWxGw4kAr1UurWxKF4DWFyUJwc_yoW5ZFy8pr
+	WfW345XFZ7Jr18twsaqr48XF1Y9w4vya47Grs5Jrs2y34rJF1YgryfKFWruaykurWkZF4x
+	ZFn8ZFZxZFyqkFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUmvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
+	AKI48G6xCjnVAKz4kxM4xvF2IEb7IF0Fy264kE64k0F24lFcxC0VAYjxAxZF0Ex2IqxwAK
+	zVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r12
+	6r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UMVCEFcxC0VAYjxAxZFUvcSsGvf
+	C2KfnxnUUI43ZEXa7IU848BUUUUUU==
 
-On Tue, Sep 16, 2025 at 01:28:16PM +0530, Kamal Wadhwa wrote:
-> On new targets like Glymur, `pmic-id` will have this new
-> format `[A-N]_E[0-3]`.
+T24gTW9uLCAxNSBTZXAgMjAyNSAxODoyMjozNSAtMDcwMCBKYWt1YiBLaWNpbnNraSB3cm90ZToK
+PiA+IFRoZSBvcmlnaW5hbCBjb2RlIHVzZXMgY2FuY2VsX2RlbGF5ZWRfd29yaygpIGluIGNuaWNf
+Y21fc3RvcF9ibngyeF9odygpLAo+ID4gd2hpY2ggZG9lcyBub3QgZ3VhcmFudGVlIHRoYXQgdGhl
+IGRlbGF5ZWQgd29yayBpdGVtICdkZWxldGVfdGFzaycgaGFzCj4gPiBmdWxseSBjb21wbGV0ZWQg
+aWYgaXQgd2FzIGFscmVhZHkgcnVubmluZy4gQWRkaXRpb25hbGx5LCB0aGUgZGVsYXllZCB3b3Jr
+Cj4gPiBpdGVtIGlzIGN5Y2xpYywgZmx1c2hfd29ya3F1ZXVlKCkgaW4gY25pY19jbV9zdG9wX2Ju
+eDJ4X2h3KCkgY291bGQgbm90Cj4gPiBwcmV2ZW50IHRoZSBuZXcgaW5jb21pbmcgb25lcy4gVGhp
+cyBsZWFkcyB0byB1c2UtYWZ0ZXItZnJlZSBzY2VuYXJpb3MKPiA+IHdoZXJlIHRoZSBjbmljX2Rl
+diBpcyBkZWFsbG9jYXRlZCBieSBjbmljX2ZyZWVfZGV2KCksIHdoaWxlIGRlbGV0ZV90YXNrCj4g
+PiByZW1haW5zIGFjdGl2ZSBhbmQgYXR0ZW1wdCB0byBkZXJlZmVyZW5jZSBjbmljX2RldiBpbiBj
+bmljX2RlbGV0ZV90YXNrKCkuCj4gCj4gW3NuaXBdCj4gCj4gPiBSZXBsYWNlIGNhbmNlbF9kZWxh
+eWVkX3dvcmsoKSB3aXRoIGNhbmNlbF9kZWxheWVkX3dvcmtfc3luYygpIHRvIGVuc3VyZQo+ID4g
+dGhhdCB0aGUgZGVsYXllZCB3b3JrIGl0ZW0gaXMgcHJvcGVybHkgY2FuY2VsZWQgYW5kIGFueSBl
+eGVjdXRpbmcgZGVsYXllZAo+ID4gd29yayBoYXMgZmluaXNoZWQgYmVmb3JlIHRoZSBjbmljX2Rl
+diBpcyBkZWFsbG9jYXRlZC4KPiAKPiBIYXZlIHlvdSB0ZXN0ZWQgdGhpcyBvbiByZWFsIEhXPyBQ
+bGVhc2UgYWx3YXlzIGluY2x1ZGUgaW5mb3JtYXRpb24gb24KPiBob3cgeW91IGRpc2NvdmVyZWQg
+dGhlIHByb2JsZW0gYW5kIHdoZXRoZXIgeW91IG1hbmFnZWQgdG8gdGVzdCB0aGUgZml4LgoKVG8g
+cmVwcm9kdWNlIHRoZSBpc3N1ZSwgSSBlbXVsYXRlZCB0aGUgY25pYyBkZXZpY2UgaW4gUUVNVSBh
+bmQgbWFudWFsbHkKdHJpZ2dlcmVkIHRoZSBwcm9ibGVtIGJ5IGludHJvZHVjaW5nIGRlbGF5cywg
+c3VjaCBhcyBjYWxscyB0b8Kgc3NsZWVwKCksIAp3aXRoaW4gdGhlwqBjbmljX2RlbGV0ZV90YXNr
+KCnCoGZ1bmN0aW9uLgoKV2hpbGUgdGhlIGRlbGF5ZWQgd29yayB3YXMgZXhlY3V0aW5nLMKgY2Fu
+Y2VsX2RlbGF5ZWRfd29yaygpwqBmYWlsZWQgdG8gCnRlcm1pbmF0ZSBpdC4gRnVydGhlcm1vcmUs
+IHNpbmNlwqBjbmljX2RlbGV0ZV90YXNrKCnCoGlzIGEgcmVjdXJyaW5nCmRlbGF5ZWQgd29yayBp
+dGVtLMKgZmx1c2hfd29ya3F1ZXVlKCnCoG9ubHkgYmxvY2tzIGFuZCB3YWl0cyBmb3Igd29yawpp
+dGVtcyB0aGF0IHdlcmUgYWxyZWFkeSBxdWV1ZWQgdG8gdGhlIHdvcmtxdWV1ZSBwcmlvciB0byBp
+dHMgaW52b2NhdGlvbi4gCkFueSB3b3JrIGl0ZW1zIHN1Ym1pdHRlZCBhZnRlcsKgZmx1c2hfd29y
+a3F1ZXVlKCnCoGlzIGNhbGxlZCBhcmUgbm90CmluY2x1ZGVkIGluIHRoZSBzZXQgb2YgdGFza3Mg
+dGhhdCB0aGUgZmx1c2ggb3BlcmF0aW9uIGF3YWl0cy4gVGhpcwptZWFucyB0aGF0IGFmdGVyIHRo
+ZSBjeWNsaWMgd29yayBpdGVtcyBoYXZlIGZpbmlzaGVkIGV4ZWN1dGluZywgCmEgZGVsYXllZCB3
+b3JrIGl0ZW0gbWF5IHN0aWxsIGV4aXN0IGluIHRoZSB3b3JrIHF1ZXVlLgoKWW91IGNhbiBzZWUg
+dGhlIGRldGFpbCBpbiB0aGUgZm9sbG93aW5nIGxpbms6Cmh0dHBzOi8vZWxpeGlyLmJvb3RsaW4u
+Y29tL2xpbnV4L3Y2LjE3LXJjNi9zb3VyY2Uva2VybmVsL3dvcmtxdWV1ZS5jI0wzOTM3CgpGdXJ0
+aGVybW9yZSwgSSB3cm90ZSBhIGtlcm5lbCBtb2R1bGUgdG8gdGVzdCB3aGV0aGVyIHRoZSBjb21i
+aW5hdGlvbiBvZgpjYW5jZWxfZGVsYXllZF93b3JrKCnCoGFuZMKgZmx1c2hfd29ya3F1ZXVlKCnC
+oGNhbiBzYWZlbHkgdGVybWluYXRlIHJlY3VycmluZwpkZWxheWVkIHdvcmsgaXRlbXMuIFRoZSBy
+ZXN1bHQgaXMgbmVnYXRpdmUsIGluZGljYXRpbmcgdGhhdCB0aGUgYWZvcmVtZW50aW9uZWQKY29t
+YmluYXRpb24gY2FycmllcyBwb3RlbnRpYWwgcmlza3MuCgpUaGUgY2FuY2VsX2RlbGF5ZWRfd29y
+a19zeW5jwqBjYWxsc8KgX19jYW5jZWxfd29yayh3b3JrLCAuLi4gfCBXT1JLX0NBTkNFTF9ESVNB
+QkxFKQp0byBhdHRlbXB0IHRvIHJlbW92ZSB0aGUgd29yayBpdGVtIGZyb20gdGhlIHF1ZXVlIGFu
+ZCBzZXRzIHRoZcKgV09SS19DQU5DRUxfRElTQUJMRQpmbGFnLCBwcmV2ZW50aW5nIHRoZSB3b3Jr
+IGl0ZW0gZnJvbSBiZWluZyBleGVjdXRlZCBhZ2Fpbi4gTWVhbndoaWxlLCBpdCB1c2VzCl9fZmx1
+c2hfd29yayh3b3JrLCB0cnVlKcKgdG8gcGVyZm9ybSBhIHN5bmNocm9ub3VzIG9wZXJhdGlvbiwg
+d2FpdGluZyBmb3IgYW55CmN1cnJlbnRseSBleGVjdXRpbmcgd29yayBpdGVtIHRvIGZpbmlzaCBy
+dW5uaW5nLgoKWW91IGNhbiBzZWUgdGhlIGRldGFpbCBpbiB0aGUgZm9sbG93aW5nIGxpbms6Cmh0
+dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y2LjE3LXJjNi9zb3VyY2Uva2VybmVsL3dv
+cmtxdWV1ZS5jI0w0MzQ4Cgo+ID4gRml4ZXM6IGZkZjI0MDg2ZjQ3NSAoImNuaWM6IERlZmVyIGlz
+Y3NpIGNvbm5lY3Rpb24gY2xlYW51cCIpCj4gPiBTaWduZWQtb2ZmLWJ5OiBEdW9taW5nIFpob3Ug
+PGR1b21pbmdAemp1LmVkdS5jbj4KPiAKPiA+ICAJY25pY19ibngyeF9kZWxldGVfd2FpdChkZXYs
+IDApOwo+ID4gIAo+ID4gLQljYW5jZWxfZGVsYXllZF93b3JrKCZjcC0+ZGVsZXRlX3Rhc2spOwo+
+ID4gKwljYW5jZWxfZGVsYXllZF93b3JrX3N5bmMoJmNwLT5kZWxldGVfdGFzayk7Cj4gPiAgCWZs
+dXNoX3dvcmtxdWV1ZShjbmljX3dxKTsKPiAKPiBBRkFJQ1QgeW91ciBwYXRjaCBpcyBhIG5vcCwg
+ZG91YnQgdGhpcyBpZiBmaXhpbmcgYW55dGhpbmcKClRoaXMgcGF0Y2ggaXMgbm90IGEgbm9wLCBh
+bHRob3VnaCB0aGUgcHJvYmFiaWxpdHkgb2YgdHJpZ2dlcmluZwp0aGlzIGlzc3VlIGlzIGxvdywg
+dGhpcyBwYXRjaCBpbmRlZWQgZml4ZXMgdGhlIHVuZGVybHlpbmcKcHJvYmxlbS4KCkJlc3QgcmVn
+YXJkcywKRHVvbWluZyBaaG91Cg==
 
-This is a statement regarding the patch. Please desribe why you have to
-perform the change.
-
-> Update the property description to
-> reflect this information.
-> 
-> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
-> index 40e57b10ebbebeff130871b6d978df64111b6f29..40ddc64577e78b5c0dbb7b4e8893a08e8b37c92e 100644
-> --- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
-> @@ -108,7 +108,7 @@ properties:
->          RPMh resource name suffix used for the regulators found
->          on this PMIC.
->      $ref: /schemas/types.yaml#/definitions/string
-> -    enum: [a, b, c, d, e, f, g, h, i, j, k, l, m, n]
-> +    pattern: "^[a-n]|[A-N]_E[0-3]+$"
->  
->    qcom,always-wait-for-ack:
->      description: |
-> 
-> -- 
-> 2.25.1
-> 
-
--- 
-With best wishes
-Dmitry
 
