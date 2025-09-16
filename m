@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-818876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171D8B59785
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:25:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56392B59787
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8BA2A2E68
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:25:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 231654E17BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C8C311953;
-	Tue, 16 Sep 2025 13:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87770315D56;
+	Tue, 16 Sep 2025 13:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpPPiMz4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oz2kAG5V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7FE1D7E41;
-	Tue, 16 Sep 2025 13:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A855C314A62;
+	Tue, 16 Sep 2025 13:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029116; cv=none; b=pW1ydw5MuNFEAAUugrs1DPZ0qrWTyKWXJkR9Sgcx6DL6vjjm++CSzt2Gmx/3EhgRz4zkW+KML+8oCOun41i5MvxZjjhh81HGVX+tmkG+mc0sH6tzBNevX5wyUeDElaPU/SfbFm3/bu0vziGxUnRpj+Zmi/2UR3pCpbd+yfdCcZY=
+	t=1758029117; cv=none; b=UxOSK1C2EzQEjdOaN4a61Sc9YZRmhJ7qvCU0Sg5MSEWY20pa1HJA8uXaFLZZy4gqz3Op11gAJAjiOoUfpP/sEkLnnU8QOptx7PPrqYnMl6pk+9YvBEFLBbYn0rWuzkFreFvXeog5CCiZBIQaU0iZT7tM9zSua94TxRMoL2MHi1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029116; c=relaxed/simple;
-	bh=Gwdtq3KT3Skby34FHqWvNTPDYodseuItYXyKgLbVyOk=;
+	s=arc-20240116; t=1758029117; c=relaxed/simple;
+	bh=stqsNDi0MRmRsGuVrx4YIZiZv4PKdOen65Yeo1HfsEg=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=t14qU/KLrxp0eUZ14Oe+xABQ+9IWcs4pE//qRfFcuuQPF4xrNXtpOvDFmbdHqXGsg23luWRl24A8dsnE8TDGcTo1OPQlgiPNdkEabrc5bKKr4aRl4QSRqZSnHVXcuI/DxhOE9IUiZOemrB8dOYPhlya9VyC01EcSSng1GXS7n2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpPPiMz4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D87C4CEFA;
+	 Message-Id:Subject; b=AwsS9LSVbwwfH3n/WHpv4ZiVLieuadeUFcxEqnzm0UVdQKtylQw4R4X5gCybEg+z7s5fcQpSrLv1X1JbwS+1eBy154GKp3joPyCSZ7Y/NY2Xhg5hwtjmyokb9Y7PnYI89VJAyVV6pWMZ69k6VcQtKtNqXly50ywwL1jA8UJASxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oz2kAG5V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09815C4AF0B;
 	Tue, 16 Sep 2025 13:25:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758029116;
-	bh=Gwdtq3KT3Skby34FHqWvNTPDYodseuItYXyKgLbVyOk=;
+	s=k20201202; t=1758029117;
+	bh=stqsNDi0MRmRsGuVrx4YIZiZv4PKdOen65Yeo1HfsEg=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=GpPPiMz4wyZrApHDUFCob37XMpR/vuuYPGluQ2GKX0KCzW3AX9rthjNILfrQNmQ4k
-	 wFgaixJ2KbzbQKm5ZFFHavaGE4QrJDy6K40ZMslyB37OGdbxd9OuvJoTM2YMUJNwJq
-	 zstWZ2c890fwnk5bOjI2634zzNHR0HDcW9eyC8daUiCf73fGEQ0oH/2PMH/ypMSPp+
-	 r/7dWFXTPuPfxHADjukm5U7qRyK4O4x2HVGvUdPkM97o0Ziz9cszs1mw4dQQTnK0WN
-	 XzzjlgSp4OAtsCjuNmh1Z84arpLVuDHda6RsRteYteN1TAD/1HzyTUM3KEFY18Obd7
-	 uqpQGpeyRxCBw==
-Date: Tue, 16 Sep 2025 08:25:15 -0500
+	b=Oz2kAG5VEW1Kt/uhKXZqkiiF2PDUyogatKvB9PyUaKmfN9gV7VVUDJsygv0pSvJWO
+	 uWJEqEwR5S7Z7bQ50qHK29B4UMp+eP9KhB+FpYJf4knNTEYmELEsEoxtUH8s8iExz0
+	 +Dx2ZgtX9CkOj+8PgHfGEyQmIamf+zC8e9dOM6T53NOCaa/Nr+mLcGm5AIxx7Hm4We
+	 qY9npojjHnFcVY0kjxe1c5c22KOLAXsJbsbPwhykRX3WTjyvcryUtLWIwpt2uNm3ri
+	 ry0XEtzYxA0PEwEzoVit3O9SuTURP4t7m+4FiHszGLcb8ZgUN8+wbq5MjGsembJAAh
+	 xXNzsJ/xg1zqQ==
+Date: Tue, 16 Sep 2025 08:25:16 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,60 +50,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-iio@vger.kernel.org, =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-In-Reply-To: <20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com>
-References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
- <20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com>
-Message-Id: <175802889806.3636334.5922063165326624339.robh@kernel.org>
-Subject: Re: [PATCH 1/4] regulator: dt-bindings: Add Linear Technology
- LTM8054 regulator
+Cc: linux-kernel@vger.kernel.org, 
+ Radoslav Tsvetkov <rtsvetkov@gradotech.eu>, devicetree@vger.kernel.org, 
+ Jonathan Brophy <professor_jonny@hotmail.com>, linux-leds@vger.kernel.org, 
+ Pavel Machek <pavel@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, lee Jones <lee@kernel.org>
+To: Jonathan Brophy <professorjonny98@gmail.com>
+In-Reply-To: <20250916110217.45894-3-professorjonny98@gmail.com>
+References: <20250916110217.45894-1-professorjonny98@gmail.com>
+ <20250916110217.45894-3-professorjonny98@gmail.com>
+Message-Id: <175802889901.3636371.13778327614351953763.robh@kernel.org>
+Subject: Re: [PATCH 3/5] dt-bindings: leds: Add YAML bindings for Virtual
+ Color LED Group driver
 
 
-On Tue, 16 Sep 2025 12:24:06 +0200, Romain Gantois wrote:
-> The Linear Technology LTM8054 is a Buck-Boost voltage regulator with an
-> input range of 5V to 36V and an output range of 1.2V to 36V.
+On Tue, 16 Sep 2025 23:02:15 +1200, Jonathan Brophy wrote:
+> From: Jonathan Brophy <professor_jonny@hotmail.com>
 > 
-> The LTM8054's output voltage level is typically set using a voltage divider
-> between the Vout and FB pins, the FB pin being constantly regulated to
-> 1.2V.
+> Document Virtual Color device tree bindings.
 > 
-> The output current limit of the LTM8054 may be statically set by placing a
-> sense resistor on a dedicated pin. This limit can then be lowered by
-> controlling the voltage level on the CTL pin.
-> 
-> Describe the LTM8054 voltage regulator.
-> 
-> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> Co-developed-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+> Signed-off-by: Jonathan Brophy <professor_jonny@hotmail.com>
 > ---
->  .../bindings/regulator/lltc,ltm8054.yaml           | 77 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 ++
->  2 files changed, 82 insertions(+)
+>  .../leds/leds-group-virtualcolor.yaml         | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
+./Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml:5:6: [error] string value is redundantly quoted with any quotes (quoted-strings)
+./Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml:6:10: [error] string value is redundantly quoted with any quotes (quoted-strings)
+./Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml:79:7: [error] no new line character at the end of file (new-line-at-end-of-file)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: '#address-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/lltc,ltm8054.example.dtb: /: '#size-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml: monochromatic-leds: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml: patternProperties:^led@[0-9a-f]$:properties:monochromatic-leds:items:maxItems: False schema does not allow 1
+	hint: Scalar properties should not have array keywords
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml: patternProperties:^led@[0-9a-f]$:properties:monochromatic-leds:type: 'array' is not one of ['boolean', 'object']
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml:
+	Error in referenced schema matching $id: http://devicetree.org/schemas/leds/leds.yaml
+	Tried these paths (check schema $id if path is wrong):
+	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds.yaml
+	/usr/local/lib/python3.13/dist-packages/dtschema/schemas/leds/leds.yaml
+
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: leds (leds-group-virtualcolor): '#address-cells', '#size-cells' do not match any of the regexes: '^led@[0-9a-f]$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: leds (leds-group-virtualcolor): {'compatible': ['leds-group-virtualcolor'], '#address-cells': 1, '#size-cells': 0, 'led@0': {'reg': [[0]], 'label': ['status:red'], 'monochromatic-leds': [4294967295], 'priority': 2, 'blink-delay-on': 500, 'blink-delay-off': 500}, 'led@1': {'reg': [[1]], 'label': ['status:green'], 'monochromatic-leds': [4294967295], 'priority': 1}, '$nodename': ['leds']} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/leds/leds.yaml#"}
+	from schema $id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: leds (leds-group-virtualcolor): led@0: {'reg': [[0]], 'label': ['status:red'], 'monochromatic-leds': [4294967295], 'priority': 2, 'blink-delay-on': 500, 'blink-delay-off': 500} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/leds/leds.yaml#"}
+	from schema $id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: leds (leds-group-virtualcolor): led@0:monochromatic-leds:0: 4294967295 is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: leds (leds-group-virtualcolor): led@1: {'reg': [[1]], 'label': ['status:green'], 'monochromatic-leds': [4294967295], 'priority': 1} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/leds/leds.yaml#"}
+	from schema $id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.example.dtb: leds (leds-group-virtualcolor): led@1:monochromatic-leds:0: 4294967295 is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250916110217.45894-3-professorjonny98@gmail.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
