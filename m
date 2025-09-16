@@ -1,192 +1,179 @@
-Return-Path: <linux-kernel+bounces-819260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0577FB59D84
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:25:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CFBB59D8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB48C1888C8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:25:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E9F177B14
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C741437429D;
-	Tue, 16 Sep 2025 16:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96265371EB2;
+	Tue, 16 Sep 2025 16:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKfx5b2C"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x4wMjvyf"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA463629AC
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BDF2F7AA6
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758039907; cv=none; b=tpIYKFCGPKHvBWEhGS46aHQHxQEwiUlnKeeFTRXi8RJvJHRINcrKt9tWU2bElx6aNZmuR/025J0GIf8ebNeTqXwmzUzjQjt7RSx/L9Xv+jEWEFG6rWqAtND9W6iIezpigCkjH80jyNX8b3LuwwfG7AtOpkiZ7S82PF+CyC+MBjw=
+	t=1758040011; cv=none; b=Xw1+d07VSgrE2aNvZy+MIr+IJGAMjy8vTjLveH+2dFjJA3R6Hwkhf+ZcBkN7iNz1g84s56XNVR0nrLhA3VkISE3oTXiyd9ql5o1WE/WdGYzDJh/vpwUZC5Javbgb1ECYCcBFk/YBIq/UCKSEEme+08P5MMoioO2qRYikUcJScAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758039907; c=relaxed/simple;
-	bh=4bZfUcu3hp/JB4J0y/5p9andv/NKPL6V7hMbzL5vopg=;
+	s=arc-20240116; t=1758040011; c=relaxed/simple;
+	bh=PxBeY2ICmRxL7V6JGWbT7z+W48PkV2S3brfnG0Ta/Sg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PBmvL2EPk3TRqnCp3wSBW0zx/fGJPpjiz2RU+KA8lcJlqLsPAqQYpn2JgTJG9tFxcD/Bb+0HXvItmawrKDgLDBtdqD6HoiJ9PBvMPHSvwbx+D3X/DKSMTCvsMudp1QpXwtnh1DKou6D8tfJ0t0SpWTDNOL8B9IS9j/MRTarfyJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKfx5b2C; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so54647105e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=g6KraGqhT+eOJ0Lfd4o6A6OsMYM3YVDCDs4p5axhTL6U62t80b5m1eaijbQ7LI+GZBjJPrbjeUQ7xSTElOHfCoDY6KMi7QQdzsS7I7gb/2FLr4fBsrwjNWN1zSYyJn3Uqlid2lR9/APV2GooCGHGRk4gVS74KDl1WKkjNNQJnzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x4wMjvyf; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7741991159bso7161457b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758039904; x=1758644704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DU6pi+jQiHmP3RrytVdY83shq/RxcYi5dWlcWv2Gn9U=;
-        b=PKfx5b2Cr8wbMLdOGmQAVDpmUwQqc2ALiO9uql+bNly8gmsyRonj5IF1PBcUtSf4XO
-         SZmX+3Q1qe7E61CXabv8n59ncUjfQ+kisE+5MMBo8Zne/Cw/mTB29ydqq4Jkx9MQDvQJ
-         XdONhkbOaa95HJbmgAAa9pDEPhJbZb6uzttBdph6yFIvi79ruf7yvHlPGecrf4cOjTgF
-         gYrvMF/osBn0jHtVzHwR2mCzWoJEC2Q2eGttLIINhsjzg59JkGPbiDWIyAJG1Yc1rtkF
-         IXnIUbccneyvl9UiTebHvztkWsAiZZV8XQJvpZZ6MYZM6DWhqqDQVFybD5GFCDuQm1C/
-         7dbg==
+        d=linaro.org; s=google; t=1758040010; x=1758644810; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=s4w1twc2Jux9/iX+9+EawZxCflWASdrv9dd1/gUc0LA=;
+        b=x4wMjvyfpQsM54v6xctYOf/ZA6gD/PaXfUUnF13LhaC/AE9frmq2pERUCFTbcL64MK
+         3MVk5LFpY+DSoi5c5VB5u9sd2qh+j3GuZ6dKxDRCPSlnW5efp90fvPg6f9TFZER5qzEY
+         NSsQnmYj/0cltUR8/4fSZrJoQL2M9OS4eCk9FwNb/FK2K0ePYoluD9YeUzHHAPOTgRDt
+         jlKUkyDwatQfCELkiRrRNt2WJiDHS6zcKuS8lhQwVLqoOGFgZZGTeEmS4p7oFKPEJlX8
+         PgT1Jr9YN4v5eq18amIDsAZMaIsuJDNf1IDG8he3x2580UhztMvFZMuNY2Kj6XrfGeDD
+         hk8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758039904; x=1758644704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DU6pi+jQiHmP3RrytVdY83shq/RxcYi5dWlcWv2Gn9U=;
-        b=pXWY9ERvsr/SekCJTousZZRKkKCGJiNyNjI0laqiQSWjiQ6d73hZOKdMFtPvUvWDvf
-         559MFn8oIHISRFzcvK9xothMaZWIpftOX9pun37bybJjsU6qt4V5DoQR5j2N6gVMWDeE
-         g+Lfi1dczTWLagvdTKd0c9UuiL+/PwVlVAu25A4enXhQFf+8gm703m4JLHd6PyU/4nU5
-         4jdadiIj/AmroHzrk8xhdjEkMJCSLt+s0Bx4e3OuP9aggN8zzU6ieSE53QKKysVRwK5E
-         CfrRq0HrroyRKv7sbPB4+Vh8lLGQLYOanly/ZnbziJZUvw4lT7vwOsWnCGsjngET1GJ+
-         mloA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBoS6V60O07aHM+CHcQ2K9bLC4QscY3FLaXuEnZ9eac0ZWMMnkJ7VQQJEvFPR9g2URSdndjLBzL7WhuBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkNboT1fw2x8QT6tYcZGxUpI/OCzRzeB9NEOZRVGR8N6iG8Ef+
-	wB1j08sOXux+Rr5QBtTDwpx7+LjzxQV5ZMyp55XPueGxccwmENPbFso2xURIqJaPmcKojRHSMbW
-	1K50lD3vcCtUQQrmhFqGNFjIEGk6g/Fo=
-X-Gm-Gg: ASbGncsJl71KTUErFWYKEBVNg5K73KwS8afkE33AlGdV6WuT3lSWLZXM5yEMkO+njPc
-	JSLNZ1J2D3yiTUDG36y6lrQ+DViAXipXGveJwHdKPle/x2YrTlHrun0U1GPpvbTomeUMcbIZKL+
-	WK+1uqbYaF0c5y8Pn7eRRimpnk4aoocEn537wmGasZAmSNqrsnGosgRnMVZddEHwJ8QI69rAC+y
-	47wfOBx
-X-Google-Smtp-Source: AGHT+IFnC+ZB8Y8EWWSgcq7DryM/idg50aJ/eE+AB8zfjBLAVoKc5lX8wjY+HH9LKTM1j4AoLgwSfNow1JOz5yHjF94=
-X-Received: by 2002:a7b:c857:0:b0:45b:7be1:be1f with SMTP id
- 5b1f17b1804b1-45f211f300dmr100112085e9.32.1758039903439; Tue, 16 Sep 2025
- 09:25:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758040010; x=1758644810;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s4w1twc2Jux9/iX+9+EawZxCflWASdrv9dd1/gUc0LA=;
+        b=UZvyHbEaJT9x0fMuUYIrQXDNO2gjwlu6KgVpn5gHzGL5WHUpjmOS+gcqt9IY+02HR5
+         Zc9GpQkt56MYlpMSYnRY6QYWDMmcXUejpgRrRKeBC/sB3A9DzikinHdRWg03CdVNx0Dk
+         u5VJhz74Fjj5AG0zjRnKtr7Z1P2JrD+CrpXGXYSDSop7+iAVmgLVXtu1AkRfcVUFied8
+         oOL4asGFycThijNvMVTmOqm1uFPj8gLJuMWfdzZo1wg2gNtYbEkkNOpf9rPUUK+SKcbC
+         Eghkq46lGhQ60/Q46ErDEXjIZw3+a9PEvjEA3g4uk66AOujAmWVKe8EFQCd4DV4GJ+ct
+         PlGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFyW52suyq3QUsXxd+ODU1T2xJzBHeCa79RLfTVcyeVNn34FCmJk98wbxLRBzufVZSOm5tKoi53k75flI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6v55/UQjUWADsGrdb2h8cg/ROVybs8ktaAcHVp7D5UpV1qED3
+	I2vdu7s3IRM1Ix9KGbLwq8nSUIVzLrWrtx1swAqTrAZskPc9KOC/c7ChUI/qNmg+ENSj7qyl42D
+	ti5AMvQIeKyBF6CoKMhtIAFREhEq947eHYru3ZtuIbw==
+X-Gm-Gg: ASbGncuk7HmfI/hNxelL+9THZ9TRd9iMohyLWxhbQU395SHNTUiKmp8kiGgx8TGdsz6
+	55Hrga8jl1n4/zbMHx8uPaNWgGVNoM27cuYj/OwZeOvxsc9uvpJMiA4quIYXmJExwB8I+v2TAJx
+	roQxovuuOpiIr3dNcmBpqCvwtFj7Apumpp9nH6D8CSrenS81yd82w9TFyM6nVKUBLF1PQQosNuN
+	3hR8YhH6MPzhbK8zp2UYIDcY33m34/j6surLTdAu2wO7hXIU/fMVsVqeKiGu4RXq+zXvPs=
+X-Google-Smtp-Source: AGHT+IHuTUY+Teyoa1eWvti9PIr/otK14LfkQmbXX52ZUETrjjVY6olQ+9HFTHWNNqsEYSy8wzDykuGz9e1hPuCuCPc=
+X-Received: by 2002:a05:6a20:c28a:b0:262:4378:9df2 with SMTP id
+ adf61e73a8af0-26243789f89mr10527030637.44.1758040009637; Tue, 16 Sep 2025
+ 09:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906135345.241229-1-clamor95@gmail.com> <20250906135345.241229-12-clamor95@gmail.com>
- <20250916180418.3fa270a9@booty>
-In-Reply-To: <20250916180418.3fa270a9@booty>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 16 Sep 2025 19:24:52 +0300
-X-Gm-Features: AS18NWDUsY2rg2kwucuKEpR6QKEKIqi67u-AOuSpm9Dlzkb81_NunB_TLA1wgsc
-Message-ID: <CAPVz0n1Nvun5yBf_i3NB=kDmLfNFRjbFt1uTUW-hpLbp-h0g4w@mail.gmail.com>
-Subject: Re: [PATCH v2 11/23] staging: media: tegra-video: csi: add a check to tegra_channel_get_remote_csi_subdev
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+References: <CA+G9fYtT7HNBM2XBbePeZ-Fw+ig7SJ+JE_NpQ1VuHR_TvAjX2w@mail.gmail.com>
+In-Reply-To: <CA+G9fYtT7HNBM2XBbePeZ-Fw+ig7SJ+JE_NpQ1VuHR_TvAjX2w@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 16 Sep 2025 21:56:38 +0530
+X-Gm-Features: AS18NWDfejtlQ9zlS_9kzf9pQW6YsiN2lV16eZmPLVxyOpZY0K_VUANrsx-p3cc
+Message-ID: <CA+G9fYs4JB0ngq+aryXHVQSq-f05cb4agCfyM9zN0SgprQf0_A@mail.gmail.com>
+Subject: Re: next-20250915: error[E0425]: cannot find function
+ `atomic_read_acquire` in crate `bindings`
+To: rust-for-linux@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	Linux Regressions <regressions@lists.linux.dev>, lkft-triage@lists.linaro.org
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>, 
+	Elle Rhumsaa <elle@weathered-steel.dev>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-=D0=B2=D1=82, 16 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:04 Luca=
- Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+On Tue, 16 Sept 2025 at 11:17, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 >
-> Hello Svyatoslav,
+> The following build warnings / errors noticed on the arm arm64 and x86_64
+> with rust config build on the Linux next-20250915 tag.
 >
-> On Sat,  6 Sep 2025 16:53:32 +0300
-> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> First seen on next-20250915
+> Good: next-20250912
+> Bad: next-20250915
 >
-> > By default tegra_channel_get_remote_csi_subdev returns next device in p=
-ipe
-> > assuming it is CSI but in case of Tegra20 and Tegra30 it can also be VI=
-P
-> > or even HOST. Lets check if returned device is actually CSI by comparin=
-g
-> > subdevice operations.
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
 >
-> This is just for extra safety, or is there a real case where the lack
-> of this check creates some issues in your use case?
+> * arm, build
+>   - rustclang-lkftconfig-kselftest
+>   - rustgcc-lkftconfig-kselftest
 >
-> > --- a/drivers/staging/media/tegra-video/csi.c
-> > +++ b/drivers/staging/media/tegra-video/csi.c
-> > @@ -445,6 +445,22 @@ static const struct v4l2_subdev_ops tegra_csi_ops =
-=3D {
-> >       .pad    =3D &tegra_csi_pad_ops,
-> >  };
-> >
-> > +struct v4l2_subdev *tegra_channel_get_remote_csi_subdev(struct tegra_v=
-i_channel *chan)
-> > +{
-> > +     struct media_pad *pad;
-> > +     struct v4l2_subdev *subdev;
-> > +
-> > +     pad =3D media_pad_remote_pad_first(&chan->pad);
-> > +     if (!pad)
-> > +             return NULL;
-> > +
-> > +     subdev =3D media_entity_to_v4l2_subdev(pad->entity);
-> > +     if (!subdev)
-> > +             return NULL;
-> > +
-> > +     return subdev->ops =3D=3D &tegra_csi_ops ? subdev : NULL;
-> > +}
+> * arm64, build
+>   - rustclang-lkftconfig-kselftest
+>   - rustgcc-lkftconfig-kselftest
 >
-> I tested your series on a Tegra20 with a parallel camera, so using the
-> VIP for parallel input.
+> * x86_64, build
+>   - rustgcc-lkftconfig-kselftest
+>   - rustclang-nightly-lkftconfig-kselftest
 >
-> The added check on subdev->ops breaks probing the video device:
->
->   tegra-vi 54080000.vi: failed to setup channel controls: -19
->   tegra-vi 54080000.vi: failed to register channel 0 notifier: -19
->
-> This is because tegra20_chan_capture_kthread_start() is also calling
-> tegra_channel_get_remote_csi_subdev(), but when using VIP subdev->ops
-> points to tegra_vip_ops, not tegra_csi_ops.
->
+> Build regression: next-20250915: error[E0425]: cannot find function
+> `atomic_read_acquire` in crate `bindings`
 
-Your assumption is wrong. 'tegra_channel_get_remote_csi_subdev' is
-designed to get next device which is expected to be CSI, NOT VIP
-(obviously, Tegra210 has no VIP). It seems that VIP implementation did
-not take into account that CSI even exists.  -19 errors are due to
-tegra_vi_graph_notify_complete not able to get next media device in
-the line. Correct approach would be to add similar helper for VIP and
-check if next device is VIP. Since I have no devices with VIP support
-I could not test this properly. I can add this in next iteration if
-you are willing to test.
+Anders bisected this build regressions and found,
 
-Best regards,
-Svyatoslav R.
+# first bad commit:
+ [eb57133305f61b612252382d0c1478bba7f57b67]
+ rust: sync: Add basic atomic operation mapping framework
 
-> Surely the "csi" infix in the function name here is misleading. At
-> quick glance I don't see a good reason for its presence however, as the
-> callers are not CSI-specific.
 >
-> If such quick analysis is correct, instead of this diff we should:
->  * not move the function out of vi.c
->  * rename the function toremove the "_csi" infix
->  * if a check is really needed (see comment above), maybe extend it:
->    return (subdev->ops =3D=3D &tegra_csi_ops ||
->            subdev->ops =3D=3D &tegra_vip_ops) ? subdev : NULL;
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 >
-> Let me know your thoughts.
+> ## Build log
+> error[E0425]: cannot find function `atomic_read_acquire` in crate `bindings`
+>    --> rust/kernel/sync/atomic/internal.rs:124:37
+>     |
+> 124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+>     |                                       ^^^^^^^^^^^^^^^^^^^^ not
+> found in `bindings`
+> ...
+> 201 | / declare_and_impl_atomic_methods!(
+> 202 | |     /// Basic atomic operations
+> 203 | |     pub trait AtomicBasicOps {
+> 204 | |         /// Atomic read (load).
+> ...   |
+> 216 | | );
+>     | |_- in this macro invocation
+>     |
+>     = note: this error originates in the macro `impl_atomic_method`
+> which comes from the expansion of the macro
+> `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z
+> macro-backtrace for more info)
+> error: aborting due to 34 previous errors
 >
-> Best regards,
-> Luca
+> For more information about this error, try `rustc --explain E0425`.
+> make[3]: *** [rust/Makefile:553: rust/kernel.o] Error 1
+>
+>
+> ## Source
+> * Kernel version: 6.17.0-rc6
+> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+> * Git describe: 6.17.0-rc6-next-20250915
+> * Git commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
+> * Architectures: arm, arm64 and x86_64
+> * Toolchains: gcc (Debian 15.2.0-3) 15.2.0
+> * Kconfigs: rust config
+>
+> ## Build
+> * Build log: https://qa-reports.linaro.org/api/testruns/29894207/log_file/
+> * Build details:
+> https://regressions.linaro.org/lkft/linux-next-master/next-20250915/build/rustgcc-lkftconfig-kselftest/
+> * Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/32l4UDzp0FMtS73JeG3kWpcoQrm
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32l4UDzp0FMtS73JeG3kWpcoQrm/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/32l4UDzp0FMtS73JeG3kWpcoQrm/config
 >
 > --
-> Luca Ceresoli, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> Linaro LKFT
+
+- Naresh
 
