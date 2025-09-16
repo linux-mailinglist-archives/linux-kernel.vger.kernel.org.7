@@ -1,112 +1,138 @@
-Return-Path: <linux-kernel+bounces-818961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94D2B598E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:10:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11C7B598F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E870463757
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0DAD1C0376C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6AC3191B0;
-	Tue, 16 Sep 2025 14:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B685F335BAF;
+	Tue, 16 Sep 2025 14:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GENY26aQ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="SuXOcAbL"
+Received: from fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.64.237.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D1321E082
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F3717B505
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.237.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758031371; cv=none; b=ts5vjO1HVFCdrd9aPdoL/N5VjB1lX5eGXdwCDAvucSFTOqH1W4VYixltLZasWmQstrBoWVyH/yPRE4craIbs2YMoFhJ1RDOlB40ivyou6w+QGoqoKtMiHoSHuahgNpVPt1Fe7R8qLCiCWFsyhHhYNItLA2DcDsxZQNQLsDS8zmw=
+	t=1758031386; cv=none; b=aEyeDKuiqelViO4FWx8VZ5L7ERo8pxPLwqnCDHiYU9dZ23C/QkZ9VAWLwKQKhOpr+9ZzvnhV66mB09RHWAMIyDY7P8+JsRAaAUzNudWgmrfjYJke3CQ5RtztgqDwKPCucn3CvwjNCsWIHBRiQ/BMDYactXB2LhK5fQskDc5LICk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758031371; c=relaxed/simple;
-	bh=PrHDny6ZQpavYbWJP0mNeOkQflu1sgY9Zft6N5PA2Qw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNjWmD3ELFYaeE9se0dXu4h5N62UuYhjIuPKEGetiXdXVf1Ws5E6fskycx8DgZOHsaSiSFhRISR4uclW7/r+nwgN0KNLLznaUF0saasJmgIf88y0FYBmVci80kfmJUx93nhG0rQhU8EiHH/ejRcIAFtGy/tC63xgGw4YGSx6Ams=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GENY26aQ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0055A40E01AC;
-	Tue, 16 Sep 2025 14:02:45 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id kkzBIUseLwba; Tue, 16 Sep 2025 14:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758031362; bh=6ARRZU+FBKxugU9+m/3ITFGtt9dlM7LwJqnpK0WQ02w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GENY26aQlofBSdSGwsfyoOyti2ffis540uc4wmK2no7mA9lCU8dvLOTcc1Zlf0XZG
-	 1Kl8jxb/7wtK8lp9GCFMf6LGgI1vYCBit6/YF+6EoMaJXNMGDj7SIQ2kce4iZyqv5O
-	 PAWosbBKyY0meAqz3uC7xKpIIK4tdE82djTba+1H35dmnLpZgVGxUUxZhat5+4YNwJ
-	 MUZSCqTNnctBpFNetCAs7f+JuHwQUCthSnqn0hbn2t9FsG8F9HP8f0oFlmIriTq1aH
-	 9j6LF9QMsobWXTpUq9rGD6v6vzDXgk8hB/tjwZkVCyvwZKfqBlAAV8yW1jtmk4av23
-	 WSW1BCk87SicM1WtDnq07lwl0wDc+m9JchDHIpsD/cH/Mux8j7MIzk1uqB/zTVIHxZ
-	 i3m8+T/rFudM9569+HYTcdpbC9lpbk3e9wQ2MV44JgCluoKNXwFxPEpcpK+xfsIfnp
-	 nYYBZAnhraxxJD07so3oXFHCDK3FduffCI8KcRVNXJNb5w+Swy2scLR/gtjLvH8Vfr
-	 PdRgq5RG4UVNROdaFfAi6mJCr9VUMxeoMbduW2Td47jv8H+B6Nqmz0uYi8XC4TKtJN
-	 kbA9rsTcQwNNUeHNHd06rzj91OIqx5dFS+uO9xd8KIDl/4IDAz8bshF5KvBmh1U5eH
-	 pIymq6tW06YN2k2NEFF6QQDk=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6843940E01A3;
-	Tue, 16 Sep 2025 14:02:33 +0000 (UTC)
-Date: Tue, 16 Sep 2025 16:02:27 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Rong Zhang <i@rong.moe>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/CPU/AMD: Prevent reset reasons from being retained
- among boots
-Message-ID: <20250916140227.GGaMlt8xSp3eMI8Veu@fat_crate.local>
-References: <20250913144245.23237-1-i@rong.moe>
+	s=arc-20240116; t=1758031386; c=relaxed/simple;
+	bh=jGx/Yw223g22/u19/WDb3LAhoaall0qC9TKyMGM8Gv0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iIaHiHmb9rW4XPAybcJvaHTGL0mIJ+DPYKNjxSC9vPe0cmMCTgZtm7WslggRW9DfuQIUQbhpQesP+/QvhM/H7E3FyN1snakBPVQN5c94v41wFgVbJqx+S1kxfj1x0cellvfsaaMUEW+xUOdn4aTC9B9ri5ANRz+gSAPycghfjeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=SuXOcAbL; arc=none smtp.client-ip=3.64.237.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1758031384; x=1789567384;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yXWJn+oefsllBzSrWFdG2E5Pn0uf2RzuWYH2maZwKuo=;
+  b=SuXOcAbL6UxlQwl8WCgGnQQ/7JZSRpt0j3Q2Y6jX1e1pPoJ+11HX9MEF
+   Rlxk/ZnAZWh0qGqsbfnaOjYYaUK8QQyH0LpB74RyNrq6PqggSo5dEeOYZ
+   VKspLKt+Xr5VFMbZ7T68Be8ORYcyIwR/Ew1QcMer6yz3OZwAgAVBzusz+
+   wB4V/LDkJRUQRWguJcArr9ToWur1oteDt1/SWDRiciUv7h0GeMnxVciQ6
+   tOkrzM268J81WWuy20aQUeZy5GK2DcHVHqzFfxYhKRyUMAgrlDQppJ3rz
+   o1oS91BTr4zxlt5XdzkLiVzJTQqdUnOTKxUBbCz1ofAp+W8cdLzaE7l7X
+   g==;
+X-CSE-ConnectionGUID: u1Wy0rsxTS20oyEQLrs05Q==
+X-CSE-MsgGUID: qLEzx/aERB2Tapzm9dqbKA==
+X-IronPort-AV: E=Sophos;i="6.18,269,1751241600"; 
+   d="scan'208";a="2092820"
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 14:02:53 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:14199]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.0.240:2525] with esmtp (Farcaster)
+ id d22f9d81-188b-4362-acd2-884bd29253a8; Tue, 16 Sep 2025 14:02:53 +0000 (UTC)
+X-Farcaster-Flow-ID: d22f9d81-188b-4362-acd2-884bd29253a8
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 16 Sep 2025 14:02:51 +0000
+Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.108) by
+ EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 16 Sep 2025 14:02:44 +0000
+From: Fernand Sieber <sieberf@amazon.com>
+To: <peterz@infradead.org>
+CC: <mingo@redhat.com>, <vincent.guittot@linaro.org>, <juri.lelli@redhat.com>,
+	<dietmar.eggemann@arm.com>, <bsegall@google.com>, <graf@amazon.com>,
+	<jschoenh@amazon.de>, <dwmw@amazon.co.uk>, <wangtao554@huawei.com>,
+	<tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <vineethr@linux.ibm.com>
+Subject: [PATCH v2] sched/fair: Forfeit vruntime on yield
+Date: Tue, 16 Sep 2025 16:02:28 +0200
+Message-ID: <20250916140228.452231-1-sieberf@amazon.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250911095113.203439-1-sieberf@amazon.com>
+References: <20250911095113.203439-1-sieberf@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250913144245.23237-1-i@rong.moe>
+X-ClientProxiedBy: EX19D038UWB002.ant.amazon.com (10.13.139.185) To
+ EX19D003EUB001.ant.amazon.com (10.252.51.97)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 13, 2025 at 10:42:45PM +0800, Rong Zhang wrote:
-> The S5_RESET_STATUS register is parsed on boot and printed to kmsg.
-> However, this could sometimes be misleading and lead to users wasting a
-> lot of time on meaningless debugging for two reasons:
-> 
-> * Some bits are never cleared by hardware. It's the software's
-> responsibility to clear them as per the Processor Programming Reference
-> (see Link:).
-> 
-> * Some rare hardware-initiated platform resets do not update the
-> register at all.
-> 
-> In both cases, a previous reboot could leave its trace in the register,
-> resulting in users seeing unrelated reboot reasons while debugging
-> random reboots afterward.
+If a task yields, the scheduler may decide to pick it again. The task in
+turn may decide to yield immediately or shortly after, leading to a tight
+loop of yields.
 
-Just a heads-up: we're figuring out internally what the right thing to do here
-would be.
+If there's another runnable task as this point, the deadline will be
+increased by the slice at each loop. This can cause the deadline to runaway
+pretty quickly, and subsequent elevated run delays later on as the task
+doesn't get picked again. The reason the scheduler can pick the same task
+again and again despite its deadline increasing is because it may be the
+only eligible task at that point.
 
-Stay tuned.
+Fix this by making the task forfeiting its remaining vruntime and pushing
+the deadline one slice ahead. This implements yield behavior more
+authentically.
 
-Thx.
+Fixes: 147f3efaa24182 ("sched/fair: Implement an EEVDF-like scheduling  policy")
+Link: https://lore.kernel.org/r/20250401123622.584018-1-sieberf@amazon.com
+Link: https://lore.kernel.org/r/20250911095113.203439-1-sieberf@amazon.com
+Signed-off-by: Fernand Sieber <sieberf@amazon.com>
 
--- 
-Regards/Gruss,
-    Boris.
+Changes in v2:
+- Implement vruntime forfeiting approach suggested by Peter Zijlstra
+- Updated commit name
+- Previous Reviewed-by tags removed due to algorithm change
+---
+ kernel/sched/fair.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 7a14da5396fb..cc4ef7213d43 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9036,6 +9036,7 @@ static void yield_task_fair(struct rq *rq)
+ 	 */
+ 	rq_clock_skip_update(rq);
+
++	se->vruntime = se->deadline;
+ 	se->deadline += calc_delta_fair(se->slice, se);
+ }
+
+--
+2.34.1
+
+
+
+
+Amazon Development Centre (South Africa) (Proprietary) Limited
+29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+Registration Number: 2004 / 034463 / 07
+
 
