@@ -1,107 +1,151 @@
-Return-Path: <linux-kernel+bounces-819010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A41B59A2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5FAB59A0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B933C4A242B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:23:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86781177663
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE93338F3F;
-	Tue, 16 Sep 2025 14:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371C03081BB;
+	Tue, 16 Sep 2025 14:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZmjL6RjW"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLtdruPi"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835251078F;
-	Tue, 16 Sep 2025 14:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB2E28C84F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758032418; cv=none; b=aWWGDc/ruSasPIParLoXU5A1Crb6QBaQLNw9YWkYbEcrZI89ko+yI05Yc15mlT8jgR4vjKqa4+YftWdftCD4ynnQY4txrWiiyglLdtfzHtcOstv0UqME1Kq6C7YnA0oqsR5v9ckUJ9zZovYXID3NiNkUiksedRCjAvxLon4G8uA=
+	t=1758032532; cv=none; b=UJF/+MN9YVImoeVVwel23iLHwLh21vLc3E7gP/aGzF4y4VFjBRhLuaVrG861W9yDdM9mHq16Y5mqDPcVR0bl5xC5oWrPEbmmDO4w2qkXd4P9EsHQFwy6jlyFQp2UoZ4MmUB4qZ3k///eij5y+/BLY8s5mPjzXchwYDmqgPDB75A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758032418; c=relaxed/simple;
-	bh=gxDtgHz7G1qQsGNenAHFPQ0Z2+aX6Y9VV1cwAM/Bx0k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HTyM+OWagcmXP9a77A4Dw/wLqFTpzMGsdjpg20w7K4ZvS9ppNYzanCZc/9ZZDA86HYDYTGH5w11AJly7ZIlyMgHsTebJukeslwgUXpGGchvGH+TpCIn9QpHIsNXC1DdcZoqqjTyZl8yk+4210DK1XqB2mMU+Dxk9fT7LX5C/OJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZmjL6RjW; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6F8B140506
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1758032415; bh=zYbUqQqq5gBAL5NIx7a64DWZNoB49w8Fp0Gj3T0pxnM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZmjL6RjWsOZ3eAjNFWsOuzjJ0Ru9j9OUpBRNBMRLLKNfG48ZXDy7L1DBpuUggW6Sb
-	 Kchk7t0p0giMOvQ+nErBhBHHuOMLmgD2X0Os32s4ZIHYuaOxRxO95RmmZmombPAI6x
-	 VnU5WL1lASRpwAuGmchNSyDbfhNSbjgWo95ypTGez30DhV5nm91BcgQrda0Fc34U/0
-	 X14t+pZGhwYrqfWabPVAD1U+rr8gEiYrdFwLfCtkOMSSbfMIOyv5m5HgVyts62/am/
-	 E1zv0QBP7UDkqON3AtqWjJI0Wa2A6d5d4VTIaaxZMvOTJYdeTACO+Jawj+JyfdW1fg
-	 eH5UgPsER07pA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 6F8B140506;
-	Tue, 16 Sep 2025 14:20:15 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Andrew Morton <akpm@linux-foundation.org>, Kalesh Singh
- <kaleshsingh@google.com>
-Cc: minchan@kernel.org, lorenzo.stoakes@oracle.com, david@redhat.com,
- Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de,
- kernel-team@android.com, android-mm@google.com, stable@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook
- <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar
- <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jann Horn
- <jannh@google.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] mm: fix off-by-one error in VMA count limit checks
-In-Reply-To: <20250915153642.7f46974a536a3af635f49a89@linux-foundation.org>
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-2-kaleshsingh@google.com>
- <20250915153642.7f46974a536a3af635f49a89@linux-foundation.org>
-Date: Tue, 16 Sep 2025 08:20:14 -0600
-Message-ID: <87v7lifpi9.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1758032532; c=relaxed/simple;
+	bh=S16ECLvytyLmOv2TFGMROw+zdnonrMQxJZVeq+GI71U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IvNxwxq/wKwTID5Xy3kog6QyTyAtDQ1TYCdvUXHoq8bZzvpu/j2e7VftSYjHyNNshCankBYSzlfAX+iX0iqcVi8Vq6nywr4sZ7VbPvVP3vPMyKyjFUCtDcfPqvc7W+ugw1v3WJvCD0MZcoIphu5NjtzUNiuwTztoYC2d0yAQuQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLtdruPi; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3eb0a50a4c3so1517713f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:22:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758032529; x=1758637329; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pl1jcFzXvRWCuO/5MhdLryyBckGIL24XMYEjQYGJmG0=;
+        b=XLtdruPi07bATKjGB7WBmahu9AXObkmiq8xWhkmB7qS1u1kL+Ksuynkxp/lnqrDf1U
+         zokSqdx0e7PmItaWHJ3VFToab/B3JfV/tgDkG4NzX7Yd+09Frv8rrhLpK6MFxlTiJt9e
+         kZJSi7oD5MmAHIVD485CnVhfPeySVMaiNtkPXw1quWBbCRgcX2FDDY5Bhq90I+1yKp2v
+         pnn2UeXTbBRAzpiAl8ACW5c88OgyCLKN3jA8Gkxh0U9NNLOpJolgA13CLla/66wxtDJW
+         CNIvw3Ez4/H+2rugt+mIrsscx/4yhw9Ltzv3200BStNZN7AzjLe4faEPam8rRCNGbt2M
+         YqKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758032529; x=1758637329;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pl1jcFzXvRWCuO/5MhdLryyBckGIL24XMYEjQYGJmG0=;
+        b=TjhZica6g4A9n0pj/i6rC8VPs7s/LC+Vdyk8Ijd8FIEBioKWvXuVQVQDWuoXjuuc2c
+         ymljt0AGbE/U3+D4yDvTiFPKwKbUEJeeVOE9HcQ1glRqz528L8rCVSQ3Q9kuZdjRYsFl
+         a+PIeZdYUO/Dusv/94Q5x8Mp2HTFlT/Cz1W59qVYCAKsj26ts9CKL2/FOJHiPKq9YVt2
+         RE64JDge+Q2JhS3z91tHgIDQ46jzzgwFBTKK/SVQfQ1yc3rSqoERhQPmEK9tpZ5TjsaE
+         PC4Gg44N4NNgbrLRYytAkFFAsBJcPMwtGgXcgt+zalgVOnybChYjDmF/8rGruo6Lo8Qr
+         vxPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvRxz8aI/KMhYYdQ/KQGOnKVf9ALdCdQQomKkQMyIuZ9Isnin2fADWu2LgfIxFEdqlUNAW9xHy6TGCF9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7GCvejAKr2XgoFa5fFMKaHiylrNO7e7Rggbwci4f3BTARSyhe
+	DFODRxIn/IdPbIY4LkZ82HHKUH2gWzGnzxsJo+mT87nSQjB/e/pSyA1X
+X-Gm-Gg: ASbGncuqvi8Pnj/UoqDFozlUw5owhbKOqLQMn3DCBSC8f5NEvDqO5lJuilPTstKAo1+
+	QLhypfalsoGNmG3VHcWRcpUn8PWfxK7EsxAri4T3P23XVLzC1RHYvslNYPnO9CE6Mllq5NaAMtt
+	sW6pAfYc9tFLMBTmgvU6kt0v8t5iXhbR4iDjPPoAxgYkBdE5fjaNGuztbXXZAITN7OHKBQrXC7P
+	Lf8yv8a0Zzr8IxRp02pdN7YrGoa1pr5WXH512Y8JAowIu4w50UES5oZ65Pb6A1FM3JIr9dRo2mU
+	x7J99nP75hlXELjwi1Cg3vi4CZTqB+vhOwN13O+fkrbbVQ/TMNI4v2qp0otCug7nIe0gzXaYQoY
+	dRPBMFTfNiCHEaFYVaHnjTyp1C1cItG0UwXYwG6mfor+c4eeBGBbtd6MD8JVtn3aP2Gd0vee1GT
+	PrXmtsoGhaOhzejgPAUKruvgTXwIuFcuAEtp909w==
+X-Google-Smtp-Source: AGHT+IEfo6dIZQgb+2KQqBaq9k8zgeodNBoQBmoTlSmN4T18NxGs2JJXZCHspCns20/kog8GcmY8rQ==
+X-Received: by 2002:a05:6000:3112:b0:3ea:e0fd:290a with SMTP id ffacd0b85a97d-3eae0fd2e16mr6354578f8f.12.1758032528799;
+        Tue, 16 Sep 2025 07:22:08 -0700 (PDT)
+Received: from emanuele-nb.corp.toradex.com (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c4490sm225090165e9.19.2025.09.16.07.22.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 07:22:07 -0700 (PDT)
+From: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
+To: 
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] drm/bridge: ti-sn65dsi86: Transition to LP mode on every video line
+Date: Tue, 16 Sep 2025 16:20:43 +0200
+Message-ID: <20250916142047.3582018-1-ghidoliemanuele@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Andrew Morton <akpm@linux-foundation.org> writes:
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-> On Mon, 15 Sep 2025 09:36:32 -0700 Kalesh Singh <kaleshsingh@google.com> wrote:
->
->> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->
-> lol.
->
-> x1:/usr/src/25> grep "Fixes.*1da177e4c3f4" ../gitlog|wc -l
-> 661
->
-> we really blew it that time!
+The component datasheet recommends, to reduce power consumption,
+transitioning to LP mode on every video line.
 
-A few years back I made a list of the most-fixed commits in the kernel
-history; unsurprisingly that one (I call it the "original sin") came out
-on top:
+Enable the MIPI_DSI_MODE_VIDEO_NO_HFP and MIPI_DSI_MODE_VIDEO_NO_HBP
+flags so that the bridge can enter LP mode during the horizontal front
+porch and back porch periods.
 
-  https://lwn.net/Articles/914632/
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+---
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: Jonas Karlman <jonas@kwiboo.se>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: <dri-devel@lists.freedesktop.org>
+Cc: <linux-kernel@vger.kernel.org>
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Perhaps the time has come to update that analysis.
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index ae0d08e5e960..957e9abd46c3 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -689,7 +689,8 @@ static int ti_sn_attach_host(struct auxiliary_device *adev, struct ti_sn65dsi86
+ 	/* TODO: setting to 4 MIPI lanes always for now */
+ 	dsi->lanes = 4;
+ 	dsi->format = MIPI_DSI_FMT_RGB888;
+-	dsi->mode_flags = MIPI_DSI_MODE_VIDEO;
++	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_NO_HFP |
++			  MIPI_DSI_MODE_VIDEO_NO_HBP;
+ 
+ 	/* check if continuous dsi clock is required or not */
+ 	pm_runtime_get_sync(dev);
+-- 
+2.43.0
 
-jon
 
