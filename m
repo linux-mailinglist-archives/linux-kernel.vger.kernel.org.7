@@ -1,169 +1,126 @@
-Return-Path: <linux-kernel+bounces-819213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EA9B59CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:06:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11603B59CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E742F58382C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3021325555
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A10527713;
-	Tue, 16 Sep 2025 16:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB013DAC13;
+	Tue, 16 Sep 2025 16:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i7IqmjlC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qUQJtCFx"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C545128312D;
-	Tue, 16 Sep 2025 16:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C5E393DDE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038552; cv=none; b=ItYF3Iv7ViaowvFawW69PpKx/vyxGUT/M7CMSCHJZ9vcNDjdIzr4lAOkN7MFAP8r8ck4U6aPQ222RFMb9ClzYnsj4nfY19o80QWYANIXNeJs4dR63W/uaLWdbbAhJFmuO6UCq7uqxyEH6A5wiYyexWNV3aevEcYk4XyyQu0Yjqo=
+	t=1758038562; cv=none; b=kh9ROVHwYQY7TPu0+kBsx/3gJhEVZSfR6X+FKRqABEL5rPUba7oJ0Osh8jFhLOpIX4i9HmNtebMBdTGJrmaCvoJsjTUh77+UV0qcjo/FWPgOy5/NoNUCUdDLbE3LQObcXy/QYOls51aZAA9ChaVrR4zg9NNbxjr2c64hBdUJJUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038552; c=relaxed/simple;
-	bh=Hb5au3Uvp4FpaBemuX/VN5BQxHiXxDyZSfCuoXwXubE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VOLzIgbMEbL6Dz+qyBOJDuVelUhqDbKGpB0iMaor52+/eHgvsBrcqZGUcVAFcSSsQ4VIVACJXxXBCisi4vSwzdJHX0mT5Jw/TYkDGmqRnAv/3DwenpvrYcP/eu7UhnfTqr9/uLVzt1wuS9kZNppDr21iNW9bB5982UHS7XD63Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i7IqmjlC; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758038551; x=1789574551;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Hb5au3Uvp4FpaBemuX/VN5BQxHiXxDyZSfCuoXwXubE=;
-  b=i7IqmjlCvDAcReqTnnZYyMgCb/aS85hwya7fmGiEd9CsaV/EjCe7cO4b
-   PBUfQFCqNWkmS0SVZCCPv5v0d4wxkHEUlz2sxrA1rJins1JYCx7yPOroD
-   tr9FnrFINwimYLxVmdOYsNx8b52qd7cilpH/KWsbC8o+4mx+QyQBahXSs
-   JVQ6OjMvfjUjGdJS2bMekxr2GvrBPUmPy2lFtuC2QsSkuNdu9vtMoDjqu
-   4vmcgx1rAbXPawoKzkVM0/DJ7iqJgnegcr423VSKalhCgqlbe27JUVCdI
-   js08IncrBIEaAcPf7iqAlu+pcqUyjwX2qxAtTdsW13avOKoxP4Z8D2SE+
-   w==;
-X-CSE-ConnectionGUID: oCZLtxtYT8Kag8dz9I44cQ==
-X-CSE-MsgGUID: kK9op9HTQV+MWAp0fqGkhg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60394586"
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="60394586"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 09:02:29 -0700
-X-CSE-ConnectionGUID: EOkCs+SITou17l4soUtPiQ==
-X-CSE-MsgGUID: eUSEsKZCSa6pXfmGD5BMmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="205940945"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.195])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 09:02:27 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 16 Sep 2025 19:02:19 +0300 (EEST)
-To: Bjorn Helgaas <bhelgaas@google.com>
-cc: linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 00/24] PCI: Bridge window selection improvements
-In-Reply-To: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com>
-Message-ID: <9a21aa6b-ab8b-7ae5-5dbf-f2b895798e8c@linux.intel.com>
-References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1758038562; c=relaxed/simple;
+	bh=Pm9S+Z/lbTmOGDpkTDgV/dX6CqEliRA23hXOnATAb4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u4PGEkkAA1QAgm34/ZxMhALhTDUAotjWLzdGABKQydvIq8EKZ4ogzia+hBWoaNdIx0qHVdBsNSxligCS9pjVC8gk86hglA4BFmVBEtDQCNu8VgcRitRJzRdARjfSJte3xRhXoWkade8tX5tW9j37Mg4R2tGm0sLQQz50tee/2/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qUQJtCFx; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b4bcb9638aso542221cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758038556; x=1758643356; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mOGfEho2lxDBDt+dfHnFZdb9utqA2RtE2i1pJMhS6N8=;
+        b=qUQJtCFx0kkjwCYBYqEnlVtLCctOk2wa4Iby0zStroK/N6BgW+SJkxW5F420iBAm82
+         74DQGu5RAzLl6RLvm8b+H8jKqLIFt8NJkdhvnkN1WSBr+Asmhy6xK+c7rqHcSCO16UTZ
+         Rre+cdMdLxgur+EndbZAM5dPTzxsd8Voa1/fAN8jm3+lb+HYy951lY11H0252rZhW/IU
+         xsvlJzTUEqHdD6fLzfjwJs7wClESkvzAxZvzwgCRJqxssJP1V4tqfaRTP82gWTRHB5jV
+         0AEp9abm7/RtotePkb7XcEddYEyed3MuYe0KORJxR2c2UKcz9CCGF5Dm4qXrW9WHPfx1
+         SJTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758038556; x=1758643356;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mOGfEho2lxDBDt+dfHnFZdb9utqA2RtE2i1pJMhS6N8=;
+        b=DK/ExAmuxfuBD7EwFgczHCqRmxU3VE/l8BYqxGaNhVuo4LM6g5YSzltroRnbaojHe3
+         kh3VUQpR2gDV6Uqi3cK1SCECNHCcIey3AwgLCzPe7fh2G6Q+WWD2tr5fAJa5zFRz/xYK
+         VFpzSS2Kj4C9PjnwIhEb4MNHRZ1sQTdYxnF5bTr9uC3vZYZg+DJciqOnDmjvn4RBfpTi
+         rhWhCyXr74mEW2gx+yk173nkHIW4VqOpw/TUbobyYCp2RjHgNIXyJUA3cEj58gjVbpjV
+         MuM19Udz4wQOEf5CcWtsb+ZcFxBu/x+raDwauuUiE9rOZkJ2Cw3e7H8hafZReniYlhiE
+         st/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVI2gLXxHFl48M4kM8Y26DkxaxzDQShEPoIjAUbZw7ii4rzEvm8GLj5++DlXzW/xcpz5WN8vtbJw22v3Pc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+Wi7Wpo21SrkeuzdSGVapfRFVHcMYPoqSu9MwqmBDFHhEBYU3
+	hH/qeKtoJa4+oNMG87uOAA1RgjMJIGeFTm03RPb14eFIRruerJBpGEYr5H/Tvep6GHo3wKhS4Ut
+	hDR9z7KxkyfV2On+CQrcg36XMkpFlQzCPmd56938K
+X-Gm-Gg: ASbGncsdr2G+14SvJfs9LT/MQcGnOUrSo5re0mWANyvhItrlFCF5Itk1nwT/WE8u36A
+	VOOI/kDraQWfDSsUe0hvFVbBQeJ+fquMFZszuia8PN+vAADZDltnB4tbE0jlFGUH9a/vh9w4QBl
+	H0niA3ZRcLN4hvbv1ALka+SFGmv30mgQ1Ale5tPCEyGN6grfi941pwmweZgqeWb/KXzf8Ls1XHx
+	TNF9oDkSLUQGCvwa0SpNoko4D6tUSpWZcNSbqmv0YrF
+X-Google-Smtp-Source: AGHT+IFrvIE5klPLjtgAcRRwXahOqbKuS12v1SX41CUBYbkgKcxIRfBt0vMkeQV4TW2WSxuZyLvtourtBQzZChO5rcI=
+X-Received: by 2002:ac8:59d5:0:b0:4b7:8de4:52d6 with SMTP id
+ d75a77b69052e-4b7b1bdf823mr7027581cf.2.1758038554773; Tue, 16 Sep 2025
+ 09:02:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1097006165-1758038539=:10969"
+References: <20250915230224.4115531-1-surenb@google.com> <20250915171112.f71a7606a7f9fd3054662bed@linux-foundation.org>
+ <CAJuCfpFQCgQLSrzfVjV+J4tkYbOx_W9v-kWmoo-rmh5hs9gEXA@mail.gmail.com>
+ <20250915195633.96236cecebd8777243a770bc@linux-foundation.org>
+ <CAJuCfpH1JW8vwOFF2H2SOxZqoJHadXsTc6C=LUS_=twcf=k9qQ@mail.gmail.com>
+ <20250915212133.de5b8522137a5ed30efe956e@linux-foundation.org> <CAJuCfpFonUPE0FL5XGm0paYp9ZXeAKK6mjHO_8hUkyxfyduL=Q@mail.gmail.com>
+In-Reply-To: <CAJuCfpFonUPE0FL5XGm0paYp9ZXeAKK6mjHO_8hUkyxfyduL=Q@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 16 Sep 2025 09:02:22 -0700
+X-Gm-Features: AS18NWBBsyvMb_SnYAjyDoVzFBtIKASw_yt6BbU_ooXkYgjsNjIX79eMvqtS-Dw
+Message-ID: <CAJuCfpEGpLJMTDS30Z0xpurbxtRS2LKx1G2=u=kPknpBrHK6jA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org, 
+	usamaarif642@gmail.com, rientjes@google.com, roman.gushchin@linux.dev, 
+	harry.yoo@oracle.com, shakeel.butt@linux.dev, 00107082@163.com, 
+	pyyjason@gmail.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Sep 15, 2025 at 9:39=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Mon, Sep 15, 2025 at 9:21=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
+ion.org> wrote:
+> >
+> > On Mon, 15 Sep 2025 20:34:33 -0700 Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+> >
+> > > >
+> > > > > could you fold it into the existing patch or
+> > > > > should I respin?
+> > > >
+> > > > A little fixlet would be preferred (by me, at least).
+> > >
+> > > Ok, should I post a fixup patch or you will do that in-place?
+> >
+> > I think the former, please.  Your intent is preferable to my
+> > interpretation of your intent and we get all the nice patch metadata to
+> > track everything.
+>
+> Will do first thing in the morning. Thanks!
 
---8323328-1097006165-1758038539=:10969
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Posted at: https://lore.kernel.org/all/20250916160110.266190-1-surenb@googl=
+e.com/
 
-On Fri, 29 Aug 2025, Ilpo J=C3=A4rvinen wrote:
-
-> This series is based on top of the three resource fitting and assignment
-> algorithm fixes already in the pci/resource branch. I've tried to compare
-> these patch with the commits in the pci/resource branch to retain the min=
-or
-> spelling/grammar corrections Bjorn made while applying v1.
->=20
-> v2 is just to fix two small issues within the series intermediate patches=
-=2E
-> These corrections attempt to ensure this series is bisectable if
-> troubleshooting requires that in the future.
->=20
-> In addition, a few corrections to changelog texts were made.
->=20
-> I'm left to wonder though if the added double spaces after some stops
-> within the commit messages in the pci/resource branch were intentional or
-> not (I did remove them for v2).
->=20
-> As the changes are very minimal, I'm only sending this to lists and Bjorn
-> to spare people's inboxes. If somebody provides a Tested-by tag for v1, i=
-t
-> should be counted in for this v2 (v1 vs v2 difference does not matter if
-> testing the entire series).
->=20
-> v2:
-> - In pci_bridge_release_resources():
->     - Keep type assignment in until removing the type hack.
->     - Introduce res_name in the patch it is used avoid compiler warning
->       about unused variable. Place it into the block that needs it.
-> - Minor corrections to changelog texts
-
-Hi Bjorn,
-
-Just a reminder that v2 improves bisectability of this series which might=
-=20
-turn out very useful in case people hit any issues due to one of these=20
-changes so I'd prefer pci/resource content to be upgrade from v1 to v2.
-
---
- i.
-
-> Ilpo J=C3=A4rvinen (24):
->   m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
->   sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
->   MIPS: PCI: Use pci_enable_resources()
->   PCI: Move find_bus_resource_of_type() earlier
->   PCI: Refactor find_bus_resource_of_type() logic checks
->   PCI: Always claim bridge window before its setup
->   PCI: Disable non-claimed bridge window
->   PCI: Use pci_release_resource() instead of release_resource()
->   PCI: Enable bridge even if bridge window fails to assign
->   PCI: Preserve bridge window resource type flags
->   PCI: Add defines for bridge window indexing
->   PCI: Add bridge window selection functions
->   PCI: Fix finding bridge window in pci_reassign_bridge_resources()
->   PCI: Warn if bridge window cannot be released when resizing BAR
->   PCI: Use pbus_select_window() during BAR resize
->   PCI: Use pbus_select_window_for_type() during IO window sizing
->   PCI: Rename resource variable from r to res
->   PCI: Use pbus_select_window() in space available checker
->   PCI: Use pbus_select_window_for_type() during mem window sizing
->   PCI: Refactor distributing available memory to use loops
->   PCI: Refactor remove_dev_resources() to use pbus_select_window()
->   PCI: Add pci_setup_one_bridge_window()
->   PCI: Pass bridge window to pci_bus_release_bridge_resources()
->   PCI: Alter misleading recursion to pci_bus_release_bridge_resources()
->=20
->  arch/m68k/kernel/pcibios.c   |  39 +-
->  arch/mips/pci/pci-legacy.c   |  38 +-
->  arch/sparc/kernel/leon_pci.c |  27 --
->  arch/sparc/kernel/pci.c      |  27 --
->  arch/sparc/kernel/pcic.c     |  27 --
->  drivers/pci/bus.c            |   3 +
->  drivers/pci/pci-sysfs.c      |  27 +-
->  drivers/pci/pci.h            |   8 +-
->  drivers/pci/probe.c          |  35 +-
->  drivers/pci/setup-bus.c      | 798 ++++++++++++++++++-----------------
->  drivers/pci/setup-res.c      |  46 +-
->  include/linux/pci.h          |   5 +-
->  12 files changed, 504 insertions(+), 576 deletions(-)
->=20
->=20
-> base-commit: 295524c65d8b4850efbb809f12176eb1262a5aba
->=20
---8323328-1097006165-1758038539=:10969--
+>
+> >
 
