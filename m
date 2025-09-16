@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-818890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FBD0B597AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:31:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1628B597B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0961A7A8DF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FB7167881
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A910321ADA4;
-	Tue, 16 Sep 2025 13:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB10C311C2D;
+	Tue, 16 Sep 2025 13:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IYJ1APij"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R+1zHJBl"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10D220E029
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889A72DAFB5;
+	Tue, 16 Sep 2025 13:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029462; cv=none; b=PtAEDM/hyQgyVxVmePzlkSAxduFjUUSXimcAPQCVTAyuJpyZoLMgAIGrvo6Kez1QxM8XphCV/jzQy87kFgYATOFu58zje8Qeo5IoioHiUDRf42vcrG99eMS4Jx52rqaSPr6u/KnQHPUom5X5rwB0FFmh1ojobjudS3/wHqw2bsc=
+	t=1758029484; cv=none; b=R06rrkcfNDw7tFop46Vcz7auYxHP0L/Ao3IuH05eMd5he0Cx7RzLCbdIk4jMqpf4lwyY1/3rF+1GO6SBHI4FI+Z7YXtPIaWGcv7RTSeGWugv8acMPXt4EWar6BOpnHami0Xmrbgt0Wd1Xw0Z89WZXIWQd51J77L1KkOTf5piKIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029462; c=relaxed/simple;
-	bh=vHGeoc6gZ+/27XjQT7Icf4xx8n94wIYqdOJfkABkoDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ofw2TN31Psje+TBPRRWboQzdgnVdGUcFLAvxGBSYvo5tYjPWhzwh07oXLpR6PATeGGdGjAGC6G5n7r/5B2xW7DyKsxvKPhoplu+iGONYE0CTVjVqS7GrOTyi7IhphpHl8QW/Dmhtp3c96SOqF9APUEdjJa28VBGJUvb9jf46ues=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IYJ1APij; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 641E9C8F462;
-	Tue, 16 Sep 2025 13:30:41 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BCE9B6061E;
-	Tue, 16 Sep 2025 13:30:57 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3A0ED102F16EB;
-	Tue, 16 Sep 2025 15:30:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758029456; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=tUyzwXW4458dpExn6r1iPeVrMvWBtYuEhb3Ju7KaSQg=;
-	b=IYJ1APijKsoPsmylpXB1reCXjld/uQqgECM+pnJVPqDiw15H3pG8uQAqDIGoKPMA0+d306
-	HHdU6PEy7Aidx1OZH6BH+CTrcWkLtunt63vvp3q17Dsd9Nw4DD2bRhsYlCfD4M7BGiN/Sl
-	NPiOODnElalEawczpz7eSqn4lPNPFQE+L50fP4nBfcV/ea0soFr+OLF0NLhzPsIBsMpGuc
-	IVj6TCVouLXWiSK9ElBNvUlb8u8uuIGwLBqYTxFgjzDpfwhMZIAhBYPT2YVZ3eVWe21DIe
-	ccSk/qVsKJeAQMtt36QM1HGOhrPx5kButftwcY6pPVBQpuC3F40r3Ho/Hvh7XA==
-Date: Tue, 16 Sep 2025 15:30:40 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Liu Ying
- <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Andrew Morton
- <akpm@linux-foundation.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Zijun Hu <zijun.hu@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/9] drm/bridge: get/put the bridge returned
- by drm_bridge_get_next_bridge()
-Message-ID: <20250916153040.0eb77a92@booty>
-In-Reply-To: <175681953112.353165.466531296795467773.b4-ty@bootlin.com>
-References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
-	<175681953112.353165.466531296795467773.b4-ty@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758029484; c=relaxed/simple;
+	bh=eaiguNiv3IiJurV7vpMt3YJy2iyvkR3xDYI9wQMO+Co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q8a3hKiujWiM6v2AqOPMuQZY4RX2JaSarZYy7ZDz1LPSu69o8gOeL0gu4ngk4ymhm6NNbXbhGOcMAuZWmAxs3mRADI3F+J5sqeLgRjxiKxW7rJFxov+5KI4nHHMkQqblHxQ9c7/+C3sl++4P2h0aYeqCSsbIVeOKOpLUL0Dsmlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R+1zHJBl; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G6uIXG020960;
+	Tue, 16 Sep 2025 13:31:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=eaiguNiv3IiJurV7vpMt3YJy2iyvkR
+	3xDYI9wQMO+Co=; b=R+1zHJBlGqTxw4PIUT8ZZCSBbpQTFg2KTY3fjbR4nY2RYv
+	fde7eIwUx7US2Pt3iwT4QzJEbA+HH1BjCDsw6SK5OihAisE6vvb8rOJzEPE19OGN
+	bIzWH5vKddGEH8parhZUo5LYFtrG6hrcF36zWrCFpCpbRKp7suZDmXtCRX2Sg4te
+	Fu/6BS+6cnSjrI643V+7Ur79RdV3niM3cabvzGXWVW0HaMmyJ85CQzDNodfovqw7
+	qcAwgncBKTjcFkxUKeUH7TSB963MZafTJOwX4lxztuoytpoL910tldAEGDiMz3d4
+	8KKOKoB5boXq5/Ej8OP5mX2UvUhgYDWw5q5+NSEQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g537c0p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 13:31:06 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58GCeO5a022467;
+	Tue, 16 Sep 2025 13:31:05 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g537c0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 13:31:05 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9vsnn005929;
+	Tue, 16 Sep 2025 13:31:04 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 495jxu48fg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 13:31:04 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58GDV3KU26542484
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Sep 2025 13:31:03 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3791120040;
+	Tue, 16 Sep 2025 13:31:03 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2884F20043;
+	Tue, 16 Sep 2025 13:31:00 +0000 (GMT)
+Received: from mac.in.ibm.com (unknown [9.109.215.35])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 16 Sep 2025 13:30:59 +0000 (GMT)
+Date: Tue, 16 Sep 2025 19:00:48 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: maddy@linux.ibm.com, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] perf python: Add an example for sampling
+Message-ID: <aMlmiHATn5WHUcSM@mac.in.ibm.com>
+References: <20250728055937.58531-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728055937.58531-1-gautam@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: vRJY6iQXGbzEferAhLtEWP6AL0cK4Xap
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfXzLmlqbRrP6wS
+ pxd8eGkg8nTEPPLsRnAlGpFtxDl7FiUZD9e4mewOR7xmWtyt+o7fRTiWc8jPgbJgIdfY1WTggxn
+ U3MdoztUEFHyw/5QY4+q74EeNKIwbjaNIrkAOwrOu0qF6FLXiVDXAgHaoZXtmA3Jbb5cpiy2iFE
+ P1Z1LwgmFaLigZHQ3mdFRljCZVu0+YofXAUqMiK9miQUeTuJ5saNYLWXrN6agNv2hR6tLEXJRWV
+ IZNxcuW/jFWRN+Ljd3V9bdnXyvzs/STVP7/fYsl6IbFJYllcA0mtbt2e8AZoOJub9EOMOZos148
+ 52n6iRuhbY4pq3gBwaonJattNwD0mBVUC+mDZZbjtxl8wzzsNBBXuyvp0ccnS6dgHbn5hG3tfAj
+ s8Y6t0MS
+X-Proofpoint-ORIG-GUID: TRA8eS2hPVamDhbfiBHzGwjl3nUTmpW0
+X-Authority-Analysis: v=2.4 cv=UJ7dHDfy c=1 sm=1 tr=0 ts=68c9669a cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=4H6ACr21Ec4LRm_unsIA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
 
-Hello,
+Hi Ian/Arnaldo,
 
-On Tue, 02 Sep 2025 15:25:31 +0200
-Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+Can you please review this series and let me know if any changes are
+needed?
 
-> On Fri, 01 Aug 2025 19:05:22 +0200, Luca Ceresoli wrote:
-> > Note: the cover in v1 was mentioning by mistake
-> > drm_bridge_get_last_bridge() instead of drm_bridge_get_next_bridge().
-> >                ^^^^
-> > 
-> > This series adds drm_bridge_get/put() calls for DRM bridges returned by
-> > drm_bridge_get_next_bridge().
-> > 
-> > [...]  
-> 
-> Applied, thanks!
-> 
-> [1/9] list: add list_last_entry_or_null()
->       commit: cb86408b1fc2e3f6fe45ebe8509a5404060e01e0
-> [2/9] drm/bridge: add drm_bridge_chain_get_last_bridge()
->       commit: d77ad5178e90f5aa4ce6085510b3b2f742abc5f0
-> [3/9] drm/bridge: imx93-mipi-dsi: use drm_bridge_chain_get_last_bridge()
->       commit: 5849eff7f06709c98baa7989806165fe30bd0cbe
-> [4/9] drm/omapdrm: use drm_bridge_chain_get_last_bridge()
->       commit: c3183f71c3f1f004a0ca0b84c45c40d8b84dce3d
-> [5/9] drm/bridge: add drm_bridge_is_last()
->       commit: e4cedfd4f0fc839bb3c783d7e827e9755e1af5cf
-> [6/9] drm/display: bridge_connector: use drm_bridge_is_last()
->       commit: 306734a1c76ce35fa613ea823a31ddbcdbf1eef5
-
-Last 3 patches applied (but I don't get why 'b4 ty' fails at finding
-them to send an automated thank-you e-mail).
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Gautam
 
