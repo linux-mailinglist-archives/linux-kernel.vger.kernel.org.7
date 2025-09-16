@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-819067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF0DB59AD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:51:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CD2B59ADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2DC01B24398
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:50:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C86F167D3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1E3469F8;
-	Tue, 16 Sep 2025 14:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7B2350D6B;
+	Tue, 16 Sep 2025 14:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqQCcOZF"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cKrgdUXk"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2808D321F3F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3BF350D4E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758034132; cv=none; b=A3xDHIMJjGZrj82dnyRXUiyZTmH7wf42MD1LqJsB0cwuAg9PvikB4+jrryVoOchTwwRKbi2v1PIqxPNgQN1kjnBGU9DgSwHhrJD8ZkjkZkMcLJgOaHMfgQSxh9I3IqE0ag2dZ4FqVUOl8Rxcpkj6Xw1VWGgBkkb9QdyywT4JuZ8=
+	t=1758034137; cv=none; b=HP7XXzStk5obNqDGgOgwnbr2LMd1C+O1A7VHZWuQVQclFk7hhmgFq8UTxaqrVg+AeJjAn1EMZzpcphSIwXO0D9brVwF1WtkLJPIxNYW2qc/mzjLEBpCQLEd0u0wkBltIVIsy940fa1UU8VB6S15nXbm+luTdxlwH/0afNcI097U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758034132; c=relaxed/simple;
-	bh=rNXTzd8y/wZluRg6Jvfxzqflk4W6xg+4K6b4ed4H3eU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bxtxYSi+62PkJmeNhdKACO5FGrB5iVAT3+f2+K0hfHenkAMBXLF+sZYarYk6CMhYMLnkcV6/+g4ed7m6t/T/9xGGdVu9BbWpHL+TopUza1SAzzElMjE47cN4ndMqBTsnyCMt0NvcTselXkJn71Pjl99k7nRHssIaohQGbhqxNvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqQCcOZF; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1758034137; c=relaxed/simple;
+	bh=5DFBuSdlxaCcOvy2y416jSTiEqL4AHa8+uh89xjhSCs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BZ93DOGDJKIVqHXeLqW6u6sA+/hD8aNlTNwdmCQPvK2GxTdVcR1waeOnNWAMvX+2kINCD9NwoPCcVgYBXim8AE3NKbwHk00BVxYYtaE9/NArquHdDUHzSiSkoji3NgznM1/u5T6xkRZUxd6LqNRY37aNDWxYKxDQanTtYWKuMJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cKrgdUXk; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3eb3f05c35bso1749244f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:48:50 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3dae49b1293so3124199f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:48:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758034129; x=1758638929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gi8igtDXG6yISj4lOwkgI+AubBkRaNNUbNn455YRy4w=;
-        b=lqQCcOZFyikD3mCy8LKGK/u4u51SYo67+ASJ4Kb7Az2xrYM2egccgTodONIHrWQ98E
-         ZkeedAfBr0k7IRaQ6eIS2rLRiyZNPtUop6x9GSSCwqdN11dPg0hMVa7ComELoEr5yyik
-         u7Gu56BmqqdhyfDoHdULH1tB07Kw6k0Gq7bbvKkxiDhjNdVPdmsGgfg5fiNPwsF4Ycxa
-         8NRlZ+v5LFk9PEk6pJl+i/9ivQusziOT+SuAQEDZY4aUqN8NhevJRDZ+9nzTulnzJoaw
-         /NMEq9JproZ9iMFmSUWB+4cFa6wuWAnN+BbdTiYDjTp9Xn/sOrf+IDgh/C+lJA3fPzw5
-         HUlg==
+        d=gmail.com; s=20230601; t=1758034134; x=1758638934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nwLDNBiVN98UCDyIlQ/l+MZhscT3bhY9tzLzQhwCiT8=;
+        b=cKrgdUXk+sbR6enw6/IL1fN3TMASiLsY9VrIXhNh24TdsS7F1Fh9yJj1zslRJUWQ2t
+         E8InQi4UMbzdXnD9o9tHCW98LLQZWQHYTPCjYDukiYyNU+wO3yu870RGHif8cz0pXF4G
+         nENdWAoTWT7gBSfj4JjJKOJZU+rDPSOFuTgD6wF7sNV1eNDJCGIrTB1q8KHeXCqnAdLS
+         OrN/2FwMO0Bipv0Umep0j/JhwkUkr108PG2ivy57xtZhX6XzziXMxu2ZoVMKZH6+5HL+
+         rkTgig+/wD0ffSOFraf+uMZ9lXhiY4VVnzt7lI3g58LTwDwdaCq/8fmD47S5stZ5PKZB
+         wPqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758034129; x=1758638929;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gi8igtDXG6yISj4lOwkgI+AubBkRaNNUbNn455YRy4w=;
-        b=bfu4CjmM8dLq5cqagCyaZh0mgrjSM7egcGQTsp7atHxk9NN++TeHMYRJa0xL3YSIG/
-         zbhrf7Fkws1zeVETZbJ6VONyeGKT5Yuio0N5AheKTThTY5ljfwYMGpWN5CWHEGQXjkh7
-         UvS6oGVTyFoC6+5ECo2j8YYKYs47f40tod1/3K50r2kRMW6txzp4qkA0IGXWpldvoj8o
-         xTTsJI3HemtU9XiiVFbn1BDbL91PnkVIx39hQrbdFgCrjYHhJsGlWL82w82gZzkrAknS
-         nv18kyJ5s8Keum0ObYhrtIttWcNHRQCwZioDnnFrjDMHtc4cOJvYGuoTmR7VQdvNp3pZ
-         FY0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVSErhpTK2ULz9LC/iy/r6G+clDkWjuCdIy5r+WCXj0gGO+N9cSGhEP8UeRla9wDjA00Nm/bu4JYQRRbfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyREtH86UJWG9sNRXt6I7dih/O7/os46LPv27gsW+42gJeZ4cQV
-	kSHXLqVqmriHCmnbLRx0/G1AnuJFPvQPYOhQE+FfwCPLXQxAVqatC+dv
-X-Gm-Gg: ASbGncteVu3FRxYK4ugMRp89MBf9+6GI1DLA7k4K39Fp4so671p7mNhV2/RH97rsXKp
-	Q3H5SlB0q+QsLK6Me95zIsGI5RNqUKyx/bDyAXCu8dTQ+p/bxJXZeLW8sOWhp2NVuTW79WhmUSl
-	Kp55xhJeERwJa6BvQUTOfD7GWfox6m1ygLXjrE+cAkRwGOyeYgGWqTflDnUj/1qp7B/HUkIWCwL
-	XiC08gthDg5usYDblnc98vYLsKzKXG97U60y4jzFum85kNiDiZoKl9qOoqNZn53kAvzP3YTqPeJ
-	+ACiN4HYlMDvnad3n9V/6KzDwUhYdrUvgL39I0czVCoeD8t3MgxSZV0u2F1C7VQ1K6lhysTzRWz
-	/0Tdjf+x5LCGjKwc5FseH8Qoku/CF9c3N2RIU49zfVr9M
-X-Google-Smtp-Source: AGHT+IGT7w/chOq0xQ5oMWhmAwb9pTJAk7OU7dgxbXf0jDuUrdTnKUuAju0yoQhH6wGHRH+wmsMvRA==
-X-Received: by 2002:a05:6000:250f:b0:3e7:64c8:2dba with SMTP id ffacd0b85a97d-3e765a051e9mr16033982f8f.38.1758034129317;
-        Tue, 16 Sep 2025 07:48:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758034134; x=1758638934;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nwLDNBiVN98UCDyIlQ/l+MZhscT3bhY9tzLzQhwCiT8=;
+        b=ItZfEZY5WLt3Te1WRu3UB5sy+5aNFJ2CQhB6aWX+TqycRV7MBVlXKa7adjmt97vYEq
+         TQE1fkMsH/qj8DivSSB3GxCA6rYu8mmex50mEU63yfFE/hAL3vbGS6LeHtT9oQ2EaKZN
+         FH2cxmEBPBIIQW5cQKEBMFOLJwV72ajl0SWG9qRtGoQTFpQZJ90NP7d2Bt53GgVgZi7b
+         6HDQr+eioj4O+JiL7/R7X5jaRt7tj6HfxZA99qEHTabpnvX0LZgVIgyBt3HjqDlkIGEO
+         T5uSaq8hz+q5k/r/KlubR5xyVtJ4b/4PmpmCg2N6V8TtyBMupATX6BdkAKk9rvjVxlqh
+         MhDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdcVipmloBYfEg9SVGxguZfPt1HLm5lnU9ZQadjSCyDwWLGvtu1y6mJxZQfh4/z5lydwHVn0fNOIXz7VA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi7EQNatAMjSGtBLH45R0DXyjWoDkhQO0x2h2uKO8SqNvzi9QF
+	herlaUuidgp9kz6S4U/5moHMHBF5ilwyLl51N3A5oTA7i4Vt4blrgEE3
+X-Gm-Gg: ASbGncsEn7APsEX0ZYpW6ncRqvMOeRkqUcARietV80dO0gijO72kVeAaG98y3A9IbJ6
+	o6BsVdPBwt92Dr+YK8A5xU2NRpxSDxdwBMsr6KyrckCq0QPmFZ1yW+oJWO/2vzZRyVvqcoN1hZK
+	QgGw3wfqT9ZqrrP6edY1kidnisTGZQoFUkpYGxanDa6+WuaEqdJWuydBW81gWKa91NByEgc9G4P
+	pansbxFM8KpZcgG5aEmDnYqHUAGoJgI4c61KVj5P0A2mr1BgGrbe4gTLAPL1PNsn7nU97ebnJ6H
+	s4yo02oYPCvXq4gVdt86A9b9/chFtjM8gjjMn9+twOJE6ZD61l8RomLH3U2eUcqA9z00qxKwDlk
+	1NZYxxQxj+XEBTrgrVk7rDp1ycuXcyslRvQ==
+X-Google-Smtp-Source: AGHT+IHMZUDMbOWsWpqh/e41woRC0crzmoX/URxSA0zpdw+P5ipokAbwJBvsiKBVGdIlEJC6cgi+xg==
+X-Received: by 2002:a05:6000:420f:b0:3cd:edee:c7f1 with SMTP id ffacd0b85a97d-3e765a3d7d3mr16074714f8f.56.1758034133988;
+        Tue, 16 Sep 2025 07:48:53 -0700 (PDT)
 Received: from localhost ([45.10.155.18])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b3137sm232324935e9.19.2025.09.16.07.48.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd43csm21784014f8f.29.2025.09.16.07.48.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 07:48:49 -0700 (PDT)
+        Tue, 16 Sep 2025 07:48:53 -0700 (PDT)
 From: Richard Gobert <richardbgobert@gmail.com>
 To: netdev@vger.kernel.org,
 	pabeni@redhat.com,
@@ -94,11 +96,14 @@ Cc: davem@davemloft.net,
 	alexander.duyck@gmail.com,
 	linux-kernel@vger.kernel.org,
 	linux-net-drivers@amd.com,
-	Richard Gobert <richardbgobert@gmail.com>
-Subject: [PATCH net-next v6 0/5] net: gso: restore outer ip ids correctly
-Date: Tue, 16 Sep 2025 16:48:36 +0200
-Message-Id: <20250916144841.4884-1-richardbgobert@gmail.com>
+	Richard Gobert <richardbgobert@gmail.com>,
+	Willem de Bruijn <willemb@google.com>
+Subject: [PATCH net-next v6 1/5] net: gro: remove is_ipv6 from napi_gro_cb
+Date: Tue, 16 Sep 2025 16:48:37 +0200
+Message-Id: <20250916144841.4884-2-richardbgobert@gmail.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250916144841.4884-1-richardbgobert@gmail.com>
+References: <20250916144841.4884-1-richardbgobert@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,78 +112,168 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GRO currently ignores outer IPv4 header IDs for encapsulated packets
-that have their don't-fragment flag set. GSO, however, always assumes
-that outer IP IDs are incrementing. This results in GSO mangling the
-outer IDs when they aren't incrementing. For example, GSO mangles the
-outer IDs of IPv6 packets that were converted to IPv4, which must
-have an ID of 0 according to RFC 6145, sect. 5.1.
+Remove is_ipv6 from napi_gro_cb and use sk->sk_family instead.
+This frees up space for another ip_fixedid bit that will be added
+in the next commit.
 
-GRO+GSO is supposed to be entirely transparent by default. GSO already
-correctly restores inner IDs and IDs of non-encapsulated packets. The
-tx-tcp-mangleid-segmentation feature can be enabled to allow the
-mangling of such IDs so that TSO can be used.
+udp_sock_create always creates either a AF_INET or a AF_INET6 socket,
+so using sk->sk_family is reliable. In IPv6-FOU, cfg->ipv6_v6only is
+always enabled.
 
-This series fixes outer ID restoration for encapsulated packets when
-tx-tcp-mangleid-segmentation is disabled. It also allows GRO to merge
-packets with fixed IDs that don't have their don't-fragment flag set.
+Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+---
+ include/net/gro.h      |  3 ---
+ net/ipv4/fou_core.c    | 32 ++++++++++++++------------------
+ net/ipv4/udp_offload.c |  2 --
+ net/ipv6/udp_offload.c |  2 --
+ 4 files changed, 14 insertions(+), 25 deletions(-)
 
-v5 -> v6:
- - Fix typo
- - Fix formatting
- - Update comment and commit message
-
-v4 -> v5:
- - Updated documentation and comments
- - Remove explicit inline keyword in fou_core.c
- - Fix reverse xmas tree formatting in ef100_tx.c
- - Remove added KSFT_MACHINE_SLOW check in selftest
-
-v3 -> v4:
- - Specify that mangleid for outer ids cannot turn incrementing ids to fixed if DF is unset
- - Update segmentation-offload documentation
- - Fix setting fixed ids in ef100 TSO
- - Reformat gro_receive_network_flush again
-
-v2 -> v3:
- - Make argument const in fou_gro_ops helper
- - Rename SKB_GSO_TCP_FIXEDID_OUTER to SKB_GSO_TCP_FIXEDID
- - Fix formatting in selftest, gro_receive_network_flush and tcp4_gro_complete
-
-v1 -> v2:
- - Add fou_gro_ops helper
- - Clarify why sk_family check works
- - Fix ipip packet generation in selftest
-
-Links:
- - v1: https://lore.kernel.org/netdev/20250814114030.7683-1-richardbgobert@gmail.com/
- - v2: https://lore.kernel.org/netdev/20250819063223.5239-1-richardbgobert@gmail.com/
- - v3: https://lore.kernel.org/netdev/20250821073047.2091-1-richardbgobert@gmail.com/
- - v4: https://lore.kernel.org/netdev/20250901113826.6508-1-richardbgobert@gmail.com/
- - v5: https://lore.kernel.org/netdev/20250915113933.3293-1-richardbgobert@gmail.com/
-
-Richard Gobert (5):
-  net: gro: remove is_ipv6 from napi_gro_cb
-  net: gro: only merge packets with incrementing or fixed outer ids
-  net: gso: restore ids of outer ip headers correctly
-  net: gro: remove unnecessary df checks
-  selftests/net: test ipip packets in gro.sh
-
- .../networking/segmentation-offloads.rst      | 22 ++++---
- .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  8 ++-
- drivers/net/ethernet/sfc/ef100_tx.c           | 17 ++++--
- include/linux/netdevice.h                     |  9 ++-
- include/linux/skbuff.h                        |  8 ++-
- include/net/gro.h                             | 32 ++++------
- net/core/dev.c                                |  8 ++-
- net/ipv4/af_inet.c                            | 10 +---
- net/ipv4/fou_core.c                           | 32 +++++-----
- net/ipv4/udp_offload.c                        |  2 -
- net/ipv6/udp_offload.c                        |  2 -
- tools/testing/selftests/net/gro.c             | 58 ++++++++++++++-----
- tools/testing/selftests/net/gro.sh            |  2 +-
- 13 files changed, 126 insertions(+), 84 deletions(-)
-
+diff --git a/include/net/gro.h b/include/net/gro.h
+index a0fca7ac6e7e..87c68007f949 100644
+--- a/include/net/gro.h
++++ b/include/net/gro.h
+@@ -71,9 +71,6 @@ struct napi_gro_cb {
+ 		/* Free the skb? */
+ 		u8	free:2;
+ 
+-		/* Used in foo-over-udp, set in udp[46]_gro_receive */
+-		u8	is_ipv6:1;
+-
+ 		/* Used in GRE, set in fou/gue_gro_receive */
+ 		u8	is_fou:1;
+ 
+diff --git a/net/ipv4/fou_core.c b/net/ipv4/fou_core.c
+index 3e30745e2c09..3970b6b7ace5 100644
+--- a/net/ipv4/fou_core.c
++++ b/net/ipv4/fou_core.c
+@@ -228,21 +228,27 @@ static int gue_udp_recv(struct sock *sk, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
++static const struct net_offload *fou_gro_ops(const struct sock *sk,
++					     int proto)
++{
++	const struct net_offload __rcu **offloads;
++
++	/* FOU doesn't allow IPv4 on IPv6 sockets. */
++	offloads = sk->sk_family == AF_INET6 ? inet6_offloads : inet_offloads;
++	return rcu_dereference(offloads[proto]);
++}
++
+ static struct sk_buff *fou_gro_receive(struct sock *sk,
+ 				       struct list_head *head,
+ 				       struct sk_buff *skb)
+ {
+-	const struct net_offload __rcu **offloads;
+ 	struct fou *fou = fou_from_sock(sk);
+ 	const struct net_offload *ops;
+ 	struct sk_buff *pp = NULL;
+-	u8 proto;
+ 
+ 	if (!fou)
+ 		goto out;
+ 
+-	proto = fou->protocol;
+-
+ 	/* We can clear the encap_mark for FOU as we are essentially doing
+ 	 * one of two possible things.  We are either adding an L4 tunnel
+ 	 * header to the outer L3 tunnel header, or we are simply
+@@ -254,8 +260,7 @@ static struct sk_buff *fou_gro_receive(struct sock *sk,
+ 	/* Flag this frame as already having an outer encap header */
+ 	NAPI_GRO_CB(skb)->is_fou = 1;
+ 
+-	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+-	ops = rcu_dereference(offloads[proto]);
++	ops = fou_gro_ops(sk, fou->protocol);
+ 	if (!ops || !ops->callbacks.gro_receive)
+ 		goto out;
+ 
+@@ -268,10 +273,8 @@ static struct sk_buff *fou_gro_receive(struct sock *sk,
+ static int fou_gro_complete(struct sock *sk, struct sk_buff *skb,
+ 			    int nhoff)
+ {
+-	const struct net_offload __rcu **offloads;
+ 	struct fou *fou = fou_from_sock(sk);
+ 	const struct net_offload *ops;
+-	u8 proto;
+ 	int err;
+ 
+ 	if (!fou) {
+@@ -279,10 +282,7 @@ static int fou_gro_complete(struct sock *sk, struct sk_buff *skb,
+ 		goto out;
+ 	}
+ 
+-	proto = fou->protocol;
+-
+-	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+-	ops = rcu_dereference(offloads[proto]);
++	ops = fou_gro_ops(sk, fou->protocol);
+ 	if (WARN_ON(!ops || !ops->callbacks.gro_complete)) {
+ 		err = -ENOSYS;
+ 		goto out;
+@@ -323,7 +323,6 @@ static struct sk_buff *gue_gro_receive(struct sock *sk,
+ 				       struct list_head *head,
+ 				       struct sk_buff *skb)
+ {
+-	const struct net_offload __rcu **offloads;
+ 	const struct net_offload *ops;
+ 	struct sk_buff *pp = NULL;
+ 	struct sk_buff *p;
+@@ -450,8 +449,7 @@ static struct sk_buff *gue_gro_receive(struct sock *sk,
+ 	/* Flag this frame as already having an outer encap header */
+ 	NAPI_GRO_CB(skb)->is_fou = 1;
+ 
+-	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+-	ops = rcu_dereference(offloads[proto]);
++	ops = fou_gro_ops(sk, proto);
+ 	if (!ops || !ops->callbacks.gro_receive)
+ 		goto out;
+ 
+@@ -467,7 +465,6 @@ static struct sk_buff *gue_gro_receive(struct sock *sk,
+ static int gue_gro_complete(struct sock *sk, struct sk_buff *skb, int nhoff)
+ {
+ 	struct guehdr *guehdr = (struct guehdr *)(skb->data + nhoff);
+-	const struct net_offload __rcu **offloads;
+ 	const struct net_offload *ops;
+ 	unsigned int guehlen = 0;
+ 	u8 proto;
+@@ -494,8 +491,7 @@ static int gue_gro_complete(struct sock *sk, struct sk_buff *skb, int nhoff)
+ 		return err;
+ 	}
+ 
+-	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+-	ops = rcu_dereference(offloads[proto]);
++	ops = fou_gro_ops(sk, proto);
+ 	if (WARN_ON(!ops || !ops->callbacks.gro_complete))
+ 		goto out;
+ 
+diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
+index b1f3fd302e9d..19d0b5b09ffa 100644
+--- a/net/ipv4/udp_offload.c
++++ b/net/ipv4/udp_offload.c
+@@ -891,8 +891,6 @@ struct sk_buff *udp4_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 		skb_gro_checksum_try_convert(skb, IPPROTO_UDP,
+ 					     inet_gro_compute_pseudo);
+ skip:
+-	NAPI_GRO_CB(skb)->is_ipv6 = 0;
+-
+ 	if (static_branch_unlikely(&udp_encap_needed_key))
+ 		sk = udp4_gro_lookup_skb(skb, uh->source, uh->dest);
+ 
+diff --git a/net/ipv6/udp_offload.c b/net/ipv6/udp_offload.c
+index d8445ac1b2e4..046f13b1d77a 100644
+--- a/net/ipv6/udp_offload.c
++++ b/net/ipv6/udp_offload.c
+@@ -154,8 +154,6 @@ struct sk_buff *udp6_gro_receive(struct list_head *head, struct sk_buff *skb)
+ 					     ip6_gro_compute_pseudo);
+ 
+ skip:
+-	NAPI_GRO_CB(skb)->is_ipv6 = 1;
+-
+ 	if (static_branch_unlikely(&udpv6_encap_needed_key))
+ 		sk = udp6_gro_lookup_skb(skb, uh->source, uh->dest);
+ 
 -- 
 2.36.1
 
