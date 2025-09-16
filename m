@@ -1,202 +1,156 @@
-Return-Path: <linux-kernel+bounces-819234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18DAB59CF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35FFB59D28
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF9FA7A8911
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C4A3A43FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291242BFC9D;
-	Tue, 16 Sep 2025 16:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D077F223DEA;
+	Tue, 16 Sep 2025 16:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PXk1O+jz"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013046.outbound.protection.outlook.com [40.107.159.46])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ua1hLY+X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D70D29D265;
-	Tue, 16 Sep 2025 16:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038876; cv=fail; b=pidW5daxhHPlGaE+3mr1rOan8AveAA7j9pIPERYnhGNZhhWV1kL/iU7t9BYRWQC65HEZghnL/rPpRZaySuGYtYVWBrFTyckjCi1o2I5lmZjMjiVRodO0Qghu7Qf7+cgziJy6F0YqtHCfPHKtIdpWueW0rb/i0v56lnE85n5n1wg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038876; c=relaxed/simple;
-	bh=qaJgDRgSBAoCOJxAacL6iLoTTP6iDIy0owY/z6SSl6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MROU/rN17L/8o7+Min5Xt5YiZMbtyGtzJZTlXjKfZlMAGJvr/IChU8i/4R5SETaTicw/Ms1aJYvYm4Rd5J2hWh5m12ANTE4Iq8dYj66DY+weULMTA+Iv/HHvwKDwxNE4ZCxpZxaM4m3gmIVgTcnfEwRKE3qIHyNWfv1B/Yc0Fpc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PXk1O+jz; arc=fail smtp.client-ip=40.107.159.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xRp39jwAqCTD6uO6CxFu7aoPk8ed4xzGlsylquvFxtRVSI1iXt+LxrRq/90eT+R74RSPHwOikXuAQB2ujm3LvpNDLOhnyeXptHoOIMTPtSt0HFrn9lwuzJA+hTzWgi8dPNS8PRt27+URZNs1jfNIIladl3SLrwrwzGAO5SsLGA3xywe5tnK/u4LwYaQGIFJlISIvvOIJ12eoRhkN5QpTKDZJo8qTLsduk8OPHe9Co++IMNcP1H4fTEtWzGa31Qs/7NJzYJ3+gwkNgq7kZg8ugn/+DfwDDFsj/lJ/dw+8FKCRxDIDbSmvJ/4wvnVpyHIEeBENFJnk3v71c40HpaljAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QPoGzaaunsWugECtCkhU9r+r4nYMzAWgV/BqoHyZPNI=;
- b=TQ16scTMnHYn2IcvVwrjXcpaM/sdHi2qgrWV79MN7GB+Xc5fncI0oGMSJrOCWW0gU8ekp2Z6YlpNXt25qA0zn/5mWsAiETHIonAB9PNRsU/TrH1HjCCppIYs20JyBNPRfPKNj4JsjqavqL/nSbE6I3QDuDWgaIoM0Kra8KKhnVxQd1OFPtObAYTk0NxfHGAV6VkBEo+liEZyP9x+wpsmfoYItD/FyDsE4xnyd5wyE3XT8e6kDqez/+sC940k7+disAjm5yV2hB6DUZnhwm1jMB4V/YlVdT3SU9igstS2qF6UIDDwOiV+Wt/Y3CuGI2cyEfGGkfSAs5WttsUWiuMghw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QPoGzaaunsWugECtCkhU9r+r4nYMzAWgV/BqoHyZPNI=;
- b=PXk1O+jz/Rux2xfN1zbXBpoDgkooGKtIgIjZOgbsbdsor2Ps9P6QPQ6NkhdzGbtJPZwCZtFTKQLzkeuV9RYVYh9ZT4Xg6eaZTjJsLbphvBwNN7PRgvIUHMjvDkHFn4FXyu/W7P9QYurfANLkv6NsogeYqWW5jnf3DK88shr3GgZvoO3UyQZCMOIyoRLonvruLw0gVqUH75eNjZbr/PRHR9K5JlCbbRfTf3nxv5JYxnKB9kiKDEesQryeazFJ5vy9ljNFVozUls36I/hTepNaOYfRkGAd0sxVublC8BkvgFXIjGfoWVsKZXFa0kMof4XJbxZl4Sr9jsnd0suU3kaY7g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by AS5PR04MB9753.eurprd04.prod.outlook.com (2603:10a6:20b:679::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
- 2025 16:07:50 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
- 16:07:50 +0000
-Date: Tue, 16 Sep 2025 12:07:42 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] dt-bindings: gpio: add QIXIS FPGA based GPIO
- controller
-Message-ID: <aMmLTldFerRrwgvP@lizhi-Precision-Tower-5810>
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-2-ioana.ciornei@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915122354.217720-2-ioana.ciornei@nxp.com>
-X-ClientProxiedBy: PH7P221CA0085.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:510:328::19) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2152420DD42;
+	Tue, 16 Sep 2025 16:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758038931; cv=none; b=Inn2olHD3Y0gXR9JfOhw4y3GfH/OZbgKnJddVAhg2Fl5M7l5RFNQzYB+m7/lmFzBtQS/JWDazh6qMEdH3oyg6dTHBzcNnTyF6sSSkrWrzVMcLAkptl4QQn74OuMe21bJJDZOS/evVEQh3FoOBFBmtv2pdsreO2D526jIbRdrXRA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758038931; c=relaxed/simple;
+	bh=5hX+MeZ8vcEMEurO6Y40AR819qOTZbK9YJY3iGxx6k4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HNdrYPnYCI5Ck9gUT5KOSe5SVbF2p2sEvq4LSfN80gA2q1T1gJ2wgpmEISKbTev1TykJ/OSz/NTkmPM8Sj8+N7npw0IjLI0IJ5slPR22QfWMx6aZ+UnO+AGI5+BwSgyE4kf3WB2H4WVSNAc1oQkrxlwa4eZCf8Uphmcm39fxBEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ua1hLY+X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCF7C4CEEB;
+	Tue, 16 Sep 2025 16:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758038930;
+	bh=5hX+MeZ8vcEMEurO6Y40AR819qOTZbK9YJY3iGxx6k4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ua1hLY+XBsg8eXHWBeeCokC451ULHY3woDF80vGCLpv8zvT5OXl9RngvHcXv1QyWa
+	 +iFodlFuB4pfDZ8xLk11FndVKtk9JhvYb0mWGE5B94JrqmFrFeJxGipBlibYu5zal5
+	 nOikZ0ATXBUFHmfB7V+I/5aWpjtSDlXy4Qcq7oOT6QBBMLse2pCmqU9OCEsKusiohp
+	 O85BEqEmHM51ATbJZcYPJ2UuzPG0soFxApgfQKuxzQJex38+csItNRoEJrVqKdHW4U
+	 lDzYjx/6hyh46yGuOeypN5dnd4CKnmCJMJ+wcajPaNA6Yt7uLHTC/EtLW6Or4GJrM2
+	 yxwOwNITszBYA==
+Date: Tue, 16 Sep 2025 17:08:45 +0100
+From: Lee Jones <lee@kernel.org>
+To: Corey Minyard <corey@minyard.net>
+Cc: Binbin Zhou <zhoubb.aaron@gmail.com>, Corey Minyard <minyard@acm.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io,
+	kexybiscuit@aosc.io, wangyao@lemote.com
+Subject: Re: (subset) [PATCH v11 0/3] LoongArch: Add Loongson-2K BMC support
+Message-ID: <20250916160845.GB3893363@google.com>
+References: <cover.1756987761.git.zhoubinbin@loongson.cn>
+ <175760122164.1552180.16853979882678693472.b4-ty@kernel.org>
+ <CAMpQs4JbQU3D-Bs2687BXSC=FKJBS6RMvWAKb6AJEtzit6hWqw@mail.gmail.com>
+ <20250916084002.GF1637058@google.com>
+ <CAMpQs4+J2zYgZaGYBSaf4UwzKZY-qMoD1oe2vmgJQXAfghqu=w@mail.gmail.com>
+ <20250916101438.GA3585920@google.com>
+ <CAMpQs4+kj0i1BpJ4Nk+Z=Ov-AMEWcqPmkbruNhD--TmycX4z-Q@mail.gmail.com>
+ <aMl_47OOOotywm0U@mail.minyard.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS5PR04MB9753:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50c26aeb-db13-426e-c19a-08ddf53b2f22
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7416014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?V4VgrIygGOqUV1Rb0HPpvGlVO+SX2BJ8oeGoVVjx7+bhagqp3s8pzJe3Q7NK?=
- =?us-ascii?Q?mh6Tp0HtZyt7CzDrBB0VaBKWD4qcajO1tzNpbvqsdAfCRVB+YKSFj+GAew+K?=
- =?us-ascii?Q?V/BzfdY0vpQ0CSCQMAw6iLnOJQwiWnTsgdsr1S5Lz0WIlJh2Tdf/yUbTgQjy?=
- =?us-ascii?Q?Y6DQnafIsTUA1zD0Hvllbye3GwrMkc2O1tbuCNGwTJ10W8HJU850Q0EPmMfz?=
- =?us-ascii?Q?hiJYE3c7MVJKfs5bLc7K/ZIoukIxwesv372xcItZUGGQHeUIFDv8W1stFwn/?=
- =?us-ascii?Q?BR0MhmLf179o5sRrWkyRNZlsfz93521M8QdY03bRWdNg/Jj7Ti61hFBvdmOf?=
- =?us-ascii?Q?ZHmjPWCzAqO1U7Cv23WfQ6WQ/+Ybco8MU+qxGBrzpVr0dPm4pj208QRBZgbt?=
- =?us-ascii?Q?n5BDkXm6+OEtZvpa6Ug28VpDjAGnjznhvf3X1jmRCpQMQ50OVuyBVcIiJwwM?=
- =?us-ascii?Q?OtKyy0VPVRXTl+U32I+y60Od/vt8sXDfSwFwf3hGuxckneK0iL1pgryfCaXS?=
- =?us-ascii?Q?lCTlLmFpqzlFrsmpZNy48FUEm3NsUKhVnNUfTCXrLiVC2p57EexKDSfPHYs5?=
- =?us-ascii?Q?aPbm5xdQQSOwUl2ILDHWUCid2PYUl5JivqhHGHBCkP33NBn5YVJIcejIpPBR?=
- =?us-ascii?Q?cKPlA5HIik2JWG11eSU8oM7xThO4hO7JV6MigtfjjKUJsAXgvsnu0iF/l0uj?=
- =?us-ascii?Q?H4FPAGDMJR+ZjZTYGRlkyTQ+Yehed/YtxM4t2hyptGvwA4LZGVwG4BIv13cm?=
- =?us-ascii?Q?0nICATcSs/MBU94s+8DkKes/uQIU/6tbmtOEJWLveCWsIcHx5TY6S++0wMSN?=
- =?us-ascii?Q?upWa4F8trOLY8mo2yik6tRl5xBmC5/neVx3CaZl3AAo/cF2ZqqB+gmHg1tN/?=
- =?us-ascii?Q?u9KR8+pWUNSw9dDMvZDprTyKnYbbB56PLy45tUg5fRSlrXMCCdLteQBfWiH8?=
- =?us-ascii?Q?3gPOUju6u417g/A8lZhZya+Yq8dTFap8TX/Q6Nr81pxm6F/5Xz96hXKcS4Q4?=
- =?us-ascii?Q?L4As5AuUifzlLM7R56BckP3u+JLGk8tgcJBn0GKO2VcMhxzr90tkGyvyGJiN?=
- =?us-ascii?Q?cMuwr+02lHU6YW9w6KgTwftR+P3Ll+5zNzHJ3PoZ5K+sQ9pOYr8YUkS7VaC0?=
- =?us-ascii?Q?xLxh/RM0ESopX8CDXvkTYV/7GtzSbWzKdPckZ8OCb0vzARRjyN7cVPGDSVAp?=
- =?us-ascii?Q?CoE2+FFPm6pcP6cupxMCSUG8TiCh9cs6xz9eUt8vodRtTarR6UpS1e39kUjh?=
- =?us-ascii?Q?mDerDz5/G+ShtTIliwSd+78RKwz5WWWt8zMqm56WRd+dNSoYbTTu5YCB/NpS?=
- =?us-ascii?Q?irmBYnFwf4iwOQsa2h7S2KbocPdA8VlGphv7c4vntmx1VJlsuSO5Wjo2byi5?=
- =?us-ascii?Q?yuKLX6V4iUknZPmYgnpYVVfEAuZlRtVvD1h9ZfQ5xiaJSDUhBHrdFYUCPMy1?=
- =?us-ascii?Q?3e1aU/dfnxKBTrmuenpoJk53EbJedNXLPyX2OkPtlNONTR9FjwcDZQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?uu1M3Yry+v2uwkbBHn/7waJi+Q2mhu0WSBXDchaR07KXrRZ4NbZ7jfY4TAt0?=
- =?us-ascii?Q?Ke5eoe1I93XdDTldD9sZAVRbJmJ8BfquOUUbgcNeeL9N4YqLOgM2UkSivnSg?=
- =?us-ascii?Q?b0/1XXjabsqn1750vQXO9muQIbdJluZAjX9ggTBw9Y4PAevfFxu8o2bGbtXF?=
- =?us-ascii?Q?rPdRWxsSg9avVxUTbITNBUhXLgCRfqo2DQZ5Jzi8+iLz6XriepTwLiNjYziO?=
- =?us-ascii?Q?KhUlKWkBsd8zQiKVS2XCi6R6mBbgVqlspOibjksZeNnyy8VtG9JyeKKivYSf?=
- =?us-ascii?Q?rbPhhBguPrWu6KS9QNOb0GaJHlSa2ZLsLMozvWnjelb5f+uFzqpvVbXzqj/M?=
- =?us-ascii?Q?wpP0UFv42VzYgPHfiuv+5DdAZdq2byqtPvjJ0w4WnuLivZ6522zGWlyTidmw?=
- =?us-ascii?Q?frviLkAX4KAvNE1ZKBi+cJ3TGQj3GAnA0zp4/uFG9VwPe2yLPeOpo2Kl9ZRd?=
- =?us-ascii?Q?Xzi57atBzdrGJfmv8jweDu49M4zdnq8X0cZIrHRMFAIRKKDGnoY1p2nRas7d?=
- =?us-ascii?Q?31iEGaOA8hh3skySDSbya2NdqjRYwOL5bJZQZzU+TSycxgPyUzTH3C/vMhtA?=
- =?us-ascii?Q?WFvSFpsOOOU4iLppzQUum69rqAO/6dQUZj4u/7V/jbWEyzBM1sl/xpQuWPg7?=
- =?us-ascii?Q?/d4uXUXKQwvNfszjF3kmfSPQoRI+/pWE4RAyhR1v//Um0s1d/HC8wxGyFWx7?=
- =?us-ascii?Q?XZhFap7nASaIXdmuPSMYfYtiBQl3aKKoGJ80ggtImCTRHptIyZpvmwUys3Ob?=
- =?us-ascii?Q?QGSbNyWidBOVjbeCTwrBGIC/Ns0Py1BTbxwr5etMxHgeBdLGSOSlqGtJZdwH?=
- =?us-ascii?Q?HdvkMohgrfWEfro/In0VxZEuEuzMnc2vl/I/4Ea4i/skzrNdJn+xVnDpBenU?=
- =?us-ascii?Q?ck3DrykaYHb1mb8TQtYaD2nS72KTZLoaqpxn8D00d7oXQvMVZzp5cG4e82NG?=
- =?us-ascii?Q?MfjucR1OrkG1yg1SacLH68otdu9jinK1xG9q0rY/rHoPH/1Y9kpNdfTtZBk0?=
- =?us-ascii?Q?mk/BAg8OUyZUAQLaF8gnwdRU2/MUv2aNvs6eConX2M8pRT2N30qjJ4CJ51vG?=
- =?us-ascii?Q?po/YSfV73IUQbEH5cwOAl/YUaxRqpc37igVJTi6mRTcFUcnt5ExOUS9F9dTj?=
- =?us-ascii?Q?ejSUO4McwdMWLNwozrSI9goRFkp5HMHkJlGm5FQ+MV34qgT/ZzGTSa+ChVUg?=
- =?us-ascii?Q?VykkZkhkX1k25leTo4HNF3xodiuhDPFsqpemTEnQ8wa5QOPkGUWEd6cVfh7j?=
- =?us-ascii?Q?wGZTc5arEna5zz+LXSt7lWGvFCrk6gM6R4acb3MeggyZ020cboFGcmmmtxic?=
- =?us-ascii?Q?EdNTW6MfvaNNrPjOaD3Jqdeea3sR9Q6VSNTJzju7Gp3w6lsrL2zj3m2/rx6a?=
- =?us-ascii?Q?ShCpmYCYvdSZISi2ibUfeVYOyDSm0R0BLyXMIrA+KzWZcAHTh23sF/Nw1nCq?=
- =?us-ascii?Q?G5zW0qee2zrnhQzLW+WYM4sQTtpbxdkSR987hmEGME63ouKru//hY1IG/zWn?=
- =?us-ascii?Q?ka0bbVvHphJn+9RwEgRgcoPMEsVysm0FIxTzLVMUN/MTWegM3mwPaZ9MSW/O?=
- =?us-ascii?Q?QBZ8qeSc0jlxiIu2koBDDj83x+VogccBEd3WfAzm?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50c26aeb-db13-426e-c19a-08ddf53b2f22
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 16:07:50.0652
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nYDJC1mjXLnHrCENoEfw306beYesn2rvT+inqrOfkV0q9x17h2d33yX4x/K+wQN3MA2AphUlZnRcL0KDNGu1Dw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9753
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMl_47OOOotywm0U@mail.minyard.net>
 
-On Mon, Sep 15, 2025 at 03:23:46PM +0300, Ioana Ciornei wrote:
-> Add a device tree binding for the QIXIS FPGA based GPIO controller.
-> Depending on the board, the QIXIS FPGA exposes registers which act as a
-> GPIO controller, each with 8 GPIO lines of fixed direction.
->
-> Since each QIXIS FPGA layout has its particularities, add a separate
-> compatible string for each board/GPIO register combination supported.
->
-> Since these GPIO controllers are trivial, make use of the newly added
-> trivial-gpio.yaml file instead of creating an entirely new one.
->
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+On Tue, 16 Sep 2025, Corey Minyard wrote:
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> On Tue, Sep 16, 2025 at 06:51:25PM +0800, Binbin Zhou wrote:
+> > On Tue, Sep 16, 2025 at 6:14 PM Lee Jones <lee@kernel.org> wrote:
+> > >
+> > > On Tue, 16 Sep 2025, Binbin Zhou wrote:
+> > >
+> > > > Hi Lee:
+> > > >
+> > > > Thanks for your reply.
+> > > >
+> > > > On Tue, Sep 16, 2025 at 4:40 PM Lee Jones <lee@kernel.org> wrote:
+> > > > >
+> > > > > On Fri, 12 Sep 2025, Binbin Zhou wrote:
+> > > > >
+> > > > > > Hi Lee:
+> > > > > >
+> > > > > > On Thu, Sep 11, 2025 at 10:33 PM Lee Jones <lee@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Thu, 04 Sep 2025 20:35:04 +0800, Binbin Zhou wrote:
+> > > > > > > > This patchset introduces the Loongson-2K BMC.
+> > > > > > > >
+> > > > > > > > It is a PCIe device present on servers similar to the Loongson-3 CPUs.
+> > > > > > > > And it is a multifunctional device (MFD), such as display as a sub-function
+> > > > > > > > of it.
+> > > > > > > >
+> > > > > > > > For IPMI, according to the existing design, we use software simulation to
+> > > > > > > > implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
+> > > > > > > >
+> > > > > > > > [...]
+> > > > > > >
+> > > > > > > Applied, thanks!
+> > > > > > >
+> > > > > > > [1/3] mfd: ls2kbmc: Introduce Loongson-2K BMC core driver
+> > > > > > >       commit: 67c2639e1fc1a07b45d216af659c0dd92a370c68
+> > > > > > > [2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function support
+> > > > > > >       commit: 2364ccc827e44064e9763f2ae2d1dcc5f945fdf3
+> > > > > >
+> > > > > > Thanks for acknowledging my patchset.
+> > > > > >
+> > > > > > I can't confirm why you didn't apply the IPMI patch, but this appears
+> > > > > > to break the patchset's integrity, potentially causing missing Kconfig
+> > > > > > dependencies (IPMI_LS2K select MFD_LS2K_BMC_CORE).
+> > > > >
+> > > > > Pretty sure this doesn't break anything.
+> > > > >
+> > > > > What build errors do you see as a result?
+> > > > >
+> > > > > > Additionally, as Corey previously explained[1], this patch can be
+> > > > > > applied through your side.
+> > > > > >
+> > > > > > [1]: https://lore.kernel.org/all/aFVtNAY4u2gDiLDS@mail.minyard.net/
+> > > > >
+> > > > > We only apply cross-subsystem patch-sets to a single tree if there are
+> > > > > good reasons to do so.  In this instance, I can't see any reason why the
+> > > > > IPMI driver cannot go in via it's own repo.
+> > > >
+> > > > However, there still seems to be a text dependency issue. The IPMI
+> > > > patch modifies the MAINTAINERS, which depends on the first patch.
+> > > > If the entire series of patches cannot be merged together, does this
+> > > > mean the IPMI patch can only be merged after the MFD patch has been
+> > > > merged into the mainline?
+> > >
+> > > No, not at all.  So long as all patches come together during the
+> > > merge-window, there is no issue.
+> > 
+> > OK, I see, thanks.
+> > 
+> > Hi Corey:
+> > 
+> > What do you think about it?
+> 
+> I thought my ack would be sufficient, but I've pulled this into my tree.
+> I can't apply the MAINTAINERS portion of this, but that can go in
+> later; you can send me a patch for that after the next kernel release.
+> 
+> I'll make a note to Linus that this depends on the MFD changes.
 
-> ---
-> Changes in v2:
-> - Used the newly added trivial-gpio.yaml file
-> - Removed redundant "bindings" from commit title
-> - Added only one compatible string for the gpio controllers on
->   LX2160ARDB since both registers have the same layout.
->
->  Documentation/devicetree/bindings/gpio/trivial-gpio.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml b/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml
-> index c994177de940..3f4bbd57fc52 100644
-> --- a/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml
-> @@ -22,6 +22,8 @@ properties:
->            - cznic,moxtet-gpio
->            - dlg,slg7xl45106
->            - fcs,fxl6408
-> +          - fsl,ls1046aqds-fpga-gpio-stat-pres2
-> +          - fsl,lx2160ardb-fpga-gpio-sfp
->            - gateworks,pld-gpio
->            - ibm,ppc4xx-gpio
->            - loongson,ls1x-gpio
-> --
-> 2.25.1
->
+Feel free to separate that from that patch and I'll happily apply it.
+
+-- 
+Lee Jones [李琼斯]
 
