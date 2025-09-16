@@ -1,191 +1,103 @@
-Return-Path: <linux-kernel+bounces-818874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E936B59781
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68BAB59788
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87FC07A7C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA731BC5DD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5CFFC1D;
-	Tue, 16 Sep 2025 13:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F59311963;
+	Tue, 16 Sep 2025 13:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jeIYMd/q"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lcxw3LjC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94D51D7E41
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7781D7E26;
+	Tue, 16 Sep 2025 13:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029102; cv=none; b=X+0Yf8chQe8r3+k6IwFsJ6HOwHadHt0JVsLDW8x7JgDWa0na7jCofUvSrRXah2vdqAfjvDxdj0UUjr5hN8guf8zrC0VZ4FH4598DwpfkXvDKYBhv4zdWPFAYOMM80JWybyhEv9shzstitXsAzbZMjBN+1uextmzPGp7MaaD8miE=
+	t=1758029116; cv=none; b=VfaYVL09wU5odNlNW8y6YRwrwjY8FtYoKxqVvRbMIK6MmnX0GEkDlbBFUtme/z7iNSHkur0S/L421v0zDaJtz6vzn1gZneZyi2daaGp7JfV+7d+0fF87z1qdsK6DTMqi+54wmU8H8BVyhiKC+M5NLwsF/13Fed96PzLjlrCCu8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029102; c=relaxed/simple;
-	bh=s8ThdCXM5O9yyBHIfDFZ9OEayAHX03FFFGLLjXjF7XY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/qa63ps6BNVQ1rX51jucFq59yek76Q1DPZJrjr1Iuqp0kwbClc1cf9uTIoV0oec8kkWZrzyKgw/PUKfwCmXuKacp2RHWpbe+YCKSOHS69U0KEDbrmToygm2Z/lrjA56rQzdQ4ZKc2V1gIOeZG8PHm+XCUIHd3syn+A2BpHtT94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jeIYMd/q; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b042cc3954fso990405466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758029098; x=1758633898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwfKh8YcNEbswE2yYv8jHBhvIioj0iL2kRQaWZR7TS4=;
-        b=jeIYMd/qRHO+nPBNV5EseY3/4XkcyAp9gayRU5pCXHVJYBIhZMwzNpcKQEuDLXP+n0
-         hRv6WaRsqF6Ex0gQ0qpwcj64LW0uIrA8ciLh5U7qSFL8B1w/zkZnBTiXUCzyEZBjDurA
-         K6CR9IXZBnBFGym4LBqzhiLHAgJgfBnNoGae8Si//bWDUMWlcAY1EeHoQVodaONgiHa0
-         bxJO0hKeD1TWbAt5q6sAG5RvONO8mQGXGLAcjDAbl7uFwgx0MrTYOOuwmfJYj0dkOQxe
-         fpuXn0D4l7gsCNF31gjZFhGfIMV1dL6ARMSoTS295WLe/s0NQVrjR2TRHl7BFK0DKxUW
-         fbWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758029098; x=1758633898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gwfKh8YcNEbswE2yYv8jHBhvIioj0iL2kRQaWZR7TS4=;
-        b=JbpUqTWp1bpyFCvu47pPCXWhD26Wt1391iuCycS+k1fXGBaAG5bL886aY9WZgUFWHw
-         qVf3zauAyFMOnpYyE3XazCKeYcoPV6b53+nz/f4q89pzsnz/MGD2k8NCklCH2MESmgUH
-         9euS1ksFMEBNJVSbnkGE2kGkXfuKLSMK7iAXEx5dQhOTW6pbQjUq/H+cKiY7SWiR9593
-         QF/bYOtjBw8lKxpn4L1ZG5hdvmO0qjSDYUsDwF7IaZBtcQudkqCISquhhERJdihztgnT
-         UU/VrKgeNWAEKwd2nrrATJy0qroIZkKSeW2zwOl3s7nZENBEAUJoKVZFkGkmA5EVHzt9
-         9GNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeyy8hPzSa84O83FvGFnjYzJ9vcri46SuQ/GMBk+MZeNNn3ZL040DIQjFxbgOgO6nCAEI8X9na4ZmO6F0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj+AZz15CTDxPF5XnjJyUxfNZBb9GDFnKox2yJ4gv8TGuE/xP+
-	XY8BVc1opD1i0FX05FJ/f8JV4/bJFP9RDVnI8YV50jWCr7U974/n5Cw1IaHtVSEYH5c=
-X-Gm-Gg: ASbGncvdJc4+6hjyb+tSewjNUydAR8Ttc5x3bsB2UjlDY/rX+d1Tv8vR7W9Db0LVWH4
-	5kGnCUMMOMJOhPWdCOO7N4H1I/kR0TGTSa7L10k4Y3swq1K4Q6w/e7uOH0g3LmN95fvoTwga+VG
-	Aj57J/BWuOZ8vRbBLJIspcmfcxS7d8PTQWI6dBdcx7yMxx585aq9ReF7d3guu4EoSt4TfOgV5hT
-	HcfQSU+6KRRFAllzNv81s3oB28dIBMHHTtYfqTgnu01lRdVJLLIUOLkS6UU2VeNJqKH1gHuUfX2
-	vLOG1j3xYos/2grMtdj6rghEtiiRPPQz4XPnjqnWsPexeIwu5wAArTUswUY/xQkpKLjtGiDe8NB
-	3rEVzPFgSWXokXl5fWNKFxgpyhj/4xRx9xTYMEY0z4jRa50ZtvrP7WIvtDSiYxidT
-X-Google-Smtp-Source: AGHT+IE9kjhldcCIBvjPr9jo7lRPPHVqNSYEJDmsT9jH1F0DRGqPEBku/9BloIv9jKtuTpavenfoLw==
-X-Received: by 2002:a17:907:d16:b0:afe:c6a0:d116 with SMTP id a640c23a62f3a-b07c3572d31mr1812203466b.18.1758029098143;
-        Tue, 16 Sep 2025 06:24:58 -0700 (PDT)
-Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32f202dsm1164355266b.84.2025.09.16.06.24.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 06:24:57 -0700 (PDT)
-Date: Tue, 16 Sep 2025 15:24:56 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org, 
-	krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
-	kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-Message-ID: <t3uk3k4h3l53yajoe3xog2njmdn3jhkmdphv3c4wnpvcqniz4n@opgigzazycot>
-References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
- <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1758029116; c=relaxed/simple;
+	bh=TnWVqJu7+bSzvUH6klH4pCKIBwlLZnLJ30RdHCvcXpI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=KzSXga2G0+jeLAv9ILSj86u0xRh0fXOO4xbNsxMomH9VamjMdRwsSNsgAdAZQyMkD5uo92GWkXkB7uwAUXSzmmqXFe8vBytVumzEcd/M+rhWclQiHL6IeZuJnhsTJTyPePOZEfdPCBMPEzkuzHBoZ/3aC9bes3lvywSH/5smZlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lcxw3LjC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A71FC4CEF0;
+	Tue, 16 Sep 2025 13:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758029115;
+	bh=TnWVqJu7+bSzvUH6klH4pCKIBwlLZnLJ30RdHCvcXpI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Lcxw3LjCuB4qNqHjRm2+ofuatX9CR3D1fdfUaY+ANH1VM+E6Jj8u+OoSCrSRO3/J8
+	 IMBUlCTYnlFQ0tZvKbUfUIHDfhCkYIak3x+XiSLbj48RW5ErX1bQjlKLcaOl7xwQ7b
+	 1zFYnysLUWaJarrgwbpxGYZ6EndgDWBzdfWRVtOhYZ03qKv0XuckObDb05F3uc8GEz
+	 DVouY/XqJT3pO2ACpmEYeOn0/ACJwmoQPsh9MswEtAY0WaiAbSFOlf3IQtqy1re8fQ
+	 0XWihOjUttpgpBZTdZtkWrVDwfvv6aU25+REfjk8YF6LtJw3x/dvMGfqu3a08aNbwY
+	 2+fYwKWNApwhQ==
+Date: Tue, 16 Sep 2025 08:25:14 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="36zni4ukkwfibixi"
-Content-Disposition: inline
-In-Reply-To: <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>
+To: Troy Mitchell <troy.mitchell@linux.dev>
+In-Reply-To: <20250916-ctl2301-v1-2-97e7c84f2c47@linux.dev>
+References: <20250916-ctl2301-v1-0-97e7c84f2c47@linux.dev>
+ <20250916-ctl2301-v1-2-97e7c84f2c47@linux.dev>
+Message-Id: <175802889714.3636283.16878564061648936522.robh@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: Add CTF2301 devicetree bindings
 
 
---36zni4ukkwfibixi
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-MIME-Version: 1.0
+On Tue, 16 Sep 2025 12:46:45 +0800, Troy Mitchell wrote:
+> Add dt-binding for the hwmon driver of Sensylink's CTF2301 chip.
+> 
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
+> ---
+>  .../bindings/hwmon/sensylink,ctf2301.yaml          | 49 ++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+> 
 
-Hello,
+My bot found errors running 'make dt_binding_check' on your patch:
 
-On Tue, Sep 16, 2025 at 10:44:40AM +0200, AngeloGioacchino Del Regno wrote:
-> @@ -119,19 +128,24 @@ static int sdam_probe(struct platform_device *pdev)
->  	if (!sdam)
->  		return -ENOMEM;
-> =20
-> -	sdam->regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
-> -	if (!sdam->regmap) {
-> -		dev_err(&pdev->dev, "Failed to get regmap handle\n");
-> -		return -ENXIO;
-> -	}
-> +	sparent =3D to_spmi_device(dev->parent);
-> +	sub_sdev =3D devm_spmi_subdevice_alloc_and_add(dev, sparent);
-> +	if (IS_ERR(sub_sdev))
-> +		return PTR_ERR(sub_sdev);
-> =20
-> -	rc =3D of_property_read_u32(pdev->dev.of_node, "reg", &sdam->base);
-> +	rc =3D of_property_read_u32(dev->of_node, "reg", &sdam_regmap_config.re=
-g_base);
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/hwmon/sensylink,ctf2301.yaml:18:111: [warning] line too long (161 > 110 characters) (line-length)
 
-It's a bit ugly that you pass the address of an unsigned int as u32*.
-But this isn't new, so fine for me. (Also for all Linux archs we have
-sizeof(unsigned int) =3D=3D 4, so AFAICT it's safe anyhow.)
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/sensylink,ctf2301.yaml: properties:compatible:const: ['sensylink,ctf2301'] is not of type 'integer', 'string'
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/sensylink,ctf2301.yaml: properties:compatible:const: ['sensylink,ctf2301'] is not of type 'string'
+	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
+Documentation/devicetree/bindings/hwmon/sensylink,ctf2301.example.dtb: /example-0/i2c/ctf2301@4c: failed to match any schema with compatible: ['sensylink,ctf2301']
 
->  	if (rc < 0) {
->  		dev_err(&pdev->dev, "Failed to get SDAM base, rc=3D%d\n", rc);
->  		return -EINVAL;
->  	}
-> =20
-> -	rc =3D regmap_read(sdam->regmap, sdam->base + SDAM_SIZE, &val);
-> +	sdam->regmap =3D devm_regmap_init_spmi_ext(&sub_sdev->sdev, &sdam_regma=
-p_config);
-> +	if (IS_ERR(sdam->regmap)) {
-> +		dev_err(&pdev->dev, "Failed to get regmap handle\n");
+doc reference errors (make refcheckdocs):
 
-dev_err_probe()
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250916-ctl2301-v1-2-97e7c84f2c47@linux.dev
 
-> +		return PTR_ERR(sdam->regmap);
-> +	}
-> +
-> +	rc =3D regmap_read(sdam->regmap, SDAM_SIZE, &val);
->  	if (rc < 0) {
->  		dev_err(&pdev->dev, "Failed to read SDAM_SIZE rc=3D%d\n", rc);
->  		return -EINVAL;
-> @@ -159,7 +173,7 @@ static int sdam_probe(struct platform_device *pdev)
->  	}
->  	dev_dbg(&pdev->dev,
->  		"SDAM base=3D%#x size=3D%u registered successfully\n",
-> -		sdam->base, sdam->size);
-> +		sdam_regmap_config.reg_base, sdam->size);
-> =20
->  	return 0;
->  }
-> @@ -181,3 +195,4 @@ module_platform_driver(sdam_driver);
-> =20
->  MODULE_DESCRIPTION("QCOM SPMI SDAM driver");
->  MODULE_LICENSE("GPL v2");
-> +MODULE_IMPORT_NS("SPMI");
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-If it's exactly the files that #include <linux/spmi.h> should have that
-namespace import, you can put the MODULE_IMPORT_NS into that header.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-Best regards
-Uwe
+pip3 install dtschema --upgrade
 
---36zni4ukkwfibixi
-Content-Type: application/pgp-signature; name="signature.asc"
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjJZSUACgkQj4D7WH0S
-/k5X2gf8CPcy37sX+3TAvMselYC6a5KTw9qBUgRRRW2xU0jMLPVSugZd9i7RFBsX
-qcP6Xq/FcBLfEIdwT9uwud13CtVdV6qyNQaWgz+BnrTomiNrrr4wZTVrOOhNgSDi
-VElZSzvXwu+7EZQLmdGAwoXB3HnCHuShI5LiCUQ0zi4pYoMoAc4Tw6htJhjM7NJ2
-48eZomVZ2s+xwPA17EyHn9FaHiisgWV/tjxRtL9P5Kt79qZNel8MXHgWU4jFEUDm
-hqciH+VQhquuUhU/UfWhV0q4Q6aJ2acuI+AsHcWctTI1Whgdtm0Ddr8/iJmUjitw
-JNecAkD3czkJvfdQpE1uSbxMdDBrww==
-=Jcue
------END PGP SIGNATURE-----
-
---36zni4ukkwfibixi--
 
