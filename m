@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-819593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB50B5A381
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:57:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716B2B5A383
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51C81BC3B63
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD5C5269C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AB5285069;
-	Tue, 16 Sep 2025 20:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5D528489B;
+	Tue, 16 Sep 2025 21:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Njz6mWDc"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="soQ+rA7h"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DEF31BC89;
-	Tue, 16 Sep 2025 20:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A83283FD0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056258; cv=none; b=AH2mWy37nV73aEJD7nvVfqiVwZVK+OBu+hX+GKfKSvMUSUwRB1RDPG7P+bOGRHlgBMn672HsSSgEJopF40x6WAg7jkYVlzNT31rYpFjLW5bOG0CNgTOccOEeMCVSdSpnRU94872nAaoCSdfAi++RF53TcSm/Ez7A9cXfhskuE18=
+	t=1758056633; cv=none; b=XQ70VdbrXae8UdVcDlzkIb1px3+RxlGEx+HnN+nG8IYrTb/aC06xnHCQ66RW6kbExFqwKN96VQuPl5NV51D0+I3lu9pNPamQbXLQdqJtQ0hOlJFoNdmZP9Fcus4hHKv1+3g43nLJcoKJqn9Qr6yigeUuW6ZiUj6Ll5Qk1ahRIh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056258; c=relaxed/simple;
-	bh=GNntTJeDbkB1LJQxeNsIY9NZ3Bms5eH7F2iMfEDMsbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=E/cmRtTJMswLAlKOiULFt5ZBK+G49GJQfi7+P7QDFo/djZuCc3jGB6pg6aa95XyR5302JudS1LAQcAmaAvk28BC9wA9FhYfBa95tcxq0BA2gECKiBGxCJOjdoB8RUspDA/Ija5Ni2jz7MTysnSbVFVwK6WjFrqp+wDOrZxAwiuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Njz6mWDc; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58GKvVB31356259;
-	Tue, 16 Sep 2025 15:57:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758056251;
-	bh=JOKZIPu742YrIyVjpGt0KD1fljibV+3sCbTDvXdQGkM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Njz6mWDcYe/sTNK1WlTFwR2LifObNgsCY4F2iqk5jINXfF/das5n51DgGBeOg37Cb
-	 sNkerl52NUabLt+k3ncwPnNc23FEMW4j5dq2WLnt+Hl2WMMAF+Y3Ik/bcvmhwwu3uT
-	 kmmjP2Rtmfd6GNq880k2EnrQEkbXpS4Q9jKSBWRE=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58GKvVoZ1803070
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 16 Sep 2025 15:57:31 -0500
-Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 16
- Sep 2025 15:57:31 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE206.ent.ti.com
- (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 16 Sep 2025 15:57:31 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58GKvVKc1903904;
-	Tue, 16 Sep 2025 15:57:31 -0500
-Message-ID: <7aafd8bd-4710-45e8-ad54-4d8b44de2b25@ti.com>
-Date: Tue, 16 Sep 2025 15:57:31 -0500
+	s=arc-20240116; t=1758056633; c=relaxed/simple;
+	bh=Io2scmS/z+WnjNJRf3hkBU19k8Nous3Bk+KEVXDXVgo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XN31+XS9WxvuY5M//h8ErqauykGK0qLnje75TofGuQBATZalLd+x4TWuvmgAiixxSfQhp9Lq5Cv6LU1fJODk9k4AUkLmz/HudBeGCOjhQmTsvHjGlCgXhahxwQ9OXBIPjW8wNof0twpLeFX2ziwMnckt3Kt2yUuljK07unBaeqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=soQ+rA7h; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-331d60b0a37so935042fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758056630; x=1758661430; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Le06RGdi5tEECJzNJMW1XJ+7hPRqsfMSGYuiprIOY+A=;
+        b=soQ+rA7hWEOJvgR2+o6YmeqBMl7M5MxkEsdkM+si/OzM/tqTQwLm/lyEzLTVtmO4qm
+         HUbZD8UMdWm6Bojbz3MyVIBev04Vd/oTQrdrxvNUKDLDTUxdHP7e0bKc+Si4anWjhzQe
+         HEsVYdRgCCvA/gPdi7PYc4NudWeNopSR4ymy6XCTH/1b8QPvc6+EeA6KtWt/PjVVBl7T
+         VNesvrmT+00NSy+mNWURZAs/kBg4LC7rbtlku851KHcgFlA/Sq3QLH2qHIMgsZ28H3HD
+         EC0xn/Q3bV9zXWxeAwa1ehO+5aU/zMt2NZQO3bFIBuszCBUvfotXcgF73q4z3VSyDqAa
+         ItFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758056630; x=1758661430;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Le06RGdi5tEECJzNJMW1XJ+7hPRqsfMSGYuiprIOY+A=;
+        b=ip3N0xspW+UyLE3Ixdj7uDsZ2TdPOT+X18wkxi+40OcXC6XCYH2+ZuLYVPdVdCu23q
+         +WbIr+Zhq4cG/42CQOrQpXUUH9Dk0zK+GnTLselIxMUIPG5Xg5nIpvpr/KwllfYJbJFM
+         X8HJev3RUm2gze/8db6f+luEaoyFLHibfRrYHSauR+BjFydApbgZqHMeLhulX8xKOrpV
+         kkapq53nQENV853jle9KS8K6xzn25NvlEJElkiN5Ag69gKoTOgtzUTauvI155dkWfQxV
+         qgK0X7E8WZfb7Yuke0BXZ1Q0Bz5jjnVxYWP+6Z6akRQpX/Up/OELz+Z9VHAi/1pPZjC5
+         pPyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUstM1vj6Q1bFcHR2H/2KpLiBq3VO0tdoDbcjBMF68O8FhebjMArsU3IGTqhZJbYKbEGPpClXkI179/WiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmoLobLaVp4Puyi+n7DJTphValsF01nVeS4F7zExYnuLXAfViZ
+	G/y4IQbrx/ETYmPRAWEH/y88UrC0cLsAeLdwiNHf1aPDml8oDZrtKh+ug+10usNRpzqPqttMH3U
+	DRyS5KuA=
+X-Gm-Gg: ASbGncu7WGGVH7PEDKddHzTHpA4+/VfgjXVNP+waj3Syej9SjEQhD8PVOIoWovxX7ku
+	oVVMSA07dkQNRJIFRiHhZNiXklwthDEhFyOpgGa7V9yI2IjvwzXFRg6wKtoYWWNYTdx/PVj+bbp
+	pWP2kJfIwvO74HL8lM7ZaWVazJZr2jPzA/h/tjBwhJNP6TDAoGcb3BpJfLYeMOZWK2zF//wegMt
+	Cj9dYZXEiyyeRHspVPMMrlqhdyeNHbs7Y975JuqZ0tIHuR8d94Ju+ri/ps2MNOX8F4xNwqCN/Bo
+	6gyPnFD95V1nXP1BaBFZXsC8gBQyfZBkP40kF4nIPKpw5OmhTy3Kdb8XARMJPSXqw9tWXmXLpzg
+	bvE7tFLKOTE4lBz3GqLe1e9O3bPxi
+X-Google-Smtp-Source: AGHT+IFSdP7n3cXhEVkMxAbOUR4txcADy1xra4weBsKgP9TqoZzgKeQqXEXw3x/c7+UAADgXcva7/Q==
+X-Received: by 2002:a05:6808:ed0:b0:41d:7d24:e328 with SMTP id 5614622812f47-43b8d896d66mr7240614b6e.9.1758056630179;
+        Tue, 16 Sep 2025 14:03:50 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:70a1:e065:6248:ef8b])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b8294ac06sm3540044b6e.14.2025.09.16.14.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 14:03:48 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v2 0/7] iio: buffer: document calling context when pushing
+ to buffers
+Date: Tue, 16 Sep 2025 16:02:50 -0500
+Message-Id: <20250916-iio-doc-push-to-buffers-context-v2-0-8b17937a6cc7@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] dt-bindings: nvmem: Introduce nvmem efuse binding for
- TI K3 SoCs
-To: Andrew Davis <afd@ti.com>, Srinivas Kandagatla <srini@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bryan
- Brattlof <bb@ti.com>
-References: <20250916154809.545283-1-jm@ti.com>
- <5b793fa1-e075-4a14-a28d-7aaf0d5b1619@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <5b793fa1-e075-4a14-a28d-7aaf0d5b1619@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHrQyWgC/42NQQ6CMBAAv2L27Jq2qBFP/sNwKO1WNlGWtIVAC
+ H+38gKPM4eZFRJFpgT3wwqRJk4sfQFzPIDrbP8iZF8YjDIXVWuDzIJeHA5j6jALtmMIFBM66TP
+ NGX2onK1vgZQPUCpDpMDzfng2hTtOWeKyDyf9s/+3J40K3dlar3Tl6ys9Wru8uY10cvKBZtu2L
+ 1/7IPrRAAAA
+X-Change-ID: 20250912-iio-doc-push-to-buffers-context-df3ca98fe0df
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Andy Shevchenko <andy.shevchenko@gmail.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1697; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=Io2scmS/z+WnjNJRf3hkBU19k8Nous3Bk+KEVXDXVgo=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoydB9YzSfLhVJNZC2TJiA81VdZ9vFMqNLTMTnO
+ 900A7H+20iJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMnQfQAKCRDCzCAB/wGP
+ wIcrCACLw1x05Ie0qH/qUbzkpjbs+zS34Ecw8prSEvsSwJtyQ/DJPHrEtKJWVuV/wPmDIRRC13i
+ 7OdhLcDHsBTiUnt5uTkP5JOj1YaPzaBfQ4GIBpe2XGnSXay+Ry2ln+Ng+AsYneNwhNJwW+4lNo7
+ 2oJDWWTdbuf+HZR2tA/GnMziwoEiT/YQVtm+idp36Ofd380YssjuSPI/0wFI509dIiZiL4xgVEr
+ UlCUcbAZagwL9UXXgsWzYlaTa9xLs8u95c4XfAAytV+2fLk0HzTKlDw7H9sUFRSYO26xp7QN1YM
+ /AUE4UEhJEJgbHvHVIsWoFqelwx/jGOLdOXdWqAYJJn19mSD
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Hi Andrew,
+It came up in a recent discussion [1] that we need to be careful about
+the calling context for various iio_push_to_buffer*() functions. Here is
+a series that adds some documentation in a number of places to make this
+a bit more visible.
 
-On 9/16/25 11:31 AM, Andrew Davis wrote:
-> On 9/16/25 10:48 AM, Judith Mendez wrote:
->> On K3 SoCs there are efuse registers scattered across the memory
->> map. In order to reference these efuse registers like gp-sw which
->> may store SW REV information or other general purpose information
->> for drivers to consume, treat them appropriately as efuse devices
->> with nvmem framework.
->>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->> This patch is not complete and is sent as an RFC to get some initial
->> thoughts on this implementation to solve [0].
->>
->> [0] https://lore.kernel.org/linux- 
->> mmc/736f09e0-075a-48e0-9b32-6b8805a7ee2a@kernel.org
->> ---
->>   .../devicetree/bindings/nvmem/ti,efuses.yaml  | 36 +++++++++++++++++++
->>   1 file changed, 36 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/nvmem/ 
->> ti,efuses.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml b/ 
->> Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
->> new file mode 100644
->> index 0000000000000..fffca65cdbfe0
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
->> @@ -0,0 +1,36 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/nvmem/ti,efuses.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: TI SoC eFuse-based NVMEM
->> +
->> +maintainers:
->> +  - Judith Mendez <jm@ti.com>
->> +
->> +allOf:
->> +  - $ref: nvmem.yaml#
->> +  - $ref: nvmem-deprecated-cells.yaml#
-> 
-> As the name suggests, this old fix-layout is deprecated, you
-> should look at using the newer NVMEM layouts style for this node.
+[1]: https://lore.kernel.org/linux-iio/CAHp75Vc8u2N2AHWtnPRmRXWKN3u8Qi=yvx5afbFh4NLNb8-y9A@mail.gmail.com/
 
-Fair point, this can be fixed.
+---
+Changes in v2:
+- Picked up a review tag (PATCH 1)
+- Clarified comment about scan buffer size (PATCH 3)
+- Use DEPRECATED to signal function deprecation (PATCH 4)
+- Link to v1: https://lore.kernel.org/r/20250912-iio-doc-push-to-buffers-context-v1-0-c4aad013d96e@baylibre.com
 
-> 
->> +
->> +properties:
->> +  compatible:
->> +    - const: ti,am62p-efuse
-> 
-> You mention in the commit message, there are a couple efuse regions
-> in the AM62P SoC, so does this apply generally to all of them, or
-> should you have this be specific to the "gp-sw" efuse region you
-> are describing here?
+---
+David Lechner (7):
+      iio: buffer: document iio_push_to_buffers_with_ts_unaligned() may sleep
+      iio: buffer: iio_push_to_buffers_with_ts_unaligned() might_sleep()
+      iio: buffer: document iio_push_to_buffers_with_ts()
+      iio: buffer: deprecated iio_push_to_buffers_with_timestamp()
+      iio: buffer: document iio_push_to_buffers() calling context
+      iio: buffer: document store_to() callback may be called in any context
+      iio: buffer: document that buffer callback must be context safe
 
-I think it is better if this can be more generic, so not only should
-it apply to gp-sw, gp-sw is only one example register we could treat
-as efuse register.
+ drivers/iio/buffer/industrialio-buffer-cb.c |  1 +
+ drivers/iio/industrialio-buffer.c           |  8 ++++++++
+ include/linux/iio/buffer.h                  | 22 +++++++++++++++++-----
+ include/linux/iio/buffer_impl.h             |  3 ++-
+ include/linux/iio/consumer.h                |  3 ++-
+ 5 files changed, 30 insertions(+), 7 deletions(-)
+---
+base-commit: 671b9b6d7f4fe17a174c410397e72253877ca64e
+change-id: 20250912-iio-doc-push-to-buffers-context-df3ca98fe0df
 
-> 
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    efuse@43000230 {
->> +        compatible = "ti,am62p-efuse";
->> +        reg = <0x43000230 0x4>;
-> 
-> The efuse region at 0x43000230 is 96bits, so this should be 0xc not 0x4 
-> size.
-
-oop, this will be fixed, thanks.
-
-~ Judith
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
