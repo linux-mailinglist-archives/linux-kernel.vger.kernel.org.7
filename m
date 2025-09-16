@@ -1,179 +1,129 @@
-Return-Path: <linux-kernel+bounces-818486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF385B59262
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:37:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD622B59263
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900B3161BA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878003B0A7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA59329A9C3;
-	Tue, 16 Sep 2025 09:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821CA299A8F;
+	Tue, 16 Sep 2025 09:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfpnD8Le"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iOem0TZy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02492221F13;
-	Tue, 16 Sep 2025 09:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4672283FFB
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758015457; cv=none; b=AjMaeMPRF129uGM95w1pWviiz3OJt7+AvdO2NCRjiJyXpDnH/QIHjHm1BIcwaDicptHJDYu6ZwxZp276iA9VUIHNEdaOKAQYZh71wo7f8hb3nNMCKtSO2zvIVvJKyAbpivtY6Ndpd0mAYAwyJx9VFFEBkho5HKj0/LeY1GzvSTM=
+	t=1758015471; cv=none; b=hDefCZXIHEdtHoVrVAt7teOvciQ1rBihkBW+zrv3QUeuGq0S5it8t7m2qpWQ9yPtxA+Xm3YCmzMPd5lvu0paB44y1RavmxqDZ8snDNbgLxwBamoPzH4FOblOzjLP8WC2dma+VmBchMtbx/y/Rjy9mvZV0/yp2r8IKz91YrT7jBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758015457; c=relaxed/simple;
-	bh=zFqtE/qNhnj5QoIqzFKnaCQYnyy/uOAyvfVMAV8OuuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtU/ZhDTuiEjO1cKEZOxQ5KkOQhU5fIM1Sb2n21f8xnVzC3a1YXKg9jbRluaxVKqQNAe30LXFdYgJlUo0J8YZhNcfIL6nUFP+KWjExpB2wVxEZTu6j1hA+aOgU7pC2VBovWlgiCBLIXEX8bOMUjo2Qd1xPrG7D8HLcMUKssoZ1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfpnD8Le; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E1DEC4CEEB;
-	Tue, 16 Sep 2025 09:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758015456;
-	bh=zFqtE/qNhnj5QoIqzFKnaCQYnyy/uOAyvfVMAV8OuuI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kfpnD8LewKPf4aF4rqDRFTB557nfWps9/hoxTv0uzVvACdoLyJ/DQLYYQH260i/Z2
-	 wDIM3roPGXB727cxfQsIt5E2rSS6EMoQHNaQ53zB3J32+mSic9JBmqkRdfcuv+QbhB
-	 TicaxGCXweX6KZBHxCWVU/TR66KbFF9Vb8LE8qV1l7G75VdXkjdTjUwLEawPi43AZB
-	 AU5EhpxJ5zKNDDYr3/V1WY9ITnBiIx5xnnA4d9rV2N7T4FlQuvGh/zLrpE9qJ3qdCj
-	 G5ftV+/5fA75+epIiJFFJDxeXlwLLHqdhHTVIpRIIONQu3s1gknP52SWR1686a2ETA
-	 3IGexham0iK+g==
-Date: Tue, 16 Sep 2025 11:36:54 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
- vmlinux.unstripped
-Message-ID: <aMkvtg55F1gJ5feM@levanger>
-References: <cover.1755535876.git.legion@kernel.org>
- <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
- <aMeqgPVfJcjBLhl8@levanger>
- <aMkN1m55vejTii_H@example.org>
+	s=arc-20240116; t=1758015471; c=relaxed/simple;
+	bh=JsKvXZf16gFxMkeh1H5MR/rTqxol3ZetNqtosBoRFDc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=reyS1ioXclHbqxOAapQV8+djsWcynXR7Q30GZqcJFksGK9EpdWWVP7U717WXau8fDgQ9KSKuhIQ8Nawb5ayrdEllIpE3gkptZb7jB0OdYx3gMJxckrJmTlGAzkySHx02fPXs3eUdC8fXEPadSifhLw0UJAFpjt63twEz6nNjFvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iOem0TZy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758015468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zf08R8nyJZM1unNfA8nj+QS6nwSWS7QnqLFVWYPYD94=;
+	b=iOem0TZywwXIk6V8dTC1c8Tr/AzNZ/6dp0zSOe99puStq5appzzIqi0/2jOVpNQtPQE4pP
+	da3ALvcQHLYCr+LgcvLOJgVhb/zFo4lo72dvpSJCWzEzwh3f2hFJ3LtRrhr+RbHpl5FSee
+	seB/6DN2AFQq0Cx36u9Eta12QxOnC7s=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-148-_yxwNnbjOyyRybn6xBbt8Q-1; Tue, 16 Sep 2025 05:37:47 -0400
+X-MC-Unique: _yxwNnbjOyyRybn6xBbt8Q-1
+X-Mimecast-MFC-AGG-ID: _yxwNnbjOyyRybn6xBbt8Q_1758015466
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45f2b9b958aso12168575e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:37:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758015466; x=1758620266;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zf08R8nyJZM1unNfA8nj+QS6nwSWS7QnqLFVWYPYD94=;
+        b=or/cZbAs0VFnS21Dg2KEDIUHc5FH5DPatokqbm3utEVC0HbjsBOlHewRhAXJZjt1k0
+         uxM2HOduH/4xK5QAnsP3RC8s9M2RdXrYesrhORAz7B+2k5gjQY+D8HoWi90OUhvsNKWw
+         0y4Dvm2GaMwLtIsPRe40OVlWVd9iqEWUE9vrAa8Qm3n/RegtPPEUs/nIIqLApuhXEyRl
+         It09MqYc0A32YefHSrVIYEgutJA60cfMym6m21dHI3Ii4HsoPinDgTtUzqW/i9s+M1RE
+         sdzd9naMqmSMqmkWhG4aqii8EyMIK05lSI6iXGum5CR4/i25L+VC4mgclvMRii842Cen
+         pbhA==
+X-Gm-Message-State: AOJu0YypHP7UOpOz4lfvI5duhtGZwBXRXKuSyjP+H7ZxQifnosTUHYZc
+	NxJsZOMkWEgIT3cSvV4Vn6TtDUoytWgzBHvDn83RONBk6VsXMzebPrcDDq2bits3oSaXbVvgDTG
+	VUb+0mitl6SEzgm+2mwKis2H1t5XAqpDcdV7ifVC/vtUkU6t93bG9eaWgMkb5CaYxqA==
+X-Gm-Gg: ASbGnctn+cjwt9F2DlmGZbmXgKii1Zu9A3dlhL7BB5g2DT1qy2stVPT72SCt/qOCS5e
+	eO1N02STtmPj863EIeB8mG9OKMf7piU3avZLCHiAbVKi9Bc2bm63RJhrbWKXJUjJUEhiCHj6AEb
+	gSecM+CBC7tOoT/JCe6eoF2O8rJXzRDLNgUHJEi1zFfTJNTQb9wKpiMLK/9dAtnk6Gn0rAXkR3U
+	P1KKJGKPYhI7j91SEOU3ddOhRMh6DjKSQVjxVjoTa8aITVQ6AiJ6q3G6r+KtHR/nkUbYkdBiIdj
+	I39eaLMKaE1DJT2p+LCI4WUUkiUIzi187Q85OSF1/t1xrmmvfbfaPc41QyIyNj7TxQ==
+X-Received: by 2002:a05:600c:a47:b0:45b:47e1:ef69 with SMTP id 5b1f17b1804b1-45f212089a5mr147295315e9.36.1758015466386;
+        Tue, 16 Sep 2025 02:37:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGz3A+hTwx8PXOtCqhpLtFTrejUAgQYwGRq9js49jLeMuPKv1ZHqMuB9OCaiP9e1Ur5cgHTNA==
+X-Received: by 2002:a05:600c:a47:b0:45b:47e1:ef69 with SMTP id 5b1f17b1804b1-45f212089a5mr147295035e9.36.1758015465987;
+        Tue, 16 Sep 2025 02:37:45 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.35])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd6absm21436968f8f.34.2025.09.16.02.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 02:37:45 -0700 (PDT)
+Message-ID: <243819a5337a7eb3dc6e87b97dd5269c2cd14002.camel@redhat.com>
+Subject: Re: [GIT PULL] rv fixes for 6.17-rc7
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Akhilesh Patil <akhilesh@ee.iitb.ac.in>, 
+ Nam Cao <namcao@linutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Zhen
+ Ni <zhen.ni@easystack.cn>
+Date: Tue, 16 Sep 2025 11:37:44 +0200
+In-Reply-To: <a3563dcd-80e1-4091-87ae-f1ce1e22bf6e@redhat.com>
+References: <20250915073529.20364-2-gmonaco@redhat.com>
+	 <20250915192527.38f80056@gandalf.local.home>
+	 <a3563dcd-80e1-4091-87ae-f1ce1e22bf6e@redhat.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMkN1m55vejTii_H@example.org>
 
-On Tue, Sep 16, 2025 at 09:12:22AM +0200, Alexey Gladkov wrote:
-> On Mon, Sep 15, 2025 at 07:56:16AM +0200, Nicolas Schier wrote:
-> > On Mon, Aug 18, 2025 at 06:54:57PM +0200, Alexey Gladkov wrote:
-> > > From: Masahiro Yamada <masahiroy@kernel.org>
-> > > 
-> > > Keep the .modinfo section during linking, but strip it from the final
-> > > vmlinux.
-> > > 
-> > > Adjust scripts/mksysmap to exclude modinfo symbols from kallsyms.
-> > > 
-> > > This change will allow the next commit to extract the .modinfo section
-> > > from the vmlinux.unstripped intermediate.
-> > > 
-> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > ---
-> > >  include/asm-generic/vmlinux.lds.h | 2 +-
-> > >  scripts/Makefile.vmlinux          | 2 +-
-> > >  scripts/mksysmap                  | 3 +++
-> > >  3 files changed, 5 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> > > index ae2d2359b79e9..cfa63860dfd4c 100644
-> > > --- a/include/asm-generic/vmlinux.lds.h
-> > > +++ b/include/asm-generic/vmlinux.lds.h
-> > > @@ -831,6 +831,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
-> > >  
-> > >  /* Required sections not related to debugging. */
-> > >  #define ELF_DETAILS							\
-> > > +		.modinfo : { *(.modinfo) }				\
-> > >  		.comment 0 : { *(.comment) }				\
-> > >  		.symtab 0 : { *(.symtab) }				\
-> > >  		.strtab 0 : { *(.strtab) }				\
-> > > @@ -1044,7 +1045,6 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
-> > >  	*(.discard.*)							\
-> > >  	*(.export_symbol)						\
-> > >  	*(.no_trim_symbol)						\
-> > > -	*(.modinfo)							\
-> > >  	/* ld.bfd warns about .gnu.version* even when not emitted */	\
-> > >  	*(.gnu.version*)						\
-> > >  
-> > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > > index 4f2d4c3fb7372..e2ceeb9e168d4 100644
-> > > --- a/scripts/Makefile.vmlinux
-> > > +++ b/scripts/Makefile.vmlinux
-> > > @@ -86,7 +86,7 @@ endif
-> > >  # vmlinux
-> > >  # ---------------------------------------------------------------------------
-> > >  
-> > > -remove-section-y                                   :=
-> > > +remove-section-y                                   := .modinfo
-> > >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> > >  
-> > >  quiet_cmd_strip_relocs = OBJCOPY $@
-> > > diff --git a/scripts/mksysmap b/scripts/mksysmap
-> > > index 3accbdb269ac7..a607a0059d119 100755
-> > > --- a/scripts/mksysmap
-> > > +++ b/scripts/mksysmap
-> > > @@ -79,6 +79,9 @@
-> > >  / _SDA_BASE_$/d
-> > >  / _SDA2_BASE_$/d
-> > >  
-> > > +# MODULE_INFO()
-> > > +/ __UNIQUE_ID_modinfo[0-9]*$/d
-> > > +
-> > >  # ---------------------------------------------------------------------------
-> > >  # Ignored patterns
-> > >  #  (symbols that contain the pattern are ignored)
-> > > -- 
-> > > 2.50.1
-> > > 
-> > 
-> > Hi Alexey,
-> > 
-> > with this patch applied, I still get a warning from objcpy as Masahiro
-> > and Stephen wrote [1,2]
-> > 
-> >   SORTTAB vmlinux.unstripped
-> > + sorttable vmlinux.unstripped
-> > + nm -S vmlinux.unstripped
-> > + ./scripts/sorttable -s .tmp_vmlinux.nm-sort vmlinux.unstripped
-> > + is_enabled CONFIG_KALLSYMS
-> > + grep -q ^CONFIG_KALLSYMS=y include/config/auto.conf
-> > + cmp -s System.map .tmp_vmlinux2.syms
-> > + echo vmlinux.unstripped: ../scripts/link-vmlinux.sh
-> > # OBJCOPY vmlinux
-> >   objcopy --remove-section=.modinfo vmlinux.unstripped vmlinux
-> > objcopy: vmlinux.unstripped: warning: empty loadable segment detected at vaddr=0xffff8000807a0000, is this intentional?
-> > 
-> > (arm64, allnoconfig)
-> > 
-> > Kind regards,
-> > Nicolas
-> > 
-> > 
-> > [1]: https://lore.kernel.org/linux-kbuild/CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com/
-> > [2]: https://lore.kernel.org/lkml/20250730164047.7c4a731a@canb.auug.org.au/
-> > 
-> 
-> Hm. I missed that. I need to investigate how to fix this. Nothing comes
-> to mind right now.
+On Tue, 2025-09-16 at 05:24 +0000, Gabriele Monaco wrote:
+>=20
+> note the link above is gitLab:
+>=20
+> https://gitlab.com/glemco/linux/-/tree/rv-6.17-rc7?ref_type=3Dtags
+>=20
+> and yes it's public.
 
-Same here.  Only thing I could find until now is
+It seems Gitlab doesn't allow anonymous access via SSH, so yeah, you'd
+need an account to clone the link I shared.
+For now you should be able to clone via HTTPS:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/diff/scripts/link-vmlinux.sh?id=90ceddcb495008ac8ba7a3dce297841efcd7d584
+  git clone https://gitlab.com/glemco/linux.git -b rv-6.17-rc7
 
-where '2>/dev/null' is appended exactly to prevent this very warning.
-But for me, it doesn't feel good doing that when stripping to vmlinux.
+But I'll try and get a repository up and running on kernel.org for the
+next time.
 
--- 
-Nicolas
+Sorry for the trouble.
+
+Gabriele
+
 
