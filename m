@@ -1,332 +1,167 @@
-Return-Path: <linux-kernel+bounces-818160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5959BB58DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D017B58DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F604803EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7FB487756
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C40253B67;
-	Tue, 16 Sep 2025 05:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8367265CC9;
+	Tue, 16 Sep 2025 05:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PRNtdPEd"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9HdjQS1"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E81A236A73
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DAF25F988
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757999272; cv=none; b=gCeYF5gyl55kdMxebHRHFD1J9YeXPzHj0+Or39DuWAMnNCOxPkm4z5GwwHfnOMoaS/7WdRQDoGETjKnYjl+C0ZjlG+z8Xacpk/dZE+9vqIyBRmWuTIS/Rw0zvnjKLXHKgJU1sJVqx+xHtYH/h2u4uWQOpW0cY7eqqtN5rl9gIcQ=
+	t=1757999579; cv=none; b=E6C/qlQ5f5pcCVq+KwOlVK2AFCwSCXWL9xaGFndibOKga+ngmPyU3zErOqAysl8uR+keVmk1Ivj1cwQHuH4yf4mOwmaTMjYei3EfXysC7EjbhR0Q9HA1bhOn9dNzcMm1KFxv8dwqNQwG/tVpuKDZXHiysOaI8fFjShgpHRueSlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757999272; c=relaxed/simple;
-	bh=daFiBDhD3aJ48E9jadgGLfvb3skhIggquyhgw7ndih0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nIruZCpLvLCxvz5jWFuSKteZOH57T6aSkn3DrZtmWtgejW+j0scP+ViGOSUL/N85jcXI3fPrMPhsi0BXumL6g1kffCZ9uepQETeRxqLYrCF3MtgVXs7yZpEXzBfhDJoi7jIpg6q29ik/jrfFF0j5dTheblyubYnSztZe9Rqi/oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PRNtdPEd; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7762021c574so2690971b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:07:50 -0700 (PDT)
+	s=arc-20240116; t=1757999579; c=relaxed/simple;
+	bh=YCagT15TJjexqc1Up8uabF4bbwgjLWA6JZqJVkY1Ick=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uPbX+toVNcnp6lLX6DlKGDJoJj3ct3am41baMx4FlsZSy1rulcwRqS4lmZIJQgusqPrv2fbYmKXYA7y2TXnW43oIxvDukREcILMBRLlsV5ZjhECnRZa/Oo0rBvaeiAz9eNruWx85m0FAl/d4EYhgX9Z46OVejimkG99OpdQqsnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9HdjQS1; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b54b55c6eabso2954466a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:12:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757999269; x=1758604069; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+qmsLaQYfIFnfOnViE0APxpYe9wnZszmNaZLIS/hLg=;
-        b=PRNtdPEd8WpWwECsDkJSaBeYDQ53h7kcQdDAyyh+kjM3SSzeSHc1WF6mURj18sE6cU
-         5dYChqCLaMMeaZ4Q3plt26FJV2zkACH3lb0GW4saCbzj3Ny/qyedYrRZqgG7CgNLcVCn
-         TcSiBxWuGiJ7F8mx0cSeSQHQexnbeHeXwZWcxFhcvcANuoNZtHMZV6RqwU/dv6PDfDlY
-         V//9dhyQdxZ/9drEs+RN6Q7vUHamW3TO0TUZhiC3fR4vnMvWS/E5C+EL2uQsFh5eEgGh
-         lN9MCxKA2kowdLdX7Ufgg1YBAWfSc8CO4+A832+amZuMZXZiirn+nzexrT8qMAW7sEP9
-         WxFA==
+        d=gmail.com; s=20230601; t=1757999576; x=1758604376; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cBOq3NZ+rM2h9sy3fGHWYF48a38jqJCkuNGc5MxKF+A=;
+        b=l9HdjQS12U4qnpW3qm+sVeeDpgaAqXXT7kyu9Y+UNv+E6HOgJ3PJjhBv4o/xI1zlAa
+         tOBrrFwLyXa0j5PNKdIhpHGgMfeCh0e6xrr19Fg+lnyuiU3aKWVwWmPtW7DiN2/jtKdp
+         vx5IXI/iUqXxh3fNSnP4uYZCOM2AdICJVrdZDYSPYB53xJEuoHxusBoqNXjUdgN5/Bbe
+         uD7sra6ZYzf4GOxdA8/pTNiJWYBykDEXm0e9Xeh3leHV4xTxAgUm6a61CRwWyAmoN6QQ
+         ly5nXNJYkS+YGJWHYnU8T1HFMbplQ2By/jQaLK/LjgmAQ5J0sIerHuPw3nLKHrHDw4fQ
+         rYVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757999269; x=1758604069;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+qmsLaQYfIFnfOnViE0APxpYe9wnZszmNaZLIS/hLg=;
-        b=V1pNGgFANJtAm1ctlrx03q6D9XIpzUpl4OHtbEdeOhHhzGatgw4lHkiQTO9tx/AWH8
-         KectTrBXkODjikyhzHVNapHchCQDAnA4o/PFhKi5XBUzDa+Xz1DW9E6M09qv2VxOOedA
-         jhh3pyyEm9Y8dZ2+X/VumawNJ8UC0eLF2rM7rJJRB4U6BPsf6eYeZ0WVCFT++M+LKKwG
-         jnxs9CaDRPz/OO/gl6snampUOpPX+t5/p6O1UpoicUUDrXf46rHttzZpQzRADaU2QUUn
-         CDNGybWl9W6G+g7/rZHV2C4/gNRAyn53s9vk04UFpNkfCD9hFabAr4JfsgAf3MFmWNQl
-         x9Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCXreK3nvBj9p4qaudWfXVh3mS1q249NSPgkL2j6ZRERugJFwRSNTCehdhhb99v/QKYcbc1pytDHtwKNyMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz73XwZI1eguF+jXR0CoAlHuq4cRMU0Gv5EGjjiPT+mUQQL2ywP
-	v5RlMCuRjG5fGmMVfX5tj9FKVs+2pJuTTaX8SNtGob5eKTiSnRxjLhO+/wC/SJB/HQ==
-X-Gm-Gg: ASbGncvHYly5zGcdKNdw6So/e/xWeDgByKEXdDRvS/hqBEcpEOZAqRz9JTYgUAqSWhL
-	q8+GG9gjFLBSh5G//oMMWXwIF+SXl3d7sM1erkc7O3fuI5PVG9O4unlJi9uHYYmj/DUwFqYd9Cz
-	sYn+R2KeXvo63+JROpemCcpghL23xLyTyYVoBq1T9UVGEBiwwxfWS3lpjFVcXKlxbln7JP8/juA
-	wWj23t2W0ScuOyrykfc3GKiaNyyLjepOxOG4UtyyhcnVUuTqi8yEls8PD8xyqdEZe38x5y55mRx
-	LBphchzm5zJJC8KgoFT+wB51CEjzN+EfH4Mlwa5HIkxgwIoIfjN4e3ycm+CyBxSbvr67/F5sXFU
-	575waNLfLz9/cVz9aQlIFwXEr++KRh4ik+Td+rzR89AqFSifDZmgDw0tXNqxHosRJ9wdFoQewc+
-	KpiMzU5BhLN0NCQdvrFMWc++xD
-X-Google-Smtp-Source: AGHT+IE67V0/Q7PMyxtMDe4Dx+1Y/Qbj1MBm0zEQYVlSQIpIVrmBipbiYSmuQN2+gYdoKBRHHyil8Q==
-X-Received: by 2002:a05:6a00:a88f:b0:776:139d:cccb with SMTP id d2e1a72fcca58-776139dcdf7mr17285388b3a.28.1757999269172;
-        Mon, 15 Sep 2025 22:07:49 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607a47310sm14496490b3a.27.2025.09.15.22.07.47
+        d=1e100.net; s=20230601; t=1757999576; x=1758604376;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cBOq3NZ+rM2h9sy3fGHWYF48a38jqJCkuNGc5MxKF+A=;
+        b=WfTA0QQz7Jb0agWv+czbd7Ao47h80X++9MWVA4iKudlCM4f5FdsmP3rg6zoo5HcdNe
+         sVrQz4sjdh6v5UROQTHChzaWia1fmpqh+7pex++sxn7XxOgUjY9gySimof++kBQoznvG
+         gBky2AC875Ih3KQWnZIdIilyFJJKZ8kdm+LtbUyfYMk/geC2vogBp6TXXtBFBhKfIDLt
+         jh95YGUGKAKYD0Zs4Qehhz2RE5r+QoejE0wF/prYVFdRpw4I7v5Q7HvbOMlijYgewApW
+         GGexlqqIn06v5VpuQUNKsq0JXxo6pOlUQjZQK9A6lgck9YQTte5hcIxoMKAeJ8MMViPP
+         yCbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjvLTUJockOeqqPIPwwz7Qd/BTe+MBOXN/QphbLVNcEQ0kzQO1wfYoT5j2Urdt39BksPIdA8bOgVxf9dY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzuau0qesdzIuBBXTKOKGn68IC3w+Ldjw5I4+RvFIJISFoJ74JN
+	a1qw24mJtKdblZpwVaRFCWEcl2qT+nkeoakie2aQo6O4FmrxrrnQSsW9
+X-Gm-Gg: ASbGncu07gtjTr1s7/9fpsuQtJnwJIuxAgvCczuLo2FXEL5JM1b9gaYmBukFjMDNet6
+	0CmG8xh4JegUKF9X63vZqB0IPOoZ57B7A57J4O2Ilz7MKkV//hmX9GjdOYxRGyV1XUlzOQyIBJ5
+	WUX+mSWvU7QbkXiOSSOSFpxDhzXJMGRhWtXSn3eGYEhHuDQAzY8cv2Ecjf0CzphNqwZNV78b20o
+	RvO+RXx/1q6VORY/AUMxQwohsRQM3VhXpDj8wzkRSZZizONg/23RrR4LhaY71D9C9tXvRhQ4LTQ
+	uMksaj1tzsaLF09JUa45sxjWjD6gvtkItkJFojsUcAEpY0H61d+HOvG9TE1oqhkZrTHHkaXLUg5
+	cHzqmFOU9VOX8KVn43ECvlBzxhcsi9AVTLQt/0k0=
+X-Google-Smtp-Source: AGHT+IE7OBjzV/92I2FhRFhRyz0p6Dc1x8NjHMGdKfNgjrPBrsrB5BEKW/jgDKL3ClaLwqWrxBdTgQ==
+X-Received: by 2002:a17:903:2f08:b0:24a:f79e:e5eb with SMTP id d9443c01a7336-25d26e455a4mr180824495ad.49.1757999575963;
+        Mon, 15 Sep 2025 22:12:55 -0700 (PDT)
+Received: from cortexauth ([2402:e280:2313:10b:d917:bfec:531b:9193])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26295996ff6sm80994095ad.64.2025.09.15.22.12.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 22:07:48 -0700 (PDT)
-Date: Mon, 15 Sep 2025 22:06:52 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Paul Moore <paul@paul-moore.com>
-cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-    James Morris <jmorris@namei.org>, 
-    Stephen Smalley <stephen.smalley.work@gmail.com>, 
-    Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, 
-    Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-    linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
-In-Reply-To: <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
-Message-ID: <92255d5e-7e0a-6ca3-3169-114ae7f6247f@google.com>
-References: <20250826031824.1227551-1-tweek@google.com> <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
+        Mon, 15 Sep 2025 22:12:55 -0700 (PDT)
+From: Deepak Sharma <deepak.sharma.472935@gmail.com>
+To: jikos@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Deepak Sharma <deepak.sharma.472935@gmail.com>,
+	syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Subject: [PATCH v2] HID: cp2112: Add parameter validation to data length
+Date: Tue, 16 Sep 2025 10:40:55 +0530
+Message-ID: <20250916051055.317581-1-deepak.sharma.472935@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-1767593222-1757999268=:21221"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This is v2 for the earlier patch, where a few bounds check were
+unnecessarily strict. This patch also removes the use of magic numbers
 
----1463770367-1767593222-1757999268=:21221
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Syzkaller reported a stack OOB access in cp2112_write_req caused by lack
+of parameter validation for the user input in I2C SMBUS ioctl codeflow
+in the report
 
-On Wed, 3 Sep 2025, Paul Moore wrote:
-> On Aug 25, 2025 "=3D?UTF-8?q?Thi=3DC3=3DA9baud=3D20Weksteen?=3D" <tweek@g=
-oogle.com> wrote:
-> >=20
-> > Prior to this change, no security hooks were called at the creation of =
-a
-> > memfd file. It means that, for SELinux as an example, it will receive
-> > the default type of the filesystem that backs the in-memory inode. In
-> > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-> > be hugetlbfs. Both can be considered implementation details of memfd.
-> >=20
-> > It also means that it is not possible to differentiate between a file
-> > coming from memfd_create and a file coming from a standard tmpfs mount
-> > point.
-> >=20
-> > Additionally, no permission is validated at creation, which differs fro=
-m
-> > the similar memfd_secret syscall.
-> >=20
-> > Call security_inode_init_security_anon during creation. This ensures
-> > that the file is setup similarly to other anonymous inodes. On SELinux,
-> > it means that the file will receive the security context of its task.
-> >=20
-> > The ability to limit fexecve on memfd has been of interest to avoid
-> > potential pitfalls where /proc/self/exe or similar would be executed
-> > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-> > similarly to the file class. These access vectors may not make sense fo=
-r
-> > the existing "anon_inode" class. Therefore, define and assign a new
-> > class "memfd_file" to support such access vectors.
-> >=20
-> > Guard these changes behind a new policy capability named "memfd_class".
-> >=20
-> > [1] https://crbug.com/1305267
-> > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.c=
-om/
-> >=20
-> > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
-> > Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > ---
-> > Changes since RFC:
-> > - Remove enum argument, simply compare the anon inode name
-> > - Introduce a policy capability for compatility
-> > - Add validation of class in selinux_bprm_creds_for_exec
-> >=20
-> >  include/linux/memfd.h                      |  2 ++
-> >  mm/memfd.c                                 | 14 +++++++++--
-> >  security/selinux/hooks.c                   | 27 ++++++++++++++++++----
-> >  security/selinux/include/classmap.h        |  2 ++
-> >  security/selinux/include/policycap.h       |  1 +
-> >  security/selinux/include/policycap_names.h |  1 +
-> >  security/selinux/include/security.h        |  5 ++++
-> >  7 files changed, 46 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-> > index 6f606d9573c3..cc74de3dbcfe 100644
-> > --- a/include/linux/memfd.h
-> > +++ b/include/linux/memfd.h
-> > @@ -4,6 +4,8 @@
-> > =20
-> >  #include <linux/file.h>
-> > =20
-> > +#define MEMFD_ANON_NAME "[memfd]"
-> > +
-> >  #ifdef CONFIG_MEMFD_CREATE
-> >  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned =
-int arg);
-> >  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
-> > diff --git a/mm/memfd.c b/mm/memfd.c
-> > index bbe679895ef6..63b439eb402a 100644
-> > --- a/mm/memfd.c
-> > +++ b/mm/memfd.c
-> > @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, un=
-signed int flags)
-> >  {
-> >  =09unsigned int *file_seals;
-> >  =09struct file *file;
-> > +=09struct inode *inode;
-> > +=09int err =3D 0;
-> > =20
-> >  =09if (flags & MFD_HUGETLB) {
-> >  =09=09file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
-> > @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, =
-unsigned int flags)
-> >  =09}
-> >  =09if (IS_ERR(file))
-> >  =09=09return file;
-> > +
-> > +=09inode =3D file_inode(file);
-> > +=09err =3D security_inode_init_security_anon(inode,
-> > +=09=09=09&QSTR(MEMFD_ANON_NAME), NULL);
-> > +=09if (err) {
-> > +=09=09fput(file);
-> > +=09=09file =3D ERR_PTR(err);
-> > +=09=09return file;
-> > +=09}
-> > +
-> >  =09file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
-> >  =09file->f_flags |=3D O_LARGEFILE;
-> > =20
-> >  =09if (flags & MFD_NOEXEC_SEAL) {
-> > -=09=09struct inode *inode =3D file_inode(file);
-> > -
-> >  =09=09inode->i_mode &=3D ~0111;
-> >  =09=09file_seals =3D memfd_file_seals_ptr(file);
-> >  =09=09if (file_seals) {
->=20
-> Hugh, Baolin, and shmem/mm folks, are you okay with the changes above? If
-> so it would be nice to get an ACK from one of you.
+I2C device drivers are "responsible for checking all the parameters that
+come from user-space for validity" as specified at Documentation/i2c/dev-interface
 
-So far as I can tell, seems okay to me:
-Acked-by: Hugh Dickins <hughd@google.com>
+Add the parameter validation for the data->block[0] to be bounded by
+I2C_SMBUS_BLOCK_MAX + the additional compatibility padding
 
-If I'd responded earlier (sorry), I would have asked for it just to use
-&QSTR("[memfd]") directly in the call, rather than indirecting through
-unnecessary #define MEMFD_ANON_NAME "[memfd]"; never mind, that's all.
+Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7617e19c8a59edfbd879
+Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
+---
+ drivers/hid/hid-cp2112.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-Please do take this, along with the rest, through your security tree:
-mm.git contains no conflicting change to mm/memfd.c at present.
+diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
+index 482f62a78c41..13dcd2470d92 100644
+--- a/drivers/hid/hid-cp2112.c
++++ b/drivers/hid/hid-cp2112.c
+@@ -689,7 +689,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 			count = cp2112_write_read_req(buf, addr, read_length,
+ 						      command, NULL, 0);
+ 		} else {
+-			count = cp2112_write_req(buf, addr, command,
++			/* Copy starts from data->block[1] so the length can
++			 * be at max I2C_SMBUS_CLOCK_MAX + 1
++			 */
++			
++			if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
++				count = -EINVAL;
++			else
++				count = cp2112_write_req(buf, addr, command,
+ 						 data->block + 1,
+ 						 data->block[0]);
+ 		}
+@@ -700,7 +707,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 						      I2C_SMBUS_BLOCK_MAX,
+ 						      command, NULL, 0);
+ 		} else {
+-			count = cp2112_write_req(buf, addr, command,
++			/* data_length here is data->block[0] + 1
++			 * so make sure that the data->block[0] is
++			 * less than or equals I2C_SMBUS_BLOCK_MAX + 1
++			*/
++			if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
++				count = -EINVAL;
++			else
++				count = cp2112_write_req(buf, addr, command,
+ 						 data->block,
+ 						 data->block[0] + 1);
+ 		}
+@@ -709,7 +723,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 		size = I2C_SMBUS_BLOCK_DATA;
+ 		read_write = I2C_SMBUS_READ;
+ 
+-		count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
++		/* data_length is data->block[0] + 1, so 
++		 * so data->block[0] should be less than or
++		 * equal to the I2C_SMBUS_BLOCK_MAX + 1
++		*/
++		if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
++			count = -EINVAL;
++		else
++			count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
+ 					      command, data->block,
+ 					      data->block[0] + 1);
+ 		break;
+-- 
+2.51.0
 
-Thanks,
-Hugh
-
->=20
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index c95a5874bf7d..429b2269b35a 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -93,6 +93,7 @@
-> >  #include <linux/fanotify.h>
-> >  #include <linux/io_uring/cmd.h>
-> >  #include <uapi/linux/lsm.h>
-> > +#include <linux/memfd.h>
-> > =20
-> >  #include "avc.h"
-> >  #include "objsec.h"
-> > @@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct li=
-nux_binprm *bprm)
-> >  =09ad.type =3D LSM_AUDIT_DATA_FILE;
-> >  =09ad.u.file =3D bprm->file;
-> > =20
-> > +=09if (isec->sclass !=3D SECCLASS_FILE && isec->sclass !=3D SECCLASS_M=
-EMFD_FILE)
-> > +=09=09return -EPERM;
->=20
-> In the interest of failing fast, this should probably be moved up in the
-> function to just after where @isec is set.  There are also a number of
-> checks that happen prior to this placement, but after the isec assignment=
-=2E
-> While I don't think any of those checks should be an issue, I'd rather
-> not to have to worry about those and just fail the non-FILE/MEMFD_FILE
-> case as soon as we can in selinux_bprm_creds_for_exec().
->=20
-> >  =09if (new_tsec->sid =3D=3D old_tsec->sid) {
-> > -=09=09rc =3D avc_has_perm(old_tsec->sid, isec->sid,
-> > -=09=09=09=09  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
-> > +=09=09rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
-> > +=09=09=09=09  FILE__EXECUTE_NO_TRANS, &ad);
-> >  =09=09if (rc)
-> >  =09=09=09return rc;
-> >  =09} else {
-> > @@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct lin=
-ux_binprm *bprm)
-> >  =09=09if (rc)
-> >  =09=09=09return rc;
-> > =20
-> > -=09=09rc =3D avc_has_perm(new_tsec->sid, isec->sid,
-> > -=09=09=09=09  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
-> > +=09=09rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
-> > +=09=09=09=09  FILE__ENTRYPOINT, &ad);
-> >  =09=09if (rc)
-> >  =09=09=09return rc;
-> > =20
-> > @@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(str=
-uct inode *inode,
-> >  =09struct common_audit_data ad;
-> >  =09struct inode_security_struct *isec;
-> >  =09int rc;
-> > +=09bool is_memfd =3D false;
-> > =20
-> >  =09if (unlikely(!selinux_initialized()))
-> >  =09=09return 0;
-> > =20
-> > +=09if (name !=3D NULL && name->name !=3D NULL &&
-> > +=09    !strcmp(name->name, MEMFD_ANON_NAME)) {
-> > +=09=09if (!selinux_policycap_memfd_class())
-> > +=09=09=09return 0;
-> > +=09=09is_memfd =3D true;
-> > +=09}
-> > +
-> >  =09isec =3D selinux_inode(inode);
-> > =20
-> >  =09/*
-> > @@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(stru=
-ct inode *inode,
-> > =20
-> >  =09=09isec->sclass =3D context_isec->sclass;
-> >  =09=09isec->sid =3D context_isec->sid;
-> > +=09} else if (is_memfd) {
-> > +=09=09isec->sclass =3D SECCLASS_MEMFD_FILE;
-> > +=09=09rc =3D security_transition_sid(
-> > +=09=09=09sid, sid,
-> > +=09=09=09isec->sclass, name, &isec->sid);
-> > +=09=09if (rc)
-> > +=09=09=09return rc;
-> >  =09} else {
-> >  =09=09isec->sclass =3D SECCLASS_ANON_INODE;
-> >  =09=09rc =3D security_transition_sid(
->=20
-> We're duplicating the security_transition_sid() call which seems less
-> than ideal, how about something like this?
->=20
->   if (context_inode) {
->     /* ... existing stuff ... */
->   } else {
->     if (is_memfd)
->       isec->sclass =3D SECCLASS_MEMFD_FILE;
->     else
->       isec->sclass =3D SECCLASS_ANON_INODE;
->     rc =3D security_transition_sid(...);
->     if (rc)
->       return rc;
->   }
->=20
-> --
-> paul-moore.com
----1463770367-1767593222-1757999268=:21221--
 
