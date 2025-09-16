@@ -1,125 +1,139 @@
-Return-Path: <linux-kernel+bounces-818152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCDEAB58DA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:58:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B48B58D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810A11BC6DDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:57:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C1617B44BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A648823C4ED;
-	Tue, 16 Sep 2025 04:56:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EE12356D2;
+	Tue, 16 Sep 2025 04:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S1i1cMoj"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8F821B9DB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0326635950
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998606; cv=none; b=VL2mAH0TexEf2S65qoidY8FvYCdAbyFJ4RWVhzWuFRE6VcTP/bLegm5iNpmwNAJh/tOMztnP0zB0cP2h1XG7egdW8juUyYxhgrsiTgkV6uJvV3hT2ML8w8IrYN3uQzI4KFBQQAeW+5ydwkPjEcxA8B9qFHLew2vP7RYo7bfr24U=
+	t=1757998669; cv=none; b=N73mKZ8+UKefMM2hi3aM9/TeqGuLV9TcCIHOmihPuREZqJP6JSaQUKsNG+7AW0yqVV/KlNcRKeDRp9ndsAFWaBpSrVpJM1B2S/JyWOG+Yxl2+po3pdz/FqYXTUFtNzX2YoDQhK4Ap1IBb56ZG9RaboQ2LkJVorhZ176asOvZeXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998606; c=relaxed/simple;
-	bh=cEellUF89w42MfPZvNg0Pwo5l35x4ka2ztq8ivbFbok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jH7r5/QA4OEjMsH1YAi4sHgygTdL+Dxw98V6Kv51UDpZztqhig42eBSh54ox3e5ny+4zkcFtjmMHZsZM6xnmk150CAqIstiyxL1ImZw9OhPTOZTOlsoTel9yWM21U0Tk7kDVUzzqQbhS8I94GQzDCTCw4ah6C+E0jAgXRE97zJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uyNju-00054e-FR; Tue, 16 Sep 2025 06:56:26 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uyNjr-001Wy3-0D;
-	Tue, 16 Sep 2025 06:56:23 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uyNjq-00BRnc-2p;
-	Tue, 16 Sep 2025 06:56:22 +0200
-Date: Tue, 16 Sep 2025 06:56:22 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
-Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
- ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
-Message-ID: <aMjt9iVcNWYf0opD@pengutronix.de>
-References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
- <20250908124610.2937939-3-o.rempel@pengutronix.de>
- <20250911193440.1db7c6b4@kernel.org>
- <aMPw7kUddvGPJCzx@pengutronix.de>
- <20250912170053.24348da3@kernel.org>
- <aMfczCuRf0bm2GgQ@pengutronix.de>
- <20250915080720.17646515@kernel.org>
+	s=arc-20240116; t=1757998669; c=relaxed/simple;
+	bh=iUJUx5oWUZWYdWeJo/HoxqWODfTPlYBKHgYdht6D9+s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H/FCfJuu6u2RkiRJ4sy+h8J2XyN/jDIQOnV4wiCGKLjNjHWRHo/lN2UFM7vjgqxgZjDzQvvyH9BTdoqVhXo1tTgdZHr0qcUj6pzUVOz0caTjYre/+XtRfv+Yxxh/kSb6luL25oiM3qKfwe84eWzdzyxrVIYLaAjc5aQAoUBsAok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S1i1cMoj; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-560888dc903so6084718e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757998666; x=1758603466; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HpTDV+2DFFFsEkDb9LE6EbkfjFcEBTy8hUBRFSFYa6A=;
+        b=S1i1cMojv7805s7N3e3YeKJy3fMOw6QWYr+/oYIxVvr25Rj6Oe+eOhTANhJKsT4aTC
+         KZDiLjP+kWPkLTwMg6nyt2onERB+jB/prb28uBT63BNfgaNMDpxOSdVAcePeT2Em3H/o
+         qtzXFV9c2qPGR8o3oVq5dvBRB3NvJejQNPYofA98MFsCLpMcMpIkgyHF45a+r0LBI0MQ
+         BuR08FyIMkcmm+yLL7Rqeggfv3TA0yA6iUUk17zqTyD3G+zElstKC8QeO/02+7KDXvuq
+         01CBADcNVLz2AexstSqci+S5M4wiUbL6KxgxYTe0OtQQRutHl+2Olf8wfpTnO28JTrUx
+         reVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757998666; x=1758603466;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HpTDV+2DFFFsEkDb9LE6EbkfjFcEBTy8hUBRFSFYa6A=;
+        b=d+WhCuWmNensbyq/kVLwoBSlDKWktYlwAKnX3HINqpKWpwUXCoqtpsQdIpaA1VkBo+
+         E5hTmdvX0MoHiQ59TCfAZappRiSrTqEiGjNTHBpIHBIsb9OJ0DjJxRDlkPmF5EI9Pv5T
+         DktoD+Xch1TLqjtXWfsz3bmPdwQLt7XHwkvVVsI3jzVU93yPVicxc2ThMXUFgf6P8Saf
+         X9ywrlRAaM3/04F9wapms5PhQ8W64zVqcjz5eEtJLt4bY8qoDtSVYIz0yODA1NWin4FO
+         6uqROwcymef42Y0leJrxXMo2vblEmPZx1+QBNQLqV1cZDecwTq8i3j5aOR85hz6StMaN
+         E+Xw==
+X-Gm-Message-State: AOJu0YxFfoECRfPa9Htpd1kuBencPmtYhnwplztNbgq9rUigggEypW8X
+	30e7PnPE5UqIfNeFA9WBvrtlkFL0Iixz2p10WD9p9ITwy7s4bUzRpYyzCnvj9kTLG7XWDJ74GV7
+	pMEwdauPIKSbPXWOEdxpk7dhDI9k5ZWO6TD4kE6I=
+X-Gm-Gg: ASbGncuNrWXylS9LwXLBCyflr1wI6JXNg6w6eTGFy1RykWL6Etyv+E3siV4dFOgK6qd
+	fWqltntNf9It3rc4ri89L5oVYZAtDbxVDOSIlziBZhIZJRh+EE1AbYrJwXCedvCiBJg6pWPbWiV
+	p/fEW+91xMWLOPKYivJHINfcLfPcstTyoM42q20EAOm/ayQ5QCp+pwMqFLBEKIxcNicD1GT6c3e
+	+xIAHSqrxZiTMAwrFWIXK0TYpF8zsrcaSGbgLRgTjSiAWRL4DqF
+X-Google-Smtp-Source: AGHT+IHDtK38btqcqlkD7yHcTAT6wH6BBASqjuq5UxWSmLvsur+1YzpjI1vPbX7dpj1/96HVo327lR6HZEJMkJp3lBk=
+X-Received: by 2002:ac2:4e99:0:b0:55f:65f2:8740 with SMTP id
+ 2adb3069b0e04-5704e34edd5mr3498516e87.42.1757998665846; Mon, 15 Sep 2025
+ 21:57:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250915080720.17646515@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250904002201.971268-1-jstultz@google.com> <02dcdbfe-605a-4acb-8f51-6ccae7fbee65@amd.com>
+In-Reply-To: <02dcdbfe-605a-4acb-8f51-6ccae7fbee65@amd.com>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 15 Sep 2025 21:57:32 -0700
+X-Gm-Features: AS18NWA-4eenx69pjaDAFCdNbGQj8xLMy7uhnEko3XSwqF6OJCxMt4lyaKC1imE
+Message-ID: <CANDhNCp8Nrvoy_-xwWOk_7XM3PmGiKJPc6Rh8bGqhnu+dwF1gw@mail.gmail.com>
+Subject: Re: [RESEND][PATCH v21 0/6] Donor Migration for Proxy Execution (v21)
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 08:07:20AM -0700, Jakub Kicinski wrote:
-> On Mon, 15 Sep 2025 11:30:52 +0200 Oleksij Rempel wrote:
-> > On Fri, Sep 12, 2025 at 05:00:53PM -0700, Jakub Kicinski wrote:
-> > > On Fri, 12 Sep 2025 12:07:42 +0200 Oleksij Rempel wrote:  
-> > > > I would prefer to keep u64 for refresh-rate-ps and num-symbols.
-> > > > 
-> > > > My reasoning comes from comparing the design decisions of today's industrial
-> > > > hardware to the projected needs of upcoming standards like 800 Gbit/s. This
-> > > > analysis shows that future PHYs will require values that exceed the limits of a
-> > > > u32.  
-> > > 
-> > > but u64 may or may not also have some alignment expectations, which uint
-> > > explicitly excludes  
-> > 
-> > just to confirm - if we declare an attribute as type: uint in the YAML
-> > spec, the kernel side can still use nla_put_u64() to send a 64-bit
-> > value, correct? My understanding is that uint is a flexible integer
-> > type, so userspace decoders will accept both 4-byte and 8-byte encodings
-> > transparently.
-> 
-> Theoretically, and yes. But why would you use put_u64 and not
-> put_uint() ?
+On Mon, Sep 15, 2025 at 8:19=E2=80=AFPM K Prateek Nayak <kprateek.nayak@amd=
+.com> wrote:
+>
+> Hello John,
+>
+> On 9/4/2025 5:51 AM, John Stultz wrote:
+> > Also you can find the full proxy-exec series here:
+> >   https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v21-6=
+.17-rc4/
+> >   https://github.com/johnstultz-work/linux-dev.git proxy-exec-v21-6.17-=
+rc4
+>
+> tl;dr
+>
+> This series seems fine from performance standpoint but the above branch
+> may have some performance issues but take them with a grain of salt
+> since this is not all apples to apples comparison.
+>
 
-rater.. rater.. rater.. (sound of rusty gears slowly moving)
+Thank you so much for running these test! I really appreciate it!
+It does look like I need to  spend some more work on the full series,
+as those regressions with the full proxy patch set does seem
+problematic. Thank  you for raising this!
 
-Right, I was thinking of uint as u32. But in NLA, NLA_UINT is handled
-like NLA_U64, so the max is U64_MAX. That clears it up, thanks!
+(Thank you also for your feedback on the patches in this series, I've
+not gotten a chance to address and reply back individually yet, but I
+hope to do so soon!)
 
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+> For this series things are alright - my harness for longer running
+> benchmarks gave up for some reason so I'll rerun those tests again and
+> report back later but either tip has some improvements for
+> netperf / tbench or "proxy-exec-v21-6.17-rc4" may have some issues
+> around it. I'll take a deeper look later in the week.
+>
+
+Let me know if you find anything further!
+
+Thank you so much again for all your efforts here, both in testing and
+review! As well as the testing you do for the whole community!
+-john
 
