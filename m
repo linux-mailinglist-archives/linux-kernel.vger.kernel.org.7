@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-819604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02135B5A397
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241F0B5A39B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7577B18935C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60AD93A4285
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31B0284671;
-	Tue, 16 Sep 2025 21:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B4129ACD8;
+	Tue, 16 Sep 2025 21:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mASVOgPN"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8umpCHb"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13F028F1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425EC2798E5
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056913; cv=none; b=oIk9KKu9EFg7BY4Yl39I28J77m5EeJOixvP+tkI8sDnYj85V1xt6QP6PrTYGnNIvQiL/ZtAqz41zmxGEALgQr2AiIVTFZu301O832LL0YpsWzAEE4jwJhabl+tUqrqPY+QFQ4ytzE81jRpRJl5PJIkcttSfnO6pksQq9AaJJY5M=
+	t=1758056914; cv=none; b=fo5yGb/sEXlPDHNSd0O/F+syqfzvWmverwSI7WFOkMUjUUQaUuw2njTWP5TAdporxT6YtQ5DHOMmCe6Wya/CbfW152w3Jk4N0vAG5VBJIfQhxVuOQdA4Pv5+iFiQCyRxNlBkSZ+CMkLhfb0ulySKgxZ5sNVtOYelpyRBc9th+fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056913; c=relaxed/simple;
-	bh=b0tvp9HkVoVWUGRoRD92AJ6HbI5HFdHK3HGpdescOZY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=N8DOBVACGy6vRnhrBPT+WpPGIV3yP2MD8s9Hk1SflxfilWxajJLgA+SxFMSvzcoQ2v2dgGalZ83BDKOuHGldY6h3t0Gn5ZYg30LgLS7u/7jcBY9LMnHMnRLJiu04vzHUrMIE4eIZe+ygEKamwd4ktfmVq56maiZvlVP/QqRIE28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mASVOgPN; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1758056914; c=relaxed/simple;
+	bh=SuiPmK+Crh42Wn2BmX/TuMGhY6YmRUh+uPBkvuNcLk8=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZKGUwjGSEc9NGkTtcxbNeD1GcxwKmONvDIXgMbUS4VB4MRIhqIL6eKgmKBQslwRvexki9vNoE550TeIuLEYWnvod1XMVEdkFZfmEC8uSpNKkIA4TsfSsbV7t2c65AYyJdFl1RGZyK1lEftfWAs0FOn1q1y3QQJvTed3jH2QfBAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8umpCHb; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b54dd647edcso1386238a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:31 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77619f3f41aso3489523b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758056911; x=1758661711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JnksU2SwWU4C6GidGC0GSw5ecTfl2Qc9jjuMTd5CwuA=;
-        b=mASVOgPNrzAURm/1wxM3M24Pn10bU41ftAlhMY6AbRooMGVL1UVgYKjaFttgUVYkSy
-         2LpAmFNGF5fK5RpCGmkVYLOQXj5YFIc2Ss78q4mJQLMkjYA4Ax5pVbujjhSgBTxgtnHE
-         lAKqEZ7F2/AMXHKI6BIDKdCAAusaOy95Br98qxKsAp2kvx5q916f4v7lA9kAW6F3UCle
-         4Ye/jxvnLCrccdiYfkShsI1LNeimgimzRMyipHi6BoO114vSk5EvkPamoqgQD7hny2Rt
-         PBErfSZ84DHSJMQnEkq0WUan9gGQRLk1x9linSicYyfPIOfy/D5pKn/S8HQsbTKX0sfW
-         3K6g==
+        d=gmail.com; s=20230601; t=1758056912; x=1758661712; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JXlqsfnKLagrxPr3VzrTdqYzxgGnKLHikbQ3zw87L3c=;
+        b=C8umpCHbwZZ2llAQ1djBycVECywlKd5mAd1G02oPuDt4hYOusHAsdriA084wbIHFkK
+         91eP+zDaGyanHdZ8W4h5uE+vy6ZXSlMWOpA2kAvyFJ847YgYUiWiw3OMXJEGDm2l51JG
+         b4/m9x1c4ynmk7ZPWEhk2bQsxHDMbbHa3bcDSbT5CIsDyZEGc72J5gstBWlUdDAJhaRS
+         m2AQn9Hmd8ke2vy4m7xmnmpP5cm6rtIxXKXIkiqu1ncowVja+a02bVEEMah7e7gNG6yr
+         6UYGdygIodxgcA7KwCVN0PXQX1SUn3On+JAJObjvwukIvyvWK5YYPMfml/iAYwcZROIF
+         rRyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758056911; x=1758661711;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JnksU2SwWU4C6GidGC0GSw5ecTfl2Qc9jjuMTd5CwuA=;
-        b=GpxdDYv2QQN0mXUyLzQcFkEYT7m34ADvl9e6cGOOK5/yhQ1L+AkUwP4/NM+66jdWGc
-         XFFQ9bfjxQioVURA+lBEo3hn8PuwAQzHMvK2Z4uvTTtQ/3bcCA6Rt7ZyjkaXKBWwJ5kd
-         uBZQl3hKgOKMUSb72p0yJxHulJibxf2cg2HVW3yPScbhkxY0z9+07SW4YgJJJRT5mnxO
-         FYEzABwY3MKZRTkL8shfwxQSxMKrwrLb4OyGaPzYi7cn15ZuWPI+6INaptlpU8dT5TIn
-         4PPii060QCPuWVA5teZzHEOllCM2J/yG65hBiKMq58nGes7zWhv9s4LLPebrNPoIbmlx
-         /RHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ6HjAqINglY0b0OCuRwo6xWfM6Dlm/XljcLqSqco0TGkIiq6Z0c51LVf2OqEC38mD9Wh2iV9pELVAQII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX19hhlt/Plmfl/vvFPMwv6yk0VTP/wJvYrVZbPRcKKC+V4/JG
-	6W7h+qJwyntZzchcUysyruoYGlF1kllopXYjzN/juTh7SqH3ZD9ZM4gt
-X-Gm-Gg: ASbGncvtQAluK3kOlwOn0xzOAjUggtqnj91JJAeUMFNZM64c9biKStL6NLF5pDBAqpM
-	Aebg+Sd+Xa2PH8epS0nEjQEoudIevKWLL7PHoNZqIax6znDSePT7TloOrx3stqSdhYGAJWv8Pkq
-	XCNllP7UG/HQL4hyWyLxE2XAqgfTKBWcrlSqK9/y2DbjPaKieZ1vLnSghezESV1+0Ob1qy0HAx5
-	z7a1VaR+aYsYs8wzTgDWP9l4Uff0Txcm8CZHDSqavFkqV18FnD7D/MCZTEtQCpH0r1Dkg/nSx7U
-	Yv645iH9PTazao1qGhdVdDplbfw1SkVHGWbIqkvlcTtnVr0VXCRybTP2ziWAnmmcQ6SCl+ceqZ+
-	4YJZpwkacrFZkmCkNDjfQfULHE9+U/A+z6UclpCUl4txKvvjnfzkAPdAFyVYAZstLgppVAjCe8i
-	R37rTc3aU/Cw==
-X-Google-Smtp-Source: AGHT+IFDCNg8RT7iyB/b9XWWvWDI50pwmmPAEJl2QkoNSyYP2rCXRsOqrvEryw3II2ggN4h26fj0GA==
-X-Received: by 2002:a17:90b:5583:b0:32e:6858:b503 with SMTP id 98e67ed59e1d1-32e6858b70dmr10303623a91.29.1758056911296;
-        Tue, 16 Sep 2025 14:08:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758056912; x=1758661712;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JXlqsfnKLagrxPr3VzrTdqYzxgGnKLHikbQ3zw87L3c=;
+        b=pkDZclCMLOQgfknfVk4T6XZ6ohHIc2CUZ2ooj+pP9ctqg5a8+L+R+Ah9eUgce7uZbL
+         xBMdZEGqzrYOpG61+IEz4Kv4ZPK16OuqE5hokd9yXXrbCWuUMVqth2XHmXzS4dGWjD3r
+         GOoU4gM1ZDhrCuJC/r84+OIq7w4Ez7m0EywDfYA2Z//VGcVrh2+Z/d0dWpxTgAaYg+Hx
+         rsx8LRwOjMZU+sSSfIsdvFl5yNyLd4uRNjI/w1fDMO18KkVIh9j8DysRr4ljW8jzr/Ko
+         mqK1KAPYjdqeFqCrSovB7vbpww3LA8I3YKZpC4UWXiZTSLDHQB0ujWoI4QMSQGlNn6xB
+         eC5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXLamdwKlesTNe9bAxsvO8MO2VYZUlauVX8dxDWwESX8Gz/EbYeoDViptdgkebeTSaSdkoeqA1zxze2SgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6Zc+RxOD9ZJudysR944SNm4zSbovAAhe48cvsjiQ8c7wuz3AJ
+	4J4wZ/oAZ4wZq55WBj+k3AFQ32DrVa745hGseNIJW30Yfkxtq97I+pWV
+X-Gm-Gg: ASbGncvtqWJpw/LvkoQE7UAjM99cKwRIyOYQ48sU3ofmYIWy3shlB8T9Zh0g9R8sJr/
+	H3KKJM4aSFfTtFxnl69J8QCjnb9vhmTNedEwJx+0esrYZap5AWehBkn+LluRag7So8dBE123719
+	CNZOvyuXCpyTCwhlhKpI8W+oiDLd+0uuwBJmWJ75t3VYkp/tKWL9t2Iu0H+hg3qW++Cn1rht31j
+	LYM7HqC8GBOG/yj5Znpm09dYN0ikw9w4SSxkTYDpdPlJk4NHpJDPAYj4D0h7U9B47b2LTtzyl8B
+	P3XwwLnBp156hj9B72V6VjM8S/sCe6KYXiZJmk3bX8W1Tja+8/rbO3zqKKLmr0G/YwPrNb0Pk76
+	VXd5EDRp0Oek/wk6Y2c3jHwnDf75hRkEda2Jgin6y2X91RQzwpVYGJSo0eQ7BkvrA4d+KUWxOLX
+	BfQx+44ht4uA==
+X-Google-Smtp-Source: AGHT+IGpEOt2m53Rpg1wAIXOJxhtQSEdxYW2LFFzym9M525oZbCACFLRLKzow9N2bwg0rZ2ZXol3rg==
+X-Received: by 2002:a17:903:19e8:b0:267:776b:a315 with SMTP id d9443c01a7336-267776ba382mr100151885ad.32.1758056912450;
+        Tue, 16 Sep 2025 14:08:32 -0700 (PDT)
 Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b54a35ca2basm14988737a12.12.2025.09.16.14.08.30
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-26711e5d42csm62779625ad.78.2025.09.16.14.08.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 14:08:30 -0700 (PDT)
+        Tue, 16 Sep 2025 14:08:31 -0700 (PDT)
 From: Chia-I Wu <olvaffe@gmail.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Steven Price <steven.price@arm.com>,
@@ -83,10 +86,12 @@ To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 00/10] drm/panthor: minor AS_CONTROL clean up
-Date: Tue, 16 Sep 2025 14:08:13 -0700
-Message-ID: <20250916210823.4033529-1-olvaffe@gmail.com>
+Subject: [PATCH 01/10] drm/panthor: rename and document wait_ready
+Date: Tue, 16 Sep 2025 14:08:14 -0700
+Message-ID: <20250916210823.4033529-2-olvaffe@gmail.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+In-Reply-To: <20250916210823.4033529-1-olvaffe@gmail.com>
+References: <20250916210823.4033529-1-olvaffe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,35 +100,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series performs minor AS_CONTROL clean up.
+Rename wait_ready to mmu_hw_wait_ready.
 
-Patch 1 to 5 rename and document AS_CONTROL config functions. There is
-no functional change. All functions are now prefixed by mmu_hw_ for
-consistency. All of them also expect locking. I choose not to suffix
-them by _locked, but I can be convinced.
+Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+---
+ drivers/gpu/drm/panthor/panthor_mmu.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-Patch 6 to 7 eliminiate redundant mmu_hw_wait_ready. This is the main
-functional change of the series. panthor_vm_flush_range no longer waits
-for UNLOCK to complete.
-
-Patch 8 to 10 give mmu_hw_flush_caches final touches, to improve error
-handling, simplifying code, etc.
-
-Chia-I Wu (10):
-  drm/panthor: rename and document wait_ready
-  drm/panthor: rename and document lock_region
-  drm/panthor: add mmu_hw_cmd_unlock
-  drm/panthor: add mmu_hw_cmd_update
-  drm/panthor: rename and document mmu_hw_do_operation_locked
-  drm/panthor: remove write_cmd
-  drm/panthor: remove unnecessary mmu_hw_wait_ready calls
-  drm/panthor: improve error handling for mmu_hw_flush_caches
-  drm/panthor: move size check to mmu_hw_flush_caches
-  drm/panthor: simplify mmu_hw_flush_caches
-
- drivers/gpu/drm/panthor/panthor_mmu.c | 157 +++++++++++++++-----------
- 1 file changed, 94 insertions(+), 63 deletions(-)
-
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index 6dec4354e3789..d3af4f79012b4 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -503,7 +503,17 @@ static void free_pt(void *cookie, void *data, size_t size)
+ 	kmem_cache_free(pt_cache, data);
+ }
+ 
+-static int wait_ready(struct panthor_device *ptdev, u32 as_nr)
++/**
++ * mmu_hw_wait_ready() - Wait until the AS is inactive
++ * @ptdev: Device.
++ * @as_nr: AS to wait.
++ *
++ * An AS can accept one command at a time. This function waits until the AS is
++ * inactive and is ready to accept the next command.
++ *
++ * Return: 0 on success, a negative error code otherwise.
++ */
++static int mmu_hw_wait_ready(struct panthor_device *ptdev, u32 as_nr)
+ {
+ 	int ret;
+ 	u32 val;
+@@ -528,7 +538,7 @@ static int write_cmd(struct panthor_device *ptdev, u32 as_nr, u32 cmd)
+ 	int status;
+ 
+ 	/* write AS_COMMAND when MMU is ready to accept another command */
+-	status = wait_ready(ptdev, as_nr);
++	status = mmu_hw_wait_ready(ptdev, as_nr);
+ 	if (!status)
+ 		gpu_write(ptdev, AS_COMMAND(as_nr), cmd);
+ 
+@@ -601,7 +611,7 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+ 
+ 	lock_region(ptdev, as_nr, iova, size);
+ 
+-	ret = wait_ready(ptdev, as_nr);
++	ret = mmu_hw_wait_ready(ptdev, as_nr);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -617,7 +627,7 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+ 	write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
+ 
+ 	/* Wait for the unlock command to complete */
+-	return wait_ready(ptdev, as_nr);
++	return mmu_hw_wait_ready(ptdev, as_nr);
+ }
+ 
+ static int mmu_hw_do_operation(struct panthor_vm *vm,
 -- 
 2.51.0.384.g4c02a37b29-goog
 
