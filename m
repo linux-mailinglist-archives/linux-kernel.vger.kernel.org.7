@@ -1,206 +1,291 @@
-Return-Path: <linux-kernel+bounces-818336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172FBB59017
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:11:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3622B59018
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAEEE176D90
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:11:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41943B5CF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5741928688D;
-	Tue, 16 Sep 2025 08:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22CF288CA6;
+	Tue, 16 Sep 2025 08:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FyE619/e"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wdfU+nZz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9DD28642C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99E7285C8B;
+	Tue, 16 Sep 2025 08:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758010293; cv=none; b=BJiwh1PCUWOsktkneTfHk7GVEw8SLcegmEwiZEbP4oHYu9NkoviIuCLbo/uEJpLdxpIcDQjUlhES2xjQiTdXDWPQjUbnumSArxVj0KCL5lyNu6ASS1GRbq3GQzKDxHK/P5SnQpwl8+Jnt0dHo2GwuLNxcPw2yrC7sRL2jvpC9is=
+	t=1758010326; cv=none; b=BdV/987l+MJFVjTmBP292SKj2cA5Xco6shm2eVgFnHXmEp4R4d5tLsJio5bUvjaIKM0wKTkZj+HsLbwAep7IeKf7Fpptn4xPDvq+hoSU9442E7czQ9pLMDQVeoEoGefPDGtdKkF3hNEw6fbA7vLphvTzCv4CjcIQu1GhGbayoD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758010293; c=relaxed/simple;
-	bh=HyfOs7rbrqIWkqNzUpNMAaZLN/rofAij+yVLXi5+pCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p/SKW7rQVQPXdSFObaBDT8bbjFgZkb9zDmJKxsOrbH1/IKuwj1iXm3cnIpo3ESLFRGngs4lrjU+/22y0RWeTllyLQ9H8QLBPpqsP2OS4zbRz/VHHp97M/tTdFFnm93ki18vzsiKMSSeKRygu7Ijf8BtRY0I3lLbkFCSAtHhTddI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FyE619/e; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45decc9e83eso55916105e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758010290; x=1758615090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gZZORlflm4LecF9/7KAxcGVbVXdKEFLgc7zSGL4QiDQ=;
-        b=FyE619/ekNoM2cBJJesnCrJFqk1gzaO5s+3bZDrODZx1VANC213nn/EDNtF4Q4/9cJ
-         saHAMyFT0wKV2dTG8J35qDVfvLfXEGYaWvVsISBaMU+nrPAnSnQyrj5ISGdnYRNEToEq
-         mBJYioqwU2I+AGfrsDBVqNVv/lxSQJIhhcd8Ec2LJ0AVHxNzCiORbeYoZg6dnOEi6B9L
-         VaUEE/gOYehHAhcs28VdzD5g6t0uZqGcz0EdRaCks5ME8V770gOemiQzUoFPV1a9YYej
-         DfvgcQoeXrIBEYM4uhnLQ6R6LNG0gmIdxQK6wCk3Gr60QdxAWqETNt4rpLOuiTisatuz
-         Qtzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758010290; x=1758615090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gZZORlflm4LecF9/7KAxcGVbVXdKEFLgc7zSGL4QiDQ=;
-        b=YJ59tYzOwpqjDw0R3yxmmVLx5B+U5WedQhxwXkvpvOpqgm6uBpyVKRI4xIaw8KXqYW
-         MK8SbDapJWV/nemusluXxdkL+AYGiTet4aKC336dXT+hxnQEi19smXmg9csbWUsUohpA
-         UXTBM4MODGwz7h7/xMdMB9TujRnYVgyVcVgtlM2cfUNucWoVJesG9IWheM6FSVUo/9se
-         2+rg+hLb6XhLzAAkqxrfCL9gZXI7V6oflCZ1sob9hxG6faG7zmlpcqoE0PfV6Gmi3CGN
-         vkZsAqAK/AkLDS06bvI8jRWVjPRcxSyHQGC3YK9EiMzr25hQ3K4ddskVNnbBGyxlD/aq
-         FABw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdjvaj3YVk0+g/hV9Tuhp3M/NE26W+LBN6bLPVVI3oEj5PHinGsZxZtbMsAECm61xTcxpFDARhnK3LuIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycc8uE9b4sJjIMBTiAsX2Jo9ZNFY0iWonoCdhUnQ/pwc27yogm
-	AudvzfBewQxh482TXj8TONCiskhdxeMsFwEB9sUiN1gQIC5BU5VlD5COkaqvVAJN0sbMQvDOww+
-	mFnqpA7neIbmLGyAezufqcLcfieIekQ0=
-X-Gm-Gg: ASbGnct2nAyNEBy4PrfW3c9UcDY5OXXke1z6nDOYyZCOPdjhhz9kCKjI4TAeSVEixKU
-	59QqG8oUIg3QhUvbetyiutfd23V1UP1/nZx57E19VjlB1TGN7gU5xEoOS1u7ALPrN+rNoGDIKPi
-	+a/4y0m7Ok0gvZ6MbIjMpjdMkP9+MYqBm7wxfEXC4siDT+eb9A6g7/4grDtOZwJsxbLlMYeer4P
-	P83fKB9
-X-Google-Smtp-Source: AGHT+IFqLEMM72PchwIu85GLmuVTTpcOHaMo1tyv7F4Po+jfn8jzAhB3sLa3AaeijxW03w2RP5MM6waIv1XXZtoBSHE=
-X-Received: by 2002:a5d:5886:0:b0:3e6:116a:8fdf with SMTP id
- ffacd0b85a97d-3e7658bcb87mr14615901f8f.13.1758010289683; Tue, 16 Sep 2025
- 01:11:29 -0700 (PDT)
+	s=arc-20240116; t=1758010326; c=relaxed/simple;
+	bh=er6zXtoTiw8c9MS+Ncvtij5P2UtensvSwZETz1uW9OE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WwRvFueIxa0iGEPPiRguPTpgAmeFcOP56XSuGk/O0WtPid/YyNi4KFzvfpW+e7IuGW9C+EKCwvq40TXSaNIuYhacpTo8q+DEJnsn3YhM7qAG6qLRQCQI2beBPy53bnz5gKRSu/vxY0pDbrijT4VCQxntnO7/9JCtL2Ik+QLuwKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wdfU+nZz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-51-255.net.vodafone.it [5.90.51.255])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2226AEC1;
+	Tue, 16 Sep 2025 10:10:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758010243;
+	bh=er6zXtoTiw8c9MS+Ncvtij5P2UtensvSwZETz1uW9OE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wdfU+nZzDWn1ihybBVNW1Qg87qTxj3YEgYFLWLS5ZHS+38Rk17T4WQh9rXsBiDFRm
+	 56OWwjVT4Lm7xMLcVzAkuCYoPUqL89jwTtlDgeCBdhxx+i403V//Rc9hQqMRCSWOut
+	 52WUcxN3v/FkAtXRMZ95dy32/bmmet9vJBZ0menQ=
+Date: Tue, 16 Sep 2025 10:11:57 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Stefan Klug <stefan.klug@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	linux-media@vger.kernel.org, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: rkisp1: Improve frame sequence correctness on
+ stats and params buffers
+Message-ID: <5hk62bt3jejd4boxtc67klu4zegypvdidt7kju6z2iohbhjeem@apm5bu7opcol>
+References: <20250908094200.48002-1-stefan.klug@ideasonboard.com>
+ <rthpkuipbpbp2lv2ddmruwb7fmpkmtlsnx3q6kk7gaskzpdaar@5bk3r44f2mpo>
+ <175800895207.653594.14948138348210533073@localhost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915060141.12540-1-clamor95@gmail.com> <aMf6DLr8pTCP8tKn@shikoro>
- <CAPVz0n3m9VOV5unVHhU67XQnk4jckA+zyJdCHXu2fFxCSht4JQ@mail.gmail.com>
- <aMgzzqhXeOi5cn3f@ninjato> <20250916081955.2826c6a8@bootlin.com> <ffa2a954-d161-45f1-a83f-509148be3b6f@lucaceresoli.net>
-In-Reply-To: <ffa2a954-d161-45f1-a83f-509148be3b6f@lucaceresoli.net>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 16 Sep 2025 11:11:18 +0300
-X-Gm-Features: AS18NWCT5GhXoRK8bMJ59n5EJHC15a_WloTpuyCeHJD_J5GBYxnxIFrz9tOt418
-Message-ID: <CAPVz0n1aPWZhmCAft_58-eVaynhxWJRodEzuLE8aqWqqGQHR=w@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] i2c: muxes: Add GPIO-detected hotplug I2C
-To: Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Herve Codina <herve.codina@bootlin.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Rosin <peda@axentia.se>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luca.ceresoli@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <175800895207.653594.14948138348210533073@localhost>
 
-=D0=B2=D1=82, 16 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:50 Luca=
- Ceresoli <luca@lucaceresoli.net> =D0=BF=D0=B8=D1=88=D0=B5:
+Hi Stefan
+
+On Tue, Sep 16, 2025 at 09:49:12AM +0200, Stefan Klug wrote:
+> Hi Jacopo,
 >
-> Hello,
+> Thank you for the review.
 >
-> thanks Wolfram for pulling Herv=C3=A9 and me in.
+> Quoting Jacopo Mondi (2025-09-15 18:55:44)
+> > Hi Stefan
+> >
+> > On Mon, Sep 08, 2025 at 11:41:48AM +0200, Stefan Klug wrote:
+> > > On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
+> > > handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
+> > > and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
+> > > commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
+> > > debugfs var for irq delay") a warning was added for that. There are two
+> > > cases where this condition can occur:
+> > >
+> > > 1. The v-sync and the frame-end belong to the same frame. This means,
+> > >    the irq was heavily delayed and the warning is likely appropriate.
+> > >
+> > > 2. The v-sync belongs to the next frame. This can happen if the vertical
+> > >    blanking between two frames is very short.
+> > >
+> > > The current code always handles case 1 although case 2 is in my
+> > > experience the more common case and happens in regular usage. This leads
+> >
+> > I would rather argue that 8524fa22fd2f is possibily wrong, and case 1)
+> > would imply the interrupt has been delayed for the whole frame
+> > duration (+ blanking), which seems unlikely to me ?
 >
-> +Cc my Bootlin e-mail address
+> I am not completely sure about that. I didn't hunt for that condition.
+> Note that RKISP1_CIF_ISP_FRAME comes before the blanking. So I could
+> imagine that this might occur for very small sensor crop rectangles at
+> high datarates.
+
+Indeed, very short frame durations and minimum blankins might increase
+the likeliness of 1).
+
+Would be intersting to measure and compare with the time spent in IRQ,
+but it's quite an exercize.
+
 >
-> Il 16/09/25 08:19, Herve Codina ha scritto:
-> > Hi Wolfram,
 > >
-> > On Mon, 15 Sep 2025 17:42:06 +0200
-> > Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+> > True we handle stats collection and parameters programming in irq
+> > context, which is less than ideal and could take time (I wonder if we
+> > should use a threaded irq, but that's a different problem)
 > >
-> >> On Mon, Sep 15, 2025 at 02:53:23PM +0300, Svyatoslav Ryhel wrote:
-> >>> =D0=BF=D0=BD, 15 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 14:3=
-5 Wolfram Sang
-> >>> <wsa+renesas@sang-engineering.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>>>
-> >>>> On Mon, Sep 15, 2025 at 09:01:36AM +0300, Svyatoslav Ryhel wrote:
-> >>>>> Implement driver for hot-plugged I2C busses, where some devices on
-> >>>>> a bus are hot-pluggable and their presence is indicated by GPIO lin=
-e.
-> >>>>> This feature is used by the ASUS Transformers family, by the  Micro=
-soft
-> >>>>> Surface RT/2 and maybe more.
-> >>>>>
-> >>>>> ASUS Transformers expose i2c line via proprietary 40 pin plug and w=
-ire
-> >>>>> that line through optional dock accessory. Devices in the dock are
-> >>>>> connected to this i2c line and docks presence is detected by a dedi=
-cted
-> >>>>> GPIO.
-> >>>>>
-> >>>>> Micha=C5=82 Miros=C5=82aw (1):
-> >>>>>   i2c: muxes: Add GPIO-detected hotplug I2C
-> >>>>>
-> >>>>> Svyatoslav Ryhel (1):
-> >>>>>   dt-bindings: i2c: Document GPIO detected hot-plugged I2C bus
-> >>>>>
-> >>>>>  .../bindings/i2c/i2c-hotplug-gpio.yaml        |  65 +++++
-> >>>>>  drivers/i2c/muxes/Kconfig                     |  11 +
-> >>>>>  drivers/i2c/muxes/Makefile                    |   1 +
-> >>>>>  drivers/i2c/muxes/i2c-hotplug-gpio.c          | 263 ++++++++++++++=
-++++
-> >>>>>  4 files changed, 340 insertions(+)
-> >>>>>  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-hotpl=
-ug-gpio.yaml
-> >>>>>  create mode 100644 drivers/i2c/muxes/i2c-hotplug-gpio.c
-> >>>>
-> >>>> Adding Herve and Luca to CC because they want to achieve the same wi=
-th
-> >>>> their I2C bus extensions, no?
-> >>
-> >> Sorry, a misunderstanding: the question was for Herve and Luca. I want=
-ed
-> >> to ask for a comment from them if this is the same problem (which I
-> >> think it is). The question was not meant for you.
-> >>
-> >
-> > Indeed, we try to handle the same use case.
-> >
-> > The i2c-hotplug-gpio.c driver handles only an connector with an I2C bus=
-.
-> >
-> > On our side, we try to have something more generic that can handle more
-> > than one I2C and some other busses and resources (gpio, pwm, ...) wired
-> > to a connector.
-> >
-> > To move this i2c-hotplug-gpio to our proposal direction, this should be=
-come
-> > a connector driver with a i2c bus extension and an addon DT describing =
-the
-> > i2c devices available on the addon board.
-> >
-> > The connector driver should monitor the gpio and apply the addon DT whe=
-n it
-> > detects the addon plugged.
-> >
-> > Also, I am waiting for conclusions in the export symbols discussion [1]=
- to
-> > re-spin the i2c bus extension series.
+> > If that's the case and we only should care about 2) would simply
+> > handling RKISP1_CIF_ISP_FRAME before RKISP1_CIF_ISP_V_START be enough ?
 >
-> I just have one question to add to what Herv=C3=A9 wrote.
+> That was my first try. But it felt not right to run a whole
+> rkisp1_isp_isr() with frame_sequence being set to -1. And as I believe
+
+You mean for the first frame in case of both V_START and ISP_FRAME
+occour in the same irq ?
+
+> that there is at least a slight chance that 1) might occur, I'd prefer
+> frame_sequence to be 0 in that case.
+
+also because otherwise you would get stats and param buffers with
+sequence -1
+
 >
-> I guess in the big picture you have a device tree where all
-> hot-pluggable I2C devices are always described, but they won't probe
-> until i2c_hotplug_activate() adds an adapter for them. Is my
-> understanding correct?
+> >
+> > > to incorrect sequence numbers on stats and params buffers which in turn
+> > > breaks the regulation in user space. Fix that by adding a frame_active
+> > > flag to distinguish between these cases and handle the start of frame
+> > > either at the beginning or at the end of the rkisp1_isp_isr().
+> > >
+> > > Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+> > > ---
+> > >  .../platform/rockchip/rkisp1/rkisp1-common.h    |  1 +
+> > >  .../media/platform/rockchip/rkisp1/rkisp1-isp.c | 17 +++++++++++++----
+> > >  2 files changed, 14 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> > > index ca952fd0829b..adf23416de9a 100644
+> > > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> > > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> > > @@ -222,6 +222,7 @@ struct rkisp1_isp {
+> > >       struct media_pad pads[RKISP1_ISP_PAD_MAX];
+> > >       const struct rkisp1_mbus_info *sink_fmt;
+> > >       __u32 frame_sequence;
+> > > +     bool frame_active;
+> > >  };
+> > >
+> > >  /*
+> > > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> > > index 8c29a1c9309a..1469075b2d45 100644
+> > > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> > > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> > > @@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd, int enable)
+> > >       }
+> > >
+> > >       isp->frame_sequence = -1;
+> > > +     isp->frame_active = false;
+> > >
+> > >       sd_state = v4l2_subdev_lock_and_get_active_state(sd);
+> > >
+> > > @@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *rkisp1)
+> > >   * Interrupt handlers
+> > >   */
+> > >
+> > > -static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
+> > > +static void rkisp1_isp_sof(struct rkisp1_isp *isp)
+> > >  {
+> > >       struct v4l2_event event = {
+> > >               .type = V4L2_EVENT_FRAME_SYNC,
+> > >       };
+> > >
+> > > +     isp->frame_sequence++;
+> > > +     isp->frame_active = true;
+> > > +
+> > >       event.u.frame_sync.frame_sequence = isp->frame_sequence;
+> > >       v4l2_event_queue(isp->sd.devnode, &event);
+> > >  }
+> > > @@ -1112,14 +1116,15 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+> > >       rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
+> > >
+> > >       /* Vertical sync signal, starting generating new frame */
+> > > -     if (status & RKISP1_CIF_ISP_V_START) {
+> > > -             rkisp1->isp.frame_sequence++;
+> > > -             rkisp1_isp_queue_event_sof(&rkisp1->isp);
+> > > +     if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
+> > > +             status &= ~RKISP1_CIF_ISP_V_START;
+> > > +             rkisp1_isp_sof(&rkisp1->isp);
+> > >               if (status & RKISP1_CIF_ISP_FRAME) {
+> > >                       WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
+> > >                       rkisp1->debug.irq_delay++;
+> > >               }
+> > >       }
+> > > +
+> > >       if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
+> > >               /* Clear pic_size_error */
+> > >               isp_err = rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
+> > > @@ -1138,6 +1143,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+> > >       if (status & RKISP1_CIF_ISP_FRAME) {
+> > >               u32 isp_ris;
+> > >
+> > > +             rkisp1->isp.frame_active = false;
+> > >               rkisp1->debug.complete_frames++;
+> > >
+> > >               /* New frame from the sensor received */
+> > > @@ -1152,5 +1158,8 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+> > >               rkisp1_params_isr(rkisp1);
+> > >       }
+> > >
+> > > +     if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active)
+> >
+> > I think you can drop the  && !rkisp1->isp.frame_active because if you
+> > get here and 'status & RKISP1_CIF_ISP_V_START' it means that:
+> >
+> > 1) frame_active was false and you have entered the above
+> >
+> >         if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
+> >
+> >    and now the RKISP1_CIF_ISP_V_START bit in 'status' has been cleared
+> >    so you don't need to handle VSYNC here
+> >
+> > 2) frame_active was true and you delayed handling V_START till here.
+> >    If also ISP_FRAME was set, frame_start has been set to false here
+> >    above. If ISP_FRAME was not set then it has been delivered by a
+> >    previous interrupt and then frame_start is false.
+> >
+> > So I guess it's enough to check if at this point RKISP1_CIF_ISP_V_START
+> > is still set in 'status' ?
+>
+> I think you are right. I can't come up with a sane condition where
+> frame_active==true and RKISP1_CIF_ISP_V_START is set and we *don't* want
+> to increase the frame count. I'll drop that condition.
+>
+> >
+> > However, as said, it's seems unlikely to that your above 1) can
+> > happen. Have you ever hit a WARN() again with this patch applied ?
+>
+> I don't remember seeing it again. But as noted above, I didn't try to
+> provoke it and took the "better safe than sorry" route. Could you go
+> with that?
 >
 
-Yes, your understanding is correct, i2c_hotplug creates a i2c mux from
-parent with a set of always described devices by GPIO signal.
+Fine indeed..
 
-> If correct, this implies you can connect only one type of dock. Multple
-> dock models with different peripherals cannot be supported.
->
+Could you please comment on the two VSYNC conditions ?
+Something like"
 
-This configuration is used for ASUS Transformers and they don't have
-multiple docks, only one accessory is used and it is not swappable
-even between models by design, not even talking about different
-generations. SO configuration used by Transformers can be described
-just as title says "GPIO-detected hotplug I2C" devices are fixed just
-can be detached, but never swapped.
+	/*
+         * Vertical sync signal, starting generating new frame.
+         * Defer handling of vsync after ISP_FRAME if the we still have to
+         * complete the previous frame.
+         */
+	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
+		status &= ~RKISP1_CIF_ISP_V_START;
+		rkisp1_isp_sof(&rkisp1->isp);
+		if (status & RKISP1_CIF_ISP_FRAME) {
+			WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
+			rkisp1->debug.irq_delay++;
+		}
+	}
+
+        ...
+
+        /*
+         * Deferred handling of vsync if V_START and ISP_FRAME
+         * occurrend in the same irq.
+         */
+	if (status & RKISP1_CIF_ISP_V_START)
+		rkisp1_isp_sof(&rkisp1->isp);
+
+Up to you
+
 
 > Best regards,
-> Luca
+> Stefan
 >
+> >
+> > > +             rkisp1_isp_sof(&rkisp1->isp);
+> > > +
+> > >       return IRQ_HANDLED;
+> > >  }
+> > > --
+> > > 2.48.1
+> > >
+> > >
 
