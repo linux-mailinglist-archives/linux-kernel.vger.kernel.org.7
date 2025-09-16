@@ -1,136 +1,135 @@
-Return-Path: <linux-kernel+bounces-818246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB238B58EC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:06:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BF6B58EDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C07A7ABD02
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFFB1B25FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005B62E3AF5;
-	Tue, 16 Sep 2025 07:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402C92E4274;
+	Tue, 16 Sep 2025 07:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iFG9hULC"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="d8KiUw1P"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06912E11B0
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4AA2BAF9;
+	Tue, 16 Sep 2025 07:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758006355; cv=none; b=Jh/IGydTrLZVtF5Zt+8VCZ8gMYV5ZKt9dZvbnQ1Z1zKayoYzIf6wuqR2BP55tnKNK5Mu4IJMpWd6Xn1gqZ09xyn2FzjTs8RgWKUw0v7DeY1gJVow/sOIvK/PcBKyXk8IEB4GvIbRj+nXywCvszaewtu6+M7pAZLt45AmLUCKI2g=
+	t=1758006664; cv=none; b=g+WJ4WPLidPhzx6iO0LPdcGudxJH4UiK7K2TEqKpQ/VdZCnQe3sYS0IGgTR69EZLJg7aojuERLDOCkqhrhMOOEe91QOOxu4k3mRT2eSfvbPC7ZoraBLt78oMC8Cq/AjZ2Q6of8f4GzUgALAo+qdy4XHgtA/HHnZIhopwBQQEF6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758006355; c=relaxed/simple;
-	bh=+y/eEEKKXQN7aK6Kkodz+hQeZnrOKlkRRKodOnrnh2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D0K4KflmMEqi93V+bNmaHF++osdSL8kMM4Nzk3Y+Su8BiBJEjArwOALY3qkynbSNzj4mq5/a6YhSsEZ0bA4MB5ncs9kduqw2wzzLuytwJF/r37BUGh8kU9WGQIj5bvcnsZ32UkoMFIlWjX56kzqIRO0AOis6OpDicSyJYDKLVZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iFG9hULC; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <36f7c6b0-eaa8-476d-b060-46c2c172d428@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758006350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rkCYU2hnN7SdTU8iIMlWGHc/y+53owK9PLewiGtjRNU=;
-	b=iFG9hULCYBZq5cJd2sOYRANHbw+GXBnvdYIHqurF20TrMZ7oLijfxKpTnFHP89kknDYT10
-	hApkwu1wO5SeI/uIeYqHbgd/OyJ3SU88qaGPj9sl/Qv4gOKdbNsxU5JcEGMqjAM1RZa2oX
-	uLtppLW2XNVSKPNZG6CzpeBqHrGk5xc=
-Date: Tue, 16 Sep 2025 15:05:36 +0800
+	s=arc-20240116; t=1758006664; c=relaxed/simple;
+	bh=W5ajTpSNMNJWbfWHVcFvQAWx4kBahExAyHsoGBmxcyE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNBU7/9hMLryZ1aXpUBeK9+K0ATMOGXtk/WIH4mpKLzz20hLcaIoyOvCNl07Zz2nnh+ZmsGQe+SKISnhXOFUEr2pk096KJuoXcwDWFL+PqAFQWRWVATbc+2wJiBpK8LifZNsmWl+RtgDbcPqmhh6RNDknuAVGf5DfJwTEqmbTU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=d8KiUw1P; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758006662; x=1789542662;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W5ajTpSNMNJWbfWHVcFvQAWx4kBahExAyHsoGBmxcyE=;
+  b=d8KiUw1PAF0CTxKY5RbvhUlCGQm8bVFyAB2e5GmeVejLCrYvhmI8hFvp
+   3hm5EVkptx7wcYwBFh3jrl5UWsRxYoe2xtkN6BRtZuqoWOOYSVQqZ8Br/
+   UbVEos/3LfxGBDadRawv3RhLgqSGpXy3nc9Nzx2n6FdEG9vnbk9Ov7crG
+   6WNlwaCEFz7iY2hsHVNHIUAewF4jJMLneWDCu3vZAxcCTx1kT9fInruDz
+   4BiMNdhMT9pwBbkjmiHrXvE+mzPxtrN7LkccfCrj0TfIhk3WdvEW/Owil
+   QUhUZmdwkY0rbM/i2zfV06riSuCBEOn8NHO015CBqitmRh1cOACb/M9ze
+   A==;
+X-CSE-ConnectionGUID: IFmucD1jTJGMc+TDfuaTuQ==
+X-CSE-MsgGUID: Rhyib+rKQ7G9UsGeAGA/lw==
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="277928140"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2025 00:11:00 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Tue, 16 Sep 2025 00:10:56 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Tue, 16 Sep 2025 00:10:56 -0700
+Date: Tue, 16 Sep 2025 09:07:00 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: phy: micrel: Add Fast link failure support
+ for lan8842
+Message-ID: <20250916070700.qxhnjwy4r3brvdys@DEN-DL-M31836.microchip.com>
+References: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
+ <aMgAKIn0YRyxK0Fn@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new 1/3] mm/khugepaged: skip unsuitable VMAs earlier in
- khugepaged_scan_mm_slot()
-Content-Language: en-US
-To: Hugh Dickins <hughd@google.com>, david@redhat.com,
- lorenzo.stoakes@oracle.com
-Cc: akpm@linux-foundation.org, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, baohua@kernel.org, ioworker0@gmail.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250914143547.27687-1-lance.yang@linux.dev>
- <20250914143547.27687-2-lance.yang@linux.dev>
- <bc86d5f7-5b23-14fb-0365-b47f5a6f13c9@google.com>
- <a0ec4014-384b-4c04-bf0b-777c989eabcb@linux.dev>
- <70da1948-b0f2-f54b-e0eb-ff901e007ccc@google.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <70da1948-b0f2-f54b-e0eb-ff901e007ccc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <aMgAKIn0YRyxK0Fn@shell.armlinux.org.uk>
 
+The 09/15/2025 13:01, Russell King (Oracle) wrote:
 
-
-On 2025/9/16 14:42, Hugh Dickins wrote:
-> On Tue, 16 Sep 2025, Lance Yang wrote:
-> 
->> Hi Hugh,
->>
->> Thanks for taking a look and for raising this important point!
->>
->> On 2025/9/16 13:32, Hugh Dickins wrote:
->>> On Sun, 14 Sep 2025, Lance Yang wrote:
->>>
->>>> From: Lance Yang <lance.yang@linux.dev>
->>>>
->>>> Let's skip unsuitable VMAs early in the khugepaged scan; specifically,
->>>> mlocked VMAs should not be touched.
->>>
->>> Why?  That's a change in behaviour, isn't it?
->>>
->>> I'm aware that hugepage collapse on an mlocked VMA can insert a fault
->>> latency, not universally welcome; but I've not seen discussion, let
->>> alone agreement, that current behaviour should be changed.
->>> Somewhere in yet-to-be-read mail?  Please give us a link.
->>>
->>> Hugh
->>
->> You're right, this is indeed a change in behaviour. But it's specifically
->> for khugepaged.
->>
->> Users of mlock() expect low and predictable latency. THP collapse is a
->> heavy operation that introduces exactly the kind of unpredictable delays
->> they want to avoid. It has to unmap PTEs, copy data from the small folios
->> to a new THP, and then remap the THP back to the PMD ;)
->>
->> IMO, that change is acceptable because THP is generally transparent to
->> users, and khugepaged does not guarantee when THP collapse or split will
->> happen.
-> 
-> I disagree.  Many of those who have khugepaged enabled would prefer
-> it to give them hugepages, even or especially on mlocked areas.
-> 
-> If you make that change, it must be guarded by a sysfs or sysctl tuning.
-
-Thanks for the feedback!
-
-Well, seems like we're not on the same page. Let's gather more opinions from
-other folks ;)
+Hi Russell,
 
 > 
-> Perhaps it could share the sysctl_compact_unevictable_allowed tuning
-> (I'm not sure whether that's a good or bad idea: opinions will differ).
+> On Mon, Sep 15, 2025 at 11:11:49AM +0200, Horatiu Vultur wrote:
+> > +static int lan8842_set_fast_down(struct phy_device *phydev, const u8 *msecs)
+> > +{
+> > +     if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_ON)
+> > +             return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
+> > +                                           LAN8842_FLF,
+> > +                                           LAN8842_FLF_ENA |
+> > +                                           LAN8842_FLF_ENA_LINK_DOWN,
+> > +                                           LAN8842_FLF_ENA |
+> > +                                           LAN8842_FLF_ENA_LINK_DOWN);
+> > +
+> > +     if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_OFF)
+> > +             return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
+> > +                                           LAN8842_FLF,
+> > +                                           LAN8842_FLF_ENA |
+> > +                                           LAN8842_FLF_ENA_LINK_DOWN, 0);
+> 
+> Would this be more readable?
+> 
+>         u16 flf;
+> 
+>         switch (*msecs) {
+>         case ETHTOOL_PHY_FAST_LINK_DOWN_OFF:
+>                 flf = 0;
+>                 break;
+> 
+>         case ETHTOOL_PHY_FAST_LINK_DOWN_ON:
+>                 flf = LAN8842_FLF_ENA | LAN8842_FLF_ENA_LINK_DOWN;
+>                 break;
+> 
+>         default:
+>                 return -EINVAL;
+>         }
+> 
+>         return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
+>                                       LAN8842_FLF,
+>                                       LAN8842_FLF_ENA |
+>                                       LAN8842_FLF_ENA_LINK_DOWN, flf);
 
-Thanks,
-Lance
+Yes, I think it looks nicer.
+I will update this in the next version.
 
 > 
-> Hugh
-> 
->>
->> Well, we don't have a discussion on that, just something I noticed.
->>
->> Thanks,
->> Lance
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
+-- 
+/Horatiu
 
