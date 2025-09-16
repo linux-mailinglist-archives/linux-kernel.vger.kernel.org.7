@@ -1,82 +1,107 @@
-Return-Path: <linux-kernel+bounces-818085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50DDFB58C74
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:41:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D75B58C6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95FB17F6B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86442A72AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910F9266B64;
-	Tue, 16 Sep 2025 03:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E8E248F4E;
+	Tue, 16 Sep 2025 03:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ms29.hinet.net header.i=@ms29.hinet.net header.b="P9eMshch"
-Received: from cdmsr2.hinet.net (210-65-1-144.hinet-ip.hinet.net [210.65.1.144])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CNf7AHxN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520C22AD24
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.65.1.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2AA2DC78E;
+	Tue, 16 Sep 2025 03:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757994111; cv=none; b=UfLIPj7Mf6vVJUOCj/r1cLso3X8thNCZUx6JbNVp6KmN7/QjVtHIGMXNKsm4DB3T2Ky1BYejIGEcKF1cqbJiqeGja1eZtiLjQEqvfQlpzq8BpUeWtWu1q5EBE8yTWEtvS2PMNSrJvCP5HEjRQbFxRZLW7FL6HkiWESlTFRcytBo=
+	t=1757993815; cv=none; b=dL0J4oJQbSwpbfPkGUBaW7uII5bvSywJn9NbO2y0lrq2DIoyxBrj+OjyvB7m3hx1GwGSjn5NrcY7zC+HqkN/k7rPOStcBdgVj7V+Jr4u1W4pGqx6VxK+j1HCOJ/IbmA/3ezgnf47Fskf+jIH9ajjAPd0LGoo0LAVtxNG6CJ/1u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757994111; c=relaxed/simple;
-	bh=gzREn5ca4+YpMZqnMfnv/TdMXaFQn21PPSInZEkblZU=;
-	h=From:To:Subject:Message-ID:Date:MIME-Version:Content-Type; b=J5OqmG1muIirWeQ+uFijHy+T1iyd8t266jCGb3IlZBiBm0SUqQwq7Vfcy1RAjAgtji1x+UWvxgmaYRKUtU2oCTl+Bv2xKLGZ0+EsvCneoYeClBqSlB2wzS9qHe5dvdn9nVUoh9rQ7zbwa2jgY7cc/u8kbf1fpYMvQMnLZjiYzTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ms29.hinet.net; spf=pass smtp.mailfrom=ms29.hinet.net; dkim=pass (1024-bit key) header.d=ms29.hinet.net header.i=@ms29.hinet.net header.b=P9eMshch; arc=none smtp.client-ip=210.65.1.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ms29.hinet.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ms29.hinet.net
-Received: from cmsr5.hinet.net ([10.199.216.84])
-	by cdmsr2.hinet.net (8.15.2/8.15.2) with ESMTPS id 58G3fibv953935
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:41:47 +0800
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=ms29.hinet.net;
-	s=default; t=1757994107; bh=Bi+J3OZGVAfOm5T6NkD+urGUk4Y=;
-	h=From:To:Subject:Date;
-	b=P9eMshchvbi5jyW/mXe3UmCcmE77F5GYOUBGsZgzOkqUTGLMJMYeo23tUFRDK+tSG
-	 GOnmJwQ5PNQqXdf4Q6VAvkzuZM92u5FI/m+BofRU6v4pmWLMBiNViCSb2UAKd598pt
-	 e1qo99C7C2/RExWryjv2thUAosd1ifW+KIJiKwj8=
-Received: from [127.0.0.1] (111-249-139-199.dynamic-ip.hinet.net [111.249.139.199])
-	by cmsr5.hinet.net (8.15.2/8.15.2) with ESMTPS id 58G3a7ng329148
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:36:26 +0800
-From: "Info - Albinayah 507" <Linux-kernel@ms29.hinet.net>
-To: linux-kernel@vger.kernel.org
-Reply-To: "Info - Albinayah." <europe-sales@albinayah-group.com>
-Subject: =?UTF-8?B?TmV3IFNlcHRlbWJlciBPcmRlci4gNTI1NTkgVHVlc2RheSwgU2VwdGVtYmVyIDE2LCAyMDI1IGF0IDA1OjM2OjI1IEFN?=
-Message-ID: <6e796fa2-8676-fb01-bcb8-756dcf5761e3@ms29.hinet.net>
-Content-Transfer-Encoding: 7bit
-Date: Tue, 16 Sep 2025 03:36:26 +0000
+	s=arc-20240116; t=1757993815; c=relaxed/simple;
+	bh=CfVil0FdRSS0PaXQXnEL2MuMd3+XojlUadD8GRWQi7w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=lWaNExEOINSJiYchYCOC5M5M9aohNp8Ue92UacxyeBg9F6Wuotr1Qzdx5ebVZaErEMFK7i7MS0llscolIejxHbvVGWSr2JYzV1XQ7E4eE41uwZHhn1ZGbAFzNcmlEy7nvbhA3ZEMojtlmARMR0AgnDGLmeL7SmEJSx0ikURb7b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CNf7AHxN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04DAC4CEEB;
+	Tue, 16 Sep 2025 03:36:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757993814;
+	bh=CfVil0FdRSS0PaXQXnEL2MuMd3+XojlUadD8GRWQi7w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CNf7AHxNVzyFResUYW5usorS95/1cgWEfQBxIXzVgEh5LcEryf/UaE9d6FXnmevp/
+	 hUOvt/SIiD7/Xfzhk6DVSSkzymHadep7a/+dLaY5Vb+n0WLbUQmf5rY9iYjBaJbYhP
+	 EK//AR137efTrjN+qYgc2VP+Ya6Cv8E6hGsRI3+Y=
+Date: Mon, 15 Sep 2025 20:36:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>, ryabinin.a.a@gmail.com,
+ christophe.leroy@csgroup.eu, bhe@redhat.com, hca@linux.ibm.com,
+ zhangqing@loongson.cn, chenhuacai@loongson.cn, davidgow@google.com,
+ glider@google.com, dvyukov@google.com, alexghiti@rivosinc.com,
+ alex@ghiti.fr, agordeev@linux.ibm.com, vincenzo.frascino@arm.com,
+ elver@google.com, kasan-dev@googlegroups.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 1/2] kasan: introduce ARCH_DEFER_KASAN and unify
+ static key across modes
+Message-Id: <20250915203653.c17d501a5f4b68936a0e3ea9@linux-foundation.org>
+In-Reply-To: <CACzwLxh4pJOBbU2fHKCPWkHHCuLtDW-rh52788u2Q6+nG-+bTA@mail.gmail.com>
+References: <20250810125746.1105476-1-snovitoll@gmail.com>
+	<20250810125746.1105476-2-snovitoll@gmail.com>
+	<CA+fCnZdFp69ZHbccLSEKYH3i7g6r2WdQ0qzyf+quLnA0tjfXJg@mail.gmail.com>
+	<CACzwLxh4pJOBbU2fHKCPWkHHCuLtDW-rh52788u2Q6+nG-+bTA@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-X-HiNet-Brightmail: Spam
-X-CMAE-Score: 100
-X-CMAE-Analysis: v=2.4 cv=UojANPwB c=0 sm=1 tr=0 ts=68c8db3b
-	p=OrFXhexWvejrBOeqCD4A:9 a=MCuf8VMJZhU/2X3TAKonxg==:117 a=IkcTkHD0fZMA:10
-	a=5KLPUuaC_9wA:10
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Linux-kernel,
+On Mon, 15 Sep 2025 09:30:03 +0500 Sabyrzhan Tasbolatov <snovitoll@gmail.com> wrote:
 
-Please provide a quote for your products:
+> On Wed, Sep 3, 2025 at 6:01 PM Andrey Konovalov <andreyknvl@gmail.com> wrote:
+>
 
-Include:
-1.Pricing (per unit)
-2.Delivery cost & timeline
-3.Quote expiry date
+[400+ lines removed - people, please have mercy]
 
-Deadline: September
+>
+> > > @@ -246,7 +255,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
+> > >  bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+> > >                                 unsigned long ip)
+> > >  {
+> > > -       if (!kasan_arch_is_ready() || is_kfence_address(object))
+> > > +       if (is_kfence_address(object))
+> > >                 return false;
+> >
+> > Why is the check removed here and in some other places below? This
+> > need to be explained in the commit message.
+> 
+> kasan_arch_is_ready which was unified with kasan_enabled, was removed
+> here because
+> __kasan_slab_pre_free is called from include/linux/kasan.h [1] where
+> there's already kasan_enabled() check.
+> 
+> [1] https://elixir.bootlin.com/linux/v6.16.7/source/include/linux/kasan.h#L198
+> 
+> Please let me know if v7 is required with the change in the git commit
+> message only.
 
-Thanks!
+Neither works - please send along the appropriate paragraph and I'll
+paste it in, can't get easier than that.
 
-Kamal Prasad
-
-Albinayah Trading
+> >
+>
+> [another ~250 lines snipped]
+>
 
