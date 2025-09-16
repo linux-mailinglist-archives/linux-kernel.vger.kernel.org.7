@@ -1,58 +1,50 @@
-Return-Path: <linux-kernel+bounces-819042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BE0B59A9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:44:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5EBB59A88
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EA23467822
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34961188D0F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D19732ED36;
-	Tue, 16 Sep 2025 14:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZN1ct+08"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07808327A1C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBAF334386;
+	Tue, 16 Sep 2025 14:38:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF05313E39
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758033448; cv=none; b=MAHDV9ikAtleXwgW/ZuZ5E6ovl+JjUomqzY6brtRJoP58OG7ycCH23Vqz7UYtCCrG0iE3dEMKDGdNkNvfFfJalZIgpd5ofVjb7VlYm8PdfUL8+vwow1LIunvHW/puzPgjmMyI/h98hNVF6OP3U2+T5JltETnzlofCu5+CMxefYY=
+	t=1758033517; cv=none; b=YOGY+8Ju0Y/c4VsLXgaZmuuzDI7Eq7r2s41yJZpNKZdu+XKKjCA2Q7kB2YFGnZ2cUrr09gWnBP1NaqZQyKIR7OUJQLP+ZGWFN86pFlzZxOfpKY0p+LlBVXlOxf5NurhS0WFYKvVSWzPcV8YiCRN23NPm4CpJ/mPY1u9cP5Vg2do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758033448; c=relaxed/simple;
-	bh=LgO5/yIM681jTrDMpq8xGFhrw1pnS2TvOssqGdcDUCI=;
+	s=arc-20240116; t=1758033517; c=relaxed/simple;
+	bh=MMiBakgTXgsppLhre/lgCobdOkw5V7t+nmyIjY9of18=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLIsliaWS8pRYAy20k1eYmr1q0biouMfwtYMekeOKWdz8LgZZ9QfyQbbKHqrkqGWVjBPwqnPbEpc0loXnQjsIU6QEUlTuOqzF90s9IFZYWA/lX9mUY5mgKwuj0IxwKqda9NddtYUURVg1/dzLkg6j/Lf+SnJ5M0JjNxFlbDZPeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZN1ct+08; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74623C4CEEB;
-	Tue, 16 Sep 2025 14:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758033447;
-	bh=LgO5/yIM681jTrDMpq8xGFhrw1pnS2TvOssqGdcDUCI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZN1ct+08J2HGLhNlNLuFWoe5C1alwpgQhtMeSmLSwH9dlwRSe6s3/oXgwOLOzbBlQ
-	 PXzXEd86PJ9ccKF0e8Qpla8hYUK4grbeGFjGSOb9K8AXPMkJLiDDIvnraAWyyYlZaA
-	 3yMAqc6xK3vhvitPcAQ247EwtzG/RPw8JG3N7cbBJm57zZ3CBZ9lOulbeA1Px/h2s+
-	 RXuYmEWymSRiUoLadgIGLtH40Jj6EH/zUUkJIw1tqvgnPAghpo+5BW2ZySzqHEAKRL
-	 B+bEFypAX1aQFvcNUbgVJC88obupLOi9uZCERwx4xTeog6t+8o7/+21q5bc5zMdfTK
-	 LwJLKBnL+qljg==
-Date: Tue, 16 Sep 2025 17:37:19 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Alexander Graf <graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, Chris Li <chrisl@kernel.org>,
-	Jason Miu <jasonmiu@google.com>, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, linux-mm@kvack.org
-Subject: Re: [PATCH] kho: make sure folio being restored is actually from KHO
-Message-ID: <aMl2H3BLpH3xFCOw@kernel.org>
-References: <20250910153443.95049-1-pratyush@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OxPuNMrn3jMcZxtCWrIGKseaUOmWQIEsmsYHF1IsDA7inq4b6Gw//VG0zy3qmEccyTd8PnPqUapwwAaq6yFpFoukQSlnxhXHr030rm0X4rDDTyM/f001nVyD4QgtB4/Q49hI7x6UJREIgiVGkxfFCHMJSCFubgAZVMrVyoWju1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D046FEC;
+	Tue, 16 Sep 2025 07:38:27 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22BEE3F673;
+	Tue, 16 Sep 2025 07:38:33 -0700 (PDT)
+Date: Tue, 16 Sep 2025 15:38:31 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>,
+	Chao Gao <chao.gao@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Salman Nabi <salman.nabi@arm.com>
+Subject: Re: [RFC PATCH 0/1] Arm Live Firmware activation support
+Message-ID: <20250916-energetic-debonair-mongrel-dfcafb@sudeepholla>
+References: <20250625142722.1911172-1-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,31 +53,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250910153443.95049-1-pratyush@kernel.org>
+In-Reply-To: <20250625142722.1911172-1-andre.przywara@arm.com>
 
-On Wed, Sep 10, 2025 at 05:34:40PM +0200, Pratyush Yadav wrote:
-> When restoring a folio using kho_restore_folio(), no sanity checks are
-> done to make sure the folio actually came from a kexec handover. The
-> caller is trusted to pass in the right address. If the caller has a bug
-> and passes in a wrong address, an in-use folio might be "restored" and
-> returned, causing all sorts of memory corruption.
+On Wed, Jun 25, 2025 at 03:27:21PM +0100, Andre Przywara wrote:
+> Hi,
 > 
-> Harden the folio restore logic by stashing in a magic number in
-> page->private along with the folio order. If the magic number does not
-> match, the folio won't be touched. page->private is an unsigned long.
-> The union kho_page_info splits it into two parts, with one holding the
-> order and the other holding the magic number.
+> (please feel free to add people interested on this from the x86 side
+> as you see fit)
+> 
+> this is a proposal for a driver for the Arm Live Firmware Activation (LFA)
+> specification[1]. LFA provides an interface to allow "activating" firmware
+> updates without a reboot.
+> In contrast to Intel's TDX [2] approach (which seems only concerned about
+> some confidential computing related firmware blob), and even OCP's
+> "impactless" updates[3], the Arm approach just lists a number of
+> "activatable" firmware images, and does not limit their scope. In
+> particular those updates can (and will) be for firmware bits used by the
+> application processors (which OCP seems to rule out), including runtime
+> secure firmware (TF-A/BL31), confidential compute firmware, and
+> potentially even UEFI runtime firmware.
+> Initially we have the whole chain demoing the Arm Confidential Computing
+> firmware (RMM) update, which is conceptually the same as Intel's TDX
+> proposal.
+> 
+> So our design approach is to create a directory under /sys/firmware, and
+> just list all images there, as directories named by their GUID.
+> Then the properties of each image can be queried and the activation
+> triggered by the sysfs files inside each directory. For details see the
+> commit message of the patch.
+> This is admittedly a somewhat raw interface, though even in that form
+> it's good enough for testing. Eventually I would expect some fwupd
+> plugin to wrap this nicely for any admins or end users.
+> 
+> The purpose of this RFC is to get some feedback on the feasibility of
+> this interface, and to understand how this would relate to the other two
+> approaches (TDX + OCP "impactless" updates).
+> 
 
-I think the sanity checks belongs to the core kho_restore_page() function
-and kho_restore_folio() should be a thin wrapper for that, at least until
-we'd need to allocate struct folio there.
- 
-> Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
-> ---
->  kernel/kexec_handover.c | 29 ++++++++++++++++++++++++-----
->  1 file changed, 24 insertions(+), 5 deletions(-)
+Thanks for the details and I agree we need opinions from x86 community
+if possible but definitely from cloud/hyperscale community using these
+user interfaces ? While x86 and Arm may provide its own user interface,
+are hyperscale community happy with that ? I briefly read the unified
+(arch agnostic) requirements specification [3] but will there be a
+requirement to have a unified user interface from the OS ?
+
+We don't want to define something Arm specific to just abandon it quickly
+if and when hyperscale community comes back with such a request for unified
+user interface.
+
+I am not against having Arm specific interface, just getting clarification
+in terms of requirements even before diving into technical review of the
+patch here.
+
+Anyone from hyperscale community ? Please provide directions here.
 
 -- 
-Sincerely yours,
-Mike.
+Regards,
+Sudeep
 
