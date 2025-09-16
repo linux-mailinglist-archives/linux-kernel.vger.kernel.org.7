@@ -1,114 +1,87 @@
-Return-Path: <linux-kernel+bounces-818705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178E6B59574
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:43:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C59B5954C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B7A4E18A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:43:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E7777B19BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4915307AD5;
-	Tue, 16 Sep 2025 11:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B9C307AD5;
+	Tue, 16 Sep 2025 11:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Mqk3CajW"
-Received: from forward203b.mail.yandex.net (forward203b.mail.yandex.net [178.154.239.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FoNvm5PM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E213B2D24A3;
-	Tue, 16 Sep 2025 11:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE8B3064A6;
+	Tue, 16 Sep 2025 11:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758022985; cv=none; b=Bs4RZ1ltlT+PyQ00tQspd1V4VuBVmf77gYF8LdqZ61wzN6rid1QciySAQ0eLSyCZPMdKBIuYQ/Aw31wxXZHiOUYO+JUikPJR8OFZTD7U87AdU08ovTwQG+JShxaSV53MDd4hxQPZw1P26HMSjzBi6smwmflLwiDAVdQbgzeRR+I=
+	t=1758022489; cv=none; b=BnnTrKy+fOE8Iuj9FqZQMZp/2y7ZXU85PlWiNazp35s8XPg1sSo4mZBAPckxrb+gB9RVcx7rFufUL+PHyTCsUj4Gu0/+VMJBaglv73xFAFXiPnry/YU05IR5GNtabVDlQYBlEZVM3BJZCIrOPrGej48oESPA+Lz37nIJaFgzNIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758022985; c=relaxed/simple;
-	bh=ufQwXgpAF7x/2e87GzztuyE/4qAuG3GmhscgNSQnQ9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QbNgtcjZOeJWUtcWCqfOrwODnmJYwSwzn0E6D4Q5uFk2P6R8Iad3eUdKmm0+Oj9PtzlCOb13YmalzHhJDk2OiP3XQEmvRwc72eIa4m6WlIreF0vxsQgNfLOW0pESW6lBSVN8nEa7hf6Hw6jQKAo9lKWr12G+fenm97XlxRD6Hu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Mqk3CajW; arc=none smtp.client-ip=178.154.239.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
-	by forward203b.mail.yandex.net (Yandex) with ESMTPS id 0B4FD81773;
-	Tue, 16 Sep 2025 14:35:00 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net [IPv6:2a02:6b8:c24:942:0:640:e3c0:0])
-	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 356A3C0148;
-	Tue, 16 Sep 2025 14:34:52 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id kYODtTGM88c0-q7bDjdtS;
-	Tue, 16 Sep 2025 14:34:51 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1758022491;
-	bh=tamG18SOnqflM3WTf5u2oTfNYuCXJLMJ+kcGrwAEU/M=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=Mqk3CajWO8a4IME8O98bYpJ8v70TnGSGyqJp18pc5MUpwjDlVRFlgGqCFNCJkHznh
-	 ecqJ/pqIDgf/f/9NgjETKF2E1X4bFUgpTSXSDgOiHwSRmUKTFmvi7YLM9CYz1oBqlr
-	 T4MsQbVwDJPuvqB1dALawk4xdkUwRsUEM8gf7o5U=
-Authentication-Results: mail-nwsmtp-smtp-production-main-71.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Tue, 16 Sep 2025 14:34:45 +0300
-From: Onur <work@onurozkan.dev>
-To: JaimeF <jaimefine6@gmail.com>
-Cc: gregkh@linuxfoundation.org, ojeda@kernel.org, alex.gaynor@gmail.com,
- david.m.ertman@intel.com, ira.weiny@intel.com, leon@kernel.org,
- boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
- tmgross@umich.edu, dakr@kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, onur-ozkan <contact@onurozkan.dev>
-Subject: Re: [PATCH] Fixed "initialialized" typo in auxiliary.rs
-Message-ID: <20250916143445.5d437391@nimda.home>
-In-Reply-To: <20250916103839.17202-1-jaimefine6@gmail.com>
-References: <20250916103839.17202-1-jaimefine6@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1758022489; c=relaxed/simple;
+	bh=C2VFNh9pG4n1CHA/01gyfSaN+qDLGHCCfe5WiisML6c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gv9Eq9ILxPr1X6gO2VU9PYUb40yrKmCJxUUbjby5kbYnYrAlqBCfQb9fW02rNUtZwY5GgV3nmevG4Fn4tC95Yq4ODohJRGIccFRVCY2p69XgZiGCRn8aYPAQyv4shB2RyBwsdd4sXcH7w8wnW8nEhBtSgzAQmUevfD2KB0ryEPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FoNvm5PM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94121C4CEEB;
+	Tue, 16 Sep 2025 11:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758022489;
+	bh=C2VFNh9pG4n1CHA/01gyfSaN+qDLGHCCfe5WiisML6c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=FoNvm5PMCHajQNTMUN+OR08ZdrYXyV2yCuWoBmeyy+6G4r9zhnQK1axIhiPhg+xH5
+	 V4nOGSWwFKxXuAh6X7wgGyCjo2V6Fpm3AZdmWTo4Nj/eTlp+yDtUbzfnXv0PAzXitX
+	 2kqJyXpL7wii7AvyqD79eJZpHvV89ZhLX1jZQzEdm06FsBxsrHmihXJUyH8gaDN1tY
+	 T8PpdFSOAIy2yhraML5cMaw0idYLB2F4Ez8gDlBBELwrTTNxeQZYfAlsM+/SKiVJv0
+	 Pcc2lQuMl6O5Ds4WStfqNRe+kHvrDmp4aeKMU3JjFPxZ1UXU3kIxcznp1h8Vt+ZDwX
+	 dhIbk8Ngl5K6A==
+From: Carlos Maiolino <cem@kernel.org>
+To: linux-xfs@vger.kernel.org, Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: Dave Chinner <david@fromorbit.com>, 
+ "Darrick J . Wong" <djwong@kernel.org>, hch <hch@lst.de>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250901105128.14987-1-hans.holmberg@wdc.com>
+References: <20250901105128.14987-1-hans.holmberg@wdc.com>
+Subject: Re: [PATCH 0/3] xfs: hint based zone allocation improvements
+Message-Id: <175802248724.997282.6225952797513053259.b4-ty@kernel.org>
+Date: Tue, 16 Sep 2025 13:34:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Tue, 16 Sep 2025 10:38:38 +0000
-JaimeF <jaimefine6@gmail.com> wrote:
-
-> From: Jaime Fan <jaimefine6@gmail.com>
+On Mon, 01 Sep 2025 10:52:03 +0000, Hans Holmberg wrote:
+> This series makes the zone allocation policy a bit easier to
+> understand and adjusts the policy for unset and "none" rw hints,
+> avoiding mixing these with files with file data with set values.
 > 
-> Suggested-by: onur-ozkan <contact@onurozkan.dev>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1187
-> Signed-off-by: Jaime F <jaimefine6@gmail.com>
-> ---
->  rust/kernel/auxiliary.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> The first patch adds an enum for the number of hints available,
+> the second introduces allocation matrix without changing the policy,
+> and rhe third adjusts the allocation policy.
 > 
-> diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-> index 58be09871..129eae8ff 100644
-> --- a/rust/kernel/auxiliary.rs
-> +++ b/rust/kernel/auxiliary.rs
-> @@ -317,12 +317,12 @@ pub fn new(parent: &device::Device, name:
-> &CStr, id: u32, modname: &CStr) -> Res 
->          // SAFETY:
->          // - `adev` is guaranteed to be a valid pointer to a `struct
-> auxiliary_device`, which has
-> -        //   been initialialized,
-> +        //   been initialized,
->          // - `modname.as_char_ptr()` is a NULL terminated string.
->          let ret = unsafe { bindings::__auxiliary_device_add(adev,
-> modname.as_char_ptr()) }; if ret != 0 {
->              // SAFETY: `adev` is guaranteed to be a valid pointer to
-> a `struct auxiliary_device`,
-> -            // which has been initialialized.
-> +            // which has been initialized.
->              unsafe { bindings::auxiliary_device_uninit(adev) };
->  
->              return Err(Error::from_errno(ret));
+> [...]
 
-Thank you for fixing this!
+Applied to for-next, thanks!
 
-Can you please use work@onurozkan.dev address instead of
-contact@onurozkan.dev for both cc-list and suggested-by tag ? I am
-not using contact@..com for LKML.
+[1/3] fs: add an enum for number of life time hints
+      commit: 94deac977fbd0246c971b4f1d17a6385f5e0b1a4
+[2/3] xfs: refactor hint based zone allocation
+      commit: 0301dae732a5402a68fdb8d8461b97da6b9bccc6
+[3/3] xfs: adjust the hint based zone allocation policy
+      commit: 8e2cdd8e18ff5073ad76ab2220910001eae39398
 
--Onur
+Best regards,
+-- 
+Carlos Maiolino <cem@kernel.org>
+
 
