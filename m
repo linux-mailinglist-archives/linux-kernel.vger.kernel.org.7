@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-819135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11DEFB59BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DCCB59BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB5E3AC47D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F683AB95C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8CD3375B5;
-	Tue, 16 Sep 2025 15:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9989330C624;
+	Tue, 16 Sep 2025 15:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZsVVx8N"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kuYuso/H"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1366B313267
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508B9158545
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758036148; cv=none; b=sPQLySpU6NOKrkn8N8sv1khL1vEON3PIdNzq5MZFFuhzFWvs4U1mYxwH6SVuasItEVOEAVj10c9ojIZ4ZkfCx4WgNNTxNWM2ANvMmyBrDcr50miCq2nCmUDUyrfwDaMzVVgYSjaJ9ucfEodomOKp3tsdvPsGpBniMrTGNO19ics=
+	t=1758036188; cv=none; b=mch6i6V42Mrcx5fteSaXq0ztme+dg6teIaeuA7ULu4AA72pVLPfaN4Tgv8c4Ut/sQZBYuvlDXpvFXLTlDeqwqW/nNJNoOW5LRc78igBrT/9OdfSjnXrU7udlW8YX4GwafesQhANC7bpCwMAL5M0kbpKLXb5b0Lj9I+SJa+vkd/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758036148; c=relaxed/simple;
-	bh=/nF0wezrX8HC8RMqyG0TPBedh2UdBlIuZpHXidTvNEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rAVJP2lfRD2aaWlTBYUsF1ZMDl4FF3XNn9VVFS7yerEHBY3dJvQVUO3zFGj4eaw3gCiVL/XMDrHbCPxuc8W4p2JdC5460qAzrwOKW47xOT2+bZtMc5D+IroveDqfo9QAiqEu+Hsm4pcQ+iqeMtSQ+gitCLktPpF9bJvGh/j6jEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZsVVx8N; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d5fe46572so59973587b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:22:26 -0700 (PDT)
+	s=arc-20240116; t=1758036188; c=relaxed/simple;
+	bh=Fa0Dr4dfGCPnuqxyzWaU5/riMvOQE/XL+WP+SmmUJ9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F/Eud7IZ9sQU5I7tZV+DA4vknyjnTEhO6JD3luRz4BgROuQnA6j2wVLn7vM5Jdzvq8Ws1V645WsJ009H0rxqDofZoNDRQZU9HT8o8lhmHVlvWEDXl/Taby6H0CwCBkx3XyHG9Ccr3OBNEhHBSdsBY1EVdokQoAmsGmpoYP4c6tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kuYuso/H; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3eb0a50a60aso1705301f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758036146; x=1758640946; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X+hqoJDq2BiqHsGbYM9yfS1OJ2MwVQ9DaOjGAY9kFSg=;
-        b=gZsVVx8NIrUct+1P6pQhxMVaRXhq/3yWrNvjWQ0xXKaNhXHjpqgS39vl2mgx1G123E
-         K1v3dx5tDlvJol7U6WOM/YxPb+kdY/MMCSxfTBRSPnmg01wrOIkaWpkCuYFmo5y4ZGVz
-         9mK6SKtr9peQgfIYRmpjZZUu3oOsoooe7n6uHYnhdXi7+9j99HecqYiLxv22LxOdPHqR
-         AC8KaY/x+X+sz0ASvrhs/dtCO/G4blZprszP6vcI5s1Hj8eOcKyXAHC46FSv602Hpj0P
-         VNf1oaLBFJd0Sju2yQ3lFdD6jC5u2n+5aurL4oVYs48MO1TH489Q6Gpy4cjOxCwNuUep
-         hLNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758036146; x=1758640946;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1758036185; x=1758640985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X+hqoJDq2BiqHsGbYM9yfS1OJ2MwVQ9DaOjGAY9kFSg=;
-        b=sFv1R8bLVlTR8kfKon/8AhFJBIvi3xYQvZqVJRPu51Z4D+/K1Qnigm46BZj0i+PdXy
-         3swwiHycv67VFlkXGWlvkWgq2krFSAtGE5t9Il+R1zfzwitswHifQ0BrDjpER6DMi9uc
-         1MhfjDW/3tSByJctVsxjk2y/KxL4tNTRwbdfKHRJU2NINIxtdUNlv3vP6pRKwm0ak1yb
-         g2/nMm3naiABHfu8tkEFC9XGST3b/xdnHDHJqGgemIyJwc1VFq1B0yQL4hYmmqe9V0Er
-         s99FzhqVcRjI0W09DjCKgo7bG5lFxhQArSHUllbQyrZHw/6jbpJOgpMV714Q4ZYRu9c1
-         3GaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUd9iVo+DIu26SzKKF0XkKi+VlUGWhHISRMtcNMKubevuE7UarUXryMUWuM879SbyhYqBR172gMuyq55kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEiWjkr92PwZNAzI+lrNgY/HouD1kd5gaKChmmtZoGi6E3eQSV
-	DN4A0B1LuW7/8kExXtKzbj5p1/PMIyyGJ9wEDfD1lknOSRRhLDEwb1ef
-X-Gm-Gg: ASbGncvd+uiBF7kAWe8VlbGIvNIaccqUQDOo/+fWKzs94w0kocZgncmvXF4IsZod605
-	9bPEvFJN/WKMg/3hqYKPaediBm0b/fWQS7joa8HkIj2hlLqik1Kf0DZaRbnpD0ZWG9qKKc/N3dz
-	C0AKEiF/GQz8p05f/lNfrGWQ2wvWVneGDRqVMCBiMubqFClnZvtrYqxq4rQ0Vccffe9nHMQfEE9
-	CFgnMyTBwK3BsA6/E6vTjDaubdNoO+OYl2oZ37cyh5r8HbDTndALUE8Q+yq2LrAabbxhys1xD9Z
-	9R5skjzfqWrMQXHF4iAIlAXH6+67TYNA67j6jnzGjOeo0FpnrKRCsaSus3l6wK6TWwg1HLsDgZs
-	ZLc+PXCd0OOQr1yx2LPE9xBo4B+nWNUD9ZbS0s26agVpHwAvLjClx7fJ/Bg==
-X-Google-Smtp-Source: AGHT+IGEQKbP+B42Bg/27Wc17/GObfW61wqyEbvLsQiwRRh94WgAv42a8XeuGZEAMbaGhW4UkoCMiw==
-X-Received: by 2002:a05:690c:7203:b0:735:7d28:8ab6 with SMTP id 00721157ae682-73721985290mr23298597b3.27.1758036145766;
-        Tue, 16 Sep 2025 08:22:25 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f76238392sm41603507b3.1.2025.09.16.08.22.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 08:22:23 -0700 (PDT)
-Date: Tue, 16 Sep 2025 11:22:21 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re:
-Message-ID: <aMmArVuPadJhn4c-@yury>
-References: <20250915195231.403865-1-yury.norov@gmail.com>
- <20250916144813.GG224143@horms.kernel.org>
+        bh=texts6YK6dHVfgZZeSBQl5brt53L42uPuX8uB3l26sA=;
+        b=kuYuso/Hc7HXiwf0sWv54DUN46+b1/qPDv2uKpry4S8CwsD2dUCLnvQuCIT3es3a8n
+         7/L/buyCO5ph0jTvPsthOqk83DVfHUMpvxc6LzNQPT4bwZtqSAZRUYf/sF1XlRsundft
+         o6SiEOHA4WI4yCyjzHIZ9f+op+6HAx/rHKwv4tOqh+ArXDk4l+7VQ6IZ01rJJ/WFx1dl
+         ry5+11ab6QRWeSZtYuVUtOOYCamY/pj78nN61bOGcDgj78arS/pCK9GwAjkqHtbnsrBm
+         EgbwgmVfa6E/Oq9WGLns1cvDahmpsbrNl4VY9pcariYd2RD3BmhXuZXIt6OVwYzmjoM+
+         NLCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758036185; x=1758640985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=texts6YK6dHVfgZZeSBQl5brt53L42uPuX8uB3l26sA=;
+        b=CDpIzx40gXF0J+sXeI6u8/1zXEmMIKWLA2GcyBHHybzsZP168CFTuPZhIw50phWPu+
+         W+UCLMwy/VMq5oUkxi2TZaxBJB8VWm5JkLrUzL+QjmXLRcpkNOxAbso469JDF81LY6sH
+         E5fAb5RntOHl29zAvRb/u29Vq+KXIrlRAiyE3fMVR5IwjwweEDfcLj1Cjk5aEzBUXQL4
+         /WX7wPaYJ7kiLdW1OAuBZIiHObfURzoPcZK8X+6yE6qGmVCwmpuEiSo59s3e/B95Khgo
+         eW2FnysXDSR3bgftzoXuc5BJ3pGdG1x+INLUCxaL2y08L3TG2Z4u7VSu8TErADcDS+91
+         E4hw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz6aYy8TD1nj8DOB1ry2DxK+iv2Yb9kZ49hC88caHe54omraRpjm+nqT0xoUKzM+8D4+m8H2Fkra0BtEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0fD+Sz9gqpfvg2vG3JXNoMgQtCCTlWk3witt5DfcSzlEknprs
+	dNh3uOj5eN+2boZpdkd2QcczHn+pUKsn/D4NXXSVAb28t68asrOaSkgvCA+8flwpi8PyAQibn05
+	dxzvq4Kn+X0nWVpQ2AZDZILsKr21qEB1I0yL6D14u
+X-Gm-Gg: ASbGncv4rVTmRmXWHhjj1rkC6ui6DMK3whLzNxfCBFGCNW/0oUAqIAhf/Ck3s8ud7y4
+	2RLlpavnJdB6jXFTgjnQQukVLWFm/9ppLZaD8haaayhB7nHhkfMIZ9/JgNKJfZtdh3FmvsqU5D+
+	kUib+KrGggNttOewTFbxwiA/zl376l7wCnlkwrMg6nqUZ/QI5NU7XQq5C8OMHzllNZuZ9WjV+sx
+	abKDH91BekzuZMTvRyIix5Z2lX+CEei6vZSaFKHajexMg==
+X-Google-Smtp-Source: AGHT+IFy1RlL1SatJgBFIBvGoq3npIwG8d6Cn+4HJd5+MSUy27ddCNOgybatr+aQ4jtPxVHl995CYHsAfpJttecW+Y4=
+X-Received: by 2002:a05:6000:1865:b0:3eb:9447:b97a with SMTP id
+ ffacd0b85a97d-3eb9447bb52mr6106858f8f.54.1758036184384; Tue, 16 Sep 2025
+ 08:23:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916144813.GG224143@horms.kernel.org>
+References: <20250915221248.3470154-1-cmllamas@google.com>
+In-Reply-To: <20250915221248.3470154-1-cmllamas@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 16 Sep 2025 17:22:50 +0200
+X-Gm-Features: AS18NWBLONbGoOBW37qrDmhLX61Yut1ndwXCKLgmrwXKz5E_ZpMaR_KAfK0teGc
+Message-ID: <CAH5fLghdcCx_OrCY-xq2gxug4j4RTMnmZsoB-Y18tLRp=Z5R-g@mail.gmail.com>
+Subject: Re: [PATCH] binder: fix double-free in dbitmap
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	Tiffany Yang <ynaffit@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 03:48:13PM +0100, Simon Horman wrote:
-> On Mon, Sep 15, 2025 at 03:52:31PM -0400, Yury Norov (NVIDIA) wrote:
-> > Subject: [PATCH net-next v2] net: renesas: rswitch: simplify rswitch_stop()
-> > 
-> > rswitch_stop() opencodes for_each_set_bit().
-> > 
-> > CC: Simon Horman <horms@kernel.org>
-> > Reviewed-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> > Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> > ---
-> > v1: https://lore.kernel.org/all/20250913181345.204344-1-yury.norov@gmail.com/
-> > v2: Rebase on top of net-next/main
-> > 
-> >  drivers/net/ethernet/renesas/rswitch_main.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> Hi Yury,
-> 
-> I see this marked as Changes Requested in Patchwork.
-> But no response on the netdev ML. So I'll provide one.
-> 
-> Unfortunately it seems that the posting is slightly mangled,
+On Tue, Sep 16, 2025 at 12:12=E2=80=AFAM Carlos Llamas <cmllamas@google.com=
+> wrote:
+>
+> A process might fail to allocate a new bitmap when trying to expand its
+> proc->dmap. In that case, dbitmap_grow() fails and frees the old bitmap
+> via dbitmap_free(). However, the driver calls dbitmap_free() again when
+> the same process terminates, leading to a double-free error:
+>
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   BUG: KASAN: double-free in binder_proc_dec_tmpref+0x2e0/0x55c
+>   Free of addr ffff00000b7c1420 by task kworker/9:1/209
+>
+>   CPU: 9 UID: 0 PID: 209 Comm: kworker/9:1 Not tainted 6.17.0-rc6-dirty #=
+5 PREEMPT
+>   Hardware name: linux,dummy-virt (DT)
+>   Workqueue: events binder_deferred_func
+>   Call trace:
+>    kfree+0x164/0x31c
+>    binder_proc_dec_tmpref+0x2e0/0x55c
+>    binder_deferred_func+0xc24/0x1120
+>    process_one_work+0x520/0xba4
+>   [...]
+>
+>   Allocated by task 448:
+>    __kmalloc_noprof+0x178/0x3c0
+>    bitmap_zalloc+0x24/0x30
+>    binder_open+0x14c/0xc10
+>   [...]
+>
+>   Freed by task 449:
+>    kfree+0x184/0x31c
+>    binder_inc_ref_for_node+0xb44/0xe44
+>    binder_transaction+0x29b4/0x7fbc
+>    binder_thread_write+0x1708/0x442c
+>    binder_ioctl+0x1b50/0x2900
+>   [...]
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Fix this issue by marking proc->map NULL in dbitmap_free().
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
 
-Yeah, bad luck.
-
-> there was no Subject in the header (or an empty one), and what
-> was supposed to be the Subject ended up at the top of the body.
-> 
-> I'm wondering if you could repost with that addressed,
-> being sure to observe the 24h delay between postings.
-
-Sure, will do shortly.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
