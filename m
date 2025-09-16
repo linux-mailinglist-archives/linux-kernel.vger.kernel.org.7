@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-819245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDC2B59D33
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:14:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94B2B59D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF8724E21A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:14:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2EA3AD9A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C6231FED7;
-	Tue, 16 Sep 2025 16:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E30E2D0298;
+	Tue, 16 Sep 2025 16:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ky7UgO1G"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mwv+33IG"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB562DF134
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9053E2E62CB
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758039291; cv=none; b=EdIWQYBDsrZdBj8d/Fm7mcnXWsFCyCst3OD+TBP3eIZVjjor9byufM/evAbTwrsssEc3r+HDkqNkDd1Opz3tXwim9GvNCRxqrn3T3GR5/OpIkwU5zFMek4TJT+puxync5adhkHSWGMsEDwi1QYrjK1sJpulDqkCXf2ueiNOwvEk=
+	t=1758039315; cv=none; b=UXdNklAU78oCEOhOjNcSgDwfIR7as6TN0EbHyUnh3AsYKpov6IGH6bc76dff2ADz5FsGioroBE31dgz0I5K5N6nze/TYXXKleYiHqfpgfoIxnCJgl0zHWTX6AdnCOQHEQOEQ5XZOO8E17W2hlEEulnnU6M2raZtXNx13lsXWFOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758039291; c=relaxed/simple;
-	bh=nCspZXbYgBEeT/yWlgTEnHVXD9ZAr3pI1W6tGEUs16k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uxm9vrEr8105X4TPpGrYZhCrOVDZbVA61/BjpgmsjXl9aXGb/1cco7hd4n+3DkAL64qxDLSSXkaylxO4O0R6KV2OsJtEkD5FD85GRaup3rzhtpNmgkchAonyH4lXvqw00fJXb8b2ogup6xH5u3bQiFadYIXGAz12RAkD0Xti8HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ky7UgO1G; arc=none smtp.client-ip=95.215.58.187
+	s=arc-20240116; t=1758039315; c=relaxed/simple;
+	bh=Fau07E6HejNdul8Szkqjw5bZVaz1B/kG8LVY6o+QQXk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BDTp7rNj/kIojgcZAtTv7MEg3Mm1aKCfzPD39BvaOwx0ZjsYBJpyqfyBFKwyCnPfLD89xAR2bXJg14j25xlGG8ZTUEV5KnsYKmkT/6tgfcyw5X7ztSJDbZSGgLJZVBbr3E9pLd6jgK8r/7gXPve9Fwm2m2nCvxziQAyGD1SPv0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mwv+33IG; arc=none smtp.client-ip=91.218.175.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a35e2d54-f1f5-4ae4-9daa-ae1f3a8a302b@linux.dev>
+Message-ID: <92171eea-e7ff-4cf3-a923-a4efabe6dec5@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758039287;
+	t=1758039310;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SNmCIEwcZ4e13p0I/AT02il2AZu+ZHcccjAcZWxU8pk=;
-	b=Ky7UgO1Gvl4Aq2strv+i4L2ECO6vSXbzIyDyCJ8yXojQbhh41opmKt7rOH6QaAKjIK9L8H
-	jOjmiJmuiWEm2+4s74XBg6qa72akUUnw72uw936hfshyKUzYI+08Lr3CvaCiWgBhHJOlN4
-	+9irM9Fk2CnWpLsOdGc0+GAtjfH58kk=
-Date: Tue, 16 Sep 2025 12:14:40 -0400
+	bh=6KBC+nK2RkCVHyAeUAqIGl3Ld5/CTaXGUV+afM+Gk2Q=;
+	b=mwv+33IGWF3UtH3Ox7yDBt52Th4X3q2lOv1rKUQtPNXdB3h004TYtPSCukr9bbo8jCCnJ/
+	nTal+zQASg9EIoGny57dGANLfSFEb4W2fXHbsE9g9zhSBbQ5kqnACQGcjwwtLtRU8TwNuG
+	PjPL0lH032Se/Ysti0VNgWgenMLsbFA=
+Date: Tue, 16 Sep 2025 09:15:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3] coresight: Fix possible deadlock in coresight_panic_cb
-To: Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, Yeoreum Yun <yeoreum.yun@arm.com>,
- Mike Leach <mike.leach@linaro.org>, Linu Cherian <lcherian@marvell.com>,
- linux-kernel@vger.kernel.org,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- James Clark <james.clark@linaro.org>
-References: <20250912151314.3761026-1-sean.anderson@linux.dev>
- <20250915095820.GH12516@e132581.arm.com>
- <3e618117-96bd-44f3-bede-7cadfe0264dd@linux.dev>
- <20250916160027.GK12516@e132581.arm.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>,
+ edwards@nvidia.com, jgg@ziepe.ca, leon@kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <68c2ec01.050a0220.3c6139.003f.GAE@google.com>
 Content-Language: en-US
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250916160027.GK12516@e132581.arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: "yanjun.zhu" <yanjun.zhu@linux.dev>
+In-Reply-To: <68c2ec01.050a0220.3c6139.003f.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
 
-On 9/16/25 12:00, Leo Yan wrote:
-> On Mon, Sep 15, 2025 at 10:31:24AM -0400, Sean Anderson wrote:
->> On 9/15/25 05:58, Leo Yan wrote:
->> > On Fri, Sep 12, 2025 at 11:13:14AM -0400, Sean Anderson wrote:
->> >> coresight_panic_cb is called with interrupts disabled during panics.
->> >> However, bus_for_each_dev calls bus_to_subsys which takes
->> >> bus_kset->list_lock without disabling IRQs. This may cause a deadlock.
->> > 
->> > I would rephrase it to make it clearer for anyone reading it later:
->> > 
->> >   coresight_panic_cb() is called during panics, which can preempt a flow
->> >   that triggers exceptions (such as data or instruction aborts).
->> 
->> I don't see what exceptions have to do with it. You can also panic
->> during a regular interrupt.
+On 9/11/25 8:34 AM, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
 > 
-> The commit mentioned "without disabling IRQs" gives the impression that
-> the deadlock is caused by IRQ-unsafe locking, which might mislead into
-> thinking why the issue cannot be fixed with IRQ-safe locking.
+> HEAD commit:    5f540c4aade9 Add linux-next specific files for 20250910
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=157dab12580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
 > 
-> Regardless of whether IRQs are disabled, and regardless of the context
-> (interrupt, bottom-half, or normal thread), the conditions for the
-> deadlock are only about:
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/df0dfb072f52/disk-5f540c4a.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/20649042ae30/vmlinux-5f540c4a.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4c16358268b8/bzImage-5f540c4a.xz
 > 
->   (a) The bus lock has been acquired;
->   (b) A panic is triggered to try to acquire the same lock.
-> 
-> [...]
-> 
->> > When I review this patch, I recognize we can consolidate panic notifier
->> > in coresight-tmc-core.c, so we don't need to distribute the changes
->> > into ETF and ETR drivers (sorry if I misled you in my previous reply).
->> 
->> And this kind of thing is why I went with the straightforward fix
->> initially. I do not want to bikeshed the extent that this gets removed.
->> IMO the whole "panic ops" stuff should be done directly with the panic
->> notifier, hence this patch. If you do not agree with that, then ack v2
->> and send a follow up of your own to fix it how you see fit.
-> 
-> I would fix it in one go.
-> 
-> I agree with you that "the whole panic ops stuff should be done directly
-> with the panic". The only difference between us is that I would keep the
-> `panic_ops` callback. To me, this encapsulates panic callbacks into
-> different modules, to make the code more general.
-> 
-> Could you check if the drafted patch below looks good to you? If so, I
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
 
-As stated above I disagree with a half-hearted removal. If you want to do that,
-then I will resend v2 done with an rcu list and you can make your own follow-up.
+This problem is fixed by a fix in https://github.com/zhuyj/linux.git 
+v6.17_fix_gid_table_release_one
 
---Sean
+I will make an official patch and send it out very soon.
+
+Zhu Yanjun
+
+> 
+> ------------[ cut here ]------------
+> GID entry ref leak for dev syz1 index 2 ref=615
+> WARNING: drivers/infiniband/core/cache.c:809 at release_gid_table drivers/infiniband/core/cache.c:806 [inline], CPU#0: kworker/u8:2/36
+> WARNING: drivers/infiniband/core/cache.c:809 at gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886, CPU#0: kworker/u8:2/36
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+> Workqueue: ib-unreg-wq ib_unregister_work
+> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
+> RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
+> Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 a0 43 91 8c 4c 89 e6 44 89 fa e8 fb 67 f5 f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+> RSP: 0018:ffffc90000ac7908 EFLAGS: 00010246
+> RAX: 621d731dcb27e200 RBX: ffff88806241b8d8 RCX: ffff888141289e40
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+> RBP: 1ffff1100c48371b R08: ffff8880b8724253 R09: 1ffff110170e484a
+> R10: dffffc0000000000 R11: ffffed10170e484b R12: ffff888027503e00
+> R13: ffff88806241b800 R14: ffff8880289a2400 R15: 0000000000000002
+> FS:  0000000000000000(0000) GS:ffff8881259f0000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000555569847588 CR3: 00000000338c8000 CR4: 00000000003526f0
+> Call Trace:
+>   <TASK>
+>   ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+>   device_release+0x99/0x1c0 drivers/base/core.c:-1
+>   kobject_cleanup lib/kobject.c:689 [inline]
+>   kobject_release lib/kobject.c:720 [inline]
+>   kref_put include/linux/kref.h:65 [inline]
+>   kobject_put+0x228/0x480 lib/kobject.c:737
+>   process_one_work kernel/workqueue.c:3263 [inline]
+>   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+>   kthread+0x711/0x8a0 kernel/kthread.c:463
+>   ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:158
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>   </TASK>
+> 
+> 
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
 
