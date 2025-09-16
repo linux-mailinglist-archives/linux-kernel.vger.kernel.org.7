@@ -1,231 +1,497 @@
-Return-Path: <linux-kernel+bounces-819711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC63B7E8B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:52:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01EBB7F24A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2FCCC4E0630
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:47:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB8F27A2DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FA927F4CE;
-	Tue, 16 Sep 2025 22:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5082BEFEB;
+	Tue, 16 Sep 2025 22:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="n/yUPXqR"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011071.outbound.protection.outlook.com [40.107.208.71])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oQXJ8Yj3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F2C54279
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758062824; cv=fail; b=BgNaSCHeChOuxQkSUi8CZ5I9/vXbFeiTE8JAWK3PQlcg/yzLFo/pFjWCcAv82BuheIrINRhmQlHCiOLm+7EdOStVAx9951KZ+ECYb8UPhZWAfVZp+4yfLMCNgD2z3E3QxIzO08aqi1HH8wwW5JnIFapXb4D/UTftHOS3hSsbY+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758062824; c=relaxed/simple;
-	bh=5oBA8Omndv8YSpocUE6TIpeH1KKAXVB4i7DbDUcaOdA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CqvzE9i5Rdo5vniDuk2EK21hfPIPZr+oVLfqKTxEjcHOkeQ+7UtE5B9pU8ion58d6DPMt/GbKfbdWjVGSgZUBs9jSoKisgzDE3ANGerKMu6LKXCm0GF6xzLgWf2KJMnqbopNw40ks8hkfHBVZ2x1W3mA1b8SIXluvwPUPWaUv1k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=n/yUPXqR; arc=fail smtp.client-ip=40.107.208.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GyHXaDx936IylyEv5sR//KnkkUlQyPHqjuI4AhSAvrx2t2CXbEVnuBXyIpJFCaKas4uC6AN+LoiJ0e9v+HOtSu7YCL4l9gzckPun6j8/QCIh0YZ3BOGAgxmQn2oW/Idh/2xMGuNbrU38Ef4tRN/NMXBTOyA1CQ1zury6wvrZDlfgSDCpGmMR3uTqXySOnSs+7LxE1flheuJvHD7hWmf0hHQKzXaekcqoxPoFL4waECSfwBpzKUygfEywnw6wK7VtZ9AsATk0vbN05sm4mP7GzOs/lumVOYUSLt/0dsx1yfK7G/xg9FQgCsMlxrzr3/P8vvSyQUramzUosRSjbYSDzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xtUmFUy1PNhqOGZqRMZU+fVV7p0b70yPcyRwRMbAwwI=;
- b=WG7865wiUPlfmDGHRyghrkfg07wC4rzdK3ZpejyqtnGmhLm6ew3bqvgEio9u7lq+V3jqeINe7CpWol5O0xbQkMtkCdhTRwFr0CrgXV+ZKzsD0RB8Bt1hMr1pZCHYb1wRxFRHTm6x8Izv86Cqi1lfcZ087tZ30gBYDckUd2ixazJvWIMyzHpj5wBFL/PJDg4/EXWfABsnyHyKpZo0IoNyLyOhWEW7+/FDreb9/o/nqlA+C2/vEDXCCXQnPDlbPapIJY4ogcQz5zEnsLTVKITTo/EVObk0vDw7sDsFbZ/QXTYAGxXKiQRPWIkMcs+1lclaOPB1siLQKKfQSnc/13+sAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xtUmFUy1PNhqOGZqRMZU+fVV7p0b70yPcyRwRMbAwwI=;
- b=n/yUPXqR9MtFclto/mszm84su4e/bcTl8OJ22wlzGItoG9w8TKFcTXmrWWg0ZHbM/dpIgqetbwdhr9xNXWn+ixpkFj71InXj+wA5V5q2M70l2ewQDEXWJ22re7nFm+bciPYAcjH3MtWam/jHSP97E7mnc92XccGJCJrACU2dULM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by IA1PR12MB7590.namprd12.prod.outlook.com
- (2603:10b6:208:42a::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Tue, 16 Sep
- 2025 22:46:59 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::8d61:56ca:a8ea:b2eb]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::8d61:56ca:a8ea:b2eb%8]) with mapi id 15.20.9115.018; Tue, 16 Sep 2025
- 22:46:58 +0000
-Message-ID: <6d25c7a9-02f9-481f-9eb3-b1f6e3276e58@amd.com>
-Date: Tue, 16 Sep 2025 17:46:56 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/resctrl: Fix counter auto-assignment on mkdir with
- mbm_event enabled
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Babu Moger <babu.moger@amd.com>, tony.luck@intel.com, Dave.Martin@arm.com,
- james.morse@arm.com, bp@alien8.de
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-References: <9788ef37c17a9559a08019b694d2a47b507aa4ac.1758043391.git.babu.moger@amd.com>
- <437d6c22-f232-48a0-94db-a395aabe85d5@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <437d6c22-f232-48a0-94db-a395aabe85d5@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DS7PR05CA0067.namprd05.prod.outlook.com
- (2603:10b6:8:57::12) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5AB1C84A6
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758062907; cv=none; b=h8Uwcu4IDTylhyh8TsfBXIpjhv3s030H2tVnQh3Nn0mpWGln4FS03x85nVopzEBjZpwD8gr5bRjrVNLLKpPYysTOayZ4KRUgR5hQV7i1ZIVtw++KTnbyr2A0kl1dx2WGUO7Ngr77KMAQnnWtME8WF103VorW96e6UTHD+PYNYVE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758062907; c=relaxed/simple;
+	bh=2DFMm6LIh3PH3uODuHvlYd6xCZm/nyxzIpl1xb3Rlc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMp3Fk4eDubD7mYk5T5g8PKAbt4jLuQaIQl6Re/rLSIfxj3MN/0fCSc45meRD7sguDuqWZC6gWmARf69q/E3D/4xeMWto6iX/EnDg4XNuthLPfJVAYW5nNjw0x6DxqbvgPEUzezf0s85XCZSNr2i0/j2IaPRt4e/epexqWg1ZNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oQXJ8Yj3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLabDH008565
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:48:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=6lqy88FzgcpTp3nfJKIO0ixM
+	kbRL1bHvuglEZ1P3X1g=; b=oQXJ8Yj3+sfKiF4C96MYOcOWnQsURIEOvgINIDrJ
+	3W9dWs/p5dfXyUNf0NgVXZx4bp4RbaIRyFFgYGiYadRQKmc/wTSBQrV7UVq+7UEt
+	Zm76MHFR6nrE9pNTSPDADfZtdCDOSq8tnCHkfHwZeM/e5Z0K1cmYdMe0QkxQa8EX
+	rpgf56ZNXvYjkUkC6XWAWR/ZFQP5lGtSAOQ4QSKFo7hKe1HiLmvjGyywa3Fr4ko2
+	JJNKzTI0Yx5bCVBAuauIHxHDhTSH3k7440SL/L2V8ae5vHnWM4R6CwRhwcx4saEq
+	GXMMvKIxg6LB8dPWRBEeRqS8+YrfyPZ5vhG7unQgfwBUuw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxr5je-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:48:23 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-81678866c0cso1193430785a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:48:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758062902; x=1758667702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6lqy88FzgcpTp3nfJKIO0ixMkbRL1bHvuglEZ1P3X1g=;
+        b=VkA3hMkk4JhEoaSpTJKLObwRPvneU+t7ou7ZMtv5sGe8QhuNGquP6MzxCvGSji9xRh
+         LZnLVSk4Uj7nQBf4yhDKJP5BJNfF8+WeGcxpGHROVfsyiKL/UPfzYdF068ruBPc2VEgs
+         9OQYNdd+k5x9LNMfhcQ3nakShW9Dq2FJV+8mvnLQLgaDWdhgKwLX8luPQSjIPIGxPDY1
+         kBcU5dSZoa2jbCOObkDJfbLMBaonCjYXXhkUrZjAYBgmp0SJngFEhiqZ1sxKHw8h9xBi
+         /h4yuZSrzODrQl5m2EZwAS11nLpWGCV5KFp/Y4hGgQICkCwcEpAA62yNZfRWSUQjciiy
+         SIyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk0p6ANi8pi76wWYP5T385tlPvQjFchuBLNLaSc7F+q4m9dbYxd63+S6dvs9ZYr5vsSXAgAb3xIz+aT/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTstRs/tD26DPGKK9d6qJJE8dP89v1sVbdKbZ0WWNa7h1Ycebt
+	wVD7a0cdak9edmqAh81Q8+GeXYcCbB162rwv8nfW2t0dr2bpNbUcb1M6FlMLKhAPLxrl2R5g4DK
+	5yMtG9y2/KnKQtHMGkWg5MfruREtQ8kk6LN0atn1caZewBXIKM0nvdbBtCWMfjHgHeNM=
+X-Gm-Gg: ASbGncvcOsRLF6Rij55ytduo19Nb9b2us9cBeI9LJkPNpq/J9CInbL82K67mBMzXG4b
+	lMwqqSAjUYh+ST53qHebufQ3+MbNRhuaPYUQMN5Ej0NSwzOul3iYkvrF4ASvwhth45VVFKkoPjq
+	Z40v4hwaivcX7dA2Kd7zC0IuRLL8XPGoIl3fOnlpCOJOt+hdhNp//OB3a/zRpDVEZoxp/q+sH0V
+	7cvZGAlotu/diEslblpw5wxPK3r1hcWiGZ34rHNr/3WSZDHFDzXwLMKnEJgOoQALEhTTZdgW6Sn
+	HtCEujdx7kMzT4xDGGcxi4LIIVJyMRC+5kEf0YaadbePDt7W2WmDn1xFDAd/QYGG47wSIohc85T
+	2A6o4hgHRBe3EqXU9wmbNcGOvgbNR59ijCK4QH/wHymfC3lL3ZqqT
+X-Received: by 2002:a05:622a:2505:b0:4b7:b193:56c0 with SMTP id d75a77b69052e-4ba66e0c77fmr2182831cf.21.1758062902190;
+        Tue, 16 Sep 2025 15:48:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHiAGFbpHt/NioJ7e/FEexyytK2hopKKGV8FKMvLAQUpoguf3uiH8FC1V5uYGk4pK4dTKzi9Q==
+X-Received: by 2002:a05:622a:2505:b0:4b7:b193:56c0 with SMTP id d75a77b69052e-4ba66e0c77fmr2182311cf.21.1758062901616;
+        Tue, 16 Sep 2025 15:48:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e5c3b6193sm4670677e87.31.2025.09.16.15.48.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 15:48:20 -0700 (PDT)
+Date: Wed, 17 Sep 2025 01:48:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        Jack Pham <quic_jackp@quicinc.com>,
+        Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
+        Mayank Rana <mayank.rana@oss.qualcomm.com>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Mika Westerberg <westeri@kernel.org>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
+ Router
+Message-ID: <fqxcvu5o7urw6fxbzshp3kv7mlte4iujgxjab3qs2yo5mv2o6h@umutqskjoxvg>
+References: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|IA1PR12MB7590:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea60767f-7e75-456a-4185-08ddf572f1b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b2Y3NlRGZnVleFVXMlJnOGgvRFVsRXhSNW5tdmFxV2cyRXBjZGlSSXBmMVNN?=
- =?utf-8?B?eFVVSWpkSVErTFF3aElsZHoxZ002YXVSNmpaR0ZqbUFPQzIyOFl2RUtFbThU?=
- =?utf-8?B?UzBiOWtzNTZnOS90TllmSWorOUZlUDFCQ2FlWjFFem1QU0xPMWVWWDQvMHlt?=
- =?utf-8?B?dFpmbGR4NXdGOTR1cjlOQ1Z0djluWHFzd2Z5U2hQSnRFL0VQZ2R2enAvQ1Ex?=
- =?utf-8?B?TFpFZDExN2NuNTgwNDk5NEhXMDZIb3lTUGkyZkkzQVE4ZDhPU2tza25hSm9E?=
- =?utf-8?B?ZHUwcTJFTUVEQnNBbG1kcWZxVXJxZzRyV0xmWitIbkZJcG83TWd2WU5GT01Q?=
- =?utf-8?B?QVlVMkdNUEhPaW5DTWV5OCtGVUszcUhvQWVsMjN6ampySUY4aGkvT2gvdW1r?=
- =?utf-8?B?cGt6aUZXY2lJbFhnY2VZK3MxZEVuQWFuM3AxekNIUEYrSEVJWnNucW9Td1JV?=
- =?utf-8?B?dHlXaHltOFd1M2pKV1pqSGJ6aEdLL1FYcTlHY2RWd29hVzk0bTV4d1paNTN4?=
- =?utf-8?B?cEdhVnk3RHJTNXVZa3ZIUlpGdVcxVHVtcDZya1A2NmlnNWdhVTQreHR0N1hK?=
- =?utf-8?B?SC9UMlVqTG5FcXZ3REhGa1NCK1U5NkU4WGhCbTRTOXRXV1lGTDhMSm9VWE1s?=
- =?utf-8?B?NHZLSzZjdGdWNEZoWWt3OWxLbW1tdEI4bjFWK1F1NEpLZFRYMmthTWF5UUlm?=
- =?utf-8?B?TVhFL3JJdjJlTzNEWFJtWXJvRDRWZnQzSFRJL0RkUFpEaTV5b2VRcGZycUdW?=
- =?utf-8?B?K3I5Qk1qM1JXYTlWM2lMbmlRNzB5eDBGdTVUMUlSUlRDOFFMeGx3dnBKcE5H?=
- =?utf-8?B?Y2ltOXBVU0k0NVQ3YTVuOGpNYmcwUGV6MkZBaEdrU0dzbHMvZ21ZUW1WdDVu?=
- =?utf-8?B?WnpUUURlM0Y3aGNIVEhBcEpEVjdiMC9FZy94Ymw5bU5adGM0OHduRFFsVmRr?=
- =?utf-8?B?SjZjWG4ra0U1cjB3S21FNTFtY1Z2M3NnWGUvVjZUT2F4SDV1Mi9vd0pCMW9E?=
- =?utf-8?B?ZEZyOTBHL3FlS0VTYldUc0hMVlV5RkJNdjk1c3B1NXYwT2xxZnBXMzVLdWJZ?=
- =?utf-8?B?U2FwckJJdVBGeDJKaFV4NE5lZS9ZT2ZUdWI4QnZNaWR0aEtFUGNobC9qUzFZ?=
- =?utf-8?B?UGtmeTJBMitPOGUxbXJ0bkdXUXQrM3pJLzNmU0JRejBrWlZwN3ZCcWZMcXpZ?=
- =?utf-8?B?a1BlVFFaRzVQeGxtOEkweGxJaUdtbUlhK2dUd0J0d0N3S2xYZXkrNytHc2tL?=
- =?utf-8?B?Y3dMSTlCQ2ZhOUw2aGhFdlMxTytQc1FyU0RoWDFiTEgvMjB1MzZUaWNLaHhy?=
- =?utf-8?B?TXhHZmQ4LzV3bGhLVjNPMFAvQ2JUcHVSOURKRVp5djVZdW5rWnpuNHI3cjNy?=
- =?utf-8?B?NE1ya0gvQS81V3REaTJTc3lSNVVGVzNCY0FsVDR5WVE2Tk5NTVdQUkVIVzVh?=
- =?utf-8?B?b2hqcmtYQzFEcmdkSzRkRlMxMGNjbE1rdUN1QXBvQkY1ZUNzenIxQjlsVVo3?=
- =?utf-8?B?MFlnZ2RWNkVDekM4OW1jYjZxT0xUbm5hNngzRjVibWV0WXRDNFFJZ3J5cjlz?=
- =?utf-8?B?UXZ1alNIMFVtYVNuUTVYTnM1SFZTWVJNaE9vQ2lqTGRMbmJqdXFONDVYeHVW?=
- =?utf-8?B?dUhub0M0c1hHQ055M3JLb2JId2lwMENhc21iYWIzYk9kUmNwazVHOGtuUzdk?=
- =?utf-8?B?MEdSQ1hLM3RNUG5EUVpMaGdzZHhiNGIvNlJZMVE1eVQ3Qk5nSlpYUXh1ckJH?=
- =?utf-8?B?MWl4UURMTlBoOTBRcDlSRTJocTYwQU1nMzQxZ1JldmtzZ013bzhOV1E4WkJC?=
- =?utf-8?B?b1RGaWZhdzBSSXg2V0QxRm96dDh6SFd3WklzZ0hyaGRmVHpaQytsUGNTTzRn?=
- =?utf-8?B?d3JsSjZEWDVQV05acElCN25TaC9QSHBMdUtOc2lFYzR1RmpHYzNYemY0Zkls?=
- =?utf-8?Q?/jnXkf8+8d8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Qno3RnRWNXNMTUtzNExTSTB1L2hKbUlVUVVtU0MyaEcyZlFLOWQ3elJoalpq?=
- =?utf-8?B?cU5EVGtzU1VCbkVXcEpjV0gvRVhsZE56WmVOMnpRZ0lCbDY3Ry8zdWZyVkls?=
- =?utf-8?B?U0hhTTdOdXA5ZXZOVWxqcW92aTQydnJSdlpJRjdGS0pTQysvS212UGRkMG5S?=
- =?utf-8?B?OGRZYVBxVzVCL0VySllnL2lJeHJnVWlPRnA4dG5pZWhTazNKSmJZT1BiNDgw?=
- =?utf-8?B?M2ZkTUpicFYzTysxdTRwNU5wOHM0M1hsZld2VmRDNXVxTm52VWtDVDdZbWpa?=
- =?utf-8?B?NnZwWU9lSDNNUk9HdmFzUE9DKzdoSnFrTHNlVEw2Wncrd2dSNm9JNURubzBP?=
- =?utf-8?B?TW1LUnI3Um9CbDNmTE1RSGQyUnRyRXlOUk9UbEpZclg3TnFvcmR5YTl1Q0VY?=
- =?utf-8?B?Y0dnMzNnRW9oQjV4aEliMDNJWWh6MDFjNUU4TllQWjdoY09sY2ZxbW5Zb0RN?=
- =?utf-8?B?K3I0d1RuSDFIelF1UUJ2UjdydlFsSnVSdExWQmloL1E1WHJzbnJiSk0yZUJQ?=
- =?utf-8?B?eU8xSEhqOFJEUjhsQ3BGU2RLalNDQ2I1dlNaUVgxaUJ2SE5GTW82N1F0Ui94?=
- =?utf-8?B?cFl2L1R5OWgxQ3puU1BGb0ZvaDk5SW1NWkxPNUN3VUdjUk0yRTdET0J4MnB1?=
- =?utf-8?B?UUs1S05IOU9tTlZ1SHJLb3lKYkM3cC9HTHE2bU10QUdOdnVxVFRGbmtiamVt?=
- =?utf-8?B?QVhCaWNuR1NhclEzVzZxMUJwUTcvOFJNak1YOGdZMVZGUE04Mmg3ekh4U3Qv?=
- =?utf-8?B?S2ZjK0lybG5rTmRhT1FpVHFpczd4VHlCYXZHUmE4MHc4R0h2SkcxT3ZvQ1NS?=
- =?utf-8?B?R0d5SDFZNFE4NmdLeGs1RlZqUXAzb211UGhlUUVMMEFIUjFLbmo2bUxPd0FS?=
- =?utf-8?B?N05HR0tsT3lqMkNTKzhuS0hDbzVGZmw2Tnk2S24rWkR0elVRZzFvM2o4cjFO?=
- =?utf-8?B?bzhSZXNoMENueEs0RGY5NW5INi85TmVOVGswR3F3eGZXUmtpTHArQnZnb3Aw?=
- =?utf-8?B?Q0dsbTBML0N3T2wxM0pZNno3L2hDQ0NqYU1UbFBHeEFlakloenV4MFNwYm5B?=
- =?utf-8?B?dnpKTUFZcXpTeHJscHVmYURkZjlxTGFtSEg3MkNnYU1DRXJvRmMxVGpWMEY1?=
- =?utf-8?B?VXVvNUpWUXV2QjVDMXhUWE52ZHdFMVMrY05qd1RkVGNLaDhNWG41Rk5uMVlj?=
- =?utf-8?B?c3JYN3AxdE9USDFGYkRoMmhxZThzUW92MHQ2MVBNelRUSHExU0JBNDVzMG1y?=
- =?utf-8?B?SFYvTFZGSi9yUDVqTDU4dFVwcnpPYTJaK0hKZHBYTnVqeHA4Zlc4alFGOUtl?=
- =?utf-8?B?NzR6WE4vRGM2VExSUFV4Q2hWa3cwcUtFZzdkRWdJeEZSRGRFdmQrSE9HdXhz?=
- =?utf-8?B?eDQvMlVNTjdDaUlCOWcxaTBhbURKRm8vbXZFRUpCVDA3KzBMY0V5eDBZSC9X?=
- =?utf-8?B?UDBBNzIrdFNyZFZJNFJDZGQyNVZvcEtHZnlISS9oeXByUm9pUDhUWGk5bm9M?=
- =?utf-8?B?ZjhoQytMMVNGQk4vbTkxRjJCT0FuUXpXZThiWjJkdENWeEFEcCt3WjRjVUJL?=
- =?utf-8?B?TTRuWHhzczZneC81OXVKQzllQTFOSFdjMjc0d0NRVXUxV0txdHc4Q1dXTTVV?=
- =?utf-8?B?VG5tdUJoQVUyU0xyWFpsRGVEL3Z0Y3BiUkVWanBaV3Z5ZUt3WGlqMnpmVHlN?=
- =?utf-8?B?Zy8wSmVUdExtUk50WUhFbjRRNVhRZEJ1ZEU1ZTk1akF5dUhIVG0vWkRVeGMz?=
- =?utf-8?B?REZSTU5HUm9iTldpeU1WY3ltWGVORGNMS3cwdVJQODNidncwU29vQ0ZqQUtt?=
- =?utf-8?B?M3JaR0djeXRwd095MXRDcnoxZjBWbFhpbWtjd1hBZ2U2SVZyOHNZVlpzcWtR?=
- =?utf-8?B?S05TWVYzTDI3RTgzcUtOcm1RUkRRNjNnc0xwQjhyb2g2TnV4ZlI5WHRUU1po?=
- =?utf-8?B?a2JmNlpmeldPamRTclViRjhRbzFxUk91TnJTSS9WMVVPVzZsakZNeTdpQmYr?=
- =?utf-8?B?czkycWdvVzNYNTJJNHBuQjZaNWFhVUo0dkEvRUJqZlpSN2dUM01OV2xoNkhO?=
- =?utf-8?B?SlBvLzNJNExudzNKOEw0RWk3Y3R0MW8zWUtCY1VHYWNpVjdJcUtXVTU2dGlT?=
- =?utf-8?Q?B36E=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea60767f-7e75-456a-4185-08ddf572f1b5
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 22:46:58.8429
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4jznRUj8CaRiSoEC+rJecJOEls4PAGE9o0/a3mLkq0+vVCOQffc234Oa+s6hA0bp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7590
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXzqrfO/kHh1uD
+ 98KNzSFD/I5q3/kZ2XutatgAKb/1hQNaKWUGexYlaruXTdNUSJEoyStgeWKzlmruNBJKnoFdqFh
+ QMrZF8S0h2or16nsmgO4h3yEw3KK2CEwlFqiGz1fcfT4BFNr79N70UtvnvQopVi1OKa1UGEzD8H
+ TjDB+jF65lcqI8ub4bKIy6LHM9ZZD+T2QXO0bXvUJ/feHf8x5HlBHSlqLLvlICGuHtV9rWUg1xW
+ pSH69AK67f5IkY+JyMtaSF/4qs/Rje6WfyeyrRPGBSIbmMJWHEO5aAoU9cJUASvAFMXNYiWtSdN
+ ARaV73OTxQL1u+Vgv5yI3bAW2Zlz5dofpQx/WbjDukrfuhInaGiSN6gs16lhJWWpd3+BeweMwK0
+ R8oroe3d
+X-Proofpoint-ORIG-GUID: B82zqR9EKksT3h0ANmG8Pyj6mnw6dP9b
+X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68c9e937 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
+ a=bXFFeEhO61wJ5UbjiUcA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+ a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-GUID: B82zqR9EKksT3h0ANmG8Pyj6mnw6dP9b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-Hi Reinette,
+On Tue, Sep 16, 2025 at 10:06:01PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Several Qualcomm platforms feature an in-house Host Router IP block,
+> which enables USB4 and Thunderbolt 3 functionality. It implements the
+> common NHI interface, allowing for easier integration with existing
+> Thunderbolt driver implementations.
+> 
+> The Host Router features a microcontroller (with loadable firmware),
+> which takes care of detecting and acting upon plug events, initiating
+> high-speed link establishment or performing HW power management
+> operations.
+> 
+> Each instance is connected to a single USB3.x host, a PCIe RC and a
+> DisplayPort controller through a fitting Protocol Adapter, allowing
+> for the tunneling of the respective protocols between the USB4/TBT3
+> device and the on-SoC controller.
 
-On 9/16/2025 4:58 PM, Reinette Chatre wrote:
-> Hi Babu,
->
-> On 9/16/25 10:25 AM, Babu Moger wrote:
->> Found that the automatic counter assignment is not working as expected when
->> "mbm_event" is enabled. Counters are being assigned regardless of whether
->> mbm_assign_on_mkdir is enabled or not.
->>
->> The logic was mistakenly placed in rdtgroup_unassign_cntrs() instead of
->> rdtgroup_assign_cntrs().
->>
->> Fix it by moving the code snippet to rdtgroup_assign_cntrs().
->>
-> With the goal to address Boris's concerns about changelogs I think the changelog
-> can be made more specific by replacing the vague "the logic" and "the code snippet"
-> terms. Below is an example changelog that addresses this but I am afraid that it may
-> now be considered too much text :(. As I am still learning how to get this right I
-> surely will not hold up the patch because of this, tag is below.
->
-> 	rdt_resource::resctrl_mon::mbm_assign_on_mkdir determines if a counter will
-> 	automatically be assigned to an RMID, MBM event pair when its associated
-> 	monitor group is created via mkdir.
->
-> 	Testing shows that counters are always automatically assigned to new monitor
-> 	groups,	whether	mbm_assign_on_mkdir is set or not.
->
-> 	To support automatic counter assignment the check for mbm_assign_on_mkdir
-> 	should be in rdtgroup_assign_cntrs() that assigns counters during monitor group
-> 	creation. Instead, the check for mbm_assign_on_mkdir is in rdtgroup_unassign_cntrs()
-> 	that is called on monitor group deletion from where counters should always be
-> 	unassigned, whether mbm_assign_on_mkdir is set or not.
->
-> 	Fix automatic counter assignment by moving the mbm_assign_on_mkdir check from
-> 	rdtgroup_unassign_cntrs() to rdtgroup_assign_cntrs().
->
->> Fixes: ef712fe97ec57 ("fs/resctrl: Auto assign counters on mkdir and clean up on group removal")
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
-> Thank you very much for catching and fixing this issue.
->
-> It is not clear to me if the changelog will be acceptable and I provided alternative
-> text just in case. The fix looks good to me, for that:
+I'd really like to see a full example, how the overall picture looks
+like? The bindings describe a single port with a single endpoint. Where
+is it supposed to be connected to?
 
-Looks good to me.
+Could you please provide an example of the overall system (including USB
+controller, DP controller, USB-C connector, etc.). I think one of the
+systems had muxes on the SBU lines, how are they supposed to be defined?
 
-Boris, I will send v2 with updated changelog. Let me know otherwise.
+Also, do we need to define the thunderbolt AltMode inside
+usb-connector.yaml?
 
->
-> Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+> 
+> Describe the block, as present on the X1E family of SoCs, where it
+> implements the USB4v1 standard.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+> Hello!
+> 
+> This is our stab at USB4/Thunderbolt dt-bindings.
+> 
+> This submission, as stated in the commit message, describes our USB4
+> Host Router block, which is roughly the same class of hardware that you
+> can find on add-in PCIe cards aimed at x86 machines.
+> 
+> This specific patch is NOT supposed to be merged, since the bindings
+> may still ever so slightly change, as we continue work on the driver
+> (i.e. it's still possible that we omitted some resource).
+> 
+> It is however published early to create grounds for a discussion.
+> This is the first bring-up of USB4/TBT3 on a DT platform, so this
+> binding is likely going to influence all subsequent submissions. I've
+> added various DT and TBT folks to the recipient list to make everyone
+> aware of any decisions we settle on.
+> 
+> Comments very welcome!
+> 
+> P.S.
+> The driver part (which has quite some dependencies) is not yet 100%
+> ready to share and will be published at a later date.
+> ---
+>  .../bindings/thunderbolt/qcom,usb4-hr.yaml         | 263 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 264 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1cf3d083c6129a492010a4b98fea0e8dec9746cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
+> @@ -0,0 +1,263 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/thunderbolt/qcom,usb4-hr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm USB4 Host Router
+> +
+> +maintainers:
+> +  - Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> +
+> +description:
+> +  The Qualcomm USB4 Host Router IP block implements the NHI standard
+> +  as described in the USB4 specification.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - qcom,x1e80100-usb4-hr # USB4v1
+> +      - const: qcom,usb4-hr
+> +
+> +  reg:
+> +    maxItems: 17
+> +
+> +  reg-names:
+> +    items:
+> +      - const: router
+> +      - const: router_config
+> +      - const: tmu_config
+> +      - const: port_group
+> +      - const: sideband
+> +      - const: uc_ram
+> +      - const: uc_per
+> +      - const: uc_mbox
+> +      - const: nhi
+> +      - const: cfg
+> +      - const: debug
+> +      - const: usbap_config
+> +      - const: pcieap_config
+> +      - const: dpap0_aux
+> +      - const: dpap0_config
+> +      - const: dpap1_aux
+> +      - const: dpap1_config
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Combined event interrupt for all three rings
+> +      - description: OOB Firmware interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: ring
+> +      - const: fw
+> +
+> +  clocks:
+> +    maxItems: 10
+> +
+> +  clock-names:
+> +    items:
+> +      - const: sys
+> +      - const: tmu
+> +      - const: ahb
+> +      - const: axi
+> +      - const: master
+> +      - const: phy_rx0
+> +      - const: phy_rx1
+> +      - const: sb
+> +      - const: dp0
+> +      - const: dp1
+> +
+> +  resets:
+> +    maxItems: 13
+> +
+> +  reset-names:
+> +    items:
+> +      - const: core
+> +      - const: phy_nocsr
+> +      - const: sys
+> +      - const: rx0
+> +      - const: rx1
+> +      - const: usb_pipe
+> +      - const: pcie_pipe
+> +      - const: tmu
+> +      - const: sideband_iface
+> +      - const: hia_master
+> +      - const: ahb
+> +      - const: dp0
+> +      - const: dp1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  required-opps:
+> +    maxItems: 1
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    const: usb4
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: usb4-ddr
+> +      - const: apps-usb4
+> +
+> +  mode-switch: true
+> +
+> +  wakeup-source: true
+> +
+> +allOf:
+> +  - $ref: /schemas/usb/usb-switch.yaml#
 
-Thank you.
+I don't think this should be including usb-switch.yaml (pretty much like
+QMP PHY isn't a usb-switch).
 
-Babu
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - power-domains
+> +  - phys
+> +  - phy-names
+> +  - iommus
+> +  - interconnects
+> +  - interconnect-names
+> +  - mode-switch
+> +  - port
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        usb4_router0: usb4-host-router@15600000 {
+> +            compatible = "qcom,x1e80100-usb4-hr",
+> +                         "qcom,usb4-hr";
+> +            reg = <0x0 0x15600000 0x0 0x8000>,
+> +                  <0x0 0x15608000 0x0 0x70>,
+> +                  <0x0 0x15608070 0x0 0x500>,
+> +                  <0x0 0x1560d000 0x0 0x1000>,
+> +                  <0x0 0x15612000 0x0 0x1000>,
+> +                  <0x0 0x15613000 0x0 0xe000>,
+> +                  <0x0 0x15621000 0x0 0x2000>,
+> +                  <0x0 0x15623000 0x0 0x2000>,
+> +                  <0x0 0x1563f000 0x0 0x40000>,
+> +                  <0x0 0x1567f000 0x0 0x1000>,
+> +                  <0x0 0x15680000 0x0 0x1000>,
+> +                  <0x0 0x15681000 0x0 0x1000>,
+> +                  <0x0 0x15682000 0x0 0x1000>,
+> +                  <0x0 0x15683000 0x0 0x1000>,
+> +                  <0x0 0x15685000 0x0 0x1000>,
+> +                  <0x0 0x15686000 0x0 0x1000>,
+> +                  <0x0 0x15688000 0x0 0x1000>;
+> +            reg-names = "router",
+> +                        "router_config",
+> +                        "tmu_config",
+> +                        "port_group",
+> +                        "sideband",
+> +                        "uc_ram",
+> +                        "uc_per",
+> +                        "uc_mbox",
+> +                        "nhi",
+> +                        "cfg",
+> +                        "debug",
+> +                        "usbap_config",
+> +                        "pcieap_config",
+> +                        "dpap0_aux",
+> +                        "dpap0_config",
+> +                        "dpap1_aux",
+> +                        "dpap1_config";
+> +
+> +            interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
+> +                         <GIC_SPI 579 IRQ_TYPE_LEVEL_HIGH>;
+> +            interrupt-names = "ring",
+> +                              "fw";
+> +
+> +            clocks = <&gcc_usb4_0_sys_clk>,
+> +                     <&gcc_usb4_0_tmu_clk>,
+> +                     <&gcc_usb4_0_cfg_ahb_clk>,
+> +                     <&gcc_aggre_usb4_0_axi_clk>,
+> +                     <&gcc_usb4_0_master_clk>,
+> +                     <&gcc_usb4_0_phy_rx0_clk>,
+> +                     <&gcc_usb4_0_phy_rx1_clk>,
+> +                     <&gcc_usb4_0_sb_if_clk>,
+> +                     <&gcc_usb4_0_dp0_clk>,
+> +                     <&gcc_usb4_0_dp1_clk>;
+> +            clock-names = "sys",
+> +                          "tmu",
+> +                          "ahb",
+> +                          "axi",
+> +                          "master",
+> +                          "phy_rx0",
+> +                          "phy_rx1",
+> +                          "sb",
+> +                          "dp0",
+> +                          "dp1";
+> +
+> +            resets = <&gcc_usb4_0_bcr>,
+> +                     <&gcc_usb4phy_phy_prim_bcr>,
+> +                     <&gcc_usb4_0_misc_usb4_sys_bcr>,
+> +                     <&gcc_usb4_0_misc_rx_clk_0_bcr>,
+> +                     <&gcc_usb4_0_misc_rx_clk_1_bcr>,
+> +                     <&gcc_usb4_0_misc_usb_pipe_bcr>,
+> +                     <&gcc_usb4_0_misc_pcie_pipe_bcr>,
+> +                     <&gcc_usb4_0_misc_tmu_bcr>,
+> +                     <&gcc_usb4_0_misc_sb_if_bcr>,
+> +                     <&gcc_usb4_0_misc_hia_mstr_bcr>,
+> +                     <&gcc_usb4_0_misc_ahb_bcr>,
+> +                     <&gcc_usb4_0_misc_dp0_max_pclk_bcr>,
+> +                     <&gcc_usb4_0_misc_dp1_max_pclk_bcr>;
+> +            reset-names = "core",
+> +                          "phy_nocsr",
+> +                          "sys",
+> +                          "rx0",
+> +                          "rx1",
+> +                          "usb_pipe",
+> +                          "pcie_pipe",
+> +                          "tmu",
+> +                          "sideband_iface",
+> +                          "hia_master",
+> +                          "ahb",
+> +                          "dp0",
+> +                          "dp1";
+> +
+> +            power-domains = <&gcc GCC_USB4_0_GDSC>;
+> +
+> +            phys = <&usb4_phy>;
+> +            phy-names = "usb4";
+> +
+> +            iommus = <&apps_smmu 0x1440 0x0>;
+> +
+> +            interconnects = <&icc0 &icc1>,
+> +                            <&icc2 &icc3>;
+> +            interconnect-names = "usb4-ddr",
+> +                                 "apps-usb4";
+> +
+> +            mode-switch;
+> +
+> +            port {
+> +                usb4_0_mode_in: endpoint {
+> +                };
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9da37c8dee69de9421d4f70906b4e623a442d171..b607f0a66f953fb1ea72e3405820288850004dfe 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -25428,6 +25428,7 @@ L:	linux-usb@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git
+>  F:	Documentation/admin-guide/thunderbolt.rst
+> +F:	Documentation/devicetree/bindings/thunderbolt/
+>  F:	drivers/thunderbolt/
+>  F:	include/linux/thunderbolt.h
+>  
+> 
+> ---
+> base-commit: 05af764719214d6568adb55c8749dec295228da8
+> change-id: 20250916-topic-qcom_usb4_bindings-3e83e2209e1e
+> 
+> Best regards,
+> -- 
+> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
 
+-- 
+With best wishes
+Dmitry
 
