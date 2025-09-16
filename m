@@ -1,206 +1,118 @@
-Return-Path: <linux-kernel+bounces-818264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97C3B58F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:27:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B06B58F2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D48A320FE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:27:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B41C7A7EE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1D92E62C0;
-	Tue, 16 Sep 2025 07:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3072E8B81;
+	Tue, 16 Sep 2025 07:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cK6bTLES"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Qg/yyuyP"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4272DECB9
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93999DDC3;
+	Tue, 16 Sep 2025 07:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758007660; cv=none; b=JGioevChWBNbLRO3vImDBMhmYwMqjcafYiuFwekc1YVLnulSguSLVv5dYNkl2lGU0Nle5OiQY5TlNaQePNYf29tpyBkq80ILdUxc8Q0G2BhjEQUVDPyhn+E8za1lgFFnBH7j6GKIaCPl1zZxL3dDBXGboLwxODS8C3xXROcv0eY=
+	t=1758007856; cv=none; b=Btbbikr2r1eMuozN4OsbATyGabaXxWvv8DF6X1DXS7F8BjmiBPN6Ugk2lTrA3oNdK4ZmGoEJS3fPkVERRT+79X2LiPv5b62jjRepjgrY3WRdGE9UYx+S/dESVC+uc2WX3gML243iTjElsIIK3Pb9EK6tO8Rt9o8Y1xXAQ0ggsQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758007660; c=relaxed/simple;
-	bh=F9b2EyhEO6rGTgADu2vlV7ZYUMvWMAZOSNB2YByeOEQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=HbMXlfDxPXuDxvnSBO85qTsoL/5sl9ez0cftfSO/NfwnQ8tmIG0K3VO8nHkmaT4yTqxwFsosi1LsrOC85k7rjpPQHRcSJXpNASjfYoW87lLvc6A3G+AkHSuubjWCeYcBfkF8cbATM7y74N8VdOpjplV3bkcXMNetAUsjcHal4gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cK6bTLES; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-26060bcc5c8so30181575ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758007658; x=1758612458; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YdzUgBNm+Fykgerb+7FYicUv4mSP6WHZUtexZFjMOI8=;
-        b=cK6bTLESUs2Iulj9mXcczqVlJ0+e9+ajybZFCW8UX16X85+39TkvjfVaesdgUNATw5
-         6MJDXn+xPw384Z944YQ95XQwseK4ggaI0WRbswSw8JcnLRIW/bXDy6d12IWsRexJ+pgs
-         t6qByrq2zQ9ThoAM08OnN6/ReaNqq4KPN0Cjxy1RKvEt8C1b1a69/fWhN7alO8Ss1+hO
-         NQhCWvAetHG/BCQ3U10Oqnpq41GcCMaG2aKTqYaf6TAf6I5cR8UwkjXXHB9y9WZ4bjeM
-         MKBxsP658VKTDpra8iI0uVWskCkkjj75Dnoxu4BVr+9/f98YA9nj6jbZjptDPBXQhAVp
-         /nmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758007658; x=1758612458;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YdzUgBNm+Fykgerb+7FYicUv4mSP6WHZUtexZFjMOI8=;
-        b=XdgNMrS+sc1+qU6QnCEUpmhS/P1p315aN+ox9/OACfqCdiQRcqpxuYg75rsBq/NYu1
-         OXJbmrX7LtHMfR4kXWMCldrmzLHcGuW6rWE0V6SfK0T4eTzu6+G157BBpQfXYFVCr0cC
-         r6ZsnzrVRB9sw1p1IumvAM4VGBi0tbSEpG2LB925tpu5xNpPCxH+rwVLMQUggfMJH9n/
-         H8uNXEnOVxsmpZg5R8+QNKBTHWDt68v2LhfbXyoQyNbXNQwozMfQH8QNpgR/TcxU6eeG
-         jLfa4QM/S5xdFrK9QaCrVNQObBD/F81rYAMwO0L9MnwFkXRMCcj9bh8hP3U5rni3tz6n
-         3w3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrYFTOAiEipWOrujAul+Xde3c7GwBb3eN/cHrulfWCys/vSMldjR7+1IbAWjuW0f1pWJp0PubiP7I7/sE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3WulOACqR7DGssaFX+4jxJcRWYTSQLtad4OflH2AuAXzSYl8i
-	Au94dysEMLtLQm72sndFQULNkwYWs3lzvksYBoJbYCkuP3/lY+nrCrTxRWgaZ3fiZxvBvy58KO7
-	1X3Tl7HrKiStOgeHBR05W6mkwojJrqQv2gWPD+Vnlcw==
-X-Gm-Gg: ASbGncvMenukVHt2FPilx0NZZCIlu03fbh0OZNPsmaM65kakjNeqLmTWHdX954qDQ2l
-	YM0voWv/VwkoSVEVvhnKuWSKAlF8IvxIxA9DkIjnTciiGEFB+q9nMbtvBmIccDjJWLKq2vR5QRB
-	FoX+VR6LuzTfGu21uDQTO3msUVXF3asGlW/BAMWNlQEcLomRu3yw9ucudq9aWupaB2FTvLq5hsk
-	undbMuCNBJghYjSoSZYI3x92VaLefUg47lkZII7QQDnH0VTRAabL9zsqnxK/C9pvfo8n4+z
-X-Google-Smtp-Source: AGHT+IGaVagTx8hEuPpGoL7AEHAise+m6cLY73KC6Dl72g9vxKRp51S5NCherF7SA2OcxJNUcL1e+yLHf56LlaRQ9wY=
-X-Received: by 2002:a17:902:d58a:b0:264:c48:9cae with SMTP id
- d9443c01a7336-2640c489f42mr117753185ad.38.1758007658046; Tue, 16 Sep 2025
- 00:27:38 -0700 (PDT)
+	s=arc-20240116; t=1758007856; c=relaxed/simple;
+	bh=wPde9TMwBGkziAuGp2yA+MirGEH2dlnMkHkt0kJI6hI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZ8fuqM6lFSELczUOR0S7z7XMdIjjQVUgls3xxqP206fk/nnUSC5mJsC+9pIl43yvUWt/9UJgFtNmIxvjLFhwb/nSwq6YsM3ffcV02t6CytSN/F6FpjAJJwMRhHKo1YmhB0OPa/jVtF58Lrk/axAxBtqTtcfGlzRkx+l9xbycwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Qg/yyuyP; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id E760FBDC2C;
+	Tue, 16 Sep 2025 10:30:52 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id 01183BCF50;
+	Tue, 16 Sep 2025 10:30:52 +0300 (EEST)
+Received: from antheas-z13 (x5996a832.customers.hiper-net.dk [89.150.168.50])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 1702E1FE646;
+	Tue, 16 Sep 2025 10:30:49 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1758007851;
+	bh=d/UIKDx5Gt/ffx4MsbsrnzAol/o1JTVv1V+uDA3j8Rg=; h=From:To:Subject;
+	b=Qg/yyuyPdG34/xdxwNSLjJ6oOrz+Guoajiw0jjwcoep4SYb+z1ewfb7EUaHUSROck
+	 Nmg++RcvDYjF5W2LccsIDXlNhYU/WMkJLlgDfZeAq8KnNj0rpYdu9GPKMtC6d2YWvx
+	 ekwQR0uP00Ttxjz3Jhpfz0lb7awqUKD4Rf9SbGq3uRl+eOrJZe1k2SrDLzWp6dQqzZ
+	 +0gYYhPFfEKAb11p2X1ZK0NQIvyL0UUERGcbi7NIHpioQLtOoQ2zF/5IKZjgJQLOfZ
+	 woRX4cccnZxoHanFPLnZPTND/bRYCqREwam1kIqZFoHHx1r+AACU1zia3R2WYi1sXg
+	 YLDdeKJirHryw==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 89.150.168.50) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>,
+	Rahul Chandra <rahul@chandra.net>,
+	stable@kernel.org
+Subject: [PATCH v1] platform/x86: asus-wmi: Re-add extra keys to
+ ignore_key_wlan quirk
+Date: Tue, 16 Sep 2025 09:28:18 +0200
+Message-ID: <20250916072818.196462-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 16 Sep 2025 12:57:26 +0530
-X-Gm-Features: AS18NWAma5_BQDQUJLHrWh8m4zqOKBnCdl8KRwcCODUf5Yb_JGvr-6H4NUsMNP4
-Message-ID: <CA+G9fYuFdesVkgGOow7+uQpw-QA6hdqBBUye8CKMxGAiwHagOA@mail.gmail.com>
-Subject: next-20250915: LTP chdir01 df01_sh stat04 tst_device.c:97: TBROK:
- Could not stat loop device 0
-To: linux-block <linux-block@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	LTP List <ltp@lists.linux.it>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>, chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Anuj Gupta <anuj20.g@samsung.com>, 
-	Kanchan Joshi <joshi.k@samsung.com>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <175800785164.3205569.9673175359798985343@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-The following LTP chdir01 df01_sh and stat04 tests failed on the rock-pi-4b
-qemu-arm64 on the Linux next-20250915 tag build.
+It turns out that the dual screen models use 0x5E for attaching and
+detaching the keyboard instead of 0x5F. So, re-add the codes by
+reverting commit cf3940ac737d ("platform/x86: asus-wmi: Remove extra
+keys from ignore_key_wlan quirk"). For our future reference, add a
+comment next to 0x5E indicating that it is used for that purpose.
 
-First seen on next-20250915
-Good: next-20250912
-Bad: next-20250915
+Fixes: cf3940ac737d ("platform/x86: asus-wmi: Remove extra keys from ignore_key_wlan quirk")
+Reported-by: Rahul Chandra <rahul@chandra.net>
+Closes: https://lore.kernel.org/all/10020-68c90c80-d-4ac6c580@106290038/
+Cc: stable@kernel.org
+Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+---
+ drivers/platform/x86/asus-nb-wmi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index 3a488cf9ca06..6a62bc5b02fd 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -673,6 +673,8 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_driver *asus_wmi, int *code,
+ 		if (atkbd_reports_vol_keys)
+ 			*code = ASUS_WMI_KEY_IGNORE;
+ 		break;
++	case 0x5D: /* Wireless console Toggle */
++	case 0x5E: /* Wireless console Enable / Keyboard Attach, Detach */
+ 	case 0x5F: /* Wireless console Disable / Special Key */
+ 		if (quirks->key_wlan_event)
+ 			*code = quirks->key_wlan_event;
 
-* rk3399-rock-pi-4b, ltp-smoke
-* qemu-arm64, ltp-smoke
-* qemu-arm64-compat, ltp-smoke
- - chdir01
-  - df01_sh
-  - stat04
+base-commit: 46a51f4f5edade43ba66b3c151f0e25ec8b69cb6
+-- 
+2.51.0
 
-Test regression: next-20250915: LTP chdir01 df01_sh stat04
-tst_device.c:97: TBROK: Could not stat loop device 0
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Test log
-<8>[   53.655971] <LAVA_SIGNAL_STARTTC chdir01>
-tst_buffers.c:57: TINFO: Test is using guarded buffers
-tst_tmpdir.c:316: TINFO: Using /tmp/LTP_chdm4pHJb as tmpdir (tmpfs filesystem)
-tst_device.c:98: TINFO: Found free device 0 '/dev/loop0'
-tst_test.c:1953: TINFO: LTP version: 20250530
-tst_test.c:1956: TINFO: Tested kernel: 6.17.0-rc6-next-20250915 #1 SMP
-PREEMPT @1757983656 aarch64
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-which might slow the execution
-tst_test.c:1774: TINFO: Overall timeout per run is 0h 28m 48s
-tst_supported_fs_types.c:97: TINFO: Kernel supports ext2
-tst_supported_fs_types.c:62: TINFO: mkfs.ext2 does exist
-tst_supported_fs_types.c:97: TINFO: Kernel supports ext3
-tst_supported_fs_types.c:62: TINFO: mkfs.ext3 does exist
-tst_supported_fs_types.c:97: TINFO: Kernel supports ext4
-tst_supported_fs_types.c:62: TINFO: mkfs.ext4 does exist
-tst_supported_fs_types.c:128: TINFO: Filesystem xfs is not supported
-tst_supported_fs_types.c:97: TINFO: Kernel supports btrfs
-tst_supported_fs_types.c:62: TINFO: mkfs.btrfs does exist
-tst_supported_fs_types.c:105: TINFO: Skipping bcachefs because of FUSE blacklist
-tst_supported_fs_types.c:97: TINFO: Kernel supports vfat
-tst_supported_fs_types.c:62: TINFO: mkfs.vfat does exist
-tst_supported_fs_types.c:128: TINFO: Filesystem exfat is not supported
-tst_supported_fs_types.c:132: TINFO: FUSE does support ntfs
-tst_supported_fs_types.c:62: TINFO: mkfs.ntfs does exist
-tst_supported_fs_types.c:97: TINFO: Kernel supports tmpfs
-tst_supported_fs_types.c:49: TINFO: mkfs is not needed for tmpfs
-tst_test.c:1888: TINFO: === Testing on ext2 ===
-tst_device.c:391: TWARN: Failed to clear 512k block on /dev/loop0
-tst_test.c:1217: TBROK: tst_clear_device() failed
-Summary:
-passed   0
-failed   0
-broken   1
-skipped  0
-warnings 1
-tst_device.c:283: TWARN: open(/dev/loop0) failed: ENOENT (2)
-<8>[   53.679564] <LAVA_SIGNAL_ENDTC chdir01>
-<8>[   53.708246] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=chdir01 RESULT=fail>
-
-<8>[   53.933883] <LAVA_SIGNAL_STARTTC stat04>
-tst_buffers.c:57: TINFO: Test is using guarded buffers
-tst_tmpdir.c:316: TINFO: Using /tmp/LTP_staPDxElt as tmpdir (tmpfs filesystem)
-tst_device.c:97: TBROK: Could not stat loop device 0
-Summary:
-passed   0
-failed   0
-broken   1
-skipped  0
-warnings 0
-<8>[   53.947889] <LAVA_SIGNAL_ENDTC stat04>
-<8>[   53.974024] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=stat04 RESULT=fail>
-
-<8>[   54.048075] <LAVA_SIGNAL_STARTTC df01_sh>
-df01 1 TINFO: Running: df01.sh
-df01 1 TINFO: Tested kernel: Linux
-runner-j2nyww-sk-project-40964107-concurrent-0
-6.17.0-rc6-next-20250915 #1 SMP PREEMPT @1757983656 aarch64 GNU/Linux
-df01 1 TINFO: Using /tmp/LTP_df01.7pcwUXe1CN as tmpdir (tmpfs filesystem)
-tst_device.c:97: TBROK: Could not stat loop device 0
-df01 1 TBROK: Failed to acquire device
-Summary:
-passed   0
-failed   0
-broken   1
-skipped  0
-warnings 0
-<8>[   54.060936] <LAVA_SIGNAL_ENDTC df01_sh>
-<8>[   54.087630] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=df01_sh RESULT=fail>
-
-## Source
-* Kernel version: 6.17.0-rc6
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: 6.17.0-rc6-next-20250915
-* Git commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
-* Architectures: arm64
-* Toolchains: gcc-13 and gcc-8
-* Kconfigs: lkftconfigs
-
-## Build
-* Test log: https://qa-reports.linaro.org/api/testruns/29896973/log_file/
-* Test details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250915/ltp-smoke/stat04/
-* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32l4Vv9hKep2EcmS18u3NBtmoAm
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32l4UF8KltAzu6kUpW3hXaYRWjZ/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/32l4UF8KltAzu6kUpW3hXaYRWjZ/config
-
---
-Linaro LKFT
 
