@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-819591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091A8B5A37B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:53:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B863B5A37F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05DFB7A1493
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E5A16C716
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80252848A2;
-	Tue, 16 Sep 2025 20:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C44A284663;
+	Tue, 16 Sep 2025 20:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sX2NAplt"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yOLgRMgn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MFtM5T/Y"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3717C2582;
-	Tue, 16 Sep 2025 20:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D9431BC89;
+	Tue, 16 Sep 2025 20:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056016; cv=none; b=klpF2QzhnB/yHufgrzqCenJUdrD6c2XrdRF0ytbStdzK2JRkKJhN/cyxhbukqHCVbnUGYMpcqC7KAT3zwCpytbUeTdi9EyUudt4lpLhMtqkKpVDBOMdpqf0KFc4YKuTbtEwxKEfWvmWERmyuFyItqlqnlh401m+gLoYmUc6Kj6A=
+	t=1758056201; cv=none; b=OpxBlBkM39J1Qm+RR3agoh/g5P6qOuer8XnfvfDR1sxNI8Ym8fHzFXJFZVw6HyH8EMJivuqoiHfthPalkfq9FQW/z9rM/c/zwElbA0HkAyxYAMtC1VS4yn+nC3s8RK7BVKla13b5loELOQYc9pKr2zMC3LLziiDn/z8jBrgWKSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056016; c=relaxed/simple;
-	bh=uUubJs8bOxMTHPR4DTibp6eIte4WdH2/29ZxdZWiurs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E5g5aT+nmLdBD4mxQkm8vQ8dHT4EQPR+n5zMh9EG7gtPkCySp8G/+QmfIvxgNYRZXXsz/Zq3Xzk1GZu9WD9Sf3KUkZXB/pp3O6MIx4PzzP0Ahy66g0y4dzROf0u3mJt/hWIsoB0AtavF5aNd0fIu6ETtJBiOpgUBlC/EgJGZh6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sX2NAplt; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id ycg4uDQfgNEP1ycg4uY8zG; Tue, 16 Sep 2025 22:53:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1758056010;
-	bh=YVBH0cCDdgQq/NKC5gRUU1oByt7SDjC9SrS7xiiT7sY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sX2NApltPb+/vm0YlP0wwVw/p5NegydxULjeyp6f6GxxMy+Q2NSLPaBn906XYuL6G
-	 eWuf/V/K4wQqato9fNzIP+pJMlFU0An7TiXA8qrMH0rjTfvMw+yMPpgVmX1MHGfToO
-	 cKC3NR3V7H+xmAhBOsM5BhdT5ZobblIJNnXW6MMrcLdd5TlKp8sn9xoREUSFBus/6q
-	 LdefoON8v+beAGIzo8ygmzj+GQj88GbVknPifUD9hQzhU2mbdIhKhHZPm5sdbkBI6a
-	 PEm6eKdzuvT1ZKqcqME0CRmkf9J85EY5pb1ReslQIuyg/DhKbGucMZ9GOrWAEjH8kg
-	 1QZv3FLGZS8ZQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 16 Sep 2025 22:53:30 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <f4e52440-fa96-486b-9c50-828fdbbe27eb@wanadoo.fr>
-Date: Tue, 16 Sep 2025 22:53:28 +0200
+	s=arc-20240116; t=1758056201; c=relaxed/simple;
+	bh=koQDNjlXuAxFNxiPa2xHUdVqSkQnErvMuXgbqWZmMN8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mR1TI6yjzyW6Y+1NvwK6wakVh0ESx3lAnEXGvSjP9nlnjBz92GYDW3quWCHtTfmaFiDBLnlZihf5SPUrde+pLvuX8F9GtKY94GwY6ivTPyjUDuEhPwKnNAj+GKHZlFIxNWrv/kcD48GfGqZFSBhXI3ZY+AZa5s1eGKD/8AksNaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yOLgRMgn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MFtM5T/Y; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758056198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3xUyqhsEiyiUoxhJieOdMTcH66oxWdRq1GQhqVdXzx4=;
+	b=yOLgRMgnYE69+7MlYv3qCTagaN6kVQQCjqUEw0JlvAlnaNwzk/bGmJ3rTHtN7JjeISB+jL
+	mv+meKS0TlnU5SVG/SgMlwbTkAm359ew/MyEUJ5/eC87h1UxbKKNDPr9JIXMLhhGxP37kJ
+	Z9j2QuWaWNM10eyAyULEp5yuzjc5SxupVQHIqzbyAlWA/hDW6VqMGzo+yw6QBYszEo15+8
+	XYFDG6ypTWzqzTC0tu8oFlgFAj1qP0c++HrNFH9jDrEp/AvK1Wmea2CJ5+jW0W74Z2eg8L
+	/Jp6cte4T9TsFdscMLpIwBTThoJjhc02ubExYMXQafm24zgdgYPwF+Ih4LRBfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758056198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3xUyqhsEiyiUoxhJieOdMTcH66oxWdRq1GQhqVdXzx4=;
+	b=MFtM5T/YeW0GGddiSAFphbAmE/KU1rx1JNt3/rcSiWFowx9AM/VhLqeqVeXdFSY84jYUx4
+	QiFRM/gYAMBeeMDw==
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
+ kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
+ <andrealmeid@igalia.com>, x86@kernel.org, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang <
+ version 17
+In-Reply-To: <87ikhi9lhg.ffs@tglx>
+References: <20250916163004.674341701@linutronix.de>
+ <20250916163252.100835216@linutronix.de> <20250916184440.GA1245207@ax162>
+ <87ikhi9lhg.ffs@tglx>
+Date: Tue, 16 Sep 2025 22:56:36 +0200
+Message-ID: <87frcm9kvv.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, jic23@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, krzk+dt@kernel.org
-Cc: linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
- ghennadi.procopciuc@oss.nxp.com
-References: <20250916202605.2152129-1-daniel.lezcano@linaro.org>
- <20250916202605.2152129-3-daniel.lezcano@linaro.org>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20250916202605.2152129-3-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Le 16/09/2025 à 22:26, Daniel Lezcano a écrit :
-> From: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
-> 
-> The NXP S32G2 and S32G3 platforms integrate a successive approximation
-> register (SAR) ADC. Two instances are available, each providing 8
-> multiplexed input channels with 12-bit resolution. The conversion rate
-> is up to 1 Msps depending on the configuration and sampling window.
-> 
-> The SAR ADC supports raw, buffer, and trigger modes. It can operate
-> in both single-shot and continuous conversion modes, with optional
-> hardware triggering through the cross-trigger unit (CTU) or external
-> events. An internal prescaler allows adjusting the sampling clock,
-> while per-channel programmable sampling times provide fine-grained
-> trade-offs between accuracy and latency. Automatic calibration is
-> performed at probe time to minimize offset and gain errors.
-> 
-> The driver is derived from the BSP implementation and has been partly
-> rewritten to comply with upstream requirements. For this reason, all
-> contributors are listed as co-developers, while the author refers to
-> the initial BSP driver file creator.
-> 
-> All modes have been validated on the S32G274-RDB2 platform using an
-> externally generated square wave captured by the ADC. Tests covered
-> buffered streaming via IIO, trigger synchronization, and accuracy
-> verification against a precision laboratory signal source.
-> 
-> Co-developed-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
-> Signed-off-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.com>
-> Co-developed-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Co-developed-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
-> Signed-off-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
-> Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
-> Co-developed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
+clang < 17 fails to use scope local labels with CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y:
 
-Hi,
+     {
+     	__label__ local_lbl;
+	...
+	unsafe_get_user(uval, uaddr, local_lbl);
+	...
+	return 0;
+	local_lbl:
+		return -EFAULT;
+     }
 
-> +static void nxp_sar_adc_dma_remove(void *data)
-> +{
-> +	struct nxp_sar_adc *info = data;
-> +
-> +	dma_free_coherent(info->dma_chan->device->dev, NXP_SAR_ADC_DMA_BUFF_SZ,
-> +			  info->dma_buf.buf, info->rx_dma_buf);
-> +}
-> +
-> +static int nxp_sar_adc_dma_probe(struct device *dev, struct nxp_sar_adc *info)
-> +{
-> +	struct device *dev_dma;
-> +	u8 *rx_buf;
-> +
-> +	info->dma_chan = devm_dma_request_chan(dev, "rx");
-> +	if (IS_ERR(info->dma_chan))
-> +		return PTR_ERR(info->dma_chan);
-> +
-> +	dev_dma = info->dma_chan->device->dev;
-> +	rx_buf = dma_alloc_coherent(dev_dma, NXP_SAR_ADC_DMA_BUFF_SZ,
-> +				    &info->rx_dma_buf, GFP_KERNEL);
+when two such scopes exist in the same function:
 
-maybe dmam_alloc_coherent() for the managed version?
-This would save some LoC.
+  error: cannot jump from this asm goto statement to one of its possible targets
 
-> +	if (!rx_buf)
-> +		return -ENOMEM;
-> +
-> +	info->dma_buf.buf = rx_buf;
-> +
-> +	return devm_add_action_or_reset(dev, nxp_sar_adc_dma_remove, info);
-> +}
+There are other failure scenarios. Shuffling code around slightly makes it
+worse and fail even with one instance.
 
+That issue prevents using local labels for a cleanup based user access
+mechanism.
+
+After failed attempts to provide a simple enough test case for the 'depends
+on' test in Kconfig, the initial cure was to mark ASM goto broken on clang
+versions < 17 to get this road block out of the way.
+
+But Nathan pointed out that this is a known clang issue and indeed affects
+clang < version 17 in combination with cleanup(). It's not even required to
+use local labels for that.
+
+The clang issue tracker has a small enough test case, which can be used as
+a test in the 'depends on' section of CC_HAS_ASM_GOTO_OUTPUT:
+
+void bar(void **);
+void* baz();
+
+int  foo (void) {
+    {
+	    asm goto("jmp %l0"::::l0);
+	    return 0;
+l0:
+	    return 1;
+    }
+    void *x __attribute__((cleanup(bar))) = baz();
+    {
+	    asm goto("jmp %l0"::::l1);
+	    return 42;
+l1:
+	    return 0xff;
+    }
+}
+
+Add another dependency to config CC_HAS_ASM_GOTO_OUTPUT for it and use the
+clang issue tracker test case for detection by condensing it to obfuscated
+C-code contest format. This reliably catches the problem on clang < 17 and
+did not show any issues on the non known to be broken GCC versions.
+
+That test might be sufficient to catch all issues and therefore could
+replace the existing test, but keeping that around does no harm either.
+
+Thanks to Nathan for pointing to the relevant clang issue!
+
+Suggested-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/1886
+Link: https://github.com/llvm/llvm-project/commit/f023f5cdb2e6c19026f04a15b5a935c041835d14
+---
+V2a: Use the reproducer from llvm
+V2: New patch
+---
+ init/Kconfig |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -99,7 +99,10 @@ config GCC_ASM_GOTO_OUTPUT_BROKEN
+ config CC_HAS_ASM_GOTO_OUTPUT
+ 	def_bool y
+ 	depends on !GCC_ASM_GOTO_OUTPUT_BROKEN
++	# Find basic issues
+ 	depends on $(success,echo 'int foo(int x) { asm goto ("": "=r"(x) ::: bar); return x; bar: return 0; }' | $(CC) -x c - -c -o /dev/null)
++	# Detect buggy clang, fixed in clang-17
++	depends on $(success,echo 'void b(void **);void* c();int f(void){{asm goto("jmp %l0"::::l0);return 0;l0:return 1;}void *x __attribute__((cleanup(b))) = c();{asm goto("jmp %l0"::::l1);return 2;l1:return 1;}}' | $(CC) -x c - -c -o /dev/null)
+ 
+ config CC_HAS_ASM_GOTO_TIED_OUTPUT
+ 	depends on CC_HAS_ASM_GOTO_OUTPUT
 
