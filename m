@@ -1,111 +1,140 @@
-Return-Path: <linux-kernel+bounces-818321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F65B58FD4
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36107B58FD3
 	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1631BC4DBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 684E37AE007
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C73284695;
-	Tue, 16 Sep 2025 08:00:01 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91799281357;
+	Tue, 16 Sep 2025 08:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7F/p4kA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E127228467B;
-	Tue, 16 Sep 2025 07:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD8E285043;
+	Tue, 16 Sep 2025 08:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758009601; cv=none; b=KoLiajz+0pY0cmkTPGP/qP0FCCZLevcdWXxcZDom3eosaEqFEt53DJ47FE+JI1nmeuatUuMhpIcAWRfGddQnowK77sK64dJjEekLgc9qUJhcUDBAUsTQhHwKiv5UETD0tld8hXc/PQ5SudvZMHgC6XsFfYO+LcpkvF3qWmBZVg8=
+	t=1758009616; cv=none; b=BRqvFiYrwi3SVtfoNHOlYE3OtK0JtCtFFWCkclEQCWZAiNp5Ci/bPqeOUAcortwzKwxquDcqITqI+epoP1SljgWKDwzuCZLf8v0y/7FO31l7ja1eO31C/INPKDYRR0kFbSPZP3Z7SglOIy/ilo2vOvUcx6vXRgJt9ecaWB7yFDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758009601; c=relaxed/simple;
-	bh=upYn1SaDh/dxXAW/6acZeEgVJxzVW91u/xRUFgUHzHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oI01xVhnGzuETVtIfg6+T7ssqw073e7uyVVBC9FN3d/pY0D+owABiTOrcFYpdNd3H9lMGwbBnOhj9QWrf+tJ5svbNzYIAZfSM+mJ27STAS1YYcAI4eFXJU6//RTQlPvXn4Ztq8GpJIrQ7u91EeQ10e/NHSEamGsbWID39G+geDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cQvSl1tkJzYQvQM;
-	Tue, 16 Sep 2025 15:59:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id D220C1A0AB8;
-	Tue, 16 Sep 2025 15:59:49 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgAX1nv0GMloYU2MCg--.11477S2;
-	Tue, 16 Sep 2025 15:59:49 +0800 (CST)
-Message-ID: <76e3163d-f323-46db-af3a-06bbd755243b@huaweicloud.com>
-Date: Tue, 16 Sep 2025 15:59:48 +0800
+	s=arc-20240116; t=1758009616; c=relaxed/simple;
+	bh=sNxIegpyNfQkNQy6ew2+PYZBthlAuOgsuvUHQhkSy/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TU2csSaUiS3PD0iWdcP7h+WkAUXOsu/v/4S5LiAdkHqPLBAuFZoJC/iyjdiA4vxxJab2AIyGccntqy5Kt7h0g0NKOMFcg090tuVJC84/D/JpHd2sDZdL4YGu71//wsqxsmIIggm5lEqXp8OllH7EP/HdEAsYA8AOX3kbBV41JXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7F/p4kA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF260C4CEEB;
+	Tue, 16 Sep 2025 08:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758009615;
+	bh=sNxIegpyNfQkNQy6ew2+PYZBthlAuOgsuvUHQhkSy/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L7F/p4kA4VGLF2RSvwxBEHNfRr1ebHow5mDpvYrjjURl4Cdw+Wl7KJJl2Xwe3j+hx
+	 gMMfOtcoR8TcVh7YqAvYtYQq5HoPypG3P02VRaeYC9+sanVowNSW/nbqUZ10ebieII
+	 UkyP9QF8crNvZvVVUaPyobAdDh9GNO5ZkREo/QN4S1yOVt9hfe8/UqzspQFgP5yWwx
+	 WNRdz8L5ODk8XDzfW+do0s7qqJ2AKH+makkaEMxw/fpamRjbRBtKACnHvc/Cl25CAd
+	 aASuFhfHsCObS7cv/D8sePYP70ipQXvKpnOzcq+8VKWj4Rrq2B1R/dyygbYODq1Tfg
+	 cMzQSsqIRpakg==
+Date: Tue, 16 Sep 2025 09:00:10 +0100
+From: Lee Jones <lee@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>, herbert@gondor.apana.org.au,
+	jarkko@kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, davem@davemloft.net,
+	linux-crypto@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org, sgarzare@redhat.com
+Subject: Re: [GIT PULL] Immutable branch between MFD, Char and Crypto due for
+ the v6.18 merge window
+Message-ID: <20250916080010.GC1637058@google.com>
+References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
+ <20250902124205.GL2163762@google.com>
+ <20250912213256.GA3062565@ax162>
+ <20250916075835.GB1637058@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC -v2 06/11] cpuset: introduce cpus_excl_conflict
- and mems_excl_conflict helpers
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
- <20250909033233.2731579-7-chenridong@huaweicloud.com>
- <7085a2a8-0f03-4222-9ba8-9281e25d8daf@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <7085a2a8-0f03-4222-9ba8-9281e25d8daf@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX1nv0GMloYU2MCg--.11477S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF47Gw47Kr1kJr1DuFyxAFb_yoWfKrgEgr
-	s5ArnF93s5AF4fta4fJa1kCrZxCrn8Aa1UJw1UXrs8Xw1rXFZ3G3y0y3yYk3yjkFWSqryk
-	ua4YqFZxJ347KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+In-Reply-To: <20250916075835.GB1637058@google.com>
 
+On Tue, 16 Sep 2025, Lee Jones wrote:
 
+> On Fri, 12 Sep 2025, Nathan Chancellor wrote:
+> 
+> > Hi Lee,
+> > 
+> > On Tue, Sep 02, 2025 at 01:42:05PM +0100, Lee Jones wrote:
+> > > Enjoy!
+> > > 
+> > > The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+> > > 
+> > >   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+> > > 
+> > > are available in the Git repository at:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-char-crypto-v6.18
+> > > 
+> > > for you to fetch changes up to 74fddd5fbab879a7d039d9fb49af923927a64811:
+> > > 
+> > >   MAINTAINERS: Add entry for Loongson Security Engine drivers (2025-09-02 12:29:57 +0100)
+> > > 
+> > > ----------------------------------------------------------------
+> > > Immutable branch between MFD, Char and Crypto due for the v6.18 merge window
+> > > 
+> > > ----------------------------------------------------------------
+> > > Qunqin Zhao (4):
+> > ...
+> > >       tpm: Add a driver for Loongson TPM device
+> > 
+> > This one needs a fix up due to commit 07d8004d6fb9 ("tpm: add bufsiz
+> > parameter in the .send callback") in 6.17-rc1, as I am seeing the
+> > following error in next-20250912.
+> > 
+> >   drivers/char/tpm/tpm_loongson.c:48:17: error: initialization of 'int (*)(struct tpm_chip *, u8 *, size_t,  size_t)' {aka 'int (*)(struct tpm_chip *, unsigned char *, long unsigned int,  long unsigned int)'} from incompatible pointer type 'int (*)(struct tpm_chip *, u8 *, size_t)' {aka 'int (*)(struct tpm_chip *, unsigned char *, long unsigned int)'} [-Wincompatible-pointer-types]
+> >      48 |         .send = tpm_loongson_send,
+> >         |                 ^~~~~~~~~~~~~~~~~
+> >   drivers/char/tpm/tpm_loongson.c:48:17: note: (near initialization for 'tpm_loongson_ops.send')
+> >   drivers/char/tpm/tpm_loongson.c:31:12: note: 'tpm_loongson_send' declared here
+> >      31 | static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> >         |            ^~~~~~~~~~~~~~~~~
+> > 
+> > Can you squash it or do you want a separate patch?
+> > 
+> > Cheers,
+> > Nathan
+> > 
+> > diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
+> > index a4ec23639911..9e50250763d1 100644
+> > --- a/drivers/char/tpm/tpm_loongson.c
+> > +++ b/drivers/char/tpm/tpm_loongson.c
+> > @@ -28,7 +28,7 @@ static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> >  	return cmd_ret->data_len;
+> >  }
+> >  
+> > -static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> > +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz, size_t count)
+> >  {
+> >  	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> >  	struct tpm_loongson_cmd *cmd = tpm_engine->command;
+> 
+> This will break my local branch.
+> 
+> Any chance of an immutable pull-request for:
+> 
+>   07d8004d6fb9 ("tpm: add bufsiz parameter in the .send callback")
 
-On 2025/9/16 2:42, Waiman Long wrote:
-> 
-> On 9/8/25 11:32 PM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> This patch adds cpus_excl_conflict() and mems_excl_conflict() helper
->> functions to improve code readability and maintainability. The exclusive
->> conflict checking follows these rules:
->>
->> 1. If either cpuset has the 'exclusive' flag set, their user_xcpus must
->>     not have any overlap.
->> 2. If both cpusets are non-exclusive, their 'cpuset.cpus.exclusive' values
->>     must not intersect.
-> 
-> The term "non-exclusive" is somewhat confusing. I suppose you mean that the exclusive flag isn't
-> set. However, exclusive flag is a cpuset v1 only feature and cpus.exclusive is a v2 only feature.
-> They will not coexist. You may need to update the wording.
-> 
-> After you fix that, you can add
-> 
-> Reveiwed-by: Waiman Long <longman@redhat.com>
-
-Thank you, Longman, I will update.
+Either that or your proposed change needs to be applied to the tree that
+changed the .send API.
 
 -- 
-Best regards,
-Ridong
-
+Lee Jones [李琼斯]
 
