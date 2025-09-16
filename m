@@ -1,112 +1,82 @@
-Return-Path: <linux-kernel+bounces-818080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F9EB58C69
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:36:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50DDFB58C74
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B72D67B0423
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95FB17F6B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEC5280CC1;
-	Tue, 16 Sep 2025 03:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910F9266B64;
+	Tue, 16 Sep 2025 03:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GswUYaDo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ms29.hinet.net header.i=@ms29.hinet.net header.b="P9eMshch"
+Received: from cdmsr2.hinet.net (210-65-1-144.hinet-ip.hinet.net [210.65.1.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F7327B35D;
-	Tue, 16 Sep 2025 03:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520C22AD24
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.65.1.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757993724; cv=none; b=KiHVXrJPEebzoOYxqXMUu+zBYjww124I2dEgIg/Yxc5iVGjrRJtSfAJhaou0qt47VmXWOn/zLScN8spIgktkwLRq3v31CzaGOQFHABJtzRYGVXZwFGZjRhdYw/BGxbWdTILTnWLcCP1XPuyrhMjwKhoA8r790kMDYzT298TgJgY=
+	t=1757994111; cv=none; b=UfLIPj7Mf6vVJUOCj/r1cLso3X8thNCZUx6JbNVp6KmN7/QjVtHIGMXNKsm4DB3T2Ky1BYejIGEcKF1cqbJiqeGja1eZtiLjQEqvfQlpzq8BpUeWtWu1q5EBE8yTWEtvS2PMNSrJvCP5HEjRQbFxRZLW7FL6HkiWESlTFRcytBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757993724; c=relaxed/simple;
-	bh=4uQscG4mYr4g+dERacoLlCCtLcp3o3ScovLzzqmdpAo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TaWXebTW+DjxHZLQliqPI5mCe7WWshKFNTvnhaRbwYDqePG0h/IFbkeUH0mDOMx7c1Dqu5dibfxTI4eYuBNmYVCw0gmMxh2nANk9i9o57nh7kyED9Y4fKLZNWwBGQE9SdKlrze763F/XJzoNCkJ/8dk18CVpQKekQGrK8eBYBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GswUYaDo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39857C4CEEB;
-	Tue, 16 Sep 2025 03:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757993724;
-	bh=4uQscG4mYr4g+dERacoLlCCtLcp3o3ScovLzzqmdpAo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GswUYaDoamgG2C1fR5wV2glRHaeU2ehx1anVdkERZyRo8fOlc1aeI5cWSmpAXxkzY
-	 QQ+fAztPPkjGPGDQDmwTywr6x+/ai7QaVZiQsW/tNsk+3STv0BOSUIFL++v5mNfPUV
-	 1fDqc3qT9fr6vrYJr9YeIbQRUYHKUHTe4IE86+lejqcEFRhi4QTJrB5e17ngGfKgWA
-	 J7DsbY3hyzBg2ViujYAtCqPhGghty1jWBjXovXvb2W80VXGnRTZ8mjvQ5k75SmKnCR
-	 DPABkkkbjn5E8O+T8kW+rt8d5XCWHiv5+HjDu9Pg0mnB3l2d/Ow0O+kZgqOnMsrm5O
-	 yYKPe1tJXw/Jg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 7/7] samples/damon/mtier: use damon_initialized()
-Date: Mon, 15 Sep 2025 20:35:11 -0700
-Message-Id: <20250916033511.116366-8-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250916033511.116366-1-sj@kernel.org>
-References: <20250916033511.116366-1-sj@kernel.org>
+	s=arc-20240116; t=1757994111; c=relaxed/simple;
+	bh=gzREn5ca4+YpMZqnMfnv/TdMXaFQn21PPSInZEkblZU=;
+	h=From:To:Subject:Message-ID:Date:MIME-Version:Content-Type; b=J5OqmG1muIirWeQ+uFijHy+T1iyd8t266jCGb3IlZBiBm0SUqQwq7Vfcy1RAjAgtji1x+UWvxgmaYRKUtU2oCTl+Bv2xKLGZ0+EsvCneoYeClBqSlB2wzS9qHe5dvdn9nVUoh9rQ7zbwa2jgY7cc/u8kbf1fpYMvQMnLZjiYzTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ms29.hinet.net; spf=pass smtp.mailfrom=ms29.hinet.net; dkim=pass (1024-bit key) header.d=ms29.hinet.net header.i=@ms29.hinet.net header.b=P9eMshch; arc=none smtp.client-ip=210.65.1.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ms29.hinet.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ms29.hinet.net
+Received: from cmsr5.hinet.net ([10.199.216.84])
+	by cdmsr2.hinet.net (8.15.2/8.15.2) with ESMTPS id 58G3fibv953935
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:41:47 +0800
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=ms29.hinet.net;
+	s=default; t=1757994107; bh=Bi+J3OZGVAfOm5T6NkD+urGUk4Y=;
+	h=From:To:Subject:Date;
+	b=P9eMshchvbi5jyW/mXe3UmCcmE77F5GYOUBGsZgzOkqUTGLMJMYeo23tUFRDK+tSG
+	 GOnmJwQ5PNQqXdf4Q6VAvkzuZM92u5FI/m+BofRU6v4pmWLMBiNViCSb2UAKd598pt
+	 e1qo99C7C2/RExWryjv2thUAosd1ifW+KIJiKwj8=
+Received: from [127.0.0.1] (111-249-139-199.dynamic-ip.hinet.net [111.249.139.199])
+	by cmsr5.hinet.net (8.15.2/8.15.2) with ESMTPS id 58G3a7ng329148
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:36:26 +0800
+From: "Info - Albinayah 507" <Linux-kernel@ms29.hinet.net>
+To: linux-kernel@vger.kernel.org
+Reply-To: "Info - Albinayah." <europe-sales@albinayah-group.com>
+Subject: =?UTF-8?B?TmV3IFNlcHRlbWJlciBPcmRlci4gNTI1NTkgVHVlc2RheSwgU2VwdGVtYmVyIDE2LCAyMDI1IGF0IDA1OjM2OjI1IEFN?=
+Message-ID: <6e796fa2-8676-fb01-bcb8-756dcf5761e3@ms29.hinet.net>
+Content-Transfer-Encoding: 7bit
+Date: Tue, 16 Sep 2025 03:36:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+X-HiNet-Brightmail: Spam
+X-CMAE-Score: 100
+X-CMAE-Analysis: v=2.4 cv=UojANPwB c=0 sm=1 tr=0 ts=68c8db3b
+	p=OrFXhexWvejrBOeqCD4A:9 a=MCuf8VMJZhU/2X3TAKonxg==:117 a=IkcTkHD0fZMA:10
+	a=5KLPUuaC_9wA:10
 
-damon_sample_mtier is assuming DAMON is ready to use in module_init
-time, and uses its own hack to see if it is the time.  Use
-damon_initialized(), which is a way for seeing if DAMON is ready to be
-used that is more reliable and better to maintain instead of the hack.
+Hi Linux-kernel,
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- samples/damon/mtier.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Please provide a quote for your products:
 
-diff --git a/samples/damon/mtier.c b/samples/damon/mtier.c
-index beaf36657dea..775838a23d93 100644
---- a/samples/damon/mtier.c
-+++ b/samples/damon/mtier.c
-@@ -193,8 +193,6 @@ static void damon_sample_mtier_stop(void)
- 	damon_destroy_ctx(ctxs[1]);
- }
- 
--static bool init_called;
--
- static int damon_sample_mtier_enable_store(
- 		const char *val, const struct kernel_param *kp)
- {
-@@ -208,7 +206,7 @@ static int damon_sample_mtier_enable_store(
- 	if (enabled == is_enabled)
- 		return 0;
- 
--	if (!init_called)
-+	if (!damon_initialized())
- 		return 0;
- 
- 	if (enabled) {
-@@ -225,7 +223,12 @@ static int __init damon_sample_mtier_init(void)
- {
- 	int err = 0;
- 
--	init_called = true;
-+	if (!damon_initialized()) {
-+		if (enabled)
-+			enabled = false;
-+		return -ENOMEM;
-+	}
-+
- 	if (enabled) {
- 		err = damon_sample_mtier_start();
- 		if (err)
--- 
-2.39.5
+Include:
+1.Pricing (per unit)
+2.Delivery cost & timeline
+3.Quote expiry date
+
+Deadline: September
+
+Thanks!
+
+Kamal Prasad
+
+Albinayah Trading
 
