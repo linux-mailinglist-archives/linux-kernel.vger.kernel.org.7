@@ -1,131 +1,169 @@
-Return-Path: <linux-kernel+bounces-818441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BACB591C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D87B591D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0931516C2DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522DC1B22A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E741B291C1E;
-	Tue, 16 Sep 2025 09:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BDF29A310;
+	Tue, 16 Sep 2025 09:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDSoRoCx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQ6C4vPi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E7E1891AB;
-	Tue, 16 Sep 2025 09:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EE829898B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013824; cv=none; b=MDSiFIvW2atwqNyzGWw7044W7WEG0lUlYWdHgQ/hJTs0yScqf+1NsFQT271R45vn3ornTH2a/mZtF2ztW4M0iq+DHLqpKLx0dG6mky0khqTzwc/uEtkx1+LTS6xCMTxuXY4tDn40qxxNcQ/1hbNwvlRHpNNe0cMWvcR5BgRdKhI=
+	t=1758013909; cv=none; b=EZn1Z4E+rbaCGgADLFicux1mF8L9PQDLOCNtorxCUcsyNGU5XljHNcuMGfM8xnRR32VBGrIA8pHBt67mXFoCTsb/Nyq4M8/+509EIS5HrMO40wjGhfYZOyG0vU9dZ74Rd+ZHyKkS2tdLRuUl/AaG94KALJmGR4uUVq6G6rcK1x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013824; c=relaxed/simple;
-	bh=kuJAKoB9pXWwUKKACzc17S2FgoaepkoZ3hJBpHeLLDg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pJ0gBV+7R+7yZXoQ0es7MIx6OT/Giz/YYKQqW0/Vpcz9DGzAh7YI4AiMM+dmDL7IHKwuIjuCcGiteu2VCqPNPnIE4wX7lgBxL7fniGJZurUxIFRzRZhfwbaRcgGPVUj6kxoPsjql5n8wbfPnHOIc2pmIhlNBscX5WABAxsUbtgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDSoRoCx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4B68C4CEEB;
-	Tue, 16 Sep 2025 09:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758013823;
-	bh=kuJAKoB9pXWwUKKACzc17S2FgoaepkoZ3hJBpHeLLDg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=QDSoRoCxBfKcnd1tAo4tGRMdxCoWeBCzzg9AZE5qxKAEFgApoUDbETYnbOoSnX08/
-	 tLEVkKXrb0mB7ikPTGcKpxBiH3I67vqHOGM2EpFAp1yRpF08giwcEssnbpChK8mj6c
-	 RXMw3ZRm8IDGnUDiRoPsuG4GIwM12GEQc5Z6eGGnvhb44vTcaWYdyUU++24VdRfPya
-	 iTJRDi8nLBntLKGGeSabDPnCRBZH3S55d8JVgXMvYyS0K/I2kPSp7IuiIbA9F+tq0g
-	 CY4KY0v9n5yv3P5n7X2mB0tWA/ccyAzTgqDeRo7PFcrkZ0GENfmpVdzsHenVXO3yi5
-	 UwsZ/WGKOaLTg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CCE39D0C1A;
-	Tue, 16 Sep 2025 09:10:26 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758013909; c=relaxed/simple;
+	bh=zMt+lj07w4o0jqg5XJ/ynsRarpPmoVl62tOzbhSFTo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6sxhTOGMgCajON0PXzETWsUPqF/z60ONiateD130PyDQ7F3JpuFLb3E6WOVV0/NDS2vG9zoNwxEw/aCjmrRkLhJ6kTMCt8kEEjo1j3MYaais6yU2xcNJyVClDr2A22NDuBVqgv8xsv7yRKm37orvPLM6A6xPVuq5pq3hQXuD1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQ6C4vPi; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758013908; x=1789549908;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zMt+lj07w4o0jqg5XJ/ynsRarpPmoVl62tOzbhSFTo4=;
+  b=mQ6C4vPi6xTlDTcKuPQfIf6NvmgiV5F08dExvsSP4iUu4ooHyzqYjgxJ
+   CErfwJM3tmZgIlb7S3mQKPV2838CTIEq4n4X2LYsM9f6cjMVaijVR6KRW
+   XMO9Y6A+eGPLXRpc/iG+ezFdUCaGf5zSBZyQGH05dQSrb3HgA9xvbl0sx
+   fMekRHN23vIW8HdyZ999BpOCdDlKf1X+rlir1pEuhAwINnc78TtKeqBfS
+   3yrDez06Vj5ad8FH/e98D5pkh1Bc9TuefBbvy4Cu+VEaBhOwY3x/kPtr2
+   WXDX/9dX1NDGm04XgOufn0eMqfYWUMOMkpMwYyimqWCoIex+hUg2HoNtr
+   Q==;
+X-CSE-ConnectionGUID: MNnty9PoRNq2CtXZcBrRnw==
+X-CSE-MsgGUID: mEFCnxATQ7qBa9O/ywQANw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="60156178"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="60156178"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 02:11:42 -0700
+X-CSE-ConnectionGUID: uZhwW8IrSsG2Bt+G9sPI2Q==
+X-CSE-MsgGUID: vXVH7QybRG+5S4cYC1RT9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="205672250"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 16 Sep 2025 02:11:40 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uyRir-00008V-1z;
+	Tue, 16 Sep 2025 09:11:37 +0000
+Date: Tue, 16 Sep 2025 17:10:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mikisabate@gmail.com>,
+	linux-riscv@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	pjw@kernel.org, palmer@dabbelt.com, alex@ghiti.fr,
+	wangyuli@uniontech.com, chenhuacai@kernel.org, mikisabate@gmail.com
+Subject: Re: [PATCH] riscv: kgdb: Prefer strscpy instead of strcpy
+Message-ID: <202509161619.eJeLbfU0-lkp@intel.com>
+References: <20250915200644.200498-1-mikisabate@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v06 00/14] net: hinic3: Add a driver for Huawei
- 3rd
- gen NIC - sw and hw initialization
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175801382500.673413.8933950320451913033.git-patchwork-notify@kernel.org>
-Date: Tue, 16 Sep 2025 09:10:25 +0000
-References: <cover.1757653621.git.zhuyikai1@h-partners.com>
-In-Reply-To: <cover.1757653621.git.zhuyikai1@h-partners.com>
-To: Fan Gong <gongfan1@huawei.com>
-Cc: zhuyikai1@h-partners.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, andrew+netdev@lunn.ch,
- linux-doc@vger.kernel.org, corbet@lwn.net, helgaas@kernel.org,
- luosifu@huawei.com, guoxin09@huawei.com, shenchenyang1@hisilicon.com,
- zhoushuai28@huawei.com, wulike1@huawei.com, shijing34@huawei.com,
- luoyang82@h-partners.com, meny.yossefi@huawei.com, gur.stavi@huawei.com,
- lee@trager.us, mpe@ellerman.id.au, vadim.fedorenko@linux.dev,
- sumang@marvell.com, przemyslaw.kitszel@intel.com, jdamato@fastly.com,
- christophe.jaillet@wanadoo.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915200644.200498-1-mikisabate@gmail.com>
 
-Hello:
+Hi Miquel,
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+kernel test robot noticed the following build errors:
 
-On Fri, 12 Sep 2025 14:28:17 +0800 you wrote:
-> This is [3/3] part of hinic3 Ethernet driver initial submission.
-> With this patch hinic3 becomes a functional Ethernet driver.
-> 
-> The driver parts contained in this patch:
-> Memory allocation and initialization of the driver structures.
-> Management interfaces initialization.
-> HW capabilities probing, initialization and setup using management
-> interfaces.
-> Net device open/stop implementation and data queues initialization.
-> Register VID:DID in PCI id_table.
-> Fix netif_queue_set_napi usage.
-> 
-> [...]
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.17-rc6 next-20250915]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Here is the summary with links:
-  - [net-next,v06,01/14] hinic3: HW initialization
-    https://git.kernel.org/netdev/net-next/c/cdb096c41b7d
-  - [net-next,v06,02/14] hinic3: HW management interfaces
-    https://git.kernel.org/netdev/net-next/c/8a1c655f55c8
-  - [net-next,v06,03/14] hinic3: HW common function initialization
-    https://git.kernel.org/netdev/net-next/c/069e42485e53
-  - [net-next,v06,04/14] hinic3: HW capability initialization
-    https://git.kernel.org/netdev/net-next/c/a0543a79359e
-  - [net-next,v06,05/14] hinic3: Command Queue flush interfaces
-    https://git.kernel.org/netdev/net-next/c/b92e6c734db8
-  - [net-next,v06,06/14] hinic3: Nic_io initialization
-    https://git.kernel.org/netdev/net-next/c/8133788d023f
-  - [net-next,v06,07/14] hinic3: Queue pair endianness improvements
-    https://git.kernel.org/netdev/net-next/c/6b822b658aaf
-  - [net-next,v06,08/14] hinic3: Queue pair resource initialization
-    https://git.kernel.org/netdev/net-next/c/73f37a7e1993
-  - [net-next,v06,09/14] hinic3: Queue pair context initialization
-    https://git.kernel.org/netdev/net-next/c/97dcb914a25b
-  - [net-next,v06,10/14] hinic3: Tx & Rx configuration
-    https://git.kernel.org/netdev/net-next/c/b83bb584bc97
-  - [net-next,v06,11/14] hinic3: Add Rss function
-    https://git.kernel.org/netdev/net-next/c/1f3838b84a63
-  - [net-next,v06,12/14] hinic3: Add port management
-    https://git.kernel.org/netdev/net-next/c/45f97ae93de2
-  - [net-next,v06,13/14] hinic3: Fix missing napi->dev in netif_queue_set_napi
-    https://git.kernel.org/netdev/net-next/c/4404f6af8108
-  - [net-next,v06,14/14] hinic3: Fix code style (Missing a blank line before return)
-    https://git.kernel.org/netdev/net-next/c/d5aeec592154
+url:    https://github.com/intel-lab-lkp/linux/commits/Miquel-Sabat-Sol/riscv-kgdb-Prefer-strscpy-instead-of-strcpy/20250916-040750
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250915200644.200498-1-mikisabate%40gmail.com
+patch subject: [PATCH] riscv: kgdb: Prefer strscpy instead of strcpy
+config: riscv-randconfig-002-20250916 (https://download.01.org/0day-ci/archive/20250916/202509161619.eJeLbfU0-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509161619.eJeLbfU0-lkp@intel.com/reproduce)
 
-You are awesome, thank you!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509161619.eJeLbfU0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/ptrace.h:5,
+                    from arch/riscv/kernel/kgdb.c:6:
+   arch/riscv/kernel/kgdb.c: In function 'kgdb_arch_handle_qxfer_pkt':
+>> include/linux/compiler.h:197:67: error: static assertion failed: "must be array"
+     197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                                   ^~~~~~~~~~~~~~
+   include/linux/compiler.h:202:28: note: in expansion of macro '__BUILD_BUG_ON_ZERO_MSG'
+     202 | #define __must_be_array(a) __BUILD_BUG_ON_ZERO_MSG(!__is_array(a), \
+         |                            ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:80:40: note: in expansion of macro '__must_be_array'
+      80 |  sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) + \
+         |                                        ^~~~~~~~~~~~~~~
+   include/linux/args.h:25:24: note: in expansion of macro '__strscpy0'
+      25 | #define __CONCAT(a, b) a ## b
+         |                        ^
+   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
+      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
+         |                           ^~~~~~~~
+   include/linux/string.h:114:2: note: in expansion of macro 'CONCATENATE'
+     114 |  CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
+         |  ^~~~~~~~~~~
+   arch/riscv/kernel/kgdb.c:268:3: note: in expansion of macro 'strscpy'
+     268 |   strscpy(remcom_out_buffer, riscv_gdb_stub_target_desc);
+         |   ^~~~~~~
+>> include/linux/compiler.h:197:67: error: static assertion failed: "must be array"
+     197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                                   ^~~~~~~~~~~~~~
+   include/linux/compiler.h:202:28: note: in expansion of macro '__BUILD_BUG_ON_ZERO_MSG'
+     202 | #define __must_be_array(a) __BUILD_BUG_ON_ZERO_MSG(!__is_array(a), \
+         |                            ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:80:40: note: in expansion of macro '__must_be_array'
+      80 |  sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) + \
+         |                                        ^~~~~~~~~~~~~~~
+   include/linux/args.h:25:24: note: in expansion of macro '__strscpy0'
+      25 | #define __CONCAT(a, b) a ## b
+         |                        ^
+   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
+      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
+         |                           ^~~~~~~~
+   include/linux/string.h:114:2: note: in expansion of macro 'CONCATENATE'
+     114 |  CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
+         |  ^~~~~~~~~~~
+   arch/riscv/kernel/kgdb.c:271:3: note: in expansion of macro 'strscpy'
+     271 |   strscpy(remcom_out_buffer, riscv_gdb_stub_cpuxml);
+         |   ^~~~~~~
+
+
+vim +197 include/linux/compiler.h
+
+230fa253df6352 Christian Borntraeger 2014-11-25  193  
+cb7380de9e4cbc Kees Cook             2025-02-05  194  #ifdef __CHECKER__
+243c90e917f5cf Vincent Mailhol       2025-03-29  195  #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) (0)
+cb7380de9e4cbc Kees Cook             2025-02-05  196  #else /* __CHECKER__ */
+243c90e917f5cf Vincent Mailhol       2025-03-29 @197  #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+cb7380de9e4cbc Kees Cook             2025-02-05  198  #endif /* __CHECKER__ */
+cb7380de9e4cbc Kees Cook             2025-02-05  199  
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
