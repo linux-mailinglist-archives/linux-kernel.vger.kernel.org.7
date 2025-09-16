@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-819629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0820FB5A3C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:23:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A797B5A3CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997D51BC82E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:23:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BBBB4866DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE92287515;
-	Tue, 16 Sep 2025 21:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176B228A72F;
+	Tue, 16 Sep 2025 21:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MOwq0Avk"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="icF3vNmX"
+Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B049E27280A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A28D287515;
+	Tue, 16 Sep 2025 21:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758057787; cv=none; b=k8K4ngqVTyC0Iy7BhQIVa5QYhw1JsG5Eptb9eQbsOcR++q33EuW6+GRtcbCmHCf3+wrtrmrlsXYsUmylZ92nRQVDNpLQECqKLIdP/L/ZhqOwy+/Pz6jmRu1zbYcxBX8X6Ksek9E06VCmAOLcgiMasNTT2+gBR7krP935zKBJC8I=
+	t=1758057812; cv=none; b=P+ncE4NQ+yBF9qntfKFIWkJYa7apBZI0iLz+Z27d4gT0p4dSS4QH7P0bZl37XNqAt78+Ki41Zsu+iPWbTjbYt67YLCsqQfgE58ifLoB1PoqR2RJxFuV+bIj85skPICZPqe/kztBbYRYVEmJI3P3E9wf0FLeMqXkUxuVnsciY1nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758057787; c=relaxed/simple;
-	bh=7d7fyEYUl0ACJpbrJxaRgpnFSnvwlBZGD5NItbZRgx0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KzdnrqwF9KkLYsFt2rnTKD5wv2zi2+MNEWB7dkW5FrSnRFNOLLoKgfaud+jx+n3FbSLE8/a9cDiao8gh7idQMqYzQccbOOtXTjU4ZodQhUCNrjsXDZXHncYnBqdA3s8HeHmiupair+wJ+yEy6RhIbt9TNedvRTn0zdGwidldLk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MOwq0Avk; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e931c858dbbso3847262276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:23:05 -0700 (PDT)
+	s=arc-20240116; t=1758057812; c=relaxed/simple;
+	bh=esyAzSji+adnp9bEMrjhOKGtohfgrOrb8yIfBdZNEx0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jWqM+oJcYks00jNYFoynBzU899knxLSji5vf6mviQqzCfWv3thn8RcuVlKwqK3WcinRa4AEgcEeUR9X4N+geMnEAo1wJeFQvcOS+7/IZZ26kamm9ZGqxcLakJd6yAZFMvhoFcHvvH4cL7JGe3ZJHCatWFbTsd4sfsWXoM3L5sDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=icF3vNmX; arc=none smtp.client-ip=63.176.194.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758057784; x=1758662584; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1/ZO0MqZiDI6fHTwbXd86RNAJbgLdrJ10yQLcCe1K2k=;
-        b=MOwq0AvkD07vR8CfMxTsrMVlGyyrL7s06z93o6ydMUY2mKEywuFERdXB2EtmLDqzcT
-         Oa+KiKcmo6gAxVtI4GXFjQHMIYtDn+Ou4D6HQuEmU3OEKbb1FU5oJ4nfSoHaohWnfOJc
-         uiRyIjcqQLphoHZPeeT1mswv1Yg0lRfP8RH32yMrfEfzTAAs4z5kDSCsa5/Kmofg0CXE
-         Hl5/O8fITOlKG2WLYYroUl6Yz6p3OtiBM0huSpRMJtft6DwbYw0OMeZ7QsE2MVe6zjaw
-         B5HUAlZ3bndKLBCNN2g7xX8tz9NxoaMMEhutKhhm7oU2UUGQ5G7j+CdC+PHY1ZvXcCo4
-         kM1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758057784; x=1758662584;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1/ZO0MqZiDI6fHTwbXd86RNAJbgLdrJ10yQLcCe1K2k=;
-        b=Oa+fjvkdwzKE8TsTu223IpMFK4tTl9us/9S8ry/mdDqsNwtaWeUbV1HLoOYEbQMagG
-         p1HkyTlFhfPDxRTy2ebLGNTPqS5FRO/V8t1v2YXYoyt7dyU/rsS0WQopfrg4CeEJhtlV
-         d7YVtmY41du78kCpA1DUW+x6pCGN8Hq4QEsQe2GYTeUI1f40yUm9C+fe/sJCb6NihilV
-         Ydlx62K3EvJLg6D9VqWVxmRwe53QpkdaPF7mA+TM9PwCUtvmlYui0R3zVHAbEYPrqq8N
-         AAADWf3Zn7EPDuSgl4qNfHfY6eokXe6bSpCMWtc2esjEKELVcnJFVO9ruAFSWeP7704i
-         c92A==
-X-Forwarded-Encrypted: i=1; AJvYcCVoLjOowMhNXpoWJNTLPPrwDFgzwsZbcErTR3Ccc8sIZMTRjlq7oLxg5xuACBvovkeFtibld4zq9P4mq+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhWKMkp5V1MDDcEqkfRZICvpLNoo0bd9XAXhCddTQPzGMH1wJE
-	MjOiRM5uxPMc+RNFe8eURVJJJuUTbNZWtruwuHtIuwtBD5RH2FaNkd+YqRa3L8Urvw==
-X-Gm-Gg: ASbGncsJonQRgNJIAzgkVsflyqwMdahhV1b2zzJPnMPdwTraFkjR0KW8p18wQWUrgtT
-	K0vYKUdliGeLIFu6ch1LGz/HxAMIaSC4w746yHSkFKsLxrcjq0OTyVYIA7+W9vfnTDhKq5WSfHW
-	cCGEBLeKnMlt47frIcOUI6xxqDvNV2W4fR41OZlDWojHu9E7R83dr0k2TiSBzOu+xyQA5GFwRMp
-	mFseter3f5fYlkEtzsBLHdSpNwHa6ly1H6v9sBL0hM8kR8VyxgnJWERaFwARO196zlgzskxtaTs
-	+hjdlWfzd5gTKkgD+MFcSlscpoiMbNKPAn6a1cTvGPSJHSs+Xq/0lMkvuuMZOEYTV9BisTRU0zO
-	CorO3WIWm83DnOUedcwmOuG5zpBdeSBONVSgPkh3q2hUrRMikxAWtveNWfsSZ6X6BnScFsaPVuB
-	schkV3BBCL4MvbjQ==
-X-Google-Smtp-Source: AGHT+IF9km1aJwEt+1aGPxCzX4qDZv8bfQl194903OwDWSZ+8/On9Gh9pLdqJIZx54NMGgPjHY2hVg==
-X-Received: by 2002:a05:6902:4203:b0:e90:6ed1:ec51 with SMTP id 3f1490d57ef6-ea3d9a34108mr13441041276.14.1758057784374;
-        Tue, 16 Sep 2025 14:23:04 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea3f0fe5fcesm3633731276.29.2025.09.16.14.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 14:23:03 -0700 (PDT)
-Date: Tue, 16 Sep 2025 14:22:51 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Kairui Song <ryncsn@gmail.com>
-cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-    Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, 
-    Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>, 
-    Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-    Kemeng Shi <shikemeng@huaweicloud.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    Ying Huang <ying.huang@linux.alibaba.com>, 
-    Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
-    Yosry Ahmed <yosryahmed@google.com>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-    linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH v4 00/15] mm, swap: introduce swap table as swap cache
- (phase I)
-In-Reply-To: <20250916160100.31545-1-ryncsn@gmail.com>
-Message-ID: <99f57a96-611a-b6be-fe00-3ac785154d1c@google.com>
-References: <20250916160100.31545-1-ryncsn@gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1758057810; x=1789593810;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=e/vB7Zs9aHMwYsXkTiYJPhWtLpilAdRV0YFCpKnteE0=;
+  b=icF3vNmXJ9OatxNza2d4xwas3+sPt+TM1CSlEkLQZuhde4sqzApnXm/h
+   FbV5tRY9GnJ32DlKFXB/WjRLBdwgVgAI36PROpDIYJGWUZAcRCbyXXuTp
+   +IIdBtIAqwqKGoPLQlpH+G2fzN1UCKPxbQEdixo9IEQfwfV/Zutr9sg2G
+   aySqZrosRIP0S3hTodw3zwzftMGYb9krwFg0kbk6YmDOpoYzV9B+L+FIR
+   B1rB4jn0jggMfdCV3zBKFEgjWRbiryeerb3f0xiejFeYEHNVXDuDJcKPn
+   ireP716p92H96nG3Q78fp9T7Yl1g6Vp9/raWUtlFQ9B0l1wT3w6dEcYBS
+   w==;
+X-CSE-ConnectionGUID: G9gJrqgFR5iQk+BTToyKSw==
+X-CSE-MsgGUID: JPHEJVGKQsuVHRVhQjZNkA==
+X-IronPort-AV: E=Sophos;i="6.18,270,1751241600"; 
+   d="scan'208";a="2214755"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 21:23:20 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.232:29113]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.39.25:2525] with esmtp (Farcaster)
+ id d5687765-781d-4aee-8ed0-c911a128d4b7; Tue, 16 Sep 2025 21:23:20 +0000 (UTC)
+X-Farcaster-Flow-ID: d5687765-781d-4aee-8ed0-c911a128d4b7
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 16 Sep 2025 21:23:17 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 16 Sep 2025
+ 21:23:12 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: <luc.vanoostenryck@gmail.com>, <rostedt@goodmis.org>, <mingo@redhat.com>,
+	<akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>, <sj@kernel.org>,
+	<David.Laight@ACULAB.COM>, <Jason@zx2c4.com>,
+	<andriy.shevchenko@linux.intel.com>, <bvanassche@acm.org>,
+	<keescook@chromium.org>, <linux-sparse@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jonnyc@amazon.com>, <farbere@amazon.com>, <stable@vger.kernel.org>
+Subject: [PATCH 0/7 5.10.y] Cherry pick of minmax.h commits from 5.15.y
+Date: Tue, 16 Sep 2025 21:22:52 +0000
+Message-ID: <20250916212259.48517-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D038UWC001.ant.amazon.com (10.13.139.213) To
+ EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
-On Wed, 17 Sep 2025, Kairui Song wrote:
-> V4 changes:
-> - Patch 14: fix potential cluster leak when attemp a sleep allocation of
->   swap table: Just remove the logic that check and return the percpu
->   cluster, it was trying to avoid fragmentation, which wasn't very
->   successfully and may not work at all if there are multiple devices.
->   The fragmentation is not a serious issue and given the chance of
->   hitting that race is extremely low, let's just ignore that [ Chris Meson ].
+This series backports seven commits from v5.15.y that update minmax.h
+and related code:
 
-And in Patch 11 I can see that you've made an important fix to the
-!folio_ref_freeze() block in __folio_migrate_mapping(): there had been a
-swap_cluster_unlock(ci) which you've fixed to swap_cluster_unlock_irq(ci):
-I was going to report that, with the WARNING and "BUG: sleeping function"s
-it caused, but you're ahead of me.
+ - ed6e37e30826 ("tracing: Define the is_signed_type() macro once")
+ - 998f03984e25 ("minmax: sanity check constant bounds when clamping")
+ - d470787b25e6 ("minmax: clamp more efficiently by avoiding extra
+   comparison")
+ - 1c2ee5bc9f11 ("minmax: fix header inclusions")
+ - d53b5d862acd ("minmax: allow min()/max()/clamp() if the arguments
+   have the same signedness.")
+ - 7ed91c5560df ("minmax: allow comparisons of 'int' against 'unsigned
+   char/short'")
+ - 22f7794ef5a3 ("minmax: relax check to allow comparison between
+   unsigned arguments and signed constants")
 
-Thanks also for fixing the shmem_replace_folio() locking and stats
-update, which I'd noticed too (but never hit): looks good now.
+The main motivation is commit d53b5d862acd, which removes the strict
+type check in min()/max() when both arguments have the same signedness.
+Without this, kernel 5.10 builds can emit warnings that become build
+failures when -Werror is used.
 
-Hugh
+Additionally, commit ed6e37e30826 from tracing is required as a
+dependency; without it, compilation fails.
 
-> - Patch 8 & 9: move some changes from Patch 9 to Patch 8 to avoid build
->   error, no code change. [ Baolin Wang ]
-> - Patch 9: Fix locking section issue, should protect the shmem statistic
->   update with spin lock irq. Also fix an warn on condition.
-> Link to V3:
-> - https://lore.kernel.org/linux-mm/20250910160833.3464-1-ryncsn@gmail.com/
+Andy Shevchenko (1):
+  minmax: fix header inclusions
+
+Bart Van Assche (1):
+  tracing: Define the is_signed_type() macro once
+
+David Laight (3):
+  minmax: allow min()/max()/clamp() if the arguments have the same
+    signedness.
+  minmax: allow comparisons of 'int' against 'unsigned char/short'
+  minmax: relax check to allow comparison between unsigned arguments and
+    signed constants
+
+Jason A. Donenfeld (2):
+  minmax: sanity check constant bounds when clamping
+  minmax: clamp more efficiently by avoiding extra comparison
+
+ include/linux/compiler.h     |  6 +++
+ include/linux/minmax.h       | 89 ++++++++++++++++++++++++++----------
+ include/linux/overflow.h     |  1 -
+ include/linux/trace_events.h |  2 -
+ 4 files changed, 70 insertions(+), 28 deletions(-)
+
+-- 
+2.47.3
+
 
