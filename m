@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-818397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A77EB59139
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:48:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9174FB5913D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE513237FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:47:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B757A9CD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DD928DB46;
-	Tue, 16 Sep 2025 08:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B8D28641E;
+	Tue, 16 Sep 2025 08:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G0gACZ3M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZQbHBJQ6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49393195811;
-	Tue, 16 Sep 2025 08:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1237C1DED52;
+	Tue, 16 Sep 2025 08:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758012419; cv=none; b=bHCIl6XxQNGyoTkfa4GH0MTMIzRIae0djH6HttUeh2IL0niRv/rOC8u2rg14hIBx52th0HY4/0eSYGJ3rjayzE3bwHTag4M3G7UUsJhviOuQMOsCRlTxmMOCC6JHLO8wNsv/eG43QTnBHISrw9vLsiDXjr1KILwUuVdovH9CGW0=
+	t=1758012493; cv=none; b=R3KhqrQQLKW+XKZLF0D73RvRclIGfIz1121LTmJXBs1XXOWGrNA9/CBK0rNAFxK5FOs2A4Y5yqfZ/vWrLy6Q7ttHvUsm+4Ba22PNMdPYrHnbo/Cb++eeAoKtpAE7zTPOCYEvlepkGrxo9ZhUtYIleKhqP3/JmCtiwW0eMAdBqtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758012419; c=relaxed/simple;
-	bh=ykt5iKNeqDYbUvArcIPqA4Dk2B/zsxIPAzUkjmckNlo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fhfAqJGK2ob3P3ruchspZfPdW9c/oCNYpxc2GRYoRv9DbE7iGJ7gO3YUhlh6NrAdIVZaHCcTtp7P75vPmQXdKItEyIEtZT6yOYJNU/W7vWcF8FPUxpamdMi7dfjohq2hfEsunJGJrDegmglO9AxJpXPjz/rcQ2TVXNvDYJPGFN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G0gACZ3M; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758012418; x=1789548418;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ykt5iKNeqDYbUvArcIPqA4Dk2B/zsxIPAzUkjmckNlo=;
-  b=G0gACZ3Mrgm45eOA+q10nfEFuI+BS68sFAx5qI+myhNuJxUxNLbUmtEZ
-   459o8P4boH6bMx/tj/aNxq+nYbG9JrIMqtZnB/mAT1UfNZixQMkI4kDrp
-   RdG6abp6XOPMBFBPqM9at3dpWw1tSoHzgknMS9VgCtuKyoPv9hjqrspnw
-   J7DD24AzZBfGXI0l6YXNCK1Rq/R5kWcIeFMebwnVrxDm6VfHxst3ClNfn
-   PVhieWE3N3WLV/ddYP+nZpjK+z1CMGwD4wmX5H8qlOdzzAonc0LH6VTJn
-   xy7DnJihMlGYa1TUOekPj2DivexJNqyUHqGVROSk4ZVzKSlczCrAOy3/y
-   g==;
-X-CSE-ConnectionGUID: nHHrNosPQZuDxneev0WKyQ==
-X-CSE-MsgGUID: sogNXx5nR46/vghckBN1Aw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64091477"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64091477"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 01:46:57 -0700
-X-CSE-ConnectionGUID: CzUhbfpRRQOO0eUlar3fXQ==
-X-CSE-MsgGUID: 0zcksTDCRA+UDWtTtWu5tQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="180130901"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 01:46:54 -0700
-Message-ID: <081acb09-43e4-4ed9-a12c-3b9c8f6da247@linux.intel.com>
-Date: Tue, 16 Sep 2025 16:46:51 +0800
+	s=arc-20240116; t=1758012493; c=relaxed/simple;
+	bh=vKbbtg7Na5iJInnZIagyOi1PcdqDXNi8cIhSiA8abQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KiW1+O/lRLf62KTtRGcmQNHtPZLMzEgm1fL4BJ13Msc4y314RP0gOoXuvyjJJ0VBCihlmlAmZqZDncEtFdER2f0gGhv2yfRKitUsQfgQWV09ZV/YFaB/PCSzmMrcdYIV9yaOBv+pLOtna2Z4serDg6X1VHBKRBJHvLjDaxxGFeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZQbHBJQ6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2461940E01A3;
+	Tue, 16 Sep 2025 08:48:06 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id AmL-BIRRyneF; Tue, 16 Sep 2025 08:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758012482; bh=45shmwAZiLqEtZxAd55jcbykeKkgRaUpjw+bIADDSgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZQbHBJQ6sRAshMfaX60BXHq9gz4MMNvsTTEqV1b3KAE8UiUxm7/FgyJpeA6Y8V+64
+	 xSsOd3l8465PFvhiEI+zMEqyCUdSf8MY8R8LhUDHDWvqG1g20wFB4OCXTk/kLmnq+f
+	 NXf/CcHgT94RCDp+jgut+oJUSQXjYCkA67Rrbj8jRd8sm/c7jMjXDz/kOHzsCAJf9h
+	 NBIRmnjvaFgm2J7MIli9khoQ9SXO8LE5tR9pj6eUVxtG+2rIr0sSAGAVhVKWM9lPRW
+	 vXpjiiZMvzqDEyg4HMPvz6bJMOX2zKrrDntekyU1nbVM0m+0MCz20fu54vzB4LZQyd
+	 AQcnlOwO43gUkW4U5uhH17G3oci1gfK5OrwR1u2MYRSg9yNGls4FtZyU4Q9ig5Up/0
+	 Koz+iH3M0uLtQybIZTJ4n55sSJtfImPQlBKFdRWK6csNy8vqpFJ7Mga79UEx7qa5t8
+	 1RlLTKiVYkcJS1VLm1h1ZMlPPtqGcKyxwyp74OuIAeEoLOR6eREWpPrKsWA5A1vdaS
+	 s/pTE76Z+EpoN298+qAQFaoYtjWq8CrqPdIDhEFo1RiHreV8+wEfbQMw6rvciG0Azz
+	 mzEE3fa2P9shLvPqSuSWJqzgeoQQ5Zz6of0VGeWKAucQ5Nm7h7Px3LphoTiRJaYSvL
+	 NNFAQNjze2M5KvGPTemfzJeU=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 034E940E00DD;
+	Tue, 16 Sep 2025 08:47:44 +0000 (UTC)
+Date: Tue, 16 Sep 2025 10:47:36 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, git@amd.com, ptsm@linux.microsoft.com,
+	srivatsa@csail.mit.edu, shubhrajyoti.datta@gmail.com,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>
+Subject: Re: [PATCH v9 0/5] EDAC/Versal NET: Add support for error
+ notification
+Message-ID: <20250916084736.GBaMkkKB2jPmgltQgX@fat_crate.local>
+References: <20250908115649.22903-1-shubhrajyoti.datta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 11/41] KVM: x86: Report KVM supported CET MSRs as
- to-be-saved
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-12-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250912232319.429659-12-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250908115649.22903-1-shubhrajyoti.datta@amd.com>
 
+On Mon, Sep 08, 2025 at 05:26:44PM +0530, Shubhrajyoti Datta wrote:
+> Shubhrajyoti Datta (5):
+>   cdx: Split mcdi.h and reorganize headers
+>   cdx: Export Symbols for MCDI RPC and Initialization
+>   ras: Export log_non_standard_event for External Usage
+>   dt-bindings: memory-controllers: Add support for Versal NET EDAC
+>   EDAC: Add a driver for the AMD Versal NET DDR controller
+> 
+>  .../xlnx,versal-net-ddrmc5.yaml               |  41 +
+>  MAINTAINERS                                   |   7 +
+>  drivers/cdx/controller/cdx_controller.c       |   2 +-
+>  drivers/cdx/controller/cdx_rpmsg.c            |   2 +-
+>  drivers/cdx/controller/mcdi.c                 |  43 +-
+>  drivers/cdx/controller/mcdi_functions.c       |   1 -
+>  drivers/cdx/controller/mcdi_functions.h       |   3 +-
+>  drivers/cdx/controller/mcdid.h                |  63 ++
+>  drivers/edac/Kconfig                          |   8 +
+>  drivers/edac/Makefile                         |   1 +
+>  drivers/edac/versalnet_edac.c                 | 958 ++++++++++++++++++
+>  drivers/ras/ras.c                             |   1 +
+>  .../linux/cdx}/bitfield.h                     |   0
+>  include/linux/cdx/edac_cdx_pcol.h             |  28 +
+>  .../controller => include/linux/cdx}/mcdi.h   |  47 +-
+>  15 files changed, 1154 insertions(+), 51 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/xlnx,versal-net-ddrmc5.yaml
+>  create mode 100644 drivers/cdx/controller/mcdid.h
+>  create mode 100644 drivers/edac/versalnet_edac.c
+>  rename {drivers/cdx/controller => include/linux/cdx}/bitfield.h (100%)
+>  create mode 100644 include/linux/cdx/edac_cdx_pcol.h
+> rename {drivers/cdx/controller => include/linux/cdx}/mcdi.h (79%)
 
+Applied, thanks.
 
-On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Add CET MSRs to the list of MSRs reported to userspace if the feature,
-> i.e. IBT or SHSTK, associated with the MSRs is supported by KVM.
->
-> Suggested-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+-- 
+Regards/Gruss,
+    Boris.
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> ---
->   arch/x86/kvm/x86.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 5653ddfe124e..2c9908bc8b32 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -344,6 +344,10 @@ static const u32 msrs_to_save_base[] = {
->   	MSR_IA32_UMWAIT_CONTROL,
->   
->   	MSR_IA32_XFD, MSR_IA32_XFD_ERR, MSR_IA32_XSS,
-> +
-> +	MSR_IA32_U_CET, MSR_IA32_S_CET,
-> +	MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
-> +	MSR_IA32_PL3_SSP, MSR_IA32_INT_SSP_TAB,
->   };
->   
->   static const u32 msrs_to_save_pmu[] = {
-> @@ -7598,6 +7602,20 @@ static void kvm_probe_msr_to_save(u32 msr_index)
->   		if (!kvm_caps.supported_xss)
->   			return;
->   		break;
-> +	case MSR_IA32_U_CET:
-> +	case MSR_IA32_S_CET:
-> +		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
-> +		    !kvm_cpu_cap_has(X86_FEATURE_IBT))
-> +			return;
-> +		break;
-> +	case MSR_IA32_INT_SSP_TAB:
-> +		if (!kvm_cpu_cap_has(X86_FEATURE_LM))
-> +			return;
-> +		fallthrough;
-> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> +		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK))
-> +			return;
-> +		break;
->   	default:
->   		break;
->   	}
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
