@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-818482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBF2B59254
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:35:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9839B5925C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55DDB1B2729E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9194E3B4C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B472BE622;
-	Tue, 16 Sep 2025 09:35:18 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2175129B204;
+	Tue, 16 Sep 2025 09:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SKAMH1ry"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81E228B512;
-	Tue, 16 Sep 2025 09:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEABF299A8F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758015318; cv=none; b=sCO8npYI4Dn305OMo3IBbc4CtbVEdNBqYFsrNz7RVHxvLne7Ysf+zRKGXOdLNeH8cv0DG7cKQYdPBTKbhYs6z8+kB88V8V1alG02pqgNcdTamx507YcxzeB0JNZ7iuUvB2UgGPd8KD/+ax9Bza16W8NOMn+XLP0rh8eCWgZiTHA=
+	t=1758015336; cv=none; b=I9n6pTcDsanE2+i20gBEZXeiccLjgYr5lBG6t/t5Fta0iMuUOOAiVZhLsDFpUBciYApGs60eIzZ5VF4u4Kh26AnOW7VqLr4hKA2tClIgy9ZXa2JHaHPSlUhNBjIT8k7DFccV8RqFXPACIegJ0wdyIoV6COlfeOKyfG1Yygmbom0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758015318; c=relaxed/simple;
-	bh=ryKkBJM0Lnvi5aP6l35atJN0WHU3Iq2tgzeYeCbGTig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aFAv6gqBLrjNupSFN6XVcBnrSwaFxsaP1R+ao9Rifq1SyF/v50zTEYcE+xJmJg65XcQHRK9en97lodh3Wfo1W1LnjlLZKgle8QrWqi3pPmI62zilbIiXJbgjNP98f9FjWYdsyDIzch6BuDiTg/wLOe+TCTjb8InKI3XqwkGQS1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cQxZl5vPlzKHN7g;
-	Tue, 16 Sep 2025 17:35:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 763EC1A0A1C;
-	Tue, 16 Sep 2025 17:35:12 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP4 (Coremail) with SMTP id gCh0CgAncIxIL8loVknDCg--.4503S6;
-	Tue, 16 Sep 2025 17:35:12 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	hsiangkao@linux.alibaba.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 2/2] ext4: wait for ongoing I/O to complete before freeing blocks
-Date: Tue, 16 Sep 2025 17:33:37 +0800
-Message-ID: <20250916093337.3161016-3-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
-References: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1758015336; c=relaxed/simple;
+	bh=uVJcNQLIaI0TFYuzHf9V948rCw4GzWbCyOZcjnOCgjI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ceeylc3DmmMAwgNOeMEqo8iHfBUFDdsJ0gxs5uO7ZGhZ5lONrJH3G/Zo7a0BQerKD1w/fuYCnSsuH/2gU9HbYVJ9m8QpdCbHlQw1nWBA71HF0yInxREk0nVq0EobN1xGLlGLgjBJ1RhRHRymUzXKRxFejWizmNbAGejSyvLeyq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SKAMH1ry; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b5eee40cc0so51299351cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758015334; x=1758620134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ItFEEUKNnd6JDkvIGqIsrhAmf5lSlmXXN6ieayVKa88=;
+        b=SKAMH1ryj8J2J012Y1bbgYx0UEv6Z2AGMpSXuuQ0c9mXf2n4QbpWNkQ69n0hjm5E3g
+         GIQcDL14+IUXZ7hP1Hpk8mkozPlVHa3Uw/QPVxtIP6gTWl7uzZ4kBI7i0jui4+7bDkkh
+         Upx9Pyd5Icy3HPeHwbW+o6Zz0F15Bsc2fIrXqj0xn1En4HJ4riFVdj/8Ccod7JDrV8Yz
+         41NNKWfJoffNX4o8h62ibuXgY9PvguzsA5NHyqvr8ZbDHG1jTResEaXyaY1rpqpCfviT
+         5L/xBKtur7MVjdeB/PB2iCaovNfB/Zg7t5TDdlUfY8ozjnlBkZjIfn3wQwmSO8ZpsCNF
+         JxLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758015334; x=1758620134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ItFEEUKNnd6JDkvIGqIsrhAmf5lSlmXXN6ieayVKa88=;
+        b=eYNzGB82q6wCkPd1s6ry6MxA0FtPMDdvz2iHmYeb5s8cdy9nvy1BrfhXDI4w3BZcjw
+         bepsmm/eld9iV5ffgE+nY1O6tiuQTHLFsoHVhLmAB02K16PQJkl9UkQ52bbt85H4n1+/
+         HL60sbyhd7rT87LTrV0OxFJIdpkt6M0bHzy8UrIRUZLMtWc8no3uJKkNgAxpBu+cbfqW
+         L0hN8Yc2f0Vz/Qvs6/OdcT1BT+XKMSs9QUxyOdZztBRgiP3x5IlccSNYk1V8ZMee4QGg
+         HOvC1kGGM44cWMJnyQoBL/cg+Ss/3kWnr2x/5YAfzXCtQcT5FlA24yN/LddJLm13MbE4
+         fJIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPR7MCLY1OQYUmsltryobCoI1iYbg4KDaja+NgZRWSLF++jCuqKsTcBNWLrkekKW8qfMT8xFYWjTTunl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKsoVvpuE2Vo5vSyHDBLjVX9iEOFs1EQfY4I7UcNK3Pgp9/TDK
+	mGAeDq/MXh8gbw1ib3L4IeEeo7HAMLa9zPlzijX6xBHaw84dW9D+OMHn0qbFfb5sMtarlgVvl2/
+	Dnxh1jh8PLGdq2gFnpvxkgz780f3U/m2IzC+DCgA/
+X-Gm-Gg: ASbGncv9B+wuVZ2kvqjoKgHuVkf4tI1op01kyHtaPGiB753hjNsyxNC24kvP3ZX6Dhy
+	nOOxHiTlch/Pbx2cuEol/RG1AAZt1bboKrWOplEH2HdrNZLN4ek/oSu5jzS9dQV+BthMDr2bt8s
+	YLuE0gKWwnwhvCvFrbHWqJReLtXGWBIfc4yuZaHpGnaTRLWnMTZ4k07O7pHmxvgdmm+/l8GFpND
+	RpmqpidcF+WOQddWSi52E8m5wGqSnTSCxX9GIIthxpxKq3U913tShw=
+X-Google-Smtp-Source: AGHT+IEoi69t7mYkGM64faWfanIG3G+aZjIxCT9T7NbXrz1Tm5ebO1fIisC59kXZkBUKvdy4EFZyz1T9cHFhC09CFbA=
+X-Received: by 2002:a05:622a:17ce:b0:4b7:9438:c362 with SMTP id
+ d75a77b69052e-4b79438e5dcmr151588411cf.33.1758015333543; Tue, 16 Sep 2025
+ 02:35:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncIxIL8loVknDCg--.4503S6
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW7Jr18ZF15tF45WF1kAFb_yoW8AFy5pr
-	WSk3W3Grs8Wr9F9FZrGa17CFyrWa1kGw4UCrWfGa43urW3Jr1IvFWft34FvFWjyFWxWa4F
-	vr4UGr4DCFnrJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
-	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
-	vjDU0xZFpf9x0JUADGOUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20250916090109.91132-1-ethan.w.s.graham@gmail.com> <20250916090109.91132-2-ethan.w.s.graham@gmail.com>
+In-Reply-To: <20250916090109.91132-2-ethan.w.s.graham@gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 16 Sep 2025 11:34:56 +0200
+X-Gm-Features: AS18NWAeZ0I8Ql6T2VXhNmbi0_zOyyX9JImpZH4pIDJbyS4OHq46p0yv6zBf1BI
+Message-ID: <CAG_fn=U-SH5u4Lv3CcqKVHnK1ewrF46AF3JU1eiAh-JYxj86sg@mail.gmail.com>
+Subject: Re: [PATCH v1 01/10] mm/kasan: implement kasan_poison_range
+To: Ethan Graham <ethan.w.s.graham@gmail.com>
+Cc: ethangraham@google.com, andreyknvl@gmail.com, andy@kernel.org, 
+	brauner@kernel.org, brendan.higgins@linux.dev, davem@davemloft.net, 
+	davidgow@google.com, dhowells@redhat.com, dvyukov@google.com, 
+	elver@google.com, herbert@gondor.apana.org.au, ignat@cloudflare.com, 
+	jack@suse.cz, jannh@google.com, johannes@sipsolutions.net, 
+	kasan-dev@googlegroups.com, kees@kernel.org, kunit-dev@googlegroups.com, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, lukas@wunner.de, rmoar@google.com, shuah@kernel.org, 
+	tarasmadan@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Yi <yi.zhang@huawei.com>
-
-When freeing metadata blocks in nojournal mode, ext4_forget() calls
-bforget() to clear the dirty flag on the buffer_head and remvoe
-associated mappings. This is acceptable if the metadata has not yet
-begun to be written back. However, if the write-back has already started
-but is not yet completed, ext4_forget() will have no effect.
-Subsequently, ext4_mb_clear_bb() will immediately return the block to
-the mb allocator. This block can then be reallocated immediately,
-potentially causing an data corruption issue.
-
-Fix this by clearing the buffer's dirty flag and waiting for the ongoing
-I/O to complete, ensuring that no further writes to stale data will
-occur.
-
-Fixes: 16e08b14a455 ("ext4: cleanup clean_bdev_aliases() calls")
-Reported-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Closes: https://lore.kernel.org/linux-ext4/a9417096-9549-4441-9878-b1955b899b4e@huaweicloud.com/
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/ext4_jbd2.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-index b3e9b7bd7978..a0e66bc10093 100644
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -280,9 +280,16 @@ int __ext4_forget(const char *where, unsigned int line, handle_t *handle,
- 		  bh, is_metadata, inode->i_mode,
- 		  test_opt(inode->i_sb, DATA_FLAGS));
- 
--	/* In the no journal case, we can just do a bforget and return */
-+	/*
-+	 * In the no journal case, we should wait for the ongoing buffer
-+	 * to complete and do a forget.
-+	 */
- 	if (!ext4_handle_valid(handle)) {
--		bforget(bh);
-+		if (bh) {
-+			clear_buffer_dirty(bh);
-+			wait_on_buffer(bh);
-+			__bforget(bh);
-+		}
- 		return 0;
- 	}
- 
--- 
-2.46.1
-
+On Tue, Sep 16, 2025 at 11:01=E2=80=AFAM Ethan Graham
+<ethan.w.s.graham@gmail.com> wrote:
+>
+> From: Ethan Graham <ethangraham@google.com>
+>
+> Introduce a new helper function, kasan_poison_range(), to encapsulate
+> the logic for poisoning an arbitrary memory range of a given size, and
+> expose it publically in <include/linux/kasan.h>.
+>
+> This is a preparatory change for the upcoming KFuzzTest patches, which
+> requires the ability to poison the inter-region padding in its input
+> buffers.
+>
+> No functional change to any other subsystem is intended by this commit.
+>
+> ---
+> v3:
+> - Enforce KASAN_GRANULE_SIZE alignment for the end of the range in
+>   kasan_poison_range(), and return -EINVAL when this isn't respected.
+> ---
+>
+> Signed-off-by: Ethan Graham <ethangraham@google.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
