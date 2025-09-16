@@ -1,239 +1,230 @@
-Return-Path: <linux-kernel+bounces-818450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDA8B591E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFCCB591E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED2718951D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BC1174CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9E02989BA;
-	Tue, 16 Sep 2025 09:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFE4299AAA;
+	Tue, 16 Sep 2025 09:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SA7ew/eV"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0zirtnh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29097213E6A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30CE29A310;
+	Tue, 16 Sep 2025 09:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014093; cv=none; b=l1GhAx4GIgK4r2kk0Nr+uKLjHLjHKBDrDX/C+moG60xahjct980R/T/z5Tov9E3zgGlwg+SpRECwK9oD4rkXD3ZerQuNtzpPHHLKtjRPl3AX3vWTUpwcJEPVXGhAJz0EzoZsugmKnWvEuFHx02cMn3u/ZDta8GWAmpiaasBt8Wg=
+	t=1758014097; cv=none; b=EI2YXoFPdUSG+iRroFZ75gjvDKych2HIcdmLXyuAH13qgYo3ym8ZqEA91M0lwEhrYizeezPi6m1o0uWCWbuKYIRqhE3oC2luvj80gGfYZrMCvXvt9RpYH5XmOfgQUaQT1abkQ55zFKFmCMqiQuxzJuXZX4MX28I4Xcc0QqUCXAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014093; c=relaxed/simple;
-	bh=t7JA6AMNc/SslXLubb+B4OGmYInEP2xAEldF8ytxiqw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LJqSoIsRA/DGFyrr8RYhecwXaMHPezcKczPrZjrvTKb2BO41VTr3nvDCGT1v/BBwzqbCnmSz4vHm8Dyf3sVaobR+tIF7zGBVYr8fFTksMkcxbO0G9VL5nW6EwWHPz17S4wJrPY/npnH1ghZh5ff9Nc9rovduFcSrScAgMZZeWCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SA7ew/eV; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7761e1fc3faso2879668b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758014091; x=1758618891; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oy3gQMyU/E1i5AJcLQlonxALYGjighiI1yeoujTpolk=;
-        b=SA7ew/eVWcjut7JPTDE7SYXj0SDrIWRUNsRb2S18vVI+VlAI2Kb4dZFLe8HD4qJkNm
-         zB+mniJXS83kSAo8Ft+QPwkiARJZ9ZnagHAEaeeSNTudZgI1Hi6kXOt+XSDwkXmfkf56
-         tHjUh3JPiku1NebIEgD+HvesJ1J2umOCak7gjb6+yndgJCcUHFK3p4BFUBBy0wXzNdm8
-         X07q8J6ZJsSDfnlV7YojCvtrkK/+BEsdC/vBstZRWq2HpV/YQWPeJ6DDgqzMoh22LAIl
-         m7nt33aePraYeccZ46kUO/SH6pKRRsyOxuDNNiu1nc2R7qvPXcDPiGovHK+A7ufgAAhk
-         VSIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758014091; x=1758618891;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Oy3gQMyU/E1i5AJcLQlonxALYGjighiI1yeoujTpolk=;
-        b=rg9bo+L7YUNev7OSIy2kP2A3eG0SShhIKCZ80NvG4eRMz4ufi0ibE2CrqX3/6ixpNJ
-         MRgo1zfrvHz3zezafnJWj+r4OZjm+aSf7lPRP7DWx2ep9S77wLErzL5q7vnd3Yt22sDD
-         YqDJEhaPmdo+24kEgB/UHKyMbxPLk8bSpMqzd8NNtJBSg8Xoc4zmFBMJko3PrKk+VK9x
-         SQKcMUNR2GQ7vEZ2YV5b+QPhGQnIzil1m/L8/a4iuI42Swgd9FaR0qe7S99uONBtP6EO
-         GWW/9q/BzhPLOGQ79/q2IE0Dsjxy1v4kts84BbRDR2qLj3tZBAkMoKI03vYHJw2oiJ81
-         MJpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSYmw72bRgiuVkYcvc+kZO2OSnbFe6Gi/tBvund6NRCnDj2stKCL41hjq4lwNQw9fi0D1Ye3L0uH1jvD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzONWh50nyU3HzYnRz5qDaPdzoetOdPSR6RrPe96/uftob1CBfA
-	BeOMRZzneW7U9nCPuyWf90ouFfadzsg2Jo8LQqTA0rPV70hPvM4FXTJj
-X-Gm-Gg: ASbGncs9mMlsQFvo8Jqs5vp4Yl+5b/XB/MK40SOaOHxnHg4zurXILvBagz87Xdzz/bA
-	VbRmpSxxxeC3qv8+uelcM+aQKcEAskFNUAmgfqk9qCAbGApF1bNmX/Px8Y7hWhNSYSFunSF5MjJ
-	iqogAbhf7w8ZW1AbGO0/0q42+tG3Xdfj5z4dl9bJ1DRrCcNf0nwRZ/+ij3pbHctd1nhtWLnb0vZ
-	kuZVS9KAeRPYBn3uKuSs7vUjjzt5kIAc1YGcgDFWAy/T2kUdd6EsZejpV4LgPn/xpIIf6sK+4CW
-	KBtwXEIpApZpHvp93M2XVaB7W64xyO90vdEbIpKjQ6E8tjD1NUHux1Ya7HcQx+a32uA9xNGFpX7
-	wvXDannEjFzXab2rbV7Q=
-X-Google-Smtp-Source: AGHT+IFRwBAv+gM3FW6NQ8wDnj8ZpAYAq5LHxgZZmC0m3Ji+oSMyylDVJKE7igYS2ZaruefyUntvig==
-X-Received: by 2002:a05:6a00:22d3:b0:772:8dd7:f55f with SMTP id d2e1a72fcca58-7761218839fmr17315128b3a.25.1758014091227;
-        Tue, 16 Sep 2025 02:14:51 -0700 (PDT)
-Received: from [192.168.0.56] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-776075fdd83sm15555183b3a.0.2025.09.16.02.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 02:14:50 -0700 (PDT)
-Message-ID: <c42dd869d9ba23f14681448581a9c8c7ec23105b.camel@gmail.com>
-Subject: Re: [syzbot] [bpf?] WARNING in maybe_exit_scc
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: syzbot <syzbot+3afc814e8df1af64b653@syzkaller.appspotmail.com>, 
-	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, 	haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, 	linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, sdf@fomichev.me, 	song@kernel.org,
- syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Date: Tue, 16 Sep 2025 02:14:47 -0700
-In-Reply-To: <b1717a5b75475b8e14afaee4825a40a3808bd0cb.camel@gmail.com>
-References: <68c85acd.050a0220.2ff435.03a4.GAE@google.com>
-		 <81bb1cf72e9c5f56c92ab43636a0626a1046d748.camel@gmail.com>
-	 <b1717a5b75475b8e14afaee4825a40a3808bd0cb.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758014097; c=relaxed/simple;
+	bh=lWa38QWpQKBheh2+8pa3IIFdfHdW+eC2aXKWV7xfz+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9t+wFj41NRZQG26XZnoCl3tNPl5pXvwsX5KBx+XK6h9SCE9Rw8FDo8kqS/S0ww5EEJmd1pZk7Gj2+oNNbk98NKOTQ2Bkt1k6T+U/j6p2SURxZUXvHlMcOpZ6T/4TQBieiaEaAbuRPBztxP7caMNQVukDPuHldmMPPnK4ogxvM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0zirtnh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F39C4CEFD;
+	Tue, 16 Sep 2025 09:14:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758014097;
+	bh=lWa38QWpQKBheh2+8pa3IIFdfHdW+eC2aXKWV7xfz+E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N0zirtnhTBVOiXpUexGzhnv1iQ/q+CWOJgJKWTOLGOASvxhhj+Bv9NubaV4y7JaJS
+	 MqdEdfBJoIVu4GFO2aiejrWspeBeSfhQwZvUpmVzro5c1Mo1o/AGAcZR2vkamUUWrT
+	 pjKKrSIuE9Lw8jBBE+OrQ4otNtlpyRUDF8JzNqjz7EjBiKLg1DsGjYfWiTeiPR4UsP
+	 plbwEvzdOEvN98EGCUvGXetxDz6fb2UrOIe02rLnfkdIfoB5986CWiDP6gx6Y5EbQZ
+	 PHqGcVEOmfwzgaPxgDcr2mc+W0sdCrbzVItMt4HvYo/va3p7gP1iOtYCX3oX4EUOPJ
+	 EsCIF/J2p7MFg==
+Date: Tue, 16 Sep 2025 14:44:49 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v19 4/6] dt-bindings: remoteproc: Add compatibility for
+ TEE support
+Message-ID: <aMkqifHSdlCs4VjA@sumit-X1>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+ <20250625094028.758016-5-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625094028.758016-5-arnaud.pouliquen@foss.st.com>
 
-On Mon, 2025-09-15 at 16:40 -0700, Eduard Zingerman wrote:
-> On Mon, 2025-09-15 at 15:34 -0700, Eduard Zingerman wrote:
->=20
-> [...]
->=20
-> > > verifier bug: scc exit: no visit info for call chain (1)(1)
-> > > WARNING: CPU: 1 PID: 6013 at kernel/bpf/verifier.c:1949 maybe_exit_sc=
-c+0x768/0x8d0 kernel/bpf/verifier.c:1949
-> >=20
-> > Both this and [1] are reported for very similar programs:
-> >=20
-> > <this>                                      <[1]>
-> > -----------------------------------------------------------------------=
----------------------
-> > (b7) r0 =3D -1023213567                       (b7) r0 =3D -1023213567
-> > (bf) r3 =3D r10				    (bf) r3 =3D r10
-> > (07) r3 +=3D -512				    (07) r3 +=3D -504
-> > (72) *(u8 *)(r10 -16) =3D -8		    (72) *(u8 *)(r10 -16) =3D -8
-> > (71) r4 =3D *(u8 *)(r10 -16)		    (71) r4 =3D *(u8 *)(r10 -16)
-> > (65) if r4 s> 0xff000000 goto pc+2	    (65) if r4 s> 0xff000000 goto pc=
-+2
-> > (2d) if r0 > r4 goto pc+5		    (2d) if r0 > r4 goto pc+5
-> > (20) r0 =3D *(u32 *)skb[60673]		    (20) r0 =3D *(u32 *)skb[60673]
-> > (7b) *(u64 *)(r3 +0) =3D r0		    (7b) *(u64 *)(r3 +0) =3D r0
-> > (1d) if r4 =3D=3D r4 goto pc+0		    (1d) if r4 =3D=3D r4 goto pc+0
-> > (7a) *(u64 *)(r10 -512) =3D -256		    (7a) *(u64 *)(r10 -512) =3D -256
-> > (db) lock *(u64 *)(r3 +0) |=3D r0		    (db) r0 =3D atomic64_fetch_and((=
-u64 *)(r3 +0), r0)
-> > (b5) if r0 <=3D 0x0 goto pc-2		    (b5) if r0 <=3D 0x0 goto pc-2
-> > (95) exit				    (95) exit
-> >=20
-> > So, I assume it's the same issue. Looking into it.
-> >=20
-> > [1] https://lore.kernel.org/bpf/68c85b0d.050a0220.2ff435.03a5.GAE@googl=
-e.com/T/#u
->=20
-> Minimal reproducer:
->=20
->   SEC("socket")
->   __caps_unpriv(CAP_BPF)
->   __naked void syzbot_bug(void)
->   {
->         asm volatile (
->         "r0 =3D 100;"
->   "1:"
->         "*(u64 *)(r10 - 512) =3D r0;"
->         "if r0 <=3D 0x0 goto 1b;"
->         "exit;"
->         ::: __clobber_all);
->   }
->=20
-> And corresponding verifier log:
->=20
->   Live regs before insn:
->         0: .......... (b7) r0 =3D 100
->     1   1: 0......... (7b) *(u64 *)(r10 -512) =3D r0
->     1   2: 0......... (b5) if r0 <=3D 0x0 goto pc-2
->         3: 0......... (95) exit
->   Global function syzbot_bug() doesn't return scalar. Only those are supp=
-orted.
->   0: R1=3Dctx() R10=3Dfp0
->   ; asm volatile ( @ verifier_and.c:118
->   0: (b7) r0 =3D 100                      ; R0_w=3D100
->   1: (7b) *(u64 *)(r10 -512) =3D r0       ; R0_w=3D100 R10=3Dfp0 fp-512_w=
-=3D100
->   2: (b5) if r0 <=3D 0x0 goto pc-2
->   mark_precise: frame0: last_idx 2 first_idx 0 subseq_idx -1
->   mark_precise: frame0: regs=3Dr0 stack=3D before 1: (7b) *(u64 *)(r10 -5=
-12) =3D r0
->   mark_precise: frame0: regs=3Dr0 stack=3D before 0: (b7) r0 =3D 100
->   2: R0_w=3D100
->   3: (95) exit
->=20
->   from 2 to 1 (speculative execution): R0_w=3Dscalar() R1=3Dctx() R10=3Df=
-p0 fp-512_w=3D100
->   1: R0_w=3Dscalar() R1=3Dctx() R10=3Dfp0 fp-512_w=3D100
->   1: (7b) *(u64 *)(r10 -512) =3D r0
->   verifier bug: scc exit: no visit info for call chain (1)
->   processed 5 insns (limit 1000000) max_states_per_insn 0 total_states 0 =
-peak_states 0 mark_read 0
->=20
-> [...]
+Hi Arnaud,
 
-Here is what happens:
-- Verification process starts and gets to instruction (2) w/o creating
-  any checkpoints.
-- A speculative execution of the false branch is pushed onto states
-  stack; main execution process predicts the branch as false and
-  continues to exit. Still no checkpoints.
-- Speculative execution branch is popped from stack and proceeds from
-  instruction (1).
-- Speculative execution immediately terminates, because verifier
-  detects an infinite loop and signals an error.
-- update_branch_counts() is called for speculative execution state and
-  its branches count reaches zero.
-- update_branch_counts() -> maybe_exit_scc() is called for a state
-  with insn_idx in SCC #1.
-- maybe_exit_scc() assumes that when it is called for a state with
-  insn_idx in some SCC, there should be an instance of struct
-  bpf_scc_visit allocated for this SCC, which is not the case here.
- =20
-Why the assumption about bpf_scc_visit existence is made by
-maybe_exit_scc()?
-While performing non-speculative symbolic execution there are three
-ways to terminate execution path:
-a. Verification error is found. In this case update_branch_counts() is
-   not called and bpf_scc_visit existence does not matter.
-b. Top level BPF_EXIT is reached. Exit instructions are never a part of
-   an SCC, so compute_scc_callchain() in maybe_scc_exit() will return
-   false and maybe_scc_exit() will return early.
-c. A checkpoint is reached and matched. Checkpoints are created by
-   is_state_visited(), which calls maybe_enter_scc(), which allocates
-   bpf_scc_visit instances for checkpoints within SCCs.
+First of all apologies for such a late review comment as previously I
+wasn't CCed or involved in the review of this patch-set. In case any of
+my following comments have been discussed in the past then feel free to
+point me at relevant discussions.
 
-Hence, for non-speculative symbolic execution paths there is no way to
-reach a state when maybe_scc_exit() is called for a state within an
-SCC, but bpf_scc_visit instance does not exist.
+On Wed, Jun 25, 2025 at 11:40:26AM +0200, Arnaud Pouliquen wrote:
+> The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+> where the Cortex-M4 firmware is loaded by the Trusted Execution Environment
+> (TEE).
 
-However, the above logic falls short for speculative symbolic
-execution paths, because verification errors (option (a) above) lead
-to update_branch_counts() calls. And the test case above demonstrates
-exactly that scenario.
+Having a DT based compatible for a TEE service to me just feels like it
+is redundant here. I can see you have also used a TEE bus based device
+too but that is not being properly used. I know subsystems like
+remoteproc, SCMI and others heavily rely on DT to hardcode properties of
+system firmware which are rather better to be discovered dynamically.
 
-I'll send a patch disabling bpf_scc_visit existence assertion for
-speculative paths in the morning. Something along the lines:
+So I have an open question for you and the remoteproc subsystem
+maintainers being:
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1950,6 +1950,8 @@ static int maybe_exit_scc(struct bpf_verifier_env *en=
-v, struct bpf_verifier_stat
-                return 0;
-        visit =3D scc_visit_lookup(env, callchain);
-        if (!visit) {
-+               if (st->speculative)
-+                       return 0;
-                verifier_bug(env, "scc exit: no visit info for call chain %=
-s",
-                             format_callchain(env, callchain));
-                return -EFAULT;
+Is it feasible to rather leverage the benefits of a fully discoverable
+TEE bus rather than relying on platform bus/ DT to hardcode firmware
+properties?
 
+> 
+> For instance, this compatible is used in both the Linux and OP-TEE device
+> trees:
+> - In OP-TEE, a node is defined in the device tree with the
+>   "st,stm32mp1-m4-tee" compatible to support signed remoteproc firmware.
+>   Based on DT properties, the OP-TEE remoteproc framework is initiated to
+>   expose a trusted application service to authenticate and load the remote
+>   processor firmware provided by the Linux remoteproc framework, as well
+>   as to start and stop the remote processor.
+> - In Linux, when the compatibility is set, the Cortex-M resets should not
+>   be declared in the device tree. In such a configuration, the reset is
+>   managed by the OP-TEE remoteproc driver and is no longer accessible from
+>   the Linux kernel.
+> 
+> Associated with this new compatible, add the "st,proc-id" property to
+> identify the remote processor. This ID is used to define a unique ID,
+> common between Linux, U-Boot, and OP-TEE, to identify a coprocessor.
+
+This "st,proc-id" is just one such property which can rather be directly
+probed from the TEE/OP-TEE service rather than hardcoding it in DT here.
+I think the same will apply to other properties as well.
+
+-Sumit
+
+> This ID will be used in requests to the OP-TEE remoteproc Trusted
+> Application to specify the remote processor.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 58 ++++++++++++++++---
+>  1 file changed, 50 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> index 843679c557e7..58da07e536fc 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> @@ -16,7 +16,12 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    const: st,stm32mp1-m4
+> +    enum:
+> +      - st,stm32mp1-m4
+> +      - st,stm32mp1-m4-tee
+> +    description:
+> +      Use "st,stm32mp1-m4" for the Cortex-M4 coprocessor management by non-secure context
+> +      Use "st,stm32mp1-m4-tee" for the Cortex-M4 coprocessor management by secure context
+>  
+>    reg:
+>      description:
+> @@ -43,6 +48,10 @@ properties:
+>            - description: The offset of the hold boot setting register
+>            - description: The field mask of the hold boot
+>  
+> +  st,proc-id:
+> +    description: remote processor identifier
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+>    st,syscfg-tz:
+>      deprecated: true
+>      description:
+> @@ -146,21 +155,43 @@ properties:
+>  required:
+>    - compatible
+>    - reg
+> -  - resets
+>  
+>  allOf:
+>    - if:
+>        properties:
+> -        reset-names:
+> -          not:
+> -            contains:
+> -              const: hold_boot
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp1-m4
+>      then:
+> +      if:
+> +        properties:
+> +          reset-names:
+> +            not:
+> +              contains:
+> +                const: hold_boot
+> +      then:
+> +        required:
+> +          - st,syscfg-holdboot
+> +      else:
+> +        properties:
+> +          st,syscfg-holdboot: false
+> +        required:
+> +          - reset-names
+>        required:
+> -        - st,syscfg-holdboot
+> -    else:
+> +        - resets
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: st,stm32mp1-m4-tee
+> +    then:
+>        properties:
+>          st,syscfg-holdboot: false
+> +        reset-names: false
+> +        resets: false
+> +      required:
+> +        - st,proc-id
+>  
+>  additionalProperties: false
+>  
+> @@ -192,5 +223,16 @@ examples:
+>        st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+>        st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+>      };
+> +  - |
+> +    #include <dt-bindings/reset/stm32mp1-resets.h>
+> +    m4@10000000 {
+> +      compatible = "st,stm32mp1-m4-tee";
+> +      reg = <0x10000000 0x40000>,
+> +            <0x30000000 0x40000>,
+> +            <0x38000000 0x10000>;
+> +      st,proc-id = <0>;
+> +      st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+> +      st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+> +    };
+>  
+>  ...
+> -- 
+> 2.25.1
+> 
+> 
 
