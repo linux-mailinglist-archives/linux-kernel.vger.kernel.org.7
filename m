@@ -1,79 +1,61 @@
-Return-Path: <linux-kernel+bounces-817957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3048FB589AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:35:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2E0B589C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22693BF395
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:35:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D823BCA17
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C417535950;
-	Tue, 16 Sep 2025 00:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75981C3BE0;
+	Tue, 16 Sep 2025 00:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JcCMqs0K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="E2LjKSHH"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888822032D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E8CD528;
+	Tue, 16 Sep 2025 00:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982947; cv=none; b=EigMSGgPdJXjhu7NkMXrfMmRz89AcJYmJjHGEWDNBbD5fhdjnnMJR9gq330RKHnS6tW34k7DvUbs/DFtaVDVGmw5HZP9PvXgmd+z9FFlx522OiH8atkDgKBMrz8YKiE6bgz4010QCuMThbWDlfkKTLOOp+ETVfutA3XJ2e2kJFM=
+	t=1757983043; cv=none; b=ridDf8ah21V6jdZlrcFfgDNoliY/WM2ctFWQHDsoKeC8A1/r8Vpt+E8a7nImZ4+K2VS+xk2BFt/YwlJ3x6ahfWvh6L0lm5OoVoiXrohKAeZzJl+FJE6PIimqDUfosgRyjfEaEpOZk88DQ+Kc8aODNPMr1rkJcrZyicN8YPkj1cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982947; c=relaxed/simple;
-	bh=LmJHPD9NHoWsBXvcXhrQkihPJobp0T9K6gUq47vVjC8=;
+	s=arc-20240116; t=1757983043; c=relaxed/simple;
+	bh=ikTm6uj0+srWdypX4iIZg25AU+MD0sFfVNG1DiPazbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdHRtsdW/0XwaZ2AzubGQiSTpCliHNSz8JqChj5AXkHVJYCyqiWziAuhhufw3cC4pFE4yBzAR+p4SKQOI/KhOj2FpxXb/Bot53W4hitcaQ4DYP2S+gmi3qjzQvlP3QxLqtsRtr9pm9puMR4VyKLgg7l5Z0Yx2c+PSA7X3S+CXm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JcCMqs0K; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757982946; x=1789518946;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LmJHPD9NHoWsBXvcXhrQkihPJobp0T9K6gUq47vVjC8=;
-  b=JcCMqs0KkCuO0XSzKxdOzodfWsyBcuvcKRB2qVct7AJNFVKFSJUR8P5X
-   +SxhcqF3G/A04DsRnMnqeYbrEUUxiNYsDLhRbczzvzQt2Qz7szg7Znsu2
-   ScOFHGmfwoYvi4iSJoXXD35R9jEUCGGfHwXBm8/M0EIxk6WiUAuf5YDiE
-   6KClvzW29evtvnogMOHI5c8vje34lMoIR7wq88wYYzrkCb6AWdI+0AAxb
-   DpL9cCXMCrEJ+1gj13ikC5GpA2ZFNIPmlb8cNq3tvZDTezQz/JKG0qe3k
-   7XTS+jC4BA++kQbuSrYb8aiy4afa2Ms98WQUjD3NxxNwQC0He/Pv8sbNJ
-   w==;
-X-CSE-ConnectionGUID: NP3vUqLdTyesjnCdScNfrA==
-X-CSE-MsgGUID: WePOyC2TTiCm3g0004YEEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="59950170"
-X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
-   d="scan'208";a="59950170"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 17:35:45 -0700
-X-CSE-ConnectionGUID: TdDvCJkJRcqdFr636SwQ8w==
-X-CSE-MsgGUID: TK3RuA7ETMiS+F2G8Urczw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
-   d="scan'208";a="174607853"
-Received: from lkp-server01.sh.intel.com (HELO 5b01dd97f97c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 15 Sep 2025 17:35:43 -0700
-Received: from kbuild by 5b01dd97f97c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyJfY-0000qX-36;
-	Tue, 16 Sep 2025 00:35:40 +0000
-Date: Tue, 16 Sep 2025 08:34:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Michal Hocko <mhocko@kernel.org>, Baoquan He <bhe@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH v2 10/10] mm/vmalloc: Update __vmalloc_node_range()
- documentation
-Message-ID: <202509160821.gR75Zhnh-lkp@intel.com>
-References: <20250915134041.151462-11-urezki@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XVmuCYgCaJTJ8KqXN58MxGHgFjrByaCbisk0WL+HvRn10VPeU9+Xytjy0NcVYzbXncY+jjGhQt+64EzEpe+8gfvWnXbvMsRRvPMjiRAkKYjMlA5zB2Zd/c21YUJ7H7iIg3IAKhIQNK3pfqW+s4IlCct3GY1wo8LJs4IVpLBE/Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=E2LjKSHH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=wJr+506HYavhLyAPNE14fMgJgbHbAikFhnzPhM0kVTM=; b=E2LjKSHHRSkxB/9Njm9q50MF83
+	5VIRQcjknoMGoSETEPmq1ef9Bm/AV5jPSVpEYvzAaLcUJXhg10I9yN6duT7TuNjN+S7adLuZLbRLy
+	tEvYLVQ0qxx+nfDYqjXvQHhOjUC17HFMHdR6O5up+6uOgNsk857c0y41t4QQwibbvQQA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uyJgs-008V93-Hj; Tue, 16 Sep 2025 02:37:02 +0200
+Date: Tue, 16 Sep 2025 02:37:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rebecca Cran <rebecca@bsdio.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
+ ALTRAD8 BMC
+Message-ID: <74e68c53-2696-4f86-97d3-c0b0a74d4669@lunn.ch>
+References: <20250911051009.4044609-1-rebecca@bsdio.com>
+ <20250911051009.4044609-3-rebecca@bsdio.com>
+ <58a092c5-5dd0-4718-831a-e25ecb184087@lunn.ch>
+ <5ccc4945-87f6-4325-b034-ca3f2f90257a@bsdio.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,37 +64,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250915134041.151462-11-urezki@gmail.com>
+In-Reply-To: <5ccc4945-87f6-4325-b034-ca3f2f90257a@bsdio.com>
 
-Hi Uladzislau,
+On Mon, Sep 15, 2025 at 06:26:04PM -0600, Rebecca Cran wrote:
+> On 9/11/25 08:09, Andrew Lunn wrote:
+> > There is no phy-handle here, and no mdio node in this file. What is
+> > the MAC connected to? Does it connect to the hosts Ethernet interface?
+> 
+> Yes, it's connected to one of the host's 10Gb Ethernet interfaces.
 
-kernel test robot noticed the following build warnings:
+O.K. Maybe add a comment please.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master v6.17-rc6 next-20250912]
-[cannot apply to dennis-percpu/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > RGMII pinctrl is referenced here. This opens up the question about
+> > RGMII delays. What is this MAC connected to?
+> 
+> It's the AST2500 MAC2, connected to the management LAN ethernet port.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Uladzislau-Rezki-Sony/lib-test_vmalloc-add-no_block_alloc_test-case/20250915-214352
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250915134041.151462-11-urezki%40gmail.com
-patch subject: [PATCH v2 10/10] mm/vmalloc: Update __vmalloc_node_range() documentation
-config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20250916/202509160821.gR75Zhnh-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509160821.gR75Zhnh-lkp@intel.com/reproduce)
+And does it have a PHY? On an MDIO bus? Unless i'm mistaken, you don't
+describe the PHY, a phy-handle pointing to the PHY, and don't have
+phy-mode = 'rgmii-id'.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509160821.gR75Zhnh-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: mm/vmalloc.c:3889 bad line: 
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Andrew
 
