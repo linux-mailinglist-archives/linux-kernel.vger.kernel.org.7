@@ -1,206 +1,87 @@
-Return-Path: <linux-kernel+bounces-819689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A929B7D61B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E6CB7DA0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10043A6035
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501E91890886
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7087A2E5430;
-	Tue, 16 Sep 2025 22:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="PbGhk40v"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4153C2E5430;
+	Tue, 16 Sep 2025 22:21:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D443228C869;
-	Tue, 16 Sep 2025 22:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1C21E8329
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758061197; cv=none; b=LRBLMoLjFrJCf9rZn/9wvSf5M57BpZBQymkY5PKoUN71qClAS2BQ58a3Vwplob87Dq8bqj6ZHtck8pGZEB9qvd6OIKOHjeGRNC2iRmEVpo+aDjsipJX48uF0M7NY1ecTrj8EAMAlxThdtJr7A9h3ltIsYGhGt9Won1qFaprHlWU=
+	t=1758061265; cv=none; b=V9MuSBbHbCMxglH+VQ5RuwC9osdP0RCgWqHJsMmdgvwXffYj8ur+NMal9CrngGDlLctRE6MggEED/tnEOFqMJpzWdlPL8k3YIaYXLhvzPh6F/QnsELQpWgI6zgK1319cLvemNyvL3T2qybaFnCxRLp8S3hv53u//8ZBQgkj+dLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758061197; c=relaxed/simple;
-	bh=m4JY9aGLYVoEfQTvIOCGSK9fG/1zq/kPVw6zLN783uQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MY+MJzCBVG7m73E74aNoVf+V9ZJFvjiCEQMsXlKR00uoc8i6gN3YOpveDMoIpoFNbV+ZKau4E+6sIiibPOPZZOcwIpuBvOPk0iCNufwBBLfLDvMnks6+ZaazlVVv2xB90j7mX/EWvRxXZD+eeBlEwwA5/oGXWpThCh5PIirzSsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=PbGhk40v; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6jJa1yb6mq/yCOx6rK0pnWqPtQg/Mqf+5GEFWxFsvHU=; b=PbGhk40vPRpR4Y38Yd5CXsgOaC
-	Ingfdvy+FZckMkZJRlESAaVZaRGIrREu/7sMA+TyDBh15nM2L34u/cbtJRtrKsDDSNIjquIkoxpUv
-	MAwpW5lTHDf4HwH70NGP/CObiaadLjKXVCKlgQ36ZJR3XLnaRBV9uXGndZAr/fGHV+OqeXPr0RAnf
-	XhQq1qeZDvgBh0Q/Dkq1ksASa5fjifQx1XexIUz2emDWMhUD6wx0jTKFjzyKjER/HJXCbJHZWVRcL
-	b53hkOrayZEQZ1nRdIvtToxDitAkeJKZPwaZRcJYtKYUQ4DgEKsKgFS2p4V4uI8rd1S91uudMm97j
-	uPvbti9A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33612)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uye1d-000000006Wl-3upM;
-	Tue, 16 Sep 2025 23:19:50 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uye1b-0000000082K-1ZIi;
-	Tue, 16 Sep 2025 23:19:47 +0100
-Date: Tue, 16 Sep 2025 23:19:47 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
-Cc: andrew@lunn.ch, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: qcom: qca808x: Add .get_rate_matching
- support
-Message-ID: <aMnigwTeMQc0GxaD@shell.armlinux.org.uk>
-References: <20250914-qca808x_rate_match-v1-1-0f9e6a331c3b@oss.qualcomm.com>
- <aMcFHGa1zNFyFUeh@shell.armlinux.org.uk>
- <aMfUiBe9gdEAuySZ@oss.qualcomm.com>
- <aMgCA13MhTnG80_V@shell.armlinux.org.uk>
- <aMgootkPQ/GcdiXX@oss.qualcomm.com>
- <aMgsiDS5tFeqJsKD@shell.armlinux.org.uk>
+	s=arc-20240116; t=1758061265; c=relaxed/simple;
+	bh=ZBIudhQVrYdfCcOUB9cO58N6p/Um/yARiCufpEOjarg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CgciuD38ff6B6Z7lZg+2lIocePvswZcEM/r7XI5aKAGuzilH5R3Sls5aROP24jfU4pE5AX7IIrOKlv3YJDjLZhqZj+mESh01mi3Vt1mC1SMcJJhY4ZQsWPJ7j6hVTs6VZxtcs2k7DQc8LfmrLAeAVOwxME9lV4lLfuw80F8hhYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-892df556b68so739112339f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:21:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758061262; x=1758666062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nuy4KewtRDjxjKMYRMIfw0ULUDnoQ15DxUc1MxtbTBc=;
+        b=J3v2KQHFREic0HkixLUt1zDIFzeK79JH+UGRrh1DylsR1mM5BObTSnzyeTzIDAq7p8
+         29MxovOIDr0a6MyPtHQX3qL9ZXJ3idm1Cj2vUNl5fKRO8SMEftnOVDCMGfx+R5iwXfWd
+         f6CJR3Wk8/QJQ05siCdek9Bscs9J4PIAEUFUaKEs1DvotfhsvBufOamxCg9n3D+veE7s
+         tcdaPw46gKiinRDxXwq8OLLbzrJqYFNJF/Nu10CAy5BbMHN0gB2pmxFIa+ThK8nNzFUz
+         2F6RnNMLOhtEyitbu1Vgkikt8bbnhGlAnFe5TUw+kPf3HjUN620AB4UbBDDlp7g7BNmM
+         NoVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVVrkEN44pVjYPCT2h7A64esRu0ssn0UdneLHBTlaYsL4bmknLTt56MDQ6KO983T1kT6DUcsbIuUHczhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUTq8XcSf/99HfZRPl/krCammHmdgl39fYN2oObOCn5GJMMQE6
+	SuXimXnx1VSN9Huh+XGQPwQ+U0rVhlogIw4hgf5m7CU+UD8GNa6KLzlcmeioVc/qFkvg+5iezZp
+	xKOaFGFGR/rKoWaX/hp+5IyRSMmM0zHtFSVrQnpJ6cKuWBbxLowhVXk3HzfA=
+X-Google-Smtp-Source: AGHT+IE/99AVUSN3fisE2w+ifdN8vFFpq0rqhLd/A5gHvS/pil1024rmFgAFl4MGzcHMxY0PaMaN5MvVtNGQFcQ4xsrcItXRSlgY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMgsiDS5tFeqJsKD@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-Received: by 2002:a05:6e02:1528:b0:3f6:6c03:18bc with SMTP id
+ e9e14a558f8ab-4209f2bca6emr192739385ab.9.1758061262563; Tue, 16 Sep 2025
+ 15:21:02 -0700 (PDT)
+Date: Tue, 16 Sep 2025 15:21:02 -0700
+In-Reply-To: <689cd5e4-1ebe-4b81-8036-68393d61f4ce@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c9e2ce.050a0220.3c6139.0e6b.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 15, 2025 at 04:11:04PM +0100, Russell King (Oracle) wrote:
-> On Mon, Sep 15, 2025 at 08:24:26PM +0530, Mohd Ayaan Anwar wrote:
-> > On Mon, Sep 15, 2025 at 01:09:39PM +0100, Russell King (Oracle) wrote:
-> > > This shows that the PHY supports SGMII (4) and 2500base-X (23). However,
-> > > as we only validate 2500base-X, this suggests stmmac doesn't support
-> > > switching between SGMII and 2500base-X.
-> > > 
-> > > What *exactly* is the setup with stmmac here? Do you have an external
-> > > PCS to support 2500base-X, or are you using the stmmac internal PCS?
-> > 
-> > Internal PCS. But it's not really pure 2500base-X...
-> > I found an older thread for this exact MAC core [0], and it looks like
-> > we have an overclocked SGMII, i.e., 2500base-X without in-band
-> > signalling.
-> > 
-> > Just wondering if registering a `.get_interfaces` callback in
-> > `dwmac-qcom-ethqos.c` and doing something like the following will be
-> > helpful?
-> > 
-> > case PHY_INTERFACE_MODE_2500BASEX:
-> > 	__set_bit(PHY_INTERFACE_MODE_2500BASEX, interfaces);
-> > 	fallthrough;
-> > case PHY_INTERFACE_MODE_SGMII:
-> > 	__set_bit(PHY_INTERFACE_MODE_SGMII, interfaces);
-> > 	break;
-> > ...
-> > 
-> > This should ensure that both SGMII and 2500base-X are validated,
-> > allowing switching between them.
-> 
-> So, this is something that has never worked with this hardware setup.
-> I don't think we should rush to make it work. The stmmac internal
-> PCS code is a mess, bypassing phylink. I had a patch series which
-> addressed this a while back but it went nowhere, but I guess this is
-> an opportunity to say "look, we need to get this sorted properly".
-> 
-> I suspect this isn't going to be simple - stmmac does _not_ use
-> phylink properly (I've been doing lots of cleanups to this driver
-> over the last year or so to try and make the code more
-> understandable so I can start addressing this deficiency) and
-> there's still lots of work to be done. The way the "platform glue"
-> drivers work is far from ideal, especially when it comes to
-> switching interfaces.
-> 
-> I'll try to post the stmmac PCS cleanup series in the coming few
-> days, and it would be useful if you could give it whatever
-> testing you can.
+Hello,
 
-... and it's been delayed because I've had to rework three of the
-patch series I recently posted.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I did get some time late last night to read through the documentation
-I have for one version of the dwmac which has optional PCS, and I'm
-coming to the conclusion that the whole mac_interface vs phy_interface
-thing is wrong in the driver.
+Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+Tested-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
 
-My comment update which added this a few years ago:
+Tested on:
 
-        /* MAC ----- optional PCS ----- SerDes ----- optional PHY ----- Media
-         *       ^                               ^
-         * mac_interface                   phy_interface
-         *
-         * mac_interface is the MAC-side interface, which may be the same
-         * as phy_interface if there is no intervening PCS. If there is a
-         * PCS, then mac_interface describes the interface mode between the
-         * MAC and PCS, and phy_interface describes the interface mode
-         * between the PCS and PHY.
-         */
+commit:         e48b344c RDMA/core: Fix WARNING in gid_table_release_one
+git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+console output: https://syzkaller.appspot.com/x/log.txt?x=16844534580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-appears to be incorrect. It was based on just phylink knowledge and a
-reasonable guess about what was going on with this driver. It seems
-no one had any better ideas on exactly what mac_interface was trying
-to describe.
-
-Having looked at the information I now have, and referred back to the
-psat code, it appears to me that what is actually going on here is
-this:
-
-	MAC --- optional integrated PCS --- SerDes --- world (media or PHY)
-                                         ^          ^
-                                 mac_interface  phy_interface
-				        TBI      1000base-X
-
-It seems that TBI is used on the PCS output when talking to a SerDes
-for 1000BASE-X or SGMII. RTBI is used with a PHY that can talk RTBI.
-
-Considering just 2.5G and below, it seems to me that mac_interface
-can be determined from phy_interface:
-
-phy_interface		mac_interface
-SGMII			TBI
-1000BASE-X		TBI
-2500BASE-X		TBI
-RTBI			RTBI
-
-These are the "official" modes. There is also a seperate block that
-is used for SMII and RGMII which the code treats as a PCS (partly
-because it uses the same registers) so I'd throw into this:
-
-phy_interface		mac_interface
-SMII			SMII
-RGMII*			RGMII*
-
-For every other phy_interface <= 2.5G, mac_interface is basically
-not applicable, and we should be referring to phy_interface everywhere.
-
-In fact, I can't see that mac_interface actually matters for most of
-the driver. The only case I can see it matters is when the core
-supports multiple interfaces, and needs to be configured appropriately
-(which needs an entire core-wide reset if it changes.)
-
-So, I'm going to propose at the very least selecting whether the driver
-uses the PCS not based on mac_interface as the code currently does, but
-on phy_interface (actually the interface passed by phylink.) That will
-make phylink happier when stmmac is converted to phylink_pcs.
-
-This means I need to spend some time reworking my series... and yay,
-more patches to add to my already massive stack of stmmac patches. :/
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
