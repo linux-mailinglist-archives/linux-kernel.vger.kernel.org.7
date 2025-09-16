@@ -1,167 +1,176 @@
-Return-Path: <linux-kernel+bounces-819592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B863B5A37F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:56:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB50B5A381
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E5A16C716
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51C81BC3B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C44A284663;
-	Tue, 16 Sep 2025 20:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AB5285069;
+	Tue, 16 Sep 2025 20:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yOLgRMgn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MFtM5T/Y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Njz6mWDc"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D9431BC89;
-	Tue, 16 Sep 2025 20:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DEF31BC89;
+	Tue, 16 Sep 2025 20:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056201; cv=none; b=OpxBlBkM39J1Qm+RR3agoh/g5P6qOuer8XnfvfDR1sxNI8Ym8fHzFXJFZVw6HyH8EMJivuqoiHfthPalkfq9FQW/z9rM/c/zwElbA0HkAyxYAMtC1VS4yn+nC3s8RK7BVKla13b5loELOQYc9pKr2zMC3LLziiDn/z8jBrgWKSw=
+	t=1758056258; cv=none; b=AH2mWy37nV73aEJD7nvVfqiVwZVK+OBu+hX+GKfKSvMUSUwRB1RDPG7P+bOGRHlgBMn672HsSSgEJopF40x6WAg7jkYVlzNT31rYpFjLW5bOG0CNgTOccOEeMCVSdSpnRU94872nAaoCSdfAi++RF53TcSm/Ez7A9cXfhskuE18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056201; c=relaxed/simple;
-	bh=koQDNjlXuAxFNxiPa2xHUdVqSkQnErvMuXgbqWZmMN8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mR1TI6yjzyW6Y+1NvwK6wakVh0ESx3lAnEXGvSjP9nlnjBz92GYDW3quWCHtTfmaFiDBLnlZihf5SPUrde+pLvuX8F9GtKY94GwY6ivTPyjUDuEhPwKnNAj+GKHZlFIxNWrv/kcD48GfGqZFSBhXI3ZY+AZa5s1eGKD/8AksNaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yOLgRMgn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MFtM5T/Y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758056198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3xUyqhsEiyiUoxhJieOdMTcH66oxWdRq1GQhqVdXzx4=;
-	b=yOLgRMgnYE69+7MlYv3qCTagaN6kVQQCjqUEw0JlvAlnaNwzk/bGmJ3rTHtN7JjeISB+jL
-	mv+meKS0TlnU5SVG/SgMlwbTkAm359ew/MyEUJ5/eC87h1UxbKKNDPr9JIXMLhhGxP37kJ
-	Z9j2QuWaWNM10eyAyULEp5yuzjc5SxupVQHIqzbyAlWA/hDW6VqMGzo+yw6QBYszEo15+8
-	XYFDG6ypTWzqzTC0tu8oFlgFAj1qP0c++HrNFH9jDrEp/AvK1Wmea2CJ5+jW0W74Z2eg8L
-	/Jp6cte4T9TsFdscMLpIwBTThoJjhc02ubExYMXQafm24zgdgYPwF+Ih4LRBfw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758056198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3xUyqhsEiyiUoxhJieOdMTcH66oxWdRq1GQhqVdXzx4=;
-	b=MFtM5T/YeW0GGddiSAFphbAmE/KU1rx1JNt3/rcSiWFowx9AM/VhLqeqVeXdFSY84jYUx4
-	QiFRM/gYAMBeeMDw==
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
- kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
- <andrealmeid@igalia.com>, x86@kernel.org, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: [patch V2a 2/6] kbuild: Disable CC_HAS_ASM_GOTO_OUTPUT on clang <
- version 17
-In-Reply-To: <87ikhi9lhg.ffs@tglx>
-References: <20250916163004.674341701@linutronix.de>
- <20250916163252.100835216@linutronix.de> <20250916184440.GA1245207@ax162>
- <87ikhi9lhg.ffs@tglx>
-Date: Tue, 16 Sep 2025 22:56:36 +0200
-Message-ID: <87frcm9kvv.ffs@tglx>
+	s=arc-20240116; t=1758056258; c=relaxed/simple;
+	bh=GNntTJeDbkB1LJQxeNsIY9NZ3Bms5eH7F2iMfEDMsbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E/cmRtTJMswLAlKOiULFt5ZBK+G49GJQfi7+P7QDFo/djZuCc3jGB6pg6aa95XyR5302JudS1LAQcAmaAvk28BC9wA9FhYfBa95tcxq0BA2gECKiBGxCJOjdoB8RUspDA/Ija5Ni2jz7MTysnSbVFVwK6WjFrqp+wDOrZxAwiuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Njz6mWDc; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58GKvVB31356259;
+	Tue, 16 Sep 2025 15:57:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758056251;
+	bh=JOKZIPu742YrIyVjpGt0KD1fljibV+3sCbTDvXdQGkM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Njz6mWDcYe/sTNK1WlTFwR2LifObNgsCY4F2iqk5jINXfF/das5n51DgGBeOg37Cb
+	 sNkerl52NUabLt+k3ncwPnNc23FEMW4j5dq2WLnt+Hl2WMMAF+Y3Ik/bcvmhwwu3uT
+	 kmmjP2Rtmfd6GNq880k2EnrQEkbXpS4Q9jKSBWRE=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58GKvVoZ1803070
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 16 Sep 2025 15:57:31 -0500
+Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 16
+ Sep 2025 15:57:31 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 16 Sep 2025 15:57:31 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58GKvVKc1903904;
+	Tue, 16 Sep 2025 15:57:31 -0500
+Message-ID: <7aafd8bd-4710-45e8-ad54-4d8b44de2b25@ti.com>
+Date: Tue, 16 Sep 2025 15:57:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] dt-bindings: nvmem: Introduce nvmem efuse binding for
+ TI K3 SoCs
+To: Andrew Davis <afd@ti.com>, Srinivas Kandagatla <srini@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bryan
+ Brattlof <bb@ti.com>
+References: <20250916154809.545283-1-jm@ti.com>
+ <5b793fa1-e075-4a14-a28d-7aaf0d5b1619@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <5b793fa1-e075-4a14-a28d-7aaf0d5b1619@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-clang < 17 fails to use scope local labels with CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y:
+Hi Andrew,
 
-     {
-     	__label__ local_lbl;
-	...
-	unsafe_get_user(uval, uaddr, local_lbl);
-	...
-	return 0;
-	local_lbl:
-		return -EFAULT;
-     }
+On 9/16/25 11:31 AM, Andrew Davis wrote:
+> On 9/16/25 10:48 AM, Judith Mendez wrote:
+>> On K3 SoCs there are efuse registers scattered across the memory
+>> map. In order to reference these efuse registers like gp-sw which
+>> may store SW REV information or other general purpose information
+>> for drivers to consume, treat them appropriately as efuse devices
+>> with nvmem framework.
+>>
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>> This patch is not complete and is sent as an RFC to get some initial
+>> thoughts on this implementation to solve [0].
+>>
+>> [0] https://lore.kernel.org/linux- 
+>> mmc/736f09e0-075a-48e0-9b32-6b8805a7ee2a@kernel.org
+>> ---
+>>   .../devicetree/bindings/nvmem/ti,efuses.yaml  | 36 +++++++++++++++++++
+>>   1 file changed, 36 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/nvmem/ 
+>> ti,efuses.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml b/ 
+>> Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
+>> new file mode 100644
+>> index 0000000000000..fffca65cdbfe0
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
+>> @@ -0,0 +1,36 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/nvmem/ti,efuses.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: TI SoC eFuse-based NVMEM
+>> +
+>> +maintainers:
+>> +  - Judith Mendez <jm@ti.com>
+>> +
+>> +allOf:
+>> +  - $ref: nvmem.yaml#
+>> +  - $ref: nvmem-deprecated-cells.yaml#
+> 
+> As the name suggests, this old fix-layout is deprecated, you
+> should look at using the newer NVMEM layouts style for this node.
 
-when two such scopes exist in the same function:
+Fair point, this can be fixed.
 
-  error: cannot jump from this asm goto statement to one of its possible targets
+> 
+>> +
+>> +properties:
+>> +  compatible:
+>> +    - const: ti,am62p-efuse
+> 
+> You mention in the commit message, there are a couple efuse regions
+> in the AM62P SoC, so does this apply generally to all of them, or
+> should you have this be specific to the "gp-sw" efuse region you
+> are describing here?
 
-There are other failure scenarios. Shuffling code around slightly makes it
-worse and fail even with one instance.
+I think it is better if this can be more generic, so not only should
+it apply to gp-sw, gp-sw is only one example register we could treat
+as efuse register.
 
-That issue prevents using local labels for a cleanup based user access
-mechanism.
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    efuse@43000230 {
+>> +        compatible = "ti,am62p-efuse";
+>> +        reg = <0x43000230 0x4>;
+> 
+> The efuse region at 0x43000230 is 96bits, so this should be 0xc not 0x4 
+> size.
 
-After failed attempts to provide a simple enough test case for the 'depends
-on' test in Kconfig, the initial cure was to mark ASM goto broken on clang
-versions < 17 to get this road block out of the way.
+oop, this will be fixed, thanks.
 
-But Nathan pointed out that this is a known clang issue and indeed affects
-clang < version 17 in combination with cleanup(). It's not even required to
-use local labels for that.
+~ Judith
 
-The clang issue tracker has a small enough test case, which can be used as
-a test in the 'depends on' section of CC_HAS_ASM_GOTO_OUTPUT:
-
-void bar(void **);
-void* baz();
-
-int  foo (void) {
-    {
-	    asm goto("jmp %l0"::::l0);
-	    return 0;
-l0:
-	    return 1;
-    }
-    void *x __attribute__((cleanup(bar))) = baz();
-    {
-	    asm goto("jmp %l0"::::l1);
-	    return 42;
-l1:
-	    return 0xff;
-    }
-}
-
-Add another dependency to config CC_HAS_ASM_GOTO_OUTPUT for it and use the
-clang issue tracker test case for detection by condensing it to obfuscated
-C-code contest format. This reliably catches the problem on clang < 17 and
-did not show any issues on the non known to be broken GCC versions.
-
-That test might be sufficient to catch all issues and therefore could
-replace the existing test, but keeping that around does no harm either.
-
-Thanks to Nathan for pointing to the relevant clang issue!
-
-Suggested-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Link: https://github.com/ClangBuiltLinux/linux/issues/1886
-Link: https://github.com/llvm/llvm-project/commit/f023f5cdb2e6c19026f04a15b5a935c041835d14
----
-V2a: Use the reproducer from llvm
-V2: New patch
----
- init/Kconfig |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -99,7 +99,10 @@ config GCC_ASM_GOTO_OUTPUT_BROKEN
- config CC_HAS_ASM_GOTO_OUTPUT
- 	def_bool y
- 	depends on !GCC_ASM_GOTO_OUTPUT_BROKEN
-+	# Find basic issues
- 	depends on $(success,echo 'int foo(int x) { asm goto ("": "=r"(x) ::: bar); return x; bar: return 0; }' | $(CC) -x c - -c -o /dev/null)
-+	# Detect buggy clang, fixed in clang-17
-+	depends on $(success,echo 'void b(void **);void* c();int f(void){{asm goto("jmp %l0"::::l0);return 0;l0:return 1;}void *x __attribute__((cleanup(b))) = c();{asm goto("jmp %l0"::::l1);return 2;l1:return 1;}}' | $(CC) -x c - -c -o /dev/null)
- 
- config CC_HAS_ASM_GOTO_TIED_OUTPUT
- 	depends on CC_HAS_ASM_GOTO_OUTPUT
 
