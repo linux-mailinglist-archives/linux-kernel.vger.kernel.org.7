@@ -1,156 +1,108 @@
-Return-Path: <linux-kernel+bounces-818011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B933B58B92
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:56:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0450B58B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6903D3BC979
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:55:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B3DE7AE9CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE52234973;
-	Tue, 16 Sep 2025 01:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ADD22422B;
+	Tue, 16 Sep 2025 01:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7jrtFBe"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heyquark.com header.i=@heyquark.com header.b="Op0/4x4X"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25917221DB3
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E70F1A295
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757987741; cv=none; b=L5AzdJ5a43wsynuYN0LpzfsnJNe3LT/N9d5RbeDMreWqtje19dMEL+uW3TpCM6Irdl2vwjZXqv9t7/T5wb8VhpA6w3J99jcX3/2492ZvvNKoUO+tjCyLYq3NmzVyMqVlP3rK+my6x+3TJ8YGbN0x4w9deCSJS1vKkSbVF2jn/O4=
+	t=1757987838; cv=none; b=KG6Ydi8kR8Sk6h6nzp55vr9XvpmV8thkUbdE/381y4djTrMNsKq94nZf14Cq7MqU04+c7MxyPiEtWKDgggJENdeKvOARrxnyJensiwguJeOteOFTOHayIrjj5Hqa6QUFeX3/jycSXe8aYJOK9xkmb2o+x4aNmjztaM/W3PAD5pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757987741; c=relaxed/simple;
-	bh=jep2u5VNTk538PUR4KP/b48BjYybUEbcPCBXSSZj1Jc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F0ly1KPgSuDkY1EwhB0jU7hiGsC6xspckYp2JsGo/hQUJ6c2PV0YTEdvFEO37snap3W4s4LKiM6B6DdGf7VGVrOyz/eyW7x+shXGtCVtzwm6cBiWTV1yLUJw3RWSKQ5QsTnhimPwQ6kf9zC3Y+UulX7EAdT2iWVhBqgcOAT1wM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7jrtFBe; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b07ba1c3df4so732100566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757987737; x=1758592537; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3JiJuCf5fDbcsVFqie8KviQvSHh9fw4OMPm4D25E3/I=;
-        b=L7jrtFBeKsXLrJDFDYYmH2CyVHVGaP7NniIcPoVRTVVLg7SFE9957XIvhw3x8MgICw
-         CDpPEd/EvkXVp9dPXf1Gt53xcIN4DTYeAO3uejVWSujOZM9uyd36wYS6GMlsLZdT6UnW
-         7HYKpyB74OKpRCums2wzPDgp4aCBWP+hhOmTDPahklmaFkFJaDxaUqwpTMnEWIL4wYhJ
-         k8ZieHGQYUcarek1roI9rrQRmip+Wz/0Zk9V5+eJJVC+HOOwSnB/dSpO77nC8RzFxzfd
-         F72+Hx13bHOcSLWvv/YOj3CYWyDS3b7dhzjLh+XgHPDoLwdjeuc9OBclZHONhptg+yB/
-         j4nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757987737; x=1758592537;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3JiJuCf5fDbcsVFqie8KviQvSHh9fw4OMPm4D25E3/I=;
-        b=ZaJZtRV7EsZeXh/yMqc3tMwYX2A4ml7PDTPFylltpXAYU9YTLxgvDymUo+dxiAnvqD
-         Tm0b3LUAxxLqwasgM7kuyNdrIpm9Ow16q4xCP9BoFqSUvGYn9RSCxWjrK8Jn4bDlsjIx
-         0gh8ttPEoHS12XL5exvy7QY5df1UHYKe6+1nXoioBvNAztvDbsTQvRxYyRplYwXe3n2T
-         bYuGpEKFRb4eOI1Lygc8SZqUEQxUmTy1YOX15SSr1Wm3R49PH8hOYGfcxIegd/XK49T5
-         RkPHTpjGtfMNUY6rcMXpr8J+4GknnC5sUpLnoqH+hMoXESYtO3FtcG30aSqg42yEmOzN
-         wNtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcOnZpo2zsiU8n0+T7hW2XCaJizYSstd0+mi7C23P7Fy5/JBpkgcq3AWUgdsVsrQK0iALFMrqd0oV+nck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylTdb8CCYHLZtEtX+MhgA67CB2CkqFlSeg8F6SpZQLginmBDSo
-	0/mzlPK/btz8OYYCb83zU7T03oYExJSe8emeAww40D67mjSNCPg1ukHtc/Fv7TbyZmAEOfNir++
-	otMIJ+HdR8xgYB5NwSrSsLFgIt4L5e/E=
-X-Gm-Gg: ASbGncsYloUT5WA+UorQ26xL5ZOzpADxpqbMDbrWhdYtsLjUrROU+A3D/OVtgHOHfsd
-	fuddLVD+mnphiKlN33IzRVPL0GgBNcD+sn/MLtepi87Mr3dzCUPzXzy14p8V6dW/4IM1gng3LyB
-	zxcril9mJTwzG5x6YWRcmBGKameRhOri/fCTXqVt0N/d1wpPkD3ZU1UNeN8PnwBdkH6TVrWQnIQ
-	jJMgmbO
-X-Google-Smtp-Source: AGHT+IHJugXW7PgqM4C561Es6pZ+yMEeghRxxr249HgOnA0uY3PnwVnYPJp7RZWq/M8Ro+g8NAKFEnS73k9uc/Q2N9g=
-X-Received: by 2002:a17:907:969e:b0:b04:6c19:ed8d with SMTP id
- a640c23a62f3a-b07c35bdfa1mr1378153066b.26.1757987737286; Mon, 15 Sep 2025
- 18:55:37 -0700 (PDT)
+	s=arc-20240116; t=1757987838; c=relaxed/simple;
+	bh=FgxDkQGwEwVbfgZHHscPbiP9oLrfgEf7RXxKz/Rv96A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ssV0Yy53fcBU66avNmIMTjHeDKtjy7c3VzGyZqWQ7nnH2BGK24g3wCleRXrtyVpsYqOuXcgZCfoX2PQsSyVkDZKbzlRmnjCjwCSa6q2DSMQbLjQ2PElbsod1aCZbgf25I93YKzZEVk1ZlJ7zcbt8WdjAtZixij/BLaetmAQOnOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=heyquark.com; spf=pass smtp.mailfrom=heyquark.com; dkim=pass (2048-bit key) header.d=heyquark.com header.i=@heyquark.com header.b=Op0/4x4X; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=heyquark.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heyquark.com
+Message-ID: <11e667d6-2210-47f0-a9ec-a134a60e138c@heyquark.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heyquark.com;
+	s=key1; t=1757987830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vre4VQdls+C6Fg3+3Ay6LAhZabA5fF49M2ujQWAzVo0=;
+	b=Op0/4x4XJ5x0+J+qr5sJ60cG5jP5EnaIQDUlXmonQR64r8S5O5rmQQ1lj2Zw4CPEUVmg0q
+	g6Vl5Sr8zZ+We27APTCUqWuUvu6z7UGgQ1ZK0y2hDgz5DCgGAOFmZkxAkM9Fo/6+/DzxJc
+	ImNn2O1iuk3qg2u69HVTKjaKqPdR3V/6ZnI/9qp2L4dDg/mXdfYVMGsvfcs/hbTFxtn2H6
+	WbsgllneruKh9bNDGUfuLSeja3E6Zuk2JLcJd9jPVz8PwagQKAG0SxMh+BhZHz7vnNDbgl
+	9KHx87PJl/A/NAniPpiYLoggz0E4uvxRVNJEz27IZuh4qnMPi0GcfFcxxvPJ0A==
+Date: Tue, 16 Sep 2025 11:57:00 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915134729.1801557-1-dolinux.peng@gmail.com> <20250915144052.VHYlgilw@linutronix.de>
-In-Reply-To: <20250915144052.VHYlgilw@linutronix.de>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Tue, 16 Sep 2025 09:55:25 +0800
-X-Gm-Features: AS18NWAOIt4gv03twwvlmnUbxI3Di3y_xFKnQycCNlJ75R-ks7_KB2ty8Keq5J8
-Message-ID: <CAErzpmsW7=3RmLZxByxVD+vD=FV0YDF6POHVZZce784r7jMQyg@mail.gmail.com>
-Subject: Re: [PATCH v2] rcu: Remove redundant rcu_read_lock/unlock() in
- spin_lock critical sections
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com, 
-	ap420073@gmail.com, jv@jvosburgh.net, freude@linux.ibm.com, bcrl@kvack.org, 
-	trondmy@kernel.org, longman@redhat.com, kees@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	linux-nfs@vger.kernel.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, linux-acpi@vger.kernel.org, 
-	linux-s390@vger.kernel.org, cgroups@vger.kernel.org, 
-	Hillf Danton <hdanton@sina.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: 32-bit HIGHMEM and game console downstreams
+To: Arnd Bergmann <arnd@arndb.de>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ officialTechflashYT@gmail.com, "A. Wilcox" <AWilcox@wilcox-tech.com>,
+ Michael Ellerman <mpe@ellerman.id.au>
+References: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
+ <432e049f-886d-4734-ad59-52569a796046@app.fastmail.com>
+Content-Language: en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ash Logan <ash@heyquark.com>
+In-Reply-To: <432e049f-886d-4734-ad59-52569a796046@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 15, 2025 at 10:40=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2025-09-15 21:47:29 [+0800], pengdonglin wrote:
-> > From: pengdonglin <pengdonglin@xiaomi.com>
-> >
-> > Per Documentation/RCU/rcu_dereference.rst [1], since Linux 4.20's RCU
-> > consolidation [2][3], RCU read-side critical sections include:
-> >   - Explicit rcu_read_lock()
-> >   - BH/interrupt/preemption-disabling regions
-> >   - Spinlock critical sections (including CONFIG_PREEMPT_RT kernels [4]=
-)
-> >
-> > Thus, explicit rcu_read_lock()/unlock() calls within spin_lock*() regio=
-ns are redundant.
-> > This patch removes them, simplifying locking semantics while preserving=
- RCU protection.
-> >
-> > [1] https://elixir.bootlin.com/linux/v6.17-rc5/source/Documentation/RCU=
-/rcu_dereference.rst#L407
-> > [2] https://lore.kernel.org/lkml/20180829222021.GA29944@linux.vnet.ibm.=
-com/
-> > [3] https://lwn.net/Articles/777036/
-> > [4] https://lore.kernel.org/lkml/6435833a-bdcb-4114-b29d-28b7f436d47d@p=
-aulmck-laptop/
->
-> What about something like this:
->
->   Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side
->   function definitions") there is no difference between rcu_read_lock(),
->   rcu_read_lock_bh() and rcu_read_lock_sched() in terms of RCU read
->   section and the relevant grace period. That means that spin_lock(),
->   which implies rcu_read_lock_sched(), also implies rcu_read_lock().
->
->   There is no need no explicitly start a RCU read section if one has
->   already been started implicitly by spin_lock().
->
->   Simplify the code and remove the inner rcu_read_lock() invocation.
->
->
-> The description above should make it clear what:
-> - the intention is
-> - the proposed solution to it and why it is correct.
+On 13/9/25 23:52, Arnd Bergmann wrote:
 
-Thanks, that's much clearer. I'll use this commit message in v3.
+Hi Arnd! Thanks for your reply.
 
->
-> You can't send a patch like this. You need to split it at the very least
-> by subsystem. The networking bits need to follow to follow for instance
->    Documentation/process/maintainer-netdev.rst
+> Like most other machines, this one is probably fine with a combination
+> of a custom LOWMEM_SIZE setting and using zram-highmem, even if we
+> end up removing support for highmem page cache.
 
-Thanks, I will split this into a series for v3.
+Good shout - I'm now testing a 2G/2G split which allows for 1536MiB 
+lowmem. I know that's a somewhat aggressive setting for userspace, so 
+we'll see if anything breaks. I read Rasbian shipped similar kernels and 
+had issues with Wine, though that's not a common use case on PowerPC ^^
 
->
-> and so on.
->
-> Sebastian
+> The smaller devices are probable getting problematic sooner, 96MB
+> in the Wii is already really tight and this only gets worse over
+> time.
+
+The maintainer of that downstream claims to be able to boot modern 
+text-mode distros on the GameCube' 24MB, which I find really impressive!
+
+> Just to be clear: there is no general 32-bit deprecation going on. When
+> I talked about phasing out 32-bit platforms over time, that is purely
+> going to be those that have no users left, or the few ones that are
+> causing more work than they are worth. E.g. The ppc405 ones got
+> removed recently (after many years of discussion) because they were
+> making ppc440 maintenance harder and had no known users.
+> 
+> Highmem does get in the way, but unless more -mm folks make a strong
+> argument in favor of removing it all, it's more likely that we'll
+> go with Willy's suggestion of keeping highmem on page cache (anon
+> and file mappings) than just keeling zram, and even that would
+> still work.
+
+That's good to hear. I would like to have the page cache, though I'm 
+still going to try and maximise lowmem as well.
+
+Thanks,
+Ash
 
