@@ -1,171 +1,533 @@
-Return-Path: <linux-kernel+bounces-818191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B059B58E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:46:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32AF3B58E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05BAD3BD74B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6441BC2F69
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC9D2BE051;
-	Tue, 16 Sep 2025 05:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9376328DB52;
+	Tue, 16 Sep 2025 05:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bs8qj7Q+"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+CNLsA6"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95AA25332E
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5744223DF6
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758001592; cv=none; b=CJKr9SQYGnLNZpJEdH/LmPNnNFP5dUZO2Hr7Kngeg12qZzCR5C/EZ0ntWU8wRdDS6MqoCbORdIexaqKDUHAFSsBB4evbWIqGi0tqeYRx+GNCMhMsXNd6hpxbweAlZbzvcWUj0YgKajJM7UvwxVbejX3aDB7sRrkemkCnWz/5JN8=
+	t=1758001659; cv=none; b=JeQumck0XYr8yFZg0HlJvXLrVJmKoooYgtND9QvR8uk6ZCTjLbqPlk0o0+yGpEZWlCr6urWuwgYigtGZwd1Aq531P9z2BuzIeDMfHN7LTO+/o1xg8+iXjKUlrKjWVnj+8hFx4MrM3+NoLzrAderea/EVUKQ61SWLljRGfvyBPNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758001592; c=relaxed/simple;
-	bh=FywVTW+NkJBScWUwmd15Woqfq8DE1jZ960vJHnXScr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ilQh+twk+3VN50R5fGzDDdM0A4lfBVf7wXOrQ2L/7RLHefFPDlQiK+FF2GCpxHdcLK7gwFinTkvnLIM7ABvbQRipwsv+G9YgTs8vWC9eEFnLVM4RyNYZ/ziEoJUUk+S3Gs2wD7A0/oBZ7Omp2sv+/feP8qJb7g+AxFKi7ZH92v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bs8qj7Q+; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45de56a042dso32746635e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:46:29 -0700 (PDT)
+	s=arc-20240116; t=1758001659; c=relaxed/simple;
+	bh=+lsaphoMQuQ3s01hYSJIzZ3cMHaDBtWRUADgh8fqpKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JGoZ8RKVpYasDbjXMz7rD6Tr0vPi2RHlQZUYL9yD6uhEqfKtaSLADvxUDkpeOjvdDxo76TMhiYE5K7ysNnnIX0bsBH0PXJQoivM0Eoc9Br8crKUpOS/NT762bUJ2xdoxdjET8r+9oC/4EeU32aG2WeaRu9NwtlWhXe1j+1LXHWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+CNLsA6; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-251fc032d1fso56065325ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:47:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758001588; x=1758606388; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRpDCRaw7BEKyikqEm/KEgdpxjmtpKt/Hv/Bxs3qVwM=;
-        b=Bs8qj7Q+iivL2e2nLY45i1BDffFVMDFPVBZTMUk/2MrskVSIoi6rq+FCu83F1Mfqb6
-         SyCC6paARPt9rNrfrH1bg9batBbvwPrm6q+AAEOSbqhVa3ra5ihtrWTKKr8Yk+2xF6ML
-         inxGlzrrVc6fwNUdgo4N9TsaatkwUqsx0TnuBzsnp94B0qo8PNuukGB4OHyXRghToLeW
-         Or+3GeJWUwCbsuSf2oqC4WiJTjQWB/6Ud6lG5D+OJ4lIl6iRA1j2lzxSfFhqeNw+LLU8
-         otC2uywdE4wW32bPR9/FZy3tW6SJlIW91enMgCex5VTfsBjr0I6iW84gUj57QeXEo8HW
-         gV1A==
+        d=gmail.com; s=20230601; t=1758001657; x=1758606457; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3z1kIls+XLkqZ+rCu1kC1Wj9NHeh9KxgN0P8MgwWRLE=;
+        b=T+CNLsA6IPfSd6D26BSu2ZeXSmp03o4mSi7chxuzdbURv5Hm7hWaQF3gkApwHcMntr
+         b8pjB2bk/gV/ugFjJrgv9lpFE8J35HxVeowjARSL5U4K5qF8OpGQ81F4wMpyuw5YrvSi
+         D8PxzRDu8LTF+r1jwFJjaz7Xa0NU/h1av+H0hqgxBk1YhoIJ5MSOIjpSOvX3S66lX2Jh
+         TLaS238zogb4mQcXhrOeiN5Pae2Dj7OGpImQt2KXbEPQciI1MouZ125pFjtK2Wo2KxDh
+         RJ8qCFQ+3rT5+CCGI2jNja5zfXxUs9pOIJPCvpDNpKzVyDbbAlW3XbG/mbIXEbF1WOXd
+         5kcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758001588; x=1758606388;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hRpDCRaw7BEKyikqEm/KEgdpxjmtpKt/Hv/Bxs3qVwM=;
-        b=Y4Tu/BRNM40829iQOwVdGNYmgLb9ms2jOTs/ty4FPPrZ3eFXpJthjQ2Ii9Y0HAxlVq
-         uwtHkhg6LcPQ2hHE5jRY6anFKURr1igufd32JUxUABf5ivz0fhTko7MS/BT64M3jJHiM
-         nvpmQD0FRtKyHi80gRkLGov+gESvlY9VFml1vSMrnWnJKBLcshDKIN5j4nkWBixbxJHK
-         Jl5NwZPSpqFVg+PLJfwgHDVZkjF9qjNPAgMe5RmtuLiCUHo+kagDKEMl40gkOswzMxv9
-         IOf9IGKOi+ARjPpwJtpMcTBDJpN6M9+n7A1ClEH4iNFIYzw63t4g3lsBw6w9CZpqDUhv
-         6hjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFInIAm0g1NGroMD3HZvX3NSXxKsUb6ip2L7udkgG99VDyhB6za3iB3K3l6t6oiisC19Wzb0C4k9E17w8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQQ85uBggQibFf9/edFc2lvWScP93ls4j6hgiGibeMViSfl4+j
-	COfBCeEs0W5BTy6+qgdYjk0NCucSwiaLmznwJ1cIyCHr1sNtbylHfp8TI0ex8M+8DQo=
-X-Gm-Gg: ASbGncvzIjyWL9YpWozVYukUmk4Z1X0sxCdAWUrYrYMhfx/djIZF4+ix6FTER3kjy9Q
-	BVOCLEugHTg9NCD6qrII0Q1EzEYEcXDd63/fLQD6cvzubeZ8mmZkWsEYThH0aF/2siAXbSLGu5O
-	fp0R9Nr7eq087MxlhUCs7d+I6z5pXhz3BQMlboBEXlPhA5gFUnw1R0/o35orRQ/D5PIcXj+z7Yr
-	bO+zOolhrwnOEPnQA1bv0sxPgqk3qfxqeBg+5/6bDStIEdnW8Xawhg7GyCtaTc7/djrwoegsfDh
-	uHPjoUOtGvDrkMsZ5F4G4vNyZKQBK9FR0Gn1kz3y3NQAPIq5VQvjomjXQ2BdOADctMeaglNbAxM
-	wNZwn24N5kuog67bPaDcK6HQXxf5IKHijYCPWqg==
-X-Google-Smtp-Source: AGHT+IEJMjy+qyIk5xqFocYpNMUmqI1onZLmshq/sOyCOw+IB161XWLjgacwRGHQYXdmBTmZ8cwD6Q==
-X-Received: by 2002:a05:600c:58d8:b0:45b:868e:7f7f with SMTP id 5b1f17b1804b1-45f211f856fmr120265875e9.17.1758001588267;
-        Mon, 15 Sep 2025 22:46:28 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e95b111b68sm10476481f8f.32.2025.09.15.22.46.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 22:46:27 -0700 (PDT)
-Date: Tue, 16 Sep 2025 08:46:23 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, John Ripple <john.ripple@keysight.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-	andrzej.hajda@intel.com, blake.vermeer@keysight.com,
-	dianders@chromium.org, dri-devel@lists.freedesktop.org,
-	jernej.skrabec@gmail.com, jonas@kwiboo.se,
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-	matt_laubhan@keysight.com, mripard@kernel.org,
-	neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
-	tzimmermann@suse.de
-Subject: Re: [PATCH V3] drm/bridge: ti-sn65dsi86: Add support for DisplayPort
- mode with HPD
-Message-ID: <202509161344.FPfsjq01-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1758001657; x=1758606457;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3z1kIls+XLkqZ+rCu1kC1Wj9NHeh9KxgN0P8MgwWRLE=;
+        b=K4RLxqvsf19DifGc7iOlhO7AjJOIGRCQLSuh5o6c9L8halmqMcop31m6QcMtCAYmS6
+         iKmRjXKiPHmZLEHgdF58P8Iu2UErgpgOgA9h8HiA3sEIDW1birZFCUmzqqeexTN/s+6Y
+         l90Mxx/OjlqO6Dh9UYP3UxxuM3jse/AHBdTshd1gDuH27uf1vlfzHwvE5+01Qz06Lve+
+         F2vyNuKPSNOGZCQ6wOQjPQHJlp0i68sKIJ3n+uK1VrWTWZsv0pjUz5I1ENxst6qlA8VL
+         tXnPzyEJRu5zinSHsObXK5N6xpqA1a8FjxIq0nkjQ/OqYDI27tyyCehuqo1ujiOvzUqE
+         at5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX505gcYnwRihKxgoDZVaiqj4m7EPVLoW21xL3zMp76s4oeUPgm+NJmU3uYgEcRJxgGbAWvguCtHJ2foJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6zXWxE7GkazfoJJfO6/rKY9BDtGHJV/ytDhLoNUBfi3vWctSz
+	hg5CsH4jbDjpH8J5w7I/wB7tlBg6zNyLMgh1SUm25goPWHLGnhJ2CZu9
+X-Gm-Gg: ASbGncvxYKYfQcI1VfTBJmXvJ+XFtHP0hKFiUpakYd5C8L5iRWSJ5gSuopOuX9by7bx
+	orVsJkf4884C1a+uTePa0F+RqMIJlz8HIHIO5F7gr+dxWQF+qLe9vphqeGJOM+m+NEUKgplo0PQ
+	nK1WBvSWUgOpo2fNohjQLbP1dk4ZvMYAuVZzyqt8n91tRmxfnzaJm8nm8JxiyO7TxTjGjX/0SHs
+	IXBB51b2aVUgEHi3foRva877GH3d2fhOF9jxc7e5nIPX4rdeoUiFdK91gJf6uW6AGv9LwpDv0bd
+	jIx0ch0ouuI4TPqwdysqZWb0wpCBJ3BaY4x0FX3lAORb8g/MoWd2Aqyj2Jtu6pz+7tRwCLq8LiX
+	LExjtYSvDcnLQ+0Q9OySF04D1L7XkdQ1/
+X-Google-Smtp-Source: AGHT+IGxSPiGM/tTPVWQyrm1/2BC8WaFamiHb8GxojcLncFyrSY4eb0VUFQkEooDpjy31OtboyJztA==
+X-Received: by 2002:a17:903:2ecc:b0:25c:e895:6a75 with SMTP id d9443c01a7336-25d260792damr180404015ad.28.1758001656782;
+        Mon, 15 Sep 2025 22:47:36 -0700 (PDT)
+Received: from [172.17.44.75] ([49.249.92.90])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25d9c7e5b16sm118147875ad.87.2025.09.15.22.47.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 22:47:36 -0700 (PDT)
+Message-ID: <98a92bff-db74-4b14-8a19-1171e60e87bd@gmail.com>
+Date: Tue, 16 Sep 2025 11:17:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910183353.2045339-1-john.ripple@keysight.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add support for QCS615 talos evk
+ board
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tingweiz@qti.qualcomm.com
+References: <20250909125255.1124824-1-tessolveupstream@gmail.com>
+ <20250909125255.1124824-2-tessolveupstream@gmail.com>
+ <f6kaau5sxgleuim7cgdw6hsvlwl73ye7emwjtrxwvtpl3pxsvr@frxbvtv6ixho>
+Content-Language: en-US
+From: Tessolve Upstream <tessolveupstream@gmail.com>
+In-Reply-To: <f6kaau5sxgleuim7cgdw6hsvlwl73ye7emwjtrxwvtpl3pxsvr@frxbvtv6ixho>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi John,
 
-kernel test robot noticed the following build warnings:
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 09/09/25 19:56, Bjorn Andersson wrote:
+> On Tue, Sep 09, 2025 at 06:22:55PM +0530, Sudarshan Shetty wrote:
+>> Introduce the device tree support for the QCS615-based talos-evk
+>> platform, which follows the SMARC (Smart Mobility ARChitecture)
+>> standard. The platform is composed of two main hardware
+>> components: the IQ-QCS615-SOM and the talos-evk carrier board.
+>>
+>> The IQ-QCS615-SOM is a compact System on Module that integrates the
+>> QCS615 SoC, PMIC, and essential GPIO connectivity. It follows the
+>> SMARC standard, which defines a modular form factor allowing the SoM
+>> to be paired with different carrier boards for varied applications.
+>>
+>> The talos-evk is one such carrier board, designed for evaluation
+>> and development purposes. It provides additional peripherals
+>> such as UART, USB, and other interfaces to enable rapid
+>> prototyping and hardware bring-up.
+>>
+>> This initial device tree provides the basic configuration needed
+>> to boot the platform to a UART shell. Further patches will extend
+>> support for additional peripherals and subsystems.
+>>
+>> The initial device tree includes basic support for:
+>>
+>> - CPU and memory
+>>
+>> - UART
+>>
+>> - GPIOs
+>>
+>> - Regulators
+>>
+>> - PMIC
+>>
+>> - Early console
+>>
+>> - AT24MAC602 EEPROM
+>>
+>> - MCP2515 SPI to CAN
+>>
+>> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
+>> ---
+>>
+>> This series depend on the below patch changes
+>> https://lore.kernel.org/linux-arm-msm/20250625063213.1416442-1-quic_ziyuzhan@quicinc.com/T/#t
+> 
+> This was merged August 11.
+> 
+>> https://lore.kernel.org/all/20241224-fix-board-clocks-v3-0-e9b08fbeadd3@linaro.org/
+> 
+> This was merged December 27.
+> 
+>> https://lore.kernel.org/linux-arm-msm/20250604-qcs615-sm6150-v1-0-2f01fd46c365@oss.qualcomm.com/T/#t
+> 
+> This was merged July 16.
+> 
+> You just wasted 5 minutes of my time, tracking down the status of these
+> dependencies. Don't list dependencies that are already in linux-next (or
+> actual releases), or even better, only send patches once the
+> dependencies has landed (or send them together with the dependencies).
+> 
+>> ---
+>>  arch/arm64/boot/dts/qcom/Makefile        |   1 +
+>>  arch/arm64/boot/dts/qcom/qcs615-som.dtsi | 414 +++++++++++++++++++++++
+>>  arch/arm64/boot/dts/qcom/talos-evk.dts   |  42 +++
+>>  3 files changed, 457 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/qcom/qcs615-som.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 4bfa926b6a08..588dc55995c5 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -117,6 +117,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs615-ride.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk.dtb
+> 
+> If you look a little bit harder, you can see that all other entries in
+> this file is sorted alphabetically.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/UPDATE-20250911-023707/John-Ripple/drm-bridge-ti-sn65dsi86-break-probe-dependency-loop/20250820-235209
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250910183353.2045339-1-john.ripple%40keysight.com
-patch subject: [PATCH V3] drm/bridge: ti-sn65dsi86: Add support for DisplayPort mode with HPD
-config: x86_64-randconfig-161-20250916 (https://download.01.org/0day-ci/archive/20250916/202509161344.FPfsjq01-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+Yes, Will sort it in v2 patch. 
+> 
+>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+>>  
+>>  qcs6490-rb3gen2-vision-mezzanine-dtbs := qcs6490-rb3gen2.dtb qcs6490-rb3gen2-vision-mezzanine.dtbo
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-som.dtsi b/arch/arm64/boot/dts/qcom/qcs615-som.dtsi
+>> new file mode 100644
+>> index 000000000000..1b9b2581af42
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-som.dtsi
+>> @@ -0,0 +1,414 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
+> 
+> This is not the correct copyright statement.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202509161344.FPfsjq01-lkp@intel.com/
+Thanks for the review. 
+I used above copyright since qcs615-ride.dts in the same platform tree already follows this format.
+If you’d prefer me to switch to The Linux Foundation for consistency with older DTS files, I can respin the patch accordingly.
+> 
+>> + */
+>> +/dts-v1/;
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+> 
+> Once is probably sufficient.
 
-smatch warnings:
-drivers/gpu/drm/bridge/ti-sn65dsi86.c:1385 ti_sn_bridge_interrupt() error: uninitialized symbol 'status'.
+Yes, will update in v2 patch.
+> 
+>> +#include "sm6150.dtsi"
+>> +#include "pm8150.dtsi"
+>> +/ {
+>> +	aliases {
+>> +		mmc0 = &sdhc_1;
+>> +		serial0 = &uart0;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	clocks {
+>> +		sleep_clk: sleep-clk {
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <32764>;
+>> +			#clock-cells = <0>;
+>> +		};
+>> +
+>> +		xo_board_clk: xo-board-clk {
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <38400000>;
+>> +			#clock-cells = <0>;
+>> +		};
+>> +	};
+>> +
+>> +	regulator-usb2-vbus {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "USB2_VBUS";
+>> +		gpio = <&pm8150_gpios 10 GPIO_ACTIVE_HIGH>;
+>> +		pinctrl-0 = <&usb2_en>;
+>> +		pinctrl-names = "default";
+>> +		enable-active-high;
+>> +		regulator-always-on;
+> 
+> I forget where we are on this, but is there no way you can describe this
+> to be the vbus for the connector and have it be consumed and enabled
+> properly?
 
-vim +/status +1385 drivers/gpu/drm/bridge/ti-sn65dsi86.c
+Thanks for the comment. I followed the approach used in qcs615-ride.dts, where the VBUS regulator is defined as always-on.
+I understand your point about describing it as the VBUS supply for the connector so that it can be consumed/enabled properly. I’ll need to test whether the USB controller/connector on this platform works correctly if I switch to the vbus-supply model instead of forcing it on.
 
-b8670cf7e6a41b John Ripple  2025-09-10  1365  static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
-b8670cf7e6a41b John Ripple  2025-09-10  1366  {
-b8670cf7e6a41b John Ripple  2025-09-10  1367  	struct ti_sn65dsi86 *pdata = private;
-b8670cf7e6a41b John Ripple  2025-09-10  1368  	struct drm_device *dev = pdata->bridge.dev;
-b8670cf7e6a41b John Ripple  2025-09-10  1369  	u8 status;
-b8670cf7e6a41b John Ripple  2025-09-10  1370  	int ret;
-b8670cf7e6a41b John Ripple  2025-09-10  1371  	bool hpd_event = false;
-b8670cf7e6a41b John Ripple  2025-09-10  1372  
-b8670cf7e6a41b John Ripple  2025-09-10  1373  	mutex_lock(&pdata->hpd_mutex);
-b8670cf7e6a41b John Ripple  2025-09-10  1374  	if (!pdata->hpd_enabled) {
-b8670cf7e6a41b John Ripple  2025-09-10  1375  		mutex_unlock(&pdata->hpd_mutex);
-b8670cf7e6a41b John Ripple  2025-09-10  1376  		return IRQ_HANDLED;
-b8670cf7e6a41b John Ripple  2025-09-10  1377  	}
-b8670cf7e6a41b John Ripple  2025-09-10  1378  
-b8670cf7e6a41b John Ripple  2025-09-10  1379  	ret = ti_sn65dsi86_read_u8(pdata, SN_IRQ_STATUS_REG, &status);
-b8670cf7e6a41b John Ripple  2025-09-10  1380  	if (ret)
-b8670cf7e6a41b John Ripple  2025-09-10  1381  		pr_err("Failed to read IRQ status: %d\n", ret);
+If it works, I’ll update the patch in v2. If not, could you advise whether keeping the current style (as in qcs615-ride.dts) is acceptable for now?
+> 
+>> +	};
+>> +
+>> +	vreg_v3p3_can: regulator-v3p3-can {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vreg-v3p3-can";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +		regulator-boot-on;
+>> +		regulator-always-on;
+> 
+> Why can't the MCP2515 driver enable these when it's needed?
 
-status isn't initialized on error.
+They reflecting the always-on rails that are downstream from the
+main DC/battery input, and the supplies always-on by design.
+> 
+>> +	};
+>> +
+>> +	vreg_v5p0_can: regulator-v5p0-can {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vreg-v5p0-can";
+>> +		regulator-min-microvolt = <5000000>;
+>> +		regulator-max-microvolt = <5000000>;
+>> +		regulator-boot-on;
+>> +		regulator-always-on;
+> 
+> Ditto
 
-b8670cf7e6a41b John Ripple  2025-09-10  1382  	else
-b8670cf7e6a41b John Ripple  2025-09-10  1383  		hpd_event = status & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS);
-b8670cf7e6a41b John Ripple  2025-09-10  1384  
-b8670cf7e6a41b John Ripple  2025-09-10 @1385  	if (status) {
-                                                    ^^^^^^
-warning
+They reflecting the always-on rails that are downstream from the
+main DC/battery input, and the supplies always-on by design.
+> 
+>> +	};
+>> +};
+>> +
+>> +&apps_rsc {
+>> +	regulators-0 {
+>> +		compatible = "qcom,pm8150-rpmh-regulators";
+>> +		qcom,pmic-id = "a";
+>> +
+>> +		vreg_s3a: smps3 {
+>> +			regulator-name = "vreg_s3a";
+>> +			regulator-min-microvolt = <600000>;
+>> +			regulator-max-microvolt = <650000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_s4a: smps4 {
+>> +			regulator-name = "vreg_s4a";
+>> +			regulator-min-microvolt = <1800000>;
+>> +			regulator-max-microvolt = <1829000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_s5a: smps5 {
+>> +			regulator-name = "vreg_s5a";
+>> +			regulator-min-microvolt = <1896000>;
+>> +			regulator-max-microvolt = <2040000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_s6a: smps6 {
+>> +			regulator-name = "vreg_s6a";
+>> +			regulator-min-microvolt = <1304000>;
+>> +			regulator-max-microvolt = <1404000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l1a: ldo1 {
+>> +			regulator-name = "vreg_l1a";
+>> +			regulator-min-microvolt = <488000>;
+>> +			regulator-max-microvolt = <852000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+> 
+> Are you 100% certain that you (in contrast to all other boards) are
+> ready to enable LPM - and make it the default mode?
+> 
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l2a: ldo2 {
+>> +			regulator-name = "vreg_l2a";
+>> +			regulator-min-microvolt = <1650000>;
+>> +			regulator-max-microvolt = <3100000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l3a: ldo3 {
+>> +			regulator-name = "vreg_l3a";
+>> +			regulator-min-microvolt = <1000000>;
+>> +			regulator-max-microvolt = <1248000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l5a: ldo5 {
+>> +			regulator-name = "vreg_l5a";
+>> +			regulator-min-microvolt = <875000>;
+>> +			regulator-max-microvolt = <975000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l7a: ldo7 {
+>> +			regulator-name = "vreg_l7a";
+>> +			regulator-min-microvolt = <1800000>;
+>> +			regulator-max-microvolt = <1900000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l8a: ldo8 {
+>> +			regulator-name = "vreg_l8a";
+>> +			regulator-min-microvolt = <1150000>;
+>> +			regulator-max-microvolt = <1350000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l10a: ldo10 {
+>> +			regulator-name = "vreg_l10a";
+>> +			regulator-min-microvolt = <2950000>;
+>> +			regulator-max-microvolt = <3312000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l11a: ldo11 {
+>> +			regulator-name = "vreg_l11a";
+>> +			regulator-min-microvolt = <1232000>;
+>> +			regulator-max-microvolt = <1260000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l12a: ldo12 {
+>> +			regulator-name = "vreg_l12a";
+>> +			regulator-min-microvolt = <1800000>;
+>> +			regulator-max-microvolt = <1890000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l13a: ldo13 {
+>> +			regulator-name = "vreg_l13a";
+>> +			regulator-min-microvolt = <3000000>;
+>> +			regulator-max-microvolt = <3230000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l15a: ldo15 {
+>> +			regulator-name = "vreg_l15a";
+>> +			regulator-min-microvolt = <1800000>;
+>> +			regulator-max-microvolt = <1904000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l16a: ldo16 {
+>> +			regulator-name = "vreg_l16a";
+>> +			regulator-min-microvolt = <3000000>;
+>> +			regulator-max-microvolt = <3312000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
+>> +			regulator-allow-set-load;
+>> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>> +						   RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +
+>> +		vreg_l17a: ldo17 {
+>> +			regulator-name = "vreg_l17a";
+>> +			regulator-min-microvolt = <2950000>;
+>> +			regulator-max-microvolt = <3312000>;
+>> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&gcc {
+>> +	clocks = <&rpmhcc RPMH_CXO_CLK>,
+>> +		 <&rpmhcc RPMH_CXO_CLK_A>,
+>> +		 <&sleep_clk>;
+> 
+> This is already specified in sm6150.dtsi, why repeat them here?
+> 
+> PS. This list is incomplete and needs to be corrected.
 
-b8670cf7e6a41b John Ripple  2025-09-10  1386  		drm_dbg(dev, "(SN_IRQ_STATUS_REG = %#x)\n", status);
-b8670cf7e6a41b John Ripple  2025-09-10  1387  		ret = regmap_write(pdata->regmap, SN_IRQ_STATUS_REG, status);
-b8670cf7e6a41b John Ripple  2025-09-10  1388  		if (ret)
-b8670cf7e6a41b John Ripple  2025-09-10  1389  			pr_err("Failed to clear IRQ status: %d\n", ret);
-b8670cf7e6a41b John Ripple  2025-09-10  1390  	} else {
-b8670cf7e6a41b John Ripple  2025-09-10  1391  		mutex_unlock(&pdata->hpd_mutex);
-b8670cf7e6a41b John Ripple  2025-09-10  1392  		return IRQ_NONE;
-b8670cf7e6a41b John Ripple  2025-09-10  1393  	}
-b8670cf7e6a41b John Ripple  2025-09-10  1394  
-b8670cf7e6a41b John Ripple  2025-09-10  1395  	/* Only send the HPD event if we are bound with a device. */
-b8670cf7e6a41b John Ripple  2025-09-10  1396  	if (dev && hpd_event)
-b8670cf7e6a41b John Ripple  2025-09-10  1397  		drm_kms_helper_hotplug_event(dev);
-b8670cf7e6a41b John Ripple  2025-09-10  1398  	mutex_unlock(&pdata->hpd_mutex);
-b8670cf7e6a41b John Ripple  2025-09-10  1399  
-b8670cf7e6a41b John Ripple  2025-09-10  1400  	return IRQ_HANDLED;
-b8670cf7e6a41b John Ripple  2025-09-10  1401  }
+Thanks for pointing this out. I copied the clocks list here from an earlier reference, but you’re right — it’s already defined in sm6150.dtsi. Since I don’t need to override or extend it for this board, I’ll drop this block in v2.
+> 
+>> +};
+>> +
+> [..]
+>> diff --git a/arch/arm64/boot/dts/qcom/talos-evk.dts b/arch/arm64/boot/dts/qcom/talos-evk.dts
+>> new file mode 100644
+>> index 000000000000..7500f051783f
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/talos-evk.dts
+>> @@ -0,0 +1,41 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
+> 
+> Fix this please.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks for the review. 
+I used above copyright since qcs615-ride.dts in the same platform tree already follows this format.
+If you’d prefer me to switch to The Linux Foundation for consistency with older DTS files, I can respin the patch accordingly.
+> 
+> Regards,
+> Bjorn
+> 
+>> + */
+>> +/dts-v1/;
+>> +
+>> +#include "qcs615-som.dtsi"
+>> +
+>> +/ {
+>> +	model = "Qualcomm QCS615 IQ 615 EVK";
+>> +	compatible = "qcom,qcs615-iq-615-evk", "qcom,qcs615", "qcom,sm6150";
+>> +	chassis-type = "embedded";
+>> +
+>> +	aliases {
+>> +		mmc1 = &sdhc_2;
+>> +	};
+>> +};
+>> +
+>> +&pon_pwrkey {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pon_resin {
+>> +	linux,code = <KEY_VOLUMEDOWN>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&sdhc_2 {
+>> +	pinctrl-0 = <&sdc2_state_on>;
+>> +	pinctrl-1 = <&sdc2_state_off>;
+>> +	pinctrl-names = "default", "sleep";
+>> +
+>> +	bus-width = <4>;
+>> +	cd-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
+>> +
+>> +	vmmc-supply = <&vreg_l10a>;
+>> +	vqmmc-supply = <&vreg_s4a>;
+>> +
+>> +	status = "okay";
+>> +};
+>> -- 
+>> 2.34.1
+>>
 
 
