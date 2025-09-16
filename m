@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-819471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB30B5A149
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A153AB5A14D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E00A2A7D4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8995B2A821C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FAA2F5A05;
-	Tue, 16 Sep 2025 19:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB372F5A29;
+	Tue, 16 Sep 2025 19:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeiRSBEr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbLibwDf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B661FBEA2;
-	Tue, 16 Sep 2025 19:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B5F30171E;
+	Tue, 16 Sep 2025 19:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758050464; cv=none; b=XU7eT9FlZU4ePmH3REd8rTQnfIdj+DOjRl+eS6ufTXXpw/LM9HcgWRdUrLsXTSW4y5Lht7b3v4DyR1F2sW3wV5yXzHja1C1esh523RFgoYRQCyL8+PPMaah6LyVP1K4nM7zyS2A7Vj7f05TzXlYJIlA8vgaz6Ur+fAFqsVlONfI=
+	t=1758050467; cv=none; b=cYFFmyOS2BJ0w1vIFpzH4f2Cgl6TSFnYj0CyCOtpZNmEKKW4FHiObfjvg7T+aJDRKJSy9uE5B+DYrIxEqZo7cNBE9GfMDdqUK1+T0J5MUC0Qk9R7xJLZv3ABBMZ6Bl+6rqvLxxSoO4jbkH1CIoWrw9myfPniwRB0W53r9Pkm/I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758050464; c=relaxed/simple;
-	bh=+5w/cHHsMi3HiFOnCiVNH48CuMDOqzyQSHdW+O7wiys=;
+	s=arc-20240116; t=1758050467; c=relaxed/simple;
+	bh=6+WqFfDAReqi0O3H8d46eKzoBiYaoKSbaFyax7f1R6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ps8aa2HWjPntQnxZgnHBLR5KgdhW/nPnk5eqAo7NHv/nveyr8wyMiyu5ZpuSyRvY3CTadcBnPd9k0Mj9nkRWCe0q4sjOkQhXzampz1dwmyUaI2GITAMClthIz+ZDS24WmJ+uczzgOfrdcclXwL+tpIYtPXssUGaCqhjzoZ1XqLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeiRSBEr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8547C4CEEB;
-	Tue, 16 Sep 2025 19:21:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=beKmt5wgawZTvAdBJ8qwu3xwol4nkmNwlCo2AVfmAHK+UgLM/ntRIcANx6+cToMpa+5mIy2rgQRPREGYSMn1FAHVJWDsB1M62hyC7Jc8wekYS5qvuSWXr/8T5z3kjrYnWnU0b9IB+5t+XsYsu5mnzoI2YSdZ2dWLfIkI4lhR5js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbLibwDf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2B1C4CEEB;
+	Tue, 16 Sep 2025 19:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758050464;
-	bh=+5w/cHHsMi3HiFOnCiVNH48CuMDOqzyQSHdW+O7wiys=;
+	s=k20201202; t=1758050465;
+	bh=6+WqFfDAReqi0O3H8d46eKzoBiYaoKSbaFyax7f1R6s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OeiRSBErvqz+cliurvNo/ueg+bmVv0SgHKS8A8gYdoRKcab503nyRx/ENiM4pNdon
-	 LmkoFHuwsgW/Q8ckdNbYNSwHqiYd3u3+CZ1Jfx/rJ9hDfB05/JQspJWcVhaT8Y5DyM
-	 lc9v/euHCZKwFh3nb9mxGzSI8jbnvlRpcBHuGJpcJyE9KUCIHugdfDH9+7SqV6vs3+
-	 uDNvHhOhb2NrI/8SJlpHkDjgU5njFSuC4XukG5kFpYxuiU2L2+74gcnsP2ulvcbIkW
-	 tQMm2jOpM06LAdHZbEJTHR4hFxNQjKAC2GMxp/nW2MOEDAS7AP9UudwTQ4U7++dmt2
-	 vcDxMIM4yMWDg==
-Date: Tue, 16 Sep 2025 20:20:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	b=YbLibwDf7yCOcK9svXpIDFUcOn32houdi7d16upgcEbaGLSNZTOrorXqEHyoimOas
+	 xizUTKlJ0+Nx/BPNdCxR0b43KWKcf3/DRo3Sd0huDxC7I5LveFpwLW45Pocbe+uvAr
+	 Xvhiiqm2ztQqKix/6+XVs+JZey7NT05JprdAdyW6CiYLt1TTKHh/H4WX1TUy3SQ+jq
+	 zEr8yM4lpxavP+iD9nNBErkcJVvzNO9WmjP7kNkZ/hi6Fly+FAO7GLPNIYktMMr/U5
+	 FDiDEQijdpHQlL8cQ1Lv/tfjS8n+VJ3ABJwsi0IlwQ+cVD9ZQc8fm1s1Vlow9xedKc
+	 HLNVwN64wNpmQ==
+Date: Tue, 16 Sep 2025 12:21:03 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH v11 1/3] dt-bindings: iio: adc: add max14001
-Message-ID: <20250916-alto-vaseline-f8dafbab03e9@spud>
-References: <cover.1757971454.git.marilene.agarcia@gmail.com>
- <30f33a64da0339eccc1474406afb2b1d02a0cd6b.1757971454.git.marilene.agarcia@gmail.com>
- <8e88b601-1329-4cdb-bbd7-feb998c552e8@baylibre.com>
+	Kornel =?utf-8?Q?Dul=C4=99ba?= <mindal@semihalf.com>,
+	Adrien Ricciardi <aricciardi@baylibre.com>,
+	James Morse <james.morse@arm.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Vasudevan Srinivasan <vasu@rivosinc.com>, guo.wenjia23@zte.com.cn,
+	liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: riscv: Add Ssqosid extension
+ description
+Message-ID: <aMm4n2PlI8JqmK2c@x1>
+References: <20250915-ssqosid-v6-17-rc5-v2-0-2d4b0254dfd6@kernel.org>
+ <20250915-ssqosid-v6-17-rc5-v2-1-2d4b0254dfd6@kernel.org>
+ <20250916-landfall-easeful-782b60eb7d69@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NwfCVTRFvQ7doDJR"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tpbFvsgPwTSnAM87"
 Content-Disposition: inline
-In-Reply-To: <8e88b601-1329-4cdb-bbd7-feb998c552e8@baylibre.com>
+In-Reply-To: <20250916-landfall-easeful-782b60eb7d69@spud>
 
 
---NwfCVTRFvQ7doDJR
+--tpbFvsgPwTSnAM87
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 11:40:47AM -0500, David Lechner wrote:
-> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
-
+On Tue, Sep 16, 2025 at 07:36:01PM +0100, Conor Dooley wrote:
+> On Mon, Sep 15, 2025 at 10:13:41PM -0700, Drew Fustini wrote:
+> > Document the ratified Supervisor-mode Quality of Service ID (Ssqosid)
+> > extension v1.0.
 > >=20
-> > The MAX14001 and MAX14002 both have the COUT output pin and the FAULT
-> > output pin, and work the same. I have decided to declare them as interr=
-upts
-> > because I think some action should be done when they are hit. However, =
-the
-> > implementation of these features is not present in the v11 driver code,=
- as
-> > it was not in v9. But I plan to submit it in the next steps.
+> > Link: https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
+> > Signed-off-by: Drew Fustini <fustini@kernel.org>
+> > ---
+> >  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/=
+Documentation/devicetree/bindings/riscv/extensions.yaml
+> > index ede6a58ccf5347d92785dc085a011052c1aade14..38e3d8d38cce55022ea70eb=
+52423b1163e3cb097 100644
+> > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > @@ -165,6 +165,12 @@ properties:
+> >              ratified at commit d70011dde6c2 ("Update to ratified state=
+")
+> >              of riscv-j-extension.
+> > =20
+> > +        - const: ssqosid
+> > +          description: |
+> > +            The ratified Supervisor-mode Quality of Service ID (Ssqosi=
+d)
+> > +            extension v1.0 which adds the Supervisor Resource Manageme=
+nt
+> > +            Configuration (srmcfg) CSR.
 >=20
-> The devicetree bindings should be as complete as possible and not care
-> if the driver doesn't use everything. So adding them now is the right
-> thing to do.
+> Please cite when it was added, as is done for other extensions.
 
-> > +  interrupts:
-> > +    minItems: 1
-> > +    items:
-> > +      - description: |
-> > +          Asserts high when ADC readings exceed the upper threshold an=
-d low
-> > +          when below the lower threshold. Must be connected to the COU=
-T pin.
-> > +      - description: |
-> > +          Alert output that asserts low during a number of different e=
-rror
-> > +          conditions. The interrupt source must be attached to FAULT p=
-in.
+I had seen the pattern of commit X from Unpriv or Priv spec but I was
+having trouble adapting that for Ssqosid as it has its own v1.0 PDF.
 
-These descriptions read wrong to me. They __are__ the COUT and FAULT
-pins, given what David responded to above, not something that can be
-connected to these pins (if they were, they would be represented as
--gpios rather than interrupts most likely). Unless you mean that these
-pins can have some other use and are only available on the COUT/FAULT
-pins when some register value is set - but even in that case saying
-"must be" doesn't fit since the interrupt property could be used to
-configure the device accordingly.
+However, I now notice 'zacas' seems to have its own spec. Would this
+work for 'ssqosid'?
 
---NwfCVTRFvQ7doDJR
+        - const: ssqosid
+          description: |
+            The Ssqosid extension for Quality of Service ID is ratified
+	    as v1.0 in commit 5059e0ca641c of riscv-ssqosid.
+
+Thanks,
+Drew
+
+--tpbFvsgPwTSnAM87
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMm4mgAKCRB4tDGHoIJi
-0imOAP0ZC2aY5vECp3LF3rgrn/fkRX8Lr8A7hdrfivq83WcRyQEA4KSSTzqFwflb
-3PcXNE5a3VYZFeq924CIasGoN631dwY=
-=Z0Ld
+iHUEABYIAB0WIQSy8G7QpEpV9aCf6Lbb7CzD2SixDAUCaMm4jAAKCRDb7CzD2Six
+DLUeAQDO5lFaFCk4ig6oiUbCMV1B9ivTXYq9bg45BcgvGSoJ5wEAkSJ5NLq9ohsk
+h+B7lIHYwZ3f6UjrMUYCusgwEo4uwgQ=
+=FJJd
 -----END PGP SIGNATURE-----
 
---NwfCVTRFvQ7doDJR--
+--tpbFvsgPwTSnAM87--
 
