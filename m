@@ -1,155 +1,422 @@
-Return-Path: <linux-kernel+bounces-819509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E0CB5A1CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:05:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF18B5A1D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE004830C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A301BC7049
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1A02C21F7;
-	Tue, 16 Sep 2025 20:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3633F2E1C6F;
+	Tue, 16 Sep 2025 20:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hWIeYjJf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKntb37w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA8E27A46A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B1B21FF55;
+	Tue, 16 Sep 2025 20:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758053140; cv=none; b=ZszftruKftA6UI9NuoQIag7c4xmFCzGGdsBOKZX92U3RubCd62GRB4F2JrmpyGpt7llLD0TZM2NVaQoQUNMxe8jcHgLFT8Teb4lxrB6aLM/JPATWKhbNxMp8pT1hCpYLtgrPBjCV8t78ara2WUoyfXefyBH8aMMYK7hgokV7xQw=
+	t=1758053227; cv=none; b=G2NBaN/xXaK5eow4U4oTFyM2a5TX6o2PH55f5Znlc8ceDgmioIy5bJ6vW4NJjxMKDRFPX989xTPfeITdkcufgh/erG7YZ8pMqAsKBj4AM8ZTvhk7ojuDMUFqZf6M6IH68lnmWxrp2hLbPS+wuI6fApS1kNMhlrg0EkTDdY9iU5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758053140; c=relaxed/simple;
-	bh=y/6eUBEaYSo/SX73Jy1+Z/mMaSBXfm0oxSPTbXRy6w4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjQYJ+TkXmF1h+U2fdW2a4bk6BR0Ceb6gBFU4UgnXDeFcw+QivYDe2vhEY3su6019YkTbpPSVU1X1gel483gbOUbFLc4ZBbGkoC83uPLUmxcRihmBCG2iKTdzRW6GiKneqvD+nfd97MCmpPBHWZObgG4Ka9PlQ/96yhBpaibwZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hWIeYjJf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758053137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RpCQ4fVtk0nJ15mgeceVmsFUTpPDIkoZsDCSqJpWkuY=;
-	b=hWIeYjJftxA2QpMfICXEaIhZEs9GgPfwGdDQIYPJ7bp8x+6BSDEj6MRoHUPnIsWrxWSYLx
-	9eTRvyHWHgH+4oawWbH+87ym+xWYgQ3DIPnZMhu73+7/D+Zn833fnmv2H3CFjW9OgO0WJX
-	zi2CIzJVnpv3yG+PlJsPnzq63fLZVpE=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-458-vSrTFfFDNA-B46LLSKUARg-1; Tue, 16 Sep 2025 16:05:36 -0400
-X-MC-Unique: vSrTFfFDNA-B46LLSKUARg-1
-X-Mimecast-MFC-AGG-ID: vSrTFfFDNA-B46LLSKUARg_1758053135
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-783f069a122so62588446d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:05:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758053135; x=1758657935;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RpCQ4fVtk0nJ15mgeceVmsFUTpPDIkoZsDCSqJpWkuY=;
-        b=sBhlIS0U3gaUjjF835fHlm1YWiVEzrNMPUNUaJ7+iwR/cVUHWdUUJfn+NCITTR4NZh
-         Q0lbyhfYowUciEftKNMN8STuqSt79Hd1xZBZ7sSS+9Xdsq/L69UNMto4mws4/IB5Wfd/
-         ixAcdHwHCQoY2c9csmXXBNdykKKVOHctCtogbJJ0x3rg5rk4mKJoJZgx7uRRyPdpszWp
-         4hhhY0dU+81LRTdfu8WpZlHeqWqe6TglH0s5xHk9FSIFjEGLNu3s9s1LPxvQOSK11i0O
-         6ZVzemXs0GhnFFAspKyhWkiu0m3AuHoXIpqg/dSOtSIefuqVZGPQuAAeO40l4xUh6MhG
-         sgOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/WUeMeRV/T8BmKo8rFyUSTPrKIvhNsolrrdohfisuFDBNU286X+OSzAMtiMp1vnkS9QU8Xi4FZZ8z88g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjQcFsTcBv1TYSim6dSHEhhnqIgfGSFXrGChA4R3D6aZHauv+I
-	dbnKeDcyQ3yUH70plZVANjHbbe0u1aXCjcyx6BmVp838UZzB2B9mpVfXmB2FfaguDhhb3DMK5I9
-	9okS5HvTZrlpufECIIgoGRyyONDB4h8kutTCoD3YznWxP7QzFWGV5sMhtWw/qWDhoZw==
-X-Gm-Gg: ASbGncsFzTYbMqeL6NUs6GxiLAxzfqkA3bxy5TKUuTLNpu8Kzwl2WYR4W5rydbGrrO0
-	ihkEBttCvXaF1442XC2BMzYp/yVxUCfhHDLc6QVc3tCCe6WAMiUkGIawCxmrETZWqM5Ofv1llVe
-	sE/3hIlYcMIgHXbA498HMss7VbAJ97SznSbxnAWvfc8Ww1yR190Yfau+zO6QOTKnd+kmt8VTxO6
-	tXYWAKbb1zK0C9Yl7/YtC/cDwTaXnuziLXXyOmGRmlNI/dcH709Kx+o9d2Wwj6d0qaO4wSBTGOb
-	Bpe9c+9I0FSgmYO72T7X7+ixY3JWSfiR
-X-Received: by 2002:a05:6214:202e:b0:756:a4cf:b1df with SMTP id 6a1803df08f44-767be6d5f03mr247719536d6.18.1758053135314;
-        Tue, 16 Sep 2025 13:05:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEfhupWWrTG8VxMqGQsU8BHddz1vAyCePst6r9UyWiXycB0vta1N1jEpGL7eOj4d2fvDA4mqw==
-X-Received: by 2002:a05:6214:202e:b0:756:a4cf:b1df with SMTP id 6a1803df08f44-767be6d5f03mr247719026d6.18.1758053134748;
-        Tue, 16 Sep 2025 13:05:34 -0700 (PDT)
-Received: from x1.local ([174.89.135.121])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-773292c6357sm67482916d6.67.2025.09.16.13.05.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 13:05:34 -0700 (PDT)
-Date: Tue, 16 Sep 2025 16:05:21 -0400
-From: Peter Xu <peterx@redhat.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-	Muchun Song <muchun.song@linux.dev>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>
-Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <aMnDAdMyuatKth3w@x1.local>
-References: <982f4f94-f0bf-45dd-9003-081b76e57027@lucifer.local>
- <cda7c46b-c474-48f4-b703-e2f988470f3b@amazon.com>
- <aGVu1Isy-R9RszxW@kernel.org>
- <aGWMsfbayEco0j4R@x1.local>
- <aGbCbW7hUf3a2do2@kernel.org>
- <289eede1-d47d-49a2-b9b6-ff8050d84893@redhat.com>
- <aGfsaIIzHWfjcNFd@x1.local>
- <e7vr62s73dftijeveyg6lfgivctijz4qcar3teswjbuv6gog3k@4sbpuj35nbbh>
- <930d8830-3d5d-496d-80d8-b716ea6446bb@amazon.com>
- <jxekhkhbn7uk23oe24svxrs3vfuhseae57sqagndqgh2e7h33o@kfkygmrvjb5n>
+	s=arc-20240116; t=1758053227; c=relaxed/simple;
+	bh=82ODHO+ZHstBJ3tXU3RRL74ckaZe2VyLF/nSIFdDBC8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=j1Ko12bceJ/jepiswCtdCPMR0DS0NuMjujsTQbQvEp6qG0GF38nNCW07aJ+TWQGnFOWijSVUZyzR3X62YZ3R3zssCLpCfzhnQc5W9ND5lKc3UbcIXMdhOuPtDS3RKJbHf1gO0Iq9yl00Zf1CDrLeGW8cd9+iEodM3iQ2kV3ir2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKntb37w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778CEC4CEEB;
+	Tue, 16 Sep 2025 20:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758053227;
+	bh=82ODHO+ZHstBJ3tXU3RRL74ckaZe2VyLF/nSIFdDBC8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=pKntb37wA+2URaeTKiVR+RnQbI2WbfCKz730Q24GL5W0vJAHW42XiP1iyQNsV5T+6
+	 ADqKBCXgAwUQzapNWsEOQvIieUu7bDStup/B+aA88AQm+NGYVe0Se0jCG6UTFk5SRd
+	 /TqGnSXlUZAhuiBMZTIV+qvYWYb8pkGvwfCT/33LrRmmOd4zn7iiaHP2JDHgMsl3hE
+	 Py5lO1/tecsKMj1vons8Z7ae4eHkOj5mo2/iov7y4ToQxTGsVyi1rmKquWyq9CMyBa
+	 hj0rg3Nj7K9YikoDJ4MlhQVpBEY8yVRPiw/tXnuUS5Qi6uYHcp/ERnVEwgJLdz1BJ6
+	 QQYHlXzHkpsgQ==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Tue, 16 Sep 2025 22:06:01 +0200
+Subject: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
+ Router
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <jxekhkhbn7uk23oe24svxrs3vfuhseae57sqagndqgh2e7h33o@kfkygmrvjb5n>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIACjDyWgC/x3MSwqDMBRG4a3IHRvIwxZ1KyKi8a+9AxPNbUtB3
+ LvB4Tc45yBBYgi1xUEJPxaOIcOUBfn3GBYonrPJavvQjXmqT9zYq93HdfjKVA0Th5nDIsqhdrB
+ WNzCgnG8JL/7f664/zwtboI2GagAAAA==
+X-Change-ID: 20250916-topic-qcom_usb4_bindings-3e83e2209e1e
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+ Wesley Cheng <quic_wcheng@quicinc.com>, Jack Pham <quic_jackp@quicinc.com>, 
+ Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Mayank Rana <mayank.rana@oss.qualcomm.com>, 
+ Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>, 
+ Mika Westerberg <westeri@kernel.org>, 
+ Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758053222; l=10454;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=7i8SYua4P42R+C99GKv8GP2AAHRi2AKDbV2qgnnCITg=;
+ b=LoBP/bKbJzR7Kyy+IEwJNJ/xwVx2S+enbDx0KSUpbMST4m+/tWbYApZeIlW5t7WCTO37b1FXh
+ kavzL8gNx8LCzFFtYX5Ds/d4zNiD1E1m9c8CdT6Y2cn4fKJj6g2O76h
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Mon, Sep 08, 2025 at 12:53:37PM -0400, Liam R. Howlett wrote:
-> What we don't want is non-mm code specifying values for the function
-> pointer and doing what they want, or a function pointer that returns a
-> core mm resource (in the old example this was a vma, here it is a
-> folio).
-> 
-> From this patch set:
-> +        * Return: zero if succeeded, negative for errors.
-> +        */
-> +       int (*uffd_get_folio)(struct inode *inode, pgoff_t pgoff,
-> +                             struct folio **folio);
-> 
-> This is one of the contention points in the current scenario as the
-> folio would be returned.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-OK I didn't see this one previously, it partly answers one of my question
-in the other reply, in a way I wished not.
+Several Qualcomm platforms feature an in-house Host Router IP block,
+which enables USB4 and Thunderbolt 3 functionality. It implements the
+common NHI interface, allowing for easier integration with existing
+Thunderbolt driver implementations.
 
-Could you elaborate why an API returning an folio pointer would be
-dangerous?
+The Host Router features a microcontroller (with loadable firmware),
+which takes care of detecting and acting upon plug events, initiating
+high-speed link establishment or performing HW power management
+operations.
 
-OTOH, would you think alloc_pages() or folio_alloc() be dangerous too?
+Each instance is connected to a single USB3.x host, a PCIe RC and a
+DisplayPort controller through a fitting Protocol Adapter, allowing
+for the tunneling of the respective protocols between the USB4/TBT3
+device and the on-SoC controller.
 
-They return a folio from the mm core to drivers, hence it's not the same
-direction of folio sharing, however it also means at least the driver can
-manipulate the folio / memmap as much as it wants, sabotaging everything is
-similarly possible.  Why we worry about that?
+Describe the block, as present on the X1E family of SoCs, where it
+implements the USB4v1 standard.
 
-Are we going to unexport alloc_pages() someday?
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Hello!
 
-Thanks,
+This is our stab at USB4/Thunderbolt dt-bindings.
 
+This submission, as stated in the commit message, describes our USB4
+Host Router block, which is roughly the same class of hardware that you
+can find on add-in PCIe cards aimed at x86 machines.
+
+This specific patch is NOT supposed to be merged, since the bindings
+may still ever so slightly change, as we continue work on the driver
+(i.e. it's still possible that we omitted some resource).
+
+It is however published early to create grounds for a discussion.
+This is the first bring-up of USB4/TBT3 on a DT platform, so this
+binding is likely going to influence all subsequent submissions. I've
+added various DT and TBT folks to the recipient list to make everyone
+aware of any decisions we settle on.
+
+Comments very welcome!
+
+P.S.
+The driver part (which has quite some dependencies) is not yet 100%
+ready to share and will be published at a later date.
+---
+ .../bindings/thunderbolt/qcom,usb4-hr.yaml         | 263 +++++++++++++++++++++
+ MAINTAINERS                                        |   1 +
+ 2 files changed, 264 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1cf3d083c6129a492010a4b98fea0e8dec9746cf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
+@@ -0,0 +1,263 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/thunderbolt/qcom,usb4-hr.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm USB4 Host Router
++
++maintainers:
++  - Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
++
++description:
++  The Qualcomm USB4 Host Router IP block implements the NHI standard
++  as described in the USB4 specification.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - qcom,x1e80100-usb4-hr # USB4v1
++      - const: qcom,usb4-hr
++
++  reg:
++    maxItems: 17
++
++  reg-names:
++    items:
++      - const: router
++      - const: router_config
++      - const: tmu_config
++      - const: port_group
++      - const: sideband
++      - const: uc_ram
++      - const: uc_per
++      - const: uc_mbox
++      - const: nhi
++      - const: cfg
++      - const: debug
++      - const: usbap_config
++      - const: pcieap_config
++      - const: dpap0_aux
++      - const: dpap0_config
++      - const: dpap1_aux
++      - const: dpap1_config
++
++  interrupts:
++    items:
++      - description: Combined event interrupt for all three rings
++      - description: OOB Firmware interrupt
++
++  interrupt-names:
++    items:
++      - const: ring
++      - const: fw
++
++  clocks:
++    maxItems: 10
++
++  clock-names:
++    items:
++      - const: sys
++      - const: tmu
++      - const: ahb
++      - const: axi
++      - const: master
++      - const: phy_rx0
++      - const: phy_rx1
++      - const: sb
++      - const: dp0
++      - const: dp1
++
++  resets:
++    maxItems: 13
++
++  reset-names:
++    items:
++      - const: core
++      - const: phy_nocsr
++      - const: sys
++      - const: rx0
++      - const: rx1
++      - const: usb_pipe
++      - const: pcie_pipe
++      - const: tmu
++      - const: sideband_iface
++      - const: hia_master
++      - const: ahb
++      - const: dp0
++      - const: dp1
++
++  power-domains:
++    maxItems: 1
++
++  required-opps:
++    maxItems: 1
++
++  phys:
++    maxItems: 1
++
++  phy-names:
++    const: usb4
++
++  iommus:
++    maxItems: 1
++
++  interconnects:
++    maxItems: 2
++
++  interconnect-names:
++    items:
++      - const: usb4-ddr
++      - const: apps-usb4
++
++  mode-switch: true
++
++  wakeup-source: true
++
++allOf:
++  - $ref: /schemas/usb/usb-switch.yaml#
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - interrupt-names
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - power-domains
++  - phys
++  - phy-names
++  - iommus
++  - interconnects
++  - interconnect-names
++  - mode-switch
++  - port
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        usb4_router0: usb4-host-router@15600000 {
++            compatible = "qcom,x1e80100-usb4-hr",
++                         "qcom,usb4-hr";
++            reg = <0x0 0x15600000 0x0 0x8000>,
++                  <0x0 0x15608000 0x0 0x70>,
++                  <0x0 0x15608070 0x0 0x500>,
++                  <0x0 0x1560d000 0x0 0x1000>,
++                  <0x0 0x15612000 0x0 0x1000>,
++                  <0x0 0x15613000 0x0 0xe000>,
++                  <0x0 0x15621000 0x0 0x2000>,
++                  <0x0 0x15623000 0x0 0x2000>,
++                  <0x0 0x1563f000 0x0 0x40000>,
++                  <0x0 0x1567f000 0x0 0x1000>,
++                  <0x0 0x15680000 0x0 0x1000>,
++                  <0x0 0x15681000 0x0 0x1000>,
++                  <0x0 0x15682000 0x0 0x1000>,
++                  <0x0 0x15683000 0x0 0x1000>,
++                  <0x0 0x15685000 0x0 0x1000>,
++                  <0x0 0x15686000 0x0 0x1000>,
++                  <0x0 0x15688000 0x0 0x1000>;
++            reg-names = "router",
++                        "router_config",
++                        "tmu_config",
++                        "port_group",
++                        "sideband",
++                        "uc_ram",
++                        "uc_per",
++                        "uc_mbox",
++                        "nhi",
++                        "cfg",
++                        "debug",
++                        "usbap_config",
++                        "pcieap_config",
++                        "dpap0_aux",
++                        "dpap0_config",
++                        "dpap1_aux",
++                        "dpap1_config";
++
++            interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 579 IRQ_TYPE_LEVEL_HIGH>;
++            interrupt-names = "ring",
++                              "fw";
++
++            clocks = <&gcc_usb4_0_sys_clk>,
++                     <&gcc_usb4_0_tmu_clk>,
++                     <&gcc_usb4_0_cfg_ahb_clk>,
++                     <&gcc_aggre_usb4_0_axi_clk>,
++                     <&gcc_usb4_0_master_clk>,
++                     <&gcc_usb4_0_phy_rx0_clk>,
++                     <&gcc_usb4_0_phy_rx1_clk>,
++                     <&gcc_usb4_0_sb_if_clk>,
++                     <&gcc_usb4_0_dp0_clk>,
++                     <&gcc_usb4_0_dp1_clk>;
++            clock-names = "sys",
++                          "tmu",
++                          "ahb",
++                          "axi",
++                          "master",
++                          "phy_rx0",
++                          "phy_rx1",
++                          "sb",
++                          "dp0",
++                          "dp1";
++
++            resets = <&gcc_usb4_0_bcr>,
++                     <&gcc_usb4phy_phy_prim_bcr>,
++                     <&gcc_usb4_0_misc_usb4_sys_bcr>,
++                     <&gcc_usb4_0_misc_rx_clk_0_bcr>,
++                     <&gcc_usb4_0_misc_rx_clk_1_bcr>,
++                     <&gcc_usb4_0_misc_usb_pipe_bcr>,
++                     <&gcc_usb4_0_misc_pcie_pipe_bcr>,
++                     <&gcc_usb4_0_misc_tmu_bcr>,
++                     <&gcc_usb4_0_misc_sb_if_bcr>,
++                     <&gcc_usb4_0_misc_hia_mstr_bcr>,
++                     <&gcc_usb4_0_misc_ahb_bcr>,
++                     <&gcc_usb4_0_misc_dp0_max_pclk_bcr>,
++                     <&gcc_usb4_0_misc_dp1_max_pclk_bcr>;
++            reset-names = "core",
++                          "phy_nocsr",
++                          "sys",
++                          "rx0",
++                          "rx1",
++                          "usb_pipe",
++                          "pcie_pipe",
++                          "tmu",
++                          "sideband_iface",
++                          "hia_master",
++                          "ahb",
++                          "dp0",
++                          "dp1";
++
++            power-domains = <&gcc GCC_USB4_0_GDSC>;
++
++            phys = <&usb4_phy>;
++            phy-names = "usb4";
++
++            iommus = <&apps_smmu 0x1440 0x0>;
++
++            interconnects = <&icc0 &icc1>,
++                            <&icc2 &icc3>;
++            interconnect-names = "usb4-ddr",
++                                 "apps-usb4";
++
++            mode-switch;
++
++            port {
++                usb4_0_mode_in: endpoint {
++                };
++            };
++        };
++    };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9da37c8dee69de9421d4f70906b4e623a442d171..b607f0a66f953fb1ea72e3405820288850004dfe 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25428,6 +25428,7 @@ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git
+ F:	Documentation/admin-guide/thunderbolt.rst
++F:	Documentation/devicetree/bindings/thunderbolt/
+ F:	drivers/thunderbolt/
+ F:	include/linux/thunderbolt.h
+ 
+
+---
+base-commit: 05af764719214d6568adb55c8749dec295228da8
+change-id: 20250916-topic-qcom_usb4_bindings-3e83e2209e1e
+
+Best regards,
 -- 
-Peter Xu
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
