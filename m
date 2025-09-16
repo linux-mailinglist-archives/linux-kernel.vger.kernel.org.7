@@ -1,109 +1,79 @@
-Return-Path: <linux-kernel+bounces-819729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C406B7D406
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B845B7F484
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06A09174109
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029D63A00D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D772C375E;
-	Tue, 16 Sep 2025 23:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBC02D3A6C;
+	Tue, 16 Sep 2025 23:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DPpksF7o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZXcq8fh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD1B28467B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34182C3242;
+	Tue, 16 Sep 2025 23:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758064933; cv=none; b=ppgK6e5dJVJuUWdzCXPbRlfI9nWkJTjSiFp0/kSTzvm+5HhVgAizNVxHZQNn78qL4omFkkrmjxh8W2qKFS7FYe7+EXLvn7CY/eUgM5cG1u4JoXSIMirSxejTaVczJtaS6a5caXaEDGYBaX6tZ/dZNY4Zeu28iJgrDBHPP6rqhbw=
+	t=1758065104; cv=none; b=OJ6vTyuQeIDl8v2Y2UbAxKqzVIcICOkdocb+ll7G8g0H4eORH1yTBH5w8P0HjQXte5ObUkmXQx+pIQ43G8WqdnWfGA4n/eBDu40eIkQtYAdFGqKz+J/4fpwacl/5WHTnHSkYExzwimdF1M84rKbW2xwBi6vgpVBCDHgIycwSn+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758064933; c=relaxed/simple;
-	bh=paQHa9b3xhY6u+jULo2ppco20m/1K8DGNXQUpteD7e0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ZitMrlZ0ZwdvSoPYb4pyW/34jK5lGSaYPAI+tp8VIS2LkAUF3vdGasL5cpNWgY33xIFHi5zMro2W+EYA4eIwxgxTs8SNjhtDgKv8HXnzm3nrLDr6uFflqzd84UCWF+wRc+TQmLfNFF/qjFaVR1xSVe5qcmYXHsUubRNkwamEuhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DPpksF7o; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758064932; x=1789600932;
-  h=date:from:to:cc:subject:message-id;
-  bh=paQHa9b3xhY6u+jULo2ppco20m/1K8DGNXQUpteD7e0=;
-  b=DPpksF7o7wTogR5vtxQBpIf3L+DscxYzuKBrCPV0hMYVcZCLGM+wOi+k
-   p1fZzMcm9BtI8qXbp60oQtfc+2UjTHqwqV2/ZgH/6TaLr2w+7csi6VaT7
-   A21Co51NUduCCtA0PSLwLEpatT7XcIitRazBhraK8V1PfuGBpRA3ZRtGg
-   M4k3GjgcmdzpD94Pb+uRpjEle7MYyrEAD+85RKRcoAlx1dqpkm/keD1IP
-   ypFKvr6Vfdgof4X8sHPkVHaO7d0z7YVTHMKqcFK6eJRgbid5bmx1XX79M
-   xb8UGGJBO7bM9hzkfu72Yp0lB66vN3Ut7053reRDfi3hHPTkFP9aeEf5v
-   A==;
-X-CSE-ConnectionGUID: v05xC5zNQXObPq3doiKmBQ==
-X-CSE-MsgGUID: r5uFdQUoRXeNzMMSi/ZU8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60504748"
-X-IronPort-AV: E=Sophos;i="6.18,270,1751266800"; 
-   d="scan'208";a="60504748"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 16:22:12 -0700
-X-CSE-ConnectionGUID: TMrQnMQlTjSeg4htSXNNcg==
-X-CSE-MsgGUID: nKZ2YNfYQxq2RrvM4e8SFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,270,1751266800"; 
-   d="scan'208";a="179082819"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 16 Sep 2025 16:22:11 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyezw-0000qh-0s;
-	Tue, 16 Sep 2025 23:22:08 +0000
-Date: Wed, 17 Sep 2025 07:21:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 7f830e126dc357fc086905ce9730140fd4528d66
-Message-ID: <202509170750.Jsr6zfkF-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1758065104; c=relaxed/simple;
+	bh=rQeheaB38YY+9A+IcXKdOsVPzWB/MYw/5UlgVC5BkEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZDplsjVns5KD4eiTG6BV9SE54GwTYt0OFEmZNC8bT0yF3hrf8tzKT2j1Pc9DWPomNlb1upAImsFWWWsrzLZh9LuJmsuXQ8Oy7K+/2tNbFlBmsI03RZNywfoMvzr8MpkNLrRMrJfRzOIPBP2h93BACePwy1fEUt81EmI16BQ9jVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZXcq8fh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB34C4CEEB;
+	Tue, 16 Sep 2025 23:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758065104;
+	bh=rQeheaB38YY+9A+IcXKdOsVPzWB/MYw/5UlgVC5BkEY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TZXcq8fhHdP+Qrwtqam23H+1Ck3We430xTMOmgasKbebh8LsYJja/9Fi37uPU9rSM
+	 5VXrjQhus+mnfPxF592rMEBHlplnCgoTF3BPYImrohWbEKcji7xp6YOFOdH1zkmR3f
+	 BDK3BeJfYpZIMgeXFDZDZJc8D1eIbVePdkyjN1mF1+4QMYKCq1EwbOsNRhM9+BTS/H
+	 mvXLm0YNJzF3ePtkTL/UXuHQIydVCGVmbeNrl4fMYDjPxqwnq9Gj+tP+gnL6MKqWwE
+	 B0oVsuPXeDd/t7w6HzOodHFmasR6chsqqLYiL2pSXiBTvCMzYN5MHE6V2lCJ7csXX4
+	 2FmQAfrJFSYKg==
+Date: Tue, 16 Sep 2025 16:25:02 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>, Konrad Leszczynski
+ <konrad.leszczynski@intel.com>, davem@davemloft.net, andrew+netdev@lunn.ch,
+ edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cezary.rojewski@intel.com,
+ sebastian.basierski@intel.com, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>
+Subject: Re: [PATCH net v4 1/2] net: stmmac: replace memcpy with
+ ethtool_puts in ethtool
+Message-ID: <20250916162502.0fcdaf9a@kernel.org>
+In-Reply-To: <8cc527bc-41cd-48ae-a40a-05c69b2c4ac3@lunn.ch>
+References: <20250916120932.217547-1-konrad.leszczynski@intel.com>
+	<20250916120932.217547-2-konrad.leszczynski@intel.com>
+	<20250916164530.GM224143@horms.kernel.org>
+	<8cc527bc-41cd-48ae-a40a-05c69b2c4ac3@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 7f830e126dc357fc086905ce9730140fd4528d66  x86/sev: Guard sev_evict_cache() with CONFIG_AMD_MEM_ENCRYPT
+On Tue, 16 Sep 2025 19:12:22 +0200 Andrew Lunn wrote:
+> where desc can be any length, ironically making
+> dwmac5_safety_feat_dump() unsafe. This is why i asked that this be
+> changed to be the same stmmac_stats, so [ETH_GSTRING_LEN]
+> __nonstring. But that seems to of fallen on deaf ears.
 
-elapsed time: 1462m
+Yes, very strange.
 
-configs tested: 17
-configs skipped: 119
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-i386                          allnoconfig    gcc-14
-i386    buildonly-randconfig-001-20250916    gcc-14
-i386    buildonly-randconfig-002-20250916    gcc-14
-i386    buildonly-randconfig-003-20250916    clang-20
-i386    buildonly-randconfig-004-20250916    gcc-14
-i386    buildonly-randconfig-005-20250916    gcc-14
-i386    buildonly-randconfig-006-20250916    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250916    gcc-14
-x86_64  buildonly-randconfig-002-20250916    clang-20
-x86_64  buildonly-randconfig-003-20250916    clang-20
-x86_64  buildonly-randconfig-004-20250916    clang-20
-x86_64  buildonly-randconfig-005-20250916    clang-20
-x86_64  buildonly-randconfig-006-20250916    clang-20
-x86_64                          defconfig    gcc-14
-x86_64                      rhel-9.4-rust    clang-20
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Tony, Przemek, I suspect the folks here are from "different part of
+Intel" but I think they need some guidance..
 
