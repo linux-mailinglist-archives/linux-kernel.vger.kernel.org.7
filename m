@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-819277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBABB59DCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:35:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E920B59DD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EAD9322738
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6983A4E6692
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA51531E894;
-	Tue, 16 Sep 2025 16:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BBB31E896;
+	Tue, 16 Sep 2025 16:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lc4uTPT5"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGrvxf1B"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8B531E885
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614F231E886
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758040522; cv=none; b=La/JgB5s394/h35NdSrtjn6CUyrsSsT32ccss+fgXrnDjU8lptXAN7d7gLNnfz2d76aVjEn/gq/tIaHePiqMBINRJGUYE1xV7/7D06DgnXCyXSf+jdf+Is1EseRFNcDljRKw3MLdLaXZ5mi30UeMzpBl06BqhDnxyTjnhA/Ct/E=
+	t=1758040574; cv=none; b=ISoTNotG/qe5MS3VCpuBdT7fRopNSJYY32tdF9OrpiEg/sAMmPAgb6vvedHgFvHOkvhONqib8kExVtvA7EZdKKJkW/WDnCUNAHXqGBYNsaMun5KOPnJWLOtrTw7rGY9hq9HxWbVxuASZIcF4fPHuIVOtadvL/WGqXo//jLaQl84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758040522; c=relaxed/simple;
-	bh=W9pIZSJJd90LkruG1/ysGwyisU1HWLXk6DyjzcXgGco=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sSZrZSP5zhaAphIArBy6n2vihe4D16nclWIDe2SH+kYhlXp5eLzcbD7P/rFXpN8MMIMpnJcGugUZvGM8dJPuuRmahAX87TojB13LMJO0vQVV70JJfxHkuTJXQ/qcNDhWu2qX9E50+WZKKjQgt3i0KriNQ5hkNRb9F+6vqq25EuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lc4uTPT5; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1758040574; c=relaxed/simple;
+	bh=Ne7w70vRXTLq2BLmtuDIrB6BWCpz1lm8rEcPhExfc/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NIlNr8IWD/yGvwZFHP1ZnrjzfXOXFmx+sEMhTkxZIZzUJhFQsrn55UOEenOKi/c2bzLrHZcUZ0j0v/W3XWtQXzXYfLoAgoapHYudCGx0lDct2rgN6cnck0rBn6JvFmdtQgwIvjDQwGDRHZYeBGEOfwkHa7npc0+OeZAfFWAbCmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGrvxf1B; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-724b9ba77d5so55947287b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:35:20 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-71d603b60cbso51353407b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:36:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758040519; x=1758645319; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kuKVeqxC1e52+9KOcIW3A/OViu0706QA58Vh/Z8d+28=;
-        b=lc4uTPT5iwLZIq6+Gfq0UVeORPzREqdfb1aSTO7FcygpGRNA8ncWVK7xfEII22VjLh
-         G2yxwZge52CfSzodHF5RR53aTIo8/9zJK1Fo/dI8l6qh0yHlMUkjKjk0lSMJIFBVMn6K
-         +UBnFZHhd8y5wZ4mNGTTYjYoiKXfj+Qlm5vW/V8CAJmWCRufyMcIsWIzVNaGG9jsAtYL
-         v26JzRAQIN4nK2S98tSMXGPefHwOVWNnI3m5kelfJnSKIGpikBxdgnSwqYXgCjajOFhQ
-         SkJLQcu7ld30R3q5sUYwfhDG7B/vd8D8Vj3SSCdeA1duVu6mzGhIw0F9nSXCKsHrQ0tD
-         uu8A==
+        d=gmail.com; s=20230601; t=1758040572; x=1758645372; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ne7w70vRXTLq2BLmtuDIrB6BWCpz1lm8rEcPhExfc/s=;
+        b=XGrvxf1BTLlbnXk+wGGQYTWnOOigYGriODzjnViu6U39S1XKYbYUz2feo8CXWh4qUA
+         xkFvK22Or5ftZ5oPt5dagpvLcpZsa6cJ9qOHpnm5HZqBj1e6+oQ+iXkOiyf+iUFN4SIl
+         VrzeTPiSYhzZBfdb1e+fAKt7Hpq65tzjm8nqXg988bi49st/hw/aV/USY1NausBLgnjE
+         EzYqmU0CW5/rvgaGRKcrJlzsOXhGFgwhtL7Mr3xDDFWn1/f6SKZOjV7bQZOv2tGU4xX4
+         VGlIgBc/jJObANeRkejMDAMJmKDIcxopvJdGneIJ5uujeoG284cU0y8DB/LQqz4igCZJ
+         9G2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758040519; x=1758645319;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kuKVeqxC1e52+9KOcIW3A/OViu0706QA58Vh/Z8d+28=;
-        b=v1UOtoDJaLEE3Mq9MeKcLn3GtwIakthzVczzgebJlXS4jbG8S2PXmjjK6mwE6WqN1c
-         gEN9gkqnbpKwVczPw1j2Zmorb/OK9iHD94UwmoSi0fIwRrcmvlvhE0AZ9JUIgqUw/pTI
-         n/j3Lsgxs0saOISLhZoTfIZGm102rdwBK+3rJOYmUTHS+svRL7EoejoB99+frWXxCvps
-         0xhbXWDf+QE/5l+FyzZSJ/mSj9cnkc0RRpFydauAJUvS/JkoUI5i9XNlAgxIt0pQ0doC
-         NJtd1rsiqhnZfTy/oY7Rck6ho0tssFBfwpF7WsxR6eDsslqfUrnIFa2noNSnqcbRTzRs
-         0y4A==
-X-Forwarded-Encrypted: i=1; AJvYcCU8gcVdzQL5+7juxdVAzBRNz6JY/3QoWXsSudsFB81m6sydwuLZgJiMvdBUqfGZt9bnW1S7BlOhBTVkC04=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvg7+5s05EpoKuWLRg545oqoXI4d4Tt3gHFBkG3hw+uO6D8xSU
-	rJymkAvWZil6b4jFnmZT1lFD5s/Jah40zoc12zVI8tQeX6gEOn1JqU7K
-X-Gm-Gg: ASbGncst9ix7VC4sBzRQ48rVAogzKusD7fMUgjLoDE9bMPFf7Pb0qF3gAtWZZuWkkkv
-	CxCDdXwFOfih3kOHi6i1F4Z8zBMe0+y6sTjxwqXg4iuT3N+JsLiVLbjDdRQKN7Ehsma48G3S3AS
-	VgGksjdI9YR20z+vQMyyMRQspua7+xcL40F5owR0eMoJEjAIiGPReqX0M8wc/YhswhPogm5HmzX
-	v/wl/SyheZJdcEut0349tH3lGyexch/B9NUEvucjC1eKk2kRkY5Ao5dMEVccqHMd/klg4TjHMxi
-	KM8DQr8+cGCw98fQFyfznI+gc70MvMZJHg/eRbH1EJCOfUQAchxU+cOzOfZPUQ9HC/rr15TbAK7
-	gbvXBwFERM0iyZDE1m0cmkJEZT9ElLpVd93ZSFlKXMbDCw5QSDvbSOSuWHg==
-X-Google-Smtp-Source: AGHT+IELK6d8jAkr7WzE3/g8PvsLx8V6BOoNS9QvY2+YNcoJ5bf+I2q1PR/+pmVM3steyyY7/7i/0A==
-X-Received: by 2002:a05:690c:4912:b0:725:39d:a31a with SMTP id 00721157ae682-730652dd1dfmr178212297b3.27.1758040519218;
-        Tue, 16 Sep 2025 09:35:19 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6247490a012sm4214557d50.0.2025.09.16.09.35.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 09:35:18 -0700 (PDT)
-From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	"Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
-	Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND net-next v2] net: renesas: rswitch: simplify rswitch_stop()
-Date: Tue, 16 Sep 2025 12:35:16 -0400
-Message-ID: <20250916163516.486827-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758040572; x=1758645372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ne7w70vRXTLq2BLmtuDIrB6BWCpz1lm8rEcPhExfc/s=;
+        b=u2sjxI3+R5FCEWmnll0eFt1x2PKNuRq8NhdNDLf57o7K4kr/yqWcHRiFsty+BDOgzS
+         C3iyO6QP7vXdGnRDy9MeO7JontH7zoyPRbrKCPfgFqaaIwuJD8GTQAjg45iA3v8pzFCP
+         WV5VBDVgXPyxNn/Sf8LpcnXveaCgT/tjz93bvkXhppnj5jKGhe14wBQNmZ9VR08Y+uNI
+         AoxWo6176+6tnnPP3m8kVebkEW1dtcyRGGwvjTYCGMB+p4zKZdq3R9cYeNM1/Qed0Z1j
+         TtUzTdzGlz1+g6sMyv4htPJYML2UhzArg+xia/FAy7lEKWDBT8R7BFzORBECuI75zf9y
+         X9AA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBP1DzAIBPvUYYLplDYgenbSfinoiVT2nARM8GukzbOBto8PpYHWluPDqUSKl+WckylHaAbkIiFntuB7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjOGar9CsvNvLnZuGOIkCJDNFzzd3FzJZnNwG0Xr0nRZFZ9GW+
+	LpdQJMNL2hj/AgTdYj/kIxU2Fxhxpn6mhddIjAMw5JsnQNxYHjsN4oMin6753bqP93p1dTxkK08
+	uNr3Nqyn0SQ2iHeufMdECiy+FGM0AFDs=
+X-Gm-Gg: ASbGncsQfPyca3DDE9r1fsbg8NTprysFhx9CYNlBgONsYB0rMUEPAMtJ/bhSeqSn8qX
+	n1JBuoyB5nIRkWJv0ZC7tvpy7tIc/F9RbMbuu7xzZBvMoRxiY6vb1T06VSmUEtJWBNFXrTD4ZKm
+	H5fEAJdfCKo7q5WqV1TFJRKTeIzbOAp1LkSCrHM59hd9xBv6IAULeUqM9TibS4ISixA24qZ5AjU
+	9mm1EMpLBFjlp5j3xH4JeB8yz12lhFSOAvmdK97mAiYTZBnmiw=
+X-Google-Smtp-Source: AGHT+IHIuOuqX6mE4aGd7thbKCeMu/VHD1H9MujMYDKtPf0VsR8B+/tCGB/fUewVltI/2VBa1oTdrOYVj8oRFBQVYL8=
+X-Received: by 2002:a05:690c:6c8e:b0:734:81fb:8bb0 with SMTP id
+ 00721157ae682-73481fba318mr61953297b3.3.1758040572094; Tue, 16 Sep 2025
+ 09:36:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250912222539.149952-1-dwindsor@gmail.com> <20250912222539.149952-2-dwindsor@gmail.com>
+ <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com>
+ <CAEXv5_gR1=OcH9dKg3TA1MGkq8dRSNX=phuNK6n6UzD=eh6cjQ@mail.gmail.com>
+ <CAPhsuW44HznMHFZdaxCcdsVrYuYhJOQAPEjETxhm-j_fk18QUw@mail.gmail.com>
+ <CAEXv5_g2xMwSXGJ=X1FEiA8_YQnSXKwHFW3Cv5Ki5wwLkhAfuA@mail.gmail.com>
+ <CAADnVQLuUGaWaThSb94nv8Bb_qgA0cyr9=YmZgxuEtLaQLWzKw@mail.gmail.com>
+ <CAEXv5_griDfE03D1wDLH8chgCz0R2qZ5dAeiG0Rcg5sAicnMsg@mail.gmail.com>
+ <CAEXv5_hKQqFH_7zmxr7moBpt07B-+ZWB=qfWOb+Rn9Vj=7EX+g@mail.gmail.com> <CAPhsuW6vSkYLyjGm60YZvruVKHrT+0tf4ZUdyp5ftd3hZB6cxg@mail.gmail.com>
+In-Reply-To: <CAPhsuW6vSkYLyjGm60YZvruVKHrT+0tf4ZUdyp5ftd3hZB6cxg@mail.gmail.com>
+From: David Windsor <dwindsor@gmail.com>
+Date: Tue, 16 Sep 2025 12:36:01 -0400
+X-Gm-Features: AS18NWBVuEyZ6KTtiue_oaKY4L5_7tE16jnXk5C4R2YarJI7n6Mo-0jeof4xqW8
+Message-ID: <CAEXv5_jCXKm4L6tJy5X6kjoLpoPqkbRLuhGuEMYNwoW=EYYtsw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
+To: Song Liu <song@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-rswitch_stop() opencodes for_each_set_bit().
+On Tue, Sep 16, 2025 at 12:16=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> On Tue, Sep 16, 2025 at 8:25=E2=80=AFAM David Windsor <dwindsor@gmail.com=
+> wrote:
+> [...]
+> > >
+> > > makes sense thanks
+> > >
+> >
+> > Hi,
+> >
+> > Thinking about this more, hashmaps are still problematic for this case.
+> >
+> > Meaning, placing a hook on security_cred_free alone for garbage
+> > collection / end-of-life processing isn't enough - we still have to
+> > deal with prepare/commit_creds. This flow works by having
+> > prepare_creds clone an existing cred object, then commit_creds works
+> > by swapping old creds with new one atomically, then later freeing the
+> > original cred. If we are not very careful there will be a period of
+> > time during which both cred objects could be valid, and I think this
+> > is worth the feature alone.
+>
+> With cred local storage, we still need to deal with prepare/commit creds,
+> right? cred local storage only makes sure the storage is allocated and
+> freed. The BPF LSM programs still need to initiate the data properly
+> based on the policy. IOW, whether we have cred local storage or not,
+> it is necessary to handle all the paths that alloc/free the cred. Did I m=
+iss
+> something here?
+>
 
-CC: Simon Horman <horms@kernel.org>
-Reviewed-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
----
-v1: https://lore.kernel.org/all/20250913181345.204344-1-yury.norov@gmail.com/
-v2: Rebase on top of net-next/main
+Yes each LSM will have to do whatever it feels it should. Some will
+initialize their blob's data with one type of data, some another,
+depends on the LSM's use case. We're just here to provide the storage
+- bpf cannot use the "classic" LSM storage blob.
 
- drivers/net/ethernet/renesas/rswitch_main.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I was referring to the fact that if we use a hashmap to track state on
+a per-cred basis there may be a period of time when it could be come
+stale during the state change from commit -> prepare_creds.
 
-diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
-index ff5f966c98a9..69676db20fec 100644
---- a/drivers/net/ethernet/renesas/rswitch_main.c
-+++ b/drivers/net/ethernet/renesas/rswitch_main.c
-@@ -1656,9 +1656,7 @@ static int rswitch_stop(struct net_device *ndev)
- 	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
- 		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDID);
- 
--	for (tag = find_first_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT);
--	     tag < TS_TAGS_PER_PORT;
--	     tag = find_next_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT, tag + 1)) {
-+	for_each_set_bit(tag, rdev->ts_skb_used, TS_TAGS_PER_PORT) {
- 		ts_skb = xchg(&rdev->ts_skb[tag], NULL);
- 		clear_bit(tag, rdev->ts_skb_used);
- 		if (ts_skb)
--- 
-2.43.0
+Thanks,
+David
 
+> Thanks,
+> Song
 
