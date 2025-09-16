@@ -1,86 +1,114 @@
-Return-Path: <linux-kernel+bounces-819481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA9CB5A175
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:32:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7430B5A182
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB4357B5C38
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89191485FF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DC727A442;
-	Tue, 16 Sep 2025 19:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C055F2DECC5;
+	Tue, 16 Sep 2025 19:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViltXeTD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wkjh3SWJ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A2624887E;
-	Tue, 16 Sep 2025 19:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9223127F006;
+	Tue, 16 Sep 2025 19:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758051136; cv=none; b=FA5NLrq58f2uMIh6MJjnNrczRBnWcgmtDRLREf2eX4b+Kh1OSa1oiqQu905hKEwmAV3yH+0qaq0BoJfQnv7OtlUNQgRxaGdnJ6SKzUadMnFdrP64UYormKveOvUlWx5ZCSGPJiKQzPbxnInZJ/7y63GHm2r58rdJvndPQqUXXEc=
+	t=1758051261; cv=none; b=aEedoyqsJFLJup53LJj7UbXPIFu4XmqqSN2vCCQv69aXoJANz/KdeFGpW40IH+EZVz7yac9itsyAiteFnnWYbqU2JF5yHUhAuLl0ADJiIA/eefkFDSK3nLDpJEGk87F+LBw+vH64PKvT9mBpcoTWBH+kqp6fSnUtsKuB/XAKoAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758051136; c=relaxed/simple;
-	bh=nJUVQfDNWUN7WS8fn07Trv/k+0SzHN7/fXHW6s/Nm8Y=;
+	s=arc-20240116; t=1758051261; c=relaxed/simple;
+	bh=btjlquJZgN4cfS3dp6NZPpiz13/EggiO0pSdV9kExQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THI3RWWDijv942eotf7fUH6r19/zGiThXWmMYp05n1D26IOTrWhlz558tMQRoPbHP9MvTlC+q5yJKqa/uqXJuFrx0UU2GyLX5D40x91HYqifyKnExh5mPjF4HPzVX5RLQTSBsEuGwAgRsImalX5rZWtHOyVYZyexSWqQeJKq+io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViltXeTD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305B8C4CEEB;
-	Tue, 16 Sep 2025 19:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758051135;
-	bh=nJUVQfDNWUN7WS8fn07Trv/k+0SzHN7/fXHW6s/Nm8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ViltXeTDs6AsUCALWrTaSqafUoDcDKRpGsmUxuWafRvBUZiYD4ZJb6TxLSK+WodJw
-	 hr81nRPdC+/tTrPykzrkDDBdfMvHPGxNBwooorRm1prbnD5O1ZHHt4ar9Ba+jkn3Ze
-	 ITQwEEqSCFXCkKyatMFbZt/WPq1U+yjZvftuytq0ODxYNi7+1OIHXYcn8gYfwiWkHt
-	 xRIKs8QMYbjVwI7HvCo9DWzG9VYRI9oVV4eXlWPMi72qlB1TomVmSC16mkZlbFyhrn
-	 NPgJEEGov7GHHvBlkMWSwPFgJbywSIj7IKddF2JQgvotNBy7iNF84Ymh0s27Rrf6Ao
-	 txWIOUGcyD/+A==
-Date: Tue, 16 Sep 2025 20:32:10 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jianping.Shen@de.bosch.com
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, dima.fedrau@gmail.com,
-	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Christian.Lorenz3@de.bosch.com, Ulrike.Frauendorf@de.bosch.com,
-	Kai.Dolde@de.bosch.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: iio: imu: smi330: Add binding
-Message-ID: <20250916-henna-rinsing-32a18a4d30b9@spud>
-References: <20250915160934.89208-1-Jianping.Shen@de.bosch.com>
- <20250915160934.89208-2-Jianping.Shen@de.bosch.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LTVoB9vebuvfseBf5eVUiqxiQREa12qB7eB2s3xLDqHuOTRTGNATBhvnPsUIBavHxDVjgoJ0RoAVF+6TWDmYI2MagtRPXAEzf3nZrxqrUIqnZU1HtKZoZfj67clIJrMqZtU/BF5p9RKkxDY9XZn1hO94PeM9qVtUlZ2hxq5AGpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wkjh3SWJ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=DirpkGByuFZfnnqnuYZc8fUxpUvQJF3y+mZitXGzjPU=; b=wkjh3SWJtut/oefauPN+WQTgpL
+	fwRI5OHhy7A2arc4MRTDdvSjCDuTx1m3EDlvtahIWysgdVB06IIb3u4pJlqYApEp3wd7zwxH1uOKN
+	qiEO/54r8kw+rAkA03grxvlaiBf8xpfDRARPuO7Z6qXkz+qLL143nvG9x4NrNyp2bUgc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uybQm-008bS6-3R; Tue, 16 Sep 2025 21:33:36 +0200
+Date: Tue, 16 Sep 2025 21:33:36 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?J=F6rg?= Sommer <joerg@jo-so.de>
+Cc: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, rdunlap@infradead.org,
+	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v12 3/5] net: rnpgbe: Add basic mbx ops support
+Message-ID: <5a942120-fe95-4d6a-a2cf-ef832f65343e@lunn.ch>
+References: <20250916112952.26032-1-dong100@mucse.com>
+ <20250916112952.26032-4-dong100@mucse.com>
+ <7d4olrtuyagvcma5sspca6urmkjotkjtthbbekkeqltnd6mgq6@pn4smgsdaf4c>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NDqmdNp0JilL81AM"
-Content-Disposition: inline
-In-Reply-To: <20250915160934.89208-2-Jianping.Shen@de.bosch.com>
-
-
---NDqmdNp0JilL81AM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <7d4olrtuyagvcma5sspca6urmkjotkjtthbbekkeqltnd6mgq6@pn4smgsdaf4c>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > +	if (fw_req != 0 && fw_req != hw->mbx.fw_req) {
+> > +		hw->mbx.stats.reqs++;
+> > +		return 0;
+> > +	}
+> > +
+> > +	return -EIO;
+> 
+> Only a suggestion: Might it be clearer to flip the cases and handle the if
+> as error case and continue with the success case?
+> 
+> if (fw_req == 0 || fw_req == hw->mbx.fw_req)
+> 	return -EIO;
+> 
+> hw->mbx.stats.reqs++;
+> return 0;
 
---NDqmdNp0JilL81AM
-Content-Type: application/pgp-signature; name="signature.asc"
+That would by the usual pattern in the kernel. It is good to follow
+usual patterns.
 
------BEGIN PGP SIGNATURE-----
+> > +static void mucse_mbx_inc_pf_req(struct mucse_hw *hw)
+> > +{
+> > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > +	u16 req;
+> > +	u32 val;
+> > +
+> > +	val = mbx_data_rd32(mbx, MUCSE_MBX_PF2FW_CNT);
+> > +	req = FIELD_GET(GENMASK_U32(15, 0), val);
+> 
+> Why not assign the values in the declaration like done with mbx?
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMm7OgAKCRB4tDGHoIJi
-0nbTAP4ydR+/8Y/udGCa6dMD9twR3ZH6U71sjhVJf2KSLvTWjgD/W7Nuo9fe0g4+
-CKblP8Qbyho+rSArAU7cmx+FfN0oWw8=
-=Qfln
------END PGP SIGNATURE-----
+Reverse Christmas tree.
 
---NDqmdNp0JilL81AM--
+	struct mucse_mbx_info *mbx = &hw->mbx;
+	u32 val = mbx_data_rd32(mbx, MUCSE_MBX_PF2FW_CNT);
+	u16 req = FIELD_GET(GENMASK_U32(15, 0), val);
+
+This is not reverse christmas tree. Sometimes you need to put
+assignments into the body of the function.
+
+	Andrew
 
