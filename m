@@ -1,422 +1,172 @@
-Return-Path: <linux-kernel+bounces-819511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF18B5A1D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D0DB5A1D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A301BC7049
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273511BC0F00
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3633F2E1C6F;
-	Tue, 16 Sep 2025 20:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2B5283FE1;
+	Tue, 16 Sep 2025 20:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKntb37w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGytgli2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B1B21FF55;
-	Tue, 16 Sep 2025 20:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E4F27AC37
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758053227; cv=none; b=G2NBaN/xXaK5eow4U4oTFyM2a5TX6o2PH55f5Znlc8ceDgmioIy5bJ6vW4NJjxMKDRFPX989xTPfeITdkcufgh/erG7YZ8pMqAsKBj4AM8ZTvhk7ojuDMUFqZf6M6IH68lnmWxrp2hLbPS+wuI6fApS1kNMhlrg0EkTDdY9iU5E=
+	t=1758053199; cv=none; b=EQaJQ0SzC30aPbD/RH0I++JHYlabjCMmiz27jAdUUsXIEOCQIDhGTA3aTWtw8jx8iV0aS1mmIPetXFrpC+SvDXvntZli7wZYclujLMjjVjjT8f3wvAA0PfZehRn8Wstu/NHvYexyw3g3DfyL99A8QpjlQKfmlL0zl/UR4os4EoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758053227; c=relaxed/simple;
-	bh=82ODHO+ZHstBJ3tXU3RRL74ckaZe2VyLF/nSIFdDBC8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=j1Ko12bceJ/jepiswCtdCPMR0DS0NuMjujsTQbQvEp6qG0GF38nNCW07aJ+TWQGnFOWijSVUZyzR3X62YZ3R3zssCLpCfzhnQc5W9ND5lKc3UbcIXMdhOuPtDS3RKJbHf1gO0Iq9yl00Zf1CDrLeGW8cd9+iEodM3iQ2kV3ir2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKntb37w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778CEC4CEEB;
-	Tue, 16 Sep 2025 20:07:02 +0000 (UTC)
+	s=arc-20240116; t=1758053199; c=relaxed/simple;
+	bh=sgYmSPXr5fJEn+ksoOyt6N70CNWy742OaZOeIXzvKEk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nEL5Pwcz9tiw8rIthc9BR/qX0bPokxP4vfXp1y0prMP1lRlJD2J513SZImRmOSIQ6Ta2u1Xa/1FS/9XOIXq3I0HKxT7kVUe56JiC1jInga7WNckrrGydj75ofiAO3bdzccRoqIMgMhn37X519Wk7nJWudregJw743VizycsG95A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGytgli2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91860C116B1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758053227;
-	bh=82ODHO+ZHstBJ3tXU3RRL74ckaZe2VyLF/nSIFdDBC8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=pKntb37wA+2URaeTKiVR+RnQbI2WbfCKz730Q24GL5W0vJAHW42XiP1iyQNsV5T+6
-	 ADqKBCXgAwUQzapNWsEOQvIieUu7bDStup/B+aA88AQm+NGYVe0Se0jCG6UTFk5SRd
-	 /TqGnSXlUZAhuiBMZTIV+qvYWYb8pkGvwfCT/33LrRmmOd4zn7iiaHP2JDHgMsl3hE
-	 Py5lO1/tecsKMj1vons8Z7ae4eHkOj5mo2/iov7y4ToQxTGsVyi1rmKquWyq9CMyBa
-	 hj0rg3Nj7K9YikoDJ4MlhQVpBEY8yVRPiw/tXnuUS5Qi6uYHcp/ERnVEwgJLdz1BJ6
-	 QQYHlXzHkpsgQ==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 16 Sep 2025 22:06:01 +0200
-Subject: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
- Router
+	s=k20201202; t=1758053198;
+	bh=sgYmSPXr5fJEn+ksoOyt6N70CNWy742OaZOeIXzvKEk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pGytgli2fZqIFFSPD4nEJRarafpTfU7+HzOmQ4CrN2CjEOk4ppBUfuubssvHpkzrF
+	 Yq1Fu3JhenEJhBau9+SeBigC14UAXOKsIezP4Fx7i+c2SSYg7JmRNu0H+7xAQEjo71
+	 rg7BXNu5OtLeDuJtpfEqyONbSEfwBrBKai/4f3qtNYNZFKyEs0XUriJ7IUEsVYR1l3
+	 sgi7Um57l/zNJ55jX7gV8lA9nsst8AZcGh+Lr1JpsYDXDKsADdMKhLSbEKryyd1axR
+	 K3vczRqSxgpFXlvYuZ6R54wUd/hu+zQa8K+QEPSaOlYmNzqghDusF5TeByeZsS7KsJ
+	 /4SEXhXmAz//g==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74c1251df00so2989021a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:06:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVeut/YpsS9PgsIJN01N/CEwBjpmNkU8WCJP4MsVpbYMaMz5V2RsdpUbyjgOSbPeZyfpsnSycUJ2XNmZTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWnMzggjZF9oQ1LkpH1VXCY/+mTYqCBBwBEes8esx56PCrounv
+	hQwc1VCOlPf/TjkZsm39zo1BUT0K5ZSxVyjhiXPs8Vgd+NkaMiNz+xBq+DH1cvY7Z0SyuttP+9W
+	7EgyN8elBhjNhSHNftjG2Xvdylr4hqDE=
+X-Google-Smtp-Source: AGHT+IEgzjAAkbMDY4awbYDp3Kq0/fxmVwsoGjHomqpd9a5KNX9ogTaPcgxeatr4pPDlCJhtFOK6MLyI7Ue0IaNcehc=
+X-Received: by 2002:a05:6808:689b:10b0:439:b491:401b with SMTP id
+ 5614622812f47-43b8d87c7bbmr8034409b6e.10.1758053197833; Tue, 16 Sep 2025
+ 13:06:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIACjDyWgC/x3MSwqDMBRG4a3IHRvIwxZ1KyKi8a+9AxPNbUtB3
- LvB4Tc45yBBYgi1xUEJPxaOIcOUBfn3GBYonrPJavvQjXmqT9zYq93HdfjKVA0Th5nDIsqhdrB
- WNzCgnG8JL/7f664/zwtboI2GagAAAA==
-X-Change-ID: 20250916-topic-qcom_usb4_bindings-3e83e2209e1e
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, Jack Pham <quic_jackp@quicinc.com>, 
- Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Mayank Rana <mayank.rana@oss.qualcomm.com>, 
- Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>, 
- Mika Westerberg <westeri@kernel.org>, 
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758053222; l=10454;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=7i8SYua4P42R+C99GKv8GP2AAHRi2AKDbV2qgnnCITg=;
- b=LoBP/bKbJzR7Kyy+IEwJNJ/xwVx2S+enbDx0KSUpbMST4m+/tWbYApZeIlW5t7WCTO37b1FXh
- kavzL8gNx8LCzFFtYX5Ds/d4zNiD1E1m9c8CdT6Y2cn4fKJj6g2O76h
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+References: <20250830053404.763995-1-srosek@google.com> <CAJZ5v0hShKgPB42p4dOgKoRuMCkGhe+ZHMeAuFQO0Soa1ty_LQ@mail.gmail.com>
+ <CAF3aWvHTXiODVE72Q33KDS51j4QA7gXVSsvdRnvsHdBv4NzCfw@mail.gmail.com>
+In-Reply-To: <CAF3aWvHTXiODVE72Q33KDS51j4QA7gXVSsvdRnvsHdBv4NzCfw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 16 Sep 2025 22:06:26 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gTUj0zj3rZP+0iQAhsqMaLnN0K5RYpeH+ViS+GMKPHfw@mail.gmail.com>
+X-Gm-Features: AS18NWDo9e7e7lAfAdBG6Gzab9UFwhygJIWaLVvGXMJwbkP1bC1WNNPO2W6V_JU
+Message-ID: <CAJZ5v0gTUj0zj3rZP+0iQAhsqMaLnN0K5RYpeH+ViS+GMKPHfw@mail.gmail.com>
+Subject: Re: [PATCH v1 00/12] ACPI: DPTF: Move INT340X enumeration from DPTF
+ core to thermal drivers
+To: =?UTF-8?Q?S=C5=82awomir_Rosek?= <srosek@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
+	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
+	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Hi,
 
-Several Qualcomm platforms feature an in-house Host Router IP block,
-which enables USB4 and Thunderbolt 3 functionality. It implements the
-common NHI interface, allowing for easier integration with existing
-Thunderbolt driver implementations.
+On Mon, Sep 15, 2025 at 7:13=E2=80=AFPM S=C5=82awomir Rosek <srosek@google.=
+com> wrote:
+>
+> Hi Rafael,
+>
+> First of all I would like to apologize for the late reply and thank
+> you for your comments.
+>
+> On Mon, Sep 1, 2025 at 10:49=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Sat, Aug 30, 2025 at 7:34=E2=80=AFAM Slawomir Rosek <srosek@google.c=
+om> wrote:
+> > >
+> > > The Intel Dynamic Platform and Thermal Framework (DPTF) relies on
+> > > the INT340X ACPI device objects. The temperature information and
+> > > cooling ability are exposed to the userspace via those objects.
+> > >
+> > > Since kernel v3.17 the ACPI bus scan handler is introduced to prevent
+> > > enumeration of INT340X ACPI device objects on the platform bus unless
+> > > related thermal drivers are enabled. However, using the IS_ENABLED()
+> > > macro in the ACPI scan handler forces the kernel to be recompiled
+> > > when thermal drivers are enabled or disabled, which is a significant
+> > > limitation of its modularity. The IS_ENABLED() macro is particularly
+> > > problematic for the Android Generic Kernel Image (GKI) project which
+> > > uses unified core kernel while SoC/board support is moved to loadable
+> > > vendor modules.
+> > >
+> > > This patch set moves enumeration of INT340X ACPI device objects on
+> > > the platform bus from DPTF core to thermal drivers. It starts with
+> > > some code cleanup and reorganization to eventually remove IS_ENABLED(=
+)
+> > > macro from the ACPI bus scan handler. Brief list of changes is listed
+> > > below:
+> > >
+> > > 1) Remove SOC DTS thermal driver case from the ACPI scan handler
+> > >    since its dependency on INT340X driver is unrelated to DPTF
+> > > 2) Move all INT340X ACPI device ids to the common header and update
+> > >    the DPTF core and thermal drivers accordingly
+> > > 3) Move dynamic enumeration of ACPI device objects on the platform bu=
+s
+> > >    from the intel-hid and intel-vbtn drivers to the ACPI platform cor=
+e
+> > > 4) Move enumeration of INT340X ACPI device objects on the platform bu=
+s
+> > >    from DPTF core to thermal drivers using ACPI platform core methods
+> > >
+> > >
+> > > Slawomir Rosek (12):
+> > >   ACPI: DPTF: Ignore SoC DTS thermal while scanning
+> > >   ACPI: DPTF: Move INT3400 device IDs to header
+> > >   ACPI: DPTF: Move INT3401 device IDs to header
+> > >   ACPI: DPTF: Move INT3402 device IDs to header
+> > >   ACPI: DPTF: Move INT3403 device IDs to header
+> > >   ACPI: DPTF: Move INT3404 device IDs to header
+> > >   ACPI: DPTF: Move INT3406 device IDs to header
+> > >   ACPI: DPTF: Move INT3407 device IDs to header
+> >
+> > Please avoid sending multiple patches with the same subject,
+> > especially in one patch series.
+> >
+> > Thanks!
+> >
+>
+> The subjects are quite similar but they are not exactly the same.
+>
+> Originally the ACPI bus scan handler was added in 3230bbfce8a9
+> ("ACPI: introduce ACPI int340x thermal scan handler") to prevent
+> enumeration of ACPI device objects in range INT3401~INT340B
+> and only the INT3400 master device had their platform driver added
+> in 816cab931f28 ("Thermal: introduce int3400 thermal driver").
+>
+> These days, however, each of INT3400~INT3407 device ID, representing
+> a different kind of thermal device, has its own platform driver.
+> Most of them, depending on X Lake generation, can also be enumerated
+> on the ACPI bus using INTC1XXXX device ID. In addition INT3408~INT340B
+> and some of The Wildcat Lake device IDs are not supported by any
+> platform driver.
+>
+> To make the review process easier and minimize the risk of mistakes
+> I decided to create separe patch for each ID in range INT3400~INT3407.
+> The INT3400, INT3404 and INT3407 device ID can probably be renamed to
+> Thermal Core, Fan and Power device ID, respectively, but I am not sure
+> about the others.
+>
+> Alternatively they can be squashed into a single patch which moves
+> all INT340X device IDs to the common header.
 
-The Host Router features a microcontroller (with loadable firmware),
-which takes care of detecting and acting upon plug events, initiating
-high-speed link establishment or performing HW power management
-operations.
-
-Each instance is connected to a single USB3.x host, a PCIe RC and a
-DisplayPort controller through a fitting Protocol Adapter, allowing
-for the tunneling of the respective protocols between the USB4/TBT3
-device and the on-SoC controller.
-
-Describe the block, as present on the X1E family of SoCs, where it
-implements the USB4v1 standard.
-
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
-Hello!
-
-This is our stab at USB4/Thunderbolt dt-bindings.
-
-This submission, as stated in the commit message, describes our USB4
-Host Router block, which is roughly the same class of hardware that you
-can find on add-in PCIe cards aimed at x86 machines.
-
-This specific patch is NOT supposed to be merged, since the bindings
-may still ever so slightly change, as we continue work on the driver
-(i.e. it's still possible that we omitted some resource).
-
-It is however published early to create grounds for a discussion.
-This is the first bring-up of USB4/TBT3 on a DT platform, so this
-binding is likely going to influence all subsequent submissions. I've
-added various DT and TBT folks to the recipient list to make everyone
-aware of any decisions we settle on.
-
-Comments very welcome!
-
-P.S.
-The driver part (which has quite some dependencies) is not yet 100%
-ready to share and will be published at a later date.
----
- .../bindings/thunderbolt/qcom,usb4-hr.yaml         | 263 +++++++++++++++++++++
- MAINTAINERS                                        |   1 +
- 2 files changed, 264 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..1cf3d083c6129a492010a4b98fea0e8dec9746cf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
-@@ -0,0 +1,263 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/thunderbolt/qcom,usb4-hr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm USB4 Host Router
-+
-+maintainers:
-+  - Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-+
-+description:
-+  The Qualcomm USB4 Host Router IP block implements the NHI standard
-+  as described in the USB4 specification.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - qcom,x1e80100-usb4-hr # USB4v1
-+      - const: qcom,usb4-hr
-+
-+  reg:
-+    maxItems: 17
-+
-+  reg-names:
-+    items:
-+      - const: router
-+      - const: router_config
-+      - const: tmu_config
-+      - const: port_group
-+      - const: sideband
-+      - const: uc_ram
-+      - const: uc_per
-+      - const: uc_mbox
-+      - const: nhi
-+      - const: cfg
-+      - const: debug
-+      - const: usbap_config
-+      - const: pcieap_config
-+      - const: dpap0_aux
-+      - const: dpap0_config
-+      - const: dpap1_aux
-+      - const: dpap1_config
-+
-+  interrupts:
-+    items:
-+      - description: Combined event interrupt for all three rings
-+      - description: OOB Firmware interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: ring
-+      - const: fw
-+
-+  clocks:
-+    maxItems: 10
-+
-+  clock-names:
-+    items:
-+      - const: sys
-+      - const: tmu
-+      - const: ahb
-+      - const: axi
-+      - const: master
-+      - const: phy_rx0
-+      - const: phy_rx1
-+      - const: sb
-+      - const: dp0
-+      - const: dp1
-+
-+  resets:
-+    maxItems: 13
-+
-+  reset-names:
-+    items:
-+      - const: core
-+      - const: phy_nocsr
-+      - const: sys
-+      - const: rx0
-+      - const: rx1
-+      - const: usb_pipe
-+      - const: pcie_pipe
-+      - const: tmu
-+      - const: sideband_iface
-+      - const: hia_master
-+      - const: ahb
-+      - const: dp0
-+      - const: dp1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  required-opps:
-+    maxItems: 1
-+
-+  phys:
-+    maxItems: 1
-+
-+  phy-names:
-+    const: usb4
-+
-+  iommus:
-+    maxItems: 1
-+
-+  interconnects:
-+    maxItems: 2
-+
-+  interconnect-names:
-+    items:
-+      - const: usb4-ddr
-+      - const: apps-usb4
-+
-+  mode-switch: true
-+
-+  wakeup-source: true
-+
-+allOf:
-+  - $ref: /schemas/usb/usb-switch.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
-+  - phys
-+  - phy-names
-+  - iommus
-+  - interconnects
-+  - interconnect-names
-+  - mode-switch
-+  - port
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        usb4_router0: usb4-host-router@15600000 {
-+            compatible = "qcom,x1e80100-usb4-hr",
-+                         "qcom,usb4-hr";
-+            reg = <0x0 0x15600000 0x0 0x8000>,
-+                  <0x0 0x15608000 0x0 0x70>,
-+                  <0x0 0x15608070 0x0 0x500>,
-+                  <0x0 0x1560d000 0x0 0x1000>,
-+                  <0x0 0x15612000 0x0 0x1000>,
-+                  <0x0 0x15613000 0x0 0xe000>,
-+                  <0x0 0x15621000 0x0 0x2000>,
-+                  <0x0 0x15623000 0x0 0x2000>,
-+                  <0x0 0x1563f000 0x0 0x40000>,
-+                  <0x0 0x1567f000 0x0 0x1000>,
-+                  <0x0 0x15680000 0x0 0x1000>,
-+                  <0x0 0x15681000 0x0 0x1000>,
-+                  <0x0 0x15682000 0x0 0x1000>,
-+                  <0x0 0x15683000 0x0 0x1000>,
-+                  <0x0 0x15685000 0x0 0x1000>,
-+                  <0x0 0x15686000 0x0 0x1000>,
-+                  <0x0 0x15688000 0x0 0x1000>;
-+            reg-names = "router",
-+                        "router_config",
-+                        "tmu_config",
-+                        "port_group",
-+                        "sideband",
-+                        "uc_ram",
-+                        "uc_per",
-+                        "uc_mbox",
-+                        "nhi",
-+                        "cfg",
-+                        "debug",
-+                        "usbap_config",
-+                        "pcieap_config",
-+                        "dpap0_aux",
-+                        "dpap0_config",
-+                        "dpap1_aux",
-+                        "dpap1_config";
-+
-+            interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 579 IRQ_TYPE_LEVEL_HIGH>;
-+            interrupt-names = "ring",
-+                              "fw";
-+
-+            clocks = <&gcc_usb4_0_sys_clk>,
-+                     <&gcc_usb4_0_tmu_clk>,
-+                     <&gcc_usb4_0_cfg_ahb_clk>,
-+                     <&gcc_aggre_usb4_0_axi_clk>,
-+                     <&gcc_usb4_0_master_clk>,
-+                     <&gcc_usb4_0_phy_rx0_clk>,
-+                     <&gcc_usb4_0_phy_rx1_clk>,
-+                     <&gcc_usb4_0_sb_if_clk>,
-+                     <&gcc_usb4_0_dp0_clk>,
-+                     <&gcc_usb4_0_dp1_clk>;
-+            clock-names = "sys",
-+                          "tmu",
-+                          "ahb",
-+                          "axi",
-+                          "master",
-+                          "phy_rx0",
-+                          "phy_rx1",
-+                          "sb",
-+                          "dp0",
-+                          "dp1";
-+
-+            resets = <&gcc_usb4_0_bcr>,
-+                     <&gcc_usb4phy_phy_prim_bcr>,
-+                     <&gcc_usb4_0_misc_usb4_sys_bcr>,
-+                     <&gcc_usb4_0_misc_rx_clk_0_bcr>,
-+                     <&gcc_usb4_0_misc_rx_clk_1_bcr>,
-+                     <&gcc_usb4_0_misc_usb_pipe_bcr>,
-+                     <&gcc_usb4_0_misc_pcie_pipe_bcr>,
-+                     <&gcc_usb4_0_misc_tmu_bcr>,
-+                     <&gcc_usb4_0_misc_sb_if_bcr>,
-+                     <&gcc_usb4_0_misc_hia_mstr_bcr>,
-+                     <&gcc_usb4_0_misc_ahb_bcr>,
-+                     <&gcc_usb4_0_misc_dp0_max_pclk_bcr>,
-+                     <&gcc_usb4_0_misc_dp1_max_pclk_bcr>;
-+            reset-names = "core",
-+                          "phy_nocsr",
-+                          "sys",
-+                          "rx0",
-+                          "rx1",
-+                          "usb_pipe",
-+                          "pcie_pipe",
-+                          "tmu",
-+                          "sideband_iface",
-+                          "hia_master",
-+                          "ahb",
-+                          "dp0",
-+                          "dp1";
-+
-+            power-domains = <&gcc GCC_USB4_0_GDSC>;
-+
-+            phys = <&usb4_phy>;
-+            phy-names = "usb4";
-+
-+            iommus = <&apps_smmu 0x1440 0x0>;
-+
-+            interconnects = <&icc0 &icc1>,
-+                            <&icc2 &icc3>;
-+            interconnect-names = "usb4-ddr",
-+                                 "apps-usb4";
-+
-+            mode-switch;
-+
-+            port {
-+                usb4_0_mode_in: endpoint {
-+                };
-+            };
-+        };
-+    };
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9da37c8dee69de9421d4f70906b4e623a442d171..b607f0a66f953fb1ea72e3405820288850004dfe 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25428,6 +25428,7 @@ L:	linux-usb@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git
- F:	Documentation/admin-guide/thunderbolt.rst
-+F:	Documentation/devicetree/bindings/thunderbolt/
- F:	drivers/thunderbolt/
- F:	include/linux/thunderbolt.h
- 
-
----
-base-commit: 05af764719214d6568adb55c8749dec295228da8
-change-id: 20250916-topic-qcom_usb4_bindings-3e83e2209e1e
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
+Yes, please.
 
