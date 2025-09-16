@@ -1,195 +1,125 @@
-Return-Path: <linux-kernel+bounces-819448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F85BB5A0D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:52:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF11B5A0CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D30EA587A65
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5A8F587B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18252DC336;
-	Tue, 16 Sep 2025 18:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Bso0quWn"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1376E2D73B9;
+	Tue, 16 Sep 2025 18:52:07 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29719219E8D;
-	Tue, 16 Sep 2025 18:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758048764; cv=pass; b=bjGzmu/RslrgWinA6inyGAJzC2PtV2Jjedh3cJT8SO9k1GwurdQFGRFxxrq7PfHmvQCi/zgtmDmh/S1P3m+QnB9KInxOEmnqDSn1heddj4BD5kp02miyWZFFvN9NtfD5gfPewry33Aa6O45FaipBdInyjtPLoUxRBVmVe4rVQ4A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758048764; c=relaxed/simple;
-	bh=MkRhcuMfG7Wc5icNw+38YPni0DNeWvgarJWK/gyfE78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVJLb51LNVthYbUe5fV6ti0rG7dgg3DLHbq9YWnGHTD2FVH5JVimiaSLAdIwOLrWyhhT8Ms7LjJKgZvRqUpvnJi1AVsIhXN0EehhXO4XHBZ+A/SOR6XBKTR8kbP3FsbL3IpOUYL1s/kxCI6cNEGFoT8Erhuxqy6nvJ4bJocOPQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Bso0quWn; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758048740; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hwEf/NxODHgKfr5qqNaXtIwC032hrGNLbfLqUMVsNDxaamv6rr4/dVzPm6RFqZ99ZKlWjJrZYRmji8jo1shANvnVc9RoxdslpXeI0Lu8cRFdljIXJqcNUem94yJt4FPiejvkVL0JK9vM3QT+8yVSbcUo1icHRQQn4gd1azdw7l0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758048740; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AE2v096FXM3U02PoUXC7+g+/MgYT28uhtv7iQ0kgGIs=; 
-	b=a8814MJmcLlEyFLDm4ezRBv/D2khSrl+dtKolpYcn2DwvcBNKUE97ziJza6F5Dkz/rDkgqeUV2yO3v6QOheh/VtTwMoeIVYJWrApFft8M8VUNYAbnLfxYoJQYIC5Z+KML9udiRMtC5+46zqsGMK0+8tzALbrhgq8fktzlr+STCE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758048740;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=AE2v096FXM3U02PoUXC7+g+/MgYT28uhtv7iQ0kgGIs=;
-	b=Bso0quWn+dK9MmELmgJ1AMVQFe7An5XhaL2GXfyOgXyFvFFFT/BHBi5+d2+JubQv
-	mDMy1PhOcbHIrkyxV8EAq34x6k2FBzokMlDjTWPV3tCNvsOfALxIBH2fhcK6vy5adI1
-	ABs6DBlxrSQ2aCqHHs1UpJLXIhNH/FTR5JMmue+E=
-Received: by mx.zohomail.com with SMTPS id 1758048737206189.14835880661303;
-	Tue, 16 Sep 2025 11:52:17 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 25D89180733; Tue, 16 Sep 2025 20:51:31 +0200 (CEST)
-Date: Tue, 16 Sep 2025 20:51:31 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Souvik Chakravarty <Souvik.Chakravarty@arm.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andy Yan <andy.yan@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, 
-	Stephen Boyd <swboyd@chromium.org>, Andre Draszik <andre.draszik@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	Elliot Berman <quic_eberman@quicinc.com>, Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v14 04/10] Documentation: ABI: Add
- sysfs-class-reboot-mode-reboot_modes
-Message-ID: <7z65qijcophg63npp5duix7zlhitazu6kba6aaulgwo2fg4txy@hzpj45cm77qd>
-References: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
- <20250815-arm-psci-system_reset2-vendor-reboots-v14-4-37d29f59ac9a@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9B2219E8D;
+	Tue, 16 Sep 2025 18:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758048726; cv=none; b=IW42zApvcNZtRYJbBQRPCg9oeLmkcB0b/RghqqemGF0b/w9/FoOJETgntDApv96QhREk4nJnV3GjSlCKsqh7iATPfOGDw7gK0R6BoeremeGDsWqPIuz8uYSFDVKYL+OxhCFJzWJF2eSvG4klHIomycn97eZE4C1PTflCQMgLjyg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758048726; c=relaxed/simple;
+	bh=uVMWKXu8FITctmOe18YNYkwXE2KLr8lvqARqp7ItpNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZXVPwBVg1Nu3K/Pt3p6Vg7h8ZWitR0UkPvnjZoBQ9NDxwM8IEMuio6t0LLHg0v1UiSYlFKWEZ5A1FdLfV7/XXHgzMYlpxav+uccLmv6uB5sP0qe+lNWCkZzsDxoe1rzf9YhjdJ1Q/YF5Y6tJEdDgmHB1U0pe1eN9tnt984YQtiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 41DBCB6F0C;
+	Tue, 16 Sep 2025 18:51:55 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 76DAA8000F;
+	Tue, 16 Sep 2025 18:51:47 +0000 (UTC)
+Date: Tue, 16 Sep 2025 14:51:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: akpm@linux-foundation.org, minchan@kernel.org,
+ lorenzo.stoakes@oracle.com, david@redhat.com, Liam.Howlett@oracle.com,
+ rppt@kernel.org, pfalcato@suse.de, kernel-team@android.com,
+ android-mm@google.com, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook
+ <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
+ Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
+ Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan
+ <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded
+ trace event
+Message-ID: <20250916145146.046f56a8@batman.local.home>
+In-Reply-To: <CAC_TJvfAQDiL9PydWnKE6TDMcCzw0xrsLMZVZLe6eO0R1LODhA@mail.gmail.com>
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+	<20250915163838.631445-8-kaleshsingh@google.com>
+	<20250915194158.472edea5@gandalf.local.home>
+	<CAC_TJvconNNKPboAbsfXFBboiRCYgE2AN23ask1gdaj9=wuHAQ@mail.gmail.com>
+	<20250916115220.4a90c745@batman.local.home>
+	<CAC_TJvdkVPcw+aKEjUOmTjwYfe8BevR51X_JPOo69hWSQ1MGcw@mail.gmail.com>
+	<20250916134833.281e7f8b@gandalf.local.home>
+	<CAC_TJvc6aqjBRZ05wyGb49AU+-aKpSph=ZSk3fdV2xraXi-_nQ@mail.gmail.com>
+	<20250916140245.5894a2aa@gandalf.local.home>
+	<CAC_TJvfAQDiL9PydWnKE6TDMcCzw0xrsLMZVZLe6eO0R1LODhA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ufoor27abvo5l3af"
-Content-Disposition: inline
-In-Reply-To: <20250815-arm-psci-system_reset2-vendor-reboots-v14-4-37d29f59ac9a@oss.qualcomm.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.4.7
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: yhko68sfdee7rmpk5n31f1agewjzkxx1
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 76DAA8000F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18AaF19e3B9PdxiVyBsClWhsh9I/89dalw=
+X-HE-Tag: 1758048707-555230
+X-HE-Meta: U2FsdGVkX185Jk6EEAUV8t4XubC8/kXNROIjXRupcelR+hH3LPjbVvHzsC//ioq5oS07dWS2t7cQckl27RISrjNCA88UBb0WAorl7tjjsLJmAKwUX70maRG2rX9HPTBirBDH4VHEimIgl8f+sKXSAQQAFna9voNks/f8vy1zMr+7hWy7EAKlbbNCjd3jVgdRV30jSqdSv4iERGG1Z8w+dpwGGctTjQ9PNTMFD/16TifGmYPPyAk/4HUaqXfRy6P5otXkNPqkDkKMf59MRJxuHUt4InKNbMuwnay4dXCncAd6/+5o9+JNFiLY2MaD0GVL7y7Xz7aYj1A/e4MnaFiiQ0W5uB2CRAwb
 
+On Tue, 16 Sep 2025 11:23:03 -0700
+Kalesh Singh <kaleshsingh@google.com> wrote:
 
---ufoor27abvo5l3af
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v14 04/10] Documentation: ABI: Add
- sysfs-class-reboot-mode-reboot_modes
-MIME-Version: 1.0
+> > When it comes to tracing, you already lost. If it goes into the ring buffer
+> > it's a raw pointer. BPF doesn't use the output of the trace event, so you
+> > are exposing nothing from that. It uses the proto directly.  
+> 
+> My understanding is that the BPF tracepoint type uses the trace event
+> fields from TP_STRUCT__entry(); whereas the raw tracepoint type has
+> access to the proto arguments. Please CMIW: Isn't what we'd be adding
+> to the trace buffer is the hashed mm_id value?
 
-Hi,
+Ah, right. Can't the BPF infrastructure protect against it?
 
-On Fri, Aug 15, 2025 at 08:05:09PM +0530, Shivendra Pratap wrote:
-> Add ABI documentation for /sys/class/reboot-mode/*/reboot_modes,
-> a read-only sysfs attribute exposing the list of supported
-> reboot-mode arguments. This file is created by reboot-mode
-> framework and provides a user-readable interface to query
-> available reboot-mode arguments.
->=20
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-> ---
+> 
+> >
+> > Heck, if you enable function tracing, you are exposing every function
+> > address it traces via the raw data output.  
+> 
+> Right, security doesn't allow compiling CONFIG_FUNCTION_TRACER  in
+> Android production kernels.
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Does it block all the other trace events that share pointers?
 
--- Sebastian
+Like nmi handler tracepoints, x86_fpu tracepoints, page_fault kernel
+tracepoint, tasklet tracepoints, cpu hot plug tracepoints, timer
+tracepoints, work queue tracepoints, ipi tracepoints, scheduling
+tracepoints, locking tracepoints, rcu tracepoints, dma tracepoints,
+module tracepoints, xdp tracepoints, filemap tracepoints, page map
+tracepoints, vmscan tracepoints, percpu tracepoints, kmem_cache
+tracepoints, mmap lock tracepoints, file lock tracepoints, and many
+more! (I got tired of looking them up).
 
->  .../testing/sysfs-class-reboot-mode-reboot_modes   | 39 ++++++++++++++++=
-++++++
->  1 file changed, 39 insertions(+)
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-class-reboot-mode-reboot_mod=
-es b/Documentation/ABI/testing/sysfs-class-reboot-mode-reboot_modes
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..6a3fc379afae3a6caf56ad0b7=
-3b1c06c43a9fee7
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-class-reboot-mode-reboot_modes
-> @@ -0,0 +1,39 @@
-> +What:		/sys/class/reboot-mode/<driver>/reboot_modes
-> +Date:		August 2025
-> +KernelVersion:	6.17.0-rc1
-> +Contact:	linux-pm@vger.kernel.org
-> +		Description:
-> +		This interface exposes the reboot-mode arguments
-> +		registered with the reboot-mode framework. It is
-> +		a read-only interface and provides a space
-> +		separated list of reboot-mode arguments supported
-> +		on the current platform.
-> +		Example:
-> +		 recovery fastboot bootloader
-> +
-> +		The exact sysfs path may vary depending on the
-> +		name of the driver that registers the arguments.
-> +		Example:
-> +		 /sys/class/reboot-mode/nvmem-reboot-mode/reboot_modes
-> +		 /sys/class/reboot-mode/syscon-reboot-mode/reboot_modes
-> +		 /sys/class/reboot-mode/qcom-pon/reboot_modes
-> +
-> +		The supported arguments can be used by userspace
-> +		to invoke device reset using the reboot() system
-> +		call, with the "argument" as string to "*arg"
-> +		parameter along with LINUX_REBOOT_CMD_RESTART2.
-> +		Example:
-> +		 reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
-> +		        LINUX_REBOOT_CMD_RESTART2, "bootloader");
-> +
-> +		A driver can expose the supported arguments by
-> +		registering them with the reboot-mode framework
-> +		using the property names that follow the
-> +		mode-<argument> format.
-> +		Example:
-> +		 mode-bootloader, mode-recovery.
-> +
-> +		This attribute is useful for scripts or initramfs
-> +		logic that need to programmatically determine
-> +		which reboot-mode arguments are valid before
-> +		triggering a reboot.
->=20
-> --=20
-> 2.34.1
->=20
->=20
+Again, are you really protecting anything if this one trace point
+hashes the pointer? Most other tracepoints expose this. If BPF can
+access a tracepoint entry struct, it can access the raw address and
+break KASLR.
 
---ufoor27abvo5l3af
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjJsbIACgkQ2O7X88g7
-+poTWQ/8DSYSg2jqDDCxWdzmAT84Zysi+6IUUCSr7Wgbhouh1+Sb8o4w+ETJBYqk
-5YvCNDJyxrOvQ6fRQYHYqludVm13qFMAXiG5eKWOGA4zoou3MJtpGHNHcn776lMx
-48uXZtxHTmuY3ZTkJGmvBSp2MVWmbeRY/mHGdfGPuqE7DkJq2H/NQ43vfdAMDHgj
-pDCrNcl4f495LGdPwR4czKm/390Fw7DRGpcy6ZmathNjX+cHAHzfLWLSpyrzUfgA
-sTeCW4C91y8wD9qnY2mQFbZzHdIChr+mEkSlBQLiO1Ves14fpxrNaz+TRia2XFfU
-i+iavZPxLfBpi1DNw/ljbbyKcFYa2ivCbl7sXo/r9o82akE28RadjRgVeKgrHdxP
-z/KC82emIlsltM2QExk2R05nemQjQk7USrVmgiQpbl4q8R4K5ashSO+Ee2XLLacl
-NpynxRzYrWc7Bz8mAAZW7Jlh8xr5aE7Q5vQhPoFjzSFqztDO3ZfoPfDCYmvs5zJp
-NydLsKCJUiKIq5zwiO3/Hp0l5dEwzEDOvZOP2PvYIeJ5X+N58fZN9JzrrPJ4fIuW
-3vJatAVutg6q9qmm/yBByigPSySFSyr2RFcX93MpmctnrrK/6iDubMspRDqq4b2e
-QnHwFolYjmkzyRqBlkQZWgy2MC8pNHIK5qQao1AEETWMKfRrLTY=
-=6mt+
------END PGP SIGNATURE-----
-
---ufoor27abvo5l3af--
+-- Steve
 
