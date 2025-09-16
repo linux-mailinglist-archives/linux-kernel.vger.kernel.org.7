@@ -1,94 +1,172 @@
-Return-Path: <linux-kernel+bounces-818929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E65EB59842
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:53:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82640B5983C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBD7F4628DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586984E4D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DE23203B4;
-	Tue, 16 Sep 2025 13:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3696131E0FD;
+	Tue, 16 Sep 2025 13:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="s17WA7Jc"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l755Vy0Z"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012051.outbound.protection.outlook.com [40.107.209.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9932C3272
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030798; cv=none; b=JIp/J81tXzMGwLeEbFA/50wP+JtDfx1+GqL+hM1/ZNTehG55HMluXaaYDgLf1LS2we01UJ0depHhjmz0HVRPfMw8Qzbpw/F6o1c4fddz177sNxVTwvyY+LyyGAhIUmT89WJGrSRcwcWY/S9UlYHNHId00q3iqUV9Fh+Di5iFG3o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030798; c=relaxed/simple;
-	bh=Yp2R/g2fNFa7ZfSs8Nn4Lcs6PIIA5o3oDLaRuu+UsqU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=q2+fe5o8ak5TT8mUKP0tt4IWq2NMner5afHrPeYnKQbxqAa/t+7KaE+IQ/fnp9BEbPj5KxgTSfv9rhevCO8sVy6tbxZrFfhlcREikMESw86CqV7I8DH4MCL3eIHsAijNQop5OwSDYXc/B0Nk9YGndpTLY8srZhznX4Ql+Y50CxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=s17WA7Jc; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id C17F51A0DB3;
-	Tue, 16 Sep 2025 13:53:13 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 94F586061E;
-	Tue, 16 Sep 2025 13:53:13 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 41726102F170B;
-	Tue, 16 Sep 2025 15:52:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758030792; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=YOfBlPUim/a57KH/xWF3eDOAgXrdeRdSWvKWpWJnLho=;
-	b=s17WA7JcvsyW6R+Jeuy+Zt6CeDzINJoogPCTRZJLV86SxvpFuNHG3UJvwYor6fRIsW6QEI
-	aW/6NJkfTat8KFpEDRmJwnyHtpBrZ/FLNh8Uxmf6/VmLHHQyjnmg+Qg/veQw6CEL+IuJQb
-	IAq7YTJ3xdQJ6EP53dIcWXRy8873WRaSRVUZa8v1wcZPqDaqITaT7wBw2tu6bBxTy3kBA2
-	CluRH2yaaT0kxv7angWI4WXIfjHe9uAe8/CcWpK6NFcwKQ4ahSB07RDmR1GFeqKmAUezyG
-	IGtIOApWb1udIkwrdBEO8bWrtuicMVPDGtyZEVEHvGX9d63iT9xuc3LKNVHrqA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: bobo.shaobowang@huawei.com, andrzej.hajda@intel.com, 
- neil.armstrong@linaro.org, rfoss@kernel.org, 
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
- lumag@kernel.org, dianders@chromium.org, lyude@redhat.com, 
- andy.yan@rock-chips.com, viro@zeniv.linux.org.uk, mordan@ispras.ru, 
- amishin@t-argos.ru, dri-devel@lists.freedesktop.org, 
- Qi Xi <xiqi2@huawei.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250904034447.665427-1-xiqi2@huawei.com>
-References: <20250904034447.665427-1-xiqi2@huawei.com>
-Subject: Re: [PATCH] drm: bridge: cdns-mhdp8546: Fix missing mutex unlock
- on error path
-Message-Id: <175803077334.454670.15469913360427831912.b4-ty@bootlin.com>
-Date: Tue, 16 Sep 2025 15:52:53 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010CE31DDB6
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758030787; cv=fail; b=i7SqGSkTgatSRqouWx+rvOnqxU1aUSz+PuvfTo7GRD2ysB7iiKEFO3lrExp4ySX06jlw/GVXZpXv6GukbD5Xa458lZ8d6RqlaC+KjzaXYHykEOx7mR7ydg6CatHnJ1R9/p3+viM0eRg93B+5GqWk6Uz9Fn5aIqsYFsQe8xnB0k8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758030787; c=relaxed/simple;
+	bh=b5yQZFnY4gDGL9tOM0hGoraU6h7dY94SIuB3TTHXRDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZOfKykArWRr+hRpI3Gq3JM7oTu1Ormh9IZgodE46KubihQ0izqi3x+tWL1Lkd7C+BqQg/d2/87Nxi3IZPSJzVAVUFfEDl4dWYlsldRY9JItTc5p+2OPgnlBZWbAEkJK53m3/YyQmzjYxF3vRQE6pcYZ5kA7a5KUWKP/iBOOoBTE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l755Vy0Z; arc=fail smtp.client-ip=40.107.209.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SFf1bR2+FgjeI8VZC/j0yqLhhtl0igoH7hH2LxWPC56zFbMJkawJo6K+0yLVqukcg+BDtsWBW2wbuneCZ9wWSDOzYMDWkQwI6eZVzt6YX38h1n9eTHBidlg8K9c4FHxMCYAfVIvycyxcyO0X0iocwf2/fJhjTzCQozt6gNZRLKfRwKMGTs4hBodxEbqZcx/Blw/l4tVTOlf3FzMcG33AOmnWNApmAVAha6eYlIh0yiPA9F8/0xhbEAoDELtOe1jL28q0h5XJ76JKkqq4Anlwnv5w2r+2hLT/jNVWiI9zulEzbCSWObOifAtaYbvqCD6AtHlaBZD5zHpho+tPwDs9zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vpWQqRi2zlZJY2q8jPCrZZWoLvxn54qCap3kKcdIf7U=;
+ b=TmjS6jFLKmRRvu30uwiKx4YU/9lepuQ9O7u82jF+TrhqRDdxKOvU5bVNHeEP1VEt475Q6GMFcLkW434nDDhy/VaALKibKrhIIi1IMsv3mYhPyPKKE+Iz2u+L18WAWmjGe2o1EV5ZN6RfvFAhnDM3bNBYjEKA3sEhf2L0+9XqObHN2/sk+lpQkKIEb/jup69wohtYYU58QfT9L1vJ6iU4pnu87ia4/C4FAK7bZef2vPP0UYcb7KOMRNJeKpWekr+RfjJO4Be58/ewCEwvsvgVcnCtM1H3O9Teg1hHioRJh+hYnjvYFA9iauyhIbCOmuBQ3ftKRXDGNKUI2Ofmpwy61Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vpWQqRi2zlZJY2q8jPCrZZWoLvxn54qCap3kKcdIf7U=;
+ b=l755Vy0ZzQpnYkINitKVJJ5eghwa9JQhuWnY1MpXqCW5gWL7kHQ3oRvM1JpgMuoqjgR6r4rlTEJr2apcmdwRymPUgTo4pwl30oXQEkEq8OHpO4RXh4BduspAWzWbSLWfffDToPFH1O/baFe9crdpr74NSF1MsmjNQHNegIBt+CanaQLAIUUO7W21VXDHR9rCraQ3+7TWSlKbIxSz9PpAlBgc1dNEuwBWsmHndL+vI/JLyNd2AT8uzwUPAf6Ym8vZ3OL97D/D0SxRQi5euM+XR9fve3xiB5X8RIyAVFWN+u15XMbMWnvcJmC334L3S0C8wZkAAuppVGqeKpOnEbGT1g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by SN7PR12MB7250.namprd12.prod.outlook.com (2603:10b6:806:2aa::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
+ 2025 13:53:03 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9115.022; Tue, 16 Sep 2025
+ 13:53:03 +0000
+Date: Tue, 16 Sep 2025 10:53:02 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v3 2/4] dma-mapping: convert dummy ops to physical
+ address mapping
+Message-ID: <20250916135302.GE1086830@nvidia.com>
+References: <cover.1758006942.git.leon@kernel.org>
+ <3b54fbe896086adc0f3fb90a2a1a2e3bb3ff9de4.1758006942.git.leon@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b54fbe896086adc0f3fb90a2a1a2e3bb3ff9de4.1758006942.git.leon@kernel.org>
+X-ClientProxiedBy: BN9PR03CA0689.namprd03.prod.outlook.com
+ (2603:10b6:408:10e::34) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|SN7PR12MB7250:EE_
+X-MS-Office365-Filtering-Correlation-Id: 990c2b0c-4b5a-4638-49b4-08ddf5285b33
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vqSUULIVC/Nfxsi/2D20sD6TemlAKpCt3EEuupIh9klcfmX4KgmrO3cEAWx7?=
+ =?us-ascii?Q?wodi1eB/RISP5TFaH0MaEcMUstz38LuGvLYwfHPpiZRGOn5Imrwh3kke4R/B?=
+ =?us-ascii?Q?aBJbO/D6qDirNG3FBJ/+aQpkNMGLZD0k7LRsPAk1kGBmINY86q6HzsnvAg7x?=
+ =?us-ascii?Q?oZtiqPUSkFSNR1HVsIrl6dAJ3+Xg2N5dAQV61eTjv7EZLtk6R3rnVy08V8/X?=
+ =?us-ascii?Q?NCxANrXUeKVJJPlqWDhMdSjrc98xnY+EsUy/Kxw6skyUgiX2DenKfIoYw5/K?=
+ =?us-ascii?Q?SOQNl28ZF2xp5m2k5bAtuqjbhI/GTTkBJhjUY1vmY8pcOnZaLZRjdhBWPhsj?=
+ =?us-ascii?Q?Y32yRmZTOMM2b6iGODW5jkXHrjoaEwPVfruubsSyyvEed1/Nu6S3wrFHG0Ms?=
+ =?us-ascii?Q?cI5Dl3SqfHjNowH+c68Yen2sG9k4gD6zwC/eL0jug6s3xlErVWBMYuyKo9DS?=
+ =?us-ascii?Q?ma2f89Dl1Bo391SwszGljOK2tPpCRwujS/ogi84t13co1pbvkMrk8yLlXGnb?=
+ =?us-ascii?Q?Y+AP1ZXefLopmM8J/1TME8SVcquJ3T40GgFuTw9ZqB4JYxIUWLz9zW8sHs8D?=
+ =?us-ascii?Q?Ds/LE/4RIrDpAo7kHKXGx2SkaEx/HHMl3q+fZJTUGJln17ZDxNSB74k64x2N?=
+ =?us-ascii?Q?KYAnTwv1aa5YDba8squOagY8Dck286CRuwchkik7UoiIPamF8M7KWzPdBXim?=
+ =?us-ascii?Q?1+lk1Pj/cJNsi+z9j/tqPEVhCYS1LLXhAUqD/N5c0eIE9aypS1lsKdgDKrxI?=
+ =?us-ascii?Q?v44YkqLD2qK3GcWm9NdtGuLi1DcnEG6QVA+iNh+USKYK7++ijWEZ8wS+gkoJ?=
+ =?us-ascii?Q?vp/Tf/TbiKzqsW/p0KjvhXBj44QsI6/elW66WX13RmX2TsUDn+l807AMg4D0?=
+ =?us-ascii?Q?8qHiAB4lK2outVwfdm/LAl10tirhkwBL3X+zsWCvcwImbWOQTTjiX3y2gt+j?=
+ =?us-ascii?Q?yBhP55JDI9gBwE5BS5rtCfJVDdclWrum9awmCk6r6Hlg3vUsrSVBEYWO+afq?=
+ =?us-ascii?Q?ffIuvcI5rCqtHS8wOq5Dgu7/5RK3B3/hbdJ1/bp1hJVCOvLNHXPb54P+BH1e?=
+ =?us-ascii?Q?POmJecqUS+/zvgkdAqvUENdNZ7FFnKqS6V1zXMVeLRHKMWxS4H0shGPb4zm9?=
+ =?us-ascii?Q?1586bgBVaig2gaCYz9uakPGCd8c9pMpJdISduzjSLY0Kn1cqnYVMVjVoE2zp?=
+ =?us-ascii?Q?625zgtVMEEQ4rmUrZK1zNPrYJLkS98PhrdO4l0AAvRhszaM0EcpQaqETX/SO?=
+ =?us-ascii?Q?UbuPa8x6kpnVcvJaabBnQRr+D4M4uNySt+vD43qYcIY+i0XKGV/bjmvjdeNg?=
+ =?us-ascii?Q?kLGrayvLFBCUVcMoC1Amg6JTCeV7lA5oS38vLOYi/pHf7QMOSHtDhZqriswC?=
+ =?us-ascii?Q?MS/tHgZwnUdTCgl2Er/x20zcK1hk6l0Fj96Xu3GL5lx7zCc6a3Bt37c7f5tj?=
+ =?us-ascii?Q?WJ1AxF9HXKc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YqGBDYTv1/6KtgqCO2u1Kp04zIn8IFOyGbpc19Kua0cMFj8kq3DPHkIputlL?=
+ =?us-ascii?Q?MIoylLsGvSbQ1oEZPSwNJIFlYUKI+b4cNLDCAB/IPf6q1+vEB/Z7tR6JGGf5?=
+ =?us-ascii?Q?2i7Y9P89yYozsDhlzdBX1zEKi8Uv92tQpJmiFiPyI7//mSEiWOPWls0+hjAw?=
+ =?us-ascii?Q?ea78FiNpoNqrIWzYYhslhcH+SDcBe34A2wVBuqSJ6NXa8oU0+3Rdvnqh72yS?=
+ =?us-ascii?Q?k0cOO6j0fezTChXWJl/f2dVHSDZEK5x4cE39MuFw3hjz8sS09G27xh2JVxuK?=
+ =?us-ascii?Q?61fc+FY1+oZMTbdUXtfllHW9dtZcfE2Vrnr9n5BDWaJQk+x8/+yNvRF2bVtL?=
+ =?us-ascii?Q?nrEvkG1z9Ktqb6PKXAn9paLbYLmtM00MTsjsRT4AsjmzDY7tQlSmkCpMgyR3?=
+ =?us-ascii?Q?EKdPDxVS/X6WUdGPGGDtpRDfP5O7tFLtKmSsDZXYXcf30k4ckiZzyfrQ7zB4?=
+ =?us-ascii?Q?//q8LhIDaMfUimO0aOPZh4Y9sZkmm7oK3HMsniHsDEUHS5CcDq6Ug/OF6wnw?=
+ =?us-ascii?Q?U6/RzuFNT3UVu4qT1G+CS0hzxa8Vf58Ah1R74faihT9L/vNu/nR+wAw6cP+Q?=
+ =?us-ascii?Q?8QPV4kKM3kW2umSxsRQvfFhdbZNKM1UWv5r+9xmZf9upmzeYKNXQARcvNJqN?=
+ =?us-ascii?Q?2+RCqfuB39P6C0Pv5e+2VfvjfJDbKn1s3MV4U9PqUn4+EkVrAtcBmVDO1uK7?=
+ =?us-ascii?Q?c9Qb6Dn1Y0ARWwt1I2rPtIbfqiSpaebhH1XU/HzK5hEJeNkc3oFOW9UeIPNX?=
+ =?us-ascii?Q?1ypYG3/Ckrh8v++AeAfRu6k4uAZEuI+WSpmN/fOmb2IzFCKPJsD9DSRqKYGN?=
+ =?us-ascii?Q?xHMZLNFTCvh7MCUjehqCoQFBzjm587DwnCtEKUqJtiA70U92FtBSEmC53vo/?=
+ =?us-ascii?Q?McrNwiOP1bN6kadcRsfK3Zm5ukB0cnhf7TYsuAmFmGuRjy+/h6/xWubQ48fD?=
+ =?us-ascii?Q?lol1vdOil5RJCcE4/cNscxVfkWhxej6tfPWrYG5TntP3UcI2AZS1hYdUiYR0?=
+ =?us-ascii?Q?7dsaz+OJGLQJk4bQRRlEDnsMfsk7dGqPqwUXdrScPMcjnHwZ1+1dDOJWL7H0?=
+ =?us-ascii?Q?VgM+5NMr6Rt0kHOoUx3Qfed3AhVNxCfzob4HVGFLMJ3cHXyPuKL7C4JFXUh0?=
+ =?us-ascii?Q?E134ZSUgkS1G3RHaismRB9X9NA7XW8G2S1GExPdhEvRm7KL/kMLFMLfyWc6Z?=
+ =?us-ascii?Q?0/BncO9zngyQN492a6ohDttsa7fkTFjaraTGnR1waIozgjSy3a8m4geEXmqF?=
+ =?us-ascii?Q?1MEDw6mVTYLuVwqVF0yNCdcINK2M/eZyC87NXnBKABr4cY3oVwnbzo0LPMv0?=
+ =?us-ascii?Q?+Ni7Rm4wcuIEsDWSEQ9TaIFBHKQVckImje1SurdHqpIEkVWiCcxw8CUzBOLH?=
+ =?us-ascii?Q?nZOUy2HgnobJfBv6EFtn7CAodbakD0w7+RbAajzOVduR28Evjmd5sunkIpPo?=
+ =?us-ascii?Q?UxsBLXaGmUYnCY6s1d5NxWFYgK7l/K0nmIQE3Oo5t7WNrlePAYwnPwTLbVeW?=
+ =?us-ascii?Q?gWLnsWajbKrefG/lyD21G72NMzxNLSzypdWicIXS30+zsCzqQR2Ndz71t71S?=
+ =?us-ascii?Q?LxLITJZz+v5yEsko+x+SnBaDL+DGl6cH7LjOnwll?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 990c2b0c-4b5a-4638-49b4-08ddf5285b33
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 13:53:03.5692
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ctni/v4BPKkzzlWmE/jqvvBpJb6O3ptdfE9os8SEFqFHSLRLJZNouRUs6uORvcN9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7250
 
-
-On Thu, 04 Sep 2025 11:44:47 +0800, Qi Xi wrote:
-> Add missing mutex unlock before returning from the error path in
-> cdns_mhdp_atomic_enable().
+On Tue, Sep 16, 2025 at 10:32:05AM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
+> Change dma_dummy_map_page and dma_dummy_unmap_page routines
+> to accept physical address and rename them.
 > 
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> ---
+>  kernel/dma/dummy.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 
-Applied, thanks!
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-[1/1] drm: bridge: cdns-mhdp8546: Fix missing mutex unlock on error path
-      commit: 288dac9fb6084330d968459c750c838fd06e10e6
-
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+Jason
 
