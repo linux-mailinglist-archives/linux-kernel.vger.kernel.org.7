@@ -1,99 +1,172 @@
-Return-Path: <linux-kernel+bounces-819193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4B2B59CB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D95AB59CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862673ADC1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D221B27939
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6576F3728AE;
-	Tue, 16 Sep 2025 15:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBA7374270;
+	Tue, 16 Sep 2025 15:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="igY1sd5h"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bl1tovBv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CF937289B;
-	Tue, 16 Sep 2025 15:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F386837289B;
+	Tue, 16 Sep 2025 15:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038395; cv=none; b=UEPlKakI8UKNwhgdkMROvwuQBlKZaHMJJLQuZIJAZH0EcsJ6JYYJZDGac24oz+JGeMinVKGFzjNkZ0aIAXr0KJHifxfaVGMTJqeXmqkTbSw/9F8eK5C1D2l/f/4Q9EDWqmczzlfpdoDhPbusMRkz4sCh49pwbnU8s79Klfog/N4=
+	t=1758038399; cv=none; b=jPYoi5TX3ReAAasIp/4ITjROb/730NvrXwB4g7s7xU+FBS0F+9JvndwKjbxXE0sE3d6UebdPpGk2oAcisUU1SnxX0Psqf4Na+EQI75aBW1/Ls1qyVq5Y95Z+XGRB2ry8EtMA7Ab1illPvm7+9FIism5zR2EaZtNHivwsF0biXZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038395; c=relaxed/simple;
-	bh=Dp7szgpaGfHlQ755zC+EanzJ5ixm7MT/BCbY2JQBh3Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tavVTWabJuzOFqCnU66L/6qiKHMXWhg6eT1FcR0dKFPyfBckO2nC3HOcrsyJ/rBy9vCVxiphTabhETUJW4mPpygxTgJ0rADM9m+BrDthSDyof9EutX3UQyOspVDXybGqA6oKBX/S1NILk2XftIrqcz8Hyib910sxjUQOmV9PPhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=igY1sd5h; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9465D40ADA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1758038393; bh=EeMXhtxJprG2YTOXivHc4OPVuBvbCoeoJoyBQiRwvNU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=igY1sd5hSbQ/+MQuIl7oOjn/nadXg/GYQvdXKVFrXJOnMF++U96ZSlatwgksMz9cD
-	 e0upqeTDNNv+geMOKQ/XhrUmL02BijqfV4GqIxyC66EFsk2uqEjuG+B/tr2jZ8IdqG
-	 G/GGlXDjOeSQJxUoE33acY3K/HQBopPsdEDk2fe42PU7m33s4azmwyrnfva6IkQhwm
-	 0FK7A7ssfC3dRJjSLqeMOKjFlKGdqmRRFhFIkQOUcrcsTb2vnlvzspBP8/PNPVl+Ke
-	 IHfWrDqdz6RQ53f09m8L7RCTtQJb7+4XrUbwFc71G4pBB555FDjqv+JCJ2KNBVk7N7
-	 4BbQLDiz+6uEQ==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 9465D40ADA;
-	Tue, 16 Sep 2025 15:59:53 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Akiyoshi Kurita <weibu@redadmin.org>, kvm@vger.kernel.org,
- pbonzini@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akiyoshi Kurita
- <weibu@redadmin.org>
-Subject: Re: [PATCH] docs: wmi: lenovo-wmi-gamezone: fix typo in frequency
-In-Reply-To: <20250913173845.951982-1-weibu@redadmin.org>
-References: <20250913173845.951982-1-weibu@redadmin.org>
-Date: Tue, 16 Sep 2025 09:59:52 -0600
-Message-ID: <877bxyfkw7.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1758038399; c=relaxed/simple;
+	bh=wr2tJyYlkR5y7T+xXW7Ilz7m2i0rIvhhJ50qSX15f1Q=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K7uq5oxNkzM18mjAUTIBN1BckLA+YoMLI8R14v90Qj9YCRUFtPVZHRBavjYXTLIvqLrTwdHBfqEoMqja6ZnAWPFZp6S3Q69qRqLZ8MlKr5F/Br4lDswD8NDbDx/7nIny1SvxVdgsyc7SL7LgyXyHwii9pSV15bDDoicTVnT8VkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bl1tovBv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BF72C4CEEB;
+	Tue, 16 Sep 2025 15:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758038398;
+	bh=wr2tJyYlkR5y7T+xXW7Ilz7m2i0rIvhhJ50qSX15f1Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bl1tovBv/A1b3dWFDjYnUvsI3AMmg0L1t0r51/nrQVCCpwzstVSwREiaJ4NPAT6Ij
+	 aCBROW6QSv6LBn/reHoTPN07KUpdK1eTLIX1wbpAxJYlGxs2pdSJs9uPzlT27yR/F0
+	 lBvNpc5z0rM1q2xJQXNF90n5FXiFyf+fD9WCG6pt/LIv83ILa87/6PAqEvUBKRvImp
+	 XYotFnLUUO/ranSYvN1o+U1QaMsgBiJqBVe+ATLpyWuOhemojZjcL8fZa+HGdg/FdH
+	 niss8SL/WuTI5EyOj3/xJqEozCvblDppJwo9/ktBg9K8cD0DaWAQ8KW3UpBs26pJar
+	 KmQU/zzJcmdVw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uyY5z-00000006mKg-36KG;
+	Tue, 16 Sep 2025 15:59:55 +0000
+Date: Tue, 16 Sep 2025 16:59:55 +0100
+Message-ID: <86tt121j7o.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Mark\
+ Rutland" <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J.\
+ Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	"Saravana\
+ Kannan" <saravanak@google.com>,
+	Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau
+	<j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark
+	<james.clark@linaro.org>
+Subject: Re: [PATCH v2 05/25] irqchip/gic-v3: Add FW info retrieval support
+In-Reply-To: <20250916163413.000062f0@huawei.com>
+References: <20250915085702.519996-1-maz@kernel.org>
+	<20250915085702.519996-6-maz@kernel.org>
+	<20250916163413.000062f0@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: jonathan.cameron@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Akiyoshi Kurita <weibu@redadmin.org> writes:
+On Tue, 16 Sep 2025 16:34:13 +0100,
+Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+> 
+> On Mon, 15 Sep 2025 09:56:42 +0100
+> Marc Zyngier <maz@kernel.org> wrote:
+> 
+> > Plug the new .get_info() callback into the GICv3 core driver,
+> > using some of the existing PPI affinity handling infrastructure.
+> > 
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Hi Marc,
+> 
+> Yet another trivial comment. It's one of those days it seems :)
 
-> Fix a spelling mistake in lenovo-wmi-gamezone.rst
-> ("freqency" -> "frequency").
->
-> No functional change.
->
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
-> ---
->  Documentation/wmi/devices/lenovo-wmi-gamezone.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
-> index 997263e51a7d..167548929ac2 100644
-> --- a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
-> +++ b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
-> @@ -153,7 +153,7 @@ data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
->      [WmiDataId(1), read, Description("P-State ID.")] uint32 PStateID;
->      [WmiDataId(2), read, Description("CLOCK ID.")] uint32 ClockID;
->      [WmiDataId(3), read, Description("Default value.")] uint32 defaultvalue;
-> -    [WmiDataId(4), read, Description("OC Offset freqency.")] uint32 OCOffsetFreq;
-> +    [WmiDataId(4), read, Description("OC Offset frequency")] uint32 OCOffsetFreq;
->      [WmiDataId(5), read, Description("OC Min offset value.")] uint32 OCMinOffset;
+No worries, your trivial comments are far more interesting than some
+of the emails I'm otherwise getting.. ;-)
 
-I don't have the device in question and can't test this ... but the text
-in question has the appearance of being literal output from the bmfdec
-utility.  Do we know that this is some sort of editing error rather than
-an accurate reflection of what the tool prints?
+> 
+> > ---
+> >  drivers/irqchip/irq-gic-v3.c | 53 ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 53 insertions(+)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> > index dbeb85677b08c..71c278ddd1e39 100644
+> > --- a/drivers/irqchip/irq-gic-v3.c
+> > +++ b/drivers/irqchip/irq-gic-v3.c
+> > @@ -69,6 +69,8 @@ struct gic_chip_data {
+> >  	bool			has_rss;
+> >  	unsigned int		ppi_nr;
+> >  	struct partition_desc	**ppi_descs;
+> > +	struct partition_affinity *parts;
+> > +	unsigned int		nr_parts;
+> >  };
+> >  
+> >  #define T241_CHIPS_MAX		4
+> > @@ -1796,11 +1798,58 @@ static int gic_irq_domain_select(struct irq_domain *d,
+> >  	return d == partition_get_domain(gic_data.ppi_descs[ppi_idx]);
+> >  }
+> >  
+> > +static int gic_irq_get_fwspec_info(struct irq_fwspec *fwspec, struct irq_fwspec_info *info)
+> > +{
+> > +	const struct cpumask *mask = NULL;
+> > +
+> > +	info->flags = 0;
+> > +	info->affinity = NULL;
+> > +
+> > +	/* ACPI is not capable of describing PPI affinity -- yet */
+> > +	if (!is_of_node(fwspec->fwnode))
+> > +		return 0;
+> > +
+> > +	/* If the specifier provides an affinity, use it */
+> > +	if (fwspec->param_count == 4 && fwspec->param[3]) {
+> > +		struct fwnode_handle *fw;
+> > +
+> > +		switch (fwspec->param[0]) {
+> > +		case 1:			/* PPI */
+> > +		case 3:			/* EPPI */
+> > +			break;
+> > +		default:
+> > +			return 0;
+> > +		}
+> > +
+> > +		fw = of_node_to_fwnode(of_find_node_by_phandle(fwspec->param[3]));
+> 
+> of_node_to_fwnode() has a note that says it'll be removed in the merge window.
+> It was enough of an oddity I wondered why it existed.
 
-Thanks,
+Cargo culted, obviously. And yet another sign that I've been sitting
+on these patches for way too long...
 
-jon
+> Of course it did say it would be removed in the previous merge window and wasn't...
+> Probably want of_fwnode_handle()
+
+Thanks for the hint, I'll add that to v3.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
