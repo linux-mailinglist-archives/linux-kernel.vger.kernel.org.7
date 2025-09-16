@@ -1,256 +1,115 @@
-Return-Path: <linux-kernel+bounces-818464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B683B59213
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:25:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FA9B591F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B84189AB58
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:25:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424987A8A2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA0F299AAA;
-	Tue, 16 Sep 2025 09:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C259296BBC;
+	Tue, 16 Sep 2025 09:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WHyCsCYt"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011047.outbound.protection.outlook.com [52.101.57.47])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vxd4kuen"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00088285CB4;
-	Tue, 16 Sep 2025 09:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014715; cv=fail; b=X90r3Q6PfaEobfyDbnj8spi42sYPXOhWWg1+IwP2WyC+JWNOu/hoP9v4DyTTiJutX5lc917FP3h1swRXu27AViALDHH1HXgCn7fVoU26iICFKFDOU9VRpJ6GH0WSOIT2SdZ+sjcW7uxsrUwECLVL0kLuQ4PKKG5e4+VcEZTqTm4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014715; c=relaxed/simple;
-	bh=1FMbpppQEewqof2H6QMJw6o8EIyLrF4Va376+mHQsL8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CRLpaY3jFBd5Pcjr3bJ27r6rq8Rbsuo1/BQx7fA0bBbbdlNN+nVnOkEvBw6Xe2QGoKl1QsuylEHh9DpG5VRwnjzuP95tKwI8jT2eS0GENWIYHGtTQb8igJLoJJWXgU4JTfY/OBtt5Ws6YeHGD9LignXixhTQEwcgw6sKs/ZhgrY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WHyCsCYt; arc=fail smtp.client-ip=52.101.57.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a/FcGxFK6jyVBfOiEPKLPz7cyX4hGg0QHewuas5/QnXQPLlu2qqB5rvlf9j8HHtye94vSSCKNqfe9Yu9djQ9juXIb/EcgpMF0mKKksFGUn2CN47xaLRxT9HaTRNs+ztKq4PSQQD+74g2mlDBXyJwQ+ouY/DepkDEvMZ92ZVGV936DpiPXVwXx9cxrEI77gBz7DrTe2BI56ZI+rtaEG82pjifemmII7pat6i/8YEiu/l/PKlJFiqTh8PB3MNnPONiQ9O7wGzvv1NTVaL/0pMpEfmju5wtvDi8noxwyXGmHDnw2fNZH187lkBbZK/T6vwYiiqGuigqwNIkzzmI8PtMVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FnnHTN28vrDGHuSct+UswkaDW4QJeRFlsVaTt0HmooQ=;
- b=PLSIhQXwH6twf0EoATiSpNa5BdiHQiMoFsKtsM2hyfSLf4M9Zh6sfwEA664tcCIGl6S/5riUfWD1GYuaK613SqSZrdgxyleH3JM/RhAxQS53ptOQFoJC+oXqZHWJbRKQHvwqtEgpAG5oFsS+i1XI0zd9Ny2BhdwWaqNh598psBgWpxDuNCdhDSm7mO8qyXD99yAyOEQTJcQH6xsmYTm8TXNcFREcTo5/OVjDaCcxO1SebLBDG7BKL4tsDEO6WtTcJO99oj6/06q0DTwUoW1tmxLcvDGSPVJeHF9cEyM/TByHsowPsJkzHDECWiM21eNwkAC5pCEnWCelm4+ldussZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FnnHTN28vrDGHuSct+UswkaDW4QJeRFlsVaTt0HmooQ=;
- b=WHyCsCYtmlNbgcaXQD5bcKGsx+UHMpUdpoJRgZBZDM+VOwwqGtOyTXJRqe1O6Wk8eleZtnzeQpGgdlbovJVBm8G1e6YDHiT3RNRCh4i1wY+dixV4wYhedDNlQXiIW1Ui8pPy6ac55ZmvU3Kn6pyDi9UhiRhY/c5hfZLqo7ewWa0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CY1PR12MB9628.namprd12.prod.outlook.com (2603:10b6:930:105::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Tue, 16 Sep
- 2025 09:25:11 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
- 09:25:11 +0000
-Message-ID: <f66cc34f-b54b-4f91-a6fe-11a146c516b2@amd.com>
-Date: Tue, 16 Sep 2025 11:25:06 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] drm/amdgpu: make non-NULL out fence mandatory
-To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250916070846.5107-1-pierre-eric.pelloux-prayer@amd.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250916070846.5107-1-pierre-eric.pelloux-prayer@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT4PR01CA0075.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:ff::17) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE8F29BDB4;
+	Tue, 16 Sep 2025 09:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758014428; cv=none; b=M4ND4yBDx+V8vi0kpfE1VE+0vk+RVOaZ05mO9DeV2jdUhwDcK56XNSSl/sXQoe+Vpd3yib9DOsuKyy66OgqNJ2279Pl6DojurNv9xKgp0MPwosi8i0QmHJUWl3VjOrvHQcdpgRHUz6rx0utSM3hAGaTYBjGEwI7fd369bpQrICk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758014428; c=relaxed/simple;
+	bh=aWLd47MRoI/sjNgau3RpO0j0qsjD6QkgQ11E2+SOxIA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iEDK7nb2tOVnYo5chz3Xzm/WlbI6Is4YnTAZIg939O91J0eYAB1gLbsoDM0UbQVwmhCStxy6IjDoKLCIfYNV1rB+YFIk/QFWVsS5hYm1MtZa9O8xLaS7wVFUBRCXhT2BBD8e+aCj4wtoLIF+UtCQVb1HzpW8BNBybzlL0YaDqrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vxd4kuen; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758014427; x=1789550427;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=aWLd47MRoI/sjNgau3RpO0j0qsjD6QkgQ11E2+SOxIA=;
+  b=Vxd4kuen5vTifKTAtULgYzh9AJMSjcHJMF2oSUIbxVb6JP8C4JE2iNVa
+   F232w5UJTP9WKr4fbN9uSaW4bhwc/OFNfIcaogObUS1rv3j2bhWCFG9cV
+   ML5EHw+Njuf4rii8/5ZK/x3WFvBbpvgoVMtP6Zpv1GzSYYyEuXwoz+oxe
+   8SQwRSOtaGBSPEDheAhOuHSd5bJ3noY9L8Qg5MmFyo9uYMTFAp9LRQXv8
+   9lviKwBJHUBEWtM6zO17gjo4eEkEc4xE5SE8phiireC6y+hX1eaBN5G6T
+   KpFanBpmV/+BOtDXpHC3acJvShcZWVxlslu+M6QRt0zQSN6eqftC5QQaG
+   A==;
+X-CSE-ConnectionGUID: GlsMhUFkRKKpfFhUGRzYvg==
+X-CSE-MsgGUID: X8VwbWSOTmGiIGKFT5nWzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="70968809"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="70968809"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 02:20:25 -0700
+X-CSE-ConnectionGUID: tJ61g1MGTxqtjrUcSIXGIA==
+X-CSE-MsgGUID: pD4hyALmSeCx2udQBKU0xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="175305467"
+Received: from gklab-kleszczy-dev.igk.intel.com ([10.102.25.215])
+  by fmviesa008.fm.intel.com with ESMTP; 16 Sep 2025 02:20:22 -0700
+From: Konrad Leszczynski <konrad.leszczynski@intel.com>
+To: davem@davemloft.net,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cezary.rojewski@intel.com,
+	sebastian.basierski@intel.com,
+	Karol Jurczenia <karol.jurczenia@intel.com>,
+	Konrad Leszczynski <konrad.leszczynski@intel.com>
+Subject: [PATCH net v3 2/2] net: stmmac: check if interface is running before TC block setup
+Date: Tue, 16 Sep 2025 11:25:07 +0200
+Message-Id: <20250916092507.216613-3-konrad.leszczynski@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250916092507.216613-1-konrad.leszczynski@intel.com>
+References: <20250916092507.216613-1-konrad.leszczynski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY1PR12MB9628:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19091c16-09da-4462-043b-08ddf502ef2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?LzZub2QrTjRyZUlzdFU4MjRTOStmRGVYV0g2LzFBS2hCSkU5YkhUZGViRmpN?=
- =?utf-8?B?UjlnSUI5eGlrNVVCL3lSZ1dxY3c1Tmt3R0dLb2VvRFlGbU1CMkdIeDMvR3hL?=
- =?utf-8?B?aU5ZR1dVdE13VU1FNnBrcU9jb3dDTEhpTnluM1RPNmhSZkkxbHlBbitHV0kz?=
- =?utf-8?B?MjFSNGhPWmloSjVXSmw0cCtpcHNrY1NHN29lSzJ1V3Z5WFY5YkV5bmpDaHg5?=
- =?utf-8?B?dG1zTHJSZlROSHhMY3FDU3RadE9iQzl6RHBwRUIzQXdiS3JpUk9VQXVNb1Jr?=
- =?utf-8?B?aGlHTmU3aHJIZnR5Sk9XNXNrMjdCaGhZUDZmaVMrMWwyVTdkSWlEdnY5SUlD?=
- =?utf-8?B?RGZlYXgzSkF0Y0RxdlFqU2tueDNZZlpwL1VMdU1idEZpRWFzeE5YUWNhZ00y?=
- =?utf-8?B?aFQ0TTN6bW9heWxzek1RYXdDa2xSVWFnNzZiM1BRVUZzM1hzWWtOUzJ3V0Vl?=
- =?utf-8?B?ajI0VzB2TXZRY0xGWnhuQVpkU1Vxd1AyQlFnZUNnZWcrM0VPOFFwVkxIVXIv?=
- =?utf-8?B?cGE2VEc1eEFxWVZsWExqemliNzQvTjdOVTk3SjYzRGY3T1B2MkFEN0c0Y3VG?=
- =?utf-8?B?YWZvWmtrQkxiMHExNWVJcE13NXBqaTFaVFlDZG1nYVJ2SUFSNXExTUxUVXZ1?=
- =?utf-8?B?ZFpYeC9nNEpRMGxYZFh1SlFtSGNXZ2tGdmNuR3NpQTFweWY0bk9BTUVSQ0Jl?=
- =?utf-8?B?VjFpeE9NbmFQWTEzaEdSeFRtbjdFK2JYRndEZjZ3bHRGUTlFaWpvWVNJSDJC?=
- =?utf-8?B?QVJEQmVJckE3R0FKZ01lRDNhVnVDRHIyd1RJdEN6M2xscVArcHNJdjNlMW1T?=
- =?utf-8?B?VXF5azQ1TDZxcko0dWVTMlVyN2tGWkV5S2lQbjJqbXlzZmVnRkNtMEgvOGRn?=
- =?utf-8?B?eS8wZy9xc25keDBnRHVjeDVEcW01dTlqcDR3RExsRzBiSnBGb2Y3dFZwMEJ1?=
- =?utf-8?B?WUZhb2cxS2g1Z29kdEY2SXRkRWp0aEpVTEFFK3gvUkRUYWNnWVQxaXlqWlov?=
- =?utf-8?B?YUdwS3NHay8xd3pBTFI1bkplY0o2azNnaG52dEJoeWZFZEFCNU5jWTZSb003?=
- =?utf-8?B?WWRPUElYUWZuSWhxYWh2RlFVbWJ2KzF4ejlleWRZNEJKQkVoWWxSSWEwNU16?=
- =?utf-8?B?MGNWS2NNNmFJUXI5NFVCekxTRTVIVEwxYjJjelIvaWpJTjYyQWhFcktNUVRI?=
- =?utf-8?B?WiswN1pXT3FKNzBKb2dPNExRaUFFaXlFMzM5dGZGZGNrUHo4NVJBSG5adVlO?=
- =?utf-8?B?MkZST21CeFhsMXdsWTlkSEhvNWtmaWFtNEtNNFo3dUtwS2hzZlRVTEVkSExZ?=
- =?utf-8?B?a0xTMzNDYTNlWWw2a2ZBL0hMRnorL1VpdjBudUhqMDhrNDIzUFc4OWwzdkRM?=
- =?utf-8?B?UmFnMUdmYWJ3WHBnQm51REVjcHhSbENTVFZmTzFVYWE0dDRXY0Nqa1FlTTJQ?=
- =?utf-8?B?SitUWWdYb2FpTVc5T0lqYm1KMVdyUng4cm84QzFTQUtRbVh4RmZLTVQzNTVn?=
- =?utf-8?B?bHBza0Y3S256OWRFQWFadTYvWE1uSjdNa0dib3ZocFNwMlRYY2Y3a2pkNGxI?=
- =?utf-8?B?NUk4TnlINTVLcTg1RzV2V2cyRE5jSFB6KzlJREFDdkZ0ZHVvbUxDcXZVVm5B?=
- =?utf-8?B?dWdFSXFpTkt5dFpuUFc0MkdCaVFNOVpMeVdZODI2NjVWakhQWERSVENJa0lx?=
- =?utf-8?B?N1QxaWJpMHU3L0dmUnoxTEZmTWhlaFM5VzZFbWRMZ2NJZzNZRGtIY1ZWcUVE?=
- =?utf-8?B?UUphYjl4Wk1jNFJHR28wWUdIWFRSQTFJTndtejdxenVCYWNldUExSzRBWWJ2?=
- =?utf-8?B?cTJWRjJMT0pvd2REQm5qM1FPOVJtMWVEQUZvQUpHQmZpL2dWNHdoZ0hYcW1M?=
- =?utf-8?B?ZE9Lc1dqVGtDaUowQXE3MDl4MjlIbmR5SVFmSUNBdkxGQTBKYnlISjRQeWU1?=
- =?utf-8?Q?iTd7wLIwi04=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SW5CQ2Urditva0FOVU9ETnNOUjJuREZnVk9FK2htRWhpeFVNVTZRcmZ2MmRy?=
- =?utf-8?B?YlY1T2hwUis3QzVwa0xNU1MzcENRVEo0cWF0bFpwMWo2dVJqb3dFSUdqd0ZR?=
- =?utf-8?B?dFBvVnVxbHZmV0xZMjdXT0ZXaStuVnNxSy9MT0d4bjc1VG5KZjdmZUx5ZEpS?=
- =?utf-8?B?cTF1Y0Z3RzJmajlnMHRWd21tUWt1cXlCKzVGQ3Vqc1lTYkRmWEc2bHRBS2pY?=
- =?utf-8?B?ZlZoQjMrOGQyUzN3SS9pQXd5YjVwOUd5ZWNpUkU3Wks0aFVoYS9WaThyUVBy?=
- =?utf-8?B?dzhQUXE0dGtUL3JSSXBLQTJNTmlEMmhaOWYzVHdVSTkxMlZBY3VqSjVmZGFW?=
- =?utf-8?B?bjRjem1GeWo5VnhLWVZvRnJnNkJ1Wlg0RFpmUW9pVUZnWW5rdG52dDliQ2Z6?=
- =?utf-8?B?NXI4N1dVS3NVdXFuRjZVdER4cmltQnVvNk5sdmRxTUc2eDd5UElNbitQbEtx?=
- =?utf-8?B?SEhjMGJZY3JPMmhRbUVLbDRsenQweWtvV2RSQXBmTk93eGVKVVRNQVRxYVdS?=
- =?utf-8?B?VTZiUjBoTlpGTVM3cmZpcjM4R252bXZ3d0JkYVVtK280N1MweVJ1T3RmWVpo?=
- =?utf-8?B?WTZoTCtvV0FhUmc1Q2dFcVVGZVdWUC81UEh6Z2VITEh3endQdCtOcDdONlNX?=
- =?utf-8?B?NzJwRm01bm15aGdsdFk3K3RJLy80RFVOYWRYNCtXQ3lTK0JkUmszTGUwWEFk?=
- =?utf-8?B?c0J1Zk01ZWlweTlXVDF2Q0h5SFFpODlTbFhPUm1vNXlNQTNVekoxZWVsbmps?=
- =?utf-8?B?QTRlTzdZTDhXYW84WmlZV21vL0hEeDdPN09QTlJ5TmRvT2JBWnI4eXlxT2g5?=
- =?utf-8?B?dk5EVHBLWFZncm5FaTBBU1l3R0JCdGVqSDhiOUtVOHBOZVZaRFdwNCtHa3RQ?=
- =?utf-8?B?VTBNZWhCcDhaL0VqdlFDY0FUTFhhbmlLZTZTNVFLRVUvMk0wZmNWdVdmZkhz?=
- =?utf-8?B?RXBsdTROM1ordlBtTFJOcG1FNE4rbXJubkxnQ3dtWllDdElMaDZTcTg5Rlp0?=
- =?utf-8?B?Qk5qNDVqOG5adFlJeEJldXZtT1B0Ni96SmhZeCt0NzNIYy94T1M1RmdYSnNO?=
- =?utf-8?B?RnhqTmkveEtkeHkxU3FrRTk4c2xnd1F2M2tiYmduM1lJUjFueVBwWE1DcWRS?=
- =?utf-8?B?bnhhaGg2VnNnVTdwS0RsclZJQXVsbDAvSTBvVDVvMXRtcEZYMG1EOU01b3hV?=
- =?utf-8?B?QnoxazdiMmkyNkhaV1Z5KzZQaDd3YURjcUJncTZaeitGbmFyVHMxZ0lxOWl0?=
- =?utf-8?B?bVgra3gyZjFOeVFEZjlBZWJNQnBUZFo4SjVjY3A2UEJqanZCV29ZNGx1Q083?=
- =?utf-8?B?dCtCeUxMWkl0U3lHOC8yZVRtOTFJS1VZRnpRNTd1MUxKQzU4V2RPOGVzQktv?=
- =?utf-8?B?b0kwYzczRVJWVzdxWWhVZzNMVjdNTzJIZG9FdDFyK1hrdi9CVjI1SlZSQUxK?=
- =?utf-8?B?QmVjV0Y2UG5HMThSa2ZwZnoraDZzd0xxWkt1SGpFM1h1Q0pGeTNCS3p0dUdQ?=
- =?utf-8?B?Sm84NFVkd2NNMUR1RkFUZTZ1bHNvSldBakgzWG1wclhzd0phbEdpbzdUSDhE?=
- =?utf-8?B?T3BzN1l5ZTlBT0tvLzNGNlN4L2M0KzFtTW9lekZLL0l3OUZ4UUNPcENWNnps?=
- =?utf-8?B?ZWRSVVRmWjZvNWdqaTdXM2JTMnRSNDI4RHBZTWt5QnBzYzEzcExlT0Y0RHFI?=
- =?utf-8?B?ekx2UjR1VFptYUVTR0EwTWpuS0JRakp2emVIM1dvWk1JTmFFSFJGTnFaNU11?=
- =?utf-8?B?WERlVThJK29TWFUwTit1dHdMT0k5a0QvdXpHcTFVN05aVFFjN09sTnJUWkx1?=
- =?utf-8?B?SjJ5Ym5xT093Yms0ZllqU3dMTnQxMXVlNzVHQTZQSjdjdWVLelJCZWg4TGov?=
- =?utf-8?B?YmVRRllYeGhzK0FQK3lOYjE4RTBrYmVkbzdlekt1UG9VWTV4WTFHM2I1SkVN?=
- =?utf-8?B?WEs4U0FKMVUvTGQ0QzB4c0hLK3VKekE5R2dUL3NaWmREOTdrSEdBT2lMdDBJ?=
- =?utf-8?B?dUVCV1M0S210MW1FZGR4Rnh3Y0pHMTk4ZW9sc1M0Q2JydHZvbUFOeEdoNUhr?=
- =?utf-8?B?UTBSSHRGODZjVzduMXpKaGFWU3ZRQnFlaHdxK0ptZENMV3kvZFN6RWROejZq?=
- =?utf-8?Q?VU+RbPDsVgUR/jRMYa3j76VLK?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19091c16-09da-4462-043b-08ddf502ef2e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 09:25:10.9873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VXf3dQvRNFoHSiYEu0aLUtPuT+G6K8Xifpn320aHUkO5GHFKTpMmS4FlgvSVJyzt
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9628
+Content-Transfer-Encoding: 8bit
 
-On 16.09.25 09:08, Pierre-Eric Pelloux-Prayer wrote:
-> amdgpu_ttm_copy_mem_to_mem has a single caller, make sure the out
-> fence is non-NULL to simplify the code.
-> Since none of the pointers should be NULL, we can enable
-> __attribute__((nonnull))__.
-> 
-> While at it make the function static since it's only used from
-> amdgpuu_ttm.c.
-> 
-> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 17 ++++++++---------
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h |  6 ------
->  2 files changed, 8 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> index 27ab4e754b2a..70b817b5578d 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> @@ -284,12 +284,13 @@ static int amdgpu_ttm_map_buffer(struct ttm_buffer_object *bo,
->   * move and different for a BO to BO copy.
->   *
->   */
-> -int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
-> -			       const struct amdgpu_copy_mem *src,
-> -			       const struct amdgpu_copy_mem *dst,
-> -			       uint64_t size, bool tmz,
-> -			       struct dma_resv *resv,
-> -			       struct dma_fence **f)
-> +__attribute__((nonnull))
+From: Karol Jurczenia <karol.jurczenia@intel.com>
 
-That looks fishy.
+If the interface is down before setting a TC block, the queues are already
+disabled and setup cannot proceed.
 
-> +static int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
-> +				      const struct amdgpu_copy_mem *src,
-> +				      const struct amdgpu_copy_mem *dst,
-> +				      uint64_t size, bool tmz,
-> +				      struct dma_resv *resv,
-> +				      struct dma_fence **f)
+Reviewed-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
+Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
+Signed-off-by: Karol Jurczenia <karol.jurczenia@intel.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I'm not an expert for those, but looking at other examples that should be here and look something like:
-
-__attribute__((nonnull(7)))
-
-But I think for this case here it is also not a must have to have that.
-
-Regards,
-Christian.
-
->  {
->  	struct amdgpu_ring *ring = adev->mman.buffer_funcs_ring;
->  	struct amdgpu_res_cursor src_mm, dst_mm;
-> @@ -363,9 +364,7 @@ int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
->  	}
->  error:
->  	mutex_unlock(&adev->mman.gtt_window_lock);
-> -	if (f)
-> -		*f = dma_fence_get(fence);
-> -	dma_fence_put(fence);
-> +	*f = fence;
->  	return r;
->  }
->  
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
-> index bb17987f0447..07ae2853c77c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
-> @@ -170,12 +170,6 @@ int amdgpu_copy_buffer(struct amdgpu_ring *ring, uint64_t src_offset,
->  		       struct dma_resv *resv,
->  		       struct dma_fence **fence, bool direct_submit,
->  		       bool vm_needs_flush, uint32_t copy_flags);
-> -int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
-> -			       const struct amdgpu_copy_mem *src,
-> -			       const struct amdgpu_copy_mem *dst,
-> -			       uint64_t size, bool tmz,
-> -			       struct dma_resv *resv,
-> -			       struct dma_fence **f);
->  int amdgpu_ttm_clear_buffer(struct amdgpu_bo *bo,
->  			    struct dma_resv *resv,
->  			    struct dma_fence **fence);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 7b16d1207b80..133ffdc91153 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -6247,6 +6247,9 @@ static int stmmac_setup_tc_block_cb(enum tc_setup_type type, void *type_data,
+ 	struct stmmac_priv *priv = cb_priv;
+ 	int ret = -EOPNOTSUPP;
+ 
++	if (!netif_running(priv->dev))
++		return -EINVAL;
++
+ 	if (!tc_cls_can_offload_and_chain0(priv->dev, type_data))
+ 		return ret;
+ 
+-- 
+2.34.1
 
 
