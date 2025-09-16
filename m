@@ -1,179 +1,135 @@
-Return-Path: <linux-kernel+bounces-818904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2284BB597DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:38:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D68B597B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2BF51624E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0873AA514
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840C7313297;
-	Tue, 16 Sep 2025 13:38:41 +0000 (UTC)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005CB305070;
+	Tue, 16 Sep 2025 13:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="dvnnIlki"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C6331326B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BE921CC4D;
+	Tue, 16 Sep 2025 13:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029921; cv=none; b=Sv7N5cDOCwHPZazkAaqs5RZmkeldPifOXtljAidlpkQZ5wVbrRVUg9Sga7jySdYv5AIhT4+CvfUA/YP1HWjP4t7+S28VOdCk40CH6/dkygvq6jkhjgsTvWQoxiwYeeFaOuoin5Iyw90N+CxE1DlwCSOK84EhJ7hZRYFsX0GZhAM=
+	t=1758029557; cv=none; b=O07NCkCg5n4sDYRRQk2ht1nvlzpOlOc+SPTldNXrj05EZZl76SPbDCtiaEYVDtNZwCbphf+diUTtjq9f48R8fqFoPexUN6jxGyZKN40yPn2Zba0XLEAbSVBQG4jihEffAlp7IfhFDaaXzcCA2DxIxa5boTmRnTmnsdzt1kcPN8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029921; c=relaxed/simple;
-	bh=lRwGS+EzOykdHSjihfKZFNIAo3QDxUC71G1I5pU5mBM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CcEvUSV9LQq8dZRAoB8zwe5EyTLOYxYtbU2jCvwDSHfgK6hC+iL+GYXSpMNwSjCZo6L+MW/GKURKwE48++xLpJom1LUxarJj2mafYBqYGxPSL63SkmPt9m3cpkwXcwjrOcF+MfE90Jp7FH+25FK1DTGkskPWX1Mmb/HZcFkkfU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-77d253914d0so19262896d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:38:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758029918; x=1758634718;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aDQooxDkD5fz4sLWBIH6i0SDIPVUTbpTi303GssaIAI=;
-        b=nlPDYsl62ZyB/KUiiFq3Wa7vShTg9nQ19bXNQoa1pcQtygdxsqxG/r7LYQxZmqI4Sh
-         f6mwY+pAkz3N2PcARpzulEwGpuV59wqSLJYwwKZp8ldx/WovCuYYMhEHaFOoDeAN346N
-         IFWC8tBK/3nq/vp04dc750vwGI21HZL2ixhpFTxzlZuCB8hOMLH0fYp9Nft8ahzjHyRM
-         0IYQEcUOxNfRvIBomnZnH5AAXYWe3/ZHpL/aADw0Rvc6A4JownTuXk/xc6hL1Ov+/nC7
-         NtRjFIzGZ4ujcQ1gqDXYhAaTMsVL+E+JOyQfpSXOasubz/s/pC+4pWc3FzE29jO6fOCO
-         ycsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5YPQNkfgxnW47U+8l7Ij+cPy2XuPB+Sxt1MpBiAjmTSfuhFbvfwpyLG/ElgF+rgAumZ/ewWCHl/A/tZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRo7wu0dyw36DXHPeDaEfRZz5tRElliEpv2SkzNwgVxEdtjnOY
-	0dMlSBVQk8OzvRZqRRh/7Psubd5zfFVc4De3LyKYhOTy4WkpN4hc/uxtQs+aZcsE
-X-Gm-Gg: ASbGnctXfQrtU70Qns3ZL1ziMLQ4shWLmAuotXnNgcQD3uSObS+gVa5FYvM2TfOKM1u
-	NaeXh2ulsiSBtVCLAn4Y/sltctYA2FLuPQdOtoLKjpaliq40nGOKHKR5B0S6fpZDsk7Brldg0Jy
-	U5ACxFn3hjx2yCUx+xon4r+UeMaI7HUKBemjpAVHSLRDYOu6TUn3rm87oEvcyUDORshioALa8EV
-	3PeUciVLYKyzSifR4MF7MznH9aAHJ78d1PwJLkZKAa5JEmx9cGg56IYEAl3IeiuJUuMMe3HzJEI
-	wuUAg/8Bk/ZVGo83TTo9yWf3s2mLMMgNbO8ubs9LX3zD3QxQkiqg7G3TiiZaNTfkwd4SaJUivI9
-	VAcx6P8wEnKeTDOP7/1SMS707b0n54nSEs2lEj41mkqHUSF9fwsJYTaPjtxi1BtHV
-X-Google-Smtp-Source: AGHT+IHni7ZsO0r3VLNIrZCFd35biqrcyPNh4ZM0ogaZXP+bS6NaWiYuUHgwb3DquAhp7RD8LCqGfQ==
-X-Received: by 2002:a05:6214:400d:b0:786:d65c:1c3e with SMTP id 6a1803df08f44-786d65c1c6bmr77176846d6.30.1758029917964;
-        Tue, 16 Sep 2025 06:38:37 -0700 (PDT)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com. [209.85.222.177])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763b549866dsm94221736d6.19.2025.09.16.06.38.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 06:38:37 -0700 (PDT)
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-826311c1774so384090185a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:38:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVe4O4VLkS1JZpGWABwq9/lpDcl88tTiby8aXi6uKsTnd0o98sk81vj1JYtUORxuvzjiG09EPMCMJ/OP8c=@vger.kernel.org
-X-Received: by 2002:a05:6122:1d8c:b0:53b:174d:98f2 with SMTP id
- 71dfb90a1353d-54a16b20009mr5200853e0c.3.1758029474999; Tue, 16 Sep 2025
- 06:31:14 -0700 (PDT)
+	s=arc-20240116; t=1758029557; c=relaxed/simple;
+	bh=deX/rVBPdegf69NRE/QTcz9qXpuXvCrt/VgQVjcOjaU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nVPqPyXA924h5O+5foSzizfsL46PQo+DPZhhb6YhLHCWtts/z9s/XLcqsr5YUuLmDz6O7I8PalMH8KiXuLYgisF2EY7mntE9WtO5n4dyU+i5F/zLhP02i1cSPNwmtvOqMuNQnDBGSLpIfP6cSoz79LNem3bpLJWPQ1tpUFXUdoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=dvnnIlki; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G4VDFA007140;
+	Tue, 16 Sep 2025 06:32:14 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=n6cisBj2p2xn0aKmABWIf0u
+	3dHDp6nt/8KtXwp/QwkI=; b=dvnnIlkinX6KXODabc2/r5yRA1g292h8Pk5j8uI
+	5KbtNApbDD77Jm1gQssP0d7PGUJRPA4xg4ISz9l5mQLvVkZRQSC/ZL8xBjHoMwXB
+	A7CrHY9wUYs6lFleaxTd+Yg15PNQYTk6mRPo5+1jvTBHRoaIIOSr0v7DMhXTj2mh
+	xEUIm9jsjxTxdL8QgraurUX1fDldnJEIznPEyRNeAl70S58DKQu7PXTPD6i2oxY3
+	dBgp1k9szHW8Y4h1GhtEliPKGuNinNHZ6JuL27o4HeKiUXunzXgWNXIDXup75yZw
+	7b/9cFeaD7IBRFTvRe94nlZ8cvauyHijRWSkkfIv8jnw1Qg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 496vgphdv0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 06:32:14 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 16 Sep 2025 06:32:20 -0700
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 16 Sep 2025 06:32:12 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 16 Sep 2025 06:32:12 -0700
+Received: from sburla-PowerEdge-T630.sclab.marvell.com (unknown [10.106.27.217])
+	by maili.marvell.com (Postfix) with ESMTP id 3023A3F7045;
+	Tue, 16 Sep 2025 06:32:12 -0700 (PDT)
+From: Sathesh B Edara <sedara@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <sburla@marvell.com>, <vburru@marvell.com>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>, <hgani@marvell.com>,
+        <andrew@lunn.ch>, <srasheed@marvell.com>
+CC: <sedara@marvell.com>
+Subject: [net PATCH v2] octeon_ep: fix VF MAC address lifecycle handling
+Date: Tue, 16 Sep 2025 06:32:07 -0700
+Message-ID: <20250916133207.21737-1-sedara@marvell.com>
+X-Mailer: git-send-email 2.36.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908105901.3198975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250908105901.3198975-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <aMlgg_QpJOEDGcEA@monster>
-In-Reply-To: <aMlgg_QpJOEDGcEA@monster>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Sep 2025 15:31:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXWVXd5FauMYNq0yXgQa87F4Z9HcGOu2O_ercQg48GNoQ@mail.gmail.com>
-X-Gm-Features: AS18NWCih78Z1mvXR97O_iR6cJDURxsOD6O73Iub1rATQe0jxKnm2iY0iJuCAa8
-Message-ID: <CAMuHMdXWVXd5FauMYNq0yXgQa87F4Z9HcGOu2O_ercQg48GNoQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 3/3] net: stmmac: dwmac-renesas-gbeth: Add
- support for RZ/T2H SoC
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Russell King <linux@armlinux.org.uk>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=Sen3duRu c=1 sm=1 tr=0 ts=68c966de cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=yJojWOMRYYMA:10 a=M5GUcnROAAAA:8 a=RNbTXI68HHUJU8bo58UA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: R0DTh89jvXZ2uOnZSjxjffdtGTCRPYPv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDIyMCBTYWx0ZWRfX31/8vjo6xSc+ bcEX1n5+sIeUAcwli/TOrEB1yWAKYWXXNX9ilsPgvrNv5dWtHLwPoIfElFu91Zm77FlsW25d9Fn KEmv/SUFszPAAN7Ip3OM34IjRFgYT6pnD2BF51ILbvtw81e6ve59/t9cPpin+nd7y5Xua2QMocz
+ TZcWni5466cdqbREZKTpHCOuEsZpO/+Z2y5cs+aAT6wHEPRH+HywhI6HmVYkcN8AZn5B4k3IFK1 U7Vkrs5GthXIQq6bzus/i+RqxdmQsAOVBQX9MIBK0KYGMqXhGDqBGsUb23RUHUmfTFx99ROxm+Q T4AZY4BmE3J5bh17aXFG9IOrNSDKo1/I3AREOpIp3YUrxPdadUZ9XaK3Vkq+eC8Mp/N/nes13SB 7c2AQfra
+X-Proofpoint-ORIG-GUID: R0DTh89jvXZ2uOnZSjxjffdtGTCRPYPv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
 
-Hi Anders,
+Currently, VF MAC address info is not updated when the MAC address is
+configured from VF, and it is not cleared when the VF is removed. This
+leads to stale or missing MAC information in the PF, which may cause
+incorrect state tracking or inconsistencies when VFs are hot-plugged
+or reassigned.
 
-On Tue, 16 Sept 2025 at 15:05, Anders Roxell <anders.roxell@linaro.org> wrote:
-> On 2025-09-08 11:59, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Extend the Renesas GBETH stmmac glue driver to support the RZ/T2H SoC,
-> > where the GMAC is connected through a MIIC PCS. Introduce a new
-> > `has_pcs` flag in `struct renesas_gbeth_of_data` to indicate when PCS
-> > handling is required.
-> >
-> > When enabled, the driver parses the `pcs-handle` phandle, creates a PCS
-> > instance with `miic_create()`, and wires it into phylink. Proper cleanup
-> > is done with `miic_destroy()`. New init/exit/select hooks are added to
-> > `plat_stmmacenet_data` for PCS integration.
-> >
-> > Update Kconfig to select `PCS_RZN1_MIIC` when building the Renesas GBETH
-> > driver so the PCS support is always available.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3:
-> > - Dropped passing STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP flag in stmmac_flags
-> >   as it is always set for all the SoCs.
-> > - Updated Kconfig to include RZ/T2H and RZ/N2H.
-> >
-> > v1->v2:
-> > - No changes.
->
-> The following warning is seen when doing a defconfig build (make
-> defconfig) for arm64 on the Linux next-20250915 tag.
->
-> First seen on next-20250915
-> Good: next-20250912
-> Bad: next-20250915
->
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? yes
->
-> Build regression: WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> This is the build warning:
-> WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC
->   Depends on [n]: NETDEVICES [=y] && OF [=y] && (ARCH_RZN1 [=n] || COMPILE_TEST [=n])
->   Selected by [m]:
->   - DWMAC_RENESAS_GBETH [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_STMICRO [=y] && STMMAC_ETH [=m] && STMMAC_PLATFORM [=m] && OF [=y] && (ARCH_RENESAS [=y] || COMPILE_TEST [=n])
->
-> WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC
->   Depends on [n]: NETDEVICES [=y] && OF [=y] && (ARCH_RZN1 [=n] || COMPILE_TEST [=n])
->   Selected by [m]:
->   - DWMAC_RENESAS_GBETH [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_STMICRO [=y] && STMMAC_ETH [=m] && STMMAC_PLATFORM [=m] && OF [=y] && (ARCH_RENESAS [=y] || COMPILE_TEST [=n])
-> I: config: PASS in 0:00:01.592356
+Fix this by:
+ - storing the VF MAC address in the PF when it is set from VF
+ - clearing the stored VF MAC address when the VF is removed
 
-Thanks for your report!
+This ensures that the PF always has correct VF MAC state.
 
-    config DWMAC_RENESAS_GBETH
-        depends on OF && (ARCH_RENESAS || COMPILE_TEST)
-        select PCS_RZN1_MIIC
+Fixes: cde29af9e68e ("octeon_ep: add PF-VF mailbox communication")
+Signed-off-by: Sathesh B Edara <sedara@marvell.com>
+---
+Changes:
+V2:
+  - Commit header format corrected.
 
-    config PCS_RZN1_MIIC
-        depends on ARCH_RZN1 || ARCH_R9A09G077 || ARCH_R9A09G087 || COMPILE_TEST
+ drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-"ARCH_RENESAS" is wider than "ARCH_RZN1 || ARCH_R9A09G077 || ARCH_R9A09G087".
-I would just change the latter to ARCH_RENESAS.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+index ebecdd29f3bd..0867fab61b19 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+@@ -196,6 +196,7 @@ static void octep_pfvf_get_mac_addr(struct octep_device *oct,  u32 vf_id,
+ 			vf_id);
+ 		return;
+ 	}
++	ether_addr_copy(oct->vf_info[vf_id].mac_addr, rsp->s_set_mac.mac_addr);
+ 	rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+ }
+ 
+@@ -205,6 +206,8 @@ static void octep_pfvf_dev_remove(struct octep_device *oct,  u32 vf_id,
+ {
+ 	int err;
+ 
++	/* Reset VF-specific information maintained by the PF */
++	memset(&oct->vf_info[vf_id], 0, sizeof(struct octep_pfvf_info));
+ 	err = octep_ctrl_net_dev_remove(oct, vf_id);
+ 	if (err) {
+ 		rsp->s.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.36.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
