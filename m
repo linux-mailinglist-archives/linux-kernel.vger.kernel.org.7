@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-818851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89BDBB59725
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C180B59721
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 847697A06D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BCE3AD30F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3F73164CF;
-	Tue, 16 Sep 2025 13:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1B1315D32;
+	Tue, 16 Sep 2025 13:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gmjf/lXN"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="I1tJQ1kz"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579132DC32C;
-	Tue, 16 Sep 2025 13:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09C531352A;
+	Tue, 16 Sep 2025 13:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028379; cv=none; b=CBMkfvA+fHTy0csEHT7QbuOLpa4Sa1o5nwo/lCQGhzC+/F3axBYFHLa4DnRG+aQmJSdpy+P1YfFPUH3TbBJS5cGC9Ut/fuUjx5xuOusj+qnS0sTsXWCa59C2IU+6fwbV//AOP3caSZ5JIJ7Rt9dNtr98RFjrwlUisBvFSJuOv5I=
+	t=1758028370; cv=none; b=RZ7VP5W2mTu2sAFkpcyFM2y9fXoZDZq4p7kKYz/RZ8X3n+gW/RGiWWrM1P1SpgSG95Wp53KUKnW0dzjBzoN/Gp8otFPo1cc7UQ27PC/60IiE42QVOQxArQJ1EZo/ZORa64FZTRbUMF3gqO35URQFaj9eUn15+jUNY65M80Mi6hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028379; c=relaxed/simple;
-	bh=ik/Ise1iswo7LmVkd0oG8YoqIncJ668v/g3g8ti6nAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ekzN1S1bl/rGFrsOdr7g6DlfS808jh22/qyTPUzajUYqO86ZcJsiogE1ccLB5N9Ob7o+1AqMrMe/4yG1HNhA56UGnRB+IVMXytLUYp/ahLyr06Ee5HvfeWNczkLsf4Nl0b4obHV+iiFqZrawgvX63efZdnNweHKRUPluZi6npzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gmjf/lXN reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5ACC740E01A2;
-	Tue, 16 Sep 2025 13:12:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ttVk2Mn4Jhig; Tue, 16 Sep 2025 13:12:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758028368; bh=NnBsyV+YEsnQMd6sc1QNEhxEPfHuUEo9ekvsKqyRBYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gmjf/lXNIcIJDLPQtdWfx1fRSmvkzzEwQ8vP/zezZ0107I0vRCVnG8vzblIbimzMR
-	 X8ETN1ek9FNo+qVkh+/2kent5aIyRKV/zWvBbCrNCBDoB1AXeGBkOIlpUivWdiRLXj
-	 iUP+ygZFwUqH5m9N4GvEUDckKHUleCf6g7oaOUN6gmKJSrxOI9YeLtPZBZvl6j/EX6
-	 yNJtQXvYC84ewbNYlQYYrU1d0VptsrTwFY9MRkbqFBzPYcmbcX8cvfm8ssVzo1k7BK
-	 RykS64aDoG7iOgzYnx4AbOpH7vos50ko+AmHylvqYhjmM6iEqTlvh/B29arKI4r8gu
-	 Wqk2frZPZ1r0Wru0/phS3SK5BpjpaRerTe8cGME0SVAyfFxg44RbdZu8O3lB4TLQe5
-	 idvZGgm4/qG6c1RzzI7Ut2C7gX0/INOEnYVQhs7MSsv7ICThwyxa4lXvtWVyrqLUW8
-	 YffMmMXAVKXLfk7e7fOFb4p5LEAvEKi10B+cZz7Tpcwrhl3ko4vgmPgeb2fkwzhEiP
-	 0MaTLQ2cBd6+uVUfY66JBtSf/ezJEqLFQb78Mk0BBQ/yHE6hgSupPxKmCUmllpJJza
-	 RRQU/O1S0Tbod9G5uXfYCvXO2jcypjQIDUaUAiVuU+os+ZfYfLdSMJ/LEZS9b4YatR
-	 2sAel0TbLh/0/kKOVDBUSZjk=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 3E68F40E00DD;
-	Tue, 16 Sep 2025 13:12:28 +0000 (UTC)
-Date: Tue, 16 Sep 2025 15:12:21 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, seanjc@google.com,
-	pbonzini@redhat.com, thomas.lendacky@amd.com,
-	herbert@gondor.apana.org.au, nikunj@amd.com, davem@davemloft.net,
-	aik@amd.com, ardb@kernel.org, john.allen@amd.com,
-	michael.roth@amd.com, Neeraj.Upadhyay@amd.com,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] x86/sev: Add new dump_rmp parameter to
- snp_leak_pages() API
-Message-ID: <20250916131221.GCaMliNe3NVmOwzHEN@fat_crate.local>
-References: <cover.1757969371.git.ashish.kalra@amd.com>
- <18ddcc5f41fb718820cf6324dc0f1ace2df683aa.1757969371.git.ashish.kalra@amd.com>
+	s=arc-20240116; t=1758028370; c=relaxed/simple;
+	bh=NdsjIpLQ/ZCIkYQFwRJqqaobbgPnADrDW11zLKXJU0M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O6PgRhT4bzt3nmnSbnCfltBIUnQdDUlB1b7Gdhi3jtFnSluXsHCyhriYQjIz+AEfxXowEuP+YXnir8qXCWAkN0rTV3OEiWE07YTGSvk0YoqsrnieFTwnpjkK41elS7NDTsshlLi0Hd1CSE9vYT6MGmeKp5RM+2RJwydiIQXu3hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=I1tJQ1kz; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9RMM3014997;
+	Tue, 16 Sep 2025 06:12:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=S43lXPw2lCJOOulxOQ+29E0
+	fsDGAddr6dm3x72BG9Bk=; b=I1tJQ1kzg5YbjS2KVQXzWdOnTtkbtgagUFBU2+N
+	dNT+2zwtXVQpi3lZzLwqnXWizDV8ZoalbWAOvU3odGE3zfVqP190bix01Ijj8W1j
+	+CqRlVA2L72Cwh3sXviGIB1pAtXrVQ+2KkqA6HP/DTLliCP+qUytXrqVG1fayrvk
+	HGKEmtQcTqK/KpwALqb+G/J+YdY7OvlMOdd1hnWAOvgiv/VGH8wLytApZNzG9MYy
+	pM5R/sgURrBdRwb3yO8zUWmaCDYOePfGKiWQggH4iodSGGatI6JEtBrlC2IwNLtC
+	SnXu8AdDVEbXwfIxFfhM4XmiTxLAoRmqHbzXL1pmcwIzvSg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 496tgysjs5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 06:12:38 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 16 Sep 2025 06:12:44 -0700
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 16 Sep 2025 06:12:36 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 16 Sep 2025 06:12:36 -0700
+Received: from sburla-PowerEdge-T630.sclab.marvell.com (unknown [10.106.27.217])
+	by maili.marvell.com (Postfix) with ESMTP id 523123F7045;
+	Tue, 16 Sep 2025 06:12:36 -0700 (PDT)
+From: Sathesh B Edara <sedara@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <sburla@marvell.com>, <vburru@marvell.com>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>, <hgani@marvell.com>,
+        <andrew@lunn.ch>, <srasheed@marvell.com>
+CC: <sedara@marvell.com>
+Subject: [net PATCH v2] octeon_ep: Clear VF info at PF when VF driver is removed
+Date: Tue, 16 Sep 2025 06:12:25 -0700
+Message-ID: <20250916131225.21589-1-sedara@marvell.com>
+X-Mailer: git-send-email 2.36.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <18ddcc5f41fb718820cf6324dc0f1ace2df683aa.1757969371.git.ashish.kalra@amd.com>
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=KpVN2XWN c=1 sm=1 tr=0 ts=68c96246 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=yJojWOMRYYMA:10 a=M5GUcnROAAAA:8 a=DmOvae2lHUslj-ssQz4A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: D9z8UjjYgHqZDk8tCwnomO0at0y4l_MF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDE5OCBTYWx0ZWRfX82iOB9Wa8OmN bn+b8j1mduxKKnETsINw6R5hD29y2+qrea9YaK4QpL5D4ONHPP/k62qEpOcKXlY92EdDjauuMUC 6w+ODDxScC/YJ8EaSR9tEMGUfrZxl6IVZnSHbit+INRvJCUzh47boHi3PjFFhVmeV8PUVIWmNq3
+ vvapK9pW+9OmxbCqssakLixhBa9KTWYVYyPRELIU9K7Jdry11Zo6WEDmnqJaT/0qlcpi+7MOUoa m1pjam1bd5t2EkA5uwwYSq7HcrEiCuvdPsQaRfy1DazftnOWnUhfIdRvYmnjZ6ZsZ2J4BKI2YYn ydVmgXN2o2Jyl8UmVKOpRZD86Sv9lr/BGJz/IE9N+lT2iAHHa+DEl9seRAQh7aT8bsyOxB2tA7f RjqD8GsP
+X-Proofpoint-GUID: D9z8UjjYgHqZDk8tCwnomO0at0y4l_MF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
 
-On Mon, Sep 15, 2025 at 09:21:58PM +0000, Ashish Kalra wrote:
-> @@ -668,6 +673,7 @@ static inline int rmp_make_private(u64 pfn, u64 gpa=
-, enum pg_level level, u32 as
->  	return -ENODEV;
->  }
->  static inline int rmp_make_shared(u64 pfn, enum pg_level level) { retu=
-rn -ENODEV; }
-> +static inline void __snp_leak_pages(u64 pfn, unsigned int npages, bool=
- dump_rmp) {}
->  static inline void snp_leak_pages(u64 pfn, unsigned int npages) {}
+When a VF (Virtual Function) driver is removed, the PF (Physical Function)
+driver continues to retain stale VF-specific information. This can lead to
+inconsistencies or unexpected behavior when the VF is re-initialized or
+reassigned.
 
-I basically don't even have to build your patch to see that this can't bu=
-ild.
-See below.
+This patch ensures that the PF driver clears the corresponding VF info
+when the VF driver is removed, maintaining a clean state and preventing
+potential issues.
 
-When your patch touches code behind different CONFIG_ items, you must mak=
-e
-sure it builds with both settings of each CONFIG_ item.
+Fixes: cde29af9e68e ("octeon_ep: add PF-VF mailbox communication")
+Signed-off-by: Sathesh B Edara <sedara@marvell.com>
+---
+Changes:
+V2:
+  - Commit header format corrected.
 
-In file included from arch/x86/boot/startup/gdt_idt.c:9:
-./arch/x86/include/asm/sev.h:679:20: error: redefinition of =E2=80=98snp_=
-leak_pages=E2=80=99
-  679 | static inline void snp_leak_pages(u64 pfn, unsigned int pages)
-      |                    ^~~~~~~~~~~~~~
-./arch/x86/include/asm/sev.h:673:20: note: previous definition of =E2=80=98=
-snp_leak_pages=E2=80=99 with type =E2=80=98void(u64,  unsigned int)=E2=80=
-=99 {aka =E2=80=98void(long long unsigned int,  unsigned int)=E2=80=99}
-  673 | static inline void snp_leak_pages(u64 pfn, unsigned int npages) {=
-}
-      |                    ^~~~~~~~~~~~~~
-make[4]: *** [scripts/Makefile.build:287: arch/x86/boot/startup/gdt_idt.o=
-] Error 1
-make[3]: *** [scripts/Makefile.build:556: arch/x86/boot/startup] Error 2
-make[2]: *** [scripts/Makefile.build:556: arch/x86] Error 2
-make[2]: *** Waiting for unfinished jobs....
-In file included from drivers/iommu/amd/init.c:32:
-./arch/x86/include/asm/sev.h:679:20: error: redefinition of =E2=80=98snp_=
-leak_pages=E2=80=99
-  679 | static inline void snp_leak_pages(u64 pfn, unsigned int pages)
-      |                    ^~~~~~~~~~~~~~
-./arch/x86/include/asm/sev.h:673:20: note: previous definition of =E2=80=98=
-snp_leak_pages=E2=80=99 with type =E2=80=98void(u64,  unsigned int)=E2=80=
-=99 {aka =E2=80=98void(long long unsigned int,  unsigned int)=E2=80=99}
-  673 | static inline void snp_leak_pages(u64 pfn, unsigned int npages) {=
-}
-      |                    ^~~~~~~~~~~~~~
-make[5]: *** [scripts/Makefile.build:287: drivers/iommu/amd/init.o] Error=
- 1
-make[4]: *** [scripts/Makefile.build:556: drivers/iommu/amd] Error 2
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [scripts/Makefile.build:556: drivers/iommu] Error 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [scripts/Makefile.build:556: drivers] Error 2
-make[1]: *** [/mnt/kernel/kernel/linux/Makefile:2011: .] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+ drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---=20
-Regards/Gruss,
-    Boris.
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+index ebecdd29f3bd..f2759d2073d1 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+@@ -205,6 +205,8 @@ static void octep_pfvf_dev_remove(struct octep_device *oct,  u32 vf_id,
+ {
+ 	int err;
+ 
++	/* Reset VF-specific information maintained by the PF */
++	memset(&oct->vf_info[vf_id], 0, sizeof(struct octep_pfvf_info));
+ 	err = octep_ctrl_net_dev_remove(oct, vf_id);
+ 	if (err) {
+ 		rsp->s.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+-- 
+2.36.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
