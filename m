@@ -1,173 +1,122 @@
-Return-Path: <linux-kernel+bounces-818549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B19B5932D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:17:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D845B59323
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 641E57B3C31
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CDEA1751A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE1E3043AB;
-	Tue, 16 Sep 2025 10:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C3A27D784;
+	Tue, 16 Sep 2025 10:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pYodLLOu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjVktaW7"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52E330274A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344D32BE655
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758017814; cv=none; b=MOgorj5lrr4uuFA+Qe39C1LCup1yFLAEeXW9EKSOweO6rxqtcp2zj+4gm6HympIe3Lqi6Ukanqrl3un2QbSsDvsVJQrmvs78x6R9NJvXAEqA6808HUPQmdVOan9Y1Elo5Cd7QWa63FwXI2DJg2i0ftUKLEIQhK3vH0dx/K7a0y8=
+	t=1758017798; cv=none; b=VnrEE5F6K3kLTrFGauAYHulJtSsn7LqO8K2f8+trvnqrtu7zf0cvvRDq9h5tFkGEnbN6mi6Q7KtIVda5bMFeHUJwSNmaVGGeE4o0VC24/rIngpC9WIBTFShHPbp2/D5Q4paQch21W/AbS+Hm0dtu2DU9Qw87MT9Ftm4JyLFoxSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758017814; c=relaxed/simple;
-	bh=ZZTjg3nESIJaMyExBV/VDYlLd9/ybfakJ0TFBxehk+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=so/UTYsN8JMbz00z9pgNaSx9KU4lGJIpDQgFH6aNM7LqfmVIr7xnf3vZRi+n0q3YwXqX0Ue3xfk8rcdyet3NY8OxmWY8WSXyINJmoKtvYX133XeOPH+nOsvyUfnoy26NqxOpL57btsAiAzTynNKeigUgBos5383KccmfPbvg+uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pYodLLOu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GAAdg6012286
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:16:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=r5q7Ptg3IDb5aGHpR/B6NYC/
-	GiSBXmLjKmkevafLTeU=; b=pYodLLOuHd0OOa+UEZZOQmlXHdy2260fWcB/BarZ
-	pU9PIakrNMRjRQLY/sl7jxmSYEhDUPyoywnz/SyHYlhFQkNQglWuQnApultaGt73
-	LkNiIVNx+A2cX7rHHmFFcEiECUU7tKU/VJ9FaTH8m8kvc4FMyLD5prt4ela78Z4O
-	kd/70erhbgDxLBGizdkXpvOu/v5DBMG0574a4gTHZbJIqWunXiFnJEGnwp6akdqj
-	bLn/W0CnGL7oaDc5/dTGoWLRwGc4BdmZy872Bhof0tvig/UglZpZmPQfv19JQ5C2
-	XCqlHJWLGFi0VmeaK6dGISzwDmjAo4D4LBvYb2vHJ6HwZA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496g12m4yk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:16:52 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-77c23fc66b7so40539056d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:16:51 -0700 (PDT)
+	s=arc-20240116; t=1758017798; c=relaxed/simple;
+	bh=VmZzhETWZwgrAXAyoyBia2dF4hbrFav1Sum4dtojLBk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UTqQAv+T3Ue9NpPZXFyj2XqenLPd7UwGu6F39BB1zhSPRqLK+d3HorgTqusajtTVXNaRdHluHHXinnbtXSQaqoelLBVN2pMVvXdRYRkXXePcGfUG/4os2yn0/6pC2wGQgBtzqz+kYY1V896BxUZUSt6uFFV0aHhxqmQgBTOHgiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjVktaW7; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ebe8dc13a3so938004f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758017795; x=1758622595; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VmZzhETWZwgrAXAyoyBia2dF4hbrFav1Sum4dtojLBk=;
+        b=kjVktaW7AZ99MOW897CGo5btfUWpf5Fb98oj+ECi76u3iIobYRNGf4/kp5iYe88+m4
+         l06c4S0s/HwgcG0VGt/bOg+Kh4Mg+hrrkEkQbd6/RiTatzJgztYtinQcreZIwInaYVb0
+         i4TwmOmdUl3xmVqHu0B9mUsU0DadHCzsFVRr6yNWrgvz6247d0R0315jjSMqaa0UpA8Q
+         vFDv5+W6hkH+8AlQYGqO7fk7Tg0S4xtlA2TTdckNufDJB+jzxv1Zq/TBTIamnUGFb0M5
+         k0Osfkiu9QbJ08SjvbkM6Vi16tA1w6NyBLIaEqRGW7+/VKzKdGodA1CrT9KOrOQJ7FTt
+         ZyzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758017811; x=1758622611;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5q7Ptg3IDb5aGHpR/B6NYC/GiSBXmLjKmkevafLTeU=;
-        b=H1eBZkZxQ/FKSc31mfKgcEnzmq8aHwXT8/Fy6UAHSatCzCUmdr1A45v0WuE4nz+ziu
-         ore/ONlS6I/w2HNSb6g1hPVvklJ6o09dZTF/lN+XYanrkIcqH6uJ6LTWxoteyMxIWNrF
-         sHK2qK4Y1G7eGO+JOTyekCUv37/tIn7HoO3YGV6HkqcKi7tlgab6Ma4vcpTsek/Ak+xE
-         DBiFMwazVNQFUROdpuuLhHxv9FNtDqHz4RaoXJniI8T4t5ts1VnZJE97W7KGnXIm5q1C
-         JTYnwYWe+fX5/ioFbNDFZrA1wPfg1JiUdco0njrfwP999T7+uEBGH63ESwVGv8kfqlSS
-         6IhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIVCNNYD/iWRNLVc9ZL2Xf9UMzlOg297FK53TbWcYuEhgxSsbJAPWJ5o/cnpuo8rASV7WLg1vZqm5K/2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUIAqil9Yawm55s06Y+xsKrZgZ+SRAjh6PdBsbYJhNzHrJH2A5
-	5RPMaXESTlOeKyZ8/s1AI8nX9haeOOOF9HN218Tsc3WKn5vlBx36BUeiWQaDpkL9XW1nT19/eXN
-	bFiaMQOTN0P3fjerVppTN24bLKScdyov9itKgMRtyDv1TR7okLVfeliuLOE/gIABoiiY=
-X-Gm-Gg: ASbGnct3zdgUw6uzRaJ2vEaYBWWiSnk9nL9+saa7A0gCWhEr/PuZq6JJlXdv8V2LlsZ
-	RF02X4KRUbWEmxMZ2Bp9WKU28zj3jDUwzVF1ifLd9IWUvFdh3d7jM/7ufLYyte0Fd1g4tUYSPBR
-	LvP/Sg+YRfP3MPr2Snf9auGDY7AO6yEusssP26r42z5dcGQUs8ZMR+DTZUQj5Lzmx4fxEqlef0b
-	6MssXheWmFKx0ID1hj3dsYx9OzLOc1Q1J50i469K2U3A0NT9PQGCVOBdJ5QZ/Yd8HxYf0GUTKjv
-	4m4Hg5V7FzlT91uJi3PHfNRzba/TNn32P6frcavO7lcISjVElTaYb83hBdvlCx1eCTyXAnOJ/u6
-	2lv/Z3gWTEjzRsrE+cfH9txw14hMRwMIb1I5sFZA6EdPqdDhjjiWI
-X-Received: by 2002:a05:6214:4287:b0:76e:7c27:f03a with SMTP id 6a1803df08f44-76e7c27f5d0mr62114066d6.24.1758017810581;
-        Tue, 16 Sep 2025 03:16:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyThvaMCTHqAaC7s4keMOJ2X/m+LlZYzRAuUnW6jCYfwPDs8ID5mqt+pz5VEB+vkErkc/XZA==
-X-Received: by 2002:a05:6214:4287:b0:76e:7c27:f03a with SMTP id 6a1803df08f44-76e7c27f5d0mr62113746d6.24.1758017810098;
-        Tue, 16 Sep 2025 03:16:50 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e65a32f66sm4186723e87.138.2025.09.16.03.16.48
+        d=1e100.net; s=20230601; t=1758017795; x=1758622595;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VmZzhETWZwgrAXAyoyBia2dF4hbrFav1Sum4dtojLBk=;
+        b=r9kF+dNZ63ou/25iW/jqaWLkGuvYUHqxV9M/1IDah13WNUJhcYrqHcO9Dp1zBX6H+w
+         dsfbrNo3z+IGjgdteTbXqRVwSVfssEwLWnJU7HMhzRi/cqY0uFMhwl9OVnN1qcAL6HhB
+         UEbb7l7b/1OzYQW+WI9qh2nMP5cDbkdaE2IIFVrJJjz0mvsNwBe6B3zVi7pL2FV+EWmk
+         vPonlNa7nA7ingH6Ca9ScFWvU5LOsNTKOH+0nswW7bO3NSGzSt128IaaHsYYiAfQmXQu
+         ZbGnsoxb78NJkmLAVyZr6phN6vXZ6Ie/A9wf9KSFysme8/SBrVNm0JQRSUYkid/OY9gh
+         X9NA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgqhSRJq4LUetl3Qkp4ZT7EfpeoGQi1Rr9Nlyarz6581xMTgY8p5Na0FCrgXEj7zldWuSEtuT3P6afUT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtwXsY3gIdxd+JjHZhNL+LKEVyFgI/+0AR35ptxmj7dRT2XbSl
+	CpR40G47Bp7bNFNmepRxftv6BQrQSFaZJuxl+1x/e6bCuwqQQZuKP918
+X-Gm-Gg: ASbGncvmOu246pcGr1veUsogTQ3mPb6Ipu79Q0O285E7gLRq4+Mnv6nkwbvgeyjZ8kF
+	KCI4l4D4s5J/OZyTxNk04pzjXdCLjV3UfRGKHH1AG5FJqCacK0pZFBrfOW0GAjP6i8Ab2SiGFUZ
+	OUIsO5D1eTaFgqsk/ch1B3yi4FlmfwVPZX8PVkPj2vC/GcJ9kDZCHDuIjEm20c0/g2L7c3fEMMj
+	RmypYyrwpUrkl2/nH/QWS5T00TxiMyJeR64xVpTwRWCauj60CXii2PMjRxknxbvro2x7NINeVkw
+	uL8rYX/0VaUuarHt7CQeyC8H5oL0BlhW+HHknNV49IABfBPXk8yvAtn8EQ4EUGuwvtLzbrwf7TA
+	1VTFuNYWGkXYscLHnCip+qSRzFY963QU=
+X-Google-Smtp-Source: AGHT+IEsDQnZ3ALRjZKNZkTIB6aa3ymyhHeIfAjtkOgrgqYBTsLvorpYR1r3Og+DA0Xw9SYb3SSGQg==
+X-Received: by 2002:a05:6000:1acb:b0:3e5:d2f1:403d with SMTP id ffacd0b85a97d-3e7659e981fmr16107836f8f.36.1758017795283;
+        Tue, 16 Sep 2025 03:16:35 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037b9ebbsm229691635e9.11.2025.09.16.03.16.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 03:16:49 -0700 (PDT)
-Date: Tue, 16 Sep 2025 13:16:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        =?utf-8?Q?Gy=C3=B6rgy?= Kurucz <me@kuruczgy.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 5/8] power: supply: qcom_battmgr: update compats for
- SM8550 and X1E80100
-Message-ID: <aiplezjbovtaghgblua5xj3rag5kjwzt6sjrnygzbez5dtaxm3@vn6kwmskc4e2>
-References: <20250915-qcom_battmgr_update-v4-0-6f6464a41afe@oss.qualcomm.com>
- <20250915-qcom_battmgr_update-v4-5-6f6464a41afe@oss.qualcomm.com>
- <f3s2srlmvuj7wmh4rndffmbfrzylbuq4rsu7pqqrnqa5fgsmch@t5f4dgmqtgys>
- <c5e3ac07-e91e-4c9f-9256-497991b75200@oss.qualcomm.com>
+        Tue, 16 Sep 2025 03:16:34 -0700 (PDT)
+Message-ID: <bb6ab3f73b6f18d7e8c37c28481a13a7808ba44e.camel@gmail.com>
+Subject: Re: [PATCH] i3c: master: adi: fix header location
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: alexandre.belloni@bootlin.com, Jorge Marques <jorge.marques@analog.com>,
+  Frank Li <Frank.Li@nxp.com>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 16 Sep 2025 11:17:00 +0100
+In-Reply-To: <20250916091252.39265-1-alexandre.belloni@bootlin.com>
+References: <20250916091252.39265-1-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5e3ac07-e91e-4c9f-9256-497991b75200@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: HKaO0yfIF1KetWfUGq7jyg9ei5Fb59dT
-X-Proofpoint-GUID: HKaO0yfIF1KetWfUGq7jyg9ei5Fb59dT
-X-Authority-Analysis: v=2.4 cv=E5PNpbdl c=1 sm=1 tr=0 ts=68c93914 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=R-MLo3Tlqdaq_EXOKnUA:9
- a=CjuIK1q_8ugA:10 a=1HOtulTD9v-eNWfpl4qZ:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX6n1GGOj+83wb
- hIda2loS7sL5lFovPD2UDTydx2aYIXDJr/gZniSusuSf6ALn01DVA89esiCbO13xFeL7GDNLQ12
- mMSvvheNLBbmdFxzsune+zHfZO0nOMvpbVPf+YWbFF0A6MWJQrL1vsYBxOTFQdlkBFAhAipbCog
- M9gW79cr8U0u31U78gcUCEFf9SzwtU0xgifcOAzN6FsQUJA/HUj87Mw8ftdRJ7HUp3yPMSBFGHE
- jIrsL/UcnX04pevfqjzjeHccIzw59PFab5XK5UR5K6W3Xcwg4wwYfAHG/b9JHqnZbMFQgUk8Pmb
- EjzGExh1JZIHDCIu9kxtsgpmXcwxk3IsZNw1SdKfmEFOhI5KVtmUZGPJRym8JxN6HwOg5t4n9bp
- c6Lh6D6O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
- spamscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
 
-On Tue, Sep 16, 2025 at 10:40:03AM +0800, Fenglin Wu wrote:
-> 
-> On 9/15/2025 6:19 PM, Dmitry Baryshkov wrote:
-> > On Mon, Sep 15, 2025 at 04:49:57PM +0800, Fenglin Wu via B4 Relay wrote:
-> > > From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> > > 
-> > > Add variant definitions for SM8550 and X1E80100 platforms. Add a compat
-> > > for SM8550 and update match data for X1E80100 specifically so that they
-> > > could be handled differently in supporting charge control functionality.
-> > Why?
-> Is the question about why this was submitted as a separate patch, or about
-> the need for the change itself? The reason for the change is explained in
-> the commit text.
+On Tue, 2025-09-16 at 11:12 +0200, alexandre.belloni@bootlin.com wrote:
+> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>=20
+> The adi-axi-common header has been moved to the upper directory.
+>=20
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
 
-It's not, and that was my question. Why do you need to handle them
-differently?
+Acked-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-Please always start your commit message with the description of the
-issue that you are facing.
-
-
-> As for submitting it separately, that was done to address
-> Bryan's comments to split out the compats changes. Anyway, I will address
-> the further comments from Stephen to make the change bisectable.
-> > 
-> > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
-> > > Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> > > ---
-> > >   drivers/power/supply/qcom_battmgr.c | 7 +++++--
-> > >   1 file changed, 5 insertions(+), 2 deletions(-)
-> > > 
-
--- 
-With best wishes
-Dmitry
+> =C2=A0drivers/i3c/master/adi-i3c-master.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/i3c/master/adi-i3c-master.c b/drivers/i3c/master/adi=
+-i3c-
+> master.c
+> index 162f9eed39aa..18597ba1f1c3 100644
+> --- a/drivers/i3c/master/adi-i3c-master.c
+> +++ b/drivers/i3c/master/adi-i3c-master.c
+> @@ -10,7 +10,7 @@
+> =C2=A0#include <linux/clk.h>
+> =C2=A0#include <linux/err.h>
+> =C2=A0#include <linux/errno.h>
+> -#include <linux/fpga/adi-axi-common.h>
+> +#include <linux/adi-axi-common.h>
+> =C2=A0#include <linux/i3c/master.h>
+> =C2=A0#include <linux/interrupt.h>
+> =C2=A0#include <linux/io.h>
 
