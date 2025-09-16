@@ -1,140 +1,111 @@
-Return-Path: <linux-kernel+bounces-817935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD09B588FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:16:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9A1B58935
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBAC116B32D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:16:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCE73A4B41
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E22C4086A;
-	Tue, 16 Sep 2025 00:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C7A1A5B92;
+	Tue, 16 Sep 2025 00:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DTwym6wB"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ustimBcy"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75C915A8;
-	Tue, 16 Sep 2025 00:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF1172639
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757981789; cv=none; b=N5kjfxzc6onXGVVoZqro3/JlfmViszcXnCBd1LNtiyxeVQCBgIw+ILlWonBmlsUWIbqzn2TdC2QBrQKJ+I4JPSzAYpk8vk7TNOwT97Tf/7QgZvl3FjlvACgYXuvemVBMWWXjYW3c5SMUSSgZt5yIUsraXbm28xLumQTS2whE2h4=
+	t=1757982356; cv=none; b=JbdpLPbJX8BU8/qS5Jq/VXRmdtovxSa4C1Z13mdoMETlj7ZBIeUkPvQhK3fVRoHk4uUhWusP2jMvCyseH5rYLtLBIwdOPdUwjXIRF93KJlTS/jP9sV15H1NEj3h38Atd38er0cbnGay3KA6Fek2SpQcIGK3Hzxr0KCrX/iC1Atw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757981789; c=relaxed/simple;
-	bh=7wyvt1aUEIplVhO7XedK4IOEAVq8hHM1yH+qSy1rpJc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=d+YCqxBVKDrDY3MC718pouogErLVR/fciY7t1DunkfOn+lbBD4j6L3Z+d8RgrmQ/ZLk9z+2EZDhfL/0GZRR2SDVpppzFnUdoLu1AJXXdJbrVEOXK9d3f0k778SefLTean2gJ5l0YKE7m3DzRRq1gz3PKgE1snUyrLM+gkIUgH4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DTwym6wB; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id BF1827A014C;
-	Mon, 15 Sep 2025 20:16:25 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 15 Sep 2025 20:16:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757981785; x=1758068185; bh=nd5//992Sn2C6rJuZNs6CVfdDJPCaeF3X6A
-	0IwVAbQM=; b=DTwym6wB9PyYVJKs++qpVap4g8n//DXe5kH6IHNpkN5mhkE4cr9
-	aiNsfvm0OHBL5KHtAp0PiYkuBiovzdO1x/+gLc+pXz+irwRvYjZdMyGb+/pYt8zb
-	mCI1CeJDoa+m1eAQDPOcsIF5OKCy2i5WtRnluFnK6iXEKgVZ4w0KtE8sQod8L58e
-	GfcAwM2glqqUg1xiQ1xNUPcCrbpcBA89AXdJQXhjlG2CSWSf3tnwL11tLxD1iBjd
-	6eQyrDOp4vlN6+VyMC94o/YfawAm8WEWlPQMWss3xZIkXUgZZ5KO3npTvi+f8CeX
-	GOXqXAStx/9wbLYGSvtpUZZFnY2S0EutEog==
-X-ME-Sender: <xms:WKzIaITbrcF9CCQYLK3qjFtcN_XyKcAh4nXvpumAUfZc0QV89YESDA>
-    <xme:WKzIaBl6ID0b0P5BNF26rZ3Ih7XNA71wid1MRelmliMDURM_lDROddoF1ya2OBMAM
-    Etl4wWNuhW7-TAIEHk>
-X-ME-Received: <xmr:WKzIaBOs4zmVUnA_Ho5weg0WHC-DoUaaEI36Scm3pPElfkusrnEo9AZN_bLx_1WMlV69Kuf5nnHGfjcXxpUlkSRdAlhEAPSgypw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefleduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
-    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepfeeiheejvdetgfeitddutefhkeeilefhveehgfdvtdekkedvkeehffdtkeevvdeu
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdho
-    rhhgpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    eprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehpvghtvghriiesihhnfhhrrggu
-    vggrugdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthho
-    pegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopegtohhrsggvth
-    eslhifnhdrnhgvthdprhgtphhtthhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtgho
-    mhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:WKzIaFiTu4CyMwTqs__Fky2KtquFaoP5UpQn-NDKLzR2TRlh__mHaA>
-    <xmx:WKzIaPhi6cH_eZBS17w9y5PyajhQt51gXTDziMjjvKDUTq66WH9HBQ>
-    <xmx:WKzIaELF6LYk7LUq538ggVi9AXmIiP7QcO5TkFrlqi-Lmdx43BYyLQ>
-    <xmx:WKzIaOlWxuDMBAisTH4VbPuxygflomfJgrgn0_It54x0JsgQepAVvA>
-    <xmx:WazIaPZfW3Hc61XmKDhjns6h0uUIz3diSE3aUOUcdGwlf9TeTvHoGjIH>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 20:16:21 -0400 (EDT)
-Date: Tue, 16 Sep 2025 10:16:12 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
-    Linux-Arch <linux-arch@vger.kernel.org>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org
-Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
- operations
-In-Reply-To: <57bca164-4e63-496d-9074-79fd89feb835@app.fastmail.com>
-Message-ID: <1c9095f5-df5c-2129-df11-877a03a205ab@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org> <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org> <20250915080054.GS3419281@noisy.programming.kicks-ass.net> <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
- <20250915100604.GZ3245006@noisy.programming.kicks-ass.net> <8247e3bd-13c2-e28c-87d8-5fd1bfed7104@linux-m68k.org> <57bca164-4e63-496d-9074-79fd89feb835@app.fastmail.com>
+	s=arc-20240116; t=1757982356; c=relaxed/simple;
+	bh=E/de48skkARmukqAoxeQ9dfDPu/mldn9SPasCaWg59M=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NPv/m4R76SMZuVkTNeyBrybHfKxTv9aIDU4I5KV7JgfciJ1Jchtmp4LzPDGdkLkNwHckmRuNcDLXNPYx4Q/HJGOOtRybL4KmUANGgIlh9+X89sJv0oJIu5vH4fbIigFjOQGKCxvnBwIwQmJDpkkf8pC0fMrJhSrHUfFH0QskGBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ustimBcy; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458345f5dso57136575ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:25:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757982354; x=1758587154; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BaSliU/Qp9/+sHRYKq5VI0MpnDs5e9LG+HbU1FTeWqM=;
+        b=ustimBcyJL9fQImvXMEQHuPEFgtCSifF3ERbSQYLHS8zfbVFBV1KQ73Rtsla7KWezI
+         4IuOgYtHzKXmkDXw0vRxfClvmCDizCiE4rRj9i/t58uBQ8YOIR5HzLDByiVXA1LjVpnB
+         OMlEpglBrkK/YFfs/rxJqnnolZZSNAPL++3/osZRgp4Sv9TUrwcpyuD3f4ifLApv8rlg
+         Ftwo1YILY8MxEAUghBLc6jq6wDWq3UsPpy+LJKAvGoUOrXFtppMmKLqR5xJO21cRjNB+
+         RApWmMvy8vMHEJEouXpxcoyzDhtH7NWjjm76F0UC4joXWUqzPRSvbqtTSBIHv1FxMfkI
+         W3NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757982354; x=1758587154;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BaSliU/Qp9/+sHRYKq5VI0MpnDs5e9LG+HbU1FTeWqM=;
+        b=urGLET0WuuPakiUztPZhkVG58RxS9jgt3VURLBZjnQZq0wXiuXJM1ukajDRBtpmg5M
+         SaOAXgj8fV5O8hJgQFl7urQgXuENqhZzbVlcdYM/NZYURIL/5jARrA7uQiITEP99GO4v
+         yFFcHTDSScbpGzFBo2LwSggMWpYZOOFZLX70mTTxO1ZuMKKRMhtYME/P7aNdy8Es7wNe
+         xB/pV5uR83/klaMfC9JnOCRboXtxFqJj/hBH92Q7VfBMXTT7zrAKuIVLIDFOQExAYCDf
+         K3pOAXutEgsUj7IkiAZCHcR+DzGitV7W7/vyUj9RDV3plKkttKI2Y2eit3wJi4g4emRx
+         w3UA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSFVMgbfoBiT32yLJiJGBkKWIzI3l3M10q2zgd4e3uxNxAvN5ioTYhnENPA5ChcJwa3AnmzQwmBr68Qyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztw4VJ7tWMa2vKuF73lK8/u+OEzmdWVgwwec96vwErcudeVWY6
+	URW0p5HCZkOsTZbA1BcMWZ/+IHuz2aAGe4ddPPNeDJQVKYjgIFNTX7d2EjZ0ej58H5ofvd8dGi4
+	01RT02g==
+X-Google-Smtp-Source: AGHT+IHOQzoWratRa3KzsT8Q/5SHJa6zw6V9nFNlvLqY74TjeW9ZR9cvV4jCcml3ZPsjaO73z8IOeS9HoRM=
+X-Received: from pjbsq6.prod.google.com ([2002:a17:90b:5306:b0:32e:834b:ea49])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3c2c:b0:24b:2b07:5fa5
+ with SMTP id d9443c01a7336-25d26663dcamr173825965ad.29.1757982353968; Mon, 15
+ Sep 2025 17:25:53 -0700 (PDT)
+Date: Mon, 15 Sep 2025 17:25:31 -0700
+In-Reply-To: <cover.1756139678.git.maciej.szmigiero@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0
+References: <cover.1756139678.git.maciej.szmigiero@oracle.com>
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <175798189623.622616.15058554259906842549.b4-ty@google.com>
+Subject: Re: [PATCH v2 0/2] KVM: SVM: Fix missing LAPIC TPR sync into
+ VMCB::V_TPR with AVIC on
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Maxim Levitsky <mlevitsk@redhat.com>, 
+	Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Naveen N Rao <naveen@kernel.org>, 
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-
-On Mon, 15 Sep 2025, Arnd Bergmann wrote:
-
-> On Mon, Sep 15, 2025, at 12:37, Finn Thain wrote:
-> > On Mon, 15 Sep 2025, Peter Zijlstra wrote:
-> >>
-> >> > When you do atomic operations on atomic_t or atomic64_t, (sizeof(long)
-> >> > - 1) probably doesn't make much sense. But atomic operations get used on 
-> >> > scalar types (aside from atomic_t and atomic64_t) that don't have natural 
-> >> > alignment. Please refer to the other thread about this: 
-> >> > https://lore.kernel.org/all/ed1e0896-fd85-5101-e136-e4a5a37ca5ff@linux-m68k.org/
-> >> 
-> >> Perhaps set ARCH_SLAB_MINALIGN ?
-> >> 
-> >
-> > That's not going to help much. The 850 byte offset of task_works into 
-> > struct task_struct and the 418 byte offset of exit_state in struct 
-> > task_struct are already misaligned.
+On Mon, 25 Aug 2025 18:44:27 +0200, Maciej S. Szmigiero wrote:
+> From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
 > 
-> Has there been any progress on building m68k kernels with -mint-align?
-
-Not that I know of.
-
-> IIRC there are only a small number of uapi structures that need
-> __packed annotations to maintain the existing syscall ABI.
+> This is an updated v2 patch series of the v1 series located at:
+> https://lore.kernel.org/kvm/cover.1755609446.git.maciej.szmigiero@oracle.com/
 > 
+> 
+> Changes from v1:
+> Fix this issue by doing unconditional LAPIC -> V_TPR sync at each VMRUN
+> rather than by just patching the KVM_SET_LAPIC ioctl() code path
+> (and similar ones).
+> 
+> [...]
 
-Packing uapi structures (and adopting -malign-int) sounds easier than the 
-alternative, which might be to align certain internal kernel struct 
-members, on a case-by-case basis, where doing so could be shown to improve 
-performance on some architecture or other (while keeping -mno-align-int).
+Applied patch 1 to kvm-x86 fixes (will get a PULL request sent out shortly).
 
-Well, it's easy to find all the structs that belong to the uapi, but it's 
-not easy to find all the internal kernel structs that describe MMIO 
-registers. For -malign-int, both kinds of structs are a problem.
+Thanks!
 
-If better performance is to be had, my guess is that aligning atomic_t 
-will get 80% of it (just an appeal to the Pareto principle, FWIW...)
+[1/2] KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR even if AVIC is active
+      https://github.com/kvm-x86/linux/commit/d02e48830e3f
+
+--
+https://github.com/kvm-x86/linux/tree/next
 
