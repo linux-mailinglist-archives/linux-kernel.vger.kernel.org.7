@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-818024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5060B58BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:10:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF25B58BBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 061277AE970
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:09:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36C237AFCFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7E5223311;
-	Tue, 16 Sep 2025 02:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1512222AA;
+	Tue, 16 Sep 2025 02:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heyquark.com header.i=@heyquark.com header.b="eRF/+CFr"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Fugi7cRn"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B79C1D63CD
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23331D63CD
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757988632; cv=none; b=mwg/zOlq+iavh9Eo36z/1yd1FQtpWHNRgC/cpLYBrfJKA2uy8C4FZ94eV7dTB9DlP6RCJlidUtDDVfRlsNYCY4PDecPhco7S8xRLVfrAfJttNk5e4feCCe7W56cGpCvz6L6wKZG/gMMQxJY/49JVoVREGsjEcpBgl+Bzqk09JwQ=
+	t=1757988648; cv=none; b=J4B2EmnpLv6ZEIqy0MfqRqQIQRhPoRFwC5kVLFoZzoL3RItWtPfNhOgdRCEE/q66an+tCzbW8ign905Gtdmu+HGz5dAV9PcO6MJyb/JmegqDJpYZ6M8Agfjjm/gZf4vWO0p3YzJaeZB4kQ01l30CQFhFhHLAeA3TpiExlgnjt8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757988632; c=relaxed/simple;
-	bh=bXmDvVWcHXxijKQJr8QRBglYzhdO5AlV3JfMf//AnEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPddZZeug/Yo7vWoVnbB+fxrpwAcBI99R6oOlQFLGS/mPtIUJ8f1No5h9jB02BAEZwBn+1E+o5+nZOJAqFfgJqN1JOF3GeQttUECJs1b0Bs4HqG+72fZlfx0wMfSLkCKfldQOEygznHNDV3aumk5zMKN5ZpJObgipXe3I8Tsq4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=heyquark.com; spf=pass smtp.mailfrom=heyquark.com; dkim=pass (2048-bit key) header.d=heyquark.com header.i=@heyquark.com header.b=eRF/+CFr; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=heyquark.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heyquark.com
-Message-ID: <95d176d1-e1be-4594-91bd-caf0d68fd532@heyquark.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heyquark.com;
-	s=key1; t=1757988626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iJr24DEs/rWeHHDqtfvtPlFLof2ltSbnJvrEvQKwOHo=;
-	b=eRF/+CFr1nTu6HDehRO4fvmEVi8PQElVzr9pKXog1aJk0eEtUK7ZQcdbABGk0cl3sI2gME
-	Q1AfB4m6d5V7Pgsfn5lNmwA3BbGLW5eDQNFaH+5fmg3ealHyJyw/JsyQM5poP3qiQRFIVh
-	CQvvB2z3abIjCYgzrYALUaruzVET4modJ5T+6Lx5xN3H3QKdb4z6hwIhmWl3ct3ZePcZWh
-	mFpBDEmFZGQKGHQvbihd71tyjMNbamXkQvmstyvcTvAkKAdglezTAhgqNnw4g0k/Hufi0W
-	yoLD/tzJw36KWKrsQ1iSDM7HfNdLWK6hMAWzD3B4+uVTqtTKYhnQ/9S5mfWrNQ==
-Date: Tue, 16 Sep 2025 12:10:14 +1000
+	s=arc-20240116; t=1757988648; c=relaxed/simple;
+	bh=2OQhBrSRArJQ1Ru2x8IxYne5QF4vrSh8Ef8nzC+tceM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mexIVVoDMuGxKU+cgnlzJNMuzlCHd7EOWLW4/LJFhW61np7yjo18hx1elrkKLU/1C/cs8rdp2zXwPlckA9I6r1tFsFtGeI85Qw3YeRvf+SiAAJdydnWjdXY0tY80xWT0haDYepKlgIl/gn+GX0bf47aCK7sUpRZ4Hab8bwTajsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Fugi7cRn; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757988642; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=ace3VQl9Qd7WAPxbz6HMw52CfIbRMCyc/gIuBLwG5oU=;
+	b=Fugi7cRng6knv2/1IaGkMwivKgGcXVfwvPVkp6Anzd9NKHggKKOfp9i+e3zm9hUSRPolaH5FMzv82pdXSSSpwXdO7jSQebedu9L5AY6RvDSdvVrM2/e0AxYw/97YGU4IbnJ8/QJj4rRkyQ5de/mBNgE6s//WfL0eSltU8GuLNu8=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0Wo6baSE_1757988641 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 16 Sep 2025 10:10:41 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] drm/xe: Remove duplicate header files
+Date: Tue, 16 Sep 2025 10:10:39 +0800
+Message-ID: <20250916021039.1632766-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: 32-bit HIGHMEM and game console downstreams
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: arnd@arndb.de, christophe.leroy@csgroup.eu,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- officialTechflashYT@gmail.com, AWilcox@wilcox-tech.com,
- Michael Ellerman <mpe@ellerman.id.au>
-References: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
- <aMbNwBrxtBSPl8NQ@gate>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ash Logan <ash@heyquark.com>
-In-Reply-To: <aMbNwBrxtBSPl8NQ@gate>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 15/9/25 00:14, Segher Boessenkool wrote:
+./drivers/gpu/drm/xe/xe_tlb_inval.c: xe_tlb_inval.h is included more than once.
+./drivers/gpu/drm/xe/xe_pt.c: xe_tlb_inval_job.h is included more than once.
 
-Hello!
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=24705
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=24706
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/gpu/drm/xe/xe_pt.c        | 3 +--
+ drivers/gpu/drm/xe/xe_tlb_inval.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-> On Sat, Sep 13, 2025 at 08:53:08PM +1000, Ash Logan wrote:
->> Wii (2006)
->> - 1x PowerPC 750CL "Broadway" @ 729MHz
->> - 24MB "MEM1" + 64MB "MEM2" (non-contiguous - MEM2 starts 256MiB in)
->> - Kernel 4.19 (+ CIP patchset), dev has been working on forward-porting all
->> the drivers one major version at a time (he's currently up to 5.15 last I
->> checked) + limited upstream support (hardware bringup, UART, not many
->> peripherals)
-> 
-> There *aren't* many peripherals, so that is quite okay :-)
+diff --git a/drivers/gpu/drm/xe/xe_pt.c b/drivers/gpu/drm/xe/xe_pt.c
+index 01eea8eb1779..a1c88f9a6c76 100644
+--- a/drivers/gpu/drm/xe/xe_pt.c
++++ b/drivers/gpu/drm/xe/xe_pt.c
+@@ -13,14 +13,13 @@
+ #include "xe_drm_client.h"
+ #include "xe_exec_queue.h"
+ #include "xe_gt.h"
+-#include "xe_tlb_inval_job.h"
+ #include "xe_migrate.h"
+ #include "xe_pt_types.h"
+ #include "xe_pt_walk.h"
+ #include "xe_res_cursor.h"
+ #include "xe_sched_job.h"
+-#include "xe_sync.h"
+ #include "xe_svm.h"
++#include "xe_sync.h"
+ #include "xe_tlb_inval_job.h"
+ #include "xe_trace.h"
+ #include "xe_ttm_stolen_mgr.h"
+diff --git a/drivers/gpu/drm/xe/xe_tlb_inval.c b/drivers/gpu/drm/xe/xe_tlb_inval.c
+index e6e97b5a7b5c..918a59e686ea 100644
+--- a/drivers/gpu/drm/xe/xe_tlb_inval.c
++++ b/drivers/gpu/drm/xe/xe_tlb_inval.c
+@@ -10,11 +10,10 @@
+ #include "xe_force_wake.h"
+ #include "xe_gt.h"
+ #include "xe_gt_printk.h"
++#include "xe_gt_stats.h"
+ #include "xe_guc.h"
+ #include "xe_guc_ct.h"
+ #include "xe_guc_tlb_inval.h"
+-#include "xe_gt_stats.h"
+-#include "xe_tlb_inval.h"
+ #include "xe_mmio.h"
+ #include "xe_pm.h"
+ #include "xe_tlb_inval.h"
+-- 
+2.43.7
 
-That's true. The lack of a UART or similar does make USB kinda essential 
-for an input device in my opinion, though getting it working is 
-Complicated for DMA reasons. (I think this is the main thing holding the 
-downstream back in their rebasing efforts)
-
->> Wii U (2012)
->> - 3x PowerPC 750CL "Espresso" @ 1.2GHz
-> 
-> It is not a 750CL.  We never found out what the model # is, if indeed it
-> has one!  But the CPU cores are compatible to the Broadway, sure, there
-> even are configuration bits to make it do the bugs that were fixed in
-> Espresso!  (Just like Broadway can emulate a Gekko, 750CXe, the GCN
-> thing).
-> 
-> It does have its own PVR value of course, that is something at least :-)
-> 
-> (Espresso is one chip btw, with three mostly symmetrical cores).
-
-Yeah, I was just going for the closest "public" chip :) I think the PVR 
-is closer to the CXe too, but all the HIDs, missing THRM, missing 
-frequency scaling - it's very CL-y...
-
->> - 32MB "MEM1" + 2GB "MEM2" (also starts 256MiB in) + various small SRAMs
-> 
-> It has 32MB MEM1?  Huh.  Why?
-
-New generation upgrade? MEM1 does get used for Wii U software too, 
-usually to keep framebuffers and other 3D things, so I guess they wanted 
-just a little more for all the 1080p buffers the new console juggles.
-
->> Distribution-wise, we're supported by ArchPOWER [5], Adélie Linux [6], and
->> other distros. The Wii U's Espresso has CPU errata requiring a patched
->> compiler,
-> 
-> Can you remind me what that is about?  It shouldn't be too hard to
-> include it in mainline GCC.
-
-The short version is "every stwcx. should be prefaced with a dcbst" - 
-something to do with bus snooping (store-with-flush, store-with-kill) 
-I'd guess. I have some GCC patches drafted (activated by -mcpu=espresso) 
-here: https://gitlab.com/linux-wiiu/smp-patches
-
-I'm impressed by how often IBM stuffed up atomics during this 
-generation. The Xbox 360 has an extremely similar issue despite being an 
-entirely different lineage of chip. No surprise the console vendors all 
-went to x86 and ARM right after, I suppose.
-
-Thanks,
-Ash
 
