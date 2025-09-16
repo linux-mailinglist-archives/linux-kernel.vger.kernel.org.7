@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-819051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E151B59AB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:46:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B847EB59ABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E5B3A5C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB71B16878B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D2733EB0E;
-	Tue, 16 Sep 2025 14:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F6133A01D;
+	Tue, 16 Sep 2025 14:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTDC3X4b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wi6UcF92"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED7932F77B;
-	Tue, 16 Sep 2025 14:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225D628C84F;
+	Tue, 16 Sep 2025 14:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758033782; cv=none; b=etP7oUjiPNw3K4IaVrv8H35EKzfVJx8RUOm1xpZ1WR2UHgyr/5G+I8sjGnS++A8MrHvBKC8Y/3Z5GLFeh4tUalsChrm0IB+8nlSJP6N3ownBFSUntGZy2JNSB7qqDtczm5NeGcR4l6snYZXBJ9r6fQ1+cOMZ5aBg/JaXGu0r1QQ=
+	t=1758033878; cv=none; b=nlSxWfxdKXN5SPOJzL/C/1VW9G5FJPklVBPi4IOZ+Egwr1935eojWavk2LLaBoG/eBdGZc2zKl6pjtsXWsvm57OB82VQWVguK0LRouyeTnEXrHbk2Uq5HZoGdK/SXBoWuR4NauH9yqGFBaDCSmHLuLEi74WCrru+/Sr/Z8GBB7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758033782; c=relaxed/simple;
-	bh=9CXMfeWckRDvBvDHG9XadDvfadOIeWKQ5x4Hda3B4pA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Do0ETyFFpqAX7ZjSVF5v5BckdPP8i56Djr6Ixy+Ri2pqwPNksKeTo0Il5GeuzfuDWwXkNFYzshTturtlLCWX6fu6QV7siN08kIJHT1R4Di3QO65GVIaVvAmoAhpb1jMltwsG6uMV98yiYqU7/4dMKFJoyBOM1xUpWaTlfnpanig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTDC3X4b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D1AC4CEEB;
-	Tue, 16 Sep 2025 14:43:00 +0000 (UTC)
+	s=arc-20240116; t=1758033878; c=relaxed/simple;
+	bh=iiC4tjJJx28eT4BRKfnKA87RDzNV9kDWK6nujCe9XzA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=s6SLqfdB1RkWeaC9N+6shHOGfqdnOfSnPZj08FJV05YcnHQaJbeI1Mtjzf9rQHLGJu050XVY+Zlf1A+CT3NW27q8JWqCiVrhO2g8egA7/ZTckKlW8MNabC5piN47v8xNCu/OYRXfuadocYvRyJOSK5gXqpDp5Lz2GZP274y77+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wi6UcF92; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7ABC4CEEB;
+	Tue, 16 Sep 2025 14:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758033780;
-	bh=9CXMfeWckRDvBvDHG9XadDvfadOIeWKQ5x4Hda3B4pA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lTDC3X4bKxLH2t/3/4Y1FMq57qD4H2OA8iFV5D7XfOCnxgFbuRlQWLN/hgpT0ImnX
-	 XArmcMufNimUat9F7TQKapLm+ELbpmklb0OWALKXJvBKsQRYLfGoVnidWBde3LZb4u
-	 +6cOQPLpG29uGuNg7Dz+ZmxNBtUohnMIWCMmJSU/KxR4YX2+AE+f8nXaG1aF3fPnnC
-	 tz74rwSPDLG2tPkFevWux32vJJ6FQDz6yhAW3q9bxInrfpoLmXvAOMHiGRCmurTHaO
-	 2RFSdVF8t8RN02HZ4K5u/c4zs704H6+hiBtf54LWD3+jtIC/UOJQk5O6K10seTjvtU
-	 flFvejGWLWdcQ==
-Date: Tue, 16 Sep 2025 07:42:59 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Alan Stern <stern@rowland.harvard.edu>, "Russell King (Oracle)"
- <linux@armlinux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Hubert =?UTF-8?B?V2nFm25pZXdza2k=?=
- <hubert.wisniewski.25632@gmail.com>, stable@vger.kernel.org,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Xu Yang
- <xu.yang_2@nxp.com>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
- PM to avoid MDIO runtime PM wakeups
-Message-ID: <20250916074259.509382a8@kernel.org>
-In-Reply-To: <aMkPMa650kfKfmF4@pengutronix.de>
-References: <CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
-	<b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
-	<aMLfGPIpWKwZszrY@shell.armlinux.org.uk>
-	<20250911075513.1d90f8b0@kernel.org>
-	<aMM1K_bkk4clt5WD@shell.armlinux.org.uk>
-	<22773d93-cbad-41c5-9e79-4d7f6b9e5ec0@rowland.harvard.edu>
-	<aMPawXCxlFmz6MaC@shell.armlinux.org.uk>
-	<a25b24ec-67bd-42b7-ac7b-9b8d729faba4@rowland.harvard.edu>
-	<aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
-	<aMUS8ZIUpZJ4HNNX@pengutronix.de>
-	<aMkPMa650kfKfmF4@pengutronix.de>
+	s=k20201202; t=1758033878;
+	bh=iiC4tjJJx28eT4BRKfnKA87RDzNV9kDWK6nujCe9XzA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Wi6UcF92OMC9qqPeGB2uaxqq0YPYtn+E4w6mS0m4xMOABcfBZphJvoQnWPFfDrNNq
+	 G4fGDX+dDAi2QI4EvYoqbFDPy/9NBVVC3/NKJ3QIv8rtZRW7dFM0o7MU8I3EDTf9aS
+	 ch7DMf/DfmmTQ0k3mYP+ZjFcyGy15enN/yWyZCEt+VJPaO52kQeyyzEQ9ceDPV5w/Y
+	 vFJbdyv/o8zrMBfaZDgsn6d6LgzC7bxRwpYYxdltqdEaAzDNqm9UsqMDiP8xMEa+uE
+	 QOfAf5jVB1FeQhgWwBlA7NVcq58sVaYqZcMlvfrk72DotRdn6lO2gcof1emMZALfBh
+	 Ty0yIzpZSYdLA==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>, 
+ "Dr. David Alan Gilbert" <linux@treblig.org>, 
+ Heiko Stuebner <heiko@sntech.de>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+ Alexander Kurz <akurz@blala.de>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250914193723.10544-5-akurz@blala.de>
+References: <20250914193723.10544-5-akurz@blala.de>
+Subject: Re: (subset) [PATCH v4 4/8] mfd: mc13xxx: Use devm_mfd_add_devices
+ and devm_regmap_add_irq_chip
+Message-Id: <175803387512.3840128.4666901728831953125.b4-ty@kernel.org>
+Date: Tue, 16 Sep 2025 15:44:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-On Tue, 16 Sep 2025 09:18:09 +0200 Oleksij Rempel wrote:
-> Given autosuspend brings no measurable benefit here, and it hasn=E2=80=99=
-t been
-> effectively functional for this device in earlier kernels, I suggest a mi=
-nimal
-> -stable patch that disables USB autosuspend for ASIX driver to avoid the
-> PM/RTNL/MDIO issues. If someone needs autosuspend-based low-power later, =
-they
-> can implement a proper device low-power sequence and re-enable it.
->=20
-> Would this minimal -stable patch be acceptable?
+On Sun, 14 Sep 2025 19:37:19 +0000, Alexander Kurz wrote:
+> Use devm_mfd_add_devices() for adding MFD child devices and
+> devm_regmap_add_irq_chip() for IRQ chip registration.
+> 
+> This reduces the amount of required cleanup.
+> 
+> 
 
-SGTM
+Applied, thanks!
+
+[4/8] mfd: mc13xxx: Use devm_mfd_add_devices and devm_regmap_add_irq_chip
+      commit: c5f395868781099e54a220bd5d6dc60c698c8c72
+
+--
+Lee Jones [李琼斯]
+
 
