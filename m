@@ -1,99 +1,173 @@
-Return-Path: <linux-kernel+bounces-818673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1155B594F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:19:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87D4B594FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAB644E1082
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:19:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6923A4682
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8EA2D6625;
-	Tue, 16 Sep 2025 11:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAF42D5C7A;
+	Tue, 16 Sep 2025 11:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G65cqdPg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dyx8krGl"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F5F2D46B6;
-	Tue, 16 Sep 2025 11:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4612C158F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758021558; cv=none; b=dMZJP82q40btNCgJ1XnkDIOjW7BA5BspNXm/EGQSrX2H3YvN3jef2plxhw+T5IQ6RsPxFS06CKaN6hZuW0R61OE9E3AwAe5VgPwzfiBvme68QzfZ2mJC/TG7cY3a5hZfMJcJ4JzT9XjpK+qEIoHrvWoUD4WQKNcewdWpx9ykGyw=
+	t=1758021606; cv=none; b=T0BhOOYxFxE0IFGPu6LRJUccQua/o1eaCtkr9XJ/h1Q2BYGiuAml0ShRlyItxQIQGtsLj0xYF/VgwkuthPnoZlDAnu5CDvVV6Gi9CAUWz+zmdHhsHaL5In4Az+O8ORrLbt5OqjAKR+2e/a4/uYe3JY1zO+ymR6NmG5cPkLUJ8sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758021558; c=relaxed/simple;
-	bh=h3QHa+7pUL0eyFT9zKSxUDYj07fVGoExcdeVN2+uMuw=;
+	s=arc-20240116; t=1758021606; c=relaxed/simple;
+	bh=6Z9HRjTpL6Nieh/l8DUnXky6k1yn+f7s/1vHrl9qB4M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ctbFnI0pAxrcxsV0MMJbPkVoZINMmeqBFnmutfqj6q4/ObYw138W/z0Sv/kgR5P36qejgupmY3lDgwmi1AOu3mokrQJ274pyiOJuqX4hWG42Qe6yiARTcYF9wWtxLLHXEb8WYYNuWlp4+nOOCL8XS/9/9Z1WWoX5vHR9AMENoiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G65cqdPg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A41FC4CEF0;
-	Tue, 16 Sep 2025 11:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758021555;
-	bh=h3QHa+7pUL0eyFT9zKSxUDYj07fVGoExcdeVN2+uMuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G65cqdPg55ZeCRfuKY3dDofW+3CXzUS4E44yG6TAJI6sb7VX1BqbSq/3yQMqak9J1
-	 7YP91GfqfS4yWRIS7JL7d6OnrfTML2V6CsoVXzTDTp3fkL58i2RbtohJv0Ce2VmtB/
-	 TVHirJm4OFwZcqtRPiVLiCeEbuEUL2LFBaUJUSRk76prGPJIMQRW4OjbNYx0t2mIdS
-	 ez/kFgA3qXa2F49OTtGnc/LBd5Zd0MCfqPW+pNTLhJjJ/crMWi9rwcFQhgNUjI6NOH
-	 YQJYuclOqW+JtxbkvM/q2zv1DphMPMEVLvovMVFDZNqOof2EspUFaeXoI/y6E83k3u
-	 G2nQKlW0mYfxQ==
-Date: Tue, 16 Sep 2025 12:19:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 2/4] iio: add processed write API
-Message-ID: <ecdce9fe-dcb0-46e0-8913-d733040a74c5@sirena.org.uk>
-References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
- <20250916-ltm8054-driver-v1-2-fd4e781d33b9@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cXCki5DkJ5oQnysM392gVoia0gDW1AtJYFftcIfcYjY7JNP4a8BBbU8w/chtUODu3EFSm7f7Pk580PO2KoPVutP8fO1p45d52nSZC0ARCmnTxOgR9NVr5DJoRreu6t5xYfoPQfPuSMDjgMieWEATX72luULVFlL6yTyB0t+EFMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dyx8krGl; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b04ba3de760so672946466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758021603; x=1758626403; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZkAhMwtG05Nwx51W4BF/MbpYhaSp+19IYTVLsAUUIs=;
+        b=dyx8krGlkJ+bN6N/1EC2gdPehKi6Wv+V9WBXYWTQeGMozo1NA0WsqPDwfRESHZlwCL
+         BYph7tYGEJXF8GCj0gchAlOxgbzjOWlzKg5p2klpZ0mugRQKMlzmHWmfXQpqaJxJ0Cm7
+         9gNR9ljMCcj+OXFiMxiE7C0aRrZCHZTjTDFWY9DPN6BNlBp9k982I3GE8/L4YVUu1sl2
+         1O89EwJe92An9EsGkORsSeJ+nod7KKY8cA/mW0BThidUzldTpRZsMZw1RP4nDXli+MeJ
+         ens76EITeYSKVmqb8rXvjDjD+fZqdIh0m8lJPgKFjE+5G93TApLLNH4tVOp/8H4ui3ea
+         t54g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758021603; x=1758626403;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MZkAhMwtG05Nwx51W4BF/MbpYhaSp+19IYTVLsAUUIs=;
+        b=O6okMGPjISFx42LSGVfCKi0Pmx4dSpF2TkVoEbJdbrXgvI+bB8fwvrbDZR2LX9+SaI
+         b5EUmw2axxtM947timcbt5qAxT+U5FLjdlRpg5X9Cr8i3EpyGsSctSidIaKM9g2l6Vj0
+         WIEcbkY6SY5946yBNV//2dNO2P31KXRdXsRQ/u5PDhRr3Qlz4Di44brj7oPVTWKjgIm4
+         bKgfKWvbBDiFqa+ljv+uIqqDxnnX4xM4B3+9IyIwHWy+fwzyJNy1w9xO0oyvQuTnrrxW
+         v95OI8p8zQ6SfxaFMK1aUofbZeH7+XGJSd1Nn+3gxFk28it5mvG3fhNSSo8PaU2FmyUp
+         rdTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbu27Pt7aYsb52KLRIEy0a0v2CDuKtG6hrKGDKd6EPoVSdbBdKE7WtoRAQvIC5WGATnAolpvZdvS7ZIls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGX3lnBUnfFKspU9NdoI565Ek7Zj8z4RB9eQEIq3ZDURel7R5m
+	ppA+knnNrZeDmKh+fim7deoYNmsHzlXhGeDD38TcK9DRDMYxjBszDPBvNhjLVQNg9ig=
+X-Gm-Gg: ASbGnctys7Zwtyq15sFyexSNNiZ2OykA+3Kjfu2xNXV0ki3c6Cltn7R4Yy2hM9kgyy6
+	fK2LWlTeeDMxusXgUxlfYsbYADJNTdsE/kuPPxHDoixYmGaI31ZcHuS4ye4db5Sbo+g5XXm1hbD
+	2J6KDVsDU2YhV14V78zPu4+w3iMNnG0E6g+LKJ4yp+3ozdrQOTjigqOpmLL+lhwrQTwqdBruF8n
+	Tq8LS1FU+yk49sqRkOuxqdpqTDquaSpzF+0HaMdNSslH1qBYRAXc2CAtGNzfCKN6hyRYT3gwvqZ
+	gpIBtIsrnfW8+XI3CGhrpPByaNqdwUSx+9kTNGu0FKpZnx6934ZY+3CMnFWzjknwoJ2JLcxvRHx
+	DBnNCXYPUq+82sLfK5kDxqySBMWh6psObgVFTkwDU
+X-Google-Smtp-Source: AGHT+IGYOku1dWOd7XgyZFqiTBP3WC2b/azuNq9E2ePki1CNpOxLiy1c6JRukGNdqA80ZoAb+KYahA==
+X-Received: by 2002:a17:906:c153:b0:b04:8c45:4bdb with SMTP id a640c23a62f3a-b07c37fb543mr1468835066b.34.1758021602813;
+        Tue, 16 Sep 2025 04:20:02 -0700 (PDT)
+Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f3919e168sm4212344a12.34.2025.09.16.04.20.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 04:20:02 -0700 (PDT)
+Date: Tue, 16 Sep 2025 13:20:00 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Qianqiang Liu <qianqiang.liu@163.com>,
+	Simona Vetter <simona@ffwll.ch>, Helge Deller <deller@gmx.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	Shixiong Ou <oushixiong@kylinos.cn>,
+	Zsolt Kajtar <soci@c64.rulez.org>, Ingo Molnar <mingo@kernel.org>,
+	Nam Cao <namcao@linutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Sohil Mehta <sohil.mehta@intel.com>,
+	Feng Tang <feng.tang@linux.alibaba.com>,
+	Sravan Kumar Gundu <sravankumarlpu@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>, Tejun Heo <tj@kernel.org>,
+	Luo Gengkun <luogengkun@huaweicloud.com>,
+	Li Huafei <lihuafei1@huawei.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Yicong Yang <yangyicong@hisilicon.com>, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, kexec@lists.infradead.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/9] panic: use panic_try_start() in vpanic()
+Message-ID: <aMlH4CcK_n1I1gY2@pathway.suse.cz>
+References: <20250825022947.1596226-1-wangjinchao600@gmail.com>
+ <20250825022947.1596226-6-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NaaEyeMGCXItHdyp"
-Content-Disposition: inline
-In-Reply-To: <20250916-ltm8054-driver-v1-2-fd4e781d33b9@bootlin.com>
-X-Cookie: The people rule.
-
-
---NaaEyeMGCXItHdyp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250825022947.1596226-6-wangjinchao600@gmail.com>
 
-On Tue, Sep 16, 2025 at 12:24:07PM +0200, Romain Gantois wrote:
-> Add a function to allow IIO consumers to write a processed value to a
-> channel.
+On Mon 2025-08-25 10:29:33, Jinchao Wang wrote:
+> vpanic() had open-coded logic to claim panic_cpu with atomic_try_cmpxchg.
+> This is already handled by panic_try_start().
+> 
+> Switch to panic_try_start() and use panic_on_other_cpu() for the fallback
+> path.
+> 
+> This removes duplicate code and makes panic handling consistent across
+> functions.
+> 
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -415,7 +415,6 @@ void vpanic(const char *fmt, va_list args)
+>  	static char buf[1024];
+>  	long i, i_next = 0, len;
+>  	int state = 0;
+> -	int old_cpu, this_cpu;
+>  	bool _crash_kexec_post_notifiers = crash_kexec_post_notifiers;
+>  
+>  	if (panic_on_warn) {
+> @@ -452,13 +451,10 @@ void vpanic(const char *fmt, va_list args)
+>  	 * `old_cpu == this_cpu' means we came from nmi_panic() which sets
+>  	 * panic_cpu to this CPU.  In this case, this is also the 1st CPU.
+>  	 */
 
-This seems unrelated to the rest of the series?
+The above comment does not fit any longer. I think that it can
+be removed, maybe except for the 1st paragraph.
 
---NaaEyeMGCXItHdyp
-Content-Type: application/pgp-signature; name="signature.asc"
+> -	old_cpu = PANIC_CPU_INVALID;
+> -	this_cpu = raw_smp_processor_id();
+> -
+>  	/* atomic_try_cmpxchg updates old_cpu on failure */
 
------BEGIN PGP SIGNATURE-----
+Also this comment should be removed.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJR60ACgkQJNaLcl1U
-h9AZ4Af/V+o5xEgGh1Fyarj8hqlyHjIUT65TfmeDxJST34i1/XHSictl5u0SlY25
-mOrGy+F6RFUOfHdjYtQ+eXi4nCQIb8+/p4EiivRGSxEOqqfoUVxOLWdLy96LzAji
-dMFJ5GPQ4p4uSfGvcyja41lgJ1BgmmU9CEDPzVz01V9uG+9j2ZPHtrUS3eFGTRRq
-Z32TYoYr9pH/I/DVYtDvNqjRgyDFVMUjeqqc+WIHh5z+oQfZvqa/nR9/mN1A/YjO
-DI9oZCsw+nq/uhMkDbqWCZ3qoUXkgu6Tr6IaOqNogzHK+CSYacYtP73wMrmWV8zp
-Nz/2X/jJwC+DvOf5GXs+z6kJPwDmew==
-=gddA
------END PGP SIGNATURE-----
+> -	if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu)) {
+> +	if (panic_try_start()) {
+>  		/* go ahead */
+> -	} else if (old_cpu != this_cpu)
+> +	} else if (panic_on_other_cpu())
+>  		panic_smp_self_stop();
+>  
+>  	console_verbose();
 
---NaaEyeMGCXItHdyp--
+Otherwise, it looks good. And the comments might be removed
+by a followup patch.
+
+Best Regards,
+Petr
 
