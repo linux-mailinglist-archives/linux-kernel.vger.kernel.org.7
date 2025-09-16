@@ -1,151 +1,117 @@
-Return-Path: <linux-kernel+bounces-817964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8C8B58A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570ACB58A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 753AE3B5602
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B4491B234A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78061DF26A;
-	Tue, 16 Sep 2025 00:49:25 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C601D31B9;
+	Tue, 16 Sep 2025 00:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZaKu7U9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B045C96;
-	Tue, 16 Sep 2025 00:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8502C1CD2C;
+	Tue, 16 Sep 2025 00:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983765; cv=none; b=gQBZ2ZrJHc/mVo4UyXnnOl3puSXwrhOxXpWgW1n3hIBZK5s6dGXXY6vezvtuIfgOuqgL13L6muQFfT85em36tWNGB7HwvYPPPPdmgaDIqbkKzZYo7EI4mC1+x/jnT7GsTyv4ljFoiZneR8z/P/Elok8oAl3OgDGsXBVFm+VJhOc=
+	t=1757983816; cv=none; b=q9a5qwEr5079Qk2uWbnCz2wrhNAz2NNkYWJQYgT0V5K6yYwa5fWfqkP+AKkpiSnkN7xnS1XxPzPPCQI3EdEV+ezSFD+o9zWmgeqI02tW0+cI1du7uxwI4+nOcpISP5FpSn8pca/kqcZ8BBOzzuFsRubdl8jgfQWDQ/VA7pJm48E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983765; c=relaxed/simple;
-	bh=X/pFC3va19rRg+gk9IqHnYcd8NlNCqdJD2INmemQlIQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QfKqVOg8AIKAtt7xptEf3Pe3cZiaoptQESXo1SFs8wTzeE2jY9SVEfzOKMH/+NkEFvQvZo7d2W7tGwcLMe3DC+1aZJbxn4EKMcwGZrIGBGsvD58nO9oyn2/dJS9IELt6H98qAQ7pD9ZAm8/1/qgOjfkcj0nixKx7SbgJMYolWgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cQjvx38XNzKHMVH;
-	Tue, 16 Sep 2025 08:49:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0DF5E1A0FC4;
-	Tue, 16 Sep 2025 08:49:18 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDXIY4JtMhoI46ZCg--.11965S3;
-	Tue, 16 Sep 2025 08:49:15 +0800 (CST)
-Subject: Re: [PATCH v2 0/2] Fix the initialization of
- max_hw_wzeroes_unmap_sectors for stacking drivers
-To: John Garry <john.g.garry@oracle.com>, Zhang Yi
- <yi.zhang@huaweicloud.com>, axboe@kernel.dk, linux-raid@vger.kernel.org
-Cc: linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- pmenzel@molgen.mpg.de, hch@lst.de, martin.petersen@oracle.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250910111107.3247530-1-yi.zhang@huaweicloud.com>
- <c7dd117e-6e3e-4b2d-a890-20f5c4bade2f@huaweicloud.com>
- <370ca2e5-a4b2-4b5d-9fd1-a931dc2d1a6b@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <44590d08-2127-e44d-d4f8-6ae9237dd53c@huaweicloud.com>
-Date: Tue, 16 Sep 2025 08:49:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757983816; c=relaxed/simple;
+	bh=20xMqf7x7OJmuH7fFjAsJXvXWV2SutHIerjaBjyjWD0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=rXZzyJfW3Ajuj4PnHcL7L3FAEWLD6rOiYgA0X1bTy+NcjM6bUhyyzi54aYiOdSfwSuD+XXGxZXWAkjbzc55NX9/UZl9hxm0RiCjW6mfvf4JlOYkR6LtooC4D7yjV5aYxMXcGy5PP2cWr9rxEIpDlZUCi+Bkaj2Fh+npDDH6cPLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZaKu7U9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C48C4CEF1;
+	Tue, 16 Sep 2025 00:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757983816;
+	bh=20xMqf7x7OJmuH7fFjAsJXvXWV2SutHIerjaBjyjWD0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=RZaKu7U9yVfdNBHoLpC1wVXaqbkDS9ynou3O2LasTk0j6bcG4TsBIj6aZKCOd6X4d
+	 efE/C42jV3BkHymT/fpZp8K1fj7eKVqX3RbAPBUZunlzA0L0Uk2mX7tsNhzdvTR0S2
+	 zbDFLWlqbcAd967ug5rI3UaCMd60Halnhrirbvt/P4CI5EzclOXOptoO0mGoKvLLSJ
+	 SCL6ZvDk11o4EkK7MytrbFjuMISHM13ADhzJKYQX0AmUCZ2yS4fTtmQ+6+98na4SLs
+	 AkwtoH7gkgPsZG69sV7yxkSEtDUGjwhgn2OmYpSbCYcEKEEXD0cHp9OKJtcob5DMCa
+	 F7INYP1QCIkKw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0A139D0C18;
+	Tue, 16 Sep 2025 00:50:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <370ca2e5-a4b2-4b5d-9fd1-a931dc2d1a6b@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXIY4JtMhoI46ZCg--.11965S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFy3Gw4fXw1DGry7Gw1xZrb_yoW8Cw4xpF
-	Z7Wa4jyryUKr48Ar1jqF12vFy5tw1fJ347XrW5Xan3XrWqvFyIgF409FZ0grnrXw4rGa4j
-	qF1UG3s3uw13trDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Subject: Re: [PATCH net-next v3 0/9] Add PCS support for Renesas RZ/{T2H,N2H}
+ SoCs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175798381775.548349.11396728695783446846.git-patchwork-notify@kernel.org>
+Date: Tue, 16 Sep 2025 00:50:17 +0000
+References: <20250910204132.319975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250910204132.319975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: clement.leger@bootlin.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, p.zabel@pengutronix.de,
+ wsa+renesas@sang-engineering.com, geert+renesas@glider.be,
+ magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, biju.das.jz@bp.renesas.com,
+ fabrizio.castro.jz@renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com
 
-Hi,
+Hello:
 
-在 2025/09/15 18:43, John Garry 写道:
-> On 12/09/2025 07:16, Zhang Yi wrote:
->> Hi, Jens!
->>
->> Can you take this patch set through the linux-block tree?
-> 
-> 
-> md raid maintainers,
-> 
-> please try to get this picked up ASAP. As things stand, all these RAID 
-> personalities will be broken for 6.17 on drives supporting/reporting 
-> write zeroes.
-> 
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Not sure if Jens missed this, I'll pick patch 1 later today if Jens
-doesn't apply.
+On Wed, 10 Sep 2025 21:41:21 +0100 you wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Hi All,
+> 
+> This series aims to add PCS support for the Renesas RZ/T2H and RZ/N2H SoCs
+> These SoCs include a MII converter (MIIC) that converts MII to RMII/RGMII
+> or can be set in pass-through mode for MII similar to the RZ/N1 SoC. The
+> MIIC is used in conjunction with the Ethernet switch (ETHSW) available on
+> these SoCs.
+> 
+> [...]
 
-Thanks,
-Kuai
+Here is the summary with links:
+  - [net-next,v3,1/9] dt-bindings: net: pcs: renesas,rzn1-miic: Add RZ/T2H and RZ/N2H support
+    https://git.kernel.org/netdev/net-next/c/8c01cc2382bc
+  - [net-next,v3,2/9] net: pcs: rzn1-miic: Drop trailing comma from of_device_id table
+    https://git.kernel.org/netdev/net-next/c/b2e12fca3164
+  - [net-next,v3,3/9] net: pcs: rzn1-miic: Add missing include files
+    https://git.kernel.org/netdev/net-next/c/861d10f09250
+  - [net-next,v3,4/9] net: pcs: rzn1-miic: Move configuration data to SoC-specific struct
+    https://git.kernel.org/netdev/net-next/c/f39e968dc168
+  - [net-next,v3,5/9] net: pcs: rzn1-miic: move port range handling into SoC data
+    https://git.kernel.org/netdev/net-next/c/c112520de041
+  - [net-next,v3,6/9] net: pcs: rzn1-miic: Make switch mode mask SoC-specific
+    https://git.kernel.org/netdev/net-next/c/6245237abae3
+  - [net-next,v3,7/9] net: pcs: rzn1-miic: Add support to handle resets
+    https://git.kernel.org/netdev/net-next/c/882a8bb0706c
+  - [net-next,v3,8/9] net: pcs: rzn1-miic: Add per-SoC control for MIIC register unlock/lock
+    https://git.kernel.org/netdev/net-next/c/419747319e3a
+  - [net-next,v3,9/9] net: pcs: rzn1-miic: Add RZ/T2H MIIC support
+    https://git.kernel.org/netdev/net-next/c/08f89e42121d
 
-> Thanks
-> 
->>
->> Thanks,
->> Yi.
->>
->> On 9/10/2025 7:11 PM, Zhang Yi wrote:
->>> From: Zhang Yi <yi.zhang@huawei.com>
->>>
->>> Changes since v1:
->>>   - Improve commit messages in patch 1 by adding a simple reproduction
->>>     case as Paul suggested and explaining the implementation differences
->>>     between RAID 0 and RAID 1/10/5, no code changes.
->>>
->>> v1: 
->>> https://urldefense.com/v3/__https://lore.kernel.org/linux-block/20250825083320.797165-1-yi.zhang@huaweicloud.com/__;!!ACWV5N9M2RV99hQ!JAN4eq3ePrspeto0Hn7563lg3392Lh44jM1oTbgxbDoClxVOh5B73QhGD53f9tiLxuxfJCr51PyAP55COV2TTZAt$ 
->>>
->>>
->>> This series fixes the initialization of max_hw_wzeroes_unmap_sectors in
->>> queue_limits for all md raid and drbd drivers, preventing
->>> blk_validate_limits() failures on underlying devices that support the
->>> unmap write zeroes command.
->>>
->>> Best regards,
->>> Yi.
->>>
->>> Zhang Yi (2):
->>>    md: init queue_limits->max_hw_wzeroes_unmap_sectors parameter
->>>    drbd: init queue_limits->max_hw_wzeroes_unmap_sectors parameter
->>>
->>>   drivers/block/drbd/drbd_nl.c | 1 +
->>>   drivers/md/md-linear.c       | 1 +
->>>   drivers/md/raid0.c           | 1 +
->>>   drivers/md/raid1.c           | 1 +
->>>   drivers/md/raid10.c          | 1 +
->>>   drivers/md/raid5.c           | 1 +
->>>   6 files changed, 6 insertions(+)
->>>
->>
->>
-> 
-> 
-> .
-> 
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
