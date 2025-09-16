@@ -1,92 +1,99 @@
-Return-Path: <linux-kernel+bounces-818674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C29B594F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:19:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1155B594F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF21A32433E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAB644E1082
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A320B2D73AD;
-	Tue, 16 Sep 2025 11:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8EA2D6625;
+	Tue, 16 Sep 2025 11:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="iAhOZc7j"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G65cqdPg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7787E2D6E64;
-	Tue, 16 Sep 2025 11:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F5F2D46B6;
+	Tue, 16 Sep 2025 11:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758021566; cv=none; b=TrIjralx9oO1jgWO9u0xJzS9JSTTSrkaN/J7Xl6UF1N/c2hPTwCDSq3B63CTW1B21O2SQNT/Obxznz8JYyYZPCQMSK7kmHNrsHdmDhh+/v/L0Kp7/Y214kl8iKomPUhtOPGoHyby1+HzzGAAbLp27BUWm2rw2s2pEHJL/fy2e7A=
+	t=1758021558; cv=none; b=dMZJP82q40btNCgJ1XnkDIOjW7BA5BspNXm/EGQSrX2H3YvN3jef2plxhw+T5IQ6RsPxFS06CKaN6hZuW0R61OE9E3AwAe5VgPwzfiBvme68QzfZ2mJC/TG7cY3a5hZfMJcJ4JzT9XjpK+qEIoHrvWoUD4WQKNcewdWpx9ykGyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758021566; c=relaxed/simple;
-	bh=ZkEUkqP6FZBlXHDVGb/IKSKdn6/DO0jUbBztVIUKexc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FmOpVHGbadaeFgYboQqKFo3VwC8At2+WeHblw8yZpNzlSbH43tz2RCzevx/4xC/70I9+QSngjydkUmH+EDH2P+bLv5BIG1PrvQ4nSCc+fXcsHbBJc9oISyIlpddpapn448q/06F/jYdUnB+Hu7VYlsWNy8a9CJ4lvq3A1Bp9680=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=iAhOZc7j; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GBEO7k001188;
-	Tue, 16 Sep 2025 04:19:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	content-type:date:from:message-id:mime-version:subject:to; s=
-	pfpt0220; bh=Ab6LVYTy3wdjdNsodU2BuvBNogQMb57VcpoD69+tAxk=; b=iAh
-	OZc7jmcfoAtKTuIe75kPTRsGY9bQ/+LUnpDyF2IJC8bkI57JMeuhlYUat3pA1iRK
-	W+wCJjHrudUN6jAOikspco4s0yGhCVh0BlwF6lwcEUV2K9wExM9NlMSakBK1TNcm
-	T93rBFVjg1fuTunzzFkZSfDEwZ4G1SS8ALl84uaBQTx5ocSZsStjpIqTqyuS325X
-	ZYNJU/5VPQ+lF6PeS1gaK3X8TOqg5/VENXB14fH+u8jx/A/ifItZ0KkAxU+rGWnD
-	1QjNageV6cE70PUTY1U29kDztHFfgLOogiZciSWgydl+XZHSlmkKH4gwnF00uHZV
-	l/wkLSLyCkZlm8LK55Q==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4976ukg060-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 04:19:03 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 16 Sep 2025 04:19:09 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 16 Sep 2025 04:19:09 -0700
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id D27375E6872;
-	Tue, 16 Sep 2025 04:18:57 -0700 (PDT)
-Date: Tue, 16 Sep 2025 16:48:56 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kuba@kernel.org>, <davem@davemloft.net>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <sbhatta@marvell.com>, <naveenm@marvell.com>,
-        <edumazet@google.com>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-        <bbhushan2@marvell.com>
-Subject: Query regarding Phy loopback support
-Message-ID: <aMlHoBWqe8YOwnv8@test-OptiPlex-Tower-Plus-7010>
+	s=arc-20240116; t=1758021558; c=relaxed/simple;
+	bh=h3QHa+7pUL0eyFT9zKSxUDYj07fVGoExcdeVN2+uMuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctbFnI0pAxrcxsV0MMJbPkVoZINMmeqBFnmutfqj6q4/ObYw138W/z0Sv/kgR5P36qejgupmY3lDgwmi1AOu3mokrQJ274pyiOJuqX4hWG42Qe6yiARTcYF9wWtxLLHXEb8WYYNuWlp4+nOOCL8XS/9/9Z1WWoX5vHR9AMENoiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G65cqdPg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A41FC4CEF0;
+	Tue, 16 Sep 2025 11:19:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758021555;
+	bh=h3QHa+7pUL0eyFT9zKSxUDYj07fVGoExcdeVN2+uMuw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G65cqdPg55ZeCRfuKY3dDofW+3CXzUS4E44yG6TAJI6sb7VX1BqbSq/3yQMqak9J1
+	 7YP91GfqfS4yWRIS7JL7d6OnrfTML2V6CsoVXzTDTp3fkL58i2RbtohJv0Ce2VmtB/
+	 TVHirJm4OFwZcqtRPiVLiCeEbuEUL2LFBaUJUSRk76prGPJIMQRW4OjbNYx0t2mIdS
+	 ez/kFgA3qXa2F49OTtGnc/LBd5Zd0MCfqPW+pNTLhJjJ/crMWi9rwcFQhgNUjI6NOH
+	 YQJYuclOqW+JtxbkvM/q2zv1DphMPMEVLvovMVFDZNqOof2EspUFaeXoI/y6E83k3u
+	 G2nQKlW0mYfxQ==
+Date: Tue, 16 Sep 2025 12:19:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH 2/4] iio: add processed write API
+Message-ID: <ecdce9fe-dcb0-46e0-8913-d733040a74c5@sirena.org.uk>
+References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <20250916-ltm8054-driver-v1-2-fd4e781d33b9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NaaEyeMGCXItHdyp"
 Content-Disposition: inline
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDEwNiBTYWx0ZWRfX5veuNGpLKakX n6LyHf6Y88IWZgqddag0rcKhZKvpfVv3lxY7T9IQAKX+CTwSMegQS9VOwR2QHmXiXvWQ5X3kKXB PzQ6fPnbqV7eAvBeq02rD9eNeU8Z0rlhS8WZVlCG3l6E2vCo0YgGNa+ZX35SmfqaP1Kih7ZZw4V
- QBEbPR1pZ4/u0f4NNSUs4gG3YIrKWJ3lYj6SlhkaKzKhig5iKlzaPXIBnxfIbGxFrWskea014UN 5tBfWDaYRcp1erPy/61eYDfYjQSXd7Pez27fQgbwKUxA+G+yj6sT83WrfAfbuWmjEUfOdN14CkL v9RZsUXoNxYpYIQ7NmcDnP7plwNDdii3zlUYvy4IwCmkzUnEkYPd4/Pr88rYS7VP9FSrD/zLfxc J82oVcTK
-X-Proofpoint-GUID: N1wQo6NOJfc867ctH2CRmUh7HuymDQ6R
-X-Proofpoint-ORIG-GUID: N1wQo6NOJfc867ctH2CRmUh7HuymDQ6R
-X-Authority-Analysis: v=2.4 cv=deWA3WXe c=1 sm=1 tr=0 ts=68c947a7 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=Q0HHoM9fUppamqbhzqYA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+In-Reply-To: <20250916-ltm8054-driver-v1-2-fd4e781d33b9@bootlin.com>
+X-Cookie: The people rule.
 
-We're looking for a standard way to configure PHY loopback on a network 
-interface using common Linux tools like ethtool, ip, or devlink.
 
-Currently, ethtool -k eth0 loopback on enables a generic loopback, but it 
-doesn't specify if it's an internal, external, or PHY loopback. 
-Need suggestions to implement this feature in a standard way.
+--NaaEyeMGCXItHdyp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Tue, Sep 16, 2025 at 12:24:07PM +0200, Romain Gantois wrote:
+> Add a function to allow IIO consumers to write a processed value to a
+> channel.
+
+This seems unrelated to the rest of the series?
+
+--NaaEyeMGCXItHdyp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJR60ACgkQJNaLcl1U
+h9AZ4Af/V+o5xEgGh1Fyarj8hqlyHjIUT65TfmeDxJST34i1/XHSictl5u0SlY25
+mOrGy+F6RFUOfHdjYtQ+eXi4nCQIb8+/p4EiivRGSxEOqqfoUVxOLWdLy96LzAji
+dMFJ5GPQ4p4uSfGvcyja41lgJ1BgmmU9CEDPzVz01V9uG+9j2ZPHtrUS3eFGTRRq
+Z32TYoYr9pH/I/DVYtDvNqjRgyDFVMUjeqqc+WIHh5z+oQfZvqa/nR9/mN1A/YjO
+DI9oZCsw+nq/uhMkDbqWCZ3qoUXkgu6Tr6IaOqNogzHK+CSYacYtP73wMrmWV8zp
+Nz/2X/jJwC+DvOf5GXs+z6kJPwDmew==
+=gddA
+-----END PGP SIGNATURE-----
+
+--NaaEyeMGCXItHdyp--
 
