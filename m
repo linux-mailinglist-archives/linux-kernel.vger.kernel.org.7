@@ -1,101 +1,195 @@
-Return-Path: <linux-kernel+bounces-819708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A3ACB80712
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:13:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A4EB7EA1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F10F7AC7DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6430B2A65EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA752BEC3F;
-	Tue, 16 Sep 2025 22:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D020C29D282;
+	Tue, 16 Sep 2025 22:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8Uiiuss"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZkcLUZC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F088B1E3DF2;
-	Tue, 16 Sep 2025 22:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B5B2BDC2A
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758062516; cv=none; b=bjLPePEB/HsWUNrd8wZg6H2BVjtdjxi4QspEWEeJUYh/AEMzjO87OBhvIgsqdq+OGwxVxr2yUIOdg+M7E0ulRAysz9zS5EbhspcMVuaG6J4Rq8xkRNV+YZ9zq12EXtQ8dJBZG2sLoS3T2VTJ2c73k1Yy0QjQdIcgYpNam5DocG0=
+	t=1758062541; cv=none; b=hSMch40YwjE0rKPPfCy6+TgYhVGEcVdG/KjWYxyPTTQq9aWbGFgwca2zMmg1awXfCH+SJif/Rh47VCGxXd6tvYMiyLYU7+tipXjRyPSk579tKVltNB92wQJaVW6Ey8yzjyy0ljbbAADrq08QLbh51e0Ynka09aoF0r7A/tMrUUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758062516; c=relaxed/simple;
-	bh=v+3wS5sLqhU0LglDjdXcdux+MerLj86GGSMD7aXW76M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lP7mgpthhfxU6o5hnDRZYrBwE2sRvprWZ6jG8qfmn7mdmhAe03rPFPBJQleHd9S9/xRDHRDux0kyrRShFsc93wCb5pQQGNssd7N3JipbuSm/nZ0nt0sRi+k3TB1sSFs6F3FVC6rWJhj/Cu0sbW7OhixooiQJWYnwkWD0eWKlNAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8Uiiuss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 678C4C4CEEB;
-	Tue, 16 Sep 2025 22:41:55 +0000 (UTC)
+	s=arc-20240116; t=1758062541; c=relaxed/simple;
+	bh=t4iTrV+CqcFLDpG4Gp8BKSUYWO2Ix48fUK0eR2N/m20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kC2+v7a3dg1iO4OM3+nlzbfP8dcV0AiGW4+JeGJgjdI4ig3l83soraWxOv5eYJip4fHfxxlMUaTyITxKS/zsoFBrkmjGqcSUKo1IoTm0lfxqmKpMl7GUYMUzC1vc14QB/nd5eBV1LKfHDs2k6fQcdm/0WxmyEtQ/iTO2kSq/Fbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZkcLUZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B25C4AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758062515;
-	bh=v+3wS5sLqhU0LglDjdXcdux+MerLj86GGSMD7aXW76M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u8UiiusskGw0mL0Usk64hbyD+MgaLSBTE7FFIDsusDUMtP3UXFM9BNd9gkqUEmDJd
-	 ULMEfIVUDc6A2hVvgi/tvKByr3PH/JZhFavJ08riLO3ycr369jNGWCFjCU1PyJbrp6
-	 KJvGxfkaL8CdFVv4VfBm5YU/dYoOKFQAxxUlJW/+wzwCFPqbe+QURmDhTGD+bty4HR
-	 7bA3yqZ9QOqvDBYkC6l/MSRTnagsuVN3VQZ0DnG3o35kUyYyTX+wpn/QHCSI9W+sgc
-	 t/ufnaFiNC9qw/BeyNYNhbZ7qeKtXCHV/K0o7rgrJY4Iwxksv5N+yOKaQS3Tp4fj7D
-	 /nNH/j6lB3GXw==
-Date: Tue, 16 Sep 2025 12:41:54 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
- __task_rq_lock()
-Message-ID: <aMnnslT_mUfAtytN@slm.duckdns.org>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.684653538@infradead.org>
- <aMNnLenCytO_KEKg@slm.duckdns.org>
- <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
- <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
- <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
- <aMnk5Wcdr2q6BWqR@slm.duckdns.org>
+	s=k20201202; t=1758062540;
+	bh=t4iTrV+CqcFLDpG4Gp8BKSUYWO2Ix48fUK0eR2N/m20=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KZkcLUZCDSstkZ3Ty026dyokebf5jPCTNbVbbw7XSxBv6QWqs0Jw4YBWjxIU+INE6
+	 IEf/UAFqrndL9634RW5NgSlYc2z2ei242KeZvvWQWiuMeyz3Tmqo5XsX/ydqQ4BDYt
+	 MhtLjbwffmITqL4fEi4olcX82T906tXyWejOQQ8OUO9Jt2iG9IoiBspEm+Cxc8OFCs
+	 xmUvJNkv0YJSo11UnyBYw2LLI3BhYT5lmWDYOZ5OXlXtVxG7ODY3E5HaAJNlpJkWD3
+	 Yj20CyNOmHf8qZM5+Kk56wGchd7ZVguUAOjGDbGP2TEpNHfX65n1OPwHr++3Iqpoj1
+	 beoT7wy6y1J5w==
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45f28aba94cso30865e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:42:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdOboBDlxz52l9SuTQVDp+InfaS3zYZyvzhjlZLiquKCrP3lchd8At8jpsiRdzIM8etwYc7ljE8ewtZe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGIfpnxtmhfJ/BIkayETCIEkpbFZlan8DAF9RlvhktU/N3SWdo
+	BGXkGxsIHe2F3dSfNr6pnDfTJ2QUM1dBJMbAiZDY+YWDKNZwTetj6ilftMqwTr57Vkd4toj5y1V
+	BvvZ8LS0pH/UvfbCucrI2JQbHC6oPx5s+RKNmmyCx
+X-Google-Smtp-Source: AGHT+IHWLOmuD/tU8v3ni2BKIAlWeib4S+ucs/1zjlARg1seSLctmJGnrUIwP3gUbQopXbQ3T+B3asPvoCAu+Yfk/Lg=
+X-Received: by 2002:a05:600c:26c5:b0:45c:b4fb:f0b3 with SMTP id
+ 5b1f17b1804b1-461a07c7283mr159535e9.3.1758062539040; Tue, 16 Sep 2025
+ 15:42:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMnk5Wcdr2q6BWqR@slm.duckdns.org>
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
+ <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+In-Reply-To: <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 16 Sep 2025 15:42:07 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+X-Gm-Features: AS18NWDQO70jEWQyR-tJB4PbRe5EI87TY1HG1tDIFqnOkXu_DbegsZNLqYZwqoM
+Message-ID: <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
+To: Barry Song <21cnbao@gmail.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello, again.
+On Tue, Sep 16, 2025 at 3:00=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Wed, Sep 17, 2025 at 12:01=E2=80=AFAM Kairui Song <ryncsn@gmail.com> w=
+rote:
+> >
+> > From: Chris Li <chrisl@kernel.org>
+> >
+> > Swap table is the new swap cache.
+> >
+> > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >  Documentation/mm/index.rst      |  1 +
+> >  Documentation/mm/swap-table.rst | 72 +++++++++++++++++++++++++++++++++
+> >  MAINTAINERS                     |  1 +
+> >  3 files changed, 74 insertions(+)
+> >  create mode 100644 Documentation/mm/swap-table.rst
+> >
+> > diff --git a/Documentation/mm/index.rst b/Documentation/mm/index.rst
+> > index fb45acba16ac..828ad9b019b3 100644
+> > --- a/Documentation/mm/index.rst
+> > +++ b/Documentation/mm/index.rst
+> > @@ -57,6 +57,7 @@ documentation, or deleted if it has served its purpos=
+e.
+> >     page_table_check
+> >     remap_file_pages
+> >     split_page_table_lock
+> > +   swap-table
+> >     transhuge
+> >     unevictable-lru
+> >     vmalloced-kernel-stacks
+> > diff --git a/Documentation/mm/swap-table.rst b/Documentation/mm/swap-ta=
+ble.rst
+> > new file mode 100644
+> > index 000000000000..acae6ceb4f7b
+> > --- /dev/null
+> > +++ b/Documentation/mm/swap-table.rst
+> > @@ -0,0 +1,72 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +:Author: Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com=
+>
+> > +
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +Swap Table
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Swap table implements swap cache as a per-cluster swap cache value arr=
+ay.
+> > +
+> > +Swap Entry
+> > +----------
+> > +
+> > +A swap entry contains the information required to serve the anonymous =
+page
+> > +fault.
+> > +
+> > +Swap entry is encoded as two parts: swap type and swap offset.
+> > +
+> > +The swap type indicates which swap device to use.
+> > +The swap offset is the offset of the swap file to read the page data f=
+rom.
+> > +
+> > +Swap Cache
+> > +----------
+> > +
+> > +Swap cache is a map to look up folios using swap entry as the key. The=
+ result
+> > +value can have three possible types depending on which stage of this s=
+wap entry
+> > +was in.
+> > +
+> > +1. NULL: This swap entry is not used.
+> > +
+> > +2. folio: A folio has been allocated and bound to this swap entry. Thi=
+s is
+> > +   the transient state of swap out or swap in. The folio data can be i=
+n
+> > +   the folio or swap file, or both.
+>
+> This doesn=E2=80=99t look quite right.
+>
+> the folio=E2=80=99s data must reside within the folio itself?
 
-On Tue, Sep 16, 2025 at 12:29:57PM -1000, Tejun Heo wrote:
-...
-> Long term, I think maintaining flexibility is of higher importance for
-> sched_ext than e.g. small performance improvements or even design or
-> implementation aesthetics. The primary purpose is enabling trying out new,
-> sometimes wild, things after all. As such, I don't think it'd be a good idea
-> to put strict restrictions on how the BPF side operates unless it affects
-> the ability to recover the system from a malfunctioning BPF scheduler, of
-> course.
+For swap out cases that is true. The swap in case you allocate the
+folio first then read data from swap file to folio. There is a window
+swap file that has the data and folio does not.
 
-Thinking a bit more about it. I wonder the status-quo is actually an okay
-balance. All in-kernel sched classes are per-CPU rich rq design, which
-meshes well with the current locking scheme, for obvious reasons.
+> The data might also be in a swap file, or not.
 
-sched_ext is an oddball in that it may want to hot-migrate tasks at the last
-minute because who knows what the BPF side wants to do. However, this just
-boils down to having to always call balance() before any pick_task()
-attempts (including DL server case). Yeah, it's a niggle, especially as
-there needs to be a secondary hook to handle losing the race between
-balance() and pick_task(), but it's pretty contained conceptually and not a
-lot of code.
+The data only in swap file is covered by "data can be in the folio or
+swap file", it is an OR relationship.
 
-Thanks.
+I think my previous statement still stands correct considering both
+swap out and swap in. Of course there is always room for improvement
+to make it more clear. But folio always has the data is not true for
+swap in. If you have other ways to improve it, please feel free to
+suggest.
 
--- 
-tejun
+
+> On a 32-bit system, I=E2=80=99m guessing the swap table is 2 KB, which is=
+ about
+> half of a page?
+
+Yes, true. I consider that but decide to leave it out of the document.
+There are a lot of other implementation details the document does not
+cover, not just this aspect. This document provides a simple
+abstracted view (might not cover all the detail cases). One way to
+address that is add a qualification "on a 64 bit system". What do you
+say? I don't want to talk about the 32 bit system having half of a
+page in this document, I consider that too much detail. The 32 bit
+system is pretty rare nowadays.
+
+Chris
 
