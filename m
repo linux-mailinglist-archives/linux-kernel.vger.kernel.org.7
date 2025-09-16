@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-818837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B173DB59703
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:09:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFA1B59708
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A5C7ABBC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2461C1628BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE0D310771;
-	Tue, 16 Sep 2025 13:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF4A315D5C;
+	Tue, 16 Sep 2025 13:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GDAjJkIk"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gk9DccDG"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12103307AD7
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF53F315D4F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028133; cv=none; b=DccoOSyzQef0sN/DvM/vPZqRe9HKJsUE7iEnyyKkXs3CtlEA7LYFXWnUFyn8vTal96vWocb3WeWncN30HJmmg12VO5kUo8kNJj6Ar4lO3Grc8eZxQjppHy7ZythFmyAIm+VvlOF7mR2ubDHMpWbWJnfECKAwFfBc9f6X1ALZWkk=
+	t=1758028139; cv=none; b=VrXXd5e3pJMlaCp3nwqJhclQ9JCGy7122agmCXR/ngQfIOUxABKZHK5hmO5bQWKKLkgx27EgpiLiRb9V3tS0krznUHJnoAfD1QPEcNdoG/0zZ3xBzEt+Vb+RE3qNr0bxP/oAEOZYu++O7aoJYUnM5uRorsRAPwsgkLXUGaPQZaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028133; c=relaxed/simple;
-	bh=pbBzLjrUvy4Jws3IrdIk6Q8D7H91HuRG6YGPY55CtrI=;
+	s=arc-20240116; t=1758028139; c=relaxed/simple;
+	bh=d3fQw6S99FciRy182QOtEgFEi+t/Z1n3HSNtRTk38Y4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CinjyMVxXD8SsR0DT52BTV45xtwx5t1zCUsqgWC8YmNXYb7q4lDIZOFlIFhXSLcmjV3GyPhMGfoYJxdxre2RHHSlqMQukcQCJeD3HRMEutEF/HQJbTfipHIIPmbZ3gHr35A0/TfTmzJww6+olIrquayWHuQYgBsPzIs5s51qs+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GDAjJkIk; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=mF8aPR/toK1V8KB8NZxMqSo804B+cIY5a1M28ujZMZGYKuD0eW0agfxKm2j1e0oVnov7rpd0SD63zO+LQ8bXpZo0w9Z1nzbGC+9/Qm6TQl0u2O02iGZTrx4nWX4SnKZE0Q4rtbLMUUD5zwP+A8EE6C0Gu4/vmA7UKhC/4a16TvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gk9DccDG; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758028131;
+	s=mimecast20190719; t=1758028136;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6Dg27mnkpxY6+wpImWrHzQoz+UEHN7ql4f1eRWWfzQk=;
-	b=GDAjJkIkLNCwM3/0gKu1THW+iQoWGuhH+eKePMj/GwC8tPVdKa2o9eBlZlPAtyFIrzIgPz
-	T0X2lopNkmpPIWCU+vIt9dP78zK+JWR/vaKBXHKwUJvkBsj6W3KKV3rJXAdtJc4/ebEGjf
-	STUEk0qIO0AIHYJfYYbcWT8x3/8hfhw=
+	bh=7Z09Es5Ylciu4ZkGEwk7fK8/twSlfHUI3tackVpOb1U=;
+	b=Gk9DccDGLEyM8HvlTPdSZdqMd/ps4uMHadRp01j9AQeaAZqINU+agiY/0plMenDWoM4wzZ
+	RE3s1jeglHuZxiQIGMCCx0nZFyBBcefxALo3Zv1xXYfcQFa28bsaNSiZs68Gjyqu2o7oDl
+	VoyC9vdH/kJzATQmI9YyBVal9/zv0wI=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-8UvkHeh8NO2a03xXa6XTLA-1; Tue,
- 16 Sep 2025 09:08:47 -0400
-X-MC-Unique: 8UvkHeh8NO2a03xXa6XTLA-1
-X-Mimecast-MFC-AGG-ID: 8UvkHeh8NO2a03xXa6XTLA_1758028126
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-119-WpCKzfMoM9Wcol4Cu9Ufhw-1; Tue,
+ 16 Sep 2025 09:08:52 -0400
+X-MC-Unique: WpCKzfMoM9Wcol4Cu9Ufhw-1
+X-Mimecast-MFC-AGG-ID: WpCKzfMoM9Wcol4Cu9Ufhw_1758028131
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D87618002CC;
-	Tue, 16 Sep 2025 13:08:46 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7CFE01800371;
+	Tue, 16 Sep 2025 13:08:51 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.44.34.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B5F9E1956048;
-	Tue, 16 Sep 2025 13:08:41 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E77E119560B8;
+	Tue, 16 Sep 2025 13:08:46 +0000 (UTC)
 From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To: "Michael S . Tsirkin " <mst@redhat.com>
 Cc: Stefano Garzarella <sgarzare@redhat.com>,
@@ -68,9 +68,9 @@ Cc: Stefano Garzarella <sgarzare@redhat.com>,
 	Laurent Vivier <lvivier@redhat.com>,
 	virtualization@lists.linux.dev,
 	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-Subject: [PATCH v2 1/7] vduse: add v1 API definition
-Date: Tue, 16 Sep 2025 15:08:27 +0200
-Message-ID: <20250916130833.329087-2-eperezma@redhat.com>
+Subject: [PATCH v2 2/7] vduse: make domain_lock an rwlock
+Date: Tue, 16 Sep 2025 15:08:28 +0200
+Message-ID: <20250916130833.329087-3-eperezma@redhat.com>
 In-Reply-To: <20250916130833.329087-1-eperezma@redhat.com>
 References: <20250916130833.329087-1-eperezma@redhat.com>
 Precedence: bulk
@@ -83,34 +83,173 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-This allows the kernel to detect whether the userspace VDUSE device
-supports the VQ group and ASID features.  VDUSE devices that don't set
-the V1 API will not receive the new messages, and vdpa device will be
-created with only one vq group and asid.
+It will be used in a few more scenarios read-only so make it more
+scalable.
 
-The next patches implement the new feature incrementally, only enabling
-the VDUSE device to set the V1 API version by the end of the series.
-
+Suggested-by: Xie Yongji <xieyongji@bytedance.com>
 Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
 ---
- include/uapi/linux/vduse.h | 4 ++++
- 1 file changed, 4 insertions(+)
+v2: New in v2
+---
+ drivers/vdpa/vdpa_user/vduse_dev.c | 41 +++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
-index 10ad71aa00d6..ccb92a1efce0 100644
---- a/include/uapi/linux/vduse.h
-+++ b/include/uapi/linux/vduse.h
-@@ -10,6 +10,10 @@
+diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+index e7bced0b5542..2b6a8958ffe0 100644
+--- a/drivers/vdpa/vdpa_user/vduse_dev.c
++++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+@@ -14,6 +14,7 @@
+ #include <linux/cdev.h>
+ #include <linux/device.h>
+ #include <linux/eventfd.h>
++#include <linux/rwlock.h>
+ #include <linux/slab.h>
+ #include <linux/wait.h>
+ #include <linux/dma-map-ops.h>
+@@ -117,7 +118,7 @@ struct vduse_dev {
+ 	struct vduse_umem *umem;
+ 	struct mutex mem_lock;
+ 	unsigned int bounce_size;
+-	struct mutex domain_lock;
++	rwlock_t domain_lock;
+ };
  
- #define VDUSE_API_VERSION	0
+ struct vduse_dev_msg {
+@@ -1176,9 +1177,9 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+ 		if (entry.start > entry.last)
+ 			break;
  
-+/* VQ groups and ASID support */
-+
-+#define VDUSE_API_VERSION_1	1
-+
- /*
-  * Get the version of VDUSE API that kernel supported (VDUSE_API_VERSION).
-  * This is used for future extension.
+-		mutex_lock(&dev->domain_lock);
++		read_lock(&dev->domain_lock);
+ 		if (!dev->domain) {
+-			mutex_unlock(&dev->domain_lock);
++			read_unlock(&dev->domain_lock);
+ 			break;
+ 		}
+ 		spin_lock(&dev->domain->iotlb_lock);
+@@ -1193,7 +1194,7 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+ 			entry.perm = map->perm;
+ 		}
+ 		spin_unlock(&dev->domain->iotlb_lock);
+-		mutex_unlock(&dev->domain_lock);
++		read_unlock(&dev->domain_lock);
+ 		ret = -EINVAL;
+ 		if (!f)
+ 			break;
+@@ -1346,10 +1347,10 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+ 				 sizeof(umem.reserved)))
+ 			break;
+ 
+-		mutex_lock(&dev->domain_lock);
++		write_lock(&dev->domain_lock);
+ 		ret = vduse_dev_reg_umem(dev, umem.iova,
+ 					 umem.uaddr, umem.size);
+-		mutex_unlock(&dev->domain_lock);
++		write_unlock(&dev->domain_lock);
+ 		break;
+ 	}
+ 	case VDUSE_IOTLB_DEREG_UMEM: {
+@@ -1363,10 +1364,10 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+ 		if (!is_mem_zero((const char *)umem.reserved,
+ 				 sizeof(umem.reserved)))
+ 			break;
+-		mutex_lock(&dev->domain_lock);
++		write_lock(&dev->domain_lock);
+ 		ret = vduse_dev_dereg_umem(dev, umem.iova,
+ 					   umem.size);
+-		mutex_unlock(&dev->domain_lock);
++		write_unlock(&dev->domain_lock);
+ 		break;
+ 	}
+ 	case VDUSE_IOTLB_GET_INFO: {
+@@ -1385,9 +1386,9 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+ 				 sizeof(info.reserved)))
+ 			break;
+ 
+-		mutex_lock(&dev->domain_lock);
++		read_lock(&dev->domain_lock);
+ 		if (!dev->domain) {
+-			mutex_unlock(&dev->domain_lock);
++			read_unlock(&dev->domain_lock);
+ 			break;
+ 		}
+ 		spin_lock(&dev->domain->iotlb_lock);
+@@ -1402,7 +1403,7 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+ 				info.capability |= VDUSE_IOVA_CAP_UMEM;
+ 		}
+ 		spin_unlock(&dev->domain->iotlb_lock);
+-		mutex_unlock(&dev->domain_lock);
++		read_unlock(&dev->domain_lock);
+ 		if (!map)
+ 			break;
+ 
+@@ -1425,10 +1426,10 @@ static int vduse_dev_release(struct inode *inode, struct file *file)
+ {
+ 	struct vduse_dev *dev = file->private_data;
+ 
+-	mutex_lock(&dev->domain_lock);
++	write_lock(&dev->domain_lock);
+ 	if (dev->domain)
+ 		vduse_dev_dereg_umem(dev, 0, dev->domain->bounce_size);
+-	mutex_unlock(&dev->domain_lock);
++	write_unlock(&dev->domain_lock);
+ 	spin_lock(&dev->msg_lock);
+ 	/* Make sure the inflight messages can processed after reconncection */
+ 	list_splice_init(&dev->recv_list, &dev->send_list);
+@@ -1647,7 +1648,7 @@ static struct vduse_dev *vduse_dev_create(void)
+ 
+ 	mutex_init(&dev->lock);
+ 	mutex_init(&dev->mem_lock);
+-	mutex_init(&dev->domain_lock);
++	rwlock_init(&dev->domain_lock);
+ 	spin_lock_init(&dev->msg_lock);
+ 	INIT_LIST_HEAD(&dev->send_list);
+ 	INIT_LIST_HEAD(&dev->recv_list);
+@@ -1805,7 +1806,7 @@ static ssize_t bounce_size_store(struct device *device,
+ 	int ret;
+ 
+ 	ret = -EPERM;
+-	mutex_lock(&dev->domain_lock);
++	write_lock(&dev->domain_lock);
+ 	if (dev->domain)
+ 		goto unlock;
+ 
+@@ -1821,7 +1822,7 @@ static ssize_t bounce_size_store(struct device *device,
+ 	dev->bounce_size = bounce_size & PAGE_MASK;
+ 	ret = count;
+ unlock:
+-	mutex_unlock(&dev->domain_lock);
++	write_unlock(&dev->domain_lock);
+ 	return ret;
+ }
+ 
+@@ -2045,11 +2046,11 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mdev, const char *name,
+ 	if (ret)
+ 		return ret;
+ 
+-	mutex_lock(&dev->domain_lock);
++	write_lock(&dev->domain_lock);
+ 	if (!dev->domain)
+ 		dev->domain = vduse_domain_create(VDUSE_IOVA_SIZE - 1,
+ 						  dev->bounce_size);
+-	mutex_unlock(&dev->domain_lock);
++	write_unlock(&dev->domain_lock);
+ 	if (!dev->domain) {
+ 		put_device(&dev->vdev->vdpa.dev);
+ 		return -ENOMEM;
+@@ -2059,10 +2060,10 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mdev, const char *name,
+ 	ret = _vdpa_register_device(&dev->vdev->vdpa, dev->vq_num);
+ 	if (ret) {
+ 		put_device(&dev->vdev->vdpa.dev);
+-		mutex_lock(&dev->domain_lock);
++		write_lock(&dev->domain_lock);
+ 		vduse_domain_destroy(dev->domain);
+ 		dev->domain = NULL;
+-		mutex_unlock(&dev->domain_lock);
++		write_unlock(&dev->domain_lock);
+ 		return ret;
+ 	}
+ 
 -- 
 2.51.0
 
