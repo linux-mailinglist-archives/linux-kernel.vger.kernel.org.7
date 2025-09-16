@@ -1,92 +1,89 @@
-Return-Path: <linux-kernel+bounces-819397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEDAB59FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:02:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB703B5A01E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0835A581592
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AE61BC288D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD72C2D0C89;
-	Tue, 16 Sep 2025 18:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BFD29617D;
+	Tue, 16 Sep 2025 18:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rlizjEY5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I3Yh1UNG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="OK93RaaW"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A124A29D280
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C7B27E04F;
+	Tue, 16 Sep 2025 18:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758045724; cv=none; b=kmW8kPkCZlH4TtZVFsCSDdHseuVbln4Q8B9+ZL7CbcG2wEY7q07d8XDQ2gkmGGKMetMVRDYiOH0nO+CungV/Ph1FXY2+1A0/0BLxzrA7adBfa//686LnFxyORIgEdRUxU+7CHmOk/jHmKL0al3aTsx4CBLAgpzlerr/ue5udTUg=
+	t=1758046095; cv=none; b=HDpf5yXtMe1sdCU+9uLh8jUr1AkaPXw9rQNGRXOI7n1tBXs2+uOoU4m2vcREF0OF8tOUhSfHQKFKVvogqNEP9MFjPD/pYyzMmjFo+u1AYSV5ZEy+flz2sz+yHsv/Y4tV9vuP15UxgMfEZ/y00P4/3bEt2NpCjVLNje2vMRL/9WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758045724; c=relaxed/simple;
-	bh=rLUOJFZUImaUfo6SdetdAgOJfxOPATvzty/XKsifFnA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uq1r6BDhKtbeioRhjlm9Fn1ZllbqAcunoC/+G5/9nj4gp2NKyS5taLIELu/qI04rMirddk9kJtZo6srWElk/i5LgKSy6f1XHvJsdWfiaMmnmYY0MvpkLUEgzZKbp+N1BAcsjuDbBCGkQfpYKPnhy391Uc8Qew41ANJtD4pxXYZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rlizjEY5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I3Yh1UNG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758045719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rLUOJFZUImaUfo6SdetdAgOJfxOPATvzty/XKsifFnA=;
-	b=rlizjEY5wByJN9OlvYx1jL11IWtDhp6F60MRFS8WZE3YA9wFEAHVBkH1RIaGaMv/QQoOFh
-	fzbbK23DzyeTlo8nGjAEsIyJKhauBMM+H7Q++grmwg2gOy3x4hqWbpvQmwnWUGuGp4iyyv
-	pu8DgvXl9kqh01D5Yv7Bj90iuqr+Zp+zXJykBWMvdAqxqAzqGKRNmIjGByo+WFxojTL0SR
-	UTPzwx+aSzHl2kTK2PsiTQtP8KjtyKqsZ8iW8/nYITuklCpjcahl6h/DB1RWcBX5UJ3a0l
-	hjumCkdnxhnU1rtwUCGmZeE9gMr4sDWW00HAT87wkpNofBxC2mfFpNquGo5SVg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758045719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rLUOJFZUImaUfo6SdetdAgOJfxOPATvzty/XKsifFnA=;
-	b=I3Yh1UNG5fgJcJC/vuiQLI4n8j9+NvVpTX6AYL1Y2vq6+VrlnSSOpesFjngYDEE/Owb7a2
-	DchTBisnkFxe2ZDg==
-To: Nam Cao <namcao@linutronix.de>, Marc Zyngier <maz@kernel.org>,
- linux-kernel@vger.kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: Re: [PATCH] genirq/msi: Remove msi_post_free()
-In-Reply-To: <20250916061007.964005-1-namcao@linutronix.de>
-References: <20250916061007.964005-1-namcao@linutronix.de>
-Date: Tue, 16 Sep 2025 20:01:58 +0200
-Message-ID: <87segm9syx.ffs@tglx>
+	s=arc-20240116; t=1758046095; c=relaxed/simple;
+	bh=HVIAurRXmIXwxwsBwpt3ginMb+fRbhUIRyEdhVqSAVw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Xg/6ibtGXhoMAZmDGmc8NbNA3kUm1LrxhV10FB66DQanLtfogGaZ3FGZspHL8/mvlrTlBQVPmJs+GOfEUCzfnzQF8nYWlp5B3yTG1KhdhRrWQH1Qye4Z6oikJOQX6RYCKfXmnFxoEbpRgcufNmeKZHcXnX3GFjsB6bXYiDUng9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=OK93RaaW; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1758045732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tcU9A/tq5+oi7hBJMmArLeP3C7GfHr2OsLC6PY1wg9s=;
+	b=OK93RaaWnkocTLdikKRF0xvCK4IJRIQo6zYoBR7M12A6V/i7Zi5vN57SMabR1ftqdaiI3w
+	5wSLj4Mfkuf2tXJqc3W0aZuWIU8YW9Vl+dEpHg8pITdrNSw5q6QKLPi8BP+3P4qjnF4C8y
+	SVEC0R9sqUpg5yxi09dHu9zRUZ+93c3QxzqO+j6BMTDoH7FsyCqDDv+c/E+4whne1ajLiV
+	2TgyQ76s7OaKndeTm7VISUBiHz6Bj+3/DBGEj7Ay178jZuK2ZvXBydCsWz1KU4uFOuTD5E
+	ffdSwca6Lv5D++1so5EcGqNa3YRWBnoGEb011jxbfK2HjksK7ygi34w28akJpg==
+Date: Tue, 16 Sep 2025 20:02:11 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andrey Leonchikov <andreil499@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heiko@sntech.de, dmitry.osipenko@collabora.com, tglx@linutronix.de,
+ amadeus@jmu.edu.cn, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: arm64: dts: rockchip: RK356x: Add OTP description.
+In-Reply-To: <20250912135542.2304150-1-andreil499@gmail.com>
+References: <20250912135542.2304150-1-andreil499@gmail.com>
+Message-ID: <957705f3b0f6407031f76ca433a0541d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Tue, Sep 16 2025 at 08:10, Nam Cao wrote:
+Hello Andrey,
 
-> The only user of msi_post_free() - powerpc/pseries - has been changed to
-> use msi_teardown().
->
-> Remove this unused callback.
->
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> This patch depends on the powerpc/series conversion patch, which is
-> currently in powerpc tree:
-> https://lore.kernel.org/lkml/c7a6d8f27fd217021dea4daad777e81a525ae460.1754903590.git.namcao@linutronix.de/
->
-> I think it is most convenient to apply this patch to powerpc tree, if
-> everyone is okay with that?
+On 2025-09-12 15:55, Andrey Leonchikov wrote:
+> Add OTP mapping, can be used on future by drivers.
+> Contain a factory-programmed values for a various peripheral.
+> U-Boot already use "CPU-ID" OTP value ("otp_id" on this patch).
+> All values from original Rockchip sources tree on github.
+> 
+> Signed-off-by: Andrey Leonchikov <andreil499@gmail.com>
 
-Yes.
+Thanks for the revised version of this patch.  As Jonas already pointed
+out, [1] this patch needs more work before it can be accepted.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+I'd suggest that this patch is temporarily dropped, and I'll include it
+as part of my upcoming patch series that will handle the SoC binning,
+with the appropriate tags.
+
+[1] 
+https://lore.kernel.org/linux-rockchip/6bd28aaf-aafd-436e-8799-fcdb07082660@kwiboo.se/
 
