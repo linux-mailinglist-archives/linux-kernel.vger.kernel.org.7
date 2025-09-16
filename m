@@ -1,194 +1,204 @@
-Return-Path: <linux-kernel+bounces-818662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714E7B594D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:10:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE42B594D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB093B6E81
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:10:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5C0E7A252B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DD02C237D;
-	Tue, 16 Sep 2025 11:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143052D0C69;
+	Tue, 16 Sep 2025 11:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIFc/3q/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NFEro7Xn"
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011051.outbound.protection.outlook.com [52.101.57.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD8D25B695
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758021042; cv=none; b=a2/IYCmcI4mvxvV59aWNuSvkrgtRrbMliTvdrzeiy7xM09G7FZndQ2MHNeHIyQGPeYXP9ie7UPidlpEBMbZwty71mbbKXrrErWT4FpMsMw796U8/cu1XgWEIIgO/pCpYk5qos7EYCbLA0fHax5ctTgP9M+Hyjc6dniFjrfEyBpk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758021042; c=relaxed/simple;
-	bh=/OCeromXmEqYI/Es1TTYHVwWJW+VqClogHhSj6EuVbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qci7z7w7ariUUZe7pDqBwqUNzphJZuGFX5B/VMtz7+8L0Ruijro/hgL0tZeUGVPZLohCtfD/pdie9jNOQq6W85ii//0ocYFZ56zKbHMlHlDo9UEJH5acoeV9Pu0Z2wE6+YhejKV600jc0R8sSElisuBJYf2Ghswl6TB/lkYJL10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIFc/3q/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46627C4CEFA
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758021042;
-	bh=/OCeromXmEqYI/Es1TTYHVwWJW+VqClogHhSj6EuVbo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EIFc/3q/Xi4FtSEOW05i4pvkm+RqOTZEohTNEHnAqQ8AtG2lw8HsgEj1ZuHVxRllg
-	 Z1JVgs1LDCVBf9Xfd2xhZ3TuXqF7RMIU+QbVSFQuupp0q/ZCK4tba9Wo73fenOFHeQ
-	 2cofCyHDkaH+bllEzZwMXxZC6bv49iJM7s3mbKwC6cG/rfA3ZI1WG+ryBP5W6MBCZt
-	 sdwauQj3Og8814RfpdhZo+B+FEUDXtBuYnZ9khBdsNE/0bG/8GsTEMxPukqFHJ4i7i
-	 qckvoLqvcFrr4s26KU1o2W5a0v5YHDYdNS6UmaFtqWYPvcugn1zVhqc+aiajIRedFN
-	 yF/Be6hmDbBow==
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-75763558ae1so756428a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:10:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUt46W24fwSILNUaGU8PfxQLSHTf/Xe1e0nI9RsfHV3XKO7qR/IF+R+96WZhyagvR0Rpfvx+aQbV+H03Mg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznGwB95SR7/N7/9OWKhlX/jQXH+HrGckWm1kfRNMBlfk0HlfWD
-	tgPP7fHcurtgd+cScd46WvtWeV2Uww6ew06Gy26K3lJRLlLpW9J15g00h9rTPqGgl7mcLoFq8t/
-	zfGKrG8stcXh9Xjpm9mYaqyQBiwOFptA=
-X-Google-Smtp-Source: AGHT+IF0VYEPlBFhsdIdEZMghX7ixkZneNnJF8NCdV6rSXVrCq7PwIvhipfFXbQg7I2krb3I+RkZQsMB+/MfadhjHZI=
-X-Received: by 2002:a05:6808:80a7:b0:43d:1ffb:1b08 with SMTP id
- 5614622812f47-43d1ffb3372mr4051710b6e.18.1758021041539; Tue, 16 Sep 2025
- 04:10:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A6E25B695;
+	Tue, 16 Sep 2025 11:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758021098; cv=fail; b=QGIIzvniDOK8dEGjOK54MvwlS6toLkVCXg65UMqa6WRhtaD/v/+wAbYmL5A7jAUa866uAOxuZlvfiq3nVJsd6l3sHUzuYI+Kk+nDppl9+GiH+QL6HzWZsb4rSSmRqHXjkKkdJ1Q0/AvnPlT7NkFMMQjhSyIqBEnuNpGkofAKVe0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758021098; c=relaxed/simple;
+	bh=y3K3Z7aQeeBYkG0q2iRFE1FBWWT8oXOHO49nUb6m2jo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XRn1Vi5nTARQfKkxmCl7QjLemknJgG5TLTd5L82CKafDPscz1DNWfHbKK8/v6Fi0L03UDnV26iLGP9T0pyrLrsISaO4uERwr88h1OYVZ1B+FdzgH/k5LMX6dhF6c1gdBPgogoFDUAkP+eXRVACbgo8kFdf2cGHlB5v0c4eFx5Ek=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NFEro7Xn; arc=fail smtp.client-ip=52.101.57.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N0Jujq2g5TFLcfe7W++RaJOr7TBKfmxf3nbAWnM6DPIlUCm5ozHr4CFOzSjVO0YBBV0zLfWjrVxU71kcWcGI1j5APuVK5NeNTNE1S9oNP4aOLKxGEIpBjvxJfEt3Z2JoUwXzH9SCeCwrqTISjhpBbItC+Wj7icd4YNmYV9gv4CAHBI5riW3DE0thqwozfSaaJdTisin9b0PVq8z2UfJSAzp+lcI5W7ShMbLLfWn7VVhR+8FfT5f3Yd0MPyPudnPB2MkyNaZyZ4kRuGDBKolr0UH4x/3HAAxP+uRLMvA8xCOZzLRNBb505eJ+u4q80uB672WBoDdyBda2wI1INrTzuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QUCHc/M1RH7BwM32AX0quOzHTI2iIVZ+8IaEE4NohtA=;
+ b=d+0rvOTMq8b7nZ9u/m/NaxLUmWxSHyIcCply3w3deRQQKtJRB2WAAIPFjRlNLrvjdWvVdl6Gfizh1gZHmMUch42ed0CZPEGNdAZ4fntQ7OY8v7RT9uisbrhLwsbdcBb84XsorDUrkYYC9nBmvDjRz/tjQ2B2P6kJ4VMjqoKTWz2Sb89rHVoOuF3kzIGzGEwvdu5ilkGpRt3aS51bS3/g8IeQd4S/m823x1u3wFVVisjLRFTmhjbhL9XSKsndEF3XaK80xyBoorcdbp8KX5fkqOBhfwng9UQlno/Gr/p4ZvrNKR+XII1SmjFdQco8epKtl16WAevRA9AZZTv0npX2vA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=ziepe.ca smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QUCHc/M1RH7BwM32AX0quOzHTI2iIVZ+8IaEE4NohtA=;
+ b=NFEro7XnOJeM62ESYe2U5pGNRKI/MM5sfv4wr2RxKXe+LyuiRIlwUyx5/ojC8pA/zlkRcNUtQwTLGc0u/qrFpgZLG7pmvAIAHym+VcjfJtIfWvhZraENNSw5d/EpZ51XYrrfgSzGXGa+088wNn3/L3RcmNcQMif5GBx5/GXEpHVlu7+ZaHSVMhfMMWDH3d06roR8NtG96YIHVweaJcfNPTMv9/w8euRv9v5JjDiAbn5JaLgc4Nj6bZqVsoVofRzFuBxAu3sQpoA4yXHY1YZIJk4A5tiNOSBKDqClb6eUjus1hgqG1yXfu1HdiID6n18Ybf6+rSspnfJ8pTgYCHXPsw==
+Received: from SJ0PR03CA0351.namprd03.prod.outlook.com (2603:10b6:a03:39c::26)
+ by IA0PR12MB7555.namprd12.prod.outlook.com (2603:10b6:208:43d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
+ 2025 11:11:31 +0000
+Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
+ (2603:10b6:a03:39c:cafe::37) by SJ0PR03CA0351.outlook.office365.com
+ (2603:10b6:a03:39c::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.22 via Frontend Transport; Tue,
+ 16 Sep 2025 11:11:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 11:11:30 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 16 Sep
+ 2025 04:11:21 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 16 Sep 2025 04:11:20 -0700
+Received: from vdi.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Tue, 16 Sep 2025 04:11:17 -0700
+From: Edward Srouji <edwards@nvidia.com>
+To: <jgg@ziepe.ca>, <leon@kernel.org>
+CC: <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<parav@nvidia.com>, <cratiu@nvidia.com>, <vdumitrescu@nvidia.com>,
+	<edwards@nvidia.com>, <kuba@kernel.org>, <tariqt@nvidia.com>,
+	<mbloch@nvidia.com>, <gal@nvidia.com>, <idosch@nvidia.com>
+Subject: [PATCH v1 0/4] Fix local destination address resolution with VRF
+Date: Tue, 16 Sep 2025 14:10:59 +0300
+Message-ID: <20250916111103.84069-1-edwards@nvidia.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20250907160833.56589-1-edwards@nvidia.com>
+References: <20250907160833.56589-1-edwards@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5046661.31r3eYUQgx@rafael.j.wysocki> <2243680.irdbgypaU6@rafael.j.wysocki>
- <aMf5ZNW9t_6tfsjy@kekkonen.localdomain> <CAJZ5v0ivX3s=pChGZ_+zeUswJgMPDH2Wi_cGeATyh+M9Tb0LYw@mail.gmail.com>
- <aMh0sRizzRFTtp6z@kekkonen.localdomain>
-In-Reply-To: <aMh0sRizzRFTtp6z@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 16 Sep 2025 13:10:29 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gGcyWfgUxj-ayTj0QXaDa9eayWP7ANfumzGqAU61-vAA@mail.gmail.com>
-X-Gm-Features: AS18NWB1MYk_hERbWYACORkIAOwhllsLln5G0yGDyxhkCNVSOoOfBu6FbFMFn6g
-Message-ID: <CAJZ5v0gGcyWfgUxj-ayTj0QXaDa9eayWP7ANfumzGqAU61-vAA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] ACPI: property: Add code comments explaining what
- is going on
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|IA0PR12MB7555:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e479472-81a4-4efc-c77e-08ddf511c9c2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oeAPV0JrHmqnwFSBkP9cSlcJQu9wDlXTDov4mdsg/CB7ID5HWLKZKdEzt1y9?=
+ =?us-ascii?Q?HS/qIiNKCt1ZJDLJG33zHqcYFp9g4BUdNW3F4u6XmlM18ZJZl0gbdLrhjm8/?=
+ =?us-ascii?Q?BwSYgVhczRMr460CLmnHqP5aq6i23ixjwY9rhavm0W5SfuI8Kx+cIx99wxlc?=
+ =?us-ascii?Q?ABCg5tM/9sxTpWmm/0Whr5FVSgGSFWal/GB3mYddGJD2bZv2AAgl6oIJd/Os?=
+ =?us-ascii?Q?i5KBRKHYwI0pQvTx49BvbGdVzLR2adjblLOiOK26gj49aIJOEhjmfFqN2Dwf?=
+ =?us-ascii?Q?rBld6Oh2qnFmzXantvljF3y9nCESC3NyKFDzMvueWp8eEAcumNbmtTW/hx7Q?=
+ =?us-ascii?Q?c4CReVZwNPToZDt1+19v+Ve5F+RlwzcfP9UwDIdke+WLWs3zz4FlumgisvR9?=
+ =?us-ascii?Q?vEhcjIRhb5jolgM99w255a1LiPn43GmAIlgU94fU4KE5A06Oq7sP+xkqqa2M?=
+ =?us-ascii?Q?uwWzHlkM6+CT14Twu466C/DNCvkd8JY19ug/vL/JmA9BUfDTvd+tAX6vgbyE?=
+ =?us-ascii?Q?/PkCgW4TLwa0TeQ8u3Xy2NrqAycZzuHkHmKWEuJ5ga7O8Bs9zYOqCU4nc3MZ?=
+ =?us-ascii?Q?Gf2hy+3zCN1Pgtj2C6c59FdrYRiLkvcRHFa3csCdGcpXuLHwefe3xL52CzqR?=
+ =?us-ascii?Q?cULZXTglYJxLE+F+7H/JlclIXJf0vCwAmycWFoIZ3MayLrGM+I0ko5MS+1eB?=
+ =?us-ascii?Q?6NltUTp2SxVcKWlQ6f/XzU/HavWh/N+gmeONknK6+Kuoma3zOrcnX4LSo1pE?=
+ =?us-ascii?Q?1P6acni3kJVSsflMJPFvZ0QeLjU9Ru1YWDzNonpiace8THRW4COe6MzQ73HA?=
+ =?us-ascii?Q?69QX6UNyiFBYyirgpOAogBmM3ZDSUntKAM/HSojFpykPvrH7jHeNJN8YKAv8?=
+ =?us-ascii?Q?mdZTnPBn++c091upJcQ9VLhUgOlcC04GK2IyN7T/7vfsaNQ56l3TIFLMXveN?=
+ =?us-ascii?Q?pW/mLg7CZjfbku2ZYGfiMuAdTn+wOSntJ7HNaO1JEAQ89MtjsCQV69MBCLre?=
+ =?us-ascii?Q?6tOGQ6l1dD7LjaazltbbCHs69WneZqNNsYl4tWoLVxv8+l0PBdWiWDOK+tR4?=
+ =?us-ascii?Q?mM0Ju1FcWqD96tm8zMwFBpU/seXLj8T6Vq4wAx29rCQcaq1WJ8BQqyPwMLAc?=
+ =?us-ascii?Q?VEZmoHNGry7eypokfmT5fW/QGa0jVEYHZXVq9BvDTYTS+JIvw/cUDsQ+I1wo?=
+ =?us-ascii?Q?GNGS/sOu69h8xEgYvRKWoEP14ttr5R/c60FKeWAsWdYkyTN0nrGNWJlpxdzs?=
+ =?us-ascii?Q?SN88yd3M1HbCELuGOmk6YXQlGEneETOnaBENfNMnh3Gjm0hDq2mMk3KsPlQq?=
+ =?us-ascii?Q?wHmilGZPXKKLKjONldbFK4gcPjyUn2luNCYLxALJPrNbgAO5Z8TnCfO7F9Iv?=
+ =?us-ascii?Q?+QV8iSDB0MX2CgvkqE4RjilLuw5m04FdRaK1GVwT7dhvIVc3TeusYdYzNqua?=
+ =?us-ascii?Q?q8IPzuifbgyy6bVXQ772k//9Bcx5eCzfgCN+1q1BasgPNqowG6Eek1+5NEI+?=
+ =?us-ascii?Q?QjHWHchOTWnuOb7d+iK3SD4CnbsioPJrBy26piOTMdnOVCQxLh3tCrstLg?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 11:11:30.4261
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e479472-81a4-4efc-c77e-08ddf511c9c2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7555
 
-Hi Sakari,
+From Parav:
 
-On Mon, Sep 15, 2025 at 10:19=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Mon, Sep 15, 2025 at 02:27:16PM +0200, Rafael J. Wysocki wrote:
-> > Hi Sakari,
-> >
-> > On Mon, Sep 15, 2025 at 1:32=E2=80=AFPM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Rafael,
-> > >
-> > > On Fri, Sep 12, 2025 at 09:40:58PM +0200, Rafael J. Wysocki wrote:
-> > > > +                     /*
-> > > > +                      * The reference is expected to point to an o=
-bject
-> > > > +                      * returning a package that contains _DSD-equ=
-ivalent
-> > > > +                      * information.
-> > > > +                      */
-> > > >                       handle =3D link->package.elements[1].referenc=
-e.handle;
-> > > >                       result =3D acpi_nondev_subnode_data_ok(handle=
-, link, list,
-> > > >                                                            parent);
-> > > >                       break;
-> > > >               case ACPI_TYPE_PACKAGE:
-> > >
-> > > And similarly, the result of an evaluation here is a package when a
-> > > reference points to a name object (i.e. a data node).
-> >
-> > Well, I'm not sure how this remark is related to the new comment below.
-> >
-> > Do you mean that this always happens when a reference is used in ASL
-> > to point to the target here?
->
-> As long as the target is a non-device object (or name or method object at
-> least), which is required by DSD-guide for (non-string-)referenced object=
-s.
->
-> >
-> > But the comment would still be valid in that case, wouldn't it?
->
-> After re-reading the first paragraph, I agree.
->
-> >
-> > > > +                     /*
-> > > > +                      * This happens when the target package is em=
-bedded
-> > > > +                      * within the links package as a result of di=
-rect
-> > > > +                      * evaluation of an object pointed to by a re=
-ference.
-> > > > +                      *
-> > > > +                      * The target package is expected to contain =
-_DSD-
-> > > > +                      * equivalent information, but the scope in w=
-hich it
-> > > > +                      * is located in the original AML is unknown.=
-  Thus
-> > > > +                      * it cannot contain pathname segments repres=
-ented as
-> > > > +                      * strings because there is no way to build f=
-ull
-> > > > +                      * pathnames out of them.
->
-> Is the "original AML" relevant? Aren't we just interested in how the
-> evaluation result was reached instead of what was its actual path?
+Presently, address resolve routines consider a destination to be local
+if the next-hop device of the resolved route for the destination is the 
+loopback netdevice. While this works for simple configurations, it fails
+when the source and destination IP addresses belong to an enslaved
+netdevice of a VRF.
+In that case the next-hop device is the VRF itself, so packets are 
+generated with an incorrect destination MAC on the VRF netdevice and 
+ib_write_bw times out.
 
-So long as the node in question is not referred to via a namepath from
-a different place (for instance, a reference property in a different
-node), we don't.  However, if there is such a reference to it
-somewhere, we need to know that this is the target node of that
-reference.
+This patch series fixes that by determining whether a destination is
+local based on the resolved route's type rather than on the next-hop
+netdevice's loopback flag.
+That approach resolves loopback traffic consistently both with and 
+without VRF configurations.
 
-> We won't know the latter in any case. What would you think of:
->
->                         /*
->                          * Evaluating a reference results in a package ob=
-ject
->                          * (required by DSD guide) allocated on the fly. =
-The
->                          * actual target object of the reference isn't
->                          * available.
->                          */
+This series contains 4 patches:
+  1/4: refactor address resolution code for reuse by subsequent patches
+  2/4: resolve destination MAC via IP stack
+  3/4: use route table entry instead of netdev loopback flag
+  4/4: fix netdev lookup for IPoIB interfaces
 
-The target object actually is available, but the path to it isn't
-known at this point.
+Parav.
 
->
-> I guess nothing prevents having further string references within the
-> object?
+---
 
-The _DSD guide forbids that and they would only work if they were full
-namepaths (because of the unknown scope).
+Changelog:
+v0 -> v1:
+- Addressed comments from Leon
+- Updated commit message to reflect that dev_addr fields are invalid in
+  case of failure in PATCH 1/4
+- Removed incorrect commit log about 'no functional change' in PATCH 1/4
 
-Anyway, I think that the comment is as good as it gets in its current form.
+v0: https://lore-kernel.gnuweeb.org/lkml/20250907160833.56589-5-edwards@nvidia.com/T/
 
-> I think it'd be best to deprecate direct references in the DSD guide.
+---
 
-That I agree with, but the code needs to be retained for compatibility
-with the installed base.
+Parav Pandit (3):
+  RDMA/core: Squash a single user static function
+  RDMA/core: Resolve MAC of next-hop device without ARP support
+  RDMA/core: Use route entry flag to decide on loopback traffic
 
-> > > > +                      */
-> > > >                       desc =3D &link->package.elements[1];
-> > > >                       result =3D acpi_nondev_subnode_extract(desc, =
-NULL, link,
-> > > >                                                            list, pa=
-rent);
-> > > >
-> > >
->
-> --
+Vlad Dumitrescu (1):
+  IB/ipoib: Ignore L3 master device
+
+ drivers/infiniband/core/addr.c            | 83 +++++++++++------------
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 21 +++---
+ 2 files changed, 50 insertions(+), 54 deletions(-)
+
+-- 
+2.21.3
+
 
