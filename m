@@ -1,84 +1,114 @@
-Return-Path: <linux-kernel+bounces-821664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90DFB81E79
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD44B81E7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B99D2A810E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97D03B0455
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC9D30505F;
-	Wed, 17 Sep 2025 21:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DD7304962;
+	Wed, 17 Sep 2025 21:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjGrIP+g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iFCNvO50"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E484D29A323;
-	Wed, 17 Sep 2025 21:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF002302770
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143676; cv=none; b=nHJiJk80ohvFXjhWMoC/aPlmf6Dq1yLaakLv1MOr1X8XaXitk+oL1DxGK85gtiIQF3MMBp91OnplgHNaD5h9JX9NP7YzJY116xksSIMgBSzcnLLVyU5FC/PfHeyoCe3EVhRVUAyWmc38K/GnNQKK+Y9MqzUB0qJNAqyO5GlimbE=
+	t=1758143692; cv=none; b=LdX0zlN4xhDIYnBpgYcTXYjMZ8RNHa5C3uJZjXO1PHLsXjQ7Y/5Dkockw5KVfl19Yo+whTS7ojiIs+q58YE+JbNszecmox41ZxJ4FRarQB4Dkc1lDmjpqIH5kASUK3H0zkEq/FMUCJGxKbjxe2d7cBTIJIbM/GH/2JoIRSRyGXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143676; c=relaxed/simple;
-	bh=J4z5cEqKbEspPdyozEYrcyU1xwoqZA19vQU8cDASk9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I967HPAC/t5H4GA8DpP+oRu6nzYWehW5wu37VXtZu9/Aj+x8GTa+k6JDRGts05ljUZKNPjYWfF4bjBKDbTNaXET2pqJ9H7g93BKsM6tTSqDHp/wxAs8JAFowZ2pl4obpE0a2s77zs8KWuWZFD3R2hAk0wg7lDVkWlCphT8rdgW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjGrIP+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25DAFC4CEE7;
-	Wed, 17 Sep 2025 21:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758143675;
-	bh=J4z5cEqKbEspPdyozEYrcyU1xwoqZA19vQU8cDASk9A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WjGrIP+gdqicn/RQIuhpLGRt1mLDHTY960t5rIHoAz7EDRp0wgegE793Z055cMJIS
-	 huXD8b5KBMnngLM3Ncsk8INVRwiDJmuM1Rmn2Q6wdtfDQ9e/q2Pz2YqyF2cr5G89eK
-	 8+0jezQGXBnDCeYS5njAWU8tM8xwkT+te8FUEgM/6PdHwOR6310ra3pdYnkSx9tIkf
-	 6SJyZQPwOrBbu6OTwi/jGVN+7ntM33yNzu7uRPCUsSWH8zgLxmZOlVtdUBNGaPZx+8
-	 L3sCTq2Luc1JEW7OoPKNhiGysmta1AF5gnfDxtnDlg12uQJIq/DOhzMiBK5KUjjEn5
-	 v6qP25/zm5gVw==
-Date: Wed, 17 Sep 2025 14:14:34 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Felix Fietkau <nbd@nbd.name>
-Subject: Re: [PATCH net-next] ppp: enable TX scatter-gather
-Message-ID: <20250917141434.596f6b8b@kernel.org>
-In-Reply-To: <CALW65jZaDtchy1FFttNH9jMo--YSoZMsb8=HE72i=ZdnNP-akw@mail.gmail.com>
-References: <20250912095928.1532113-1-dqfext@gmail.com>
-	<20250915181015.67588ec2@kernel.org>
-	<CALW65jYgDYxXfWFmwYBjXfNtqWqZ7VDWPYsbzAH_EzcRtyn0DQ@mail.gmail.com>
-	<20250916075721.273ea979@kernel.org>
-	<CALW65jZaDtchy1FFttNH9jMo--YSoZMsb8=HE72i=ZdnNP-akw@mail.gmail.com>
+	s=arc-20240116; t=1758143692; c=relaxed/simple;
+	bh=RaoWOKKibBSIhwB6Z65REC0tLSVTkdLqW+U8o9V09GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhwC1MV0RRxKWS5LNDjGS+j9T1M0cRuxx3GT21qKm+QGH8Fsvv3KmokxVYLgmY+nc4whrdsmREazuq+8JI3o24OdcQ6B9kMF8MKq8WIcEnNB6LIBREmXWqFY7bzCX00KlgvPrX+OeuKODjIAowdZ3R3FDD+YrUjSjuoy5EyRR3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iFCNvO50; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=DeyO
+	YVVOwSXryyIFNeXOryw2bfBU2D+56jiC7Iy2kog=; b=iFCNvO50Pk698z75Xqzb
+	RQEgrXpls3brlFzGT/+q2qjf6Wad3ZQbAExpRAVauTYyidWvtnX1EEnU4TLoNCqc
+	MpkJgUeR9fGF36gcL9G1RTbosNx7AdPI+4P8UznZw0OujgfaS9gb+4xDxxUOSTPA
+	wvpWsCbiQIMj150VsaSbDKkyezo1HgXBh79NIxb0LvGNRy6/4YhfMMshJbtxrpPs
+	OW1j7E+fRS5yW/KXvctTNRpTS8uXBTipxKEUge1BgN2bbLNNCOZwIA0Rinraw1Gc
+	6dUKw7aoNZWLq8l3GW+2mbp7hv1VpxxJ5usHbKOPf/Ig+eYEqKSsQRb+DV/FKPG5
+	ng==
+Received: (qmail 3268779 invoked from network); 17 Sep 2025 23:14:45 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Sep 2025 23:14:45 +0200
+X-UD-Smtp-Session: l3s3148p1@tDjXuQU/Yt4ujnvK
+Date: Wed, 17 Sep 2025 23:14:45 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thierry Reding <treding@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@kernel.org>,
+	Akhil R <akhilrajeev@nvidia.com>,
+	Kartik Rajput <kkartik@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the i2c tree with the arm-soc tree
+Message-ID: <aMskxYrDxyzXPsBy@shikoro>
+References: <aMhR9TJm5V5EqaoC@sirena.org.uk>
+ <aMh_eKWqkuLODo2r@shikoro>
+ <e70f4454-d0f5-4b3e-9751-730781f056f9@sirena.org.uk>
+ <ofp27qiwsw7jj5ne3y7kp2lpycwg37bvhswidwe6jfazs2czzp@76gzsofmliyc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="O7g2/ck/gjKfI7m2"
+Content-Disposition: inline
+In-Reply-To: <ofp27qiwsw7jj5ne3y7kp2lpycwg37bvhswidwe6jfazs2czzp@76gzsofmliyc>
 
-On Wed, 17 Sep 2025 19:00:16 +0800 Qingfang Deng wrote:
-> On Tue, Sep 16, 2025 at 10:57=E2=80=AFPM Jakub Kicinski <kuba@kernel.org>=
- wrote:
-> >
-> > On Tue, 16 Sep 2025 10:57:49 +0800 Qingfang Deng wrote: =20
-> > > Can I modify dev->features directly under the spin lock (without
-> > > .ndo_fix_features) ? =20
-> >
-> > Hm, I'm not aware of a reason not to. You definitely need to hold
-> > rtnl_lock, and call netdev_update_features() after. =20
->=20
-> Will the modification race against __netdev_update_features(), where
-> dev->features is assigned a new value?
 
-Shouldn't race if we're holding rtnl_lock when we make the modification
-and until we call netdev_update_features()? I'm just spitballing tho,
-haven't studied the code.
+--O7g2/ck/gjKfI7m2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Thierry,
+
+> Note also that I only applied the DT bindings patch from the v6 series
+> because it was already acked by device tree maintainers and there have
+> not been any objections to the DT bits, nor are they relevant to the
+> driver changes still being reviewed.
+
+May I suggest then to send the DT bindings patch seperately next time?
+We can apply it earlier then, so you can continue your work. I prefer to
+take binding patches via the I2C tree so I can chime in if necessary and
+also to keep the merge conflicts low.
+
+Happy hacking,
+
+   Wolfram
+
+
+--O7g2/ck/gjKfI7m2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjLJMEACgkQFA3kzBSg
+KbZpthAAgnSxLZP3isLW2SCv5iNDOaaNvNXliyrZm4yvMmiVR0NicKcz8BMdVAhV
+ueGg6/8DeMlx6A+9IQSwPh59F66jN78XU9QUbzMCxKKb+bA0360j/ad8uD5fsaE3
+qK845cokxDu7k0CjaViNTNmlzoPF0zve8I+APsFpF2qtp+GNefwibvl1boepmp7t
+jQ+yE75v/KSH4v+bIBzvx60zBTJghIBELe1T89trtPWn+XY5/xUjCOu6aMH31sX8
+Ts1fmlNIK4y98FhmmOEN4a50s3DqTZHQI7iTMV4pwIRauS0Fl9naSLNfJ+KLOgQQ
+3sddwL06Bxb4S6kJy3oc+z3aDBUqKjXldGxhXdXTdjxe8/47UXGwVGjBJzex9LvA
+egEYhzy83/UhcyE1WCm+kxsz9qMVclfB/mXx77iKvE8v5pWAbNhIbLpMCqgJCw6g
+FdWL7j2covNgSSWDMnA4/Dxl8GDdtzUI1PGrWemzwQYuChMH+q5qYcfkuXWawJy6
+rGTzzm3UgSloxSbkG6MdPAkl4uJyUIk869gp2H8M/rLNqpz4ItGXNNYDHIlmajkJ
+gXYWZm5L2IouJGiuKH1DR7xNb72jSLbyF+a6UTQXb8/IwCsbBVvgR1P+2dO4QTuV
+hzr+fnBDIlbWfX7eoGKmby6rbZZo2wPscA3h10eZ+Vz50dOClP8=
+=5aB1
+-----END PGP SIGNATURE-----
+
+--O7g2/ck/gjKfI7m2--
 
