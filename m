@@ -1,196 +1,161 @@
-Return-Path: <linux-kernel+bounces-821806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73C3B82540
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:56:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9D7B8254C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4381BC1366
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A6BF621E20
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCE82C158F;
-	Wed, 17 Sep 2025 23:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCF52EC089;
+	Wed, 17 Sep 2025 23:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HGgUr0jW"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsDfVDDo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BA127FB03
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70FF262FD8;
+	Wed, 17 Sep 2025 23:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758153351; cv=none; b=IQdGkIpl8PqTk5CZdfTnXGFAeQW0UjnhwR+VI9ixpAljBZAl7++N9g7r0Zbpm5Le7UCJDCRpugZwvK73yqWQniCijnGJd749Herxj2RM+Z+/i54vIK/63AZU8H4u6xmv1G/ipkuMIwZcuYNRmcMhkIp1613ONfhW4D7YuFHCBAE=
+	t=1758153540; cv=none; b=r+KBLh0qw4QSc3Nla7LTq+Wa5fhI8Ai7tH+2p2pBF+ezFuZG57OWfZih53p5qL19yazzDQoJa0gK0V3PfsyDagxTkxSR04T1knSoCUraQmLBleGwgaabXG8a3+a3uwy09vi9CnofQ537VJyc2UJ26+4OceXzgvYSE+jhDk5JwRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758153351; c=relaxed/simple;
-	bh=s3kx4Yc+B/QQMXBOgQOpaOW3sMuakNxguXeeY6yqNeA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MxJiWeiJK7CaYIidpqFW8bFESOpl4zKUGdDHWydODrIuClaRGBS2Vl4Ee+3D+eJ2g4lGP+VcfbVGtMA0P+qnb4WKh6W9s9G2TEV3X3iTErpTu1bseubnShR1zHbD3ZOxUg7jh+Mb5fLTXzKKBTU9FrsVawHKLmCSye+C6eRgDhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HGgUr0jW; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-560885b40e2so4288e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:55:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758153348; x=1758758148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h2BqbA+mdt4TSxAifBWwgyG/76v4E1bDgqDxwYgdDNY=;
-        b=HGgUr0jWdlWBtEfv/9You9L4DZ8VNxIvnv9mtumi9UpOk9tnnwr2inzAoKbirIP/cR
-         2NcRDbEdUqzxEsy5XwxP3+NdtiSWWkdUuItzPOhOVqXYJnZk3mB9u6PyO+IbS3mACy2r
-         1cJ87drey8X8DM8gkr5HTXdV8UOfAmBNSbu89USaHr5WVlIL8U3VXGcpm7XBhudwjusb
-         6l39C2NkXtQ3YmpKOXTQZL9elWCj7ehRW/eaQNaGNww/50jZ4ivjkLf/hCMArj8q2wd1
-         9mvzlSVn6vCXztokFpftcHgFFYk16CIYZPiJtkh2wR8ygqd5zGUDvT87wlGfmagG0taW
-         iaLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758153348; x=1758758148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h2BqbA+mdt4TSxAifBWwgyG/76v4E1bDgqDxwYgdDNY=;
-        b=eAlMcTTDBo1Or76df4hp5P86OUrlnCDmvnaY3PCYRHpzB4IrqziHmau3HZMyEEhJgu
-         X+EVZoNOTapNO9h9/S8tR62Pm8b0fcWO7Pd8ZRwW32N3CB1lzEm4GRJP9Q/hAdXR51lL
-         ezhoBTfa2t4aULwZtCR74gN2vv+sXmZAJKSVh4e9EMJPpy6hhazj/+uHiEDcW9JZLQ7W
-         rWjDr1NjO3J3NAbh5KB2vmEL3FtqslJJaQoL96emFC17DNBhDMf1CO3505SJQucyIGFS
-         SLA7RvWQvG66Wt3/CjX82eGfK+xaap+HhRcpP8M6EJpS8V0bEJdASke+B8EO+0cYGAql
-         MR5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ7OKhu3J6PDMGG+lIef9X0BC5k56nEk6TsrXgZPql9Zkxk4yisnVxRKIPExvSf0wyVG76iSJLC+AbYHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsLwkNONLFecT75lnmAHU36i0sP0TBM6pwkzENbP5ucF/9wx3V
-	85Cqz7DYCUSOFxPjFBi1npAD+0Qoirio1VH5XVbucqkmc1O0H4t7Y+aLON+tgqByuI0feLgYD6C
-	s+NKNgI9/gtfaSflPEFIbIIi4lIHKZoULEpXkq99E
-X-Gm-Gg: ASbGncuaEDZmgrOhiaVYSzapwc/zUwJIc8YoDsjS2fRkvtXPlwkaayeBi48m2IX//E4
-	OpGH5GzbyLCXQWnZHk0PhgJbEu5ZQ+YZQ13Ia7kNBQt/pOXNDAu5s6A5uz7ksF9HH3Xlb9X54lt
-	Dpn5UrjIkr0y5JiaiPKMoyYQZLy7PGBaFOHwhrkhjEb9WNUQGbkPt0q70FJBrvLtCJfLTvCWoWE
-	sJKxfFSPyGYj+PD2DN0aQtUGUm0NOjgaeJvrmMMwxdOWEzGBD8zwbDmDhmRDmA=
-X-Google-Smtp-Source: AGHT+IGAuAFB/cjvpY7Y4AZju/AFSMn3Ds5rHS2LUoc+dpzjwn1K7OXUpwxzSZfe8tpiqg4YPaRsvQ/ih9HrDwCBidg=
-X-Received: by 2002:a05:6512:3ba6:b0:542:6b39:1d57 with SMTP id
- 2adb3069b0e04-57778c48d17mr515140e87.3.1758153347419; Wed, 17 Sep 2025
- 16:55:47 -0700 (PDT)
+	s=arc-20240116; t=1758153540; c=relaxed/simple;
+	bh=yUnTqNSlOTSApytbl115zDhyJMMhucx8J4LyCp1ebPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O45zDssMNt0pzyVscMI8F/A2aXDxv4C+9bry7+LPUUpkFsIQyabV0Z4d7cRXA5pxHNZTsZybqhIQsD6bl3nHqnBJSHwMf0QuKm2RYW0Ht5NJlySMhx3+pIPLs4UKbxpYdRoVPFovRMsJnAIpaeh1aUnZ0C4QQZfHK4MfDUTKCDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsDfVDDo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 419E6C4CEE7;
+	Wed, 17 Sep 2025 23:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758153539;
+	bh=yUnTqNSlOTSApytbl115zDhyJMMhucx8J4LyCp1ebPQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lsDfVDDohhE1YamjhG8WVFvAN/xlZoIAUJs2qHS5p/o/5ztd0TJqEdkrHBI2BlFqS
+	 MYhD04VeqlX6rFzIfEcs1Qqnl3NUxFfCBhPymNr2PMTwiqRpapXPqgkpfWNbtGvvCf
+	 343GelpotnOIVTrU4LWfmGDf4hKVZG+lMIWCbj5/pLHlkiHDEsrCdsVkRyXhKYQAId
+	 uypx8lPVgiexmDH8W83NIBVao/EiOQRN8g2nG3NzS+oxTQBCSig2J8furg6GedywC9
+	 HVfrweTWfbBushGT/RwaAmxr4pv1qic7pgKi4axHwM412L36jld5ltEwnsTcUtGmc2
+	 0d4x61Eb7mN1g==
+Message-ID: <dab18f70-4017-4c06-92c1-91cfd2229540@kernel.org>
+Date: Thu, 18 Sep 2025 08:58:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
- <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-2-c80d735bd453@meta.com>
-In-Reply-To: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-2-c80d735bd453@meta.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 17 Sep 2025 16:55:34 -0700
-X-Gm-Features: AS18NWDDuUAXlqLMWoiuJyipblvfnn6oVju_1frRroYSHlxNGTk3xhMxeaVEObI
-Message-ID: <CAHS8izPNC65OUr4j1AjWFwRi-kNFobQ=cS4UtwNSVJsZrw19nQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 2/3] net: devmem: use niov array for token management
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] serial: qcom_geni: Fix pinctrl deadlock on runtime
+ resume
+To: Praveen Talari <praveen.talari@oss.qualcomm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Praveen Talari <quic_ptalari@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ alexey.klimov@linaro.org, jorge.ramirez@oss.qualcomm.com,
+ dmitry.baryshkov@oss.qualcomm.com, andersson@kernel.org
+Cc: psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
+ quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
+ quic_shazhuss@quicinc.com, quic_cchiluve@quicinc.com
+References: <20250917185102.3763398-1-praveen.talari@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250917185102.3763398-1-praveen.talari@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 10:28=E2=80=AFPM Bobby Eshleman <bobbyeshleman@gmai=
-l.com> wrote:
->
-> From: Bobby Eshleman <bobbyeshleman@meta.com>
->
-> Improve CPU performance of devmem token management by using page offsets
-> as dmabuf tokens and using them for direct array access lookups instead
-> of xarray lookups. Consequently, the xarray can be removed. The result
-> is an average 5% reduction in CPU cycles spent by devmem RX user
-> threads.
->
-> This patch changes the meaning of tokens. Tokens previously referred to
-> unique fragments of pages. In this patch tokens instead represent
-> references to pages, not fragments.  Because of this, multiple tokens
-> may refer to the same page and so have identical value (e.g., two small
-> fragments may coexist on the same page). The token and offset pair that
-> the user receives uniquely identifies fragments if needed.  This assumes
-> that the user is not attempting to sort / uniq the token list using
-> tokens alone.
->
-> A new restriction is added to the implementation: devmem RX sockets
-> cannot switch dmabuf bindings. In practice, this is a symptom of invalid
-> configuration as a flow would have to be steered to a different queue or
-> device where there is a different binding, which is generally bad for
-> TCP flows. This restriction is necessary because the 32-bit dmabuf token
-> does not have enough bits to represent both the pages in a large dmabuf
-> and also a binding or dmabuf ID. For example, a system with 8 NICs and
-> 32 queues requires 8 bits for a binding / queue ID (8 NICs * 32 queues
-> =3D=3D 256 queues total =3D=3D 2^8), which leaves only 24 bits for dmabuf=
- pages
-> (2^24 * 4096 / (1<<30) =3D=3D 64GB). This is insufficient for the device =
-and
-> queue numbers on many current systems or systems that may need larger
-> GPU dmabufs (as for hard limits, my current H100 has 80GB GPU memory per
-> device).
->
-> Using kperf[1] with 4 flows and workers, this patch improves receive
-> worker CPU util by ~4.9% with slightly better throughput.
->
-> Before, mean cpu util for rx workers ~83.6%:
->
-> Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal =
- %guest  %gnice   %idle
-> Average:       4    2.30    0.00   79.43    0.00    0.65    0.21    0.00 =
-   0.00    0.00   17.41
-> Average:       5    2.27    0.00   80.40    0.00    0.45    0.21    0.00 =
-   0.00    0.00   16.67
-> Average:       6    2.28    0.00   80.47    0.00    0.46    0.25    0.00 =
-   0.00    0.00   16.54
-> Average:       7    2.42    0.00   82.05    0.00    0.46    0.21    0.00 =
-   0.00    0.00   14.86
->
-> After, mean cpu util % for rx workers ~78.7%:
->
-> Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal =
- %guest  %gnice   %idle
-> Average:       4    2.61    0.00   73.31    0.00    0.76    0.11    0.00 =
-   0.00    0.00   23.20
-> Average:       5    2.95    0.00   74.24    0.00    0.66    0.22    0.00 =
-   0.00    0.00   21.94
-> Average:       6    2.81    0.00   73.38    0.00    0.97    0.11    0.00 =
-   0.00    0.00   22.73
-> Average:       7    3.05    0.00   78.76    0.00    0.76    0.11    0.00 =
-   0.00    0.00   17.32
->
-> Mean throughput improves, but falls within a standard deviation (~45GB/s
-> for 4 flows on a 50GB/s NIC, one hop).
->
-> This patch adds an array of atomics for counting the tokens returned to
-> the user for a given page. There is a 4-byte atomic per page in the
-> dmabuf per socket. Given a 2GB dmabuf, this array is 2MB.
->
+On 18/09/2025 03:51, Praveen Talari wrote:
+> A stall was observed in disable_irq() during
+> pinctrl_pm_select_default_state(), triggered by wakeup IRQ being active
+> while the UART port was not yet active. This led to a hang in
+> __synchronize_irq(), as shown in the following trace:
+> 
+> Call trace:
+>     __switch_to+0xe0/0x120
+>     __schedule+0x39c/0x978
+>     schedule+0x5c/0xf8
+>     __synchronize_irq+0x88/0xb4
+>     disable_irq+0x3c/0x4c
+>     msm_pinmux_set_mux+0x508/0x644
+>     pinmux_enable_setting+0x190/0x2dc
+>     pinctrl_commit_state+0x13c/0x208
+>     pinctrl_pm_select_default_state+0x4c/0xa4
+>     geni_se_resources_on+0xe8/0x154
+>     qcom_geni_serial_runtime_resume+0x4c/0x88
+>     pm_generic_runtime_resume+0x2c/0x44
+>     __genpd_runtime_resume+0x30/0x80
+>     genpd_runtime_resume+0x114/0x29c
+>     __rpm_callback+0x48/0x1d8
+>     rpm_callback+0x6c/0x78
+>     rpm_resume+0x530/0x750
+>     __pm_runtime_resume+0x50/0x94
+>     handle_threaded_wake_irq+0x30/0x94
+>     irq_thread_fn+0x2c/0xa8
+>     irq_thread+0x160/0x248
+>     kthread+0x110/0x114
+>     ret_from_fork+0x10/0x20
+> 
+> To fix this, wakeup IRQ setup is moved from probe to UART startup,
+> ensuring it is only configured when the port is active. Correspondingly,
+> the wakeup IRQ is cleared during shutdown. This avoids premature IRQ
+> disable during pinctrl setup and prevents the observed stall. The probe
+> and remove pathsare simplified by removing redundant wakeup IRQ handling.
+> 
+> Fixes: 1afa70632c39 ("serial: qcom-geni: Enable PM runtime for serial driver")
+> Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
+> Closes: https://lore.kernel.org/all/DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org/
+> Tested-by: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
 
-I think this may be an issue. A typical devmem application doing real
-work will probably use a dmabuf around this size and will have
-thousands of connections. For algorithms like all-to-all I believe
-every node needs a number of connections to each other node, and it's
-common to see 10K devmem connections while a training is happening or
-what not.
+Where did you receive this tag for this patch exactly?
 
-Having (2MB * 10K) =3D 20GB extra memory now being required just for
-this book-keeping is a bit hard to swallow. Do you know what's the
-existing memory footprint of the xarrays? Were they large anyway
-(we're not actually adding more memory), or is the 2MB entirely new?
-
-If it's entirely new, I think we may need to resolve that somehow. One
-option is implement a resizeable array... IDK if that would be more
-efficient, especially since we need to lock it in the
-tcp_recvmsg_dmabuf and in the setsockopt.
-
-Another option is to track the userrefs per-binding, not per socket.
-If we do that, we can't free user refs the user leaves behind when
-they close the socket (or crash). We can only clear refs on dmabuf
-unbind. We have to trust the user to do the right thing. I'm finding
-it hard to verify that our current userspace is careful about not
-leaving refs behind. We'd have to run thorough tests and stuff against
-your series.
-
---
-Thanks,
-Mina
+Best regards,
+Krzysztof
 
