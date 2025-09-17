@@ -1,87 +1,53 @@
-Return-Path: <linux-kernel+bounces-820093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EE0B7F47B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8307BB7CC35
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CEA3520CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D86CD1C04938
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A022529B8D9;
-	Wed, 17 Sep 2025 07:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bHrS4tJg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548A72737E8
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD80A303CBE;
+	Wed, 17 Sep 2025 07:21:22 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980A3303A23;
+	Wed, 17 Sep 2025 07:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758092584; cv=none; b=YBufsOAKSg5uUoZ9R8HmhTOWBmWLmW+Pk80gID+YU32uNlyzVWV+q1j9VUS79pGo57mrOlaOglhiLUwjLJebxWJBnGfdJN2HutcF2auakS3aP7N4K3HNqQeJkhPglp0ycRto4AwSx5ATWH4b5psKxRW6fp+WN7Pm/g53X89o9Ts=
+	t=1758093682; cv=none; b=WiG1B58nZTybzHE55PgFCR5HKYCX0cIUBkR7VuB5xdRUm2jtrfzWp6GjPd3/8+gb5raQwOi3plM/m2D7n17408KUm5WfQZxJXcGiuHd1fLiwVjwxgyThlnInlw3CZ02dgTxGuovzOpdpWSaC4kFFVsmy1ZKEr8RfvMxY703VZG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758092584; c=relaxed/simple;
-	bh=ko/99fPEHJQwgLb5nCPWVD8uy5wLTxH5KAinDw/smNk=;
+	s=arc-20240116; t=1758093682; c=relaxed/simple;
+	bh=vclbm78W33VZdHNBihtes8tEpFczMHG4sPe/5s+9vgs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kgy8kzDPp9xR+7DJPMx/4sRVhyPLbvybDsfx4s2bvT/ajOGrHAtzaF2PB2TqxkmFlo2luOWtKBKusec6n2RJiC1u1rmxHp2GbdDGcoG5E+f5ncwecL/6O2rCOEBZf2Io/ZTEjsSMa6SNz0J7DWVIOhhUNsMgreH4n/mypWYn5b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bHrS4tJg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758092582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nawTqrlEeqSv7zVujc+JzfalbuSXfxtcl1SSEsQficc=;
-	b=bHrS4tJg3eEGBnSjEfnyVVKvW5Uewo43q6ZB93u/rQzfCjO0uJcVphHnZ1fN1Gdx/DRVpx
-	4n6neFiilnrIetvNGjE6lIO8KBE/Ivgn1sh4kbVVWJ0akPt941/t23nan0dDjZImiwYRMX
-	WDAFNbxpqR9p6kt85f1xpiUrzAVnhWE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-331-2NJYS_OdNKq14XOUxrgm6A-1; Wed, 17 Sep 2025 03:03:00 -0400
-X-MC-Unique: 2NJYS_OdNKq14XOUxrgm6A-1
-X-Mimecast-MFC-AGG-ID: 2NJYS_OdNKq14XOUxrgm6A_1758092579
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45de27bf706so35424965e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:03:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758092579; x=1758697379;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nawTqrlEeqSv7zVujc+JzfalbuSXfxtcl1SSEsQficc=;
-        b=W4kD9eXg0BTfU1mBgTeH5mqYrqy3Mai1uefowUUQmxj7Bneuk7tR0VZA+VWdiT42YL
-         jWkUkoQnVuay4cajftC+aDqzNhEgbHxClLYTn7XubeB/RcK2iPZmMERRci3TX3a+Eyns
-         eGluTU91V6Z/ZbHPdeAw3xpHx0icCmCJcAtTJ0iJ36DjsSYCQeOiWbROxnqodlaXYabe
-         uK7IC50nuvaRVSuvS8usw6iExHFnPBbDBjgA4FVjniXBVRnJPsc9ZVrTaY/OapX4MuBc
-         cObTGNegAGd53A3lVgPWGoa0TAWmD91Tqo9yRhAYU7r9kI4xTsWes618+mD4e4Sgyz/l
-         8p4A==
-X-Forwarded-Encrypted: i=1; AJvYcCW0Qn7WFtvGeVcSNQFkVruuokvngEDqYUQBn9/kbVBtsHDdod10dYHrUyBOyvYtF1OPUDAOy+yEfSOwSxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUUDWLeN7Tw4sgxbuP9acZHpxkU/aZiOn5qRi/IOUPEDrzfRAZ
-	Ee+3XnbkyZeKyAXogSLXFL2z+9a4AwRv5xZzaL8ZySlGn5FjlQnz+umpprDmCuMU3m/hktzABEm
-	rRKSxwhQ4dzW7Rr7iUeV6i4tWthE7gBqc1sU9Jf8y0NzV1npDDzYmuweEXH/kDJmy+w==
-X-Gm-Gg: ASbGncvFDXxVMupvPIMB8Xd3lUeviPvxLAkGUNzJhVIrGz3GpXjbsqf79Cg6qpJy1wb
-	rWVTHdlTHgqjTJ1t2v15CvvtQcL4ha61bSy4S4y32uoV/yp8dJxXzAU8V1xwrh3Kzkm5fESTci6
-	X9n0/xRo/UJnB9CacEvpTreAddE3f/AUkyvlM5AODD8upVGep+oeqMRSAy/GrV0bRvbrdUyLbzD
-	0Gnwj6fuWuRAva0uvL53WWU0BNM2X/OVNlPx9A+Cqd0AVsAQim/tfO6U+Kk9H9G0OQyBDmkljqP
-	mlrTlPLFrF0WBFLFQjFF/nRBUJiUmkwONX0dpTY+rD3kvcXv9x3MhlEW4zLq6hlBp07yS9yyJzj
-	ovfsCsVs2JmTa56QMs4la8uX1liApGH43hmkGuAfrRYMLU5tPDrOgDRL53D8dmu+o
-X-Received: by 2002:a05:600c:1e88:b0:45c:b56c:4183 with SMTP id 5b1f17b1804b1-46205adf753mr8270875e9.18.1758092579153;
-        Wed, 17 Sep 2025 00:02:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCHXqLZgubOsFpSEryXy6qEwTu5TBAMNWT2kDUAPReOb9ESdWMxgF+theDpncx+aIUqSILpQ==
-X-Received: by 2002:a05:600c:1e88:b0:45c:b56c:4183 with SMTP id 5b1f17b1804b1-46205adf753mr8270405e9.18.1758092578660;
-        Wed, 17 Sep 2025 00:02:58 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46137a252fasm23338645e9.7.2025.09.17.00.02.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 00:02:58 -0700 (PDT)
-Message-ID: <8c3188da-7078-4099-973a-1d0d74db2720@redhat.com>
-Date: Wed, 17 Sep 2025 09:02:55 +0200
+	 In-Reply-To:Content-Type; b=YGYX/w6frd/iIndPJ7mmY8QV+5kBC0Ojdm6ozNSWhOBpzRsJDEBBihnMLSagEXxPzwkAX8D8nRwsD2YrBaEuTAGte/ZJq+YsGkyzVE42GRnPbYLkWngpNNFNdsWho6+ccKOzcHmeCF+ckRqvgkR3FPUziinL1yC/W2xCKiu7fy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cRV8y5cxKz9sy2;
+	Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id JcCnYpbaHND0; Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cRV8y4BN2z9sy1;
+	Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5AF7A8B766;
+	Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id H1xM81UEGxD0; Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D8B68B763;
+	Wed, 17 Sep 2025 09:03:12 +0200 (CEST)
+Message-ID: <92ccb5be-efea-4dbf-ac87-a3415b0ed3dc@csgroup.eu>
+Date: Wed, 17 Sep 2025 09:03:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,108 +55,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
- HugeTLB pages
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- Kyle Meyer <kyle.meyer@hpe.com>, akpm@linux-foundation.org, corbet@lwn.net,
- linmiaohe@huawei.com, shuah@kernel.org, tony.luck@intel.com,
- jane.chu@oracle.com, jiaqiyan@google.com
-Cc: Liam.Howlett@oracle.com, bp@alien8.de, hannes@cmpxchg.org, jack@suse.cz,
- joel.granados@kernel.org, laoar.shao@gmail.com, lorenzo.stoakes@oracle.com,
- mclapinski@google.com, mhocko@suse.com, nao.horiguchi@gmail.com,
- osalvador@suse.de, rafael.j.wysocki@intel.com, rppt@kernel.org,
- russ.anderson@hpe.com, shawn.fan@intel.com, surenb@google.com,
- vbabka@suse.cz, linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org
-References: <aMiu_Uku6Y5ZbuhM@hpe.com>
- <a99eb11f-a7ac-48a3-a671-c5f0f6b5b491@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <a99eb11f-a7ac-48a3-a671-c5f0f6b5b491@arm.com>
+Subject: Re: [PATCH net-next v12 15/18] net: phy: qca807x: Support SFP through
+ phy_port interface
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+References: <20250909152617.119554-1-maxime.chevallier@bootlin.com>
+ <20250909152617.119554-16-maxime.chevallier@bootlin.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250909152617.119554-16-maxime.chevallier@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
->> +
->> +	0 - Enable soft offline
->> +	1 - Disable soft offline for HugeTLB pages
->> +
->> +Supported values::
->> +
->> +	0 - Soft offline is disabled
->> +	1 - Soft offline is enabled
->> +	3 - Soft offline is enabled (disabled for HugeTLB pages)
+
+Le 09/09/2025 à 17:26, Maxime Chevallier a écrit :
+> QCA8072/8075 may be used as combo-port PHYs, with Serdes (100/1000BaseX)
+>   and Copper interfaces. The PHY has the ability to read the configuration
+> it's in.  If the configuration indicates the PHY is in combo mode, allow
+> registering up to 2 ports.
 > 
-> This looks very adhoc even though existing behavior is preserved.
+> Register a dedicated set of port ops to handle the serdes port, and rely
+> on generic phylib SFP support for the SFP handling.
 > 
-> - Are HugeTLB pages the only page types to be considered ?
-> - How the remaining bits here are going to be used later ?
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+>   drivers/net/phy/qcom/qca807x.c | 73 ++++++++++++++--------------------
+>   1 file changed, 30 insertions(+), 43 deletions(-)
 > 
-
-What I proposed (that could be better documented here) is that all other 
-bits except the first one will be a disable mask when bit 0 is set.
-
-2 - ... but yet disabled for hugetlb
-4 - ... but yet disabled for $WHATEVER
-8 - ... but yet disabled for $WHATEVERELSE
-
-> Also without a bit-wise usage roadmap, is not changing a procfs
-> interface (ABI) bit problematic ?
-
-For now we failed setting it to values that are neither 0 or 1, IIUC 
-set_enable_soft_offline() correctly?
-
-So there should not be any problem, or which scenario do you have in mind?
-
-
--- 
-Cheers
-
-David / dhildenb
+> diff --git a/drivers/net/phy/qcom/qca807x.c b/drivers/net/phy/qcom/qca807x.c
+> index 070dc8c00835..d8f1ce5a7128 100644
+> --- a/drivers/net/phy/qcom/qca807x.c
+> +++ b/drivers/net/phy/qcom/qca807x.c
+> @@ -13,7 +13,7 @@
+>   #include <linux/phy.h>
+>   #include <linux/bitfield.h>
+>   #include <linux/gpio/driver.h>
+> -#include <linux/sfp.h>
+> +#include <linux/phy_port.h>
+>   
+>   #include "../phylib.h"
+>   #include "qcom.h"
+> @@ -643,68 +643,54 @@ static int qca807x_phy_package_config_init_once(struct phy_device *phydev)
+>   	return ret;
+>   }
+>   
+> -static int qca807x_sfp_insert(void *upstream, const struct sfp_eeprom_id *id)
+> +static int qca807x_configure_serdes(struct phy_port *port, bool enable,
+> +				    phy_interface_t interface)
+>   {
+> -	struct phy_device *phydev = upstream;
+> -	__ETHTOOL_DECLARE_LINK_MODE_MASK(support) = { 0, };
+> -	phy_interface_t iface;
+> +	struct phy_device *phydev = port_phydev(port);
+>   	int ret;
+> -	DECLARE_PHY_INTERFACE_MASK(interfaces);
+>   
+> -	sfp_parse_support(phydev->sfp_bus, id, support, interfaces);
+> -	iface = sfp_select_interface(phydev->sfp_bus, support);
+> +	if (!phydev)
+> +		return -ENODEV;
+>   
+> -	dev_info(&phydev->mdio.dev, "%s SFP module inserted\n", phy_modes(iface));
+> -
+> -	switch (iface) {
+> -	case PHY_INTERFACE_MODE_1000BASEX:
+> -	case PHY_INTERFACE_MODE_100BASEX:
+> +	if (enable) {
+>   		/* Set PHY mode to PSGMII combo (1/4 copper + combo ports) mode */
+>   		ret = phy_modify(phydev,
+>   				 QCA807X_CHIP_CONFIGURATION,
+>   				 QCA807X_CHIP_CONFIGURATION_MODE_CFG_MASK,
+>   				 QCA807X_CHIP_CONFIGURATION_MODE_PSGMII_FIBER);
+> +		if (ret)
+> +			return ret;
+>   		/* Enable fiber mode autodection (1000Base-X or 100Base-FX) */
+>   		ret = phy_set_bits_mmd(phydev,
+>   				       MDIO_MMD_AN,
+>   				       QCA807X_MMD7_FIBER_MODE_AUTO_DETECTION,
+>   				       QCA807X_MMD7_FIBER_MODE_AUTO_DETECTION_EN);
+> -		/* Select fiber page */
+> -		ret = phy_clear_bits(phydev,
+> -				     QCA807X_CHIP_CONFIGURATION,
+> -				     QCA807X_BT_BX_REG_SEL);
+> -
+> -		phydev->port = PORT_FIBRE;
+> -		break;
+> -	default:
+> -		dev_err(&phydev->mdio.dev, "Incompatible SFP module inserted\n");
+> -		return -EINVAL;
+> +		if (ret)
+> +			return ret;
+>   	}
+>   
+> -	return ret;
+> +	phydev->port = enable ? PORT_FIBRE : PORT_TP;
+> +
+> +	return phy_modify(phydev, QCA807X_CHIP_CONFIGURATION,
+> +			  QCA807X_BT_BX_REG_SEL,
+> +			  enable ? 0 : QCA807X_BT_BX_REG_SEL);
+>   }
+>   
+> -static void qca807x_sfp_remove(void *upstream)
+> +static const struct phy_port_ops qca807x_serdes_port_ops = {
+> +	.configure_mii = qca807x_configure_serdes,
+> +};
+> +
+> +static int qca807x_attach_mii_port(struct phy_device *phydev,
+> +				   struct phy_port *port)
+>   {
+> -	struct phy_device *phydev = upstream;
+> +	__set_bit(PHY_INTERFACE_MODE_1000BASEX, port->interfaces);
+> +	__set_bit(PHY_INTERFACE_MODE_100BASEX, port->interfaces);
+>   
+> -	/* Select copper page */
+> -	phy_set_bits(phydev,
+> -		     QCA807X_CHIP_CONFIGURATION,
+> -		     QCA807X_BT_BX_REG_SEL);
+> +	port->ops = &qca807x_serdes_port_ops;
+>   
+> -	phydev->port = PORT_TP;
+> +	return 0;
+>   }
+>   
+> -static const struct sfp_upstream_ops qca807x_sfp_ops = {
+> -	.attach = phy_sfp_attach,
+> -	.detach = phy_sfp_detach,
+> -	.module_insert = qca807x_sfp_insert,
+> -	.module_remove = qca807x_sfp_remove,
+> -	.connect_phy = phy_sfp_connect_phy,
+> -	.disconnect_phy = phy_sfp_disconnect_phy,
+> -};
+> -
+>   static int qca807x_probe(struct phy_device *phydev)
+>   {
+>   	struct device_node *node = phydev->mdio.dev.of_node;
+> @@ -745,9 +731,8 @@ static int qca807x_probe(struct phy_device *phydev)
+>   
+>   	/* Attach SFP bus on combo port*/
+>   	if (phy_read(phydev, QCA807X_CHIP_CONFIGURATION)) {
+> -		ret = phy_sfp_probe(phydev, &qca807x_sfp_ops);
+> -		if (ret)
+> -			return ret;
+> +		phydev->max_n_ports = 2;
+> +
+>   		linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported);
+>   		linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->advertising);
+>   	}
+> @@ -825,6 +810,7 @@ static struct phy_driver qca807x_drivers[] = {
+>   		.get_phy_stats		= qca807x_get_phy_stats,
+>   		.set_wol		= at8031_set_wol,
+>   		.get_wol		= at803x_get_wol,
+> +		.attach_mii_port	= qca807x_attach_mii_port,
+>   	},
+>   	{
+>   		PHY_ID_MATCH_EXACT(PHY_ID_QCA8075),
+> @@ -852,6 +838,7 @@ static struct phy_driver qca807x_drivers[] = {
+>   		.get_phy_stats		= qca807x_get_phy_stats,
+>   		.set_wol		= at8031_set_wol,
+>   		.get_wol		= at803x_get_wol,
+> +		.attach_mii_port	= qca807x_attach_mii_port,
+>   	},
+>   };
+>   module_phy_driver(qca807x_drivers);
 
 
