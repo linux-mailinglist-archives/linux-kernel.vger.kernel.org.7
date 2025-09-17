@@ -1,141 +1,89 @@
-Return-Path: <linux-kernel+bounces-820396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA26B7D6CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBCFB7D713
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F15A71881A1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:55:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9E867B0173
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FF234575D;
-	Wed, 17 Sep 2025 09:54:22 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294FD34AAEE;
+	Wed, 17 Sep 2025 09:55:34 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9083534AB1D;
-	Wed, 17 Sep 2025 09:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C8034AB00;
+	Wed, 17 Sep 2025 09:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102861; cv=none; b=D5lqJ20POxI2rBxq7R5TKojBmNesq1xu8Pawjfp7M8klaCHYJwzyoOTt6qDeA8OXwujaIqGr2zpBZcb4uN6tpnyU52mAGmjwz0bmHKjRtZp0luJJ8WAOy6jo0Ph82r1E/gcV+LGhYeCEoMOd2VrlxgwLftfms58QgW4dDTnj7Ug=
+	t=1758102933; cv=none; b=nEPLEqzDbWnEZC09x3PxTFoaUiKf5uIQjAQw03bTvMoHvjfnlEWXmE5hof5SysZI2CC2izR+DgxJFqr9C41aNCXhR7s+gvZayr0g5mcO15fVAv3y/Xk92oC6hhfdBXcctTqqNZuApIpPRVVt8TRDRBtkhSUQCq766C2Fq74cLp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102861; c=relaxed/simple;
-	bh=McqcASJsTzPznvt5YCM25psP2hkfHoNU+DH9+PrhYWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kfT9HKCeLB/IKD9TqHt1sJ/zWSuFulY1bkJiOVfneYBitu8tnPup+2Wue5kQ3g9pTVqiYsBqqnzhS7JyF5yruolOr7b8/3JbGOwzsZTMHslCvpdLTH1OgdjlUz7FJzrUoZlaLXw2xjg03Bl23LA59keG0YCZAeXS6wuDtvnTsw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cRYrz33m9zPsc3;
-	Wed, 17 Sep 2025 17:49:39 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1182A18007F;
-	Wed, 17 Sep 2025 17:54:15 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Sep 2025 17:54:14 +0800
-Received: from [10.67.120.171] (10.67.120.171) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Sep 2025 17:54:14 +0800
-Message-ID: <ace00212-b02b-4407-98ab-5aff3e0fad77@huawei.com>
-Date: Wed, 17 Sep 2025 17:54:13 +0800
+	s=arc-20240116; t=1758102933; c=relaxed/simple;
+	bh=1ZcejynwqKIf3ztV1ioOpuoDxNtc/nW44Mr7lEuPChg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jC6AV3RvLnTd+kVcSp26jrhTLqjNpCfR53xCf3RmQ/iJdH2Xb3vjWaQAsDshbVsPi17oCIxhEIsD3wYa5TBcelvGvYRootf/9Va+x2VAE35IblJXpseYRkioqw3iYK5y1+LEssIGsuy1+s3Xb8SwnYBzKchxxmyFncmSdDmKrWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
+CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Fushuai Wang <wangfushuai@baidu.com>
+Subject: [PATCH] perf trace: Fix IS_ERR() vs NULL check bug
+Date: Wed, 17 Sep 2025 17:54:22 +0800
+Message-ID: <20250917095422.60923-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] uacce: fix isolate sysfs check condition
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <zhangfei.gao@linaro.org>, <wangzhou1@hisilicon.com>,
-	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <fanghao11@huawei.com>, <shenyang39@huawei.com>,
-	<liulongfang@huawei.com>, <qianweili@huawei.com>
-References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
- <20250916144811.1799687-3-huangchenghai2@huawei.com>
- <2025091633-antacid-gluten-0a61@gregkh>
-From: huangchenghai <huangchenghai2@huawei.com>
-Content-Language: en-US
-In-Reply-To: <2025091633-antacid-gluten-0a61@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemq200001.china.huawei.com (7.202.195.16)
+Content-Type: text/plain
+X-ClientProxiedBy: bjhj-exc7.internal.baidu.com (172.31.3.17) To
+ bjkjy-exc17.internal.baidu.com (172.31.50.13)
+X-FEAS-Client-IP: 172.31.50.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
+The alloc_syscall_stats() function always returns an error pointer
+(ERR_PTR) on failure. So replace NULL check with IS_ERR() check
+after calling alloc_syscall_stats() function.
 
-On Mon, Sep 16, 2025 at 11:15 PM +0800, Greg KH wrote:
-> On Tue, Sep 16, 2025 at 10:48:09PM +0800, Chenghai Huang wrote:
->> The uacce supports device isolation feature. If the driver
->> implements the isolate_err_threshold_read and
->> isolate_err_threshold_write callbacks, the uacce will create sysfs
->> files. Users can read and configure isolation policies through
->> sysfs. Currently, if either isolate_err_threshold_read or
->> isolate_err_threshold_write callback exists, sysfs files are
->> created.
->>
->> However, accessing a non-existent callback may cause a system panic.
-> Where is the callback happening that fails?  Shouldn't that be checked
-> instead of doing this change?
->
->> Therefore, sysfs files are only created when both
->> isolate_err_threshold_read and isolate_err_threshold_write are
->> present.
-> What if a device only has 1?  That should still work properly?
->
-> And why not just create the file if it is going to be used, that is the
-> real solution here.
->
-> thanks,
->
-> greg k-h
-Thank you for your feedback.I agree that the check should be done in the 
-corresponding `isolate_strategy_show()` and `isolate_strategy_store()` 
-functions.
+Fixes: fc00897c8a3f ("perf trace: Add --summary-mode option")
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+---
+ tools/perf/builtin-trace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-How about the updated:
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index fe737b3ac6e6..25c41b89f8ab 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -4440,7 +4440,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 
+ 	if (trace->summary_mode == SUMMARY__BY_TOTAL && !trace->summary_bpf) {
+ 		trace->syscall_stats = alloc_syscall_stats();
+-		if (trace->syscall_stats == NULL)
++		if (IS_ERR(trace->syscall_stats))
+ 			goto out_delete_evlist;
+ 	}
+ 
+@@ -4748,7 +4748,7 @@ static int trace__replay(struct trace *trace)
+ 
+ 	if (trace->summary_mode == SUMMARY__BY_TOTAL) {
+ 		trace->syscall_stats = alloc_syscall_stats();
+-		if (trace->syscall_stats == NULL)
++		if (IS_ERR(trace->syscall_stats))
+ 			goto out;
+ 	}
+ 
+-- 
+2.36.1
 
-@@ -402,6 +402,9 @@ static ssize_t isolate_strategy_show(struct device 
-*dev, struct device_attribute
-         struct uacce_device *uacce = to_uacce_device(dev);
-         u32 val;
-
-+       if (!uacce->ops->isolate_err_threshold_read)
-+               return -ENOENT;
-+
-         val = uacce->ops->isolate_err_threshold_read(uacce);
-
-         return sysfs_emit(buf, "%u\n", val);
-@@ -414,6 +417,9 @@ static ssize_t isolate_strategy_store(struct device 
-*dev, struct device_attribut
-         unsigned long val;
-         int ret;
-
-+       if (!uacce->ops->isolate_err_threshold_write)
-+               return -ENOENT;
-+
-         if (kstrtoul(buf, 0, &val) < 0)
-                 return -EINVAL;
-
-@@ -460,9 +466,7 @@ static umode_t uacce_dev_is_visible(struct kobject 
-*kobj,
-             (!uacce->qf_pg_num[UACCE_QFRT_DUS])))
-                 return 0;
-
--       if (attr == &dev_attr_isolate_strategy.attr &&
--           (!uacce->ops->isolate_err_threshold_read ||
--            !uacce->ops->isolate_err_threshold_write))
-+       if (attr == &dev_attr_isolate_strategy.attr)
-                 return 0;
-
-This way, the sysfs files will only be created if they are going to be 
-used, and the checks are done at the appropriate places.
-
-Thanks,
-Chenghai
 
