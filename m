@@ -1,154 +1,102 @@
-Return-Path: <linux-kernel+bounces-821310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9FAB80EF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:20:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80008B80F15
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F1D7ADC33
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE243A5937
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52BA34BA28;
-	Wed, 17 Sep 2025 16:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFECB2874E0;
+	Wed, 17 Sep 2025 16:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="NHGDOZ+i"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWb2Nks2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8A534BA27
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0258B34BA34;
+	Wed, 17 Sep 2025 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758125961; cv=none; b=jDcyDn4jA90YU+GFLFJrBnBMDertAlpQ3Kec1dU9CAL4hFxXUvVq6mhsB4mZV1PCSRyoUwM2EHhR1Is3/gb/kjklGCfRb6zFtTS4FJ2i2Q0PportYi6grVq+8+WME+57bDN4yxXliGyNVkpBhxE/4Ed01oAEOCnlw6YgVBUHiq8=
+	t=1758125976; cv=none; b=q6pKgZBz68605YXVQDVFRzOtS55izyh+MIHfEd2Hxb92GVWD6QLy2Zm8/ymFPqAjQE9b73LYYglMnBtdCxTV9r60IdGb2faDTEdsB+q99B7CvpjQLnpB/0+JZMqo68VVT7Sv2n19FCg34SlY96vHAh4FQi4iaegcdXmsb6ktdwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758125961; c=relaxed/simple;
-	bh=fv4NXiGEDThBZAu27ctGOKRFZI31MskkS+WI85Qapqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qGN9pRJz5/H8NF7naxlezgElSQvaAfRYsXKDo7rIyabJ6pvnQl/TXtxyO76fcREiHMu90H9hybe0YElu/ty1/+EKQbmfbQgCqPJBgAu7tjwIJrTRyFaqFa6PN1ST6b3oCx8IFzUIQVqFRjv3NZqXi4pneeGJ8a73ZXWQX5CRxyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=NHGDOZ+i; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b7abed161bso35262221cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:19:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1758125958; x=1758730758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sbkMBeVkd2QsX19NXxvq/zinXbb8IJRh0dyhEXqRclg=;
-        b=NHGDOZ+i3FARUc04jONtESFOMeIFO78n16OEcpl4xi/th13rPexz+GSsS4ZrwHMt6J
-         Bft5ExP+0RnnUpCr/oodwakuNI8FEZkggeoUJuaXlvjcqS0eRRC4I3yfHcammqYFnG+d
-         2a1N2tlv1jK8XlOduyNiosBPRChAgFMn0k5nNhQNqoZWtm8Aa6hqD+3OCETuJXg9ZrwZ
-         Zsf42ltck8qJWmikDVXNebAMSdqp6hucji+XPYWlamliIw2HynezI9a60yRpYOKi1WQr
-         iQrk5DV2mxKWoKdIvvMJS60S6adh8KWG7Agp1FDbqQCN1T6IoZQsQbpyoW793prRiMy4
-         NVSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758125958; x=1758730758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sbkMBeVkd2QsX19NXxvq/zinXbb8IJRh0dyhEXqRclg=;
-        b=B/Hk8uDEaN6NGAUhqQLIe6pI/m1l/S3f5v4tJN0qE1+8MBqrCecRrqHHS7lnqsIkvx
-         2tStXM8KOcFIIODpsSscgdUvTfOc+z+klBgX5RD+nRf35yhvlErtV2SD4IhlLbLx8SkP
-         C6wM488gMjx/VJANH80OXf6AHMOEzF7GCrxySnlYSGUBYZrs/RaFKi31ac7NaTjEShwr
-         ci2U9C5Tfg0UUC+5w0WE8bPyEJY/hVIAeERXyot6zctJPFLWUl3/Pm8hETK9EShXJ/zW
-         /czE08cfmstNWDotx1/9HZiFiZQiyYDSuTvClVEERAG1iNsa4XzStwSDQLx9E7Jh09mO
-         m5oA==
-X-Forwarded-Encrypted: i=1; AJvYcCXU8HNvUISVxr+5nUOBi0EKx/91f64UqEf7YfZ8KfdM1DimoCsbprgvSQ57VNVXdj+wAV/zv5P+kl9GsVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrNm17UCUOc0eLYpbLI8fubuZznJESE4qr3HgTxnGrF8lGdAWw
-	GUzS7Ua8NB+36elIhSxtiJNB1ftzd3W3HQh/5zGL+TNB1kVEH0aPSRphkPJKms+l4b2OhApUKto
-	UC1ymApnL5+WyWk6CdWWhuCCJiTuqkAV4S81iomhVUA==
-X-Gm-Gg: ASbGnct2hiSunfqwDsitiTdxhq6Xeqhk7tFVMIqyyhV21jdizH7psCl8sIuKm22BRlz
-	ivpYSjGpe7thEoTNHe48OxhZ5DSIkqtGEtd1FFHxeocptAMoOg3seIxwNVp5YrQ8UVRAlkOn28R
-	g9k3Y06THOsO7sNPiXu9KAR6Y5aXUiC89h5C63MupkAZkXvpS6jAyH+cCInNQoz8SBrxtlWAjh5
-	dnw
-X-Google-Smtp-Source: AGHT+IGRAvd1PnnWvQJ8F4H+1eu57qvinrMS4TrUKO+pmpvMdhYGbF64WQPsfAaGR7+V69bkpqWp7J6cB8kByry08wM=
-X-Received: by 2002:a05:622a:48d:b0:4b7:a44f:5263 with SMTP id
- d75a77b69052e-4ba6cd712ccmr33213531cf.71.1758125958222; Wed, 17 Sep 2025
- 09:19:18 -0700 (PDT)
+	s=arc-20240116; t=1758125976; c=relaxed/simple;
+	bh=KfbeK80H5Y9LffAIOXluY2vfgoEGJRjwY72RgtAxAT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jqtd0DEEblA3uJZdnBynI0BbWsHjJM3m1DvxM0QcrvXBV1t1+QXG/841LqhQUCfbn5WFC8jNeATenFzwoFztvymhSQsUoqpoasJUDxAagel1nAZRsq+rH38zgW1xWg5A8cdrPttt1zKRjrA/h4qMpUkUI4w821vAKyCyHj32KK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWb2Nks2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F40C4CEE7;
+	Wed, 17 Sep 2025 16:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758125975;
+	bh=KfbeK80H5Y9LffAIOXluY2vfgoEGJRjwY72RgtAxAT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aWb2Nks2coYtIafEU2uyaJpd1scrX/JVLeYBEygX6FHTySf5AH9stfpZ00LqGyCgi
+	 KmcoccWAGSZj7Kkan+ohlqjUFYSv5fI78MujSSd/JuIYas8CudQoj6gtYLa9CsGvTr
+	 JFhKZAwSeqd1Wh79kHmyB2JplqxOc//XBRfxnFBQi/6zCrRhDvyJ8h9jCcehHl+dLR
+	 XYupBBeeozaq/t+yGj6i0nowDraIL4DQjPnhPK9hCPHB2gJlmRgl8gjFBWRkEnNbiH
+	 EnRSGQKOTIXePC9+rS1O0uW2jVBKmcRAFuuFT+RVBUYoQ/g67/o5kPwsoGOGYERtjR
+	 JJ81Kw81nCVVQ==
+Date: Wed, 17 Sep 2025 17:19:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v6 0/9] vsock: add namespace support to
+ vhost-vsock
+Message-ID: <20250917161928.GR394836@horms.kernel.org>
+References: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917025019.1585041-1-jasonmiu@google.com> <20250917025019.1585041-2-jasonmiu@google.com>
- <20250917122158.GC1086830@nvidia.com>
-In-Reply-To: <20250917122158.GC1086830@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 17 Sep 2025 12:18:39 -0400
-X-Gm-Features: AS18NWDMazE060QNWHKjDg0IshqlUPi2ez4c84o8JlbYF6kbzA9fUlhLDhAngT8
-Message-ID: <CA+CK2bBbSSyCDAAgThDSSwH0WdOeHz-eVgB-1bdiwsDtTSE5pg@mail.gmail.com>
-Subject: Re: [RFC v1 1/4] kho: Introduce KHO page table data structures
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Jason Miu <jasonmiu@google.com>, Alexander Graf <graf@amazon.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Changyuan Lyu <changyuanl@google.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Joel Granados <joel.granados@kernel.org>, 
-	Marcos Paulo de Souza <mpdesouza@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Mike Rapoport <rppt@kernel.org>, Petr Mladek <pmladek@suse.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Steven Chen <chenste@linux.microsoft.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, kexec@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com>
 
-On Wed, Sep 17, 2025 at 8:22=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Tue, Sep 16, 2025 at 07:50:16PM -0700, Jason Miu wrote:
-> > + * kho_order_table
-> > + * +-------------------------------+--------------------+
-> > + * | 0 order| 1 order| 2 order ... | HUGETLB_PAGE_ORDER |
-> > + * ++------------------------------+--------------------+
-> > + *  |
-> > + *  |
-> > + *  v
-> > + * ++------+
-> > + * |  Lv6  | kho_page_table
-> > + * ++------+
->
-> I seem to remember suggesting this could be simplified without the
-> special case 7h level table table for order.
->
-> Encode the phys address as:
->
-> (order << 51) | (phys >> (PAGE_SHIFT + order))
+On Tue, Sep 16, 2025 at 04:43:44PM -0700, Bobby Eshleman wrote:
 
-Why 51 and not 52, this limits to 63bit address space, is it not?
+...
 
->
-> Then you don't need another table for order, the 64 bits encode
-> everything consistently. Order can't be > 52 so it is
-> only 6 bits, meaning the result fits into at most 57 bits.
->
+> base-commit: 949ddfb774fe527cebfa3f769804344940f7ed2e
 
-Hi Jason,
+Hi Bobby,
 
-Nice packing. That's a really clever bit-packing scheme to create a
-unified address space.
+This series does not seem to compile when applied to the commit above.
+Likewise when applied to current net-next (which is now slightly newer).
 
-I like the idea, but I'm trying to find the benefits compared to the
-current per-order tree approach.
+hyperv_transport.c: In function ‘hvs_open_connection’:
+hyperv_transport.c:316:14: error: too few arguments to function ‘vsock_find_bound_socket’
+  316 |         sk = vsock_find_bound_socket(&addr, vsock_global_dummy_net());
+      |              ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from hyperv_transport.c:15:
+/home/horms/projects/linux/linux/include/net/af_vsock.h:218:14: note: declared here
+  218 | struct sock *vsock_find_bound_socket(struct sockaddr_vm *addr, struct net *net,
+      |              ^~~~~~~~~~~~~~~~~~~~~~~
 
-1. Packing adds a slight performance overhead for higher orders. With
-the current approach, preserving higher order pages only requires a
-3/4-level page table. With bit-packing proposal we will always have
-extra loads during preserve/unpreserve operations.
-
-2. It also adds insignificant memory overhead, as extra levels will
-have a couple extra pages.
-
-3. It slightly complicates the logic in the new kernel. Instead of
-simply iterating a known tree for a specific order, the boot-time
-walker would need to reconstruct the per-order subtrees, and walk
-them.
-
-Perhaps I'm missing a key benefit of the unified tree? The current
-approach might not be as elegant as having everything packed into the
-same page table but it seems to be OK to me, and easy to understand.
-
-Pasha
+-- 
+pw-bot: changes-requested
 
