@@ -1,172 +1,219 @@
-Return-Path: <linux-kernel+bounces-820508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C38B7C9E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31193B7CDBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2C9324BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57232A5632
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB68A29BD91;
-	Wed, 17 Sep 2025 10:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="niTkxtcE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7sXTFmdj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vHfdZFUB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ysCFvFtO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AE02C0F6E;
+	Wed, 17 Sep 2025 10:51:32 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6881287515
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48D57464
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758106168; cv=none; b=BHpsBipWMyBgat2hP8W7gur+TOhBHKUnj04Pdjj5JcNbupU0FS17ZippTvU2PX+bzhLBJVaa6fWdnt+OuGXG7jVvPgOJ+gCTqIXOTSziSDONoFZUoTJI54AMbKKzIhoig1c90nv5m8M1hKQ8DkLS1Wqn+4AzrlXgSt1+oZ7gPCk=
+	t=1758106292; cv=none; b=s5wx5tvv1YCuA1qTMPGHMNJyxV1Znbimsr6XPwQrBLA+CNhKGpi1iVJo4YhowSrjqw3R+MS2dnqIpCFG5B/TjWJ2giEXGueqVrv0izFumpLGySyvBo2+m8BWgmT4E8BrS4Q+MlmTZMOFmXWywVSJPnV3kVviT2xh1swYqkAqCBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758106168; c=relaxed/simple;
-	bh=Lv8lsxmw1T40EYS0DvJKScoRYDPLYB5fZTCwKGxV9KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dsQxiZj47smmithZtl29Dj32iNRBK7tW2khhA+xyney5mQMbbZQf/T5TmESqOqG+1A1lDAYLPi51dZH/8Rzss8bf682q/8B26iAapG3BisQNa7kL0E4h2IXFgYH+mJZ/JbOyIc+wO/nfHuhxoVl3d4W0wQXHFPqrSRGOfvhUT5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=niTkxtcE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7sXTFmdj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vHfdZFUB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ysCFvFtO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EFB432225C;
-	Wed, 17 Sep 2025 10:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758106164; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
-	b=niTkxtcEsWHMLusW2uhOMmiQ+Zfat7dgrfB4F9HpeVv6d6//vidrvTnU/aJ4FYqBUF6/31
-	S8xdorf8fnri1Yz4VUshF2jJ8nD3YR9xyA5krXG5aE2bhuBHqd5dn3msDcKISdnCbwA/zG
-	3PnSCfyh+pAV2PK+IzaNWAQWDSAuWLw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758106164;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
-	b=7sXTFmdjfBvPh9vPl+957gltmt72YVjGoLfmTjzZc9/62+QYrp3JFMXUWd+wQo8Bl2PL++
-	hD8DSBFfFKYnHNBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758106163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
-	b=vHfdZFUBkQ+UKwx3ExzaOVaVfdytoF5pIPVJR8dzyBegHfGTA/i4xWB3CXo4LAWANrTple
-	GNzn6QM/qXSIiJuBT1bPSSxDRI13GV/Z0g0hLuxGiGFPI77KlcFQIUxMl4kbDbNuMRySEO
-	GuPcB2gc8dypv5uYz9RaDAFC1IdMfDk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758106163;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
-	b=ysCFvFtOC2J5k6ktL7EscaU0B5pQropJLEepc80lv0no7M6FC6O6ldyLix+zd/a0PHVk/b
-	HHBgqHjVk6P7FDAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66CFE1368D;
-	Wed, 17 Sep 2025 10:49:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 50PgFTCSymh8PQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 10:49:20 +0000
-Date: Wed, 17 Sep 2025 11:49:18 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
-	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
-	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
-	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 05/13] mm/vma: rename __mmap_prepare() function to
- avoid confusion
-Message-ID: <jokgdkyv4ca4sb7nl2wjkzxclhzhaee4p4luwj546tsdbylfei@laplfpugf3of>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <3063484588ffc8a74cca35e1f0c16f6f3d458259.1758031792.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1758106292; c=relaxed/simple;
+	bh=CHubr+gz/8SeH2ipxwdDKf6GGQvYOWnJ694fs9NTuo4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UR5exgfUWBAajzHnrVjer55MG0BTeC8U4ZMxclv998qNvxE2CN453f/f8wZugWKGQuJ0cuVZ46UpZjytPPj+/x1HH3fF2L6JgkBsmvLgg9u3RDI9zbfXsI+5cErj2qgj6nV9a5k6tjS+XV0lUWujGcRkaDPXmU+nSTvc0InnbLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 403277e093b411f0b29709d653e92f7d-20250917
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:a6d723f1-d286-4965-b2a4-2108b27af4c6,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:ae52444b68201e296db1878e51f33df7,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|50,EDM:
+	-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
+	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 403277e093b411f0b29709d653e92f7d-20250917
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <pengyu@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 245116275; Wed, 17 Sep 2025 18:51:22 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id A658EE009009;
+	Wed, 17 Sep 2025 18:51:22 +0800 (CST)
+X-ns-mid: postfix-68CA92AA-57447578
+Received: from [10.42.20.31] (unknown [10.42.20.31])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 6AB64E009008;
+	Wed, 17 Sep 2025 18:51:19 +0800 (CST)
+Message-ID: <31861b75-02ee-495e-b839-15d7510bf7c6@kylinos.cn>
+Date: Wed, 17 Sep 2025 18:51:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3063484588ffc8a74cca35e1f0c16f6f3d458259.1758031792.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[62];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,oracle.com:email,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+User-Agent: Mozilla Thunderbird
+From: pengyu <pengyu@kylinos.cn>
+Subject: Re: [PATCH] locking/qspinlock: use xchg with _mb in slowpath for
+ arm64
+To: Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, boqun.feng@gmail.com, longman@redhat.com,
+ linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+ t.haas@tu-bs.de, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
+ luc.maranget@inria.fr, paulmck@kernel.org, jonas.oberhauser@huaweicloud.com,
+ r.maseli@tu-bs.de, lkmm@lists.linux.dev, stern@rowland.harvard.edu
+References: <20250916033903.3374794-1-pengyu@kylinos.cn>
+ <20250916141032.GJ3245006@noisy.programming.kicks-ass.net>
+ <aMmJlv8JrzyHRCxR@willie-the-truck>
+Content-Language: en-US
+In-Reply-To: <aMmJlv8JrzyHRCxR@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 03:11:51PM +0100, Lorenzo Stoakes wrote:
-> Now we have the f_op->mmap_prepare() hook, having a static function called
-> __mmap_prepare() that has nothing to do with it is confusing, so rename
-> the function to __mmap_setup().
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+On 9/17/25 00:00, Will Deacon wrote:
+> On Tue, Sep 16, 2025 at 04:10:32PM +0200, Peter Zijlstra wrote:
+>> On Tue, Sep 16, 2025 at 11:39:03AM +0800, pengyu wrote:
+>>> From: Yu Peng <pengyu@kylinos.cn>
+>>>
+>>> A hardlock detected on arm64: rq->lock was released, but a CPU
+>>> blocked at mcs_node->locked and timed out.
+>>>
+>>> We found xchg_tail and atomic_try_cmpxchg_relaxed used _relaxed
+>>> versions without memory barriers. Suspected insufficient coherence
+>>> guarantees on some arm64 microarchitectures, potentially leading to
+>>> the following issues occurred:
+>>>
+>>> CPU0:                                           CPU1:
+>>> // Set tail to CPU0
+>>> old =3D xchg_tail(lock, tail);
+>>>
+>>> //CPU0 read tail is itself
+>>> if ((val & _Q_TAIL_MASK) =3D=3D tail)
+>>>                                                  // CPU1 exchanges th=
+e tail
+>>>                                                  old =3D xchg_tail(lo=
+ck, tail)
+>>> //assuming CPU0 not see tail change
+>>> atomic_try_cmpxchg_relaxed(
+>>> 	  &lock->val, &val, _Q_LOCKED_VAL)
+>>> //released without notifying CPU1
+>>> goto release;
+>>>                                                  //hardlock detected
+>>>                                                  arch_mcs_spin_lock_c=
+ontended(
+>>>                                                        &node->locked)
+>>>
+>>> Therefore, xchg_tail and atomic_try_cmpxchg using _mb to replace _rel=
+axed.
+>>
+>> Yeah, no. We do not apply patches based on suspicion. And we most
+>> certainly do not sprinkle #ifdef ARM64 in generic code.
+>=20
+> Absolutely.
+>=20
+>> There is this thread:
+>>
+>>    https://lkml.kernel.org/r/cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-b=
+s.de
+>>
+>> Which is also concerned with xchg_tail(). Reading back, I'm not sure
+>> we've ever heard back from ARM on whether that extra ;si was correct o=
+r
+>> not, Will?
+>=20
+> It's still under discussion with the Arm architects but it was _very_
+> close to concluding last time we met and I wouldn't worry about it for
+> the purposes of this report.
+>=20
+>> Anyway, as Waiman already asked, please state your exact ARM64
+>> microarch.
+>>
+>> Barring the ;si, the above thread suggests that they can prove the cod=
+e
+>> correct with the below change, does that resolve your problem?
+>>
+>> Other than that, I'm going to have to leave this to Will and co.
+>=20
+> I'll take a look but it's light on details.
+>=20
+> Will
 
-I would love to bikeshed on the new name (maybe something more descriptive?),
-but I don't really mind.
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+Yes, this issue occurred on a kunpeng920 96-core machine and only
+affected a small number of systems that had been running for over a
+year.
 
--- 
-Pedro
+Vmcore Analysis:
+=E2=80=A2 Panic triggered by CPU 83 detecting a hard lockup at
+     queued_spin_lock_slowpath+0x1d8/0x320.
+
+=E2=80=A2 Corresponding code:
+     arch_mcs_spin_lock_contended(&node->locked);
+
+=E2=80=A2 The qspinlock involved was the rq lock, which showed a cleared =
+state:
+     crash> rq.lock,cpu ffffad96ff2907c0
+       lock =3D {
+         raw_lock =3D {
+           {
+             val =3D {
+               counter =3D 0
+             },
+             {
+               locked =3D 0 '\000',
+               pending =3D 0 '\000'
+             },
+             {
+               locked_pending =3D 0,
+               tail =3D 0
+             }
+           }
+         }
+       },
+       cpu =3D 50,
+
+=E2=80=A2 CPU 83=E2=80=99s MCS node remained in a locked=3D0 state, with =
+no previous
+node found in the qnodes list.
+     crash> p qnodes:83
+     per_cpu(qnodes, 83) =3D $292 =3D
+      {{
+         mcs =3D {
+           next =3D 0x0,
+           locked =3D 0,
+           count =3D 1
+         }
+       },
+     crash> p qnodes | grep 83
+       [83]: ffffadd6bf7914c0
+     crash> p qnodes:all | grep ffffadd6bf7914c0
+     crash>
+
+=E2=80=A2 Since rq->lock was cleared, no CPU could notify CPU 83.
+
+This issue has occurred multiple times, but the root cause remains
+unclear. We suspect that CPU 83 may have failed to enqueue itself,
+potentially due to a failure in the xchg_tail atomic operation.
+
+It has been noted that the _relaxed version is used in xchx_tail, and we
+are uncertain whether this could lead to visibility issues=E2=80=94for ex=
+ample,
+if CPU 83 modifies lock->tail, but other CPUs fail to observe the
+change.
+
+We are also checking if this is related=EF=BC=9A
+     https://lkml.kernel.org/r/cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs=
+.de
+
+
+
+
 
