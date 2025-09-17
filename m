@@ -1,416 +1,157 @@
-Return-Path: <linux-kernel+bounces-820756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C283AB7F126
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:14:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F1BB7DD29
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8281890DF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:08:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A45097A3D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B36D33C76D;
-	Wed, 17 Sep 2025 13:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270C018FDBD;
+	Wed, 17 Sep 2025 12:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fYSsjdww"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6d3KpTU"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA3433C75C;
-	Wed, 17 Sep 2025 13:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282EE337E8A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758114057; cv=none; b=LlsN/PDsrHANPDe0hxUVhKgOfxvELGpVoM/hU2HPOuM4hLF6vNncvRzA+XbBBV7bqplIpaZ+iSOVfmvTqVspwTag+xulF1K/HgXdMZv2ajXn3k0ciX2UwU7Me6wc6WPi4PEBDopc4uo6mmKm+HfF8q5fi0SGp9c+M85/WxpCLXY=
+	t=1758112496; cv=none; b=kg1T0euqU9CpPIV2Lp+zBmZF7Yp0eKe85nZqt6O6H9xi2jxAcEiaGQxhiGLH9G+1IKE4IZwS0x7kzC8f4CxVRPTvMBme+5eKE1J+VVNMSLvKFAibTjkcX6cVmaRFzgvPNpwAyOSZAW6Fb03TpMsiuiOxn1KfKKoNvac/ZmcAAkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758114057; c=relaxed/simple;
-	bh=bqo8ajwo6tzWDZcYu0cZXQ19QYNj9gExS87H4AoDTtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nRUKPFR0XQY33AL9ml9Gaua8Ez3ytFGS+P7jEq8NVJenuq5bQS4j1rKcKYlrAoARE7u4ggXDO81LZlhmuUK4+rGbJKNh8h2xIt4ChXG8GUL938rmgk0+NfeFi6Pz2IZeEqr6wfmtddPfFLPviIVc1rozW3vk0OlNJ/HKMR9d4Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fYSsjdww; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27785C4CEF7;
-	Wed, 17 Sep 2025 13:00:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758114056;
-	bh=bqo8ajwo6tzWDZcYu0cZXQ19QYNj9gExS87H4AoDTtE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fYSsjdwwusUrj7pI/UnyjxRyUrQUCJpY6gTHQYVVRTX0jc5RLrETOvs+uvxvblebh
-	 BO58u338d51e6KPGE/SIkQHw0ai7LZ/S6OdCn0vPNKFPdsjks0UYQncKp1sFTRUp+g
-	 BcgZ8YXcscCBkd3XPi8wgOg7UEmNNwz+3EHo+qbI=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org
-Subject: [PATCH 6.1 00/78] 6.1.153-rc1 review
-Date: Wed, 17 Sep 2025 14:34:21 +0200
-Message-ID: <20250917123329.576087662@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758112496; c=relaxed/simple;
+	bh=dIHZ2ja5BcqyFYZHTMC9NB4DPw2yeBGuLWIA863z9c0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0edUgYOs1aD4v3zhy9bZiv/OTzFSvKdodh8W19MPRNEcQYGln/Uet+/sjVTgsWd8D0v9w5Y7VQrBq+Y+JeP/LkSNNsWjkSgRjvSj76skQ5+0E2XukByRP4jeTxHMNR+TeWrEtifm0sF6+VTUpNvxbpihTR89aAKouoRceHoafs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6d3KpTU; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so5337499b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758112494; x=1758717294; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=utS8lVVKosLlcozLvz8gzAcyDlCOQkj/lxegrEe9iDQ=;
+        b=E6d3KpTUeJysKM4pzb8m0yv/z2EQ222aW7cv5V9dICRWdW8a5jshxgT/DS1a9x9+g5
+         5rQ6AF//a9cfADYms5s/lVT4MZkfWA4p91SOR0v5MEgr1fo/Eo/GHFkDOMpKWWEfweEU
+         aeYhuvKKVq7aGyTXxu7nGaU8hQ5oY2HGScnbGKSMHVSVirVOzI3iN3dg/c7ttJwocATZ
+         u6gajZ1kKxdRzcI0HAaoSaGnlUwQPAoAwWVdA21N7BxuWLRTnwxZn3i7yNiPon1CSvT/
+         VYP/IJhKcEzHa3lAiK4FUpga9EXIvb4At24JaJ8c7R2WWFztw51qKtgRUQBVSWh9OlLM
+         rMpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758112494; x=1758717294;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=utS8lVVKosLlcozLvz8gzAcyDlCOQkj/lxegrEe9iDQ=;
+        b=qVsnf01nFZEY19XXWIbCbYXJBbGQClyflccN7j3c7I0hx6HWwSC1l1+WXohyanCpyO
+         LuvwfIwwaWgedLzz8JFjpAhjaP733SlD58A8BTdXtL2eO7fvQuqZp2r7LZdlNvBCzG/7
+         Zym1sra+/ITKtNW8LIkG5LIhfN8oj/3oFWdIp45S9kEE24pGn4yf/C64LcjNmQph0tuk
+         NtTzh8rA5NbCce5t/qbBRZOLc8Vl0uBC/A0GrQReL/qJ3TS6Zqsv00T2H6DGdezDKTqy
+         QXw8g9mwaiVzfnOruHRqFpK6QQOJmpH/3BG/0/fPuIkTRdgvDDxAO6Z4Cz6s6Dr+OwLT
+         ljrw==
+X-Gm-Message-State: AOJu0Yw1VDktUuM9xkIE89IjHqF5K0uAqdLpW/x8tJpivev74JyHop9I
+	BWkcy1XpkxPjBzukKQxy8HWCs1SbKw3A6o5ldo7ZJ5gRJY7hf+agUuZv
+X-Gm-Gg: ASbGncu4Hh1+oDqZ3v/BpSA6KPXxaqAZSyOlxQ/FqGdmxZuT6VVVmjJIKRgXi8+pOmk
+	pjohuE/UtgBgOyBw3vROdt20EEYN+vk1KhgV70hPKifEaSGtH1PYC6ffbt0/yM9W0RfTh6WSniM
+	Rquzj7HW6cV6VMIXeUxJkVGRSY3QVPRusDSG6XHe4Mfj3T8XJ8Bhs8LENQTSwdqy8V5kXwi1cNP
+	X2f4K1tFj3s7GCIGxjPaE06a5bH1bnnutiwiCSkmv7zZN5dBHVHobwFpdHwNTvCJ1vee/xKstmI
+	vXkcaKc0weLVTMsVFMvP5Xn6SW4oA27ERZBSKDuwAGy09eRoQyhsCpdLA2228x8y6Xwo4m2+ano
+	J5ppI4YvhTAYJ9VIKePAsFQ==
+X-Google-Smtp-Source: AGHT+IGeKFbSBQzcjeErNPgTvys2M7mfX8aKe2x/3shc2eZK33DqdVGYJdaiODyVtgcaSRi+Kz/18A==
+X-Received: by 2002:a05:6a00:a589:b0:772:553:934b with SMTP id d2e1a72fcca58-77bf9e4b797mr2202682b3a.31.1758112494267;
+        Wed, 17 Sep 2025 05:34:54 -0700 (PDT)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77b794f627esm2565787b3a.53.2025.09.17.05.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 05:34:53 -0700 (PDT)
+Date: Wed, 17 Sep 2025 08:34:51 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v12 8/9] cpumask: Add initialiser CPUMASK_NULL to use
+ cleanup helpers
+Message-ID: <aMqq6zr7_dJveu3o@yury>
+References: <20250915145920.140180-11-gmonaco@redhat.com>
+ <20250915145920.140180-19-gmonaco@redhat.com>
+ <aMg5EzmxG3hG7aJK@yury>
+ <820443ea-56d7-4fd0-9535-b1339e53240c@redhat.com>
+ <aMhcYCCJDFWoxcyw@yury>
+ <aMlJqDjWNyak07LX@localhost.localdomain>
+ <6aeda48661359eedd232c9bb0c337d93c36dae70.camel@redhat.com>
+ <aMqdzQcwvkjl5WNA@yury>
+ <1d15af4ab9f8f63dafbf4810a76eb3d547217596.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.153-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.1.153-rc1
-X-KernelTest-Deadline: 2025-09-19T12:33+00:00
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.1.153 release.
-There are 78 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.153-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.1.153-rc1
-
-Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-    soc: qcom: mdt_loader: Deal with zero e_shentsize
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()
-
-Jani Nikula <jani.nikula@intel.com>
-    drm/i915/power: fix size for for_each_set_bit() in abox iteration
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: fix a memory leak in fence cleanup when unloading
-
-Johan Hovold <johan@kernel.org>
-    phy: ti-pipe3: fix device leak at unbind
-
-Johan Hovold <johan@kernel.org>
-    phy: tegra: xusb: fix device and OF node leak at probe
-
-Miaoqian Lin <linmq006@gmail.com>
-    dmaengine: dw: dmamux: Fix device reference leak in rzn1_dmamux_route_allocate
-
-Stephan Gerhold <stephan.gerhold@linaro.org>
-    dmaengine: qcom: bam_dma: Fix DT error handling for num-channels/ees
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: gadget: dummy-hcd: Fix locking bug in RT-enabled kernels
-
-Xiongfeng Wang <wangxiongfeng2@huawei.com>
-    hrtimers: Unconditionally update target CPU base after offline timer migration
-
-Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-    hrtimer: Rename __hrtimer_hres_active() to hrtimer_hres_active()
-
-Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-    hrtimer: Remove unused function
-
-Andreas Kemnade <akemnade@kernel.org>
-    regulator: sy7636a: fix lifecycle of power good gpio
-
-Anders Roxell <anders.roxell@linaro.org>
-    dmaengine: ti: edma: Fix memory allocation size for queue_priority_map
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    dmaengine: idxd: Fix double free in idxd_setup_wqs()
-
-Hangbin Liu <liuhangbin@gmail.com>
-    hsr: use hsr_for_each_port_rtnl in hsr_port_get_hsr
-
-Hangbin Liu <liuhangbin@gmail.com>
-    hsr: use rtnl lock when iterating over ports
-
-Murali Karicheri <m-karicheri2@ti.com>
-    net: hsr: Add VLAN CTAG filter support
-
-Murali Karicheri <m-karicheri2@ti.com>
-    net: hsr: Add support for MC filtering at the slave device
-
-Ravi Gunasekaran <r-gunasekaran@ti.com>
-    net: hsr: Disable promiscuous mode in offload mode
-
-Anssi Hannula <anssi.hannula@bitwise.fi>
-    can: xilinx_can: xcan_write_frame(): fix use-after-free of transmitted SKB
-
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    can: j1939: j1939_local_ecu_get(): undo increment when j1939_local_ecu_get() fails
-
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    can: j1939: j1939_sk_bind(): call j1939_priv_put() immediately when j1939_local_ecu_get() failed
-
-Michal Schmidt <mschmidt@redhat.com>
-    i40e: fix IRQ freeing in i40e_vsi_request_irq_msix error path
-
-Kohei Enju <enjuk@amazon.com>
-    igb: fix link test skipping when interface is admin down
-
-Alex Tran <alex.t.tran@gmail.com>
-    docs: networking: can: change bcm_msg_head frames member to support flexible array
-
-Antoine Tenart <atenart@kernel.org>
-    tunnels: reset the GSO metadata before reusing the skb
-
-Stefan Wahren <wahrenst@gmx.net>
-    net: fec: Fix possible NPD in fec_enet_phy_reset_after_clk_enable()
-
-Fabio Porcedda <fabio.porcedda@gmail.com>
-    USB: serial: option: add Telit Cinterion LE910C4-WWX new compositions
-
-Fabio Porcedda <fabio.porcedda@gmail.com>
-    USB: serial: option: add Telit Cinterion FN990A w/audio compositions
-
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-    dt-bindings: serial: brcm,bcm7271-uart: Constrain clocks
-
-Hugo Villeneuve <hvilleneuve@dimonoff.com>
-    serial: sc16is7xx: fix bug in flow control levels init
-
-Fabian Vogt <fvogt@suse.de>
-    tty: hvc_console: Call hvc_kick in hvc_write unconditionally
-
-Paolo Abeni <pabeni@redhat.com>
-    Revert "net: usb: asix: ax88772: drop phylink use in PM to avoid MDIO runtime PM wakeups"
-
-Christoffer Sandberg <cs@tuxedo.de>
-    Input: i8042 - add TUXEDO InfinityBook Pro Gen10 AMD to i8042 quirk table
-
-Jeff LaBundy <jeff@labundy.com>
-    Input: iqs7222 - avoid enabling unused interrupts
-
-Miaohe Lin <linmiaohe@huawei.com>
-    mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
-
-Chen Ridong <chenridong@huawei.com>
-    kernfs: Fix UAF in polling when open file is released
-
-Wei Yang <richard.weiyang@gmail.com>
-    mm/khugepaged: fix the address passed to notifier on testing young
-
-Vishal Moola (Oracle) <vishal.moola@gmail.com>
-    mm/khugepaged: convert hpage_collapse_scan_pmd() to use folios
-
-Alexander Sverdlin <alexander.sverdlin@siemens.com>
-    mtd: nand: raw: atmel: Respect tAR, tCLR in read setup timing
-
-Alexander Dahl <ada@thorsis.com>
-    mtd: nand: raw: atmel: Fix comment in timings preparation
-
-Quanmin Yan <yanquanmin1@huawei.com>
-    mm/damon/lru_sort: avoid divide-by-zero in damon_lru_sort_apply_parameters()
-
-Quanmin Yan <yanquanmin1@huawei.com>
-    mm/damon/reclaim: avoid divide-by-zero in damon_reclaim_apply_parameters()
-
-Stanislav Fort <stanislav.fort@aisle.com>
-    mm/damon/sysfs: fix use-after-free in state_show()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: fix invalid accesses to ceph_connection_v1_info
-
-Miklos Szeredi <mszeredi@redhat.com>
-    fuse: prevent overflow in copy_file_range return value
-
-Miklos Szeredi <mszeredi@redhat.com>
-    fuse: check if copy_file_range() returns larger than requested size
-
-Christophe Kerello <christophe.kerello@foss.st.com>
-    mtd: rawnand: stm32_fmc2: fix ECC overwrite
-
-Christophe Kerello <christophe.kerello@foss.st.com>
-    mtd: rawnand: stm32_fmc2: avoid overlapping mappings on ECC buffer
-
-Oleksij Rempel <linux@rempel-privat.de>
-    net: usb: asix: ax88772: drop phylink use in PM to avoid MDIO runtime PM wakeups
-
-Mark Tinguely <mark.tinguely@oracle.com>
-    ocfs2: fix recursive semaphore deadlock in fiemap call
-
-Krister Johansen <kjlx@templeofstupid.com>
-    mptcp: sockopt: make sync_socket_options propagate SOCK_KEEPOPEN
-
-Nathan Chancellor <nathan@kernel.org>
-    compiler-clang.h: define __SANITIZE_*__ macros only when undefined
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    Revert "SUNRPC: Don't allow waiting for exiting tasks"
-
-Salah Triki <salah.triki@gmail.com>
-    EDAC/altera: Delete an inappropriate dma_free_coherent() call
-
-Borislav Petkov (AMD) <bp@alien8.de>
-    KVM: SVM: Set synthesized TSA CPUID flags
-
-Boris Ostrovsky <boris.ostrovsky@oracle.com>
-    KVM: SVM: Return TSA_SQ_NO and TSA_L1_NO bits in __do_cpuid_func()
-
-Kim Phillips <kim.phillips@amd.com>
-    KVM: x86: Move open-coded CPUID leaf 0x80000021 EAX bit propagation code
-
-wangzijie <wangzijie1@honor.com>
-    proc: fix type confusion in pde_set_flags()
-
-Kuniyuki Iwashima <kuniyu@google.com>
-    tcp_bpf: Call sk_msg_free() when tcp_bpf_send_verdict() fails to allocate psock->cork.
-
-Thomas Richter <tmricht@linux.ibm.com>
-    s390/cpum_cf: Deny all sampling events by counter PMU
-
-Pu Lehui <pulehui@huawei.com>
-    tracing: Silence warning when chunk allocation fails in trace_pid_write
-
-Jonathan Curley <jcurley@purestorage.com>
-    NFSv4/flexfiles: Fix layout merge mirror check.
-
-Vladimir Riabchun <ferr.lambarginio@gmail.com>
-    ftrace/samples: Fix function size computation
-
-Luo Gengkun <luogengkun@huaweicloud.com>
-    tracing: Fix tracing_marker may trigger page fault during preempt_disable
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFSv4: Clear the NFS_CAP_XATTR flag if not supported by the server
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFSv4: Clear the NFS_CAP_FS_LOCATIONS flag if it is not set
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFSv4: Don't clear capabilities that won't be reset
-
-Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>
-    flexfiles/pNFS: fix NULL checks on result of ff_layout_choose_ds_for_read
-
-Steven Rostedt <rostedt@goodmis.org>
-    tracing: Do not add length to print format in synthetic events
-
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-    ASoC: q6apm-dai: schedule all available frames to avoid dsp under-runs
-
-Kuniyuki Iwashima <kuniyu@amazon.com>
-    net: Fix null-ptr-deref by sock_lock_init_class_and_name() and rmmod.
-
-Andr√© Apitzsch <git@apitzsch.eu>
-    media: i2c: imx214: Fix link frequency validation
-
-Arnd Bergmann <arnd@arndb.de>
-    media: mtk-vcodec: venc: avoid -Wenum-compare-conditional warning
-
-Jiasheng Jiang <jiashengjiangcool@gmail.com>
-    media: mediatek: vcodec: Fix a resource leak related to the scp device in FW initialization
-
-Harry Yoo <harry.yoo@oracle.com>
-    mm: introduce and use {pgd,p4d}_populate_kernel()
-
-Yeoreum Yun <yeoreum.yun@arm.com>
-    kunit: kasan_test: disable fortify string checker on kasan_strings() test
-
-
--------------
-
-Diffstat:
-
- .../bindings/serial/brcm,bcm7271-uart.yaml         |   2 +-
- Documentation/networking/can.rst                   |   2 +-
- Makefile                                           |   4 +-
- arch/s390/kernel/perf_cpum_cf.c                    |   4 +-
- arch/x86/kvm/cpuid.c                               |  33 +++--
- drivers/dma/dw/rzn1-dmamux.c                       |  15 +-
- drivers/dma/idxd/init.c                            |  33 +++--
- drivers/dma/qcom/bam_dma.c                         |   8 +-
- drivers/dma/ti/edma.c                              |   4 +-
- drivers/edac/altera_edac.c                         |   1 -
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |   3 -
- drivers/gpu/drm/i915/display/intel_display_power.c |   6 +-
- drivers/input/misc/iqs7222.c                       |   3 +
- drivers/input/serio/i8042-acpipnpio.h              |  14 ++
- drivers/media/i2c/imx214.c                         |  27 +++-
- .../platform/mediatek/vcodec/mtk_vcodec_fw_scp.c   |   4 +-
- .../platform/mediatek/vcodec/venc/venc_h264_if.c   |   6 +-
- drivers/mtd/nand/raw/atmel/nand-controller.c       |  18 ++-
- drivers/mtd/nand/raw/stm32_fmc2_nand.c             |  46 +++---
- drivers/net/can/xilinx_can.c                       |  16 +-
- drivers/net/ethernet/freescale/fec_main.c          |   3 +-
- drivers/net/ethernet/intel/i40e/i40e_main.c        |   2 +-
- drivers/net/ethernet/intel/igb/igb_ethtool.c       |   5 +-
- drivers/phy/tegra/xusb-tegra210.c                  |   6 +-
- drivers/phy/ti/phy-ti-pipe3.c                      |  13 ++
- drivers/regulator/sy7636a-regulator.c              |   7 +-
- drivers/soc/qcom/mdt_loader.c                      |  14 +-
- drivers/tty/hvc/hvc_console.c                      |   6 +-
- drivers/tty/serial/sc16is7xx.c                     |  14 +-
- drivers/usb/gadget/udc/dummy_hcd.c                 |   8 +-
- drivers/usb/serial/option.c                        |  17 +++
- fs/fuse/file.c                                     |   5 +-
- fs/kernfs/file.c                                   |  54 ++++---
- fs/nfs/client.c                                    |   2 +
- fs/nfs/flexfilelayout/flexfilelayout.c             |  21 ++-
- fs/nfs/nfs4proc.c                                  |   6 +-
- fs/ocfs2/extent_map.c                              |  10 +-
- fs/proc/generic.c                                  |   3 +-
- include/linux/compiler-clang.h                     |  31 +++-
- include/linux/pgalloc.h                            |  29 ++++
- include/linux/pgtable.h                            |  13 +-
- include/net/sock.h                                 |  40 ++++-
- kernel/time/hrtimer.c                              |  50 ++-----
- kernel/trace/trace.c                               |  10 +-
- kernel/trace/trace_events_synth.c                  |   2 -
- mm/damon/lru_sort.c                                |   3 +
- mm/damon/reclaim.c                                 |   3 +
- mm/damon/sysfs.c                                   |  14 +-
- mm/kasan/init.c                                    |  12 +-
- mm/kasan/kasan_test.c                              |   1 +
- mm/khugepaged.c                                    |  22 +--
- mm/memory-failure.c                                |   7 +-
- mm/percpu.c                                        |   6 +-
- mm/sparse-vmemmap.c                                |   6 +-
- net/can/j1939/bus.c                                |   5 +-
- net/can/j1939/socket.c                             |   3 +
- net/ceph/messenger.c                               |   7 +-
- net/core/sock.c                                    |   5 +
- net/hsr/hsr_device.c                               | 163 ++++++++++++++++++++-
- net/hsr/hsr_main.c                                 |   4 +-
- net/hsr/hsr_main.h                                 |   4 +
- net/hsr/hsr_slave.c                                |  15 +-
- net/ipv4/ip_tunnel_core.c                          |   6 +
- net/ipv4/tcp_bpf.c                                 |   5 +-
- net/mptcp/sockopt.c                                |  11 +-
- net/sunrpc/sched.c                                 |   2 -
- samples/ftrace/ftrace-direct-modify.c              |   2 +-
- sound/soc/qcom/qdsp6/q6apm-dai.c                   |  28 +++-
- 68 files changed, 669 insertions(+), 285 deletions(-)
-
-
+In-Reply-To: <1d15af4ab9f8f63dafbf4810a76eb3d547217596.camel@redhat.com>
+
+On Wed, Sep 17, 2025 at 02:08:06PM +0200, Gabriele Monaco wrote:
+> On Wed, 2025-09-17 at 07:38 -0400, Yury Norov wrote:
+> > On Wed, Sep 17, 2025 at 09:51:47AM +0200, Gabriele Monaco wrote:
+> > > According to what I can understand from the standard, the C list
+> > > initialisation sets to the default value (e.g. 0) all elements not
+> > > present in the initialiser. Since in {} no element is present, {}
+> > > is not a no-op but it initialises the entire cpumask to 0.
+> > > 
+> > > Am I missing your original intent here?
+> > > It doesn't look like a big price to pay, but I'd still reword the
+> > > sentence to something like:
+> > > "and a valid struct initializer when CPUMASK_OFFSTACK is disabled."
+> > 
+> > The full quote is:
+> > 
+> > † So define a CPUMASK_NULL macro, which allows to init struct cpumask
+> > † pointer with NULL when CPUMASK_OFFSTACK is enabled, and effectively
+> > † a no-op when CPUMASK_OFFSTACK is disabled.
+> > 
+> > If you read the 'which allows' part, it makes more sense, isn't?
+> 
+> Alright, my bad for trimming the sentence, what I wanted to highlight
+> is that with !CPUMASK_OFFSTACK this CPUMASK_NULL becomes something like
+> 
+>   struct cpumask mask[1] = {};
+> 
+> which, to me, doesn't look like a no-op as the description suggests,
+> but an initialisation of the entire array.
+> 
+> Now I'm not sure if the compiler would be smart enough to optimise this
+> assignment out, but it doesn't look obvious to me.
+> 
+> Unless you were meaning the __free() becomes a no-op (which is true but
+> out of scope in this version of the patch), I would avoid mentioning
+> the no-op altogether.
+> 
+> Am I missing something and that initialisation is proven to be compiled
+> out?
+
+When you create a non-initialized variable on stack, compiler does
+nothing about it, except for adjusting an argument to brk() emitted in
+the function prologue.
+
+In this case, non-initialized struct cpumask is already on stack, and
+switching from
+
+        struct cpumask mask[1];
+
+to
+
+        struct cpumask mask[1] = {};
+
+is really a no-op.
+
+Thanks,
+Yury
 
