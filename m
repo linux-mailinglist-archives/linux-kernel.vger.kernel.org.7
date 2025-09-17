@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-820159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD807B7D89A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD765B7DB1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 696DB164D16
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01BD163F25
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53FE2F60C0;
-	Wed, 17 Sep 2025 07:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED142F618A;
+	Wed, 17 Sep 2025 07:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E2+PiBdF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1paEusad";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E2+PiBdF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1paEusad"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D2GkKqfH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B5B226D04
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E357A2F2913
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758094727; cv=none; b=D4F9MO0ytMF81KRR64ZTT/D+Yk4hiwmGfxMbGfZp7flQxE7fsBNJB+Q8WXKHTaLJp8ZfGNJg29f2xIbqm1aqv2awhH/5Oyth6BSeeFWZhUnDHADcuMCvpu4ScCXDzIITWZLeqX5TbinRZiOIbGF5GLz0KJr0E77IPF2uDYkrRJQ=
+	t=1758094741; cv=none; b=o2dfXPPHDoA1XYjW5tOfIu19NhfuRrtPjUFH9kXyXGCX6Jq4/VVclRRmOrFn20FUc5zdCT8VyKFpvST2wh9A5tpsHUwBS9rtYMWHulQNXNYSn1XiUa7jjjHgbhl8p5wZVxQZpmfWmsPUhwiek0xuL2zlHczDCrnFzDxn//kbscM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758094727; c=relaxed/simple;
-	bh=GXFLsMjCK7wOD1TzjlK0w1zHEbODFJncfAYwaXt2oOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Httw7v+4JpVsfmvXxAxC4Umq7LR1ddHLlScoGrN80BLp65x+CcdhbX7YdbkKQKFSu6L6ghzyrVgQewV/FEkAepbOkyIrXOEnzPc9rkNYMATjV7qlMRdPR4OI6KmcbV9Z1i8r6rbZqk8/yI3fMtTHCW5wFF1SMMgE+sthTRrDODk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E2+PiBdF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1paEusad; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E2+PiBdF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1paEusad; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 26CD41F76B;
-	Wed, 17 Sep 2025 07:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758094724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1758094741; c=relaxed/simple;
+	bh=V8sUkCv1Do/gjP7DOGDQWYGyQgbg1wWESr1tAGRUIIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RuiKuU70iqc7VT8vUA+rpAvmKp9LMItzcUiJ/1YbWIikycV6jLbMVJaJ5BBO9/Twsf0Lj7UIdG/P6LZ8DxqYAA2vWeqdXWFoPqhybZx/cOdVltP1koKDXhbfXplYEIKKhJy2edByU80lmTFcr327TCOW9l+sihXfsEGsC5VxjSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D2GkKqfH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758094738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ITCMlsFIxE+UIfyD3VibFZmpAdYbM+Tp7kiWDSAXLy4=;
-	b=E2+PiBdFDPIdItusE2CFQ6kmbOtgMsO3tXknJ6h4xEGiu6QrsDXz9v4zf8wN5nnJwjAxZY
-	ZLegEOkn7JWH+C41Cby+xregx82MCxvwavOE1H444XXl9daxJ8JqErEp0siyVRfe/roD7H
-	zmrQGKzWOJ7nTakUW062IHzxYJq1lkQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758094724;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ITCMlsFIxE+UIfyD3VibFZmpAdYbM+Tp7kiWDSAXLy4=;
-	b=1paEusadbNBcfB/T8WMGOYKKw6YeqRzlOxtiJC1MFrwLFWJrCSAXlfq+rMEkTowpK0QzQo
-	o2hV5Vae79YdtiDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758094724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ITCMlsFIxE+UIfyD3VibFZmpAdYbM+Tp7kiWDSAXLy4=;
-	b=E2+PiBdFDPIdItusE2CFQ6kmbOtgMsO3tXknJ6h4xEGiu6QrsDXz9v4zf8wN5nnJwjAxZY
-	ZLegEOkn7JWH+C41Cby+xregx82MCxvwavOE1H444XXl9daxJ8JqErEp0siyVRfe/roD7H
-	zmrQGKzWOJ7nTakUW062IHzxYJq1lkQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758094724;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ITCMlsFIxE+UIfyD3VibFZmpAdYbM+Tp7kiWDSAXLy4=;
-	b=1paEusadbNBcfB/T8WMGOYKKw6YeqRzlOxtiJC1MFrwLFWJrCSAXlfq+rMEkTowpK0QzQo
-	o2hV5Vae79YdtiDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B967137C3;
-	Wed, 17 Sep 2025 07:38:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1PV7AoRlymhxdAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 17 Sep 2025 07:38:44 +0000
-Message-ID: <af62a2c2-3c01-408d-b694-aa7e95d23c18@suse.cz>
-Date: Wed, 17 Sep 2025 09:38:43 +0200
+	bh=ecjLuFYma2pmjKDGSxmd7rMO1bVxbe6uv0k2p4+S6ME=;
+	b=D2GkKqfHStPxRm38PzRG0xoNLj8eNgFJoQPYsj9Vzhd5BfJF6pEFXD6YC+kKokmUxZXoka
+	srwxkS5SuQLZfPcKp1bm325CbLn710rc25LDFZDyzZmD5GvSjgGA/9ea2osahxw6OnoSzu
+	wUT/cQUjTIjxEQY7Fu3obKaXmOHL7Aw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-gd86ZLxGMXilsJlvUHKjoA-1; Wed, 17 Sep 2025 03:38:57 -0400
+X-MC-Unique: gd86ZLxGMXilsJlvUHKjoA-1
+X-Mimecast-MFC-AGG-ID: gd86ZLxGMXilsJlvUHKjoA_1758094736
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ea35489002so2397464f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:38:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758094736; x=1758699536;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ecjLuFYma2pmjKDGSxmd7rMO1bVxbe6uv0k2p4+S6ME=;
+        b=mLMxOWyCe+pcVGG4TFpt1RaVth8nmslDWD4WL8IKCq1ojjoV4l5cQ3VhxMKIMWEWLA
+         PLTdDsmhjd2Qa/bqo58DdULa5YDLVtL2XFjwTpC59DKjWdyzUbym81kwpAkHt/WJ5XGJ
+         uTu4RWmt085818BYe7UAGADDoXe/zSDgqUzqWv7aITSh1kYXT2CiMXRi8AzJTYsp6QxI
+         R2YAVxl6Cc/lrCBALor6vNZiq1TmKgeLtxQeFufXZZSJky9cnJF1kCyQJGT/nZrqSUJ9
+         YgBuOEpedDmmR9cD0G5HagY1jBZvIHhD6eBQxPd5xG5ta6db4H2dOs7OjVUu9cJlBHb9
+         O7Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/CWqmaMD2jET1Y8qD1n847IOGhck3fLL1MA3h19oHUR+ShDlW/B2hAjo5WuMJ9RnCr7wPySeWcFUb454=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyai7tvM2mk+R1f70hVSawraA43Oy2QazsRY7QiBBVNN7rSw7xy
+	+gwd+PzgkB8Ve9X4MUqGETMAK0TTVWC7GZ9JWi3oeLmR/fTEyrqH2SAaWN/GtyJriSiDNvGXPMr
+	0IR3JNS4bl+D0+zs10PW0MjfJiBlzp8OdHRm7hebu8MzPKBxbGjezzuw8apSDEjsQRQ==
+X-Gm-Gg: ASbGncvh/0EftcYCPpyhw+WyOcsrnfUFO7upC1k4e1wqWG9BeMTRNhEg8UmmYEM5v48
+	q2NYC4xDuaZfGHq26H9kpDuvMzaldH0/zxHr3dH9auXjabz5rRxSMJb+XlWBfSxOOH9+fPQsdO3
+	C0bmoexr0ByedBgPNn04UwrmKvPjCORTIIESNs9nchshPY81uZzuM1AfFFhIv74g9IfFTqe7zUU
+	NJkicakNaYwSR/r/y6/zh78v3kdccXuNTYp9LRWvULjplWOMDfkMcVyR7gP6FQ+x0/Hs4dpigmN
+	R5qfZSzcNZZxsaD9ROCU57yy1qQKvc/9ryOrJT9QpNY5pEA7mOVXV+jjPjqkUKgeJidlnnOKOdf
+	WYhJRSsZrFWcFJsiZmnfEHhP4+/CjzmRvZctZHc8fmsHkQETL4ucH/Fs9WmdSgo7s
+X-Received: by 2002:a05:6000:400c:b0:3eb:c276:a353 with SMTP id ffacd0b85a97d-3ecdf9b479amr1090388f8f.10.1758094736413;
+        Wed, 17 Sep 2025 00:38:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9bJWm23LysPNDyBnHVvP/fmBhJ1zuxTFboH2BF4Lnv2ayY/DGUm+xwiSt1zWCebC8DkrtCw==
+X-Received: by 2002:a05:6000:400c:b0:3eb:c276:a353 with SMTP id ffacd0b85a97d-3ecdf9b479amr1090361f8f.10.1758094736053;
+        Wed, 17 Sep 2025 00:38:56 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7e645d1fcsm19329609f8f.48.2025.09.17.00.38.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 00:38:55 -0700 (PDT)
+Message-ID: <c4ba8fa6-246d-4a6d-84fd-3a14b4d0dc1b@redhat.com>
+Date: Wed, 17 Sep 2025 09:38:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,114 +88,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] alloc_tag: mark inaccurate allocation counters in
- /proc/allocinfo output
+Subject: Re: [PATCH] ksm: Use a folio inside cmp_and_merge_page()
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ akpm@linux-foundation.org, xu.xin16@zte.com.cn, chengming.zhou@linux.dev,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Longlong Xia <xialonglong@kylinos.cn>
+References: <20250916080533.2385624-1-xialonglong@kylinos.cn>
+ <20250916181219.2400258-1-willy@infradead.org>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>,
- Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, hannes@cmpxchg.org,
- rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com,
- shakeel.butt@linux.dev, 00107082@163.com, pyyjason@gmail.com,
- pasha.tatashin@soleen.com, souravpanda@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250915230224.4115531-1-surenb@google.com>
- <2d8eb571-6d76-4a9e-8d08-0da251a73f33@suse.cz>
- <CAJuCfpHXAhGZb1aOPyHOPiTWSwQJi570THqJQcjrVPf=4Dt3xQ@mail.gmail.com>
- <a8519bca-ae16-4642-84a1-4038b12e8bb0@gmail.com>
- <CAJuCfpFJabb02OK8Rj08d7WU_7AM674i=vsZxzfw7i7h-PGftQ@mail.gmail.com>
- <e5e3d96a-d0aa-4466-8303-5a7e8f96bbe5@gmail.com>
- <CAJuCfpEULVxMixDjrk_xg7+3+97dkcMmkDd++BaR17X4tDSs6Q@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAJuCfpEULVxMixDjrk_xg7+3+97dkcMmkDd++BaR17X4tDSs6Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[google.com,gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,linux.dev,cmpxchg.org,google.com,oracle.com,163.com,gmail.com,soleen.com,kvack.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250916181219.2400258-1-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 9/17/25 00:26, Suren Baghdasaryan wrote:
-> On Tue, Sep 16, 2025 at 9:52 PM Usama Arif <usamaarif642@gmail.com> wrote:
+On 16.09.25 20:11, Matthew Wilcox (Oracle) wrote:
+> This removes the last call to page_stable_node(), so delete the
+> wrapper.  It also removes a call to trylock_page() and saves a call to
+> compound_head(), as well as removing a reference to folio->page.
 > 
-> Hmm. Missing a large allocation and not knowing about it can be a problem...
-> I'll start sketching a patch to see if tracking such a global counter
-> has any drawbacks and in the meantime I'm open to suggestions on how
-> to expose it to the userspace.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
 
-Could it be made to look like an actual tag in the output?
-e.g. lib/alloc_tag.c:1234 func:untracked_slab_objects
+Acked-by: David Hildenbrand <david@redhat.com>
 
-(probably some better name conveying it's uknown due to failure to allocate
-objexts)
+-- 
+Cheers
 
-Maybe even implemented in a way that it's not a specially crafted output line.
-
-> About concerns on the IOCTL interface, would it be more usable if we
-> get the alloctop [1] or a similar tool which can be used to easily
-> issue such commands into kernel/tools?
-> 
-> [1] https://android-review.git.corp.google.com/c/platform/system/memory/libmeminfo/+/3431860
-> 
->>
+David / dhildenb
 
 
