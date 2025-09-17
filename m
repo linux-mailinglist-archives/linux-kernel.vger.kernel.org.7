@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-821585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63617B81B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:56:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD0AB81B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 380587B4919
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:54:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0E542A6FD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67C0279789;
-	Wed, 17 Sep 2025 19:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDFF280CE5;
+	Wed, 17 Sep 2025 19:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="JKSjebNC"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrgB+DW5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69726261B97
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C623A2797A5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758138987; cv=none; b=LJoyAU1aCGunsK5X1MmInWXwnySde49AQFIfzDd/gI5r2ZAKmYKrFpqJAybbFsDyWDEd7/NEN9948giezhch6a+0qcwXjn/Mv0Z93a7xQB925tm9QsDSxr+byXFlipSghjJPsNTWcxOJ2h8V+6U/Z1UOLtFCVB99Tf8r5tmBxHw=
+	t=1758139008; cv=none; b=YmmdrI4/2qrLIBk2eqxhyCuRGQ05gojxla/tdKslw44gDv/u9HzNfxF2CZLfbrCBci45X3zjt98LmbIsE9sEzJpCwzn4MNm51AbyoZM9gkpAhbhNsW5QvFoBdT7YqIeTO2ZeIHJo2GoWgD/Wmb0aa0Zz0PhEGYc55d+4oBP1qdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758138987; c=relaxed/simple;
-	bh=U+xzvg0+p8YRBwVjJW5ad4ZRAtixrH50H3CYwD66PRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7773n7r3Wxgw9CHVhYxX37CvkSid3wG369skahSs/wGeotTsf1Lssnj8jVfnmuTVKdvaANNZ+5sXrtb5JJp7IrdNT0b5FqVVTikIu7i4nGW6bHDw1mhIw84+jfoiDYbHBy3X8FL3D+Q5AHY4kFziVE66xvX11bBiHaJZZ+4voE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=JKSjebNC; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b7a8ceace8so2103491cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1758138984; x=1758743784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TWHRbE+2RwfEiSllz0UZDyGmNU78opvT0w9mXRiIjrQ=;
-        b=JKSjebNCeuvZec/sew0HOq5nhdjUYTGNTSBdF7eHxVOGjK7UxiBXf35dEqaUxpdNVm
-         eYlcx6Lq3Svfb/N7RUavziAQkIiFqivDehH657gD355So2wY1enjBpNwE7t9y7BYJfkg
-         ks9xqirKwnPJE7i/lx0rpyBiE9qqz3hN8bcvXfLe8NOmLjAXmefrfgarVLOFx4zEnBbZ
-         3AUs5Qqpyrhc3n41jwCro44X8TaVnQZFZDjtvcOR4iVP7MnHgJ6cs8BH7sl0R9sG+lx9
-         Lhw0pPeBOuXDLssv/qzkJImhtgUl8iFIaW8HaAd3DjL8uzWSxhBP0JPSsGd2DK2a+2ca
-         WYEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758138984; x=1758743784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TWHRbE+2RwfEiSllz0UZDyGmNU78opvT0w9mXRiIjrQ=;
-        b=tilJf1WhoWz0gwIHz23B4kjH4FMhAJ9AFgVbh40QrIm80gOE1/8mLN115X5poQdeCE
-         iZc4iN0KEjAix8obHEIZihTGerg+tjPM1KCRO1pPqy3jWpzmSBYo61qfX8ALZs8TRxMh
-         CReVuwrgJJV3l+aP39ih9Gl0VWHcIBXgiri9T2jaZDhLjQgJLuv1QHbcXEnygKj/1TRz
-         eqgPsWxEAYFkyiMWhBe9dkJg/vqgEDfPzvDJCkTtXDokfoT4W833z2tA+TQBAE96W+De
-         InTeUpFrFnbJYLeMJi4BngG0SBj4fmx+FNpjjx4fiQWEt2XLzsN85ZFzks11W9jnTZiX
-         Iglw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXqNENUPdgsN1CiP0rKtEE/PJEiZ/24RjOkeX9FvKf7kn2ivmT1xPRHAvSIrViK/Lw25+7CiCcOsCh9lY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4CbTEKmCVqMpY+qwJz8lO2JaNbf/63bPqKAuliWvW1ILfvlrT
-	umZOK4ySDjVmNN3G1s8zQQnV8aJu09G/p8wBb3SyOj/a0ObfFP2pe2HkCj5wVRagVcA=
-X-Gm-Gg: ASbGnct1eXP+nQQJpsHokPFCmvFjhzZ/0Lz155cCrhVKa2wmaOvj5UQfNqceH5bb8B/
-	J+wgSYbL9U840TW1Ri8NyDqA3FefhpydYamoowB6F8GoHIXVYoz+LNg1Qip7daprvGJHl+G8uqf
-	LbI9q0l2YKZzmnRWFRlqixIKG3qGaQryIGfZqs5S+PRwLVEg6x4NiJpB4OE1cdWkZqiiLgfIx4B
-	6E00mmkhIXlZll0mJbBzlYS9x7hgOB6fO2ENYXrMjq1pidvNeVRv7XgQ8/p6QdEAgUmSV0+yZHU
-	MNmQYxebasVn6eZxnRZLIF/3kwscaxBc22WXAZaBpohD/5pjgHUVKaj27eAaZbPda1lx3wvDxva
-	DDYDAdOSV7KYQLx/h1BSN3TrJPq5gE9VMMTsU4PY66AgD43JCvSo6+qBguS6dyZ3iTkQ0Ryuz0s
-	eezPr/2iSs8k6m5piwQHClGg==
-X-Google-Smtp-Source: AGHT+IGZY5onFfbJ/Ady5+OG7UsSraIKd+u3udvBLrGG06Nf882Q/uxkOvG1zGx4Y0t9b1FKmtIqRA==
-X-Received: by 2002:a05:622a:1cc3:b0:4b7:8235:1eaf with SMTP id d75a77b69052e-4ba6a5d6732mr45153491cf.39.1758138984189;
-        Wed, 17 Sep 2025 12:56:24 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda15f577esm3184571cf.7.2025.09.17.12.56.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 12:56:23 -0700 (PDT)
-Date: Wed, 17 Sep 2025 15:56:21 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 01/11] cxl/region: Store root decoder in struct
- cxl_region
-Message-ID: <aMsSZZVNwH3LP_Ur@gourry-fedora-PF4VCD3F>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-2-rrichter@amd.com>
+	s=arc-20240116; t=1758139008; c=relaxed/simple;
+	bh=zkYCeThjXGVc9K9cgkXWiT+imwcdgOAZ07NL5lOK0FM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EY0B2RT4dTKhDzASyP08lWSfqPz4biLWbC+tVisqd1xxdujtEcKm/4AUNwHB57CLxu4F2NI5P/Eqo55abNHK9ymOpqE6nd1gRWJMp1Zf0ZjldlE38zT1Q/P9DzUDay69LEb1ZNuXcQ6CBgF45oLUOzeyIe1X6U8rohg4jHplTdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrgB+DW5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BD8C4CEFE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758139008;
+	bh=zkYCeThjXGVc9K9cgkXWiT+imwcdgOAZ07NL5lOK0FM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FrgB+DW53zf1IrcBarnr/CTFuns3vz8KABXZQdPEAxxvYlpVSb2gUcTHaaacfYb3D
+	 a/u2l7TyRDQUH4wUnHmYIxhDOPXdbAYgq93cI/GHBgm+JG/CzUdf4I+Hk0kPfjOZDI
+	 33zlRK/Z1EPbvAb6ApeghoAMCpErV7xyRKqN5KzzGIUZFSur/Bz0ynddj7eyseLzMu
+	 77jXBPWUgYaETSF2gk1Mah1y/8BlwAxG0niyMxoc77Z8dYl+rxxoEu4oS+JbM0VgBC
+	 JH1AqSF5+Uyoh375Z75PhqfuL2Z2FfQF5URD6KHGJojbh1CQP1eJjaqRP0vmGeGUBw
+	 HR0Xfmmd0nBrw==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-62355a687e6so184439eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:56:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWwutdth3wY8gZqfVHl5nfMgwS/vaUAXE9zyYPw9N0ysxQuFFwcRKCdjAYB3dDsPJTs2g+J6bVTk8sJU90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkqMTZfSfbhYRmJxuxPAqdtCGc9REqDaB/XkVBNJ/5/0wGRX5c
+	5NBcqAOmDJTP1aWVioUYT2+u/ZYefiUCJyf+73RLIw/vNmNPIfCK46+UI9jwz606N0qQUAuP0uP
+	Utu7r3J7EsJJYvLYr/BYJb1kcl9KIZws=
+X-Google-Smtp-Source: AGHT+IHQVqexYJq9t5JCGXcCkIGvd8MopByJd95VnTnT55FBaju3b6Lh/QzF2ByiyJPE+EvO4HEzohL2z5yoPdZvApc=
+X-Received: by 2002:a05:6820:1607:b0:621:b76e:66b9 with SMTP id
+ 006d021491bc7-624a5698d34mr1867267eaf.3.1758139007745; Wed, 17 Sep 2025
+ 12:56:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912144514.526441-2-rrichter@amd.com>
+References: <20250911112408.1668431-1-lihuisong@huawei.com> <20250911112408.1668431-3-lihuisong@huawei.com>
+In-Reply-To: <20250911112408.1668431-3-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 17 Sep 2025 21:56:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gzYECjqsFeaaQm+bG1ssLsM0fA6cfGQ8-fQ_tEpF7v8Q@mail.gmail.com>
+X-Gm-Features: AS18NWBPtqI36wR3-xAg9LnQbiDgBSwU6IG9kuQynD7FmPoEOPiXWIRQmd-RzJ8
+Message-ID: <CAJZ5v0gzYECjqsFeaaQm+bG1ssLsM0fA6cfGQ8-fQ_tEpF7v8Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] ACPI: processor: Unify the place of function
+ declaration of processor_idle.c
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 04:45:03PM +0200, Robert Richter wrote:
-> A region is always bound to a root decoder. The region's associated
-> root decoder is often needed. Add it to struct cxl_region.
-> 
-> This simplifies code by removing dynamic lookups and removing the root
-> decoder argument from the function argument list where possible.
-> 
-> Patch is a prerequisite to implement address translation which uses
-> struct cxl_region to store all relevant region and interleaving
-> parameters.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+On Thu, Sep 11, 2025 at 1:24=E2=80=AFPM Huisong Li <lihuisong@huawei.com> w=
+rote:
+>
+> To unify the place of function declaration of processor_idle.c, move
+> acpi_processor_ffh_lpi_probe and acpi_processor_ffh_lpi_enter to one
+> place. And remove 'extern' key word in declaration by the way.
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  include/acpi/processor.h | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index 2976a6d0c54f..6ee4a69412de 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -425,6 +425,8 @@ int acpi_processor_power_state_has_changed(struct acp=
+i_processor *pr);
+>  int acpi_processor_hotplug(struct acpi_processor *pr);
+>  void acpi_processor_register_idle_driver(void);
+>  void acpi_processor_unregister_idle_driver(void);
+> +int acpi_processor_ffh_lpi_probe(unsigned int cpu);
+> +int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi);
+>  #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
+>
+>  /* in processor_thermal.c */
+> @@ -447,11 +449,6 @@ static inline void acpi_thermal_cpufreq_exit(struct =
+cpufreq_policy *policy)
+>  }
+>  #endif /* CONFIG_CPU_FREQ */
+>
+> -#ifdef CONFIG_ACPI_PROCESSOR_IDLE
+> -extern int acpi_processor_ffh_lpi_probe(unsigned int cpu);
+> -extern int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi);
+> -#endif
+> -
+>  void acpi_processor_init_invariance_cppc(void);
+>
+>  #endif
+> --
 
-Nice
-
-Reviewed-by: Gregory Price <gourry@gourry.net>
-
+Applied as 6.18 material under a new subject and with a new changelog, than=
+ks!
 
