@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-821621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA407B81C35
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 438C2B81C3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E9184807BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7406B482A9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB882C11D1;
-	Wed, 17 Sep 2025 20:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED8F24395C;
+	Wed, 17 Sep 2025 20:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O32RE3ri"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W/m62qAO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDC62749E4
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070FD27B358
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758140993; cv=none; b=VfD9nJfsCRya5p1Y0xaYvGbzLqk+nrv7SZVgKDiKHc1Zy0WG0hm6x3x8ri6v8gprsMGq/0Vmv0GQNCxCS1xdLXrwX2sFSoB6nHx91mWt9poLh7lpq6BF9UPhQW6Aa+n4QLuRsCkOzAEb9gybCciZlf5m/LKwZjekLu0tUgYfg6k=
+	t=1758141033; cv=none; b=HMnJIRIfm0MjjP6rrfaChDLfT+78foydhQUO+sh0QLKutQQCDekMrh0tEDkiEIEHZbrq6ZesBUS2Qn0/gOo1slTAODHR3fIEDqbNDPl/F6k5aTmDgorfjR+pyNiQy0o/ydJufVYqynf76V0NJxphuf2lnoGCO+cF6qvd2elJ2aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758140993; c=relaxed/simple;
-	bh=rxAati95/xUI61030WJWld7Jg5f/fH5oCtuvlnPZI1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QB+DD9ZK54DnmcFCv6tchDhk0mPAxFopdsLceG968hlv3cqMLlhOKP+2GRnRC2KnG/vnm8WC8gq3QVejxxJNSJA6JRBeMjzrNZudSTJG+RyASV6hi1CbkxXDyfAO9su5uOlwXZXE7hZmLeYJphjrCnj5tNoe5wPi8YBiNsIvhAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O32RE3ri; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HGQTER014186
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:29:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HEM1lJMKa2QVcYthJ1BIIXMBnRFN8LfFqYTZtb21724=; b=O32RE3riyGSoQUA3
-	q1AU52H69/hFWKxCdkNT2rE9A5iLo9O2DE2gH3UigCTJWh/IhPNYpdk/6/T7rPV/
-	dRxVGsbUMtE+V4iN+zYI6w40/OKEW1d6Sbztnqhi9ZNpWabFlEDTj7FqKdBhknfP
-	PtoAXuOEl+TX8ni9ogB9Hs8kqbNtxtAO2cnLFJjpoMcDVeg1zv262qAaiQI6wOLu
-	frgsJ9YRwVZKFw0wCWi8Vw5UHqile123TQ4Jwp+QDXrOF57S6gra+EInum6rW7gx
-	pnR9gxL7Tn3l54eh6bm3o4MRRVn3DO11RHmYj9HTZ+7iTlLFsBrDTGrUISaF3Ydz
-	lgPv3A==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxu3syh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:29:50 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2697c4e7354so2894385ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:29:50 -0700 (PDT)
+	s=arc-20240116; t=1758141033; c=relaxed/simple;
+	bh=dk5zx77mpJJ4zSO9QP+mnL0268RtvLRSCRX1s15k0/8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fWYitRNaFVirFxZHl8UuEnp9WbZsW/Dj0NI+yeXOU1Hpi2319A5m0QfJXjI0fXyP4kWIh7guvBxsXUITAsverTEFj+Z/jgx6UrLlct4JuPVOxzEC6C9WC5CGP3UlFNxY4jeLvriLG1q24dBRt6zvPOcO6Gkw6jToPo2vOLOhSzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W/m62qAO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758141030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4IoZ6vgHUgGl8xPXxLnbZGS8X05iv6WeuWzJZo7OEtk=;
+	b=W/m62qAOhi+ZUy8+9MaYC5rKaaP6w4Y4wx3469890Ix/d0PsedX+/gyMFgovwEnJCJxzT6
+	FSWCmNAeg02M9rYfIzc0kmlA1ZbDjZNNGFVHKVLz19934tYN03W5tL4aZlHij949ZpsPiP
+	zwHaVoZ6tooWlDr6KqkMwDLDirLlxN4=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-xRk--yRIOrK_jgYOZwjExQ-1; Wed, 17 Sep 2025 16:30:29 -0400
+X-MC-Unique: xRk--yRIOrK_jgYOZwjExQ-1
+X-Mimecast-MFC-AGG-ID: xRk--yRIOrK_jgYOZwjExQ_1758141029
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b32d323297so3958271cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:30:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758140989; x=1758745789;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1758141027; x=1758745827;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HEM1lJMKa2QVcYthJ1BIIXMBnRFN8LfFqYTZtb21724=;
-        b=Q2/3+jISPi9Rpbtp9tQhHMkuWBM69BTpqpjTdOaoioBpLZ0ciX+Sxnftc3oDlGiHIr
-         F0fl5+jP3qtQNj4WefMI83VsVG5SDmd7B6XDdenUTfVpF0c/gPA5osabuDt4M7zgXMRl
-         zbaflZb0wsVQVHnjUgfHZ720aywViB+v7qJ3ETDHrERUVz1lKmYIWWCyk7C3zknCE6ik
-         8xftBU4aEdCeSOBRZQ0Uj06AXOOLDNqZAWEr2u8RdeqvuqlS9j5W3lKSkdCHwKv8YeWs
-         BEClCy9qhsGwroqwZq1HIPRzv/A+wPaJq6KwZRZ8STASsVyQV4KRkdfpPSHoNiJCBn/d
-         6Yjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxbNKrhvN4qSkOJRFMsSbxKjdpxhbuL1yWDNktorU9NatDpF3/qijZSB5Yq/brmn5xpMttMs1Nkbpnm6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz32DDJWCMIM/+/o7dO6gO4ygMhgUylpi8HS4Em3KncYuSYLkcA
-	FJ9Soro0EwQAb6WkHN0QJJ/rDd5s4aCbMVkC22O+wMcjV1hBf8dDrkMu2n6xeT1Jt0nxLFbwgdM
-	0nBmyJZsY0c3/CdQB9RUjZvaUz3nrl4UdGLCTn03kKOtpJWx/JexvGRxvgIxwKGq3fLbR/Y9ZGq
-	I=
-X-Gm-Gg: ASbGncvIa1snesnYJvvsIQQfgDSX6uca1iqkRjxkHMdNQPgzihJ1vzB/tOVMh72e0/Z
-	zMLfQVGxJFC48vrvCFetfEeC7WC9NS/LIw3aB+A3ON28CbvwraNZw5TQ/ROeiC1RiBGTer+w5Wp
-	jTEii94R6rbVrVXPa8qUkd7K8r/UqEe03chct0aWUTYAMvcLxosNuEWp0UYjtf1po9by/afZC2l
-	UOBdvcuAK+z4RDuCSAj7QNMa+jeodtW8HyLdVGJzmWKFxZl21C8+f/3YTZPQUGBhpqkpRitUF5k
-	Eie/pPu+C+qyoNBMU4JJXX4wtt9dbIYhX9f7gvQCN1Z9H9Q7br82EpH8PN8FCStEP2SiTFnnci/
-	vuAWlW04Za4e9VLnmz4JayWbGP7XSv4heWjRo
-X-Received: by 2002:a17:903:11d1:b0:266:3f63:3500 with SMTP id d9443c01a7336-2697c829fd7mr9913385ad.12.1758140989443;
-        Wed, 17 Sep 2025 13:29:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFoM/05y1CwkSSQcd6Pm0FZF2zcDhD38jOzV9/eRqaD0ZUm8ijYqgE/YnLUSCVJPnWy0wFC1w==
-X-Received: by 2002:a17:903:11d1:b0:266:3f63:3500 with SMTP id d9443c01a7336-2697c829fd7mr9913175ad.12.1758140988955;
-        Wed, 17 Sep 2025 13:29:48 -0700 (PDT)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802fe08bsm4163555ad.103.2025.09.17.13.29.48
+        bh=4IoZ6vgHUgGl8xPXxLnbZGS8X05iv6WeuWzJZo7OEtk=;
+        b=vWHcY1EDALon9u7IF0i8Sw4LCzEBr/U2yS8dGNkJPjZJWE4V6Ib9CWNmlzntI7dKR6
+         S0fz7lT2qq0uwdPBKmeApqoCHRBdJBiQxPFGKkkKN0P9OOeNjUXcnZNzEdqaMG3XfsXm
+         24pKk83i09fAi/aUFULfV49OJir693l3wA8V3XiIctQqkSEyY8+q0W20D60fMzNyK79J
+         elUyXRHhrG7jbVfvtIl6RnKwiHt+3BYjQ0D0kdKZMETOz0P5Z9GgCKAnmTX9pQPJky00
+         o9PNGH2qMCMxRaP4UI+1oc5MPQlHoczlTk04M1z0tKp0H6dh1vlD9kXAB0l45izzM0/6
+         Ftnw==
+X-Gm-Message-State: AOJu0YxM4d2SNCuTi/CxQOE7ApoEACRX0lyTz2isGxf4xHvHu/YCs9D7
+	tFQpgRW8eF1zDq4zKjyJu8ixBGac8PHJm0p68m4u/SmXywd5j2p1J8oyDSS/JWUhKoH20fD5hXY
+	s09qNxQWfFtQ94FjDfJsaYzyZWtVkR6GcfMyYDJPeEdRK6GI+IpyOo4Y22Ws5E5/7+rhSbGX4kQ
+	==
+X-Gm-Gg: ASbGncvAUW+g4Wh+B7xeYyl3nhBp9/CyHiNz2zym5Gm/2OXeQGNhewRuaJPCmWlPjp3
+	cJOGsWnoOTZ8YfSTwFGeFpr53Bxaby7kHeQAFkBSf5GG3yxWnMyUJsayLOHsuxTPF9ufVjyLR04
+	X4Gjl7joDD0+jJecxBO2M74iuvN1BNDhNqP9t8VwjU4EkLcvJ1VdQQm22S7XhfI6v43TEn0zygi
+	422hsmstHRIy9ITgmY3FA26tOmvzo8Tma3qbxrHd6FpgfhSl5Q0w1DMholEDteO6+28qoBmdYr5
+	c5WxYU4JEzgICWvtRqxjq3WKsvGntg1Y9yoEU35m5s7XA1zfQk4ryicuUDZlf6tAzW+YdLPGUef
+	LMbmBmqD/ZA==
+X-Received: by 2002:a05:622a:5517:b0:4b6:5fe:6c93 with SMTP id d75a77b69052e-4ba6b93edf8mr46154841cf.71.1758141027263;
+        Wed, 17 Sep 2025 13:30:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlGMvVwgHD29RYPFfysvvC3axBOmMnRbYIOTl9MRwjES1rh4kgPFl8ORTbFCgeqfT7sqA4yg==
+X-Received: by 2002:a05:622a:5517:b0:4b6:5fe:6c93 with SMTP id d75a77b69052e-4ba6b93edf8mr46154371cf.71.1758141026753;
+        Wed, 17 Sep 2025 13:30:26 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda86b4b94sm3199281cf.26.2025.09.17.13.30.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 13:29:48 -0700 (PDT)
-Message-ID: <b2efb1f2-df89-4c88-8f97-e164e89c7532@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 13:29:47 -0700
+        Wed, 17 Sep 2025 13:30:26 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <c3fd1a11-fdba-4dae-a733-435a9296c2e1@redhat.com>
+Date: Wed, 17 Sep 2025 16:30:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,70 +90,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath11k: Remove redundant semicolons
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jeff Johnson
- <jjohnson@kernel.org>,
-        "open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER"
- <linux-wireless@vger.kernel.org>,
-        "open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER"
- <ath11k@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20250812075259.6921-1-liaoyuanhong@vivo.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH v13 0/9] timers: Exclude isolated cpus from timer
+ migration
+To: Frederic Weisbecker <frederic@kernel.org>,
+ Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20250917161958.178925-1-gmonaco@redhat.com>
+ <aMrpiMTzvLW_eR3A@localhost.localdomain>
 Content-Language: en-US
-In-Reply-To: <20250812075259.6921-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX3uhQDtI+Qkkm
- L/8CX7l5Wqfy9Chteq9hlMdj3NCsgLbc6XTmBtTBBvXXR4XNWpL7KF7fpATJPJkXll0JdcY72E0
- ZraMoTlTa9dA7ZT3jJaYUOyyFQPzhg1FFSK/cPmYPE7fTCMIiOXVzeIrfLDpPuTaTB1N4TEFoZx
- eT0MTHCF2Cw3r4tS4KWoJZFSeF3booY/aDNf/qgsgxb3A4Airp/WLCd5mCtUaLlvtqep/k3Jwoe
- HSyht6NLIcNpYOhZyHyvXgbuYv5rtTCLjDtde6Fc4X9jxySoWOy4OMgeOqo2vpprVaNuwrTUDUX
- 6eCXb5zzpOL1i9UnVStA//vMPA6iVAHNQXGmIZGONrE0b4ATY1waS/bPRKDi7upgfBnbkW8MSdy
- jROwBbFp
-X-Proofpoint-ORIG-GUID: QlunFZqFcyVjk4zyYiD07B4bR5WXcc2A
-X-Authority-Analysis: v=2.4 cv=R+UDGcRX c=1 sm=1 tr=0 ts=68cb1a3e cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=e70TP3dOR9hTogukJ0528Q==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=1WtWmnkvAAAA:8 a=mgvM1FoPK4XduYGJcSIA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: QlunFZqFcyVjk4zyYiD07B4bR5WXcc2A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 adultscore=0 clxscore=1015 priorityscore=1501
- bulkscore=0 malwarescore=0 suspectscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+In-Reply-To: <aMrpiMTzvLW_eR3A@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 8/12/2025 12:52 AM, Liao Yuanhong wrote:
-> Remove unnecessary semicolons.
+On 9/17/25 1:02 PM, Frederic Weisbecker wrote:
+> Le Wed, Sep 17, 2025 at 06:19:49PM +0200, Gabriele Monaco a écrit :
+>> The timer migration mechanism allows active CPUs to pull timers from
+>> idle ones to improve the overall idle time. This is however undesired
+>> when CPU intensive workloads run on isolated cores, as the algorithm
+>> would move the timers from housekeeping to isolated cores, negatively
+>> affecting the isolation.
+>>
+>> Exclude isolated cores from the timer migration algorithm, extend the
+>> concept of unavailable cores, currently used for offline ones, to
+>> isolated ones:
+>> * A core is unavailable if isolated or offline;
+>> * A core is available if non isolated and online;
+>>
+>> A core is considered unavailable as isolated if it belongs to:
+>> * the isolcpus (domain) list
+>> * an isolated cpuset
+>> Except if it is:
+>> * in the nohz_full list (already idle for the hierarchy)
+>> * the nohz timekeeper core (must be available to handle global timers)
+>>
+>> CPUs are added to the hierarchy during late boot, excluding isolated
+>> ones, the hierarchy is also adapted when the cpuset isolation changes.
+>>
+>> Due to how the timer migration algorithm works, any CPU part of the
+>> hierarchy can have their global timers pulled by remote CPUs and have to
+>> pull remote timers, only skipping pulling remote timers would break the
+>> logic.
+>> For this reason, prevent isolated CPUs from pulling remote global
+>> timers, but also the other way around: any global timer started on an
+>> isolated CPU will run there. This does not break the concept of
+>> isolation (global timers don't come from outside the CPU) and, if
+>> considered inappropriate, can usually be mitigated with other isolation
+>> techniques (e.g. IRQ pinning).
+>>
+>> This effect was noticed on a 128 cores machine running oslat on the
+>> isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
+>> and the CPU with lowest count in a timer migration hierarchy (here 1
+>> and 65) appears as always active and continuously pulls global timers,
+>> from the housekeeping CPUs. This ends up moving driver work (e.g.
+>> delayed work) to isolated CPUs and causes latency spikes:
+>>
+>> before the change:
+>>
+>>   # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+>>   ...
+>>    Maximum:     1203 10 3 4 ... 5 (us)
+>>
+>> after the change:
+>>
+>>   # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+>>   ...
+>>    Maximum:      10 4 3 4 3 ... 5 (us)
+>>
+>> The same behaviour was observed on a machine with as few as 20 cores /
+>> 40 threads with isocpus set to: 1-9,11-39 with rtla-osnoise-top.
+>>
+>> The first 5 patches are preparatory work to change the concept of
+>> online/offline to available/unavailable, keep track of those in a
+>> separate cpumask cleanup the setting/clearing functions and change a
+>> function name in cpuset code.
+>>
+>> Patch 6 and 7 adapt isolation and cpuset to prevent domain isolated and
+>> nohz_full from covering all CPUs not leaving any housekeeping one. This
+>> can lead to problems with the changes introduced in this series because
+>> no CPU would remain to handle global timers.
+>>
+>> Patch 9 extends the unavailable status to domain isolated CPUs, which
+>> is the main contribution of the series.
+>>
+>> Changes since v12:
+>> * Pick and adapt patch by Yury Norov to initialise cpumasks
+>> * Reorganise accesses to tmigr_available_cpumask to avoid races
+>>
+>> Changes since v11:
+>> * Rename isolcpus_nohz_conflict() to isolated_cpus_can_update()
+>> * Move tick_nohz_cpu_hotpluggable() check to tmigr_is_isolated()
+>> * Use workqueues in tmigr_isolated_exclude_cpumask() to avoid sleeping
+>>    while atomic
+>> * Add cpumask initialiser to safely use cpumask cleanup helpers
+>>
+>> Changes since v10:
+>> * Simplify housekeeping conflict condition
+>> * Reword commit (Frederic Weisbecker)
+>>
+>> Changes since v9:
+>> * Fix total housekeeping enforcement to focus only on nohz and domain
+>> * Avoid out of bound access in the housekeeping array if no flag is set
+>> * Consider isolated_cpus while checking for nohz conflicts in cpuset
+>> * Improve comment about why nohz CPUs are not excluded by tmigr
+>>
+>> Changes since v8 [1]:
+>> * Postpone hotplug registration to late initcall (Frederic Weisbecker)
+>> * Move main activation logic in _tmigr_set_cpu_available() and call it
+>>    after checking for isolation on hotplug and cpusets changes
+>> * Call _tmigr_set_cpu_available directly to force enable tick CPU if
+>>    required (this saves checking for that on every hotplug change).
+>>
+>> Changes since v7:
+>> * Move tmigr_available_cpumask out of tmc lock and specify conditions.
+>> * Initialise tmigr isolation despite the state of isolcpus.
+>> * Move tick CPU check to condition to run SMP call.
+>> * Fix descriptions.
+>>
+>> Changes since v6 [2]:
+>> * Prevent isolation checks from running during early boot
+>> * Prevent double (de)activation while setting cpus (un)available
+>> * Use synchronous smp calls from the isolation path
+>> * General cleanup
+>>
+>> Changes since v5:
+>> * Remove fallback if no housekeeping is left by isolcpus and nohz_full
+>> * Adjust condition not to activate CPUs in the migration hierarchy
+>> * Always force the nohz tick CPU active in the hierarchy
+>>
+>> Changes since v4 [3]:
+>> * use on_each_cpu_mask() with changes on isolated CPUs to avoid races
+>> * keep nohz_full CPUs included in the timer migration hierarchy
+>> * prevent domain isolated and nohz_full to cover all CPUs
+>>
+>> Changes since v3:
+>> * add parameter to function documentation
+>> * split into multiple straightforward patches
+>>
+>> Changes since v2:
+>> * improve comments about handling CPUs isolated at boot
+>> * minor cleanup
+>>
+>> Changes since v1 [4]:
+>> * split into smaller patches
+>> * use available mask instead of unavailable
+>> * simplification and cleanup
+>>
+>> [1] - https://lore.kernel.org/lkml/20250714133050.193108-9-gmonaco@redhat.com
+>> [2] - https://lore.kernel.org/lkml/20250530142031.215594-1-gmonaco@redhat.com
+>> [3] - https://lore.kernel.org/lkml/20250506091534.42117-7-gmonaco@redhat.com
+>> [4] - https://lore.kernel.org/lkml/20250410065446.57304-2-gmonaco@redhat.com
+>>
+>> Frederic Weisbecker (1):
+>>    timers/migration: Postpone online/offline callbacks registration to
+>>      late initcall
+>>
+>> Gabriele Monaco (7):
+>>    timers: Rename tmigr 'online' bit to 'available'
+>>    timers: Add the available mask in timer migration
+>>    timers: Use scoped_guard when setting/clearing the tmigr available
+>>      flag
+>>    cgroup/cpuset: Rename update_unbound_workqueue_cpumask() to
+>>      update_exclusion_cpumasks()
+>>    sched/isolation: Force housekeeping if isolcpus and nohz_full don't
+>>      leave any
+>>    cgroup/cpuset: Fail if isolated and nohz_full don't leave any
+>>      housekeeping
+>>    timers: Exclude isolated cpus from timer migration
+>>
+>> Yury Norov (1):
+>>    cpumask: Add initialiser to use cleanup helpers
+>>
+>>   include/linux/cpumask.h                |   2 +
+>>   include/linux/timer.h                  |   9 ++
+>>   include/trace/events/timer_migration.h |   4 +-
+>>   kernel/cgroup/cpuset.c                 |  78 +++++++++-
+>>   kernel/sched/isolation.c               |  23 +++
+>>   kernel/time/timer_migration.c          | 205 ++++++++++++++++++++-----
+>>   kernel/time/timer_migration.h          |   2 +-
+>>   7 files changed, 278 insertions(+), 45 deletions(-)
+>>
+>>
+>> base-commit: 320475fbd590dc94a0a3d9173f81e0797ee1a232
+> So what is the best way to route this? Timers or cgroups tree?
 
-There is only one so s/semicolons/semicolon/ here and in subject
+As the majority of the code changes are in timers code, it will be 
+better to route through the timers tree. BTW, this patch set will have 
+some minor conflict with the current cgroup/for-6.18 branch, that should 
+be easily resolved.
 
-> 
-> Fixes: d5c65159f2895 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+Cheers,
+Longman
 
-Drop this since this isn't a bug fix that needs to be backported
-
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  drivers/net/wireless/ath/ath11k/dp_rx.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
-> index ffc7482c77b6..b9e976ddcbbf 100644
-> --- a/drivers/net/wireless/ath/ath11k/dp_rx.c
-> +++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
-> @@ -4615,7 +4615,6 @@ static void ath11k_hal_rx_msdu_list_get(struct ath11k *ar,
->  			      msdu_details[i].buf_addr_info.info0) == 0) {
->  			msdu_desc_info = &msdu_details[i - 1].rx_msdu_info;
->  			msdu_desc_info->info0 |= last;
-> -			;
->  			break;
->  		}
->  		msdu_desc_info = &msdu_details[i].rx_msdu_info;
-No need to repost -- I'll incorporate these changes when I process the patch.
-
-/jeff
 
