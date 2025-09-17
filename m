@@ -1,141 +1,245 @@
-Return-Path: <linux-kernel+bounces-820896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E980B7F988
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DF6B7F991
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DFE5880A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27996200BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEA3333A83;
-	Wed, 17 Sep 2025 13:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D549733593D;
+	Wed, 17 Sep 2025 13:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IoCueL3b"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UDzL9NTq"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EE7330D5E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A09132D5C2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758116817; cv=none; b=aavsKHK13Q+AhxEDkQQKASHcEbe7IlSL7KWNVSBT99lxEDURPOmbSafAfT1ZkmT7Ha5froqXOtsuCoqSwZbhOZ1WsKRBU4iSsiVl06vfedoyzHYQl+eXB7qHSwleUporNLGn6cWz3SR2L6iA4as6shBHWuXdDyG+vXSUXutOXTc=
+	t=1758116831; cv=none; b=ZZeb+3TH4wwwweeGGlvwq+mdomBGa459PhbrhI3m4xRNxjGIKxxjXw1wHAyy/3d1OLrETr5lCLXi9zlOZWmZKS8YHLsxOJyWYTFlxeMDh7mJ7pUMXkAGi/0sRZVem3L9GK5qLZljsxyreQ128yzXw4IziMYg0ggfGtKFTBBjeaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758116817; c=relaxed/simple;
-	bh=RwgGuPyKTCBSO/iOJFj8LyqIzyjQZ0GGQTuA4gXXKac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CDXc5nhi3bv6I6KTXmuaaxiYOVOZytowqMN8148GmKP0k2YAem545J5jobLnRwCU4UhDaKVE+Fn0hUb0pVJsulhPNxuiDpRSEkkLO3NlN8my3JSAiUJ0p/FOGC9SyLLsgkgCpcmkh4Fq1KA+Ajfp+4LvArplzBviOFpvz8et/OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IoCueL3b; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1758116831; c=relaxed/simple;
+	bh=2yQiKDpTK9neTRF8yPN8BWml/BMWi6JowDZommLNK5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbQFbv1Y4KByH81pnTsk4MpUEvXyFTflEGE62F+x+txfAfHjxrPJ0NM0lIzkFnrinznJkKKmnSkwaM6SlR5uUcJ6OPgQVwylQKl+XTAIlTJ7YaPXaCQedPqWjQ7NqgCKo9NDfczlfV4GF9f9LTibIvrNMdhAz06zeGydLuoN9Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UDzL9NTq; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HDG3mM003340
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:46:55 GMT
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8Xcdr029909
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:47:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RwgGuPyKTCBSO/iOJFj8LyqIzyjQZ0GGQTuA4gXXKac=; b=IoCueL3bfrp2DYCi
-	vLUHwjwAW+ntbPQ/dCh2L0sSb9z8DxcyJXIYgHEgzZHBLwwVEwK/D7Zsf3pj++5k
-	vPN/2xVzXQV13yjg7Hz6S0k4Y2CDvcDt47xz6WU1BNZ7IcZFDBGewM1UK7aJS2lt
-	+wcPzJBZaFx4Y/PKif3vb2H/2TEAUUNcqsPDNuM5Bsf8Mj1kMs4S05C8PwcZbgQV
-	YEk8bband0KNIvovShfngB9UvD8AEQCH7j1RNsnYrVLhv5CDuF8wuX5GN71Usm7z
-	r3ggXbv3bgZCtlFBy+kP6nMQpk9rPKbHoqRZRonK8SclnzkQK7yLFA6eSEBuIM3S
-	T616oA==
+	U+1FYSzFPulCZwhYK8uuFP4RJbaCiDqOUmY+x+avlIU=; b=UDzL9NTq019eYDfU
+	ZpBgeA34jHGfjZLp0QyNsys5dqfc8BRpCNJLdokShV3UI+vfIBuWb2wK+fMLGclq
+	FDOXD6w6zlvTr34m1ZmU/82QIijC29BQUPWl9FD1AZRcvpVX8kAcVxUtnQnBGlrt
+	7L1O1pEOkjX7wT60rz59+k3ss5DAqUgp5nlH0Xaf8srH31Pb97W9QFIfFJsImqww
+	X97PQNEpSP3inzHvTlFEKqcbiq5OZedOsiL/VP7aG1YFlFuwPnRE7MwOZWYQcuVv
+	F19v/xDysU1/IEYTNNr4EHl00oFhKA8f5z9yrCs2uDVewYCAIEP6hkYAhUzCMgXG
+	9jj9Qg==
 Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497wqgr2mn-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxjjs4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:46:55 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b3ca5e94d3so4667121cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:46:55 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:47:08 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b5e9b60ce6so180817341cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:47:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758116814; x=1758721614;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1758116827; x=1758721627;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RwgGuPyKTCBSO/iOJFj8LyqIzyjQZ0GGQTuA4gXXKac=;
-        b=kNQd2FHeEjS/XKOMqsBAQt6V+Gb9ce/LoIQo77USijUzhBh+4PdJmo+jMGQ9IwzK2z
-         cxdNLFT0ueVeP2QVSiwZK0jcuHXV7j0AlVZXSuxVvewe+hkb5i8nfh0gko9Qqhl3omrh
-         OVzZfnK4Oqm2tlyx67snfs1N84xdu6VB1E59iA176wJHHza1GzligOWJirErKW4NGiz+
-         ra3geNT6XSFEdOlGFUtdwUqovKXYwAFYa4IiGGTl+SS1OEB67C5mEUva6fa+cfGh2URM
-         4Wa8b11UoV8RwGNndfT1n0m3WItyI6glqg+G4rPYf6DgJOA0mJlv26e8EKaR37BRre25
-         BEkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUS0ALi8lFbagb9SJGGVeLZtUtSPxe/3Nbt0jlq57Z6f0StAHoVj5l41SHIflqaTDD0Y3zPC6KKNdcgupY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzjoYvTeGQpDejFGqqBwThii/3yDQyhiVAoAtMFAE+GWMsxG+8
-	ammP7+Jb2jADPxfckt4O6mRzr7tsJR58EzySsusVTpOTr2e9Rf18lPPNT4/5ycG5DnVA+uu2kDA
-	djqUu+xc/pEUztfAe3/fSDAgsaX0Qu8Lf+6g2gkFctmsED0PqNIxPbAnp2SKgYlOeJqo=
-X-Gm-Gg: ASbGncsZ2BiidgaajGVyxv/8i5vRDrzCMGRgKrg1TIuQXANTAwKeyuxPpYI1FwkJ/W5
-	REzoOeP4llhqRktYaMXUacIxhqm5lOztkaxhVSItTtgPR6aqPI7qqDHu9UgDK1rx61YNIEq3sGa
-	r9mk4bBAC6njFFV/8A+fEntbZg+kMpcWLugEt4/2orKMGEI5hr2s5EI/ruoMt59+Prxqz9MmpEK
-	YJ4fzyyr3WK6sJdO0+GEydmG2IjJIp5OLkzvd4/3hl3SM5bg6FBRfzLZuXbD69ZRNAqPJcnBK0Q
-	pYVFxokL6qfAvyPV7MtWAAtGw1s9z1zzx/lXRfJ+4C7jHT5fiLrqMAZHNwyZaB7sAm/ROUfpDuI
-	dp8e1quqY0XsIZh2tL3ihGA==
-X-Received: by 2002:a05:622a:1a9d:b0:4b5:a0fb:59a6 with SMTP id d75a77b69052e-4ba65bc2015mr14609911cf.1.1758116814185;
-        Wed, 17 Sep 2025 06:46:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGU9SK9QoEi4qqIyWuOLrD+1Koi2QQZhObu9zrUg9uyVY24N4I01Bsoa7ag79322ufzX+ZsQ==
-X-Received: by 2002:a05:622a:1a9d:b0:4b5:a0fb:59a6 with SMTP id d75a77b69052e-4ba65bc2015mr14609671cf.1.1758116813649;
-        Wed, 17 Sep 2025 06:46:53 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62ec551bf13sm13031804a12.53.2025.09.17.06.46.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 06:46:53 -0700 (PDT)
-Message-ID: <adbbc9cd-dfe7-4983-865d-d311cddbdbf1@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 15:46:51 +0200
+        bh=U+1FYSzFPulCZwhYK8uuFP4RJbaCiDqOUmY+x+avlIU=;
+        b=nqo/GaUsUV7Fqxo6z42o48ozDjsE5epke4sVgLVI+OTgGhHxyveBObWBuOIUANsREh
+         pY0Rwm9yK1wgyGfRC+tcxhFLiOmhb7FWz8aIQtJBpcJEYIMVqJZR3HAVlNOgmSWkRBc1
+         g4YXUZ1MhGaDG85caQXnYNP3IMfOP5Oky86mLkkhzfbSWLKSq5DdtfgX7DEQnu6uCbjL
+         QAgOMwFk03W/5zhL5UH0GuC7OYawHK2gs0LmyWto3tyxq6avYICxZ3WfAFfMbxfY1z3F
+         e/4UYorMZH+VYZGOU1CGmpaVWB6rF9inygKP+R4lKbAFFWFXr0ZFC7wxrLxprgKsWvkc
+         oBMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqHQR88U6qSRRiOFzNp7X9qengVB2NJ9zDmhtezxAWjNi6T9WyVTCVDZtmicOxhs+z+4dmNKUirpVq5Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1wVrO16h3JQiy6cJUZW/wxrzAFTe4o/erNKqBRV/SDLiKw3ar
+	fz095au/jzj9yqr8SOyERNLeq8HFyqIl4WSuNbg+6Lj05NoGc9yv7VRN0kyqM7+VsGsDUJc7ZdN
+	Rmq4jGi71k6K0Vx/VlBArrj2cODQbgLPkyqYCyKXZvlX5ijDGymEVtS3LBy9D7ROYy8s=
+X-Gm-Gg: ASbGncs2uzLOmDFTio/JA4oLW9FXSAzybOyntpIO1A7B9iXwQ00zEJ9Rjr/+wmMdmJZ
+	zIyaCRJPGOPe4Fu1H4YstRCMLIdO4ZDBAxOdHsTmYV81t5R2QUK7vKe9LMuRRJiMfB/ukesp06G
+	DCFiy0CsPZ3nFEdz8xFliHphFD5YIrriHmzwq2RnnYz8V20iK8UcCrogxfAd9iYUnUx3/VUJ3+t
+	jHpHWhmeEvYEFSioBL0Visa+MKIo348ELG+35wEkzAxifTKUhmqZINXll+QZnKwYngp6IYZX5o1
+	d+2cp2+jBhTXef/6a4AP61m9744Veunw9rt1D8Gvnb5O1cjkD+ArcvT9odwUYnHKditoyJLZFgm
+	yj37I5dfCjJ4QBACLpJlJDDKPkUNCEQRvecRkosE1TGKjWD09IqGr
+X-Received: by 2002:a05:622a:1822:b0:4b5:ed1b:74a9 with SMTP id d75a77b69052e-4ba6ac99828mr24107111cf.41.1758116826997;
+        Wed, 17 Sep 2025 06:47:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtXlZuFQreMzb64H+tnz5zGrRTbMmy49Axu1iq7yKRAfklZROJk01Ls9kms99uRsAwPum0Qw==
+X-Received: by 2002:a05:622a:1822:b0:4b5:ed1b:74a9 with SMTP id d75a77b69052e-4ba6ac99828mr24106611cf.41.1758116826295;
+        Wed, 17 Sep 2025 06:47:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-35bcee2ce08sm12429401fa.54.2025.09.17.06.47.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 06:47:04 -0700 (PDT)
+Date: Wed, 17 Sep 2025 16:47:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Hermes.Wu@ite.com.tw
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, Pet.Weng@ite.com.tw, Kenneth.Hung@ite.com.tw,
+        treapking@chromium.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v3 3/5] drm/bridge: it6505: modify DP link auto
+ training
+Message-ID: <nh3mxefaqznbirhez4c5xtkvs756cjasmb5bdsxol7cai7u4da@3nmtq6figidw>
+References: <20250916-fix-link-training-v3-0-0f55bfdb272a@ite.com.tw>
+ <20250916-fix-link-training-v3-3-0f55bfdb272a@ite.com.tw>
+ <2bk6t2uibhbqtreavimigffzp746rnui4ohqk6sxcpolf4skjh@ddyma4omo6k7>
+ <b1d7dcc0ad6e40309677058f8affa5a5@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/13] arm64: dts: qcom: sdm845-lg-judyln: Add lab/ibb
-To: Paul Sajna <sajattack@postmarketos.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
- <20250916-judyln-dts-v2-13-5e16e60263af@postmarketos.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250916-judyln-dts-v2-13-5e16e60263af@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: yPOZ-1f13l3et6-odr4-eJ6eaVVeK_RP
-X-Authority-Analysis: v=2.4 cv=HITDFptv c=1 sm=1 tr=0 ts=68cabbcf cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=cdr5l01el_-Pmc56AxUA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: yPOZ-1f13l3et6-odr4-eJ6eaVVeK_RP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDEyOCBTYWx0ZWRfX/Bhz4onnQVi2
- MmqC6SQSvWlc/ek3j5YfhKw7kAM4i5dKYZYHQjONySNx/eg5hWMiTYEG0nMRNRHIogf93K8guNn
- 1EMAdwiWuzlbFXle2oQMULYT8iS7dj60V1T6h9aBLRgC2oCICSr1QUWj6bQxTA+ymBK75BlBr0o
- 1tEAeEQpmvzi2IkiNF3lKnoCRPMvrjC5xbtkUbQr3u9gKQdT3aLoMSxLZD+IfGEKunzquvewI4Q
- dEfg6aVJVh/eXxmG9QrbYdBsfsla6aV4M0GPERoOtlWyZvnRKJq5YraLRI8wAHePvx7HwTbNxqn
- s7L6lWqLOnp1x2mLgUMpR/Utiw6TGXzqLIjkHaG7r7RU+f2eS5I7acmVguEPJKNISjXL8+DceWZ
- m8YRBnmF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b1d7dcc0ad6e40309677058f8affa5a5@ite.com.tw>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX4/r4hy9/eHwj
+ i4X0b8l4IyJiQihuZ/w5Dklo59a1PzBIX1ZVNs5Peg5jSP1gQqJRCOm5xzy8wO5752FCJz84BMc
+ hi5U28GZEbkSZSgnS7zsNE6dycZpfSTAGDrPlTGid+f2r4YO5WKst+pxLc0T87yx8AkDsecaK01
+ eOBcrUnc7DBnb+2B/RgDgX0bRc/WA2r4wecW+tiMcTEdMf0g7sRjGZumxD1x2wFFLDEfUUXMR/W
+ Lv8YDxnmyHpM8y+l+If+0gEPFO1kmfCy33ZE8yetqfvG28whHBP2ZxrIgmnq5/05YhDIDEtAquo
+ 28ryWPHiwKmugsiklFmB1fIXG44GlD4F6uY8mG5yhwiyR5xDgpEHWk9CBXycJLTqmcaupHAMtEU
+ 7LxS2FiJ
+X-Authority-Analysis: v=2.4 cv=MMFgmNZl c=1 sm=1 tr=0 ts=68cabbdc cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=Ns9eNvu6AAAA:8 a=EUspDBNiAAAA:8 a=QyXUC8HyAAAA:8
+ a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=P1BnusSwAAAA:8 a=pGLkceISAAAA:8
+ a=cm27Pg_UAAAA:8 a=e5mUnYsNAAAA:8 a=zgMSu1BmLbmheqphp-cA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=LZLx1i01EnjtqRv10NxV:22
+ a=cvBusfyB2V15izCimMoJ:22 a=D0XLA9XvdZm18NrgonBM:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-ORIG-GUID: CML2cd-66fF8bdGQ4svUtQKpJ4U05BzD
+X-Proofpoint-GUID: CML2cd-66fF8bdGQ4svUtQKpJ4U05BzD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 bulkscore=0
- malwarescore=0 impostorscore=0 clxscore=1015 spamscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 phishscore=0 impostorscore=0 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170128
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On 9/17/25 3:09 AM, Paul Sajna wrote:
-> `regulator-always-on;` in ibb improves display blanking issue
+On Wed, Sep 17, 2025 at 08:37:10AM +0000, Hermes.Wu@ite.com.tw wrote:
+> 
+> >-----Original Message-----
+> >From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> 
+> >Sent: Tuesday, September 16, 2025 6:49 PM
+> >To: Hermes Wu (吳佳宏) <Hermes.Wu@ite.com.tw>
+> >Cc: Andrzej Hajda <andrzej.hajda@intel.com>; Neil Armstrong <neil.armstrong@linaro.org>; Robert Foss <rfoss@kernel.org>; Laurent Pinchart <Laurent.pinchart@ideasonboard.com>; Jonas Karlman <jonas@kwiboo.se>; Jernej Skrabec <jernej.skrabec@gmail.com>; Maarten Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Pet Weng (翁玉芬) <Pet.Weng@ite.com.tw>; Kenneth Hung (洪家倫) <Kenneth.Hung@ite.com.tw>; treapking@chromium.org; dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org
+> >Subject: Re: [PATCH RESEND v3 3/5] drm/bridge: it6505: modify DP link auto training
+> >
+> >On Tue, Sep 16, 2025 at 12:47:43PM +0800, Hermes Wu via B4 Relay wrote:
+> >> From: Hermes Wu <Hermes.wu@ite.com.tw>
+> >> 
+> >> IT6505 supports HW link training which will write DPCD and check
+> >> training status automatically.
+> >> 
+> >> In the case that driver set link rate at 2.7G and HW fail to training,
+> >> it will change link configuration and try 1.65G. And this will cause
+> >> INT_VID_FIFO_ERROR triggered when link clock is changed.
+> >> 
+> >> When video error occurs, video logic is reset and link training restart,
+> >> this will cause endless auto link training.
+> >> 
+> >> Modify link auto training with disable INT_VID_FIFO_ERROR to avoid loop
+> >> and check INT_LINK_TRAIN_FAIL event to abort wait training done.
+> >> 
+> >> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+> >> ---
+> >>  drivers/gpu/drm/bridge/ite-it6505.c | 14 +++++++++++++-
+> >>  1 file changed, 13 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+> >> index 7f6227c278a51358c70a3de93454aafeef64f2bb..f9b99c70789eea6beb3c6513155c9a4ca103d219 100644
+> >> --- a/drivers/gpu/drm/bridge/ite-it6505.c
+> >> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
+> >> @@ -1806,6 +1806,13 @@ static bool it6505_link_start_auto_train(struct it6505 *it6505)
+> >>  	struct device *dev = it6505->dev;
+> >>  
+> >>  	mutex_lock(&it6505->aux_lock);
+> >> +
+> >> +	/* Disable FIFO error interrupt trigger  */
+> >> +	/* to prevent training fail loop issue   */
+> >> +	it6505_set_bits(it6505, INT_MASK_03, BIT(INT_VID_FIFO_ERROR), 0);
+> >> +
+> >> +	it6505_write(it6505, INT_STATUS_03,
+> >> +		     BIT(INT_LINK_TRAIN_FAIL) | BIT(INT_VID_FIFO_ERROR));
+> >>  	it6505_set_bits(it6505, REG_TRAIN_CTRL0,
+> >>  			FORCE_CR_DONE | FORCE_EQ_DONE, 0x00);
+> >>  	/* reset link state machine and re start training*/
+> >> @@ -1818,8 +1825,10 @@ static bool it6505_link_start_auto_train(struct it6505 *it6505)
+> >>  		link_training_state = it6505_read(it6505, REG_LINK_TRAIN_STS);
+> >>  		int03 = it6505_read(it6505, INT_STATUS_03);
+> >>  		if (int03 & BIT(INT_LINK_TRAIN_FAIL)) {
+> >> +			/* Ignore INT_VID_FIFO_ERROR when auto training fail*/
+> >>  			it6505_write(it6505, INT_STATUS_03,
+> >> -				     BIT(INT_LINK_TRAIN_FAIL));
+> >> +				     BIT(INT_LINK_TRAIN_FAIL) |
+> >> +				     BIT(INT_VID_FIFO_ERROR));
+> >
+> >I'm really unusure about this change. Judging by the description of the
+> >problem, it's fix for the issue, but the issue gets introduced in the
+> >previous patch.
+> In this patch serious?
+> 
+> This patch serious fix this FIFO error issue, it change link training algorithm first then fix wrong FIFO error status.
+> 
+> The link training process start after video status is stable, and when video FIFO error occurs,
+> video stable status will also lost, link training will reset to idle and wait until video stable again.
+> 
+> IT6505 HW auto training will process link training automatically, which include CR/EQ DPCD setting, link status check,
+> and try lower link rate is the 2.7G cannot pass training.
+> 
+> In some case, DP connect to a DP sink device which cannot pass IT6505 HW auto training. 
+> when link auto training fail on 2.7G and IT6505 HW change link rate to 1.65G and retry training automatically,
+> at this time video FIFO error will occur because of the link rate change(chip issue), the video signal from SOC is not lost actually.
 
-..but doesn't let you save power when the display is not in use
+We seems to be misunderstanding each other. I pointed out that your are
+fixing the code that was introduced in the previous patch. Would it make
+more sense to reoder or to squash the patches?
 
-That suggests your panel driver may not be sequencing the supplies
-properly (or maybe the reset pin/commands may be misplaced)
+> 
+> 
+> >>  
+> >>  			DRM_DEV_DEBUG_DRIVER(dev,
+> >>  					     "INT_LINK_TRAIN_FAIL(%x)!",
+> >> @@ -1837,6 +1846,9 @@ static bool it6505_link_start_auto_train(struct it6505 *it6505)
+> >>  		timeout--;
+> >>  	}
+> >>  unlock:
+> >> +	/* recover interrupt trigger*/
+> >> +	it6505_set_bits(it6505, INT_MASK_03,
+> >> +			BIT(INT_VID_FIFO_ERROR), BIT(INT_VID_FIFO_ERROR));
+> >>  	mutex_unlock(&it6505->aux_lock);
+> >>  
+> >>  	return state;
+> >> 
+> >> -- 
+> >> 2.34.1
+> >> 
+> >> 
+> >
+> >-- 
+> >With best wishes
+> >Dmitry
+> >
+> BR.
+> Hermes Wu
 
-Konrad
+-- 
+With best wishes
+Dmitry
 
