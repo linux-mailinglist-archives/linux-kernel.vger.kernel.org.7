@@ -1,274 +1,209 @@
-Return-Path: <linux-kernel+bounces-820795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDD1B7F38E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:26:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CC9B7F2D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF120586BFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAEF27ABA86
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A28633C741;
-	Wed, 17 Sep 2025 13:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC8E1E1E00;
+	Wed, 17 Sep 2025 13:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rRINjgm9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oVzuygt4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rRINjgm9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oVzuygt4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtEIDobW"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8605C1DE894
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E17C1F4192
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115307; cv=none; b=uknZqj1vu7dTOVHb0wp9DZgTSP9LQ5JBnL36k0V7zP165ckMXkwP4gGXGL6h0U7R14G4BtrLBQHyt5pyxm/7t7vjdQqaYf+Louhb2hRCyhHPKFgkQhiiFjkd+JKOn9Nc2267fcJ32KAkrxXyGREDvJEA+Ts1YaUnZns76R9Qhl0=
+	t=1758115379; cv=none; b=ruHUSQ23ns91/DBrJzteHH97CW3Iw1Fgir7HuXb2Po2dq75ZuIQivMQ8ML+6hHt11FpndUaIox2kJYbb4+oO3pzEqWHpE0D9TqQ4JCw2UB21fs7kTr36Uz/2LC9D93j93vr45m5ff+aWppXshTCYVVOf+l3jntniBxxExIYGYrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115307; c=relaxed/simple;
-	bh=r4ov91MIeMuw40nHteEZZFOnlD9OgzAli4sw1EF/K9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kOWaOT/4VFXwIFqU4DjW5CBe/zC2K6vCQgUdCnYssvJ6p++GNk+XZOtCxs9fgUA81xHRPib1pmIb9JPVVbZb73enu/amkOfyVAaSXmRneUCjZjPocN6150yMtr6XXFURDf1e96cB5uNOxMsDBAiJmgOZemQWc/OLnf3jEU+S3jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rRINjgm9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oVzuygt4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rRINjgm9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oVzuygt4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7B7A1227FE;
-	Wed, 17 Sep 2025 13:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758115303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
-	b=rRINjgm9XXftmCaFqE42aDxmpGTm2BIkPOrnkkwjG9lrcnauCu+UPkoyNHx60HU59KQ9dk
-	mns/v9v8O83c7irrcJByzpDm36S4ZEcFL6DyEGYUF0qd849sAbAxLTl5ATT24D+R5cdmIF
-	0i6g1uZWnJ8LTeKTEuGzguBcvbqoLVU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758115303;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
-	b=oVzuygt4YW03vGLdPSeVFvAVpQWFlQBvv/EAL9t7q1HZe1begUvNrilsf79hgVrA2LQU6u
-	ytwwursrUCx7SECg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rRINjgm9;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oVzuygt4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758115303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
-	b=rRINjgm9XXftmCaFqE42aDxmpGTm2BIkPOrnkkwjG9lrcnauCu+UPkoyNHx60HU59KQ9dk
-	mns/v9v8O83c7irrcJByzpDm36S4ZEcFL6DyEGYUF0qd849sAbAxLTl5ATT24D+R5cdmIF
-	0i6g1uZWnJ8LTeKTEuGzguBcvbqoLVU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758115303;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
-	b=oVzuygt4YW03vGLdPSeVFvAVpQWFlQBvv/EAL9t7q1HZe1begUvNrilsf79hgVrA2LQU6u
-	ytwwursrUCx7SECg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B116137C3;
-	Wed, 17 Sep 2025 13:21:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vICNFee1ymiQcgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 17 Sep 2025 13:21:43 +0000
-Message-ID: <bf8b4741-1025-4cc8-b9ed-5b566bdcb2d7@suse.cz>
-Date: Wed, 17 Sep 2025 15:21:31 +0200
+	s=arc-20240116; t=1758115379; c=relaxed/simple;
+	bh=IXtdj43M5q2Ed5NQe9mn8kcTi6HyJvp+nQtN50y6JwY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fvqczsri6EBCQCXFRUROjqSyyn+jDjdSij5uH9hiOW/BsGtvnLmVxaDli+ZbRBO4t25YuU/1AwXhGhX9G6ZPy0EnH128xp+7BsE0rBwE8Lb0R3r7N+9B/NRK5V/ldkdXHnnD+AbZXNog1RV+63mGV3GGm/gk3jc8yoQvp8T58yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtEIDobW; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62f1987d446so5851029a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758115375; x=1758720175; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fNei8MHThiloklPU7UxzTmaJV1wQ0pvOzFsJZ+duSAw=;
+        b=dtEIDobWRDzpGN+FdDhFfoFiHtzGUPzW0pcT/Jb+oNR3B80z0S24QkQ2+tJp6BZ+E/
+         2SlbHxnjDN783WeZS11qulZHLrmY8tfl32+sUPaLEHDQxM2VdtGVjCSoAWO/81tAVN2u
+         ZQwPKFJbwP2at65JIdllh/SMVVp4UfrocsykoBmIxiIski7oZfqhigY4pelh0UtMjMxY
+         WvQoX61HxRKGO0Dq+//ussr1do4V2PL7DoU/mjsktCGkBr8AlvvmntplrClk9kmGL0sc
+         J9DmNVrqTVEUBc1/2sp70X5gfLIDNC387OJskChrSs6DRyg/zPih4y+a+vXpqM7bLNdE
+         mHJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758115375; x=1758720175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fNei8MHThiloklPU7UxzTmaJV1wQ0pvOzFsJZ+duSAw=;
+        b=Ko9GV7mq1AdkkyfyBMOhRz9PleM8lPA4G9zBv67aZecLvC2qlt8Ts+fDJy6bneuPkA
+         qDxcoXJxv5Tcz+pH9w0WywgWVX39N8lx73qDUbnon1G3agLEG8aw4DND3lSg7Nj12Nn5
+         +/ZTzJp3aXqMF+Nj3BKSyCYoYhvRegjWp6RRDoDqLqtKEXc6lQ5apQihQ7uoaLMEQyRr
+         V1i0hCZTAJioZ02UT/kt3HRGFeVtcQQEYhC1ROVkemiRd5j0Ho5urr5FoCgn00Qwgaxm
+         64isdqDEzD2sSPh4mRH+UrIZbpGLRgTS6DC8WmM7QyGoyHHTnJfWlyMG4cBUhW78spn5
+         ebJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNCQ034PHbHCOqJNXldVoG1FgWUOyPYWBzrcMVrQUAuAbQNgRHCcwiCWKQ6vlLcJ32k4Kx5cFz2lKzoP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9ms7pXWfRrCF0VyZpZUxqZyDyGR/GXFCJkrKVNlAkTofP6QiK
+	GLY45vCwNDH/cR3bJWKubqmFPQrIj0sRvnkHC/IUMw1dJUaJdR0JqdXy0FHs+8zdlRFtN1klvMD
+	muuHXfsdSJO8jC1v8yctpRnODJCvNbAA=
+X-Gm-Gg: ASbGncsAPXr7sf6wteKig66BGTV0m6O5TYxyM6QuTQbFiCPh8JHyAaxSOCXkrjhbyDQ
+	Dlv6xEtBZf6Le5FLE5mQx53oESPsl48G6Wtz7o8ij0yOGgp0UMecipbdhhLIg+K/TcFr4MAF20A
+	w0iIpOZYxyXcHH1PATGFWUFH/rnJmFmKvwbGxb4AkpF5S1EAWlHuVsodmaBQDyoZb7VFcwkJSq0
+	f49MVRs9F6N1OfUrvtAjJ3RqR0/JLIPOAEKsB0=
+X-Google-Smtp-Source: AGHT+IH1fnd7pg1OiM+Vful9dVduFaBmJC8BwTm18iho+3iiqRU+5s4WiBnxugsYrfCl+j7st2Br4O7QIh8RDO+5yVc=
+X-Received: by 2002:a05:6402:34c2:b0:62f:65f5:a8cd with SMTP id
+ 4fb4d7f45d1cf-62f84213d25mr2465122a12.7.1758115374571; Wed, 17 Sep 2025
+ 06:22:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu()
- operations
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Uladzislau Rezki <urezki@gmail.com>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org, "Paul E . McKenney" <paulmck@kernel.org>
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
- <aMpxnACqmsQl-lp0@hyeyoo> <bbda8c25-b575-4e98-b1ae-b103c6598d38@suse.cz>
- <aMqcXyKRlZggLxu_@hyeyoo> <6f92eca3-863e-4b77-b2df-dc2752c0ff4e@suse.cz>
- <aMqyn6nenR8V_p1y@hyeyoo>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
-In-Reply-To: <aMqyn6nenR8V_p1y@hyeyoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7B7A1227FE
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,gentwo.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+References: <20250917124404.2207918-1-max.kellermann@ionos.com> <CAGudoHHSpP_x8MN5wS+e6Ea9UhOfF0PHii=hAx9XwFLbv2EJsg@mail.gmail.com>
+In-Reply-To: <CAGudoHHSpP_x8MN5wS+e6Ea9UhOfF0PHii=hAx9XwFLbv2EJsg@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 17 Sep 2025 15:22:42 +0200
+X-Gm-Features: AS18NWCj5D-vA3jAqNwkPHxdj4sWxauOvPCPJajJmK9sXPHNO63KqrqU8QfOTfU
+Message-ID: <CAGudoHHiH+2+LdQGBs8cS4Hr6sDWk6diEG+JQ7HMQbWdiNtKAA@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
+	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/17/25 15:07, Harry Yoo wrote:
-> On Wed, Sep 17, 2025 at 02:05:49PM +0200, Vlastimil Babka wrote:
->> On 9/17/25 13:32, Harry Yoo wrote:
->> > On Wed, Sep 17, 2025 at 11:55:10AM +0200, Vlastimil Babka wrote:
->> >> On 9/17/25 10:30, Harry Yoo wrote:
->> >> > On Wed, Sep 10, 2025 at 10:01:06AM +0200, Vlastimil Babka wrote:
->> >> >> +				sfw->skip = true;
->> >> >> +				continue;
->> >> >> +			}
->> >> >>
->> >> >> +			INIT_WORK(&sfw->work, flush_rcu_sheaf);
->> >> >> +			sfw->skip = false;
->> >> >> +			sfw->s = s;
->> >> >> +			queue_work_on(cpu, flushwq, &sfw->work);
->> >> >> +			flushed = true;
->> >> >> +		}
->> >> >> +
->> >> >> +		for_each_online_cpu(cpu) {
->> >> >> +			sfw = &per_cpu(slub_flush, cpu);
->> >> >> +			if (sfw->skip)
->> >> >> +				continue;
->> >> >> +			flush_work(&sfw->work);
->> >> >> +		}
->> >> >> +
->> >> >> +		mutex_unlock(&flush_lock);
->> >> >> +	}
->> >> >> +
->> >> >> +	mutex_unlock(&slab_mutex);
->> >> >> +	cpus_read_unlock();
->> >> >> +
->> >> >> +	if (flushed)
->> >> >> +		rcu_barrier();
->> >> > 
->> >> > I think we need to call rcu_barrier() even if flushed == false?
->> >> > 
->> >> > Maybe a kvfree_rcu()'d object was already waiting for the rcu callback to
->> >> > be processed before flush_all_rcu_sheaves() is called, and
->> >> > in flush_all_rcu_sheaves() we skipped all (cache, cpu) pairs,
->> >> > so flushed == false but the rcu callback isn't processed yet
->> >> > by the end of the function?
->> >> > 
->> >> > That sounds like a very unlikely to happen in a realistic scenario,
->> >> > but still possible...
->> >> 
->> >> Yes also good point, will flush unconditionally.
->> >> 
->> >> Maybe in __kfree_rcu_sheaf() I should also move the call_rcu(...) before
->> >> local_unlock().
->> >>
->> >> So we don't end up seeing a NULL pcs->rcu_free in
->> >> flush_all_rcu_sheaves() because __kfree_rcu_sheaf() already set it to NULL,
->> >> but didn't yet do the call_rcu() as it got preempted after local_unlock().
->> > 
->> > Makes sense to me.
-> 
-> Wait, I'm confused.
-> 
-> I think the caller of kvfree_rcu_barrier() should make sure that it's invoked
-> only after a kvfree_rcu(X, rhs) call has returned, if the caller expects
-> the object X to be freed before kvfree_rcu_barrier() returns?
+On Wed, Sep 17, 2025 at 3:13=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
+>
+> On Wed, Sep 17, 2025 at 2:44=E2=80=AFPM Max Kellermann <max.kellermann@io=
+nos.com> wrote:
+>
+> I don't know about ceph internals, so no comment on that front.
+>
+> > +/**
+> > + * Queue an asynchronous iput() call in a worker thread.  Use this
+> > + * instead of iput() in contexts where evicting the inode is unsafe.
+> > + * For example, inode eviction may cause deadlocks in
+> > + * inode_wait_for_writeback() (when called from within writeback) or
+> > + * in netfs_wait_for_outstanding_io() (when called from within the
+> > + * Ceph messenger).
+> > + *
+> > + * @n: how many references to put
+> > + */
+> > +void ceph_iput_n_async(struct inode *inode, int n)
+> > +{
+> > +       if (unlikely(!inode))
+> > +               return;
+> > +
+> > +       if (likely(atomic_sub_return(n, &inode->i_count) > 0))
+> > +               /* somebody else is holding another reference -
+> > +                * nothing left to do for us
+> > +                */
+> > +               return;
+> > +
+> > +       doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n",=
+ inode, ceph_vinop(inode));
+> > +
+> > +       /* the reference counter is now 0, i.e. nobody else is holding
+> > +        * a reference to this inode; restore it to 1 and donate it to
+> > +        * ceph_inode_work() which will call iput() at the end
+> > +        */
+> > +       atomic_set(&inode->i_count, 1);
+> > +
+>
+> That loop over iput() indeed asks for a variant which grabs an
+> explicit count to subtract.
+>
+> However, you cannot legally transition to 0 without ->i_lock held. By
+> API contract the ->drop_inode routine needs to be called when you get
+> here and other CPUs are prevented from refing the inode.
+>
+> While it is true nobody *refs* the inode, it is still hanging out on
+> the superblock list where it can get picked up by forced unmount and
+> on the inode hash where it can get picked up by lookup. With a
+> refcount of 0, ->i_lock not held and no flags added, from their POV
+> this is a legally cached inode they can do whatever they want with.
+>
+> So that force setting of refcount to 1 might be a use-after-free if
+> this raced against another iput or it might be losing a reference
+> picked up by someone else.
+>
+> If you got the idea to bring back one frem from iput() in the stock kerne=
+l:
+>
+>         if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+>                 if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
+>                         atomic_inc(&inode->i_count);
+>
+> Note this guy still makes sure to take the lock first. As a side note
+> this weird deref to 0 + ref back to 1 business is going away [1].
+>
+> I don't know what's the handy Linux way to sub an arbitrary amount as
+> long as the target is not x, I guess worst case one can just write a
+> cmpxchg loop by hand.
+>
+> Given that this is a reliability fix I would forego optimizations of the =
+sort.
+>
+> Does the patch convert literally all iput calls within ceph into the
+> async variant? I would be worried that mandatory deferral of literally
+> all final iputs may be a regression from perf standpoint.
+>
+> I see you are mentioning another deadlock, perhaps being in danger of
+> deadlocking is something you could track with a flag within ceph (just
+> like it happens for writeback)? Then the local iput variant could
+> check on both. I have no idea if this is feasible at all for the netfs
+> thing.
+>
+> No matter what though, it looks like the way forward concerning
+> ->i_count is to make sure it does not drop to 0 within the new
+> primitive.
+>
 
-Hmm, the caller of kvfree_rcu(X, rhs) might have returned without filling up
-the rcu_sheaf fully and thus without submitting it to call_rcu(), then
-migrated to another cpu. Then it calls kvfree_rcu_barrier() while another
-unrelated kvfree_rcu(X, rhs) call on the previous cpu is for the same
-kmem_cache (kvfree_rcu_barrier() is not only for cache destruction), fills
-up the rcu_sheaf fully and is about to call_rcu() on it. And since that
-sheaf also contains the object X, we should make sure that is flushed.
+That is to say the routine async routine should start with:
+        if (atomic_add_unless(&inode->i_count, -1, 1))
+                return;
+         /* defer to iput here */
 
-> IOW if flush_all_rcu_sheaves() is called while __kfree_rcu_sheaf(s, X) was
-> running on another CPU, we don't have to guarantee that
-> flush_all_rcu_sheaves() returns after the object X is freed?
-> 
->> >> But then rcu_barrier() itself probably won't mean we make sure such cpus
->> >> finished the local_locked section, if we didn't queue work on them. So maybe
->> >> we need synchronize_rcu()?
-> 
-> So... we don't need a synchronize_rcu() then?
-> 
-> Or my brain started malfunctioning again :D
-> 
+this is copy pasted, no credit needed for anyone
 
+As you can see there is some work going on concerning these routines,
+I would wager that loop over iput in writeback will go away in
+mainline after the dust settles ;)
+
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=
+=3Dvfs-6.18.inode.refcount.preliminaries&id=3D9e70e985bdc2[1[1c6fe7a160e4d5=
+9ddd7c0a39bc077
+>
+> > +       /* simply queue a ceph_inode_work() without setting
+> > +        * i_work_mask bit; other than putting the reference, there is
+> > +        * nothing to do
+> > +        */
+> > +       WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_=
+wq,
+> > +                                &ceph_inode(inode)->i_work));
+> > +
+> > +       /* note: queue_work() cannot fail; it i_work were already
+> > +        * queued, then it would be holding another reference, but no
+> > +        * such reference exists
+> > +        */
+> > +}
+> > +
 
