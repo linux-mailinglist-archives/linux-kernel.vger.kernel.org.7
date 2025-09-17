@@ -1,186 +1,101 @@
-Return-Path: <linux-kernel+bounces-821424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8258CB8136A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:41:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D90B81370
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95F662765C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CF61C279F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD50C3002A1;
-	Wed, 17 Sep 2025 17:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228FC2FC01E;
+	Wed, 17 Sep 2025 17:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOltoQiY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="HeYxWK60"
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038832FF661
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB92D229B18;
+	Wed, 17 Sep 2025 17:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758130856; cv=none; b=TjiAGzI9aDBLAJUh/uCcmMZUldjLQSpKW4x3PxwvzQTBLclCyvYyMoezDs2Lop+aDDI7CYIANOiSV7VsjVuveQXBtVDCoprZbc3s63JQ+SdLKvC7taOf8jbbFqSkpCpfnApJeKm+gjjd393EhxOxTLLJ/FbR8jZMKqQ41d5Kw04=
+	t=1758130914; cv=none; b=Tgy6VE9omXe5QdRNWkUBLE/iFCq1Z9OFQ4wEaQyNKWTq545rUke7VVoReBiKb7tbczESkb0zKALZt+oYR1kZMVBqoh7XJ5PqgFK3tnmmEsYXkIqWIiCiL27IaI+B3KuZyiX+bEgTdRAsRXgMI/QZqfoj5eRRe8FrUqdbmweqous=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758130856; c=relaxed/simple;
-	bh=C/FWcnjtqXbXmArF2cJQxrpogJR0iVY010DR1LrFIwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GI06DFPhfVx4viwIMqR/lDD05cpAFtWGV9bB+47gyCfu9DejKMAmO3b590Wi/GANeJSdUfS/YLRiHGXPPQsvDL3uKhNFn2t0nPvtbKn+buw2Bc80O2coCeQHUqWrxP+hJ6DeiNVTii2hN0prDpHUPE/fYAQseNDXzRkoXzFAOVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOltoQiY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E146C4CEFA;
-	Wed, 17 Sep 2025 17:40:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758130855;
-	bh=C/FWcnjtqXbXmArF2cJQxrpogJR0iVY010DR1LrFIwM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iOltoQiY284U3hh2FAqR2YSLRiqan90fIeNrfxWEWrR29HIUddWKZ/avmPxyf4zyD
-	 48SuIuMabx2PFhfGtKxw3xLX5yN5DEqSRLY46DPismYxhCr+uVHXdT9h6wZC73xizJ
-	 2EccQO9M+RUx3o7svQ/39W44rBZFiTdpV+FOUQKTR4XmGqjI8B3m4HFfFOhU8jCI9W
-	 U6dECIYw2T4DZvhsu7ot2HGYrYhT0HTxXaB3kbSYA5t4TAvDuAaUfh+9rcdHUvY7cR
-	 0W9RdaJ1bnVhKXdiQ8D7OWCD48DIlzjcmC8dr3jhzyWngx+DLnlkD1R+QfW+UQ3Zp9
-	 BqkAomc0Ys5BA==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Graf <graf@amazon.com>,
-	Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Chris Li <chrisl@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	kexec@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/4] lib/test_kho: use kho_preserve_vmalloc instead of storing addresses in fdt
-Date: Wed, 17 Sep 2025 20:40:33 +0300
-Message-ID: <20250917174033.3810435-5-rppt@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250917174033.3810435-1-rppt@kernel.org>
-References: <20250917174033.3810435-1-rppt@kernel.org>
+	s=arc-20240116; t=1758130914; c=relaxed/simple;
+	bh=vIqfQzX/DDStB/C412AZQpeeutgfVCWBdc9gK5Elb0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tGBvb5z0aLPdeZo9rjm8ICbci5OCZxuf/sfZF5Dt473Aox/zcx1fanyXshp0TBHa+tfy8Au7PlFhFobJlV4wFjX8/H/8qMJ9BJW0YE5n260VwrwdZSICDdGA1Erp99DdAtYjKhq31+cwah4mP6Bo0dIbUOrbyDK/JgrdosfYI+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=HeYxWK60; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net [IPv6:2a02:6b8:c22:d15:0:640:4031:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id BECA380718;
+	Wed, 17 Sep 2025 20:41:43 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id bfVhOBEL1W20-fCQhJYIk;
+	Wed, 17 Sep 2025 20:41:42 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1758130903;
+	bh=28EP7Oi8xQcqOY/2fxNQgg7mmEgV2RO5dAkZcmLSGbs=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=HeYxWK60ukf6zL5lGd9ArUwj+hmEnktcnuX/z/zJRmYkVuDZOH4HTKM4pgFV2O5E/
+	 ovBlvVivQSM+2ktKsv8PMHDfz9FI3RIn58PMuvkUtOuVYu7AVQwmt0RlmxLdlyxpfj
+	 Q/aR9gzjSJUxv2bKa0bKgarNJIwb5oWcb36I6WdQ=
+Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Wed, 17 Sep 2025 20:41:35 +0300
+From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+To: djfkvcing117@gmail.com
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, gregkh
+ <gregkh@linuxfoundation.org>, lossin@kernel.org, gary@garyguo.net
+Subject: Re: [PATCH v4] rust/fs: use intra-doc link for `EBADF` in
+ `BadFdError` docs
+Message-ID: <20250917204135.7a796dd3@nimda.home>
+In-Reply-To: <20250917165106.22262-1-djfkvcing117@gmail.com>
+References: <20250917165106.22262-1-djfkvcing117@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Thu, 18 Sep 2025 00:50:59 +0800
+djfkvcing117@gmail.com wrote:
 
-KHO test stores physical addresses of the preserved folios directly in
-fdt.
-Use kho_preserve_vmalloc() instead of it and kho_restore_vmalloc() to
-retrieve the addresses after kexec.
+> From: Tong Li <djfkvcing117@gmail.com>
+>=20
+> In rust/kernel/fs/file.rs, replace `EBADF` with [`EBADF`].
+>=20
+> This helps rust-analyzer to resolve such references.
+>=20
+> Suggested-by: Onur =C3=96zkan <work@onurozkan.dev>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1186
+> Signed-off-by: Tong Li <djfkvcing117@gmail.com>
+> ---
+>  rust/kernel/fs/file.rs | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+> index 67a3654f0fd3..f3153f4c8560 100644
+> --- a/rust/kernel/fs/file.rs
+> +++ b/rust/kernel/fs/file.rs
+> @@ -448,9 +448,9 @@ fn drop(&mut self) {
+>      }
+>  }
+> =20
+> -/// Represents the `EBADF` error code.
+> +/// Represents the [`EBADF`] error code.
+>  ///
+> -/// Used for methods that can only fail with `EBADF`.
+> +/// Used for methods that can only fail with [`EBADF`].
+>  #[derive(Copy, Clone, Eq, PartialEq)]
+>  pub struct BadFdError;
+> =20
 
-This makes the test more scalable from one side and adds tests coverage
-for kho_preserve_vmalloc() from the other.
-
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- lib/test_kho.c | 41 +++++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 12 deletions(-)
-
-diff --git a/lib/test_kho.c b/lib/test_kho.c
-index fe8504e3407b..60cd899ea745 100644
---- a/lib/test_kho.c
-+++ b/lib/test_kho.c
-@@ -32,6 +32,7 @@ module_param(max_mem, long, 0644);
- struct kho_test_state {
- 	unsigned int nr_folios;
- 	struct folio **folios;
-+	phys_addr_t *folios_info;
- 	struct folio *fdt;
- 	__wsum csum;
- };
-@@ -67,18 +68,15 @@ static struct notifier_block kho_test_nb = {
- 
- static int kho_test_save_data(struct kho_test_state *state, void *fdt)
- {
--	phys_addr_t *folios_info;
-+	phys_addr_t *folios_info __free(kvfree) = NULL;
-+	struct kho_vmalloc folios_info_phys;
- 	int err = 0;
- 
--	err |= fdt_begin_node(fdt, "data");
--	err |= fdt_property(fdt, "nr_folios", &state->nr_folios,
--			    sizeof(state->nr_folios));
--	err |= fdt_property_placeholder(fdt, "folios_info",
--					state->nr_folios * sizeof(*folios_info),
--					(void **)&folios_info);
--	err |= fdt_property(fdt, "csum", &state->csum, sizeof(state->csum));
--	err |= fdt_end_node(fdt);
-+	folios_info = vmalloc_array(state->nr_folios, sizeof(*folios_info));
-+	if (!folios_info)
-+		return -ENOMEM;
- 
-+	err = kho_preserve_vmalloc(folios_info, &folios_info_phys);
- 	if (err)
- 		return err;
- 
-@@ -93,6 +91,17 @@ static int kho_test_save_data(struct kho_test_state *state, void *fdt)
- 			break;
- 	}
- 
-+	err |= fdt_begin_node(fdt, "data");
-+	err |= fdt_property(fdt, "nr_folios", &state->nr_folios,
-+			    sizeof(state->nr_folios));
-+	err |= fdt_property(fdt, "folios_info", &folios_info_phys,
-+			    sizeof(folios_info_phys));
-+	err |= fdt_property(fdt, "csum", &state->csum, sizeof(state->csum));
-+	err |= fdt_end_node(fdt);
-+
-+	if (!err)
-+		state->folios_info = no_free_ptr(folios_info);
-+
- 	return err;
- }
- 
-@@ -209,8 +218,9 @@ static int kho_test_save(void)
- 
- static int kho_test_restore_data(const void *fdt, int node)
- {
-+	const struct kho_vmalloc *folios_info_phys;
- 	const unsigned int *nr_folios;
--	const phys_addr_t *folios_info;
-+	phys_addr_t *folios_info;
- 	const __wsum *old_csum;
- 	__wsum csum = 0;
- 	int len;
-@@ -225,8 +235,12 @@ static int kho_test_restore_data(const void *fdt, int node)
- 	if (!old_csum || len != sizeof(*old_csum))
- 		return -EINVAL;
- 
--	folios_info = fdt_getprop(fdt, node, "folios_info", &len);
--	if (!folios_info || len != sizeof(*folios_info) * *nr_folios)
-+	folios_info_phys = fdt_getprop(fdt, node, "folios_info", &len);
-+	if (!folios_info_phys || len != sizeof(*folios_info_phys))
-+		return -EINVAL;
-+
-+	folios_info = kho_restore_vmalloc(folios_info_phys);
-+	if (!folios_info)
- 		return -EINVAL;
- 
- 	for (int i = 0; i < *nr_folios; i++) {
-@@ -246,6 +260,8 @@ static int kho_test_restore_data(const void *fdt, int node)
- 		folio_put(folio);
- 	}
- 
-+	vfree(folios_info);
-+
- 	if (csum != *old_csum)
- 		return -EINVAL;
- 
-@@ -304,6 +320,7 @@ static void kho_test_cleanup(void)
- 		folio_put(kho_test_state.folios[i]);
- 
- 	kvfree(kho_test_state.folios);
-+	vfree(kho_test_state.folios_info);
- 	folio_put(kho_test_state.fdt);
- }
- 
--- 
-2.50.1
-
+Reviewed-by: Onur =C3=96zkan <work@onurozkan.dev>
 
