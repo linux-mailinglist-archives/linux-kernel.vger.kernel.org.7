@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-821565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5C5B81A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:32:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5324B81A52
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F7163A0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:32:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A972C7A2D89
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925F62F361D;
-	Wed, 17 Sep 2025 19:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EF62F9C2D;
+	Wed, 17 Sep 2025 19:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwLK2Obo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y15ptXCy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F1234BA5B;
-	Wed, 17 Sep 2025 19:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E2134BA5B;
+	Wed, 17 Sep 2025 19:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137519; cv=none; b=b8BpyTcBmLHihuyp1lIXEoAsLJTP2TjQRk9Uij0z67b4i9F+lXJLcree1xLbJMQEIoaF6tWNzjN/1x2buxJV188YweDhbkbG1C23oPnUsSoGMRMcrONPc/hcKWv9VDz0sXQC8la8a+oovAzPJBimp7jSXmoDxoVLrfoOQ8j4WGI=
+	t=1758137546; cv=none; b=o/btI0p+AlBmjlXtuminT1GoHqK936SxtyuNW+O7AHR9vWZ6qXPs2QyigdUJSfKkU+fB7lfa1w2vH8QzeI/TbF+2Dz2iNYNMQOFlInixZjh3dutNkcxBfoMRagv+A2wlSTEjPWXs0idrT4oaNIl+vAZmCpnd9HK2o8vuAFCH9xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137519; c=relaxed/simple;
-	bh=WUFOFnUVv9N92t+5xEmPWp7XyvUW3ydifXMJo5NR5M4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nv1ZnTTomF3vqPQ5A/EMxdG8a54+b/unZ9e9Q+XBMfPGgulOpL5JDR6iKUBZFuFugJNJWIxdnhUUlKLIJx/0eCKtYwYb0sTJwlLhRpA23a1KEQ7CFY0S3X918cQ8kMtQ4IiPhEGDznW8ryT9LLNCXWaRNupC7nd+GHpIE8DB/TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwLK2Obo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A54C4CEE7;
-	Wed, 17 Sep 2025 19:31:55 +0000 (UTC)
+	s=arc-20240116; t=1758137546; c=relaxed/simple;
+	bh=BQ9vg10uTh0RETSo3oUECvSfFUlwcB6Bm1G8JleKmSk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DA/u4cP3UlnzNdN0QIZfI0Ka/6Mnpdkxl4G9KQBkPH68nqm1ud0CC4b3NyNo2bqx+Fa9vRnmr6TF9ugl4DMOR0eaExaDQVkIqtPROIEzsH1fBtWIZpJWlNzjWAOcO0E1Iz6fHVF7hcrTxHVc0p+ArpyCPwdYV/AR/HFAZYh8tdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y15ptXCy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A1AC4CEE7;
+	Wed, 17 Sep 2025 19:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758137518;
-	bh=WUFOFnUVv9N92t+5xEmPWp7XyvUW3ydifXMJo5NR5M4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TwLK2OboNRlZBlnQjxi6UFTeVdz6cnoT9b9CqRlF5ByMoO+s3C0MgUeZDjrETyB/m
-	 jBj1wsT88+9QPF2ZZcIqPV/f6IjbfyHH+dpbDPb7puFtPo2OfrvoGudGnAkZYHdF0C
-	 8Zbzo0pUnam0ehLCXmxon/cAfJfnFmiT2pIcU2T04GAo//uwiEi8rTrv5+74dyGCRd
-	 dMyPeTAlOzkID8Cq8iBj05dUd/IPK/fx2gEWKU9lx+ymiAzFn/j3dHX9aczr/bwPOR
-	 9tlWknf4mahBqybmQanuxSbe+hpGTtAFCuVg7M6GBx85Z46itgYicrDLfpPYRhP44E
-	 cs9LVbQs0hhyQ==
-Date: Wed, 17 Sep 2025 20:31:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	s=k20201202; t=1758137545;
+	bh=BQ9vg10uTh0RETSo3oUECvSfFUlwcB6Bm1G8JleKmSk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y15ptXCy3OkvHw3yQiaAJRCsM7iDYlMMA6NG6wJH428wPOjHi9p2+XABusOsmRNPE
+	 63b0E1ZM4gOVrvIppx5UJqPF+IiBljV6s/yCfOp6h5+A8AAMFCaE7bQtdCwQOA6u17
+	 /zDJUsPcChdubKeMJShMk7WMjupHCiEpHU1zgvdYZEVZqEStnw2huVbj7CIlVmnWDJ
+	 S4vslk9JAPiMnRSkcKJZjsXpzJHoLOyl4QRGHpvdI9Vff3d92yZHFIo5GgWZN7tSzV
+	 PPqXV7CoaaAKqqFlzSnUsA4N0fk8Smuas5ZBLgSE7lQauSPhLiS+rroxrUDop0itia
+	 +QukcYE2SdNMQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	Alex Elder <elder@riscstar.com>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: i2c: spacemit: extend and validate all
- properties
-Message-ID: <20250917-irritant-smitten-fa1e05dd713d@spud>
-References: <20250917-01-k1-i2c-schema-v1-1-bd276b366d9c@gentoo.org>
+	Alejandro Tafalla <atafalla@dnyon.com>,
+	Luca Weiss <luca@lucaweiss.eu>,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: qcom: msm8953-xiaomi-daisy: fix cd-gpios
+Date: Wed, 17 Sep 2025 14:32:19 -0500
+Message-ID: <175813753508.68230.3127732514683313178.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250903-daisy-sd-fix-v2-1-e08c50f3be57@mainlining.org>
+References: <20250903-daisy-sd-fix-v2-1-e08c50f3be57@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yHs0dDgU61VAAlXJ"
-Content-Disposition: inline
-In-Reply-To: <20250917-01-k1-i2c-schema-v1-1-bd276b366d9c@gentoo.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---yHs0dDgU61VAAlXJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, 03 Sep 2025 23:27:33 +0200, Barnabás Czémán wrote:
+> SD detection was not working because cd-gpios flag
+> was wrongly configured, according to downstream sources
+> device is using GPIO_ACTIVE_HIGH.
+> Fix SD detection with change cd-gpios from GPIO_ACTIVE_LOW
+> to GPIO_ACTIVE_HIGH.
+> 
+> 
+> [...]
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Applied, thanks!
 
---yHs0dDgU61VAAlXJ
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/1] arm64: dts: qcom: msm8953-xiaomi-daisy: fix cd-gpios
+      commit: 48e7e8996cf78101da5aa8292647ed960506da03
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsMqQAKCRB4tDGHoIJi
-0pu8AP9ltcftudLjoNZ/qKl0lqLRaZWaisXFk99pUfyogbPICgEAr/LT3xU5a2mf
-ICBPeS4zVVPH57BRN9hBd8yiGFeeWgY=
-=tIiq
------END PGP SIGNATURE-----
-
---yHs0dDgU61VAAlXJ--
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
