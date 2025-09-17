@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-820332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A609EB7F6E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2744B7C4AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2F93A6BFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99AA5461A7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D69A309EEE;
-	Wed, 17 Sep 2025 09:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FF8309EFE;
+	Wed, 17 Sep 2025 09:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ftom3kH2"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SCaklSd2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA90E2C181
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3952C181
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758101225; cv=none; b=aOvkhHsuoVC1D3bbfMGN9E0s8Rle1AL8dgBBnngQ0jWlSydrQqAxB9yLyADMgVqYwR2aJ3cusaB9kQnd+pFrUFFyRVtRbxP3PkzGT52Kp6xVtkJfwFLGLv13N48wQX5FFISr2amRX+beoXWV+o84MpZzeXdt1noZETCDnq2Ll6A=
+	t=1758101258; cv=none; b=ogaRSHL5qOrQrb4WY2j7lkDgMf4Wu2oMPZ1HFCvnAa5UZYovBTA98FA6ohTClzWjkAsiO5gq1QvkIBsJQJdjRt39paOpmlobjv4vriCsfFjiV+hbFLyEF/nLGOOGBCvBxa9pQzrU/J0+aOqWV6r1dch6dz0CFuqCBwgAFOfiK/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758101225; c=relaxed/simple;
-	bh=JaVP9BG15QuKXb1gk7QU+lDM/U+ULJkt+RfzsjV1CUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WnjY8O5tXuad0u0e2TYwb6B+QDiZR/DIRml97oMPriMUl1QeOZT2LhmA7rcjgQUcJFCcDnDctkQzKKmIVwE2N8pPBWGy+6jILaWK/6rZ03ntvnLmtC8IB4+u1dlHQpf6KDyzpuH67K5oq1cNEl48QWv6PxliJw8mTEMdK9d1Vsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ftom3kH2; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CCB6140E01A5;
-	Wed, 17 Sep 2025 09:26:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cX-5zdvozMQh; Wed, 17 Sep 2025 09:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758101214; bh=hGpT1OkN1WEYpMVmrUYYT+6oX+YBbLGqX/JMZiZMYJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftom3kH2n1mJY2tOj6vk4nBNL/1rnc+VKeUU8hVC5OGUjIW9nNGtjW1XaLj7CVvn7
-	 JjdKtNoG26GzcfHi7L8u1RLUHx00eyEAyo1jW9PgwDe2oDr6ZDKQ6FPKyImn0Fi+a2
-	 usvVHpPl0ypPS3N1EU7mHOeMld4C5imrL/uXMP2y+vsOekR2BsKuyiIZ+SIB6+rLMG
-	 XjB2zSvNEhVom/9cwmcq3neeLbX5MsVq0zScmzBLv6F4UxefvvDKYdIk9eOeuCLb+w
-	 aBkSRT7qXTlZUqCJv9n/TGvCsCDpGvXFZXr2AcPcIcF7UiBGRQa1LZ5HRPi2NM8+y6
-	 EnX/ZBUvQXwlaSWhajE2gapgTI5hk8f9R5caty4ljbxdL4gnPKaIs5UuwJy4ulVBZO
-	 irURAMmKrurvUuz1CERCu6h05xK7OI0+Lndfn3nLjnqBs2pMVzBDzvJ4K9VpFkOqhm
-	 P2z+NP7Rbym//MfSZonmUNoP4CfXGi0pnMJtT6j0XSP+INGdvKFfASI1FRUDGPRq1X
-	 s2qcwAcbJUbAxtutkBtSZOzPWdRspHZnPIYEjr7oJRJyhjmxdLhuRPtQ4vv8ua5KXp
-	 kgN9/L4RIsIxBaDGgPUckpKQvY6qFzxXmKLg6QkbsdJfinG5jBAPfJWK51S/FE6XJp
-	 mQiAxsC92NjOJ81KP5PKDOCs=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id B3B6840E01A3;
-	Wed, 17 Sep 2025 09:26:46 +0000 (UTC)
-Date: Wed, 17 Sep 2025 11:26:39 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Moger, Babu" <bmoger@amd.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Babu Moger <babu.moger@amd.com>, tony.luck@intel.com,
-	Dave.Martin@arm.com, james.morse@arm.com, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl: Fix counter auto-assignment on mkdir with
- mbm_event enabled
-Message-ID: <20250917092639.GAaMp-zzcfnpFkVUiG@fat_crate.local>
-References: <9788ef37c17a9559a08019b694d2a47b507aa4ac.1758043391.git.babu.moger@amd.com>
- <437d6c22-f232-48a0-94db-a395aabe85d5@intel.com>
- <6d25c7a9-02f9-481f-9eb3-b1f6e3276e58@amd.com>
+	s=arc-20240116; t=1758101258; c=relaxed/simple;
+	bh=4bFt7RvE0meXHmC1f+ZoRU6uHj9+oiw4gTVmpGm82Ck=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ddyRo3aSFUe9UtYdme78oNoYCvLEnaZBKQ7VJtRAgHB+qJIycfUSsP72zXpUZC6oNrToNxinMMS837CqlxS+fKmf3ERbmdh9Nc5qQbI8Xsfloak2wX/FU1A/RZJLerWqWzT0QgMpp8FNwvjJbaGkIdlg971lgu2rCTl2DcXBpu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SCaklSd2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758101255;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FYsWl90aa2IFCJSMLifqsmjQanJGgpfYBqQYufjAHKw=;
+	b=SCaklSd2xnoiE8PKLJ4rbcmZasOzjIoTr4l+eh8qpsYClKDmB2zglcN8SxWMoKzKesy131
+	Gigsbu5Sifx35u1e7GWYGzYdRuGnBIeiWeZSxMOJuDJntmymSXbGJslQSSSEvMe9gRaind
+	FBGe9VnywuN7kuDc/bitK9P5g/baLbY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-Wor4heHyNEasLosQZNTc1Q-1; Wed, 17 Sep 2025 05:27:34 -0400
+X-MC-Unique: Wor4heHyNEasLosQZNTc1Q-1
+X-Mimecast-MFC-AGG-ID: Wor4heHyNEasLosQZNTc1Q_1758101253
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45e037fd142so53419135e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:27:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758101253; x=1758706053;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FYsWl90aa2IFCJSMLifqsmjQanJGgpfYBqQYufjAHKw=;
+        b=lR27dmIRhNdswbhgoSd7QPef0vsGknxYMPEik54Y1JxHt5JNgIdCHNNwsdc7FmeJqv
+         V0zBZ17Tm83B0MGbnFEMKVtDBD842Ej1/raZvbaW44M0mxJ34FHYA58MO2M/b3TUjEeO
+         elrDOKe2D9Rs1PW3NlTDS/m5xt+gVztESSC6hO78QAUxEvscDzYQ+BF2LvtLRvL/NbRt
+         SHYbgpg/MSBqKP+YZkSC9sYheWhoLNoFajOlISfmNpBXC5pfX8X2eJwmALljwA2/HS5r
+         /km1jxrkqNnBUckQQr5F4D7A0Ag00gdKY8larVgVpsmWhvqcnsrbXdENOf0aRpt+VgSF
+         tJXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwXIfRNZ2eiJyTtRhrjWf4FEn63e2qCJw2VpYwrxmahj/PoWYAxdF7xZxvHwgsAmdM6BZJRwFxGN4BA8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPVyKecEcCmAgu51jJWJeoif5NqL9L1K8VxxZ7EYJEUV1bgqcF
+	vDjxIWtFSl8C5W9pngRKBhSEE5teZ6G3NWn4JXgONWAy6c+r+A8BKfcRnaZlrcvg0hD0pOfz32W
+	ZIuTMMzotLDtd5fj1Q5flM0osF560O6+EWY7AqdgZa1+Ut5BEgx4NJDNGnWuFR/Rctan8Y9HTOA
+	==
+X-Gm-Gg: ASbGncvg4b0Jqgh5FcG7WnqNZ83FzWCwNGFZXnWgrr2R8IEQzkwGYcV/xu0zJ7oe453
+	dNj9Jwg9u3kW9aw4gfbeKCnWmRAAP8CltyfKumN6968oEUc0jaf1JCa6+MvtBqCBzXIeiYs3FVO
+	qG9BWtfwvTjwF4Rt9xzNm9SQZQ93j3o//Xd+uMAfZEcSGlxk17P07nKjsWXDO2wxSPB+StL+NtU
+	v9fsOlOCMZ5O4AvTsJH7eHpq0D4k3QlZD2Z0Djh7ja0QKsprYW5X7PV8DUBwOHrgCu8Ni4BF2lF
+	dSPQMXcSWqGVsUeouxUItGuXlQL7VCmeM2ubtafPrh/vzls/E+TGH56BqLmDTIKBOqD28X6J5LB
+	Wnh5uYEoLhqRHsDfb5p6LqQ==
+X-Received: by 2002:a05:600c:354b:b0:45b:9906:e1cd with SMTP id 5b1f17b1804b1-46202de09fbmr13144195e9.13.1758101252691;
+        Wed, 17 Sep 2025 02:27:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG02+Djk7I2WYZdxGpqffFjigQcwROtQsx5Gti/Wx1hmpHUcyHWzmZ3z2sX1v+uNmbXW/h9fw==
+X-Received: by 2002:a05:600c:354b:b0:45b:9906:e1cd with SMTP id 5b1f17b1804b1-46202de09fbmr13143915e9.13.1758101252208;
+        Wed, 17 Sep 2025 02:27:32 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46137a252fasm28873285e9.7.2025.09.17.02.27.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 02:27:31 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Iker Pedrosa <ikerpedrosam@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Iker
+ Pedrosa <ikerpedrosam@gmail.com>
+Subject: Re: [PATCH 3/5] drm/solomon: Simplify mode_valid() using DRM helper
+In-Reply-To: <20250912-improve-ssd130x-v1-3-bc9389ed299e@gmail.com>
+References: <20250912-improve-ssd130x-v1-0-bc9389ed299e@gmail.com>
+ <20250912-improve-ssd130x-v1-3-bc9389ed299e@gmail.com>
+Date: Wed, 17 Sep 2025 11:27:30 +0200
+Message-ID: <87wm5xo2d9.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6d25c7a9-02f9-481f-9eb3-b1f6e3276e58@amd.com>
+Content-Type: text/plain
 
-On Tue, Sep 16, 2025 at 05:46:56PM -0500, Moger, Babu wrote:
-> > It is not clear to me if the changelog will be acceptable and I provided alternative
-> > text just in case. The fix looks good to me, for that:
-> 
-> Looks good to me.
-> 
-> Boris, I will send v2 with updated changelog. Let me know otherwise.
+Iker Pedrosa <ikerpedrosam@gmail.com> writes:
 
-No need, lemme simply do that now.
+> The ssd130x_crtc_mode_valid() function contains a manual implementation
+> to validate the display mode against the panel's single fixed resolution.
+>
+> This pattern is common for simple displays, and the DRM core already
+> provides the drm_crtc_helper_mode_valid_fixed() helper for this exact
+> use case.
+>
+> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
+> ---
 
-Reinette, your version is exactly the structure one would like to read: first
-you set up what the behavioral expectation is, and then you explain what the
-issue is - i.e., what's wrong.
+Indeed.
 
-Good.
-
-Thx.
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
 -- 
-Regards/Gruss,
-    Boris.
+Best regards,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
