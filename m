@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-820002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C156EB7E974
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC54B7EAFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB0B522529
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:43:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEC2522CF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6679127E076;
-	Wed, 17 Sep 2025 05:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bahRn+WE"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0599926F44D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD33264614;
+	Wed, 17 Sep 2025 05:46:36 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1172539FCE;
+	Wed, 17 Sep 2025 05:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758087831; cv=none; b=OZrJRh/NTPE48B+MOVeTV22Dbq5epD3UXLTV7vT0gyvZR7NprTV8N0fQKYiiNJJHYptsETwVk8vk1H0Bx5aWZPTx5j6INObKraG97r3o6/fOCBKv2T+25kCDA/BWbb0Wf751DeeLnr679UowsybpqMxirMT8OBQ7vLMqWl3PGVI=
+	t=1758087996; cv=none; b=XZteDee/llt/Q/2tcj6hr5HR/uMtHN2Y65TaJnlY9AEZW1+vzzkQv4sFnlIy+zlvJqXZQyMOaTzfL5ykEgxdZjtVYaoA4LXI87KpXLNXLJptTupfBcoUGAZ5uGCwZya+w8ScFxTTXtpo3KdlUCmoVY1sAJTN1fFwIh93BdWXZew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758087831; c=relaxed/simple;
-	bh=2Rj2GVVJeO3cElmAMzCe+vsZ7kk7vpWF5sm/8l3AHd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sXh0l98v2poLaT7cJX5q+wod+R1aNQunynCpa3LKfMB1gflOj9Ndav4/bueEJdME53LPPxDO6lXfUg+d2QMLhti01egMz072YIjeSmP4foIO+GUkfhhhS/7D4gbxCt9KOq7EH1VRcyv7w0dx+3J6PnSnhs9MzQG+CaXykQCAiA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bahRn+WE; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b07c28f390eso850811666b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758087828; x=1758692628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CW6YRUB7XWZg6Z0QvIr5Jdp9CvsPmVtxl4KHm6Wzt7g=;
-        b=bahRn+WE6Dm9TwNA8fqpX/CAWNUyUdT37CPdrvoYBZ+zF3AfoojbVZDika7I2d/O5i
-         JAzevz8or6hZBhQeCy0coOVyjpNdqev5KgTseH4dv7Jvt3zucPhrSIY+J9Z978FQdIS1
-         UsJUHi9S/7gUvi9thBF9ASjWAHM1wpSbMAr4YgqJoGdidfVDNDwXxwf8OXlWWxl1aCtf
-         +kv5AdUQOifw85GCvDvPo3AodUv3QVhtJuPWpNSGlPQACDKb8Bqk6RjU3pqLvH9odVY1
-         8DHh68E5LeURTLUuzIyKHaI5qnAOF7vSJQe5EVlPSN7/3YABk4KBHq1+F2MBNV8GvzoT
-         6Fug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758087828; x=1758692628;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CW6YRUB7XWZg6Z0QvIr5Jdp9CvsPmVtxl4KHm6Wzt7g=;
-        b=rwZIez32XSl9EVHJAhEd5IusTmlAUsN47z6MMESvWJcobREV9DlhrZsmeAmu4tHUGJ
-         FgPtc4v0t8V0uJH6dfaOanscb087OeEoHX7Eahha9WRyDxkvo04fzZ1uQjljkKVrmxlU
-         e+7NjJXznVj/1hDoELMUgv6krUdjhb620qCbnDlGG03To1SELEU9x9GGbKauur4A/6Cv
-         L2nKg8VIKQbqHZBUYJGreblQNIIjlTKz24smuL4hB5Rg7qR5smX64g7RnRWGjo3DZJcM
-         FZf2GJoU0O8LYYI+9sOrsp/oBlnURrHlOtNl2ik2qJYKIuBVoCL4ZfyU/sBjE57sxUm7
-         4NuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhzcGP1JU1MmuI0+j/W67h5LpNOjIIYSGahhjfP4tA1gHllm0Q/rnzjUfmPW20cfbA0aWDch372EFSXK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw340eoYgEYhuJOEUtrQa98dqyXzFwdb6d32MO4NgCMSDoe+Cvv
-	Zk7uunHk93H1svUw0S3RllsM36D4WUdAlMnhVHTU3k4YLn8P2u7z21uqaxoVDibigEk=
-X-Gm-Gg: ASbGnctdl8k222FW7yB5gmJFwBI2E5UsuxAN+fijDIBthPsxBfKs6f8UEBPS7Cc1DBR
-	036d9PLkOupxMhzT0l1M7r5T7/8zmuOBceWsCWrnYdZQzTOhaQzjLei2ex9t4j58NHFcd48STQK
-	K4CqA9tX6lBnGNXux3/w2Sl2wJE5Ui6rIpMCYnpXhrgKtRh71AKBJmL5Um72IuYFXevMsb7rut8
-	30rUcQUsz48jBkoXdul67+wazzwXL2AEVzel/99HkvD0IN2hx3BGwMndmqGhakPiPuXWBn6wzYs
-	8J/nMqtYS07CcNzKOrwxQabDggNZyzZoWqxswqUeFJYaMKBnSHbg3IMviee5q/SkSf4QEkiIFxV
-	Xy6HsPlTfbW3e8ART8gt/J8a1lMGc3w==
-X-Google-Smtp-Source: AGHT+IEwTeAqrWw3yRYXMNv2Kyom1bFBunp2rNawKurYFNJfFiYeBaBgK7tfvL+8o/YQVxm7ewmS1g==
-X-Received: by 2002:a17:907:3f0a:b0:b08:85d0:3d8b with SMTP id a640c23a62f3a-b1bb73a69abmr108132766b.21.1758087828294;
-        Tue, 16 Sep 2025 22:43:48 -0700 (PDT)
-Received: from [192.168.0.24] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07c6110c27sm1088029366b.66.2025.09.16.22.43.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 22:43:47 -0700 (PDT)
-Message-ID: <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
-Date: Wed, 17 Sep 2025 08:43:46 +0300
+	s=arc-20240116; t=1758087996; c=relaxed/simple;
+	bh=2f19mQav6gwzMIg6V1nSP79ryNXoYeYfagKKlybhPSE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=W4vAWfau886CbnIt6VybftJINy9OIPdjMrc6yukK3swMGKMdvnDbgm5MNjbbznOJQBwXJyeZPiS1koPOKio/dcZlD2iBFTj06lcc0NvjqZ+mHxHSBLlUJiUCHC7bkRZk3BoGkbBZmn59ltTTUKp+q9zLVf2+iwMsSw3tci8ON60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [106.117.98.100])
+	by mtasvr (Coremail) with SMTP id _____wDnoewfS8poC6JCAg--.2647S3;
+	Wed, 17 Sep 2025 13:46:08 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [106.117.98.100])
+	by mail-app4 (Coremail) with SMTP id zi_KCgC3TYMcS8poA53oAQ--.17850S2;
+	Wed, 17 Sep 2025 13:46:06 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	edumazet@google.com,
+	davem@davemloft.net,
+	andrew+netdev@lunn.ch,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH v3 net] cnic: Fix use-after-free bugs in cnic_delete_task
+Date: Wed, 17 Sep 2025 13:46:02 +0800
+Message-Id: <20250917054602.16457-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
-To: Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
- pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, david@redhat.com,
- mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
- <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
- <87a52u9jyl.ffs@tglx>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <87a52u9jyl.ffs@tglx>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zi_KCgC3TYMcS8poA53oAQ--.17850S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwQMAWjJvXsG9gAHsa
+X-CM-DELIVERINFO: =?B?qNoS9wXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR131FE3wBtlILXmPZxD8pDyDF6auOnSUBe/Otpe715s37l1u0dpkuwlm+i5YvY82xOPTB
+	XevXbOfKwvDIw1MoGswrnuIdOBCKa07kOFutN/OoK9AMAT+3mukI9oR5gRN+Mw==
+X-Coremail-Antispam: 1Uk129KBj93XoWxGw13WFyrAr1xZw4UJr1UArc_yoW5CryUpr
+	W5Ga4UJa97Jr13twsrXr48XFn09ayvy34UGr4fJws5Z3s0qF15Kry8KFWfua4UCrZ5ZF1x
+	Zrs8ZFZxZF90kFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
+	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
+	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
+	WUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
+	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
+	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZE
+	Xa7IU801v3UUUUU==
 
+The original code uses cancel_delayed_work() in cnic_cm_stop_bnx2x_hw(),
+which does not guarantee that the delayed work item 'delete_task' has
+fully completed if it was already running. Additionally, the delayed work
+item is cyclic, the flush_workqueue() in cnic_cm_stop_bnx2x_hw() only
+blocks and waits for work items that were already queued to the
+workqueue prior to its invocation. Any work items submitted after
+flush_workqueue() is called are not included in the set of tasks that the
+flush operation awaits. This means that after the cyclic work items have
+finished executing, a delayed work item may still exist in the workqueue.
+This leads to use-after-free scenarios where the cnic_dev is deallocated
+by cnic_free_dev(), while delete_task remains active and attempt to
+dereference cnic_dev in cnic_delete_task().
 
+A typical race condition is illustrated below:
 
-On 9/17/25 00:16, Thomas Gleixner wrote:
-> On Tue, Sep 16 2025 at 23:10, Thomas Gleixner wrote:
->> On Fri, Sep 12 2025 at 18:08, Eugen Hristev wrote:
->>> nr_irqs is required for debugging the kernel, and needs to be
->>> accessible for kmemdump into vmcoreinfo.
->>
->> That's a patently bad idea.
->>
->> Care to grep how many instances of 'nr_irqs' variables are in the
->> kernel?
->>
->> That name is way too generic to be made global.
-> 
-> Aside of that there is _ZERO_ justification to expose variables globaly,
-> which have been made file local with a lot of effort in the past.
-> 
-> I pointed you to a solution for that and just because David does not
-> like it means that it's acceptable to fiddle in subsystems and expose
-> their carefully localized variables.
-> 
+CPU 0 (cleanup)              | CPU 1 (delayed work callback)
+cnic_netdev_event()          |
+  cnic_stop_hw()             | cnic_delete_task()
+    cnic_cm_stop_bnx2x_hw()  | ...
+      cancel_delayed_work()  | /* the queue_delayed_work()
+      flush_workqueue()      |    executes after flush_workqueue()*/
+                             | queue_delayed_work()
+  cnic_free_dev(dev)//free   | cnic_delete_task() //new instance
+                             |   dev = cp->dev; //use
 
-I agree. I explained the solution to David. He wanted to un-static
-everything. I disagreed.
-I implemented your idea in the v2 of the patch series.
-Did you have a look on how it turned out ?
-Perhaps I can improve on that and make it more acceptable.
+Replace cancel_delayed_work() with cancel_delayed_work_sync() to ensure
+that the cyclic delayed work item is properly canceled and that any
+ongoing execution of the work item completes before the cnic_dev is
+deallocated. Furthermore, since cancel_delayed_work_sync() uses
+__flush_work(work, true) to synchronously wait for any currently
+executing instance of the work item to finish, the flush_workqueue()
+becomes redundant and should be removed.
 
-Eugen
+This bug was identified through static analysis. To reproduce the issue
+and validate the fix, I simulated the cnic PCI device in QEMU and
+introduced intentional delays — such as inserting calls to ssleep()
+within the cnic_delete_task() function — to increase the likelihood
+of triggering the bug.
 
-> Thanks
-> 
->         tglx
+Fixes: fdf24086f475 ("cnic: Defer iscsi connection cleanup")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+---
+Changes in v3:
+  - Add how I discovered and tested the patch in the commit message.
+  - Remove flush_workqueue() in cnic_cm_stop_bnx2x_hw().
+
+ drivers/net/ethernet/broadcom/cnic.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/cnic.c b/drivers/net/ethernet/broadcom/cnic.c
+index a9040c42d2ff..6e97a5a7daaf 100644
+--- a/drivers/net/ethernet/broadcom/cnic.c
++++ b/drivers/net/ethernet/broadcom/cnic.c
+@@ -4230,8 +4230,7 @@ static void cnic_cm_stop_bnx2x_hw(struct cnic_dev *dev)
+ 
+ 	cnic_bnx2x_delete_wait(dev, 0);
+ 
+-	cancel_delayed_work(&cp->delete_task);
+-	flush_workqueue(cnic_wq);
++	cancel_delayed_work_sync(&cp->delete_task);
+ 
+ 	if (atomic_read(&cp->iscsi_conn) != 0)
+ 		netdev_warn(dev->netdev, "%d iSCSI connections not destroyed\n",
+-- 
+2.34.1
 
 
