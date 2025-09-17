@@ -1,136 +1,156 @@
-Return-Path: <linux-kernel+bounces-819950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96170B7CCF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5328EB7CD35
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C29F582DB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B16A582D0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B522798EA;
-	Wed, 17 Sep 2025 03:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2EF276028;
+	Wed, 17 Sep 2025 03:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4a+wE2r"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DQ5IYe8z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA6E26C3BF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AA326159E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758081252; cv=none; b=oYqwOwAw0z3qy53SUS7aI1UTdAb0ve7nA+4wbr0jzUB8q+UPCQ3eBOZh8AVhiO59AshkPs9OFFELR44l4pFyMJzqgP9hlDe/1XW+6274YUvS1xbQFnA7Bj0nO3LBvZVSnj4q7q0rz3oEKrWDCfaXz07VCeaYBlYjkZc98b4B6Zc=
+	t=1758081224; cv=none; b=oNgPWoDnbKO7/uKbZ9iN1cEkPAaDdEjBuzozWye/2MeA8gMc5Xj4Hmp3KNfyK/WJxwfOAtGLkPTZCngh/Qe1pWv+GIpKv+/iyhmVxntIhVKv6sIwnfBD42PLDdWzaFkiJTPFvvMskyXjiwiP9z8AhdK1fLC/W5/nH8r8PbssM9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758081252; c=relaxed/simple;
-	bh=+MqiPb3ov0IKVWlpRr7bR9ZISO7h6uwkFV280vsZjH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=euAYo/qBzCc6ciHR64U/KF5p4uIIQQjBb1XoK2ur5Q08IZ3nD7nFOAvIerUiS1xICXUwq20FnYelSUJJxod5vQ8y9HH5ReTvcVB8X3Rl8OKPfAGbVFiD4GT5TRK8xyXeRuKqER6+LuwF62FKU96lkEHs4Ak5WZ1c/dzfSo3o1PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J4a+wE2r; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62ec5f750f7so11162287a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758081249; x=1758686049; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L0QwMkAAX/U3GVYuIcwJivoYCBq4VWe1sqX6AUImt4s=;
-        b=J4a+wE2rPhXsKu88z9r6VN/MHyN3EzIIclg9DqqRfA0MtZh+lWS7W32dQrM9a7VdvL
-         5lEtSJJAJxxtoFXu4NgaGNIjH9JRjnrQ2rS9rKpz8WEcCAhU0vb4KraWz17VDMfsKimK
-         rNc380yrIkxfOUjyNMK8q4+DkdsNlYkiwOMW1DdGAzP4Y5KN3nqgZUYO2x06JAdk7Wiv
-         ht70g2nx5U1Uxj4zrTnqNKqC96mkKitGM3WvEmBu80o4IkxLIGgPgMUIPo6i9ov/OdY/
-         pBOeS/hh8rx0phwryt5XGMCJQG1JdeobXLr8fXE97AFEm2Ggd5bA/ccit4bh1lCyQJaO
-         ZCaw==
+	s=arc-20240116; t=1758081224; c=relaxed/simple;
+	bh=KlTGsGVXqwBej59KeF874/Bo/ROethgpLYZEmN7KZsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mKpN6mgSevgn/97Nd1M6wd8delefuJ1dIJSQGvI7Qy4vyLQazAYDFvKeHGfoV7VPr6SugSJJY5awML36TSeSvLkEP8mO+PZXsk/bOJCKLRkKhjBkcSNbUzN+fbezIpPKZoWknplLRxDphj5Wf4HmGys/TArPCnOKyb/sjRMstr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DQ5IYe8z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLZjbP005527
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:53:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cep67SnTfnADXcOmFM0wZ+47pVbXaqSC/dRePINIa3M=; b=DQ5IYe8zCWBQgkrP
+	1OkP6M8IejcEYdrmuxaD90k7mzkhy2nbk7OW4h5jYcV35u8THXsUcrHMDNddolsl
+	de8DbAQcEQX/q6SENMcb0zZuXxgV/4DOxNJxJbcC3DqD5+Qbyfk2Prw0RwVCv+K1
+	kJ03hsNB3VKm20eR8LIRMTOUy4RYkslF8lUrZxdEiVypg3bCB2EreZFI+kaalfmw
+	Fzkl5nZd8pVLPflxYWhgzySvVRuBK1Cpx1UnBwpWJ5eEUG1x30n/VCpHJrUCS+5N
+	6dCYy1KYeI8UVXMpqCIc4WRuE88GxINAgRtoyS5g5Xc3iUD2AsoyRXrp5OrtnDKD
+	gJDP6g==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxu0trw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:53:42 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32d4e8fe166so8700412a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:53:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758081249; x=1758686049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L0QwMkAAX/U3GVYuIcwJivoYCBq4VWe1sqX6AUImt4s=;
-        b=iQX+9r8bNtkWobllze9KBeV01stRgepaHtJbq793ooCiKZ5l6LxQUhJv50YvXFxbw7
-         6aKtEz82h9fCS1peZPAojM+Mn+wwXk5wIv1Ua3stAVrvB87CnRGmbSVBAvxWSJZgjMz8
-         CnoC5WiX5Ojq5CV0tLp3YgZGjDoo6LvxTJD7t59x7BitZr9qJWpkGtlHDAwKqgK66V7F
-         fbZqny+e0+9Rf8CbKDTOhE7xRp82MSnXpATkTTFxc+UQWqbgY0GSYeOkW2X/LjA9qOHe
-         ulD8JYXVVfGfczQH6NPtgHwfsSOgGoZBi1VDOjnWVPf/oji/YnJHfPa3l1n5msgGVl+b
-         kDPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrw+4neIVCDJAj0p1GDVHebE9FOSbFTcwulLXvb44rwTM8xfPV3nPygAZEUZ9yv/MH0JR3c6rMoQsJrnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Z9X3PsF5uABQkzNys3dvoOw8TJT2XLD6Wi0Aqo8Mxq8Pm35a
-	IvzM7Ti6cLdoEKSe0Ck6bQcRYB557rImhWOaNMGihnm6Y7plAQ0e9MGmcgWZvGv47gNI0iBuKOm
-	BYCpPNSDVaaI71ns/wLCGnzG7pCg/tGY=
-X-Gm-Gg: ASbGnctlODE6dLOFblny6plfJc0rwhdE7P50G4tEcyYKw/XfNDfupeDgvySK5lZpGet
-	1zIhUxiLREZ21+gpGzdcCcdos/nLEEWtwZCyqXE/qSE/GVBdDU+yX+7x6G6+XCY8TbEkbecyORH
-	3wa0B4wq7L63oOHP3DmviB/2Xie7jo3cyoSdy71t+n0N9v9HeKUXmeIkXyzIGyTev8NWElmOvDF
-	4p079xOGkE=
-X-Google-Smtp-Source: AGHT+IGhRbEhR4Oo2vBtn2h/CPfWnxXTyRl5ODWLuAjQjfM1dwrXBEVwTAXFoqpp4dj/i/oD+7ds9W6OZF+WhV/3FVI=
-X-Received: by 2002:a05:6402:52c3:b0:61c:7090:c7de with SMTP id
- 4fb4d7f45d1cf-62f84222764mr901341a12.13.1758081248924; Tue, 16 Sep 2025
- 20:54:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758081221; x=1758686021;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cep67SnTfnADXcOmFM0wZ+47pVbXaqSC/dRePINIa3M=;
+        b=rlbYg3F5gXB9Pqjhrkkq5Epy6Ir1+TLxkA1Wn6AMUBS5IJ0JW3KFqD4RRbp60AexJQ
+         v6EWTRXA/rsux2q01/2qnGTzgoSrKpvTCht0ePjjGyui2P/uwraazQn6lo5mcipJkRhY
+         v8ku3vC9si1c/qeXdgoXLz+eqf9EBQuH4XB6v6iO2bGGKt6HJPw75/J6HgkE7eBxfvIP
+         +ROoXfAlhumT+hfIQ0mKxpXLLfdnFtgv713qERe0BZwWiXEb2Sa45S22h9YuzTbtaVrK
+         XbVuQctA00M9Vi7Y9vibVnTrNPZZZOeuEdE5lyngSxGLsZgiEyVG1hUb6JX6Np03O1IK
+         4CGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPX3O5nUP54VYRjK7+v4zUUAB05G57mesR4Ok7nSQtn7zHzRPV9rdZQ9iCr6j2T+H4lz1laEyn+wYMEHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQXTvC+7zWQI5aLaVu3XrRr9dvBWdkGLTqmt+KXfcWFFwNT/WQ
+	xdoZXP0H6cEjjJAf76rIUUoy+8B4hZjqUO8nRgyj61AqU3oUcDGbvQIVrqCmEDzTzxDa379ASbd
+	syArLy4mhm4ZiEU64szXW8SFjrLD1wE7yreGcdsZNIn6d/NUUlgCPgEfRah0WEafZ5NY=
+X-Gm-Gg: ASbGnctgZuzkcxb8p+5zYD91hBUCJnQHg9eydVujbNk2jtlsG9WQ+35US4b6ECQd8V4
+	V+Oj1A38GpKRAw8Oq5FrH43xKS+YwCeKZ1arHWnSRxN38TCxauuQRXTGTCZ5Cbf4yz2I8yfCAiN
+	ij3YWLFyIU5hMXpaRVBFo4+Iy9umsnRd0m+W4ApbiZGOLc284mOAJ6r3QNykqsIluE6IH/IVNvO
+	+Y6Xy5JNtK7bfz20JuqjOFoEa6jlgGSvJC4ErNpRPquPubrL+w53vWhrP/vZ79W9P3zssIKSQgu
+	fWiQvcXLJnXQpNNfuNjC5KwgqPjgJGuHbiyNnuN8GDTnRTjYm6+emUXlWVNepfoIXR8DXnllF8a
+	YTtNaQO8Zkyk=
+X-Received: by 2002:a17:90b:5348:b0:32e:d011:ea1c with SMTP id 98e67ed59e1d1-32ee3eefe77mr975455a91.15.1758081221364;
+        Tue, 16 Sep 2025 20:53:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhkw0YdOtL29ExmK2v3LOWKcGCk1jKtiEcNh06EUhootqyd/kiRmyV7nVn1zQ6nwDbzwHsFg==
+X-Received: by 2002:a17:90b:5348:b0:32e:d011:ea1c with SMTP id 98e67ed59e1d1-32ee3eefe77mr975422a91.15.1758081220864;
+        Tue, 16 Sep 2025 20:53:40 -0700 (PDT)
+Received: from [192.168.225.142] ([157.49.98.234])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed27724c9sm985762a91.27.2025.09.16.20.53.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 20:53:40 -0700 (PDT)
+Message-ID: <a5778370-d889-fb9d-0ce5-498342bbfb2d@oss.qualcomm.com>
+Date: Wed, 17 Sep 2025 09:23:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <99f57a96-611a-b6be-fe00-3ac785154d1c@google.com>
-In-Reply-To: <99f57a96-611a-b6be-fe00-3ac785154d1c@google.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 17 Sep 2025 11:53:32 +0800
-X-Gm-Features: AS18NWDLbQi2oDznlq4BBqwefgqt9eAxrqURM48ErVF0viZ-1CzrWKG884E532I
-Message-ID: <CAMgjq7Dx51gPWfE0eobNQBtMzUDwxuaZrrSDW=q2CsVqBamRZA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/15] mm, swap: introduce swap table as swap cache
- (phase I)
-To: Hugh Dickins <hughd@google.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next 0/3] wifi: ath: downgrade logging level for CE
+ buffer enqueue failure
+Content-Language: en-US
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+        Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Carl Huang <quic_cjhuang@quicinc.com>,
+        Karthikeyan Periyasamy <quic_periyasa@quicinc.com>,
+        P Praneesh <quic_ppranees@quicinc.com>,
+        Sriram R <quic_srirrama@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Balamurugan Selvarajan <quic_bselvara@quicinc.com>,
+        Ramya Gnanasekar <quic_rgnanase@quicinc.com>,
+        ath12k@lists.infradead.org
+References: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-0-f955ddc3ba7a@oss.qualcomm.com>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-0-f955ddc3ba7a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXxGoeRYAaRQI1
+ rhVvMjipv9FmWyhSnS8dqUTGNhrBN0i2d+BYg7Vx/QYmk7eiFTPZVJE2OaiByfXxsAMBFu5g70q
+ V8cJhiZROJuxTS+6xI4IijK0vrfbCuSFNhmPWYwyQVglr/WIhssuh9L+En67cUczwYNP5pNOH/Q
+ Mf/EPbJY82fFkSFKeHiiwnPxwJilT5aiq65ma6TBAj4pseGftI3S4ZDI4bTZMLyO0r/262ojxl2
+ pmfQx1rAkGXFErUs2oPjAzgvQZbFQg9NysU62h4PP/lV1/vUv74UAG5NH+pWquUAsMmNs96nT1E
+ v7BBeo/uXe2+G4N+YvkUm/m5sRQRK8qNLJA3DOYS/d0RsJlEUMe6LQtHAqyQSJRWGYPwxKdC5yG
+ FIBCf2HS
+X-Proofpoint-ORIG-GUID: 3w3SK3_ie4wOi0pc9Aeu6I0Y4Uf9eRxr
+X-Authority-Analysis: v=2.4 cv=R+UDGcRX c=1 sm=1 tr=0 ts=68ca30c6 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=r0KOKur2OvuaYElxfjaavw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=TpeBPK0GJKfZ0rfD3RcA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: 3w3SK3_ie4wOi0pc9Aeu6I0Y4Uf9eRxr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 malwarescore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On Wed, Sep 17, 2025 at 5:23=E2=80=AFAM Hugh Dickins <hughd@google.com> wro=
-te:
->
-> On Wed, 17 Sep 2025, Kairui Song wrote:
-> > V4 changes:
-> > - Patch 14: fix potential cluster leak when attemp a sleep allocation o=
-f
-> >   swap table: Just remove the logic that check and return the percpu
-> >   cluster, it was trying to avoid fragmentation, which wasn't very
-> >   successfully and may not work at all if there are multiple devices.
-> >   The fragmentation is not a serious issue and given the chance of
-> >   hitting that race is extremely low, let's just ignore that [ Chris Me=
-son ].
->
-> And in Patch 11 I can see that you've made an important fix to the
-> !folio_ref_freeze() block in __folio_migrate_mapping(): there had been a
-> swap_cluster_unlock(ci) which you've fixed to swap_cluster_unlock_irq(ci)=
-:
-> I was going to report that, with the WARNING and "BUG: sleeping function"=
-s
-> it caused, but you're ahead of me.
 
-Oh thanks for pointing that out, I fixed that some time ago and forgot
-to include it in the change log.
 
->
-> Thanks also for fixing the shmem_replace_folio() locking and stats
-> update, which I'd noticed too (but never hit): looks good now.
->
-> Hugh
->
-> > - Patch 8 & 9: move some changes from Patch 9 to Patch 8 to avoid build
-> >   error, no code change. [ Baolin Wang ]
-> > - Patch 9: Fix locking section issue, should protect the shmem statisti=
-c
-> >   update with spin lock irq. Also fix an warn on condition.
-> > Link to V3:
-> > - https://lore.kernel.org/linux-mm/20250910160833.3464-1-ryncsn@gmail.c=
-om/
+On 8/15/2025 7:14 AM, Baochen Qiang wrote:
+> The CE buffer enqueue failure won't cause any functional issue, downgrade
+> logging level to avoid misleading.
+> 
+> Also fix an incorrect debug ID usage for CE.
+> 
+> Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+> ---
+> Baochen Qiang (3):
+>        wifi: ath11k: downgrade log level for CE buffer enqueue failure
+>        wifi: ath12k: fix wrong logging ID used for CE
+>        wifi: ath12k: downgrade log level for CE buffer enqueue failure
+> 
+>   drivers/net/wireless/ath/ath11k/ce.c    | 3 ++-
+>   drivers/net/wireless/ath/ath12k/ce.c    | 5 +++--
+>   drivers/net/wireless/ath/ath12k/debug.h | 1 +
+>   3 files changed, 6 insertions(+), 3 deletions(-)
+
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
