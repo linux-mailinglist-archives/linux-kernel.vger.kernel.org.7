@@ -1,327 +1,268 @@
-Return-Path: <linux-kernel+bounces-820502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89230B7C5DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952F3B7F7C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F601188B01D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C5C3AB55E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B31350D4E;
-	Wed, 17 Sep 2025 10:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8A3350829;
+	Wed, 17 Sep 2025 10:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8Igic/o"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgcKSRLa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F2732D5AC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AC12641CA;
+	Wed, 17 Sep 2025 10:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105812; cv=none; b=T850b3L8pDNbwATiU8YACy3cghLxnlbrKZo25FO0SDq6OHgaIQnkgVQ7hYCtX+LI/hCWGFHB5e8gSOWB8Bb8SvjODZcdAJ+SvQX0OVld3j6PCWC7hIPd4w9UJdqdtzsZMxa65b5iw4a0FSwHOV7ya/yD65SMHx4j7r4dmi3pW1U=
+	t=1758105891; cv=none; b=SpfAU8AZEHrKzAtj4/vHUxEtnZaNaXPZNPEYfJIjuUuUdmoT9/RyUf9SuWUzFuN0RiDYqiZa3Kad+kWnTzLOBcp77tpFKnesmWeBLsMTkIuCKBH7OD98s2cvogpzlrU4a/NtMiH1UskRLSQ7k4AgByGv76eY6bWD/Uyn1gEFeyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105812; c=relaxed/simple;
-	bh=7I53Ykw1eFryroVQTuUQXnFZzr85bDzFPt1fAEv0b6g=;
+	s=arc-20240116; t=1758105891; c=relaxed/simple;
+	bh=C4TnItmUWUIRUSK3TbcDmRi0bbtRQFSg0p42mp/7DWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btstctlyKNc4sYfmdV2Jnr1X651cEQEeMtyy8ZTnK+vvwmi474EmSoOedny4pRl4dqmeNVWm2kmvH5CvyoX/hkAuOcb4aqin9CL7oN26jvTGsj/997MnZ9wpvW4yiYiSWr6mi55aJO2g1u/l3gfi/3cZ0zEN+pv+CtxzIpFHj14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A8Igic/o; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b078af34f8aso114119166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758105809; x=1758710609; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Yyh8Hkqs7GqsXIM+okxGaGUnlxOgHFmx9rSotm4MB8=;
-        b=A8Igic/oEB//tu0k72oof6mGPZKpfAXvaJzlLQERXXttCRaly8afI5OKULJcaaJaZ7
-         dNbwam/HPx8EPMjfZpF6yyLbmCOy9FN3DKXxMbpqiw1EFttv/bAYFupFlhzOi2ppEMMJ
-         iuD/703qij7BsKIETYwzlXvbbu54Yt9gxzHhoYZY94yhEHDrDckuyJAn7+CV+4qdHqta
-         1olTqp5HmMy25UZVhMExyd7K6bSEKuk195o/BKMRCv7YUvYryYvwpC1DqAEyi6XBR1Va
-         MecsB6oRtPUD1kDqkVNfIy0+X9nsHtA+E9dM6Xddn15/+7GAHSFtkae/pPfYVtpUpHGm
-         ZYsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758105809; x=1758710609;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Yyh8Hkqs7GqsXIM+okxGaGUnlxOgHFmx9rSotm4MB8=;
-        b=VCC4bC43RPk2Z9bMnWIVpT81NhjJAdO7ySi86sehEM+LIZgQheriPKZHyhzWVDkv2M
-         xkp1qCLywszr8XhXEfTmYl3RUp6Lbb+e/kosK76PiANyApCe/4kgaZzbw8fDlq3S7KOa
-         0TUgiarixhH5i83/cKdigfeHAy+fDFr4nhKkqtKXK4tjuybo71QKuYWznZqOL+JogYPY
-         vrh706dfQbXKpOXuWWpAVW82fUOh7JD7vLrGZEIEZZAanbHJ7igAz+1zJQmLtYp64S78
-         KcTcOOHuF6nrb4xjGHk9lEJ7kl7a8jHPTFITg9oo5ift06MwKEkVh9W9Q9zTCl6IffNo
-         MyBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXK66AOyDM7Uc2j8desDnsovxRqBDaDctvuIkczHNawcbnGCGwB1lqpk/o/EbZ37PnOBWy51X2XUsPkxkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfmzf4i4rWJ3wgdJS1b/rO/Pf9FNc96bwfD/+HsS7IjzqXnrS3
-	Uc4CNGN6nLySw70QyoDKIgzfsdXPCO12Pwc3qiqf6WshQqOJxk+v4xqh
-X-Gm-Gg: ASbGncv5nAWXA+HozXZ9vDMLNuiW58DMtXpbJaQ5upMBinK2dOha2ciyu+d6xkyW7jP
-	5VZxmVymMskkIdzlJm6ggnNTxVlRFHjZz/aRN3XEJOBFQJnoclNn89KdZNSwvsnCoHuyLEwbJR/
-	Oo2mRsqt7op70odVl9+97jG+UYF9b3FXlimKa8KEFkWoOeHhgLGOHBEzFW7AFCrDtgvAdkbuB0+
-	Z1igjHH9G7Esbj4ql4t73eY4sUYHWF9U0VUHYMGrwgCPhWQgS3SMKagxyyJJX2ZhqEXc0zxf2/D
-	+N9ncc3+vh3yTkDcSLmVd9K+XdDOkwrfykMs+tWLls412krbTOcIwlZzvdF1KVoqUM0+fcywWrK
-	tE9slanxJY0DuoYU=
-X-Google-Smtp-Source: AGHT+IF0bGu8coGo8S13flYMunWY6PoCzFUDuD7l8SY41Vuc7seAVPH3vRAusBx3pRQ3RA9KkKbEpA==
-X-Received: by 2002:a17:907:7e93:b0:b04:669f:e70f with SMTP id a640c23a62f3a-b1bb7f2a4f5mr112464766b.2.1758105808719;
-        Wed, 17 Sep 2025 03:43:28 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:8bcc:b603:fee7:a273])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07c6110c27sm1132722066b.66.2025.09.17.03.43.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 03:43:28 -0700 (PDT)
-Date: Wed, 17 Sep 2025 13:43:25 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH v18 5/8] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <20250917104325.j5je2jtachee7thw@skbuf>
-References: <20250915104545.1742-1-ansuelsmth@gmail.com>
- <20250915104545.1742-6-ansuelsmth@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XX6jrbYlctv7OOJJ5tAPr1674SHiKz1C6azNqKaiQxADVBkg2Tn3kg3erCwOYAaeB1uLpdT9ldZRa+K7FsyJxA8Whq9WnjtAgaWN/OK4VeKxm1yC1Nf7npZKvuWPxVIw6op4HiKkyuSlCjglLlyu7mj0R4jElWszWcIuaSbDHNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgcKSRLa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DDA9C4CEF0;
+	Wed, 17 Sep 2025 10:44:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758105891;
+	bh=C4TnItmUWUIRUSK3TbcDmRi0bbtRQFSg0p42mp/7DWk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TgcKSRLazVyMkDCnD6P3JB0NjdcDHEJq/eQ3OSd2vMP1cFo0XMNc3DijYrvI4vUil
+	 zE4XLv+dvBR2LadwZ++uZ9ZbGL6rhfyd12poCU56T6DtP6j495aVgtlqCvz/ITgEDb
+	 o2kTg6Eoa4YQWpAa5g5HKz4Ey9v5Yy5QB96n9/MuOX3RZxsU5KHFBCWbMB7lgUOyqn
+	 cD4SLpz926wI//7h5IHHqxYUQWaU8H7abWiHuRac0lZhwzkhEMiw3WDhNJFdkSy1XT
+	 ZYYam+SvE1KF286hjFHlCiEnRSkT9vFWx7KgM8UnGAR3OszVd5X0zz8IKYmdQ7G65r
+	 9LlguJhoD0ptw==
+Date: Wed, 17 Sep 2025 16:14:42 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>
+Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
+ by BIOS for devicetree platforms
+Message-ID: <frmzvhnhljy23xds7lnmo23zg35wxpzu4pvabnc6v6vz7qn2lj@gk25cglbpn3q>
+References: <20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com>
+ <20250916171546.GA1806498@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250915104545.1742-6-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250916171546.GA1806498@bhelgaas>
 
-On Mon, Sep 15, 2025 at 12:45:41PM +0200, Christian Marangi wrote:
-> +static const struct an8855_mib_desc an8855_mib[] = {
-> +	MIB_DESC(1, AN8855_PORT_MIB_TX_DROP, "TxDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_TX_CRC_ERR, "TxCrcErr"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_TX_COLLISION, "TxCollision"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_TX_OVERSIZE_DROP, "TxOversizeDrop"),
-> +	MIB_DESC(2, AN8855_PORT_MIB_TX_BAD_PKT_BYTES, "TxBadPktBytes"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RX_DROP, "RxDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RX_FILTERING, "RxFiltering"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RX_CRC_ERR, "RxCrcErr"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RX_CTRL_DROP, "RxCtrlDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RX_INGRESS_DROP, "RxIngressDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RX_ARL_DROP, "RxArlDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_FLOW_CONTROL_DROP, "FlowControlDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_WRED_DROP, "WredDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_MIRROR_DROP, "MirrorDrop"),
-> +	MIB_DESC(2, AN8855_PORT_MIB_RX_BAD_PKT_BYTES, "RxBadPktBytes"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RXS_FLOW_SAMPLING_PKT_DROP, "RxsFlowSamplingPktDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_RXS_FLOW_TOTAL_PKT_DROP, "RxsFlowTotalPktDrop"),
-> +	MIB_DESC(1, AN8855_PORT_MIB_PORT_CONTROL_DROP, "PortControlDrop"),
-> +};
-> +
-> +static int
-> +an8855_mib_init(struct an8855_priv *priv)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_write(priv->regmap, AN8855_MIB_CCR,
-> +			   AN8855_CCR_MIB_ENABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(priv->regmap, AN8855_MIB_CCR,
-> +			    AN8855_CCR_MIB_ACTIVATE);
-> +}
-> +
-> +static void an8855_get_strings(struct dsa_switch *ds, int port,
-> +			       u32 stringset, uint8_t *data)
-> +{
-> +	int i;
-> +
-> +	if (stringset != ETH_SS_STATS)
-> +		return;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(an8855_mib); i++)
-> +		ethtool_puts(&data, an8855_mib[i].name);
+On Tue, Sep 16, 2025 at 12:15:46PM GMT, Bjorn Helgaas wrote:
+> On Tue, Sep 16, 2025 at 09:42:52PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
+> > the BIOS (through LNKCTL) during device initialization. This was done
+> > conservatively to avoid issues with the buggy devices that advertise
+> > ASPM capabilities, but behave erratically if the ASPM states are enabled.
+> > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
+> > states that were known to work for the devices.
+> 
+> Questions about what exactly "honoring ASPM states set by BIOS" means:
+> 
+>   - I *think* honoring ASPM states set by BIOS means that Linux
+>     doesn't change ASPM config at boot-time, and this only applies
+>     when:
+> 
+>     * CONFIG_PCIEASPM_DEFAULT=y, or
+>     * booting with "pcie_aspm=off", or
+>     * FADT has ACPI_FADT_NO_ASPM set, or
+>     * platform retained control of PCIe Capability via _OSC (I'm not
+>       sure we enforce this today, but I think we should)
+> 
+>   - IIUC we always save the pre-Linux config in link->aspm_default,
+>     but when CONFIG_PCIEASPM_POWERSAVE, CONFIG_PCIEASPM_POWER_SUPERSAVE,
+>     or CONFIG_PCIEASPM_PERFORMANCE are set, Linux immediately
+>     reconfigures ASPM.
+> 
+>   - But I *think* the config option is not restrictive, and users can
+>     do more aggressive ASPM configuration at run-time via sysfs, right?
+>     (Assuming the platform hasn't prevented Linux from doing so)
+> 
+> If users can configure ASPM differently than BIOS did, we're liable to
+> trip over issues later even though we claim to honor ASPM states set
+> by BIOS, so I think CONFIG_PCIEASPM_DEFAULT is kind of a fig leaf that
+> only defers issues.
+> 
 
-Same feedback as for yt921x. For new drivers we want in unstructured
-ethtool -S only those statistics which are not exposed through standard
-variants (to force the adoption of the new interfaces).
+True. Similar to how we allow users to fiddle with the PCI config space through
+sysfs even when a driver is bound to the device.
 
-> +}
-> +
-> +static void an8855_read_port_stats(struct an8855_priv *priv, int port,
-> +				   u32 offset, u8 size, uint64_t *data)
-> +{
-> +	u32 val, reg = AN8855_PORT_MIB_COUNTER(port) + offset;
-> +
-> +	regmap_read(priv->regmap, reg, &val);
-> +	*data = val;
-> +
-> +	if (size == 2) {
-> +		regmap_read(priv->regmap, reg + 4, &val);
-> +		*data |= (u64)val << 32;
-> +	}
-> +}
-> +
-> +static void an8855_get_ethtool_stats(struct dsa_switch *ds, int port,
-> +				     uint64_t *data)
-> +{
-> +	struct an8855_priv *priv = ds->priv;
-> +	const struct an8855_mib_desc *mib;
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(an8855_mib); i++) {
-> +		mib = &an8855_mib[i];
-> +
-> +		an8855_read_port_stats(priv, port, mib->offset, mib->size,
-> +				       data + i);
-> +	}
-> +}
-> +
-> +static int an8855_get_sset_count(struct dsa_switch *ds, int port,
-> +				 int sset)
-> +{
-> +	if (sset != ETH_SS_STATS)
-> +		return 0;
-> +
-> +	return ARRAY_SIZE(an8855_mib);
-> +}
-> +
-> +static void an8855_get_eth_mac_stats(struct dsa_switch *ds, int port,
-> +				     struct ethtool_eth_mac_stats *mac_stats)
-> +{
-> +	struct an8855_priv *priv = ds->priv;
-> +
-> +	/* MIB counter doesn't provide a FramesTransmittedOK but instead
-> +	 * provide stats for Unicast, Broadcast and Multicast frames separately.
-> +	 * To simulate a global frame counter, read Unicast and addition Multicast
-> +	 * and Broadcast later
-> +	 */
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_UNICAST, 1,
-> +			       &mac_stats->FramesTransmittedOK);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_SINGLE_COLLISION, 1,
-> +			       &mac_stats->SingleCollisionFrames);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_MULTIPLE_COLLISION, 1,
-> +			       &mac_stats->MultipleCollisionFrames);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_UNICAST, 1,
-> +			       &mac_stats->FramesReceivedOK);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_BYTES, 2,
-> +			       &mac_stats->OctetsTransmittedOK);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_ALIGN_ERR, 1,
-> +			       &mac_stats->AlignmentErrors);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_DEFERRED, 1,
-> +			       &mac_stats->FramesWithDeferredXmissions);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_LATE_COLLISION, 1,
-> +			       &mac_stats->LateCollisions);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_EXCESSIVE_COLLISION, 1,
-> +			       &mac_stats->FramesAbortedDueToXSColls);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_BYTES, 2,
-> +			       &mac_stats->OctetsReceivedOK);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_MULTICAST, 1,
-> +			       &mac_stats->MulticastFramesXmittedOK);
-> +	mac_stats->FramesTransmittedOK += mac_stats->MulticastFramesXmittedOK;
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_BROADCAST, 1,
-> +			       &mac_stats->BroadcastFramesXmittedOK);
-> +	mac_stats->FramesTransmittedOK += mac_stats->BroadcastFramesXmittedOK;
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_MULTICAST, 1,
-> +			       &mac_stats->MulticastFramesReceivedOK);
-> +	mac_stats->FramesReceivedOK += mac_stats->MulticastFramesReceivedOK;
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_BROADCAST, 1,
-> +			       &mac_stats->BroadcastFramesReceivedOK);
-> +	mac_stats->FramesReceivedOK += mac_stats->BroadcastFramesReceivedOK;
-> +}
-> +
-> +static const struct ethtool_rmon_hist_range an8855_rmon_ranges[] = {
-> +	{ 0, 64 },
-> +	{ 65, 127 },
-> +	{ 128, 255 },
-> +	{ 256, 511 },
-> +	{ 512, 1023 },
-> +	{ 1024, 1518 },
-> +	{ 1519, AN8855_MAX_MTU },
-> +	{}
-> +};
-> +
-> +static void an8855_get_rmon_stats(struct dsa_switch *ds, int port,
-> +				  struct ethtool_rmon_stats *rmon_stats,
-> +				  const struct ethtool_rmon_hist_range **ranges)
-> +{
-> +	struct an8855_priv *priv = ds->priv;
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_UNDER_SIZE_ERR, 1,
-> +			       &rmon_stats->undersize_pkts);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_OVER_SZ_ERR, 1,
-> +			       &rmon_stats->oversize_pkts);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_FRAG_ERR, 1,
-> +			       &rmon_stats->fragments);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_JABBER_ERR, 1,
-> +			       &rmon_stats->jabbers);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_64, 1,
-> +			       &rmon_stats->hist[0]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_65_TO_127, 1,
-> +			       &rmon_stats->hist[1]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_128_TO_255, 1,
-> +			       &rmon_stats->hist[2]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_256_TO_511, 1,
-> +			       &rmon_stats->hist[3]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_512_TO_1023, 1,
-> +			       &rmon_stats->hist[4]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_1024_TO_1518, 1,
-> +			       &rmon_stats->hist[5]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_1519_TO_MAX, 1,
-> +			       &rmon_stats->hist[6]);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_64, 1,
-> +			       &rmon_stats->hist_tx[0]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_65_TO_127, 1,
-> +			       &rmon_stats->hist_tx[1]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_128_TO_255, 1,
-> +			       &rmon_stats->hist_tx[2]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_256_TO_511, 1,
-> +			       &rmon_stats->hist_tx[3]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_512_TO_1023, 1,
-> +			       &rmon_stats->hist_tx[4]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_1024_TO_1518, 1,
-> +			       &rmon_stats->hist_tx[5]);
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_1519_TO_MAX, 1,
-> +			       &rmon_stats->hist_tx[6]);
-> +
-> +	*ranges = an8855_rmon_ranges;
-> +}
-> +
-> +static void an8855_get_eth_ctrl_stats(struct dsa_switch *ds, int port,
-> +				      struct ethtool_eth_ctrl_stats *ctrl_stats)
-> +{
-> +	struct an8855_priv *priv = ds->priv;
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PAUSE, 1,
-> +			       &ctrl_stats->MACControlFramesTransmitted);
-> +
-> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PAUSE, 1,
-> +			       &ctrl_stats->MACControlFramesReceived);
-> +}
+> I'd really like to get rid of all those CONFIG_PCIEASPM_* options
+> because I don't think they have any business being build-time things,
+> but I don't think that would have to be in this series.
+> 
+> > But this turned out to be a problem for devicetree platforms, especially
+> > the ARM based devicetree platforms powering Embedded and *some* Compute
+> > devices as they tend to run without any standard BIOS. So the ASPM states
+> > on these platforms were left disabled during boot and the PCI subsystem
+> > never bothered to enable them, unless the user has forcefully enabled the
+> > ASPM states through Kconfig, cmdline, and sysfs or the device drivers
+> > themselves, enabling the ASPM states through pci_enable_link_state() APIs.
+> > 
+> > This caused runtime power issues on those platforms. So a couple of
+> > approaches were tried to mitigate this BIOS dependency without user
+> > intervention by enabling the ASPM states in the PCI controller drivers
+> > after device enumeration, and overriding the ASPM/Clock PM states
+> > by the PCI controller drivers through an API before enumeration.
+> > 
+> > But it has been concluded that none of these mitigations should really be
+> > required and the PCI subsystem should enable the ASPM states advertised by
+> > the devices without relying on BIOS or the PCI controller drivers. If any
+> > device is found to be misbehaving after enabling ASPM states that they
+> > advertised, then those devices should be quirked to disable the problematic
+> > ASPM/Clock PM states.
+> > 
+> > In an effort to do so, start by overriding the ASPM and Clock PM states set
+> > by the BIOS for devicetree platforms first. Separate helper functions are
+> > introduced to set the default ASPM and Clock PM states and they will
+> > override the BIOS set states by enabling all of them if CONFIG_OF is
+> > enabled. To aid debugging, print the overridden ASPM and Clock PM states.
+> > 
+> > In the future, these helpers could be extended to allow other platforms
+> > like VMD, newer ACPI systems with a cutoff year etc... to follow the path.
+> > 
+> > Link: https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
+> > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/pcie/aspm.c | 48 +++++++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 43 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index 919a05b9764791c3cc469c9ada62ba5b2c405118..1e7218c5e9127699fdbf172c277aad3f847c43be 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -235,13 +235,15 @@ struct pcie_link_state {
+> >  	u32 aspm_support:7;		/* Supported ASPM state */
+> >  	u32 aspm_enabled:7;		/* Enabled ASPM state */
+> >  	u32 aspm_capable:7;		/* Capable ASPM state with latency */
+> > -	u32 aspm_default:7;		/* Default ASPM state by BIOS */
+> > +	u32 aspm_default:7;		/* Default ASPM state by BIOS or
+> > +					   override */
+> >  	u32 aspm_disable:7;		/* Disabled ASPM state */
+> >  
+> >  	/* Clock PM state */
+> >  	u32 clkpm_capable:1;		/* Clock PM capable? */
+> >  	u32 clkpm_enabled:1;		/* Current Clock PM state */
+> > -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+> > +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+> > +					   override */
+> >  	u32 clkpm_disable:1;		/* Clock PM disabled */
+> >  };
+> >  
+> > @@ -373,6 +375,20 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+> >  	pcie_set_clkpm_nocheck(link, enable);
+> >  }
+> >  
+> > +static void pcie_clkpm_set_default_link_state(struct pcie_link_state *link,
+> > +					      int enabled)
+> > +{
+> > +	struct pci_dev *pdev = link->downstream;
+> > +
+> > +	link->clkpm_default = enabled;
+> > +
+> > +	/* Override the BIOS disabled Clock PM state for devicetree platforms */
+> > +	if (IS_ENABLED(CONFIG_OF) && !enabled) {
+> > +		link->clkpm_default = 1;
+> > +		pci_info(pdev, "Clock PM state overridden\n");
+> 
+> It's obvious from the code that this message means we're going to
+> *enable* ClockPM, but I want to know from the message itself what the
+> resulting state is, not just that it was overridden.
+> 
+> Maybe "ClockPM+" or "ClockPM-" like lspci does?
+> 
+
+We are not disabling ClockPM here, but just enabling it. So adding 'ClockPM+'
+would make sense.
+
+> Maybe we should have a pci_dbg() for the current state?
+> 
+
+Since we are always enabling ClockPM if it was disabled, printing the current
+state is redundant.
+
+> For debuggability, I wonder if we should have a pci_dbg() at the point
+> where we actually update PCI_EXP_LNKCTL, PCI_L1SS_CTL1, etc?  I could
+> even argue for pci_info() since this should be a low-frequency and
+> relatively high-risk event.
+> 
+
+I don't know why we should print register settings since we are explicitly
+printing out what states are getting enabled.
+
+> > +	}
+> > +}
+> > +
+> >  static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+> >  {
+> >  	int capable = 1, enabled = 1;
+> > @@ -394,7 +410,7 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+> >  			enabled = 0;
+> >  	}
+> >  	link->clkpm_enabled = enabled;
+> > -	link->clkpm_default = enabled;
+> 
+> I think both the patch and the resulting code would be easier to read
+> if we preserved the link->clkpm_enabled here and simply added the call
+> to pcie_clkpm_set_default_link_state().
+> 
+
+Ok, in that case the helper should be renamed to
+pcie_{clkpm/aspm}_override_default_link_state().
+
+> > +	pcie_clkpm_set_default_link_state(link, enabled);
+> >  	link->clkpm_capable = capable;
+> >  	link->clkpm_disable = blacklist ? 1 : 0;
+> >  }
+> > @@ -788,6 +804,29 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
+> >  		aspm_calc_l12_info(link, parent_l1ss_cap, child_l1ss_cap);
+> >  }
+> >  
+> > +static void pcie_aspm_set_default_link_state(struct pcie_link_state *link)
+> > +{
+> > +	struct pci_dev *pdev = link->downstream;
+> > +	u32 override;
+> > +
+> > +	/* Set BIOS enabled states as the default */
+> > +	link->aspm_default = link->aspm_enabled;
+> > +
+> > +	/* Override the BIOS disabled ASPM states for devicetree platforms */
+> > +	if (IS_ENABLED(CONFIG_OF)) {
+> > +		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> > +		override = link->aspm_default & ~link->aspm_enabled;
+> > +		if (override)
+> > +			pci_info(pdev, "ASPM states overridden: %s%s%s%s%s%s\n",
+> > +				 (override & PCIE_LINK_STATE_L0S) ? "L0s, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1) ? "L1, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_1) ? "L1.1, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_2) ? "L1.2, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_1_PCIPM) ? "L1.1 PCI-PM, " : "",
+> > +				 (override & PCIE_LINK_STATE_L1_2_PCIPM) ? "L1.2 PCI-PM" : "");
+> 
+> Same here.
+> 
+
+I will add '+' to make it clear that these states are getting enabled.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
