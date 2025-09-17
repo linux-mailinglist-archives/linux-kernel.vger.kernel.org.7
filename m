@@ -1,158 +1,118 @@
-Return-Path: <linux-kernel+bounces-820803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A25FB7F547
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:32:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5AEB7F3C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59230188866B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:26:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AE927ACCD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EA91E1E00;
-	Wed, 17 Sep 2025 13:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C62B29ACD1;
+	Wed, 17 Sep 2025 13:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyzzqaq1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewFu/Oq8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5A233C76E;
-	Wed, 17 Sep 2025 13:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E58F1A76DE;
+	Wed, 17 Sep 2025 13:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115588; cv=none; b=UWV9wN3PK2kr9aXEEwoewjg6AZnCK73Qlo6qaBvM8r/H8F5LBjNutvXbBgudlV6aYDeLSZD4Y3hb18AfjQzR/p24LRExZqrKUUl/afav3rgGWikGxfeP0DB01zWIeSHv+CbyRzT+QJVC/DlBOp9kmPTaipuXDE9tNog7U8UXOwU=
+	t=1758115615; cv=none; b=oIb0j5rTL8dXULOG5YkJwSzDUCBBOOymVK7RcdrIQ0GiHmmQmYFSIFDidR0Gj7ahtC6LAnAy9w2inm/i9//Y08GbDE0NrRiZsm+EmEgD+7Y9+s9YiR2yYTVjwtAFBytWerx5cqNZGA/ypUhAurofaXPa7dbKP6ALH4XJJk4IlCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115588; c=relaxed/simple;
-	bh=V7HgAwR8e8tHaVcJaPJfV58nE9V/qJQQN1kUxjKXpss=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RsoIGqZqNLDIbr9DJOGt2t+BiE3F/PD1edOgu32LDaPj1w7MxxrKVTC5uVwRSvFgCALeEXzctVSKLvjszykjGdO6pmP9sogMChRHaCrrLpheap9XcSZWxdZzCH8BJJojBVcLSF0kb+tG/gW9/VKMT3Sj+542QgvujNrjCDrv1UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyzzqaq1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B5EBC4CEF0;
-	Wed, 17 Sep 2025 13:26:27 +0000 (UTC)
+	s=arc-20240116; t=1758115615; c=relaxed/simple;
+	bh=iUP8CJMIjPtCkCevxIoR3+jahqp22AVYpvNjPcCSOXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qmw6yJHNUEHwdjV67shDyHgYArummQJf+tOXSN2oxAfbqzw3J7Dggj+BUg7CANQd31ieq6fkv31vP77gLF5xbSaEUpmr1InTtCWm1rcvurgEQ+ItkRNU6yTOUruQu8yFC7Ejg5iJLRrD8LCCGFtbWvpNY432G3f0DYM4vNwy3s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewFu/Oq8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4B0C4CEF0;
+	Wed, 17 Sep 2025 13:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758115587;
-	bh=V7HgAwR8e8tHaVcJaPJfV58nE9V/qJQQN1kUxjKXpss=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fyzzqaq1wSWdrMvUjJY6Q8mC1TXbi8ZuTpl3Lz3wZq3GVXDFvew6jCkP8AXYWXvgB
-	 v3f6qKVhT1BE1orrKlvZlrYFo3gehLDsv8q8s79Bg6852M9OSEVlSW87AROb1ApL0J
-	 uil+MxoysSLaD1bs2lntCi/dzIhktmXgWQu0Q6V0loAgomgt07L2zjkmiQqP2q5AbR
-	 rF9W6qdmUXXuBcQ/VKyeYFBnXwDStG9KONCUVf+F3lFragWgSGkWouCgFLIFAiH45C
-	 ez/sh5E6l479QZ5yWfcqrNaCVn0BGq9ZWLdrK0bedHmT8UQ02l2pDwuN0bUl4AoYu6
-	 LSiTwVKrAqqhQ==
-From: SeongJae Park <sj@kernel.org>
-To: Ethan Graham <ethan.w.s.graham@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	ethangraham@google.com,
-	glider@google.com,
-	andreyknvl@gmail.com,
-	andy@kernel.org,
-	brauner@kernel.org,
-	brendan.higgins@linux.dev,
-	davem@davemloft.net,
-	davidgow@google.com,
-	dhowells@redhat.com,
-	dvyukov@google.com,
-	elver@google.com,
-	herbert@gondor.apana.org.au,
-	ignat@cloudflare.com,
-	jack@suse.cz,
-	jannh@google.com,
-	johannes@sipsolutions.net,
-	kasan-dev@googlegroups.com,
-	kees@kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lukas@wunner.de,
-	rmoar@google.com,
-	shuah@kernel.org,
-	tarasmadan@google.com
-Subject: Re: [PATCH v1 04/10] tools: add kfuzztest-bridge utility
-Date: Wed, 17 Sep 2025 06:26:25 -0700
-Message-Id: <20250917132625.61081-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250916090109.91132-5-ethan.w.s.graham@gmail.com>
-References: 
+	s=k20201202; t=1758115615;
+	bh=iUP8CJMIjPtCkCevxIoR3+jahqp22AVYpvNjPcCSOXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ewFu/Oq88t1wv9kKa1KOJlxI7ymd3utJOVNw3PQ9vQx2trHoQGM6sSta8bkxFV7mE
+	 9KXikfssThGFbnQfE9QkoLoQ/QR7MSOWII7lZHAM9SYJnuhc/17u5lulJbzAc32/zK
+	 mEoCr1isBZe3FdwY78cgyz9WwfltW9hrrfPYPUP5Pgrhhaj9Lx6ikQap5sq9fuzVBb
+	 VwgVJmOJQI+CSg9omxaVxArIrh5fgkRWV0X9jb2DT/OEPExoKQwgZJceEhFaL7diel
+	 qfBpXonl/9CPC3YRIJfHDMy76+432/BO0wcycXLiTWY7BKrroXno+1Xfxtg6V7dM4i
+	 NDaBXlVgzG2cw==
+Date: Wed, 17 Sep 2025 15:26:49 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Subject: [PATCH 1/2][next] stddef: Remove token-pasting in TRAILING_OVERLAP()
+Message-ID: <13b3e0a69aad837b4e32ca8269b9d91bf1fbe9ef.1758115257.git.gustavoars@kernel.org>
+References: <cover.1758115257.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1758115257.git.gustavoars@kernel.org>
 
-On Tue, 16 Sep 2025 09:01:03 +0000 Ethan Graham <ethan.w.s.graham@gmail.com> wrote:
+Currently, TRAILING_OVERLAP() token-pastes the FAM parameter into the
+name of internal pdding member `__offset_to_##FAM`. This forces FAM to
+be a single identifier, which prevents callers from using a FAM when
+it's a nested member. For instance, see the following scenario:
 
-> From: Ethan Graham <ethangraham@google.com>
-> 
-> Introduce the kfuzztest-bridge tool, a userspace utility for sending
-> structured inputs to KFuzzTest harnesses via debugfs.
-> 
-> The bridge takes a textual description of the expected input format, a
-> file containing random bytes, and the name of the target fuzz test. It
-> parses the description, encodes the random data into the binary format
-> expected by the kernel, and writes the result to the corresponding
-> debugfs entry.
-> 
-> This allows for both simple manual testing and integration with
-> userspace fuzzing engines. For example, it can be used for smoke testing
-> by providing data from /dev/urandom, or act as a bridge for blob-based
-> fuzzers (e.g., AFL) to target KFuzzTest harnesses.
+| struct flex {
+| 	size_t count;
+| 	int data[];
+| };
 
-Thank you for doing this great work, Ethan!  I think this will be very helpful
-for finding bugs of DAMON.
+| struct foo {
+| 	int hdr_foo;
+| 	struct flex f;
+| };
 
-> 
-> Signed-off-by: Ethan Graham <ethangraham@google.com>
-> 
-> ---
-> v3:
-> - Add additional context in header comment of kfuzztest-bridge/parser.c.
-> - Add some missing NULL checks.
-> - Refactor skip_whitespace() function in input_lexer.c.
-> - Use ctx->minalign to compute correct region alignment, which is read
->   from /sys/kernel/debug/kfuzztest/_config/minalign.
-> ---
-> ---
->  tools/Makefile                        |  15 +-
->  tools/kfuzztest-bridge/.gitignore     |   2 +
->  tools/kfuzztest-bridge/Build          |   6 +
->  tools/kfuzztest-bridge/Makefile       |  48 ++++
->  tools/kfuzztest-bridge/bridge.c       | 103 +++++++
->  tools/kfuzztest-bridge/byte_buffer.c  |  87 ++++++
->  tools/kfuzztest-bridge/byte_buffer.h  |  31 ++
->  tools/kfuzztest-bridge/encoder.c      | 391 +++++++++++++++++++++++++
->  tools/kfuzztest-bridge/encoder.h      |  16 ++
->  tools/kfuzztest-bridge/input_lexer.c  | 242 ++++++++++++++++
->  tools/kfuzztest-bridge/input_lexer.h  |  57 ++++
->  tools/kfuzztest-bridge/input_parser.c | 395 ++++++++++++++++++++++++++
->  tools/kfuzztest-bridge/input_parser.h |  81 ++++++
->  tools/kfuzztest-bridge/rand_stream.c  |  77 +++++
->  tools/kfuzztest-bridge/rand_stream.h  |  57 ++++
->  15 files changed, 1602 insertions(+), 6 deletions(-)
->  create mode 100644 tools/kfuzztest-bridge/.gitignore
->  create mode 100644 tools/kfuzztest-bridge/Build
->  create mode 100644 tools/kfuzztest-bridge/Makefile
->  create mode 100644 tools/kfuzztest-bridge/bridge.c
->  create mode 100644 tools/kfuzztest-bridge/byte_buffer.c
->  create mode 100644 tools/kfuzztest-bridge/byte_buffer.h
->  create mode 100644 tools/kfuzztest-bridge/encoder.c
->  create mode 100644 tools/kfuzztest-bridge/encoder.h
->  create mode 100644 tools/kfuzztest-bridge/input_lexer.c
->  create mode 100644 tools/kfuzztest-bridge/input_lexer.h
->  create mode 100644 tools/kfuzztest-bridge/input_parser.c
->  create mode 100644 tools/kfuzztest-bridge/input_parser.h
->  create mode 100644 tools/kfuzztest-bridge/rand_stream.c
->  create mode 100644 tools/kfuzztest-bridge/rand_stream.h
+| struct composite {
+| 	struct foo hdr;
+| 	int data[100];
+| };
 
-I'm wondering if it makes sense to put the files under tools/testing/ like
-kselftest and kunit.
+In this case, it'd be useful if TRAILING_OVERLAP() could be used in
+the following way:
 
+| struct composite {
+| 	TRAILING_OVERLAP(struct foo, hdr, f.data,
+| 		int data[100];
+| 	);
+| };
 
-Thanks,
-SJ
+However, this is not current possible due to the token concatenation
+in `__offset_to_##FAM`, which fails when FAM contains a dot.
 
-[...]
+So, remove token-pasting and use the fixed internal name
+`__offset_to_FAM` and, with this, expand the capabilities of
+TRAILING_OVERLAP(). :)
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ include/linux/stddef.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/stddef.h b/include/linux/stddef.h
+index dab49e2ec8c0..701099c67c24 100644
+--- a/include/linux/stddef.h
++++ b/include/linux/stddef.h
+@@ -108,7 +108,7 @@ enum {
+ 	union {									\
+ 		TYPE NAME;							\
+ 		struct {							\
+-			unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];	\
++			unsigned char __offset_to_FAM[offsetof(TYPE, FAM)];	\
+ 			MEMBERS							\
+ 		};								\
+ 	}
+-- 
+2.43.0
+
 
