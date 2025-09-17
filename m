@@ -1,248 +1,148 @@
-Return-Path: <linux-kernel+bounces-820601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68043B7C92E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827BCB7CA88
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F445486601
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43AD132856A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5DA3728B5;
-	Wed, 17 Sep 2025 12:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0946D37428E;
+	Wed, 17 Sep 2025 12:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dS6kKDBa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dW8oVmQZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dS6kKDBa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dW8oVmQZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="euMQjirx"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DAF225761
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AC74086A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758110753; cv=none; b=j8h5xW5D8ZE84/70v1zIPcEsUK8Hr+tPZbagtUA+7VjbhibObD6YR9TTW+yqWwAtRsWy/SxMbM1VWr9j/ZK+WYo7sAYgxeoUZv9iFuCsRuJYZZPYQT/HE2tW/KGu+NIm6dnohpRsIUr4SFD/4o+lkP3yKzCvrBmGysKJng4pDm0=
+	t=1758110848; cv=none; b=aaX3HgkP/d+7Wu2WxCHgynRe0d0cCdYTI2283lslEr7OFyFGCQWS/ln5v9GO5rPn5smMVUYBza4K3Gnc/W9RTjxuDKYjqtgPtQcdtgvqEJz9hdFko3en4EfUC4yBObkzJQgyDuBZb2mL5xiaO0lCERAauBQqw7739smiV2miae0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758110753; c=relaxed/simple;
-	bh=KJXRfc2H/5p6Cz4Kmce7eZ8OdlDab0HKWMKaV9Fk3EU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SvDv/KIBWxuQXmyFFfFG4lZCC46SBglo517NDhOL1Y6vcFcTzyMGkO0heISaMy5LTixaDkpV9LTgJLQ62m7yBe/ZvcpM/co6NDgPJOOVhII45io+Jp+ZWVcsxVTmxRjxryjoehQhonfhBD/6Qt4yQnJJynIIA1C0dqn61dtFDsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dS6kKDBa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dW8oVmQZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dS6kKDBa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dW8oVmQZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 55BCE221C6;
-	Wed, 17 Sep 2025 12:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758110750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sVQIjNweGYYhg48Q2wQmHA9p1bEpqt7R5ZvRvK3sBss=;
-	b=dS6kKDBahjzfAuS45GhHk4YBwAvvY0OeDIBRUJLTfZUt6rAoF4gymim51rn9rZaHJZuJuJ
-	+uhbE1jo0L3DY3Loce5cMS0ZKpJE1r7WKAM8ykiGCF1C08/5HSo5qb4M5fLMcoiZ7SsB1W
-	Ocet+1CdPSHdcrzgC7NUAipm5xfuHQc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758110750;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sVQIjNweGYYhg48Q2wQmHA9p1bEpqt7R5ZvRvK3sBss=;
-	b=dW8oVmQZewGGOxa5lLZ3R61N99ZOZB3b7W9ZjVKCR1zd+QZgzdrZ74+zLfJJNNxRLZl0FW
-	MUce3DdMvAIpR4BA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758110750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sVQIjNweGYYhg48Q2wQmHA9p1bEpqt7R5ZvRvK3sBss=;
-	b=dS6kKDBahjzfAuS45GhHk4YBwAvvY0OeDIBRUJLTfZUt6rAoF4gymim51rn9rZaHJZuJuJ
-	+uhbE1jo0L3DY3Loce5cMS0ZKpJE1r7WKAM8ykiGCF1C08/5HSo5qb4M5fLMcoiZ7SsB1W
-	Ocet+1CdPSHdcrzgC7NUAipm5xfuHQc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758110750;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sVQIjNweGYYhg48Q2wQmHA9p1bEpqt7R5ZvRvK3sBss=;
-	b=dW8oVmQZewGGOxa5lLZ3R61N99ZOZB3b7W9ZjVKCR1zd+QZgzdrZ74+zLfJJNNxRLZl0FW
-	MUce3DdMvAIpR4BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3C931137C3;
-	Wed, 17 Sep 2025 12:05:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tqB1Dh6kymhWVwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 17 Sep 2025 12:05:50 +0000
-Message-ID: <6f92eca3-863e-4b77-b2df-dc2752c0ff4e@suse.cz>
-Date: Wed, 17 Sep 2025 14:05:49 +0200
+	s=arc-20240116; t=1758110848; c=relaxed/simple;
+	bh=9YsOK7xOkBmqSXAsGz41A8TfQISRyzo2HhwCFSvVyL8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Eo5wN1+hD3B643dG6hXl02JRmc0SO3UQH9UHNKj6Iorr3s5EqcyVVQzIwE4xe5ABkztUM9ErLzs9lCgvFkVmBdru+HYsGuKX3nRgp1CQrczfN2tpwus83PUI1WZc50HBj9p24qfWMwsiFnkgF8GITjH0iNWeYZW8y7eCg9WePns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--srosek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=euMQjirx; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--srosek.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-62f9cfb8075so104185a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758110845; x=1758715645; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oUSdiy6K/FdW7+NZhKD0MWSuKUWi3Six21x+wvEODfc=;
+        b=euMQjirxt+darB1wsav+RBep6Q23AjZOnzloiQ9fttRr6DuuNoXnBrSViRYCMx/oG8
+         /CLTKrkf6FFadgFoDy/mVoYtd0eR/xsSvQMTFRco1GD8t1CWJSB0pXA+LGY0XOtFTkJ6
+         ACcTZ4mNBSWFR/SqlUqTvOJghdTcO2HD0PNext0cTz0/8wkyACSxeY4w6w6wN9OTDagu
+         jn6zi/sU9W2ctPwSWITQ7iCAEn2VgOMw4wQywWoW8PV88OT/kVc2JlBArtLy3AI7LeAG
+         imixOmCh4fkgPuVSdgkEwD+HntSQvS2xrZd9IV7VELZqffMz1MjkmJhUsnMmQRtZVTmw
+         Cf6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758110845; x=1758715645;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oUSdiy6K/FdW7+NZhKD0MWSuKUWi3Six21x+wvEODfc=;
+        b=VuLxyIUiWsDv3VUch6Tor6pGA+Ett212XeMv+axV7irMgbX0+7Z+O8wis8DMQut1d4
+         DZQCJqxoTJQllJTNoRewynIDjEts41O+qYc35xOA6Zg4Xt82mgGsABTG6Jyl1he793i/
+         jo8fSV4WvAOALqoKUxEpvSTA+5+5xRl6voaprXcglsU5PqAXMLe6U8ILZ/tr1egZ4Age
+         J3rW1sPHKSGIxoV2Fx9L9DElM5tAhH4IIUDDoDH3gL8OfpwAcP5k9oMetBFBE10KHO1o
+         cIOaCxZ62P9a6JRIb0r4uDu58QRUwNC7TJjrRudpoxaueuggvXxLLFUCIrLbKK46FUtW
+         zTbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWK1I1wShkLxRzttb+N/zWdAxx2hZ0lSHyPpbpK1skTiqp7QeK8urDfi2Dnu+deVpjO7sBGcUVHgZ+rRFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/15ZyEs6iLSymnxLufuWrm3UUgebxVFjIsQHDNQ6RTwEbocze
+	0mT/ofMFmII3Nks9Hd4PlFrcMeb+2ehP30q1BMMHrewIelr0KGskrnE3QT6L8O+hgIWNjVjdkmv
+	8LrhkiA==
+X-Google-Smtp-Source: AGHT+IF/Up2kM8AayYk2fWIelBsJluwkobfI62XMvAqfgyqmhTCwPUqTNtia/rvIr6vUEF42cBfglmWXKmI=
+X-Received: from edj19.prod.google.com ([2002:a05:6402:3253:b0:61e:ed05:2161])
+ (user=srosek job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:21cb:b0:62f:9cfb:7d75
+ with SMTP id 4fb4d7f45d1cf-62f9cfb7f95mr226755a12.2.1758110845149; Wed, 17
+ Sep 2025 05:07:25 -0700 (PDT)
+Date: Wed, 17 Sep 2025 12:07:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu()
- operations
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Uladzislau Rezki <urezki@gmail.com>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org, "Paul E . McKenney" <paulmck@kernel.org>
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
- <aMpxnACqmsQl-lp0@hyeyoo> <bbda8c25-b575-4e98-b1ae-b103c6598d38@suse.cz>
- <aMqcXyKRlZggLxu_@hyeyoo>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <aMqcXyKRlZggLxu_@hyeyoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,gentwo.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250917120719.2390847-1-srosek@google.com>
+Subject: [PATCH v2 0/6] ACPI: DPTF: Move INT340X enumeration from DPTF core to
+ thermal drivers
+From: Slawomir Rosek <srosek@google.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
+	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
+	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Slawomir Rosek <srosek@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/17/25 13:32, Harry Yoo wrote:
-> On Wed, Sep 17, 2025 at 11:55:10AM +0200, Vlastimil Babka wrote:
->> On 9/17/25 10:30, Harry Yoo wrote:
->> > On Wed, Sep 10, 2025 at 10:01:06AM +0200, Vlastimil Babka wrote:
->> >> +				sfw->skip = true;
->> >> +				continue;
->> >> +			}
->> >>
->> >> +			INIT_WORK(&sfw->work, flush_rcu_sheaf);
->> >> +			sfw->skip = false;
->> >> +			sfw->s = s;
->> >> +			queue_work_on(cpu, flushwq, &sfw->work);
->> >> +			flushed = true;
->> >> +		}
->> >> +
->> >> +		for_each_online_cpu(cpu) {
->> >> +			sfw = &per_cpu(slub_flush, cpu);
->> >> +			if (sfw->skip)
->> >> +				continue;
->> >> +			flush_work(&sfw->work);
->> >> +		}
->> >> +
->> >> +		mutex_unlock(&flush_lock);
->> >> +	}
->> >> +
->> >> +	mutex_unlock(&slab_mutex);
->> >> +	cpus_read_unlock();
->> >> +
->> >> +	if (flushed)
->> >> +		rcu_barrier();
->> > 
->> > I think we need to call rcu_barrier() even if flushed == false?
->> > 
->> > Maybe a kvfree_rcu()'d object was already waiting for the rcu callback to
->> > be processed before flush_all_rcu_sheaves() is called, and
->> > in flush_all_rcu_sheaves() we skipped all (cache, cpu) pairs,
->> > so flushed == false but the rcu callback isn't processed yet
->> > by the end of the function?
->> > 
->> > That sounds like a very unlikely to happen in a realistic scenario,
->> > but still possible...
->> 
->> Yes also good point, will flush unconditionally.
->> 
->> Maybe in __kfree_rcu_sheaf() I should also move the call_rcu(...) before
->> local_unlock(). So we don't end up seeing a NULL pcs->rcu_free in
->> flush_all_rcu_sheaves() because __kfree_rcu_sheaf() already set it to NULL,
->> but didn't yet do the call_rcu() as it got preempted after local_unlock().
-> 
-> Makes sense to me.
-> 
->> But then rcu_barrier() itself probably won't mean we make sure such cpus
->> finished the local_locked section, if we didn't queue work on them. So maybe
->> we need synchronize_rcu()?
-> 
-> Ah, it works because preemption disabled section works as a RCU
-> read-side critical section?
+The Intel Dynamic Platform and Thermal Framework (DPTF) relies on
+the INT340X ACPI device objects. The temperature information and
+cooling ability are exposed to the userspace via those objects.
 
-AFAIK yes? Or maybe not on RT where local_lock is taking a mutex? So we
-should denote the RCU critical section explicitly too?
+Since kernel v3.17 the ACPI bus scan handler is introduced to prevent
+enumeration of INT340X ACPI device objects on the platform bus unless
+related thermal drivers are enabled. However, using the IS_ENABLED()
+macro in the ACPI scan handler forces the kernel to be recompiled
+when thermal drivers are enabled or disabled, which is a significant
+limitation of its modularity. The IS_ENABLED() macro is particularly
+problematic for the Android Generic Kernel Image (GKI) project which
+uses unified core kernel while SoC/board support is moved to loadable
+vendor modules.
 
-> But then are we allowed to do release the local_lock to allocate empty
-> sheaves in __kfree_rcu_sheaf()?
+This patch set moves enumeration of INT340X ACPI device objects on
+the platform bus from DPTF core to thermal drivers. It starts with
+some code cleanup and reorganization to eventually remove IS_ENABLED()
+macro from the ACPI bus scan handler. Brief list of changes is listed
+below:
 
-I think so, as we do that when we found no rcu_sheaf in the first place.
+1) Remove SOC DTS thermal driver case from the ACPI scan handler
+   since its dependency on INT340X driver is unrelated to DPTF
+2) Move all INT340X ACPI device ids to the common header and update
+   the DPTF core and thermal drivers accordingly
+3) Move dynamic enumeration of ACPI device objects on the platform bus
+   from the intel-hid and intel-vbtn drivers to the ACPI platform core
+4) Move enumeration of INT340X ACPI device objects on the platform bus
+   from DPTF core to thermal drivers using ACPI platform core methods
+
+
+Slawomir Rosek (6):
+  ACPI: DPTF: Ignore SoC DTS thermal while scanning
+  ACPI: DPTF: Move INT340X device IDs to header
+  ACPI: DPTF: Move PCH FIVR device IDs to header
+  ACPI: DPTF: Remove not supported INT340X IDs
+  ACPI: platform: Add macro for acpi platform driver
+  ACPI: DPTF: Move INT340X enumeration to modules
+
+ drivers/acpi/acpi_platform.c                  | 27 +++++++
+ drivers/acpi/dptf/dptf_pch_fivr.c             | 10 +--
+ drivers/acpi/dptf/dptf_power.c                | 20 +----
+ drivers/acpi/dptf/int340x_thermal.c           | 76 ++++---------------
+ drivers/acpi/fan.h                            | 10 +--
+ drivers/acpi/fan_core.c                       |  2 +-
+ drivers/acpi/int340x_thermal.h                | 76 +++++++++++++++++++
+ drivers/platform/x86/intel/hid.c              | 33 +-------
+ drivers/platform/x86/intel/vbtn.c             | 30 +-------
+ drivers/thermal/intel/Kconfig                 |  1 +
+ .../intel/int340x_thermal/int3400_thermal.c   | 12 +--
+ .../intel/int340x_thermal/int3401_thermal.c   |  5 +-
+ .../intel/int340x_thermal/int3402_thermal.c   |  5 +-
+ .../intel/int340x_thermal/int3403_thermal.c   | 12 +--
+ .../intel/int340x_thermal/int3406_thermal.c   |  5 +-
+ include/linux/platform_device.h               | 17 +++++
+ 16 files changed, 163 insertions(+), 178 deletions(-)
+ create mode 100644 drivers/acpi/int340x_thermal.h
+
+-- 
+2.51.0.384.g4c02a37b29-goog
+
 
