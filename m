@@ -1,195 +1,249 @@
-Return-Path: <linux-kernel+bounces-820338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF1AB7F48C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DE7B7C418
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C624824DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E18463A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E1030BF59;
-	Wed, 17 Sep 2025 09:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDDD32D5CA;
+	Wed, 17 Sep 2025 09:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cNv4IzPb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YLWAugVK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVBdaj0v"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AC232D5C5;
-	Wed, 17 Sep 2025 09:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B89B30C63A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758101274; cv=none; b=m0rbOvDaunHo+s+8OGWCQovdvJ9TaynKVrfCWL6VCgW/aULzjVjuYJHz6cPH9EqF2cA3j2tBelZ8C+7eWglTgieFWM5wqyEs96f0a3z+chQZzQLAX3nvgIHN1p5XuZZCBLqpr2IHyoAUnxNEO/F/9ko6qa2zPql1lGT9ngFPz1g=
+	t=1758101296; cv=none; b=IBuNnfs808cJy1iN6fqduQMkgcaSUVuMIaY4BIGFeiktP6pcTIQn9ODt29qKuQ2Vdwz+0P8DmuaIBqHa2vJmjOJrXA1zt1NfhBfke9u0IZuJov4WVOFPo8ETQUgCTRt9M6SVJamk+oU6ragxHLnfTK1DgqRzAYiGDbWHbgPzmdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758101274; c=relaxed/simple;
-	bh=Gqy3eXuobhwCtb+fUm60YoxBVPzPwQOentF3d4D/SSg=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=jk+lGIp9E1RplHyzu/FscZBPtO/Kwv4xRsPXl291y3u4EhRdb3qhXmuZNVHsC1V0r3hWGfUqPssTe3xTu0qPJRmUaMKIlL+TimUvcaYGyarASnFmMX9w6TVFlJ0RBlDcET5s0Dm1K5XBXLZi1nsafalkEnISEEVywPX1vsbsqqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cNv4IzPb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YLWAugVK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 17 Sep 2025 09:27:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758101270;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=6lEsbsK4ehYJuu5l9UwnTS3HeKFJ9MZNchMVOQ0paC0=;
-	b=cNv4IzPbGrsn+HvG5ef8nhpiWp3EPtfTxy8dgaFqv+uLtzOCZwztRlSEEoeH3Lp1s2Z02H
-	8dGwBJ8eg9PGaGOJhzWOuyp92frKBsH+8k2SmWJolVVXw3NhzVZpR0j+RQG9iW+8fuFud9
-	f41Q6sl9khzRKsffRxGMiZYOYSIimIS2B3TGouqyj3+J2lgCffYMdHlPwxqgPSgKBLhIQv
-	/pyBQsErO1zfOQVP/tCkJGLskoIZ1vBHBFZ/kj9iT6OsxQ3tiz7Bap0EkEcc6rsEHRvvmB
-	XkIf7KAuioFAQ34TmhLwrR20cJ4STKaUGzkw+pTvmA8fIUcsZVtyf1HXKWA5ag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758101270;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=6lEsbsK4ehYJuu5l9UwnTS3HeKFJ9MZNchMVOQ0paC0=;
-	b=YLWAugVKmvHPZqPWNq0wTx5bGSz6GHBAiyQEn0yJVmoV4SJRkOux5ViwG1EDD4hh8eye07
-	Dd6J9BvylvmFSfCg==
-From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/cpu: Rename and move CPU model entry for Diamond Rapids
-Cc: Peter Zijlstra <peterz@infradead.org>, Tony Luck <tony.luck@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1758101296; c=relaxed/simple;
+	bh=BvQk4uuZWQQsyS0bgCtnD8Q2EwGdUDl2hTU4IVjcj60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5prTmSPp9j7PmbgMqroK5AePyVO11ix0yv8pE6fsZu52QILUXbMHsaujIGQAopl79iT0EXvq/tozPPQa/PnFFy5p1ncxNwsB8j8ZWhsKM1hgwyF/2CoSESSNQH8m2A+wc4mcFDH4pwMWaTIxjJs66HQTD0UHNeUPM19pmklGyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVBdaj0v; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b00f6705945so90661766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758101292; x=1758706092; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o12PIdH5jrLINYaBDIAtrFJQyb2acUWsg9n32mRR/5k=;
+        b=JVBdaj0v/hbdVqguRjn5NCfyLNTxtb92X6WozyadXPvjm1nA2NMlGS90yPHrzAmhga
+         1Lyoabc15pQmnhheTJOk4wcAHWmO+CgdNy6s8LEFAZvzGZekBr6sdob1FCrxJ7rh0ZmX
+         I9Srq9Hzkn6SxPg666qvtIiJ2eWYT9jVlM2ZngQcMGRjjPIQCaKglmuPDHglI0ExRBP9
+         KYp4XiqR+xoVDPRtx8+s1ob69xsjHM/BffPrSGs1fXHZnXGflZOHliwsH2F7UWtsAa5s
+         ExtsxTARDKVsO+Sav4OiaCVvP+EvkcVDh23Pa4bmIEXVVulzMmXXuEnHc8VpFgvTI/4H
+         8TGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758101292; x=1758706092;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o12PIdH5jrLINYaBDIAtrFJQyb2acUWsg9n32mRR/5k=;
+        b=lf4vtEl3VZ6N0uERfOGXtZQsQMStXMpkpe2QOoD3G1Dkmr6fCBFqnlB3MfNy0c3ddA
+         i9/zW3taCflmwwH3GtTsL2gb92zaqtWrZbn8DfiNgN7+RE99IMHja+52p1iuWDS84Dxt
+         N6WPq0nzuN/Ota/HdmKGaTb8WMkNJaiIku4L3XLB/I20vD+DQ4v4z5mYBphgGvJr4DUn
+         4cIO8U387/5pCXt9bKMzh04wPXqN3IOLiHCFrpczMRWvtxw4EkhczkROT9zhRviZ+6AI
+         bBkbuRK1t4pgzkctiaXI/G0hAT4/LUd5ckMOazJ6PDlvW+MpVuatggr0kEe8eKJN6ooq
+         sPug==
+X-Forwarded-Encrypted: i=1; AJvYcCWosjMLhNDt55FcfjR6RLWGRjcusL1h2ZmpWlmnzn5LKAl1eZnNdOe0d2+Lv221MPqp+ciSwFJRR6Mhhf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgOPhKMFcURKUlcSKZfqJ7U8VOKHUFqoUe5VtGZO1G8xotOP1O
+	q2/f6/094c+K9XutLISb0Sz3geGquP4pAzHx4BDtYv2xmuKHHkD+X7Bc
+X-Gm-Gg: ASbGncvO2PwXf9zudh9X3rNltv8O3xE/p4URHVT7baeJ8D64urrcn88V1w6fZ2KAZrc
+	pYWX/F5nxdVokIZ4tCsPi9KYbMqAkHGtBHqdm8boZYgT4/RMPSQhmzOSXH9IYweiP8ASTjvk3z2
+	OuZROvj+ks259qY1eqhL7bqSTHz781fwm1d9LvvJnBhWCq8gElbD0HrI8JISZIWCC2OFCL4zgPR
+	Jfmoz4tH4K0k2h6TVZiSyaNubBGVfevH2i4Mqv4cw2+z2S3wHrCEsXMM/U7NAsK0i5C7cRIPci1
+	oIVTfC8gWFWzGpKp6E3W8Rg0hJoyBIhM23RzRk2QXNjQB5vDJZH9ZPs1E/rooJn7tBpWUkzl+4X
+	mpvm8iEeDAUtg0IQ=
+X-Google-Smtp-Source: AGHT+IHvszT87WzP63vcOaexO/pLxfMWcRX57JUYYOxi6z+V5togEaPi0QjDbwzVUWpwnuisJKwZww==
+X-Received: by 2002:a17:907:7f9f:b0:b04:7b5b:850a with SMTP id a640c23a62f3a-b1bb5598e03mr85457666b.4.1758101292043;
+        Wed, 17 Sep 2025 02:28:12 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d005:3b00:8bcc:b603:fee7:a273])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1c40fe2df8sm74103266b.18.2025.09.17.02.28.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 02:28:10 -0700 (PDT)
+Date: Wed, 17 Sep 2025 12:28:07 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v18 0/8] net: dsa: Add Airoha AN8855 support
+Message-ID: <20250917092807.uui2qwva2sqbe6sp@skbuf>
+References: <20250915104545.1742-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175810126962.709179.5721893706621939725.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915104545.1742-1-ansuelsmth@gmail.com>
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Mon, Sep 15, 2025 at 12:45:36PM +0200, Christian Marangi wrote:
+> It's conceptually similar to mediatek switch but register and bits
+> are different. And there is massive list of register for the PCS
+> configuration.
+> Saddly for that part we have absolutely NO documentation currently.
 
-Commit-ID:     70d1d98934e723b9e463283a542b88f4f009ae82
-Gitweb:        https://git.kernel.org/tip/70d1d98934e723b9e463283a542b88f4f00=
-9ae82
-Author:        Tony Luck <tony.luck@intel.com>
-AuthorDate:    Mon, 11 Aug 2025 14:33:45 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 17 Sep 2025 11:22:11 +02:00
+Please add in the next revision a more convincing argument for not
+reusing the mt7530 driver control flow. Regmap fields can abstract a
+lot, and the driver can select a completely different phylink_pcs for
+different hardware.
 
-x86/cpu: Rename and move CPU model entry for Diamond Rapids
+I don't see in the short change log included here any mentions related
+to the mt7530, but I'm not going to search the mailing lists since Nov
+2024 for any previous discussions about this...
 
-This model was added as INTEL_PANTHERCOVE_X (based on the name of the
-core) with a comment that the platform name is Diamond Rapids. It was
-also placed at the end of the file in a new section for family 19
-processors.
+Also, let's try not to reach v20.. Please try to collect a full round of
+feedback from people who commented before when submitting a new version,
+pinging people if necessary. You want to make sure that their previous
+feedback was addressed.
 
-This is different from previous naming as Andrew Cooper noted.
-PeterZ agreed and posted a patch[1] to fix the name and move it in
-sequence with other Xeon servers. But without a commit description or
-sign-off the patch wasn't ever applied.
+> TEST: lan2: Multicast IPv4 to joined group                          [ OK ]
+> TEST: lan2: Multicast IPv4 to unknown group                         [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: lan2: Multicast IPv4 to unknown group, promisc                [ OK ]
+> TEST: lan2: Multicast IPv4 to unknown group, allmulti               [ OK ]
+> TEST: lan2: Multicast IPv6 to joined group                          [ OK ]
+> TEST: lan2: Multicast IPv6 to unknown group                         [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: lan2: Multicast IPv6 to unknown group, promisc                [ OK ]
+> TEST: lan2: Multicast IPv6 to unknown group, allmulti               [ OK ]
+> TEST: lan2: 1588v2 over L2 transport, Sync                          [ OK ]
+> TEST: lan2: 1588v2 over L2 transport, Follow-Up                     [ OK ]
+> TEST: lan2: 1588v2 over L2 transport, Peer Delay Request            [ OK ]
+> TEST: lan2: 1588v2 over IPv4, Sync                                  [FAIL]
+>         reception failed
+> TEST: lan2: 1588v2 over IPv4, Follow-Up                             [FAIL]
+>         reception failed
+> TEST: lan2: 1588v2 over IPv4, Peer Delay Request                    [FAIL]
+>         reception failed
+> TEST: lan2: 1588v2 over IPv6, Sync                                  [FAIL]
+>         reception failed
+> TEST: lan2: 1588v2 over IPv6, Follow-Up                             [FAIL]
+>         reception failed
+> TEST: lan2: 1588v2 over IPv6, Peer Delay Request                    [FAIL]
+>         reception failed
 
-Patch updated to cover one additional use of the #define by turbostat
-and to change the "Family 6" comment to also list 18 and 19 since new
-models in these families are mixed in with family 6.
+Do you know why it won't receive PTP over IP? It seems strange, given it
+receives other IP multicast (even unregistered). Is it a hardware or a
+software drop? What port counters increment? Does it drop PTP over IP
+only on local termination, or does it also fail to forward it? What
+about the packet makes the switch drop it?
 
-Originally-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-Link: https://lore.kernel.org/all/20250214130205.GK14028@noisy.programming.ki=
-cks-ass.net/ # [1]
----
- arch/x86/include/asm/intel-family.h                         | 7 +++----
- drivers/platform/x86/intel/speed_select_if/isst_if_common.c | 2 +-
- drivers/platform/x86/intel/tpmi_power_domains.c             | 2 +-
- tools/power/x86/turbostat/turbostat.c                       | 2 +-
- 4 files changed, 6 insertions(+), 7 deletions(-)
+> TEST: vlan_filtering=1 bridge: Multicast IPv6 to unknown group, promisc   [ OK ]
+> TEST: vlan_filtering=1 bridge: Multicast IPv6 to unknown group, allmulti   [ OK ]
+> TEST: VLAN upper: Unicast IPv4 to primary MAC address               [ OK ]
+> TEST: VLAN upper: Unicast IPv4 to macvlan MAC address               [ OK ]
+> TEST: VLAN upper: Unicast IPv4 to unknown MAC address               [ OK ]
+> TEST: VLAN upper: Unicast IPv4 to unknown MAC address, promisc      [ OK ]
+> TEST: VLAN upper: Unicast IPv4 to unknown MAC address, allmulti     [ OK ]
+> TEST: VLAN upper: Multicast IPv4 to joined group                    [ OK ]
+> TEST: VLAN upper: Multicast IPv4 to unknown group                   [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: VLAN upper: Multicast IPv4 to unknown group, promisc          [ OK ]
+> TEST: VLAN upper: Multicast IPv4 to unknown group, allmulti         [ OK ]
+> TEST: VLAN upper: Multicast IPv6 to joined group                    [ OK ]
+> TEST: VLAN upper: Multicast IPv6 to unknown group                   [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: VLAN upper: Multicast IPv6 to unknown group, promisc          [ OK ]
+> TEST: VLAN upper: Multicast IPv6 to unknown group, allmulti         [ OK ]
+> TEST: VLAN upper: 1588v2 over L2 transport, Sync                    [ OK ]
+> TEST: VLAN upper: 1588v2 over L2 transport, Follow-Up               [FAIL]
+>         reception failed
+> TEST: VLAN upper: 1588v2 over L2 transport, Peer Delay Request      [ OK ]
+> TEST: VLAN upper: 1588v2 over IPv4, Sync                            [FAIL]
+>         reception failed
+> ;TEST: VLAN upper: 1588v2 over IPv4, Follow-Up                       [FAIL]
+>         reception failed
+> TEST: VLAN upper: 1588v2 over IPv4, Peer Delay Request              [FAIL]
+>         reception failed
+> TEST: VLAN upper: 1588v2 over IPv6, Sync                            [FAIL]
+>         reception failed
+> TEST: VLAN upper: 1588v2 over IPv6, Follow-Up                       [FAIL]
+>         reception failed
+> TEST: VLAN upper: 1588v2 over IPv6, Peer Delay Request              [FAIL]
+>         reception failed
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel=
--family.h
-index e345dbd..f32a0ec 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -51,7 +51,7 @@
- #define INTEL_PENTIUM_MMX		IFM(5, 0x04) /* P55C */
- #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
-=20
--/* Family 6 */
-+/* Family 6, 18, 19 */
- #define INTEL_PENTIUM_PRO		IFM(6, 0x01)
- #define INTEL_PENTIUM_II_KLAMATH	IFM(6, 0x03)
- #define INTEL_PENTIUM_III_DESCHUTES	IFM(6, 0x05)
-@@ -126,6 +126,8 @@
- #define INTEL_GRANITERAPIDS_X		IFM(6, 0xAD) /* Redwood Cove */
- #define INTEL_GRANITERAPIDS_D		IFM(6, 0xAE)
-=20
-+#define INTEL_DIAMONDRAPIDS_X		IFM(19, 0x01) /* Panther Cove */
-+
- #define INTEL_BARTLETTLAKE		IFM(6, 0xD7) /* Raptor Cove */
-=20
- /* "Hybrid" Processors (P-Core/E-Core) */
-@@ -203,9 +205,6 @@
- #define INTEL_P4_PRESCOTT_2M		IFM(15, 0x04)
- #define INTEL_P4_CEDARMILL		IFM(15, 0x06) /* Also Xeon Dempsey */
-=20
--/* Family 19 */
--#define INTEL_PANTHERCOVE_X		IFM(19, 0x01) /* Diamond Rapids */
--
- /*
-  * Intel CPU core types
-  *
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c b/dr=
-ivers/platform/x86/intel/speed_select_if/isst_if_common.c
-index 71e104a..7449873 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-@@ -790,7 +790,7 @@ static const struct x86_cpu_id isst_cpu_ids[] =3D {
- 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X,	SST_HPM_SUPPORTED),
- 	X86_MATCH_VFM(INTEL_ICELAKE_D,		0),
- 	X86_MATCH_VFM(INTEL_ICELAKE_X,		0),
--	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	SST_HPM_SUPPORTED),
-+	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	SST_HPM_SUPPORTED),
- 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	0),
- 	X86_MATCH_VFM(INTEL_SKYLAKE_X,		SST_MBOX_SUPPORTED),
- 	{}
-diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platfo=
-rm/x86/intel/tpmi_power_domains.c
-index 8641353..7d93119 100644
---- a/drivers/platform/x86/intel/tpmi_power_domains.c
-+++ b/drivers/platform/x86/intel/tpmi_power_domains.c
-@@ -85,7 +85,7 @@ static const struct x86_cpu_id tpmi_cpu_ids[] =3D {
- 	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT,	NULL),
- 	X86_MATCH_VFM(INTEL_ATOM_DARKMONT_X,	NULL),
- 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_D,	NULL),
--	X86_MATCH_VFM(INTEL_PANTHERCOVE_X,	NULL),
-+	X86_MATCH_VFM(INTEL_DIAMONDRAPIDS_X,	NULL),
- 	{}
- };
- MODULE_DEVICE_TABLE(x86cpu, tpmi_cpu_ids);
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbosta=
-t/turbostat.c
-index 72a280e..47eb2d4 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -1195,7 +1195,7 @@ static const struct platform_data turbostat_pdata[] =3D=
- {
- 	{ INTEL_EMERALDRAPIDS_X, &spr_features },
- 	{ INTEL_GRANITERAPIDS_X, &spr_features },
- 	{ INTEL_GRANITERAPIDS_D, &spr_features },
--	{ INTEL_PANTHERCOVE_X, &dmr_features },
-+	{ INTEL_DIAMONDRAPIDS_X, &dmr_features },
- 	{ INTEL_LAKEFIELD, &cnl_features },
- 	{ INTEL_ALDERLAKE, &adl_features },
- 	{ INTEL_ALDERLAKE_L, &adl_features },
+The same thing happens with VLAN too...
+
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv4 to joined group   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv4 to unknown group   [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv4 to unknown group, promisc   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv4 to unknown group, allmulti   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv6 to joined group   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv6 to unknown group   [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv6 to unknown group, promisc   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: Multicast IPv6 to unknown group, allmulti   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over L2 transport, Sync   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over L2 transport, Follow-Up   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over L2 transport, Peer Delay Request   [ OK ]
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv4, Sync   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv4, Follow-Up   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv4, Peer Delay Request   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv6, Sync   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv6, Follow-Up   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=0 bridged port: 1588v2 over IPv6, Peer Delay Request   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv4 to joined group   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv4 to unknown group   [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv4 to unknown group, promisc   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv4 to unknown group, allmulti   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv6 to joined group   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv6 to unknown group   [XFAIL]
+>         reception succeeded, but should have failed
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv6 to unknown group, promisc   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: Multicast IPv6 to unknown group, allmulti   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over L2 transport, Sync   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over L2 transport, Follow-Up   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over L2 transport, Peer Delay Request   [ OK ]
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv4, Sync   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv4, Follow-Up   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv4, Peer Delay Request   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv6, Sync   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv6, Follow-Up   [FAIL]
+>         reception failed
+> TEST: VLAN over vlan_filtering=1 bridged port: 1588v2 over IPv6, Peer Delay Request   [FAIL]
+>         reception failed
+
+And over bridge ports...
 
