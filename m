@@ -1,119 +1,98 @@
-Return-Path: <linux-kernel+bounces-819892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50898B7CA0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FBCB7CA19
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF0C16C5B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4687216D321
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28E02222AA;
-	Wed, 17 Sep 2025 02:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B882C08BC;
+	Wed, 17 Sep 2025 02:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SgeB0ro/"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV0gbRik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E7101F2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF7D220F5C;
+	Wed, 17 Sep 2025 02:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758076674; cv=none; b=g4gJzkpNHzRK/nguksOhjhoyIb1omwFJ2BM/l2xOLUtGguMVNeFtdWiLLnuZjpSWgXgMRz4wUBw5ZLAT8OVkZj3j9OUZwFJ5kvXi/e1sWssK/aE4mE1+++nOEoJZAxTllH9s3iev31ZPvipowRCpublFbrapM9WZa5BUr4Mt3Es=
+	t=1758076811; cv=none; b=Ccx92eVN5upYDAb/LHKJlgROcu26yz3kgPF9mBnQS7SryJW3gk6xIJwAYcPTkoyzDoRH6pqcP3DM6Y50uFrouq5G35c8eaeMVXwcd+Sg6yzisAnc4lB6n4lNQjPgzexWdBUaK1yhTSG+3qbNMGwmxIEQ0akgmAAv499HH39gPW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758076674; c=relaxed/simple;
-	bh=+Oqv1htTU1oUQjoIW05xzrckf/ASgORwl3N7cCZXE1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gvexAaSJ6ox3ByiEwviLT2Z5bg9pfBF9BccH/p2R1VkR/ehW326OMs++Shr0eOV3jet24QLRjwoCqHw9A/RswSEcK3BhdVhBjaD0DwapC0r3+0UAfIWcdtvbzlveASvxqtgEompnIqvIflaAcdFbpMKNRhoNwXHEbF+UnisDfv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SgeB0ro/; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b8d641d6-9afc-4bfe-bf50-25ac4a3702a1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758076668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p3MY+R4WlGn4rtSW55R1LJoHIL+0MIVP772CgyYCMxU=;
-	b=SgeB0ro/uuX3tDAlrYKbDux+d4sXbPUojiloZ7f+4R1MxgMa6Dk0dhrp62MhLOYXFKrWgw
-	LO50glCVjyagbyRBpecTHT8TSQimV9YRjUL96CU5JFGSBHnoc8QnAO+6EtbUCoTlaq3Pkn
-	bArAlUljAap/rTfb4Z1g0eTOWkC9kM8=
-Date: Wed, 17 Sep 2025 10:37:38 +0800
+	s=arc-20240116; t=1758076811; c=relaxed/simple;
+	bh=w4wLr2yP8Lf0P8+wu6uiNnPTZbO4BPOT3E8l8dJYdWA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Crg8rzaPhLohPQ+MMbNsl70X0ZSeRKY1DKAbEFR2aSqtHGadGh32rVkfJAiSiAjsTiTQRm/oIOhQ7PL9+fQ+Z0xwQAr0EHwvK0pEY0eIG/ni2z/ykY/5LUKxjehHAIFQtc+i2o05RRi+Qyi7FnP8LcFI3cXC9x+xLpb0lUP0PQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV0gbRik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A29C4CEEB;
+	Wed, 17 Sep 2025 02:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758076811;
+	bh=w4wLr2yP8Lf0P8+wu6uiNnPTZbO4BPOT3E8l8dJYdWA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=pV0gbRikLFcdAi6S6oBasXHUmazo9Ijq3E1YrL4stpdS1JqA+JI66tleB1GCtaDRN
+	 Y7R4ElrtL/gNYTxlyJN9cVKJnEkM1+xVxx28zI/LNqsrFpfx0H2gcaHtLX+uNl7GOZ
+	 NpazGumn8ZKM9sKSlJ/5LVslpZvlO9y80i2vGK+26GnT1zKESblKd4RnxmmsonkPbI
+	 CtzcJJw/zktmjeSUpXXFHdxkHjZYpDvLn1mSlzNENjCRBUQ300u8zEIByis5kavqlN
+	 bYYJWVcUXMEYw2GFZX3nVg59xhelLfolp+sHHyiCWBmBuEqmVzJWQdb25PYaeuYoRh
+	 Zj1/H65b9WFJA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D3239D0C1A;
+	Wed, 17 Sep 2025 02:40:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 2/2] bpftool: Fix UAF in get_delegate_value
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20250916054111.1151487-1-chen.dylane@linux.dev>
- <20250916054111.1151487-2-chen.dylane@linux.dev>
- <CAADnVQKfH6QnLHfsGO_sL10LhTjL+YUWDist2+xGM_PiPjM9Wg@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <CAADnVQKfH6QnLHfsGO_sL10LhTjL+YUWDist2+xGM_PiPjM9Wg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH v2 0/2] Common csr_read_num() and csr_write_num() for
+ RISC-V
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <175807681200.1444719.17820860384159771040.git-patchwork-notify@kernel.org>
+Date: Wed, 17 Sep 2025 02:40:12 +0000
+References: <20250818143600.894385-1-apatel@ventanamicro.com>
+In-Reply-To: <20250818143600.894385-1-apatel@ventanamicro.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, sunilvl@ventanamicro.com,
+ rafael@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ alex@ghiti.fr, lenb@kernel.org, atish.patra@linux.dev,
+ ajones@ventanamicro.com, anup@brainfault.org, will@kernel.org,
+ mark.rutland@arm.com, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-在 2025/9/17 01:07, Alexei Starovoitov 写道:
-> On Mon, Sep 15, 2025 at 10:42 PM Tao Chen <chen.dylane@linux.dev> wrote:
->>
->> The return value ret pointer is pointing opts_copy, but opts_copy
->> gets freed in get_delegate_value before return, fix this by strdup
->> a new buffer.
->>
->> Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   tools/bpf/bpftool/token.c | 47 ++++++++++++++++++++++-----------------
->>   1 file changed, 27 insertions(+), 20 deletions(-)
->>
->> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
->> index 82b829e44c8..c47256d8038 100644
->> --- a/tools/bpf/bpftool/token.c
->> +++ b/tools/bpf/bpftool/token.c
->> @@ -28,6 +28,12 @@ static bool has_delegate_options(const char *mnt_ops)
->>                 strstr(mnt_ops, "delegate_attachs");
->>   }
->>
->> +static void free_delegate_value(char *value)
->> +{
->> +       if (value)
->> +               free(value);
->> +}
->> +
->>   static char *get_delegate_value(const char *opts, const char *key)
->>   {
->>          char *token, *rest, *ret = NULL;
->> @@ -40,7 +46,7 @@ static char *get_delegate_value(const char *opts, const char *key)
->>                          token = strtok_r(NULL, ",", &rest)) {
->>                  if (strncmp(token, key, strlen(key)) == 0 &&
->>                      token[strlen(key)] == '=') {
->> -                       ret = token + strlen(key) + 1;
->> +                       ret = strdup(token + strlen(key) + 1);
+Hello:
+
+This series was applied to riscv/linux.git (for-next)
+by Paul Walmsley <pjw@kernel.org>:
+
+On Mon, 18 Aug 2025 20:05:58 +0530 you wrote:
+> Some of the RISC-V drivers (such as RISC-V PMU and ACPI CPPC) need to
+> access CSR based on CSR number discovered from somewhere. Add common
+> RISC-V csr_read_num() and csr_write_num() functions under arch/riscv
+> for such drivers.
 > 
-> Instead of adding more strdup-s
-> strdup(mntent->mnt_opts) once per cmd/map/prog and
-> remove another strdrup/free in print_items_per_line().
+> These patches can be found in the riscv_csr_read_num_v2 branch at:
+> https://github.com/avpatel/linux.git
 > 
-> pw-bot: cr
+> [...]
 
-will remove it in v2, thanks.
+Here is the summary with links:
+  - [v2,1/2] ACPI: RISC-V: Fix FFH_CPPC_CSR error handling
+    https://git.kernel.org/riscv/c/5b3706597b90
+  - [v2,2/2] RISC-V: Add common csr_read_num() and csr_write_num() functions
+    (no matching commit)
 
+You are awesome, thank you!
 -- 
-Best Regards
-Tao Chen
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
