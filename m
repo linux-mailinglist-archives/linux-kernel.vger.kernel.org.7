@@ -1,237 +1,155 @@
-Return-Path: <linux-kernel+bounces-819938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7FCB7C86D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32555B7C7EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9383A3272
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FDD1B223FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57DA29293D;
-	Wed, 17 Sep 2025 03:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50CF26CE2C;
+	Wed, 17 Sep 2025 03:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQuphdWc"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="azFY920c"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0A62FAC06
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F97625A2A2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758080702; cv=none; b=VrcPI5C51GgiFvM2+P4QQvlFpxpJlzDIht4nw4HNcES2u7mJ/VtNeds496ERv5p1W9BRa8StU4cLPRvF+FTC/bWpF8K2Nzuak/ZeFJR76x0Zp6zKbesJqOp+YkyDDxItJncECHmMD8Vx0vEvbUBee77Wt3h4+9CscVPvncU0OEA=
+	t=1758080763; cv=none; b=RonfVz1in6KoOaCuSQVqGOI+KXPNxX/lKP/RFog5K8GgwEqr5aMwnlNpDiDriypEB3jY3fszqoOjOOVkRPuCaIaeBH/h5G1ClymIzTt1g4+Z3kxBFo9wuGcc9hFFQbWo5Kll0e0N5+SeqWXFV+Y2nAssoKxxxQv6lpofpHlOdps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758080702; c=relaxed/simple;
-	bh=oa0vHhrxyZCIIgVXIZyHtxCkFNV7aqhzkqAkyDBQVQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uxFi8ZHTCva2hr6RljXSQ+i57FY6ffeAO/oQL+ePZpOt1IqdHqiEYNg8U1J6vcLB5mUR02sCuPyhh5Dm78KJ24G/I+D4qEjSqj9v38izGKTZf/Dl8NEk4MITXRzTlP0ndis/OQzpDQVW4uzlYlxP/s0Jh7DxGEkzZj5lq3/lSSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQuphdWc; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62f5bfd0502so3338245a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758080698; x=1758685498; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v8lC4ZFoQIKqgBAuP6ysNsXfK9CM7H9836ItXVZ6+84=;
-        b=eQuphdWcUR3AZgwSRAsLuolzXv652B+ToHBfOZuFkaU2K+jKRvei5eZWfDFKAe43Or
-         nJCYiaVPEA8wBUOzBK4ZMsdsAizMMdPzdfOkzCy5X1l3AWn9O20MLoTrVXa0/6av6hXX
-         YvqNQUjYH+tmxbTFqlE+sHnLxlAJMT3n3OPFF8q9kK7YpNpVp4+ajcpTjKhjl5dIrsHU
-         ZYdg5nAnegcUfvAXliTykQmlVYB60+Lc8SQ4IjZaOvJNh29Jh5O0L8cvt+db9MUp4Lu/
-         QyDUq4vw/ilriF1v6jWd3IoZ0Jn9GRqNMoWxsIpRvkSnvdna7hmkEKedSmgpNptbNjHw
-         CDsw==
+	s=arc-20240116; t=1758080763; c=relaxed/simple;
+	bh=sY7+9SKozhRu/TkYni/YpHN2Ml74bnH6lOQPxmF60jQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MoJGJzuUD30p9jg8AWrpRx2g26+m1rL/QRmn+CduKtwL/iZMsd3HwEb0bE/lUdCLDfx48+bqVqJ0m3Yfu3TkqhY0ef4h5UeN7lP1/ysuCVWVl5dFS5bWgQS21YTcCvu7kpgx8NdEzHosw4Gkd4YbVgt+4sXZhYOsPQaBasu8Wf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=azFY920c; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLahCZ008571
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:46:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AMuqU4rto6Tj0kKX2+FmkQgPqo1rKzpdESKn4BxVroY=; b=azFY920c9ghQDLkf
+	fX1sqqg7aNP5Jffz9GSXh2VnR3wLXWdhE/kAGkT1J/6ydDFjA2lj8Bu75q+vf84Y
+	HAzp0fPEqxhxWj5HdgwyysKxmo6FGp63iIJB86ImYVab7kK3JtyPW33HR4uCkiE+
+	PrzdVmXHggxIPTwxuTTOWAnCnniiQL1A7zCUo6MhbbAcDCJXunrXvRw3jJUO3PED
+	fGkoCLarGOX0u8YngLPc8fV1rszd5YPTrAfGevKaUU0MesqoqET6VuYMDWe63u0Q
+	6WLWbOU7O/V9xBvxaUQ4ziZsDS+q69RMe5nZ+f3SsAn9NOYepWcPRygz/fH1zm2G
+	+Q6abg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxrshn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:46:00 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e2eb787f2so6003911b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:46:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758080698; x=1758685498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v8lC4ZFoQIKqgBAuP6ysNsXfK9CM7H9836ItXVZ6+84=;
-        b=gscQTD3yYT25d5j2VP42MQ0n0UoKL2+o336qCpujQ+jClZkmMSceYVTZPCAhlVe5vm
-         /S7DfqjN4MfnlRbvWmVndC8cw9oDndK3nR/dfMbljQbF8yuqZnW6vEvUpfQ2JOTAuqqA
-         hfrPfZXB1l66qLJAR3s4M9QoijeI6N9W7SKvU+1wFpfq/SLVZNRRRDRZwZp1gb8KVoXq
-         uAa7UJZcQx5HWbS+p6mUk/NMUwt75E+DiHqjRHsbaqOYit1TMp4nZCiOUU0Vn2A5Jas/
-         IE/KRD25bHhm1pGvXsbmKBpmF1bGQEwEv3s07Nxi2tFAHC+0ugYd6KADFhJhCKsiwDci
-         70WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmHiDcL1r3Dbs3d9K2eGitZLvnC1W+DJ0QUrvts2g/vNOoczSfPIGcorPznKquPDsrfDbDYoMrcCsj1NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyN+7JjnXiEffAoprNckiqlYKaOBG6coD2gdEUEFfiZ6ikodbx
-	p2f04RyEf1yabjaUQG5rQ8Z4T55ONrjJ18joFUYGOSijA++uKf5CQ4Aql2b+Vc1r0QMdppCqtnC
-	1jnB/J/15RwhgbtudfIwxLLn8YRlZoJo=
-X-Gm-Gg: ASbGnct8m9hKNA09Z78RWFLtWQvWVB1JUHx9SKxDWOnIH24AXmk5KE32oU27B7sHGBZ
-	WCoe59b5odRNRpllfgFWI+Jf5iGtX9SBRw0VDtOF+qr6TAW8VQBzTrZLBXJtEei1zg3GqU2CGfo
-	JFT06Z73hf3FkATfqpawgzL7ev02O7tvs0dQqWj4LosFmEpkDvK9LEGumWSMgx3JXbe8lHkk+Vh
-	h12Z9Z96y0RV3dIBEkFUN2Bqp+Rlg8/+WqLEso=
-X-Google-Smtp-Source: AGHT+IEkYVhQ2BZ2Ni4lk201OVQduO9+WF3uVv+BNAqFBXXk1/sOTq+gX54m7iTfh6s8Rv0RYqaeBmydmJOWP+kWstU=
-X-Received: by 2002:a05:6402:848:b0:62f:257a:2865 with SMTP id
- 4fb4d7f45d1cf-62f83c2db06mr839202a12.14.1758080698272; Tue, 16 Sep 2025
- 20:44:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758080760; x=1758685560;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMuqU4rto6Tj0kKX2+FmkQgPqo1rKzpdESKn4BxVroY=;
+        b=gUtSoeIzQo63sEdXOentQU02pZupLcKqaFxFibJsNw82E55BmyCoX5a8fjyTbifQxr
+         uaCkWnkbng3yRuXlCUgwluXmE40VPZsdsY/9XjMW2fm1XarINlZ/FNHZsRBJQpaUZy4h
+         uYz9P8ChG4YYYLzvPExPPJ9SxBnRIfByhoAchKYaDwn7LpvZwK0bGTtreF7SF6jIZSdn
+         rOov2HGmsXWjGPOLUnQuCHkBbjkNvMVNIGw+MlBuTZAvPNbZJU9ejgpqCNJE3enX6uuX
+         qk6X+vcD4/QL5v5VuKjkaSaK2l87mlmP+clIr94H6hc6/BlMRbpOoeiGgup6xh5DV/if
+         dTdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6SdQmYaGHj3kG2m7OL+4qspK6tQU9+iXPAOn4Q0aT1GcLf7k8dfFucPNgnVU5NMP2JayblO9i0V7hwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBY/Ynu15UuKV0Z5jUyYWMbXPyMNceoaT+GQAJ+ERVqAyV5rK6
+	CFuBKWzIQ4Cqx8DejVgiWoCfuKS74m1iDZ0602lMdNBJ7YC8k6LumhArCN9cJAyWp63L4PyIkiO
+	yyx27KpU3MN+grb2dSwUVojaMeT0rn/XGTNhZbyN43kqtbrDhrOvQ5nRoQtAdNAfRc2M=
+X-Gm-Gg: ASbGncu6Yp3/n8Oikiw6ZcI0OWn7Z4TGvJYFqT4E3nHn9wDWdB1GKQU50JpDN7A6H0B
+	WxRQRO9VwCQrbvU7/QHg4p2AlNRbDmlEwLD5yYYwwSgEKIHkr5H7RhPFMrRuAcVUOgeCVagsgXw
+	0BWmU/mCDpyKMG+RPz0Pu0thWUFHyrYONtL8jOELT0K5nq2u0he+AJ/uOJeMFxOJa/RxgDJ7Eom
+	jGHnTJJCI8dLwxdlLhhnQK/kOu7OpYZObMAHezAcfI7i81QWaS2brj/vAdbYp4U+NUH1LBWnjJF
+	4DArasp5xFL5pukPPKU8HjkjQSJKz7tbp62iw2i/ZFAnJIZCpHiiNb6YGV6yyWf03a7PxBl9l8N
+	DcIbidfuhRUc=
+X-Received: by 2002:a05:6a21:6d94:b0:240:1d4f:720b with SMTP id adf61e73a8af0-27a9760c9d8mr838019637.23.1758080759689;
+        Tue, 16 Sep 2025 20:45:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0SDPT67Q8/Cmh9y8XsaaAI5lLTinSzkTWY7gbKUtf+kghwj+ZUL4wfYqfmIlqztAHU7GdLA==
+X-Received: by 2002:a05:6a21:6d94:b0:240:1d4f:720b with SMTP id adf61e73a8af0-27a9760c9d8mr838000637.23.1758080759189;
+        Tue, 16 Sep 2025 20:45:59 -0700 (PDT)
+Received: from [192.168.225.142] ([157.49.98.234])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54f4aafde6sm30670a12.23.2025.09.16.20.45.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 20:45:58 -0700 (PDT)
+Message-ID: <e2809c34-7002-f189-a10e-21695b529ee2@oss.qualcomm.com>
+Date: Wed, 17 Sep 2025 09:15:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c58291cd-0775-4c90-8443-ba71897b5cbb@p183>
-In-Reply-To: <c58291cd-0775-4c90-8443-ba71897b5cbb@p183>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 17 Sep 2025 05:44:45 +0200
-X-Gm-Features: AS18NWA4pz9gr9bYS9xpf4rQWT9q9ZICfmD5jpg_w2UAGJFAppEKdLNhzA9z5go
-Message-ID: <CAGudoHGs8LNQ9qT8k0dibgMLVoyjYM2FrNwgNMA-AzV5yz72GA@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow to mark /proc files permanent outside of fs/proc/
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next 0/2] wifi: ath12k: fix 2 instances of Smatch
+ warnings
+Content-Language: en-US
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+References: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX1k4jv/7rh1ON
+ PksrZSZh/z4kpCJM864PyaWK4mQnU6xWBuEVxM6Aj6PhAeq9xi5Fb9ISWSBcBer5sHZmdbFM7rf
+ t5Uosqx/0YBEN6Fyzevih/ephT2M0DQ3oDgXU6uA/H1MH0J5jaFVwTCAa6ezDTb86WxoKL41RbQ
+ HzmIBo2s/zd+qcGBc05EwqfQ8UEDYwRGz/wy7hvtEThlMWUL3OpYknPe6nLm9+1UrvMlk+QR6xn
+ 6L/JsDEYLrFwxU1qs+RbUPt8HrA4Eqc8nFYzyz6kMmQF/nqTM8lJB6bQAgs9iflv/+ohdfkdP60
+ ewqK7qzEn6s5vVZ9iGTg72wPIKu7Wd4rh71iDpz+KS1TdJmHsp+5GBlfQ22tWx1Uy41nkSST+L/
+ XwYl3qw+
+X-Proofpoint-ORIG-GUID: Tksx2EKsENzkIkAekJzSlTYEp1i3kDOz
+X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68ca2ef8 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=r0KOKur2OvuaYElxfjaavw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=BoDogKCtvrOBLCu30DUA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: Tksx2EKsENzkIkAekJzSlTYEp1i3kDOz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1011 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-Hi. This fell through the cracks.
 
-Can you please resubmit your patch with my name dropped from it? It's
-basically all you.
 
-Alternatively perhaps Christian will be happy to do the edits?
-
-After this is sorted out I'll resend my thing altering how the content
-of the file is generated.
-
-On Wed, Apr 9, 2025 at 9:20=E2=80=AFPM Alexey Dobriyan <adobriyan@gmail.com=
-> wrote:
->
-> From 06e2ff406942fef65b9c397a7f44478dd4b61451 Mon Sep 17 00:00:00 2001
-> From: Alexey Dobriyan <adobriyan@gmail.com>
-> Date: Sat, 5 Apr 2025 14:50:10 +0300
-> Subject: [PATCH 1/1] proc: allow to mark /proc files permanent outside of
->  fs/proc/
->
-> From: Mateusz Guzik <mjguzik@gmail.com>
->
-> Add proc_make_permanent() function to mark PDE as permanent to speed up
-> open/read/close (one alloc/free and lock/unlock less).
->
-> Enable it for built-in code and for compiled-in modules.
-> This function becomes nop magically in modular code.
->
-> Use it on /proc/filesystems to add a user.
->
->                 Note, note, note!
->
-> If built-in code creates and deletes PDEs dynamically (not in init
-> hook), then proc_make_permanent() must not be used.
->
-> It is intended for simple code:
->
->         static int __init xxx_module_init(void)
->         {
->                 g_pde =3D proc_create_single();
->                 proc_make_permanent(g_pde);
->                 return 0;
->         }
->         static void __exit xxx_module_exit(void)
->         {
->                 remove_proc_entry(g_pde);
->         }
->
-> If module is built-in then exit hook never executed and PDE is
-> permanent so it is OK to mark it as such.
->
-> If module is module then rmmod will yank PDE, but proc_make_permanent()
-> is nop and core /proc code will do everything right.
->
-> [adobriyan@gmail.com: unexport function (usual exporting is a bug)]
-> [adobriyan@gmail.com: rewrite changelog]
->
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+On 8/4/2025 8:33 AM, Baochen Qiang wrote:
+> Fix below two Smatch warnings:
+> 
+> 1#
+> drivers/net/wireless/ath/ath12k/mac.c:10069
+> ath12k_mac_fill_reg_tpc_info() error: uninitialized symbol 'eirp_power'.
+> 
+> 2#
+> drivers/net/wireless/ath/ath12k/mac.c:9812
+> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'local_non_psd->power' 5 <= 15
+> drivers/net/wireless/ath/ath12k/mac.c:9812
+> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'reg_non_psd->power' 5 <= 15
+> 
+> Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 > ---
->  fs/filesystems.c        |  4 +++-
->  fs/proc/generic.c       | 12 ++++++++++++
->  fs/proc/internal.h      |  3 +++
->  include/linux/proc_fs.h | 10 ++++++++++
->  4 files changed, 28 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/filesystems.c b/fs/filesystems.c
-> index 58b9067b2391..81dcd0ddadb6 100644
-> --- a/fs/filesystems.c
-> +++ b/fs/filesystems.c
-> @@ -252,7 +252,9 @@ static int filesystems_proc_show(struct seq_file *m, =
-void *v)
->
->  static int __init proc_filesystems_init(void)
->  {
-> -       proc_create_single("filesystems", 0, NULL, filesystems_proc_show)=
-;
-> +       struct proc_dir_entry *pde =3D
-> +               proc_create_single("filesystems", 0, NULL, filesystems_pr=
-oc_show);
-> +       proc_make_permanent(pde);
->         return 0;
->  }
->  module_init(proc_filesystems_init);
-> diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-> index a3e22803cddf..0342600c0172 100644
-> --- a/fs/proc/generic.c
-> +++ b/fs/proc/generic.c
-> @@ -826,3 +826,15 @@ ssize_t proc_simple_write(struct file *f, const char=
- __user *ubuf, size_t size,
->         kfree(buf);
->         return ret =3D=3D 0 ? size : ret;
->  }
-> +
-> +/*
-> + * Not exported to modules:
-> + * modules' /proc files aren't permanent because modules aren't permanen=
-t.
-> + */
-> +void impl_proc_make_permanent(struct proc_dir_entry *pde);
-> +void impl_proc_make_permanent(struct proc_dir_entry *pde)
-> +{
-> +       if (pde) {
-> +               pde_make_permanent(pde);
-> +       }
-> +}
-> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-> index 96122e91c645..885b1cd38020 100644
-> --- a/fs/proc/internal.h
-> +++ b/fs/proc/internal.h
-> @@ -80,8 +80,11 @@ static inline bool pde_is_permanent(const struct proc_=
-dir_entry *pde)
->         return pde->flags & PROC_ENTRY_PERMANENT;
->  }
->
-> +/* This is for builtin code, not even for modules which are compiled in.=
- */
->  static inline void pde_make_permanent(struct proc_dir_entry *pde)
->  {
-> +       /* Ensure magic flag does something. */
-> +       static_assert(PROC_ENTRY_PERMANENT !=3D 0);
->         pde->flags |=3D PROC_ENTRY_PERMANENT;
->  }
->
-> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-> index ea62201c74c4..2d59f29b49eb 100644
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> @@ -247,4 +247,14 @@ static inline struct pid_namespace *proc_pid_ns(stru=
-ct super_block *sb)
->
->  bool proc_ns_file(const struct file *file);
->
-> +static inline void proc_make_permanent(struct proc_dir_entry *pde)
-> +{
-> +       /* Don't give matches to modules. */
-> +#if defined CONFIG_PROC_FS && !defined MODULE
-> +       /* This mess is created by defining "struct proc_dir_entry" elsew=
-here. */
-> +       void impl_proc_make_permanent(struct proc_dir_entry *pde);
-> +       impl_proc_make_permanent(pde);
-> +#endif
-> +}
-> +
->  #endif /* _LINUX_PROC_FS_H */
-> --
-> 2.47.0
->
+> Baochen Qiang (2):
+>        wifi: ath12k: initialize eirp_power before use
+>        wifi: ath12k: fix overflow warning on num_pwr_levels
+> 
+>   drivers/net/wireless/ath/ath12k/mac.c | 16 ++++++++++------
+>   1 file changed, 10 insertions(+), 6 deletions(-)
+
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
