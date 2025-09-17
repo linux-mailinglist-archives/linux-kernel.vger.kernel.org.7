@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-821465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C1DB81501
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E26BFB81504
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D9D5252DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:11:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA131683C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C2D30149C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DB7301710;
 	Wed, 17 Sep 2025 18:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="XhXWpcTD"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="edqcO8SY"
 Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4192FFDDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54982FFDC9;
 	Wed, 17 Sep 2025 18:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758132670; cv=none; b=IYi7eemU0WUBIwaJJOQf/CV+ZzsdJF4p/cjw+C/efNnmzzt0vhyotSmA07i4ETlWCQM8rsZb1+N0ElbZuChYYS0wq0PBthWjkvsyNQYnkYx+Sbfh/aVmKsDn7qTYra//VFkyhUD+qHbT3Ud08gG1pYSuXB4wY0hCfFu+FB1iWg4=
+	t=1758132670; cv=none; b=rlSvL8Zo3N3n+feJMQ6uJyG30pgQfV54Zq1KPTjS5nPTL05WfwafUpFsZ2TmMk3xyBI7VnRaOPF8Bzgi7QlnjGLypstmqOAlgortzZ35nULIrZVqLx9D4bCX9pP2xTbofPhynuL7b6wUfbdvJB1dQJnC6uk4QXd4NiOfiHKsFX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758132670; c=relaxed/simple;
-	bh=MAdWsOy6N7LSPzbEuJLznpiAQXYpmqt+m9M8GD2QeKo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HAQPa76RH+O65N8Z5ZSpYsEQbe7XYdmqCcjiRH2CpSahhp8efnh93coIr1iY+ZBk/RB0BiPn16Eyn++QHW49jniMjZfV0gaB6o+cNoK6hmn6s4t8HU/CsjJMPSPYTCBMO3feWdepYTeELal0TvXa6x6y5caaE/fA8UednwiH880=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=XhXWpcTD; arc=none smtp.client-ip=212.227.15.19
+	bh=tzcGfSS7gnYEBx8TXY3VDLR8HICoV3aUSuiFO5lghvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SQ4aLST5HAic/kleAXmoasc6UWW/WzYyJZQdekkSHo220qFRum6xLz4/QP/HQTjPR08He0B1JdRWvsnDh9/69LIKaEGyfVSPO411Qn2xeP929WKkLcUkVjoL03X2BMhiIB+O9/AXgIL2nlkDNKY9PSfC0IRuHyi6xUAhPqYzJLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=edqcO8SY; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1758132648; x=1758737448; i=w_armin@gmx.de;
-	bh=dbFpNN3EzW9eoFqSCLHSwxKIYRcMtoGVmYM70oOZsMQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
+	s=s31663417; t=1758132650; x=1758737450; i=w_armin@gmx.de;
+	bh=9D/Y1uLEmnPzDJTHwZFhPNecM+RYeSIhgRtjdsjeCWI=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=XhXWpcTDfaZMtxQe44I9hncirY+xkvbCAq1KYt/g4Ii0Xv2z4UzIUoQxIUyqzBjJ
-	 n1i8vGEko1bdjbCpbWxoij9utUpsZ+tFCBnymDh8aFdwud/Q4fVGEEr9HSn8zTL5T
-	 JuAk2UaMYEj6NaLUZxTxV44QWHV7KFMDawUDbVeWTNBkMWfbGxbZc2+15cxgIofdb
-	 ioAUDe9BMT4kMloAD/TXoM5hdwe71nKqhbySKf/GbHu7hITmzlfhi69sypsYm4Hbg
-	 G/dsl8xrAaxhMesb9P3EhzQU4jfUwubgEAJT4CzbOrTSgeqdB+u6kz5HhH2l8VB1F
-	 6hj4iWE8e5K4i3g+DA==
+	b=edqcO8SYb+rz+06PNUO+9WtM02tRSZgpS4W52TZXLtyrjkhcT8Rn1B4oPR1JwEUf
+	 ZXXQNz+BE8MisnickJdy3B8ZujmtJRoAGwH6OEPgwYm4gFPqJEurMwWvUwrxvFxsb
+	 pZh52HcX+4gx7zz1dZL7Z3HroIoCCupC1TiUExI/CvST0f9rcxfWZI+rLlt8H3wC1
+	 V6Zt/OVnjam2Vxkt1XIlJWJocjYj3wG+EHLxraZwdpLONcmFGAkTGMUJGzLudBI7J
+	 4kTpnONfB+B74ILTBMchtgMUp31QwV95jMhNh7IN9SSdX2hSgAnAfb716ZT/Sj37P
+	 imusfROSxYtM0ffrgA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-inspiron.fritz.box ([93.202.247.91]) by mail.gmx.net
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MYNNo-1utsQE30V8-00RN9h; Wed, 17 Sep 2025 20:10:48 +0200
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MAwbz-1v5m643SJt-00Fdid; Wed, 17 Sep 2025 20:10:49 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: pali@kernel.org
 Cc: linux@roeck-us.net,
 	linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] hwmon: (dell-smm) Add support for automatic fan mode
-Date: Wed, 17 Sep 2025 20:10:32 +0200
-Message-Id: <20250917181036.10972-1-W_Armin@gmx.de>
+Subject: [PATCH 1/4] hwmon: (dell-smm) Remove Dell Precision 490 custom config data
+Date: Wed, 17 Sep 2025 20:10:33 +0200
+Message-Id: <20250917181036.10972-2-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250917181036.10972-1-W_Armin@gmx.de>
+References: <20250917181036.10972-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,115 +65,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:c/YVLSZfe24FRDWOug6JWTSFsF0Z4q6wLEGs/HYSaN7E2OQiskM
- NeWYxZDNm+THAI78+V8gq87XlHMEw2ku/NmPQq4plzUF8QRXc5WUgwhIdVqag98tTmQhkFY
- iMtrzGGvjOLXqXcYhTRf0xwuCMjvD+tMkHmKbMZ2RUgIN+72nDgm42i+p5Mz94ZWqojRLki
- EDtkNiiAT8EQkGSvkphDw==
+X-Provags-ID: V03:K1:nxPb/sBBYWtXlZdNNzMUyxUI/Trh3Q/aZvm8d0YkHwIeZCskSky
+ Ht7LPTALowNlPqqTjWQuqafIBICrHgcBJM51jdn0ZGqp5H8uJSw1vErrQ88QDKx57frXtuA
+ Asif0KY3Ir6WIeodepKd6TD3vqF7BaLIMFqfpLwkuu/aWrddT/WwLdy3mDbTyQULRBvLhmo
+ 7McI0rHjcd260lmjYCAYw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XJnsuZLbkEE=;otvrJEBrAtxe4TkeRLErrBa08jf
- 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
- QlEg0eGGXP6QIMJ3TQT
+UI-OutboundReport: notjunk:1;M01:P0:6QYnEAwwBvU=;GL7PjgrGI3/DpVq7oO5kFRn43wH
+ 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
+ LuSDzxwv0YlgiJCFvAqkDHEMoCMmflRQ==
 
-This patch series adds support for individually enabling and disabling
-automatic fan control for each fan on most Dell machines. This works
-by using fan state 3 that does not act like an ordinary fan state on
-most devices. Instead of increasing the speed, said fan state usually
-enables automatic fan control for the associated fan.
+It turns out the second fan on the Dell Precision 490 does not
+really support I8K_FAN_TURBO. Setting the fan state to 3 enables
+automatic fan control, just like on the other two fans.
+The reason why this was misinterpreted as turbo mode was that
+the second fan normally spins faster in automatic mode than
+in the previous fan states. Yet when in state 3, the fan speed
+reacts to heat exposure, exposing the automatic mode setting.
 
-The first patch removes the custom config data for the Precision 490
-that turned out to be incorrect, see the link inside the patch
-description for details.
+Link: https://github.com/lm-sensors/lm-sensors/pull/383
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/hwmon/dell-smm-hwmon.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-The second patch enables i8k_set_fan() to accept fan states larger
-than i8k_fan_max to prepare for the following patch.
-
-The third patch finally adds support for this special fan state. It
-should be noted that after applying this patch, the "pwmX" and
-"fanX_target" sysfs attributes will return -ENODATA when automatic fan
-control has been enabled for fan X using the special fan state.
-
-The last patch adds the OptiPlex 7040 to the device whitelist so that
-the driver automatically loads on those machine.
-
-All patches have been tested on a Dell Inspiron 3505 and appear to
-work.
-
-Armin Wolf (4):
-  hwmon: (dell-smm) Remove Dell Precision 490 custom config data
-  hwmon: (dell-smm) Move clamping of fan speed out of i8k_set_fan()
-  hwmon: (dell-smm) Add support for automatic fan mode
-  hwmon: (dell-smm) Add support for Dell OptiPlex 7040
-
- Documentation/hwmon/dell-smm-hwmon.rst | 56 +++++++++------
- drivers/hwmon/dell-smm-hwmon.c         | 99 ++++++++++++++++++--------
- include/uapi/linux/i8k.h               |  2 +
- 3 files changed, 108 insertions(+), 49 deletions(-)
-
+diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon=
+.c
+index 1e2c8e284001..3f61b2d7935e 100644
+=2D-- a/drivers/hwmon/dell-smm-hwmon.c
++++ b/drivers/hwmon/dell-smm-hwmon.c
+@@ -1331,7 +1331,6 @@ struct i8k_config_data {
+=20
+ enum i8k_configs {
+ 	DELL_LATITUDE_D520,
+-	DELL_PRECISION_490,
+ 	DELL_STUDIO,
+ 	DELL_XPS,
+ };
+@@ -1341,10 +1340,6 @@ static const struct i8k_config_data i8k_config_data=
+[] __initconst =3D {
+ 		.fan_mult =3D 1,
+ 		.fan_max =3D I8K_FAN_TURBO,
+ 	},
+-	[DELL_PRECISION_490] =3D {
+-		.fan_mult =3D 1,
+-		.fan_max =3D I8K_FAN_TURBO,
+-	},
+ 	[DELL_STUDIO] =3D {
+ 		.fan_mult =3D 1,
+ 		.fan_max =3D I8K_FAN_HIGH,
+@@ -1364,15 +1359,6 @@ static const struct dmi_system_id i8k_config_dmi_ta=
+ble[] __initconst =3D {
+ 		},
+ 		.driver_data =3D (void *)&i8k_config_data[DELL_LATITUDE_D520],
+ 	},
+-	{
+-		.ident =3D "Dell Precision 490",
+-		.matches =3D {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+-			DMI_MATCH(DMI_PRODUCT_NAME,
+-				  "Precision WorkStation 490"),
+-		},
+-		.driver_data =3D (void *)&i8k_config_data[DELL_PRECISION_490],
+-	},
+ 	{
+ 		.ident =3D "Dell Studio",
+ 		.matches =3D {
 =2D-=20
 2.39.5
 
