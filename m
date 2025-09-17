@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-819870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842A9B805B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:05:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C927EB7E90F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276647B47F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485021C00D49
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF202DF719;
-	Wed, 17 Sep 2025 02:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="aXV2X5Kf"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7C12F3C16;
+	Wed, 17 Sep 2025 02:13:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7C92192F2;
-	Wed, 17 Sep 2025 02:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081C721D596
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758075158; cv=none; b=QGczmwtY3aE88bxcn+TN+wpIShkgIQ3zTbjMSzH4Afru8fawZeIKmxL2dosQ4trIbaBiCyjXGCurUWBn3UdvSXoL96h4qQrXTsJ3m+rpYLVRtwOkmJr2WGBJ0qbBI/KVf1CDtjTXjRASP5AWpSPGeAOhmjMf5mr5ezTYVhsWe/4=
+	t=1758075186; cv=none; b=i/cgb/taFCDyKCj1JoCd1fYgogDQ17TqjmtLwrlg9agYAtZoJzqtSxKSOVtOd1YmEAvzEAOAAP7b/mVAOKeeDsVtXAP+spUDD/2YTHLx3f7RBXdsElPorX9ekvs41kgPRuwNH3Tcssv7NjHOjifQC4TVCnd1FEnFVcu4n6WQCi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758075158; c=relaxed/simple;
-	bh=o7B2mZHPWT/aZdNVmEU0SN6olLzQWfJsVaSsEW6Dp44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eDfSzd9iI+EAmP0O/gO3JPTk6UFn+Dfnq11fqToMfhSGiAFNFXTjfBU4pXyjZX9aqCpTL+ReM5Na2ZtFSWoh/9rWH9hKR8PXml3nVagB0q+1mfmqI78LVtwV8c9+aWz8aScpmCh21CMgjOWZqpBovQOd4wZop1XkjdIPH9Futxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=aXV2X5Kf; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=oTAMKDMleRnfi2Q+zweyRqDXxRH9gs+cg8KcwQjTdOk=; b=aXV2X5KfybjG+NdBAlSbb1geMi
-	PapCNN5AlvZuKC96YbVn6VMFwr4xu/DRBNoMV18Bkfwpw/cRM0+RM0SZMmrFZI7re3Udc70kHz9DP
-	C2+b1cuLR9N0WNFBXaqekw9DWpL3i0y6q2ZIJnJ4Hd3nnNVxAvit0hld+Sb+eUqGCJc/WIVAAANGI
-	1h/ZxoR2NID3RfF1Jb/6Nh9Pp7k12ym6Ls568YevSY8c7Ow1Y7r1sd+cSLJiOaQsFaU1EHUfN7pwx
-	sV+IXhU8XqUy9iaeQt4+4lRcsuzRlCIA0+ad31qrWgONCRzRWD5cOthceBRfDqb3Q7Aq15xjCkh5O
-	FytUT5iA==;
-Received: from [58.29.143.236] (helo=[192.168.1.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uyhej-00CWDi-KH; Wed, 17 Sep 2025 04:12:26 +0200
-Message-ID: <2ef92808-42c9-4f8b-9d58-11e5d2c89fc3@igalia.com>
-Date: Wed, 17 Sep 2025 11:12:18 +0900
+	s=arc-20240116; t=1758075186; c=relaxed/simple;
+	bh=6g5R/CWMwYhd5/WdCqBRyVlAAiYoh903mjsN79+AlgQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A0g5b51Zl1Y6pwbshnvdbDR2hD5PsrisKTHEV7Qo2jHznQrt9K4QYC6R78l/5uBAEt0ejJO/oUmfQe004rcgh0K6onFk57dqWDz+2bMPS03zvszJciVcq5e4HBnErOpKO/SQ5t6f2dRKCBjzq3ZMrJitGFCdvl418VyFLYp6wlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42404bb4284so38532635ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:13:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758075184; x=1758679984;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jx9KHdVtHZIgjGBqLS7wvJNBVbVLbHgFsIJKE5SzA2A=;
+        b=C4wAnGjoJERYFShagEYXGgRQF7FhYnbhhgm1dRYAznb1q3XLI+uQcQRMWgUD+hVkCk
+         Y8Jd+qtRrKZ5K7jbf0DnIqNe2i5kn+LTHRRVjCYoHIJL7LGLhHYUCyCqx2pOOJIPzqNF
+         kVmtLSiG1lYraFK8zClC3KD8ngthUPd3Cmr81MDgCpZ78YR82a+xAcvuboF1YbS9eS7v
+         7v8THbnI1lngqr2C67i6o0Iw9jyav4UD0M5gMhP7F1pjGU0HMOXEhwKAQID4JUM4y6AC
+         wSvNgTRRrcg9AU/Q6zFmd+nD2z2YzA1n6tF6Sg5DeMtTHfTv56caV3qm4aZgUaTfaIeS
+         dyjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHOiaP1LAPk40LkZ1SvjpiXvL5UWmj0kq/1X751yFwsMSne7LJ0eUuCyzbCpfkQ6DjvaREYSqty6uZTFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFMKKEOAfs3FyPG9WU9W1JPRz5qQgdPN/5YYto/edLzlJvmhtF
+	pEkN2VyAczsreWJcsn4vuS6WE4IuSbeB5b7d0ahEW3NTjWhhOCgW/t68Of6TbPXU73OyZv3uNVG
+	Nbxj9H7+luDYoXqOwCpvzYyDnkezwqzQLWA7gIPq+LUMakiXGfNrQAnzcQtg=
+X-Google-Smtp-Source: AGHT+IF+Xp7F2zdQBLS6SfovYyoE419pQjxvECuoP3lsjzjgdtWD70iDaZp39lRnVWoebUhj7MfmUrcBlwtX+cSlj+PwarwdY8fL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched_ext: allow scx_bpf_task_cgroup() in ops.dispatch()
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, arighi@nvidia.com, kernel-dev@igalia.com,
- sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250915065236.13669-1-changwoo@igalia.com>
- <aMnJRn8qdiFaqQXU@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <aMnJRn8qdiFaqQXU@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:19ca:b0:3f2:a771:9fb3 with SMTP id
+ e9e14a558f8ab-4241a56dbedmr6050635ab.27.1758075184290; Tue, 16 Sep 2025
+ 19:13:04 -0700 (PDT)
+Date: Tue, 16 Sep 2025 19:13:04 -0700
+In-Reply-To: <15d03ed6-4913-4498-a1d4-9f4f2e43d7f5@huawei.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ca1930.050a0220.2ff435.0498.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in napi_gro_frags (2)
+From: syzbot <syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, hawk@kernel.org, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	lorenzo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, toke@redhat.com, wangliang74@huawei.com, 
+	yuehaibing@huawei.com, zhangchangzhong@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Tejun,
+Hello,
 
-Thanks for the feedback.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-On 9/17/25 05:32, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Sep 15, 2025 at 03:52:36PM +0900, Changwoo Min wrote:
-> ...
->> Fix this by adding the prev task to scx.kf_tasks so that task-related
->> BPF helpers such as scx_bpf_task_cgroup() can be called safely. Since
->> the SCX_CALL_OP_TASK family assumes the first argument is the task,
->> introduce a new SCX_CALL_OP_TASK_ANY macro without that restriction.
->> Also update __SCX_KF_TERMINAL to include SCX_KF_DISPATCH.
-> 
-> I'm not sure this is safe tho. ops.dispatch() can release the rq lock it's
-> holding to migrate tasks across rq's, which means that other operations can
-> nest inside - ie. there can be an irq which triggers ops.enqueue() while
-> ops.dispatch() is in progress. That can in turn overwrite
-> current->scx.kf_tasks[].
-
-I thought that ops.dispatch() always holds an rq lock since there
-is a lockdep_assert_rq_held(rq) check at the beginning of
-balance_one(), which invokes the BPF scheduler's dispatch.
-I guess I am missing an edge case?
-
-> 
-> I wonder whether a better approach would be tracking cgroup membership from
-> BPF side. ops.init_task() tells you the initial cgroup it's joining and if
-
-Currently, it is also not allowed to call scx_bpf_task_cgroup()
-at ops.init_task() because the rq lock is not held at
-ops.init_task(). The earliest possible moment to get a task's
-cgroup ID is ops.enable().
-
-> the task later moves to another cgroup, ops.cgroup_move() will be invoked.
-> Would that work?
-
-Checking cgroup ID at ops.enable() is not ideal because there
-would be no cgroup ID changes between ops.enable() calls.
-However, the additional overhead should be marginal. So tracking
-cgroup ID at ops.enable() and ops.cgroup_move() will work.
-
-Regards,
-Changwoo Min
+failed to apply patch:
+checking file drivers/net/tun.c
+Hunk #1 FAILED at 1875.
+1 out of 1 hunk FAILED
 
 
 
+Tested on:
 
+commit:         5e87fdc3 Merge tag 'batadv-next-pullrequest-20250916' ..
+git tree:       net-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a6c33a7db07dbea2
+dashboard link: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17600c7c580000
 
 
