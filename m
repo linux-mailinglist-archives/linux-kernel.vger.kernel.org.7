@@ -1,117 +1,172 @@
-Return-Path: <linux-kernel+bounces-821552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BD5B819BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C1FB819CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A187E188B76B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A61516625D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6B0303A21;
-	Wed, 17 Sep 2025 19:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1332FB987;
+	Wed, 17 Sep 2025 19:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="APxIxzAu"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMhwH362"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3339D288C14
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D6534BA28;
+	Wed, 17 Sep 2025 19:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137165; cv=none; b=QDHW9gkOR34wkbxMejObIp6F35bvKLjk9eSdsA7BUrAOI5Ko3vk8ox6gNLd45fSfN8FfDL2bXU9g27SFZ/KU3gmyJTg4ZRDWXh5GoNHIq+vTSXBnN7I79+0eqf7AoP/FQoVFsPHeCxMPbSqd+dx59VmHzDTe+WAFSmrTCd50WN4=
+	t=1758137215; cv=none; b=o49IDmIViPNzYABy1Zbph8uTJ8q3k+spyfM5ASPZ2YWD6NqBXkHqNgtg8nhC9sV4oCN7x4dm/yKrqlbGGkBiG6mgRmSdLthSdr9qFaEEfJoWZ5nw8CrH96vtlPuBUR3Zv94wtwCSUuBFH3d2cfYOgLzTkRy5rYgoC012x1qGLE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137165; c=relaxed/simple;
-	bh=rnRQh1fgG/iBS/92Mk0NI/PnJazDMk7alTWmgTAbA0E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uymi26DootIG0Y9xzTd9f4V+oZVKgJ1jCC81rZzS49opwMfatVW4k49G/78kTwdY4pU1QJLEeVPRlm4SQ+XPfT9R4mHFL0xPxznFPyrdrAcFdke2Q0iCCvnrnUi3PJjoQHPvzThDEwWam3eFsEp0/KdhmMpzw9SJWqh0dU68V+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=APxIxzAu; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b07883a5feeso31293866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:26:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758137161; x=1758741961; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gM73047ejBdI07SXB7vIlmIGMpwYKQFcM4Zm+pCZ9bo=;
-        b=APxIxzAurGpDGUBI9zQAJK7Hevf9cPrI/8seWcloFvTdDqPcFtINSys63QyTqYRytw
-         qsQ27bAmXJnNIXnr9p5kxjRLoYQtve/qM1gtGnqTZrk9szQ+XGusBJBKBP3VmVEG8bHz
-         KChjYmNLR+gBU+uLUO536WTol8mcBRN14NUY9MA0G7sN8ZSCBuu9uzgCq60eZWCAi68y
-         Vv0YqhSvx96V/xy1YRlKrvr+MVOlkkBU6uLsu8HF1+z9u3tjgWFOSA8eT0IIwLpzlVH2
-         tBmZJMPPntFbaxFbtRwa6snbS1PYw/yoviHWY+Ph/NsV7YypVtACtSgFxYZ2HI5P3Akk
-         iCHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758137161; x=1758741961;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gM73047ejBdI07SXB7vIlmIGMpwYKQFcM4Zm+pCZ9bo=;
-        b=qTWthxRshj3/ro+cCQEUlbOY92H2+s3wjLD6G1u1sx4Crtru4pqMEBZHPo+GbGYwR8
-         vIaF0GwDKT4i78SxebFqu4Wy7R72HC9x6nQQCTH7lLrJWNCJodAEjWyDdjFGbmxa67nN
-         4LjTwuVN5kFlGUIvCs5eJx2Xn+3WhidGgT5xQu1AWzl7nlZ6sJc2VyUTLA7d4zsdWXky
-         a9gKZ9j4QvL1aidf0Yz/x7K/Di7p1gp4JMxU4DvcgWwTLxjV9MwWG3521aN0QSo/AXpL
-         7jr7rOlvyJsnO1CBKB7AlhOhCI9GQAIjXlAqYxyGdAh6OX3j6/CHTK3Kg+pSfqg1xXhL
-         RLdA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1DR1kX3Ji6Ad4nPOKKeMh3Fi4T/vTjUqX7cp6A0zBLLxAQQDzuiTnUVGub1iWHjShNeMiM47D1feJUfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1ChX32eAsXAR3U4H/4MWiMmBkfqwpo0WZPqkZJn+uWs5RCvK5
-	S3/JCAMUfOG5JjH32RhSoudjsIaWi7ehbJ/rh+6SNBPkLF5moemH5bVsHS04UWvWR2M5Auh1JkH
-	grP8XGVEFtkm2dBxpQpA13qNM+9t31XRx9urC35Wo6A==
-X-Gm-Gg: ASbGnctLIuTRf6XpX2HdsNxsbMhsviu5gOhdwNerqbM2rxdJMDtzuhWcY6NOXfEqbPq
-	C1ruPHFaGyzA0La84fPcd3r9w0N9xlePYIHCXtiLwLnHQ3fYPjvhF9jMs9TDlAB9dKkVdJfk4PU
-	Rt67yYxVYTmYeoZkmwl6f2NRdBBBHU72RAJ7pvlmmyXQBtX1ZyfmApaBCY7STwAms1hhyHqBg9j
-	Rq/5YQcP051fHFxFjlojyXi+oNWwo4wKDVT
-X-Google-Smtp-Source: AGHT+IHV+j4kzgnlA17vMPfFNZMuPAmy/0tGoISSJII60cK9xhE9rBFeexcHdz76p+ynPHs9naBObYA9aHQI2oTrR4o=
-X-Received: by 2002:a17:907:944f:b0:b04:9468:4a21 with SMTP id
- a640c23a62f3a-b1bb739e7f5mr341249166b.14.1758137161567; Wed, 17 Sep 2025
- 12:26:01 -0700 (PDT)
+	s=arc-20240116; t=1758137215; c=relaxed/simple;
+	bh=rxQ5P0gTfpf4dmZ7B42QPAmEImAeP2nFA/KifuYjACM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Io19eJUgJvi7XDhBLVtm+XBUSWafCv7pH1waaJSfUGUZQ0dyG1HFhlPPQBGWbBAiGvJ4NgDQOCCi7OyFC1pSM8aQPZqgLIzFPAPVFcZqTVda/nSm/Ozdv0IUBCIyxConi2KQtR3bQcI6rfmVUzQn6IHHN3GBC8C0je4t190zeQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMhwH362; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9256C4CEE7;
+	Wed, 17 Sep 2025 19:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758137214;
+	bh=rxQ5P0gTfpf4dmZ7B42QPAmEImAeP2nFA/KifuYjACM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tMhwH362ygjjwtnqhXiVywzh3oiDjnrB5XKf0gfMFk/qbDnOy0tJhMrLeVNSz0XX1
+	 nF/X6JJvntikX0l4b7OuOv8ibCjAfJCW1P/mzjf03kgBw5yyB1Xe9LqCX4tJIrrQhP
+	 CCnjdAC0Lwj4DN+Zhc95Puuo6k9iXc/Z5ppMcbB5miUh4+tesHDmssV1vs6JMMjtC1
+	 lNhyo4jJGo/wCqrT3pOeG/zRkLc9PKFy8x/WxX+5l8RJMh4wcwDkah8aMz8m2yHyGN
+	 9KAIkeZfXV2rUFurIu/vgS94QSZkilL6fF1cVfI7nqawQUtFWDX/rzQSwcDSUSD78B
+	 FcmkowUHZpt1g==
+Date: Wed, 17 Sep 2025 20:26:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] dt-bindings: touchscreen: fsl,imx6ul-tsc: support
+ glitch thresold
+Message-ID: <20250917-unhidden-foothill-7c103245be1f@spud>
+References: <20250917080534.1772202-1-dario.binacchi@amarulasolutions.com>
+ <20250917080534.1772202-5-dario.binacchi@amarulasolutions.com>
+ <aMrc0GhVbpI38t3L@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917135907.2218073-1-max.kellermann@ionos.com>
- <832b26f3004b404b0c4a4474a26a02a260c71528.camel@ibm.com> <CAKPOu+_xxLjTC6RyChmwn_tR-pATEDLMErkzqFjGwuALgMVK6g@mail.gmail.com>
- <3c36023271ed916f502d03e4e2e76da711c43ebf.camel@ibm.com>
-In-Reply-To: <3c36023271ed916f502d03e4e2e76da711c43ebf.camel@ibm.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 17 Sep 2025 21:25:50 +0200
-X-Gm-Features: AS18NWDOAnSLj0nw3kPAv4b-NSgo8QkEB21FLGzoG6YC2RFaOsN704wTATLg6Fg
-Message-ID: <CAKPOu+8b_xOicarviAw_39b2y5ei9boRFNxxkP19zE5LGZxm=Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: Xiubo Li <xiubli@redhat.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"netfs@lists.linux.dev" <netfs@lists.linux.dev>, Alex Markuze <amarkuze@redhat.com>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	"mjguzik@gmail.com" <mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1WzqRwur55oUj4Vo"
+Content-Disposition: inline
+In-Reply-To: <aMrc0GhVbpI38t3L@lizhi-Precision-Tower-5810>
+
+
+--1WzqRwur55oUj4Vo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 9:20=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
-> > > > +     WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inod=
-e_wq,
-> > > > +                              &ceph_inode(inode)->i_work));
-> > >
-> > > This function looks like ceph_queue_inode_work() [1]. Can we use
-> > > ceph_queue_inode_work()?
+On Wed, Sep 17, 2025 at 12:07:44PM -0400, Frank Li wrote:
+> On Wed, Sep 17, 2025 at 10:05:09AM +0200, Dario Binacchi wrote:
+> > Support the touchscreen-glitch-threshold-ns property.
 > >
-> > No, we can not, because that function adds an inode reference (instead
-> > of donating the existing reference) and there's no way we can safely
-> > get rid of it (even if we would accept paying the overhead of two
-> > extra atomic operations).
->
-> This function can call iput() too. Should we rework it, then? Also, as a =
-result,
-> we will have two similar functions. And it could be confusing.
+> > Drivers must convert this value to IPG clock cycles and map it to one of
+>=20
+> binding descript hardware, not drivers. So below sentence should be bette=
+r.
+>=20
+> "TSC only supports the four discrete thresholds, counted by IPG clock cyc=
+les.
+> See SC_DEBUG_MODE2 register."
+>=20
+> > the four discrete thresholds exposed by the TSC_DEBUG_MODE2 register:
+> >
+> >   0: 8191 IPG cycles
+> >   1: 4095 IPG cycles
+> >   2: 2047 IPG cycles
+> >   3: 1023 IPG cycles
+> >
+> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> >
+> > ---
+> >
+> > Changes in v4:
+> > - Adjust property description following the suggestions of
+> >   Conor Dooley and Frank Li.
+> > - Update the commit description.
+> >
+> > Changes in v3:
+> > - Remove the final part of the description that refers to
+> >   implementation details.
+> >
+> >  .../bindings/input/touchscreen/fsl,imx6ul-tsc.yaml | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/fsl,im=
+x6ul-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx=
+6ul-tsc.yaml
+> > index 678756ad0f92..1975f741cf3d 100644
+> > --- a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-ts=
+c.yaml
+> > +++ b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-ts=
+c.yaml
+> > @@ -62,6 +62,20 @@ properties:
+> >      description: Number of data samples which are averaged for each re=
+ad.
+> >      enum: [ 1, 4, 8, 16, 32 ]
+> >
+> > +  touchscreen-glitch-threshold-ns:
+> > +    description: |
+> > +      Minimum duration in nanoseconds a signal must remain stable
+> > +      to be considered valid.
+> > +
+> > +      Drivers must convert this value to IPG clock cycles and map
+> > +      it to one of the four discrete thresholds exposed by the
+> > +      TSC_DEBUG_MODE2 register:
+>=20
+> same as commit messsage, talk about hardware.
 
-No. NOT calling iput() is the whole point of my patch. Did you read
-the patch description?
+This is fine. It's a generic comment about what must be done with the
+property by software that helps people understand how to populate it.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+
+> > +        0: 8191 IPG cycles
+> > +        1: 4095 IPG cycles
+> > +        2: 2047 IPG cycles
+> > +        3: 1023 IPG cycles
+> > +
+>=20
+> This case genenerally need enum 4 values, but it relates IPG frequency.
+> I have not idea how to restrict it base on clk frequency. May DT mainatai=
+ner
+> have idea.
+
+I don't see how you really can restrict it based on the frequency of a
+clock that can probably be varied at runtime.
+
+--1WzqRwur55oUj4Vo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsLeQAKCRB4tDGHoIJi
+0lL5AQCLnyauVzJQEzihjVDX0KlDXBi1HSOzSRs+/oAZJqNsBAEA8sAFqz68gVZ5
+J9dWazzA8+lZXRKWTAXkUnsZSD9G7Ac=
+=6CrS
+-----END PGP SIGNATURE-----
+
+--1WzqRwur55oUj4Vo--
 
