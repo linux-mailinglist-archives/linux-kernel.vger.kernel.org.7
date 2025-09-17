@@ -1,256 +1,226 @@
-Return-Path: <linux-kernel+bounces-820902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD614B7FA4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:59:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF4CB805C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B84A317F3E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CC1D17DE14
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81BB2EC0A2;
-	Wed, 17 Sep 2025 13:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9115330D5E;
+	Wed, 17 Sep 2025 15:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="muKUEBsa"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012022.outbound.protection.outlook.com [52.101.66.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlgIVplc"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4882253AB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758117007; cv=fail; b=ZBnQQxc07ES8GqKKUb3Wm/dyZWwkAnihqwLor6DFaNVQC1Wx4ZaFsT8LdLxqot/5nP4LErhGL19MR17cQo3O/dKNWjq+yrja7+TzBLyGVIp2Cu4191+fwUkWMZSs1KmayARxfrAB8Ev3SYnlVJ4G7S2TU9SJe1dICQdq5IZChAg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758117007; c=relaxed/simple;
-	bh=dMyTqR7+tkan1VaRVdOUQgLhL1aNGkmE6dgfb3VsgP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nK7JF1eE+wjMAq8dALWKsYnQ7JU2o6ndIs1Hd5NDFjm38dGrk8E2TxHAXtIc+/G9BEjD2FWB5L59cZGLKfNtCo3CkQq7WfWoepJFUogm6PpgRbzPsi9Oq1mlHBmpdOPiteU5AnK5fxtBx7EGa3BswXbsdevbUqnUv9b2kItWHms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=muKUEBsa; arc=fail smtp.client-ip=52.101.66.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TvxSB9kaslkM2HmllwbGrztqKK6WVpRD5Gwip+vYf1E35hkuZv9gSWDDywxKney8aEP/wtSdqhLNohrnbshQm0mJ6/e+shpMn9d6jS9ovq6iMkiqxeHisalDneyQMzit/wvfSRoAl+bsYAV7VAQEGJ5CGTi7iZoTgLjBg7aaz2itcLglUm5xR/gMC7wZ1z7+RoYLjDlosVInoCQm9+OyGdM6ZcHdUsnvW01KAvg7AmaB8CcZJKwHPIdsI3hDijUiUMsogmsuPmvOTSHCqqlE/8ClHw7rS61Mzx5sjr7kCfjcAuIUj1swEj+jgXY0whSmuLlsB1lkYfwkqqN9KlIA5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gYhaDAlZnX736holjwY0BXw+nuPy03/dZ0ZU67Zlkec=;
- b=iZy08n5q7IXhhdtgsWxay2pWlFbh9ny1jPbV5G6AuM35RJjz8PlA9EduTMzPOEOgxeXko0FRRlBiP/xnHswzHswjcqNooRxVZ0PGeOqBAhEXnz6j5hInyTXuTt/Mct0PpnOv3XxX3rTytCc1DsX2tmipwiBQtjMUdbxOXyAXl0heBNuJSfnYpUTxVPnajyORw+FwBhFmDJ5eKcck6wsnIqIUApfpPsGupE3njV5W2lhlBWK43DYgF6r0O9FctdICjZM9ln3uJb0ZJIr3eIoJRTM1WxFv8AnHr4CLs+an4iEcNmCaxFMwLHZtWwiwXYO8t+MiZ0s2TiWDVMxRehtTbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gYhaDAlZnX736holjwY0BXw+nuPy03/dZ0ZU67Zlkec=;
- b=muKUEBsaakGCkgbtxBxhDO4/Kh11kbmB26zv5aSvTJJ3AwBvzTTBRVdCocM+hdNRuBa0U3rhLyTbVUZCGNK9Az3n4jEcj3aWHye0PvA8RJwLBGWAruX8osJJsO9l096WBmB1GZEt+kvRHOxWCEgf08IjUXHbJklYitMLpwStvYfb2a3GFDXjp4Sdhea0MbR4Y2g3ZG3DnC41onZzxMxABNNu7s39VYfMyuzeZDAGT1vXay6beMLSwZ0/MODouFS4AjTNsaR9eFHUaRshx07HB/rM3SzHHzjBrCg8VeCsxEbz6u3SDZNmt6ERJSK4y5+KnA+NlIMIjIqChIg5eUFe1g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AS1PR04MB9237.eurprd04.prod.outlook.com (2603:10a6:20b:4d1::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 13:50:01 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 13:50:01 +0000
-Date: Wed, 17 Sep 2025 23:01:35 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Joonwon Kang <joonwonkang@google.com>
-Cc: jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mailbox: Fix undefined behavior in of_mbox_index_xlate()
-Message-ID: <20250917150135.GA28673@nxa18884-linux.ap.freescale.net>
-References: <20250916153455.2527723-1-joonwonkang@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916153455.2527723-1-joonwonkang@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SGXP274CA0003.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::15)
- To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACD832BC17
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758121358; cv=none; b=mBHG4gcnncP2Bpny9Nr9Rvit6PTn/eGnzDGtboyvbSRW0ioXABYcHrSO3/MwzYx43MeQC3a7ULD74+ZD6lmrsr1XNdK7BUrPls7mDwKczIOyvMr3xHM9V51LS4NGPo0/tH2v+v+LXD3USwSzdBkmnaLMwKpKuPn4J8aVhCL/zRU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758121358; c=relaxed/simple;
+	bh=NK1NyMuEOj0ydYsGx4ZznjUDtoWvKqGQmTI9anPdlYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IiaMaR7OuBIc/Jniwyjx6w4rF1j6m88JhyGJNa4K+zl0bnfPkeIUvpP61jiGywM8fZQ+P55t3hPWNa4snlUXd0E3a3mT939TlVm6c+4MGuSKWVeEMs/qGfXGSpXX/i+eLKj7T1dO2JLnVezeEiAWxtkBaOqaBPLNWQPU4r7ziAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NlgIVplc; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so1038482766b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758121354; x=1758726154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lIUjmKGGbQEJsCoFeZig1jDOJNxeqR+9vgxX7Gkos/k=;
+        b=NlgIVplccLGOuDvQmoD4tVOjPq2CsNCms1DDKVBojv/PLJ1rVg3DGM6XZkhVJnsYmV
+         ul8erHnVNPhBNr0BJIO+Os3+qzQpLhm9jyqF+GPasH/tz4iuaK3w3OTpS+U9lgOWA/iq
+         H8ycdarrSInpy3Q2CHPukpaJHnCWmfwZ1ORjaUJWA2aE8vOAWnCEYUo/HuZtzQt2GuCM
+         aOzkR1kl31hdOmKUf4OdjuV+k5MwtW2gDdtS51/9NJOjPdmwVgSYsRXZgWGY8H702CO6
+         qtIKva4qwKkhl0q5flGlrcJOiMLFDLZk+Y8SZ0QFs0zCJT1yu//wga1S0/8x1Ti7eGej
+         IuTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758121354; x=1758726154;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lIUjmKGGbQEJsCoFeZig1jDOJNxeqR+9vgxX7Gkos/k=;
+        b=sQDULUc/fWjpHHM5lYiOZ1mP/kYNgum9YWxvtyM89Nm7bv/7d/MGlxe968PdJ+HvI1
+         owH4RKpikPinME6ebbo3rgyEmCjp1Wg6jVcHER4NpvHHnWQ+gqqHTuuLTZk/TTBGBFKV
+         TD+4uNznsnjZgsqeHemOkXK12FbL1nBuaxhTTRSMFkUTUr5gzsT7/5vc8fUpvxhinwsb
+         nV0iRsBLSOOCW78Z//kLCSrHnwX9HeLT3YudninAlTxBisiLx1A5zqWJIRVoD8xYvvdM
+         GnnoWHpa09vXeCNfUwuTdRU6Bnz+wR9dftTO5AQD0B/BfU2Os8iB4QPG3/j98KtOcYc6
+         3Haw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh41a1DaphqWrlZ/WRdDqR3EDMnzQT+7zYpJ8SOZd36io+/8F5WijJGQyT+leY6zn0eW/8ga0wFHINkJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydDnyxvPmMHvQSXz1FxYwCvyi+Mn1z+VzJ4pJ3Ny6iaI9FKb/A
+	ZKMtEkIddHnhcZATlp2KUSWwEnSDov+mrhUifrHp4lZIIwpT/+s27gGBVOSp01tJHIA=
+X-Gm-Gg: ASbGncvbKkGcsreXFFbBhPqQc7pQfzLdRoT71zKcbeBREU4FOeNreyzNyJ/RffvWaEG
+	OM6dYE85T6X7Vf4jVIdIaA499ZPNOXaKaTQOYLVWx5NG5VMjpCQSORI8vASFVkrVsKzhwatoU0x
+	FVDWb1CdBOEl/ltgijyDCHbdFA8eaCyVZ4Fxi8JlwzfwaRoS7PnVPOtULD48tVamJM26C+cX0Lu
+	xBWce70efhZxr0MEtd8Ru4K0S8D3WD3PiKbgpWHwPcfUF6jZuOypFH3zPsPWCvqFqwwjj0EtnHH
+	qR/geytHy7912eaFE/D9JlU68Jmw2WS4cCSQ7NdQAE4S8LDgRDk1EE2UfpXRnBydMxgt51QKyy4
+	VpoAgECPFaXGCDDuyOowm+drMaWeU4Ukh
+X-Google-Smtp-Source: AGHT+IH30uplY82utdrU9T7Dyp89uUZLy9OYpPpZfnqv2x2yCGVqH4bKpd1FnewjvmvV1dBnafhklA==
+X-Received: by 2002:a17:907:6ea4:b0:b04:85f2:d272 with SMTP id a640c23a62f3a-b1bb935d70fmr292343066b.49.1758121353549;
+        Wed, 17 Sep 2025 08:02:33 -0700 (PDT)
+Received: from [172.20.10.3] ([109.166.135.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b3347b90sm1362672466b.109.2025.09.17.08.02.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 08:02:33 -0700 (PDT)
+Message-ID: <24d6a51d-f5f8-44d7-94cb-58b71ebf473a@linaro.org>
+Date: Wed, 17 Sep 2025 18:02:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS1PR04MB9237:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c2abdc7-1663-444f-3ca5-08ddf5f118f5
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|19092799006|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3VJeTpNTvsHl0GwDEBwC0gr13x2xOtEo/WyT7CWSm5lQXm7665YPQHMKSB8K?=
- =?us-ascii?Q?Zi88BTQMmPH2wCnbGWeENyjfft1cgAIk0zeu1folxsFsOcxnRcMyixwD0Ukf?=
- =?us-ascii?Q?ucvucxHHV1gM0Y+YXhRQhkJBVhiALNBfLOEZD7uFHNwwHZR5UQ1i0HtFCK4h?=
- =?us-ascii?Q?ppYHz+fIfRlHCvXJSPlQ6yCbICz14bkBB4qDO1H/YfsyceoHbaJ2plcHFH6s?=
- =?us-ascii?Q?zoTFLdkQ5fztvokZ4CsFl40fHnl1Kv3d7oUvvIMS1+EJ6xYW/JjtM0BQV6iA?=
- =?us-ascii?Q?MdIn48yHYKc3a2JT8GbAVvoqIHlVbetdWAr/AxUUspbnHDkZY+HaG3pom5+u?=
- =?us-ascii?Q?bqddMAnvSnWD0WGj+ig+q3E/uL3/NBQIQq1UxpG8agbKsVBuxMsGyHCpeaEO?=
- =?us-ascii?Q?c5MMdJEwDQ8X/dlGWpdi/tkXgva92oFHk4O+WWB7OOKgrUaC1o9AJYz4S+VC?=
- =?us-ascii?Q?4mgjdexm2gaawWEe5mWbpa0oIxpvzXX7ryFQM7jUM/M7O7e9I6VIMDON3+qu?=
- =?us-ascii?Q?gJMXWRf5gRMC1OsXfumUjLMYGURTaSFvI33TvZGSlQCmlF2M8UErkmCKls0B?=
- =?us-ascii?Q?GIe6/nrmmtfU+I3iKsNmQv4jVWl2wrylrI7g+UgUnvqgYcrBNv5aAScaRTb0?=
- =?us-ascii?Q?3+PrucI8srPshB2EL9ey6TwWOwXMytjuSZCo4m8Ew4v21WAyFXs9lCxdFYwj?=
- =?us-ascii?Q?ZZRVgXq5nH99GGhIrH+s1goSUZZkAbGbAz2kTXAdz4tVelClgzRPQuaoyZRS?=
- =?us-ascii?Q?g8wBtc/LNxFALC68mDOmvQK5cKmUqs1+u4SLvbg7bViIlTpC0NZJhn4jvM4g?=
- =?us-ascii?Q?sQsgt6i7xqYqYGTBhBCGpIYFp5gcIsr6/b+dBoVv1zPHJUTJiFEHpYnlPAtA?=
- =?us-ascii?Q?84/TGLg/ku62VwHirK5SDbXMOglt4A8lWeb97DGhFxLdIehlgcwcro+QsfHR?=
- =?us-ascii?Q?dtmwk/COCAOuzFNGnuI3t353PQKdQLmPMW7r8NIPQjo/0Enzj4JcLu980IbB?=
- =?us-ascii?Q?R7C/rspLyCaselLdcsgHObBt1jvyeZP82btH+zAtB+sBTdkyeS/VRlTGSFOL?=
- =?us-ascii?Q?Rbn7YiFbJ3+on7RcvAUN6Rj7Tk8mONyuiDWP1szfywr+Gzoa/0H6YvRGFrd+?=
- =?us-ascii?Q?IoXwsC/B1cbnMwk57ttwgekB6ecCNwkE8r8N02UV1onIcR+2ywlJ+4gji/dJ?=
- =?us-ascii?Q?MxJI9y8ozg8wRV0yaCXNyGKlkku3lZXL5VAHwuJ5weRbqAfpPezEcW723xcY?=
- =?us-ascii?Q?p01HGcX/SU8c864iBY1rIZTvV1wHKNBtPwgbNEUX4J3Usnu1Bmf6XDd/tcIA?=
- =?us-ascii?Q?ADTKJbVnG2XVw+NnguriJUZB3nzQphX3cNc5c9jrC65TGSP0wbeaCYrqYP0R?=
- =?us-ascii?Q?iaSmWOWH/caWKH/AUdzCZBZIN6qgeHoRFzhOdManvO7cjpmge9l8eBg4h+wb?=
- =?us-ascii?Q?fwcs1nEKz0JTdITb0rmDDe03HSKIKZMFWztiGMYkl5ySQVl+JXUKyw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zXRAYMMMkqxIZ1g5fDKMILH9tzmWNApHWOPN0X6uXHI3GL+EzfE/Cl+x8lQu?=
- =?us-ascii?Q?JZd4yK9hHlFxVtibgCuc/ayk/JkvFfFMd+403MbN4yxCEzCLVOiVEgpOgs5X?=
- =?us-ascii?Q?S91/zfDeQifJ91J+bLQxyP9eMn/D9rIeAMGdCmlpY8YGGrbZCI5dclGrx+Xh?=
- =?us-ascii?Q?7Y93N8S674APIP8ClvmtGtK57SXaOxJtZKJxETXmf1ZH8ftwDIAYTRBzXgu/?=
- =?us-ascii?Q?e/YX+X5ZWj/tU95yg1jUcu2IkNVDGCRYQ97+g47nC6YO8ODGNZmRIEo2/RwJ?=
- =?us-ascii?Q?Z+knMYc+TlALLvtpfniq/KexSQ/KdlRLccO64UhhWFnEVshXbA1ENeC0/sWC?=
- =?us-ascii?Q?Zce5kTFTPCKHz+5E4fxDBz9RbxGWrH11PSq7viCNvwwLXbcqDtnZTqz9LioK?=
- =?us-ascii?Q?iEsEgawB4vMorpuUpiT9ZHClG2Rfp65yBLxaLQAA4BhMZmRd2gjlIezSHL2A?=
- =?us-ascii?Q?jgeB4UGRh+0kC8zIQ3gylYnGwWyefnkl1IAannyHg0LFoKRcYZ0s4PwBtWwd?=
- =?us-ascii?Q?z5PWPZAwDupIl49ywgygSvtPyVgmwTbifwo43Otcy7BuoZ+BzsjTWMgb8e2U?=
- =?us-ascii?Q?g3YbqPwmeLmhM3OyFNrTTV5EIEQKHym//5EYnGqia9lmLBNY6HT2K58wnQKa?=
- =?us-ascii?Q?bPURCVGQ3BsMfp2kaxMAEdBTiE12N1p1qAFjBNajOro6ZYQi3oWWUac+8XbS?=
- =?us-ascii?Q?aOZg2/otkCR+2m5hV5/6gbnyO2aSAvaupPEM0qUxMd3lSa0kgChhTUyGaI8O?=
- =?us-ascii?Q?CSFY4Pl570tZW8yHr0bJ7LmQg/JIhGlPu+8zcz/0KuJAnJHciO6kFD+FQPcI?=
- =?us-ascii?Q?GkYv2/mbeVfSfm96J6kWU8vvi6yhZgLCCA3mo1RebrlnSN7RKE0chmmlOACi?=
- =?us-ascii?Q?VfrvRpJi5/pBew777TG8o9qAluJC5WrOfbVyG1X1GmnoDb1Yq9Xpq9xpk9p7?=
- =?us-ascii?Q?hyw4r6WMZlHrc4GtH9gYRPHvwV6ghfK+JKD+zapPMEZq1v+O53wNHNgp2P+U?=
- =?us-ascii?Q?fWmtEBTOdI23qk/2LlfM5ee3Oiz4PY6CNmpDYHyEYi7UE8fGo+EnaIvYsKqt?=
- =?us-ascii?Q?HNaBAKqpb98LDFnyYhgL60Bs+A2DVd0EjEYOEmKz5aFFlCx8+660D30F0z/X?=
- =?us-ascii?Q?Hhbo6cF1XpTOhAy2w1dwKyUDR7Uc1cfuBaxpRLbcdwEIfsLNKzRY7KqG19m1?=
- =?us-ascii?Q?/IoHQS6sGmBh3NkdLSdxLRPRYs/BphdIDo0tvZPmhmeif1bh9ucqGx/l2Gcg?=
- =?us-ascii?Q?1hmK+enHGesGj8Q5xQJSY1Zsv0hxlBw24nMslzIJscd2F2X+Aez2ssGOgnet?=
- =?us-ascii?Q?AbTLT75L64x3fCXdMz+qx0l27Ml0Hsr/Dbs0tXWRR7wvE3MWWPX+EFgGv1/d?=
- =?us-ascii?Q?VaYEs4aeDVbax/64Qg7FVtEpKGAP7kXfqPbIs7Kj0VjuqwSmu6Iq579QlbzI?=
- =?us-ascii?Q?gLlmCaxHcMXe+7SiaxkJ1ZEl71coMapGvZBeyAKhWEmM+bWO8AaG8z995TLL?=
- =?us-ascii?Q?CMYagO2eo1AXYEt5xV+4RUYx0KG8lVtXWaakk8+YLxQWFcrXZ2Tfypyd3rey?=
- =?us-ascii?Q?vaM5YTkAaU6pHkHtr/xTxDUUtz/jgXpBt7ASgjJV?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c2abdc7-1663-444f-3ca5-08ddf5f118f5
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 13:50:01.6840
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 99CWkKPTSRaj3lI+sfIOsBNNC1Aa5wxXZVR4MS4YT8RbtQFpDlfjab4r5VM3t8k3nztIdFI6QxJUTyWkSLedwQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9237
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
+To: David Hildenbrand <david@redhat.com>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
+ pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
+ <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
+ <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com> <87v7lh891c.ffs@tglx>
+ <95ff36c2-284a-46ba-984b-a3286402ebf8@redhat.com>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <95ff36c2-284a-46ba-984b-a3286402ebf8@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 03:34:55PM +0000, Joonwon Kang wrote:
->Although it is guided that `#mbox-cells` must be at least 1, there are
->many instances of `#mbox-cells = <0>;` in the device tree. If that is
->the case and the corresponding mailbox controller does not provide
->`of_xlate` function pointer, `of_mbox_index_xlate()` will be used by
->default and undefined behaviors could occur in that function.
->
->Below is a problematic control flow which results in undefined behavior
->when `#mbox-cells = <0>;`.
->
->```
->static struct mbox_chan *
->of_mbox_index_xlate(struct mbox_controller *mbox,
->                    const struct of_phandle_args *sp)
->{
->    int ind = sp->args[0];					// (4)
->
->    if (ind >= mbox->num_chans)					// (5)
->        return ERR_PTR(-EINVAL);
->
->    return &mbox->chans[ind];					// (6)
->}
->
->struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
->{
->    struct of_phandle_args spec;				// (1)
->
->    if (of_parse_phandle_with_args(dev->of_node, "mboxes",	// (2)
->        "#mbox-cells", index, &spec)) {
->        ...
->    }
->
->    list_for_each_entry(mbox, &mbox_cons, node)
->        if (mbox->dev->of_node == spec.np) {
->            chan = mbox->of_xlate(mbox, &spec);			// (3)
->            if (!IS_ERR(chan))
->                break;
->        }
->    ...
->    ret = __mbox_bind_client(chan, cl);				// (7)
->    ...
->}
->
->static int __mbox_bind_client(struct mbox_chan *chan,
->                              struct mbox_client *cl)
->{
->    if (chan->cl || ...) {					// (8)
->}
->````
->
->(1) `spec.args[]` is filled with arbitrary leftover values in the stack.
->    Let's say that `spec.args[0] == 0xffffffff`.
->(2) Since `#mbox-cells = <0>;`, `spec.args_count` is assigned 0 and
->    `spec.args[]` are untouched.
->(3) Since the controller does not provide `of_xlate`,
->    `of_mbox_index_xlate()` is used instead.
->(4) `idx` is assigned -1 due to the value of `spec.args[0]`.
->(5) Since `mbox->num_chans >= 0` and `idx == -1`, this condition does
->    not filter out this case.
->(6) Out-of-bounds address is returned. Depending on what was left in
->    `spec.args[0]`, it could be an arbitrary(but confined to a specific
->    range) address.
->(7) A function is called with the out-of-bounds address.
->(8) The out-of-bounds address is accessed.
 
-There is no need to write such long commit log to describe the issue
-which is easy to understand what it is.
 
-And the subject should be improved:
-mailbox: Avoid out-of-band access in of_mbox_index_xlate()
+On 9/17/25 17:46, David Hildenbrand wrote:
+> On 17.09.25 16:10, Thomas Gleixner wrote:
+>> On Wed, Sep 17 2025 at 09:16, David Hildenbrand wrote:
+>>> On 17.09.25 07:43, Eugen Hristev wrote:
+>>>> On 9/17/25 00:16, Thomas Gleixner wrote:
+>>>>> I pointed you to a solution for that and just because David does not
+>>>>> like it means that it's acceptable to fiddle in subsystems and expose
+>>>>> their carefully localized variables.
+>>>
+>>> It would have been great if we could have had that discussion in the
+>>> previous thread.
+>>
+>> Sorry. I was busy with other stuff and did not pay attention to that
+>> discussion.
+> 
+> I understand, I'm busy with too much stuff such that sometimes it might 
+> be good to interrupt me earlier: "David, nooo, you're all wrong"
+> 
+>>
+>>> Some other subsystem wants to have access to this information. I agree
+>>> that exposing these variables as r/w globally is not ideal.
+>>
+>> It's a nono in this case. We had bugs (long ago) where people fiddled
+>> with this stuff (I assume accidentally for my mental sanity sake) and
+>> caused really nasty to debug issues. C is a horrible language to
+>> encapsulate stuff properly as we all know.
+> 
+> Yeah, there is this ACCESS_PRIVATE stuff but it only works with structs 
+> and relies on sparse IIRC.
+> 
+>>
+>>> I raised the alternative of exposing areas or other information through
+>>> simple helper functions that kmemdump can just use to compose whatever
+>>> it needs to compose.
+>>>
+>>> Do we really need that .section thingy?
+>>
+>> The section thing is simple and straight forward as it just puts the
+>> annotated stuff into the section along with size and id and I definitely
+>> find that more palatable, than sprinkling random functions all over the
+>> place to register stuff.
+>>
+>> Sure, you can achieve the same thing with an accessor function. In case
+>> of nr_irqs there is already one: irq_get_nr_irqs(), but for places which
+> 
+> Right, the challenge really is that we want the memory range covered by 
+> that address, otherwise it would be easy.
+> 
+>> do not expose the information already for real functional reasons adding
+>> such helpers just for this coredump muck is really worse than having a
+>> clearly descriptive and obvious annotation which results in the section
+>> build.
+> 
+> Yeah, I'm mostly unhappy about the "#include <linux/kmemdump.h>" stuff.
+> 
+> Guess it would all feel less "kmemdump" specific if we would just have a 
+> generic way to tag/describe certain physical memory areas and kmemdump 
+> would simply make use of that.
 
->
->This commit prevents the undefined behavior by checking the array bounds
->and matching the types of the argument for correct filtering.
->
->Signed-off-by: Joonwon Kang <joonwonkang@google.com>
->---
-> drivers/mailbox/mailbox.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
->index 5cd8ae222073..6ed53868c83d 100644
->--- a/drivers/mailbox/mailbox.c
->+++ b/drivers/mailbox/mailbox.c
->@@ -474,9 +474,9 @@ static struct mbox_chan *
-> of_mbox_index_xlate(struct mbox_controller *mbox,
-> 		    const struct of_phandle_args *sp)
-> {
->-	int ind = sp->args[0];
->+	uint32_t ind = sp->args[0];
+The idea was to make "kmemdump" exactly this generic way to tag/describe
+the memory.
+If we would call it differently , simply dump , would it be better ?
+e.g. include linux/dump.h
+and then DUMP(var, size) ?
 
-int should be fine.
+could we call it maybe MARK ? or TAG ?
+TAG_MEM(area, size)
+
+this would go to a separate section called .tagged_memory.
+
+Then anyone can walk through the section and collect the data.
+
+I am just coming up with ideas here.
+Could it be even part of mm.h instead of having a new header perhaps ?
+Then we won't need to include one more.
 
 > 
->-	if (ind >= mbox->num_chans)
->+	if (sp->args_count < 1 || ind >= mbox->num_chans)
-> 		return ERR_PTR(-EINVAL);
+> For example, wondering if it could come in handy to have an ordinary 
+> vmcoreinfo header contain this information as well?
+> 
+> Case in point, right now we do in crash_save_vmcoreinfo_init()
+> 
+> 	VMCOREINFO_SYMBOL_ARRAY(mem_section);
+> 	VMCOREINFO_LENGTH(mem_section, NR_SECTION_ROOTS);
+> 	VMCOREINFO_STRUCT_SIZE(mem_section);
+> 
+> And in kmemdump code we do
+> 
+> 	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_mem_section,
+> 			     (void *)&mem_section, sizeof(mem_section));
+> 
+> I guess both cases actually describe roughly the same information: An 
+> area with a given name.
+> 
+> Note 1: Wondering if sizeof(mem_section) is actually correct in the 
+> kmemdump case
+> 
+> Note 2: Wondering if kmemdump would also want the struct size, not just 
+> the area length.
 
-Regards
-Peng
+For kmemdump, right now, debugging without vmlinux symbols is rather
+impossible, so we have all that information from vmlinux.
+> 
+> (memblock alloc wrappers are a separate discussion)
+> 
+>>
+>> The charm of sections is that they don't neither extra code nor stubs or
+>> ifdeffery when a certain subsystem is disabled and therefore no
+>> information available.
+> 
+> Extra code is a very good point.
+> 
+>>
+>> I'm not insisting on sections, but having a table of 2k instead of
+>> hundred functions, stubs and whatever is definitely a win to me.
+> 
+> So far it looks like it's not that many, but of course, the question 
+> would be how it evolves.
+> 
+
 
