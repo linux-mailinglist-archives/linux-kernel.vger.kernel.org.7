@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-820522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDA3B7D279
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3828AB7D9F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD073B5D84
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77B01C031EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089F929BDA3;
-	Wed, 17 Sep 2025 11:03:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9272248B0;
-	Wed, 17 Sep 2025 11:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A182D9EE5;
+	Wed, 17 Sep 2025 11:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e10JiuyG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB692BEC42;
+	Wed, 17 Sep 2025 11:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758107031; cv=none; b=dbZAviAGIjndqwOr2FZz+sc6SiiGWacPTTmtfq2ldyyg88cs3hUq4n4AQ590yS2/KObPgbZ656Mu/NJwxCv+VrQBu+9AR1LJKaP3hfhwJ8x6gJ0PaQF6LO88/zSXqvur/ka+n8Tu1OGwLA3SE5c2hf+1/+wNK/Bs4y7XODxWC68=
+	t=1758107135; cv=none; b=AaYJ3Ygzlvlsi8OpgnIRCJHpkG6fCCUrf/aR7f+1B86C794Y4dzN37FA73eIEJk8LUajvfwz5PnXydkFyXLieSPDjHTOlOI47CQoEpAWdC6Qlic3LyFj5BYIlgSzKmDpgSATtmGk6cEmQVYi2WSrhJh4QULlzdU6Z25kT64WAd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758107031; c=relaxed/simple;
-	bh=nc8Q9E3OvyBkeas0GLrDvnpayNQJWT8K4tsGGXORGmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=quPrk7Kk25s9YAzp2/7H7aEDrK8U/vMncUIV1HRZRwTMiTPRTnJrqL3vEsheQ35UyisxTJhQ4fSLgnL9D61gGfnc5/kSil8m6XsoRmZDBuQkWx7p3I2saFJrIeE0Jr1NrYlKHWW67ZpsIB0ueBb9tq/3Lv2m9Qc9yna4BAdrZmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5D022696;
-	Wed, 17 Sep 2025 04:03:40 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3C293F66E;
-	Wed, 17 Sep 2025 04:03:44 -0700 (PDT)
-Message-ID: <d9f6bfa6-4d58-4467-aa97-4e46f88e919e@arm.com>
-Date: Wed, 17 Sep 2025 12:03:43 +0100
+	s=arc-20240116; t=1758107135; c=relaxed/simple;
+	bh=aYfiGscODZY08nTaVOaMHh+BkAmQFeULqygoaWas8mk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGPqkWxKAWzpIEwRHs2z5pH0OvNqoqj/Zm6eIyh/FIxvBxNvYs69Fo8Ii8pQUbgXXcnNObO18IfGHMfAdUIpjEjBJXfs21ZesDasEz7SMXlhEv0mxMsmX8eNHAvBFK7AxQcKchNaNrSoiQP+JgmkH6H9pP2C1jxbHSpwkke0o7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e10JiuyG; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758107133; x=1789643133;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aYfiGscODZY08nTaVOaMHh+BkAmQFeULqygoaWas8mk=;
+  b=e10JiuyGMW/VSs95vPJz/T5yhXtT90is6xUc0b98eFP1NOjtjboMh+Oh
+   7QAM+wg4CfeCqAS3hnftb2TqIZ4YDekOszRa9oJu9wHsDkag+tYG87xa2
+   t4WB8r5G3HIONglexOPVJp0mOAe9CIRaKe9yRqvt+5nxkSyh5WJvAAMUw
+   a5ACtfbl0BD0yewORz4TcBXcxSJP0+k611wcfIIJX+hnZarS1DG4+uiq6
+   Idh7mwrSimGqTTYeZZMtBrW796oJ9NP2MERuXxYC8DRTk7+c57m9+fu8t
+   wEhDExKFW6H7paaokR65eqVRIg1wbAadNp63AByr1C8ZPiQy//PcqIFjP
+   A==;
+X-CSE-ConnectionGUID: Wj3QbtN0TeiVwHmVwRMSpA==
+X-CSE-MsgGUID: kfjVKoiVQna12zW9EVix0A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="78014332"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="78014332"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 04:05:32 -0700
+X-CSE-ConnectionGUID: K61CCjLJSi2MLr0tbHiVbQ==
+X-CSE-MsgGUID: DjGYdbNkTqy4ceeBIqZFDA==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Sep 2025 04:05:29 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uypyZ-0001Pf-2G;
+	Wed, 17 Sep 2025 11:05:27 +0000
+Date: Wed, 17 Sep 2025 19:05:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	jishnu.prakash@oss.qualcomm.com
+Subject: Re: [PATCH v2 3/4] regulator: rpmh-regulator: Add support for new
+ resource name format
+Message-ID: <202509171822.oRjF64pS-lkp@intel.com>
+References: <20250916-glymur-rpmh-regulator-driver-v2-3-c6593ff9b4be@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/29] arm_mpam: Add probe/remove for mpam msc driver
- and kbuild boiler plate
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-8-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-8-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-glymur-rpmh-regulator-driver-v2-3-c6593ff9b4be@oss.qualcomm.com>
 
-Hi James,
+Hi Kamal,
 
-On 9/10/25 21:42, James Morse wrote:
-> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
-> only be accessible from those CPUs, and they may not be online.
-> Touching the hardware early is pointless as MPAM can't be used until
-> the system-wide common values for num_partid and num_pmg have been
-> discovered.
-> 
-> Start with driver probe/remove and mapping the MSC.
-> 
-> CC: Carl Worth <carl@os.amperecomputing.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
+kernel test robot noticed the following build warnings:
 
-> diff --git a/drivers/resctrl/Makefile b/drivers/resctrl/Makefile
-> new file mode 100644
-> index 000000000000..92b48fa20108
-> --- /dev/null
-> +++ b/drivers/resctrl/Makefile
-> @@ -0,0 +1,4 @@
-> +obj-$(CONFIG_ARM64_MPAM_DRIVER)			+= mpam.o
-> +mpam-y						+= mpam_devices.o
-> +
-> +cflags-$(CONFIG_ARM64_MPAM_DRIVER_DEBUG)	+= -DDEBUG
+[auto build test WARNING on c3067c2c38316c3ef013636c93daa285ee6aaa2e]
 
-s/cflags/ccflags/
+url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Wadhwa/dt-bindings-rpmh-regulator-Add-compatibles-for-PMH01XX-PMCX0102/20250916-210231
+base:   c3067c2c38316c3ef013636c93daa285ee6aaa2e
+patch link:    https://lore.kernel.org/r/20250916-glymur-rpmh-regulator-driver-v2-3-c6593ff9b4be%40oss.qualcomm.com
+patch subject: [PATCH v2 3/4] regulator: rpmh-regulator: Add support for new resource name format
+config: i386-buildonly-randconfig-001-20250917 (https://download.01.org/0day-ci/archive/20250917/202509171822.oRjF64pS-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250917/202509171822.oRjF64pS-lkp@intel.com/reproduce)
 
-Thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509171822.oRjF64pS-lkp@intel.com/
 
-Ben
+All warnings (new ones prefixed by >>):
 
+>> Warning: drivers/regulator/qcom-rpmh-regulator.c:47 Enum value 'NUM_REGULATOR_TYPES' not described in enum 'regulator_hw_type'
+>> Warning: drivers/regulator/qcom-rpmh-regulator.c:167 bad line:                                 on the PMIC.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
