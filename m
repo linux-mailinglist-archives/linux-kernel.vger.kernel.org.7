@@ -1,146 +1,224 @@
-Return-Path: <linux-kernel+bounces-819947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67771B7CDCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:11:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CACAB7CE8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18076327A7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:53:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 969127A3C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E032D9EFE;
-	Wed, 17 Sep 2025 03:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GJ3aZv8e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484DE2F7445;
+	Wed, 17 Sep 2025 03:54:40 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D4F26C3BF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8E42E1F0D;
+	Wed, 17 Sep 2025 03:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758081175; cv=none; b=RItkV3Ml/Y9VqXmvY2z5dKEAynVe6fKPa+Yt7AhMdgMX92Q8f2EEGSWjeDMA719EDaB3oIeHImdMZN2CPQu4gcQrETyPT14jLnQc5oGgHSvjd7ih6JgyrPEVmhq84wXrNiMZ7+YEntaUkhqId7R2DsFVKkpRtYuC01OgROC2YnQ=
+	t=1758081279; cv=none; b=CMiCrs59h3k4DOn6peSQIwNQHnzaCxb8YKRViWIYZ+KmUnlUxgg5IMhmtuhz2ZbpvVObbco0mEQ/q8V5Zt4T40tt1NRx7+RyDqpzNvk/duVqdK2aZcSR8wnii4Lhe3jzB/sZYnYXhsS1OAVCebtCgKl7niFipdh5X4ni/DM3tX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758081175; c=relaxed/simple;
-	bh=CBOTbMPLyW6Qri05HDDpBJ2PvCULc1vyqw9jSPetlDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X9500LOAayfwnBYwvgb8abiY7JnU4GYeOtG/MxuC1I3v+9oQF3F2ZNnPOWGDFI6aLvjCWHxaUxRk298rrnErIczoXjBSuTNLehcL0p748ffRTcuItvIJpGLJ36sC56FRKUidus8qDOAZMrvzmb2caixVuY2quVDDZfvvX/hAQ+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GJ3aZv8e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758081172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JrKEzK18eUta4tCPwqfVqVURTriuK6G2hxnic40XtZ8=;
-	b=GJ3aZv8evllYRCSZEuFhdvE9/dVM379aHMkQPvwlr6nl+OGPQrQKM+5Wsl8z3OHDE/RK1y
-	0kwCmb5mRlECwWwQZbV/N1kOhpLYAzWUU+SGN5biluZvfmTqwPun02H0AZ0TKdhy9r0ScT
-	Z7Gtn0ACWh5nGLSsI2tYlPPSpHgobJ0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-609-o75eMzOhNeaoS7J23TH45A-1; Tue,
- 16 Sep 2025 23:52:49 -0400
-X-MC-Unique: o75eMzOhNeaoS7J23TH45A-1
-X-Mimecast-MFC-AGG-ID: o75eMzOhNeaoS7J23TH45A_1758081168
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	s=arc-20240116; t=1758081279; c=relaxed/simple;
+	bh=Q2kM3lnHr5P4zMjlGfNl/diKMPh85vv3c9VIC7C07HA=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=d1h+n1rMlhV+PdTvGr+vKN6e1Med7gEe3D8ae3hDWpj40e7H2uWvi6FJGIlC8+07QPfYX1wPRkpHZcT7Y0ZkHi1iPV66bF6geQv2mQDHujFtSeYzCAONo2jwKS+bd0Mp6k0vBUBI/6yofBJvFtLzT01Cpnv85vIZ6pEr+szhydk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1937919560B0;
-	Wed, 17 Sep 2025 03:52:48 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.8])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 149291800446;
-	Wed, 17 Sep 2025 03:52:43 +0000 (UTC)
-Date: Wed, 17 Sep 2025 11:52:38 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Shuah Khan <shuah@kernel.org>, linux-block@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] selftests: ublk: add test to verify that feat_map is
- complete
-Message-ID: <aMowhqjOND9EdiKh@fedora>
-References: <20250916-ublk_features-v1-0-52014be9cde5@purestorage.com>
- <20250916-ublk_features-v1-3-52014be9cde5@purestorage.com>
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cRPz71x8Qz5B146;
+	Wed, 17 Sep 2025 11:54:27 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 58H3r3u6005823;
+	Wed, 17 Sep 2025 11:53:04 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 17 Sep 2025 11:53:05 +0800 (CST)
+Date: Wed, 17 Sep 2025 11:53:05 +0800 (CST)
+X-Zmail-TransId: 2afb68ca30a15ba-e6a56
+X-Mailer: Zmail v1.0
+Message-ID: <20250917115305176nSeCtz0xVxMrUHVC_vRd4@zte.com.cn>
+In-Reply-To: <20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn>
+References: 20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-ublk_features-v1-3-52014be9cde5@purestorage.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <shao.mingyin@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <wang.longjie1@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHY1IDEvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIHViaWZzLnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 58H3r3u6005823
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Wed, 17 Sep 2025 11:54:27 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68CA30F3.000/4cRPz71x8Qz5B146
 
-On Tue, Sep 16, 2025 at 04:05:57PM -0600, Uday Shankar wrote:
-> Add a test that verifies that the currently running kernel does not
-> report support for any features that are unrecognized by kublk. This
-> should catch cases where features are added without updating kublk's
-> feat_map accordingly, which has happened multiple times in the past (see
-> [1], [2]).
-> 
-> Note that this new test may fail if the test suite is older than the
-> kernel, and the newer kernel contains a newly introduced feature. I
-> believe this is not a use case we currently care about - we only care
-> about newer test suites passing on older kernels.
-> 
-> [1] https://lore.kernel.org/linux-block/20250606214011.2576398-1-csander@purestorage.com/t/#u
-> [2] https://lore.kernel.org/linux-block/2a370ab1-d85b-409d-b762-f9f3f6bdf705@nvidia.com/t/#m1c520a058448d594fd877f07804e69b28908533f
-> 
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-> ---
->  tools/testing/selftests/ublk/Makefile           |  1 +
->  tools/testing/selftests/ublk/test_generic_13.sh | 16 ++++++++++++++++
->  2 files changed, 17 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/ublk/Makefile b/tools/testing/selftests/ublk/Makefile
-> index 5d7f4ecfb81612f919a89eb442f948d6bfafe225..770269efe42ab460366485ccc80abfa145a0c57b 100644
-> --- a/tools/testing/selftests/ublk/Makefile
-> +++ b/tools/testing/selftests/ublk/Makefile
-> @@ -20,6 +20,7 @@ TEST_PROGS += test_generic_09.sh
->  TEST_PROGS += test_generic_10.sh
->  TEST_PROGS += test_generic_11.sh
->  TEST_PROGS += test_generic_12.sh
-> +TEST_PROGS += test_generic_13.sh
->  
->  TEST_PROGS += test_null_01.sh
->  TEST_PROGS += test_null_02.sh
-> diff --git a/tools/testing/selftests/ublk/test_generic_13.sh b/tools/testing/selftests/ublk/test_generic_13.sh
-> new file mode 100755
-> index 0000000000000000000000000000000000000000..ff5f22b078ddd08bc19f82aa66da6a44fa073f6f
-> --- /dev/null
-> +++ b/tools/testing/selftests/ublk/test_generic_13.sh
-> @@ -0,0 +1,16 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +. "$(cd "$(dirname "$0")" && pwd)"/test_common.sh
-> +
-> +TID="generic_13"
-> +ERR_CODE=0
-> +
-> +_prep_test "null" "check that feature list is complete"
-> +
-> +if ${UBLK_PROG} features | grep -q unknown; then
-> +        ERR_CODE=255
-> +fi
-> +
-> +_cleanup_test "null"
-> +_show_result $TID $ERR_CODE
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-What if the ublk selftest is run on downstream kernel?
+translate the "ubifs.rst" into Simplified Chinese.
 
-Maybe the output can changed to "unsupported" to show that ublk selftest
-code doesn't cover or use this feature.
+Update to commit 5f5cae9b0e81("Documentation: ubifs: Fix
+compression idiom")
 
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+---
+v4->v5
+fix some format issues.
+ .../translations/zh_CN/filesystems/index.rst  |   2 +-
+ .../translations/zh_CN/filesystems/ubifs.rst  | 114 ++++++++++++++++++
+ 2 files changed, 115 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs.rst
 
-
-Thanks,
-Ming
-
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index 9f2a8b003778..6049b599dec8 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -26,4 +26,4 @@ Linux Kernel中的文件系统
+    virtiofs
+    debugfs
+    tmpfs
+-
++   ubifs
+diff --git a/Documentation/translations/zh_CN/filesystems/ubifs.rst b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+new file mode 100644
+index 000000000000..16c28bfd6fc3
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+@@ -0,0 +1,114 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/filesystems/ubifs.rst
++
++:翻译:
++
++   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++
++============
++UBI 文件系统
++============
++
++简介
++====
++
++UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 代表无序块镜
++像（Unsorted Block Images）。UBIFS 是一种闪存文件系统，这意味着它专为闪
++存设备设计。需要理解的是，UBIFS与 Linux 中任何传统文件系统（如 Ext2、
++XFS、JFS 等）完全不同。UBIFS 代表一类特殊的文件系统，它们工作在 MTD 设备
++而非块设备上。该类别的另一个 Linux 文件系统是 JFFS2。
++
++为更清晰说明，以下是 MTD 设备与块设备的简要比较：
++
++1. MTD 设备代表闪存设备，由较大尺寸的擦除块组成，通常约 128KiB。块设备由
++   小块组成，通常 512 字节。
++2. MTD 设备支持 3 种主要操作：在擦除块内偏移位置读取、在擦除块内偏移位置写
++   入、以及擦除整个擦除块。块设备支持 2 种主要操作：读取整个块和写入整个块。
++3. 整个擦除块必须先擦除才能重写内容。块可直接重写。
++4. 擦除块在经历一定次数的擦写周期后会磨损，通常 SLC NAND 和 NOR 闪存为
++   100K-1G 次，MLC NAND 闪存为 1K-10K 次。块设备不具备磨损特性。
++5. 擦除块可能损坏（仅限 NAND 闪存），软件需处理此问题。硬盘上的块通常不会损
++   坏，因为硬件有坏块替换机制（至少现代 LBA 硬盘如此）。
++
++这充分说明了 UBIFS 与传统文件系统的本质差异。
++
++UBIFS 工作在 UBI 层之上。UBI 是一个独立的软件层（位于 drivers/mtd/ubi），
++本质上是卷管理和磨损均衡层。它提供称为 UBI 卷的高级抽象，比 MTD 设备更上层。
++UBI 设备的编程模型与 MTD 设备非常相似，仍由大容量擦除块组成，支持读/写/擦
++除操作，但 UBI 设备消除了磨损和坏块限制（上述列表的第 4 和第 5 项）。
++
++某种意义上，UBIFS 是 JFFS2 文件系统的下一代产品，但它与 JFFS2 差异巨大且
++不兼容。主要区别如下：
++
++* JFFS2 工作在 MTD 设备之上，UBIFS 依赖于 UBI 并工作在 UBI 卷之上。
++* JFFS2 没有介质索引，需在挂载时构建索引，这要求全介质扫描。UBIFS 在闪存
++  介质上维护文件系统索引信息，无需全介质扫描，因此挂载速度远快于 JFFS2。
++* JFFS2 是直写（write-through）文件系统，而 UBIFS 支持回写
++  （write-back），这使得 UBIFS 写入速度快得多。
++
++与 JFFS2 类似，UBIFS 支持实时压缩，可将大量数据存入闪存。
++
++与 JFFS2 类似，UBIFS 能容忍异常重启和断电。它不需要类似 fsck.ext2 的工
++具。UBIFS 会自动重放日志并从崩溃中恢复，确保闪存数据结构的一致性。
++
++UBIFS 具有对数级扩展性（其使用的数据结构多为树形），因此挂载时间和内存消耗不
++像 JFFS2 那样线性依赖于闪存容量。这是因为 UBIFS 在闪存介质上维护文件系统
++索引。但 UBIFS 依赖于线性扩展的 UBI 层，因此整体 UBI/UBIFS 栈仍是线性扩
++展。尽管如此，UBIFS/UBI 的扩展性仍显著优于 JFFS2。
++
++UBIFS 开发者认为，未来可开发同样具备对数级扩展性的 UBI2。UBI2 将支持与
++UBI 相同的 API，但二进制不兼容。因此 UBIFS 无需修改即可使用 UBI2。
++
++挂载选项
++========
++
++(*) 表示默认选项。
++
++====================    =======================================================
++bulk_read               批量读取以利用闪存介质的顺序读取加速特性
++no_bulk_read (*)        禁用批量读取
++no_chk_data_crc (*)     跳过数据节点的 CRC 校验以提高读取性能。 仅在闪存
++                        介质高度可靠时使用此选项。 此选项可能导致文件内容损坏无法被
++                        察觉。
++chk_data_crc            强制校验数据节点的 CRC
++compr=none              覆盖默认压缩器，设置为"none"
++compr=lzo               覆盖默认压缩器，设置为"LZO"
++compr=zlib              覆盖默认压缩器，设置为"zlib"
++auth_key=               指定用于文件系统身份验证的密钥。
++                        使用此选项将强制启用身份验证。
++                        传入的密钥必须存在于内核密钥环中， 且类型必须是'logon'
++auth_hash_name=         用于身份验证的哈希算法。同时用于哈希计算和 HMAC
++                        生成。典型值包括"sha256"或"sha512"
++====================    =======================================================
++
++快速使用指南
++============
++
++挂载的 UBI 卷通过 "ubiX_Y" 或 "ubiX:NAME" 语法指定，其中 "X" 是 UBI
++设备编号，"Y" 是 UBI 卷编号，"NAME" 是 UBI 卷名称。
++
++将 UBI 设备 0 的卷 0 挂载到 /mnt/ubifs::
++
++    $ mount -t ubifs ubi0_0 /mnt/ubifs
++
++将 UBI 设备 0 的 "rootfs" 卷挂载到 /mnt/ubifs（"rootfs" 是卷名）::
++
++    $ mount -t ubifs ubi0:rootfs /mnt/ubifs
++
++以下是内核启动参数的示例，用于将 mtd0 附加到 UBI 并挂载 "rootfs" 卷：
++ubi.mtd=0 root=ubi0:rootfs rootfstype=ubifs
++
++参考资料
++========
++
++UBIFS 文档及常见问题解答/操作指南请访问 MTD 官网：
++
++- http://www.linux-mtd.infradead.org/doc/ubifs.html
++- http://www.linux-mtd.infradead.org/faq/ubifs.html
+-- 
+2.27.0
 
