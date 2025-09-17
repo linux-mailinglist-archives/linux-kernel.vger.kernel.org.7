@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-821108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715C6B80706
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:13:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9696B8074B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015C33ADBD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:11:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33422188E1F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82AE32E726;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE65A32E745;
 	Wed, 17 Sep 2025 15:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DpPsVx+S"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="LoOmsI2K"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6002F49EB;
-	Wed, 17 Sep 2025 15:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5900E32BC07
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758121872; cv=none; b=szj12TX+s8yNRGZM6Rn93821EMl49uM/ksrzv9Jrt89/ywmUvUKYq49qfQaHz1fJf+3wwpvc8Gn8hZQpBgz3amJZ91DMaqHmdLifPiocSGRJulw86kEvHLfI4SFrM13nm7VPnRUVr8UfvBcdYhIpJ/cmV3E62AMTKkAGDuQsjkc=
+	t=1758121872; cv=none; b=CvWPc0xIaDcFyfZSIQtfezTB036RbWJXfLaqNkiWgFpIB3DeMLu44OKksl7hxkZW+e4A33kNU78+pXm3sJJ2oyoabJfndwmUYpJ3bTNVLk1tFXexHa694pTVp5x3iayBbPOnpTWkJDvx3wWBkpxxZ1d/l1C6KoWkYdp+X+Vk0PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758121872; c=relaxed/simple;
-	bh=Zr9ly5vUCTSEt2ECzSEbT3wV+t5UqSaNiO+FAr4ESxw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YngckJ7H1CYkr4DMNvZLdzkOt4By/Glexy6G4vLN9heSGVDK1Y6Fd1VE2pAUlkP4hqYeGYMzd4WooN6TUoEUZ1gWJJa0ImceHcWw3CbSCF1b/SMxx6J5uZcq8dIhJFUUoyttPa/tzCzMjWeb+GZVduPi1fuxP7hYBboBjyhR/ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DpPsVx+S; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BA2A240AFB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1758121862; bh=6l5JXS0ooZIaiqsm0blDM5iBQJ72/GZBEez8roRV8F0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DpPsVx+SyU+34gLPGZe4OEi6BJlJL/auCV9k+1gg7M+XYd1RpIzzZ0LGE5U3J+wdk
-	 mFu3a+AzU/cAA/NSnVo/re3RXF+45mC+12D0HJngTaDNq2Jao3EXf8BD83MdpgXxQI
-	 wi5zntCePzTNZC+7AUQNnsnAuflCSD7MGcsN/ckCa/rb+Q8HzlRqyPXDPmogeywgG+
-	 PVbXyCjBisNzPq666fzi23jBY4ANy+r9DwXR4QITn1OeSBjjjP7CV6+gVntkCTHVDA
-	 pjrSfwgiO5Q4SsvOsDomSZyCw+ENK0z4CyuUq3G4WDOCYSmb3aCyJhG003Aq6kp5DQ
-	 LpkztrmZYKIEg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id BA2A240AFB;
-	Wed, 17 Sep 2025 15:11:02 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Akira Yokosawa <akiyks@gmail.com>, mchehab+huawei@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula
- <jani.nikula@linux.intel.com>, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v6 10/21] tools/docs: sphinx-build-wrapper: add a
- wrapper for sphinx-build
-In-Reply-To: <1d454604-288d-4185-8567-836e06b3cbea@gmail.com>
-References: <4d4dc78a4e29f2478fd1c1a746378dc61a090ca3.1758018030.git.mchehab+huawei@kernel.org>
- <1d454604-288d-4185-8567-836e06b3cbea@gmail.com>
-Date: Wed, 17 Sep 2025 09:11:01 -0600
-Message-ID: <875xdhazcq.fsf@trenco.lwn.net>
+	bh=64hrnh+G03ii19qLsbC+gKG4i0vub0qBYZGHShiMxCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3Q1dtqpvSvnAM4Ab/+ABw1LXnk7OpwYf5cuVgBIE7kss+gnbyMUeey1S6Q3pAdriPi5fdYAwdxsNfk8m8pHNXws8fw+f4KfTP16Ra9kW3UBQOngKQbrlUrgwdE8sQbSm2Leq+4hWePOHHDsAFmNXbCAKsZgDO1fcn34hcPiD1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=LoOmsI2K; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2570bf6058aso87635855ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1758121869; x=1758726669; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=weVpY5S2PB5qtPhKTuvCTrn7esiEfFzwXr1/dTkYFP8=;
+        b=LoOmsI2Ks/zUbNEF+n7QQuSDSGgM7521H/F7bpcAFz5soGS5OWWMIvOx7D2A705LyS
+         wzPdwzp+dpnx74tuW9tCfPTRq5GNu8Hy3ZC4XZ5nsaaFrAELNtxwuSAUdRFKbRRJllPO
+         ehDcrhfC+QWfPX8edW019IlBV4TS7he1XlvZCfbfOHahOQuXuvyqUpfUtLT6YdMijqGW
+         MEvLQb32snj70zkRsGaTEbxmIa+KwdvAnxXCZN+OcEpkfILFYhOGghhdduBGOjU85uq6
+         nMve4I/mPo8klnuNu742MN/6OLpPcLqqkm8P6rvdh1OjyVxbE4ia5hqPFry/MsT8kv/P
+         TUjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758121869; x=1758726669;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=weVpY5S2PB5qtPhKTuvCTrn7esiEfFzwXr1/dTkYFP8=;
+        b=CKcAWp9XnJdhgCiY8hpfJGfMR+vPyVIgV5KqHYv+o5plXbXAvHdBG70kLkpjBRw8x3
+         /gXdcUZNFeTz6K6HeQxzEDreg9WDafSb0SaHBF0SLlR2aDnFHArc47qEIN5vNF54iKIj
+         IFAIA7tvvRrP9gF0IGPK4kveefEBbpfHWekH/OW7BHmtt0Zey5iBV/bSj4J2fQShv867
+         ATkB8dXe4bosryPeQc1MiSMhWRKOrEcuqPpAwKDYhM6CY+pdUkWsFujN4xFr3oE9ik58
+         M7MZTKVfsdhEZudyIeJEK5ApuZjfcUJ3ObKo2PQG/pvZDFg38PbHrEP3XgbUxc4niQvR
+         g9wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNb3XomDr/scbzP9yQrzU2/f8vz2h90Q04XxSZpqRPs1Z7WBItGcztKn2xm/b2Hi15IYRz+SqceUeUjoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSq/4Gui6JEQOk/PNG7MhJiP9eFXe5RBkmzCQi88bfgoE7hzPs
+	mFDJM4mI3y9Gu+VgfrkSvOcxctBp2yfZN0Hb2ozrfbP/MAwnLFsbPf2uP5Q/b0KEsFo=
+X-Gm-Gg: ASbGncuNVuh1Pv8zfXgrHf/FTWsEP6LyzgqJFjlSB1PSnqcHLJAgl1uAioZDvHd+5Ga
+	G0cq2yMMIIV1DbGM+v3yNtsuqOXEr2W5pdkzXjRxoNKZQTPHrca+AHLqmW/MoOP5j/P5+NJfQ51
+	XJz3WT/06nrjIjQTlgtLJPrtJKh4Iz37QkHkTFbrkQsTxjLfhMW1e79ynn2gbD4D+8MAwC5tLq2
+	zB910GYtMg3zxWg9JM0CCp18Nu4kG+YRXuM9IIYY1hXnuswJNKKPBUB0WEMFgVRVT9bhk6rAcJH
+	4PG+s9rYJmmOfvU4gOYZVmENfKluay77FYU9dU/UVg58OuLtwpiDHN9HlHtjKnGXtEwADQl85Vr
+	LdSEN6mE=
+X-Google-Smtp-Source: AGHT+IFmYE7qlDUFZiho9mEwR2DSnCEfJp/r2TtZAeVeo8f4CW3I/2ig+DnSXAwTVwkjjffoimql8A==
+X-Received: by 2002:a17:902:d582:b0:25c:9688:bdca with SMTP id d9443c01a7336-26813bf1f32mr31633255ad.50.1758121869329;
+        Wed, 17 Sep 2025 08:11:09 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2623fd4d163sm127041555ad.80.2025.09.17.08.11.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 08:11:08 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uytoJ-00000008NeJ-3muR;
+	Wed, 17 Sep 2025 12:11:07 -0300
+Date: Wed, 17 Sep 2025 12:11:07 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+	joro@8bytes.org, praan@google.com
+Subject: Re: [PATCH 0/2] Move io-pgtable-arm selftest to KUnit
+Message-ID: <20250917151107.GF1326709@ziepe.ca>
+References: <20250917140216.2199055-1-smostafa@google.com>
+ <20250917144435.GE1326709@ziepe.ca>
+ <aMrNJw3obyu8IvBL@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMrNJw3obyu8IvBL@google.com>
 
-Akira Yokosawa <akiyks@gmail.com> writes:
+On Wed, Sep 17, 2025 at 03:00:55PM +0000, Mostafa Saleh wrote:
+> On Wed, Sep 17, 2025 at 11:44:35AM -0300, Jason Gunthorpe wrote:
+> > On Wed, Sep 17, 2025 at 02:02:01PM +0000, Mostafa Saleh wrote:
+> > > Instead, we can remove the __init constraint, and be able to run the tests
+> > > on-demand, and possibly compile it as a module.
+> > 
+> > I think you can just put the kunit in a module to avoid all this?
+> 
+> Yes, I don’t see the point of trying to run everything from __init,
+> relaxing that allows us to use more of the kunit infrastructure.
+> But, it’s more code to do so (it’s just longer to explain :)),
+> I can add a patch in between, modularizing the selftest before kunit.
 
-> Wait!  In the cover-letter, you said:
->
->     It should be noticed that it is out of the scope of this series
->     to change the implementation. Surely the process can be improved,
->     but first let's consolidate and document everything on a single
->     place.
->
-> Removing current restriction on SPHINXDIRS does look inconsistent with
-> your own words to me.
->
-> So, I guess I have to NAK 06/21 as well.
+Sounds good, also it would be good to include the kunit.py
+instructions in the commit message:
 
-Is there an actual problem with this change that we need to know about?
-I am not quite understanding the objection here.
+Eg this is one from my iommpt series:
 
-Thanks,
+    tools/testing/kunit/kunit.py run --build_dir build_kunit_arm64 --arch arm64 --make_options LLVM=-19 --kunitconfig ./drivers/iommu/generic_pt/.kunitconfig
 
-jon
+You can run that from x86, which is really how I'd recommend anyone
+actually use this kunit rather than booting a live system and trying
+to run the test before the system boots enough to explode on a buggy
+implementation :)
+
+Jason
 
