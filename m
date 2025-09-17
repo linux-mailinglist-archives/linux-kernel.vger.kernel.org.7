@@ -1,333 +1,256 @@
-Return-Path: <linux-kernel+bounces-821531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2435B8191C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E1FB81925
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454B51684D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 930FC2A2530
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C67632126F;
-	Wed, 17 Sep 2025 19:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D10830C10A;
+	Wed, 17 Sep 2025 19:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="fzm78YDY"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11020092.outbound.protection.outlook.com [52.101.201.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hM07K/iY"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9FC33595E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758136536; cv=fail; b=K5zc8qFo17H3ZKbn3bNG5lBzTEPa2RG2Kb7Erdq1I5pzkyKoLiNbhYm6tQVRy2/CVYJziyfyGGySuBa2DQF+lIHUfdKLkOZJm5IYzDX+TL/tmotjchJmdKzeNTXh1T6Kh78NqbjWwsRY0DOyqP39IXpJhwoAQ5iD2hpzxD3zcbU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758136536; c=relaxed/simple;
-	bh=N0CAtujyZ/bXppfaXEkJMD7gfdPfJ3hXLcX0jRMpedg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MSpYIbZmRaYyQxaTb2oPBciX0HBJZZf9dF4tsly7waspwbhj2i9fd+Fd30KWgO653hgdp35ja00wkkqoj1/M7K+Gmdrmi8XWAUpnbbJeVOZSk4FRXSvLx+xMIgm/0KS8PI8rKvD3FNQlFg4aQhwH22pzkpDr/6wdhmgztcSR7O4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=fzm78YDY; arc=fail smtp.client-ip=52.101.201.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aGSLxCFl6OQGL3G+L+9DASboImP7xhvrTz2kWsApYG2E+hRuHwuJKWWdnpGV4QfSKZ4KvjWb/hNK6RGtA7eCTH4IATS2EkQFgTyreZDCPgLzkSMCKTVJ+SuAEHdGzImihxrvet8ICkWQmqqxtwPnfcvAoO/hdkzniPditjeMsgk32ex8yfsrhVqAHmNnJgwfWke9jMOAjs2v6AV+Ta+LMtURgJayuN7+iji43E1gSGSFvEaHYLP8oojl9+mNJt6A9XrUqJxTzTgbmmOEPRNspFRDiQVtN3uv1ZGFArCsYyC40x8yEx9gW54RHqMX3HPr6zsnJkVFhr3Iero6ROPuQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gFaNZzW7eC5f/HUyWFmmBPcD9+4RVNfoR7/P2457JbE=;
- b=mypE7PDkpO6QlDZwclsBIziQQ1jeF93NQts1MOxzcpxC+0F7avMLyH7p/KKD2GCK7U/A18V2dCGTiOkm0oVUd47QOsAFepdbPysE5EZVOjlAz7q2RfS1w7lWPl4MVOFrmNNX4rBYaUhG80TpSd5CQq2udqGdrnojZY/ujw1BF6aUJ0rIH75qhM1URGHXOnneLWcXE1KuBpEn4wo0181DqWBo37g7ue4QjudngLHHMAdDvdE9q2od3U1FBH0Pey1Mhfzmy0fpF3VCd3ze6wM610UpjDye2EUKTwnnpEBPrejvbXLs9HYDIaKwSqXGk0T6m6UWin4THTWH6AFx7BMh/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEF1227EB9
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758136614; cv=none; b=X8pNE0tJNSpaGkxqrcxY1SLQXRaEt/CRkvq7SyZH0aDmL+Vg8eW8rUbADibnzf8vwz9Rt63IfVfy40v8j6/hHBYxYG/zDTVpbmMEekuzfZ7wlnw36NhGkO963vPBxXwxIh4IcPSpM5u/R1hMBqOwHDGsBP4b+l+M0OuFk/Y9Jec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758136614; c=relaxed/simple;
+	bh=iyfzVXc6Veh38mNzCbeQ1OZ7FI7NlY18Cw8pOgMf9iA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9KfN7Ncoh31sxokrOxCQ4a+TelpVT/V6xG2KtyhRAgNs/hgqUlby1rzWya621/bipimI17Ob1B8LxfGCOiu8Suy5sAKUT5T6MW83CHMZ6LYEmq0WM2aDH0xYYKe4tdZmP/Km+R8XirbRqwJlYPn4rfBFmEqXTIsqdhMVfiK4WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hM07K/iY; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62fa0653cd1so143067a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:16:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gFaNZzW7eC5f/HUyWFmmBPcD9+4RVNfoR7/P2457JbE=;
- b=fzm78YDYP8gZhkK7WcSoE+O86pU1TVwz9ux4MYwA4Syli2+/k1IZr7c7Un9IuCY3wxaRQvpSp3Dra9sc94JuzIPMSgQdPJ5Ix/NPnMx7zpeQavmY257lzms7ZeAEI3V6z+qv9b30zrJZKMDD2tKpzlpDbOq7415cz0gynf4SN+o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- CH0PR01MB6860.prod.exchangelabs.com (2603:10b6:610:101::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.13; Wed, 17 Sep 2025 19:15:31 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 19:15:31 +0000
-Message-ID: <45dc2746-153a-482d-954f-11fe1cd8d18e@os.amperecomputing.com>
-Date: Wed, 17 Sep 2025 12:15:27 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
- mapping when rodata=full
-To: Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
- <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
- <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
- <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
- <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
- <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
- <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
- <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
- <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
- <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
- <4aa4eedc-550f-4538-a499-504dc925ffc2@os.amperecomputing.com>
- <1cfda234-1339-4d83-bd87-b219fbd72664@arm.com>
- <55a79826-48e3-41c0-8dbd-b6398e7e49a6@os.amperecomputing.com>
- <92719b15-daf8-484f-b0db-72e23ae696ad@os.amperecomputing.com>
- <e86e2aa5-c66c-41a9-a56d-74451df0d105@arm.com>
- <f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com>
- <047c0f7b-e46d-4a3f-8bc0-ce007eac36a7@arm.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <047c0f7b-e46d-4a3f-8bc0-ce007eac36a7@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0183.namprd05.prod.outlook.com
- (2603:10b6:a03:330::8) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+        d=linaro.org; s=google; t=1758136611; x=1758741411; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ks/nBSck7Stoiu3lp2n8wjNWID3INEqmA7FA9e4kAW0=;
+        b=hM07K/iY3AEe4GQRt65uof4cujKehvkB+XMaoggLIJYAxqSzCG8j8w0iNnjU8oyJPB
+         V9FUdvdzq4uJtA9y5A3Ry3/9jmUvB0p2IowkRjtBYyp0Q7RztLUdxqdT4v2AqqjyM6Kg
+         LlJCps6A10t7Yz+kJtrmQpLTNxGB0+pRUkfJToJnfjEUK5Q/F19z4mNH8uQILsJu8GgU
+         WPDoTMFFDVWvN7f3pOPvzWyeL2aQ6olZiky3A9L2W4D1q+yrWeDCto2pvzP69Ik2suKi
+         0J2kO/+IH7Nl+sfkbzf9viY8p3n5dzSLplQdnGR0Z0jIQuPB3e2jhPkl65Vq0/boSe5Z
+         8yTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758136611; x=1758741411;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ks/nBSck7Stoiu3lp2n8wjNWID3INEqmA7FA9e4kAW0=;
+        b=f49f42SnCkypFwHIifdg9cW5DlVinoHdcuSnZQjmy2OikfduLq8nhyfjTs1JgFf61n
+         h1JijZ/osSQAMqwkwFvZV3Mdyo6LAvQM2sbBWEDCrSuXfRTLpOOpXmw30ucq95vKfnYn
+         PBQcEiC3FEZlfsdi+fT1dL8nTIH/Um1Pd8V+36wXB2xNvCFy3YibVDFs2jFMc4oip9FC
+         XbIHBG1dYcwHniVAi5pjOMnkDheArOGVI3hcbcJTseaGQmhj5mB1WUVyBY2v3zsPrE/E
+         SPUwUwYReY3R2nsDTM3+ggpyUuFK//NGSgZHQRdFEc7IUpcD0xLdD+PQu5TnoFBnxUbg
+         BeyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWms5qVnvgFmGMpcbrkTf+gAt+L5owAwJ6ZMl4i3T+c7DY+vmcOwb9vwlUpzKHj0MV1ZuwwMs1IOc/3mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTXwbCYy/ym0sNLpJ1zj4eRfyUJH+b3fl7ZaXhAeymEQptHBIp
+	GHWHLq5mS53t+ZwysgZaRe2xFfU6Zrtk/qHfNDtRE9E79tQofcBw0xXYnqpOMJpoVWk=
+X-Gm-Gg: ASbGncurifR/cGJjWa9pgWJBX5+lwoUm+tcE/vPNtHWy6t8psuu7QcB9+iKKfwsEW2j
+	rTkcH7DUHkBWvryawcd9T0sN4Nrtk/6ws8+oJIqfJ27gEr/Govfy6KPXtm7fyS1xGgNc85QK3jN
+	ERznTAstEp8jfmQC/JMWu2yEYaciNLTbUTKeFBIuMQEoFDUPMlk911Czo2LCEZBiCwyAyhHj/VH
+	jL2vcM5rFEtItLXztQDlKO5mLvvRa4Eqy5Fojoh5Bhu+bn2U2+lMgkkOIOXZ54NKKVb+u/7jM6i
+	SD1xJG1rCaT1NrRmvFX0xK3hI41LTNlbNsIWEJJVtS2h/huguemjHYV97D9q7AhiSV9fl1RIC9h
+	EY0Ec/CtIsc1J9ZyT/t3SD6CvvRPLi0s=
+X-Google-Smtp-Source: AGHT+IHykcOXTk1a6tur651VWEsRLYVKfCQ0dvzLRtdYQ8gOpn4ZAYevIOYz/DJNbLAO5Jx7dvWoJg==
+X-Received: by 2002:a05:6402:2755:b0:61c:1b27:56d4 with SMTP id 4fb4d7f45d1cf-62f8466118dmr3057422a12.35.1758136610657;
+        Wed, 17 Sep 2025 12:16:50 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:4eea:42a:b97c:21a5])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62fa5d4357esm119697a12.23.2025.09.17.12.16.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 12:16:50 -0700 (PDT)
+Date: Wed, 17 Sep 2025 21:16:46 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/arm-smmu-qcom: Enable use of all SMR groups when
+ running bare-metal
+Message-ID: <aMsJHheI6Y1V5q74@linaro.org>
+References: <20250821-arm-smmu-qcom-all-smr-v1-1-7f5cbbceac3e@linaro.org>
+ <aMAkJ7CfPQuhvhfm@willie-the-truck>
+ <aMBJNzXpQTMg4Ncs@linaro.org>
+ <d73e5026-ccb0-4a19-9742-099a0443f878@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CH0PR01MB6860:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d6e91fa-778e-4031-8002-08ddf61e91ba
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bFRqaG8xeEtmVXNQdlZqUnJ5VVZSeEZmU0JzNXU2OTZ3U2xnc1R2U1pHdUEr?=
- =?utf-8?B?SGEzdnhkdTBLTnhIUm9PVWlpVWxVc1lGcC9RTjF5S2kyQllQMEZhNlRTcjlS?=
- =?utf-8?B?b2Y3NWMzQ0NhTENHNmN6MFlZSC8vNi93dGM0d0cxSytsSVYrbXgzV1dkR3Fs?=
- =?utf-8?B?bjFudlJhZkxaeVFlZ05LeStSZldlVWRDRW03S0w5QUVrSlF6S0laYlh5K3J1?=
- =?utf-8?B?TENzNk8yRk1GalA3dUpMd1h0L1k1WndyMlRVakNsRlJNYXVFR2ZUaFJGZndD?=
- =?utf-8?B?Y1hUOGU0cGNmcWFHUU01N0duYWJ4NGJESCtDTE90LzJpVjR3QXBmeXBTYy84?=
- =?utf-8?B?TGtsbVhTMk5XTmVGNHNmejRXT0xkc0RNTk5rWEpLdTRYeC9oTy9kQ2pYRzdX?=
- =?utf-8?B?V1N1YzYwd08rZ1Q5WTZKa1EvcHNKa0F5RktmcmgxOVE4SWFKa2pHMjhqTmlQ?=
- =?utf-8?B?cUlYbllZUFhMT0RybWJpeHFiYUFyWG5DUUVXQTVoL0JDOXpGVFczaVFUZkp2?=
- =?utf-8?B?Q3k3YnNMekRPTjFrTlk4bUNLN3FubmYrcDd6T3RsK2RYT1UvbHV1NkMrRk9k?=
- =?utf-8?B?UmJPRDl5emcxWWFKc01sNE5kbFE5QVljU0F3NERwOUFZcDNDalB2bnRXQTdN?=
- =?utf-8?B?R3hmN2JWVFJjdjBDZ3Z2YzZjcVpVZXBDVHZpWlg0VWdLUU1obmV6N0xLdC85?=
- =?utf-8?B?eXV4RmVNaDFRekpySjQwejU1dmtaS09iWmVXSktndG1aVFZPbzcrVHhwbmpC?=
- =?utf-8?B?MU5BdVArWVYxbEN5ZTF6d2d4M3NzUDN5L2tEN09na092NkovSVB2SXJNYU5s?=
- =?utf-8?B?ak1DazBwRHdzeW9sVEdleEo5RHJ0L2wrL2J6MmJGdWdGekV2a0J4WmZ0a3FE?=
- =?utf-8?B?bUpVU1F2YUtadUoxVDFUVjlEKzhJc0hLMytWWXpEZG85L2VJVVZPL3BTQUZt?=
- =?utf-8?B?NG5MSXJBdUtrbUd6bEwyc2tHWHBvSEl1YUkrTGFONnp0eWZoSXdZWXppRXBF?=
- =?utf-8?B?YnBONU5ESzNKQlZGakVmTkY0elN5ODZJM3ZXUW01RjFXSUFUOHlCSWMrdS81?=
- =?utf-8?B?TlpYeW1oYU41eFBVYUF5a0JIKzZSakVzdm1qcVcxMWM1RW9MNDJkSXdjdEtm?=
- =?utf-8?B?cllmTnIvcFYreXBqRmVheit3cnB2azlyV1pkQUNFMVZHWUhLUnRLUU90UjNX?=
- =?utf-8?B?MWY0RUd0c29rbjlxMkhhYUI3blA2TnowblcvTlE0Q2NIQ01RSDJocS9LaXlY?=
- =?utf-8?B?KzRVR2VWc2JsY3ExMmJjZlU4MEN1d3VickRRazJGdzR1eGQwYjExbVV0c2VM?=
- =?utf-8?B?TXhCbW9NYkNwWncrOVJtazU5dWRka2x2SkZMcU8wWnJqWlA3TnJPM2U1OHl0?=
- =?utf-8?B?cjhjSDI5L21iMWVXaTBBU2ZjSmpBZDE5cmg5MjlUMFplcVJ5QUF2OGNiTmZz?=
- =?utf-8?B?OVFPRHhpcVN0ZzEzWlhEbUtsNmNjaHlSOENqajg1ZytScElhMlRWL1hLRGxY?=
- =?utf-8?B?QTNvZm8zd3prOXh3Q0pNbUZNVnZVbVlGSkhWUUxkYXRNaldQdUZCb0lUdThu?=
- =?utf-8?B?cHV2VW5jbUU1anovTWtHNkR4MVZIbmNUczRrOE1pTXlBRGF1dXJ5SUxXNndZ?=
- =?utf-8?B?ZjFRb1UvSFEzMjRKamhoaXdGTGRsU2xFNWFPTHVVN3g0NnQrVVZiTUJPanZ3?=
- =?utf-8?B?c0x4eEFZRlpSUlZ6cWdhazI3WStndCtHLzJuaGRvbWMvdXNIN2hQYjNMRXlM?=
- =?utf-8?B?UVRRQmhEZkhta2lGbjFibTVNb0pRdkxDdnZmSFVkNmZXbmx2V21FWXJmS3Yw?=
- =?utf-8?B?UHZGb29VZEl2eldzNU9hbHl1WmpJaUgxOFdkTkUvU0JLZHd2eDgvMnNsYzZK?=
- =?utf-8?B?THpsUllYWGFMbHdldHdieVNPUDR6Q1MrbjJjblEydk51Rk5RTmZIN1hPNVE4?=
- =?utf-8?Q?Q63l7cds+G8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUlxaXVQWVQ5dTJ0R0J6UGlGT0xWUU1pYkI1aWpEYkdNa1d4KzRTRm0wdytB?=
- =?utf-8?B?NkdHWUF2dmJyckNLc3RjM2c0TG00U0UyM2JBMyt4TWVCOWIvWG9pS1ZEUlA0?=
- =?utf-8?B?eld5Qy9vY2d0NnFuKzd0MVEyVEJyRTBkMGxJM1prUjdaWndXQkYzZklBV3Zm?=
- =?utf-8?B?N2pyd1J3MUlBeTRqUGtWdE1kdWR2QVZOS2RBMFgwckpTVXp2UFgyNjZuQTNx?=
- =?utf-8?B?S09mRmppTW4zVzRrQWtTMEVORmFZa3RJUnJQaSs0anQ3SUZMMTh0SXpHSG85?=
- =?utf-8?B?T3BFRERleTZBbHdBYkJqaWp0LzUwS1R4QlRMYTBrRHpPSmhXQkFuTkR4c1Zk?=
- =?utf-8?B?ZlRseGRDS095elNUUmhLbGo2c2JRNVFndWpvSFVoZmluUkhZK0F6ZnJvbFpZ?=
- =?utf-8?B?THJET1ErYzRLdHNzYzB5b2hEQ1JPOC95YzF4c05UNTJ4V0YyV0JpcXo1aUhO?=
- =?utf-8?B?OVlybTQ2WVN1NkxPZ3ZtVktuZmEzZDlGUGlXVWp0MEVGVkpFWGZsaXVGNGM4?=
- =?utf-8?B?dm1NSysxaFd4S3YrNEltbEVzZTR6eURCMkFiODdPbjROUnpldWFzQW1qdndz?=
- =?utf-8?B?K3NkSGx4RllkYkdTNXdvNzJSWnVZTmYxYnZ1Ly84bnBCWGlXSm9PVGpQbDJu?=
- =?utf-8?B?WUYxMy91ODVjWXZramdlaFNuR0xvNzZBMzJEZVpHdHR1My9SL2ZPM25SWm1t?=
- =?utf-8?B?S1VUdDgrZXk1Z1hyaDZOekNxYU9HRkVZU2wyMDVQOVl1akhVYmtORGxYdUZp?=
- =?utf-8?B?b0tLdldoSHUrVVlIbXFDL1lLeXpVamhGWVN3ajFBTCtDb2Z5aEs1TG5kTWll?=
- =?utf-8?B?a0Y2ekRJRXRPcDYraXNjRFNCZTFjdm1reUFoR2F2ck5QOC85OE5RRWdJREN4?=
- =?utf-8?B?VGF0Y1E0ZS9MRVZ3Sm9ON0d6Ym9VaTlCRlpDZ3VJWWlqa3ZVdkN2WWNUeHpY?=
- =?utf-8?B?WnFXcjlaZ3gxZW5NbTFieTE2U2NCWkpqYXdneCszQjBEMk1tQU0zNW5CRTd2?=
- =?utf-8?B?SWlBbHZzdkIyZC85djRNYzhaZjEyNS9Yb05NaTkyWWNISEVteUdFY2dCaTZS?=
- =?utf-8?B?Sm9DWDlmZXNUN0FraHMranhwTm5Eb3dwMVEvbEp1YXhVVG03Sm1MWVYyMGMv?=
- =?utf-8?B?U1JvdEVkcGNYMWtmbjdyUG5KdE5wdTlsUXhLblNVTnJkdFk1dlp1SnlZVU5x?=
- =?utf-8?B?S2xFODhIODFOT2FuY3dacW5jdWNpWFBScjJqMThwUmd2MFhkMmxreFJWR2Nr?=
- =?utf-8?B?V2lxbEg3MUxxWjIvUTU4WjFjTFlHc2lhU2c3bHg4bDFpY3llQ2xPeE1EOFZv?=
- =?utf-8?B?TkRmK096TTJDTWZ4a0FzUi9zV0JiRlFiRUV3Wkg2cVZPRUZoYzZsc2FzOEtz?=
- =?utf-8?B?bHNHcEpPQVR4Zysrakp1aUtibzY5MzlBd1l3VStEbDlQT1ByejBpVm0veTgx?=
- =?utf-8?B?RFVkTEg3OVFXdkF6b21vT1JXYlhJUDdnamliek8vK085bXVEc0w5WUNEemJi?=
- =?utf-8?B?d2R6eEhORkwxeDJzYzd5NmllS051UDk2b3grQ2xjMTFpeGY1L2kxbHMrMWd1?=
- =?utf-8?B?UDMva0E5eTd4L0xyNUFPMTUrdmdMcXhBc2RXd3pRcFlEZHNseThxYzBEZU5a?=
- =?utf-8?B?RTEyd2ZWYVhmYkltQWVYV2tWSzl4WXloYkVWVHpQYmVKTnNKUmJzSXVzQi92?=
- =?utf-8?B?alpHNkR4M2hEbjh4bi9yb043VDNTenlmck9VVmdiTDZBNE50NmtqdDJnb3V4?=
- =?utf-8?B?Y2ZYMk1XaFpNWTVHUk92bFYwcExycE0xRlAzVHRxeUQ5UHozM0RPMDBPNlk5?=
- =?utf-8?B?OGdtTkFwOVpLSGVrRG1qNHY5S3M1Vjcyc2FiTCt3ZUlrTmkrUWxUQzBkY2g3?=
- =?utf-8?B?TGtOOUwzZDdHWVJYRy9ReUFxdEJKUSswTFRsYk1LWXhPZlByaHZ2RDVsYldD?=
- =?utf-8?B?OEpoQnY0N0U4Y1kzTlJDNXluakZoSkgvQjVPMHVWVWpMR0xJUEJBUnJSb2VZ?=
- =?utf-8?B?a0xyZ3pKZVhYeVV5eWJJVjFqak5GN2l1bzVrcXNqdGJJdkN2aTJzclJzU3Zi?=
- =?utf-8?B?bzdBa1hVME5oZ1B5azUvaXVBNEtvSEs4SHFxeE9WRVlUc2d4WVdHU1BKUnVx?=
- =?utf-8?B?Z2RNSmJpT0ppZXF3OUhMTFlHdHA0TVZ6d2JISjJEdFRZNU1TSmJCTlF4QWVy?=
- =?utf-8?Q?2dkRwzUMScwo7V94nc+f1AU=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d6e91fa-778e-4031-8002-08ddf61e91ba
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 19:15:31.2212
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1laL6rIbUvSKopgqxVACf9xncag1Kz6T29iT8al9VWFVgCT0H2wK3+VMAGr7+h9KakaArD2+xThYua0BRQPgP3GljTv3GRargX8NqTS+9BU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB6860
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d73e5026-ccb0-4a19-9742-099a0443f878@arm.com>
 
+On Wed, Sep 17, 2025 at 07:02:52PM +0100, Robin Murphy wrote:
+> On 2025-09-09 4:35 pm, Stephan Gerhold wrote:
+> > On Tue, Sep 09, 2025 at 01:57:11PM +0100, Will Deacon wrote:
+> > > On Thu, Aug 21, 2025 at 10:33:53AM +0200, Stephan Gerhold wrote:
+> > > > Some platforms (e.g. SC8280XP and X1E) support more than 128 stream
+> > > > matching groups. This is more than what is defined as maximum by the ARM
+> > > > SMMU architecture specification. Commit 122611347326 ("iommu/arm-smmu-qcom:
+> > > > Limit the SMR groups to 128") disabled use of the additional groups because
+> > > > they don't exhibit the same behavior as the architecture supported ones.
+> > > > 
+> > > > It seems like this is just another quirk of the hypervisor: When running
+> > > > bare-metal without the hypervisor, the additional groups appear to behave
+> > > > just like all others. The boot firmware uses some of the additional groups,
+> > > > so ignoring them in this situation leads to stream match conflicts whenever
+> > > > we allocate a new SMR group for the same SID.
+> > > > 
+> > > > The workaround exists primarily because the bypass quirk detection fails
+> > > > when using a S2CR register from the additional matching groups, so let's
+> > > > perform the test with the last reliable S2CR (127) and then limit the
+> > > > number of SMR groups only if we detect that we are running below the
+> > > > hypervisor (because of the bypass quirk).
+> > > > 
+> > > > Fixes: 122611347326 ("iommu/arm-smmu-qcom: Limit the SMR groups to 128")
+> > > > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> > > > ---
+> > > > I modified arm_smmu_find_sme() to prefer allocating from the SMR groups
+> > > > above 128 (until they are all used). I did not see any issues, so I don't
+> > > > see any indication that they behave any different from the others.
+> > > > ---
+> > > >   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 27 +++++++++++++++++----------
+> > > >   1 file changed, 17 insertions(+), 10 deletions(-)
+> > > 
+> > > Is the existing workaround causing you problems somehow? Limiting the SMR
+> > > groups to what the architecture allows still seems like the best bet to
+> > > me unless there's a compelling reason to do something else.
+> > > 
+> > 
+> > Yes, the problem is the following (copied from commit message above):
+> > 
+> > > The boot firmware uses some of the additional groups, so ignoring them
+> > > in this situation leads to stream match conflicts whenever we allocate
+> > > a new SMR group for the same SID.
+> > 
+> > This happens e.g. in the following situation on SC8280XP when enabling
+> > video decoding acceleration bare-metal without the hypervisor:
+> > 
+> >   1. The SMMU is already set up by the boot firmware before Linux is
+> >      started, so some SMRs are already in use during boot. I added some
+> >      code to dump them:
+> > 
+> >       arm-smmu 15000000.iommu: Found SMR0 <0xe0 0x0>
+> >        ...
+> >       arm-smmu 15000000.iommu: Found SMR8 <0x800 0x0>
+> >       <unused>
+> >       arm-smmu 15000000.iommu: Found SMR170 <0x2a22 0x400>
+> >       arm-smmu 15000000.iommu: Found SMR171 <0x2a02 0x400>
+> >        ...
+> >       arm-smmu 15000000.iommu: Found SMR211 <0x400 0x3>
+> > 
+> >   2. We limit the SMRs to 128, so all the ones >= 170 just stay as-is.
+> >      Only the ones < 128 are considered when allocating SMRs.
+> > 
+> >   3. We need to configure the following IOMMU for video acceleration:
+> > 
+> > 	video-firmware {
+> > 		iommus = <&apps_smmu 0x2a02 0x400>;
+> > 	};
+> > 
+> >   4. arm-smmu 15000000.iommu: Picked SMR 14 for SID 0x2a02 mask 0x400
+> >      ... but SMR170 already uses that SID+mask!
+> > 
+> >   5. arm-smmu 15000000.iommu: Unexpected global fault, this could be serious
+> >      arm-smmu 15000000.iommu: GFSR 0x80000004, GFSYNR0 0x0000000c, GFSYNR1 0x00002a02, GFSYNR2 0x00000000
+> > 
+> >      SMCF, bit[2] is set -> Stream match conflict fault
+> >      caused by SID GFSYNR1 0x00002a02
+> > 
+> > With my patch this does not happen anymore. As I wrote, so far I have
+> > seen no indication that the extra groups behave any different from the
+> > standard ones defined by the architecture. I don't know why it was done
+> > this way (rather than e.g. implementing the Extended Stream Matching
+> > Extension), but we definitely need to do something with the extra SMRs
+> > to avoid stream match conflicts.
+> 
+> I'm also a little wary of exposing more non-architectural stuff to the main
+> driver - could we not keep the existing logic and simply add an extra loop
+> at the end here to ensure any "extra" SMRs are disabled?
+> 
 
+It's not that simple at least, because some of these SMRs are used by
+co-processors (remoteprocs) that are already active during boot and we
+need to keep them in bypass until they are taken over by the drivers in
+Linux. Any interruption inbetween could cause the remoteprocs to crash.
 
-On 9/17/25 11:58 AM, Ryan Roberts wrote:
-> On 17/09/2025 18:21, Yang Shi wrote:
->>
->> On 9/17/25 9:28 AM, Ryan Roberts wrote:
->>> Hi Yang,
->>>
->>> Sorry for the slow reply; I'm just getting back to this...
->>>
->>> On 11/09/2025 23:03, Yang Shi wrote:
->>>> Hi Ryan & Catalin,
->>>>
->>>> Any more concerns about this?
->>> I've been trying to convince myself that your assertion that all users that set
->>> the VM_FLUSH_RESET_PERMS also call set_memory_*() for the entire range that was
->>> returned my vmalloc. I agree that if that is the contract and everyone is
->>> following it, then there is no problem here.
->>>
->>> But I haven't been able to convince myself...
->>>
->>> Some examples (these might intersect with examples you previously raised):
->>>
->>> 1. bpf_dispatcher_change_prog() -> bpf_jit_alloc_exec() -> execmem_alloc() ->
->>> sets VM_FLUSH_RESET_PERMS. But I don't see it calling set_memory_*() for
->>> rw_image.
->> Yes, it doesn't call set_memory_*(). I spotted this in the earlier email. But it
->> is actually RW, so it should be ok to miss the call. The later
->> set_direct_map_invalid call in vfree() may fail, but set_direct_map_default call
->> will set RW permission back. But I think it doesn't have to use execmem_alloc(),
->> the plain vmalloc() should be good enough.
->>
->>> 2. module_memory_alloc() -> execmem_alloc_rw() -> execmem_alloc() -> sets
->>> VM_FLUSH_RESET_PERMS (note that execmem_force_rw() is nop for arm64).
->>> set_memory_*() is not called until much later on in module_set_memory(). Another
->>> error in the meantime could cause the memory to be vfreed before that point.
->> IIUC, execmem_alloc_rw() is used to allocate memory for modules' text section
->> and data section. The code will set mod->mem[type].is_rox according to the type
->> of the section. It is true for text, false for data. Then set_memory_rox() will
->> be called later if it is true *after* insns are copied to the memory. So it is
->> still RW before that point.
->>
->>> 3. When set_vm_flush_reset_perms() is set for the range, it is called before
->>> set_memory_*() which might then fail to split prior to vfree.
->> Yes, all call sites check the return value and bail out if set_memory_*() failed
->> if I don't miss anything.
->>
->>> But I guess as long as set_memory_*() is never successfully called for a
->>> *sub-range* of the vmalloc'ed region, then for all of the above issues, the
->>> memory must still be RW at vfree-time, so this issue should be benign... I think?
->> Yes, it is true.
-> So to summarise, all freshly vmalloc'ed memory starts as RW. set_memory_*() may
-> only be called if VM_FLUSH_RESET_PERMS has already been set. If set_memory_*()
-> is called at all, the first call MUST be for the whole range.
+With my changes, the boot SMRs stay active (at the same index), because
+there is an existing loop inside qcom_smmu_cfg_probe() that preserves
+them as bypass:
 
-Whether the default permission is RW or not depends on the type passed 
-in by execmem_alloc(). It is defined by execmem_info in 
-arch/arm64/mm/init.c. For ARM64, module and BPF have PAGE_KERNEL 
-permission (RW) by default, but kprobes is PAGE_KERNEL_ROX (ROX).
+	for (i = 0; i < smmu->num_mapping_groups; i++) {
+		smr = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_SMR(i));
 
-> If those requirements are all met, then if VM_FLUSH_RESET_PERMS was set but
-> set_memory_*() was never called, the worst that can happen is for both the
-> set_direct_map_invalid() and set_direct_map_default() calls to fail due to not
-> enough memory. But that is safe because the memory was always RW. If
-> set_memory_*() was called for the whole range and failed, it's the same as if it
-> was never called. If it was called for the whole range and succeeded, then the
-> split must have happened already and set_direct_map_invalid() and
-> set_direct_map_default() will therefore definitely succeed.
->
-> The only way this could be a problem is if someone vmallocs a range then
-> performs a set_memory_*() on a sub-region without having first done it for the
-> whole region. But we have not found any evidence that there are any users that
-> do that.
+		if (FIELD_GET(ARM_SMMU_SMR_VALID, smr)) {
+			/* Ignore valid bit for SMR mask extraction. */
+			smr &= ~ARM_SMMU_SMR_VALID;
+			smmu->smrs[i].id = FIELD_GET(ARM_SMMU_SMR_ID, smr);
+			smmu->smrs[i].mask = FIELD_GET(ARM_SMMU_SMR_MASK, smr);
+			smmu->smrs[i].valid = true;
 
-Yes, exactly.
+			smmu->s2crs[i].type = S2CR_TYPE_BYPASS;
+			smmu->s2crs[i].privcfg = S2CR_PRIVCFG_DEFAULT;
+			smmu->s2crs[i].cbndx = 0xff;
+		}
+	}
 
->
-> In fact, by that logic, I think alloc_insn_page() must also be safe; it only
-> allocates 1 page, so if set_memory_*() is subsequently called for it, it must by
-> definition be covering the whole allocation; 1 page is the smallest amount that
-> can be protected.
+We could "move" the SMRs > 128 to earlier indexes, but this also needs
+to be done carefully in order to avoid:
 
-Yes, but kprobes default permission is ROX.
+ - Stream match conflicts, if we write the new entry before deleting the
+   old one.
+ - Unhandled transactions, if we delete the old entry before writing the
+   new one.
 
->
-> So I agree we are safe.
->
->
->>> In summary this all looks horribly fragile. But I *think* it works. It would be
->>> good to clean it all up and have some clearly documented rules regardless. But I
->>> think that could be a follow up series.
->> Yeah, absolutely agreed.
->>
->>>> Shall we move forward with v8?
->>> Yes; Do you wnat me to post that or would you prefer to do it? I'm happy to do
->>> it; there are a few other tidy ups in pageattr.c I want to make which I spotted.
->> I actually just had v8 ready in my tree. I removed pageattr_pgd_entry and
->> pageattr_pud_entry in pageattr.c and fixed pmd_leaf/pud_leaf as you suggested.
->> Is it the cleanup you are supposed to do?
-> I was also going to fix up the comment in change_memory_common() which is now stale.
+Currently this can't happen, because we don't move any entries around.
 
-Oops, I missed that in my v8. Please just comment for v8, I can fix it 
-up later.
+We could do it similar to arm_smmu_rmr_install_bypass_smr() and add:
+
+	/*
+	 * Rather than trying to look at existing mappings that
+	 * are setup by the firmware and then invalidate the ones
+	 * that do no have matching RMR entries, just disable the
+	 * SMMU until it gets enabled again in the reset routine.
+	 */
+	reg = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_sCR0);
+	reg |= ARM_SMMU_sCR0_CLIENTPD;
+	arm_smmu_gr0_write(smmu, ARM_SMMU_GR0_sCR0, reg);
+
+However, this would need to be done carefully only for the bare-metal
+case, since I doubt Qualcomm's hypervisor will allow disabling all
+access protections by setting CLIENTPD.
+
+I can try implementing this, but the resulting code will likely be more
+complex than this patch.
+
+I realize it is weird to allow non-architectural features like this, but
+I haven't found any indication that the additional SMRs work any
+different from the standard ones. The SMMU spec seems to reserve space
+for up to 256 SMRs in the address space and the register bits, as if it
+was intended to be extended like this later. That's also why it works
+correctly without any changes in arm-smmu.c: the bit masks used there
+already allow up to 256 SMRs.
+
+What do you think?
 
 Thanks,
-Yang
-
-
->
->> And I also rebased it on top of
->> Shijie's series (https://git.kernel.org/pub/scm/linux/kernel/git/arm64/
->> linux.git/commit/?id=bfbbb0d3215f) which has been picked up by Will.
->>
->>>> We can include the
->>>> fix to kprobes in v8 or I can send it separately, either is fine to me.
->>> Post it on list, and I'll also incorporate into the series.
->> I can include it in v8 series.
->>
->>>> Hopefully we can make v6.18.
->>> It's probably getting a bit late now. Anyway, I'll aim to get v8 out tomorrow or
->>> Friday and we will see what Will thinks.
->> Thank you. I can post v8 today.
-> OK great - I'll leave it all to you then - thanks!
->
->> Thanks,
->> Yang
->>
->>> Thanks,
->>> Ryan
->>>
->>>> Thanks,
->>>> Yang
->>>>
-
+Stephan
 
