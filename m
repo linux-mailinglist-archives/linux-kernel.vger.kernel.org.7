@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-821122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E51DB807D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29DDAB807F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF48620F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE99B621057
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F03335936;
-	Wed, 17 Sep 2025 15:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B8A335950;
+	Wed, 17 Sep 2025 15:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="kRZ08od4"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="Ng+nOdOv"
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479BF30BF72
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66983064A2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122505; cv=none; b=bZowF0aoSf7m4ksRyw20xsLZ/DAGmb3WYly9WBZbja+FcgPU1bFRp9DMd9YEBcGzNm0zFSEUtKyFNafoq+yIzODr3MGprhfsJI/AgBoNPrNV8mTGkjHugGimqDPl2nB75H4FrSgXSCG0EqjDsvdETQK/xuBYYrxcwTXkVdPqo48=
+	t=1758122630; cv=none; b=vAapH/E7gKDvdUvDF69EmWHKALOWpjf+ST33aqIIm7ciW5jUrh1Dq9xRv0ngujYzbMzhTvwmFEx8kbvNnOSGEalDPWhWM4Tqb9luONVr7mU93AhBVRpKJo4Q3FVFR5BHd5E4OdM5hSAo/Q9RW1ie7OXaTJl/3lsMOnkahmMR4qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122505; c=relaxed/simple;
-	bh=8Jn9cqENQBz9wlb9m8v/hRdjL6PD83V+XLEj/Z5ytdY=;
+	s=arc-20240116; t=1758122630; c=relaxed/simple;
+	bh=ISiQrcVdWLeRJhsxH1iqkkyhKFxhbNjQMJSoqqRl0Qw=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MIzlwMnsoulY/U5upAbdEmCXE5eG7Il+VhhbgzOX9K3vl5RBcdk6X6dNt/uiA+xqpaSJEE7UD0Jv1TkeAmTvYAUrFvtRcON6UyYQgNP6Y3/2v/bky7V7LPuft56bI1zMhYSmSFTZ2t9/CfWwks20jCjGFTuOWQtZsRshjK8NAng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=kRZ08od4; arc=none smtp.client-ip=96.67.55.147
+	 Content-Type:MIME-Version; b=H1C9n4GP6xV1hMpjnhUD6o8u2ttm0sbCI4Htn81SplfwjCsq2yAIduUrooBvKJ6wCNp1bcxUCJeLyKfNd/B1YcGi8AzkSBEECa4Effi9cchG3QDepV0dZ6b/yLHx8LX0tnaV262QlylIIlJHn7r7PDkYNvs+QaUXHUZ8VI0pahY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=Ng+nOdOv; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
@@ -36,28 +36,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=8Jn9cqENQBz9wlb9m8v/hRdjL6PD83V+XLEj/Z5ytdY=; b=kRZ08od4q1oLOhIe8ryYYwIdOS
-	g72yHRZ3s7C6A+kCwqLOIFMau75U1LaWb3wfHbDVls/U1lTvdcqv0fP4Y6dBRggDbuQqjcHjunu4f
-	icmLP9aKT1mfIHeizMPGgnu72UxKg6srn7YW6JUOwrS1+VyuE1JAoXG7rzM8pm4O6X51Rwn2q+y3Z
-	GZHoPE0GUeY014XVxqrSxQtW3i+wRA2N27wtvFVCa07PikFS4NNFR5O8Sx2Uqh3j/RtyC4NJV3EuG
-	P8VOLyUDyEFB99/WM+d1CICsWCvuccQUZ2wLwJhl+U5NeTy5Eibhq/hZV0sWhweLERBc2iiErDigL
-	4+p+wgYg==;
+	bh=ISiQrcVdWLeRJhsxH1iqkkyhKFxhbNjQMJSoqqRl0Qw=; b=Ng+nOdOvgJJASAaP4YgZLM/a66
+	Je3VLwcz1rtLpZXJ117EJswsQcpcsnV4XcrcKn7KlZhPQIo00nUxQDHUuutrZzbmtu6/XNGOl95fn
+	y6DY+QcliaAW2+5RO7r4vWydfIk/ie78ohPllI3iE3OmzQSxz8R33OgfgDA5kzgub4c+Guirat1Xf
+	rCoo7Dpau0+SO2YcTTd2UK/YIuJJp08TQWT3h3tzs0TyJDVx7PbVz8miYLq73Ajd3ha/Cx+7W7V9X
+	OPLiNSIAwbLLZqdVbYJmrxkcZTc+s0z7y9D2kD8/lIW34uoFVrM6cqwFSPEkJ8U6vehJ7gnIiw0Uj
+	7I36BhRg==;
 Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@surriel.com>)
-	id 1uytyO-000000001A9-2dO5;
-	Wed, 17 Sep 2025 11:21:32 -0400
-Message-ID: <6c10723cb3da89dad12eb8f8f44ec335bb2680c8.camel@surriel.com>
-Subject: Re: [RFC PATCH 10/12] mm/hugetlb: do explicit CMA balancing
+	id 1uytz5-000000001B6-1fYM;
+	Wed, 17 Sep 2025 11:22:15 -0400
+Message-ID: <1c799faa2a1b6d79080f4ad378b5a1d583813c2f.camel@surriel.com>
+Subject: Re: [RFC PATCH 11/12] mm/cma: rebalance CMA when changing
+ cma_first_limit
 From: Rik van Riel <riel@surriel.com>
 To: Frank van der Linden <fvdl@google.com>, akpm@linux-foundation.org, 
 	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev
-Date: Wed, 17 Sep 2025 11:21:32 -0400
-In-Reply-To: <20250915195153.462039-11-fvdl@google.com>
+Date: Wed, 17 Sep 2025 11:22:15 -0400
+In-Reply-To: <20250915195153.462039-12-fvdl@google.com>
 References: <20250915195153.462039-1-fvdl@google.com>
-	 <20250915195153.462039-11-fvdl@google.com>
+	 <20250915195153.462039-12-fvdl@google.com>
 Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
  keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
  eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
@@ -93,22 +94,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Mon, 2025-09-15 at 19:51 +0000, Frank van der Linden wrote:
-> CMA areas are normally not very large, but HugeTLB CMA is an
-> exception. hugetlb_cma, used for 'gigantic' pages (usually
-> 1G), can take up many gigabytes of memory.
+> To keep things consistent, rebalance CMA when changing the
+> cma_first_limit sysctl.
 >=20
-> As such, it is potentially the largest source of 'false OOM'
-> conditions,
+> Signed-off-by: Frank van der Linden <fvdl@google.com>
+>=20
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
-The false OOM kills also seem to happen when a system
-does not use hugetlbfs at all, but a cgroup simply has
-most/all of its reclaimable memory in a CMA region,
-and then tries to do a kernel allocation.
-
-Would it make sense to call hugetlb_cma_balance() from
-the pageout code instead, when the pageout code is
-trying to free non-CMA memory, but ended up freeing
-mostly/only CMA memory?
 
 --=20
 All Rights Reversed.
