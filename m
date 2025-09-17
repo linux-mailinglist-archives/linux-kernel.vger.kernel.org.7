@@ -1,113 +1,167 @@
-Return-Path: <linux-kernel+bounces-821713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E94B820CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:56:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612F3B820DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EAA51C225C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A4917C4D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D0B30C60A;
-	Wed, 17 Sep 2025 21:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7168430C63A;
+	Wed, 17 Sep 2025 21:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cLILqsL6"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEgvKat0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150C93043AC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD513D984;
+	Wed, 17 Sep 2025 21:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758146189; cv=none; b=dphGa34qBWwaLSw3rXBkk8O/ddXJt3uYpdAJ2h4JI5jn+Ev2i5UzyJanyAW9Z0JpsDvteEHcpFBBaZLxjr7J/5RifSN/yxS6k6l/T3QcgRooH8MgMeYBZ9JbrdII4R8ph7ahWQYt4uny75oDvKjGTJwy1s3aaZian2kvWQEbo+4=
+	t=1758146244; cv=none; b=paxgAPSb1Mboi9uoBiZmethYzZMxsLzgFhtphdjfhFtIJkYdKATwzT6gaTvfyyn/S9LK6lj9XFDOWxjk94WZ67ViX7I2zbiIsNRM2oRN0G7+rnios7Hh1qFQ87Lb2/QVdDh5KvqEiaOd2js+VQYxf30yDZh5DJVbVyEUaLJ0HVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758146189; c=relaxed/simple;
-	bh=ISMK7DM43Nk4mIV0A/GH5D71wvjF9kfvLj8iGbNKtas=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UkkT/4S684yt/KgZjezU82c5fBJTLNPWcQDZ0/X01JCdAJ6pq0BJ8SGha3fbXqS7cCrO1CL0MoXk5F72kbepgQBQmi1lggJaDwn9DA0lGd1mm3qr9mMzIp1ZXZmfxakH4FQriAsIagWYWvgCazrLXg7IM7BYLipYCvKPIMMa8Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cLILqsL6; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3234811cab3so220241a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758146187; x=1758750987; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nEBSWYKD+SqnMEh1+pQSHNZcrfb8li51aiqDJLMcodY=;
-        b=cLILqsL6p1LsctF5I8ga5NcvgrJs4o0v3v2cyNFUtLb75StqKG/cJ8NsiEOfsASRLW
-         uzTHzFReXaT2ImvmpIkPpOPuJPh2Sr9yAW947OQ6ccSYmTNAPbmIs9MjgcXeOp0EPRf0
-         8YgX4Zgxjirv77Exe41hXPF7cyif9d7EsGsF9VwLXl0FbPRlaFt03sCZiF6BwP8BodEH
-         nieYtdB4B6As2pKMpCWz9xXo84nWW0dB6Hy81hoIp/RhsBk5CZC/y9/sSZSebW0vN6n7
-         oC0DaFWxHQG0XqNuObxEBNGEKhlraXYlZpVPVPLG4zW8X6SbVBKLlVV3pTaSfkcmkakJ
-         5Pww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758146187; x=1758750987;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nEBSWYKD+SqnMEh1+pQSHNZcrfb8li51aiqDJLMcodY=;
-        b=W3ixmJQFslh/QZezT4xC7GZxF9uJnYkA8rH6qMCWrnHyP60q2rQLRyghDQoQLcz1Rk
-         Dho/szuiNdwUgGJPbWQ5ILScaLsOIOMaKC6IsxRMHyEzRrVlPIGkRtzyelPLuLb1ivTJ
-         YdpA1tz+lHhqRTPskcBrzJNHSmzMYaAU42E4kftOmjMYw3gDnSnOin5HbI1sIve4hWgd
-         HAFqXtlpEKddqpb4RkEvR3L6ZON45TeEDwtEg3BfKjN0gw8EEGmWAHpnT1Vq4QE/jIqq
-         Z6u+TAn2pYVNKxo1q6TfU529Z6R5zQWcbRFZHRD3waToZGieMcX4qbCXNiZi8O5wngPD
-         TN6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVdwrrpGEI4dKBvxY4J8bE7Qj9NeZ2X6/yETIfFFDDaeLOIFUDu98e3Q7wf3CcRnrlJLgHQD75KIQmByq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrPIIDovNQVJQhZhIDTvOUJKs0RoF+1eGjaKv/c17LCzspR5/X
-	dcnm223D0E8n6IIc5p1XzM20kYZp9x8bU6EBhEM1+G3O0C5G9Z/mm9UbjBLRtorUxNwx2nwukCd
-	UMX0ncg==
-X-Google-Smtp-Source: AGHT+IHOXqIQmTAugf15BrDiV6HcY4fQ6ZvPzwSIXYUDhSteM2Wo5XdQ+I1dxHg6x0puKwyQc7KGqYKDSZo=
-X-Received: from pjbnb15.prod.google.com ([2002:a17:90b:35cf:b0:328:116e:273])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:390a:b0:329:f670:2624
- with SMTP id 98e67ed59e1d1-32ee3f2488dmr4339532a91.30.1758146187259; Wed, 17
- Sep 2025 14:56:27 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:56:25 -0700
-In-Reply-To: <aMqt46hxeKxCxkmq@google.com>
+	s=arc-20240116; t=1758146244; c=relaxed/simple;
+	bh=HhzyC0ZZquIaoVW0wTN6cNxHYwm1q26N31dr9FfEXU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZM50eZ8ipRcoe3eKM44a1m16F2NVV5RqczIA0R/dDeOVro/mWjChEN/zvmKOQxuF8hpWlHFLU0CGs6WLiTsk6EXrZ5mZqldr14es8C6+roBQxEHntAacI3EqCJKKRKP4f5/OaHDosgN5s+y4rG2Znjyf6NVpkOTpHLy5v0Og6y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEgvKat0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00465C4CEE7;
+	Wed, 17 Sep 2025 21:57:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758146244;
+	bh=HhzyC0ZZquIaoVW0wTN6cNxHYwm1q26N31dr9FfEXU4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=vEgvKat0epe6kqqVZtBbn30bTqELyhZ2f8QkxJejKvL25YakygsCf0EO8+P1S10wT
+	 2XijqumznfrXxiFuWsNcr+dewYFNcGCyu8TeRuTHzFEtL1dF0Gy6F0TcL5Bz9o1xNo
+	 UvXQkwn29eTB79mNiGuGtpuyNcX86BzG1McYGBe2YNUaVhV5A+BOLkAIcqrgtz5fTR
+	 w5KtoqrV64Vm24hu/rQlgTgEgFJIS3ZoI3Qwb7+QlNA8flyA3G2FsHhNN+nT929R0T
+	 M9h0d3zG5ZngswmHGVak/0tKnGp9fJwpVGjuVvxPCUEQbnxjSxZmT57c9hXeE2RZri
+	 FSiHwkIFqcKqQ==
+Date: Wed, 17 Sep 2025 16:57:22 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Randolph Lin <randolph@andestech.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alex@ghiti.fr,
+	aou@eecs.berkeley.edu, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	ben717@andestech.com, inochiama@gmail.com,
+	thippeswamy.havalige@amd.com, namcao@linutronix.de,
+	shradha.t@samsung.com, randolph.sklin@gmail.com,
+	tim609@andestech.com
+Subject: Re: [PATCH v2 4/5] PCI: andes: Add Andes QiLai SoC PCIe host driver
+ support
+Message-ID: <20250917215722.GA1876729@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-10-seanjc@google.com>
- <c4b9d87b-fddc-420b-ac86-7da48a42610f@linux.intel.com> <aMqt46hxeKxCxkmq@google.com>
-Message-ID: <aMsuiTIUlulepJly@google.com>
-Subject: Re: [PATCH v15 09/41] KVM: x86: Load guest FPU state when access
- XSAVE-managed MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMqmmd381sySCGnY@swlinux02>
 
-On Wed, Sep 17, 2025, Sean Christopherson wrote:
-> On Tue, Sep 16, 2025, Binbin Wu wrote:
-> > > +/*
-> > > + * Lock and/or reload guest FPU and access xstate MSRs. For accesses initiated
+On Wed, Sep 17, 2025 at 08:16:25PM +0800, Randolph Lin wrote:
+> On Tue, Sep 16, 2025 at 09:46:52AM -0500, Bjorn Helgaas wrote:
+> > On Tue, Sep 16, 2025 at 06:04:16PM +0800, Randolph Lin wrote:
+> > > Add driver support for DesignWare based PCIe controller in Andes
+> > > QiLai SoC. The driver only supports the Root Complex mode.
+
+> > > +          Say Y here to enable PCIe controller support on Andes QiLai SoCs,
+> > > +       which operate in Root Complex mode. The Andes QiLai SoCs PCIe
+> > > +       controller is based on DesignWare IP (5.97a version) and therefore
+> > > +       the driver re-uses the DesignWare core functions to implement the
+> > > +       driver. The Andes QiLai SoC has three Root Complexes (RCs): one
+> > > +       operates on PCIe 4.0 with 4 lanes at 0x80000000, while the other
+> > > +       two operate on PCIe 4.0 with 2 lanes at 0xA0000000 and 0xC0000000,
+> > > +       respectively.
 > > 
+> > I assume these addresses come from devicetree, so I don't think
+> > there's any need to include them here.
+> 
+> I will add num-lanes property in the devicetree.
+
+Don't add num-lanes to devicetree unless your driver requires it.
+dw_pcie_host_init() uses dw_pcie_link_get_max_link_width() try to get
+the lane width from PCI_EXP_LNKCAP.
+
+> > > +static
+> > > +bool qilai_pcie_outbound_atu_addr_valid(struct dw_pcie *pci,
+> > > +                                     const struct dw_pcie_ob_atu_cfg *atu,
+> > > +                                     u64 *limit_addr)
+> > > +{
+> > > +     u64 parent_bus_addr = atu->parent_bus_addr;
+> > > +
+> > > +     *limit_addr = parent_bus_addr + atu->size - 1;
+> > > +
+> > > +     /*
+> > > +      * Addresses below 4 GB are not 1:1 mapped; therefore, range checks
+> > > +      * only need to ensure addresses below 4 GB match pci->region_limit.
+> > > +      */
+> > > +     if (lower_32_bits(*limit_addr & ~pci->region_limit) !=
+> > > +         lower_32_bits(parent_bus_addr & ~pci->region_limit) ||
+> > > +         !IS_ALIGNED(parent_bus_addr, pci->region_align) ||
+> > > +         !IS_ALIGNED(atu->pci_addr, pci->region_align) || !atu->size)
+> > > +             return false;
 > > 
-> > Lock is unconditional and reload is conditional.
-> > "and/or" seems not accurate?
+> > Seems a little bit strange.  Is this something that could be expressed
+> > via devicetree?  Or something peculiar about QiLai that's different
+> > from all the other DWC-based controllers?
 > 
-> Agreed.  This?
+> After reviewing both the code history and the bug tracking system,
+> it turns out that this code doesn't even qualify as a valid
+> workaround.  Apologies for having submitted it as a patch.
 > 
-> /*
->  * Lock andr (re)load guest FPU and access xstate MSRs. For accesses initiated
->  * by host, guest FPU is loaded in __msr_io(). For accesses initiated by guest,
->  * guest FPU should have been loaded already.
->  */
+> The root cause is that the iATU limits were not configured
+> correctly.  The original design assumed at least 32GB or 128GB of
+> BAR resource assignment, but the actual chip sets the iATU limit to
+> only 4GB.  As a result, region_limit is always constrained by this
+> 4GB boundary.
+> 
+> The correct workaround should be to program the iATU only for the
+> 32-bit address space and skip iATU programming for the 64-bit space.
+> A simple way to implement this workaround is to parse the
+> num-viewport property from the devicetree and use this value
+> directly, instead of relying on the result of reading
+> PCIE_ATU_VIEWPORT.
+> 
+> I will attempt to implement it this way, but the correct method is
+> not yet well-defined. Do you have any suggestions on how to modify
+> the num-viewport property from the devicetree for use in the driver?
+> It seems it will be modified in pcie-designware.c.
 
-That's not very good either.
+Nope, I don't know enough about DWC to give any advice, sorry!
 
-/*
- * Lock (and if necessary, re-load) the guest FPU, i.e. XSTATE, and access an
- * MSR that is managed via XSTATE.  Note, the caller is responsible for doing
- * the initial FPU load, this helper only ensures that guest state is resident
- * in hardware (the kernel can load its FPU state in IRQ context).
- */
+> > > +static struct platform_driver qilai_pcie_driver = {
+> > > +     .probe = qilai_pcie_probe,
+> > > +     .driver = {
+> > > +             .name   = "qilai-pcie",
+> > > +             .of_match_table = qilai_pcie_of_match,
+> > > +             /* only test passed at PROBE_DEFAULT_STRATEGY */
+> > > +             .probe_type = PROBE_DEFAULT_STRATEGY,
+> > 
+> > This is the only use of PROBE_DEFAULT_STRATEGY in the entire tree, so
+> > I doubt you need it.  If you do, please explain why in more detail.
+> 
+> In the V1 patch, the reviewer, Manivannan, suggested:
+> "You should start using PROBE_PREFER_ASYNCHRONOUS."
+> However, after setting up PROBE_PREFER_ASYNCHRONOUS, numerous errors
+> were encountered during the EP device probe flow.
+> Therefore, we would prefer to continue using PROBE_DEFAULT_STRATEGY.
+
+I don't really know the details of probe_type.  But it sounds like the
+errors with PROBE_PREFER_ASYNCHRONOUS should probably be debugged and
+fixed.
+
+If PROBE_PREFER_ASYNCHRONOUS can't be made to work, it sounds like you
+should specify PROBE_FORCE_SYNCHRONOUS, because the comments suggest
+that using PROBE_DEFAULT_STRATEGY means the driver should work with
+either PROBE_FORCE_SYNCHRONOUS or PROBE_PREFER_ASYNCHRONOUS:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/device/driver.h?id=v6.16#n24
 
