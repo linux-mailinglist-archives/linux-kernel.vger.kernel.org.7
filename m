@@ -1,146 +1,94 @@
-Return-Path: <linux-kernel+bounces-821666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F94CB81E82
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:15:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01597B81E94
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605CB3AA460
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69285881A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C74F308F09;
-	Wed, 17 Sep 2025 21:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F011314D2F;
+	Wed, 17 Sep 2025 21:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fRT8zgYp"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="rUbvzeb6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBB2308F24
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8112314D0D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143719; cv=none; b=oMA3yE/xzYPAjyNyD/rKlzIKlKHfb/iT3sBbPPjzbv+OPi9c4oFOP3P8IErA2FDkIjo5/GQL2IkH+BXs4hHUSNR2ngK7uhhioFFEOuei7btg10slFNrBd0MhSsWIclUaP9Nz6OJEiQR60RsL7QxBf6HXHeb2O0oAyRwcqxwui2M=
+	t=1758143730; cv=none; b=YlTVdrm68S9lvmEjslp0pQyWEwbuZwQfbHuM8+8o0JGbroBGVGxjOvnarff6Yiwbk/LEWXUTsSc/RjMkn1zU+9UOGs6n/lkM1kVspFNCz4w/8Pf7ieZZMlCcm5ISBowWncDShAQUTCasmhlinSwv8J93dqTWFNghu0YEI0BP89Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143719; c=relaxed/simple;
-	bh=aOsBVV1Tpb4mhK2PfFogLLFA+uKbhmaEQcibYeJBiMc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YL6cu9lG3uAwLUk8hreQiR1GrXEVzXDEthqdDgTcO3+RUQQCRkHSodU4rdj2Aomwwc/0UQ8ZDrr3lYM+q3SaxDGI6Gv0M9OUKtq7s2TFtRSzpmLs1kfRI88yoRORLAC2o8l3YFeoH9HhQHoNY5Jcq8soxxh/9mnkLuh9OG0L7uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fRT8zgYp; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b4e796ad413so213700a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758143717; x=1758748517; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zf/y0HmWPOZ3dErMq/oUtcRItkhIQW6aNr62qVpQuQM=;
-        b=fRT8zgYpLgCO77DcdRAFmm6LMK8e+40lsvfGOFFM49bwqpaQDpb263GPYNnoD6fwcn
-         yH+7uOA9paLVsq6oljCxhOp2sBRvf+8te+AJHfr586nBzU0A5mlr3ezGqzFJQlhdK2TM
-         OuSoJZ7AVIkhNp/sVI4NzZqexVGAhNeo3Jzq/b1taiuqa5gbZzA8/D05EXjqfa6bIlCr
-         /ayi5vSBx9nVXSfqjAdxsuG9gGSqiOIflPi/i0i/l+WGFfmJbrgZRJt5BkX6YvdF1SJa
-         O+SRk/eallZVUTntgulkpNZM0otK4aBuct+PNQOFGQ1c64tXzyBPEyt5otst5wTQXoKl
-         yGvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758143717; x=1758748517;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zf/y0HmWPOZ3dErMq/oUtcRItkhIQW6aNr62qVpQuQM=;
-        b=KYQQDH/pLcT3hHzQYUg13TeuVTnoQ+mBYVOciOjblLed/W0xx2fIVR+TOggoVPHJYI
-         t9ilxLda+1G2fu3bs8Ha2cpVg93PHaG3i2y+RBeP4jsZmhjEDEs4U0wMkSfC1rsHEJ1E
-         1CUARNcUgvbUlVLTcQFLAUVP8asYYkCNIf3AI+UlAhSlSMY2tn88ar6A/3B7P1YOaeGg
-         dcOGE+zyw6lz/N4d5ZKY9iOiWA5C9zPhbH9+l0fWFnQtFJ4RXIUTfXJXjjAmjxONOn1P
-         NJzUUMW4+rde4lx7AwB3wI+AGKxIc0VkihiHrRzBzebbo2lH0/rT9b5IaFxflj/fBOev
-         JeKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbPWKzUgMBtrBNqtxxBtEmj5oaqMTlDUo0CXEuEi3Cqmdsk+cTc4G1BeQQrDS7x/cb4iQF9iMpinWEkps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnMzLK8UxIg03TSv3OG281dIR27p5fQOVEv7DuZHsDnjVGan6L
-	TipdXVWp2e8jw/hIaTHIKlwDBm6Uc2qdK0rGiPB8uDZp9hLDZROwTINOpRxeT3YOZznr5H7XI3M
-	p2ruWuA==
-X-Google-Smtp-Source: AGHT+IEx2ToSGxWphNk2FKfxD2yst1MtFncBvHa8DVnpZZzTslJr/R25DqHaOFbX/k7CmOZUhV/Ax0gsm+0=
-X-Received: from pjbst3.prod.google.com ([2002:a17:90b:1fc3:b0:330:49f5:c0b1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d89:b0:252:525c:2c2c
- with SMTP id adf61e73a8af0-27a9f267877mr5474946637.14.1758143717363; Wed, 17
- Sep 2025 14:15:17 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:15:15 -0700
-In-Reply-To: <aMpuaVeaVQr3ajvB@intel.com>
+	s=arc-20240116; t=1758143730; c=relaxed/simple;
+	bh=DcxYPaU/C9Z8kxq2ijoz5I5wq5YK+7WzAtenGXmcCw8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hfkM/UZcbs84YyvzHiQKCnNtiA2Jao6MOiEYzKvRB9RHj1BgtRaveA0nfBiobZoVp96Fus/2zxV9rtkF6zfpmgAQAb0eXefFMtzsvO4V3rmufjZKW8ndCjdh4Nm5sCHKI0KPCNLY8Y04MmdzlvOQdnRCUTx/NsxmwNWkBD52+uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=rUbvzeb6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA83BC4CEE7;
+	Wed, 17 Sep 2025 21:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758143729;
+	bh=DcxYPaU/C9Z8kxq2ijoz5I5wq5YK+7WzAtenGXmcCw8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rUbvzeb6lTZ+Whs/55k7lgnRyrOb9pGJ8yrG1X4a738PSNve1uqUlZcQLNspuugE5
+	 igqRsR7m7ZGW7YhWZbOsdqHura7PFNCHH12FdrnOJlBb9p1LgYcJsXXfuvBQcK1aBL
+	 Zpue6/TV2+E0fX526TLpn03YIXhPqX3qMwZoVtXo=
+Date: Wed, 17 Sep 2025 14:15:28 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>, Changyuan
+ Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>, Jason Gunthorpe
+ <jgg@nvidia.com>, Pasha Tatashin <pasha.tatashin@soleen.com>, Pratyush
+ Yadav <pratyush@kernel.org>, kexec@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] kho: add support for preserving vmalloc
+ allocations
+Message-Id: <20250917141528.cd619a95a19a33d71dcc4b1c@linux-foundation.org>
+In-Reply-To: <20250917174033.3810435-4-rppt@kernel.org>
+References: <20250917174033.3810435-1-rppt@kernel.org>
+	<20250917174033.3810435-4-rppt@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-19-seanjc@google.com>
- <aMpuaVeaVQr3ajvB@intel.com>
-Message-ID: <aMsk43I7UkGbmL88@google.com>
-Subject: Re: [PATCH v15 18/41] KVM: x86: Don't emulate instructions affected
- by CET features
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025, Chao Gao wrote:
-> On Fri, Sep 12, 2025 at 04:22:56PM -0700, Sean Christopherson wrote:
-> >From: Yang Weijiang <weijiang.yang@intel.com>
-> >
-> >Don't emulate branch instructions, e.g. CALL/RET/JMP etc., that are
-> >affected by Shadow Stacks and/or Indirect Branch Tracking when said
-> >features are enabled in the guest, as fully emulating CET would require
-> >significant complexity for no practical benefit (KVM shouldn't need to
-> >emulate branch instructions on modern hosts).  Simply doing nothing isn't
-> >an option as that would allow a malicious entity to subvert CET
-> >protections via the emulator.
-> >
-> >Note!  On far transfers, do NOT consult the current privilege level and
-> >instead treat SHSTK/IBT as being enabled if they're enabled for User *or*
-> >Supervisor mode.  On inter-privilege level far transfers, SHSTK and IBT
-> >can be in play for the target privilege level, i.e. checking the current
-> >privilege could get a false negative, and KVM doesn't know the target
-> >privilege level until emulation gets under way.
+On Wed, 17 Sep 2025 20:40:32 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+
+> A vmalloc allocation is preserved using binary structure similar to
+> global KHO memory tracker. It's a linked list of pages where each page
+> is an array of physical address of pages in vmalloc area.
 > 
-> I modified KUT's cet.c to verify that near jumps, near returns, and far
-> transfers (e.g., IRET) trigger the emulation failure logic added by this
-> patch when guests enable Shadow Stack or IBT.
+> kho_preserve_vmalloc() hands out the physical address of the head page
+> to the caller. This address is used as the argument to
+> kho_vmalloc_restore() to restore the mapping in the vmalloc address
+> space and populate it with the preserved pages.
 > 
-> I found only one minor issue: near return instructions were not tagged with
-> ShadowStack.
+> ...
+>
+> --- a/include/linux/kexec_handover.h
+> +++ b/include/linux/kexec_handover.h
+> @@ -39,12 +39,22 @@ struct page;
+>  
+>  struct kho_serialization;
+>  
+> +struct kho_vmalloc_chunk;
+> +struct kho_vmalloc {
+> +        DECLARE_KHOSER_PTR(first, struct kho_vmalloc_chunk *);
 
-Heh, I had just found this through inspection.
+offtopic nit: DECLARE_KHOSER_PTR() *defines* a union named "first".  It
+doesn't declare one.  A better name for this would have been DEFINE_...
 
-> The following diff fixes this issue:
-> 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index e4be54a677b0..b1c9816bd5c6 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -4326,8 +4326,8 @@ static const struct opcode opcode_table[256] = {
-> 	X8(I(DstReg | SrcImm64 | Mov, em_mov)),
-> 	/* 0xC0 - 0xC7 */
-> 	G(ByteOp | Src2ImmByte, group2), G(Src2ImmByte, group2),
-> -	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch, em_ret_near_imm),
-> -	I(ImplicitOps | NearBranch | IsBranch, em_ret),
-> +	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch | ShadowStack, em_ret_near_imm),
-> +	I(ImplicitOps | NearBranch | IsBranch | ShadowStack, em_ret),
+And the world would be a better place if those three macros had a bit
+of documentation ;)
 
-Tangentially directly related to this bug, I think we should manual annotation
-where possible.  I don't see an easy way to do that for ShadowStack, but for IBT
-we can use IsBranch, NearBranch and the SrcXXX operance to detect IBT-affected
-instructions.  It's obviously more complex, but programmatically detecting
-indirect branches should be less error prone.  I'll do so in the next version.
-
-> 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2ES, em_lseg),
-> 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2DS, em_lseg),
-> 	G(ByteOp, group11), G(0, group11),
-> 
-> 
-> And for reference, below are the changes I made to KUT's cet.c
-
-I now have a more comprehensive set of testcases, and it can be upstreamed
-(relies on KVM's default behavior of injecting #UD at CPL==3 on failed emulation).
+The code looks nice though.
 
