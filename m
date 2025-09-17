@@ -1,247 +1,78 @@
-Return-Path: <linux-kernel+bounces-820533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A967B7D9DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5E5B7D828
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C79A918888AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:10:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F7E2A4740
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEE234A327;
-	Wed, 17 Sep 2025 11:09:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A244F2EAB89
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D4F2EC54D;
+	Wed, 17 Sep 2025 11:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iGJt740u"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AA52EA740
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758107346; cv=none; b=SvRZqQdl6GUVVlY+uXY3yQwg1jPThwBJ0CuFfI0sTdlTE0eRShrVs0bQJmwd9xUuUcdtfqncqrqO/mRCCO/GWoA7KfIL7lmP8NFmEHG/wIkTIF4BzpgIJrCWkb10aBiLqOoAdNyIKmR8UZb1TzuXa++wssOcXO72zo1UjK2FwMo=
+	t=1758107357; cv=none; b=fi5uazf4cq4cI6v86OTCVk4FQ8uB/asE+laTV7+vNnTibnE0aqr2y1xUBAQATEQsfPbF+/hy40SxNfLTvaDbwJxRUfo3A+IYH/nIkOrtPOGWylAbiKOb4YCfIZWHwFppU2zxNJpNoshYqhNF06B0mITnJHlbwCyu2OhaW5vPwYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758107346; c=relaxed/simple;
-	bh=yG46QiIn2E8l+bpjPLStSV45GrTXN4pUWo7SrRu814Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BGgbQHQxQdGXFBFQZrYNLO/+uRlgcexW06gM9tov4cWVzoQraj+KBD3xEPB/bB7N2G3GbCXGX4EFCVXI1jCOmJu+YAJkSj5A9mJ1k8L0NFo3/gVDu5ukQvYgJbOS4w5h5LFD3Z9siSFf7C+Bmcu47p0sOqy8A2oHCyBdDmurT8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7EF5267F;
-	Wed, 17 Sep 2025 04:08:55 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CD5EE3F66E;
-	Wed, 17 Sep 2025 04:09:01 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	james.morse@arm.com,
-	ardb@kernel.org,
-	scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v8 5/5] arm64: futex: support futex with FEAT_LSUI
-Date: Wed, 17 Sep 2025 12:08:38 +0100
-Message-Id: <20250917110838.917281-6-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250917110838.917281-1-yeoreum.yun@arm.com>
-References: <20250917110838.917281-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1758107357; c=relaxed/simple;
+	bh=vCQ82qV94yiNku9nli/U7SHV6Xn5r9YiEW4JVuIgcls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EwRXqEr98S7e/DNgWvLWzBVflyouhDSkqaTISwGF+shm2n4GWr/JztXdgoNuC53D7YUXywTPvhEf0VCXdMlmGxqv2dFoHNYrvRPVBr8U0ivIys898qmfMuIRd6QT+ld53WRymuMkgGbM32gMvVw1MpYP94FHq5A1H4ubrJIRyAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iGJt740u; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0892d313-c483-44e8-98d4-6a4cab788e29@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758107341;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x+RKa+uqGSHSACfTcMdSr144l4JX7Dk0z0dr1U28JGU=;
+	b=iGJt740u+j96DRk93gu+geDuO4RJOuxcqEU5ghVWcK+T4YN52cIf867k0kLZ3gzllNTjFC
+	zCt+d3KWOnmrwUnkEZpqylijU6fxqmrJNQQZnFEUzPArtWwB1luIMaCrZ7UHml3jOOfFqu
+	pptOWqU4/BLtzA3JW43UhNHVv15A3pI=
+Date: Wed, 17 Sep 2025 12:08:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: ti: am65-cpsw: Update hw timestamping filter for
+ PTPv1 RX packets
+To: vishnu singh <v-singh1@ti.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, richardcochran@gmail.com, rogerq@kernel.org,
+ horms@kernel.org, mwalle@kernel.org, alexander.sverdlin@gmail.com,
+ npitre@baylibre.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: c-vankar@ti.com
+References: <20250917041455.1815579-1-v-singh1@ti.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250917041455.1815579-1-v-singh1@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Current futex atomic operations are implemented with ll/sc instructions
-and clearing PSTATE.PAN.
+On 17/09/2025 05:14, vishnu singh wrote:
+> From: Vishnu Singh <v-singh1@ti.com>
+> 
+> CPTS module of CPSW supports hardware timestamping of PTPv1 packets.Update
+> the "hwtstamp_rx_filters" of CPSW driver to enable timestamping of received
+> PTPv1 packets. Also update the advertised capability to include PTPv1.
+> 
+> Signed-off-by: Vishnu Singh <v-singh1@ti.com>
 
-Since Armv9.6, FEAT_LSUI supplies not only load/store instructions but
-also atomic operation for user memory access in kernel it doesn't need
-to clear PSTATE.PAN bit anymore.
-
-With theses instructions some of futex atomic operations don't need to
-be implmented with ldxr/stlxr pair instead can be implmented with
-one atomic operation supplied by FEAT_LSUI.
-
-However, some of futex atomic operation don't have matched
-instructuion i.e) eor or cmpxchg with word size.
-For those operation, uses cas{al}t to implement them.
-
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/include/asm/futex.h | 136 ++++++++++++++++++++++++++++++++-
- 1 file changed, 135 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-index f8cb674bdb3f..683291700ff5 100644
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -9,6 +9,8 @@
- #include <linux/uaccess.h>
- #include <linux/stringify.h>
- 
-+#include <asm/alternative.h>
-+#include <asm/alternative-macros.h>
- #include <asm/errno.h>
- 
- #define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
-@@ -86,11 +88,143 @@ __llsc_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
- 	return ret;
- }
- 
-+#ifdef CONFIG_AS_HAS_LSUI
-+
-+/*
-+ * When the LSUI feature is present, the CPU also implements PAN, because
-+ * FEAT_PAN has been mandatory since Armv8.1. Therefore, there is no need to
-+ * call uaccess_ttbr0_enable()/uaccess_ttbr0_disable() around each LSUI
-+ * operation.
-+ */
-+
-+#define __LSUI_PREAMBLE	".arch_extension lsui\n"
-+
-+#define LSUI_FUTEX_ATOMIC_OP(op, asm_op, mb)				\
-+static __always_inline int						\
-+__lsui_futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)	\
-+{									\
-+	int ret = 0;							\
-+	int oldval;							\
-+									\
-+	asm volatile("// __lsui_futex_atomic_" #op "\n"			\
-+	__LSUI_PREAMBLE							\
-+"1:	" #asm_op #mb "	%w3, %w2, %1\n"					\
-+"2:\n"									\
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)				\
-+	: "+r" (ret), "+Q" (*uaddr), "=r" (oldval)			\
-+	: "r" (oparg)							\
-+	: "memory");							\
-+									\
-+	if (!ret)							\
-+		*oval = oldval;						\
-+									\
-+	return ret;							\
-+}
-+
-+LSUI_FUTEX_ATOMIC_OP(add, ldtadd, al)
-+LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
-+LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
-+LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
-+
-+static __always_inline int
-+__lsui_cmpxchg64(u64 __user *uaddr, u64 *oldval, u64 newval)
-+{
-+	int ret = 0;
-+
-+	asm volatile("// __lsui_cmpxchg64\n"
-+	__LSUI_PREAMBLE
-+"1:	casalt	%x2, %x3, %1\n"
-+"2:\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-+	: "+r" (ret), "+Q" (*uaddr), "+r" (*oldval)
-+	: "r" (newval)
-+	: "memory");
-+
-+	return ret;
-+}
-+
-+static __always_inline int
-+__lsui_cmpxchg32(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-+{
-+	u64 __user *uaddr_al;
-+	u64 oval64, nval64, tmp;
-+	static const u64 hi_mask = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ?
-+		GENMASK_U64(63, 32): GENMASK_U64(31, 0);
-+	static const u8 hi_shift = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? 32 : 0;
-+	static const u8 lo_shift = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? 0 : 32;
-+
-+	uaddr_al = (u64 __user *) PTR_ALIGN_DOWN(uaddr, sizeof(u64));
-+	if (get_user(oval64, uaddr_al))
-+		return -EFAULT;
-+
-+	if ((u32 __user *)uaddr_al != uaddr) {
-+		nval64 = ((oval64 & ~hi_mask) | ((u64)newval << hi_shift));
-+		oval64 = ((oval64 & ~hi_mask) | ((u64)oldval << hi_shift));
-+	} else {
-+		nval64 = ((oval64 & hi_mask) | ((u64)newval << lo_shift));
-+		oval64 = ((oval64 & hi_mask) | ((u64)oldval << lo_shift));
-+	}
-+
-+	tmp = oval64;
-+
-+	if (__lsui_cmpxchg64(uaddr_al, &oval64, nval64))
-+		return -EFAULT;
-+
-+	if (tmp != oval64)
-+		return -EAGAIN;
-+
-+	*oval = oldval;
-+
-+	return 0;
-+}
-+
-+static __always_inline int
-+__lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	return __lsui_futex_atomic_andnot(~oparg, uaddr, oval);
-+}
-+
-+static __always_inline int
-+__lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	u32 oldval, newval;
-+
-+	/*
-+	 * there are no ldteor/stteor instructions...
-+	 */
-+	if (get_user(oldval, uaddr))
-+		return -EFAULT;
-+
-+	newval = oldval ^ oparg;
-+
-+	return __lsui_cmpxchg32(uaddr, oldval, newval, oval);
-+
-+}
-+
-+static __always_inline int
-+__lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-+{
-+	return __lsui_cmpxchg32(uaddr, oldval, newval, oval);
-+}
-+
-+#define __lsui_llsc_body(op, ...)					\
-+({									\
-+	alternative_has_cap_likely(ARM64_HAS_LSUI) ?			\
-+		__lsui_##op(__VA_ARGS__) : __llsc_##op(__VA_ARGS__);	\
-+})
-+
-+#else	/* CONFIG_AS_HAS_LSUI */
-+
-+#define __lsui_llsc_body(op, ...)	__llsc_##op(__VA_ARGS__)
-+
-+#endif	/* CONFIG_AS_HAS_LSUI */
-+
-+
- #define FUTEX_ATOMIC_OP(op)						\
- static __always_inline int						\
- __futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)		\
- {									\
--	return __llsc_futex_atomic_##op(oparg, uaddr, oval);		\
-+	return __lsui_llsc_body(futex_atomic_##op, oparg, uaddr, oval);	\
- }
- 
- FUTEX_ATOMIC_OP(add)
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
