@@ -1,46 +1,42 @@
-Return-Path: <linux-kernel+bounces-821780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120B5B823AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:04:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC03B823AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7634626259
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8624F1BC06EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BDD3126CC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264A53126CB;
 	Wed, 17 Sep 2025 23:03:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D5B286D62;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C0C27AC2E;
 	Wed, 17 Sep 2025 23:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758150220; cv=none; b=i1qyZ1Q4xGDt1gdSazgsdW82J4XobmFCwJm6hWYhEyMGB8/di7cctxX/uA5v3CdpA3M96hrsJQRN6XNOkJejdrjsDf9EL6dmQKXD7sxC+MjHGnMs7qkVkdkWX5KGZaixFIdhTbtA8m/jtpFICt7UbLmuzCSsIuhONOcb25d8ZdU=
+	t=1758150220; cv=none; b=sIfrwQyTpXKMwc6ZkemFmCIxBjIHWQQWvR6GMJPCplYc/eM0NkF9zuCxzR2fC7f65Qo7cmNb5T8lMUGaa/3taT5YT02H96PKW/iL74QztJFJXVmAL6kU324+nK9NC0InP/tXZH67v1cnbvkNWJZXKpy5SnyYI9HKBog1xb7J2E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758150220; c=relaxed/simple;
-	bh=9CtECTK0SVX0Fkdz1HxUIBD2ZUopRnHEfxtXI//qLEE=;
+	bh=b3lnzbMGUMruv80TpeQ8LxeDYvyLXztW7EmdDS4NOSg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OL5unzy4YTMd92n7snSibY90Lpod2gLOyx9zpgISuyTarpSxNTADhJ4nzUBNZQAzxtrK+PYYjTBV0Mvl7qMUSmgEdez5qdRO3OOzL/IFrSX5sNfNv9XkZ/eY+0kFhr/hO7pAOloLtYvB0iuoldBDA5UofFjWpUn0bW0WjMVuICs=
+	 MIME-Version:Content-Type; b=S/7v8ud8WwAMAqyazMVyvngfUis2nSYgoNtiVOs661u33sjE5FtbIU5xC/KJkB0GSfR1wX/o6o6NA2QroVPKz7IotXZq4joGDIw1BTDncySFBfophzPJM3EUHGFyR80SQ1+itQF0ElavwYJ4FoPdnHBjVCL0ZbW1e+m74kt0T2M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 306F6C4CEF9;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32554C4CEFA;
 	Wed, 17 Sep 2025 23:03:40 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 65042180680; Thu, 18 Sep 2025 01:03:38 +0200 (CEST)
+	id 5651218067E; Thu, 18 Sep 2025 01:03:38 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250912065146.28059-1-clamor95@gmail.com>
-References: <20250912065146.28059-1-clamor95@gmail.com>
-Subject: Re: [PATCH v1 0/1] dt-bindings: power: supply: bq24190: document
- charge enable pin
-Message-Id: <175815021840.129824.12179531235914960284.b4-ty@collabora.com>
+To: sre@kernel.org, Xichao Zhao <zhao.xichao@vivo.com>
+Cc: pali@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250909020925.382261-1-zhao.xichao@vivo.com>
+References: <20250909020925.382261-1-zhao.xichao@vivo.com>
+Subject: Re: [PATCH] power: supply: rx51: remove redundant condition checks
+Message-Id: <175815021834.129824.6840579489464192316.b4-ty@collabora.com>
 Date: Thu, 18 Sep 2025 01:03:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,22 +49,15 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Fri, 12 Sep 2025 09:51:45 +0300, Svyatoslav Ryhel wrote:
-> Document active low Charge Enable pin. Battery charging is enabled when
-> REG01[5:4] = 01 and CE pin = Low. CE pin must be pulled high or low.
+On Tue, 09 Sep 2025 10:09:25 +0800, Xichao Zhao wrote:
+> Remove redundant condition checks and replace else if with else.
 > 
-> Svyatoslav Ryhel (1):
->   dt-bindings: power: supply: bq24190: document charge enable pin
 > 
-> Documentation/devicetree/bindings/power/supply/bq24190.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> [...]
 
 Applied, thanks!
 
-[1/1] dt-bindings: power: supply: bq24190: document charge enable pin
-      commit: c3a45c5fde95d319125812f629c579cc63c69941
+[1/1] power: supply: rx51: remove redundant condition checks
+      commit: 1bafaa156ed3881cd4f187ab1c43e408742e1f11
 
 Best regards,
 -- 
