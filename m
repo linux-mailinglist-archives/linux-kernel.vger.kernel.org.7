@@ -1,81 +1,59 @@
-Return-Path: <linux-kernel+bounces-820523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3828AB7D9F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D12BB7D8AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77B01C031EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5371058251E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A182D9EE5;
-	Wed, 17 Sep 2025 11:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e10JiuyG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FD42DF6FA;
+	Wed, 17 Sep 2025 11:06:16 +0000 (UTC)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB692BEC42;
-	Wed, 17 Sep 2025 11:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E002DAFA5;
+	Wed, 17 Sep 2025 11:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758107135; cv=none; b=AaYJ3Ygzlvlsi8OpgnIRCJHpkG6fCCUrf/aR7f+1B86C794Y4dzN37FA73eIEJk8LUajvfwz5PnXydkFyXLieSPDjHTOlOI47CQoEpAWdC6Qlic3LyFj5BYIlgSzKmDpgSATtmGk6cEmQVYi2WSrhJh4QULlzdU6Z25kT64WAd8=
+	t=1758107175; cv=none; b=W3ytlmWshnfH9h0We00xQryL8hDgUP++7ZlBuYK6RBDIFoc4DzS0VFNCZR3cZ9WmkbjzWIOTM7+FZYLejA+ykAQst4ZvdDxLoqmjlhKo990A9PQbODHzpQKLJuctpx199F0zDxULmWSHe7VSYc8d2Q+LCYh/eSd12ABnGJOw5uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758107135; c=relaxed/simple;
-	bh=aYfiGscODZY08nTaVOaMHh+BkAmQFeULqygoaWas8mk=;
+	s=arc-20240116; t=1758107175; c=relaxed/simple;
+	bh=qUsp7FIwmTAFssINAeQmhTm8DdUAGD6ER7hbOPzidRI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nGPqkWxKAWzpIEwRHs2z5pH0OvNqoqj/Zm6eIyh/FIxvBxNvYs69Fo8Ii8pQUbgXXcnNObO18IfGHMfAdUIpjEjBJXfs21ZesDasEz7SMXlhEv0mxMsmX8eNHAvBFK7AxQcKchNaNrSoiQP+JgmkH6H9pP2C1jxbHSpwkke0o7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e10JiuyG; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758107133; x=1789643133;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aYfiGscODZY08nTaVOaMHh+BkAmQFeULqygoaWas8mk=;
-  b=e10JiuyGMW/VSs95vPJz/T5yhXtT90is6xUc0b98eFP1NOjtjboMh+Oh
-   7QAM+wg4CfeCqAS3hnftb2TqIZ4YDekOszRa9oJu9wHsDkag+tYG87xa2
-   t4WB8r5G3HIONglexOPVJp0mOAe9CIRaKe9yRqvt+5nxkSyh5WJvAAMUw
-   a5ACtfbl0BD0yewORz4TcBXcxSJP0+k611wcfIIJX+hnZarS1DG4+uiq6
-   Idh7mwrSimGqTTYeZZMtBrW796oJ9NP2MERuXxYC8DRTk7+c57m9+fu8t
-   wEhDExKFW6H7paaokR65eqVRIg1wbAadNp63AByr1C8ZPiQy//PcqIFjP
-   A==;
-X-CSE-ConnectionGUID: Wj3QbtN0TeiVwHmVwRMSpA==
-X-CSE-MsgGUID: kfjVKoiVQna12zW9EVix0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="78014332"
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="78014332"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 04:05:32 -0700
-X-CSE-ConnectionGUID: K61CCjLJSi2MLr0tbHiVbQ==
-X-CSE-MsgGUID: DjGYdbNkTqy4ceeBIqZFDA==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 17 Sep 2025 04:05:29 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uypyZ-0001Pf-2G;
-	Wed, 17 Sep 2025 11:05:27 +0000
-Date: Wed, 17 Sep 2025 19:05:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-	jishnu.prakash@oss.qualcomm.com
-Subject: Re: [PATCH v2 3/4] regulator: rpmh-regulator: Add support for new
- resource name format
-Message-ID: <202509171822.oRjF64pS-lkp@intel.com>
-References: <20250916-glymur-rpmh-regulator-driver-v2-3-c6593ff9b4be@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ogkwLOfNX+zcEWKguJjecK8Dp882f/obZBxGrN37iu1KY89tIC+jVVPlU5KDhlAIDKrkcpkllh6xhfq4MFgYws/PMSgLcvebXS5eTl10uC4Az6Gw4XmGR9ffw1JK0xFZv85DaMrxB1WR00AchCgxeVWjRWl4RvWV3pziL+lQEJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpgz16t1758107143tfd4595b3
+X-QQ-Originating-IP: KyjLbqrSwWDsBL167vTWTlsLOGuQf/XO+VF1mGtMYgQ=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 17 Sep 2025 19:05:41 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14013483781731506798
+Date: Wed, 17 Sep 2025 19:05:40 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, rdunlap@infradead.org, joerg@jo-so.de,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v12 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <D7EC5E8B6F6E685E+20250917110540.GA91482@nic-Precision-5820-Tower>
+References: <20250916112952.26032-1-dong100@mucse.com>
+ <20250916112952.26032-5-dong100@mucse.com>
+ <3058c061-3a17-4077-8d4e-c91ad72b3831@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,33 +62,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916-glymur-rpmh-regulator-driver-v2-3-c6593ff9b4be@oss.qualcomm.com>
+In-Reply-To: <3058c061-3a17-4077-8d4e-c91ad72b3831@linux.dev>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MnvGtZwO7LbyrzQzy3gSHZpndqqwTFAD5/Ae+NgTmFBU3bMcwjYbP9X4
+	JygP+AELsD9LsI6vEN5nT9Sn+Jx33MzhoY5CycW1lXPnpPquSXTtb1fiDRyWRK3hbIYkEcs
+	TpEHel0XMPaNIzv91OfktmfkF8v6L0prtnbgl5uEiIq4b7gyGT59Q2oDaqFVDP6oIHePRtP
+	3Z02o4hmjgAjWrPDJ/eirNyr2/0e/IyXA+KDqY8xtsTzhLwIkFPy/4y+rrs79AvnAh9KXkl
+	07mw0+FoHAkiRrGk4iVx120LnNUG6JL+k7nq3hJ8AVmGVbvX/JwTlXU8NfpoJ2AtkbCoNC5
+	TF5aA91iewsjDKkaOOo4Ywzb1gHitCxuSEU45M9l8W1al+46F5xxk04pDdrIT7Qs4XYqaE4
+	fsmwuKgZKGa85Auy00JK2CQ3FUYo6vvYeM5u4Gj1LgrgJdOJu+NxOPofjK/xzyuc28WMIfH
+	5ssTzCFEW/ZGePPkamaWB5yc/+2yp/wMvNL2V8P2RPmIKP+lFtI/xX8PhVHYaIkvRrvIbHD
+	53GrWF81/VW8JMnjSklS7xDFB8afGeJVe0Qv0knuaTm96O4EU50Fe8yd/NkxG/ixZbCsPs6
+	NRVJZEtxbETljjMujNrK5J4Qu0vzTu41C4WLb4JNQa0VETovxx5ECpsvqdNPrB76EdmPSqS
+	GS5APoy7YAww9vsyw2r3buItsteWzZXkgU93wnEe/ofZK/j5DITAQ9x92EqIRIh9bc8x6U5
+	hw0Vya09oIBVxMdll0WGciNwcwwPA5DzPaRTc1NODP6TL6sz9KD9Z3Bfg39+zx/vokSDnZU
+	TPz53oN19CF1Kwai2+7N2gmL2ne5OHj2l/LcvPfLs/J8k6BrsqqqVuW8nA4mJdJMtJSTAWh
+	1QqiLCvaSKZWU04D5I9BhuArYln3eWezSFKxJLH/GdbSBYHenHbXkMpsMT5l3p0GHTtv60L
+	oe8PND9S7Bz0oJ6AaUWpwoHm2Xh6AO7ZNZjxdMHoD2z+xI/hLV0566KNU50uy37SvfAOOfE
+	qnzlWp0teWx8xpDy52
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-Hi Kamal,
+On Wed, Sep 17, 2025 at 11:45:31AM +0100, Vadim Fedorenko wrote:
+> On 16/09/2025 12:29, Dong Yibo wrote:
+> > Add fundamental firmware (FW) communication operations via PF-FW
+> > mailbox, including:
+> > - FW sync (via HW info query with retries)
+> > - HW reset (post FW command to reset hardware)
+> > - MAC address retrieval (request FW for port-specific MAC)
+> > - Power management (powerup/powerdown notification to FW)
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> 
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> 
+> small nits below
+> 
+> 
+> > +static void build_get_hw_info_req(struct mbx_fw_cmd_req *req)
+> > +{
+> > +	req->flags = 0;
+> > +	req->opcode = cpu_to_le16(GET_HW_INFO);
+> > +	req->datalen = cpu_to_le16(MUCSE_MBX_REQ_HDR_LEN);
+> > +	req->reply_lo = 0;
+> > +	req->reply_hi = 0;
+> > +}
+> 
+> All these build*() functions re-init flags and reply to 0, but all
+> mbx_fw_cmd_req are zero-inited on the stack. Might be better clean
+> things assignments, but no strong opinion because the code is explicit
+> 
+> If you will think of refactoring this part, it might be a good idea to
+> avoid build*() functions at all and do proper initialization of
+> mbx_fw_cmd_req in callers?
+> 
+> > +
+> > +/**
+> > + * mucse_mbx_get_info - Get hw info from fw
+> > + * @hw: pointer to the HW structure
+> > + *
+> > + * mucse_mbx_get_info tries to get hw info from hw.
+> > + *
+> > + * Return: 0 on success, negative errno on failure
+> > + **/
+> > +static int mucse_mbx_get_info(struct mucse_hw *hw)
+> > +{
+> > +	struct mbx_fw_cmd_reply reply = {};
+> > +	struct mbx_fw_cmd_req req = {};
+> 
+> something like:
+> 
+> struct mbx_fw_cmd_req req =
+> 	{
+> 	  .opcode = cpu_to_le16(GET_HW_INFO),
+> 	  .datalen = cpu_to_le16(MUCSE_MBX_REQ_HDR_LEN),
+> 	}
+> 
+> 
+> 
 
-kernel test robot noticed the following build warnings:
+That's a good idea! That makes the code more compact.
+I think I should update this as your suggestion.
 
-[auto build test WARNING on c3067c2c38316c3ef013636c93daa285ee6aaa2e]
+Regarding adding your "Reviewed-by" tag in the next version:
+Would it be acceptable to include it when I submit the updated patch (with
+the initialization logic adjusted), or should I wait for your further
+review of the modified code first?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Wadhwa/dt-bindings-rpmh-regulator-Add-compatibles-for-PMH01XX-PMCX0102/20250916-210231
-base:   c3067c2c38316c3ef013636c93daa285ee6aaa2e
-patch link:    https://lore.kernel.org/r/20250916-glymur-rpmh-regulator-driver-v2-3-c6593ff9b4be%40oss.qualcomm.com
-patch subject: [PATCH v2 3/4] regulator: rpmh-regulator: Add support for new resource name format
-config: i386-buildonly-randconfig-001-20250917 (https://download.01.org/0day-ci/archive/20250917/202509171822.oRjF64pS-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250917/202509171822.oRjF64pS-lkp@intel.com/reproduce)
+Thanks for your feedback.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509171822.oRjF64pS-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/regulator/qcom-rpmh-regulator.c:47 Enum value 'NUM_REGULATOR_TYPES' not described in enum 'regulator_hw_type'
->> Warning: drivers/regulator/qcom-rpmh-regulator.c:167 bad line:                                 on the PMIC.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
