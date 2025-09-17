@@ -1,101 +1,94 @@
-Return-Path: <linux-kernel+bounces-821425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D90B81370
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:42:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE97B81376
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CF61C279F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE88627863
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228FC2FC01E;
-	Wed, 17 Sep 2025 17:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="HeYxWK60"
-Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB92D229B18;
-	Wed, 17 Sep 2025 17:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B04C2FF167;
+	Wed, 17 Sep 2025 17:42:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29012FE599;
+	Wed, 17 Sep 2025 17:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758130914; cv=none; b=Tgy6VE9omXe5QdRNWkUBLE/iFCq1Z9OFQ4wEaQyNKWTq545rUke7VVoReBiKb7tbczESkb0zKALZt+oYR1kZMVBqoh7XJ5PqgFK3tnmmEsYXkIqWIiCiL27IaI+B3KuZyiX+bEgTdRAsRXgMI/QZqfoj5eRRe8FrUqdbmweqous=
+	t=1758130925; cv=none; b=cxirjVBkmoDKB7KSwyol+WjbX7qaQkQakxgG9sEFS9c9p6dQY4t9a5b5SpsOeOG+VLEkH+cpkPPu3qlJTHX14mDyUvKZOfmZVF/E48ydIlXbiTOlAkWdxQ5hemmovAGKjRR86Rl3CtpUUdAmVtWCHpWRv8ugfNUA+/QTe2QjCws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758130914; c=relaxed/simple;
-	bh=vIqfQzX/DDStB/C412AZQpeeutgfVCWBdc9gK5Elb0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tGBvb5z0aLPdeZo9rjm8ICbci5OCZxuf/sfZF5Dt473Aox/zcx1fanyXshp0TBHa+tfy8Au7PlFhFobJlV4wFjX8/H/8qMJ9BJW0YE5n260VwrwdZSICDdGA1Erp99DdAtYjKhq31+cwah4mP6Bo0dIbUOrbyDK/JgrdosfYI+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=HeYxWK60; arc=none smtp.client-ip=178.154.239.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net [IPv6:2a02:6b8:c22:d15:0:640:4031:0])
-	by forward500a.mail.yandex.net (Yandex) with ESMTPS id BECA380718;
-	Wed, 17 Sep 2025 20:41:43 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id bfVhOBEL1W20-fCQhJYIk;
-	Wed, 17 Sep 2025 20:41:42 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1758130903;
-	bh=28EP7Oi8xQcqOY/2fxNQgg7mmEgV2RO5dAkZcmLSGbs=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=HeYxWK60ukf6zL5lGd9ArUwj+hmEnktcnuX/z/zJRmYkVuDZOH4HTKM4pgFV2O5E/
-	 ovBlvVivQSM+2ktKsv8PMHDfz9FI3RIn58PMuvkUtOuVYu7AVQwmt0RlmxLdlyxpfj
-	 Q/aR9gzjSJUxv2bKa0bKgarNJIwb5oWcb36I6WdQ=
-Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Wed, 17 Sep 2025 20:41:35 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: djfkvcing117@gmail.com
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, gregkh
- <gregkh@linuxfoundation.org>, lossin@kernel.org, gary@garyguo.net
-Subject: Re: [PATCH v4] rust/fs: use intra-doc link for `EBADF` in
- `BadFdError` docs
-Message-ID: <20250917204135.7a796dd3@nimda.home>
-In-Reply-To: <20250917165106.22262-1-djfkvcing117@gmail.com>
-References: <20250917165106.22262-1-djfkvcing117@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1758130925; c=relaxed/simple;
+	bh=7d6idTSBvkiqCwUiJ/luxxi9bE5VUTAm37cIjDh+ZzA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q4BDvhypJbZthtJCYiUW/8jijNqbrtMo2TfZsWJPYUDEl0IjNjjqYPgnXaDsBhtwlzhlEj1VpyPBj1K0Ze8InOHhSTcrOyJuoDRdQbz9CamUNMtmSVG3qqH5K/IARteiKV6S5K61bzMqsaGhOd1zFe9tok+qaf3Rynz5nq4gvxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2D562696;
+	Wed, 17 Sep 2025 10:41:54 -0700 (PDT)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4DD343F694;
+	Wed, 17 Sep 2025 10:42:01 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH 0/2] perf: Fix overflow in PERF_IDX2OFF() for Arm SPE and
+ TRBE drivers
+Date: Wed, 17 Sep 2025 18:41:37 +0100
+Message-Id: <20250917-fix_aux_trace_index-v1-0-e36a76ac6292@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANHyymgC/x2MQQqAIBAAvyJ7TtDQxL4SIWJb7cVCK4Tw70nHg
+ Zl5IWMizDCyFxI+lOmIDWTHIOw+bshpaQy96LWw0vCVivN3cVfyAR3FBQu3RunBqFWLQUIrz4R
+ N+6/TXOsHEUNqjWUAAAA=
+X-Change-ID: 20250917-fix_aux_trace_index-9745674f5061
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>, 
+ Tamas Zsoldos <tamas.zsoldos@arm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758130921; l=922;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=7d6idTSBvkiqCwUiJ/luxxi9bE5VUTAm37cIjDh+ZzA=;
+ b=l1R2E0wH9AF+zWn77eji4SNZvlIIGpnYbl+xIy2V8F3ACCoxcbAm1QcrImRDRoMH34+wF7ewX
+ gwCmdpX6BpVASGS3IqfhOCW5XbZoPd+r27JfNEKkBhN9Om/ToECELvJ
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-On Thu, 18 Sep 2025 00:50:59 +0800
-djfkvcing117@gmail.com wrote:
+If the AUX buffer size is specified as 2 GiB or larger, the expression
+"(buf)->nr_pages << PAGE_SHIFT" may exceed 0x8000_0000. Since
+(buf)->nr_pages is a signed integer, the shift can overflow and produce
+a negative value. As a result, PERF_IDX2OFF() fails to work correctly.
 
-> From: Tong Li <djfkvcing117@gmail.com>
->=20
-> In rust/kernel/fs/file.rs, replace `EBADF` with [`EBADF`].
->=20
-> This helps rust-analyzer to resolve such references.
->=20
-> Suggested-by: Onur =C3=96zkan <work@onurozkan.dev>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1186
-> Signed-off-by: Tong Li <djfkvcing117@gmail.com>
-> ---
->  rust/kernel/fs/file.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-> index 67a3654f0fd3..f3153f4c8560 100644
-> --- a/rust/kernel/fs/file.rs
-> +++ b/rust/kernel/fs/file.rs
-> @@ -448,9 +448,9 @@ fn drop(&mut self) {
->      }
->  }
-> =20
-> -/// Represents the `EBADF` error code.
-> +/// Represents the [`EBADF`] error code.
->  ///
-> -/// Used for methods that can only fail with `EBADF`.
-> +/// Used for methods that can only fail with [`EBADF`].
->  #[derive(Copy, Clone, Eq, PartialEq)]
->  pub struct BadFdError;
-> =20
+Fix this by casting (buf)->nr_pages to unsigned long before the shift,
+which allows PERF_IDX2OFF() to handle large buffers properly.
 
-Reviewed-by: Onur =C3=96zkan <work@onurozkan.dev>
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+Leo Yan (2):
+      coresight: trbe: Prevent overflow in PERF_IDX2OFF()
+      perf: arm_spe: Prevent overflow in PERF_IDX2OFF()
+
+ drivers/hwtracing/coresight/coresight-trbe.c | 3 ++-
+ drivers/perf/arm_spe_pmu.c                   | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+---
+base-commit: 5aca7966d2a7255ba92fd5e63268dd767b223aa5
+change-id: 20250917-fix_aux_trace_index-9745674f5061
+
+Best regards,
+-- 
+Leo Yan <leo.yan@arm.com>
+
 
