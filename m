@@ -1,85 +1,81 @@
-Return-Path: <linux-kernel+bounces-820302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBE4B7E024
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9195DB7E196
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0309188898E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4862326A04
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E606D30648A;
-	Wed, 17 Sep 2025 09:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1D43016F6;
+	Wed, 17 Sep 2025 09:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="diAnWUF1"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013002.outbound.protection.outlook.com [40.93.201.2])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HVLPCzHL"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010009.outbound.protection.outlook.com [52.101.69.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BF131BCB7;
-	Wed, 17 Sep 2025 09:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AA830596D;
+	Wed, 17 Sep 2025 09:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.9
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758099854; cv=fail; b=FdHAc9A76bhun6uC7nqLvH221jJhO/X9VRmKbM04NM88//4zj7yqo/ArEqG9gRE/h1SD5E2m4LgkJdk03VB1xcKK/cv3zBvOuCSd/ZXRxEr7d4VKQAZKuqTUDCmYwOg4ri41X0SohCZBsT/7VgIrM5+9Z0M0pZRAFeMrb7BjfhA=
+	t=1758099896; cv=fail; b=GOJPj4n40n9NKwcu51ONuxduetNBZk6PiUZorEY6IBonmzzU+eZpvakZy2kzAmfu1wsYulMsHPZ6y5JVLStCe4tTMZs8ToyDL6GUHLIk90nbQ6wU9qvdl+n0lgao4vTGbNDFW04S+po+ES/u9Xdg/v4MxqBoat7E0qI2YtGCFDM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758099854; c=relaxed/simple;
-	bh=1OSFfv1MbGjlc7ToYX0Ddxa62FymuskZPQCXfKGzH4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=r3ItsQvtSX/l/Ef9i+mnPvzfhuLXPklGwOf6LE43D5VIgcIz1P4C11zj8Xc8Dby3zxBwEPUkWYU8fQKH0UOCJNVlbg2IYJhFiRkg4fMHOxnJgVo7qiqu/xQt0CDt7N10om3oQXr00ewpTejmXECbx+wyxfHlbENNb7svZpdIyyc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=diAnWUF1; arc=fail smtp.client-ip=40.93.201.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1758099896; c=relaxed/simple;
+	bh=/IIv2tBZaaOa86vNSlxFM98voEr5KTOi9yTgQqenguE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ux2p4SaSxUizzD7+dwZzSbuv7wlbGVDNM5qjE1PESBdUgG4W91DUNGzjWomEoH9RpOvEm73jUMddLgSyKsMnjgvJzlgb2AuAWJs7FcHXR8jtylN5XjD/EaDh5/qPl7q6gnQ3xNCS9DKoDQLPiV2Tbg3HlHk/A1w2FwGWFp6USZc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HVLPCzHL; arc=fail smtp.client-ip=52.101.69.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F+pmvjIUVPNyaz3nAc/hkHbh2TI4Hn4PYbTlLnblCIRAHK87IGhFESsLEGHgITIW/mFLU2BNY9p9J6N+XXx1O2Af6WiJrI0TycaCyNIctOzl3heYzUHEsfZF31sCC2wt5Eyr+gHeLEWTxGJQYPK69lXEOXJQFYzya9JuyX+vInpyB5DJV6iZZGIt07KL/ihreFTlxUCmgcEw6c1SgeXvQ5+gimzCG15IMemqD1qknAiyaNg6AtKF/2iL+coiiYYM4gDKHbI9w+OXtYwgqPNuwIeZFIabEX6/weTFSuUG1p7gLFTMVicypRRol7AUbAvXP7UujCqBtSIh7d/25v50bg==
+ b=Af6HOKIdEwK17o7bRtscrsxjZDFWWNA6pvF9jFHVoWk2L9poDV+Fzt22ssR4dJrohO4qvHAVMjoxqi8oV4t5xsGkmHDI8vgsgbeDI1yLrtmPdlKbhp79wb3p400LjPs1cLf8PV9GTYAKRI3cDdXGOR+HfSPYhtJQOnVFWj32r/Ipg+xyXCBELERs40e1gRvbbRXC1KsgcOgcoha6SxrlKryaGSkWmSImRxFE6OMfgzZ7aISAMQ4wP5D/RN94g7Oakm/yiXODu9XQK25LRdut0dWCYNQkKDIqxtDcyRYBBbE4o1fGFVROVXWbnYPXPJ/G2WxLybtwP/7BxtFC4vuOIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cBISqZ6Tz1NyKnrqtUoXJd6ym4VMAMQreDpcy6wO+NY=;
- b=ej00k1DVXqM25kIk04QDCxP9o+wZx7/QA+iv+P5dqw7B+4xv91LolIg+CsaFO7epPu91cfiHrE1g+Dn67GUEugA/U3nyKZ8OpQnUvBoJr3nToTsICmdAfW2vunbH0Rey5UDu2aspfW3BLkC0WHVRclLeVg2sbt6SU05HAS/FMOS5inymurjg1+ye4eQnuU89NJjD0boqvWpfJGuzSgQL8ItTDdH9ICCIf4+QEORRr6SBh9aOc2bM1VBBtWqTVxhF5r34MVuPRbCWWFCQjSG1fmISSGRL/DctV/lia9phGN1OBggq5vwp/jFhjBKyRN8JjkQzjJ4LnZ1RY+DAGTspAg==
+ bh=o9GDZupTYQzu1HKqE5vXI9jXvA6AMTETBKkSWVCIQtI=;
+ b=t0i749rIffUWIDf9mKMOCDoZPDkjoksttgN3/5lM1NwaCyACDBDMt1Ix+gWrwx/PpXjBnguZtgQlGxqg2NM22DOWxC2JBgqTUbybB3tazG6YtieXG8sl4QLTCCCbIf5Rc1nRNFWC1Lqx6ZcsoHZMjPhOadeQo2LobmcmAmwlcv5T4gqLosuJojsD5jeO7pyBsQZ702HAVIPc4H/DObnnOJE9eLukAQaSMJ2JOrfm1d4LmLyCSjXSRv8JkDmE9xmUYaUVCZPwEQ53Ujzfv4xlOGAilDac9PPYD3c3YS/qqZlR+pOyVHJqN52RbcvTIkoGFSt8vAs3dI43jauEh7vGhQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cBISqZ6Tz1NyKnrqtUoXJd6ym4VMAMQreDpcy6wO+NY=;
- b=diAnWUF1OqagH3w/eTYHQJdFlCwCef2YuA6r1IRFah00M0kk9UyXq9TU8DYkQxwZ2bd7jyuL9oNqmalKqge4KNnSUyk4TPdSlX4PJr45+LjcMpJCKYOToDoNZP7GRVm77+OVlCVAyBX5D9lqL5TzwXtOYhe6dZWbHtPv5mgjOfg=
+ bh=o9GDZupTYQzu1HKqE5vXI9jXvA6AMTETBKkSWVCIQtI=;
+ b=HVLPCzHLXNfBOsLK641uGCdOO7MsR3N8TOCpa4FFwbhk9/5jySkgY2gHrMJ1ftRFKueLkq51WAHLWJ+eMYCTw4rIdsg6xZZPye99ZOuKNQAB1NpwiJE/FyfShXFWt/MYTOzAQ4o8XpLjw5PTgKpLOg5I/0q1H+Lz5hNj3TkUZEXyJy0LtYsXE+xSi/vX4iW5sqonSQ38DQd3OBSbW2nsvr4zw4K1NxA0/4goF77nf8yFqQ7IrCrKAdzMMjT1dFbF1I7Z9TtY7hZw3/iOtXhbhozmu6jFMh2XQ77WTvARd0LmIur6D+PY9HT7QBv3flmp43OdRkTjnmcu5mt1i9f61g==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by DM6PR12MB4073.namprd12.prod.outlook.com (2603:10b6:5:217::12) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by PR3PR04MB7387.eurprd04.prod.outlook.com (2603:10a6:102:91::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 09:04:09 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
- 09:04:09 +0000
-Date: Wed, 17 Sep 2025 11:04:03 +0200
-From: Robert Richter <rrichter@amd.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 08/11] cxl/region: Implement endpoint decoder address
- translation
-Message-ID: <aMp5gw2kSsavhdmg@rric.localdomain>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-9-rrichter@amd.com>
- <20250915114614.000053f1@huawei.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915114614.000053f1@huawei.com>
-X-ClientProxiedBy: FR2P281CA0118.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9d::10) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.13; Wed, 17 Sep
+ 2025 09:04:51 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 09:04:49 +0000
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v3 00/10] drivers: gpio: and the QIXIS FPGA GPIO controller
+Date: Wed, 17 Sep 2025 12:04:12 +0300
+Message-Id: <20250917090422.870033-1-ioana.ciornei@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P195CA0005.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e2::14) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,311 +83,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DM6PR12MB4073:EE_
-X-MS-Office365-Filtering-Correlation-Id: eaa5be9b-425c-489c-5df0-08ddf5c929d7
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|PR3PR04MB7387:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00f85f86-70b1-4e86-0c38-08ddf5c94158
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|376014|7416014|1800799024|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9DPZ5pr7SgmUe5RsYbEHTZqrELjZq5ntvJhzjblxANC/G2MpIMS8aM/I1zA2?=
- =?us-ascii?Q?HCQyVn1AdvAor/P6nYqjPiinE6Ppkft2Ibg5oywR7qu97R7ulcf4foPosyqw?=
- =?us-ascii?Q?seJvgFz1SwEHspXcdWyR2Tj361OPnqOVD+qyAvY5g+Igb1HGyFU1N5eW9ldZ?=
- =?us-ascii?Q?0FZwh0TnnV9d9vYQbsU7znFYl9PX5JZPByMHRH+d07PZqkyyC7yZaMGp5Rqn?=
- =?us-ascii?Q?sEjnc7N/H6WjeUAcindCbLJLqIKAADuqdeW6rayRduAD1pDuY4pubVXk97sq?=
- =?us-ascii?Q?ipqxnIsBqAW3WZczydppbetDLV1hMmvEJG9KaV5AjOcrKo8x9B3w8LFM4Ea9?=
- =?us-ascii?Q?71tOVQKkKWsX8znuLE6ZKlhGLSPwsvdV2Jo6eZBXEiqOj1F9/KGXP8xfzUDf?=
- =?us-ascii?Q?u8BPQSVHTitt0ngIExaDn48jv14DzdcyIFaTDm4i3FsC8UOHOGt+K0wG+/6m?=
- =?us-ascii?Q?myponwB2I4viK+19tCoiKt1p66wUuuFmsHTQqU2qd9iijNfDtswLp1FcczLw?=
- =?us-ascii?Q?oRUEtjfkaZohMzUAIuOI+ceJNa2yJhSLdqYqsdyCZkXt2YtNGo+Gy79yvHPt?=
- =?us-ascii?Q?5vCi8qBW03BabmwIyLzbT/RT+UcW6oqqZ1nrqVH91YYmFlfIho+t/uYUf3jy?=
- =?us-ascii?Q?ni9NvuyrgX0Dv80QXUl4nwMG+m9L99YXxe8CuBiHVErhTF7wxdo7m0NeC79c?=
- =?us-ascii?Q?4zo4r/WE0dUmC2gd++pmw7o3oZ44QImOHc3KQfO3YGThL5Yej1nAsJ/PYm3s?=
- =?us-ascii?Q?uw+BzogHpVXF5rvFiDlNjjUEva1lLA9vGLs/yUXnhGhoIvuU8UIEHwSB5ewT?=
- =?us-ascii?Q?kj5dxJ6ybLV0cZcgnIA6TULwKdMpqui5SlZDD3JQqIRIYMJnLgpEJZcAbuj8?=
- =?us-ascii?Q?nobNNzmdhylecn4JZI4q6P+E/RUPYYSzP3yGvtLm9IYXT40lqPo+yYL/ykhD?=
- =?us-ascii?Q?5YQh8l8rlUp2TR/8HYT8+VFvyx2mZCDCtQzpnOa534PwzMw412U8u06rCABs?=
- =?us-ascii?Q?CAt5iCRviUHwQx+uCSw/IJ5m95RqzfSpiLWCq3pP4YhyK2arPvysyV2z54nB?=
- =?us-ascii?Q?sndn0+Xjza7Rcni3dZW9HIVr2Ar/UCcD2Blw+X25LSbgdLa8I3RTwD7aLaNz?=
- =?us-ascii?Q?PQuKXsXcq7Nocz0sXR7x5Xg4jg04PbawjXbkB+uV6w3nSi3tEG/UY/D7NTCn?=
- =?us-ascii?Q?Ei+WrJcqvMTE4srF385+yHEE21DL0awzK8XQJzPi2Me0vEHX/a9hmTwtnTUi?=
- =?us-ascii?Q?ZvynG4KSDOA5TEacHuRfsDKUpbozFJU+V3ky7lNtSXUjMc7Vn9Atf772IgnQ?=
- =?us-ascii?Q?VY2NmYZLuLYZV+DBapMM7PjeMdgVty9Yq9ZSMf0Mz0tJWWvfbMNgdVfmyfhj?=
- =?us-ascii?Q?Yyc6DLVU5vAtDCUCN3bi41InI3GJT3fDRXrfZIpG73tOYFlJf8XnGUymWr00?=
- =?us-ascii?Q?BSHRkEYSGLw=3D?=
+	=?us-ascii?Q?wrv1M7xqK1NngkQTq9AwxG9QtU2UVC2TMjmX9dHkTbYWpvJ3JshIeWfrzHMf?=
+ =?us-ascii?Q?DN0x46qhgO+yaPbmQ+54Rmh+67HxShA2ttU67joTUjhPq8Y3YzDOtE0zELjS?=
+ =?us-ascii?Q?Wpo4QTly/UNSqwhtovwQaJSElyzAWJKXshzhnO3qk2z3j5d7mf5OUFWTZ9OM?=
+ =?us-ascii?Q?jgpu2hZz0a9gjYMsMP8I42kz36/7ojhit/oFdVzcyyWMBcglw8pMJpd3kE2+?=
+ =?us-ascii?Q?AgT78RQjLrdKP2EpPt1OAxB+W1iboymZ7lxwXBSucRRKY5OibUjn1BzicSwz?=
+ =?us-ascii?Q?WBl9wkiiOhrAvPnCGRdRnJT6TUXHhHp9KjTbEUUbkudH4fhbZW1Rf2+BWJGe?=
+ =?us-ascii?Q?McuUbDssNzeEnwirlSKsmHJXZ8RxH1KO3EKL1313CyOVFnL+eRyjsFqGQrEz?=
+ =?us-ascii?Q?A9isIV44A/SbcvKiZs9Hd/kwScxPpYuxRFVgxfr6+ye5tGUCOSCJ/+1yuc7j?=
+ =?us-ascii?Q?fVYRlK9yan1MLC9JxyW6wGelrtihkEz3uTHzRHpmuwtqOd5N3eCSSipOU/bk?=
+ =?us-ascii?Q?F+jG5hKOxzgfH0tFhmWNeZFdX1Xhl/SfnPaxJMDCqNfDppvE0uUXEzSWNjkh?=
+ =?us-ascii?Q?rW7sFNuCWBci+bzHKO0KboDMhU5hfIPu3mjJhpanCDNjqwIIutMlq2Qituz2?=
+ =?us-ascii?Q?UW3kI9g/s28qJBQwInCo7LizGJw9MPEY9eXnpuvR7lGWQ75SIpVodv6nG2QL?=
+ =?us-ascii?Q?9qCFKp25hBXv2HjY4MtnOlCHhGbpjpgWNwsQ09k2E0oBCfXtDnau2COOadq6?=
+ =?us-ascii?Q?D5SkkrVIBaM/GAm55XAKsRy6FMteyNG1dHGLxoxDt8EnSJRZHr6mqyx/inBl?=
+ =?us-ascii?Q?A8/wG2aFIcY7ifpoI/SULoN7nlNAldBv2mnmrC3hqOLLaf/UXuyIXRPpZBa/?=
+ =?us-ascii?Q?FMK7H99lSMlqaDpqZdGtYhAUXt8Z7PESBvqixg6sV5ooa6yFNmJa9pC6EesB?=
+ =?us-ascii?Q?tCEhQwmyh+z1sIX4uoDk43X+7ey34V91VE0HGCyBhlHS9sQLcosnbJnCLW5/?=
+ =?us-ascii?Q?ApDH0s3TfryPxbb8RbIELhi/HNmkFeX1uhVLlVIevcjFawwY28UXtGUxvO9L?=
+ =?us-ascii?Q?TcESFntKKSBRV2GoNMKy6h3qIl2sCZvTy7jBpPweSKrlglPmn95xKPhoTHu+?=
+ =?us-ascii?Q?YNPaa8G/RCHkQHI8GWfiWGyb7UYul/81KZztVEImQ7u5KX+e/23FFMfR5zvL?=
+ =?us-ascii?Q?mV4mrLB/PvqXfroJGSnY3Skx89Jlqw4Ls0ehyaB6L6muOGXQeqxUTPxRQgHJ?=
+ =?us-ascii?Q?kAbyBxY3zSNWcmTZm93BBjAN9FMsONhn+jQpy3usvnUxJFSjVk9a3m6zdasE?=
+ =?us-ascii?Q?W/UoLlPDA5WjmE5g5JqxBv8I/0TI+s8HKhZsGzm0VCW8gfkOEOp++6tfO784?=
+ =?us-ascii?Q?wK2JdCJb8lsfn90t6MT2VebbNHmroWIe9j1T8vn/yS+6oE2TdcKxZ5RmjgIy?=
+ =?us-ascii?Q?Pl1oX0fIGEI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?G6uMRDE4U2OcJV/HWbeYi+wZ7hVP/RDLf3GgjD8bsd1+sjgzOD8/5gvt6wAB?=
- =?us-ascii?Q?sVzisBQgqH/Ts97L07Po0BkXjnjR1p7qhAJKCbYQnriBoYpkffTUE8VZvWpW?=
- =?us-ascii?Q?FWQlnR8ykZuqwRjxPzOvQQ6TMSEdF3ijczT2m+XESx5tZyZq3uiYSDqq1cSn?=
- =?us-ascii?Q?eB1+jBiuiTgI819T81zfYM7dSbXJrjx7uOPH4CV0IEgWuRop/K4BD6Ag563T?=
- =?us-ascii?Q?QaSXK8l+muEfixcdk/l7qsJLSDCmpqpnxKszyT3zKSiv9JM8JTe5X31MjO79?=
- =?us-ascii?Q?jeO47IWZVJLDSPczhrCemvWgAhEv1T6xo1R0lizwbsL1rOzX9aMO5UUSZhhN?=
- =?us-ascii?Q?32v7YgLEcuyD39DOvuqi4W25UxVP2JpYUpCpV3SrfFU7xqzUKM8zAMcz1l7A?=
- =?us-ascii?Q?O4qndsUyQKLhE7g3bcnRkC/So7a5lrQSXljLMIeFXVkswbKyU6RF6snR2HS2?=
- =?us-ascii?Q?6d+14hLQZFN1sCQbKuByWAK4bYfjZQtHGbMFu541HTVEMmfUjn5xOaE7lCz5?=
- =?us-ascii?Q?EvrraPpzBY93L1KMRqqubMTlx2oXJSRBwmc/fWkaYUEM0M1vhfMGkQYBlsZE?=
- =?us-ascii?Q?BK7LldshzXfOmeproqfVUrlN2vdCDx7kVmcIvbhH7Lyn+4w+4lzKQMt+TJz+?=
- =?us-ascii?Q?V9HMP1s+UK1Jhlpu14+xBgYnJ4FKchcvv0p5xxM7CYZ+waDD+eYy6M+RBgEi?=
- =?us-ascii?Q?zW04aIG7gkwQmCs6Vpbc0PBk51z58nqDGeWbLHcPnhPQLmLWwVk3w3+nM/0G?=
- =?us-ascii?Q?pv1c/NYR/+SP+s3gU/WkcO8pLetSNxpc3R369PZgaSW9AQ9cgyyz2g8aprMY?=
- =?us-ascii?Q?9DCmPNbONh2EXVmqNPJhr4K6Iodj3E+1vC9ZiujB6fJcXFb77lymZnm9I04q?=
- =?us-ascii?Q?wbv4chXHDtXI94Kt+SdmMvj8lN2kE7wcHywieMnmA6Q8f7/F7/fCIdi5lk+M?=
- =?us-ascii?Q?Y8MNBfGjLV+8/K/RJqZjdT8KK2Sp88B2/iWQDoz1IcQVNJq4IdZm9DbgcuHQ?=
- =?us-ascii?Q?ZgaAaObtF2EJNduD3AcvkM54/Zz5nwLygk/xcbgDzEDD5zkD3JPu4K0wt0L+?=
- =?us-ascii?Q?3Fltc3GFvacLhlm+e9vNk534pZ6sB3RSgoYBOBN7gzhQMNx5oY0bml7cojlu?=
- =?us-ascii?Q?sG48MvouEwZwbqKdrXPGJfl7fA+Od3b86Ofb6dkglAjR1AIuQLmYqSWqYkqO?=
- =?us-ascii?Q?3z8F9fN80eB/CwPJP0e1H4B2QvEhmnfTkEQM0yASEXx9WY94AEpw9YdR02sB?=
- =?us-ascii?Q?vMTl2t0YGFfeXJOE/gRoX4HJbszbWV68NfmQ+pUIbLZ/Pusi2Hvd8tFV+8HW?=
- =?us-ascii?Q?vW0oFYWy33kOQsRlEWAtbyeG4MB5iLcU0aGcPuoBWOoItAhhkw2bbkidbiYm?=
- =?us-ascii?Q?/KU2gJE2kUILiV17iWJ6R8Yu/VstuLjgImSKtedtmCQ4gYFJPs98MDrNMoTR?=
- =?us-ascii?Q?EvEvCVVp/Wg0xaPHGJmp7yweDkKBUthzzEb9oBruyu3Qz1IEs6ENgTu4Lxgz?=
- =?us-ascii?Q?nnvZLnYfgW4Z458gz/tW96B35rLaxWfWSNK3+60qvxfFAVD/F7Ozb4VrRKVp?=
- =?us-ascii?Q?aDyIwt7dDLnqhRFHGnoNVtltkec1I4tx0jAbcC1a?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaa5be9b-425c-489c-5df0-08ddf5c929d7
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+	=?us-ascii?Q?UHWag2V0i18yuXRuf7MHtxvvGpzUEnVQPoF7P4rgjU4Pcs81fb4btbpGfgJ+?=
+ =?us-ascii?Q?g2tkOtrt8RS6fe90nOAIEhJlUySkoI0EIHAbeHmfApjHQMlBaacHDoQOUNvA?=
+ =?us-ascii?Q?vvZ7oJAGN+MHTS2UaDi2sCHpmOIGjoUkACrifvZzCdTfnjXUsuWpIQLamhLc?=
+ =?us-ascii?Q?5BIhIkIH1kYrDsigzQ0uy41IWzSa+XLQIay0Q8p9I4AGnwDmjtA7Q+IasRCV?=
+ =?us-ascii?Q?q13I4Td8Z7z34sdAi6AnJSQwLoFSnFOuFXnkAIiZa1NKDgycqnn2jU9kxz7/?=
+ =?us-ascii?Q?SLiJEYZs+9r1JhZ5ggiyoJ1korKGI5Y4eT6Sdoykts6rDB2rf+Dh3YAJo5zR?=
+ =?us-ascii?Q?F6mOm7lLIfdJURpS7d4jKPfqjenx5dGmTcHdkLu/iJtiJW/npaMeBxwg+C0+?=
+ =?us-ascii?Q?BAbp7QGYpgno0RnNrQEox+fQ4n+RI0sG7tjg0TnFbuZe+sj9Dt8dcJUMQEzz?=
+ =?us-ascii?Q?k1HTZRBdVMcnCpyQHbF0mVMioRJcTDe/2hjiSUaOyHIZA9AsA3TsRb8Iygvz?=
+ =?us-ascii?Q?W5BQ4zbn4M5Vf6caDfeHFFxt/VGMkVLSzULLyW0cYf7KEG1M3YEAE1KtFLsO?=
+ =?us-ascii?Q?M0iYPVgg4XYrXLF4FHrSrjTY6JtfYz8xTpZq7JWWzc0UcRPWcu7ObA87Wm7O?=
+ =?us-ascii?Q?xdocniZcPGQ/m732CT/zsqxI6+s0gbCXjDp5i2jx5Fq5KNTRhUlFXQEyVCmH?=
+ =?us-ascii?Q?7/Nk2tSJ+0H1D3KDSTmaVmnYEDx4exVeZkF0Mlts6hsX/H5S36xwG/vqc/x4?=
+ =?us-ascii?Q?2XxoRV0UbeiGYyLD2OxD3r2795tRnNateHm9LmZJR7Xt7WZNKh9+QL3xg4G6?=
+ =?us-ascii?Q?9zd5ou4JxR3MfkgcEOz5Q3ErH7upAI9jReVIbLwNayJfVCmacg4jqfZK0gv+?=
+ =?us-ascii?Q?Guyz9Tx7Yg5LczgEnJMxw+sGol07WTYhKNO2Xj5pXpmqD5D20cCT12d8NacU?=
+ =?us-ascii?Q?8m3JFCi/OEtGmgTp+YlO+205bi+JqI2Kd2wmv1qY/c5+9zurGHwGHuRYGd2A?=
+ =?us-ascii?Q?9X8loO8ocpPOrFNOIL9Zjg8mSFxzbp/wFQnIm9CEEbtk7igWm3iHAfVYx6id?=
+ =?us-ascii?Q?x4fwIJHPV6U5T69A6/Rlwmjho3dcOiu2o/80Fdfa7PLepy8RAhbU9GEq19/i?=
+ =?us-ascii?Q?NxgM8igjfcSms9VpggWCABJMihVGpG0X7NLWIY2jNRZVG0k+RJmr5UawOxms?=
+ =?us-ascii?Q?cXOUgcvHRDrizM58DlJYWHfWs1HDuT/FHzeAheHXlDaOvh3IqDUu45zft9PE?=
+ =?us-ascii?Q?RlPqnZsI+Yy06AJU9Fw8NAJEr3wl8axTeRXSIjmK5lCf5hKftrb1oFumLwh1?=
+ =?us-ascii?Q?KKt6PnpGM/w5+MyLrsngVD3ObNuDMffos3qwtgdbKXEDTuuI82MRWneTu76R?=
+ =?us-ascii?Q?OqPxgH+85youbEspLWW25enGliWrXL/kchgDYsM7F1SJqJbC7HeqClEHQAo4?=
+ =?us-ascii?Q?NkEIX0GM5ViQzSh6f03gzZmJRvDMA8R+4EDHN4aoe8pV29ciRTq9Y+PK7IOg?=
+ =?us-ascii?Q?CkexClj3uNy7B7Kdhdh1Mc8eUu50tZNCkfN7q6gtjosKICcGEMcynoCI6kX7?=
+ =?us-ascii?Q?je04mgYc2088cxo0CN9tnFf7avBos1IoXXIHqpSf?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00f85f86-70b1-4e86-0c38-08ddf5c94158
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 09:04:09.7672
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 09:04:49.3437
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s8PHvN//ajm3raxqHcnOt1BeRHPXaLHeRuO5ah1K6AYFmYw5lujKfuXQYFCRrATKc2ocdEcR5uzJbUqC5APdiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4073
+X-MS-Exchange-CrossTenant-UserPrincipalName: GVaTTheEvsu3BG8dRJQ4EYS9vje5oFmG+eVkRwVpBgzVgDOLxxnQQ2IypauHu9UUh0COWJl+Qy2riR8kDkLZwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7387
 
-On 15.09.25 11:46:14, Jonathan Cameron wrote:
-> On Fri, 12 Sep 2025 16:45:10 +0200
-> Robert Richter <rrichter@amd.com> wrote:
-> 
-> > Systems that need address translation have the endpoint decoders
-> > programmed for a different address space. Host physical addresses
-> > (HPA) are different from their system physical addresses (SPA). The
-> > decoder's address range and interleaving configuration of such
-> > endpoints cannot be used to determine the region parameters. The
-> > region's address range must be SPA which the decoder does not
-> > provide. In addition, an endpoint's incoming HPA is already converted
-> > to the devices physical address (DPA). Thus it has interleaving
-> > disabled.
-> > 
-> > Address translation may provide different ways to determine an
-> > endpoint's SPA, e.g. it may support a firmware call. This allows the
-> > determination of the region's parameters without inspecting the
-> > endpoint decoders.
-> > 
-> > Implement the setup of address translation given there is a function
-> > to convert an endpoint's HPA (which is identical to its DPA) to an
-> > SPA. Use the previously introduced cxl_to_hpa_fn callback for this.
-> > Convert the decoder's address range and ensure it is 256MB aligned.
-> > 
-> > Identify the region's interleaving ways by inspecting the address
-> > ranges. Also determine the interleaving granularity using the address
-> > translation callback. Note that the position of the chunk from one
-> > interleaving block to the next may vary and thus cannot be considered
-> > constant. Address offsets larger than the interleaving block size
-> > cannot be used to calculate the granularity. Thus, probe the
-> > granularity using address translation for various HPAs in the same
-> > interleaving block.
-> > 
-> > Note that this patch does not yet enable address translation as
-> > callbacks have not been initialized.
-> > 
-> > Signed-off-by: Robert Richter <rrichter@amd.com>
-> > ---
-> >  drivers/cxl/core/region.c | 95 ++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 94 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> > index 57697504410b..9fb1e9508213 100644
-> > --- a/drivers/cxl/core/region.c
-> > +++ b/drivers/cxl/core/region.c
-> > @@ -3422,16 +3422,109 @@ struct cxl_region_context {
-> >  	int interleave_granularity;
-> >  };
-> >  
-> > +static int setup_address_translation(struct cxl_endpoint_decoder *cxled,
-> > +				     struct cxl_region_context *ctx)
-> > +{
-> > +	struct cxl_port *port = to_cxl_port(cxled->cxld.dev.parent->parent);
-> 
-> When there is a parent->parent it always makes me nervous that I haven't
-> reasoned out what port this actually is. A comment would help or
-> a more specific macro where the name lets us know what we are getting.
+This patch set adds support for the GPIO controllers on the QIXIS FPGAs
+found on some Layerscape boards such as LX2160ARDB and LS1046AQDS. At
+the same time it describes the SFP+ cages found on these boards, which
+are the users of those GPIO lines.
 
-Yes, will improve that. Since the implemenatation will be changed to
-be more specific to only translate cxled -> host_bridge, this section
-will become more readable as well.
+Before actually adding the GPIO driver, patches #2 and #3 add and
+describe a new compatible string - fsl,lx2160ardb-fpga - which would be
+used for the QIXIS FPGA found on the LX2160ARDB board. As opposed to the
+other compatible strings found in fsl,fpga-qixis-i2c.yaml, the
+fsl,lx2160ardb-fpga imposes a unit address for its child devices. This
+will be used in the next patches when the gpio controller node will
+define its unit address as the address of its underlying register offset
+inside the FPGA. This requirement is described in the yaml file and it
+only affects the newly added compatible.
 
-> 
-> > +	struct cxl_decoder *cxld = &cxled->cxld;
-> > +	struct range range = ctx->hpa_range;
-> > +	u64 spa_len, len = range_len(&range);
-> > +	u64 addr, base = range.start;
-> > +	int ways, gran;
-> > +
-> > +	if (!len || !port->to_hpa)
-> > +		return 0;
-> > +
-> > +	if (!IS_ALIGNED(range.start, SZ_256M) ||
-> > +	    !IS_ALIGNED(range.end + 1, SZ_256M)) {
-> > +		dev_warn(&port->dev,
-> > +			"CXL address translation: Unaligned decoder HPA range: %#llx-%#llx(%s)\n",
-> > +			range.start, range.end, dev_name(&cxld->dev));
-> > +		return -ENXIO;
-> > +	}
-> > +
-> > +	/* Translate HPA range to SPA. */
-> > +	range.start = port->to_hpa(cxld, range.start);
-> 
-> This is where the generic naming as 'range' gets really confusing.
-> hpa_range etc with separate struct range for each would definitely help
-> 
-> For the checks and inputs maybe just use ctx->hpa_range directly.
-> 
-> 
-> > +	range.end = port->to_hpa(cxld, range.end);
-> Perhaps use the DEFINE_RANGE macro or 
-> 	range = (struct range) {
-> 		.start = ...
-> style as per earlier patches.
+Moving on to the GPIO subsystem, patch #4 is extending the gpio-regmap
+with the fixed_direction_output bitmap which could be used by user
+drivers to transmit directly the fixed direction of all the GPIO lines.
 
-Ok.
+Even though this patch set touches multiple subsytems, each with their
+own tree, I submit everything at once so that we can have a clear
+picture on the overall intention. The hope is that each subsystem can
+pick up the related patches since there is no compile time dependency
+between them.
 
+Please note that CHECK_DTBS will fail without the following fixup patch.
+https://lore.kernel.org/all/20250912165916.3098215-1-ioana.ciornei@nxp.com/
 
-> 
-> > +
-> > +	if (range.start == ULLONG_MAX || range.end == ULLONG_MAX) {
-> > +		dev_warn(&port->dev,
-> > +			"CXL address translation: Failed to translate HPA range: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> > +			range.start, range.end, ctx->hpa_range.start,
-> > +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> > +		return -ENXIO;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Since translated addresses include the interleaving
-> > +	 * offsets, align the range to 256 MB.
-> 
-> So we pass in an HPA range without interleaving offsets and get back
-> one with them?  Is that unavoidable, or can we potentially push
-> this bit into the callback?  Probably with separate callbacks to
-> get the interleave details.
+Changes in v2:
+- 1/9: Used the newly added trivial-gpio.yaml file
+- 1/9: Removed redundant "bindings" from commit title
+- 1/9: Added only one compatible string for the gpio controllers on
+  LX2160ARDB since both registers have the same layout.
+- 2/9: Enforce a unit address on the child gpios nodes (remove the ?)
+- 2/9: Enforce the use of unit addresses by having #address-size and
+  #size-cells only for the newly added fsl,lx2160ardb-fpga compatible
+- 4/9: Add the fixed_direction_output bitmap to the gpio_regmap_config
+- 5/9: Use the newly added .fixed_direction_output bitmap
+  representing the fixed direction of the GPIO lines.
+- 6/9: Use the same compatible string for both GPIO controller nodes.
 
-While the translation is used here to get the HPA range for whole
-region regardless of the specific endpoint, the call should also
-provide translated addresses of the endpoint, esp. for a later use in
-tracing and error reporting. As this function extracts the range, do
-the alignment here too and not in the callback.
+Changes in v3:
+- 2/10: Replace the trivial-gpio reference with an explicit mention of
+  the accepted child gpio compatible.
+- 2/10: Reword the commit message.
+- 2/10: Add the 'else' case to the if statement.
+- 3/10: New patch
+- 5/10: Make a deep copy of the new bitmap.
+- 5/10: Remove the offset check against the ngpio.
+- 5/10: Added documentation for the new config field.
+- 6/10: Remove 'drivers' from the commit title.
+- 6/10: Remove the qixis_cpld_gpio_type enum since its not needed.
+- 6/10: Remove the NULL check for device_get_match_data().
+- 6/10: Use a bitmap declared on the stack as the config field passed to
+  gpio-regmap.
+- 9,10/10: Moved the reg property before address/cells-size.
 
-> 
-> Overall I'm not really following what is going on here.  Maybe
-> some ascii art would help?
+Ioana Ciornei (10):
+  dt-bindings: gpio: add QIXIS FPGA based GPIO controller
+  dt-bindings: fsl,fpga-qixis-i2c: add support for LX2160ARDB FPGA
+  dt-bindings: fsl,fpga-qixis: describe the gpio child node found on
+    LS1046AQDS
+  mfd: simple-mfd-i2c: add compatible string for LX2160ARDB
+  gpio: regmap: add the .fixed_direction_output configuration parameter
+  gpio: add QIXIS FPGA GPIO controller
+  arm64: dts: lx2160a-rdb: describe the QIXIS FPGA and two child GPIO
+    controllers
+  arm64: dts: ls1046a-qds: describe the FPGA based GPIO controller
+  arm64: dts: lx2160a-rdb: fully describe the two SFP+ cages
+  arm64: dts: ls1046a-qds: describe the two on-board SFP+ cages
 
-Uh, how about this:
+ .../bindings/board/fsl,fpga-qixis-i2c.yaml    |  58 ++++++++++
+ .../bindings/board/fsl,fpga-qixis.yaml        |  10 ++
+ .../bindings/gpio/trivial-gpio.yaml           |   2 +
+ .../boot/dts/freescale/fsl-ls1046a-qds.dts    |  52 +++++++++
+ .../boot/dts/freescale/fsl-lx2160a-rdb.dts    |  78 +++++++++++++
+ drivers/gpio/Kconfig                          |   9 ++
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-qixis-fpga.c                | 107 ++++++++++++++++++
+ drivers/gpio/gpio-regmap.c                    |  18 +++
+ drivers/mfd/simple-mfd-i2c.c                  |   1 +
+ include/linux/gpio/regmap.h                   |   6 +
+ 11 files changed, 342 insertions(+)
+ create mode 100644 drivers/gpio/gpio-qixis-fpga.c
 
-   ___ Start of region
-  /                                                  End of region ___
- /                                                                    \
-|----------------------------------------------------------------------|
-| chunk 1 | chunk 2 | ... |  ................ | chunk1 | chunk 2 | ... |
-|----------------------------------------------------------------------|
-\          \                                 /        /
- \          \___ Start HPA EP2              /        /
-  \___  Start HPA EP1                      /        /
-                          End HPA EP1 ____/        /
-                                  End HPA EP2 ____/
+-- 
+2.25.1
 
-As regions are aligned 256MB, use that instead of the gran * ways
-blocksize.
-
-> 
-> > +	 */
-> > +	range.start = ALIGN_DOWN(range.start, SZ_256M);
-> > +	range.end = ALIGN(range.end, SZ_256M) - 1;
-> > +
-> > +	spa_len = range_len(&range);
-> > +	if (!len || !spa_len || spa_len % len) {
-> > +		dev_warn(&port->dev,
-> > +			"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> > +			range.start, range.end, ctx->hpa_range.start,
-> > +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> > +		return -ENXIO;
-> > +	}
-> > +
-> > +	ways = spa_len / len;
-> > +	gran = SZ_256;
-> > +
-> > +	/*
-> > +	 * Determine interleave granularity
-> > +	 *
-> > +	 * Note: The position of the chunk from one interleaving block
-> > +	 * to the next may vary and thus cannot be considered
-> > +	 * constant. Address offsets larger than the interleaving
-> > +	 * block size cannot be used to calculate the granularity.
-> > +	 */
-> > +	while (ways > 1 && gran <= SZ_16M) {
-> > +		addr = port->to_hpa(cxld, base + gran);
-> > +		if (addr != base + gran)
-> > +			break;
-> > +		gran <<= 1;
-> > +	}
-> > +
-> > +	if (gran > SZ_16M) {
-> > +		dev_warn(&port->dev,
-> > +			"CXL address translation: Cannot determine granularity: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> > +			range.start, range.end, ctx->hpa_range.start,
-> > +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> > +		return -ENXIO;
-> > +	}
-> > +
-> > +	ctx->hpa_range = range;
-> > +	ctx->interleave_ways = ways;
-> > +	ctx->interleave_granularity = gran;
-> > +
-> > +	dev_dbg(&cxld->dev,
-> > +		"address mapping found for %s (hpa -> spa): %#llx+%#llx -> %#llx+%#llx ways:%d granularity:%d\n",
-> > +		dev_name(ctx->cxlmd->dev.parent), base, len, range.start,
-> > +		spa_len, ways, gran);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int setup_region_params(struct cxl_endpoint_decoder *cxled,
-> >  			       struct cxl_region_context *ctx)
-> >  {
-> > +	int rc;
-> > +
-> >  	ctx->cxled = cxled;
-> >  	ctx->cxlmd = cxled_to_memdev(cxled);
-> >  	ctx->hpa_range = cxled->cxld.hpa_range;
-> >  	ctx->interleave_ways = cxled->cxld.interleave_ways;
-> >  	ctx->interleave_granularity = cxled->cxld.interleave_granularity;
-> >  
-> > -	return 0;
-> > +	rc = setup_address_translation(cxled, ctx);
-> 
-> A quick search suggested nothing new gets added after this. As such
-> 	return setup_address_translation(...);
-> is probably appropriate here.
-> 
-> 
-> > +	if (rc)
-> > +		return rc;
-> > +
-> > +	return rc;
-
-Considered a tail call here too but dropped that idea. That would
-suggest the function should not be extended. But function is open to
-extend the setup, maybe Low Memory Hole or so. However, there are
-advantages for both and can change that.
-
-Thanks for review,
-
--Robert
-
-> >  }
-> >  
-> >  static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
-> 
 
