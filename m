@@ -1,108 +1,163 @@
-Return-Path: <linux-kernel+bounces-820492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F877B7F853
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2D7B7F7FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8258A16571D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93D5752799D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BF22BEC2D;
-	Wed, 17 Sep 2025 10:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87C9342CA9;
+	Wed, 17 Sep 2025 10:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="diiuz67A"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCefrIWD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5A5278150
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C8A2367C3;
+	Wed, 17 Sep 2025 10:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105253; cv=none; b=WS+igCk1Q2LuTPM1WmBvQaYl/KMmmq+POfwYpBRnUbiqHtWY1H7RrEq67s4MMFxUkkznuEuUkcybkKpKVJIEiOZGZB+lkOej8EnoKC2ZVJQV266Jcc5EpYDtRM215rPFvS4mgbniHB43PWqwh3BFb6+bga627YuHZ/RLd0sxqvg=
+	t=1758105409; cv=none; b=ukYFl/s0d7JvR6a6fsHNHdMPW8yRtIum/5JnQh31wj64PiHES2Wa9UhaJU+6Bl+lQ5xLNEwwREeOmirLvB4qNQ4oINRgT1rh2qsEu6ytJCTBwyCSwQgP02pmoqPYnSOaNLiE8AGi7sWIfwu1SXqSpIUat0R3VlYchiCpKKZjpLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105253; c=relaxed/simple;
-	bh=1cBxv1xbY8Fpy8oQcvISFXu2Gvy5Sux1+zhD/ZCpP5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LIwh8Ug+qsNFLgkaPAy1V2iqW1wsoWV80/oj+skgG9WasUIIUGeV4IxGKTmGI5+skM/EqqfbhRtTz/GefNE9byn8jlCkiDCNhHw0N4qRrY8+wH3DG/ufbbKf/PLz9t7XFnfjkw+8mY+KqiuWQfOcQItKt+dOm35CRikvE80L5Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=diiuz67A; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758105250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1cBxv1xbY8Fpy8oQcvISFXu2Gvy5Sux1+zhD/ZCpP5Q=;
-	b=diiuz67A3GAhUt1E2g79iZE8lvTIdYx7A1I6OA4JVsiobHXvIsxzu/YLDK3niOc0YfBOtR
-	FfuU7wb1L18YEDVerkoeCMhz5es6hwbp5ahq1nwQyA4z5l1iSnGeiz8T7gxJV/vtkhQaGj
-	6iS0E7dpB8a9YqhPdbZqu4+/nPwgtGc=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-DemHZIyAPxSQcit3hzhtNw-1; Wed, 17 Sep 2025 06:34:09 -0400
-X-MC-Unique: DemHZIyAPxSQcit3hzhtNw-1
-X-Mimecast-MFC-AGG-ID: DemHZIyAPxSQcit3hzhtNw_1758105248
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2445806b18aso64805945ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:34:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758105248; x=1758710048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1cBxv1xbY8Fpy8oQcvISFXu2Gvy5Sux1+zhD/ZCpP5Q=;
-        b=HCmU9GCcDLzsJjIHv3ZPcvFFYaYD9XSc8df992+yn1I6UoVGnm+6gtYsC35Zeo3N9i
-         fIzw3AxIAfWjlPcwo47Hq0ReuJL8grmGj0IGjbJyTFTxF4p8IQe6xZiRv7KNtzaN8odl
-         bdZp6ePtNKObNpuiTtlUnTLzoZ5c/SbAa6xBIQ+hv3gj5MuxqC5AuyLSqHwuW3QpYoiJ
-         b5hUipd8KETBd7M97l3haHiV233K/7p5Ln8DcDtUVJj2WND8wkvYv1O+OybRiwPT0CS+
-         I48IlFlE1UeUgzbIBEsAjc+ip1wQSvY7q8h3mVOEGLDVPaL9SjNErpw5qolc+4Dxilg/
-         Dtww==
-X-Forwarded-Encrypted: i=1; AJvYcCVNw1yvNaayGhUTEBnwLS0OOIFAWI7cRltSy/zrfoqCL24DbADWHe8YdoXyFfo9fLYnsDEyjlXhKpc+t5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTyHpKLNc7LkpSfCXlS6WmRJAtO3e6uiss0O9R1Vr1Qj9r9h9x
-	Uk84/FLoo0nwJQBGDt9MzzpMQlkaoveDT4CAzpcMJoZmA82Hg++jGJusW4UR7STFkGjG2+ubiCc
-	Nfikvkf9L3nMHw+R6Gke4DjiS9iJ/U0ShQ7M1PwD/6jwKLECoIlQwXj5H9hPJj2J7yBX/Q1aSQb
-	wNZuXlxXjdEas72HXrc9qLerN+EKgH6RGxHAYtvme5
-X-Gm-Gg: ASbGncs2YvGbgbMCWaJDkp596TYtyQnZbODbOYYQo6eFrLhilGbcRKIt9Vi7n5ETaTN
-	Br00lCYtyV5oI4x5705F1C0ReQuJo6gQ6sLSVUoMyD+K1wSFdtuxED7wRQOUmU58T6EucfoL4m4
-	ExlcOj0KQLJhemeTs3+1A=
-X-Received: by 2002:a17:902:c408:b0:246:76ed:e25d with SMTP id d9443c01a7336-26813bf0c6bmr21731685ad.50.1758105248311;
-        Wed, 17 Sep 2025 03:34:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2YzbN/E+UopYldHCixM+VVbcJJcmpQWL8AhaVK43uVZhoyGaM4rEdKN7JZb5lpF619POQOSbhM/3uAXXs2eU=
-X-Received: by 2002:a17:902:c408:b0:246:76ed:e25d with SMTP id
- d9443c01a7336-26813bf0c6bmr21731485ad.50.1758105247999; Wed, 17 Sep 2025
- 03:34:07 -0700 (PDT)
+	s=arc-20240116; t=1758105409; c=relaxed/simple;
+	bh=9+CfYEPcX9RBMZk8bYI4Kxv/QQTIj2Zq3577UGdLueI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZUVcjxOrV1mDGGX6g+3iSemVBIEzvaiPdaFhfgRG2rqa1KlcOnq9gGG+nz0Z1R1wB7iaWVVLQeGPRuAhXPWBLCu6lvzErUANf5XdrEpGgUwi8T0AEF3n2XFDmdnyiKXqYuRcrW35NOXzapwW7qAqcR3MGiwbjdr5HyHZQwI6ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCefrIWD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2481FC4CEFC;
+	Wed, 17 Sep 2025 10:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758105408;
+	bh=9+CfYEPcX9RBMZk8bYI4Kxv/QQTIj2Zq3577UGdLueI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QCefrIWDpyeDN3tXCB94u2Q5MHcY4yejTjtLsnQVEmKCthEh6xZgfJLbg0LQHPSrA
+	 nSRFKqERWoVpqSJRGh2DasAyTzco1FZJiQ6RV8TxkrkGc6jukqP6yo3IsgptEsd7b9
+	 ZPjqCne7q7h0dMm/687O7OdUOK4Sx3X1cX5N7PnoEz1D4z93ewUSVpM6AJLAoz+qLQ
+	 tB4jan9ZQqw8jp1Mp9F67+yZRi2ivSd+Xs5sHJOxM1s9jbSS2eGenOP4oD7vtFmg2P
+	 7UnjEMEaBp8ZKfTszdcjLZOf2Ezycnw6joQfJW/BWvhcuIOSFMdO0eAw/bx6/+U2Of
+	 FAOvNCNFqe7QQ==
+Date: Wed, 17 Sep 2025 13:36:44 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v3 3/4] ARM: dma-mapping: Switch to physical address
+ mapping callbacks
+Message-ID: <20250917103644.GB6464@unreal>
+References: <cover.1758006942.git.leon@kernel.org>
+ <5f96e44b1fb5d92a6a5f25fc9148a733a1a53b9d.1758006942.git.leon@kernel.org>
+ <20250916184617.GW1086830@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916211108.1243390-1-kriish.sharma2006@gmail.com>
-In-Reply-To: <20250916211108.1243390-1-kriish.sharma2006@gmail.com>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Wed, 17 Sep 2025 12:33:56 +0200
-X-Gm-Features: AS18NWD1T2FGHwQjVZMQL6NQNbpFLaeIpEjOA39LSJoQzn1UTtglxZVkhl6gbdQ
-Message-ID: <CAHc6FU5qWAY=aUjZ+YwwjteWCanNYFZW_xpDbWHkJV99qo=W=g@mail.gmail.com>
-Subject: Re: [PATCH] gfs2: avoid %pS in pr_err() fallback to prevent vsnprintf crash
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzbot+fa7122891ab9e0bbc6a7@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916184617.GW1086830@nvidia.com>
 
-On Tue, Sep 16, 2025 at 11:12=E2=80=AFPM Kriish Sharma
-<kriish.sharma2006@gmail.com> wrote:
-> While debugging a syzbot report, I found that the %pS format in
-> dump_holder() can trigger a crash when we end up in the pr_err()
-> fallback path. This happens because %pS goes through symbol resolution
-> inside vsnprintf, and in this case that isn=E2=80=99t always safe.
+On Tue, Sep 16, 2025 at 03:46:17PM -0300, Jason Gunthorpe wrote:
+> On Tue, Sep 16, 2025 at 10:32:06AM +0300, Leon Romanovsky wrote:
+> > +	if (!dev->dma_coherent &&
+> > +	    !(attrs & (DMA_ATTR_SKIP_CPU_SYNC | DMA_ATTR_MMIO)))
+> > +		__dma_page_cpu_to_dev(phys_to_page(phys), offset, size, dir);
+> 
+> I'd keep going and get rid of the page here too, maybe as a second
+> patch in this series:
 
-I'm unconvinced -- when and why is %pS not safe to use?
+Thanks, it is always unclear how far to go with cleanups.
 
-Thanks,
-Andreas
-
+> 
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 88c2d68a69c9ee..a84d12cd0ba4a9 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -624,16 +624,14 @@ static void __arm_dma_free(struct device *dev, size_t size, void *cpu_addr,
+>  	kfree(buf);
+>  }
+>  
+> -static void dma_cache_maint_page(struct page *page, unsigned long offset,
+> +static void dma_cache_maint_page(phys_addr_t paddr,
+>  	size_t size, enum dma_data_direction dir,
+>  	void (*op)(const void *, size_t, int))
+>  {
+> -	unsigned long pfn;
+> +	unsigned long pfn = paddr / PAGE_SIZE;
+> +	unsigned int offset = paddr % PAGE_SIZE;
+>  	size_t left = size;
+>  
+> -	pfn = page_to_pfn(page) + offset / PAGE_SIZE;
+> -	offset %= PAGE_SIZE;
+> -
+>  	/*
+>  	 * A single sg entry may refer to multiple physically contiguous
+>  	 * pages.  But we still need to process highmem pages individually.
+> @@ -644,17 +642,17 @@ static void dma_cache_maint_page(struct page *page, unsigned long offset,
+>  		size_t len = left;
+>  		void *vaddr;
+>  
+> -		page = pfn_to_page(pfn);
+> -
+> -		if (PageHighMem(page)) {
+> +		if (PhysHighMem(pfn << PAGE_SHIFT)) {
+>  			if (len + offset > PAGE_SIZE)
+>  				len = PAGE_SIZE - offset;
+>  
+>  			if (cache_is_vipt_nonaliasing()) {
+> -				vaddr = kmap_atomic(page);
+> +				vaddr = kmap_atomic_pfn(pfn);
+>  				op(vaddr + offset, len, dir);
+>  				kunmap_atomic(vaddr);
+>  			} else {
+> +				struct page *page = pfn_to_page(pfn);
+> +
+>  				vaddr = kmap_high_get(page);
+>  				if (vaddr) {
+>  					op(vaddr + offset, len, dir);
+> @@ -662,7 +660,7 @@ static void dma_cache_maint_page(struct page *page, unsigned long offset,
+>  				}
+>  			}
+>  		} else {
+> -			vaddr = page_address(page) + offset;
+> +			vaddr = phys_to_virt(pfn) + offset;
+>  			op(vaddr, len, dir);
+>  		}
+>  		offset = 0;
+> @@ -676,14 +674,11 @@ static void dma_cache_maint_page(struct page *page, unsigned long offset,
+>   * Note: Drivers should NOT use this function directly.
+>   * Use the driver DMA support - see dma-mapping.h (dma_sync_*)
+>   */
+> -static void __dma_page_cpu_to_dev(struct page *page, unsigned long off,
+> +static void __dma_page_cpu_to_dev(phys_addr_t paddr,
+>  	size_t size, enum dma_data_direction dir)
+>  {
+> -	phys_addr_t paddr;
+> +	dma_cache_maint_page(paddr, size, dir, dmac_map_area);
+>  
+> -	dma_cache_maint_page(page, off, size, dir, dmac_map_area);
+> -
+> -	paddr = page_to_phys(page) + off;
+>  	if (dir == DMA_FROM_DEVICE) {
+>  		outer_inv_range(paddr, paddr + size);
+>  	} else {
+> 
+> > +	if (!dev->dma_coherent &&
+> > +	    !(attrs & (DMA_ATTR_SKIP_CPU_SYNC | DMA_ATTR_MMIO))) {
+> >  		page = phys_to_page(iommu_iova_to_phys(mapping->domain, iova));
+> >  		__dma_page_dev_to_cpu(page, offset, size, dir);
+> 
+> Same treatment here..
+> 
+> Looks Ok though, I didn't notice any pitfalls
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> 
+> Jason
+> 
 
