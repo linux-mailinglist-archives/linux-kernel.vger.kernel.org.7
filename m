@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-821464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EC0B814F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1459DB814F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DB9481CF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:11:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B8A1C07F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE133009CA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597063002D9;
 	Wed, 17 Sep 2025 18:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="SvaRCDLu"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="hdH1WFJy"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EE22FFF83;
-	Wed, 17 Sep 2025 18:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485212FFDE6;
+	Wed, 17 Sep 2025 18:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758132659; cv=none; b=crLqTEi9ji8G1v8CtguxKtr7J3Rp0ctQur34O2dYUPivaK8p+vtlGETd55Uc56YyV6DYffQHZljfSzcV1ljle2XkZbgwlqnERiZqvrvIQThipIS1H9N1TstBgw/eWeofEmpkevzKb/jWYvyXzZB7y7XW6iP8P2411INjsHfTm5Q=
+	t=1758132659; cv=none; b=hyQJZRUGi0c9KBh2OSvzAFQIAH8Y0LlwBbfy1EJedza+y5ZFAdNwLwqBFt1c2b2coOUTbLgPei7TGUeD9ACJI2pzcCW9V58dUEBRtpZmUu5QBrKjH1gZ/aNoaxVwE2PCWTR5TUd7TsiptfrsDw+kJxyKBM5nFTLAdUNryC1JRsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758132659; c=relaxed/simple;
-	bh=rD+QXGGfQm0GQUxO4gvoPLdUStuZl5ssQkzCTRneFJ8=;
+	bh=ukf89Mi5/N4oqhQaxMlLvcNfgpUTQNr3RMAtIiJxJyo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q5jSzVhE+KxtFqcyctwPEZbyfekDRM/+ZBJL0kZ+DlUKJ7oiVeq4njvo6Rhc0tZ2L6CNp1k5GSPbRQzTKVbBKOXc9icraiR51DGIE7hkk2uUje+pDD5K+Ev6wmukxKBYNTvyB19YHsWsI9gV9iFWQnFffSoEGzlEns3wLV9cG/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=SvaRCDLu; arc=none smtp.client-ip=212.227.15.18
+	 MIME-Version; b=D7ful7n9EAqzvfQjmdrKTr0jeNZLZEmSY+dXEDeiws/nv4mvx6m6poIifp6pXSf1koZlXIH7ba8gybJWz9YSAhwMfGszE4ZCK6m7mm3oOrXl+SydztrFrtlMSu8xGA1f9SnMe1wlUUTTyUPrtpUZ8WQmD5V130s84lrLP3xnQ0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=hdH1WFJy; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
 	s=s31663417; t=1758132651; x=1758737451; i=w_armin@gmx.de;
-	bh=cEGy2MVbi+xXySqfNnmZGof77Bh8J+/suG2ra6yw8MQ=;
+	bh=ZblnzLFdXavPwUeIgLs8kx/36vQLCHDbmWEBd6b3IPU=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=SvaRCDLulhoa8ZVqtjuCeuk4KVN9NSuyArVznvAPO9Q5jbz6LXqwsHKB6N1B42IG
-	 R5VkX8i06geLKYOaDEyOPVbXWZv9AUDYMMWjpawvWX+r8kE/U6DQJJF1NJSZZcwc6
-	 0lGRBIGVBgqetfYtYt1oSX7Sb7RfYcpYF0/+64YIqL+RSUaO6oPx8e9nKMVXB36Hy
-	 i8RnWO7i83JZ7foFrtXUZRUgnogjXgAcAJhTb6/jey7x930bdtQN8vTOj/BGzLrYe
-	 puxIxDoi0gZn4ZoFPi73MuRIKdDkRT+G4E5GE9oki8ubx1fLV/b1s8YzRX8ygkQjK
-	 bzFYcbmamqLZW42b5A==
+	b=hdH1WFJyQHYa0U4EumSFpjfvIDm+G5IaTeiCkyVxRmxj4xN5KbC7lIlmPCcmaRlK
+	 X9Hh6UHxke4JlSB2FdIbgB0yJqjIvF3vfoverf/7Nv4itYAHA+/UVsgeum53URiqU
+	 Z5m9gFsVM/Xbaj8NoUQDW2mS/kGm/woGrDiUtkEWs+NX7Xf6+SHUXjXZpw04nnpGw
+	 YH0XdOHytFCpDhLEHTMz9t9lQrOns8MENdkBBF3PvKG8K6/e/EoBKv+GxttPaJZQ7
+	 XN2wfGY49Ydyu0lO2HAtGEl6A/ENO/e7uGqbtDbrZBy/qYqRv+DWZCDPWVG/RV5yA
+	 OuA1fSFCNLpR5zTEAQ==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-inspiron.fritz.box ([93.202.247.91]) by mail.gmx.net
- (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MCKFk-1v7A4m3Uqg-00EFiJ; Wed, 17 Sep 2025 20:10:50 +0200
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MLR1V-1uh0G01Wux-00MhJX; Wed, 17 Sep 2025 20:10:51 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: pali@kernel.org
 Cc: linux@roeck-us.net,
 	linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] hwmon: (dell-smm) Add support for automatic fan mode
-Date: Wed, 17 Sep 2025 20:10:35 +0200
-Message-Id: <20250917181036.10972-4-W_Armin@gmx.de>
+Subject: [PATCH 4/4] hwmon: (dell-smm) Add support for Dell OptiPlex 7040
+Date: Wed, 17 Sep 2025 20:10:36 +0200
+Message-Id: <20250917181036.10972-5-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250917181036.10972-1-W_Armin@gmx.de>
 References: <20250917181036.10972-1-W_Armin@gmx.de>
@@ -65,348 +65,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:k17Cdg7sZTUAB0IxQMa5oLgu85Y8C5pSMbhiWC+TnPYq+bgJ6l/
- vzuEUxFr1hDUbFCljglTKxd0zieJUPWyqt6J0f5C5zstx0B4gfxU+sn1hUO7Ky+WMxTu3EB
- MqrqCSer8h3THlPGmXP/KRuJ0lA01Ej5WUKfar0SrFsRmOJqnOKvt3pV99EvvecLrVPradc
- aTwX0zLvatn8yVFMuzdbQ==
+X-Provags-ID: V03:K1:h6P1rkI8OmOaYFc1CnhvFeFlhhOQpoux1AVNbyGVwTfisgmznjU
+ 3WI3hNS1H8OrYSH7j9ujhCXlC2n7ovLr5ocx5dS0yptQmDNa4fFjXJdrw/oBj84xB18Hfoa
+ T3uxda7RRpimkXe2DHem9r6SsuqCkuOLlQrs5DBU6Q09jCWaje+BtpU4yyIgq7hLJsOCOlU
+ I6tDvgfdJ5EXY6Tp/4Btw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yDkoZ0/3UWI=;KavKHPBqyIHqykU4FbEybdW0lyr
- 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
- 5dx2fE6TvT
+UI-OutboundReport: notjunk:1;M01:P0:um7+0C7jEA8=;We5A02L3XjuYNt9INvN2MLE00XQ
+ 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
 
-Many machines treat fan state 3 as some sort of automatic mode,
-which is superior to the separate SMM calls for switching to
-automatic fan mode for two reasons:
+The Dell OptiPlex 7040 supports the legacy SMM interface for reading
+sensors and performing fan control. Whitelist this machine so that
+this driver loads automatically.
 
-- the fan control mode can be controlled for each fan separately
-- the current fan control mode can be retrieved from the BIOS
-
-On some machines however, this special fan state does not exist.
-Fan state 3 acts like a regular fan state on such machines or
-does not exist at all. Such machines usually use separate SMM calls
-for enabling/disabling automatic fan control.
-
-Add support for it. If the machine supports separate SMM calls
-for changing the fan control mode, then the other interface is
-ignored.
-
+Closes: https://github.com/Wer-Wolf/i8kutils/issues/15
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- Documentation/hwmon/dell-smm-hwmon.rst | 56 +++++++++++--------
- drivers/hwmon/dell-smm-hwmon.c         | 74 +++++++++++++++++++++-----
- include/uapi/linux/i8k.h               |  2 +
- 3 files changed, 98 insertions(+), 34 deletions(-)
+ drivers/hwmon/dell-smm-hwmon.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/hwmon/dell-smm-hwmon.rst b/Documentation/hwmon/=
-dell-smm-hwmon.rst
-index 5a4edb6565cf..3e4e2d916ac5 100644
-=2D-- a/Documentation/hwmon/dell-smm-hwmon.rst
-+++ b/Documentation/hwmon/dell-smm-hwmon.rst
-@@ -38,7 +38,7 @@ fan[1-4]_min                    RO      Minimal Fan spee=
-d in RPM
- fan[1-4]_max                    RO      Maximal Fan speed in RPM
- fan[1-4]_target                 RO      Expected Fan speed in RPM
- pwm[1-4]                        RW      Control the fan PWM duty-cycle.
--pwm1_enable                     WO      Enable or disable automatic BIOS =
-fan
-+pwm[1-4]_enable                 RW/WO   Enable or disable automatic BIOS =
-fan
-                                         control (not supported on all lap=
-tops,
-                                         see below for details).
- temp[1-10]_input                RO      Temperature reading in milli-degr=
-ees
-@@ -49,26 +49,40 @@ temp[1-10]_label                RO      Temperature se=
-nsor label.
- Due to the nature of the SMM interface, each pwmX attribute controls
- fan number X.
-=20
--Disabling automatic BIOS fan control
-=2D------------------------------------
--
--On some laptops the BIOS automatically sets fan speed every few
--seconds. Therefore the fan speed set by mean of this driver is quickly
--overwritten.
--
--There is experimental support for disabling automatic BIOS fan
--control, at least on laptops where the corresponding SMM command is
--known, by writing the value ``1`` in the attribute ``pwm1_enable``
--(writing ``2`` enables automatic BIOS control again). Even if you have
--more than one fan, all of them are set to either enabled or disabled
--automatic fan control at the same time and, notwithstanding the name,
--``pwm1_enable`` sets automatic control for all fans.
--
--If ``pwm1_enable`` is not available, then it means that SMM codes for
--enabling and disabling automatic BIOS fan control are not whitelisted
--for your hardware. It is possible that codes that work for other
--laptops actually work for yours as well, or that you have to discover
--new codes.
-+Enabling/Disabling automatic BIOS fan control
-+---------------------------------------------
-+
-+There exist two methods for enabling/disabling automatic BIOS fan control=
-:
-+
-+1. Separate SMM commands to enable/disable automatic BIOS fan control for=
- all fans.
-+
-+2. A special fan state that enables automatic BIOS fan control for a indi=
-vidual fan.
-+
-+The driver cannot reliably detect what method should be used on a given
-+device, so instead the following heuristic is used:
-+
-+- use fan state 3 for enabling BIOS fan control if the maximum fan state
-+  setable by the user is smaller than 3 (default setting).
-+
-+- use separate SMM commands if device is whitelisted to support them.
-+
-+When using the first method, each fan will have a standard ``pwmX_enable`=
-`
-+sysfs attribute. Writing ``1`` into this attribute will disable automatic
-+BIOS fan control for the associated fan and set it to maximum speed. Enab=
-ling
-+BIOS fan control again can be achieved by writing ``2`` into this attribu=
-te.
-+Reading this sysfs attributes returns the current setting as reported by
-+the underlying hardware.
-+
-+When using the second method however, only the ``pwm1_enable`` sysfs attr=
-ibute
-+will be available to enable/disable automatic BIOS fan control globaly fo=
-r all
-+fans available on a given device. Additionally, this sysfs attribute is w=
-rite-only
-+as there exists no SMM command for reading the current fan control settin=
-g.
-+
-+If no ``pwmX_enable`` attributes are available, then it means that the dr=
-iver
-+cannot use the first method and the SMM codes for enabling and disabling =
-automatic
-+BIOS fan control are not whitelisted for your device. It is possible that=
- codes
-+that work for other laptops actually work for yours as well, or that you =
-have to
-+discover new codes.
-=20
- Check the list ``i8k_whitelist_fan_control`` in file
- ``drivers/hwmon/dell-smm-hwmon.c`` in the kernel tree: as a first
 diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon=
 .c
-index 36576db09706..79befa13b699 100644
+index 79befa13b699..cbe1a74a3dee 100644
 =2D-- a/drivers/hwmon/dell-smm-hwmon.c
 +++ b/drivers/hwmon/dell-smm-hwmon.c
-@@ -764,6 +764,13 @@ static int dell_smm_get_cur_state(struct thermal_cool=
-ing_device *dev, unsigned l
- 	if (ret < 0)
- 		return ret;
-=20
-+	/*
-+	 * A fan state bigger than i8k_fan_max might indicate that
-+	 * the fan is currently in automatic mode.
-+	 */
-+	if (ret > cdata->data->i8k_fan_max)
-+		return -ENODATA;
-+
- 	*state =3D ret;
-=20
- 	return 0;
-@@ -851,7 +858,14 @@ static umode_t dell_smm_is_visible(const void *drvdat=
-a, enum hwmon_sensor_types
-=20
- 			break;
- 		case hwmon_pwm_enable:
--			if (auto_fan)
-+			if (auto_fan) {
-+				/*
-+				 * The setting affects all fans, so only create a
-+				 * single attribute.
-+				 */
-+				if (channel !=3D 1)
-+					return 0;
-+
- 				/*
- 				 * There is no command for retrieve the current status
- 				 * from BIOS, and userspace/firmware itself can change
-@@ -859,6 +873,10 @@ static umode_t dell_smm_is_visible(const void *drvdat=
-a, enum hwmon_sensor_types
- 				 * Thus we can only provide write-only access for now.
- 				 */
- 				return 0200;
-+			}
-+
-+			if (data->fan[channel] && data->i8k_fan_max < I8K_FAN_AUTO)
-+				return 0644;
-=20
- 			break;
- 		default:
-@@ -928,14 +946,28 @@ static int dell_smm_read(struct device *dev, enum hw=
-mon_sensor_types type, u32 a
- 		}
- 		break;
- 	case hwmon_pwm:
-+		ret =3D i8k_get_fan_status(data, channel);
-+		if (ret < 0)
-+			return ret;
-+
- 		switch (attr) {
- 		case hwmon_pwm_input:
--			ret =3D i8k_get_fan_status(data, channel);
--			if (ret < 0)
--				return ret;
-+			/*
-+			 * A fan state bigger than i8k_fan_max might indicate that
-+			 * the fan is currently in automatic mode.
-+			 */
-+			if (ret > data->i8k_fan_max)
-+				return -ENODATA;
-=20
- 			*val =3D clamp_val(ret * data->i8k_pwm_mult, 0, 255);
-=20
-+			return 0;
-+		case hwmon_pwm_enable:
-+			if (ret =3D=3D I8K_FAN_AUTO)
-+				*val =3D 2;
-+			else
-+				*val =3D 1;
-+
- 			return 0;
- 		default:
- 			break;
-@@ -1022,16 +1054,32 @@ static int dell_smm_write(struct device *dev, enum=
- hwmon_sensor_types type, u32
-=20
- 			return 0;
- 		case hwmon_pwm_enable:
--			if (!val)
--				return -EINVAL;
--
--			if (val =3D=3D 1)
-+			switch (val) {
-+			case 1:
- 				enable =3D false;
--			else
-+				break;
-+			case 2:
- 				enable =3D true;
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
-=20
- 			mutex_lock(&data->i8k_mutex);
--			err =3D i8k_enable_fan_auto_mode(data, enable);
-+			if (auto_fan) {
-+				err =3D i8k_enable_fan_auto_mode(data, enable);
-+			} else {
-+				/*
-+				 * When putting the fan into manual control mode we have to ensure
-+				 * that the device does not overheat until the userspace fan control
-+				 * software takes over. Because of this we set the fan speed to
-+				 * i8k_fan_max when disabling automatic fan control.
-+				 */
-+				if (enable)
-+					err =3D i8k_set_fan(data, channel, I8K_FAN_AUTO);
-+				else
-+					err =3D i8k_set_fan(data, channel, data->i8k_fan_max);
-+			}
- 			mutex_unlock(&data->i8k_mutex);
-=20
- 			if (err < 0)
-@@ -1082,9 +1130,9 @@ static const struct hwmon_channel_info * const dell_=
-smm_info[] =3D {
- 			   ),
- 	HWMON_CHANNEL_INFO(pwm,
- 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
--			   HWMON_PWM_INPUT,
--			   HWMON_PWM_INPUT,
--			   HWMON_PWM_INPUT
-+			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
-+			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
-+			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE
- 			   ),
- 	NULL
- };
-diff --git a/include/uapi/linux/i8k.h b/include/uapi/linux/i8k.h
-index 268e6268f6c8..a16e4049710f 100644
-=2D-- a/include/uapi/linux/i8k.h
-+++ b/include/uapi/linux/i8k.h
-@@ -36,6 +36,8 @@
- #define I8K_FAN_LOW		1
- #define I8K_FAN_HIGH		2
- #define I8K_FAN_TURBO		3
-+/* Many machines treat this mode as some sort of automatic mode */
-+#define I8K_FAN_AUTO		3
- #define I8K_FAN_MAX		I8K_FAN_TURBO
-=20
- #define I8K_VOL_UP		1
+@@ -1330,6 +1330,13 @@ static const struct dmi_system_id i8k_dmi_table[] _=
+_initconst =3D {
+ 			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "OptiPlex 7050"),
+ 		},
+ 	},
++	{
++		.ident =3D "Dell OptiPlex 7040",
++		.matches =3D {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "OptiPlex 7040"),
++		},
++	},
+ 	{
+ 		.ident =3D "Dell Precision",
+ 		.matches =3D {
 =2D-=20
 2.39.5
 
