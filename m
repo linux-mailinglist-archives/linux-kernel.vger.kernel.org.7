@@ -1,181 +1,378 @@
-Return-Path: <linux-kernel+bounces-821306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9316DB80F0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9ACB80F21
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618F71C8247E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F1C1886DFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBF12FDC52;
-	Wed, 17 Sep 2025 16:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D4D34BA3D;
+	Wed, 17 Sep 2025 16:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="akDvQyxN"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JDYMWBw3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11E32FDC4E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DB534BA2D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758125691; cv=none; b=QlrC6oO79gP36m7gnk7Tv77bZyv3gx9RPAXvU4se9n6OufKd08YuqKmlX5KRhgF1EAZy8AY6NhZcBkC4c+qvK3GFi2HnBG/R6CiTuPCWDukBaGuJx3qDgKZuCcJjpGKYlG+4LAnx4gXZz8+t0O3LMhm6ro4pL2u1pkropFJepi0=
+	t=1758125836; cv=none; b=N9ZBnzkmjoZCBKlWZCfRMmmR4NDnI3OyZ8Y/PeCv3enZIgfpTHs1NUh+Ud3YHJsKHPH9DBrktYKeU+XZB8K4wZYqQUOe3sCdGq+SUUDEcrE3YYWqcPm+uB+O1+ZEAqXRcpenpb2obHEcSXsdM6BLq1uKdcdq1AIYBj/BLsaFMJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758125691; c=relaxed/simple;
-	bh=RMvc+oHzDZ/mGe8MqNZjXMhfawRf05GjGyKnSnZBYu4=;
+	s=arc-20240116; t=1758125836; c=relaxed/simple;
+	bh=f5o/FUxe5iNbC4RBGy2qWQid6QD7+9xO0zGKc4rFrQo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lOW2xu9IWlZZAdu2YIJrrK/VogyiD9iOJESK4uJyDLtkOCtiny3ouxAXyM0nd0iLulqzEFHkGXNA1ooBwZ10r/cNAqZyDX/n6/EtnWo3dlD3/322comYEciAIrTmeigvA+uDZlHwLJs5e4Gug9N0/MdSx0OUBjR6b+fzkzHpyKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=akDvQyxN; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b796ff6d45so450831cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:14:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758125689; x=1758730489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OArBKu/OVLMzSppvTMJHRKcjYiNm1Tha8BBwDyvcaCw=;
-        b=akDvQyxNgv3ODheynsE1J+0BmEgVFJrb+ni+XC0d5RrtEa5nf280nj4XOjhCOsefcv
-         MXBoewDx1MgHFtYAuOazzsiIE8Kzp/+KcQgksAHUqfKsZ+iL1HT1iHpfCGtvZ7rAybCW
-         Js8OQvk6n5d6yVft7/lxOtqoEe2ykNRvln1QFLrvtdyRU8e0luo45Rkoea05TPPhd2Ld
-         B+uYfqjvSV+Sngagynh2tqQV3Om3jpBSsPHKhNk8bpNxYdKuPnX1H/oFbahHb8zrSUEl
-         ICVk4UClVHFR05h+3iCMfBpaIpTbzUSFOPVb+Yn/uv1Px/JOTlCz1ibOg2pb/xY0Nrjz
-         tvnA==
+	 To:Cc:Content-Type; b=kIbcKSJ3VHe9dwXQ0nqOLFq7RNGTHtqOE3v+kDtM2WR1vvd2voK0BPZn9H11I/Watqb48eEKaJ0qU25Wezgx5Hy3aJcNP8IofbZtCTWxL5lRU+DvRhHVkQBMDaFsaBvSPt9KMXM/xtA0qG3mUiwwYX/bYDNJDppM6cDrJ27ItRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JDYMWBw3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758125833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JfWZBt2zSfStApfaCH7mmPn5eoFglffKKLGnGyZRxNM=;
+	b=JDYMWBw33vYMsKwP5kuA/LqYsggCvCt6uEPp8nxSQ6ItOSquRxhZp1n4YHRhcUGWxpDVR3
+	CzY5DSlnq2zvZ5CmGMxqggn4sAxyToHi/71wJnIgOD7pWlcq/X/ujz3Vc3fTB61soRNo10
+	x+t6emTVmtuR8xW/7v5M5znVMMqOJnk=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-353-3Gc1lW4AOtCRaK6rdEessQ-1; Wed, 17 Sep 2025 12:17:11 -0400
+X-MC-Unique: 3Gc1lW4AOtCRaK6rdEessQ-1
+X-Mimecast-MFC-AGG-ID: 3Gc1lW4AOtCRaK6rdEessQ_1758125831
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-733ff1a73dcso668967b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:17:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758125689; x=1758730489;
+        d=1e100.net; s=20230601; t=1758125830; x=1758730630;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OArBKu/OVLMzSppvTMJHRKcjYiNm1Tha8BBwDyvcaCw=;
-        b=hM4GWKnk6R1YNmhQtBGtg6pcGrxYY3M8f5cceYPDtBcCkvhxLy3/peDs8KFPUnIET6
-         tLsm+sf2iPjnasPvIJtW2/FczOQs0XGpcOf3aB2uD2OG8RqY5E7GwuCdLdBdVvEaAgYy
-         oDZqVViZfR3uORo9utPJjr6aO8ppby5z+rQLT5rsVpfjE/s2MGgxlThXM00A6AeZJoNm
-         c+o+zKsBQKkYN1iH9SmzP6wsBe87clQ9iewzuH67YF0oiYJbEK46+ify8zdAwc4cLnOS
-         sMw0qWTuCqB92cI2XRmPRLnEH1bjtNw1e8YnWEeuUGpGd+IFUEYNljRStSlitzW70gwR
-         evbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSh00zwqxWOVx6XtvildIDjDwa/xv1TVSpxCpaQwIJZsB61u9MV58PIqfPwd0r74LOONVykPKIvTJwIQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy12t5iuyB7u1b8BK00iARgPRdMQqXocPNhayixIUmZCpeg9cYQ
-	NI/3eMdbh8OwZOFN4XrDEeBSrK5mkMTPtJHC8erpmGPtQgpbnOkq4fKokvReG9c9zzQDSn2cmej
-	hQ2J6aLRAuWloECQ5SHk5PlQEIbLHGkLYCmJkOVHl
-X-Gm-Gg: ASbGncvi8c6LBPbka/SuJZmZJ9rRPRMx0MRWU6vRHfo+La1tdBth9GzpDJl+aurFx+Q
-	dHv0XJOtlzgu4MoM6/1nhKIzS0OBeRPWS3LYCG1+h2iztL9ihuKXDobZ8SlaiC1yg6fiYngrD3z
-	r5SdhvTuY+1hoBWIXdwAyIqXwB5ufVHxGypwGZRFqcLctqxau9JpK7PaG2sfK+aPH8ahNDuAQnl
-	y8AuPGVs/JmJ+5pzqxi86JTqInL3SXcd/yEjuvlV0fN0uJjC2i9vQ==
-X-Google-Smtp-Source: AGHT+IG9w0PDQP5VzsbXW+qZNvO2uClVZrTUiqPIC6ePHQIbByt0FQbuPg77WNGmS8ZH42TU2TS5A3kWp2z/r71KEQ4=
-X-Received: by 2002:a05:622a:1818:b0:479:1958:d81a with SMTP id
- d75a77b69052e-4b9dd4b6fa5mr7747081cf.6.1758125688026; Wed, 17 Sep 2025
- 09:14:48 -0700 (PDT)
+        bh=JfWZBt2zSfStApfaCH7mmPn5eoFglffKKLGnGyZRxNM=;
+        b=Sp3+f9qD1Ba/Ck4goiQ+/q819G84aY8yVaNI2QVz4y0Xzhpz9D/ULtuJ2WOEJ/v3fs
+         pAHI+CJDb+YmHGGJRIhi3VJyGq11O/1dY+Siy8Soe/CrICuHsaQQvPV083Z+Y8wC8GQ0
+         K3400abTby5ynOmfAvhjdULdNPc+Dn1Q3Iq3NIS9/b7bT1jxJ+gnd6oAaGshg3TlQKT+
+         kpsFAliFEGow2g4x5Fq5V6dVXP0Bpm4yZHsg2XUAQ9bhWCIvjygtgn7D3wCk9duq7TqH
+         qrNLl5da2MAc4faABYkZ3Zoccm91Way2owlQmUwQDZQjGun2doejeLJykNdT2X42KyyS
+         tNXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVH7SBA3/N1sFuuKhBRe1eXVmrd9yKg0FBtRGNv8XPjb4gMupdzrwQywh6/7/BHYvF6TpEjKoDcWqOt110=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT+F1anOKhawHLGqpzzEACt2nyM4rkhJhlCtcvuvkc+PeXh2k7
+	phH9qzC1Nl57HyeWqCA9r+XVWvkzg4ZmLkQyGeOhPCOHEJbbWRBjIQdbeXGUwyj2leLBxOFtRw+
+	XdFMsrn7ykVfPl7U+bXawIVEKeyj0cEXpC9y0brodDWYWO67T/FNG+rnhjoVBAeElbqxcSFyzFt
+	nU/OELA3WmNR49sQ0fuU415mgvl5deGjyfhXSZRvByAk+YoIQhL7c2vA==
+X-Gm-Gg: ASbGncvENxPvtr+ojCYq52hb0uMaNnWq2oclqMU50GTSPI8kWOn1tVlTDdOcDKudvQv
+	PCkOrd4NYUls7FFyxffpeijhwmJ/G6l/PThEBTlSFCScME/L0PD9UDWmEMHwbUQHo8S0Grx7JKk
+	5f6KqJFlz+nOYYr68LLOPchbJwxz5CB/IuUWhWoomnj0bTAdTgPkEb4eEevI5ghfaS4/zI6LO2C
+	xE+K9x8
+X-Received: by 2002:a05:690c:64ca:b0:726:4b7a:1ec1 with SMTP id 00721157ae682-73893249140mr23662917b3.47.1758125830015;
+        Wed, 17 Sep 2025 09:17:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGObF9RKTyIpHyxzWy+Hnw2h3N0ZVh0xAj9VZdVv1dpBLIeYQreBnm0kTVybwmeR5N+VPNZL+4W2cjYeU7Ptbg=
+X-Received: by 2002:a05:690c:64ca:b0:726:4b7a:1ec1 with SMTP id
+ 00721157ae682-73893249140mr23662517b3.47.1758125829439; Wed, 17 Sep 2025
+ 09:17:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
- <20250913000935.1021068-1-sudarsanm@google.com> <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
- <f5792407-d2b9-42b3-bc85-ed14eac945ec@paulmck-laptop> <d1ef1cbb-c18d-4da6-b56b-342e86dca525@suse.cz>
- <CAJuCfpEQ=RUgcAvRzE5jRrhhFpkm8E2PpBK9e9GhK26ZaJQt=Q@mail.gmail.com> <aMpE-oSjtlDU4TSl@pc636>
-In-Reply-To: <aMpE-oSjtlDU4TSl@pc636>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 17 Sep 2025 09:14:37 -0700
-X-Gm-Features: AS18NWAl3tnnsDRXh1YlHaUElOip_SV2qsqTsXfBx-HZev1MuKyA-GY3Dn540H0
-Message-ID: <CAJuCfpHQ_JedSRHKKoYXyVzaFOm=dDWzgFZwqerfEC1fn35j0w@mail.gmail.com>
-Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, paulmck@kernel.org, Jan Engelhardt <ej@inai.de>, 
-	Sudarsan Mahendran <sudarsanm@google.com>, Liam.Howlett@oracle.com, cl@gentwo.org, 
-	harry.yoo@oracle.com, howlett@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, maple-tree@lists.infradead.org, rcu@vger.kernel.org, 
-	rientjes@google.com, roman.gushchin@linux.dev
+References: <20250916130833.329087-1-eperezma@redhat.com> <20250916130833.329087-5-eperezma@redhat.com>
+ <CACGkMEuY359QtVeTY40Z_L1zhG87rB2te=qc7YM6gZxcKM=m7w@mail.gmail.com>
+In-Reply-To: <CACGkMEuY359QtVeTY40Z_L1zhG87rB2te=qc7YM6gZxcKM=m7w@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 17 Sep 2025 18:16:33 +0200
+X-Gm-Features: AS18NWDkg-GLhDiz_uY5XwV9ED8cCpt8XErhSKA-aurbAKWbY2w-ZsgS0WsMdl0
+Message-ID: <CAJaqyWfkpxmFXafRnxvP1Wjd3=uBaSr_m05BCpDYB4e7XR9diQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] vduse: return internal vq group struct as map token
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, 
+	Cindy Lu <lulu@redhat.com>, Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 10:19=E2=80=AFPM Uladzislau Rezki <urezki@gmail.com=
-> wrote:
+On Wed, Sep 17, 2025 at 10:37=E2=80=AFAM Jason Wang <jasowang@redhat.com> w=
+rote:
 >
-> On Tue, Sep 16, 2025 at 10:09:18AM -0700, Suren Baghdasaryan wrote:
-> > On Mon, Sep 15, 2025 at 8:22=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz=
-> wrote:
-> > >
-> > > On 9/15/25 14:13, Paul E. McKenney wrote:
-> > > > On Mon, Sep 15, 2025 at 09:51:25AM +0200, Jan Engelhardt wrote:
-> > > >>
-> > > >> On Saturday 2025-09-13 02:09, Sudarsan Mahendran wrote:
-> > > >> >
-> > > >> >Summary of the results:
-> > >
-> > > In any case, thanks a lot for the results!
-> > >
-> > > >> >- Significant change (meaning >10% difference
-> > > >> >  between base and experiment) on will-it-scale
-> > > >> >  tests in AMD.
-> > > >> >
-> > > >> >Summary of AMD will-it-scale test changes:
-> > > >> >
-> > > >> >Number of runs : 15
-> > > >> >Direction      : + is good
-> > > >>
-> > > >> If STDDEV grows more than mean, there is more jitter,
-> > > >> which is not "good".
-> > > >
-> > > > This is true.  On the other hand, the mean grew way more in absolut=
-e
-> > > > terms than did STDDEV.  So might this be a reasonable tradeoff?
-> > >
-> > > Also I'd point out that MIN of TEST is better than MAX of BASE, which=
- means
-> > > there's always an improvement for this config. So jitter here means i=
-t's
-> > > changing between better and more better :) and not between worse and =
-(more)
-> > > better.
-> > >
-> > > The annoying part of course is that for other configs it's consistent=
-ly the
-> > > opposite.
+> On Tue, Sep 16, 2025 at 9:09=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
+at.com> wrote:
 > >
-> > Hi Vlastimil,
-> > I ran my mmap stress test that runs 20000 cycles of mmapping 50 VMAs,
-> > faulting them in then unmapping and timing only mmap and munmap calls.
-> > This is not a realistic scenario but works well for A/B comparison.
+> > Return the internal struct that represents the vq group as virtqueue ma=
+p
+> > token, instead of the device.  This allows the map functions to access
+> > the information per group.
 > >
-> > The numbers are below with sheaves showing a clear improvement:
+> > At this moment all the virtqueues share the same vq group, that only
+> > can point to ASID 0.  This change prepares the infrastructure for actua=
+l
+> > per-group address space handling
 > >
-> > Baseline
-> >             avg             stdev
-> > mmap        2.621073        0.2525161631
-> > munmap      2.292965        0.008831973052
-> > total       4.914038        0.2572620923
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> > RFC v3:
+> > * Make the vq groups a dynamic array to support an arbitrary number of
+> >   them.
+> > ---
+> >  drivers/vdpa/vdpa_user/vduse_dev.c | 52 ++++++++++++++++++++++++------
+> >  include/linux/virtio.h             |  6 ++--
+> >  2 files changed, 46 insertions(+), 12 deletions(-)
 > >
-> > Sheaves
-> >             avg            stdev           avg_diff        stdev_diff
-> > mmap        1.561220667    0.07748897037   -40.44%        -69.31%
-> > munmap      2.042071       0.03603083448   -10.94%        307.96%
-> > total       3.603291667    0.113209047     -26.67%        -55.99%
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index 42f8807911d4..9c12ae72abc2 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/uio.h>
+> >  #include <linux/vdpa.h>
+> >  #include <linux/nospec.h>
+> > +#include <linux/virtio.h>
+> >  #include <linux/vmalloc.h>
+> >  #include <linux/sched/mm.h>
+> >  #include <uapi/linux/vduse.h>
+> > @@ -85,6 +86,10 @@ struct vduse_umem {
+> >         struct mm_struct *mm;
+> >  };
 > >
-> Could you run your test with dropping below patch?
+> > +struct vduse_vq_group_int {
+> > +       struct vduse_dev *dev;
+> > +};
+>
+> I remember we had some discussion over this, and the conclusion is to
+> have a better name.
+>
+> Maybe just vduse_vq_group?
+>
 
-Sure, will try later today and report.
+Good catch, I also hate the _int suffix :). vduse_vq_group was used in
+the vduse uapi in previous series, but now there is no reason for it.
+Replacing it, thanks!
 
+> And to be conceptually correct, we need to use iova_domain here
+> instead of the vduse_dev. More below.
 >
-> [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu() operati=
-ons
+> > +
+> >  struct vduse_dev {
+> >         struct vduse_vdpa *vdev;
+> >         struct device *dev;
+> > @@ -118,6 +123,7 @@ struct vduse_dev {
+> >         u32 vq_align;
+> >         u32 ngroups;
+> >         struct vduse_umem *umem;
+> > +       struct vduse_vq_group_int *groups;
+> >         struct mutex mem_lock;
+> >         unsigned int bounce_size;
+> >         rwlock_t domain_lock;
+> > @@ -602,6 +608,15 @@ static u32 vduse_get_vq_group(struct vdpa_device *=
+vdpa, u16 idx)
+> >         return dev->vqs[idx]->vq_group;
+> >  }
+> >
+> > +static union virtio_map vduse_get_vq_map(struct vdpa_device *vdpa, u16=
+ idx)
+> > +{
+> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +       u32 vq_group =3D dev->vqs[idx]->vq_group;
+> > +       union virtio_map ret =3D { .group =3D &dev->groups[vq_group] };
+> > +
+> > +       return ret;
+> > +}
+> > +
+> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+> >                                 struct vdpa_vq_state *state)
+> >  {
+> > @@ -822,6 +837,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
+ig_ops =3D {
+> >         .get_vq_affinity        =3D vduse_vdpa_get_vq_affinity,
+> >         .reset                  =3D vduse_vdpa_reset,
+> >         .set_map                =3D vduse_vdpa_set_map,
+> > +       .get_vq_map             =3D vduse_get_vq_map,
+> >         .free                   =3D vduse_vdpa_free,
+> >  };
+> >
+> > @@ -829,7 +845,8 @@ static void vduse_dev_sync_single_for_device(union =
+virtio_map token,
+> >                                              dma_addr_t dma_addr, size_=
+t size,
+> >                                              enum dma_data_direction di=
+r)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
 >
-> mmap()/munmap(), i assume it is a duration time in average, is the time
-> in microseconds?
+> If we really want to do this, we need to move the iova_domian into the gr=
+oup.
+>
 
-Yeah, it ends up being in microseconds. The actual reported time is
-the total time in seconds that all mmap/munmap in the test consumed.
-With 20000 cycles of 50 mmap/munmap calls we end up with 1000000
-syscalls, so the number can be considered as duration in microseconds
-for a single call.
+It's done in patches on top to make each patch smaller. This patch is
+focused on just changing the type of the union. Would you prefer me to
+reorder the patches so that part is done earlier?
 
+> >
+> >         vduse_domain_sync_single_for_device(domain, dma_addr, size, dir=
+);
+> >  }
+> > @@ -838,7 +855,8 @@ static void vduse_dev_sync_single_for_cpu(union vir=
+tio_map token,
+> >                                              dma_addr_t dma_addr, size_=
+t size,
+> >                                              enum dma_data_direction di=
+r)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
+> >
+> >         vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir);
+> >  }
+> > @@ -848,7 +866,8 @@ static dma_addr_t vduse_dev_map_page(union virtio_m=
+ap token, struct page *page,
+> >                                      enum dma_data_direction dir,
+> >                                      unsigned long attrs)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
+> >
+> >         return vduse_domain_map_page(domain, page, offset, size, dir, a=
+ttrs);
+> >  }
+> > @@ -857,7 +876,8 @@ static void vduse_dev_unmap_page(union virtio_map t=
+oken, dma_addr_t dma_addr,
+> >                                  size_t size, enum dma_data_direction d=
+ir,
+> >                                  unsigned long attrs)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
+> >
+> >         return vduse_domain_unmap_page(domain, dma_addr, size, dir, att=
+rs);
+> >  }
+> > @@ -865,7 +885,8 @@ static void vduse_dev_unmap_page(union virtio_map t=
+oken, dma_addr_t dma_addr,
+> >  static void *vduse_dev_alloc_coherent(union virtio_map token, size_t s=
+ize,
+> >                                       dma_addr_t *dma_addr, gfp_t flag)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
+> >         unsigned long iova;
+> >         void *addr;
+> >
+> > @@ -884,14 +905,16 @@ static void vduse_dev_free_coherent(union virtio_=
+map token, size_t size,
+> >                                     void *vaddr, dma_addr_t dma_addr,
+> >                                     unsigned long attrs)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
+> >
+> >         vduse_domain_free_coherent(domain, size, vaddr, dma_addr, attrs=
+);
+> >  }
+> >
+> >  static bool vduse_dev_need_sync(union virtio_map token, dma_addr_t dma=
+_addr)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
+> >
+> >         return dma_addr < domain->bounce_size;
+> >  }
+> > @@ -905,7 +928,8 @@ static int vduse_dev_mapping_error(union virtio_map=
+ token, dma_addr_t dma_addr)
+> >
+> >  static size_t vduse_dev_max_mapping_size(union virtio_map token)
+> >  {
+> > -       struct vduse_iova_domain *domain =3D token.iova_domain;
+> > +       struct vduse_dev *vdev =3D token.group->dev;
+> > +       struct vduse_iova_domain *domain =3D vdev->domain;
+> >
+> >         return domain->bounce_size;
+> >  }
+> > @@ -1720,6 +1744,7 @@ static int vduse_destroy_dev(char *name)
+> >         if (dev->domain)
+> >                 vduse_domain_destroy(dev->domain);
+> >         kfree(dev->name);
+> > +       kfree(dev->groups);
+> >         vduse_dev_destroy(dev);
+> >         module_put(THIS_MODULE);
+> >
+> > @@ -1885,7 +1910,15 @@ static int vduse_create_dev(struct vduse_dev_con=
+fig *config,
+> >         dev->device_features =3D config->features;
+> >         dev->device_id =3D config->device_id;
+> >         dev->vendor_id =3D config->vendor_id;
+> > +
+> >         dev->ngroups =3D (dev->api_version < 1) ? 1 : (config->ngroups =
+?: 1);
+> > +       dev->groups =3D kcalloc(dev->ngroups, sizeof(dev->groups[0]),
+> > +                             GFP_KERNEL);
+> > +       if (!dev->groups)
+> > +               goto err_vq_groups;
+> > +       for (u32 i =3D 0; i < dev->ngroups; ++i)
+> > +               dev->groups[i].dev =3D dev;
+> > +
+> >         dev->name =3D kstrdup(config->name, GFP_KERNEL);
+> >         if (!dev->name)
+> >                 goto err_str;
+> > @@ -1922,6 +1955,8 @@ static int vduse_create_dev(struct vduse_dev_conf=
+ig *config,
+> >  err_idr:
+> >         kfree(dev->name);
+> >  err_str:
+> > +       kfree(dev->groups);
+> > +err_vq_groups:
+> >         vduse_dev_destroy(dev);
+> >  err:
+> >         return ret;
+> > @@ -2083,7 +2118,6 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mde=
+v, const char *name,
+> >                 return -ENOMEM;
+> >         }
+> >
+> > -       dev->vdev->vdpa.vmap.iova_domain =3D dev->domain;
+> >         ret =3D _vdpa_register_device(&dev->vdev->vdpa, dev->vq_num);
+> >         if (ret) {
+> >                 put_device(&dev->vdev->vdpa.dev);
+> > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> > index 96c66126c074..5f8db75f7833 100644
+> > --- a/include/linux/virtio.h
+> > +++ b/include/linux/virtio.h
+> > @@ -41,13 +41,13 @@ struct virtqueue {
+> >         void *priv;
+> >  };
+> >
+> > -struct vduse_iova_domain;
+> > +struct vduse_vq_group_int;
+> >
+> >  union virtio_map {
+> >         /* Device that performs DMA */
+> >         struct device *dma_dev;
+> > -       /* VDUSE specific mapping data */
+> > -       struct vduse_iova_domain *iova_domain;
+> > +       /* VDUSE specific virtqueue group for doing map */
+> > +       struct vduse_vq_group_int *group;
+> >  };
+> >
+> >  int virtqueue_add_outbuf(struct virtqueue *vq,
+> > --
+> > 2.51.0
+> >
 >
-> Thank you.
+> Thanks
 >
-> --
-> Uladzislau Rezki
+
 
