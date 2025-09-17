@@ -1,120 +1,199 @@
-Return-Path: <linux-kernel+bounces-820402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E63B7D682
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FECB7D6DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03CAF188ACF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2BC81882486
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E348309EE4;
-	Wed, 17 Sep 2025 09:56:34 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.205.26])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C3830BB95;
-	Wed, 17 Sep 2025 09:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.205.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3358134DCEA;
+	Wed, 17 Sep 2025 09:56:30 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135042F60A2;
+	Wed, 17 Sep 2025 09:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102993; cv=none; b=a2BTPR4N91iZnJnATttfyfPOR4HmVViVq+CyDg6Hgg67MyxoaJjSKkm4a3Q1yGNLZabvREw5wn6iEXsOma/Co76e4fij1QB4B07V8/otZEtu/bJRd9FmGLMdYUzTaa2oOfGDvUgp+A3PLuFGjHTVFCo4U7rgjK71ervKesc2duQ=
+	t=1758102989; cv=none; b=b2nQHOGdiHSn+DkCWuGHlZDHgLRudvYiLgMjsUCiylHbr4ReqfJbgXGd27l1342Vmk7UT0TZBZXIuMIsN8CPdBYaqkE0dxfsKJnXrMUTW53/UKapydX5DY9t2caxkdgBZvCj+NJa1UXGj4cAxVUPPus7Hxx8nzoqBabvus0b8zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102993; c=relaxed/simple;
-	bh=16bpVU88cJUh6YPx5ZktJMysaL5Bti5I4co90FJoiSo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n9ldDlrKbvxDoxMNC5XO+7TZYl9/mMHuZIhh96DBP0MAMV35BrdrJNCOdB/DJIPD6MVvdfwjYcUsWXxfJQgEPyXr1Nzd7O7peBnvxwcfTH0YQeulZbEVnwBPGUI4q8TEBoeRG69omI3H3+UAtWhqg8oPcp9Ym9GRmb4d5lE0W50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.229.205.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [106.117.98.100])
-	by mtasvr (Coremail) with SMTP id _____wAXHQXBhcpoA+1DAg--.14889S3;
+	s=arc-20240116; t=1758102989; c=relaxed/simple;
+	bh=JkKrUSNmn6eFBVBF/ul8YYiOU/ezlAAMmRX8Do1T+O8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TdcEkufOK508IgeTIz48xn7XQwgT5SZt+dwaooo8nQkjuTcdiWLe+gie8ycxP0w9CqWspQQNplglB7JuUW8EfG0hKVg6WPIm+44uy3tcsBTyID6cDOHTYBgvfOwMtbkINqaF2wX01daz/7YCcOBV3iCgjy5VoLgb7NFIXMd8eqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cRYwj1NZGz2VRk1;
+	Wed, 17 Sep 2025 17:52:53 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1FE3C18001B;
 	Wed, 17 Sep 2025 17:56:18 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [106.117.98.100])
-	by mail-app1 (Coremail) with SMTP id yy_KCgCHCNG6hcpoaqclAg--.17846S2;
-	Wed, 17 Sep 2025 17:56:13 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	mchehab@kernel.org,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH RESEND] media: tunner: xc5000: Fix use-after-free in xc5000_release
-Date: Wed, 17 Sep 2025 17:56:08 +0800
-Message-Id: <20250917095608.14449-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 17 Sep 2025 17:56:17 +0800
+Received: from [10.67.120.171] (10.67.120.171) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 17 Sep 2025 17:56:17 +0800
+Message-ID: <8e5d4afb-8a21-4a93-a80f-e1f2b6baa8ca@huawei.com>
+Date: Wed, 17 Sep 2025 17:56:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] uacce: fix for cdev memory leak
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <zhangfei.gao@linaro.org>, <wangzhou1@hisilicon.com>,
+	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <fanghao11@huawei.com>, <shenyang39@huawei.com>,
+	<liulongfang@huawei.com>, <qianweili@huawei.com>
+References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
+ <20250916144811.1799687-2-huangchenghai2@huawei.com>
+ <2025091620-theft-glue-5e7f@gregkh>
+From: huangchenghai <huangchenghai2@huawei.com>
+Content-Language: en-US
+In-Reply-To: <2025091620-theft-glue-5e7f@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:yy_KCgCHCNG6hcpoaqclAg--.17846S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwQMAWjJvXsG9gBjs+
-X-CM-DELIVERINFO: =?B?25/VbwXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR131FE3wBtlILXmPZxD8pDyBTAro6gO3+CKt5DSKOLCbQH3igjFDdofwCMhjTtT6UK8wq
-	+tJujV6Fgi6rC5dpJmHiLILLAaagKZ7JI+//+cjTsanuRtMX/zbvqogSIHA8qw==
-X-Coremail-Antispam: 1Uk129KBj93XoW7Zr1fAFyDZw13ur4xuFy7XFc_yoW8Aw13pF
-	W5ury3JFWkWr45twsrXF1UXFn5uan5JF1UCFn7G3s3Aryrtr43GryrtF1F9FWDXr4xAa1f
-	Zrn8XFWaqF4qk3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZE
-	Xa7IU8VMKtUUUUU==
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-The original code uses cancel_delayed_work() in xc5000_release(), which
-does not guarantee that the delayed work item timer_sleep has fully
-completed if it was already running. This leads to use-after-free scenarios
-where xc5000_release() may free the xc5000_priv while timer_sleep is still
-active and attempts to dereference the xc5000_priv.
 
-A typical race condition is illustrated below:
+On Mon, Sep 16, 2025 at 11:15 PM +0800, Greg KH wrote:
+> On Tue, Sep 16, 2025 at 10:48:08PM +0800, Chenghai Huang wrote:
+>> From: Wenkai Lin <linwenkai6@hisilicon.com>
+>>
+>> If cdev_device_add failed, it is hard to determine
+>> whether cdev_del has been executed, which lead to a
+>> memory leak issue, so we use cdev_init to avoid it.
+> I do not understand, what is wrong with the current code?  It checks if
+> add fails:
+>
+>> Fixes: 015d239ac014 ("uacce: add uacce driver")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
+>> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+>> ---
+>>   drivers/misc/uacce/uacce.c | 13 ++++---------
+>>   include/linux/uacce.h      |  2 +-
+>>   2 files changed, 5 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
+>> index 42e7d2a2a90c..12370469f646 100644
+>> --- a/drivers/misc/uacce/uacce.c
+>> +++ b/drivers/misc/uacce/uacce.c
+>> @@ -522,14 +522,10 @@ int uacce_register(struct uacce_device *uacce)
+>>   	if (!uacce)
+>>   		return -ENODEV;
+>>   
+>> -	uacce->cdev = cdev_alloc();
+>> -	if (!uacce->cdev)
+>> -		return -ENOMEM;
+> This is the check.
+>
+>
+>> -
+>> -	uacce->cdev->ops = &uacce_fops;
+>> -	uacce->cdev->owner = THIS_MODULE;
+>> +	cdev_init(&uacce->cdev, &uacce_fops);
+>> +	uacce->cdev.owner = THIS_MODULE;
+>>   
+>> -	return cdev_device_add(uacce->cdev, &uacce->dev);
+>> +	return cdev_device_add(&uacce->cdev, &uacce->dev);
+> And so is this.  So what is wrong here?
+>
+>
+>>   }
+>>   EXPORT_SYMBOL_GPL(uacce_register);
+>>   
+>> @@ -568,8 +564,7 @@ void uacce_remove(struct uacce_device *uacce)
+>>   		unmap_mapping_range(q->mapping, 0, 0, 1);
+>>   	}
+>>   
+>> -	if (uacce->cdev)
+>> -		cdev_device_del(uacce->cdev, &uacce->dev);
+>> +	cdev_device_del(&uacce->cdev, &uacce->dev);
+>>   	xa_erase(&uacce_xa, uacce->dev_id);
+>>   	/*
+>>   	 * uacce exists as long as there are open fds, but ops will be freed
+>> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
+>> index e290c0269944..98b896192a44 100644
+>> --- a/include/linux/uacce.h
+>> +++ b/include/linux/uacce.h
+>> @@ -126,7 +126,7 @@ struct uacce_device {
+>>   	bool is_vf;
+>>   	u32 flags;
+>>   	u32 dev_id;
+>> -	struct cdev *cdev;
+>> +	struct cdev cdev;
+>>   	struct device dev;
+> You can not do this, you now have 2 different reference counts
+> controlling the lifespan of this one structure.  That is just going to
+> cause so many more bugs...
+>
+> How was this tested?  What is currently failing that requires this
+> change?
+>
+> thanks,
+>
+> greg k-h
+We analyze it theoretically there may be a memory leak
+issue here, if the cdev_device_add returns a failure,
+the uacce_remove will not be executed, which results in the
+uacce cdev memory not being released.
+Therefore, we have decided to align with the design of other
+drivers by making cdev a static member of uacce_device and
+releasing the memory through uacce_device.
 
-CPU 0 (release thread)                 | CPU 1 (delayed work callback)
-xc5000_release()                       | xc5000_do_timer_sleep()
-  cancel_delayed_work()                |
-  hybrid_tuner_release_state(priv)     |
-    kfree(priv)                        |
-                                       |   priv = container_of() // UAF
+found one example in drivers/watchdog/watchdog_dev.h.
+struct watchdog_core_data {
+     struct device dev;
+     struct cdev cdev;
+     struct watchdog_device *wdd;
+     struct mutex lock;
+     ktime_t last_keepalive;
+     ktime_t last_hw_keepalive;
+     ktime_t open_deadline;
+     ...
+};
 
-Replace cancel_delayed_work() with cancel_delayed_work_sync() to ensure
-that the timer_sleep is properly canceled before the xc5000_priv memory
-is deallocated.
+static int watchdog_cdev_register(struct watchdog_device *wdd)
+{
+     struct watchdog_core_data *wd_data;
+     int err;
+     ...
+     cdev_init(&wd_data->cdev, &watchdog_fops);
+     wd_data->cdev.owner = wdd->ops->owner;
 
-A deadlock concern was considered: xc5000_release() is called in a process
-context and is not holding any locks that the timer_sleep work item might
-also need. Therefore, the use of the _sync() variant is safe here.
+     /* Add the device */
+     err = cdev_device_add(&wd_data->cdev, &wd_data->dev);
+     ...
+}
 
-This bug was initially identified through static analysis.
+static void watchdog_cdev_unregister(struct watchdog_device *wdd)
+{
+     struct watchdog_core_data *wd_data = wdd->wd_data;
+     ...
+     cdev_device_del(&wd_data->cdev, &wd_data->dev);
+     if (wdd->id == 0) {
+             misc_deregister(&watchdog_miscdev);
+             old_wd_data = NULL;
+     }
+     ...
+}
 
-Fixes: f7a27ff1fb77 ("[media] xc5000: delay tuner sleep to 5 seconds")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
- drivers/media/tuners/xc5000.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/media/tuners/xc5000.c b/drivers/media/tuners/xc5000.c
-index 30aa4ee958bd..ec9a3cd4784e 100644
---- a/drivers/media/tuners/xc5000.c
-+++ b/drivers/media/tuners/xc5000.c
-@@ -1304,7 +1304,7 @@ static void xc5000_release(struct dvb_frontend *fe)
- 	mutex_lock(&xc5000_list_mutex);
- 
- 	if (priv) {
--		cancel_delayed_work(&priv->timer_sleep);
-+		cancel_delayed_work_sync(&priv->timer_sleep);
- 		hybrid_tuner_release_state(priv);
- 	}
- 
--- 
-2.34.1
+ChengHai
 
 
