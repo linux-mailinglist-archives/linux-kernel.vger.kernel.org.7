@@ -1,259 +1,191 @@
-Return-Path: <linux-kernel+bounces-820614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE173B7CD8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1907BB7CD9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EEF2328914
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:10:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA691C20166
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E5131A7E2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35B231A7E7;
 	Wed, 17 Sep 2025 12:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WBNlnGOy"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W7ZV9dM6"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348F730CB45
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711D030CB3D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758110988; cv=none; b=edPjlS+SANhn8i7a9kA8Ofkf5g2xCZH3j2J3pGLGKfhQ/PbQrL832Qwe/KV1hoaI6vTBWZdEWxgcPpG6HuiKWPSZoHy9YJ18NGFOIRksCw04j7TkjvgyY9CZ+tDGZdfaBMgC75TjdFlwcgPMzvqiwzDPotlgVdPlv/yu80yU+Lo=
+	t=1758110988; cv=none; b=tQHB8B6y8fUr7Dc2T4sJfvcnvgF9yfUMNgVD/01vZ3eNSiluKlzaRTJPPycEiD2H9j+V23IvHcuJjxKWomP50cB81Y9gEb31jl02XBYMCf4lEy9zNKNMW0FJ7/3idGIM33PwBEUGUIyeCwaupXnGoHNtZi3NN/1fzH7YPciGRIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758110988; c=relaxed/simple;
-	bh=8oUJwioEDnAfVO3Y1PXWwxoLC14KxAtkMyhu2PHDtkY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=E72NpKesHenLyazmPgPZ6rFGQWMHIxftP5mB9bxRnJsY5wfx4mbM2A/iRp0Fc6uH6cvTt9jmdHmvEZFeLA0mkKMdWUb7SqFd96k8pYpDhigUQFW+FTvYGX5RbqlpgnHzZWLdDLz3/NH5bkneXjC8nw7Icn2UtQaG6q84mUs9ffI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WBNlnGOy; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250917120943epoutp0326da0144d56c66c9732a1110c488712a~mEJ-R_Tk-2507125071epoutp039
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:09:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250917120943epoutp0326da0144d56c66c9732a1110c488712a~mEJ-R_Tk-2507125071epoutp039
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758110983;
-	bh=owWadpSv9H77ZxbKoBmofshhPRj3pGK/wIU+s8/EQVc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=WBNlnGOyvhvdURAbgVsc8eIroy5H8a2SRO75EfKSBc741Nklz9GuHlXwKhGkpBx7i
-	 NJ4PocbRepuBeZmxh6sDk2lkIC6+IfkVvFVtbwTWIqq00H9tVxmPrUcs4OBKvjsIBT
-	 IH6udZJYiSGrQ0QhlT51XCv96TJuZCZo1e68KdI4=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250917120942epcas5p357c123d3099e83bb132f2cf79da872fb~mEJ_a0QgV0694206942epcas5p3J;
-	Wed, 17 Sep 2025 12:09:42 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cRcyY23SNz3hhT4; Wed, 17 Sep
-	2025 12:09:41 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250917120940epcas5p2ccd8cbd489fe1634d9b176f1e8c01e79~mEJ85vD6F3174731747epcas5p26;
-	Wed, 17 Sep 2025 12:09:40 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250917120937epsmtip29e2450f342f91ad1dce9599cf91c9426~mEJ6DjSln1850718507epsmtip2N;
-	Wed, 17 Sep 2025 12:09:37 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Rob Herring'" <robh@kernel.org>
-Cc: <rmfrfs@gmail.com>, <laurent.pinchart@ideasonboard.com>,
-	<martink@posteo.de>, <kernel@puri.sm>, <mchehab@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <shawnguo@kernel.org>,
-	<s.hauer@pengutronix.de>, <kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	<pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>,
-	<shradha.t@samsung.com>
-In-Reply-To: <20250829174638.GA1054721-robh@kernel.org>
-Subject: RE: [PATCH v3 1/7] dt-bindings: media: nxp: Add support for FSD SoC
-Date: Wed, 17 Sep 2025 17:39:35 +0530
-Message-ID: <024f01dc27cb$f167d370$d4377a50$@samsung.com>
+	bh=pWAp+enihdVGwkQw1B9IjT9uZhcvd2Ivu2Cou6yb00I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Co6c7B06yXCMceB37o0ZNU4O5su4LyxfqD0OHxd18t8ZsU7UeauDRHmqUeAWCmKJ1JR8QdutFNwM8jaAOPep8bGRdMFNALzeE3ZzEm388ULB3VzBrxj8ZWpCEwm5K5BZDv9HIFk1As8meuaix2YYVxeQisnJ1odAuJVZ7PRjaU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W7ZV9dM6; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so1006471166b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:09:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758110985; x=1758715785; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SxZ3+rLWm8Lxy+EHVqksiJdCm4z0sfQ0FHsCPWMh5L0=;
+        b=W7ZV9dM67jjXOM38AJx6/beDVtPuolFRM8ex+/1o3whGuGYpdnSf7cNDBx74co6s3N
+         c6mH6eIfJEtf5jQlShe+HdALl8Y4JKzzZ8rqRg/9BXvD3uLF6ptxS/k30ES21EqETnJE
+         oBUG2nh4Tz8wnKWSP1HOxhhmvcs68HlNkaInm8hU4pi1LShhbf7iBqGeyIKR9vKfHHRi
+         ye94nBM5vN5L7OQWPz12h1b8xo7hZOSTCo+KOTIkhKgYDMgYZxlOy4SzMwyem/onRQqD
+         6OCMQuyv3PG9S69jXA2anQDCEjd+PbeWjY1qndcoOTzZbulUSKiskRu4pNLw+E4igJMC
+         pEbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758110985; x=1758715785;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SxZ3+rLWm8Lxy+EHVqksiJdCm4z0sfQ0FHsCPWMh5L0=;
+        b=TRn5TwaKa1VUI9LK11j8lu4uN2MIh1fFnjXpr9Tt3aWBck5ko980LjlyQRbuE0wdGG
+         sPkOdLqwiZ2lC3pmps5xfinigYoHW8htNt08dYdh9vpE+IqIUngI2WqyitNwywkExJxe
+         V2QXIZta/FjWkCh5zi0kEhH9LjpKnfQA7QGnB4U4lYQz4SdZo9dl91WHnT6Y0f+brsYB
+         tYivW1j5rfezUpUE/Q/9B+8yNKHxlLoKfF99hrn9qRuYWDJ8y6dE6zQ/zq81ltPBRc9t
+         H9MGk2Q4/rcy0tLEnnRySeGMqBbXvM/XBf7gLuf5uOYAmIFSrAwbfUxinYaaCTBadc00
+         UGeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSAY/IAndAGgji+3uOAQuU5dlykjBDkYU1kxXSOHYYOyyu6b57DoyZFGbIaEFu74q2hdwfsN40P7DxphE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJLwf/0ea5hKlK9m+CMDQ65oVlIvd4zjB8fYJNw/pzwqA++kkZ
+	pRTEWz7a68uFTT1zGXZRX30CQDe6SLY26HqCr6pwk6tJEukd9nlmfEH86wHGwcNjZS8=
+X-Gm-Gg: ASbGncv3Lv2Qv5za+Dt+cd13FAo7r33bVjrrsYNjkzKKimzj8mQ3L6atTR2bf3m6v+4
+	aWy+MY6JScACQFE44Xo7BUcLt+oSgIF99tN1gVToU8crcxIaS7H03gzmpYoJ2DeDpNfknHaGGKA
+	t8M2bc0DWvHDI+QxCMBuZB6YCNPhUlvnqaIfbKL7h28w08jfLR+tqKc6JrXG7rX5jVle2266Vts
+	gy2VksU8S0bR6kY72cHUZMqUPOD6/KkYFqT88FwsdE9Ybzui3Q7ldtNhhH+f2jI6puUiaZ8+T5R
+	o0fKEu/hTmO81XL7Wgf2xUIbc9wrtiRPaKZLUDN1hBp9oVwprc5x7LC6hg564pW9ltbLeWVkaxu
+	mwIwqG7XbepDz04VSLmZxE39AH6etb/hyZyrcyKvH1+th
+X-Google-Smtp-Source: AGHT+IEiPsKGkN/Uq1H8HSxXA+gLbV8eTjrBUjU0AsRADHTNUdgsScaxG3DVDMRBuqTKXekvFmA2yg==
+X-Received: by 2002:a17:907:7eaa:b0:b0a:333:2f91 with SMTP id a640c23a62f3a-b1bb7e35ed1mr229890666b.40.1758110984541;
+        Wed, 17 Sep 2025 05:09:44 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0906a9640esm904166666b.110.2025.09.17.05.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 05:09:44 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:09:42 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v4 3/5] printk: nbcon: Allow KDB to acquire the NBCON
+ context
+Message-ID: <aMqlBvIBZJTkKD0l@pathway.suse.cz>
+References: <20250915-nbcon-kgdboc-v4-0-e2b6753bb566@suse.com>
+ <20250915-nbcon-kgdboc-v4-3-e2b6753bb566@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIBSJFzUA8Lz5NCh/Whmc1GwVh24gH1qTvqAkLBkWsB/yoSjrQbSRSA
-Content-Language: en-in
-X-CMS-MailID: 20250917120940epcas5p2ccd8cbd489fe1634d9b176f1e8c01e79
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6
-References: <20250828085911.81266-1-inbaraj.e@samsung.com>
-	<CGME20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6@epcas5p1.samsung.com>
-	<20250828085911.81266-2-inbaraj.e@samsung.com>
-	<20250829174638.GA1054721-robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915-nbcon-kgdboc-v4-3-e2b6753bb566@suse.com>
 
-Hi Rob,
-
-Thanks for the review
-
-
-> > +    description:
-> > +      Syscon used to hold and release the reset of MIPI D-PHY
+On Mon 2025-09-15 08:20:32, Marcos Paulo de Souza wrote:
+> KDB can interrupt any console to execute the "mirrored printing" at any
+> time, so add an exception to nbcon_context_try_acquire_direct to allow
+> to get the context if the current CPU is the same as kdb_printf_cpu.
 > 
-> Reset? Sounds like you should be using the reset binding.
-
-The Tesla FSD Soc does not have a dedicated reset controller. Instead, we
-are using the
-system controller which is MMIO Space handled by syscon driver, to assert or
-de-assert the D-PHY
-reset. So, I prefer to use syscon.
-
+> This change will be necessary for the next patch, which fixes
+> kdb_msg_write to work with NBCON consoles by calling ->write_atomic on
+> such consoles. But to print it first needs to acquire the ownership of
+> the console, so nbcon_context_try_acquire_direct is fixed here.
 > 
-> > +
-> >    phy-supply:
-> >      description: The MIPI D-PHY digital power supply
-> >
-> > @@ -93,7 +91,8 @@ properties:
-> >              properties:
-> >                data-lanes:
-> >                  description:
-> > -                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2
-data lines.
-> > +                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2
-data
-> > +                  lines.
-> 
-> Reformatting should be a separate patch.
+> --- a/include/linux/kdb.h
+> +++ b/include/linux/kdb.h
+> @@ -207,11 +207,17 @@ static inline const char *kdb_walk_kallsyms(loff_t *pos)
+>  /* Dynamic kdb shell command registration */
+>  extern int kdb_register(kdbtab_t *cmd);
+>  extern void kdb_unregister(kdbtab_t *cmd);
+> +
+> +#define KDB_IS_ACTIVE() (READ_ONCE(kdb_printf_cpu) != raw_smp_processor_id())
 
-Sure, I'll add new patch in next patchset.
+The condition looks inverted. It should be true when the CPU ID matches.
 
-> 
-> >                  minItems: 1
-> >                  items:
-> >                    - const: 1
-> > @@ -115,7 +114,6 @@ required:
-> >    - interrupts
-> >    - clocks
-> >    - clock-names
-> > -  - power-domains
-> >    - ports
-> >
-> >  additionalProperties: false
-> > @@ -124,20 +122,73 @@ allOf:
-> >    - if:
-> >        properties:
-> >          compatible:
-> > -          contains:
-> > -            const: fsl,imx7-mipi-csi2
-> > +          const: fsl,imx7-mipi-csi2
-> 
-> 'contains' was correct. It is more future proof when there is another SoC
-that
-> is backwards compatible with imx7.
+I actually think about using similar approach and naming scheme
+as for the similar API checking @panic_cpu. There are patches
+in -mm tree which consolidated that API, see
+https://lore.kernel.org/r/20250825022947.1596226-2-wangjinchao600@gmail.com
 
-Sure, I'll add new patch in next patchset.
+In our case, the similar API would be:
 
-> 
-> >      then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: The peripheral clock (a.k.a. APB clock)
-> > +            - description: The external clock (optionally used as the
-pixel
-> > +                clock)
-> > +            - description: The MIPI D-PHY clock
-> > +        clock-names:
-> > +          items:
-> > +            - const: pclk
-> > +            - const: wrap
-> > +            - const: phy
-> > +        tesla,syscon-csis: false
-> > +        fsl,num-channels: false
-> 
-> blank line
+/* Return true when KDB has locked for printing a message on this CPU. */
+static inline
+bool kdb_printf_on_this_cpu(void)
+{
+	/*
+	 * We can use raw_smp_processor_id() here because the task could
+	 * not get migrated when KDB has locked for printing on this CPU.
+	 */
+	return unlikely(READ_ONCE(kdb_printf_cpu) == raw_smp_processor_id());
+}
 
-Will remove in nextpatchset.
+> +
+>  #else /* ! CONFIG_KGDB_KDB */
+>  static inline __printf(1, 2) int kdb_printf(const char *fmt, ...) { return 0; }
+>  static inline void kdb_init(int level) {}
+>  static inline int kdb_register(kdbtab_t *cmd) { return 0; }
+>  static inline void kdb_unregister(kdbtab_t *cmd) {}
+> +
+> +#define KDB_IS_ACTIVE() false
 
-> 
-> >        required:
-> > +        - power-domains
-> >          - phy-supply
-> >          - resets
-> > -    else:
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          const: fsl,imx8mm-mipi-csi2
-> > +    then:
-> >        properties:
-> >          clocks:
-> > -          minItems: 4
-> > +          items:
-> > +            - description: The peripheral clock (a.k.a. APB clock)
-> > +            - description: The external clock (optionally used as the
-pixel
-> > +                clock)
-> > +            - description: The MIPI D-PHY clock
-> > +            - description: The AXI clock
-> >          clock-names:
-> > -          minItems: 4
-> > +          items:
-> > +            - const: pclk
-> > +            - const: wrap
-> > +            - const: phy
-> > +            - const: axi
-> > +        tesla,syscon-csis: false
-> > +        fsl,num-channels: false
-> >          phy-supply: false
-> >          resets: false
-> 
-> blank line
-> 
-> > +      required:
-> > +        - power-domains
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          const: tesla,fsd-mipi-csi2
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: The peripheral clock (a.k.a. APB clock)
-> > +            - description: The DMA clock
-> 
-> Wouldn't this be the same as the "AXI clock"?
+and here to match the style above:
 
-According to v4.3 manual it is DMA clock.
+static inline bool kdb_printf_on_this_cpu(void) { return false };
 
-> 
-> > +        clocks-names:
-> > +          items:
-> > +            - const: pclk
-> > +            - const: aclk
-> > +        phy-supply: false
-> > +        resets: false
-> > +        power-domains: false
-> 
-> blank line
+> +
+>  #endif	/* CONFIG_KGDB_KDB */
+>  enum {
+>  	KDB_NOT_INITIALIZED,
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index ff218e95a505fd10521c2c4dfb00ad5ec5773953..8644e019e2391797e623fcc124d37ed4d460ccd9 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -248,13 +249,17 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
+>  		 * since all non-panic CPUs are stopped during panic(), it
+>  		 * is safer to have them avoid gaining console ownership.
+>  		 *
+> -		 * If this acquire is a reacquire (and an unsafe takeover
+> +		 * One exception is if kdb is active, which may print
+> +		 * from multiple CPUs during a panic.
 
-Sure will remove in next patchset.
-> 
-> > +      required:
-> > +        - tesla,syscon-csis
-> > +        - fsl,num-channels
-> >
-> >  examples:
-> >    - |
-> > --
-> > 2.49.0
-> >
+Also here the "active" is a bit ambiguous term. I would use:
 
-Regards,
-Inbaraj E
+		 * One exception is when kdb has locked for printing on this
+		 * CPU.
 
+> +		 *
+> +		 * Second exception is a reacquire (and an unsafe takeover
+>  		 * has not previously occurred) then it is allowed to attempt
+>  		 * a direct acquire in panic. This gives console drivers an
+>  		 * opportunity to perform any necessary cleanup if they were
+>  		 * interrupted by the panic CPU while printing.
+>  		 */
+>  		if (other_cpu_in_panic() &&
+> +		    !KDB_IS_ACTIVE() &&
+>  		    (!is_reacquire || cur->unsafe_takeover)) {
+>  			return -EPERM;
+>  		}
+
+I am sorry that I did not suggested the better names already when
+this new API was discussed in v3.
+
+Best Regards,
+Petr
 
