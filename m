@@ -1,184 +1,104 @@
-Return-Path: <linux-kernel+bounces-821206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CE4B80BD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF426B80BC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9A516F927
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCEF16EB1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73A933BB3C;
-	Wed, 17 Sep 2025 15:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD292FD1B0;
+	Wed, 17 Sep 2025 15:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="NejvthPT"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dmQca/Fa"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE544330D5E;
-	Wed, 17 Sep 2025 15:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758123929; cv=pass; b=s3BEWRgxMhEVOSVOouzlsZ7+0+3Y/tag0HxfFGIlQHlEtkb8mkc8DuIansEXU2vkezKXGNjkCoAujRNpzYWmGip9fh1AeiGSv1WcIAwr5dClYx5dYQPRNiuv7YqJXYLZRseTuZIlkCdGvN6/d680c3Q0038ROeeD2nKKjceeZB8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758123929; c=relaxed/simple;
-	bh=W+d2QhzS9d4dVv1umEjGxfNNpAtmdVzBKd4FrSNlyOI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S7wy5brEIfP/FrTEGu0PC5IWRYRjSXrBuujTZDYmXYQH1BWhhN0uKfGJW5elm+M/DA8vEApD0+CGQKeaWxO3+VevBAthJtDxw516SV4P3eymWhtAWT5MY+NrwsZCy+TMWg24cNCZS9ugZB2HYIu2Tk5Dsbd5G2HA64KKzZWQk5c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=NejvthPT; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758123894; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WUDPUqRYYRpGM37VGj/cDz9tsmHSCH7z2usKWo4WfYTFqwOWSYE7WlmN9fw201sgDuk1auBBLGi62GkV8TtF9s7/PnDX8S6ddHutLFO7p7H5y7cjaE1HhneNt7w16P+Sd4TcRx3JasYFYSVV6hwqJplrgWuOn80/JuWTSDwnqzI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758123894; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9NS+2TMW4a/gl2sgYIe2u6WUeHZdcfg3javQWIkrkKM=; 
-	b=Q6XxApfyDbvekZy13u7UvGapk6xX8cS6oImN9Th02x4R+gX1Q1wZHNYtfkECfuGe0NmayPJmOIc0rdqbj8Dh7BvWq4d6ogfOATfBaK78d8xQS+7fhNtWuh36VO1JhybMhio0M+BYxPH5T9RhmR8JEYQxv1hiowCmmlpYeq6dS+s=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758123893;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=9NS+2TMW4a/gl2sgYIe2u6WUeHZdcfg3javQWIkrkKM=;
-	b=NejvthPT83l3L66HVbJc2UCAMq88GBLUvu9INaOe4bXmqYIkpMKH9YFvQVqBiCWe
-	JRSk21bXGQPYakduq5EBPTIVWkcYq1OEXEw4VS5S4stMkKfmsTehLdMEzDQvhkCUhWv
-	yYkmDj2SkWchceg9TOiUEGXU4Y46MszU/vabMa/M=
-Received: by mx.zohomail.com with SMTPS id 1758123892638662.0849377963553;
-	Wed, 17 Sep 2025 08:44:52 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org,
- Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 00/10] MT8196 GPU Frequency/Power Control Support
-Date: Wed, 17 Sep 2025 17:44:43 +0200
-Message-ID: <2162077.CQOukoFCf9@workhorse>
-In-Reply-To:
- <CAPDyKFoi9KcsP5k84cSxuXNuMHmcf3a8emfOc6hMjGm_0FMk8w@mail.gmail.com>
-References:
- <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com>
- <CAPDyKFoi9KcsP5k84cSxuXNuMHmcf3a8emfOc6hMjGm_0FMk8w@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED482F7442
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758123925; cv=none; b=FdfQp7TiOVj1P3rCEQTlGDHobUchBpuwDH1hTENOy468FzeRaIrIue8D+03z9BCZ977kYSuUqASZZQ0egdX8ghN0xjGUgVOhAKHXFskD+INBsdrIesYGoVYLUG8srutDtZukuHP10/V9IHe3b3+NFGfgGWD+UvjbE6wBvK3O9MQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758123925; c=relaxed/simple;
+	bh=sz7SYILff82DqDpxJ+4+erabvkbgg/Mq/k7fYb0hsCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e5DKfK3Ti8VUNzjUTrkiVHtyViaO/537MYkFJ/qo93nAcKEIttfzi39WVAzedu8hfrMhPpf7WWGuCI9uSZGv5qZ9rfbBeK3yPuZgpsj8c0iXVFzekab0rSzO7JrSGPU+V3/ptVUy5o/ouAY/JuMcqSJpFw/dBBcKs76k3oZ1qDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dmQca/Fa; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-336dc57f562so9469451fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758123920; x=1758728720; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sz7SYILff82DqDpxJ+4+erabvkbgg/Mq/k7fYb0hsCk=;
+        b=dmQca/FaBOY0gnQJKQvFZb/KZL2u1gu/netj69fp0mrbA9nY3lUC+fEoidrFyXNz20
+         0cR99orveHey/KGAVdiNhpaS+nbVKLAVgLy76QKJbi454MJksAra2WEslHaCR3x+Yo08
+         6x9SNTesyVQRl9jhI79SQzOKc8AtplmaR/r0WAstT/5p0C+1RD1I+Ew1Q6bfdWOftb9w
+         juugSoNEhKEQRAtC0YX+be9n+I0MalK72q0pFHAWHKiwyUxPmGLIaVQFt+kUBQGcLWkY
+         zQxk0IQSQG9Od3PU7ONZj36cY3fX4cAug34T/jyxiMNtMjoFZj/+JEPRfEHz+k/j44Cj
+         XUxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758123920; x=1758728720;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sz7SYILff82DqDpxJ+4+erabvkbgg/Mq/k7fYb0hsCk=;
+        b=g2hXsS8Y91SGN45B/+LY7VeCzYK4CiQ0QwMbjuABDWN4avlNXtMPgRVRtIga2J52cv
+         o4fI+eDdTgaWUIqsZ8rIB5WiFh07dCmnvSmq7gef9Z13wxwKwKEPV5ekurVXEhf/pUtj
+         gmStgcJH7VjehVvybBwBs4IF9K4M3Vxhlll8UtnipE/cHIGzAnwBV9/ORLcxdcF/mHP2
+         HQlQs7DDVq0G6EYfSZGXPIZ9d/Hoxxp25D0C0I/l/D9+vGKcNwYRrrAIIt4s3AAqlUzt
+         yBxFR9pb4/it4QVmc/JaT0saynJVQqMVsTJyTHXLNMFiz9o76vQqvC6I3xRqXTMHDxZl
+         maWw==
+X-Gm-Message-State: AOJu0YziE/WkZViMvjt4FWLBcKGneINn7QTxdiytn+Q5cL7qCAHnYeRv
+	B7jbG54FCldIvYbolK16piLPht9Zuo4+CVKMFdfdI40Lcc6zkj3njLIe/RfKnINfvWZdl7qnkRm
+	OofP7tnFrWE1kdo/B94wgwQrMNP6XBVBhAC7I/AADJQ==
+X-Gm-Gg: ASbGncvryrepqVTNLnS3UdfGEGo8Q2VdgMI0PINeutuEh/9tlUpNB9bc00yixCBw8mz
+	pXkiRcbReuAYpe+TYrORaGm/9u+fRDCI4elNgMwqQVigdRo2aUmTAGDiNUxCmczA8ApbEKebzaG
+	4yGNpkR4BVFdq2QPseMO4eqRfVjMKVwbgFkMJu0xTOCxkvL4HfgsSM1r8bW7UXjhelepY4qyMfm
+	PkWbPpk/vuKEZEWOk94zvf81gmX7KO/rfpvIIDl
+X-Google-Smtp-Source: AGHT+IHaQop1vRGZ5Gk+j1PzwXk+VYonaqfFJM7yvDR050nmE4+hPgSj1kpGWDRYAvKK2mxhuA23eHMkUjo7qjvxHUU=
+X-Received: by 2002:a2e:a615:0:b0:360:3acd:e3a8 with SMTP id
+ 38308e7fff4ca-3616c671504mr316881fa.10.1758123920295; Wed, 17 Sep 2025
+ 08:45:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250905090953.109082-1-marco.crivellari@suse.com>
+ <20250905090953.109082-2-marco.crivellari@suse.com> <77b495f8-177d-4977-9d09-1dffc29db269@paulmck-laptop>
+In-Reply-To: <77b495f8-177d-4977-9d09-1dffc29db269@paulmck-laptop>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Wed, 17 Sep 2025 17:45:08 +0200
+X-Gm-Features: AS18NWAsOEJGo8EtUKJm47DROikfEhUYQ0-D6YnIBL6bh6Q5V5-FKnG25GD6-2w
+Message-ID: <CAAofZF78KLU0-qj5EdvYnYGw4suCRcKHwQpAcHxUc7V8-q+P0w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] smp: replace use of system_wq with system_percpu_wq
+To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@redhat.com>, 
+	Rik van Riel <riel@surriel.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday, 17 September 2025 15:28:59 Central European Summer Time Ulf Hansson wrote:
-> On Wed, 17 Sept 2025 at 14:23, Nicolas Frattaroli
-> <nicolas.frattaroli@collabora.com> wrote:
-> >
-> > This series introduces two new drivers to accomplish controlling the
-> > frequency and power of the Mali GPU on MediaTek MT8196 SoCs.
-> >
-> > The reason why it's not as straightforward as with other SoCs is that
-> > the MT8196 has quite complex glue logic in order to squeeze the maximum
-> > amount of performance possible out of the silicon. There's an additional
-> > MCU running a specialised firmware, which communicates with the
-> > application processor through a mailbox and some SRAM, and is in charge
-> > of controlling the regulators, the PLL clocks, and the power gating of
-> > the GPU, all while also being in charge of any DVFS control.
-> >
-> > This set of drivers is enough to communicate desired OPP index limits to
-> > the aforementioned MCU, referred to as "GPUEB" from here on out. The
-> > GPUEB is still free to lower the effective frequency if the GPU has no
-> > jobs going on at all, even when a higher OPP is set. There's also
-> > several more powerful OPPs it seemingly refuses to apply. The downstream
-> > chromeos kernel also doesn't reach the frequencies of those OPPs, so we
-> > assume this is expected.
-> >
-> > The frequency control driver lives in panthor's subdirectory, as it
-> > needs to pass panthor some data. I've kept the tie-in parts generic
-> > enough however to not make this a complete hack; mediatek_mfg (the
-> > frequency control driver) registers itself as a "devfreq provider" with
-> > panthor, and panthor picks it up during its probe function (or defers if
-> > mediatek_mfg is not ready yet, after adding a device link first).
-> >
-> > It's now generic enough to where I'll ponder about moving the devfreq
-> > provider stuff into a header in include/, and moving mediatek_mfg into
-> > the drivers/soc/ subdirectory, but there were enough changes so far to
-> > warrant a v3 without a move or further struct renames added, so that I
-> > can get feedback on this approach.
-> >
-> > The mailbox driver is a fairly bog-standard common mailbox framework
-> > driver, just specific to the firmware that runs on the GPUEB.
-> 
-> I had a brief look at the series and it seems to me that the devfreq
-> thing here, may not be the perfect fit.
-> 
-> Rather than using a new binding  (#performance-domain-cells) to model
-> a performance domain provider using devfreq, I think it could be more
-> straightforward to model this using the common #power-domain-cells
-> binding instead. As a power-domain provider then, which would be
-> capable of scaling performance too. Both genpd and the OPP core
-> already support this, though via performance-states (as indexes).
-> 
-> In fact, this looks very similar to what we have implemented for the
-> Arm SCMI performance domain.
-> 
-> If you have a look at the below, I think it should give you an idea of
-> the pieces.
-> drivers/pmdomain/arm/scmi_perf_domain.c
-> drivers/firmware/arm_scmi/perf.c
-> Documentation/devicetree/bindings/firmware/arm,scmi.yaml (protocol@13
-> is the performance protocol).
-> 
-> That said, I don't have a strong opinion, but just wanted to share my
-> thoughts on your approach.
+On Fri, Sep 12, 2025 at 4:24=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-Yeah, I found out about the pmdomain set_performance_state callback
-a few days ago. I've not looked into it much so far because not
-unlike a veterinarian on a cattle ranch, I was elbow-deep in v3's
-guts already and didn't want to pivot to something different before
-pushing it out, but I'll look into it more seriously now.
-
-Even if it means I have to get rid of my fun array binary search
-and rely on the opp core to do its linear time linked list
-traversal. :'( (But moving OPP core to use XArrays instead is a
-concern for the future.)
-
-I've also been avoiding it because I didn't know how much
-additional functionality we'll add later, but I've talked with
-Angelo about it an hour ago and he agrees that I should go down
-the pmdomain route for the current functionality.
-
-Thank you for the hints!
-
-Kind regards,
-Nicolas Frattaroli
-
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
-> 
+Thank you!
 
 
+--=20
 
+Marco Crivellari
 
+L3 Support Engineer, Technology & Product
 
