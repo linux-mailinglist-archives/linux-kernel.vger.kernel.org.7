@@ -1,248 +1,140 @@
-Return-Path: <linux-kernel+bounces-821797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B83B824FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:40:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CB4B82508
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C96327CEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C65327E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BB53112B4;
-	Wed, 17 Sep 2025 23:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2C232B4B1;
+	Wed, 17 Sep 2025 23:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="fnnTFpM9"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="oT0iDBy6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F12D265630
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35FB32B490;
+	Wed, 17 Sep 2025 23:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758152436; cv=none; b=AyjqAD7gi9SYMuILw6odQYM7h39F6BjDBh+M2DCriq9nKjEbVZ3iriHdnBWWsztag0W/4DqDx/gk+1dxgF3/HcseXrgdSDHuP7zgra2uWWi0ey7ffhnSr9Wa/lUwI6xIuAkYNPQ31Y8O7IWSpyyIeIoKoIRuJ9SKP6ygYPGkqHc=
+	t=1758152441; cv=none; b=ft3mNkiYV0CFOquif9QdmlNTSu8mXzXCvs6m9KJ13C+CD0g/y6p3YY7/DiesH8n8ifGMAQwWi2UaLq8YMnbQqsan8zDKgXi9GMuwZ4H7cMw5AyxcAZsY8FotMU2qMqbf/k7MRvgAtZ8bfJ5WHC88eTqFam5Kx1k3R2OCFBckZZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758152436; c=relaxed/simple;
-	bh=WSUDTo2YPrsMhanXvD2WU2viqGWsoO+MKY+Xv+c2P7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jefW2iXQdsijeni39XZesJw2G7pcSLTeJBzknoBozSeaq2wPIVEIfCaVUfb0Dug6HSj+kvUhwZBXdZtkH6BwM52pZcbUCuIcBcb0rHQfI/GBL2r3EFf2vVgUn/IT6ntroI80wAe1ZEGRF7dC/37FUFLR5m9H25ZBNFMhv5FIMEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=fnnTFpM9; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-88c3944558bso8713439f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758152433; x=1758757233; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U4LnKnBe0mUrdxdcBF4M/llb4IeQlPfA2whttLuEB5Q=;
-        b=fnnTFpM9dbLZRTz6baEM0q99r59tQD9IRcrATU5qxeYy4P/VepArnvQsfq0gjt1/4D
-         VuhWE4wm00PqAmNIuqzZxOB1w8NejghD3PjIw5pKPbSqNLdInB+0YDnB+fADVgP4vrBt
-         8JOCwHBCYp9xiSxlxw+RWGitND6DfcJCOr+W2WsyA8GW0xfe2bA97HIJd5I6uuNfaACN
-         VbuVFlYwq32bXQUcFk0WVqpYMMq+bEPdUOBxA4eSxsM3ZbAAvu+vZ4vZ7bwPu/cLprQC
-         i7BYhE74YyHMnSqUMsjeDaj1IfYQIJdD5S/gN1oy36v6WOoraplaSZWe/rFWkO6CoPyZ
-         V0rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758152433; x=1758757233;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U4LnKnBe0mUrdxdcBF4M/llb4IeQlPfA2whttLuEB5Q=;
-        b=b93GS8d9P3SkvGuTGCiuEC39fc3eE4bMXKrkDQZ3FswK2oitJmhHef6eYSRlHgz6ii
-         yXItyxkvvmPEHhJTe906XMeCaAbx0mgvrUazTvXcuRCyR37qlQpLqupIZMN4Ahd//n+9
-         yR++WwPA+7+qLprGKBWYYLRK1EAxJ7PVJhHUdirHdM3UXA60blTxJ7h/NfelOdecyU1O
-         v2dI2tvW5YIkoyxmUc7F7uxgcJ5R3YcIPYLLcuAsuWtULzSVIykXh4sYby8UFfTCuzms
-         89RKl75n5jYJ3YL6NuSGtXED7wi38hylMJCzZCzb2SavAlVla/O8An6q1QG7wgIsxVeE
-         FHcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWF4lrh+D5vrMY1VfV7+lXozqUzpVaDe3XN8EQtAQZmoNbUExbleotVboq92al+Ctu6kJMbJpSC0vjVE1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ/Ywer7cW7depC39XSucKVFOP7a8cMKSIiIrwpEr3m9RZ3qjZ
-	q2OReOGdnoXMkp0LGfUOvvPVBCeFu7tGmVLpL4StgDoFDJgh8G4BqfNu9lz+wj8MwNw=
-X-Gm-Gg: ASbGncsNS5EVRyi3F2O2J1X3BiXFU7uZSKIK4ndsApbIabcgK7X9gQEcey03O4fpMnN
-	t7p+CRpqBRf8g9ZUxJfXIYAtiLMV+9LGGmKzvZH6b1pm9yUlzgemHUBqk6nk2ZkBAy6ZZKRq/aJ
-	3nlzso+8B9+Agdf/vmuQ4n5NoGXML7V8VOBotmfN4AD2p/naK3qG8NOLMCmitXl7lFE8sMLOpuP
-	YvhbryRQpS1MEjZrHZ8obcrE0vqF4cA54hnylQvGrD/poll9LrlZKip9sd4tA0XbGzb40HtdYjo
-	JOAGLiZSiURjGYjXi5GC0NJ1r4NbKZZqats6etdW5CS1yvov5tOAqbXX/3pFQdGtPfsouGXnA6C
-	H3sOBbsze/Ll7NxLw1xmExvLEJMi/jgYDoXfllQlV1+dcIJv7n0E+4A==
-X-Google-Smtp-Source: AGHT+IFIMlPua7p/TY9YMSKjXsZOBX/5j6z1IJQ7nS5dT8sO4hABWq+/kl4R3zdjJi/vT1pYQ+i8NA==
-X-Received: by 2002:a05:6602:6c10:b0:86d:9ec7:267e with SMTP id ca18e2360f4ac-89d1a7c97eamr718446339f.4.1758152433403;
-        Wed, 17 Sep 2025 16:40:33 -0700 (PDT)
-Received: from [10.211.55.5] ([131.212.251.230])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8a46fea3353sm31238739f.12.2025.09.17.16.40.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 16:40:32 -0700 (PDT)
-Message-ID: <3b815302-21f2-4ee2-bf83-c1dba77ce3d1@riscstar.com>
-Date: Wed, 17 Sep 2025 18:40:31 -0500
+	s=arc-20240116; t=1758152441; c=relaxed/simple;
+	bh=Qc2UYbWx7EeejKtW1EO2f6MFaxFiWH2vxkYJ9Q39XB0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hChhV8gDUQEG3qgIPZwz2SdZU6N0PhgbYHbZMJEB1lwJnQC+2uXqee7MEiMJoVlDxhRL+7sXpjxqv5xn66ujGl0TB2EHy4RbSDAyAySLhJeYc/S4zQz7BA+5KhWtfQvjDP2TH2ZORNSlCu9QDZtXhM1MTJ29d0PIuBH1wUh2aGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=oT0iDBy6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10344C4CEE7;
+	Wed, 17 Sep 2025 23:40:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758152440;
+	bh=Qc2UYbWx7EeejKtW1EO2f6MFaxFiWH2vxkYJ9Q39XB0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oT0iDBy6r5P/R1iNfHqc4gbQ24AicRfxW687can2dx00oXBYiW32GIfMyrCUjS4sY
+	 AhPIs0yj8xztgdayC01mhko3n5q1C/gqdo+1hq2uWauxo0aMOYkPi/725vvn3Y7koE
+	 ZjPTSlKSinGcrnTHT9eQkwDMaaHzzw66RsnTWviw=
+Date: Wed, 17 Sep 2025 16:40:37 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ "David S . Miller" <davem@davemloft.net>, Andreas Larsson
+ <andreas@gaisler.com>, Dave Hansen <dave.hansen@linux.intel.com>, Andy
+ Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+ <jack@suse.cz>, Kees Cook <kees@kernel.org>, David Hildenbrand
+ <david@redhat.com>, Zi Yan <ziy@nvidia.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+ <baohua@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
+ <chengming.zhou@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, David Rientjes <rientjes@google.com>, Shakeel Butt
+ <shakeel.butt@linux.dev>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
+ <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, Juri
+ Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jason
+ Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu
+ <peterx@redhat.com>, Jann Horn <jannh@google.com>, Pedro Falcato
+ <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>, Mateusz Guzik
+ <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
+Message-Id: <20250917164037.21c669dfcbd7b0b49067a49a@linux-foundation.org>
+In-Reply-To: <3b7f0faf-4dbc-4d67-8a71-752fbcdf0906@lucifer.local>
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+	<1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
+	<3b7f0faf-4dbc-4d67-8a71-752fbcdf0906@lucifer.local>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: spi: add SpacemiT K1 SPI support
-To: Yixun Lan <dlan@gentoo.org>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, p.zabel@pengutronix.de, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250917220724.288127-1-elder@riscstar.com>
- <20250917220724.288127-2-elder@riscstar.com>
- <20250917231520-GYA1269891@gentoo.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250917231520-GYA1269891@gentoo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9/17/25 6:15 PM, Yixun Lan wrote:
-> Hi Alex,
+On Wed, 17 Sep 2025 06:16:37 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+
+> Hi Andrew,
 > 
-> On 17:07 Wed 17 Sep     , Alex Elder wrote:
->> Add support for the SPI controller implemented by the SpacemiT K1 SoC.
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->>   .../bindings/spi/spacemit,k1-spi.yaml         | 94 +++++++++++++++++++
->>   1 file changed, 94 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml b/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
->> new file mode 100644
->> index 0000000000000..5abd4fe268da9
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
->> @@ -0,0 +1,94 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/spi/spacemit,k1-spi.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: SpacemiT K1 SoC Serial Peripheral Interface (SPI)
->> +
->> +maintainers:
->> +  - Alex Elder <elder@kernel.org>
->> +
->> +description:
->> +  The SpacemiT K1 SoC implements a SPI controller that has two 32-entry
->> +  FIFOs, for transmit and receive.  Details are currently available in
->> +  section 18.2.1 of the K1 User Manual, found in the SpacemiT Keystone
->> +  K1 Documentation[1].  The controller transfers words using PIO.  DMA
->> +  transfers are supported as well, if both TX and RX DMA channels are
->> +  specified,
->> +
->> +  [1] https://developer.spacemit.com/documentation
->> +
->> +allOf:
->> +  - $ref: /schemas/spi/spi-controller.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - spacemit,k1-spi
-> one enum is effectively equal to const..
-
-OK.  That's an easy fix.
-
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: Core clock
->> +      - description: Bus clock
->> +
->> +  clock-names:
->> +    items:
->> +      - const: core
->> +      - const: bus
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  dmas:
->> +    items:
->> +      - description: RX DMA channel
->> +      - description: TX DMA channel
->> +
->> +  dma-names:
->> +    items:
->> +      - const: rx
->> +      - const: tx
->> +
->> +  spacemit,k1-ssp-id:
->> +    description: SPI controller number
->> +    $ref: /schemas/types.yaml#/definitions/uint32
-> could you explain a little bit why this vendor specific property should
-> be introduced? I took a look at the code, and didn't get the reason
-> behind.. or what's the problem of simply using "pdev->id"?
-
-This property was carried over from the vendor code.  It is
-optional, and if it isn't specified, the platform device ID (-1)
-will be used.  It's just intended to provide a well-defined ID
-for a particular SPI controller.
-
-> we should really be careful to introduce vendor specific property..
-
-If there were a standard way of doing this I'd love to use it.
-
-And if it isn't necessary, please just explain to me why.  I
-have no problem removing it.
-
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - resets
->> +  - interrupts
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +
->> +    #include <dt-bindings/clock/spacemit,k1-syscon.h>
->> +    spi3: spi@d401c000 {
-> label not needed for DT example
-
-OK.
-
->> +        compatible = "spacemit,k1-spi";
->> +        reg = <0xd401c000 0x30>;
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +        clocks = <&syscon_apbc CLK_SSP3>,
->> +                 <&syscon_apbc CLK_SSP3_BUS>;
->> +        clock-names = "core",
->> +                      "bus";
->> +        resets = <&syscon_apbc RESET_SSP3>;
->> +        interrupts-extended = <&plic 55>;
->> +        spacemit,k1-ssp-id = <3>;
->> +        dmas = <&pdma 20>,
->> +               <&pdma 19>;
->> +        dma-names = "rx",
->> +                    "tx";
-> ..
->> +        status = "disabled";
-> ditto, drop it
-
-OK.  Thanks a lot for your quick review.  I'll wait a bit
-(probably until Monday) before I send an update.
-
-					-Alex
-
->> +    };
->> -- 
->> 2.48.1
->>
+> Please apply the below fixpatch to account for an accidentally inverted check.
 > 
+> Thanks, Lorenzo
+
+The fixee is now in mm-stable so I turned this into a standalone thing.
+
+(hate having to do it this way!  A place where git requirements simply
+don't match the workflow)
+
+
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: mm/oom_kill.c: fix inverted check
+Date: Wed, 17 Sep 2025 06:16:37 +0100
+
+Fix an incorrect logic conversion in process_mrelease().
+
+Link: https://lkml.kernel.org/r/3b7f0faf-4dbc-4d67-8a71-752fbcdf0906@lucifer.local
+Fixes: 12e423ba4eae ("mm: convert core mm to mm_flags_*() accessors")
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reported-by: Chris Mason <clm@meta.com>
+  Closes: https://lkml.kernel.org/r/c2e28e27-d84b-4671-8784-de5fe0d14f41@lucifer.local
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/oom_kill.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/mm/oom_kill.c~mm-oom_killc-fix-inverted-check
++++ a/mm/oom_kill.c
+@@ -1257,7 +1257,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
+ 	 * Check MMF_OOM_SKIP again under mmap_read_lock protection to ensure
+ 	 * possible change in exit_mmap is seen
+ 	 */
+-	if (mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm))
++	if (!mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm))
+ 		ret = -EAGAIN;
+ 	mmap_read_unlock(mm);
+ 
+_
+
 
 
