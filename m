@@ -1,121 +1,188 @@
-Return-Path: <linux-kernel+bounces-821802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EC1B82525
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:50:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66874B8252B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4238248195F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:50:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B0FB4E138C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5294F27FB03;
-	Wed, 17 Sep 2025 23:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D55E2877D7;
+	Wed, 17 Sep 2025 23:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov1GnA9L"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jtHmqwVt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A38C1F462D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899031F462D;
+	Wed, 17 Sep 2025 23:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758153048; cv=none; b=gTWeHcVTcoxf3tddAkDmTGnR4csJ0GACf/9rubmZnTqR/FSQQAaPnXaNMeUVVowSl7o9HtkFQHz9+iYGTcYLReB7x6KM5QHF2iGu2ImlTF2mlWRAXtnjy/gNXxjt57wcrnf+HU1P2zuBEFHdeIyKkycBMDvWWSk66KvLyN3vOdA=
+	t=1758153171; cv=none; b=ik36DIoqxsUssQmAq5npFS3TAaYAYEhfrfFr71yP9G29nAxoq2o22Qk7dP5vb5XdqCPmIxeIX37+vrChLpQc/RFJ5wHQE+og1Uyn/66jxlwojhv8KLO0dqANjs3gJ/gJck5Pn1Fcf8wv3OnZ0PjlvDErXH5baNEuGFWOpuhw46k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758153048; c=relaxed/simple;
-	bh=H9+O1OqYBXulm61p1ERwP1q/meGeBE4HmC2D5TX8SAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qi9sn+7Pn4fqSplhbVpPbMxi9AeepPR2IjeqVxjXVQF87veRMuOCsQdA6IxHLSjr6W97qpdzBS8sSBlveTy0jCCyr5iS2NIGPf2VFn7zZ6FNgTOD8RgHvCY+W9bJbifDps86WCYnP0ZtSpFDVZ3n27JBMN7e8FyEgYCFqnuWTnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov1GnA9L; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-807e414bf03so50446385a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:50:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758153046; x=1758757846; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=H9+O1OqYBXulm61p1ERwP1q/meGeBE4HmC2D5TX8SAc=;
-        b=Ov1GnA9LhAMOcrIOfY08drGThj++0cn5qWBLS4hZCVFHeMgvCBKQSyGfYOqhBoXB7g
-         f8tobc8x69HEwt+sGx1xLHy2gzJmzv/KFntGiqDJqFlJlJ8dEmVsbcrRFg/knI8zNh/D
-         B03y5RodiE4CepttfxKScstl2OkdG5oXLYdNWbFLbXHWYhAH6BDtc4RT7nAMQ5tmEg7c
-         Dvvab1IRusUeGuUzW62IXO865v6wroAyUVSid6y+Vb8q/7sAXk9CxbYWYJcLZf7euzZC
-         sSYS3UPNQaEqRVWbGy4Tixs9ma0ldtxb/pz3/d35UJBSw6azgq3UlNKiIWSAIB1EqV0f
-         jD2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758153046; x=1758757846;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H9+O1OqYBXulm61p1ERwP1q/meGeBE4HmC2D5TX8SAc=;
-        b=Z9sAgHgapC4uQCCk+bz5vcftFeAR06PW5LwKqMwaMMr6LJLVmnJaPRd1QcGMbA6DwC
-         y4cTLyouNC7fEoqvfosUt35oApW8wEITa0tApS3D3AlSNPQd+CM6CuKQVHByQNOGa3VM
-         2T0ZsIIzqtA/B86iGKUcv/jFKzD4V5EiInAjoyssmzoemwG+CHEHEP2ux+fVtt4hBzlC
-         aT1KnM1Po0igByAgRcvscWKKaSwsz4rADVG66ACIL36Q3b74S97ee6PXpT8wsftWz4Ik
-         DT5U0B97+ss+3Ohtb+TQgg4dxKRTBz3l9PsbYAeZWyj+6rfQGG9riHStH7v1dHpcChSY
-         dfww==
-X-Forwarded-Encrypted: i=1; AJvYcCXp+32Z7w2Cb3SVAqDRkwyZGUPf25iBP3w8+j0HYkiAwjbWMpeqnDfPvjkqDPwVmc3+IgJ1Bl3FJoubx2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbuFvDEiiX1+MDUww7rIiV0s34yK00Z06voKd3Hs6JUiUwM9vX
-	L57AEsXDX5LP/RHRSzj6GG+JxjN2bXID5sepIRHLMauuGUSfnkCCkg4ZrtHCqScvhyUsctiSNYV
-	Q9zrEPvP76d1KSzVq6xI2xiZBi2OwH1c=
-X-Gm-Gg: ASbGncv/sfU/Ixy+VXwt3pHhCwVe1wcBYKB1it5u+8/gHxHF5dwHecvbgblMsl+Oek2
-	SSQlrdGlJu+9rEVdzz+H2v9DV245/GM45BSnsLZTw9vvkeX/n+RgZXFFZWnbcBPMTfitTdWJYWP
-	sDZFauwhScYjy1LD3uqxdiBcLXAOJFiEhtHhhSVRED9JTJrRKAyA6yvDA4IMYuYTLkEUwOeCwpq
-	WFuWeUrmSlOfYcLxX6tNX1LNc6YEN2/wT1lghyYiOLy6rzb7duXZwsmLlBjrkKdME64aZA=
-X-Google-Smtp-Source: AGHT+IFJL2CJP3uAzbra1ybzJTukuqDvEDP7eQvl2rLg43pEVlZyTdk5GR3/awpXrLF8fxzamaO6EK4oI+hndM5gC/Q=
-X-Received: by 2002:a05:620a:46a4:b0:815:630d:2cbd with SMTP id
- af79cd13be357-831096e9fc5mr440866485a.34.1758153046104; Wed, 17 Sep 2025
- 16:50:46 -0700 (PDT)
+	s=arc-20240116; t=1758153171; c=relaxed/simple;
+	bh=nUw9UV3qqAqfedKxW/GHa+5T1537ToqgVNkqjyyf6I4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yda4ZIqEJrSwfzFKozfHfY2JYPydwRF+gmMHKwr8qEWzyOOlinfi6kG8+NKdd5wlM0Nn5K34MVRKauohmuWLWQNRo5nGjQSnaMEJbfi/ruDHK/OQW/F7pyYqhp1FUEKzcQS3fsn89f2LpXXO56zbqI8oYXozCpJxISphi+jt2Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jtHmqwVt; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758153169; x=1789689169;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nUw9UV3qqAqfedKxW/GHa+5T1537ToqgVNkqjyyf6I4=;
+  b=jtHmqwVtOg1jvUJ4yleFoSxxPEBHJPI1qe9UDWANfFFBqOeLLdZdC39w
+   Epwuwze4nRNiVyVWLNXb2bBl36vYZS5dVonMh1UJ6mozeIpsPoWy6yv0Y
+   jB8aci7O0d4/Ev0DAcLN7K2fgDIumpAF/LlOU88UyQT2n+hTxYNSd+E8M
+   SoIDGQPvn51bNpeL5GuhmznzkGT9cBa/qjFw8X38a4KIxyr3eXLA7Assy
+   zhPktunLjPGtVVEzCURHPYfIH48lF9O2Vje2Uj9fpyKPwFBKL8nWeNdi1
+   D+2NsbyNoNYSJqa5K5MVUY/VpsvX9qUkrc+EAyTHhGbS9Vgh0pOdnj1ce
+   g==;
+X-CSE-ConnectionGUID: IN8PgtfJTDOSSUywIrh8uQ==
+X-CSE-MsgGUID: gIrW07KRTEm/+1LUhVXsvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60623386"
+X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
+   d="scan'208";a="60623386"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 16:52:48 -0700
+X-CSE-ConnectionGUID: ue/ZtmWzSq6WQmExoQw84A==
+X-CSE-MsgGUID: YZob5zk7SoeTxvtGECKUyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
+   d="scan'208";a="212535712"
+Received: from unknown (HELO [10.238.3.254]) ([10.238.3.254])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 16:52:46 -0700
+Message-ID: <189e060b-207b-469f-9b6e-314380d12a42@linux.intel.com>
+Date: Thu, 18 Sep 2025 07:52:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
- <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
- <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
- <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
- <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
- <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
- <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com> <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 18 Sep 2025 07:50:34 +0800
-X-Gm-Features: AS18NWASEv1_Mi_lbIVC978vKQXdnz7rSZ51ahk117211gXUBICfxJ64AqF1yvM
-Message-ID: <CAGsJ_4xTPJo7+kCkkiZhn8b7xjH7yXeJ2XPoXeoJm+XwJB_o9A@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
-To: Chris Li <chrisl@kernel.org>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
+ <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> Perhaps you could describe the swap table as similar to a PTE page table
-> representing the swap cache mapping.
-> That is correct for most 32-bit and 64-bit systems,
-> but not for every machine.
+
+On 9/18/2025 5:12 AM, Ian Rogers wrote:
+> On Sun, Aug 10, 2025 at 10:56 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
+>> his patch-set fixes perf kvm commands issues, like missed memory
+>> allocation check/free, out of range memory access and especially the
+>> issue that fails to sample guest with "perf kvm record/top" commands on
+>> Intel platforms.
+>>
+>> The commit 634d36f82517 ("perf record: Just use "cycles:P" as the
+>>  default event") changes to use PEBS event to do sampling by default
+>> including guest sampling. This breaks host to sample guest with commands
+>> "perf kvm record/top" on Intel platforms.
+> Huh? That change is:
+> ```
+> $ git show 634d36f82517
+> commit 634d36f82517eb5c6a9b9ec7fe3ba19dbbcb7809
+> Author: Namhyung Kim <namhyung@kernel.org>
+> Date:   Tue Oct 15 23:23:58 2024 -0700
 >
-> The only exception is a 32-bit system with a 64-bit physical address
-> (Large Physical Address Extension, LPAE), which uses a 4 KB PTE table
-> but a 2 KB swap table because the pointer is 32 bit while each page
-> table entry is 64 bit.
+>     perf record: Just use "cycles:P" as the default event
 >
-> Maybe we can simply say that the number of entries in the swap table
-> is the same as in a PTE page table?
+>     The fallback logic can add ":u" modifier if needed.
+> ...
+> -               bool can_profile_kernel = perf_event_paranoid_check(1);
+> -
+> -               err = parse_event(rec->evlist, can_profile_kernel ?
+> "cycles:P" : "cycles:Pu");
+> +               err = parse_event(rec->evlist, "cycles:P");
+> ...
+> ```
+> isn't the precision the same before and after? I think you've blamed
+> the wrong patch.
+>
+> The change to use cycles:P looks to come from commit 7b100989b4f6
+> ("perf evlist: Remove __evlist__add_default") but the old code was
+> doing things like "evsel->precise_max = true;" so I think I was just
+> carrying forward behavior. The use of precise_max comes from commit
+> 4e8a5c155137 ("perf evsel: Fix max perf_event_attr.precise_ip
+> detection") from over 6 years ago, and the behavior before that also
+> appears to have been to use the maximum supported precision.
+>
+> Apart from the blame and commit message being off I think the change
+> is okay, delta my usual complaint that weak symbols are the devil's
+> work.
 
-BTW, as Kairui mentioned, you plan to store the PFN instead of a
-pointer in phase 2.
+Hmm, yeah, you're right. Thanks for correcting this. 
 
-I wonder whether we need to switch to atomic64_t on systems where the
-physical address is 64 bit but the virtual address is 32 bit :-)
 
-Thanks
-Barry
+>
+> Thanks,
+> Ian
+>
+>> Since the change "KVM: x86/pmu: Add basic support to enable guest PEBS
+>>  via DS"[1] starts, host loses the capability to sample guest with PEBS
+>> since all PEBS related MSRs are switched to guest value after vm-entry,
+>> like IA32_DS_AREA MSR is switched to guest GVA at vm-entry. This leads
+>> to PEBS events can't be used to sample guest by host, otherwise no guest
+>> PEBS records can be really sampled. The patches 5-6/6 fix this issue by
+>> using "cycles" event instead of PEBS event "cycles:P" to sample guest on
+>> Intel platforms.
+>>
+>> Changes:
+>>   v1 -> v2:
+>>   * Free memory allocated by strdup().
+>>   * Check "--pfm-events" in kvm_add_default_arch_event() as well.
+>>   * Opportunistically fix the missed memory allocation and free issue in
+>>     builtin-kwork.
+>>   * Comments refine.
+>>
+>>
+>> Tests:
+>>   * Run command "perf kvm record -a && perf kvm report" and "perf kvm
+>>     top" on Intel Sapphire Rapids platform, guest records can be
+>>     captured successfully.
+>>   * Since no powerpc platforms on hand, doesn't check the patches on
+>>     powerpc. Any test on powerpc is appreciated.
+>>
+>> Ref:
+>>   [1] https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/
+>>
+>>
+>> Dapeng Mi (6):
+>>   perf tools kvm: Add missed memory allocation check and free
+>>   perf tools kwork: Add missed memory allocation check and free
+>>   perf tools kvm: Fix the potential out of range memory access issue
+>>   perf tools: Add helper x86__is_intel_cpu()
+>>   perf tools kvm: Use "cycles" to sample guest for "kvm record" on Intel
+>>   perf tools kvm: Use "cycles" to sample guest for "kvm top" on Intel
+>>
+>>  tools/perf/arch/x86/util/kvm-stat.c |  51 +++++++++++
+>>  tools/perf/builtin-kvm.c            | 130 ++++++++++++++++++++--------
+>>  tools/perf/builtin-kwork.c          |  27 ++++--
+>>  tools/perf/util/env.c               |  22 +++++
+>>  tools/perf/util/env.h               |   2 +
+>>  tools/perf/util/kvm-stat.h          |  10 +++
+>>  6 files changed, 203 insertions(+), 39 deletions(-)
+>>
+>>
+>> base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
+>> --
+>> 2.34.1
+>>
 
