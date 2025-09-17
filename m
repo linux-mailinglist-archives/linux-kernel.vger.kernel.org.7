@@ -1,144 +1,142 @@
-Return-Path: <linux-kernel+bounces-821123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9BEB807DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:22:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D413B807E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F7E1BC3CA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:22:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B6C465469
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F43333AB3;
-	Wed, 17 Sep 2025 15:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0AA335953;
+	Wed, 17 Sep 2025 15:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DMzvxYE1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="N1UKVgw9"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257F8333AB5
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556743064A2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122542; cv=none; b=vC5Z0elY9ei1rlgKVDoyOgA6ZBA91tTpdec/a7OfzteO3YNyCfEHnq4EG7vnABMRDLZmiB2sXAC9tv3Em5o+gbIXFIu0gp6/uvh8GFeK5bpqgqfJWlLASBvSPWi/D4/5aEl+GFiHOBmivVLadpiDPxCqLt5EPdHGruH3YlzF6Oo=
+	t=1758122563; cv=none; b=ACDKPwBr+Ccmh2hP8Cu0wus+KLhfyny0TS8GGDg6nbpE89NBOSTF3PlInHqiScGmSEWgXLBZ4/YHSJiDiT+ZJz4gXw8giqSSkBRU7Fv8hWRzDjUt7ZstzYoJsKVHBRm87M9ayqtk7q53CmQnrNJJgROFHADxKbtwtQi4mDeBpFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122542; c=relaxed/simple;
-	bh=G/bV8fRNuXhxBDfwwFFEsp0hzSbHLbcHv/U1NKTsReY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KofaKr6jOhKsyijKEiEr+q+o9BEwJYfBD9xFxuIYNg5Jk/wcbAW2ha2hAsjvViuuVVi9QixjQvAB3BrRevkFMtYORJFHVvgog+hNUdMlZlTmuoUyT5CSiMbBU4IdRzy3uPhz7CAW0S+Pwrr+qprDX9FDcsyV9/s/xtKOxhEK654=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DMzvxYE1; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758122540; x=1789658540;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G/bV8fRNuXhxBDfwwFFEsp0hzSbHLbcHv/U1NKTsReY=;
-  b=DMzvxYE1sCRMNxSbs5aRwbQikdpkn+Se4CAaeQ04qWHcl4J9DJoPFYun
-   ua8x2WPHGq62PckU5H3PTdLeONQU9htxUXQfTP1PoDZqF08atREqWpcBv
-   P2BpdBTYVtec8JzdJ0QZqnHHuP7YErdbWDZH8PQ+3J9gFjsvmtONUY4ur
-   3tY4Qcw2ZvZDjYLMh/UCNvETko6cYCKB264skTCy+IHldQx40cEwZpYw5
-   zOdMpgRonlormIfaTbuD1aICVJ2zg0GNBdGdrrhR9K1Vognd/0iyxy9F3
-   8tZ1JmI79GRwrrhwqgUPW5/7i3JyEIJIcU7OZLkcAfMcI/pwOReYlcSM/
-   Q==;
-X-CSE-ConnectionGUID: eSI5QQimSXCvqmaZYvat5w==
-X-CSE-MsgGUID: TGd3uvGbQEu1zOoBvxnvlQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="48007032"
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="48007032"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 08:22:18 -0700
-X-CSE-ConnectionGUID: Y3ZkmuDhSEeH0TMd+gKnWQ==
-X-CSE-MsgGUID: xZCP5nuQSGq+oATXotjpyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="212421123"
-Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.111.223]) ([10.125.111.223])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 08:22:18 -0700
-Message-ID: <4ba6e926-c658-45bd-a1ba-96255a7d3279@intel.com>
-Date: Wed, 17 Sep 2025 08:22:16 -0700
+	s=arc-20240116; t=1758122563; c=relaxed/simple;
+	bh=zQsz9BdqYptqLS1CMsswCBOUQ6lz2yV3McAsdB6NOOE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DHA3EaCle8th0wYZbRXJgDNbyFhLB+ZWetchXKr0937ixrvw5jd7SiJ3VRmZFRRIEv+x3ArXL19fUEGeOeW647QpReMPcYfp/giKUa32D8Ah9v1qA3WVI9V1EB81ZXSF67etyDVDkgKofwHw7gLTbyotmCWfQhLGZVsMH6+r5P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=N1UKVgw9; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-74526ca79c2so2729683a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758122559; x=1758727359; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JuqG0yxquK8kD4GeaITKrOy10EcGnmyS01S1D7HLSeg=;
+        b=N1UKVgw9l9iUB7fQmMQdEi8hNISkqOSIfIvcyGR1KFvyjEFT/Ct8k6jPl/p2j/4OB2
+         mEdLJ2sNWrtR8IRhhVdUmKUuJM39Ig3fbbr2FsH5RwtAGsOexcViIJK759aqyUaEv9ni
+         S/iAn9MqjwDOSSd+m5IHPIohel0TDKnNdJaN80CS8mHtuiK9oMLrCFBUI9lIODT+QwRX
+         +lzlUvPHk2jn0Xy554nW216wt/ri6CeItcg1m/u4vqh92YkuZ8WOkOXIgPxissV4pjeu
+         ok5OaHHk6uNdClpZYE+6ZqEiVZolbxRi+lbG/2Cr7hJP7EAvznIcPwbprIGjrK5fEe5j
+         v0OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758122559; x=1758727359;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JuqG0yxquK8kD4GeaITKrOy10EcGnmyS01S1D7HLSeg=;
+        b=n16HqfNAwelIYkfKPFuGkL0PELpZL6LyTmO6CcPHh9GDVE6wp81ItErfCusKtE/ZKn
+         AH9u+QHjzAywLgMi+yTxjPptEbXNhZ3/QGai3ua2hW8qpJWxaGrJKZprDh9wtJ030TdR
+         vLp2a/Yag21HT6Ad5Lkjd2dym1y02qkMfIiZ+JVLlJrE4rF9J22QVZ3aakGPwwtC3P5L
+         djI1NZuPJVztEjfDOqLB986UOeXid7cg/fMQ1S6CrmFobo/2AI387C6lwuvLQc11Cl68
+         EJevPJK4tgtfGxeu/6RIB8HeBKKtlhWLY0BVjMQv2PKDKkk5lkasTBClnUFn5AT+9gvN
+         dnug==
+X-Forwarded-Encrypted: i=1; AJvYcCUsZnbzBSuu5xXxeRjl0BONwrJzDV5nTcruHr5r/7yg1i8+QpalQ79esbWXNomLxhQE5pFlZPKz5ihKiUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9UVQBNK0Qu44YDiJIUWqGK6UrAwlhzu3Nbf5p84GlmsgWVAGs
+	1zZ/IhYE0rbVal7rIiCQasw5a5R8lmmO0dKp7QDuhiiEB+npIPdjEwvfAwKcsJKuX+M=
+X-Gm-Gg: ASbGncvMWBCH1bZwO1Zb+o39gV+B+a6nkWSil2q5BcaVNGB/kwBbgEy8tYwtp1pC6kv
+	jO3z3VDFYASHeLy9HYUUNCUtE/Ca2qZZGf90xYO0NU8oTwuPmytnjnHQNMLYcmd1urKyg7bRilh
+	MLWAwxsRC5FzK9wwktvcLg4Pu8gtdYD7sCTKUGXjqSg8gsov9FSy/ySjSTl+ipzO3tkTpYstZ7X
+	pL5TQ2sB+lKbL9xaciA6TE2zNs+DwEHA5VJtkDa8ILVr5Ey/3e3+c/BSEaAtuU72W7/vNxrujNU
+	75KxMqVmdWVt2oxqAoQZde5nQAz7bVvB7qC10pMH31tTtj0DDUlYwJ2bLzV3Lvv8g2FJ7EQVkER
+	L3ySUb4hmyzqxboUs6I/uTDRRnlQ=
+X-Google-Smtp-Source: AGHT+IGVA49Felbs27PadgaFXN++BYp8GHFxN2UZXDDxNeHRd4MCJpOkfBeMbxQ9o+r14RuVAakEUw==
+X-Received: by 2002:a05:6808:1984:b0:43b:663e:270a with SMTP id 5614622812f47-43d50d72f39mr911532b6e.39.1758122559292;
+        Wed, 17 Sep 2025 08:22:39 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:72c:cb37:521d:46e2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524986ca64sm5388388a34.14.2025.09.17.08.22.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 08:22:38 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 17 Sep 2025 10:22:30 -0500
+Subject: [PATCH] iio: adc: ad7124: use devm_mutex_init()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pds_fwctl: Replace kzalloc + copy_from_user with
- memdup_user in pdsfc_fw_rpc
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Brett Creeley <brett.creeley@amd.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Saeed Mahameed <saeedm@nvidia.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20250917150941.168887-1-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250917150941.168887-1-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250917-iio-adc-ad7124-use-devm_mutex_init-v1-1-ff23fe3ad954@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIADXSymgC/yWN0QqDMAxFf0XyvKItSqe/MkRqTV0e2m5tFUH89
+ 4X5EMK5CfeckDERZhiqExLulCkGBvmowL5NWFHQwgyqUV3TSy2IojCL5dFStWLLKBbc/eS3gsd
+ EgYpoO6N6PUvnng646JPQ0fGXvMabE343dpU7hNlwjY3eUxkq/s51Qh/5WrOu5l0orDBe1w/7S
+ OQ3sAAAAA==
+X-Change-ID: 20250917-iio-adc-ad7124-use-devm_mutex_init-45a297b1ff8f
+To: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1115; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=zQsz9BdqYptqLS1CMsswCBOUQ6lz2yV3McAsdB6NOOE=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoytI3IQvdBP+yS597bPrqEJC0E63Fmq5HNfTed
+ 2UnEEDvaXiJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMrSNwAKCRDCzCAB/wGP
+ wHKIB/sEN4lqvOC9afRqIE/ulkwoktZ1q1wpR7WsLN8FSZH2EPNZRAJOd/rGsgs5wlyDicCwz87
+ y2PSKodKgzBtH6qGPqa3HsiljxZ2cgP9HyOvLYHYTtEVa7c2RcwKeX/rZqqL3VOwr8TjaADfoKK
+ 3Il8XnzVjHZX9eW2A4NXPeD7fB9SJOnbWw3iI4NvNdlRJ9hAdcFa/YmaueJgvCL4q4cc9FOLvb+
+ 3QCb2QQQhKNzdrwkE3OZ0wN2rfRaNzuWaoH5G8xhln8MUvI9coVpMHtVFthPeRJ/YA2cQttan8K
+ M3dItbxroFaw6qbHwFsc84lif24EWUkx6iLvdsvqkm3xcAAo
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
+Use devm_mutex_init() to initialize the mutex to handle automatically
+freeing in debug builds.
 
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/iio/adc/ad7124.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-On 9/17/25 8:09 AM, Thorsten Blum wrote:
-> Replace kzalloc() followed by copy_from_user() with memdup_user() to
-> improve and simplify pdsfc_fw_rpc().
-> 
-> Return early if an error occurs and remove the obsolete 'err_out' label.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+index 9ace3e0914f5acab695c0382df758f56f333ae72..9d9250274b9a02e2982e6ceda27009a84413dc2f 100644
+--- a/drivers/iio/adc/ad7124.c
++++ b/drivers/iio/adc/ad7124.c
+@@ -1482,7 +1482,10 @@ static int ad7124_setup(struct ad7124_state *st)
+ 	st->adc_control &= ~AD7124_ADC_CONTROL_MODE;
+ 	st->adc_control |= FIELD_PREP(AD7124_ADC_CONTROL_MODE, AD_SD_MODE_IDLE);
+ 
+-	mutex_init(&st->cfgs_lock);
++	ret = devm_mutex_init(dev, &st->cfgs_lock);
++	if (ret)
++		return ret;
++
+ 	INIT_KFIFO(st->live_cfgs_fifo);
+ 	for (i = 0; i < st->num_channels; i++) {
+ 		struct ad7124_channel_config *cfg = &st->channels[i].cfg;
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+---
+base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
+change-id: 20250917-iio-adc-ad7124-use-devm_mutex_init-45a297b1ff8f
 
-> ---
->  drivers/fwctl/pds/main.c | 16 ++++------------
->  1 file changed, 4 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/fwctl/pds/main.c b/drivers/fwctl/pds/main.c
-> index 9b9d1f6b5556..04d84f892fb8 100644
-> --- a/drivers/fwctl/pds/main.c
-> +++ b/drivers/fwctl/pds/main.c
-> @@ -6,6 +6,7 @@
->  #include <linux/pci.h>
->  #include <linux/vmalloc.h>
->  #include <linux/bitfield.h>
-> +#include <linux/string.h>
->  
->  #include <uapi/fwctl/fwctl.h>
->  #include <uapi/fwctl/pds.h>
-> @@ -366,18 +367,10 @@ static void *pdsfc_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
->  		return ERR_PTR(err);
->  
->  	if (rpc->in.len > 0) {
-> -		in_payload = kzalloc(rpc->in.len, GFP_KERNEL);
-> -		if (!in_payload) {
-> -			dev_err(dev, "Failed to allocate in_payload\n");
-> -			err = -ENOMEM;
-> -			goto err_out;
-> -		}
-> -
-> -		if (copy_from_user(in_payload, u64_to_user_ptr(rpc->in.payload),
-> -				   rpc->in.len)) {
-> +		in_payload = memdup_user(u64_to_user_ptr(rpc->in.payload), rpc->in.len);
-> +		if (IS_ERR(in_payload)) {
->  			dev_dbg(dev, "Failed to copy in_payload from user\n");
-> -			err = -EFAULT;
-> -			goto err_in_payload;
-> +			return in_payload;
->  		}
->  
->  		in_payload_dma_addr = dma_map_single(dev->parent, in_payload,
-> @@ -453,7 +446,6 @@ static void *pdsfc_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
->  				 rpc->in.len, DMA_TO_DEVICE);
->  err_in_payload:
->  	kfree(in_payload);
-> -err_out:
->  	if (err)
->  		return ERR_PTR(err);
->  
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
