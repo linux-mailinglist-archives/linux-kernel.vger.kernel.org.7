@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-820574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABB9B7D212
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF21B7C89E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49FC13B3D19
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80429485D7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59F636C067;
-	Wed, 17 Sep 2025 11:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490F036CDF9;
+	Wed, 17 Sep 2025 11:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OgsObV8Y"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c31U7ebF"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC9E22D78A;
-	Wed, 17 Sep 2025 11:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCE820E03F;
+	Wed, 17 Sep 2025 11:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758109306; cv=none; b=h1ojiu3sHqx5hWVEaN3vYcOHIGJEHW5YxaGme3GfU05WI5ZBtzVbRCgSfJxsNEUNanSF5GcCMELoHFH5+L+AZrlQO5DHIZUVX2ujVe49XBEYT9yx4qAd5en4N70nsyLfoKRSGjKtHpZeBPQ35Ul/ci0VdGuc326oaDZHy2AZKts=
+	t=1758109575; cv=none; b=N+wYAHEw1p1g1+odNFHOmQK4VgH+BP34kSA4tariNwpoI50nZRfCt+ef/2dQwKe3/CafcRS5zjCd4BMsqo/D1nNBAH9H91ixxSkW7VEodvcnOpI+Yxk3iAbcbZy+ckjc41O3PRHq+bxXunef8bHQ5bxERjU/JmDWtMj4ckBU1D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758109306; c=relaxed/simple;
-	bh=0OtD0Y91eraXp7qlae6rfKOz1LeKFfNmCmaZ1OElvSI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jF3KQ9OTKHVMUopSxuqpAf64gdycgG8N1uHlj+RTMTrNCth2MPaL9DjEWiyfBh7aQaPdkPaX5Q7FEBKc6zrcGiwozByLuQM79cX1KXPSjtO7pzubHIfLXwrm1LkVmnfkzHzQ6ZLhyRzCseQgv3XZQDy+X/J402D6zbo26Q2cRKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OgsObV8Y; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758109302;
-	bh=0OtD0Y91eraXp7qlae6rfKOz1LeKFfNmCmaZ1OElvSI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OgsObV8YW7tOY5+PL28HwItU/FdPf6MHC4mP4i613Caz1L/lU2AKXzio9nx+qjykZ
-	 C3X7qT+n+A2gpIo6dPrCSdsecp6k4lbQyCGEUHpJnuup2V6zoK+atoFaY7bFvbm8FF
-	 /cwuWNvMSDp70uMeD1uiUA86GbGkwX9WC39Fqgw6z08vVFx0uowzHqMBJfSzyuqpH/
-	 Dwfvs2LGSvQM85kAQhlxrPFLvLXTkcHFxPp/a3IRM78Ev6WUgqpoLhoGb4BdiGWlCR
-	 vxXQch2XyjzydceRQfztY4bXwHNcq0iRCr/rlr0qTQjZiG7WqpKzbIF9Z/i9TpceB0
-	 S4vEPuGN/zcQA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 49AA317E10F3;
-	Wed, 17 Sep 2025 13:41:41 +0200 (CEST)
-Message-ID: <a16cafd4-4d6c-45be-b241-45d2d6479bb1@collabora.com>
-Date: Wed, 17 Sep 2025 13:41:40 +0200
+	s=arc-20240116; t=1758109575; c=relaxed/simple;
+	bh=GE1ZvajMjR1jpdcyQ23SFnVuz3QmYfCASBO13hwms0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VEFe8TkLGPiV3YPVwaYYI9L0gEUYM336U/YFilgfBMO3NN8NdlWsl2pOouTfIVpuBrDMazOvE1V7lZG061tvdeeQqieDWFVYlndh9py9ZUAtQEoatzPNR7eC3IAuxGglNIbPtE+pgqtNPjYukBm9tz5lsrvgR1+wL1J71FQzANU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=c31U7ebF; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58HBj7G91597639;
+	Wed, 17 Sep 2025 06:45:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758109507;
+	bh=CESIdT/b5vC34F/eerVXaRdloEbeJeSQadVRXpn30xo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=c31U7ebFlqU6kZuPjeR3YrLRk3pu22idBxlSh8Qez5VPn+A9Pd896Vfs9dUFchjaq
+	 WQwPgC5USgoJu/BmU6RwfRFBd+IXgVYn/3y/Td1AAmKwptbKrDi3dYpM36blp2qNPj
+	 QyUxKkARwRsEFJiJufjePXpCFZiDDPIr7n+JX6Ro=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58HBj6CM2312628
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 17 Sep 2025 06:45:06 -0500
+Received: from DLEE213.ent.ti.com (157.170.170.116) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 17
+ Sep 2025 06:45:06 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE213.ent.ti.com
+ (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 17 Sep 2025 06:45:06 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58HBivYL2975345;
+	Wed, 17 Sep 2025 06:44:58 -0500
+Message-ID: <7cd06f8f-bd74-429d-bf2c-71858178950a@ti.com>
+Date: Wed, 17 Sep 2025 17:14:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,114 +64,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] spmi: Implement spmi_subdevice_alloc_and_add() and
- devm variant
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
- gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
- casey.connolly@linaro.org, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
- <20250916084445.96621-2-angelogioacchino.delregno@collabora.com>
- <mr7gqhvom5soofn2oujzxtsuczsnx2yizkushar64cojwnvhd6@dt64ojgjqdxw>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH net-next v4 0/7] Add RPMSG Ethernet Driver
+To: Andrew Davis <afd@ti.com>, "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet
+	<corbet@lwn.net>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        Mengyuan Lou
+	<mengyuanlou@net-swift.com>,
+        Lei Wei <quic_leiwei@quicinc.com>, Xin Guo
+	<guoxin09@huawei.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Fan Gong
+	<gongfan1@huawei.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Parthiban
+ Veerasooran <Parthiban.Veerasooran@microchip.com>,
+        Lukas Bulwahn
+	<lukas.bulwahn@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20250911113612.2598643-1-danishanwar@ti.com>
+ <8a20160e-1528-4d0e-9347-0561fc3426b4@ti.com>
 Content-Language: en-US
-In-Reply-To: <mr7gqhvom5soofn2oujzxtsuczsnx2yizkushar64cojwnvhd6@dt64ojgjqdxw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <8a20160e-1528-4d0e-9347-0561fc3426b4@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Il 16/09/25 15:25, Uwe Kleine-König ha scritto:
-> Hello AngeloGioacchino,
+Hi Andrew,
+
+On 11/09/25 9:34 pm, Andrew Davis wrote:
+> On 9/11/25 6:36 AM, MD Danish Anwar wrote:
+>> This patch series introduces the RPMSG Ethernet driver, which provides a
+>> virtual Ethernet interface for communication between a host processor and
+>> a remote processor using the RPMSG framework. The driver enables
+>> Ethernet-like packet transmission and reception over shared memory,
+>> facilitating inter-core communication in systems with heterogeneous
+>> processors.
+>>
 > 
-> On Tue, Sep 16, 2025 at 10:44:39AM +0200, AngeloGioacchino Del Regno wrote:
->> +/**
->> + * spmi_subdevice_alloc_and_add(): Allocate and add a new SPMI sub-device
->> + * @sparent:	SPMI parent device with previously registered SPMI controller
->> + *
->> + * Returns:
->> + * Pointer to newly allocated SPMI sub-device for success or negative ERR_PTR.
->> + */
->> +struct spmi_subdevice *spmi_subdevice_alloc_and_add(struct spmi_device *sparent)
->> +{
->> +	struct spmi_subdevice *sub_sdev;
->> +	struct spmi_device *sdev;
->> +	int ret;
->> +
->> +	sub_sdev = kzalloc(sizeof(*sub_sdev), GFP_KERNEL);
->> +	if (!sub_sdev)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	ret = ida_alloc(&spmi_subdevice_ida, GFP_KERNEL);
->> +	if (ret < 0) {
->> +		kfree(sub_sdev);
->> +		return ERR_PTR(ret);
->> +	}
->> +
->> +	sdev = &sub_sdev->sdev;
->> +	sdev->ctrl = sparent->ctrl;
->> +	device_initialize(&sdev->dev);
->> +	sdev->dev.parent = &sparent->dev;
->> +	sdev->dev.bus = &spmi_bus_type;
->> +	sdev->dev.type = &spmi_subdev_type;
->> +
->> +	sub_sdev->devid = ret;
->> +	sdev->usid = sparent->usid;
->> +
->> +	ret = dev_set_name(&sdev->dev, "%d-%02x.%d.auto",
->> +			   sdev->ctrl->nr, sdev->usid, sub_sdev->devid);
-> 
-> If I understand correctly sub_sdev->devid is globally unique. I wonder
-> if a namespace that is specific to the parent spmi device would be more
-> sensible?!
+> This is neat and all but I have to ask: why? What does this provide
+> that couldn't be done with normal RPMSG messages? Or from a userspace
+> TAP/TUN driver on top of RPMSG?
 > 
 
-Only in the context of the children of sdev. I'm not sure of what you're proposing
-here, looks like it would complicate the code for no big reason - unless I am
-misunderstanding something here.
+This is different from RPMSG because here I am not using RPMSG to do the
+actual TX / RX. RPMSG is only used to share information (tx / rx
+offsets, buffer size, etc) between driver and firmware. The TX / RX
+happens in the shared memory. This implementation uses a shared memory
+circular buffer with head/tail pointers for efficient data passing
+without copies between cores.
 
->> +	if (ret)
->> +		goto err_put_dev;
->> +
->> +	ret = device_add(&sdev->dev);
->> +	if (ret) {
->> +		dev_err(&sdev->dev, "Can't add %s, status %d\n",
-> 
-> I'd use %pe instead of %d here.
+> This also feels like some odd layering, as RPMSG sits on virtio, and
+> we have virtio-net, couldn't we have a firmware just expose that (or
+> would the firmware be vhost-net..)?
 > 
 
-The only reason why I am using %d is for consistency with the rest of the code that
-is in SPMI - there is another device_add() call in spmi_device_add() which prints
-the same error in the very same way as I'm doing here.
+PMSG sits on virtio, and we do have virtio-net but I am not trying to do
+ethernet communication over RPMSG. RPMSG is only used to exchange
+information between cores regarding the shared memory where the actual
+ethernet communication happens.
 
-I agree that using %pe makes error prints more readable, but perhaps that should be
-done as a later cleanup to keep prints consistent (and perhaps that should not be
-done only in SPMI anyway).
-
-If you have really strong opinions about doing that right now I can do it, but I
-anyway prefer seeing that as a later commit doing that in the entire SPMI codebase.
-
-Cheers,
-Angelo
-
->> +			dev_name(&sdev->dev), ret);
->> +		goto err_put_dev;
->> +	}
->> +
->> +	return sub_sdev;
->> +
->> +err_put_dev:
->> +	put_device(&sdev->dev);
->> +	return ERR_PTR(ret);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(spmi_subdevice_alloc_and_add, "SPMI");
->> +
+> Andrew
 > 
-> Best regards
-> Uwe
+
+
+-- 
+Thanks and Regards,
+Danish
 
 
