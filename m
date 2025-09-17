@@ -1,221 +1,104 @@
-Return-Path: <linux-kernel+bounces-820247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8C6B7CFC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAED0B7CF39
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380915835F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A6D189F2D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C44B3054D9;
-	Wed, 17 Sep 2025 08:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K0CKpcQJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGmtl/eV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K0CKpcQJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGmtl/eV"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A133016F6;
+	Wed, 17 Sep 2025 08:36:16 +0000 (UTC)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574C2EC0A6
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584B82FFF8D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758098160; cv=none; b=oGJJAnaAh6aDRKdwdbQfFYjHnpOFZn3mIX+amnUxKUISdLYFciJx6+QjPRaRzX0LZakGXiFXWLZb1GJXARjxUsb27clVBj1kH/Z6qJ5BKH9JZPsG8g4oHZr+ZTT1SzH3VpwzsGRGLYlSutTLFt5qvu5TcwZyZqgbDuKyeohoYR0=
+	t=1758098175; cv=none; b=BSKcoTWpFE5vYJ1dSRPiIrXE8DIV0fYT/rhNv9s7/GKLFtUutQ27WmuAvlBOL6SEd67PQho2I2vGHIucsl5NAcweRBH67MyNQbmbayHQ836FxJXQ1ECt4H1L3pTGnNZmCIFoyaeQei4yZ6pA9iT0B0fuXm4sTzmmm7e6pw/4j8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758098160; c=relaxed/simple;
-	bh=ofO0Q8oMta1PRDwIhLkYMub7GGndR7KtZQUqeFBiVPU=;
+	s=arc-20240116; t=1758098175; c=relaxed/simple;
+	bh=sXFkn3fuD3qapzhmeLtcjyz5+yB2lVkMKUy/xANyteE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCmu0jN+NZsPkomnRfECT8y7Ma0s8Z8EZgTvYwmB09vIH4IS0NEwKMCh7FAEQHUvkwmQEtB4P/7jisIWtiIjp/AxMNfLqkFp3V3Pp2CTHwaoYWja00LdqnF52uFA4KdjGeeomhMeZRpJRCB6zBKu8TBF1JYa8zCvbnQ3yByTSkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K0CKpcQJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGmtl/eV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K0CKpcQJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGmtl/eV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F73A1F79F;
-	Wed, 17 Sep 2025 08:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758098151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
-	b=K0CKpcQJHVMxSJ+0OTFPfYcV2OQ3IS7jig+x8ob4XXEYr/va3BZ90Lw30tMgFKMxGbQsRe
-	wWJgOOxdyvKIkGPA+QLwucu4EJLL2mBYylcaol6HmYxdEMQDGiMcoHTqSItojZq/0sEJVs
-	NlB55PNYrKpbGroyNlKHypEvgErFWrA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758098151;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
-	b=aGmtl/eVV6qvZej9Irm87pmJC9gTjqhA4sHTtOsVXSk0BcUzvZreilLZGDZCGSUx9rhB8s
-	W7+K9XDbHa/fxCBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758098151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
-	b=K0CKpcQJHVMxSJ+0OTFPfYcV2OQ3IS7jig+x8ob4XXEYr/va3BZ90Lw30tMgFKMxGbQsRe
-	wWJgOOxdyvKIkGPA+QLwucu4EJLL2mBYylcaol6HmYxdEMQDGiMcoHTqSItojZq/0sEJVs
-	NlB55PNYrKpbGroyNlKHypEvgErFWrA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758098151;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
-	b=aGmtl/eVV6qvZej9Irm87pmJC9gTjqhA4sHTtOsVXSk0BcUzvZreilLZGDZCGSUx9rhB8s
-	W7+K9XDbHa/fxCBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 158141368D;
-	Wed, 17 Sep 2025 08:35:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GcU6Bedyymj4CwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 08:35:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B774CA0A95; Wed, 17 Sep 2025 10:35:46 +0200 (CEST)
-Date: Wed, 17 Sep 2025 10:35:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: David Hildenbrand <david@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Ryan Roberts <ryan.roberts@arm.com>, 
-	syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>, akpm@linux-foundation.org, chaitanyas.prakash@arm.com, 
-	davem@davemloft.net, edumazet@google.com, hdanton@sina.com, horms@kernel.org, 
-	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, perex@perex.cz, 
-	syzkaller-bugs@googlegroups.com, tiwai@suse.com, willemb@google.com
-Subject: Re: [syzbot] [sound?] kernel BUG in filemap_fault (2)
-Message-ID: <s5pl5yhhxyz7dn4r2v6c4ll53ejboe5xa5226ytgg7kjirgmh5@tofyas4lp4uy>
-References: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
- <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
- <lqzgi7abe2onda3faavn5ays6gdw4syiu32hmrfaibrh6cmozs@pjf3llvnnefk>
- <7e338491-0c6b-4b65-93b7-df0af8b2fd87@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBdc+Ro6MduLmr0us0l3V6B95b/0eAYGF4YUn89n3e7PHQ+bV43mnKiXGiSTW3/vtaWtS3EVA7o1z3PA2cpF9/BRYXW2sPQ7x6Jof1RNMY7kNkVUSsMV9WPz6qR+Zk6+ZGhr0mVWj3mTpLb4WgpZ39tUON911dZV9Mkfc/+mdSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32e1c68d806so2796227a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:36:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758098173; x=1758702973;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5C6ubQVztzzRmQnjXOEGDILcUWZK/yh+JDrJ9NOH2l8=;
+        b=DQo9SxtaR4hZHON6JTBwgAZ28c6EwUpwMPrynWfUdc103I0WFa6TGlkQGn91s1jRhh
+         xRXeiUv6nCj3b6wUiKvlJWAmHQ7925t3sHuEijS0jBMVqA4R4ovofh3djH11REhKxPin
+         HxwYa7A9AzAGpdNmfFhimo5eIZ/mTEeyxvcmjt7jZKcf1d5QZzRnfkMItq1ugoOImqAD
+         ynAnb2bZobiqXmQc6FOVTlgzhDzMruEmJlbsLmRIII+wJmQDB6YWUeCtyiC1Llq05Xbf
+         8dQ+qk6kA3WY/l3D90+m2+B4lTcbad8a/L1VU38htDL7o2MSJPREUUfJfhBUNRGALY4L
+         dodA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxZSpyn74qW/ufdAC/g3dTQ3lwWeCTwNebkP87UBASDy1ISFnJYrZ3eFTTgdn0/7CHvKD9/RwocwfyFMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeoGwhTr5PKa9PwOyDASecob4PBAbDn5R5gd8ZopGy3A1WNDvS
+	9ABr1gFa2joaa41Krd/jT3VvDyv7ilGcLh92uA0tnA8FOkGbXRH/47Un
+X-Gm-Gg: ASbGncu4/MuO6X5vgDNIJd98TjMPyRl8pQYTRz955Qpz2120HsdAMV7EJvo7PtrnV00
+	ec8xp2khW2DQkmyQjKVg4H3kg7Am0fda7N7gE95pAF3YjxGKKv51w3mCeoOWmkLS7W5UB9YausO
+	iSBKhTByJs3s4kPOf9CNylCRs12N2PYcMjoaB3d2HsHDUvUZNJW3QY8pwZ6x/rryXyu+iEA9r0x
+	/ZhIMFl2Zpr4wC2F4QPSgZqgqSOGB1M068tF1xWec0QqUTHLa9Urm4G45t02eSfh3yUySXhPkOB
+	VHKOyxVtJhNZC5n52ixRsOVS1cfGdbRqvHyAqo3NUWLXrnmMsu6XnvDk9oCzqE+0wpaMreFLGRd
+	E9Sw4gV0ViVhevkkkuFAJ1bJzR/J8KwhDSjTEQzn/OJiVFUBKawVl+qFtsw==
+X-Google-Smtp-Source: AGHT+IHADwAA9JCqd2quqoOP3FocyxM/8owwIIVqvZ9oow3gcrEgcb/6VhdirEK4z8X/BFS9knXdhA==
+X-Received: by 2002:a17:90a:d88b:b0:32e:1b1c:f8b8 with SMTP id 98e67ed59e1d1-32ee3f7b4c2mr1574450a91.26.1758098173401;
+        Wed, 17 Sep 2025 01:36:13 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32ed27612b3sm1764647a91.22.2025.09.17.01.36.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 01:36:12 -0700 (PDT)
+Date: Wed, 17 Sep 2025 17:36:11 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Matthew Wood <thepacketgeek@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mario Limonciello <superm1@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [RESEND PATCH v7 1/1] PCI/sysfs: Expose PCIe device serial number
+Message-ID: <20250917083611.GB1467593@rocinante>
+References: <20250821232239.599523-2-thepacketgeek@gmail.com>
+ <20250915193904.GA1756590@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7e338491-0c6b-4b65-93b7-df0af8b2fd87@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[263f159eb37a1c4c67a4];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[sina.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,arm.com,syzkaller.appspotmail.com,linux-foundation.org,davemloft.net,google.com,sina.com,kernel.org,vger.kernel.org,redhat.com,perex.cz,googlegroups.com,suse.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250915193904.GA1756590@bhelgaas>
 
-On Wed 17-09-25 09:57:19, David Hildenbrand wrote:
-> On 16.09.25 15:05, Jan Kara wrote:
-> > On Tue 16-09-25 13:50:08, Ryan Roberts wrote:
-> > > On 14/09/2025 11:51, syzbot wrote:
-> > > > syzbot suspects this issue was fixed by commit:
-> > > > 
-> > > > commit bdb86f6b87633cc020f8225ae09d336da7826724
-> > > > Author: Ryan Roberts <ryan.roberts@arm.com>
-> > > > Date:   Mon Jun 9 09:27:23 2025 +0000
-> > > > 
-> > > >      mm/readahead: honour new_order in page_cache_ra_order()
-> > > 
-> > > I'm not sure what original bug you are claiming this is fixing? Perhaps this?
-> > > 
-> > > https://lore.kernel.org/linux-mm/6852b77e.a70a0220.79d0a.0214.GAE@google.com/
+> > Add a single sysfs read-only interface for reading PCIe device serial
+> > numbers from userspace in a programmatic way. This device attribute
+> > uses the same hexadecimal 1-byte dashed formatting as lspci serial number
+> > capability output. If a device doesn't support the serial number
+> > capability, the serial_number sysfs attribute will not be visible.
 > > 
-> > I think it was:
-> > 
-> > https://lore.kernel.org/all/684ffc59.a00a0220.279073.0037.GAE@google.com/
-> > 
-> > at least that's what the syzbot email replies to... And it doesn't make a
-> > lot of sense but it isn't totally off either. So I'd just let the syzbot
-> > bug autoclose after some timeout.
+> > Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
+> > Reviewed-by: Mario Limonciello <superm1@kernel.org>
+> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> > Reviewed-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 > 
-> Hm, in the issue we ran into was:
-> 
-> 	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
-> 
-> in filemap_fault().
-> 
-> Now, that sounds rather bad, especially given that it was reported upstream.
-> 
-> So likely we should figure out what happened and see if it really fixed it
-> and if so, why it fixed it (stable backports etc)?
+> Sorry for the delay, I have no excuse.
 
-Ok, ok, fair enough ;)
+I also didn't noticed it has been a while... This series has fallen through
+the cracks completely, indeed.  Sorry about this.
 
-> Could be that Ryans patch is just making the problem harder to reproduce, of
-> course (what I assume right now).
-> 
-> Essentially we do a
-> 
-> 	folio = filemap_get_folio(mapping, index);
-> 
-> followed by
-> 
-> 	if (!lock_folio_maybe_drop_mmap(vmf, folio, &fpin))
-> 		goto out_retry;
-> 
-> 	/* Did it get truncated? */
-> 	if (unlikely(folio->mapping != mapping)) {
-> 		folio_unlock(folio);
-> 		folio_put(folio);
-> 		goto retry_find;
-> 	}
-> 	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
-> 
-> 
-> I would assume that if !folio_contains(folio, index), either the folio got
-> split in the meantime (filemap_get_folio() returned with a raised reference,
-> though) or that file pagecache contained something wrong.
+Thank you,
 
-Right.
-
-> In __filemap_get_folio() we perform the same checks after locking the folio
-> (with FGP_LOCK), and weird enough it didn't trigger yet there.
-
-But we don't call __filemap_get_folio() with FGP_LOCK from filemap_fault().
-The folio locking is handled by lock_folio_maybe_drop_mmap() as you
-mentioned. So this is the first time we do the assert after getting the
-folio AFAICT. So some race with folio split looks plausible. Checking the
-reproducer it does play with mmap(2) and madvise(MADV_REMOVE) over the
-mapped range so the page fault may be racing with
-truncate_inode_partial_folio()->try_folio_split(). But I don't see the race
-there now...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	Krzysztof
 
