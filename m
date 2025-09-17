@@ -1,391 +1,708 @@
-Return-Path: <linux-kernel+bounces-820381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF4FB7D0BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FB9B7D0B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870833203C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:47:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD8E2A7087
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1BD34A301;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4215E346A14;
 	Wed, 17 Sep 2025 09:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="pdE3oOvi"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013064.outbound.protection.outlook.com [52.101.127.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RY3lV75a"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1A41F4701;
-	Wed, 17 Sep 2025 09:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102369; cv=fail; b=G2f+oSrw4kyfEQS6aPP0D/1KlbS1wnZvLlcaRON/Xvyx3o9DFVsH1n2FwYidSD8YVurF1AyEC1BqupOQdT29e+MWLYNrc619kyXxgiiuyGWfw6E7km0YSe1IXSwHdHSEWw+e+BrmsxgNx/IONC3VVbmDO5jVjX0wLFIVghv1ZeM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102369; c=relaxed/simple;
-	bh=K36cyTW6PwLKw4pjwosXCjSC0KQc2ZktazSVPRup5do=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HFCjzghspRB8vY6QldP1nUZHVscR7UMemk76GhxITm8yGevnQ8qrt01kbgmnJ1WRc2gG8+w+/iDQPvgwJbNbBhdqKcNaZfw3W1KK65N89+Yg/RMG/hxBPTCq1L9HTfYJ2cJtDbySShNLCT7+HxDiCK1riEOvP0cHDYYo+5vaTy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=pdE3oOvi; arc=fail smtp.client-ip=52.101.127.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eexx3WFXLif+ep+RJ2K2a2Qj2VQytmbugXJkakbPxItXpsaMOJCZnA5u5gCH0EZFvQXloHrfWYjhPQnAwuuHB0J9sG6KQgtzt3rBg8GJ8G9+5vIgbE8cw5aw+8wAhYuN1fyIMByookP3cdTrJz+xoJceS2uf3uw23NqbdJ4i4x7i8vQgIzSHq3w5aI8PyZRzFG1GLIkioNzrNNNVbLEMQd4HJe+8rMjhrDGVk7sBzi32wT5CCHn+kNm3cnrvgzn5nr8kAr5+7bvip0F/rffB4eTqr2EMEE6+64ZmIzBYntCZ9E1Uz8HlxF5ZedFwyb7EL01vBh7XU5UvsQiq8UEyMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jn4QX8ke10iA+NARvkVYIvqMWcIAl5zOZH0y0u7E35k=;
- b=ZiDF0gf6UhIUIxKYxMpdQjVHTpZgdPAFfDiRWI8a4c2FoYEG8fPvy4oYvdod4LEcCM01yJRsLk8nbQn0BchbjlhjTI+WcLFbfLmB78huuYQ+YUUrshZVmHjeJUY2BDzEUpt63F3Fc+hL1eEeSw2YuCyHKArTPAWX4CYX4/EzxXxycloR/LsZ7Fww5jpIr5WTGQ/L4HbwszQ7vL+qtQ4RTly/uySh0uOAIDp6rjMjWpuAzLaXg4Aob5i+CGaWidzbckuCtPd933iqi6HfOKKWEn+/bDqYCPzUKM70JOunzzHIWyasJxRtmu6mNNLrqV/mYEPBhrX5nfs33YZ+gNar7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jn4QX8ke10iA+NARvkVYIvqMWcIAl5zOZH0y0u7E35k=;
- b=pdE3oOviA0Bf6aN5UcvSulfW1hooEdJ0PhmkPnaClFsd4E+af51bbJvE56MAuXWjEdz5NMI42+x2pnwkpijyR7+O0fpkfARkfn7G4uBBenanpm9SnGJnR4a/fHd8G1Pj7+4NMS8qT2s1WjwVasGtB88Fql8bk1TQFpSzywjK7Ap0IML9AgIipcQij3hBI3UazIpcnfqu5s9CWzCSwza+2aWswMWdtjtVLESRNBCvQN6+VDjgCLkLj1zrjs2QwIUXLtQfTRWMkchyY8l6BTRvuDyVGnurDLvmjPrm5CJixRo38riyH2qAOa5XCEKnyhwVL2caVl4U+uEGdrIrUjOGvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5624.apcprd06.prod.outlook.com (2603:1096:101:c8::14)
- by PS1PPF97BB1365E.apcprd06.prod.outlook.com (2603:1096:308::25e) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Wed, 17 Sep
- 2025 09:45:59 +0000
-Received: from SEZPR06MB5624.apcprd06.prod.outlook.com
- ([fe80::e837:10e3:818e:bdfd]) by SEZPR06MB5624.apcprd06.prod.outlook.com
- ([fe80::e837:10e3:818e:bdfd%5]) with mapi id 15.20.9115.020; Wed, 17 Sep 2025
- 09:45:59 +0000
-Message-ID: <d31a3880-dc7c-4224-b248-085941431abc@vivo.com>
-Date: Wed, 17 Sep 2025 17:45:45 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v0] mm/vmscan: Add readahead LRU to improve readahead
- file page reclamation efficiency
-To: Yuanchu Xie <yuanchu@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Axel Rasmussen <axelrasmussen@google.com>, Wei Xu <weixugc@google.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Qi Zheng <zhengqi.arch@bytedance.com>, Shakeel Butt
- <shakeel.butt@linux.dev>, Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Yosry Ahmed <yosry.ahmed@linux.dev>, Nico Pache <npache@redhat.com>,
- Harry Yoo <harry.yoo@oracle.com>, Yu Zhao <yuzhao@google.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Usama Arif <usamaarif642@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Nhat Pham <nphamcs@gmail.com>, Hao Jia <jiahao1@lixiang.com>,
- "Kirill A. Shutemov" <kas@kernel.org>, Barry Song <baohua@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Petr Mladek <pmladek@suse.com>, Jaewon Kim <jaewon31.kim@samsung.com>,
- "open list:PROC FILESYSTEM" <linux-kernel@vger.kernel.org>,
- "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
- "open list:MEMORY MANAGEMENT - MGLRU (MULTI-GEN LRU)" <linux-mm@kvack.org>,
- "open list:TRACING" <linux-trace-kernel@vger.kernel.org>
-References: <20250916072226.220426-1-liulei.rjpt@vivo.com>
- <CAJj2-QHy3rTSPpE5uyu4gW9dWe1E5Q28P_N-VX2Uo+xBFauxdw@mail.gmail.com>
-From: Lei Liu <liulei.rjpt@vivo.com>
-In-Reply-To: <CAJj2-QHy3rTSPpE5uyu4gW9dWe1E5Q28P_N-VX2Uo+xBFauxdw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0051.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::6) To SEZPR06MB5624.apcprd06.prod.outlook.com
- (2603:1096:101:c8::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA87E2EA74C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758102368; cv=none; b=CC5Y4OI27b/dW3nVlNEDWZVcefeHxgBmMwH351hzz63DB2JhLSZ8/ARr8Kn6VPhtXjYxsuI9CqKi71cI7X17UcySZiNHU0oGpPx94J/tWXzRjHlmxMK50/gw/T8Ymmg/KMeVy+1XUAFX1+MIxGkuIdBleEmcBnIDzaqnhSzP57I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758102368; c=relaxed/simple;
+	bh=C1VvAsQRJI7YrP3PfvH4dWEjrOqx884XY76GmBlOBVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EImNjp3+p3b7icZXzJvMny+R75ISNShoYxgrQO+h0+ZU0tsN5pnIh/XevAOTXwvJWnkLdyEknJxMwKUCG2ceagB0kUXLhU8rwrMiUy1JxHEjWX1pLpodv29utTh/Rtkuu/x4BlIwoJZDAaVTt9+y9STVNiG/IF/Zgj3FEqTDgNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RY3lV75a; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45f2cc29fd8so5028035e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758102364; x=1758707164; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x+S6y4iVLqDm0uN2+bAM2tJmf/Y6UpjS7/uM2lMzRm4=;
+        b=RY3lV75aDJlBszpcyDgtqzsCEopo3rEzDJi7svvqMCUa+FDmSkB0JXdG5xeaCsyLYX
+         LyGVX96nEasV0sP0IkrSDX14qp9ko2zAV+qXQViDrt/qu0+2kZmAVstwRwKw/8QxZEJs
+         PACi+DXFEFx1LD8pEgybSQlYqg7ldAzeBTOfQ2DV+nRb2/RB/nsbdCsBbVRGefVdmc86
+         aAi2+KkwQ8IpOi/FkUyT7yC/4+VvOXtVIUtUu8JC1lxvJJnHBMRYQxsHdsmOOC1KELRL
+         t2kXHLNwKk/GxmWSeZ0jGeggi3BcyxQpFk12lbRGBaVji4rnljbwrPX/gNNzOBN7dDei
+         n6OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758102364; x=1758707164;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x+S6y4iVLqDm0uN2+bAM2tJmf/Y6UpjS7/uM2lMzRm4=;
+        b=msGJOOOLpxDOjeGp0QOLoJoBNrD3V5RrolgnKDOaokqE+7tnMWAWDW4VxC45qFB7mf
+         4NLFpv9OgjeRSfsGUfwSzHTEGdR8k1tktgoqihmNo7VWEGnqZxd2Cn+43ntz/Bu7Cp3J
+         eNldBqM40QOFgH1Xrg7TxWN/H1IrKLnD4CUL7zUB1NNVRoWxWhmuZwtu6U8GDOf5ngYU
+         j5s5jaKvqebgDL++bWrGg9qUXojH+PyC+qO8mzOcvMC2GZos/0PPEtJoBzOoupT41qPb
+         gsSpWEciwrgQvTKXhxJI5P+zBRahswSw6yMsmyFa3kd132yM/xR9vRnnLldAgCsOe1eN
+         Cnjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmyHpbA8/j1ObQJAPzdDBVR5ayeZYi7Go0wrMeMQ8YMxpSnt+V6iMGm830Wh81Xsa1hnw76y+ZvTCDYj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx38nvVvG5AO73ccMv6FIFHqIvlKTPznbQj/HqpddcCA6LsnQIp
+	A2ZK0MyR6F3C5OzjeQil+l1yvayQLFTF+zzCHlwHwarEfr03t2akLfDS
+X-Gm-Gg: ASbGnct3vIfUlLb17052UsNRuXhgpDq85TeAL91HKJsf9o5G2kkDf9qN/0aYBOMgnTc
+	uCLdNNH5+7ya5bpe1p3DYdfW4MyVeaHv6R5v+Tzk+YKnv+lwv+7Y48TjzuIshw5K7RriOKQypSU
+	aGibNppbTI0NJD5IUzZGcyaMFgwIjZaIqcde0ohz02lRoIyhaKsDUPQ0fi0hp1vAbTwHJiCJ6WK
+	N2SmnlkQeXlIEe/63ws1rJaFQhukiaqglhRabKuOWhzKO1gPUNP2eOPiUbxrFJoO4sNHoC2Wsmd
+	trSvb4E1fu/Fq8u9kqQ+M6IPUaNR/uflkZGlImgmNH8Z1Flaevmpycv8sxkRp42LUGA/hShaycx
+	BaHtl3i2LhRNw18Y=
+X-Google-Smtp-Source: AGHT+IGbWD+uVEFkH71gk57y08q6YLO/dT2mVOMLrp9VU9G9bg7nqmyBsUuM7bG5cbe5Hw6bH549+g==
+X-Received: by 2002:a05:6000:230f:b0:3dc:1473:1a8d with SMTP id ffacd0b85a97d-3ecdf947cbfmr730275f8f.0.1758102363890;
+        Wed, 17 Sep 2025 02:46:03 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d005:3b00:8bcc:b603:fee7:a273])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613930bdd8sm29480335e9.19.2025.09.17.02.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 02:46:03 -0700 (PDT)
+Date: Wed, 17 Sep 2025 12:46:00 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v18 6/8] mfd: an8855: Add support for Airoha
+ AN8855 Switch MFD
+Message-ID: <20250917094600.umxiz5kcrkcxqntt@skbuf>
+References: <20250915104545.1742-1-ansuelsmth@gmail.com>
+ <20250915104545.1742-1-ansuelsmth@gmail.com>
+ <20250915104545.1742-7-ansuelsmth@gmail.com>
+ <20250915104545.1742-7-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5624:EE_|PS1PPF97BB1365E:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb0e5ca9-e6f7-4572-735c-08ddf5cf0192
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|42112799006|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bk9tclZFWTZSR3NORTVDSVc4QmxBNk9qb3c3MjZJTWxTb1dPM0lBUTh6cUxJ?=
- =?utf-8?B?bEwxbEJYcm80WURVaWRJLzRjK05TeGhVZ0xTZGJ1c0Q1b2VqbFdObDJxMmpX?=
- =?utf-8?B?QVBmSHpVWCtRdmNLYnovSmxKc1dHdXlQOUdqeVdwSGsyc052U2FEUGNhOVYz?=
- =?utf-8?B?QnBSdUZqSmozQlk5VzlrYityWVZFVEE2MjBBa215Z1RaUHFRcis4NmRUVDls?=
- =?utf-8?B?TXhzUEwybGkydEZpRWcyYVBPQjFVaFVPNUNrdm9CKzN1b0FHYnFiWTlLS0ZW?=
- =?utf-8?B?cDREMC9wWlhjQnE0WWxFOTNLRUhDamVjdk9jVHVXeFZZV3N4Y2JlOS85S1lS?=
- =?utf-8?B?MzRWdXp1SDkxMTVjU01OT1dBaktVeVVZZGxBVnVGUlVUa281eHdDb0JXYUtZ?=
- =?utf-8?B?Q2k0K3d4a1paMXpBUUpWZ3ZJOVo0dStnaEhUK3dPZFBCQ3pzUm1YM0tNcVRr?=
- =?utf-8?B?ZUtaOVluNVFScXZTbXFNV0dmZm9oN0t0WU9tOVc1L21wMVhHSWJxVzh3NWY4?=
- =?utf-8?B?SWtzS1pYK1FoWGVzUVRkVWtpRndON1VXMzY4RksxYWVFTmZlWE1pYUVuc0lQ?=
- =?utf-8?B?T2x1Q2J5amJYcm9NRDFKdmNGK3k4d2pxTHBqSUxZbUgwZHFKcUJOT2NiWll2?=
- =?utf-8?B?YmFpWEx2RmxjMkJtT3Yrekp2bG5ybFhXMGNraUxhM041STBQZE9ZTTQ1VTBJ?=
- =?utf-8?B?MzFsZmh3aGVhT3llZmM0blNkTlUvTlhKVnhSb2RFSkFCWjVCdFhXdkN5akRj?=
- =?utf-8?B?SFFSaG1kYlRPRURFUFowbnE1K3kybHlvZHBZcDF4K0RyYUdJL1U1WmJsSlhC?=
- =?utf-8?B?NTNCMDVzOGVzeWs2VG5pdU90TllLd1hjT2RqcTFoY1VSbkdBd3h0RWU0eUY1?=
- =?utf-8?B?OFVIRjcxMENaY1FLbEpsaDhYMCtaUHNnMnE4OFRoRFlHNERFRmVndWd6Q0tC?=
- =?utf-8?B?QUNNQjBWdXdjRVRGNlZFMnRIclZGcDkyZjRQMS85Zkk5bXI0Q2pjTWM0eE04?=
- =?utf-8?B?SnF4amZBejZzMGdPaTNPRENzdTc1azU4SVVIVTRGTHo4MjlJTjZ0Nk9SWDZl?=
- =?utf-8?B?MXVtVER2QnFhemZRdEJTemhHcEpCVDNxU3plaXVNSEVwNHM1VUxhd0hLUGVa?=
- =?utf-8?B?dWlSL1Ria1FIcjZ1QjRQbEZKc3Z3ZS9wczhLOXd0V3hlc3dtcGV5ekJHaWFh?=
- =?utf-8?B?cUdOdDdPaTFhS3hjVkZxa1FWb2NEdVZIemVkU2tyMDRWVEpueUEzL1Arb04x?=
- =?utf-8?B?UWd0MWErUHRBaEFQN1ovQkpqUXJLMTRPYXFLaDRSVlZLNzVjWWZDTkIwdFhm?=
- =?utf-8?B?TUpKUmtCTkNsM0xuc1ZldTlYUEVYMzU0OGczTzRxODZQalBlTzBabVFONjJy?=
- =?utf-8?B?bjkrWDQ0UGplZWkxbjdockRxMTc3eHB2MUErbnBKVFFsUm9WR2NrNlFaUlY1?=
- =?utf-8?B?MDY0N2FsNDZhbnhMQ2MzaGJ2WDhYUm02T0tzaExpd25Fby9jRVQ0dDJrU3BQ?=
- =?utf-8?B?bCt5dDdUQWYyNXp5QktoY3RXbGZ0eis1UUlBQkVaU05NSFRZK25JdG41YVhS?=
- =?utf-8?B?RDRpOC9WdHhYZ2xlUXAzbWxHK3EwWUpWY0JUek9mRG5ZZDNid3d0aWJQS29Y?=
- =?utf-8?B?RVZRSUZuTlkzK09NV0hMWFpxRWRlTWdJQlFtY1JNUFl4MTVkK2YrWVhjUUph?=
- =?utf-8?B?Unl5aWdwUVdLUThndHdMNHMvem04R3g4cXNncWkxRVJNbk1XQ0FKK3RMS0Jr?=
- =?utf-8?B?NC95ZTdjdVVuME51NFlkeWNVYkxTN1VWT29hZDNrUUFKMGFERktqL213R1Yx?=
- =?utf-8?Q?Lt5CAcS17bmYMZXP4KTGQmeVVyqYTwDPdOdJg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5624.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(42112799006)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NXM4U0NIVlN5Ry80NHNDUnZQQm9DdXEvVFIveXFRV2EzYkU0dmlhZnhKUGd2?=
- =?utf-8?B?WFdYcTNiS0hhUWFJNm1FbUV5NW5GTHR6bGFqR1lVOG9tZ1pUWVBQUll6S20y?=
- =?utf-8?B?WXd1aURRWXJhcUQ4UCsyQnN3ekc0Z2JGSUdBV0xsZ2duT2RjVzE3cnBHOS9R?=
- =?utf-8?B?NjQrdTFnUDVuNEVKVEJhZFdhUHNFalliYkJ2dUZNYXV1ZEt6a1FBZDZqUHhK?=
- =?utf-8?B?SThOL2VqWHI0UGM4KzBWSmhvR0YvVkZvdnJXUFdyUTB5WHNzaDh6VlZMcTYw?=
- =?utf-8?B?NFlDZmhid2pOSWsvS1hEZXBHb2o0NThDRS9KbmhzWE1uRy9wRFdUK1FrMVVr?=
- =?utf-8?B?RHk3UmVYQXlnSHRBaUd6YWFuY09lK2Rqc0F2RTgzbTRYVXRTLzY0a3QvQm82?=
- =?utf-8?B?K2hLd0lxc3M5WW56ZTFRTVlKOU52Sk5XMzZGQTFwdTZlVjRWaEdrQzc4NTRQ?=
- =?utf-8?B?N1RDRDBLY1dHS3NlMktYMitIZno4L09SdEhKOFArVExGaXRjSytvQmNnL04x?=
- =?utf-8?B?VnQvT0F6MW44V3hMUnNTRVRVZlZld2J5WVZmZTZTQ3Q5c0tBempiUTJwZits?=
- =?utf-8?B?M1JDbVcxT1dXclRwRTJqN2tBTXJCck9lZmZvbUwzMjNXMHRld3ZBNUMrZ1Z5?=
- =?utf-8?B?MUZGU3dzVVBNS3pOcGZQRXJEdWZIeS8zc01wQlAxUmsrVTgzRW1kTFl0R1pS?=
- =?utf-8?B?Sk50TTJvRDFibWtaZ2ZSNjd0TnZyenJHek5kc3dUdHJlMHJjbERTWlFrQ3lM?=
- =?utf-8?B?UjBhelBmbjVXQ1VCUFc2eWNiUWVla2pJbmJFRHFPWEoyTkZFZEY2YkUxYlVw?=
- =?utf-8?B?cFN2cUcyMWlORGhnQnlDOEZzcHFraWdFRWtKZVg5T2p2V0hjTGsrRm1jTzZG?=
- =?utf-8?B?c0NzeDUzL2kwdENvWDdmbS9zUEduNU85WWsxM0hrV0t0eUQ5WFNBQ0k5RldW?=
- =?utf-8?B?ZFlzR2xwM2VNcm1GTjdFY3dUZ1Z6eXR3a01DZTFsU1FaRWJSa0RyNkJHTkd4?=
- =?utf-8?B?MnZOaERzcXk2NGs4UkJEODdWcG9QNWs0eEZTc0dPOHM1c1hPWmhONXZtREZt?=
- =?utf-8?B?Y1g2T0t0dmZmTFNTNlgxb1N0YlR1WjNIRlhOR29uaHdrV3lpOGI4dU0rZjNZ?=
- =?utf-8?B?bmZBVWtYUjZUcnA5OVZDUFJoYUtKRUQwUUg1Vmc1RFp2WVFkdk9pQSsyRy82?=
- =?utf-8?B?VENzL0RlZHZTSmV4T1pDYTBsWnNEdURiQlRQdWJQZG5Fc2h1WEg4NGhNK1Fh?=
- =?utf-8?B?alozYmdvNEdGUXhQenNIWGVWVHJUN1JwZ2E0eGRmUXcvYWNjLzh1MnpBOXln?=
- =?utf-8?B?eXI0V0F6QU1KWnh3U1BxVEJiODVjamhNbGlObkdDUExEMkNwVWtaMWtvL1JS?=
- =?utf-8?B?RjJEN1d6ZzhybC9OdHBSOFQ2eTRIT0kzTGhYeTF4bW92b1h4MEZzRmlvRDhQ?=
- =?utf-8?B?NDVvNnlkbUdyaUxWVzRqaENEalRrekRkQWpDNzBoUjEwVGlDanQ1c1JtNDNn?=
- =?utf-8?B?cXFvbEZMbW9kdXM1M0l0RVV1Z2w1ckl2cEFxcmFkTHhleG1Tb0RVb2RaaGh4?=
- =?utf-8?B?WXVLZllGYzlPMGRyenpDWUVaVk1MQ0FaVVdybUU1QThnUExaVnBVOWQvTlFJ?=
- =?utf-8?B?QllUQmEyYkpnRS9SK2cvU1NHRDVycmdlMy92Nk1reGIyTGtvc1FhU1dKcDJP?=
- =?utf-8?B?cVdIY1pWaTJvNWpNNHRYUlFNSnNhMm5PcktNc1d5UDN5WHV5U3lPTlFhMHAv?=
- =?utf-8?B?N05LR2dGRlpabUtFYzhFVUM1bUs4UitlZEtSYXV5TWRTOVV3QlFqM0RHc2t2?=
- =?utf-8?B?QzJnUFdxaCtuZk1uZmJhSGloWGMvTHZKKzZTbGxoT25BYldKeE8ybmRHNmg1?=
- =?utf-8?B?VEN5VFQwNWRFaUNCTkplcTZ4ZVhWUmlPUGtQZTQ4R3FsN0RIT0NlS3FMeHl0?=
- =?utf-8?B?c2ZTMDdpckw4ODdYR0x3Z2JoSlNHYTlSUFE0WGxqUTA4eHJ4bndWWGNhNzZC?=
- =?utf-8?B?b0Z4bzNUQlREdEdPSllycjZSaTc0MEJCdTdrR05QbXUwZFRrbEduS210eGsy?=
- =?utf-8?B?T2svVjFoS255VXJyMm95YXlBNFhEb3E3OENqaVMwSXFIMDNzakpGcnkvcGRn?=
- =?utf-8?Q?/sicCINg1z+8twRExpxB1aKZb?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb0e5ca9-e6f7-4572-735c-08ddf5cf0192
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5624.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 09:45:59.3011
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xuvpdBUDMG3OTTWlgjfEppFntXnJ3nQj+5yoJvec1t/Wjp01WYAHCEmyopnS7RbBAtkjYBxO3z1tiz5CSG4tDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPF97BB1365E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915104545.1742-7-ansuelsmth@gmail.com>
+ <20250915104545.1742-7-ansuelsmth@gmail.com>
 
+On Mon, Sep 15, 2025 at 12:45:42PM +0200, Christian Marangi wrote:
+> Add support for Airoha AN8855 Switch MFD that provide support for a DSA
+> switch and a NVMEM provider.
+> 
+> Also make use of the mdio-regmap driver and register a regmap for each
+> internal PHY of the switch.
+> This is needed to handle the double usage of the PHYs as both PHY and
+> Switch accessor.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/mfd/Kconfig         |  13 +
+>  drivers/mfd/Makefile        |   1 +
+>  drivers/mfd/airoha-an8855.c | 517 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 531 insertions(+)
+>  create mode 100644 drivers/mfd/airoha-an8855.c
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 425c5fba6cb1..f93450444887 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -53,6 +53,19 @@ config MFD_ALTERA_SYSMGR
+>  	  using regmap_mmio accesses for ARM32 parts and SMC calls to
+>  	  EL3 for ARM64 parts.
+>  
+> +config MFD_AIROHA_AN8855
+> +	tristate "Airoha AN8855 Switch Core"
+> +	select MFD_CORE
+> +	select MDIO_DEVICE
+> +	select MDIO_REGMAP
+> +	depends on NETDEVICES && OF
+> +	help
+> +	  Support for the Airoha AN8855 Switch Core. This is an SoC
+> +	  that provides various peripherals, to count, i2c, an Ethrnet
+> +	  Switch, a CPU timer, GPIO, eFUSE.
+> +
+> +	  Currently it provides a DSA switch and a NVMEM provider.
+> +
+>  config MFD_ACT8945A
+>  	tristate "Active-semi ACT8945A"
+>  	select MFD_CORE
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index f7bdedd5a66d..30f46c53d6df 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_MFD_88PM860X)	+= 88pm860x.o
+>  obj-$(CONFIG_MFD_88PM800)	+= 88pm800.o 88pm80x.o
+>  obj-$(CONFIG_MFD_88PM805)	+= 88pm805.o 88pm80x.o
+>  obj-$(CONFIG_MFD_88PM886_PMIC)	+= 88pm886.o
+> +obj-$(CONFIG_MFD_AIROHA_AN8855)	+= airoha-an8855.o
+>  obj-$(CONFIG_MFD_ACT8945A)	+= act8945a.o
+>  obj-$(CONFIG_MFD_SM501)		+= sm501.o
+>  obj-$(CONFIG_ARCH_BCM2835)	+= bcm2835-pm.o
+> diff --git a/drivers/mfd/airoha-an8855.c b/drivers/mfd/airoha-an8855.c
+> new file mode 100644
+> index 000000000000..a46c5a0c3668
+> --- /dev/null
+> +++ b/drivers/mfd/airoha-an8855.c
+> @@ -0,0 +1,517 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Core driver for Airoha AN8855 Switch
+> + *
+> + * Copyright (C) 2024 Christian Marangi <ansuelsmth@gmail.com>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/fwnode_mdio.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mdio.h>
+> +#include <linux/mdio/mdio-regmap.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/phy.h>
+> +#include <linux/regmap.h>
+> +
+> +/* Register for HW trap status */
+> +#define AN8855_HWTRAP			0x1000009c
+> +
+> +/*
+> + * Register of the Switch ID
+> + * (called Project ID in Documentation)
+> + */
+> +#define AN8855_CREV			0x10005000
+> +#define   AN8855_ID			0x8855 /* Switch ID */
+> +
+> +/* Register for GPHY Power Down
+> + * Used to Toggle the Gigabit PHY power and enable them.
+> + */
+> +#define AN8855_RG_GPHY_AFE_PWD		0x1028c840
+> +
+> +/* MII Registers */
+> +#define AN8855_PHY_SELECT_PAGE		0x1f
+> +#define   AN8855_PHY_PAGE		GENMASK(2, 0)
+> +#define   AN8855_PHY_PAGE_STANDARD	FIELD_PREP_CONST(AN8855_PHY_PAGE, 0x0)
+> +#define   AN8855_PHY_PAGE_EXTENDED_1	FIELD_PREP_CONST(AN8855_PHY_PAGE, 0x1)
+> +#define   AN8855_PHY_PAGE_EXTENDED_4	FIELD_PREP_CONST(AN8855_PHY_PAGE, 0x4)
+> +
+> +/* MII Registers Page 4 */
+> +#define AN8855_PBUS_MODE		0x10
+> +#define   AN8855_PBUS_MODE_ADDR_FIXED	0x0
+> +#define   AN8855_PBUS_MODE_ADDR_INCR	BIT(15)
+> +#define AN8855_PBUS_WR_ADDR_HIGH	0x11
+> +#define AN8855_PBUS_WR_ADDR_LOW		0x12
+> +#define AN8855_PBUS_WR_DATA_HIGH	0x13
+> +#define AN8855_PBUS_WR_DATA_LOW		0x14
+> +#define AN8855_PBUS_RD_ADDR_HIGH	0x15
+> +#define AN8855_PBUS_RD_ADDR_LOW		0x16
+> +#define AN8855_PBUS_RD_DATA_HIGH	0x17
+> +#define AN8855_PBUS_RD_DATA_LOW		0x18
+> +
+> +#define AN8855_MAX_PHY_PORT		5
+> +
+> +struct an8855_core_priv {
+> +	struct mii_bus *bus;
+> +	unsigned int switch_addr;
+> +	u16 current_page;
+> +};
+> +
+> +struct an8855_phy_priv {
+> +	u8 addr;
+> +	struct an8855_core_priv *core;
+> +};
+> +
+> +static const struct mfd_cell an8855_cells[] = {
+> +	MFD_CELL_OF("an8855-efuse", NULL, NULL, 0, 0,
+> +		    "airoha,an8855-efuse"),
+> +	MFD_CELL_OF("an8855-switch", NULL, NULL, 0, 0,
+> +		    "airoha,an8855-switch"),
+> +};
+> +
+> +static int an8855_mii_set_page(struct an8855_core_priv *priv, u8 addr,
+> +			       u8 page) __must_hold(&priv->bus->mdio_lock)
+> +{
+> +	struct mii_bus *bus = priv->bus;
+> +	int ret;
+> +
+> +	ret = __mdiobus_write(bus, addr, AN8855_PHY_SELECT_PAGE, page);
+> +	if (ret) {
+> +		dev_err_ratelimited(&bus->dev, "failed to set mii page\n");
+> +		return ret;
+> +	}
+> +
+> +	/* Cache current page if next MII read/write is for Switch page */
+> +	priv->current_page = page;
+> +	return 0;
+> +}
+> +
+> +static int an8855_mii_read32(struct mii_bus *bus, u8 phy_id, u32 reg,
+> +			     u32 *val) __must_hold(&bus->mdio_lock)
+> +{
+> +	int lo, hi, ret;
+> +
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_MODE,
+> +			      AN8855_PBUS_MODE_ADDR_FIXED);
+> +	if (ret)
+> +		goto err;
+> +
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_RD_ADDR_HIGH,
+> +			      upper_16_bits(reg));
+> +	if (ret)
+> +		goto err;
+> +
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_RD_ADDR_LOW,
+> +			      lower_16_bits(reg));
+> +	if (ret)
+> +		goto err;
+> +
+> +	hi = __mdiobus_read(bus, phy_id, AN8855_PBUS_RD_DATA_HIGH);
+> +	if (hi < 0) {
+> +		ret = hi;
+> +		goto err;
+> +	}
+> +
+> +	lo = __mdiobus_read(bus, phy_id, AN8855_PBUS_RD_DATA_LOW);
+> +	if (lo < 0) {
+> +		ret = lo;
+> +		goto err;
+> +	}
+> +
+> +	*val = ((u16)hi << 16) | ((u16)lo & 0xffff);
+> +
+> +	return 0;
+> +err:
+> +	dev_err_ratelimited(&bus->dev, "failed to read register\n");
+> +	return ret;
+> +}
+> +
+> +static int an8855_regmap_read(void *ctx, uint32_t reg, uint32_t *val)
+> +{
+> +	struct an8855_core_priv *priv = ctx;
+> +	struct mii_bus *bus = priv->bus;
+> +	u16 addr = priv->switch_addr;
+> +	int ret;
+> +
+> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+> +	ret = an8855_mii_set_page(priv, addr, AN8855_PHY_PAGE_EXTENDED_4);
+> +	if (ret < 0)
+> +		goto exit;
+> +
+> +	ret = an8855_mii_read32(bus, addr, reg, val);
+> +
+> +exit:
+> +	mutex_unlock(&bus->mdio_lock);
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +
+> +static int an8855_mii_write32(struct mii_bus *bus, u8 phy_id, u32 reg,
+> +			      u32 val) __must_hold(&bus->mdio_lock)
+> +{
+> +	int ret;
+> +
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_MODE,
+> +			      AN8855_PBUS_MODE_ADDR_FIXED);
+> +	if (ret)
+> +		goto err;
+> +
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_WR_ADDR_HIGH,
+> +			      upper_16_bits(reg));
+> +	if (ret)
+> +		goto err;
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_WR_ADDR_LOW,
+> +			      lower_16_bits(reg));
+> +	if (ret)
+> +		goto err;
+> +
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_WR_DATA_HIGH,
+> +			      upper_16_bits(val));
+> +	if (ret)
+> +		goto err;
+> +
+> +	ret = __mdiobus_write(bus, phy_id, AN8855_PBUS_WR_DATA_LOW,
+> +			      lower_16_bits(val));
+> +	if (ret)
+> +		goto err;
+> +
+> +	return 0;
+> +err:
+> +	dev_err_ratelimited(&bus->dev,
+> +			    "failed to write an8855 register\n");
+> +	return ret;
+> +}
+> +
+> +static int an8855_regmap_write(void *ctx, uint32_t reg, uint32_t val)
+> +{
+> +	struct an8855_core_priv *priv = ctx;
+> +	struct mii_bus *bus = priv->bus;
+> +	u16 addr = priv->switch_addr;
+> +	int ret;
+> +
+> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+> +	ret = an8855_mii_set_page(priv, addr, AN8855_PHY_PAGE_EXTENDED_4);
+> +	if (ret)
+> +		goto exit;
+> +
+> +	ret = an8855_mii_write32(bus, addr, reg, val);
+> +
+> +exit:
+> +	mutex_unlock(&bus->mdio_lock);
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +
+> +static int an8855_regmap_update_bits(void *ctx, uint32_t reg, uint32_t mask,
+> +				     uint32_t write_val)
+> +{
+> +	struct an8855_core_priv *priv = ctx;
+> +	struct mii_bus *bus = priv->bus;
+> +	u16 addr = priv->switch_addr;
+> +	u32 val;
+> +	int ret;
+> +
+> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+> +	ret = an8855_mii_set_page(priv, addr, AN8855_PHY_PAGE_EXTENDED_4);
+> +	if (ret)
+> +		goto exit;
+> +
+> +	ret = an8855_mii_read32(bus, addr, reg, &val);
+> +	if (ret < 0)
+> +		goto exit;
+> +
+> +	val &= ~mask;
+> +	val |= write_val;
+> +	ret = an8855_mii_write32(bus, addr, reg, val);
+> +
+> +exit:
+> +	mutex_unlock(&bus->mdio_lock);
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +
+> +static const struct regmap_range an8855_readable_ranges[] = {
+> +	regmap_reg_range(0x10000000, 0x10000fff), /* SCU */
+> +	regmap_reg_range(0x10001000, 0x10001fff), /* RBUS */
+> +	regmap_reg_range(0x10002000, 0x10002fff), /* MCU */
+> +	regmap_reg_range(0x10005000, 0x10005fff), /* SYS SCU */
+> +	regmap_reg_range(0x10007000, 0x10007fff), /* I2C Slave */
+> +	regmap_reg_range(0x10008000, 0x10008fff), /* I2C Master */
+> +	regmap_reg_range(0x10009000, 0x10009fff), /* PDMA */
+> +	regmap_reg_range(0x1000a100, 0x1000a2ff), /* General Purpose Timer */
+> +	regmap_reg_range(0x1000a200, 0x1000a2ff), /* GPU timer */
 
-On 2025/9/17 0:33, Yuanchu Xie wrote:
-> On Tue, Sep 16, 2025 at 2:22 AM Lei Liu <liulei.rjpt@vivo.com> wrote:
->> ...
->>
->> 2. Solution Proposal
->> Introduce a Readahead LRU to track pages brought in via readahead. During
->> memory reclamation, prioritize scanning this LRU to reclaim pages that
->> have not been accessed recently. For pages in the Readahead LRU that are
->> accessed, move them back to the inactive_file LRU to await subsequent
->> reclamation.
-> I'm unsure this is the right solution though, given all users would
-> have this readahead LRU on and we don't have performance numbers
-> besides application startup here.
-> My impression is that readahead behavior is highly dependent on the
-> hardware, the workload, and the desired behavior, so making the
-> readahead{-adjacent} behavior more amenable to tuning seems like the
-> right direction.
->
-> Maybe relevant discussions: https://lwn.net/Articles/897786/
->
-> I only skimmed the code but noticed a few things:
->
->> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
->> index a458f1e112fd..4f3f031134fd 100644
->> --- a/fs/proc/meminfo.c
->> +++ b/fs/proc/meminfo.c
->> @@ -71,6 +71,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->>          show_val_kb(m, "Inactive(anon): ", pages[LRU_INACTIVE_ANON]);
->>          show_val_kb(m, "Active(file):   ", pages[LRU_ACTIVE_FILE]);
->>          show_val_kb(m, "Inactive(file): ", pages[LRU_INACTIVE_FILE]);
->> +       show_val_kb(m, "ReadAhead(file):",
-> I notice both readahead and read ahead in this patch. Stick to the
-> conventional one (readahead).
->
->> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> index 8d3fa3a91ce4..57dac828aa4f 100644
->> --- a/include/linux/page-flags.h
->> +++ b/include/linux/page-flags.h
->> @@ -127,6 +127,7 @@ enum pageflags {
->>   #ifdef CONFIG_ARCH_USES_PG_ARCH_3
->>          PG_arch_3,
->>   #endif
->> +       PG_readahead_lru,
-> More pageflags...
->
-> b/include/trace/events/mmflags.h
->> index aa441f593e9a..2dbc1701e838 100644
->> --- a/include/trace/events/mmflags.h
->> +++ b/include/trace/events/mmflags.h
->> @@ -159,7 +159,8 @@ TRACE_DEFINE_ENUM(___GFP_LAST_BIT);
->>          DEF_PAGEFLAG_NAME(reclaim),                                     \
->>          DEF_PAGEFLAG_NAME(swapbacked),                                  \
->>          DEF_PAGEFLAG_NAME(unevictable),                                 \
->> -       DEF_PAGEFLAG_NAME(dropbehind)                                   \
->> +       DEF_PAGEFLAG_NAME(dropbehind),                                  \
->> +       DEF_PAGEFLAG_NAME(readahead_lru)                                \
->>   IF_HAVE_PG_MLOCK(mlocked)                                              \
->>   IF_HAVE_PG_HWPOISON(hwpoison)                                          \
->>   IF_HAVE_PG_IDLE(idle)                                                  \
->> @@ -309,6 +310,7 @@ IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,  "droppable"     )               \
->>                  EM (LRU_ACTIVE_ANON, "active_anon") \
->>                  EM (LRU_INACTIVE_FILE, "inactive_file") \
->>                  EM (LRU_ACTIVE_FILE, "active_file") \
->> +               EM(LRU_READ_AHEAD_FILE, "readahead_file") \
-> Likewise, inconsistent naming.
->
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index 9e5ef39ce73a..0feab4d89d47 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -760,6 +760,8 @@ void folio_migrate_flags(struct folio *newfolio, struct folio *folio)
->>                  folio_set_workingset(newfolio);
->>          if (folio_test_checked(folio))
->>                  folio_set_checked(newfolio);
->> +       if (folio_test_readahead_lru(folio))
->> +               folio_set_readahead_lru(folio);
-> newfolio
-Understood—I'll revise accordingly.
->
->>   /*
->> @@ -5800,6 +5837,87 @@ static void lru_gen_shrink_node(struct pglist_data *pgdat, struct scan_control *
->>
->>   #endif /* CONFIG_LRU_GEN */
->>
->> +static unsigned long shrink_read_ahead_list(unsigned long nr_to_scan,
->> +                                           unsigned long nr_to_reclaim,
->> +                                           struct lruvec *lruvec,
->> +                                           struct scan_control *sc)
->> +{
->> +       LIST_HEAD(l_hold);
->> +       LIST_HEAD(l_reclaim);
->> +       LIST_HEAD(l_inactive);
->> +       unsigned long nr_scanned = 0;
->> +       unsigned long nr_taken = 0;
->> +       unsigned long nr_reclaimed = 0;
->> +       unsigned long vm_flags;
->> +       enum vm_event_item item;
->> +       struct pglist_data *pgdat = lruvec_pgdat(lruvec);
->> +       struct reclaim_stat stat = { 0 };
->> +
->> +       lru_add_drain();
->> +
->> +       spin_lock_irq(&lruvec->lru_lock);
->> +       nr_taken = isolate_lru_folios(nr_to_scan, lruvec, &l_hold, &nr_scanned,
->> +                                     sc, LRU_READ_AHEAD_FILE);
->> +
->> +       __count_vm_events(PGSCAN_READAHEAD_FILE, nr_scanned);
->> +       __mod_node_page_state(pgdat, NR_ISOLATED_FILE, nr_taken);
->> +       item = PGSCAN_KSWAPD + reclaimer_offset(sc);
->> +       if (!cgroup_reclaim(sc))
->> +               __count_vm_events(item, nr_scanned);
->> +       count_memcg_events(lruvec_memcg(lruvec), item, nr_scanned);
->> +       __count_vm_events(PGSCAN_FILE, nr_scanned);
->> +       spin_unlock_irq(&lruvec->lru_lock);
->> +
->> +       if (nr_taken == 0)
->> +               return 0;
->> +
->> +       while (!list_empty(&l_hold)) {
->> +               struct folio *folio;
->> +
->> +               cond_resched();
->> +               folio = lru_to_folio(&l_hold);
->> +               list_del(&folio->lru);
->> +               folio_clear_readahead_lru(folio);
->> +
->> +               if (folio_referenced(folio, 0, sc->target_mem_cgroup, &vm_flags)) {
->> +                       list_add(&folio->lru, &l_inactive);
->> +                       continue;
->> +               }
->> +               folio_clear_active(folio);
->> +               list_add(&folio->lru, &l_reclaim);
->> +       }
->> +
->> +       nr_reclaimed = shrink_folio_list(&l_reclaim, pgdat, sc, &stat, true,
->> +                                        lruvec_memcg(lruvec));
->> +
->> +       list_splice(&l_reclaim, &l_inactive);
->> +
->> +       spin_lock_irq(&lruvec->lru_lock);
->> +       move_folios_to_lru(lruvec, &l_inactive);
->> +       __mod_node_page_state(pgdat, NR_ISOLATED_FILE, -nr_taken);
->> +
->> +       __count_vm_events(PGSTEAL_READAHEAD_FILE, nr_reclaimed);
->> +       item = PGSTEAL_KSWAPD + reclaimer_offset(sc);
->> +       if (!cgroup_reclaim(sc))
->> +               __count_vm_events(item, nr_reclaimed);
->> +       count_memcg_events(lruvec_memcg(lruvec), item, nr_reclaimed);
->> +       __count_vm_events(PGSTEAL_FILE, nr_reclaimed);
->> +       spin_unlock_irq(&lruvec->lru_lock);
-> I see the idea is that readahead pages should be scanned before the
-> rest of inactive file. I wonder if this is achievable without adding
-> another LRU.
->
->
-> Thanks,
-> Yuanchu
+Is it intentional that the General Purpose Timer and the GPU timer
+ranges overlap?
 
-Hi， Yuanchu
+> +	regmap_reg_range(0x1000a300, 0x1000a3ff), /* GPIO */
+> +	regmap_reg_range(0x1000a400, 0x1000a5ff), /* EFUSE */
+> +	regmap_reg_range(0x1000c000, 0x1000cfff), /* GDMP CSR */
+> +	regmap_reg_range(0x10010000, 0x1001ffff), /* GDMP SRAM */
+> +	regmap_reg_range(0x10200000, 0x10203fff), /* Switch - ARL Global */
+> +	regmap_reg_range(0x10204000, 0x10207fff), /* Switch - BMU */
+> +	regmap_reg_range(0x10208000, 0x1020bfff), /* Switch - ARL Port */
+> +	regmap_reg_range(0x1020c000, 0x1020cfff), /* Switch - SCH */
+> +	regmap_reg_range(0x10210000, 0x10213fff), /* Switch - MAC */
+> +	regmap_reg_range(0x10214000, 0x10217fff), /* Switch - MIB */
+> +	regmap_reg_range(0x10218000, 0x1021bfff), /* Switch - Port Control */
+> +	regmap_reg_range(0x1021c000, 0x1021ffff), /* Switch - TOP */
+> +	regmap_reg_range(0x10220000, 0x1022ffff), /* SerDes */
+> +	regmap_reg_range(0x10286000, 0x10286fff), /* RG Batcher */
+> +	regmap_reg_range(0x1028c000, 0x1028ffff), /* ETHER_SYS */
+> +	regmap_reg_range(0x30000000, 0x37ffffff), /* I2C EEPROM */
+> +	regmap_reg_range(0x38000000, 0x3fffffff), /* BOOT_ROM */
+> +	regmap_reg_range(0xa0000000, 0xbfffffff), /* GPHY */
+> +};
+> +
+> +static const struct regmap_access_table an8855_readable_table = {
+> +	.yes_ranges = an8855_readable_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(an8855_readable_ranges),
+> +};
+> +
+> +static const struct regmap_config an8855_regmap_config = {
+> +	.name = "switch",
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +	.max_register = 0xbfffffff,
+> +	.reg_read = an8855_regmap_read,
+> +	.reg_write = an8855_regmap_write,
+> +	.reg_update_bits = an8855_regmap_update_bits,
+> +	.disable_locking = true,
+> +	.rd_table = &an8855_readable_table,
+> +};
+> +
+> +static int an855_regmap_phy_reset_page(struct an8855_core_priv *priv,
+> +				       int phy) __must_hold(&priv->bus->mdio_lock)
+> +{
+> +	/* Check PHY page only for addr shared with switch */
+> +	if (phy != priv->switch_addr)
+> +		return 0;
+> +
+> +	/* Don't restore page if it's not set to Switch page */
+> +	if (priv->current_page != FIELD_GET(AN8855_PHY_PAGE,
+> +					    AN8855_PHY_PAGE_EXTENDED_4))
+> +		return 0;
+> +
+> +	/*
+> +	 * Restore page to 0, PHY might change page right after but that
+> +	 * will be ignored as it won't be a switch page.
+> +	 */
+> +	return an8855_mii_set_page(priv, phy, AN8855_PHY_PAGE_STANDARD);
+> +}
+> +
+> +static int an8855_regmap_phy_read(void *ctx, uint32_t reg, uint32_t *val)
+> +{
+> +	struct an8855_phy_priv *priv = ctx;
+> +	struct an8855_core_priv *core_priv;
+> +	u32 addr = priv->addr;
+> +	struct mii_bus *bus;
+> +	int ret;
+> +
+> +	core_priv = priv->core;
+> +	bus = core_priv->bus;
+> +
+> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+> +	ret = an855_regmap_phy_reset_page(core_priv, addr);
+> +	if (ret)
+> +		goto exit;
+> +
+> +	ret = __mdiobus_read(bus, addr, reg);
+> +	if (ret >= 0)
+> +		*val = ret;
+> +
+> +exit:
+> +	mutex_unlock(&bus->mdio_lock);
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +
+> +static int an8855_regmap_phy_write(void *ctx, uint32_t reg, uint32_t val)
+> +{
+> +	struct an8855_phy_priv *priv = ctx;
+> +	struct an8855_core_priv *core_priv;
+> +	u32 addr = priv->addr;
+> +	struct mii_bus *bus;
+> +	int ret;
+> +
+> +	core_priv = priv->core;
+> +	bus = core_priv->bus;
+> +
+> +	mutex_lock_nested(&bus->mdio_lock, MDIO_MUTEX_NESTED);
+> +	ret = an855_regmap_phy_reset_page(core_priv, addr);
+> +	if (ret)
+> +		goto exit;
+> +
+> +	ret = __mdiobus_write(bus, addr, reg, val);
+> +
+> +exit:
+> +	mutex_unlock(&bus->mdio_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct regmap_config an8855_phy_regmap_config = {
+> +	.reg_bits = 16,
+> +	.val_bits = 16,
+> +	.reg_read = an8855_regmap_phy_read,
+> +	.reg_write = an8855_regmap_phy_write,
+> +	.disable_locking = true,
+> +	.max_register = 0x1f,
+> +};
+> +
+> +static int an8855_read_switch_id(struct device *dev, struct regmap *regmap)
+> +{
+> +	u32 id;
+> +	int ret;
+> +
+> +	ret = regmap_read(regmap, AN8855_CREV, &id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (id != AN8855_ID) {
+> +		dev_err(dev, "Detected Switch ID %x but %x was expected\n",
+> +			id, AN8855_ID);
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int an8855_phy_register(struct device *dev, struct an8855_core_priv *priv,
+> +			       struct device_node *phy_np)
+> +{
+> +	struct mdio_regmap_config mrc = { };
+> +	struct an8855_phy_priv *phy_priv;
+> +	struct regmap *regmap;
+> +	struct mii_bus *bus;
+> +	u8 phy_offset;
+> +	u32 addr;
+> +	int ret;
+> +
+> +	ret = of_property_read_u32(phy_np, "reg", &addr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	phy_offset = addr - priv->switch_addr;
+> +	if (phy_offset >= AN8855_MAX_PHY_PORT)
+> +		return -EINVAL;
+> +
+> +	phy_priv = devm_kzalloc(dev, sizeof(*phy_priv), GFP_KERNEL);
+> +	if (!phy_priv)
+> +		return -ENOMEM;
+> +
+> +	phy_priv->addr = addr;
+> +	phy_priv->core = priv;
+> +
+> +	regmap = devm_regmap_init(dev, NULL, phy_priv, &an8855_phy_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap),
+> +				     "phy%d regmap initialization failed\n",
+> +				      addr);
+> +
+> +	mrc.regmap = regmap;
+> +	mrc.parent = dev;
+> +	mrc.valid_addr = addr;
+> +	snprintf(mrc.name, MII_BUS_ID_SIZE, "an8855-phy%d-mii", addr);
+> +
+> +	bus = devm_mdio_regmap_register(dev, &mrc);
+> +	if (IS_ERR(bus))
+> +		return PTR_ERR(bus);
+> +
+> +	return fwnode_mdiobus_register_phy(bus, of_fwnode_handle(phy_np), addr);
+> +}
+> +
+> +static int an855_mdio_register(struct device *dev, struct an8855_core_priv *priv)
+> +{
+> +	struct device_node *mdio_np;
+> +	int ret = 0;
+> +
+> +	mdio_np = of_get_child_by_name(dev->of_node, "mdio");
+> +	if (!mdio_np)
+> +		return -ENODEV;
+> +
+> +	for_each_available_child_of_node_scoped(mdio_np, phy_np) {
+> +		ret = an8855_phy_register(dev, priv, phy_np);
+> +		if (ret)
+> +			break;
+> +	}
+> +
+> +	of_node_put(mdio_np);
+> +	return ret;
+> +}
+> +
+> +static int an8855_core_probe(struct mdio_device *mdiodev)
+> +{
+> +	struct device *dev = &mdiodev->dev;
+> +	struct an8855_core_priv *priv;
+> +	struct gpio_desc *reset_gpio;
+> +	struct regmap *regmap;
+> +	u32 val;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->bus = mdiodev->bus;
+> +	priv->switch_addr = mdiodev->addr;
+> +	/* No DMA for mdiobus, mute warning for DMA mask not set */
+> +	dev->dma_mask = &dev->coherent_dma_mask;
+> +
+> +	regmap = devm_regmap_init(dev, NULL, priv, &an8855_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap),
+> +				     "regmap initialization failed\n");
+> +
+> +	ret = an855_mdio_register(dev, priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(reset_gpio))
+> +		return PTR_ERR(reset_gpio);
+> +
+> +	if (reset_gpio) {
+> +		usleep_range(100000, 150000);
+> +		gpiod_set_value_cansleep(reset_gpio, 0);
+> +		usleep_range(100000, 150000);
+> +		gpiod_set_value_cansleep(reset_gpio, 1);
 
-Thank you for your valuable feedback!
+Is this correct? Isn't the default logical value of the GPIO "0"?
+And when you set the GPIO to logical 1 and go, doesn't that mean you're
+leaving the reset asserted?
 
-1.We initially considered keeping readahead pages in the system's 
-existing inactive/active LRUs without adding a dedicated LRU. However, 
-this approach may lead to inefficient reclamation of readahead pages.
+Is it really GPIOD_OUT_LOW?
 
-Reason: When scanning the inactive LRU, processing readahead pages can 
-be frequently interrupted by non-readahead pages (e.g., shared/accessed 
-pages). The reference checks for these non-readahead pages incur 
-significant overhead, slowing down the scanning and reclamation of 
-readahead pages.
-Thus, isolating readahead pages in a readahead LRU allows more targeted 
-reclamation, significantly accelerating scanning and recycling efficiency.
+Also, why do you need to sleep before the first gpiod_set_value_cansleep() call?
+What are you waiting for?
 
-2.That said, this solution does raise valid concerns. As you rightly 
-pointed out, enabling this LRU globally may not align with all users' 
-needs since not every scenario requires it.
-
-3.For now, this remains a preliminary solution. The primary goal of this 
-RFC is to highlight the issue of excessive readahead overhead and gather 
-community insights for better alternatives.
-
-We are actively exploring solutions without adding a new LRU for future 
-iterations.
-
-Best regards,
-Lei Liu
+> +
+> +		/* Poll HWTRAP reg to wait for Switch to fully Init */
+> +		ret = regmap_read_poll_timeout(regmap, AN8855_HWTRAP, val,
+> +					       val, 20, 200000);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = an8855_read_switch_id(dev, regmap);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Release global PHY power down */
+> +	ret = regmap_write(regmap, AN8855_RG_GPHY_AFE_PWD, 0x0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, an8855_cells,
+> +				    ARRAY_SIZE(an8855_cells), NULL, 0,
+> +				    NULL);
+> +}
+> +
+> +static const struct of_device_id an8855_core_of_match[] = {
+> +	{ .compatible = "airoha,an8855" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, an8855_core_of_match);
+> +
+> +static struct mdio_driver an8855_core_driver = {
+> +	.probe = an8855_core_probe,
+> +	.mdiodrv.driver = {
+> +		.name = "an8855",
+> +		.of_match_table = an8855_core_of_match,
+> +	},
+> +};
+> +mdio_module_driver(an8855_core_driver);
+> +
+> +MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
+> +MODULE_DESCRIPTION("Driver for Airoha AN8855");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.51.0
+> 
 
 
