@@ -1,111 +1,108 @@
-Return-Path: <linux-kernel+bounces-820759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFB5B7F1AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:16:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48ADFB7F1BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C821B239D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:10:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEBFD1C802B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442CF3195FF;
-	Wed, 17 Sep 2025 13:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450C632899D;
+	Wed, 17 Sep 2025 13:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CBsz/ma5"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZr6mxGv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD091E25FA
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C87529BDA3;
+	Wed, 17 Sep 2025 13:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758114204; cv=none; b=btjUhUq0tb12Y0RsMM6oB1FfNDrY6DRudanC1VbUbN3SdBoKsayG6hL5Q/KancRGmmXxIGsT6R5vLhHBxzv7UySF3l0VHCmOsv5OFQBNLD6ggylHmCDM2ISbvA8dc5TiLpJW4vxFiJ2/lRfBnQPEtr2dVqqVdQxqXE4bnCIyDAM=
+	t=1758114233; cv=none; b=UEQF8cJlHa30VgNJkf+SOBsHN8RzmlT65JqkC/zNFdymgvQcfv5RmjhdlU2rl1UGXiAjZE5Y0WFl4zg4KHs4erf4TwaRQsZC4Is4uG104EJdRMSEEYPwrLWC58SA37IbDZqQDSmHJ+AqkZWTpiYrJbKmgYMSTFLgUQES+GdbEbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758114204; c=relaxed/simple;
-	bh=zl8dtS2s8MYi3R+5GbUzLpCQnvnRdqNEFwiEPzkST2s=;
+	s=arc-20240116; t=1758114233; c=relaxed/simple;
+	bh=mNCWQ7fqTtCLr0owwxZ4bFfSdq0S2SRt3AhVHe0ur5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrZXKRsPQOEkvzNM4jDdUUdD7zM7+NQWQsi6UywoENVrY/xOJHkPfyPsgBlMwBpbkUQ2GsctYVkgZjP5aOJENcVuVfKYbpXPWawTRC562LTuNTWLpOnEoIikOMmBxPl80QopbtCfxMPWS07aMLvb2Cv3W1iy0Ls2MU38egW3vK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CBsz/ma5; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-80bdff6d1e4so667390585a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758114200; x=1758719000; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IYcedJ+FRQjWVYCRh7ALmsdypiv3CPiXNm5ziICxEq4=;
-        b=CBsz/ma5UaoPEMHnobJn1kkE2SZyZPJ2lXMgwFVHgGIMZJrpZMTK8jfF4gV4ru1M6v
-         65sE5AJsMqMk/Yito1i7YqFhvzt/NMLI84q9qXf3H++ADKVukdDBEgCExwSCAGyC2+w/
-         C784ULEh2DdwtIGAF8mhQqylPOPodhSQ6QZ2sdOZvUydW8yKtAHDY/L+CnnRGTvJTJGT
-         iQh72Uf4JrSBvbegomPyNAFEdTweQ/Is5+BigyoKQ8ZPIPYkIqsQP7JlYd1e4SvouPIh
-         Rt64azi9glApLuXC5cXrec46S5ngHwqAtp+HhsWgAf4fTarAxyg8Q+iuoUeXq2H4wY4y
-         rFsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758114200; x=1758719000;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IYcedJ+FRQjWVYCRh7ALmsdypiv3CPiXNm5ziICxEq4=;
-        b=ZlYgB3lKf/rpnCYCm9l8e2L9ravEuSsAhqX+Oq92xpmuia7Byf7ZPchEI3rlMK4t5w
-         Fjsg0fFKuHlZqeTh3BkB9iYfLhLTCLTVLaquE59Ibnx4CNbsTFpixqA3lXA5RYhGCR2V
-         lSRDOGrkvfQUKQJ46IHJpDYr4c8d+UdnqAuyn2UyW1+9siT3Ud1BprJUBrdsuVyCqYjc
-         K8sOu5X6898AkPznVf67NqCMMUAcLIDbyKNE7uiUni9cW4MtV/eNspaYcHUvUJ7Czaob
-         ie2BOGm6vahrh8UebopbkC98lkEJX7wrPB8eyll/A//E6TBJN6LWGPly5tZc5cCh/Qjf
-         RhwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVldqJEp2jPep/m8FEPK8grTda09Y5621jGmXUmDYCMLrmUImgJeJfwkHpfFK75ATPlIl93gj8ZvDmjWeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHv6eeJ0QKjwxkfNWsEPYh1Rr7EaeUG+eotgJDwanZxeOOzS4Z
-	utvhD0AAC6K8GqlcB6ZDmeAqNnwvkIj3Jqc6/aDgAbb8TGzbDD/KKH+mhGNdl7MGGHU=
-X-Gm-Gg: ASbGncvTaQoEJED/mws4UmhhkwSE8KxD46jN5X+iSVj7mYlXMSUrHJtdaWXDftWa9dW
-	oetox0zKW7kDlUDWzQqkPYtIkM+dWapRh1FDQG4z29c0tyywXEH47Hm5WAdaER+bI+mCn3ZH61r
-	h/zcXuoRd/8NWY5QbkjBsIvy7DgAqNn+HBMKYmjKGZdXXlAyEOocAEI6rJ5t00vdEcwZRJCiGqU
-	+Xves7IfVEI6r9JAq32ZMRllQ3xs5boxzauP5AunEYj7bcb1sLXf91IxDFTfYHUsGG9WKMTT2n9
-	e/5GqYCWBPFJLfGBx3pHvroQXHsMzg5UsYRG+sEOkEiV8lDOgJT+flY14Xz7xu7M0MFJofhi
-X-Google-Smtp-Source: AGHT+IEXcfwq6TZFvI1/bsiI6XXtPuNGpklsTOThRAzYqIU6ebAxXzOJL4H5dXz0lx0Wgxd1JKJqJA==
-X-Received: by 2002:a05:620a:40cb:b0:81a:63d5:de93 with SMTP id af79cd13be357-8310f02c0a9mr217416385a.45.1758114199998;
-        Wed, 17 Sep 2025 06:03:19 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cf9be9b5sm1117778885a.70.2025.09.17.06.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 06:03:19 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uyroc-00000005q2E-1030;
-	Wed, 17 Sep 2025 10:03:18 -0300
-Date: Wed, 17 Sep 2025 10:03:18 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Saeed Mahameed <saeed@kernel.org>
-Cc: Dave Jiang <dave.jiang@intel.com>, Avihai Horon <avihaih@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH fwctl 1/2] fwctl/mlx5: Allow MODIFY_CONG_STATUS command
-Message-ID: <20250917130318.GC1326709@ziepe.ca>
-References: <20250908165256.1255985-1-saeed@kernel.org>
- <20250908165256.1255985-2-saeed@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tk4VYdl0cspOuxKTM044nFkMhfCYBIouAskt+RJj1qYd5z+XbkTS5KT50snrPzB3wWc/Lv9C8VAahjd33zF7CE9gaAP3v5ct+O1zNat3DaizNRXMc5J9cm2BGANnrpzxjVIH68bWAWstPwbQLJYqV/CGXOkcCMYrjG407cPNDSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZr6mxGv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356B2C4CEF0;
+	Wed, 17 Sep 2025 13:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758114233;
+	bh=mNCWQ7fqTtCLr0owwxZ4bFfSdq0S2SRt3AhVHe0ur5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gZr6mxGvdVRKpfldxKeNfps3tSvpTNLGIV02tC7SsREh5Gcnf7e6396Ll9auP0Bwk
+	 rgGcSYT3AoEIxk09qx45vygEjdpJzqiwNS4u5ablxwVYqB+TXLCshUGar8Vpo/Bgck
+	 fDKygIzvomCaN7boM+MmrjxLSf0ri3Hc/kiDxYT1GhCRGnAw+jXXErcF+SIleAw7pn
+	 HP3mjxHxx/VKG0lhvwvFRm4GCLNva8hr1lPgau+gf0Ukc5IqnJCSla0X7U7ozEzP9O
+	 k2ll7GnK+siJSpGNnjPqYNKbFEKv6qE6lqsMLH7D4msvuJc8D0e2FYZaryzP0Ya5tY
+	 8TGIkJskD/EgQ==
+Date: Wed, 17 Sep 2025 18:33:43 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>
+Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
+ by BIOS for devicetree platforms
+Message-ID: <jgidvwogoopfgtmxywllxl76lap42s4fhzt23ldncgtzfvy5ir@xs7pnhuz2nxs>
+References: <frmzvhnhljy23xds7lnmo23zg35wxpzu4pvabnc6v6vz7qn2lj@gk25cglbpn3q>
+ <20250917112218.GA1844955@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250908165256.1255985-2-saeed@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250917112218.GA1844955@bhelgaas>
 
-On Mon, Sep 08, 2025 at 09:52:55AM -0700, Saeed Mahameed wrote:
-> From: Avihai Horon <avihaih@nvidia.com>
+On Wed, Sep 17, 2025 at 06:22:18AM GMT, Bjorn Helgaas wrote:
+> [+cc Kai-Heng, Rafael, Heiner, AceLan; response to
+> https://lore.kernel.org/r/20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com]
 > 
-> MODIFY_CONG_STATUS command is used to enable or disable congestion
-> control according to a given priority and protocol.
+> On Wed, Sep 17, 2025 at 04:14:42PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Sep 16, 2025 at 12:15:46PM GMT, Bjorn Helgaas wrote:
+> > > On Tue, Sep 16, 2025 at 09:42:52PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
+> > > > the BIOS (through LNKCTL) during device initialization. This was done
+> > > > conservatively to avoid issues with the buggy devices that advertise
+> > > > ASPM capabilities, but behave erratically if the ASPM states are enabled.
+> > > > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
+> > > > states that were known to work for the devices.
+> > ...
 > 
-> Add MODIFY_CONG_STATUS to the allowed commands under configuration
-> scope.
+> > > For debuggability, I wonder if we should have a pci_dbg() at the point
+> > > where we actually update PCI_EXP_LNKCTL, PCI_L1SS_CTL1, etc?  I could
+> > > even argue for pci_info() since this should be a low-frequency and
+> > > relatively high-risk event.
+> > 
+> > I don't know why we should print register settings since we are explicitly
+> > printing out what states are getting enabled.
 > 
-> Change-Id: I6099206ca683de5173fe74fe56f63994f1c4c911
-> Signed-off-by: Avihai Horon <avihaih@nvidia.com>
+> My thinking here is that we care about is what is actually written to
+> the device, not what we *intend* to write to the device.
+> 
+> There's a lot of complicated aspm.c code between setting
+> link->clkpm_default/aspm_default and actually programming the device,
+> and when debugging a problem, I don't want to have to parse all that
+> code to derive the register values.
 
-You left a change id, I removed it
+Sure, but that is not strictly related to this series I believe. I will add a
+patch for that at the start of this series so that you can merge it
+independently.
 
-Jason
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
