@@ -1,178 +1,246 @@
-Return-Path: <linux-kernel+bounces-820107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54348B7F3A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 244FAB7C485
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881793A6DFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1377032417C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AEB2E62B3;
-	Wed, 17 Sep 2025 07:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC63A2D662D;
+	Wed, 17 Sep 2025 07:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gqm4B8E4"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012036.outbound.protection.outlook.com [40.93.195.36])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RGWtcuUa"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54C82BE051;
-	Wed, 17 Sep 2025 07:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758092933; cv=fail; b=qSltT2kmPuGdkb4GjQhuxOzkflAUX4M01tLkKGtAgjLrdkXUZW37zxIas0CqjJVHh+2i39LHHKc03GZ6jyDtCAtZB9+bN06mveSeP+HQHJmdmTIDLp7eqAP+EqbL+aSJkV50xAS9SfI3EybKFnDjsz7N0fi7R+vovXHfIC6U2WE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758092933; c=relaxed/simple;
-	bh=v/mvP396TOsMv+0/LlsAMokFZQCNtmLe1iHBh6yWuEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oWDt4/ZZW1BQEQT728xL8PKhOqOHBYxY/hUPzVwQnjcLxW5GsRCnNULLM/m7qL4wlrMP9zPjAosNYzBuF5UUe+WjTDE74XC6zd7NWnbZ7FagwNKbUPWeQkZEb8c0M91YtUYdTVwuQTimrOjivngpVUTYNluuRUTVRzfXrFP9HNA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gqm4B8E4; arc=fail smtp.client-ip=40.93.195.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DKXrc1/xLEwnd3Xk6khhil9EKWErHcE55uooJJwFrPAR8quO+Tjt+4EJ8Q36OMzUe/Q/ZT5jULV0jZw/bRitXxcgwu7K4l57ML5xB1m9I+f1KYE0AEHgiV9SeuRAmhWjaE2Sw+gWJ5zgoR4IPIIIkv1HYnA7qciFi3uBS12tremb9fXbJnfdBLs5JzvZe4jICk5dmHoHBOgp3NHXwivb2Xz/8hjG1nwu+/+HDsTq4jnVZJN//PfW3cY0+Oaqc/vWDes1nU1/8BUGRlZegVsezXfo56gm5KyCn9s1tGbhPspzytacjyeyThkyoF7epQsJ1BNibah0Z1qoxdKVs+NmIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kmYhOr50p+qWyLeJ680eY8LQh7S3BgY0TcNo/NpeclY=;
- b=VoDosOL61L9kYkAahGezu1Iw2GD/nq4qdju/Q4YG9Qa1tT9HppLY2u7u59MYgEp3luVIh0cOiQYBfYBLr6AriHWnUbP81vytVBGKpzA5CWLVdp6USytJPDmF3JdZFXy8xVX9/I8mGefPRvGiPKXEsS3sOrLumGGWO01LlU4utLBeEc3GeSrrWBiN72zWLmGWguYSByhDxULrPf5Y533gHilF8sSw2GTJmZpgbTVmtpj5Uretsmkd2OhFRWY8fmk+I9iahIPWTRtjJDh7ZX9qnQhrbt4CJJgAolOxWd+aserYs02vvfoitoNoWKP4RIHJ7rt6LZeD3iFW4YqjvXoU8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kmYhOr50p+qWyLeJ680eY8LQh7S3BgY0TcNo/NpeclY=;
- b=gqm4B8E4WVZ0qPDMM8dy8gNEYLYnFzykO1wEc+MUlK8PQwItiy8RhgEy04LOPY9qqlpVZ6jWI/KH6+nYfIPXA3hPbxXCIot9fC5bqtEQ05QNzD/29B6d6YZdzqVrZM5EPH/BlplFhtj0T9qwpta/2yzbl67waOiM/Gbu8rg4v1khQm99ioFj03/UuWdS1nB0+Ix/I0eBLn4mhVTuB3jN+RpO9NPm6Zcwi8L2M4odag3bq+oCwlSqQD/BbZAhMtlSqt1vmEpN4HrlBbSZXJHUvdVWmhMicoI18/ktzF74QFS4kLvPMTWEUXhazQlPAJHiwu/eQnrZOAJk9vd6B/GyYg==
-Received: from SJ0PR13CA0115.namprd13.prod.outlook.com (2603:10b6:a03:2c5::30)
- by CH2PR12MB4087.namprd12.prod.outlook.com (2603:10b6:610:7f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 07:08:48 +0000
-Received: from SJ1PEPF000023D5.namprd21.prod.outlook.com
- (2603:10b6:a03:2c5:cafe::26) by SJ0PR13CA0115.outlook.office365.com
- (2603:10b6:a03:2c5::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12 via Frontend Transport; Wed,
- 17 Sep 2025 07:08:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000023D5.mail.protection.outlook.com (10.167.244.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.0 via Frontend Transport; Wed, 17 Sep 2025 07:08:48 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 00:08:33 -0700
-Received: from [172.29.246.187] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 00:08:27 -0700
-Message-ID: <a720eef5-a01c-4449-8ea0-7cd0d05df25b@nvidia.com>
-Date: Wed, 17 Sep 2025 15:07:24 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C5621B19D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758092870; cv=none; b=YdW6pJ6SGLE1eG600esla8w/GJhMyoXZ+9WR41nnsDcVpmY91z8FdZN8bFTbis9oxz64+zv1ibRuPPOIdVl3B2B8n+2rUiaqoKu3CprOEcgfmzwjwT6njpoqIEP5hU/QZ2CtbmOAKUt13gdjVa5sb9Xcfd6v400UePvWMYZEAMc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758092870; c=relaxed/simple;
+	bh=25mYkkbNo5dkgGxMHrf97VRhuH0HcwY5SglFwuDCXdo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=AZJhL4NFOPRByyaLEVlYUJ5LM/uXtbcLHPpovRFDcdx3LFDw3HCQB599mltN+bKkt701I+0V028DeR8GFrey7tmX83vmkiDWCzq+GaHvnyQEL5IkZACda01abXWPoQQF9MNJA7rVuc8QatD+sAwV+5yRw+TpXYS2xsNAq3791zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RGWtcuUa; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250917070744epoutp047b651a3b8d58d59a5da77f4e5071bde9~mACVPQtzT2866828668epoutp04M
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:07:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250917070744epoutp047b651a3b8d58d59a5da77f4e5071bde9~mACVPQtzT2866828668epoutp04M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758092864;
+	bh=p2X+j5SJAMEREJd1w3t8TYTfU2tuNXV8TS1mq8smvaI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=RGWtcuUaLhY8WQoRtyFOqx/FJvfhMKjDYYPiIGcIN/rh/LOZiSE0ImM6Uz7pCYiSz
+	 7pwIjapvnQQrI1V11HFsyxt9lvlqFOgaXCJ6smnF/lygHilO0iyzaHcz3LyHrJEhPM
+	 ebnabodwTvetz6i9shXEWIpf0hNPG2O0ofuHlw/k=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250917070743epcas5p21e3006ddc5adb45dae44c3ad85d064da~mACT3guNG0339903399epcas5p2Y;
+	Wed, 17 Sep 2025 07:07:43 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cRVG61MTyz6B9m7; Wed, 17 Sep
+	2025 07:07:42 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250917070741epcas5p3f40ff9cf54757eef08a6faa7451f4e2b~mACSKitQP0859608596epcas5p3-;
+	Wed, 17 Sep 2025 07:07:41 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250917070737epsmtip204cd5a53ee83aea2bc9f33c333939bdd~mACOpKYWk2897628976epsmtip24;
+	Wed, 17 Sep 2025 07:07:37 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: 
+Subject: RE: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Wed, 17 Sep 2025 12:37:36 +0530
+Message-ID: <054e01dc27a1$c2011120$46033360$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net V2 2/3] net/mlx5e: Prevent entering switchdev mode
- with inconsistent netns
-To: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
-CC: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "Mark
- Bloch" <mbloch@nvidia.com>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gal Pressman
-	<gal@nvidia.com>
-References: <1757939074-617281-1-git-send-email-tariqt@nvidia.com>
- <1757939074-617281-3-git-send-email-tariqt@nvidia.com>
- <20250916172106.593683a8@kernel.org>
-Content-Language: en-US
-From: Jianbo Liu <jianbol@nvidia.com>
-In-Reply-To: <20250916172106.593683a8@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D5:EE_|CH2PR12MB4087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54162d9b-568b-4e84-500f-08ddf5b90c70
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RmVZOGZWaFpNYWpyanhSMms2RSsrdEw0M3pjWWE1cGRwbmp3WFFiUVRBYVhy?=
- =?utf-8?B?YlBjcmZQSzV2L25jUlRiTjliVlZRSjFKKzdGVmh0YzFpWk9oa0RzQkNiYk5Y?=
- =?utf-8?B?bGRocXdvM1FIQjYzVTZnVEFFemdlY2xvL0hJaG0xQjNDK0dHcjVFam16eTha?=
- =?utf-8?B?czFzN2tnZXdDV0VYNlo2OWY3aUFHYS8xTzdRdFBvZzNFUVJ0SkVXOGN5TDV2?=
- =?utf-8?B?ZUVjcGlmK09DUHdyd1RmY1Y0aTZTTXAzWlZsU3lSQUd6TXRwOUxDQUZxNzBl?=
- =?utf-8?B?QkVWZzBYUTZRdmVUZkNsT3U3OHdwdXF2ZWo2a0V5UVlydDNkSldMMzZkRFp4?=
- =?utf-8?B?VFlMWU14OEZWUWh5dWRRZS8wbWVaRTVhT3pUUERhNk1EVHRFU0FvaWRLOFFD?=
- =?utf-8?B?b3o0anJXMU9ZYzM3SnhCNzIvbVp1dUFWRDhJKzFoajF4aTB4U04xT0N0RHdy?=
- =?utf-8?B?QlZodkhQMU9TS3MzNU5uOE81TXhrSTVqZ25XV3I2T0VWT3I1aERWcUNrSy9Q?=
- =?utf-8?B?VjBDaDNQTzhKdWphbXBjS05xVlRNb0svcVloZDRwYTFiM05PUEJ5UDQrSzVa?=
- =?utf-8?B?b2Q3RG5Oa09RdkVxNGVTTElESUVUWC8xZDh1ZndwL2VuaGdqSEJ3bXFvRkQw?=
- =?utf-8?B?aFlqekVXbUF6cVM2RjBxS1ZUTlJRUEh1Z2lXWXYybWpYRkQ2S0N1c2h0bHRw?=
- =?utf-8?B?ZTl3WFlGSkZ3NHo5ajU5VWdiVm9ub0ttVzNweFRUd3JReFpKT1RkNU1NRWZQ?=
- =?utf-8?B?RkJMQnV1K0gzV0cycnhBZXkyZjJha3FHM0EzY3BHeUJqREZWcTRTVjdRaXdM?=
- =?utf-8?B?M3prYXd6bHVNTW1jdzU0M0RiTldRcUlnREcyVkhTUEJBb3VIQ1N1bk5RWExq?=
- =?utf-8?B?RU9oQWtoeFFrdEV0bVIyMFBkTThmRFBvamV1TDQzL2NTVG5mL3VXaTE1Unhs?=
- =?utf-8?B?TlZPTGk2Y2xla3BPUHFiMkVpZGRqNXNEVWhBRm9ZOHNTSjhsYmlxd2lxK1ha?=
- =?utf-8?B?SE9XYWVSenJNWkp1VW9wanNBTDJMMFY2ZUFHYVErK2lMVCtXMlNmZlVEZE9v?=
- =?utf-8?B?N3Zvc3owZ01rNDRzSk9UZjdEV3Y5cHVLUGtRcFpxVnNwdktuQWR6ZUxaTlI3?=
- =?utf-8?B?cnhhSWZ1bHVaWXBaS0diMFB5cDBBTGJ0TDdNV0s1VndrTGxNaHV6RGlnUStz?=
- =?utf-8?B?UzduNG1QSlduSHgvdzk2dkhOSjNuTXRkMUJXMzZvbW9qYUdmVDBCL21CV0U2?=
- =?utf-8?B?RlYzOGJVSGg1enFqVUt2QzJVN2l6dUJrSExrTERuSVZKc1EzRXdnaFQ2U2w0?=
- =?utf-8?B?RmFMUmtMTXpZQWk3WElKa002dlQwdGgzMWpaeXMyaVVJOW51NWU2QjhZUnJO?=
- =?utf-8?B?MVl6bmhkZHkxbmV6MnFwVFlZdVdKSEh2dG9CcnJTVXc5VFkxbWxJMkMyYjMz?=
- =?utf-8?B?UFFwUXZPVGdEZzZNMUZCZUtkNVpmU2ZCbTdIMGtodllQQ0YycGFvMDRML0FD?=
- =?utf-8?B?ZFVpMENBN2JuWENEWW9pd2N5bjlrUWlUNEFjd3JEV3JjZVBLQzJWRjIyckcv?=
- =?utf-8?B?MGJFeWRrVXZJeGhwZWxNQ2wyM3FkbzJpSko1ZUo1d2MxTURTeEhmanI2RXB4?=
- =?utf-8?B?YnF0d1pJRFVCM0o4R0lQNnQxemVRc3ZVbHhIS29LNzFjSW9JSjZ0TW0zd20z?=
- =?utf-8?B?WC9jdExVMlgvQU4xdHROYkdSZUFaczZwYkFjTnZTSzEwc1RuZVJRL0loZG1k?=
- =?utf-8?B?MDNQVzdUcnJyNHBVQWVnMlBHWk5NenZTQU5XenFZNWpwYUQ4TndUZ3c0ei9s?=
- =?utf-8?B?RHRMZllLUkZEY3huUkJCNkxMVktvNFVqb0FqNDZhSjNFdGZER2pQc3pQUU4w?=
- =?utf-8?B?b1RkeEV0ZkhRZDVpYmVjaTdjTjYzcTYzeUx4dE1qMlZ2bC96OVpoUEhRUjZj?=
- =?utf-8?B?OE5jZHQwY2JrNWN2bllxWlFSanpPQ0E4S1VyTWhpQ1lHcW9hUmNSL0F6TzlW?=
- =?utf-8?B?cWduTnJsNk5OckdBaGgyQklSZUJhZHcrcHhCWVdVeWRJSUtBUTQ0emNSSUxh?=
- =?utf-8?Q?+KALPF?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 07:08:48.2646
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54162d9b-568b-4e84-500f-08ddf5b90c70
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D5.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4087
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIRMOVGdWg5oRjNsRBgEjzIeIB8IgGabj6EAmTXuDcB8lF0oAGjtHpaA19Hw4WzwQPd4IAUON4A
+Content-Language: en-in
+X-CMS-MailID: 20250917070741epcas5p3f40ff9cf54757eef08a6faa7451f4e2b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e
+References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
+	<CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
+	<20250903073827.3015662-2-pritam.sutar@samsung.com>
+	<20250904-interesting-lovely-ringtail-38bbef@kuoka>
+	<000001dc1d70$aebf7d80$0c3e7880$@samsung.com>
+	<87857202-b436-4476-9384-67566126d844@kernel.org> 
+
+Hi Krzysztof,
 
 
+> -----Original Message-----
+> From: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Sent: 04 September 2025 03:52 PM
+> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>
+> Cc: 'vkoul=40kernel.org' <vkoul=40kernel.org>; 'kishon=40kernel.org'
+> <kishon=40kernel.org>; 'robh=40kernel.org' <robh=40kernel.org>;
+> 'krzk+dt=40kernel.org' <krzk+dt=40kernel.org>; 'conor+dt=40kernel.org'
+> <conor+dt=40kernel.org>; 'alim.akhtar=40samsung.com'
+> <alim.akhtar=40samsung.com>; 'andre.draszik=40linaro.org'
+> <andre.draszik=40linaro.org>; 'peter.griffin=40linaro.org'
+> <peter.griffin=40linaro.org>; 'kauschluss=40disroot.org' <kauschluss=40di=
+sroot.org>;
+> 'ivo.ivanov.ivanov1=40gmail.com' <ivo.ivanov.ivanov1=40gmail.com>;
+> 'igor.belwon=40mentallysanemainliners.org'
+> <igor.belwon=40mentallysanemainliners.org>; 'm.szyprowski=40samsung.com'
+> <m.szyprowski=40samsung.com>; 's.nawrocki=40samsung.com'
+> <s.nawrocki=40samsung.com>; 'linux-phy=40lists.infradead.org' <linux-
+> phy=40lists.infradead.org>; 'devicetree=40vger.kernel.org'
+> <devicetree=40vger.kernel.org>; 'linux-kernel=40vger.kernel.org' <linux-
+> kernel=40vger.kernel.org>; 'linux-arm-kernel=40lists.infradead.org' <linu=
+x-arm-
+> kernel=40lists.infradead.org>; 'linux-samsung-soc=40vger.kernel.org' <lin=
+ux-
+> samsung-soc=40vger.kernel.org>; 'rosa.pila=40samsung.com'
+> <rosa.pila=40samsung.com>; 'dev.tailor=40samsung.com'
+> <dev.tailor=40samsung.com>; 'faraz.ata=40samsung.com'
+> <faraz.ata=40samsung.com>; 'muhammed.ali=40samsung.com'
+> <muhammed.ali=40samsung.com>; 'selvarasu.g=40samsung.com'
+> <selvarasu.g=40samsung.com>
+> Subject: RE: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 HS phy compatible
+>=20
+> Hi Krzysztof,
+>=20
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk=40kernel.org>
+> > Sent: 04 September 2025 03:12 PM
+> > To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> > Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> > krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> > andre.draszik=40linaro.org; peter.griffin=40linaro.org;
+> > kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> > igor.belwon=40mentallysanemainliners.org;
+> > m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> > phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> > kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
+> > linux-samsung- soc=40vger.kernel.org; rosa.pila=40samsung.com;
+> > dev.tailor=40samsung.com; faraz.ata=40samsung.com;
+> > muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
+> > Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy:
+> > add
+> > ExynosAutov920 HS phy compatible
+> >
+> > On 04/09/2025 09:51, Pritam Manohar Sutar wrote:
+> > > Hi Krzysztof,
+> > >
+> > >> -----Original Message-----
+> > >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> > >> Sent: 04 September 2025 12:18 PM
+> > >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> > >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> > >> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.c=
+om;
+> > >> andre.draszik=40linaro.org; peter.griffin=40linaro.org;
+> > >> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> > >> igor.belwon=40mentallysanemainliners.org;
+> > >> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> > >> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> > >> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
+> > >> linux-samsung- soc=40vger.kernel.org; rosa.pila=40samsung.com;
+> > >> dev.tailor=40samsung.com; faraz.ata=40samsung.com;
+> > >> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
+> > >> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-p=
+hy:
+> > >> add
+> > >> ExynosAutov920 HS phy compatible
+> > >>
+> > >> On Wed, Sep 03, 2025 at 01:08:22PM +0530, Pritam Manohar Sutar wrote=
+:
+> > >>> Document support for the USB20 phy found on the ExynosAutov920 SoC.
+> > >>> The
+> > >>> USB20 phy is functionally identical to that on the Exynos850 SoC,
+> > >>> so no driver changes are needed to support this phy. However, add
+> > >>> a dedicated compatible string for USB20 phy found in this SoC.
+> > >>>
+> > >>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> > >>
+> > >> You just dropped all tags without explaining why.
+> > >
+> > > Regretted inconvenience.
+> > >
+> > > There were significant changes in supplies' names in driver and
+> > > schemas (patch-set v8). This led to make changes in patch no 5.  And
+> > > review for these changes is needed.  Hence, removed RB tag in this pa=
+tch-
+> set.
+> > >
+> > > There was a ask for the same https://lore.kernel.org/linux-
+> >
+> phy/000401dc18cd=24ec02a1b0=24c407e510=24=40samsung.com/=23:=7E:text=3DLe=
+t%20me%
+> >
+> 20know%2C%20because%20of%20above%20changes%2C%20should%20be%20
+> >
+> removing%20your%20%0A%27reviewed%2Dby%27%20tag%20from%20patch%
+> > 201%20and%203.
+> > >
+> >
+> >
+> > Where in the changelog you explained why you dropped the tags?
+>=20
+> Along with supplies' names, there were similar commit messages for patch =
+no 1,
+> 3 as patch no 5 (v7). (though, they were explaining schema more than h/w)=
+.
+> Changed commit messages of the patch no 1, 3, 5 (v7) as per reference com=
+mits
+> and would like to get them reviewed again, so did not add RB for patch 1 =
+and 3,
+> which you had given RB (in v7).
+>=20
+> Forgot to add these details for dropping the RB tags in changelog.
+> Do I need to send v9 by retaining RB for patch 1 and 3?
+>=20
 
-On 9/17/2025 8:21 AM, Jakub Kicinski wrote:
-> On Mon, 15 Sep 2025 15:24:33 +0300 Tariq Toukan wrote:
->> If the PF's netns has been moved and differs from the devlink's netns,
->> enabling switchdev mode would create a state where the OVS control
->> plane (ovs-vsctl) cannot manage the switch because the PF uplink
->> representor and the other representors are split across different
->> namespaces.
-> 
-> I appreciate the extra paragraph of explanation but it's still not
-> a fix.
+Gentle Reminder.=20
 
-Ack.
+> >
+> > Best regards,
+> > Krzysztof
+>=20
+>=20
+> Thank you.
+>=20
+> Regards,
+> Pritam
+
+Thank you,
+
+Regards,
+Pritam
 
 
