@@ -1,188 +1,124 @@
-Return-Path: <linux-kernel+bounces-821803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66874B8252B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:52:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C25B82531
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B0FB4E138C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:52:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE282A8844
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D55E2877D7;
-	Wed, 17 Sep 2025 23:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50E1283FF9;
+	Wed, 17 Sep 2025 23:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jtHmqwVt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="d4aj0Z1y"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899031F462D;
-	Wed, 17 Sep 2025 23:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A43127FB03
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758153171; cv=none; b=ik36DIoqxsUssQmAq5npFS3TAaYAYEhfrfFr71yP9G29nAxoq2o22Qk7dP5vb5XdqCPmIxeIX37+vrChLpQc/RFJ5wHQE+og1Uyn/66jxlwojhv8KLO0dqANjs3gJ/gJck5Pn1Fcf8wv3OnZ0PjlvDErXH5baNEuGFWOpuhw46k=
+	t=1758153215; cv=none; b=eC1J58jz8HsagL4NfvySFC9KZqF4AxLe0PWwPz4NvRso28wT5wRsqp8fmYszoCu3wi+83sta0LAi01IzLPLzqApBCbi2ZCzaXMes72/IpKTg5KuBG6KMgzJTRLjGX7toH7N/lf43S9y6EtO/yHedpNhMmfg8MsvTxVPEOI5pGoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758153171; c=relaxed/simple;
-	bh=nUw9UV3qqAqfedKxW/GHa+5T1537ToqgVNkqjyyf6I4=;
+	s=arc-20240116; t=1758153215; c=relaxed/simple;
+	bh=zHXhaxfq8txSsNL6FuywZq3TbSULGj8UT+faA8DSrqY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yda4ZIqEJrSwfzFKozfHfY2JYPydwRF+gmMHKwr8qEWzyOOlinfi6kG8+NKdd5wlM0Nn5K34MVRKauohmuWLWQNRo5nGjQSnaMEJbfi/ruDHK/OQW/F7pyYqhp1FUEKzcQS3fsn89f2LpXXO56zbqI8oYXozCpJxISphi+jt2Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jtHmqwVt; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758153169; x=1789689169;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nUw9UV3qqAqfedKxW/GHa+5T1537ToqgVNkqjyyf6I4=;
-  b=jtHmqwVtOg1jvUJ4yleFoSxxPEBHJPI1qe9UDWANfFFBqOeLLdZdC39w
-   Epwuwze4nRNiVyVWLNXb2bBl36vYZS5dVonMh1UJ6mozeIpsPoWy6yv0Y
-   jB8aci7O0d4/Ev0DAcLN7K2fgDIumpAF/LlOU88UyQT2n+hTxYNSd+E8M
-   SoIDGQPvn51bNpeL5GuhmznzkGT9cBa/qjFw8X38a4KIxyr3eXLA7Assy
-   zhPktunLjPGtVVEzCURHPYfIH48lF9O2Vje2Uj9fpyKPwFBKL8nWeNdi1
-   D+2NsbyNoNYSJqa5K5MVUY/VpsvX9qUkrc+EAyTHhGbS9Vgh0pOdnj1ce
-   g==;
-X-CSE-ConnectionGUID: IN8PgtfJTDOSSUywIrh8uQ==
-X-CSE-MsgGUID: gIrW07KRTEm/+1LUhVXsvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60623386"
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="60623386"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 16:52:48 -0700
-X-CSE-ConnectionGUID: ue/ZtmWzSq6WQmExoQw84A==
-X-CSE-MsgGUID: YZob5zk7SoeTxvtGECKUyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="212535712"
-Received: from unknown (HELO [10.238.3.254]) ([10.238.3.254])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 16:52:46 -0700
-Message-ID: <189e060b-207b-469f-9b6e-314380d12a42@linux.intel.com>
-Date: Thu, 18 Sep 2025 07:52:43 +0800
+	 In-Reply-To:Content-Type; b=fAFsx5D1GQamWAQyKm364YMszYaTGyxVfIU6teZhrvG6udOOJL7BRO6Mev/Uu1/zB/Hz26051I82hgjotqbawC5qOqgJUWewkYI8HzLfc4ltr0i3pGUVGd9p19ud6Tr/ix6+r/Jbcy4wI/L1zjYr7OfNZvzNSHxgtS1yju74AYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=d4aj0Z1y; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso3462425e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1758153212; x=1758758012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fH3dCOcwPC522SUE8y5HpvFj5uDFCkjUJfHRR81NqUI=;
+        b=d4aj0Z1yD4MZHeQz/0sXuQpRKfZ4jA8A0+ZtielwaXmtpTizWn8No+jhczTOzgBj2S
+         F1Er8CHqZdSvKeV3fSPXhfKdR1w4UFklQ6qUGbM7lsM9o7odb2lPd902whKeIdvGpvD2
+         qHvuWxrCVA/amHZmjwyf9Ns1GlW+X+DuD4oey5FRfxr9eGr7q6Ao+VaSQBtx3TPi8QhI
+         wc4M/tLH6S1FK2iaPtxYHLVaGiaVCfLJ8//JMUm5UXoIJjskOHK9v7dmJtfxRAqlehdR
+         3aupgWVC2JEbq9jvZanhuPWPJsT1fYlivdJQm16w0aNbwOLEPQcnf7NMb2prJeOSrwEP
+         L0jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758153212; x=1758758012;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fH3dCOcwPC522SUE8y5HpvFj5uDFCkjUJfHRR81NqUI=;
+        b=PwxA7wcMtTg4SQjp/z1T6Ig3X8XHpA91uTaPN04rtFHiY3Ln8bv6EJEWlQ3p9gAMG2
+         SzMsbYABYmCPTG6bf656FDL76nlxt9ZS4nPjFIAZk2yaLpcSU/m1I8Qh7oO4rn6CTYnT
+         CtzuV1lCV77AvLjMaazT7BGtsI3ntt9wQ2KNHJVenJcYfZY/zVjc9mtSAfpEipKQ9PEU
+         U/l4EDPQgr0WzeAH2Zq07wUx8u6douaSvPqr6xXNmXzVV6eWvMsnZ/mleCs7ywtkwWZV
+         aN4mAe5Ecgtg/FSGX4jIJxakB8AJ+Uvt6EUYuB4vRgIql7z6/x+cAOFcSVEaeqjvL75L
+         pGUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0nMSzSTv2iGxFDfDD41ve27Fr1EuO58yVwevRIk0onpiCeOHMLOfHsLCdNaqRj9SReyUaTCY+vnHACzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8Fh5OLb6Y83XmOv1yaWCJ2UER/sVY+5fbPDorZ701dxsuAU72
+	QH2V4+U9T+eymn4olWziOh5+jRbSsGQq/eTKg5rbVZlRLmgr4knEU1M=
+X-Gm-Gg: ASbGnct5uiE+T5gGlcJTCJDM0c/SRuxOFUaduGuBP7POAM5leXGl2E5Wvsz4nlT0swj
+	CGdVDjO+D4YiPtBSlNxySVb49qyFGWdZ3MjAHNhSzda0ZHTyM30MZLkyk2Ec9zNpdUTEHwoKRDn
+	chIxKYXlKD7iodLPSA/Z+XWByVy4XfTwWzsmfs/9mx+FeJHny/AvVoLkgZ2T4PXNNzsHXlsIDfR
+	Ae56NFsc/aL03fwq1dvD+EDrZZY+HuMWcBEM4HHm/683HQuUzByGGnE8mmA0S6bwHg7OaAA9JQG
+	bHLUzt8hQOx7XcMm25QrE6DTXPQVOobkhRx0ss+5I5G8tYqGaLf5hGLXaXgzaDulB3tPMJM5XWb
+	7/D7IxOc6FQ0ntOWUAi0oAThbdym7QN1sAxFj8pQWmYzJOGn1zJKud3M0/JgplzO/dQdLdavIJi
+	8wdJoClvjm+aPhwMJB2Q==
+X-Google-Smtp-Source: AGHT+IGHl+QODOErTNJaVKR/wtb9/LJeotK+VcYJyj3xSaimjfMW6asZkiXk10lZ2ZIxdq/EFGb6JA==
+X-Received: by 2002:a05:600c:3511:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-46202bf80d5mr37445935e9.11.1758153211721;
+        Wed, 17 Sep 2025 16:53:31 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2aca14.dip0.t-ipconnect.de. [91.42.202.20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e849a41sm55028755e9.20.2025.09.17.16.53.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 16:53:31 -0700 (PDT)
+Message-ID: <e5ec3508-6c54-4f52-80f9-1fc4b04755e0@googlemail.com>
+Date: Thu, 18 Sep 2025 01:53:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
- <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 00/78] 6.1.153-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250917123329.576087662@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250917123329.576087662@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Am 17.09.2025 um 14:34 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.153 release.
+> There are 78 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-On 9/18/2025 5:12 AM, Ian Rogers wrote:
-> On Sun, Aug 10, 2025 at 10:56 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
->> his patch-set fixes perf kvm commands issues, like missed memory
->> allocation check/free, out of range memory access and especially the
->> issue that fails to sample guest with "perf kvm record/top" commands on
->> Intel platforms.
->>
->> The commit 634d36f82517 ("perf record: Just use "cycles:P" as the
->>  default event") changes to use PEBS event to do sampling by default
->> including guest sampling. This breaks host to sample guest with commands
->> "perf kvm record/top" on Intel platforms.
-> Huh? That change is:
-> ```
-> $ git show 634d36f82517
-> commit 634d36f82517eb5c6a9b9ec7fe3ba19dbbcb7809
-> Author: Namhyung Kim <namhyung@kernel.org>
-> Date:   Tue Oct 15 23:23:58 2024 -0700
->
->     perf record: Just use "cycles:P" as the default event
->
->     The fallback logic can add ":u" modifier if needed.
-> ...
-> -               bool can_profile_kernel = perf_event_paranoid_check(1);
-> -
-> -               err = parse_event(rec->evlist, can_profile_kernel ?
-> "cycles:P" : "cycles:Pu");
-> +               err = parse_event(rec->evlist, "cycles:P");
-> ...
-> ```
-> isn't the precision the same before and after? I think you've blamed
-> the wrong patch.
->
-> The change to use cycles:P looks to come from commit 7b100989b4f6
-> ("perf evlist: Remove __evlist__add_default") but the old code was
-> doing things like "evsel->precise_max = true;" so I think I was just
-> carrying forward behavior. The use of precise_max comes from commit
-> 4e8a5c155137 ("perf evsel: Fix max perf_event_attr.precise_ip
-> detection") from over 6 years ago, and the behavior before that also
-> appears to have been to use the maximum supported precision.
->
-> Apart from the blame and commit message being off I think the change
-> is okay, delta my usual complaint that weak symbols are the devil's
-> work.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-Hmm, yeah, you're right. Thanks for correcting this. 
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
->
-> Thanks,
-> Ian
->
->> Since the change "KVM: x86/pmu: Add basic support to enable guest PEBS
->>  via DS"[1] starts, host loses the capability to sample guest with PEBS
->> since all PEBS related MSRs are switched to guest value after vm-entry,
->> like IA32_DS_AREA MSR is switched to guest GVA at vm-entry. This leads
->> to PEBS events can't be used to sample guest by host, otherwise no guest
->> PEBS records can be really sampled. The patches 5-6/6 fix this issue by
->> using "cycles" event instead of PEBS event "cycles:P" to sample guest on
->> Intel platforms.
->>
->> Changes:
->>   v1 -> v2:
->>   * Free memory allocated by strdup().
->>   * Check "--pfm-events" in kvm_add_default_arch_event() as well.
->>   * Opportunistically fix the missed memory allocation and free issue in
->>     builtin-kwork.
->>   * Comments refine.
->>
->>
->> Tests:
->>   * Run command "perf kvm record -a && perf kvm report" and "perf kvm
->>     top" on Intel Sapphire Rapids platform, guest records can be
->>     captured successfully.
->>   * Since no powerpc platforms on hand, doesn't check the patches on
->>     powerpc. Any test on powerpc is appreciated.
->>
->> Ref:
->>   [1] https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/
->>
->>
->> Dapeng Mi (6):
->>   perf tools kvm: Add missed memory allocation check and free
->>   perf tools kwork: Add missed memory allocation check and free
->>   perf tools kvm: Fix the potential out of range memory access issue
->>   perf tools: Add helper x86__is_intel_cpu()
->>   perf tools kvm: Use "cycles" to sample guest for "kvm record" on Intel
->>   perf tools kvm: Use "cycles" to sample guest for "kvm top" on Intel
->>
->>  tools/perf/arch/x86/util/kvm-stat.c |  51 +++++++++++
->>  tools/perf/builtin-kvm.c            | 130 ++++++++++++++++++++--------
->>  tools/perf/builtin-kwork.c          |  27 ++++--
->>  tools/perf/util/env.c               |  22 +++++
->>  tools/perf/util/env.h               |   2 +
->>  tools/perf/util/kvm-stat.h          |  10 +++
->>  6 files changed, 203 insertions(+), 39 deletions(-)
->>
->>
->> base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
->> --
->> 2.34.1
->>
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
