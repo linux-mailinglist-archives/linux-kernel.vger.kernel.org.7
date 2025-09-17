@@ -1,244 +1,188 @@
-Return-Path: <linux-kernel+bounces-820227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DCEB7CCCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FDDB7C448
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E711E3A5EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5BC0176ADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1683090EC;
-	Wed, 17 Sep 2025 08:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A33A308F2A;
+	Wed, 17 Sep 2025 08:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJ7zy5Ge"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rTlv1ddm"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011040.outbound.protection.outlook.com [52.101.62.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B6F31BC8D;
-	Wed, 17 Sep 2025 08:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758097205; cv=none; b=AgO3sNMTZ0aXN1MjrV0UAJtB3tsaJNDMb0BafHbPcBqONJVsSensltmLZoCtw+kURM4f7DSOJ+CjEDYQK39iR6aTdEJ1nrwx5/xqMpdPb/rPYK8eA/WVZTrNAHXWxE6ANcDdx6dQV0CRASD68kO32PDNhfH9C2gsnwxNwI0cMWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758097205; c=relaxed/simple;
-	bh=So+LvTMBvZJ/yLBfQqfxuFpdLCw8Umq6IiCkx+94J3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTV7BGWQPS5/xK9W1GUobl1v5Dtp7mggZfMO9j603XzwpxIW2enmrluB8BSeI8dD4YlG1NA6TMe3Q+wnmEAVD2h4ezKxL0AEf8SLFEeU7XX5M+ZqsgtuA2hV6+DcbfmnWzDnVouj+3gBwJg3FsmH/cGeyXuRbn8sseKT/DDmgPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJ7zy5Ge; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758097204; x=1789633204;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=So+LvTMBvZJ/yLBfQqfxuFpdLCw8Umq6IiCkx+94J3s=;
-  b=UJ7zy5GeIkcxyiKhxOTJ1zN+G4XeIMxzIVjucvrbs84pGyqkWPoorP2h
-   qQIot4JQa0Z6ZgmW/F70qx9VEPoCxsSJ+9uvIhaWAg4ce/D3LFi2qfxKw
-   cD9CYCeoRlHrtEl3YIXMkU/XrkOS8JXIOYZdkDG//NazV51eLeo1/Qun7
-   aFuV0Vj2uTMj3aGWe7uJPC4N5hCfOjZMkeo8ZvZY0tKx6aJ7ZLkNn6BES
-   nms3V8Fm4pVp1z0xu/MD/E9e2Y3oxiaasEQh1XNBIzTnOrQPzhpinMt1H
-   mutgCJ7rQ43Kw+/f+luG92n72xhWJbkMOvD1bMRFQvVcKPN+uGnJYUCeH
-   Q==;
-X-CSE-ConnectionGUID: F5EkdrNUQQ20RInoK46xAQ==
-X-CSE-MsgGUID: uCsXhBzHRz2lPox2QfdPdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="59439357"
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="59439357"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:20:03 -0700
-X-CSE-ConnectionGUID: Ud3xW+D9QoGOURA/lLO8XA==
-X-CSE-MsgGUID: xIjvrPOhT2SFelvQZnJQ9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="180442642"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:20:00 -0700
-Message-ID: <55ab5774-0fcc-469a-8edc-59512def2bae@intel.com>
-Date: Wed, 17 Sep 2025 16:19:58 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FBE25A331;
+	Wed, 17 Sep 2025 08:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758097259; cv=fail; b=klV3WsDte/u5qdwaLcDsYNadNu7LnE8vdC870aClcdztvELNw98dBqBiohq4C84l0zXB7bceMBI694QsaFIatYG4YrqyVE8ltOrHgiPNC5IcKlqNdnIztlpOHdwF7LcjfbzcdACw2LXMA9gmEENkG3ongrWjld1oM7qYhlNvNKs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758097259; c=relaxed/simple;
+	bh=YHEgV7ieDnygBIh0+pks2yRvN5x6a9i09KN+98gJ/B0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=U0gsgwHH7DIg/3CabM7yH9HIPWxrZ7mGxCpz7vjCLsXK9oPxiDLN2eHnFSBY9EB7mRLSogkr/zMJGKQW+OjXdeCCarf/eIdtJ0Q/A3MAvy4xf0PkufROOFZc6AcplpqoZ2hB05FFNnZ+Mnta42rFLamlRpAQ2uhCojeEt2D6ZVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rTlv1ddm; arc=fail smtp.client-ip=52.101.62.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ar7X1F5Ch/og250E+0CQArqTV73RR72IAmFrWxreo40CIm77DEbX6RnddQFfWgMMphKg6LnawgSRZKWBTahIUMxQCC4Nk2+jdIlqCM08OJXqjKb4srOwjjPzH+CahIqi7+IIfCLlxGXoVuTsWGAqur45C01hUw8LNJ3fIgnOBN4VgJE/Fo3cWgBXbrpLGVQWKG/E+x8Vf/M1e23KBpX6ZnCnAwbcoCGc1iwjGa/TrfZ6HCnMSoD3s1TsGg0UhCXmIW2sZ73a9TNZn0GynuA7QBupvwvRrtejfgPrkvhWr8kGEdm+7xc7c8PYAFroBwVS71tRN4zgLxJuF/XOqwrquA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e57WTsb/sYNMJGG8iOueJw0sAmzgE72s6sUi9RDIxfk=;
+ b=r4Jgg0DyAkKqiYOKcL+kIf9e571+yGMZnFLLfvZ4TLVKZP9cbJrT7eVQtrk3fmuCpieP290I72vArphxMvdST4Sqswr6wFdVtcxEpbYggjlobyezyRw2W8tfLe6W2PxAYSEBhVOFnb/60vSntbhp/6UBx67A8wrUIYomIXAytpSQelNJsUfGmO8/74tdPnZXuMd+SPAzNRrxGvbBNDpCxlbQpQDynblMPwzS1rFv9lt3/KAivnD7jRqr2Sv+FbGW9D2mIGlJdENIJsgk+xOWHYO6tAB2kQs1QMk8wdHFIp+1qaBKxdUAocsxI6+62jq+GZUea79FsH5t4NAL4aBw7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e57WTsb/sYNMJGG8iOueJw0sAmzgE72s6sUi9RDIxfk=;
+ b=rTlv1ddm3zp9kydJJe84d47MU2w0otxhyz/a3r3AOZzO6CF42l9aQ8C5iJbN2aJs3POqjMM1Yz2v8N7MSsZ02VPNLYdFh+6RGB6t6bG7aprQQ++AUibNifPyW99y++4ZToMprH/1o1bEzmkWXEFJLvYYuSu8W7ask+gL+bpDucI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by DM4PR12MB6158.namprd12.prod.outlook.com (2603:10b6:8:a9::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
+ 2025 08:20:52 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
+ 08:20:52 +0000
+Date: Wed, 17 Sep 2025 10:20:46 +0200
+From: Robert Richter <rrichter@amd.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v3 07/11] cxl: Introduce callback to translate a
+ decoder's HPA to the next parent port
+Message-ID: <aMpvXmmbons8PIxA@rric.localdomain>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-8-rrichter@amd.com>
+ <2e4a3ff4-72fc-4a67-90be-f08880d5afae@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e4a3ff4-72fc-4a67-90be-f08880d5afae@intel.com>
+X-ClientProxiedBy: FR2P281CA0051.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:92::8) To CYYPR12MB8750.namprd12.prod.outlook.com
+ (2603:10b6:930:be::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 18/41] KVM: x86: Don't emulate instructions affected
- by CET features
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-19-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250912232319.429659-19-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DM4PR12MB6158:EE_
+X-MS-Office365-Filtering-Correlation-Id: bcb2fcb3-6d14-4e01-a98b-08ddf5c31d94
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?diH+NKZfOVvZ9NCO3etXgiNzb/wMVoDLTv+aQuREQTm9/IFDFY/10sZds/Xi?=
+ =?us-ascii?Q?V9GoC+5HwQeFAjzRB1doiQeDJvmlm8UdcXdsHHkT2TFeq1x6WQGccm5tGJy2?=
+ =?us-ascii?Q?BVr2ygXcujoZUClVcREJBmKLxxNkxXHv8Dz5jRqPT1irbDP0Q3wiAmoc1Ne5?=
+ =?us-ascii?Q?4eJu51gA75W16mgSIAWT1SqPBXyfQn0TC63s/rh1VAaOdcEQgwLQEVYK6lsd?=
+ =?us-ascii?Q?WHedNzKC7WEbJSr8WJ2cgsISl109piak/4gbrT1CgXnbyDt9k74Jlwp4DETi?=
+ =?us-ascii?Q?TS+ZXBeioUtAwiDc4IBjq2xMorzW5SWuH0xfr1ldq68LGmqiW0U4+R3fhz2I?=
+ =?us-ascii?Q?SxWVIuL/aRKAYN5xu7SnlHPmDx7HVOgqp/hWhwITwjb3i3iOUMT/DAtE/wyI?=
+ =?us-ascii?Q?jJE859nWEe91P8nKM4Ujn/4HFe5dFcUiX/Ixl7DrIRXAn5FWYInninFI3Tdy?=
+ =?us-ascii?Q?O0SS+LPxjROZ05Hta78HUTEqGUaxUUchC65wanAc/A3u0CIfJ91u4ZYAXpPh?=
+ =?us-ascii?Q?yS9teXC+oshSbNIFNXvVduAfdkqDPdcGDmHBlszDRqnK632Vzd+ia95haZDG?=
+ =?us-ascii?Q?5PIWIv/kRD4Z8xRcLrF/72wtFwoK0U7cfJwpz78gzCxuNVmmwkPhTJGJb5oL?=
+ =?us-ascii?Q?7bN4f/M35ymM11DDPM3+rhIhQsmhbfbKoQL4cv+jmeVOLGcu+CToMualZE34?=
+ =?us-ascii?Q?GZDOp3O+GTByx44FAMLLunv7/XFJCAInEHzbdjVHcfWhqt0CwLuet2rrr0kR?=
+ =?us-ascii?Q?a1gvMdAowZoWsB+jy++iGCHrXKsfv6WzYrq8w5e5Szu7gFl7diNkgxHnAjz4?=
+ =?us-ascii?Q?zdyMc2JYwE3pHl1bbTevl2d7Gf+ttIEze92nM3k/d999aOzuJEHp062VxzNB?=
+ =?us-ascii?Q?F1hqWxnMSVLPTVfgsN8pI9dwAMLwmH7Qp09QgEovfqtMroA8b7sES4xiQ4Yf?=
+ =?us-ascii?Q?IokKf+GJVdxmDuOoYeFh0rWuj9+xGqwjWtjxt2FG7x+hJCsYhzzrQxrD6Gb7?=
+ =?us-ascii?Q?yX6DaHSdbGxFM04UE7lDtxdkUGID6MLZ8FBKjCQqgpmQ/LOBMP4vl9QNrh7d?=
+ =?us-ascii?Q?ol+ocx5nNF6zXHPO/Wayp0pl3Y4wXQDTXBcd/MJXHSPk18VJaMAvPBZHwcZt?=
+ =?us-ascii?Q?BGK+6KR2Iv0ogEtfQdbWqdPdYvNH/Lv5bQ5Mae4+7zbYGMjJoGn1q9dxROkd?=
+ =?us-ascii?Q?8661UVYzNGxoBapi6lyx3L83nWUlwAyxnv688C1RynnU8T0zonQ3TQo7uQmP?=
+ =?us-ascii?Q?WE4K2AdnzRmbo233AB5DycAT5QlEfATt7bS5Fy4GmVxjFdhIvBvuhjIG+fP6?=
+ =?us-ascii?Q?OUDJFz9G/iM3grnm9WSFOPovJtXX+ANROL/Fz/E+IRa6NryClQQijP37JmDS?=
+ =?us-ascii?Q?HZUubyP9DE4q96vSqG0h+dCorTevnNXyWMYGJIJj3PELn65G8JqJOYgO5zt6?=
+ =?us-ascii?Q?9mZmg6C1ClE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Ojrhu1o4YkqLnJye1S7MQraG2TSuCIbuPJKIuBuMOf9nISD5IEpH2wlMciN/?=
+ =?us-ascii?Q?GWJQq8BdFvb3FfR4MwlIsGIeca5h5sYnNhFHYMtaZgIzUCsBLSV2iv3J82oJ?=
+ =?us-ascii?Q?wJP/w15edHwfVysUEDiKVV+CcokjvJZXsoJ+bRkbBik3Z5cIz58m9pstIxz/?=
+ =?us-ascii?Q?+psu2zMxxo81CEa+cT2B9jfy42Bysqtu+BMqfxK3TORelcXXBAwT20rIQP3D?=
+ =?us-ascii?Q?Y14YAdTG/tN4Bycr6kFIEm2fckZqw4C8nvSsCGkrEPmsWS2eDVUXkfvXjxbX?=
+ =?us-ascii?Q?ePcYuVcKFPD+hCnn8vBQ9v8Mr/Dwnt4DT+9+edI+Pm2rLcz1Tq8+T5mjXDYu?=
+ =?us-ascii?Q?y126a4ZHWr5tNrV65uWFagxTfMRTu0ljlAfNpeHGGkaAX+HfFJiHjTolGKZL?=
+ =?us-ascii?Q?dlXp4pGFZQ4ApVEve66zeQBvjRkH0FFNRXe5C+pGxTYw9mGTApL64UJh2lvm?=
+ =?us-ascii?Q?S9utD4TZP62NiPO3FSOlxSKLcY7bxRCKBMw5Ivki2cf49LxjkkVWrcH/T1FO?=
+ =?us-ascii?Q?UzwEqOQ7xel/duMMG5DSufOLUYqkmm7heIa/T2Pib55CftOH4abDMX0mpeQq?=
+ =?us-ascii?Q?CJ59YxSUoAWZVV+GE0OncMPEUihhnLR4sd1J2mYCt3jyOp8eZ769wHey02Ot?=
+ =?us-ascii?Q?79RdiIVCtxgDvX6hcpDN+4uddzzzZI7bn4t/g64eoR3OOcNsVVZyDf/r5pJZ?=
+ =?us-ascii?Q?3LEp9A3E3w1+9O+0yEs2DLsvcd6gKFbZ3y9d12s3lT89DmIeGKkMMmPE2bjL?=
+ =?us-ascii?Q?braaYmK9hutnzouF+D7xIWJVYQ4grxuNBmlB5Z3AiXZx80rpfLTt3AMx7MIw?=
+ =?us-ascii?Q?27WL9a83XYp0MytAHmE72KeZq3oY2mkNcSDILvdzYonjwiqT4mYjzZqtaWhA?=
+ =?us-ascii?Q?/hn9H3PuQxPnk/yML75Gwa++1ucrwG866VqEDcsNIlFElqQ2GqxRemUdoCM4?=
+ =?us-ascii?Q?huxrAb3peodLDlaT8choOt+nseKH0hWom5ow/uucQTAmQ5KF6jU2f3PByAPf?=
+ =?us-ascii?Q?HzTSzHHNxBd4wUvvA9F4sqqNr4Tf5bDPGTj4bnRv9HijD7tkqcTZtJ2ncRcK?=
+ =?us-ascii?Q?cWmYYEeLTkx7t9lT4nVRNmlkM04qQGTNJMDlcNE70ceBScPfAmTdQdGpiiVH?=
+ =?us-ascii?Q?IXzFcc/iYnR96/7Hcdt2kZ07KWexjHuis8rWQ5goitMxN+q5xUNagC5PFkL0?=
+ =?us-ascii?Q?c40LFIMZdEJVGMzDRBMpN4wvHErt3TklWIUBe+GsAvqrB+i+KyOx+epr8cUy?=
+ =?us-ascii?Q?f3ZZHoxVg0QsLoyl9IPD5OOsemal1wmbC5P+4i611v4YAK+18HmB8jGrAWXT?=
+ =?us-ascii?Q?NEq+Ze4p7Non86nT3h77TvoxAsD2HdJ3LqLCdLYbldbwKocTJmE4HS9FNOLH?=
+ =?us-ascii?Q?7Wx/eZiJkAkc3oUL60fToPg0pliQrQRgO9DU6FdRy7tlKcLesY5447frTitp?=
+ =?us-ascii?Q?T0g+urcNea0GdX2BxzJRqGtffIh0GmI2Qr15bNIf3zvzOjfZ4vP7CFwr+jHg?=
+ =?us-ascii?Q?HuXHA8dZv8Sc3FxBZVxJEHXW+BSWpL1Otq6iXYFuUqM3xjpaca4yYJriIfrG?=
+ =?us-ascii?Q?I0Y8tX63NZCbZ9XnHESWj1HaYff4J85KhXHzI8+9?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcb2fcb3-6d14-4e01-a98b-08ddf5c31d94
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 08:20:52.2532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7ucE+dhnIAkYniRkSdf79VqKzR0LlCFdGVUQHoC1nD0qIcY+uQAr0JWPky/Y8t36zJeEw2BW5zKzVBAkaoUjcg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6158
 
-On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
+On 15.09.25 13:22:14, Dave Jiang wrote:
+> On 9/12/25 7:45 AM, Robert Richter wrote:
+
+> > @@ -619,6 +631,7 @@ struct cxl_port {
+> >  	struct cxl_dport *parent_dport;
+> >  	struct ida decoder_ida;
+> >  	struct cxl_register_map reg_map;
+> > +	cxl_to_hpa_fn to_hpa;
 > 
-> Don't emulate branch instructions, e.g. CALL/RET/JMP etc., that are
-> affected by Shadow Stacks and/or Indirect Branch Tracking when said
-> features are enabled in the guest, as fully emulating CET would require
-> significant complexity for no practical benefit (KVM shouldn't need to
-> emulate branch instructions on modern hosts).  Simply doing nothing isn't
-> an option as that would allow a malicious entity to subvert CET
-> protections via the emulator.
-> 
-> Note!  On far transfers, do NOT consult the current privilege level and
-> instead treat SHSTK/IBT as being enabled if they're enabled for User *or*
-> Supervisor mode.  On inter-privilege level far transfers, SHSTK and IBT
-> can be in play for the target privilege level, i.e. checking the current
-> privilege could get a false negative, and KVM doesn't know the target
-> privilege level until emulation gets under way.
-> 
-> Suggested-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Cc: Mathias Krause <minipli@grsecurity.net>
-> Cc: John Allen <john.allen@amd.com>
-> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Co-developed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/emulate.c | 58 ++++++++++++++++++++++++++++++++++--------
->   1 file changed, 47 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index 542d3664afa3..e4be54a677b0 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -178,6 +178,8 @@
->   #define IncSP       ((u64)1 << 54)  /* SP is incremented before ModRM calc */
->   #define TwoMemOp    ((u64)1 << 55)  /* Instruction has two memory operand */
->   #define IsBranch    ((u64)1 << 56)  /* Instruction is considered a branch. */
-> +#define ShadowStack ((u64)1 << 57)  /* Instruction protected by Shadow Stack. */
-> +#define IndirBrnTrk ((u64)1 << 58)  /* Instruction protected by IBT. */
->   
->   #define DstXacc     (DstAccLo | SrcAccHi | SrcWrite)
->   
-> @@ -4068,9 +4070,9 @@ static const struct opcode group4[] = {
->   static const struct opcode group5[] = {
->   	F(DstMem | SrcNone | Lock,		em_inc),
->   	F(DstMem | SrcNone | Lock,		em_dec),
-> -	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
-> -	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
-> -	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
-> +	I(SrcMem | NearBranch | IsBranch | ShadowStack | IndirBrnTrk, em_call_near_abs),
-> +	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack | IndirBrnTrk, em_call_far),
-> +	I(SrcMem | NearBranch | IsBranch | IndirBrnTrk, em_jmp_abs),
 
->   	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
+> The more I look at this, the more I feel the callback should be part
+> of 'struct cxl_rd_ops' and not under each port. While this provides
+> flexibility in a general case if there is a need to translate at
+> each level, the actual use case in the field today only requires
+> translation at the top as far as I can tell. And the translate
+> functionality should be part of a decoder and not a port. And in
+> this case, the root decoder would suffice.
 
-It seems this entry for 'FF 05' (Jump far, absolute indirect) needs to 
-set ShadowStack and IndirBrnTrk as well?
+Ok, I see the tendence to handle this in a more specific use case.  A
+change of the implementation should be possible, will change that.
 
->   	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
->   };
-> @@ -4332,11 +4334,11 @@ static const struct opcode opcode_table[256] = {
->   	/* 0xC8 - 0xCF */
->   	I(Stack | SrcImmU16 | Src2ImmByte | IsBranch, em_enter),
->   	I(Stack | IsBranch, em_leave),
-> -	I(ImplicitOps | SrcImmU16 | IsBranch, em_ret_far_imm),
-> -	I(ImplicitOps | IsBranch, em_ret_far),
-> -	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch, intn),
-> +	I(ImplicitOps | SrcImmU16 | IsBranch | ShadowStack, em_ret_far_imm),
-> +	I(ImplicitOps | IsBranch | ShadowStack, em_ret_far),
-> +	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch | ShadowStack, intn),
->   	D(ImplicitOps | No64 | IsBranch),
-> -	II(ImplicitOps | IsBranch, em_iret, iret),
-> +	II(ImplicitOps | IsBranch | ShadowStack, em_iret, iret),
->   	/* 0xD0 - 0xD7 */
->   	G(Src2One | ByteOp, group2), G(Src2One, group2),
->   	G(Src2CL | ByteOp, group2), G(Src2CL, group2),
-> @@ -4352,7 +4354,7 @@ static const struct opcode opcode_table[256] = {
->   	I2bvIP(SrcImmUByte | DstAcc, em_in,  in,  check_perm_in),
->   	I2bvIP(SrcAcc | DstImmUByte, em_out, out, check_perm_out),
->   	/* 0xE8 - 0xEF */
-> -	I(SrcImm | NearBranch | IsBranch, em_call),
-> +	I(SrcImm | NearBranch | IsBranch | ShadowStack, em_call),
->   	D(SrcImm | ImplicitOps | NearBranch | IsBranch),
->   	I(SrcImmFAddr | No64 | IsBranch, em_jmp_far),
->   	D(SrcImmByte | ImplicitOps | NearBranch | IsBranch),
-> @@ -4371,7 +4373,7 @@ static const struct opcode opcode_table[256] = {
->   static const struct opcode twobyte_table[256] = {
->   	/* 0x00 - 0x0F */
->   	G(0, group6), GD(0, &group7), N, N,
-> -	N, I(ImplicitOps | EmulateOnUD | IsBranch, em_syscall),
-> +	N, I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack | IndirBrnTrk, em_syscall),
->   	II(ImplicitOps | Priv, em_clts, clts), N,
->   	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
->   	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
-> @@ -4402,8 +4404,8 @@ static const struct opcode twobyte_table[256] = {
->   	IIP(ImplicitOps, em_rdtsc, rdtsc, check_rdtsc),
->   	II(ImplicitOps | Priv, em_rdmsr, rdmsr),
->   	IIP(ImplicitOps, em_rdpmc, rdpmc, check_rdpmc),
-> -	I(ImplicitOps | EmulateOnUD | IsBranch, em_sysenter),
-> -	I(ImplicitOps | Priv | EmulateOnUD | IsBranch, em_sysexit),
-> +	I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack | IndirBrnTrk, em_sysenter),
-> +	I(ImplicitOps | Priv | EmulateOnUD | IsBranch | ShadowStack, em_sysexit),
->   	N, N,
->   	N, N, N, N, N, N, N, N,
->   	/* 0x40 - 0x4F */
-> @@ -4941,6 +4943,40 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
->   	if (ctxt->d == 0)
->   		return EMULATION_FAILED;
->   
-> +	/*
-> +	 * Reject emulation if KVM might need to emulate shadow stack updates
-> +	 * and/or indirect branch tracking enforcement, which the emulator
-> +	 * doesn't support.
-> +	 */
-> +	if (opcode.flags & (ShadowStack | IndirBrnTrk) &&
-> +	    ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
-> +		u64 u_cet = 0, s_cet = 0;
-> +
-> +		/*
-> +		 * Check both User and Supervisor on far transfers as inter-
-> +		 * privilege level transfers are impacted by CET at the target
-> +		 * privilege levels, and that is not known at this time.  The
-> +		 * the expectation is that the guest will not require emulation
-> +		 * of any CET-affected instructions at any privilege level.
-> +		 */
-> +		if (!(opcode.flags & NearBranch))
-> +			u_cet = s_cet = CET_SHSTK_EN | CET_ENDBR_EN;
-> +		else if (ctxt->ops->cpl(ctxt) == 3)
-> +			u_cet = CET_SHSTK_EN | CET_ENDBR_EN;
-> +		else
-> +			s_cet = CET_SHSTK_EN | CET_ENDBR_EN;
-> +
-> +		if ((u_cet && ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet)) ||
-> +		    (s_cet && ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet)))
-> +			return EMULATION_FAILED;
-> +
-> +		if ((u_cet | s_cet) & CET_SHSTK_EN && opcode.flags & ShadowStack)
-> +			return EMULATION_FAILED;
-> +
-> +		if ((u_cet | s_cet) & CET_ENDBR_EN && opcode.flags & IndirBrnTrk)
-> +			return EMULATION_FAILED;
-> +	}
+Thanks,
 
-I'm not sure other than 'jmp far' case I pointed above, if any more 
-instruction/case that are protected by shadow stack or IBT are missed.
-(I'm not really good at identifying all of them. Just identify one case 
-drains my energy)
-
-At least, the part to return EMULATION_FAILED for the cases where shadow 
-stack/IBT protection is needed looks good to me. So, for this part:
-
-Reviewed-by: Xiaoyao Li <xiaoyao.li@Intel.com>
-
->   	ctxt->execute = opcode.u.execute;
->   
->   	if (unlikely(emulation_type & EMULTYPE_TRAP_UD) &&
-
+-Robert
 
