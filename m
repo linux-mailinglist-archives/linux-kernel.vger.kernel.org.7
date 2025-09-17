@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-820457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46925B806B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:12:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FDBB7E67B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDEDB7A371B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0892E16AF74
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61E522D78A;
-	Wed, 17 Sep 2025 10:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D6035082E;
+	Wed, 17 Sep 2025 10:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qAJKxemu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCHIiTS5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262CE2DECBF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4330264A72;
+	Wed, 17 Sep 2025 10:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104185; cv=none; b=BMkjJDZbL7eID4xfRtVf/3HiXWpiREdCa1k0U7pzKXjsKzMHHu/oPvcf6a7UoahJME18c+ER3lyIqaEG8+zPIAQlVeYuLeGW9tkiiXvg7rD0h41UCt2OqRuvSYaeGCV1UdHcqMKk4ahBQa04GvIgBAsM9vUdHZQGdfZUCyTdj5c=
+	t=1758104185; cv=none; b=A+JnwucrbnUjCTnj/1w6HXkYXF3RZ5GFrAHNmQNg9hIk2/5srzEobj9FlhKbD6J6CG0MRLNvtCK/FPeCRHx4Kap/9OBYLN9H7Gcw3SMkpfhdZDYTfBRS+0rkCqbVRMP8mqw812xaBH6Sc2scodgpkOY0TDD4ZOrpWkSwbp5R2TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758104185; c=relaxed/simple;
-	bh=FV3YzMUIlDQ/ACtsBX/BoY2m1QmvGjJL4Oc0FDB6s3s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OneBXa4B8TcDig7Yj7bKg3K6iOn2B/9RdipPTsV3Wi+swEPnuLO7Vxf3rAvCwBmiQajMwrL3xJH228Z6Be/WmXVPILzD2jrMu1hQvaPABKA6fhvXcyzncFj0wuR6aj1tbcNjtrwfAJYuXM2jc4Oadin8I1E+DdA9e0DnSYlC8F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qAJKxemu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4751C4CEF5
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:16:24 +0000 (UTC)
+	bh=ambwCGac4A+Wl1cpfcxdw276sosjbIvttwf0nQ4WwSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cYYpFqGmww9w6f6x8+ergDQwjueFP8eYCqHBlJgd25Rv3G8HghBks5G8emLthbs0oMIYZdJxOZTz79ywjjWRnSQQuCBwug5FkhaocYjhHfrL0Fz9vNBbwVZpUoyEFiEU/r8BVJc9Y0hODdRkXai7knQ9fHkBAN6lnV8ggkDc1mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCHIiTS5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C43C4CEF0;
+	Wed, 17 Sep 2025 10:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758104184;
-	bh=FV3YzMUIlDQ/ACtsBX/BoY2m1QmvGjJL4Oc0FDB6s3s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qAJKxemuXRgXicrk1W+3iy0EJnFVWGgJahCkdUajSjNf4njSmp2Te3PgL0G4IWi4P
-	 FBz+PGpTWodzQRatwr0uGVs5HtRv7m//sdCYnI6dqfraKPPfHgJQaLg4alUt7HYy90
-	 TJFY7fCLZhyviIwTn+6vU6Fr3qM+YPcV+nnSIiUoH0Sw2ehjxtNhbJ3JDsap8AwO0A
-	 qh9+D1tCevafuJZMY+dHXeb3Cc5E33DHcUAKyiA1/lv0+I0o/b1B6NtMyEgyFbCvQs
-	 E0myy+YczTMMUSiPHjpAfHRsor6w6Nv/6dQlY/Tt8H9AkHDhMOmhaTVh/iATlbPkNS
-	 CpUFJgitjOlsw==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b07c2908f3eso779758666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:16:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUD6LPXNoroMoNRP6QhXwvz5pvm8sw4nXE47e/4kR0yu1DiQcBsYaBpAPcsj7AThXn6cjK2zyyWiJRuB7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1AInaRiAKobY0aTQlq0elTzqeI3HzZeMWWm8gPugJYF6yVdWH
-	PEarjEqpKvOhtiOShzUTNORkn1luPEZm8d1waPC9xJVfAPw6SuDmZGFYfsQoMMWHmDaZ4hl6niG
-	D13bjked3Pa2SANJOL0DT++CdDRhU5iM=
-X-Google-Smtp-Source: AGHT+IF7fGodltx1kpWL49MQTNyLgMsqD3ylHseIhazBD0g2sV/4fO5FkmPSY5FjDMoIMwOryC81aFHSAQRH2m0s1cw=
-X-Received: by 2002:a17:906:730d:b0:b04:725c:bcb with SMTP id
- a640c23a62f3a-b1bb60490a5mr191370566b.23.1758104183377; Wed, 17 Sep 2025
- 03:16:23 -0700 (PDT)
+	s=k20201202; t=1758104185;
+	bh=ambwCGac4A+Wl1cpfcxdw276sosjbIvttwf0nQ4WwSQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iCHIiTS5S7WjpNatZpUtiukDA24Vv/tY/DJRflBgUWWJTErqrXNp3Nn3kErGKvP2n
+	 mCS9pwMSp7FxkunDQ9SzVJr5lodt/TVG/2+GT6c2qe+nZR2TDuxXz2sP/IE0j1Evlr
+	 PjuXwXHBs3aVNDuvfSqUAsYZ3rfCYm8Adx+twqZuh4pDlHm6tX0SsDnvV1ehM7i/EX
+	 9SNV/B5cKpgWhiTfLbutW28xMCIEyOpZ1PWqcHNq3zAZ8IdSZj/RMomQyGrdIcl30/
+	 77dja6K58Mko0nfezrwfNbcLs8foBuId5yMnSyWWfnwlyKKzga+9Ds3FEeWcN+stfM
+	 Eckm0vLKBvZaQ==
+Date: Wed, 17 Sep 2025 11:16:17 +0100
+From: Lee Jones <lee@kernel.org>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	andriy.shevchenko@intel.com,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] Immutable branch between MFD, GPIO, Input, Pinctrl and
+ PWM due for the v6.18 merge window 
+Message-ID: <20250917101617.GI3893363@google.com>
+References: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917011007.4540-1-yangtiezhu@loongson.cn> <20250917011007.4540-4-yangtiezhu@loongson.cn>
- <CAAhV-H6yKyqU+jQ=-RoOOc0fyRgjFfdorJAk1LashV0Gt=Y=AQ@mail.gmail.com> <bfd7035b-ca08-66d2-bdc5-d28743144128@loongson.cn>
-In-Reply-To: <bfd7035b-ca08-66d2-bdc5-d28743144128@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 17 Sep 2025 18:16:09 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H738P94-XJQx=KMH5oGfp_eji_edvKr1HAgK3mnVjh3Mw@mail.gmail.com>
-X-Gm-Features: AS18NWASloU-JqjqzSklb5PnbdxA4guCjeP15AlRq9Xd6SIGha8Htpxv0p0vK1U
-Message-ID: <CAAhV-H738P94-XJQx=KMH5oGfp_eji_edvKr1HAgK3mnVjh3Mw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] objtool/LoongArch: Fix unreachable instruction
- warnings about entry points
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
 
-On Wed, Sep 17, 2025 at 5:47=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> On 2025/9/17 =E4=B8=8B=E5=8D=883:07, Huacai Chen wrote:
-> > Hi, Tiezhu,
-> >
-> > On Wed, Sep 17, 2025 at 9:10=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongso=
-n.cn> wrote:
-> >>
-> >> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
-> >> following objtool warnings:
-> >>
-> >>    vmlinux.o: warning: objtool: kernel_entry+0x0: unreachable instruct=
-ion
-> >>    vmlinux.o: warning: objtool: smpboot_entry+0x0: unreachable instruc=
-tion
-> >>
-> >> kernel_entry() and smpboot_entry() are in arch/loongarch/kernel/head.S=
-,
-> >> there is "OBJECT_FILES_NON_STANDARD_head.o :=3D y" to skip objtool che=
-cking
-> >> for head.o, but the STACK_FRAME_NON_STANDARD macro does not work for l=
-ink
-> >> time validation of vmlinux.o according to objtool documentation, just =
-give
-> >> a proper unwind hint to fix the warnings.
-> >>
-> >> By the way, ASM_BUG() can be removed due to unnecessary, otherwise the=
-re
-> >> are following warnings:
-> >>
-> >>    kernel_entry+0xf4: start_kernel() missing __noreturn
-> >>    in .c/.h or NORETURN() in noreturns.h
-> >>
-> >>    smpboot_entry+0x68: start_secondary() missing __noreturn
-> >>    in .c/.h or NORETURN() in noreturns.h
-> >>
-> >> This is because the previous instructions of kernel_entry+0xf4 and
-> >> smpboot_entry+0x68 are the 'bl' instructions, start_kernel() and
-> >> start_secondary() are the respective call destination symbols which
-> >> are noreturn functions, then the 'bl' instructions are already marked
-> >> as dead end in annotate_call_site().
-> >>
-> >> For now, it is time to remove "OBJECT_FILES_NON_STANDARD_head.o :=3D y=
-"
-> >> in arch/loongarch/kernel/Makefile.
->
-> ...
->
-> >> -OBJECT_FILES_NON_STANDARD_head.o :=3D y
-> > This line should be kept, othewise we get:
-> >
-> > arch/loongarch/kernel/head.o: warning: objtool: kernel_entry+0xf4:
-> > start_kernel() missing __noreturn in .c/.h or NORETURN() in
-> > noreturns.h
-> >
-> > even without LTO. This is a regression, we can only remove it after
-> > the above warning be fixed.
->
-> As said in the commit message, ASM_BUG() needs to be removed
-> to fix the above warning.
->
-> I tested again with GCC and LLVM (with and without LTO),
-> there is no the warning what you said, please double check.
-I'm sorry, I was confused by the similar warnings described in this
-patch and the cover letter.
+Enjoy!
 
-Huacai
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
->
-> (1) GCC
-> make ARCH=3Dloongarch defconfig
-> make ARCH=3Dloongarch -j8
->
-> (2) LLVM without LTO
-> make ARCH=3Dloongarch LLVM=3D1 clean defconfig
-> make ARCH=3Dloongarch LLVM=3D1 olddefconfig all -j8
->
-> (3) LLVM with LTO
-> make ARCH=3Dloongarch LLVM=3D1 clean defconfig
-> scripts/config -d LTO_NONE -e LTO_CLANG_THIN
-> make ARCH=3Dloongarch LLVM=3D1 olddefconfig all -j8
->
-> Thanks,
-> Tiezhu
->
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-input-pinctrl-pwm-v6.18
+
+for you to fetch changes up to 32d4cedd24ed346edbe063323ed495d685e033df:
+
+  MAINTAINERS: Add entry on MAX7360 driver (2025-09-16 15:24:48 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, GPIO, Input, Pinctrl and PWM due for the v6.18 merge window
+
+----------------------------------------------------------------
+Kamel Bouhara (2):
+      mfd: Add max7360 support
+      pwm: max7360: Add MAX7360 PWM support
+
+Mathieu Dubois-Briand (8):
+      dt-bindings: mfd: gpio: Add MAX7360
+      pinctrl: Add MAX7360 pinctrl driver
+      gpio: regmap: Allow to allocate regmap-irq device
+      gpio: regmap: Allow to provide init_valid_mask callback
+      gpio: max7360: Add MAX7360 gpio support
+      input: keyboard: Add support for MAX7360 keypad
+      input: misc: Add support for MAX7360 rotary
+      MAINTAINERS: Add entry on MAX7360 driver
+
+ .../bindings/gpio/maxim,max7360-gpio.yaml          |  83 ++++++
+ .../devicetree/bindings/mfd/maxim,max7360.yaml     | 191 +++++++++++++
+ MAINTAINERS                                        |  13 +
+ drivers/gpio/Kconfig                               |  12 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max7360.c                        | 257 +++++++++++++++++
+ drivers/gpio/gpio-regmap.c                         |  30 +-
+ drivers/input/keyboard/Kconfig                     |  12 +
+ drivers/input/keyboard/Makefile                    |   1 +
+ drivers/input/keyboard/max7360-keypad.c            | 308 +++++++++++++++++++++
+ drivers/input/misc/Kconfig                         |  10 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/max7360-rotary.c                | 192 +++++++++++++
+ drivers/mfd/Kconfig                                |  14 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max7360.c                              | 171 ++++++++++++
+ drivers/pinctrl/Kconfig                            |  11 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-max7360.c                  | 215 ++++++++++++++
+ drivers/pwm/Kconfig                                |  10 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-max7360.c                          | 209 ++++++++++++++
+ include/linux/gpio/regmap.h                        |  18 ++
+ include/linux/mfd/max7360.h                        | 109 ++++++++
+ 24 files changed, 1869 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/maxim,max7360-gpio.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max7360.yaml
+ create mode 100644 drivers/gpio/gpio-max7360.c
+ create mode 100644 drivers/input/keyboard/max7360-keypad.c
+ create mode 100644 drivers/input/misc/max7360-rotary.c
+ create mode 100644 drivers/mfd/max7360.c
+ create mode 100644 drivers/pinctrl/pinctrl-max7360.c
+ create mode 100644 drivers/pwm/pwm-max7360.c
+ create mode 100644 include/linux/mfd/max7360.h
+
+-- 
+Lee Jones [李琼斯]
 
