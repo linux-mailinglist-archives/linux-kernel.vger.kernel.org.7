@@ -1,196 +1,229 @@
-Return-Path: <linux-kernel+bounces-820326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD32B7ECD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F34B80033
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9994328475
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BEE83283C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FFC31BC8E;
-	Wed, 17 Sep 2025 09:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76BE2D879A;
+	Wed, 17 Sep 2025 09:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOSe7VCM"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tZAje8IZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ntpufKvP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tZAje8IZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ntpufKvP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8665430596D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A762D7DF2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758100853; cv=none; b=bgnTwaHZB+pd3/Quk7VdhXUSy/huyQCjKE4W0mnK8AZ2ewA+2RabdEhBENBugx9LmIxjTGD+vgWdNoGk4S9CKjLZkvB8i1yt/SZFu3GF+q550Hzz2gwvAkbnkxX3CF6exWeH0KNf5SarvUWS23ygQ2QJ9JJb69Wk/iQciCmtqOs=
+	t=1758100827; cv=none; b=YMXySXk/D7MmVrllH9NgyIKa7gB2f3U3Oas4rKGXMZEj6Wkx4ddp8hxMiUgNZgFcAgl4D2MyhFhH8xclWrL2D2frqfnXCMIQ8IVn1Q1QZJqvkk8jMLMxjVor3zjyhU8/dZD3KY3hd9ydhW5bzGU84HENx1Cj+Eu3Hg5fnhIS1XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758100853; c=relaxed/simple;
-	bh=GPrMgKLIF76NvpNeh03mLIHEOaiBvol3hzVk3son8tE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mNhVgXhcSmpzX29aPt1Rak6xwmOhOA1vJ1iNsI8x8Aws/7GXKPIB/QMpPOIOLn+XCI/aMgE0KJUXBkOMFByTj5774wdbx9+6VFDTWTifSsTyy/q0edzDpbvXE5084G6PP3CsCvDA9nRDkqPBivCVLk+QP5XrhZaDwow5QROtm2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOSe7VCM; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3357b8aeddaso968481fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758100850; x=1758705650; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ox09wceLheN9CV/GNKAbltAUFRxxk0VbuNEPceF8/DQ=;
-        b=SOSe7VCMhoCLfGmUaYB6GzCdWwStBaaY2tOuKd2oo+GJyneR5SYpsEdYYIgPoTu58s
-         /P8BrPZ+AY9skH1sKfJBZNpx2fMK5qPx90ZcCmLu8B0mBFrVw35eoAn7XGDWRCbUx2fT
-         AYOyLvXzoXkq4eolmfS2JeG81abYUpAvgF5ZhjdilnMCZrJMKfVKuFHVtMwxl6DAbur7
-         Frci7n+jXhNdLXtJ2wui2OP8h81JQBnoNXXyedY7Av63BxERfqOfjgstBFx1+3bwJ0sh
-         2njAnl4Rdv896JknCeJMxUzvtOwTipYdnVVCI3uqqVdj3GLmmYbRJG/DWxFGYm2P4AxB
-         +SLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758100850; x=1758705650;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ox09wceLheN9CV/GNKAbltAUFRxxk0VbuNEPceF8/DQ=;
-        b=XlpGRmQ6gRMk61c0QDQG6NpUAxHf8lkD96GZASNucp+mrXOa3xXr31g/1XsPvoFvqM
-         GPg7XRvVJS9YiRoPy0Ks3frqWMqrPgNVER/Yb0UcCs1N4a7srOHBXT/r7B/qDSoef3U6
-         ZYEDRVOp7aX/Wv+Zlsi/h4P6aSmZHAuojusBsQDg1RtOlLDf5mdo5072DR8AAW3lzv8F
-         5tWi4sQ/upleP6uKq9dpBRccCqjZs/ol7m/Z4BLDa9Og94y4seznfr6exxdfx3R4rwWe
-         A/A8TQhU5HgWXnBgnlsBbOIU3+xyuqrmBMsUhwO3ZGitLgt8XBj+p5dC0f9R0/i8V1on
-         iFQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVG0eIjThf2HtzGim0/uatf2I3de346L5Jv9bvyGbsQ6S6ZSJlavt8IfFRf1mrJy/LSl4IBvlfGGPkcIc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSxtPnN1vKNhiXb6gSqbyj3HrffPlBWjZhRFq7f4xS3+L217JG
-	zIxBYLA+7I4LSxKVd+I5wxFuHSB4IUM/78kBM46eU9xBfjaj6+qcRF8No1WYMLvMtTc8vc7poop
-	h+yRJ/1FvhRY1mPg+ac4XX4lb3S+cnxY=
-X-Gm-Gg: ASbGncufPn9B+1JmB61bTot3+gWd6tYgNx7dMDW6ieHRE5sTREHSJVMoZOEU49SL6Dy
-	PzwvqZ+NbrYoaH0f0s8bnTpKYIv5NFM9xwO00Tq0gxbnWC/H/ChHRocsewkJjlQpTpDQbDMBXf2
-	75ITCiqVHbj73oVnuORwq9Aj3IkIIfiBU4ugsuS+QaJ1r5iZYmnaZW+Qwpw+ODgBQaYkthDkdmw
-	eQtWA==
-X-Google-Smtp-Source: AGHT+IEvi/vcvuNXEKryAobinAuQaOybDNziHzvdIl5fQxCUxTSrL6UDLu1P/TgPbjPopqUhtAHphiQym0mzQtaf3UA=
-X-Received: by 2002:a05:6871:d618:b0:31d:6467:3ddd with SMTP id
- 586e51a60fabf-335be8c863emr772149fac.3.1758100850540; Wed, 17 Sep 2025
- 02:20:50 -0700 (PDT)
+	s=arc-20240116; t=1758100827; c=relaxed/simple;
+	bh=VqjvmLCiWPQHnESEs2Pt55XF628ZhcIy4aC8gAC7J3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tFl3PFVk370ifxk80j8fUhQC/ynG7me5fjE2EL7+SR+PfSTuaCPLXFzfw7u3vISATDrnfYvwvau88tlJmzWeFeFvL4FO6w9QzvYJCpKPeNW4T89tpW1H2EjvyEHDQDebwPwNWeITgnYf8bM7R9NCwDBrmS0jx+o8XjYR6matz1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tZAje8IZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ntpufKvP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tZAje8IZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ntpufKvP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 459E71F456;
+	Wed, 17 Sep 2025 09:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758100823; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5tk+r5R/k8njcQI73K4TtrfXFTXLCZoxOGoZ0oxk0u4=;
+	b=tZAje8IZWc8Krfc4yHx/T6mHwHr4a3Pip1ewhAZR44ws4YmfiQjumnwhH7LiMKa3nfn2u0
+	Ex9NN0wLgFMa0cE3OtYUl8VISdauIJMFlzdW5GSE5wjTp0FvwTu3n6ldR+z59kJamf9Tkp
+	EaXTS6yKhZ77CrYJjMYUy3sIhlyQZ7Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758100823;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5tk+r5R/k8njcQI73K4TtrfXFTXLCZoxOGoZ0oxk0u4=;
+	b=ntpufKvPTP2zwujZmCJjBCn8ByZ6R95iRNyunyELPDG+ULfPSUYhqOdVXQoeyW4+PBpMhI
+	whXzDoonW7EVVuAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758100823; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5tk+r5R/k8njcQI73K4TtrfXFTXLCZoxOGoZ0oxk0u4=;
+	b=tZAje8IZWc8Krfc4yHx/T6mHwHr4a3Pip1ewhAZR44ws4YmfiQjumnwhH7LiMKa3nfn2u0
+	Ex9NN0wLgFMa0cE3OtYUl8VISdauIJMFlzdW5GSE5wjTp0FvwTu3n6ldR+z59kJamf9Tkp
+	EaXTS6yKhZ77CrYJjMYUy3sIhlyQZ7Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758100823;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5tk+r5R/k8njcQI73K4TtrfXFTXLCZoxOGoZ0oxk0u4=;
+	b=ntpufKvPTP2zwujZmCJjBCn8ByZ6R95iRNyunyELPDG+ULfPSUYhqOdVXQoeyW4+PBpMhI
+	whXzDoonW7EVVuAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 05BAC137C3;
+	Wed, 17 Sep 2025 09:20:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 62wEAFd9ymglHQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 17 Sep 2025 09:20:22 +0000
+Message-ID: <0b6cb807-1a7e-427e-af42-dfc8f422f813@suse.de>
+Date: Wed, 17 Sep 2025 11:20:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917033703.1695933-1-zhangchunyan@iscas.ac.cn>
- <20250917033703.1695933-3-zhangchunyan@iscas.ac.cn> <bc87f2a8-7a9c-4416-9106-bdf4b98e40a8@redhat.com>
-In-Reply-To: <bc87f2a8-7a9c-4416-9106-bdf4b98e40a8@redhat.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Wed, 17 Sep 2025 17:20:14 +0800
-X-Gm-Features: AS18NWA4SAC8zxdE-h5_sRhBzgX8xMPmN4jL9phgOErltDfEWb2iq0mEGYtEXpk
-Message-ID: <CAAfSe-vjgcgFyvVoci8F9ra4JwbDcdbhsxjSL0j8=0CCKAzFHQ@mail.gmail.com>
-Subject: Re: [PATCH V13 2/6] mm: userfaultfd: Add pgtable_supports_uffd_wp()
-To: David Hildenbrand <david@redhat.com>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>, Deepak Gupta <debug@rivosinc.com>, 
-	Ved Shanbhogue <ved@rivosinc.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] drm/solomon: Move calls to drm_gem_fb_end_cpu*()
+To: Javier Martinez Canillas <javierm@redhat.com>,
+ Iker Pedrosa <ikerpedrosam@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250912-improve-ssd130x-v1-0-bc9389ed299e@gmail.com>
+ <20250912-improve-ssd130x-v1-1-bc9389ed299e@gmail.com>
+ <874it1phx8.fsf@minerva.mail-host-address-is-not-set>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <874it1phx8.fsf@minerva.mail-host-address-is-not-set>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[redhat.com,gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Wed, 17 Sept 2025 at 15:25, David Hildenbrand <david@redhat.com> wrote:
+grr, I should have noticed that before giving the r-b
+
+Am 17.09.25 um 11:06 schrieb Javier Martinez Canillas:
+> Iker Pedrosa <ikerpedrosam@gmail.com> writes:
 >
-> On 17.09.25 05:36, Chunyan Zhang wrote:
-> > Some platforms can customize the PTE/PMD entry uffd-wp bit making
-> > it unavailable even if the architecture provides the resource.
-> > This patch adds a macro API that allows architectures to define their
-> > specific implementations to check if the uffd-wp bit is available
-> > on which device the kernel is running.
-> >
-> > Also this patch is removing "ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP" and
-> > "ifdef CONFIG_PTE_MARKER_UFFD_WP" in favor of pgtable_supports_uffd_wp()
-> > and uffd_supports_wp_marker() checks respectively that default to
-> > IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP) and
-> > "IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP) && IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP)"
-> > if not overridden by the architecture, no change in behavior is expected.
-> >
-> > Acked-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> > ---
+> Hello Iker,
 >
+> Thanks for your patch.
+>
+>> Calls to drm_gem_fb_end_cpu*() should be between the calls to
+>> drm_dev*(), and not hidden inside some other function. This way the
+>> critical section code is visible at a glance, keeping it short and
+>> improving maintainability.
+>>
+>> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
+>> ---
+>>   drivers/gpu/drm/solomon/ssd130x.c | 33 +++++++++++++++------------------
+>>   1 file changed, 15 insertions(+), 18 deletions(-)
+>>
 > [...]
 >
-> Taking another look.
+>> @@ -1232,6 +1214,9 @@ static void ssd130x_primary_plane_atomic_update(struct drm_plane *plane,
+>>   	if (!drm_dev_enter(drm, &idx))
+>>   		return;
+>>   
+>> +	if (drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE))
+>> +		return;
+>> +
+> In this error path you should call drm_dev_exit(). The convention in the
+> kernel usually is to have a goto label for this, e.g.:
 >
-> >   /* mm helpers */
-> > @@ -415,68 +475,24 @@ static inline bool vma_has_uffd_without_event_remap(struct vm_area_struct *vma)
-> >       return false;
-> >   }
-> >
-> > -#endif /* CONFIG_USERFAULTFD */
-> > -
-> >   static inline bool userfaultfd_wp_use_markers(struct vm_area_struct *vma)
-> >   {
-> > -     /* Only wr-protect mode uses pte markers */
-> > -     if (!userfaultfd_wp(vma))
-> >               return false;
+>         if (drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE))
+>                goto out_drm_dev_exit;
 >
-> Isn't this indented one level too deep?
+>>   	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plane_state);
+>>   	drm_atomic_for_each_plane_damage(&iter, &damage) {
+>>   		dst_clip = plane_state->dst;
+>> @@ -1245,6 +1230,8 @@ static void ssd130x_primary_plane_atomic_update(struct drm_plane *plane,
+>>   				     &shadow_plane_state->fmtcnv_state);
+>>   	}
+>>   
+>> +	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
+>> +
+> and then here before the call you could have the label.
+>
+> out_drm_dev_exit:
+>
+>>   	drm_dev_exit(idx);
+> Same comments for the other places where you are adding the
+> drm_gem_fb_end_cpu*() calls next to the drm_dev*() ones.
+>
+> After the mentioned changes:
+>
+> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+>
 
-Oh right, I will fix these.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Thanks to you spotting them out!
 
-Chunyan
-
->
-> > -
-> > -     /* File-based uffd-wp always need markers */
-> > -     if (!vma_is_anonymous(vma))
-> > -             return true;
-> > -
-> > -     /*
-> > -      * Anonymous uffd-wp only needs the markers if WP_UNPOPULATED
-> > -      * enabled (to apply markers on zero pages).
-> > -      */
-> > -     return userfaultfd_wp_unpopulated(vma);
-> >   }
-> >
-> >   static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
-> >   {
-> > -#ifdef CONFIG_PTE_MARKER_UFFD_WP
-> > -     return is_pte_marker_entry(entry) &&
-> > -         (pte_marker_get(entry) & PTE_MARKER_UFFD_WP);
-> > -#else
-> > -     return false;
-> > -#endif
-> > +             return false;
->
-> Same here.
->
-> >   }
-> >
-> >   static inline bool pte_marker_uffd_wp(pte_t pte)
-> >   {
-> > -#ifdef CONFIG_PTE_MARKER_UFFD_WP
-> > -     swp_entry_t entry;
-> > -
-> > -     if (!is_swap_pte(pte))
-> >               return false;
->
-> Same here.
->
-> > -
-> > -     entry = pte_to_swp_entry(pte);
-> > -
-> > -     return pte_marker_entry_uffd_wp(entry);
-> > -#else
-> > -     return false;
-> > -#endif
-> >   }
->
->
-> --
-> Cheers
->
-> David / dhildenb
->
 
