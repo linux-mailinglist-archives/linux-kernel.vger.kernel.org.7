@@ -1,208 +1,110 @@
-Return-Path: <linux-kernel+bounces-820648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A9BB7D3FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A75BAB7D546
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD36846694F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90287178965
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F78231A7F4;
-	Wed, 17 Sep 2025 12:17:46 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8C62FBE0F;
+	Wed, 17 Sep 2025 12:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="rMprJkSN"
+Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E78A26E6F4;
-	Wed, 17 Sep 2025 12:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758111465; cv=none; b=jhf0aP8JxpLxvF0ZNvJniUVXng2lAFsSaicWy7fQh3HoYVk9zrKtWJgyQB0kF9p8nRf9wU5eTiYLiqkgcPy0vTGu8S55+swybNC9Izzb0GtmaeJ8AjBLpFGxz8Vxsv1F4H3tgbndGsuV9+EllQtEugTjLwonQf00L3Wvq+h2520=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758111465; c=relaxed/simple;
-	bh=MnL+OLyGBlGIzgc1VK2Ha0TXloPlDmQ3gtUlcniYA5E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5QAI1xx4yPcsLXVvZiV/PnOIVMlcekbV5oK0bDLowSNHDJ3hLAnZwo8lnLw+g/ub/5RaK5KJb+yky9sb3mO4LlEqUqsuYGyuwyZm6V0mG7EW0aXiuo/y7JmhUVDHEAqtp61m0NBCJ2zBQvuDeZstdGA/2UdeUiEo0wQ8a+K08M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 58HCGWNJ024712
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 20:16:32 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
- with Microsoft SMTP Server id 14.3.498.0; Wed, 17 Sep 2025 20:16:32 +0800
-Date: Wed, 17 Sep 2025 20:16:25 +0800
-From: Randolph Lin <randolph@andestech.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <jingoohan1@gmail.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alex@ghiti.fr>,
-        <aou@eecs.berkeley.edu>, <palmer@dabbelt.com>,
-        <paul.walmsley@sifive.com>, <ben717@andestech.com>,
-        <inochiama@gmail.com>, <thippeswamy.havalige@amd.com>,
-        <namcao@linutronix.de>, <shradha.t@samsung.com>,
-        <randolph.sklin@gmail.com>, <tim609@andestech.com>
-Subject: Re: [PATCH v2 4/5] PCI: andes: Add Andes QiLai SoC PCIe host driver
- support
-Message-ID: <aMqmmd381sySCGnY@swlinux02>
-References: <20250916100417.3036847-5-randolph@andestech.com>
- <20250916144652.GA1795814@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA732FBDEA;
+	Wed, 17 Sep 2025 12:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758111490; cv=pass; b=qYO1CLug5h9n52ensj8nUdWgAEo1Xpd4pHTFP/BoxRZyhhgXC2WqmpzBB3Y2q6leShuwTf3BVOSNRQ6mGV5ssVwcqHb5EZjhT78MdvlWSb8/ONSK1NfYXRUZLx562VRfta7dPus8jevKiR5xcqeZ3qApEd4IQezUmRKIT7hHaEI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758111490; c=relaxed/simple;
+	bh=B17GYg5auTAkWVCdRWKpLbr4OlUwuYKWU0Iqp+RY+fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fhUEW992jVA8KEaNOPoP/L/QlPZTgLySp5aPy5opYEAIY/vv35OHGoev0AlJTM6UKlIFQMekLVsAT73WyjLQbr4YhQ8h7VlgATCOEDT7Kp0DYo9PET1N6tB/42fDRWEDjhhh1GowW3qW/LmjPbUxeG4ob83XeCD7iEmZi2VUKqQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=rMprJkSN; arc=pass smtp.client-ip=49.212.207.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	(authenticated bits=0)
+	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58HCI2QP002008
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 17 Sep 2025 21:18:02 +0900 (JST)
+	(envelope-from weibu@redadmin.org)
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id 4C36C12418486;
+	Wed, 17 Sep 2025 21:18:02 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id VUG1dTMA0amh; Wed, 17 Sep 2025 21:17:59 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id D81A111EE222B; Wed, 17 Sep 2025 21:17:58 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1758111478;
+	cv=none; b=q+pzCNB2uJ8qPtF/tfDmunzkS0Hm+VSPTpzjh/lsoQfaimhD8rMl3SltubQtXetlb41F2H/+ymrTu/ZwTz0jHa8jzTU+ykB2aDWFj0vdye+YTEPAETYvfBz4FNyjvWCkKOrbuDSq0UGsl3IHw85OiCiUAhC6Df+li582oReTsEg=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1758111478; c=relaxed/relaxed;
+	bh=mrFS2WeE2DuciHDNhnemsvIlsB4vcsFJDQytVFcwjBA=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=a/9MQsLb1ve5CaiCnPyoQcdJ7t3EmhtIuU1PIgIzzz7DN8dPy8YZWTWZAPpMFGAjYz71NTuoXVlA9Uup4+eZ8XkwFOXFYuis5YPShMk6D43x21nrVPthNopLtls8qYwPUjscdoPJ3EK2DqZ/HJLhWRKyhWhuyfxumQjjwxtuEf0=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org D81A111EE222B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1758111478;
+	bh=mrFS2WeE2DuciHDNhnemsvIlsB4vcsFJDQytVFcwjBA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rMprJkSNXwfixvI/KvYPuDWU2ThRdcup0NF8SckFeJCMLa5mzWAjxW3FzDHnBHKei
+	 Qr52qZxw3wQA8u5n/hME7Z5VPB1Ji2Fy3r9QACrfu7gBWR2XKEL3nsQgeV7Z1vsa74
+	 gUjOROxaABAkXbuZzB+lJTvytQf8JZUyxr+mzBEo=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] staging: rtl8723bs: sdio: clarify OQT free page comment
+Date: Wed, 17 Sep 2025 21:17:54 +0900
+Message-ID: <20250917121754.1465051-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250916144652.GA1795814@bhelgaas>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 58HCGWNJ024712
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Clarify the comment above HalQueryTxBufferStatus8723BSdio() to use
+"TX OQT free page count" wording consistent with SDIO_REG_OQT_FREE_PG.
 
-On Tue, Sep 16, 2025 at 09:46:52AM -0500, Bjorn Helgaas wrote:
-> [EXTERNAL MAIL]
-> 
-> On Tue, Sep 16, 2025 at 06:04:16PM +0800, Randolph Lin wrote:
-> > Add driver support for DesignWare based PCIe controller in Andes
-> > QiLai SoC. The driver only supports the Root Complex mode.
-> 
-> > +config PCIE_ANDES_QILAI
-> > +     bool "ANDES QiLai PCIe controller"
-> > +     depends on OF && (RISCV || COMPILE_TEST)
-> > +     depends on PCI_MSI
-> > +     depends on ARCH_ANDES
-> 
-> This prevents a lot of compile testing.  AFAICT, no other controller
-> depends directly on the arch.  Most do something like these:
-> 
->   depends on MACH_ARTPEC6 || COMPILE_TEST
->   depends on ARCH_MXC || COMPILE_TEST
->   depends on OF && (ARM || ARCH_LAYERSCAPE || COMPILE_TEST)
-> 
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ drivers/staging/rtl8723bs/hal/sdio_ops.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-ok.
+diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl=
+8723bs/hal/sdio_ops.c
+index 8736c124f857..0ee50b4a1149 100644
+--- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
++++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+@@ -997,10 +997,7 @@ u8 HalQueryTxBufferStatus8723BSdio(struct adapter *ada=
+pter)
+ 	return true;
+ }
+=20
+-/*  */
+-/*	Description: */
+-/*		Query SDIO Local register to get the current number of TX OQT Free Spa=
+ce. */
+-/*  */
++/* Read the TX OQT free page count from the SDIO local register. */
+ void HalQueryTxOQTBufferStatus8723BSdio(struct adapter *adapter)
+ {
+ 	struct hal_com_data *haldata =3D GET_HAL_DATA(adapter);
+--=20
+2.47.3
 
-> > +     select PCIE_DW_HOST
-> > +     help
-> > +          Say Y here to enable PCIe controller support on Andes QiLai SoCs,
-> > +       which operate in Root Complex mode. The Andes QiLai SoCs PCIe
-> > +       controller is based on DesignWare IP (5.97a version) and therefore
-> > +       the driver re-uses the DesignWare core functions to implement the
-> > +       driver. The Andes QiLai SoC has three Root Complexes (RCs): one
-> > +       operates on PCIe 4.0 with 4 lanes at 0x80000000, while the other
-> > +       two operate on PCIe 4.0 with 2 lanes at 0xA0000000 and 0xC0000000,
-> > +       respectively.
-> 
-> I assume these addresses come from devicetree, so I don't think
-> there's any need to include them here.
-> 
-
-I will add num-lanes property in the devicetree.
-
-> Fix space/tab indentation issue on first line of help text.  Do the
-> indentation the same way as the rest of the file.
-> 
-
-I'm sorry for making this mistake.
-
-> > + * Refer to Table A4-5 (Memory type encoding) in the
-> > + * AMBA AXI and ACE Protocol Specification.
-> > + * The selected value corresponds to the Memory type field:
-> > + * "Write-back, Read and Write-allocate".
-> 
-> Add blank line between paragraphs or rewrap into a single paragraph.
-> 
-
-Ok.
-
-> > +static
-> > +bool qilai_pcie_outbound_atu_addr_valid(struct dw_pcie *pci,
-> > +                                     const struct dw_pcie_ob_atu_cfg *atu,
-> > +                                     u64 *limit_addr)
-> > +{
-> > +     u64 parent_bus_addr = atu->parent_bus_addr;
-> > +
-> > +     *limit_addr = parent_bus_addr + atu->size - 1;
-> > +
-> > +     /*
-> > +      * Addresses below 4 GB are not 1:1 mapped; therefore, range checks
-> > +      * only need to ensure addresses below 4 GB match pci->region_limit.
-> > +      */
-> > +     if (lower_32_bits(*limit_addr & ~pci->region_limit) !=
-> > +         lower_32_bits(parent_bus_addr & ~pci->region_limit) ||
-> > +         !IS_ALIGNED(parent_bus_addr, pci->region_align) ||
-> > +         !IS_ALIGNED(atu->pci_addr, pci->region_align) || !atu->size)
-> > +             return false;
-> 
-> Seems a little bit strange.  Is this something that could be expressed
-> via devicetree?  Or something peculiar about QiLai that's different
-> from all the other DWC-based controllers?
-> 
-
-After reviewing both the code history and the bug tracking system, it turns out
-that this code doesn't even qualify as a valid workaround.
-Apologies for having submitted it as a patch.
-
-The root cause is that the iATU limits were not configured correctly.
-The original design assumed at least 32GB or 128GB of BAR resource assignment,
-but the actual chip sets the iATU limit to only 4GB.
-As a result, region_limit is always constrained by this 4GB boundary.
-
-The correct workaround should be to program the iATU only for the 32-bit address
-space and skip iATU programming for the 64-bit space. A simple way to implement
-this workaround is to parse the num-viewport property from the devicetree and
-use this value directly, instead of relying on the result of reading
-PCIE_ATU_VIEWPORT.
-
-I will attempt to implement it this way, but the correct method is not yet
-well-defined. Do you have any suggestions on how to modify the num-viewport
-property from the devicetree for use in the driver?
-It seems it will be modified in pcie-designware.c.
-
-> > + * Setup the Qilai PCIe IOCP (IO Coherence Port) Read/Write Behaviors to the
-> > + * Write-Back, Read and Write Allocate mode.
-> > + * The IOCP HW target is SoC last-level cache (L2 Cache), which serves as the
-> > + * system cache.
-> > + * The IOCP HW helps maintain cache monitoring, ensuring that the device can
-> > + * snoop data from/to the cache.
-> 
-> Add blank lines between paragraphs (or rewrap into a single paragraph
-> if that's what you intend).
-> 
-
-Ok.
-
-> > +static struct platform_driver qilai_pcie_driver = {
-> > +     .probe = qilai_pcie_probe,
-> > +     .driver = {
-> > +             .name   = "qilai-pcie",
-> > +             .of_match_table = qilai_pcie_of_match,
-> > +             /* only test passed at PROBE_DEFAULT_STRATEGY */
-> > +             .probe_type = PROBE_DEFAULT_STRATEGY,
-> 
-> This is the only use of PROBE_DEFAULT_STRATEGY in the entire tree, so
-> I doubt you need it.  If you do, please explain why in more detail.
-> 
-
-In the V1 patch, the reviewer, Manivannan, suggested:
-"You should start using PROBE_PREFER_ASYNCHRONOUS."
-However, after setting up PROBE_PREFER_ASYNCHRONOUS, numerous errors
-were encountered during the EP device probe flow.
-Therefore, we would prefer to continue using PROBE_DEFAULT_STRATEGY.
-
-> Bjorn
-
-Sincerely,
-Randolph
 
