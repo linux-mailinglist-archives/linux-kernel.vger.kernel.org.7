@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-820477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DCBB7FA1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:58:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AC4B7F604
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E65320604
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:28:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B88523328
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE77D305975;
-	Wed, 17 Sep 2025 10:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161603294EB;
+	Wed, 17 Sep 2025 10:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mnz3pZO2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txxfI2C8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAF62F39D7;
-	Wed, 17 Sep 2025 10:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611D6306498;
+	Wed, 17 Sep 2025 10:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104875; cv=none; b=aE/+/Oek/qr8sqVkvi9yiSq7zEVHlmd2lgpauZ8yNcl05GnZ4MHYW8jJ4lHIhhkCdJq0e0eVxHPCc6NC2va/FayByl6VtaPuOyOp69UwXD8Q6hly8TtSt3qkyceV+L1jypD8nHfEsYARubye22dhi058hRWFnuOjELpq8ytLAx0=
+	t=1758104915; cv=none; b=CIpWOh+XUzgPIm5w2nlJwdLLGa8+CYQ5X6xXbV7BHD3pUGb4Lj60GiYqcRE14XLddAasXoqZCbso7MRydrbJNog7snWIAy3X2BdOwlRGV4LU0b01SAYcRe90HbJ+A5iteW2ShwVmYqlM7FmKdJYIKTBI6C/77Jrl+CfeE9o0cFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104875; c=relaxed/simple;
-	bh=9EIowYvEPZOqg+KYd0lf5vl3N9XVhtAKVJH7AC+KA5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6nsbmGSL+XknFh2EcFTS8dify1nZydgseK6FMqvRr3AMb7bK4QSP/1yVEoMOnrUADqS0OUb5svUBY0MRGnwyU2pW8z+A8EW/rh1Mrzct/DGGIeyqAIEfAh3hudQN99x71rDV1X5KNIUckwJgrtpZcwSkITus2y22JM1UEnY188=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mnz3pZO2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB82BC4CEF0;
-	Wed, 17 Sep 2025 10:27:50 +0000 (UTC)
+	s=arc-20240116; t=1758104915; c=relaxed/simple;
+	bh=6Fbk1AWCJkKzgSUrfIvCQZYtZjMyGsGaw3a7FOb//jc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Xbx3hoqQYwnI80p1kRIoyTIeltL6Nnj5gPsgCZKGXkR7WL7ou3Zqbc9mKYlZkMe2QsDmEfg0HvlQO2APSpfQly4P9/B4hW5x2qF/lPzgLaqt6M4lSOzVdcgPDTgG9QX7Z3i6SY5c2n8fYdazPqxc8jvzoZehZ7KD0F7DADBvQl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txxfI2C8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC1FDC4CEF0;
+	Wed, 17 Sep 2025 10:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758104874;
-	bh=9EIowYvEPZOqg+KYd0lf5vl3N9XVhtAKVJH7AC+KA5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mnz3pZO2LNyBtk9R4cClLiheWHz4cq6ok9vEM/tCuO6cscaqpT/AsxDF5zr/L9cSk
-	 2aOl//VZAqW+Bo9UjsWrbdftYsHImwwL6IXsiTQHofRd/wHsfiMh3vvYqiJUIhdctl
-	 jyOHMo53h5SSdEIkIGCQxJ5d+MA0LcUm+OyR3rqJ4EAOsN1wlhMXP8nU0ICF0j27i5
-	 +nOH/i3CFmM7YzoPY/OnfTPPn+X/NV+EuyocoRRQpdfmN59X1sGZn7lv6AxQ1JvUuB
-	 /kyCCMXcQ8WUJzPoBDXzfDmumnUrWK1SW4F46ajIfjm/rrc0+l0qF3AtiiqpfPAj+r
-	 qDXrv7JO3z7aw==
-Date: Wed, 17 Sep 2025 15:57:46 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	"David E. Box" <david.e.box@linux.intel.com>, Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
- by BIOS for devicetree platforms
-Message-ID: <5fifyei5gt2ypvk3hzj4lyc476thcou3g7u7x2lnup2eerazlx@66cbcjzvo5dg>
-References: <20250916-pci-dt-aspm-v1-0-778fe907c9ad@oss.qualcomm.com>
- <20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com>
- <ccf1b22b-8b6d-4aae-ac27-e84943b7ffd0@oss.qualcomm.com>
+	s=k20201202; t=1758104915;
+	bh=6Fbk1AWCJkKzgSUrfIvCQZYtZjMyGsGaw3a7FOb//jc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=txxfI2C8t9zqn/W6qoRHRsg9YVf+acGtNqdRHEb735n9avqnFj/OnWflHYRI5zujJ
+	 LP7lzkakqsah4XdI3DOIwvjWZmD3z0MBfkLsOJylm5JwwmqsrZtomxw/+i8X176jLN
+	 HcdeCrixaN2qziTTw1+p/it42cuexxbmmc7k8ayaqU5neYpasjr3bWBkaCv5u+We8Y
+	 w+ZEWm5ZjPnTkRoZLA23JMyzVVZ9Q4vcsaGVWRXPb12Qf+8ggIjGf5JXZNX7MuuDIL
+	 hcYVOxrHwI6LGeEi0snKBvdviv0i6MLMi5XmhrcZkLUaQzLmOa0TsKbMoeVe5ZHZYM
+	 RUbGybX1p0uDw==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 0/9] ns: rework common initialization
+Date: Wed, 17 Sep 2025 12:27:59 +0200
+Message-Id: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ccf1b22b-8b6d-4aae-ac27-e84943b7ffd0@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADCNymgC/0WNQQ6CMBAAv0J6dpESisWvGEOWssDGsiVtoiaEv
+ 1u9eJzDzOwqUWRK6lrsKtKTEwfJoE+FcgvKTMBjZlVXtak6fYFXiA8QXClt6Agk9S6saxAw1nR
+ Na6lxxqisb5Emfv/St3vmARPBEFHc8g2GyDMLoPfnf60ttS0n9tTn9+izfBwfSuxwbKMAAAA=
+X-Change-ID: 20250917-work-namespace-ns_common-5859468e4c55
+To: linux-fsdevel@vger.kernel.org
+Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ Lennart Poettering <mzxreary@0pointer.de>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-56183
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1854; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=6Fbk1AWCJkKzgSUrfIvCQZYtZjMyGsGaw3a7FOb//jc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc6vWNbnF/+9Yg77h7kTXXB3Ym/ea313JzGpeLJOc0n
+ jsT8+JsRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETelzD8Uym6IFzs6r0gkofh
+ xBlFXe7Db38+OCTS/Vjr5YZ3rAXMiQz/q4sXba/ZVbDqaK25rIJSS4m8CePqL5tsrruWiu0WD87
+ lAQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue, Sep 16, 2025 at 06:28:58PM GMT, Konrad Dybcio wrote:
-> On 9/16/25 6:12 PM, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > 
-> > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
-> > the BIOS (through LNKCTL) during device initialization. This was done
-> > conservatively to avoid issues with the buggy devices that advertise
-> > ASPM capabilities, but behave erratically if the ASPM states are enabled.
-> > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
-> > states that were known to work for the devices.
-> > 
-> > But this turned out to be a problem for devicetree platforms, especially
-> > the ARM based devicetree platforms powering Embedded and *some* Compute
-> > devices as they tend to run without any standard BIOS. So the ASPM states
-> > on these platforms were left disabled during boot and the PCI subsystem
-> > never bothered to enable them, unless the user has forcefully enabled the
-> > ASPM states through Kconfig, cmdline, and sysfs or the device drivers
-> > themselves, enabling the ASPM states through pci_enable_link_state() APIs.
-> > 
-> > This caused runtime power issues on those platforms. So a couple of
-> > approaches were tried to mitigate this BIOS dependency without user
-> > intervention by enabling the ASPM states in the PCI controller drivers
-> > after device enumeration, and overriding the ASPM/Clock PM states
-> > by the PCI controller drivers through an API before enumeration.
-> > 
-> > But it has been concluded that none of these mitigations should really be
-> > required and the PCI subsystem should enable the ASPM states advertised by
-> > the devices without relying on BIOS or the PCI controller drivers. If any
-> > device is found to be misbehaving after enabling ASPM states that they
-> > advertised, then those devices should be quirked to disable the problematic
-> > ASPM/Clock PM states.
-> > 
-> > In an effort to do so, start by overriding the ASPM and Clock PM states set
-> > by the BIOS for devicetree platforms first. Separate helper functions are
-> > introduced to set the default ASPM and Clock PM states and they will
-> > override the BIOS set states by enabling all of them if CONFIG_OF is
-> > enabled. To aid debugging, print the overridden ASPM and Clock PM states.
-> > 
-> > In the future, these helpers could be extended to allow other platforms
-> > like VMD, newer ACPI systems with a cutoff year etc... to follow the path.
-> > 
-> > Link: https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
-> > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> 
-> [...]
-> 
-> > +	/* Override the BIOS disabled Clock PM state for devicetree platforms */
-> > +	if (IS_ENABLED(CONFIG_OF) && !enabled) {
-> 
-> JFYI CONFIG_OF=y && CONFIG_ACPI=y is valid, at least on arm64
+The current scheme still involves a lot of open-coding and copy-pasing
+and bleeds a lot of unnecessary details into actual namespace
+implementers. Encapsulate it in the common helpers and simplify it all.
 
-Ouch! I didn't know this, thanks for pointing it out.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (9):
+      uts: split namespace into separate header
+      mnt: expose pointer to init_mnt_ns
+      nscommon: move to separate file
+      cgroup: split namespace into separate header
+      nsfs: add inode number for anon namespace
+      mnt: simplify ns_common_init() handling
+      net: centralize ns_common initialization
+      nscommon: simplify initialization
+      ns: add ns_common_free()
 
-> Maybe something like of_have_populated_dt()?
-> 
+ fs/namespace.c                   | 16 ++++++----
+ include/linux/cgroup.h           | 51 +------------------------------
+ include/linux/cgroup_namespace.h | 56 ++++++++++++++++++++++++++++++++++
+ include/linux/mnt_namespace.h    |  2 ++
+ include/linux/ns_common.h        | 43 ++++++++++++++++++++++++++
+ include/linux/proc_ns.h          | 21 -------------
+ include/linux/uts_namespace.h    | 65 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/utsname.h          | 58 +----------------------------------
+ include/uapi/linux/nsfs.h        |  3 ++
+ ipc/namespace.c                  |  6 ++--
+ kernel/Makefile                  |  2 +-
+ kernel/cgroup/namespace.c        |  4 +--
+ kernel/nscommon.c                | 25 ++++++++++++++++
+ kernel/pid_namespace.c           |  6 ++--
+ kernel/time/namespace.c          |  4 +--
+ kernel/user_namespace.c          |  6 ++--
+ kernel/utsname.c                 |  4 +--
+ net/core/net_namespace.c         | 23 ++------------
+ 18 files changed, 225 insertions(+), 170 deletions(-)
+---
+base-commit: bf56a464f4ad7143c6e4b581b411f682f345a344
+change-id: 20250917-work-namespace-ns_common-5859468e4c55
 
-Yep, this looks like the correct API.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
