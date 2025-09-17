@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-820501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36D3B7C6DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:01:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89230B7C5DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4D616CAA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F601188B01D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1452345724;
-	Wed, 17 Sep 2025 10:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B31350D4E;
+	Wed, 17 Sep 2025 10:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="hFl85Ne2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JdN24G+t"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8Igic/o"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BE954262
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F2732D5AC
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105795; cv=none; b=CBVRKpW9gLKMGB2IfXGDSlSmvzwO0f98mUQmVVzlfzsegJsn2VW4TqHOyge1XnWW/niH5rU3yXNE3/RPDJuJLNWgUPPtzt4kQn2UYeeooFky9aTvzD2PTByEsfht5uVUI7DR8bNlO7UXaNKX8vLd1H/+vHRKV5mXjR3mRtvsvJM=
+	t=1758105812; cv=none; b=T850b3L8pDNbwATiU8YACy3cghLxnlbrKZo25FO0SDq6OHgaIQnkgVQ7hYCtX+LI/hCWGFHB5e8gSOWB8Bb8SvjODZcdAJ+SvQX0OVld3j6PCWC7hIPd4w9UJdqdtzsZMxa65b5iw4a0FSwHOV7ya/yD65SMHx4j7r4dmi3pW1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105795; c=relaxed/simple;
-	bh=xVUHSQEV9R1i8qu4QCvBkFYy7lo2qBzQfwY2XYBsUJc=;
+	s=arc-20240116; t=1758105812; c=relaxed/simple;
+	bh=7I53Ykw1eFryroVQTuUQXnFZzr85bDzFPt1fAEv0b6g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boelGVFfc/MCeIT7dMPJ4LOwvN+xI1ivglrXLfoohrAviSvqnF2H4UmjwAfQw1uhdp/6WXQlX1unYwb/N0WPmQW93y7FRlaJJY0yVDR9UPAMk66Wmf7a7pemXJsjagSuvCYgQaAogxxZtGdMm8iSRlg+flyKKcP4ijCPrl8Ldn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=hFl85Ne2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JdN24G+t; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7F16C14001DE;
-	Wed, 17 Sep 2025 06:43:12 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 17 Sep 2025 06:43:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1758105792; x=
-	1758192192; bh=74X70xzEhBM0tW2lzuA0ESFpEqnjRQx9KPWr7O/CNbQ=; b=h
-	Fl85Ne2Dxf0+e1Zeyn7iSeFwbs1zURwloVh9+uV8sDF5i1ken+c3N4OhSMEE4fQg
-	Rk73PcExtwPGu218/Bbyf4cmiYoD18pMdXqedlDABkGssmJ25oAEZutDusHh3cd3
-	E70xlH9tnyS/RfTocqX1vNRl1qyvU+Yo/0o6ln4GwEZLstIPDTO2pavC5/kusANU
-	xmRNJIutJ5xqpqXfENe6L+5llIO1dQfXBUQS+iPBiBeW83Q24RZ3sTWP6iHBWGDg
-	Q4Z9fIv2mOejCKC3w7mjmAQnk5b8voSGGciJRpicNECWi/sgrtmHOsKNZkLuqS68
-	29uBu41oNwNM7SHHE9kVg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758105792; x=1758192192; bh=74X70xzEhBM0tW2lzuA0ESFpEqnjRQx9KPW
-	r7O/CNbQ=; b=JdN24G+t3tAtKEaF3xy9/usv8GaFHeYOqrUsOtCLEG6H2AVjKO/
-	z/ppztjGiIb2oTuLYhiWs+2ju8J1UsnTxCuiQbv9++JILxhJT7qoqX4OvGRKdCb5
-	Y/x5WMYXYfptlZ4UZqJZmavoaPQUTghqltZ1eJ7Z05RxKczDbWUmy+O2UmTscZf/
-	cemk+T/thmz/ZDwEygZ0gVZSVF9fWeC42+dv7O02TIlE7m5xdGmNmGuLP0AumUJu
-	zI8cie3GJqgZ8AZ4daWsLEjU70a6WzrXYPOypYn8SScKkXCmbzhHw6Hu7VVFoWyS
-	BFHPfaAgeYkkDxZQDF6SqlFVAC0zNDvbyRQ==
-X-ME-Sender: <xms:v5DKaBRX0yS8FD8qt-AC-V9tRJXQSOqPMmBBXmawkd6AGirEwgFPOw>
-    <xme:v5DKaGpLZXUvscnwH8ZoLoYQu60UwnreKcKWMpLjuSyhpIZUoznDQP5YKSEwe0M2I
-    2plbZmz-0lK9T1uQCA>
-X-ME-Received: <xmr:v5DKaPpoduEQ_2ZSaPZQhsv35CIYWOQYDw7kUpOzkkw_8FNKShG1wLRys9Qjjg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfedvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
-    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepvdeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhrvghniihordhsthhorghkvg
-    hssehorhgrtghlvgdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhn
-    uggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsggrohhlihhn
-    rdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlihgrmh
-    drhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehr
-    vgguhhgrthdrtghomhdprhgtphhtthhopehrhigrnhdrrhhosggvrhhtshesrghrmhdrtg
-    homhdprhgtphhtthhopeguvghvrdhjrghinhesrghrmhdrtghomh
-X-ME-Proxy: <xmx:v5DKaB2h-8I5FINeZ6DBBIlYuR_mhdfk2nOhP7ciKrwWZxmBlZRgdw>
-    <xmx:v5DKaDi56MNn6yD1nQTgCCscQozH7ovo2yNCKXIqJT2yUCfn6qO_Dw>
-    <xmx:v5DKaAlTECDEQqK1XmSv90WalG12KPOQqFTlbRQzWHt-_cfNQyqAvA>
-    <xmx:v5DKaL-fewQ-QpdswZuFxLosxSXD-E6n6etTZSaSiz37hzJuDd1vog>
-    <xmx:wJDKaDk6zs0RS8-cvQBQ7seUyblylVYSAniu0Q5CbRWqR30Q8LGNwC2i>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 17 Sep 2025 06:43:10 -0400 (EDT)
-Date: Wed, 17 Sep 2025 11:43:08 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
-	Barry Song <baohua@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] mm/khugepaged: Do not fail collapse_pte_mapped_thp()
- on SCAN_PMD_NULL
-Message-ID: <l6yjv4b2xvcwgpq5q3esyat56jdfj7flcokbqptsxlzgesrwe2@sxxzcp477ldi>
-References: <v5ivpub6z2n2uyemlnxgbilzs52ep4lrary7lm7o6axxoneb75@yfacfl5rkzeh>
- <ecac1e7f-1709-4348-b8ff-fa1c0f087548@lucifer.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=btstctlyKNc4sYfmdV2Jnr1X651cEQEeMtyy8ZTnK+vvwmi474EmSoOedny4pRl4dqmeNVWm2kmvH5CvyoX/hkAuOcb4aqin9CL7oN26jvTGsj/997MnZ9wpvW4yiYiSWr6mi55aJO2g1u/l3gfi/3cZ0zEN+pv+CtxzIpFHj14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A8Igic/o; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b078af34f8aso114119166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758105809; x=1758710609; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Yyh8Hkqs7GqsXIM+okxGaGUnlxOgHFmx9rSotm4MB8=;
+        b=A8Igic/oEB//tu0k72oof6mGPZKpfAXvaJzlLQERXXttCRaly8afI5OKULJcaaJaZ7
+         dNbwam/HPx8EPMjfZpF6yyLbmCOy9FN3DKXxMbpqiw1EFttv/bAYFupFlhzOi2ppEMMJ
+         iuD/703qij7BsKIETYwzlXvbbu54Yt9gxzHhoYZY94yhEHDrDckuyJAn7+CV+4qdHqta
+         1olTqp5HmMy25UZVhMExyd7K6bSEKuk195o/BKMRCv7YUvYryYvwpC1DqAEyi6XBR1Va
+         MecsB6oRtPUD1kDqkVNfIy0+X9nsHtA+E9dM6Xddn15/+7GAHSFtkae/pPfYVtpUpHGm
+         ZYsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758105809; x=1758710609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Yyh8Hkqs7GqsXIM+okxGaGUnlxOgHFmx9rSotm4MB8=;
+        b=VCC4bC43RPk2Z9bMnWIVpT81NhjJAdO7ySi86sehEM+LIZgQheriPKZHyhzWVDkv2M
+         xkp1qCLywszr8XhXEfTmYl3RUp6Lbb+e/kosK76PiANyApCe/4kgaZzbw8fDlq3S7KOa
+         0TUgiarixhH5i83/cKdigfeHAy+fDFr4nhKkqtKXK4tjuybo71QKuYWznZqOL+JogYPY
+         vrh706dfQbXKpOXuWWpAVW82fUOh7JD7vLrGZEIEZZAanbHJ7igAz+1zJQmLtYp64S78
+         KcTcOOHuF6nrb4xjGHk9lEJ7kl7a8jHPTFITg9oo5ift06MwKEkVh9W9Q9zTCl6IffNo
+         MyBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXK66AOyDM7Uc2j8desDnsovxRqBDaDctvuIkczHNawcbnGCGwB1lqpk/o/EbZ37PnOBWy51X2XUsPkxkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfmzf4i4rWJ3wgdJS1b/rO/Pf9FNc96bwfD/+HsS7IjzqXnrS3
+	Uc4CNGN6nLySw70QyoDKIgzfsdXPCO12Pwc3qiqf6WshQqOJxk+v4xqh
+X-Gm-Gg: ASbGncv5nAWXA+HozXZ9vDMLNuiW58DMtXpbJaQ5upMBinK2dOha2ciyu+d6xkyW7jP
+	5VZxmVymMskkIdzlJm6ggnNTxVlRFHjZz/aRN3XEJOBFQJnoclNn89KdZNSwvsnCoHuyLEwbJR/
+	Oo2mRsqt7op70odVl9+97jG+UYF9b3FXlimKa8KEFkWoOeHhgLGOHBEzFW7AFCrDtgvAdkbuB0+
+	Z1igjHH9G7Esbj4ql4t73eY4sUYHWF9U0VUHYMGrwgCPhWQgS3SMKagxyyJJX2ZhqEXc0zxf2/D
+	+N9ncc3+vh3yTkDcSLmVd9K+XdDOkwrfykMs+tWLls412krbTOcIwlZzvdF1KVoqUM0+fcywWrK
+	tE9slanxJY0DuoYU=
+X-Google-Smtp-Source: AGHT+IF0bGu8coGo8S13flYMunWY6PoCzFUDuD7l8SY41Vuc7seAVPH3vRAusBx3pRQ3RA9KkKbEpA==
+X-Received: by 2002:a17:907:7e93:b0:b04:669f:e70f with SMTP id a640c23a62f3a-b1bb7f2a4f5mr112464766b.2.1758105808719;
+        Wed, 17 Sep 2025 03:43:28 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d005:3b00:8bcc:b603:fee7:a273])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07c6110c27sm1132722066b.66.2025.09.17.03.43.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 03:43:28 -0700 (PDT)
+Date: Wed, 17 Sep 2025 13:43:25 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v18 5/8] net: dsa: Add Airoha AN8855 5-Port
+ Gigabit DSA Switch driver
+Message-ID: <20250917104325.j5je2jtachee7thw@skbuf>
+References: <20250915104545.1742-1-ansuelsmth@gmail.com>
+ <20250915104545.1742-6-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,110 +106,222 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ecac1e7f-1709-4348-b8ff-fa1c0f087548@lucifer.local>
+In-Reply-To: <20250915104545.1742-6-ansuelsmth@gmail.com>
 
-On Tue, Sep 16, 2025 at 10:54:12AM +0100, Lorenzo Stoakes wrote:
-> On Mon, Sep 15, 2025 at 02:52:53PM +0100, Kiryl Shutsemau wrote:
-> > From: Kiryl Shutsemau <kas@kernel.org>
-> >
-> > MADV_COLLAPSE on a file mapping behaves inconsistently depending on if
-> > PMD page table is installed or not.
-> >
-> > Consider following example:
-> >
-> > 	p = mmap(NULL, 2UL << 20, PROT_READ | PROT_WRITE,
-> > 		 MAP_SHARED, fd, 0);
-> > 	err = madvise(p, 2UL << 20, MADV_COLLAPSE);
-> >
-> > fd is a populated tmpfs file.
-> >
-> > The result depends on the address that the kernel returns on mmap().
-> > If it is located in an existing PMD table, the madvise() will succeed.
-> > However, if the table does not exist, it will fail with -EINVAL.
-> >
-> > This occurs because find_pmd_or_thp_or_none() returns SCAN_PMD_NULL when
-> > a page table is missing, which causes collapse_pte_mapped_thp() to fail.
-> >
-> > SCAN_PMD_NULL and SCAN_PMD_NONE should be treated the same in
-> > collapse_pte_mapped_thp(): install the PMD leaf entry and allocate page
-> > tables as needed.
-> >
-> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> 
-> There was a v1 with tags, you've not propagated any of them? Did you feel
-> the change was enough to remove them?
+On Mon, Sep 15, 2025 at 12:45:41PM +0200, Christian Marangi wrote:
+> +static const struct an8855_mib_desc an8855_mib[] = {
+> +	MIB_DESC(1, AN8855_PORT_MIB_TX_DROP, "TxDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_TX_CRC_ERR, "TxCrcErr"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_TX_COLLISION, "TxCollision"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_TX_OVERSIZE_DROP, "TxOversizeDrop"),
+> +	MIB_DESC(2, AN8855_PORT_MIB_TX_BAD_PKT_BYTES, "TxBadPktBytes"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RX_DROP, "RxDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RX_FILTERING, "RxFiltering"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RX_CRC_ERR, "RxCrcErr"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RX_CTRL_DROP, "RxCtrlDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RX_INGRESS_DROP, "RxIngressDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RX_ARL_DROP, "RxArlDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_FLOW_CONTROL_DROP, "FlowControlDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_WRED_DROP, "WredDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_MIRROR_DROP, "MirrorDrop"),
+> +	MIB_DESC(2, AN8855_PORT_MIB_RX_BAD_PKT_BYTES, "RxBadPktBytes"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RXS_FLOW_SAMPLING_PKT_DROP, "RxsFlowSamplingPktDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_RXS_FLOW_TOTAL_PKT_DROP, "RxsFlowTotalPktDrop"),
+> +	MIB_DESC(1, AN8855_PORT_MIB_PORT_CONTROL_DROP, "PortControlDrop"),
+> +};
+> +
+> +static int
+> +an8855_mib_init(struct an8855_priv *priv)
+> +{
+> +	int ret;
+> +
+> +	ret = regmap_write(priv->regmap, AN8855_MIB_CCR,
+> +			   AN8855_CCR_MIB_ENABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_write(priv->regmap, AN8855_MIB_CCR,
+> +			    AN8855_CCR_MIB_ACTIVATE);
+> +}
+> +
+> +static void an8855_get_strings(struct dsa_switch *ds, int port,
+> +			       u32 stringset, uint8_t *data)
+> +{
+> +	int i;
+> +
+> +	if (stringset != ETH_SS_STATS)
+> +		return;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(an8855_mib); i++)
+> +		ethtool_puts(&data, an8855_mib[i].name);
 
-I moved code around and was not comfortable to carry tags over.
+Same feedback as for yt921x. For new drivers we want in unstructured
+ethtool -S only those statistics which are not exposed through standard
+variants (to force the adoption of the new interfaces).
 
-> Anyway, LGTM so:
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> 
-> > ---
-> >
-> > v2:
-> >  - Modify set_huge_pmd() instead of introducing install_huge_pmd();
-> >
-> > ---
-> >  mm/khugepaged.c | 20 +++++++++++++++++++-
-> >  1 file changed, 19 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index b486c1d19b2d..986718599355 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -1472,15 +1472,32 @@ static void collect_mm_slot(struct khugepaged_mm_slot *mm_slot)
-> >  static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
-> >  			pmd_t *pmdp, struct folio *folio, struct page *page)
-> >  {
-> > +	struct mm_struct *mm = vma->vm_mm;
-> >  	struct vm_fault vmf = {
-> >  		.vma = vma,
-> >  		.address = addr,
-> >  		.flags = 0,
-> > -		.pmd = pmdp,
-> >  	};
-> > +	pgd_t *pgdp;
-> > +	p4d_t *p4dp;
-> > +	pud_t *pudp;
-> >
-> >  	mmap_assert_locked(vma->vm_mm);
-> 
-> NIT: you have mm as a local var should use here too. Not a big deal though
-> obviously...
-
-Do you want v3 for this?
-
-> >
-> > +	if (!pmdp) {
-> > +		pgdp = pgd_offset(mm, addr);
-> > +		p4dp = p4d_alloc(mm, pgdp, addr);
-> > +		if (!p4dp)
-> > +			return SCAN_FAIL;
-> > +		pudp = pud_alloc(mm, p4dp, addr);
-> > +		if (!pudp)
-> > +			return SCAN_FAIL;
-> > +		pmdp = pmd_alloc(mm, pudp, addr);
-> > +		if (!pmdp)
-> > +			return SCAN_FAIL;
-> > +	}
-> > +
-> > +	vmf.pmd = pmdp;
-> >  	if (do_set_pmd(&vmf, folio, page))
-> >  		return SCAN_FAIL;
-> >
-> > @@ -1556,6 +1573,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
-> >  	switch (result) {
-> >  	case SCAN_SUCCEED:
-> >  		break;
-> > +	case SCAN_PMD_NULL:
-> >  	case SCAN_PMD_NONE:
-> >  		/*
-> >  		 * All pte entries have been removed and pmd cleared.
-> > --
-> > 2.50.1
-> >
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> +}
+> +
+> +static void an8855_read_port_stats(struct an8855_priv *priv, int port,
+> +				   u32 offset, u8 size, uint64_t *data)
+> +{
+> +	u32 val, reg = AN8855_PORT_MIB_COUNTER(port) + offset;
+> +
+> +	regmap_read(priv->regmap, reg, &val);
+> +	*data = val;
+> +
+> +	if (size == 2) {
+> +		regmap_read(priv->regmap, reg + 4, &val);
+> +		*data |= (u64)val << 32;
+> +	}
+> +}
+> +
+> +static void an8855_get_ethtool_stats(struct dsa_switch *ds, int port,
+> +				     uint64_t *data)
+> +{
+> +	struct an8855_priv *priv = ds->priv;
+> +	const struct an8855_mib_desc *mib;
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(an8855_mib); i++) {
+> +		mib = &an8855_mib[i];
+> +
+> +		an8855_read_port_stats(priv, port, mib->offset, mib->size,
+> +				       data + i);
+> +	}
+> +}
+> +
+> +static int an8855_get_sset_count(struct dsa_switch *ds, int port,
+> +				 int sset)
+> +{
+> +	if (sset != ETH_SS_STATS)
+> +		return 0;
+> +
+> +	return ARRAY_SIZE(an8855_mib);
+> +}
+> +
+> +static void an8855_get_eth_mac_stats(struct dsa_switch *ds, int port,
+> +				     struct ethtool_eth_mac_stats *mac_stats)
+> +{
+> +	struct an8855_priv *priv = ds->priv;
+> +
+> +	/* MIB counter doesn't provide a FramesTransmittedOK but instead
+> +	 * provide stats for Unicast, Broadcast and Multicast frames separately.
+> +	 * To simulate a global frame counter, read Unicast and addition Multicast
+> +	 * and Broadcast later
+> +	 */
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_UNICAST, 1,
+> +			       &mac_stats->FramesTransmittedOK);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_SINGLE_COLLISION, 1,
+> +			       &mac_stats->SingleCollisionFrames);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_MULTIPLE_COLLISION, 1,
+> +			       &mac_stats->MultipleCollisionFrames);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_UNICAST, 1,
+> +			       &mac_stats->FramesReceivedOK);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_BYTES, 2,
+> +			       &mac_stats->OctetsTransmittedOK);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_ALIGN_ERR, 1,
+> +			       &mac_stats->AlignmentErrors);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_DEFERRED, 1,
+> +			       &mac_stats->FramesWithDeferredXmissions);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_LATE_COLLISION, 1,
+> +			       &mac_stats->LateCollisions);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_EXCESSIVE_COLLISION, 1,
+> +			       &mac_stats->FramesAbortedDueToXSColls);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_BYTES, 2,
+> +			       &mac_stats->OctetsReceivedOK);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_MULTICAST, 1,
+> +			       &mac_stats->MulticastFramesXmittedOK);
+> +	mac_stats->FramesTransmittedOK += mac_stats->MulticastFramesXmittedOK;
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_BROADCAST, 1,
+> +			       &mac_stats->BroadcastFramesXmittedOK);
+> +	mac_stats->FramesTransmittedOK += mac_stats->BroadcastFramesXmittedOK;
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_MULTICAST, 1,
+> +			       &mac_stats->MulticastFramesReceivedOK);
+> +	mac_stats->FramesReceivedOK += mac_stats->MulticastFramesReceivedOK;
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_BROADCAST, 1,
+> +			       &mac_stats->BroadcastFramesReceivedOK);
+> +	mac_stats->FramesReceivedOK += mac_stats->BroadcastFramesReceivedOK;
+> +}
+> +
+> +static const struct ethtool_rmon_hist_range an8855_rmon_ranges[] = {
+> +	{ 0, 64 },
+> +	{ 65, 127 },
+> +	{ 128, 255 },
+> +	{ 256, 511 },
+> +	{ 512, 1023 },
+> +	{ 1024, 1518 },
+> +	{ 1519, AN8855_MAX_MTU },
+> +	{}
+> +};
+> +
+> +static void an8855_get_rmon_stats(struct dsa_switch *ds, int port,
+> +				  struct ethtool_rmon_stats *rmon_stats,
+> +				  const struct ethtool_rmon_hist_range **ranges)
+> +{
+> +	struct an8855_priv *priv = ds->priv;
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_UNDER_SIZE_ERR, 1,
+> +			       &rmon_stats->undersize_pkts);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_OVER_SZ_ERR, 1,
+> +			       &rmon_stats->oversize_pkts);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_FRAG_ERR, 1,
+> +			       &rmon_stats->fragments);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_JABBER_ERR, 1,
+> +			       &rmon_stats->jabbers);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_64, 1,
+> +			       &rmon_stats->hist[0]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_65_TO_127, 1,
+> +			       &rmon_stats->hist[1]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_128_TO_255, 1,
+> +			       &rmon_stats->hist[2]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_256_TO_511, 1,
+> +			       &rmon_stats->hist[3]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_512_TO_1023, 1,
+> +			       &rmon_stats->hist[4]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_1024_TO_1518, 1,
+> +			       &rmon_stats->hist[5]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PKT_SZ_1519_TO_MAX, 1,
+> +			       &rmon_stats->hist[6]);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_64, 1,
+> +			       &rmon_stats->hist_tx[0]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_65_TO_127, 1,
+> +			       &rmon_stats->hist_tx[1]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_128_TO_255, 1,
+> +			       &rmon_stats->hist_tx[2]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_256_TO_511, 1,
+> +			       &rmon_stats->hist_tx[3]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_512_TO_1023, 1,
+> +			       &rmon_stats->hist_tx[4]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_1024_TO_1518, 1,
+> +			       &rmon_stats->hist_tx[5]);
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PKT_SZ_1519_TO_MAX, 1,
+> +			       &rmon_stats->hist_tx[6]);
+> +
+> +	*ranges = an8855_rmon_ranges;
+> +}
+> +
+> +static void an8855_get_eth_ctrl_stats(struct dsa_switch *ds, int port,
+> +				      struct ethtool_eth_ctrl_stats *ctrl_stats)
+> +{
+> +	struct an8855_priv *priv = ds->priv;
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_TX_PAUSE, 1,
+> +			       &ctrl_stats->MACControlFramesTransmitted);
+> +
+> +	an8855_read_port_stats(priv, port, AN8855_PORT_MIB_RX_PAUSE, 1,
+> +			       &ctrl_stats->MACControlFramesReceived);
+> +}
 
