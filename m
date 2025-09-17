@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-819957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A890FB7CFDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A4BB7D30D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F3D482F92
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF7B1B270BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B3B2D781E;
-	Wed, 17 Sep 2025 03:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461A92F363B;
+	Wed, 17 Sep 2025 04:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DBelvs2+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="go2jnzER"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3862026C3BF;
-	Wed, 17 Sep 2025 03:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF6726656F;
+	Wed, 17 Sep 2025 04:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758081587; cv=none; b=eMzCn8lu9/cFF0awuKzDonnBkEGYvUENK6t8rLORVZz5ylSulb/LVOfTAPphaUmke9mx/9NX/yK/za2cy6026DFVeeM7GH7wFMZtSkirrSjTf1+R72AOl59CgL/hvCdbonc1IgK1nJ1ZzLcIUZhk2VbCLahndbYayQuF/wJeiE4=
+	t=1758081707; cv=none; b=Pd0CErY4jtNt3XZwcPwr//7Tj2uBPnusbpfSkX5OplPMlBfK6MhXVKuUhsErusE3dRrsHq8U1xKr1iXbAzUQddnJEWetVVi+tZCVtZO2/Vi1WdOaDVWl0Kn/ygiYdo68gkEQrLUGPv2InbCq/0tA6IdD0XrZP2HXyCOYCBaapYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758081587; c=relaxed/simple;
-	bh=H9thyNiLTdBDPl30sbess+15GJm36k6HegAlHIfWnHU=;
+	s=arc-20240116; t=1758081707; c=relaxed/simple;
+	bh=J2NSNg0Gqtw2lyDsZpuPoODIxHZStkLFai9r0M2FN4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOr28zDj/n/vOQKdCGstLMOMSQbbW2S/PxZz52/ZFGokRJNVvoUMrlhdeo+Ttcgouz56r0eLXZvWFGgo96jhrT6iM4Be1NqEWh2QCay98WNcg8SeLkNPO/xu3jw7lsbaD/7DxlpvpIO6lLqwpliUyGmyJ98Ex5uqNC7fIsAz2yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DBelvs2+; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758081586; x=1789617586;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H9thyNiLTdBDPl30sbess+15GJm36k6HegAlHIfWnHU=;
-  b=DBelvs2+fS+ZAGbH8kAqbpxPFhJGtjk71UoA28vZSiSbP7IwWWMgNIFI
-   huYn7ORuvDpUP64HZ3IeveXv44fizWvx5W2T5Np2/qny/s0ITxI+3tjo6
-   qbCbITWXOY4pwEFhFZ8E4BzBxTH2GWFRNpQ3e4JCseIyz+p8YOl9n0/M7
-   A4Zi4+bCXKJ98S75cd+BbcxIvCCA35vKSs/nszHijM0lYcYPBbIXDjN1e
-   4nnxZyMfzsh5E0Iku/CadTJtaCaFOG44qTWbWqiKzRVXjHGqU1ux+wQMM
-   mJiQ8ViET2f1Jz8j9ca65S96YKDG8kh8+TpMsJBUrKFIcV1Vc7zsp/vYp
-   w==;
-X-CSE-ConnectionGUID: aWy5kao1SNikqQlKRb5UkA==
-X-CSE-MsgGUID: 4S2p1TIHSC+aBHXQoHeJMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60305022"
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="60305022"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 20:59:45 -0700
-X-CSE-ConnectionGUID: 8r1RW9JuQCOoNSWzEvSMaQ==
-X-CSE-MsgGUID: 7cId5LfgQUu8YUrX2ncqBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="180266969"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 16 Sep 2025 20:59:38 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyjKS-000127-0B;
-	Wed, 17 Sep 2025 03:59:36 +0000
-Date: Wed, 17 Sep 2025 11:59:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com,
-	glider@google.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	andreyknvl@gmail.com, andy@kernel.org, brauner@kernel.org,
-	brendan.higgins@linux.dev, davem@davemloft.net, davidgow@google.com,
-	dhowells@redhat.com, dvyukov@google.com, elver@google.com,
-	herbert@gondor.apana.org.au, ignat@cloudflare.com, jack@suse.cz,
-	jannh@google.com, johannes@sipsolutions.net,
-	kasan-dev@googlegroups.com, kees@kernel.org,
-	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
-	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com
-Subject: Re: [PATCH v1 03/10] kfuzztest: implement core module and input
- processing
-Message-ID: <202509171131.vod7tLWH-lkp@intel.com>
-References: <20250916090109.91132-4-ethan.w.s.graham@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zv3Jv30pgJMN2yk0ob7rdOU7ApAwOBnWfbrP9fJE3dmB7Mk2PcYuhSiNscK+nmpewgXlIaKjhq14uCQIzDIYi+U2Sby688uq55PYSiP518pKOHaDW2KChv2D5B+CT8yNi4mCfgA+wL8E5pELbY0oZcqz9BvsP+LfmzoRNEHpjmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=go2jnzER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC4DC4CEF0;
+	Wed, 17 Sep 2025 04:01:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758081707;
+	bh=J2NSNg0Gqtw2lyDsZpuPoODIxHZStkLFai9r0M2FN4I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=go2jnzERdw7VxOgNIZrgWGBzeruCsK1AW9ZSyKThP7yqY3WQ/69loAHqO8ZwY+Pz5
+	 RmSNEASnzlmaE1l34EObx8PbsjpMZfAnTVeHmFY8ssJ+xda/ALlcDI+jAk1Vyd2i2s
+	 mO9FCoCVFwEvw/QBtU/dW+mWNXtAqYbjXItUg+7PZO7tQOMI4OniGKelNX4jGXk45b
+	 MacxQjgECMv/fvFL65VzgGkfPyUkl9GVWigT2Hozs0VT5GGhcE9uquyP7/lY1QKwCA
+	 AYoi5W0JlbnQWyM/gmWT+o/bjulyMJ3+cqqk6tLCqpWcmJMtgxjR6YUN/oCZV9sHom
+	 m9Y9l9Vt4iqPw==
+Date: Wed, 17 Sep 2025 00:01:34 -0400
+From: Guo Ren <guoren@kernel.org>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Xu Lu <luxu.kernel@bytedance.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, ajones@ventanamicro.com,
+	brs@rivosinc.com, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	apw@canonical.com, joe@perches.com
+Subject: Re: [PATCH v2 0/4] riscv: Add Zalasr ISA extension support
+Message-ID: <aMoyntAydNMtcl+3@gmail.com>
+References: <20250902042432.78960-1-luxu.kernel@bytedance.com>
+ <aLciY2putG8g2P9F@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,36 +61,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916090109.91132-4-ethan.w.s.graham@gmail.com>
+In-Reply-To: <aLciY2putG8g2P9F@andrea>
 
-Hi Ethan,
+On Tue, Sep 02, 2025 at 06:59:15PM +0200, Andrea Parri wrote:
+> > Xu Lu (4):
+> >   riscv: add ISA extension parsing for Zalasr
+> >   dt-bindings: riscv: Add Zalasr ISA extension description
+> >   riscv: Instroduce Zalasr instructions
+> >   riscv: Use Zalasr for smp_load_acquire/smp_store_release
+> 
+> Informally put, our (Linux) memory consistency model specifies that any
+> sequence
+> 
+>   spin_unlock(s);
+>   spin_lock(t);
+> 
+> behaves "as it provides at least FENCE.TSO ordering between operations
+> which precede the UNLOCK+LOCK sequence and operations which follow the
+> sequence".  Unless I missing something, the patch set in question breaks
+> such ordering property (on RISC-V): for example, a "release" annotation,
+> .RL (as in spin_unlock() -> smp_store_release(), after patch #4) paired
+> with an "acquire" fence, FENCE R,RW (as could be found in spin_lock() ->
+> atomic_try_cmpxchg_acquire()) do not provide the specified property.
+> 
+> I _think some solutions to the issue above include:
+> 
+>  a) make sure an .RL annotation is always paired with an .AQ annotation
+>     and viceversa an .AQ annotation is paired with an .RL annotation
+>     (this approach matches the current arm64 approach/implementation);
+> 
+>  b) on the opposite direction, always pair FENCE R,RW (or occasionally
+>     FENCE R,R) with FENCE RW,W (this matches the current approach/the
+>     current implementation within riscv);
+> 
+>  c) mix the previous two solutions (resp., annotations and fences), but
+>     make sure to "upgrade" any releases to provide (insert) a FENCE.TSO.
+I prefer option c) at first, it has fewer modification and influence.
 
-kernel test robot noticed the following build warnings:
+asm volatile(ALTERNATIVE("fence rw, w;\t\nsb %0, 0(%1)\t\n",	\
+-			  SB_RL(%0, %1) "\t\nnop\t\n",		\
++			  SB_RL(%0, %1) "\t\n fence.tso;\t\n",	\
+			  0, RISCV_ISA_EXT_ZALASR, 1)		\
+			  : : "r" (v), "r" (p) : "memory");	\
 
-[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
-[also build test WARNING on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250916]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I didn't object option a), and I think it could be done in the future.
+Acquire Zalasr extension step by step.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Graham/mm-kasan-implement-kasan_poison_range/20250916-210448
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20250916090109.91132-4-ethan.w.s.graham%40gmail.com
-patch subject: [PATCH v1 03/10] kfuzztest: implement core module and input processing
-config: x86_64-randconfig-004-20250917 (https://download.01.org/0day-ci/archive/20250917/202509171131.vod7tLWH-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250917/202509171131.vod7tLWH-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509171131.vod7tLWH-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: lib/kfuzztest/main.c:46 struct member 'num_invocations' not described in 'kfuzztest_state'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> (a) would align RISC-V and ARM64 (which is a good thing IMO), though it
+> is probably the most invasive approach among the three approaches above
+> (requiring certain changes to arch/riscv/include/asm/{cmpxchg,atomic}.h,
+> which are already relatively messy due to the various ZABHA plus ZACAS
+> switches).  Overall, I'm not too exited at the idea of reviewing any of
+> those changes, but if the community opts for it, I'll almost definitely
+> take a closer look with due calm.  ;-)
+> 
+>   Andrea
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
