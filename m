@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-820189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C1FB7E6C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AA8B7E673
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46BD4626C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02734462A84
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC81C2F261F;
-	Wed, 17 Sep 2025 07:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B2B30496B;
+	Wed, 17 Sep 2025 07:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7K0rv1n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aH4UUspA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CFF1F5820
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191172C21C5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758095830; cv=none; b=IxmZtChkiNmeRiQrqHSDZw+R5zUu1NSFFkJpVTKTRfNS1TwzTKXYcWSH7MFxp9DW7AfhG1eHh6+j8fyzzK1ew41uDzVAUuZZtERkNvtnB1pu5VwvlCAVG48jzAtq4xVgItNHCxAEa38CKa6FJ7HvqEXi5JWCHYSuwb9DJMVBj/U=
+	t=1758095847; cv=none; b=YTl5ben90ASUEGiDdfkrCWbYYjk8W6fT2TeuVzthbXasphPToU4GK7qXuUBmbOqk/o54tilm3x2RJP7tyAo1/FIJ41NNWEWEa+PTua6ubtjmHAqydK4zsweEYnJ9pbx5nIeKtf/eoGdmzDpUK5fqOTStJ1rdim8FcX+seHUlRKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758095830; c=relaxed/simple;
-	bh=gqi+Je9O1n+GdXxCwk4Oc1By7Xpu7yNWj4QRpQLsigc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Yi0hdj3sTRGWoqeRTbau1tgFd/pJ3WkV+wvGQayJNn8hXtNgmwuVnjcXjROmBHtkXKz53ClMKgb+TFQiuMnZzL0m2N89DkDGadI/slkJ9B2USoPP2ccwIM0d4ucrcfhjJ62djHMYf5gs2rYlCnybwdvAVCKSC/mOmbg0zSJvrMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7K0rv1n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED502C4CEF0;
-	Wed, 17 Sep 2025 07:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758095829;
-	bh=gqi+Je9O1n+GdXxCwk4Oc1By7Xpu7yNWj4QRpQLsigc=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=d7K0rv1nfYJMKSEpfQg8eREexP6zGEDjiRdCBfGFBI0ObsZuOg2U5ifTG4B+eWmAL
-	 KioDVDxasKiU/Yta/7N7fo87KrL1z2rGOkVNULfs9ZHt5X0KraQVqN3D/1so35Q8L0
-	 vYxZ/AqPskY1tKMwUVVgTRSgxUrbeP62xbg/65kqBr/ShySPC2r8NWByqkDfjFWOYD
-	 mizkk77l0Lt9dbDRIJOUtDBO8aIv0PbtDIm0DMj/WhFF40NIPA9dO7EdzaprQS2lyl
-	 wktFXxI8QyGD3ckE3WOV5xtUMCy2XiZY8cXd1hu0khrFm1OkAoUJBA+uApaWkaURMB
-	 QSJ5DZe0FlIrQ==
-Message-ID: <22d9f9d1-1db0-4bad-a782-212ab3da630e@kernel.org>
-Date: Wed, 17 Sep 2025 15:57:06 +0800
+	s=arc-20240116; t=1758095847; c=relaxed/simple;
+	bh=7cjsHAs6KihPquo/vuD2/3FbmYO2y4zQ9Q9gpKGQuRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nf4t6K1Hmd1HVckL+t31nA17YHTknNTRkvjaXR/cFXk1NZOsP6h8LcvbNHH4di/5T3DTXpNc8GrVKaOErAnR4khpRLDZtAzU/WRvFLojojkFwr6hCTqVAPCvuF/Neg8VBtINXngcW9J2RGSoG3ApA6NE57FazRhlqmrQkzs/Uu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aH4UUspA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758095845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9PzBAtZ6dCpqAcibyTZBdx2ih4FIqPQpEwny2ET0cgw=;
+	b=aH4UUspAm5xH/KTcc8aXdFtQjWRyrdke5aKsET3xAzK1loXcXgyqF0BC3dCVUgKd+kYLJZ
+	Wf4cvzPJlUoa1WUrsvJgyVPaEZGgFiSmoOTz29LOtOjbCoUbA2RvoY9c4WPjUJcWxDvn86
+	rQAiUkyUdfu9Tb7OPOKWtzcTm4Sbvys=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-399-akqRqpJwO2mWSzz23QAYug-1; Wed, 17 Sep 2025 03:57:23 -0400
+X-MC-Unique: akqRqpJwO2mWSzz23QAYug-1
+X-Mimecast-MFC-AGG-ID: akqRqpJwO2mWSzz23QAYug_1758095842
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3eb2c65e0d6so1591296f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:57:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758095842; x=1758700642;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9PzBAtZ6dCpqAcibyTZBdx2ih4FIqPQpEwny2ET0cgw=;
+        b=QFGlscowJMCXs4ih77sP4Khh+5vJ8elQhho2Ol3994IOQlqPmp22IM4RpjV/aEZxiJ
+         G7uw8sKcyproUT03MvrulX7WH6LSMZcvY+N3U6xMQggQoaQ1582+5FqU6RndLPXujUWi
+         Mxo7UEfjg6VpG8h/uSJI+pzxc/LAmMSihyL/eDksXRfBLbSHbg/Rh4MC2efwBh/BcnOJ
+         vYUQ3pIE0NlUHjV1cyoxuNXvzalts8AXPon5DfACYTvyZONE9CB7tEEf3jDAtopytKM7
+         SLVf1BTxbjq30AcJfbX6i1F9dYWHsW6Irb7u4PJrV4o5v+2A98gkl5nYsTCzQW1o9KhH
+         xlFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUs8GMCS5eaZKh11M6+YMNNj91ouF9IckHdAlKJ0zZ/wWdQBX8Uft1TkpDQyLPyqYlqRgjnIa1LbCAbRDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO2Py8Jp+yGpG5oEuOU5NmnM6x9GdK1ouJaEvGtdFRCI2rXGUB
+	L7sjmcugekY0gPFGoVd6Ffvl98dfpdn5o3hvxBWIpms7anwPDkKpiLJC9DYVjo+UMrUZf61cCiu
+	qRLNw5FvFhp/wKkk5xnnNseijUs9jV6o8By77NJF5J7/3xJu2nk5a+S/x7wLJnMsZ8w==
+X-Gm-Gg: ASbGnctpLrJrb1uZyK770uhkg+2zymlIF9fr87XEmuie8NmydICQB3sPT92umer5CVr
+	1sE+LfSWZ1K8Hg7oNuSCV90JZjFh9Jiqyuc01oAIMKdbIDUxKvh/yCTxwItdrVhIOYSFq5ZCqTX
+	BWixn8ljWKJWgq1bT+a0TKuD7R1CwEXMJRf3LoKwKtGbET4jzsfEaW2LEIt9NCSRIdPRt1kJPIC
+	8QljQEQEDHzvSbSATViqahhXRfNohM9rpDczTH+1NC8s0CxGUw4blWjuuRq4H0o+OEE/vC2bzUS
+	NWxG41sap9Z4E/cIluGMJep8n2335+4oXSnnbcgZh89Z2Mkkku0tAD9cpNbpledOfcVIOz89IGh
+	ssHGwY3AJkWT47VYeuk4BohiFHyL3StKMtpUjDxaLG7cqu2BzaE3qv3KkfDvQNueD
+X-Received: by 2002:a05:6000:40c8:b0:3d2:9cbf:5b73 with SMTP id ffacd0b85a97d-3ecdf9b5961mr874634f8f.6.1758095841883;
+        Wed, 17 Sep 2025 00:57:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1fuIiFC5t7bfIvFNwsccdu8uwKOxCMzstpj7QWFZNvkLHIrE8zhNFdLVe+xbAw0R9o3KnJw==
+X-Received: by 2002:a05:6000:40c8:b0:3d2:9cbf:5b73 with SMTP id ffacd0b85a97d-3ecdf9b5961mr874608f8f.6.1758095841400;
+        Wed, 17 Sep 2025 00:57:21 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f32642813sm31271485e9.10.2025.09.17.00.57.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 00:57:20 -0700 (PDT)
+Message-ID: <7e338491-0c6b-4b65-93b7-df0af8b2fd87@redhat.com>
+Date: Wed, 17 Sep 2025 09:57:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,69 +89,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org
-Subject: Re: [PATCH 2/2] f2fs: Enhance the subsequent logic of
- valid_thresh_ratio to prevent unnecessary background GC
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250909134418.502922-1-liaoyuanhong@vivo.com>
- <20250909134418.502922-3-liaoyuanhong@vivo.com>
- <b42b161d-cd5d-45dc-8e84-c2b28eb632e5@kernel.org>
- <a508b9b8-3c81-4a2c-a525-baac822563b3@vivo.com>
+Subject: Re: [syzbot] [sound?] kernel BUG in filemap_fault (2)
+To: Jan Kara <jack@suse.cz>, Ryan Roberts <ryan.roberts@arm.com>
+Cc: syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, chaitanyas.prakash@arm.com, davem@davemloft.net,
+ edumazet@google.com, hdanton@sina.com, horms@kernel.org, kuba@kernel.org,
+ kuniyu@google.com, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
+ willemb@google.com
+References: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
+ <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
+ <lqzgi7abe2onda3faavn5ays6gdw4syiu32hmrfaibrh6cmozs@pjf3llvnnefk>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <a508b9b8-3c81-4a2c-a525-baac822563b3@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <lqzgi7abe2onda3faavn5ays6gdw4syiu32hmrfaibrh6cmozs@pjf3llvnnefk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 9/17/25 15:08, Liao Yuanhong wrote:
-> 
-> On 9/15/2025 4:36 PM, Chao Yu wrote:
->> On 9/9/25 21:44, Liao Yuanhong wrote:
->>> When the proportion of dirty segments within a section exceeds the
->>> valid_thresh_ratio, the gc_cost of that section is set to UINT_MAX,
->>> indicating that these sections should not be released. However, if all
->>> section costs within the scanning range of get_victim() are UINT_MAX,
->>> background GC will still occur. Add a condition to prevent this situation.
->> For this case, f2fs_get_victim() will return 0, and f2fs_gc() will use unchanged
->> segno for GC?
->>
->> Thanks,
-> 
-> You're right, segno won't update in this scenario, and this patch feature is redundant.
-
-Oh, I meant, if f2fs_get_victim() fails to select a valid victim due to the reason you
-described, f2fs_get_victim() will return 0, and f2fs_gc() will migrate segment #NULL_SEGNO?
-Or am I missing something?
-
-Thanks,
-
-> 
-> 
-> Thanks,
-> 
-> Liao
-> 
->>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
->>> ---
->>>   fs/f2fs/gc.c | 5 +++++
->>>   1 file changed, 5 insertions(+)
+On 16.09.25 15:05, Jan Kara wrote:
+> On Tue 16-09-25 13:50:08, Ryan Roberts wrote:
+>> On 14/09/2025 11:51, syzbot wrote:
+>>> syzbot suspects this issue was fixed by commit:
 >>>
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index 4a8c08f970e3..ffc3188416f4 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -936,6 +936,11 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
->>>           }
->>>       }
->>>   +    if (f2fs_sb_has_blkzoned(sbi) && p.min_cost == UINT_MAX) {
->>> +        ret = -ENODATA;
->>> +        goto out;
->>> +    }
->>> +
->>>       /* get victim for GC_AT/AT_SSR */
->>>       if (is_atgc) {
->>>           lookup_victim_by_age(sbi, &p);
+>>> commit bdb86f6b87633cc020f8225ae09d336da7826724
+>>> Author: Ryan Roberts <ryan.roberts@arm.com>
+>>> Date:   Mon Jun 9 09:27:23 2025 +0000
+>>>
+>>>      mm/readahead: honour new_order in page_cache_ra_order()
+>>
+>> I'm not sure what original bug you are claiming this is fixing? Perhaps this?
+>>
+>> https://lore.kernel.org/linux-mm/6852b77e.a70a0220.79d0a.0214.GAE@google.com/
+> 
+> I think it was:
+> 
+> https://lore.kernel.org/all/684ffc59.a00a0220.279073.0037.GAE@google.com/
+> 
+> at least that's what the syzbot email replies to... And it doesn't make a
+> lot of sense but it isn't totally off either. So I'd just let the syzbot
+> bug autoclose after some timeout.
+
+Hm, in the issue we ran into was:
+
+	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
+
+in filemap_fault().
+
+Now, that sounds rather bad, especially given that it was reported upstream.
+
+So likely we should figure out what happened and see if it really fixed 
+it and if so, why it fixed it (stable backports etc)?
+
+Could be that Ryans patch is just making the problem harder to 
+reproduce, of course (what I assume right now).
+
+
+Essentially we do a
+
+	folio = filemap_get_folio(mapping, index);
+
+followed by
+
+	if (!lock_folio_maybe_drop_mmap(vmf, folio, &fpin))
+		goto out_retry;
+
+	/* Did it get truncated? */
+	if (unlikely(folio->mapping != mapping)) {
+		folio_unlock(folio);
+		folio_put(folio);
+		goto retry_find;
+	}
+	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
+
+
+I would assume that if !folio_contains(folio, index), either the folio 
+got split in the meantime (filemap_get_folio() returned with a raised 
+reference, though) or that file pagecache contained something wrong.
+
+
+In __filemap_get_folio() we perform the same checks after locking the 
+folio (with FGP_LOCK), and weird enough it didn't trigger yet there.
+
+-- 
+Cheers
+
+David / dhildenb
 
 
