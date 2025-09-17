@@ -1,152 +1,392 @@
-Return-Path: <linux-kernel+bounces-821769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6FFB8232E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD490B82343
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D513488961
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:54:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7363A2800
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DCE311954;
-	Wed, 17 Sep 2025 22:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDDhwxbk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95EC3128AE;
+	Wed, 17 Sep 2025 22:54:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274B53112A1;
-	Wed, 17 Sep 2025 22:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B1030FC0F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758149655; cv=none; b=k4qrY/XLmShQodL6W6SAvUK2j1+vK21kL1joj4JDGv0LDaLIm6sAgn/y9A7oOh073nx+JFZu8MIiXX/9s8iC7vF2VXivX3790geEIiAK3ayO1RFlHBMZ2DzdAvx7LILAN9zPcr9DzRRS9B9No8dZkVBXlkFBl7dpD+zf4xV/aWc=
+	t=1758149672; cv=none; b=mPtWs59nVWogZX0JjR8VDGAsCpXm5M5mk6sg1UXlD2J3nJwHBG+xHQ76/Mz5TYLV2stVglvr5rYXJlneZZZZ2tmaA7F1TdTNtQ5AgmEQHw4rgwiqAdaDQR9BLjEKcZIv7tAYpRUwVCFj6aiaV8e5VMnQJOLFm2wh6Oe7IBUTRNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758149655; c=relaxed/simple;
-	bh=z5aUyn8esdedtU49mhVPTZw8U7IDxTGO/BUaAI/eVc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DYU7geAOtpUZOM11w0sQveLTvxqx1wKRUUVpnvmgJwSeW1mFABPRW0CIlIkRBZztBuCuo1BX1eMApuFiOTH2lXqktGCF7zSmwBHsro2Np+Vmu6TZBicohUKQZtTiwIW2cgLKDzOBynP4iVl3kkrkCFZ8lOD/AjZIPLkZWu6xv9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDDhwxbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18268C4CEE7;
-	Wed, 17 Sep 2025 22:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758149653;
-	bh=z5aUyn8esdedtU49mhVPTZw8U7IDxTGO/BUaAI/eVc0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sDDhwxbk05spzhEuUTjELdBpi/vcVfTquXJ0xQRksKIGXbGBQeo8hef4TMeDoMDGU
-	 BIpdgHAv8ULGeXAyb0p+7+bEV1Tf2NzDoUjJdbXXZU1OW1PwC76E62ALG8dHeg4FJH
-	 5weCZ5b/4Pl3wIMyMdwq4hpEwTVlP6kvgdsKoY+abl76cnVM17bmqgbTGKn5BRTTRf
-	 KyLv35rP+AxIajSR3Tl/rP4zxk4GELQYoQtSwyZz6KTVXvucSMSiS31t10zwWgtXBD
-	 YElcaWl/dAYvBZnF2wpsTBlMctgMm/0t1KVjZ6b+qkgXPH9wdSqj5gXNfQYEcqFfZi
-	 PhBbeDAFr/auw==
-Date: Wed, 17 Sep 2025 15:54:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Rohan G Thomas via B4 Relay
- <devnull+rohan.g.thomas.altera.com@kernel.org>
-Cc: rohan.g.thomas@altera.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
- <Jose.Abreu@synopsys.com>, Rohan G Thomas <rohan.g.thomas@intel.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>, "Ng, Boon Khai"
- <boon.khai.ng@altera.com>
-Subject: Re: [PATCH net v2 2/2] net: stmmac: Consider Tx VLAN offload tag
- length for maxSDU
-Message-ID: <20250917155412.7b2af4f1@kernel.org>
-In-Reply-To: <20250917154920.7925a20d@kernel.org>
-References: <20250915-qbv-fixes-v2-0-ec90673bb7d4@altera.com>
-	<20250915-qbv-fixes-v2-2-ec90673bb7d4@altera.com>
-	<20250917154920.7925a20d@kernel.org>
+	s=arc-20240116; t=1758149672; c=relaxed/simple;
+	bh=IdtSv+kThya+McSai+pRuUaP35zd3rurmW34WISWh2c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GMlo5qV2KRGDZqSze89zLD1CqtmOY5eAKBUjge4XgG1ZVa2qlX/oY+UirJ8JQ99WzAlhcQBLHduCYvWTucPq+5pRDEEMGbNxDJMkRhlH6LxWkbZbpNVy2pJV1V5QtvJ/5iLSrtdvsMbMW4s/crKqWeazKo5UPFhRU2S1fi1EtgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-423f9d1ea61so7668295ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:54:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758149669; x=1758754469;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ha0H7zu5ogkEJkgWVqvHlZ7mIelQAqz0THYh5WuqZbM=;
+        b=b8uJofR944VN/rnXK3vCOdbEY2XRvJMksevx+NrO7AkPzlNEgWXb+ocpyPHO+fbu+r
+         1ZbxIN4G4bTQbTGRSpeM1cPCsL340X9TLKvBXvXwQuy1i/kn8IgExnTe3zR89qK873rA
+         DdPQ39JWtRGgD2U5hwBLFl469AymhJv3Fxo6k5OMpboWvgVEZ9roiPkDToLQF0vVz3HQ
+         7mciw3CiaJik5ajTpHHHGiTgkCc46n5NC63uHAvxvDBZWfWapZh5SuVRaCUSwsxxmCdb
+         z2TQMFOPba6ZBTT0fNupqBJK3YfMgl0vWQ8oXvsBo5ue1O2b/zrSq40WNxoonq2W0Q54
+         3ZiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfHNNUg19Fu8XQakqJuzJwXdZ/BMwjGCAIq0p/EkiNhDK9/fbUZmiOCyAm6iMpuYMn5WqXljbWKZXl7Z8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjHS7x7xrTQam9Bx2ANOK9IBl3heb7+2LhP4pQV9l64b/CE7q3
+	DOZow98suttnMCnJPWVW2syjrryGuGJ8+DEEwqL+5epHWoIO25i1ZBxrpEK0Bdx6a/7t2Nd0RK0
+	Jv/i+qmHvglLa1IsJ5oTNHyGa+GY+vqg/dQveEkmHb4wzj3vvoRgO0tn+cqo=
+X-Google-Smtp-Source: AGHT+IEthyF/AW3K3cFIoA16CgwY+MSgvl5M5hlStslgWfRJEoV+ENZDmrdooBQsx9wnM4HqsVGsIH7NMP6eYqBIwW4sadx8Y9Ne
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3cc5:b0:423:fcd6:5488 with SMTP id
+ e9e14a558f8ab-4241a4d1893mr57231765ab.12.1758149668946; Wed, 17 Sep 2025
+ 15:54:28 -0700 (PDT)
+Date: Wed, 17 Sep 2025 15:54:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cb3c24.050a0220.50883.0029.GAE@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_seek_pagecache_hole (3)
+From: syzbot <syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 17 Sep 2025 15:49:20 -0700 Jakub Kicinski wrote:
-> On Mon, 15 Sep 2025 16:17:19 +0800 Rohan G Thomas via B4 Relay wrote:
-> > From: Rohan G Thomas <rohan.g.thomas@altera.com>
-> > 
-> > On hardware with Tx VLAN offload enabled, add the VLAN tag
-> > length to the skb length before checking the Qbv maxSDU.
-> > Add 4 bytes for 802.1Q an add 8 bytes for 802.1AD tagging.
-> > 
-> > Fixes: c5c3e1bfc9e0 ("net: stmmac: Offload queueMaxSDU from tc-taprio")
-> > Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-> > Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> > ---
-> >  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 25 ++++++++++++++++-------
-> >  1 file changed, 18 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > index 8c8ca5999bd8ad369eafa0cd8448a15da55be86b..c06c947ef7764bf40291a556984651f4edd7cb74 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > @@ -4537,6 +4537,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
-> >  	bool has_vlan, set_ic;
-> >  	int entry, first_tx;
-> >  	dma_addr_t des;
-> > +	u32 sdu_len;
-> >  
-> >  	tx_q = &priv->dma_conf.tx_queue[queue];
-> >  	txq_stats = &priv->xstats.txq_stats[queue];
-> > @@ -4553,13 +4554,6 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
-> >  			return stmmac_tso_xmit(skb, dev);
-> >  	}
-> >  
-> > -	if (priv->est && priv->est->enable &&
-> > -	    priv->est->max_sdu[queue] &&
-> > -	    skb->len > priv->est->max_sdu[queue]){
-> > -		priv->xstats.max_sdu_txq_drop[queue]++;
-> > -		goto max_sdu_err;
-> > -	}
-> > -
-> >  	if (unlikely(stmmac_tx_avail(priv, queue) < nfrags + 1)) {
-> >  		if (!netif_tx_queue_stopped(netdev_get_tx_queue(dev, queue))) {
-> >  			netif_tx_stop_queue(netdev_get_tx_queue(priv->dev,
-> > @@ -4575,6 +4569,23 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
-> >  	/* Check if VLAN can be inserted by HW */
-> >  	has_vlan = stmmac_vlan_insert(priv, skb, tx_q);
-> >  
-> > +	sdu_len = skb->len;
-> > +	if (has_vlan) {
-> > +		/* Add VLAN tag length to sdu length in case of txvlan offload */
-> > +		if (priv->dev->features & NETIF_F_HW_VLAN_CTAG_TX)
-> > +			sdu_len += VLAN_HLEN;
-> > +		if (skb->vlan_proto == htons(ETH_P_8021AD) &&
-> > +		    priv->dev->features & NETIF_F_HW_VLAN_STAG_TX)
-> > +			sdu_len += VLAN_HLEN;  
-> 
-> Is the device adding the same VLAN tag twice if the proto is 8021AD?
-> It looks like it from the code, but how every strange..
-> 
-> In any case, it doesn't look like the driver is doing anything with 
-> the NETIF_F_HW_VLAN_* flags right? stmmac_vlan_insert() works purely
-> off of vlan proto. So I think we should do the same thing here?
+Hello,
 
-I suppose the double tagging depends on the exact SKU but first check
-looks unnecessary. Maybe stmmac_vlan_insert() should return the number
-of vlans it decided to insert?
+syzbot found the following issue on:
 
-> > +	}
-> > +
-> > +	if (priv->est && priv->est->enable &&
-> > +	    priv->est->max_sdu[queue] &&
-> > +	    sdu_len > priv->est->max_sdu[queue]) {
-> > +		priv->xstats.max_sdu_txq_drop[queue]++;
-> > +		goto max_sdu_err;
-> > +	}
-> > +
-> >  	entry = tx_q->cur_tx;
-> >  	first_entry = entry;
-> >  	WARN_ON(tx_q->tx_skbuff[first_entry]);
-> >   
-> 
+HEAD commit:    5aca7966d2a7 Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=137baf62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=cb91f22d8a581fc19edf
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16342e42580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c4c534580000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4946b6719e9f/disk-5aca7966.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f982750cccde/vmlinux-5aca7966.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e070a17d9c63/bzImage-5aca7966.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2615c2777a3c/mount_0.gz
+
+The issue was bisected to:
+
+commit c02e5b57283ad6fd8dec8d834bd340bf2627fcee
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 2 19:12:49 2025 +0000
+
+    bcachefs: Single device mode
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a34c7c580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a34c7c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a34c7c580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cb91f22d8a581fc19edf@syzkaller.appspotmail.com
+Fixes: c02e5b57283a ("bcachefs: Single device mode")
+
+INFO: task syz.3.20:6170 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.20        state:D stack:21416 pid:6170  tgid:6147  ppid:5988   task_flags:0x400040 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ io_schedule+0x81/0xe0 kernel/sched/core.c:7903
+ folio_wait_bit_common+0x6b5/0xb90 mm/filemap.c:1317
+ __folio_lock mm/filemap.c:1675 [inline]
+ folio_lock include/linux/pagemap.h:1133 [inline]
+ __filemap_get_folio+0x167/0xa40 mm/filemap.c:1929
+ folio_hole_offset fs/bcachefs/fs-io-pagecache.c:756 [inline]
+ bch2_seek_pagecache_hole+0xbb/0x7c0 fs/bcachefs/fs-io-pagecache.c:793
+ bch2_clamp_data_hole+0x8f/0x180 fs/bcachefs/fs-io-pagecache.c:808
+ __bchfs_fallocate+0xe77/0x1870 fs/bcachefs/fs-io.c:697
+ bchfs_fallocate+0x33f/0x680 fs/bcachefs/fs-io.c:789
+ bch2_fallocate_dispatch+0x28d/0x410 fs/bcachefs/fs-io.c:836
+ vfs_fallocate+0x672/0x7f0 fs/open.c:342
+ ksys_fallocate fs/open.c:366 [inline]
+ __do_sys_fallocate fs/open.c:371 [inline]
+ __se_sys_fallocate fs/open.c:369 [inline]
+ __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feb0096eba9
+RSP: 002b:00007feafffb5038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007feb00bb6090 RCX: 00007feb0096eba9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007feb009f1e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000001001ec R11: 0000000000000246 R12: 0000000000000000
+R13: 00007feb00bb6128 R14: 00007feb00bb6090 R15: 00007ffc531dd1d8
+ </TASK>
+INFO: task syz.3.20:6171 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.20        state:D stack:26248 pid:6171  tgid:6147  ppid:5988   task_flags:0x440040 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ __bch2_two_state_lock+0x1ea/0x370 fs/bcachefs/two_state_shared_lock.c:7
+ bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:55 [inline]
+ bch2_readahead+0x94f/0x1100 fs/bcachefs/fs-io-buffered.c:296
+ read_pages+0x177/0x580 mm/readahead.c:160
+ page_cache_ra_unbounded+0x63b/0x740 mm/readahead.c:297
+ filemap_get_pages+0x443/0x1df0 mm/filemap.c:2603
+ filemap_splice_read+0x587/0xc60 mm/filemap.c:2991
+ do_splice_read fs/splice.c:982 [inline]
+ splice_direct_to_actor+0x4b1/0xcd0 fs/splice.c:1086
+ do_splice_direct_actor fs/splice.c:1204 [inline]
+ do_splice_direct+0x187/0x270 fs/splice.c:1230
+ vfs_copy_file_range+0xad7/0x1330 fs/read_write.c:1627
+ __do_sys_copy_file_range fs/read_write.c:1677 [inline]
+ __se_sys_copy_file_range+0x2fb/0x470 fs/read_write.c:1644
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feb0096eba9
+RSP: 002b:00007feafff94038 EFLAGS: 00000246 ORIG_RAX: 0000000000000146
+RAX: ffffffffffffffda RBX: 00007feb00bb6180 RCX: 00007feb0096eba9
+RDX: 0000000000000004 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007feb009f1e19 R08: 0000000000000101 R09: 0000000000000000
+R10: 00002000000000c0 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007feb00bb6218 R14: 00007feb00bb6180 R15: 00007ffc531dd1d8
+ </TASK>
+
+Showing all locks held in the system:
+2 locks held by kworker/u8:1/13:
+ #0: ffff888019881138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff888019881138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #1: ffffc90000127bc0 ((reaper_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc90000127bc0 ((reaper_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
+2 locks held by kworker/u8:2/37:
+ #0: ffff888019881138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff888019881138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #1: ffffc90000ac7bc0 (connector_reaper_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc90000ac7bc0 (connector_reaper_work){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
+1 lock held by khungtaskd/39:
+ #0: ffffffff8d9a8d80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8d9a8d80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8d9a8d80 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
+2 locks held by kworker/u8:3/57:
+ #0: ffff888019881138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff888019881138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #1: ffffc9000123fbc0 ((work_completion)(&(&kfence_timer)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc9000123fbc0 ((work_completion)(&(&kfence_timer)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
+2 locks held by kworker/u8:15/3581:
+2 locks held by getty/5601:
+ #0: ffff88823bf700a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90003e762e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x444/0x1410 drivers/tty/n_tty.c:2222
+1 lock held by udevd/6029:
+2 locks held by udevd/6043:
+3 locks held by syz.3.20/6170:
+ #0: ffff88803941a488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff88803941a488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d6009b8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d6009b8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff88805a404678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff88805a404678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff88805a404678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.3.20/6171:
+ #0: ffff88805d600b88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d600b88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+3 locks held by syz.0.17/6189:
+ #0: ffff888021f46488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff888021f46488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d7f89b8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d7f89b8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff888055304678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff888055304678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff888055304678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.0.17/6191:
+ #0: ffff88805d7f8b88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d7f8b88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+3 locks held by syz.1.18/6204:
+ #0: ffff888058a7a488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff888058a7a488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d601a38 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d601a38 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff888059404678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff888059404678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff888059404678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.1.18/6209:
+ #0: ffff88805d601c08 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d601c08 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+3 locks held by syz.4.23/6255:
+ #0: ffff88803db8c488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff88803db8c488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d604bb8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d604bb8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff888065204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff888065204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff888065204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.4.23/6256:
+ #0: ffff88805d604d88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d604d88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+1 lock held by syz.2.40/6491:
+ #0: ffff88805d7f93c8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d7f93c8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+3 locks held by syz.2.40/6513:
+ #0: ffff88805d13e488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff88805d13e488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d7f91f8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d7f91f8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff88806de04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff88806de04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff88806de04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+3 locks held by syz.5.28/6539:
+ #0: ffff8881413d8488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff8881413d8488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d7fd3f8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d7fd3f8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff88806dd04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff88806dd04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff88806dd04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.5.28/6540:
+ #0: ffff88805d7fd5c8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d7fd5c8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+1 lock held by syz.6.30/6542:
+ #0: ffff88805d602c88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d602c88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+3 locks held by syz.6.30/6555:
+ #0: ffff88804856e488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff88804856e488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d602ab8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d602ab8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff88806d904678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff88806d904678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff88806d904678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+3 locks held by syz.8.35/6579:
+ #0: ffff88806dc8e488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff88806dc8e488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff88805d602278 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff88805d602278 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff88806cc04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff88806cc04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff88806cc04678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.8.35/6580:
+ #0: ffff88805d602448 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff88805d602448 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+3 locks held by syz.9.46/6851:
+ #0: ffff888054616488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff888054616488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff888075d6cbb8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff888075d6cbb8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff88807d204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff88807d204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff88807d204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.9.46/6852:
+ #0: ffff888075d6cd88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff888075d6cd88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+3 locks held by syz.7.60/6896:
+ #0: ffff888027a44488 (sb_writers#12){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3108 [inline]
+ #0: ffff888027a44488 (sb_writers#12){.+.+}-{0:0}, at: vfs_fallocate+0x5f9/0x7f0 fs/open.c:341
+ #1: ffff888075d6d3f8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+ #1: ffff888075d6d3f8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: bch2_fallocate_dispatch+0x111/0x410 fs/bcachefs/fs-io.c:827
+ #2: ffff888083204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:161 [inline]
+ #2: ffff888083204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:253 [inline]
+ #2: ffff888083204678 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0xaf/0x220 fs/bcachefs/btree_iter.c:3299
+1 lock held by syz.7.60/6897:
+ #0: ffff888075d6d5c8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:935 [inline]
+ #0: ffff888075d6d5c8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
+2 locks held by syz.0.167/7213:
+1 lock held by syz.3.168/7216:
+3 locks held by syz.2.169/7219:
+4 locks held by syz.1.170/7222:
+2 locks held by syz.4.171/7225:
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 39 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+ watchdog+0xf93/0xfe0 kernel/hung_task.c:491
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x439/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 17 Comm: pr/legacy Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:io_serial_in+0x77/0xc0 drivers/tty/serial/8250/8250_port.c:400
+Code: e8 ae 4e 7f fc 44 89 f9 d3 e3 49 83 ee 80 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 74 08 4c 89 f7 e8 4f 89 de fc 41 03 1e 89 da ec <0f> b6 c0 5b 41 5c 41 5e 41 5f e9 0a 81 bb 05 cc 44 89 f9 80 e1 07
+RSP: 0018:ffffc90000167890 EFLAGS: 00000202
+RAX: 1ffffffff3275c00 RBX: 00000000000003fd RCX: 0000000000000000
+RDX: 00000000000003fd RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffffff993ae870 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffffff853f1f10 R12: dffffc0000000000
+R13: 0000000000000000 R14: ffffffff993ae5e0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881268bc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f20e01f8000 CR3: 000000003ae94000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ serial_in drivers/tty/serial/8250/8250.h:137 [inline]
+ serial_lsr_in drivers/tty/serial/8250/8250.h:159 [inline]
+ wait_for_lsr+0x1a7/0x2f0 drivers/tty/serial/8250/8250_port.c:1984
+ fifo_wait_for_lsr drivers/tty/serial/8250/8250_port.c:3288 [inline]
+ serial8250_console_fifo_write drivers/tty/serial/8250/8250_port.c:3311 [inline]
+ serial8250_console_write+0x11bd/0x1b40 drivers/tty/serial/8250/8250_port.c:3396
+ console_emit_next_record kernel/printk/printk.c:3118 [inline]
+ console_flush_all+0x695/0xcd0 kernel/printk/printk.c:3226
+ __console_flush_and_unlock+0xa4/0x240 kernel/printk/printk.c:3285
+ legacy_kthread_func+0x13b/0x1a0 kernel/printk/printk.c:3638
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x439/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
