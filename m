@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-819963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9805B7E096
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757F2B7E3CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B2D581936
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:25:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001151BC3E06
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6F523BCEE;
-	Wed, 17 Sep 2025 04:25:00 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F6B2472B6;
+	Wed, 17 Sep 2025 04:26:07 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCC5249F9;
-	Wed, 17 Sep 2025 04:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3700C21CA02;
+	Wed, 17 Sep 2025 04:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758083100; cv=none; b=YNFl9iPC6cDalx8w2hpXo1C10Q9pvxGIbqeHbICO4qnA6dHe1G02isQk00C6csqz3cXNHrOju6Z3OE37gt4TsPJDvQHNEIJpV1Ng5dGQQgqGnM5Fp1+cEqDJLpcszUvqJHJAdakxJR41Y1jp4Unh/wGVIZfrkTX83FqVCBHXNwE=
+	t=1758083167; cv=none; b=DgfYq94r/M6LI+VihDvZAoU2EaUr28dtb4qWcTnncIJprqK0lE8QfocjomgxIEJWeJQn5cEz9svRjXe8cpObQPhwWSsyU8bLlK2WwM0ARUd1L6FBhQPL9ksMfhqKxp3xwMuCqTT7CtmrMwRZ2uK8ZNG569t1rFt+AaNWhmd0+eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758083100; c=relaxed/simple;
-	bh=ad1Ll8EQd3ZeNF+4/uYDbsQos4r5PVOfSSlKyv8nlIc=;
+	s=arc-20240116; t=1758083167; c=relaxed/simple;
+	bh=OM0OYGtvnwRFjm045osmKXtPFf9jPX0mC2j6ZnfLYFA=;
 	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=rF9m1bqz/O2vE2Lt+KFFb3Lpz3zYoJR9d7uSvQIcIrI1JnE+gX1ella7mW0Jf45k9wWrpQJa6WVlT3orjMhX+d0daaPmw8ifiSBefKiR50sIdpdk82CAZYzwylQecePQak2NfAcgpz5L5u3ckr4MZun+1DP80hurh9w4gbdy/4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+	 Subject:Content-Type; b=Dm/ow4a2ewDbMGaFtmvj+N6GzYtczDClaU8tA/YW1rwzspmCwfjclV/Lrbbq7QAGVIhbxzNrDJCrxTqGLLWd+fHSMYbGGkzkmNHI6b7AGlEQBlPCeLLHay1C77gIS1P4+bNgoTo/dqjg0neOGm5WhMm1Hm1euwiEpFgK+LVNgU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cRQfD2bm6z59ys6;
-	Wed, 17 Sep 2025 12:24:52 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 58H4Oigu039306;
-	Wed, 17 Sep 2025 12:24:44 +0800 (+08)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cRQgP3dSRz8Xs70;
+	Wed, 17 Sep 2025 12:25:53 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl1.zte.com.cn with SMTP id 58H4PiQt074981;
+	Wed, 17 Sep 2025 12:25:44 +0800 (+08)
 	(envelope-from shao.mingyin@zte.com.cn)
 Received: from mapi (xaxapp04[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Wed, 17 Sep 2025 12:24:46 +0800 (CST)
-Date: Wed, 17 Sep 2025 12:24:46 +0800 (CST)
-X-Zmail-TransId: 2afb68ca380e2a4-11716
+	Wed, 17 Sep 2025 12:25:46 +0800 (CST)
+Date: Wed, 17 Sep 2025 12:25:46 +0800 (CST)
+X-Zmail-TransId: 2afb68ca384a5fd-12a6e
 X-Mailer: Zmail v1.0
-Message-ID: <202509171224460946llOiB6KmdOqZU3PyTvqs@zte.com.cn>
+Message-ID: <20250917122546297TjO8DMLwNpJDVWQchM-fL@zte.com.cn>
 In-Reply-To: <20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn>
 References: 20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn
 Precedence: bulk
@@ -60,261 +60,131 @@ Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
         <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
         <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
         <wang.longjie1@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY1IDUvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczItZ2xvY2tzLnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
+Subject: =?UTF-8?B?W1BBVENIIHY1IDYvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGRub3RpZnkucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 58H4Oigu039306
+X-MAIL:mse-fl1.zte.com.cn 58H4PiQt074981
 X-TLS: YES
 X-SPF-DOMAIN: zte.com.cn
 X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
 X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Wed, 17 Sep 2025 12:24:52 +0800
+X-SOURCE-IP: 10.5.228.132 unknown Wed, 17 Sep 2025 12:25:53 +0800
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68CA3814.000/4cRQfD2bm6z59ys6
+X-Fangmail-MID-QID: 68CA3851.000/4cRQgP3dSRz8Xs70
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+From: Wang Longjie <wang.longjie1@zte.com.cn>
 
-translate the "gfs2-glocks.rst" into Simplified Chinese.
+translate the "dnotify.rst" into Simplified Chinese.
 
-Update to commit 713f8834389f("gfs2: Get rid of emote_ok
-checks")
+Update to commit b31763cff488("docs: filesystems: convert dnotify.txt to
+ReST")
 
+Signed-off-by: Wang Longjie <wang.longjie1@zte.com.cn>
 Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Signed-off-by: yang tao <yang.tao172@zte.com.cn>
 ---
 v4->v5
 fix some format issues.
- .../zh_CN/filesystems/gfs2-glocks.rst         | 211 ++++++++++++++++++
- .../translations/zh_CN/filesystems/index.rst  |   1 +
- 2 files changed, 212 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+ .../zh_CN/filesystems/dnotify.rst             | 69 +++++++++++++++++++
+ .../translations/zh_CN/filesystems/index.rst  | 10 +++
+ 2 files changed, 79 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/dnotify.rst
 
-diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+diff --git a/Documentation/translations/zh_CN/filesystems/dnotify.rst b/Documentation/translations/zh_CN/filesystems/dnotify.rst
 new file mode 100644
-index 000000000000..951176c7af9b
+index 000000000000..31ce2b4c75ff
 --- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
-@@ -0,0 +1,211 @@
++++ b/Documentation/translations/zh_CN/filesystems/dnotify.rst
+@@ -0,0 +1,69 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
 +.. include:: ../disclaimer-zh_CN.rst
 +
-+:Original: Documentation/filesystems/gfs2-glocks.rst
++:Original: Documentation/filesystems/dnotify.rst
 +
 +:翻译:
 +
-+   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++   王龙杰 Wang Longjie <wang.longjie1@zte.com.cn>
 +
-+:校译:
++==============
++Linux 目录通知
++==============
 +
-+   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++	   Stephen Rothwell <sfr@canb.auug.org.au>
 +
-+==================
-+Glock 内部加锁规则
-+==================
++目录通知的目的是使用户应用程序能够在目录或目录中的任何文件发生变更时收到通知。基本机制包括应用程序
++通过 fcntl(2) 调用在目录上注册通知，通知本身则通过信号传递。
 +
-+本文档阐述 glock 状态机内部运作的基本原理。每个 glock（即
-+fs/gfs2/incore.h 中的 struct gfs2_glock）包含两把主要的内部锁：
++应用程序可以决定希望收到哪些 “事件” 的通知。当前已定义的事件如下：
 +
-+ 1. 自旋锁（gl_lockref.lock）：用于保护内部状态（如
-+    gl_state、gl_target）和持有者列表（gl_holders）
-+ 2. 非阻塞的位锁（GLF_LOCK）：用于防止其他线程同时调用
-+    DLM 等操作。若某线程获取此锁，则在释放时必须调用
-+    run_queue（通常通过工作队列），以确保所有待处理任务
-+    得以完成。
++	=========	=====================================
++	DN_ACCESS	目录中的文件被访问（read）
++	DN_MODIFY	目录中的文件被修改（write,truncate）
++	DN_CREATE	目录中创建了文件
++	DN_DELETE	目录中的文件被取消链接
++	DN_RENAME	目录中的文件被重命名
++	DN_ATTRIB	目录中的文件属性被更改（chmod,chown）
++	=========	=====================================
 +
-+gl_holders 列表包含与该 glock 关联的所有排队锁请求（不
-+仅是持有者）。若存在已持有的锁，它们将位于列表开头的连
-+续条目中。锁的授予严格遵循排队顺序。
++通常，应用程序必须在每次通知后重新注册，但如果将 DN_MULTISHOT 与事件掩码进行或运算，则注册
++将一直保持有效，直到被显式移除（通过注册为不接收任何事件）。
 +
-+glock 层用户可请求三种锁状态：共享（SH）、延迟（DF）和
-+排他（EX）。它们对应以下 DLM 锁模式：
++默认情况下，SIGIO 信号将被传递给进程，且不附带其他有用的信息。但是，如果使用 F_SETSIG fcntl(2)
++调用让内核知道要传递哪个信号，一个 siginfo 结构体将被传递给信号处理程序，该结构体的 si_fd 成员将
++包含与发生事件的目录相关联的文件描述符。
 +
-+==========	====== =====================================================
-+Glock 模式       DLM    锁模式
-+==========	====== =====================================================
-+    UN          IV/NL  未加锁（无关联的 DLM 锁）或 NL
-+    SH          PR     受保护读（Protected read）
-+    DF          CW     并发写（Concurrent write）
-+    EX          EX     排他（Exclusive）
-+==========	====== =====================================================
++应用程序最好选择一个实时信号（SIGRTMIN + <n>），以便通知可以被排队。如果指定了 DN_MULTISHOT，
++这一点尤为重要。注意，SIGRTMIN 通常是被阻塞的，因此最好使用（至少）SIGRTMIN + 1。
 +
-+因此，DF 本质上是一种与“常规”共享锁模式（SH）互斥的共
-+享模式。在 GFS2 中，DF 模式专用于直接 I/O 操作。Glock
-+本质上是锁加缓存管理例程的组合，其缓存规则如下：
++实现预期（特性与缺陷 :-)）
++--------------------------
 +
-+==========      ==============   ==========   ==========   ==============
-+Glock 模式      缓存元数据       缓存数据      脏数据        脏元数据
-+==========      ==============   ==========   ==========   ==============
-+    UN               否            否           否            否
-+    DF               是            否           否            否
-+    SH               是            是           否            否
-+    EX               是            是           是            是
-+==========      ==============   ==========   ==========   ==============
++对于文件的任何本地访问，通知都应能正常工作，即使实际文件系统位于远程服务器上。这意味着，对本地用户
++模式服务器提供的文件的远程访问应能触发通知。同样的，对本地内核 NFS 服务器提供的文件的远程访问
++也应能触发通知。
 +
-+这些规则通过为每种 glock 定义的操作函数实现。并非所有
-+glock 类型都使用全部的模式，例如仅 inode glock 使用 DF 模
-+式。
++为了尽可能减小对文件系统代码的影响，文件硬链接的问题已被忽略。因此，如果一个文件（x）存在于两个
++目录（a 和 b）中，通过名称”a/x”对该文件进行的更改应通知给期望接收目录“a”通知的程序，但不会
++通知给期望接收目录“b”通知的程序。
 +
-+glock 操作函数及类型常量说明表：
++此外，取消链接的文件仍会在它们链接到的最后一个目录中触发通知。
 +
-+==============     ========================================================
-+字段                用途
-+==============     ========================================================
-+go_sync            远程状态变更前调用（如同步脏数据）
-+go_xmote_bh        远程状态变更后调用（如刷新缓存）
-+go_inval           远程状态变更需使缓存失效时调用
-+go_instantiate     获取 glock 时调用
-+go_held            每次获取 glock 持有者时调用
-+go_dump            为 debugfs 文件打印对象内容，或出错时将 glock 转储至日志
-+go_callback        若 DLM 发送回调以释放此锁时调用
-+go_unlocked        当 glock 解锁时调用（dlm_unlock()）
-+go_type            glock 类型，``LM_TYPE_*``
-+go_flags           若 glock 关联地址空间，则设置GLOF_ASPACE 标志
-+==============     ========================================================
++配置
++----
 +
-+每种锁的最短持有时间是指在远程锁授予后忽略远程降级请求
-+的时间段。此举旨在防止锁在集群节点间持续弹跳而无实质进
-+展的情况，此现象常见于多节点写入的共享内存映射文件。通
-+过延迟响应远程回调的降级操作，为用户空间程序争取页面取
-+消映射前的处理时间。
++Dnotify 由 CONFIG_DNOTIFY 配置选项控制。禁用该选项时，fcntl(fd, F_NOTIFY, ...) 将返
++回 -EINVAL。
 +
-+未来计划将 glock 的 "EX" 模式设为本地共享，使本地锁通
-+过 i_mutex 实现而非 glock。
++示例
++----
 +
-+glock 操作函数的加锁规则：
++具体示例可参见 tools/testing/selftests/filesystems/dnotify_test.c。
 +
-+==============   ======================    =============================
-+操作              GLF_LOCK 位锁持有          gl_lockref.lock 自旋锁持有
-+==============   ======================    =============================
-+go_sync              是                         否
-+go_xmote_bh          是                         否
-+go_inval             是                         否
-+go_instantiate       否                         否
-+go_held              否                         否
-+go_dump              有时                       是
-+go_callback          有时（N/A）                 是
-+go_unlocked          是                         否
-+==============   ======================    =============================
++注意
++----
 +
-+.. Note::
-+
-+   若入口处持有锁则操作期间不得释放位锁或自旋锁。
-+   go_dump 和 do_demote_ok 严禁阻塞。
-+   仅当 glock 状态指示其缓存最新数据时才会调用 go_dump。
-+
-+GFS2 内部的 glock 加锁顺序：
-+
-+ 1. i_rwsem（如需要）
-+ 2. 重命名 glock（仅用于重命名）
-+ 3. Inode glock
-+    （父级优先于子级，同级 inode 按锁编号排序）
-+ 4. Rgrp glock（用于（反）分配操作）
-+ 5. 事务 glock（通过 gfs2_trans_begin，非读操作）
-+ 6. i_rw_mutex（如需要）
-+ 7. 页锁（始终最后，至关重要！）
-+
-+每个 inode 对应两把 glock：一把管理 inode 本身（加锁顺
-+序如上），另一把（称为 iopen glock）结合 inode 的
-+i_nlink 字段决定 inode 生命周期。inode 加锁基于单个
-+inode，rgrp 加锁基于单个 rgrp。通常优先获取本地锁再获
-+取集群锁。
-+
-+Glock 统计
-+----------
-+
-+统计分为两类：超级块相关统计和单个 glock 相关统计。超级
-+块统计按每 CPU 执行以减少收集开销，并进一步按 glock 类
-+型细分。所有时间单位为纳秒。
-+
-+超级块和 glock 统计收集相同信息。超级块时序统计为 glock
-+时序统计提供默认值，使新建 glock 具有合理的初始值。每个
-+glock 的计数器在创建时初始化为零，当 glock 从内存移除时
-+统计丢失。
-+
-+统计包含三组均值/方差对及两个计数器。均值/方差对为平滑
-+指数估计，算法与网络代码中的往返时间计算类似（参见《
-+TCP/IP详解 卷1》第21.3节及《卷2》第25.10节）。与 TCP/IP
-+案例不同，此处均值/方差未缩放且单位为整数纳秒。
-+
-+三组均值/方差对测量以下内容：
-+
-+ 1. DLM 锁时间（非阻塞请求）
-+ 2. DLM 锁时间（阻塞请求）
-+ 3. 请求间隔时间（指向 DLM）
-+
-+非阻塞请求指无论目标 DLM 锁处于何种状态均能立即完成的请求。
-+当前满足条件的请求包括：(a)锁当前状态为互斥（如锁降级）、
-+(b)请求状态为空置或解锁（同样如锁降级）、或(c)设置"try lock"
-+标志的请求。其余锁请求均属阻塞请求。
-+
-+两个计数器分别统计：
-+ 1. 锁请求总数（决定均值/方差计算的数据量）
-+ 2. glock 代码顶层的持有者排队数（通常远大于 DLM 锁请求数）
-+
-+为什么收集这些统计数据？我们需深入分析时序参数的动因如下：
-+
-+1. 更精准设置 glock "最短持有时间"
-+2. 快速识别性能问题
-+3. 改进资源组分配算法（基于锁等待时间而非盲目 "try lock"）
-+
-+因平滑更新的特性，采样量的阶跃变化需经 8 次采样（方差需
-+4 次）才能完全体现，解析结果时需审慎考虑。
-+
-+通过锁请求完成时间和 glock 平均锁请求间隔时间，可计算节
-+点使用 glock 时长与集群共享时长的占比，对设置锁最短持有
-+时间至关重要。
-+
-+我们已采取严谨措施，力求精准测量目标量值。任何测量系统均
-+存在误差，但我期望当前方案已达到合理精度极限。
-+
-+超级块状态统计路径::
-+
-+    /sys/kernel/debug/gfs2/<fsname>/sbstats
-+
-+Glock 状态统计路径::
-+
-+    /sys/kernel/debug/gfs2/<fsname>/glstats
-+
-+（假设 debugfs 挂载于 /sys/kernel/debug，且 <fsname> 替
-+换为对应 GFS2 文件系统名）
-+
-+输出缩写说明：
-+
-+=========  ============================================
-+srtt       非阻塞 DLM 请求的平滑往返时间
-+srttvar    srtt 的方差估计
-+srttb      （潜在）阻塞 DLM 请求的平滑往返时间
-+srttvarb   srttb 的方差估计
-+sirt       DLM 请求的平滑请求间隔时间
-+sirtvar    sirt 的方差估计
-+dlm        DLM 请求数（glstats 文件中的 dcnt）
-+queue      排队的 glock 请求数（glstats 文件中的 qcnt）
-+=========  ============================================
-+
-+sbstats文件按glock类型（每种类型8行）和CPU核心（每CPU一列）
-+记录统计数据集。glstats文件则为每个glock提供统计集，其格式
-+与glocks文件类似，但所有时序统计量均采用均值/方差格式存储。
-+
-+gfs2_glock_lock_time 跟踪点实时输出目标 glock 的当前统计
-+值，并附带每次接收到的dlm响应附加信息：
-+
-+======   ============
-+status   DLM 请求状态
-+flags    DLM 请求标志
-+tdiff    该请求的耗时
-+======   ============
-+
-+（其余字段同上表）
++从 Linux 2.6.13 开始，dnotify 已被 inotify 取代。有关 inotify 的更多信息，请参见
++Documentation/filesystems/inotify.rst。
 diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 7051fd9d94f3..4a670f6cc080 100644
+index 4a670f6cc080..4e9b1ca46231 100644
 --- a/Documentation/translations/zh_CN/filesystems/index.rst
 +++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -30,3 +30,4 @@ Linux Kernel中的文件系统
-    ubifs-authentication
-    gfs2
-    gfs2-uevents
-+   gfs2-glocks
+@@ -15,6 +15,16 @@ Linux Kernel中的文件系统
+ 文件系统（VFS）层以及基于其上的各种文件系统如何工作呈现给大家。当前\
+ 可以看到下面的内容。
+
++核心 VFS 文档
++=============
++
++有关 VFS 层本身以及其算法工作方式的文档，请参阅这些手册。
++
++.. toctree::
++   :maxdepth: 1
++
++   dnotify
++
+ 文件系统
+ ========
+
 -- 
 2.27.0
 
