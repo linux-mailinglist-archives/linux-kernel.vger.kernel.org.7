@@ -1,170 +1,204 @@
-Return-Path: <linux-kernel+bounces-821002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61FAB80017
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C88B8005F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3C62A0D25
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5006E1889C66
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203592BE032;
-	Wed, 17 Sep 2025 14:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1B72D4B71;
+	Wed, 17 Sep 2025 14:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wMacfxa6"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRhST95e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A574E33C776
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F211225A29
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119175; cv=none; b=qrnLZwjOboEMhToestFOvKBQ1cD8MODnNBvDsgpnGOeJzBIGpA4SXl4kEGeY8DQD39F5I/4v8NO3z78M9Qbd4KgJm99k09ayyA/3ASegMRkAgQzbjjXn7jaCtpJjrZMqN6TF8Tf5wZs61Lv4gnhugR4qV7wnQhjZtSp5GoQtwvQ=
+	t=1758119267; cv=none; b=b10fAR9FSp7m1hkFvz4PC5dGgqjdmfFjNLFBeORY2fKNKcJmjGoFE3qhvOCc6drkvLWH66vA8SLWBE/zKFReTbH4GQ5H1dzo6wNvCOtnkfaUFkMHXwKaPIQqaoleVACkjRfiJJraFETOm4i/wl227mMKcLkMVNVjPer6PZfVxLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119175; c=relaxed/simple;
-	bh=JZxC59+l0K5DkGdV5aRYQYUWp1YC5ovZfqzD3FPsuz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=StBn0c6YR08CXwcOBZQyaVZrgyKFAlFXr941ScivFiON61lewlll27U3Vj9QNdo69XNTvVq0MnRP9f4kWSnJ3WUtjQci7LTy9fxk6N3fAkildWB/Pd5VKfeNs1q/4KrJKUSmfg2W/hFYaqBkpyEaV0z+OwJL5aSeufwyQqwyerI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wMacfxa6; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0473327e70so546563266b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758119171; x=1758723971; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=10t2Z6sgnABIAwDZkTB26QdFfX0ldYEILJpBIALC4NU=;
-        b=wMacfxa64V+hZqJdlMnXg2iSd8LdTVPmi5yXWNYYsPUQc/J8+hrz4DoD5nrQhJ42fn
-         lqYPw4FMS30yNrWWuIwJIIfpA35RmuASBsHIvLBSzdg20DpRwJU7UuxQdqsfZZ/myoN2
-         BgmpKgzbgIR9kuV8egT9fW7/uShJv18fYzfI5NdxS/JAzWA7HSLDoVYVOjt1/v+LZHOP
-         73H2hVA/lfUhzCm3SsnPH1BFNGNc5ii4yvJvXJunecjrn419i291yAPce4q3nT6ClaCZ
-         ZMWGweox/NDihX+XLcQlPvFDH8S2PZNE5jw3jJYdSH+c1b3qisNVF4MkZ9md+bo3CF72
-         4TXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758119171; x=1758723971;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=10t2Z6sgnABIAwDZkTB26QdFfX0ldYEILJpBIALC4NU=;
-        b=hF/Bc+GXp8TJSuBxX82oUDFe/tyFXxal3NsMdRaNvV2zICdD+bt3aCDAbb63/0CxRk
-         K62MqtnP/sv5exwlz/8DXcpP7oFO9qCmAsFZGQCBKfQmQdkInP/+IV8oH5aV/GoW6heD
-         onTV/eonBYRDuhXoRpFA9ZaEbeZyUIdW6/jeOck4NIcPvqganB2lL7D+VpCxF7mCLrfS
-         EI9dm3n409sAd02OfBDSMROo4XreeaY0GTUl1fn1zMMJ5kFHgMgyDpTSbSve6Alh+Rx+
-         Jw79leJDia1pTRklzksQWQV+Y4kMzPTPB/OPugYjlwqJEVYX66Zt2C1erkQF8zRowkUX
-         8KoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdbDJ9MHl7hHWaYjQMqkNWsT4mM65/5wdEr+KHv04L+53+yGJNAQSZm/flZD80cNf/Evb0gu3DtX80jy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMaVZS+cnHbTTLMS6I9scP5WY24yVxDpcpHaNVJbc5h2iR1mAh
-	N8Dowh/l1l4qr1q/wqwfik/qdfqypHsCspwu8bu4QktryAzbO6GrAQPRLKE5Me6LXh0=
-X-Gm-Gg: ASbGncv6gHkk7fpY05uu1BndOf6tnd7rJe0J3vVrKT2cMtjjSXDX/iNffpAyHbEVaII
-	KH2BF05yjq9bk6EVfmbfwg6GrZqj8hX7NuLBWM5Q7AqPB9SjCKM19fLPpjmt8Wzbs0SslcoY0aC
-	N5lNGO4ThRmMkHNFgQkx2NyqkcLQO9lXlsKWZUHmjc7yAJpBnkQXuqAj+bQSp/fLZevDQVo6UkY
-	3UtlFsCEFC92JCFnu5XfzVhLMIE9AzgBqMjHfOfLw1+wzgQrBEoDfok4cc9MpZFBR5ZrU1Ag3xc
-	O41BMRJ+AdemLfHfJb6dRpvMZUXXwbQrKzK+lvGolnaIVvI6/4yrdW7wOUNGvwCmbUmiUtJtggr
-	ZMOmfKVOa2meGKZ9fdZwmvKhg6vmGhrZhPJwkErICtEc=
-X-Google-Smtp-Source: AGHT+IEaxm2Ezs6X9pAGeZTfGiDeZKKFcv9jYxAWmPiRXScidoOV/iqJhV2uKVKOhqCyY8zfonbwMA==
-X-Received: by 2002:a17:907:970e:b0:afe:c2e7:3705 with SMTP id a640c23a62f3a-b1bb2d0f4fdmr263147466b.22.1758119170855;
-        Wed, 17 Sep 2025 07:26:10 -0700 (PDT)
-Received: from [172.20.10.3] ([109.166.135.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b3347b90sm1356906866b.109.2025.09.17.07.26.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 07:26:10 -0700 (PDT)
-Message-ID: <b8a0586e-a79a-4e14-87d8-ee156436d1b0@linaro.org>
-Date: Wed, 17 Sep 2025 17:26:08 +0300
+	s=arc-20240116; t=1758119267; c=relaxed/simple;
+	bh=/EeIQi0ansmbb7h7cdFJIsa+CD2IvLgTaCfE6ZaIlxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDnOfokQTzkEveNzwUlY82uPundMet/dj6B8CMsSAKaT9zgeP7cHCMOwZag7JxUppGpeiTCujHzaMHWtTxtyXh2ccTbZjdkYxzboreNpUO1Uea507iOLEgo85oWVy3R7CxwagwEu9kCl/DTHKorSv/kI4A4oo32wcGqNVrH54+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRhST95e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF49C4CEE7;
+	Wed, 17 Sep 2025 14:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758119267;
+	bh=/EeIQi0ansmbb7h7cdFJIsa+CD2IvLgTaCfE6ZaIlxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VRhST95e6M0ImbIkRf5j2AWy3ejUWuNIjebo0Vt5MgW06Upoza4JsMhq27JsHn87h
+	 yKsPubiKosrsh2UtkoE3UBwZpfyR0LGuOX7YdXCPVJpxq0Ob4OqZGNn08bkEjo1q+x
+	 2gyHdVlX/zSQmvXVJs3gWIU59dKdulFyf3wG0CKQct2Ql/jg71r+KX3AK9noMREomn
+	 2mDHcEa8IHiKzxJ0/hgs4GCC1spb4cBkSykP3thbZlneN5IaTzXevesTClml/8oRio
+	 ntlD4I58un7kW10VNqX1FvWuV7OPi6imYkRWWiCDcupgRQ77X11nIAJ1OtVwacduZz
+	 1K8D2iqyPVcew==
+Date: Wed, 17 Sep 2025 17:27:40 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, vbabka@suse.cz,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, elver@google.com,
+	dvyukov@google.com, kasan-dev@googlegroups.com,
+	Aleksandr Nogikh <nogikh@google.com>
+Subject: Re: [PATCH v1] mm/memblock: Correct totalram_pages accounting with
+ KMSAN
+Message-ID: <aMrFXOTrlcgPhqjo@kernel.org>
+References: <20250917123250.3597556-1-glider@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
-To: Thomas Gleixner <tglx@linutronix.de>, David Hildenbrand
- <david@redhat.com>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
- pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
- <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
- <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
- <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com> <87v7lh891c.ffs@tglx>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <87v7lh891c.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917123250.3597556-1-glider@google.com>
 
+On Wed, Sep 17, 2025 at 02:32:50PM +0200, Alexander Potapenko wrote:
+> When KMSAN is enabled, `kmsan_memblock_free_pages()` can hold back pages
+> for metadata instead of returning them to the early allocator. The callers,
+> however, would unconditionally increment `totalram_pages`, assuming the
+> pages were always freed. This resulted in an incorrect calculation of the
+> total available RAM, causing the kernel to believe it had more memory than
+> it actually did.
+> 
+> This patch refactors `memblock_free_pages()` to return the number of pages
+> it successfully frees. If KMSAN stashes the pages, the function now
+> returns 0; otherwise, it returns the number of pages in the block.
+> 
+> The callers in `memblock.c` have been updated to use this return value,
+> ensuring that `totalram_pages` is incremented only by the number of pages
+> actually returned to the allocator. This corrects the total RAM accounting
+> when KMSAN is active.
+> 
+> Cc: Aleksandr Nogikh <nogikh@google.com>
+> Fixes: 3c2065098260 ("init: kmsan: call KMSAN initialization routines")
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+> ---
+>  mm/internal.h |  4 ++--
+>  mm/memblock.c | 18 +++++++++---------
+>  mm/mm_init.c  |  9 +++++----
+>  3 files changed, 16 insertions(+), 15 deletions(-)
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 45b725c3dc030..ae1ee6e02eff9 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -742,8 +742,8 @@ static inline void clear_zone_contiguous(struct zone *zone)
+>  extern int __isolate_free_page(struct page *page, unsigned int order);
+>  extern void __putback_isolated_page(struct page *page, unsigned int order,
+>  				    int mt);
+> -extern void memblock_free_pages(struct page *page, unsigned long pfn,
+> -					unsigned int order);
+> +extern unsigned long memblock_free_pages(struct page *page, unsigned long pfn,
+> +					 unsigned int order);
 
+No need for extern, the inconsistency is fine here.
 
-On 9/17/25 17:10, Thomas Gleixner wrote:
-> On Wed, Sep 17 2025 at 09:16, David Hildenbrand wrote:
->> On 17.09.25 07:43, Eugen Hristev wrote:
->>> On 9/17/25 00:16, Thomas Gleixner wrote:
->>>> I pointed you to a solution for that and just because David does not
->>>> like it means that it's acceptable to fiddle in subsystems and expose
->>>> their carefully localized variables.
->>
->> It would have been great if we could have had that discussion in the 
->> previous thread.
-> 
-> Sorry. I was busy with other stuff and did not pay attention to that
-> discussion.
-> 
->> Some other subsystem wants to have access to this information. I agree 
->> that exposing these variables as r/w globally is not ideal.
-> 
-> It's a nono in this case. We had bugs (long ago) where people fiddled
-> with this stuff (I assume accidentally for my mental sanity sake) and
-> caused really nasty to debug issues. C is a horrible language to
-> encapsulate stuff properly as we all know.
-> 
->> I raised the alternative of exposing areas or other information through 
->> simple helper functions that kmemdump can just use to compose whatever 
->> it needs to compose.
->>
->> Do we really need that .section thingy?
-> 
-> The section thing is simple and straight forward as it just puts the
-> annotated stuff into the section along with size and id and I definitely
-> find that more palatable, than sprinkling random functions all over the
-> place to register stuff.
+>  extern void __free_pages_core(struct page *page, unsigned int order,
+>  		enum meminit_context context);
+>  
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 117d963e677c9..de7ff644d8f4f 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1834,10 +1834,9 @@ void __init memblock_free_late(phys_addr_t base, phys_addr_t size)
+>  	cursor = PFN_UP(base);
+>  	end = PFN_DOWN(base + size);
+>  
+> -	for (; cursor < end; cursor++) {
+> -		memblock_free_pages(pfn_to_page(cursor), cursor, 0);
+> -		totalram_pages_inc();
+> -	}
+> +	for (; cursor < end; cursor++)
+> +		totalram_pages_add(
+> +			memblock_free_pages(pfn_to_page(cursor), cursor, 0));
+>  }
+>  
+>  /*
+> @@ -2259,9 +2258,11 @@ static void __init free_unused_memmap(void)
+>  #endif
+>  }
+>  
+> -static void __init __free_pages_memory(unsigned long start, unsigned long end)
+> +static unsigned long __init __free_pages_memory(unsigned long start,
+> +						unsigned long end)
+>  {
+>  	int order;
+> +	unsigned long freed = 0;
+>  
+>  	while (start < end) {
+>  		/*
+> @@ -2279,10 +2280,11 @@ static void __init __free_pages_memory(unsigned long start, unsigned long end)
+>  		while (start + (1UL << order) > end)
+>  			order--;
+>  
+> -		memblock_free_pages(pfn_to_page(start), start, order);
+> +		freed += memblock_free_pages(pfn_to_page(start), start, order);
+>  
+>  		start += (1UL << order);
+>  	}
+> +	return freed;
+>  }
+>  
+>  static unsigned long __init __free_memory_core(phys_addr_t start,
+> @@ -2297,9 +2299,7 @@ static unsigned long __init __free_memory_core(phys_addr_t start,
+>  	if (start_pfn >= end_pfn)
+>  		return 0;
+>  
+> -	__free_pages_memory(start_pfn, end_pfn);
+> -
+> -	return end_pfn - start_pfn;
+> +	return __free_pages_memory(start_pfn, end_pfn);
+>  }
+>  
+>  static void __init memmap_init_reserved_pages(void)
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 5c21b3af216b2..9883612768511 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char *tablename,
+>  	return table;
+>  }
+>  
+> -void __init memblock_free_pages(struct page *page, unsigned long pfn,
+> -							unsigned int order)
+> +unsigned long __init memblock_free_pages(struct page *page, unsigned long pfn,
+> +					 unsigned int order)
 
-+1 from my side.
+Please either align this with 'struct' or drop spaces and keep only tabs.
 
-> 
-> Sure, you can achieve the same thing with an accessor function. In case
-> of nr_irqs there is already one: irq_get_nr_irqs(), but for places which
+>  {
+>  	if (IS_ENABLED(CONFIG_DEFERRED_STRUCT_PAGE_INIT)) {
+>  		int nid = early_pfn_to_nid(pfn);
+>  
+>  		if (!early_page_initialised(pfn, nid))
+> -			return;
+> +			return 0;
+>  	}
+>  
+>  	if (!kmsan_memblock_free_pages(page, order)) {
+>  		/* KMSAN will take care of these pages. */
+> -		return;
+> +		return 0;
+>  	}
+>  
+>  	/* pages were reserved and not allocated */
+>  	clear_page_tag_ref(page);
+>  	__free_pages_core(page, order, MEMINIT_EARLY);
+> +	return 1UL << order;
+>  }
+>  
+>  DEFINE_STATIC_KEY_MAYBE(CONFIG_INIT_ON_ALLOC_DEFAULT_ON, init_on_alloc);
 
-Not really. I cannot use this accessory function because it returns the
-<value> of nr_irqs. To have this working with a debug tool, I need to
-dump the actual memory where nr_irqs reside. This is because any debug
-tool will not call any function or code, rather look in the dump where
-is the variable to find its value. And nr_irqs is not in the coredump
-image if it's not registered itself into kmemdump.
-So to make it work, the accessory would have to return a pointer to
-nr_irqs. Which is wrong. Returning a pointer to a static, outside of the
-subsystem, is not right from my point of view.
-
-> do not expose the information already for real functional reasons adding
-> such helpers just for this coredump muck is really worse than having a
-> clearly descriptive and obvious annotation which results in the section
-> build.
-> 
-> The charm of sections is that they don't neither extra code nor stubs or
-> ifdeffery when a certain subsystem is disabled and therefore no
-> information available.
-> 
-> I'm not insisting on sections, but having a table of 2k instead of
-> hundred functions, stubs and whatever is definitely a win to me.
-> 
-> Thanks,
-> 
->         tglx
-
+-- 
+Sincerely yours,
+Mike.
 
