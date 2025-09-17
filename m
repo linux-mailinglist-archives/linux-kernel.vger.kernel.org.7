@@ -1,120 +1,574 @@
-Return-Path: <linux-kernel+bounces-820997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F7EB7FFD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940C5B8000B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6280D189E083
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146F61C88119
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D1D23BCF7;
-	Wed, 17 Sep 2025 14:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373A3222594;
+	Wed, 17 Sep 2025 14:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wjJHQij1"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HI/Ku464"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8863526AA91
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53E91607AC;
+	Wed, 17 Sep 2025 14:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758118885; cv=none; b=DC7/2ANFUhCryr78+3DwGbhs8E+Id0AkVbvEwDUEjzU8DX1S63dIqOnJgCzJMki7jREpHjYhgXR+KnJi8+peqM5LrooEp3fpJTD0vs/O5k/eaf0QX/v5B0G2eB7q1ZdU6ALmdZhlZnppaLwCV1/6b9grWelM5vMhg5CmBWH9/+A=
+	t=1758118914; cv=none; b=XG6gimbOW/sAJWosoACexkGmHgZjxQ3OBHCBpS5DkDJ6wlMZPT2/+p6RbWndAPZQ3w/RAUqnIPL8OtKC47fL424TwMBmSWeQ0AOa/hcq7jJmlKgx+UOS/Yzme03yUjkOlIAzZYsQ7ZpGMooAJi9l/9S2okqYt2q4fEN6jhkQBMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758118885; c=relaxed/simple;
-	bh=1TUVSazKQlcSc3z3Y2bsrkbYOyuQZNMq/r+GrFIaxTI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hTmSC2L6xHRojVGHABZigGlcy7qd9TfeUtUqRxoKFWcopSCUcMz1AMXCZLty5An+sPuudgKjunikp1CSKJ0S2nLtRR0vwUA4+lkuQFn+T/GJvujmkCU6WcfpoQLTUmh402GjmaYnaOBCwv8qDe549v3OHNPrreWPeIn2uEEE+yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wjJHQij1; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-890e5bb3100so138987739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:21:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1758118873; x=1758723673; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d68s8pWNCdPaGhVBNodG3vOwiZCJ3oHbIMlBi1U/Nnw=;
-        b=wjJHQij1Djnyd+LvAKaJ4kZDOns/Xoy+QAvOS3vhpqxRB2B+xGPTELcZ2lPynzkwTK
-         I3l4cTijuHItHj42TfPELiHvw2dhDtgLdYHWo5xIhbNbLEzoVQUrjCjhSh2tEqSrbo6t
-         xHcXVl2d08mcWhHFf0v4CGXDC9Lgk2lfF9aQHF42dyYSRugUJ48y1NN3jiTpUt+PIH2c
-         huq2O72EpWltyhKJhSubacSFu5Ba3RpyJ58Uise8DjqELET2s6wlEAKwr4IF+nEq5IV8
-         cfBPcfLjgSiLIzWOpd0sHHjoOxSa+eEjLpBaEst2HvKX4LKilkAe+yRuG/vvcbpBz302
-         fmFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758118873; x=1758723673;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d68s8pWNCdPaGhVBNodG3vOwiZCJ3oHbIMlBi1U/Nnw=;
-        b=bjOBCE4dpPDK3VKB6+82zjmnVrYMdOFehwBuELNRmiSay3xCdfuncuHihiIgeJI7/f
-         iN5Scskz3lGozDTtCxaf8Y70jpYF149CtWwV6k+j2iQVT/w7b8aAeJnJ6FvqaN93P3Eh
-         LhFM+bUqBfdRveXYhPQ8oeDOwWXKXTSjY+MWb8duKiohjP8/8D38XFxtopIzhDiJUL2F
-         K5ixli4+n3KqsOe7xLXc4snbvOFHNZL9uMUcuIqjxJgMwINHN6o7BrOwmkYPD8Z07ujt
-         bIQs6NJKTpRgGCxi+S8fxvU4RtGLQGEoplEpfqf0cQg7NiI9cdkIhAtZpgQUPaUmHrjg
-         P00w==
-X-Forwarded-Encrypted: i=1; AJvYcCWnTs/q9anegqKoDeAhU0tRxfX3EZupXSJDrw6SaicBEbDzvCkXRpUMNZ6CVUQQwUG/1rq0pAFKgLlWN9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBG5FtYyl2wEKcEocSHgPcA7sAbN1kh12GKcwHdRZZG14SRlca
-	rqoiIUdhHfSV7cyVMNH8gs17FuRaMTbUENm5AIo9f5EirrMIfMBmpkdMo+nzw7tw+Sc=
-X-Gm-Gg: ASbGnctjr5a6/pN5cpXK4RFISD5SVjL8qlgmJYuSTBs5SRg5BETF6J6SI+FpsrS/hqU
-	BS43lw8eHI5QO2bgvxvKl9Naulq/rfjoNtoUZp+++toDXNeJq+wroc1JNrF31kXFo6JkI1vVbru
-	PXeY9djJkQ2dK868Gj/9xHViV2VXQLXWzcGn7FY5QOKYxcJcJx8IRbgWdI4X6R0QJIlgJClz1pd
-	UwKoy4wqpO5yXNm2cB4o8UMMqPE2XEl+p/07qguXXGY6CnGI9agTBRtZjxdOeJZAVzdJOCsJ7dh
-	22jaSEUjWwD/ss/NDhh5HS8uHPa2WrxjPxAYNoxUXN2H8xSGusRCrxT8inrQ7wktUnQNE2suIMX
-	8w5httMPVw+Pjqg==
-X-Google-Smtp-Source: AGHT+IHdd2VS4yz6Fa1klXONV8I+5ZoG/vMhg8JzZxOXeIeHOgf+AemBCv8ARUuHNgaKUufvKlJZJA==
-X-Received: by 2002:a05:6602:1683:b0:887:1b69:9693 with SMTP id ca18e2360f4ac-89d1bfaa016mr356375239f.5.1758118872921;
-        Wed, 17 Sep 2025 07:21:12 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-88f2f6c6339sm670751239f.21.2025.09.17.07.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 07:21:12 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-block@vger.kernel.org, linux-raid@vger.kernel.org, 
- drbd-dev@lists.linbit.com, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- john.g.garry@oracle.com, pmenzel@molgen.mpg.de, hch@lst.de, 
- martin.petersen@oracle.com, yi.zhang@huawei.com, yukuai3@huawei.com, 
- yangerkun@huawei.com
-In-Reply-To: <20250910111107.3247530-1-yi.zhang@huaweicloud.com>
-References: <20250910111107.3247530-1-yi.zhang@huaweicloud.com>
-Subject: Re: (subset) [PATCH v2 0/2] Fix the initialization of
- max_hw_wzeroes_unmap_sectors for stacking drivers
-Message-Id: <175811887192.378805.895284774096542580.b4-ty@kernel.dk>
-Date: Wed, 17 Sep 2025 08:21:11 -0600
+	s=arc-20240116; t=1758118914; c=relaxed/simple;
+	bh=gdqcIoDlmzXwVJDkZfRsloKwk6lqLUHz/JxOdu8KJ3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvbKDb4hcpQiLrQH7cHiIsXNKd56eLpdlP7LdcdfGynqIq2QuJmi6ACAtD46Xud9KFulqRf5nrN3gBsctQufjjA3hJJRXA30j1I/aWCkNOAWOnNOQF8WLYC34ulXnNMmv1eZdF1w7SEn/1F5NgoX2/zShVtx/6OwwkfrXa2Mg+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HI/Ku464; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DEE9C4CEE7;
+	Wed, 17 Sep 2025 14:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758118914;
+	bh=gdqcIoDlmzXwVJDkZfRsloKwk6lqLUHz/JxOdu8KJ3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HI/Ku464YiPgEvOlg7HzUCb/WIOt3dabFOPcR26kZCX/jTzVgKS/TCgggEFDOyvXL
+	 Ou+StiNS7nwHYZA8BNWrAiY0X/SDdsCs3/C67ovZqZJ7matjlf4rxStsjof0GowSkO
+	 ZU30Mu3IKs0Fzvjc8cPz5K+u8Hyby6asDq2GmvHn9evWA9eL7dsiNmckEzZpyjPnZh
+	 FzEI9hx+dxFCpnhBhGnkF7OAAaOtWw0dnBEQei9I7oJHy/OKdbR23J3uXomfbQty0D
+	 B62EuNFm5LkL20bGzlzErNuKjSrJH8Rslln4+OKH3AYOTh2wL0w+zMQhJnGyIKyGqV
+	 5a0BwxC+bhbnQ==
+Date: Wed, 17 Sep 2025 16:21:50 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, 
+	Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] HID: playstation: Simplify locking with guard()
+ and scoped_guard()
+Message-ID: <7fp3kik4b6wtzp65ir3bz5bw5r5qrjzi2nahwxkszjfptmsuyb@eoja4452cryb>
+References: <20250625-dualsense-hid-jack-v2-0-596c0db14128@collabora.com>
+ <20250625-dualsense-hid-jack-v2-3-596c0db14128@collabora.com>
+ <dor5e2ugnp4k5iava3uwxltttrfopkqoo23uex6xdu5rcz6rqt@7ett6gqco32m>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dor5e2ugnp4k5iava3uwxltttrfopkqoo23uex6xdu5rcz6rqt@7ett6gqco32m>
 
-
-On Wed, 10 Sep 2025 19:11:05 +0800, Zhang Yi wrote:
-> Changes since v1:
->  - Improve commit messages in patch 1 by adding a simple reproduction
->    case as Paul suggested and explaining the implementation differences
->    between RAID 0 and RAID 1/10/5, no code changes.
+On Sep 17 2025, Benjamin Tissoires wrote:
+> On Jun 25 2025, Cristian Ciocaltea wrote:
+> > Use guard() and scoped_guard() infrastructure instead of explicitly
+> > acquiring and releasing spinlocks and mutexes to simplify the code and
+> > ensure that all locks are released properly.
+> > 
+> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 > 
-> v1: https://lore.kernel.org/linux-block/20250825083320.797165-1-yi.zhang@huaweicloud.com/
+> It looks like the patch is now creating sparse errors:
 > 
-> [...]
+> https://gitlab.freedesktop.org/bentiss/hid/-/jobs/84636162
+> 
+> with:
+> 
+> drivers/hid/hid-playstation.c:1187:32: warning: context imbalance in 'dualsense_player_led_set_brightness' - wrong count at exit
+> drivers/hid/hid-playstation.c:1403:9: warning: context imbalance in 'dualsense_parse_report' - different lock contexts for basic block
+> drivers/hid/hid-playstation.c:1499:12: warning: context imbalance in 'dualsense_play_effect' - different lock contexts for basic block
+> drivers/hid/hid-playstation.c:1552:13: warning: context imbalance in 'dualsense_set_lightbar' - wrong count at exit
+> drivers/hid/hid-playstation.c:1564:13: warning: context imbalance in 'dualsense_set_player_leds' - wrong count at exit
+> drivers/hid/hid-playstation.c:2054:33: warning: context imbalance in 'dualshock4_led_set_blink' - wrong count at exit
+> drivers/hid/hid-playstation.c:2095:33: warning: context imbalance in 'dualshock4_led_set_brightness' - wrong count at exit
+> drivers/hid/hid-playstation.c:2463:12: warning: context imbalance in 'dualshock4_play_effect' - different lock contexts for basic block
+> drivers/hid/hid-playstation.c:2501:13: warning: context imbalance in 'dualshock4_set_bt_poll_interval' - wrong count at exit
+> drivers/hid/hid-playstation.c:2509:13: warning: context imbalance in 'dualshock4_set_default_lightbar_colors' - wrong count at exit
+> 
+> (the artifacts are going to be removed in 4 hours, so better document
+> the line numbers here).
+> 
+> I am under the impression that it's because the 2 *_output_worker
+> functions are not using scoped guarding, but it could very well be
+> something entirely different. Do you mind taking a look as well?
 
-Applied, thanks!
+Turns out it's the mix of guard and scoped_guard that confuses spare:
+https://lkml.org/lkml/2025/6/8/74
 
-[2/2] drbd: init queue_limits->max_hw_wzeroes_unmap_sectors parameter
-      commit: 027a7a9c07d0d759ab496a7509990aa33a4b689c
+the following shuts down all of the warnings:
 
-Best regards,
--- 
-Jens Axboe
+---
 
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index d2bee1a314b1..36f3ac044fdc 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -1274,9 +1274,9 @@ static void dualsense_init_output_report(struct dualsense *ds,
+ 
+ static inline void dualsense_schedule_work(struct dualsense *ds)
+ {
+-       guard(spinlock_irqsave)(&ds->base.lock);
+-       if (ds->output_worker_initialized)
+-               schedule_work(&ds->output_worker);
++       scoped_guard(spinlock_irqsave, &ds->base.lock)
++               if (ds->output_worker_initialized)
++                       schedule_work(&ds->output_worker);
+ }
+ 
+ /*
+@@ -2626,9 +2626,9 @@ static void dualshock4_remove(struct ps_device *ps_dev)
+ 
+ static inline void dualshock4_schedule_work(struct dualshock4 *ds4)
+ {
+-       guard(spinlock_irqsave)(&ds4->base.lock);
+-       if (ds4->output_worker_initialized)
+-               schedule_work(&ds4->output_worker);
++       scoped_guard(spinlock_irqsave, &ds4->base.lock)
++               if (ds4->output_worker_initialized)
++                       schedule_work(&ds4->output_worker);
+ }
+ 
+ static void dualshock4_set_bt_poll_interval(struct dualshock4 *ds4, u8 interval)
 
+---
 
+There are also a couple more of manual spin_unlock_irqrestore which
+would benefit from the scoped guard mechanism.
+
+Cheers,
+Benjamin
+
+> > ---
+> >  drivers/hid/hid-playstation.c | 216 ++++++++++++++++++------------------------
+> >  1 file changed, 93 insertions(+), 123 deletions(-)
+> > 
+> > diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+> > index 799b47cdfe034c2b78ec589ac19e3c7a764dc784..ab3a0c505c4db9110ae4d528ba70b32d9f90b81b 100644
+> > --- a/drivers/hid/hid-playstation.c
+> > +++ b/drivers/hid/hid-playstation.c
+> > @@ -7,6 +7,7 @@
+> >  
+> >  #include <linux/bitfield.h>
+> >  #include <linux/bits.h>
+> > +#include <linux/cleanup.h>
+> >  #include <linux/crc32.h>
+> >  #include <linux/device.h>
+> >  #include <linux/hid.h>
+> > @@ -566,26 +567,25 @@ static int ps_devices_list_add(struct ps_device *dev)
+> >  {
+> >  	struct ps_device *entry;
+> >  
+> > -	mutex_lock(&ps_devices_lock);
+> > +	guard(mutex)(&ps_devices_lock);
+> > +
+> >  	list_for_each_entry(entry, &ps_devices_list, list) {
+> >  		if (!memcmp(entry->mac_address, dev->mac_address, sizeof(dev->mac_address))) {
+> >  			hid_err(dev->hdev, "Duplicate device found for MAC address %pMR.\n",
+> >  					dev->mac_address);
+> > -			mutex_unlock(&ps_devices_lock);
+> >  			return -EEXIST;
+> >  		}
+> >  	}
+> >  
+> >  	list_add_tail(&dev->list, &ps_devices_list);
+> > -	mutex_unlock(&ps_devices_lock);
+> >  	return 0;
+> >  }
+> >  
+> >  static int ps_devices_list_remove(struct ps_device *dev)
+> >  {
+> > -	mutex_lock(&ps_devices_lock);
+> > +	guard(mutex)(&ps_devices_lock);
+> > +
+> >  	list_del(&dev->list);
+> > -	mutex_unlock(&ps_devices_lock);
+> >  	return 0;
+> >  }
+> >  
+> > @@ -649,13 +649,12 @@ static int ps_battery_get_property(struct power_supply *psy,
+> >  	struct ps_device *dev = power_supply_get_drvdata(psy);
+> >  	uint8_t battery_capacity;
+> >  	int battery_status;
+> > -	unsigned long flags;
+> >  	int ret = 0;
+> >  
+> > -	spin_lock_irqsave(&dev->lock, flags);
+> > -	battery_capacity = dev->battery_capacity;
+> > -	battery_status = dev->battery_status;
+> > -	spin_unlock_irqrestore(&dev->lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &dev->lock) {
+> > +		battery_capacity = dev->battery_capacity;
+> > +		battery_status = dev->battery_status;
+> > +	}
+> >  
+> >  	switch (psp) {
+> >  	case POWER_SUPPLY_PROP_STATUS:
+> > @@ -1173,19 +1172,17 @@ static int dualsense_player_led_set_brightness(struct led_classdev *led, enum le
+> >  {
+> >  	struct hid_device *hdev = to_hid_device(led->dev->parent);
+> >  	struct dualsense *ds = hid_get_drvdata(hdev);
+> > -	unsigned long flags;
+> >  	unsigned int led_index;
+> >  
+> > -	spin_lock_irqsave(&ds->base.lock, flags);
+> > -
+> > -	led_index = led - ds->player_leds;
+> > -	if (value == LED_OFF)
+> > -		ds->player_leds_state &= ~BIT(led_index);
+> > -	else
+> > -		ds->player_leds_state |= BIT(led_index);
+> > +	scoped_guard(spinlock_irqsave, &ds->base.lock) {
+> > +		led_index = led - ds->player_leds;
+> > +		if (value == LED_OFF)
+> > +			ds->player_leds_state &= ~BIT(led_index);
+> > +		else
+> > +			ds->player_leds_state |= BIT(led_index);
+> >  
+> > -	ds->update_player_leds = true;
+> > -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> > +		ds->update_player_leds = true;
+> > +	}
+> >  
+> >  	dualsense_schedule_work(ds);
+> >  
+> > @@ -1234,12 +1231,9 @@ static void dualsense_init_output_report(struct dualsense *ds, struct dualsense_
+> >  
+> >  static inline void dualsense_schedule_work(struct dualsense *ds)
+> >  {
+> > -	unsigned long flags;
+> > -
+> > -	spin_lock_irqsave(&ds->base.lock, flags);
+> > +	guard(spinlock_irqsave)(&ds->base.lock);
+> >  	if (ds->output_worker_initialized)
+> >  		schedule_work(&ds->output_worker);
+> > -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> >  }
+> >  
+> >  /*
+> > @@ -1337,7 +1331,6 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+> >  	int battery_status;
+> >  	uint32_t sensor_timestamp;
+> >  	bool btn_mic_state;
+> > -	unsigned long flags;
+> >  	int i;
+> >  
+> >  	/*
+> > @@ -1399,10 +1392,10 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+> >  	 */
+> >  	btn_mic_state = !!(ds_report->buttons[2] & DS_BUTTONS2_MIC_MUTE);
+> >  	if (btn_mic_state && !ds->last_btn_mic_state) {
+> > -		spin_lock_irqsave(&ps_dev->lock, flags);
+> > -		ds->update_mic_mute = true;
+> > -		ds->mic_muted = !ds->mic_muted; /* toggle */
+> > -		spin_unlock_irqrestore(&ps_dev->lock, flags);
+> > +		scoped_guard(spinlock_irqsave, &ps_dev->lock) {
+> > +			ds->update_mic_mute = true;
+> > +			ds->mic_muted = !ds->mic_muted; /* toggle */
+> > +		}
+> >  
+> >  		/* Schedule updating of microphone state at hardware level. */
+> >  		dualsense_schedule_work(ds);
+> > @@ -1495,10 +1488,10 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+> >  		battery_status = POWER_SUPPLY_STATUS_UNKNOWN;
+> >  	}
+> >  
+> > -	spin_lock_irqsave(&ps_dev->lock, flags);
+> > -	ps_dev->battery_capacity = battery_capacity;
+> > -	ps_dev->battery_status = battery_status;
+> > -	spin_unlock_irqrestore(&ps_dev->lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ps_dev->lock) {
+> > +		ps_dev->battery_capacity = battery_capacity;
+> > +		ps_dev->battery_status = battery_status;
+> > +	}
+> >  
+> >  	return 0;
+> >  }
+> > @@ -1507,16 +1500,15 @@ static int dualsense_play_effect(struct input_dev *dev, void *data, struct ff_ef
+> >  {
+> >  	struct hid_device *hdev = input_get_drvdata(dev);
+> >  	struct dualsense *ds = hid_get_drvdata(hdev);
+> > -	unsigned long flags;
+> >  
+> >  	if (effect->type != FF_RUMBLE)
+> >  		return 0;
+> >  
+> > -	spin_lock_irqsave(&ds->base.lock, flags);
+> > -	ds->update_rumble = true;
+> > -	ds->motor_left = effect->u.rumble.strong_magnitude / 256;
+> > -	ds->motor_right = effect->u.rumble.weak_magnitude / 256;
+> > -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ds->base.lock) {
+> > +		ds->update_rumble = true;
+> > +		ds->motor_left = effect->u.rumble.strong_magnitude / 256;
+> > +		ds->motor_right = effect->u.rumble.weak_magnitude / 256;
+> > +	}
+> >  
+> >  	dualsense_schedule_work(ds);
+> >  	return 0;
+> > @@ -1525,11 +1517,9 @@ static int dualsense_play_effect(struct input_dev *dev, void *data, struct ff_ef
+> >  static void dualsense_remove(struct ps_device *ps_dev)
+> >  {
+> >  	struct dualsense *ds = container_of(ps_dev, struct dualsense, base);
+> > -	unsigned long flags;
+> >  
+> > -	spin_lock_irqsave(&ds->base.lock, flags);
+> > -	ds->output_worker_initialized = false;
+> > -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ds->base.lock)
+> > +		ds->output_worker_initialized = false;
+> >  
+> >  	cancel_work_sync(&ds->output_worker);
+> >  }
+> > @@ -1561,14 +1551,12 @@ static int dualsense_reset_leds(struct dualsense *ds)
+> >  
+> >  static void dualsense_set_lightbar(struct dualsense *ds, uint8_t red, uint8_t green, uint8_t blue)
+> >  {
+> > -	unsigned long flags;
+> > -
+> > -	spin_lock_irqsave(&ds->base.lock, flags);
+> > -	ds->update_lightbar = true;
+> > -	ds->lightbar_red = red;
+> > -	ds->lightbar_green = green;
+> > -	ds->lightbar_blue = blue;
+> > -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ds->base.lock) {
+> > +		ds->update_lightbar = true;
+> > +		ds->lightbar_red = red;
+> > +		ds->lightbar_green = green;
+> > +		ds->lightbar_blue = blue;
+> > +	}
+> >  
+> >  	dualsense_schedule_work(ds);
+> >  }
+> > @@ -1755,7 +1743,6 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
+> >  static void dualshock4_dongle_calibration_work(struct work_struct *work)
+> >  {
+> >  	struct dualshock4 *ds4 = container_of(work, struct dualshock4, dongle_hotplug_worker);
+> > -	unsigned long flags;
+> >  	enum dualshock4_dongle_state dongle_state;
+> >  	int ret;
+> >  
+> > @@ -1774,9 +1761,8 @@ static void dualshock4_dongle_calibration_work(struct work_struct *work)
+> >  		dongle_state = DONGLE_CONNECTED;
+> >  	}
+> >  
+> > -	spin_lock_irqsave(&ds4->base.lock, flags);
+> > -	ds4->dongle_state = dongle_state;
+> > -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ds4->base.lock)
+> > +		ds4->dongle_state = dongle_state;
+> >  }
+> >  
+> >  static int dualshock4_get_calibration_data(struct dualshock4 *ds4)
+> > @@ -2048,26 +2034,23 @@ static int dualshock4_led_set_blink(struct led_classdev *led, unsigned long *del
+> >  {
+> >  	struct hid_device *hdev = to_hid_device(led->dev->parent);
+> >  	struct dualshock4 *ds4 = hid_get_drvdata(hdev);
+> > -	unsigned long flags;
+> >  
+> > -	spin_lock_irqsave(&ds4->base.lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ds4->base.lock) {
+> > +		if (!*delay_on && !*delay_off) {
+> > +			/* Default to 1 Hz (50 centiseconds on, 50 centiseconds off). */
+> > +			ds4->lightbar_blink_on = 50;
+> > +			ds4->lightbar_blink_off = 50;
+> > +		} else {
+> > +			/* Blink delays in centiseconds. */
+> > +			ds4->lightbar_blink_on = min_t(unsigned long, *delay_on / 10,
+> > +						       DS4_LIGHTBAR_MAX_BLINK);
+> > +			ds4->lightbar_blink_off = min_t(unsigned long, *delay_off / 10,
+> > +							DS4_LIGHTBAR_MAX_BLINK);
+> > +		}
+> >  
+> > -	if (!*delay_on && !*delay_off) {
+> > -		/* Default to 1 Hz (50 centiseconds on, 50 centiseconds off). */
+> > -		ds4->lightbar_blink_on = 50;
+> > -		ds4->lightbar_blink_off = 50;
+> > -	} else {
+> > -		/* Blink delays in centiseconds. */
+> > -		ds4->lightbar_blink_on = min_t(unsigned long, *delay_on / 10,
+> > -					       DS4_LIGHTBAR_MAX_BLINK);
+> > -		ds4->lightbar_blink_off = min_t(unsigned long, *delay_off / 10,
+> > -						DS4_LIGHTBAR_MAX_BLINK);
+> > +		ds4->update_lightbar_blink = true;
+> >  	}
+> >  
+> > -	ds4->update_lightbar_blink = true;
+> > -
+> > -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> > -
+> >  	dualshock4_schedule_work(ds4);
+> >  
+> >  	/* Report scaled values back to LED subsystem */
+> > @@ -2081,36 +2064,33 @@ static int dualshock4_led_set_brightness(struct led_classdev *led, enum led_brig
+> >  {
+> >  	struct hid_device *hdev = to_hid_device(led->dev->parent);
+> >  	struct dualshock4 *ds4 = hid_get_drvdata(hdev);
+> > -	unsigned long flags;
+> >  	unsigned int led_index;
+> >  
+> > -	spin_lock_irqsave(&ds4->base.lock, flags);
+> > -
+> > -	led_index = led - ds4->lightbar_leds;
+> > -	switch (led_index) {
+> > -	case 0:
+> > -		ds4->lightbar_red = value;
+> > -		break;
+> > -	case 1:
+> > -		ds4->lightbar_green = value;
+> > -		break;
+> > -	case 2:
+> > -		ds4->lightbar_blue = value;
+> > -		break;
+> > -	case 3:
+> > -		ds4->lightbar_enabled = !!value;
+> > -
+> > -		/* brightness = 0 also cancels blinking in Linux. */
+> > -		if (!ds4->lightbar_enabled) {
+> > -			ds4->lightbar_blink_off = 0;
+> > -			ds4->lightbar_blink_on = 0;
+> > -			ds4->update_lightbar_blink = true;
+> > +	scoped_guard(spinlock_irqsave, &ds4->base.lock) {
+> > +		led_index = led - ds4->lightbar_leds;
+> > +		switch (led_index) {
+> > +		case 0:
+> > +			ds4->lightbar_red = value;
+> > +			break;
+> > +		case 1:
+> > +			ds4->lightbar_green = value;
+> > +			break;
+> > +		case 2:
+> > +			ds4->lightbar_blue = value;
+> > +			break;
+> > +		case 3:
+> > +			ds4->lightbar_enabled = !!value;
+> > +
+> > +			/* brightness = 0 also cancels blinking in Linux. */
+> > +			if (!ds4->lightbar_enabled) {
+> > +				ds4->lightbar_blink_off = 0;
+> > +				ds4->lightbar_blink_on = 0;
+> > +				ds4->update_lightbar_blink = true;
+> > +			}
+> >  		}
+> > -	}
+> > -
+> > -	ds4->update_lightbar = true;
+> >  
+> > -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> > +		ds4->update_lightbar = true;
+> > +	}
+> >  
+> >  	dualshock4_schedule_work(ds4);
+> >  
+> > @@ -2242,7 +2222,6 @@ static int dualshock4_parse_report(struct ps_device *ps_dev, struct hid_report *
+> >  	uint8_t battery_capacity, num_touch_reports, value;
+> >  	int battery_status, i, j;
+> >  	uint16_t sensor_timestamp;
+> > -	unsigned long flags;
+> >  	bool is_minimal = false;
+> >  
+> >  	/*
+> > @@ -2420,10 +2399,10 @@ static int dualshock4_parse_report(struct ps_device *ps_dev, struct hid_report *
+> >  		battery_status = POWER_SUPPLY_STATUS_DISCHARGING;
+> >  	}
+> >  
+> > -	spin_lock_irqsave(&ps_dev->lock, flags);
+> > -	ps_dev->battery_capacity = battery_capacity;
+> > -	ps_dev->battery_status = battery_status;
+> > -	spin_unlock_irqrestore(&ps_dev->lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ps_dev->lock) {
+> > +		ps_dev->battery_capacity = battery_capacity;
+> > +		ps_dev->battery_status = battery_status;
+> > +	}
+> >  
+> >  	return 0;
+> >  }
+> > @@ -2441,7 +2420,6 @@ static int dualshock4_dongle_parse_report(struct ps_device *ps_dev, struct hid_r
+> >  	 */
+> >  	if (data[0] == DS4_INPUT_REPORT_USB && size == DS4_INPUT_REPORT_USB_SIZE) {
+> >  		struct dualshock4_input_report_common *ds4_report = (struct dualshock4_input_report_common *)&data[1];
+> > -		unsigned long flags;
+> >  
+> >  		connected = ds4_report->status[1] & DS4_STATUS1_DONGLE_STATE ? false : true;
+> >  
+> > @@ -2450,9 +2428,8 @@ static int dualshock4_dongle_parse_report(struct ps_device *ps_dev, struct hid_r
+> >  
+> >  			dualshock4_set_default_lightbar_colors(ds4);
+> >  
+> > -			spin_lock_irqsave(&ps_dev->lock, flags);
+> > -			ds4->dongle_state = DONGLE_CALIBRATING;
+> > -			spin_unlock_irqrestore(&ps_dev->lock, flags);
+> > +			scoped_guard(spinlock_irqsave, &ps_dev->lock)
+> > +				ds4->dongle_state = DONGLE_CALIBRATING;
+> >  
+> >  			schedule_work(&ds4->dongle_hotplug_worker);
+> >  
+> > @@ -2464,9 +2441,8 @@ static int dualshock4_dongle_parse_report(struct ps_device *ps_dev, struct hid_r
+> >  			    ds4->dongle_state == DONGLE_DISABLED) && !connected) {
+> >  			hid_info(ps_dev->hdev, "DualShock 4 USB dongle: controller disconnected\n");
+> >  
+> > -			spin_lock_irqsave(&ps_dev->lock, flags);
+> > -			ds4->dongle_state = DONGLE_DISCONNECTED;
+> > -			spin_unlock_irqrestore(&ps_dev->lock, flags);
+> > +			scoped_guard(spinlock_irqsave, &ps_dev->lock)
+> > +				ds4->dongle_state = DONGLE_DISCONNECTED;
+> >  
+> >  			/* Return 0, so hidraw can get the report. */
+> >  			return 0;
+> > @@ -2488,16 +2464,15 @@ static int dualshock4_play_effect(struct input_dev *dev, void *data, struct ff_e
+> >  {
+> >  	struct hid_device *hdev = input_get_drvdata(dev);
+> >  	struct dualshock4 *ds4 = hid_get_drvdata(hdev);
+> > -	unsigned long flags;
+> >  
+> >  	if (effect->type != FF_RUMBLE)
+> >  		return 0;
+> >  
+> > -	spin_lock_irqsave(&ds4->base.lock, flags);
+> > -	ds4->update_rumble = true;
+> > -	ds4->motor_left = effect->u.rumble.strong_magnitude / 256;
+> > -	ds4->motor_right = effect->u.rumble.weak_magnitude / 256;
+> > -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ds4->base.lock) {
+> > +		ds4->update_rumble = true;
+> > +		ds4->motor_left = effect->u.rumble.strong_magnitude / 256;
+> > +		ds4->motor_right = effect->u.rumble.weak_magnitude / 256;
+> > +	}
+> >  
+> >  	dualshock4_schedule_work(ds4);
+> >  	return 0;
+> > @@ -2506,11 +2481,9 @@ static int dualshock4_play_effect(struct input_dev *dev, void *data, struct ff_e
+> >  static void dualshock4_remove(struct ps_device *ps_dev)
+> >  {
+> >  	struct dualshock4 *ds4 = container_of(ps_dev, struct dualshock4, base);
+> > -	unsigned long flags;
+> >  
+> > -	spin_lock_irqsave(&ds4->base.lock, flags);
+> > -	ds4->output_worker_initialized = false;
+> > -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> > +	scoped_guard(spinlock_irqsave, &ds4->base.lock)
+> > +		ds4->output_worker_initialized = false;
+> >  
+> >  	cancel_work_sync(&ds4->output_worker);
+> >  
+> > @@ -2520,12 +2493,9 @@ static void dualshock4_remove(struct ps_device *ps_dev)
+> >  
+> >  static inline void dualshock4_schedule_work(struct dualshock4 *ds4)
+> >  {
+> > -	unsigned long flags;
+> > -
+> > -	spin_lock_irqsave(&ds4->base.lock, flags);
+> > +	guard(spinlock_irqsave)(&ds4->base.lock);
+> >  	if (ds4->output_worker_initialized)
+> >  		schedule_work(&ds4->output_worker);
+> > -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> >  }
+> >  
+> >  static void dualshock4_set_bt_poll_interval(struct dualshock4 *ds4, uint8_t interval)
+> > 
+> > -- 
+> > 2.49.0
+> > 
 
