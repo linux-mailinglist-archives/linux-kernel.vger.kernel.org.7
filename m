@@ -1,152 +1,109 @@
-Return-Path: <linux-kernel+bounces-820702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA04B7E388
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:45:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0053B7E4CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F104A1B268BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:45:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C2587B112E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6372FBDF4;
-	Wed, 17 Sep 2025 12:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE02F2EC0BD;
+	Wed, 17 Sep 2025 12:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CD3Y2Bcs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S5ck+4lq"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A812F5A3F;
-	Wed, 17 Sep 2025 12:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFDA337EB9;
+	Wed, 17 Sep 2025 12:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113062; cv=none; b=SgecKMJBXPuUWfiAa9vxmHOdCI5KdF85OEg76bdVmhA/ibTDFkrAHOiLzOgW9YwKE3cM1z1wjE1UYe+wo+dbzA82Th5t9aEssOKTCv3LsdQfhlsCjCbd+3vYGMLqIWkQ/UjTdqZK+AqTyXtuzcT/QYe+mMWZpTCwA4J5t/PSzzc=
+	t=1758113026; cv=none; b=JizuxZqlgWqzn5l+9H2bwxxcoc8toV8MjkMvKWkWZN+m/JCc0b0LhNATxPGl76cJcm4CVyJH03YEouKo485zBIId1Lr1bJ9Fk+gxlz40VxMAnXDbthYKTMk6wzEJo5wkSz22NXTnHKqZBHpgfRepqa61r/yl3ULLzf5zfS1rsW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113062; c=relaxed/simple;
-	bh=bJcg/pBe0wAmBajRsoCOyCPLNBQSDkSLEFp6n0FscF4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=srPjTM4RdiA8S/NGX7VkF74qVCEE5mN+Ir2DUwKNl49hozjHv/xTGBTfaBEScHmlmT3DMBW4bI02yFKQdATjC3KbJSkvIxqz0xdh65R/tBJbqCt4tC67ktqu6tk5ObHBFqRQExCTS9qTHliqzgEZZPUe0IZdJL2LXGVsVo6yFkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CD3Y2Bcs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8XX4G026799;
-	Wed, 17 Sep 2025 12:43:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Z3q28GCMmqb0mtzx4dGMhS
-	kQrUgtXvj7//96GGRaoE0=; b=CD3Y2BcsSUPBnBzXcpfucRsruatzQhZqNcAt7I
-	wLmAsl2fbKhj6b659oDae8NrJd+RVexX1O3ZMWtuRGZyNgr7SVUZQ6HYTh4nFkht
-	hgqgUamICnmQHvBrcScGdHsz3niEA1Zt9hE9OVnOn7bgMySNcsHzAs15ol0AzxpY
-	DESDvzFA7y42515E40m/8JqjVXedC+plVw20Fq7MVKZUFKJpdKmxiVTYTwvOtz2k
-	o4aig5bPcF6btB/ezXx/x+yAKEnYz3c2912inC4UD5NzzsQVo9a7aH0OpWd/vN0o
-	LRToy6sAPKprTDaUIJG5sY8Nmit+OShwXBFqnS1vUHcbEJQw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxt2cph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 12:43:48 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58HChlSg007441
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 12:43:47 GMT
-Received: from hu-ckantibh-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Wed, 17 Sep 2025 05:43:42 -0700
-From: Sanjay Chitroda <quic_ckantibh@quicinc.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Sanjay Chitroda
-	<sanjayembeddese@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii
- Nakryiko <andrii@kernel.org>
-CC: Martin KaFai Lau <martin.lau@linux.dev>,
-        Eduard Zingerman
-	<eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song
-	<yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo
-	<haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] libbpf: increase probe_name buffer size to avoid format-truncation
-Date: Wed, 17 Sep 2025 18:13:34 +0530
-Message-ID: <20250917124334.1783090-1-quic_ckantibh@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758113026; c=relaxed/simple;
+	bh=f/DltGKx9pSF+Vy+y1ZLxi8tkefLICe4HyQIufxy04w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCOumzjQV+lAtcwZQMEqZTBPi/5TtBjYo5BLckMSczaDlLgb7BeuGU0C2jpVkaPP/7kvqy6nkqO6Jjg23KQf55X/tGyAjQQuGCHvQklrxKY4LfqMNKyEU4HIsR/Jz8BPHT64JbrxvCKTCwG5eProrpCj88GaVGwjihzoD3N54qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S5ck+4lq; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758113022;
+	bh=f/DltGKx9pSF+Vy+y1ZLxi8tkefLICe4HyQIufxy04w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S5ck+4lqyVEaw6X+IVc7RImLkxZ8jIdtgAFomf8EY48Pa3HILQXwxjm2TckX+mbq2
+	 cHHNPX0nflnhiuiofgtcBE9AGsclKEeQ3ouWgagveQPH4K3UM8F9gTrwnqmIN9TpEh
+	 +B7/jf8wIJRKJJIYlLX+dRMXbG/tJ+nKjGad/nPQn7J9DSZ5KGibQ0+3280T/qxSbn
+	 0i92rWwjMgsmP/czMsd7UspUbcxOzms1s3z8ArVeA6+F9MYZYbl5UIynhuLsTRgbgK
+	 LErt7RqYx3Bmjsl0QNBSxhdm24IggBRp4nRR/5JpT7GlenTB6GtUqDAt/tFP6jpgQJ
+	 ZMuh1G+SA9u7g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3EF3B17E10D3;
+	Wed, 17 Sep 2025 14:43:41 +0200 (CEST)
+Message-ID: <4522baca-7262-457c-94d4-326b660aad97@collabora.com>
+Date: Wed, 17 Sep 2025 14:43:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5-Ls7IbWoXQlmCMNlM2q0vOFd1zAYaES
-X-Authority-Analysis: v=2.4 cv=bIMWIO+Z c=1 sm=1 tr=0 ts=68caad04 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=ZtdpfGWLlbT3tiSeqQcA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX+Ll5Lkr+GQNE
- MeZvJkmmCmT1AEwLGBTofG/gy7yZmu27q57CwHP48I6GFAw5e04eWLhRtU4nglk45nROdbsjDaE
- CnTZSxYLdcNuchDDigHQuR1devFOxltS2enFVKVJsD2r1PO1QtbUenXFZweqaAKMZ+j9L/cBY27
- YG4MQTZhFGlk2qgH5KDKHAHzG08LAGZlwFAS25vdsWwMgxjv7rw2gXKeBG5PJoNq8vGx5Q1CZFs
- Dz0ZfKLEG4VsnSlTDW5TW5lmfA5/pY8E2655v0UdkN16DUtwLIVEQaQgzWTxVBlPX5BEdZiQwRU
- X5kqR9ov4SuCawcWIs2YOUUstWc18gdm/WOhqGEqu8/ZU/l8jRzOjzTNe4ncEa+n/uo9z4RmONK
- 5krSiOL/
-X-Proofpoint-ORIG-GUID: 5-Ls7IbWoXQlmCMNlM2q0vOFd1zAYaES
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/10] drm/panthor: add no_clocks soc_data member for
+ MT8196
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com>
+ <20250917-mt8196-gpufreq-v3-9-c4ede4b4399e@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250917-mt8196-gpufreq-v3-9-c4ede4b4399e@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch increases the size of the `probe_name` buffer in
-`probe_kern_syscall_wrapper()` from `MAX_EVENT_NAME_LEN` to
-`MAX_EVENT_NAME_LEN * 2`.
+Il 17/09/25 14:22, Nicolas Frattaroli ha scritto:
+> While panthor does not try to do anything untoward with the core clock
+> outside of increasing its enable/disable count, the spirit of using DT
+> to describe hardware, not what drivers need, informs us that on the
+> MT8196, panthor should work without one, as the true owner of the clocks
+> in this case is the performance-domain.
+> 
+> Add a boolean to the soc_data struct that tells panthor whether on any
+> given SoC, it can leave even the core clock NULL. Set it to true for the
+> MT8196 soc_data instance.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-The change addresses a build failure in perf builds caused by GCC's
--Werror=format-truncation warning:
+The only doubt that I have here is about the "no_clocks" name, as it may be read
+as "number of clocks" ("no" is often used as "number").
 
-  libbpf.c:11052:45: error: '%s' directive output may be truncated writing up to 63 bytes into a region of size between 34 and 53 [-Werror=format-truncation]
+I don't really have any better name to suggest though, and the execution is right,
+so.....
 
-The warning is triggered by a `snprintf()` call that formats a string
-using syscall names and other identifiers. In some cases, the buffer
-size is insufficient, leading to potential truncation.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Debug builds pass because they do not treat warnings as errors, but
-perf builds fail due to `-Werror`.
-
-Increasing the buffer size ensures that the formatted string fits
-safely, resolving the issue without affecting functionality.
-
-Signed-off-by: Sanjay Chitroda <quic_ckantibh@quicinc.com>
----
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 8f5a81b672e1..9413e86476da 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -11290,7 +11290,7 @@ int probe_kern_syscall_wrapper(int token_fd)
- 
- 		return pfd >= 0 ? 1 : 0;
- 	} else { /* legacy mode */
--		char probe_name[MAX_EVENT_NAME_LEN];
-+		char probe_name[MAX_EVENT_NAME_LEN * 2];
- 
- 		gen_probe_legacy_event_name(probe_name, sizeof(probe_name), syscall_name, 0);
- 		if (add_kprobe_event_legacy(probe_name, false, syscall_name, 0) < 0)
--- 
-2.34.1
-
+Cheers,
+Angelo
 
