@@ -1,178 +1,383 @@
-Return-Path: <linux-kernel+bounces-820225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0FAB7C4CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED26DB7F889
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648152A0B50
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFA3520E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3235B308F0E;
-	Wed, 17 Sep 2025 08:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CB4308F14;
+	Wed, 17 Sep 2025 08:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QKy9gYy1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QQ98NDyL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O9pfrPeR";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TWhAn3zE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="M+czzIS+"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73B23081DB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2978026773C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758097133; cv=none; b=EuR/ildqdnX2rktdYeZRB1svFL/ZvM71H4uo2D9EKEN3XtbT4Srxr0yMqaWQ+dDb7IeCGGackQpHLUo3g+tTFhOiNwFcSGQ0dKXgznGqzZ3eZX/LdNM22xjhJLOZULRaFOhN/GWwzDFbIzLM/gWloC1Gn2UaHk65+y4TBSx37O4=
+	t=1758097168; cv=none; b=dVr+Kblt73/7A5BiO9xd9iSan8MUuE4IzzpHDEiBTt2qhN/lN/yCpTruBV8pxiAeQIjE4BPusNuFna0bEuwQ0nVCEqvzDOF0ArglaGf4OowGuFipeseGEcRdPnXJdOuTLvxN0EVmJB2rc+RNHK6wzg9zvOrqCTXWAFGUJMDOIfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758097133; c=relaxed/simple;
-	bh=tHTS98ix6fubxBMrfZDjVgQq/C9j1OXsT1BzpJOfVJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZwpKuRT4c/egViKgCdcEjp9l3XkQBs63L3MO+l1tpTpY0XoutJlawvfaPn9Jz/4io+uy4bs9qPyKGMzYAZObYOZUzyvat98Uc1c2ZdIuQidjMggyT0gnt3QGkpLF3piPvUdhiZsFOfPC9MIyAzihHJrMebOlR8kyvD5KDTmgqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QKy9gYy1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QQ98NDyL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O9pfrPeR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TWhAn3zE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D9EF9221A4;
-	Wed, 17 Sep 2025 08:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758097130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
-	b=QKy9gYy1ComwTc+vQCBzK3bAN4dI0pAG2Q3EfLESztOs+tFGBj0U8DAYF1TqSK4Jpw7V+U
-	T62o8AE25X3FktxqSp4KPYalsKvs5STJLZK+VvVuSxE4u0uewYMaVIVgWgmJdzrdt+MRT0
-	F2Nlk4lHnWqGrzIOchrkGY/UB1CJANk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758097130;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
-	b=QQ98NDyL4IE5tPlNNPIwQyIjn4gEX7IDvrZR5d58smXRM3ZBwOfvSQDaafIavRKF4/3i8w
-	VVi2GX0dnULrtwBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758097129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
-	b=O9pfrPeRKeta0cqOznkr0QMpC4z2NnMdlI88YFcDhieFTcRoAJ/t+qciFLBxCp7d0L7gHx
-	GXOUDFc3yUodTyutNxefB2/W/GRo6ynt9drtotTOIhYOewFOf5zshtGKUCBUlGBvvhhpBZ
-	qgvG9DPoTBkvSa6+4EsUb/CFh7oB16U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758097129;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
-	b=TWhAn3zEp97BkxWyLCYfe2R+zA/uCSQ9cg8Ale7wGXgldTdEbRYPVq5rAvexdSBOJ5Il1E
-	p6I64rVvp3X7APAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 156621368D;
-	Wed, 17 Sep 2025 08:18:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tmJsAeluymhZBAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 17 Sep 2025 08:18:49 +0000
-Date: Wed, 17 Sep 2025 10:18:47 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Jane Chu <jane.chu@oracle.com>
-Cc: david@redhat.com, harry.yoo@oracle.com, liushixin2@huawei.com,
-	muchun.song@linux.dev, akpm@linux-foundation.org, jannh@google.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 RESEND] mm/hugetlb: fix copy_hugetlb_page_range() to
- use ->pt_share_count
-Message-ID: <aMpu58yNnLWszoqX@localhost.localdomain>
-References: <20250916191252.1653993-1-jane.chu@oracle.com>
+	s=arc-20240116; t=1758097168; c=relaxed/simple;
+	bh=peOIbYU6htFMTQRA/VcBJe2Lsffwsbwp/kKlXcfL6GY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=idsQJkdUJC6jzKrkGRqQm/uNaTh72lFYsUZQNfTAkMfw4eym0F0gqxX+o1dzuEyOFq1M9965amUXu5qHMKelb+njb63f6deBAeYelZ7S1Ce+J/Q+wFubTp0TzCC+cFkzOkJttXI65QfmLmSw3HKYsRjEL5oxjME4B9tTAkLljeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=M+czzIS+; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b149efbed4eso325206266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1758097164; x=1758701964; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3tulPDEUZIFKEReR+gBOBkznmrdl/S7EwDLj5UhpCJo=;
+        b=M+czzIS+J5zTf+Qkfcrf3NetsTXIG7E7WXKgCvyPMtG64DovG8F66iPTLmtGiBOcc+
+         lVeeRjddR6WVLgmylKFW00fCeMfaevXflytV0Xnw5YkmbO+Rk9AHCs+x68jGXQGuX0sB
+         ATgPocoVEMPq3NFa323lXDsGIKzhbamT4LlbuPmRZDsG79rXHQgEA7IFBFJ5WSvffe29
+         eAlS6+j/IP/lS9WJHjCHaqeMVi1ZQ6/GkJ1egVZ9v4mJr76rUNK4eR011yw2df5SB2rB
+         KjTLUuN8Yya3PlSm/6KxxrwjsV4eFhq/GnXvaWVRavfWV2qUrVKQyGSmqPbvYs7WWt3X
+         3sJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758097164; x=1758701964;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3tulPDEUZIFKEReR+gBOBkznmrdl/S7EwDLj5UhpCJo=;
+        b=fSfqtR+23kjRoctnak5XO6CpfOuygfB1YzN5MeRmu0IG68r77mKDY2Deu/HARJjZ0Y
+         gPGMZtutgYgrg4EeBb9rPPU+lEcEBNdMqkl1e1Yz84kD2oTTRzzWbwVZkoVm/kGZ1e/t
+         lfodrHCqx9jybk+GhXkc3oslqli5NumXoY4RuWLruvuVjWik66FR01WWKZ5Xx5DF3RT2
+         r+g53LMAjAh7cyy4oo51OxkvFh+PagPY0mgskHYbIh3jp/iTOud6rdWBezXqaejqhW8A
+         5ewnXEDA5UVFPH2YjcRRL7ML4n2iPwtUFgPDyb/m2SWzhIlqPDuw5/ZOH6xe6Vl+9z6x
+         riGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA6ci0/2+JlIeI5+TR6qbs1DWxkywKc8xzr5WsRqFvRyVPfEYidGHWhvloqLEN+tBrlyNwBDaOcSIiXes=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2G/JxaBjT1klNWYPpzpwsOEEm/emy3y55cFsu368lZslJ1DnU
+	zaLPPV+rtDEyf6y+UE7eg/33gHjrrFjab7xjW/TRY+ICUY4ljjkt0Tboj7MzjQ8uwc4=
+X-Gm-Gg: ASbGncv3eQ/EtuN/yLo879g12PmG3cqSxtk+ApGLgR5sx0St11uMcUXcGskNfYv8RBf
+	R8XNnmlkUA6AjpkrTUGvbHIzJcKr4pR30XDLk9nw9JclHCsAwNk6S0EOzFiP+WKj6ehIL23Ea+2
+	+aePG5RWVgC6FM4Yll3G/uu5WYLaGvUB8JrXjTHCo5EINevcyediGQt1yvv8INHwvGBiLkzT0yk
+	iOlPrQBwvPRBVNHgZ3XulR8HO4Lj+ldVI0oZPHP/YJHE2BV064uv7NmRLqWSudE8s2fNyK6sMRt
+	LdyIiEoJ/gNBeCOMkYZ0Fjb8l/S7eH3DJ8S7y0PGdxbYpCFGrYqpp2vy5soGsBbuZfoDs4mDgwa
+	1zQ9lzb243r92S04zWfVc8fJhYGU/DGibAL2FIQS0hS7jHgxce6UZywzkVDu10vQV4hxLvgiP/d
+	09ITSFs0bTI9X9OEKao1xBzw==
+X-Google-Smtp-Source: AGHT+IEFcyz4PFJ1ypPo7TZSmV9J03co38u+ISE3aEa6H9BlOHAkROj+JRNr+EhUcdLXbfcLPxcDOg==
+X-Received: by 2002:a17:907:3d03:b0:b0e:bb58:652b with SMTP id a640c23a62f3a-b1bbb067465mr152904166b.39.1758097164392;
+        Wed, 17 Sep 2025 01:19:24 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f1e26sm1342544466b.77.2025.09.17.01.19.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 01:19:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916191252.1653993-1-jane.chu@oracle.com>
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 17 Sep 2025 10:19:23 +0200
+Message-Id: <DCUXFIZ5KRCU.3JANM98BSE8SE@fairphone.com>
+To: "Takashi Iwai" <tiwai@suse.de>, "Luca Weiss" <luca.weiss@fairphone.com>
+Cc: "Arnd Bergmann" <arnd@arndb.de>, "Arnd Bergmann" <arnd@kernel.org>,
+ "Mark Brown" <broonie@kernel.org>, "Wesley Cheng"
+ <quic_wcheng@quicinc.com>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>, <linux-sound@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space
+ confusion
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250513123442.159936-1-arnd@kernel.org>
+ <20250513123442.159936-4-arnd@kernel.org>
+ <DBR2363A95M1.L9XBNC003490@fairphone.com> <87v7n72pg0.wl-tiwai@suse.de>
+ <DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com> <87ms8j2on6.wl-tiwai@suse.de>
+ <DCKUCB8A1JCV.1GK0TW2YMXNZP@fairphone.com> <87bjnpqe45.wl-tiwai@suse.de>
+ <a2a6843f-7e03-4b7e-b5fc-415ac9fc6621@app.fastmail.com>
+ <DCU39JVDVFAG.2EOCQ37KAS3N0@fairphone.com> <87o6raxtu9.wl-tiwai@suse.de>
+In-Reply-To: <87o6raxtu9.wl-tiwai@suse.de>
 
-On Tue, Sep 16, 2025 at 01:12:52PM -0600, Jane Chu wrote:
-> commit 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
-> introduced ->pt_share_count dedicated to hugetlb PMD share count tracking,
-> but omitted fixing copy_hugetlb_page_range(), leaving the function relying on
-> page_count() for tracking that no longer works.
-> 
-> When lazy page table copy for hugetlb is disabled, that is, revert
-> commit bcd51a3c679d ("hugetlb: lazy page table copies in fork()")
-> fork()'ing with hugetlb PMD sharing quickly lockup -
-> 
-> [  239.446559] watchdog: BUG: soft lockup - CPU#75 stuck for 27s!
-> [  239.446611] RIP: 0010:native_queued_spin_lock_slowpath+0x7e/0x2e0
-> [  239.446631] Call Trace:
-> [  239.446633]  <TASK>
-> [  239.446636]  _raw_spin_lock+0x3f/0x60
-> [  239.446639]  copy_hugetlb_page_range+0x258/0xb50
-> [  239.446645]  copy_page_range+0x22b/0x2c0
-> [  239.446651]  dup_mmap+0x3e2/0x770
-> [  239.446654]  dup_mm.constprop.0+0x5e/0x230
-> [  239.446657]  copy_process+0xd17/0x1760
-> [  239.446660]  kernel_clone+0xc0/0x3e0
-> [  239.446661]  __do_sys_clone+0x65/0xa0
-> [  239.446664]  do_syscall_64+0x82/0x930
-> [  239.446668]  ? count_memcg_events+0xd2/0x190
-> [  239.446671]  ? syscall_trace_enter+0x14e/0x1f0
-> [  239.446676]  ? syscall_exit_work+0x118/0x150
-> [  239.446677]  ? arch_exit_to_user_mode_prepare.constprop.0+0x9/0xb0
-> [  239.446681]  ? clear_bhb_loop+0x30/0x80
-> [  239.446684]  ? clear_bhb_loop+0x30/0x80
-> [  239.446686]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> There are two options to resolve the potential latent issue:
->   1. warn against PMD sharing in copy_hugetlb_page_range(),
->   2. fix it.
-> This patch opts for the second option.
-> While at it, simplify the comment, the details are not actually relevant
-> anymore.
-> 
-> Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Hi Takashi,
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+On Tue Sep 16, 2025 at 6:09 PM CEST, Takashi Iwai wrote:
+> On Tue, 16 Sep 2025 10:41:01 +0200,
+> Luca Weiss wrote:
+>>=20
+>> Hi Arnd,
+>>=20
+>> On Fri Sep 5, 2025 at 4:54 PM CEST, Arnd Bergmann wrote:
+>> > On Fri, Sep 5, 2025, at 14:26, Takashi Iwai wrote:
+>> >> On Fri, 05 Sep 2025 13:47:28 +0200,
+>> >
+>> >> @@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struc=
+t=20
+>> >> snd_usb_substream *subs,
+>> >>  	if (!xfer_buf)
+>> >>  		return -ENOMEM;
+>> >>=20
+>> >> -	/* Remapping is not possible if xfer_buf is outside of linear map *=
+/
+>> >> -	xfer_buf_pa =3D virt_to_phys(xfer_buf);
+>> >> -	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+>> >> -		ret =3D -ENXIO;
+>> >> -		goto unmap_sync;
+>> >> -	}
+>> >>  	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+>> >>  			xfer_buf_dma, len);
+>> >>=20
+>> >>  	/* map the physical buffer into sysdev as well */
+>> >> +	/* note: 0 is passed to pa argument as we use sgt */
+>> >>  	xfer_buf_dma_sysdev =3D uaudio_iommu_map(MEM_XFER_BUF, dma_coherent=
+,
+>> >> -					       xfer_buf_pa, len, &xfer_buf_sgt);
+>> >> +					       0, len, &xfer_buf_sgt);
+>> >>  	if (!xfer_buf_dma_sysdev) {
+>> >>  		ret =3D -ENOMEM;
+>> >>  		goto unmap_sync;
+>> >
+>> >
+>> > Makes sense. I had to rework the code a little more to actually
+>> > understand how it fits together, for reference the below version
+>> > (I don't expect it to build cleanly) would split up
+>> > uaudio_iommu_map() into one function that takes a physical
+>> > address and another function that takes an sg table.
+>>=20
+>> Are you planning to post this as a proper patch? It's a bit late in the
+>> 6.17 cycle already but good to still get this fixed for final release.
+>>=20
+>> Or revert the original commit that broke it for now.
+>>=20
+>> I couldn't really test your patch since there's a couple of compile
+>> errors where I wasn't sure how to resolve them correctly.
+>
+> Could you check the patch below, then?  At least it compiles without
+> errors.
 
-Thanks
+It does compile as well for me, but looks like it's not working.
 
+It's still triggering the WARN_ON from
 
--- 
-Oscar Salvador
-SUSE Labs
+  if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+
+[  214.157471] ------------[ cut here ]------------
+[  214.157491] WARNING: CPU: 4 PID: 12 at sound/usb/qcom/qc_audio_offload.c=
+:1067 handle_uaudio_stream_req+0xecc/0x13c4
+[  214.157510] Modules linked in:
+[  214.157522] CPU: 4 UID: 0 PID: 12 Comm: kworker/u32:0 Tainted: G        =
+W           6.16.0-00047-gfa3c1e37ba38 #1 NONE=20
+[  214.157531] Tainted: [W]=3DWARN
+[  214.157535] Hardware name: Fairphone 4 (DT)
+[  214.157541] Workqueue: qmi_msg_handler qmi_data_ready_work
+[  214.157553] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[  214.157560] pc : handle_uaudio_stream_req+0xecc/0x13c4
+[  214.157568] lr : handle_uaudio_stream_req+0xcdc/0x13c4
+[  214.157575] sp : ffff8000800b39d0
+[  214.157579] x29: ffff8000800b3b40 x28: ffff0000895eb6b0 x27: 00000000000=
+08000
+[  214.157589] x26: ffff0000d6bae960 x25: ffffa11dbe275e28 x24: 00000000000=
+08000
+[  214.157598] x23: ffffa11dbe0a4ec0 x22: ffff8000800b3c00 x21: 00000000000=
+00000
+[  214.157608] x20: ffff8000800b3cc8 x19: ffff00008b128ac0 x18: ffffa11dbdf=
+aa258
+[  214.157617] x17: ffff0000803e9388 x16: ffff0000800162c0 x15: ffffa11dbdf=
+aa000
+[  214.157626] x14: 0000000000000500 x13: ffffa11dbe03c000 x12: 00000000000=
+00000
+[  214.157636] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffa11dbe0=
+f78a0
+[  214.157645] x8 : ffffdee36909b000 x7 : ffff0000d6ac8418 x6 : 00000000000=
+00000
+[  214.157654] x5 : 0000000000000000 x4 : ffff8000800b3968 x3 : 00000000000=
+00000
+[  214.157663] x2 : 0000000000000000 x1 : ffff0000801a4100 x0 : 00000000000=
+00000
+[  214.157672] Call trace:
+[  214.157677]  handle_uaudio_stream_req+0xecc/0x13c4 (P)
+[  214.157687]  qmi_invoke_handler+0xb4/0x100
+[  214.157694]  qmi_handle_message+0x88/0x1a0
+[  214.157702]  qmi_data_ready_work+0x208/0x35c
+[  214.157709]  process_one_work+0x144/0x2c4
+[  214.157719]  worker_thread+0x280/0x45c
+[  214.157726]  kthread+0xfc/0x1dc
+[  214.157733]  ret_from_fork+0x10/0x20
+[  214.157744] ---[ end trace 0000000000000000 ]---
+
+Should that code be removed with the new code now?
+
+Regards
+Luca
+
+>
+>
+> Takashi
+>
+> --- a/sound/usb/qcom/qc_audio_offload.c
+> +++ b/sound/usb/qcom/qc_audio_offload.c
+> @@ -538,38 +538,33 @@ static void uaudio_iommu_unmap(enum mem_type mtype,=
+ unsigned long iova,
+>  			umap_size, iova, mapped_iova_size);
+>  }
+> =20
+> +static int uaudio_iommu_map_prot(bool dma_coherent)
+> +{
+> +	int prot =3D IOMMU_READ | IOMMU_WRITE;
+> +
+> +	if (dma_coherent)
+> +		prot |=3D IOMMU_CACHE;
+> +	return prot;
+> +}
+> +
+>  /**
+> - * uaudio_iommu_map() - maps iommu memory for adsp
+> + * uaudio_iommu_map_pa() - maps iommu memory for adsp
+>   * @mtype: ring type
+>   * @dma_coherent: dma coherent
+>   * @pa: physical address for ring/buffer
+>   * @size: size of memory region
+> - * @sgt: sg table for memory region
+>   *
+>   * Maps the XHCI related resources to a memory region that is assigned t=
+o be
+>   * used by the adsp.  This will be mapped to the domain, which is create=
+d by
+>   * the ASoC USB backend driver.
+>   *
+>   */
+> -static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_cohe=
+rent,
+> -				      phys_addr_t pa, size_t size,
+> -				      struct sg_table *sgt)
+> +static unsigned long uaudio_iommu_map_pa(enum mem_type mtype, bool dma_c=
+oherent,
+> +					 phys_addr_t pa, size_t size)
+>  {
+> -	struct scatterlist *sg;
+>  	unsigned long iova =3D 0;
+> -	size_t total_len =3D 0;
+> -	unsigned long iova_sg;
+> -	phys_addr_t pa_sg;
+>  	bool map =3D true;
+> -	size_t sg_len;
+> -	int prot;
+> -	int ret;
+> -	int i;
+> -
+> -	prot =3D IOMMU_READ | IOMMU_WRITE;
+> -
+> -	if (dma_coherent)
+> -		prot |=3D IOMMU_CACHE;
+> +	int prot =3D uaudio_iommu_map_prot(dma_coherent);
+> =20
+>  	switch (mtype) {
+>  	case MEM_EVENT_RING:
+> @@ -583,20 +578,41 @@ static unsigned long uaudio_iommu_map(enum mem_type=
+ mtype, bool dma_coherent,
+>  				     &uaudio_qdev->xfer_ring_iova_size,
+>  				     &uaudio_qdev->xfer_ring_list, size);
+>  		break;
+> -	case MEM_XFER_BUF:
+> -		iova =3D uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
+> -				     &uaudio_qdev->xfer_buf_iova_size,
+> -				     &uaudio_qdev->xfer_buf_list, size);
+> -		break;
+>  	default:
+>  		dev_err(uaudio_qdev->data->dev, "unknown mem type %d\n", mtype);
+>  	}
+> =20
+>  	if (!iova || !map)
+> -		goto done;
+> +		return 0;
+> =20
+> -	if (!sgt)
+> -		goto skip_sgt_map;
+> +	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
+> +
+> +	return iova;
+> +}
+> +
+> +static unsigned long uaudio_iommu_map_xfer_buf(bool dma_coherent, size_t=
+ size,
+> +					       struct sg_table *sgt)
+> +{
+> +	struct scatterlist *sg;
+> +	unsigned long iova =3D 0;
+> +	size_t total_len =3D 0;
+> +	unsigned long iova_sg;
+> +	phys_addr_t pa_sg;
+> +	size_t sg_len;
+> +	int prot =3D uaudio_iommu_map_prot(dma_coherent);
+> +	int ret;
+> +	int i;
+> +
+> +	prot =3D IOMMU_READ | IOMMU_WRITE;
+> +
+> +	if (dma_coherent)
+> +		prot |=3D IOMMU_CACHE;
+> +
+> +	iova =3D uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
+> +			       &uaudio_qdev->xfer_buf_iova_size,
+> +			       &uaudio_qdev->xfer_buf_list, size);
+> +	if (!iova)
+> +		goto done;
+> =20
+>  	iova_sg =3D iova;
+>  	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
+> @@ -618,11 +634,6 @@ static unsigned long uaudio_iommu_map(enum mem_type =
+mtype, bool dma_coherent,
+>  		uaudio_iommu_unmap(MEM_XFER_BUF, iova, size, total_len);
+>  		iova =3D 0;
+>  	}
+> -	return iova;
+> -
+> -skip_sgt_map:
+> -	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
+> -
+>  done:
+>  	return iova;
+>  }
+> @@ -1061,8 +1072,8 @@ static int uaudio_transfer_buffer_setup(struct snd_=
+usb_substream *subs,
+>  			xfer_buf_dma, len);
+> =20
+>  	/* map the physical buffer into sysdev as well */
+> -	xfer_buf_dma_sysdev =3D uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+> -					       xfer_buf_pa, len, &xfer_buf_sgt);
+> +	xfer_buf_dma_sysdev =3D uaudio_iommu_map_xfer_buf(dma_coherent,
+> +							len, &xfer_buf_sgt);
+>  	if (!xfer_buf_dma_sysdev) {
+>  		ret =3D -ENOMEM;
+>  		goto unmap_sync;
+> @@ -1143,8 +1154,8 @@ uaudio_endpoint_setup(struct snd_usb_substream *sub=
+s,
+>  	sg_free_table(sgt);
+> =20
+>  	/* data transfer ring */
+> -	iova =3D uaudio_iommu_map(MEM_XFER_RING, dma_coherent, tr_pa,
+> -			      PAGE_SIZE, NULL);
+> +	iova =3D uaudio_iommu_map_pa(MEM_XFER_RING, dma_coherent, tr_pa,
+> +				   PAGE_SIZE);
+>  	if (!iova) {
+>  		ret =3D -ENOMEM;
+>  		goto clear_pa;
+> @@ -1207,8 +1218,8 @@ static int uaudio_event_ring_setup(struct snd_usb_s=
+ubstream *subs,
+>  	mem_info->dma =3D sg_dma_address(sgt->sgl);
+>  	sg_free_table(sgt);
+> =20
+> -	iova =3D uaudio_iommu_map(MEM_EVENT_RING, dma_coherent, er_pa,
+> -			      PAGE_SIZE, NULL);
+> +	iova =3D uaudio_iommu_map_pa(MEM_EVENT_RING, dma_coherent, er_pa,
+> +				   PAGE_SIZE);
+>  	if (!iova) {
+>  		ret =3D -ENOMEM;
+>  		goto clear_pa;
+
 
