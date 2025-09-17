@@ -1,323 +1,320 @@
-Return-Path: <linux-kernel+bounces-819962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00722B7DC8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:34:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9805B7E096
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3521B2783F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B2D581936
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CF221CA02;
-	Wed, 17 Sep 2025 04:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zyM+CO90"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011045.outbound.protection.outlook.com [52.101.57.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6F523BCEE;
+	Wed, 17 Sep 2025 04:25:00 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E531E249F9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 04:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758082633; cv=fail; b=Dq569oviqXPXOr1MG11KkiwAOuVNjc4FN5qSG/eFxuAU4YuY2x1y7TaZjNqLQHUdjb4wTg9EQjq1ibQxAmodZnUK8xiNorBRpBrMOQ5QYkNCYUKaJ8umjM7KKIigJhD+a0qGeVJGtXz2GuZIV3WPiXB7eex5VjF0refVWLXrGKs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758082633; c=relaxed/simple;
-	bh=Nt/DOEFxr/yJr31lVphUpGittOYRZuT6HJhPRB0Iiwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HUaDllZCD9puqNQ71w65aJkT41BdsDdq2ovajDFhk/74gajYxibHpGmYXrva3BKe9ZNC1E///anL/QCgzzITufhc16ZxqivZcRw8LVS810+BhfjkMURjnkETqAg+LsbAZMI62zFWWgmb2dfK6DPvaSA6vMgcLzMK6IlnYOnozW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zyM+CO90; arc=fail smtp.client-ip=52.101.57.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a7vCXQrcrqmTmctd/N4wpvTgLaBDcJrxyx8IQ/dcpmo7zO1J2I1BCNLxSQMXMmI4aylRC5CTFRFX38RkIIrFuVCc7WPEm1f+qjWEHFKEn8cPypNxbiNlogEYoC8KmtgMkYgrj529yYZ3kErHNFoM4HA89F1RqPJaDTVR9hLwERXouZmsKyJLnlNamVhD+NUCwOcY1La1kwNxYZtFmzwJb7IvbE2ZacIOiCNsUta8OiTyPFQZq5cE2W60Kce0SC56n/ngqUyTQnZtg1tUePMZIjYdnolUXdP3JYfzXlkXIpO62g4YUJ0UPaM2xjSOB1T2k2iDyvGm0OLkkmea+aq7BA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S5JnkWsZ60K1+ZwFc7RPCShrCkEo5aFrBI4sAaHRVe8=;
- b=c8zHWGDkEOKfZxNrdUxlGWLEzcLosCT/fyD+bD+OdVA0Ke/DvVAwZ6At29lUafQRX8v98NKPwf9A88wcfNhCxGFvl0QDIUKY+H8c7M61EUcnc9hix/pR2OXLlKKPbKpyRUFloqVzCOEwrBajE0dn8YZO6eXFxKwfOAzlnFCL9q+snPLv9EdJ4qqeQB8jsBkKn1IqFYH3Q0DVUOakUEvajf8ak+FrnGmF+61BLKiHig2WXLP6cKGRaPPBq0jfoB7zw+ktcLeRDBH99LQItfk6u9Afvzo/a7P/+FH64pWHpN4zC20yfyQ5LXY37Sg2NWIY5h0vYuu+dhqgMp6TnS72zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=nvidia.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S5JnkWsZ60K1+ZwFc7RPCShrCkEo5aFrBI4sAaHRVe8=;
- b=zyM+CO90ABDFH3zsQ7Os0V4s6hJPesHJSKxFUIkokcKUyLdP0Oxx7QIticnEjoIV/m7pcRNY4VksUZOR1FtKiwiqvZ0MCnXmw4oUzdDjhgCR6m06UxQK2NyF6u9rVWiZaRN2ZXtz3JN3UrlLaEySWjIcHIwPXnszscLPlH36YnE=
-Received: from BYAPR08CA0067.namprd08.prod.outlook.com (2603:10b6:a03:117::44)
- by CH1PR12MB9718.namprd12.prod.outlook.com (2603:10b6:610:2b2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
- 2025 04:15:45 +0000
-Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
- (2603:10b6:a03:117:cafe::2d) by BYAPR08CA0067.outlook.office365.com
- (2603:10b6:a03:117::44) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Wed,
- 17 Sep 2025 04:15:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Wed, 17 Sep 2025 04:15:44 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 16 Sep
- 2025 21:15:15 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 16 Sep
- 2025 23:15:15 -0500
-Received: from [10.252.223.214] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 16 Sep 2025 21:15:07 -0700
-Message-ID: <332e842b-a3c9-41f0-af5c-c147661d7997@amd.com>
-Date: Wed, 17 Sep 2025 09:45:06 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCC5249F9;
+	Wed, 17 Sep 2025 04:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758083100; cv=none; b=YNFl9iPC6cDalx8w2hpXo1C10Q9pvxGIbqeHbICO4qnA6dHe1G02isQk00C6csqz3cXNHrOju6Z3OE37gt4TsPJDvQHNEIJpV1Ng5dGQQgqGnM5Fp1+cEqDJLpcszUvqJHJAdakxJR41Y1jp4Unh/wGVIZfrkTX83FqVCBHXNwE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758083100; c=relaxed/simple;
+	bh=ad1Ll8EQd3ZeNF+4/uYDbsQos4r5PVOfSSlKyv8nlIc=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=rF9m1bqz/O2vE2Lt+KFFb3Lpz3zYoJR9d7uSvQIcIrI1JnE+gX1ella7mW0Jf45k9wWrpQJa6WVlT3orjMhX+d0daaPmw8ifiSBefKiR50sIdpdk82CAZYzwylQecePQak2NfAcgpz5L5u3ckr4MZun+1DP80hurh9w4gbdy/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cRQfD2bm6z59ys6;
+	Wed, 17 Sep 2025 12:24:52 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 58H4Oigu039306;
+	Wed, 17 Sep 2025 12:24:44 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 17 Sep 2025 12:24:46 +0800 (CST)
+Date: Wed, 17 Sep 2025 12:24:46 +0800 (CST)
+X-Zmail-TransId: 2afb68ca380e2a4-11716
+X-Mailer: Zmail v1.0
+Message-ID: <202509171224460946llOiB6KmdOqZU3PyTvqs@zte.com.cn>
+In-Reply-To: <20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn>
+References: 20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-To: Balbir Singh <balbirs@nvidia.com>, Wei Xu <weixugc@google.com>, "David
- Rientjes" <rientjes@google.com>
-CC: Gregory Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<Jonathan.Cameron@huawei.com>, <dave.hansen@intel.com>, <hannes@cmpxchg.org>,
-	<mgorman@techsingularity.net>, <mingo@redhat.com>, <peterz@infradead.org>,
-	<raghavendra.kt@amd.com>, <riel@surriel.com>, <sj@kernel.org>,
-	<ying.huang@linux.alibaba.com>, <ziy@nvidia.com>, <dave@stgolabs.net>,
-	<nifan.cxl@gmail.com>, <xuezhengchu@huawei.com>, <yiannis@zptcorp.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>, <byungchul@sk.com>,
-	<kinseyho@google.com>, <joshua.hahnjy@gmail.com>, <yuanchu@google.com>,
-	<alok.rathore@samsung.com>
-References: <20250910144653.212066-1-bharata@amd.com>
- <aMGbpDJhOx7wHqpo@casper.infradead.org>
- <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
- <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
- <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
- <71ac5779-d535-4b0f-bf8d-7a60bf6a6ecf@nvidia.com>
-Content-Language: en-US
-From: Bharata B Rao <bharata@amd.com>
-In-Reply-To: <71ac5779-d535-4b0f-bf8d-7a60bf6a6ecf@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB05.amd.com: bharata@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|CH1PR12MB9718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 115fbfba-1791-42e3-fb29-08ddf5a0df51
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SVk0Mjloa2RTOVJEZzRVbXNXN0daK2ZoNkdCL0pQaWxQNUxHaTVsTVR3YnJE?=
- =?utf-8?B?N3lOdUtibG1aNmUwK3ZCVVo5WTNsV21oWlNOcVhmMjFxbjV6TitYT3ZmN3J4?=
- =?utf-8?B?cGJpZ2dXZWNZdkZQNTBzZFUwY2xHV2lVaHdxQ0VFc2dKRGUvM3hpdFFIdnE5?=
- =?utf-8?B?M0ZhUUtQMUEwSFM0RnRGTjFPVVZ0K2FXQXNlQlg5eXdVbUl4aHlhRWlaNld4?=
- =?utf-8?B?OGFnTUFiTUIvTi85Nk12eS9UM0FSNEVNOUkrTWtTeGw3U3NZMXRMM2RQMmVv?=
- =?utf-8?B?YytaU1NRTEdqSVlmaWRTbTY4Yy92TVNmWjR1Yk80OXpHV1gvelpHR0N0Qm9w?=
- =?utf-8?B?UTNkSnBMRmwzQU9QWkpoS3dzQjdCcTh6TnJxcWtITzB5U05meEkydlIyNTVj?=
- =?utf-8?B?WEUxUjEzTjFMVC9lY2tUMUZjWXZOYmtYR2lHbFhSek5WVGNSWjEzY0NSbXhX?=
- =?utf-8?B?OGZZZzgrbDNQM0p1ZE5OWFJKeVliSFdMK3UxeE1KRHlaSnB0alpuZDl6RDN4?=
- =?utf-8?B?VVhWNWRneGg2ZnZObXBDNGQ1a1lQQWJYZCtiOUp1K2FzOGxvNTRLOUtzQ280?=
- =?utf-8?B?WFFDQjRRbnltODRxM0RUZ0R1RzliR3lXVUNwSjlENlhzWUNnOEtCbkp1YUg3?=
- =?utf-8?B?OUZnTVprajhrSjdsbkRsN1dvU2M4eVNIbmhvOXVsN3FEUHRPcnk3TmxNaE9T?=
- =?utf-8?B?eHdRWXduWDlNcWtzY2QxU0lha1VWNXI4a2VDVUlLdVhuYmpPTDFtVmRMT3Bi?=
- =?utf-8?B?aFlxcG5kMWVMZENhMlJiT2R2d2lnRHRuaUdWL2JqOUNPZ0xaQXlncVdvb3Zk?=
- =?utf-8?B?RGxzb3hxVjlIa09uby9rRUpaa3pTRGxneTBUVHZvVkdwbDQ2aHFrWXJUTTRQ?=
- =?utf-8?B?bWJKbXhHN3pMcTFkelcwcUp3ZzdHaEpmQkFLQ1h1UVFiQWJhNUZKRUZZS2Fy?=
- =?utf-8?B?TGdGRDZlOGw1RURSYUd0cE5CamZiUHI2bkxUNHQ0VEJ5dG05UE9Nb2tlYkNG?=
- =?utf-8?B?Y2tEZ21sbmdkaHFIRHJmRllyN2J6dXlpRXdWRTZmYWh6M3RpN1ZkVWFRZG8y?=
- =?utf-8?B?NGpzNUpLYlVta1BxbWdPVTRKcFNlWWFHcEJEV3ZjYkF4Q0htN3FhSVJqR051?=
- =?utf-8?B?Y3NoSmd1bEtnQ1VxMyt4L3BmN2h4RStzWmFrUjhydmdKd2RqTlhXVFdORmN0?=
- =?utf-8?B?K0JrS2ExWm5Xd2hmbUY0SlJkY0Z2amd4aGRzb0xKWW9lUzFaYUF5VGVmVUtU?=
- =?utf-8?B?QTF4TFZaVDNYbnVBdzRQdER2WjRkUHRJRmxpVEpQeithRFVIVXNhS1pSK3lX?=
- =?utf-8?B?R0NIYkt6R294M2xQSkVqZVRJSzczT2NESDRobXZDdFEyNnJXeTV0QWd5R0Nn?=
- =?utf-8?B?aWVoeGR6OE5ySnljbkNoVDVZaWhudjFmd2d4b2lpVThNZDNjRDBpTlFDd2lZ?=
- =?utf-8?B?LysrK2RDSllxeU5pSmJDMTUxbkVvME9WeG9sS01kKzVGTU8wSE43SkU4MThO?=
- =?utf-8?B?MTRFZlFhWEpVc1BYNlJQNm05UGVFdWdrZUxWL0FDbTZ4MXQ2bVEybWRPVGM3?=
- =?utf-8?B?dDVYY1ZpbCswTmVzQ3lnUVNoaUEwaWJJOXpBd3lQTyt6TElZT2FVOFZWN24x?=
- =?utf-8?B?bXpueitQUVdGOWZjNUpmVk9ITWNsUkdlbFNZeGxvT2gzc3Y0ZXc2TXhMa09N?=
- =?utf-8?B?RTNVMlZKd3hiWGY3NzV2Q1p0Zys5ZVFDRWFNdXFXVm85WU1DN29HMXh4NFlV?=
- =?utf-8?B?S0xLT1hmKy84YVFhSGd2b3hyTzE2NEFYZDRmVVBYNXRnMnlmSExpOHhQa0dU?=
- =?utf-8?B?b2ZFZS8rcmsyNG1HOWNwUUk4amVsdU8yc0xrdzV2NzdYV2NQZUZqc0xMaGQr?=
- =?utf-8?B?cjVrVmxpTis3c2haOHpaWk5WbmZGeXVoVlJKQlhXWXA1M1p3c2lEN1dDSTNs?=
- =?utf-8?B?K3d3eVNtelYyMW9yWmo4bWREcmlNdS9rZzhTWm0yaXRLUzBxR2Vnc0g1dCtO?=
- =?utf-8?B?VVZmS3p3M2tpYXozVldvaTZ3NWxZSk14dmlQeEwwdjlZckpud1FyWDJzR0gz?=
- =?utf-8?Q?2no1uM?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 04:15:44.5404
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 115fbfba-1791-42e3-fb29-08ddf5a0df51
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9718
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <shao.mingyin@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <wang.longjie1@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHY1IDUvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczItZ2xvY2tzLnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 58H4Oigu039306
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Wed, 17 Sep 2025 12:24:52 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68CA3814.000/4cRQfD2bm6z59ys6
 
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
+translate the "gfs2-glocks.rst" into Simplified Chinese.
 
-On 17-Sep-25 8:50 AM, Balbir Singh wrote:
-> On 9/17/25 10:30, Wei Xu wrote:
->> On Tue, Sep 16, 2025 at 12:45 PM David Rientjes <rientjes@google.com> wrote:
->>>
->>> On Wed, 10 Sep 2025, Gregory Price wrote:
->>>
->>>> On Wed, Sep 10, 2025 at 04:39:16PM +0100, Matthew Wilcox wrote:
->>>>> On Wed, Sep 10, 2025 at 08:16:45PM +0530, Bharata B Rao wrote:
->>>>>> This patchset introduces a new subsystem for hot page tracking
->>>>>> and promotion (pghot) that consolidates memory access information
->>>>>> from various sources and enables centralized promotion of hot
->>>>>> pages across memory tiers.
->>>>>
->>>>> Just to be clear, I continue to believe this is a terrible idea and we
->>>>> should not do this.  If systems will be built with CXL (and given the
->>>>> horrendous performance, I cannot see why they would be), the kernel
->>>>> should not be migrating memory around like this.
->>>>
->>>> I've been considered this problem from the opposite approach since LSFMM.
->>>>
->>>> Rather than decide how to move stuff around, what if instead we just
->>>> decide not to ever put certain classes of memory on CXL.  Right now, so
->>>> long as CXL is in the page allocator, it's the wild west - any page can
->>>> end up anywhere.
->>>>
->>>> I have enough data now from ZONE_MOVABLE-only CXL deployments on real
->>>> workloads to show local CXL expansion is valuable and performant enough
->>>> to be worth deploying - but the key piece for me is that ZONE_MOVABLE
->>>> disallows GFP_KERNEL.  For example: this keeps SLAB meta-data out of
->>>> CXL, but allows any given user-driven page allocation (including page
->>>> cache, file, and anon mappings) to land there.
->>>>
->>>
->>> This is similar to our use case, although the direct allocation can be
->>> controlled by cpusets or mempolicies as needed depending on the memory
->>> access latency required for the workload; nothing new there, though, it's
->>> the same argument as NUMA in general and the abstraction of these far
->>> memory nodes as separate NUMA nodes makes this very straightforward.
->>>
->>>> I'm hoping to share some of this data in the coming months.
->>>>
->>>> I've yet to see any strong indication that a complex hotness/movement
->>>> system is warranted (yet) - but that may simply be because we have
->>>> local cards with no switching involved. So far LRU-based promotion and
->>>> demotion has been sufficient.
->>>>
->>>
->>> To me, this is a key point.  As we've discussed in meetings, we're in the
->>> early days here.  The CHMU does provide a lot of flexibility, both to
->>> create very good and very bad hotness trackers.  But I think the key point
->>> is that we have multiple sources of hotness information depending on the
->>> platform and some of these sources only make sense for the kernel (or a
->>> BPF offload) to maintain as the source of truth.  Some of these sources
->>> will be clear-on-read so only one entity would be possible to have as the
->>> source of truth of page hotness.
->>>
->>> I've been pretty focused on the promotion story here rather than demotion
->>> because of how responsive it needs to be.  Harvesting the page table
->>> accessed bits or waiting on a sliding window through NUMA Balancing (even
->>> NUMAB=2) is not as responsive as needed for very fast promotion to top
->>> tier memory, hence things like the CHMU (or PEBS or IBS etc).
->>>
->>> A few things that I think we need to discuss and align on:
->>>
->>>  - the kernel as the source of truth for all memory hotness information,
->>>    which can then be abstracted and used for multiple downstream purposes,
->>>    memory tiering only being one of them
->>>
->>>  - the long-term plan for NUMAB=2 and memory tiering support in the kernel
->>>    in general, are we planning on supporting this through NUMA hint faults
->>>    forever despite their drawbacks (too slow, too much overhead for KVM)
->>>
->>>  - the role of the kernel vs userspace in driving the memory migration;
->>>    lots of discussion on hardware assists that can be leveraged for memory
->>>    migration but today the balancing is driven in process context.  The
->>>    kthread as the driver of migration is yet to be a sold argument, but
->>>    are where a number of companies are currently looking
->>>
->>> There's also some feature support that is possible with these CXL memory
->>> expansion devices that have started to pop up in labs that can also
->>> drastically reduce overall TCO.  Perhaps Wei Xu, cc'd, will be able to
->>> chime in as well.
->>>
->>> This topic seems due for an alignment session as well, so will look to get
->>> that scheduled in the coming weeks if people are up for it.
->>
->> Our experience is that workloads in hyper-scalar data centers such as
->> Google often have significant cold memory. Offloading this to CXL memory
->> devices, backed by cheaper, lower-performance media (e.g. DRAM with
->> hardware compression), can be a practical approach to reduce overall
->> TCO. Page promotion and demotion are then critical for such a tiered
->> memory system.
->>
->> A kernel thread to drive hot page collection and promotion seems
->> logical, especially since hot page data from new sources (e.g. CHMU)
->> are collected outside the process execution context and in the form of
->> physical addresses.
->>
->> I do agree that we need to balance the complexity and benefits of any
->> new data structures for hotness tracking.
-> 
-> 
-> I think there is a mismatch in the tiering structure and
-> the patches. If you see the example in memory tiering
-> 
-> /*
->  * ...
->  * Example 3:
->  *
->  * Node 0 is CPU + DRAM nodes, Node 1 is HBM node, node 2 is PMEM node.
->  *
->  * node distances:
->  * node   0    1    2
->  *    0  10   20   30
->  *    1  20   10   40
->  *    2  30   40   10
->  *
->  * memory_tiers0 = 1
->  * memory_tiers1 = 0
->  * memory_tiers2 = 2
->  *..
->  */
-> 
-> The topmost tier need not be DRAM, patch 3 states
-> 
-> "
-> [..]
->  * kpromoted is a kernel thread that runs on each toptier node and
->  * promotes pages from max_heap.
+Update to commit 713f8834389f("gfs2: Get rid of emote_ok
+checks")
 
-That comment is not accurate, will reword it next time.
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+---
+v4->v5
+fix some format issues.
+ .../zh_CN/filesystems/gfs2-glocks.rst         | 211 ++++++++++++++++++
+ .../translations/zh_CN/filesystems/index.rst  |   1 +
+ 2 files changed, 212 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
 
-Currently I am using kthread_create_on_node() to create one kernel thread
-for each toptier node. I haven't tried this patchset with HBM but it should
-end up creating a kthread for HBM node too.
-
-However unlike for regular DRAM nodes, the kthread for HBM node can't be
-bound to any CPU.
-
-> 
-> Also, there is no data in the cover letter to indicate what workloads benefit from
-> migration to top-tier and by how much?
-
-I have been trying to get the tracking infrastructure up and hoping to
-get some review on that. I will start including numbers from the next iteration.
-
-Regards,
-Bharata.
+diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+new file mode 100644
+index 000000000000..951176c7af9b
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+@@ -0,0 +1,211 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/filesystems/gfs2-glocks.rst
++
++:翻译:
++
++   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++
++==================
++Glock 内部加锁规则
++==================
++
++本文档阐述 glock 状态机内部运作的基本原理。每个 glock（即
++fs/gfs2/incore.h 中的 struct gfs2_glock）包含两把主要的内部锁：
++
++ 1. 自旋锁（gl_lockref.lock）：用于保护内部状态（如
++    gl_state、gl_target）和持有者列表（gl_holders）
++ 2. 非阻塞的位锁（GLF_LOCK）：用于防止其他线程同时调用
++    DLM 等操作。若某线程获取此锁，则在释放时必须调用
++    run_queue（通常通过工作队列），以确保所有待处理任务
++    得以完成。
++
++gl_holders 列表包含与该 glock 关联的所有排队锁请求（不
++仅是持有者）。若存在已持有的锁，它们将位于列表开头的连
++续条目中。锁的授予严格遵循排队顺序。
++
++glock 层用户可请求三种锁状态：共享（SH）、延迟（DF）和
++排他（EX）。它们对应以下 DLM 锁模式：
++
++==========	====== =====================================================
++Glock 模式       DLM    锁模式
++==========	====== =====================================================
++    UN          IV/NL  未加锁（无关联的 DLM 锁）或 NL
++    SH          PR     受保护读（Protected read）
++    DF          CW     并发写（Concurrent write）
++    EX          EX     排他（Exclusive）
++==========	====== =====================================================
++
++因此，DF 本质上是一种与“常规”共享锁模式（SH）互斥的共
++享模式。在 GFS2 中，DF 模式专用于直接 I/O 操作。Glock
++本质上是锁加缓存管理例程的组合，其缓存规则如下：
++
++==========      ==============   ==========   ==========   ==============
++Glock 模式      缓存元数据       缓存数据      脏数据        脏元数据
++==========      ==============   ==========   ==========   ==============
++    UN               否            否           否            否
++    DF               是            否           否            否
++    SH               是            是           否            否
++    EX               是            是           是            是
++==========      ==============   ==========   ==========   ==============
++
++这些规则通过为每种 glock 定义的操作函数实现。并非所有
++glock 类型都使用全部的模式，例如仅 inode glock 使用 DF 模
++式。
++
++glock 操作函数及类型常量说明表：
++
++==============     ========================================================
++字段                用途
++==============     ========================================================
++go_sync            远程状态变更前调用（如同步脏数据）
++go_xmote_bh        远程状态变更后调用（如刷新缓存）
++go_inval           远程状态变更需使缓存失效时调用
++go_instantiate     获取 glock 时调用
++go_held            每次获取 glock 持有者时调用
++go_dump            为 debugfs 文件打印对象内容，或出错时将 glock 转储至日志
++go_callback        若 DLM 发送回调以释放此锁时调用
++go_unlocked        当 glock 解锁时调用（dlm_unlock()）
++go_type            glock 类型，``LM_TYPE_*``
++go_flags           若 glock 关联地址空间，则设置GLOF_ASPACE 标志
++==============     ========================================================
++
++每种锁的最短持有时间是指在远程锁授予后忽略远程降级请求
++的时间段。此举旨在防止锁在集群节点间持续弹跳而无实质进
++展的情况，此现象常见于多节点写入的共享内存映射文件。通
++过延迟响应远程回调的降级操作，为用户空间程序争取页面取
++消映射前的处理时间。
++
++未来计划将 glock 的 "EX" 模式设为本地共享，使本地锁通
++过 i_mutex 实现而非 glock。
++
++glock 操作函数的加锁规则：
++
++==============   ======================    =============================
++操作              GLF_LOCK 位锁持有          gl_lockref.lock 自旋锁持有
++==============   ======================    =============================
++go_sync              是                         否
++go_xmote_bh          是                         否
++go_inval             是                         否
++go_instantiate       否                         否
++go_held              否                         否
++go_dump              有时                       是
++go_callback          有时（N/A）                 是
++go_unlocked          是                         否
++==============   ======================    =============================
++
++.. Note::
++
++   若入口处持有锁则操作期间不得释放位锁或自旋锁。
++   go_dump 和 do_demote_ok 严禁阻塞。
++   仅当 glock 状态指示其缓存最新数据时才会调用 go_dump。
++
++GFS2 内部的 glock 加锁顺序：
++
++ 1. i_rwsem（如需要）
++ 2. 重命名 glock（仅用于重命名）
++ 3. Inode glock
++    （父级优先于子级，同级 inode 按锁编号排序）
++ 4. Rgrp glock（用于（反）分配操作）
++ 5. 事务 glock（通过 gfs2_trans_begin，非读操作）
++ 6. i_rw_mutex（如需要）
++ 7. 页锁（始终最后，至关重要！）
++
++每个 inode 对应两把 glock：一把管理 inode 本身（加锁顺
++序如上），另一把（称为 iopen glock）结合 inode 的
++i_nlink 字段决定 inode 生命周期。inode 加锁基于单个
++inode，rgrp 加锁基于单个 rgrp。通常优先获取本地锁再获
++取集群锁。
++
++Glock 统计
++----------
++
++统计分为两类：超级块相关统计和单个 glock 相关统计。超级
++块统计按每 CPU 执行以减少收集开销，并进一步按 glock 类
++型细分。所有时间单位为纳秒。
++
++超级块和 glock 统计收集相同信息。超级块时序统计为 glock
++时序统计提供默认值，使新建 glock 具有合理的初始值。每个
++glock 的计数器在创建时初始化为零，当 glock 从内存移除时
++统计丢失。
++
++统计包含三组均值/方差对及两个计数器。均值/方差对为平滑
++指数估计，算法与网络代码中的往返时间计算类似（参见《
++TCP/IP详解 卷1》第21.3节及《卷2》第25.10节）。与 TCP/IP
++案例不同，此处均值/方差未缩放且单位为整数纳秒。
++
++三组均值/方差对测量以下内容：
++
++ 1. DLM 锁时间（非阻塞请求）
++ 2. DLM 锁时间（阻塞请求）
++ 3. 请求间隔时间（指向 DLM）
++
++非阻塞请求指无论目标 DLM 锁处于何种状态均能立即完成的请求。
++当前满足条件的请求包括：(a)锁当前状态为互斥（如锁降级）、
++(b)请求状态为空置或解锁（同样如锁降级）、或(c)设置"try lock"
++标志的请求。其余锁请求均属阻塞请求。
++
++两个计数器分别统计：
++ 1. 锁请求总数（决定均值/方差计算的数据量）
++ 2. glock 代码顶层的持有者排队数（通常远大于 DLM 锁请求数）
++
++为什么收集这些统计数据？我们需深入分析时序参数的动因如下：
++
++1. 更精准设置 glock "最短持有时间"
++2. 快速识别性能问题
++3. 改进资源组分配算法（基于锁等待时间而非盲目 "try lock"）
++
++因平滑更新的特性，采样量的阶跃变化需经 8 次采样（方差需
++4 次）才能完全体现，解析结果时需审慎考虑。
++
++通过锁请求完成时间和 glock 平均锁请求间隔时间，可计算节
++点使用 glock 时长与集群共享时长的占比，对设置锁最短持有
++时间至关重要。
++
++我们已采取严谨措施，力求精准测量目标量值。任何测量系统均
++存在误差，但我期望当前方案已达到合理精度极限。
++
++超级块状态统计路径::
++
++    /sys/kernel/debug/gfs2/<fsname>/sbstats
++
++Glock 状态统计路径::
++
++    /sys/kernel/debug/gfs2/<fsname>/glstats
++
++（假设 debugfs 挂载于 /sys/kernel/debug，且 <fsname> 替
++换为对应 GFS2 文件系统名）
++
++输出缩写说明：
++
++=========  ============================================
++srtt       非阻塞 DLM 请求的平滑往返时间
++srttvar    srtt 的方差估计
++srttb      （潜在）阻塞 DLM 请求的平滑往返时间
++srttvarb   srttb 的方差估计
++sirt       DLM 请求的平滑请求间隔时间
++sirtvar    sirt 的方差估计
++dlm        DLM 请求数（glstats 文件中的 dcnt）
++queue      排队的 glock 请求数（glstats 文件中的 qcnt）
++=========  ============================================
++
++sbstats文件按glock类型（每种类型8行）和CPU核心（每CPU一列）
++记录统计数据集。glstats文件则为每个glock提供统计集，其格式
++与glocks文件类似，但所有时序统计量均采用均值/方差格式存储。
++
++gfs2_glock_lock_time 跟踪点实时输出目标 glock 的当前统计
++值，并附带每次接收到的dlm响应附加信息：
++
++======   ============
++status   DLM 请求状态
++flags    DLM 请求标志
++tdiff    该请求的耗时
++======   ============
++
++（其余字段同上表）
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index 7051fd9d94f3..4a670f6cc080 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -30,3 +30,4 @@ Linux Kernel中的文件系统
+    ubifs-authentication
+    gfs2
+    gfs2-uevents
++   gfs2-glocks
+-- 
+2.27.0
 
