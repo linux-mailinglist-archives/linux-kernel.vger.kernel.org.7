@@ -1,157 +1,105 @@
-Return-Path: <linux-kernel+bounces-821130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BB0B80833
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:25:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495C2B808E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA12621476
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DFE0623DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF053397EF;
-	Wed, 17 Sep 2025 15:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7744A30C105;
+	Wed, 17 Sep 2025 15:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AmYGJNOg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2QNT5yM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF9B3397DF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C717630C102;
+	Wed, 17 Sep 2025 15:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122707; cv=none; b=ScQsILqmEz+Be96t6Atp58k3gU9GbDZmm5zIbv5HNOmFd8sTQGGh/hDJBdceDmskRZrFw/YbQw8r15ySbnUmq17fJ7u6TgANAKqaWM1URh/1RGRoPAXRRgjo6wDW1Afqj4CGUumHuJNXwcgavMrF80yxExZbFHmqkQZl8iJkGcI=
+	t=1758122742; cv=none; b=Po76lpSNsEwMT5fI1+lkHuXwvg9LjBmUQs3vgKsosNda7OyMmL9nItPVsQ25q0WW8ugIVvy3t2NM0G/VNJe5dRbI10Poe4VD/uqPm3aUusyp5ANT6Seg3sAbuobhmwhY3V8QhkZE/s9FqA8hiE+4M1f3OiKAUofvqE80s2nQlzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122707; c=relaxed/simple;
-	bh=gwgIsDRVRYX2HhF1a8Tduga7fOLhZSoXaPH0ZHLIBKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uwYDepaQZhEmNv9H9Vi4UAXQySE7WtODth8MSQhzpIRDBI0E+LLcgt2knyTwGxaJAx7Ea/FDxradM1AfZgSjsPjvlVkrIxMDJn6h3gi2pSxu1voBCln3937S4nqqetBqilPZlL4tzGnRrcXIlrdwNkrhf5XkS3wq9ItUnPYPqWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AmYGJNOg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HBLfww028290
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:25:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HL0iIHuhrw0+QPXTAS58J7uV9gkk1dnDKaysIWMxgeI=; b=AmYGJNOg7ZI9mNqf
-	ohNuYKzbBoNUXLEe1XfqGDT4QPC1lDgzm60HYvILfn8U4Nb2JNLHsmA5N4FM/Gob
-	ve1MgvnBFB/mDsoUTMlag1zyMHHND41OJ4NYgFi8UOty8+wxv8JXM1Do4h40WBAv
-	gSu5FehDq+UXNv7Ek9dbdUO/rGo/9PBhhIl5qxCIhOMUFTKxV8xKZJnZRtmGDKOZ
-	9qOki9ZUjt6ML7mu4WCIiaepLLxHqltbO2n8xiA29SU/hzHmGwcaDd5Pk/Qxa/8z
-	GzQT676WCBNS2ho43eiSvKFqtoylv1Tg+uzRd/98I9Nj2fWNvBVZVym7us9PczmG
-	eCNGtA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497v1j8sc0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:25:05 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2659a7488a2so71275855ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:25:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758122704; x=1758727504;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HL0iIHuhrw0+QPXTAS58J7uV9gkk1dnDKaysIWMxgeI=;
-        b=KVLViry1Q1RlYRgZd6FJAICWLlrQBZAGvIk5/luaHYOXpqqZU5mUl2jyAQo7oZK4T3
-         6qOFKhgCIt/sQMuuIhT07U2TqWFBObbCucrRaLSRwaJDeqTJkacVWU4UFLOYRJPbQ8CB
-         T1G8ezcrO4mDK3bNJTQZ8KmyErah/35FT7OnN/198WueLpxX49l5RUt9bvBQyO3yiOsA
-         pxJdyhejefDG+qAXUfmh/86qw51D4UEPQpOm1gDT7AgEDDuEFcEvJeiMLhpNulgXCedR
-         +HVgp5EEpUlSmNW8zsZCwKwLfY+9XlwIY7wBIIKsU03nK2HrYJ0KxAQaGqM14LailxP9
-         VUVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXup9ryIyifVzbykcAFmRCfkOKH4wYAVMyDnlogO9z/uChjFyXa9nWP1NFy4uCrmA/+O+IvHYbnVvrTljM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaqiJxDNI3kgyFWmCtSz0fy65kj8TbBDHX9/7stXF+jxoEYIk6
-	LvvkrZ07zI2LgcXMHh7wGGrH242NX9mhuwtf2w579E46mWjgCGZ07Bly+2XVoxxvq6VEq3LzV+M
-	Xl+s8EVzX6v+Ng3bDtCYvpzSaSDEolQYxcyGqCbCw1M8ixSK3sDilXpNe9J2SiVA1YM0=
-X-Gm-Gg: ASbGncs6viuRILlkbYsvFtETDHhpn2GEoPV8tFtHfaNnV+RL4uNggFPxRvJLT9a6bNn
-	u6kMtCWWuiBwDkx33PFFaOkIat8CDVLFYO51vokrypjKxiYz3mAQ8IZae1BY8fyl64rEUX9qhqq
-	4H/AsO2gxCbDv11zoyfhBnkWV/nhH2JX7zeZzEm5EpxwZnfOiq9SYhLhiCYryZK9LD2bJkgYEwu
-	NPYKYgSZ9UtNn+qJVXuEYa3i49tTsDb3lFlsg5Cobx5bPVNVFk8wIcWnJoDAEyhzRm/nlCWDVhX
-	SN0hzU+bm/m1NBrVTOTunKE78x8Q9TMVTxncy6/tnzhZCvLTtKjYzAjgeaTDqg==
-X-Received: by 2002:a17:903:234b:b0:24b:1d30:5b09 with SMTP id d9443c01a7336-26811ba45b9mr26940275ad.13.1758122703750;
-        Wed, 17 Sep 2025 08:25:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmORI6sNcePUHDL1ea7LBwUjWJDxDDKVUaaJcRzC/M+TlpMhiORpT2SoIF305qk9daBSB9Zw==
-X-Received: by 2002:a17:903:234b:b0:24b:1d30:5b09 with SMTP id d9443c01a7336-26811ba45b9mr26940035ad.13.1758122703239;
-        Wed, 17 Sep 2025 08:25:03 -0700 (PDT)
-Received: from [10.91.118.43] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a80asm193499715ad.90.2025.09.17.08.24.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 08:25:02 -0700 (PDT)
-Message-ID: <16701111-9e8c-42d6-8fac-2f4b9a5e5e5d@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 20:54:56 +0530
+	s=arc-20240116; t=1758122742; c=relaxed/simple;
+	bh=tI6Ac6w2oSwCuXBkCkMUNA45xDANBSg0NsMKs0L/pWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ee+8ZIYgrgS+o9C29u+8pgSsYFDzqC9is/89gs5KNxlWeq3dr+sQZ6ZG2XeEhUHpCIUTuT/qcEWTT9uiAHUDHI3JPrkRokoJoRqHTRcgPBVIuQns3wPJF0nZfe/xE1QQmAeax8M2ApQoV5U2zwUu1VpzJZY4CSeVwylQCOfYHWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2QNT5yM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37AF3C4CEF7;
+	Wed, 17 Sep 2025 15:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758122742;
+	bh=tI6Ac6w2oSwCuXBkCkMUNA45xDANBSg0NsMKs0L/pWk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K2QNT5yMEHai5Vv/X9Wu5SKbEUub0HuW9bSL7UR9OtNZ2wgtTRGVMqy+EeWLu6zCB
+	 9HS05wzgxjSx4t8yvRyP1tYn37tOihaIeKFoa2duJhXOkZe33a7JQR2QKGK+m73OI1
+	 8NwIn1eQRXwi9/1JIkEExLaRWwFqnddrYWy4Fs8FdQ4nkVA4HktT8+KExwWgLeLtEi
+	 BnlbVPi/+zScjZk1SdmMRPOB2RNHTetUxhMCvBEbSWaEkKu2dDOvdlGuORECI+Ady9
+	 7fEcN6N9jEZj5n/s4KHdLyWw5f9796kOJslzMbSki0HHfRWGrgWyYakx0/qhfOCq5+
+	 BY2I3uw4moQjA==
+Date: Wed, 17 Sep 2025 16:25:35 +0100
+From: Will Deacon <will@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 22/28] iommu/arm-smmu-v3-kvm: Emulate CMDQ for host
+Message-ID: <aMrS71vQ_MaVonzi@willie-the-truck>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-23-smostafa@google.com>
+ <aMQroI4NDu74PDGT@willie-the-truck>
+ <20250915163858.GK882933@ziepe.ca>
+ <aMl_5j8G3IGulAC6@google.com>
+ <20250917123601.GA1326709@ziepe.ca>
+ <aMrNTny9jgZJd_Ef@willie-the-truck>
+ <20250917151612.GH1326709@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/msm/registers: Sync GPU registers from mesa
-To: Anna Maniscalco <anna.maniscalco2000@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250911-preemption_aware_hangcheck-v1-0-974819876819@gmail.com>
- <20250911-preemption_aware_hangcheck-v1-1-974819876819@gmail.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20250911-preemption_aware_hangcheck-v1-1-974819876819@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: ZKOH9Tg_TniCQPfa09nvNy8AK9J0r87O
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDExMCBTYWx0ZWRfX3/2H7xfDV1bP
- qDtKN8CLAdMg4jqJidx3L0NY+8z68k4oAPaT+yxIuFaC53wwX9mZ4O54OZi2qR68bMOs4TQSKD5
- CECUOC1qrDzrAU59HQB5MvY2qNbY7gKq5M1qkIozAWTvZcl9TL2brN5pZnQ/C6LF7121JEFIWy4
- olQtH+bgWlNFJe6OGnCqzKlfErEnSBG2M+N8fYJptm+aT+p/jlySYFk6/ATnZVkrpCVBrBKY/2G
- PUXamRB23sTQUXo6edLg72DijEjRtkAXo85ko5j1TSxEBejY8BZ4QYshzcYHaucml69RTAWK2NK
- h51ODWwBZNJD9x77nKLLmSDHs2JJYdMkG++86AoYWwCf4juF9HJKVqPrrUbQgYqzVxOTDvWDlgg
- 2RUsTNtP
-X-Authority-Analysis: v=2.4 cv=AeqxH2XG c=1 sm=1 tr=0 ts=68cad2d1 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
- a=wfxb_XhhgxZQwQkhXVMA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: ZKOH9Tg_TniCQPfa09nvNy8AK9J0r87O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170110
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917151612.GH1326709@ziepe.ca>
 
-On 9/11/2025 10:31 PM, Anna Maniscalco wrote:
-> In particular bring in `CP_ALWAYS_ON_CONTEXT`
+On Wed, Sep 17, 2025 at 12:16:12PM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 17, 2025 at 04:01:34PM +0100, Will Deacon wrote:
+> > On Wed, Sep 17, 2025 at 09:36:01AM -0300, Jason Gunthorpe wrote:
+> > > On Tue, Sep 16, 2025 at 03:19:02PM +0000, Mostafa Saleh wrote:
+> > > 
+> > > > I think the fix for the problem Will mentioned is to just use CMOs
+> > > > before accessing the host structures, so that should be simple.
+> > > > If it turns to be more complicated, I am happy to drop the support
+> > > > for non-coherent devices from this series and we can add it later.
+> > > 
+> > > I feel like it is easier/better to fix the driver to use cachable
+> > > memory than to add CMOs to the pkvm side..
+> > 
+> > Hmm, but for non-coherent SMMU hardware (which sadly exists in
+> > production), I don't think there's a way for firmware to tell the driver
+> > that it needs to issue CMOs for the page-tables and the CDs but not the
+> > other in-memory data structures (e.g. STEs). I suppose we could do it in
+> > some pKVM-specific way, but then that's not really helping anybody else.
 > 
-> Signed-off-by: Anna Maniscalco <anna.maniscalco2000@gmail.com>
-> ---
->  drivers/gpu/drm/msm/registers/adreno/a6xx.xml | 1 +
->  1 file changed, 1 insertion(+)
+> Not sure I understand?
 > 
-> diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
-> index 9459b603821711a1a7ed44f0f1a567cf989b749b..6ea5479670970cc610ca25e71aa41af5f328f560 100644
-> --- a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
-> +++ b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
-> @@ -254,6 +254,7 @@ by a particular renderpass/blit.
->  		<bitfield name="CONTEXT" low="4" high="5"/>
->  	</bitset>
->  	<reg64 offset="0x0980" name="CP_ALWAYS_ON_COUNTER"/>
-> +	<reg64 offset="0x0982" name="CP_ALWAYS_ON_CONTEXT"/>
->  	<reg32 offset="0x098D" name="CP_AHB_CNTL"/>
->  	<reg32 offset="0x0A00" name="CP_APERTURE_CNTL_HOST" variants="A6XX"/>
->  	<reg32 offset="0x0A00" name="CP_APERTURE_CNTL_HOST" type="a7xx_aperture_cntl" variants="A7XX-"/>
+> I mean to issue CMOs in the smmu driver consistently for everthing,
+> page table, CD entry, STE, etc. Today it only does it for page table.
 > 
+> Make the driver consistently use cachable memory for everything
+> instead of having two different ways to deal with incoherent HW.
 
-Reviewed-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Ah right, so the driver would unnecessarily issue CMOs for the structures
+that are just shared with the hypervisor. At least it's _functional_ that
+way, but I'm sure people will complain!
 
--Akhil
-
+Will
 
