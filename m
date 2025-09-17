@@ -1,139 +1,189 @@
-Return-Path: <linux-kernel+bounces-820993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28B1B7FF3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FA3B7FFC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E797227F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 057031C84828
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75192BE635;
-	Wed, 17 Sep 2025 14:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFE028EA72;
+	Wed, 17 Sep 2025 14:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w3ggX6aJ"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dvs2nOWu"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080402BE032
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD562278E67
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758118660; cv=none; b=hBJREULi5L+2gBv1lr0SCgqVFy8toAwV83uaynaecGC/tPpz2DpZ/tuj8wxlh9bWdR4wh/w6338/bsEOjrUJaNx8PmIM8EaboGGch3aWf8jQPc7FZWCfV3xMFGqgNNY/vWbi87jcWp4DvibRKPFzD/LRdEVOo7FSqtf9b+gfOOU=
+	t=1758118693; cv=none; b=ZgeLjI+X21lE2FSDvmc8cQ+3hdVt0oFwj266Fw80+wkLIRS42hbOVptckBz70xBfJmKdQ54u0ZNowJl5eaxCBUmxoHQU4snpePQSzoPYQBC74n5dFtmkvzYj2G52S9dqFnMfUu2W3GB9LCEKZ4B3WaPIXyf2m7x9iutsff2EU9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758118660; c=relaxed/simple;
-	bh=6hv63xN0KYQWhz2vAf0QB/EYtmLibBjQj8kn4Burfa8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QBBeKKxo97WZClLdsbfhkIIPrQBEcQKE36xWPtn6ERUEIfw4G1GiQtf2woLnlKlVZ3ILD6jJe07XGoMo7UQNhwOH68Ymf8XowHhIwCISHolc25XxVENxwYPgJ7SOcOsw+Y4HevDiicbgzgA0o5oyzoBxx8elFGQjnxK71fTf6DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w3ggX6aJ; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-331503fdc51so1900257fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:17:37 -0700 (PDT)
+	s=arc-20240116; t=1758118693; c=relaxed/simple;
+	bh=rijBXGyPPRI7zVY1PE5cIgzPuGwv03123CnIu1WqQ/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Naa698w2t/dkb7+QMurGHLFXQsSRNLgngmIz2tG7thuOn3/FReJBMpFfgLB7trCjDyZZHTVXV96BaekwSr26OdpERSvQpEJUNOzleNTCnp/WuDMKnn20cr72VppjF5L0nW2ghzuFK+YxGWFyGcVBCJ6wvGxhIgYgcTa3tOzsbbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dvs2nOWu; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-266fa7a0552so32232155ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:18:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758118657; x=1758723457; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2dcnvqhytDHVondi2QamJr5XwZgrzeEnuwXkS+adOZY=;
-        b=w3ggX6aJwEfAkv8C+yCDG6IhqDP1TWgV2D08BtHZGWC8iACU634hW01VK2hlMpwsyy
-         qTyPipes8FkQH869QxQJJhcEdzpKOr/ZdsIqyXsbJRPa+tswVPBWK3l5iDWXNBjBdAuL
-         phKu6jbBO5f8oMUgUny58d8jrDiHoSRZ1ltyEcYvScFbPuP5mp1HSeJTWuY2JbLC4Je3
-         zTrF21SjiP0Q1RmjcXYEVvO5eFyZfRRvdxeVBYZfP1GrAR0KZUOc/epWnDaITVF4enfZ
-         EXJxrqX16d+hstYruK24is3dLTFqZcC+VhqRgQ0eHyBluuteAx8x63RhCRueaoX20UId
-         kPew==
+        d=gmail.com; s=20230601; t=1758118690; x=1758723490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TRTCbDx6myQFWxAdWRCj4l7Pp4fnr8OTe0kIEsi/f/4=;
+        b=Dvs2nOWuewo9eig8ugL9pyqkIcrBBUrd2zukXvCI+S02addnY3DPFGpGDbhyLDptoR
+         g6bqOMnbk+QI49oi1OE24WPSveEYFFqYkTzlMvz6aIHf/R/k6XN+IuODlZ5FdwNehUZE
+         gXrBjvB3VR1F3uNn/ByAJbRUJ+hh3yGCU81Z13rKxr6jev214yujd1ftqPlxRWviGZM/
+         qqAa8STgkQ+Eed9oTQJNt24vwdcVBGvfbsw8OCJD50zcYS6rk3t+GuV5BZ+vvHWmIKAd
+         aZSjjNH/MBMhKE8WXyGg7N7APw8rT6UNWHaFFXQL5oLUKuuY+Y9sOxGbr1sLDMaa3zkk
+         TNzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758118657; x=1758723457;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758118690; x=1758723490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2dcnvqhytDHVondi2QamJr5XwZgrzeEnuwXkS+adOZY=;
-        b=sOTJdfeT+c4zPCMXXD2x4Lk2VJAa+1RtKIbu6cpsObD9TOpbVh8GQmaAX1RidMN2zu
-         GC9XlVvCnqA9i8SJMp6/FoxDr3piBUy+qWhioOf2Fs9tPwI9H5uicyx+3qIiO3eRY4bz
-         5XjTraegTyKhvWb7jX3akvupGYWM3LHPPHQOR5354FTGoYDLp60lre/SUsNVixP+QFZn
-         RX0mwDYDSsiK2smLNe62KdTlltl8BBrkYmU+02pFeyFdn6Wwehq8VjFFda+GG4qd2MrK
-         To9JUbOv6w8pWLu9SGzL7wBF9n0lWAIiBTC9aNVFj9UVxjbfOjKgu/P0ClCcoCdGVmY7
-         yxOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd2b1aB+qc6oXxQx5AT8wh2dCLPfQVktLn1RubHAlAvEmAfGz6YqdqUmMzyTCA6aQhoB1C28cf/pY85Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytVeGYsAGqUDbr8cHHSDPMp7SERbwN2KNGeObC6zV5DzVu8kYM
-	H7midkECD+7Y9k2rbidyo5FGIft9SynMcZxBvS30JXsZxrXBn+4iuWJlzF5/M3nXPXM=
-X-Gm-Gg: ASbGncuHzDV1nIjmutoeNDdSJDEyob37JTj0GdIQd/EsRghRMZIlL58uqUj5blqsGjv
-	EuMUdzEkDOy9CielM3t0Z2vDkbSk8TKXORvMxuWDYJq0BEXr7TAC6gSGBwRsz1R0w891tzvlaKp
-	14DtK7iZR78zUTf77H/5+R9W1IS0IfG1VixVzilPYEWrlWZHEUY2GvzldE5+QF5qPgK10BdaYZP
-	68tMz1ANtyQwdFD+b8m37VPgjYEECRYS9q6lHdwqssbWCEi3szoScnUxfH4e07qyhTalqNnLRWM
-	Je+AhxJ+dSzH2pIrJ6adj49Tp99R7+04Vazn9QBKTZKmEd3GB7GDRdGnrsPlhB//2RJ8or0H97u
-	Zv0y4JDueF1TCGuPg6aXhg9ZTAJ4=
-X-Google-Smtp-Source: AGHT+IGzJt9Yn527W26iNrzT+3DLjLySBnQVi7hx6OsN1flWKGl/+FA+2GwgxmExVcRHcBhks5H4ew==
-X-Received: by 2002:a05:6871:54b:b0:31d:6b5b:6b57 with SMTP id 586e51a60fabf-335bf82124fmr1142378fac.30.1758118656946;
-        Wed, 17 Sep 2025 07:17:36 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:72c:cb37:521d:46e2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-32d3537ebdesm6344406fac.21.2025.09.17.07.17.34
+        bh=TRTCbDx6myQFWxAdWRCj4l7Pp4fnr8OTe0kIEsi/f/4=;
+        b=C32dGR8a93r8PL8p4jGqpGse88xvShUN60wF5ia0X0mAMCLYiUXdX394SMF/lL4otO
+         jW+/txJm0oW9/G6s+ieX/ngs1/uBxf3Hz6ydQG2aawz1/9inFY5dJ5PAEemuLV4zT3Yj
+         9OmRsH6zpePnfpBb/Ovc4Fq16AR1Ly/hCojVkIWUQZNb1loZOfVJOMqJsST3zE+2N2qj
+         0VvZBN1judoLUzTX7MHaJCvP4r/GQVEbXDOK3ySvPlZ3H/MJsqQuVPk6BGPzvfuRSjEh
+         z0hHAiTj4GvvdN0eILkx9wyPY+rWdBNFGCAqV0KZdC3OZh4Co5YhDHNgkt/5wMQ+0lgv
+         8Xfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOxW+1EavU3ECJvXwUcUxc5UWJyxVnfhyl+Rds6FGzMPYsHHFWeFv8fOfG1V3fWlD7NYNWvGRiDJaw51I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyurXfjYy/iZF5mO1atuQ9+BYkb5smAEhfHmdios53lnSkP4+q
+	GEz4GlaiGOciAAoNARCAnIU4HZmEFt7PWvlqEwwi70AaWNZj/Y9zEnwO
+X-Gm-Gg: ASbGncswloQFWIYLZwz9R6w0TZoRJYzLeS9sAY5dh7jMcWEEi2LXnZd9Wep5GlBI2EZ
+	0MQHdUoq0OZZIKpl2nnw3+bpJ1c9v/Lw2WEPHcVpiuZupa1xNJ75FVBuZ9C1RUrPnd5kqR04a85
+	4Hmn8e3o36GBIJv5C7vEcbsZV1GPezrgVsQnpJTUKzZRQA54+CUu5vzORlJRX59Wg/5O2oRy4sZ
+	xF16z03OiFWcxXB3lxvLHfTtU3zAVkJ/hHqZv0WR/kmkJU8B1l3763bZgbnT2C8KsLG2z1wCxqo
+	b9nQ7jucjKfGXiNdi+1ZTGghYO9cYbMOX6EizKafE/jHEJdT0yt9Gsg4GlneTeq3/qHehJkX2zt
+	Tx9/iXC247PYdQZ15k1zBdWUAYych37O5
+X-Google-Smtp-Source: AGHT+IF+FxnnVbL96kb6pRnRNwKlX+NEALRG1IpYvbainoyd6nXRnmkIYrgpnMijmi2HscnYoH8gYg==
+X-Received: by 2002:a17:902:d509:b0:24c:ea17:e322 with SMTP id d9443c01a7336-268118b3f86mr27269085ad.3.1758118689645;
+        Wed, 17 Sep 2025 07:18:09 -0700 (PDT)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed26f583esm2663438a91.27.2025.09.17.07.18.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 07:17:34 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 17 Sep 2025 09:17:23 -0500
-Subject: [PATCH] iio: adc: ad7124: use AD7124_MAX_CHANNELS
+        Wed, 17 Sep 2025 07:18:08 -0700 (PDT)
+From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+To: James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+Subject: [PATCH] scsi: lpfc: rework lpfc_sli4_fcf_rr_next_index_get()
+Date: Wed, 17 Sep 2025 10:18:05 -0400
+Message-ID: <20250917141806.661826-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-iio-adc-ad7124-use-ad7124_max_channels-v1-1-70913256a8f8@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAPLCymgC/y2N0Q6CMAxFf4X02QUYw0V+xRAyt4pN3IYbGBLCv
- 1vFh6Y9be+9G2RMhBm6YoOEb8oUA0N9KsA+TBhRkGMGWcm2utRaEEVhnOXStVRiyfgfB2/W4as
- J+Myi0SjbRjut1BnYbEp4p/UXdO0PTvhaOG8+lnAzbGWj9zR3BX/nMqGPfC05suQ+Uxih3/cPO
- y69y7QAAAA=
-X-Change-ID: 20250917-iio-adc-ad7124-use-ad7124_max_channels-37e2537d7446
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=949; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=6hv63xN0KYQWhz2vAf0QB/EYtmLibBjQj8kn4Burfa8=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoysL4Y6PZZASzbARRTWo8XbiFHTsKjzxIp7iVT
- +U1g1EyyxKJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMrC+AAKCRDCzCAB/wGP
- wDu3CACainziwIbk5oQYsKEeTpfcpDEY4W1ivRUFcy5ptJFOpGTh3PIlUqewWCL0BIJf9QRjMVv
- J/d+Ir3tKUK50uGCn4G4aD0dY5iwIrByozihTuO2mgEKBYjixu4WmMBKV2/ZGNV6/EQPGMebj7T
- eadxB+IeyXTHT02xB6Oh5SG6X/TcsXde8EEF2h/IPk7iGp6yDq4rBBH0QlC8dJU9oDVTrBHLR+u
- f0eHBS2MdnGhWpodPXHgNNBgJzesXpGU3G8RHqDuj+NM4PghshOcQD6pxXaM++0rH8F+YTHTyO8
- ax0f9IhdovMJC3c7/tTNYGLi24iEgGzF8i8W2tfk4H4fD9LO
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Transfer-Encoding: 8bit
 
-Use AD7124_MAX_CHANNELS macro instead of hardcoding 16 in
-ad7124_disable_all(). We already have the macro, so we should use it.
+The function opencodes for_each_set_bit_wrap(). Use it, and while there
+switch from goto-driven codeflow to more high-level constructions.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- drivers/iio/adc/ad7124.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/lpfc/lpfc_sli.c | 62 +++++++++++-------------------------
+ 1 file changed, 18 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index c24f3d5127cb83eeab0cf37882446fc994173274..9ace3e0914f5acab695c0382df758f56f333ae72 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -702,7 +702,7 @@ static int ad7124_disable_all(struct ad_sigma_delta *sd)
- 	int ret;
- 	int i;
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index a8fbdf7119d8..9a2b821adfaa 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -20370,62 +20370,36 @@ lpfc_check_next_fcf_pri_level(struct lpfc_hba *phba)
+ uint16_t
+ lpfc_sli4_fcf_rr_next_index_get(struct lpfc_hba *phba)
+ {
+-	uint16_t next_fcf_index;
++	uint16_t next;
  
--	for (i = 0; i < 16; i++) {
-+	for (i = 0; i < AD7124_MAX_CHANNELS; i++) {
- 		ret = ad7124_disable_one(sd, i);
- 		if (ret < 0)
- 			return ret;
-
----
-base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
-change-id: 20250917-iio-adc-ad7124-use-ad7124_max_channels-37e2537d7446
-
-Best regards,
+-initial_priority:
+-	/* Search start from next bit of currently registered FCF index */
+-	next_fcf_index = phba->fcf.current_rec.fcf_indx;
+-
+-next_priority:
+-	/* Determine the next fcf index to check */
+-	next_fcf_index = (next_fcf_index + 1) % LPFC_SLI4_FCF_TBL_INDX_MAX;
+-	next_fcf_index = find_next_bit(phba->fcf.fcf_rr_bmask,
+-				       LPFC_SLI4_FCF_TBL_INDX_MAX,
+-				       next_fcf_index);
++	do {
++		for_each_set_bit_wrap(next, phba->fcf.fcf_rr_bmask,
++				LPFC_SLI4_FCF_TBL_INDX_MAX, phba->fcf.current_rec.fcf_indx) {
++			if (next == phba->fcf.current_rec.fcf_indx)
++				continue;
+ 
+-	/* Wrap around condition on phba->fcf.fcf_rr_bmask */
+-	if (next_fcf_index >= LPFC_SLI4_FCF_TBL_INDX_MAX) {
+-		/*
+-		 * If we have wrapped then we need to clear the bits that
+-		 * have been tested so that we can detect when we should
+-		 * change the priority level.
+-		 */
+-		next_fcf_index = find_first_bit(phba->fcf.fcf_rr_bmask,
+-					       LPFC_SLI4_FCF_TBL_INDX_MAX);
+-	}
++			if (phba->fcf.fcf_pri[next].fcf_rec.flag & LPFC_FCF_FLOGI_FAILED == 0) {
++				lpfc_printf_log(phba, KERN_INFO, LOG_FIP,
++					"2845 Get next roundrobin failover FCF (x%x)\n", next);
++				return next;
++			}
+ 
++			if (list_is_singular(&phba->fcf.fcf_pri_list))
++				return LPFC_FCOE_FCF_NEXT_NONE;
++		}
+ 
+-	/* Check roundrobin failover list empty condition */
+-	if (next_fcf_index >= LPFC_SLI4_FCF_TBL_INDX_MAX ||
+-		next_fcf_index == phba->fcf.current_rec.fcf_indx) {
+ 		/*
+ 		 * If next fcf index is not found check if there are lower
+ 		 * Priority level fcf's in the fcf_priority list.
+ 		 * Set up the rr_bmask with all of the avaiable fcf bits
+ 		 * at that level and continue the selection process.
+ 		 */
+-		if (lpfc_check_next_fcf_pri_level(phba))
+-			goto initial_priority;
+-		lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
+-				"2844 No roundrobin failover FCF available\n");
+-
+-		return LPFC_FCOE_FCF_NEXT_NONE;
+-	}
+-
+-	if (next_fcf_index < LPFC_SLI4_FCF_TBL_INDX_MAX &&
+-		phba->fcf.fcf_pri[next_fcf_index].fcf_rec.flag &
+-		LPFC_FCF_FLOGI_FAILED) {
+-		if (list_is_singular(&phba->fcf.fcf_pri_list))
+-			return LPFC_FCOE_FCF_NEXT_NONE;
++	} while (lpfc_check_next_fcf_pri_level(phba));
+ 
+-		goto next_priority;
+-	}
+-
+-	lpfc_printf_log(phba, KERN_INFO, LOG_FIP,
+-			"2845 Get next roundrobin failover FCF (x%x)\n",
+-			next_fcf_index);
++	lpfc_printf_log(phba, KERN_WARNING, LOG_FIP,
++			"2844 No roundrobin failover FCF available\n");
+ 
+-	return next_fcf_index;
++	return LPFC_FCOE_FCF_NEXT_NONE;
+ }
+ 
+ /**
 -- 
-David Lechner <dlechner@baylibre.com>
+2.43.0
 
 
