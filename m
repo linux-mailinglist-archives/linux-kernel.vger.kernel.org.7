@@ -1,93 +1,143 @@
-Return-Path: <linux-kernel+bounces-821353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E9EB810A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:36:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D9AB810A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888E03B1181
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5987E7208EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4900D2F9DA2;
-	Wed, 17 Sep 2025 16:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FDA2F9C3E;
+	Wed, 17 Sep 2025 16:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1XDHKkGE"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6cnV/rF"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BBD2F7AAE;
-	Wed, 17 Sep 2025 16:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62512264B1
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126852; cv=none; b=mhZeVLTLSFP2DgZpY8IpxBPGBWsqyKRqyl113t60YP4Y4RgiESuiNXBL0aN0bg2bJt4vNn18OND1lMVzjVGy1yjF2AedDVXDLBd0aJRfHbmHwP54Hf9dVI/0izVkiiFNfOZ1yS1pkAj9qXDmOeetInDtYDY8XHM9Da/tT1dX8oA=
+	t=1758126829; cv=none; b=hMqOnVwGpAIV7wyRa6BvBkhshVFYY0U4YB4kiomKer6EvxqH4ISC8aO5YlqebXktLNMFRcB9NTgNi8RorBS4o3bAoCDjf8yHZBteGhR9+etflqWHTzv+0gW1atmE2k/KEMOX3k59tNqpHUPwuBJs6KRTV9yWVilKDd1wIOTnwbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126852; c=relaxed/simple;
-	bh=aeS9l2tTCDKgWAxwJ8mToW14uNusa+g81dSkxQCfmxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SwZz3sARu6sS8Oc4VdK44T1MTe8wGPNbZu87jwOUjc23ZbgNSQrIeaZH15slqG7Ba9osw5Nt+gEAKIm4r/0hxMKqw0kRoYvm3Rgo74I1hd374DgqrNROCUy7FSCIuP5Lyx0s3R3J9RNn0CRXAZTaSqxMaqXbhFtTTy2LhobqWz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1XDHKkGE; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cRkqc2FS0zm10gb;
-	Wed, 17 Sep 2025 16:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1758126840; x=1760718841; bh=aeS9l2tTCDKgWAxwJ8mToW14
-	uNusa+g81dSkxQCfmxc=; b=1XDHKkGEGpHrx0LRQPUitQQsoYjNHCvGTCmMC+8a
-	zCT/OcU6aMv3IPKhABXFh054g/KaC05SdTNGr8RARkk8EeoABSf6T2k6QHmI/xi7
-	o5XzmiH0Asc0D7DL0f6qpa6Li2jt5UQN6VkCUaAByCEplKxcjaWpKTVM+Yea3G4P
-	QAjqakWq1YT6g0LacZSLub3kd9leW6hyDkXXNfzCmVaN+jjlJw6tEmrmZnNj6VaY
-	ofvhPY6zyoUFipog1/mFWzBPS3VZbT6WGKS6wURY7O+e7dfOdXjdhHOZft86NTxO
-	vhxv+g93LuqHdTH05SUx061HGmGtQUjCDighAO7xxeCfkQ==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id vvNpeq7vN_Z4; Wed, 17 Sep 2025 16:34:00 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cRkq72k82zm1744;
-	Wed, 17 Sep 2025 16:33:37 +0000 (UTC)
-Message-ID: <c276985b-dff1-48ea-a4b4-d9526b7dece6@acm.org>
-Date: Wed, 17 Sep 2025 09:33:36 -0700
+	s=arc-20240116; t=1758126829; c=relaxed/simple;
+	bh=T5rlTmWWL8B+5YTFOLQue/O9Et9XFS1RiNWss6/XQ4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EelDuPHB5SuEeN6sX7xLBQojcsSpe+/dWX3e2xGSMA02wqUhMtHu9csVJhqZvH5nZ2OR5F02qeUcoFeiCT6H0nFmLR4L0df1HL5lCPH72QePxtnrnZy82SLww4xbJ5qMEqm9xhbti7X7hiS4lYixFB2B9ESHCMbkjANOKFTJlLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6cnV/rF; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-72e565bf2feso337067b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758126827; x=1758731627; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G8RlqH67o65j5zlsChBs5Q8TtBN1OWluyR+3o2WLBvY=;
+        b=T6cnV/rFgXqt/niP2fM57gb+CLF2WZs6T4GqVWyC9DWxPy5yB5DIXwEtk/EA2yC0c9
+         0PQb6m3EeiWNuPGw41KNOJKGH1B+Gxw3XtErDq8N+EpKg9dUnIVPoVV+LrNtfrTG7bDv
+         l6As/7Cf9DhfTtH+Kz0AiLoCOdbFWsYLublGV2BMqjZQacHM3LRjD7b6KkJwL+oQsc7J
+         60Q47It15vBvlfyUWta/IRfGh3ZtAZ40RLOe/6QtUm/M1cW3GeASWktY6Qyog33Sc9jY
+         m56tERbOLqDzHNkr5AAu+lX/VGaBLlBlPpZTYoUxZ/OC0DGnGAesr7hX90PdM/oR0oJM
+         5+Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758126827; x=1758731627;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8RlqH67o65j5zlsChBs5Q8TtBN1OWluyR+3o2WLBvY=;
+        b=Ep96kHSZexMcolRC3LKhRXImJ2mp4bpRKV74JWfeecS8KYGfimjBEt3GyF2Xt6ffA5
+         kvxNTGAboYHi06F704D9HYF+V2fZ4TMsjluWVaqRg69ThwUvM6X/Nx2S7trjZcOVXOvP
+         Jn7rqmp6MOs84rMcrEVmIErpE0sR4MT1mH3J2wKvVQQj/TYDqgv4no+DI0EfeFIzZJM5
+         nH6GvO/nzAhdXoZWn9FhMSTjk1avx+OMY3kDMXj6Y2PMPYiwhMpn+a5Ll0mJgOwePYmv
+         yLcCQzmoeBqmIocmIQytOUTkt8LKgu8L/W6K1gl7k0KRp7fJSPg3TzGUWIXZKiYRFeH0
+         EEuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVlUXhjzfg4xy705mOOPLg/N99+xMsO48thgW1dxAzZVLhewDN1qi1t386Awm9H+4O4G//vWtVE0nkDko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrUrn3IBdCwKlcl55b0IO1rFM045hBDc9DXIi7J3vhLamf97je
+	9DXDdZaa0SW33+8lFAaPe5eRNnJ8vmte8+njUyhtdfkYQmYq3WnAwiOX
+X-Gm-Gg: ASbGncv00yqZEPFOrN6rXUwLiruIR62GkoxAACpL+VSzsVc3ZPyfovr4aBEJ0a9xtGy
+	HPLS9ER1Tj2cP5LxwUsuUVNzMwcH6kJC5HEQI8iAE81HioBJoDuoxfEwy7syJ4zXBPyNyWiDDO5
+	yEzYI7ILGe+0+TJg4x/P5vYiXS7pU96T91KQwDUpXs+5vJ/8gXYStyLDvMgJEXYGXz7ZQCukzgs
+	DCr+h4QiyTC21Oi6OVZpEuUWEVPpnd3+sLxMxfuNN1VJFtOUmiSUVC5c9sQvyBGuYaPSNx25AJ2
+	HRDKqUIEJCdkrBF0kKebl7O0e0ov114A8y10/9cHm6qP1JHvOjz8MsDODVvX+zkDNN71b+QwGyo
+	m3KoteJYuNB1EeGvH/+LQcuc9lQ5orAH9Y7l7WD9y1Sx34Ew=
+X-Google-Smtp-Source: AGHT+IFLdAPsCemxYmXa54CmGTZ+ICmGT/J4SrrjoNdABQMevWtNWlVjH/3dQNMTr0HHKjs9ZEs8Vw==
+X-Received: by 2002:a05:690c:64ca:b0:734:ee:200b with SMTP id 00721157ae682-7389304b317mr22927617b3.51.1758126826608;
+        Wed, 17 Sep 2025 09:33:46 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:4c::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7389d32a27dsm5115687b3.10.2025.09.17.09.33.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 09:33:46 -0700 (PDT)
+Date: Wed, 17 Sep 2025 09:33:41 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v6 0/9] vsock: add namespace support to
+ vhost-vsock
+Message-ID: <aMri5apAxBpHtZbJ@devvm11784.nha0.facebook.com>
+References: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com>
+ <20250917161928.GR394836@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] scsi: ufs: core: Fix data race in CPU latency PM QoS
- request handling
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
- quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
- adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
- neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
- quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com
-References: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250917161928.GR394836@horms.kernel.org>
 
-On 9/17/25 2:41 AM, Zhongqiu Han wrote:
-> This patch introduces a dedicated mutex to serialize PM QoS operations,
-> preventing data races and ensuring safe access to PM QoS resources,
-> including sysfs interface reads.
+On Wed, Sep 17, 2025 at 05:19:28PM +0100, Simon Horman wrote:
+> On Tue, Sep 16, 2025 at 04:43:44PM -0700, Bobby Eshleman wrote:
+> 
+> ...
+> 
+> > base-commit: 949ddfb774fe527cebfa3f769804344940f7ed2e
+> 
+> Hi Bobby,
+> 
+> This series does not seem to compile when applied to the commit above.
+> Likewise when applied to current net-next (which is now slightly newer).
+> 
+> hyperv_transport.c: In function ‘hvs_open_connection’:
+> hyperv_transport.c:316:14: error: too few arguments to function ‘vsock_find_bound_socket’
+>   316 |         sk = vsock_find_bound_socket(&addr, vsock_global_dummy_net());
+>       |              ^~~~~~~~~~~~~~~~~~~~~~~
+> In file included from hyperv_transport.c:15:
+> /home/horms/projects/linux/linux/include/net/af_vsock.h:218:14: note: declared here
+>   218 | struct sock *vsock_find_bound_socket(struct sockaddr_vm *addr, struct net *net,
+>       |              ^~~~~~~~~~~~~~~~~~~~~~~
+> 
+> -- 
+> pw-bot: changes-requested
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Ah dang it, looks like I had hvc disabled when I build tested it.
 
+Thanks for the catch, I'll fix this in the next rev.
+
+Best,
+Bobby
 
