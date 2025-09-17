@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-820641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60084B7D1DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:19:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF6EB7D1C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8787620476
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:19:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A00A465FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76556330EE3;
-	Wed, 17 Sep 2025 12:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412BE32897E;
+	Wed, 17 Sep 2025 12:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSauP6aJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbPoNrMK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0AA37C116;
-	Wed, 17 Sep 2025 12:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A2B371EAF;
+	Wed, 17 Sep 2025 12:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758111357; cv=none; b=pF92yc4wHN81Ui46Ye/LyOHz/oDGyl3Wj9Km6nWXaJfDBLOSjqiU8khgtDo/QzdHisDP2SXSx11dBPw30x2TWvGy7JLio0LveNYY0BvnuFa+vIyR4UCPp2Okdw14zBD8Ua/rWalBDjHzEzil9RCD7H2Rck76soaAwoGeLOz6AVo=
+	t=1758111356; cv=none; b=NqOlXbF4z1MRMjRHNCmVTRiZZknVM6fOJIumKgYAQVFBc9+SYGg5DW4vNq/Fq8tRbXj2/530LDsDKL/A12098KVnYlE+AHOo8S09VA2utggvi8fpE6c8GFL+UQH4dPOxTh2Au1V+xTfu/luWjKqSvJfw9i+1b+LBNIkCr4nVsYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758111357; c=relaxed/simple;
-	bh=KDZQ/WnN5vw7Bl6a4chb+TcehefEfRpozxecUjS1tVU=;
+	s=arc-20240116; t=1758111356; c=relaxed/simple;
+	bh=bNOmw1tzFH8Sl7kR3p+wUYP6U5+a6FHYIcsXQNkIydI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NCNIKTQHwWhPfS2wBIKzcuRKUWPLhI19BH/3viRuO1MdovV11UpRhsP9TbPOEigBJ8BkSwN3+ifsMEQFDVK+61+MQEwFU1udCS+0p34sDHQ+w+NnYhOhOv9RERFJpFx764n84dfxceRIG2BqnO4c4fgLtElIX1WgLfM+liFoQ4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSauP6aJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26724C4CEF7;
-	Wed, 17 Sep 2025 12:15:57 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZIIUVOznDP3RT/8RWO7Y3mWRq9m8vvmtS1BidvMI0Hw5QJcNFoCC7Ac4R66VybQCEKfr9jZ7zTMb+YW46SKbl3gMu1O2FsSbvSSRCpnUZPkMFCBMbW//0pXpNYwshKYC4y75rwcog0bD6ZvTGlIejJgespJvRlvVgKVqBXFK+rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jbPoNrMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83037C19422;
+	Wed, 17 Sep 2025 12:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758111357;
-	bh=KDZQ/WnN5vw7Bl6a4chb+TcehefEfRpozxecUjS1tVU=;
+	s=k20201202; t=1758111356;
+	bh=bNOmw1tzFH8Sl7kR3p+wUYP6U5+a6FHYIcsXQNkIydI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aSauP6aJcU9M95c1AYqWV0JLEGZhuDsNcSVaPznUJ79TcJbKvkmv4fX+JoXSR1p4/
-	 xRXl/3cSWXhu4Lt5tKk2YAvMZhZ8eax/HDx6tNVjISKTkQp9HGPOkqM246SU56CGx2
-	 pYkTPK65EulCmBvT2GB0LY/GSDDscgFY5GZPfXj+1hdglwT+ixxlwu4MDZdBOr9c+p
-	 7z9rawYAnO43cbG11l9DJk+37IXHQYRDfCnO+PT/lRo4Otrr5LU7B5s1mZcy5h7lZX
-	 xk43b0K/W1L0s1VzS4Ocr9kWRkWPBFWfoSeK0LMn0iTXVAKqxN/q8GjkWfvPUWuTXH
-	 hWKi5jo+A8fRg==
+	b=jbPoNrMKn1gSfxlY36zJAHXYIUfCUJDeVVvWAhIFQYCrdjO7KBRubv7DJqBODQG6x
+	 ifnvCcTkAaO3Gh2aPLIkWOFQ7pP8auVp/KiVU+T5E7w/tUKR6Wo3bMbcuevEsw/0uP
+	 JU5C6QGDrTOJFlKxIVUhm3dqQyiBpLSUs99w/xVKAQncuGGpZyrdgCNNgG3f55uxYq
+	 8P01LwaLHH8ZdulLmXcBUXdvGiUaZKpPuHNFbiDcQMBt2UPMOeOaDRFoc6MUCbl7R2
+	 2rMGJbyZoDksWXhvV602xkLmLb7DpPFXUtV5EG4t6BvJVoHlcCzZ8656m0/97Xocue
+	 OAYa+3vfkcN+g==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uyr4h-0000000CGeO-2J2F;
+	id 1uyr4h-0000000CGeS-2Q88;
 	Wed, 17 Sep 2025 14:15:51 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -50,19 +50,10 @@ To: Jonathan Corbet <corbet@lwn.net>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Masahiro Yamada <mchehab+huawei@kernel.org>,
-	Miguel Ojeda <mchehab+huawei@kernel.org>,
-	Nathan Chancellor <mchehab+huawei@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 19/24] docs: add support to build manpages from kerneldoc output
-Date: Wed, 17 Sep 2025 14:15:13 +0200
-Message-ID: <25a6f9a1c1d746c9e6b3a5eba181d01fe98976ea.1758111077.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v7 20/24] tools: kernel-doc: add a see also section at man pages
+Date: Wed, 17 Sep 2025 14:15:14 +0200
+Message-ID: <c16fa58194eb2a2d165f4a8f591754523fde3391.1758111077.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1758111077.git.mchehab+huawei@kernel.org>
 References: <cover.1758111077.git.mchehab+huawei@kernel.org>
@@ -72,261 +63,215 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Generating man files currently requires running a separate
-script. The target also doesn't appear at the docs Makefile.
+While cross-references are complex, as related ones can be on
+different files, we can at least correlate the ones that belong
+to the same file, adding a SEE ALSO section for them.
 
-Add support for mandocs at the Makefile, adding the build
-logic inside sphinx-build-wrapper, updating documentation
-and dropping the ancillary script.
+The result is not bad. See for instance:
+
+	$ tools/docs/sphinx-build-wrapper --sphinxdirs driver-api/media -- mandocs
+	$ man Documentation/output/driver-api/man/edac_pci_add_device.9
+
+	edac_pci_add_device(9)  Kernel Hacker's Manual  edac_pci_add_device(9)
+
+	NAME
+	       edac_pci_add_device  - Insert the 'edac_dev' structure into the
+	       edac_pci global list and create sysfs entries  associated  with
+	       edac_pci structure.
+
+	SYNOPSIS
+	       int  edac_pci_add_device  (struct  edac_pci_ctl_info *pci , int
+	       edac_idx );
+
+	ARGUMENTS
+	       pci         pointer to the edac_device structure to be added to
+	                   the list
+
+	       edac_idx    A unique numeric identifier to be assigned to the
+
+	RETURN
+	       0 on Success, or an error code on failure
+
+	SEE ALSO
+	       edac_pci_alloc_ctl_info(9),          edac_pci_free_ctl_info(9),
+	       edac_pci_alloc_index(9),  edac_pci_del_device(9), edac_pci_cre‐
+	       ate_generic_ctl(9),            edac_pci_release_generic_ctl(9),
+	       edac_pci_create_sysfs(9), edac_pci_remove_sysfs(9)
+
+	August 2025               edac_pci_add_device   edac_pci_add_device(9)
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/Makefile                 |  3 +-
- Documentation/doc-guide/kernel-doc.rst | 29 ++++-----
- Makefile                               |  2 +-
- scripts/split-man.pl                   | 28 ---------
- tools/docs/sphinx-build-wrapper        | 81 ++++++++++++++++++++++++--
- 5 files changed, 95 insertions(+), 48 deletions(-)
- delete mode 100755 scripts/split-man.pl
+ scripts/lib/kdoc/kdoc_files.py  |  5 +-
+ scripts/lib/kdoc/kdoc_output.py | 84 +++++++++++++++++++++++++++++++--
+ 2 files changed, 83 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 05397b9d844d..aa42b2cb7030 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -53,7 +53,7 @@ ifeq ($(HAVE_SPHINX),0)
- else # HAVE_SPHINX
+diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
+index 9e09b45b02fa..061c033f32da 100644
+--- a/scripts/lib/kdoc/kdoc_files.py
++++ b/scripts/lib/kdoc/kdoc_files.py
+@@ -275,7 +275,10 @@ class KernelFiles():
+                 self.config.log.warning("No kernel-doc for file %s", fname)
+                 continue
  
- # Common documentation targets
--infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
-+mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
- 	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
- 		--sphinxdirs="$(SPHINXDIRS)" --conf="$(SPHINX_CONF)" \
-@@ -104,6 +104,7 @@ dochelp:
- 	@echo  '  htmldocs        - HTML'
- 	@echo  '  texinfodocs     - Texinfo'
- 	@echo  '  infodocs        - Info'
-+	@echo  '  mandocs         - Man pages'
- 	@echo  '  latexdocs       - LaTeX'
- 	@echo  '  pdfdocs         - PDF'
- 	@echo  '  epubdocs        - EPUB'
-diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
-index af9697e60165..4370cc8fbcf5 100644
---- a/Documentation/doc-guide/kernel-doc.rst
-+++ b/Documentation/doc-guide/kernel-doc.rst
-@@ -579,20 +579,23 @@ source.
- How to use kernel-doc to generate man pages
- -------------------------------------------
- 
--If you just want to use kernel-doc to generate man pages you can do this
--from the kernel git tree::
-+To generate man pages for all files that contain kernel-doc markups, run::
- 
--  $ scripts/kernel-doc -man \
--    $(git grep -l '/\*\*' -- :^Documentation :^tools) \
--    | scripts/split-man.pl /tmp/man
-+  $ make mandocs
- 
--Some older versions of git do not support some of the variants of syntax for
--path exclusion.  One of the following commands may work for those versions::
-+Or calling ``script-build-wrapper`` directly::
- 
--  $ scripts/kernel-doc -man \
--    $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
--    | scripts/split-man.pl /tmp/man
-+  $ ./tools/docs/sphinx-build-wrapper mandocs
- 
--  $ scripts/kernel-doc -man \
--    $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
--    | scripts/split-man.pl /tmp/man
-+The output will be at ``/man`` directory inside the output directory
-+(by default: ``Documentation/output``).
+-            for arg in self.results[fname]:
++            symbols = self.results[fname]
++            self.out_style.set_symbols(symbols)
 +
-+Optionally, it is possible to generate a partial set of man pages by
-+using SPHINXDIRS:
-+
-+  $ make SPHINXDIRS=driver-api/media mandocs
-+
-+.. note::
-+
-+   When SPHINXDIRS={subdir} is used, it will only generate man pages for
-+   the files explicitly inside a ``Documentation/{subdir}/.../*.rst`` file.
-diff --git a/Makefile b/Makefile
-index 6bfe776bf3c5..9bd44afeda26 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1800,7 +1800,7 @@ $(help-board-dirs): help-%:
- # Documentation targets
- # ---------------------------------------------------------------------------
- DOC_TARGETS := xmldocs latexdocs pdfdocs htmldocs epubdocs cleandocs \
--	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs
-+	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs mandocs
- PHONY += $(DOC_TARGETS)
- $(DOC_TARGETS):
- 	$(Q)$(MAKE) $(build)=Documentation $@
-diff --git a/scripts/split-man.pl b/scripts/split-man.pl
-deleted file mode 100755
-index 96bd99dc977a..000000000000
---- a/scripts/split-man.pl
-+++ /dev/null
-@@ -1,28 +0,0 @@
--#!/usr/bin/env perl
--# SPDX-License-Identifier: GPL-2.0
--#
--# Author: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
--#
--# Produce manpages from kernel-doc.
--# See Documentation/doc-guide/kernel-doc.rst for instructions
--
--if ($#ARGV < 0) {
--   die "where do I put the results?\n";
--}
--
--mkdir $ARGV[0],0777;
--$state = 0;
--while (<STDIN>) {
--    if (/^\.TH \"[^\"]*\" 9 \"([^\"]*)\"/) {
--	if ($state == 1) { close OUT }
--	$state = 1;
--	$fn = "$ARGV[0]/$1.9";
--	print STDERR "Creating $fn\n";
--	open OUT, ">$fn" or die "can't open $fn: $!\n";
--	print OUT $_;
--    } elsif ($state != 0) {
--	print OUT $_;
--    }
--}
--
--close OUT;
-diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
-index 8d1f77c4a880..7a6eb41837e6 100755
---- a/tools/docs/sphinx-build-wrapper
-+++ b/tools/docs/sphinx-build-wrapper
-@@ -47,12 +47,14 @@ the newer version.
- import argparse
- import locale
- import os
-+import re
- import shlex
- import shutil
- import subprocess
- import sys
++            for arg in symbols:
+                 m = self.out_msg(fname, arg.name, arg)
  
- from concurrent import futures
-+from glob import glob
+                 if m is None:
+diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
+index ea8914537ba0..1eca9a918558 100644
+--- a/scripts/lib/kdoc/kdoc_output.py
++++ b/scripts/lib/kdoc/kdoc_output.py
+@@ -215,6 +215,9 @@ class OutputFormat:
  
- from lib.python_version import PythonVersion
- from lib.latex_fonts import LatexFontChecker
-@@ -77,6 +79,7 @@ TARGETS = {
-     "epubdocs":      { "builder": "epub",    "out_dir": "epub" },
-     "texinfodocs":   { "builder": "texinfo", "out_dir": "texinfo" },
-     "infodocs":      { "builder": "texinfo", "out_dir": "texinfo" },
-+    "mandocs":       { "builder": "man",     "out_dir": "man" },
-     "latexdocs":     { "builder": "latex",   "out_dir": "latex" },
-     "pdfdocs":       { "builder": "latex",   "out_dir": "latex" },
-     "xmldocs":       { "builder": "xml",     "out_dir": "xml" },
-@@ -503,6 +506,71 @@ class SphinxBuilder:
-             except subprocess.CalledProcessError as e:
-                 sys.exit(f"Error generating info docs: {e}")
+     # Virtual methods to be overridden by inherited classes
+     # At the base class, those do nothing.
++    def set_symbols(self, symbols):
++        """Get a list of all symbols from kernel_doc"""
++
+     def out_doc(self, fname, name, args):
+         """Outputs a DOC block"""
  
-+    def handle_man(self, kerneldoc, docs_dir, src_dir, output_dir):
+@@ -577,6 +580,7 @@ class ManFormat(OutputFormat):
+ 
+         super().__init__()
+         self.modulename = modulename
++        self.symbols = []
+ 
+         dt = None
+         tstamp = os.environ.get("KBUILD_BUILD_TIMESTAMP")
+@@ -593,6 +597,68 @@ class ManFormat(OutputFormat):
+ 
+         self.man_date = dt.strftime("%B %Y")
+ 
++    def arg_name(self, args, name):
 +        """
-+        Create man pages from kernel-doc output
++        Return the name that will be used for the man page.
++
++        As we may have the same name on different namespaces,
++        prepend the data type for all types except functions and typedefs.
++
++        The doc section is special: it uses the modulename.
 +        """
 +
-+        re_kernel_doc = re.compile(r"^\.\.\s+kernel-doc::\s*(\S+)")
-+        re_man = re.compile(r'^\.TH "[^"]*" (\d+) "([^"]*)"')
++        dtype = args.type
 +
-+        if docs_dir == src_dir:
-+            #
-+            # Pick the entire set of kernel-doc markups from the entire tree
-+            #
-+            kdoc_files = set([self.srctree])
-+        else:
-+            kdoc_files = set()
++        if dtype == "doc":
++            return self.modulename
 +
-+            for fname in glob(os.path.join(src_dir, "**"), recursive=True):
-+                if os.path.isfile(fname) and fname.endswith(".rst"):
-+                    with open(fname, "r", encoding="utf-8") as in_fp:
-+                        data = in_fp.read()
++        if dtype in ["function", "typedef"]:
++            return name
 +
-+                    for line in data.split("\n"):
-+                        match = re_kernel_doc.match(line)
-+                        if match:
-+                            if os.path.isfile(match.group(1)):
-+                                kdoc_files.add(match.group(1))
++        return f"{dtype} {name}"
 +
-+        if not kdoc_files:
-+                sys.exit(f"Directory {src_dir} doesn't contain kernel-doc tags")
++    def set_symbols(self, symbols):
++        """
++        Get a list of all symbols from kernel_doc.
 +
-+        cmd = [ kerneldoc, "-m" ] + sorted(kdoc_files)
-+        try:
-+            if self.verbose:
-+                print(" ".join(cmd))
++        Man pages will uses it to add a SEE ALSO section with other
++        symbols at the same file.
++        """
++        self.symbols = symbols
 +
-+            result = subprocess.run(cmd, stdout=subprocess.PIPE, text= True)
++    def out_tail(self, fname, name, args):
++        """Adds a tail for all man pages"""
 +
-+            if result.returncode:
-+                print(f"Warning: kernel-doc returned {result.returncode} warnings")
++        # SEE ALSO section
++        if len(self.symbols) >= 2:
++            cur_name = self.arg_name(args, name)
 +
-+        except (OSError, ValueError, subprocess.SubprocessError) as e:
-+            sys.exit(f"Failed to create man pages for {src_dir}: {repr(e)}")
++            self.data += f'.SH "SEE ALSO"' + "\n.PP\n"
++            related = []
++            for arg in self.symbols:
++                out_name = self.arg_name(arg, arg.name)
 +
-+        fp = None
-+        try:
-+            for line in result.stdout.split("\n"):
-+                match = re_man.match(line)
-+                if not match:
-+                    if fp:
-+                        fp.write(line + '\n')
++                if cur_name == out_name:
 +                    continue
 +
-+                if fp:
-+                    fp.close()
++                related.append(f"\\fB{out_name}\\fR(9)")
 +
-+                fname = f"{output_dir}/{match.group(2)}.{match.group(1)}"
++            self.data += ",\n".join(related) + "\n"
 +
-+                if self.verbose:
-+                    print(f"Creating {fname}")
-+                fp = open(fname, "w", encoding="utf-8")
-+                fp.write(line + '\n')
-+        finally:
-+            if fp:
-+                fp.close()
++        # TODO: does it make sense to add other sections? Maybe
++        # REPORTING ISSUES? LICENSE?
 +
-     def cleandocs(self, builder):           # pylint: disable=W0613
-         """Remove documentation output directory"""
-         shutil.rmtree(self.builddir, ignore_errors=True)
-@@ -531,7 +599,7 @@ class SphinxBuilder:
-         # Other targets require sphinx-build, so check if it exists
-         #
-         sphinxbuild = shutil.which(self.sphinxbuild, path=self.env["PATH"])
--        if not sphinxbuild:
-+        if not sphinxbuild and target != "mandocs":
-             sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")
++    def msg(self, fname, name, args):
++        """
++        Handles a single entry from kernel-doc parser.
++
++        Add a tail at the end of man pages output.
++        """
++        super().msg(fname, name, args)
++        self.out_tail(fname, name, args)
++
++        return self.data
++
+     def output_highlight(self, block):
+         """
+         Outputs a C symbol that may require being highlighted with
+@@ -618,7 +684,9 @@ class ManFormat(OutputFormat):
+         if not self.check_doc(name, args):
+             return
  
-         if builder == "latex":
-@@ -619,10 +687,13 @@ class SphinxBuilder:
-                 output_dir,
-             ]
+-        self.data += f'.TH "{self.modulename}" 9 "{self.modulename}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        out_name = self.arg_name(args, name)
++
++        self.data += f'.TH "{self.modulename}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
  
--            try:
--                self.run_sphinx(sphinxbuild, build_args, env=self.env)
--            except (OSError, ValueError, subprocess.SubprocessError) as e:
--                sys.exit(f"Build failed: {repr(e)}")
-+            if target == "mandocs":
-+                self.handle_man(kerneldoc, docs_dir, src_dir, output_dir)
-+            else:
-+                try:
-+                    self.run_sphinx(sphinxbuild, build_args, env=self.env)
-+                except (OSError, ValueError, subprocess.SubprocessError) as e:
-+                    sys.exit(f"Build failed: {repr(e)}")
+         for section, text in args.sections.items():
+             self.data += f'.SH "{section}"' + "\n"
+@@ -627,7 +695,9 @@ class ManFormat(OutputFormat):
+     def out_function(self, fname, name, args):
+         """output function in man"""
  
-             #
-             # Ensure that each html/epub output will have needed static files
+-        self.data += f'.TH "{name}" 9 "{name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
++        out_name = self.arg_name(args, name)
++
++        self.data += f'.TH "{name}" 9 "{out_name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"{name} \\- {args['purpose']}\n"
+@@ -671,7 +741,9 @@ class ManFormat(OutputFormat):
+             self.output_highlight(text)
+ 
+     def out_enum(self, fname, name, args):
+-        self.data += f'.TH "{self.modulename}" 9 "enum {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        out_name = self.arg_name(args, name)
++
++        self.data += f'.TH "{self.modulename}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"enum {name} \\- {args['purpose']}\n"
+@@ -703,8 +775,9 @@ class ManFormat(OutputFormat):
+     def out_typedef(self, fname, name, args):
+         module = self.modulename
+         purpose = args.get('purpose')
++        out_name = self.arg_name(args, name)
+ 
+-        self.data += f'.TH "{module}" 9 "{name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        self.data += f'.TH "{module}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"typedef {name} \\- {purpose}\n"
+@@ -717,8 +790,9 @@ class ManFormat(OutputFormat):
+         module = self.modulename
+         purpose = args.get('purpose')
+         definition = args.get('definition')
++        out_name = self.arg_name(args, name)
+ 
+-        self.data += f'.TH "{module}" 9 "{args.type} {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        self.data += f'.TH "{module}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"{args.type} {name} \\- {purpose}\n"
 -- 
 2.51.0
 
