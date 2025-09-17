@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-821798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56CB4B82508
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:40:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54CDB82510
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C65327E8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:40:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858EB6201BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2C232B4B1;
-	Wed, 17 Sep 2025 23:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41303329514;
+	Wed, 17 Sep 2025 23:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="oT0iDBy6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgQtX1mH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35FB32B490;
-	Wed, 17 Sep 2025 23:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F122265630;
+	Wed, 17 Sep 2025 23:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758152441; cv=none; b=ft3mNkiYV0CFOquif9QdmlNTSu8mXzXCvs6m9KJ13C+CD0g/y6p3YY7/DiesH8n8ifGMAQwWi2UaLq8YMnbQqsan8zDKgXi9GMuwZ4H7cMw5AyxcAZsY8FotMU2qMqbf/k7MRvgAtZ8bfJ5WHC88eTqFam5Kx1k3R2OCFBckZZ0=
+	t=1758152504; cv=none; b=jeqrIpaOvY4oFfh82upeceI9jo6FAX1M3qlaE3PQD4C+n5ZSEPkDz5BrhaWfQZ7h/W1euVsf4z8cwQ9d/QzWb+nR7e0qbECq/XhhNQQsb2gWtPX4WsWYg0iKpvv8J4ovXDzLymvywFs84CXJimvAC0YoDz9j9E1JCD64PJIkqG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758152441; c=relaxed/simple;
-	bh=Qc2UYbWx7EeejKtW1EO2f6MFaxFiWH2vxkYJ9Q39XB0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=hChhV8gDUQEG3qgIPZwz2SdZU6N0PhgbYHbZMJEB1lwJnQC+2uXqee7MEiMJoVlDxhRL+7sXpjxqv5xn66ujGl0TB2EHy4RbSDAyAySLhJeYc/S4zQz7BA+5KhWtfQvjDP2TH2ZORNSlCu9QDZtXhM1MTJ29d0PIuBH1wUh2aGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=oT0iDBy6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10344C4CEE7;
-	Wed, 17 Sep 2025 23:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758152440;
-	bh=Qc2UYbWx7EeejKtW1EO2f6MFaxFiWH2vxkYJ9Q39XB0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oT0iDBy6r5P/R1iNfHqc4gbQ24AicRfxW687can2dx00oXBYiW32GIfMyrCUjS4sY
-	 AhPIs0yj8xztgdayC01mhko3n5q1C/gqdo+1hq2uWauxo0aMOYkPi/725vvn3Y7koE
-	 ZjPTSlKSinGcrnTHT9eQkwDMaaHzzw66RsnTWviw=
-Date: Wed, 17 Sep 2025 16:40:37 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- "David S . Miller" <davem@davemloft.net>, Andreas Larsson
- <andreas@gaisler.com>, Dave Hansen <dave.hansen@linux.intel.com>, Andy
- Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Kees Cook <kees@kernel.org>, David Hildenbrand
- <david@redhat.com>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
- <chengming.zhou@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, David Rientjes <rientjes@google.com>, Shakeel Butt
- <shakeel.butt@linux.dev>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Masami
- Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jason
- Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu
- <peterx@redhat.com>, Jann Horn <jannh@google.com>, Pedro Falcato
- <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>, Mateusz Guzik
- <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
-Message-Id: <20250917164037.21c669dfcbd7b0b49067a49a@linux-foundation.org>
-In-Reply-To: <3b7f0faf-4dbc-4d67-8a71-752fbcdf0906@lucifer.local>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
-	<1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
-	<3b7f0faf-4dbc-4d67-8a71-752fbcdf0906@lucifer.local>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758152504; c=relaxed/simple;
+	bh=gksuHgtQV130LdHluiSdfOyOFN0sEQGZ5ozfjzHEH/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3ZoyrNeASwBRJ99GTwtkfmOqv4yb2GtYrd/JNHN91+wDxjYzpvs686ZqUnXE6X1jXmD7TC/S2mPBr6ra3u+u4LHJf2Z4PxvFRAH52WawGDcAPZ9c/mfSqSFcVraRogwAD4Fbe+x9wExF2v25qjl6KO5psop3yAk9nRwAz+jTmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgQtX1mH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8EB2C4CEE7;
+	Wed, 17 Sep 2025 23:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758152504;
+	bh=gksuHgtQV130LdHluiSdfOyOFN0sEQGZ5ozfjzHEH/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kgQtX1mHxbWBpY5GSzq3w7RKE+uK5JfqSGL3GZXFGqbi6/MgQF2aY1H7TK0pFOMdK
+	 p+oEwGu4w0bSRhsmWc2sXEqaYXtyunj57gdzSHVnc27ED2bukhTqtYjFAGKjXSAcfp
+	 MMzv+2hH1ViP20I+Y5IIlTw3Gv7+Fphar5pcnM1n+wYAtGNHIWSCHcM2+ugUlvwyjS
+	 auko+9otty8Cs0pYyQNx9HT0UydEPwRhKx8pXxksEcMKGUtcLWwD4PKLF9hlRGUs3m
+	 2L1XBcP1WPBw0MY6EyBfFFMmMToAprEv9Iht6KBTvR5wArxW+vtk4YccUPVTSdL3lh
+	 F5weYOOU9SehQ==
+Date: Wed, 17 Sep 2025 16:41:41 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Dylan Hatch <dylanbhatch@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Jiri Kosina <jikos@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Weinan Liu <wnliu@google.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Ian Rogers <irogers@google.com>, linux-toolchains@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	live-patching@vger.kernel.org, joe.lawrence@redhat.com, Puranjay Mohan <puranjay@kernel.org>, 
+	Song Liu <song@kernel.org>, Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+Subject: Re: [PATCH v2 6/6] unwind: arm64: Add reliable stacktrace with
+ sframe unwinder.
+Message-ID: <xo2ro446awhsd7i55shx6tlz6s2azuown4xk6zfm7ie4zz2nqc@244onpurkvy3>
+References: <20250904223850.884188-1-dylanbhatch@google.com>
+ <20250904223850.884188-7-dylanbhatch@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250904223850.884188-7-dylanbhatch@google.com>
 
-On Wed, 17 Sep 2025 06:16:37 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Thu, Sep 04, 2025 at 10:38:50PM +0000, Dylan Hatch wrote:
+> +noinline notrace int arch_stack_walk_reliable(
+> +				stack_trace_consume_fn consume_entry,
+> +				void *cookie, struct task_struct *task)
+> +{
+> +	struct kunwind_reliable_consume_entry_data data = {
+> +		.consume_entry = consume_entry,
+> +		.cookie = cookie,
+> +		.unreliable = false,
+> +	};
+> +
+> +	kunwind_stack_walk(arch_kunwind_reliable_consume_entry, &data, task, NULL);
+> +
+> +	if (data.unreliable)
+> +		return -EINVAL;
 
-> Hi Andrew,
-> 
-> Please apply the below fixpatch to account for an accidentally inverted check.
-> 
-> Thanks, Lorenzo
+As far I can tell, the *only* error condition being checked is if it
+(successfully) fell back to frame pointers.
 
-The fixee is now in mm-stable so I turned this into a standalone thing.
+What if there was some bad or missing sframe data?  Or some unexpected
+condition on the stack?
 
-(hate having to do it this way!  A place where git requirements simply
-don't match the workflow)
+Also, does the exception handling code have correct cfi/sframe metadata?
 
+In order for it to be "reliable", we need to know the unwind reached the
+end of the stack (e.g., the task pt_regs frame, from entry-from-user).
 
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: mm/oom_kill.c: fix inverted check
-Date: Wed, 17 Sep 2025 06:16:37 +0100
-
-Fix an incorrect logic conversion in process_mrelease().
-
-Link: https://lkml.kernel.org/r/3b7f0faf-4dbc-4d67-8a71-752fbcdf0906@lucifer.local
-Fixes: 12e423ba4eae ("mm: convert core mm to mm_flags_*() accessors")
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reported-by: Chris Mason <clm@meta.com>
-  Closes: https://lkml.kernel.org/r/c2e28e27-d84b-4671-8784-de5fe0d14f41@lucifer.local
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- mm/oom_kill.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/mm/oom_kill.c~mm-oom_killc-fix-inverted-check
-+++ a/mm/oom_kill.c
-@@ -1257,7 +1257,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
- 	 * Check MMF_OOM_SKIP again under mmap_read_lock protection to ensure
- 	 * possible change in exit_mmap is seen
- 	 */
--	if (mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm))
-+	if (!mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm))
- 		ret = -EAGAIN;
- 	mmap_read_unlock(mm);
- 
-_
-
-
+-- 
+Josh
 
