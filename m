@@ -1,226 +1,205 @@
-Return-Path: <linux-kernel+bounces-820120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6495CB7C772
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:02:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82535B7CB93
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A342C4E013C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:16:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5D07AC290
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7882D6E41;
-	Wed, 17 Sep 2025 07:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971EB2741C6;
+	Wed, 17 Sep 2025 07:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nf3azMsl"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013069.outbound.protection.outlook.com [52.101.83.69])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RwfhhQZ0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53BB248F52;
-	Wed, 17 Sep 2025 07:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758093366; cv=fail; b=pzKqatNTF2bpddqBiN8yuCKcT7s8j8TMnSkw15dyaRQGvyD7fluYWjSCCHhZJrCFMoIoS9UZm8yCEKSkebCOSmwM0Hup7+4gdsm8sxKlEtUEL4PhSl4i1imSS/w6+MDeB6W58tHI/2YyQTD+oqIWUTO2aFnPZVY2Mv/IoAZDubY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758093366; c=relaxed/simple;
-	bh=ndmFBH3AR7zvJgFFKfvXpXYTySUPuhkSj03OBjBrucA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GB1Cew77c9dBWBZ4nGDyo7+d4f0Ww49mgZtS2v5N+bKFBViVAOVNOu/ifPIyoePULiTCAsn9zdcUhviVTS5lAwThLvn0sASpou8KUzm74+KkPG4FheNBDZ+DzuaEie6JFch8tCpEe6JV+CXIYdSaNTIaXCeTqyRAki9F4MY18bY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nf3azMsl; arc=fail smtp.client-ip=52.101.83.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SXLVLInOepEEqKCddPKFl0DztqEsABaGXfhv5vabRBHI0KtlSVjiwPssBKfOfvfffZNWoMEvdsqxuSSL4SGsdaX9Mc/mleFWQjzO+lMZ5OtqrvGt7Ok2h3f7elOev2/T6CHnWJ7g7z3xQGbmNATtqq4Al95LfZLFQavPAnJjgiym8+Wx9A+mS9pz10UIA5gTKd+Of4CM7vW4JULb+aw8zIuuMpxoethAp3XNQJ7Z8EJ30sMqQqBPZsKrctn5ss6c8V3YiFljy0SE1xf7tmVgYlJ6+yn7+QiByHfsgPrT3aPUOGNgoRFbMvJa0lAaiGrWrc6MJ/Cq74+Z0jbLE53jPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rMpRiFxzym1d9kHVzqALyBj64WIyDEl5egIG4BDyncM=;
- b=itSn6UHE872mYWjxUwnd6eQ8qjjfgNSS55AqnCRYYnJ6UFLPw8Z0GxsVDMcyMAerc4XDYcQ4Xbcb/OU4ZO0rR6K9qngjLrdvmnbL1ueU3bI0SfEaxYKoKy53P3fnwNUGFSwBy6h3/5C/jsL4LkLFg+LHJrkXlMrIPSZmONkoKaqI6mBvnChJB2Fqvzqrx2hySpYX1O6QYukhFx4XCXVcDidSOy9kiAyDaHksq0sQ1tMJiyi3lQi5XMyr47cz/MqJuEml6OfZv0mxz1KmrH4bhAIMVUUhwL2Xwy6okb9kpBJum3U0pEyx8ItcV7haFRCZUmsYQ05+FwfHDT7EtdKHDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rMpRiFxzym1d9kHVzqALyBj64WIyDEl5egIG4BDyncM=;
- b=nf3azMslvJhpA/m/tcATGkkTpQzmuiOOpH6qD9A4ZF8GXu72QQ8AFuRoi7uE/K7RGIklaK0w7EWl17gSWmRZa1mvPwXzbvsXd0wKdpsBGqnVnTtG0SyZ+UTPCMaivT39UO7rjb9J5LnXZGjcfKFRrNHz0wqtD5hVV3EJsSuC/CFUg+E/aepQAMTdGDwAgVUCHcip/Sg0VztusoYpBzeI1o2jGn+sIEU7XcVRacisxdBQ/3nj9+eUFYd4Z7qn/JFBX1bQN8k/KkjeIL/9Jb0ZscHibjMCCm0n60nujwY72CJhjHoPkSFLP1ttI6pQoAfLNQrQqF1X3laZ8G/6NZyMwA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by GV1PR04MB10426.eurprd04.prod.outlook.com (2603:10a6:150:1cc::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 07:15:58 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 07:15:58 +0000
-Date: Wed, 17 Sep 2025 10:15:55 +0300
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] dt-bindings: fsl,fpga-qixis-i2c: extend support
- to also cover the LX2160ARDB FPGA
-Message-ID: <hioigg5kn4lf2rvmfdxahxsuxhe4unvdkaoy5esoxepgc4jf7f@2wg42pxz3iry>
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-3-ioana.ciornei@nxp.com>
- <aMmNwurzsaPXDs4t@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMmNwurzsaPXDs4t@lizhi-Precision-Tower-5810>
-X-ClientProxiedBy: AM9P192CA0006.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:20b:21d::11) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B58827A927
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758093396; cv=none; b=Sge+94GuYLfj4RBcMvsqwtixyCDmaPQ5OggUtqfLKWcRvooCvlyMISpzZdxafoHc+lum6KAmEz1txySkVRvqS9/5oEV+7LQKRzqvu18ZxVqJCPWYoJJV2fHXJHcNYM5c2szl6zsvB2hUfQmeqk3zYqm4v5p2mZF6bBYspXg2+MY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758093396; c=relaxed/simple;
+	bh=T5zrGXefk5YqzH+xL7lyiCx6Qqp0h29OwnsxViUW03c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T65u5A7QEQk6G6svNpaaF7ti0/sYSwKrfdkoivwsQlNBBOerVuZcIi2w2TbpxUbf7OCthR1/zIB9xOFNl4vUT9ggCKo+bVTUYz1YLz+VgzIs1cB1lxLFrGCWjxK/v5WNMn+F2c9TspCsgAPpRy1j9d5l/eIV8mz7AyQPGH1Aqbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RwfhhQZ0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758093394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dVrVz1y1JTYA35iR89KO57gWYWUGvkIopfwpVXaBh+A=;
+	b=RwfhhQZ0nGYUBf/zLChUZ31fGuBHJ8Z4MVzNZGayr5OdngOfmrPQEwVB91dDc4NEjKHKB/
+	KOf6SCCd5HC/tVsgEKmEsU7Pjz42Sd+nmD8OsH34aEfwgeqN9rnHj0suwvydz/5jUvv0Zm
+	LISK7ZgwZ6hx1oK+mNnZwUYilPrqpJs=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-695-NpKPI1VIO4ih2S3hH7iwxQ-1; Wed, 17 Sep 2025 03:16:32 -0400
+X-MC-Unique: NpKPI1VIO4ih2S3hH7iwxQ-1
+X-Mimecast-MFC-AGG-ID: NpKPI1VIO4ih2S3hH7iwxQ_1758093391
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45f2a1660fcso29795315e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:16:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758093391; x=1758698191;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dVrVz1y1JTYA35iR89KO57gWYWUGvkIopfwpVXaBh+A=;
+        b=eGg3WW+Xmt12y+Q3S2zagNxdZgNQbI26KjiJwXxjK8sgII/A4+5QTHUIczL2bv0i1O
+         Eu/vSXj8kG/rvNbjWr8RFC+AjwnlIY1DOKMw6dHW4Pdkjo9oPbooIhAFSlxAXoAL9Zyl
+         TDXbj9VvhIJnw2liphO9qrqgvAfshGTDw82s02CpoJQavMmYP+w17t2263X8CzOm4j9U
+         yVg60KrUq0PX/3cP3lvS2CQxeDe5P/Ho8+GxcIfmdhdPLZ1yfLzkscVOp0MBaVqMoC2v
+         WI6v84MJsKVG8Yld08Rw5NR332rjkVfeHWl1QdEQjNIL5vAS+TWkkC/fCO/f3t7mX4IR
+         jO0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUr8CE+nPSiqKawH3pfZAyl4clen7r1tagLdQ5TPAi/DOI8/0Nalv7RS3oseezbS5eoys2WJZH4JN2FP5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzPKTpN6jH2VXaGmcIaBcSNnQ4z9uSp4X9+V6zskakxwiNSsRL
+	4N35uR4qC0XTNJXMbPhgNM4wFVUGgItGRSP1+N+rmlnUt0ipuVJoAjO2WfZFPDtdGhysRY3uQRh
+	SbV+riDu1meFOqTNZg/7EEfMilNLB5sJQqoQ2YliYR5p8YiJqgJI0m6zUtt+edjwF9FgzixCJJF
+	tP
+X-Gm-Gg: ASbGnctDiL5FdS4Ul5vUWsI7eYq7E1wlBVzwnWGh6Cy4/ST7TYva4Yi86+A2VjWoZTg
+	cxmkfLDMAalghjlJayNQ+1CFz7bjKWvEfawGX92J9JuPqa/ERGKopFvqNmvJS+36JHnaGGT9adi
+	t7Uz/6yH26txItKDjYo5SYSOeqos821yxad14C24AYDwouLwjtKz1ThoweRH6VYkF9YTBS9+IOn
+	4gS7Mxhgny3+1gL64o7DtKZQTnA7BL1/ALppJUKSz7qT4ExCU16A+agpdKuhBDcLu4lJzGg/2VF
+	9NPWF2fP2gzFwFycfPfQSNyntvGpyPv6fdmVqDiZ1Ztq4sLns+2yq3eZ//lzv/PGlPutLPcXAFP
+	Izp1B50ZpxnTjrhiDMOLLulvpf9PX0Ts3q9LMH+IPPU7MJX4KVipmI1J21ntiiSq3
+X-Received: by 2002:a05:6000:24c5:b0:3e8:b4cb:c3a0 with SMTP id ffacd0b85a97d-3ecdf9afe4amr737089f8f.8.1758093391108;
+        Wed, 17 Sep 2025 00:16:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6KvkUbAw/hWHVpyZFeQHd7+eZojTjephumHug7ngWtVuZzWRraD7sIx3LIE+G0iYk+zOhBg==
+X-Received: by 2002:a05:6000:24c5:b0:3e8:b4cb:c3a0 with SMTP id ffacd0b85a97d-3ecdf9afe4amr737058f8f.8.1758093390674;
+        Wed, 17 Sep 2025 00:16:30 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46139122a8fsm23710285e9.7.2025.09.17.00.16.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 00:16:30 -0700 (PDT)
+Message-ID: <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com>
+Date: Wed, 17 Sep 2025 09:16:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|GV1PR04MB10426:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ccba572-2358-4857-e037-08ddf5ba0cac
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|7416014|19092799006|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fnDmJqh7+qtRtd69S9iH7PxQdHBpRrWo/Xr0M4EBPe9hX90o9cIiKWx1Lf5Z?=
- =?us-ascii?Q?NKUs3G1+bfaLtlPqtk9/M8JENf7/rCKIzoB/KE8UXdWnIh5IAznwNVRI+0O8?=
- =?us-ascii?Q?f5433ASLFeraUgsyONvT+NSV15RxfMNKa8wMPvdlXvzGggVL7itF1TUao6Vk?=
- =?us-ascii?Q?0ZSdPvZb/MfB+9BKHDOzyus+wMEox1Q4oecIJDNd6XbXjg9q5C1yyuQUPQ5p?=
- =?us-ascii?Q?l/79barOJTt8XEhNc9toQ1ebazcHP2TwtGgU8xzqRRHCe/febrjvrPSVI5e3?=
- =?us-ascii?Q?9fhQzVo36AYRVS85vRTZMKRBUWcdZmDvMDCYTcV1Eg+m1CR3TFgIpxeT10dK?=
- =?us-ascii?Q?14SBPHq3BkevgGF5efcee6YRFeZADmYmdxTtkSM5vl7SNBINNxOXH4kLNruK?=
- =?us-ascii?Q?04CwBXEouronypQ6BG/np9YmNf1RTHMULruFhRaKYVMadXZg1ezhwGvM337M?=
- =?us-ascii?Q?p+LNXL6jQy7Aw+9sC7mphNoQNtg7WGpYrc7XUlkJ5fPmDvH+RU5ZHjm/Xp7R?=
- =?us-ascii?Q?EVFk2q4vllMOFcQHW9c5Ubf6Vu4g1u4EBBWMlgAwhB4T3IbrvUjvnQY993P1?=
- =?us-ascii?Q?Z9c0c1GrxfFzswDH4gMQ8jMPjuefOHesMMnORb9FJ4MJS3pfnLvQWcWvV7nD?=
- =?us-ascii?Q?D6HAeC8w6hWOve2o6NTY/4FGgic3RWP14bgmfBQRv0MFMZmwJyip0YJAFzv2?=
- =?us-ascii?Q?RM3TnElEOeRWR9oB5pDdQglgQrkRL9d6JTTFK4izONqqwO+JLCPKZuIUaymh?=
- =?us-ascii?Q?fssF0mLw33gfElXBK6InodeV/AnVkbYENgXYEbnv1ng4r+TyiusCNN0l+Mpo?=
- =?us-ascii?Q?UQUGc2bJN1PlByacg3P6U5HxuqQWR+DvcAZly1D5hCmfCTn0gmNPjRYuEakD?=
- =?us-ascii?Q?7WF9N0tEgNDr8kSBeRdX8d7oMHMCT6mCJGPhLlaueOR+6TPs4hyz4POrXp4t?=
- =?us-ascii?Q?QasWSShZ5xrhMZaCFFvcMSWDrIe66/7ui21anDzEK+VntrTizr8nTgQt612H?=
- =?us-ascii?Q?qevDdm0kM8pG+lzbxGrAYDDqNDgYcryxFnpl734ojy4tRlQd/ZuCI5Yj84UL?=
- =?us-ascii?Q?fuwu5NTZikvaIXzuH5HUkNj0ST+52lpCQdRTTrmZxt4EGO6hqwRIyxa9qGzp?=
- =?us-ascii?Q?je3f5zckNNGa1wC3KuLPzb5llr3zA6OJV83+csqXL5T1BBWPeOhrOAJ1ujVr?=
- =?us-ascii?Q?ho1FLKw9CEWzC2rZyn+1RYtQ28uNNNcsabKJLD8/R2x70ZdyjI+HdjeMKbeM?=
- =?us-ascii?Q?SnPBF7UhGbUcc+d7zBoxAg4zMca9/DU2SCRy8+6tsuhpI+ow0c6DADwJmyao?=
- =?us-ascii?Q?5OnokmWgSfCr+8//eSOZXOG/iUREAWxBBwRM+iD9FkyuYCju8h7Do9D3O7dq?=
- =?us-ascii?Q?U7iYJMGbgvs6HdnA+Z0pGasP9oebvnIEFZzdl6DKCEAN/0dz+pT3W4AlhoAP?=
- =?us-ascii?Q?zDlIFxo8B/s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(19092799006)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IS6aa0PLveNxI/m8sB4FtqshCXHzeoa3Nf2dEBwiE6Wcf8VXjuhrDrWX6l5P?=
- =?us-ascii?Q?HcwlTFAfHfLTOctt8oYLFAusxH9b4SFkACpyPbWsiyYM4ccAFyopbeO866T3?=
- =?us-ascii?Q?tZfEmS7lvbtRVYgLxk6fGARCFqrkGyO7X/Rzky6JWZgjkGJp6yB3fLJ2Yrgq?=
- =?us-ascii?Q?15J6vmJC1/yKvvs5zHpJznYoaFzq2Z+MwB/CckuoHPbZTSaoo17uwVvAmqiz?=
- =?us-ascii?Q?2+Y215br7bh7PJ3b7sGQLCt9SU844f/CyAsEBwHojIQK75RxvJiqcFTqAU4X?=
- =?us-ascii?Q?WliP3IDfP8kuJi0ozc0+UhMu0n88dSfk3N+qHpWMV46NbdVc16NBqzdSO3Cq?=
- =?us-ascii?Q?FVIiQS/MnWsVsdnf63emMskZVWPw9vlBu4tdW6xUEoLUIlINZbgxn1ZTBSQ9?=
- =?us-ascii?Q?RZjokaqf3ZoDU36pCM898rvqKh2d0+v8UXeurPcsisEImScq7DHcYTx0K3nR?=
- =?us-ascii?Q?BUjDFfhDyALLtM88aBrHHHgsxaxVteKq7k0FxMFQyGCnlQFDMTBNNPQF2k6z?=
- =?us-ascii?Q?FiwZJ5tulFaTgFqHdRiyWyGXMieRmUCEzYhsjT9YntgUxkpLP0D7ipIi4LQI?=
- =?us-ascii?Q?mntXTdvDWBFtfD2MijP5kezUXk0mpZ9HqXN+P62bawY7wtOeeaWC2rcSUruk?=
- =?us-ascii?Q?Wbh6LuIee03DHZ3LKYcHrgZKiUw35OsPBwrC+4GW0LomII0lCvlzleR8CUPz?=
- =?us-ascii?Q?wn5E8i4hg69aQxMevvL3w7ARMfFqVj63GTXLV8l8ijGBvduaDXQR7Td44e5X?=
- =?us-ascii?Q?5uRVw/RKg+0wbWBUEP9vXUVUxi8maBTAh15Gl+0eoiuFbLnoCktDE6WzO3Dn?=
- =?us-ascii?Q?DADNgmDSrWJzNAkvsoRkDBd/t7WEat4IraDVpC5Jq5VZhcZyE8dNeV1139Lm?=
- =?us-ascii?Q?LuThGhHf3TtieMwIRJImldS/a1qiNNEDcuoB9kfkTH8Kq7zO/4fzThM4pvXF?=
- =?us-ascii?Q?R5WaYFQ/8lRdB1MSJC9rjHVsmoIBHQ6AJtaVk2JDL7p9SN1cqPg1aqpcTrkm?=
- =?us-ascii?Q?TQrqoMuArwJme7CcCFe1ZrdMc0GyG+DfpZxGDB1vOZtgzdIas6k4/A/Yow49?=
- =?us-ascii?Q?hbqku38VIig+JKggzEbLASbwvcvDvV7bVwEnQJ0OkxCDwazWJnZ0GcbsCbl3?=
- =?us-ascii?Q?dtSSEWLBHcKwpf6IFg7HQlkfa01Gu0SLHkQ4WXl4FxS1nY6tCADYvKvyTxj8?=
- =?us-ascii?Q?mj38343hi5GzpuBoB7HcM2sXd7NruNR+rqihw8ENCFtfBKSjonDFPIiAzzNh?=
- =?us-ascii?Q?LsPRcakHBvSgZ2S02SeXVg4Kd+tIDWmBRUqy9CcLg+87tDoRGcH8UsHviJox?=
- =?us-ascii?Q?46gVXQX4YRv6Ga3/1eA8vFT6p/a6LsdcDbM5z/ozIQtbdNk1LPbDcVaIGd06?=
- =?us-ascii?Q?tmW5c6mtz+yYbR9M6LsdR2G6qWZhZ2n+GskvjSZY4Dcn3RysLQKHjhQ/HXxD?=
- =?us-ascii?Q?z0a+waQxdpASCrv5ImUIzPYUTM+gd7oAgwgl2DEKzpk87/X/yFyIMvfo8wtf?=
- =?us-ascii?Q?akYheSfn/1mwbvV2ZEixGpGxMgY7qPE45FMfwybkQIKlwMrobWaNiX4J/EZD?=
- =?us-ascii?Q?g68ujrGH6bWfUfH4wQxpMgb1IAQJvLSiT+tc3HjL?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ccba572-2358-4857-e037-08ddf5ba0cac
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 07:15:58.4315
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MQavWVIfcUvYT8rkmiTPTtWwBp1djyx07/N1UvCxKFOa1Z0smFSTk9IGY4A5QbDtNJ7dimfM995JglK5CTqjqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10426
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
+To: Eugen Hristev <eugen.hristev@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
+ pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
+ <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 12:18:10PM -0400, Frank Li wrote:
-> On Mon, Sep 15, 2025 at 03:23:47PM +0300, Ioana Ciornei wrote:
+On 17.09.25 07:43, Eugen Hristev wrote:
 > 
-> subject:
-> dt-bindings: fsl,fpga-qixis-i2c: add support for LX2160ARDB FPGA
 > 
-> > Extend the list of supported compatible strings with fsl,lx2160ardb-fpga.
-> >
-> > Since the register map exposed by the LX2160ARDB's FPGA also contains
-> > two GPIO controllers, accept the necessary GPIO pattern property.
-> > At the same time, add the #address-cells and #size-cells properties as
-> > valid ones so that the child nodes of the fsl,lx2160ardb-fpga node are
-> > addressable.
-> >
-> > This is needed because when defining child devices such as the GPIO
-> > controller described in the added example, the child device needs a the
-> > reg property to properly identify its register location.
+> On 9/17/25 00:16, Thomas Gleixner wrote:
+>> On Tue, Sep 16 2025 at 23:10, Thomas Gleixner wrote:
+>>> On Fri, Sep 12 2025 at 18:08, Eugen Hristev wrote:
+>>>> nr_irqs is required for debugging the kernel, and needs to be
+>>>> accessible for kmemdump into vmcoreinfo.
+>>>
+>>> That's a patently bad idea.
+>>>
+>>> Care to grep how many instances of 'nr_irqs' variables are in the
+>>> kernel?
+>>>
+>>> That name is way too generic to be made global.
+>>
+>> Aside of that there is _ZERO_ justification to expose variables globaly,
+>> which have been made file local with a lot of effort in the past.
+>>
+>> I pointed you to a solution for that and just because David does not
+>> like it means that it's acceptable to fiddle in subsystems and expose
+>> their carefully localized variables.
+
+It would have been great if we could have had that discussion in the 
+previous thread.
+
+I didn't like what I saw in v2. In particular, having subsystems fiddle 
+with kmemdump specifics.
+
+I prefer if we can find a way to not have subsystems to that.
+
+>>
 > 
-> These are neccesary because reg of child gpio controller nodes is in I2C
-> device's address space.
+> I agree. I explained the solution to David. He wanted to un-static
+> everything. I disagreed.
 
-Will incorporate the remark in this paragraph.
+Some other subsystem wants to have access to this information. I agree 
+that exposing these variables as r/w globally is not ideal.
 
-> 
-> need empty line here.
+I raised the alternative of exposing areas or other information through 
+simple helper functions that kmemdump can just use to compose whatever 
+it needs to compose.
 
-Ok.
+Do we really need that .section thingy?
 
-> 
-> > Impose this restriction for the new compatible through an if-statement.
-> >
-> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> > ---
-> > Changes in v2:
-> > - Enforce a unit address on the child gpios nodes (remove the ?)
-> > - Enforce the use of unit addresses by having #address-size and
-> >   #size-cells only for the newly added fsl,lx2160ardb-fpga compatible
-> >
-> >  .../bindings/board/fsl,fpga-qixis-i2c.yaml    | 47 +++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> >
-> ...
-> 
-> >
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - fsl,lx2160ardb-fpga
-> > +    then:
-> > +      required:
-> > +        - "#address-cells"
-> > +        - "#size-cells"
-> > +
->        else:
->          properties:
->            '#address-cells': false
->            'size-cells': false
+-- 
+Cheers
 
-So that we also catch the cases in which address-cells/size-cells
-shoudn't be used. Will do.
+David / dhildenb
 
-Thanks,
-Ioana
 
