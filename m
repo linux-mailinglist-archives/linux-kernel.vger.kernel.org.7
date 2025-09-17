@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-820385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53242B7D082
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:16:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081AEB7D4B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC76517B19D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CA816FB2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3DF34AAEA;
-	Wed, 17 Sep 2025 09:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C69346A06;
+	Wed, 17 Sep 2025 09:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSuYhjIB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="so7XiTxO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1598884A3E;
-	Wed, 17 Sep 2025 09:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E28EEBD;
+	Wed, 17 Sep 2025 09:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102638; cv=none; b=IhFJoLDj3Abj7EB6k8YepCEXmLpc7sP2caWygZWllac7LIBvT64ff8qLdXPIB+RJnfWNtMdwMgSfwc4QTc7yaz9Yk8ht6gfgMDbtNBR74V/3IJF6fNRHUJURpI0iOibNHjtzjjp9fdC7bL4QHSPbjeQwN2zES9S7CmFdI4wdhUs=
+	t=1758102703; cv=none; b=eW0a/2ogpzr/Guxr2KGkfqS/hX+NdMvwaEjxsvFHWVkNGrsfjgp4lNXBaKq0+S7/C5wk4PD6RxbZmW8cB5b84HJLjqtOdqJu4hBCMJSRiczbry7Olt160I3LU5InLGNDJqkw1soRc/Y4TiqSWkvSaDnIaHp4ao5rGh/gSSgJUBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102638; c=relaxed/simple;
-	bh=R8bBc8E+Z3IqtxfpLmr+7QmObySQ+mWruEPNJ7MrlFc=;
+	s=arc-20240116; t=1758102703; c=relaxed/simple;
+	bh=8J4tD3WezGFvLQ7eQ6sV1btWqMNPBtvPGxyAHuy2lV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nRMeF4W6ekx/PijDAcV0ISs+X7z2Fnxendp9khd5uOsLWypBXhciz274l4BSp27TOccjsthLtGBKGdXbtUbQpBt4ZhXoZWDFW7PZMzNRCyQgyMu5o0nZVERtxsGUdLsE+Nb0tDKvBgLzt4dp7fsb1xF3BMA8dCjUzHOmtm07ie4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSuYhjIB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A16DC4CEF0;
-	Wed, 17 Sep 2025 09:50:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qTJm9nLx+n6EnJVEOQMaQZZT3N4ALzVgnHlppFr7GQU25zsqfuybqoWl+ZkEBdXsDD9dKu+nPUs88oXP401OfjuX+JmSlHU7qz1aMhGGgbIu3pCQI0MXfHfT5t9UARbS8+y8vzJhQFUrZwmBv4pBS3iG3JIxKNqOZqTGGyjZyQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=so7XiTxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689CDC4CEF0;
+	Wed, 17 Sep 2025 09:51:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758102637;
-	bh=R8bBc8E+Z3IqtxfpLmr+7QmObySQ+mWruEPNJ7MrlFc=;
+	s=k20201202; t=1758102702;
+	bh=8J4tD3WezGFvLQ7eQ6sV1btWqMNPBtvPGxyAHuy2lV8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fSuYhjIBPQXozMo1k0MYS23BlFjFflyKzb9M1olal1DqbotYr5zJO8l0sSMemANvr
-	 JIZm0E5KcqWHVcq+UJR7QNrEUu2z+Rqrfyhj932a9O2x1WDTMZMU4LHeGU+0J4eyuJ
-	 K4kixSlqEBJGjJYTr3gob3XKckJSRylgsFH58XOdeqYKnyayTN6YBRMdf+fctC4SK3
-	 AWzPoJBDk4fWUyo6RG6EQbGarou/c5TaQLpI7f38fr8zD+Df32I8yfBtDATeVEFvmA
-	 MZx+1PLSxEuhCwUODD21YBZbHLhi2AHw+SNDcQEVNHcWpClXy2uRenMP8fORyCC7zI
-	 kZFU+jQ0ZIGfA==
-Date: Wed, 17 Sep 2025 11:50:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 18/33] mnt: support ns lookup
-Message-ID: <20250917-garten-nirgendwo-f65f951a9268@brauner>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-18-1a247645cef5@kernel.org>
- <20250916035633.GM39973@ZenIV>
- <20250916035949.GO39973@ZenIV>
- <20250916044648.GP39973@ZenIV>
+	b=so7XiTxOuNnP08p1xd/GOooo+aWnvf5FqzZ7dajH2KA5f87cYwP8ht1kjoVhoZEdK
+	 3yS7VgByF9zDTPjQtukrNGqS2cEFyv06NAmPfqjLNUc7Jmo8otSfYep0EHwGQ7i5N/
+	 p9ge+zoKlXLQGd9bP7iZTsOhJsMxny8CElajcyRnmQpON5UmBJeqgbvLxTNl9AFQNu
+	 KrDww3omSjbr0M7cDMEd4VD1w8j11fJzgJztGsVx/V7cFZNAnh5N8JcvpDm9CPLH2l
+	 HUHdHKUWuxlAFggIQjPH9NbSJQJT0u8wkaosghYQDy9W0oi9vMHFw8ipFGcBPHCpLz
+	 y9rv9Xdz7gzRA==
+Date: Wed, 17 Sep 2025 11:51:36 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, a.hindborg@kernel.org, 
+	alex.gaynor@gmail.com, aliceryhl@google.com, benno.lossin@proton.me, 
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, 
+	db48x@db48x.net, gary@garyguo.net, ojeda@kernel.org, tmgross@umich.edu, 
+	peter.hutterer@who-t.net
+Subject: Re: [PATCH v3 RESEND RESEND 1/3] HID: core: Change hid_driver to use
+ a const char* for name
+Message-ID: <bk7rp5zyw6n4txhgbyq4gi3cegi6fkwhvkk7gdvtqp3en7uidu@wgaohfzkp4i2>
+References: <20250913161222.3889-1-sergeantsagara@protonmail.com>
+ <20250913161222.3889-2-sergeantsagara@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916044648.GP39973@ZenIV>
+In-Reply-To: <20250913161222.3889-2-sergeantsagara@protonmail.com>
 
-On Tue, Sep 16, 2025 at 05:46:48AM +0100, Al Viro wrote:
-> On Tue, Sep 16, 2025 at 04:59:49AM +0100, Al Viro wrote:
-> > On Tue, Sep 16, 2025 at 04:56:33AM +0100, Al Viro wrote:
-> > > 	if (!RB_EMPTY_NODE(to_ns_common(ns)->ns_tree_node))
-> > 
-> >  	if (!RB_EMPTY_NODE(&to_ns_common(ns)->ns_tree_node))
-> > 
-> > obviously...
+On Sep 13 2025, Rahul Rameshbabu wrote:
+> name is never mutated by the core HID stack. Making name a const char*
+> simplifies passing the string from Rust to C. Otherwise, it becomes
+> difficult to pass a 'static lifetime CStr from Rust to a char*, rather than
+> a const char*, due to lack of guarantee that the underlying data of the
+> CStr will not be mutated by the C code.
 > 
-> FWIW, how about the following - I put the commit below into never-rebased
-> branch, pull it into #work.mount and you do the same to your branch
-> just prior to 18/33?  The difference from one in #work.mount is that
-> this variant checks RB_EMPTY_NODE(&ns->mnt_ns_tree_node) instead of
-> list_empty(&ns->mnt_ns_list).  The reasons why it's safe lockless are
-> pretty much the same...
-> 
-> Objections?  Does vfs/vfs.git #no-rebases-mnt_ns_tree_remove look sane
-> for you?
+> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
 
-Perfect, thank you!
+While we figure out the rest, I'm queueing this one patch in my test
+setup and will probably merge it for 6.18. This way, the rest of the
+series is purely rust and doesn't depend on anything on the HID tree.
 
-> 
-> mnt_ns_tree_remove(): DTRT if mnt_ns had never been added to mnt_ns_list
->     
-> Actual removal is done under the lock, but for checking if need to bother
-> the lockless RB_EMPTY_NODE() is safe - either that namespace had never
-> been added to mnt_ns_tree, in which case the the node will stay empty, or
-> whoever had allocated it has called mnt_ns_tree_add() and it has already
-> run to completion.  After that point RB_EMPTY_NODE() will become false and
-> will remain false, no matter what we do with other nodes in the tree.
->     
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Cheers,
+Benjamin
+
 > ---
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ae6d1312b184..39afeb521a80 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -187,7 +187,7 @@ static void mnt_ns_release_rcu(struct rcu_head *rcu)
->  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
->  {
->  	/* remove from global mount namespace list */
-> -	if (!is_anon_ns(ns)) {
-> +	if (!RB_EMPTY_NODE(&ns->mnt_ns_tree_node)) {
->  		mnt_ns_tree_write_lock();
->  		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
->  		list_bidir_del_rcu(&ns->mnt_ns_list);
+>  include/linux/hid.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/hid.h b/include/linux/hid.h
+> index 568a9d8c749b..d65c202783da 100644
+> --- a/include/linux/hid.h
+> +++ b/include/linux/hid.h
+> @@ -816,7 +816,7 @@ struct hid_usage_id {
+>   * zero from them.
+>   */
+>  struct hid_driver {
+> -	char *name;
+> +	const char *name;
+>  	const struct hid_device_id *id_table;
+>  
+>  	struct list_head dyn_list;
+> -- 
+> 2.47.2
+> 
+> 
 
