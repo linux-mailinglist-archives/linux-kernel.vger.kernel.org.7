@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-819982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9CDB7C86B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C556CB7CC3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23F01525BE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50DE51887B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9762773C7;
-	Wed, 17 Sep 2025 04:59:42 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293DA2367AC;
-	Wed, 17 Sep 2025 04:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FFD285042;
+	Wed, 17 Sep 2025 05:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFhARYhx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14FD263889;
+	Wed, 17 Sep 2025 05:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758085182; cv=none; b=AnH4wgT1+00xqzmymmj2hFP2vrDVB+w35HHBEHjV1CP9FKfkNbPE65HFyh3raRI0QdTMvkvcdKi9uhe3IWYhgL4mBbU2Y5V2PRQ4VHMT/TgXOV9CSA/011ryKsvZ1T1JCjWMH7lMciymONneIHObr2Ij1b8mor0qOt3NPabp3ko=
+	t=1758085225; cv=none; b=WJHnKLg8aR773z3rp4CnXCwkpF9uOm0RuHnECaoCSUHXc7RULa14ppbIPWAkJ0W3JT1M2bngyar35XfQ2aXzNxMI/D8rqG5MjsTuNDY8DPTEmkuEHWMrsHoyLYheqlPy+R88F6SQlSPbB6jwHwxfGl67UwhLnsFkWAY7k+e0PBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758085182; c=relaxed/simple;
-	bh=xkA6wZgKsXKRGndcmhrcGrRKpM4Brxpl84gHv/Zw7j4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=flOJVwxavZw0lnahzJz3a4EGNnWBXIDmSoyPQ9l9cP4L6KptKefv+0iE41U7E2Xp2M8KuBYcE3sBx7SHVaGN7ZWqZX73KruWnFSBDG6AHg8bcDlrIBegm/D4zOZwdOlZ6YJ7khO0pJrzGq9+BVAJxMnsCfDE84h/sjJQYwJ5qzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [106.117.98.100])
-	by mtasvr (Coremail) with SMTP id _____wD34GoeQMpoVmpCAg--.11506S3;
-	Wed, 17 Sep 2025 12:59:11 +0800 (CST)
-Received: from duoming$zju.edu.cn ( [106.117.98.100] ) by
- ajax-webmail-mail-app3 (Coremail) ; Wed, 17 Sep 2025 12:59:10 +0800
- (GMT+08:00)
-Date: Wed, 17 Sep 2025 12:59:10 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: duoming@zju.edu.cn
-To: "Jakub Kicinski" <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com,
-	edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch,
-	bbhushan2@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
-	gakula@marvell.com, sgoutham@marvell.com
-Subject: Re: [PATCH net] octeontx2-pf: Fix use-after-free bugs in
- otx2_sync_tstamp()
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.3-cmXT6 build
- 20250620(94335109) Copyright (c) 2002-2025 www.mailtech.cn zju.edu.cn
-In-Reply-To: <20250916163643.36dd866a@kernel.org>
-References: <20250915130136.42586-1-duoming@zju.edu.cn>
- <20250916163643.36dd866a@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1758085225; c=relaxed/simple;
+	bh=NTlDCmwOjQ6Fl9+bfqZguIsw/+1A0nQYdRFatNqYrBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNXUIH/zx1ybPXYZ2n7tewieB/b+cNNKXxDKp0gFKN8hlknwR6HHmMt1GBO9P7XAbGwDr5bP5IvIqy9j/81QUpFdi9awx0qg+jbBKsXnBtroRzFw9iZKxOMhsxQ80vvEOwOFKl/Bq9K2JvQg45LxC3/tmBmseo5mw83fnszWHig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFhARYhx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF8BC4CEF0;
+	Wed, 17 Sep 2025 05:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758085225;
+	bh=NTlDCmwOjQ6Fl9+bfqZguIsw/+1A0nQYdRFatNqYrBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cFhARYhxPhBes+wQUjdXNrThGDXVOY4IPcqzbvMSJ4iWCkeadJbwKVY6gzYsOHA+F
+	 Q+0pmGkUecLfIu3bKSUHy0alapR+FovWEoDODAM994ECrZgsPDARQrQb+jjtQWJ1x0
+	 bGqV1RGHX378oz1XfLnGU+/gCFsfy1Rmkka9qjh0DvrkMHhxOBDYU5HjNHMhOuAift
+	 uXgy09bR/wbI7lRI1PhjOV6r0iuyzY6ZdNiUHfGDOSgF/AMq+geHEOYkhl+3wvLWeM
+	 tR2G4xQk9442lG98j8WXWiUKRmioGDhfJNJ/4slHIE5zcGRwT9Vl9Bf7wdWjdpqDRJ
+	 JVJDs8Kf/UN+w==
+Date: Tue, 16 Sep 2025 19:00:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Changwoo Min <changwoo@igalia.com>
+Cc: void@manifault.com, arighi@nvidia.com, kernel-dev@igalia.com,
+	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: allow scx_bpf_task_cgroup() in ops.dispatch()
+Message-ID: <aMpAaLZ_UF6qwTGM@slm.duckdns.org>
+References: <20250915065236.13669-1-changwoo@igalia.com>
+ <aMnJRn8qdiFaqQXU@slm.duckdns.org>
+ <2ef92808-42c9-4f8b-9d58-11e5d2c89fc3@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <564ad9c5.8bb9.199560a7661.Coremail.duoming@zju.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:zS_KCgAnJ2oeQMpoADGrAg--.59716W
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwQMAWjJvXsG9gAAsd
-X-CM-DELIVERINFO: =?B?SXSRGAXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR131FE3wBtlILXmPZxD8pDyD/yWQ0Q2ektRbG9ON7jma6UkNjHoVbwjKChRsPfdRZy6vf
-	IiamH4K0mU4dDBtRwT2BGkAGFw8R/UopGNMkGBoKxsKyXLdfSZ96xjQaLMcoqA==
-X-Coremail-Antispam: 1Uk129KBj93XoW7uF15tw4DCw1rAFWfGrWDKFX_yoW8JF4kpr
-	Wru34UJFZ7AF4xGrWftw4Fq3WIgr4kt345CF45Xr4xC395JFy29FWfKayF93Wjgrs7Zry2
-	v3srZa95ZF90kFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUQEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxM4xvF2IEb7IF0Fy264kE64k0F24lFcxC0VAYjxAxZF0Ex2IqxwAC
-	I402YVCY1x02628vn2kIc2xKxwAKzVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I
-	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
-	GVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
-	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0
-	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwCE64xvF2IEb7IF0Fy7YxBIdaVFxhVjvjDU0xZFpf9x07j8GYJUUUUU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ef92808-42c9-4f8b-9d58-11e5d2c89fc3@igalia.com>
 
-T24gVHVlLCAxNiBTZXAgMjAyNSAxNjozNjo0MyAtMDcwMCBKYWt1YiBLaWNpbnNraSB3cm90ZToK
-PiA+IFJlcGxhY2UgY2FuY2VsX2RlbGF5ZWRfd29yaygpIHdpdGggY2FuY2VsX2RlbGF5ZWRfd29y
-a19zeW5jKCkgdG8gZW5zdXJlCj4gPiB0aGF0IHRoZSBkZWxheWVkIHdvcmsgaXRlbSBpcyBwcm9w
-ZXJseSBjYW5jZWxlZCBiZWZvcmUgdGhlIG90eDJfcHRwIGlzCj4gPiBkZWFsbG9jYXRlZC4KPiAK
-PiBQbGVhc2UgYWRkIGluZm8gYWJvdXQgaG93IHRoZSBidWcgd2FzIGRpc2NvdmVyZWQgYW5kIGZp
-eCB0ZXN0ZWQsIHNhbWUKPiBhcyB0aGUgY25pYyBwYXRjaC4KClRoYW5rIHlvdSBmb3IgeW91ciBz
-dWdnZXN0aW9ucy4gVGhpcyBidWcgd2FzIGluaXRpYWxseSBpZGVudGlmaWVkIHRocm91Z2gKc3Rh
-dGljIGFuYWx5c2lzLiBUbyByZXByb2R1Y2UgYW5kIHRlc3QgaXQsIEkgc2ltdWxhdGVkIHRoZSBP
-Y3Rlb25UWDIgUENJCmRldmljZSBpbiBRRU1VIGFuZCBpbnRyb2R1Y2VkIGFydGlmaWNpYWwgZGVs
-YXlzIOKAlCBzdWNoIGFzIGFkZGluZyBjYWxscyB0bwpzc2xlZXAoKcKgd2l0aGluIHRoZcKgb3R4
-Ml9zeW5jX3RzdGFtcCgpwqBmdW5jdGlvbiDigJQgdG8gaW5jcmVhc2UgdGhlIHByb2JhYmlsaXR5
-Cm9mIHRyaWdnZXJpbmcgdGhlIGlzc3VlLgoKVGhlwqBvdHgyX3N5bmNfdHN0YW1wKCnCoGZ1bmN0
-aW9uIG9wZXJhdGVzIGFzIGEgY3ljbGljIHdvcmsgaXRlbS4gClRoZcKgY2FuY2VsX2RlbGF5ZWRf
-d29ya19zeW5jKCnCoGZ1bmN0aW9uIHdvcmtzIGJ5IGNhbGxpbmfCoApfX2NhbmNlbF93b3JrKHdv
-cmssIC4uLiB8IFdPUktfQ0FOQ0VMX0RJU0FCTEUpLCB3aGljaCBhdHRlbXB0cyB0byAKcmVtb3Zl
-IHRoZSB3b3JrIGl0ZW0gZnJvbSB0aGUgcXVldWUgYW5kIHNldHMgdGhlwqBXT1JLX0NBTkNFTF9E
-SVNBQkxFwqAKZmxhZyB0byBwcmV2ZW50IHRoZSB3b3JrIGl0ZW0gZnJvbSBiZWluZyBleGVjdXRl
-ZCBhZ2Fpbi4gQXQgdGhlIHNhbWUgCnRpbWUsIGl0IHVzZXPCoF9fZmx1c2hfd29yayh3b3JrLCB0
-cnVlKcKgdG8gcGVyZm9ybSBhIHN5bmNocm9ub3VzIHdhaXQgCmZvciBhbnkgY3VycmVudGx5IGV4
-ZWN1dGluZyBpbnN0YW5jZSBvZiB0aGUgd29yayBpdGVtIHRvIGZpbmlzaCBydW5uaW5nLgoKSSB3
-aWxsIGFkZCBpbmZvIGFib3V0IGhvdyB0aGUgYnVnIHdhcyBkaXNjb3ZlcmVkIGFuZCBmaXggdGVz
-dGVkIGluIHBhdGNoIHYyLgoKQmVzdCByZWdhcmRzLApEdW9taW5nIFpob3UK
+Hello,
 
+On Wed, Sep 17, 2025 at 11:12:18AM +0900, Changwoo Min wrote:
+> > I'm not sure this is safe tho. ops.dispatch() can release the rq lock it's
+> > holding to migrate tasks across rq's, which means that other operations can
+> > nest inside - ie. there can be an irq which triggers ops.enqueue() while
+> > ops.dispatch() is in progress. That can in turn overwrite
+> > current->scx.kf_tasks[].
+> 
+> I thought that ops.dispatch() always holds an rq lock since there
+> is a lockdep_assert_rq_held(rq) check at the beginning of
+> balance_one(), which invokes the BPF scheduler's dispatch.
+> I guess I am missing an edge case?
+
+ops.dispatch() is always called and returns with rq locked; however, it
+sometimes needs to migrate tasks across rq boundaries and thus can
+temporarily release the rq lock it was called with. Please take a look at
+dispatch_to_local_dsq() which is called from balance_one() ->
+flush_dispatch_buf() -> finish_dispatch().
+
+> > I wonder whether a better approach would be tracking cgroup membership from
+> > BPF side. ops.init_task() tells you the initial cgroup it's joining and if
+> 
+> Currently, it is also not allowed to call scx_bpf_task_cgroup()
+> at ops.init_task() because the rq lock is not held at
+> ops.init_task(). The earliest possible moment to get a task's
+> cgroup ID is ops.enable().
+
+ops.init_task() is called with scx_init_task_args, which contains .cgroup
+which points to the CPU controller cgroup the task belongs to.
+
+Thanks.
+
+-- 
+tejun
 
