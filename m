@@ -1,207 +1,160 @@
-Return-Path: <linux-kernel+bounces-820029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35496B7CC61
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26397B7CF03
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3DE21C019A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:14:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377A61BC0A43
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99BA270EAB;
-	Wed, 17 Sep 2025 06:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2663248861;
+	Wed, 17 Sep 2025 06:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNIbWBmh"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cDWQ20az";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C25vMrkc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730351DDC0B
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC51823DD;
+	Wed, 17 Sep 2025 06:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758089652; cv=none; b=KOU7OzYhgUorZ94EkYb0bHaUYBxtkxlI1j+0UdKvhUfWNTqFBpADkRa2VO9Z5Qdo/fCmnzruzDB39J1NyexHjvrlfTp+MM3yji7tkw3xlSxfwRCd9DFfC5+5ozHsD7eWLR6j02tb/+12t5IGkUF6ddufjPgZPZDXYujD1OuWt/4=
+	t=1758089796; cv=none; b=EdCnREJI1DC4Fl5M+F7sHctER08baBqzPp7KVvFA/xm5dWXQer2jZ86VCyJMnugL9Z5fodT849XCWFrc4ee933+cOmVJvHETJ4aHBG/dywavvmDkrsd0ftiHh5FxPVvpuDZGy4wYJjV9lh07OvnNSA2JqKlGBkCbX7VjIKJmZJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758089652; c=relaxed/simple;
-	bh=jwNyZdCzkpVeu8M/UncF/JIEZsPkukGJTMUOSNPYnO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lyf2a8TAnRG65YJ0C6eFeHJ8yImBlPwMsBaaXHORmKZ72JGBbobKVjye+WYifJLtoWErCNadXIKatxKPTDJ479+m3BUfWqIvSFrhzggdjgUhjcdXdwNB4SnwPHovt17kFFtGxyxSGRFBB3tCETeDF/6JyS3fG3JlH1ANabaULnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNIbWBmh; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-776b0100de0so466103b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:14:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758089651; x=1758694451; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FmzfgTfio2uU1BYpRua3Nqm7f01ztuczzsg9vKgt8Hk=;
-        b=fNIbWBmhnTpKRlRZlHhECeXxrxRTkuUGze9MPrTN3O0pBWYjyWKp80N/jMoEHtKNlw
-         7it1yZ/Jc4+Xy4LGlPw8Af0KBpIjvxtUYCQ0C4TxuJeOLOG935Q5ouWtu6ZoicaI7m0I
-         TRBO1S4hQUSvUoxhg5kp+xbhmAn6s/JgakGKfridtuDyQaXlpe2Rehq6bEpZQQeYqqIb
-         eoiUGU9Ot0IzawZh2UfPYJkIy2CB2L7Jo3NchVSkF4mRATr5DUcIxeZa6nWTA6TaQq7f
-         eLs4wx+fZ/RDc+IFZ5dYKRItMp1W+H0KBdkbmsgW2eKd7pRlfr4OkuuKJnEmclNosI/i
-         mi9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758089651; x=1758694451;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FmzfgTfio2uU1BYpRua3Nqm7f01ztuczzsg9vKgt8Hk=;
-        b=wksscgY9va7nl1mvGIUFpXAwqPbilaLbisMZlG+OfZMIcztD632/pKQId7RkMayhhk
-         PKH6X7ieAuytgjMdSQWxpJB222jY+PtYjBzndZ7i9uWudJLQUFIb84HlYSRV+CLyQW3g
-         uM7wTMDK0Ru2UX8v9v87uPpPhrdYMw4al3r99ELuGYan4EOEWaHOz4NkarkR0DdkKS2b
-         kc96RyfpP9qGGXFDr+/YSXl+Y35aqBS5MzEYGiW38l5OgsG+VeD6jg+cuT0tXBJWXptn
-         Q3XkQVp3JYUea8Nd+4/eOR91SEaej4debIXQQumwjm9I3v0fgPMvIQ8uRtYJFPYyg9HB
-         ScOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeUjr0oPMx4hx8MzI/agj5QSdW48b/u1zOJ7HHZbHvOcEtN0G4g/D8Vxd5wBIPL3TV9Tnndm49/lHcrUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcu0XgkIkpsgI3/nbLMe5IIBy629FKcsie22aNh08W2ANbm6gL
-	Cw7J3p5ZyeX+kt/1O4oy0VpeIKOP2A7Ykqjd8Bu4m7g9mAAeQp+7kGw6
-X-Gm-Gg: ASbGncuTb7PtdwcdLQZjghfkrGW8Lj4E3ca6b3YYTF5Hgax72sNxTSWwJeXKgQKcZfJ
-	JfA8oxloKBW79n2rIbHokKtQQR69AyiDq2fDzFsETvjxBRzSySwrpla0zZIrletyh2NzQMndAcG
-	+ZYGt+nB8BDcvcUcHsEVMlRInsbFJV8HXWOorC7WY5tsmKW8O4U1IEuYdkBZjdJurpxI7+6jgzi
-	yMVG1dTRNHwAaVJiy2+/2DqFWXgP44zhiCTyZua48DWb1Tf1HnwMqLRI8L0ZRQ8GHF6lYdJnRBz
-	WMmxwiIvslglMbgQB+HbLQxIM0O9d1INKc8pkmp+um3v/0Cund7jhDxhSyE3zZcgctKOXOkjN3G
-	njmS/w+iqC3I8J0YJNxGpUEMMjo2gMMejxINeUT9V
-X-Google-Smtp-Source: AGHT+IFbOOUPuUp71MZLUCXJnIvNlVqkzTniqbE7azWA2KDlmn7NJjUtb/+FLQYp6JRxCAhLg6/vEQ==
-X-Received: by 2002:a05:6a20:3d10:b0:243:b089:9fbe with SMTP id adf61e73a8af0-26701102125mr7170178637.31.1758089650568;
-        Tue, 16 Sep 2025 23:14:10 -0700 (PDT)
-Received: from localhost ([146.19.163.62])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b169f2edsm12638506a12.19.2025.09.16.23.14.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 23:14:10 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:14:02 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Doug Anderson <dianders@chromium.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>,
-	akpm@linux-foundation.org, catalin.marinas@arm.com,
-	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-	christophe.leroy@csgroup.eu, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, kees@kernel.org,
-	masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org,
-	thomas.weissschuh@linutronix.de, xur@google.com,
-	ruanjinjie@huawei.com, gshan@redhat.com, maz@kernel.org,
-	suzuki.poulose@arm.com, zhanjie9@hisilicon.com,
-	yangyicong@hisilicon.com, gautam@linux.ibm.com, arnd@arndb.de,
-	zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com,
-	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com,
-	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org,
-	yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
-Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup
- detector
-Message-ID: <aMpRqlDXXOR5qYFd@mdev>
-References: <20250916145122.416128-1-wangjinchao600@gmail.com>
- <CAP-5=fWWOQ-6SWiNVBvb5mCofe0kZUURG_bm0PDsVFWqwDwrXg@mail.gmail.com>
- <aMoTOXIKBYVTj7PV@mdev>
- <CAP-5=fX7NJmBjd1v5y4xCa0Ce5rNZ8Dqg0LXd12gPrdEQCERVA@mail.gmail.com>
- <aMpIsqcgpOH1AObN@z2>
+	s=arc-20240116; t=1758089796; c=relaxed/simple;
+	bh=vrYcYQ4zq0zlPe/TP4ubMTwRudM33CYNlQ2Yyh5Rt70=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PCZKS2okJgOK0+zfqFQKWtWrbzLrGolLoPtM9mzGtk6ZayoF535M3namfjXTUnwdqGjkvlKwpAQVd5E5dvuq6iMRyw4bLlR1rKEWfZbv0ru4mC+Vvre5sms6xrOFAq1xSinutadB4hNi3fOiUo3dr6Sj4QX31D9QEIgeU6Abcc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cDWQ20az; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C25vMrkc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 17 Sep 2025 06:16:30 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758089793;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jxXsopuLPuRo7OZ63A/8Wq3fGfzGpJF4hklm/gowkUQ=;
+	b=cDWQ20azTOvl3DSenvfSF8H/B6OS39qS+S9GiT2rzxWtC2JEwljCfXEoxXXm3yijOr7DTi
+	lPJ4Gx8figmomGcP2SYOFKE6hjDRVJMTwI+jm275u5avyu/THlpo2gJvKM8qpA+At16H4H
+	Xl8EUKyigoqmQnI7brC1Q2B/6wkiuDd2gDbFnBZFvf9BAFi4h+RQgnGo1iyedPv47zjoHJ
+	aaBhqnRtFiQEj11spL3svE5m/GDg03AtzebNcM6noEqLdWBq/t2OS536UgdBT22d5E856a
+	BqKSOqDMy8bSFj9+Wa/DuSsg9YysjyQBbUFwkm5xF11QIsl0vQQPOi+kG+/c+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758089793;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jxXsopuLPuRo7OZ63A/8Wq3fGfzGpJF4hklm/gowkUQ=;
+	b=C25vMrkcTh8TzbT8SoOl87QtMcvtszM0qmBW/CKntEP0FjvTbaT8Hnn/CZPNYnRNT1cPfC
+	zCPUWORg0E8xBPAg==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/core] riscv: Use generic TIF bits
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250908212927.500173102@linutronix.de>
+References: <20250908212927.500173102@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMpIsqcgpOH1AObN@z2>
+Message-ID: <175808979084.709179.2976591843300945521.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 10:35:46PM -0700, Namhyung Kim wrote:
-> Hello,
-> 
-> On Tue, Sep 16, 2025 at 10:13:12PM -0700, Ian Rogers wrote:
-> > On Tue, Sep 16, 2025 at 6:47 PM Jinchao Wang <wangjinchao600@gmail.com> wrote:
-> > >
-> > > On Tue, Sep 16, 2025 at 05:03:48PM -0700, Ian Rogers wrote:
-> > > > On Tue, Sep 16, 2025 at 7:51 AM Jinchao Wang <wangjinchao600@gmail.com> wrote:
-> > > > >
-> > > > > Currently, the hard lockup detector is selected at compile time via
-> > > > > Kconfig, which requires a kernel rebuild to switch implementations.
-> > > > > This is inflexible, especially on systems where a perf event may not
-> > > > > be available or may be needed for other tasks.
-> > > > >
-> > > > > This commit refactors the hard lockup detector to replace a rigid
-> > > > > compile-time choice with a flexible build-time and boot-time solution.
-> > > > > The patch supports building the kernel with either detector
-> > > > > independently, or with both. When both are built, a new boot parameter
-> > > > > `hardlockup_detector="perf|buddy"` allows the selection at boot time.
-> > > > > This is a more robust and user-friendly design.
-> > > > >
-> > > > > This patch is a follow-up to the discussion on the kernel mailing list
-> > > > > regarding the preference and future of the hard lockup detectors. It
-> > > > > implements a flexible solution that addresses the community's need to
-> > > > > select an appropriate detector at boot time.
-> > > > >
-> > > > > The core changes are:
-> > > > > - The `perf` and `buddy` watchdog implementations are separated into
-> > > > >   distinct functions (e.g., `watchdog_perf_hardlockup_enable`).
-> > > > > - Global function pointers are introduced (`watchdog_hardlockup_enable_ptr`)
-> > > > >   to serve as a single API for the entire feature.
-> > > > > - A new `hardlockup_detector=` boot parameter is added to allow the
-> > > > >   user to select the desired detector at boot time.
-> > > > > - The Kconfig options are simplified by removing the complex
-> > > > >   `HARDLOCKUP_DETECTOR_PREFER_BUDDY` and allowing both detectors to be
-> > > > >   built without mutual exclusion.
-> > > > > - The weak stubs are updated to call the new function pointers,
-> > > > >   centralizing the watchdog logic.
-> > > >
-> > > > What is the impact on  /proc/sys/kernel/nmi_watchdog ? Is that
-> > > > enabling and disabling whatever the boot time choice was? I'm not sure
-> > > > why this has to be a boot time option given the ability to configure
-> > > > via /proc/sys/kernel/nmi_watchdog.
-> > > The new hardlockup_detector boot parameter and the existing
-> > > /proc/sys/kernel/nmi_watchdog file serve different purposes.
-> > >
-> > > The boot parameter selects the type of hard lockup detector (perf or buddy).
-> > > This choice is made once at boot.
-> > >
-> > >  /proc/sys/kernel/nmi_watchdog, on the other hand, is only a simple on/off
-> > > switch for the currently selected detector. It does not change the detector's
-> > > type.
-> > 
-> > So the name "nmi_watchdog" for the buddy watchdog is wrong for fairly
-> > obvious naming reasons but also because we can't differentiate when a
-> > perf event has been taken or not - this impacts perf that is choosing
-> > not to group events in metrics because of it, reducing the metric's
-> > accuracy. We need an equivalent "buddy_watchdog" file to the
-> > "nmi_watchdog" file. If we have such a file then if I did "echo 1 >
-> > /proc/sys/kernel/nmi_watchdog" I'd expect the buddy watchdog to be
-> > disabled and the perf event one to be enabled. Similarly, if I did
-> > "echo 1 > /proc/sys/kernel/buddy_watchdog" then I would expect the
-> > perf event watchdog to be disabled and the buddy one enabled. If I did
-> >  "echo 0 > /proc/sys/kernel/nmi_watchdog; echo 0 >
-> > /proc/sys/kernel/buddy_watchdog" then I'd expect neither to be
-> > enabled. I don't see why choosing the type of watchdog implementation
-> > at boot time is particularly desirable. It seems sensible to default
-> > normal people to using the buddy watchdog (more perf events, power...)
-> > and  CONFIG_DEBUG_KERNEL type people to using the perf event one. As
-> > the "nmi_watchdog" file may be assumed to control the buddy watchdog,
-> > perhaps a compatibility option (where the "nmi_watchdog" file controls
-> > the buddy watchdog) is needed so that user code has time to migrate.
-> 
-> Sounds good to me.  For perf tools, it'd be great if we can have a run-
-> time check which watchdog is selected.
-Considering backward compatibility, I prefer to keep
-/proc/sys/kernel/nmi_watchdog and introduce a new file called
-/proc/sys/kernel/hardlockup_detector_type, which only shows the default string
-or the boot parameter.
+The following commit has been merged into the core/core branch of tip:
 
-The global str pointer hardlockup_detector_type was already introduced in the
-patch, so exposing it in a file is straightforward.
-> 
-> Thanks,
-> Namhyung
-> 
+Commit-ID:     41e871f2b63edaf8da20907d512cd5d91ba51476
+Gitweb:        https://git.kernel.org/tip/41e871f2b63edaf8da20907d512cd5d91ba=
+51476
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 08 Sep 2025 23:32:38 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 17 Sep 2025 08:14:05 +02:00
 
--- 
-Jinchao
+riscv: Use generic TIF bits
+
+No point in defining generic items and the upcoming RSEQ optimizations are
+only available with this _and_ the generic entry infrastructure, which is
+already used by RISCV. So no further action required here.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/riscv/Kconfig                   |  1 +-
+ arch/riscv/include/asm/thread_info.h | 31 +++++++++++----------------
+ 2 files changed, 14 insertions(+), 18 deletions(-)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 51dcd8e..0c28061 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -161,6 +161,7 @@ config RISCV
+ 	select HAVE_FUNCTION_GRAPH_FREGS
+ 	select HAVE_FUNCTION_TRACER if !XIP_KERNEL && HAVE_DYNAMIC_FTRACE
+ 	select HAVE_EBPF_JIT if MMU
++	select HAVE_GENERIC_TIF_BITS
+ 	select HAVE_GUP_FAST if MMU
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/th=
+read_info.h
+index f5916a7..a315b02 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -107,23 +107,18 @@ int arch_dup_task_struct(struct task_struct *dst, struc=
+t task_struct *src);
+  * - pending work-to-be-done flags are in lowest half-word
+  * - other flags in upper half-word(s)
+  */
+-#define TIF_NEED_RESCHED	0	/* rescheduling necessary */
+-#define TIF_NEED_RESCHED_LAZY	1       /* Lazy rescheduling needed */
+-#define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+-#define TIF_SIGPENDING		3	/* signal pending */
+-#define TIF_RESTORE_SIGMASK	4	/* restore signal mask in do_signal() */
+-#define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+-#define TIF_NOTIFY_SIGNAL	9	/* signal notifications exist */
+-#define TIF_UPROBE		10	/* uprobe breakpoint or singlestep */
+-#define TIF_32BIT		11	/* compat-mode 32bit process */
+-#define TIF_RISCV_V_DEFER_RESTORE	12 /* restore Vector before returing to us=
+er */
+-
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+-#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
+-#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+-#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
+-#define _TIF_UPROBE		(1 << TIF_UPROBE)
+-#define _TIF_RISCV_V_DEFER_RESTORE	(1 << TIF_RISCV_V_DEFER_RESTORE)
++
++/*
++ * Tell the generic TIF infrastructure which bits riscv supports
++ */
++#define HAVE_TIF_NEED_RESCHED_LAZY
++#define HAVE_TIF_RESTORE_SIGMASK
++
++#include <asm-generic/thread_info_tif.h>
++
++#define TIF_32BIT			16	/* compat-mode 32bit process */
++#define TIF_RISCV_V_DEFER_RESTORE	17	/* restore Vector before returing to us=
+er */
++
++#define _TIF_RISCV_V_DEFER_RESTORE	BIT(TIF_RISCV_V_DEFER_RESTORE)
+=20
+ #endif /* _ASM_RISCV_THREAD_INFO_H */
 
