@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-820274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79BAB7D83E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43709B7D803
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 389532A0B24
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0849617E718
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5736C30C60F;
-	Wed, 17 Sep 2025 08:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08B7306487;
+	Wed, 17 Sep 2025 08:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nMFHz4rL"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kGmkMkmt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11475285CA9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAC6285CA9;
+	Wed, 17 Sep 2025 08:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758098864; cv=none; b=rKD0oOubtM1D8qMb+PJIdXmumXa4u+un5D1EYn9xVj9DpW6C+5Ll1kUWhkulczJXPkbke14Hk3IzsY+1llXG1tHDHvK9+E1Pfmb4NqVaVW2a8Jh3meyG+L5qbSNzmR03huqYnPraQVT5RAJvoV4/WpymxWjmfIsz6WoBJzDZNwc=
+	t=1758098858; cv=none; b=ZV4YCksEQrfiKhcs1vLiDI22S04spf5CFDOwouVWDtecRaOQFKtkPmGm2axlOv3BD07ZYu1wYgtqy8SA8WdXYiB37wVA4uzjOP4xgQ6bmCnBYu4NHtJstoU4R9ex6TRrvhZl3kFkWcPT/QpjZfGw9ogRfqyPfAeRTfZ6MRY63j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758098864; c=relaxed/simple;
-	bh=mD1dKSaDbFABDNdxhBOrHC0pI1BKnXyc1MHH71Bb614=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eZS3kk/thMNGMGY5pZgmMYtRZ2ZiDpiny/SQE5YuDO1qB4iAvVKw8kTHyP6Mroxe7Ezu6ESBURfF1s82upFhW+2S17YG9ftU79ECzDWl5D2DmvgFGg9H5AzDe/Wgf8ojYBoW0IUef5GU8vwICnEFtfz5vfEU46srOb5MNNX203o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nMFHz4rL; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-7814871b581so27014156d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758098862; x=1758703662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qSQBwTY7x8IQoxtsTDFfPaHwMvtropOKYFv/BGH9LuE=;
-        b=nMFHz4rLjW9HxACLfiGmFUDToCY8xwg3npc15bK5XMjrlNTdzc/sYKlZNyYjkiJfGV
-         04709FfI9hX4IQyLJ7g988v3DW+ZR9dju8jlw3jQkKIhABgqSomLxrvzNVlNclndI92e
-         c58nFVIiq2itPPGMNki0u2UyFSgm03ZV5JC7j7UrBDtHRldm691Li1IU1NevcMlG+Q0r
-         T9ioL2PauUpuY3pdIHhEoGaT3I3lNRfrShFnPUBnQ9xnlme1deOG7y2l5Km5miG10rZT
-         Sw7KaDM/c7b4xNktgKwB+rMrN8eNbu28K+KoBe0GdhmPot3yrgFcifmKnCOIdEv/dyts
-         l9BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758098862; x=1758703662;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qSQBwTY7x8IQoxtsTDFfPaHwMvtropOKYFv/BGH9LuE=;
-        b=gXQPs32z8gDtTIt04TF0k1H6YKrN4E4+CLZSU9DwtwU18lIatS5mRgOdOm8bHAFapQ
-         nAGWUFl8qbutbJFroFhW3MKcvqNJLqP56EEwqK6BLhUqAe2sOZcYIA7Cpw9Bo0NoZBE/
-         XVt1xT0Pt0E3PnDj2GZ1icqlWQmu4JQVRtxM8omAbIldq4a7mPPyU2OMLwHjAhD2oQ8u
-         m+HqHYWl/JZYJge7QOuB5872EfWn3jLDWbOjCqvC1uKgs7QftPV3JPAkAfqxpflVitJR
-         mdDVzkILaKZMD/K2ZnonBJEN0F8JBNKm2PxeqTwIpl3Vso20QKa2uyD+RAqiqmb7nZIk
-         w+xg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbB3h+6o07MnJTXfOBbAB1zQPlHTevpRCdtts12owWOCulsUk3vk2vjYjpoHvg/50rjXt3wQzVFTOHTPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8U+8k2b9M26F5E/h+/05rCsrDnLOB/S/r/muCRXxghYCcCnl9
-	OyuE4HVpFjeYG1curQAKXB4izPF7kBe2GHc9fFcilSvlDvdSpJtta4SyOd9EtNnrKT5SZ4vVM9G
-	2q9F/V8+fJEwBaskcI1VlVL8gc17GQnMuqHopyIdh
-X-Gm-Gg: ASbGncsc1de+il+kdrmltTdnI6Dyu4FxBKhN6daoA8u1oIjLoXKvS4PyL1cTeYRPlL1
-	LMNq5+lIPJ4yhbUbyWrcky8uBTgZBE1ZZJWaEX5xhZ5h1iN3IC55OwG/s51g2odS515M709aduj
-	2ZgvVzaCtbmLTWiIIxu6WjuxRJI/w2FXOspHJbvCzfitf4ZAKdXZblZrnUW+cdtVUbh3kutEAHx
-	Bex0900KeHVuMDpzoWh75WFZ+ZfvzFZo1Kh6lDbYdA=
-X-Google-Smtp-Source: AGHT+IHQqM5a49OQaZzq5NlAj4f7mo4PVwkO0Od/qpE6zKcTcL2cYsdQMpOPx7K+APxdGyrFaBcGHMy5truFRbrqA1M=
-X-Received: by 2002:ad4:4eab:0:b0:76f:6972:bb91 with SMTP id
- 6a1803df08f44-78ecc6316d3mr11179046d6.10.1758098861793; Wed, 17 Sep 2025
- 01:47:41 -0700 (PDT)
+	s=arc-20240116; t=1758098858; c=relaxed/simple;
+	bh=WkzohTudC0x+vl+4/fcJ6KBEZ7BqS45IMhaCRsr5tz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxKquFE/RCmBF/dD7kf0Bj5KOPTYi/O/gKmDH5sRUR1IXggXljkdXe7LfyIcvL0BLs8gIsVnjtnKR+dZrmn/E6y0zu7wWIHxFai83b32xGs59axQz9WEL6PzjeeFSDHS8ADVcRd9mXf6QCrbwA/UvXAw0T7YlaBg7YfOW8GAVSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kGmkMkmt; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758098856; x=1789634856;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WkzohTudC0x+vl+4/fcJ6KBEZ7BqS45IMhaCRsr5tz4=;
+  b=kGmkMkmtRUZONGElO2fp7izoEdkxJZ+BIQdAzYcE+JM5Q7aK8PYySyQA
+   DlQ0LOvGVoKmjaTuwZs0Di8wu+uG4Wt7qeFvnt+Q907OTjKuEG2nKeuUe
+   ElNTyijAilu8h1cBDvOt124QIAO7NJpEpbfyjMylYh77rR39pF+KdxNDm
+   c33RjeQBNWKW4Qy4IxIVB06oaKkfOzJmouAmUGjwZkEEWoFr8jqzV5xCF
+   2PGS8eZl5O++DwYrqyV4TSe6PPPsdoC4qpm8dOdQ6DzWnU1OwAgi4FSdc
+   NbIrwuMR7t2unos2KeyTZ9paqChUMalYxx67zTSH8czc+LfD5U08lBJ3y
+   g==;
+X-CSE-ConnectionGUID: dKY9MTl4SveKOaV5bj0bow==
+X-CSE-MsgGUID: Mei8hZy3QaiOsA0bCmj2fg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="64215358"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="64215358"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:47:36 -0700
+X-CSE-ConnectionGUID: 4kOutKrdR4+/3lllUWX+dQ==
+X-CSE-MsgGUID: oiC2OLyRQe2kCrB/Zsl4cQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="175101917"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:47:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uynp5-00000003l5i-0dqx;
+	Wed, 17 Sep 2025 11:47:31 +0300
+Date: Wed, 17 Sep 2025 11:47:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] iio: ABI: document accelerometer event attributes
+Message-ID: <aMp1orvA-SSSZeN2@smile.fi.intel.com>
+References: <20250916-bmi270-v6-0-6acd8d26a862@gmail.com>
+ <20250916-bmi270-v6-2-6acd8d26a862@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911195858.394235-1-ebiggers@kernel.org>
-In-Reply-To: <20250911195858.394235-1-ebiggers@kernel.org>
-From: Alexander Potapenko <glider@google.com>
-Date: Wed, 17 Sep 2025 10:47:05 +0200
-X-Gm-Features: AS18NWCHIE1dESGpN9uvlB5H-Nyc3e2nakhbUlwz_P_LJD2Kd7WI7My-Di8UNK8
-Message-ID: <CAG_fn=UY1HxmxpkM_YFGbr8W272F_bZgZHKiuvbsUjgFCs1RcA@mail.gmail.com>
-Subject: Re: [PATCH v2] kmsan: Fix out-of-bounds access to shadow memory
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, 
-	Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-bmi270-v6-2-6acd8d26a862@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Sep 11, 2025 at 10:01=E2=80=AFPM Eric Biggers <ebiggers@kernel.org>=
- wrote:
->
-> Running sha224_kunit on a KMSAN-enabled kernel results in a crash in
-> kmsan_internal_set_shadow_origin():
->
->     BUG: unable to handle page fault for address: ffffbc3840291000
->     #PF: supervisor read access in kernel mode
->     #PF: error_code(0x0000) - not-present page
->     PGD 1810067 P4D 1810067 PUD 192d067 PMD 3c17067 PTE 0
->     Oops: 0000 [#1] SMP NOPTI
->     CPU: 0 UID: 0 PID: 81 Comm: kunit_try_catch Tainted: G               =
-  N  6.17.0-rc3 #10 PREEMPT(voluntary)
->     Tainted: [N]=3DTEST
->     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.=
-0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
->     RIP: 0010:kmsan_internal_set_shadow_origin+0x91/0x100
->     [...]
->     Call Trace:
->     <TASK>
->     __msan_memset+0xee/0x1a0
->     sha224_final+0x9e/0x350
->     test_hash_buffer_overruns+0x46f/0x5f0
->     ? kmsan_get_shadow_origin_ptr+0x46/0xa0
->     ? __pfx_test_hash_buffer_overruns+0x10/0x10
->     kunit_try_run_case+0x198/0xa00
->
-> This occurs when memset() is called on a buffer that is not 4-byte
-> aligned and extends to the end of a guard page, i.e. the next page is
-> unmapped.
->
-> The bug is that the loop at the end of
-> kmsan_internal_set_shadow_origin() accesses the wrong shadow memory
-> bytes when the address is not 4-byte aligned.  Since each 4 bytes are
-> associated with an origin, it rounds the address and size so that it can
-> access all the origins that contain the buffer.  However, when it checks
-> the corresponding shadow bytes for a particular origin, it incorrectly
-> uses the original unrounded shadow address.  This results in reads from
-> shadow memory beyond the end of the buffer's shadow memory, which
-> crashes when that memory is not mapped.
->
-> To fix this, correctly align the shadow address before accessing the 4
-> shadow bytes corresponding to each origin.
->
-> Fixes: 2ef3cec44c60 ("kmsan: do not wipe out origin when doing partial un=
-poisoning")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-Tested-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: Alexander Potapenko <glider@google.com>
+On Tue, Sep 16, 2025 at 08:38:24PM -0300, Gustavo Silva wrote:
+> Add ABI documentation for accelerometer event-related sysfs attributes
+> exposed by the bmi270 driver. These include threshold, period, and
+> enable controls for adaptive magnitude (any-motion) and rate of change
+> (no-motion) event detection.
 
-Thanks a lot!
+...
+
+> What:		/sys/.../iio:deviceX/events/in_accel_y_roc_rising_en
+
+>  What:		/sys/.../iio:deviceX/events/in_accel_y_roc_falling_en
+>  What:		/sys/.../iio:deviceX/events/in_accel_z_roc_rising_en
+>  What:		/sys/.../iio:deviceX/events/in_accel_z_roc_falling_en
+> +What:		/sys/.../iio:deviceX/events/in_accel_x&y&z_roc_rising_en
+>  What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_rising_en
+>  What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_falling_en
+>  What:		/sys/.../iio:deviceX/events/in_anglvel_y_roc_rising_en
+
+> What:		/sys/.../events/in_accel_y_raw_thresh_rising_value
+
+>  What:		/sys/.../events/in_accel_y_raw_thresh_falling_value
+>  What:		/sys/.../events/in_accel_z_raw_thresh_rising_value
+>  What:		/sys/.../events/in_accel_z_raw_thresh_falling_value
+> +What:		/sys/.../events/in_accel_mag_adaptive_rising_value
+>  What:		/sys/.../events/in_anglvel_x_raw_thresh_rising_value
+>  What:		/sys/.../events/in_anglvel_x_raw_thresh_falling_value
+>  What:		/sys/.../events/in_anglvel_y_raw_thresh_rising_value
+
+> +What:		/sys/.../events/in_accel_roc_rising_value
+>  What:		/sys/.../events/in_accel_x_raw_roc_rising_value
+>  What:		/sys/.../events/in_accel_x_raw_roc_falling_value
+>  What:		/sys/.../events/in_accel_y_raw_roc_rising_value
+
+>  What:		/sys/.../events/in_accel_x_thresh_rising_period
+>  What:		/sys/.../events/in_accel_x_thresh_falling_period
+> +What:		/sys/.../events/in_accel_roc_rising_period
+>  What:		/sys/.../events/in_accel_x_roc_rising_period
+>  What:		/sys/.../events/in_accel_x_roc_falling_period
+>  What:		/sys/.../events/in_accel_y_thresh_rising_period
+
+With the given context (above and below) I'm not sure this is the best place of
+putting an attribute in the list. Perhaps something below will not disrupt the
+xyz structure (like mag cases)?
+
+> What:		/sys/.../events/in_accel_z_thresh_rising_period
+
+>  What:		/sys/.../events/in_accel_z_thresh_falling_period
+>  What:		/sys/.../events/in_accel_z_roc_rising_period
+>  What:		/sys/.../events/in_accel_z_roc_falling_period
+> +What:		/sys/.../events/in_accel_mag_adaptive_rising_period
+>  What:		/sys/.../events/in_anglvel_x_thresh_rising_period
+>  What:		/sys/.../events/in_anglvel_x_thresh_falling_period
+>  What:		/sys/.../events/in_anglvel_x_roc_rising_period
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
