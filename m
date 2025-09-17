@@ -1,180 +1,108 @@
-Return-Path: <linux-kernel+bounces-820491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD00B7FC59
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:08:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F877B7F853
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B277A188CC40
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8258A16571D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058662F6189;
-	Wed, 17 Sep 2025 10:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BF22BEC2D;
+	Wed, 17 Sep 2025 10:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2ttTBwW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="diiuz67A"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F1427875C;
-	Wed, 17 Sep 2025 10:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5A5278150
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105222; cv=none; b=qnQtefL3L/k156H++ApaqCSP4i7bFcamOxs1+F2gyX2GIu1bbGDAv7ZIXmNO08Aby5xG1qZpugS/hIwkTkyRrapBgo9HIM9ffJWcUaNv1Nr43RaCcSrCGRuWRh+gNf22LLrYr0wZHphjpgTOCVEMDcP0c3nndezDkMJcknEXLXA=
+	t=1758105253; cv=none; b=WS+igCk1Q2LuTPM1WmBvQaYl/KMmmq+POfwYpBRnUbiqHtWY1H7RrEq67s4MMFxUkkznuEuUkcybkKpKVJIEiOZGZB+lkOej8EnoKC2ZVJQV266Jcc5EpYDtRM215rPFvS4mgbniHB43PWqwh3BFb6+bga627YuHZ/RLd0sxqvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105222; c=relaxed/simple;
-	bh=zR8e5ODVjSrwzVSSVXLPmLraedCt8Ylf7vaGoQG0OA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k9XcgTQVXZkGJTprroUnHD2Aavj/+Qiuia5IdruWFh+VbZfl9gQT1YoBrazuAyd+4Dc/hReBpY7PdxU8nn2VOoPoczVJmd6aO2lH5KEzUOCSWNTQVFkuaQoHcObxPBsefra1D9PTuaQO50HqrmK+FX0WU7XaLl6AL3jRyyof4IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2ttTBwW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50AC8C4CEF0;
-	Wed, 17 Sep 2025 10:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758105221;
-	bh=zR8e5ODVjSrwzVSSVXLPmLraedCt8Ylf7vaGoQG0OA0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N2ttTBwWWFlIjwbrOMe7mhW6e8zw60BNGJXPhrKxmLY7OxbePmWFFTOXKrNzUps5p
-	 J1B9vDAovgN4oKZ5CxFoz4Sn+61kq+LEaQG/Ure6HNkdoSnRm6tKdZ3pYlDVIKdac7
-	 n8yM0w79IVoPcHVO8cP0V+W1rTYHTz9kPTfoA4T7uaC+Ho2nc7HWfaoeC6DVXBmBdf
-	 Jix+GTPnWkyK0BdxTOrnWAIIS4hzT1f2RfIbNHFnyC/osWPGgDdrPe4WUseop88tBp
-	 Nj1EgyuN560nkQcEP4ATjRcv87kVMFFEoXL36wk7SQmJ3vhYiKxwU2lBoJQsI/VXU/
-	 0riuvvyP26PlQ==
-Message-ID: <8e2c3560-6cba-4808-8207-ba3e1dd0e661@kernel.org>
-Date: Wed, 17 Sep 2025 12:33:36 +0200
+	s=arc-20240116; t=1758105253; c=relaxed/simple;
+	bh=1cBxv1xbY8Fpy8oQcvISFXu2Gvy5Sux1+zhD/ZCpP5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LIwh8Ug+qsNFLgkaPAy1V2iqW1wsoWV80/oj+skgG9WasUIIUGeV4IxGKTmGI5+skM/EqqfbhRtTz/GefNE9byn8jlCkiDCNhHw0N4qRrY8+wH3DG/ufbbKf/PLz9t7XFnfjkw+8mY+KqiuWQfOcQItKt+dOm35CRikvE80L5Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=diiuz67A; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758105250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1cBxv1xbY8Fpy8oQcvISFXu2Gvy5Sux1+zhD/ZCpP5Q=;
+	b=diiuz67A3GAhUt1E2g79iZE8lvTIdYx7A1I6OA4JVsiobHXvIsxzu/YLDK3niOc0YfBOtR
+	FfuU7wb1L18YEDVerkoeCMhz5es6hwbp5ahq1nwQyA4z5l1iSnGeiz8T7gxJV/vtkhQaGj
+	6iS0E7dpB8a9YqhPdbZqu4+/nPwgtGc=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-DemHZIyAPxSQcit3hzhtNw-1; Wed, 17 Sep 2025 06:34:09 -0400
+X-MC-Unique: DemHZIyAPxSQcit3hzhtNw-1
+X-Mimecast-MFC-AGG-ID: DemHZIyAPxSQcit3hzhtNw_1758105248
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2445806b18aso64805945ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:34:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758105248; x=1758710048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1cBxv1xbY8Fpy8oQcvISFXu2Gvy5Sux1+zhD/ZCpP5Q=;
+        b=HCmU9GCcDLzsJjIHv3ZPcvFFYaYD9XSc8df992+yn1I6UoVGnm+6gtYsC35Zeo3N9i
+         fIzw3AxIAfWjlPcwo47Hq0ReuJL8grmGj0IGjbJyTFTxF4p8IQe6xZiRv7KNtzaN8odl
+         bdZp6ePtNKObNpuiTtlUnTLzoZ5c/SbAa6xBIQ+hv3gj5MuxqC5AuyLSqHwuW3QpYoiJ
+         b5hUipd8KETBd7M97l3haHiV233K/7p5Ln8DcDtUVJj2WND8wkvYv1O+OybRiwPT0CS+
+         I48IlFlE1UeUgzbIBEsAjc+ip1wQSvY7q8h3mVOEGLDVPaL9SjNErpw5qolc+4Dxilg/
+         Dtww==
+X-Forwarded-Encrypted: i=1; AJvYcCVNw1yvNaayGhUTEBnwLS0OOIFAWI7cRltSy/zrfoqCL24DbADWHe8YdoXyFfo9fLYnsDEyjlXhKpc+t5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTyHpKLNc7LkpSfCXlS6WmRJAtO3e6uiss0O9R1Vr1Qj9r9h9x
+	Uk84/FLoo0nwJQBGDt9MzzpMQlkaoveDT4CAzpcMJoZmA82Hg++jGJusW4UR7STFkGjG2+ubiCc
+	Nfikvkf9L3nMHw+R6Gke4DjiS9iJ/U0ShQ7M1PwD/6jwKLECoIlQwXj5H9hPJj2J7yBX/Q1aSQb
+	wNZuXlxXjdEas72HXrc9qLerN+EKgH6RGxHAYtvme5
+X-Gm-Gg: ASbGncs2YvGbgbMCWaJDkp596TYtyQnZbODbOYYQo6eFrLhilGbcRKIt9Vi7n5ETaTN
+	Br00lCYtyV5oI4x5705F1C0ReQuJo6gQ6sLSVUoMyD+K1wSFdtuxED7wRQOUmU58T6EucfoL4m4
+	ExlcOj0KQLJhemeTs3+1A=
+X-Received: by 2002:a17:902:c408:b0:246:76ed:e25d with SMTP id d9443c01a7336-26813bf0c6bmr21731685ad.50.1758105248311;
+        Wed, 17 Sep 2025 03:34:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2YzbN/E+UopYldHCixM+VVbcJJcmpQWL8AhaVK43uVZhoyGaM4rEdKN7JZb5lpF619POQOSbhM/3uAXXs2eU=
+X-Received: by 2002:a17:902:c408:b0:246:76ed:e25d with SMTP id
+ d9443c01a7336-26813bf0c6bmr21731485ad.50.1758105247999; Wed, 17 Sep 2025
+ 03:34:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
-To: "Leo L. Schwab" <ewhac@ewhac.org>
-Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
- <aLSntMknSv3lMarZ@ewhac.org>
- <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
- <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
- <aLiZbkKgIC8jIqE9@ewhac.org>
- <c12adb45-fa6d-4bb8-afd2-a02e3026d646@kernel.org>
- <aMESMcFLrzqrCdbq@ewhac.org>
- <a6ea0b5d-7586-4529-bf91-d8b966aa986e@kernel.org>
- <aMG9L2566Hh6b0Kf@ewhac.org>
- <64b1c076-f1f7-45a3-900a-dd52ab50cd4e@kernel.org>
- <aMiQsMtyX9POrXof@ewhac.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <aMiQsMtyX9POrXof@ewhac.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250916211108.1243390-1-kriish.sharma2006@gmail.com>
+In-Reply-To: <20250916211108.1243390-1-kriish.sharma2006@gmail.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Wed, 17 Sep 2025 12:33:56 +0200
+X-Gm-Features: AS18NWD1T2FGHwQjVZMQL6NQNbpFLaeIpEjOA39LSJoQzn1UTtglxZVkhl6gbdQ
+Message-ID: <CAHc6FU5qWAY=aUjZ+YwwjteWCanNYFZW_xpDbWHkJV99qo=W=g@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: avoid %pS in pr_err() fallback to prevent vsnprintf crash
+To: Kriish Sharma <kriish.sharma2006@gmail.com>
+Cc: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzbot+fa7122891ab9e0bbc6a7@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Leo,
+On Tue, Sep 16, 2025 at 11:12=E2=80=AFPM Kriish Sharma
+<kriish.sharma2006@gmail.com> wrote:
+> While debugging a syzbot report, I found that the %pS format in
+> dump_holder() can trigger a crash when we end up in the pr_err()
+> fallback path. This happens because %pS goes through symbol resolution
+> inside vsnprintf, and in this case that isn=E2=80=99t always safe.
 
-On 16-Sep-25 00:18, Leo L. Schwab wrote:
-> On Wed, Sep 10, 2025 at 09:16:45PM +0200, Hans de Goede wrote:
->> Since the driver writes any new values to the G13 and the G13 accepts
->> those and remembers them even when the backlight is off,
->> the notify() should be passed g15_led->brightness when an
->> off -> on transition happens (and 0 or LED_OFF for the on -> off
->> transition).
->>
->> Since g15_led->brightness gets initialized by reading the actual
->> setting from the G13 at probe time and then gets updated on
->> any successful completion if writing a new brightness value
->> to the G13, it should always reflect the value which the backlight
->> will be set at by the G13 after an off -> on transition.
->>
->> Or am I missing something ?
->>
-> 	If I'm understanding you correctly:
+I'm unconvinced -- when and why is %pS not safe to use?
 
-
-> 	You want `brightness` to be copied to `brightness_hw_changed` on
-> probe, and on every backlight off->on transition (cool so far).
-
-Just to clarify, there are 2 things here
-
-1: brightness as in the actual rgb/brightness values the backlight will
-   be lit with when it is on
-2. A backlight_disabled flag to indicate if the backlight is disabled
-   in hw by the button on the G13
-
-I would suggest to track those separately by adding a backlight_disabled
-(or backlight_enabled) flag to struct lg_g15_data like I do in the
-g510 patch I send earlier in the thread.
-
-So wrt copying things on probe() I would copy both the brightness
-to g15_led->brightness which is already done in v3 as well as 
-use something like:
-
-        ret = hid_hw_raw_request(g15->hdev, LG_G510_INPUT_KBD_BACKLIGHT,
-                                 g15->transfer_buf, 2,
-                                 HID_INPUT_REPORT, HID_REQ_GET_REPORT);
-
-to get the input-report with the backlight_enabled/disabled flag and
-initialize backlight_disabled based on that.
-
-I would not touch mcled.cdev.brightness_hw_changed directly,
-not touching this will also avoid the build issues when
-support for it is disabled.
-
-Ack to on detecting a backlight off->on transition based on comparing
-the input-report bit to the cached backlight_disabled flag pass
-the cached g15_led->brightness to notify()
-
-> 	What do you want to happen to `brightness_hw_changed` when
-> `brightness` is changed in sysfs while the backlight is on?  As it stands,
-> the current behavior is:
-> 	* Driver loads and probes; `brightness` and `brightness_hw_changed`
-> 	  both set to 255.
-
-Ack, except that as mentioned above I would not touch brightness_hw_changed
-and just leave it at -1.
-
-> 	* sysfs `brightness` changed to 128.  `brightness_hw_changed`
-> 	  remains at 255.
-> 	* Toggle backilght off.  `brightness_hw_changed` changed to 0.
-> 	  `brightness` remains at 128.
-> 	* Toggle backlight back on.  `brightness_hw_changed` gets a copy of
-> 	  `brightness`, and both are now 128.
-
-Ack this is all correct.
-
-> 	This seems inconsistent to me.
-
-This is working as intended / how the API was designed as
-Documentation/ABI/testing/sysfs-class-led says:
-
-                Reading this file will return the last brightness level set
-                by the hardware, this may be different from the current
-                brightness. Reading this file when no hw brightness change
-                event has happened will return an ENODATA error.
-
->  Hence my earlier suggestion that
-> `brightness_hw_changed` should track all changes to `brightness`, except
-> when the backlight is toggled off.
-
-Then it also would be reporting values coming from sysfs writes,
-which it explicitly should not do.
-
-Summarizing in my view the following changes are necessary on v4:
-
-1. Add backlight_disabled (or backlight_enabled) flag to struct lg_g15_data
-2. Init that flag from prope()
-3. Use that flag on receiving input reports to see if notify()
-   should be called
-4. Replace the LED_FULL passed to notify() (for off->on)
-   with g15_led->brightness
-
-and that is it, with those changes I believe that we should be
-good to go.
-
-Regards,
-
-Hans
-
+Thanks,
+Andreas
 
 
