@@ -1,109 +1,122 @@
-Return-Path: <linux-kernel+bounces-821602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7130B81B6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:03:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78E5B81B71
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF45E17818D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:03:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953224A26B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C324D279DA3;
-	Wed, 17 Sep 2025 20:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E122278779;
+	Wed, 17 Sep 2025 20:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fs8seP2s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="EdPtg6/J"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BDD24501B
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E84263F4A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758139383; cv=none; b=gaqtVlQ8XV+ogTVLDiISK24WcQDdvPFUuwrw9S03KZByCMzrBcyeNGwI0SecUW38b1eN3u2pvHIh2744AmVCFscC+3OUeDW7CY6yNYXqq4ohrWYlcxJhG3b2zQx0DpIa7UaqPh9DuvdvVd03IhdkacRhYIjr6VFPIcaJIPFffZ0=
+	t=1758139519; cv=none; b=pkgRGIK1RUc3VFZT1Gs7gexctwrJOMlCCdJQItCLSDGgMBGihU4vROA4y61FWpR5MyImXepLFW7tafdQ4aZ08b/6UHBqwgzzT+fdKtumFil6dAXxj17Lb6+sLJPsG46KK7Au3NS3LTRMBisSD0DbCN0WPkto75h0FR9LJz03slg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758139383; c=relaxed/simple;
-	bh=8RwCiCEqgS/oR9Wj+EYfIJapVjRPjFagO+/mW2BIcW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=itJ+tNRwPXVBkQXrH1XjlNvcixkx9oqwG46V1/EeRNoN3Fz1KZNtLavMlkIfLRkKCps7Sz8x4pqEAhpE/YbCePovoW8lEYePVNpy89iSL9CwzCd6pIbfQL9wjciCd62ZGIolsuTuVyQcBPWiwk64TKhnt16w2R2Xde4pYuPj0mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fs8seP2s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D19A1C4CEE7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:03:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758139382;
-	bh=8RwCiCEqgS/oR9Wj+EYfIJapVjRPjFagO+/mW2BIcW8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fs8seP2smajGErdccqfjm/qBI73OZR07YbZ7EB5CfTXvZMxu23c8ilwPL4tCTJLuC
-	 AtWRwbNmXywMbpsZuIAjESMWLIlai3YyiQfX56Cyz+2s8gY33vqzxFHrORzfaGfAjL
-	 ++X+iZxkRMSv7rf6tcDj35RVmpICwlz4NVrst+qzAkVTZdiyI3mxpDi2Ag1jb254/8
-	 ffLwxGZuGXBZm/LXVQ8LlEaxjwJeYHEHjU6BxkwuE76T76LaTu9HQ/IId13djfD2/M
-	 jlESXMx6dho/5icGZhfmQXmm9HeM7kxvYkdW5d+jbD2HZwe3PWnrbrOYvtl9YvlOlW
-	 StWJBitBXOXbw==
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8116af074e2so23853885a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:03:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWuXld7sZUWs/DD15TAVCz4z/APUvV3M0jVvHP/ROEOY795tPmVs270NdlINt7btadpnjYqOIQQLvyPtPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw199VZY77oj1XDOVg0lQNQJgsWe23G/F625y6+EXV+U4e/JH/J
-	tR2NvNckXhyWHXSMDbHKrYcw/XfEm0bguMtB+7yF1JybilseOdZXhjfDuxejXToiwl0gfSU7EjK
-	usUGPed8uml1Hxhw5Gy1i4Qvo/LrOFO4=
-X-Google-Smtp-Source: AGHT+IE//43LvVRRL9P+bNBPabqBCP+0kbkAEemFxudHgIYmZJyboCRGVcIniMVsONVy0SAWFjDYnlR/dKKofxkrt60=
-X-Received: by 2002:a05:620a:7081:b0:7fd:6709:f08d with SMTP id
- af79cd13be357-8311801ddcfmr445536185a.81.1758139381472; Wed, 17 Sep 2025
- 13:03:01 -0700 (PDT)
+	s=arc-20240116; t=1758139519; c=relaxed/simple;
+	bh=yfIfL+POLiJ30NxgYv7j+jnpGlALZIt6NFQ9Ps7CrdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUALzXjdiQd+Ux7/VBy1OdUutMSvSTGaWu9uyeJRmtwhS1bLKW26eSIZN8m9B833LyVKhbnAHTiNjP7U0tvE9Vo6Ir31jXIiMOTAwtUJANdfT69u8/LKbss8/I2j/rQ1tYb9AbjYI0DvblGiJqFHXTkzALj4XUnvB66DMaalxN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=EdPtg6/J; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b61161dd37so1456171cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1758139516; x=1758744316; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wJOsiB1bpVW5O3ppXUgWRDtm86RikS6Y+yhj+zAkaVw=;
+        b=EdPtg6/JwGcibacmGlPGIWO8PqDby/mP7FZRP+qXZinCUrheES/7Ju9XjJPZpUlJrz
+         +yvvgv4bWR46xowVDM/QaAwqG/bFtSUuZ89h8kpEpHo/bkfbHHzwINYQLWy2MT0zSRdU
+         7kUAoLc0c9hHav17qrZ7DkVWBtztfPA9CeOB8ESp3bwtOiBLZoPn7DnhDhmJXplmKgDo
+         qQOi1JJ9ark9a9I83yYU0fSpvsSvvEHsUT8drOauet5vLeJutM4bQHp6h9ohrtOi+aN2
+         9EUg8S8psjUbgq3qftIJ/TWV+J3KVyJlsFtcZLU74RM9+LqBdKU0oLfL/ydooPoczQR7
+         A/tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758139516; x=1758744316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wJOsiB1bpVW5O3ppXUgWRDtm86RikS6Y+yhj+zAkaVw=;
+        b=eLnJ/GYR+zsVykM6eF1Qh75+fODUg8zdtvmd2t0vYuzbPnnNvHGiUZ3lh6RtW3Zu0n
+         Jo9e0bmfBkDyDUWOP88QUwHvb7Vn4ZFhofHJNMlRlFy9wYSydbyVxTkiNhlS6Ppqbqix
+         cyO3zaGwasWn+t5EywoKM3+A7t61m+FRCNnE6qgAnow6BO0xDufOoI9Bq0wA27hIMjqN
+         j1wiSZqQhalUmg6BLscgSL0+JEvvjt6mQ9HD+AJRPVVW1h1u6OzG7LQGACXTC4iUKfU0
+         twpuROms/mwWEKFMIqkynt5PkB7qD4ZI9eBRCK/MyPQy2oGA7mw6Kzc7PwHqeT91Ujzx
+         HSMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrWnTB7OIYkslquVicBg2WREtNPT51hKfavEc4fxxcRCJM5iAYaPnoNATFzm3O2DVPLxfoEHVQVBPGT1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5P7qwqfgbXtetVsw5lhOpX3AToKIYUXwb0uS5bC6mEryywZGE
+	BDZc4a+/7DgVarIRXna6+yBPYOIyNAK96K+fVxifM1OqDD9MFMGrPLYSRtUPqMJ/L5M=
+X-Gm-Gg: ASbGncv0DspDnu601x/9fx206JRhcsrCfdq/0UtCVwPg6dDj/T1qewxqgh6Wgdi9uo1
+	8G4yAgB1HFUL5Snr/Jk6CBWDrfPGLYw0nku2E4Y7OehwhmXPazbW7dvuNYLEPXpMVdmelkipyrJ
+	P07fbxuk19SnBhAItWHWXHK2EZuDqX8M82shuu0wKDwpx8QWgWfAvUk6jXUz/tTaUaVFHTixG6F
+	iHyqpr7AuXO6BmUn8KLILUSj1zVoYOoradrSCyDZ4SCjJLqEobkn+tAUIHWoI0GRS2kz3Oe3TUZ
+	r+EBxZts/Tu9wXRrFeJWP4/Uuc8GvT5fJTpvJt3MrP/Au+BG/MHw/Gfq5DwiJNWA+5HR0pxhYHM
+	0ihxmUCNpR9ThGfAJld3kREgEWYGcfDUD7jCF9KGsSVUWDb9sYO2jBj0H3hi072BHOEdm1dgu5U
+	cgOCc=
+X-Google-Smtp-Source: AGHT+IHkspUc1p8HZXKoRsdqMt3Uynx+jmY/D5qq0kQlFo+6agSywrHnZywaLkDz7glbxTmttKdAYQ==
+X-Received: by 2002:a05:622a:580e:b0:4b7:7ed2:c3f0 with SMTP id d75a77b69052e-4ba66d141b2mr39682451cf.32.1758139516308;
+        Wed, 17 Sep 2025 13:05:16 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda86b279fsm2914211cf.33.2025.09.17.13.05.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 13:05:15 -0700 (PDT)
+Date: Wed, 17 Sep 2025 16:05:13 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v3 04/11] cxl/region: Add @range argument to function
+ cxl_find_root_decoder()
+Message-ID: <aMsUeUME_6wkhfp1@gourry-fedora-PF4VCD3F>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-5-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917072242.674528-1-zhaofuyu@vivo.com>
-In-Reply-To: <20250917072242.674528-1-zhaofuyu@vivo.com>
-From: Song Liu <song@kernel.org>
-Date: Wed, 17 Sep 2025 13:02:49 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW47BVGsszGU=27gKa1XOYLH+de1FgrHPVL4mftB2CvX9g@mail.gmail.com>
-X-Gm-Features: AS18NWBxIdANPrX03bLZsJtpTPm-ZgoF9PRFYS0o8-H5DTmZDbcviXZne_YxRys
-Message-ID: <CAPhsuW47BVGsszGU=27gKa1XOYLH+de1FgrHPVL4mftB2CvX9g@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next v1 0/3] bpf: Add BPF program type for
- overriding tracepoint probes
-To: Fuyu Zhao <zhaofuyu@vivo.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@linux.dev, yonghong.song@linux.dev, haoluo@google.com, 
-	jolsa@kernel.org, eddyz87@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	shuah@kernel.org, willemb@google.com, kerneljasonxing@gmail.com, 
-	paul.chaignon@gmail.com, chen.dylane@linux.dev, memxor@gmail.com, 
-	martin.kelly@crowdstrike.com, ameryhung@gmail.com, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	yikai.lin@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912144514.526441-5-rrichter@amd.com>
 
-On Wed, Sep 17, 2025 at 12:23=E2=80=AFAM Fuyu Zhao <zhaofuyu@vivo.com> wrot=
-e:
+On Fri, Sep 12, 2025 at 04:45:06PM +0200, Robert Richter wrote:
+> cxl_find_root_decoder() uses the endpoint decoder's HPA range to find
+> the root decoder. This requires endpoints and root decoders to be in
+> the same memory domain, which is not the case for systems that need
+> address translation.
+> 
+> Add a separate @range argument to function cxl_find_root_decoder() to
+> specify the root decoder's address range. Now it is possible to pass a
+> translated address range of an endpoint decoder to function
+> cxl_find_root_decoder().
+> 
+> Patch is a prerequisite to implement address translation.
 >
-> Hi everyone,
->
-> This patchset introduces a new BPF program type that allows overriding
-> a tracepoint probe function registered via register_trace_*.
->
-> Motivation
-> ----------
-> Tracepoint probe functions registered via register_trace_* in the kernel
-> cannot be dynamically modified, changing a probe function requires recomp=
-iling
-> the kernel and rebooting. Nor can BPF programs change an existing
-> probe function.
->
-> Overiding tracepoint supports a way to apply patches into kernel quickly
-> (such as applying security ones), through predefined static tracepoints,
-> without waiting for upstream integration.
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-IIUC, this work solves the same problem as raw tracepoint (raw_tp) or raw
-tracepoint with btf (tp_btf).
+Maybe worth noting that this patch is just a refactor (i.e. no-op).
 
-Did I miss something?
-
-Thanks,
-Song
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
