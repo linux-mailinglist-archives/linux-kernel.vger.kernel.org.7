@@ -1,174 +1,115 @@
-Return-Path: <linux-kernel+bounces-821049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F392B80362
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:47:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5288AB803BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A0D54488A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:47:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E7A3BA414
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD2F2C235A;
-	Wed, 17 Sep 2025 14:47:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279C63191B2;
+	Wed, 17 Sep 2025 14:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F7gaKwOK"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA44B1C4A0A;
-	Wed, 17 Sep 2025 14:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0897E328980
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758120425; cv=none; b=Lm8Q2H9vWSktLOsChweE9Rc3AHFqRYTpTcU3sFm7c0+1P/bhT/M2Q89eSoYdTa6Jrby7EspZ6E1EomO9pwvfmN/1j7j/qNhASnFlaXkVzKmb/t3enYGpCmWyqfIp8M3EE63hrHzv6zG3I3M8fML3j6zI1w8DnC//1MiY1z4KX+8=
+	t=1758120487; cv=none; b=GOC2fBR9Ck3QO2OtmpYi9xAIgcpxyNeB2cuYsa28bhi+lIwQXG/W7D/btpcG37RuDt/rBnDDy6G6BR/8IDFJr5Z9J1l3qjM4heuQ7YAtHccO6JDZWPL+pitEYXTELTr+CCsG4d1LsZP2TYfnzeFO12Glfd6God87f/74cFPRPyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758120425; c=relaxed/simple;
-	bh=rQmRuK5KU7Z/3bIU2Azpwz/1kuf16Qoy7+ym9YjEuoY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TwtDFmwW+wn/itkWV9/C8gNIjBsvqg7LpeCsvf1iSaktKC/yNvZufvccy454L+8cYTleoM0Lq1jGWtK4ovGPot4IkgfNN5jleWldOXedrc2arjCDnozT9e3PqzofF+PMnjnU8ZuEqGBPZv/hHqhj8hWcIANN6n9Lj+n8mzAI0uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cRhNp0YNhz6M5G5;
-	Wed, 17 Sep 2025 22:44:10 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7C3A1400D4;
-	Wed, 17 Sep 2025 22:46:58 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 17 Sep
- 2025 16:46:58 +0200
-Date: Wed, 17 Sep 2025 15:46:56 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V3 04/20] nvdimm/label: Update mutex_lock() with
- guard(mutex)()
-Message-ID: <20250917154656.00001c2f@huawei.com>
-In-Reply-To: <20250917132940.1566437-5-s.neeraj@samsung.com>
-References: <20250917132940.1566437-1-s.neeraj@samsung.com>
-	<CGME20250917133034epcas5p2c9485e40fce4c3a5a826cc94d515b25d@epcas5p2.samsung.com>
-	<20250917132940.1566437-5-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1758120487; c=relaxed/simple;
+	bh=WAl5OuqroQdkdQI4Wd3qHEcTe93M5exvNPWBFvPsfw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BRZVvDqj1YkHY8dIbQz2W4ei/p2JeqvPLsH2sIddgjQfnVKVmw7hVIyACNCLsDSxU2xqm+lNjreecGqDGniQQB885izRQwFjXUxeHx+j6EUnN+YwTqFnC6Rc7UtV8GAwQ4Z/Vp1K005pv4+32DmJlMT2KaUU3tja0LAn0jrBPww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F7gaKwOK; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758120471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wz2Qh6CCUAyXy2y7KZplScVX0TJVeLEXcg6HqXMpxrE=;
+	b=F7gaKwOKLZ5+NGschFIL4W3vuy1U9X3NyMy4FxCeCPyIE5Ad9gCrveKM8rdJzOVW582AQr
+	nIM+Yxj8kMyHS/98WXObiHPbAMdAvIxNh2IwBXIx93YzPRro8Z2mJl6Vk/EUM4CE/go8BU
+	RE85zrMsJLWuWbCRqa0sbU5sQ73Rie8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] sparc: PCI: Replace deprecated strcpy() with strscpy()
+Date: Wed, 17 Sep 2025 16:47:30 +0200
+Message-ID: <20250917144733.118553-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 17 Sep 2025 18:59:24 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+strcpy() is deprecated; use strscpy() instead.
 
-> Updated mutex_lock() with guard(mutex)()
+No functional changes intended.
 
-Say why.
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> ---
->  drivers/nvdimm/label.c | 36 +++++++++++++++++-------------------
->  1 file changed, 17 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index 668e1e146229..3235562d0e1c 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -948,7 +948,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
->  		return rc;
->  
->  	/* Garbage collect the previous label */
-> -	mutex_lock(&nd_mapping->lock);
-> +	guard(mutex)(&nd_mapping->lock);
->  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->  		if (!label_ent->label)
->  			continue;
-> @@ -960,20 +960,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
->  	/* update index */
->  	rc = nd_label_write_index(ndd, ndd->ns_next,
->  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
-> -	if (rc == 0) {
-> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
-> -			if (!label_ent->label) {
-> -				label_ent->label = nd_label;
-> -				nd_label = NULL;
-> -				break;
-> -			}
-> -		dev_WARN_ONCE(&nspm->nsio.common.dev, nd_label,
-> -				"failed to track label: %d\n",
-> -				to_slot(ndd, nd_label));
-> -		if (nd_label)
-> -			rc = -ENXIO;
-> -	}
-> -	mutex_unlock(&nd_mapping->lock);
-> +	if (rc)
-> +		return rc;
-> +
-> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
-> +		if (!label_ent->label) {
-> +			label_ent->label = nd_label;
-> +			nd_label = NULL;
-> +			break;
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/sparc/kernel/pcic.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Perhaps it will change in later patches, but you could have done
-		if (!label_ent->label) {
-			label_ent->label = nd_label;
-			return;
-		}
-as nothing else happens if we find a match.
-
-> +		}
-> +	dev_WARN_ONCE(&nspm->nsio.common.dev, nd_label,
-> +			"failed to track label: %d\n",
-> +			to_slot(ndd, nd_label));
-> +	if (nd_label)
-> +		rc = -ENXIO;
->  
->  	return rc;
->  }
-> @@ -998,9 +998,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
->  		label_ent = kzalloc(sizeof(*label_ent), GFP_KERNEL);
->  		if (!label_ent)
->  			return -ENOMEM;
-> -		mutex_lock(&nd_mapping->lock);
-> +		guard(mutex)(&nd_mapping->lock);
->  		list_add_tail(&label_ent->list, &nd_mapping->labels);
-> -		mutex_unlock(&nd_mapping->lock);
-
-Not sure I'd bother with cases like this but harmless.
-
->  	}
->  
->  	if (ndd->ns_current == -1 || ndd->ns_next == -1)
-> @@ -1039,7 +1038,7 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
->  	if (!preamble_next(ndd, &nsindex, &free, &nslot))
->  		return 0;
->  
-> -	mutex_lock(&nd_mapping->lock);
-> +	guard(mutex)(&nd_mapping->lock);
->  	list_for_each_entry_safe(label_ent, e, &nd_mapping->labels, list) {
->  		struct nd_namespace_label *nd_label = label_ent->label;
->  
-> @@ -1061,7 +1060,6 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
->  		nd_mapping_free_labels(nd_mapping);
->  		dev_dbg(ndd->dev, "no more active labels\n");
->  	}
-> -	mutex_unlock(&nd_mapping->lock);
-This is a potential functional change as the lock is held for longer than before.
-nd_label_write_index is not trivial so reviewing if that is safe is not trivial.
-
-The benefit is small so far (maybe that changes in later patches) so I would not
-make the change.
-
-
-
->  
->  	return nd_label_write_index(ndd, ndd->ns_next,
->  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+diff --git a/arch/sparc/kernel/pcic.c b/arch/sparc/kernel/pcic.c
+index 25fe0a061732..f894ae79e78a 100644
+--- a/arch/sparc/kernel/pcic.c
++++ b/arch/sparc/kernel/pcic.c
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ #include <linux/jiffies.h>
+ 
+ #include <asm/swift.h> /* for cache flushing. */
+@@ -352,7 +353,7 @@ int __init pcic_probe(void)
+ 	pbm = &pcic->pbm;
+ 	pbm->prom_node = node;
+ 	prom_getstring(node, "name", namebuf, 63);  namebuf[63] = 0;
+-	strcpy(pbm->prom_name, namebuf);
++	strscpy(pbm->prom_name, namebuf);
+ 
+ 	{
+ 		extern int pcic_nmi_trap_patch[4];
+@@ -477,7 +478,7 @@ static void pcic_map_pci_device(struct linux_pcic *pcic,
+ 	int j;
+ 
+ 	if (node == 0 || node == -1) {
+-		strcpy(namebuf, "???");
++		strscpy(namebuf, "???");
+ 	} else {
+ 		prom_getstring(node, "name", namebuf, 63); namebuf[63] = 0;
+ 	}
+@@ -536,7 +537,7 @@ pcic_fill_irq(struct linux_pcic *pcic, struct pci_dev *dev, int node)
+ 	char namebuf[64];
+ 
+ 	if (node == 0 || node == -1) {
+-		strcpy(namebuf, "???");
++		strscpy(namebuf, "???");
+ 	} else {
+ 		prom_getstring(node, "name", namebuf, sizeof(namebuf));
+ 	}
+-- 
+2.51.0
 
 
