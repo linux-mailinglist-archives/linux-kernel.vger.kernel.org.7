@@ -1,238 +1,115 @@
-Return-Path: <linux-kernel+bounces-820349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76860B7F463
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5C7B7FA84
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24E63BC3B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629C11C01EE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F32F2BEC5A;
-	Wed, 17 Sep 2025 09:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47F43093BD;
+	Wed, 17 Sep 2025 09:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ofa7FySs"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpbyHRlj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754483074BA;
-	Wed, 17 Sep 2025 09:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5A929AB13
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758101559; cv=none; b=ISoOB3KHqf/nZyy+WvQXOzPjmOLCT0OZzaQ+8YxZ6/Dd7HZrMdBt1GSr0Pdl4Gk+IWOMc65kCyV6V8R4Eu1s46DWtFrGuR1tk6xEJ4qr5LP8aY9j/3vl9pQL4E4ZZWP5VMZO3IT1YTSr/25M44PlZfrrFNCW2F2BP4GqBqKOlSA=
+	t=1758101149; cv=none; b=R2loLhYu/JMkXRGMyF5TBeXRDclzyW0KR9G5B44njp6SHTeTPvlpgGdVg54QPkAbQJCuWSMS5nhVFiiJlr5FB4Alm82yvb9v9aQf5oRWe3Ic1QEmwt2ulLeLeU7mJ+leU7CGkamwQZRT+CM06tdaJQxFnOrUm3vFEY/PJzx2png=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758101559; c=relaxed/simple;
-	bh=tl0TsG2e6GDs5NmAO38DZ+18yVqnIjSBVq1pvWcs22I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KH/0ojJXv3DX77iuOckwRjwAcyYmbKFmlWtfJE9hr326aegdyDBjeeAidKmtZehhgumPsEcvkPRb039AdA6D1NbA9FHoVF3/1QOklqSKZnu4pLBDd82C8mV8DPgpZ0lsFlgZLhBpuh3ubkEGHCU3yNVSlS8rHOp+KseK2RAKgLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ofa7FySs; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [5.228.116.177])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 0E6A540762F3;
-	Wed, 17 Sep 2025 09:25:09 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 0E6A540762F3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1758101109;
-	bh=n3b2nPejUENpVHaajjMk59jl6pFrmTsX4tUpLwh41X4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ofa7FySs0IMCHADNxPsVY66DhgV2JAToobyCUX5TAPgXyy0rmxfotOe/Idzb33e2E
-	 01KXKdhLbEJKYqn7AZRID7julNHqmhxSrB8eYy91WOu0DgYv78yDb0sGgeFMC8Ygu7
-	 Y4GWZT3s1HnLNIKZrNcUxMUyvtCAljEBhzAsPKZw=
-Date: Wed, 17 Sep 2025 12:25:08 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, 
-	Zong-Zhe Yang <kevin_yang@realtek.com>, Po-Hao Huang <phhuang@realtek.com>, 
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH rtw v3 3/5] wifi: rtw89: perform tx_wait completions for
- USB part
-Message-ID: <20250917104047-82a166f58532dffcb0a8d1a3-pchelkin@ispras>
-References: <20250828211245.178843-1-pchelkin@ispras.ru>
- <20250828211245.178843-4-pchelkin@ispras.ru>
- <bc1857a0-86d9-40aa-a1ab-f4bc83adf6fa@gmail.com>
- <20250901194743-62fc282f96aeeb9804c34e2f-pchelkin@ispras>
- <0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com>
+	s=arc-20240116; t=1758101149; c=relaxed/simple;
+	bh=mi+c+o3FWmHPaLJiT7Mnmm6sTZe4R8F+gNG7LUzeQcM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PtxSG4eondVkk9Aoa6rzdwzY+XEgopDsiHMu9nbPr4vwAjnrhIqG8SUrKizXTAn+J4Rfm78GVbzd1i5X0pgRZ3UrO8mmegUSuSwgVLfU3k6KltH927wklv73f0TZXs6z+B0VfJ+l+5sUNc7rorXCR5mAtTvgC74dXb5qcw9JBvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpbyHRlj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A34C4CEF0;
+	Wed, 17 Sep 2025 09:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758101147;
+	bh=mi+c+o3FWmHPaLJiT7Mnmm6sTZe4R8F+gNG7LUzeQcM=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=UpbyHRlj6I92I8jYO8q8IHg9KFI/uWkocCl/yZZihL+Pu5p5cNv9/3GUZM17ZnTEL
+	 55OySOMRo/VxAf3J394PdGoWX6PnbU604tDshBIp4JnADYGd/Pkg31p/3oS9TTje5M
+	 7XfdTlfu+IC1/Km3+dylN2uadA4ih0TYYSHUze4cbDLE16OZqf4/SRXFT7EkFTZb4J
+	 gH3rkjwmWpvOwW12ngJ60mDM2ggbYPEiueaZ6Bn9U9mvtgUlJrFrGEpHajgaa9UoZP
+	 ZMlPKuJYultxRbn5+7KKJOHkKr9t6sXPHiG2v0BXspJrgKTFHMr7j3ktzLyJEJoz06
+	 rPPyl6Or7FIGA==
+Date: Wed, 17 Sep 2025 12:25:37 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Houghton <jthoughton@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aMp-kW3OLqtZs8sh@kernel.org>
+References: <982f4f94-f0bf-45dd-9003-081b76e57027@lucifer.local>
+ <cda7c46b-c474-48f4-b703-e2f988470f3b@amazon.com>
+ <aGVu1Isy-R9RszxW@kernel.org>
+ <aGWMsfbayEco0j4R@x1.local>
+ <aGbCbW7hUf3a2do2@kernel.org>
+ <289eede1-d47d-49a2-b9b6-ff8050d84893@redhat.com>
+ <aGfsaIIzHWfjcNFd@x1.local>
+ <e7vr62s73dftijeveyg6lfgivctijz4qcar3teswjbuv6gog3k@4sbpuj35nbbh>
+ <930d8830-3d5d-496d-80d8-b716ea6446bb@amazon.com>
+ <jxekhkhbn7uk23oe24svxrs3vfuhseae57sqagndqgh2e7h33o@kfkygmrvjb5n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com>
+In-Reply-To: <jxekhkhbn7uk23oe24svxrs3vfuhseae57sqagndqgh2e7h33o@kfkygmrvjb5n>
 
-On Mon, 01. Sep 21:46, Bitterblue Smith wrote:
-> On 01/09/2025 20:45, Fedor Pchelkin wrote:
-> > On Fri, 29. Aug 22:57, Bitterblue Smith wrote:
-> >> The USB side doesn't have real TX ACK status reporting yet. I only
-> >> learned recently how to do that. It looks like it will work about the
-> >> same as in rtw88.
-> > 
-> > Do you mean similar pattern already exists in rtw88?  Could you give a
-> > hint on how USB side TX ACK status reporting works there?  At a quick
-> > glance, I don't see how those TX URB complete callbacks differ from what
-> > rtw89 has.
+Hi Liam,
+
+On Mon, Sep 08, 2025 at 12:53:37PM -0400, Liam R. Howlett wrote:
 > 
-> Well, I assume we are talking about ACK status reporting. For example,
-> when mac80211 detects beacon loss it sends a null frame, or a probe
-> request (I'm not sure which is used when). It flags the frame with
-> IEEE80211_TX_CTL_REQ_TX_STATUS, which means the driver has to report
-> whether the AP sent ACK for the null frame/probe request or not. If
-> the AP doesn't reply for a while, the connection is considered lost.
+> Reading through the patches, I'm not entirely sure what you are
+> proposing.
 > 
-> A URB status of 0 only means that the URB was submitted successfully.
-> It doesn't mean the chip actually transmitted anything, and it doesn't
-> mean the chip received ACK from the AP.
+> What I was hoping to see by a generalization of the memory types is a
+> much simpler shared code base until the code hit memory type specific
+> areas where a function pointer could be used to keep things from getting
+> complicated (or, I guess a switch statement..).
 > 
-> In order to receive these ACK status reports rtw89 will have to set
-> a bit in the TX descriptor and place the skb in a queue to wait for
-> a message from the firmware. ieee80211_tx_status_irqsafe() can be
-> called when the firmware sends the message. 
+> What we don't want is non-mm code specifying values for the function
+> pointer and doing what they want, or a function pointer that returns a
+> core mm resource (in the old example this was a vma, here it is a
+> folio).
 > 
-> This is for USB. It seems to work differently for PCIE in rtw89
-> (rtw89_pci_release_rpp()). In rtw88 it's one mechanism for PCIE, USB,
-> and SDIO.
+> From this patch set:
+> +        * Return: zero if succeeded, negative for errors.
+> +        */
+> +       int (*uffd_get_folio)(struct inode *inode, pgoff_t pgoff,
+> +                             struct folio **folio);
 > 
-> These are some functions to look at in rtw88:
-> 
-> rtw_tx_report_enable()
-> rtw_usb_write_port_tx_complete()
-> rtw_tx_report_enqueue()
-> 
-> rtw_usb_rx_handler()
-> rtw_fw_c2h_cmd_rx_irqsafe()
-> rtw_fw_c2h_cmd_handle() / rtw_fw_c2h_cmd_handle_ext()
-> rtw_tx_report_handle()
+> This is one of the contention points in the current scenario as the
+> folio would be returned.
 
-Thanks for the detailed explanation of the above!
+I don't see a problem with it. It's not any different from
+vma_ops->fault(): a callback for a filesystem to get a folio that will be
+mapped afterwards by the mm code.
 
-Apologies for the delay. So I've got the RTL8851BU chip in the meantime.
-
-As rtw89-usb part is designated for not yet released v6.17 and is rather
-a thing on its own, I'd better address it in a separate series.
-
-With RTL8851BU there appears a possible firmware bug related to hardware
-scan channel list, already reported at [1].  Eventually after some time of
-hardware unresponsiveness it leads to the splat [2] and the device has to
-be replugged.  So I had to apply your proposed workaround to avoid
-experiencing these failures.  It happens with the first available firmware
-version, too (0.29.41.0 (e210be8a)).
-
-[1]: https://lore.kernel.org/linux-wireless/0abbda91-c5c2-4007-84c8-215679e652e1@gmail.com/
-
-[2]:
-rtw89_8851bu 2-1:1.2: rtw89_hw_scan_offload failed ret -110
-rtw89_8851bu 2-1:1.2: c2h reg timeout
-rtw89_8851bu 2-1:1.2: FW does not process h2c registers
-rtw89_8851bu 2-1:1.2: HW scan failed: -110
-rtw89_8851bu 2-1:1.2: Update probe request failed
-rtw89_8851bu 2-1:1.2: Update probe request failed
-rtw89_8851bu 2-1:1.2: timed out to flush queues
-rtw89_8851bu 2-1:1.2: timed out to flush queues
-rtw89_8851bu 2-1:1.2: FW does not process h2c registers
-rtw89_8851bu 2-1:1.2: FW does not process h2c registers
-rtw89_8851bu 2-1:1.2: [ERR]FWDL path ready
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x23
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x70000
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a77
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a55
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a53
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a6f
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a73
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a59
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a67
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a57
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a67
-rtw89_8851bu 2-1:1.2: [ERR]FWDL path ready
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x23
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x70000
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a75
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a55
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a69
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce5
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a51
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
-rtw89_8851bu 2-1:1.2: [ERR]FWDL path ready
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x23
-rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=0
-rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=1
-rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=2
-rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=3
-rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=4
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]H2C path ready
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]H2C path ready
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
-rtw89_8851bu 2-1:1.2: mac init fail, ret:-110
-rtw89_8851bu 2-1:1.2: failed to leave idle state
-rtw89_8851bu 2-1:1.2: Update probe request failed
-rtw89_8851bu 2-1:1.2: rfkill hardware state changed to disable
-
+-- 
+Sincerely yours,
+Mike.
 
