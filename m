@@ -1,259 +1,139 @@
-Return-Path: <linux-kernel+bounces-821634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4835FB81CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:42:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD6FB81CE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE4E27BBB3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C77481A86
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195FD2FAC1C;
-	Wed, 17 Sep 2025 20:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYVjwLHH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D470D2E2F0E;
+	Wed, 17 Sep 2025 20:40:32 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3156C8BEE;
-	Wed, 17 Sep 2025 20:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8472DAFCA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141614; cv=none; b=Azr2TGnuNbQMIea0gSijc4LD2Ar5K3B5PP98yxb2dQG2nsXn90nNLcNL6WuipqJ/+y8w36xajV7vqosXapvE1KXOHXa8bC0Qd7WSufP5Icy7f1GvPdO6bZlk8fPIpr9lLOnZnOpLqMWAj/ftLQqsbfdAYrXD2Re9dOmnP1Quc40=
+	t=1758141632; cv=none; b=YDrF6axDNpMVHnfYLNsjXBVAr77Dllzts9skVvxfMVgUuDNje4OlT1SS0orz0L2vJXQ6H1JzKDgNRrol0cgCODc7a50Fuizksrw9Gk3gbIwXcJIPVVodit22XwYeqTPCAsojq0GBdO8RBF+CDmzFb2OCzPc3kBtXnMRwlPETewc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141614; c=relaxed/simple;
-	bh=oWRF0e+JL1I2wWRpFWpkjtN2+s+6zaJH3zvzmrp0RGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQGPkDYQrUNMRmI6SuZHDbt5t5sdA5QoL0vO/YRBmojadg8XqURn4fY98au++hSphqoqQZgrb3wYzvvkhTH8up5goNyWffVo7Sl1BvaONd57Mt4ZSyXkGrWUbJym007/drEIJwhAu+o+o/4C8RM5Ee8qx54Q1yPDOlTZXp2x/R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYVjwLHH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA3BC4CEE7;
-	Wed, 17 Sep 2025 20:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758141613;
-	bh=oWRF0e+JL1I2wWRpFWpkjtN2+s+6zaJH3zvzmrp0RGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tYVjwLHHA/7Yhkh2KRc8XzIxzcxuNa8oalYYl6JthoyVK/yU844EsWgorjBU/tHzq
-	 Dp3lcKUMJVC4tYDPeJmNLaVEfLZlY+BULrfCYq4HB934D8gfnnpmG9b8hjJCQSorxR
-	 8lh3njPOHoKVcAs7Fflntx8gVgzYftF9Q1PQP4dcx8NAHs7GraVvSmD0q+CTO2a4gP
-	 YpP60W30bQj6wPvI3n8pK5MorPMhf3LNPhe58LwyfDl+6NtHKPuMLA2g8gH+5orgnD
-	 5exL6jNlX4bpNA864glMyxUuLmJf7Yv7pAzorrPVMk3buq24tL2PAFP0eDKjOMhxJ+
-	 09kXbsw/EALWA==
-Date: Wed, 17 Sep 2025 21:40:06 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dang Huynh <dang.huynh@mainlining.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 09/25] dt-bindings: clock: Add RDA Micro RDA8810PL
- clock/reset controller
-Message-ID: <20250917-lividly-bargraph-2d3c036fe469@spud>
-References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
- <20250917-rda8810pl-drivers-v1-9-74866def1fe3@mainlining.org>
+	s=arc-20240116; t=1758141632; c=relaxed/simple;
+	bh=vwP0GenJdk6bZCTcVwM7MWlgruFCVXuQFEX+unH5AEM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ueNejyD0c3eypRRy8RdhzYaq6oubd29EHBZ+WgKqN2PbHvHjgIPj7WG3F83+fab6ZF7Rt7W6C1REYuivN9T367NH+jRGSkN1e+519fRXiHs35Ct44u6tFGnLERcYeookBv0FUDc6GfaSOlm28Qh+nqnogdPw3sSCZ1lw2eyKOHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3f65e91bfa9so3402165ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:40:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758141630; x=1758746430;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KUCYj0fhxjvce8cBgXv45Gpv57iRXT6SbAGiU7Ajbu0=;
+        b=EdrEGlWUHswJ84i5l9WCzCWb+G8YUe6t1v+iynsRd2PwZbJDUn2Y7Oqxa32csmAOes
+         VdT7ocbzT4etliH08V42+Dpcu57y7tYMbZXkGuf0Qj5XGpa4ZagFdQn4gYFcPnbMmB6z
+         8P/U55v0IF8wqLEjoVKBBDWCpZVb8mk2dxW/py/UTcJW+HpI3xA1dFcE/adLrMkjn0wL
+         OX1HoHHpZwyfkImAMoV21XbssYqisVFNjicnfTd8HPC4gDDvY3MuDSLmaSJahADU1QSt
+         fBAHukR0qzAy8R6LCqrlhqUMmLfdbkd7wrBi7NktAM/EkWPf9tUU14Xy1oQj0qB835vI
+         nDJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUs1OHNwtCMQxJDuWAxW/WaBCmF//ja9gEeuyL/ddL0RSdrUY7AoP8MJLbRO86RcTAw0ubRCWRqQjiI4tE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyohvPYhwokPv0Qp7zkeuNVc4w5l/FWQMtS5Amz3G9cNUuEDDmF
+	w60lFIneGc6xhLCHlio+BTkasS4SqlnGkq9VRqmsLAEz9CkfZePEOVwfHzZNT6KxNVUKyhqKdXI
+	jL82608qy3hbnu9URrNfcz1eNPXiD17iGuYK0QyTRXz3+bxZqLEuN+czY6VI=
+X-Google-Smtp-Source: AGHT+IGdPxS4H9dRvFlHe6Wk8P+TELA29Ig2qHHSvPSczHZXvjurzZu60fowB+sTUUIXjlKJVMIyB7j3CQDGyoJXkfcafvV894vG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+GCP3T4o6WO3PNuz"
-Content-Disposition: inline
-In-Reply-To: <20250917-rda8810pl-drivers-v1-9-74866def1fe3@mainlining.org>
+X-Received: by 2002:a05:6e02:17cf:b0:423:f9c6:f21b with SMTP id
+ e9e14a558f8ab-4241a4deb08mr46830165ab.8.1758141629862; Wed, 17 Sep 2025
+ 13:40:29 -0700 (PDT)
+Date: Wed, 17 Sep 2025 13:40:29 -0700
+In-Reply-To: <683adb33.a70a0220.1a6ae.000b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cb1cbd.050a0220.2ff435.0599.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING: bad unlock balance in copy_process
+From: syzbot <syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, bsegall@google.com, 
+	david@redhat.com, dietmar.eggemann@arm.com, juri.lelli@redhat.com, 
+	kees@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
+	mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, 
+	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
+	vincent.guittot@linaro.org, vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    6edf2885ebeb Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=16d14c7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8b6789b42526d72
+dashboard link: https://syzkaller.appspot.com/bug?extid=80cb3cc5c14fad191a10
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179d9f62580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d14c7c580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c72239eb6d76/disk-6edf2885.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b67e9820b2be/vmlinux-6edf2885.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0c4ab7e562f6/Image-6edf2885.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com
+
+=====================================
+WARNING: bad unlock balance detected!
+syzkaller #0 Not tainted
+-------------------------------------
+syz.1.48/6865 is trying to release lock (&sighand->siglock) at:
+[<ffff8000803b8634>] spin_unlock include/linux/spinlock.h:391 [inline]
+[<ffff8000803b8634>] copy_process+0x22d4/0x31ec kernel/fork.c:2432
+but there are no more locks to release!
+
+other info that might help us debug this:
+1 lock held by syz.1.48/6865:
+ #0: ffff80008fa00450 (cgroup_threadgroup_rwsem){++++}-{0:0}, at: copy_process+0x2228/0x31ec kernel/fork.c:2274
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6865 Comm: syz.1.48 Not tainted syzkaller #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
+ __dump_stack+0x30/0x40 lib/dump_stack.c:94
+ dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_unlock_imbalance_bug+0xf4/0xfc kernel/locking/lockdep.c:5298
+ __lock_release kernel/locking/lockdep.c:-1 [inline]
+ lock_release+0x244/0x39c kernel/locking/lockdep.c:5889
+ __raw_spin_unlock include/linux/spinlock_api_smp.h:141 [inline]
+ _raw_spin_unlock+0x24/0x78 kernel/locking/spinlock.c:186
+ spin_unlock include/linux/spinlock.h:391 [inline]
+ copy_process+0x22d4/0x31ec kernel/fork.c:2432
+ kernel_clone+0x1d8/0x84c kernel/fork.c:2605
+ __do_sys_clone kernel/fork.c:2748 [inline]
+ __se_sys_clone kernel/fork.c:2716 [inline]
+ __arm64_sys_clone+0x144/0x1a0 kernel/fork.c:2716
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
 
 
---+GCP3T4o6WO3PNuz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 17, 2025 at 03:07:26AM +0700, Dang Huynh wrote:
-> Add documentation describing the RDA8810PL Clock and Reset
-> controller.
->=20
-> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
-> ---
->  .../bindings/clock/rda,8810pl-apsyscon.yaml        | 44 ++++++++++++
->  include/dt-bindings/clock/rda,8810pl-apclk.h       | 79 ++++++++++++++++=
-++++++
->  2 files changed, 123 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.=
-yaml b/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..988b609403a96abc4964ab366=
-daa6fec0514595c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rda,8810pl-apsyscon.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rda,8810pl-apsyscon.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RDA Micro RDA8810PL AP Clock Controller
-> +
-> +maintainers:
-> +  - Dang Huynh <dang.huynh@mainlining.org>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: rda,8810pl-apsyscon
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
-> +  - "#reset-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rda,8810pl-apclk.h>
-> +
-> +    ap_syscon: syscon@0 {
-
-Drop the ap_syscon label, since it is unused.
-
-> +      compatible =3D "rda,8810pl-apsyscon", "syscon";
-> +      reg =3D <0x0 0x1000>;
-> +      #clock-cells =3D <1>;
-> +      #reset-cells =3D <1>;
-> +    };
-> diff --git a/include/dt-bindings/clock/rda,8810pl-apclk.h b/include/dt-bi=
-ndings/clock/rda,8810pl-apclk.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..372358e72436a28c0775519f4=
-9626c9c5f4c6046
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/rda,8810pl-apclk.h
-> @@ -0,0 +1,79 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
-> +
-> +#ifndef _DT_BINDINGS_CLK_RDA8810_H_
-> +#define _DT_BINDINGS_CLK_RDA8810_H_
-> +
-> +/* soc clocks */
-> +#define CLK_CPU 0
-> +#define CLK_BUS 1
-> +#define CLK_MEM 2
-> +
-> +#define CLK_USB 3
-> +#define CLK_AXI 4
-> +#define CLK_GCG 5
-> +#define CLK_AHB1 6
-> +#define CLK_APB1 7
-> +#define CLK_APB2 8
-> +
-> +#define CLK_GPU 9
-> +#define CLK_VPU 10
-> +#define CLK_VOC 11
-> +#define CLK_SFLSH 12
-> +
-> +#define CLK_UART1 13
-> +#define CLK_UART2 14
-> +#define CLK_UART3 15
-> +
-> +#define CLK_VOC2 16
-> +#define CLK_EMMC 17
-> +
-
-> +#define CLK_COUNT (CLK_EMMC + 1)
-
-This is not permitted, if you need this define please add it to
-the driver directly.
-
-> +
-> +/* resets */
-> +#define RST_CPU 0
-> +
-> +#define RST_AXI_VOC 1
-> +#define RST_AXI_DMA 2
-> +#define RST_AXI_CONNECT 3
-> +#define RST_AXI_VPU 4
-> +
-> +#define RST_GCG_GOUDA 5
-> +#define RST_GCG_CAMERA 6
-> +#define RST_GCG_LCDC 7
-> +
-> +#define RST_AHB1_USBC 8
-> +#define RST_AHB1_SPIFLASH 9
-> +
-> +#define RST_APB1_TIMER 10
-> +#define RST_APB1_KEYPAD 11
-> +#define RST_APB1_GPIO 12
-> +#define RST_APB1_PWM 13
-> +#define RST_APB1_AIF 14
-> +#define RST_APB1_AUIFC 15
-> +#define RST_APB1_I2C1 16
-> +#define RST_APB1_I2C2 17
-> +#define RST_APB1_I2C3 18
-> +#define RST_APB1_COMREGS 19
-> +#define RST_APB1_DMC 20
-> +#define RST_APB1_DDRPHY_P 21
-> +
-> +#define RST_APB2_IFC 22
-> +#define RST_APB2_UART1 23
-> +#define RST_APB2_UART2 24
-> +#define RST_APB2_UART3 25
-> +#define RST_APB2_SPI1 26
-> +#define RST_APB2_SPI2 27
-> +#define RST_APB2_SPI3 28
-> +#define RST_APB2_SDMMC1 29
-> +#define RST_APB2_SDMMC2 30
-> +#define RST_APB2_SDMMC3 31
-> +#define RST_APB2_NAND 32
-> +
-> +#define RST_MEM_GPU 33
-> +#define RST_MEM_VPU 34
-> +#define RST_MEM_DMC 35
-> +#define RST_MEM_DDRPHY_P 36
-> +
-
-> +#define RST_COUNT (RST_MEM_DDRPHY_P + 1)
-
-Ditto here.
-
---+GCP3T4o6WO3PNuz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMscpgAKCRB4tDGHoIJi
-0ps/AP4piHliUCDvEEUik0FH/7MzvmR63WJQrrnsPFPC3yOkfQD/Qx91k9Cbmdnw
-BKNMCt5IYsh65uJuh73HEVehqhuQzgA=
-=v+w9
------END PGP SIGNATURE-----
-
---+GCP3T4o6WO3PNuz--
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
