@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-821229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD87B80D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:59:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC2AB80D16
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C257E7AF688
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDFD2A040D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338892FBE1D;
-	Wed, 17 Sep 2025 15:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CA32F83B7;
+	Wed, 17 Sep 2025 16:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NujC3H2a"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjphx54c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7C32DC35A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A012877F7;
+	Wed, 17 Sep 2025 16:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758124775; cv=none; b=TqNAvFMKtWBYxip05wG/8ujxliwCOeHFVmqs/jHGbAEWlSJWA2Bgh8higwwHqDFdTwtv4wQe9aSSlP2IuwuGkzV8XdvjpLnYk/FSXWZnCNoFXjSLNt5DiJhAciZI7/eThK110Ip/4XtRHjZLMpElNneTG6hpXV1W7NCuZENNGD8=
+	t=1758124846; cv=none; b=B7Sr8o8uMhpW6/wmxQUP7IBHafZlBS/o+KbP4DVQBq5PByEbHNqftXcwqBjoOJ3wFbsB7TyxnDbDrcoL1tnudC9aJUcWaxTzSG9Yzqa8gdRN4vrQbfoGLH3g27jtiTmQtNb1qtnyCx/YoyHxlgDbKZbizXTTtfiDJs0TSGxywwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758124775; c=relaxed/simple;
-	bh=bwd2hym8tNSAdXkGE4hZ3iw7DYGozn+untN0aXZ6tZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=poqIvpWWa4oQgkc38Z8mskz4Gw3KTs9/qE5C/XGlXV6BUEAJfD8KURNK9sRqq5NqZ9yiSYIMsAe3RrWroiXcTeUnuwNiK4o/tuRYRydqn3avPdaAGlib2SfRyAe0ti+r18tpvUVA7ze7Q0tdvA0OsZ0tx4FmW/KNJxsYTnmgv5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NujC3H2a; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-621132816c8so1907eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758124773; x=1758729573; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bwd2hym8tNSAdXkGE4hZ3iw7DYGozn+untN0aXZ6tZA=;
-        b=NujC3H2a1m14GIu3bjmWd3ca3E7gLcVDIN+HxLv9W3WOoS8F/Hpdtn1m/0N64MFGeE
-         SoP2Z4ZixG0hA0BHPrDfxp1578zB9HaWuQTaINkxqpOjLuoC2RClpx5gdJ75CWNN6rRn
-         vPa9B0CkC3sZJMoWPxeOiQd5xI05uJAINF/bur7H7ddKHGVE9iyFj+MI4R79XlYiecWL
-         1gXMjMRvD0oAExv9D8yIRBo8F6mZwMrnRSWTIKMBZW+3GdXrxQNYvE8N+UG7p1AuiyCn
-         +U5dPlB5MCwEF5UVt9TbIgDYdfBONH3LORTtbKxgfy89K6kRErGEAs1v71FQu5eDFCbq
-         tVig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758124773; x=1758729573;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bwd2hym8tNSAdXkGE4hZ3iw7DYGozn+untN0aXZ6tZA=;
-        b=sDub3+lcsvO5+EAOHRe24+b55Tay//qPA/fBzpzhJ6WABd45ZvkrBMTL2wb6RESYNk
-         0xIm3HQ43XqEqDLR2auTn1Xa7Bnvt78EFPBuiPkjj2euHq4q0JNLSKRjO84+M15GgPty
-         8lWQUNV1jF9pGqBp3a6jJ8od2KPpFnw4C0rQTD4EG1zjrY162ElM+A1B32e+/WWgXgv2
-         GIKi1/NMVeAI3A7B9DbLmLjPmsvwkw0StywL0a7oovIFGEsiIGtabFe4CRDtIFBt3Ejl
-         0EQHyL7xkR7HBV+Q2Ddiqh3+0NattNsQ0cQc1gbLVMJER8qqJZpo3eWjTBYe1lOM9bLp
-         4+Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWolzRYnPVS/bWGqBNxHGu/mLTGcbGRUOP83P4Da2CgDBJzveB53c2PhtZEvHews6Nu6N1u2yNLsgn5rlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx47FpgXTIO/WWTbvrnMJIMstcCMeqUIg4DEEqNH5A0uJ8lR8Rm
-	NFadqvsZCkG3XC7FlVgDCNzLFg3yv8IIY2eOM+AjJz6IMiIJaNZkXd7173JwEvF5Nvg=
-X-Gm-Gg: ASbGncuHlNq/8yjI9vAeY2KJ8+BOLw36USmxGqY6VfZrhAMlOx/NXgWohJRjPcbgQw6
-	DrX3Yj3eHDrsr9qN2cnGxytOrjrDjwd15/+nK6aVMkqnktc8e+mzxyNcWxKZ7fOSMcH25p1sZpT
-	2ii/WdR6lrCDohGUNJO5EkRkhGMk2DxafZLUPERoKPxaePvBzwtLLaOwM/fS4wQsiqLNyWeoeG3
-	RAMTUKJVZF0psfdNjkyxI6LRfPf64iHAi0FGBecRm/DWOV9JHe26lv8wRiJki2HHdOUql9G8UCl
-	zy493TiwqrcrqW2CBhevRHqJo/x9dQDHs35nUYyV158Lh0QTLyFyPqQjpHfYVAqINu5bCf1Q
-X-Google-Smtp-Source: AGHT+IFPi2deeD5xpECHK4kizIqpzvjT3NpSt1j+SxaGfjDrfDGe9/bYIqtD0y9cjE6AL0d46S51pw==
-X-Received: by 2002:a05:6808:4f4b:b0:43b:2829:e642 with SMTP id 5614622812f47-43d50c63332mr1037591b6e.24.1758124772981;
-        Wed, 17 Sep 2025 08:59:32 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b828d6909sm4320090b6e.7.2025.09.17.08.59.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 08:59:32 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uyuZ9-00000008UmV-28J5;
-	Wed, 17 Sep 2025 12:59:31 -0300
-Date: Wed, 17 Sep 2025 12:59:31 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Will Deacon <will@kernel.org>
-Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 22/28] iommu/arm-smmu-v3-kvm: Emulate CMDQ for host
-Message-ID: <20250917155931.GI1326709@ziepe.ca>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-23-smostafa@google.com>
- <aMQroI4NDu74PDGT@willie-the-truck>
- <20250915163858.GK882933@ziepe.ca>
- <aMl_5j8G3IGulAC6@google.com>
- <20250917123601.GA1326709@ziepe.ca>
- <aMrNTny9jgZJd_Ef@willie-the-truck>
- <20250917151612.GH1326709@ziepe.ca>
- <aMrS71vQ_MaVonzi@willie-the-truck>
+	s=arc-20240116; t=1758124846; c=relaxed/simple;
+	bh=Xn5cUrhSlYfU8D+L9SzM1MDf0JSuHHuyW2CfS7ldx4U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fwNVBG0qsKCE8/2QZDxAxi356xmvGHAntuc5RZcpUFtYRq0cO7nait4bjv1Duq4DDS9XHSUnlEcG41vN0ZfLXYARKFk7xCto/Ifs5Wxn5BtrwE1VQHNDIFsW6CWPSlL79Jk3WNM3Brpa/DTzpshk50yJnY6Yy96/aHvIBbtW0Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjphx54c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CA2C4CEE7;
+	Wed, 17 Sep 2025 16:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758124845;
+	bh=Xn5cUrhSlYfU8D+L9SzM1MDf0JSuHHuyW2CfS7ldx4U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rjphx54ch07/tjRjFKkF3By6vtvpnEoUncKbAEpNlvByUm0k6NJiK3Av1UQUAvA7/
+	 LneouAJG8afb9GBos2X2/BHT0+7oWwtTWaYdMGOH27C/1vsA8vR5XCj9KCRigfP3Bo
+	 7ad72wYPbbvz18kBhYzdme8W+ABuQfkCcb/v0HGDCCeUNmkyXDIU8/Cwy0Njj9wTV5
+	 Wt1hoamLPijmJsp5rkEo1Cnd2gpQGLnwFJLpr5vW83Y4IneF8pEqWZhH4R0jD5kiZb
+	 AtwYwkRHy3ufNQZWQM/Ikvip8S9PgWIOiSxcdZ1uHjRAI4dMhBWDg1s/ormnLgbIwE
+	 bLEcc8txhbO6w==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Quanmin Yan <yanquanmin1@huawei.com>,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com,
+	Chris Mason <clm@fb.com>
+Subject: Re: [PATCH v3 11/11] mm/damon: add damon_ctx->min_sz_region
+Date: Wed, 17 Sep 2025 09:00:41 -0700
+Message-Id: <20250917160041.53187-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250828171242.59810-12-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMrS71vQ_MaVonzi@willie-the-truck>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 17, 2025 at 04:25:35PM +0100, Will Deacon wrote:
+On Thu, 28 Aug 2025 10:12:42 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-> Ah right, so the driver would unnecessarily issue CMOs for the structures
-> that are just shared with the hypervisor. At least it's _functional_ that
-> way, but I'm sure people will complain!
+> From: Quanmin Yan <yanquanmin1@huawei.com>
+> 
+> Adopting addr_unit would make DAMON_MINREGION 'addr_unit * 4096'
+> bytes and cause data alignment issues[1].
+> 
+> Add damon_ctx->min_sz_region to change DAMON_MIN_REGION from a global
+> macro value to per-context variable.
+> 
+> [1] https://lore.kernel.org/all/527714dd-0e33-43ab-bbbd-d89670ba79e7@huawei.com
 
-Yes, functional, why would anyone complain? STE and CD manipulation is
-not fast path for anything?
+I think I found an issue of this patch.  Please refer to the attaching patch
+for details.
 
-Jason
+This patch is in the mm tree and not yet merged into the mainline.  Andrew,
+could you please add the attached patch as a fixup of this one?
+
+
+Thanks,
+SJ
+
+==== Attachment 0 (0001-mm-damon-sysfs-set-damon_ctx-min_sz_region-only-for-.patch) ====
+From af4a31405f4d8c4e5b32f7244f0cdcf960dce30f Mon Sep 17 00:00:00 2001
+From: SeongJae Park <sj@kernel.org>
+Date: Wed, 17 Sep 2025 08:31:54 -0700
+Subject: [PATCH] mm/damon/sysfs: set damon_ctx->min_sz_region only for paddr
+ use case
+
+damon_ctx->addr_unit is respected only for physical address space
+monitoring use case.  Meanwhile, damon_ctx->min_sz_region is used by the
+core layer for aligning regions, regardless of whether it is set for
+physical address space monitoring or virtual address spaces monitoring.
+And it is set as 'DAMON_MIN_REGION / damon_ctx->addr_unit'.  Hence, if
+user sets ->addr_unit on virtual address spaces monitoring mode, regions
+can be unexpectedly aligned in <PAGE_SIZE granularity.  It shouldn't
+cause crash-like issues but make monitoring and DAMOS behavior difficult
+to understand.
+
+Fix the unexpected behavior by setting ->min_sz_region only when it is
+configured for physical address space monitoring.
+
+The issue was found from a result of Chris' experiments that thankfully
+shared with me off-list.
+
+Cc: Chris Mason <clm@fb.com>
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ mm/damon/sysfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
+index fe4e73d0ebbb..883b0d886d68 100644
+--- a/mm/damon/sysfs.c
++++ b/mm/damon/sysfs.c
+@@ -1435,7 +1435,10 @@ static int damon_sysfs_apply_inputs(struct damon_ctx *ctx,
+ 	if (err)
+ 		return err;
+ 	ctx->addr_unit = sys_ctx->addr_unit;
+-	ctx->min_sz_region = max(DAMON_MIN_REGION / sys_ctx->addr_unit, 1);
++	/* addr_unit is respected by only DAMON_OPS_PADDR */
++	if (sys_ctx->ops_id == DAMON_OPS_PADDR)
++		ctx->min_sz_region = max(
++				DAMON_MIN_REGION / sys_ctx->addr_unit, 1);
+ 	err = damon_sysfs_set_attrs(ctx, sys_ctx->attrs);
+ 	if (err)
+ 		return err;
+-- 
+2.39.5
+
 
