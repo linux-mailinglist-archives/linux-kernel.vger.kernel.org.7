@@ -1,88 +1,98 @@
-Return-Path: <linux-kernel+bounces-821113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3753BB80748
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:14:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3D2B80769
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 070314E1C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:14:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15675816A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC9F330D20;
-	Wed, 17 Sep 2025 15:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E948C335950;
+	Wed, 17 Sep 2025 15:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="Jr3RJMxq"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EtVD1/Gh"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A460309EF4
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1528032E741
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122090; cv=none; b=gdTtwxr7R5rNv1pVis3lEeDzHayboVGmk5KbW2xqDRZ3AiXmHqjbxkjb7JgQUOlmvbY6hut0CdMga1jN8dS+F5slXyj3OKMCZxGmq1QyQH1I4Pf/hZqoO2o32E9sjLx0OPAi/3LfIE3wnbd7Jus30kI67fl/f/BIIHXufde3h9A=
+	t=1758122178; cv=none; b=dkeAW0VWJa7p/XoeYjqiwsQTKUU4+J9s1fXWU5nf+nj24MTkLfClB/vtze8OVzER8Cn6oTpYlYqi/WTaE7Z3vnY066KG5UZHzZo3fANJ++jc2JC6gLOk/DJltfAp8SAYWADziBsZpbEIuXiek3/xTM/U+NVoOrsIhY4cVKPCidI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122090; c=relaxed/simple;
-	bh=BJGW2dTrJ5vL37y1VD5hJsGeiolH7Qgx6xvbYYe2VoQ=;
+	s=arc-20240116; t=1758122178; c=relaxed/simple;
+	bh=vr6s4p5RDrOlpzEnsFxEhXbnKDJ/Ny2Q/csoaU7WttE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ReSy4pk59XSIQVzDOBFGjdDzX5kNRspRkwMrUjPF2PxlH9P1VdCGGYhgKYv4kJx9qpyRE99dS+2KBID8mlbmEIEiCx6IIAkXGUBgkzDhAjKZIvbEvAW0QzAY1JeKiFiRPqrAqoUyjUVD2zNBz/yQVwq/tnAWupxd8NcLSXBsKkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=Jr3RJMxq; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78f15d58576so5204806d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:14:48 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHmGCaDPvWHjac9DFnfSTb/krksZWZwMrs27vWJynTqP3E3wlj870WpKFwIVmcNbCc3ytoVe7wfL+VuRtA3keLS8bFi4nkdHql3x3Z2pRJUh3/FqK19MD1bnVtnKxTwvmRo2apcorolP87OhvKvGUDPrQ7C0Y6DgsdLgthAcgyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=EtVD1/Gh; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32e64d54508so3574581a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:16:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1758122088; x=1758726888; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1758122174; x=1758726974; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v6NrCcDiMgz4BfT37/6MfLkoGQSFwd3bQQCaY08TYjM=;
-        b=Jr3RJMxqr8A1MbkPS9ZoIPOFuGreY4uY6Fm/UhOyJyUwEzzJyufmCl7LU/XU6iO6iX
-         r85EZ0HmonvXhwWiVRV7DL7FLFJFugPxaaekd2qm1+3kFhw3dDhrS+4moqKNcMqzsBGW
-         mgLYwPKhN4rvHkiN7YX6YyNJ0NE2VrDQEtuVo7MizcLi6hwQ5O8O9c8SxkuoJ8V4ylDT
-         bi3/rNVU/pnBpAD5/HxRsgDKoKqNMeMNje9dB49nN7dls8FNPFamaBhrFpObjl66Tt+J
-         zHLdigkXNEzyDXfui8fCjnao46shpTOAS60J1tyR9XTf+xGHyoreVl2zutNMvGRDn7E8
-         U8rA==
+        bh=j5mwCMXZll74MsKobdLnh2paEF22CAKr4juHWA93w7A=;
+        b=EtVD1/GhcFT6sbBQmBFmeZL0Ey1kZ7kMalu8h7bV76QBRcuqLgp89o53d9GMibaFcv
+         kmKCZU2YedvuLdruws1ghEBbPPzvrG5bimwZbjgnU2nr6jif/QPfGr5VGmwOzS5SICgp
+         xU++hc9OHgZ/yTP5wJKeOrZIztk+4ck5XtnuRNATkZcBzSoFfj4BsRuFBnLlGjlCUtbv
+         YopncFXRBExfiXWy/g9Y5pMdgpL1xjvRZBNijqIF8wByHQNRRO+WZUeWQuPb/SH3UCZ/
+         +mzJXc5SevvLl4N97HirohlvUOvW76C9fYyfwJS9IQxPkqA6ul/7ZnlomtQyDp4dLJjn
+         gq6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758122088; x=1758726888;
+        d=1e100.net; s=20230601; t=1758122174; x=1758726974;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v6NrCcDiMgz4BfT37/6MfLkoGQSFwd3bQQCaY08TYjM=;
-        b=Uqn4zo9ykDRNF+xykHOyz1dBP3DuQ7B4LZXTShp+DjoKukWHSwrWRVWKgyfX7Mu9Ue
-         5Dj60b8uzkH669oLjxTnoc9657q0E9krUUiYNfcAJzIfp9Tva1avTbUlbC9IGpJXECS9
-         GJGMZT36EDF5mgvhSvlF1CPAnypZpZ1TWVxmkzG2mFRQuPe9I7x0QRQtlLuIvV7wV8wb
-         hq44//pzOg8m1Rq+8JIeRnFgQoeZSf/BVOqWUoNUo0/9Ob5rLqhJMeFChWe/r4YfAejA
-         a473AqUSC5ag1LNkH3W/i7GTANlSFlm1uJPpG0PBBhHE8a+N9l2MZtQTAVVlekSsU2t4
-         Rb+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU+hjtLAsfGrSaXD0m/jBbjp+ED56QndpuneKo/IHgl0dpwvqdTelRLBq0hfrYElc8aFzre9jPwfgeJs3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweZybkuDBBNr4mlxE5FJAn44OAZsmyZg08dwDSimSv9/solqvP
-	hsQT7gjJ3vrQwVX7pk91qQut40TzszH0rfN6lgOOmfaMhfyxtCr+ol4uXJ/JQ8m5IAwJ9jWA4sL
-	dK27X
-X-Gm-Gg: ASbGncsf+2QNoH3bCxEqvA/s9/y2RkFbJPJPE0KC+D8lhg9qW4HQNOpacXfCwHcWuy8
-	RVR+jkK2hs/iM8XTl4dQ/i7W/k5/VKKCKC8pzzhU11eYvCR+3eUettQtsGavbW2gztT/EqHWtV4
-	FMxp/a6UQEiHnuoEiwBDUBJYqCj5zJ1+n5ljexYZq+Q9mPVYZ8GlgXu3SIXnBZfJ01zncAQOF0Z
-	JBVQwmW7MKFnsYh3cjgnmvlQXaeAeZI0Isnz59lgbGhkhHVpJIbmHqt04Ii3Ngxs6u7/6Wd+YgO
-	x7/RO8dPDEW3dRSowdkrlrkOhhV96+iDZArIk5Adbn6Cc8mXw2QJesmwrE/0dVPOOAvCUa1/B8y
-	34Uc423p+WtyBdyAXEuYqmpc9wWbrDX6K0Iu4IqI9NZzBx/MUkPQ=
-X-Google-Smtp-Source: AGHT+IGd/ABHMF4f3Hvae/ZzKRbwMwLDu0yyj04cHbrYciDrdwe6HnEu0vohHTaXLEoMoD8R1qEw/Q==
-X-Received: by 2002:ad4:5b84:0:b0:77e:8d71:c335 with SMTP id 6a1803df08f44-78ec6177b6bmr28182516d6.19.1758122087595;
-        Wed, 17 Sep 2025 08:14:47 -0700 (PDT)
-Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-77cb4cf2a35sm65042936d6.51.2025.09.17.08.14.46
+        bh=j5mwCMXZll74MsKobdLnh2paEF22CAKr4juHWA93w7A=;
+        b=mwxd+A0sCwjS5yYGB4FYbZYc1nKm3tGkI7vuYs57Byeui5NxsTbxxO432i8X92x7Bv
+         9jP6oNFSCijzGeyHfIV7BGNSaIAt8JoC/KpjrI+StDGofChJkZclX5/n4V3u5cIqBY6a
+         L0FafzD74WSTTiqz2Ey2g4dEzoHlrkYgppH+B0nJgBIXfqn98NvlEPTrwuFsr3QaDc/Q
+         vPjEKq8macNS5unqk8naAdVuY6XIH3gzNrrxuVsXAFe2ohvj8kMTNwMpZjw30R1tBjPW
+         k2KJxKVG8qvgM7ZVvQ9yE0naGp/AC4sL/JwE17qSkbVH/qlSPJapYVawotDnlqKM4ZRD
+         nciA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDb+LsIUxVaoe2b5FyKHR2pk3w8Irb94Sa1lSBu4xcAqyC1PHCTf7BbG0RREvjvSkO7mWa9u8QqxbNphk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Tc51zWnqBdeuctmxJuAHaWoGHzfexFEkv7rjuyE5LTQWyEBH
+	vm1psN3X1wY7YJ8Po71Ep5R1GvNzaPcfSG1nQy1gzSQ3rZ7tlvu/veR4AFB6BIz5wxY=
+X-Gm-Gg: ASbGncv2LF0NyChYrHCVlg/ugkYhiofJs36jo5bohPNbYTUdlZ3/nu7IynE0kc8rU6O
+	sbh0Lh84Zk/BH6gObnMI3mWbfzqA7hIiECNrBDwRXGypYm63hkmq2haE84Y1Cl9MFb02qQ2y4Th
+	B3HpFclcpvC50OpAZrIT0KxmR4zqjfuTlwJgPBKL7dxVhVkG5yF9t+uuZVdzWJbT3uVltOaFA7L
+	48kLYHGw7QbJpCjAfrCZio5e+BpG+Cd8EOuez/fXnejXj4NRZmvc/kvwceCdiIs4a6gF5DnFqnO
+	VeYlx25vD8L9p1a/2NKJ6RLaKMbiqDC3JTRY+dPEc94dYgggG/Fy8F79xYRRWmGC6Nc8aHFc
+X-Google-Smtp-Source: AGHT+IFT1177fnGaDPrsJvXBzm9YkFBr+A6b67xfQf6j5GBKuYGPXR9WdIUZ96yP+o/Tmx5sDbBqfQ==
+X-Received: by 2002:a17:90a:d44b:b0:330:3fb8:3884 with SMTP id 98e67ed59e1d1-3303fb83a3dmr2234532a91.16.1758122173999;
+        Wed, 17 Sep 2025 08:16:13 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ff1a22fdsm28695a12.0.2025.09.17.08.16.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 08:14:46 -0700 (PDT)
-Date: Wed, 17 Sep 2025 11:14:45 -0400
-From: Nick Bowler <nbowler@draconx.ca>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, regressions@lists.linux.dev
-Subject: Re: PROBLEM: AST2500 BMC video output disabled by reboot (regression)
-Message-ID: <xeipdyk2i2lpkg4rrvz4cl2l3ch62sl4zoa73qvlms3ek3zkci@y7xqbgjulaet>
-References: <wpwd7rit6t4mnu6kdqbtsnk5bhftgslio6e2jgkz6kgw6cuvvr@xbfswsczfqsi>
- <CAD=FV=Xp7zOQ2iEVf896P074RW911F-e2Qa36deD0e8fWksFBA@mail.gmail.com>
- <u7ek3ccya4c3c4rteliskjjfczpmrt4vmqo5c6kjdotxdgitn7@ko24dpb35pq4>
- <ef6558a9-c44a-4c66-967c-187f260f73e1@suse.de>
+        Wed, 17 Sep 2025 08:16:13 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uyttE-00000008NhG-2B33;
+	Wed, 17 Sep 2025 12:16:12 -0300
+Date: Wed, 17 Sep 2025 12:16:12 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Will Deacon <will@kernel.org>
+Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 22/28] iommu/arm-smmu-v3-kvm: Emulate CMDQ for host
+Message-ID: <20250917151612.GH1326709@ziepe.ca>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-23-smostafa@google.com>
+ <aMQroI4NDu74PDGT@willie-the-truck>
+ <20250915163858.GK882933@ziepe.ca>
+ <aMl_5j8G3IGulAC6@google.com>
+ <20250917123601.GA1326709@ziepe.ca>
+ <aMrNTny9jgZJd_Ef@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,47 +101,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ef6558a9-c44a-4c66-967c-187f260f73e1@suse.de>
+In-Reply-To: <aMrNTny9jgZJd_Ef@willie-the-truck>
 
-On Fri, Aug 29, 2025 at 03:07:14PM +0200, Thomas Zimmermann wrote:
-> it's been a while since you sent this report. I assume, the problem is this
-> there?
-
-Sorry, I haven't had much time to try the latest versions, the most
-recent version tested is 6.15-rc7 and the problem occurs there.
-
-I have just patched out the shutdown call in the ast driver and
-everything is fine.
-
-> Am 30.04.25 um 15:28 schrieb Nick Bowler:
-> > On Mon, Apr 28, 2025 at 01:40:25PM -0700, Doug Anderson wrote:
-[...]
-> > > 2. Could you give more details about what panel you're using?
-> > According to the documentation I have for the machine, the video output
-> > of the AST2500 BMC is connected to an IT66121 HDMI transmitter.
+On Wed, Sep 17, 2025 at 04:01:34PM +0100, Will Deacon wrote:
+> On Wed, Sep 17, 2025 at 09:36:01AM -0300, Jason Gunthorpe wrote:
+> > On Tue, Sep 16, 2025 at 03:19:02PM +0000, Mostafa Saleh wrote:
+> > 
+> > > I think the fix for the problem Will mentioned is to just use CMOs
+> > > before accessing the host structures, so that should be simple.
+> > > If it turns to be more complicated, I am happy to drop the support
+> > > for non-coherent devices from this series and we can add it later.
+> > 
+> > I feel like it is easier/better to fix the driver to use cachable
+> > memory than to add CMOs to the pkvm side..
 > 
-> That dmesg refers to a SIL164. I always thought these where only for DVI.
-> With the IT66121, I'd expect the warning from [1] in the dmesg.
+> Hmm, but for non-coherent SMMU hardware (which sadly exists in
+> production), I don't think there's a way for firmware to tell the driver
+> that it needs to issue CMOs for the page-tables and the CDs but not the
+> other in-memory data structures (e.g. STEs). I suppose we could do it in
+> some pKVM-specific way, but then that's not really helping anybody else.
 
-It's not impossible that there is an error in the documentation.
+Not sure I understand?
 
-Although the comment in the driver right above the linked code suggests
-that it might just report SIL164 even for other kinds of transmitter
-chips?
+I mean to issue CMOs in the smmu driver consistently for everthing,
+page table, CD entry, STE, etc. Today it only does it for page table.
 
-> [1] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_main.c#L196
-> 
-> 
-> The ast driver doesn't do much during shutdown. Could you please out-comment
-> the lines at either [2] xor [3] and report on either effect? These calls
-> turn of the video chip's memory access and sync pulses. Not doing that might
-> resolve the problem.
-> 
-> [2] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L835
-> [3] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L839
+Make the driver consistently use cachable memory for everything
+instead of having two different ways to deal with incoherent HW.
 
-I can try this.
-
-Thanks,
-  Nick
+Jason
 
