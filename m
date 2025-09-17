@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-820081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59FFB7E5CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:47:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14C8B7E83A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F3F3A685D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5CEC1C038F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D121271468;
-	Wed, 17 Sep 2025 06:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZsqPIvW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5D32882B2;
+	Wed, 17 Sep 2025 06:50:51 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7452629D;
-	Wed, 17 Sep 2025 06:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31D425EFBE;
+	Wed, 17 Sep 2025 06:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758091751; cv=none; b=ChY4KDPuGDu2N+dmusm0FYNcOri9mn489MDeTb+n5YlsQmpYiHreP5wGPwM3B8c2ZURQ/hdLqQvtQ/IGx10T2H3LAPI4ZVjbfiE1J32NNpJIupXmlNr1Dxr264tN/xDEAVYzCUHORn8+8OHMbMcU7DM6+qNODvpilc7QRe8XK8Y=
+	t=1758091851; cv=none; b=feerAJwZVc0u8XMAsDwTKhVPlAt93QF89UaFMx5DkY41mQk69iBFoqMkQ7orpkP8wpBMq9xDzn+pBuh2D+YxXZRqVZyvshntzE3zQaKHYRLB1BPlEH4FpP6N08+MqS7YAev4VFgxpDadrGKghc1cl6/rTWekR3RgzcULj9oJE4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758091751; c=relaxed/simple;
-	bh=hp7Yz1S2kHTO0qwTAezzgUOk9pUddyG5XB6EsyJvNEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNzFf488RFR5AesROFAhccalHu3yeNJRa+78K1js+al9Ppwr9KOCM0f8gtTE7nH+Fqvd07pHr6ZpR7U8EzQF4KI643BOEWufOIQC9NjH5eCnMkGl5bErjwSzUoBRPfUE9oYpXijzcNLMgZYZpgYd06G5X21An5RGZuTkdJWBm7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZsqPIvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5CF3C4CEF0;
-	Wed, 17 Sep 2025 06:49:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758091751;
-	bh=hp7Yz1S2kHTO0qwTAezzgUOk9pUddyG5XB6EsyJvNEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SZsqPIvWt3Xhy9tCaKqp208t+70uypGsX5qeq20ozCnIGQE/nCrgQuMYZK8WOiuFZ
-	 gHGn/lGfCrfhenGkx2Lyjbm6rfj5L0n7CWdVpOsLJYr8kaKhS4U/G5hBWHi++ousra
-	 tSsdeYgU6eUTMOF4uiL370gN2G0R/hKoPcdV1O/9RQ/yBOudYo6qvmXTuUMu+BchJU
-	 DpK3vYz42piUpDo+hhBfX5gBPS01bqbJ18icANgK7mngqr6TOl2+cvBlVWaSbnTUcS
-	 VAYGUifjtKemMOQTnmS0GR4XDQIMCo8sCRuj+M85fuRtNuIwQMO/TcqrMTUWaVAoa2
-	 gTaUV5FECLbGw==
-Date: Wed, 17 Sep 2025 08:49:05 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nsc@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
- vmlinux.unstripped
-Message-ID: <aMpZ4Q6VFMFtXEkH@example.org>
-References: <cover.1755535876.git.legion@kernel.org>
- <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
- <aMeqgPVfJcjBLhl8@levanger>
- <aMkN1m55vejTii_H@example.org>
- <aMkvtg55F1gJ5feM@levanger>
- <aMlKTPpNXrRW6v_7@example.org>
- <aMlbSEnwGOPM39Op@levanger>
- <aMlgMkB2nL31K2OB@example.org>
- <aMll6cHPhIY2yswz@levanger>
- <20250917011010.GA3106929@ax162>
+	s=arc-20240116; t=1758091851; c=relaxed/simple;
+	bh=8tluT2i8GW6WhEmoITXfxdorw8zGejI+ZxqHYeHI9gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ggFHhX2kivR33O0b/YhtUW4Gq3w8gDS9xlqIZJiC5qScaB0v3m/otZaIbF+tvO9Hd3eGYuyjgPdUEqkXMmGawpj0X4V/jufA4D7Qecg1wQpgGSqAgGubxAMYgBMS9Q1/2lIJnyHF/85RV9cciayMCAGRkInvbszcKmdL58qoSd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.205] (p5dc55721.dip0.t-ipconnect.de [93.197.87.33])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 58A2F60213C82;
+	Wed, 17 Sep 2025 08:49:47 +0200 (CEST)
+Message-ID: <329bdb90-578b-4fba-97fd-7000baa281e6@molgen.mpg.de>
+Date: Wed, 17 Sep 2025 08:49:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917011010.GA3106929@ax162>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-net] libie: fix string names for AQ
+ error codes
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250916-jk-fix-missing-underscore-v1-1-a64be25ec2ac@intel.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250916-jk-fix-missing-underscore-v1-1-a64be25ec2ac@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 06:10:10PM -0700, Nathan Chancellor wrote:
-> On Tue, Sep 16, 2025 at 03:28:09PM +0200, Nicolas Schier wrote:
-> > yeah, it's actually because I dislike modifying vmlinux.unstripped in
-> > the vmlinux rule.
-> > 
-> > But it may be that Nathan does not see it this way.
+Dear Jacob,
+
+
+Thank you for your patch.
+
+Am 16.09.25 um 22:09 schrieb Jacob Keller:
+> The LIBIE_AQ_STR macro() introduced by commit 5feaa7a07b85 ("libie: add
+> adminq helper for converting err to str") is used in order to generate
+> strings for printing human readable error codes. Its definition is missing
+> the separating underscore ('_') character which makes the resulting strings
+> difficult to read. Additionally, the string won't match the source code,
+> preventing search tools from working properly.
 > 
-> Yeah, I would agree that it is good form to avoid modifying the inputs
-> of a rule.
+> Add the missing underscore character, fixing the error string names.
 > 
-> This warning is pretty annoying since it is intentional but we do not
-> have great tools to hide just this one instance it seems... This is
-> probably worth a comment.
+> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+> Fixes: 5feaa7a07b85 ("libie: add adminq helper for converting err to str")
+> ---
+> I found this recently while reviewing the libie code. I believe this
+> warrants a net fix because it is both simple, and because users may attempt
+> to pass printed error codes into search tools like grep, and will be unable
+> to locate the error values without manually adding the missing '_'.
+
+As always, great commit message! Thank you.
+
+> ---
+>   drivers/net/ethernet/intel/libie/adminq.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> It would be nice if this section could be marked as NOLOAD from the
-> beginning but that will mess with extracting .modinfo via objcopy from
-> my brief testing.
-> 
+> diff --git a/drivers/net/ethernet/intel/libie/adminq.c b/drivers/net/ethernet/intel/libie/adminq.c
+> index 55356548e3f0..7b4ff479e7e5 100644
+> --- a/drivers/net/ethernet/intel/libie/adminq.c
+> +++ b/drivers/net/ethernet/intel/libie/adminq.c
+> @@ -6,7 +6,7 @@
+>   
+>   static const char * const libie_aq_str_arr[] = {
+>   #define LIBIE_AQ_STR(x)					\
+> -	[LIBIE_AQ_RC_##x]	= "LIBIE_AQ_RC" #x
+> +	[LIBIE_AQ_RC_##x]	= "LIBIE_AQ_RC_" #x
+>   	LIBIE_AQ_STR(OK),
+>   	LIBIE_AQ_STR(EPERM),
+>   	LIBIE_AQ_STR(ENOENT),
 
-Yeah, I was thinking about that too.
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
-Ok, I will make a new version of the patchset with fixes.
 
--- 
-Rgrds, legion
+Kind regards,
 
+Paul
 
