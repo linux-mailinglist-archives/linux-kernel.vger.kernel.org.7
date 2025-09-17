@@ -1,229 +1,196 @@
-Return-Path: <linux-kernel+bounces-820710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D30EB7E66F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 602A9B7E7A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 479161B245D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6831BC5775
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF1532897E;
-	Wed, 17 Sep 2025 12:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AE4323416;
+	Wed, 17 Sep 2025 12:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3Uy6JTX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xl0pRa4B"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD6931A812;
-	Wed, 17 Sep 2025 12:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F9A2FBDFF
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113203; cv=none; b=te8EmfMpjKWdVWMcmKzGMoQeJC5fPP+pEmTcfGNhOFSNmpKda7x6JqqDFOSQMH9Krw84InRIiM540LBpdk7Wkea70UICEKwlQYslTgM1vh5d/NAQlQVear58ifk6WKIoIaH27aTT+lwNmH8gnAOb3kIS1io3tQj9EHJda5piX6c=
+	t=1758113251; cv=none; b=adV++IPuOg3OjC4h7KcBx/KT6ba1lDLnZLdex0KXcUdw4hmFRclMRAh8IO/FHJgehdj2QqY/y+wtqQOkAfQYO+U63VmjxW9BZ6Sl7Jj0f5/9J5jFO1URqDl9DiKW5amlL9PkBxpATqA0Md3bBpczdTb+mcnLQEB7CX4dFSwZil4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113203; c=relaxed/simple;
-	bh=4m09HVxeWOmfLkoOABM2Z8FAF12xRU3thrbn9gHjaNE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K1kNISI/iTc0/Jv0HIH5lnCJh9GUZPIBpjoUtMCq8H4DmqRp4jpHAObX08j6oZOB/H8pMS+AA/JfNJlFso49AXbUT1CT0KXTcnJ/weeiTABrzrRmjUX3fWVD8ayHAWPl2KKz6cTl63QAqcEoEtonDXHtGP7ZaHgApsdr8SnogVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3Uy6JTX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D12B3C113D0;
-	Wed, 17 Sep 2025 12:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758113202;
-	bh=4m09HVxeWOmfLkoOABM2Z8FAF12xRU3thrbn9gHjaNE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=T3Uy6JTXmXOdWE1jCViAWmbalx94XMPubKal1ngWRnwRZQxn6OHyjSbdLB55wDegq
-	 kwchp2jtqAgCLwibxdJkjtvSqeecNCkH2SpvfIeIuRJIykV9vaukIyeD4EJtwslAnO
-	 pP+RLtBLQqWYYZ7PEA7+8xXnOTIqBUt8jK2xZEOu9HAslESlIYyn8w2dgP6rzsdeaj
-	 B45/r22U1wKIajoKPQ98QtyzkDbbgiZXJA1Lwxn+cKmx5xwzWTzntn4V8KlLtYgKEq
-	 teRsCETM/VFkarkjmGp+7NDu0VRFkkIf/VPqCO+LklYwDn80uH0/f8VMYOzrwBx+X5
-	 Vd+nIwH5l6mmw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8511CAC59D;
-	Wed, 17 Sep 2025 12:46:42 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Wed, 17 Sep 2025 20:46:43 +0800
-Subject: [PATCH v3 4/4] ALSA: doc: add docs about device_device_quirk_flags
- in snd-usb-audio
+	s=arc-20240116; t=1758113251; c=relaxed/simple;
+	bh=OpFjrz8zqyAOuDDEavL83RJ8Trpvvw84g1TSZSRsq/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K28jvXqpd5R58ugRQcv+MNhZdWraaT1ZgVUf45ES5tYnstzyhg0M13wowPvkxdOFHGaHi/QSv3mAI4LZJt0ouLDU/fsBHiFuYWY1P9yx0XBa+7m2n9c1O2NUz7oDA8093szTxR796spNZ07/Iwa9sww3L4Ghv3DfLOpDH1BQlbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xl0pRa4B; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b0787fc3008so937263966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758113246; x=1758718046; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OpFjrz8zqyAOuDDEavL83RJ8Trpvvw84g1TSZSRsq/o=;
+        b=xl0pRa4BIirS0C0dFTJ/dW+xk8U5t6HlNa1G/ySOuv+k0h/p7O4dLGjFTF/MGExHAW
+         TPzml1vDfNLBlCqwa/UBJwzmgP2Sdy83nOUA8zBHQtqIazy0D2PaM2A3RPhLlXcr/BKr
+         DG2HJ6bFsq2b6395UWCEjRYKyqmw0xFNcBzKYnfxRYQbd0uyglQZ98AtCHVCL1qQm3gz
+         tiTvJPReFqvyGJKGAOmnPEd4bnpdA+9+pFXcclg3XCyYKXe+SiAH4Jnl5J28WPE5DEUs
+         n0IPqIvc4z9rDp835TH3OafrV66TqAtQBZeChXtqORbqLLoDXt4HWcy1vXkfPF6NX6fh
+         lpbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758113246; x=1758718046;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OpFjrz8zqyAOuDDEavL83RJ8Trpvvw84g1TSZSRsq/o=;
+        b=PJHxO3TLGHiBXywHmkBYiAElArPqy6RFWXJC9oSmI9wmbyCFrsUw5EP72bxKTgawiR
+         RTVuwTE/DysaulDObD1OZyAJVBJNp4fdipGvHOKfhZAmlw7YF/KmHuQgbte19Or3aXfD
+         yKANUQYp1sx0NKoCGEyS9eHJoyLOGWxr4d9woWK4q+vg6RJ0BeIO3/7+4o+sy53KkuOB
+         DS0K/lm/2rn07AHzYd7/QyAzKn2I05iBcG+sFfgq8/aCya3AXxCOb+Kfjy0yB/R5mdM2
+         qgIPf4Zo0ojj1mrYW06+2o7uwRM+qlOXAuPSFQaktnKP3uMV7GUrZs6N/JD7Fh3qx041
+         pndA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ6K9kaK2RuPQZBaTiSe05l0rYQHBrGrmsh/EBQ1mpsXfrUVNsSa8PAdxatP3r4R/H3KFLAShM5UwXVac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQotGKCQ5GGyX0E09lZIJ1tOHJu7IP+G1jMa/HfsQlth5t2718
+	4W5M/sCM6d5A+9nENNQ+DxzGBpuJregLu03+6NEb3RvnF/k2wXuEJiHbmvY4v+7In1o=
+X-Gm-Gg: ASbGnctkl/EcIKdXOcMkKyjOwei68ghdiCiU3bZKE8T4CJLyHhPu8UuqK8TckQSKMp8
+	KLrfwTQIOjQEwsbotJdZBGxq6pU+p223/NyOs150+j6UPTQcxG2q5rzIA95tzrIbhlDMUx577qd
+	+vMU8Wg/6+kBsDbEjGE0MEG4pxOKtlKt2IAUme4XlE5btRPtYi/YMU/0uGFnKn54mprG47DhQIe
+	1jX/MzjJPpn4+aZ3MN9CcaIcLMkivi7/s3Paf1Xy498wD0bZyf9tCskmaU3J2ZSTL2Hm6EeuN0v
+	rsgqOBE6p1RqjyURYZg4vmalXqRd7/oRWdM7CHF70hP8GtUpT9u1F2pN5aaqSn1uQ7h9mSBTT+Y
+	5aB4ASaQAPYtWH09imy0WoLpr97M=
+X-Google-Smtp-Source: AGHT+IHgG+feaLFS5lYK61xigE0As4f8SIEZukBQyUiZyyvMqVLGwJC7y1Bl5VWs3fMe9SZIDZZJTw==
+X-Received: by 2002:a17:906:f591:b0:b07:c905:af33 with SMTP id a640c23a62f3a-b1bc02f669dmr228527266b.65.1758113246285;
+        Wed, 17 Sep 2025 05:47:26 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b30da289sm1339567666b.17.2025.09.17.05.47.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 05:47:25 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:47:22 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org, 
+	krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+	kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Message-ID: <er7dkmzutsu3ooegeihjzngi6l3hol5iaohecr3n5bolfse3tj@xeedlx2utwym>
+References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
+ <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
+ <t3uk3k4h3l53yajoe3xog2njmdn3jhkmdphv3c4wnpvcqniz4n@opgigzazycot>
+ <aMlnp4x-1MUoModr@smile.fi.intel.com>
+ <mknxgesog6aghc6cjzm63g63zqbqvysxf6ktmnbrbtafervveg@uoiohk3yclso>
+ <CAHp75Vf7KrsN7Ec9zOvJoRuKvkbrJ5sMv7pVv6+88tPX-j_9ZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-sound-v3-4-92ebe9472a0a@uniontech.com>
-References: <20250917-sound-v3-0-92ebe9472a0a@uniontech.com>
-In-Reply-To: <20250917-sound-v3-0-92ebe9472a0a@uniontech.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
- Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>, 
- Sami Tolvanen <samitolvanen@google.com>
-Cc: linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, 
- Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>, 
- Feng Yuan <fengyuan@uniontech.com>, qaqland <anguoli@uniontech.com>, 
- kernel@uniontech.com, linux-modules@vger.kernel.org, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758113201; l=7243;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=FrGLJBJnqo9zN6+xgDNO+WYVjRiKsb3cKaYsHmjiH7E=;
- b=gE/1lcbGSKLIyPWnGhSWN9s4EGeSj22aOYnwzSYGBlHiz/h4eoEflKVPMBXlJbVITGCM5tsKK
- 2SPYbCo7t7dB5hFGmA2W+zwcRfvQsES/Bs2Y7C1hW+2eqgK2UiC7rOs
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
-
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-
-Just briefly described about the new option.
-
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- Documentation/sound/alsa-configuration.rst | 112 ++++++++++++++++++++---------
- 1 file changed, 77 insertions(+), 35 deletions(-)
-
-diff --git a/Documentation/sound/alsa-configuration.rst b/Documentation/sound/alsa-configuration.rst
-index a2fb8ed251dd0294e7a62209ca15d5c32c6adfae..23ee37f24ff89a983b3dffe6312057cd84b8f579 100644
---- a/Documentation/sound/alsa-configuration.rst
-+++ b/Documentation/sound/alsa-configuration.rst
-@@ -2297,39 +2297,81 @@ skip_validation
-     of the unit descriptor instead of a driver probe error, so that we
-     can check its details.
- quirk_flags
--    Contains the bit flags for various device specific workarounds.
--    Applied to the corresponding card index.
--
--        * bit 0: Skip reading sample rate for devices
--        * bit 1: Create Media Controller API entries
--        * bit 2: Allow alignment on audio sub-slot at transfer
--        * bit 3: Add length specifier to transfers
--        * bit 4: Start playback stream at first in implement feedback mode
--        * bit 5: Skip clock selector setup
--        * bit 6: Ignore errors from clock source search
--        * bit 7: Indicates ITF-USB DSD based DACs
--        * bit 8: Add a delay of 20ms at each control message handling
--        * bit 9: Add a delay of 1-2ms at each control message handling
--        * bit 10: Add a delay of 5-6ms at each control message handling
--        * bit 11: Add a delay of 50ms at each interface setup
--        * bit 12: Perform sample rate validations at probe
--        * bit 13: Disable runtime PM autosuspend
--        * bit 14: Ignore errors for mixer access
--        * bit 15: Support generic DSD raw U32_BE format
--        * bit 16: Set up the interface at first like UAC1
--        * bit 17: Apply the generic implicit feedback sync mode
--        * bit 18: Don't apply implicit feedback sync mode
--        * bit 19: Don't closed interface during setting sample rate
--        * bit 20: Force an interface reset whenever stopping & restarting
--          a stream
--        * bit 21: Do not set PCM rate (frequency) when only one rate is
--          available for the given endpoint.
--        * bit 22: Set the fixed resolution 16 for Mic Capture Volume
--        * bit 23: Set the fixed resolution 384 for Mic Capture Volume
--        * bit 24: Set minimum volume control value as mute for devices
--          where the lowest playback value represents muted state instead
--          of minimum audible volume
--        * bit 25: Be similar to bit 24 but for capture streams
-+    The option provides a refined and flexible control for applying quirk
-+    flags.  It allows to specify the quirk flags for each device, and could
-+    be modified dynamically via sysfs.
-+    The old usage accepts an array of integers, each of which apply quirk
-+    flags on the device in the order of probing.
-+    e.g. ``quirk_flags=0x01,0x02`` applies get_sample_rate to the first
-+    device, and share_media_device to the second device.
-+    The new usage accepts a string in the format of
-+    ``VID1:PID1:FLAGS1;VID2:PID2:FLAGS2;...``, where ``VIDx`` and ``PIDx``
-+    specify the device, and ``FLAGSx`` specify the flags to be applied.
-+    ``VIDx`` and ``PIDx`` are 4-digit hexadecimal numbers, and could be
-+    specified as ``*`` to match any value.  ``FLAGSx`` could be a set of
-+    flags given by name, separated by ``|``, or a hexadecimal number
-+    representing the bit flags.  The available flag names are listed above.
-+    An exclamation mark could be prefixed to a flag name to negate the flag.
-+    For example, ``1234:abcd:mixer_playback_min_mute|!ignore_ctl_error;*:*:0x01;``
-+    applies the ``mixer_playback_min_mute`` flag and clears the
-+    ``ignore_ctl_error`` flag for the device 1234:abcd, and applies the
-+    ``skip_sample_rate`` flag for all devices.
-+
-+        * bit 0: ``get_sample_rate``
-+          Skip reading sample rate for devices
-+        * bit 1: ``share_media_device``
-+          Create Media Controller API entries
-+        * bit 2: ``align_transfer``
-+          Allow alignment on audio sub-slot at transfer
-+        * bit 3: ``tx_length``
-+          Add length specifier to transfers
-+        * bit 4: ``playback_first``
-+          Start playback stream at first in implement feedback mode
-+        * bit 5: ``skip_clock_selector``
-+          Skip clock selector setup
-+        * bit 6: ``ignore_clock_source``
-+          Ignore errors from clock source search
-+        * bit 7: ``itf_usb_dsd_dac``
-+          Indicates ITF-USB DSD based DACs
-+        * bit 8: ``ctl_msg_delay``
-+          Add a delay of 20ms at each control message handling
-+        * bit 9: ``ctl_msg_delay_1m``
-+          Add a delay of 1-2ms at each control message handling
-+        * bit 10: ``ctl_msg_delay_5m``
-+          Add a delay of 5-6ms at each control message handling
-+        * bit 11: ``iface_delay``
-+          Add a delay of 50ms at each interface setup
-+        * bit 12: ``validate_rates``
-+          Perform sample rate validations at probe
-+        * bit 13: ``disable_autosuspend``
-+          Disable runtime PM autosuspend
-+        * bit 14: ``ignore_ctl_error``
-+          Ignore errors for mixer access
-+        * bit 15: ``dsd_raw``
-+          Support generic DSD raw U32_BE format
-+        * bit 16: ``set_iface_first``
-+          Set up the interface at first like UAC1
-+        * bit 17: ``generic_implicit_fb``
-+          Apply the generic implicit feedback sync mode
-+        * bit 18: ``skip_implicit_fb``
-+          Don't apply implicit feedback sync mode
-+        * bit 19: ``iface_skip_close``
-+          Don't closed interface during setting sample rate
-+        * bit 20: ``force_iface_reset``
-+          Force an interface reset whenever stopping & restarting a stream
-+        * bit 21: ``fixed_rate``
-+          Do not set PCM rate (frequency) when only one rate is available
-+          for the given endpoint
-+        * bit 22: ``mic_res_16``
-+          Set the fixed resolution 16 for Mic Capture Volume
-+        * bit 23: ``mic_res_384``
-+          Set the fixed resolution 384 for Mic Capture Volume
-+        * bit 24: ``mixer_playback_min_mute``
-+          Set minimum volume control value as mute for devices where the
-+          lowest playback value represents muted state instead of minimum
-+          audible volume
-+        * bit 25: ``mixer_capture_min_mute``
-+          Be similar to bit 24 but for capture streams
- 
- This module supports multiple devices, autoprobe and hotplugging.
- 
-@@ -2344,8 +2386,8 @@ report it to the upstream.
- NB: ``quirk_alias`` option is provided only for testing / development.
- If you want to have a proper support, contact to upstream for
- adding the matching quirk in the driver code statically.
--Ditto for ``quirk_flags``.  If a device is known to require specific
--workarounds, please report to the upstream.
-+Ditto for ``quirk_flags``.  If a device
-+is known to require specific workarounds, please report to the upstream.
- 
- Module snd-usb-caiaq
- --------------------
-
--- 
-2.51.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ah6qgcyytq6i6rrs"
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vf7KrsN7Ec9zOvJoRuKvkbrJ5sMv7pVv6+88tPX-j_9ZA@mail.gmail.com>
 
 
+--ah6qgcyytq6i6rrs
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+MIME-Version: 1.0
+
+Hello Andy,
+
+On Tue, Sep 16, 2025 at 07:20:20PM +0300, Andy Shevchenko wrote:
+> On Tue, Sep 16, 2025 at 6:11=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@baylibre.com> wrote:
+> > On Tue, Sep 16, 2025 at 04:35:35PM +0300, Andy Shevchenko wrote:
+> > > On Tue, Sep 16, 2025 at 03:24:56PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > > > On Tue, Sep 16, 2025 at 10:44:40AM +0200, AngeloGioacchino Del Regn=
+o wrote:
+>=20
+> ...
+>=20
+> > > > > +MODULE_IMPORT_NS("SPMI");
+> > > >
+> > > > If it's exactly the files that #include <linux/spmi.h> should have =
+that
+> > > > namespace import, you can put the MODULE_IMPORT_NS into that header.
+> > >
+> > > Which makes anyone to import namespace even if they just want to use =
+some types
+> > > out of the header.
+> >
+> > Notice that I carefully formulated my suggestion to cope for this case.
+>=20
+> And I carefully answered.
+
+I tend to disagree. If that anyone only wants some type from the header
+but not the namespace, the if part of my statement isn't given any more.
+Still your reply felt like objection while logically it's not.
+
+> Your proposal won't prevent _other_ files to
+> use the same header in the future without needing a namespace to be
+> imported.
+
+Oh yes. But that's true for every change: If you change it further you
+have to cope for what is already there.
+
+> > > This is not good solution generally speaking. Also this will
+> > > diminish one of the purposes of _NS variants of MODULE*/EXPORT*, i.e.=
+ make it
+> > > invisible that some of the code may become an abuser of the API just =
+by someone
+> > > include the header (for a reason or by a mistake).
+> >
+> > Yeah, opinions differ. In my eyes it's quite elegant.
+>=20
+> It's not a pure opinion,
+
+That's your opinion :-)
+
+> it has a technical background that I
+> explained. The explicit usage of MODULE_IMPORT_NS() is better than
+> some header somewhere that might even be included by another and be
+> proxied to the code that doesn't need / want to have this namespace to
+> be present. Puting MODULE_IMPORT_NS() into a _header_ is a minefield
+> for the future.
+
+Well, for a deliberate abuser the hurdle to have to add the explicit
+MODULE_IMPORT_NS() isn't that big. And a mistaken abuser won't explode,
+just generate a few bytes overhead that can be fixed when noticed.
+
+In my opinion that is an ok cost for the added elegance.
+
+Best regards
+Uwe
+
+--ah6qgcyytq6i6rrs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjKrdcACgkQj4D7WH0S
+/k5EEgf8CdFx6+6iEV1AE4GeSJAKaBL6T9A2o7N08nLq8lg9b0873yxBoHXcU5fC
+aJjF55sEwR98xGntE7kk39pH49RCG8ugwvBfJUnq75LJiKU4gyhg9P3OPFnLShiJ
+I6m5bqGNDlAwq3dSuYSiDSr/4wi/Rq4mPKqRZoCT0WHQz9CWes6CdQPuRMSKYeJF
+5VvswQqZGx5s73s0oi9UinWZ1/t/tX8KTjVeEgkmosNDtXb8rSwQbmfIUqnuCv0m
+ZjvuFwKtei8Q90Ro1LSW+QP0R1bN1ydWluw6cGH65qE7Yqpb/P49Yupan3C0YEsr
+nJJjRh4HIIADYdzeEZWvvrOcN8LC8Q==
+=NvWc
+-----END PGP SIGNATURE-----
+
+--ah6qgcyytq6i6rrs--
 
