@@ -1,436 +1,355 @@
-Return-Path: <linux-kernel+bounces-821198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D23CB80B2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1276DB80B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0414872F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F385280C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687803451AA;
-	Wed, 17 Sep 2025 15:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211A4314D25;
+	Wed, 17 Sep 2025 15:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="VYoMMoAn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Di8Q9QLZ"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bHl4iCBZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0664B335927
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BB92D3756
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758123625; cv=none; b=VW/IpGibhYHRAv9s6EpUoL19lwGp4Oq9TZ0fkyvGVp3hRUxvPCXrkl4Xqez3MY3K+YGAjtL756svZ/eYhrCsvhhKsEgq+AIfp+EvoHQ8fBtRF1EmbL+8Ua/1+xE+yfyeFLhf4O5T1UVQ9QFCaDA62GJ8vtKWEN1nrRHHbjcf77I=
+	t=1758123744; cv=none; b=OYxDMEqTwroiTG2BS8+EFz2YgsQpJw4V6Qvw7ndLnurzGwrJqs0MJ9bvKPdKFneeHwZ/7hGWNLtUwLKvyqLuYrJGzwlZJu43wNg/VMz81eJsbWouVOIFSvuwuuGmsYM1Mr+489I6uMGjtrI8UGoSNrwKDVHbwJXSEKw2b8K65EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758123625; c=relaxed/simple;
-	bh=VBUC016wQ+vYi7EWAPU70/RyeZxnrgF8QozZk01S2SU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5TYF31c/lktPguOsHKJ/TGsH6iMMNkO9CCyHFVJGoqrmesjwop8aMUT/AvZtPjsfgcXmMnQ+FnK3fivTpjVmrAfXt8Uag7SrhqIWPvselhm2YfZHEfKwJPneV6A9Dtzm+7FsV7M1P0ySI4UnbbRONif7yxN+VBamKMCnxwxcQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=VYoMMoAn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Di8Q9QLZ; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id E46777A020B;
-	Wed, 17 Sep 2025 11:40:19 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Wed, 17 Sep 2025 11:40:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1758123619; x=
-	1758210019; bh=CAMFijMuE1/jMjlOYBJPpkWI2mxvY5nAqoCSx6+dKbI=; b=V
-	YoMMoAnLUn/3eMDuQsowngdZ4YHPCJsl+bG1SUOktgVn3yaIawsITbOCMfS1Apdu
-	MK+WJ7Wu64ykXuEFo8OjLRYLJFn+YSCgwnVU3SScdPQjGICMYDmAVgWB0I0THmcW
-	2qNokz+ZJLH0TIIAzbrNrNVMMkKDpOjQbpGWHV3+dK3JM6xEbKN4SxTu5by1wF0w
-	zevXmenLgbW8ktuHPeZngeOoNqLF8tIFVevKBKxNiM/tUWERQkxmHvpr6/taBhnT
-	1yjj84ydJeCrhQ24F/TISjstb/UscXwDam2nGg2eIHzzvpNSnWfBY89z/ukVW0H9
-	1wdGmN2bZ2OD8fSJfcvjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758123619; x=1758210019; bh=CAMFijMuE1/jMjlOYBJPpkWI2mxvY5nAqoC
-	Sx6+dKbI=; b=Di8Q9QLZ2SBfCIBqkKMhGrLgdTarW+AEJhtHM0CpDiHY9/j13K/
-	kSOPrZd5ikJGQqA9BGZYmjaeiTywh73SottOyl+E+FezwdWn88c9RxIylKlUDRCd
-	91w456mWsE0ruBKCWpzahfPWH4KZ8pdsI/lzHu2XZK0xhzrS4jqZ+Yt3uHp91g72
-	SM8AOprYyq0AA5dxy4F8jU5FugiTVC4r3F9G6fHjLeMqgyh0BK91QZDlyS8rGT8T
-	Ey2sFgzPXSnWFMK+isAUYcxnSvxEvwNnYuj0M6MLvehWJZelzy5WY1/sHDP3NoWL
-	WviPlBpqefeVdApI/e4+CvVtG4LBFJ6my6w==
-X-ME-Sender: <xms:Y9bKaDEVomNB876-wDOpKf3YNYZs362HSJYnvV3BsZFMGDNFkOZ7OQ>
-    <xme:Y9bKaHOHmnx1qddMB0ZjRATwAesWq0yFej-SfjuiVX1qrU8s5ZIcr1RDe_MDM8FtQ
-    SmO2c1fT04fRRAfRhI>
-X-ME-Received: <xmr:Y9bKaCF_EoYvKpPJ9hInnvNIap8ToClzYVEogZSDXGf2RQovQ8XVwz2_I-uoJaCZZbEN_omPEoKpWQ8glRK6-XMnaqXvTX8atog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfeekfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghshhhi
-    ucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqe
-    enucggtffrrghtthgvrhhnpeevieelhfdukeffheekffduudevvdefudelleefgeeileej
-    heejuedvgefhteevvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepthhhohhrshhtvghnrdgslhhumheslhhinhhugidruggvvhdp
-    rhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvg
-    hfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Y9bKaOPQVvI98g_hscUlprSuEuhukjErCsdR8CRvLBF439i8K9FniA>
-    <xmx:Y9bKaD-jFf3iPoYkox2lrqhvo1ba7x6GBDhqst1ytg8LOG32bIfQHA>
-    <xmx:Y9bKaKQp38CNxG-PWrd4R3K-kH26h8OP2aZtczo3q_QMaf6WgiDfbA>
-    <xmx:Y9bKaNkgvhKANpp3xf5RdQvvSAGwYNYJ51Fez5UWTP-n9c07xqcGTQ>
-    <xmx:Y9bKaAKalNEhYF4XRqv4hQAnZjq72jfc8PXPJcaVaPwMKlq6EgUfzH6w>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 17 Sep 2025 11:40:18 -0400 (EDT)
-Date: Thu, 18 Sep 2025 00:40:15 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firewire: core: use struct_size and flex_array_size in
- ioctl_add_descriptor
-Message-ID: <20250917154015.GA67868@workstation.local>
-Mail-Followup-To: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20250916122143.2459993-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758123744; c=relaxed/simple;
+	bh=P9Q70W+Ic4EYe9oyW2PKBgA+8S/F5OLM4eIJ/534w8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fR3ccgs6xDl8QMCkutIHmb41i08K2vbBOXU9qZVfrqH6et4lMzoIHF4+MY4tw63rgoA4FM21PBlgwD6ZUjgKa8VgdUcbsj0st8xKLgjBw7sgM0zWJDZxn+3HOmuQVFoahgtsUX6HEgisaNBdVNYhqp2gpA6iy19ueY8dRbs1myU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bHl4iCBZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758123741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPN0dHRPryDKWq/zm65+OG6eMpi/ANVf5sCNoaNPxU0=;
+	b=bHl4iCBZ4il0QjYRDkjqw/QkDr6L9cT58DaGPEzk0f9Rck1g2lhVqbHB6SUwb1OfCtFU/p
+	3k3UkzcjhKNaWmMRZ2LKbUVQ60DQF5iXtEQLUWD0EI761t32xgzUKSTCcCal4RwGFrV93k
+	mWoNB7pm/CpO1MDKZFLkoxzPdjAFMMI=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-327-i7uKC4XDPsSJMc078suYRg-1; Wed, 17 Sep 2025 11:42:19 -0400
+X-MC-Unique: i7uKC4XDPsSJMc078suYRg-1
+X-Mimecast-MFC-AGG-ID: i7uKC4XDPsSJMc078suYRg_1758123738
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-5717bd64551so2626736e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:42:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758123738; x=1758728538;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gPN0dHRPryDKWq/zm65+OG6eMpi/ANVf5sCNoaNPxU0=;
+        b=t/wiX+MaKZonxSC+LfVQ/+3oQ0bO58YfBhP1bjY7q7ti64KNH7P/pHyDEUwjiyFp/M
+         LtynJLK3FCXAlElHOzk0aNMI2PVqjsoouFtavmNTOES7yhUFyY5sQ+pOJqdbxN8g6JIG
+         qa+4VZFEcSHsasDpOeRv1rFX0BcidjpmGlbiUGMfoOMGo0BfTTH1sCpAdBdDYt9ZYPC8
+         bdHQEVz9RhU2IVayHDFEECumlSzVo8wGthyWqxxN/84B7Z2yHSDTHAbyWtr5+O7QQgMA
+         jiY74wCXyhsHQXRaMko9/SRAD9j2sPQnEDMPFzKHgHk7o8FacP5nB/DjPFVRc6PdNSR2
+         UwDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUtfEhO00OIRbYVz0cqE9pnSNJiVqqRrHb934VmtzEjjQJAgvKjsoOXyoe7FIPgt/lAo9KjLPFoT/0UOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMAU0bBcnBM9zPeB+W64CIrAEBfo1gRCvLhhdVYLSevsBaEg9s
+	TPfFia0meyFM1kRQBinl1znF3Lcn5i9Am5JPt8Yksnl1cCBv6F5mygoCVBGoeifkjIQiBqRO3AS
+	+J0PaU1POobsQw5FVONbI+q7SOpQU80PGM8b5v9Q/ht1GNNMcaqy1mYg28tF2lHgd2Hl4GBVAsk
+	c2Oki7uRdU5kLuazXBQklb6Kblk0P9iVKlurjsVIcy
+X-Gm-Gg: ASbGncvnlzw6WP7VHT0MQLozkAynBwxkLYwsJSiHRBb7DD83+gY3zQGYC/3eM83sewz
+	nLUlzRKRtNHlroCQnboyYkoDF2mfIFNK2V8GjU0vjdBg4JfN1pDfmG1XFtOHu5IM2XKuxhoUe1c
+	rWSsP2HY7tEa6S1BIj95azJqAX4VwIMtOzh495ZKvYqS0Waq2ZVLH0Ppc90ZyUNj1963jo1rarB
+	GCFu0lI
+X-Received: by 2002:a05:6512:3356:b0:55f:6c3b:7b3d with SMTP id 2adb3069b0e04-57798e1b87cmr808674e87.28.1758123737699;
+        Wed, 17 Sep 2025 08:42:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQgQl/SvTIW2Wu/CQXxSmO3uRQElCvs5sMTx4nuA8wLFKACymUD+rNx8WqXB2KN/JPB3IpQtvWYVJ7pVsPeHY=
+X-Received: by 2002:a05:6512:3356:b0:55f:6c3b:7b3d with SMTP id
+ 2adb3069b0e04-57798e1b87cmr808659e87.28.1758123737156; Wed, 17 Sep 2025
+ 08:42:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916122143.2459993-3-thorsten.blum@linux.dev>
+References: <20250916130833.329087-1-eperezma@redhat.com> <20250916130833.329087-4-eperezma@redhat.com>
+ <CACGkMEv+FxECjhxfEKjZJcqXKc=c7RogAk6wdptBymTvL0fz1Q@mail.gmail.com>
+In-Reply-To: <CACGkMEv+FxECjhxfEKjZJcqXKc=c7RogAk6wdptBymTvL0fz1Q@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 17 Sep 2025 17:41:36 +0200
+X-Gm-Features: AS18NWBYrdLBzT8YdeFrpJVn8K6S6deW49UHj3MfDqaTA-ihjHdxVryUX_buU0w
+Message-ID: <CAJaqyWeFDSXQtUnZG_O226YBu1Zy_L8ws_UMDGVTMA=YfrGcFg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] vduse: add vq group support
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, 
+	Cindy Lu <lulu@redhat.com>, Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Sep 17, 2025 at 10:37=E2=80=AFAM Jason Wang <jasowang@redhat.com> w=
+rote:
+>
+> On Tue, Sep 16, 2025 at 9:08=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
+at.com> wrote:
+> >
+> > This allows sepparate the different virtqueues in groups that shares th=
+e
+> > same address space.  Asking the VDUSE device for the groups of the vq a=
+t
+> > the beginning as they're needed for the DMA API.
+> >
+> > Allocating 3 vq groups as net is the device that need the most groups:
+> > * Dataplane (guest passthrough)
+> > * CVQ
+> > * Shadowed vrings.
+> >
+> > Future versions of the series can include dynamic allocation of the
+> > groups array so VDUSE can declare more groups.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> > v2:
+> > * Now the vq group is in vduse_vq_config struct instead of issuing one
+> >   VDUSE message per vq.
+> >
+> > v1:
+> > * Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
+> >
+> > RFC v3:
+> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
+> >   value to reduce memory consumption, but vqs are already limited to
+> >   that value and userspace VDUSE is able to allocate that many vqs.
+> > * Remove the descs vq group capability as it will not be used and we ca=
+n
+> >   add it on top.
+> > * Do not ask for vq groups in number of vq groups < 2.
+> > * Move the valid vq groups range check to vduse_validate_config.
+> >
+> > RFC v2:
+> > * Cache group information in kernel, as we need to provide the vq map
+> >   tokens properly.
+> > * Add descs vq group to optimize SVQ forwarding and support indirect
+> >   descriptors out of the box.
+> > ---
+> >  drivers/vdpa/vdpa_user/vduse_dev.c | 37 ++++++++++++++++++++++++++----
+> >  include/uapi/linux/vduse.h         | 12 +++++++---
+> >  2 files changed, 41 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index 2b6a8958ffe0..42f8807911d4 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -59,6 +59,7 @@ struct vduse_virtqueue {
+> >         struct vdpa_vq_state state;
+> >         bool ready;
+> >         bool kicked;
+> > +       u32 vq_group;
+> >         spinlock_t kick_lock;
+> >         spinlock_t irq_lock;
+> >         struct eventfd_ctx *kickfd;
+> > @@ -115,6 +116,7 @@ struct vduse_dev {
+> >         u8 status;
+> >         u32 vq_num;
+> >         u32 vq_align;
+> > +       u32 ngroups;
+> >         struct vduse_umem *umem;
+> >         struct mutex mem_lock;
+> >         unsigned int bounce_size;
+> > @@ -593,6 +595,13 @@ static int vduse_vdpa_set_vq_state(struct vdpa_dev=
+ice *vdpa, u16 idx,
+> >         return 0;
+> >  }
+> >
+> > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> > +{
+> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +
+> > +       return dev->vqs[idx]->vq_group;
+>
+> I wonder if we should fail if VDUSE_VQ_SETUP is not set by userspace?
+>
 
-On Tue, Sep 16, 2025 at 02:21:45PM +0200, Thorsten Blum wrote:
-> Use struct_size() to determine the memory needed for a new 'struct
-> descriptor_resource' and flex_array_size() to calculate the number of
-> bytes to copy from userspace. This removes the hardcoded size (4 bytes)
-> for the 'u32 data[]' entries.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  drivers/firewire/core-cdev.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+I'm kind of ok with implementing it, but I see it as redundant as if
+the VDUSE device does not call the vq max size will be 0 anyway.
 
-Applied to for-next branch, since it works as long as I tested with the
-following userspace appliaction:
+> > +}
+> > +
+> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+> >                                 struct vdpa_vq_state *state)
+> >  {
+> > @@ -790,6 +799,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
+ig_ops =3D {
+> >         .set_vq_cb              =3D vduse_vdpa_set_vq_cb,
+> >         .set_vq_num             =3D vduse_vdpa_set_vq_num,
+> >         .get_vq_size            =3D vduse_vdpa_get_vq_size,
+> > +       .get_vq_group           =3D vduse_get_vq_group,
+> >         .set_vq_ready           =3D vduse_vdpa_set_vq_ready,
+> >         .get_vq_ready           =3D vduse_vdpa_get_vq_ready,
+> >         .set_vq_state           =3D vduse_vdpa_set_vq_state,
+> > @@ -1253,12 +1263,21 @@ static long vduse_dev_ioctl(struct file *file, =
+unsigned int cmd,
+> >                 if (config.index >=3D dev->vq_num)
+> >                         break;
+> >
+> > -               if (!is_mem_zero((const char *)config.reserved,
+> > -                                sizeof(config.reserved)))
+> > +               if (dev->api_version < VDUSE_API_VERSION_1 && config.gr=
+oup)
+> > +                       break;
+> > +
+> > +               if (dev->api_version >=3D VDUSE_API_VERSION_1 &&
+> > +                   config.group > dev->ngroups)
+> > +                       break;
+> > +
+> > +               if (config.reserved1 ||
+> > +                   !is_mem_zero((const char *)config.reserved2,
+> > +                                sizeof(config.reserved2)))
+> >                         break;
+>
+> What's the reason for having this check? I mean if we don't check this
+> since the day0, it might be too late to do that.
+>
 
-```
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+It's been checked from day0, both reserved1 and reserved2 were
+included in the config.reserved before the patch, and the replaced
+lines already checked with is_mem_zero [1].
 
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+> >
+> >                 index =3D array_index_nospec(config.index, dev->vq_num)=
+;
+> >                 dev->vqs[index]->num_max =3D config.max_size;
+> > +               dev->vqs[index]->vq_group =3D config.group;
+> >                 ret =3D 0;
+> >                 break;
+> >         }
+> > @@ -1738,12 +1757,19 @@ static bool features_is_valid(struct vduse_dev_=
+config *config)
+> >         return true;
+> >  }
+> >
+> > -static bool vduse_validate_config(struct vduse_dev_config *config)
+> > +static bool vduse_validate_config(struct vduse_dev_config *config,
+> > +                                 u64 api_version)
+> >  {
+> >         if (!is_mem_zero((const char *)config->reserved,
+> >                          sizeof(config->reserved)))
+> >                 return false;
+> >
+> > +       if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
+> > +               return false;
+>
+> Better with ngroups > 1?
+>
 
-#include <sys/epoll.h>
+Same here. The kernel in the master branch already returns false if
+that position of "reserved" is 1, and we are changing the behavior if
+we don't include the 1 too.
 
-#include <string.h>
-#include <errno.h>
+> > +
+> > +       if (api_version >=3D VDUSE_API_VERSION_1 && config->ngroups > 0=
+xffff)
+> > +               return false;
+> > +
+> >         if (config->vq_align > PAGE_SIZE)
+> >                 return false;
+> >
+> > @@ -1859,6 +1885,7 @@ static int vduse_create_dev(struct vduse_dev_conf=
+ig *config,
+> >         dev->device_features =3D config->features;
+> >         dev->device_id =3D config->device_id;
+> >         dev->vendor_id =3D config->vendor_id;
+> > +       dev->ngroups =3D (dev->api_version < 1) ? 1 : (config->ngroups =
+?: 1);
+> >         dev->name =3D kstrdup(config->name, GFP_KERNEL);
+> >         if (!dev->name)
+> >                 goto err_str;
+> > @@ -1937,7 +1964,7 @@ static long vduse_ioctl(struct file *file, unsign=
+ed int cmd,
+> >                         break;
+> >
+> >                 ret =3D -EINVAL;
+> > -               if (vduse_validate_config(&config) =3D=3D false)
+> > +               if (!vduse_validate_config(&config, control->api_versio=
+n))
+> >                         break;
+> >
+> >                 buf =3D vmemdup_user(argp + size, config.config_size);
+> > @@ -2018,7 +2045,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev *=
+dev, const char *name)
+> >
+> >         vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
+> >                                  &vduse_vdpa_config_ops, &vduse_map_ops=
+,
+> > -                                1, 1, name, true);
+> > +                                dev->ngroups, 1, name, true);
+> >         if (IS_ERR(vdev))
+> >                 return PTR_ERR(vdev);
+> >
+> > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
+> > index ccb92a1efce0..a3d51cf6df3a 100644
+> > --- a/include/uapi/linux/vduse.h
+> > +++ b/include/uapi/linux/vduse.h
+> > @@ -31,6 +31,7 @@
+> >   * @features: virtio features
+> >   * @vq_num: the number of virtqueues
+> >   * @vq_align: the allocation alignment of virtqueue's metadata
+> > + * @ngroups: number of vq groups that VDUSE device declares
+> >   * @reserved: for future use, needs to be initialized to zero
+> >   * @config_size: the size of the configuration space
+> >   * @config: the buffer of the configuration space
+> > @@ -45,7 +46,8 @@ struct vduse_dev_config {
+> >         __u64 features;
+> >         __u32 vq_num;
+> >         __u32 vq_align;
+> > -       __u32 reserved[13];
+> > +       __u32 ngroups; /* if VDUSE_API_VERSION >=3D 1 */
+> > +       __u32 reserved[12];
+> >         __u32 config_size;
+> >         __u8 config[];
+> >  };
+> > @@ -122,14 +124,18 @@ struct vduse_config_data {
+> >   * struct vduse_vq_config - basic configuration of a virtqueue
+> >   * @index: virtqueue index
+> >   * @max_size: the max size of virtqueue
+> > - * @reserved: for future use, needs to be initialized to zero
+> > + * @reserved1: for future use, needs to be initialized to zero
+> > + * @group: virtqueue group
+> > + * @reserved2: for future use, needs to be initialized to zero
+> >   *
+> >   * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
+> >   */
+> >  struct vduse_vq_config {
+> >         __u32 index;
+> >         __u16 max_size;
+> > -       __u16 reserved[13];
+> > +       __u16 reserved1;
+> > +       __u32 group;
+>
+> This makes me think if u16 is sufficient as I see:
+>
+>         u32 (*get_vq_group)(struct vdpa_device *vdev, u16 idx);
+>
+> The index is u16 but the group is u32 ...
+>
 
-#include <linux/firewire-cdev.h>
-#include <linux/firewire-constants.h>
+That's a very good point, but I got the reverse logic actually :). All
+the vhost userland ioctls use an unsigned int (=3D=3Du32) already, so
+VDUSE should keep going with that. If any, get_vq_group (and similar)
+kernel internal API should move to u32 to keep up with userland API.
 
-// From include/linux/firewire.h
-#define CSR_CONFIG_ROM		0x400
-#define CSR_CONFIG_ROM_END	0x800
+[1] https://patchew.org/linux/20250606115012.1331551-1-eperezma@redhat.com/=
+20250606115012.1331551-4-eperezma@redhat.com/
 
-#define CSR_LEAF		0x80
-#define CSR_DIRECTORY		0xc0
-
-#define CSR_DESCRIPTOR		0x01
-#define CSR_VENDOR		0x03
-#define CSR_UNIT		0x11
-#define CSR_SPECIFIER_ID	0x12
-#define CSR_VERSION		0x13
-#define CSR_MODEL		0x17
-
-// See https://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git/commit/?id=d71e6a11737f
-#define ROOT_VENDOR_ID_OLD	0xd00d1e
-#define ROOT_VENDOR_ID		0x001f11
-#define ROOT_MODEL_ID		0x023901
-
-// Unit directory for AV/C protocol.
-#define AM_UNIT_SPEC_1394TA	0x00a02d
-#define AM_UNIT_VERSION_AVC	0x010001
-#define AM_UNIT_MODEL_ID	0x023903
-
-#define AM_UNIT_NAME_0		0x4c696e75	// Linu
-#define AM_UNIT_NAME_1		0x7820414c	// x AL
-#define AM_UNIT_NAME_2		0x53410000	// SA..
-
-static int add_descriptor(int fd, uint32_t *handle_value)
-{
-	uint32_t directory[] = {
-		0x00040000,		// Unit directory consists of below 4 quads
-		(CSR_SPECIFIER_ID << 24) | AM_UNIT_SPEC_1394TA,
-		(CSR_VERSION      << 24) | AM_UNIT_VERSION_AVC,
-		(CSR_MODEL        << 24) | AM_UNIT_MODEL_ID,
-		((CSR_LEAF | CSR_DESCRIPTOR) << 24) | 0x00000001, // Begin at next.
-		0x00050000,		// Text leaf consists of below 5 quads.
-		0x00000000,
-		0x00000000,
-		AM_UNIT_NAME_0,
-		AM_UNIT_NAME_1,
-		AM_UNIT_NAME_2,
-	};
-	struct fw_cdev_add_descriptor data = {
-		.immediate = 0x0c0083c0,
-        	.key = (CSR_DIRECTORY | CSR_UNIT) << 24,
-		.data = (uint64_t)directory,
-		.length = sizeof(directory) / sizeof(uint32_t),
-	};
-
-	if (ioctl(fd, FW_CDEV_IOC_ADD_DESCRIPTOR, &data)) {
-		printf("ioctl(FW_CDEV_IOC_ADD_DESCRIPTOR): %s\n", strerror(errno));
-		return -errno;
-	}
-
-	*handle_value = data.handle;
-
-	return 0;
-}
-
-static void remove_descriptor(int fd, uint32_t handle_value)
-{
-	struct fw_cdev_remove_descriptor data = {
-		.handle = handle_value,
-	};
-
-	if (ioctl(fd, FW_CDEV_IOC_REMOVE_DESCRIPTOR, &data))
-		printf("ioctl(FW_CDEV_IOC_REMOVE_DESCRIPTOR): %s\n", strerror(errno));
-}
-
-static int retrieve_config_rom(int fd, uint32_t *content, uint32_t *length,
-			       struct fw_cdev_event_bus_reset *bus_reset)
-{
-	struct fw_cdev_get_info info = {
-		.version = 6,
-		.rom_length = *length,
-		.rom = (uint64_t)content,
-		.bus_reset = (uint64_t)bus_reset,
-	};
-
-	memset(bus_reset, 0, sizeof(*bus_reset));
-
-	if (ioctl(fd, FW_CDEV_IOC_GET_INFO, &info)) {
-		printf("ioctl(FW_CDEV_IOC_GET_INFO): %s\n", strerror(errno));
-		return -errno;
-	}
-
-	*length = info.rom_length;
-
-	return 0;
-}
-
-static int wait_event(int epfd, int fd, union fw_cdev_event *event)
-{
-	struct epoll_event ep_event = {
-		.events = EPOLLIN,
-	};
-	int nfds;
-	ssize_t length;
-
-	memset(event, 0, sizeof(*event));
-
-	if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ep_event) < 0) {
-		printf("epoll_ctl(): %s\n", strerror(errno));
-		return -errno;
-	}
-
-	nfds = epoll_wait(epfd, &ep_event, 1, 500);
-	if (nfds < 0) {
-		printf("epoll_wait(): %s\n", strerror(errno));
-		return -errno;
-	}
-
-	if (nfds == 0) {
-		printf("epoll_wait(): %s\n", strerror(ETIMEDOUT));
-		return -ETIMEDOUT;
-	}
-
-	epoll_ctl(epfd, EPOLL_CTL_DEL, fd, NULL);
-
-	length = read(fd, event, sizeof(*event));
-	if (length < 0) {
-		printf("read: %s\n", strerror(errno));
-		return -errno;
-	}
-
-	return 0;
-}
-
-int main()
-{
-	struct {
-		unsigned int generation;
-		uint32_t content[CSR_CONFIG_ROM_END - CSR_CONFIG_ROM];
-		uint32_t length;
-	} images[3];
-	int fd, epfd;
-	uint32_t handle_value;
-	union fw_cdev_event event;
-	size_t maximum_quadlet_count;
-	int i;
-	int err;
-
-	for (i = 0; i < sizeof(images) / sizeof(*images); ++i) {
-		memset(images[i].content, 0, sizeof(images[i].content));
-		images[i].length = sizeof(images[i].content);
-	}
-
-	epfd = epoll_create1(0);
-	if (epfd < 0) {
-		printf("epoll_create1(): %s\n", strerror(errno));
-		return EXIT_FAILURE;
-	}
-
-	fd = open("/dev/fw0", O_RDONLY);
-	if (fd < 0) {
-		printf("open(): %s\n", strerror(errno));
-		close(epfd);
-		return EXIT_FAILURE;
-	}
-
-	//
-	// Initial state.
-	//
-	err = retrieve_config_rom(fd, images[0].content, &images[0].length, &event.bus_reset);
-	if (err < 0) {
-		printf("Fail to retrieve config rom take 0\n");
-		goto end;
-	}
-	images[0].generation = event.bus_reset.generation;
-
-	//
-	// Add descriptor.
-	//
-	err = add_descriptor(fd, &handle_value);
-	if (err < 0)
-		goto end;
-
-	err = wait_event(epfd, fd, &event);
-	if (err < 0)
-		goto end;
-	if (event.common.type != FW_CDEV_EVENT_BUS_RESET) {
-		printf("Unexpected event type: %d\n", event.common.type);
-		goto end;
-	}
-
-	err = retrieve_config_rom(fd, images[1].content, &images[1].length, &event.bus_reset);
-	if (err < 0) {
-		printf("Fail to retrieve config rom take 1\n");
-		goto end;
-	}
-	images[1].generation = event.bus_reset.generation;
-
-	// Requires delay for 2s after last reset per IEEE 1394 clause 8.2.1.
-	sleep(2);
-
-	//
-	// Clean up the descriptor.
-	//
-	remove_descriptor(fd, handle_value);
-
-	err = wait_event(epfd, fd, &event);
-	if (err < 0)
-		goto end;
-
-	err = retrieve_config_rom(fd, images[2].content, &images[2].length, &event.bus_reset);
-	if (err < 0) {
-		printf("Fail to retrieve config rom take 2\n");
-		goto end;
-	}
-	images[2].generation = event.bus_reset.generation;
-
-	//
-	// Check these contents.
-	//
-	maximum_quadlet_count = 0;
-	for (i = 0; i < sizeof(images) / sizeof(*images); ++i) {
-		size_t quadlet_count = images[i].length / sizeof(uint32_t);
-		if (quadlet_count > maximum_quadlet_count)
-			maximum_quadlet_count = quadlet_count;
-	}
-
-	printf("Gen ");
-	for (i = 0; i < sizeof(images) / sizeof(*images); ++i) {
-		printf("%11u", images[i].generation);
-	}
-	printf("\n");
-
-	for (i = 0; i < maximum_quadlet_count; ++i) {
-		int j;
-
-		printf("[%2d] ", i);
-
-		for (j = 0; j < sizeof(images) / sizeof(*images); ++j) {
-			if (i < images[j].length / sizeof(uint32_t))
-				printf("0x%08x ", images[j].content[i]);
-			else
-				printf("     -     ");
-		}
-
-		printf("\n");
-	}
-end:
-	close(fd);
-	close(epfd);
-
-	return EXIT_SUCCESS;
-}
-```
-
-```
-$ gcc -Wall -o test test.c
-$ sudo ./test
-Gen           3          4          5
-[ 0] 0x0404f693 0x0404a56d 0x0404516f
-[ 1] 0x31333934 0x31333934 0x31333934
-[ 2] 0xf000b243 0xf000b253 0xf000b263
-[ 3] 0x08002851 0x08002851 0x08002851
-[ 4] 0x0100014a 0x0100014a 0x0100014a
-[ 5] 0x00051b70 0x0007eca5 0x00051b70
-[ 6] 0x0c0083c0 0x0c0083c0 0x0c0083c0
-[ 7] 0x03001f11 0x03001f11 0x03001f11
-[ 8] 0x81000003 0x81000005 0x81000003
-[ 9] 0x17023901 0x17023901 0x17023901
-[10] 0x81000008 0x8100000a 0x81000008
-[11] 0x00064cb7 0x0c0083c0 0x00064cb7
-[12] 0x00000000 0xd100000c 0x00000000
-[13] 0x00000000 0x00064cb7 0x00000000
-[14] 0x4c696e75 0x00000000 0x4c696e75
-[15] 0x78204669 0x00000000 0x78204669
-[16] 0x72657769 0x4c696e75 0x72657769
-[17] 0x72650000 0x78204669 0x72650000
-[18] 0x0003ff1c 0x72657769 0x0003ff1c
-[19] 0x00000000 0x72650000 0x00000000
-[20] 0x00000000 0x0003ff1c 0x00000000
-[21] 0x4a756a75 0x00000000 0x4a756a75
-[22]      -     0x00000000      -
-[23]      -     0x4a756a75      -
-[24]      -     0x000466d5      -
-[25]      -     0x1200a02d      -
-[26]      -     0x13010001      -
-[27]      -     0x17023903      -
-[28]      -     0x81000001      -
-[29]      -     0x00054009      -
-[30]      -     0x00000000      -
-[31]      -     0x00000000      -
-[32]      -     0x4c696e75      -
-[33]      -     0x7820414c      -
-[34]      -     0x53410000      -
-```
-
-Thanks
-
-Takashi Sakamoto
 
