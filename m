@@ -1,83 +1,93 @@
-Return-Path: <linux-kernel+bounces-821445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BB4B8142C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0908B8143C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7071C8082E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D711C80793
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71DD2FE56E;
-	Wed, 17 Sep 2025 17:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725842FF660;
+	Wed, 17 Sep 2025 17:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leFSV0pj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ST1KfL37"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0732773CE;
-	Wed, 17 Sep 2025 17:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7478D1C84C0;
+	Wed, 17 Sep 2025 17:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758131822; cv=none; b=PBf5sL3sOwZ44OEYVnCAI4IHgKaoub3W3IXt3y+Gb64EYPl5fbG1N5qFbElG3/S01UWyjhCiBqEl4okKmTh6FPPk2DRSDV5kCEanSMI2o38VW81gXE3xi1p7aK62sV2K/y2mTn5GQ8Zwl3R2jMGKJZolTpY9rNMS/ZoFQEkNOjk=
+	t=1758131905; cv=none; b=ZXcUrpssm+B3r8SbE8yYQiP4dwnGBl3oYdLbwY12hCQF0C+rgW6RFxnQSkOAR8m9VYWBAmpjcsL1CXit7OST0g1cSiVr7TxgqGrM0ijMxxm2crcPjjQ0h1sY9+iijzKBwfE5e+YiLpwCusnfj4kpfNzsXBWj0MGnZobU3F3H5Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758131822; c=relaxed/simple;
-	bh=67ffSzd5FeWwRmf2I/9jF06+U1mwUT8kfxZrOsoiHu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJeKGK63/MB+71ro3sftMHHi8CDYGwYtS9y9P1l5Fj1ciddj/m1who2Z4dFioSOLQaxzkuNeuto/vO19/k+G1iBb5G0l/FS2c+khHP8B2cpocQzfeHO6Iy3EHwSlsQQxVp/Akx+nYhfJC20o+Vp+kVeAD0ccz2z8oWz25aco2vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leFSV0pj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3518FC4CEF7;
-	Wed, 17 Sep 2025 17:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758131821;
-	bh=67ffSzd5FeWwRmf2I/9jF06+U1mwUT8kfxZrOsoiHu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=leFSV0pjTJStHKC1yptmZHoKANoD8KsuqwcsG3/oWcTRusRkBmC2B2msU7Lrm+vdm
-	 NjM/0gVBZjoKEQxDdDF8upGJa4n9Jpm6Meb3aSf3t/fRBM5dEd9gHdFQKwoOM9mKKY
-	 1052H41Jv4G+j162LX+4vnz3LxYZuA2MRHEeYy4u4gj1I3NjRYn2x/y3OKJ6u7aVnt
-	 c1/Mso9Ru2wzyLBmCrjGMioEAtiYTE0KuGqNJg+wGZ3cBJ1NSHhplw3C4EjWdYmrY+
-	 2gU5L5jIM1sWXxMkw9Uw02Up9Ixp271zhLpRdVtbczLaj2ji65HQqCGuEfOHCeLCJb
-	 R52tCaDV6G6ZQ==
-Date: Wed, 17 Sep 2025 14:56:58 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kevin Tian <kevin.tian@intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
-Message-ID: <aMr2aokEOET8sdu-@x1>
-References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
- <aJ-VWevppm9Srjmr@google.com>
+	s=arc-20240116; t=1758131905; c=relaxed/simple;
+	bh=6zMlqvkkJUxPR+2hCntCFeaA3Ngj3U6itSCfgav3eEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ERx5V9Fwb0VL/W0jGpTMrwbmUs0k0tXKZEUXHM2SbxBQeWOibwqNELnp7pwT20wTsqdzFZNfd96KhZY4GYbOSr5iGaKIVk6BoqOpa9/fQNOP+Z/dg/dV0D7spO+PwxP1RM0lYo0gJeBdfkx8nDQKrKjPn+n9/T2c2e5Rc03NINA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ST1KfL37; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=4sg0pwVlDI3PlcEWg3BqiWrpfnSRU0MPr0hgbDjPw6w=; b=ST1KfL37z8LSxRSVV7aGFKe8Z9
+	u2ZfkpoxZX0BcWKZNcx6GOPpjZwYIB/ijc7R9rMKCezRU7vYQZSHesfNQuvqzzDRDnQoT/vsjpOtn
+	FhGLzQdSUzYoJ1H1dBn0Vl3blJwnwaX6a8aHl/ONmnuWqRv1WAR+aLAQvf6w2IPcMJpI07Bo+fsVY
+	UsG0cA7voaF7RMUFkdf/tY5BTr/10CY+zxBKKhgTSGtM/gHixBteOuTEofuJ05ckY7Sqfr36beljR
+	I8aGbN5mwE+13QVhKPlYZl1KP9R/V26NlEwdxPsvjFCrAsZU+9y0JWa8eqVFO4PhH1DRidVpjeKnG
+	4c5yfdXw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uywQ6-0000000DlSR-48eJ;
+	Wed, 17 Sep 2025 17:58:19 +0000
+Message-ID: <9c459c3f-7a7b-42d6-8a4c-66ade94e1029@infradead.org>
+Date: Wed, 17 Sep 2025 10:58:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJ-VWevppm9Srjmr@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] ALSA: doc: add docs about
+ device_device_quirk_flags in snd-usb-audio
+To: cryolitia@uniontech.com, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>
+Cc: linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>,
+ Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>,
+ Feng Yuan <fengyuan@uniontech.com>, qaqland <anguoli@uniontech.com>,
+ kernel@uniontech.com, linux-modules@vger.kernel.org
+References: <20250917-sound-v3-0-92ebe9472a0a@uniontech.com>
+ <20250917-sound-v3-4-92ebe9472a0a@uniontech.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250917-sound-v3-4-92ebe9472a0a@uniontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 01:15:21PM -0700, Namhyung Kim wrote:
-> On Mon, Aug 11, 2025 at 01:55:40PM +0800, Dapeng Mi wrote:
-> > Dapeng Mi (6):
-> >   perf tools kvm: Add missed memory allocation check and free
-> >   perf tools kwork: Add missed memory allocation check and free
-> >   perf tools kvm: Fix the potential out of range memory access issue
-> >   perf tools: Add helper x86__is_intel_cpu()
-> >   perf tools kvm: Use "cycles" to sample guest for "kvm record" on Intel
-> >   perf tools kvm: Use "cycles" to sample guest for "kvm top" on Intel
- 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Thanks, applied to perf-tools-next,
 
-- Arnaldo
+On 9/17/25 5:46 AM, Cryolitia PukNgae via B4 Relay wrote:
+> @@ -2344,8 +2386,8 @@ report it to the upstream.
+>  NB: ``quirk_alias`` option is provided only for testing / development.
+>  If you want to have a proper support, contact to upstream for
+>  adding the matching quirk in the driver code statically.
+> -Ditto for ``quirk_flags``.  If a device is known to require specific
+> -workarounds, please report to the upstream.
+> +Ditto for ``quirk_flags``.  If a device
+> +is known to require specific workarounds, please report to the upstream.
+
+What is the purpose of this change?
+
+-- 
+~Randy
+
 
