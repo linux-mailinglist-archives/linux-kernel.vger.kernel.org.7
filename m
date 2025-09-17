@@ -1,156 +1,145 @@
-Return-Path: <linux-kernel+bounces-821811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1915BB82588
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECBEB82E23
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6855D18975A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B82CC1C22124
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B1F1E89C;
-	Thu, 18 Sep 2025 00:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609C1259C9A;
+	Thu, 18 Sep 2025 04:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCnMfX9n"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YQbA0kRA"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE44C28F5
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F189258CE2
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758153908; cv=none; b=EGYITKpnXN8UbVpYN/0u+1b9IhcxQajCa2+yuFvpJVIAO3Q+X6E5FTf7E9V4b6iSpOYLROJDtUxEJMnUY4MnldyIqyCcOMLuCaQ/1udqKNWK7/JEXQnFx5dpjIqH+HW4vFNcYf6n4A8lZckTiTpf0sGrfFdTlxve6wM44hkhWiQ=
+	t=1758169687; cv=none; b=iRbHsSC2ATOT+GaicjnN+EXRyJQ//Cqt5rvDM0GahTPtclXsWkEwVPAF9CDNU33g5mfa2TzyuNTd6YZiJo9/3muE+FWucs0aafCYY3R1NO8yKpDT4gxwhKpIAbiz75LC8OTb1FwL23New5rgReUhd3+Gj84GQts8ciyiik06UPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758153908; c=relaxed/simple;
-	bh=/60HjsF5kDxVQb13pIAAZhD9mjEiPULAqqfFawaT56Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eDlEpdVXcwtgISgN1oLNowpdC7aJ++iNgvck6TEFtACkBsFdM7KD5rZe23BbjPlKLyH8l757J0TkTkYTQqJuQZFQ1At9V2ssMaOZRP9geOdGL5y9qCjFk+AGgULiWlhKdSoToYTiEqpHJOwN9jTcazFU68kVhkdV9PwulLzEc4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCnMfX9n; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b07d4d24d09so60134566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758153905; x=1758758705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J7rBzal2frbQpnRlW30Mxkh3elZt0aXaSIdElcYyVLY=;
-        b=eCnMfX9nb2niiMkElvWbWYpa4nkIf/PMO+FAJQTRxvqJJGHMmwDnPPSsVwmRt6mTI4
-         260q3Mgnk2P0OrD98cBMEpZBvS5gyw1QVeTi9UNkIZ8yPFslTSr1muU6PHgYrMY6g4Kv
-         9DouSVdfLJ67uRCL8NW78Joa/ZZ3uQFjbXiRhUNvSXEuLwEGmOnWX0gPPzT65S9HMxfk
-         Sf2sxR91myFqMafdi9ZiM1RhLzShswJDnBVqWxoV17/ZczzMiPmL4Zpvxn5LrjyQD2Lm
-         pEgRkvoAtHupuZtkZfLNAK9v16g5hPnbd4BgaTitsvlI1P5YQcIR3217kztIGBnK5yau
-         PQaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758153905; x=1758758705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J7rBzal2frbQpnRlW30Mxkh3elZt0aXaSIdElcYyVLY=;
-        b=gPxyzXtiqzCz7HLknsTJwI1pcb2tTxjp1qA6g66KGco8HIkWM0OZinWNWvCh4bBe9k
-         Ei39xEPTK9k8RltRUjOs3XF5IkIc6mWsjKzzLyhlhN+MqIQhggUf91422WbFn/m7kjnF
-         0I9ooyx7IKbfpzqGuNFdbfzAwhRmaTcclFz8jvzUQ2iWvnKXtFAvbvfhI2nfI6Q/V5Ei
-         zDnk0lwYTMnhxJ8Qwd4IcnOo3/4+VTwz/Nrhu9k/JwAfVYkaAL4/AUWLDrYkighrCBoU
-         N7a4LR9IDDG7zAg7ajqFmEEt2bZyDSdGXkDSbqAGYReHH/eHiI31KZYNskfg7GU17Ybw
-         8Hpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHNJ5WplDEXVs+rCpE1xkf1Ald5M94IE+mVxoKW7tRcqkMm8YApVsjpaCjF77vXVX4JKkq2iFwrqfVqwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFdE4vKJtnsxZytk4DdQcdD27p5U7MU5Bzk4wH2k6s0nDyntZY
-	29Lr+9BqRZ41Eibg412VmKd+sYoDcarvBlSB7I94i+uWjSSOwACYR+amddZoZNqOj4LCQufXMfu
-	hbXu3YjrK+7AKdfrNsH9GDLZxpjkxBlU=
-X-Gm-Gg: ASbGncsY8jSaOgk4lPLW370mA9EFVsDBhIlcS3jQq+PSj8DPSPwsydSKLLPY0+ISOF4
-	kGyCtQLsAg1W9BDY/5nfbRVfnL/LiY0jliKcuTj7IrF+DcOwTMAt10x14PGFqWcAMscrnlem3gI
-	xM0/Q5/xjNtE08P8oly53e6UWq+pjTS4cye2wKPGEortIlEne4jHyzTK69uilsPcPgtI7X+DVCj
-	tb7mqncJft0pPZJ19Lb8kEJX2M9ao+CTKtPfeCKWoNVc6lFfc966ymtlQ==
-X-Google-Smtp-Source: AGHT+IEG0rY/6zoPQ0V4J9TEMxL5qWtyUtLwQjBHHbE0kU7UOpID9Vbuyc6wLRhaE+GAd8+JbDeWJnkobCY95bQb0m8=
-X-Received: by 2002:a17:906:eec3:b0:afe:e9ee:4ae0 with SMTP id
- a640c23a62f3a-b1bbb7425fdmr420216666b.59.1758153905204; Wed, 17 Sep 2025
- 17:05:05 -0700 (PDT)
+	s=arc-20240116; t=1758169687; c=relaxed/simple;
+	bh=huzLLkBs3Vk5ryeeSJ5VZUBZGOCp4kS3cFAiVMmu5JQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=n656SRmNECSz72IGrP0XFXsM/NpPIsIiedVv0hAE9Oib2AHtmfU+QFEb2/tKIFTYwktoyNS4Tp5dajPSGvq8lo14FhunPAPTACye8JXbbjNwKNzk8LIvbb/Hh3+Hl3lLIqoePmRRL886d6q00gkPEnqBQHl85K7TNqA8A995fjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YQbA0kRA; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250918042803epoutp04c9cbd0ac77ecf9e5007579d83165bd4e~mRgMIGmrI2274622746epoutp04Q
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:28:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250918042803epoutp04c9cbd0ac77ecf9e5007579d83165bd4e~mRgMIGmrI2274622746epoutp04Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758169683;
+	bh=VfTKt+9cya/Xi6xKXtJ2s6w+UyV0o12N66zYmXYF2Bw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YQbA0kRABPa4qazJNmP0w0ncK1iF3Ho0j+8cn/pFxfHuwfpUP5GydFeH4Pnas5fhJ
+	 UOF7IaB6Ry8XYdV49c/d8ZJBqKoyFrEBOPc23bTC2k7BwHK7uziZaMIe7JeMCQe8c8
+	 tyxpNJAf2oVJ/kOLr9nqPivFviuhLYJyi17XXucU=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250918042802epcas5p395734330ce89f122c2e1396d1fbb2f29~mRgLfUQX02834428344epcas5p3J;
+	Thu, 18 Sep 2025 04:28:02 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cS2gQ4dgJz2SSKd; Thu, 18 Sep
+	2025 04:28:02 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250917134132epcas5p192c031691ab4cbb905f2b2313bb79dee~mFaKh1Xvt1744617446epcas5p1D;
+	Wed, 17 Sep 2025 13:41:32 +0000 (GMT)
+Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
+	by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250917134131epsmtip2b3ec6fcf599b4b2f199f60c0dc1c8878~mFaI_cDaX0779307793epsmtip2_;
+	Wed, 17 Sep 2025 13:41:30 +0000 (GMT)
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com, Neeraj Kumar <s.neeraj@samsung.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH V3 02/20] nvdimm/label: CXL labels skip the need for
+ 'interleave-set cookie'
+Date: Wed, 17 Sep 2025 19:10:58 +0530
+Message-Id: <1891546521.01758169682623.JavaMail.epsvc@epcpadp2new>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250917134116.1623730-1-s.neeraj@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917124404.2207918-1-max.kellermann@ionos.com>
- <aMs7WYubsgGrcSXB@dread.disaster.area> <CAGudoHHb38eeqPdwjBpkweEwsa6_DTvdrXr2jYmcJ7h2EpMyQg@mail.gmail.com>
-In-Reply-To: <CAGudoHHb38eeqPdwjBpkweEwsa6_DTvdrXr2jYmcJ7h2EpMyQg@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 18 Sep 2025 02:04:52 +0200
-X-Gm-Features: AS18NWA8wIEg-rpkslqLzmFrp09CSxzRRbJVlRWEvQeLl_2xapCCNgyg1L-JlpY
-Message-ID: <CAGudoHEpd++aMp8zcquh6SwAAT+2uKOhHcWRcBEyC6DRS73osA@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Dave Chinner <david@fromorbit.com>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Max Kellermann <max.kellermann@ionos.com>, slava.dubeyko@ibm.com, xiubli@redhat.com, 
-	idryomov@gmail.com, amarkuze@redhat.com, ceph-devel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250917134132epcas5p192c031691ab4cbb905f2b2313bb79dee
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250917134132epcas5p192c031691ab4cbb905f2b2313bb79dee
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+	<CGME20250917134132epcas5p192c031691ab4cbb905f2b2313bb79dee@epcas5p1.samsung.com>
 
-On Thu, Sep 18, 2025 at 1:08=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Thu, Sep 18, 2025 at 12:51=E2=80=AFAM Dave Chinner <david@fromorbit.co=
-m> wrote:
-> > - wait for Josef to finish his inode refcount rework patchset that
-> >   gets rid of this whole "writeback doesn't hold an inode reference"
-> >   problem that is the root cause of this the deadlock.
-> >
-> > All that adding a whacky async iput work around does right now is
-> > make it harder for Josef to land the patchset that makes this
-> > problem go away entirely....
-> >
->
-> Per Max this is a problem present on older kernels as well, something
-> of this sort is needed to cover it regardless of what happens in
-> mainline.
->
-> As for mainline, I don't believe Josef's patchset addresses the problem.
->
-> The newly added refcount now taken by writeback et al only gates the
-> inode getting freed, it does not gate almost any of iput/evict
-> processing. As in with the patchset writeback does not hold a real
-> reference.
->
-> So ceph can still iput from writeback and find itself waiting in
-> inode_wait_for_writeback, unless the filesystem can be converted to
-> use the weaker refcounts and iobj_put instead (but that's not
-> something I would be betting on).
+CXL LSA v2.1 utilizes the region labels stored in the LSA for interleave
+set configuration instead of interleave-set cookie used in previous LSA
+versions. As interleave-set cookie is not required for CXL LSA v2.1 format
+so skip its usage for CXL LSA 2.1 format
 
-To further elaborate, an extra count which only gates the struct being
-freed has limited usefulness. Notably it does not help filesystems
-which need the inode to be valid for use the entire time as evict() is
-only stalled *after* ->evict_inode(), which might have destroyed the
-vital parts.
+Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Acked-by: Ira Weiny <ira.weiny@intel.com>
+---
+ drivers/nvdimm/namespace_devs.c |  8 +++++++-
+ drivers/nvdimm/region_devs.c    | 10 ++++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-Or to put it differently, the patchset tries to fit btrfs's needs
-which don't necessarily line up with other filesystems. For example it
-may be ceph needs the full reference in writeback, then the new ref is
-of no use here. But for the sake of argument let's say ceph will get
-away with the ligher ref instead. Even then this is on the clock for a
-different filesystem to show up which can't do it and needs an async
-iput and then its developers are looking at "whacky work arounds".
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index 55cfbf1e0a95..3271b1c8569a 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -1684,7 +1684,13 @@ static struct device *create_namespace_pmem(struct nd_region *nd_region,
+ 	int rc = 0;
+ 	u16 i;
+ 
+-	if (cookie == 0) {
++	/*
++	 * CXL LSA v2.1 utilizes the region label stored in the LSA for
++	 * interleave set configuration. Whereas EFI LSA v1.1 & v1.2
++	 * utilizes interleave-set cookie. i.e, CXL labels skip the
++	 * need for 'interleave-set cookie'
++	 */
++	if (!ndd->cxl && cookie == 0) {
+ 		dev_dbg(&nd_region->dev, "invalid interleave-set-cookie\n");
+ 		return ERR_PTR(-ENXIO);
+ 	}
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index de1ee5ebc851..88275f352240 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -858,6 +858,16 @@ u64 nd_region_interleave_set_cookie(struct nd_region *nd_region,
+ 	if (!nd_set)
+ 		return 0;
+ 
++	/*
++	 * CXL LSA v2.1 utilizes the region label stored in the LSA for
++	 * interleave set configuration. Whereas EFI LSA v1.1 & v1.2
++	 * utilizes interleave-set cookie. i.e, CXL labels skip the
++	 * need for 'interleave-set cookie'
++	 */
++	if (nsindex && __le16_to_cpu(nsindex->major) == 2
++			&& __le16_to_cpu(nsindex->minor) == 1)
++		return 0;
++
+ 	if (nsindex && __le16_to_cpu(nsindex->major) == 1
+ 			&& __le16_to_cpu(nsindex->minor) == 1)
+ 		return nd_set->cookie1;
+-- 
+2.34.1
 
-The actual generic async iput is the actual async iput, not an
-arbitrary chunk of it after the inode is partway through processing.
-But then any form of extra refcounting is of no significance.
 
-To that end a non-whacky mechanism to defer iput would be most
-welcome, presumably provided by the vfs layer itself. Per remarks by
-Al elsewhere, care needs to be taken to make sure all inodes are
-sorted out before the super block gets destroyed.
-
-This suggests expanding the super_block to track all of the deferred
-iputs and drain them early in sb destruction. The current struct inode
-on LP64 has 2 * 4 byte holes and llist linkage is only 8 bytes, so
-this can be added without growing the struct above stock kernel.
-
-I would argue it would be good if the work could be deffered to
-task_work if possible (fput-style). Waiting for these should be easy
-enough, but arguably the thread which is supposed to get to them can
-be stalled elsewhere indefinitely, so perhaps this bit is a no-go.
 
