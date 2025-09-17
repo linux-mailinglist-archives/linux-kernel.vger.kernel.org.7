@@ -1,286 +1,132 @@
-Return-Path: <linux-kernel+bounces-821794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08292B824E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:34:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9096B824EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0FA4327BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6711C24A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82E9329505;
-	Wed, 17 Sep 2025 23:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9081932950F;
+	Wed, 17 Sep 2025 23:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fHD3+5rY"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nu6DHH9U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8090D30F52D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00A9265630;
+	Wed, 17 Sep 2025 23:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758152066; cv=none; b=H3Ur10OovWFlZPUOTQrTA5s7pqpgwL7mNehyQAPS3Immol3e7ah3urxpprBrHg03t5xxGCwlF7VZLaMDPf9Sfwv+rTBx4cV9fk6xl8pbYq4lF8Iz0AkPGtlMpCjJ6g4v/wpnmk70ghk59HzFZCjRmoPm92KlanKS+QWO/0Q99is=
+	t=1758152264; cv=none; b=t+8ubhf6eQvEdZYRtgd+xd02BpvlamlSXjzy0GHHowL7Ak0JxUnSzpFcAd7wvK/SUua0gRFDas5GPFtcFULszma/irukqjsESc0q3ys1EvfCv+blxH0//QLYRSvDJZU3Kal+U/ZUCy6KvINoL8xWtJctq6DAJS4mVKaKuMN2LuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758152066; c=relaxed/simple;
-	bh=swWyIN+1pJbbIQJJjvJgyKEibOYxD+xzaD2IMHdTwP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kd10Gv9a2pHsfxeI9AJCtZVE6L2Odu8vAVw/2CJG70mWurOa1qd/A2sAcJ0aomOD3fUlw9wWvCWscgGY94fc1m32vY5F1LwTTvVL0Y568hJixv1MqKeC+ehb32nacJvFTuaHoGo8cEp9f0kH9mmc4gMl0nabOrPoDOKtiVTTr2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fHD3+5rY; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-746dae5ff93so388483a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758152063; x=1758756863; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKhBLhOoADNGhrD1cnDjjtM0fyI+xW8dSVMWE/99mqc=;
-        b=fHD3+5rYdQXWtZN9ttp8ggQRDm5yDRxNlGHZ29cm1jgrrVij0JbCSmK/esV8CgIpux
-         Q+nDMl4iBLq1wlsZN8GcwCWAMLzlMo9aV/xwpJ72mB4JYqXeYG7be/Ibumi5hzfAxzb9
-         bn/7GyZTLzOlLHvCn4lUkMBf9K7+I+0zl6ZiUcmQbV9JACLcLIIRjDgyT/vNisq+6dPb
-         fQ6mf542fBi8iGUGKfVPIekKVaDHlMMgSrkcWmvmIhLQEnI33H1xyOFbbik7k+J95wTC
-         6uJslYfxMdeXj++VxJrISTGdtZ7AjumAYrk/TF0fGN/IgSCfKAd54l0zNt4q8EtFVjCD
-         PADw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758152064; x=1758756864;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKhBLhOoADNGhrD1cnDjjtM0fyI+xW8dSVMWE/99mqc=;
-        b=uWdQn0x70sXHVya+OidvILD3/y8pUtZ8OiZ26evC6NngEMPAcK9asE/Fu9WtnTN3If
-         Y3+o9opS6KxyyffZ0PbF35vnfZuv1uDOZyrOpacjyx2yvdbMtis33DulICjrvJ1kf5ta
-         T3Os+7543iJi72u83wz8tN+8wt/nAij093ACdokaOYdMf48oIpqgO3BdjlrsR4Yd2rWi
-         TahrGVIOL5jEMJZDMmTJ8kS7QDWFiP6TDbDQfYkMH5TiQ9ke+agtlzh0OmEZvx9UBxST
-         6cZHJUzmaRhF64rnMStiyOBY4F/9WwlFElU/npQSqnC+Ua+qoEx8xG2/Ie6rcgql2+da
-         pP6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNIbS1RvEMmT08B4bM0GWUnQVQPO3PjPzEZcNVDQPRQVUXr9PKDFopzRN6dwnQ/JpLvmp9EsctzxrYRPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycTIP81NCEWvxGfJX51Cg53fWReNKkOwvUHLOznY9kQeaaiutk
-	IY97KQLviKUjLr1Ex3T8rk/+RSkxompu3pkd3T4tbThMh0CwO3m2A9wV+JQczxexxi4=
-X-Gm-Gg: ASbGncujIO2IYmg6IuffkSyieJZv9B3/NZdfCdYNJuVonVTrvUG/2YahqjT2Vc1jFcQ
-	Lexc/AWlq3edjDRtvd0BQNirqA6zGVLIqqJkXgb934yl+D4nDdNfWyNbc0BjVNu/k/9gMdGm1Yj
-	FWsmf+I58E2vLiGZcb27gP5XQFglBrmlAx9tOdz2LYWJpBe4qpxgzpBlk3SsxbJCK95Qv8IWp56
-	/97OUX+KwOMVa6B3uPbhTz+86+T6uUGVAr9ausf4AHYHUtR+QMIQkZYKIpbSrHP9+1P6tBswHfL
-	BbrqWeGR3/kwVdlweMI/Eeek+Rmmv7vf2rxMPtBVUzF0cEe3f0N8hM6mjke7zzKgWNg6gl60utL
-	85/Vvk2jagu3nBk5sHDeDA64dEUPBslncOChdfbYeVMh+B4/SGtduiTa+TUXEvuP5hNkafCmP02
-	EAg3yzhC2jYzvnLy3MyQ==
-X-Google-Smtp-Source: AGHT+IE7RaIyMAJaTvPyOiXN+JJtZea0493IhCnfctYazgeVBHja7BYLWwucFVnhI9ICXngYTmNZug==
-X-Received: by 2002:a05:6830:6182:b0:746:d65b:a3b0 with SMTP id 46e09a7af769-76318d69ba4mr2431458a34.2.1758152063547;
-        Wed, 17 Sep 2025 16:34:23 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:55b7:b662:4c5b:a28e? ([2600:8803:e7e4:1d00:55b7:b662:4c5b:a28e])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-625dbab5cf1sm247661eaf.22.2025.09.17.16.34.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 16:34:23 -0700 (PDT)
-Message-ID: <0bc1b77c-bbbc-4e8a-a792-fb7e30a2a789@baylibre.com>
-Date: Wed, 17 Sep 2025 18:34:22 -0500
+	s=arc-20240116; t=1758152264; c=relaxed/simple;
+	bh=Tm7LDGQYbF/5OYizYxd41PtQk/zW0KgP6XlgKNQteR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9AQtZ5ZUFfc9bsC45tTkrpAjeWifZXVJKu54chBOqs3sHOZbTmUO4OtZf826SmD7V7NjPPsa12zYav0foVHG5BsLvQgI0fcAAMWq/PFJibgkkO0kD12sFbYmy1SUVWgylNkZ3rhpJd/jSisPVV/dfoofZCzG+b95PwqkgrqRAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nu6DHH9U; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758152261; x=1789688261;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Tm7LDGQYbF/5OYizYxd41PtQk/zW0KgP6XlgKNQteR0=;
+  b=nu6DHH9UbBjEWEyc1mfHdH/H1FyDHdgWj/8YZCm1Qa62yvGwxiO5wIaE
+   etdhv7+wBJoaS7crC3xRDQD5O2hqk0AUl412UmqGX3c5Re99H99rPnYGA
+   +rSMhDZefpsaBNuW5a21mAxC129mw9TTXm9NA5GyOe9l0Ly/JkF/CkRnq
+   5bhvNoXkgHPsGFyg6hWP5c7nmc94+jBCMsxTSOVXgIqfj/8nHE8jEk6ZH
+   fAE2fVTmpmCCb+1s6ioSyqKDROiKLr/eDbWV4X+pfZj3MlbaJvAO8uUVG
+   5IshS48TtDL0MwNoDUvHuGyq+kDtA0RzVfDfiaML5oWiHL01xap4MQ0HD
+   A==;
+X-CSE-ConnectionGUID: Odo81/UKTpmQL/LmmFvATA==
+X-CSE-MsgGUID: PJMy3xVGRu+syXYgICIrVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="71576745"
+X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
+   d="scan'208";a="71576745"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 16:37:41 -0700
+X-CSE-ConnectionGUID: QcxZYuG2QOyvuJ2rkRherg==
+X-CSE-MsgGUID: 5O/Z75r0RRWd2IesMQAMfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
+   d="scan'208";a="175779636"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 17 Sep 2025 16:37:34 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uz1iN-0002ZT-2Q;
+	Wed, 17 Sep 2025 23:37:31 +0000
+Date: Thu, 18 Sep 2025 07:37:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com,
+	glider@google.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	andreyknvl@gmail.com, andy@kernel.org, brauner@kernel.org,
+	brendan.higgins@linux.dev, davem@davemloft.net, davidgow@google.com,
+	dhowells@redhat.com, dvyukov@google.com, elver@google.com,
+	herbert@gondor.apana.org.au, ignat@cloudflare.com, jack@suse.cz,
+	jannh@google.com, johannes@sipsolutions.net,
+	kasan-dev@googlegroups.com, kees@kernel.org,
+	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
+	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com
+Subject: Re: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7
+ and RSA parsing
+Message-ID: <202509180721.GaBOMCkp-lkp@intel.com>
+References: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: temperature: add support for
- EMC1812
-To: Marius Cristea <marius.cristea@microchip.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250917-iio-emc1812-v1-0-0b1f74cea7ab@microchip.com>
- <20250917-iio-emc1812-v1-1-0b1f74cea7ab@microchip.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250917-iio-emc1812-v1-1-0b1f74cea7ab@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
 
-On 9/17/25 7:21 AM, Marius Cristea wrote:
-> This is the devicetree schema for Microchip EMC1812/13/14/15/33
-> Multichannel Low-Voltage Remote Diode Sensor Family.
-> 
-> Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
-> ---
->  .../iio/temperature/microchip,emc1812.yaml         | 223 +++++++++++++++++++++
->  MAINTAINERS                                        |   6 +
->  2 files changed, 229 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,emc1812.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,emc1812.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..898d6d246746e229cb004f447872ee6bd5a65074
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,emc1812.yaml
-> @@ -0,0 +1,223 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/temperature/microchip,emc1812.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip EMC1812/13/14/15/33 multichannel temperature sensor
-> +
-> +maintainers:
-> +  - Marius Cristea <marius.cristea@microchip.com>
-> +
-> +description: |
-> +  The Microchip EMC1812/13/14/15/33 is a high-accuracy 2-wire multichannel
-> +  low-voltage remote diode temperature monitor.
-> +
-> +  The datasheet can be found here:
-> +    https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/EMC1812-3-4-5-33-Data-Sheet-DS20005751.pdf
+Hi Ethan,
 
-The pinouts of these chips look nearly identical to MCP998X.
-Would it make sense to share a single bindings document for these?
-Or maybe there would be too many if: blocks and keeping it separate
-is fine.
+kernel test robot noticed the following build errors:
 
-https://lore.kernel.org/linux-iio/20250829143447.18893-2-victor.duicu@microchip.com/
+[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
+[also build test ERROR on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250917]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - microchip,emc1812
-> +      - microchip,emc1813
-> +      - microchip,emc1814
-> +      - microchip,emc1815
-> +      - microchip,emc1833
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 2
-> +
-> +  interrupt-names:
-> +    description:
-> +      -alert-therm2 asserts when a diode temperature exceeds the ALERT
-> +      threshold.
-> +      -therm-addr asserts low when the hardware-set THERM limit threshold is
-> +      exceeded by one of the temperature sensors.
-> +    items:
-> +      - const: alert-therm2
-> +      - const: therm-addr
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  microchip,beta1:
-> +    description:
-> +      Set beta compensation value for external channel 1.
-> +      <0> 0.050
-> +      <1> 0.066
-> +      <2> 0.087
-> +      <3> 0.114
-> +      <4> 0.150
-> +      <5> 0.197
-> +      <6> 0.260
-> +      <7> 0.342
-> +      <8> 0.449
-> +      <9> 0.591
-> +      <10> 0.778
-> +      <11> 1.024
-> +      <12> 1.348
-> +      <13> 1.773
-> +      <14> 2.333
-> +      <15> Diode_Mode
-> +      <16> Auto
-> +      - Diode_Mode is used when measuring a discrete thermal diode
-> +      or a CPU diode that functions like a discrete thermal diode.
-> +      - Auto enables beta auto-detection. The chip monitors
-> +      external diode/transistor and determines the optimum
-> +      setting.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 16
-> +    default: 16
-> +
-> +  microchip,beta2:
-> +    description:
-> +      Set beta compensation value for external channel 2.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 16
-> +    default: 16
+url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Graham/mm-kasan-implement-kasan_poison_range/20250916-210448
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20250916090109.91132-8-ethan.w.s.graham%40gmail.com
+patch subject: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7 and RSA parsing
+config: x86_64-randconfig-075-20250918 (https://download.01.org/0day-ci/archive/20250918/202509180721.GaBOMCkp-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509180721.GaBOMCkp-lkp@intel.com/reproduce)
 
-This beta value sounds like something that might not belong in the
-devicetree.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509180721.GaBOMCkp-lkp@intel.com/
 
-The datasheet says that auto is always the best. So that makes me
-wonder when would we want to use something else?
+All errors (new ones prefixed by >>):
 
-Also, it says that in auto mode, that the value is recalculated
-on every conversion, so even if manually selecting a value, it
-sounds like something that could change at runtime, so having a
-fixed value might not cover all use cases.
+>> ld.lld: error: undefined symbol: pkcs7_parse_message
+   >>> referenced by pkcs7_kfuzz.c:21 (crypto/asymmetric_keys/tests/pkcs7_kfuzz.c:21)
+   >>>               vmlinux.o:(kfuzztest_write_cb_test_pkcs7_parse_message)
+--
+>> ld.lld: error: undefined symbol: rsa_parse_pub_key
+   >>> referenced by rsa_helper_kfuzz.c:22 (crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:22)
+   >>>               vmlinux.o:(kfuzztest_write_cb_test_rsa_parse_pub_key)
+--
+>> ld.lld: error: undefined symbol: rsa_parse_priv_key
+   >>> referenced by rsa_helper_kfuzz.c:37 (crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:37)
+   >>>               vmlinux.o:(kfuzztest_write_cb_test_rsa_parse_priv_key)
 
-Having a boolean flag to say this is wired to a discrete thermal diode
-makes sense though (the driver would use this info to select diode mode).
-
-And if we can make the case that the beta value should be in the
-devicetree, then having the actual value instead of a lookup table
-would be preferred. There is a "basis points" standards unit (suffix
-"-bp") that can be used for non-integer values like this (assuming it
-is a unit-less value). It is 1/10,000 so it would make the property
-an enum with 15 values between 500 and 23330.
-
-Both properties would not be allowed at the same time and if both
-properties are omitted, the driver would know to use auto mode.
-
-Also, it would make more sense to have these as channel properties
-if they only apply to 1 channel each.
-
-> +
-> +  microchip,parasitic-res-on-channel1-2:
-> +    description:
-> +      Indicates that the chip and the diodes/transistors are sufficiently far
-> +      apart that a parasitic resistance is added to the wires, which can affect
-> +      the measurements. Due to the anti-parallel diode connections, channels
-> +      1 and 2 are affected together.
-> +    type: boolean
-> +
-> +  microchip,parasitic-res-on-channel3-4:
-> +    description:
-> +      Indicates that the chip and the diodes/transistors are sufficiently far
-> +      apart that a parasitic resistance is added to the wires, which can affect
-> +      the measurements. Due to the anti-parallel diode connections, channels
-> +      3 and 4 are affected together.
-> +    type: boolean
-> +
-> +  vdd-supply: true
-> +
-> +patternProperties:
-> +  "^channel@[1-4]$":
-> +    description:
-> +      Represents the external temperature channels to which
-> +      a remote diode is connected.
-> +    type: object
-> +
-> +    properties:
-> +      reg:
-> +        items:
-> +          minimum: 1
-> +          maximum: 4
-> +
-
-I.e. beta-related properties would go here.
-
-> +      microchip,ideality-factor:
-> +        description:
-> +          Each channel has an ideality factor.
-> +          Beta compensation and resistance error correction automatically
-> +          correct for most ideality errors. So ideality factor does not need
-> +          to be adjusted in general.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 8
-> +        maximum: 55
-> +        default: 18
-> +
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
