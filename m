@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel+bounces-821691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312DCB81F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:28:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1057DB81F91
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E84594E0505
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:28:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766357B037F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E2130AABF;
-	Wed, 17 Sep 2025 21:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9B9309EF1;
+	Wed, 17 Sep 2025 21:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHvd1OUm"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yLg4GU7F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407A02868AF;
-	Wed, 17 Sep 2025 21:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D595302159;
+	Wed, 17 Sep 2025 21:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758144515; cv=none; b=Nx94wZoMgy/X6bM/LPB4V2XMHA+twFMZSO0FxflQsZbW1meFgS2JghvEhIWCCqntIAHg60IxacYg4Rz778ydU3nnp7W2Tkataj+VV8sgqtjFTeN2y348KGHLGMkjLpQt3qW2uQpnsNVihuSOVwKC4PmNtOpfYnnrsWLd5FItAj4=
+	t=1758144541; cv=none; b=iQkbP/zO0AIu/FyP8vZ+WLWTzGnPKpfAthvgiqLQ+3ikgQneLmgKYB16RT2z4eC+uGcdRNfkkkOieD60VTrtBPQ24wUUzJUYGEhPB9YGKQhrR4R++5A7+o7kpQkEk5pxlrjdZsuGlogwImPX8A+X9PV5IgtT9lVa8nGafnMwoLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758144515; c=relaxed/simple;
-	bh=sXeuIQMjL3ij8K65U8iZCGwbM5nnx/S7lPAqmUslGis=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=jSLqxTO9PANgKqo4/cq+78UCvzjg6b/kchzGRYnjZYrvqTXTmBa1pBq9PoGaFMxCC4K05P9hbogEhmCm44RgRDuH2phBiEEz3U3gZtETPnlzYkRH4duYVqTVP2C9uY2xZ5MTc3bB4agpxxYkGaNFYDU52pISgt5C+pEh4KU9k+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHvd1OUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92193C4CEE7;
-	Wed, 17 Sep 2025 21:28:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758144514;
-	bh=sXeuIQMjL3ij8K65U8iZCGwbM5nnx/S7lPAqmUslGis=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bHvd1OUm79r3XEeX6f8axMNEa0NGPaqKHC9jl1m7C+c0nonFO2VZoF6uksqnhj59f
-	 4fUfAP+VPXo+8qfg+E/5sszwLGo572XdGdc++XSGEkZi2/iceZkeBB7gVzuCKAgX8P
-	 eeVrQjhLjrtUoMlHTmlEA8hoFRLL3jcvBYMw6FWP/+mHfgtn5q5R+ODbra9qR8z6Rr
-	 5BtBboj5xHGS9PaZNd4gK8GT9nntFNsfr9ySCGXyAHYsWxmagjBTRylsJG3vmqdxC6
-	 rdsHUjs0cQkCqlPepE7v2TZmrpvuFbRRg0QGPJlhUY+6x959gdEIyAQX5Ueh+gsRlM
-	 sq0tsUpoiYN3A==
-Date: Wed, 17 Sep 2025 16:28:33 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>, chester62515@gmail.com,
-	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
-	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: pcie: Add the NXP PCIe controller
-Message-ID: <20250917212833.GA1873293@bhelgaas>
+	s=arc-20240116; t=1758144541; c=relaxed/simple;
+	bh=EobuVCZcornWTzPk32AobToyuSJ570AVb66uPA37Js8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=TTgaN5SXuBgl9Z18Uj8UQ8LQzWpsm3ZwghEH4h44aVki6ecw8cWrtLTkm6lQrbf0+Zge+YRbBeHWEVam2BvgbIHnMj/t16ny11dofRbMgsJvQKlxr4tIKo4EbqtwcuCRqjV0b7op7AKhr+2Uj1j2L78ieyMs3E+EpZefR3BFhr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yLg4GU7F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCCBC4CEE7;
+	Wed, 17 Sep 2025 21:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758144541;
+	bh=EobuVCZcornWTzPk32AobToyuSJ570AVb66uPA37Js8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=yLg4GU7F7QyOOAObovX6UP+sC3Bq/L2Hbo91QRW6t0ygkshD9EF53mfq9VFVXOWXF
+	 4iOJJA3mdi1lMYid/Eofx4moGwOTnqub3vHqNxHLAd/BEhwbgyuHkF2++6tK6oEVE0
+	 DE3H4Td7LpCtfz0hUght3wWSsVBorI2LdglCbR20=
+Date: Wed, 17 Sep 2025 14:29:00 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Quanmin Yan <yanquanmin1@huawei.com>, damon@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ wangkefeng.wang@huawei.com, zuoze1@huawei.com, Chris Mason <clm@fb.com>
+Subject: Re: [PATCH v3 11/11] mm/damon: add damon_ctx->min_sz_region
+Message-Id: <20250917142900.e2915812cd94d9a2b0da3987@linux-foundation.org>
+In-Reply-To: <20250917160041.53187-1-sj@kernel.org>
+References: <20250828171242.59810-12-sj@kernel.org>
+	<20250917160041.53187-1-sj@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e236uncj7qradf34elkmd2c4wjogc6pfkobuu7muyoyb2hrrai@tta36jq5fzsr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 10:41:08PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Sep 16, 2025 at 09:23:13AM GMT, Bjorn Helgaas wrote:
-> > On Tue, Sep 16, 2025 at 10:10:31AM +0200, Vincent Guittot wrote:
-> > > On Sun, 14 Sept 2025 at 14:35, Vincent Guittot
-> > > <vincent.guittot@linaro.org> wrote:
-> > > > On Sat, 13 Sept 2025 at 00:50, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > > > On Fri, Sep 12, 2025 at 04:14:33PM +0200, Vincent Guittot wrote:
-> > > > > > Describe the PCIe controller available on the S32G platforms.
-> > 
-> > > > > > +                  num-lanes = <2>;
-> > > > > > +                  phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
-> > > > >
-> > > > > num-lanes and phys are properties of a Root Port, not the host bridge.
-> > > > > Please put them in a separate stanza.  See this for details and
-> > > > > examples:
-> > > > >
-> > > > >   https://lore.kernel.org/linux-pci/20250625221653.GA1590146@bhelgaas/
-> > > >
-> > > > Ok, I'm going to have a look
-> > > 
-> > > This driver relies on dw_pcie_host_init() to get common resources like
-> > > num-lane which doesn't look at childs to get num-lane.
-> > > 
-> > > I have to keep num-lane in the pcie node. Having this in mind should I
-> > > keep phys as well as they are both linked ?
+On Wed, 17 Sep 2025 09:00:41 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-> > Huh, that sounds like an issue in the DWC core.  Jingoo, Mani?
-> > 
-> > dw_pcie_host_init() includes several things that assume a single Root
-> > Port: num_lanes, of_pci_get_equalization_presets(),
-> > dw_pcie_start_link() are all per-Root Port things.
+> On Thu, 28 Aug 2025 10:12:42 -0700 SeongJae Park <sj@kernel.org> wrote:
 > 
-> Yeah, it is a gap right now. We only recently started moving the DWC
-> platforms to per Root Port binding (like Qcom).
+> > From: Quanmin Yan <yanquanmin1@huawei.com>
+> > 
+> > Adopting addr_unit would make DAMON_MINREGION 'addr_unit * 4096'
+> > bytes and cause data alignment issues[1].
+> > 
+> > Add damon_ctx->min_sz_region to change DAMON_MIN_REGION from a global
+> > macro value to per-context variable.
+> > 
+> > [1] https://lore.kernel.org/all/527714dd-0e33-43ab-bbbd-d89670ba79e7@huawei.com
+> 
+> I think I found an issue of this patch.  Please refer to the attaching patch
+> for details.
+> 
+> This patch is in the mm tree and not yet merged into the mainline.  Andrew,
+> could you please add the attached patch as a fixup of this one?
 
-Do you need num-lanes in the devicetree?
-dw_pcie_link_get_max_link_width() will read it from PCI_EXP_LNKCAP, so
-if that works maybe you can omit it from the binding?
+The flawed patch is actually in mm.git's mm-stable branch, which is
+supposedly non-rebasing.  So I queued this patch as separate commit, with
 
-If you do need num-lanes in the binding, maybe you could make a Root
-Port parser similar to mvebu_pcie_parse_port() or
-qcom_pcie_parse_port() that would get num-lanes, the PHY, and
-nxp,phy-mode from a Root Port node?
+Fixes: d8f867fa0825 ("mm/damon: add damon_ctx->min_sz_region")
 
-Then all this would be in one place, and if you set ->num_lanes there
-it looks like the DWC core wouldn't do anything with it.
 
