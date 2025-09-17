@@ -1,199 +1,108 @@
-Return-Path: <linux-kernel+bounces-820401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FECB7D6DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E946BB7D5CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2BC81882486
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6674C4E1E65
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3358134DCEA;
-	Wed, 17 Sep 2025 09:56:30 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DA8343D92;
+	Wed, 17 Sep 2025 09:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aca8hscL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135042F60A2;
-	Wed, 17 Sep 2025 09:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F392C08AF
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102989; cv=none; b=b2nQHOGdiHSn+DkCWuGHlZDHgLRudvYiLgMjsUCiylHbr4ReqfJbgXGd27l1342Vmk7UT0TZBZXIuMIsN8CPdBYaqkE0dxfsKJnXrMUTW53/UKapydX5DY9t2caxkdgBZvCj+NJa1UXGj4cAxVUPPus7Hxx8nzoqBabvus0b8zk=
+	t=1758103044; cv=none; b=Sbn3W3pOwSVJQZjy1BwpdVb7cq8h14ctviLoXJLCbrIf+NYDCzq6fktPeIw5XtIfU/fXNM0DhRRbEkmCj3pP3g+jdl4IRLhgk4lKv8gugpbKF14fLl15OkeXsyFTNhjnqtSYM+axNN3ExqHuwKrGyROXgVBX71nunoWrDmo6W34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102989; c=relaxed/simple;
-	bh=JkKrUSNmn6eFBVBF/ul8YYiOU/ezlAAMmRX8Do1T+O8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TdcEkufOK508IgeTIz48xn7XQwgT5SZt+dwaooo8nQkjuTcdiWLe+gie8ycxP0w9CqWspQQNplglB7JuUW8EfG0hKVg6WPIm+44uy3tcsBTyID6cDOHTYBgvfOwMtbkINqaF2wX01daz/7YCcOBV3iCgjy5VoLgb7NFIXMd8eqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cRYwj1NZGz2VRk1;
-	Wed, 17 Sep 2025 17:52:53 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1FE3C18001B;
-	Wed, 17 Sep 2025 17:56:18 +0800 (CST)
-Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Sep 2025 17:56:17 +0800
-Received: from [10.67.120.171] (10.67.120.171) by
- kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Sep 2025 17:56:17 +0800
-Message-ID: <8e5d4afb-8a21-4a93-a80f-e1f2b6baa8ca@huawei.com>
-Date: Wed, 17 Sep 2025 17:56:16 +0800
+	s=arc-20240116; t=1758103044; c=relaxed/simple;
+	bh=HNjakmqlXKYXOLr5czwwLTZPKrAK2HAIv/5QcvKc2TI=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=FkfbS6TGKzfviqzs0SArxQ25bD5XE/MCcP9h/NkWV6YP5M8SupR4PbieqD3mw1xse44kVAvnWLYRmz8P5nchBfpz4bjrv+SgiGHV0HuKCSDCUcdzRfSULwnUNYQN1w1Dryf5292kPDNj/p+8eC9RfUTTs8Kh2iPfG6jzvoYyNHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aca8hscL; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758103043; x=1789639043;
+  h=date:from:to:cc:subject:message-id;
+  bh=HNjakmqlXKYXOLr5czwwLTZPKrAK2HAIv/5QcvKc2TI=;
+  b=Aca8hscLwSQ1sYwD4NkQaD9VjUcj2LWIGlJjvs30MZc7dnpaCi19KUQh
+   Ld6mgCRitAcLVLBo+22Mf06Rlbkh9ux2RXqhcuQKM/Rq8FtSYNhMl8aDs
+   dtz62FvLQQM0S9U3L/pS73VeNdsq1L4q/KnrNSWRc7ggm5TmNL8gv4Oej
+   Dw7aBt8gihPLIYvJxU2B6l5LlfgM6UlGJ4hME71nMtVmSOQSJ2ynYpEbr
+   +sAlwnBwn/KuolPb6wQ4stH4LL0r5p0aZxyDpyJBZlC/kYxmt86m0tUmP
+   yyIfkdK6F0vWtohM6ecGsRHpQ4/lqjVeGgRNHSY7u3jK/m/zMJfZkBjFW
+   g==;
+X-CSE-ConnectionGUID: rcozrte7Rv61wx+VKnwTVw==
+X-CSE-MsgGUID: NF00FmP/Sm2SFH9HMBOVwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60272465"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="60272465"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 02:57:22 -0700
+X-CSE-ConnectionGUID: p3xNxAVeRq2+f8w8IIdd9g==
+X-CSE-MsgGUID: dhKY9juCS7yTusakfLmeDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="174308789"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 17 Sep 2025 02:57:22 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uyoud-0001Lk-2B;
+	Wed, 17 Sep 2025 09:57:19 +0000
+Date: Wed, 17 Sep 2025 17:56:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:ras/core] BUILD SUCCESS
+ 5c6f123c419b6e20f84ac1683089a52f449273aa
+Message-ID: <202509171751.NAvqx3dF-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] uacce: fix for cdev memory leak
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <zhangfei.gao@linaro.org>, <wangzhou1@hisilicon.com>,
-	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <fanghao11@huawei.com>, <shenyang39@huawei.com>,
-	<liulongfang@huawei.com>, <qianweili@huawei.com>
-References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
- <20250916144811.1799687-2-huangchenghai2@huawei.com>
- <2025091620-theft-glue-5e7f@gregkh>
-From: huangchenghai <huangchenghai2@huawei.com>
-Content-Language: en-US
-In-Reply-To: <2025091620-theft-glue-5e7f@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemq200001.china.huawei.com (7.202.195.16)
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras/core
+branch HEAD: 5c6f123c419b6e20f84ac1683089a52f449273aa  x86/mce: Add a clear_bank() helper
 
-On Mon, Sep 16, 2025 at 11:15 PM +0800, Greg KH wrote:
-> On Tue, Sep 16, 2025 at 10:48:08PM +0800, Chenghai Huang wrote:
->> From: Wenkai Lin <linwenkai6@hisilicon.com>
->>
->> If cdev_device_add failed, it is hard to determine
->> whether cdev_del has been executed, which lead to a
->> memory leak issue, so we use cdev_init to avoid it.
-> I do not understand, what is wrong with the current code?  It checks if
-> add fails:
->
->> Fixes: 015d239ac014 ("uacce: add uacce driver")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
->> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
->> ---
->>   drivers/misc/uacce/uacce.c | 13 ++++---------
->>   include/linux/uacce.h      |  2 +-
->>   2 files changed, 5 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
->> index 42e7d2a2a90c..12370469f646 100644
->> --- a/drivers/misc/uacce/uacce.c
->> +++ b/drivers/misc/uacce/uacce.c
->> @@ -522,14 +522,10 @@ int uacce_register(struct uacce_device *uacce)
->>   	if (!uacce)
->>   		return -ENODEV;
->>   
->> -	uacce->cdev = cdev_alloc();
->> -	if (!uacce->cdev)
->> -		return -ENOMEM;
-> This is the check.
->
->
->> -
->> -	uacce->cdev->ops = &uacce_fops;
->> -	uacce->cdev->owner = THIS_MODULE;
->> +	cdev_init(&uacce->cdev, &uacce_fops);
->> +	uacce->cdev.owner = THIS_MODULE;
->>   
->> -	return cdev_device_add(uacce->cdev, &uacce->dev);
->> +	return cdev_device_add(&uacce->cdev, &uacce->dev);
-> And so is this.  So what is wrong here?
->
->
->>   }
->>   EXPORT_SYMBOL_GPL(uacce_register);
->>   
->> @@ -568,8 +564,7 @@ void uacce_remove(struct uacce_device *uacce)
->>   		unmap_mapping_range(q->mapping, 0, 0, 1);
->>   	}
->>   
->> -	if (uacce->cdev)
->> -		cdev_device_del(uacce->cdev, &uacce->dev);
->> +	cdev_device_del(&uacce->cdev, &uacce->dev);
->>   	xa_erase(&uacce_xa, uacce->dev_id);
->>   	/*
->>   	 * uacce exists as long as there are open fds, but ops will be freed
->> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
->> index e290c0269944..98b896192a44 100644
->> --- a/include/linux/uacce.h
->> +++ b/include/linux/uacce.h
->> @@ -126,7 +126,7 @@ struct uacce_device {
->>   	bool is_vf;
->>   	u32 flags;
->>   	u32 dev_id;
->> -	struct cdev *cdev;
->> +	struct cdev cdev;
->>   	struct device dev;
-> You can not do this, you now have 2 different reference counts
-> controlling the lifespan of this one structure.  That is just going to
-> cause so many more bugs...
->
-> How was this tested?  What is currently failing that requires this
-> change?
->
-> thanks,
->
-> greg k-h
-We analyze it theoretically there may be a memory leak
-issue here, if the cdev_device_add returns a failure,
-the uacce_remove will not be executed, which results in the
-uacce cdev memory not being released.
-Therefore, we have decided to align with the design of other
-drivers by making cdev a static member of uacce_device and
-releasing the memory through uacce_device.
+elapsed time: 1458m
 
-found one example in drivers/watchdog/watchdog_dev.h.
-struct watchdog_core_data {
-     struct device dev;
-     struct cdev cdev;
-     struct watchdog_device *wdd;
-     struct mutex lock;
-     ktime_t last_keepalive;
-     ktime_t last_hw_keepalive;
-     ktime_t open_deadline;
-     ...
-};
+configs tested: 16
+configs skipped: 119
 
-static int watchdog_cdev_register(struct watchdog_device *wdd)
-{
-     struct watchdog_core_data *wd_data;
-     int err;
-     ...
-     cdev_init(&wd_data->cdev, &watchdog_fops);
-     wd_data->cdev.owner = wdd->ops->owner;
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-     /* Add the device */
-     err = cdev_device_add(&wd_data->cdev, &wd_data->dev);
-     ...
-}
+tested configs:
+i386                          allnoconfig    gcc-14
+i386    buildonly-randconfig-001-20250916    gcc-14
+i386    buildonly-randconfig-002-20250916    gcc-14
+i386    buildonly-randconfig-003-20250916    clang-20
+i386    buildonly-randconfig-004-20250916    gcc-14
+i386    buildonly-randconfig-005-20250916    gcc-14
+i386    buildonly-randconfig-006-20250916    clang-20
+x86_64                        allnoconfig    clang-20
+x86_64  buildonly-randconfig-001-20250916    gcc-14
+x86_64  buildonly-randconfig-002-20250916    clang-20
+x86_64  buildonly-randconfig-003-20250916    clang-20
+x86_64  buildonly-randconfig-004-20250916    clang-20
+x86_64  buildonly-randconfig-005-20250916    clang-20
+x86_64  buildonly-randconfig-006-20250916    clang-20
+x86_64                          defconfig    gcc-14
+x86_64                      rhel-9.4-rust    clang-20
 
-static void watchdog_cdev_unregister(struct watchdog_device *wdd)
-{
-     struct watchdog_core_data *wd_data = wdd->wd_data;
-     ...
-     cdev_device_del(&wd_data->cdev, &wd_data->dev);
-     if (wdd->id == 0) {
-             misc_deregister(&watchdog_miscdev);
-             old_wd_data = NULL;
-     }
-     ...
-}
-
-Thanks,
-
-ChengHai
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
