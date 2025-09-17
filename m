@@ -1,159 +1,151 @@
-Return-Path: <linux-kernel+bounces-821572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C38B81A90
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7606AB81A96
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D1FB7A3B52
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5D1487EB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2EE3002B6;
-	Wed, 17 Sep 2025 19:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978DB301715;
+	Wed, 17 Sep 2025 19:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="RJIBKu5b"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFbRYeMG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD3E2FDC47
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90A22FDC47;
+	Wed, 17 Sep 2025 19:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137902; cv=none; b=ApTXHO3PoVt0ZudyiIjqbsBBHo5VW2tRS/A7Ne3H95p1VPuqzPbvI3SXi7S0zBJrRm2mKBzFiN5tifH+wP9Zgv2mXzERC/WiB0hFXzNMDkIumZyY3bFcpaQvXyXCyPVh3JCHlxLsLxK8W4I9FnMFmw+IBnH3XHBsu7jiTleFBFE=
+	t=1758137914; cv=none; b=KObQ724JlV82++g/8VymxotZcVfrQExxdz45HNh0/SOU541A9f2JNqqeGoxeXeHJw3aH1TrGmvGK3Ub9pGxxg2srket6NABZi89Dl4571JirrJq/YpZYJI9FgfBuRl0ot+pGM8roNuDxYH829xLEwYF39M0QQ9ohYzpzqifv4TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137902; c=relaxed/simple;
-	bh=GVy6Pfve9fhUKRVNJRlAnEGSUzecOkZpiquPMdRKjA4=;
+	s=arc-20240116; t=1758137914; c=relaxed/simple;
+	bh=I2AI4BKkKagGVUrVHimGZofS8/2mTShePgfHGGxipNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gl6qNMHFtaDVvypaQ/U7KlBlE8rNVBgkN5eINAbswksnkhC/J0MfGPjyBqsys+avukc5UDGD/LTL/VM6fUgyZA+1XrNipO8rFa3rP1Tp6HgxFB+tDS9DsC2flmGO04/v8C2D8sYLX6ix7h5+hpg15dpX3HaqbUiBKBZl+40Xijk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=RJIBKu5b; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-826311c1774so21132585a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758137899; x=1758742699; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zn0Is8eeOR4Gu6G7tdLKQq8N5ufCD33SLmEnkNniBDc=;
-        b=RJIBKu5b0h3qprG+ngrJFN4NH0JwmH6sGpRaNne4rFsLoHe+58TW49n6vyonBDJmec
-         eaKYcbjNbP2h4rIlc5Uf7r+tFLg1W8jtkr9JcE81weP4bksQ4JZ1exvkdyYWercRMOSv
-         tgmUcTcRPl/q2uuU2wUiuewrS+BFDWUt7eHssAgLZ7zRDnGviWBDCvnm02m57ckOmbuV
-         Dr/1S1RCHXjr232UzQuz5yXqncUf5A5ZoXN7VF+jeh6BIlnWVSmt9lWNx40mLZexixJP
-         yo7zESvD4DecqI2N/wIVlVJciDbQ0zIvSJNOEzlDpmsjITZdBWFz15bdGgGkrbqKAv5w
-         dOJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758137899; x=1758742699;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zn0Is8eeOR4Gu6G7tdLKQq8N5ufCD33SLmEnkNniBDc=;
-        b=Vo/6rT4At+DXXCFLzAR89mCgCUrdcchFhcYA2WUGqwjDiH1oj+u2+wnxV+Jl8MeMUK
-         Ep+0fSIurJdsbJ66MZhjDafxeAyAJyAAgqtGxS9FVv/86p82rH35B4dwscwWcaFJUHbH
-         ZLEH3IM+03Gtf/YqVbj7bDUzZUVsq3mT5FY+sqChhMfoAjQxSw1GUfOtqyyDKIPdDb+V
-         wfgDMqtd0Q0F3QjAhF6ciHYxkuLtlNvNttpGxNKQcm39Lt8Zy7pTaP43XSoHymlV05V8
-         o2DOjIdwvWfJ/HgoTjJaBAPSDQm+sIGlUCE34y0tyMkKhteUphhw852GiS5XiVsarax+
-         jd0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVHGbVe6d0gapV3YKcVOyI92/NJ/J09HX5WFjJ06KhKOi83iiCS0v+bTD9LmK5TSU4v/Mkn2rcLDAI/MUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS9ibWECOvXxSg6K+XmD5h3N6PjVA/XVrzwYS+W942iFkb9XKA
-	B+LOaDiiSJOPpkRY9CHLI9/gGECqoiIW/VRt756if6r32PeoTvmTY4f/nnvN4uMWpRI=
-X-Gm-Gg: ASbGncvwSe0Q0YdiPm9gOxfasOA3oVYOzPhlqnpxShBW9s7C8U6AB4afMTMKasRHFT/
-	0XkDJFw3gW+NkHAtbjFVu1wporwA/Su1wqekCsIuaaxpoS4YKkzq7GmxYtUTJB76383WoWSfK2u
-	S4L2tG0Hp6vSDwBkoZJcxUx7KZJ8Z1tMgoi7i07Hc3asIIEQBSWXTrVzyaIlg0vR/QJJdIiffIz
-	xCAU3uUVPsBbs5olWX6j5lUVl3K2SRf8Bf5Bp0n7K3lYb1CLy41eIxs/Y5RdfBzKH5Sm62Zu8K3
-	qtIDov8FOG60yoD8DQ9kVkbmRq3U3STTS/ML2cvEFVcHNXJXeEc6xYl0m++DUdSrAZ6awCwlS8y
-	rFaODgCXc/McyMZJqOn5BH8ZMBOInwapPMNqwwcKSTvuptOmhr0FAvzgT/Gt7KyN0dRzA
-X-Google-Smtp-Source: AGHT+IEijZbrq+i+0WS1CBxKV2AIyy3lPGfFcOI06YkWPNxuKICHcEdaLnL2uf7gK6Yw1m11T0+frw==
-X-Received: by 2002:a05:620a:4406:b0:810:511f:3885 with SMTP id af79cd13be357-8310da0c6e3mr377680985a.33.1758137899133;
-        Wed, 17 Sep 2025 12:38:19 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-836263ab0e4sm34559685a.11.2025.09.17.12.38.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 12:38:18 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uyxys-00000008n8R-0Qxu;
-	Wed, 17 Sep 2025 16:38:18 -0300
-Date: Wed, 17 Sep 2025 16:38:18 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
-	joro@8bytes.org, praan@google.com
-Subject: Re: [PATCH v2 1/3] iommu/io-pgtable-arm: Move selftests to a
- separate file
-Message-ID: <20250917193818.GK1326709@ziepe.ca>
-References: <20250917191143.3847487-1-smostafa@google.com>
- <20250917191143.3847487-2-smostafa@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IqsCB2woXKMcSsB61vgvRaq6OX7aK0Yvlr+P5DJHnF7ZG9aVjZWZ6H+vZVFsmGQ8/fnhobv7Jg2Xium3KOhQliiEW3Ekmlnarm5UZH2331t63I0b8p6BbH0JH9D1mQDx5PMME+wXu8225mh140wM2gRMlsyof7Lkuuno/BwMTUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFbRYeMG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4B6C4CEE7;
+	Wed, 17 Sep 2025 19:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758137913;
+	bh=I2AI4BKkKagGVUrVHimGZofS8/2mTShePgfHGGxipNA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XFbRYeMGR/o/BJukbFrXOw9dXANO1Q319+ChFzDZz1efuhl2AvFA4ZkUpf9Ja5Byj
+	 kAs2X3gD0hX3u+p+r5xqeicUbv6YWx4CRoURTLTM31KVA8xnO1fKX2kbOZT3k/pzzx
+	 SJFUNlBfWm0cugPN5PMsh8WVgZSWouoWOyEQ/3S1Wn5WB10C/e8sAABoEeynKJIWxJ
+	 MpDSc/I2Kr86NiO58vERp3J9nVueHTa0VzHluvRKyRywO5PXfA8DVz1rdCTpOQ9nYS
+	 WNveoFVE18QI60NNTM3cs4H/LXBZgPzL7nSVQ9RCqgzhEcBz01dE5xTJw77myyQozJ
+	 vtcHLQtlQnumA==
+Date: Wed, 17 Sep 2025 20:38:28 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ryan.Wanner@microchip.com
+Cc: claudiu.beznea@tuxon.dev, sre@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	linux@armlinux.org.uk, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Varshini Rajendran <varshini.rajendran@microchip.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: power: reset: atmel,sama5d2-shdwc:
+ add lpm binding
+Message-ID: <20250917-zeppelin-stoppage-0d0f876df93e@spud>
+References: <cover.1758051358.git.Ryan.Wanner@microchip.com>
+ <d8fc40a97008cb0b4001684b3c9e1cc4bf3fb706.1758051358.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b4L9u9zjttjH2OaC"
+Content-Disposition: inline
+In-Reply-To: <d8fc40a97008cb0b4001684b3c9e1cc4bf3fb706.1758051358.git.Ryan.Wanner@microchip.com>
+
+
+--b4L9u9zjttjH2OaC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250917191143.3847487-2-smostafa@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 07:11:38PM +0000, Mostafa Saleh wrote:
-> +static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
-> +{
-> +	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-> +	struct io_pgtable_cfg *cfg = &data->iop.cfg;
+On Tue, Sep 16, 2025 at 12:50:30PM -0700, Ryan.Wanner@microchip.com wrote:
+> From: Varshini Rajendran <varshini.rajendran@microchip.com>
+>=20
+> Add microchip,lpm-connection binding which allows to specify the devices
+> the SHDWC's Low Power Mode pin is connected to.
+>=20
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> [ryan.wanner@microchip.com: Add sam9x7-shdwc SoC to properties check]
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  .../power/reset/atmel,sama5d2-shdwc.yaml      | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-=
+shdwc.yaml b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-sh=
+dwc.yaml
+> index 9c34249b2d6d..668b541eb44c 100644
+> --- a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.y=
+aml
+> +++ b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.y=
+aml
+> @@ -56,6 +56,13 @@ properties:
+>      description: enable real-time timer wake-up
+>      type: boolean
+> =20
+> +  microchip,lpm-connection:
+> +    description:
+> +      List of phandles to devices which are connected to SHDWC's Low Pow=
+er Mode Pin.
+> +      The LPM pin is used to idicate to an external power supply or devi=
+ce to enter
+> +      or exit a special powering state.
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
 
-Can be:
-
-       struct io_pgtable_cfg *cfg =
-               &io_pgtable_ops_to_pgtable(pgtbl_ops)->cfg;
+This sounds like you're some kind of power-domain provider. Why doesn't
+that generic kind of thing work for you?
 
 > +
-> +	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
-> +		cfg->pgsize_bitmap, cfg->ias);
-> +	pr_err("data: %d levels, 0x%zx pgd_size, %u pg_shift, %u bits_per_level, pgd @ %p\n",
-> +		ARM_LPAE_MAX_LEVELS - data->start_level, ARM_LPAE_PGD_SIZE(data),
-> +		ilog2(ARM_LPAE_GRANULE(data)), data->bits_per_level, data->pgd);
+>  patternProperties:
+>    "^input@[0-15]$":
+>      description:
+> @@ -96,6 +103,18 @@ allOf:
+>        properties:
+>          atmel,wakeup-rtt-timer: false
+> =20
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - atmel,sama5d2-shdwc
+> +              - microchip,sam9x60-shdwc
+> +              - microchip,sam9x7-shdwc
+> +    then:
+> +      properties:
+> +        microchip,lpm-connection: false
+> +
+>  additionalProperties: false
+> =20
+>  examples:
+> --=20
+> 2.43.0
+>=20
 
-The entire struct arm_lpae_io_pgtable is exposed to a public header
-just for this one print.. Seems undesirable.
+--b4L9u9zjttjH2OaC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Drop the print? Honestly, I prefer this, given the maturity let's not
-compromise modularity to print someting nobody will ever read..
+-----BEGIN PGP SIGNATURE-----
 
-Alternatively call a kunit-only exported function to do the print
-directly from ops so. smmuv3 has an example how to do that
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsONAAKCRB4tDGHoIJi
+0khOAP4w+nqJZTDRdwIeHuDir6MUFS8oTf5bETZiaLu4/AUpSgD/X3WcFvUR5xsN
+MyuU9dCTT8Z0XR1E5SE8px0sU/PsJgs=
+=OrR5
+-----END PGP SIGNATURE-----
 
-Either way a precursor patch to adjust it will allow this patch to
-avoid publishing most stuff.
-
-> +/*
-> + * Calculate the right shift amount to get to the portion describing level l
-> + * in a virtual address mapped by the pagetable in d.
-> + */
-> +#define ARM_LPAE_LVL_SHIFT(l,d)						\
-> +	(((ARM_LPAE_MAX_LEVELS - (l)) * (d)->bits_per_level) +		\
-> +	ilog2(sizeof(arm_lpae_iopte)))
-
-Didn't see this being used?
-
-> +#define ARM_LPAE_GRANULE(d)						\
-> +	(sizeof(arm_lpae_iopte) << (d)->bits_per_level)
-
-Only used by the above print
-
-> +#define ARM_LPAE_PGD_SIZE(d)						\
-> +	(sizeof(arm_lpae_iopte) << (d)->pgd_bits)
-
-Only used by the above print
-
-> +#define ARM_LPAE_PTES_PER_TABLE(d)					\
-> +	(ARM_LPAE_GRANULE(d) >> ilog2(sizeof(arm_lpae_iopte)))
-
-Didn't see this being used?
-
-> +typedef u64 arm_lpae_iopte;
-
-Only used by the defines and the above print.
-
-Jason
+--b4L9u9zjttjH2OaC--
 
