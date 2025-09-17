@@ -1,222 +1,190 @@
-Return-Path: <linux-kernel+bounces-821022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D61B80155
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:39:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF82B8016A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F903B5339
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:38:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 260E5164ECB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55CD2F0C44;
-	Wed, 17 Sep 2025 14:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1064D2F1FD5;
+	Wed, 17 Sep 2025 14:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edYel4cY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b90Md3nL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D780B1EF363;
-	Wed, 17 Sep 2025 14:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D042F3621
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119905; cv=none; b=JTLUFwA4DIDUs/TWlZ5pRJ4AZqHX9QU3ny4oPeIPy48pvUE6/Y+T9OZqJspiNaLbu+SuaPxiFzK7XucPsVYUnMnikp8Q26q4/z+OVSTmHDE/65jwYNxpNxHFAn5Dw02IlFg4Gjmi8kPyZTZZCvaKO6Enq5QBVrIsi2BS6jxk1Rk=
+	t=1758119910; cv=none; b=s5m18015N2T98LSLtuQ5tiVHFIKBlvfQy6Jp45Vyag+35DWxDmmwrctWAWYt+kE+WlTfpzYp0M7rl261zrgPgeElZ2YleYvdAe/MnuKGTs8RsbGphGe/8720Np0gay3lYQzFuUV5ZL7aj/MW8tbQ7FafbBeAvqxyQWan15hG5bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119905; c=relaxed/simple;
-	bh=JUOAYdT860eucBNczbVANNdcaqnUWi74UuVf01tr4rg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SSX6ByS14W4zqz4HGRebNWtx7JXvcZr6Kf1ZIuPKR5oVBDdFp5jyjP2nEoqyJ2Fc8thikYBw9JEK2d4t5LwsOHW+ecGQ6UHxA2Lmf8E4YJzrJZOypYxAmq8YQX41Upt7Y3FdTeoeHZvmzfENJAcYw+gh8LX/vGUrtKw6dSFhCVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edYel4cY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF8FFC4CEE7;
-	Wed, 17 Sep 2025 14:38:20 +0000 (UTC)
+	s=arc-20240116; t=1758119910; c=relaxed/simple;
+	bh=yXQMzE7u7vJaWF+q6evpHmh8mnMRx6jAmJ0dmD7uxfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvEJ4kfTqFRtNxArPnvLYxxERXHZV/maxV3ektQ5DMc3HAvDxOF2EhjTpS8NtSSuCs1I56WinppkJO0dwOcnPVNZJ04xDfQt1yb+INUwGA1HJ0BxS+OdrmQpII2Wpy/EfayqUvE9Boi5nW2QimyIelHTrht9dqH/tAXEy13cZUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b90Md3nL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340F6C4CEF0;
+	Wed, 17 Sep 2025 14:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758119904;
-	bh=JUOAYdT860eucBNczbVANNdcaqnUWi74UuVf01tr4rg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=edYel4cYDGAgEtEFofgM90xqvX8MYZTmQlkOdEznPSp7tEbYOqf/of3DfJhpGFICg
-	 AG2Ff/WETrM1UAfpQuyACeE72peP8+fDkK2DNo+rrTRSIFpbnpVKe5WBSj7nyRcUd5
-	 aTwAlm3s0evW7WcGqHWDKxNh8GDXze/2+qrCTMZk3jz5NtSKMa4I1Zscjxd+ZUl/bT
-	 mkjn6kOKYXqlXxWyzZrz8xZxFgrgREGamJ3rGUIZtGztnAg8QAZSVfa01OldMfBXgH
-	 md6Pf911vriZEDztQUjb5jL9J6wVxZT4L3654czOdOToJJQorQBEiPw9y96bc3bKgG
-	 W5GLADbztm9Zw==
-Date: Wed, 17 Sep 2025 23:38:18 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
- Jinchao Wang <wangjinchao600@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] tracing: wprobe: Add watchpoint probe event
- based on hardware breakpoint
-Message-Id: <20250917233818.71678d0164a6fc2d11fa6e38@kernel.org>
-In-Reply-To: <014136d2-8599-4a1f-ab8e-c5be4f522e5a@infradead.org>
-References: <175785897434.234168.6798590787777427098.stgit@devnote2>
-	<175785898586.234168.14883193853242691280.stgit@devnote2>
-	<014136d2-8599-4a1f-ab8e-c5be4f522e5a@infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1758119908;
+	bh=yXQMzE7u7vJaWF+q6evpHmh8mnMRx6jAmJ0dmD7uxfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b90Md3nLg06AdbPclruBh+rd1NWg7t+FS3LkQzq4szbDX498eIhaNARcp+1IrXyOI
+	 SPgHbuuasO4C+9du0cQTx7OacTI43kME4HB9h8Ap5XWux0egahlrtxkEdbW0TlE0Kq
+	 ymMNXCwakoDrKnqAOojTA9u99vLlx+64aYCqUhoe+r/YBUu0RLyu5KOX1FTNB7q8f6
+	 T5dbDZGR5I5mor4KLhpj1sj3oOEiBYDx3VYLmRDW29FaKFr5P2iyYc+0olaeHN9O0B
+	 l7rvvwAAwdmiJ2Q8ET+ksGXNeOHg4FZvIMSlnMYivz3pNtil5U04nvjx8vfIxyFgD6
+	 R3ASHM9Pp9hog==
+Date: Wed, 17 Sep 2025 17:38:20 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Alexander Graf <graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Chris Li <chrisl@kernel.org>,
+	Jason Miu <jasonmiu@google.com>, linux-kernel@vger.kernel.org,
+	kexec@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/2] kho: make sure page being restored is actually
+ from KHO
+Message-ID: <aMrH3NQzFrmMbEd3@kernel.org>
+References: <20250917125725.665-1-pratyush@kernel.org>
+ <20250917125725.665-2-pratyush@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917125725.665-2-pratyush@kernel.org>
 
-Hi Randy,
-
-On Sun, 14 Sep 2025 17:14:37 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
-> > +  w:[GRP/][EVENT] SPEC [FETCHARGS]                       : Probe on data access
-> > +
-> > + GRP            : Group name for wprobe. If omitted, use "wprobes" for it.
-> > + EVENT          : Event name for wprobe. If omitted, an event name is
-> > +                  generated based on the address or symbol.
-> > + SPEC           : Breakpoint specification.
-> > +                  [r|w|rw]@<ADDRESS|SYMBOL[+|-OFFS]>[:LENGTH]
-> > +
-> > +   r|w|rw       : Access type, r for read, w for write, and rw for both.
-> > +                  Use rw if omitted.
+On Wed, Sep 17, 2025 at 02:56:54PM +0200, Pratyush Yadav wrote:
+> When restoring a page, no sanity checks are done to make sure the page
+> actually came from a kexec handover. The caller is trusted to pass in
+> the right address. If the caller has a bug and passes in a wrong
+> address, an in-use page might be "restored" and returned, causing all
+> sorts of memory corruption.
 > 
-> 		     Default is rw if omitted.
-
-OK.
-
+> Harden the page restore logic by stashing in a magic number in
+> page->private along with the order. If the magic number does not match,
+> the page won't be touched. page->private is an unsigned long. The union
+> kho_page_info splits it into two parts, with one holding the order and
+> the other holding the magic number.
 > 
-> > +   ADDRESS      : Address to trace (hexadecimal).
-> > +   SYMBOL       : Symbol name to trace.
-> > +   LENGTH       : Length of the data to trace in bytes. (1, 2, 4, or 8)
-> > +
-> > + FETCHARGS      : Arguments. Each probe can have up to 128 args.
-> > +  $addr         : Fetch the accessing address.
-> > +  @ADDR         : Fetch memory at ADDR (ADDR should be in kernel)
-> > +  @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
-> > +  +|-[u]OFFS(FETCHARG) : Fetch memory at FETCHARG +|- OFFS address.(\*1)(\*2)
-> > +  \IMM          : Store an immediate value to the argument.
-> > +  NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
-> > +  FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
-> > +                  (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
-> > +                  (x8/x16/x32/x64), "char", "string", "ustring", "symbol", "symstr"
-> > +                  and bitfield are supported.
-> > +
-> > +  (\*1) this is useful for fetching a field of data structures.
-> > +  (\*2) "u" means user-space dereference.
-> > +
-> > +For the details of TYPE, see :ref:`kprobetrace documentation <kprobetrace_types>`.
-> > +
-> > +Usage examples
-> > +--------------
-> > +Here is an example to add a wprobe event on a variable `jiffies`.
-> > +::
-> > +
-> > +  # echo 'w:my_jiffies w@jiffies' >> dynamic_events
-> > +  # cat dynamic_events
-> > +  w:wprobes/my_jiffies w@jiffies
-> > +  # echo 1 > events/wprobes/enable
-> > +  # cat trace | head
+> Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
 
-Note, I also found this is not head, but combined with tail,
-e.g. `cat trace | head -n 15 | tail -n 5`
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-> > +  #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-> > +  #              | |         |   |||||     |         |
-> > +           <idle>-0       [000] d.Z1.  717.026259: my_jiffies: (tick_do_update_jiffies64+0xbe/0x130)
-> > +           <idle>-0       [000] d.Z1.  717.026373: my_jiffies: (tick_do_update_jiffies64+0xbe/0x130)
-> > +
-> > +You can see the code which writes to `jiffies` is `do_timer()`.
+> ---
 > 
-> I'm having trouble getting from tick_do_update_jiffies64+0xbe/0x130,
-> which I expect is
-> 	jiffies_64 += ticks;
-> in that function, over to do_timer(), which also updates jiffies_64,
-> but is not called by tick_do_update_jiffies64(). AFAICT, there are
-> no calls to do_timer() in the file (kernel/time/tick-sched.c).
+> Notes:
+>     Changes in v2:
+>     
+>     - Add a WARN_ON_ONCE() if order or magic is invalid.
+>     - Add a comment explaining why the magic check also implicitly makes
+>       sure phys is order-aligned.
+>     - Clear page private to make sure later restores of the same page error
+>       out.
+>     - Move the checks to kho_restore_page() since patch 1 now moves sanity
+>       checking to it.
 > 
-> Can you explain, please?
-
-Hmm, in my code base
-
-static void tick_do_update_jiffies64(ktime_t now)
-{
-	...
-	} else {
-		last_jiffies_update = ktime_add_ns(last_jiffies_update,
-						   TICK_NSEC);
-	}
-
-	/* Advance jiffies to complete the 'jiffies_seq' protected job */
-	jiffies_64 += ticks;
-
-	...
-
-So this function seems correctly update the jiffies_64.
-If you ask about where it comes from, I can also enable stacktrace on
-that event. (echo 1 >> options/stacktrace)
-
-             cat-124     [005] d.Z1.   537.689753: my_jiffies: (tick_do_update_jiffies64+0xbe/0x130)
-             cat-124     [005] d.Z1.   537.689762: <stack trace>
- => tick_do_update_jiffies64
- => tick_nohz_handler
- => __hrtimer_run_queues
- => hrtimer_interrupt
- => __sysvec_apic_timer_interrupt
- => sysvec_apic_timer_interrupt
- => asm_sysvec_apic_timer_interrupt
-
-So it came from hrtimer_interrupt().
-
+>  kernel/kexec_handover.c | 41 ++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 34 insertions(+), 7 deletions(-)
 > 
-> 
-> 
-> > diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> > index d2c79da81e4f..dd8919386425 100644
-> > --- a/kernel/trace/Kconfig
-> > +++ b/kernel/trace/Kconfig
-> > @@ -807,6 +807,20 @@ config EPROBE_EVENTS
-> >  	  convert the type of an event field. For example, turn an
-> >  	  address into a string.
-> >  
-> > +config WPROBE_EVENTS
-> > +	bool "Enable wprobe-based dynamic events"
-> > +	depends on TRACING
-> > +	depends on HAVE_HW_BREAKPOINT
-> > +	select PROBE_EVENTS
-> > +	select DYNAMIC_EVENTS
-> > +	default y
-> 
-> Wny default y?
-
-No big reason. This is just a dynamic event and unless the super user
-adds this event this does not work on the system. I can make it N so
-developer can enable it when builds their kernel.
-
-Thank you,
-
-> 
-> > +	help
-> > +	  This allows the user to add watchpoint tracing events based on
-> > +	  hardware breakpoints on the fly via the ftrace interface.
-> > +
-> > +	  Those events can be inserted wherever hardware breakpoints can be
-> > +	  set, and record various register and memory values.
-> > +
-> >  config BPF_EVENTS
-> >  	depends on BPF_SYSCALL
-> >  	depends on (KPROBE_EVENTS || UPROBE_EVENTS) && PERF_EVENTS
-> 
-> 
-> thanks.
+> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> index 69cab82abaaef..911fda8532b2e 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/kexec_handover.c
+> @@ -32,6 +32,22 @@
+>  #define PROP_PRESERVED_MEMORY_MAP "preserved-memory-map"
+>  #define PROP_SUB_FDT "fdt"
+>  
+> +#define KHO_PAGE_MAGIC 0x4b484f50U /* ASCII for 'KHOP' */
+> +
+> +/*
+> + * KHO uses page->private, which is an unsigned long, to store page metadata.
+> + * Use it to store both the magic and the order.
+> + */
+> +union kho_page_info {
+> +	unsigned long page_private;
+> +	struct {
+> +		unsigned int order;
+> +		unsigned int magic;
+> +	};
+> +};
+> +
+> +static_assert(sizeof(union kho_page_info) == sizeof(((struct page *)0)->private));
+> +
+>  static bool kho_enable __ro_after_init;
+>  
+>  bool kho_is_enabled(void)
+> @@ -186,16 +202,24 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
+>  static struct page *kho_restore_page(phys_addr_t phys)
+>  {
+>  	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
+> -	unsigned int nr_pages, order;
+> +	union kho_page_info info;
+> +	unsigned int nr_pages;
+>  
+>  	if (!page)
+>  		return NULL;
+>  
+> -	order = page->private;
+> -	if (order > MAX_PAGE_ORDER)
+> +	info.page_private = page->private;
+> +	/*
+> +	 * deserialize_bitmap() only sets the magic on the head page. This magic
+> +	 * check also implicitly makes sure phys is order-aligned since for
+> +	 * non-order-aligned phys addresses, magic will never be set.
+> +	 */
+> +	if (WARN_ON_ONCE(info.magic != KHO_PAGE_MAGIC || info.order > MAX_PAGE_ORDER))
+>  		return NULL;
+> -	nr_pages = (1 << order);
+> +	nr_pages = (1 << info.order);
+>  
+> +	/* Clear private to make sure later restores on this page error out. */
+> +	page->private = 0;
+>  	/* Head page gets refcount of 1. */
+>  	set_page_count(page, 1);
+>  
+> @@ -203,8 +227,8 @@ static struct page *kho_restore_page(phys_addr_t phys)
+>  	for (unsigned int i = 1; i < nr_pages; i++)
+>  		set_page_count(page + i, 0);
+>  
+> -	if (order > 0)
+> -		prep_compound_page(page, order);
+> +	if (info.order > 0)
+> +		prep_compound_page(page, info.order);
+>  
+>  	adjust_managed_page_count(page, nr_pages);
+>  	return page;
+> @@ -341,10 +365,13 @@ static void __init deserialize_bitmap(unsigned int order,
+>  		phys_addr_t phys =
+>  			elm->phys_start + (bit << (order + PAGE_SHIFT));
+>  		struct page *page = phys_to_page(phys);
+> +		union kho_page_info info;
+>  
+>  		memblock_reserve(phys, sz);
+>  		memblock_reserved_mark_noinit(phys, sz);
+> -		page->private = order;
+> +		info.magic = KHO_PAGE_MAGIC;
+> +		info.order = order;
+> +		page->private = info.page_private;
+>  	}
+>  }
+>  
 > -- 
-> ~Randy
+> 2.47.3
 > 
-
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Sincerely yours,
+Mike.
 
