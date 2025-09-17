@@ -1,69 +1,62 @@
-Return-Path: <linux-kernel+bounces-821563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152D5B81A36
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:31:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5C5B81A48
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0523D7B906F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F7163A0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D112302770;
-	Wed, 17 Sep 2025 19:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925F62F361D;
+	Wed, 17 Sep 2025 19:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFBRx0CE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwLK2Obo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B839820E03F;
-	Wed, 17 Sep 2025 19:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F1234BA5B;
+	Wed, 17 Sep 2025 19:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137467; cv=none; b=sJqKVgw0BSxXLcv/JiXrw0bs2gmYMyJgAD1ONQaw+QqlUabBprs2fGK5uIVURBnkcGFF1jKHL4X2jxBGmKeX7iKsDQhJIyJJBH0tMQaiHn/kUtvIGdrFjUTz4Ptf4zb4Q12mEE3wKnItcAm+7KxVJMrcgIG+EOia6pSivFjrnMM=
+	t=1758137519; cv=none; b=b8BpyTcBmLHihuyp1lIXEoAsLJTP2TjQRk9Uij0z67b4i9F+lXJLcree1xLbJMQEIoaF6tWNzjN/1x2buxJV188YweDhbkbG1C23oPnUsSoGMRMcrONPc/hcKWv9VDz0sXQC8la8a+oovAzPJBimp7jSXmoDxoVLrfoOQ8j4WGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137467; c=relaxed/simple;
-	bh=CqHwmT9jquJeX+EOuVFi/0NzpVRGCzy+hiZmGgVtW60=;
+	s=arc-20240116; t=1758137519; c=relaxed/simple;
+	bh=WUFOFnUVv9N92t+5xEmPWp7XyvUW3ydifXMJo5NR5M4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WDGnjMD6Y+l2RcpKH44lqlGMkffqKM0+13ADI64UU2X9tmjWwN4ivcR8zeA0W2vnZ1FPA1Htm0ohiBu0EccTlR7kQoHo4fBJpqNVdqrpu9krGKcHQVMBEahQwnI+IaObkPxo2c+nRCEebs6HgYx5v0LNdsefzZmGGgMxBMTlQ9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFBRx0CE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9F4C4CEF7;
-	Wed, 17 Sep 2025 19:31:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nv1ZnTTomF3vqPQ5A/EMxdG8a54+b/unZ9e9Q+XBMfPGgulOpL5JDR6iKUBZFuFugJNJWIxdnhUUlKLIJx/0eCKtYwYb0sTJwlLhRpA23a1KEQ7CFY0S3X918cQ8kMtQ4IiPhEGDznW8ryT9LLNCXWaRNupC7nd+GHpIE8DB/TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwLK2Obo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A54C4CEE7;
+	Wed, 17 Sep 2025 19:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758137467;
-	bh=CqHwmT9jquJeX+EOuVFi/0NzpVRGCzy+hiZmGgVtW60=;
+	s=k20201202; t=1758137518;
+	bh=WUFOFnUVv9N92t+5xEmPWp7XyvUW3ydifXMJo5NR5M4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nFBRx0CEoMoBxb7hu4YJFHjQFHjSbGtjzre87bEBhm34jP6xjcJiUEwdATpcjUYkw
-	 SRG2RoHicyG/894mlK9TWuGmMNM475o19F2JfEEIc85onRIivFD7NHqeABm7hUKCOC
-	 s5SsRpTIZgCyA0+NK1AhDUCr4o/pBURjCjE4wc89Bae4c1W7FESfXqhEtqAO6grm8D
-	 Q4eaF08o+ZUJWcxHT+lk1Nc9QQa/+IVtUrY+r8HnlyMmAajwCNRoqWi+pkO36em7YR
-	 hAunXLRVwqzVVRTAYM4dqxS86uL295XAeCrBfb1rp8b4YKwhD7bXQMzZhrle/3gSr9
-	 RNKFWLo3RPHVA==
-Date: Wed, 17 Sep 2025 20:31:01 +0100
+	b=TwLK2OboNRlZBlnQjxi6UFTeVdz6cnoT9b9CqRlF5ByMoO+s3C0MgUeZDjrETyB/m
+	 jBj1wsT88+9QPF2ZZcIqPV/f6IjbfyHH+dpbDPb7puFtPo2OfrvoGudGnAkZYHdF0C
+	 8Zbzo0pUnam0ehLCXmxon/cAfJfnFmiT2pIcU2T04GAo//uwiEi8rTrv5+74dyGCRd
+	 dMyPeTAlOzkID8Cq8iBj05dUd/IPK/fx2gEWKU9lx+ymiAzFn/j3dHX9aczr/bwPOR
+	 9tlWknf4mahBqybmQanuxSbe+hpGTtAFCuVg7M6GBx85Z46itgYicrDLfpPYRhP44E
+	 cs9LVbQs0hhyQ==
+Date: Wed, 17 Sep 2025 20:31:53 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-pm@vger.kernel.org, Rob Herring <robh@kernel.org>,
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Willow Cunningham <willow.e.cunningham@gmail.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Saenz Julienne <nsaenz@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 2/4] dt-bindings: soc: bcm: Add bcm2712 compatible
-Message-ID: <20250917-crept-romp-8c02570c1d6f@spud>
-References: <20250917063233.1270-1-svarbanov@suse.de>
- <20250917063233.1270-3-svarbanov@suse.de>
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	Alex Elder <elder@riscstar.com>, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: i2c: spacemit: extend and validate all
+ properties
+Message-ID: <20250917-irritant-smitten-fa1e05dd713d@spud>
+References: <20250917-01-k1-i2c-schema-v1-1-bd276b366d9c@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,108 +64,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hsLFofKKl/aa/7Bd"
+	protocol="application/pgp-signature"; boundary="yHs0dDgU61VAAlXJ"
 Content-Disposition: inline
-In-Reply-To: <20250917063233.1270-3-svarbanov@suse.de>
+In-Reply-To: <20250917-01-k1-i2c-schema-v1-1-bd276b366d9c@gentoo.org>
 
 
---hsLFofKKl/aa/7Bd
+--yHs0dDgU61VAAlXJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 09:32:31AM +0300, Stanimir Varbanov wrote:
-> Add bcm2712-pm compatible and update the bindings to satisfy it's
-> requirements. The PM hardware block inside bcm2712 lacks the "asb"
-> and "rpivid_asb" register ranges and also does not has clocks, update
-> the bindings accordingly.
->=20
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> ---
->  .../bindings/soc/bcm/brcm,bcm2835-pm.yaml     | 28 +++++++++++++++----
->  1 file changed, 23 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.ya=
-ml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
-> index e28ef198a801..c8d3d6131a8d 100644
-> --- a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
-> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
-> @@ -13,8 +13,7 @@ description: |
->  maintainers:
->    - Nicolas Saenz Julienne <nsaenz@kernel.org>
-> =20
-> -allOf:
-> -  - $ref: /schemas/watchdog/watchdog.yaml#
-> +$ref: /schemas/watchdog/watchdog.yaml#
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Please move this down with the allof.
-
-> =20
->  properties:
->    compatible:
-> @@ -22,14 +21,15 @@ properties:
->        - enum:
->            - brcm,bcm2835-pm
->            - brcm,bcm2711-pm
-> +          - brcm,bcm2712-pm
->        - const: brcm,bcm2835-pm-wdt
-> =20
->    reg:
-> -    minItems: 2
-> +    minItems: 1
->      maxItems: 3
-> =20
->    reg-names:
-> -    minItems: 2
-> +    minItems: 1
->      items:
->        - const: pm
->        - const: asb
-> @@ -62,7 +62,25 @@ required:
->    - reg
->    - "#power-domain-cells"
->    - "#reset-cells"
-> -  - clocks
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - brcm,bcm2835-pm
-> +              - brcm,bcm2711-pm
-> +    then:
-> +      required:
-> +        - clocks
-> +
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +
-> +        reg-names:
-> +          minItems: 2
-
-If the new device doesn't have clocks or the extra reg ranges, please
-add an else clause that enforces it.
-
-> =20
->  additionalProperties: false
-> =20
-> --=20
-> 2.47.0
->=20
-
---hsLFofKKl/aa/7Bd
+--yHs0dDgU61VAAlXJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsMdQAKCRB4tDGHoIJi
-0oEUAP96o7GTUuuNQybMRhkNw285zZaGo8XaVxkYQ3BLGFgV6wD/RPPmf9sqKXEb
-fpXxJZcldGF1WuzX8uE8HjH1H+SKgAU=
-=7ERd
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsMqQAKCRB4tDGHoIJi
+0pu8AP9ltcftudLjoNZ/qKl0lqLRaZWaisXFk99pUfyogbPICgEAr/LT3xU5a2mf
+ICBPeS4zVVPH57BRN9hBd8yiGFeeWgY=
+=tIiq
 -----END PGP SIGNATURE-----
 
---hsLFofKKl/aa/7Bd--
+--yHs0dDgU61VAAlXJ--
 
