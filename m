@@ -1,169 +1,246 @@
-Return-Path: <linux-kernel+bounces-820672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7705B7D9C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADA9B7D9BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAF7316AD88
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:27:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D7E1BC0805
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D06E31A81D;
-	Wed, 17 Sep 2025 12:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273A624C076;
+	Wed, 17 Sep 2025 12:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HkvugRbS"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UKHve4Zm"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C8C2FBE03
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECFE21FF5B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758111928; cv=none; b=s2FyowoUaCrtHyw2gkIVEWhYa/P99SZ574WV2cCDYemaYskJnmm+94aOvvakCSIQI0hEQ8uuR3Aox0eFgG4FcNE6hp/jChVubQcQ4pmjLebAMkDVJwEJs0dNOykgYRlYpyNiIGKyL2jkH2UZKYzOmy0CLM6n+D33YiRfvkSSnQ8=
+	t=1758111991; cv=none; b=UHdT/zN6/ScJcjTJTYoi7X9bW+FzxJKgtYtBmTDNuK2L43Z/LRwl+rMBr2g7HtkQwXN5AQW8yGnChlnLYXFVvZQO9K7N1XHPJYfwpMEYNwEvxHutdWNqJWhxBFu+V5xufiBDvEUlsrSYXHgW7Lbx9OEG2J2O86ilKNmNpGlbyOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758111928; c=relaxed/simple;
-	bh=hfGHEKj+Li5C+SsyBXQ5+0EUnOsVD4wRyx9sD6DmIzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/i269W103g8ADbYSSkIIh0BzCQWdSkbHRDDnqTtks7XknrKtUF3/HjtR3qY6k4WmeHdoGaDlu1co9CjDzDrnzGH/XYndeylwJBJkFyvLV5eTPhjfbt2a8LYSBBnrpyJbopLalO0QhPgcsRsim0+YDLxkVbUSgefuAKDUjZtp3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HkvugRbS; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b04b55d5a2cso1133410566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758111925; x=1758716725; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RGupZmSqqolDV3fFqfn3WPsHK/Y+Gx2I+5ncY0SDOWM=;
-        b=HkvugRbSmQmsWNuWVrAIphvTAX3krdROP5+PXI5WRJcjaLKIqKeq11+pC8XtbO+A6t
-         V+1clxw0GB+epCvnHcel8Lc4rw2OJouRl/biHaZJ8D4WIlzbZbKvNiGNWU7Qmcz3UwOu
-         dQh4lAmSfzYWwB40jY2LsMtGsfN+YME+lR4VuzjezFYN1VbQ5XUbPs4n+XCwDqPoNSJk
-         BEl6bLpDtpaqOKpuYSUktVkk+PdUZZCQMRtAe4TZ7fddhBYwl6klQQD8GnRNii5LzmoC
-         zK+w2rbylUl3m63IR4lNSV+g75AiwgsON8A+OJHv6VNFXeP4vkwMKAEipZePkgOmx7od
-         dg6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758111925; x=1758716725;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RGupZmSqqolDV3fFqfn3WPsHK/Y+Gx2I+5ncY0SDOWM=;
-        b=B3bBwmZWO2ZWk3KWbSyCJxdyqgEj5DZwowFWYNnP5AfydGVDkRvhnqFJMMNuNVDw5o
-         Lot9ob6FGHU8TrGCVDB6ulSEdXXygSfnxAoVPtYtnoXcaf4V308DvBQkyNJAO0swEww6
-         NpN3m7vhjt6XHC/MlbbqZpsLseANdnHr7Mg2xbvrg1qVNbV3cgPyKhON7PanW+/+GroV
-         cr8fFrnB7+/aFvjKcDGsRtOStZVS36te/xYrkfi3bceCwA6pMI6odc0kEJdVBrxTjDgw
-         ezf0/Jzuaye6PE8XJIUc68lpfYMsMFjrsifsw8rRc2zp1svcXvwgjngXPUxg8MPwNWid
-         DQUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUh3mQRw8a0CulNwwkYunCYSHuvitwyGxzFR96RDZBD+jfqp/TYZLtA/oPmQFbBpwPe63JLfku+nDT+soU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqk8/pPDeSBerP0xSqpa9YwTI2lfRpyu9tGUAEzo5lTP9bK2AB
-	6SsigD/R+6KwZG+70/Wb3y9VeilPRSxGGAun4cmX0TBfB8UEWy6IzhnYyyHEXg5XA04=
-X-Gm-Gg: ASbGnctJQSDJ/Err9s1EPnlD9TdwwHywwL/9vGHaPJzzHOaCIe6zxl4mro/ykEaA4Qw
-	XyuvkHYEwrP8Uu4tJ5B9b6/94Kq/Xgd5vpjM1rdnp7YHpKg5Jm7ne+z+jmC8IhKDWO6vDKAffsU
-	S6kB6Fl3VDDLXCehA885wPJebTujYaB0cHJirWgAV0Bq2UHu6tLnvPGl1+gb2q5rIlyT9lWLF60
-	wnOJyt7+QlmARZhoSn1bUMp5w/gqd+Om/Qj1R2aemgM214fFPk/xkPQImT6vRf+FrCWAn/14Glf
-	TP909smPhkKp72UfdMYSKKMuhgmeBokSO0qu+i5y92V436zYyxSQgYSZs8PDIWtmKoyOVmk7TcA
-	dbWqz3Q8T7ZDGNG7OI2uMHpeMjNRHT6QuNtedJKXSUIcpRzzTItgWCG6Dwfei9KTQ
-X-Google-Smtp-Source: AGHT+IEMHO2+mrGwehsjHQd9adkafh7FOklixGAh9piZ10AcM2OldRJUtx+VWHX506OwdEOot1gHeQ==
-X-Received: by 2002:a17:907:3da0:b0:b07:b645:e5b8 with SMTP id a640c23a62f3a-b1bbfa2bb35mr217910766b.30.1758111924771;
-        Wed, 17 Sep 2025 05:25:24 -0700 (PDT)
-Received: from ?IPV6:2001:a61:133d:ff01:f29d:4e4:f043:caa2? ([2001:a61:133d:ff01:f29d:4e4:f043:caa2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f1989123fsm8515308a12.37.2025.09.17.05.25.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 05:25:24 -0700 (PDT)
-Message-ID: <cae31224-95f2-4c62-bdb5-1e1e81f2b726@suse.com>
-Date: Wed, 17 Sep 2025 14:25:23 +0200
+	s=arc-20240116; t=1758111991; c=relaxed/simple;
+	bh=jfWi3kvxLwaivOaLF/QYtCJaijQx5hWXWay926//8EA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gmRlnc2pG2GKxtz+TH1WLQTcxJFk7YvOeBr8yhjihtw/MAtpJtVo1zCAZ+QV/DqQ3uDt6EZa/EmcJLqDsHPWZ5Sk60UwBW1oSlRekd7ITRc/878XT4ewl+9ZJJZfO0vF7oORzUSs+E/HyexbgwFdjSrdRI6zIoyC9SgAvV94O1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UKHve4Zm; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VtS6ju9MSgbkGY/XtCYESN8ItEESiSccYZhTWeb/iec=; b=UKHve4ZmGVG2YjKNJ0F8ISiP7x
+	hDi0RWuMTPAdJvtBYQJMoykzsAQ8xOv8ELu7qHvw202MwJjQ/DInSNyErWhfyBR9qkxO95A7WYjZk
+	FpEzHUiccbGr2pQzugypHRBOWs8QsQa5l6cmPtUXl1JwGLBBgqZPa0WWT5W301lnu+K7cJ1+8sV52
+	if4MY8e+Dx8tiY3a75aJcREAbxVlzk5s4BuTyate3goEHN0FXkx72rdZM0HTz1KbXK/GSf2qAu0sJ
+	GMT8Y4euO59Q7sxeeD7qh9lGeo0OF6Gq1mcNtbq+kMM17Kkxx0PqGmsMGgwnCvhel2FqSKnNPP+QK
+	aOyOpZMw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyrEn-0000000CY5t-0Lk0;
+	Wed, 17 Sep 2025 12:26:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0C06B30056B; Wed, 17 Sep 2025 14:26:16 +0200 (CEST)
+Date: Wed, 17 Sep 2025 14:26:16 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	kernel-team@android.com
+Subject: Re: [RFC][PATCH] sched/deadline: Fix dl_server getting stuck,
+ allowing cpu starvation
+Message-ID: <20250917122616.GG1386988@noisy.programming.kicks-ass.net>
+References: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
+ <20250916052904.937276-1-jstultz@google.com>
+ <aMklFqjbmxMKszkJ@jlelli-thinkpadt14gen4.remote.csb>
+ <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+ <CANDhNCqJbnemY8EBYu=4w3ABfrDkuc+dUShDDcjufFpsh7qv1g@mail.gmail.com>
+ <20250916213036.GC2800598@noisy.programming.kicks-ass.net>
+ <CANDhNCqK3VBAxxWMsDez8xkX0vcTStWjRMR95pksUM6Q26Ctyw@mail.gmail.com>
+ <20250917093441.GU3419281@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: forbid runtime PM to avoid
- PM/MDIO + RTNL deadlock
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Oliver Neukum <oneukum@suse.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- =?UTF-8?Q?Hubert_Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Lukas Wunner <lukas@wunner.de>, Russell King <linux@armlinux.org.uk>,
- Xu Yang <xu.yang_2@nxp.com>, linux-usb@vger.kernel.org
-References: <20250917095457.2103318-1-o.rempel@pengutronix.de>
- <0f2fe17b-89bb-4464-890d-0b73ed1cf117@suse.com>
- <aMqhBsH-zaDdO3q8@pengutronix.de>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <aMqhBsH-zaDdO3q8@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917093441.GU3419281@noisy.programming.kicks-ass.net>
 
+On Wed, Sep 17, 2025 at 11:34:42AM +0200, Peter Zijlstra wrote:
 
-
-On 17.09.25 13:52, Oleksij Rempel wrote:
-> Hi Oliver,
+> Yes. This makes sense.
 > 
-> On Wed, Sep 17, 2025 at 12:10:48PM +0200, Oliver Neukum wrote:
->> Hi,
->>
->> On 17.09.25 11:54, Oleksij Rempel wrote:
->>
->>> With autosuspend active, resume paths may require calling phylink/phylib
->>> (caller must hold RTNL) and doing MDIO I/O. Taking RTNL from a USB PM
+> The old code would disable the dl_server when fair tasks drops to 0
+> so even though we had that yield in __pick_task_dl(), we'd never hit it.
+> So the moment another fair task shows up (0->1) we re-enqueue the
+> dl_server (using update_dl_entity() / CBS wakeup rules) and continue
+> consuming bandwidth.
+> 
+> However, since we're now not stopping the thing, we hit that yield,
+> getting this pretty terrible behaviour where we will only run fair tasks
+> until there are none and then yield our entire period, forcing another
+> task to wait until the next cycle.
+> 
+> Let me go have a play, surely we can do better.
 
-This very strongly suggested that the conditional call is the issue.
+Can you please try:
 
->>> resume can deadlock (RTNL may already be held), and MDIO can attempt a
->>> runtime-wake while the USB PM lock is held. Given the lack of benefit
->>> and poor test coverage (autosuspend is usually disabled by default in
->>> distros), forbid runtime PM here to avoid these hazards.
->>
->> This reasoning depends on netif_running() returning false during system resume.
->> Is that guaranteed?
-> 
-> You’re right - there is no guarantee that netif_running() is false
-> during system resume. This change does not rely on that. If my wording
-> suggested otherwise, I’ll reword the commit message to make it explicit.
-> 
-> 1) Runtime PM (autosuspend/autoresume)
-> 
-> Typical chain when user does ip link set dev <if> up while autosuspended:
-> rtnl_newlink (RTNL held)
->    -> __dev_open -> usbnet_open
->       -> usb_autopm_get_interface -> __pm_runtime_resume
->          -> usb_resume_interface -> asix_resume
-> 
-> Here resume happens synchronously under RTNL (and with USB PM locking). If the
-> driver then calls phylink/phylib from resume (caller must hold RTNL; MDIO I/O),
-> we can deadlock or hit PM-lock vs MDIO wake issues.
-> 
-> Patch effect:
-> I forbid runtime PM per-interface in ax88772_bind(). This removes the
-> synchronous autoresume path.
-> 
-> 2) System suspend/resume
-> 
-> Typical chain:
-> ... dpm_run_callback (workqueue)
->   -> usb_resume_interface -> asix_resume
-> 
-> This is not under RTNL, and no pm_runtime locking is involved. The patch does
-> not change this path and makes no assumption about netif_running() here.
-> 
-> If helpful, I can rework the commit message.
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/urgent
 
-It would maybe good to include a wording like:
+That's yesterdays patch and the below. Its compile tested only, but
+with a bit of luck it'll actually work ;-)
 
-With runtime PM, the driver is forced to resume its device while
-holding RTNL, if it happens to be suspended. The methods needed
-to resume the device take RTNL themselves. Thus runtime PM will deadlock.
+---
+Subject: sched/deadline: Fix dl_server behaviour
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed Sep 17 12:03:20 CEST 2025
 
+John reported undesirable behaviour with the dl_server since commit:
+cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling").
 
-	Regards
-		Oliver
+When starving fair tasks on purpose (starting spinning FIFO tasks),
+his fair workload, which often goes (briefly) idle, would delay fair
+invocations for a second, running one invocation per second was both
+unexpected and terribly slow.
 
+The reason this happens is that when dl_se->server_pick_task() returns
+NULL, indicating no runnable tasks, it would yield, pushing any later
+jobs out a whole period (1 second).
 
+Instead simply stop the server. This should restore behaviour in that
+a later wakeup (which restarts the server) will be able to continue
+running (subject to the CBS wakeup rules).
+
+Notably, this does not re-introduce the behaviour cccb45d7c4295 set
+out to solve, any start/stop cycle is naturally throttled by the timer
+period (no active cancel).
+
+Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+Reported-by: John Stultz <jstultz@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/sched.h   |    1 -
+ kernel/sched/deadline.c |   23 ++---------------------
+ kernel/sched/sched.h    |   33 +++++++++++++++++++++++++++++++--
+ 3 files changed, 33 insertions(+), 24 deletions(-)
+
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -706,7 +706,6 @@ struct sched_dl_entity {
+ 	unsigned int			dl_defer	  : 1;
+ 	unsigned int			dl_defer_armed	  : 1;
+ 	unsigned int			dl_defer_running  : 1;
+-	unsigned int			dl_server_idle    : 1;
+ 
+ 	/*
+ 	 * Bandwidth enforcement timer. Each -deadline task has its
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1571,10 +1571,8 @@ void dl_server_update_idle_time(struct r
+ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+ {
+ 	/* 0 runtime = fair server disabled */
+-	if (dl_se->dl_runtime) {
+-		dl_se->dl_server_idle = 0;
++	if (dl_se->dl_runtime)
+ 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
+-	}
+ }
+ 
+ void dl_server_start(struct sched_dl_entity *dl_se)
+@@ -1602,20 +1600,6 @@ void dl_server_stop(struct sched_dl_enti
+ 	dl_se->dl_server_active = 0;
+ }
+ 
+-static bool dl_server_stopped(struct sched_dl_entity *dl_se)
+-{
+-	if (!dl_se->dl_server_active)
+-		return true;
+-
+-	if (dl_se->dl_server_idle) {
+-		dl_server_stop(dl_se);
+-		return true;
+-	}
+-
+-	dl_se->dl_server_idle = 1;
+-	return false;
+-}
+-
+ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 		    dl_server_pick_f pick_task)
+ {
+@@ -2384,10 +2368,7 @@ static struct task_struct *__pick_task_d
+ 	if (dl_server(dl_se)) {
+ 		p = dl_se->server_pick_task(dl_se);
+ 		if (!p) {
+-			if (!dl_server_stopped(dl_se)) {
+-				dl_se->dl_yielded = 1;
+-				update_curr_dl_se(rq, dl_se, 0);
+-			}
++			dl_server_stop(dl_se);
+ 			goto again;
+ 		}
+ 		rq->dl_server = dl_se;
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -371,10 +371,39 @@ extern s64 dl_scaled_delta_exec(struct r
+  *   dl_server_update() -- called from update_curr_common(), propagates runtime
+  *                         to the server.
+  *
+- *   dl_server_start()
+- *   dl_server_stop()  -- start/stop the server when it has (no) tasks.
++ *   dl_server_start() -- start the server when it has tasks; it will stop
++ *			  automatically when there are no more tasks, per
++ *			  dl_se::server_pick() returning NULL.
++ *
++ *   dl_server_stop() -- (force) stop the server; use when updating
++ *                       parameters.
+  *
+  *   dl_server_init() -- initializes the server.
++ *
++ * When started the dl_server will (per dl_defer) schedule a timer for its
++ * zero-laxity point -- that is, unlike regular EDF tasks which run ASAP, a
++ * server will run at the very end of its period.
++ *
++ * This is done such that any runtime from the target class can be accounted
++ * against the server -- through dl_server_update() above -- such that when it
++ * becomes time to run, it might already be out of runtime and get deferred
++ * until the next period. In this case dl_server_timer() will alternate
++ * between defer and replenish but never actually enqueue the server.
++ *
++ * Only when the target class does not manage to exhaust the server's runtime
++ * (there's actualy starvation in the given period), will the dl_server get on
++ * the runqueue. Once queued it will pick tasks from the target class and run
++ * them until either its runtime is exhaused, at which point its back to
++ * dl_server_timer, or until there are no more tasks to run, at which point
++ * the dl_server stops itself.
++ *
++ * By stopping at this point the dl_server retains bandwidth, which, if a new
++ * task wakes up imminently (starting the server again), can be used --
++ * subject to CBS wakeup rules -- without having to wait for the next period.
++ *
++ * Additionally, because of the dl_defer behaviour the start/stop behaviour is
++ * naturally thottled to once per period, avoiding high context switch
++ * workloads from spamming the hrtimer program/cancel paths.
+  */
+ extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
+ extern void dl_server_start(struct sched_dl_entity *dl_se);
 
