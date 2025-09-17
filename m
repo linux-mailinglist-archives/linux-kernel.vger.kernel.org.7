@@ -1,165 +1,149 @@
-Return-Path: <linux-kernel+bounces-820584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D6CB7C61C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:59:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F3CB7C3C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6316E1892AF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:52:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF674179334
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB9237058C;
-	Wed, 17 Sep 2025 11:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290B436CDE3;
+	Wed, 17 Sep 2025 11:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b="bi/dQE+5"
-Received: from mail1.nippynetworks.com (mail1.nippynetworks.com [91.220.24.129])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="w2d+UD3e"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C756A34AAF1;
-	Wed, 17 Sep 2025 11:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.220.24.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E62DF712;
+	Wed, 17 Sep 2025 11:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758109893; cv=none; b=es6l7i3yD7WuDi8C36xtZ1pyJ9xXcc6EdYcquTvKaX1BTxcaEc2DcQqgTbTLMgsgsVnShb3ihapz3NFZtF9zXaah4GF/n9G+mDaq0Ni3XoCI7slxcIrQBmzKOOGetiRzLouSwTfQLugth+qA824NrdG+YACgXbO8Z0QHNIFvKCg=
+	t=1758109841; cv=none; b=C2GCOBfWV3dYcalzI0L0yOwR06efb/6G/JOmoRNy6+/vPi+jOlrnVORZT3soT232N6OH5qtIFdK3pFDWN+taOH6FOSEX+IGerUnf6UfgkIEHuVhjLROe0N734wri6LJM5gE7yp2uTpIHTc9BhRKJu9g6p66q4R8nS3ejw/434cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758109893; c=relaxed/simple;
-	bh=YROZrb4qm7aQw+ORnAcXurjrsYXoyTb1RNcMG1YUdtQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dBvtufiPTasm04cQhunHSTfFDNlpZriu4iw9sjT3Xfjv7DHRwRCHFhtm+sJwkZthYStyIJ6oTLMDVZCs0wPc5vH463BUcwB1nNwYbj6aMAY4Za+5yCi87ZFQg5rNblKgjvQukKl2P5j4Or0yyK+ExCdeII9s4kgqDM8My8oFPPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wildgooses.com; spf=pass smtp.mailfrom=wildgooses.com; dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b=bi/dQE+5; arc=none smtp.client-ip=91.220.24.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wildgooses.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wildgooses.com
-Received: from grunt.nippynetworks.lan (unknown [94.228.36.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: lists@wildgooses.com)
-	by mail1.nippynetworks.com (Postfix) with ESMTPSA id 4cRcYY3dbvzkd2w;
-	Wed, 17 Sep 2025 12:51:29 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wildgooses.com;
-	s=dkim; t=1758109889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3FCcXXM9l7ILpFzqFtjvNKikZTyNEREOH8NytkDV5b4=;
-	b=bi/dQE+5W/WC5AbtWSIh5zzd/w2Pv6MG4i27td2c5fN8P4GOIQFNGPb1RlByU73e2Ql7yO
-	juSdNoFPCA18pmdrY0YHyA07bt4CIdBWLI/VdpFw9P+Xy8NqLh8qbCUJSgqpCglsy4OabM
-	3RLo56ROxq0sBj7TVFqlMx11y8fXFrI=
-From: Ed Wildgoose <lists@wildgooses.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Ed Wildgoose <lists@wildgooses.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] rockchip: dts: Enable UART DMA by adding default dma-names property
-Date: Wed, 17 Sep 2025 11:49:31 +0000
-Message-ID: <20250917114932.25994-3-lists@wildgooses.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250917114932.25994-1-lists@wildgooses.com>
-References: <20250917114932.25994-1-lists@wildgooses.com>
+	s=arc-20240116; t=1758109841; c=relaxed/simple;
+	bh=BmWJ8dm6tF3d7RA48fjDGm1mzg7DGhaw55N9cwl8YL8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=o7+ufEGfZu1l9pgeFe9ctf20+iOIDGCTbio0ld/8+/e3UYWtqZ8tExyimu0T45/mX4yoAJTYcvH/kYmgRtAoACcOVNJkX6cSVmR1w20V03VQRxSEQHVASi6E/cthukYu+B0ycXzZNIlDAvHhhIwDOoEltKSoCetR5+/OuTtN/VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=w2d+UD3e; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758109840; x=1789645840;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=BmWJ8dm6tF3d7RA48fjDGm1mzg7DGhaw55N9cwl8YL8=;
+  b=w2d+UD3egGEyXlAYgYf6eVUJhXWxUDR1ncwsxlWdnAp93fsxQ35iq1E+
+   JZxEjPROr1YPikVOtGAvSKWt3nSryI4iBVkkNB7HgA9vIHSyldMgOW5ov
+   SPhYtE0AkstilIko22tlSBTpPEbXw5dkG6ONhwa97bharfObHPsYn/R8W
+   esEXl+L6TuIYkw42YMDg657ieU5O1w1a6YCIAyU9feJr5hFe2ZMouTKPg
+   wN3PqviwSbVzjb98DShTbwWE7AkuCni8u5Oq720gy5IQHEbHS9eT+oEvm
+   JoZFTtCBvHTTH3h0G+1pYIrPSaG6eDb/FBX5qMxNKtFGYOf6cbEAyBRBg
+   w==;
+X-CSE-ConnectionGUID: xPqELcc0QeOcVfzESf+PTg==
+X-CSE-MsgGUID: lC9pw1FtSr+km1Jn39f1Nw==
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="47157749"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 04:50:39 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 17 Sep 2025 04:50:23 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Wed, 17 Sep 2025 04:50:20 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Date: Wed, 17 Sep 2025 13:49:43 +0200
+Subject: [PATCH net-next] net: sparx5/lan969x: Add support for ethtool
+ pause parameters
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250917-802-3x-pause-v1-1-3d1565a68a96@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAFagymgC/x2MQQ6DMAwEv4J8rqXEUVToV6oeDJjiQ12UQBUJ8
+ fcGjqPdmR2yJJUMj2aHJD/N+rUK/tbAMLO9BXWsDOQous7fsXWEoeDCWxb0HY1TbCOFEKAqS5J
+ Jy5V7gsmKJmWFV116rvc+sQ3zmfuwGhzHHyPOYGR/AAAA
+To: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, <UNGLinuxDriver@microchip.com>, Russell King
+	<linux@armlinux.org.uk>
+CC: <jacob.e.keller@intel.com>, Robert Marko <robert.marko@sartura.hr>,
+	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-Kernel appears to need a dma-names set for DMA to actually enable. Set a
-default dma-names property for all UARTs defined in the base rk356x-base
-dtsi
+Implement get_pauseparam() and set_pauseparam() ethtool operations for
+Sparx5 ports.  This allows users to query and configure IEEE 802.3x
+pause frame settings via:
 
-This is tested on a Radxa Zero 3W (which has 5x UARTs) and removes the
-warnings and enables DMA on this platform
+ethtool -a ethX
+ethtool -A ethX rx on|off tx on|off autoneg on|off
 
-Signed-off-by: Ed Wildgoose <lists@wildgooses.com>
+The driver delegates pause parameter handling to phylink through
+phylink_ethtool_get_pauseparam() and phylink_ethtool_set_pauseparam().
+
+The underlying configuration of pause frame generation and reception is
+already implemented in the driver; this patch only wires it up to the
+standard ethtool interface, making the feature accessible to userspace.
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 ---
- arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-index fd2214b6f..55240f76d 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-@@ -1334,6 +1334,7 @@ uart1: serial@fe650000 {
- 		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 2>, <&dmac0 3>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart1m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1348,6 +1349,7 @@ uart2: serial@fe660000 {
- 		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 4>, <&dmac0 5>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart2m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1362,6 +1364,7 @@ uart3: serial@fe670000 {
- 		clocks = <&cru SCLK_UART3>, <&cru PCLK_UART3>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 6>, <&dmac0 7>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart3m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1376,6 +1379,7 @@ uart4: serial@fe680000 {
- 		clocks = <&cru SCLK_UART4>, <&cru PCLK_UART4>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 8>, <&dmac0 9>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart4m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1390,6 +1394,7 @@ uart5: serial@fe690000 {
- 		clocks = <&cru SCLK_UART5>, <&cru PCLK_UART5>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 10>, <&dmac0 11>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart5m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1404,6 +1409,7 @@ uart6: serial@fe6a0000 {
- 		clocks = <&cru SCLK_UART6>, <&cru PCLK_UART6>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 12>, <&dmac0 13>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart6m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1418,6 +1424,7 @@ uart7: serial@fe6b0000 {
- 		clocks = <&cru SCLK_UART7>, <&cru PCLK_UART7>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 14>, <&dmac0 15>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart7m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1432,6 +1439,7 @@ uart8: serial@fe6c0000 {
- 		clocks = <&cru SCLK_UART8>, <&cru PCLK_UART8>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 16>, <&dmac0 17>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart8m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
-@@ -1446,6 +1454,7 @@ uart9: serial@fe6d0000 {
- 		clocks = <&cru SCLK_UART9>, <&cru PCLK_UART9>;
- 		clock-names = "baudclk", "apb_pclk";
- 		dmas = <&dmac0 18>, <&dmac0 19>;
-+		dma-names = "tx", "rx";
- 		pinctrl-0 = <&uart9m0_xfer>;
- 		pinctrl-names = "default";
- 		reg-io-width = <4>;
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c b/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
+index 832f4ae57c83..049541eeaae0 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
+@@ -1212,6 +1212,22 @@ static int sparx5_get_ts_info(struct net_device *dev,
+ 	return 0;
+ }
+ 
++static void sparx5_get_pauseparam(struct net_device *dev,
++				  struct ethtool_pauseparam *pause)
++{
++	struct sparx5_port *port = netdev_priv(dev);
++
++	phylink_ethtool_get_pauseparam(port->phylink, pause);
++}
++
++static int sparx5_set_pauseparam(struct net_device *dev,
++				 struct ethtool_pauseparam *pause)
++{
++	struct sparx5_port *port = netdev_priv(dev);
++
++	return phylink_ethtool_set_pauseparam(port->phylink, pause);
++}
++
+ const struct ethtool_ops sparx5_ethtool_ops = {
+ 	.get_sset_count         = sparx5_get_sset_count,
+ 	.get_strings            = sparx5_get_sset_strings,
+@@ -1224,6 +1240,8 @@ const struct ethtool_ops sparx5_ethtool_ops = {
+ 	.get_eth_ctrl_stats     = sparx5_get_eth_mac_ctrl_stats,
+ 	.get_rmon_stats         = sparx5_get_eth_rmon_stats,
+ 	.get_ts_info            = sparx5_get_ts_info,
++	.get_pauseparam         = sparx5_get_pauseparam,
++	.set_pauseparam         = sparx5_set_pauseparam,
+ };
+ 
+ int sparx_stats_init(struct sparx5 *sparx5)
+
+---
+base-commit: 5e87fdc37f8dc619549d49ba5c951b369ce7c136
+change-id: 20250917-802-3x-pause-192df5852333
+
+Best regards,
 -- 
-2.49.0
+Daniel Machon <daniel.machon@microchip.com>
 
 
