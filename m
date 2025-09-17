@@ -1,140 +1,247 @@
-Return-Path: <linux-kernel+bounces-819995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D670BB7D722
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54D5B7DA20
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 807677AB5DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 324BC1BC5E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EBD239085;
-	Wed, 17 Sep 2025 05:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC1C199E94;
+	Wed, 17 Sep 2025 05:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSWd2DIu"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9IP6lHS"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E31172614
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB4823817E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758086526; cv=none; b=BA+WWvwEuZaLp+pImyL9eI7jWIjs72bN0hjFaH2v0VhQ49j0VIBf/c0RGmIRzjlPdGByK1idDXdLROHiRnrW+IuXb6I3CAIh7GWm5VRfnAtW5pKUtrwUkoDPD3hqGwL+eI3hPGQ0SOxEcrWq4C7YztgXQN/jSLbsN0fiXHKmGGs=
+	t=1758086584; cv=none; b=n195pa1yKddk7nhKRP8EXWs2gPOCeKUf0ectxvU5PeOP4H2PlVuRQko6hkVI6DlzydPG3Gh4Hv2Y7oH0bKXDJGc+UKLUtBh2G9u5m29m9MlWAkexqvlhHFftbpWsAzNZ6Ml5Izp0UIfhqoJj4E/R6HHGJqmqnmsqLW9DPKJkdYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758086526; c=relaxed/simple;
-	bh=dqrWe/2xfQwHLFK2ix/zztwdYgeBIp9cIEOVTTMML3I=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+p7AkCstbow8JAMk6E+5kkohsUV4zbGVB9FmXmF+IvsG4pi0yXaAxDoUDrk831MAeIkDol4/7kGPkDPAqE3Nu8KTlzskU5xdFi0pESDCF6PHn5hzerVlnhkVDeEO+mpagideJbxUh05UabqoaX8Bw+BXISTLHkde6+utM9i3GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TSWd2DIu; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1758086584; c=relaxed/simple;
+	bh=6gmx7nAOz7x8ECrrtogL+h4cr0iBnycW9rUPcfw8OzY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ElSL+sIGUdZAmj6KdQBFmpoI2GnbtzyQehhLDZO9csZ7LnbugJj6J7CRHYydIg8g9kMlR6QnMpclFPBP95wh9KPZ4WTNKqsnWpUBlffEzDiOAHuzqfpcs6ZsQ7SujgOfSKjB7ECMHlEW/06oOAgX3taWcfaJlYmfwsKVIKfO25o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9IP6lHS; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f74c6d316so6284964e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:22:04 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62ec5f750f7so11262341a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758086523; x=1758691323; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4V0oPOiHcQlvz8Wl1Te3jqJzsEZTBdcCgGtgXa655o=;
-        b=TSWd2DIuTdJNyLwP7TfdETDVAIEWIBtLNYbYorUnOph8jBEMd8Wne9D3F7tR0pyb/S
-         XUQi4egj5VOZo6EU3McMSMedtA2tPf4bds9Ld4EoKOflooe+SNK/dzsjItI9pZxg3+Cc
-         KT44Ecl5I6L9z/cJ5CuPBwfCecwRvxRTFRd096Yh9UcwNwvsqAIjluIZV3vsfZsZ5mFJ
-         Z64X/1MXQRwxS2W+Tt0erzMdAKD651oXmlNTpgtCjG0qA37WnyFOe+0/pe8wSFJ3cvfu
-         5uP5smUwT+TPiiZpgA3eCXz/pv9WdcazZvtkKXvwKZfYK+GmvQzTeagIJCrSuSfTqHLz
-         WbBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758086523; x=1758691323;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758086580; x=1758691380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J4V0oPOiHcQlvz8Wl1Te3jqJzsEZTBdcCgGtgXa655o=;
-        b=t032ufLmKAqLS9IYsuWasF7lylJftii68EDRmnBCSOW7qDesHv5kI34H+wDGcbHxz0
-         GzffNUkA7l7syeKk462kNZwwBtV8Xlc9PBgXJ+NZvEUNQVYHtQBUDI5i0Z2Z7Df4KjTd
-         Ic2wpWTyoY3QWycOxdFCih4ce3/FZdJWx1Irq+v5wIALByGGIavkIefutca6msOEdFzn
-         /uoTAEwsxt3rgYsyGQ6YZj4CeTvKKf8mgtSXSNONlAcWTSkQcR5nWLxu8fW10fqHtvMU
-         aEh1hvExnFhtnTHktSDTwMQt218mBZypcshePaMj9Vw8ebTlug6pS5gd+hs2ueuKqQhU
-         +tLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWl+VpaY1pQ18DqYrlZb6EuD0lOEPn+WrMSEUxDcg7K1Njr/50rhrZFEZ6EyZf8t0kgF/HvPkyExMC3I50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBrTtHzKz8KGtWJWxSuyVcouq67gmIodSqk5EADjxMxDZiTMkc
-	/P5MmKxfKh/5CBQjLbGljaQ94MxRdcv/P+8N1oRh88TC3fBZ3BGPMXTe
-X-Gm-Gg: ASbGncuLVFz3Ov+ATFgHO7j3Lenr/U89uREBdB4dbhzrZc0d0mIolz8gbffEmqzFXP5
-	Q06yiKZrioTx2XP5g4zTrKrP4d2kZSmnfJ7NZ+QYNFR6iSom9QZaHxHWEN5O7XQ712kggs2V/yl
-	8baQHqiNJcPd/lahUVWu6aUJ9sqKhNUB+phwognBFHoc4wydAuaj+RqltqaviEKEXuwRi8/hFyq
-	z3m9BK5lBFCvqvzExEydE2bgbz42PoL+1jyAcRNe66Ol5+1Kh2eAZ1D3+7mmDsWeBYOPAz/4cjs
-	p6hryjTH2dd0KvRZVd1qKKvfmDp+NG8lr2y+9MBFJPyzqCRifoi5+L+xvuWnjoTX
-X-Google-Smtp-Source: AGHT+IFTd55XpTxH/s8Wj4Dy8CPAx1rIWPrgzoIlER18h3np+V8WcEqUMNnWPJgXqpr93S+bIj9hGg==
-X-Received: by 2002:a05:6512:6382:b0:55b:8afb:e638 with SMTP id 2adb3069b0e04-57799ea77b0mr164452e87.28.1758086522911;
-        Tue, 16 Sep 2025 22:22:02 -0700 (PDT)
-Received: from pc636 ([2001:9b1:d5a0:a500::800])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5779b5d6928sm233405e87.131.2025.09.16.22.22.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 22:22:02 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 17 Sep 2025 07:22:00 +0200
-To: Michal Hocko <mhocko@suse.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 04/10] mm/vmalloc: Avoid cond_resched() when blocking
- is not permitted
-Message-ID: <aMpFeIANuJGRc0vO@pc636>
-References: <20250915134041.151462-1-urezki@gmail.com>
- <20250915134041.151462-5-urezki@gmail.com>
- <aMhIv3HfRMyjlSec@tiehlicka>
- <aMmCJOJFMTuCXH3m@milan>
- <aMmnkm_E7hDO_yN0@tiehlicka>
+        bh=VB85/PaNUJMrdnB5pj74aZCvU4kUegAWUrlhOp8yV3A=;
+        b=P9IP6lHSsGmqtkRUNdyQFCORhbzxymRxrXZf7s4d/GRpykXDwmBAH0DFyKXc50QCu9
+         y99MOCSjMCHf6/TAZiQ5D8EBSsX+v9bSdHFmQ/LVwgC4gBVFIoy4Xmyev3DaciX8NCpT
+         6PikzX2ByL9KKgIEUB6EFsf37BoKf6DwAIiDhzTCFZE6CA0aTFMHfh7C2LSsRZNui1MU
+         t0aGsr+OH80TtMtpV86ajeS+3gj16aaVeR1K9h9tKQV1iszQWRDhMDC5/h6/o1Ob1TId
+         SsIKM4fnxg44xe/IchAPIF1vEVi0245vHgn5FFPzwAwIoEImucKjSwqU7qxpydC1awVX
+         879w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758086580; x=1758691380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VB85/PaNUJMrdnB5pj74aZCvU4kUegAWUrlhOp8yV3A=;
+        b=Mgamm0ELiFVzDJ7I8oqe8rCv2lzzSyMWe6EeocTQD3WPnB4cIWvIkaXJ6uHV2nydfX
+         6uGCL2iGxEDMnR4gBx5QOExpbTb9VuE2evBL4yblZ/7vmImJ6CYQ+x2O/+JgtdCePbGO
+         gKsQ0Pysl9jr3vrj2mh43DrI2HwPTmKtnuJUTEgItZ4qIGPPTtKleOtxhbniEu7ZeuFU
+         evgAOYZLkfM5AILyNmNAZJd3gGKyxVrzaWCzdbVmBpp1jVVxovUh+cyUGFK+k2SsV3C0
+         RqdqW+bC0RDkCooXBKl1hXzF9r9hKmD3gT4c2xYFT4dsw5iCEXGyXmA0/56ZyTGkuVGy
+         32Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFnBzz6C1FDU05SXkvORHxa061Y8IrKsjlytuVF1k8StXRxtsg9RzVbijC80jt3BNqSQihy8xI3q8geJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw24Etl39Q33LgWyrfq7V7jJHKHnm4GEgq+R665tzHwuZMxeKFF
+	k/ARUPF1irM7oXCptys43CAvHTFqy9Umh7FIuXqB2YzHZARg/GxGhJqR2m/PpqYuK78E36wntLw
+	96blzBx+9QOJ2v3AJzjMGafSPJl9wnjE=
+X-Gm-Gg: ASbGncvOhk1/VU/aWnDxLNx1275ZokGXwUs5bqgePs2RF8fc/99yDEoYCZ6mCwA/+sd
+	xLarhsdBIybjM7JwS3zhyZ/qmhfg+YygA1D/6ZrCE3bqTpF+ew9Mmz3G1nAUOIVkf+rfN9duBvw
+	3p0+mamK1JaAes+kxFV0RpIoO0mJKfvwp/ZD/bhdTsZNoZBb/qbGBWOgFmJQgkCk848Kc685u3J
+	0gXjvdDBPWaeu4ERAS0MX/nuHFOP/ss3FSisC0=
+X-Google-Smtp-Source: AGHT+IGW18xtRuU2GK+tpKtajYwOhrW4O1BhSvambII8KyAv0L3MmzAdTmi7DunDdrqaD8FTROygg/qVkaFANLc30gY=
+X-Received: by 2002:a05:6402:40c8:b0:62f:6706:7772 with SMTP id
+ 4fb4d7f45d1cf-62f8468ec40mr917576a12.34.1758086579371; Tue, 16 Sep 2025
+ 22:22:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMmnkm_E7hDO_yN0@tiehlicka>
+References: <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
+ <20250916194915.1395712-1-clm@meta.com> <CAGudoHE1GfgM-fX9pE-McqXH3dowPRoSPU9yHiGi+a3mk1hwnw@mail.gmail.com>
+ <36fc538c-4e25-409d-b718-437fe97201ac@lucifer.local>
+In-Reply-To: <36fc538c-4e25-409d-b718-437fe97201ac@lucifer.local>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 17 Sep 2025 07:22:46 +0200
+X-Gm-Features: AS18NWDTNu0uFCPWXMNYZriE-TkKq3-qYDDJDkS6S-UwtaAG2QuEVfyEtB1SXAM
+Message-ID: <CAGudoHGBedD35u9FnYyPuJV=vT9mUrbtRVREO1P0RdzHhV=1FQ@mail.gmail.com>
+Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Chris Mason <clm@meta.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, David Rientjes <rientjes@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Matthew Wilcox <willy@infradead.org>, linux-s390@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 08:08:18PM +0200, Michal Hocko wrote:
-> On Tue 16-09-25 17:28:36, Uladzislau Rezki wrote:
-> > On Mon, Sep 15, 2025 at 07:11:27PM +0200, Michal Hocko wrote:
-> > > On Mon 15-09-25 15:40:34, Uladzislau Rezki wrote:
-> > > > vm_area_alloc_pages() contains the only voluntary reschedule points
-> > > > along vmalloc() allocation path. They are needed to ensure forward
-> > > > progress on PREEMPT_NONE kernels under contention for vmap metadata
-> > > > (e.g. alloc_vmap_area()).
-> > > > 
-> > > > However, yielding should only be done if the given GFP flags allow
-> > > > blocking. This patch avoids calling cond_resched() when allocation
-> > > > context is non-blocking(GFP_ATOMIC, GFP_NOWAIT).
-> > > 
-> > > We do have cond_resched in the page allocator path, right?
-> > > So unless I am missing something we can safely drope these. I thought we
-> > > have discused this already.
-> > > 
-> > Yes, we discussed this. I did some test with dropped cond_resched() for
-> > !PREEMPT kernel and i can trigger soft-lockups under really heavy stress
-> > load.
-> > 
-> > I prefer to keep them so far for consistency. I need some time to
-> > investigate it more. As i noted in commit message, the vmalloc()
-> > path only has those two resched points. Probably i need to move
-> > them into another place later.
-> > 
-> > As for page-allocator, it is in a slow path which i do not hit in
-> > my stress-setup.
-> 
-> OK, so the fast path can trigger the soft lockup? If yes please mention
-> that in the changelog so that we know why this is needed. With that
-> included feel free to add
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-We, in vmalloc(), also have a slow path. Those two points seem to help.
-I will move them later to alloc_vmal_area(), after a slow path serves
-a request.
+On Wed, Sep 17, 2025 at 7:20=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Sep 17, 2025 at 02:16:54AM +0200, Mateusz Guzik wrote:
+> > On Wed, Sep 17, 2025 at 1:57=E2=80=AFAM Chris Mason <clm@meta.com> wrot=
+e:
+> > >
+> > > On Tue, 12 Aug 2025 16:44:11 +0100 Lorenzo Stoakes <lorenzo.stoakes@o=
+racle.com> wrote:
+> > >
+> > > > As part of the effort to move to mm->flags becoming a bitmap field,=
+ convert
+> > > > existing users to making use of the mm_flags_*() accessors which wi=
+ll, when
+> > > > the conversion is complete, be the only means of accessing mm_struc=
+t flags.
+> > > >
+> > > > This will result in the debug output being that of a bitmap output,=
+ which
+> > > > will result in a minor change here, but since this is for debug onl=
+y, this
+> > > > should have no bearing.
+> > > >
+> > > > Otherwise, no functional changes intended.
+> > > >
+> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > >
+> > > [ ... ]
+> > >
+> > > > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > > > index 25923cfec9c6..17650f0b516e 100644
+> > > > --- a/mm/oom_kill.c
+> > > > +++ b/mm/oom_kill.c
+> > >
+> > > [ ... ]
+> > >
+> > > > @@ -1251,7 +1251,7 @@ SYSCALL_DEFINE2(process_mrelease, int, pidfd,=
+ unsigned int, flags)
+> > > >        * Check MMF_OOM_SKIP again under mmap_read_lock protection t=
+o ensure
+> > > >        * possible change in exit_mmap is seen
+> > > >        */
+> > > > -     if (!test_bit(MMF_OOM_SKIP, &mm->flags) && !__oom_reap_task_m=
+m(mm))
+> > > > +     if (mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm=
+))
+> > > >               ret =3D -EAGAIN;
+> > > >       mmap_read_unlock(mm);
+> > > >
+> > >
+> > > Hi Lorzeno, I think we lost a ! here.
+> > >
+> > > claude found enough inverted logic in moved code that I did a new run=
+ with
+> > > a more explicit prompt for it, but this was the only new hit.
+> > >
+> >
+> > I presume conversion was done mostly manually?
+>
+> Actually largely via sed/emacs find-replace. I'm not sure why this case
+> happened. But maybe it's one of the not 'largely' changes...
+>
+> Human-in-the-middle is obviously subject to errors :)
+>
 
-Thank you!
+tru.dat
 
---
-Uladzislau Rezki
+> >
+> > The way(tm) is to use coccinelle.
+> >
+> > I whipped out the following real quick and results look good:
+> >
+> > @@
+> > expression mm, bit;
+> > @@
+> >
+> > - test_bit(bit, &mm->flags)
+> > + mm_flags_test(bit, mm)
+>
+> Thanks. Not sure it'd hit every case. But that's useful to know, could
+> presumably expand to hit others.
+>
+> I will be changing VMA flags when my review load finally allows me to so =
+knowing
+> this is useful...
+>
+
+I ran into bugs in spatch in the past where it just neglected to patch
+something, but that's rare and can be trivially caught.
+
+Defo easier to check than making sure none of the manual fixups are off.
+
+> Cheers, Lorenzo
+>
+> >
+> > $ spatch --sp-file mmbit.cocci mm/oom_kill.c
+> > [snip]
+> > @@ -892,7 +892,7 @@ static bool task_will_free_mem(struct ta
+> >          * This task has already been drained by the oom reaper so ther=
+e are
+> >          * only small chances it will free some more
+> >          */
+> > -       if (test_bit(MMF_OOM_SKIP, &mm->flags))
+> > +       if (mm_flags_test(MMF_OOM_SKIP, mm))
+> >                 return false;
+> >
+> >         if (atomic_read(&mm->mm_users) <=3D 1)
+> > @@ -1235,7 +1235,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
+> >                 reap =3D true;
+> >         else {
+> >                 /* Error only if the work has not been done already */
+> > -               if (!test_bit(MMF_OOM_SKIP, &mm->flags))
+> > +               if (!mm_flags_test(MMF_OOM_SKIP, mm))
+> >                         ret =3D -EINVAL;
+> >         }
+> >         task_unlock(p);
+> > @@ -1251,7 +1251,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
+> >          * Check MMF_OOM_SKIP again under mmap_read_lock protection to =
+ensure
+> >          * possible change in exit_mmap is seen
+> >          */
+> > -       if (!test_bit(MMF_OOM_SKIP, &mm->flags) && !__oom_reap_task_mm(=
+mm))
+> > +       if (!mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm)=
+)
+> >                 ret =3D -EAGAIN;
+> >         mmap_read_unlock(mm);
 
