@@ -1,359 +1,248 @@
-Return-Path: <linux-kernel+bounces-821732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB69B82183
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:04:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E2CB82189
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C08E18881A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EF7B17C3A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85EF29ACF7;
-	Wed, 17 Sep 2025 22:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B021430DED7;
+	Wed, 17 Sep 2025 22:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b35XFQNy"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4xUEdvlz"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50C028BABA
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239DF30C118
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758146682; cv=none; b=H1CqkK+eRpSAzghMao09RRIbF62gGWvnc/gBzyhnYNnHr87GZcWX/YIO5LidLk1c0rq4zsfUEqTIni3sjSRzfw79uItKq9MUDzZtHq8YErM3pK+ugjfXEjqwcrJXpoQIRl1Ik7PIuzRCXkKS4KO3UZtmFR8ukQ4LX1oD7sld7Gw=
+	t=1758146684; cv=none; b=ZjlluFkHWzJg5EKIBJMjFdCRZ3TwKkL6+dAGP0SZ/LVNI3lwBo5hJg+QVGQTqdZez0nvje24wC0s4lkam5/CDMHtaUWaDX4Vdn0Dvtk9twJyAlGXTMJiN09G024AU4hRQh8Guv5KZbHSakBRe9zkEX1DBTe1ohzOg6j8qxIpgDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758146682; c=relaxed/simple;
-	bh=gDUPk/m4rq1u3EYCb3lp0LjeYM8xElxylPHjyHrmMJo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FH7d7y5YYeVUP08e6y+9tXFwxdI5TdazRHuYtH9NUI6f3W0u+4Sok+PZCe0cIuO8ARVqZw204/ZfbIp9h2PqwS7uIuwv9a6+evFOgD629WK8JERGuDRSe1YSFAKZkUDk7NeMAzkw46v1PSZ37NJOYhMX0KzzOFIl/e9NpZNfPaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b35XFQNy; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-251fc032d1fso3436215ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:04:40 -0700 (PDT)
+	s=arc-20240116; t=1758146684; c=relaxed/simple;
+	bh=3B8ugtKg4GD1GWkRKEKHTDsKxMS02QOpYhTzseqwA9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eQCGNtUR7254KDB/kpR6vPY0mrR7O3j3aoTlXwn1mmekTgU+WOY2zm5KU2KSi5tI/ITUhLJM19WjHFjy99qg2jlCQm8IOC1n5a7o6Ewe+s//ITQiGNmJmQ/3CZ4f/mNTsIoJWF9Thq59CxcYXTYg91cBkHMh3q09j76tQgNQPLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4xUEdvlz; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b796ff6d45so72361cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:04:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758146680; x=1758751480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rKTYL9qZHCY6SX54g1CxCOHWNQkO0Dz6dIIx5JhUyuo=;
-        b=b35XFQNykfWQXCWjO5ftL4U5VJbu6bRpLiZ4Erw6q6njo8pyZLjuiBMTuNB2Up9r07
-         LDCFJSv0fx2tbb3XQOgID/WRrbcWauPMQl9alhJzvMK138k8ieuihDt/qpCtmbhKCNs4
-         GwOH/KNghHF0gPZ1hSW813W0+agO5h3a234Ieu/rYhsLZKth36/5Tog9gn91Lppjzywf
-         rq4C2nzFFxR6NFd44BjSRoKj/5MyaNGMmkQgXr0+MLrckAPtHW/tsX3us48LIdaKb+ys
-         KVuifK4tw0B2ndVVZJDEn9O8acByqWhiw+p0Y2TsNSpe/raj0z6k1orRQVz3atyusP2u
-         wyLQ==
+        d=google.com; s=20230601; t=1758146682; x=1758751482; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7c037OBepDtABbodeSYdc9GHv27CVVqxlwOzBg6Xtz8=;
+        b=4xUEdvlzSf6WRc6y9xmXjjhtZOS7Gp/l1+6+mjGsY/WyNalC8fqnR271pfqMBsVmFZ
+         3/oS3pSwXwXTLPDRsjBx3Q6dYHgF9yswMyAn7CJUcII0Tlhar43+oOME2l+xI6wa0TfL
+         x+6EvMKkcapBBELPZmoMUwFSYMdpfzf9shE8vwZzXwBkeaVFuAEBEoWg2QoMfLIS3HVR
+         EmI0zF38OoG1AdAjIa3nnSFzUGcJIpjQGlB0/CUucoxgB2+Z4Qk02yIvYlEmpEu76s/4
+         AiK/n6SlC8xZFe+tDfTJWUUNmJ95PWdM6faUHJOMLKyZDbwSva7/ezgQDVFyJXvELJGE
+         1uSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758146680; x=1758751480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rKTYL9qZHCY6SX54g1CxCOHWNQkO0Dz6dIIx5JhUyuo=;
-        b=fdgZx6glgdLJfBtIq5ZHi/vBqTpbG4D0bOceJkzrdIYeXskQNmUCP15VIOeEz2yUb2
-         Ac7zC4jWR0EYGuZTwq/Qwj9+Tm63dIwEDIYUitFSBSauMEw9Na3eD/UWIpxZObIO3XQC
-         VzXK2fXswFxOqf5ncC+ANdP3RPRAmdyFVYUKxMoLrnTzFbTj7DKyQ7an8z2arzPF19YC
-         VoT3uYwNlvemLWHtKMc9pnI15z+y69b8YG1R7feBOrEG7kroRaZ/mR+FQaPfJuJDE9y5
-         zvnxzfSYyy358YcH2IvtEWdw25elclYyAifXozkbiQ/BYlm7hMKaHmWcPHKhVM4SI29F
-         fTxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjxFlIVp+jSjnm3urMuejpoM8yQhA+PIU5ECQoOIUvsaPfoGBP6pxz/Y20IC2XYk8V/bdXBt2xwN/S2L0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTenDFjspM6vFrQTsAoi5wkKt+PrEHFyjXOZ4Xv4d624gMmbRl
-	OcCzgRgwMtU7vBgka3oT+eq+Kw29Gf0rkcplwd8tW6/Q8X/7zAzXHL8=
-X-Gm-Gg: ASbGnctzXebvwd4MuESSDZnKgLEXuw2jcDjWLEe9zZARZTiaawlGLMrWDE++zUrr0hO
-	VggmtaSz6ket/4BNhwvfz7IfepK19721ya2KwI5gbdWoztWRjniluvJv2cYhCaPoCj4lU8MLpcT
-	Cja+Yhd3Vw1a58O85PXeCGBDqQ3aONfhFXWau1geHiJfnpcPtH9E8Gh/YnDBbTYn9emIeeqEJQ4
-	gLKFTcXl8GLYF5BwNHC1WrJEkQxX/Bn2k4K23i7JJlxMIqYvREApn1GfRAQ+AiyoOkFdWjOqR/+
-	a/pMkFP/aK1aBQ09Itr1iuqbpImje71RbzqR0vc3iw88t0obKbJNVoU+j27p4BhJV6csbEVzOEj
-	z/AbE3LkV6cW9GjEWgTnExKx4uGBrSX4xEZBr/D76GnYf/kBF02xsMXTPho4JLivyYOyVtsIzSJ
-	6anBs=
-X-Google-Smtp-Source: AGHT+IGDFPDGX4rb+kiQg3X4yL7z83rrDxrOSR5UfT6oA70G3VDh5bLbnnVZBylxLLb/1kX5EJEZLg==
-X-Received: by 2002:a17:903:283:b0:267:f121:6a88 with SMTP id d9443c01a7336-268138fe811mr54249485ad.42.1758146679810;
-        Wed, 17 Sep 2025 15:04:39 -0700 (PDT)
-Received: from Ubuntuv2.domain.name ([122.172.86.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016bf96sm5505275ad.38.2025.09.17.15.04.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 15:04:39 -0700 (PDT)
-From: Marneni PoornaChandu <poornachandumarneni@gmail.com>
-X-Google-Original-From: Marneni PoornaChandu <Poornachandumarneni@gmail.com>
-To: corbet@lwn.net
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alexandre.belloni@bootlin.com,
-	corey@minyard.net,
-	sakari.ailus@linux.intel.com,
-	mchehab@kernel.org,
-	linux-i3c@lists.infradead.org,
-	openipmi-developer@lists.sourceforge.net,
-	linux-media@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	Marneni PoornaChandu <Poornachandumarneni@gmail.com>
-Subject: [PATCH] docs: driver-api: fix spelling of "buses".
-Date: Thu, 18 Sep 2025 06:04:30 +0800
-Message-Id: <20250917220430.5815-1-Poornachandumarneni@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1758146682; x=1758751482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7c037OBepDtABbodeSYdc9GHv27CVVqxlwOzBg6Xtz8=;
+        b=qBIUuEAOQN5pzlUUE0aC9xmwNnJVsFQ6Q8C/LrmQUXPd9VswXjouqQ1xkQuHPcBR8q
+         eai66ZdLfoYOxOMJsrMldjrL0xcUiatZeqSCGczbeMn0bywCYNe6O8yTI5NPdD5SF/E+
+         AF3y8DhN/cd9j5JQioL5+5C69g63QDEMxymQRG4FRPiSGeTUdae4BEQS1MiJl0cSxDBW
+         /rfB040K4DsUuKyvIolFv7IJSBgTkPpICm/gIz4c6ze4HmHg+1Ca7wy92nT4kV9pXnXZ
+         1AEcfwemmXTTci3dgsfJ8NK7+Q6bbjIj+/bVKa2oIPkSYZqPuNTBLjcze/yNk2dY9Ke2
+         2TrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB19mnleFkg7u1oNX86rP1/wuvPm9JMBNcpwe7BXzu+9sCeLIZpvyZTnkXpZs2/1kVUz1EN3ww/iKW464=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6NUxKOV9dCel48xSRzj91oel3Hx2jiqU132fNUl7bYnVtj90d
+	PLZ4N4SEusu/i4AKBkRHadH0+w64w1D2fiv3Oc3v/CI+kZDZvyh2VsrCCiH4cpSEpT6MNqjFKPh
+	/61zkptD+Z0fuvWUB3UY2HMDSQtMi5C/AWrf2BiqA
+X-Gm-Gg: ASbGncujYs2WKaXPqqIdoDUwdWizfu+h7I8mNPX/LCEjGRy2TNba5gZUatlTw7XO1xW
+	Y+VSFCi1QRPL8hnLtoYzqgSv6p93mNs0J9QjCoDSOn0ICRkXn161owYUQ6xMXWmu1x9R8rC90lj
+	7X1pKbtYyogpvQdd7Ab3fW2b8KXqCJytXSeD9UlFy0NAlIBb9o2PhH1lAsOs8uXXxYalRrelHif
+	6wAEuGpFCEJUUy5ztCVn1Q3MNdkng==
+X-Google-Smtp-Source: AGHT+IGDI6LJLfycjfeE1B/pgIh/9NIsQqEJIx7nxHWRrjhDqG/oq1RUbkZqCENyyqfCAvnUxyLWTbnk2uL801F6uvk=
+X-Received: by 2002:a05:622a:8597:b0:4b7:9b7a:1cfc with SMTP id
+ d75a77b69052e-4bbf022e4f3mr4682571cf.10.1758146681555; Wed, 17 Sep 2025
+ 15:04:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250915195153.462039-1-fvdl@google.com> <7ia4ecs59a2b.fsf@castle.c.googlers.com>
+In-Reply-To: <7ia4ecs59a2b.fsf@castle.c.googlers.com>
+From: Frank van der Linden <fvdl@google.com>
+Date: Wed, 17 Sep 2025 15:04:30 -0700
+X-Gm-Features: AS18NWCkUN2Jz1n68DzLl5mlp3KsVWCGAZPBnGbVyd4mox136r8TgQG5palyZuI
+Message-ID: <CAPTztWYp2yPsdvFfMm6bVB-juwHM11zKAEty9q+J8gy5d-8=KQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/12] CMA balancing
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, hannes@cmpxchg.org, david@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace incorrect plural form "busses" with "buses" in
-multiple documentation files under "Documentation/driver-api".
+On Tue, Sep 16, 2025 at 5:51=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+>
+> Frank van der Linden <fvdl@google.com> writes:
+>
+> > This is an RFC on a solution to the long standing problem of OOMs
+> > occuring when the kernel runs out of space for unmovable allocations
+> > in the face of large amounts of CMA.
+> >
+> > Introduction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > When there is a large amount of CMA (e.g. with hugetlb_cma), it is
+> > possible for the kernel to run out of space to get unmovable
+> > allocations from. This is because it cannot use the CMA area.
+> > If the issue is just that there is a large CMA area, and that
+> > there isn't enough space left, that can be considered a
+> > misconfigured system. However, there is a scenario in which
+> > things could have been dealt with better: if the non-CMA area
+> > also has movable allocations in it, and there are CMA pageblocks
+> > still available.
+> >
+> > The current mitigation for this issue is to start using CMA
+> > pageblocks for movable allocations first if the amount of
+> > free CMA pageblocks is more than 50% of the total amount
+> > of free memory in a zone. But that may not always work out,
+> > e.g. the system could easily run in to a scenario where
+> > long-lasting movable allocations are made first, which do
+> > not go to CMA before the 50% mark is reached. When the
+> > non-CMA area fills up, these will get in the way of the
+> > kernel's unmovable allocations, and OOMs might occur.
+> >
+> > Even always directing movable allocations to CMA first does
+> > not completely fix the issue. Take a scenario where there
+> > is a large amount of CMA through hugetlb_cma. All of that
+> > CMA has been taken up by 1G hugetlb pages. So, movable allocations
+> > end up in the non-CMA area. Now, the number of hugetlb
+> > pages in the pool is lowered, so some CMA becomes available.
+> > At the same time, increased system activity leads to more unmovable
+> > allocations. Since the movable allocations are still in the non-CMA
+> > area, these kernel allocations might still fail.
+> >
+> >
+> > Additionally, CMA areas are allocated at the bottom of the zone.
+> > There has been some discussion on this in the past. Originally,
+> > doing allocations from CMA was deemed something that was best
+> > avoided. The arguments were twofold:
+> >
+> > 1) cma_alloc needs to be quick and should not have to migrate a
+> >    lot of pages.
+> > 2) migration might fail, so the fewer pages it has to migrate
+> >    the better
+> >
+> > These arguments are why CMA is avoided (until the 50% limit is hit),
+> > and why CMA areas are allocated at the bottom of a zone. But
+> > compaction migrates memory from the bottom to the top of a zone.
+> > That means that compaction will actually end up migrating movable
+> > allocations out of CMA and in to non-CMA, making the issue of
+> > OOMing for unmovable allocations worse.
+> >
+> > Solution: CMA balancing
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > First, this patch set makes the 50% threshold configurable, which
+> > is useful in any case. vm.cma_first_limit is the percentage of
+> > free CMA, as part of the total amount of free memory in a zone,
+> > above which CMA will be used first for movable allocations. 0
+> > is always, 100 is never.
+> >
+> > Then, it creates an interface that allows for moving movable
+> > allocations from non-CMA to CMA. CMA areas opt in to taking part
+> > in this through a flag. Also, if the flag is set for a CMA area,
+> > it is allocated at the top of a zone instead of the bottom.
+>
+> Hm, what if we can teach the compaction code to start off the
+> beginning of the zone or end of cma zone(s) depending on the
+> current balance?
+>
+> The problem with placing the cma area at the end is that it might
+> significantly decrease the success rate of cma allocations
+> when it's racing with the background compaction, which is hard
+> to control. At least it was clearly so in my measurements several
+> years ago.
 
-Signed-off-by: Marneni PoornaChandu <Poornachandumarneni@gmail.com>
----
- Documentation/driver-api/device-io.rst             | 4 ++--
- Documentation/driver-api/driver-model/overview.rst | 2 +-
- Documentation/driver-api/driver-model/platform.rst | 2 +-
- Documentation/driver-api/eisa.rst                  | 6 +++---
- Documentation/driver-api/i3c/protocol.rst          | 4 ++--
- Documentation/driver-api/ipmi.rst                  | 4 ++--
- Documentation/driver-api/media/tx-rx.rst           | 4 ++--
- Documentation/driver-api/nvdimm/nvdimm.rst         | 2 +-
- Documentation/driver-api/pm/devices.rst            | 4 ++--
- Documentation/driver-api/scsi.rst                  | 4 ++--
- Documentation/driver-api/spi.rst                   | 2 +-
- Documentation/driver-api/usb/hotplug.rst           | 2 +-
- Documentation/driver-api/usb/usb.rst               | 4 ++--
- 13 files changed, 22 insertions(+), 22 deletions(-)
+Indeed, I saw your change that moved the CMA areas to the bottom of
+the zone for that reason. In my testing, I saw a slight uptick in
+cma_alloc failures for HugeTLB (due to migration failures), but it
+wasn't much at all. Also, our current usage scenario can deal with the
+occasional failure, so it was less of a concern. I can try to re-run
+some tests to see if I can gather some harder numbers on that - the
+problem is of course finding a test case that gives reproducible
+results.
+>
+>
+> > Lastly, the hugetlb_cma code was modified to try to migrate
+> > movable allocations from non-CMA to CMA when a hugetlb CMA
+> > page is freed. Only hugetlb CMA areas opt in to CMA balancing,
+> > behavior for all other CMA areas is unchanged.
+> >
+> > Discussion
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > This approach works when tested with a hugetlb_cma setup
+> > where a large number of 1G pages is active, but the number
+> > is sometimes reduced in exchange for larger non-hugetlb
+> > overhead.
+> >
+> > Arguments against this approach:
+> >
+> > * It's kind of heavy-handed. Since there is no easy way to
+> >   track the amount of movable allocations residing in non-CMA
+> >   pageblocks, it will likely end up scanning too much memory,
+> >   as it only knows the upper bound.
+> > * It should be more integrated with watermark handling in the
+> >   allocation slow path. Again, this would likely require
+> >   tracking the number of movable allocations in non-CMA
+> >   pageblocks.
+>
+> I think the problem is very real and the proposed approach looks
+> reasonable. But I also agree that it's heavy-handed. Doesn't feel
+> like "the final" solution :)
+>
+> I wonder if we can track the amount of free space outside of cma
+> and move pages out on reaching a certain low threshold?
+> And it can in theory be the part of the generic kswapd/reclaim code.
 
-diff --git a/Documentation/driver-api/device-io.rst b/Documentation/driver-api/device-io.rst
-index 5c7e8194bef9..d1aaa961cac4 100644
---- a/Documentation/driver-api/device-io.rst
-+++ b/Documentation/driver-api/device-io.rst
-@@ -16,7 +16,7 @@ Bus-Independent Device Accesses
- Introduction
- ============
- 
--Linux provides an API which abstracts performing IO across all busses
-+Linux provides an API which abstracts performing IO across all buses
- and devices, allowing device drivers to be written independently of bus
- type.
- 
-@@ -71,7 +71,7 @@ can be compiler optimised, you can use __readb() and friends to
- indicate the relaxed ordering. Use this with care.
- 
- While the basic functions are defined to be synchronous with respect to
--each other and ordered with respect to each other the busses the devices
-+each other and ordered with respect to each other the buses the devices
- sit on may themselves have asynchronicity. In particular many authors
- are burned by the fact that PCI bus writes are posted asynchronously. A
- driver author must issue a read from the same device to ensure that
-diff --git a/Documentation/driver-api/driver-model/overview.rst b/Documentation/driver-api/driver-model/overview.rst
-index e98d0ab4a9b6..b3f447bf9f07 100644
---- a/Documentation/driver-api/driver-model/overview.rst
-+++ b/Documentation/driver-api/driver-model/overview.rst
-@@ -22,7 +22,7 @@ uniformity across the different bus types.
- 
- The current driver model provides a common, uniform data model for describing
- a bus and the devices that can appear under the bus. The unified bus
--model includes a set of common attributes which all busses carry, and a set
-+model includes a set of common attributes which all buses carry, and a set
- of common callbacks, such as device discovery during bus probing, bus
- shutdown, bus power management, etc.
- 
-diff --git a/Documentation/driver-api/driver-model/platform.rst b/Documentation/driver-api/driver-model/platform.rst
-index 7beb8a9648c5..cf5ff48d3115 100644
---- a/Documentation/driver-api/driver-model/platform.rst
-+++ b/Documentation/driver-api/driver-model/platform.rst
-@@ -4,7 +4,7 @@ Platform Devices and Drivers
- 
- See <linux/platform_device.h> for the driver model interface to the
- platform bus:  platform_device, and platform_driver.  This pseudo-bus
--is used to connect devices on busses with minimal infrastructure,
-+is used to connect devices on buses with minimal infrastructure,
- like those used to integrate peripherals on many system-on-chip
- processors, or some "legacy" PC interconnects; as opposed to large
- formally specified ones like PCI or USB.
-diff --git a/Documentation/driver-api/eisa.rst b/Documentation/driver-api/eisa.rst
-index b33ebe1ec9ed..3563e5f7e98d 100644
---- a/Documentation/driver-api/eisa.rst
-+++ b/Documentation/driver-api/eisa.rst
-@@ -8,9 +8,9 @@ This document groups random notes about porting EISA drivers to the
- new EISA/sysfs API.
- 
- Starting from version 2.5.59, the EISA bus is almost given the same
--status as other much more mainstream busses such as PCI or USB. This
-+status as other much more mainstream buses such as PCI or USB. This
- has been possible through sysfs, which defines a nice enough set of
--abstractions to manage busses, devices and drivers.
-+abstractions to manage buses, devices and drivers.
- 
- Although the new API is quite simple to use, converting existing
- drivers to the new infrastructure is not an easy task (mostly because
-@@ -205,7 +205,7 @@ Random notes
- Converting an EISA driver to the new API mostly involves *deleting*
- code (since probing is now in the core EISA code). Unfortunately, most
- drivers share their probing routine between ISA, and EISA. Special
--care must be taken when ripping out the EISA code, so other busses
-+care must be taken when ripping out the EISA code, so other buses
- won't suffer from these surgical strikes...
- 
- You *must not* expect any EISA device to be detected when returning
-diff --git a/Documentation/driver-api/i3c/protocol.rst b/Documentation/driver-api/i3c/protocol.rst
-index 23a0b93c62b1..fe338f8085db 100644
---- a/Documentation/driver-api/i3c/protocol.rst
-+++ b/Documentation/driver-api/i3c/protocol.rst
-@@ -165,8 +165,8 @@ The first thing attached to an HDR command is the HDR mode. There are currently
- for more details):
- 
- * HDR-DDR: Double Data Rate mode
--* HDR-TSP: Ternary Symbol Pure. Only usable on busses with no I2C devices
--* HDR-TSL: Ternary Symbol Legacy. Usable on busses with I2C devices
-+* HDR-TSP: Ternary Symbol Pure. Only usable on buses with no I2C devices
-+* HDR-TSL: Ternary Symbol Legacy. Usable on buses with I2C devices
- 
- When sending an HDR command, the whole bus has to enter HDR mode, which is done
- using a broadcast CCC command.
-diff --git a/Documentation/driver-api/ipmi.rst b/Documentation/driver-api/ipmi.rst
-index 2cc6c898ab90..f52ab2df2569 100644
---- a/Documentation/driver-api/ipmi.rst
-+++ b/Documentation/driver-api/ipmi.rst
-@@ -617,12 +617,12 @@ Note that the address you give here is the I2C address, not the IPMI
- address.  So if you want your MC address to be 0x60, you put 0x30
- here.  See the I2C driver info for more details.
- 
--Command bridging to other IPMB busses through this interface does not
-+Command bridging to other IPMB buses through this interface does not
- work.  The receive message queue is not implemented, by design.  There
- is only one receive message queue on a BMC, and that is meant for the
- host drivers, not something on the IPMB bus.
- 
--A BMC may have multiple IPMB busses, which bus your device sits on
-+A BMC may have multiple IPMB buses, which bus your device sits on
- depends on how the system is wired.  You can fetch the channels with
- "ipmitool channel info <n>" where <n> is the channel, with the
- channels being 0-7 and try the IPMB channels.
-diff --git a/Documentation/driver-api/media/tx-rx.rst b/Documentation/driver-api/media/tx-rx.rst
-index 0b8c9cde8ee4..22e1b13ecde9 100644
---- a/Documentation/driver-api/media/tx-rx.rst
-+++ b/Documentation/driver-api/media/tx-rx.rst
-@@ -12,7 +12,7 @@ CSI-2 receiver in an SoC.
- Bus types
- ---------
- 
--The following busses are the most common. This section discusses these two only.
-+The following buses are the most common. This section discusses these two only.
- 
- MIPI CSI-2
- ^^^^^^^^^^
-@@ -36,7 +36,7 @@ Transmitter drivers
- 
- Transmitter drivers generally need to provide the receiver drivers with the
- configuration of the transmitter. What is required depends on the type of the
--bus. These are common for both busses.
-+bus. These are common for both buses.
- 
- Media bus pixel code
- ^^^^^^^^^^^^^^^^^^^^
-diff --git a/Documentation/driver-api/nvdimm/nvdimm.rst b/Documentation/driver-api/nvdimm/nvdimm.rst
-index c205efa4d45b..959ba1cc0263 100644
---- a/Documentation/driver-api/nvdimm/nvdimm.rst
-+++ b/Documentation/driver-api/nvdimm/nvdimm.rst
-@@ -230,7 +230,7 @@ LIBNVDIMM/LIBNDCTL: Bus
- A bus has a 1:1 relationship with an NFIT.  The current expectation for
- ACPI based systems is that there is only ever one platform-global NFIT.
- That said, it is trivial to register multiple NFITs, the specification
--does not preclude it.  The infrastructure supports multiple busses and
-+does not preclude it.  The infrastructure supports multiple buses and
- we use this capability to test multiple NFIT configurations in the unit
- test.
- 
-diff --git a/Documentation/driver-api/pm/devices.rst b/Documentation/driver-api/pm/devices.rst
-index 8d86d5da4023..36d5c9c9fd11 100644
---- a/Documentation/driver-api/pm/devices.rst
-+++ b/Documentation/driver-api/pm/devices.rst
-@@ -255,7 +255,7 @@ get registered:  a child can never be registered, probed or resumed before
- its parent; and can't be removed or suspended after that parent.
- 
- The policy is that the device hierarchy should match hardware bus topology.
--[Or at least the control bus, for devices which use multiple busses.]
-+[Or at least the control bus, for devices which use multiple buses.]
- In particular, this means that a device registration may fail if the parent of
- the device is suspending (i.e. has been chosen by the PM core as the next
- device to suspend) or has already suspended, as well as after all of the other
-@@ -493,7 +493,7 @@ states, like S3).
- 
- Drivers must also be prepared to notice that the device has been removed
- while the system was powered down, whenever that's physically possible.
--PCMCIA, MMC, USB, Firewire, SCSI, and even IDE are common examples of busses
-+PCMCIA, MMC, USB, Firewire, SCSI, and even IDE are common examples of buses
- where common Linux platforms will see such removal.  Details of how drivers
- will notice and handle such removals are currently bus-specific, and often
- involve a separate thread.
-diff --git a/Documentation/driver-api/scsi.rst b/Documentation/driver-api/scsi.rst
-index bf2be96cc2d6..8bbdfb018c53 100644
---- a/Documentation/driver-api/scsi.rst
-+++ b/Documentation/driver-api/scsi.rst
-@@ -18,7 +18,7 @@ optical drives, test equipment, and medical devices) to a host computer.
- 
- Although the old parallel (fast/wide/ultra) SCSI bus has largely fallen
- out of use, the SCSI command set is more widely used than ever to
--communicate with devices over a number of different busses.
-+communicate with devices over a number of different buses.
- 
- The `SCSI protocol <https://www.t10.org/scsi-3.htm>`__ is a big-endian
- peer-to-peer packet based protocol. SCSI commands are 6, 10, 12, or 16
-@@ -286,7 +286,7 @@ Parallel SCSI (SPI) transport class
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- The file drivers/scsi/scsi_transport_spi.c defines transport
--attributes for traditional (fast/wide/ultra) SCSI busses.
-+attributes for traditional (fast/wide/ultra) SCSI buses.
- 
- .. kernel-doc:: drivers/scsi/scsi_transport_spi.c
-    :export:
-diff --git a/Documentation/driver-api/spi.rst b/Documentation/driver-api/spi.rst
-index f28887045049..74eca6735042 100644
---- a/Documentation/driver-api/spi.rst
-+++ b/Documentation/driver-api/spi.rst
-@@ -13,7 +13,7 @@ additional chipselect line is usually active-low (nCS); four signals are
- normally used for each peripheral, plus sometimes an interrupt.
- 
- The SPI bus facilities listed here provide a generalized interface to
--declare SPI busses and devices, manage them according to the standard
-+declare SPI buses and devices, manage them according to the standard
- Linux driver model, and perform input/output operations. At this time,
- only "master" side interfaces are supported, where Linux talks to SPI
- peripherals and does not implement such a peripheral itself. (Interfaces
-diff --git a/Documentation/driver-api/usb/hotplug.rst b/Documentation/driver-api/usb/hotplug.rst
-index c1e13107c50e..12260f704a01 100644
---- a/Documentation/driver-api/usb/hotplug.rst
-+++ b/Documentation/driver-api/usb/hotplug.rst
-@@ -5,7 +5,7 @@ Linux Hotplugging
- =================
- 
- 
--In hotpluggable busses like USB (and Cardbus PCI), end-users plug devices
-+In hotpluggable buses like USB (and Cardbus PCI), end-users plug devices
- into the bus with power on.  In most cases, users expect the devices to become
- immediately usable.  That means the system must do many things, including:
- 
-diff --git a/Documentation/driver-api/usb/usb.rst b/Documentation/driver-api/usb/usb.rst
-index 976fb4221062..7f2f41e80c1c 100644
---- a/Documentation/driver-api/usb/usb.rst
-+++ b/Documentation/driver-api/usb/usb.rst
-@@ -13,7 +13,7 @@ structure, with the host as the root (the system's master), hubs as
- interior nodes, and peripherals as leaves (and slaves). Modern PCs
- support several such trees of USB devices, usually
- a few USB 3.0 (5 GBit/s) or USB 3.1 (10 GBit/s) and some legacy
--USB 2.0 (480 MBit/s) busses just in case.
-+USB 2.0 (480 MBit/s) buses just in case.
- 
- That master/slave asymmetry was designed-in for a number of reasons, one
- being ease of use. It is not physically possible to mistake upstream and
-@@ -42,7 +42,7 @@ two. One is intended for *general-purpose* drivers (exposed through
- driver frameworks), and the other is for drivers that are *part of the
- core*. Such core drivers include the *hub* driver (which manages trees
- of USB devices) and several different kinds of *host controller
--drivers*, which control individual busses.
-+drivers*, which control individual buses.
- 
- The device model seen by USB drivers is relatively complex.
- 
--- 
-2.34.1
+I considered this, yes. The first problem is that there is no easy way
+to express the number that is "pages allocated with __GFP_MOVABLE in
+non-CMA pageblocks".  You can approximate pretty well by checking if
+they are on the LRU, I suppose.
 
+If you succeed in getting that number accurately, the next issue is
+defining the right threshold and when to apply them. E.g. at one point
+I had a change to skip CMA pageblocks for compaction if the target
+pageblock is non-CMA, and the threshold has been hit. I ended up
+dropping it, since this more special-case approach was better for our
+use case. But my idea at the time was to add it as a 3rd mechanism to
+try harder for allocations (compaction, reclaim, CMA balancing).
+
+It was something like:
+
+1) Track movable allocations in non-CMA areas.
+2) If the watermark for an unmovable allocation is below high, stop
+migrating things (through compaction) from CMA to non-CMA, and always
+start allocating from CMA first.
+3) If the watermark is approaching low, don't try compaction if you
+know that CMA can be balanced, but do CMA balancing instead, in
+amounts that satisfy your needs
+
+One problem here is ping-ponging of memory. If you put CMA areas at
+the bottom of the zone, ompaction moves things one way, CMA balancing
+the other way.
+
+I think an approach like the above could still work, I just abandoned
+it in favor of this more special-cased (and thus safer) one for our
+use case.
+
+- Frank
 
