@@ -1,247 +1,77 @@
-Return-Path: <linux-kernel+bounces-819996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54D5B7DA20
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAE8B7D863
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 324BC1BC5E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8711485018
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC1C199E94;
-	Wed, 17 Sep 2025 05:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175FB25FA3B;
+	Wed, 17 Sep 2025 05:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9IP6lHS"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATmbDyVb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB4823817E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651A772614;
+	Wed, 17 Sep 2025 05:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758086584; cv=none; b=n195pa1yKddk7nhKRP8EXWs2gPOCeKUf0ectxvU5PeOP4H2PlVuRQko6hkVI6DlzydPG3Gh4Hv2Y7oH0bKXDJGc+UKLUtBh2G9u5m29m9MlWAkexqvlhHFftbpWsAzNZ6Ml5Izp0UIfhqoJj4E/R6HHGJqmqnmsqLW9DPKJkdYU=
+	t=1758086681; cv=none; b=BZY0E64DFrk1xrrW1LenhI15b2RcNUpp/+kQpfqMtsbGoc9bo0blylk9khbhXtzGXXm4KrRbQQmBjVNNjLG0lAT2cNOefS97ZlB91e8LucEqD1Tusa25d5AnjGSjyChvAG246EQsOX38oWt+JUFXT+nezKplJJNm1xXFWSjh60k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758086584; c=relaxed/simple;
-	bh=6gmx7nAOz7x8ECrrtogL+h4cr0iBnycW9rUPcfw8OzY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ElSL+sIGUdZAmj6KdQBFmpoI2GnbtzyQehhLDZO9csZ7LnbugJj6J7CRHYydIg8g9kMlR6QnMpclFPBP95wh9KPZ4WTNKqsnWpUBlffEzDiOAHuzqfpcs6ZsQ7SujgOfSKjB7ECMHlEW/06oOAgX3taWcfaJlYmfwsKVIKfO25o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9IP6lHS; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62ec5f750f7so11262341a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758086580; x=1758691380; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VB85/PaNUJMrdnB5pj74aZCvU4kUegAWUrlhOp8yV3A=;
-        b=P9IP6lHSsGmqtkRUNdyQFCORhbzxymRxrXZf7s4d/GRpykXDwmBAH0DFyKXc50QCu9
-         y99MOCSjMCHf6/TAZiQ5D8EBSsX+v9bSdHFmQ/LVwgC4gBVFIoy4Xmyev3DaciX8NCpT
-         6PikzX2ByL9KKgIEUB6EFsf37BoKf6DwAIiDhzTCFZE6CA0aTFMHfh7C2LSsRZNui1MU
-         t0aGsr+OH80TtMtpV86ajeS+3gj16aaVeR1K9h9tKQV1iszQWRDhMDC5/h6/o1Ob1TId
-         SsIKM4fnxg44xe/IchAPIF1vEVi0245vHgn5FFPzwAwIoEImucKjSwqU7qxpydC1awVX
-         879w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758086580; x=1758691380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VB85/PaNUJMrdnB5pj74aZCvU4kUegAWUrlhOp8yV3A=;
-        b=Mgamm0ELiFVzDJ7I8oqe8rCv2lzzSyMWe6EeocTQD3WPnB4cIWvIkaXJ6uHV2nydfX
-         6uGCL2iGxEDMnR4gBx5QOExpbTb9VuE2evBL4yblZ/7vmImJ6CYQ+x2O/+JgtdCePbGO
-         gKsQ0Pysl9jr3vrj2mh43DrI2HwPTmKtnuJUTEgItZ4qIGPPTtKleOtxhbniEu7ZeuFU
-         evgAOYZLkfM5AILyNmNAZJd3gGKyxVrzaWCzdbVmBpp1jVVxovUh+cyUGFK+k2SsV3C0
-         RqdqW+bC0RDkCooXBKl1hXzF9r9hKmD3gT4c2xYFT4dsw5iCEXGyXmA0/56ZyTGkuVGy
-         32Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFnBzz6C1FDU05SXkvORHxa061Y8IrKsjlytuVF1k8StXRxtsg9RzVbijC80jt3BNqSQihy8xI3q8geJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw24Etl39Q33LgWyrfq7V7jJHKHnm4GEgq+R665tzHwuZMxeKFF
-	k/ARUPF1irM7oXCptys43CAvHTFqy9Umh7FIuXqB2YzHZARg/GxGhJqR2m/PpqYuK78E36wntLw
-	96blzBx+9QOJ2v3AJzjMGafSPJl9wnjE=
-X-Gm-Gg: ASbGncvOhk1/VU/aWnDxLNx1275ZokGXwUs5bqgePs2RF8fc/99yDEoYCZ6mCwA/+sd
-	xLarhsdBIybjM7JwS3zhyZ/qmhfg+YygA1D/6ZrCE3bqTpF+ew9Mmz3G1nAUOIVkf+rfN9duBvw
-	3p0+mamK1JaAes+kxFV0RpIoO0mJKfvwp/ZD/bhdTsZNoZBb/qbGBWOgFmJQgkCk848Kc685u3J
-	0gXjvdDBPWaeu4ERAS0MX/nuHFOP/ss3FSisC0=
-X-Google-Smtp-Source: AGHT+IGW18xtRuU2GK+tpKtajYwOhrW4O1BhSvambII8KyAv0L3MmzAdTmi7DunDdrqaD8FTROygg/qVkaFANLc30gY=
-X-Received: by 2002:a05:6402:40c8:b0:62f:6706:7772 with SMTP id
- 4fb4d7f45d1cf-62f8468ec40mr917576a12.34.1758086579371; Tue, 16 Sep 2025
- 22:22:59 -0700 (PDT)
+	s=arc-20240116; t=1758086681; c=relaxed/simple;
+	bh=hC8OfH0upO2tWZ/vj30OsQiqM/inNpI8faJFzeMwnTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJQHM4TFDdEoDNvupGzsB1NvCfX4jbF9ssPXG4zqgK0bk9Z1HWOgKesEkZdmt5aj6NSZ2HCHA/rtasj0DSD4n5j7ZXSUpys3ueCjH1CYQRXYQEvBKAnf+Xj048fEsRpv+17Rl3okHq25LXFztBmx2MJrq6BK6YY+K+TQZKuXk/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATmbDyVb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A09FC4CEF0;
+	Wed, 17 Sep 2025 05:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758086680;
+	bh=hC8OfH0upO2tWZ/vj30OsQiqM/inNpI8faJFzeMwnTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ATmbDyVb8jzVUmoXm+PzTLsARTy0oqxTSNFIFgp3QqxFMJJoJuvrXU9XcMk7SRlis
+	 N0wQSeALrTnx4sHc5N4jThpvKNgg14OUNUGmTbBavjRdkJhhhXPlSuu0lM3TVHhNAj
+	 livMs3ZTXH4oOS2l2z7/ITAZ4Z7WMWUa02Z9mP7L56V++mofG04DHcfoqm3zDPUcd/
+	 sX4nM7DtwUEAgbNTxYDsa9n+Dqu38HR/Xx3BxOWSICR87PHPCXJi11PXHiZkZrSWll
+	 IGm73YjWGFoSQw4VRLNkp4q9RjJH+NEKwGfGxbudQ7KA0E0CpzmWtHqbrLcwUwd9ow
+	 L5DhAGzWTqqdQ==
+Date: Wed, 17 Sep 2025 05:24:37 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] revocable: Revocable resource management
+Message-ID: <aMpGFXII_WGviShc@google.com>
+References: <20250912081718.3827390-1-tzungbi@kernel.org>
+ <20250912081718.3827390-2-tzungbi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
- <20250916194915.1395712-1-clm@meta.com> <CAGudoHE1GfgM-fX9pE-McqXH3dowPRoSPU9yHiGi+a3mk1hwnw@mail.gmail.com>
- <36fc538c-4e25-409d-b718-437fe97201ac@lucifer.local>
-In-Reply-To: <36fc538c-4e25-409d-b718-437fe97201ac@lucifer.local>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 17 Sep 2025 07:22:46 +0200
-X-Gm-Features: AS18NWDTNu0uFCPWXMNYZriE-TkKq3-qYDDJDkS6S-UwtaAG2QuEVfyEtB1SXAM
-Message-ID: <CAGudoHGBedD35u9FnYyPuJV=vT9mUrbtRVREO1P0RdzHhV=1FQ@mail.gmail.com>
-Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Chris Mason <clm@meta.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, David Rientjes <rientjes@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
-	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	Matthew Wilcox <willy@infradead.org>, linux-s390@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912081718.3827390-2-tzungbi@kernel.org>
 
-On Wed, Sep 17, 2025 at 7:20=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Wed, Sep 17, 2025 at 02:16:54AM +0200, Mateusz Guzik wrote:
-> > On Wed, Sep 17, 2025 at 1:57=E2=80=AFAM Chris Mason <clm@meta.com> wrot=
-e:
-> > >
-> > > On Tue, 12 Aug 2025 16:44:11 +0100 Lorenzo Stoakes <lorenzo.stoakes@o=
-racle.com> wrote:
-> > >
-> > > > As part of the effort to move to mm->flags becoming a bitmap field,=
- convert
-> > > > existing users to making use of the mm_flags_*() accessors which wi=
-ll, when
-> > > > the conversion is complete, be the only means of accessing mm_struc=
-t flags.
-> > > >
-> > > > This will result in the debug output being that of a bitmap output,=
- which
-> > > > will result in a minor change here, but since this is for debug onl=
-y, this
-> > > > should have no bearing.
-> > > >
-> > > > Otherwise, no functional changes intended.
-> > > >
-> > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > >
-> > > [ ... ]
-> > >
-> > > > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > > > index 25923cfec9c6..17650f0b516e 100644
-> > > > --- a/mm/oom_kill.c
-> > > > +++ b/mm/oom_kill.c
-> > >
-> > > [ ... ]
-> > >
-> > > > @@ -1251,7 +1251,7 @@ SYSCALL_DEFINE2(process_mrelease, int, pidfd,=
- unsigned int, flags)
-> > > >        * Check MMF_OOM_SKIP again under mmap_read_lock protection t=
-o ensure
-> > > >        * possible change in exit_mmap is seen
-> > > >        */
-> > > > -     if (!test_bit(MMF_OOM_SKIP, &mm->flags) && !__oom_reap_task_m=
-m(mm))
-> > > > +     if (mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm=
-))
-> > > >               ret =3D -EAGAIN;
-> > > >       mmap_read_unlock(mm);
-> > > >
-> > >
-> > > Hi Lorzeno, I think we lost a ! here.
-> > >
-> > > claude found enough inverted logic in moved code that I did a new run=
- with
-> > > a more explicit prompt for it, but this was the only new hit.
-> > >
-> >
-> > I presume conversion was done mostly manually?
->
-> Actually largely via sed/emacs find-replace. I'm not sure why this case
-> happened. But maybe it's one of the not 'largely' changes...
->
-> Human-in-the-middle is obviously subject to errors :)
->
+On Fri, Sep 12, 2025 at 08:17:13AM +0000, Tzung-Bi Shih wrote:
+> +void *revocable_try_access(struct revocable *rev) __acquires(&rev->rp->srcu)
+> +{
+> +	struct revocable_provider *rp = rev->rp;
+> +
+> +	rev->idx = srcu_read_lock(&rp->srcu);
+> +	return rcu_dereference(rp->res);
 
-tru.dat
-
-> >
-> > The way(tm) is to use coccinelle.
-> >
-> > I whipped out the following real quick and results look good:
-> >
-> > @@
-> > expression mm, bit;
-> > @@
-> >
-> > - test_bit(bit, &mm->flags)
-> > + mm_flags_test(bit, mm)
->
-> Thanks. Not sure it'd hit every case. But that's useful to know, could
-> presumably expand to hit others.
->
-> I will be changing VMA flags when my review load finally allows me to so =
-knowing
-> this is useful...
->
-
-I ran into bugs in spatch in the past where it just neglected to patch
-something, but that's rare and can be trivially caught.
-
-Defo easier to check than making sure none of the manual fixups are off.
-
-> Cheers, Lorenzo
->
-> >
-> > $ spatch --sp-file mmbit.cocci mm/oom_kill.c
-> > [snip]
-> > @@ -892,7 +892,7 @@ static bool task_will_free_mem(struct ta
-> >          * This task has already been drained by the oom reaper so ther=
-e are
-> >          * only small chances it will free some more
-> >          */
-> > -       if (test_bit(MMF_OOM_SKIP, &mm->flags))
-> > +       if (mm_flags_test(MMF_OOM_SKIP, mm))
-> >                 return false;
-> >
-> >         if (atomic_read(&mm->mm_users) <=3D 1)
-> > @@ -1235,7 +1235,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
-> >                 reap =3D true;
-> >         else {
-> >                 /* Error only if the work has not been done already */
-> > -               if (!test_bit(MMF_OOM_SKIP, &mm->flags))
-> > +               if (!mm_flags_test(MMF_OOM_SKIP, mm))
-> >                         ret =3D -EINVAL;
-> >         }
-> >         task_unlock(p);
-> > @@ -1251,7 +1251,7 @@ SYSCALL_DEFINE2(process_mrelease, int, p
-> >          * Check MMF_OOM_SKIP again under mmap_read_lock protection to =
-ensure
-> >          * possible change in exit_mmap is seen
-> >          */
-> > -       if (!test_bit(MMF_OOM_SKIP, &mm->flags) && !__oom_reap_task_mm(=
-mm))
-> > +       if (!mm_flags_test(MMF_OOM_SKIP, mm) && !__oom_reap_task_mm(mm)=
-)
-> >                 ret =3D -EAGAIN;
-> >         mmap_read_unlock(mm);
+Got a warning from lock debugging.  This should be srcu_dereference().  Will
+fix it in the next version.
 
