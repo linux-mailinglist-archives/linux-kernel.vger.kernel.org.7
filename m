@@ -1,249 +1,117 @@
-Return-Path: <linux-kernel+bounces-819941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD443B7C898
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783C2B7DC9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3006D3A5ADE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387171B22ECB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB3624676A;
-	Wed, 17 Sep 2025 03:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAED126B96A;
+	Wed, 17 Sep 2025 03:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BRORkJgM"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c/pSWn9y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969AA246788
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58489DDA9
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758080925; cv=none; b=cvtAlS9U1mjekhGqIo+xHV+nCrXGqxyozLHxAl+a03s36PkHAiIc6vx42ZmRcAqyDnRbzhiLEIKMHcB3+nhd3CyBoQmVX+0MCNZXUOow7fByfsuxqbv7kBIxC3JmnajEB44uVnV6I6WNnZnUOGfdEoHKGwShyZKLrIbR1aM419Y=
+	t=1758080985; cv=none; b=LPGlsWf1x+3FFMg8jrtoX877FpWD4Vdp2TrL6f3lGkIzF6rTCHRzUji6jBGAu8xWwSKYG5l4OBlBcCnNOevZe5Bw41HHoJcRvof6FhGIEkN0eiXChxeuHe2p5W/z/RIHsRDd2uOmFLHCnVB2wSKd4gKQkAIej9rYHijmvBOHbuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758080925; c=relaxed/simple;
-	bh=HJhEIj/EGFsVwisNyuSbquSaJhPriioYgDQ5ZPde8Os=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VVgbz3o+Kzue5eQpiBnr2Dxd5eRDllIrIA0tEBzBOBId1zy7kWJU6TbFk68Kw6PbbN43JqVYMW471/tgLxiDY2Q8Bfd34o7B4nJNjDea4DbJcb2U1z+cLyo5dHDS7uBZloG6Pagtsphuru9o0yYMCkfV9060rINcsdQPlzgPpvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BRORkJgM; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758080921;
+	s=arc-20240116; t=1758080985; c=relaxed/simple;
+	bh=UaBjcrDAy8qe35zcK0EvPixIhqJUoVPcks/Cvf//7TA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+8I5PJP4nwe18DHbKM1fPPW8AuNRuM3Q+TcvuO30YcKrmKe55tKhEqTwXpTXc/bMEtSQqXv80WYqjwKx7j/cgIIiaT9VExzwRQU0TNo1+Wx4qMA/g60gVCyH1B7ftFIx6rHp89W3WQmsPnbhkYl4ZQgU97CNWaXKIoGNFMDuWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c/pSWn9y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758080982;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hge7Q8t2zGQIqH/1tKglsN7B2ICodZDLD87S/m4VssA=;
-	b=BRORkJgMsPo899/cXMBFBNZ6xKFO6XwJjd9HNSgSfhd44rfyqhI6GHHPw9VdxczEAlC9bw
-	2OFRILaVTk2+L+oBGbkGcpJbWSgmdmpKG8RbZ0ld9csp0q970kvcNRoOLnsClO9SiW1zyn
-	GqvDmTzmE/U2dF4U+lWa8SUaCeJ8Cmk=
-From: Tao Chen <chen.dylane@linux.dev>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	chen.dylane@linux.dev
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 2/2] bpftool: Fix UAF in get_delegate_value
-Date: Wed, 17 Sep 2025 11:47:32 +0800
-Message-ID: <20250917034732.1185429-2-chen.dylane@linux.dev>
-In-Reply-To: <20250917034732.1185429-1-chen.dylane@linux.dev>
-References: <20250917034732.1185429-1-chen.dylane@linux.dev>
+	bh=W9qpmrXCKv/lBEPu/+D2jjLY1f+6nwSMqsX4httEPJc=;
+	b=c/pSWn9yvVb4IAyM+9xTsbGSsD9sbf8TYHEqs8YJ5pnCC1pbYrPGPxmnFQJ73PRyETieK3
+	lyLA/mWKZGNngs6IekjbS8Xbc06X9SikEm9nuc1/eSqFYLvu4KwmYo+bZiVp/9aXQX+Duu
+	c1IY2di9sAdh4tcFqRmLHhIsgoa94I8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-180-XtgHUay3PuOsIqEaLT2_5Q-1; Tue,
+ 16 Sep 2025 23:49:40 -0400
+X-MC-Unique: XtgHUay3PuOsIqEaLT2_5Q-1
+X-Mimecast-MFC-AGG-ID: XtgHUay3PuOsIqEaLT2_5Q_1758080979
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 86F251956050;
+	Wed, 17 Sep 2025 03:49:39 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.8])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F03819560B8;
+	Wed, 17 Sep 2025 03:49:35 +0000 (UTC)
+Date: Wed, 17 Sep 2025 11:49:29 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Shuah Khan <shuah@kernel.org>, linux-block@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] selftests: ublk: kublk: simplify feat_map definition
+Message-ID: <aMovycUcPR1mK1cg@fedora>
+References: <20250916-ublk_features-v1-0-52014be9cde5@purestorage.com>
+ <20250916-ublk_features-v1-1-52014be9cde5@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-ublk_features-v1-1-52014be9cde5@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The return value ret pointer is pointing opts_copy, but opts_copy
-gets freed in get_delegate_value before return, fix this by free
-the mntent->mnt_opts strdup memory after show delegate value.
+On Tue, Sep 16, 2025 at 04:05:55PM -0600, Uday Shankar wrote:
+> Simplify the definition of feat_map by introducing a helper macro
+> FEAT_NAME to avoid having to type the feature name twice. As a side
+> effect, this changes the names in the feature list to be the full macro
+> name instead of the abbreviated names that were used before, but this is
+> a good change for clarity.
+> 
+> Using the full feature macro names ruins the alignment of the output, so
+> change the output format to put each feature's hex value before its
+> name, as this is easier to align nicely. The output now looks as
+> follows:
+> 
+> # ./kublk features
+> ublk_drv features: 0x7fff
+> 0x1               : UBLK_F_SUPPORT_ZERO_COPY
+> 0x2               : UBLK_F_URING_CMD_COMP_IN_TASK
+> 0x4               : UBLK_F_NEED_GET_DATA
+> 0x8               : UBLK_F_USER_RECOVERY
+> 0x10              : UBLK_F_USER_RECOVERY_REISSUE
+> 0x20              : UBLK_F_UNPRIVILEGED_DEV
+> 0x40              : UBLK_F_CMD_IOCTL_ENCODE
+> 0x80              : UBLK_F_USER_COPY
+> 0x100             : UBLK_F_ZONED
+> 0x200             : UBLK_F_USER_RECOVERY_FAIL_IO
+> 0x400             : UBLK_F_UPDATE_SIZE
+> 0x800             : UBLK_F_AUTO_BUF_REG
+> 0x1000            : UBLK_F_QUIESCE
+> 0x2000            : UBLK_F_PER_IO_DAEMON
+> 0x4000            : unknown
+> 
+> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
 
-Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- tools/bpf/bpftool/token.c | 75 +++++++++++++++++----------------------
- 1 file changed, 33 insertions(+), 42 deletions(-)
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
-index 82b829e44c8..05bc76c7276 100644
---- a/tools/bpf/bpftool/token.c
-+++ b/tools/bpf/bpftool/token.c
-@@ -28,15 +28,14 @@ static bool has_delegate_options(const char *mnt_ops)
- 	       strstr(mnt_ops, "delegate_attachs");
- }
- 
--static char *get_delegate_value(const char *opts, const char *key)
-+static char *get_delegate_value(char *opts, const char *key)
- {
- 	char *token, *rest, *ret = NULL;
--	char *opts_copy = strdup(opts);
- 
--	if (!opts_copy)
-+	if (!opts)
- 		return NULL;
- 
--	for (token = strtok_r(opts_copy, ",", &rest); token;
-+	for (token = strtok_r(opts, ",", &rest); token;
- 			token = strtok_r(NULL, ",", &rest)) {
- 		if (strncmp(token, key, strlen(key)) == 0 &&
- 		    token[strlen(key)] == '=') {
-@@ -44,24 +43,19 @@ static char *get_delegate_value(const char *opts, const char *key)
- 			break;
- 		}
- 	}
--	free(opts_copy);
- 
- 	return ret;
- }
- 
--static void print_items_per_line(const char *input, int items_per_line)
-+static void print_items_per_line(char *input, int items_per_line)
- {
--	char *str, *rest, *strs;
-+	char *str, *rest;
- 	int cnt = 0;
- 
- 	if (!input)
- 		return;
- 
--	strs = strdup(input);
--	if (!strs)
--		return;
--
--	for (str = strtok_r(strs, ":", &rest); str;
-+	for (str = strtok_r(input, ":", &rest); str;
- 			str = strtok_r(NULL, ":", &rest)) {
- 		if (cnt % items_per_line == 0)
- 			printf("\n\t  ");
-@@ -69,38 +63,39 @@ static void print_items_per_line(const char *input, int items_per_line)
- 		printf("%-20s", str);
- 		cnt++;
- 	}
--
--	free(strs);
- }
- 
-+#define PRINT_DELEGATE_OPT(opt_name) do {		\
-+	char *opts, *value;				\
-+	opts = strdup(mntent->mnt_opts);		\
-+	value = get_delegate_value(opts, opt_name);	\
-+	print_items_per_line(value, ITEMS_PER_LINE);	\
-+	free(opts);					\
-+} while (0)
-+
- #define ITEMS_PER_LINE 4
- static void show_token_info_plain(struct mntent *mntent)
- {
--	char *value;
- 
- 	printf("token_info  %s", mntent->mnt_dir);
- 
- 	printf("\n\tallowed_cmds:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
--	print_items_per_line(value, ITEMS_PER_LINE);
-+	PRINT_DELEGATE_OPT("delegate_cmds");
- 
- 	printf("\n\tallowed_maps:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
--	print_items_per_line(value, ITEMS_PER_LINE);
-+	PRINT_DELEGATE_OPT("delegate_maps");
- 
- 	printf("\n\tallowed_progs:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
--	print_items_per_line(value, ITEMS_PER_LINE);
-+	PRINT_DELEGATE_OPT("delegate_progs");
- 
- 	printf("\n\tallowed_attachs:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
--	print_items_per_line(value, ITEMS_PER_LINE);
-+	PRINT_DELEGATE_OPT("delegate_attachs");
- 	printf("\n");
- }
- 
--static void split_json_array_str(const char *input)
-+static void split_json_array_str(char *input)
- {
--	char *str, *rest, *strs;
-+	char *str, *rest;
- 
- 	if (!input) {
- 		jsonw_start_array(json_wtr);
-@@ -108,43 +103,39 @@ static void split_json_array_str(const char *input)
- 		return;
- 	}
- 
--	strs = strdup(input);
--	if (!strs)
--		return;
--
- 	jsonw_start_array(json_wtr);
--	for (str = strtok_r(strs, ":", &rest); str;
-+	for (str = strtok_r(input, ":", &rest); str;
- 			str = strtok_r(NULL, ":", &rest)) {
- 		jsonw_string(json_wtr, str);
- 	}
- 	jsonw_end_array(json_wtr);
--
--	free(strs);
- }
- 
-+#define PRINT_DELEGATE_OPT_JSON(opt_name) do {		\
-+	char *opts, *value;				\
-+	opts = strdup(mntent->mnt_opts);		\
-+	value = get_delegate_value(opts, opt_name);	\
-+	split_json_array_str(value);			\
-+	free(opts);					\
-+} while (0)
-+
- static void show_token_info_json(struct mntent *mntent)
- {
--	char *value;
--
- 	jsonw_start_object(json_wtr);
- 
- 	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
- 
- 	jsonw_name(json_wtr, "allowed_cmds");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
--	split_json_array_str(value);
-+	PRINT_DELEGATE_OPT_JSON("delegate_cmds");
- 
- 	jsonw_name(json_wtr, "allowed_maps");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
--	split_json_array_str(value);
-+	PRINT_DELEGATE_OPT_JSON("delegate_maps");
- 
- 	jsonw_name(json_wtr, "allowed_progs");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
--	split_json_array_str(value);
-+	PRINT_DELEGATE_OPT_JSON("delegate_progs");
- 
- 	jsonw_name(json_wtr, "allowed_attachs");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
--	split_json_array_str(value);
-+	PRINT_DELEGATE_OPT_JSON("delegate_attachs");
- 
- 	jsonw_end_object(json_wtr);
- }
--- 
-2.48.1
+
+Thanks,
+Ming
 
 
