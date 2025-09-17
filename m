@@ -1,307 +1,180 @@
-Return-Path: <linux-kernel+bounces-821006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7ACB8006E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:34:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB2FB7FFD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CB9188972B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E163C7AD3DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FAD2D7818;
-	Wed, 17 Sep 2025 14:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE8B2D9784;
+	Wed, 17 Sep 2025 14:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ogH7c/4/";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ogH7c/4/"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012058.outbound.protection.outlook.com [52.101.66.58])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S9LDaaun"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1B62D4B5A;
-	Wed, 17 Sep 2025 14:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.58
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119380; cv=fail; b=oWygfYRNuYX26qeDdY93qg86trlpiXprZs7zJgwW+Db+Kw636AtKZC3TSq0Wf7z41m7BTRYPGQoDs/9Q5ub5DSghuAQh3eihOF+9PftTCB0wPOl5VUIjcXPM+fDkSvocqUU6NTCpTe7UIjETlRRMB96iqFmzpq4mvljzTlUbpn0=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119380; c=relaxed/simple;
-	bh=syj5F+uQO0tW+MjiXvwEhmpjRYmm6UYq8QvIUGL/1ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Img/+45nHkAJa9j1Ks72caFi2YRcO8uuKahxRxAOZ2fNO/BqBuqAa+TYDz0ksXXbK+4mNL+W+J0KMsFNwjPgvVYy5g/5UYCQB7SSU6GoRBlP+bypIjk1ffguXzJ1A7dA/dolJbw3wDQQU7HvsoZxJhf1heQN1aibG8uxAfvBcYo=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ogH7c/4/; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ogH7c/4/; arc=fail smtp.client-ip=52.101.66.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=zUaMBGUrqCMGKuuqOmLq6G5g+acPRCQ0bZF6PJKpaJhGMbU8f4vchJmU0W3h+SDrUPHoCY8Kh2BBxkyp9I/kHo1RuWaMls5HpsrxYZqqCtYsP3tgsyDNAj9sJpWRTFN6SkFpJ1aSQh7NVJvXjoBMZcxt7OYSwaX57YnVKNOwA9jhXe+7VUd9lrWqhowtySmeTzXMH42/0RKgfW+rlZPgNFS0qCbdSaBYk9+g9mAbKYrDRNzmBhJXuUkGg79lk9degKvSucKLMrxIwLNGFm6B6TZNiOlMi1mR0BA9bruOHMK+QJC8x6qzQDas1asHtrs0BjNYFdnUdqDBVHJz/uxnHQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k1sH/NQLa+O1qhCKsXfDV0tUyIR6/Ydvry/+xnvEZoM=;
- b=GEJ9RZPWBPI5ycDqd+VIFOlm5qfjluE2Vc1spIGY7rIho+Tu+SRjuzYsET7HToJiP3STgvQU+FoQijNreYProZwqrXpYGPOpSTSmah0ms31+zu7f4+nC3Y+NIGm0sMKzux4ga4tx0neRNXfDBeH5kjv3F0IYJOGWNUoTlcshuJFxLXRsovSVlMxCkfvqi01GCz8yPYh9gyGKAjzcB+GVVdtO1nZzOF2TF17JFxMuExkyysdvupYrKRZxUy2mXi6xupkFtdc8wYaBhNkSNayCeSa+JytcqhhQRoIkQPdRHj8Mly3juw6UmKF1MRSdc5FGZuLOy/v0mIO8Arg8btHH2A==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k1sH/NQLa+O1qhCKsXfDV0tUyIR6/Ydvry/+xnvEZoM=;
- b=ogH7c/4/UIU2PZ2kwnu/y0+OsvJAngNKYB5FGEBGrsVepgWnbn0AlLdB1oDrjmYgWRu4NWmBLOz1cLj4+FeSHFwpt9LPTmvMzOTHkTFggFQCsAXGPdT/EKd8ZddFNfuSmYe3x80xHcUX8x8W+j0mmGAVIKZJFk6TSHCauYwg3MU=
-Received: from AM0PR04CA0108.eurprd04.prod.outlook.com (2603:10a6:208:be::49)
- by DU0PR08MB9874.eurprd08.prod.outlook.com (2603:10a6:10:422::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Wed, 17 Sep
- 2025 14:29:31 +0000
-Received: from AMS1EPF0000004C.eurprd04.prod.outlook.com
- (2603:10a6:208:be:cafe::d4) by AM0PR04CA0108.outlook.office365.com
- (2603:10a6:208:be::49) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Wed,
- 17 Sep 2025 14:29:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AMS1EPF0000004C.mail.protection.outlook.com (10.167.16.137) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12
- via Frontend Transport; Wed, 17 Sep 2025 14:29:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o2JH/8RjCthN2OvU2HhMWhePGLv29LNX29Hfl8qXB8WVAG+nWLk8nkzhiMynC5J0ha0rp0h0jf6F2kLMir94DzwKibuwCg69C5yU/D8b7mNMvYS53gnzurBZZEKNCXTyeubQ8LnU9MpUw+VsV8XmnDcqS86BiHSaUZnsgW2/OHd72OidaDeezF/veczVwp3xOHfKKyH0sWM0U7zFjtF4rl+Zxz67ULDA+/S0/1QeWvGcp9Ih78HeSqu3vU+/RC0muu8KpAunf+bNsRJQqyG6gp9bC7E85BFPy4lfaT6qNWJ9xSRfYW3xJUgqWYtJ8BNBTRjAOfpK68N3pSuaHY2I3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k1sH/NQLa+O1qhCKsXfDV0tUyIR6/Ydvry/+xnvEZoM=;
- b=n+nGGAhpTPg40btPtkUixRtf1VmkwQXXnUKHAO6mpfEgotmz2ndHi2qH5KOq6sYxxaF5CtwMkjaC8kyNW41kk5xe+w6mn1S4U2zZdoyWgVavgPE2Hy3LBcxmcZriumVQUm/GAN66Ohb2hqge8hHgBw2RSOqRf6Itp2r7xmN+kIl8H7ipXaOlND+zCi+KU5TscIU+b/iV66Mq1hofGSvXE1ObVdbWmzJJ92f64zHWErmwNDW7kovDXVxTAInToX6SeFqiepU34wwoQw+dVKQ4ilyllib4RhI8tW0p6/fk8DRe315QHAM9EOimhoSykcAe8PwzxnhKhlE7pHbHijzh2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k1sH/NQLa+O1qhCKsXfDV0tUyIR6/Ydvry/+xnvEZoM=;
- b=ogH7c/4/UIU2PZ2kwnu/y0+OsvJAngNKYB5FGEBGrsVepgWnbn0AlLdB1oDrjmYgWRu4NWmBLOz1cLj4+FeSHFwpt9LPTmvMzOTHkTFggFQCsAXGPdT/EKd8ZddFNfuSmYe3x80xHcUX8x8W+j0mmGAVIKZJFk6TSHCauYwg3MU=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by PAXPR08MB6735.eurprd08.prod.outlook.com
- (2603:10a6:102:138::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 14:28:59 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 14:28:58 +0000
-Date: Wed, 17 Sep 2025 15:28:55 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
-	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	maz@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 2/5] arm64: initialise SCTLR2_ELx register at boot time
-Message-ID: <aMrFp/2TY2BYQ76W@e129823.arm.com>
-References: <20250821172408.2101870-1-yeoreum.yun@arm.com>
- <20250821172408.2101870-3-yeoreum.yun@arm.com>
- <aLW4A3rTcJvA0c+j@e133380.arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLW4A3rTcJvA0c+j@e133380.arm.com>
-X-ClientProxiedBy: LO4P265CA0159.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c7::9) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010362D4B71;
+	Wed, 17 Sep 2025 14:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758119401; cv=none; b=IzYUVq2fHRFoF9GGhY2oQ1yOl6J3lSis7+Go1nDQi6lPlE59Gq3emRVzvC3Jo5dGNUvqfeTZ3/VYjoZA3rjFlwlEM+P+gR1rQBhPZoRRu1clkz1MYjK5D2nCpiLSI0v0h5X6OnFcLASPUyKS+Vzuk8TfhpKRuVVHe6DMARg2S/M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758119401; c=relaxed/simple;
+	bh=6AC9IsRJupEPZp611yucaK3pIYA+QofGgL5/NzSNUgY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uNSBOED+6iaLueZsuv6pS6uOyc+6Ln5EODgM8N5gpukwFwUYh0uk6QQi2M7g3rOfT8typIvkf4rseteOjYA1RgZOpZNoWZgYDiM5ssztnIempE/1fMltnskB0OFjkAmTUZU4WSpBNSXSatxqU6YPEXw6fct4S5iF/r4HoAgrOo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S9LDaaun; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8XfmS010827;
+	Wed, 17 Sep 2025 14:29:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jawXIxis37bWIPOnqourLw0/qXEIwvwtvxlta3lSn7I=; b=S9LDaaunSk35t9We
+	wqxw2m5U488RVf+3I1tfmC8Cs6JIYP2+9QEfSzdXUAnzgCIiS3cRMWROyuWqvpcB
+	6ZOQsGTUxu2uPDc6bsLfPDjM1f73fJRYk5Bt5pS/cuxD5lgvSdHga0d3Pjb1FK75
+	/WQW04C4/UfOiP4yoc2tCuot48MxZWQ0KUADbY6lxlhUEreN7l2IduTX014kLyXW
+	vXCDGIKdh6RaoRqQ2KkqTwQQfBCSXe9665dE+jbqrUXfyDv+DqeI5ofHHExVlzpc
+	sGZlI4KMgF7yBcKEa2718wS8EqfDGzrJWq4fBDRTD8l/7sWXKcNygUWePGCo5hHB
+	YjugkA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxtp9y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 14:29:48 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58HETl9v012967
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 14:29:47 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 17 Sep
+ 2025 07:29:43 -0700
+Message-ID: <8138a25e-eb1b-4edc-92d1-270066b8fc85@quicinc.com>
+Date: Wed, 17 Sep 2025 19:59:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|PAXPR08MB6735:EE_|AMS1EPF0000004C:EE_|DU0PR08MB9874:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8aecd232-aa8e-470d-c39d-08ddf5f69d8f
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?jwjnEyMckAhyhJxSoZ8+Rv+riOV8AJgu3Psu1FU7D629be/bExOpoBxBVRnB?=
- =?us-ascii?Q?hFlcOVRuwb2KyvQ7wSobXVu555FbLHWl7I42iQmUz0OLXZragfXxxTGvMWfe?=
- =?us-ascii?Q?CCppBWjZ0XdFSlhuLKaipFotApR9MrQcQ/+z/AfxBXLU26zx0rrYnv8ZskrF?=
- =?us-ascii?Q?oFcq5CkpGc4XQ3VF7rmkQjZ24Oz45PbX/ycGSygDcrLQlr7a7ugzl1CGjGgG?=
- =?us-ascii?Q?S8BzUGIQmU+vadMB7AE+n5aGqWoyaU42ccy2tWl1+pH4CbpTamkhMLnPMKzj?=
- =?us-ascii?Q?HO6RBVbyuXzksXp6VblmZnhGbeoltVSg2p6/VS3EoFgM8O4HuC6C5wFp3bjr?=
- =?us-ascii?Q?P12acpSK/2uVn8G1n4yu5bsaY++PPfKMO0A/unNQV9cIJyotudYF2DtXA/Yo?=
- =?us-ascii?Q?w2eENiyeKNy0E2DPFeuf0nc/qs1CKBo7Ca/Ti390h/btRRPh+DfwTAYCXdX7?=
- =?us-ascii?Q?oz6UyoVej2IpZEWS//KNZVMp+Hv9rFzb/MaUvMjjjep4tx4/enqhvuo/pFgx?=
- =?us-ascii?Q?0/w5UFB5FJxyGp2qQyzea8Bj2whLzR4lwBfc0ToHxpIKumuFNtYIvaK9MHfE?=
- =?us-ascii?Q?ytltUuk/JWshTUAG/hWRMgdpNcynLwEvsZRU9P+07V2U8kstdW19443kwgKE?=
- =?us-ascii?Q?QEJC027HEptPwun8E3Pjzeb04eNw7L7u9BQBJpCK5G/z74C6ymvZUA2JFYbS?=
- =?us-ascii?Q?cyKcVfeNsbIJQUIUUpuLOFf25GS7DSafYKzHBoNcy7UHIlGKkjEEDjDs6i+f?=
- =?us-ascii?Q?MVbCePoavFavgVlcgqQmZ5LI5uQ1U3bKZ8cHjQZKhEF45SXRqIbeS81ob9Kc?=
- =?us-ascii?Q?jL+2tnIPOqgdmF+2ZZY/4nkJmzCs7+5tOcLGXaIExPOBF3X01YpdN9IpwYPF?=
- =?us-ascii?Q?23mxjLgLAFyWJ7rKhr+trX6u7zIQPrws7GTr7WFCWikceVqME4u982Fml3+L?=
- =?us-ascii?Q?/UvyYIMvGBdyNtZ3R2FsDzdLQPxSX8EV+pqIh+WTBJjA7X2Rr3tUXd7JlW0Q?=
- =?us-ascii?Q?/i0a9q3ChRmWDhTuuubS8SqIAfFS4OKnddrvRzhZiJfXaDbbgCeRvPpC9WvU?=
- =?us-ascii?Q?AuHJa2dojbplmFe8zlrl8L2UtQber77faNi2YrbGC01642WIPajcl87smFCK?=
- =?us-ascii?Q?EVaK9VaMAumIs1UhZIVhfsOzJG/AnmOzZH1YilQ1j0ursiQH3hZv3FCuiTMR?=
- =?us-ascii?Q?VA0fzz2Qo9lJGFznsaHPzqwWqpXMZaCUkHHH1kJdMdSiHnRQwQFDvUGYYLVR?=
- =?us-ascii?Q?QUvGYcC3T1Dh74svvVU3ta7EPC18JlZNLp0uedYjdxrSLEFyVHrVYnYaNzeW?=
- =?us-ascii?Q?hmkWOGniyozroFBWGL1hasVJjlp8gRS/7CP/2ssqHQmf6bnLTTBJBxYY0St4?=
- =?us-ascii?Q?UyWm7ByWcQkkfjtSfcK5eBRbRZWZyL8j4/EEfQJAJfuukrOUI3KoGL4GsLxH?=
- =?us-ascii?Q?CdfgC9wBTyk=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB6735
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS1EPF0000004C.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	31abadf5-aa59-4231-db77-08ddf5f689f7
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|82310400026|35042699022|376014|7416014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ymBFU9XnXESjV5j1F8BoIveZ207z0n7matTY7JueN39TU2Mu+4cKZ2n3AnUV?=
- =?us-ascii?Q?gdFuFVO+M+PSmU+SPRyaxSr49Plskjnl6s2XMGk5mFQVh42M8SINIv7j4fsY?=
- =?us-ascii?Q?fzKF95w+C11YqowFT96pOBQiBK1L9CV9xwTFK/eyGswjpL2dLtmxH2li7jpT?=
- =?us-ascii?Q?pjOXf210wOsNuGeRHwgi/i308Z8+6fCRY+IbDjJO4C+W+QfbE0sNBW0ThDmO?=
- =?us-ascii?Q?8wp6pFkOm1qEBdL1G0yZNgMLEyPfNYpYhERr0GDgkMTCoHgi00b1vB5aM9VT?=
- =?us-ascii?Q?v60rS+dskzbVZld4qVdiYXtNiQh2Gcpl5TzjnhsdYi8MmKRJofknCB0XrNfo?=
- =?us-ascii?Q?Px1UB6RcF7EkgT2Bx4y53lOkjvnau8blmsLACzgZ/t0hTXHyjPtHqOZ200PE?=
- =?us-ascii?Q?dnfrzG5c9qamPSYM27BqWU37irWJYtYb4gDVAXS4sKrImSkK7tzHyqTnKKsI?=
- =?us-ascii?Q?3jaeLigWq/d153Zip/6MBkXLb6rSJh3LRycstPsN3EAYeOq8EdQJq2sMSWCd?=
- =?us-ascii?Q?8Pjo3I6TDwNLFPV+vdidru+sAnic7XJhuVnlKXYIwS+rMEuImnE5DWdl5f5b?=
- =?us-ascii?Q?D/GTc5ElLcACeHQ8969Hq4wQOr6GNPSPslT9+7w1r67CeNXiWzhoD+bDhTy7?=
- =?us-ascii?Q?gzpX52+JJfgbEa3ShgUeXNRmqVd1nhIAR2AeRxImeQfq+TQqKd72LSdSK0Px?=
- =?us-ascii?Q?eATXKdvwi20L6lnby3MiQfXDsjdihRrjJkVYVhbDe7tJ9qwlyXSUXezJ4Gxe?=
- =?us-ascii?Q?wJkha3n/prHXuAHgyXFZgLjSt6XnGvSIVRboYVTgfMpVpMMfdvCwhSefCzZ6?=
- =?us-ascii?Q?J6BOnPYqpk4ViEZh7P2MID1HXnIh8v/2zHwQv5gMrvKriSh8JPgsHyRgQJew?=
- =?us-ascii?Q?tPiGADhI6tN28JBhD1MXK/dXVOW8wz1qjP6KA2BF7vtcA9OaKOmmmVUDi73F?=
- =?us-ascii?Q?LAbD3ThmHJGTL9AjFy1Ag5nZB4woQ+Z+8X/fBQKpC1HFpA/cwAkEldGW8eQi?=
- =?us-ascii?Q?cA0Dfm7Z0Owubt8rjziOV7D/OSXkzqULt94jfeyO99G9bV1wRJFxgLDjLUKF?=
- =?us-ascii?Q?pMmNRZjEkqe6NKzkR3fjGghocdd6jcw8Zdc1UBz7cJB1Ddxe2YwvDovnFl9b?=
- =?us-ascii?Q?CfErIfQ6fQLnCaLNFf9p6VM4kS9lcXV5cCWQD40mmcrmHH3o04rzAq0mUhK9?=
- =?us-ascii?Q?83a+1d88eMw8Pf3JFSiMHRbV6BYzlq0nEqwI7XZSceBPtoUmUtRROK9PWrnp?=
- =?us-ascii?Q?HwtZc/X8hHjTtGaxxi3uLnkSRyQyx/LEQx6xxnpn5cq7t9m75JWS4eXcEv42?=
- =?us-ascii?Q?p6GO/j8koSoXL0NWzEMmCv84vm1ctrE68TeFiyhBXkpF0d/6w66E+YTjby4k?=
- =?us-ascii?Q?Cno3vw/92Mf4JaJdYB2gxR7h4b/7wzxR6S/z3nDptAAh+1z0TM0iLhDlwfP0?=
- =?us-ascii?Q?QMWStHCVhrXjJpIth7p9m8eIyjiUF2AYgyroATMwxQIBRHYb/8Y1KJQoKysU?=
- =?us-ascii?Q?KLI9v03rNEhLJ/DHhFk8kMPTPjPIKYM2d49r?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(82310400026)(35042699022)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 14:29:30.9715
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8aecd232-aa8e-470d-c39d-08ddf5f69d8f
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS1EPF0000004C.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB9874
-
-Hi Dave,
-
-[...]
-
-> > diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-> > index 23be85d93348..c25c2aed5125 100644
-> > --- a/arch/arm64/include/asm/assembler.h
-> > +++ b/arch/arm64/include/asm/assembler.h
-> > @@ -738,6 +738,21 @@ alternative_endif
-> >  	set_sctlr sctlr_el2, \reg
-> >  .endm
-> >
-> > +/* Set SCTLR2_ELx to the @reg value. */
-> > +.macro set_sctlr2_elx, el, reg, tmp
-> > +	mrs_s	\tmp, SYS_ID_AA64MMFR3_EL1
-> > +	ubfx	\tmp, \tmp, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
-> > +	cbz	\tmp, .Lskip_sctlr2_\@
-> > +	.if	\el == 2
-> > +	msr_s	SYS_SCTLR2_EL2, \reg
-> > +	.elseif	\el == 12
-> > +	msr_s	SYS_SCTLR2_EL12, \reg
-> > +	.else
-> > +	msr_s	SYS_SCTLR2_EL1, \reg
-> > +	.endif
-> > +.Lskip_sctlr2_\@:
-> > +.endm
-> > +
->
-> You were right that just doing
->
-> 	msr_s	SYS_SCTLR_\el, \reg
->
-> here doesn't work.  It looks like we rely on the C preprocessor to
-> expand the SYS_FOO_REG names to numeric sysreg encodings.  By the time
-> the assembler macros are expanded, it is too late to construct sysreg
-> names -- the C preprocessor only runs once, before the assembler.
->
-> So, your code here looks reasonable.
->
-> But, it will still silently do the wrong thing if \el is empty or
-> garbage, so it is probably worth adding an error check:
->
-> 	.else
-> 	.error "Bad EL \"\el\" in set_sctlr2_elx"
-> 	.endif
->
->
-> Also, looking at all this again, the "1", "2" and "12" suffixes are not
-> really numbers: SYS_REG_EL02 would definitely not be the same thing as
-> SYS_REG_EL2 (although there is no _EL02 version of this particular
-> register).
->
-> So, can you use .ifc to do a string comparison instead?
->
-> If might be a good idea to migrate other macros that use an "el"
-> argument to do something similar -- although that probably doesn't
-> belong in this series.
->
-> The assembler seems to have no ".elseifc" directive, so you'll need
-> separate nested .ifc blocks:
->
-> 	.ifc	\el,2
-> 	msr_s	SYS_SCTLR2_EL2, \reg
-> 	.else
-> 	.ifc	\el,12
-> 	msr_s	SYS_SCTLR2_EL12, \reg
-> 	.else
-> 	.ifc	\el,1
-> 	msr_s	SYS_SCTLR2_EL1, \reg
-> 	.else
-> 	.error	"Bad EL \"\el\" in set_sctlr2_elx"
-> 	.endif
-> 	.endif
-> 	.endif
->
-> (Note, I've not tested this approach.  If you can think of a better
-> way, please feel free to suggest.)
->
-
-Sorry for late reply. but when I find some usage like above.
-I couldn't find any usage for this except this macro.
-In case of entry, since it just only chekc for "el0" case
-I think it doesn't need to apply this for them.
-
-So, let me apply this for set_sctlr2_elx only right now.
-when some new register requires this kind of pattern,
-let's apply at that time more generally.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
+ hs_rate
+To: Alim Akhtar <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
+        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mani@kernel.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
+ <CGME20250902164935epcas5p14139d20b5d385b99edfc0da60865dd98@epcas5p1.samsung.com>
+ <20250902164900.21685-3-quic_rdwivedi@quicinc.com>
+ <3a9201dc1c8e$affa1c10$0fee5430$@samsung.com>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <3a9201dc1c8e$affa1c10$0fee5430$@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX0z6uE4Lx1C4G
+ NL+W9Rd4ytpvINNx8Z45mZuF697l16+nWLfZumhOpeosTWQvPaRR/QlmMYA522ZvC9SH1fuOLbj
+ SN1LfnMT72plrSm9wEvPC6FYQkYIsoYNU1CHph1qfdBduju03AyzMhbM4UiJFuckAzGEcsGvD+4
+ 165+wp8P3P/bPk97+WK1+6IALNaSOnjZpi6GLmw238XIiG+1zb4KjsfypYqhyuutamLt9hKwr5n
+ 45UXPgbsREISEn5o+NvzyHSlAeUdz7GfT4k8Uu34Q/bd6cRPU5+dc2sOptB55Do6kom+U+Oy3Pl
+ dtofFuMizxwjPnCD2mBmz+8WncKRSVLDUgmw/y8rwxKZCOQ+YsmtRVfvq5Ar+ZrchMThcAnmL73
+ eU8rtdKo
+X-Proofpoint-ORIG-GUID: Zp6r04OFxRdBFBG5JyIeQwTXDFXOnjmT
+X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cac5dc cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=hD80L64hAAAA:8 a=JF9118EUAAAA:8 a=N54-gffFAAAA:8 a=VwQbUJbxAAAA:8
+ a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8 a=OIpetahlEYfThk03V3EA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=xVlTc564ipvMDusKsbsT:22 a=zSyb8xVVt2t83sZkrLMb:22
+X-Proofpoint-GUID: Zp6r04OFxRdBFBG5JyIeQwTXDFXOnjmT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
 
-Thanks.
 
---
-Sincerely,
-Yeoreum Yun
+On 03-Sep-25 10:23 AM, Alim Akhtar wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> Sent: Tuesday, September 2, 2025 10:19 PM
+>> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
+>> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
+>> conor+dt@kernel.org; mani@kernel.org;
+>> James.Bottomley@HansenPartnership.com; martin.petersen@oracle.com
+>> Cc: linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
+>> Subject: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
+>> hs_rate
+>>
+>> Remove the redundant else block that assigns PA_HS_MODE_B to hs_rate,
+>> as it is already assigned in ufshcd_init_host_params(). This avoids
+>> unnecessary reassignment and prevents overwriting hs_rate when it is
+>> explicitly set to a different value.
+>>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> ---
+> Better to send non-dependent patches separately.
+
+Hi Alim,
+
+Thanks for the suggestion. This patch is essential for our
+ufs-qcom changes to function correctly. Without it,
+the rate limit would be overwritten.
+
+Thanks,
+Ram.> 
+> Feel free to add:
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>  
+> 
+>>  drivers/ufs/host/ufs-qcom.c | 8 ++------
+>>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index
+>> 9574fdc2bb0f..1a93351fb70e 100644
+>> --- a/drivers/ufs/host/ufs-qcom.c
+>> +++ b/drivers/ufs/host/ufs-qcom.c
+>> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct
+>> ufs_hba *hba)
+>>  	 * If the HS-G5 PHY gear is used, update host_params->hs_rate to
+>> Rate-A,
+>>  	 * so that the subsequent power mode change shall stick to Rate-A.
+>>  	 */
+>> -	if (host->hw_ver.major == 0x5) {
+>> -		if (host->phy_gear == UFS_HS_G5)
+>> -			host_params->hs_rate = PA_HS_MODE_A;
+>> -		else
+>> -			host_params->hs_rate = PA_HS_MODE_B;
+>> -	}
+>> +	if (host->hw_ver.major == 0x5 && host->phy_gear == UFS_HS_G5)
+>> +		host_params->hs_rate = PA_HS_MODE_A;
+>>
+>>  	mode = host_params->hs_rate == PA_HS_MODE_B ?
+>> PHY_MODE_UFS_HS_B : PHY_MODE_UFS_HS_A;
+>>
+>> --
+>> 2.50.1
+> 
+> 
+
 
