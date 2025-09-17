@@ -1,735 +1,386 @@
-Return-Path: <linux-kernel+bounces-820423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0EAB7DCC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2478B7DC86
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63DCC188DA39
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3EE01886FD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C10C34F470;
-	Wed, 17 Sep 2025 10:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCB034F481;
+	Wed, 17 Sep 2025 10:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qisvuo3S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMwWUJ7V"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D1B2DA769;
-	Wed, 17 Sep 2025 10:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C318D309F0C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758103477; cv=none; b=MIqN4/HHm2gBvqVOvdC8GtFyV+qWwDDnwWiCiIOiDSw9HN134XtCKF/Zxh+iKGi0cX3OiX207bzpDtN6dU9ftSiauCaOkqmAI19Krd3vqauTB44/HVjPSXNJQN8HnMvrWNMf4KBPzCNakN7M/+5uaCtNG2HCNTDd4Ou0jvQDVJg=
+	t=1758103508; cv=none; b=eClhY2GvtooQyERp2vHL+E/P24Ot/0eG8DZdPs0GqDQaVUy/MK/yBPsEUvliN3al+mnMatTLhU2LwTkiG7wIPqppYah45IKCLfuxFMLe4cQYI0HC+JC7KtCxSbhUVmXKys7rt7fM06FruJP1aPJXipN4uchv3xRxf8NU6udIeKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758103477; c=relaxed/simple;
-	bh=msxAulJ/HILGusITqa34f0E+/ArWlIMP4J/LfOJwJKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRbQ6A6C5X3mjNLqUiqP38hH7Rh71CCS+an8gpyZDm9FIBV8VIr+VlPkZIRjH4/X8a98r66yP0tZlLBRm+ZpmL2lWb+dKIA4W7SETW+eJhm0st84b7jX2O1bob4UZfFwjnYccNeB0hgMwcnfdOXeZRQzD5WAczHniHnFWrhwW5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qisvuo3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88CB0C4CEF0;
-	Wed, 17 Sep 2025 10:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758103477;
-	bh=msxAulJ/HILGusITqa34f0E+/ArWlIMP4J/LfOJwJKg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qisvuo3SU0Ey8paVCOHismPqj7lT5racpsSVGMx8gGQVdsPxqWmcTQDFpKfmycScg
-	 CeNutTa38A5lzpEUEm2DkW7ThEwxshNJbcEJU31330wo4iqL8Hq2nAhVGYidU8IFbI
-	 XZhHf4x1Vz5qkzQDem+M8CJ+neTpysXBrWA7YW66TCgMpZZOC5aR+gWNSfgfPWydPa
-	 +oII2WUi3hv4Qa8BV3Q265jUuJDBfe0A3dLfEzwgREnK/qJVN/Mwcj3RoV+7PIzvMv
-	 zWlmgwdmkK22LhYtKps9cxtoKRFc3qVB99tuWiL1jgSmoQXWlERkfZpASyA09k88uT
-	 USmnYJQID84lg==
-Date: Wed, 17 Sep 2025 12:04:30 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, a.hindborg@kernel.org, 
-	alex.gaynor@gmail.com, aliceryhl@google.com, benno.lossin@proton.me, 
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, 
-	db48x@db48x.net, gary@garyguo.net, ojeda@kernel.org, tmgross@umich.edu, 
-	peter.hutterer@who-t.net
-Subject: Re: [PATCH v3 RESEND RESEND 2/3] rust: core abstractions for HID
- drivers
-Message-ID: <wjfjzjc626n55zvhksiyldobwubr2imbvfavqej333lvnka2wn@r4zfcjqtanvu>
-References: <20250913161222.3889-1-sergeantsagara@protonmail.com>
- <20250913161222.3889-3-sergeantsagara@protonmail.com>
+	s=arc-20240116; t=1758103508; c=relaxed/simple;
+	bh=tWVdEkVHEy6G4nvyP0NsCicBdSwaQuQTYho95ChUS6o=;
+	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
+	 In-Reply-To:Cc:To:References; b=Kqy13E3d7w4Pw8OM+6MjxS/752iPUyphT4zoQZEu26SaswjOUVuWWhkSeNFxQCUcr6K1YnBv8VuEyQ3nO+VOo1R7s8inVRmfAyKTvDKBYsy0yfGiqVonH3LksyBIa9+pR8jJga2oWK47iZtIS2aA4wRfiTuCfTbL32t5DccDJK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMwWUJ7V; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b54fa8a371fso51800a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:05:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758103506; x=1758708306; darn=vger.kernel.org;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+6IorbE+hVHYQT1y6KYFtDWV5rbTEqJlJVBp1L7jsE=;
+        b=aMwWUJ7V2ApsTYXxnCEKNWeYFUDhS7P1X9EwUcQ1oabsAQLD0bNLWomXsuXG1FBE7X
+         sqYgqF37BXEHLo6zpy9wF7Z+Ld6hYpSXUbFUvDoL6mVXrIMEB0J+0xd3tPTy1uy+iab5
+         /bIvjb0TQcylW0NqKI/DycVyA1iXNFAtreb5Vf9mr5PG3Wlct15uPtF9ULY5TOZyGNOk
+         pT1dHconTpJa9x0RIrutprU6fn0NxWjcBJxj364KEPKCd56uFp0j9uoOXqqwTXO0TqY9
+         NV/MPKOJB5pQYU52FkXFbJhojPFBSXvp3EOHVMeD5S4nvSc84rhScNzqY2K8b/dbs6K7
+         cWuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758103506; x=1758708306;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+6IorbE+hVHYQT1y6KYFtDWV5rbTEqJlJVBp1L7jsE=;
+        b=pQ4iNV6SwXDXgHEFCLU99jYJaBoy7FioJmdROkLNL9NSGgcdxFT4UIEdf/hYYRdqHC
+         7b00PlvVOYBnXn/CLzbInRcWQecjGb4LcgH0SOD9S1kiRK/8wNQGExzb7YArjcIklitP
+         o1JoMeGi01g08tcpyFWDoRcNOdBX9algcHZHUmLi2Uzfeyy1BqMydwQ+SbH+8snD6iSL
+         ofgGGPUql8jEuxzIHkTNyyikQsDKl2h+KooDoiKCygrWq4YXaT8aW+5kE2hBz5c7JxgC
+         yipEkIQOIFDv7bSaoPAMAloR6Sz0wc6tspUM9R3BV6EW2BJubQYWqavKIqC5//vBIL6L
+         J5/Q==
+X-Gm-Message-State: AOJu0YwXcjwcY6HLGVipMK8+o0vBMY3BpU23QmLJ95SQffPAqepvkSb/
+	DXmi2X1JcjGCclqF7WJN2OfmSbsoLkOveveSkZ893H4gvseV6xbfpl0F
+X-Gm-Gg: ASbGncuY5+1WXp0atdugcezBtZkbr3aC+Y0aEbRWggiXflgeGGWAx6eR5qu5nfjc7Su
+	nh+y02RaQUTqJUWbdFtcR9swcNTnEDVVDiUroxbtCG3xnElg0WOItI9ZzdUj0yUCRM+n4XOThcT
+	VW5XMIQj3+l/SVPw854mMru+KSzwv2iHjPsXnSSYnp6K23p283auID0VRFRJLUss98rvfnedqJp
+	tyo6ANPkG/ZvzI1PLR2v4HIC2T6ShulEkmZtrujpKK8KbLgqjaWNe1KvDIKM1QQg3ivGIP52Gd4
+	Rbe9FixaQlsvt8yjDLIpn/ehT9QkEx3K8S330TlW2tjWJTisN0KQjgYWIlVxoPC2v3IecDlWagj
+	KICRmqCMrjSZMIUn1VXvFAJ72ugrv6RH7W3X8/q0cbuZT
+X-Google-Smtp-Source: AGHT+IGp63ACmwnCmwh1RXx2S9YMbzhM4BEgxkrdUIOWOa6hEAtUHBg3Ll05m5McRUqYP0JoUqbEiQ==
+X-Received: by 2002:a17:903:2b0c:b0:265:acc3:d2e7 with SMTP id d9443c01a7336-26812194204mr20063935ad.16.1758103505899;
+        Wed, 17 Sep 2025 03:05:05 -0700 (PDT)
+Received: from smtpclient.apple ([58.247.22.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264eeab7bf1sm97458265ad.5.2025.09.17.03.04.57
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Sep 2025 03:05:05 -0700 (PDT)
+From: =?utf-8?B?6ZmI5Y2O5pit77yITHlpY2Fu77yJ?= <lyican53@gmail.com>
+Message-Id: <FF69D584-EEF9-4B5A-BE30-24EEBF354780@gmail.com>
+Content-Type: multipart/mixed;
+	boundary="Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250913161222.3889-3-sergeantsagara@protonmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [RFC] Fix potential undefined behavior in __builtin_clz usage
+ with GCC 11.1.0
+Date: Wed, 17 Sep 2025 18:04:42 +0800
+In-Reply-To: <80e107f13c239f5a8f9953dad634c7419c34e31b.camel@ibm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+ Xiubo Li <xiubli@redhat.com>,
+ "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ "idryomov@gmail.com" <idryomov@gmail.com>,
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+ "seanjc@google.com" <seanjc@google.com>
+References: <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
+ <80e107f13c239f5a8f9953dad634c7419c34e31b.camel@ibm.com>
+X-Mailer: Apple Mail (2.3826.700.81)
 
-On Sep 13 2025, Rahul Rameshbabu wrote:
-> These abstractions enable the development of HID drivers in Rust by binding
-> with the HID core C API. They provide Rust types that map to the
-> equivalents in C. In this initial draft, only hid_device and hid_device_id
-> are provided direct Rust type equivalents. hid_driver is specially wrapped
-> with a custom Driver type. The module_hid_driver! macro provides analogous
-> functionality to its C equivalent. Only the .report_fixup callback is
-> binded to Rust so far.
-> 
-> Future work for these abstractions would include more bindings for common
-> HID-related types, such as hid_field, hid_report_enum, and hid_report as
-> well as more bus callbacks. Providing Rust equivalents to useful core HID
-> functions will also be necessary for HID driver development in Rust.
-> 
-> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-> ---
-> 
-> Notes:
->     Some points I did not address from the last review cycle:
->     
->         * I did not look into autogenerating all the getter functions for various
->           fields exported from the binded C structures.
->           - I would be interested in hearing opinions from folks actively involved
->             with Rust for Linux on this topic.
->     
->     Changelog:
->     
->         v2->v3:
->           * Implemented AlwaysRefCounted trait using embedded struct device's
->             reference counts instead of the separate reference counter in struct
->             hid_device
->           * Used &raw mut as appropriate
->           * Binded include/linux/device.h for get_device and put_device
->           * Cleaned up various comment related formatting
->           * Minified dev_err! format string
->           * Updated Group enum to be repr(u16)
->           * Implemented From<u16> trait for Group
->           * Added TODO comment when const_trait_impl stabilizes
->           * Made group getter functions return a Group variant instead of a raw
->             number
->           * Made sure example code builds
->         v1->v2:
->           * Binded drivers/hid/hid-ids.h for use in Rust drivers
->           * Remove pre-emptive referencing of a C HID driver instance before
->             it is fully initialized in the driver registration path
->           * Moved static getters to generic Device trait implementation, so
->             they can be used by all device::DeviceContext
->           * Use core macros for supporting DeviceContext transitions
->           * Implemented the AlwaysRefCounted and AsRef traits
->           * Make use for dev_err! as appropriate
->         RFC->v1:
->           * Use Danilo's core infrastructure
->           * Account for HID device groups
->           * Remove probe and remove callbacks
->           * Implement report_fixup support
->           * Properly comment code including SAFETY comments
-> 
->  MAINTAINERS                     |   9 +
->  drivers/hid/Kconfig             |   8 +
->  rust/bindings/bindings_helper.h |   3 +
->  rust/kernel/hid.rs              | 503 ++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs              |   2 +
->  5 files changed, 525 insertions(+)
->  create mode 100644 rust/kernel/hid.rs
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index dd810da5261b..6c60765f2aaa 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10686,6 +10686,15 @@ F:	include/uapi/linux/hid*
->  F:	samples/hid/
->  F:	tools/testing/selftests/hid/
->  
-> +HID CORE LAYER [RUST]
-> +M:	Rahul Rameshbabu <sergeantsagara@protonmail.com>
-> +R:	Benjamin Tissoires <bentiss@kernel.org>
-> +L:	linux-input@vger.kernel.org
-> +S:	Maintained
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git rust
 
-FWIW, we (HID maintainers) are still undecided on how to handle that,
-and so it's a little bit postponed for now
+--Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-> +F:	drivers/hid/*.rs
+Hi Slava and Sean,
 
-Could you instead make it really independant by relying on
-drivers/hid/rust instead?
-We already have drivers/hid/bpf for HID-BPF related stuff, so it doesn't
-seem to be that much of an issue to have a separate rust dir.
+Thank you for the valuable feedback!
 
-This should allow for a cleaner separation without tinkering in Makefile
-or Kconfig if the HID rust tree is handled separately.
+CEPH FORMAL PATCH:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Cheers,
-Benjamin
+As requested by Slava, I've prepared a formal patch for the Ceph case.
+The patch adds proper zero checking before __builtin_clz() to prevent
+undefined behavior. Please find it attached as ceph_patch.patch.
 
-> +F:	rust/kernel/hid.rs
-> +
->  HID LOGITECH DRIVERS
->  R:	Filipe Laíns <lains@riseup.net>
->  L:	linux-input@vger.kernel.org
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index 43859fc75747..922e76e18af2 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -744,6 +744,14 @@ config HID_MEGAWORLD_FF
->  	Say Y here if you have a Mega World based game controller and want
->  	to have force feedback support for it.
->  
-> +config RUST_HID_ABSTRACTIONS
-> +	bool "Rust HID abstractions support"
-> +	depends on RUST
-> +	depends on HID=y
-> +	help
-> +	  Adds support needed for HID drivers written in Rust. It provides a
-> +	  wrapper around the C hid core.
-> +
->  config HID_REDRAGON
->  	tristate "Redragon keyboards"
->  	default !EXPERT
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 8cbb660e2ec2..7145fb1cdff1 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -45,6 +45,7 @@
->  #include <linux/cpufreq.h>
->  #include <linux/cpumask.h>
->  #include <linux/cred.h>
-> +#include <linux/device.h>
->  #include <linux/device/faux.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/errname.h>
-> @@ -52,6 +53,8 @@
->  #include <linux/file.h>
->  #include <linux/firmware.h>
->  #include <linux/fs.h>
-> +#include <linux/hid.h>
-> +#include "../../drivers/hid/hid-ids.h"
->  #include <linux/jiffies.h>
->  #include <linux/jump_label.h>
->  #include <linux/mdio.h>
-> diff --git a/rust/kernel/hid.rs b/rust/kernel/hid.rs
-> new file mode 100644
-> index 000000000000..a93804af8b78
-> --- /dev/null
-> +++ b/rust/kernel/hid.rs
-> @@ -0,0 +1,503 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2025 Rahul Rameshbabu <sergeantsagara@protonmail.com>
-> +
-> +//! Abstractions for the HID interface.
-> +//!
-> +//! C header: [`include/linux/hid.h`](srctree/include/linux/hid.h)
-> +
-> +use crate::{device, device_id::RawDeviceId, driver, error::*, prelude::*, types::Opaque};
-> +use core::{
-> +    marker::PhantomData,
-> +    ptr::{addr_of_mut, NonNull},
-> +};
-> +
-> +/// Indicates the item is static read-only.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_CONSTANT: u8 = bindings::HID_MAIN_ITEM_CONSTANT as u8;
-> +
-> +/// Indicates the item represents data from a physical control.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_VARIABLE: u8 = bindings::HID_MAIN_ITEM_VARIABLE as u8;
-> +
-> +/// Indicates the item should be treated as a relative change from the previous
-> +/// report.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_RELATIVE: u8 = bindings::HID_MAIN_ITEM_RELATIVE as u8;
-> +
-> +/// Indicates the item should wrap around when reaching the extreme high or
-> +/// extreme low values.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_WRAP: u8 = bindings::HID_MAIN_ITEM_WRAP as u8;
-> +
-> +/// Indicates the item should wrap around when reaching the extreme high or
-> +/// extreme low values.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_NONLINEAR: u8 = bindings::HID_MAIN_ITEM_NONLINEAR as u8;
-> +
-> +/// Indicates whether the control has a preferred state it will physically
-> +/// return to without user intervention.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_NO_PREFERRED: u8 = bindings::HID_MAIN_ITEM_NO_PREFERRED as u8;
-> +
-> +/// Indicates whether the control has a physical state where it will not send
-> +/// any reports.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_NULL_STATE: u8 = bindings::HID_MAIN_ITEM_NULL_STATE as u8;
-> +
-> +/// Indicates whether the control requires host system logic to change state.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_VOLATILE: u8 = bindings::HID_MAIN_ITEM_VOLATILE as u8;
-> +
-> +/// Indicates whether the item is fixed size or a variable buffer of bytes.
-> +///
-> +/// Refer to [Device Class Definition for HID 1.11]
-> +/// Section 6.2.2.5 Input, Output, and Feature Items.
-> +///
-> +/// [Device Class Definition for HID 1.11]: https://www.usb.org/sites/default/files/hid1_11.pdf
-> +pub const MAIN_ITEM_BUFFERED_BYTE: u8 = bindings::HID_MAIN_ITEM_BUFFERED_BYTE as u8;
-> +
-> +/// HID device groups are intended to help categories HID devices based on a set
-> +/// of common quirks and logic that they will require to function correctly.
-> +#[repr(u16)]
-> +pub enum Group {
-> +    /// Used to match a device against any group when probing.
-> +    Any = bindings::HID_GROUP_ANY as u16,
-> +
-> +    /// Indicates a generic device that should need no custom logic from the
-> +    /// core HID stack.
-> +    Generic = bindings::HID_GROUP_GENERIC as u16,
-> +
-> +    /// Maps multitouch devices to hid-multitouch instead of hid-generic.
-> +    Multitouch = bindings::HID_GROUP_MULTITOUCH as u16,
-> +
-> +    /// Used for autodetecing and mapping of HID sensor hubs to
-> +    /// hid-sensor-hub.
-> +    SensorHub = bindings::HID_GROUP_SENSOR_HUB as u16,
-> +
-> +    /// Used for autodetecing and mapping Win 8 multitouch devices to set the
-> +    /// needed quirks.
-> +    MultitouchWin8 = bindings::HID_GROUP_MULTITOUCH_WIN_8 as u16,
-> +
-> +    // Vendor-specific device groups.
-> +    /// Used to distinguish Synpatics touchscreens from other products. The
-> +    /// touchscreens will be handled by hid-multitouch instead, while everything
-> +    /// else will be managed by hid-rmi.
-> +    RMI = bindings::HID_GROUP_RMI as u16,
-> +
-> +    /// Used for hid-core handling to automatically identify Wacom devices and
-> +    /// have them probed by hid-wacom.
-> +    Wacom = bindings::HID_GROUP_WACOM as u16,
-> +
-> +    /// Used by logitech-djreceiver and logitech-djdevice to autodetect if
-> +    /// devices paied to the DJ receivers are DJ devices and handle them with
-> +    /// the device driver.
-> +    LogitechDJDevice = bindings::HID_GROUP_LOGITECH_DJ_DEVICE as u16,
-> +
-> +    /// Since the Valve Steam Controller only has vendor-specific usages,
-> +    /// prevent hid-generic from parsing its reports since there would be
-> +    /// nothing hid-generic could do for the device.
-> +    Steam = bindings::HID_GROUP_STEAM as u16,
-> +
-> +    /// Used to differentiate 27 Mhz frequency Logitech DJ devices from other
-> +    /// Logitech DJ devices.
-> +    Logitech27MHzDevice = bindings::HID_GROUP_LOGITECH_27MHZ_DEVICE as u16,
-> +
-> +    /// Used for autodetecting and mapping Vivaldi devices to hid-vivaldi.
-> +    Vivaldi = bindings::HID_GROUP_VIVALDI as u16,
-> +}
-> +
-> +// TODO: use `const_trait_impl` once stabilized:
-> +//
-> +// ```
-> +// impl const From<Group> for u16 {
-> +//     /// [`Group`] variants are represented by [`u16`] values.
-> +//     fn from(value: Group) -> Self {
-> +//         value as Self
-> +//     }
-> +// }
-> +// ```
-> +impl Group {
-> +    /// Internal function used to convert [`Group`] variants into [`u16`].
-> +    const fn into(self) -> u16 {
-> +        self as u16
-> +    }
-> +}
-> +
-> +impl From<u16> for Group {
-> +    /// [`u16`] values can be safely converted to [`Group`] variants.
-> +    fn from(value: u16) -> Self {
-> +        match value.into() {
-> +            bindings::HID_GROUP_GENERIC => Group::Generic,
-> +            bindings::HID_GROUP_MULTITOUCH => Group::Multitouch,
-> +            bindings::HID_GROUP_SENSOR_HUB => Group::SensorHub,
-> +            bindings::HID_GROUP_MULTITOUCH_WIN_8 => Group::MultitouchWin8,
-> +            bindings::HID_GROUP_RMI => Group::RMI,
-> +            bindings::HID_GROUP_WACOM => Group::Wacom,
-> +            bindings::HID_GROUP_LOGITECH_DJ_DEVICE => Group::LogitechDJDevice,
-> +            bindings::HID_GROUP_STEAM => Group::Steam,
-> +            bindings::HID_GROUP_LOGITECH_27MHZ_DEVICE => Group::Logitech27MHzDevice,
-> +            bindings::HID_GROUP_VIVALDI => Group::Vivaldi,
-> +            _ => Group::Any,
-> +        }
-> +    }
-> +}
-> +
-> +/// The HID device representation.
-> +///
-> +/// This structure represents the Rust abstraction for a C `struct hid_device`.
-> +/// The implementation abstracts the usage of an already existing C `struct
-> +/// hid_device` within Rust code that we get passed from the C side.
-> +///
-> +/// # Invariants
-> +///
-> +/// A [`Device`] instance represents a valid `struct hid_device` created by the
-> +/// C portion of the kernel.
-> +#[repr(transparent)]
-> +pub struct Device<Ctx: device::DeviceContext = device::Normal>(
-> +    Opaque<bindings::hid_device>,
-> +    PhantomData<Ctx>,
-> +);
-> +
-> +impl<Ctx: device::DeviceContext> Device<Ctx> {
-> +    fn as_raw(&self) -> *mut bindings::hid_device {
-> +        self.0.get()
-> +    }
-> +
-> +    /// Returns the HID transport bus ID.
-> +    pub fn bus(&self) -> u16 {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct hid_device`
-> +        unsafe { *self.as_raw() }.bus
-> +    }
-> +
-> +    /// Returns the HID report group.
-> +    pub fn group(&self) -> Group {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct hid_device`
-> +        unsafe { *self.as_raw() }.group.into()
-> +    }
-> +
-> +    /// Returns the HID vendor ID.
-> +    pub fn vendor(&self) -> u32 {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct hid_device`
-> +        unsafe { *self.as_raw() }.vendor
-> +    }
-> +
-> +    /// Returns the HID product ID.
-> +    pub fn product(&self) -> u32 {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct hid_device`
-> +        unsafe { *self.as_raw() }.product
-> +    }
-> +}
-> +
-> +// SAFETY: `Device` is a transparent wrapper of a type that doesn't depend on `Device`'s generic
-> +// argument.
-> +kernel::impl_device_context_deref!(unsafe { Device });
-> +kernel::impl_device_context_into_aref!(Device);
-> +
-> +// SAFETY: Instances of `Device` are always reference-counted.
-> +unsafe impl crate::types::AlwaysRefCounted for Device {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-> +        unsafe { bindings::get_device(&raw mut (*self.as_raw()).dev) };
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-> +        unsafe { bindings::put_device(&raw mut (*obj.cast::<bindings::hid_device>().as_ptr()).dev) }
-> +    }
-> +}
-> +
-> +impl<Ctx: device::DeviceContext> AsRef<device::Device<Ctx>> for Device<Ctx> {
-> +    fn as_ref(&self) -> &device::Device<Ctx> {
-> +        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
-> +        // `struct hid_device`.
-> +        let dev = unsafe { addr_of_mut!((*self.as_raw()).dev) };
-> +
-> +        // SAFETY: `dev` points to a valid `struct device`.
-> +        unsafe { device::Device::as_ref(dev) }
-> +    }
-> +}
-> +
-> +/// Abstraction for the HID device ID structure `struct hid_device_id`.
-> +#[repr(transparent)]
-> +#[derive(Clone, Copy)]
-> +pub struct DeviceId(bindings::hid_device_id);
-> +
-> +impl DeviceId {
-> +    /// Equivalent to C's `HID_USB_DEVICE` macro.
-> +    ///
-> +    /// Create a new `hid::DeviceId` from a group, vendor ID, and device ID
-> +    /// number.
-> +    pub const fn new_usb(group: Group, vendor: u32, product: u32) -> Self {
-> +        Self(bindings::hid_device_id {
-> +            bus: 0x3, // BUS_USB
-> +            group: group.into(),
-> +            vendor,
-> +            product,
-> +            driver_data: 0,
-> +        })
-> +    }
-> +
-> +    /// Returns the HID transport bus ID.
-> +    pub fn bus(&self) -> u16 {
-> +        self.0.bus
-> +    }
-> +
-> +    /// Returns the HID report group.
-> +    pub fn group(&self) -> Group {
-> +        self.0.group.into()
-> +    }
-> +
-> +    /// Returns the HID vendor ID.
-> +    pub fn vendor(&self) -> u32 {
-> +        self.0.vendor
-> +    }
-> +
-> +    /// Returns the HID product ID.
-> +    pub fn product(&self) -> u32 {
-> +        self.0.product
-> +    }
-> +}
-> +
-> +// SAFETY:
-> +// * `DeviceId` is a `#[repr(transparent)` wrapper of `hid_device_id` and does not add
-> +//   additional invariants, so it's safe to transmute to `RawType`.
-> +// * `DRIVER_DATA_OFFSET` is the offset to the `driver_data` field.
-> +unsafe impl RawDeviceId for DeviceId {
-> +    type RawType = bindings::hid_device_id;
-> +
-> +    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::hid_device_id, driver_data);
-> +
-> +    fn index(&self) -> usize {
-> +        self.0.driver_data
-> +    }
-> +}
-> +
-> +/// [`IdTable`] type for HID.
-> +pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
-> +
-> +/// Create a HID [`IdTable`] with its alias for modpost.
-> +#[macro_export]
-> +macro_rules! hid_device_table {
-> +    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
-> +        const $table_name: $crate::device_id::IdArray<
-> +            $crate::hid::DeviceId,
-> +            $id_info_type,
-> +            { $table_data.len() },
-> +        > = $crate::device_id::IdArray::new($table_data);
-> +
-> +        $crate::module_device_table!("hid", $module_table_name, $table_name);
-> +    };
-> +}
-> +
-> +/// The HID driver trait.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// use kernel::{bindings, device, hid};
-> +///
-> +/// struct MyDriver;
-> +///
-> +/// kernel::hid_device_table!(
-> +///     HID_TABLE,
-> +///     MODULE_HID_TABLE,
-> +///     <MyDriver as hid::Driver>::IdInfo,
-> +///     [(
-> +///         hid::DeviceId::new_usb(
-> +///             hid::Group::Steam,
-> +///             bindings::USB_VENDOR_ID_VALVE,
-> +///             bindings::USB_DEVICE_ID_STEAM_DECK,
-> +///         ),
-> +///         (),
-> +///     )]
-> +/// );
-> +///
-> +/// #[vtable]
-> +/// impl hid::Driver for MyDriver {
-> +///     type IdInfo = ();
-> +///     const ID_TABLE: hid::IdTable<Self::IdInfo> = &HID_TABLE;
-> +///
-> +///     /// This function is optional to implement.
-> +///     fn report_fixup<'a, 'b: 'a>(_hdev: &hid::Device<device::Core>, rdesc: &'b mut [u8]) -> &'a [u8] {
-> +///         // Perform some report descriptor fixup.
-> +///         rdesc
-> +///     }
-> +/// }
-> +/// ```
-> +/// Drivers must implement this trait in order to get a HID driver registered.
-> +/// Please refer to the `Adapter` documentation for an example.
-> +#[vtable]
-> +pub trait Driver: Send {
-> +    /// The type holding information about each device id supported by the driver.
-> +    // TODO: Use `associated_type_defaults` once stabilized:
-> +    //
-> +    // ```
-> +    // type IdInfo: 'static = ();
-> +    // ```
-> +    type IdInfo: 'static;
-> +
-> +    /// The table of device ids supported by the driver.
-> +    const ID_TABLE: IdTable<Self::IdInfo>;
-> +
-> +    /// Called before report descriptor parsing. Can be used to mutate the
-> +    /// report descriptor before the core HID logic processes the descriptor.
-> +    /// Useful for problematic report descriptors that prevent HID devices from
-> +    /// functioning correctly.
-> +    ///
-> +    /// Optional to implement.
-> +    fn report_fixup<'a, 'b: 'a>(_hdev: &Device<device::Core>, _rdesc: &'b mut [u8]) -> &'a [u8] {
-> +        build_error!(VTABLE_DEFAULT_ERROR)
-> +    }
-> +}
-> +
-> +/// An adapter for the registration of HID drivers.
-> +pub struct Adapter<T: Driver>(T);
-> +
-> +// SAFETY: A call to `unregister` for a given instance of `RegType` is guaranteed to be valid if
-> +// a preceding call to `register` has been successful.
-> +unsafe impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
-> +    type RegType = bindings::hid_driver;
-> +
-> +    unsafe fn register(
-> +        hdrv: &Opaque<Self::RegType>,
-> +        name: &'static CStr,
-> +        module: &'static ThisModule,
-> +    ) -> Result {
-> +        // SAFETY: It's safe to set the fields of `struct hid_driver` on initialization.
-> +        unsafe {
-> +            (*hdrv.get()).name = name.as_char_ptr();
-> +            (*hdrv.get()).id_table = T::ID_TABLE.as_ptr();
-> +            (*hdrv.get()).report_fixup = if T::HAS_REPORT_FIXUP {
-> +                Some(Self::report_fixup_callback)
-> +            } else {
-> +                None
-> +            };
-> +        }
-> +
-> +        // SAFETY: `hdrv` is guaranteed to be a valid `RegType`
-> +        to_result(unsafe {
-> +            bindings::__hid_register_driver(hdrv.get(), module.0, name.as_char_ptr())
-> +        })
-> +    }
-> +
-> +    unsafe fn unregister(hdrv: &Opaque<Self::RegType>) {
-> +        // SAFETY: `hdrv` is guaranteed to be a valid `RegType`
-> +        unsafe { bindings::hid_unregister_driver(hdrv.get()) }
-> +    }
-> +}
-> +
-> +impl<T: Driver + 'static> Adapter<T> {
-> +    extern "C" fn report_fixup_callback(
-> +        hdev: *mut bindings::hid_device,
-> +        buf: *mut u8,
-> +        size: *mut kernel::ffi::c_uint,
-> +    ) -> *const u8 {
-> +        // SAFETY: The HID subsystem only ever calls the report_fixup callback
-> +        // with a valid pointer to a `struct hid_device`.
-> +        //
-> +        // INVARIANT: `hdev` is valid for the duration of
-> +        // `report_fixup_callback()`.
-> +        let hdev = unsafe { &*hdev.cast::<Device<device::Core>>() };
-> +
-> +        // SAFETY: The HID subsystem only ever calls the report_fixup callback
-> +        // with a valid pointer to a `kernel::ffi::c_uint`.
-> +        //
-> +        // INVARIANT: `size` is valid for the duration of
-> +        // `report_fixup_callback()`.
-> +        let buf_len: usize = match unsafe { *size }.try_into() {
-> +            Ok(len) => len,
-> +            Err(e) => {
-> +                dev_err!(
-> +                    hdev.as_ref(),
-> +                    "Cannot fix report description due to {}!\n",
-> +                    e
-> +                );
-> +
-> +                return buf;
-> +            }
-> +        };
-> +
-> +        // Build a mutable Rust slice from `buf` and `size`.
-> +        //
-> +        // SAFETY: The HID subsystem only ever calls the `report_fixup callback`
-> +        // with a valid pointer to a `u8` buffer.
-> +        //
-> +        // INVARIANT: `buf` is valid for the duration of
-> +        // `report_fixup_callback()`.
-> +        let rdesc_slice = unsafe { core::slice::from_raw_parts_mut(buf, buf_len) };
-> +        let rdesc_slice = T::report_fixup(hdev, rdesc_slice);
-> +
-> +        match rdesc_slice.len().try_into() {
-> +            // SAFETY: The HID subsystem only ever calls the report_fixup
-> +            // callback with a valid pointer to a `kernel::ffi::c_uint`.
-> +            //
-> +            // INVARIANT: `size` is valid for the duration of
-> +            // `report_fixup_callback()`.
-> +            Ok(len) => unsafe { *size = len },
-> +            Err(e) => {
-> +                dev_err!(
-> +                    hdev.as_ref(),
-> +                    "Fixed report description will not be used due to {}!\n",
-> +                    e
-> +                );
-> +
-> +                return buf;
-> +            }
-> +        }
-> +
-> +        rdesc_slice.as_ptr()
-> +    }
-> +}
-> +
-> +/// Declares a kernel module that exposes a single HID driver.
-> +///
-> +/// # Examples
-> +///
-> +/// ```ignore
-> +/// kernel::module_hid_driver! {
-> +///     type: MyDriver,
-> +///     name: "Module name",
-> +///     authors: ["Author name"],
-> +///     description: "Description",
-> +///     license: "GPL",
-> +/// }
-> +/// ```
-> +#[macro_export]
-> +macro_rules! module_hid_driver {
-> +    ($($f:tt)*) => {
-> +        $crate::module_driver!(<T>, $crate::hid::Adapter<T>, { $($f)* });
-> +    };
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index e88bc4b27d6e..44c107f20174 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -80,6 +80,8 @@
->  pub mod firmware;
->  pub mod fmt;
->  pub mod fs;
-> +#[cfg(CONFIG_RUST_HID_ABSTRACTIONS)]
-> +pub mod hid;
->  pub mod init;
->  pub mod io;
->  pub mod ioctl;
-> -- 
-> 2.47.2
-> 
-> 
+PROOF-OF-CONCEPT TEST CASE:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+
+I've also created a proof-of-concept test case that demonstrates the
+problematic input values that could trigger this bug. The test =
+identifies
+specific input values where (x & 0x1FFFF) becomes zero after the =
+increment
+and condition check.
+
+Key findings from the test:
+- Inputs like 0x7FFFF, 0x9FFFF, 0xBFFFF, 0xDFFFF, 0xFFFFF can trigger =
+the bug
+- These correspond to x+1 values where (x+1 & 0x18000) =3D=3D 0 and (x+1 =
+& 0x1FFFF) =3D=3D 0
+
+The test can be integrated into Ceph's existing test framework or =
+adapted
+for KUnit testing as you suggested. Please find it as ceph_poc_test.c.
+
+KVM CASE CLARIFICATION:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Thank you Sean for the detailed explanation about the KVM case. You're
+absolutely right that pages and test_dirty_ring_count are guaranteed to
+be non-zero in practice. I'll remove this from my analysis and focus on
+the genuine issues.
+
+BITOPS WRAPPER DISCUSSION:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+
+
+I appreciate you bringing Yuri into the discussion. The idea of using
+existing fls()/fls64() functions or creating new fls8()/fls16() variants
+sounds promising. Many __builtin_clz() calls in the kernel could indeed
+benefit from these safer alternatives.
+
+STATUS UPDATE:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Ceph: Formal patch and test case ready for review
+2. KVM: Confirmed not an issue in practice (thanks Sean)
+3. SCSI: Still investigating the drivers/scsi/elx/libefc_sli/sli4.h case
+4. Bitops: Awaiting input from Yuri on kernel-wide improvements
+
+NEXT STEPS:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Please review the Ceph patch and test case (Slava)
+2. Happy to work with Yuri on bitops improvements if there's interest
+3. For SCSI maintainers: would you like me to prepare a similar analysis =
+for the sli_convert_mask_to_count() function?
+4. Can prepare additional patches for any other confirmed cases
+
+Questions for maintainers:
+- Slava: Should the Ceph patch go through ceph-devel first, or directly =
+to you?
+- Any specific requirements for the test case integration?
+- SCSI maintainers: Is the drivers/scsi/elx/libefc_sli/sli4.h case worth =
+investigating further?
+
+Best regards,
+Huazhao Chen
+lyican53@gmail.com
+
+---
+
+Attachments:
+- ceph_patch.patch: Formal patch for net/ceph/crush/mapper.c
+- ceph_poc_test.c: Proof-of-concept test case demonstrating the issue
+
+--Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
+Content-Disposition: attachment;
+	filename=ceph_poc_test.c
+Content-Type: application/octet-stream;
+	x-unix-mode=0644;
+	name="ceph_poc_test.c"
+Content-Transfer-Encoding: quoted-printable
+
+/*=0A=20*=20Proof-of-concept=20test=20case=20for=20Ceph=20CRUSH=20mapper=20=
+GCC=20101175=20bug=0A=20*=20=0A=20*=20This=20test=20demonstrates=20the=20=
+potential=20undefined=20behavior=20in=20crush_ln()=0A=20*=20when=20=
+__builtin_clz()=20is=20called=20with=20zero=20argument.=0A=20*=20=0A=20*=20=
+Can=20be=20integrated=20into=20existing=20Ceph=20unit=20test=20framework=20=
+or=20adapted=0A=20*=20for=20KUnit=20testing=20as=20suggested=20by=20=
+Slava.=0A=20*/=0A=0A#include=20<stdio.h>=0A#include=20<stdint.h>=0A=
+#include=20<assert.h>=0A=0A/*=20Simplified=20version=20of=20the=20=
+problematic=20crush_ln=20function=20*/=0Astatic=20uint64_t=20=
+crush_ln_original(unsigned=20int=20xin)=0A{=0A=20=20=20=20unsigned=20int=20=
+x=20=3D=20xin;=0A=20=20=20=20int=20iexpon=20=3D=2015;=0A=20=20=20=20=0A=20=
+=20=20=20x++;=0A=20=20=20=20=0A=20=20=20=20/*=20This=20is=20where=20the=20=
+bug=20can=20occur=20*/=0A=20=20=20=20if=20(!(x=20&=200x18000))=20{=0A=20=20=
+=20=20=20=20=20=20/*=20PROBLEMATIC:=20no=20zero=20check=20before=20=
+__builtin_clz=20*/=0A=20=20=20=20=20=20=20=20int=20bits=20=3D=20=
+__builtin_clz(x=20&=200x1FFFF)=20-=2016;=0A=20=20=20=20=20=20=20=20x=20=
+<<=3D=20bits;=0A=20=20=20=20=20=20=20=20iexpon=20=3D=2015=20-=20bits;=0A=20=
+=20=20=20}=0A=20=20=20=20=0A=20=20=20=20return=20(uint64_t)x=20|=20=
+((uint64_t)iexpon=20<<=2032);=0A}=0A=0A/*=20Fixed=20version=20with=20=
+zero=20check=20*/=0Astatic=20uint64_t=20crush_ln_fixed(unsigned=20int=20=
+xin)=0A{=0A=20=20=20=20unsigned=20int=20x=20=3D=20xin;=0A=20=20=20=20int=20=
+iexpon=20=3D=2015;=0A=20=20=20=20=0A=20=20=20=20x++;=0A=20=20=20=20=0A=20=
+=20=20=20if=20(!(x=20&=200x18000))=20{=0A=20=20=20=20=20=20=20=20=
+uint32_t=20masked=20=3D=20x=20&=200x1FFFF;=0A=20=20=20=20=20=20=20=20/*=20=
+FIXED:=20add=20zero=20check=20*/=0A=20=20=20=20=20=20=20=20int=20bits=20=
+=3D=20masked=20?=20__builtin_clz(masked)=20-=2016=20:=2016;=0A=20=20=20=20=
+=20=20=20=20x=20<<=3D=20bits;=0A=20=20=20=20=20=20=20=20iexpon=20=3D=20=
+15=20-=20bits;=0A=20=20=20=20}=0A=20=20=20=20=0A=20=20=20=20return=20=
+(uint64_t)x=20|=20((uint64_t)iexpon=20<<=2032);=0A}=0A=0A/*=20Test=20=
+function=20to=20find=20problematic=20input=20values=20*/=0Avoid=20=
+test_crush_ln_edge_cases(void)=0A{=0A=20=20=20=20printf("=3D=3D=3D=20=
+Ceph=20CRUSH=20Mapper=20GCC=20101175=20Bug=20Test=20=3D=3D=3D\n\n");=0A=20=
+=20=20=20=0A=20=20=20=20/*=20Test=20values=20that=20could=20trigger=20=
+the=20bug=20*/=0A=20=20=20=20unsigned=20int=20problematic_inputs[]=20=3D=20=
+{=0A=20=20=20=20=20=20=20=200x17FFF,=20=20=20=20/*=20x+1=20=3D=20=
+0x18000,=20(x+1=20&=200x18000)=20=3D=200x18000=20-=20not=20triggered=20=
+*/=0A=20=20=20=20=20=20=20=200x7FFF,=20=20=20=20=20/*=20x+1=20=3D=20=
+0x8000,=20=20(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=
+=3D=200x8000=20-=20safe=20*/=0A=20=20=20=20=20=20=20=200xFFFF,=20=20=20=20=
+=20/*=20x+1=20=3D=200x10000,=20(x+1=20&=200x18000)=20=3D=200=20and=20=
+(x+1=20&=200x1FFFF)=20=3D=200x10000=20-=20safe=20*/=0A=20=20=20=20=20=20=20=
+=200x7FFFF,=20=20=20=20/*=20x+1=20=3D=200x80000,=20(x+1=20&=200x18000)=20=
+=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=
+=20=20=20=20=20=20=200x9FFFF,=20=20=20=20/*=20x+1=20=3D=200xA0000,=20=
+(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20=
+PROBLEMATIC!=20*/=0A=20=20=20=20=20=20=20=200xBFFFF,=20=20=20=20/*=20x+1=20=
+=3D=200xC0000,=20(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=20=
+0x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=20=20=20=20=20=20=20=
+0xDFFFF,=20=20=20=20/*=20x+1=20=3D=200xE0000,=20(x+1=20&=200x18000)=20=3D=20=
+0=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=20=20=
+=20=20=20=20=200xFFFFF,=20=20=20=20/*=20x+1=20=3D=200x100000,=20(x+1=20&=20=
+0x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20=
+PROBLEMATIC!=20*/=0A=20=20=20=20};=0A=20=20=20=20=0A=20=20=20=20int=20=
+num_tests=20=3D=20sizeof(problematic_inputs)=20/=20=
+sizeof(problematic_inputs[0]);=0A=20=20=20=20int=20bugs_found=20=3D=200;=0A=
+=20=20=20=20=0A=20=20=20=20printf("Testing=20%d=20potentially=20=
+problematic=20input=20values:\n\n",=20num_tests);=0A=20=20=20=20=
+printf("Input=20=20=20=20|=20x+1=20=20=20=20=20=20|=20Condition=20Check=20=
+|=20Masked=20Value=20|=20Status\n");=0A=20=20=20=20=
+printf("---------|----------|-----------------|--------------|--------\n")=
+;=0A=20=20=20=20=0A=20=20=20=20for=20(int=20i=20=3D=200;=20i=20<=20=
+num_tests;=20i++)=20{=0A=20=20=20=20=20=20=20=20unsigned=20int=20input=20=
+=3D=20problematic_inputs[i];=0A=20=20=20=20=20=20=20=20unsigned=20int=20=
+x=20=3D=20input=20+=201;=0A=20=20=20=20=20=20=20=20bool=20condition_met=20=
+=3D=20!(x=20&=200x18000);=0A=20=20=20=20=20=20=20=20unsigned=20int=20=
+masked=20=3D=20x=20&=200x1FFFF;=0A=20=20=20=20=20=20=20=20=0A=20=20=20=20=
+=20=20=20=20printf("0x%06X=20|=200x%06X=20|=20%-15s=20|=200x%05X=20=20=20=
+=20|=20",=20=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20input,=20x,=20=
+=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20condition_met=20?=20=
+"TRUE"=20:=20"FALSE",=20=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+masked);=0A=20=20=20=20=20=20=20=20=0A=20=20=20=20=20=20=20=20if=20=
+(condition_met=20&&=20masked=20=3D=3D=200)=20{=0A=20=20=20=20=20=20=20=20=
+=20=20=20=20printf("BUG!=20Zero=20passed=20to=20__builtin_clz\n");=0A=20=20=
+=20=20=20=20=20=20=20=20=20=20bugs_found++;=0A=20=20=20=20=20=20=20=20}=20=
+else=20if=20(condition_met)=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20=
+printf("Safe=20(non-zero=20argument)\n");=0A=20=20=20=20=20=20=20=20}=20=
+else=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20printf("Condition=20not=20=
+met=20(safe)\n");=0A=20=20=20=20=20=20=20=20}=0A=20=20=20=20}=0A=20=20=20=
+=20=0A=20=20=20=20printf("\n=3D=3D=3D=20Summary=20=3D=3D=3D\n");=0A=20=20=
+=20=20printf("Total=20tests:=20%d\n",=20num_tests);=0A=20=20=20=20=
+printf("Potential=20bugs=20found:=20%d\n",=20bugs_found);=0A=20=20=20=20=0A=
+=20=20=20=20if=20(bugs_found=20>=200)=20{=0A=20=20=20=20=20=20=20=20=
+printf("\n=E2=9A=A0=EF=B8=8F=20=20WARNING:=20Found=20inputs=20that=20=
+could=20trigger=20undefined=20behavior!\n");=0A=20=20=20=20=20=20=20=20=
+printf("These=20inputs=20cause=20__builtin_clz(0)=20to=20be=20called,=20=
+which=20has\n");=0A=20=20=20=20=20=20=20=20printf("undefined=20behavior=20=
+when=20compiled=20with=20GCC=2011.1.0=20-march=3Dx86-64-v3=20-O1\n");=0A=20=
+=20=20=20}=20else=20{=0A=20=20=20=20=20=20=20=20printf("\n=E2=9C=85=20No=20=
+obvious=20problematic=20inputs=20found=20in=20this=20test=20set.\n");=0A=20=
+=20=20=20}=0A=20=20=20=20=0A=20=20=20=20/*=20Test=20that=20fixed=20=
+version=20handles=20problematic=20cases=20*/=0A=20=20=20=20if=20=
+(bugs_found=20>=200)=20{=0A=20=20=20=20=20=20=20=20printf("\n=3D=3D=3D=20=
+Testing=20Fixed=20Version=20=3D=3D=3D\n");=0A=20=20=20=20=20=20=20=20for=20=
+(int=20i=20=3D=200;=20i=20<=20num_tests;=20i++)=20{=0A=20=20=20=20=20=20=20=
+=20=20=20=20=20unsigned=20int=20input=20=3D=20problematic_inputs[i];=0A=20=
+=20=20=20=20=20=20=20=20=20=20=20unsigned=20int=20x=20=3D=20input=20+=20=
+1;=0A=20=20=20=20=20=20=20=20=20=20=20=20if=20(!(x=20&=200x18000)=20&&=20=
+(x=20&=200x1FFFF)=20=3D=3D=200)=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20uint64_t=20result=20=3D=20crush_ln_fixed(input);=0A=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20printf("Fixed=20version=20handles=20=
+input=200x%06X=20->=20result=200x%016lX\n",=20=0A=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20input,=20result);=0A=20=20=20=
+=20=20=20=20=20=20=20=20=20}=0A=20=20=20=20=20=20=20=20}=0A=20=20=20=20}=0A=
+}=0A=0Aint=20main(void)=0A{=0A=20=20=20=20printf("NOTE:=20This=20is=20a=20=
+proof-of-concept=20test=20case=20to=20demonstrate\n");=0A=20=20=20=20=
+printf("=20=20=20=20=20=20the=20potential=20GCC=20101175=20bug=20in=20=
+Ceph's=20crush_ln().\n");=0A=20=20=20=20printf("=20=20=20=20=20=20=
+Maintainers=20can=20compile=20and=20run=20this=20to=20verify=20the=20=
+issue.\n\n");=0A=20=20=20=20=0A=20=20=20=20test_crush_ln_edge_cases();=0A=
+=20=20=20=20=0A=20=20=20=20printf("\n=3D=3D=3D=20Compilation=20Test=20=
+=3D=3D=3D\n");=0A=20=20=20=20printf("To=20reproduce=20the=20GCC=20bug,=20=
+compile=20with:\n");=0A=20=20=20=20printf("gcc=20-march=3Dx86-64-v3=20=
+-O1=20-S=20-o=20test_crush.s=20ceph_poc_test.c\n");=0A=20=20=20=20=
+printf("Then=20examine=20the=20assembly=20for=20BSR=20instructions=20=
+without=20zero=20checks.\n");=0A=20=20=20=20=0A=20=20=20=20return=200;=0A=
+}=0A=0A/*=0A=20*=20Expected=20problematic=20assembly=20with=20GCC=20=
+11.1.0=20-march=3Dx86-64-v3=20-O1:=0A=20*=20=0A=20*=20In=20=
+crush_ln_original,=20you=20might=20see:=0A=20*=20=20=20=20=20bsr=20eax,=20=
+[masked_value]=20=20=20=20#=20<--=20UNDEFINED=20if=20masked_value=20is=20=
+0=0A=20*=20=20=20=20=20=0A=20*=20While=20crush_ln_fixed=20should=20=
+generate=20proper=20conditional=20logic=20or=20use=20LZCNT.=0A=20*=20=0A=20=
+*=20Integration=20suggestions=20for=20Ceph:=0A=20*=201.=20Add=20this=20=
+as=20a=20KUnit=20test=20in=20net/ceph/=0A=20*=202.=20Include=20in=20=
+existing=20Ceph=20test=20suite=0A=20*=203.=20Add=20to=20crush=20unit=20=
+tests=0A=20*/=0A=
+
+--Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
+Content-Disposition: attachment;
+	filename=ceph_patch.patch
+Content-Type: application/octet-stream;
+	x-unix-mode=0644;
+	name="ceph_patch.patch"
+Content-Transfer-Encoding: 7bit
+
+From: Huazhao Chen <lyican53@gmail.com>
+Date: Mon, 16 Sep 2025 10:00:00 +0800
+Subject: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with GCC 11.1.0
+
+When compiled with GCC 11.1.0 and -march=x86-64-v3 -O1 optimization flags,
+__builtin_clz() may generate BSR instructions without proper zero handling.
+The BSR instruction has undefined behavior when the source operand is zero,
+which could occur when (x & 0x1FFFF) equals 0 in the crush_ln() function.
+
+This issue is documented in GCC bug 101175:
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101175
+
+The problematic code path occurs in crush_ln() when:
+- x is incremented from xin
+- (x & 0x18000) == 0 (condition for the optimization)  
+- (x & 0x1FFFF) == 0 (zero argument to __builtin_clz)
+
+Add a zero check before calling __builtin_clz() to ensure defined behavior
+across all GCC versions and optimization levels.
+
+Signed-off-by: Huazhao Chen <lyican53@gmail.com>
+---
+ net/ceph/crush/mapper.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
+index 1234567..abcdef0 100644
+--- a/net/ceph/crush/mapper.c
++++ b/net/ceph/crush/mapper.c
+@@ -262,7 +262,8 @@ static __u64 crush_ln(unsigned int xin)
+ 	 * do it in one step instead of iteratively
+ 	 */
+ 	if (!(x & 0x18000)) {
+-		int bits = __builtin_clz(x & 0x1FFFF) - 16;
++		u32 masked = x & 0x1FFFF;
++		int bits = masked ? __builtin_clz(masked) - 16 : 16;
+ 		x <<= bits;
+ 		iexpon = 15 - bits;
+ 	}
+-- 
+2.40.1
+
+--Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+
+
+
+--Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2--
 
