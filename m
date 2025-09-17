@@ -1,201 +1,194 @@
-Return-Path: <linux-kernel+bounces-820209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F90B7ECEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B030B7F736
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B55D168BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513275214DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91771305E3B;
-	Wed, 17 Sep 2025 08:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4055A306B23;
+	Wed, 17 Sep 2025 08:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="StGD3ARx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UkVy1J1I"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012008.outbound.protection.outlook.com [40.107.209.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146A722A4EA;
-	Wed, 17 Sep 2025 08:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758096654; cv=none; b=gQO2K+EK9o57CVVFn73W2YIRSGONv4hnY+cD4dhyAeONYoiEn+IZnW/BABargy2znNZfixzraG6iZwaLF4m91J7HgrA7FOXp9KlDQCUyngHlhKcSq4//vwImAwtao0ABAulIZ2P9Q+EbUrSJT3FfdEqlpTOwcjOCNEMDxS+lGoQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758096654; c=relaxed/simple;
-	bh=a2NGnZXyMk2WBG9QLMhqEkm3HJ2+sNYSVMHdCrgUh0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYUBQ33ciBOSy1dkPTNT1fLTwR9g2zTbMEW8FfNVo7oGs73rBcseY0aecw472JCkPLUjFONIQ0r++YzSSFlpUwHLuPCpixUzAxPK2XluohvyAI7xPxA6yWlNRUxY2dvwaliF+G7hh45NUTGRiqGilvcaiChxLkPf9rc9ikk6M5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=StGD3ARx; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758096653; x=1789632653;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a2NGnZXyMk2WBG9QLMhqEkm3HJ2+sNYSVMHdCrgUh0E=;
-  b=StGD3ARxQ0t3B+MfdE2ZejedWUYhkBlgLlWFrUW2XDQGt2phSeCWYLYC
-   bceogOscj2XauQ1WRbA0YpLBFduFhIKJ1wW2CEHDxGpadOcC0JG9DA13f
-   BjCvEibR5YTJo9YGqwAThiztcpEg0T0y+gYJGqJVCqq5E9O4ADuucPzDy
-   QomfWdpD9MRXYZAho3pUO81pWIAGnzMnKXCapgObQQFIKi03VcfTjKkyZ
-   Q7+VzAWnM2eX7ctD5/+Ygz2Yl78lp2Fs5uk4+HJL/ePliZ3vsiPrId7cx
-   iSdY8FWLUIydeu4bMGMpriwRykWyYpkAUKtYw1AutnsTKqXksDqE2RWjr
-   g==;
-X-CSE-ConnectionGUID: rSzAGjOUS7qqrSI8EzwlNQ==
-X-CSE-MsgGUID: Xkey+w6XT5SjGA4TvBFxRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60452767"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60452767"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:10:50 -0700
-X-CSE-ConnectionGUID: /JvmjEfbQ1SQOf+a5IYzwA==
-X-CSE-MsgGUID: dTtc8jMtQhWeBa63wngxgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="180320252"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:10:45 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uynFS-00000003kRu-0aYO;
-	Wed, 17 Sep 2025 11:10:42 +0300
-Date: Wed, 17 Sep 2025 11:10:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH v11 2/3] iio: adc: max14001: New driver
-Message-ID: <aMptAUsQaUIYpVNG@smile.fi.intel.com>
-References: <cover.1757971454.git.marilene.agarcia@gmail.com>
- <c257f7feb92dcf33bf7a55810fe69d13890374d5.1757971454.git.marilene.agarcia@gmail.com>
- <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2A7306B1E;
+	Wed, 17 Sep 2025 08:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758096661; cv=fail; b=fDnuyozd2cjsfx3hnbmYEh2opCtzIk5TjhTbcq6qRJ1qT0a1ejD+UNoDHEDbmJfa2p8XCdkRp6wspjXFMdoLgKonSAlViV/1jzsWuOaYoqm3UiH0nikme/VAiQYWe2qgx/J2nnXo6Yz/u25H8qdvOs8YYlgLa/O1maJsn78dAsg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758096661; c=relaxed/simple;
+	bh=khOs1ab+PBSNDu8iAifXZMeukiLLy53YEvPIKy/OthU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bKCL57DH0QRZvb0A5wUbG9ZGGbLvz6mEMQRa+7faHMw+oaHwiXeXPr3Hv+4GMoTrV11q19OMAv4PywXXRq7wjIF8IhqzpBm7QOD+OsyKZ8PJHbUr9ZREN/2uiI75BcMFf7x7lra6vA7WqBErFO+yQD7MkG7ecJduvuYKwm14PS8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UkVy1J1I; arc=fail smtp.client-ip=40.107.209.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xVI7fGzPOKJAG1vBvtbglEalA2lpFqnpEpnxteN8F9L0HFtgslKNA/3FdiRio+4QeJp35+sAf8htn3K2LRAIORdigm4n2HwhlPLH7J3S3jZNXZGQ+sNCVpl1MvME+9lkBX3oQaBaE+MLw/rLydojWuNKErURlupqvNyoIChI8BcqE9/qqyf1p6YNWtYdO6Ux/3S337crEIMu1KThkBco4RS51wkv4fli/bLLkaisdmAWrfiBpKUFWxOaBHAhkDOYPoQpYbZ5JDXa+N4vSxmaJ37vQWc7Wkp/CDE89Ngtm1ggANqT7/3Th3U6UApYBG76bOupsA0ws/nRFZw32r/I3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=awl4zW+g/fIWu1BFclxcXk0tk2HsCnjoPaNbHIV1FAY=;
+ b=JXEnuCyOeyY3HoisSxk5MLIlh49OB22ly7nJS486px9nmoOSG2LZm9cWq7akIyBmhm+FSBzSM+5suiPmGBuEDCcxcpPpuCibwGuUBDZ+DDgG4ozpx3bYFcZ/qCPFzXrZ02/Ohpz3c/8dVuxb0U9S5uqtk//DR6ZQ6foPmJ+pb7+dnyfMl4fj/Ea+ezJWwEFy1F3Mnhdd3HUCEUxMlQ2/7VD6juOr9J5RfhbCOgEjZedP3rLoe9GJT62GIfm0F49Jdeg/6O0u6+WPzWcSJhxsHgEssy0i5sIipCJ4HOo5VBNxiLoCsIovlgSoSVA97/bYHAZVE1ajcGsqu0Lp35jM6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=awl4zW+g/fIWu1BFclxcXk0tk2HsCnjoPaNbHIV1FAY=;
+ b=UkVy1J1Ios5SLHtGlFpYEVpuePI0ZZHUNQ0br9BmhTxJVMI4wde0CD30u8CeSsK8+qJXNCte0cJoGZ05WSY3dB5i+TvG0xwyve7CUFrwm4iHGXyr0PtJh5xWxxRb8fOaJ7P9YAcl7GmACospmNkJp9cfI+KHu6rHm9xNju6EmD4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by DS7PR12MB5789.namprd12.prod.outlook.com (2603:10b6:8:74::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
+ 2025 08:10:56 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
+ 08:10:56 +0000
+Date: Wed, 17 Sep 2025 10:10:50 +0200
+From: Robert Richter <rrichter@amd.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v3 03/11] cxl/region: Rename misleading variable name
+ @hpa to @range
+Message-ID: <aMptCmrATwzBH6kA@rric.localdomain>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-4-rrichter@amd.com>
+ <60f05a02-6a0a-4616-a2f2-d7ae5709d94e@intel.com>
+ <aMe_6Olzsx9iYxIO@rric.localdomain>
+ <20250915112555.00003854@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915112555.00003854@huawei.com>
+X-ClientProxiedBy: FR4P281CA0380.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f7::8) To CYYPR12MB8750.namprd12.prod.outlook.com
+ (2603:10b6:930:be::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DS7PR12MB5789:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d351456-4656-4e9f-b5dd-08ddf5c1ba53
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Dvu51rVWqLit964ajSS4Iy/va7CUR1zxiYidxOK3eajEiPZySRkbXGP4Th2H?=
+ =?us-ascii?Q?OaAmsNPjbxCyHIvl8g6qgIL33u5QOf46fDxnQrWtnhdLg2IHSGOMY0eUBx/1?=
+ =?us-ascii?Q?65IpMTszFhVDWsoN1BpTyISX/2d/8gHZe5t4enm2H2/7RrckT2QlUqPWaqSS?=
+ =?us-ascii?Q?WbajVJLnt7W7Or/IxlyEcYesXxsXkZDRayI4cE00n2emTtPPZasJ2UmJ7V6T?=
+ =?us-ascii?Q?5PvcW2lTybOpRPRyu79eITn2Vh23Yj2EBcbcVf791E7vONa06uW5cFE2oTyQ?=
+ =?us-ascii?Q?HQV1hP3NjoCsRkimlz41clsaaQDVAdw7rtRRsK79fqTwWHaWk6JFEfxIEfYs?=
+ =?us-ascii?Q?hVCMspxZ071bc1Th8AWTJ0MDbQzwAvWLZNtnPP1tLavDfEgJWZbJkDs8pR8X?=
+ =?us-ascii?Q?yQhkD3P7WD1WMXqO0gk7xERtmRgFUtMmSoG4HOl55Xm4SCUq1j9aM02qHqpf?=
+ =?us-ascii?Q?ChxRXFqeCPdp/zbXIwy50sJkotbxn2tqjy6K9mIRcvywo5v7CJieUdv9eqyr?=
+ =?us-ascii?Q?kq64O9vARYoh+LkTNUs6LbCGyx0dmhrDbjUFsw3+awnTVosLD82pdARpD2fi?=
+ =?us-ascii?Q?NOAcqKm1chEnMj3yM3KBuSCY4iIpwP60DiwDDSwTgYjubTEJbDLMzSrdqe+/?=
+ =?us-ascii?Q?QdoXOj3PlvIDox9StyRi25pIMKT6jTvfzwrNXyf7ge/boklMNKkgjLBwpaug?=
+ =?us-ascii?Q?kRkX8Gubo6YYFN8j9OlzIY56KNrTqld+CcaPwMuaYeReV8Qo2EI03rlJngWN?=
+ =?us-ascii?Q?uIcV+32Lt8zLD+SwYMBUV53UtujDy3DqSSdZYUn6SMm3K8/a1b4H06a7hfDs?=
+ =?us-ascii?Q?1DuhK5n9SPEj0X5X5qARLdsj2xA1eW+UNcTqW0JDDX85Ye64YKY6IJOI2gtp?=
+ =?us-ascii?Q?LSLLmqtsIMSd96H4Ywuq3pNgGQqwq4aHSjc4j0EggS70irF3rWtskVa+JZGv?=
+ =?us-ascii?Q?U2xh1Ys+CiV/ozZSa9cFJwPEA1limimUEq4hvlCjNpCEgDo1GN1v3rhHndry?=
+ =?us-ascii?Q?Vd7bkzlWmwR5pcTKT40hTvmanJwlPZxc6xDL0JipcGHt5yag9hniWjCMBIiE?=
+ =?us-ascii?Q?4A42HMkmiDLYfDnCiGcSrVGPobFIpLie+bspe0PzPhVf7OAIgpPIVpQpewm1?=
+ =?us-ascii?Q?BQBS+V7svTa/2Ho10RPv/hmgkrUlpUoRguHepxKNa+w+tUZfjvDKv9jxqW9c?=
+ =?us-ascii?Q?ultDapTpdwhL5mSajJNidvbLPV8jFxh/j6eCwAJlqbBG6jjBP6VMoDZwu6SV?=
+ =?us-ascii?Q?53x1UZ6HHJVvVpRdw6btFEElxbYkaWW1mktHI/UZPmEXVmfoFv36hCp5qLzE?=
+ =?us-ascii?Q?lR9qS5wX0E2pvxOS6tcDPgbitWzPA/3+7c11hyvs9f2KeU+y8aLA7iZUSJ8c?=
+ =?us-ascii?Q?80mAkadTDNcg63Dqr2wxiPqEMEczAewg7WGajhngzW0hEiBHr7efJv9E4JLV?=
+ =?us-ascii?Q?LtoQeGqbTAk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QxPewP0BY8H19NgE9ORYWDMCkQRewQTeR8tA6tkrZ6z5pEkyXyfiojWmurCz?=
+ =?us-ascii?Q?apN6groH4M1bqqnRKDKJxZEY4TooMSWlPQuXmMuXTdwCDGpsWAgXZeNYJrLl?=
+ =?us-ascii?Q?AKSpPbB/QeYnEgktyjtrsNG/K1S5MTvGlBHrJDeW9jqhUSb050CVZtm7xAAR?=
+ =?us-ascii?Q?ZJJXxakB7h6omLKFnXPbnVKbQoXLqXgOFrp9V31/eUyiDAxvAsC2mONMl2bk?=
+ =?us-ascii?Q?f78h0a2r3zXfS1rM3mZ5ildnU47r+Fmhfc/rTBwhI2k1UR5h9waK3sL3mU2/?=
+ =?us-ascii?Q?1vt/buO7D5jOOdMH5/U0qO7qb9U4O5K2Za+0+uGikxEc9+qCku613wgz1G2W?=
+ =?us-ascii?Q?r8K2ZlkWnVV0r6bXSHig6AtFII/+4x2rHAKU7r3A/w29nHXAW+zGc5eS826f?=
+ =?us-ascii?Q?fwDaZAjoBujoNcObbacl/8ZOJ+ht8KDol6+4q3yYTl72zWjWVEl/c/9rSp/n?=
+ =?us-ascii?Q?ShhHJ0VUawiq9gdIHKhsvn+KrK3BhAyx4WT6bv0jdYTUjn8tGrmDBnpR4lSL?=
+ =?us-ascii?Q?7vrM26p/QrzuQCO5hM63PLzeKWQwi1fBCDx1e3QNXuQBMYXes6u6RnaxzWmj?=
+ =?us-ascii?Q?yf3EHKjEF5h46QaN9iz+teLKh5tl/nata4O2dnUugedJwEN0PplWBfnaEoRc?=
+ =?us-ascii?Q?Wn6HQxEbXQpj4Hvj3eFIDi+NATNwih/BKIAw/tub26T371a83YE+RucCIVkK?=
+ =?us-ascii?Q?5wFydfFDkma2Wsy4ZgXu9agIt0Nhr0szy9i7gGt3hy+lv9s44rLchfvC7S1c?=
+ =?us-ascii?Q?TrTlx7xpxGFfqoGLbbvfm/oxJnsaFai+RvuUGnxBk6u2rVSnOAvXsf/aHFHy?=
+ =?us-ascii?Q?i2tuQl6I9+lTEidP2gPJXm5rjH3KxuezBqYf2juEHie2R+yuS5DYhxFebjLY?=
+ =?us-ascii?Q?U4PNJtgFeNAF03bGnrIfCAZ7yFp/DJa/pvxZrr2WDLooc1de6NcC8ljEedOf?=
+ =?us-ascii?Q?YNXbE2R39geCD0pGxrjFcG21k4oiD/aDOsuvJoJZGBJRca2hEGJj4ZojrEYP?=
+ =?us-ascii?Q?P+QvxNaW11P5VdwqsUeOaShPfLdJxN3jEec3Yw5uWxc2kN7rCMKlafhmVc2C?=
+ =?us-ascii?Q?4DpxrmyAX/1yTnhYBVe2N6UPqysj11az27GoMk75ol84RkUCbwVvkBEnQHVE?=
+ =?us-ascii?Q?P74rVS9SXXSTxtU0A20bwIL8ijimryXeTiynkGLiQbyxiVBotOK6Ao8bFvHq?=
+ =?us-ascii?Q?7/LKlczvXnvxaGf0PfGfSIJVhApVdZC8OlJtb+JgUQ8pTXSLgvyIV2DkLWL5?=
+ =?us-ascii?Q?75XxmNiui3x8S0pb1ulfHZaPJ0KasG5k3ha6ckM/Yemg7n33T6ZALQ70Qunv?=
+ =?us-ascii?Q?c+SxMXkWbVBgclKpxxumz8ER2NMizMVxsA1kscMI+VFTn8F3Q4zsLZcOpCXs?=
+ =?us-ascii?Q?PUu3DK5Z9YyDJUtN4Fim8K5b0qMArHRuPFe+SnrhNk8YribTao5FuIA1AWDV?=
+ =?us-ascii?Q?Ig0nyrPNIWkazB3QL2ixxd42i2EyLgqIas0MxDY20g9B7V4LLEgV1YMqo/jz?=
+ =?us-ascii?Q?WKp07IiGku+MeoZR+J+auPGP8O679/zN+/xocum5hUiEg5rh9H4Jm5ZHHv4x?=
+ =?us-ascii?Q?mS55tjHhQq14bHxR1Lo2sZC5aJPiFjOWuRlg38Z5?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d351456-4656-4e9f-b5dd-08ddf5c1ba53
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 08:10:56.3392
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qkMBGfLSJ1jR6Hx+zcAHIZCmUl09q8u29gQ5UY/eXqj0VtO3872r8LNKE8uLdNE0Iz1Wrp3pC2LhqRRXO5auZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5789
 
-On Tue, Sep 16, 2025 at 01:04:41PM -0500, David Lechner wrote:
-> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
-
-...
-
-> > Change I was not able to do:
-> > - I could not remove bitrev16 because I am using an SPI controller that
-> > does not support SPI_LSB_FIRST. So I suggest keeping bitrev16 and not using
-> > the spi-lsb-first devicetree property for now, since this driver currently
-> > works for both types of controllers: those that support it and those that
-> > do not. I left a TODO comment to address this issue as soon as the SPI
-> > kernel code starts handling the bit-reverse operation for controllers that
-> > do not have this support. Once I finish my work on this driver, if the SPI
-> > code still does not include this handling, I can submit patches to add it.
+On 15.09.25 11:25:55, Jonathan Cameron wrote:
+> On Mon, 15 Sep 2025 09:27:36 +0200
+> Robert Richter <rrichter@amd.com> wrote:
 > 
-> I looked more at what it would take to implement this in the SPI core code
-> and found that it would actually be quite difficult to do in a generic way
-> because there are so many edge/corner/n-dim cases. We can't change tx_buf
-> data in-place because it might be const data that is in some memory area
-> that can't be modified. And things would get complicated if different
-> transfers pointed to the same buffer memory addresses anyway. So we would
-> basically have to allocate new memory for all buffers, copy all tx data to
-> that new memory, reverse all of the tx bits, and update all the pointers in
-> the transfer structs. Then when the message was finished, we would have to
-> reverse all of the rx bits, copy all of the rx buffers back to the original
-> buffers and put all the buffer pointers back the way they were. But this
-> could write over some of the original tx data if tx_buf and rx_buf point to
-> the same original buffer, which would break things if a peripheral driver
-> expected the tx data to persist.
-
-And what's the problem here? We do the same with bounce-buffers in case
-of DMA/IOMMU (okay, without actual data modification, but it's possible
-on-the-fly).
-
-> And we can't do this during the SPI optimize
-> step because that currently allows the tx_buf data values to be modified after
-> optimization.
-
-This I don't know, so perhaps it's indeed a showstopper.
-
-> So perhaps it is best to just handle it in the peripheral driver. It will
-> be much more efficent that way anyway.
+> > On 12.09.25 10:33:30, Dave Jiang wrote:
+> > > 
+> > > 
+> > > On 9/12/25 7:45 AM, Robert Richter wrote:  
+> > > > @hpa is actually a @range, rename variables accordingly.  
+> > > 
+> > > it's a range of HPA right? May as well call it 'hpa_range' to distinguish from 'dpa_range' or 'spa_range'  
+> > 
+> > To me this is ok as it is locally used only in the functions. I used
+> > the short version to not hit the 80 char line limit in some of the
+> > statements for readability. Range is most of the time HPA unless for
+> > special cases, which use a prefix then. It also becomes clear viewed
+> > in context, e.g.
+> > 
+> > 	 range = &cxld->hpa_range;
+> > 
+> > Thus, I rather would like to not change that.
 > 
-> However, we still do want to handle SPI_LSB_FIRST now so that people with
-> hardware support can be more efficient and we don't want things to break
-> if someone puts spi-lsb-first in the devicetree.
+> I'm with Dave on this one.  Better to have some slightly long lines
+> and avoid any potential confusion.
 
-...
+Ok, thanks.
 
-> > +	if (ret < 0)
-> > +		ret = 1250000;
-> > +	else
-> > +		ext_vrefin = 1;
-> > +	st->vref_mV = ret / (MICRO / MILLI);
-> 
-> Just a style choice here, but in other drivers with similar handling
-> we wrote it like this to avoid the extra if statement:
-
-I didn't get this. You move from clear if to not-so-clear ternary. How is
-the proposed code better?
-
-> 	if (ret < 0 && ret != -ENODEV)
-> 		return dev_err_probe(dev, ret, "Failed to get REFIN voltage\n");
-> 
-> 	ext_vrefin = ret != -ENODEV;
-> 	st->vref_mV = ext_vrefin ? ret / 1000 : 1250;
-> 
-> Keeping (MICRO / MILLI) instead of 1000 is fine too. There are varying opinions
-> on this.
-
-> Or we could drop ext_vrefin and have:
-
-It goes back and force. Can we keep the code as it's in this version?
-
-> 	if (ret < 0 && ret != -ENODEV)
-> 		return dev_err_probe(dev, ret, "Failed to get REFIN voltage\n");
-> 
-> 	if (ret != -ENODEV) {
-> 		st->vref_mV = ret / 1000;
-> 
-> 		/* regmap set bits goes here. */
-> 		... 
-> 	} else {
-> 		st->vref_mV = 1250;
-> 	}
-
-...
-
-> > +			return dev_err_probe(dev, ret, "Failed to set External REFIN in Configuration Register\n");
-> These lines are getting very long. We try to wrap to 80 characters
-> as much as we can in the IIO subsystem.
-
-Side note: checkpatch.pl almost never complained (okay, something like 15y+
-ago) on long string literals at the end of statements. For the code lines
-I fully support the wrapping.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-Robert
 
