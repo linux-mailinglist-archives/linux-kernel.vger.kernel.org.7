@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-821601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22EF2B81B5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:02:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7130B81B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09BB3AE561
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:02:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF45E17818D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5141026E16A;
-	Wed, 17 Sep 2025 20:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C324D279DA3;
+	Wed, 17 Sep 2025 20:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdTpAbYB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fs8seP2s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AD71DF996
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BDD24501B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758139331; cv=none; b=dANpYdCcsqekx0+/lMiNfGX99KwJR55RYY7K7Bf6K8JDenGuNkf7ck9B9IdxKOwafjfH77UBUscGyP/PGwpLN9Ra/NgKUdyaQBIrQEbMvFnalriFGlA1pctNYwGiHzVnHf1z85gFmdWlYWyT1VC9dhC+BuKTMVUvaHkCdzzef0s=
+	t=1758139383; cv=none; b=gaqtVlQ8XV+ogTVLDiISK24WcQDdvPFUuwrw9S03KZByCMzrBcyeNGwI0SecUW38b1eN3u2pvHIh2744AmVCFscC+3OUeDW7CY6yNYXqq4ohrWYlcxJhG3b2zQx0DpIa7UaqPh9DuvdvVd03IhdkacRhYIjr6VFPIcaJIPFffZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758139331; c=relaxed/simple;
-	bh=ZD+WSYB80u9bCZ3Wp8c9KL0x353x2PWFiso5n0IU0Q4=;
+	s=arc-20240116; t=1758139383; c=relaxed/simple;
+	bh=8RwCiCEqgS/oR9Wj+EYfIJapVjRPjFagO+/mW2BIcW8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dfJKEIikEV9iJrVwRVeDDgC5Eg4GkQacGokC/EHjwjvbkyvoGK11NNPMYNIIkQayDYd+1GsluJLdFo51VF76AyQpvlLaXloLCaoGp5icKJfyuTqTQNbek/dSxHQ+1Q7nZ6KNC7r7SVEvyJ05KK7vEq2NF2hVtsakamE2S78e5D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdTpAbYB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497B9C4CEE7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:02:11 +0000 (UTC)
+	 To:Cc:Content-Type; b=itJ+tNRwPXVBkQXrH1XjlNvcixkx9oqwG46V1/EeRNoN3Fz1KZNtLavMlkIfLRkKCps7Sz8x4pqEAhpE/YbCePovoW8lEYePVNpy89iSL9CwzCd6pIbfQL9wjciCd62ZGIolsuTuVyQcBPWiwk64TKhnt16w2R2Xde4pYuPj0mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fs8seP2s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D19A1C4CEE7
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:03:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758139331;
-	bh=ZD+WSYB80u9bCZ3Wp8c9KL0x353x2PWFiso5n0IU0Q4=;
+	s=k20201202; t=1758139382;
+	bh=8RwCiCEqgS/oR9Wj+EYfIJapVjRPjFagO+/mW2BIcW8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hdTpAbYBbTc2DfYjr6wbwkGUMhgoqSajUDCxwToNVnnkiGd9gILhCijKKCBoZOXCr
-	 a56bbxnaEvmiUGfQNpyExY+xnDz5pA8hCyvLUWDyjwN+BcC/QUs8zOESjbhXLnEFFL
-	 QvQfesq1JwfROv1ZgBrfVeyJl4hYglhBibj8gYtF4ywZl2D88nPAS5IiQTphPM1sQV
-	 J34CkkAaW7lVrsH0pSYhX+cHPJGcir9rdlJF1mtzrGmsuXHD6fiD5nbFbnerEdMqEA
-	 ATbMOliUkkJCkjg/M4n6sY3zu9fjdhZTDvtQe+5jvK1mvvWRsEKxBkMXLXTBZvkfC4
-	 JOBP+eDJxRAbg==
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-746d3b0f7e5so246142a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:02:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX7enjocUQbr3j0Kw0yDLsNoS7COQKEq/yZZO8H3I1j5c9JG4NxLKz+frAXZi31iEBmqYGuCmVjp1J/rI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3l6DXM45sfz2Nh+/ah1nxpxH51qsxG22dePerPTpISruxffxQ
-	CYqxelzkk3j4ZLJejMaNTJo1dv3P7rTzxjS4n90KmNnl0ktHnS0ldg9u2rlQA0qhlBYpA9ufLQq
-	5jYrR5dPdzz/11v1kONGTBx40ux0bX2Q=
-X-Google-Smtp-Source: AGHT+IFkjpRdCh1qZfJ0OjbhoBy7zXZfCwVVILxyYRaxXLTvDJXS+PVGClzjW3osEWYZ6+pSMlQa++RQ2clAsGHLvv8=
-X-Received: by 2002:a05:6808:1506:b0:43d:1eec:aea7 with SMTP id
- 5614622812f47-43d50d97cd9mr1976141b6e.45.1758139330621; Wed, 17 Sep 2025
- 13:02:10 -0700 (PDT)
+	b=fs8seP2smajGErdccqfjm/qBI73OZR07YbZ7EB5CfTXvZMxu23c8ilwPL4tCTJLuC
+	 AtWRwbNmXywMbpsZuIAjESMWLIlai3YyiQfX56Cyz+2s8gY33vqzxFHrORzfaGfAjL
+	 ++X+iZxkRMSv7rf6tcDj35RVmpICwlz4NVrst+qzAkVTZdiyI3mxpDi2Ag1jb254/8
+	 ffLwxGZuGXBZm/LXVQ8LlEaxjwJeYHEHjU6BxkwuE76T76LaTu9HQ/IId13djfD2/M
+	 jlESXMx6dho/5icGZhfmQXmm9HeM7kxvYkdW5d+jbD2HZwe3PWnrbrOYvtl9YvlOlW
+	 StWJBitBXOXbw==
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8116af074e2so23853885a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:03:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuXld7sZUWs/DD15TAVCz4z/APUvV3M0jVvHP/ROEOY795tPmVs270NdlINt7btadpnjYqOIQQLvyPtPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw199VZY77oj1XDOVg0lQNQJgsWe23G/F625y6+EXV+U4e/JH/J
+	tR2NvNckXhyWHXSMDbHKrYcw/XfEm0bguMtB+7yF1JybilseOdZXhjfDuxejXToiwl0gfSU7EjK
+	usUGPed8uml1Hxhw5Gy1i4Qvo/LrOFO4=
+X-Google-Smtp-Source: AGHT+IE//43LvVRRL9P+bNBPabqBCP+0kbkAEemFxudHgIYmZJyboCRGVcIniMVsONVy0SAWFjDYnlR/dKKofxkrt60=
+X-Received: by 2002:a05:620a:7081:b0:7fd:6709:f08d with SMTP id
+ af79cd13be357-8311801ddcfmr445536185a.81.1758139381472; Wed, 17 Sep 2025
+ 13:03:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911112408.1668431-1-lihuisong@huawei.com> <20250911112408.1668431-4-lihuisong@huawei.com>
-In-Reply-To: <20250911112408.1668431-4-lihuisong@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 17 Sep 2025 22:01:58 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hb19Xy8dOP4itU-F5F7OjDXBVNGYiwoxAVc_yGuUv=Aw@mail.gmail.com>
-X-Gm-Features: AS18NWDO6uTE_MfULjEl-0mdzmM-7WVvhCx7N0JciMpQ0JH1SyhFMkqRMbTjpLE
-Message-ID: <CAJZ5v0hb19Xy8dOP4itU-F5F7OjDXBVNGYiwoxAVc_yGuUv=Aw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] ACPI: processor: Do not expose the global
- acpi_idle_driver variable
-To: Huisong Li <lihuisong@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
+References: <20250917072242.674528-1-zhaofuyu@vivo.com>
+In-Reply-To: <20250917072242.674528-1-zhaofuyu@vivo.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 17 Sep 2025 13:02:49 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW47BVGsszGU=27gKa1XOYLH+de1FgrHPVL4mftB2CvX9g@mail.gmail.com>
+X-Gm-Features: AS18NWBxIdANPrX03bLZsJtpTPm-ZgoF9PRFYS0o8-H5DTmZDbcviXZne_YxRys
+Message-ID: <CAPhsuW47BVGsszGU=27gKa1XOYLH+de1FgrHPVL4mftB2CvX9g@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next v1 0/3] bpf: Add BPF program type for
+ overriding tracepoint probes
+To: Fuyu Zhao <zhaofuyu@vivo.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, yonghong.song@linux.dev, haoluo@google.com, 
+	jolsa@kernel.org, eddyz87@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	shuah@kernel.org, willemb@google.com, kerneljasonxing@gmail.com, 
+	paul.chaignon@gmail.com, chen.dylane@linux.dev, memxor@gmail.com, 
+	martin.kelly@crowdstrike.com, ameryhung@gmail.com, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	yikai.lin@vivo.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 1:24=E2=80=AFPM Huisong Li <lihuisong@huawei.com> w=
-rote:
+On Wed, Sep 17, 2025 at 12:23=E2=80=AFAM Fuyu Zhao <zhaofuyu@vivo.com> wrot=
+e:
 >
-> Currently, processor_driver just use the global acpi_idle_driver variable
-> to check if the cpuidle driver is acpi_idle_driver. Actually, there is no
-> need to expose this global variable defined in processor_idle.c to outsid=
-e.
-> So move the related logical to acpi_processor_power_init() and do not
-> expose it.
+> Hi everyone,
+>
+> This patchset introduces a new BPF program type that allows overriding
+> a tracepoint probe function registered via register_trace_*.
+>
+> Motivation
+> ----------
+> Tracepoint probe functions registered via register_trace_* in the kernel
+> cannot be dynamically modified, changing a probe function requires recomp=
+iling
+> the kernel and rebooting. Nor can BPF programs change an existing
+> probe function.
+>
+> Overiding tracepoint supports a way to apply patches into kernel quickly
+> (such as applying security ones), through predefined static tracepoints,
+> without waiting for upstream integration.
 
-And it can also be made static, can't it?
+IIUC, this work solves the same problem as raw tracepoint (raw_tp) or raw
+tracepoint with btf (tp_btf).
 
-Please do that too.
+Did I miss something?
 
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> ---
->  drivers/acpi/processor_driver.c | 3 +--
->  drivers/acpi/processor_idle.c   | 5 +++++
->  include/acpi/processor.h        | 1 -
->  3 files changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_dri=
-ver.c
-> index bc9f58a02c1d..5d824435b26b 100644
-> --- a/drivers/acpi/processor_driver.c
-> +++ b/drivers/acpi/processor_driver.c
-> @@ -166,8 +166,7 @@ static int __acpi_processor_start(struct acpi_device =
-*device)
->         if (result && !IS_ENABLED(CONFIG_ACPI_CPU_FREQ_PSS))
->                 dev_dbg(&device->dev, "CPPC data invalid or not present\n=
-");
->
-> -       if (!cpuidle_get_driver() || cpuidle_get_driver() =3D=3D &acpi_id=
-le_driver)
-> -               acpi_processor_power_init(pr);
-> +       acpi_processor_power_init(pr);
->
->         acpi_pss_perf_init(pr);
->
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
-c
-> index 5dacf41d7cc0..967fb13f38fa 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -1404,6 +1404,11 @@ int acpi_processor_power_init(struct acpi_processo=
-r *pr)
->  {
->         int retval;
->         struct cpuidle_device *dev;
-> +       struct cpuidle_driver *drv;
-> +
-> +       drv =3D cpuidle_get_driver();
-> +       if (drv && drv !=3D &acpi_idle_driver)
-> +               return 0;
->
->         if (disabled_by_idle_boot_param())
->                 return 0;
-> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-> index 6ee4a69412de..bd96dde5eef5 100644
-> --- a/include/acpi/processor.h
-> +++ b/include/acpi/processor.h
-> @@ -417,7 +417,6 @@ static inline void acpi_processor_throttling_init(voi=
-d) {}
->  #endif /* CONFIG_ACPI_CPU_FREQ_PSS */
->
->  /* in processor_idle.c */
-> -extern struct cpuidle_driver acpi_idle_driver;
->  #ifdef CONFIG_ACPI_PROCESSOR_IDLE
->  int acpi_processor_power_init(struct acpi_processor *pr);
->  int acpi_processor_power_exit(struct acpi_processor *pr);
-> --
+Thanks,
+Song
 
