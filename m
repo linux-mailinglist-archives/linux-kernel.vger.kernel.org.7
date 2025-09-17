@@ -1,185 +1,251 @@
-Return-Path: <linux-kernel+bounces-821338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B31CB81063
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:34:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E132B81075
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711042A456E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DEC13238B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F54B2EAD0C;
-	Wed, 17 Sep 2025 16:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E711E2F7AD2;
+	Wed, 17 Sep 2025 16:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZiHXr1VS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OE3hcLs5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zp4jDqR4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OE3hcLs5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zp4jDqR4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F52224B04
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FF82F3C3B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126599; cv=none; b=l/0+EcKVM219t5aDKQXWRWN2B1qMrmyql03Ur+TD2Aa7fW+o8yzo6nPc3e9h6bnVgbuHDIqewQDLDzJj7+brwe4JdxqU1ZdJXShX3MoWfMbVIpUAEjbmRZlfYZ/9EMSrQaqwclTgrQ88MWdGkl85vYGg5Kdmpp1hpa/nrPhSWJc=
+	t=1758126616; cv=none; b=DP+axcffdVu/gHzGsPc82h2chQGNOQjY6kiYoHpumoyydHvHNh/j4f7iz5DYzT8t4MeNXYIKnxNTFX2fpwcvOxmNTUAKgbKo8DmjbsFHXcTYqDry91esAjCaHKa4Alg4pEejMJF6wVtDmQ3fJlIADyUS6CdDV8kj894iGzwfjuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126599; c=relaxed/simple;
-	bh=j/kIpr44aITpYwfRH5MGrbeYBzQDUseVMB6E+aFtzw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=htzI4ThQtkTvN4fcQgcyacytpCbWoDdTVVhEv2/O6AtivQU199CGasW0OaKJwl6pK1IjDiLIjlYHNEsJDz4ha5ay6xLXKuLmetqHEHhZH1rOhNZytLYHw1WUPZGtyG1+pd1LxaEOqm6fzLN1UzBP9IDyafQIV7WjvgYkjajTb6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZiHXr1VS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HGTeJf010735
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:29:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aPbliOpcCjIzayrMLkNw1FIe5VlXIVH9kvQijQYZm20=; b=ZiHXr1VSwLPkG2/M
-	uN4aJnP3sUlNJHPGAh3ELOm4kQ4P2lX+AdVXRyMYk27T7PcAAhrVYwvHjtwZjgHF
-	uhuOh6Vaga2zVy0qbAVoknjr2A8srxFLICJWEY8Az8eL8D26lVz1ipfyB/knPy+c
-	Da0bx9l7qK2KqhohTPupv/taCjPhHh+M1NatXt3JMlxX+kA5Jm3XcYilL/PrlDlP
-	9BYLM72CjrJBhFMpW4UwRBQNImIzZL4c+7a75wZVGjDypcZu0PitzLFjaTDDo8p/
-	hxNDhMB4Xd2wobqCu7aH/QKoK07FdCpEX5kIu1EemxR72AIlYDL0IDdA+8s9lCkr
-	CVrLBA==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxu416-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:29:55 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77619bb3871so68806b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:29:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758126595; x=1758731395;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPbliOpcCjIzayrMLkNw1FIe5VlXIVH9kvQijQYZm20=;
-        b=Rb8dWoOizs3E9X8Jm6shdCiSQmOXm1qvRKv4khxTYVr0MlXSfa3Eh/PqxLHDZ0TDyW
-         vULeS+6NLNwooRM5h8E9wyXcyVInw2wa0z0oGIP4sxaiPruBCynrcGEJNKPGy1yetHJB
-         +msF3Ykw3wfBh2Ydn7hQN08XxokRGCLM6NhVc6oSoEEiLcvTt8z8icoc/zbuNzbrnxiP
-         QSGAa4YStBXi+kRTCEmLp+/jBREzKst2mV9SG2Gnh8EGJ+FdSiQsmiijoRv3F7xVo1/C
-         WI0+JR2tH/cJ/O894t+9oeUEB/Oal1lTJAvzasi2D9O3YqU4SCxVXUyCwy1QFeEUfdNU
-         g7eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaZRvroLQ6RSiUlDz0PCctDmdFaDtYsIkmNckL0mlwZwv8ri6lZJ/mUQwTV0NJCsKUsq/MFmpKuZU0yY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCBepLqhiS0CqFVEoGPS3WNMMYQV2gftcRwSk5qLa+bHzmIXKc
-	ISjI97/uNrWywyKv/GhwTUg18hmRiHaW0n1ytZc+ID2+7rPqv9pdnqTosg75wyP9FqWikQPRaX+
-	9Wx0YRngSwrqq1U18O2nrMztKKHKoQYXtgShWPnL/k4E4Exf/lRihFIpTDhXxSacL6uM=
-X-Gm-Gg: ASbGnct0VK7CX3JNU7CBqNAMzgbMS/7v+4bHxJLhkP5sDLo2micu4rmqhOXIwBbtfcT
-	5O84OBc4N06KHWsZ7erXmBvTpdulZVb2yPhGxSwTlGK90Y3OmzUD0dadtq7i2iwJUL2aIb6cHR5
-	WnOvdI4t+A+PC7/zGjgpNAbdRHaL4E7zrmSA8Om9Ico21hq0Jcaa50dtQsWepIExqWAIks5EQHN
-	Rf6+vgAw2dGj3ZHhyTGgAQvcDPoyZIp0mEDqyepFHiuBv7JMqThSHKO5Xxxtpgc37JVAq3HKgX8
-	0pLwjzxXIQhUX3C77HKvXmtBDMq74czXeKwVANXz+M6Q3R5cGphAfwzu4e2PT4c=
-X-Received: by 2002:a05:6a00:8d0:b0:776:1f45:904f with SMTP id d2e1a72fcca58-77bf9268104mr3162349b3a.28.1758126594827;
-        Wed, 17 Sep 2025 09:29:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSAETCbSP3vIIE9VWiyL8Alz3IwaM2MYDhGvePBLrTzg5i1/2OcH9B9+r9HC87lkyc+hFW4Q==
-X-Received: by 2002:a05:6a00:8d0:b0:776:1f45:904f with SMTP id d2e1a72fcca58-77bf9268104mr3162319b3a.28.1758126594363;
-        Wed, 17 Sep 2025 09:29:54 -0700 (PDT)
-Received: from [10.216.34.136] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b3603asm18872680b3a.84.2025.09.17.09.29.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 09:29:54 -0700 (PDT)
-Message-ID: <3c56cd00-770f-019a-d93b-5ebaa6b9374d@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 21:59:44 +0530
+	s=arc-20240116; t=1758126616; c=relaxed/simple;
+	bh=cB+9aDQdjjNMF3UrfZ8fO4WwdzVZEgF/hkUoEzY763A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MeXndUd96dBzWwjLn9CoKpkgetE/oTAOkIVpEMEhhWDyeSlM4T4YmOo/QL5zhpNYj0wzxQJa+KnxS0e2wpf+sAGWg/LD42A41VK8G6VK5vGd0H0Vt+jlvXhiq9RixzjLdU0aiJhdzpyFWAEG0e64VHpD2UIEsk1XjCDbr/sp4vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OE3hcLs5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zp4jDqR4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OE3hcLs5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zp4jDqR4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A66C421CA9;
+	Wed, 17 Sep 2025 16:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758126612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Z7NOln9zlNouZEOdokL7aaYwYEzJZSXWUIUToQ/mqg=;
+	b=OE3hcLs5V77eQwcrATb2miPr6Qk8PuFyi5t9DOzWARSl7+Bre3b9hmyCsVm+yv/HFpV6St
+	+e4Un2VVNeluSw3Ye+OSgkTTRya+CTFCiv+36d4Gw67jPtoZm+uT8SPyoiq/QtehuOl2SX
+	/jibHWL2OE855Dw31DG8Pbnknr7pf3U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758126612;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Z7NOln9zlNouZEOdokL7aaYwYEzJZSXWUIUToQ/mqg=;
+	b=zp4jDqR4FK1HWAMDx8Nt8dXoLtiytH/4fSUiREQGNy6hs0dXk3a8Mt4OCODxLRyBhA+O3N
+	elkgb+QVQcU8OVBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758126612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Z7NOln9zlNouZEOdokL7aaYwYEzJZSXWUIUToQ/mqg=;
+	b=OE3hcLs5V77eQwcrATb2miPr6Qk8PuFyi5t9DOzWARSl7+Bre3b9hmyCsVm+yv/HFpV6St
+	+e4Un2VVNeluSw3Ye+OSgkTTRya+CTFCiv+36d4Gw67jPtoZm+uT8SPyoiq/QtehuOl2SX
+	/jibHWL2OE855Dw31DG8Pbnknr7pf3U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758126612;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Z7NOln9zlNouZEOdokL7aaYwYEzJZSXWUIUToQ/mqg=;
+	b=zp4jDqR4FK1HWAMDx8Nt8dXoLtiytH/4fSUiREQGNy6hs0dXk3a8Mt4OCODxLRyBhA+O3N
+	elkgb+QVQcU8OVBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 969A91368D;
+	Wed, 17 Sep 2025 16:30:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1qjBJBTiymioMgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 16:30:12 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2768AA083B; Wed, 17 Sep 2025 18:30:04 +0200 (CEST)
+Date: Wed, 17 Sep 2025 18:30:04 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 3/9] nscommon: move to separate file
+Message-ID: <uzg5z2g7yv2xbzj54nn37khy54kv5q7vj43w7qk3stebhxphc5@cnbj7tehxdpo>
+References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
+ <20250917-work-namespace-ns_common-v1-3-1b3bda8ef8f2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v14 02/10] power: reset: reboot-mode: Add device tree
- node-based registration
-Content-Language: en-US
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
- <20250815-arm-psci-system_reset2-vendor-reboots-v14-2-37d29f59ac9a@oss.qualcomm.com>
- <in6bqvemnscvuxbumpxogxiiav7odmsc3iazktifninh6iqen7@qwhrhdidcx7y>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <in6bqvemnscvuxbumpxogxiiav7odmsc3iazktifninh6iqen7@qwhrhdidcx7y>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX9PNB4ms+Re5H
- M8kucezoBJSPywvpFjtfe0LcO1tVmIZWzljIdZwKSWcnACZv9JlS0A0gQj4BtlX9l8WMcje81Ry
- wfeqnxBl/oJzaqVTKYMnP6MsZjpFqpU4f0ALKnRCfTQYchHxMbJ56na3cvMifyKUcIslV/B80Z9
- iqxQBL139aC+Wu6RL61EUGNAMWSmAjmBv3rAUD/n3jEJranwhSEeJL9zuIenXRKcNbCSd/YgKEX
- h5bihZlszOO2YZMaNm3/Dc8IN92qvURa4CHZF5LOxE1mEGsS8wj+UkG3aylq1f3NkvNz8Ph97Qp
- eAGp01EPYpTaiOLO7mu+kVjaAV6zrZv580+dku6thomjH8xW5euobRIggD/ScGca1qTar1skhSg
- 0m27h76w
-X-Proofpoint-ORIG-GUID: jbThNhO8B7zwqHtlPz-_loZfMukGr80v
-X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cae203 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=6ImPWgPuv615vBLeUzsA:9
- a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: jbThNhO8B7zwqHtlPz-_loZfMukGr80v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
- suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917-work-namespace-ns_common-v1-3-1b3bda8ef8f2@kernel.org>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,suse.cz,cmpxchg.org,suse.com,linutronix.de];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.30
 
-
-
-On 9/17/2025 12:18 AM, Sebastian Reichel wrote:
-> Hi,
+On Wed 17-09-25 12:28:02, Christian Brauner wrote:
+> It's really awkward spilling the ns common infrastructure into multiple
+> headers. Move it to a separate file.
 > 
-> On Fri, Aug 15, 2025 at 08:05:07PM +0530, Shivendra Pratap wrote:
->> The reboot-mode driver does not have a strict requirement for
->> device-based registration. It primarily uses the device's of_node
->> to read mode-<cmd> properties and the device pointer for logging.
->>
->> Remove the dependency on struct device and introduce support for
->> Device Tree (DT) node-based registration. This enables drivers
->> that are not associated with a struct device to leverage the
->> reboot-mode framework.
->>
->> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
->> ---
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  include/linux/ns_common.h |  3 +++
+>  include/linux/proc_ns.h   | 19 -------------------
+>  kernel/Makefile           |  2 +-
+>  kernel/nscommon.c         | 21 +++++++++++++++++++++
+>  4 files changed, 25 insertions(+), 20 deletions(-)
 > 
-> Please use fwnode instead of device_node, so that the same thing
-> can be used with non DT setups, if that becomes necessary. Otherwise
-> LGTM.
-
-To be more clear on this, have one question: the current unmodified
-design of reboot-mode is dt based:
-
-struct device_node *np = reboot->dev->of_node;
-and then parses the node using for_each_property_of_node(np, prop).
-
-We want to refactor reboot-mode to support non-DT setups by adding
-support for fwnode-based approach (struct fwnode_handle *fwnode)?
-
-Can you please explain a bit? Some more details would be helpful to
-make the change.
-
-thanks,
-Shivendra
+> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+> index 7224072cccc5..78b17fe80b62 100644
+> --- a/include/linux/ns_common.h
+> +++ b/include/linux/ns_common.h
+> @@ -31,6 +31,9 @@ struct ns_common {
+>  	};
+>  };
+>  
+> +int ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops,
+> +		   bool alloc_inum);
+> +
+>  #define to_ns_common(__ns)                              \
+>  	_Generic((__ns),                                \
+>  		struct cgroup_namespace *: &(__ns)->ns, \
+> diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
+> index 7f89f0829e60..9f21670b5824 100644
+> --- a/include/linux/proc_ns.h
+> +++ b/include/linux/proc_ns.h
+> @@ -66,25 +66,6 @@ static inline void proc_free_inum(unsigned int inum) {}
+>  
+>  #endif /* CONFIG_PROC_FS */
+>  
+> -static inline int ns_common_init(struct ns_common *ns,
+> -				 const struct proc_ns_operations *ops,
+> -				 bool alloc_inum)
+> -{
+> -	if (alloc_inum) {
+> -		int ret;
+> -		ret = proc_alloc_inum(&ns->inum);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -	refcount_set(&ns->count, 1);
+> -	ns->stashed = NULL;
+> -	ns->ops = ops;
+> -	ns->ns_id = 0;
+> -	RB_CLEAR_NODE(&ns->ns_tree_node);
+> -	INIT_LIST_HEAD(&ns->ns_list_node);
+> -	return 0;
+> -}
+> -
+>  #define ns_free_inum(ns) proc_free_inum((ns)->inum)
+>  
+>  #define get_proc_ns(inode) ((struct ns_common *)(inode)->i_private)
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index b807516a1b43..1f48f7cd2d7b 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -8,7 +8,7 @@ obj-y     = fork.o exec_domain.o panic.o \
+>  	    sysctl.o capability.o ptrace.o user.o \
+>  	    signal.o sys.o umh.o workqueue.o pid.o task_work.o \
+>  	    extable.o params.o \
+> -	    kthread.o sys_ni.o nsproxy.o nstree.o \
+> +	    kthread.o sys_ni.o nsproxy.o nstree.o nscommon.o \
+>  	    notifier.o ksysfs.o cred.o reboot.o \
+>  	    async.o range.o smpboot.o ucount.o regset.o ksyms_common.o
+>  
+> diff --git a/kernel/nscommon.c b/kernel/nscommon.c
+> new file mode 100644
+> index 000000000000..ebf4783d0505
+> --- /dev/null
+> +++ b/kernel/nscommon.c
+> @@ -0,0 +1,21 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <linux/ns_common.h>
+> +
+> +int ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops,
+> +		   bool alloc_inum)
+> +{
+> +	if (alloc_inum) {
+> +		int ret;
+> +		ret = proc_alloc_inum(&ns->inum);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	refcount_set(&ns->count, 1);
+> +	ns->stashed = NULL;
+> +	ns->ops = ops;
+> +	ns->ns_id = 0;
+> +	RB_CLEAR_NODE(&ns->ns_tree_node);
+> +	INIT_LIST_HEAD(&ns->ns_list_node);
+> +	return 0;
+> +}
+> 
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
