@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-821669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536C2B81E9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C71B81EA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1240C3AC5F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5A33B1D95
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0A6243371;
-	Wed, 17 Sep 2025 21:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A9E2749CE;
+	Wed, 17 Sep 2025 21:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAFvS4Aj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZD1FJCNp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC2610F1;
-	Wed, 17 Sep 2025 21:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE3D10F1;
+	Wed, 17 Sep 2025 21:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143907; cv=none; b=OZjhohn4bDxOaPB4rU0WKXf99DdRPE9KKSbT2rCbw7nBXg8TSbc0SyK05HvAsjgYznf/d1ArlrCV/hJF3cNwJf71RzJRsL3aiv9KtZsxJl+WXr3v8Ib6FqfwQ8XnTydwUAJGWAXttd0iLQqptB1dUUYVn8y71Etr8/8amFwg/Ms=
+	t=1758143954; cv=none; b=iiVRKFYvpDWYBmSQIhQ/3PfuPMi/J1woOBJ4QW/ygzhm+/kecFnVeTwHRzZYA5fOEAvaEI6bQbQKWkwWws4xvE+ywpuoqKkgaRGPxcjzF50fQ+TT1tXX57HZoYxA+iPsK9ruuTi+b5uBSYgWCna+tyjyOjDmn3jnUCNwBolMrUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143907; c=relaxed/simple;
-	bh=Dkf08spIxA201bgB3U6VQQ/RiMff9Y1iizvcrMd6Ipw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JT5m/XqCV4fp8idzWbVvXAah0RRoccijXt9Ldrh924OKAXBux8fdOamRqumUrsu7a8bxiwaOP3uanQ9Nzvh9jBIT3m0hTOCWFtoKpCqWuLmhjDCwWXnVylXr1cmeGi+csz1cmMoJ08fsY42IIRWrRPwIEmhTaWm0WEImfe/M0qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAFvS4Aj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A0DC4CEE7;
-	Wed, 17 Sep 2025 21:18:27 +0000 (UTC)
+	s=arc-20240116; t=1758143954; c=relaxed/simple;
+	bh=2hX6h0lZi6Wvimj0InNgEZYJuaAotowTDFW8fY0ZYi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eKU9UfcsJZlrLB7FnoKV0V4Ya0IrmZaIkQoA0HIvI++IZhgN3uO7IXjw0/nRFQwO4PkTCsbpwLEnovJB5t6fDIYgSYv0YVbirObwhuWqCVVrJHqWJlseGoZ/I4qjWb7vIt40hEVlhOj0abluPZX72I6Wf3MvB+5fHd6R/qm9bvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZD1FJCNp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF6EEC4CEE7;
+	Wed, 17 Sep 2025 21:19:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758143907;
-	bh=Dkf08spIxA201bgB3U6VQQ/RiMff9Y1iizvcrMd6Ipw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eAFvS4Ajgc6dGXw+wpqk+89BbU6NxbLokTy88t5guS8V8kgaePfP/jBJ9cMNWnzG/
-	 91uRTY7+56XLBLzDMi+MfWFAb3cKziHq8Op1EUnuPj7A5jt0cIc3zH1+MaH0t2bxoy
-	 M74PI70kJJ7TH38wdUF0G+WuPgFK81TNHc4Iypc1a+5+uKmFR4i3hTg55ScwFiEZ3j
-	 ZKFZaL31t7v6IGmdDn6taTUJugECvKCNJL3iIt0iPM53wtdsq9KCFY/mBl0oRNGXmD
-	 1SXJ1JaF5aAGcpUWX6X2mSPDX1qEd4rjAiduq1luH+E/zBu70acdYR1EGl4uJaJIga
-	 SwMvK40TkXXpg==
-Date: Wed, 17 Sep 2025 16:18:25 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: chester62515@gmail.com, mbrugger@suse.com,
-	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
-	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: pcie: Add the NXP PCIe controller
-Message-ID: <20250917211825.GA1874549@bhelgaas>
+	s=k20201202; t=1758143954;
+	bh=2hX6h0lZi6Wvimj0InNgEZYJuaAotowTDFW8fY0ZYi4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZD1FJCNpKn9xWANveD4AS6EmPXZFEpw7jlIGhgK4rilzcrgLC1jInQGIz+azQjvHP
+	 MCpXKR1a/ph8hoHB8YzUP1H+IUOCxCNPXzQ4iBUixHYprRbz4TdaGVQzryWSLDa97v
+	 FMMREQoLBH7T7wsiqZwIC8XnvaGcrKJeJV0YHct8H13TAknPLPjvQunW7MT0jYpSau
+	 z89wOoPrjtkCkjO8BbUegUaClOfK+pXnhrHKfHyU1IxLQhxp4Qdoj9zvv2xPxdaETS
+	 eIO5i59siokBOQZ4JuHSLLZvhE7f/LNQvgbp2M4rl/taAxE4bw9Fh9E1mPwxRxjT2C
+	 gVwR9t9xM/ujA==
+Date: Wed, 17 Sep 2025 14:19:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
+ <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
+ kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org, Kyle Swenson
+ <kyle.swenson@est.tech>
+Subject: Re: [PATCH net-next v3 0/5] net: pse-pd: pd692x0: Add permanent
+ configuration management support
+Message-ID: <20250917141912.314ea89b@kernel.org>
+In-Reply-To: <20250917114655.6ed579eb@kmaincent-XPS-13-7390>
+References: <20250915-feature_poe_permanent_conf-v3-0-78871151088b@bootlin.com>
+	<20250916165440.3d4e498a@kernel.org>
+	<20250917114655.6ed579eb@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912141436.2347852-2-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Suggest following convention for subject lines (run "git log --oneline
-Documentation/devicetree/bindings/pci/"), e.g.,
+On Wed, 17 Sep 2025 11:46:55 +0200 Kory Maincent wrote:
+> > On Mon, 15 Sep 2025 19:06:25 +0200 Kory Maincent wrote:  
+> > > This patch series introduces a new devlink-conf uAPI to manage device
+> > > configuration stored in non-volatile memory. This provides a standardized
+> > > interface for devices that need to persist configuration changes across
+> > > reboots. The uAPI is designed to be generic and can be used by any device
+> > > driver that manages persistent configuration storage.
+> > > 
+> > > The permanent configuration allows settings to persist across device
+> > > resets and power cycles, providing better control over PSE behavior
+> > > in production environments.    
+> > 
+> > I'm still unclear on the technical justification for this.
+> > "There's a tool in another project which does it this way"
+> > is not usually sufficient upstream. For better or worse we
+> > like to re-implement things from first principles.
+> > 
+> > Could you succinctly explain why "saving config" can't be implemented
+> > by some user space dumping out ethtool configuration, saving it under
+> > /etc, and using that config after reboot. A'la iptables-save /
+> > iptables-restore?  
+> 
+> I think the only reason to save the config in the NVM instead of the userspace
+> is to improve boot time. As Oleksij described:
+> > I can confirm a field case from industrial/medical gear. Closed system,
+> > several modules on SPE, PoDL for power. Requirement: power the PDs as
+> > early as possible, even before Linux. The box boots faster if power-up
+> > and Linux init run in parallel. In this setup the power-on state is
+> > pre-designed by the product team and should not be changed by Linux at
+> > runtime.  
+> 
+> He told me that he also had added support for switches in Barebox for the
+> same reason, the boot time. I don't know if it is a reasonable reason to add it
+> in Linux.
 
-  dt-bindings: PCI: s32g: Add NXP PCIe controller
-
-On Fri, Sep 12, 2025 at 04:14:33PM +0200, Vincent Guittot wrote:
-> Describe the PCIe controller available on the S32G platforms.
-
-> +        pcie0: pcie@40400000 {
-> +            compatible = "nxp,s32g3-pcie",
-> +                         "nxp,s32g2-pcie";
-> +            dma-coherent;
-> +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
-> +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
-> +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
-> +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
-> +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
-> +                  /* RC configuration space, 4KB each for cfg0 and cfg1
-> +                   * at the end of the outbound memory map
-> +                   */
-> +                  <0x5f 0xffffe000 0x0 0x00002000>,
-> +                  <0x58 0x00000000 0x0 0x40000000>; /* 1GB EP addr space */
-> +                  reg-names = "dbi", "dbi2", "atu", "dma", "ctrl",
-> +                              "config", "addr_space";
-
-Looks like an indentation error.  Shouldn't "reg-names" and subsequent
-properties be aligned under "reg"?
-
-> +                  #address-cells = <3>;
-> +                  #size-cells = <2>;
-> +                  device_type = "pci";
-> +                  ranges =
-> +                  /* downstream I/O, 64KB and aligned naturally just
-> +                   * before the config space to minimize fragmentation
-> +                   */
-> +                  <0x81000000 0x0 0x00000000 0x5f 0xfffe0000 0x0 0x00010000>,
-> +                  /* non-prefetchable memory, with best case size and
-> +                  * alignment
-> +                   */
-> +                  <0x82000000 0x0 0x00000000 0x58 0x00000000 0x7 0xfffe0000>;
-> +
-> +                  nxp,phy-mode = "crns";
-
-If "nxp,phy-mode" goes with "phys", should it be adjacent to it?
-
-> +                  bus-range = <0x0 0xff>;
-> +                  interrupts =  <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-> +                                <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> +                                <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-> +                                <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-> +                                <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
-> +                                <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-> +                                <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
-> +                                <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
-> +                  interrupt-names = "link_req_stat", "dma", "msi",
-> +                                    "phy_link_down", "phy_link_up", "misc",
-> +                                    "pcs", "tlp_req_no_comp";
-> +                  #interrupt-cells = <1>;
-> +                  interrupt-map-mask = <0 0 0 0x7>;
-> +                  interrupt-map = <0 0 0 1 &gic 0 0 0 128 4>,
-> +                                  <0 0 0 2 &gic 0 0 0 129 4>,
-> +                                  <0 0 0 3 &gic 0 0 0 130 4>,
-> +                                  <0 0 0 4 &gic 0 0 0 131 4>;
-> +                  msi-parent = <&gic>;
-> +
-> +                  num-lanes = <2>;
-> +                  phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
-> +        };
-> +    };
+Right, subjectively I focused on the last sentence of Oleksij's reply.
+I vote we leave it out for now.
 
