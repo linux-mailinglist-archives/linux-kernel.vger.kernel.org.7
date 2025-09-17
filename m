@@ -1,196 +1,474 @@
-Return-Path: <linux-kernel+bounces-820026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8B1B7CCC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AFDFB7D0D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57BC3AD31F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466D4174317
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE8626D4EE;
-	Wed, 17 Sep 2025 06:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52192773CB;
+	Wed, 17 Sep 2025 06:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZrcCknnn"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010026.outbound.protection.outlook.com [52.101.46.26])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GBG8NRr0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1889D23D7E6
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758089495; cv=fail; b=KF2e+Ltgq/6GSt3+MKjITH0SWhjCZT+Hlfy2wfSJbXCbk+EXhrzGKoa7sSaQWRqJSBUN1GWOQIjo0QXyXxMfsHTGMprEkFtSmWE7Lgb5L6OIO5jhDRE9Cz8y/WNJMDHP/A/1K6c4bUtNv0hvIYH5wvGfadAsgqyC+nY1+paq5ls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758089495; c=relaxed/simple;
-	bh=9n1V8OEVq8CZ3wBKTNH+pThqEaV0+QLolNs0VtHFwww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rhc4BKKYyIKv/KeQA1KepjrLY8crssLksDeNy/g9VtIHt2yrCaz0yK2lV81Zazhw3nmR72JCbkUYpB5ms2LzHEmNBURwiTPONiuI6yFMR2dCA2yVd5yb6qqbNd3ey9xTYS+rQHHyNQ+uPoIxf80N3MRpmJyeFOm0LdIubd0pvlw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZrcCknnn; arc=fail smtp.client-ip=52.101.46.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ejCVdExzKG5srQCFGPQFOIjS4eG6HvobyulhnO11OLdjyxJ3mK2uh217wHZjkmHPJzHjcHVKvdVqbq/VhHDUvlY1Gqmu6HBl2UVehe6LteMnVbR13DYRGk9tyYy1tcM4Z6DXhiF3KwsuJa6bdA0aMDqPh5uuj8B/vBRDjcW1uDuzDK/xP6RGyGw8JhiHpQ9MWXjz6otAco4Rk+pRvSmeA0M1oeGwvRjJoLO4+dSUBDSh5wKJTRpQBTbparwo7mvbJHMd5kmvFyznAcqzSfDytUxV2kpsofyJj/Aidvrjvo9bVAbQjtZ9IMa955Syt7LPGifYxKQXlBGOXZ8pruDu5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=22GR49sZNILGNHSBuUTS9iDZJPGejSd36Nc+RoWPqk4=;
- b=abZml7sekAPkh0nE3CRgQk2emtfB0YVHhlO6dEN6XbfE1f2S9mtpZhd3Pqg+bJWvBjZtPKguybslNCocS/oTBA3QA7J2MQ2EUMPtrR77Pz8s42XePKK2WA1tA5CNfhoO25hQAAnN0ldkizeETRlF5F3pkV8uCINMfS1nUzOKqDEG4pWAYcxlUDDfVfFMYfkvyA/8K2dwnxoWqG4DuL18vyK/ZQs2WovG0e1XhKnf0IbqR1QAmNNWVtAVUWKrRHmnRRMNFL4IKUjd7v4TiQOp/V9VGgsBL7A2XKcqPAHVFpDfqLhfo0/hdz5DPqgJ1L6p6MQVNcR8+tlIweba+Pn/8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=22GR49sZNILGNHSBuUTS9iDZJPGejSd36Nc+RoWPqk4=;
- b=ZrcCknnnNou+kvop/C/9dyCVkFG4mbQLMcok0t2Ajw/3bzxZUiGs+76OTaUn+XfckH9QlNu656wBVKD6xzZmmHMljgJ+K9dqV25eUvOmPA7zPkHac79yEqxrrZrfU8oAPk9Q/6ve9m44lqYrOwO+pA2JVrsKAo0MoaAMYMYOlNXMV4+RujTm0Yx1hOGAShjQtdiTEMbe/+jZ5HC/Zy5Q902rc1dGY+jq4l3KpAvaUQEJpYw/Inj67HYeDzCPj0UlmP+U+ESKZkoRRDpRwmuTJx8O0kF9DL5+fVF4wCvYKjSYih4yMaQUHmojgGppBw1cbcaqIzE4qRSdPTIoCFhF0w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by IA1PR12MB7495.namprd12.prod.outlook.com (2603:10b6:208:419::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Wed, 17 Sep
- 2025 06:11:31 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 06:11:31 +0000
-Date: Wed, 17 Sep 2025 08:11:25 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev
-Subject: Re: [PATCH sched_ext/for-6.17-fixes] sched_ext, sched/core: Fix
- build failure when !FAIR_GROUP_SCHED && EXT_GROUP_SCHED
-Message-ID: <aMpRDcIhrnx2ZaIr@gpd4>
-References: <aMnRYuUvbYsc9S2L@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMnRYuUvbYsc9S2L@slm.duckdns.org>
-X-ClientProxiedBy: MI0P293CA0007.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::10) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADBA81749;
+	Wed, 17 Sep 2025 06:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758089565; cv=none; b=MDpBHAO+T0M+OMrZBFoghcy7gEpOaW7hbjanz1NR1ekgz/DFmAlhNj5Zk5sIO0faDWpGRNcg1+TXmf0IE0K7xKgqN80k2iScADji8JKWpX0FtA9kohYBUXXhJ4ibJHM/lahs6OLu/AkBskeCD2G8f4EkUftYXD9gta6f4hCdY4I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758089565; c=relaxed/simple;
+	bh=udpS6+iQy+p9dZ8y/1+rUWGfwcAIGSK/9mGEtIpNcwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTN4nU36Oiv5GobFJK8YUjA/ucgGPxVF/FahmCgVuSUHXSbOERRdKD3XdqvSwI7bQZkYnQp8E3SODJ9HE/sV7NLZBZyjybAtCIFL3mhgQq/uCFM0mIOrTF3gjCMEdvMVMmfsRcSMTEwdFi8efchdR1j/pyxz17398IR0X25KSws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GBG8NRr0; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758089564; x=1789625564;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=udpS6+iQy+p9dZ8y/1+rUWGfwcAIGSK/9mGEtIpNcwQ=;
+  b=GBG8NRr0tVaymvxOcP/iANXVzOXM+k0aQPhMokKEN869HaLQqqWrR8qA
+   CR1KKk23sAILnMRZOILZb8ssczNuNiUe/hUpRI0mu5TGZPDF0MPGIH0f2
+   ogip+86Ui59sHw9oOikkPDZV9nKIFxZShZNrkStRgMRUdtOmcgybYtdad
+   0iwO3cqM+vsoE6l3safE/3+t4xiSK6NMdxU+T1HvE7ikbh9g6gyOn/KOr
+   z4IKRizJ3IYZVJn0iD/b3FIvWARS1f44yYie71IyX7NfMiC8q8jtW6b6o
+   efdnVQobCQ2oJfyNUMLOQW/+x5oCZ3dFEsxFj5T3lb+QOx5xTOLQTw202
+   A==;
+X-CSE-ConnectionGUID: HkDddUD2Q1y5a/in9+IPEg==
+X-CSE-MsgGUID: gStdk3KaS8WrxQymFlAy0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="64019708"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="64019708"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 23:12:43 -0700
+X-CSE-ConnectionGUID: hNZcGEGhSCW7xK5OGpZE9g==
+X-CSE-MsgGUID: CXf3vY/dTtyHWHmpM38U2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="198831405"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa002.fm.intel.com with ESMTP; 16 Sep 2025 23:12:38 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id D33E795; Wed, 17 Sep 2025 08:12:36 +0200 (CEST)
+Date: Wed, 17 Sep 2025 08:12:36 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Jack Pham <quic_jackp@quicinc.com>,
+	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Mayank Rana <mayank.rana@oss.qualcomm.com>,
+	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
+ Router
+Message-ID: <20250917061236.GF2912318@black.igk.intel.com>
+References: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|IA1PR12MB7495:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d5b4ff9-69c9-4f8b-519b-08ddf5b10bdb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0LRSvlhDY7abXC/kKV4UAi3uQLHY8iYUpHDVtR7bWxVD98BdexYEScORFUnM?=
- =?us-ascii?Q?srMdKpHHcyZ+Y7jJZzy1ojG0j96rzHzNxWMta3cf3GnuIHrNrX2qH5W1g4Kn?=
- =?us-ascii?Q?6DDSrIRkzxP2QoJxOnPzlKhJd6LPt45+KcderkmCCwRBZ44dpcG4DhDHA92l?=
- =?us-ascii?Q?udOVKo8LWqALZKJ3OrKHraEzo+S2bowvt9d9pbDgTha80F0QOWQiX6FBcj5S?=
- =?us-ascii?Q?t8kEe/FbrPda7soHNQ0p9eLPBwJXfV8gW2C3o1zgudWy1dbFK5oNODaA5C6s?=
- =?us-ascii?Q?ujlHE2k03f+Pb6IgwZQvMMXrhY2VjBeXm1xFvXkYytT2LqRNYqJzV/FbGmvt?=
- =?us-ascii?Q?5IcUIB6COlyw6PYYSs4ThyP1+rcYilN86nC1MuKiALWV1N6wia9mTOcs05kj?=
- =?us-ascii?Q?W2Fo/RqoUG9+2mASfX9hC4e8rWKhncyIOpSZQuGiHt8ognyCELX8/554tB5z?=
- =?us-ascii?Q?TdljukHU5lXxeKvsET6M3XFynOpt1Yvg2AwxNLIp2KkRu1Ijirdx+44SA3Gq?=
- =?us-ascii?Q?mtKVwW2Ee8Xl7nBSrtQ5RDVdIEtj1s06tRiYNbcGUQjXBoTme/DhqOlIIrOb?=
- =?us-ascii?Q?rUvDnGIUGrfgXcHm6PpPJvbc1X5Xa1cp/1WWs2bj/UcYkgcsj+mn3G0Onk5L?=
- =?us-ascii?Q?er12Nlrj39JG5uWi5IshAs0oKC//quLvzCWu9JsyucuhOc467C0sYnJbqa20?=
- =?us-ascii?Q?AVVvhbbTpWaACtWZ97lqEsKwprt1lNE2jilR1MB0Q02bA8H+IL2tr4X9+uLa?=
- =?us-ascii?Q?W/xUBN8xLn59s9HxjtGSXntDvm0wza3KKx9UbfdDKVwHk6uOdiBaV5akteD4?=
- =?us-ascii?Q?bv2hgJphkL06/leqLAxO4w9eZFiTIjd1Rl8wJz15EZyqiVrD3aPlVrUqFRKi?=
- =?us-ascii?Q?DfY/cB/V0slkO7ARJmvKz8Nu2o5PoHmGLR5zPe73Y8Mqwk7e+Zs0EMXl5AJg?=
- =?us-ascii?Q?sSi8FYxKW8FI1De9t4EnnZzaDOapSbOG14TgFM+0/WoRuK21uheMljn2voNv?=
- =?us-ascii?Q?DrEHUyAQKhrLMwyH73WNLN40O5fn0HMYcyKPzd/ruub91uUY1FcX/qH23aqR?=
- =?us-ascii?Q?RZsgtoVaNVcc/LkCO7BK/IssDVkZFTpo7PaY5S8s7rIR5rIl7oo0x1K6cyN3?=
- =?us-ascii?Q?7nwx9Y/PLxnl2zR3fWj5f8TvE9GLNlPzP3J1B/XQQQV9pi8eqP+L6jWXkRTQ?=
- =?us-ascii?Q?C6+5loV+LeShtcqrzm8fDr8XEhGh8MA5owtedYnBCWGjz/K9dZwSgHTpB3qN?=
- =?us-ascii?Q?7SKclWFjZ945JGRGGbfXQCXZiEPGqHpQZ1lq/mbDXIHDGVlTK2xIKsJItuGV?=
- =?us-ascii?Q?RU0n+WtUw8p/FIumSyTHVMWCtxfif9MvAgPgto9MtMIzr/1XotGkaNJ4aphB?=
- =?us-ascii?Q?00lSaKWofHCTRT3DcLA91drRQorKfOzr2Dcr0wVO/l6FYGB+S4H3GlOiXMn5?=
- =?us-ascii?Q?AibBNP14Wyw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?uPKvsP9j/5vYGus6nSNGuFI8uz0dnoj+CUhIJgOxfkXxNvcR9Z2K4co1tSXS?=
- =?us-ascii?Q?DfPwx0NdeFSrADj4xlT2x6+3zIMeyNZSL5t2HgnUD1nmyW1epuyOVlkKm5JU?=
- =?us-ascii?Q?ogLI3tSIZUQNiQNOY5yM6d967ppn+n8rPRH9KFTsxa8HqobH7rPIVvoxFqFF?=
- =?us-ascii?Q?akOPdktyW6NYFdgBvcy6/I/hiPx8JCucvY73Mqa6pIjiQIFYC84ihKX5AFyy?=
- =?us-ascii?Q?E9WJRyrf6FbYK9ZIJrhHekkVXgi0j40hFqx7sSSJA+FPvg6yL8jPWAJyJ6Wi?=
- =?us-ascii?Q?/3VUQSAyDybulEY4WG0AG8RPwfFm/IAOFmB8Xe6xn4YI8KRX8GhujRmCpy6R?=
- =?us-ascii?Q?yYG4BNKTegPxNc1+KILixn6FSoHMWhsCLTdfUzLzwXmVNt++SAbhVzfyk+GO?=
- =?us-ascii?Q?c6/8zC8wWxIKp/A/EM+g4gTElRORPubwpaAaL8+1U1K0Vlj/exbTL7lhLmIP?=
- =?us-ascii?Q?75U/vOBs63UV9puVTygMJuF1fX8TxdGMQ6ulcp2RLmIhVUQyx7T9MjOh//cK?=
- =?us-ascii?Q?SgOQNVkWuwNSxWdci1ESidu5uCDXnVgDS+6tscYc1z5VSNgNI/06q8RNlbLm?=
- =?us-ascii?Q?Hgbsfx4upexfhKJG3Fa7UAGixnFQq+M9WcVJKI2ml5LdZNuJcZHUJxlFmvJd?=
- =?us-ascii?Q?iHcTJH6ySESUIQoOvW/n8ApQ9DBQu86bwlJW6E5/I2nu+M4U5dCvHFAQHp5/?=
- =?us-ascii?Q?lExJdmoR9dRfhvr8FJu7JGT/0edeT58l0gUI5BKP7pU/UgG4JvIwLAUO+bBM?=
- =?us-ascii?Q?+yULLfqw+FPndsQCXxHgil8qkhxHrX5TBRMrwyhZhs1WEmveuLTI5Y3B9LT3?=
- =?us-ascii?Q?Vz0x9O/g3UPqmiKBt0nhwD5tEtaj+f7qAm9KoLKI0ijDzle3pp+1FdGvi/Ep?=
- =?us-ascii?Q?5hDhQmCfmHaR3wTIR3mrDu/v2xSaBgS+SUlRkLmcES9B73M1KTMr0eDO7oBp?=
- =?us-ascii?Q?Dcn90QKgidSDTWpO+Q6rHxr6v6s1OpiF47uZ7t0lX1aS2TrtnqAafMfXQPom?=
- =?us-ascii?Q?d4Jr3bGIJehW7qwHUsn52vBQ0VZA/WjiCkQsNREXXrcy5OsmiFH0SW8rZVLh?=
- =?us-ascii?Q?oCAreG1w7dncFKWYDTW1wdpD00ZCIQ6N/6s8Lzp5JamhIUg686kc2fk4woIH?=
- =?us-ascii?Q?aatgjlU5+5r85xoiHeLhBlIS/D3Z8P8rBRPyhHpRb2n3HKJjOfU7PWrjAoUg?=
- =?us-ascii?Q?PGdgeFDPRnM9J78oECQLd1gC5CGL0nB4eQ/69MBOh+Gj56iW/3jwUzWswg1e?=
- =?us-ascii?Q?N7qsVdGyO7J1VqiL79Q2C0eqtJRN7mr2eqCAnICcY13TMNaHy2CyWRggG6Gm?=
- =?us-ascii?Q?EjMzx3lvnow5ZYMPuzQrSk1T6gdPm2MrE2uz//p4vgPv/su0Z+LUe8q7z8mH?=
- =?us-ascii?Q?CJ2xPfB1764aGvVs8CJjhbL3f6QolAXf4t3QbS9gi5h3J5fa/xdXYHmWvvVZ?=
- =?us-ascii?Q?nv6fV9wlQ1pB22/Di+X2e2+86twZrhpNQ4XLxtor2TVAeMq58w4m2FB+5bGi?=
- =?us-ascii?Q?7Crtc8yVMg2dQQu4cOzqP0fRGWzlSHhdU8YgyE9HsknwSheAI7smrEJ1ceoW?=
- =?us-ascii?Q?9C1u9q4KmNZEoDA4Dg4GKy6ENriy/NomvqidCxDH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d5b4ff9-69c9-4f8b-519b-08ddf5b10bdb
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 06:11:31.5003
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vvT7RiUZB4/xVZbc30ddxdaOYCsB3zJAbU8Z3WblvLSQOePw7DfBUNd4nOrpHe5pWBHNelbgnNIlxkPUX8Ws5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7495
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
 
-On Tue, Sep 16, 2025 at 11:06:42AM -1000, Tejun Heo wrote:
-> While collecting SCX related fields in struct task_group into struct
-> scx_task_group, 6e6558a6bc41 ("sched_ext, sched/core: Factor out struct
-> scx_task_group") forgot update tg->scx_weight usage in tg_weight(), which
-> leads to build failure when CONFIG_FAIR_GROUP_SCHED is disabled but
-> CONFIG_EXT_GROUP_SCHED is enabled. Fix it.
+Hi Konrad,
+
+On Tue, Sep 16, 2025 at 10:06:01PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> Fixes: 6e6558a6bc41 ("sched_ext, sched/core: Factor out struct scx_task_group")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202509170230.MwZsJSWa-lkp@intel.com/
+> Several Qualcomm platforms feature an in-house Host Router IP block,
+> which enables USB4 and Thunderbolt 3 functionality. It implements the
+> common NHI interface, allowing for easier integration with existing
+> Thunderbolt driver implementations.
+> 
+> The Host Router features a microcontroller (with loadable firmware),
+> which takes care of detecting and acting upon plug events, initiating
+> high-speed link establishment or performing HW power management
+> operations.
+> 
+> Each instance is connected to a single USB3.x host, a PCIe RC and a
+> DisplayPort controller through a fitting Protocol Adapter, allowing
+> for the tunneling of the respective protocols between the USB4/TBT3
+> device and the on-SoC controller.
+> 
+> Describe the block, as present on the X1E family of SoCs, where it
+> implements the USB4v1 standard.
 
-Missing SoB line? Apart than that LGTM.
+This is nice!
 
-Tested-by: Andrea Righi <arighi@nvidia.com>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+> Hello!
+> 
+> This is our stab at USB4/Thunderbolt dt-bindings.
+> 
+> This submission, as stated in the commit message, describes our USB4
+> Host Router block, which is roughly the same class of hardware that you
+> can find on add-in PCIe cards aimed at x86 machines.
+> 
+> This specific patch is NOT supposed to be merged, since the bindings
+> may still ever so slightly change, as we continue work on the driver
+> (i.e. it's still possible that we omitted some resource).
+> 
+> It is however published early to create grounds for a discussion.
+> This is the first bring-up of USB4/TBT3 on a DT platform, so this
+> binding is likely going to influence all subsequent submissions. I've
+> added various DT and TBT folks to the recipient list to make everyone
+> aware of any decisions we settle on.
+> 
+> Comments very welcome!
+> 
+> P.S.
+> The driver part (which has quite some dependencies) is not yet 100%
+> ready to share and will be published at a later date.
 
-Thanks,
--Andrea
+Okay, I think it is beter to submit the bindings with the driver changes so
+that we can see the big picture.
 
 > ---
-> Peter, I'll apply this to sched_ext/for-6.17-fixes and send it Linus' way.
-> Please let me know for any concerns.
+>  .../bindings/thunderbolt/qcom,usb4-hr.yaml         | 263 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 264 insertions(+)
 > 
-> Thanks.
-> 
->  kernel/sched/core.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index be00629f0ba4..ccba6fc3c3fe 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9551,7 +9551,7 @@ static unsigned long tg_weight(struct task_group *tg)
->  #ifdef CONFIG_FAIR_GROUP_SCHED
->  	return scale_load_down(tg->shares);
->  #else
-> -	return sched_weight_from_cgroup(tg->scx_weight);
-> +	return sched_weight_from_cgroup(tg->scx.weight);
->  #endif
->  }
+> diff --git a/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1cf3d083c6129a492010a4b98fea0e8dec9746cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/thunderbolt/qcom,usb4-hr.yaml
+> @@ -0,0 +1,263 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/thunderbolt/qcom,usb4-hr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm USB4 Host Router
+> +
+> +maintainers:
+> +  - Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> +
+> +description:
+> +  The Qualcomm USB4 Host Router IP block implements the NHI standard
+> +  as described in the USB4 specification.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - qcom,x1e80100-usb4-hr # USB4v1
+> +      - const: qcom,usb4-hr
+> +
+> +  reg:
+> +    maxItems: 17
+> +
+> +  reg-names:
+> +    items:
+> +      - const: router
+> +      - const: router_config
+> +      - const: tmu_config
+> +      - const: port_group
+> +      - const: sideband
+> +      - const: uc_ram
+> +      - const: uc_per
+> +      - const: uc_mbox
+> +      - const: nhi
+> +      - const: cfg
+> +      - const: debug
+> +      - const: usbap_config
+> +      - const: pcieap_config
+> +      - const: dpap0_aux
+> +      - const: dpap0_config
+> +      - const: dpap1_aux
+> +      - const: dpap1_config
+
+Are these the specific to the host controller? I mean route_config sounds
+pretty much like Router Config space and that is available through the USB4
+fabric so not sure why this is listed?
+
+Also this does not list the standard Host Interface registers, is that on
+purpose?
+
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Combined event interrupt for all three rings
+> +      - description: OOB Firmware interrupt
+
+No MSI? If not then at least I suggest to support it in the DT description.
+
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: ring
+> +      - const: fw
+> +
+> +  clocks:
+> +    maxItems: 10
+> +
+> +  clock-names:
+> +    items:
+> +      - const: sys
+> +      - const: tmu
+> +      - const: ahb
+> +      - const: axi
+> +      - const: master
+> +      - const: phy_rx0
+> +      - const: phy_rx1
+> +      - const: sb
+> +      - const: dp0
+> +      - const: dp1
+> +
+> +  resets:
+> +    maxItems: 13
+> +
+> +  reset-names:
+> +    items:
+> +      - const: core
+> +      - const: phy_nocsr
+> +      - const: sys
+> +      - const: rx0
+> +      - const: rx1
+> +      - const: usb_pipe
+> +      - const: pcie_pipe
+> +      - const: tmu
+> +      - const: sideband_iface
+> +      - const: hia_master
+> +      - const: ahb
+> +      - const: dp0
+> +      - const: dp1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  required-opps:
+> +    maxItems: 1
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    const: usb4
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: usb4-ddr
+> +      - const: apps-usb4
+> +
+> +  mode-switch: true
+> +
+> +  wakeup-source: true
+
+What about the "power contract"? Are you using the existing we have for
+ACPI:
+
+https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#map-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
+
+It was designed DT in mind but I don't think we have DT bindings for it.
+This is needed to make sure the driver (Connection Manager) creates the
+tunnels before the native protocol stacks get enumerated (e.g during power
+transitions).
+
+> +
+> +allOf:
+> +  - $ref: /schemas/usb/usb-switch.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - power-domains
+> +  - phys
+> +  - phy-names
+> +  - iommus
+> +  - interconnects
+> +  - interconnect-names
+> +  - mode-switch
+> +  - port
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        usb4_router0: usb4-host-router@15600000 {
+> +            compatible = "qcom,x1e80100-usb4-hr",
+> +                         "qcom,usb4-hr";
+> +            reg = <0x0 0x15600000 0x0 0x8000>,
+> +                  <0x0 0x15608000 0x0 0x70>,
+> +                  <0x0 0x15608070 0x0 0x500>,
+> +                  <0x0 0x1560d000 0x0 0x1000>,
+> +                  <0x0 0x15612000 0x0 0x1000>,
+> +                  <0x0 0x15613000 0x0 0xe000>,
+> +                  <0x0 0x15621000 0x0 0x2000>,
+> +                  <0x0 0x15623000 0x0 0x2000>,
+> +                  <0x0 0x1563f000 0x0 0x40000>,
+> +                  <0x0 0x1567f000 0x0 0x1000>,
+> +                  <0x0 0x15680000 0x0 0x1000>,
+> +                  <0x0 0x15681000 0x0 0x1000>,
+> +                  <0x0 0x15682000 0x0 0x1000>,
+> +                  <0x0 0x15683000 0x0 0x1000>,
+> +                  <0x0 0x15685000 0x0 0x1000>,
+> +                  <0x0 0x15686000 0x0 0x1000>,
+> +                  <0x0 0x15688000 0x0 0x1000>;
+> +            reg-names = "router",
+> +                        "router_config",
+> +                        "tmu_config",
+> +                        "port_group",
+> +                        "sideband",
+> +                        "uc_ram",
+> +                        "uc_per",
+> +                        "uc_mbox",
+> +                        "nhi",
+> +                        "cfg",
+> +                        "debug",
+> +                        "usbap_config",
+> +                        "pcieap_config",
+> +                        "dpap0_aux",
+> +                        "dpap0_config",
+> +                        "dpap1_aux",
+> +                        "dpap1_config";
+> +
+> +            interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
+> +                         <GIC_SPI 579 IRQ_TYPE_LEVEL_HIGH>;
+> +            interrupt-names = "ring",
+> +                              "fw";
+> +
+> +            clocks = <&gcc_usb4_0_sys_clk>,
+> +                     <&gcc_usb4_0_tmu_clk>,
+> +                     <&gcc_usb4_0_cfg_ahb_clk>,
+> +                     <&gcc_aggre_usb4_0_axi_clk>,
+> +                     <&gcc_usb4_0_master_clk>,
+> +                     <&gcc_usb4_0_phy_rx0_clk>,
+> +                     <&gcc_usb4_0_phy_rx1_clk>,
+> +                     <&gcc_usb4_0_sb_if_clk>,
+> +                     <&gcc_usb4_0_dp0_clk>,
+> +                     <&gcc_usb4_0_dp1_clk>;
+> +            clock-names = "sys",
+> +                          "tmu",
+> +                          "ahb",
+> +                          "axi",
+> +                          "master",
+> +                          "phy_rx0",
+> +                          "phy_rx1",
+> +                          "sb",
+> +                          "dp0",
+> +                          "dp1";
+> +
+> +            resets = <&gcc_usb4_0_bcr>,
+> +                     <&gcc_usb4phy_phy_prim_bcr>,
+> +                     <&gcc_usb4_0_misc_usb4_sys_bcr>,
+> +                     <&gcc_usb4_0_misc_rx_clk_0_bcr>,
+> +                     <&gcc_usb4_0_misc_rx_clk_1_bcr>,
+> +                     <&gcc_usb4_0_misc_usb_pipe_bcr>,
+> +                     <&gcc_usb4_0_misc_pcie_pipe_bcr>,
+> +                     <&gcc_usb4_0_misc_tmu_bcr>,
+> +                     <&gcc_usb4_0_misc_sb_if_bcr>,
+> +                     <&gcc_usb4_0_misc_hia_mstr_bcr>,
+> +                     <&gcc_usb4_0_misc_ahb_bcr>,
+> +                     <&gcc_usb4_0_misc_dp0_max_pclk_bcr>,
+> +                     <&gcc_usb4_0_misc_dp1_max_pclk_bcr>;
+> +            reset-names = "core",
+> +                          "phy_nocsr",
+> +                          "sys",
+> +                          "rx0",
+> +                          "rx1",
+> +                          "usb_pipe",
+> +                          "pcie_pipe",
+> +                          "tmu",
+> +                          "sideband_iface",
+> +                          "hia_master",
+> +                          "ahb",
+> +                          "dp0",
+> +                          "dp1";
+> +
+> +            power-domains = <&gcc GCC_USB4_0_GDSC>;
+> +
+> +            phys = <&usb4_phy>;
+> +            phy-names = "usb4";
+> +
+> +            iommus = <&apps_smmu 0x1440 0x0>;
+> +
+> +            interconnects = <&icc0 &icc1>,
+> +                            <&icc2 &icc3>;
+> +            interconnect-names = "usb4-ddr",
+> +                                 "apps-usb4";
+> +
+> +            mode-switch;
+> +
+> +            port {
+> +                usb4_0_mode_in: endpoint {
+> +                };
+
+This describes the Downstream Facing Port (e.g USB4 port), right? We have
+something similar used in Chromebooks so it would be good if we can make
+the bindings close to each other if possible. This allows binding firmware
+description to retimers (and also to "fixed/embedded" device routers as
+recent changes to the USB4 spec makes possible).
+
+See drivers/thunderbolt/acpi.c::tb_acpi_find_companion().
+
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9da37c8dee69de9421d4f70906b4e623a442d171..b607f0a66f953fb1ea72e3405820288850004dfe 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -25428,6 +25428,7 @@ L:	linux-usb@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git
+>  F:	Documentation/admin-guide/thunderbolt.rst
+> +F:	Documentation/devicetree/bindings/thunderbolt/
+>  F:	drivers/thunderbolt/
+>  F:	include/linux/thunderbolt.h
 >  
+> 
+> ---
+> base-commit: 05af764719214d6568adb55c8749dec295228da8
+> change-id: 20250916-topic-qcom_usb4_bindings-3e83e2209e1e
+> 
+> Best regards,
+> -- 
+> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
