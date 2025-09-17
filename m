@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-820050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C6BB7D4BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3598DB7D29F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6FC321005
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123483BADB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E136529D266;
-	Wed, 17 Sep 2025 06:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A9129B8D0;
+	Wed, 17 Sep 2025 06:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TpeFTEhk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iw+1ptZy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475C2219A7E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B4F248861;
+	Wed, 17 Sep 2025 06:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758090126; cv=none; b=epflZAfQSdOiDmb/4u9PO4Lab/F8h38CTXgTwr2X8VJPVqK0tTwhixCLPimxhLItO9O+vD1Iv8K6j+RhSpyUnMGy31QMWC50YtWb2pv5YvdNPJfzOpb/dYt+/tQ1gHfAlD69Mfkc5/ywrrQR4skC0AjUKyFxBYzvUG6sYOCBnms=
+	t=1758090186; cv=none; b=k5GECTOtt2o7hBES6f38VK/ralsA0wgb6fpAx9bkEdL6gT+ybI1YqTozS5o0y2sMB0oDilSMoqiuqQnoZGKgxLrBrri4MIljBAoMPruqcDeeD+eXiUUbF7ACgVXMLvHok3sKTPXxDE9FBhqeXi/0DA9vyF35GaZEWWktuxOmrhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758090126; c=relaxed/simple;
-	bh=Kjn7elBlJ9GDdMgXC2HuQsesFr1yau8WiLp8/P3iHa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YPnjGR43t0yxHDb8kWdPpalhfbKELJMaO9lUBZ2L+eD4kXJDZwPOzfjy4maY67+9CGqP7/363BWb68a5S2FxWNSjyZaKFY2hgZs0jw3vJQ+8jUDCmE6EYuVi+Em44Ri0OaA/ChzoPRaaWdUMngkTEX7e7K7NDIy5EkggCbAnK2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TpeFTEhk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758090123;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ykBGuqrBMlcXxL95pIhOkq4MfPjBUjAZXEQ/nbR5dCs=;
-	b=TpeFTEhkTytsKM+LWmzL5eRFdQrnrVgVakVwLrGHk9C/Dp+OB28OZ42sjl2m0b8ZR2s4/6
-	Hb9PZM6KmyiyURsAohrREt5BZWks1IpeqFWl0XkN2BkmFcxnq7nNypPMnl4KRWHM0kMKgN
-	Ycf6nne0FzDlZ2L9PbfnWgSkoGMR2q4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-184-wzf6R8YGNIaEvjisRD5xbw-1; Wed, 17 Sep 2025 02:22:02 -0400
-X-MC-Unique: wzf6R8YGNIaEvjisRD5xbw-1
-X-Mimecast-MFC-AGG-ID: wzf6R8YGNIaEvjisRD5xbw_1758090121
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3eb72c3e669so1445065f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:22:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758090121; x=1758694921;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ykBGuqrBMlcXxL95pIhOkq4MfPjBUjAZXEQ/nbR5dCs=;
-        b=BvuieT5+wOUHlhg0tQfdg5hIdgsSQv/XldewcwiCJevUo1fvKu1q5DMDKlyPMPXOM0
-         XJvne9gH81pP1+uADfL9OtNDCRzal/ffhM3eMn0xjhQvq7GIEVX8BfiDi2Y4nyXcxI2w
-         yaPNAsTbObL9doku1NYWZUrsfsl6HHLqrshNOU6ucZy0E9eu9j1LSbXeM8U2ogJGQqag
-         t3Un/HjEbFbbT22o8L+wEYMqYhiUMvHVVtppRSwezuEOc7XkmwNOO5Dmlq1pgt2d2wUL
-         7gW6ofsWYL1OBiC1APXenoWYykkDe8MB6GAQRVKofnLgGdDZEhDrHjFvxCs1DOQUMK1e
-         T1OA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT4AYnHyv455EKQ/Fz+h6EupAiaeQsutEfyx3MmoUrCa+hW1FeDy/TfqeXc3nRTy0mB6qE1o1iRn9r3d0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwltuPsiQNmvhOnBkO76o03n/hJD5A46Ik98QwDtojsqIq+W53Z
-	ut13qTCeIF8KiFEYPo46cemtW4TreHj1RuoS9x5+QK6y0MYXwiswbjMjZkOsANK/KBkpeYThEi0
-	VKj2kY9SYVbfjq3SITmaueVFYl+qIbQbWUdOSsoa4t6zISirEOPy1faUuECZxLHpFpA==
-X-Gm-Gg: ASbGncsyFxmTiiwHE+oCYilsb187RQxT71VKjjklbgk9vrNcd8OB7il8iqCWP5y3fa0
-	YR8k30j6IexiEMVuS6hi3i6FIa4YdQ07itUu3MfHYwPcoOZod0YYzL5SX+NQLBW/ppNFn4OA4Iz
-	+9oNrkor7G2LpSkWyFZJcUJQcV8wK6L6IpDsV5mtWbBjnUwmDaT3cWivGUPU/HkhQmCEWP8pRd4
-	QAb17pxK2N1loDdd7uT55mIg/Vs4OefQDoeXK014WSp5Re7/V9JdkKuYqhauvrDyOaKq5fBPK3I
-	NWH0zsHaZRwM7eXeRUfVH5O4jI0RoD+Dj/bEIeml5srt3AMHKWAvzMwnln4Xb3d6HnZyfi6jopn
-	35yU=
-X-Received: by 2002:a05:6000:1889:b0:3eb:c276:a340 with SMTP id ffacd0b85a97d-3ecdf9bebc0mr1073618f8f.5.1758090120705;
-        Tue, 16 Sep 2025 23:22:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH95sM8zcZA3S/ZThSNtLvc2pETLqqWNVH9/PfGgCarDap7/c7q1p/06ACiud6tmXkUphYpCQ==
-X-Received: by 2002:a05:6000:1889:b0:3eb:c276:a340 with SMTP id ffacd0b85a97d-3ecdf9bebc0mr1073598f8f.5.1758090120354;
-        Tue, 16 Sep 2025 23:22:00 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:280:24f0:576b:abc6:6396:ed4a? ([2a01:e0a:280:24f0:576b:abc6:6396:ed4a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecde05551fsm1861195f8f.23.2025.09.16.23.21.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 23:21:59 -0700 (PDT)
-Message-ID: <f6f59318-c462-404b-bf4f-ae121950be8c@redhat.com>
-Date: Wed, 17 Sep 2025 08:21:58 +0200
+	s=arc-20240116; t=1758090186; c=relaxed/simple;
+	bh=Rs+c/vVPVxFus14/jicS7KV9PWjsmmv1oIivk8MfMiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HQgMrNVSjyOVeZ7/zhKExdLnLmg4Uq8QOHZ0QGVZem3Zo2BsqjLyCLL3quoIwPjecYLtOhHBa81b414AtKb+NzQpaLKCfquydel6q1Ymq7ull1uJZq6MdCEFfXj+rZLOS0eqybogSJatbOYWcFuZ5BThz8EQVjSbuhZ5rzm9iw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iw+1ptZy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H5QV1W016245;
+	Wed, 17 Sep 2025 06:22:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PV0bRllSrJgBYJQjnvZ+Phhssn54H7w1TTU3TTjh7Xs=; b=iw+1ptZypZp9LXdY
+	0B19SrICsTgc2Y3+xHOSTHq53fi8Gcvv8P+pP/GaBcsABKVnDsy6t2ALUj4ZHprt
+	p1xfqT3k8O7yPhpL/vvyaLV38lg49F75QUSNcA3/Q23KgE+GUl0CWYiCZIksE46X
+	sT+zjt9UCrmWtVJnUyUH7dqwkigiNC65AegLLObDGIh7rl5W/11xorgzQocURlS1
+	weYEJ7q3athlaCEQe02jbIxCOlL3/1msS76O/vARuMdC3Lgp6c/3LGmXhfpWpkK0
+	87+TZ6qxsQ7tGSX6ZaeP0QMEqmBid77lzBXQMZ38/5nZcDFXn7+R2/WBz35fET5B
+	aiRdow==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxh5ny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 06:22:51 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58H6MowZ018092
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 06:22:50 GMT
+Received: from [10.206.103.106] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 16 Sep
+ 2025 23:22:44 -0700
+Message-ID: <fd075b5f-3766-474a-bffe-c1c402cfca81@quicinc.com>
+Date: Wed, 17 Sep 2025 11:52:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,99 +64,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/10] PCI: Allow per function PCI slots
-To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: alex.williamson@redhat.com, helgaas@kernel.org, schnelle@linux.ibm.com,
- mjrosato@linux.ibm.com
-References: <20250911183307.1910-1-alifm@linux.ibm.com>
- <20250911183307.1910-4-alifm@linux.ibm.com>
- <07205677-09f0-464b-b31c-0fb5493a1d81@redhat.com>
- <e86caff6-8af0-48c9-9058-c1991e23160f@linux.ibm.com>
-From: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@redhat.com>
-Content-Language: en-US, fr
-Autocrypt: addr=clg@redhat.com; keydata=
- xsFNBFu8o3UBEADP+oJVJaWm5vzZa/iLgpBAuzxSmNYhURZH+guITvSySk30YWfLYGBWQgeo
- 8NzNXBY3cH7JX3/a0jzmhDc0U61qFxVgrPqs1PQOjp7yRSFuDAnjtRqNvWkvlnRWLFq4+U5t
- yzYe4SFMjFb6Oc0xkQmaK2flmiJNnnxPttYwKBPd98WfXMmjwAv7QfwW+OL3VlTPADgzkcqj
- 53bfZ4VblAQrq6Ctbtu7JuUGAxSIL3XqeQlAwwLTfFGrmpY7MroE7n9Rl+hy/kuIrb/TO8n0
- ZxYXvvhT7OmRKvbYuc5Jze6o7op/bJHlufY+AquYQ4dPxjPPVUT/DLiUYJ3oVBWFYNbzfOrV
- RxEwNuRbycttMiZWxgflsQoHF06q/2l4ttS3zsV4TDZudMq0TbCH/uJFPFsbHUN91qwwaN/+
- gy1j7o6aWMz+Ib3O9dK2M/j/O/Ube95mdCqN4N/uSnDlca3YDEWrV9jO1mUS/ndOkjxa34ia
- 70FjwiSQAsyIwqbRO3CGmiOJqDa9qNvd2TJgAaS2WCw/TlBALjVQ7AyoPEoBPj31K74Wc4GS
- Rm+FSch32ei61yFu6ACdZ12i5Edt+To+hkElzjt6db/UgRUeKfzlMB7PodK7o8NBD8outJGS
- tsL2GRX24QvvBuusJdMiLGpNz3uqyqwzC5w0Fd34E6G94806fwARAQABzSJDw6lkcmljIExl
- IEdvYXRlciA8Y2xnQHJlZGhhdC5jb20+wsGRBBMBCAA7FiEEoPZlSPBIlev+awtgUaNDx8/7
- 7KEFAmTLlVECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQUaNDx8/77KG0eg//
- S0zIzTcxkrwJ/9XgdcvVTnXLVF9V4/tZPfB7sCp8rpDCEseU6O0TkOVFoGWM39sEMiQBSvyY
- lHrP7p7E/JYQNNLh441MfaX8RJ5Ul3btluLapm8oHp/vbHKV2IhLcpNCfAqaQKdfk8yazYhh
- EdxTBlzxPcu+78uE5fF4wusmtutK0JG0sAgq0mHFZX7qKG6LIbdLdaQalZ8CCFMKUhLptW71
- xe+aNrn7hScBoOj2kTDRgf9CE7svmjGToJzUxgeh9mIkxAxTu7XU+8lmL28j2L5uNuDOq9vl
- hM30OT+pfHmyPLtLK8+GXfFDxjea5hZLF+2yolE/ATQFt9AmOmXC+YayrcO2ZvdnKExZS1o8
- VUKpZgRnkwMUUReaF/mTauRQGLuS4lDcI4DrARPyLGNbvYlpmJWnGRWCDguQ/LBPpbG7djoy
- k3NlvoeA757c4DgCzggViqLm0Bae320qEc6z9o0X0ePqSU2f7vcuWN49Uhox5kM5L86DzjEQ
- RHXndoJkeL8LmHx8DM+kx4aZt0zVfCHwmKTkSTQoAQakLpLte7tWXIio9ZKhUGPv/eHxXEoS
- 0rOOAZ6np1U/xNR82QbF9qr9TrTVI3GtVe7Vxmff+qoSAxJiZQCo5kt0YlWwti2fFI4xvkOi
- V7lyhOA3+/3oRKpZYQ86Frlo61HU3r6d9wzOwU0EW7yjdQEQALyDNNMw/08/fsyWEWjfqVhW
- pOOrX2h+z4q0lOHkjxi/FRIRLfXeZjFfNQNLSoL8j1y2rQOs1j1g+NV3K5hrZYYcMs0xhmrZ
- KXAHjjDx7FW3sG3jcGjFW5Xk4olTrZwFsZVUcP8XZlArLmkAX3UyrrXEWPSBJCXxDIW1hzwp
- bV/nVbo/K9XBptT/wPd+RPiOTIIRptjypGY+S23HYBDND3mtfTz/uY0Jytaio9GETj+fFis6
- TxFjjbZNUxKpwftu/4RimZ7qL+uM1rG1lLWc9SPtFxRQ8uLvLOUFB1AqHixBcx7LIXSKZEFU
- CSLB2AE4wXQkJbApye48qnZ09zc929df5gU6hjgqV9Gk1rIfHxvTsYltA1jWalySEScmr0iS
- YBZjw8Nbd7SxeomAxzBv2l1Fk8fPzR7M616dtb3Z3HLjyvwAwxtfGD7VnvINPbzyibbe9c6g
- LxYCr23c2Ry0UfFXh6UKD83d5ybqnXrEJ5n/t1+TLGCYGzF2erVYGkQrReJe8Mld3iGVldB7
- JhuAU1+d88NS3aBpNF6TbGXqlXGF6Yua6n1cOY2Yb4lO/mDKgjXd3aviqlwVlodC8AwI0Sdu
- jWryzL5/AGEU2sIDQCHuv1QgzmKwhE58d475KdVX/3Vt5I9kTXpvEpfW18TjlFkdHGESM/Jx
- IqVsqvhAJkalABEBAAHCwV8EGAECAAkFAlu8o3UCGwwACgkQUaNDx8/77KEhwg//WqVopd5k
- 8hQb9VVdk6RQOCTfo6wHhEqgjbXQGlaxKHoXywEQBi8eULbeMQf5l4+tHJWBxswQ93IHBQjK
- yKyNr4FXseUI5O20XVNYDJZUrhA4yn0e/Af0IX25d94HXQ5sMTWr1qlSK6Zu79lbH3R57w9j
- hQm9emQEp785ui3A5U2Lqp6nWYWXz0eUZ0Tad2zC71Gg9VazU9MXyWn749s0nXbVLcLS0yop
- s302Gf3ZmtgfXTX/W+M25hiVRRKCH88yr6it+OMJBUndQVAA/fE9hYom6t/zqA248j0QAV/p
- LHH3hSirE1mv+7jpQnhMvatrwUpeXrOiEw1nHzWCqOJUZ4SY+HmGFW0YirWV2mYKoaGO2YBU
- wYF7O9TI3GEEgRMBIRT98fHa0NPwtlTktVISl73LpgVscdW8yg9Gc82oe8FzU1uHjU8b10lU
- XOMHpqDDEV9//r4ZhkKZ9C4O+YZcTFu+mvAY3GlqivBNkmYsHYSlFsbxc37E1HpTEaSWsGfA
- HQoPn9qrDJgsgcbBVc1gkUT6hnxShKPp4PlsZVMNjvPAnr5TEBgHkk54HQRhhwcYv1T2QumQ
- izDiU6iOrUzBThaMhZO3i927SG2DwWDVzZltKrCMD1aMPvb3NU8FOYRhNmIFR3fcalYr+9gD
- uVKe8BVz4atMOoktmt0GWTOC8P4=
-In-Reply-To: <e86caff6-8af0-48c9-9058-c1991e23160f@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: qcom-cci: Document qcs8300
+ compatible
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Vikram Sharma <quic_vikramsa@quicinc.com>
+CC: <vladimir.zapolskiy@linaro.org>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ravi Shankar <quic_rshankar@quicinc.com>
+References: <20250912141134.2799078-1-quic_vikramsa@quicinc.com>
+ <20250912141134.2799078-2-quic_vikramsa@quicinc.com>
+ <20250916024858.GA3574831-robh@kernel.org>
+ <373bbb78-2b0c-446c-be97-53b82edeed64@quicinc.com>
+ <49d6c554-e6ed-4c86-8946-be2cdba659d0@oss.qualcomm.com>
+Content-Language: en-US
+From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+In-Reply-To: <49d6c554-e6ed-4c86-8946-be2cdba659d0@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX8nXMPL614Yff
+ lsRzdA57d3IrdbVicft0uc9b7mhS6zrbvgZIvjDiWMkM8RaTHeV76GETDi+V9PLZh1ecqHOHfRg
+ GLatwjNwStxqvhwOTss9jCwuZlZJ+9LaufJ1mzfW6paR3Dl2JqxCnSSa7mCEM0+Y6geghZNY+i7
+ a3Ssv6Ln/sLYUkuRCqFK5VQlIwKGYHPPXwftlc1j74gb5pc4XnPh9o3Vo1Rx6sxyH1WHgEBlKWt
+ 4+TJbKiu3ilXD1fhkEZ31OUG3WdG51xfJE2hyXSj03oHbk6cjGsjviW9L/LSvFMj7M7PqwT7Z45
+ zhOlWGtZIU+D5C83S6YDQJSSxDMG0bUqb5tesntilGjbY+V8PTdJ1PMOS7QTZOvxZau9mUmbnUZ
+ 6/+3y0AO
+X-Authority-Analysis: v=2.4 cv=MMFgmNZl c=1 sm=1 tr=0 ts=68ca53bc cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=XobKNSAVkuln2dIsCLwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: -YWeYURqnfd2valzalzR04FJDFsdegub
+X-Proofpoint-GUID: -YWeYURqnfd2valzalzR04FJDFsdegub
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 phishscore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-Hi Farhan,
 
-> Hi Cedric,
+
+On 16-09-2025 16:41, Konrad Dybcio wrote:
+>>> Wrap commit messages at 72 chars. And explain how it's the same or 
+>>> different from existing SoCs in the commit message. Don't explain the 
+>>> diff. We can read that ourselves.
+>>>
+>> SA8775P(Lemans) has 4 CCIs, while QCS8300 (Monaco) has 3 CCI, with the 
+>> only difference being the GPIOs used for SDA/SCL pins.
+>>
+>> Currently, the CCI driver probe happens through the "qcom,msm8996-cci" 
+>> compatible string. Could we use the existing SA8775P compatible string
+>> "qcom,sa8775p-cci" or we should remove it? 
+>>
+>> Please advise on the preferred approach for upstream compliance.
+> Try:
 > 
-> Thanks for pointing this out. I missed that dev->slot could be NULL and so the per_func_slot check should be done after the check for !dev->slot. I tried this change on top of the patch in an x86_64 VM and was able to boot the VM without the oops.
+> """
+> The three instances of CCI found on the QCS8300 are functionally
+> the same as on a number of existing Qualcomm SoCs.
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 70296d3b1cfc..3631f7faa0cf 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5061,10 +5061,9 @@ static int pci_reset_hotplug_slot(struct hotplug_slot *hotplug, bool probe)
+> Introduce a new SoC-specific compatible, with a common fallback.
+> """
 > 
->   static int pci_dev_reset_slot_function(struct pci_dev *dev, bool probe)
->   {
-> -       if (dev->multifunction && !dev->slot->per_func_slot)
-> -               return -ENOTTY;
->          if (dev->subordinate || !dev->slot ||
-> -           dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET)
-> +           dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET ||
-> +           (dev->multifunction && !dev->slot->per_func_slot))
->                  return -ENOTTY;
-All good.
 
-I have pushed the Linux branch I use for vfio :
-  
-    https://github.com/legoater/linux/commits/vfio/
-
-These commits have small changes :
-
-     PCI: Allow per function PCI slots
-     vfio-pci/zdev: Add a device feature for error information
-
-Thanks,
-
-C.
-
+ACK, Will address this in next version.
+> Konrad
 
 
