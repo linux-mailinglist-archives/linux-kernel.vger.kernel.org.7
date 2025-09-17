@@ -1,169 +1,219 @@
-Return-Path: <linux-kernel+bounces-820496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32083B80421
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E79B7F670
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0741BC007C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED214527D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452FF2DBF75;
-	Wed, 17 Sep 2025 10:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB2A342CA9;
+	Wed, 17 Sep 2025 10:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixNeAMcC"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gjBwbsd5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97321331AF7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEC91F30BB
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105473; cv=none; b=RP7Ji0XU333w8DxJQUimAqEV/QUCTFcyvvODUJlFICmfNLLv6rTsS5EImi4YL/yRT7oQeenbCjAvfGvlHtww/oQaBW5tPGBoYC+yT2Q/flDvX9lUDh81NTC8gKTvGDnaM4xyWd7xzUifV3xgSZ96Aclwflj/5vj9pe6ft1YKURM=
+	t=1758105519; cv=none; b=pum3ovevwEwrTRc6+hFc5j4dutsh77MJ2v8i0DiX9FlnfZLcSYm24C0rwUcXusCJBm+1AyA1S/yR6YgCAQQhKYpWQDga+J+ASDlMgb+U53dekb/S2uDdqaLLBwbrztiiDbqBc0dxjNw/V15V8mp4rWB9aKKHA4GwYjxVznlBZcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105473; c=relaxed/simple;
-	bh=+jUeO/7waznrAiGaH6nmbusoTFDyzVVMGz6K6davJk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kgG+6rLUIxDgWpcUTz/4cdpf8K3/iWcGjjijVkGJRHH3jC9Ki4XvX4j7/Eu2d1AbdurzarBJdTK1ecQo7i0rZD8o0YteEzkdw1Rc7k558of3mR/IURE8kGAGbNrn6N+/PKE/iibw7PlPWnn2/AEfS4GueMHeaMm+eJTY4v879lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixNeAMcC; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45de4ebe79eso8278875e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758105470; x=1758710270; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wsYcWLS54K1ej44Yjhz6yrulC2XJ3aJ+2KhXmhL8N/4=;
-        b=ixNeAMcCtIwuhadNQBJP2UfBAm9SUCCGrfVtT2EPDG3TsEWMjB6nGC6D+fsT1OVdxq
-         LLx5P4Vjal47z5jUXRKMgeIY/WUV7mBVscAfIBIWxWLB+PJu2IN1oQYCfIOVJVyKpWu0
-         lFTCQmVubbambfUhvkiW2YOJ4OuuTaWJg5JmG/or24hT+Qlayp4pD2+rxmG6rx42oJho
-         U1CMkIzhyihb9HfgKBx+wFsgwRRHcnbZUnGLfHIkCjkoeAf075UmCeJC9E2AGzCizuhy
-         bEEcA1SZoYTulRZU+JjQz5NNFeSkmcCRn6uCSc3QXmx3KsVSW8Q/O6/L0X9SRkmi0wFp
-         X/BQ==
+	s=arc-20240116; t=1758105519; c=relaxed/simple;
+	bh=uys/W2sJ8/JPqZgfhzw7G25uk132Iw0CP8xM8xaTQLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s8N4wPhod7hRMSnHr4RTuvl4dMOrY42kyRDSBS7GpZJuBsMAdtplcRO4z57zgl50rJOsOmbrIwj7ZkfOkN9/pyIdurQaYAdxIc4UJMIjuBnkTJCXT0jvG68fRjEecl1Mzjr+zKP3eZTWODMDkZM2So3RaN8vwwnOeDZLEDqJjlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gjBwbsd5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758105517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=soTuum+uvrVdwH4G5wCW13aWL0UwyqwjoUoslGSKOfc=;
+	b=gjBwbsd5gWAunocqcOPHXf81BJwpAaEqfIXjXBpY++IogrMk/f0P0BS7rBdhA37TCJcan6
+	XizEiCefOHtpR9T3HGXZX8Sl4NQBRfTEYW583vm8+DwW4/yDBBhHNu/6ORKRxdqcp7IJk2
+	ldjQNPiHCMESYgvhpRKXawavZGp+K+4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-407-MyS__l90P6SIck4UBVypLg-1; Wed, 17 Sep 2025 06:38:35 -0400
+X-MC-Unique: MyS__l90P6SIck4UBVypLg-1
+X-Mimecast-MFC-AGG-ID: MyS__l90P6SIck4UBVypLg_1758105515
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3eb8e43d556so322194f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:38:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758105470; x=1758710270;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wsYcWLS54K1ej44Yjhz6yrulC2XJ3aJ+2KhXmhL8N/4=;
-        b=uWggkHZ4x3Qa7DqyUABD38js6jIUdz1YmtkFlBIFUZThJXTpW9iAqVAFky0M2spXJ4
-         Rq0UCqB1gZqazggxuvBy6EJA/djo4WUK6aMFgMbkum3zm9CKt/D4eD85czSXlUWj/1Bk
-         N2VFOjkzx+XgYIrhTF3Q94+FlJkspg9AKME9see0tyMTQK71Zk9mVfUXiAY47LkLFuAA
-         6P6NnWgP2eMNvl2G401eH1kczOjLYj39pCjT1HFioSdlnn24dChjeLDMFwz8ZxJZ3aPe
-         lSYXfjzUHLH9As7EGIsUSA8fuurTdCD88CJa0dJ+GjBQuzeOj3A3Lk/2WO69ch2E2jMT
-         nF4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdFIClUf2KJaRXyexdCMPpRJe93j/MsWbPFSd9j3x1WyPouvy3O01Xp8O4xC7dzmNqbbKx+9zgl5pYITA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZYp1+YqNLSfKGOLv+YfgSJ6a1AHPOvd4325aoZt4SfU/p9yaY
-	MzcSEx68DYUVtATpnfSyRm4qkOLZVijca8VJmsxKLix2pLZTQN6BkLdJ
-X-Gm-Gg: ASbGnctr551/AnaTueAPilJIk6H0KNZAJ8ZXEsLxUxx9MKOs+czAXQjkyUmVTWvxD6E
-	ozMn41UCCuIUtyFDuO0rBeu627EIJ+jOoCHbhRdVG4Z/u972gfEKprdP+921wAm2tWIY3HOIs0m
-	V2nuhGq5J56sxaoXHXYqVfaTOkJ3ym4vYw61IV8FAJ086CQByFWpaf6FJUh2OpXD0vQd0LacN1O
-	3xhQffyENYk3xf2F0Skp87zetchQ/1UY42SwA/S8BB4NeZvHSsZQ2wqV+KAYaVtLaWr/u3BJsxF
-	Ub+FK75Vu/z6Mdd7T0IP8hYFfr5K2+7DSUhScDc2jBE/7IVLLjry94XrTKfQloKm04nGMSyNJEj
-	cjKwSu8K+EKoaZTg=
-X-Google-Smtp-Source: AGHT+IHmbRK/RR/f6CMsiKwgVCww0CbZLWw9FNcy1YCsTBab4ScCzhgCjBGfKDPKwCMgjbZt1yeo9Q==
-X-Received: by 2002:a05:600c:3d92:b0:45f:2919:5e8d with SMTP id 5b1f17b1804b1-46201cac25dmr7562685e9.1.1758105469624;
-        Wed, 17 Sep 2025 03:37:49 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:8bcc:b603:fee7:a273])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e93dd85sm34991125e9.22.2025.09.17.03.37.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 03:37:48 -0700 (PDT)
-Date: Wed, 17 Sep 2025 13:37:45 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Jakub Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	DENG Qingfang <dqfext@gmail.com>, Lee Jones <lee@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>
-Subject: Re: [net-next PATCH v18 3/8] dt-bindings: mfd: Document support for
- Airoha AN8855 Switch SoC
-Message-ID: <20250917103745.vhdsvrrv7z23qpnn@skbuf>
-References: <20250915104545.1742-1-ansuelsmth@gmail.com>
- <20250915104545.1742-4-ansuelsmth@gmail.com>
- <175795551518.2905345.11331954231627495466.robh@kernel.org>
- <20250915201938.GA3326233-robh@kernel.org>
- <68c8a6fd.050a0220.26bdf7.871a@mx.google.com>
+        d=1e100.net; s=20230601; t=1758105514; x=1758710314;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=soTuum+uvrVdwH4G5wCW13aWL0UwyqwjoUoslGSKOfc=;
+        b=Z0WGATl83lYarVE2tB5I0OkFPeAVUeNG+n/TRie9xP2zT2SGfkVqRiiTceCRBMLA+w
+         OUKPWUxkUEgIp/vANj87UVy9sKAUHYJwc2HXK47oiEt098ajLxD/FIM9zRt9V1lsoQ+a
+         j3d4VaxvYgJBvKfE7rO7vIaRBIU5BB9uDNkE7/Qm6eqiRGdRFnzHgku+gyh0WOrTVSYf
+         hdgGPm+muVahXY9bqW0husumHVc4Jcvg/PHg7xr+8kWfWIHKnJ3DnmN14ajEGHeUSDDy
+         58wZ6PMtj5KzAkTRjaRMkuIm5S3ypjzifTPL+H/VWA9O66jyaNXJ8BqcMxRpAsIoKAmt
+         nH9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcAyqjB1nVrwtIwqRUgWO5+tX6dAnO83TFTCz6qYTUg3LhcDnluwj//zCZ3MjykQQREdZRPE9nJr/cOIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDQ0fRuDoBOGJvwX7prQk9JbwDkf9W2jR5LndGbeedUWjYNILE
+	uum5o2inP88gBcYAokAw6WLyJv92OEQQm8KuHbLwgG7RfnBVTElAOEYWMSNapkh9AAF9ypv07bo
+	8WG89vKXJYi34HxdSaPyYYnvsKhOhxHp+F8wO5131+yMHe1zzO4DM8dIB+ImS/LgNBQ==
+X-Gm-Gg: ASbGncv5VFLTlZXB2SvE+zPETX9Tt3MPGRjT9M1wbIQlbjUqLnvdJ5xzCMn1li5j2LO
+	v26hJSDFwpTso3l2KF8PXOJWTNXhZ+AJE221hdURw3gfNTc3ww5hXxtxj/cdsrCht96baUGvXlZ
+	O9cqMgj81J0A3j0PXEf3TTAiXy7h60EJKzGMDvrLxLVidQHPnt+nJzy6mVnB/HjH61Yirbr0Tvd
+	59yZAe/Sp2NX9TebGeeCd40xLWyN4bRVHwndwJsyYtLjvltW5lbP/UZgLrsuP0X79cymOC3dnjL
+	+YZLmEU4/qOcBlGaEWEj+ChkjdsJepXXL8lHECjKqrtbjThkTMPESvIJ4YDfOt48Tzks/hB4i/U
+	srN3K52eg89HN8A1/oi85lPi0pSAHSRvadOEbzbIHNHiFNARwHD8M7EjTx846BCAn
+X-Received: by 2002:a05:6000:4009:b0:3ea:c893:95b6 with SMTP id ffacd0b85a97d-3eca04743f7mr5153574f8f.27.1758105514580;
+        Wed, 17 Sep 2025 03:38:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8tKIbcNk5D2bluX7BbsWlrG22DyI/8RTeAIZckT7d1/mvHIE0aGsiKEPHwv0/JBjR38b5Xg==
+X-Received: by 2002:a05:6000:4009:b0:3ea:c893:95b6 with SMTP id ffacd0b85a97d-3eca04743f7mr5153552f8f.27.1758105514108;
+        Wed, 17 Sep 2025 03:38:34 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e95b111b68sm15518054f8f.32.2025.09.17.03.38.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 03:38:33 -0700 (PDT)
+Message-ID: <6dde7c50-a222-4984-bb69-07ace724f161@redhat.com>
+Date: Wed, 17 Sep 2025 12:38:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68c8a6fd.050a0220.26bdf7.871a@mx.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
+ mm_struct during fork
+To: Donet Tom <donettom@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Wei Yang <richard.weiyang@gmail.com>,
+ Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
+ stable@vger.kernel.org
+References: <cover.1757946863.git.donettom@linux.ibm.com>
+ <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 01:53:27AM +0200, Christian Marangi wrote:
-> On Mon, Sep 15, 2025 at 03:19:38PM -0500, Rob Herring wrote:
-> > On Mon, Sep 15, 2025 at 12:01:47PM -0500, Rob Herring (Arm) wrote:
-> > > 
-> > > On Mon, 15 Sep 2025 12:45:39 +0200, Christian Marangi wrote:
-> > > > Document support for Airoha AN8855 Switch SoC. This SoC expose various
-> > > > peripherals like an Ethernet Switch, a NVMEM provider and Ethernet PHYs.
-> > > > 
-> > > > It does also support i2c and timers but those are not currently
-> > > > supported/used.
-> > > > 
-> > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > > ---
-> > > >  .../bindings/mfd/airoha,an8855.yaml           | 173 ++++++++++++++++++
-> > > >  1 file changed, 173 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,an8855.yaml
-> > > > 
-> > > 
-> > > My bot found errors running 'make dt_binding_check' on your patch:
-> > > 
-> > > yamllint warnings/errors:
-> > > 
-> > > dtschema/dtc warnings/errors:
-> > > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.yaml:
-> > > 	Error in referenced schema matching $id: http://devicetree.org/schemas/nvmem/airoha,an8855-efuse.yaml
-> > > 	Tried these paths (check schema $id if path is wrong):
-> > > 	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/airoha,an8855-efuse.yaml
-> > > 	/usr/local/lib/python3.13/dist-packages/dtschema/schemas/nvmem/airoha,an8855-efuse.yaml
-> > > 
-> > > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: soc@1 (airoha,an8855): efuse: {'compatible': ['airoha,an8855-efuse'], '#nvmem-cell-cells': 0, 'nvmem-layout': {'compatible': ['fixed-layout'], '#address-cells': 1, '#size-cells': 1, 'shift-sel-port0-tx-a@c': {'reg': [[12, 4]], 'phandle': 3}, 'shift-sel-port0-tx-b@10': {'reg': [[16, 4]], 'phandle': 4}, 'shift-sel-port0-tx-c@14': {'reg': [[20, 4]], 'phandle': 5}, 'shift-sel-port0-tx-d@18': {'reg': [[24, 4]], 'phandle': 6}, 'shift-sel-port1-tx-a@1c': {'reg': [[28, 4]], 'phandle': 7}, 'shift-sel-port1-tx-b@20': {'reg': [[32, 4]], 'phandle': 8}, 'shift-sel-port1-tx-c@24': {'reg': [[36, 4]], 'phandle': 9}, 'shift-sel-port1-tx-d@28': {'reg': [[40, 4]], 'phandle': 10}}} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/nvmem/airoha,an8855-efuse.yaml#"}
-> > > 	from schema $id: http://devicetree.org/schemas/mfd/airoha,an8855.yaml#
-> > > Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: /example-0/mdio/soc@1/efuse: failed to match any schema with compatible: ['airoha,an8855-efuse']
-> > 
-> > Why are we on v18 and still getting errors? I only review patches 
-> > without errors.
+On 15.09.25 17:03, Donet Tom wrote:
+> Currently, the KSM-related counters in `mm_struct`, such as
+> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
+> inherited by the child process during fork. This results in inconsistent
+> accounting.
 > 
-> Hi Rob,
+> When a process uses KSM, identical pages are merged and an rmap item is
+> created for each merged page. The `ksm_merging_pages` and
+> `ksm_rmap_items` counters are updated accordingly. However, after a
+> fork, these counters are copied to the child while the corresponding
+> rmap items are not. As a result, when the child later triggers an
+> unmerge, there are no rmap items present in the child, so the counters
+> remain stale, leading to incorrect accounting.
 > 
-> the problem is that the MFD driver and the schema patch subset of this
-> series has been picked separately and are now in linux-next.
-
-Link for MFD driver? I don't see the MFD driver in linux-next.
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/mfd
-
-> I tried to make the bot happy by using base-commit but it doesn't seem
-> to work. Any hint for this? 
+> A similar issue exists with `ksm_zero_pages`, which maintains both a
+> global counter and a per-process counter. During fork, the per-process
+> counter is inherited by the child, but the global counter is not
+> incremented. Since the child also references zero pages, the global
+> counter should be updated as well. Otherwise, during zero-page unmerge,
+> both the global and per-process counters are decremented, causing the
+> global counter to become inconsistent.
 > 
-> The errors comes from the missing efuse schema.
+> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
+> during fork, and the global ksm_zero_pages counter is updated with the
+> per-process ksm_zero_pages value inherited by the child. This ensures
+> that KSM statistics remain accurate and reflect the activity of each
+> process correctly.
+> 
+> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
+> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each process")
+> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
+> cc: stable@vger.kernel.org # v6.6
+> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+> ---
+>   include/linux/ksm.h | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+> index 22e67ca7cba3..067538fc4d58 100644
+> --- a/include/linux/ksm.h
+> +++ b/include/linux/ksm.h
+> @@ -56,8 +56,14 @@ static inline long mm_ksm_zero_pages(struct mm_struct *mm)
+>   static inline void ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
+>   {
+>   	/* Adding mm to ksm is best effort on fork. */
+> -	if (mm_flags_test(MMF_VM_MERGEABLE, oldmm))
+> +	if (mm_flags_test(MMF_VM_MERGEABLE, oldmm)) {
+> +		long nr_ksm_zero_pages = atomic_long_read(&mm->ksm_zero_pages);
+> +
+> +		mm->ksm_merging_pages = 0;
+> +		mm->ksm_rmap_items = 0;
+> +		atomic_long_add(nr_ksm_zero_pages, &ksm_zero_pages);
+>   		__ksm_enter(mm);
 
-So the efuse schema is in the nvmem tree and this schema needs to go
-through the mfd tree.
+That LGTM. KSM is all weird in combination with fork(), but that's 
+something for another day to improve I guess.
 
-For v17, you used "base-commit: 04b74f665961599e807b24af28099a29d691b18c":
-https://lore.kernel.org/netdev/20250911133929.30874-4-ansuelsmth@gmail.com/
-I ran "git show", after fetching linux-next, where all trees should be
-included, and didn't find this commit. What does it represent?
+Acked-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Cheers
+
+David / dhildenb
+
 
