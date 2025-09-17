@@ -1,170 +1,126 @@
-Return-Path: <linux-kernel+bounces-821369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655CBB8114A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:50:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89630B81156
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4713B9529
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:50:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 926667A6346
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6312FB081;
-	Wed, 17 Sep 2025 16:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D552FB085;
+	Wed, 17 Sep 2025 16:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XnNrvRQ4"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1pvPFy9"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14502F8BF4
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35B62F83DE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758127812; cv=none; b=PU7WZYb47W2Q0YjZGeqODFD4u785qGTLAUO+vTFJoSODBpLzyBkeCuu3tNglyvj6F5lc9ilsuGiGEtuOthoOnxh0tP6YiXR+2EVG+1JmUF7PsJr0iEbV0ef7nri6AoTK5X8kDcH9JzMcKw4OokWa2mlp99RN/jU+qAP9DhckXt4=
+	t=1758127883; cv=none; b=He+eItHXo4B9KtyW/ubk1YrWH+9CuZnvrpxUpJnVd7hs/5XiyMO6cjrL9JgKRIeDMdCcvZ1Hb7JBitg+SO0hBzfmZDV+Pwp+0mMa+tcMY+5FfmKDJoQOhheHoeLQxznNXXMIsXv5RuXXQW5wDwAK/absHmt0yrQrXqwm3NKaHUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758127812; c=relaxed/simple;
-	bh=1H1iuJrn/iWHh0/FIddtuyxCZaL0dzOSp1DYiZsbMY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=arut9fVKPfGH9ar3rcl0yi3yB1RdGZSbnOkXv/bhzNOyF20A2P2NW+1/YMQVcFUCXvJgDcVu3jVUVtuYijgGsZBFc5n3JWIqXHGTXbxP97EUEQ4g+IRNV7wDhHtvgYhM3PP9TAie9mJn3ElvGxew5RWIsqAOdazlecvAr/JVccY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XnNrvRQ4; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-267c90c426dso2505ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:50:10 -0700 (PDT)
+	s=arc-20240116; t=1758127883; c=relaxed/simple;
+	bh=5CHAX/eFWIie6RcVxAtrIKJ7zhEjDBgEC9JG/XZEo8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fxDSsc+P1Vd9/Kajt0KAQ+YHBmER+EWm7EEWbKj86C/dFjbMhEel8CdU+nQ6gM85BnEHSh2ZJv1xn2XgWNKqzh+vmF0dK93Bow/ypVwEAvXSb8Rfm9WJyfkpTKHTpcrS+TsHkzRRa9cnd80S+l0Qs8jxFIf6jsv0ofxyGdwS/gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1pvPFy9; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-264417f3a26so186925ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758127810; x=1758732610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B8PrCNixuKjn7muO0S4+O0quWRgO8+yd5D10C3h36dQ=;
-        b=XnNrvRQ4WvjwS11ZRsSOfZudwYfX2Y6GCcIgrW/+rSTbb/vgBLPKHuXJzKZ29MUXj/
-         D8j4kprbjNLh74JDhMEz5g8m+N/OcHqRd2DHl8w/7FNYgM4ztO1iWmRLKbCvEVCZQ6b3
-         Gimx9bJiD8MoeaAzwDRtsW7hBdTMKxcgqaxEFZqrwcJBxPTyDi9+F+O1RuZ5S6ySNLvf
-         xtbOz9hocSLvDviuQ48dexhZyKCT8ifOhB2WtQcKeQRiORaEDszzY6BtAP3/T69MOHV6
-         TN2qSZdlQ6sOqoH9lYmiz0xSQDLx7a8xVrCC12nj9wlLeOU+BoZrO6QBIoF8uzSSG8gx
-         n5NA==
+        d=gmail.com; s=20230601; t=1758127881; x=1758732681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V5/sfcYMmxKdZz4FohXf1IpKXn8Gn6GevqVRpmEVs50=;
+        b=V1pvPFy9QIZfbvuBSrOLgaPn1TyV7Ls9YzObwVNlqocs91d8+0McMrQMXMF9OGV7YE
+         knABoLYVCq4in87LB2hRJTjCCsJ7vZ0ok6nvjO4R7Rd1qPcs8OuxZxAfxglB4vBT8YLc
+         i72WenSdTBCRhIZwGEsqp1mX3Siiar56OktWc7NGCZg9r8gBlI+Uf9/bhIM2RCVksVSx
+         7aQNdaFauxO5fkKFyB0Xw/WANmvMLOnAr/NcV1wk0pniNBaXVl2EkTgPAxsfb1hSFfNN
+         PvJWmvV+3Xza+4OwG19SpA6LNrZVewA83d0ijZJb88oWgfo+iEQ5DPTjnsz+PfQZLdXV
+         EC1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758127810; x=1758732610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B8PrCNixuKjn7muO0S4+O0quWRgO8+yd5D10C3h36dQ=;
-        b=V6PjaHB6CsVc0nf38C8H68d2V1ReTLKfeLuRCL7UuKhOxzbMf2DKTgBLuj5GeniGNp
-         ZibH6qlkFoilAvkgLf9sm2+ZFuO/zXhNzWFuf6cWi1mI3z7iGw6UQLfnWp4u14+RUwNA
-         EA2yx0r/3Nh6I66qfHAD9tCb9EVQdbV4EScLcoDx27/6hZ+iK5Cu3k7fq2jDpwY0oyCz
-         J8xHZVl153qYDJdwYbTvthhAoW8GVYlLNZIZOp9uh/MZsMoc7SyfmrARPlocJwlymNaF
-         m4wQddQQp2k3jeiA4IRPCi6UzJyhtOJnjEvc70s6ecj/8mDhsOb0Cpv123z1wZ0x18Kw
-         +uVA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/PAjwB5uX6FAWrCnXQoDEXPYfeA0fwjaXEZDUnUY/MSQded3ezsb3QPelz+HOk8ckxTb7ULOopp5zl/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz4Sz6BosGdvWOhzEL8i8r6jzLUamaY0ZmmA9o2YA0P/5YDmSB
-	8psZfqocHrhLGp/NVVhOTPMfA52u3+gj9JDtNi3oIAYRm9X6FaY2dXRU1Hl0JVOH8JzMTLmkjYz
-	B/q+xOuuWQJ1hTUWMONExStbvE4FrEjStrUt4f0Qr
-X-Gm-Gg: ASbGncsI09gKCVQKmMjv9PB6J5V/ep1Smu9cUhn5lf8yHwPNApXU3gEm1CINccgHfoD
-	ALKeAIzBcDX0coiPR0HjSGwdabjWJw7kk80DHL2o2vn/amlwvhtRGFKjwkbopW9RatJloTfaDZh
-	SJi0uaC+wyROPHrXZ/P0Zc1wsHKmKvRrywz0a1NV3Ny9EvZADoDVzlpJTvfd9seZnGz1exCcMQL
-	sZkyJWTOiRO0inBa55Dh6plnpJZREQ9kQLHzGhJ64j6
-X-Google-Smtp-Source: AGHT+IGtMrszeVWUnHllJskrp5Iflf/E5+ZGwWZI9QGzgm0SBtqy/zo9xqbqUXTBv+hZMCoJ44EWquT3yuXDAoQpNaM=
-X-Received: by 2002:a17:903:183:b0:249:1f6b:324c with SMTP id
- d9443c01a7336-26808af17c3mr5103615ad.13.1758127809488; Wed, 17 Sep 2025
- 09:50:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758127881; x=1758732681;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V5/sfcYMmxKdZz4FohXf1IpKXn8Gn6GevqVRpmEVs50=;
+        b=VJa0MT+ooQTd1DQEaTIk9b8kI2Gh47rHRVDKLP99tGnD5Pmf9qiIpMQVYx9UCykUmo
+         Wut/WaSOf7y/dadVv9kNd7aPtLdBwXMlLYKkOHSgnSBHOy9txbVU6XQSG0Pv9F4bdFf9
+         jiKs+l/M3uMXpbyysNaeAAhsijnEWNNdlvf4m8xXOT8aGfnv+jJ1+BYE8gk9bbdrc6T3
+         52LVTTGdOXdHAa3Zo5ZeXRox/b2uOyrgBZV+LEx3EcERYQgApnD3DbKB58jHjsX1NeyV
+         yeJQY4PhWU+H+x/5Y6gg1eBrsMScR3laILYQvs0LWh8rOAx7tu1nKn+cjb2oGlwz3Snt
+         bwOA==
+X-Gm-Message-State: AOJu0YxvirAAYaf/+0F2yRvZBYVyqWrIFZtkDlVVX85dLXPbSThfzlJ8
+	9O/2W0GQUK+/rqnVyYRZEOcGaOmZ0erRpecHLsWUMVTirs1Pswqap1zUSKMjPl4LuaX8JM18+j0
+	=
+X-Gm-Gg: ASbGncv5pCeaL16iCYf7WBw6nBqvKlnZ6FKlZIg/e9sXiqafIVjklS4Mv6IzRoJgLYd
+	5eRhNv+Lnvn2o3GfnUqj/Sk5QdFK8wDwNFkSwO5+6BbIc4DQzQqnPxvWu5rRObiukeoSijuqXm7
+	GDRovZdtZraoaz36e+lmWxsMG8q1zuRUoFxv8O6Er2G9LS9xD86r4ziKeshVK3a4niEAtHUL2lR
+	FJ3Oe1CtYYu9VX0R5ggKAVMFT8oKp5+Kxphqb+5eqyOvQo4HVm0OlQTug8omXLBHMIeQup7Q7/k
+	iiXurEjvN3f7vMZMB43KVoUZqbRsTsf5mMyHD9U6sXSN5qLLl4FAsV5ktnkIfWWdzqd8NBqn8/P
+	J5oh/mNhQquS37ylZOl6m3zR3hiG9
+X-Google-Smtp-Source: AGHT+IFm8FE3BSR5+gXsvt5+56cKgJkHI6zUkJnv5mR/WV8vtAeVCagIoQZ92DZuSp+qmtL7Ky0Cmg==
+X-Received: by 2002:a17:902:d2ca:b0:266:2e6b:f592 with SMTP id d9443c01a7336-2681217ae3emr34230875ad.25.1758127880709;
+        Wed, 17 Sep 2025 09:51:20 -0700 (PDT)
+Received: from LAPTOP-1SG6V2T1 ([149.40.62.106])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269800531f4sm1003615ad.25.2025.09.17.09.51.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 09:51:20 -0700 (PDT)
+From: djfkvcing117@gmail.com
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: Onur <work@onurozkan.dev>,
+	gregkh <gregkh@linuxfoundation.org>,
+	lossin@kernel.org,
+	gary@garyguo.net,
+	Tong Li <djfkvcing117@gmail.com>
+Subject: [PATCH v4] rust/fs: use intra-doc link for `EBADF` in `BadFdError` docs
+Date: Thu, 18 Sep 2025 00:50:59 +0800
+Message-ID: <20250917165106.22262-1-djfkvcing117@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-3-kaleshsingh@google.com> <1308de0e-bb5a-481f-a447-ee4440ffb419@redhat.com>
-In-Reply-To: <1308de0e-bb5a-481f-a447-ee4440ffb419@redhat.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Wed, 17 Sep 2025 09:49:57 -0700
-X-Gm-Features: AS18NWAaVY91WPhjDqAP7fbiSZehTHu_vaxEm9l-M13vdtmPSNl69ObH0kjNDtM
-Message-ID: <CAC_TJveQks8qnqTUq-tyY6VV34mPz8ZmQ9XmsDRAz0-yW535MA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] mm/selftests: add max_vma_count tests
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
-	kernel-team@android.com, android-mm@google.com, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
-	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 17, 2025 at 3:58=E2=80=AFAM 'David Hildenbrand' via kernel-team
-<kernel-team@android.com> wrote:
->
-> > + * test_suite_setup - Set up the VMA layout for VMA count testing.
-> > + *
-> > + * Sets up the following VMA layout:
-> > + *
-> > + * +----- base_addr
-> > + * |
-> > + * V
-> > + * +--------------+----------------------+--------------+-------------=
----+--------------+----------------+--------------+-----+----------------+-=
--------------+
-> > + * |  Guard Page  |                      |  Guard Page  |  Extra Map 1=
-   | Unmapped Gap |  Extra Map 2   | Unmapped Gap | ... |  Extra Map N   | =
-Unmapped Gap |
-> > + * |  (unmapped)  |      TEST_AREA       |  (unmapped)  | (mapped page=
-)  |  (1 page)    | (mapped page)  |  (1 page)    | ... | (mapped page)  | =
- (1 page)    |
-> > + * |   (1 page)   | (unmapped, 3 pages)  |   (1 page)   |    (1 page) =
-   |              |    (1 page)    |              |     |    (1 page)    | =
-             |
-> > + * +--------------+----------------------+--------------+-------------=
----+--------------+----------------+--------------+-----+----------------+-=
--------------+
-> > + * ^              ^                      ^              ^             =
-                                                     ^
-> > + * |              |                      |              |             =
-                                                     |
-> > + * +--GUARD_SIZE--+                      |              +-- EXTRA_MAPS=
- points here             Sufficient EXTRA_MAPS to ---+
-> > + *    (PAGE_SIZE) |                      |                            =
-                             reach MAX_VMA_COUNT
-> > + *                |                      |
-> > + *                +--- TEST_AREA_SIZE ---+
-> > + *                |   (3 * PAGE_SIZE)    |
-> > + *                ^
-> > + *                |
-> > + *                +-- TEST_AREA starts here
-> > + *
-> >
->
+From: Tong Li <djfkvcing117@gmail.com>
 
-Hi David,
+In rust/kernel/fs/file.rs, replace `EBADF` with [`EBADF`].
 
-Thanks for the reviews.
+This helps rust-analyzer to resolve such references.
 
-> Just wondering if we could find a different name than "guard page" here,
-> to not confuse stuff with guard ptes
->
-> Will the current "guard page" we a valid vma or just a hole?
+Suggested-by: Onur Özkan <work@onurozkan.dev>
+Link: https://github.com/Rust-for-Linux/linux/issues/1186
+Signed-off-by: Tong Li <djfkvcing117@gmail.com>
+---
+ rust/kernel/fs/file.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It's a hole to prevent coincidental merging of adjacent VMAs. I can
-rename it to HOLE in the next revision.
+diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+index 67a3654f0fd3..f3153f4c8560 100644
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@ -448,9 +448,9 @@ fn drop(&mut self) {
+     }
+ }
+ 
+-/// Represents the `EBADF` error code.
++/// Represents the [`EBADF`] error code.
+ ///
+-/// Used for methods that can only fail with `EBADF`.
++/// Used for methods that can only fail with [`EBADF`].
+ #[derive(Copy, Clone, Eq, PartialEq)]
+ pub struct BadFdError;
+ 
+-- 
+2.51.0
 
-Thanks,
-Kalesh
-
->
-> --
-> Cheers
->
-> David / dhildenb
->
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
 
