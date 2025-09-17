@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-821620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC29FB81C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:28:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA407B81C35
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 679F33B94CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E9184807BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382272DA76F;
-	Wed, 17 Sep 2025 20:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB882C11D1;
+	Wed, 17 Sep 2025 20:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="agoz5p2l"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O32RE3ri"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974CB2C21F5
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDC62749E4
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758140877; cv=none; b=DidPJwkBvpS02i1oaDFC7647TfSK9aoRLXo5DCU2DJEnOjDsrbFfZd1A7eifa6nK/uoOZ5+I7L4KsrYefroXUI1pscWlVgK9j1BtVluwfg2QDwGoj9QH6FbrM4+E5ANY+b/G/k2hiSJqw+Bk3vPVZwAoaAhmn1NAJoPs/pO6RGo=
+	t=1758140993; cv=none; b=VfD9nJfsCRya5p1Y0xaYvGbzLqk+nrv7SZVgKDiKHc1Zy0WG0hm6x3x8ri6v8gprsMGq/0Vmv0GQNCxCS1xdLXrwX2sFSoB6nHx91mWt9poLh7lpq6BF9UPhQW6Aa+n4QLuRsCkOzAEb9gybCciZlf5m/LKwZjekLu0tUgYfg6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758140877; c=relaxed/simple;
-	bh=7ftGvN/R/Ps0GPIX85RpurbPLiXS1I3fprN0bjaLYGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fC0utrr9Mgrqe3yC1t3VauA4f8ncoSWiHfVXwMnmIQ1WpWJ4WelZ5eqqAyAksKr3+wbC8uBA0wh3TDVRK02kO7cvuid0ZdGrtH54efJIcU7QSsLlzAwb0r1u3v/RFlvotr3DBsOHnfmMfe1UctLO/BQ1iiJktiftfsmgEAcKkSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=agoz5p2l; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso307609a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758140874; x=1758745674; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z4mlHJ7N2GtjpEnD9iNY8gv7p0x+AwcaIWO1wg2Altw=;
-        b=agoz5p2lO+XoTPQ7Zg4tde1jUMGrm1CG/PinADYgfLY/uup0E54BFjrUKl179+uZul
-         vCZCD5S/b1zLgFYMMl1rZnMR5D92TmfZGfhoOxuHyN19OBKicPHS/vFusG+MbBR8Lctt
-         Yb56njz0jtkPxVtWEtG2EErvFTneR1bsyTlXc20Cnw2DlsqqIAUTBTrMPIjze56qtkcD
-         gbtx5vRdK2w1k51QBJP6q05jQxhl2Vk5grH0M5RGL5+eJTbQuCstt95+CL9hp/hb8s5V
-         aFGUnneQk2rSJIr3YREy+zgPRyg/fceIh0hvup4/HPfUF7gJq4Fu28L2sPa2cEeUNr7B
-         BDXg==
+	s=arc-20240116; t=1758140993; c=relaxed/simple;
+	bh=rxAati95/xUI61030WJWld7Jg5f/fH5oCtuvlnPZI1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QB+DD9ZK54DnmcFCv6tchDhk0mPAxFopdsLceG968hlv3cqMLlhOKP+2GRnRC2KnG/vnm8WC8gq3QVejxxJNSJA6JRBeMjzrNZudSTJG+RyASV6hi1CbkxXDyfAO9su5uOlwXZXE7hZmLeYJphjrCnj5tNoe5wPi8YBiNsIvhAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O32RE3ri; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HGQTER014186
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:29:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HEM1lJMKa2QVcYthJ1BIIXMBnRFN8LfFqYTZtb21724=; b=O32RE3riyGSoQUA3
+	q1AU52H69/hFWKxCdkNT2rE9A5iLo9O2DE2gH3UigCTJWh/IhPNYpdk/6/T7rPV/
+	dRxVGsbUMtE+V4iN+zYI6w40/OKEW1d6Sbztnqhi9ZNpWabFlEDTj7FqKdBhknfP
+	PtoAXuOEl+TX8ni9ogB9Hs8kqbNtxtAO2cnLFJjpoMcDVeg1zv262qAaiQI6wOLu
+	frgsJ9YRwVZKFw0wCWi8Vw5UHqile123TQ4Jwp+QDXrOF57S6gra+EInum6rW7gx
+	pnR9gxL7Tn3l54eh6bm3o4MRRVn3DO11RHmYj9HTZ+7iTlLFsBrDTGrUISaF3Ydz
+	lgPv3A==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxu3syh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:29:50 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2697c4e7354so2894385ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:29:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758140874; x=1758745674;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z4mlHJ7N2GtjpEnD9iNY8gv7p0x+AwcaIWO1wg2Altw=;
-        b=Ltt3CSWc+MjFT3B4qGkWDvGezzXxeoJrnu1cF89pydwZclMJ0u/PAZq5744RcOfds9
-         DiY9jw0IHdEW8pgQPJIb8CoeL5BovbWr1ofIdmu4zZOhUPJQ4MpzmgX2lOm8vsUn8P6A
-         2uCH0N0njO+pOIqflBEuJdc1mkcLwyCzHVflroKdSAqQ5XlGL7OJhylsdYD+rqCLDrIu
-         G0xCUW26vqQlF1Lnhy2mv1Z5C8oC36oG3dBjc/mmlXu753lCkVKAoeJcVyx3UNeef0cP
-         HAePbnBEn6+mAep156ZUiiqAtkFcc9CjRUwBWzeL5/oq7yjDpeQrPPcKM9gnBm7RAe7h
-         Pg6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTj6Yictk+7zP+IQ0V14Tf4RS0ECyWQKjBAfCXXq0nTh7vJkGGJBeLS5mxCmJawvjl3yzXsHoEW6/fVhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbofOA0TIqQKFsUWhrP+T2fwSoSGB7ZDmzQKBu8IgaAE/EuHkc
-	jza524P37S/xCAKO/247qB1yJQX/ZbH4r2irrQTZ0eNgCw3odHsEBQrpotK1b6Itr/dywZzUFkR
-	4oz4EtCT3W3PdThdynTMo7g9Du1gPhDUxiwQ0p7jIGQ==
-X-Gm-Gg: ASbGnctcik60VgYiSG7j/p49hkJHVm2YffS8aWDxx3arpYYa9XofK8csjao5MQEminM
-	6ABl7Gx4NYKSg2uj16qsQED7qlzOhJKIvjpRz0PAX4xrpLWxEnEYuQnixqeU86KK/28+o+vkmg0
-	sUXzF2g0+DoFQiaefLCRJkmn1HDpvkQvdaQdiqEhNEgAvtdoaHz3fOuF2PQHhcZUoRSdOeneiIc
-	QuRa8stnhfbYH2X+nFIFtyGleHWxRFGfxEu8j5qgcF+ENNzVlC9ATU=
-X-Google-Smtp-Source: AGHT+IHTHtpXLrzOlNF8ItBS1Dao3rHs8rUuADCH4WTPP8QnLumlzZRuwQZByHIaY7Yr6edfpyVLQ1M4x0U8xNNPnIY=
-X-Received: by 2002:a17:907:7b8c:b0:b04:6338:c95a with SMTP id
- a640c23a62f3a-b1bbc5490a6mr373843166b.45.1758140873916; Wed, 17 Sep 2025
- 13:27:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758140989; x=1758745789;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HEM1lJMKa2QVcYthJ1BIIXMBnRFN8LfFqYTZtb21724=;
+        b=Q2/3+jISPi9Rpbtp9tQhHMkuWBM69BTpqpjTdOaoioBpLZ0ciX+Sxnftc3oDlGiHIr
+         F0fl5+jP3qtQNj4WefMI83VsVG5SDmd7B6XDdenUTfVpF0c/gPA5osabuDt4M7zgXMRl
+         zbaflZb0wsVQVHnjUgfHZ720aywViB+v7qJ3ETDHrERUVz1lKmYIWWCyk7C3zknCE6ik
+         8xftBU4aEdCeSOBRZQ0Uj06AXOOLDNqZAWEr2u8RdeqvuqlS9j5W3lKSkdCHwKv8YeWs
+         BEClCy9qhsGwroqwZq1HIPRzv/A+wPaJq6KwZRZ8STASsVyQV4KRkdfpPSHoNiJCBn/d
+         6Yjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxbNKrhvN4qSkOJRFMsSbxKjdpxhbuL1yWDNktorU9NatDpF3/qijZSB5Yq/brmn5xpMttMs1Nkbpnm6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz32DDJWCMIM/+/o7dO6gO4ygMhgUylpi8HS4Em3KncYuSYLkcA
+	FJ9Soro0EwQAb6WkHN0QJJ/rDd5s4aCbMVkC22O+wMcjV1hBf8dDrkMu2n6xeT1Jt0nxLFbwgdM
+	0nBmyJZsY0c3/CdQB9RUjZvaUz3nrl4UdGLCTn03kKOtpJWx/JexvGRxvgIxwKGq3fLbR/Y9ZGq
+	I=
+X-Gm-Gg: ASbGncvIa1snesnYJvvsIQQfgDSX6uca1iqkRjxkHMdNQPgzihJ1vzB/tOVMh72e0/Z
+	zMLfQVGxJFC48vrvCFetfEeC7WC9NS/LIw3aB+A3ON28CbvwraNZw5TQ/ROeiC1RiBGTer+w5Wp
+	jTEii94R6rbVrVXPa8qUkd7K8r/UqEe03chct0aWUTYAMvcLxosNuEWp0UYjtf1po9by/afZC2l
+	UOBdvcuAK+z4RDuCSAj7QNMa+jeodtW8HyLdVGJzmWKFxZl21C8+f/3YTZPQUGBhpqkpRitUF5k
+	Eie/pPu+C+qyoNBMU4JJXX4wtt9dbIYhX9f7gvQCN1Z9H9Q7br82EpH8PN8FCStEP2SiTFnnci/
+	vuAWlW04Za4e9VLnmz4JayWbGP7XSv4heWjRo
+X-Received: by 2002:a17:903:11d1:b0:266:3f63:3500 with SMTP id d9443c01a7336-2697c829fd7mr9913385ad.12.1758140989443;
+        Wed, 17 Sep 2025 13:29:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoM/05y1CwkSSQcd6Pm0FZF2zcDhD38jOzV9/eRqaD0ZUm8ijYqgE/YnLUSCVJPnWy0wFC1w==
+X-Received: by 2002:a17:903:11d1:b0:266:3f63:3500 with SMTP id d9443c01a7336-2697c829fd7mr9913175ad.12.1758140988955;
+        Wed, 17 Sep 2025 13:29:48 -0700 (PDT)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802fe08bsm4163555ad.103.2025.09.17.13.29.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 13:29:48 -0700 (PDT)
+Message-ID: <b2efb1f2-df89-4c88-8f97-e164e89c7532@oss.qualcomm.com>
+Date: Wed, 17 Sep 2025 13:29:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917135907.2218073-1-max.kellermann@ionos.com>
- <20250917202033.GY39973@ZenIV> <CAKPOu+8eEQ6VjTHamxZRgdUM8E7z_yd3buK2jvCiG1m3k-x_0A@mail.gmail.com>
-In-Reply-To: <CAKPOu+8eEQ6VjTHamxZRgdUM8E7z_yd3buK2jvCiG1m3k-x_0A@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 17 Sep 2025 22:27:42 +0200
-X-Gm-Features: AS18NWD_SzRUSSGY7GiasnnPbKogXv5-_s8RWyt66I7bKnW_Disajb-Bt-pl0Fc
-Message-ID: <CAKPOu+8vf5DbR=cJ5dArut=QamTu-EdpJVta_Dsk+dQDpY68UQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
-	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Mateusz Guzik <mjguzik@gmail.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: Remove redundant semicolons
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jeff Johnson
+ <jjohnson@kernel.org>,
+        "open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER"
+ <linux-wireless@vger.kernel.org>,
+        "open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER"
+ <ath11k@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20250812075259.6921-1-liaoyuanhong@vivo.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250812075259.6921-1-liaoyuanhong@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX3uhQDtI+Qkkm
+ L/8CX7l5Wqfy9Chteq9hlMdj3NCsgLbc6XTmBtTBBvXXR4XNWpL7KF7fpATJPJkXll0JdcY72E0
+ ZraMoTlTa9dA7ZT3jJaYUOyyFQPzhg1FFSK/cPmYPE7fTCMIiOXVzeIrfLDpPuTaTB1N4TEFoZx
+ eT0MTHCF2Cw3r4tS4KWoJZFSeF3booY/aDNf/qgsgxb3A4Airp/WLCd5mCtUaLlvtqep/k3Jwoe
+ HSyht6NLIcNpYOhZyHyvXgbuYv5rtTCLjDtde6Fc4X9jxySoWOy4OMgeOqo2vpprVaNuwrTUDUX
+ 6eCXb5zzpOL1i9UnVStA//vMPA6iVAHNQXGmIZGONrE0b4ATY1waS/bPRKDi7upgfBnbkW8MSdy
+ jROwBbFp
+X-Proofpoint-ORIG-GUID: QlunFZqFcyVjk4zyYiD07B4bR5WXcc2A
+X-Authority-Analysis: v=2.4 cv=R+UDGcRX c=1 sm=1 tr=0 ts=68cb1a3e cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=e70TP3dOR9hTogukJ0528Q==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=1WtWmnkvAAAA:8 a=mgvM1FoPK4XduYGJcSIA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: QlunFZqFcyVjk4zyYiD07B4bR5WXcc2A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 malwarescore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On Wed, Sep 17, 2025 at 10:25=E2=80=AFPM Max Kellermann
-<max.kellermann@ionos.com> wrote:
->
-> On Wed, Sep 17, 2025 at 10:20=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk=
-> wrote:
-> >
-> > On Wed, Sep 17, 2025 at 03:59:07PM +0200, Max Kellermann wrote:
-> >
-> > > After advice from Mateusz Guzik, I decided to do the latter.  The
-> > > implementation is simple because it piggybacks on the existing
-> > > work_struct for ceph_queue_inode_work() - ceph_inode_work() calls
-> > > iput() at the end which means we can donate the last reference to it.
-> > >
-> > > This patch adds ceph_iput_async() and converts lots of iput() calls t=
-o
-> > > it - at least those that may come through writeback and the messenger=
-.
-> >
-> > What would force those delayed calls through at fs shutdown time?
->
-> I was wondering the same a few days ago, but found no code to enforce
-> wait for work completion during shutdown
+On 8/12/2025 12:52 AM, Liao Yuanhong wrote:
+> Remove unnecessary semicolons.
 
-What about flush_fs_workqueues() in fs/ceph/super.c? Is this what
-you're looking for, Al?
+There is only one so s/semicolons/semicolon/ here and in subject
+
+> 
+> Fixes: d5c65159f2895 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+
+Drop this since this isn't a bug fix that needs to be backported
+
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> ---
+>  drivers/net/wireless/ath/ath11k/dp_rx.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireless/ath/ath11k/dp_rx.c
+> index ffc7482c77b6..b9e976ddcbbf 100644
+> --- a/drivers/net/wireless/ath/ath11k/dp_rx.c
+> +++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
+> @@ -4615,7 +4615,6 @@ static void ath11k_hal_rx_msdu_list_get(struct ath11k *ar,
+>  			      msdu_details[i].buf_addr_info.info0) == 0) {
+>  			msdu_desc_info = &msdu_details[i - 1].rx_msdu_info;
+>  			msdu_desc_info->info0 |= last;
+> -			;
+>  			break;
+>  		}
+>  		msdu_desc_info = &msdu_details[i].rx_msdu_info;
+No need to repost -- I'll incorporate these changes when I process the patch.
+
+/jeff
 
