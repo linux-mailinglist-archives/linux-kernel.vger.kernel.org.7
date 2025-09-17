@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-819893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FBCB7CA19
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8003BB7C9E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4687216D321
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:40:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7648616E871
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B882C08BC;
-	Wed, 17 Sep 2025 02:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4C12F3C3F;
+	Wed, 17 Sep 2025 02:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV0gbRik"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTo0eG04"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF7D220F5C;
-	Wed, 17 Sep 2025 02:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60402DF717;
+	Wed, 17 Sep 2025 02:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758076811; cv=none; b=Ccx92eVN5upYDAb/LHKJlgROcu26yz3kgPF9mBnQS7SryJW3gk6xIJwAYcPTkoyzDoRH6pqcP3DM6Y50uFrouq5G35c8eaeMVXwcd+Sg6yzisAnc4lB6n4lNQjPgzexWdBUaK1yhTSG+3qbNMGwmxIEQ0akgmAAv499HH39gPW4=
+	t=1758076812; cv=none; b=e3IPwxndU4m8aAWftFQS7Rd9bweU0cZvJsjv1aSB+KahD8pm/pJ8E2vrIVovJBW4R49107Gv3XpYur99c7mYubW9qD/oNX9GioMsXvpzfgX0XvIRqlPDCn57oNL6djlruB6YU9N6X5fHU5obEP5lc2oHMQs0N33q3vZOriLODP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758076811; c=relaxed/simple;
-	bh=w4wLr2yP8Lf0P8+wu6uiNnPTZbO4BPOT3E8l8dJYdWA=;
+	s=arc-20240116; t=1758076812; c=relaxed/simple;
+	bh=/S2HMi3usPSz32wfGIPF+rTLYNKndealNpX9ovOTxRM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Crg8rzaPhLohPQ+MMbNsl70X0ZSeRKY1DKAbEFR2aSqtHGadGh32rVkfJAiSiAjsTiTQRm/oIOhQ7PL9+fQ+Z0xwQAr0EHwvK0pEY0eIG/ni2z/ykY/5LUKxjehHAIFQtc+i2o05RRi+Qyi7FnP8LcFI3cXC9x+xLpb0lUP0PQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV0gbRik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A29C4CEEB;
-	Wed, 17 Sep 2025 02:40:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=EKt3gKhHE4ToNiee8f0t/8AO6oblsApkYu+DoSxbRMLFmb1JL1+/y67zKk0OYwA4NudBrruijdC3d3lRkuCsopO7g+jpWeV9+zIOIx3wImvqf0aWSdrsswlRDwEs14Iw62r93cAaFmPWCsPuXvsEPjx2UkaeXEzfuzIHi4kJ9w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTo0eG04; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A204C4CEEB;
+	Wed, 17 Sep 2025 02:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758076811;
-	bh=w4wLr2yP8Lf0P8+wu6uiNnPTZbO4BPOT3E8l8dJYdWA=;
+	s=k20201202; t=1758076812;
+	bh=/S2HMi3usPSz32wfGIPF+rTLYNKndealNpX9ovOTxRM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pV0gbRikLFcdAi6S6oBasXHUmazo9Ijq3E1YrL4stpdS1JqA+JI66tleB1GCtaDRN
-	 Y7R4ElrtL/gNYTxlyJN9cVKJnEkM1+xVxx28zI/LNqsrFpfx0H2gcaHtLX+uNl7GOZ
-	 NpazGumn8ZKM9sKSlJ/5LVslpZvlO9y80i2vGK+26GnT1zKESblKd4RnxmmsonkPbI
-	 CtzcJJw/zktmjeSUpXXFHdxkHjZYpDvLn1mSlzNENjCRBUQ300u8zEIByis5kavqlN
-	 bYYJWVcUXMEYw2GFZX3nVg59xhelLfolp+sHHyiCWBmBuEqmVzJWQdb25PYaeuYoRh
-	 Zj1/H65b9WFJA==
+	b=OTo0eG04e9twFTepVCTYzVobxe+EIJigaScEgmbcQrfCSl44NK6jgQvJrqWyq46bq
+	 UU7PHRQI7K2R8k/ltzQGTEhl1cp4VAN3sgMphvR3Iowy2mudXgw+DUxOb1YSSNCNVy
+	 Q/HA8sVuG4lmN2gjW1SRwVhpkQ3cnYAxd+g4qGFSZByMlfh72pVBfnTE4h/fF+1MjE
+	 E1tt0zKjSSVoY2z5zj0ypYribQAEWoFpjfhU8d3a3C1dLLbsygz7oTa23UUO8GhG7x
+	 DEQ9df136oEN+iAjROowKLFnubG5BVoRYyqhuRYZYU+E2BAB7lHvFChY3gN7Ekc2bg
+	 gYiYlQiByDWXw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D3239D0C1A;
-	Wed, 17 Sep 2025 02:40:13 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D2639D0C1A;
+	Wed, 17 Sep 2025 02:40:14 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2] Common csr_read_num() and csr_write_num() for
- RISC-V
+Subject: Re: [PATCH 0/2] Fix riscv sparse warnings
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175807681200.1444719.17820860384159771040.git-patchwork-notify@kernel.org>
-Date: Wed, 17 Sep 2025 02:40:12 +0000
-References: <20250818143600.894385-1-apatel@ventanamicro.com>
-In-Reply-To: <20250818143600.894385-1-apatel@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, sunilvl@ventanamicro.com,
- rafael@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
- alex@ghiti.fr, lenb@kernel.org, atish.patra@linux.dev,
- ajones@ventanamicro.com, anup@brainfault.org, will@kernel.org,
- mark.rutland@arm.com, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <175807681324.1444719.6787626572646476134.git-patchwork-notify@kernel.org>
+Date: Wed, 17 Sep 2025 02:40:13 +0000
+References: 
+ <20250903-dev-alex-sparse_warnings_v1-v1-0-7e6350beb700@rivosinc.com>
+In-Reply-To: 
+ <20250903-dev-alex-sparse_warnings_v1-v1-0-7e6350beb700@rivosinc.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, lkp@intel.com, viro@zeniv.linux.org.uk,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, cyrilbur@tenstorrent.com, jszhang@kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
 by Paul Walmsley <pjw@kernel.org>:
 
-On Mon, 18 Aug 2025 20:05:58 +0530 you wrote:
-> Some of the RISC-V drivers (such as RISC-V PMU and ACPI CPPC) need to
-> access CSR based on CSR number discovered from somewhere. Add common
-> RISC-V csr_read_num() and csr_write_num() functions under arch/riscv
-> for such drivers.
+On Wed, 03 Sep 2025 18:53:07 +0000 you wrote:
+> This series simply fixes 2 recently introduced sparse warnings.
 > 
-> These patches can be found in the riscv_csr_read_num_v2 branch at:
-> https://github.com/avpatel/linux.git
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+> Alexandre Ghiti (2):
+>       riscv: Fix sparse warning in __get_user_error()
+>       riscv: Fix sparse warning about different address spaces
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/2] ACPI: RISC-V: Fix FFH_CPPC_CSR error handling
-    https://git.kernel.org/riscv/c/5b3706597b90
-  - [v2,2/2] RISC-V: Add common csr_read_num() and csr_write_num() functions
-    (no matching commit)
+  - [1/2] riscv: Fix sparse warning in __get_user_error()
+    https://git.kernel.org/riscv/c/fef7ded169ed
+  - [2/2] riscv: Fix sparse warning about different address spaces
+    https://git.kernel.org/riscv/c/a03ee11b8f85
 
 You are awesome, thank you!
 -- 
