@@ -1,199 +1,154 @@
-Return-Path: <linux-kernel+bounces-821309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F90B80F06
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:20:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9FAB80EF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 226DF62609E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:19:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F1D7ADC33
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682182F7AB9;
-	Wed, 17 Sep 2025 16:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52BA34BA28;
+	Wed, 17 Sep 2025 16:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jENkJ1Wo"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="NHGDOZ+i"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DAA2F60D6
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8A534BA27
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758125911; cv=none; b=V22DMEL/8H9qCusq8C2BK9Cn3Gh0pcFGAnwuUTmKpRkTd1M4HHcaFa4PAauK/POKLh+2qpjI4FlgEDs6MBnaMUjR2L7jiX+M3sSTVScMwVWnj7DUuN77iaCJ6rx+ypG7oUCU+60jbSVFa9knQ01x+QVKT55uqDOlnTFIEQDhAwE=
+	t=1758125961; cv=none; b=jDcyDn4jA90YU+GFLFJrBnBMDertAlpQ3Kec1dU9CAL4hFxXUvVq6mhsB4mZV1PCSRyoUwM2EHhR1Is3/gb/kjklGCfRb6zFtTS4FJ2i2Q0PportYi6grVq+8+WME+57bDN4yxXliGyNVkpBhxE/4Ed01oAEOCnlw6YgVBUHiq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758125911; c=relaxed/simple;
-	bh=bJOnHFF6nZRk0dWJ508IJjqcXP+PPBjH32g7z6c98X4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NdCpg4ZEBWzB7oSMhkLxUtwJWR2USO1A2tOdNfERvo1IHgTBotPSDjBfx6tck1TdLvmza3txKl2vSGfIVx4qTV5NCpklCIMhNWj/BOaBM+978Sg7hHE31h3kyEhT0kQNQkkdhXTvcZWV+TbSs06GrAwdn3bSeXk0z3Au3sAgZ/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jENkJ1Wo; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-25caef29325so61333645ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:18:29 -0700 (PDT)
+	s=arc-20240116; t=1758125961; c=relaxed/simple;
+	bh=fv4NXiGEDThBZAu27ctGOKRFZI31MskkS+WI85Qapqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qGN9pRJz5/H8NF7naxlezgElSQvaAfRYsXKDo7rIyabJ6pvnQl/TXtxyO76fcREiHMu90H9hybe0YElu/ty1/+EKQbmfbQgCqPJBgAu7tjwIJrTRyFaqFa6PN1ST6b3oCx8IFzUIQVqFRjv3NZqXi4pneeGJ8a73ZXWQX5CRxyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=NHGDOZ+i; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b7abed161bso35262221cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:19:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758125909; x=1758730709; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zd82b0DJsnoTN910/ro7p5KKbAhv/mwBDCIqGg5wmLk=;
-        b=jENkJ1WomaOPOuIJqSqsIkWc3vjLqDcxYhHQs85Mmus9YwCskah3bOGkLNCOBJO0Wq
-         oC2i7WqWslBzeubNDwAhssVNDR7liLMHbFuEqIQKtwf77WMGlK7J2HZgW6ABxEtcnjB5
-         XIGXPQ+De+uePl021JzAvbGM2ms4WG8DS0IROet4srIuyrB1Fdrf+R7NlTjqvnfHWwxM
-         5Kii/lo6enG3rqfKw6lG28M4aF8XHRkPuU6bfU0TbH7cF9A/EYwWqm+jhQhbkSxAUrb9
-         3UTQadC3clXK4U4qY7lr+fxsS2r8tMzsFafP5pYaIJauN9J2Y4Kdtsn88qOZF4W9MB52
-         5ODQ==
+        d=soleen.com; s=google; t=1758125958; x=1758730758; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sbkMBeVkd2QsX19NXxvq/zinXbb8IJRh0dyhEXqRclg=;
+        b=NHGDOZ+i3FARUc04jONtESFOMeIFO78n16OEcpl4xi/th13rPexz+GSsS4ZrwHMt6J
+         Bft5ExP+0RnnUpCr/oodwakuNI8FEZkggeoUJuaXlvjcqS0eRRC4I3yfHcammqYFnG+d
+         2a1N2tlv1jK8XlOduyNiosBPRChAgFMn0k5nNhQNqoZWtm8Aa6hqD+3OCETuJXg9ZrwZ
+         Zsf42ltck8qJWmikDVXNebAMSdqp6hucji+XPYWlamliIw2HynezI9a60yRpYOKi1WQr
+         iQrk5DV2mxKWoKdIvvMJS60S6adh8KWG7Agp1FDbqQCN1T6IoZQsQbpyoW793prRiMy4
+         NVSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758125909; x=1758730709;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zd82b0DJsnoTN910/ro7p5KKbAhv/mwBDCIqGg5wmLk=;
-        b=ovH84joomu4HbuuEuD7iL12a3rsEGZT0mBDwJ6GnUXDpDzzFUWSHdrJ3C5O1SP9pZI
-         MQQO8176qXcNEqaUOM1tFg9et67nPcJrf7a/ASGMzpav+xeqk3aJOhH3sZH4gMp3GS0L
-         LAi1VrELUh2Aac29Io4lSTwcP8NVEnHL+5Pvb1f83SdFJjj47FDDRbnmdznzbXssxaz/
-         AERPwYXZEW1HQmYE9dEjDchS1UsXSuOaPZjvD8aVkOi+17HSi8HGjZtAd3N8Sv7tDbf+
-         soKA4vJWeU8+mjn+n8LXIjouUDIiLoIVAuN1mw42tEkBWRrqagOS2aernMnwfYIJ0zxj
-         rQKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWeHBb7UhANpbfbqumceyuL6EKy+YAI51ICiY0kte+n3uhd5euL86QXoD3wBndHZ+D3+zQr8mM8PLnUjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYmbwrdf1t2Gr8+y4Q9CYroSDX6M2PevR3di4oewY0uOTheB8t
-	8lIUavEo+Z8Abm+ouMhRYXuIbLMU2uTLSqcn6klo9sKUWhUqI9Q0Stlg
-X-Gm-Gg: ASbGncukPstNtq21m1l26T2yQFbrNIBvEiy8FoOwDTSyZkd2OgWjam4Ihxx3/e2GSCS
-	DcS8BfY06zy6v9Izkn11wdMdTxDOz4MrZ7mJ1YNdMqZkkupyiWH/UM36aJ4ZStV0fBwKIO4pgAh
-	xEuaZBYen73GD6KgO/+SNOMYZxUkZFmzWYFhPlXuYMLNcucbBAdDqjhNqj49wBNyzHOSKJE2X01
-	+ey3FFMD7X+VPCRpgV3EuCNCfJe86slnoSdTnSQsxl27a2DKIA8ThbCAQt9oMIHEmUaA/WVMV4h
-	oa5wMs99wXGx+FAFEQciQQDaOJPACwRvmn8O5X/tqWAJrp02mGTeZQmOYleeLPmq7Puoj7cOaGj
-	OCvndMPKAqjSpDJFWbnURdMqR623+P0tt
-X-Google-Smtp-Source: AGHT+IEumcJAF/cXNHip3PFSAZnsvm4uQ9vyeEYv48TfaWGzIQktzfrrj5KrGphpb4CjNEfE204fuA==
-X-Received: by 2002:a17:902:d2ca:b0:267:9c2f:4655 with SMTP id d9443c01a7336-268139030e8mr28234235ad.41.1758125909089;
-        Wed, 17 Sep 2025 09:18:29 -0700 (PDT)
-Received: from ti-am64x-sdk.. ([2409:40f2:4e:f163:e60:9da5:868d:e8bc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269800530c2sm399635ad.3.2025.09.17.09.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 09:18:28 -0700 (PDT)
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-To: Manivannan Sadhasivam <mani@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Tejun Heo <tj@kernel.org>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org
-Subject: [PATCH] PCI: endpoint: pci-epf-test: Fix sleeping function being called from atomic context
-Date: Wed, 17 Sep 2025 21:48:17 +0530
-Message-Id: <20250917161817.15776-1-bhanuseshukumar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1758125958; x=1758730758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sbkMBeVkd2QsX19NXxvq/zinXbb8IJRh0dyhEXqRclg=;
+        b=B/Hk8uDEaN6NGAUhqQLIe6pI/m1l/S3f5v4tJN0qE1+8MBqrCecRrqHHS7lnqsIkvx
+         2tStXM8KOcFIIODpsSscgdUvTfOc+z+klBgX5RD+nRf35yhvlErtV2SD4IhlLbLx8SkP
+         C6wM488gMjx/VJANH80OXf6AHMOEzF7GCrxySnlYSGUBYZrs/RaFKi31ac7NaTjEShwr
+         ci2U9C5Tfg0UUC+5w0WE8bPyEJY/hVIAeERXyot6zctJPFLWUl3/Pm8hETK9EShXJ/zW
+         /czE08cfmstNWDotx1/9HZiFiZQiyYDSuTvClVEERAG1iNsa4XzStwSDQLx9E7Jh09mO
+         m5oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXU8HNvUISVxr+5nUOBi0EKx/91f64UqEf7YfZ8KfdM1DimoCsbprgvSQ57VNVXdj+wAV/zv5P+kl9GsVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrNm17UCUOc0eLYpbLI8fubuZznJESE4qr3HgTxnGrF8lGdAWw
+	GUzS7Ua8NB+36elIhSxtiJNB1ftzd3W3HQh/5zGL+TNB1kVEH0aPSRphkPJKms+l4b2OhApUKto
+	UC1ymApnL5+WyWk6CdWWhuCCJiTuqkAV4S81iomhVUA==
+X-Gm-Gg: ASbGnct2hiSunfqwDsitiTdxhq6Xeqhk7tFVMIqyyhV21jdizH7psCl8sIuKm22BRlz
+	ivpYSjGpe7thEoTNHe48OxhZ5DSIkqtGEtd1FFHxeocptAMoOg3seIxwNVp5YrQ8UVRAlkOn28R
+	g9k3Y06THOsO7sNPiXu9KAR6Y5aXUiC89h5C63MupkAZkXvpS6jAyH+cCInNQoz8SBrxtlWAjh5
+	dnw
+X-Google-Smtp-Source: AGHT+IGRAvd1PnnWvQJ8F4H+1eu57qvinrMS4TrUKO+pmpvMdhYGbF64WQPsfAaGR7+V69bkpqWp7J6cB8kByry08wM=
+X-Received: by 2002:a05:622a:48d:b0:4b7:a44f:5263 with SMTP id
+ d75a77b69052e-4ba6cd712ccmr33213531cf.71.1758125958222; Wed, 17 Sep 2025
+ 09:19:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250917025019.1585041-1-jasonmiu@google.com> <20250917025019.1585041-2-jasonmiu@google.com>
+ <20250917122158.GC1086830@nvidia.com>
+In-Reply-To: <20250917122158.GC1086830@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 17 Sep 2025 12:18:39 -0400
+X-Gm-Features: AS18NWDMazE060QNWHKjDg0IshqlUPi2ez4c84o8JlbYF6kbzA9fUlhLDhAngT8
+Message-ID: <CA+CK2bBbSSyCDAAgThDSSwH0WdOeHz-eVgB-1bdiwsDtTSE5pg@mail.gmail.com>
+Subject: Re: [RFC v1 1/4] kho: Introduce KHO page table data structures
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Jason Miu <jasonmiu@google.com>, Alexander Graf <graf@amazon.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Changyuan Lyu <changyuanl@google.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, Joel Granados <joel.granados@kernel.org>, 
+	Marcos Paulo de Souza <mpdesouza@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Mike Rapoport <rppt@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Steven Chen <chenste@linux.microsoft.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, kexec@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When Root Complex(RC) triggers a Doorbell MSI interrupt to Endpoint(EP) it triggers a warning
-in the EP. pci_endpoint kselftest target is compiled and used to run the Doorbell test in RC.
+On Wed, Sep 17, 2025 at 8:22=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Tue, Sep 16, 2025 at 07:50:16PM -0700, Jason Miu wrote:
+> > + * kho_order_table
+> > + * +-------------------------------+--------------------+
+> > + * | 0 order| 1 order| 2 order ... | HUGETLB_PAGE_ORDER |
+> > + * ++------------------------------+--------------------+
+> > + *  |
+> > + *  |
+> > + *  v
+> > + * ++------+
+> > + * |  Lv6  | kho_page_table
+> > + * ++------+
+>
+> I seem to remember suggesting this could be simplified without the
+> special case 7h level table table for order.
+>
+> Encode the phys address as:
+>
+> (order << 51) | (phys >> (PAGE_SHIFT + order))
 
-[  474.686193] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:271
-[  474.694656] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 0, name: swapper/0
-[  474.702473] preempt_count: 10001, expected: 0
-[  474.706819] RCU nest depth: 0, expected: 0
-[  474.710913] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.17.0-rc5-g7aac71907bde #12 PREEMPT
-[  474.710926] Hardware name: Texas Instruments AM642 EVM (DT)
-[  474.710934] Call trace:
-[  474.710940]  show_stack+0x20/0x38 (C)
-[  474.710969]  dump_stack_lvl+0x70/0x88
-[  474.710984]  dump_stack+0x18/0x28
-[  474.710995]  __might_resched+0x130/0x158
-[  474.711011]  __might_sleep+0x70/0x88
-[  474.711023]  mutex_lock+0x2c/0x80
-[  474.711036]  pci_epc_get_msi+0x78/0xd8
-[  474.711052]  pci_epf_test_raise_irq.isra.0+0x74/0x138
-[  474.711063]  pci_epf_test_doorbell_handler+0x34/0x50
-[  474.711072]  __handle_irq_event_percpu+0xac/0x1f0
-[  474.711086]  handle_irq_event+0x54/0xb8
-[  474.711096]  handle_fasteoi_irq+0x150/0x220
-[  474.711110]  handle_irq_desc+0x48/0x68
-[  474.711121]  generic_handle_domain_irq+0x24/0x38
-[  474.711131]  gic_handle_irq+0x4c/0xc8
-[  474.711141]  call_on_irq_stack+0x30/0x70
-[  474.711151]  do_interrupt_handler+0x70/0x98
-[  474.711163]  el1_interrupt+0x34/0x68
-[  474.711176]  el1h_64_irq_handler+0x18/0x28
-[  474.711189]  el1h_64_irq+0x6c/0x70
-[  474.711198]  default_idle_call+0x10c/0x120 (P)
-[  474.711208]  do_idle+0x128/0x268
-[  474.711220]  cpu_startup_entry+0x3c/0x48
-[  474.711231]  rest_init+0xe0/0xe8
-[  474.711240]  start_kernel+0x6d4/0x760
-[  474.711255]  __primary_switched+0x88/0x98
+Why 51 and not 52, this limits to 63bit address space, is it not?
 
-Warnings can be reproduced by following steps below.
-*On EP side:
-1. Configure the pci-epf-test function using steps given below
-   mount -t configfs none /sys/kernel/config
-   cd /sys/kernel/config/pci_ep/
-   mkdir functions/pci_epf_test/func1
-   echo 0x104c > functions/pci_epf_test/func1/vendorid
-   echo 0xb010 > functions/pci_epf_test/func1/deviceid
-   echo 32 > functions/pci_epf_test/func1/msi_interrupts
-   echo 2048 > functions/pci_epf_test/func1/msix_interrupts
-   ln -s functions/pci_epf_test/func1 controllers/f102000.pcie-ep/
-   echo 1 > controllers/f102000.pcie-ep/start
+>
+> Then you don't need another table for order, the 64 bits encode
+> everything consistently. Order can't be > 52 so it is
+> only 6 bits, meaning the result fits into at most 57 bits.
+>
 
-*On RC side:
-1. Once EP side configuration is done do pci rescan.
-   echo 1 > /sys/bus/pci/rescan
-2. Run Doorbell MSI test using pci_endpoint_test kselftest app.
-  ./pci_endpoint_test -r pcie_ep_doorbell.DOORBELL_TEST
-  Note: Kernel is compiled with CONFIG_DEBUG_KERNEL enabled.
+Hi Jason,
 
-The BUG arises because the EP's Doorbell MSI hard interrupt handler is making an
-indirect call to pci_epc_get_msi, which uses mutex inside, from interrupt context.
+Nice packing. That's a really clever bit-packing scheme to create a
+unified address space.
 
-This patch converts hard irq handler to a threaded irq handler to allow it
-to call functions that can sleep during bottom half execution. The threaded
-irq handler is registered with IRQF_ONESHOT and keeps interrupt line disabled
-until the threaded irq handler completes execution.
+I like the idea, but I'm trying to find the benefits compared to the
+current per-order tree approach.
 
-Fixes: eff0c286aa916221a69126 ("PCI: endpoint: pci-epf-test: Add doorbell test support")
-Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
----
- Note : It is compiled and tested on TI am642 board.
+1. Packing adds a slight performance overhead for higher orders. With
+the current approach, preserving higher order pages only requires a
+3/4-level page table. With bit-packing proposal we will always have
+extra loads during preserve/unpreserve operations.
 
- drivers/pci/endpoint/functions/pci-epf-test.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+2. It also adds insignificant memory overhead, as extra levels will
+have a couple extra pages.
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index e091193bd..b9c1ad931 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -680,7 +680,7 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test,
- 	}
- }
- 
--static irqreturn_t pci_epf_test_doorbell_handler(int irq, void *data)
-+static irqreturn_t pci_epf_test_doorbell_irq_thread(int irq, void *data)
- {
- 	struct pci_epf_test *epf_test = data;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
-@@ -725,8 +725,8 @@ static void pci_epf_test_enable_doorbell(struct pci_epf_test *epf_test,
- 	if (bar < BAR_0)
- 		goto err_doorbell_cleanup;
- 
--	ret = request_irq(epf->db_msg[0].virq, pci_epf_test_doorbell_handler, 0,
--			  "pci-ep-test-doorbell", epf_test);
-+	ret = request_threaded_irq(epf->db_msg[0].virq, NULL, pci_epf_test_doorbell_irq_thread,
-+				   IRQF_ONESHOT, "pci-ep-test-doorbell", epf_test);
- 	if (ret) {
- 		dev_err(&epf->dev,
- 			"Failed to request doorbell IRQ: %d\n",
--- 
-2.34.1
+3. It slightly complicates the logic in the new kernel. Instead of
+simply iterating a known tree for a specific order, the boot-time
+walker would need to reconstruct the per-order subtrees, and walk
+them.
 
+Perhaps I'm missing a key benefit of the unified tree? The current
+approach might not be as elegant as having everything packed into the
+same page table but it seems to be OK to me, and easy to understand.
+
+Pasha
 
