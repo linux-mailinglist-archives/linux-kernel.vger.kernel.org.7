@@ -1,457 +1,194 @@
-Return-Path: <linux-kernel+bounces-821162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E931B809DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:36:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC757B809E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19A9466C4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:36:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92C404E333A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BAB335927;
-	Wed, 17 Sep 2025 15:36:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DA13397D9;
+	Wed, 17 Sep 2025 15:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="DNNQqBqh"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8030C0EF;
-	Wed, 17 Sep 2025 15:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402FD30C0F4
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758123392; cv=none; b=dk6pOnQekrhRG1U1VO9dGVLAeZqJDhKQT2dFLUW+nzBFjDAIvy2gZEIREVxAX8J5g2rzRAPi6RPnsI0cIKCsCkHxIV50tTl92xjbliBSyFsSDwJ6r53vABCGURIfBTSYeBMfSuM0GZq/xN9X6VzjuHvZFlzJMGD4iJA33mIk7o8=
+	t=1758123408; cv=none; b=A5vjRlAXDgZXjMVbuQuDh1ujq2zB0kdsR844+NR1bkHRs5wctOgDlCg9DvLqXliI1iOFrrvkZGBZIMOyuw9LOXCd/Rjj+HwspSCAQ3LLTXKVQ1UYNSQHfdVce6+jLE5bYENI5pB7JioxNxvrk6nRFiuZ3AL0Ky1YEfIYEKDPwm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758123392; c=relaxed/simple;
-	bh=dQ1bt/JNQYofxXHnoQ7eVyafDwfc3p2PBZOEGMk5wX4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SrtVy6WOh+szwSZEmrAhrj1DfA9SmoFQLqDhVuLYZuiHXbUelHEWcCuB007R5fIc/7wLoHsWLFTqdQ/56d0YHBY24ZS3k+PI+WW69ybqdIk11ad38kmaItf2Q+3r6AieU6aWe1Y8vlWUjw1tR7CW/kR6atxYrkYw/C3ZOYnnav8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cRjRr6P79z6L5Jk;
-	Wed, 17 Sep 2025 23:31:52 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 95D3014037D;
-	Wed, 17 Sep 2025 23:36:25 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 17 Sep
- 2025 17:36:25 +0200
-Date: Wed, 17 Sep 2025 16:36:23 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>,
-	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>
-Subject: Re: [PATCH V3 06/20] nvdimm/region_label: Add region label update
- support
-Message-ID: <20250917163623.00004a3c@huawei.com>
-In-Reply-To: <20250917134116.1623730-7-s.neeraj@samsung.com>
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
-	<CGME20250917134140epcas5p23c007dab49ed7e98726b0dd9a2ce077a@epcas5p2.samsung.com>
-	<20250917134116.1623730-7-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1758123408; c=relaxed/simple;
+	bh=naA4RqzDfx1g/AEbG7TvoN6iOGRTBF6ERPg1ybfJwR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VzdsD2s2HY4B5T/vvHRL3G+HlWA9JluKn0ZmOvEK1FpBaeDumm8P48v1GYaHjo+ciCwm9yswlkr8a2r3NRxT9hKNqguqceG20nXBvnSm3TSEDZfteNQsHol5/Q4MbNqkdw/clowWMfhCjtc6Lcxv8Wj5vYyLexanw5jG31RNJNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=DNNQqBqh; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b0428b537e5so934088766b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1758123404; x=1758728204; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uOdyIgVKQVbcfZmIBDqiw6XRB+lRYJ/AtJANCJAzYnU=;
+        b=DNNQqBqhL+C0CfYd2ixEo6vJvA3SHfW0UqQGehmgTEiqhO7B7bh7w9CTU8ZzpOb9+a
+         C5X4d0lugaWscQy68aFRU56d1tHaWwDszv459fzYCPJ9IA/nie9pK0yJxsN3ZIXlRhnY
+         sYoS/kCz4Y6ybAgcFj9hGLfBKC0EW45CmOqkjxsOmyeVUn06gMmyGvZ+dXlN/xllq4Qr
+         FOlxpcNgOiB+U5Bvt4uZ1Htz40WossGm4kwO84hnnoJE/mZ3V0yhb6Rskp9XNFG9X8fW
+         hMYmLsdCfPpN2VWkuAkfebLcwTkTeJNN3EKoN2B4sZMQJYTGqzdpAkCe2UBzsU5z5BrB
+         kZUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758123404; x=1758728204;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uOdyIgVKQVbcfZmIBDqiw6XRB+lRYJ/AtJANCJAzYnU=;
+        b=CxDqr47iegIReBndhkVNxaxuUujQBtiWtDnXmnB4irU1chJi07vQ1FF14nJu1g/uon
+         HzlNXIeDICR4mQLn884bd9i91AD2rtaLhu7YPA0aU2IERn3bz9buHXikkdMopK932iyw
+         ACzjQgVwbSPg16lz9TkNia6j2V/JvqtpZ+jO1ohZK7wg8rQee5DLfyxRAiNgAsrey4yu
+         ChIDfOPB1T3KvkK6ZfesxJwuzXukII6V5RofV8PJ34+MkdadIBXEwiNE2S8pkgEkyYYe
+         ThWMA3u7sh5RODF7Yz04VsFJG3BS7yztK8mUJ2FMtNf7Pf6AOwDxpCal6lbcqEmgozUG
+         GVtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwdUbWbZAcagyT7yuL8XYkFOFk7d9LZZPXb+Uss1ujxoa8J7VYJ+I7Tl9K310tG3enExFnO7sQasmyC+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBSqoreDpDP13UVKcpY8YS2b+h9uHU1CR/rr8nxtUoIJbfwkwc
+	SAgDzn3IQFDXTyiZkwK5kvfP5XrPI98muB1jnc0Krc7w42d47ECVAQAoswe3174JocE=
+X-Gm-Gg: ASbGnct1FboD41NzaF8TY42nvZdt7eGavs3Jv9YG2g6HoUz7hTmKecBzgbLBqshjlY4
+	PlgCdAFZe+lWNOZZwAfvEcSqtv76JQee57lYI2MME9eetbp7pO4Umkhr3hWSVwUykZStrgHtuS8
+	jYQjhuAw3EWkZVDB5Na9Kz2HWwqD6HFIwhkFGMoM1wj+eNjkLFZ/NkaF05BxE6O1YW2rqF7YP4a
+	huG+hCZM3NQKk1MIU/laJe6rgxr8ZH4NbmTUTM1NDRI1t+wAqvAmUBOIURm4fAV2utx8cLad7er
+	zCh/mSnEY58YcfnQFnMikEuieDjm4igYYeDY1rSiEmeFuPVeTgqrkClwjIWjKcI78wEVC5/gci/
+	58XMZXeosX04opvzEl/QvRSCXkUd7HSkMmIJVVda7I59uGfHkOK4PMigXCL/8+EBGYyWOY5BqgB
+	4iJTJLqriQ4Jm3aE7+VldZsBKWfXcoQ7XOHQ==
+X-Google-Smtp-Source: AGHT+IGMRHdj1slwV4bLVyYkD0N4kZa7TBulRZA4XTeW2hkIidh5BryId4F+eQgbBdrZ5RTvgJ82Ng==
+X-Received: by 2002:a17:907:3d86:b0:afe:fb5a:6428 with SMTP id a640c23a62f3a-b1bb559b7d7mr302200966b.22.1758123404446;
+        Wed, 17 Sep 2025 08:36:44 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f055a00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f05:5a00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b19a4c2d3cfsm235212866b.26.2025.09.17.08.36.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 08:36:42 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: add might_sleep() annotation to iput() and more
+Date: Wed, 17 Sep 2025 17:36:31 +0200
+Message-ID: <20250917153632.2228828-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Wed, 17 Sep 2025 19:11:02 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+When iput() drops the reference counter to zero, it may sleep via
+inode_wait_for_writeback().  This happens rarely because it's usually
+the dcache which evicts inodes, but really iput() should only ever be
+called in contexts where sleeping is allowed.  This annotation allows
+finding buggy callers.
 
-> Modified __pmem_label_update() to update region labels into LSA
-> 
-I'm struggling to follow the use of the union for the two label types
-in much of this code.  To me if feels like that should only be a thing
-at the init_labels() point on the basis I think it's only there that
-we need to handle both in the same storage.
+Additionally, this patch annotates a few low-level functions that can
+call iput() conditionally.
 
-For the rest I'd just pay the small price of duplication that will
-occur if you just split he functions up.
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+For discussion of a loosely-related Ceph deadlock bug, see:
+ https://lore.kernel.org/ceph-devel/CAKPOu+-xr+nQuzfjtQCgZCqPtec=8uQiz29H5+5AeFzTbp=1rw@mail.gmail.com/T/
+ https://lore.kernel.org/ceph-devel/CAGudoHF0+JfqxB_fQxeo7Pbadjq7UA1JFH4QmfFS1hDHunNmtw@mail.gmail.com/T/
+---
+ fs/inode.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> ---
->  drivers/nvdimm/label.c          | 269 ++++++++++++++++++++++++++------
->  drivers/nvdimm/label.h          |  15 ++
->  drivers/nvdimm/namespace_devs.c |  12 ++
->  drivers/nvdimm/nd.h             |  38 ++++-
->  include/linux/libnvdimm.h       |   8 +
->  5 files changed, 289 insertions(+), 53 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index 182f8c9a01bf..209c73f6b7e7 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -381,6 +381,16 @@ static void nsl_calculate_checksum(struct nvdimm_drvdata *ndd,
->  	nsl_set_checksum(ndd, nd_label, sum);
->  }
-
-> +static bool is_label_reapable(struct nd_interleave_set *nd_set,
-> +			       struct nd_namespace_pmem *nspm,
-> +			       struct nvdimm_drvdata *ndd,
-> +			       union nd_lsa_label *label,
-> +			       enum label_type ltype,
-> +			       unsigned long *flags)
-> +{
-> +	switch (ltype) {
-> +	case NS_LABEL_TYPE:
-> +		if (test_and_clear_bit(ND_LABEL_REAP, flags) ||
-> +		    nsl_uuid_equal(ndd, &label->ns_label, nspm->uuid))
-> +			return true;
-> +
-> +		break;
-> +	case RG_LABEL_TYPE:
-> +		if (region_label_uuid_equal(&label->region_label,
-> +		    &nd_set->uuid))
-> +			return true;
-> +
-> +		break;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static int __pmem_label_update(struct nd_region *nd_region,
-> +			       struct nd_mapping *nd_mapping,
-> +			       struct nd_namespace_pmem *nspm,
-> +			       int pos, unsigned long flags,
-> +			       enum label_type ltype)
-> +{
-> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
-> +	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +	struct nd_namespace_index *nsindex;
-> +	struct nd_label_ent *label_ent;
-> +	union nd_lsa_label *lsa_label;
-> +	unsigned long *free;
-> +	struct device *dev;
-> +	u32 nslot, slot;
-> +	size_t offset;
-> +	int rc;
-> +
-> +	if (!preamble_next(ndd, &nsindex, &free, &nslot))
-> +		return -ENXIO;
-> +
->  	/* allocate and write the label to the staging (next) index */
->  	slot = nd_label_alloc_slot(ndd);
->  	if (slot == UINT_MAX)
->  		return -ENXIO;
->  	dev_dbg(ndd->dev, "allocated: %d\n", slot);
->  
-> -	nd_label = to_label(ndd, slot);
-> -	memset(nd_label, 0, sizeof_namespace_label(ndd));
-> -	nsl_set_type(ndd, nd_label);
-> -	nsl_set_uuid(ndd, nd_label, nspm->uuid);
-> -	nsl_set_name(ndd, nd_label, nspm->alt_name);
-> -	nsl_set_flags(ndd, nd_label, flags);
-> -	nsl_set_nlabel(ndd, nd_label, nd_region->ndr_mappings);
-> -	nsl_set_nrange(ndd, nd_label, 1);
-> -	nsl_set_position(ndd, nd_label, pos);
-> -	nsl_set_isetcookie(ndd, nd_label, cookie);
-> -	nsl_set_rawsize(ndd, nd_label, resource_size(res));
-> -	nsl_set_lbasize(ndd, nd_label, nspm->lbasize);
-> -	nsl_set_dpa(ndd, nd_label, res->start);
-> -	nsl_set_slot(ndd, nd_label, slot);
-> -	nsl_set_alignment(ndd, nd_label, 0);
-> -	nsl_set_type_guid(ndd, nd_label, &nd_set->type_guid);
-> -	nsl_set_region_uuid(ndd, nd_label, NULL);
-> -	nsl_set_claim_class(ndd, nd_label, ndns->claim_class);
-> -	nsl_calculate_checksum(ndd, nd_label);
-> -	nd_dbg_dpa(nd_region, ndd, res, "\n");
-> +	lsa_label = (union nd_lsa_label *) to_label(ndd, slot);
-
-This cast feels rather dubious.
-
-If the union makes sense in general, then this should be changed
-to return the union.
-
-> +	memset(lsa_label, 0, sizeof_namespace_label(ndd));
-> +
-> +	switch (ltype) {
-> +	case NS_LABEL_TYPE:
-> +		dev = &nspm->nsio.common.dev;
-> +		rc = namespace_label_update(nd_region, nd_mapping,
-> +				nspm, pos, flags, &lsa_label->ns_label,
-> +				nsindex, slot);
-> +		if (rc)
-> +			return rc;
-> +
-> +		break;
-> +	case RG_LABEL_TYPE:
-> +		dev = &nd_region->dev;
-> +		region_label_update(nd_region, &lsa_label->region_label,
-> +				    nd_mapping, pos, flags, slot);
-> +
-> +		break;
-> +	}
->  
->  	/* update label */
-> -	offset = nd_label_offset(ndd, nd_label);
-> -	rc = nvdimm_set_config_data(ndd, offset, nd_label,
-> +	offset = nd_label_offset(ndd, &lsa_label->ns_label);
-
-This doesn't make sense as the type might be either an ns_label or a region_label.
-If there is a generic header (I'm guessing there is) then define that as part of the
-union with just the shared parts and use that to avoid any implication of what the type
-is in calls like this.  Also make nd_label_offset() take the union not the specific bit.
-
-> +	rc = nvdimm_set_config_data(ndd, offset, lsa_label,
->  			sizeof_namespace_label(ndd));
->  	if (rc < 0)
->  		return rc;
-> @@ -955,8 +1054,10 @@ static int __pmem_label_update(struct nd_region *nd_region,
->  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->  		if (!label_ent->label)
->  			continue;
-> -		if (test_and_clear_bit(ND_LABEL_REAP, &label_ent->flags) ||
-> -		    nsl_uuid_equal(ndd, label_ent->label, nspm->uuid))
-> +
-> +		if (is_label_reapable(nd_set, nspm, ndd,
-> +				      (union nd_lsa_label *) label_ent->label,
-
-If we are going with the union that label_ent->label should be a union that
-we don't need to cast.
-
-> +				      ltype, &label_ent->flags))
->  			reap_victim(nd_mapping, label_ent);
->  	}
->  
-> @@ -966,19 +1067,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
->  	if (rc)
->  		return rc;
->  
-> -	list_for_each_entry(label_ent, &nd_mapping->labels, list)
-> -		if (!label_ent->label) {
-> -			label_ent->label = nd_label;
-> -			nd_label = NULL;
-> -			break;
-> -		}
-> -	dev_WARN_ONCE(&nspm->nsio.common.dev, nd_label,
-> -			"failed to track label: %d\n",
-> -			to_slot(ndd, nd_label));
-> -	if (nd_label)
-> -		rc = -ENXIO;
-> +	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
-> +		if (label_ent->label)
-> +			continue;
-
-This flow change is unrelated to the rest here. I'd push it back
-to the simpler patch that change the locking. Make sure to call it out there
-though.  Or just don't do it and keep this patch a little more readable!
-
->  
-> -	return rc;
-> +		label_ent->label = &lsa_label->ns_label;
-> +		lsa_label = NULL;
-> +		break;
-> +	}
-> +	dev_WARN_ONCE(dev, lsa_label, "failed to track label: %d\n",
-> +		      to_slot(ndd, &lsa_label->ns_label));
-> +	if (lsa_label)
-> +		return -ENXIO;
-> +
-> +	return 0;
->  }
->  
->  static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
-> @@ -1068,6 +1170,21 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
->  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
->  }
->  
-> +static int find_region_label_count(struct nvdimm_drvdata *ndd,
-> +				   struct nd_mapping *nd_mapping)
-> +{
-> +	struct nd_label_ent *label_ent;
-> +	int region_label_cnt = 0;
-> +
-> +	guard(mutex)(&nd_mapping->lock);
-> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
-> +		if (is_region_label(ndd,
-> +		    (union nd_lsa_label *) label_ent->label))
-
-As above. If it's a union make label_ent->label that union type.
-
-> +			region_label_cnt++;
-> +
-> +	return region_label_cnt;
-> +}
-> +
->  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  		struct nd_namespace_pmem *nspm, resource_size_t size)
->  {
-> @@ -1076,6 +1193,7 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  	for (i = 0; i < nd_region->ndr_mappings; i++) {
->  		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
->  		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +		int region_label_cnt = 0;
->  		struct resource *res;
->  		int count = 0;
->  
-> @@ -1091,12 +1209,19 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  				count++;
->  		WARN_ON_ONCE(!count);
->  
-> -		rc = init_labels(nd_mapping, count);
-> +		region_label_cnt = find_region_label_count(ndd, nd_mapping);
-> +		/*
-> +		 * init_labels() scan labels and allocate new label based
-> +		 * on its second parameter (num_labels). Therefore to
-> +		 * allocate new namespace label also include previously
-> +		 * added region label
-> +		 */
-> +		rc = init_labels(nd_mapping, count + region_label_cnt);
->  		if (rc < 0)
->  			return rc;
->  
->  		rc = __pmem_label_update(nd_region, nd_mapping, nspm, i,
-> -				NSLABEL_FLAG_UPDATING);
-> +				NSLABEL_FLAG_UPDATING, NS_LABEL_TYPE);
-
-The amount of shared code in __pmem_label_update() across the two types in
-the union isn't that high.  I'd be tempted to just split it for simplicity.
-
->  		if (rc)
->  			return rc;
->  	}
-> @@ -1108,7 +1233,47 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  	for (i = 0; i < nd_region->ndr_mappings; i++) {
->  		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
->  
-> -		rc = __pmem_label_update(nd_region, nd_mapping, nspm, i, 0);
-> +		rc = __pmem_label_update(nd_region, nd_mapping, nspm, i, 0,
-> +				NS_LABEL_TYPE);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int nd_pmem_region_label_update(struct nd_region *nd_region)
-> +{
-> +	int i, rc;
-> +
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +		int region_label_cnt = 0;
-> +
-> +		/* No need to update region label for non cxl format */
-> +		if (!ndd->cxl)
-> +			return 0;
-> +
-> +		region_label_cnt = find_region_label_count(ndd, nd_mapping);
-> +		rc = init_labels(nd_mapping, region_label_cnt + 1);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		rc = __pmem_label_update(nd_region, nd_mapping, NULL, i,
-> +				NSLABEL_FLAG_UPDATING, RG_LABEL_TYPE);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	/* Clear the UPDATING flag per UEFI 2.7 expectations */
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +
-> +		WARN_ON_ONCE(!ndd->cxl);
-> +		rc = __pmem_label_update(nd_region, nd_mapping, NULL, i, 0,
-> +				RG_LABEL_TYPE);
->  		if (rc)
->  			return rc;
->  	}
-> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
-> index 0650fb4b9821..284e2a763b49 100644
-> --- a/drivers/nvdimm/label.h
-> +++ b/drivers/nvdimm/label.h
-> @@ -30,6 +30,11 @@ enum {
->  	ND_NSINDEX_INIT = 0x1,
->  };
->  
-> +enum label_type {
-> +	RG_LABEL_TYPE,
-> +	NS_LABEL_TYPE,
-> +};
-> +
->  /**
->   * struct nd_namespace_index - label set superblock
->   * @sig: NAMESPACE_INDEX\0
-> @@ -183,6 +188,15 @@ struct nd_namespace_label {
->  	};
->  };
->  
-> +/*
-> + * LSA 2.1 format introduces region label, which can also reside
-> + * into LSA along with only namespace label as per v1.1 and v1.2
-> + */
-> +union nd_lsa_label {
-> +	struct nd_namespace_label ns_label;
-> +	struct cxl_region_label region_label;
-> +};
-
-> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-> index 3271b1c8569a..559f822ef24f 100644
-> --- a/drivers/nvdimm/namespace_devs.c
-> +++ b/drivers/nvdimm/namespace_devs.c
-> @@ -232,6 +232,18 @@ static ssize_t __alt_name_store(struct device *dev, const char *buf,
->  	return rc;
->  }
->  
-> +int nd_region_label_update(struct nd_region *nd_region)
-> +{
-> +	int rc;
-> +
-> +	nvdimm_bus_lock(&nd_region->dev);
-> +	rc = nd_pmem_region_label_update(nd_region);
-> +	nvdimm_bus_unlock(&nd_region->dev);
-Looks like it would be worth introducing a
-DEFINE_GUARD() for this lock.
-
-Not necessarily in this series however.
-> +
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(nd_region_label_update);
-> +
->  static int nd_namespace_label_update(struct nd_region *nd_region,
->  		struct device *dev)
->  {
-> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-> index e362611d82cc..f04c042dcfa9 100644
-> --- a/drivers/nvdimm/nd.h
-> +++ b/drivers/nvdimm/nd.h
-
->  bool nsl_validate_type_guid(struct nvdimm_drvdata *ndd,
->  			    struct nd_namespace_label *nd_label, guid_t *guid);
->  enum nvdimm_claim_class nsl_get_claim_class(struct nvdimm_drvdata *ndd,
-> @@ -399,7 +432,10 @@ enum nd_label_flags {
->  struct nd_label_ent {
->  	struct list_head list;
->  	unsigned long flags;
-> -	struct nd_namespace_label *label;
-> +	union {
-> +		struct nd_namespace_label *label;
-> +		struct cxl_region_label *region_label;
-
-It is a bit odd to have a union above of the two types in
-here but then union the pointers here.
-
-I'm also failing to find where region_label is used in this patch.
-
-
-> +	};
->  };
->  
->  enum nd_mapping_lock_class {
-_rc)
+diff --git a/fs/inode.c b/fs/inode.c
+index fc2edb5a4dbe..ec9339024ac3 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1279,6 +1279,8 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+ 	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+ 	struct inode *old;
+ 
++	might_sleep();
++
+ again:
+ 	spin_lock(&inode_hash_lock);
+ 	old = find_inode(inode->i_sb, head, test, data, true);
+@@ -1382,6 +1384,8 @@ struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
+ 	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
+ 	struct inode *inode, *new;
+ 
++	might_sleep();
++
+ again:
+ 	inode = find_inode(sb, head, test, data, false);
+ 	if (inode) {
+@@ -1422,6 +1426,9 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+ 	struct inode *inode;
++
++	might_sleep();
++
+ again:
+ 	inode = find_inode_fast(sb, head, ino, false);
+ 	if (inode) {
+@@ -1605,6 +1612,9 @@ struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
+ 		int (*test)(struct inode *, void *), void *data)
+ {
+ 	struct inode *inode;
++
++	might_sleep();
++
+ again:
+ 	inode = ilookup5_nowait(sb, hashval, test, data);
+ 	if (inode) {
+@@ -1630,6 +1640,9 @@ struct inode *ilookup(struct super_block *sb, unsigned long ino)
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+ 	struct inode *inode;
++
++	might_sleep();
++
+ again:
+ 	inode = find_inode_fast(sb, head, ino, false);
+ 
+@@ -1780,6 +1793,8 @@ int insert_inode_locked(struct inode *inode)
+ 	ino_t ino = inode->i_ino;
+ 	struct hlist_head *head = inode_hashtable + hash(sb, ino);
+ 
++	might_sleep();
++
+ 	while (1) {
+ 		struct inode *old = NULL;
+ 		spin_lock(&inode_hash_lock);
+@@ -1826,6 +1841,8 @@ int insert_inode_locked4(struct inode *inode, unsigned long hashval,
+ {
+ 	struct inode *old;
+ 
++	might_sleep();
++
+ 	inode->i_state |= I_CREATING;
+ 	old = inode_insert5(inode, hashval, test, NULL, data);
+ 
+@@ -1908,6 +1925,7 @@ static void iput_final(struct inode *inode)
+  */
+ void iput(struct inode *inode)
+ {
++	might_sleep();
+ 	if (unlikely(!inode))
+ 		return;
+ 
+-- 
+2.47.3
 
 
