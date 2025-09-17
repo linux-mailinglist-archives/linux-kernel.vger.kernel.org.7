@@ -1,109 +1,135 @@
-Return-Path: <linux-kernel+bounces-821775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08370B82380
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:02:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3651AB82388
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA30B1BC02A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6CEF625FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDAB2F6594;
-	Wed, 17 Sep 2025 23:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE2E10E9;
+	Wed, 17 Sep 2025 23:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VmfspLlD"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c6McwHVp"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A4A23C4ED
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A87322A1E1
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758150134; cv=none; b=uvEH91VtCMKqh5WzHdLEzndy+sI7CV5o9qoF9eQcJ0NlyB7MMrKr2UPArrn2kd6RsQkqnPEx4t5kgoaM6drhBAneEbsr7gfHXshXNPyakd40RMGoOyKmOujsLDOsKudL7bjVCR6wUg9Vu46dyiYBLLsxRWapT4jUlcYa5P9ioIY=
+	t=1758150155; cv=none; b=RfwXSkzT45DmDzsVB8GTLUwrfU4zAdPjQ49cB/Geoiy1+9UJBjFJSPfFHF7yoKS/Xp35YuFsZOZhAWT8muMpL5GtqG7N/7QBpQ9QV6UUUc+bjpBgkPD1cxAiM07OE2HKFU5vfuyDbUIVNvIDBiaNRHI4irbK3m2WnG4nviB7jjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758150134; c=relaxed/simple;
-	bh=z9jj/dh0S6W2eXpDU5Up7mrUC508ERUUksMpIvjvSDc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J5UC5K0BivzDtpeDQOKbuvLqP8pfU/HxShMXzjLcEbrl+kSxhhAcQRlHW1JujJfaeg7SxQDoR5OPvDnnU7tE/5GQ7Md+GfCtgP0EEiboibypQFIleXyLGoJY9FfQwAoiemezTysTRti6I5r7yUh5Y/Hk6lxWseKd0qvnNmcEfKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VmfspLlD; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1758150155; c=relaxed/simple;
+	bh=pgqaaTpUUF1iWySwtTjmi51gf1ofnrMUlJLbXGuFg1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AmdpqEthXsi3VQtoIbnsMkFN/HtdwXKQioCSJep2brq+9Dxh9rId/HJ8DJhvynqa3bTokn5mmps8ykXVL5zDJYe/W5EWY44CnIj1aYWq32fOKEKVQEdlSgpV2AzvL86hvePTy7UgflmGmYTdUr2v6i01Jcm+02P+6VbjsNpqyjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c6McwHVp; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3306543e5abso204189a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:02:12 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b796ff6d45so99191cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:02:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758150132; x=1758754932; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uXvv08vlixvMjyF5WhKNg9FBBdv11ZBTjvJpc8LmO1w=;
-        b=VmfspLlD3G1KH3N9KJ1jNlFurUd1C85SDebTmy2poYgXVKg/LXnR+YaB/xWOd1O6MQ
-         MduFC9Wkk8gUEglRIMJWgbjV14iSBkoKeA0AvdLfnVkyGj/snS+XuYSJavgsANKYecxz
-         0RpelMdK3AlF44K1Izkujvd5Pu2tVK2WN+z+CSBrNFbsHSLizVsO6T2phYksjY3ggKiO
-         NI8IpKLXYKYBsxbeu1FRPlgc2Q/Nhtvlc3y/oSIj0ulpKx52t3zHDt2GRshz5zguoTXe
-         fY1ZlUjpRh8cYXGtR40DNUGaiO+nF+hPzsbJXbDU+voaFtdpOkTXEsc1U48oDYpmO6AS
-         oZJQ==
+        d=google.com; s=20230601; t=1758150153; x=1758754953; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pgqaaTpUUF1iWySwtTjmi51gf1ofnrMUlJLbXGuFg1Y=;
+        b=c6McwHVpanK6WvCbUJOhnqUM4oVuh1Y3AWV7D2kLG3+oprUqstPaCnyztCsiscK7mZ
+         svYdNS6NWT/K0NCPP8eD4gXlvfI4klerwTCTfcB8q4Dq0J/BoDlF3QJbRsGHdGu8+8wh
+         FcVvakkfEoBhv0nqzLX/ILCuiODmQRXoLONB0LP093qhrzZ4Hs/+CaB7K+jxvrwXrD7q
+         DkijPJQlQd6SNQyfdQ9qSt70CiV1Objwp1HX7dzji0Tipt4ZzD0t4j4lGL6ixnovbWxJ
+         HmVvoHlwE0NPTAXQ2byv/+jnbN9ByPntSG43elh7/StSjg7PlUFgq4fHWAAWhefhzjgd
+         zTAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758150132; x=1758754932;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uXvv08vlixvMjyF5WhKNg9FBBdv11ZBTjvJpc8LmO1w=;
-        b=N3YTBO0J2NWflczgYZpOLavpFCPieGw5ZK8N/iq1cfcRdTOB+KeatM0w1vTpRq6KmK
-         3kAfIKa4La4Vd6uat6ijOEY2b4pUfGaR8HxbtyTseSx0MXTFSUPF78B7tFCicK5QvZoc
-         s4bsmSGPFEJsPq3D0CnUvIvYvP3JH/2h7Ao1oRaoRm2FH5miA4jVLwOaLBGO8qa4WWXs
-         rfmtEp1SNiXoXFVOZakzQnAQN3eamulvMXWXxc+bX1wuKj+poN4D3GeYxbd41gpnYkds
-         +nhhF4bNtcQ2sc8rJCny07pMctCCQHansDfXgfLGh6iYI5+GkrXIEUQmtFSqmFXxVfOF
-         u8wg==
-X-Gm-Message-State: AOJu0YxOTOMnWNTs0ElgXhQE3Wzi4LFBKJyP32DLUZUkyUIGyPCRRRyw
-	UYgGixNs1zWI9wyDv5Hh0zSVbku7hd3FRpAwHfx5Tf1uZ20hWhw8Bd3jX+YeDVLEqb8ejcvkb3I
-	773az9g==
-X-Google-Smtp-Source: AGHT+IEmHTqPKDw85gYpQLyZoWz4mHqPlxsjsZ3kfl9YZfHWLosdKTXZ1EF54fp4ZzNMDipJWOGGvUoBfQY=
-X-Received: from pjkk4.prod.google.com ([2002:a17:90b:57e4:b0:327:e021:e61d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a84:b0:32e:3592:581a
- with SMTP id 98e67ed59e1d1-3305c6e438emr1476768a91.17.1758150132332; Wed, 17
- Sep 2025 16:02:12 -0700 (PDT)
-Date: Wed, 17 Sep 2025 16:02:11 -0700
-In-Reply-To: <e0ce7a92-f8e4-406c-a7dd-c59c8d541d0b@zytor.com>
+        d=1e100.net; s=20230601; t=1758150153; x=1758754953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pgqaaTpUUF1iWySwtTjmi51gf1ofnrMUlJLbXGuFg1Y=;
+        b=IdlLtT2daHicg2O/Uv1eSXpyVcl0FFv3cSrqb+AhZEvXhvcfkhFm3TMvISMNUQI2Rr
+         jltLAc5Ov9rVgQXZ7pSQMZgmtyCVPDSpOVAdyBHlN3eOcW70f0rByKybmjIdRIfV03pL
+         1FQ+2NyOYebl9HQ5Ei3e8/SCf4MtmrK7yzNt/2nBxJD6ortzmGK0NQaHZS7rRUMUt7zG
+         0AYMju/zaam7vAvPEEjeivpuCsM7G6yjixhlSz2jRo9IldI2a1tpnjIcEGa1sPRKKJ3Q
+         oPYIGUfe6sSxS+9LVYr4vjATBW4FIVPxg+i8tNX5F59iN6NqEgygzw2UHFAPNYnqfK0f
+         Jjwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVE2XaXlBECTaqq8bAm68ShTAdmMEzGpV0fkLCRJmdSOeKfozDqcMnN//xMsdTTyIH8SRb6VxwlY1UWnII=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc6TYKTr9MnBx2aw6AQrYhiZCdpSm+jLLWkRoXa12uqhNSIwhO
+	mnZ2MsxDozNs99Tvs5gMgd838zj/vreOSCRTLB/tRJ60aGMVAt2L6pGi6f5CixKJjs7LFsd4hh0
+	oZBnVXYnk8b6fNOs3eWA33vdvZL+cZIMd8rwtSVMm
+X-Gm-Gg: ASbGncshbdg+CAaeX1Vezcxe/y7g7DilM4Ea/fOXyZTnmqEtU1UQG2Wu7cocnHcYN/o
+	KgW0Jfw+b3VHZUSgtRHzCGZBa0QNhMRACrMWkVuKBfV7OserjN7F4L1eSgvBV1omFXYyqFOWbep
+	p0pRvJ6RKwLwnH55Mnp5piP/Nrz+QJPPmAmYnvDBw/rB169uzvqgqTFTDqBVp6mtB2L75yeGwcq
+	4xrKL8pkam8Wnd39YgBEyvzMjSUy7E=
+X-Google-Smtp-Source: AGHT+IHfNd/k82j9KQVELxfP/PHIbhVVGF3yc0CdD17H0HaS07rG6JkXznFxGYRKvVp7xhpstaqIEbhS5CNnvvGnMEY=
+X-Received: by 2002:a05:622a:1998:b0:4b7:a2be:bc71 with SMTP id
+ d75a77b69052e-4ba2e66f7c9mr8883171cf.9.1758150152768; Wed, 17 Sep 2025
+ 16:02:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250909182828.1542362-1-xin@zytor.com> <20250909182828.1542362-6-xin@zytor.com>
- <aMmk0lUJ8gs7OBw-@google.com> <e0ce7a92-f8e4-406c-a7dd-c59c8d541d0b@zytor.com>
-Message-ID: <aMs986QHpDqk-MSR@google.com>
-Subject: Re: [RFC PATCH v1 5/5] KVM: Remove kvm_rebooting and its references
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-pm@vger.kernel.org, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, pavel@kernel.org, brgerst@gmail.com, 
-	david.kaplan@amd.com, peterz@infradead.org, andrew.cooper3@citrix.com, 
-	kprateek.nayak@amd.com, arjan@linux.intel.com, chao.gao@intel.com, 
-	rick.p.edgecombe@intel.com, dan.j.williams@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250915230224.4115531-1-surenb@google.com> <2d8eb571-6d76-4a9e-8d08-0da251a73f33@suse.cz>
+ <CAJuCfpHXAhGZb1aOPyHOPiTWSwQJi570THqJQcjrVPf=4Dt3xQ@mail.gmail.com>
+ <a8519bca-ae16-4642-84a1-4038b12e8bb0@gmail.com> <CAJuCfpFJabb02OK8Rj08d7WU_7AM674i=vsZxzfw7i7h-PGftQ@mail.gmail.com>
+ <e5e3d96a-d0aa-4466-8303-5a7e8f96bbe5@gmail.com> <CAJuCfpEULVxMixDjrk_xg7+3+97dkcMmkDd++BaR17X4tDSs6Q@mail.gmail.com>
+ <af62a2c2-3c01-408d-b694-aa7e95d23c18@suse.cz>
+In-Reply-To: <af62a2c2-3c01-408d-b694-aa7e95d23c18@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 17 Sep 2025 16:02:21 -0700
+X-Gm-Features: AS18NWC5wZWoJ9h1q0dLcyZhaQxEfSzQ_NlOG7YOUGtZPGOPImgmHsFxTkhQl-o
+Message-ID: <CAJuCfpFAt1jS49R5xR1MELd83oh7MN5GWd2hSMEj2SQVjyJxyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, 
+	kent.overstreet@linux.dev, hannes@cmpxchg.org, rientjes@google.com, 
+	roman.gushchin@linux.dev, harry.yoo@oracle.com, shakeel.butt@linux.dev, 
+	00107082@163.com, pyyjason@gmail.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025, Xin Li wrote:
-> On 9/16/2025 10:56 AM, Sean Christopherson wrote:
-> > On Tue, Sep 09, 2025, Xin Li (Intel) wrote:
-> > > Drop kvm_rebooting and all related uses.  Virtualization is now disabled
-> > > immediately before a CPU shuts down, eliminating any chance of executing
-> > > virtualization instructions during reboot.
-> > 
-> > Wrong.  KVM clears EFER.SVME in reponse to kvm_shutdown(), and thus can trip
-> > #UDs on e.g. VMRUN.
-> > 
-> 
-> This patch assumes that AMD SVM enable/disable has been moved to the CPU
+On Wed, Sep 17, 2025 at 12:38=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+>
+> On 9/17/25 00:26, Suren Baghdasaryan wrote:
+> > On Tue, Sep 16, 2025 at 9:52=E2=80=AFPM Usama Arif <usamaarif642@gmail.=
+com> wrote:
+> >
+> > Hmm. Missing a large allocation and not knowing about it can be a probl=
+em...
+> > I'll start sketching a patch to see if tracking such a global counter
+> > has any drawbacks and in the meantime I'm open to suggestions on how
+> > to expose it to the userspace.
+>
+> Could it be made to look like an actual tag in the output?
+> e.g. lib/alloc_tag.c:1234 func:untracked_slab_objects
 
-Ah, that wasn't exactly obvious.
+Technically I think we can do that but it feels a bit hacky... I'll
+keep this option in mind and wait for more suggestions. Thanks
+Vlastimil!
 
-> startup and shutdown routines.  Accordingly, kvm_shutdown() no longer clears
-> EFER.SVME, and the patch demonstrates the resulting simplification from
-> removing kvm_rebooting.  However, as noted in the cover letter, no actual
-> modifications were made to AMD SVM.
-
-Heh, yeah, that's what's wrong.
+>
+> (probably some better name conveying it's uknown due to failure to alloca=
+te
+> objexts)
+>
+> Maybe even implemented in a way that it's not a specially crafted output =
+line.
+>
+> > About concerns on the IOCTL interface, would it be more usable if we
+> > get the alloctop [1] or a similar tool which can be used to easily
+> > issue such commands into kernel/tools?
+> >
+> > [1] https://android-review.git.corp.google.com/c/platform/system/memory=
+/libmeminfo/+/3431860
+> >
+> >>
+>
 
