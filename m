@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-821637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7D9B81D0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:46:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E1DB81D16
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043461C22B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:47:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A868C1C22C65
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBB22C0263;
-	Wed, 17 Sep 2025 20:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D2B2C08AC;
+	Wed, 17 Sep 2025 20:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAI/VxTo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rVD7Ywv0"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A519478;
-	Wed, 17 Sep 2025 20:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3B9277C8A;
+	Wed, 17 Sep 2025 20:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141982; cv=none; b=XUSraW7DTlOJ0Z69vBkunXj3Ogym+Obcmei/AhGVjPjBqWGUisNONgBh0u659zV2gMCEvXEmIq9ccYlaWRYmgFK3ZY5wKvqKSaqJx1ehCyBezLDW7JyObxXX/ZYesx+amURREaQ/hvM4kDmQTaad1cKu7uGIP2wiUzrZ7zyyAck=
+	t=1758142009; cv=none; b=Bqv+dSYMpO7Wm9LIr/mVt76gHcHqaNMXQiq8KrAcAstwfl8G+8PVneheO9aywMHttoAB4niVjJIqcNb45nthpMb9QCLML8tCvUrp92uu7QufylrrjgB1zRfyUjGuuhzHKDonAOyTgXvPCRieUT1RCusf34f5bcrWtuwEMUQWHWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141982; c=relaxed/simple;
-	bh=Q7tEg7j6RoeNTPDbkPDwYQZ4S4HAyyfHpt8dOtQ51LY=;
+	s=arc-20240116; t=1758142009; c=relaxed/simple;
+	bh=uIun9QFzl3LeXOGiX/5tJwz7Yglvx13McHScv+ZZybE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLwZRMvhvAbhBIJxXDGzwARss65GNZy8ecdYhxNPaYP3na8M+yXKfbtJp/zJKLKrdQkLhoMB28htG0GJtRW+io73Bcp0hWbwDMdwC8iy9J2KadnidO8tkg3VMTrUllGz/CwcOsRQO7w8vD/lo2RZsKPCnLJMZ2BMUC0jTiRllvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAI/VxTo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD8CC4CEE7;
-	Wed, 17 Sep 2025 20:46:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758141981;
-	bh=Q7tEg7j6RoeNTPDbkPDwYQZ4S4HAyyfHpt8dOtQ51LY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fAI/VxToUrsecvVHKVmqk9VbhbcxWqYiBnlN2OtEyK8rG+sf/HpexHmcMevAnavzW
-	 bOhKM+dSfNmxXNNrzqi95s1GO5vs0U0soS6PDR+/gFoiosXTTZpt5W0/ebQNHvzuCv
-	 +dh+HXKJyB3ADR6IW1ONBsIL/0PM2IyFsUz1u2vQ1Mbk27nVOvksvXRbzIlW1ObpOx
-	 9xEs9JUnMfwZI4NjujxGuxxMdeGipn8RdHCkcx5ire3+Rfug/1WWWaDVEwLaonXJXw
-	 tEpK3I+ButqFA2LNfe3shW80zhphJHKrUtBYuz9lpGouIKIrbwlcpJJT5ZPDTowq/8
-	 IA8hGzyCMY41w==
-Date: Wed, 17 Sep 2025 21:46:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dang Huynh <dang.huynh@mainlining.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 05/25] dt-bindings: rtc: Add RDA Micro RDA8810PL RTC
-Message-ID: <20250917-contort-sassy-df07fd7515a0@spud>
-References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
- <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJlgIy/HtTrMg2JzuJgZt1z0PEh8EJpmPzgP3uPn7b/yMJvWYMOdkNJXqS+7NPR07iNR3xRoUOqC4o2sqCPhTujpuC+syLKpkyEQmnb+YRtCRCNjg4oGlzXsREyXI2kfYjowJjjx1l+5HrGOP3aQ3IFyQOMa5CGc5TGSzWddTbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=rVD7Ywv0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+xTNLmr82yCIG6ykRBw7UqLF/vhCLhwnMm6IP4Jqnss=; b=rVD7Ywv076+SZ0KBpBwwpCL+3y
+	4a3VLKiCodruLJ1FR7pzgXGQPWZncQThl7GXLrgL0Zd6COgD5xwtIkU05QctyLNav8tliPCIe40fz
+	G0tPNAhz3ZLCW+tx1hYTn4xcgJKMfAjjmYDKEjTEqCmV5f0In5BEDqWxzzZ76GSvLn+OSsbjTbB9f
+	MSN2Im71Gq4S5/cFEflhKwDe4CZWrKbBlA2ycHdPEa6r9fI1UP59cD0j3OKvNn+MivPb1pwimaTRc
+	0/oH0m2Vfq4kDQkJwlT5elDFPyE59LeJEyuKWtndGzkOUbliUFWS9i7BPtMiRl1BZTsN7m4vjrPpm
+	xCj1WQiA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyz37-000000089QW-2x1E;
+	Wed, 17 Sep 2025 20:46:45 +0000
+Date: Wed, 17 Sep 2025 21:46:45 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jakub Acs <acsjakub@amazon.de>,
+	linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <20250917204645.GC39973@ZenIV>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+ <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+ <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+ <20250917204200.GB39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="O1or/w1/nkDw62h6"
-Content-Disposition: inline
-In-Reply-To: <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
-
-
---O1or/w1/nkDw62h6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250917204200.GB39973@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 17, 2025 at 03:07:22AM +0700, Dang Huynh wrote:
-> Add documentation describing the RTC found in RDA8810PL SoC.
->=20
-> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
-> ---
->  .../devicetree/bindings/rtc/rda,8810pl-rtc.yaml    | 30 ++++++++++++++++=
-++++++
->  1 file changed, 30 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml b/=
-Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..3ceae294921cc3211cd775d9b=
-3890393196faf82
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> @@ -0,0 +1,30 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/rda,8810pl-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RDA Micro RDA8810PL Real Time Clock
-> +
-> +maintainers:
-> +  - Dang Huynh <dang.huynh@mainlining.org>
-> +
-> +properties:
-> +  compatible:
-> +    const: rda,8810pl-rtc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
+On Wed, Sep 17, 2025 at 09:42:00PM +0100, Al Viro wrote:
+> On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
+> 
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index 60046ae23d514..8c9d0d6bb0045 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
+> > 
+> >         if (root_inode) {
+> >                 res = d_alloc_anon(root_inode->i_sb);
+> > -               if (res)
+> > +               if (res) {
+> > +                       root_inode->i_opflags |= IOP_ROOT;
+> >                         d_instantiate(res, root_inode);
+> 
+> Umm...  Not a good idea - if nothing else, root may end up
+> being attached someplace (normal with nfs, for example).
+> 
+> But more fundamentally, once we are into ->kill_sb(), let alone
+> generic_shutdown_super(), nobody should be playing silly buggers
+> with the filesystem.  Sure, RCU accesses are possible, but messing
+> around with fhandles?  ->s_root is not the only thing that might
+> be no longer there.
+> 
+> What the fuck is fsnotify playing at?
 
-Your driver implements functions that turn on an alarm irq, but there is
-none mentioned here. What's going on there?
-
-Additionally, there's no clocks property? For an onboard RTC I'd have
-expected there to be a clock sourced outside of the block.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    rtc@1a06000 {
-> +      compatible =3D "rda,8810pl-rtc";
-> +      reg =3D <0x1a06000 0x1000>;
-> +    };
->=20
-> --=20
-> 2.51.0
-
---O1or/w1/nkDw62h6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMseFgAKCRB4tDGHoIJi
-0sWyAP9Pj+b7KS94r+iyIUxvze3+ElD0xbnurxdnvk1gDdsMmAEAv1EDMSlyOted
-5VPH3fsR8ktajxFUxMY4tUTjDq9tcQM=
-=h7MI
------END PGP SIGNATURE-----
-
---O1or/w1/nkDw62h6--
+PS: there is a whole lot of the logics in e.g. shrink_dcache_for_umount()
+that relies on nobody else messing with dentry tree by that point.
 
