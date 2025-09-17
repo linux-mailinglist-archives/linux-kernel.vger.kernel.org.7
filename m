@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-820199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E94AB7F5EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:35:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C1FB7E6C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27AFB5226AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46BD4626C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EB8306B34;
-	Wed, 17 Sep 2025 08:05:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC81C2F261F;
+	Wed, 17 Sep 2025 07:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7K0rv1n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C08430596F;
-	Wed, 17 Sep 2025 08:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CFF1F5820
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758096342; cv=none; b=c4VQEsxddr9D84FkBtPhfki5LAwn70d9DEFxo8sGsTPI8ZvyTSw2/FYLtEvP9qi8Lp9oEDjHMrIcuglzf89DWqoKVakWOSR95PM5IBiEX+5T5UFRFACtIQNBC49X4mtIjshPcD9siObO3QNul201JoWgHTqGugnSTZtrYrE94p0=
+	t=1758095830; cv=none; b=IxmZtChkiNmeRiQrqHSDZw+R5zUu1NSFFkJpVTKTRfNS1TwzTKXYcWSH7MFxp9DW7AfhG1eHh6+j8fyzzK1ew41uDzVAUuZZtERkNvtnB1pu5VwvlCAVG48jzAtq4xVgItNHCxAEa38CKa6FJ7HvqEXi5JWCHYSuwb9DJMVBj/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758096342; c=relaxed/simple;
-	bh=y+CRfgW7PTzAGIICvfpS0/piQt86ehpc+tS0P4KHzKU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DT5aCblWR7TqWi+UVfvyZE9nLNSkZfNYvxOGLOPm/zdR8ErLiLYeudf5VH3gAT4nq0xLjzS/+t4A9yPbjy/ZiL/X1ctAqL9Dcbu0DRjmTU879KxqZOCENbjuUA/vbq9EJ5dS9rcurfdVdP5l0LhrI19b0DAvcrninzvU92mOGKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cRWXq6KzzzYQvfr;
-	Wed, 17 Sep 2025 16:05:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 794CB1A0B13;
-	Wed, 17 Sep 2025 16:05:30 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDnMY7Ia8poAvUtCw--.48684S4;
-	Wed, 17 Sep 2025 16:05:29 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: yi.zhang@redhat.com,
-	tj@kernel.org,
-	josef@toxicpanda.com,
-	axboe@kernel.dk,
-	hanguangjiang@lixiang.com,
-	liangjie@lixiang.com,
-	yukuai3@huawei.com
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v2] blk-throttle: fix throtl_data leak during disk release
-Date: Wed, 17 Sep 2025 15:55:39 +0800
-Message-Id: <20250917075539.62003-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1758095830; c=relaxed/simple;
+	bh=gqi+Je9O1n+GdXxCwk4Oc1By7Xpu7yNWj4QRpQLsigc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Yi0hdj3sTRGWoqeRTbau1tgFd/pJ3WkV+wvGQayJNn8hXtNgmwuVnjcXjROmBHtkXKz53ClMKgb+TFQiuMnZzL0m2N89DkDGadI/slkJ9B2USoPP2ccwIM0d4ucrcfhjJ62djHMYf5gs2rYlCnybwdvAVCKSC/mOmbg0zSJvrMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7K0rv1n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED502C4CEF0;
+	Wed, 17 Sep 2025 07:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758095829;
+	bh=gqi+Je9O1n+GdXxCwk4Oc1By7Xpu7yNWj4QRpQLsigc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=d7K0rv1nfYJMKSEpfQg8eREexP6zGEDjiRdCBfGFBI0ObsZuOg2U5ifTG4B+eWmAL
+	 KioDVDxasKiU/Yta/7N7fo87KrL1z2rGOkVNULfs9ZHt5X0KraQVqN3D/1so35Q8L0
+	 vYxZ/AqPskY1tKMwUVVgTRSgxUrbeP62xbg/65kqBr/ShySPC2r8NWByqkDfjFWOYD
+	 mizkk77l0Lt9dbDRIJOUtDBO8aIv0PbtDIm0DMj/WhFF40NIPA9dO7EdzaprQS2lyl
+	 wktFXxI8QyGD3ckE3WOV5xtUMCy2XiZY8cXd1hu0khrFm1OkAoUJBA+uApaWkaURMB
+	 QSJ5DZe0FlIrQ==
+Message-ID: <22d9f9d1-1db0-4bad-a782-212ab3da630e@kernel.org>
+Date: Wed, 17 Sep 2025 15:57:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org
+Subject: Re: [PATCH 2/2] f2fs: Enhance the subsequent logic of
+ valid_thresh_ratio to prevent unnecessary background GC
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250909134418.502922-1-liaoyuanhong@vivo.com>
+ <20250909134418.502922-3-liaoyuanhong@vivo.com>
+ <b42b161d-cd5d-45dc-8e84-c2b28eb632e5@kernel.org>
+ <a508b9b8-3c81-4a2c-a525-baac822563b3@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <a508b9b8-3c81-4a2c-a525-baac822563b3@vivo.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnMY7Ia8poAvUtCw--.48684S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1xZrWrKr4rAFy5uFyDZFb_yoW8ur18pF
-	W3Zr4jkry7WrnrW3y5JF13XFWYka97Ar4rJ3s8Ar4fArWIvw1kJwn0vr1UuaykAFsakF4r
-	Zr1rtr4kA3WUArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+On 9/17/25 15:08, Liao Yuanhong wrote:
+> 
+> On 9/15/2025 4:36 PM, Chao Yu wrote:
+>> On 9/9/25 21:44, Liao Yuanhong wrote:
+>>> When the proportion of dirty segments within a section exceeds the
+>>> valid_thresh_ratio, the gc_cost of that section is set to UINT_MAX,
+>>> indicating that these sections should not be released. However, if all
+>>> section costs within the scanning range of get_victim() are UINT_MAX,
+>>> background GC will still occur. Add a condition to prevent this situation.
+>> For this case, f2fs_get_victim() will return 0, and f2fs_gc() will use unchanged
+>> segno for GC?
+>>
+>> Thanks,
+> 
+> You're right, segno won't update in this scenario, and this patch feature is redundant.
 
-Tightening the throttle activation check in blk_throtl_activated() to
-require both q->td presence and policy bit set introduced a memory leak
-during disk release:
+Oh, I meant, if f2fs_get_victim() fails to select a valid victim due to the reason you
+described, f2fs_get_victim() will return 0, and f2fs_gc() will migrate segment #NULL_SEGNO?
+Or am I missing something?
 
-blkg_destroy_all() clears the policy bit first during queue deactivation,
-causing subsequent blk_throtl_exit() to skip throtl_data cleanup when
-blk_throtl_activated() fails policy check.
+Thanks,
 
-Idealy we should avoid modifying blk_throtl_exit() activation check because
-it's intuitive that blk-throtl start from blk_throtl_init() and end in
-blk_throtl_exit(). However, call blk_throtl_exit() before
-blkg_destroy_all() will make a long term deadlock problem easier to
-trigger[1], hence fix this problem by checking if q->td is NULL from
-blk_throtl_exit(), and remove policy deactivation as well since it's
-useless.
-
-[1] https://lore.kernel.org/all/CAHj4cs9p9H5yx+ywsb3CMUdbqGPhM+8tuBvhW=9ADiCjAqza9w@mail.gmail.com/#t
-Fixes: bd9fd5be6bc0 ("blk-throttle: fix access race during throttle policy activation")
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/all/CAHj4cs-p-ZwBEKigBj7T6hQCOo-H68-kVwCrV6ZvRovrr9Z+HA@mail.gmail.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
-Changes in v2:
- - fix the problem by checking q->td directly;
-
- block/blk-throttle.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index f510ae072868..2c5b64b1a724 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -1842,12 +1842,15 @@ void blk_throtl_exit(struct gendisk *disk)
- {
- 	struct request_queue *q = disk->queue;
- 
--	if (!blk_throtl_activated(q))
-+	/*
-+	 * blkg_destroy_all() already deactivate throtl policy, just check and
-+	 * free throtl data.
-+	 */
-+	if (!q->td)
- 		return;
- 
- 	timer_delete_sync(&q->td->service_queue.pending_timer);
- 	throtl_shutdown_wq(q);
--	blkcg_deactivate_policy(disk, &blkcg_policy_throtl);
- 	kfree(q->td);
- }
- 
--- 
-2.39.2
+> 
+> 
+> Thanks,
+> 
+> Liao
+> 
+>>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+>>> ---
+>>>   fs/f2fs/gc.c | 5 +++++
+>>>   1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 4a8c08f970e3..ffc3188416f4 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -936,6 +936,11 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
+>>>           }
+>>>       }
+>>>   +    if (f2fs_sb_has_blkzoned(sbi) && p.min_cost == UINT_MAX) {
+>>> +        ret = -ENODATA;
+>>> +        goto out;
+>>> +    }
+>>> +
+>>>       /* get victim for GC_AT/AT_SSR */
+>>>       if (is_atgc) {
+>>>           lookup_victim_by_age(sbi, &p);
 
 
