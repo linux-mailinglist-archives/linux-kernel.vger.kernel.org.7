@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-820497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E79B7F670
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 700D7B7F3E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED214527D2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB28528378
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB2A342CA9;
-	Wed, 17 Sep 2025 10:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB46A34AAF1;
+	Wed, 17 Sep 2025 10:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gjBwbsd5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cp2CBoTN"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEC91F30BB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E121F30BB
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105519; cv=none; b=pum3ovevwEwrTRc6+hFc5j4dutsh77MJ2v8i0DiX9FlnfZLcSYm24C0rwUcXusCJBm+1AyA1S/yR6YgCAQQhKYpWQDga+J+ASDlMgb+U53dekb/S2uDdqaLLBwbrztiiDbqBc0dxjNw/V15V8mp4rWB9aKKHA4GwYjxVznlBZcc=
+	t=1758105586; cv=none; b=Qzu3aJz78y289CV9usiQ5ZcHwPDFSnuKXTCsimhKGxV5c2JIYtSJ7zN8fVY5FgacTEqB41eShvyeRHlfU4Os5MLz0tbqv1oXvNka0jv81tifZbS+5cgWBtA3eMWgQ5V9ia+0WM3GS6M9qRaz+Dj75Wti8/pu8SIhASzSkjPvuR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105519; c=relaxed/simple;
-	bh=uys/W2sJ8/JPqZgfhzw7G25uk132Iw0CP8xM8xaTQLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s8N4wPhod7hRMSnHr4RTuvl4dMOrY42kyRDSBS7GpZJuBsMAdtplcRO4z57zgl50rJOsOmbrIwj7ZkfOkN9/pyIdurQaYAdxIc4UJMIjuBnkTJCXT0jvG68fRjEecl1Mzjr+zKP3eZTWODMDkZM2So3RaN8vwwnOeDZLEDqJjlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gjBwbsd5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758105517;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=soTuum+uvrVdwH4G5wCW13aWL0UwyqwjoUoslGSKOfc=;
-	b=gjBwbsd5gWAunocqcOPHXf81BJwpAaEqfIXjXBpY++IogrMk/f0P0BS7rBdhA37TCJcan6
-	XizEiCefOHtpR9T3HGXZX8Sl4NQBRfTEYW583vm8+DwW4/yDBBhHNu/6ORKRxdqcp7IJk2
-	ldjQNPiHCMESYgvhpRKXawavZGp+K+4=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-407-MyS__l90P6SIck4UBVypLg-1; Wed, 17 Sep 2025 06:38:35 -0400
-X-MC-Unique: MyS__l90P6SIck4UBVypLg-1
-X-Mimecast-MFC-AGG-ID: MyS__l90P6SIck4UBVypLg_1758105515
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3eb8e43d556so322194f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:38:35 -0700 (PDT)
+	s=arc-20240116; t=1758105586; c=relaxed/simple;
+	bh=R4CWvOUtCvrgdNMym402PYTJjWgUILHeZKrnJPMuhgM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=g1d6bt9gyLd2kO3uhwcO86yPpyMX1mTtSwz4oZMz6uDZiiqwFZa1MYbakNaOwhsFIZD65H1xb3m7PXnkZTd5Aytz1L/TTXjN5NC99rfqqDbeua/fGKDgA0Lw26Ug8hDLIku5NHEJqiAtCK3yLKBJxzsdI+/ESlYj7va9KPG6D+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cp2CBoTN; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so6633745e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758105583; x=1758710383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=k+sQHbuAnUVLK2DcccTjeny/VsR+2o6xAMfUxaFboC4=;
+        b=Cp2CBoTNalC9pWPf5OZPZP1oscN+RkKFGAyyVs7kQcsgII9WtM0putFb1oyuIlXPE4
+         BfjcAQCWf1ML6yJsT8l9C+dtkQLCeSrAsNKSI2fqVAWZl85J70p9bYxHc7S/zBPC8Wpc
+         nqfd+dqpEwbzM7S456aUjosi9hnwumnUl4i4W3Nk5fnvOUS46VdaTNZXpUbZHPoW7AwI
+         uBS7UXlt8Esd1t6SmJvDRNBrNnXQ3zKad9pgzOMk4SmC694YNgaaGoZjPDpm1P7L8YC3
+         o6XvUa7Job/nOGboGpq0FArTqFGJ1bh1KicVinPuKYMOEEhYgwPdx41Qhag+XMSUNmUn
+         N+Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758105514; x=1758710314;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=soTuum+uvrVdwH4G5wCW13aWL0UwyqwjoUoslGSKOfc=;
-        b=Z0WGATl83lYarVE2tB5I0OkFPeAVUeNG+n/TRie9xP2zT2SGfkVqRiiTceCRBMLA+w
-         OUKPWUxkUEgIp/vANj87UVy9sKAUHYJwc2HXK47oiEt098ajLxD/FIM9zRt9V1lsoQ+a
-         j3d4VaxvYgJBvKfE7rO7vIaRBIU5BB9uDNkE7/Qm6eqiRGdRFnzHgku+gyh0WOrTVSYf
-         hdgGPm+muVahXY9bqW0husumHVc4Jcvg/PHg7xr+8kWfWIHKnJ3DnmN14ajEGHeUSDDy
-         58wZ6PMtj5KzAkTRjaRMkuIm5S3ypjzifTPL+H/VWA9O66jyaNXJ8BqcMxRpAsIoKAmt
-         nH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcAyqjB1nVrwtIwqRUgWO5+tX6dAnO83TFTCz6qYTUg3LhcDnluwj//zCZ3MjykQQREdZRPE9nJr/cOIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDQ0fRuDoBOGJvwX7prQk9JbwDkf9W2jR5LndGbeedUWjYNILE
-	uum5o2inP88gBcYAokAw6WLyJv92OEQQm8KuHbLwgG7RfnBVTElAOEYWMSNapkh9AAF9ypv07bo
-	8WG89vKXJYi34HxdSaPyYYnvsKhOhxHp+F8wO5131+yMHe1zzO4DM8dIB+ImS/LgNBQ==
-X-Gm-Gg: ASbGncv5VFLTlZXB2SvE+zPETX9Tt3MPGRjT9M1wbIQlbjUqLnvdJ5xzCMn1li5j2LO
-	v26hJSDFwpTso3l2KF8PXOJWTNXhZ+AJE221hdURw3gfNTc3ww5hXxtxj/cdsrCht96baUGvXlZ
-	O9cqMgj81J0A3j0PXEf3TTAiXy7h60EJKzGMDvrLxLVidQHPnt+nJzy6mVnB/HjH61Yirbr0Tvd
-	59yZAe/Sp2NX9TebGeeCd40xLWyN4bRVHwndwJsyYtLjvltW5lbP/UZgLrsuP0X79cymOC3dnjL
-	+YZLmEU4/qOcBlGaEWEj+ChkjdsJepXXL8lHECjKqrtbjThkTMPESvIJ4YDfOt48Tzks/hB4i/U
-	srN3K52eg89HN8A1/oi85lPi0pSAHSRvadOEbzbIHNHiFNARwHD8M7EjTx846BCAn
-X-Received: by 2002:a05:6000:4009:b0:3ea:c893:95b6 with SMTP id ffacd0b85a97d-3eca04743f7mr5153574f8f.27.1758105514580;
-        Wed, 17 Sep 2025 03:38:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8tKIbcNk5D2bluX7BbsWlrG22DyI/8RTeAIZckT7d1/mvHIE0aGsiKEPHwv0/JBjR38b5Xg==
-X-Received: by 2002:a05:6000:4009:b0:3ea:c893:95b6 with SMTP id ffacd0b85a97d-3eca04743f7mr5153552f8f.27.1758105514108;
-        Wed, 17 Sep 2025 03:38:34 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e95b111b68sm15518054f8f.32.2025.09.17.03.38.33
+        d=1e100.net; s=20230601; t=1758105583; x=1758710383;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+sQHbuAnUVLK2DcccTjeny/VsR+2o6xAMfUxaFboC4=;
+        b=aAXNJiP50EPq+Y1gaKr6fZJkcj+W5yP0QiuO9RuN9Hi8ygnZElDHIPMUARGkthoivv
+         KMajKmGKRhdf17pUY9/d6CT2dp6PtdalmIE3Gre3QlvmbHDjlKCbaavjiv70UnO9HE+j
+         K2HRv/OogzCq5jbJ+gpzeM5GLdVhzp5WYuWD8wRdOFa3R8zkeXiiKx3lhH8ZaEWvn/UM
+         1QYUvH0r551jiZrkARvsqYZ14HV6+vQX/H8AZ/Zw7YZelyWychPOAHv1qRhOb14dft2X
+         GOGvzBLeo9NFrtU1sDbA1DU/+S9MDHNlq5tcEAQVGubUrNuoYAakAT346ekQg1SiBz5g
+         avMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0wEgFgbwSWetP6q1S4DkElfX+Sf9HpC5xoCcJarHGq0TZ4/gwunvV9fvqXKTdNYFjZRZX+cYigOpA38A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9dML8kNxO+75WKOCloSw3We5wRj1mk+hFGIdDdxJXex3bIwf/
+	kLOE4Iiv7U/FABeXe0ol4iz1gCty7ql5kRGSYXuLLdL0tRsAKdEQx6N7
+X-Gm-Gg: ASbGnctkaUso+uXbrqBbrnV/7GtdgOi7mv3JZgHGiZNJ1SyCxpAi22lwNrLHNRUR/y5
+	dJwYAWKhuNrsff0gKOHtLntLYWZqbJ78Y06lADH9N2NYyJQm0uBpsd1niw9+YX5PRpgjj1KyoI1
+	lxnDV5slLz+7STXOvnCOsh5nsmpVZUx8faSi7z3GC1PY7WGJTbmkW+S+qfWPAhuyCINKQRz2eV+
+	LirYJ4Bn95QMb7jyOwLZNE04HCEFk1JNn3vlEmRfonxj0ffZnAcND3UH2jIhNbF7SLez7tl4L8L
+	jajygrMbfuFuCsSopo0wojF8e7u7BHB536xAdjxQ/zzaDVTWOrtRbRDBGDXD9gBaXpb08ordin/
+	t4ezvz2DBnXgegzzykpdM2NwKtoGI7a8i+VTxg8nuFizLUIsY8K45jQ==
+X-Google-Smtp-Source: AGHT+IGusD+yhysHUCpNgRezV67Os0zRE0BcwTnTYY3tkSiddnSyzrDXOcH3hNEFYbbdLLij2+d3RA==
+X-Received: by 2002:a05:600c:6d2:b0:45d:d295:fddc with SMTP id 5b1f17b1804b1-45f32d002aemr36748375e9.4.1758105582776;
+        Wed, 17 Sep 2025 03:39:42 -0700 (PDT)
+Received: from [10.80.3.86] ([72.25.96.18])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760775b13sm26083726f8f.10.2025.09.17.03.39.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 03:38:33 -0700 (PDT)
-Message-ID: <6dde7c50-a222-4984-bb69-07ace724f161@redhat.com>
-Date: Wed, 17 Sep 2025 12:38:32 +0200
+        Wed, 17 Sep 2025 03:39:42 -0700 (PDT)
+Message-ID: <1407e41e-2750-4594-adaf-77f8d9f8ccf7@gmail.com>
+Date: Wed, 17 Sep 2025 13:39:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,131 +81,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
- mm_struct during fork
-To: Donet Tom <donettom@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Wei Yang <richard.weiyang@gmail.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
- stable@vger.kernel.org
-References: <cover.1757946863.git.donettom@linux.ibm.com>
- <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH net V2 10/11] net/mlx5e: Update and set Xon/Xoff upon port
+ speed set
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>, Daniel Zahka <daniel.zahka@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Tariq Toukan <tariqt@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Saeed Mahameed <saeedm@nvidia.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gal Pressman <gal@nvidia.com>, linux-rdma@vger.kernel.org,
+ Alexei Lazar <alazar@nvidia.com>, Mark Bloch <mbloch@nvidia.com>
+References: <20250825143435.598584-1-mbloch@nvidia.com>
+ <20250825143435.598584-11-mbloch@nvidia.com>
+ <20250910170011.70528106@kernel.org> <20250911064732.2234b9fb@kernel.org>
+ <fdd4a537-8fa3-42ae-bfab-80c0dc32a7c2@nvidia.com>
+ <20250911073630.14cd6764@kernel.org>
+ <af70c86b-2345-4403-9078-be5c8ef0886f@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
+In-Reply-To: <af70c86b-2345-4403-9078-be5c8ef0886f@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 15.09.25 17:03, Donet Tom wrote:
-> Currently, the KSM-related counters in `mm_struct`, such as
-> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
-> inherited by the child process during fork. This results in inconsistent
-> accounting.
-> 
-> When a process uses KSM, identical pages are merged and an rmap item is
-> created for each merged page. The `ksm_merging_pages` and
-> `ksm_rmap_items` counters are updated accordingly. However, after a
-> fork, these counters are copied to the child while the corresponding
-> rmap items are not. As a result, when the child later triggers an
-> unmerge, there are no rmap items present in the child, so the counters
-> remain stale, leading to incorrect accounting.
-> 
-> A similar issue exists with `ksm_zero_pages`, which maintains both a
-> global counter and a per-process counter. During fork, the per-process
-> counter is inherited by the child, but the global counter is not
-> incremented. Since the child also references zero pages, the global
-> counter should be updated as well. Otherwise, during zero-page unmerge,
-> both the global and per-process counters are decremented, causing the
-> global counter to become inconsistent.
-> 
-> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
-> during fork, and the global ksm_zero_pages counter is updated with the
-> per-process ksm_zero_pages value inherited by the child. This ensures
-> that KSM statistics remain accurate and reflect the activity of each
-> process correctly.
-> 
-> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
-> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each process")
-> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
-> cc: stable@vger.kernel.org # v6.6
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
-> ---
->   include/linux/ksm.h | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-> index 22e67ca7cba3..067538fc4d58 100644
-> --- a/include/linux/ksm.h
-> +++ b/include/linux/ksm.h
-> @@ -56,8 +56,14 @@ static inline long mm_ksm_zero_pages(struct mm_struct *mm)
->   static inline void ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
->   {
->   	/* Adding mm to ksm is best effort on fork. */
-> -	if (mm_flags_test(MMF_VM_MERGEABLE, oldmm))
-> +	if (mm_flags_test(MMF_VM_MERGEABLE, oldmm)) {
-> +		long nr_ksm_zero_pages = atomic_long_read(&mm->ksm_zero_pages);
-> +
-> +		mm->ksm_merging_pages = 0;
-> +		mm->ksm_rmap_items = 0;
-> +		atomic_long_add(nr_ksm_zero_pages, &ksm_zero_pages);
->   		__ksm_enter(mm);
 
-That LGTM. KSM is all weird in combination with fork(), but that's 
-something for another day to improve I guess.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+On 15/09/2025 10:38, Tariq Toukan wrote:
+> 
+> 
+> On 11/09/2025 17:36, Jakub Kicinski wrote:
+>> On Thu, 11 Sep 2025 17:25:22 +0300 Mark Bloch wrote:
+>>> On 11/09/2025 16:47, Jakub Kicinski wrote:
+>>>> On Wed, 10 Sep 2025 17:00:11 -0700 Jakub Kicinski wrote:
+>>>>> Hi, this is breaking dual host CX7 w/ 28.45.1300 (but I think most
+>>>>> older FW versions, too). Looks like the host is not receiving any
+>>>>> mcast (ping within a subnet doesn't work because the host receives
+>>>>> no ndisc), and most traffic slows down to a trickle.
+>>>>> Lost of rx_prio0_buf_discard increments.
+>>>>>
+>>>>> Please TAL ASAP, this change went to LTS last week.
+>>>>
+>>>> Any news on this? I heard that it also breaks DCB/QoS configuration
+>>>> on 6.12.45 LTS.
+>>>
+>>> We are looking into this, once we have anything I'll update.
+>>> Just to make sure, reverting this is one commit solves the
+>>> issue you are seeing?
+>>
+>> It did for me, but Daniel (who is working on the PSP series)
+>> mentioned that he had reverted all three to get net-next working:
+>>
+>>    net/mlx5e: Set local Xoff after FW update
+>>    net/mlx5e: Update and set Xon/Xoff upon port speed set
+>>    net/mlx5e: Update and set Xon/Xoff upon MTU set
+>>
+> 
+> Hi Jakub,
+> 
+> Thanks for reporting.
+> We're investigating and will update soon.
+> 
+> Regards,
+> Tariq
+> 
 
--- 
-Cheers
+Hi,
 
-David / dhildenb
+We prefer reverting the single patch [1] for now. We'll submit a fixed 
+version later.
+
+Regarding the other two patches [2], initial testing showed no issues.
+Can you/Daniel share more info? What issues you see, and the repro steps.
+
+Thanks,
+Tariq
+
+[1]
+net/mlx5e: Update and set Xon/Xoff upon port speed set
+
+[2]
+net/mlx5e: Set local Xoff after FW update
+net/mlx5e: Update and set Xon/Xoff upon MTU set
 
 
