@@ -1,81 +1,97 @@
-Return-Path: <linux-kernel+bounces-821080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46C1B8051D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:59:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A22B804FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45B962424B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:57:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B84AF5459B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B8430AACA;
-	Wed, 17 Sep 2025 14:54:32 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A299335937;
+	Wed, 17 Sep 2025 14:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEFR27Gz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E2B333AA5;
-	Wed, 17 Sep 2025 14:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05E032E751;
+	Wed, 17 Sep 2025 14:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758120872; cv=none; b=nu2HGEK4WpnkTOWnDUOQnSUXiMOAMMTDsWHYBVZd8D32R8wFmqas5z7jOLaaGlDzH4+0gUwd8UrrDQQ6Pf/3mRU+DExvpfVMxWAVRQtBewcfF52CJpSCIxXQoIg2y3WOh6TpXKGKlIs/eAUdCjNq2GBkI+EmN6w+cyhm7iTpiQU=
+	t=1758120888; cv=none; b=KpagI1MfAgp6JXFUKPLj5vWZi9kk6u0GcMYI5AR81YllUoPSEWe0OZ5fS3yJNG414qidqViK9zyIsdxRoiV3fHga+7aZ0HxdOPrplbGZXYLFgLF/OrYByD3D+OXGrvALxiEPGrSe67iwYWoBCY8tYu2zYidiyo00uwgy+rscmp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758120872; c=relaxed/simple;
-	bh=KS7kv/NTfqTgr3S5WYRaN2GS8eUh1o3rCXuMhHyakHM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VWxLQY0+OMGijd9NF+mf4baJhbZo9kgmZiY7f5b0p0rQqqgh3q+7pMfT0e21lOOIWOkXnxYVUWZtob6ixuUlatzuQLVJYiK2Pr//ndt6BGy6ffDhG/YSJzkuq2VxrZCYIVcaeh7QA2RsUEN+Y9UcYVgYcrU2PrA1SD6m96IIq7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cRhWQ61K1z6L60S;
-	Wed, 17 Sep 2025 22:49:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7162C1400F4;
-	Wed, 17 Sep 2025 22:54:27 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 17 Sep
- 2025 16:54:26 +0200
-Date: Wed, 17 Sep 2025 15:54:25 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>,
-	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>
-Subject: Re: [PATCH V3 05/20] nvdimm/namespace_label: Add namespace label
- changes as per CXL LSA v2.1
-Message-ID: <20250917155425.00003c87@huawei.com>
-In-Reply-To: <20250917134116.1623730-6-s.neeraj@samsung.com>
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
-	<CGME20250917134138epcas5p2b02390404681df79c26f7a1a0f0262b8@epcas5p2.samsung.com>
-	<20250917134116.1623730-6-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1758120888; c=relaxed/simple;
+	bh=tIoFj35d9AiZIRV4c88VMwpWprmFWHS7koL+OfmSgE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pi8MtHd8okcGVpwbFepkS+9BChMHaxCxmzxJM4JKcraRlomO2OXZ7jzNQYxZ/NAMn4UoJNoBjHX9nu7hl2OpaSMmPADtwgZFVQslXUZ6ZKlr96fz6ctXIaA8UA5KsbI3ll5os/evgiK+2i2SxVpP96sPs+ElJrqvJkFchIVqpE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEFR27Gz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE424C4CEE7;
+	Wed, 17 Sep 2025 14:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758120888;
+	bh=tIoFj35d9AiZIRV4c88VMwpWprmFWHS7koL+OfmSgE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OEFR27GzdFQz0RZxNjRtOzD1GE2CAtj7MNWO4v+zEUFNBFIyMkh/1D4Ck7i3PbssT
+	 1oWPBHhoLU8olr/yuyKulfA+ZLPpcEh59MbQfFTiVVwVHGMSlNB6Nlc5we6J16Fk/H
+	 fTajVaAz+J44hqSONlq/EBVkDZgxds4Eo2O+hSuV+EqwfqKH7MXLmUV2CCViRD6gHZ
+	 26dZdyig0w/6XkU2HK37GlHt2Rj4LwCBjdY+LJttd16znQmZ4U+Q5zS/bQ4GcWDmms
+	 LxdnjFsGDFEGj/GorHltWfAHwNiibuLcR5D2CEv+HSl1XnGmA5aAT8fbhwXW3SpuFb
+	 gamFhbK1YWXmg==
+Date: Wed, 17 Sep 2025 15:54:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: Konrad Leszczynski <konrad.leszczynski@intel.com>
+Cc: davem@davemloft.net, andrew+netdev@lunn.ch, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cezary.rojewski@intel.com,
+	sebastian.basierski@intel.com,
+	Piotr Warpechowski <piotr.warpechowski@intel.com>,
+	Karol Jurczenia <karol.jurczenia@intel.com>
+Subject: Re: [PATCH net-next v3 1/3] net: stmmac: enhance VLAN protocol
+ detection for GRO
+Message-ID: <20250917145443.GN394836@horms.kernel.org>
+References: <20250916124808.218514-1-konrad.leszczynski@intel.com>
+ <20250916124808.218514-2-konrad.leszczynski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916124808.218514-2-konrad.leszczynski@intel.com>
 
-On Wed, 17 Sep 2025 19:11:01 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
-
-> CXL 3.2 Spec mentions CXL LSA 2.1 Namespace Labels at section 9.13.2.5
-> Modified __pmem_label_update function using setter functions to update
-> namespace label as per CXL LSA 2.1
+On Tue, Sep 16, 2025 at 02:48:06PM +0200, Konrad Leszczynski wrote:
+> From: Piotr Warpechowski <piotr.warpechowski@intel.com>
 > 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Enhance protocol extraction in stmmac_has_ip_ethertype() by introducing
+> MAC offset parameter and changing:
+> 
+> __vlan_get_protocol() ->  __vlan_get_protocol_offset()
+> 
+> Add correct header length for VLAN tags, which enable Generic Receive
+> Offload (GRO) in VLAN.
+> 
+> Co-developed-by: Karol Jurczenia <karol.jurczenia@intel.com>
+> Signed-off-by: Karol Jurczenia <karol.jurczenia@intel.com>
+> Reviewed-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
+> Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
+> Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
+> Signed-off-by: Piotr Warpechowski <piotr.warpechowski@intel.com>
 
-Note I'm not particularly familiar with the nvdimm code so this will ideally
-want review from someone who is!
+Hi Konrad,
 
-Jonathan
+As you are sending these patches, your Signed-off-by line is needed.
+I would suggest at the end of the tags. And when present,
+you can drop your Reviewed-by tag (it is implied).
+
+Otherwise this patch looks good to me.
+
+Same for the other patches in this series.
+
+-- 
+pw-bot: changes-requested
 
