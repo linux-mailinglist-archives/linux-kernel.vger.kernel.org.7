@@ -1,99 +1,126 @@
-Return-Path: <linux-kernel+bounces-821148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52D8B808FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:30:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20846B8090B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923BE1C282DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5A44683F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF7430C0E4;
-	Wed, 17 Sep 2025 15:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E791430C0F5;
+	Wed, 17 Sep 2025 15:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlsKh/KO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VzbT8W8n"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C49930C0E0;
-	Wed, 17 Sep 2025 15:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E38D30C108;
+	Wed, 17 Sep 2025 15:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122904; cv=none; b=Xvoy5DG7hL0JrTsOH5/Lnr0xdGnCrUv18aJTg7D+caxiMAE9Tz1DcvaookLfd7S+EwVAwqosgmSM79YfRGABxExq67gYwaKBPJBc9hVmQrQdiRzbctaV0dovJEopnGwmso/UXP5N2JL2KaGbDl3CLYJekaotN1fcEUl6FRXtRzE=
+	t=1758122931; cv=none; b=L8SJhcCIjpwBtLDhJmgCYXvHbwE0mfj8EU/ATYm+nBbrs0OCgcV8MNL2iEQLNUZrKgV0oAXBnoC2Kld0sXC0pkvJHhb/OrHZJr5qrZmUiZxbx4DTyT7Hb9nUhHSb6nvP0MtjvnqJw69O6c6RbyJF7f912j2N3q1pxA/qAMqeqJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122904; c=relaxed/simple;
-	bh=tCpYKYOs1RRFEZTeEQBT6Jf93AtipOf9WVQbNEp0FSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RRzVP8ogROkmhiUeE6UGsRepz769vj6zci9O6Y62NCysnhfyxe0j274H5cGQM5Nye7nqAQj6Qycx+xtuHw017VsU10EncJrTa55vWpTcvfK9vOdH0iRChPsQmvYmwLf3ACoRW5GeIDva8JsFeIdSsbEPQ7re4C7mb9h6VVnj8mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlsKh/KO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB7CC4CEE7;
-	Wed, 17 Sep 2025 15:28:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758122903;
-	bh=tCpYKYOs1RRFEZTeEQBT6Jf93AtipOf9WVQbNEp0FSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KlsKh/KOWTz9EJsOhxbcsQD1AonOuNxGcDYCaLEvof0go8Kii2EdkTTE3cwzPY4+x
-	 pezqfTuKvi9Fyq8mgaea4SqDfa9UD6PRx+EjdXTuYIXRZBRf44v2XLveKJsGGoCqRP
-	 602qHH66J3aZQttpSl5FEe7O1QIUSnuUChjwlwFkG9xvRbSnJopQl9bpq+fWTNqDWl
-	 PXwste2mqnB34TEm4tS16177xoqY7yOlcrmkPIyBm5rty+gYZd+0D1YEz9+J4mt7UX
-	 2uF+bsk4wVK8zl+k1Sax14G72QagFZhjpimL4OyCtSA/RpByUaOKLlD3Lr0gs92s6v
-	 hUbwmgbk6ZzcA==
-Date: Wed, 17 Sep 2025 16:28:16 +0100
-From: Will Deacon <will@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, broonie@kernel.org, oliver.upton@linux.dev,
-	anshuman.khandual@arm.com, robh@kernel.org, james.morse@arm.com,
-	mark.rutland@arm.com, joey.gouly@arm.com, Dave.Martin@arm.com,
-	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	maz@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v5 0/6] initialize SCTRL2_ELx
-Message-ID: <aMrTkLhLOhas8Viy@willie-the-truck>
-References: <20250917145618.1232329-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1758122931; c=relaxed/simple;
+	bh=VpoFPhTwmm+WWukzSN7f5WNcO6XoGwtY7ZzuWmn9+lg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lIj46epuP/vULfVrfYv0/xp/Zv0q2Xbhr072O6wcYIiBVNx8eL7G553kWHE3PBuszwamMVgr5OINqe/zRfFlL6JWtbOyOHTDh2Dy7bKUkxxk/wzshz1EjE3I3kxxNvaeF3ADC5kZclh7H6Mlsjp8zubZ0saWdIftEPMGzn4iIPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VzbT8W8n; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id C6A821A0E8F;
+	Wed, 17 Sep 2025 15:28:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9801A6063E;
+	Wed, 17 Sep 2025 15:28:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BADAB102F1BF4;
+	Wed, 17 Sep 2025 17:28:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758122924; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=BFIVUZm5xuzuhfpRFg3QFSYuUBaBVnTUcSVoLhOrwf4=;
+	b=VzbT8W8n/UBPmcEza93b9wYmwQXZ05Yy8SthzG0kUy+NcfHlsxg7W9HcgcKVoWjhL7FE2E
+	Outq7VvZEGdkcqxNqc0m1OstRoquJTw6VgFfU88C0LlZdYF7bKL+Av7MxsWzxUPoj4SBW8
+	8HYzaNOh26u/Au9nqoJ5SiB+kJEAjuP/2tWHEZofJEVISWpoWHcR6eSH138JJDIV7McPjb
+	KNpoefIhS6ZtOlmXqHLo/dOnT8KclXhVjSfTw7zcxk8C5/lP7yagBp38SRAYsA5Tau/o25
+	J7YpionBrmZnKqLY0gjXfGvbSAgCwiJBGhd7+QH3pYGVtFd8cCMouQ+xrzNDiQ==
+Message-ID: <be4cd796-e47e-444a-97b9-b1d537e495f3@bootlin.com>
+Date: Wed, 17 Sep 2025 17:28:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917145618.1232329-1-yeoreum.yun@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 01/14] selftests/bpf: test_xsk: Split
+ xskxceiver
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250904-xsk-v3-0-ce382e331485@bootlin.com>
+ <20250904-xsk-v3-1-ce382e331485@bootlin.com> <aMlyUX999WOmUNMP@boxer>
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <aMlyUX999WOmUNMP@boxer>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Sep 17, 2025 at 03:56:12PM +0100, Yeoreum Yun wrote:
-> This series introduces initial support for the SCTLR2_ELx registers in Linux.
-> The feature is optional starting from ARMv8.8/ARMv9.3,
-> and becomes mandatory from ARMv8.9/ARMv9.4.
+Hi Maciej,
+
+On 9/16/25 4:21 PM, Maciej Fijalkowski wrote:
+> On Thu, Sep 04, 2025 at 12:10:16PM +0200, Bastien Curutchet (eBPF Foundation) wrote:
+>> AF_XDP features are tested by the test_xsk.sh script but not by the
+>> test_progs framework. The tests used by the script are defined in
+>> xksxceiver.c which can't be integrated in the test_progs framework as is.
+>>
+>> Extract these test definitions from xskxceiver{.c/.h} to put them in new
+>> test_xsk{.c/.h} files.
+>> Keep the main() function and its unshared dependencies in xksxceiver to
+>> avoid impacting the test_xsk.sh script which is often used to test real
+>> hardware.
+>>
+>> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+>> ---
 > 
-> Currently, Linux has no strict need to modify SCTLR2_ELx--
-> at least assuming that firmware initializes
-> these registers to reasonable defaults.
+> Hi Bastien,
 > 
-> However, several upcoming architectural features will require configuring
-> control bits in these registers.
-> Notable examples include FEAT_PAuth_LR and FEAT_CPA2.
+> after this patch the way summary is reported is different.
 > 
-> Patch History
-> ==============
-> from v4 to v5:
->   - using .ifc in set_sctlr2_elx
->   - change (re)initialise position after SCTLR_ELx
->   - add docs for SCTRL2_ELx
->   - rebase to v6.17-rc6
->   - https://lore.kernel.org/all/20250821172408.2101870-1-yeoreum.yun@arm.com/
+> Before:
+> # 16 skipped test(s) detected. Consider enabling relevant config options to improve coverage.
+> # Totals: pass:53 fail:3 xfail:0 xpass:0 skip:16 error:0
+> 
+> After:
+> # Planned tests != run tests (72 != 53)
+> # Totals: pass:53 fail:0 xfail:0 xpass:0 skip:0 error:0
+> 
+> We lose the count of failed tests. Could you take a look?
 
-Sorry, this is a really pedantic nit, but please can you fix the typo in
-the subject if/when you next post this?
+Good catch, I'll take a look at it.
 
-More importantly, as Dave says, I don't see the point in merging this
-until we have a use for the register. At that point, your patches can
-hopefully be a prefix of the series that uses it.
+Best regards,
+-- 
+Bastien Curutchet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Will
 
