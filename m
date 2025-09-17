@@ -1,301 +1,88 @@
-Return-Path: <linux-kernel+bounces-820509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84DCB7CC3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3895EB7D48D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6C41B25FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:51:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AB8A464604
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61A429BD91;
-	Wed, 17 Sep 2025 10:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D782E0B5B;
+	Wed, 17 Sep 2025 10:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W33vBsZB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpQQ1C38"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3634328B3EB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319D7285073;
+	Wed, 17 Sep 2025 10:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758106290; cv=none; b=cD5kSk0tjT5hZHgitvMneoTL9HEV4fTshBmPy/Daly9dI12VmeFC4U5kMR5G9ue0E3D4fB+1TxbQEW2NDTukB3r2zoPTo7EUhkWzXescvoU/p0Degeq93NGBplONRe8mVHYouwalF9Wk1eURT8F0KY6ESkTInkOaQsYBRc9o3MY=
+	t=1758106618; cv=none; b=Smt0R3DIoKsgljiBuLXlIrL9XtuHneyvUD7GhZMkdLGXz11uWIEvhSMXF0EeBwjcuaaJepCYDuEkwwUjZ8t6vm7Qc34pxbdLDPM0L41wA7ey/MqBYQdMFMvLYaX9/NL71+jgiGVtvpTitAo37Mcdfebb/2L5q2a7eH218gFOjUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758106290; c=relaxed/simple;
-	bh=P5xwqq9hlIAvFrIe+NtVkLGw6BsTyX4DcHVXOMN4a8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g7jmdgUbafgvZz+F2/elBaOILPwMP83a9zMX9zUroYNF/8CLtl6LFA5shTfO0KDX4zgd7u40tIPFuO8ureKpZKu2YOD87WkDF9Qyu/UEjwmYpBxCJjkCCIIScHp1vRboJWbnn5r8mABllspfSZrh7FFQbQZrAlNEWT6tU2CzOrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W33vBsZB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758106287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nERaJxhjcjrAaXh7c6wWUw3HqICZEnqzuOIyghOUsOY=;
-	b=W33vBsZBKq2Eco3fG3KPsjrq1na8zwpE8X3vDG7uJxi9r8AeIuTMLGvsT/gO2lIXEMwuFp
-	TcT4o7gG1K5E5PJq9zcM4FxCv0HeOiY2WBIDw4IJfCJoIubHgxhDcoiyTEGiEtS0i6qHBs
-	8IyXAS3wBAKYyauEhp+CkeSP32SYAdI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-286-9YklTCfhM0meFwjngESyNQ-1; Wed, 17 Sep 2025 06:51:26 -0400
-X-MC-Unique: 9YklTCfhM0meFwjngESyNQ-1
-X-Mimecast-MFC-AGG-ID: 9YklTCfhM0meFwjngESyNQ_1758106285
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45e05ff0b36so3535245e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:51:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758106285; x=1758711085;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nERaJxhjcjrAaXh7c6wWUw3HqICZEnqzuOIyghOUsOY=;
-        b=l0Qgv/rZPLNXvTjJh5t4sRJOdL58Ny98/h7OqB/3w1KIjc8aWpDulu8zsq8c/etNYi
-         /diciLq5e6YIMmR7tJTRqURV1Az9xaSyekajiEpLWeEq+hI03hnR7iPREvrj++PADcTZ
-         hP2h0mMSKGI0w7rYy5Kd0OsoaQosxpBdBUGMe0H3UDojzEyYvABKpSE/R/rpErH59D48
-         IMF7IQw2wqGJ5izPP01hgfFwz9b81pjncN+u5Va59wNrlliRkbY82qvVOhbwGgwDKOPC
-         P+3jF1H7kR3pdTYfd4xkYShuviLxTlUT8A21qgusZ9CMuwUQvYud6W0ao+nQ6UzFmWAB
-         pt+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVuFO1PADRBP0gkNuliK15ddbVbReVjODf4YaSkrjtYP7fikF13bq/dCZ3GNkoWU6HKk1LwYiW+otZMDZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBoKzwIa2ErXymuUVqIzKijVrcj9iCqInQbvr6QBDFqi7fQWT+
-	QG/wC3y4Sr0TBYg5IqDY5EahnKA6xv1BgtHz4lA9yRVeH26GX9ix9nCGiMt7L5zGzoDOdE7dD2H
-	ledvjLRt/xaxVWDvC9N+m87xaWQxBxTh3gMOt/GEE6cENVoXIz8g+3fV/cV92c/wC+w==
-X-Gm-Gg: ASbGncv2UBuvISFbs2KyGoEM2FB3mVrECl1L+dscjx0P4hjQppu0JMJeDQuMNr2gdOC
-	1m5Cm98ya3NXPnZPGrIVr4vJfFaHcCcLFLe0EkDtE5ZzpTUACThiYJLQXjBJnp6noAjpMq0ZLSz
-	Hg/n6RtQv4Dz9ixXqPAPcNzgXjmLudm+TfaQTK0fe7+Fe2hSekHcnEcd/8dE9j2+JC4YCX1T/dB
-	1VpC38trt2oOhrYRWBMXguzKGx7yGE+SnPrygezWTkh/G6M7fSfn8oiz2DFm+13Kv2T8BQaiEfq
-	AIGfxxgIJPXttAt5hgwF7W1R7DkE0TwWa/d1gJDXRdwIYsxOzK9QzOq53hEZhVUwm1ZJuGaziIS
-	PbLBergEK4p0t9eSbeH3ZbSCbqrSABJ14c9VW5C2xCzsxO9TT8RgI93vSppfvNlHr
-X-Received: by 2002:a05:600c:12ca:b0:45b:86bb:af5f with SMTP id 5b1f17b1804b1-462d73e52f9mr7092295e9.6.1758106285433;
-        Wed, 17 Sep 2025 03:51:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1ZygKbzExyxPazwktd3Op+PMSIyLXZ5fVLowDy+xVLe7/9FL4ydneS0ztJyucS3gyZvcYNA==
-X-Received: by 2002:a05:600c:12ca:b0:45b:86bb:af5f with SMTP id 5b1f17b1804b1-462d73e52f9mr7092025e9.6.1758106284912;
-        Wed, 17 Sep 2025 03:51:24 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613ddc01e6sm30967065e9.18.2025.09.17.03.51.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 03:51:24 -0700 (PDT)
-Message-ID: <353bf8f0-d9ad-4800-80d7-4177ae64eb95@redhat.com>
-Date: Wed, 17 Sep 2025 12:51:23 +0200
+	s=arc-20240116; t=1758106618; c=relaxed/simple;
+	bh=DGk49X14zZg9MmxpT2/9o8BFJoLXCKJri9nMerohPlk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JMa+CFEUDVGNBmcMgX2DpsL97qxPxZv64TendcjcYhsux0Ng1L277ra0/ShVdQWaGbVVLJnws7tMYwqKZMUYJdwWlrjPhKv+w4teiPuVThn3bGC02xnXxCQjhk2Qh4RBwXsB3lpnIBx9tZ9xaQylPEyZrrMKZ5+pIRgMAIHBtFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpQQ1C38; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF6BC4CEF0;
+	Wed, 17 Sep 2025 10:56:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758106617;
+	bh=DGk49X14zZg9MmxpT2/9o8BFJoLXCKJri9nMerohPlk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YpQQ1C384TI2WGAvkQWzejM3PSmjXMkXH0/ckB3BQXVZ4kXDvwxFt5nrcZHSLb5z1
+	 HM06Ku7j015KtYufNngi0KrSldLd1tIXbpFSxS3MtWWgOO6KsGR+pFgX1+E7ETPa3m
+	 H19BsL6bg7hwQdtVW2HMXOlbkrdP+fnr9C71wzUyXmOwwRBmKpzanX9wXWhZKuhQi9
+	 Rrtb+61Bu7m3K7LRf2xlatInybZNRUxsY0aYWOxhORS/XEIC4M5Ipy/KYP3gy2umeG
+	 R45YScn4w0//mLZCwU4hE8J/cv06Jkxv1b6kypKvAebpHckTTzgxD1D+KgP8XVnjww
+	 vcp0sypVHFtzA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Benno Lossin <lossin@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary
+ Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno
+ Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Yutaro Ohno
+ <yutaro.ono.418@gmail.com>, Manas <manas18244@iiitd.ac.in>, Xizhe Yin
+ <xizheyin@smail.nju.edu.cn>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/11] rust: block: replace `core::mem::zeroed` with
+ `pin_init::zeroed`
+In-Reply-To: <20250814093046.2071971-6-lossin@kernel.org>
+References: <20250814093046.2071971-1-lossin@kernel.org>
+ <FZTw0hzHoikt9HGS5iJbjDgyb__kfDms8TR-RjFfOQrw8OaCfg0eslVaLuBMKj75oJ-mcsX10igGP5ZXVdnPsQ==@protonmail.internalid>
+ <20250814093046.2071971-6-lossin@kernel.org>
+Date: Wed, 17 Sep 2025 12:52:17 +0200
+Message-ID: <87qzw5wdum.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/1] selftests/mm: skip soft-dirty tests when
- CONFIG_MEM_SOFT_DIRTY is disabled
-To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
- lorenzo.stoakes@oracle.com
-Cc: shuah@kernel.org, ioworker0@gmail.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-References: <20250917055913.49759-1-lance.yang@linux.dev>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250917055913.49759-1-lance.yang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 17.09.25 07:59, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
-> 
-> The madv_populate and soft-dirty kselftests currently fail on systems where
-> CONFIG_MEM_SOFT_DIRTY is disabled.
-> 
-> Introduce a new helper softdirty_is_supported() into vm_util.c/h to ensure
-> tests are properly skipped when the feature is not enabled.
+"Benno Lossin" <lossin@kernel.org> writes:
 
-I'll note that tools/testing/selftests/mm/config contains
+> All types in `bindings` implement `Zeroable` if they can, so use
+> `pin_init::zeroed` instead of relying on `unsafe` code.
+>
+> If this ends up not compiling in the future, something in bindgen or on
+> the C side changed and is most likely incorrect.
+>
+> Signed-off-by: Benno Lossin <lossin@kernel.org>
 
-	CONFIG_MEM_SOFT_DIRTY=y
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-But yes, the current arm64 handling is nasty, because some other archs 
-(e.g., riscv) also don't support it yet.
 
-LGTM, some nits below:
+Best regards,
+Andreas Hindborg
 
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> ---
->   tools/testing/selftests/mm/madv_populate.c | 21 ++--------------
->   tools/testing/selftests/mm/soft-dirty.c    |  5 +++-
->   tools/testing/selftests/mm/vm_util.c       | 28 ++++++++++++++++++++++
->   tools/testing/selftests/mm/vm_util.h       |  1 +
->   4 files changed, 35 insertions(+), 20 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/madv_populate.c b/tools/testing/selftests/mm/madv_populate.c
-> index b6fabd5c27ed..43dac7783004 100644
-> --- a/tools/testing/selftests/mm/madv_populate.c
-> +++ b/tools/testing/selftests/mm/madv_populate.c
-> @@ -264,23 +264,6 @@ static void test_softdirty(void)
->   	munmap(addr, SIZE);
->   }
->   
-> -static int system_has_softdirty(void)
-> -{
-> -	/*
-> -	 * There is no way to check if the kernel supports soft-dirty, other
-> -	 * than by writing to a page and seeing if the bit was set. But the
-> -	 * tests are intended to check that the bit gets set when it should, so
-> -	 * doing that check would turn a potentially legitimate fail into a
-> -	 * skip. Fortunately, we know for sure that arm64 does not support
-> -	 * soft-dirty. So for now, let's just use the arch as a corse guide.
-> -	 */
-> -#if defined(__aarch64__)
-> -	return 0;
-> -#else
-> -	return 1;
-> -#endif
-> -}
-> -
->   int main(int argc, char **argv)
->   {
->   	int nr_tests = 16;
-> @@ -288,7 +271,7 @@ int main(int argc, char **argv)
->   
->   	pagesize = getpagesize();
->   
-> -	if (system_has_softdirty())
-> +	if (softdirty_is_supported())
->   		nr_tests += 5;
->   
->   	ksft_print_header();
-> @@ -300,7 +283,7 @@ int main(int argc, char **argv)
->   	test_holes();
->   	test_populate_read();
->   	test_populate_write();
-> -	if (system_has_softdirty())
-> +	if (softdirty_is_supported())
->   		test_softdirty();
->   
->   	err = ksft_get_fail_cnt();
-> diff --git a/tools/testing/selftests/mm/soft-dirty.c b/tools/testing/selftests/mm/soft-dirty.c
-> index 8a3f2b4b2186..98e42d2ac32a 100644
-> --- a/tools/testing/selftests/mm/soft-dirty.c
-> +++ b/tools/testing/selftests/mm/soft-dirty.c
-> @@ -200,8 +200,11 @@ int main(int argc, char **argv)
->   	int pagesize;
->   
->   	ksft_print_header();
-> -	ksft_set_plan(15);
->   
-> +	if (!softdirty_is_supported())
-> +		ksft_exit_skip("soft-dirty is not support\n");
-> +
-> +	ksft_set_plan(15);
->   	pagemap_fd = open(PAGEMAP_FILE_PATH, O_RDONLY);
->   	if (pagemap_fd < 0)
->   		ksft_exit_fail_msg("Failed to open %s\n", PAGEMAP_FILE_PATH);
-> diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
-> index 56e9bd541edd..3173335df775 100644
-> --- a/tools/testing/selftests/mm/vm_util.c
-> +++ b/tools/testing/selftests/mm/vm_util.c
-> @@ -449,6 +449,34 @@ bool check_vmflag_pfnmap(void *addr)
->   	return check_vmflag(addr, "pf");
->   }
->   
-> +bool softdirty_is_supported(void)
 
-I'd just call it "softdirty_supported" similar to 
-"pagemap_scan_supported()".
-
-> +{
-> +	char *addr;
-> +	int ret = 0;
-
-bool supported = false;
-
-> +	size_t pagesize;
-> +
-> +	/* We know for sure that arm64 does not support soft-dirty. */
-> +#if defined(__aarch64__)
-> +	return ret;
-> +#endif
-
-Just drop this arm special case now.
-
-> +	pagesize = getpagesize();
-
-const size_t pagesize = getpagesize();
-
-> +	/*
-> +	 * __mmap_complete() always sets VM_SOFTDIRTY for new VMAs, so we
-> +	 * just mmap a small region and check its VmFlags in /proc/self/smaps
-> +	 * for the "sd" flag.
-> +	 */
-
-/* New mappings are expected to be marked with VM_SOFTDIRTY (sd). */
-
-> +	addr = mmap(0, pagesize, PROT_READ | PROT_WRITE,
-> +		    MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
-> +	if (!addr)
-> +		ksft_exit_fail_msg("mmap failed\n");
-> +
-> +	if (check_vmflag(addr, "sd"))
-> +		ret = 1;
-
-supported = true;
-
-> +
-> +	munmap(addr, pagesize);
-> +	return ret;
-> +}
-> +
-
--- 
-Cheers
-
-David / dhildenb
 
 
