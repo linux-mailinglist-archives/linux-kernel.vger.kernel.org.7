@@ -1,175 +1,333 @@
-Return-Path: <linux-kernel+bounces-821529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D808AB81878
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2435B8191C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DEB57A0335
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454B51684D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D03445AF;
-	Wed, 17 Sep 2025 19:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C67632126F;
+	Wed, 17 Sep 2025 19:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Cdj9EBJB"
-Received: from mail-qv1-f103.google.com (mail-qv1-f103.google.com [209.85.219.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="fzm78YDY"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11020092.outbound.protection.outlook.com [52.101.201.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ABA344584
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.103
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758136363; cv=none; b=Sx+/hMlru/1xe4keqWPjldmL92KlM7fKe0Q0eIsow6CTvJGKi+rRGax0mPgA6oC9jHMF/7/MEJxP0faWBuZY6U0RgU/NCwi2QuLkOsZ3e/lT77eyDRpCzi2Px5jODOxjg7VQWgrpqZkiZELYl7G7Z7BDtjS8hKMpFZm40xLUQo8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758136363; c=relaxed/simple;
-	bh=1vjvrErixwiivd/wzISzOVvkbt76yybwtaJToh3tQxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DV3ATk2E0Rv57+2+TTMUxrswDLxpY1+g2hROsEEPvxe88hjTBX15VOioKKum2E+Mw2hV5zqHn+2WVqKvcv9mKa1921lf0YZKvHBS80BNNi/DcqhHucnfWggFpi2p3snkcbrjX3lL8sgYvZ0//0Pm7eVknLTs86owB6+8w1LCHQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Cdj9EBJB; arc=none smtp.client-ip=209.85.219.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-qv1-f103.google.com with SMTP id 6a1803df08f44-78ed682e9d3so1588786d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:12:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9FC33595E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758136536; cv=fail; b=K5zc8qFo17H3ZKbn3bNG5lBzTEPa2RG2Kb7Erdq1I5pzkyKoLiNbhYm6tQVRy2/CVYJziyfyGGySuBa2DQF+lIHUfdKLkOZJm5IYzDX+TL/tmotjchJmdKzeNTXh1T6Kh78NqbjWwsRY0DOyqP39IXpJhwoAQ5iD2hpzxD3zcbU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758136536; c=relaxed/simple;
+	bh=N0CAtujyZ/bXppfaXEkJMD7gfdPfJ3hXLcX0jRMpedg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MSpYIbZmRaYyQxaTb2oPBciX0HBJZZf9dF4tsly7waspwbhj2i9fd+Fd30KWgO653hgdp35ja00wkkqoj1/M7K+Gmdrmi8XWAUpnbbJeVOZSk4FRXSvLx+xMIgm/0KS8PI8rKvD3FNQlFg4aQhwH22pzkpDr/6wdhmgztcSR7O4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=fzm78YDY; arc=fail smtp.client-ip=52.101.201.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aGSLxCFl6OQGL3G+L+9DASboImP7xhvrTz2kWsApYG2E+hRuHwuJKWWdnpGV4QfSKZ4KvjWb/hNK6RGtA7eCTH4IATS2EkQFgTyreZDCPgLzkSMCKTVJ+SuAEHdGzImihxrvet8ICkWQmqqxtwPnfcvAoO/hdkzniPditjeMsgk32ex8yfsrhVqAHmNnJgwfWke9jMOAjs2v6AV+Ta+LMtURgJayuN7+iji43E1gSGSFvEaHYLP8oojl9+mNJt6A9XrUqJxTzTgbmmOEPRNspFRDiQVtN3uv1ZGFArCsYyC40x8yEx9gW54RHqMX3HPr6zsnJkVFhr3Iero6ROPuQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gFaNZzW7eC5f/HUyWFmmBPcD9+4RVNfoR7/P2457JbE=;
+ b=mypE7PDkpO6QlDZwclsBIziQQ1jeF93NQts1MOxzcpxC+0F7avMLyH7p/KKD2GCK7U/A18V2dCGTiOkm0oVUd47QOsAFepdbPysE5EZVOjlAz7q2RfS1w7lWPl4MVOFrmNNX4rBYaUhG80TpSd5CQq2udqGdrnojZY/ujw1BF6aUJ0rIH75qhM1URGHXOnneLWcXE1KuBpEn4wo0181DqWBo37g7ue4QjudngLHHMAdDvdE9q2od3U1FBH0Pey1Mhfzmy0fpF3VCd3ze6wM610UpjDye2EUKTwnnpEBPrejvbXLs9HYDIaKwSqXGk0T6m6UWin4THTWH6AFx7BMh/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1758136358; x=1758741158; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUffZOSE0pIs8q7STk7EsoZEDkYGtOkYWeXrF7MZ/ro=;
-        b=Cdj9EBJB0GAJY4Ig4TwZSZXpXr1SeTdQphNglugm09ntSAr5u2AJbNUpFAIKw7IdWC
-         BJ4Hj/4f0JZFWYkWnxZONPomfNwdfQZI5kOfDTAUqdyXZKPP7IaeP9COa9H63N/HZWDO
-         GLvIxGG+FnRaI8/xx3dxB6d8AVm8xSLaYrZoIb8b4TWRX0zEXiMuXJQ3zHEVoPlCs3r8
-         /iTBm9wv5R4FiV/jN5tT8o2+g+JWmODnlYZOOTAtgpYMlcWpUWJGWZhEuLlvC8h7rYYY
-         Rt9O3Z6XJTOLbSIEY0CuvPJWosxtX2fIBpFoMLcD4rTg2OEWmM09Ky1UBDjNL5OQ88Hw
-         Kd2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758136358; x=1758741158;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YUffZOSE0pIs8q7STk7EsoZEDkYGtOkYWeXrF7MZ/ro=;
-        b=Q2eYA0Hpd+SDK7taSULiZEBxh9k6r5U7lwjTgmp1pTBRQv2wzq7KJ4TDnSzjgNZHrN
-         A1Pz0gNmOYCoqeBfdShFbXEw0b+MOjKRve3eGwkCbP29VUgqG6mYoo/QQdX34jdyD6s6
-         sRAu4k6I8Jq6UqAvmmzq40En8HBahNpUj0HeqMvlDEKE4VQ6/ajMT80GM6KNUFPLkLk0
-         lvdGhpdCXllvTFMOAjD4lp43KZqUDOqORHKtVgECl/ZFBx+vvGnqD2UonlE4tWetaDVi
-         i6BFWoYE038/6FF8/6g+I8rKikXrq1o7XkBrfYMdnULC++b86BzMrLitpPzK7FhIGGFo
-         OsMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUL2lXarn+Bm+aWQzv5gnd8uiyaIRiYzvojIyL+E/n3fuWvYdJhKXGOmih3GE8Xzwc7/QUCn5PzTgp6vWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh71w1stgEXraVJJh/35B/EedWMhMUcNcRgAs2E9WwW1vd0TY7
-	plCMIH661L4N2QPRZBGGeFg7g1r98mHn98tEVFs3iziOgZNCGi0XyL9Ec+wjZTmzV4BeUI/OlO3
-	5FOg1pLjbBCNW9XvlN/9OQv2yzT863oexlpZpjNeiPBeV0AOTzSn4
-X-Gm-Gg: ASbGncthXYg+NMBtEb8SZxnuV85w+FAIzhh+KCBzJKqkByjP/f3WvTxseHBqbCylGWs
-	8DcWqDt+JYx1moeABkVh2Ul4lyWa3TOgKynIH0Pz6Iyj5Qaj1sgF0a4QyQ5NH5Tq3LJW0yBw6Sd
-	LaaubtcAhj3u9UveYjB9GYQxUAl460H3gs6lL5rfxPrRYR6ANkNXOYkZQ6BF30qQ04N0aHuQobH
-	LOiIpsfSsOXr8bwRaydnRGu5mNKDatkkwOmuFaB1HlelkP+eLdlIFNHbM3NV/0MQg0kdPZVPWFf
-	rxPBDFVZ5+YPbFFBecmsI7VKsZBfkJviEBLgo3jA51UD+xB6B0Dmw6HqEyE=
-X-Google-Smtp-Source: AGHT+IF5aUvuj1zf+TNucQKa06iCuoRLrdGNIbKzVNhnsAz2hDf+JpWhBo2wnu2LTf3ORroElcN4PqQUofmw
-X-Received: by 2002:a05:6214:d85:b0:766:ab7c:3e89 with SMTP id 6a1803df08f44-78ecf4fe6e5mr32679866d6.64.1758136358312;
-        Wed, 17 Sep 2025 12:12:38 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-793456ffd82sm107916d6.15.2025.09.17.12.12.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 12:12:38 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id A6DD234052F;
-	Wed, 17 Sep 2025 13:12:37 -0600 (MDT)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 4FFC2E40305; Wed, 17 Sep 2025 13:12:37 -0600 (MDT)
-Date: Wed, 17 Sep 2025 13:12:37 -0600
-From: Uday Shankar <ushankar@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Shuah Khan <shuah@kernel.org>, linux-block@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] selftests: ublk: add test to verify that feat_map is
- complete
-Message-ID: <aMsIJXDRhkRWDH1m@dev-ushankar.dev.purestorage.com>
-References: <20250916-ublk_features-v1-0-52014be9cde5@purestorage.com>
- <20250916-ublk_features-v1-3-52014be9cde5@purestorage.com>
- <aMowhqjOND9EdiKh@fedora>
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gFaNZzW7eC5f/HUyWFmmBPcD9+4RVNfoR7/P2457JbE=;
+ b=fzm78YDYP8gZhkK7WcSoE+O86pU1TVwz9ux4MYwA4Syli2+/k1IZr7c7Un9IuCY3wxaRQvpSp3Dra9sc94JuzIPMSgQdPJ5Ix/NPnMx7zpeQavmY257lzms7ZeAEI3V6z+qv9b30zrJZKMDD2tKpzlpDbOq7415cz0gynf4SN+o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ CH0PR01MB6860.prod.exchangelabs.com (2603:10b6:610:101::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.13; Wed, 17 Sep 2025 19:15:31 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 19:15:31 +0000
+Message-ID: <45dc2746-153a-482d-954f-11fe1cd8d18e@os.amperecomputing.com>
+Date: Wed, 17 Sep 2025 12:15:27 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+To: Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
+ <aeb76956-f980-417f-b4e7-fe0503bb5a2b@os.amperecomputing.com>
+ <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
+ <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
+ <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
+ <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
+ <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
+ <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
+ <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
+ <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
+ <4aa4eedc-550f-4538-a499-504dc925ffc2@os.amperecomputing.com>
+ <1cfda234-1339-4d83-bd87-b219fbd72664@arm.com>
+ <55a79826-48e3-41c0-8dbd-b6398e7e49a6@os.amperecomputing.com>
+ <92719b15-daf8-484f-b0db-72e23ae696ad@os.amperecomputing.com>
+ <e86e2aa5-c66c-41a9-a56d-74451df0d105@arm.com>
+ <f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com>
+ <047c0f7b-e46d-4a3f-8bc0-ce007eac36a7@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <047c0f7b-e46d-4a3f-8bc0-ce007eac36a7@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR05CA0183.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::8) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMowhqjOND9EdiKh@fedora>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CH0PR01MB6860:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d6e91fa-778e-4031-8002-08ddf61e91ba
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bFRqaG8xeEtmVXNQdlZqUnJ5VVZSeEZmU0JzNXU2OTZ3U2xnc1R2U1pHdUEr?=
+ =?utf-8?B?SGEzdnhkdTBLTnhIUm9PVWlpVWxVc1lGcC9RTjF5S2kyQllQMEZhNlRTcjlS?=
+ =?utf-8?B?b2Y3NWMzQ0NhTENHNmN6MFlZSC8vNi93dGM0d0cxSytsSVYrbXgzV1dkR3Fs?=
+ =?utf-8?B?bjFudlJhZkxaeVFlZ05LeStSZldlVWRDRW03S0w5QUVrSlF6S0laYlh5K3J1?=
+ =?utf-8?B?TENzNk8yRk1GalA3dUpMd1h0L1k1WndyMlRVakNsRlJNYXVFR2ZUaFJGZndD?=
+ =?utf-8?B?Y1hUOGU0cGNmcWFHUU01N0duYWJ4NGJESCtDTE90LzJpVjR3QXBmeXBTYy84?=
+ =?utf-8?B?TGtsbVhTMk5XTmVGNHNmejRXT0xkc0RNTk5rWEpLdTRYeC9oTy9kQ2pYRzdX?=
+ =?utf-8?B?V1N1YzYwd08rZ1Q5WTZKa1EvcHNKa0F5RktmcmgxOVE4SWFKa2pHMjhqTmlQ?=
+ =?utf-8?B?cUlYbllZUFhMT0RybWJpeHFiYUFyWG5DUUVXQTVoL0JDOXpGVFczaVFUZkp2?=
+ =?utf-8?B?Q3k3YnNMekRPTjFrTlk4bUNLN3FubmYrcDd6T3RsK2RYT1UvbHV1NkMrRk9k?=
+ =?utf-8?B?UmJPRDl5emcxWWFKc01sNE5kbFE5QVljU0F3NERwOUFZcDNDalB2bnRXQTdN?=
+ =?utf-8?B?R3hmN2JWVFJjdjBDZ3Z2YzZjcVpVZXBDVHZpWlg0VWdLUU1obmV6N0xLdC85?=
+ =?utf-8?B?eXV4RmVNaDFRekpySjQwejU1dmtaS09iWmVXSktndG1aVFZPbzcrVHhwbmpC?=
+ =?utf-8?B?MU5BdVArWVYxbEN5ZTF6d2d4M3NzUDN5L2tEN09na092NkovSVB2SXJNYU5s?=
+ =?utf-8?B?ak1DazBwRHdzeW9sVEdleEo5RHJ0L2wrL2J6MmJGdWdGekV2a0J4WmZ0a3FE?=
+ =?utf-8?B?bUpVU1F2YUtadUoxVDFUVjlEKzhJc0hLMytWWXpEZG85L2VJVVZPL3BTQUZt?=
+ =?utf-8?B?NG5MSXJBdUtrbUd6bEwyc2tHWHBvSEl1YUkrTGFONnp0eWZoSXdZWXppRXBF?=
+ =?utf-8?B?YnBONU5ESzNKQlZGakVmTkY0elN5ODZJM3ZXUW01RjFXSUFUOHlCSWMrdS81?=
+ =?utf-8?B?TlpYeW1oYU41eFBVYUF5a0JIKzZSakVzdm1qcVcxMWM1RW9MNDJkSXdjdEtm?=
+ =?utf-8?B?cllmTnIvcFYreXBqRmVheit3cnB2azlyV1pkQUNFMVZHWUhLUnRLUU90UjNX?=
+ =?utf-8?B?MWY0RUd0c29rbjlxMkhhYUI3blA2TnowblcvTlE0Q2NIQ01RSDJocS9LaXlY?=
+ =?utf-8?B?KzRVR2VWc2JsY3ExMmJjZlU4MEN1d3VickRRazJGdzR1eGQwYjExbVV0c2VM?=
+ =?utf-8?B?TXhCbW9NYkNwWncrOVJtazU5dWRka2x2SkZMcU8wWnJqWlA3TnJPM2U1OHl0?=
+ =?utf-8?B?cjhjSDI5L21iMWVXaTBBU2ZjSmpBZDE5cmg5MjlUMFplcVJ5QUF2OGNiTmZz?=
+ =?utf-8?B?OVFPRHhpcVN0ZzEzWlhEbUtsNmNjaHlSOENqajg1ZytScElhMlRWL1hLRGxY?=
+ =?utf-8?B?QTNvZm8zd3prOXh3Q0pNbUZNVnZVbVlGSkhWUUxkYXRNaldQdUZCb0lUdThu?=
+ =?utf-8?B?cHV2VW5jbUU1anovTWtHNkR4MVZIbmNUczRrOE1pTXlBRGF1dXJ5SUxXNndZ?=
+ =?utf-8?B?ZjFRb1UvSFEzMjRKamhoaXdGTGRsU2xFNWFPTHVVN3g0NnQrVVZiTUJPanZ3?=
+ =?utf-8?B?c0x4eEFZRlpSUlZ6cWdhazI3WStndCtHLzJuaGRvbWMvdXNIN2hQYjNMRXlM?=
+ =?utf-8?B?UVRRQmhEZkhta2lGbjFibTVNb0pRdkxDdnZmSFVkNmZXbmx2V21FWXJmS3Yw?=
+ =?utf-8?B?UHZGb29VZEl2eldzNU9hbHl1WmpJaUgxOFdkTkUvU0JLZHd2eDgvMnNsYzZK?=
+ =?utf-8?B?THpsUllYWGFMbHdldHdieVNPUDR6Q1MrbjJjblEydk51Rk5RTmZIN1hPNVE4?=
+ =?utf-8?Q?Q63l7cds+G8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TUlxaXVQWVQ5dTJ0R0J6UGlGT0xWUU1pYkI1aWpEYkdNa1d4KzRTRm0wdytB?=
+ =?utf-8?B?NkdHWUF2dmJyckNLc3RjM2c0TG00U0UyM2JBMyt4TWVCOWIvWG9pS1ZEUlA0?=
+ =?utf-8?B?eld5Qy9vY2d0NnFuKzd0MVEyVEJyRTBkMGxJM1prUjdaWndXQkYzZklBV3Zm?=
+ =?utf-8?B?N2pyd1J3MUlBeTRqUGtWdE1kdWR2QVZOS2RBMFgwckpTVXp2UFgyNjZuQTNx?=
+ =?utf-8?B?S09mRmppTW4zVzRrQWtTMEVORmFZa3RJUnJQaSs0anQ3SUZMMTh0SXpHSG85?=
+ =?utf-8?B?T3BFRERleTZBbHdBYkJqaWp0LzUwS1R4QlRMYTBrRHpPSmhXQkFuTkR4c1Zk?=
+ =?utf-8?B?ZlRseGRDS095elNUUmhLbGo2c2JRNVFndWpvSFVoZmluUkhZK0F6ZnJvbFpZ?=
+ =?utf-8?B?THJET1ErYzRLdHNzYzB5b2hEQ1JPOC95YzF4c05UNTJ4V0YyV0JpcXo1aUhO?=
+ =?utf-8?B?OVlybTQ2WVN1NkxPZ3ZtVktuZmEzZDlGUGlXVWp0MEVGVkpFWGZsaXVGNGM4?=
+ =?utf-8?B?dm1NSysxaFd4S3YrNEltbEVzZTR6eURCMkFiODdPbjROUnpldWFzQW1qdndz?=
+ =?utf-8?B?K3NkSGx4RllkYkdTNXdvNzJSWnVZTmYxYnZ1Ly84bnBCWGlXSm9PVGpQbDJu?=
+ =?utf-8?B?WUYxMy91ODVjWXZramdlaFNuR0xvNzZBMzJEZVpHdHR1My9SL2ZPM25SWm1t?=
+ =?utf-8?B?S1VUdDgrZXk1Z1hyaDZOekNxYU9HRkVZU2wyMDVQOVl1akhVYmtORGxYdUZp?=
+ =?utf-8?B?b0tLdldoSHUrVVlIbXFDL1lLeXpVamhGWVN3ajFBTCtDb2Z5aEs1TG5kTWll?=
+ =?utf-8?B?a0Y2ekRJRXRPcDYraXNjRFNCZTFjdm1reUFoR2F2ck5QOC85OE5RRWdJREN4?=
+ =?utf-8?B?VGF0Y1E0ZS9MRVZ3Sm9ON0d6Ym9VaTlCRlpDZ3VJWWlqa3ZVdkN2WWNUeHpY?=
+ =?utf-8?B?WnFXcjlaZ3gxZW5NbTFieTE2U2NCWkpqYXdneCszQjBEMk1tQU0zNW5CRTd2?=
+ =?utf-8?B?SWlBbHZzdkIyZC85djRNYzhaZjEyNS9Yb05NaTkyWWNISEVteUdFY2dCaTZS?=
+ =?utf-8?B?Sm9DWDlmZXNUN0FraHMranhwTm5Eb3dwMVEvbEp1YXhVVG03Sm1MWVYyMGMv?=
+ =?utf-8?B?U1JvdEVkcGNYMWtmbjdyUG5KdE5wdTlsUXhLblNVTnJkdFk1dlp1SnlZVU5x?=
+ =?utf-8?B?S2xFODhIODFOT2FuY3dacW5jdWNpWFBScjJqMThwUmd2MFhkMmxreFJWR2Nr?=
+ =?utf-8?B?V2lxbEg3MUxxWjIvUTU4WjFjTFlHc2lhU2c3bHg4bDFpY3llQ2xPeE1EOFZv?=
+ =?utf-8?B?TkRmK096TTJDTWZ4a0FzUi9zV0JiRlFiRUV3Wkg2cVZPRUZoYzZsc2FzOEtz?=
+ =?utf-8?B?bHNHcEpPQVR4Zysrakp1aUtibzY5MzlBd1l3VStEbDlQT1ByejBpVm0veTgx?=
+ =?utf-8?B?RFVkTEg3OVFXdkF6b21vT1JXYlhJUDdnamliek8vK085bXVEc0w5WUNEemJi?=
+ =?utf-8?B?d2R6eEhORkwxeDJzYzd5NmllS051UDk2b3grQ2xjMTFpeGY1L2kxbHMrMWd1?=
+ =?utf-8?B?UDMva0E5eTd4L0xyNUFPMTUrdmdMcXhBc2RXd3pRcFlEZHNseThxYzBEZU5a?=
+ =?utf-8?B?RTEyd2ZWYVhmYkltQWVYV2tWSzl4WXloYkVWVHpQYmVKTnNKUmJzSXVzQi92?=
+ =?utf-8?B?alpHNkR4M2hEbjh4bi9yb043VDNTenlmck9VVmdiTDZBNE50NmtqdDJnb3V4?=
+ =?utf-8?B?Y2ZYMk1XaFpNWTVHUk92bFYwcExycE0xRlAzVHRxeUQ5UHozM0RPMDBPNlk5?=
+ =?utf-8?B?OGdtTkFwOVpLSGVrRG1qNHY5S3M1Vjcyc2FiTCt3ZUlrTmkrUWxUQzBkY2g3?=
+ =?utf-8?B?TGtOOUwzZDdHWVJYRy9ReUFxdEJKUSswTFRsYk1LWXhPZlByaHZ2RDVsYldD?=
+ =?utf-8?B?OEpoQnY0N0U4Y1kzTlJDNXluakZoSkgvQjVPMHVWVWpMR0xJUEJBUnJSb2VZ?=
+ =?utf-8?B?a0xyZ3pKZVhYeVV5eWJJVjFqak5GN2l1bzVrcXNqdGJJdkN2aTJzclJzU3Zi?=
+ =?utf-8?B?bzdBa1hVME5oZ1B5azUvaXVBNEtvSEs4SHFxeE9WRVlUc2d4WVdHU1BKUnVx?=
+ =?utf-8?B?Z2RNSmJpT0ppZXF3OUhMTFlHdHA0TVZ6d2JISjJEdFRZNU1TSmJCTlF4QWVy?=
+ =?utf-8?Q?2dkRwzUMScwo7V94nc+f1AU=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d6e91fa-778e-4031-8002-08ddf61e91ba
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 19:15:31.2212
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1laL6rIbUvSKopgqxVACf9xncag1Kz6T29iT8al9VWFVgCT0H2wK3+VMAGr7+h9KakaArD2+xThYua0BRQPgP3GljTv3GRargX8NqTS+9BU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB6860
 
-On Wed, Sep 17, 2025 at 11:52:38AM +0800, Ming Lei wrote:
-> On Tue, Sep 16, 2025 at 04:05:57PM -0600, Uday Shankar wrote:
-> > Add a test that verifies that the currently running kernel does not
-> > report support for any features that are unrecognized by kublk. This
-> > should catch cases where features are added without updating kublk's
-> > feat_map accordingly, which has happened multiple times in the past (see
-> > [1], [2]).
-> > 
-> > Note that this new test may fail if the test suite is older than the
-> > kernel, and the newer kernel contains a newly introduced feature. I
-> > believe this is not a use case we currently care about - we only care
-> > about newer test suites passing on older kernels.
-> > 
-> > [1] https://lore.kernel.org/linux-block/20250606214011.2576398-1-csander@purestorage.com/t/#u
-> > [2] https://lore.kernel.org/linux-block/2a370ab1-d85b-409d-b762-f9f3f6bdf705@nvidia.com/t/#m1c520a058448d594fd877f07804e69b28908533f
-> > 
-> > Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-> > ---
-> >  tools/testing/selftests/ublk/Makefile           |  1 +
-> >  tools/testing/selftests/ublk/test_generic_13.sh | 16 ++++++++++++++++
-> >  2 files changed, 17 insertions(+)
-> > 
-> > diff --git a/tools/testing/selftests/ublk/Makefile b/tools/testing/selftests/ublk/Makefile
-> > index 5d7f4ecfb81612f919a89eb442f948d6bfafe225..770269efe42ab460366485ccc80abfa145a0c57b 100644
-> > --- a/tools/testing/selftests/ublk/Makefile
-> > +++ b/tools/testing/selftests/ublk/Makefile
-> > @@ -20,6 +20,7 @@ TEST_PROGS += test_generic_09.sh
-> >  TEST_PROGS += test_generic_10.sh
-> >  TEST_PROGS += test_generic_11.sh
-> >  TEST_PROGS += test_generic_12.sh
-> > +TEST_PROGS += test_generic_13.sh
-> >  
-> >  TEST_PROGS += test_null_01.sh
-> >  TEST_PROGS += test_null_02.sh
-> > diff --git a/tools/testing/selftests/ublk/test_generic_13.sh b/tools/testing/selftests/ublk/test_generic_13.sh
-> > new file mode 100755
-> > index 0000000000000000000000000000000000000000..ff5f22b078ddd08bc19f82aa66da6a44fa073f6f
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/ublk/test_generic_13.sh
-> > @@ -0,0 +1,16 @@
-> > +#!/bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +. "$(cd "$(dirname "$0")" && pwd)"/test_common.sh
-> > +
-> > +TID="generic_13"
-> > +ERR_CODE=0
-> > +
-> > +_prep_test "null" "check that feature list is complete"
-> > +
-> > +if ${UBLK_PROG} features | grep -q unknown; then
-> > +        ERR_CODE=255
-> > +fi
-> > +
-> > +_cleanup_test "null"
-> > +_show_result $TID $ERR_CODE
-> 
-> What if the ublk selftest is run on downstream kernel?
-> 
-> Maybe the output can changed to "unsupported" to show that ublk selftest
-> code doesn't cover or use this feature.
 
-Yes I pointed out this issue in the commit message too. But I am unsure
-what you're asking for.
 
-I think we need a failure here if this test is to fulfill its intended
-purposes (catching cases where a feature is added without updating the
-feat_map in kublk). This does also cause failures in cases where an old
-test suite is run against a newer kernel. Since I think this is an
-unusual case, perhaps I can add a log line when this test fails saying
-that the failure is expected if running an old test suite against a new
-kernel?
+On 9/17/25 11:58 AM, Ryan Roberts wrote:
+> On 17/09/2025 18:21, Yang Shi wrote:
+>>
+>> On 9/17/25 9:28 AM, Ryan Roberts wrote:
+>>> Hi Yang,
+>>>
+>>> Sorry for the slow reply; I'm just getting back to this...
+>>>
+>>> On 11/09/2025 23:03, Yang Shi wrote:
+>>>> Hi Ryan & Catalin,
+>>>>
+>>>> Any more concerns about this?
+>>> I've been trying to convince myself that your assertion that all users that set
+>>> the VM_FLUSH_RESET_PERMS also call set_memory_*() for the entire range that was
+>>> returned my vmalloc. I agree that if that is the contract and everyone is
+>>> following it, then there is no problem here.
+>>>
+>>> But I haven't been able to convince myself...
+>>>
+>>> Some examples (these might intersect with examples you previously raised):
+>>>
+>>> 1. bpf_dispatcher_change_prog() -> bpf_jit_alloc_exec() -> execmem_alloc() ->
+>>> sets VM_FLUSH_RESET_PERMS. But I don't see it calling set_memory_*() for
+>>> rw_image.
+>> Yes, it doesn't call set_memory_*(). I spotted this in the earlier email. But it
+>> is actually RW, so it should be ok to miss the call. The later
+>> set_direct_map_invalid call in vfree() may fail, but set_direct_map_default call
+>> will set RW permission back. But I think it doesn't have to use execmem_alloc(),
+>> the plain vmalloc() should be good enough.
+>>
+>>> 2. module_memory_alloc() -> execmem_alloc_rw() -> execmem_alloc() -> sets
+>>> VM_FLUSH_RESET_PERMS (note that execmem_force_rw() is nop for arm64).
+>>> set_memory_*() is not called until much later on in module_set_memory(). Another
+>>> error in the meantime could cause the memory to be vfreed before that point.
+>> IIUC, execmem_alloc_rw() is used to allocate memory for modules' text section
+>> and data section. The code will set mod->mem[type].is_rox according to the type
+>> of the section. It is true for text, false for data. Then set_memory_rox() will
+>> be called later if it is true *after* insns are copied to the memory. So it is
+>> still RW before that point.
+>>
+>>> 3. When set_vm_flush_reset_perms() is set for the range, it is called before
+>>> set_memory_*() which might then fail to split prior to vfree.
+>> Yes, all call sites check the return value and bail out if set_memory_*() failed
+>> if I don't miss anything.
+>>
+>>> But I guess as long as set_memory_*() is never successfully called for a
+>>> *sub-range* of the vmalloc'ed region, then for all of the above issues, the
+>>> memory must still be RW at vfree-time, so this issue should be benign... I think?
+>> Yes, it is true.
+> So to summarise, all freshly vmalloc'ed memory starts as RW. set_memory_*() may
+> only be called if VM_FLUSH_RESET_PERMS has already been set. If set_memory_*()
+> is called at all, the first call MUST be for the whole range.
+
+Whether the default permission is RW or not depends on the type passed 
+in by execmem_alloc(). It is defined by execmem_info in 
+arch/arm64/mm/init.c. For ARM64, module and BPF have PAGE_KERNEL 
+permission (RW) by default, but kprobes is PAGE_KERNEL_ROX (ROX).
+
+> If those requirements are all met, then if VM_FLUSH_RESET_PERMS was set but
+> set_memory_*() was never called, the worst that can happen is for both the
+> set_direct_map_invalid() and set_direct_map_default() calls to fail due to not
+> enough memory. But that is safe because the memory was always RW. If
+> set_memory_*() was called for the whole range and failed, it's the same as if it
+> was never called. If it was called for the whole range and succeeded, then the
+> split must have happened already and set_direct_map_invalid() and
+> set_direct_map_default() will therefore definitely succeed.
+>
+> The only way this could be a problem is if someone vmallocs a range then
+> performs a set_memory_*() on a sub-region without having first done it for the
+> whole region. But we have not found any evidence that there are any users that
+> do that.
+
+Yes, exactly.
+
+>
+> In fact, by that logic, I think alloc_insn_page() must also be safe; it only
+> allocates 1 page, so if set_memory_*() is subsequently called for it, it must by
+> definition be covering the whole allocation; 1 page is the smallest amount that
+> can be protected.
+
+Yes, but kprobes default permission is ROX.
+
+>
+> So I agree we are safe.
+>
+>
+>>> In summary this all looks horribly fragile. But I *think* it works. It would be
+>>> good to clean it all up and have some clearly documented rules regardless. But I
+>>> think that could be a follow up series.
+>> Yeah, absolutely agreed.
+>>
+>>>> Shall we move forward with v8?
+>>> Yes; Do you wnat me to post that or would you prefer to do it? I'm happy to do
+>>> it; there are a few other tidy ups in pageattr.c I want to make which I spotted.
+>> I actually just had v8 ready in my tree. I removed pageattr_pgd_entry and
+>> pageattr_pud_entry in pageattr.c and fixed pmd_leaf/pud_leaf as you suggested.
+>> Is it the cleanup you are supposed to do?
+> I was also going to fix up the comment in change_memory_common() which is now stale.
+
+Oops, I missed that in my v8. Please just comment for v8, I can fix it 
+up later.
+
+Thanks,
+Yang
+
+
+>
+>> And I also rebased it on top of
+>> Shijie's series (https://git.kernel.org/pub/scm/linux/kernel/git/arm64/
+>> linux.git/commit/?id=bfbbb0d3215f) which has been picked up by Will.
+>>
+>>>> We can include the
+>>>> fix to kprobes in v8 or I can send it separately, either is fine to me.
+>>> Post it on list, and I'll also incorporate into the series.
+>> I can include it in v8 series.
+>>
+>>>> Hopefully we can make v6.18.
+>>> It's probably getting a bit late now. Anyway, I'll aim to get v8 out tomorrow or
+>>> Friday and we will see what Will thinks.
+>> Thank you. I can post v8 today.
+> OK great - I'll leave it all to you then - thanks!
+>
+>> Thanks,
+>> Yang
+>>
+>>> Thanks,
+>>> Ryan
+>>>
+>>>> Thanks,
+>>>> Yang
+>>>>
 
 
