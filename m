@@ -1,173 +1,139 @@
-Return-Path: <linux-kernel+bounces-819807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FBCB7E0DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB572B7DFFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8E548809B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5031C01D6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5191E7C19;
-	Wed, 17 Sep 2025 00:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9AB1FCF41;
+	Wed, 17 Sep 2025 00:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="Aj0MQMiv"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iM+Kng8K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68586258A;
-	Wed, 17 Sep 2025 00:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D029F1E1C1A;
+	Wed, 17 Sep 2025 00:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758070328; cv=none; b=X8OGdXQUlpPrvx6Qu7ZEs20wBQQcP3Gsq25FJvAuk1CPvdaDk5W3g9YEOxhb+ZdF3D1zYaadKgj2kLrfjkfWKQpMvDKjJSd3jTzkPoN1gCWF8Ao//sI7rnSNzQp6mGvkPu5uFFNWUnAEwXPxYA13hfup2Dbqom1l9cU/453eqdI=
+	t=1758070348; cv=none; b=fJL4tv89P29+AJ4r7pw7FPnwunIg9F2V1pPuJZu7nZp3Xk6u6fsPBFc4LvRbrNONfzAxKGhmvv5yUF1+Ja788QnPpbaGprv2u5qlNJ9b1gfWuUQbw94adFdPl6hksFHRXRnWJm+MV06eWEpfwT+ORIzdV3RBsFR553lyb3BP+YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758070328; c=relaxed/simple;
-	bh=OxwCZnJC5isXmiyPNJpyp0+DmSUnFI5Drm2wReP3NdU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hQz49o//Q0bzgI1PkKvBl2Rb4ZbxK3O5PVxr4dmbOBalVIWRPDxJXbrmANxsPx0lLsnBShZzUSyMCYoX9264Y0t7260Wm6J30XJyL/6tuTl5/fX4O85a2ue/Oqu7KeM7c0aHbSxWDqmy/0/uHhWxCuKwad+XoODx+UxGv0Hb9XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=Aj0MQMiv; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58GNwSkG3713697;
-	Wed, 17 Sep 2025 00:51:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=r1gWN7yB1juy+kFtfwJcBQuVd+foLiAL6hMf8DPhb0A=; b=
-	Aj0MQMivyrNifXPvt8IFpuRL3+m0ZcxnfChi0vw6U5W6RaPO7g/yxpv8gFP14H82
-	uoZcM0Fy44IT2tijv4dIP2waleTWxsW2aTzX69ZC4AeVyWveFy8Qu03Gdv4zkvO6
-	+hPkNNYSE5kNDhoElqL7Gx2o3qQQijFwVIIku0RQkDfZNDBW7IHpPLUm5TeVpGZM
-	MM1q9IzuGPR9ThAatX6vakSXR2/gh3IPmX+QGadUbk9IEFTf5Tyw+2d4cIq3+S2A
-	fUbgAKFBKVHLvkHSz4otHIursy09TYq8seqvccw2+lbSvO8Fu7DXl+UF67pW5cy6
-	TypaDruy159mroIFyxPryA==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 497fwrr3je-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 17 Sep 2025 00:51:40 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.59; Tue, 16 Sep 2025 17:51:39 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
- 15.1.2507.59 via Frontend Transport; Tue, 16 Sep 2025 17:51:37 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <skhan@linuxfoundation.org>
-CC: <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <shuah@kernel.org>, <stern@rowland.harvard.edu>,
-        <syzbot+205ef33a3b636b4181fb@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <valentina.manea.m@gmail.com>
-Subject: Re: [PATCH V2] usbip: Fix locking bug in RT-enabled kernels
-Date: Wed, 17 Sep 2025 08:51:36 +0800
-Message-ID: <20250917005136.1801295-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <c32f5c8b-0c62-4567-9d82-081ecb0889b1@linuxfoundation.org>
-References: <c32f5c8b-0c62-4567-9d82-081ecb0889b1@linuxfoundation.org>
+	s=arc-20240116; t=1758070348; c=relaxed/simple;
+	bh=IQUK4UH6y3UvHRusmYMhZGxdhmU0laY1aNE4fvf9Cgc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=grWbjekAD8W9DM2m5B9V0A1UpkLIuNBgOaxby4ycLmiMpLEKobIK/hpIkto7FqS0mwnSkhkbhYaPs1b3U7RG7AB2B83VoCt8EGxpjKs0ioeF+uyVFs+bLEFYR4FDBEFAZ2buzyk+Md/3889bkyuocuEOFMzJPSvuaJO9TOQ0dE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iM+Kng8K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA44C4CEEB;
+	Wed, 17 Sep 2025 00:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758070347;
+	bh=IQUK4UH6y3UvHRusmYMhZGxdhmU0laY1aNE4fvf9Cgc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iM+Kng8KInHQg3xdJ6B7yLk4QQZyQVpv+wAYNydEbiBaljhNgvu1IHSg4L4KZl0I1
+	 ThSEBV9dKCbDALIg90u1FUo/cKcbDNXPYnO+WRZZTUT728N+Om92e1oOp/hCWfnAmt
+	 UG2qF+5wW7YIRWsSiovd39rd/lNX0ixe3dJmDN5JAlH+sy5RgN3YkUQYxAVHB+EpFn
+	 vVWpz/1s5R51Y6WAtZhVRkN6iMSD+xCvG6Z60Fh7YKfaT4EvKu8BYjEjXZbYQLTx8R
+	 k/AhWx5dwpoocKxiw0F1zuuGhh7PdFu5NZJW/utE6c7Se4hEijAhHzWy5vHxzA3221
+	 ZTIRNgKISPeYQ==
+Message-ID: <85a46710-64ee-4a21-b95c-d4c18c2f634f@kernel.org>
+Date: Wed, 17 Sep 2025 09:52:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Fd3qSLfHJEgL2DhVEOdTnAmRFrOhjAtq
-X-Authority-Analysis: v=2.4 cv=Sdr3duRu c=1 sm=1 tr=0 ts=68ca061c cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=yJojWOMRYYMA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8
- a=f17w4hqU4zeInAolt7YA:9 a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDAwNiBTYWx0ZWRfX75KBoUEw7qWU
- o54yBgMshkmsCSzRql4nmB86P5EuY4AEUyHazOGHt55IMc6FlSb4DWaLwl0rQJRTt6GleAjgVHx
- gprly9JTQERxcZtE+TBqLjRVycU8xer5wGuTETHjRLTPBatp+AYNMJeZ71Q7rt1auTb2pJR6196
- 2qqO2QT/cHdo/+18CCSxcbKvDi/HAHkoARXdcNU2uz8p2PrAGL2vYnX/VzToO1lMr+8xe5bG6A2
- T2NHevGRhBAE/1QXjYR/7isgyqVAeBE4LrQQMUCIBXQoX2glkQpfkC5dZ6mzTZti0xzge29iwU3
- PoSfHf69lv4Ef45KsRwUT+XONrKHZpwCWB7MLR/kPfbYnbx01isiQfdXM04QDA=
-X-Proofpoint-GUID: Fd3qSLfHJEgL2DhVEOdTnAmRFrOhjAtq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1011 suspectscore=0 spamscore=0 bulkscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507300000 definitions=firstrun
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: rtc: Add ST m41t93
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ akhileshpatilvnit@gmail.com
+References: <cover.1757510157.git.akhilesh@ee.iitb.ac.in>
+ <3aed714163abc86a18a62f039b285643d9504e64.1757510157.git.akhilesh@ee.iitb.ac.in>
+ <20250911-resolute-translucent-koala-1707dd@kuoka>
+ <20250915141951.GA3239298@bhairav-test.ee.iitb.ac.in>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250915141951.GA3239298@bhairav-test.ee.iitb.ac.in>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 16 Sep 2025 17:33:44 -0600, Shuah Khan wrote:
->On 9/16/25 09:47, Alan Stern wrote:
->> On Tue, Sep 16, 2025 at 09:41:43AM +0800, Lizhi Xu wrote:
->>> Interrupts are disabled before entering usb_hcd_giveback_urb().
->>> A spinlock_t becomes a sleeping lock on PREEMPT_RT, so it cannot be
->>> acquired with disabled interrupts.
->>>
->>> Save the interrupt status and restore it after usb_hcd_giveback_urb().
->>>
->>> syz reported:
->>> BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
->>> Call Trace:
->>>   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->>>   rt_spin_lock+0xc7/0x2c0 kernel/locking/spinlock_rt.c:57
->>>   spin_lock include/linux/spinlock_rt.h:44 [inline]
->>>   mon_bus_complete drivers/usb/mon/mon_main.c:134 [inline]
->>>   mon_complete+0x5c/0x200 drivers/usb/mon/mon_main.c:147
->>>   usbmon_urb_complete include/linux/usb/hcd.h:738 [inline]
->>>   __usb_hcd_giveback_urb+0x254/0x5e0 drivers/usb/core/hcd.c:1647
->>>   vhci_urb_enqueue+0xb4f/0xe70 drivers/usb/usbip/vhci_hcd.c:818
->>>
->>> Reported-by: syzbot+205ef33a3b636b4181fb@syzkaller.appspotmail.com
->>> Closes: https://syzkaller.appspot.com/bug?extid=205ef33a3b636b4181fb
->>> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
->>> ---
->>> V1 -> V2: fix it in usbip
->>>
->>>   drivers/usb/usbip/vhci_hcd.c | 6 +++---
->>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
->>> index e70fba9f55d6..eb6de7e8ea7b 100644
->>> --- a/drivers/usb/usbip/vhci_hcd.c
->>> +++ b/drivers/usb/usbip/vhci_hcd.c
->>> @@ -809,15 +809,15 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
->>>   no_need_xmit:
->>>   	usb_hcd_unlink_urb_from_ep(hcd, urb);
->>>   no_need_unlink:
->>> -	spin_unlock_irqrestore(&vhci->lock, flags);
->>>   	if (!ret) {
->>>   		/* usb_hcd_giveback_urb() should be called with
->>>   		 * irqs disabled
->>>   		 */
->>> -		local_irq_disable();
->>> +		spin_unlock(&vhci->lock);
->>>   		usb_hcd_giveback_urb(hcd, urb, urb->status);
->>> -		local_irq_enable();
->>> +		spin_lock(&vhci->lock);
->>>   	}
->>> +	spin_unlock_irqrestore(&vhci->lock, flags);
->>>   	return ret;
->>>   }
+On 15/09/2025 16:19, Akhilesh Patil wrote:
+>>> +$id: http://devicetree.org/schemas/rtc/st,m41t93.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: ST M41T93 RTC and compatible
+>>> +
+>>> +maintainers:
+>>> +  - linux-rtc@vger.kernel.org
 >>
->> This looks right to me; it's the same pattern that the other host
->> controller drivers use.  However, the final decision is up to the usbip
->> maintainers.
->>
->> Also, there are several other places in the usbip drivers where
->> usb_hcd_giveback_urb() gets called; shouldn't they all be changed to
->> follow this pattern?
->>
->
->Looks good to me.
->+1 on changing all other instances - can we do that?
-I'm replying to both of you. Personally, I suggest this isn't necessary
-right now; it's safer to wait until a problem is reported before fixing it.
+>> Not much improved. This should be a person responsible/caring about this
+>> hardware support in the kernel. Why would we want to take the binding if
+>> no one cares about it?
+> 
+> Okay. As per get_maintainer.pl, linux driver corresponding to this binding does not have a dedicated
+> maintainer, hence it shows rtc subsystem maintainer (Alexandre Belloni).
 
-Also, the context of several other calls to usb_hcd_giveback_urb() in usbip
-differs from the current issue. Enabling RT_PREEMPT shouldn't cause similar
-issues.
+And what did I express at v1?
 
-BR,
-Lizhi
+> Looking forward for your suggestion here.
+> What do you suggest to keep maintainer as Rob Herring or/and me ? as I see in
+> such cases Rob is the maintainer.
+
+No, I really doubt Rob cares about this particular hardware. Neither do
+I, nor Conor.
+
+
+Best regards,
+Krzysztof
 
