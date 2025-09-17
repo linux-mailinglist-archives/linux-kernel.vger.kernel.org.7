@@ -1,147 +1,216 @@
-Return-Path: <linux-kernel+bounces-819931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3F9B8025A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:43:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFACEB7FA57
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6FA1C02820
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:38:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7332A35E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97BA2F83BC;
-	Wed, 17 Sep 2025 03:38:07 +0000 (UTC)
-Received: from chinatelecom.cn (smtpnm6-10.21cn.com [182.42.147.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF9C25FA34
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.147.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6A92F3C22;
+	Wed, 17 Sep 2025 03:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KYMJUlLy"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5DC1D7E41
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758080287; cv=none; b=vBo+HJIFHi/hrLA0Wg30ui0psMAaqEEk+gkRy4D/UuRA/oEouTqjeVpsGc4DeWNfVwnaKGFW2Xsbw680WD0vy1uzbFhP6VSL/7mVQTVrciLCLh/IgMv6ZwlV2c9KDyqcCyAbvkoQMiu6ve4bbKtHVw7MVnmB8WO1CJF3gu84JkY=
+	t=1758079759; cv=none; b=FKmyK7POJ2FZv0fNBvm7CFkJqetux8sukErH5LnoJgZEjR39UBEmbuWzBKzlRFIxNX5NuzjofRVciSMaJiEkenBZaQDjF9OOjWLaybHuEWhvjVfyq7bA9K9vTeL32Z0ylLmyr4XBNIzd4PZhkZqVs6sDSJb1wjpNyAPuMmHUTOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758080287; c=relaxed/simple;
-	bh=08VUFcXpF6AYclk8y6n1SHrN774oN8kabGwclYrzuCI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ac69WKIykLEsf9JSpMbWg8qq3f/PMEMjM1rdhlAHHDDzODfpXIR+B/jurDbBpeZni7PNsFWzB2OXIwxdTOgO8KOKFFGgJjPFj0RADugg8bMeWtvLH7mTjrIVfmN87zGqTg6f3wMEyi7oF3tae/sxBS/thzkMQmuZFLxCEs0k6u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=182.42.147.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
-HMM_SOURCE_IP:192.168.139.44:0.1676807570
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-36.111.64.84 (unknown [192.168.139.44])
-	by chinatelecom.cn (HERMES) with SMTP id 46200B023C14;
-	Wed, 17 Sep 2025 11:29:15 +0800 (CST)
-X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
-Received: from  ([36.111.64.84])
-	by gateway-ssl-dep-79cdd9d55b-z742x with ESMTP id 5da354203705446287f19055e82e39d7 for tglx@linutronix.de;
-	Wed, 17 Sep 2025 11:29:28 CST
-X-Transaction-ID: 5da354203705446287f19055e82e39d7
-X-Real-From: liuq131@chinatelecom.cn
-X-Receive-IP: 36.111.64.84
-X-MEDUSA-Status: 0
-Sender: liuq131@chinatelecom.cn
-From: Qiang Liu <liuq131@chinatelecom.cn>
-To: tglx@linutronix.de
-Cc: bp@alien8.de,
-	peterz@infradead.org,
-	jpoimboe@kernel.org,
-	pawan.kumar.gupta@linux.intel.com,
-	mingo@redhat.com,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	Qiang Liu <liuq131@chinatelecom.cn>
-Subject: [PATCH] x86/bugs: Rate-limit the SPECTRE_V2 messages
-Date: Wed, 17 Sep 2025 11:28:57 +0800
-Message-Id: <20250917032857.22441-1-liuq131@chinatelecom.cn>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1758079759; c=relaxed/simple;
+	bh=N3JfVah2P6XQPN4lz77tBvAHJXrDFSUZNEmxFiuW8Ng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nU+d9yPDyRCWDusGOSGpUt6QfcnnTNyRvjIfrHSwzcReDVIQw6XsC0NdEc28TF04gvHAQOYn/DqxDF2X7Rp2FjLuxWzPIEXPyppZbdGQUDlbUKC8Le4bmHXa2foThIc8vc3y4JeaiRq57Qn9xfDXbp5ir6f558EptJVPuZk/9KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KYMJUlLy; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5607c2f1598so7011325e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758079754; x=1758684554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LcpWUIr1iLGYih9SljEBhD+HhzbTpTNlOZj3vDSjgeM=;
+        b=KYMJUlLysD3niVVByho0FhOUPvsSapYAWVxjOC434oIRNA1gqNqCePe3ll5NyKKZhF
+         P3Xag7XmB6AltY0KVjETj+IREuPaAS8CbjvkIGaOtrxqKNjTQ1q0pCQn/tnrmfSXr8GY
+         BESyx/KpxCSr62i68cy7abllVG+0nOPVaGrnk9kiZCS+Fl9QBIw56Aa9/WV0UDQyGhHT
+         JfwkQHu+reReVJdCu1Pt7SL5FxfHW44plSBWHnsCtSt3XB/8uGOngeBZeMV9LHYLCulM
+         d9YaBlRhyFt6yVUYOwKqVk5GZp5NSLe74mBLPCAEquN5VdfxD9/071gO0JG0vfZv1aQY
+         owdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758079754; x=1758684554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LcpWUIr1iLGYih9SljEBhD+HhzbTpTNlOZj3vDSjgeM=;
+        b=v8W5fqEKqAgA7L7Z5+tzXDkXW/QMPitejeDNdNZjrp5QEROBlCXwq/pGT9DE2cE6sq
+         7Zm5CWa1TMXNwQZEhNAhk43f0sSDmEmZGwPDFBTSxscgavccKUGzzZVhpZXki8DYr3wl
+         kXEFZeb+3GS7lBz5vSqG9N6RYuHn60yrpeMak5h6qdcKnBwScyMaV2ww+Yk03qr3XuA5
+         8bgU2nOk9eK6J93rBcKEHnm3zXorgZiU5ceTZmS4FFPHuyiM4lQgPWU6UcFJKpQlgNa7
+         tMgLaiMR6JbZluoFhdBuESa9kcqzVxHA4BlrBShbuJNDHg27hdG2KTjRADdLfhHDQHuq
+         9N5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWu51emx927kwyJQHWtVUnD+PFmQ3QjsUIMuFOf4ImoYAuVw20HYLKB3Y/Z+/xDp//ZW7gjSbKcI1YTVMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQNxQfx26x4FbV7j079wX8h6Ghw+sgdEig1Xofc+90GWxitGgU
+	i3aGUKqCcwqovmktZsW7rJvu1zjFzgzyO/l9+4APWMSPAlGJCKBQbKqbRjqJQtXHxmhjV0Mjb2C
+	e44nxXUjN2GyLD50za3pnYKzb9Jx6spU0FiTWm9M=
+X-Gm-Gg: ASbGncunVztx53QCkqImYeLx4Lwwtk5mGEnmwW0OeCdMPfY0ECj7cgtiAcf1julV+hR
+	mNrxCi0tgpwWpwljdcc437z848NykB80C346QKb0Z9OkRaboSdnA5t0fbATWu4nDcbGs9DaRIjZ
+	pYGDz43UblDaxGQRDVNHIlrSVwnTeeKmZNwFOPjU4NLPdXaPwOXOfQ623MvhqSdC+G0zSnGa/pH
+	KiFs72KgErbH3CNMTQKkA4qSFgcqc8vNp1b/n/pxwU=
+X-Google-Smtp-Source: AGHT+IHvdK6YJxJ14DmmoPlrCIACrpjbO8WYwtjNhRIdVFhwRVCMJLqH6ycTr3Nz9g0eC7R87YcBGArVaTHmbz4RtU4=
+X-Received: by 2002:a05:6512:2205:b0:569:a257:c6d6 with SMTP id
+ 2adb3069b0e04-5779a470e5cmr145658e87.49.1758079754046; Tue, 16 Sep 2025
+ 20:29:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
+ <20250916052904.937276-1-jstultz@google.com> <aMklFqjbmxMKszkJ@jlelli-thinkpadt14gen4.remote.csb>
+ <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+ <CANDhNCqJbnemY8EBYu=4w3ABfrDkuc+dUShDDcjufFpsh7qv1g@mail.gmail.com> <20250916213036.GC2800598@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250916213036.GC2800598@noisy.programming.kicks-ass.net>
+From: John Stultz <jstultz@google.com>
+Date: Tue, 16 Sep 2025 20:29:01 -0700
+X-Gm-Features: AS18NWBHUeA_rL6s1DRuniVFHWpsmvyQJtxXIDkDm_Xw6ZxYEv0pKI25raWouFw
+Message-ID: <CANDhNCqK3VBAxxWMsDez8xkX0vcTStWjRMR95pksUM6Q26Ctyw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] sched/deadline: Fix dl_server getting stuck,
+ allowing cpu starvation
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Suleiman Souhlal <suleiman@google.com>, Qais Yousef <qyousef@layalina.io>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, kuyo chang <kuyo.chang@mediatek.com>, 
+	hupu <hupu.gm@gmail.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-During stress-ng testing, excessive SPECTRE_V2 messages overwhelmed the
-low-speed serial device, causing system soft lockup. This issue can be
-resolved by implementing rate-limiting for the relevant log outputs.
+On Tue, Sep 16, 2025 at 2:30=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+> On Tue, Sep 16, 2025 at 10:35:46AM -0700, John Stultz wrote:
+> > I of course still see the thread spawning issues with my
+> > ksched_football test that come from keeping the dl_server running for
+> > the whole period, but that's a separate thing I'm trying to isolate.
+>
+> So what happens with that football thing -- you're saying thread
+> spawning issues, so kthread_create() is not making progress?
+>
+> You're also saying 'keeping the dl_server running for the whole period',
+> are you seeing it not being limited to its allocated bandwidth?
+>
+> Per the bug today, the dl_server does get throttled, not sufficiently?
 
-The log as below:
-[121017.083236] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.098606] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.102398] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.102421] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.102532] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.102550] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.102569] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.133670] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.148497] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.163674] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.185720] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.287675] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.300205] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.335075] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.346428] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.428517] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.450328] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.592131] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121017.592865] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
-[121037.642577] watchdog: BUG: soft lockup - CPU#68 stuck for 23s! [stress-ng-procf:2483051]
-[121037.642578] Modules linked in: ...
-[121037.642697] CPU: 68 PID: 2483051 Comm: stress-ng-procf Kdump: loaded Tainted: ...
-[121037.642698] Hardware name: XFUSION 2288H V6/BC13MBSBC, BIOS 1.29 11/25/2022
-[121037.642706] RIP: 0010:console_unlock+0x283/0x350
-[121037.642709] Code: 00 e8 01 15 00 00 55 9d 45 84 f6 0f 84 46 ff ff ff e8 71 f8 ff ff 85 c0 0f 85 e8 fd ff ff e9 34 ff ff ff e8 df 14 00 00 55 9d <8b> 44 24 04 85 c0 0f 84 f8 fd ff ff e8 9c 84 99 00 e9 ee fd ff ff
-[121037.642710] RSP: 0018:ff607726b60abc00 EFLAGS: 00000246
-[121037.642711] RAX: 0000000000000000 RBX: ffffffffaef699cc RCX: 0000000000000008
-[121037.642712] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffffaef6c228
-[121037.642713] RBP: 0000000000000246 R08: ffffffffadabd540 R09: 0000000000aaaaaa
-[121037.642713] R10: 0000000000000001 R11: ff2cf962c6a5b550 R12: ff2cf962c2700000
-[121037.642714] R13: 0000000000000000 R14: ffffffffaef6c228 R15: 000000000000008c
-[121037.642715] FS:  00007f2021c07640(0000) GS:ff2cf9e0be700000(0000) knlGS:0000000000000000
-[121037.642715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[121037.642716] CR2: 0000000000e3b7a0 CR3: 0000003f41266005 CR4: 0000000000771ee0
-[121037.642716] PKRU: 55555554
-[121037.642717] Call Trace:
-[121037.642722]  vprintk_emit+0x118/0x120
-[121037.642727]  printk+0x58/0x73
-[121037.642731]  bpf_unpriv_handler+0xbf/0x180
-[121037.642733]  ? proc_taint+0x1d0/0x1d0
-[121037.642738]  proc_sys_call_handler+0x13e/0x250
-[121037.642742]  new_sync_read+0x10d/0x1b0
-[121037.642745]  vfs_read+0x14e/0x1b0
-[121037.642747]  ksys_read+0x5f/0xe0
-[121037.642750]  do_syscall_64+0x3d/0x80
-[121037.642753]  entry_SYSCALL_64_after_hwframe+0x61/0xc6
+So yeah, I think this is a totally different issue than the lockup
+warning problem, and again, I suspect my test is at least partially
+culpable.
 
-Fixes: 0de05d056afd ("x86/speculation: Warn about eIBRS + LFENCE + Unprivileged eBPF + SMT")
-Fixes: 44a3918c8245 ("x86/speculation: Include unprivileged eBPF status in Spectre v2 mitigation reporting")
-Signed-off-by: Qiang Liu <liuq131@chinatelecom.cn>
----
- arch/x86/kernel/cpu/bugs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+You can find my test here:
+https://github.com/johnstultz-work/linux-dev/commit/d4c36a62444241558947e22=
+af5a972a0859e031a
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 36dcfc5105be..22fb2113cbe6 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -1809,11 +1809,11 @@ void unpriv_ebpf_notify(int new_state)
- 
- 	switch (spectre_v2_enabled) {
- 	case SPECTRE_V2_EIBRS:
--		pr_err(SPECTRE_V2_EIBRS_EBPF_MSG);
-+		pr_err_ratelimited(SPECTRE_V2_EIBRS_EBPF_MSG);
- 		break;
- 	case SPECTRE_V2_EIBRS_LFENCE:
- 		if (sched_smt_active())
--			pr_err(SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG);
-+			pr_err_ratelimited(SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG);
- 		break;
- 	default:
- 		break;
--- 
-2.46.0
+The idea is we first start a "Referee" RT prio 20 task, and from that
+task we spawn NR_CPU  RT prio 5 "Offense players" which just spin
+incrementing a value ("the ball"), then NR_CPU RT prio 10 "Defense
+players" that just spin (conceptually blocking the Offense players
+from running on the cpu). Once everyone is running, the ref zeros the
+ball and sleeps for a few seconds. When it wakes it checks the ball is
+still zero and shuts the test down.
 
+So the point of this test is very much for the defense threads to
+starve the offense from the cpu.  In doing so, it is helpful for
+validating the RT scheduling invariant that we always (heh, well...
+ignoring RT_PUSH_IPI, but that's yet a different issue) run the top
+NR_CPU RT priority tasks across the cpus. So it inherently stresses
+rt-throttling as well.
+
+Note: In the test there are also RT prio 15 "crazy-fans" that sleep,
+but occasionally wake up and "streak across the field" trying to
+disrupt the game, as well as low priority defense players that take
+either proxy-mutex or rt_mutexes that the high priority defense
+threads try to aquire to ensure proxy-exec & priority inheritance
+boosting is working - but these can be mostly ignored for this
+problem.
+
+Each time the ref spawns a player type, we go from lowest to highest
+priority, calling kthread_create(), sched_setattr_nocheck() and then
+wake_up_process(), for NR_CPUs, and then the Ref repeatedly sleeps
+waiting for NR_CPU tasks to check-in (incrementing a player counter).
+
+The problem is that previously the tasks were spawned without much
+delay, but after your change, we see each RT tasks after the first
+NR_CPU take ~1 second to spawn. On systems with large cpu counts
+taking NR_CPU*player-types seconds to start can be long enough (easily
+minutes) that we hit hung task errors.
+
+As I've been digging, part of the issue seems to be kthreadd is not an
+RT task, thus after we create NR_CPU spinner threads, the following
+threads don't actually start right away. They have to wait until
+rt-throttling or the dl_server runs, allowing kthreadd to get cpu time
+and start the thread.  But then we have to wait until throttling stops
+so that the RT prio Ref thread can run to set the new thread as RT
+prio and then spawn the next, which then won't start until we do
+throttling again, etc.
+
+So it makes sense if the dl_server is "refreshed" once a second, we
+might see this one thread per second interlock happening.  So this
+seems likely just an issue with my test.
+
+However, prior to your change, it seemed like the the RT tasks would
+be throttled, kthreadd would run and the thread would start, then with
+no SCHED_NORMAL tasks to run, the dl_server would stop and we'd run
+the Ref, which would immediately eneueued kthreadd, which started the
+dl_server and since the dl_server hadn't done much, I'm guessing it
+still had some runtime/bandwidth and would run kthreadd then stop
+right after.
+
+So now my guess (and my apologies, as I really am not familiar enough
+the the DL details) is that since we're not stopping the dl_server, it
+seems like the dl_server runtime gets used up each cycle, even though
+it didn't do much boosting. So we have to wait the full cycle for a
+refresh.
+
+I've used a slightly modified version of my test (simplifying it a bit
+and adding extra trace annotations) to capture the following traces:
+
+New behavior: https://ui.perfetto.dev/#!/?s=3D663e6a8f4f0ecdbc2bbde3efdc601=
+dc980f7b333
+This shows the clear 1 second delay interlock with kthreadd for each
+thread after the first two, creating a clear stair-step pattern.
+
+Old behavior: https://ui.perfetto.dev/#!/?s=3D3d6a70716c6a66eb8d7056ef2c640=
+838404186c2
+This shows how there's a 1 second delay after the first two threads
+spawn, but then the rest of the created threads quickly interleave
+with kthreadd, allowing them to start off quickly
+
+I still need to add some temporary trace events around the dl_server
+so I can better understand how that interleaving used to work. As it
+may have been just luck that my test worked back then.
+
+However, interestingly if we go back to 6.11, before the dl_server
+landed, it's curious because I do see the 1 second stair steps, but
+with larger cpu counts there seems to be more of them working in
+parallel, so each second, the ref will manage to interlock with
+kthreadd 4 to 8 times, and that many of threads will start up.  So its
+behavior isn't exactly like either the new or old behavior with
+dl_server, but it escaped hitting the hung task errors.
+
+But as the new dl_server logic is much slower for spawning rt threads,
+I probably need to find a new way to start my test. But I just want to
+raise the issue in case others hit similar problems with the change.
+
+thanks
+-john
 
