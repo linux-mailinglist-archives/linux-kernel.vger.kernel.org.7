@@ -1,52 +1,94 @@
-Return-Path: <linux-kernel+bounces-821034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E69B80254
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:43:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA0CB80246
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B397171810
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D883ADBDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC6E2F3C14;
-	Wed, 17 Sep 2025 14:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D37E2F1FC9;
+	Wed, 17 Sep 2025 14:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="jrLBm6Tp"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mLnLCTT1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SjMSNiJA";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mLnLCTT1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SjMSNiJA"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FA12F066A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E85E2F49EF
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758120098; cv=none; b=uY9eI1W8skRVbnDuIFiU7NozSfxrJJePY+bQOv9+mNLpV71F//oBGgRECfBnUXFLuZ8A1MsnYped5P6F18YWAlH0KTPxYSZnSa6aNiPPsjhZ/hmajKAnnD2yOeB5Rq4HZTWx9SK8i98H2ePeqIF+MNQh/ty2rk6hTPZ+JvCLv7I=
+	t=1758120080; cv=none; b=hNtuLLwG2Iy/jeKTMXyNMGECKfKubwzmBgEpwV63RuiMFU0t2VkxghXck4RyJ5HsNq6W02DKVVHNC1i1y0abLFJhrE9DLvZmkDPuGOlRJV02PWvRiOzg/zUKYq+LWPo9OilOLf1P1q50gDDrAMfLD/hea4jzTpm2OViMQJ6cXb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758120098; c=relaxed/simple;
-	bh=I/z7U304JTwO94u1bnkA/Hks+NzJgOXOigQoumFURbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=idrV9Yqg0C669XNCwBkfGdLaTr98aPwh2mGMuNBkGmBufJbHEe+kTDHLzIlGaDZyqZ8HrwDkZIdVOCTEdW8GcVibwU5pmgjJ28Ja4QwTMCNG4L2gbCl7yCgX+RAWfDwkqlkp6wvrmUXGb68fDK9AfqTwE7QwlXoh7Ko+eHQaDUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=jrLBm6Tp; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:3a87:0:640:845c:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id A629EC0183;
-	Wed, 17 Sep 2025 17:41:24 +0300 (MSK)
-Received: from [IPV6:2a02:6bf:8011:f00:892:da6d:2c11:1af9] (unknown [2a02:6bf:8011:f00:892:da6d:2c11:1af9])
-	by mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id BfSKmK0GnuQ0-GrDuOf3C;
-	Wed, 17 Sep 2025 17:41:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1758120084;
-	bh=eBPc/BeuJ7fV43KQ20piI8pdsxTVb0VMtheYuJm63KI=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=jrLBm6Tp8q7toy5QEaR5te8WsegUuPaIlHWVeZInqtyy6MG/jKaohS5huMWw2eEuY
-	 FXR0wcjmOsgLNlcAd0VJDso8V+oyLqkgxC3lcFh/Ki5u3U81k/khAxZx0dcyEaSABu
-	 BYN26oIUDb4MfuhgXrOxAcG8SOiZjS8o24ytfEuo=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-69.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <3c7c5bca-5d3f-4878-b6d4-72b036e8b588@yandex-team.ru>
-Date: Wed, 17 Sep 2025 17:41:11 +0300
+	s=arc-20240116; t=1758120080; c=relaxed/simple;
+	bh=O72y1P85oEfVTM3gM8aQbN/7l0SPT52uB4xyEoYhNZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YwPS6a9uSTPwWY2QhymaWbM0cmVOPmTVK1Oqlsczgpg0hGSUllI22fSJ3quHVaKJNxbrZDclqBAkx9vHvGzXmDKzGbGxzYRPZWj0H5Rq0JqEeMub/PceCr8vyHPki073+o6bI90YyD6P70U0MOacJ37cv2GkIh9CmbijzAIn4Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mLnLCTT1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SjMSNiJA; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mLnLCTT1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SjMSNiJA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BB4712064D;
+	Wed, 17 Sep 2025 14:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758120076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wA7r1WZYbZub30NyQBFugxQeEYMaV29B73/0Mg7EIVQ=;
+	b=mLnLCTT1SLKjduRUYUdcyO/R0VneI7W64pTlhR8d5W/ON99hgYbx2S1rhA4s6eOIRArFFx
+	xUZiiBiyd8ricbrBJePLyLaTsGfHlfd8CLlFA8/sAzHZrmTw3RSB6lcqF+2e4ENPIy4Y5Z
+	A3d9Sjvjo1hqZxEk0d1q4z7Jz9fubTk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758120076;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wA7r1WZYbZub30NyQBFugxQeEYMaV29B73/0Mg7EIVQ=;
+	b=SjMSNiJA8J8jGrabu9XStHvkQ/SKk5O25RCCzAwCxhZDOqnXr5FlySijSfEnkThcwXuLMv
+	1j/rrPJ+YO7yWGDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758120076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wA7r1WZYbZub30NyQBFugxQeEYMaV29B73/0Mg7EIVQ=;
+	b=mLnLCTT1SLKjduRUYUdcyO/R0VneI7W64pTlhR8d5W/ON99hgYbx2S1rhA4s6eOIRArFFx
+	xUZiiBiyd8ricbrBJePLyLaTsGfHlfd8CLlFA8/sAzHZrmTw3RSB6lcqF+2e4ENPIy4Y5Z
+	A3d9Sjvjo1hqZxEk0d1q4z7Jz9fubTk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758120076;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wA7r1WZYbZub30NyQBFugxQeEYMaV29B73/0Mg7EIVQ=;
+	b=SjMSNiJA8J8jGrabu9XStHvkQ/SKk5O25RCCzAwCxhZDOqnXr5FlySijSfEnkThcwXuLMv
+	1j/rrPJ+YO7yWGDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D7F01368D;
+	Wed, 17 Sep 2025 14:41:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id g/HcBozIymjkDgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 17 Sep 2025 14:41:16 +0000
+Message-ID: <f2783a49-c60c-42ac-9b37-b71c253fb1cf@suse.de>
+Date: Wed, 17 Sep 2025 16:41:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,70 +96,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] x86/split_lock: Warn for bus locks once for each
- task
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-References: <20250910162126.157894-1-pfalcato@suse.de>
+Subject: Re: [PATCH 1/2] fbdev/hyperv_fb: deprecate this in favor of Hyper-V
+ DRM driver
+To: Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ dri-devel@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ssengar@linux.microsoft.com, mhklinux@outlook.com, rdunlap@infradead.org,
+ bartosz.golaszewski@linaro.org, gonzalo.silvalde@gmail.com, arnd@arndb.de,
+ decui@microsoft.com, wei.liu@kernel.org, deller@gmx.de, kys@microsoft.com,
+ haiyangz@microsoft.com
+References: <E5C2A201B1BD>
+ <1758117785-20653-1-git-send-email-ptsm@linux.microsoft.com>
 Content-Language: en-US
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-In-Reply-To: <20250910162126.157894-1-pfalcato@suse.de>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <1758117785-20653-1-git-send-email-ptsm@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[linux.microsoft.com,lists.freedesktop.org,vger.kernel.org,outlook.com,infradead.org,linaro.org,gmail.com,arndb.de,microsoft.com,kernel.org,gmx.de];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de,outlook.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-Hi!
-I've tested this patch (VM w/ bus lock detection and w/o split lock 
-detection). The warn mode works fine and as expected with only one 
-notification per task. However, the ratelimit mode has been changed too: 
-only one notification per task will be in dmesg, because this mode 
-reuses notification code of warn mode. But in the documentation for 
-ratelimit mode there is nothing about the limit of notifications: "Limit 
-bus lock rate to N bus locks per second system wide and warn on bus 
-locks.". Thus, I think that ratelimit mode should remain old behaviour.
 
-On 9/10/25 19:21, Pedro Falcato wrote:
-> Sometimes, it's possible to see long-running services that keep pounding
-> the bus_lock logic in a long-standing way that does not trigger
-> ratelimiting, but still floods the dmesg nonetheless, over time.
-> 
-> Fix it by using current->reported_split_lock, which was previously
-> used for the split_lock handling. In this way, bus_lock #DB's are only
-> warned once in the dmesg, for each task that hits a bus lock.
-> 
-> Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+
+Am 17.09.25 um 16:03 schrieb Prasanna Kumar T S M:
+> The Hyper-V DRM driver is available since kernel version 5.14 and it
+> provides full KMS support and fbdev emulation via the DRM fbdev helpers.
+> Deprecate this driver in favor of Hyper-V DRM driver.
+>
+> Signed-off-by: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+
 > ---
-> This is already reflected in the documentation for bus lock, as "Warn
-> once per task and and continues to run.".
-> 
-> Resend since the first mail had accidentally no mailing list in CC.
-> 
->   arch/x86/kernel/cpu/bus_lock.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/bus_lock.c b/arch/x86/kernel/cpu/bus_lock.c
-> index 981f8b1f0792..71342e6244e3 100644
-> --- a/arch/x86/kernel/cpu/bus_lock.c
-> +++ b/arch/x86/kernel/cpu/bus_lock.c
-> @@ -335,8 +335,11 @@ void handle_bus_lock(struct pt_regs *regs)
->   		/* Warn on the bus lock. */
->   		fallthrough;
->   	case sld_warn:
-> -		pr_warn_ratelimited("#DB: %s/%d took a bus_lock trap at address: 0x%lx\n",
-> +		if (!current->reported_split_lock) {
-> +			pr_warn_ratelimited("#DB: %s/%d took a bus_lock trap at address: 0x%lx\n",
->   				    current->comm, current->pid, regs->ip);
-> +			current->reported_split_lock = 1;
-> +		}
->   		break;
->   	case sld_fatal:
->   		force_sig_fault(SIGBUS, BUS_ADRALN, NULL);
+>   drivers/video/fbdev/Kconfig     | 5 ++++-
+>   drivers/video/fbdev/hyperv_fb.c | 2 ++
+>   2 files changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+> index c21484d15f0c..48c1c7417f6d 100644
+> --- a/drivers/video/fbdev/Kconfig
+> +++ b/drivers/video/fbdev/Kconfig
+> @@ -1773,13 +1773,16 @@ config FB_BROADSHEET
+>   	  a bridge adapter.
+>   
+>   config FB_HYPERV
+> -	tristate "Microsoft Hyper-V Synthetic Video support"
+> +	tristate "Microsoft Hyper-V Synthetic Video support (DEPRECATED)"
+>   	depends on FB && HYPERV
+>   	select DMA_CMA if HAVE_DMA_CONTIGUOUS && CMA
+>   	select FB_IOMEM_HELPERS_DEFERRED
+>   	help
+>   	  This framebuffer driver supports Microsoft Hyper-V Synthetic Video.
+>   
+> +	  This driver is deprecated, please use the Hyper-V DRM driver at
+> +	  drivers/gpu/drm/hyperv (CONFIG_DRM_HYPERV) instead.
+> +
+>   config FB_SIMPLE
+>   	tristate "Simple framebuffer support"
+>   	depends on FB
+> diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
+> index 75338ffc703f..c99e2ea4b3de 100644
+> --- a/drivers/video/fbdev/hyperv_fb.c
+> +++ b/drivers/video/fbdev/hyperv_fb.c
+> @@ -1357,6 +1357,8 @@ static int __init hvfb_drv_init(void)
+>   {
+>   	int ret;
+>   
+> +	pr_warn("Deprecated: use Hyper-V DRM driver instead\n");
+> +
+>   	if (fb_modesetting_disabled("hyper_fb"))
+>   		return -ENODEV;
+>   
 
 -- 
-Best regards,
-Maksim Davydov
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
