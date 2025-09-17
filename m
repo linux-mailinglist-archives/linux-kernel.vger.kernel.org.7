@@ -1,202 +1,225 @@
-Return-Path: <linux-kernel+bounces-820833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D052BB7F67C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:38:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8026B7F5F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDCC3AB52E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174F01B21723
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B4C3090EC;
-	Wed, 17 Sep 2025 13:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36B330506C;
+	Wed, 17 Sep 2025 13:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XtU4Ii6g"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UtHN411b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B05F337EBA
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684FB1E25FA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115864; cv=none; b=sZIABJUx4kOkf71Tzf4OTi4uGBle3bhpTk9v7c8EUybKHqm/xq4NytI3DsGpzIOPKwSgvH17mq8eQad9bzdAW3SYzbhA+8lGbKyVwr29EUQ+xfWijfc6ylznkMMSuk0Bslp7tl50lTCQ+Kmki/Kt4mrQlPthKfr+xQ2uePXHwQY=
+	t=1758115799; cv=none; b=mFacA91w57aCHu/5aZBkAS+tJV3zSA+dkDLYxwDh/HKFjUz4xUzvjH59V9DYVVfLpk0EgcyUa5lv5WJi0opdsvPeKQSPflvqjXjkykpAp1c8fhPR6dHvSDlfEim5rt9Mx+Q0xCofBk11rPLtps63s2b07uYHlB7bdC9sNN0wGIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115864; c=relaxed/simple;
-	bh=bBNRVqm0xNP2bUegYaeeW1aFmcjZpJaGNmJt5fBNr4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=eD3CDnoU54f00KBGSiVPQ3dLnioIkkhlSRxdsMi2xDt4+rZapMXEvd856W++2T8GcvIs3gL23GKv2X10hXGEwUus87F0noRcZTn9DWMmLLAx/aO0Y2YYInHxUnlkVhxM0/W7IlsKiyEVsNt3Wf30TaddPqz0t4gArcV8iHuuBrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XtU4Ii6g; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250917133100epoutp03e2155352856987734354f2c4f81c4dd4~mFQ9vtN0B2740227402epoutp03k
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:31:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250917133100epoutp03e2155352856987734354f2c4f81c4dd4~mFQ9vtN0B2740227402epoutp03k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758115860;
-	bh=47MZ+V0NL7IUSooPzfSTYCMJEyy6bhIfvUpbYlXE654=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XtU4Ii6gEkq3cyherUoMp08oJJU1mSIB8eGsFC01rzVXVTdCPFjHo6qgVYSxU5WGF
-	 NQGYDA4G3rpHYM6XD8u4tOw29EPqlCV/ZecOhtFALG+W36lgS6NhzEVkcyU33MJ8uw
-	 CDkmpo57HJxZAl2N31TBKF3J0+vtRv1r46pcsgp8=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250917133100epcas5p15b7f82eba259bafd644edd73bfd21166~mFQ9eHgPs0664606646epcas5p1i;
-	Wed, 17 Sep 2025 13:31:00 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cRfmM238jz3hhT3; Wed, 17 Sep
-	2025 13:30:59 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250917133058epcas5p33af456c574a095b53001521358bae67a~mFQ7yAc3P3265832658epcas5p31;
-	Wed, 17 Sep 2025 13:30:58 +0000 (GMT)
-Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
-	by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250917133057epsmtip1baab1e8cb410c08fbf3884b7465c5bea~mFQ6ti_NF0528605286epsmtip1v;
-	Wed, 17 Sep 2025 13:30:57 +0000 (GMT)
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	Neeraj Kumar <s.neeraj@samsung.com>
-Subject: [PATCH V3 20/20] cxl/pmem: Add CXL LSA 2.1 support in cxl pmem
-Date: Wed, 17 Sep 2025 18:59:40 +0530
-Message-Id: <20250917132940.1566437-21-s.neeraj@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250917132940.1566437-1-s.neeraj@samsung.com>
+	s=arc-20240116; t=1758115799; c=relaxed/simple;
+	bh=WLqnIK5fO6LMHVj4rkpSBrR3QhHZuNFGvGx2HGK1r/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tJez3s0mFVXqEO1JlXngezAUOZWGLve3VgckGAHErS8iLiyKtQWL/M1RyGkv4VS1t3AH6+ji44TTDyTHeef6S07qKEOmo07deelMFmRlmYrl3EItr9HsfFZiYF5ByjsUu3LlQRfK29XNV0hbLUidlu7lLMv/trIEkGs3eP81d6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UtHN411b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758115796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ORcJ/40pST81yvYCAWc/eP0hnGAXGVPHAP2CtAwPNcM=;
+	b=UtHN411bjyGhrwbExCb4k4Keoi6ODdDEFpkU4fLTRIqM4yEhMZrzuX2l0lhsrIHFDDM+zT
+	yrqHu0+J8MJCChJfnBR1xw92J6h1uDGLYS7my1vyTuWZ112EOGXQ+IxwW6k7MWTGjng/+u
+	fTFLS0RQAW6JvYsjYmqZoGo5RuJVYLM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-9EHKU5xBPj2wj7vjrl4XSQ-1; Wed, 17 Sep 2025 09:29:54 -0400
+X-MC-Unique: 9EHKU5xBPj2wj7vjrl4XSQ-1
+X-Mimecast-MFC-AGG-ID: 9EHKU5xBPj2wj7vjrl4XSQ_1758115793
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45f2f1a650dso22942335e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:29:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758115793; x=1758720593;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ORcJ/40pST81yvYCAWc/eP0hnGAXGVPHAP2CtAwPNcM=;
+        b=sjSBKbxeycZpDCQfL+hkLyH/hQAXXeRor3r6Jgs89tGHisFm6eYdJSpDh108JvSMJa
+         A6/qaDs43UH00ZOaySCUYnKOKyPyn9/xeKIhmgfTRcCAGJzVzrzd8TosjxD5TntW5sjJ
+         wCSdbWiz9UQly5R8wfdlDlkFHuFxCb5ppW42AglcudHff8Sa3VL9SNHWAGGEMvJtsiXA
+         KSp4GY+FgcEqdca+4R7KJzH2XlB5cOKmRAeS9SsLb3ID2VNudmfuoI2YdZfiSYmjWpYK
+         Emc06c2mrAajnRcwm0YBfpSho0KNCteieoP4TFSsVuBbnhks5LHtu0sDQyYR/7tY4KJ8
+         g3NA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyHFemuuU3IEMy/D9/4+MCQgwRPBdUc84AbDie/s0PNeZj6LQ1Z9MnyZr/sslBRE2gu8Q0fdb9qks7xy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc234AQLp34gXobYhSLLdFM+uwe3HqixAoTaoXKPjshV7A0gbw
+	zQklF2G7v1iHzdzgFGit1wWPrv26VqhzPlD28p52KbAK1YLt446hP0cGamXYC6lQM11MIpJrq2h
+	LzYkIW3pd0NPK4GegqE75+JRXuk6Vo7VXKOJCogXQvR8FwZ/AKf3fedLN/mNARev0Bw==
+X-Gm-Gg: ASbGncs8fFR/kKLyfdgBBDAda+//PvrNO/XkxRUp4LOzKBxUrUZ+BBI81qnoSurJXHd
+	eHRlfPrbfBazL//Eneb94ZU2DiWHkAoztYcjtBET17EVTXxTf/IbrSrRltM+NiV4/qOetzq6BtS
+	otK2cw7pq/9/+b6mlp18i0F4wZag29LIXZUBV2QYic327pgsJj/P+EYA5UxqhbP1kL4IwgjMdjn
+	nDacdvZ3zNyvoDO0bxYzAYhDnTuEePQJd9kFSj5qbDySiqJd9J/VM8ediprdfZLrxSFFOo/W2yF
+	XlLGJuResA57kFj9178gNyJTjG4mrivNx5NgnkTypz+J7/MF6rr+/k0voDwn53zLmljppwzwdFS
+	8NHKsCUG234rA3kMGTgvrjSv5Yywqn9nRaF94U3bG+l/jebXwWy4rqYgHV60KlpAc
+X-Received: by 2002:a05:600c:1f0e:b0:45b:8adf:cf2c with SMTP id 5b1f17b1804b1-4620683f83amr19218005e9.26.1758115793373;
+        Wed, 17 Sep 2025 06:29:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFi7ScQOvFIV87bvvmxFiQ/fPZp7fWi1TbijKapfO5dtDS3+Ivg3MogGqO325Ep+dlBbTlwFQ==
+X-Received: by 2002:a05:600c:1f0e:b0:45b:8adf:cf2c with SMTP id 5b1f17b1804b1-4620683f83amr19217705e9.26.1758115792898;
+        Wed, 17 Sep 2025 06:29:52 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613eb27f25sm38795825e9.23.2025.09.17.06.29.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 06:29:52 -0700 (PDT)
+Message-ID: <aba22290-3577-44fa-97b3-71abd3429de7@redhat.com>
+Date: Wed, 17 Sep 2025 15:29:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250917133058epcas5p33af456c574a095b53001521358bae67a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917133058epcas5p33af456c574a095b53001521358bae67a
-References: <20250917132940.1566437-1-s.neeraj@samsung.com>
-	<CGME20250917133058epcas5p33af456c574a095b53001521358bae67a@epcas5p3.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/memblock: Correct totalram_pages accounting with
+ KMSAN
+To: Alexander Potapenko <glider@google.com>
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, rppt@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, elver@google.com,
+ dvyukov@google.com, kasan-dev@googlegroups.com,
+ Aleksandr Nogikh <nogikh@google.com>
+References: <20250917123250.3597556-1-glider@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250917123250.3597556-1-glider@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add support of CXL LSA 2.1 using NDD_REGION_LABELING flag. It creates
-cxl region based on region information parsed from LSA.
+On 17.09.25 14:32, Alexander Potapenko wrote:
+> When KMSAN is enabled, `kmsan_memblock_free_pages()` can hold back pages
+> for metadata instead of returning them to the early allocator. The callers,
+> however, would unconditionally increment `totalram_pages`, assuming the
+> pages were always freed. This resulted in an incorrect calculation of the
+> total available RAM, causing the kernel to believe it had more memory than
+> it actually did.
+> 
+> This patch refactors `memblock_free_pages()` to return the number of pages
+> it successfully frees. If KMSAN stashes the pages, the function now
+> returns 0; otherwise, it returns the number of pages in the block.
+> 
+> The callers in `memblock.c` have been updated to use this return value,
+> ensuring that `totalram_pages` is incremented only by the number of pages
+> actually returned to the allocator. This corrects the total RAM accounting
+> when KMSAN is active.
+> 
+> Cc: Aleksandr Nogikh <nogikh@google.com>
+> Fixes: 3c2065098260 ("init: kmsan: call KMSAN initialization routines")
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+> ---
+>   mm/internal.h |  4 ++--
+>   mm/memblock.c | 18 +++++++++---------
+>   mm/mm_init.c  |  9 +++++----
+>   3 files changed, 16 insertions(+), 15 deletions(-)
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 45b725c3dc030..ae1ee6e02eff9 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -742,8 +742,8 @@ static inline void clear_zone_contiguous(struct zone *zone)
+>   extern int __isolate_free_page(struct page *page, unsigned int order);
+>   extern void __putback_isolated_page(struct page *page, unsigned int order,
+>   				    int mt);
+> -extern void memblock_free_pages(struct page *page, unsigned long pfn,
+> -					unsigned int order);
+> +extern unsigned long memblock_free_pages(struct page *page, unsigned long pfn,
+> +					 unsigned int order);
+>   extern void __free_pages_core(struct page *page, unsigned int order,
+>   		enum meminit_context context);
+>   
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 117d963e677c9..de7ff644d8f4f 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1834,10 +1834,9 @@ void __init memblock_free_late(phys_addr_t base, phys_addr_t size)
+>   	cursor = PFN_UP(base);
+>   	end = PFN_DOWN(base + size);
+>   
+> -	for (; cursor < end; cursor++) {
+> -		memblock_free_pages(pfn_to_page(cursor), cursor, 0);
+> -		totalram_pages_inc();
+> -	}
+> +	for (; cursor < end; cursor++)
+> +		totalram_pages_add(
+> +			memblock_free_pages(pfn_to_page(cursor), cursor, 0));
+>   }
 
-Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
----
- drivers/cxl/core/pmem_region.c | 53 ++++++++++++++++++++++++++++++++++
- drivers/cxl/cxl.h              |  4 +++
- drivers/cxl/pmem.c             |  2 ++
- 3 files changed, 59 insertions(+)
+That part is clear. But for readability we should probably just do
 
-diff --git a/drivers/cxl/core/pmem_region.c b/drivers/cxl/core/pmem_region.c
-index 665b603c907b..3ef9c7d15041 100644
---- a/drivers/cxl/core/pmem_region.c
-+++ b/drivers/cxl/core/pmem_region.c
-@@ -290,3 +290,56 @@ int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
- 	return rc;
- }
- EXPORT_SYMBOL_NS_GPL(devm_cxl_add_pmem_region, "CXL");
-+
-+static int match_free_ep_decoder(struct device *dev, const void *data)
-+{
-+	struct cxl_decoder *cxld = to_cxl_decoder(dev);
-+
-+	return !cxld->region;
-+}
-+
-+static struct cxl_decoder *cxl_find_free_ep_decoder(struct cxl_port *port)
-+{
-+	struct device *dev;
-+
-+	dev = device_find_child(&port->dev, NULL, match_free_ep_decoder);
-+	if (!dev)
-+		return NULL;
-+
-+	/* Release device ref taken via device_find_child() */
-+	put_device(dev);
-+	return to_cxl_decoder(dev);
-+}
-+
-+void create_pmem_region(struct nvdimm *nvdimm)
-+{
-+	struct cxl_nvdimm *cxl_nvd;
-+	struct cxl_memdev *cxlmd;
-+	struct cxl_pmem_region_params *params;
-+	struct cxl_root_decoder *cxlrd;
-+	struct cxl_decoder *cxld;
-+	struct cxl_region *cxlr;
-+
-+	if (!nvdimm_has_cxl_region(nvdimm))
-+		return;
-+
-+	lockdep_assert_held(&cxl_rwsem.region);
-+	cxl_nvd = nvdimm_provider_data(nvdimm);
-+	params = nvdimm_get_cxl_region_param(nvdimm);
-+	cxlmd = cxl_nvd->cxlmd;
-+	cxlrd = cxlmd->cxlrd;
-+
-+	 /* TODO: Region creation support only for interleave way == 1 */
-+	if (!(params->nlabel == 1))
-+		dev_info(&cxlmd->dev,
-+			 "Region Creation is not supported with iw > 1\n");
-+	else {
-+		cxld = cxl_find_free_ep_decoder(cxlmd->endpoint);
-+		cxlr = cxl_create_region(cxlrd, CXL_PARTMODE_PMEM,
-+					 atomic_read(&cxlrd->region_id),
-+					 params, cxld);
-+		if (IS_ERR(cxlr))
-+			dev_info(&cxlmd->dev, "Region Creation failed\n");
-+	}
-+}
-+EXPORT_SYMBOL_NS_GPL(create_pmem_region, "CXL");
-diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index f01f8c942fdf..0a87ea79742a 100644
---- a/drivers/cxl/cxl.h
-+++ b/drivers/cxl/cxl.h
-@@ -910,6 +910,7 @@ cxl_create_region(struct cxl_root_decoder *cxlrd,
- bool is_cxl_pmem_region(struct device *dev);
- struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
- int devm_cxl_add_pmem_region(struct cxl_region *cxlr);
-+void create_pmem_region(struct nvdimm *nvdimm);
- #else
- static inline bool is_cxl_pmem_region(struct device *dev)
- {
-@@ -923,6 +924,9 @@ static inline int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
- {
- 	return 0;
- }
-+static inline void create_pmem_region(struct nvdimm *nvdimm)
-+{
-+}
- #endif
- 
- void cxl_endpoint_parse_cdat(struct cxl_port *port);
-diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-index 38a5bcdc68ce..0cdef01dbc68 100644
---- a/drivers/cxl/pmem.c
-+++ b/drivers/cxl/pmem.c
-@@ -135,6 +135,7 @@ static int cxl_nvdimm_probe(struct device *dev)
- 		return rc;
- 
- 	set_bit(NDD_LABELING, &flags);
-+	set_bit(NDD_REGION_LABELING, &flags);
- 	set_bit(NDD_REGISTER_SYNC, &flags);
- 	set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
- 	set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
-@@ -155,6 +156,7 @@ static int cxl_nvdimm_probe(struct device *dev)
- 		return -ENOMEM;
- 
- 	dev_set_drvdata(dev, nvdimm);
-+	create_pmem_region(nvdimm);
- 	return devm_add_action_or_reset(dev, unregister_nvdimm, nvdimm);
- }
- 
+if (memblock_free_pages(pfn_to_page(cursor), cursor, 0))
+	totalram_pages_inc();
+
+Or use a temp variable as an alternative.
+
+
+LGTM
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
 -- 
-2.34.1
+Cheers
+
+David / dhildenb
 
 
