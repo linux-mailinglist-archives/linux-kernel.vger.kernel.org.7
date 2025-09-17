@@ -1,119 +1,129 @@
-Return-Path: <linux-kernel+bounces-821561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901D0B81A27
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:30:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801C1B81A3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33083A3D47
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82AF71893C53
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E055F30B524;
-	Wed, 17 Sep 2025 19:30:05 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AC12FDC55;
+	Wed, 17 Sep 2025 19:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nYwiUIRT"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11432F83B8;
-	Wed, 17 Sep 2025 19:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF47926F46F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137405; cv=none; b=c9rq5t6oLxVSY7JSlR18gs5BZuZPekxJeOfOl9iFWsG8HU/q57/ZAH0Ty3jnidvyiiULml1USwzBQV/6AcMpMLMcWkgbzqIrwp0S0VnJSz0Q1J4MQOLj30EVdnTs5u5PkWgmn9ji3qNKeCp3+nPWaMr2DtLhE7dz0zK4MWAZEIo=
+	t=1758137475; cv=none; b=MOGCyobb/s98yddrTq2t+vvCJxXRYjQ2JS8hZgJcbKiDmX7Q9J6Eg5kMiUdHpb/l6cwrBzjjo/wfs77Wpe5jXQ36KG1UcXlAKy0TGdaZ830dxosvVMijvEWlnotPwTK8dCuOjh/MOegDVBstGf43s6l+AUer8e3hVFZdPsKsSpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137405; c=relaxed/simple;
-	bh=ZnMRKLn0qyUGROjH/cSGBvjzMuSNHc9RHc0rwxb6dFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nxY0TItu0cQ8KlnJsfKrTAkC49XAM2QlwkBgG/DNVjmod7Ea9qyS/LCRl//74VVhWl/DFQ4i33vHZ7ut4ov1xyJibLdUtrOhhbXrF/JRhMuMW2HRT0qEwyd5Vatpc2y04EHZfC068UiKZUiTQcIPwSyZ4caOW+1OPkyGsDV2cyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 7A5371DF3D5;
-	Wed, 17 Sep 2025 19:29:54 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 2316430;
-	Wed, 17 Sep 2025 19:29:49 +0000 (UTC)
-Date: Wed, 17 Sep 2025 15:30:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Fuyu Zhao <zhaofuyu@vivo.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- haoluo@google.com, jolsa@kernel.org, eddyz87@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- shuah@kernel.org, willemb@google.com, kerneljasonxing@gmail.com,
- paul.chaignon@gmail.com, chen.dylane@linux.dev, memxor@gmail.com,
- martin.kelly@crowdstrike.com, ameryhung@gmail.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- yikai.lin@vivo.com
-Subject: Re: [RFC PATCH bpf-next v1 0/3] bpf: Add BPF program type for
- overriding tracepoint probes
-Message-ID: <20250917153055.6fee814f@gandalf.local.home>
-In-Reply-To: <20250917072242.674528-1-zhaofuyu@vivo.com>
-References: <20250917072242.674528-1-zhaofuyu@vivo.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758137475; c=relaxed/simple;
+	bh=RZnZyxoAGJixZI7UyHnJvCMzSr5eHzb1JHDa6gR5wx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bP+Ub0Z+afQACbJgqFWXoTf5ThEJCcETQgr8WVy3+acocD11VTMCFzrUdWDxD0w9E6q96PCfoQ9MMlTCPupkij/8hlvF1gvD0EwRZYg2YIyV5Ftza7f6KkInN9dnIR/HWDwkd7PCUYgZu8NfYwYBG3xR5kBiK03kEyvYtyoSp5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nYwiUIRT; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a321729d-f8a1-4901-ae9d-f08339b5093b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758137460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J0BNl5ZVaTpZ5ArhCofyo8O0fTEGTpHVhfR9/EZhE9g=;
+	b=nYwiUIRTNIiGEE1ZnVtuwqUSOqeiLmRKmM34YFiQUBkTRqeL2v036e67QKwS1bX778SHza
+	WMJbqK8mY6kPTpRcUMqZuwy3AV+bvLHtQ+ZzXyt5sDf+LFFPIWGpGPtKsBHPL36GOE17QX
+	R6eBb6Z5RwtM6VExi1669Pn0L97OhV8=
+Date: Wed, 17 Sep 2025 12:30:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH] RDMA/rxe: Fix race in do_task() when draining
+To: Gui-Dong Han <hanguidong02@gmail.com>, zyjzyj2000@gmail.com,
+ jgg@ziepe.ca, leon@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ baijiaju1990@gmail.com, stable@vger.kernel.org
+References: <20250917100657.1535424-1-hanguidong02@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "yanjun.zhu" <yanjun.zhu@linux.dev>
+In-Reply-To: <20250917100657.1535424-1-hanguidong02@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 2316430
-X-Stat-Signature: j94jtr56jpxuhefubu3apgodg8t3ptxb
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+RZLjwHcDXxmzAeVwGwIyEjGeUYjMsKY8=
-X-HE-Tag: 1758137389-399912
-X-HE-Meta: U2FsdGVkX18tGG5q2NUrL+YhIfzBLvn4G+9YbPhTQObhs83gjknkX3Ot3igWVxiVfemS6aF/Ot/6ACKrBVUGoLjjBFKZB3ojVCLifTdP8lEzl2ri3wo8XV0nLuDW7XhHmO2++q3hyT1axdSYO/pteHZAb7MKuqt16EO1MLxhlEVCV7SEJxpI6Sxxd9d/U+++AEokxAEAjNfEtKrTNFXEkATDN81n7jJvNMLvSNeRWJCqvQallPUZ5GiwzzY5LgCjWwOU6UGMdXBtS2dqHJ1PJaHwGDc/hDeh+zGKAdLGefuDTvvXFWGHxggfNj+MCbbz9Uek/VxvC/4O/+0M5sXPblUoMklB1YCq
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 17 Sep 2025 15:22:39 +0800
-Fuyu Zhao <zhaofuyu@vivo.com> wrote:
+On 9/17/25 3:06 AM, Gui-Dong Han wrote:
+> When do_task() exhausts its RXE_MAX_ITERATIONS budget, it unconditionally
 
-> Hi everyone,
-> 
-> This patchset introduces a new BPF program type that allows overriding
-> a tracepoint probe function registered via register_trace_*.
-> 
-> Motivation
-> ----------
-> Tracepoint probe functions registered via register_trace_* in the kernel
-> cannot be dynamically modified, changing a probe function requires recompiling
-> the kernel and rebooting. Nor can BPF programs change an existing
-> probe function.
+ From the source code, it will check ret value, then set it to 
+TASK_STATE_IDLE, not unconditionally.
 
-I'm confused by what you mean by "tracepoint probe function"?
+> sets the task state to TASK_STATE_IDLE to reschedule. This overwrites
+> the TASK_STATE_DRAINING state that may have been concurrently set by
+> rxe_cleanup_task() or rxe_disable_task().
 
-You mean the function callback that gets called via the "register_trace_*()"?
+ From the source code, there is a spin lock to protect the state. It 
+will not make race condition.
 
 > 
-> Overiding tracepoint supports a way to apply patches into kernel quickly
-> (such as applying security ones), through predefined static tracepoints,
-> without waiting for upstream integration.
-
-This sounds way out of scope for tracepoints. Please provide a solid
-example for this.
-
+> This race condition breaks the cleanup and disable logic, which expects
+> the task to stop processing new work. The cleanup code may proceed while
+> do_task() reschedules itself, leading to a potential use-after-free.
 > 
-> This patchset demonstrates the way to override probe functions by BPF program.
-> 
-> Overview
-> --------
-> This patchset adds BPF_PROG_TYPE_RAW_TRACEPOINT_OVERRIDE program type.
-> When this type of BPF program attaches, it overrides the target tracepoint
-> probe function.
-> 
-> And it also extends a new struct type "tracepoint_func_snapshot", which extends
-> the tracepoint structure. It is used to record the original probe function
-> registered by kernel after BPF program being attached and restore from it
-> after detachment. 
 
-The tracepoint structure exists for every tracepoint in the kernel. By
-adding a pointer to it, you just increased the size of the tracepoint. I'm
-already complaining that each tracepoint causes around 5K of memory
-overhead, and I'd like to make it smaller.
+Can you post the call trace when this problem occurred?
 
--- Steve
+Hi, Jason && Leon
+
+Please comment on this problem.
+
+Thanks a lot.
+Yanjun.Zhu
+
+> This bug was introduced during the migration from tasklets to workqueues,
+> where the special handling for the draining case was lost.
+> 
+> Fix this by restoring the original behavior. If the state is
+> TASK_STATE_DRAINING when iterations are exhausted, continue the loop by
+> setting cont to 1. This allows new iterations to finish the remaining
+> work and reach the switch statement, which properly transitions the
+> state to TASK_STATE_DRAINED and stops the task as intended.
+> 
+> Fixes: 9b4b7c1f9f54 ("RDMA/rxe: Add workqueue support for rxe tasks")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
+> ---
+>   drivers/infiniband/sw/rxe/rxe_task.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/sw/rxe/rxe_task.c b/drivers/infiniband/sw/rxe/rxe_task.c
+> index 6f8f353e9583..f522820b950c 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_task.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_task.c
+> @@ -132,8 +132,12 @@ static void do_task(struct rxe_task *task)
+>   		 * yield the cpu and reschedule the task
+>   		 */
+>   		if (!ret) {
+> -			task->state = TASK_STATE_IDLE;
+> -			resched = 1;
+> +			if (task->state != TASK_STATE_DRAINING) {
+> +				task->state = TASK_STATE_IDLE;
+> +				resched = 1;
+> +			} else {
+> +				cont = 1;
+> +			}
+>   			goto exit;
+>   		}
+>   
 
 
