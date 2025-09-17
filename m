@@ -1,216 +1,161 @@
-Return-Path: <linux-kernel+bounces-820012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7E1B8005C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:33:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676D1B7C53F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA11B1C001D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:59:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E3FD4E1723
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22FD27FD48;
-	Wed, 17 Sep 2025 05:59:25 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6442820DB;
+	Wed, 17 Sep 2025 06:00:38 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E83270EBC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A2422156D;
+	Wed, 17 Sep 2025 06:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758088765; cv=none; b=rfRJBJSX6X6IZ8sGZ+uXVqY4zxohFGtYQPy30aNZCPW+G1U5w5yQEKYlWtjoyRZTiFepzhj35p7Bsqrhuk/ZHJzXAEbX7H1iDdCFcThLXFReaFj+7YHwbQqBI53x7t1QWKefWKy4qHEkvBuQEDhmqFVbRKEaKkAm2JplyF544do=
+	t=1758088838; cv=none; b=KTms3j+e/YPEmIzO7p6L7zcD6iSeeICTHBKx2rn598/eFAG2baQoLy8w4W+1NCeFwVzRYAQ0+lW5i34bQb284Tj3NZpE9XavXAPbwdNfnHZzPCCzJuOzhC31zZ8GhGR7xJ58Ayp/tnPivXKTMOyUXpDy9fc1emmrxtTAmMUvJqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758088765; c=relaxed/simple;
-	bh=8R658MgjSKQ6OjkgZybldgeN9jzE69wFj18W4yvtA1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NjmH5V/h3BtivTaBDM51XUsPQwnFr6Rty2tu1jaCj8x95vHxsVhHA/hoTryZ519VTmKx3zn/6k+HdO+Yjbi5ynTUr8KH8Ka5xtFjhzwtGLKpRAF6auk1gxhJvAYnv4ekSTfAvzC0DqDXMzTKKeouVn/8HV26NwA23axK4Y+c2fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso44942085e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:59:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758088762; x=1758693562;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XlrrbpNOChtNjzl9J83pPts581jGsxoyMpwY2SqwJY4=;
-        b=DwCOT9Nl8PNjflvEIuZASUhmMfcJozQWvkGHTaBxN2i5l8RxGaVFyZo7wFwuoasa1x
-         TcLt8TbQjYKU/5PJ2Lsj5DgIojavPdowIzZQMFIJfWcWHSM0/9tHg2qnvlgzjKIWN2kX
-         JNNl0HL0hS95BwN4gH1PeuR5J3HiUoij7AWjf5vfZUskJFv5SKihLL8zVUv+JnyK2hlI
-         Nn2QCHPoRHL3kpOfKwaFE7ki7MBuJk/aJLKCvDjVEz0w989SY7zpLYjvbtNwV/KBRvZq
-         Yidq6WFomQz1OLyZPMR6/ng4fn8JtjHFqT1+otKHQl0dW4W1J5vaWtoKwIPn41BVEQgm
-         FM9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYKFm54f2Fq0sixxoZ/J/dvhl6ic6mXP9ZkBQzBbYUHEvLdtBB45RmoGP+AxAuScbhwNhvE9HRviWsFZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywccg5pUD7dQ54goWP0o63rOH5wPQNFom/ENlpAOLOQCgVsgBvF
-	WoQjncPRC+dbZ7dUng5QPG2EgN+ULfW9ZDCB2ejyZ3S/CLpQ+mGC3YNh
-X-Gm-Gg: ASbGncsEhSlpOZiBCTYdhJ/AZ/yEVs0Rdt7c9k9w2LRw8OqwzcwRvr2ZofAgt7pmkGO
-	8TWtioacpd8gGPZsNDlIkQUc6/+EGBYNW5fI+zWtCqzzJ/6aiwWEesxuwG3fJWjQXgE8eEF1tO0
-	T4TuPuxyL8ajYhkz+amw4oszbuLq4xjYk2uE/4+qJhbIDGMtzvbK6wHm65KWUVJtvP0KKbCbg0A
-	vOOVWMem9gAtWQLmR9KB1fPfx6eS9a8jNw9plUR7tG577TPeU5hEAyFo1FHd7urKnmBASfwfn6S
-	oCNkMiJCa6AyQ0rfI5ZY2FbhfLVdrVb4WA1mi1CrSRDoJpYOg6gErOg/LuCOUoZn3dNy+8VXazI
-	PsYmBGRzIJ92y2a8vouk=
-X-Google-Smtp-Source: AGHT+IH9W7esOzFT5IkroJVMwtaxdDK6d7E9R4NeEsWdBedzAfyvLtUnHVT1+OGn9VtvheonzXFrmg==
-X-Received: by 2002:a05:6000:1863:b0:3e7:6474:1b63 with SMTP id ffacd0b85a97d-3ecdfa3d20fmr589203f8f.63.1758088761975;
-        Tue, 16 Sep 2025 22:59:21 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::3086])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7c778f764sm19485191f8f.57.2025.09.16.22.59.19
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 16 Sep 2025 22:59:21 -0700 (PDT)
-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com
-Cc: shuah@kernel.org,
-	ioworker0@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH RESEND 1/1] selftests/mm: skip soft-dirty tests when CONFIG_MEM_SOFT_DIRTY is disabled
-Date: Wed, 17 Sep 2025 13:59:13 +0800
-Message-ID: <20250917055913.49759-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1758088838; c=relaxed/simple;
+	bh=/DNBC11wV0nXKmculC8fWaHGqrXeDrR5/gp9I0ROIVM=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=SGUyOmqW9yh3bbzHTeKWv2tYXS1ZZsFhq+mZEHvYmtyJXPIN9qYYCcJmip7CcGj4r7qq5q2B3RwW5GZM5B0eVlYABLMQxTM3gKMSrmtRJR3NB/fddkdhwU0vLlOiseph+e80I/t43wgr/O7DutSBOa6H4QyyncilR8W51a0mKFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cRSmb2MK2z501bS;
+	Wed, 17 Sep 2025 14:00:31 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 58H608AV043934;
+	Wed, 17 Sep 2025 14:00:08 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 17 Sep 2025 14:00:10 +0800 (CST)
+Date: Wed, 17 Sep 2025 14:00:10 +0800 (CST)
+X-Zmail-TransId: 2afc68ca4e6a4a6-738b6
+X-Mailer: Zmail v1.0
+Message-ID: <20250917140010636SMB_b6UYttZyOP2L0K93O@zte.com.cn>
+In-Reply-To: <20250917135406432vKZ2pELx-bRkvOdfP10Zb@zte.com.cn>
+References: 20250917135406432vKZ2pELx-bRkvOdfP10Zb@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <wang.yaxin@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>,
+        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHY0IDIvNF0gRG9jcy96aF9DTjogVHJhbnNsYXRlIHNrYnVmZi5yc3QgdG8gU2ltcGxpZmllZCBDaGluZXNl?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 58H608AV043934
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Wed, 17 Sep 2025 14:00:31 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68CA4E7F.000/4cRSmb2MK2z501bS
 
-From: Lance Yang <lance.yang@linux.dev>
+From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-The madv_populate and soft-dirty kselftests currently fail on systems where
-CONFIG_MEM_SOFT_DIRTY is disabled.
+translate the "skbuff.rst" into Simplified Chinese.
 
-Introduce a new helper softdirty_is_supported() into vm_util.c/h to ensure
-tests are properly skipped when the feature is not enabled.
+Update the translation through commit 9facd94114b5
+("skbuff: render the checksum comment to documentation")
 
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
+Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
+Signed-off-by: Sun yuxi <sun.yuxi@zte.com.cn>
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
 ---
- tools/testing/selftests/mm/madv_populate.c | 21 ++--------------
- tools/testing/selftests/mm/soft-dirty.c    |  5 +++-
- tools/testing/selftests/mm/vm_util.c       | 28 ++++++++++++++++++++++
- tools/testing/selftests/mm/vm_util.h       |  1 +
- 4 files changed, 35 insertions(+), 20 deletions(-)
+../translations/zh_CN/networking/index.rst   |  2 +-
+../translations/zh_CN/networking/skbuff.rst  | 44 +++++++++++++++++++
+2 files changed, 45 insertions(+), 1 deletion(-)
+create mode 100644 Documentation/translations/zh_CN/networking/skbuff.rst
 
-diff --git a/tools/testing/selftests/mm/madv_populate.c b/tools/testing/selftests/mm/madv_populate.c
-index b6fabd5c27ed..43dac7783004 100644
---- a/tools/testing/selftests/mm/madv_populate.c
-+++ b/tools/testing/selftests/mm/madv_populate.c
-@@ -264,23 +264,6 @@ static void test_softdirty(void)
- 	munmap(addr, SIZE);
- }
- 
--static int system_has_softdirty(void)
--{
--	/*
--	 * There is no way to check if the kernel supports soft-dirty, other
--	 * than by writing to a page and seeing if the bit was set. But the
--	 * tests are intended to check that the bit gets set when it should, so
--	 * doing that check would turn a potentially legitimate fail into a
--	 * skip. Fortunately, we know for sure that arm64 does not support
--	 * soft-dirty. So for now, let's just use the arch as a corse guide.
--	 */
--#if defined(__aarch64__)
--	return 0;
--#else
--	return 1;
--#endif
--}
--
- int main(int argc, char **argv)
- {
- 	int nr_tests = 16;
-@@ -288,7 +271,7 @@ int main(int argc, char **argv)
- 
- 	pagesize = getpagesize();
- 
--	if (system_has_softdirty())
-+	if (softdirty_is_supported())
- 		nr_tests += 5;
- 
- 	ksft_print_header();
-@@ -300,7 +283,7 @@ int main(int argc, char **argv)
- 	test_holes();
- 	test_populate_read();
- 	test_populate_write();
--	if (system_has_softdirty())
-+	if (softdirty_is_supported())
- 		test_softdirty();
- 
- 	err = ksft_get_fail_cnt();
-diff --git a/tools/testing/selftests/mm/soft-dirty.c b/tools/testing/selftests/mm/soft-dirty.c
-index 8a3f2b4b2186..98e42d2ac32a 100644
---- a/tools/testing/selftests/mm/soft-dirty.c
-+++ b/tools/testing/selftests/mm/soft-dirty.c
-@@ -200,8 +200,11 @@ int main(int argc, char **argv)
- 	int pagesize;
- 
- 	ksft_print_header();
--	ksft_set_plan(15);
- 
-+	if (!softdirty_is_supported())
-+		ksft_exit_skip("soft-dirty is not support\n");
+diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
+index 6e1c1df4a980..e03b5d5d39ee 100644
+--- a/Documentation/translations/zh_CN/networking/index.rst
++++ b/Documentation/translations/zh_CN/networking/index.rst
+@@ -28,6 +28,7 @@
+netmem
+alias
+mptcp-sysctl
++   skbuff
+Todolist:
+@@ -126,7 +127,6 @@ Todolist:
+*   sctp
+*   secid
+*   seg6-sysctl
+-*   skbuff
+*   smc-sysctl
+*   sriov
+*   statistics
+diff --git a/Documentation/translations/zh_CN/networking/skbuff.rst b/Documentation/translations/zh_CN/networking/skbuff.rst
+new file mode 100644
+index 000000000000..2624ea8e8e05
+--- /dev/null
++++ b/Documentation/translations/zh_CN/networking/skbuff.rst
+@@ -0,0 +1,44 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+	ksft_set_plan(15);
- 	pagemap_fd = open(PAGEMAP_FILE_PATH, O_RDONLY);
- 	if (pagemap_fd < 0)
- 		ksft_exit_fail_msg("Failed to open %s\n", PAGEMAP_FILE_PATH);
-diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
-index 56e9bd541edd..3173335df775 100644
---- a/tools/testing/selftests/mm/vm_util.c
-+++ b/tools/testing/selftests/mm/vm_util.c
-@@ -449,6 +449,34 @@ bool check_vmflag_pfnmap(void *addr)
- 	return check_vmflag(addr, "pf");
- }
- 
-+bool softdirty_is_supported(void)
-+{
-+	char *addr;
-+	int ret = 0;
-+	size_t pagesize;
++.. include:: ../disclaimer-zh_CN.rst
 +
-+	/* We know for sure that arm64 does not support soft-dirty. */
-+#if defined(__aarch64__)
-+	return ret;
-+#endif
-+	pagesize = getpagesize();
-+	/*
-+	 * __mmap_complete() always sets VM_SOFTDIRTY for new VMAs, so we
-+	 * just mmap a small region and check its VmFlags in /proc/self/smaps
-+	 * for the "sd" flag.
-+	 */
-+	addr = mmap(0, pagesize, PROT_READ | PROT_WRITE,
-+		    MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
-+	if (!addr)
-+		ksft_exit_fail_msg("mmap failed\n");
++:Original: Documentation/networking/skbuff.rst
 +
-+	if (check_vmflag(addr, "sd"))
-+		ret = 1;
++:翻译:
 +
-+	munmap(addr, pagesize);
-+	return ret;
-+}
++   王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
 +
- /*
-  * Open an fd at /proc/$pid/maps and configure procmap_out ready for
-  * PROCMAP_QUERY query. Returns 0 on success, or an error code otherwise.
-diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
-index 07c4acfd84b6..87ad8e0d92c0 100644
---- a/tools/testing/selftests/mm/vm_util.h
-+++ b/tools/testing/selftests/mm/vm_util.h
-@@ -104,6 +104,7 @@ bool find_vma_procmap(struct procmap_fd *procmap, void *address);
- int close_procmap(struct procmap_fd *procmap);
- int write_sysfs(const char *file_path, unsigned long val);
- int read_sysfs(const char *file_path, unsigned long *val);
-+bool softdirty_is_supported(void);
- 
- static inline int open_self_procmap(struct procmap_fd *procmap_out)
- {
--- 
-2.49.0
-
++struct sk_buff
++==============
++
++:c:type:`sk_buff` 是表示数据包的主要网络结构体。
++
++基本sk_buff几何结构
++-------------------
++
++.. kernel-doc:: include/linux/skbuff.h
++   :doc: Basic sk_buff geometry
++
++共享skb和skb克隆
++----------------
++
++:c:member:`sk_buff.users` 是一个简单的引用计数，允许
++多个实体保持 struct sk_buff 存活。 ``sk_buff.users != 1``
++的 skb 被称为共享 skb（参见 skb_shared()）。
++
++skb_clone() 允许快速复制 skb。不会复制任何数据缓冲区，
++但调用者会获得一个新的元数据结构体（struct sk_buff）。
++&skb_shared_info.refcount 表示指向同一数据包数据的
++skb 数量（即克隆）。
++
++数据引用和无头skb
++-----------------
++
++.. kernel-doc:: include/linux/skbuff.h
++   :doc: dataref and headerless skbs
++
++校验和信息
++----------
++
++.. kernel-doc:: include/linux/skbuff.h
++   :doc: skb checksums
+--
+2.25.1
 
