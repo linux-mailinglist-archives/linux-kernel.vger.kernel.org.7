@@ -1,244 +1,127 @@
-Return-Path: <linux-kernel+bounces-820131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8307BB7CC35
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B7CB7EE95
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D86CD1C04938
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD71D1C03E15
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD80A303CBE;
-	Wed, 17 Sep 2025 07:21:22 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980A3303A23;
-	Wed, 17 Sep 2025 07:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64A62D6E54;
+	Wed, 17 Sep 2025 07:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WudmjGv9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06FB248861;
+	Wed, 17 Sep 2025 07:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758093682; cv=none; b=WiG1B58nZTybzHE55PgFCR5HKYCX0cIUBkR7VuB5xdRUm2jtrfzWp6GjPd3/8+gb5raQwOi3plM/m2D7n17408KUm5WfQZxJXcGiuHd1fLiwVjwxgyThlnInlw3CZ02dgTxGuovzOpdpWSaC4kFFVsmy1ZKEr8RfvMxY703VZG4=
+	t=1758092623; cv=none; b=SMFX1bjtgvi9viDEmLQllcmZZPx8v0m8TL0FtuaXZNJIFbocdoYQbcCknvei90lLkgZWwR7EzIxjc18Q5hEd3UwCaQsZIrEyDzAGKFBWZ12UoKP8N/qc7/146Rab+GkSjMAJmGtp55O0lB9C1KM3wKJXMGy78XkzpDo0mCnzAd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758093682; c=relaxed/simple;
-	bh=vclbm78W33VZdHNBihtes8tEpFczMHG4sPe/5s+9vgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YGYX/w6frd/iIndPJ7mmY8QV+5kBC0Ojdm6ozNSWhOBpzRsJDEBBihnMLSagEXxPzwkAX8D8nRwsD2YrBaEuTAGte/ZJq+YsGkyzVE42GRnPbYLkWngpNNFNdsWho6+ccKOzcHmeCF+ckRqvgkR3FPUziinL1yC/W2xCKiu7fy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cRV8y5cxKz9sy2;
-	Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id JcCnYpbaHND0; Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cRV8y4BN2z9sy1;
-	Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5AF7A8B766;
-	Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id H1xM81UEGxD0; Wed, 17 Sep 2025 09:03:14 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D8B68B763;
-	Wed, 17 Sep 2025 09:03:12 +0200 (CEST)
-Message-ID: <92ccb5be-efea-4dbf-ac87-a3415b0ed3dc@csgroup.eu>
-Date: Wed, 17 Sep 2025 09:03:11 +0200
+	s=arc-20240116; t=1758092623; c=relaxed/simple;
+	bh=EgCG+hVHYiVWi4m8cYgfpmMJhtRxVZO9yGSARbeWCpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJ+5gf+hRjR+Jo9enzHszyCvu4u6FEApBXtAJdYcEuv8Vig3HhhHpZmTbZDmfBaqkQ/0P8U/NHSOuSXm7V0WdlMBW2tDYcrz1Y7dyzvkNST+MnxT9RUFN1dubofVL4r5O8LWh74n6m8PhnGa/223T7ehBO1xavKu4XNwGULZwro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WudmjGv9; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758092622; x=1789628622;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EgCG+hVHYiVWi4m8cYgfpmMJhtRxVZO9yGSARbeWCpI=;
+  b=WudmjGv98rv29rKCd4Zz7nSVgT4LHeT8kG+1hyKDckMLWYKqIE0Kbdg0
+   9g8jsVwESo7Hw3ORXbrY2uiCFXL403umvgwuk0nw96SUxajT2HLR6F51R
+   gQp3o0O2rPhxpcJOrGvvtnoU51RZuomfeV3qm+U8RhtjX3oKl42sqvopW
+   A9ckv+vGBQaXpRXUfCw2BLi8UPqBpxjpLjxKHQ7g54bjbPJlHZlf7vbot
+   WarreH53UHCd8Gq7dYCE2Yxrfj0kcgG3slntUbUQwXIBx0uSVTojLUQ/8
+   UO1wHMxLkEKFnVEvdnMUDpLPPo0bf2GLqd1+qj9n/5rRQyZJOFgD4oZmv
+   Q==;
+X-CSE-ConnectionGUID: 8+OBYxHfTSOFE8t2nx/wmA==
+X-CSE-MsgGUID: iy0T6ZWHTT6PFay6ge7Oyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60316671"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="60316671"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 00:03:41 -0700
+X-CSE-ConnectionGUID: cjp2Wl9NTPKAVDYEk8hRCQ==
+X-CSE-MsgGUID: nifEwfYmTIiYnxFDv8g+Hg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="174966062"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 00:03:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uymCU-00000003je1-1vNt;
+	Wed, 17 Sep 2025 10:03:34 +0300
+Date: Wed, 17 Sep 2025 10:03:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH 4/4] regulator: ltm8054: Support output current limit
+ control
+Message-ID: <aMpdRhAh9g71dt7M@smile.fi.intel.com>
+References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <20250916-ltm8054-driver-v1-4-fd4e781d33b9@bootlin.com>
+ <aMlj1OcfH8r9Zz6x@smile.fi.intel.com>
+ <8772650.T7Z3S40VBb@fw-rgant>
+ <aMpc64pctVA1bvmr@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 15/18] net: phy: qca807x: Support SFP through
- phy_port interface
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
- Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-References: <20250909152617.119554-1-maxime.chevallier@bootlin.com>
- <20250909152617.119554-16-maxime.chevallier@bootlin.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250909152617.119554-16-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMpc64pctVA1bvmr@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Wed, Sep 17, 2025 at 10:02:03AM +0300, Andy Shevchenko wrote:
+> On Tue, Sep 16, 2025 at 04:27:25PM +0200, Romain Gantois wrote:
+> > On Tuesday, 16 September 2025 15:19:16 CEST Andy Shevchenko wrote:
+> > > On Tue, Sep 16, 2025 at 12:24:09PM +0200, Romain Gantois wrote:
 
+...
 
-Le 09/09/2025 à 17:26, Maxime Chevallier a écrit :
-> QCA8072/8075 may be used as combo-port PHYs, with Serdes (100/1000BaseX)
->   and Copper interfaces. The PHY has the ability to read the configuration
-> it's in.  If the configuration indicates the PHY is in combo mode, allow
-> registering up to 2 ports.
+> > > /*
+> > >  * Besides missing period at the end this is not correct multi-line style of
+> > > * the comments. Use this example.
+> > >  */
+> > > 
+> > > > +	tmp = LTM8054_MIN_CTL_V * (u64)priv->max_uA;
+> > 
+> > This cast avoids an overflow of the multiplication, since the result may
+> > easily exceed 32 bytes in size.
 > 
-> Register a dedicated set of port ops to handle the serdes port, and rely
-> on generic phylib SFP support for the SFP handling.
+> It's better to read in a way of
 > 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> 	tmp = (u64)priv->max_uA * LTM8054_MIN_CTL_mV;
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+I just realised that in previous mails and here I meant _uV postfix for the
+predefined voltage thresholds. Sorry for the confusion.
 
-> ---
->   drivers/net/phy/qcom/qca807x.c | 73 ++++++++++++++--------------------
->   1 file changed, 30 insertions(+), 43 deletions(-)
-> 
-> diff --git a/drivers/net/phy/qcom/qca807x.c b/drivers/net/phy/qcom/qca807x.c
-> index 070dc8c00835..d8f1ce5a7128 100644
-> --- a/drivers/net/phy/qcom/qca807x.c
-> +++ b/drivers/net/phy/qcom/qca807x.c
-> @@ -13,7 +13,7 @@
->   #include <linux/phy.h>
->   #include <linux/bitfield.h>
->   #include <linux/gpio/driver.h>
-> -#include <linux/sfp.h>
-> +#include <linux/phy_port.h>
->   
->   #include "../phylib.h"
->   #include "qcom.h"
-> @@ -643,68 +643,54 @@ static int qca807x_phy_package_config_init_once(struct phy_device *phydev)
->   	return ret;
->   }
->   
-> -static int qca807x_sfp_insert(void *upstream, const struct sfp_eeprom_id *id)
-> +static int qca807x_configure_serdes(struct phy_port *port, bool enable,
-> +				    phy_interface_t interface)
->   {
-> -	struct phy_device *phydev = upstream;
-> -	__ETHTOOL_DECLARE_LINK_MODE_MASK(support) = { 0, };
-> -	phy_interface_t iface;
-> +	struct phy_device *phydev = port_phydev(port);
->   	int ret;
-> -	DECLARE_PHY_INTERFACE_MASK(interfaces);
->   
-> -	sfp_parse_support(phydev->sfp_bus, id, support, interfaces);
-> -	iface = sfp_select_interface(phydev->sfp_bus, support);
-> +	if (!phydev)
-> +		return -ENODEV;
->   
-> -	dev_info(&phydev->mdio.dev, "%s SFP module inserted\n", phy_modes(iface));
-> -
-> -	switch (iface) {
-> -	case PHY_INTERFACE_MODE_1000BASEX:
-> -	case PHY_INTERFACE_MODE_100BASEX:
-> +	if (enable) {
->   		/* Set PHY mode to PSGMII combo (1/4 copper + combo ports) mode */
->   		ret = phy_modify(phydev,
->   				 QCA807X_CHIP_CONFIGURATION,
->   				 QCA807X_CHIP_CONFIGURATION_MODE_CFG_MASK,
->   				 QCA807X_CHIP_CONFIGURATION_MODE_PSGMII_FIBER);
-> +		if (ret)
-> +			return ret;
->   		/* Enable fiber mode autodection (1000Base-X or 100Base-FX) */
->   		ret = phy_set_bits_mmd(phydev,
->   				       MDIO_MMD_AN,
->   				       QCA807X_MMD7_FIBER_MODE_AUTO_DETECTION,
->   				       QCA807X_MMD7_FIBER_MODE_AUTO_DETECTION_EN);
-> -		/* Select fiber page */
-> -		ret = phy_clear_bits(phydev,
-> -				     QCA807X_CHIP_CONFIGURATION,
-> -				     QCA807X_BT_BX_REG_SEL);
-> -
-> -		phydev->port = PORT_FIBRE;
-> -		break;
-> -	default:
-> -		dev_err(&phydev->mdio.dev, "Incompatible SFP module inserted\n");
-> -		return -EINVAL;
-> +		if (ret)
-> +			return ret;
->   	}
->   
-> -	return ret;
-> +	phydev->port = enable ? PORT_FIBRE : PORT_TP;
-> +
-> +	return phy_modify(phydev, QCA807X_CHIP_CONFIGURATION,
-> +			  QCA807X_BT_BX_REG_SEL,
-> +			  enable ? 0 : QCA807X_BT_BX_REG_SEL);
->   }
->   
-> -static void qca807x_sfp_remove(void *upstream)
-> +static const struct phy_port_ops qca807x_serdes_port_ops = {
-> +	.configure_mii = qca807x_configure_serdes,
-> +};
-> +
-> +static int qca807x_attach_mii_port(struct phy_device *phydev,
-> +				   struct phy_port *port)
->   {
-> -	struct phy_device *phydev = upstream;
-> +	__set_bit(PHY_INTERFACE_MODE_1000BASEX, port->interfaces);
-> +	__set_bit(PHY_INTERFACE_MODE_100BASEX, port->interfaces);
->   
-> -	/* Select copper page */
-> -	phy_set_bits(phydev,
-> -		     QCA807X_CHIP_CONFIGURATION,
-> -		     QCA807X_BT_BX_REG_SEL);
-> +	port->ops = &qca807x_serdes_port_ops;
->   
-> -	phydev->port = PORT_TP;
-> +	return 0;
->   }
->   
-> -static const struct sfp_upstream_ops qca807x_sfp_ops = {
-> -	.attach = phy_sfp_attach,
-> -	.detach = phy_sfp_detach,
-> -	.module_insert = qca807x_sfp_insert,
-> -	.module_remove = qca807x_sfp_remove,
-> -	.connect_phy = phy_sfp_connect_phy,
-> -	.disconnect_phy = phy_sfp_disconnect_phy,
-> -};
-> -
->   static int qca807x_probe(struct phy_device *phydev)
->   {
->   	struct device_node *node = phydev->mdio.dev.of_node;
-> @@ -745,9 +731,8 @@ static int qca807x_probe(struct phy_device *phydev)
->   
->   	/* Attach SFP bus on combo port*/
->   	if (phy_read(phydev, QCA807X_CHIP_CONFIGURATION)) {
-> -		ret = phy_sfp_probe(phydev, &qca807x_sfp_ops);
-> -		if (ret)
-> -			return ret;
-> +		phydev->max_n_ports = 2;
-> +
->   		linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported);
->   		linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->advertising);
->   	}
-> @@ -825,6 +810,7 @@ static struct phy_driver qca807x_drivers[] = {
->   		.get_phy_stats		= qca807x_get_phy_stats,
->   		.set_wol		= at8031_set_wol,
->   		.get_wol		= at803x_get_wol,
-> +		.attach_mii_port	= qca807x_attach_mii_port,
->   	},
->   	{
->   		PHY_ID_MATCH_EXACT(PHY_ID_QCA8075),
-> @@ -852,6 +838,7 @@ static struct phy_driver qca807x_drivers[] = {
->   		.get_phy_stats		= qca807x_get_phy_stats,
->   		.set_wol		= at8031_set_wol,
->   		.get_wol		= at803x_get_wol,
-> +		.attach_mii_port	= qca807x_attach_mii_port,
->   	},
->   };
->   module_phy_driver(qca807x_drivers);
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
