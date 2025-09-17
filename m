@@ -1,142 +1,113 @@
-Return-Path: <linux-kernel+bounces-821690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0AD7B81F73
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:27:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312DCB81F7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CF24A806B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:26:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E84594E0505
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7787330BF71;
-	Wed, 17 Sep 2025 21:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E2130AABF;
+	Wed, 17 Sep 2025 21:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="INGlmMM/"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHvd1OUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63555302159
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407A02868AF;
+	Wed, 17 Sep 2025 21:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758144329; cv=none; b=ee6QLFXxC2TdljyVrMPkDGeBfUPoApgoYREJkWs/9V8qAAQlPo83+qg0VD5L0O2PrYd4Z1HomqLkdxTFg9k2oonseSbBFwXiw+oJr184uMbBpQxHCNgNTeNYSdObh+vC9zmqCeDI4918QJ1CxhsRZ825o1f+g2G+CG1Ars7luZs=
+	t=1758144515; cv=none; b=Nx94wZoMgy/X6bM/LPB4V2XMHA+twFMZSO0FxflQsZbW1meFgS2JghvEhIWCCqntIAHg60IxacYg4Rz778ydU3nnp7W2Tkataj+VV8sgqtjFTeN2y348KGHLGMkjLpQt3qW2uQpnsNVihuSOVwKC4PmNtOpfYnnrsWLd5FItAj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758144329; c=relaxed/simple;
-	bh=JP39cW2hbi9m89rYjm6fMmNO44J29P7MpA5dKQARQX4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RXgmipe2nW54+Efa1n1Jo1sp5amlhUgm/mkxnzKlgLL5D2gCWA4DCbIHc3JIYXbfgUjxzoxz0yFcqTiYNQgq091OUfk9j/U0GGTy6q3OfsU8Itj/b/Cfsxg/9dJX1yKJh84O341AaAxXymayDJd2IAZSN9RoVhKfXr75qUDyZ+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=INGlmMM/; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7760b6b7235so217882b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:25:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758144327; x=1758749127; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VzmS6vlS4aGQUGCsqqVnjAUV5zRiihlDMEI25Ee0wp4=;
-        b=INGlmMM/fqruNYqloxjtoLDdXmsbN7nWADs1/4SeUNXJRvVHjC8lsbfRkTWAgw7HT7
-         xDowFf32dY96D0DdPNfjyPfbkzwr58k/fzR+MeX9uMgzUahnP5Z4k17cSvbpPYZmN576
-         uy64LcKcWKGty50+qmaDXCulk3Ul033fm/fHDAhzGrp97mHiLURjOhZTgXiF7vzRe5N8
-         BDYXjRdaYCKBi8UMGWnp802D3zHk23GY4efh1JqejAapaxLS9OUcj8Mb+ZI96XvJXk4+
-         yTErfPpe08i5OF3iipcNLq70jQBFfvDQ+cOgYPHkmuiPcJ7FtNp3XBmYqHSnH6yiFlRy
-         ZXMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758144327; x=1758749127;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VzmS6vlS4aGQUGCsqqVnjAUV5zRiihlDMEI25Ee0wp4=;
-        b=TYo8BaalKixMxBwG6ebIJCYcwXkrDyi3L4KSig0dU/N2GyoeBXiOIkx2WOQVwCpZ+D
-         Z8bvuGArf8VlnNNqVGvt6Yim/IDhCh/P9lMVb+cNlFgdgED78rJQismsQ/xql4hooprU
-         +sVf5f4P8+tS3dHQcfVluF1xBTsXXJ5wUYrIoXjsKBuFs2dR78E5bLrO5wfhQac2+gYu
-         LUtyrKaOXvF5wi4m/VWba7NupdFrd4gnM00r9ao4g6dcE5y6oR/xxvRPepGUU4DkcpDp
-         WCJwh1GGW+uZUPQ+3IfieLJUNi2x+Qzfd9MLEJOQ3QcAOeHgUzqn+7KOSOrl6jJXgULp
-         eDcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXDEVaipUH80oPvZnCC1gI/PYvRt9EAbtWvrCUysvPapAe9xC8iMG2saDvXbt/C195csZi6OJVSUtk0ZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbgCcwzhUpwK0Gs2zA1/iaRGD+FeJU9HebyjDHFxUl8NVN3zDs
-	+66uR1TWgR/hbfn47G0Cr7SiOSlT3cR6icH0JetebDGYgcmy5yBI2h2g9ylYMGW3UB25h7IPFKp
-	tT7VYeQ==
-X-Google-Smtp-Source: AGHT+IEt9OdbWxtc6AYige90fBSwtnNPY6nA9lHy3V8mdb8lVXQEswni2xr/2m7RjmFhT4E+7RMjQTSbWpw=
-X-Received: from pjbhl16.prod.google.com ([2002:a17:90b:1350:b0:32d:a0b1:2b03])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3947:b0:243:c274:1a7f
- with SMTP id adf61e73a8af0-27aac993578mr5089210637.46.1758144326668; Wed, 17
- Sep 2025 14:25:26 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:25:25 -0700
-In-Reply-To: <65465d1e-a7bd-4eac-a0ba-8c6cce85e3ed@intel.com>
+	s=arc-20240116; t=1758144515; c=relaxed/simple;
+	bh=sXeuIQMjL3ij8K65U8iZCGwbM5nnx/S7lPAqmUslGis=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jSLqxTO9PANgKqo4/cq+78UCvzjg6b/kchzGRYnjZYrvqTXTmBa1pBq9PoGaFMxCC4K05P9hbogEhmCm44RgRDuH2phBiEEz3U3gZtETPnlzYkRH4duYVqTVP2C9uY2xZ5MTc3bB4agpxxYkGaNFYDU52pISgt5C+pEh4KU9k+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHvd1OUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92193C4CEE7;
+	Wed, 17 Sep 2025 21:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758144514;
+	bh=sXeuIQMjL3ij8K65U8iZCGwbM5nnx/S7lPAqmUslGis=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bHvd1OUm79r3XEeX6f8axMNEa0NGPaqKHC9jl1m7C+c0nonFO2VZoF6uksqnhj59f
+	 4fUfAP+VPXo+8qfg+E/5sszwLGo572XdGdc++XSGEkZi2/iceZkeBB7gVzuCKAgX8P
+	 eeVrQjhLjrtUoMlHTmlEA8hoFRLL3jcvBYMw6FWP/+mHfgtn5q5R+ODbra9qR8z6Rr
+	 5BtBboj5xHGS9PaZNd4gK8GT9nntFNsfr9ySCGXyAHYsWxmagjBTRylsJG3vmqdxC6
+	 rdsHUjs0cQkCqlPepE7v2TZmrpvuFbRRg0QGPJlhUY+6x959gdEIyAQX5Ueh+gsRlM
+	 sq0tsUpoiYN3A==
+Date: Wed, 17 Sep 2025 16:28:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, chester62515@gmail.com,
+	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
+	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
+	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: pcie: Add the NXP PCIe controller
+Message-ID: <20250917212833.GA1873293@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-18-seanjc@google.com>
- <65465d1e-a7bd-4eac-a0ba-8c6cce85e3ed@intel.com>
-Message-ID: <aMsnRY9PG6UeTzGY@google.com>
-Subject: Re: [PATCH v15 17/41] KVM: VMX: Set host constant supervisor states
- to VMCS fields
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e236uncj7qradf34elkmd2c4wjogc6pfkobuu7muyoyb2hrrai@tta36jq5fzsr>
 
-On Wed, Sep 17, 2025, Xiaoyao Li wrote:
-> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> ...
-> > +static inline bool cpu_has_load_cet_ctrl(void)
-> > +{
-> > +	return (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_CET_STATE);
-> > +}
-> 
-> When looking at the patch 19, I realize that
-> 
->   { VM_ENTRY_LOAD_CET_STATE,		VM_EXIT_LOAD_CET_STATE }
-> 
-> is added into vmcs_entry_exit_pairs[] there.
-> 
-> So ...
-> 
-> >   static inline bool cpu_has_vmx_mpx(void)
-> >   {
-> >   	return vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_BNDCFGS;
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index adf5af30e537..e8155635cb42 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -4320,6 +4320,21 @@ void vmx_set_constant_host_state(struct vcpu_vmx *vmx)
-> >   	if (cpu_has_load_ia32_efer())
-> >   		vmcs_write64(HOST_IA32_EFER, kvm_host.efer);
-> > +
-> > +	/*
-> > +	 * Supervisor shadow stack is not enabled on host side, i.e.,
-> > +	 * host IA32_S_CET.SHSTK_EN bit is guaranteed to 0 now, per SDM
-> > +	 * description(RDSSP instruction), SSP is not readable in CPL0,
-> > +	 * so resetting the two registers to 0s at VM-Exit does no harm
-> > +	 * to kernel execution. When execution flow exits to userspace,
-> > +	 * SSP is reloaded from IA32_PL3_SSP. Check SDM Vol.2A/B Chapter
-> > +	 * 3 and 4 for details.
-> > +	 */
-> > +	if (cpu_has_load_cet_ctrl()) {
-> 
-> ... cpu_has_load_cet_ctrl() cannot ensure the existence of host CET fields,
-> unless we change it to check vmcs_config.vmexit_ctrl or add CET entry_exit
-> pair into the vmcs_entry_exit_pairs[] in this patch.
+On Wed, Sep 17, 2025 at 10:41:08PM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Sep 16, 2025 at 09:23:13AM GMT, Bjorn Helgaas wrote:
+> > On Tue, Sep 16, 2025 at 10:10:31AM +0200, Vincent Guittot wrote:
+> > > On Sun, 14 Sept 2025 at 14:35, Vincent Guittot
+> > > <vincent.guittot@linaro.org> wrote:
+> > > > On Sat, 13 Sept 2025 at 00:50, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > > On Fri, Sep 12, 2025 at 04:14:33PM +0200, Vincent Guittot wrote:
+> > > > > > Describe the PCIe controller available on the S32G platforms.
+> > 
+> > > > > > +                  num-lanes = <2>;
+> > > > > > +                  phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
+> > > > >
+> > > > > num-lanes and phys are properties of a Root Port, not the host bridge.
+> > > > > Please put them in a separate stanza.  See this for details and
+> > > > > examples:
+> > > > >
+> > > > >   https://lore.kernel.org/linux-pci/20250625221653.GA1590146@bhelgaas/
+> > > >
+> > > > Ok, I'm going to have a look
+> > > 
+> > > This driver relies on dw_pcie_host_init() to get common resources like
+> > > num-lane which doesn't look at childs to get num-lane.
+> > > 
+> > > I have to keep num-lane in the pcie node. Having this in mind should I
+> > > keep phys as well as they are both linked ?
 
-I *love* the attention to detail, but I think we're actually good, technically.
+> > Huh, that sounds like an issue in the DWC core.  Jingoo, Mani?
+> > 
+> > dw_pcie_host_init() includes several things that assume a single Root
+> > Port: num_lanes, of_pci_get_equalization_presets(),
+> > dw_pcie_start_link() are all per-Root Port things.
+> 
+> Yeah, it is a gap right now. We only recently started moving the DWC
+> platforms to per Root Port binding (like Qcom).
 
-cpu_has_load_cet_ctrl() will always return %false until patch 19, because
-VM_ENTRY_LOAD_CET_STATE isn't added to the set of OPTIONAL controls until then,
-i.e. VM_ENTRY_LOAD_CET_STATE won't be set in vmcs_config.vmentry_ctrl until
-the exit control is as well (and the sanity check is in place).
+Do you need num-lanes in the devicetree?
+dw_pcie_link_get_max_link_width() will read it from PCI_EXP_LNKCAP, so
+if that works maybe you can omit it from the binding?
 
-> > +		vmcs_writel(HOST_S_CET, kvm_host.s_cet);
-> > +		vmcs_writel(HOST_SSP, 0);
-> > +		vmcs_writel(HOST_INTR_SSP_TABLE, 0);
-> > +	}
-> >   }
+If you do need num-lanes in the binding, maybe you could make a Root
+Port parser similar to mvebu_pcie_parse_port() or
+qcom_pcie_parse_port() that would get num-lanes, the PHY, and
+nxp,phy-mode from a Root Port node?
+
+Then all this would be in one place, and if you set ->num_lanes there
+it looks like the DWC core wouldn't do anything with it.
 
