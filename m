@@ -1,137 +1,88 @@
-Return-Path: <linux-kernel+bounces-820732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94516B7EA93
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:56:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6D4B7EC9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD56D7B0A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E79B4A339A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917941A3167;
-	Wed, 17 Sep 2025 12:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E00E30BBB3;
+	Wed, 17 Sep 2025 12:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="q1DN7DKa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jttXHiCH"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGzDXCYj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7451A2F7ABF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D51B1A3167;
 	Wed, 17 Sep 2025 12:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113599; cv=none; b=Ycv4Za6wVlFrl0/rZB2ehpiDE031rksNtpvEq3hsA9mCk+sh/oFvl63DHAnNgWLyT1dVRztDMA10ovhwv5ure9jk8+mkvlmzRwLwi9T17cSq0+YYFoBAPPak+/CZrdxTY7LaNlqBsd7BKQiX3MBu1vBYVHm7EsJEgWUv4gwbF2U=
+	t=1758113597; cv=none; b=aRH6Q7GnAMj39V9hOhNE9j4PBDskIh+4M0yksOUV5uk3725Y8hycBGaO5CHF6e5wVq6RW1l1DPSOw15YWAY/C45uSdZbC9K3DLv3//GUrRhB8Iga+4BIrRWL3cwWsiADNz6dmNUbfkcVxveKrmwUl7uS9VW+QqzRF0J7c0OBA4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113599; c=relaxed/simple;
-	bh=SNw30TtYtjz3bJjJmSYVg/m9TlNMaQnm+dEAkA5BiG4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=A3eVPKUwurHl53+fHbKtyflODndKMi5a97AC5sqUz95EXAMmM8wkRaZCkCcVfQ3oEFNvkd4Mn6EdAynkg0O5ZSl3yUvC8fRf5j3L4BvrgOGkY5PgB7Ga0RxPuR3GjXFTyd0tTqRUsBu6ADbvf5st2LetbJBdAdG+q9wdh55fKaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=q1DN7DKa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jttXHiCH; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 17A997A00E5;
-	Wed, 17 Sep 2025 08:53:15 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 17 Sep 2025 08:53:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758113594;
-	 x=1758199994; bh=jJDpsD5W7eR4GMzNsuaoxriBHq6EDK0mxwvo7xTskbk=; b=
-	q1DN7DKaQgFit561Nw1FbBqlELihxV6Dk1eiyTRLS7lbGNhWC3t7sK5RbslZHQ4D
-	qYe5zEZrCMiGvLoAX9igMsTqhLm55wEeVmZHFo7hhdWbSDJ0D0sX1nqaZHOux9yl
-	MNRaUNagpsMxRvDzeOptgVs8me4XcpVLBJdF0IVKmDtVHia3HqQ0gEuUGqs2KLPH
-	OW7bdFpy3srIERiGmNpCNDG6404jyo7jon9oq2seUCYYqpD73CT2nXhBrvoYDc2E
-	0vpJWth2jP3fjHJnIYSraGH7drwaWj8OJbEGIMXM0kNXOACecZXtJdjXnJwkePP+
-	6oRJ4hBh3sPvRtwPZlbRTg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758113594; x=
-	1758199994; bh=jJDpsD5W7eR4GMzNsuaoxriBHq6EDK0mxwvo7xTskbk=; b=j
-	ttXHiCH9Zcgg+Dh5DzPnDIxu3tfg676RS5ME0MtGHflR6ige84aYHVrJRlkiwFlA
-	rkZkejuZqZ3CjWrnAKg05LnZlc/kw8sbaKgDepumyCCGl3of6adzfKYPkK2mrETs
-	oBk8FS6WIx46hWWmnGUogVrrCuu6lCATn5rBLMnzpfFW+7O7YoI8Isl7d5C4TyX9
-	Wz9+Eqg3zOz9HttsOZAd8vVMJtOlgNh9DF8tNs6mRRlnFmf1ULbAdPzkBcKYrdm7
-	9tywJLj2PDruDzxnaqT2R5V3mXM77OH1oByajcOe3sqOrK+8bQswrussZt++HUJ1
-	XNwjW1Hz7seXTOR14oxAA==
-X-ME-Sender: <xms:Oq_KaOfa-Z9vOxsGkcASJZyBd5eBWyrBgRwgZNJzLLqk0N6q_Ke1dg>
-    <xme:Oq_KaIPa9_6eDdG1u9JNhnUkjJjKc7C7gTsRYTxrXbAnUjdTNAguoM9HnQf_eJVF6
-    L1XDdzDWmro87n14kU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfeehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheplhhutggrrdifvghishhssehfrghirhhphhhonhgvrdgtohhmpdhrtg
-    hpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhhoohhnihgv
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlih
-    hnrghrohdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurght
-    ihhonhdrohhrghdprhgtphhtthhopehpvghrvgigsehpvghrvgigrdgtiidprhgtphhtth
-    hopehquhhitggpfigthhgvnhhgsehquhhitghinhgtrdgtohhmpdhrtghpthhtohepthhi
-    figrihesshhushgvrdgtohhmpdhrtghpthhtohepthhifigrihesshhushgvrdguvg
-X-ME-Proxy: <xmx:Oq_KaJ3qk_sUQerlkdhDIhinfcdtHmLHlDw8VENdoLzM2nGdvDtjvg>
-    <xmx:Oq_KaPQNS0FzaZwYF7aVo9ohYrWiAuJzRwgAmdkK2yjnLwtwFCcbKw>
-    <xmx:Oq_KaMmTn23fsgjLLjbnSrG0sgy5YLDgoJgIDdVdIqZ0dIYaQ8zmZw>
-    <xmx:Oq_KaAO8VV8ZSHYtEDaOBdF9xIltOZV6IDHHe0oOH9x79eZUBWWOzg>
-    <xmx:Oq_KaIfe3H_s6Fn-7DxjbVOP0LD3JLnkjdyIr9-cwal1-0CazHtVBMi5>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4A40A700065; Wed, 17 Sep 2025 08:53:14 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758113597; c=relaxed/simple;
+	bh=pWIyZXhr7eTtOtyEolGLe2l7VyFDBdNLk8L7cAxDYfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkKQAtYVkF9UydR0cahyPDauksKmHXwIXeTJYDNemcvR+ecUBdKVOAYZfXQHoB8ntfwuhSL70ESmA4oKyxBmf5etKxuWrPzfTl4AtImb7qkOFBFZMeeJeITLUzeVkb3HYn0ohOz3LJV5mIEtGUZUr/Oe3Ko1ZN0pkrFTVOsCI9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGzDXCYj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D427C4CEFB;
+	Wed, 17 Sep 2025 12:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758113596;
+	bh=pWIyZXhr7eTtOtyEolGLe2l7VyFDBdNLk8L7cAxDYfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SGzDXCYjlaDTpgiYTY4BWtduupodByhF+4pIPQGmIrgsp8IvKsOwZ7APdA+dcHbm4
+	 ltiJRmqRD9FXvVQLcx4788f4+AFWakP3drKJaB3DoH7U4N//tyqtJkSjI+79jo/uY5
+	 FRn+nF9nFM4mHv1X1QMYWrbvJbvlfU3DOC+SFF8cRb3ybkOMq8yzdQnKVHVCmVDECg
+	 6zUKoL3p4PgExQIhtkiyb02kcwDw/+eLEK6ouFzz/lbTb5ex5/LTg7RKpJYzDWG4T2
+	 l+lDv9majJM2Ie01Diy0n37vF628YhLinDLEBpdxl50fpTClIAa7+0rMKFUuUiirDj
+	 sfX0nPxDe8JDQ==
+Date: Wed, 17 Sep 2025 13:53:08 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>,
+	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>, Jiri Pirko <jiri@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH net-next V2 01/10] net/mlx5: Fix typo of
+ MLX5_EQ_DOORBEL_OFFSET
+Message-ID: <20250917125308.GB394836@horms.kernel.org>
+References: <1758031904-634231-1-git-send-email-tariqt@nvidia.com>
+ <1758031904-634231-2-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AJ-KNcceaLbJ
-Date: Wed, 17 Sep 2025 14:52:54 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Takashi Iwai" <tiwai@suse.de>, "Luca Weiss" <luca.weiss@fairphone.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Mark Brown" <broonie@kernel.org>,
- "Wesley Cheng" <quic_wcheng@quicinc.com>, "Jaroslav Kysela" <perex@perex.cz>,
- "Takashi Iwai" <tiwai@suse.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <548b20d2-70f5-403c-821c-630c1e605b34@app.fastmail.com>
-In-Reply-To: <87v7lhwkf2.wl-tiwai@suse.de>
-References: <20250513123442.159936-1-arnd@kernel.org>
- <20250513123442.159936-4-arnd@kernel.org>
- <DBR2363A95M1.L9XBNC003490@fairphone.com> <87v7n72pg0.wl-tiwai@suse.de>
- <DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com> <87ms8j2on6.wl-tiwai@suse.de>
- <DCKUCB8A1JCV.1GK0TW2YMXNZP@fairphone.com> <87bjnpqe45.wl-tiwai@suse.de>
- <a2a6843f-7e03-4b7e-b5fc-415ac9fc6621@app.fastmail.com>
- <DCU39JVDVFAG.2EOCQ37KAS3N0@fairphone.com> <87o6raxtu9.wl-tiwai@suse.de>
- <DCUXFIZ5KRCU.3JANM98BSE8SE@fairphone.com> <87v7lhwkf2.wl-tiwai@suse.de>
-Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758031904-634231-2-git-send-email-tariqt@nvidia.com>
 
-On Wed, Sep 17, 2025, at 10:30, Takashi Iwai wrote:
-> On Wed, 17 Sep 2025 10:19:23 +0200,
->> >> 
->> >> Are you planning to post this as a proper patch? It's a bit late in the
->> >> 6.17 cycle already but good to still get this fixed for final release.
+On Tue, Sep 16, 2025 at 05:11:35PM +0300, Tariq Toukan wrote:
+> From: Cosmin Ratiu <cratiu@nvidia.com>
+> 
+> Also convert it to a simple define.
+> 
+> Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
+> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-I was expecting your earlier suggestion (without my experimental
-changes) to get merged for 6.17.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
->> Should that code be removed with the new code now?
->
-> Yes, please try the revised patch below.
-
-This version looks good to me, thanks for following up,
-and sorry if I caused you extra work.
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
 
