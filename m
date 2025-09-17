@@ -1,149 +1,149 @@
-Return-Path: <linux-kernel+bounces-821633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFA4B81CE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:41:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7524B81CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE69B7BB245
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:39:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D158018871B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136D62F5A1A;
-	Wed, 17 Sep 2025 20:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257792E266C;
+	Wed, 17 Sep 2025 20:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yayO0t9L"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6arFysZ"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF042E6CD6
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF0D34BA30
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141602; cv=none; b=jGzZZqnbCzL8/AFSYF1FRKd37OjQ9Sfbto4dRe3dCbEqESXqyrf1XW5bo6W/2ZOL+HYQFztPjLvkC1PfeEeWIpSU6S1i/Z9qjYZ4yZOvMboun1ijC7ZNy88VTNoLloR4Es2KrgnnPbBGDOdc1KWkDUzxI3siN2hLvBsXeNMToSY=
+	t=1758141582; cv=none; b=GXUtBEUx4okIpwBjecShkV8vnc6kR3okgffyks7nO6N/eZrFdP0A++dGLI41VQTjlBx3hRVA23zM6sw/ArvExdnu16YhA9T/ywibfYV2DTfUcfqQGRu3jbGkR8aE2r6ildl+WbmCXNplG/kwmfKCoymlP8dgAg7rA1MaoYXE7ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141602; c=relaxed/simple;
-	bh=HjK6xUpUrbM/x0TIyzdMRw0JP/vNXqUhT9pldXHvbvM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=erhMRtP42rXssuiQ9N++GDH9rhSB+fiwzumjt2ABuHr0v97uD+jeyORNWrdshIc1Cq3pYX0PaAH9aegjtZS6b5H0HvDaX2zsDFFBfljra5vGeUa5fhmyJMq/lQp4ostGa7x5TAV+8P6bb3xA9lckDHzImLh6cpo89NCxLMNlxwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yayO0t9L; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-6236479c8d6so159964eaf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:40:00 -0700 (PDT)
+	s=arc-20240116; t=1758141582; c=relaxed/simple;
+	bh=QS7EDN2hyVYczke+XTorDZBFk8JUkzdgAlHMz5S5vbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ng1H/9gCcB4eFI+eJ8g/3KUwJLZKS1S7+MACrriSSz8NIvoeNwImqgwHugbp1AbbrF9Vf/RdNrZ4legPD7+04LnBkgPDSQhouT52bDe4QSbeyJMlPw8tY9Ps728GGP9X/q8F1DYScd90r0/f21LgYVAyuOV9FeUWC8Dj0En4ioo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6arFysZ; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso201225a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:39:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758141600; x=1758746400; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F1+Gj+S0d6SY5zdQCDjVAjkrnEsIPPrh8A/IsSIYkC8=;
-        b=yayO0t9LdNA+HrK71JZTxUAsIO4pxGOcJftVc8hyALOEuUhhkPm37Mq+M+oD+1OmkE
-         HqJuV4WIle3gGM0HTgtFipV1Hgjgp7SMatjClYqxI3n4YcHSbVVSk0ibB5SCd6XrIwqj
-         TjatEBS6dcK0Z+rIO6T/FXsNfotkMXZv+yt2uJv5c+fb73Etv5zL+90daGWflwQTotuK
-         X4wnEYbQn3XsDlURQOf48GtcxLZ2m08RC2bUSMVM5EgyJT8zG/i4J41yQhIvo9xx9jRm
-         jeMBiujanIC0F8EmvkXlTnGRlFJEIt3ToaSNPWS/74qfgxCPgEN82/P9c00Ac0EcEP0V
-         blog==
+        d=gmail.com; s=20230601; t=1758141580; x=1758746380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lGEnmh5du0Pzq6Rdo2bcTmUhls2o/6YOwMX0nbfB/uI=;
+        b=e6arFysZxHdNH582TIqYOwc5koU0ncQKpz7JlMvpDEsRXNzvne9JwKcL4ovbc562GA
+         CGYymMmoFsA65FSIiPNlZtkSCiPxYgalHQ1YCogT395uRSPXnMbGtd+QA69LjvQB9VDw
+         xPiPPHwG5y8JfZzuuRDokOv9lLp3BmR2UUgXau+UJnO2qZTeblkQLxClPbF4YFR7GxWH
+         lxG33JUL1llSeGmJJD25ZVwU38RbVFqzgbB/+sTspE9VWfNUs5X/nSx4C763an6jb7Cz
+         p7GY4MkWFY/Uege7QYNtnVN3nULSPVtznMrXE3O/RrR4cViN2YUQJqts0JBZkE5xRwQm
+         wj1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758141600; x=1758746400;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758141580; x=1758746380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F1+Gj+S0d6SY5zdQCDjVAjkrnEsIPPrh8A/IsSIYkC8=;
-        b=YYMRUYfd/1evhwGqSyzdTnRedL7QlqQIg1EiqxqdetfjbrS2J0G9gdqLL5VdW9GUon
-         wBnCSCO39IS/eR0jwoKqdz644EUrgYWSE1XSjPUJ9z+kEOaWAmdAv8Ooel2/80++SL08
-         9ohRMaaA+JD4+aYmT2WN8mvvffWxkEOHx6cE4ZDSYx1/FO/myTS067dykxT8r4zcv4d2
-         joUpNq4xPw9R4aWv7DJWcfVH3i6JSMu8ufkxyTQ/jye3s5ru1BpPMUBJwogyK/Tr0xq5
-         wl8IZ9RmFyB+y+AX1qD1Ibph6xe0txg+0Mcjmd+Xb17IxQKmyllG8DU9HTNrriURTe2+
-         00Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyuUpg6zuBeJPVG3sn1t1gWpMWJEYGK1LHkHVGpMR74rNQLR0kMJhmw6nULrEtjLZFkB+ivBB+Xvj00Jg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTMnSMFfRoEpmqAK6PP+lU8mE/0FkxNRTsTH2fih8TOUpFdvCn
-	QmBBh3rD+Lv9plvxwNePcrYQEle1iAk6Tjih9SnKA8L/Srv6v48LOo2VrQ8K+MPPZto=
-X-Gm-Gg: ASbGnct++uzETUnmih0K7Rpur/RsJ25I8OIs3i6aVEcUY9h8L0GB564k6N4XjqwIBku
-	gwCbcMAXSiPUHFl0rQV5BAiJewnccG9wn3wo/0O/FO2BVmY/jUFNtkNK4G6vspR8MSBn8h2PvDo
-	R+GGrKluNzKJ37Y5x5Zv+40XIRwPqWaoUebY9IBg9FZs9RFeD1+FL62/QcdErwsjFQuzaOCtYZw
-	1M6meKC9hfruqPW6S8NBB5dK+OCViTtRklGwS49PLy7SFcMGRpYlf/FZqNmFv3SqfaLSJF7rDE2
-	3ORd9E+NowViU1m4ZdU+gYjgj9D0UcFcYU2VIOEzFujZEHZGdbdDBXTOhevx8hV0nMNfZ5PVFdK
-	Xo3Rqe/mnEWOGSIi7WgoZRjGrqd1p4wqh6J5UgtQakB47xg==
-X-Google-Smtp-Source: AGHT+IEvRN0WGfOGvp8ghfVc4RqR70y4AuOHnN18NtG8AtA9iZCtysm1F9Wzp3LB/eZnthqZaBatIA==
-X-Received: by 2002:a05:6820:1c87:b0:61e:78bb:ff16 with SMTP id 006d021491bc7-624a4ea2983mr1980403eaf.1.1758141599762;
-        Wed, 17 Sep 2025 13:39:59 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:72c:cb37:521d:46e2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-625d8eec45csm124036eaf.10.2025.09.17.13.39.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 13:39:58 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 17 Sep 2025 15:39:23 -0500
-Subject: [PATCH 2/2] iio: adc: ad7124: remove unused `nr` field
+        bh=lGEnmh5du0Pzq6Rdo2bcTmUhls2o/6YOwMX0nbfB/uI=;
+        b=eMXUQyn+w6vvah4afS47oAdz/0L5P58UzI1D3egtHKSdFh107hdwwrJbEBuIQkDOV8
+         stnzzJutnmuUbwL85aV8nlV0QqPAs0afx6fl4VvIokD35cNFXgvyX9Kz99oXKYWxQBXo
+         bpe1w+7l4VGkQPBMsPMpQNAtwCeCktAJp7OkPjT2ZGgmHNhGAeaBWwbW4DXNEUp23WPQ
+         IaWnOc7Hjk1C958YgKci28Oydlk5IGtrpx3LT3U9ENWTPUbOpRE2ANw8BG+ZU2qzSIdc
+         7ej6w81NJSxth+uAU+LQrb6RAIQt+T7oOyYTXjG/q+BN29cbcISsT3KfqiU4xQMwuA4t
+         GpTw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8AVU8OxshkWYGAqI6eRw4jEcRB2ZoThA+V4mWZ8F656k/hZVy7sf01b3/Mr7zNLUsQgaFU3MiEBGbjHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyBVWwdWtR9+xJGGJtHfDJiLHVfSuDM7z1FtOGcQjRHiEZHaxe
+	TaOiTEyqE/BbBX3I5g+VYaJHxJyJKSJYfc1jDOXwLF81DDWnPbIka366vqJa/k/5bOYIpqcPGHn
+	GC6+5iT0pnzEqC8PaDVkE1CaBx3rih8A=
+X-Gm-Gg: ASbGnctZxMBXKdCRMBqxhhTO9QekHkF9J7I4/epjVb/ln6kxNm43zFSmqWRlM8/yuK5
+	XVPsqIVMFog4bqgiM8l35LjIWLSg7m9hjdqGRqbyvCr4oLzXXkoiUc1HHN02awzANzMzlI5XFjJ
+	illH533FGvZALZfSBclbOGzFR/1aZZHa5hGPdF6RbuGv3sg7IzfUxQDbNdq4/PBAgayq3DjZ0bK
+	Se6LFHrueiaCXyOik2RbOg=
+X-Google-Smtp-Source: AGHT+IFCjBIo2LxFLHCk72jsv748T0MS5ckTGyI25wwKlTOVqXJtYjuiiRuy/eB6sCxepmMCfVOb2q7/usGIKFDHafk=
+X-Received: by 2002:a17:902:ecd1:b0:265:3c3a:6117 with SMTP id
+ d9443c01a7336-26813902e03mr34835355ad.41.1758141580272; Wed, 17 Sep 2025
+ 13:39:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-iio-adc-ad7124-drop-nr-field-v1-2-5ef5cdc387c6@baylibre.com>
-References: <20250917-iio-adc-ad7124-drop-nr-field-v1-0-5ef5cdc387c6@baylibre.com>
-In-Reply-To: <20250917-iio-adc-ad7124-drop-nr-field-v1-0-5ef5cdc387c6@baylibre.com>
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1474; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=HjK6xUpUrbM/x0TIyzdMRw0JP/vNXqUhT9pldXHvbvM=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoyxyStTLuPMuQs5d4Ff8j5MtU3bpDK5q2CFrXk
- voXJ8vPEyGJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMsckgAKCRDCzCAB/wGP
- wN29B/4mfJkpp1iONvSOEMmqRQMsIMxY+lWau0IOUUQEM9/2HWTWk4olp9P7+xL3fdscg3+JQCN
- oVUz8oBfqC6Bto0dhqK3sdbYWLgppqepfSNKuy4v7bf0zdI8+C95kypIGr+cVNUgsxMwe+U8WAB
- dxvXefD6khDjFFX8i4MJZ6jHdxwMh+hrtSnqUNzbd7rFWGs3BYtO59AGZVaamCIMhMFdKzcG+St
- ZQh+msW/H8aZTy6exHRzA218wU+KRbACOwtTwdF9hPncwN0z+wbgBsK0wKQ6gSxz6NqDaaMEQ3O
- nIqWIi3kzbCBUv965kwHEaVww8/ERWfQb2b/bX+wc6eCMByK
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+References: <20250917124334.1783090-1-quic_ckantibh@quicinc.com>
+In-Reply-To: <20250917124334.1783090-1-quic_ckantibh@quicinc.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 17 Sep 2025 13:39:27 -0700
+X-Gm-Features: AS18NWBXZ1nEHppxud1nVARiIukjsn7kY8G9VoaFK9LqDvO9oKmSoZ2g1n-IO-w
+Message-ID: <CAEf4BzbM+mG5EYQKdp1r4mntP2bXTb-KgJWg4ir6zzrSRrQURA@mail.gmail.com>
+Subject: Re: [PATCH] libbpf: increase probe_name buffer size to avoid format-truncation
+To: Sanjay Chitroda <quic_ckantibh@quicinc.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Sanjay Chitroda <sanjayembeddese@gmail.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove the unused `nr` field from the `ad7124_channel` struct. There
-are no more users of this field (it is only assigned to but never read)
-so can be removed.
+On Wed, Sep 17, 2025 at 5:44=E2=80=AFAM Sanjay Chitroda
+<quic_ckantibh@quicinc.com> wrote:
+>
+> This patch increases the size of the `probe_name` buffer in
+> `probe_kern_syscall_wrapper()` from `MAX_EVENT_NAME_LEN` to
+> `MAX_EVENT_NAME_LEN * 2`.
+>
+> The change addresses a build failure in perf builds caused by GCC's
+> -Werror=3Dformat-truncation warning:
+>
+>   libbpf.c:11052:45: error: '%s' directive output may be truncated writin=
+g up to 63 bytes into a region of size between 34 and 53 [-Werror=3Dformat-=
+truncation]
+>
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/ad7124.c | 3 ---
- 1 file changed, 3 deletions(-)
+We write into that buffer with snprintf() which will handle truncation
+and leave properly zero terminated string. GCC being overly aggressive
+with its warning? Or am I missing something?
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index c61a95c5881a69e38c21ce4c340a0a61864de22b..1d93ab500a7b80bdcf18db645c3afdaea999cf48 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -199,7 +199,6 @@ struct ad7124_channel_config {
- };
- 
- struct ad7124_channel {
--	unsigned int nr;
- 	struct ad7124_channel_config cfg;
- 	unsigned int ain;
- 	unsigned int slot;
-@@ -1301,7 +1300,6 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 			return dev_err_probe(dev, -EINVAL,
- 					     "diff-channels property of %pfwP contains invalid data\n", child);
- 
--		st->channels[channel].nr = channel;
- 		st->channels[channel].ain = FIELD_PREP(AD7124_CHANNEL_AINP, ain[0]) |
- 			FIELD_PREP(AD7124_CHANNEL_AINM, ain[1]);
- 
-@@ -1328,7 +1326,6 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 
- 	if (num_channels < AD7124_MAX_CHANNELS) {
- 		st->channels[num_channels] = (struct ad7124_channel) {
--			.nr = num_channels,
- 			.ain = FIELD_PREP(AD7124_CHANNEL_AINP, AD7124_CHANNEL_AINx_TEMPSENSOR) |
- 				FIELD_PREP(AD7124_CHANNEL_AINM, AD7124_CHANNEL_AINx_AVSS),
- 			.cfg = {
+pw-bot: cr
 
--- 
-2.43.0
 
+> The warning is triggered by a `snprintf()` call that formats a string
+> using syscall names and other identifiers. In some cases, the buffer
+> size is insufficient, leading to potential truncation.
+>
+> Debug builds pass because they do not treat warnings as errors, but
+> perf builds fail due to `-Werror`.
+>
+> Increasing the buffer size ensures that the formatted string fits
+> safely, resolving the issue without affecting functionality.
+>
+> Signed-off-by: Sanjay Chitroda <quic_ckantibh@quicinc.com>
+> ---
+>  tools/lib/bpf/libbpf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index 8f5a81b672e1..9413e86476da 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -11290,7 +11290,7 @@ int probe_kern_syscall_wrapper(int token_fd)
+>
+>                 return pfd >=3D 0 ? 1 : 0;
+>         } else { /* legacy mode */
+> -               char probe_name[MAX_EVENT_NAME_LEN];
+> +               char probe_name[MAX_EVENT_NAME_LEN * 2];
+>
+>                 gen_probe_legacy_event_name(probe_name, sizeof(probe_name=
+), syscall_name, 0);
+>                 if (add_kprobe_event_legacy(probe_name, false, syscall_na=
+me, 0) < 0)
+> --
+> 2.34.1
+>
 
