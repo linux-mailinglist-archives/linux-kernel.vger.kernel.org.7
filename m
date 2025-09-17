@@ -1,386 +1,118 @@
-Return-Path: <linux-kernel+bounces-820425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E46B7DCEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:34:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15AC9B7DAB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 792991885097
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 400532A73C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA27356907;
-	Wed, 17 Sep 2025 10:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C69D32D5C2;
+	Wed, 17 Sep 2025 10:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rq1FFDLU"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SvG3QvK2"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A0F34DCEC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39E2343D92
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758103510; cv=none; b=Ms+X6aU7PsIRHBLpTipKfX/khVtsvHUIQlwl+DacsnF4Q8bVIkGJ3vqchmWch385vPTs/KnXlnJ29nATppit0Fbad3QJU/OoMjyxNs9j5asYliMmwtZ1kpjo0cfYhs3xqXgE/0nbCTKkBS0JQWnbI55/JV/nM49bGjq7KyK/DlI=
+	t=1758103549; cv=none; b=CLo6Oc5W5rp1zNS/icQWHsx6LDSnQ5LYdOYOvQnWmMS+zUaAybfVpvAAz8l9U4fMaNmLFUwJwKSjtz7jwjCtDOYaIXieZoC1xkBQqyXZxxcs2kxS4XXK2CMeBGt1yBJbsC1NZUt2e3he9Hz1vGFcIvOb1FBNHziN1ZL5Zyjw7bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758103510; c=relaxed/simple;
-	bh=tWVdEkVHEy6G4nvyP0NsCicBdSwaQuQTYho95ChUS6o=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=haAPuL+0tLV3APnP4wCG+CFM7krszGE/WziRqa6xJaspu0n0mT1zIQrsQYvzbgwPrC8PFi7IJsVOuXQ3MqO1oEtRGfqN5bDaLBSnJy/MQ/qwSMVoEI8aDjnqkJryOcN/lWcQomtFicOrDyUvx95PXdfwqvSuk/MW574flmckKAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rq1FFDLU; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24b13313b1bso45074825ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758103508; x=1758708308; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D+6IorbE+hVHYQT1y6KYFtDWV5rbTEqJlJVBp1L7jsE=;
-        b=Rq1FFDLURHXgOnSUcHhtnbPAHCvWvFYfTFAxWMctnQdjfF/7l/3+D3xTfYKUtBEeo8
-         irZpvK0Cf4ABKA3AQfNvytKCfl/SEhbKVBozXpg6OvHQXC/lLnZxnE61jDv852KznPqB
-         DQtpyCD0S4qssmEwYsb0BKWJnY6x6gM2gD7mAz0B/8ZWrcxZ/UHhS2S0fCFYz12/pQnm
-         VIzGm9CJklkg2E1T5fXK74SG1+mTRsDXqjl0efPFJ5PUzftH62VdwfTmbjbZqvcPYWVe
-         JAp3qYMLy6EjGbgxu9SRBQR1kD+VqhoTdQeQjJ20az4qLvgdi4a0sR2Bh/AHoVw7b6nj
-         aMWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758103508; x=1758708308;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D+6IorbE+hVHYQT1y6KYFtDWV5rbTEqJlJVBp1L7jsE=;
-        b=bs3dDpAz47iCCNagcRF6wy98oH8sSb6kHzXF/12uHzd1dLwWerIVstvk1Ywf6xPmZG
-         vyE0AQbqASjOChqniwIi22nn+he06B812LA95F8PLBTf2o71fMW7bBGUWy7v/KSZ5GSk
-         +Vj52UcfFVNgh72x7ct16VtkPBzD3FpJMS4HH0ey3dwezSiqTjxz+OGM6z48HA3owA6H
-         njROc0xVImreBSyltdeIgiBRZNeLw38kFlTxKpvvAbtJkgFKf8/5DvxFxNaAFnJyX2d0
-         wGKUDTlEDQLX9ryQL2m2oaRtu1pSVZgd/teCwUa2WY9aralwkwCDFwWXT30Ef7696JNL
-         JSGA==
-X-Gm-Message-State: AOJu0YzNkQeqcZbFJTFiZBd1JtbZ5zM1EbkeBJtRsbYj8s9tpeFGYk/Z
-	uiSxGDKXFA/ZRfIUR/JT04VUTQe4kHH0/IHEuEYWAthMk1n6Y2f99P+6
-X-Gm-Gg: ASbGncswDkssy7ycEEByBsgR/CTEEd3zSBG1wVIzFRoju0bIbIe6lVnGvCjmXZ1cVoe
-	mUKPhrq2+6O3j2JnyvQmfijMFhOGBeKYf6axWxRbLTycfVXRueUIbkFQ7dWTFG1FNH/BSX254rm
-	QlRuNEH3y3UxwgO0Uwz+Ll676TzP5eVIt0YtLlcaXYw40Ui2yb9GmJ315mbUf6rwC7EwFLMcTbt
-	PcgEjRbR2l2UEADE4mvT6H+jwS8ahCiRFUd7fdMDt7HaL3RXjufgQQs4HRVW1h2S/4hiWjA+HJo
-	Q722mWKPKLDxKrlcsdf+89mWFRP9pfJ8qs0sgHvCOPbZ4SgLJW1io+24io5ogBaB+Uc0vkB4nCo
-	SyxYcgroyCdOa7wsgybzNHD5plr3PyO8J5g==
-X-Google-Smtp-Source: AGHT+IEiR4kh9mVtSzNMjEftFLhPALxfP/hsstIkQAwhXKSGkdzbtgoEyucYxbCGe/rfuGnCliJOwg==
-X-Received: by 2002:a17:902:cccf:b0:24a:a2c5:a0a1 with SMTP id d9443c01a7336-2681228b1bfmr19765135ad.21.1758103508125;
-        Wed, 17 Sep 2025 03:05:08 -0700 (PDT)
-Received: from smtpclient.apple ([58.247.22.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed278b065sm1997701a91.29.2025.09.17.03.04.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Sep 2025 03:05:07 -0700 (PDT)
-From: =?utf-8?B?6ZmI5Y2O5pit77yITHlpY2Fu77yJ?= <lyican53@gmail.com>
-Message-Id: <FF69D584-EEF9-4B5A-BE30-24EEBF354780@gmail.com>
-Content-Type: multipart/mixed;
-	boundary="Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2"
+	s=arc-20240116; t=1758103549; c=relaxed/simple;
+	bh=08dcM3t0K7njHeLwqWoyWzDhpVwYoxc0lkgT3Ub3rmI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPqBrpJ6IXr++lHcytUtpsJNqnTeK74KaVJUKDvdvqMvResDGwwmguwdGv06ktAEijOgaB+e5ut12JhM1/o+mGyDJ3yL0FuyrwR58SQ+QU2aL4FqfF06lH8xmebnD6aACMlsQrD/TvGj3U1XpSZL0VXXWq5eyN5Mc3OepF3M6oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SvG3QvK2; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758103543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RTtNQO1U90KHrl0xw19CnYSeIKFOzZ2ON7jzsbKynBc=;
+	b=SvG3QvK2Lc5But0wzvm8iL/Vc79/5g8v08vUBCDL8d0XbTZLt8uqynaNPzLcZR/i1Oewex
+	mlu5NzCVpW+pFXJ3Wr1xH/FVdvyxcmWixCweiyYH/uiowzXUj5RskugxvoJWaZHQdsjrTb
+	4F5ULSt//W7SZzrCIh8WSyuhnVjDJD4=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/fpu: Replace vmalloc + copy_from_user with vmemdup_user in xstateregs_set
+Date: Wed, 17 Sep 2025 12:05:34 +0200
+Message-ID: <20250917100536.57810-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [RFC] Fix potential undefined behavior in __builtin_clz usage
- with GCC 11.1.0
-Date: Wed, 17 Sep 2025 18:04:42 +0800
-In-Reply-To: <80e107f13c239f5a8f9953dad634c7419c34e31b.camel@ibm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
- Xiubo Li <xiubli@redhat.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Paolo Bonzini <pbonzini@redhat.com>,
- "idryomov@gmail.com" <idryomov@gmail.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "seanjc@google.com" <seanjc@google.com>
-References: <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
- <80e107f13c239f5a8f9953dad634c7419c34e31b.camel@ibm.com>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Replace vmalloc() followed by copy_from_user() with vmemdup_user() to
+improve and simplify xstateregs_set(). Use kvfree() to free.
 
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Return early if an error occurs and remove the obsolete 'out' label.
 
-Hi Slava and Sean,
+No functional changes intended.
 
-Thank you for the valuable feedback!
-
-CEPH FORMAL PATCH:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-As requested by Slava, I've prepared a formal patch for the Ceph case.
-The patch adds proper zero checking before __builtin_clz() to prevent
-undefined behavior. Please find it attached as ceph_patch.patch.
-
-PROOF-OF-CONCEPT TEST CASE:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-
-I've also created a proof-of-concept test case that demonstrates the
-problematic input values that could trigger this bug. The test =
-identifies
-specific input values where (x & 0x1FFFF) becomes zero after the =
-increment
-and condition check.
-
-Key findings from the test:
-- Inputs like 0x7FFFF, 0x9FFFF, 0xBFFFF, 0xDFFFF, 0xFFFFF can trigger =
-the bug
-- These correspond to x+1 values where (x+1 & 0x18000) =3D=3D 0 and (x+1 =
-& 0x1FFFF) =3D=3D 0
-
-The test can be integrated into Ceph's existing test framework or =
-adapted
-for KUnit testing as you suggested. Please find it as ceph_poc_test.c.
-
-KVM CASE CLARIFICATION:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Thank you Sean for the detailed explanation about the KVM case. You're
-absolutely right that pages and test_dirty_ring_count are guaranteed to
-be non-zero in practice. I'll remove this from my analysis and focus on
-the genuine issues.
-
-BITOPS WRAPPER DISCUSSION:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-
-
-I appreciate you bringing Yuri into the discussion. The idea of using
-existing fls()/fls64() functions or creating new fls8()/fls16() variants
-sounds promising. Many __builtin_clz() calls in the kernel could indeed
-benefit from these safer alternatives.
-
-STATUS UPDATE:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-1. Ceph: Formal patch and test case ready for review
-2. KVM: Confirmed not an issue in practice (thanks Sean)
-3. SCSI: Still investigating the drivers/scsi/elx/libefc_sli/sli4.h case
-4. Bitops: Awaiting input from Yuri on kernel-wide improvements
-
-NEXT STEPS:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-1. Please review the Ceph patch and test case (Slava)
-2. Happy to work with Yuri on bitops improvements if there's interest
-3. For SCSI maintainers: would you like me to prepare a similar analysis =
-for the sli_convert_mask_to_count() function?
-4. Can prepare additional patches for any other confirmed cases
-
-Questions for maintainers:
-- Slava: Should the Ceph patch go through ceph-devel first, or directly =
-to you?
-- Any specific requirements for the test case integration?
-- SCSI maintainers: Is the drivers/scsi/elx/libefc_sli/sli4.h case worth =
-investigating further?
-
-Best regards,
-Huazhao Chen
-lyican53@gmail.com
-
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
+ arch/x86/kernel/fpu/regset.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-Attachments:
-- ceph_patch.patch: Formal patch for net/ceph/crush/mapper.c
-- ceph_poc_test.c: Proof-of-concept test case demonstrating the issue
-
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Disposition: attachment;
-	filename=ceph_poc_test.c
-Content-Type: application/octet-stream;
-	x-unix-mode=0644;
-	name="ceph_poc_test.c"
-Content-Transfer-Encoding: quoted-printable
-
-/*=0A=20*=20Proof-of-concept=20test=20case=20for=20Ceph=20CRUSH=20mapper=20=
-GCC=20101175=20bug=0A=20*=20=0A=20*=20This=20test=20demonstrates=20the=20=
-potential=20undefined=20behavior=20in=20crush_ln()=0A=20*=20when=20=
-__builtin_clz()=20is=20called=20with=20zero=20argument.=0A=20*=20=0A=20*=20=
-Can=20be=20integrated=20into=20existing=20Ceph=20unit=20test=20framework=20=
-or=20adapted=0A=20*=20for=20KUnit=20testing=20as=20suggested=20by=20=
-Slava.=0A=20*/=0A=0A#include=20<stdio.h>=0A#include=20<stdint.h>=0A=
-#include=20<assert.h>=0A=0A/*=20Simplified=20version=20of=20the=20=
-problematic=20crush_ln=20function=20*/=0Astatic=20uint64_t=20=
-crush_ln_original(unsigned=20int=20xin)=0A{=0A=20=20=20=20unsigned=20int=20=
-x=20=3D=20xin;=0A=20=20=20=20int=20iexpon=20=3D=2015;=0A=20=20=20=20=0A=20=
-=20=20=20x++;=0A=20=20=20=20=0A=20=20=20=20/*=20This=20is=20where=20the=20=
-bug=20can=20occur=20*/=0A=20=20=20=20if=20(!(x=20&=200x18000))=20{=0A=20=20=
-=20=20=20=20=20=20/*=20PROBLEMATIC:=20no=20zero=20check=20before=20=
-__builtin_clz=20*/=0A=20=20=20=20=20=20=20=20int=20bits=20=3D=20=
-__builtin_clz(x=20&=200x1FFFF)=20-=2016;=0A=20=20=20=20=20=20=20=20x=20=
-<<=3D=20bits;=0A=20=20=20=20=20=20=20=20iexpon=20=3D=2015=20-=20bits;=0A=20=
-=20=20=20}=0A=20=20=20=20=0A=20=20=20=20return=20(uint64_t)x=20|=20=
-((uint64_t)iexpon=20<<=2032);=0A}=0A=0A/*=20Fixed=20version=20with=20=
-zero=20check=20*/=0Astatic=20uint64_t=20crush_ln_fixed(unsigned=20int=20=
-xin)=0A{=0A=20=20=20=20unsigned=20int=20x=20=3D=20xin;=0A=20=20=20=20int=20=
-iexpon=20=3D=2015;=0A=20=20=20=20=0A=20=20=20=20x++;=0A=20=20=20=20=0A=20=
-=20=20=20if=20(!(x=20&=200x18000))=20{=0A=20=20=20=20=20=20=20=20=
-uint32_t=20masked=20=3D=20x=20&=200x1FFFF;=0A=20=20=20=20=20=20=20=20/*=20=
-FIXED:=20add=20zero=20check=20*/=0A=20=20=20=20=20=20=20=20int=20bits=20=
-=3D=20masked=20?=20__builtin_clz(masked)=20-=2016=20:=2016;=0A=20=20=20=20=
-=20=20=20=20x=20<<=3D=20bits;=0A=20=20=20=20=20=20=20=20iexpon=20=3D=20=
-15=20-=20bits;=0A=20=20=20=20}=0A=20=20=20=20=0A=20=20=20=20return=20=
-(uint64_t)x=20|=20((uint64_t)iexpon=20<<=2032);=0A}=0A=0A/*=20Test=20=
-function=20to=20find=20problematic=20input=20values=20*/=0Avoid=20=
-test_crush_ln_edge_cases(void)=0A{=0A=20=20=20=20printf("=3D=3D=3D=20=
-Ceph=20CRUSH=20Mapper=20GCC=20101175=20Bug=20Test=20=3D=3D=3D\n\n");=0A=20=
-=20=20=20=0A=20=20=20=20/*=20Test=20values=20that=20could=20trigger=20=
-the=20bug=20*/=0A=20=20=20=20unsigned=20int=20problematic_inputs[]=20=3D=20=
-{=0A=20=20=20=20=20=20=20=200x17FFF,=20=20=20=20/*=20x+1=20=3D=20=
-0x18000,=20(x+1=20&=200x18000)=20=3D=200x18000=20-=20not=20triggered=20=
-*/=0A=20=20=20=20=20=20=20=200x7FFF,=20=20=20=20=20/*=20x+1=20=3D=20=
-0x8000,=20=20(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=
-=3D=200x8000=20-=20safe=20*/=0A=20=20=20=20=20=20=20=200xFFFF,=20=20=20=20=
-=20/*=20x+1=20=3D=200x10000,=20(x+1=20&=200x18000)=20=3D=200=20and=20=
-(x+1=20&=200x1FFFF)=20=3D=200x10000=20-=20safe=20*/=0A=20=20=20=20=20=20=20=
-=200x7FFFF,=20=20=20=20/*=20x+1=20=3D=200x80000,=20(x+1=20&=200x18000)=20=
-=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=
-=20=20=20=20=20=20=200x9FFFF,=20=20=20=20/*=20x+1=20=3D=200xA0000,=20=
-(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20=
-PROBLEMATIC!=20*/=0A=20=20=20=20=20=20=20=200xBFFFF,=20=20=20=20/*=20x+1=20=
-=3D=200xC0000,=20(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=20=
-0x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=20=20=20=20=20=20=20=
-0xDFFFF,=20=20=20=20/*=20x+1=20=3D=200xE0000,=20(x+1=20&=200x18000)=20=3D=20=
-0=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=20=20=
-=20=20=20=20=200xFFFFF,=20=20=20=20/*=20x+1=20=3D=200x100000,=20(x+1=20&=20=
-0x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20=
-PROBLEMATIC!=20*/=0A=20=20=20=20};=0A=20=20=20=20=0A=20=20=20=20int=20=
-num_tests=20=3D=20sizeof(problematic_inputs)=20/=20=
-sizeof(problematic_inputs[0]);=0A=20=20=20=20int=20bugs_found=20=3D=200;=0A=
-=20=20=20=20=0A=20=20=20=20printf("Testing=20%d=20potentially=20=
-problematic=20input=20values:\n\n",=20num_tests);=0A=20=20=20=20=
-printf("Input=20=20=20=20|=20x+1=20=20=20=20=20=20|=20Condition=20Check=20=
-|=20Masked=20Value=20|=20Status\n");=0A=20=20=20=20=
-printf("---------|----------|-----------------|--------------|--------\n")=
-;=0A=20=20=20=20=0A=20=20=20=20for=20(int=20i=20=3D=200;=20i=20<=20=
-num_tests;=20i++)=20{=0A=20=20=20=20=20=20=20=20unsigned=20int=20input=20=
-=3D=20problematic_inputs[i];=0A=20=20=20=20=20=20=20=20unsigned=20int=20=
-x=20=3D=20input=20+=201;=0A=20=20=20=20=20=20=20=20bool=20condition_met=20=
-=3D=20!(x=20&=200x18000);=0A=20=20=20=20=20=20=20=20unsigned=20int=20=
-masked=20=3D=20x=20&=200x1FFFF;=0A=20=20=20=20=20=20=20=20=0A=20=20=20=20=
-=20=20=20=20printf("0x%06X=20|=200x%06X=20|=20%-15s=20|=200x%05X=20=20=20=
-=20|=20",=20=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20input,=20x,=20=
-=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20condition_met=20?=20=
-"TRUE"=20:=20"FALSE",=20=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-masked);=0A=20=20=20=20=20=20=20=20=0A=20=20=20=20=20=20=20=20if=20=
-(condition_met=20&&=20masked=20=3D=3D=200)=20{=0A=20=20=20=20=20=20=20=20=
-=20=20=20=20printf("BUG!=20Zero=20passed=20to=20__builtin_clz\n");=0A=20=20=
-=20=20=20=20=20=20=20=20=20=20bugs_found++;=0A=20=20=20=20=20=20=20=20}=20=
-else=20if=20(condition_met)=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20=
-printf("Safe=20(non-zero=20argument)\n");=0A=20=20=20=20=20=20=20=20}=20=
-else=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20printf("Condition=20not=20=
-met=20(safe)\n");=0A=20=20=20=20=20=20=20=20}=0A=20=20=20=20}=0A=20=20=20=
-=20=0A=20=20=20=20printf("\n=3D=3D=3D=20Summary=20=3D=3D=3D\n");=0A=20=20=
-=20=20printf("Total=20tests:=20%d\n",=20num_tests);=0A=20=20=20=20=
-printf("Potential=20bugs=20found:=20%d\n",=20bugs_found);=0A=20=20=20=20=0A=
-=20=20=20=20if=20(bugs_found=20>=200)=20{=0A=20=20=20=20=20=20=20=20=
-printf("\n=E2=9A=A0=EF=B8=8F=20=20WARNING:=20Found=20inputs=20that=20=
-could=20trigger=20undefined=20behavior!\n");=0A=20=20=20=20=20=20=20=20=
-printf("These=20inputs=20cause=20__builtin_clz(0)=20to=20be=20called,=20=
-which=20has\n");=0A=20=20=20=20=20=20=20=20printf("undefined=20behavior=20=
-when=20compiled=20with=20GCC=2011.1.0=20-march=3Dx86-64-v3=20-O1\n");=0A=20=
-=20=20=20}=20else=20{=0A=20=20=20=20=20=20=20=20printf("\n=E2=9C=85=20No=20=
-obvious=20problematic=20inputs=20found=20in=20this=20test=20set.\n");=0A=20=
-=20=20=20}=0A=20=20=20=20=0A=20=20=20=20/*=20Test=20that=20fixed=20=
-version=20handles=20problematic=20cases=20*/=0A=20=20=20=20if=20=
-(bugs_found=20>=200)=20{=0A=20=20=20=20=20=20=20=20printf("\n=3D=3D=3D=20=
-Testing=20Fixed=20Version=20=3D=3D=3D\n");=0A=20=20=20=20=20=20=20=20for=20=
-(int=20i=20=3D=200;=20i=20<=20num_tests;=20i++)=20{=0A=20=20=20=20=20=20=20=
-=20=20=20=20=20unsigned=20int=20input=20=3D=20problematic_inputs[i];=0A=20=
-=20=20=20=20=20=20=20=20=20=20=20unsigned=20int=20x=20=3D=20input=20+=20=
-1;=0A=20=20=20=20=20=20=20=20=20=20=20=20if=20(!(x=20&=200x18000)=20&&=20=
-(x=20&=200x1FFFF)=20=3D=3D=200)=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20uint64_t=20result=20=3D=20crush_ln_fixed(input);=0A=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20printf("Fixed=20version=20handles=20=
-input=200x%06X=20->=20result=200x%016lX\n",=20=0A=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20input,=20result);=0A=20=20=20=
-=20=20=20=20=20=20=20=20=20}=0A=20=20=20=20=20=20=20=20}=0A=20=20=20=20}=0A=
-}=0A=0Aint=20main(void)=0A{=0A=20=20=20=20printf("NOTE:=20This=20is=20a=20=
-proof-of-concept=20test=20case=20to=20demonstrate\n");=0A=20=20=20=20=
-printf("=20=20=20=20=20=20the=20potential=20GCC=20101175=20bug=20in=20=
-Ceph's=20crush_ln().\n");=0A=20=20=20=20printf("=20=20=20=20=20=20=
-Maintainers=20can=20compile=20and=20run=20this=20to=20verify=20the=20=
-issue.\n\n");=0A=20=20=20=20=0A=20=20=20=20test_crush_ln_edge_cases();=0A=
-=20=20=20=20=0A=20=20=20=20printf("\n=3D=3D=3D=20Compilation=20Test=20=
-=3D=3D=3D\n");=0A=20=20=20=20printf("To=20reproduce=20the=20GCC=20bug,=20=
-compile=20with:\n");=0A=20=20=20=20printf("gcc=20-march=3Dx86-64-v3=20=
--O1=20-S=20-o=20test_crush.s=20ceph_poc_test.c\n");=0A=20=20=20=20=
-printf("Then=20examine=20the=20assembly=20for=20BSR=20instructions=20=
-without=20zero=20checks.\n");=0A=20=20=20=20=0A=20=20=20=20return=200;=0A=
-}=0A=0A/*=0A=20*=20Expected=20problematic=20assembly=20with=20GCC=20=
-11.1.0=20-march=3Dx86-64-v3=20-O1:=0A=20*=20=0A=20*=20In=20=
-crush_ln_original,=20you=20might=20see:=0A=20*=20=20=20=20=20bsr=20eax,=20=
-[masked_value]=20=20=20=20#=20<--=20UNDEFINED=20if=20masked_value=20is=20=
-0=0A=20*=20=20=20=20=20=0A=20*=20While=20crush_ln_fixed=20should=20=
-generate=20proper=20conditional=20logic=20or=20use=20LZCNT.=0A=20*=20=0A=20=
-*=20Integration=20suggestions=20for=20Ceph:=0A=20*=201.=20Add=20this=20=
-as=20a=20KUnit=20test=20in=20net/ceph/=0A=20*=202.=20Include=20in=20=
-existing=20Ceph=20test=20suite=0A=20*=203.=20Add=20to=20crush=20unit=20=
-tests=0A=20*/=0A=
-
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Disposition: attachment;
-	filename=ceph_patch.patch
-Content-Type: application/octet-stream;
-	x-unix-mode=0644;
-	name="ceph_patch.patch"
-Content-Transfer-Encoding: 7bit
-
-From: Huazhao Chen <lyican53@gmail.com>
-Date: Mon, 16 Sep 2025 10:00:00 +0800
-Subject: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with GCC 11.1.0
-
-When compiled with GCC 11.1.0 and -march=x86-64-v3 -O1 optimization flags,
-__builtin_clz() may generate BSR instructions without proper zero handling.
-The BSR instruction has undefined behavior when the source operand is zero,
-which could occur when (x & 0x1FFFF) equals 0 in the crush_ln() function.
-
-This issue is documented in GCC bug 101175:
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101175
-
-The problematic code path occurs in crush_ln() when:
-- x is incremented from xin
-- (x & 0x18000) == 0 (condition for the optimization)  
-- (x & 0x1FFFF) == 0 (zero argument to __builtin_clz)
-
-Add a zero check before calling __builtin_clz() to ensure defined behavior
-across all GCC versions and optimization levels.
-
-Signed-off-by: Huazhao Chen <lyican53@gmail.com>
----
- net/ceph/crush/mapper.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-index 1234567..abcdef0 100644
---- a/net/ceph/crush/mapper.c
-+++ b/net/ceph/crush/mapper.c
-@@ -262,7 +262,8 @@ static __u64 crush_ln(unsigned int xin)
- 	 * do it in one step instead of iteratively
- 	 */
- 	if (!(x & 0x18000)) {
--		int bits = __builtin_clz(x & 0x1FFFF) - 16;
-+		u32 masked = x & 0x1FFFF;
-+		int bits = masked ? __builtin_clz(masked) - 16 : 16;
- 		x <<= bits;
- 		iexpon = 15 - bits;
+diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
+index 0986c2200adc..00cc009918e6 100644
+--- a/arch/x86/kernel/fpu/regset.c
++++ b/arch/x86/kernel/fpu/regset.c
+@@ -3,6 +3,7 @@
+  * FPU register's regset abstraction, for ptrace, core dumps, etc.
+  */
+ #include <linux/sched/task_stack.h>
++#include <linux/string.h>
+ #include <linux/vmalloc.h>
+ 
+ #include <asm/fpu/api.h>
+@@ -157,21 +158,15 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
+ 		return -EFAULT;
+ 
+ 	if (!kbuf) {
+-		tmpbuf = vmalloc(count);
+-		if (!tmpbuf)
+-			return -ENOMEM;
+-
+-		if (copy_from_user(tmpbuf, ubuf, count)) {
+-			ret = -EFAULT;
+-			goto out;
+-		}
++		tmpbuf = vmemdup_user(ubuf, count);
++		if (IS_ERR(tmpbuf))
++			return PTR_ERR(tmpbuf);
  	}
+ 
+ 	fpu_force_restore(fpu);
+ 	ret = copy_uabi_from_kernel_to_xstate(fpu->fpstate, kbuf ?: tmpbuf, &target->thread.pkru);
+ 
+-out:
+-	vfree(tmpbuf);
++	kvfree(tmpbuf);
+ 	return ret;
+ }
+ 
 -- 
-2.40.1
+2.51.0
 
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
-
-
-
-
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2--
 
