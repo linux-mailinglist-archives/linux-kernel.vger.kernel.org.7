@@ -1,131 +1,204 @@
-Return-Path: <linux-kernel+bounces-820244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB30B7CF20
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A370EB7CE54
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13CFF189177A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:35:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 311D34E254E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335992D239F;
-	Wed, 17 Sep 2025 08:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B64D2AEFD;
+	Wed, 17 Sep 2025 08:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K+81nkIJ"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bYY/7VuB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2795E22ACE3
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B894B2D949A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758098088; cv=none; b=tTco6+9062/hcJrHhw+kMGwt2Ay2sCXo9ifhPH/xvz4pjBCW9IZ5x2aHSpBMKDMAf+0MXJK2tzYBm1nTXfsfwhZtas8GY7rnbLXMOlNdDg68jxO956a7T3NMbX34lANhmDYetTEnBXz6MkD1gGoPVOK/WQqzlPY7f/ixA/AJx0Y=
+	t=1758098133; cv=none; b=oXSM9+bVRR0pgOMVOFvj30hpKiAmd1Du2c7etit6s1Bg5sZ/KQIWtKGrcsiVDXMfSAOaEV4jgZdmBNPQfIrgTAv8fSXV8gl20ehLCeh8RBK2zSW+EqVQ7xLxS4aA1DblEOrvCo43yULUTS5yARMYb7qqJn3j4iRcILjSaK3Yzmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758098088; c=relaxed/simple;
-	bh=V14gtq9A0bm200QoiFGs2VxEzU3HB1JIDdAg4lPo9Ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hXfVXLkDsaCYi56hXCmlszGqxVD4BIu5emoUwR9ipgXrb0cGTYDJ66QtJWQje4fQ8j2JCRGLinI70BySgaijVmWcofsUIPCB3VStJiz+dyeSxiP/u7QwalMK52z3zKLhhSkH8Gt3A2Mu9yXypXuASgke8WopdaFG4xi1VWCAXGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K+81nkIJ; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f27e3d04-ced6-459c-993f-b5495257fa3f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758098083;
+	s=arc-20240116; t=1758098133; c=relaxed/simple;
+	bh=q998US9DM6OvRET551aJFQGCAmTK69Gkhu3kFz33Lo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g0HGjhZth2ECvny1Ih4l3EQ7CFV652BAmXLps7TDTibjDgWnOfGa6JDAXkrt9/mqWm4zBAIoyMoRIezNgf6f1uE4tt7N10u0wYl6ziH9usF/Q2Ukin0vS47nJQ5ujj0pNknjHy08Jg3orr+5Pur6Zm4hJSUSylOQHYiw1FvBNvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bYY/7VuB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758098130;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RpI9q1IwSk47lhK6SwQ0h/F//+p1Xmj8B105Y7CCDUE=;
-	b=K+81nkIJNBJsjnuLjYyhZ0IItiH4Cds4vybsUOEYkVCaOGzjp8JfHqv6DNhbtT0S1eHVZW
-	1SiDAMzzafqQBgAwKV+uGtQyTtbXM96yVSS7ylvZ5mkxvkmldx5vJFt8J6eU6J7Btb3uNL
-	TAKRs0rMZXFquRgb5M9Yqey+2pUJZug=
-Date: Wed, 17 Sep 2025 16:34:35 +0800
+	bh=rpJuW7ScxpFIrDm/6lY2N9UNppFzeLdJ57JW01ss3N0=;
+	b=bYY/7VuBDQgVnIvBa68t7Czgxs0EY88Ub4ilLZj+2DbhGWJkIBgACQiX34rQDvQPEMNr+W
+	pF3N6q1Ors9ZiIkG2hxipYAebcXvwbhUIn/bYJAsvvUR9NvnBq9ipRtt+Rv3WqK1DEBQZv
+	7arakdAFanKnOvLfntGGy72a5tw2EQY=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-plNWY3tmMTmZNc92YhgF3w-1; Wed, 17 Sep 2025 04:35:29 -0400
+X-MC-Unique: plNWY3tmMTmZNc92YhgF3w-1
+X-Mimecast-MFC-AGG-ID: plNWY3tmMTmZNc92YhgF3w_1758098129
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-72f7e04f805so60518307b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:35:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758098128; x=1758702928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rpJuW7ScxpFIrDm/6lY2N9UNppFzeLdJ57JW01ss3N0=;
+        b=NcOzSL1mQ07GXFDA0kYOxrNRc0HaK94iU3S18uJJdaeLVuaBnXRDs963/OKpuui4T0
+         8CrK4dURPiAqXtL/1zUzsU9gyX6wPXn5s0pDF2janZ1lx1wXjYgPrnYQbFyMM+WcR5ms
+         dC8I1aknllg0bZhd5891cdK+gD/4RRUcBeYmjYAyFS0GtJyOFBvjKXk0G7k7+mogjic0
+         CNIrmvwzCjG66Bp/DZ45J4RTH/6O8Ph049niVSZJXdoA1UJdcveOc84lHIfV4Ic104fa
+         7xY+1e/m2ORftxgw7cQZYbumTSy2TiaDquHYKJGwW1fDCmfp2ZyFfBaPqFXUac4UJCRN
+         YsRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU78ph9cxtmy8TSo/FtEqtyBG7KcoxOqLmEG8vfaKfcqOBMZp4RIj7HiJa7obA5DbByCvqEawaPJQUcUOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb5i83sqIH2QMD1p0WUMfgjNstNHwg1wtxCUDheiWcV+UAmHl0
+	hm0kjvsqh5sxVJaLgFx/vE1/QQiuIja2X9bvvT/qHmAl3HfXxm7TgatMvpl257X2FR7WXT3rUhu
+	wG41TpIWdbIn8LdgFFnWvAvka8pj8R4KDT+ydjlKTUM/KNLMRG7Eo/plppahseUpSSUM+LTP75q
+	7bnMlm2tTPCTpWSs5HPj6KW+DVbb4n3Y7hfA5D3rn2
+X-Gm-Gg: ASbGncv2sQnIbuDJAkPJcM/fI1kDno56dLXjxmR+HYl7K5RToa7z8j+8lAk4SBSQWmK
+	qqzIXbvWB+pQC5Wd5Ln7s8x3cPsS+t96pR7wxVP6Dd/Rx+F5bVQhyP4OsJI5Z81FXgGYBhy43tK
+	Jjr2f49GERHEqcIi7uaCkgr6/ke2j+nl4SPDiP1RK8Ue6uqDAMOohtKDqLZVVR/8Q0BNYq4AJ9z
+	cw1LW11
+X-Received: by 2002:a05:690c:6287:b0:734:4c38:8dd7 with SMTP id 00721157ae682-7389284e5e5mr9726447b3.37.1758098128452;
+        Wed, 17 Sep 2025 01:35:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFw7WOF0rEFwoWJH/Fs+cwlNlhklNtr7tfG2XSvbAwX8kIp4ppyqh9Npvtpo12WegIqko71EKOuElGMUL7KcsA=
+X-Received: by 2002:a05:690c:6287:b0:734:4c38:8dd7 with SMTP id
+ 00721157ae682-7389284e5e5mr9726207b3.37.1758098127956; Wed, 17 Sep 2025
+ 01:35:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] docs/zh_CN: Add security lsm-development Chinese
- translation
-To: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>, alexs@kernel.org, corbet@lwn.net
-Cc: dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250917073010.88607-1-zhaoshuo@cqsoftware.com.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20250917073010.88607-1-zhaoshuo@cqsoftware.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250917063045.2042-1-jasowang@redhat.com> <20250917063045.2042-2-jasowang@redhat.com>
+In-Reply-To: <20250917063045.2042-2-jasowang@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 17 Sep 2025 10:34:50 +0200
+X-Gm-Features: AS18NWCp8aMeKQoIpGNO8gXB409fPKuCuu417M71iyj7YQxnhfTZ79uY8_vwglw
+Message-ID: <CAJaqyWeWy9L322_-=MNno9JABegb+ByXEHmEyBsqXHUVTiBndg@mail.gmail.com>
+Subject: Re: [PATCH vhost 2/3] Revert "vhost/net: Defer TX queue re-enable
+ until after sendmsg"
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, jonah.palmer@oracle.com, kuba@kernel.org, jon@nutanix.com, 
+	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 9/17/25 3:30 PM, Shuo Zhao 写道:
-> Translate .../security/lsm-development.rst into Chinese.
+On Wed, Sep 17, 2025 at 8:31=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
 >
-> Update the translation through commit 6d2ed653185b
-> ("lsm: move hook comments docs to security/security.c").
+> This reverts commit 8c2e6b26ffe243be1e78f5a4bfb1a857d6e6f6d6. It tries
+> to defer the notification enabling by moving the logic out of the loop
+> after the vhost_tx_batch() when nothing new is spotted. This will
+> bring side effects as the new logic would be reused for several other
+> error conditions.
 >
-> Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+> One example is the IOTLB: when there's an IOTLB miss, get_tx_bufs()
+> might return -EAGAIN and exit the loop and see there's still available
+> buffers, so it will queue the tx work again until userspace feed the
+> IOTLB entry correctly. This will slowdown the tx processing and
+> trigger the TX watchdog in the guest as reported in
+> https://lkml.org/lkml/2025/9/10/1596.
+>
+> To fix, revert the change. A follow up patch will being the performance
+> back in a safe way.
+>
+> Reported-by: Jon Kohler <jon@nutanix.com>
+> Cc: stable@vger.kernel.org
+> Fixes: 8c2e6b26ffe2 ("vhost/net: Defer TX queue re-enable until after sen=
+dmsg")
 
-Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-
-Thanks,
-
-Yanteng
-
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 > ---
->   .../translations/zh_CN/security/index.rst     |  2 +-
->   .../zh_CN/security/lsm-development.rst        | 19 +++++++++++++++++++
->   2 files changed, 20 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/translations/zh_CN/security/lsm-development.rst
+>  drivers/vhost/net.c | 30 +++++++++---------------------
+>  1 file changed, 9 insertions(+), 21 deletions(-)
 >
-> diff --git a/Documentation/translations/zh_CN/security/index.rst b/Documentation/translations/zh_CN/security/index.rst
-> index 78d9d4b36dca..05d24e3acc11 100644
-> --- a/Documentation/translations/zh_CN/security/index.rst
-> +++ b/Documentation/translations/zh_CN/security/index.rst
-> @@ -18,6 +18,7 @@
->      credentials
->      snp-tdx-threat-model
->      lsm
-> +   lsm-development
->      sak
->      self-protection
->      siphash
-> @@ -28,7 +29,6 @@
->   TODOLIST:
->   * IMA-templates
->   * keys/index
-> -* lsm-development
->   * SCTP
->   * secrets/index
->   * ipe
-> diff --git a/Documentation/translations/zh_CN/security/lsm-development.rst b/Documentation/translations/zh_CN/security/lsm-development.rst
-> new file mode 100644
-> index 000000000000..7ed3719a9d07
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/security/lsm-development.rst
-> @@ -0,0 +1,19 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. include:: ../disclaimer-zh_CN.rst
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index 16e39f3ab956..57efd5c55f89 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -765,11 +765,11 @@ static void handle_tx_copy(struct vhost_net *net, s=
+truct socket *sock)
+>         int err;
+>         int sent_pkts =3D 0;
+>         bool sock_can_batch =3D (sock->sk->sk_sndbuf =3D=3D INT_MAX);
+> -       bool busyloop_intr;
+>         bool in_order =3D vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
+>
+>         do {
+> -               busyloop_intr =3D false;
+> +               bool busyloop_intr =3D false;
 > +
-> +:Original: Documentation/security/lsm-development.rst
-> +
-> +:翻译:
-> + 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
-> +
-> +=================
-> +Linux安全模块开发
-> +=================
-> +
-> +基于https://lore.kernel.org/r/20071026073721.618b4778@laptopd505.fenrus.org，
-> +当一种新的LSM的意图（它试图防范什么，以及在哪些情况下人们会期望使用它）在
-> +``Documentation/admin-guide/LSM/`` 中适当记录下来后，就会被接受进入内核。
-> +这使得LSM的代码可以很轻松的与其目标进行对比，从而让最终用户和发行版可以更
-> +明智地决定那些LSM适合他们的需求。
-> +
-> +有关可用的 LSM 钩子接口的详细文档，请参阅 ``security/security.c`` 及相关结构。
+>                 if (nvq->done_idx =3D=3D VHOST_NET_BATCH)
+>                         vhost_tx_batch(net, nvq, sock, &msg);
+>
+> @@ -780,10 +780,13 @@ static void handle_tx_copy(struct vhost_net *net, s=
+truct socket *sock)
+>                         break;
+>                 /* Nothing new?  Wait for eventfd to tell us they refille=
+d. */
+>                 if (head =3D=3D vq->num) {
+> -                       /* Kicks are disabled at this point, break loop a=
+nd
+> -                        * process any remaining batched packets. Queue w=
+ill
+> -                        * be re-enabled afterwards.
+> -                        */
+> +                       if (unlikely(busyloop_intr)) {
+> +                               vhost_poll_queue(&vq->poll);
+> +                       } else if (unlikely(vhost_enable_notify(&net->dev=
+,
+> +                                                               vq))) {
+> +                               vhost_disable_notify(&net->dev, vq);
+> +                               continue;
+> +                       }
+>                         break;
+>                 }
+>
+> @@ -839,22 +842,7 @@ static void handle_tx_copy(struct vhost_net *net, st=
+ruct socket *sock)
+>                 ++nvq->done_idx;
+>         } while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)=
+));
+>
+> -       /* Kicks are still disabled, dispatch any remaining batched msgs.=
+ */
+>         vhost_tx_batch(net, nvq, sock, &msg);
+> -
+> -       if (unlikely(busyloop_intr))
+> -               /* If interrupted while doing busy polling, requeue the
+> -                * handler to be fair handle_rx as well as other tasks
+> -                * waiting on cpu.
+> -                */
+> -               vhost_poll_queue(&vq->poll);
+> -       else
+> -               /* All of our work has been completed; however, before
+> -                * leaving the TX handler, do one last check for work,
+> -                * and requeue handler if necessary. If there is no work,
+> -                * queue will be reenabled.
+> -                */
+> -               vhost_net_busy_poll_try_queue(net, vq);
+>  }
+>
+>  static void handle_tx_zerocopy(struct vhost_net *net, struct socket *soc=
+k)
+> --
+> 2.34.1
+>
+
 
