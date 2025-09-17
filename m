@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-820746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B37B7EFA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:09:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D16EB7F0C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286BB189FB7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:03:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8047217CAE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7C33161B5;
-	Wed, 17 Sep 2025 12:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC8E328988;
+	Wed, 17 Sep 2025 12:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKDCpqxr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDhxPTlL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584681F3BA2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D43E328963
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113857; cv=none; b=o7XmfNz+8Ba1UhtbRWUyPGPh1nDx47RnBvNjNo8lTkRK4O//En1PEvwuyLWQAsVnVT2LwB48VrmP8L3UiWCpk5KrvdI6i+ee7GCwD4/0+kELtIf3VJ21CDH79Qxe6L3AsDV0Rd4bmM5MoICIGj0ZLLQExqESY18SGjL4KOr8urY=
+	t=1758113859; cv=none; b=MiXY1ASllsiq2mQMBh5f9ZsfTp1mlqQJFeTzad24BBC9neFuXgOZTCt6WbOuf7HgBqPnuPUsGcUf8Emb3TmGGucm3cPmK2wfP3n0JDz1LeytEuM0yOqiFYJ2J2H2Zdnq3FkpMoo2SVw8B54PZs+Ovq8xnkEgV+PWL9A1GNzb8oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113857; c=relaxed/simple;
-	bh=bVQjh4jiUS12TD+kXPcBc3hIfzoE7mbPAz8+HVg3K0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MxmNSi2IdFiuYU0/P/o5OjioAszhkg9RrQ3NNZhjfi4u8LpdJwFykw06Oa/YDrvpR0raKdfWGCXeNF4jqV0B3BgUWlRioHj0oCr3/xh7wZ25Mckx37jOCGbFGEyvQtL2GcQ6FaWtSyl8mt8h1JrYX3ei34UdDX2QqE+U9VKD7lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKDCpqxr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA04C4CEF0;
-	Wed, 17 Sep 2025 12:57:35 +0000 (UTC)
+	s=arc-20240116; t=1758113859; c=relaxed/simple;
+	bh=r+p/fW1qMMIwpqKIwYaP72h2rsOOsXIYd5AWK52PFjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DegkrFbhFf1q4gD+w2JvBE6bl4kflbwLFY66U/enxaP7UB5bAHKZG6VG3PWekmvkzB2WVcc8B1HDQE06K62BoUhutEg5H5D0oC2KxRkB2r9WydBsM33/PRutYBF/RcBxI/Z7G2lQ1fb6GvgkbueedE9F/LhQDo6CIV/83XRsydY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDhxPTlL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 707FEC4CEFA;
+	Wed, 17 Sep 2025 12:57:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758113857;
-	bh=bVQjh4jiUS12TD+kXPcBc3hIfzoE7mbPAz8+HVg3K0U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jKDCpqxrnNtPb3D6338CB7uyKFGcRN9WGPbj3Df0XsYjlUo8y+qkSy8lcqNPNeJxg
-	 drm0UKWmmE5vcbRMPvNbrbH28B4MgKh2k1A+SW91COElH+SNM9gBOGY0AHR2PEIO/0
-	 uXt+OsBA3Gjbv/u2A5d4t9bWpHnLe4aMDrBEV9iWTJylLVIIEISk/J8v8ASFJf4kZe
-	 hof3guPEvNve21kEJ8h5hDC/B2BIM1/dUWtYxiMJv5Fwg08HB9R1T9Y6wk8TCOFmez
-	 SWqZglHXOb8AfaGhHDznRI1zByLsENoS99NFWM1+6DUtuJd9JKHfeVOzHK7aBmAcbP
-	 KC5lPlEjnq1MQ==
+	s=k20201202; t=1758113859;
+	bh=r+p/fW1qMMIwpqKIwYaP72h2rsOOsXIYd5AWK52PFjM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MDhxPTlLBJEX7J3Lii/V9VX413VtE8eVKCNeBKb26X7SilRFKRMeS6RdKznIrZIwd
+	 2mLPCzdmU41qnSN6vZ8XmntqKfRPB5hie55/t133keMIx5R0WSDyoxoBa5PYQHa+DQ
+	 bS9al/X6rX1zlUQVFoHb2Jy7zSiDRVGyOHLvPX8WDleZw1R5t2KlSKU8NRCCzqyqjt
+	 5mmwc8Ymr+ZlrYQ039KVM7csj2grE2DOVORw1MpBZjs+VzdwvGmfeRs6AQd52RfqXq
+	 WSJd2tVRXZyqY808XSja7d79EhFySiEkJ6BjBW8MTcFVCDSEzQuEfWTMeSz/go9twm
+	 i9+PHR6yWbvxw==
 From: Pratyush Yadav <pratyush@kernel.org>
 To: Alexander Graf <graf@amazon.com>,
 	Mike Rapoport <rppt@kernel.org>,
@@ -53,10 +54,12 @@ To: Alexander Graf <graf@amazon.com>,
 Cc: linux-kernel@vger.kernel.org,
 	kexec@lists.infradead.org,
 	linux-mm@kvack.org
-Subject: [PATCH v2 1/2] kho: move sanity checks to kho_restore_page()
-Date: Wed, 17 Sep 2025 14:56:53 +0200
-Message-ID: <20250917125725.665-1-pratyush@kernel.org>
+Subject: [PATCH v2 2/2] kho: make sure page being restored is actually from KHO
+Date: Wed, 17 Sep 2025 14:56:54 +0200
+Message-ID: <20250917125725.665-2-pratyush@kernel.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250917125725.665-1-pratyush@kernel.org>
+References: <20250917125725.665-1-pratyush@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,23 +68,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While KHO exposes folio as the primitive externally, internally its
-restoration machinery operates on pages. This can be seen with
-kho_restore_folio() for example. It performs some sanity checks and
-hands it over to kho_restore_page() to do the heavy lifting of page
-restoration. After the work done by kho_restore_page(),
-kho_restore_folio() only converts the head page to folio and returns it.
-Similarly, deserialize_bitmap() operates on the head page directly to
-store the order.
+When restoring a page, no sanity checks are done to make sure the page
+actually came from a kexec handover. The caller is trusted to pass in
+the right address. If the caller has a bug and passes in a wrong
+address, an in-use page might be "restored" and returned, causing all
+sorts of memory corruption.
 
-Move the sanity checks for valid phys and order from the public-facing
-kho_restore_folio() to the private-facing kho_restore_page(). This makes
-the boundary between page and folio clearer from KHO's perspective.
-
-While at it, drop the comment above kho_restore_page(). The comment is
-misleading now. The function stopped looking like free_reserved_page()
-since 12b9a2c05d1b4 ("kho: initialize tail pages for higher order folios
-properly"), and now looks even more different.
+Harden the page restore logic by stashing in a magic number in
+page->private along with the order. If the magic number does not match,
+the page won't be touched. page->private is an unsigned long. The union
+kho_page_info splits it into two parts, with one holding the order and
+the other holding the magic number.
 
 Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
 ---
@@ -89,65 +86,98 @@ Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
 Notes:
     Changes in v2:
     
-    - New in v2.
+    - Add a WARN_ON_ONCE() if order or magic is invalid.
+    - Add a comment explaining why the magic check also implicitly makes
+      sure phys is order-aligned.
+    - Clear page private to make sure later restores of the same page error
+      out.
+    - Move the checks to kho_restore_page() since patch 1 now moves sanity
+      checking to it.
 
- kernel/kexec_handover.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ kernel/kexec_handover.c | 41 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 34 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index ecd1ac210dbd7..69cab82abaaef 100644
+index 69cab82abaaef..911fda8532b2e 100644
 --- a/kernel/kexec_handover.c
 +++ b/kernel/kexec_handover.c
-@@ -183,10 +183,18 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
- 	return 0;
- }
+@@ -32,6 +32,22 @@
+ #define PROP_PRESERVED_MEMORY_MAP "preserved-memory-map"
+ #define PROP_SUB_FDT "fdt"
  
--/* almost as free_reserved_page(), just don't free the page */
--static void kho_restore_page(struct page *page, unsigned int order)
-+static struct page *kho_restore_page(phys_addr_t phys)
- {
--	unsigned int nr_pages = (1 << order);
-+	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
-+	unsigned int nr_pages, order;
++#define KHO_PAGE_MAGIC 0x4b484f50U /* ASCII for 'KHOP' */
 +
-+	if (!page)
-+		return NULL;
++/*
++ * KHO uses page->private, which is an unsigned long, to store page metadata.
++ * Use it to store both the magic and the order.
++ */
++union kho_page_info {
++	unsigned long page_private;
++	struct {
++		unsigned int order;
++		unsigned int magic;
++	};
++};
 +
-+	order = page->private;
-+	if (order > MAX_PAGE_ORDER)
-+		return NULL;
-+	nr_pages = (1 << order);
++static_assert(sizeof(union kho_page_info) == sizeof(((struct page *)0)->private));
++
+ static bool kho_enable __ro_after_init;
  
- 	/* Head page gets refcount of 1. */
- 	set_page_count(page, 1);
-@@ -199,6 +207,7 @@ static void kho_restore_page(struct page *page, unsigned int order)
- 		prep_compound_page(page, order);
- 
- 	adjust_managed_page_count(page, nr_pages);
-+	return page;
- }
- 
- /**
-@@ -209,18 +218,9 @@ static void kho_restore_page(struct page *page, unsigned int order)
-  */
- struct folio *kho_restore_folio(phys_addr_t phys)
+ bool kho_is_enabled(void)
+@@ -186,16 +202,24 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
+ static struct page *kho_restore_page(phys_addr_t phys)
  {
--	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
--	unsigned long order;
--
--	if (!page)
--		return NULL;
--
+ 	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
+-	unsigned int nr_pages, order;
++	union kho_page_info info;
++	unsigned int nr_pages;
+ 
+ 	if (!page)
+ 		return NULL;
+ 
 -	order = page->private;
 -	if (order > MAX_PAGE_ORDER)
--		return NULL;
-+	struct page *page = kho_restore_page(phys);
++	info.page_private = page->private;
++	/*
++	 * deserialize_bitmap() only sets the magic on the head page. This magic
++	 * check also implicitly makes sure phys is order-aligned since for
++	 * non-order-aligned phys addresses, magic will never be set.
++	 */
++	if (WARN_ON_ONCE(info.magic != KHO_PAGE_MAGIC || info.order > MAX_PAGE_ORDER))
+ 		return NULL;
+-	nr_pages = (1 << order);
++	nr_pages = (1 << info.order);
  
--	kho_restore_page(page, order);
--	return page_folio(page);
-+	return page ? page_folio(page) : NULL;
++	/* Clear private to make sure later restores on this page error out. */
++	page->private = 0;
+ 	/* Head page gets refcount of 1. */
+ 	set_page_count(page, 1);
+ 
+@@ -203,8 +227,8 @@ static struct page *kho_restore_page(phys_addr_t phys)
+ 	for (unsigned int i = 1; i < nr_pages; i++)
+ 		set_page_count(page + i, 0);
+ 
+-	if (order > 0)
+-		prep_compound_page(page, order);
++	if (info.order > 0)
++		prep_compound_page(page, info.order);
+ 
+ 	adjust_managed_page_count(page, nr_pages);
+ 	return page;
+@@ -341,10 +365,13 @@ static void __init deserialize_bitmap(unsigned int order,
+ 		phys_addr_t phys =
+ 			elm->phys_start + (bit << (order + PAGE_SHIFT));
+ 		struct page *page = phys_to_page(phys);
++		union kho_page_info info;
+ 
+ 		memblock_reserve(phys, sz);
+ 		memblock_reserved_mark_noinit(phys, sz);
+-		page->private = order;
++		info.magic = KHO_PAGE_MAGIC;
++		info.order = order;
++		page->private = info.page_private;
+ 	}
  }
- EXPORT_SYMBOL_GPL(kho_restore_folio);
  
 -- 
 2.47.3
