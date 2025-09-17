@@ -1,140 +1,115 @@
-Return-Path: <linux-kernel+bounces-821121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CFEB807CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:21:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E51DB807D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901B51BC277E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF48620F8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E4B335944;
-	Wed, 17 Sep 2025 15:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F03335936;
+	Wed, 17 Sep 2025 15:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3nhivmng";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ob8EioHS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="kRZ08od4"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3484A30BF72;
-	Wed, 17 Sep 2025 15:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479BF30BF72
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122487; cv=none; b=coJqUAdV8hbCSSo1ZxfxCn2Hh4YlsztlUkAbjALgvk7+bWq0C+2K4/VYw25D3mBGs4DEz4t95lCKvuZXPCoyIOXhKfhTjBaX2buNtpYFIuEbWG/y41TXbH2WZVSj9Xv41diKIRz/tDhxavcbK4yYAZGKCC6YPvLw1U+XCJs3Qys=
+	t=1758122505; cv=none; b=bZowF0aoSf7m4ksRyw20xsLZ/DAGmb3WYly9WBZbja+FcgPU1bFRp9DMd9YEBcGzNm0zFSEUtKyFNafoq+yIzODr3MGprhfsJI/AgBoNPrNV8mTGkjHugGimqDPl2nB75H4FrSgXSCG0EqjDsvdETQK/xuBYYrxcwTXkVdPqo48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122487; c=relaxed/simple;
-	bh=JnjyxHE2SHo2lMYG24a/vuZ5+YxATNSRGf4WRidX/4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3yxGXzDTyQa/5oyU4IE+tHJ+DjgoQDiPMzK8X1MZtQDpfog8jnHyYpyCR37MBkIfWWdowkpOKVc/d4DnpZnyJ/6BNOHEOpC/zW9Ogs/niao+AR36BZ8hjgIwIf0S1Cu6oQxzWGEAuGxnlfHEfLlALvVDrQKXwwCGnYUvCfb4Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3nhivmng; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ob8EioHS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 17 Sep 2025 17:21:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758122483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U/sWpX1d0FqUQZmJaMW2nRnPQMp56EHFIU2k1H50MYU=;
-	b=3nhivmngd6+PmA3+eV33THTVRq9jhpe+HBt/O4eCUY3Xh5mSatPaAakAkLSiN/PgvcAopM
-	y0Vf/JBYg9oMJuBPbUW8p3kfUkXUykpOTcPsUyVMjVq1GXYPIMNETdFVpFy8Dq/WubWuCF
-	s78V7VLCyrlgSlUS4fRKO9Jc+yrd1jlMFKyXuxYp5AiWpIVOuskTy+86RTMbqukB7HkVfE
-	7tOkUXZcX2xRhQyZwhU66M/r+VdJA/P0eIRfDbHpsj4zJHjLjz1urRGJEwwhNOxhg3HUFu
-	gLLrhHi+vVShPn758ZvkO2UBIFtcaaRzj0ag6ZXNqRNipr1zS9Npoc4oLzCXjA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758122483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U/sWpX1d0FqUQZmJaMW2nRnPQMp56EHFIU2k1H50MYU=;
-	b=ob8EioHSqHCIf/3CBZz5Tz2bb9bzFkW7kWflQdESNktBSVsvxeZSnY6E6RONhA6DbGeGkn
-	5sDsyosGlBsU7rDA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Shuah Khan <shuah@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Russell King <linux@armlinux.org.uk>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 07/36] powerpc/vdso: Explicitly include asm/cputable.h
- and asm/feature-fixups.h
-Message-ID: <20250917171207-1fad0416-7543-481c-a998-5881fab1714e@linutronix.de>
-References: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
- <20250917-vdso-sparc64-generic-2-v3-7-3679b1bc8ee8@linutronix.de>
- <41d100c5-4706-400e-a61a-46b068f1bc74@csgroup.eu>
+	s=arc-20240116; t=1758122505; c=relaxed/simple;
+	bh=8Jn9cqENQBz9wlb9m8v/hRdjL6PD83V+XLEj/Z5ytdY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MIzlwMnsoulY/U5upAbdEmCXE5eG7Il+VhhbgzOX9K3vl5RBcdk6X6dNt/uiA+xqpaSJEE7UD0Jv1TkeAmTvYAUrFvtRcON6UyYQgNP6Y3/2v/bky7V7LPuft56bI1zMhYSmSFTZ2t9/CfWwks20jCjGFTuOWQtZsRshjK8NAng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=kRZ08od4; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=8Jn9cqENQBz9wlb9m8v/hRdjL6PD83V+XLEj/Z5ytdY=; b=kRZ08od4q1oLOhIe8ryYYwIdOS
+	g72yHRZ3s7C6A+kCwqLOIFMau75U1LaWb3wfHbDVls/U1lTvdcqv0fP4Y6dBRggDbuQqjcHjunu4f
+	icmLP9aKT1mfIHeizMPGgnu72UxKg6srn7YW6JUOwrS1+VyuE1JAoXG7rzM8pm4O6X51Rwn2q+y3Z
+	GZHoPE0GUeY014XVxqrSxQtW3i+wRA2N27wtvFVCa07PikFS4NNFR5O8Sx2Uqh3j/RtyC4NJV3EuG
+	P8VOLyUDyEFB99/WM+d1CICsWCvuccQUZ2wLwJhl+U5NeTy5Eibhq/hZV0sWhweLERBc2iiErDigL
+	4+p+wgYg==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uytyO-000000001A9-2dO5;
+	Wed, 17 Sep 2025 11:21:32 -0400
+Message-ID: <6c10723cb3da89dad12eb8f8f44ec335bb2680c8.camel@surriel.com>
+Subject: Re: [RFC PATCH 10/12] mm/hugetlb: do explicit CMA balancing
+From: Rik van Riel <riel@surriel.com>
+To: Frank van der Linden <fvdl@google.com>, akpm@linux-foundation.org, 
+	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev
+Date: Wed, 17 Sep 2025 11:21:32 -0400
+In-Reply-To: <20250915195153.462039-11-fvdl@google.com>
+References: <20250915195153.462039-1-fvdl@google.com>
+	 <20250915195153.462039-11-fvdl@google.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <41d100c5-4706-400e-a61a-46b068f1bc74@csgroup.eu>
 
-On Wed, Sep 17, 2025 at 04:41:49PM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 17/09/2025 ‡ 16:00, Thomas Weiﬂschuh a Ècrit†:
-> > The usage of ASM_FTR_IFCLR(CPU_TR_ARCH_31) requires asm/cputable.h and
-> > asm/feature-fixups.h. Currently these headers are included transitively,
-> > but that transitive inclusion is about to go away.
-> 
-> Hum ...
-> 
-> That was unexpectedly added by commit 9c7bfc2dc21e ("powerpc/64s: Make
-> POWER10 and later use pause_short in cpu_relax loops")
-> 
-> In theory, vdso/ headers shouldn't include any headers outside of vdso/
+On Mon, 2025-09-15 at 19:51 +0000, Frank van der Linden wrote:
+> CMA areas are normally not very large, but HugeTLB CMA is an
+> exception. hugetlb_cma, used for 'gigantic' pages (usually
+> 1G), can take up many gigabytes of memory.
+>=20
+> As such, it is potentially the largest source of 'false OOM'
+> conditions,
 
-I am aware. But this is the dependency as it exists today and I don't really
-want to make this series larger than it already is. This is by far not the
-only such layering violation in the vDSO headers. I have some patches prepared...
+The false OOM kills also seem to happen when a system
+does not use hugetlbfs at all, but a cgroup simply has
+most/all of its reclaimable memory in a CMA region,
+and then tries to do a kernel allocation.
 
-> > Explicitly include the headers.
-> > 
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >   arch/powerpc/include/asm/vdso/processor.h | 3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/powerpc/include/asm/vdso/processor.h b/arch/powerpc/include/asm/vdso/processor.h
-> > index 80d13207c5688d73954822aede2bbe2d0e05c054..42b64903bdf47cc5bd571fc3b5caed45e6358cb9 100644
-> > --- a/arch/powerpc/include/asm/vdso/processor.h
-> > +++ b/arch/powerpc/include/asm/vdso/processor.h
-> > @@ -4,6 +4,9 @@
-> >   #ifndef __ASSEMBLY__
-> 
-> __ASSEMBLY__ is replaced by __ASSEMBLER__ in powerpc-next in commit
-> 74db6cc331b0 ("powerpc: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi
-> headers")
+Would it make sense to call hugetlb_cma_balance() from
+the pageout code instead, when the pageout code is
+trying to free non-CMA memory, but ended up freeing
+mostly/only CMA memory?
 
-Ack. I'll have to rebase this series after -rc1 in any case. Right now I am
-hoping to collect some Acks.
-
-> > +#include <asm/cputable.h>
-> > +#include <asm/feature-fixups.h>
-> > +
-> >   /* Macros for adjusting thread priority (hardware multi-threading) */
-> >   #ifdef CONFIG_PPC64
-> >   #define HMT_very_low()		asm volatile("or 31, 31, 31	# very low priority")
-> > 
-> 
+--=20
+All Rights Reversed.
 
