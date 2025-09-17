@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-820416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECDCB7D9F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D4AB7DA10
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2D718970AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505C81BC75CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E30343D74;
-	Wed, 17 Sep 2025 10:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CCF34DCF7;
+	Wed, 17 Sep 2025 10:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Tr8Q1dbF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OxL3SAfo"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813832F546D;
-	Wed, 17 Sep 2025 10:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E7283689
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758103317; cv=none; b=OH+P2zYqI2zamLvOWJqShiAgydLNeiiWw0xnNUNsZEQSAZpcysJKXRGalohd7/fLvPyG8mQXbBZMvshGzV17Lcwjq6K7Xkxi3PmONhCOx32EJ26VxHGDR4XJ4hBVZvKD57Vbo660pggyyZRaxd3yYoChG9QS9nkk7tg6USeXp2k=
+	t=1758103323; cv=none; b=c3Curtzrj968mtXxSUxd8NT3vSbwVDL98dbraXHaALXf0DV9weIAcCRkhVXomoxL3V8EE5usANiA8FGKRB3HNdZhCu42SRnpq0Qu5lopN3sp6ZWUNHLw8ahKN0trEJVSgy/kXRPGAjA46dnQfARycOAsCIHLUM6ydvIDq8MnSpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758103317; c=relaxed/simple;
-	bh=2zXoZqbe7apP7oCO8jdSpNDUB/kSJDzsCawwEjREvgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvPdYWucwP638hQ2TdRElbjxE145ShquiuMobyPRwZI/bMTkNMdMmiRyrZShnDx0G8sN6OKNLD2MAUZd5b88tBsP09axDfy4RMWOyqr5lqiL92lJSUSZV8A7UU0hlnMWhMsB/VizJ5KprRWecm3DeuEhTtfb6c4TwHgbWPfgv6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Tr8Q1dbF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7374940E01B0;
-	Wed, 17 Sep 2025 10:01:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RLQ_e6Ozh2iq; Wed, 17 Sep 2025 10:01:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758103306; bh=cz1Iv/44JZAGuuMVa+YY2FpUjrFJfYGnVd9mov+3qho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tr8Q1dbF3O5uyYoUQvkHSvdEm/tsBmqOVPtH7olYyZPDQ/XKZXSsq9oQVP3E+AJ1M
-	 tgUJk2p3eOvzwVdU3uJIAj7hsQX/hgAhmLhhCXqC5dFr5h1jSkb+ybD3Vhj+KO3AZj
-	 O6wcYrZ1cD8GbJv3UD2KzEODouPLdVzt+3o9Ole4sQJej0A4LgnihX6Cpn/hUgegxN
-	 joaNHpLoUFccH5x2BEUHotsv1FRi5hf79+WDrriyPoSs1RsijheYZJPzbA+Yhz7bTu
-	 pIer1H0ZaRmRtRNEAH4xpd9DOJBn/cqPUWhNAhvc63O4F7SH4difOYePjY3EeBWee/
-	 LyBefVEZIiOI/kLWB9T97HEOjNyAwykr/EbhTZAXzkrDHaxU6hcMsUvYKiaZ2Rb6qs
-	 tdlq2zC2Zllo9Dv+snihG4VfzU0rK2sktZcgsN4gblUSHXGX2Do+EFlBhXeNn/6kv/
-	 HeSpCdN2ZzI0ohbfA/wJTYaz5A5nrtKq6r2GP5ztlai0XgixYKC/MvsF/j6lRUDXpt
-	 tL114vTMltoamibRx1jp3m9s/wVM9q4KVT1oDsdpn+Mvkn8g18GpgYHUKFR3nM+t3P
-	 K9FD9V0SqjP1F9Njt8amttDIHRI5gwCKmfoR3hS8MvPJFXkgWVI85cJ2TTgYzKQdtk
-	 dLjyZ4XBdyL3zdUKM5aa9DRU=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8835440E019E;
-	Wed, 17 Sep 2025 10:01:41 +0000 (UTC)
-Date: Wed, 17 Sep 2025 12:01:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, yazen.ghannam@amd.com,
-	linux-kernel@vger.kernel.org, avadnaik@amd.com
-Subject: Re: [PATCH 0/2] Add support for AMD Family 1Ah-based SOCs
-Message-ID: <20250917100135.GBaMqG_6Da1Dywf_3X@fat_crate.local>
-References: <20250916203242.1281036-1-avadhut.naik@amd.com>
+	s=arc-20240116; t=1758103323; c=relaxed/simple;
+	bh=05OuWmIx0EGQ+z4Mvd8YfoR1xCyiI2LeN4jLN7AezMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9fo7HJbZTgOMXK2Ed3xbL3AHJa0WTzbr4U0wwy5YG0NhSNigepgE1idsz1Px/hwEObT0GZUOFdNFyrN1l07ZhagFEbABRPspoj/b0APqMLCLhueBKvL5SdEnv2wFVqGKdNP5ydPRs3um3xWIbaMi/Mg48SttuxC82iGV/xdkKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OxL3SAfo; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-263b1cf4d99so6793525ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758103321; x=1758708121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=05OuWmIx0EGQ+z4Mvd8YfoR1xCyiI2LeN4jLN7AezMc=;
+        b=OxL3SAfomCvtvA+hFQAX5tMVnWzzS9AK+jwAbCXsgBBOHUIn4jEzauBANy2jMg7r6t
+         r0KXknwQeKKRnwDdxnMFT4SqCmKBB8PaNKRRc89ZZuFBa3Ho4SsIJxrR5ZaPMUdIR7oG
+         Fnukj5DaYSryU3XWQzEmfSR5sJdwb4l0ozuhB1IxhkGVzJaZSplLuwqzrh8JBohfoYmv
+         3Eq3tNZuRTNFCDiEfr8VBNWXOMGaALbS/IjJ03B5Q2eCsIirvLEQopgNYDpUfLBdRw4d
+         qui984Tl86tSWAkqVFn/p4+lPKm+5ukpBl8nbRLe9wKxZq4bTqJGMTXTDQSgJUyXmhyI
+         cE8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758103321; x=1758708121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=05OuWmIx0EGQ+z4Mvd8YfoR1xCyiI2LeN4jLN7AezMc=;
+        b=noNGiXvz8JroA5M6cL0zlRcN+/zjaA+C3QOo+DaJWyiXUy9A63qh8pOYQT39QZszlO
+         9e29fLjrIaZuQ2wEB9yuoC3mDA5L7zXFdrfY7wlrxu0c7oc7aiEr+9h84OGAc81WaOYV
+         AvJzgETivmNAVEQdypaLmOMWKKlQKWeAbGWJ692qpnqBhsgU+FGfjhWIZH5An3BLgzUE
+         DZhWpEKFr0MXLm8/PChXPK4ebAuU6GyXMQ8wTwS0z+ZvGwEUQ30kY243NpeMlFD7q/5V
+         Yr0P8ewAD+7oXuUJGTUFnEi5K01IWjKLiPHsIH56402fVyKF/cDJrugi4ZM+F/FDCKko
+         0xaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVy0WeeJULvQnySW1TMZD5uGUgxj48npvGRT1RTdXK9f0rTjEe9QrrU9TZIi1ZP5Any35CwYUOs/YFRkE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAhQ4f2+bVws0GtQtxfFgRdQZeUp8hv6lgRHFkKYqNzTcbUcxr
+	zEdHwkwssObhRCA8b1VE9DhlKzCQiv+eauaGfWPy4/X8e2MOtM4bvLZsGjnvKmZkdkISB/+w+4c
+	DnpL0fon5MaJoKicPe2CjYukj4X59JC6H+X3ePTnN
+X-Gm-Gg: ASbGncu5VZ3udqbNE7P6FTUfW1Wf/bnI1BqqxmFxIpI4lgC0qr5bplUQFgveahEaNph
+	p5OAt/EJfhrg0mipmV+sHarKg3xJi3rLc4qsZa21dMST3PaGSlnB/fRCQDWNwxWWyL8VtFHPWv+
+	lM1dbMM5cy+1OKlDhy+dh8tThTJBq1Gz/reHQmmk6XNpHZPjjWC32Se7aZvsxjsFL8m4lduFmik
+	g9966RUJTAS+mWhzE0OxgOjxrv3xGWm2lCu
+X-Google-Smtp-Source: AGHT+IGZwHVx6Ssa4CbYrghSzzm/47CthhCvCAGo18dD3J9Ik9FjPw6pxNwNxLFS3lNwcuy4I0jlW5OSWsv/mLRISmY=
+X-Received: by 2002:a17:902:d4c8:b0:262:9ac8:6132 with SMTP id
+ d9443c01a7336-267d160b79fmr67814045ad.19.1758103320679; Wed, 17 Sep 2025
+ 03:02:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250916203242.1281036-1-avadhut.naik@amd.com>
+References: <20250916130833.329087-1-eperezma@redhat.com> <20250916130833.329087-3-eperezma@redhat.com>
+In-Reply-To: <20250916130833.329087-3-eperezma@redhat.com>
+From: Yongji Xie <xieyongji@bytedance.com>
+Date: Wed, 17 Sep 2025 18:01:49 +0800
+X-Gm-Features: AS18NWD7EY3QwkpBx4m1uRgvB5KcwXIFDktxQSExWKLqQh0PwM10VIVvgqzksGg
+Message-ID: <CACycT3vFBpum21PBEdyE-acZb+yPqGcig+xGqWP5qPNT3Ca=5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] vduse: make domain_lock an rwlock
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Cindy Lu <lulu@redhat.com>, Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 08:30:15PM +0000, Avadhut Naik wrote:
-> This patchset adds support for newer AMD's Family 1Ah-based SOCs.
-> 
-> The first patch adds support for these new SOCs in the amd64_edac module.
-> 
-> The second patch modifies the legacy EDAC sysfs interface so that the 16
-> UMCs supported by some of these new SOCs are appropriately visible through
-> the interface.
-> 
-> NOTE:
-> This set was part of the larger EDAC updates and cleanups set sent out
-> last week.
-> 
-> Link: https://lore.kernel.org/all/20250909185748.1621098-1-avadhut.naik@amd.com/
-> 
-> However, since some cleanups are still being worked on and since these
-> patches are required for enabling EDAC on Venice, have separated the sets.
-> 
-> The cleanups will now be posted as a separate set.
-> 
-> Avadhut Naik (2):
->   EDAC/amd64: Add support for AMD family 1Ah-based newer models
->   EDAC/mc_sysfs: Increase legacy channel support to 16
-> 
->  drivers/edac/amd64_edac.c    | 20 ++++++++++++++++++++
->  drivers/edac/amd64_edac.h    |  2 +-
->  drivers/edac/edac_mc_sysfs.c | 24 ++++++++++++++++++++++++
->  3 files changed, 45 insertions(+), 1 deletion(-)
-> 
-> 
-> base-commit: f55d2af9afe33db61b58e1c5273dfdd8c102e4f9
-> -- 
+On Tue, Sep 16, 2025 at 9:09=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redhat=
+.com> wrote:
+>
+> It will be used in a few more scenarios read-only so make it more
+> scalable.
+>
+> Suggested-by: Xie Yongji <xieyongji@bytedance.com>
+> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-Applied, thanks.
+Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Yongji
 
