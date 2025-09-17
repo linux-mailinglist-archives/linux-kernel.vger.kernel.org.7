@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-821558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEBB5B81A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:28:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FC4B81A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75ABB177B5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93DF83A9FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF67288C14;
-	Wed, 17 Sep 2025 19:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A943002C3;
+	Wed, 17 Sep 2025 19:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOdwcCrE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzFgPD9I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE11534BA4A;
-	Wed, 17 Sep 2025 19:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E614B2FB09A;
+	Wed, 17 Sep 2025 19:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137329; cv=none; b=A/BnIMo+GdS6PtnD4LAtEHCxKIG8vZfr3B9IdwS77SEIDb6jQeNB26YCJVZMxKQw/bW7qOLz6Ec/AAgnohTL3FmE6px+i2dX97emOgitUfj4Xeoo3yx0zJjcyxyBmmbbe8ihztxkKC0cpps3om0/h257o0lhM/uNRW2qpLWYMxw=
+	t=1758137357; cv=none; b=TBctQDtOzvVzn+2ch1xHC/0N+YHF6dAWoqe9/TSy5npZgrXvqejbgJA2Yy9HwrlspkCpsLBi+4M5UnmipKQcQJsTpJaXNpuAgYLVtk5ogxzouXHms5YPkyf4kWFbqN4i4XiTWaYzJdGOdetyNjLeTqQEIKMNgaRfI8CXeSXJLaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137329; c=relaxed/simple;
-	bh=bO+Rdo09ZmQqxDbXVAQNLU9C/l6SM21oUy6Mt1G5icQ=;
+	s=arc-20240116; t=1758137357; c=relaxed/simple;
+	bh=PwNSmdi+KZptf6b6MK55g50B3mbRbByQWSDIfsJFSMQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a7OtDr6B4/Xol0+vIfvqX9tXda1xl/gK46rtbH6vr0YvzTq73OBBx0Zzas9xTonKu2xAjv1Kh9iWP3k/9lX0Srp9pmJ1HH2QJY/u47Qmr4cnja9flQ4Skv6MJE8PsNEgU5TWme2w/GQWXa2ppEojqA9EX+QrRo+2JL4rkUHu9iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOdwcCrE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BCD6C4CEE7;
-	Wed, 17 Sep 2025 19:28:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gEH7zVOSMD+c6VM4i9gpK6tQUqVyCPscteIwNB9duGX8ZZ5VppN8BtnTQZYDsYlF5xL3PvWgcDhS7C0xuc4gs1npcdwJX5m3YmHZb1PiRJwqhssG2bY4/SMR/Eyg+7tDBnnVTKP14C5+m/V5MraNoOv4qEDTE7Oy5oeY2TAz4bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pzFgPD9I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE73C4CEE7;
+	Wed, 17 Sep 2025 19:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758137329;
-	bh=bO+Rdo09ZmQqxDbXVAQNLU9C/l6SM21oUy6Mt1G5icQ=;
+	s=k20201202; t=1758137356;
+	bh=PwNSmdi+KZptf6b6MK55g50B3mbRbByQWSDIfsJFSMQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EOdwcCrEW4gyFi855frrHUzdOFYjt+aqN9VsgRrHV2d6Acg1N3L3r5kcg0jBgHCEM
-	 N6oz0z559RnY00+iQ7Ec8Nc54TNAU7zKGmS/hzhg1FrjBIJuUzVReeaG4ddsYJw+u2
-	 UOm3M4LqsrAtu7sQdfOblElgFvvxCZFW5eeg5zeSgHqLYuH6wgU+rTeyOOT/koE8mf
-	 nsQORkzfGfMruWEQv1RU9qO9PYu50UEJjKQzUqMhaFokK2GnGX1XQOQ31yD0t/e0LE
-	 RcQc2WG7+bCJkQdNI4/S2JVDyBPZBNDv4PzUJN3NH14IoRO2LNPTw1gEJluViPLFFr
-	 2wmyRyW3h+qWQ==
-Date: Wed, 17 Sep 2025 20:28:42 +0100
+	b=pzFgPD9IWTdKPsaTt18Ghq7Sh1MfkRZHqJSBHqcEg2CkyJGEopiUmzN5oO1gqS1Al
+	 34Mw8dSikLk+oc4gvm0WnwR4ah6sYEsJsG1A4GbRKFHD1bOFzraH2ef5ECAkcrooJz
+	 D8JN1s2Sk7whLwHcaI+n4gZ0fEqMPUYg0kW892MK9Zu7/9VuG2G9bAEgYYUymXUb2n
+	 McG7RZgucCKu4hu3MIy18JRmSXXRbq2ZRG4h9bpGdS3MIoTgWZs7dU4vSS/nQth1Q7
+	 JJIJq1eBaa9tO0+zEOM14ekJDaRT89Qj6ad6O7FkN5e/oDi2I77hfu7D8WxDaUchJF
+	 MR4nOsZkyt+Kw==
+Date: Wed, 17 Sep 2025 20:29:10 +0100
 From: Conor Dooley <conor@kernel.org>
 To: Ravi Patel <ravi.patel@samsung.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, ksk4725@coasia.com, pjsin865@coasia.com,
-	gwk1013@coasia.com, bread@coasia.com, jspark@coasia.com,
-	limjh0823@coasia.com, lightwise@coasia.com, hgkim05@coasia.com,
-	mingyoungbo@coasia.com, smn1196@coasia.com, shradha.t@samsung.com,
-	swathi.ks@samsung.com, kenkim@coasia.com
-Subject: Re: [PATCH] dt-bindings: serial: samsung: Add compatible for
+Cc: daniel.lezcano@linaro.org, tglx@linutronix.de, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+	krzk@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, ksk4725@coasia.com,
+	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
+	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
+	hgkim05@coasia.com, mingyoungbo@coasia.com, smn1196@coasia.com,
+	shradha.t@samsung.com, swathi.ks@samsung.com, kenkim@coasia.com
+Subject: Re: [PATCH] dt-bindings: timer: exynos4210-mct: Add compatible for
  ARTPEC-9 SoC
-Message-ID: <20250917-tweezers-selective-15358e9b4a4d@spud>
-References: <CGME20250917071350epcas5p339e015f976f63e2df03544679ad6e6cb@epcas5p3.samsung.com>
- <20250917071342.5637-1-ravi.patel@samsung.com>
+Message-ID: <20250917-credible-refined-0e3e244ee9c1@spud>
+References: <CGME20250917071322epcas5p3b25ff15ee16f58aa3101f2fc44b554cc@epcas5p3.samsung.com>
+ <20250917071311.1404-1-ravi.patel@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,64 +64,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="migAs+wAbCopZcHg"
+	protocol="application/pgp-signature"; boundary="JN60OKxJv97kyLy2"
 Content-Disposition: inline
-In-Reply-To: <20250917071342.5637-1-ravi.patel@samsung.com>
+In-Reply-To: <20250917071311.1404-1-ravi.patel@samsung.com>
 
 
---migAs+wAbCopZcHg
+--JN60OKxJv97kyLy2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 12:43:42PM +0530, Ravi Patel wrote:
-> Add Axis ARTPEC-9 uart compatible to the bindings documentation.
-> It is similar to the older samsung,exynos8895-uart design.
->=20
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> ---
->  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b=
-/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> index 1a1f991d5364..3895049c954c 100644
-> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> @@ -48,6 +48,7 @@ properties:
->            - const: samsung,exynos850-uart
->        - items:
->            - enum:
-> +              - axis,artpec9-uart
->                - samsung,exynos7870-uart
->            - const: samsung,exynos8895-uart
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> @@ -168,6 +169,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - axis,artpec9-uart
-
-This hunk is not needed, any compatible property that contains artpec9 must
-contain exynos8895.
-
->                - google,gs101-uart
->                - samsung,exynos8895-uart
->      then:
-> --
-> 2.17.1
->=20
-
---migAs+wAbCopZcHg
+--JN60OKxJv97kyLy2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsL6gAKCRB4tDGHoIJi
-0qsFAQC7dQTZb+AhWTKjbK8mk/SWMn2c0Vxzq6RxdIFWcDmOogEAsW8Xl2ySct4Q
-S2pOZoK6WnXIQwvnjFU50iM6+fM/jgk=
-=hHNy
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsMBQAKCRB4tDGHoIJi
+0gqTAPsFO9w+7JD4IB/fAJAhSZhGgnOF48FKI1HkhpszyX/AqAD+NOEkyGMMFp9K
+scg8d9Hj8Q5MWrEH1LUvTFW+1N1OPgE=
+=0ePc
 -----END PGP SIGNATURE-----
 
---migAs+wAbCopZcHg--
+--JN60OKxJv97kyLy2--
 
