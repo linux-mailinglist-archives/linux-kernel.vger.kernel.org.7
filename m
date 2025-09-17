@@ -1,142 +1,106 @@
-Return-Path: <linux-kernel+bounces-821124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D413B807E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:22:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A884EB807E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B6C465469
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:22:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 348947AAFCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0AA335953;
-	Wed, 17 Sep 2025 15:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A35D333AB7;
+	Wed, 17 Sep 2025 15:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="N1UKVgw9"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="CwU4Ch8L"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556743064A2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B923064A2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122563; cv=none; b=ACDKPwBr+Ccmh2hP8Cu0wus+KLhfyny0TS8GGDg6nbpE89NBOSTF3PlInHqiScGmSEWgXLBZ4/YHSJiDiT+ZJz4gXw8giqSSkBRU7Fv8hWRzDjUt7ZstzYoJsKVHBRm87M9ayqtk7q53CmQnrNJJgROFHADxKbtwtQi4mDeBpFg=
+	t=1758122594; cv=none; b=pEx/VhlmsQ7Yszzr9tYG288mDQmF/5nsI7FtO6EZGnJkQDiV1kiB75rmtGyzWd/j/ostgdfTWJGhoS+QbQx3WS5mkV0EDWL+2zegmcxDxAIhX3hVuGQ29PHf7F84sE1Pj/d7SIebH6Kd7qyw6JpedA7EaIuievCa1YOJkBqoLxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122563; c=relaxed/simple;
-	bh=zQsz9BdqYptqLS1CMsswCBOUQ6lz2yV3McAsdB6NOOE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DHA3EaCle8th0wYZbRXJgDNbyFhLB+ZWetchXKr0937ixrvw5jd7SiJ3VRmZFRRIEv+x3ArXL19fUEGeOeW647QpReMPcYfp/giKUa32D8Ah9v1qA3WVI9V1EB81ZXSF67etyDVDkgKofwHw7gLTbyotmCWfQhLGZVsMH6+r5P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=N1UKVgw9; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-74526ca79c2so2729683a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758122559; x=1758727359; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JuqG0yxquK8kD4GeaITKrOy10EcGnmyS01S1D7HLSeg=;
-        b=N1UKVgw9l9iUB7fQmMQdEi8hNISkqOSIfIvcyGR1KFvyjEFT/Ct8k6jPl/p2j/4OB2
-         mEdLJ2sNWrtR8IRhhVdUmKUuJM39Ig3fbbr2FsH5RwtAGsOexcViIJK759aqyUaEv9ni
-         S/iAn9MqjwDOSSd+m5IHPIohel0TDKnNdJaN80CS8mHtuiK9oMLrCFBUI9lIODT+QwRX
-         +lzlUvPHk2jn0Xy554nW216wt/ri6CeItcg1m/u4vqh92YkuZ8WOkOXIgPxissV4pjeu
-         ok5OaHHk6uNdClpZYE+6ZqEiVZolbxRi+lbG/2Cr7hJP7EAvznIcPwbprIGjrK5fEe5j
-         v0OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758122559; x=1758727359;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JuqG0yxquK8kD4GeaITKrOy10EcGnmyS01S1D7HLSeg=;
-        b=n16HqfNAwelIYkfKPFuGkL0PELpZL6LyTmO6CcPHh9GDVE6wp81ItErfCusKtE/ZKn
-         AH9u+QHjzAywLgMi+yTxjPptEbXNhZ3/QGai3ua2hW8qpJWxaGrJKZprDh9wtJ030TdR
-         vLp2a/Yag21HT6Ad5Lkjd2dym1y02qkMfIiZ+JVLlJrE4rF9J22QVZ3aakGPwwtC3P5L
-         djI1NZuPJVztEjfDOqLB986UOeXid7cg/fMQ1S6CrmFobo/2AI387C6lwuvLQc11Cl68
-         EJevPJK4tgtfGxeu/6RIB8HeBKKtlhWLY0BVjMQv2PKDKkk5lkasTBClnUFn5AT+9gvN
-         dnug==
-X-Forwarded-Encrypted: i=1; AJvYcCUsZnbzBSuu5xXxeRjl0BONwrJzDV5nTcruHr5r/7yg1i8+QpalQ79esbWXNomLxhQE5pFlZPKz5ihKiUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9UVQBNK0Qu44YDiJIUWqGK6UrAwlhzu3Nbf5p84GlmsgWVAGs
-	1zZ/IhYE0rbVal7rIiCQasw5a5R8lmmO0dKp7QDuhiiEB+npIPdjEwvfAwKcsJKuX+M=
-X-Gm-Gg: ASbGncvMWBCH1bZwO1Zb+o39gV+B+a6nkWSil2q5BcaVNGB/kwBbgEy8tYwtp1pC6kv
-	jO3z3VDFYASHeLy9HYUUNCUtE/Ca2qZZGf90xYO0NU8oTwuPmytnjnHQNMLYcmd1urKyg7bRilh
-	MLWAwxsRC5FzK9wwktvcLg4Pu8gtdYD7sCTKUGXjqSg8gsov9FSy/ySjSTl+ipzO3tkTpYstZ7X
-	pL5TQ2sB+lKbL9xaciA6TE2zNs+DwEHA5VJtkDa8ILVr5Ey/3e3+c/BSEaAtuU72W7/vNxrujNU
-	75KxMqVmdWVt2oxqAoQZde5nQAz7bVvB7qC10pMH31tTtj0DDUlYwJ2bLzV3Lvv8g2FJ7EQVkER
-	L3ySUb4hmyzqxboUs6I/uTDRRnlQ=
-X-Google-Smtp-Source: AGHT+IGVA49Felbs27PadgaFXN++BYp8GHFxN2UZXDDxNeHRd4MCJpOkfBeMbxQ9o+r14RuVAakEUw==
-X-Received: by 2002:a05:6808:1984:b0:43b:663e:270a with SMTP id 5614622812f47-43d50d72f39mr911532b6e.39.1758122559292;
-        Wed, 17 Sep 2025 08:22:39 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:72c:cb37:521d:46e2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524986ca64sm5388388a34.14.2025.09.17.08.22.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 08:22:38 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 17 Sep 2025 10:22:30 -0500
-Subject: [PATCH] iio: adc: ad7124: use devm_mutex_init()
+	s=arc-20240116; t=1758122594; c=relaxed/simple;
+	bh=cQU70G0zFUhPGUvEQuHcfAfzttzbDI2NDOfl36y9O2c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XpW7VBIEepdXbOnVZ4fzqkbbJK3m7VUJVWA/6MShsrQYNe9GQfyytcAoHbbzND+hpn4mGson2KIzHeYI7FHBJFOdA6mmr3nh5snVSQ1ss+BrJ0CFbQMhURLdiY/xPvGZelsHm/QWKnCYyewdelmIX/mNJsQ/5Xw5226PomS9tDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=CwU4Ch8L; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=cQU70G0zFUhPGUvEQuHcfAfzttzbDI2NDOfl36y9O2c=; b=CwU4Ch8L5+MTlP1kZMMACEdHum
+	zIsW2X75R2t8AzmHNLa4iDvZGYl+9cU5ZoCI/1OzxMvLag/xUc8B/taWLIZPXih6CbFsLURKZKOdd
+	ADhEGrtJPevOwsKftjR+GAFVwMCTuksWp/6Y5q0Dn4CPKD5Kn1dDLUYnbcll/OHZou2IQPg8qSs/R
+	ZgQh8ErELHDr1QlpfGYDN2VNi72Vz+sgItjr3tyqNS9hdqSG/VG3GPo15mLr5m4niYcN2Qa643Mnl
+	B9V8T+5+euFQL8A4NKRimCOw3sUUyzQUqWP+BQRGdV+nGkS7s8bIrUh3lcJnQWu0ti+CAVdjTcJWj
+	nMnr9puQ==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uytzh-000000001BW-1m8q;
+	Wed, 17 Sep 2025 11:22:53 -0400
+Message-ID: <9dd63161c07c1c56522e3941ea59142fbd54c4ee.camel@surriel.com>
+Subject: Re: [RFC PATCH 12/12] mm/cma: add CMA balance VM event counter
+From: Rik van Riel <riel@surriel.com>
+To: Frank van der Linden <fvdl@google.com>, akpm@linux-foundation.org, 
+	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev
+Date: Wed, 17 Sep 2025 11:22:46 -0400
+In-Reply-To: <20250915195153.462039-13-fvdl@google.com>
+References: <20250915195153.462039-1-fvdl@google.com>
+	 <20250915195153.462039-13-fvdl@google.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-iio-adc-ad7124-use-devm_mutex_init-v1-1-ff23fe3ad954@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIADXSymgC/yWN0QqDMAxFf0XyvKItSqe/MkRqTV0e2m5tFUH89
- 4X5EMK5CfeckDERZhiqExLulCkGBvmowL5NWFHQwgyqUV3TSy2IojCL5dFStWLLKBbc/eS3gsd
- EgYpoO6N6PUvnng646JPQ0fGXvMabE343dpU7hNlwjY3eUxkq/s51Qh/5WrOu5l0orDBe1w/7S
- OQ3sAAAAA==
-X-Change-ID: 20250917-iio-adc-ad7124-use-devm_mutex_init-45a297b1ff8f
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1115; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=zQsz9BdqYptqLS1CMsswCBOUQ6lz2yV3McAsdB6NOOE=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoytI3IQvdBP+yS597bPrqEJC0E63Fmq5HNfTed
- 2UnEEDvaXiJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMrSNwAKCRDCzCAB/wGP
- wHKIB/sEN4lqvOC9afRqIE/ulkwoktZ1q1wpR7WsLN8FSZH2EPNZRAJOd/rGsgs5wlyDicCwz87
- y2PSKodKgzBtH6qGPqa3HsiljxZ2cgP9HyOvLYHYTtEVa7c2RcwKeX/rZqqL3VOwr8TjaADfoKK
- 3Il8XnzVjHZX9eW2A4NXPeD7fB9SJOnbWw3iI4NvNdlRJ9hAdcFa/YmaueJgvCL4q4cc9FOLvb+
- 3QCb2QQQhKNzdrwkE3OZ0wN2rfRaNzuWaoH5G8xhln8MUvI9coVpMHtVFthPeRJ/YA2cQttan8K
- M3dItbxroFaw6qbHwFsc84lif24EWUkx6iLvdsvqkm3xcAAo
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Use devm_mutex_init() to initialize the mutex to handle automatically
-freeing in debug builds.
+On Mon, 2025-09-15 at 19:51 +0000, Frank van der Linden wrote:
+> Add VM counters that record the number of migration
+> success / failures during CMA rebalancing. This is
+> similar to other migrate counters.
+>=20
+> Signed-off-by: Frank van der Linden <fvdl@google.com>
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/ad7124.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 9ace3e0914f5acab695c0382df758f56f333ae72..9d9250274b9a02e2982e6ceda27009a84413dc2f 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -1482,7 +1482,10 @@ static int ad7124_setup(struct ad7124_state *st)
- 	st->adc_control &= ~AD7124_ADC_CONTROL_MODE;
- 	st->adc_control |= FIELD_PREP(AD7124_ADC_CONTROL_MODE, AD_SD_MODE_IDLE);
- 
--	mutex_init(&st->cfgs_lock);
-+	ret = devm_mutex_init(dev, &st->cfgs_lock);
-+	if (ret)
-+		return ret;
-+
- 	INIT_KFIFO(st->live_cfgs_fifo);
- 	for (i = 0; i < st->num_channels; i++) {
- 		struct ad7124_channel_config *cfg = &st->channels[i].cfg;
-
----
-base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
-change-id: 20250917-iio-adc-ad7124-use-devm_mutex_init-45a297b1ff8f
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+--=20
+All Rights Reversed.
 
