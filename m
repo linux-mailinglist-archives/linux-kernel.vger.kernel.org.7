@@ -1,249 +1,143 @@
-Return-Path: <linux-kernel+bounces-820894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B212BB7F96D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:53:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88457B7FA09
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FEA3BB5B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:52:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BDFE188F98F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714EE332A42;
-	Wed, 17 Sep 2025 13:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D53132BC18;
+	Wed, 17 Sep 2025 13:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cL4dI1cm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2EAcp0KX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cL4dI1cm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2EAcp0KX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bgU2OpVS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43784332A4C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F976333AAF
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758116745; cv=none; b=eBLLEjPQiOcQJUp69xQfEteLs/DvEh2DMu9yJJs2f88PkekyWO/cmITyubKgMCyuNGF0rEmQPRuLHjsB+hA+Pcyt2zucHmGdRbUZ9fIHGTesUbv/+bjFI3TOE8RAkfVfL05S969DgGLk8cxs9YnKKGVN/fqch4jR3WvSeM85Lac=
+	t=1758116759; cv=none; b=adTGYYhyxDc7IvJFAfFL95UjM7LH9Jzsr5MhdNHqzBZ64kZXmr6LFx097goEkiC+lS5QZQ4hz11pSC7XNno97IvuLZB+4+O5I1C8Jup/KAqBO3SOtt4GXBMjRj22wGUhB8iD9jnIzXB4Z/cDU6fXeDmFUrE0XwDQJwbbn8Ce6QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758116745; c=relaxed/simple;
-	bh=pttNoyrVMO9HIku9QnhGRBuzxeRAlRZhE0Pn0ymP/IQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NFv5C1MISS/qIGXH4ZQDc2TbQ3ldMeyNVipSAz+AzSQYMrPMK91jOwPq1vQydyyTkCy68zKUmN6a4ENh9DQv8HqjBufinUbTs85/F39V0z3mZuE2RnNLPR+DrJ+htt6uJdz8g3jLC8g3eM4VufTbLYvVjMi9Ntg4fpDIuG1PKgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cL4dI1cm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2EAcp0KX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cL4dI1cm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2EAcp0KX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5DEFA2017A;
-	Wed, 17 Sep 2025 13:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758116741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
-	b=cL4dI1cmxNNbqLFkGrb4NyRAZTyFbeuZF+xxNpPZ2N81pZalZxmq4CWKUrNn6i+rA6ubuf
-	AEG6oFms1U1siTsakc4T4ZxZTSzkr6joyvt/dKdjDRGoArAt0zs+OP07UBSe+bjOYutorx
-	XP6Rlp6EVfMgu53jEne01ufQCs5fNmg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758116741;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
-	b=2EAcp0KXYGQcDdwOmvXzIJ8hQvle/WjeSQ64vwBKJQRt2kfS1NFNz8daDq7mZlF33rHkih
-	NVNazWta+c4320AQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=cL4dI1cm;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2EAcp0KX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758116741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
-	b=cL4dI1cmxNNbqLFkGrb4NyRAZTyFbeuZF+xxNpPZ2N81pZalZxmq4CWKUrNn6i+rA6ubuf
-	AEG6oFms1U1siTsakc4T4ZxZTSzkr6joyvt/dKdjDRGoArAt0zs+OP07UBSe+bjOYutorx
-	XP6Rlp6EVfMgu53jEne01ufQCs5fNmg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758116741;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
-	b=2EAcp0KXYGQcDdwOmvXzIJ8hQvle/WjeSQ64vwBKJQRt2kfS1NFNz8daDq7mZlF33rHkih
-	NVNazWta+c4320AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B968B137C3;
-	Wed, 17 Sep 2025 13:45:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id D/tkK4S7ymjGegAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 17 Sep 2025 13:45:40 +0000
-Date: Wed, 17 Sep 2025 15:45:40 +0200
-Message-ID: <87ms6tchvf.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: cryolitia@uniontech.com,
-	Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-sound@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Nie Cheng <niecheng1@uniontech.com>,
-	Zhan Jun <zhanjun@uniontech.com>,
-	Feng Yuan <fengyuan@uniontech.com>,
-	qaqland <anguoli@uniontech.com>,
-	kernel@uniontech.com,
-	linux-modules@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH v3 3/4] ALSA: usb-audio: add module param device_quirk_flags
-In-Reply-To: <20250917-sound-v3-3-92ebe9472a0a@uniontech.com>
-References: <20250917-sound-v3-0-92ebe9472a0a@uniontech.com>
-	<20250917-sound-v3-3-92ebe9472a0a@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758116759; c=relaxed/simple;
+	bh=zE4COWFd4PeLhXg5vg78aNdA5WS5JeobBL9xaDYIXUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rulc13N8SFfcSQx80SgAV+V7xp1yoHJzhgr3t1+8A5K2qiRCR5vdphXlsDQEHOpQQhn//AZA4W9UkIxBTVXAJyyyKGig53OCangPg9oQ16znCY1VeqLbwKfgV72pdH4GjbgwvNCxzHUAUGPl8hXychj9qdnkfSaIEsuJ8qFL0Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bgU2OpVS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HDG18L003283
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:45:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	P21xIuI10yUBLOVyIRJ8t+l+eOXwhbc5+qIAnLXXNLs=; b=bgU2OpVSyUJBD3BD
+	4WPnB7ge2kafJZ1YpPLLevKHcU77nisprbJ3nLf3kIbrdoDjl1lSwu+zai9+96Te
+	O2tsOL6ZR9y2ehX0Z2FA0nWfE0pSUiZuYife/2K4P6+5j47IjSibeu8lIhS9h3P5
+	pTfT8b2K5VLQpFtVqnjEoErPd7wIoAhjwnc7+uXmYfQOa/e+hIqqy6Ui/3GXH0yM
+	ThIMF5Gq4D+8KwoALFqVcyq9fCrFzoomn41T/IXmReSY7HXsLftMF4Hs9Lu4ujZ7
+	BrYm0ohce8dxWHF6zhA6jspOuqD2UI3hyQGpvzXdrskD8tHZeRoZnc1CfvQYcVpi
+	EKo1tQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497wqgr2gt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:45:56 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b79aa110d7so7751281cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:45:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758116756; x=1758721556;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P21xIuI10yUBLOVyIRJ8t+l+eOXwhbc5+qIAnLXXNLs=;
+        b=hQBv75nIxve5Eu9dGRsn3Tdq5Q7+12oIBM1eYO+Y/wE1BD9hJrsBxK+dIaw2lS/g73
+         PG45wmtf2+OZwDS4jY+4sfprZ5V5ob7wiYfmDRKVE/qqqpwjduaRo6+FlXtaFIN93hyu
+         jtX1sx8nm+av59TxpxAovP3FYJz1a0GW3fJ3FrmMYHBgKdUnoh26KU49byNKGR1cERi+
+         eoheOnm3u2WXCljdJVRHJeVfQUkZsG4vFMplX3MFUxI3GvMOhx2tZY0cYKV52SArY2ZR
+         TJkeXYhYtJfK6Fso2N0vII26zv+nUobby1YKPttYtQifRUVVNkNJlY9d00gPo0535pJ8
+         8xsA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+k1lz3jBQ41cXfVR2tJH3gT9hFnKa5wV7UbJw9W7PG5HLiJSSSVigHIQn3PFJp2IncHR4A4aJE7mCw/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYNq7KDxaFn6Y/gus9+D1w3YQPdH9A9M9pGweRy/rFrE0ttOGo
+	mv8XC+fe/nh3uGb9IdsmFzC/hhTPkwTYIwJM/0p0icI4NoOiVkZZ00zPD1GZPVick/GsjpjeAN4
+	w+LQQ93LA4P1d/eooRRXjQgUei9ssC3Le82PyvTw+Sn0u/wkK15gmH5l1wPPSDuN+f5E=
+X-Gm-Gg: ASbGncsYLgE50GHrpi4UPvx4oW1BY51bcIuWP1r4jTVDK2+QWGJyBZruEny8Z/aucSC
+	yRcoaHoxgE7lY3UPBSx58e3DB+ZoYXZL1WlPdfU3YMPde4GMufq3urtz7H/baA7ay5cPCWZERvm
+	51bmbBIl1UunvgrYOHJuRMUBxlFBbiwpdo4hM6iqwiB6OKc2Guz4RxnaVjuYd1qctmOoLItSEhI
+	JqMs3MYfgH3+YPzVo5rZjUAnxWZG7jlDvyZW6RpoPFXiR/YsF6QM2WDTxk+DYt8DP+fm10rTAea
+	LTiyvIIvu2zsOv4VzbaZYLWJ9H7oF9bOxz+aSILczToB2VGhCBhhKNJYYPvKukux75MixfZWEF2
+	aWGbM80HwysXTLztMmYjE0Q==
+X-Received: by 2002:ac8:5dc7:0:b0:4b7:aa56:c0f8 with SMTP id d75a77b69052e-4ba66a30247mr17249761cf.4.1758116755769;
+        Wed, 17 Sep 2025 06:45:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErNYH+JoLm17xNJUN8Ky2dbJ8QLxCLgtdEnNFK7p2G/gtB9/n2aKNVZmhfC+5+y8ZgpWMY5A==
+X-Received: by 2002:ac8:5dc7:0:b0:4b7:aa56:c0f8 with SMTP id d75a77b69052e-4ba66a30247mr17249441cf.4.1758116755132;
+        Wed, 17 Sep 2025 06:45:55 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0cf2112639sm779028866b.104.2025.09.17.06.45.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 06:45:54 -0700 (PDT)
+Message-ID: <9d64f6cc-22b3-41ee-ab1e-d6e571562b5d@oss.qualcomm.com>
+Date: Wed, 17 Sep 2025 15:45:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 5DEFA2017A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[cryolitia.uniontech.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -2.01
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/13] arm64: dts: qcom: sdm845-lg-common: Add camera
+ flash
+To: Paul Sajna <sajattack@postmarketos.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        Amir Dahan <system64fumo@protonmail.com>,
+        Christopher Brown <crispybrown@gmail.com>
+References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
+ <20250916-judyln-dts-v2-10-5e16e60263af@postmarketos.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250916-judyln-dts-v2-10-5e16e60263af@postmarketos.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: OFHWcOlEQSFGC-t8xGTh0bSlMx8ji07v
+X-Authority-Analysis: v=2.4 cv=HITDFptv c=1 sm=1 tr=0 ts=68cabb94 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=Gbw9aFdXAAAA:8 a=EUspDBNiAAAA:8
+ a=gtE8S8QUnRp0gXVXfVUA:9 a=QEXdDO2ut3YA:10 a=IQdlk4_VRkkA:10
+ a=kacYvNCVWA4VmyqE58fU:22 a=9vIz8raoGPyDa4jBFAYH:22
+X-Proofpoint-GUID: OFHWcOlEQSFGC-t8xGTh0bSlMx8ji07v
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDEyOCBTYWx0ZWRfX9+ScDAvyJOSY
+ PdEgudtjbQvVosW+MiNROajD4sI2HcwTNN6d56G3aeO1645KZxtfPtkNGuYzqKJssCNxevw1bfH
+ 993ZlCAbbRUfzheDRwfNmKrkPHHigAuMmnrJt36cadh0/Jc1EdvGRhm2zKPmKCaNxyuNWWfxGKh
+ zJMrbPRCcpTbfCNRnVy811HPl2J/L0VwJ+T1mKA/uoKkvMwtoRycs4xxydZz5RTUrDHCuxmCVVe
+ 9352Echb8vCW4yReqh9PQB3xvKM9DHGhuMrTQLCRVhOCdaxpmMXU8Sd4TyLuMwmXufZ2gHxTsWr
+ FG58ngdJH/3oZEeTnhKoh2pMPGXrvB2Ey+B3ZgAT1fJRM/QJ0PcNbOtEuvAIkaU03lCL99LhOaj
+ /tiKLZQk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 impostorscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170128
 
-On Wed, 17 Sep 2025 14:46:42 +0200,
-Cryolitia PukNgae via B4 Relay wrote:
+On 9/17/25 3:09 AM, Paul Sajna wrote:
+> So it can be used as a flashlight
 > 
-> From: Cryolitia PukNgae <cryolitia@uniontech.com>
-> 
-> For apply and unapply quirk flags more flexibly though param and sysfs
-> 
-> Co-developed-by: Takashi Iwai <tiwai@suse.de>
-> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+> ---
 
-I think an easier approach would be to rather parse the string value
-at each time when probing a device and seeking for options.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-That is, let's code without a mutex at first (for the permission
-0444):
-
-void snd_usb_init_dynamic_quirks(int idx, struct snd_usb_audio *chip)
-{
-	....
-	/* old style option found: the position-based integer value */
-	if (quirk_flags[idx] &&
-	    !kstrtou32(quirk_flags[idx], 0, &chip->quirk_flags)) {
-		usb_audio_dbg(....);
-		return;
-	}
-
-	/* take the default quirk from the quirk table */
-	snd_usb_init_quirk_flags(chip);
-
-	for (i = 0; i < ARRAY_SIZE(quirk_flags); i++) {
-		if (quirk_flags[i] && *quirk_flags[i]) {
-			err = parse_quirk_option(chip, quirk_flags[i]);
-			if (err < 0)
-				return;
-		}
-	}
-}
-
-and the parser would be something like:
-
-static int parse_quirk_option(struct snd_usb_audio *chip, const char *str)
-{
-	char *val __free(kfree) = NULL;
-	char *field;
-	int pid, vid;
-
-	if (!strchr(str, ':'))
-		return 0;
-
-	val = kstrdup(str, GFP_KERNEL);
-	if (!val)
-		return -ENOMEM;
-
-	/* Each entry consists of VID:PID:flags */
-	field = strsep(&p, ":");
-	if (!field)
-		return 0;
-	if (strcmp(field, "*") == 0)
-		vid = 0;
-	else if (kstrtou16(field, 16, &vid))
-		return 0; // can spew warning message, too
-
-	field = strsep(&p, ":");
-	if (!field)
-		return 0;
-	if (strcmp(field, "*") == 0)
-		pid = 0;
-	else if (kstrtou16(field, 16, &pid))
-		return 0; // can spew warning message, too
-
-	.... // evaluate the tokens, set or clear chip->quirk_flags accordingly
-	return 0;
-}
-
-So you can just use the normal charp type for the parameters.
-
-Once after this working, we may want to allow the dynamic module
-parameter change.  Then make the parameter a special type just to take
-the device_quirk_mutex at set callback, while the set callback simply
-calls parm_set_charp() for the rest.  For get and free callbacks, we
-can use param_get_charp() and param_free_charp() as is.
-Finally, snd_usb_init_dynamic_quirks() takes the device_quirk_mutex,
-and that's all.  No need for heavy cleanups or linked list handling.
-
-Of course, it's a bit inefficient from the performance POV, but the
-device probing is rather a very rare event, so the speed doesn't
-matter at all.
-
-
-thanks,
-
-Takashi
+Konrad
 
