@@ -1,94 +1,112 @@
-Return-Path: <linux-kernel+bounces-821543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBAEB81982
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9A4B81994
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34EF93A490C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9555B58300C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059C13002C3;
-	Wed, 17 Sep 2025 19:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C162FCBF3;
+	Wed, 17 Sep 2025 19:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUDWAchD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="h6VbFdwn"
+Received: from fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.57.120.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE3829BD88;
-	Wed, 17 Sep 2025 19:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5F772614
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.57.120.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758136896; cv=none; b=gfXczbK+3DJ5QA7Ds4+zQxhxGa2aNgoGfN0rIOH2JcTH6QAt5ghCJxc5208aA8hDElp0fQOapbGmkbBJCpoopbF/JT4gK4dC22hdQNEAYyAHQk97o3Vr1R7PI4Kb7Prt6Im24xRA5tKkKb0qK6BDvJMkr1unRYYw1dmjTbufS6I=
+	t=1758136993; cv=none; b=dQ6bKw8YW07Tl6+fMbAZyVvsSevmttBTUQJLnBGG8Orhtv5Su2iK0Xj225jqSB1tmNCpVyW0NspHOBCg3WfxCOoMSWz9LZSC2UyQnLrNxYJPHTq/Ly1FF/iLdi3Y1fGBKAunBspX4mxhyie6Rxzg2HBQthk7xxg1ehv2BvLlgOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758136896; c=relaxed/simple;
-	bh=uK8VD28pj5HsQA2BIDc77NxRzzo0PVYvig7p9Rq5qx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYOXgZOhPEVyBZfOi0nFbqOL1Cqrf/Hl/1s06HRUWOf6HzZy6ej6F2gOsXt4a7/fIYPwU8APolp7BA4C+oLRpSioYnTn6tyvV7odGC8rClVwax1Z9T/Ya84aOEMww6T3Qv//A6QMY3dFpe8LWLxA0q18naigUvF899QmjdEJr9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cUDWAchD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73474C4CEE7;
-	Wed, 17 Sep 2025 19:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758136895;
-	bh=uK8VD28pj5HsQA2BIDc77NxRzzo0PVYvig7p9Rq5qx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cUDWAchDuxejcbCy7Djo+l7J5pMHNe9+okeU2CCorrXCidCMI9adv8g5XJZxvEBuj
-	 XVZ4+cGy4qay6XGmNXDOsVWqhiiqrNY8q0jV7ckBFODPQ1sLbAV1dMHk/vfe51srgd
-	 D+6gwUyDsnynsP1ScAJubUaOeogZodPWGj/oVxc6eEWQpSHZ4S0p7qMuCVOsVi1geL
-	 4DDJf/sY2rK9PLLQzl/242Rc0/ci3efF5YYo7VLwAu5c5/omcLw1M5q5+S2cQX+IAB
-	 RAAZOIUV8xyEpy8U7/qd3L2VY6iVbfClW+N9korLKE4MgzWf7ad1WRznqwUm5POVJ1
-	 DMI0o4tn60hNQ==
-Date: Wed, 17 Sep 2025 20:21:28 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ravi Patel <ravi.patel@samsung.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	jesper.nilsson@axis.com, lars.persson@axis.com,
-	mturquette@baylibre.com, sboyd@kernel.org, alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, ksk4725@coasia.com,
-	smn1196@coasia.com, linux-arm-kernel@axis.com, krzk@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
-	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
-	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
-	swathi.ks@samsung.com, kenkim@coasia.com
-Subject: Re: [PATCH 4/7] dt-bindings: samsung: exynos-pmu: Add compatible for
- ARTPEC-9 SoC
-Message-ID: <20250917-overture-freely-8279720edce9@spud>
-References: <20250917085005.89819-1-ravi.patel@samsung.com>
- <CGME20250917085040epcas5p1fa7cba6f9425f534c9eca976c4bcd4c6@epcas5p1.samsung.com>
- <20250917085005.89819-5-ravi.patel@samsung.com>
+	s=arc-20240116; t=1758136993; c=relaxed/simple;
+	bh=JX9Ffh7Pf+hfk5UB6RHkGxi+gZ55byfAqIitgK2AQ28=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CKEJnv1Aqgkb7huPE9xRbL5GlkPNL1xETZaoAeIWWZMbriZfVY4ZAIF5zu1UCLKQZQwuni+QJZRMw67yRMYR7XenHBf8dXflj62WqZ4fNlVnmFtjW9lGp/7TiFbg277AkagublxNgJaQfRefP8lG9bv8JYoZV+SPdzRb1fsiW5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=h6VbFdwn; arc=none smtp.client-ip=52.57.120.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1758136992; x=1789672992;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=JX9Ffh7Pf+hfk5UB6RHkGxi+gZ55byfAqIitgK2AQ28=;
+  b=h6VbFdwn7ru297hcyIMuz4+upuX6Gg0TVPKi1UL9IaaDpRQ81bSbPivx
+   4d9TwQoSkWvegLzXRdxY8dEJ+PBH4LaP2/etcJSRQSekmLlA3TLMXDsYE
+   puyqi+Z9ApFiA/nIGmU0SmAcdYBLvHAizWGuXZ5uYe5U8pCnWDuQ4ypIR
+   HKjXUb8z+x7YWSfYcTl5q5+8YY6NI4xLndoors6Aw946JqkIrjvs5vLeK
+   za8yRZdc7ojZSOxuIRSGEwdiWTldLTOFaf4aMNBXDhFRRv/uYSd2ZKzD2
+   zY3rc76FzjgDx9p/YvewTd+Jdja93dV/O48WpFLBD/R6+V8tlcwVsOm6p
+   Q==;
+X-CSE-ConnectionGUID: CcJrk2DuSU2CcODOPrEeWg==
+X-CSE-MsgGUID: f1CS0OuBT5eB7gjJjNsuuQ==
+X-IronPort-AV: E=Sophos;i="6.18,272,1751241600"; 
+   d="scan'208";a="2172547"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 19:23:01 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:4376]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.23.64:2525] with esmtp (Farcaster)
+ id f3d28215-c9b9-4b1d-ac3e-07ff16a4cc00; Wed, 17 Sep 2025 19:23:01 +0000 (UTC)
+X-Farcaster-Flow-ID: f3d28215-c9b9-4b1d-ac3e-07ff16a4cc00
+Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 17 Sep 2025 19:22:53 +0000
+Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.227) by
+ EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 17 Sep 2025 19:22:45 +0000
+From: Fernand Sieber <sieberf@amazon.com>
+To: <peterz@infradead.org>
+CC: <sieberf@amazon.com>, <bsegall@google.com>, <dietmar.eggemann@arm.com>,
+	<dwmw@amazon.co.uk>, <graf@amazon.com>, <jschoenh@amazon.de>,
+	<juri.lelli@redhat.com>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
+	<tanghui20@huawei.com>, <vincent.guittot@linaro.org>,
+	<vineethr@linux.ibm.com>, <wangtao554@huawei.com>, <zhangqiao22@huawei.com>
+Subject: Re: [PATCH v2] sched/fair: Forfeit vruntime on yield
+Date: Wed, 17 Sep 2025 21:22:05 +0200
+Message-ID: <20250917192205.2306162-1-sieberf@amazon.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250916140228.452231-1-sieberf@amazon.com>
+References: <20250916140228.452231-1-sieberf@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dRvbyashsTiNm1sK"
-Content-Disposition: inline
-In-Reply-To: <20250917085005.89819-5-ravi.patel@samsung.com>
+X-ClientProxiedBy: EX19D046UWB003.ant.amazon.com (10.13.139.174) To
+ EX19D003EUB001.ant.amazon.com (10.252.51.97)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+Hi Peter,
+
+I noticed you have pulled the change in sched/urgent.
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=78f8764d34c0a1912ce209bb2a428a94d062707f
+
+However, I'd appreciate if you could weigh in on my concern regarding this
+iteration not working well with core scheduling. Since the scheduler prefers to
+run the yielding task again regardless of its eligibility rather than putting
+the task in force idle, it can cause the yielding task vruntime to runaway
+quickly. This scenario causes severe run delays later on. Please see my
+previous reply with data supporting this concern. I think, the best approach to
+address it would be to clamp vruntime. I'm not sure how exactly, a simple
+approach would be to increment the vruntime by one slice until the task becomes
+ineligible, if you have any suggestions let me know. I'll run some testing soon
+when I get a chance.
+
+Thanks, Fernand
 
 
---dRvbyashsTiNm1sK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Amazon Development Centre (South Africa) (Proprietary) Limited
+29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
+Registration Number: 2004 / 034463 / 07
 
---dRvbyashsTiNm1sK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsKOAAKCRB4tDGHoIJi
-0p78AQDSMTw2stqWHLzjK5+LTkdtN65qrrWqUWRI2Rf17tUVnQEArHJgpN7vG2Pl
-lBmuPUXF4wfsNnyi465N6V7WOXUT7ww=
-=GaZD
------END PGP SIGNATURE-----
-
---dRvbyashsTiNm1sK--
 
