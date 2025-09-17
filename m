@@ -1,80 +1,114 @@
-Return-Path: <linux-kernel+bounces-819967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5353B7EE92
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:06:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D464BB7F28F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D360A1C0074A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:42:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A83FE7A21B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8282A2472B6;
-	Wed, 17 Sep 2025 04:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CF3266B52;
+	Wed, 17 Sep 2025 04:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mcFafbbC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq2W9L30"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CAE223DE8;
-	Wed, 17 Sep 2025 04:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1491422156C;
+	Wed, 17 Sep 2025 04:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758084115; cv=none; b=peclWSqJINElvHeFnePXDVgcN7f6Y7JXgOjlPLlUo9v2cQynszshXWqggDFD31ilkj/rTQRuHg7jol/3WM2TWidBVdAJX4wKYlHQVZsBXzltNIU417jIgTKXbHtY59mxpYu1Hvf4NdhBoBXwyTGAGAhKgeLOmAMCAfHZM5xnHTs=
+	t=1758084221; cv=none; b=blhJ09QyEQoutrQG5RwVLktZN6B2w2Ru1anWp4wFIQ0se6VP94OFooI+uTgdiVI1gTdhRVTPd+QTypZAMgAgQHNZhQDBVWCpYPoZuMdwBj8kVQzWrdf4ntijrIR/+U5ZXXVlTCemk05UkayCbJARx3tDbg4iACpn/wgVDqabzoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758084115; c=relaxed/simple;
-	bh=bvYJdBIebWbbLky595Ju+Qy57cTKh3vRPO/Is9p/+As=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=dNfH+kbwrx+3z3qlsrWuIhHF5ybKtE0y7bfQTwcY6Uljq5dcGKZVTJE2OFgC8ttsY/ME2pBeCEUtVhSZ50gz7pNi8C4ZBUYZc/RSsohaqQHyKbjX9O89nCQrAvY+Lp7MuLyypbT8lRHUHEUI4siCSresRamVt5G7D0n33BJrO+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mcFafbbC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54A74C4CEF5;
-	Wed, 17 Sep 2025 04:41:55 +0000 (UTC)
+	s=arc-20240116; t=1758084221; c=relaxed/simple;
+	bh=euatEuS4JOCf3MimDRThN1Ny67GVVL/UXJJE0AQfpuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U8co/UBFNNDzB0X/RvSB6PnMEvOUfFlL9PiuiRPJ5Ox8K3lL+8/k+7B1qXW10mDcZ4+Ix3X1z1OYH6DwB/BMH6oh8vpar3qekV7h1n3qH6hG79dCGBWc1FIn8oFEWk34H/K6HeNH6f3mIYOxdJGJDSTwzdQGCmAEjjOEm54BJBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kq2W9L30; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB896C4CEF0;
+	Wed, 17 Sep 2025 04:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758084115;
-	bh=bvYJdBIebWbbLky595Ju+Qy57cTKh3vRPO/Is9p/+As=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=mcFafbbCaOwnq+FJ9nFCRZMI2CHdK6+1eVod2bk7RumbesBssXUt4WhxML8AfDckq
-	 PXa5J/KG+mDC06mzNHF5xYnmWsTAnv53g8LFg49kU5QFrZ7xKTb9FVABfvmGGcCOzb
-	 wgvTJf4yb7kKa+3hgH+paPCrxl6g2sPsvXAUqx3t/2ENk1CVRkgh7O6EXbX5Na60u/
-	 gKRKs2t/XBgIeak1pZ2ZoBh2pGuyK8nqopKSO4WZmLPbBLt7KHO4GFR7jwIPhiPGJq
-	 qJF3FSSD7jhreQQwp/8jLjDC598gSVLtUsq6h776OilHhMD8GSlHvLMyp3KO1V7a/J
-	 OIj0MCoT1FwYQ==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1758084220;
+	bh=euatEuS4JOCf3MimDRThN1Ny67GVVL/UXJJE0AQfpuE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kq2W9L30A1Y3mTSW1xcz1qYO+dB3d7ld50Ej0BIRkOpSYyqOmt6ShTd9Nq/lgfbZb
+	 y5itnC+JiHdyIWMW1h7yx7bl330zKA4B5lH7ZDuAzfrQ7Smac0fKIENJ9nP17KXObQ
+	 TG9mvgfFWU1Tk7YzKla516VXSC2MFR5sO2vvw67WOpU+jqzJoKzvvhwTEu1ixkDUKp
+	 Q+zFVxzJ0vvIrjIenyHmpgmJ7FncdmRqJeNjUbvtaPQS5lW9Myf+K14eLxHo7rSKoZ
+	 FhZEDRm2XL8zL/tdPxCPuc1CQ+1pxtjFJ7vyd2odVeysgppuktaPMyJFddZbjtcEC/
+	 rceMt6NdaPp9A==
+Message-ID: <21193ce7-26ab-4c42-a84f-669ab57257c2@kernel.org>
+Date: Wed, 17 Sep 2025 13:43:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250916074828.9677-1-abel.vesa@linaro.org>
-References: <20250916074828.9677-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.18
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
-Date: Tue, 16 Sep 2025 21:41:54 -0700
-Message-ID: <175808411442.4354.16459182435931479904@lazor>
-User-Agent: alot/0.11
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] can: raw: use bitfields to store flags in struct
+ raw_sock
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
+ <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
+ <ed2a1b51-782b-4ee1-be75-06a0a742525c@wanadoo.fr>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <ed2a1b51-782b-4ee1-be75-06a0a742525c@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Quoting Abel Vesa (2025-09-16 00:48:28)
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
-85:
->=20
->   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.18
->=20
-> for you to fetch changes up to 14be8b7b6cbc0a072c749e46e28d66e0ea6d0857:
->=20
->   clk: imx95-blk-ctl: Save/restore registers when RPM routines are called=
- (2025-09-12 17:28:29 +0300)
->=20
-> ----------------------------------------------------------------
+On 17/09/2025 at 03:35, Christophe JAILLET wrote:
+> Le 15/09/2025 à 11:23, Vincent Mailhol a écrit :
 
-Thanks. Pulled into clk-next
+(...)
+
+>> --- a/net/can/raw.c
+>> +++ b/net/can/raw.c
+>> @@ -87,10 +87,10 @@ struct raw_sock {
+>>       struct net_device *dev;
+>>       netdevice_tracker dev_tracker;
+>>       struct list_head notifier;
+>> -    int loopback;
+>> -    int recv_own_msgs;
+>> -    int fd_frames;
+>> -    int xl_frames;
+>> +    unsigned int loopback:1;
+>> +    unsigned int recv_own_msgs:1;
+>> +    unsigned int fd_frames:1;
+>> +    unsigned int xl_frames:1;
+>>       struct can_raw_vcid_options raw_vcid_opts;
+>>       canid_t tx_vcid_shifted;
+>>       canid_t rx_vcid_shifted;
+> 
+> [...]
+> 
+> Hi,
+> 
+> just in case, it looks like bound and join_filters could also be defined in the
+> bitfield.
+> 
+> just my 2c.
+
+You are absolutely right. I will add these two to the bitfield in v2.
+
+
+Yours sincerely,
+Vincent Mailhol
+
 
