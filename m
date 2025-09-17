@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-821470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B13B8154B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:24:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF3FB81553
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD611BC7878
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A57B3B439B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C223002DE;
-	Wed, 17 Sep 2025 18:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C6D2FFDC9;
+	Wed, 17 Sep 2025 18:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tZiROv/G"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siL+TZXh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1FD34BA4C;
-	Wed, 17 Sep 2025 18:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA142F7AA7;
+	Wed, 17 Sep 2025 18:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758133445; cv=none; b=t6mZ194CHvUTnrTx9nfjEbMneFL/OL93WK73wEFdSnHFDRFqyGg2Kq3s4EeDcy38lVDg/66nZQeImSAGGh5nAWHKG/f+JaCTjFYILTIW30aM5FPXgwiBgYsCJaaaDpupNuhGbevnr+6wORos+EwrXQAqTFQ0LUZWDjdl/MaaZJE=
+	t=1758133518; cv=none; b=KJJi2ddyADmRlOjd/Efs0RmS/IZLJMiP+w+3l7HLQeVbCVldKe21oxvvkoiPobcOLyOWMiIimLI7MwY1h9uXw26XanXo3XGim298baWVfrnjaa32LPUfKN0S+6kII1MsRkzTip+kvhuKVrPfL0qXlBaRqOhjm3AD6J64e6/4G8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758133445; c=relaxed/simple;
-	bh=KQBYLBTGVcI6B/UU8+PuP9ANhqubXd++Fn247awfx+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eC0r4D/TU7j7qTyzx7MMiVDHBqA4LEbTWw6WzWZ3jrnqWWkPBZs6SFS3vVGcw6wpLtJTYpvKcN6QvmwGBXrvTKbc/IAC11NN9Vw5tc61dfR84jzvuyf0bbCxcPKu5fXo9sKXOSUOUgRhaJTTrGCCd8eW99nd7WkvpPHoTzb1CHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tZiROv/G; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758133443; x=1789669443;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KQBYLBTGVcI6B/UU8+PuP9ANhqubXd++Fn247awfx+M=;
-  b=tZiROv/G5T5hSfAw8BT0EFgHSYRbJPD4f4En11zg/onExBVnL39fzSoR
-   c497FEYwN9E92pYEsdylqC/3GbX6tbWqrEYft3J3pJGrI1dpT1Cpp43nc
-   utUeFIEEANASZxghCsQDwIeREmWntR5IrZUx1VxlRp8UM9UiLhh2QDHQm
-   pyrCb8GZofVh2Md7KYx3q0n5r8x/tzp/nGISWudoWWIC2ShJJBTSbxCio
-   giVszUy8w8/dh5rYQIdsXJ704eRVFb4PcHhGK+rqLXdesPoobDfxDoh5y
-   +OwJshwWu2xMjlVY7GlC8nL6ExS80jk7SKgAnx0NeSDDbBT0bu4AcSWnf
-   Q==;
-X-CSE-ConnectionGUID: 5jJN7IFvSvKlx8qiM0vY4w==
-X-CSE-MsgGUID: RvhQqBJPShSHvESk7QwlQw==
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="214017525"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 11:24:02 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 17 Sep 2025 11:23:40 -0700
-Received: from [10.12.48.170] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 17 Sep 2025 11:23:36 -0700
-Message-ID: <1a740af5-78c9-421f-a58a-fd4a2066493a@microchip.com>
-Date: Wed, 17 Sep 2025 20:23:35 +0200
+	s=arc-20240116; t=1758133518; c=relaxed/simple;
+	bh=ol6jCR0N9MRDTPmJkwp6Mwk5BfnDhBqRmd9kJrfHils=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jvs3qcPZjSz1xxmocMkV5VxFhz/cENDeao3RZargMzrShb+pRvctBq1ZtAYtQv/m6PUyldP489UHCzfA0lq1mu5yjBoM2gk35cZ+HdzV07ph62PRPw9vIUIBfzgUEk4gwV4b+rVmXIYKJaRoTtnalFgPcU9rAR6Xh/TJPBGtd7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=siL+TZXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15724C4CEE7;
+	Wed, 17 Sep 2025 18:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758133517;
+	bh=ol6jCR0N9MRDTPmJkwp6Mwk5BfnDhBqRmd9kJrfHils=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=siL+TZXh5aIyUhYcmGbqGVIoC7PSYcFcThXMRrAt8VoWxV2RFQmaA/1D6+DhbxHS2
+	 4S+iaSvqROJ0B078hZCGJfxGQrhM84bAPoYTgTODTxGflm2qyTw6nmMPu1YMiSjz4c
+	 Z21RPIfi6x6XBHnZYyfWOewX+Zj9qLu5DWw2WiYlOTQC4WgjwW918dAvC3KlGklgVE
+	 2dGkK4AIEoOewXUGmwqBTc7kZ7O9sh/bhM26NNOtewBLa74q+4CQEy126vu4D5g+HB
+	 zY/ClVoO3HJiUHjKRa2piV8x6uRsoY45vaxD6z2FpsMOZFai0YxHxIyfjwDj+QRMjS
+	 JasuvEFFP1D4Q==
+Date: Wed, 17 Sep 2025 11:25:12 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Guodong Xu <guodong@riscstar.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>, dmaengine@vger.kernel.org,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Vinod Koul <vkoul@kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Benjamin Copeland <benjamin.copeland@linaro.org>
+Subject: Re: next-20250903 x86_64 clang-20 allyesconfig mmp_pdma.c:1188:14:
+ error: shift count >= width of type [-Werror,-Wshift-count-overflow]
+Message-ID: <20250917182512.GA98086@ax162>
+References: <CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com>
+ <a07b0ebf-25e7-48ba-a1da-2c04fc0e027f@app.fastmail.com>
+ <20250903165931.GA3288670@ax162>
+ <CAH1PCMYWWkThMosDMW=wZZWZ8d_c4_zQWhJOJPKe354LPiV1bA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] ARM: microchip: clk for 6.18 #1
-To: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, SoC Team
-	<soc@kernel.org>, <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>
-CC: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, Claudiu
- Beznea <claudiu.beznea@tuxon.dev>, <oe-kbuild-all@lists.linux.dev>,
-	<llvm@lists.linux.dev>, kbuild test robot <lkp@intel.com>
-References: <20250916080545.9310-1-nicolas.ferre@microchip.com>
- <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
- <175808457715.4354.11044142356915096975@lazor>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <175808457715.4354.11044142356915096975@lazor>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH1PCMYWWkThMosDMW=wZZWZ8d_c4_zQWhJOJPKe354LPiV1bA@mail.gmail.com>
 
-Stephen,
+Hi Guodong,
 
-On 17/09/2025 at 06:49, Stephen Boyd wrote:
-> Quoting Nicolas Ferre (2025-09-16 06:19:11)
->> On 16/09/2025 at 10:05, nicolas.ferre@microchip.com wrote:
->>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
->>>
->>> Dear clock maintainers,
->>>
->>> Here are the first clk changes for 6.18.
->>> I don't think they have conflict with changes for the deprecated round_rate()
->>> to determine_rate() topic.
->>> They are in linux-next for a couple of days.
->>
->> But... this series depends on this patch:
->> https://lore.kernel.org/r/20250827145427.46819-4-nicolas.ferre@microchip.com
->>
->> Which will be part of a pull-request to-be-sent soon to arm-soc (which
->> is part of linux-next, so the build error doesn't appear there).
->>
->> Once the pull-request is done, do you prefer that I do an immutable
->> branch between CLK and ARM, that I queue this at91 PM patch into the clk
->> pull-request or that everything goes through arm-soc?
-> 
-> Whatever is required to build the code should be included in the PR. If
-> the same commit goes into arm-soc tree that's OK, just make sure the
-> branches aren't broken if you checkout a commit anywhere along the
-> branch that is sent to clk or arm-soc trees. Broken includes
-> functionally broken.
+On Thu, Sep 04, 2025 at 03:38:21PM +0800, Guodong Xu wrote:
+> On Thu, Sep 4, 2025 at 12:59 AM Nathan Chancellor <nathan@kernel.org> wrote:
+> >
+> > On Wed, Sep 03, 2025 at 02:04:10PM +0200, Arnd Bergmann wrote:
+> > > On Wed, Sep 3, 2025, at 12:08, Naresh Kamboju wrote:
+> > >
+> > > > Build error:
+> > > > drivers/dma/mmp_pdma.c:1188:14: error: shift count >= width of type
+> > > > [-Werror,-Wshift-count-overflow]
+> > > >  1188 |         .dma_mask = DMA_BIT_MASK(64),   /* force 64-bit DMA
+> > > > addr capability */
+> > > >       |                     ^~~~~~~~~~~~~~~~
+> > > > include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA_BIT_MASK'
+> > > >    73 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+> > > >       |                                                      ^ ~~~
+...
+> Thanks, Arnd. I'll send a patch to clean up and simplify the logic.
 
-Thanks for your quick response Stephen. v2 of the pull-request has just 
-been sent.
+This error continues to break our -next builds. Have you submitted this
+patch yet? I searched lore.kernel.org and I did not find anything but I
+wanted to make sure I had not missed anything.
 
-Best regards,
-   Nicolas
-
+Cheers,
+Nathan
 
