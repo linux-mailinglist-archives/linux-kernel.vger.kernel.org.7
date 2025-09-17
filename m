@@ -1,164 +1,187 @@
-Return-Path: <linux-kernel+bounces-820103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031B2B7F53B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:32:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95671B7C417
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5315811B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1C66324492
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0501F2D480D;
-	Wed, 17 Sep 2025 07:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03972248861;
+	Wed, 17 Sep 2025 07:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ndf2w8Mr"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRZLLWPD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9D92C2361
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D56927CB35
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758092735; cv=none; b=PfPRrWa3mGYlcrQ0dCq+YNIm2OZ1tY4EpsfiiM3qNJo08WzUfVoYGEW5ApO9cLsvSGueNEVz6/5Jb27XyC7V48bEtpoJsOVE26fbEAaEy9xulcrYsoLqbcOwsv9WGAuqUfE/9d/lj5T/3FhCZ5lhCyNUYnSjot/HoFZFl08JGPk=
+	t=1758092851; cv=none; b=U4jmT1kRM1epx/42SGVAdQxCIULuwRmJZbWfOP94k+UJpUCBy9phpoMXfLBt8V2r69+ejlqMxMBdAntZdY0aJBSvgz70TnjnjmYZk9opOMQwBqcaFty57hrFv2gvDEDCzUVpGe4l1x2XJWNiRMh0ttBn9NKJOrkdscEbvE/YLXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758092735; c=relaxed/simple;
-	bh=qel+sB8eI+vw5fI+IXJcuamEgWVr7FnrIkhWQFmMCoo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BzUvcfVtLCg5NtrxzGUjA9cV9NMGyylknnuPY2vFdQIxTHSJ2s1rFXX90ayF0ELiYkVpcQoYYq3zZOJC4OgXiyuopw0Nj1Sd4YCpf/ibrJVq5qWixhOczappWoyrwuehecs+SB0XPbeZ++xE9D5jppsNMHngHHkKFg42BY35jEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ndf2w8Mr; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so4633505e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758092732; x=1758697532; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1lELm1XWpGTgxI5pP/LWBGwSZ4uAGIlOCNe7xRYuVz0=;
-        b=Ndf2w8MrDvJ09zTwEX2ML8CNBujrVNHGYSU/PnDx6U8Aoru2ujsMEzmJtcDe8nVIz1
-         tlfK/o0UtBRVX4r+3hFEsD8Oi08bCJLMy6labEwqR+xGxzVjs9oaM8IAJzbz3gtl0auF
-         jGFa+u72GOadt93x7GkZFe/645O48ZApieVvkgreOOU6FVjJv2xPLEcqhyAUpHgyznPD
-         cZl/zndOsKelCUQhuLBx6K8LMwZrHy3yw+CmnApk2D9s/gARlZAMOp5Hhek07E8CH/5d
-         LxqlA3NwhoXbzSCC4Qm2m5OyL9nh6+tI4wHKhD7l4/ileTz+5h2ovp3JUEO8W99n8pc7
-         0XOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758092732; x=1758697532;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1lELm1XWpGTgxI5pP/LWBGwSZ4uAGIlOCNe7xRYuVz0=;
-        b=FkZLkwRkRvJZ5FZ3OD47oma5DrWX448xrBUxhl8AKp2I8C1mazqTEJltJMotenBHCU
-         ycfmFoPB0nQ875z1b5YQwluD27mLClPYRVi6gR6AupZ1GmnengpXB0hsEZgsMizF5KeD
-         MfSv4BhrZzLl6FYTigv5Mtsb3lXdESXT9URK35xSwYbZKC+KBU+eDEg306vlANH+fJlN
-         R4pextGhp+SDxftSS6hvsdewTunOhgi6BWNylrNJmX4EY4znmzp++yiGxbAGqlNbXDHt
-         pHSRVBtZqQJqDu4ap/h31h5IQJ2NoLehYod4A0neBAc8566+tl3aLHQWGWu7QSmrfN8E
-         cjXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVet4Hb7rpthY6NgLAN833DOErd6fIumkGHXTaV47qTq3wSspNOOYXB+KblKBt1JlnnG39kaDHTQ2KDCUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMPzMt3lh1Dv6QHaMS4G5FemaBvdeJK2iRUa2ffm3Ghqqv2iIs
-	meoTLbPSVUxDkT00RAsGxeUuVRQcnMQ8Oo/V3Xk1wVDU4nbp1e+UJrG4
-X-Gm-Gg: ASbGnctHqpkzy+bOT75DuDQmhLL8EIAVKmCYDGIOyC+BxyJnfd9H+QZ6gAlqV2Vis9+
-	44UmCoff/W+6+4UXMrBtQx4hJovzXAmo/W6AzoDzbjSOz+83RyBv9V3IjRQPqb2RFAyjorzyW8H
-	4LHiCVEraozU05Tg9n84iZ95hO4Nwzwk7LihmmXkhMjL5mIai91L7jQGNQWPl2c23nXw86hRF7a
-	e/Vpnd2sOg4N21E5sCi11RoR45LqrphXiXjTIH5L96UbMuvu9rhM93KO0wbMm0nNTwm1xZO1gMu
-	KfsI0MTiceOH9o5MSFjuGHMfFxInhbyIOQx9boHp2E5/aZ+ej6QOA+ucC0n5tmOpR7bw7wuTTup
-	PFu58qKJHhmj3EBZ9rV0rHg==
-X-Google-Smtp-Source: AGHT+IFlPuJM7gO5ArkZaq21I+GH1aAzibNklb9hk65tHGxbHIZmR7Qv5O6d6pSrCpHsc9ccC0z1IQ==
-X-Received: by 2002:a05:600c:4f54:b0:45f:2d7b:7953 with SMTP id 5b1f17b1804b1-461fa02bc5emr9192095e9.18.1758092731465;
-        Wed, 17 Sep 2025 00:05:31 -0700 (PDT)
-Received: from [10.5.0.2] ([45.94.208.90])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613dccb4fesm23735855e9.16.2025.09.17.00.05.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 00:05:31 -0700 (PDT)
-Message-ID: <ce724693ffd6bc8f3f10cb8d753fd69191a19d8d.camel@gmail.com>
-Subject: Re: [PATCH] drivers: iio: adc: ad7124: remove __ad7124_set_channel()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 17 Sep 2025 08:05:57 +0100
-In-Reply-To: <20250916-iio-adc-ad7124-remove-__ad7124_set_channel-v1-1-aa7a2cbec8a0@baylibre.com>
-References: 
-	<20250916-iio-adc-ad7124-remove-__ad7124_set_channel-v1-1-aa7a2cbec8a0@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1758092851; c=relaxed/simple;
+	bh=OaRce51hMgVbE7SHXOBadRr7blVfjSSfr4N61mMeGH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YPrqayjwVj5j4+BD9AWppn+ug74f0dAuiSBSEhT0O4NOm/q5BmWgXoOxTH93ZacNHh9bnh7O17vb9DQK49vJ8B0GUt6cRUmIV1Zfj+hh+1ubRNdsdB2mYY+ECOcBcgUJt1VagdVpiw23FqrvgEB/PyOSnz/z+fwvk2TeyA/bAK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRZLLWPD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED870C4CEF9
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:07:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758092851;
+	bh=OaRce51hMgVbE7SHXOBadRr7blVfjSSfr4N61mMeGH4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uRZLLWPD0ApicP1dUNTh+eH97ahMBvlKcs/0TkMdhW0bL99qeJ556XwqbSDglASAR
+	 pZM1SzOKMVf19gmfieZIh4bPsfE1itXaXdP2Es4nA25bEo/UGst8WkL1AYw9qez05b
+	 o4G8ShWjAt0f3g/wxwhynogRK77tf6v+rHTFqZecd6remP4RWorvdXRepdOAjF7O6l
+	 BJmJmPFLu/FF80yMbrSAh7x1LcVZoTiGxVibCqo/cbSoQubLFKDpNag9LSBzfHVsD5
+	 DgS8GmAj3i3as+etlRoseiaI5oPomvCFJj7LzfGo6OqqxFoAJfUdz16lvXeNxQu5qa
+	 Z3bKDQN5GuwsQ==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7ae31caso1131487166b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:07:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhMJ/0ct//8xvlSmGDH5bvlA/2kRDUzmFtV+UEi6UcRRsW7Sq2f29rqAi51XwQO8N6oHgFbnbqq576RNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY2JLJ0Zc7woWFghRCUFBghgDRtvhGuh2/CWwFQmWpZpvv4tpy
+	SsbPpKA6r5oj5cRpwHi8JQg/6rbh3s8e83gwoRpOYgm6CysQJfXZIujsMRbt4iiAY7fhJPU9Ruk
+	oNNk8ZQPgBfplrRNoLFLsGER7Fx2Q5d8=
+X-Google-Smtp-Source: AGHT+IHnWDsDAUsjhNqyZZZp/XBcsXnqgvg07HKOKV9eRxOWA7vHoJaEBhv12d3En2EYSoJh/CDl5oSnYc4C9a/rZBY=
+X-Received: by 2002:a17:907:7fa7:b0:b04:4b0d:8e82 with SMTP id
+ a640c23a62f3a-b1bb86d273fmr139668666b.50.1758092849526; Wed, 17 Sep 2025
+ 00:07:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250917011007.4540-1-yangtiezhu@loongson.cn> <20250917011007.4540-4-yangtiezhu@loongson.cn>
+In-Reply-To: <20250917011007.4540-4-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 17 Sep 2025 15:07:17 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6yKyqU+jQ=-RoOOc0fyRgjFfdorJAk1LashV0Gt=Y=AQ@mail.gmail.com>
+X-Gm-Features: AS18NWDcFCYSyFl7KmJfFK-YsCl3-DOT73b5BYQ547WLX_PqpnPbI0ZcEI1ZxM0
+Message-ID: <CAAhV-H6yKyqU+jQ=-RoOOc0fyRgjFfdorJAk1LashV0Gt=Y=AQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] objtool/LoongArch: Fix unreachable instruction
+ warnings about entry points
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-09-16 at 16:39 -0500, David Lechner wrote:
-> Remove __ad7124_set_channel() wrapper function. This just added an
-> unnecessary layer of indirection with an extra call to container_of().
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Hi, Tiezhu,
+
+On Wed, Sep 17, 2025 at 9:10=E2=80=AFAM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
+> following objtool warnings:
+>
+>   vmlinux.o: warning: objtool: kernel_entry+0x0: unreachable instruction
+>   vmlinux.o: warning: objtool: smpboot_entry+0x0: unreachable instruction
+>
+> kernel_entry() and smpboot_entry() are in arch/loongarch/kernel/head.S,
+> there is "OBJECT_FILES_NON_STANDARD_head.o :=3D y" to skip objtool checki=
+ng
+> for head.o, but the STACK_FRAME_NON_STANDARD macro does not work for link
+> time validation of vmlinux.o according to objtool documentation, just giv=
+e
+> a proper unwind hint to fix the warnings.
+>
+> By the way, ASM_BUG() can be removed due to unnecessary, otherwise there
+> are following warnings:
+>
+>   kernel_entry+0xf4: start_kernel() missing __noreturn
+>   in .c/.h or NORETURN() in noreturns.h
+>
+>   smpboot_entry+0x68: start_secondary() missing __noreturn
+>   in .c/.h or NORETURN() in noreturns.h
+>
+> This is because the previous instructions of kernel_entry+0xf4 and
+> smpboot_entry+0x68 are the 'bl' instructions, start_kernel() and
+> start_secondary() are the respective call destination symbols which
+> are noreturn functions, then the 'bl' instructions are already marked
+> as dead end in annotate_call_site().
+>
+> For now, it is time to remove "OBJECT_FILES_NON_STANDARD_head.o :=3D y"
+> in arch/loongarch/kernel/Makefile.
+>
+> Link: https://lore.kernel.org/lkml/20250814083651.GR4067720@noisy.program=
+ming.kicks-ass.net/
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 > ---
-> Just a small cleanup while I continue to work on this driver.
-> ---
+>  arch/loongarch/kernel/Makefile | 2 --
+>  arch/loongarch/kernel/head.S   | 6 ++----
+>  2 files changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Makef=
+ile
+> index 6f5a4574a911..4302c5b0a201 100644
+> --- a/arch/loongarch/kernel/Makefile
+> +++ b/arch/loongarch/kernel/Makefile
+> @@ -3,8 +3,6 @@
+>  # Makefile for the Linux/LoongArch kernel.
+>  #
+>
+> -OBJECT_FILES_NON_STANDARD_head.o :=3D y
+This line should be kept, othewise we get:
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+arch/loongarch/kernel/head.o: warning: objtool: kernel_entry+0xf4:
+start_kernel() missing __noreturn in .c/.h or NORETURN() in
+noreturns.h
 
-> =C2=A0drivers/iio/adc/ad7124.c | 11 ++---------
-> =C2=A01 file changed, 2 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index
-> 910b40393f77de84afc77d406c17c6e5051a02cd..c24f3d5127cb83eeab0cf37882446fc=
-99417
-> 3274 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -657,20 +657,13 @@ static int ad7124_prepare_read(struct ad7124_state =
-*st,
-> int address)
-> =C2=A0	return ad7124_enable_channel(st, &st->channels[address]);
-> =C2=A0}
-> =C2=A0
-> -static int __ad7124_set_channel(struct ad_sigma_delta *sd, unsigned int
-> channel)
-> -{
-> -	struct ad7124_state *st =3D container_of(sd, struct ad7124_state, sd);
+even without LTO. This is a regression, we can only remove it after
+the above warning be fixed.
+
+Huacai
 > -
-> -	return ad7124_prepare_read(st, channel);
-> -}
+>  always-$(KBUILD_BUILTIN)       :=3D vmlinux.lds
+>
+>  obj-y          +=3D head.o cpu-probe.o cacheinfo.o env.o setup.o entry.o=
+ genex.o \
+> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+> index 6ce999586757..c62dab32a06b 100644
+> --- a/arch/loongarch/kernel/head.S
+> +++ b/arch/loongarch/kernel/head.S
+> @@ -43,6 +43,7 @@ SYM_DATA(kernel_fsize, .long _kernel_fsize);
+>         .align 12
+>
+>  SYM_CODE_START(kernel_entry)                   # kernel entry point
+> +       UNWIND_HINT_END_OF_STACK
+>
+>         /* Config direct window and set PG */
+>         SETUP_DMWINS    t0
+> @@ -110,8 +111,6 @@ SYM_CODE_START(kernel_entry)                        #=
+ kernel entry point
+>  #endif
+>
+>         bl              start_kernel
+> -       ASM_BUG()
 > -
-> =C2=A0static int ad7124_set_channel(struct ad_sigma_delta *sd, unsigned i=
-nt
-> channel)
-> =C2=A0{
-> =C2=A0	struct ad7124_state *st =3D container_of(sd, struct ad7124_state, =
-sd);
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	mutex_lock(&st->cfgs_lock);
-> -	ret =3D __ad7124_set_channel(sd, channel);
-> +	ret =3D ad7124_prepare_read(st, channel);
-> =C2=A0	mutex_unlock(&st->cfgs_lock);
-> =C2=A0
-> =C2=A0	return ret;
-> @@ -965,7 +958,7 @@ static int ad7124_update_scan_mode(struct iio_dev
-> *indio_dev,
-> =C2=A0	for (i =3D 0; i < st->num_channels; i++) {
-> =C2=A0		bit_set =3D test_bit(i, scan_mask);
-> =C2=A0		if (bit_set)
-> -			ret =3D __ad7124_set_channel(&st->sd, i);
-> +			ret =3D ad7124_prepare_read(st, i);
-> =C2=A0		else
-> =C2=A0			ret =3D ad7124_spi_write_mask(st, AD7124_CHANNEL(i),
-> AD7124_CHANNEL_ENABLE,
-> =C2=A0						=C2=A0=C2=A0=C2=A0 0, 2);
->=20
-> ---
-> base-commit: df76e03e8127f756f314418d683bad24b460c61f
-> change-id: 20250916-iio-adc-ad7124-remove-__ad7124_set_channel-d8e5c30ec7=
-c6
->=20
-> Best regards,
+>  SYM_CODE_END(kernel_entry)
+>
+>  #ifdef CONFIG_SMP
+> @@ -121,6 +120,7 @@ SYM_CODE_END(kernel_entry)
+>   * function after setting up the stack and tp registers.
+>   */
+>  SYM_CODE_START(smpboot_entry)
+> +       UNWIND_HINT_END_OF_STACK
+>
+>         SETUP_DMWINS    t0
+>         JUMP_VIRT_ADDR  t0, t1
+> @@ -143,8 +143,6 @@ SYM_CODE_START(smpboot_entry)
+>         ld.d            tp, t0, CPU_BOOT_TINFO
+>
+>         bl              start_secondary
+> -       ASM_BUG()
+> -
+>  SYM_CODE_END(smpboot_entry)
+>
+>  #endif /* CONFIG_SMP */
+> --
+> 2.42.0
+>
 
