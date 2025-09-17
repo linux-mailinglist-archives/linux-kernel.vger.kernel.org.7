@@ -1,171 +1,253 @@
-Return-Path: <linux-kernel+bounces-820366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D3DB7CDD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:11:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE59B7CC25
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A4A91768F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006E41C060AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C829432D5BD;
-	Wed, 17 Sep 2025 09:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042DA30C37C;
+	Wed, 17 Sep 2025 09:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="F6jd6Ef0"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lCNqGji/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3829A2F9D94;
-	Wed, 17 Sep 2025 09:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6A630BBB0
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102091; cv=none; b=Ed4AIAnCcCfQlE/DeDzKKyvEwUtHXZsy1sQyy99pMxgu8x8x0zEclBEWW3Abwnh+eYdpxAY9we8RWKCyC/pFWvi+CurRQN4foEoR4RqJPhwkqcfGq5gjzImcDNa7bl5GidqgKQ/tzc3lmZZzT6mhAKfH2G3skU4sSraTGFqonWg=
+	t=1758102115; cv=none; b=YR4ou9vkEGYcTdiwBruePD6qh+ppX5W645lv4NIrGaXAqiXoOIdfsFoNJqbJnRa5ElQ/aw6iEtxh4uA9xkMBx4AGgEc22pHXuh1jaVCXAD7d9/2MeTB2ctdYyTh5pSLcyk+yYZn8Mz6DoGpyq0/ueH0Qgy59yKQqcXY2d+QU+5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102091; c=relaxed/simple;
-	bh=YCI6wulcSyZgO+5t0TGsFWVCvN+/35+a/EhqwuiBoI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1SMDjpoyGiLG9QBBdhrsr80LCFFm0/3tBIid6roYfu7DtNqiUh4VFgSfo4m/Ueg0C1FbQaYFxwi6zTcRpuntRU7t7b857X/i/yNY/T2P+KMLNXvdQ6aaiCmwLB//UnTdRtAtM3eGT99ETfXxh28fzo9gyMd3kWT9xSReBVd8bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=F6jd6Ef0; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8m8ART9uGtatKNIYvyyLoFqaRtCnziJZo3bw/694yoE=; b=F6jd6Ef0slDx6KZTkSsFuYbYZP
-	nFB5c/p9TCBpYhYgtXht07g+ywDnTKEtxX6GHWKLqwBeOC0sZgFO48KFbAxF9iTFD+BPBQLMT6whX
-	iYKssWI5YmQzbMnwomOFNakbcfEaQkV43eUTRUMamh3fiN+Au8cdANEnP1wvOFDPnWT7SUUfomSY+
-	4bYD3uIcHoAil2wwfMcQG53So7hfRnTh5uSeyee+fuWoo9U7HYLp7Yvp0lFjrAFSnFTH900aJbx8Y
-	7mKOcIL4fV8CUm/U8ExbCUkptV+BpppC43jM+MaeqfnS+8HQZe6z87MCG53vjr2fwUHMUIEJY/sSS
-	wsOZXCuQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47292)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uyofB-000000003A2-2cyn;
-	Wed, 17 Sep 2025 10:41:21 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uyof7-0000000005z-1COi;
-	Wed, 17 Sep 2025 10:41:17 +0100
-Date: Wed, 17 Sep 2025 10:41:17 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	kernel test robot <lkp@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
- __get_user_asm_dword()
-Message-ID: <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
-References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk>
- <875xdhaaun.ffs@tglx>
+	s=arc-20240116; t=1758102115; c=relaxed/simple;
+	bh=p8S1VDimS2zg7uQi7pM+Tja1wksl8Fn6Vx8THIESBew=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcbswCgc2a4jzH6HH1bC4oqasY/3zJIv0ZOTGvDMppMNOydimJAqR3cfB0GswrobTYXraBxjS0lopCpfpUE1Q3FOnVFZYymujK4/qlpYH47XBZRSbAC2qYLvf16uid2lXKcrjujG274OVQXb9LxVkTJkGUWlEDBPmfMjJBJNsCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lCNqGji/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8XY6s018235
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:41:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=kFrYXA4FlnihNvw43zAu/XhZJbtjtQD7rqX
+	ygRQJ1VI=; b=lCNqGji/rSrM2TqKHp9NbZvIJ7VKJ0MGIg/w042GBHs4SJ+owPm
+	qLro/Kw+CAbhJ9to/74ZJlZtgdnQ5pjHM37lNNuHzaCnrJFG5RHPYe74gXt0n37P
+	8RPLOFuA5BcjfTnUiOftD86saaNOlE4uSP6Qecigs39D60wgR3aemWIRvaBk7u64
+	JLjwTjoZRki3HmyoN0OmxL8IF/BGrBH3KldIxepO/xC+AZE5lRy1TaSifvAFeMjd
+	lqqzEXECBOki9OofweX3KNBcNY7OLtvQ8husW7GTCzVSWMK497mZOiVoXyKhRnMT
+	dSfzfKqDZKc+LenSv06uIVHOzzhLIQRliwA==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxw9uay-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:41:52 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2659a7488a2so65040635ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:41:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758102111; x=1758706911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kFrYXA4FlnihNvw43zAu/XhZJbtjtQD7rqXygRQJ1VI=;
+        b=wKGSs0/ey/fFjMyfjnzYusaAGM8MHuquq0TG0nCLjXfu1k9+wW7lv67Vgj4Jy9gQMB
+         rIJm9uxR5iWEWmpcDA9T+E6/GW1Iigzyxx8u1bRqV8+mBIm4y+WRhTGUXDmdQGxie5Ol
+         IH8UMqTJevWznTKkWMIlBy7qhERJbiyvn3Ro7O0gYNjh+6agtUSHwog2xZ6ahPtf2obR
+         +4+TP5K0ttknqOUSXHov2wsdoX8xYAAFgvjQBlccmUZYW0MKs/tdPxxgVKDca6zD3rHw
+         Qdg+H6rNBH1BQmNPLlMrQCsS6gCrs4jLqdsPX8IV+WV46PheyKTpcbCKeGRfvF/JvDzM
+         WKxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ3N12sUHKELplq0vznnFEXgjtqzDM1D2F0LNzEDPRsKoSGy872BPWNTAuq60KJqJ11cUYEmqlyE/TOxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmpLM2XMQCHhygopbZHoxg0d3ieq4+P4ZxkxppPZpsCZCddG/o
+	J0B/V0T/NBPla6q8brobShj87G2aI8dT5BRwh5+CQuu/WqBB1EhRHedCPefq7boD438JPaXgyPD
+	fFqij01qFcqHpkLSzWTLWFtTveoXYSUTwYDxEcv9cFsPkiktY8cfzErxLiv1WChTjTYA=
+X-Gm-Gg: ASbGncuKzfBH95hsCoLSB1XFnuzchbHiX9UekU6RuOAiUKM+Be0BHFzw3e534T0+87M
+	RFGWRuPDddx9QMk9MaSa7iUMePTen++jPiQb/JBzgsmOHkIBjBCLRLy41bRrY4TUMqIk6K/FyU0
+	wjENAuyXXQ9IeLiczKKu1wZS9cQlQQmu0UnPKTwwPRamb9yr7CNbHKZr6P+nlMVbEsaKsOgBgZw
+	GYG9ljjmCmYGQQdUW/PZZHItPgn56cT0lFHXtMNBNHdMQ6RWUBIc3A/nDWcUryyIpQOdnmuq2Ks
+	fqqKkjPPCyW8CIi2vsj1KWswHC/ELAcWT0B9pGrGsstc9K7B0Pk91l0guLkrhjVN0BRFpS9DCUd
+	Kke6FOY4ILl4850sr3TGlemi9YgWoeBs=
+X-Received: by 2002:a17:903:1ace:b0:268:500:5ec7 with SMTP id d9443c01a7336-268118b4286mr21516925ad.2.1758102111373;
+        Wed, 17 Sep 2025 02:41:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNGoIDfb5pzgXvPOENVt3HN3joOEiGJjfQkZC/ldkf9dnxcuviCUuY4vaqdKqUUX6HUT7N0g==
+X-Received: by 2002:a17:903:1ace:b0:268:500:5ec7 with SMTP id d9443c01a7336-268118b4286mr21516595ad.2.1758102110897;
+        Wed, 17 Sep 2025 02:41:50 -0700 (PDT)
+Received: from zhonhan-gv.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed257bbf8sm1942483a91.0.2025.09.17.02.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 02:41:50 -0700 (PDT)
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
+        quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
+        adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
+        neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
+        quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com,
+        zhongqiu.han@oss.qualcomm.com
+Subject: [PATCH v3] scsi: ufs: core: Fix data race in CPU latency PM QoS request handling
+Date: Wed, 17 Sep 2025 17:41:43 +0800
+Message-ID: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <875xdhaaun.ffs@tglx>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-Authority-Analysis: v=2.4 cv=HbIUTjE8 c=1 sm=1 tr=0 ts=68ca8260 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=bwEYGBBtgshAin72mCkA:9
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX/VV8L32rjN/j
+ dnetkD3n+Pw1ZW00qXe12zO2XzDoh9iZJAsQPzlRPpc7PjHGUBwAWlMKUYcT81Lc8+c7mjsZBIe
+ mTuN4NGLzKvBCrAxbYhaOOV01yByWAMrZURTEzqS6F5wv7nzTFTPMI965OIotmth2KjNEhnZ/np
+ 1IdNsP0+rG0518B2KJ5BhoqO5FTdklBdnghnLylWL4/dSh4Jqq0GTgToen0KxQvxcqj4x/Mr0Bm
+ lI29f0o9/aM4Rt9RU3gYdx9NVZn6bThjPno1xjJSbp6/mFt7v/XDIWSKfO3gGcfH87Jy3VsJceb
+ IzKcOK/QtMbr0rJm+jHGUvOKCkjL7yAGIbHFjey9aCOVGsWGRgpbiIo09wIxrpol2zfBv9ikEGE
+ 2Q9PbYEW
+X-Proofpoint-GUID: rdM1CvUpc0fjXd2ZQF60jyXg7oiNMpCA
+X-Proofpoint-ORIG-GUID: rdM1CvUpc0fjXd2ZQF60jyXg7oiNMpCA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On Wed, Sep 17, 2025 at 07:48:00AM +0200, Thomas Gleixner wrote:
-> On Tue, Sep 16 2025 at 22:26, Russell King wrote:
-> > On Tue, Sep 16, 2025 at 06:33:09PM +0200, Thomas Gleixner wrote:
-> >> When CONFIG_CPU_SPECTRE=n then get_user() is missing the 8 byte ASM variant
-> >> for no real good reason. This prevents using get_user(u64) in generic code.
-> >
-> > I'm sure you will eventually discover the reason when you start getting
-> > all the kernel build bot warnings that will result from a cast from a
-> > u64 to a pointer.
-> 
-> I really don't know which cast you are talking about.
+The cpu_latency_qos_add/remove/update_request interfaces lack internal
+synchronization by design, requiring the caller to ensure thread safety.
+The current implementation relies on the `pm_qos_enabled` flag, which is
+insufficient to prevent concurrent access and cannot serve as a proper
+synchronization mechanism. This has led to data races and list corruption
+issues.
 
-I'll grant you that the problem is not obvious. It comes about because
-of all the different types that get_user() is subject to - it's not
-just integers, it's also pointers.
+A typical race condition call trace is:
 
-The next bit to realise is that casting between integers that are not
-the same size as a pointer causes warnings. For example, casting
-between a 64-bit integer type and pointer type causes the compiler to
-emit a warning. It doesn't matter if the code path ends up being
-optimised away, the warning is still issued.
+[Thread A]
+ufshcd_pm_qos_exit()
+  --> cpu_latency_qos_remove_request()
+    --> cpu_latency_qos_apply();
+      --> pm_qos_update_target()
+        --> plist_del              <--(1) delete plist node
+    --> memset(req, 0, sizeof(*req));
+  --> hba->pm_qos_enabled = false;
 
-Putting together a simple test case, where the only change is making
-__gu_val an unsigned long long:
+[Thread B]
+ufshcd_devfreq_target
+  --> ufshcd_devfreq_scale
+    --> ufshcd_scale_clks
+      --> ufshcd_pm_qos_update     <--(2) pm_qos_enabled is true
+        --> cpu_latency_qos_update_request
+          --> pm_qos_update_target
+            --> plist_del          <--(3) plist node use-after-free
 
-t.c: In function ‘get_ptr’:
-t.c:40:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-   40 |         (x) = (__typeof__(*(ptr)))__gu_val;                             \
-      |               ^
-t.c:21:9: note: in expansion of macro ‘__get_user_err’
-   21 |         __get_user_err((x), (ptr), __gu_err, TUSER());                  \
-      |         ^~~~~~~~~~~~~~
-t.c:102:16: note: in expansion of macro ‘__get_user’
-  102 |         return __get_user(p, ptr);
-      |                ^~~~~~~~~~
+This patch introduces a dedicated mutex to serialize PM QoS operations,
+preventing data races and ensuring safe access to PM QoS resources,
+including sysfs interface reads.
 
-In order for the code you are modifying to be reachable, you need to
-build with CONFIG_CPU_SPECTRE disabled. This is produced by:
+Fixes: 2777e73fc154 ("scsi: ufs: core: Add CPU latency QoS support for UFS driver")
+Signed-off-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+---
+v2 -> v3:
+- Per Bart's comments, replaced READ_ONCE with a mutex for sysfs access to ensure
+  thread safety, and updated the commit message accordingly.
+- Also per Bart's suggestion, use guard(mutex)(&hba->pm_qos_mutex) instead of
+  explicit mutex_lock/mutex_unlock to improve readability and ease code review.
+- Link to v2: https://lore.kernel.org/all/20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com/
 
-int get_ptr(void **ptr)
-{
-        void *p;
+v1 -> v2:
+- Fix misleading indentation by adding braces to if statements in pm_qos logic.
+- Resolve checkpatch strict mode warning by adding an inline comment for pm_qos_mutex.
 
-        return __get_user(p, ptr);
-}
+ drivers/ufs/core/ufs-sysfs.c | 2 ++
+ drivers/ufs/core/ufshcd.c    | 9 +++++++++
+ include/ufs/ufshcd.h         | 3 +++
+ 3 files changed, 14 insertions(+)
 
-Now, one idea may be to declare __gu_val as:
-
-	__typeof__(x) __gu_val;
-
-but then we run into:
-
-t.c: In function ‘get_ptr’:
-t.c:37:29: error: assignment to ‘void *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-   37 |         default: (__gu_val) = __get_user_bad();                         \
-      |                             ^
-t.c:21:9: note: in expansion of macro ‘__get_user_err’
-   21 |         __get_user_err((x), (ptr), __gu_err, TUSER());                  \
-      |         ^~~~~~~~~~~~~~
-t.c:102:16: note: in expansion of macro ‘__get_user’
-  102 |         return __get_user(p, ptr);
-      |                ^~~~~~~~~~
-
-You may think this is easy to solve, just change the last cast to:
-
-	(x) = (__typeof__(*(ptr)))(__typeof__(x))__gu_val;
-
-but that doesn't work either (because in the test case __typeof__(x) is
-still a pointer type. You can't cast this down to a 32-bit quantity
-because that will knock off the upper 32 bits for the case you're trying
-to add.
-
-You may think, why not  move this cast into each switch statement...
-there will still be warnings because the cast is still reachable at the
-point the compiler evaluates the code for warnings, even though the
-optimiser gets rid of it later.
-
-Feel free to try to solve this, but I can assure you that you certainly
-are not the first. Several people have already tried.
-
+diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
+index 4bd7d491e3c5..0086816b27cd 100644
+--- a/drivers/ufs/core/ufs-sysfs.c
++++ b/drivers/ufs/core/ufs-sysfs.c
+@@ -512,6 +512,8 @@ static ssize_t pm_qos_enable_show(struct device *dev,
+ {
+ 	struct ufs_hba *hba = dev_get_drvdata(dev);
+ 
++	guard(mutex)(&hba->pm_qos_mutex);
++
+ 	return sysfs_emit(buf, "%d\n", hba->pm_qos_enabled);
+ }
+ 
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 88a0e9289ca6..2ea7cf86cea1 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -1047,6 +1047,7 @@ EXPORT_SYMBOL_GPL(ufshcd_is_hba_active);
+  */
+ void ufshcd_pm_qos_init(struct ufs_hba *hba)
+ {
++	guard(mutex)(&hba->pm_qos_mutex);
+ 
+ 	if (hba->pm_qos_enabled)
+ 		return;
+@@ -1063,6 +1064,8 @@ void ufshcd_pm_qos_init(struct ufs_hba *hba)
+  */
+ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
+ {
++	guard(mutex)(&hba->pm_qos_mutex);
++
+ 	if (!hba->pm_qos_enabled)
+ 		return;
+ 
+@@ -1077,6 +1080,8 @@ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
+  */
+ static void ufshcd_pm_qos_update(struct ufs_hba *hba, bool on)
+ {
++	guard(mutex)(&hba->pm_qos_mutex);
++
+ 	if (!hba->pm_qos_enabled)
+ 		return;
+ 
+@@ -10765,6 +10770,10 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 	mutex_init(&hba->ee_ctrl_mutex);
+ 
+ 	mutex_init(&hba->wb_mutex);
++
++	/* Initialize mutex for PM QoS request synchronization */
++	mutex_init(&hba->pm_qos_mutex);
++
+ 	init_rwsem(&hba->clk_scaling_lock);
+ 
+ 	ufshcd_init_clk_gating(hba);
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index ea0021f067c9..277dda606f4d 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -938,6 +938,7 @@ enum ufshcd_mcq_opr {
+  * @ufs_rtc_update_work: A work for UFS RTC periodic update
+  * @pm_qos_req: PM QoS request handle
+  * @pm_qos_enabled: flag to check if pm qos is enabled
++ * @pm_qos_mutex: synchronizes PM QoS request and status updates
+  * @critical_health_count: count of critical health exceptions
+  * @dev_lvl_exception_count: count of device level exceptions since last reset
+  * @dev_lvl_exception_id: vendor specific information about the
+@@ -1110,6 +1111,8 @@ struct ufs_hba {
+ 	struct delayed_work ufs_rtc_update_work;
+ 	struct pm_qos_request pm_qos_req;
+ 	bool pm_qos_enabled;
++	/* synchronizes PM QoS request and status updates */
++	struct mutex pm_qos_mutex;
+ 
+ 	int critical_health_count;
+ 	atomic_t dev_lvl_exception_count;
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.43.0
+
 
