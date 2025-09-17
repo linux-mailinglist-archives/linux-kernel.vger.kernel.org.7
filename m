@@ -1,200 +1,351 @@
-Return-Path: <linux-kernel+bounces-821646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8865B81D8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464B1B81D95
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BCB34A3134
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:00:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFDE43B9F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D7F2264C0;
-	Wed, 17 Sep 2025 21:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DEA1D516C;
+	Wed, 17 Sep 2025 21:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mor+XBOY"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4n8Qa5B"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244682D94BA
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4096934BA56;
+	Wed, 17 Sep 2025 21:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758142819; cv=none; b=ETu4p3E2lELLOJmo3Z40YU81RMCUglBIbre5SFmzFt4FrsefDy7Wf910FdyBiKnWkcBTkBk9sy/Jf2qSXA9q9AMmxxKAXzGHY388YoPxHc5i7s2sqCdQ5hM++g4U/qI3TbRsdWjCPpFtLTL+JRrhb2scAiTeBcAFgYISNmtXbC0=
+	t=1758142924; cv=none; b=aplMf84UL55ytP37abCTok4NSQU06FWu6h03MtuRgxXOiv5gf4wlRcSUUESqRFbikRzN9fHUASxKjIEkmHqPe+IKD5bqDfoloanI8fptKc8ajPvtZg9FuEYO9dOaxjJwsM8To2MdSx5j+ihljgFigwEXEnzTE6VTrE/y3gjYZZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758142819; c=relaxed/simple;
-	bh=zfNwRSC2hr7WCZH/kgeNDGErdjsYMrY6wYew19pfj/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pY8v43aweKiMRy5/ESaWHnsAmzLwCIJ33cYjkbmamTlItmIMM9X78kDrgKbKGIOCuwIc3TvcTPaRq+uaaETV/gbwUhfj1xOlgryLZXwbtXXIfccL6S6MW7tsN0CbQuSxZLrMeDE6+HD3O6kIgDyDWIahx/ChYAKHRw6uQXq32SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mor+XBOY; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32b8919e7c7so197661a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758142816; x=1758747616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=INe0qCQ3tlR6kgjMSNcBEMbA+zEE3o+6uOpu7E7tB7A=;
-        b=Mor+XBOY9ptXGAQYQ69WKjP5lE61BTq6w4HiJOTu4SAIgI/DrtBu2CYSJvbjjaJsEy
-         fbUkSYLhJBwP0IiHmSB9WDJ4IySD3M6ZSp+OrfceZZNmFHtLyuJKNCFSzaOPnWdwfKgp
-         UejpEJVkqqRc4tmXXPnawkDbbirUAT0vuRz3Jq8rap6gvCPdA/HiAACac73nQ7ktcHoQ
-         Pn6mJrF9xye5Aa8yk3z06fUkWXcBVi5ZVw/hrNNF6csCsy5DiIE/cgpugQxb+pzcJcsq
-         Pa+Zx2CKBKN58pYej6FaC6gvV12HBrBqaN+zTKl212F1AHnVqHNA5y3YXX/tPrHMYDr2
-         /Jeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758142816; x=1758747616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=INe0qCQ3tlR6kgjMSNcBEMbA+zEE3o+6uOpu7E7tB7A=;
-        b=Hn+FVRc0oAlwoolFWs8EKmt1vMp2sl5jJebSr6c6e13cTjols/xGf+S65NtJOH2D+V
-         HtTrRs7B613fPo8NGUn7qJU+wTPyiRAnEHBcqJMY+oCGQfukmRKzS6DtfGEtNEVA7z27
-         9/xKByEXVwwyUouPjaM7lvnTMpo/6PY3bv8UDouRdCiGASnN883i0Al8AxxviUwEUXCO
-         t3roV/HgTFEqqEzG6lH3EjUwZpPoP5ThdWtOkUdV2+2JzYxIJ9sQO4RmM970AM5eR+oR
-         xxNuoanIdtsYW+mw57qZenc7+vVqUWv62431QM6IfY+cRZowJouXTDdxVBQnw1McR20T
-         3oWg==
-X-Forwarded-Encrypted: i=1; AJvYcCX19d6MBynzrZj3hSnL71DnyXCVvhNvx4ZSCacdZGTBBkJzAMatyuG1j3Q0U+rKxDrtwiYNjIrcPWPhnC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHaThLWK/Jl04lWLFjQm27Oz575bIm+kvxxRd+iTIZDNiQuqOP
-	41l326WVYR4PMe6++OzoQGnEySBDaXikTa8q0gx56l/t0kOjpd1ErN5Tnz9uZQ6GcXQwAL01Lme
-	yTVd0NMjC1e091NRVZyOTv3a7+sq/td8=
-X-Gm-Gg: ASbGncuOZiNI1sp6H0h7Zp7EvkD4Bd2hS0Dh3RK5vI0VGs5q+kSUCIvfo+u0Yv8Icmh
-	MO378VVTM0n1QlLEHsxJraw1COxdDr3Y9X6KGAetzBfYXO6T9Z1nBBsuwRkxxdeoOMfkcPd0eDQ
-	q+e5PdVlV3C7h3m9F3UHclqsCs3+hKoVIilvEvwl9CNoc9KnWkfVn0yeNOurBcHtpqyAO6pI70R
-	62KBRp3RvEUoWx4NmitR41QIIDOI4+zlQ==
-X-Google-Smtp-Source: AGHT+IFxq1VQtFeyA1l57OVybXGRuDi6kUk+l9dv55Nhpk548RUa508nI9pnyps23QBuJ7V4FJmn8X0y7r+Cqs2vcks=
-X-Received: by 2002:a17:90b:2787:b0:32e:749d:fcc3 with SMTP id
- 98e67ed59e1d1-32ee3ec58bdmr3963627a91.1.1758142816375; Wed, 17 Sep 2025
- 14:00:16 -0700 (PDT)
+	s=arc-20240116; t=1758142924; c=relaxed/simple;
+	bh=WxCMR49ecIV+cZIRPXvEdgWLkfV4q4jCKd2crDNRMpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZlJYXwUq0YTNRMRuBxkNXVyCvzwpuHXrfrjMbKwzgJcCG3fTxFSElq3phTQPEDkxPEkjawaz2uvOs2aaruSvVvyt6mxYd5Y1pf6ZiAQB7lFzIxupHFtRY9+xh9kXADXb+0xv1QLtuwYagFY4lJ+oLqeRT8iXmRUxAP7FGTWIRE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4n8Qa5B; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758142922; x=1789678922;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WxCMR49ecIV+cZIRPXvEdgWLkfV4q4jCKd2crDNRMpw=;
+  b=g4n8Qa5BnAtHDvl1bipwoaHoVN5sSDwHaLuY+3n5ZuzfTPPKx/mSArDi
+   nhVBXZRvWJ51fcwZjZUiAQY0zanwEQzyH0hSUBtV1/BxChodjSHSCBybl
+   PkWE42VHZVNJZ+MgDbajx90yP0xfKjJ5laHNUEwOGxcDYmy3lA864m4Lt
+   2JZm3i8UroaYVYJPanLccB7UySAMVdYJcTalzdG3pCHhHNhV2nTOuUUef
+   DaZRRmJxrmKdV+WrKCPR1At+lWU9JdDr66HapWuukOaezloQYYNa1k6Mc
+   H1ADgHK6VFAh3FzR0T6mu4cFX6fqekZ9WZgCnvK3WKNiVKwXABTgXyCYw
+   g==;
+X-CSE-ConnectionGUID: D2O1km93QY2xvM4PIAlDkw==
+X-CSE-MsgGUID: Yiz8yvJlRKKUpd7gZcbWqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60530691"
+X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
+   d="scan'208";a="60530691"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 14:02:01 -0700
+X-CSE-ConnectionGUID: eJ6NGNcxSUOvpA0UVdTtEQ==
+X-CSE-MsgGUID: AIK5zd3mQ9KE0vZJIgAhVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
+   d="scan'208";a="206281457"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.111.223]) ([10.125.111.223])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 14:01:59 -0700
+Message-ID: <d84b86f1-91cf-437b-bc3f-3cd7d2511b99@intel.com>
+Date: Wed, 17 Sep 2025 14:01:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917034732.1185429-1-chen.dylane@linux.dev>
- <20250917034732.1185429-2-chen.dylane@linux.dev> <523d8d6c-de99-435f-a01b-1bac72810d53@kernel.org>
-In-Reply-To: <523d8d6c-de99-435f-a01b-1bac72810d53@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 17 Sep 2025 14:00:04 -0700
-X-Gm-Features: AS18NWCB_PJ_0Rz6o0xAh3-HjaWH7SpgF3ns55lingyjoH0ZWTa0WmVtZ8959vk
-Message-ID: <CAEf4BzY3CiVLce-pB9yevsUqFZexbno+AX1j4mGYN1G+JVO+pA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 2/2] bpftool: Fix UAF in get_delegate_value
-To: Quentin Monnet <qmo@kernel.org>
-Cc: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/11] cxl: Enable AMD Zen5 address translation using
+ ACPI PRMT
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-12-rrichter@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250912144514.526441-12-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 17, 2025 at 9:30=E2=80=AFAM Quentin Monnet <qmo@kernel.org> wro=
-te:
->
-> 2025-09-17 11:47 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
-> > The return value ret pointer is pointing opts_copy, but opts_copy
-> > gets freed in get_delegate_value before return, fix this by free
-> > the mntent->mnt_opts strdup memory after show delegate value.
-> >
-> > Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
-> > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> > ---
-> >  tools/bpf/bpftool/token.c | 75 +++++++++++++++++----------------------
-> >  1 file changed, 33 insertions(+), 42 deletions(-)
-> >
-> > diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
-> > index 82b829e44c8..05bc76c7276 100644
-> > --- a/tools/bpf/bpftool/token.c
-> > +++ b/tools/bpf/bpftool/token.c
-> > @@ -28,15 +28,14 @@ static bool has_delegate_options(const char *mnt_op=
-s)
-> >              strstr(mnt_ops, "delegate_attachs");
-> >  }
-> >
-> > -static char *get_delegate_value(const char *opts, const char *key)
-> > +static char *get_delegate_value(char *opts, const char *key)
-> >  {
-> >       char *token, *rest, *ret =3D NULL;
-> > -     char *opts_copy =3D strdup(opts);
-> >
-> > -     if (!opts_copy)
-> > +     if (!opts)
-> >               return NULL;
-> >
-> > -     for (token =3D strtok_r(opts_copy, ",", &rest); token;
-> > +     for (token =3D strtok_r(opts, ",", &rest); token;
-> >                       token =3D strtok_r(NULL, ",", &rest)) {
-> >               if (strncmp(token, key, strlen(key)) =3D=3D 0 &&
-> >                   token[strlen(key)] =3D=3D '=3D') {
-> > @@ -44,24 +43,19 @@ static char *get_delegate_value(const char *opts, c=
-onst char *key)
-> >                       break;
-> >               }
-> >       }
-> > -     free(opts_copy);
-> >
-> >       return ret;
-> >  }
-> >
-> > -static void print_items_per_line(const char *input, int items_per_line=
-)
-> > +static void print_items_per_line(char *input, int items_per_line)
-> >  {
-> > -     char *str, *rest, *strs;
-> > +     char *str, *rest;
-> >       int cnt =3D 0;
-> >
-> >       if (!input)
-> >               return;
-> >
-> > -     strs =3D strdup(input);
-> > -     if (!strs)
-> > -             return;
-> > -
-> > -     for (str =3D strtok_r(strs, ":", &rest); str;
-> > +     for (str =3D strtok_r(input, ":", &rest); str;
-> >                       str =3D strtok_r(NULL, ":", &rest)) {
-> >               if (cnt % items_per_line =3D=3D 0)
-> >                       printf("\n\t  ");
-> > @@ -69,38 +63,39 @@ static void print_items_per_line(const char *input,=
- int items_per_line)
-> >               printf("%-20s", str);
-> >               cnt++;
-> >       }
-> > -
-> > -     free(strs);
-> >  }
-> >
-> > +#define PRINT_DELEGATE_OPT(opt_name) do {            \
-> > +     char *opts, *value;                             \
-> > +     opts =3D strdup(mntent->mnt_opts);                \
-> > +     value =3D get_delegate_value(opts, opt_name);     \
-> > +     print_items_per_line(value, ITEMS_PER_LINE);    \
-> > +     free(opts);                                     \
-> > +} while (0)
->
->
-> Thanks! The fix looks OK to me, but why do you need to have
-> PRINT_DELEGATE_OPT*() as macros? Can't you just use functions instead?
 
-right, function or just a loop, that will allow to also avoid
-repeating jsonw_name or printf calls:
 
-struct { const char *header, key; } sets =3D {
-    {"allowed_cmds", "delegate_cmds"},
-    {"allowed_maps", "delegate_maps"},
-    ...
-};
+On 9/12/25 7:45 AM, Robert Richter wrote:
+> Add AMD Zen5 support for address translation.
+> 
+> Zen5 systems may be configured to use 'Normalized addresses'. Then,
+> CXL endpoints use their own physical address space and are programmed
+> passthrough (DPA == HPA), the number of interleaving ways for the
+> endpoint is set to one. The Host Physical Addresses (HPAs) need to be
+> translated from the endpoint to its CXL host bridge. The HPA of a CXL
+> host bridge is equivalent to the System Physical Address (SPA).
 
-for (i =3D 0; i < ARRAY_SIZE(sets); i++) {
-    ... use sets[i].header and sets[i].key ...
-}
+I think moving this patch to the first patch of the series may help set the right frame of mind for reviewing this series by explaining what's going on.
 
-pw-bot: cr
+DJ
+ 
+> 
+> ACPI Platform Runtime Mechanism (PRM) is used to translate the CXL
+> Device Physical Address (DPA) to its System Physical Address. This is
+> documented in:
+> 
+>  AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
+>  ACPI v6.5 Porting Guide, Publication # 58088
+>  https://www.amd.com/en/search/documentation/hub.html
+> 
+> To implement AMD Zen5 address translation the following steps are
+> needed:
+> 
+> AMD Zen5 systems support the ACPI PRM CXL Address Translation firmware
+> call (Address Translation - CXL DPA to System Physical Address, see
+> ACPI v6.5 Porting Guide above) when address translation is enabled.
+> The existence of the callback can be identified using a specific GUID
+> as documented. The initialization code checks firmware and kernel
+> support of ACPI PRM.
+> 
+> Introduce a new file core/atl.c to handle ACPI PRM specific address
+> translation code. Naming is loosely related to the kernel's AMD
+> Address Translation Library (CONFIG_AMD_ATL) but implementation does
+> not dependent on it, nor it is vendor specific. Use Kbuild and Kconfig
+> options respectively to enable the code depending on architecture and
+> platform options.
+> 
+> Implement an ACPI PRM firmware call for CXL address translation in the
+> new function cxl_prm_to_hpa(). This includes sanity checks. Enable the
+> callback for applicable CXL host bridges using the new cxl_atl_init()
+> function.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+> ---
+>  drivers/cxl/Kconfig       |   4 ++
+>  drivers/cxl/core/Makefile |   1 +
+>  drivers/cxl/core/atl.c    | 138 ++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/core/core.h   |   1 +
+>  drivers/cxl/core/port.c   |   8 +++
+>  5 files changed, 152 insertions(+)
+>  create mode 100644 drivers/cxl/core/atl.c
+> 
+> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
+> index 48b7314afdb8..31f9c96ef908 100644
+> --- a/drivers/cxl/Kconfig
+> +++ b/drivers/cxl/Kconfig
+> @@ -233,4 +233,8 @@ config CXL_MCE
+>  	def_bool y
+>  	depends on X86_MCE && MEMORY_FAILURE
+>  
+> +config CXL_ATL
+> +       def_bool y
+> +       depends on ACPI_PRMT
+> +
+>  endif
+> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
+> index 5ad8fef210b5..11fe272a6e29 100644
+> --- a/drivers/cxl/core/Makefile
+> +++ b/drivers/cxl/core/Makefile
+> @@ -20,3 +20,4 @@ cxl_core-$(CONFIG_CXL_REGION) += region.o
+>  cxl_core-$(CONFIG_CXL_MCE) += mce.o
+>  cxl_core-$(CONFIG_CXL_FEATURES) += features.o
+>  cxl_core-$(CONFIG_CXL_EDAC_MEM_FEATURES) += edac.o
+> +cxl_core-$(CONFIG_CXL_ATL) += atl.o
+> diff --git a/drivers/cxl/core/atl.c b/drivers/cxl/core/atl.c
+> new file mode 100644
+> index 000000000000..5fc21eddaade
+> --- /dev/null
+> +++ b/drivers/cxl/core/atl.c
+> @@ -0,0 +1,138 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/prmt.h>
+> +#include <linux/pci.h>
+> +
+> +#include <cxlmem.h>
+> +#include "core.h"
+> +
+> +static bool check_prm_address_translation(struct cxl_port *port)
+> +{
+> +	/* Applies to CXL host bridges only */
+> +	return !is_cxl_root(port) && port->host_bridge &&
+> +	       is_cxl_root(to_cxl_port(port->dev.parent));
+> +}
+> +
+> +/*
+> + * PRM Address Translation - CXL DPA to System Physical Address
+> + *
+> + * Reference:
+> + *
+> + * AMD Family 1Ah Models 00h–0Fh and Models 10h–1Fh
+> + * ACPI v6.5 Porting Guide, Publication # 58088
+> + */
+> +
+> +static const guid_t prm_cxl_dpa_spa_guid =
+> +	GUID_INIT(0xee41b397, 0x25d4, 0x452c, 0xad, 0x54, 0x48, 0xc6, 0xe3,
+> +		  0x48, 0x0b, 0x94);
+> +
+> +struct prm_cxl_dpa_spa_data {
+> +	u64 dpa;
+> +	u8 reserved;
+> +	u8 devfn;
+> +	u8 bus;
+> +	u8 segment;
+> +	void *out;
+> +} __packed;
+> +
+> +static u64 prm_cxl_dpa_spa(struct pci_dev *pci_dev, u64 dpa)
+> +{
+> +	struct prm_cxl_dpa_spa_data data;
+> +	u64 spa;
+> +	int rc;
+> +
+> +	data = (struct prm_cxl_dpa_spa_data) {
+> +		.dpa     = dpa,
+> +		.devfn   = pci_dev->devfn,
+> +		.bus     = pci_dev->bus->number,
+> +		.segment = pci_domain_nr(pci_dev->bus),
+> +		.out     = &spa,
+> +	};
+> +
+> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +	if (rc) {
+> +		pci_dbg(pci_dev, "failed to get SPA for %#llx: %d\n", dpa, rc);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	pci_dbg(pci_dev, "PRM address translation: DPA -> SPA: %#llx -> %#llx\n", dpa, spa);
+> +
+> +	return spa;
+> +}
+> +
+> +static u64 cxl_prm_to_hpa(struct cxl_decoder *cxld, u64 hpa)
+> +{
+> +	struct cxl_memdev *cxlmd;
+> +	struct pci_dev *pci_dev;
+> +	struct cxl_port *port;
+> +	struct cxl_endpoint_decoder *cxled;
+> +
+> +	/* Only translate from endpoint to its parent port. */
+> +	if (!is_endpoint_decoder(&cxld->dev))
+> +		return hpa;
+> +
+> +	cxled = to_cxl_endpoint_decoder(&cxld->dev);
+> +
+> +	/*
+> +	 * Nothing to do if base is non-zero and Normalized Addressing
+> +	 * is disabled.
+> +	 */
+> +	if (cxld->hpa_range.start != cxled->dpa_res->start)
+> +		return hpa;
+> +
+> +	/*
+> +	 * Endpoints are programmed passthrough in Normalized
+> +	 * Addressing mode.
+> +	 */
+> +	if (cxld->interleave_ways != 1) {
+> +		dev_dbg(&cxld->dev, "unexpected interleaving config: ways: %d granularity: %d\n",
+> +			cxld->interleave_ways, cxld->interleave_granularity);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	if (hpa < cxld->hpa_range.start || hpa > cxld->hpa_range.end) {
+> +		dev_dbg(&cxld->dev, "hpa addr %#llx out of range %#llx-%#llx\n",
+> +			hpa, cxld->hpa_range.start, cxld->hpa_range.end);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	port = to_cxl_port(cxld->dev.parent);
+> +	cxlmd = port ? to_cxl_memdev(port->uport_dev) : NULL;
+> +	if (!port || !dev_is_pci(cxlmd->dev.parent)) {
+> +		dev_dbg(&cxld->dev, "No endpoint found: %s, range %#llx-%#llx\n",
+> +			dev_name(cxld->dev.parent), cxld->hpa_range.start,
+> +			cxld->hpa_range.end);
+> +		return ULLONG_MAX;
+> +	}
+> +	pci_dev = to_pci_dev(cxlmd->dev.parent);
+> +
+> +	return prm_cxl_dpa_spa(pci_dev, hpa);
+> +}
+> +
+> +static void cxl_prm_init(struct cxl_port *port)
+> +{
+> +	u64 spa;
+> +	struct prm_cxl_dpa_spa_data data = { .out = &spa, };
+> +	int rc;
+> +
+> +	if (!check_prm_address_translation(port))
+> +		return;
+> +
+> +	/* Check kernel (-EOPNOTSUPP) and firmware support (-ENODEV) */
+> +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +	if (rc == -EOPNOTSUPP || rc == -ENODEV)
+> +		return;
+> +
+> +	port->to_hpa = cxl_prm_to_hpa;
+> +
+> +	dev_dbg(port->host_bridge, "PRM address translation enabled for %s.\n",
+> +		dev_name(&port->dev));
+> +}
+> +
+> +void cxl_atl_init(struct cxl_port *port)
+> +{
+> +	cxl_prm_init(port);
+> +}
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index eac8cc1bdaa0..624e438d052a 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -150,6 +150,7 @@ int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
+>  int cxl_ras_init(void);
+>  void cxl_ras_exit(void);
+>  int cxl_gpf_port_setup(struct cxl_dport *dport);
+> +void cxl_atl_init(struct cxl_port *port);
+>  
+>  #ifdef CONFIG_CXL_FEATURES
+>  struct cxl_feat_entry *
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 8f36ff413f5d..8007e002888e 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -831,6 +831,12 @@ static void cxl_debugfs_create_dport_dir(struct cxl_dport *dport)
+>  			    &cxl_einj_inject_fops);
+>  }
+>  
+> +static void setup_address_translation(struct cxl_port *port)
+> +{
+> +	if (IS_ENABLED(CONFIG_CXL_ATL))
+> +		cxl_atl_init(port);
+> +}
+> +
+>  static int cxl_port_add(struct cxl_port *port,
+>  			resource_size_t component_reg_phys,
+>  			struct cxl_dport *parent_dport)
+> @@ -868,6 +874,8 @@ static int cxl_port_add(struct cxl_port *port,
+>  			return rc;
+>  	}
+>  
+> +	setup_address_translation(port);
+> +
+>  	rc = device_add(dev);
+>  	if (rc)
+>  		return rc;
 
->
-> Quentin
 
