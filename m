@@ -1,97 +1,103 @@
-Return-Path: <linux-kernel+bounces-821385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61608B811E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:05:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F74B8117D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9061C068C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388CB620BA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F7D2FC87F;
-	Wed, 17 Sep 2025 17:05:49 +0000 (UTC)
-Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA12FB62F;
+	Wed, 17 Sep 2025 16:56:56 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCFE2FA0F3;
-	Wed, 17 Sep 2025 17:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A5F34BA33
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758128749; cv=none; b=WKznutb2OP55vTwLSD2xbQiGysWhx9tOUac97yEbBxeN9kJB9vbwGDS9a+V8qtWAUoVuEjaj1JJIDEKIulYklQhcZMJ2+kYmuhns63tmSkGdfjL2Lu2cvHC8RDiWGyyTj234A3i3YrFUgA0yOdxR7nFz8tzruuojxIR0KZLV380=
+	t=1758128216; cv=none; b=M19n0VsFZao/L/fHKcFHsZbl3tdLM1MgzAPbdX2kpUtjspg+lEjLBVl4X+ZPmknQbJW7T2fGp3rcTOPy9WkMh78HywKak5S9jVIZsZZ1ze4p+hVDL9E7vfYTe2OdIkFEpFHiSXpfHxxIMWeFrLcNuemJw6ZRH2t5sbrwG4MbYFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758128749; c=relaxed/simple;
-	bh=CpxMlm1/qsToXu30rGUcKeukNcXMktn8ngCrfJSWTrI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kjYcjP1vo/7/5M5DeaIxGgCO42GFV3q9r7kw41p3bHxo5/k9Mf3f/0+HTarFbZhozf5GIjKk0Ql8ry5TmuXUavaBwnZV/DEORvFojxFq/tXnNg+Z1bNzaWUEg12MOwotqU8wjlTVxCsP9ILt1kDG7LAluqENJ+mktFXnW8gEZ0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-	by mail-out.m-online.net (Postfix) with ESMTP id 4cRlJ45XMLz1r5hT;
-	Wed, 17 Sep 2025 18:55:16 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
-	by mail.m-online.net (Postfix) with ESMTP id 4cRlHz2k0Pz1qqlg;
-	Wed, 17 Sep 2025 18:55:11 +0200 (CEST)
-X-Virus-Scanned: amavis at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
- by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
- with ESMTP id FyDczJ_snocr; Wed, 17 Sep 2025 18:54:51 +0200 (CEST)
-X-Auth-Info: UWGvPdzziKTyr0vIulDVWeS8odfve31015jT5V3nU7N9Ds/7k6kKhuWDOeOz4Mai
-Received: from igel.home (aftr-82-135-83-112.dynamic.mnet-online.de [82.135.83.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by mail.mnet-online.de (Postfix) with ESMTPSA;
-	Wed, 17 Sep 2025 18:54:51 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-	id 565EB2C1C80; Wed, 17 Sep 2025 18:54:41 +0200 (CEST)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Brad Boyer <flar@allandria.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,  Finn Thain <fthain@linux-m68k.org>,
-  Peter Zijlstra <peterz@infradead.org>,  Will Deacon <will@kernel.org>,
-  Andrew Morton <akpm@linux-foundation.org>,  Boqun Feng
- <boqun.feng@gmail.com>,  Jonathan Corbet <corbet@lwn.net>,  Mark Rutland
- <mark.rutland@arm.com>,  linux-kernel@vger.kernel.org,  Linux-Arch
- <linux-arch@vger.kernel.org>,  Geert Uytterhoeven <geert@linux-m68k.org>,
-  linux-m68k@vger.kernel.org
-Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
- operations
-In-Reply-To: <20250916213858.GA12681@allandria.com> (Brad Boyer's message of
-	"Tue, 16 Sep 2025 14:38:58 -0700")
-References: <cover.1757810729.git.fthain@linux-m68k.org>
-	<e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
-	<20250915080054.GS3419281@noisy.programming.kicks-ass.net>
-	<4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
-	<20250915100604.GZ3245006@noisy.programming.kicks-ass.net>
-	<8247e3bd-13c2-e28c-87d8-5fd1bfed7104@linux-m68k.org>
-	<57bca164-4e63-496d-9074-79fd89feb835@app.fastmail.com>
-	<1c9095f5-df5c-2129-df11-877a03a205ab@linux-m68k.org>
-	<534e8ff8-70cb-4b78-b0b4-f88645bd180a@app.fastmail.com>
-	<20250916213858.GA12681@allandria.com>
-Date: Wed, 17 Sep 2025 18:54:41 +0200
-Message-ID: <877bxx10ku.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1758128216; c=relaxed/simple;
+	bh=2hPN7ILfVqTEJ+c3AG1t5AUjGGnDy82Y4ctwGuvzzZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDdp3S0uCJLCwmixX02Ld7n1+lXk6im7msHivQFt5MDtrx6rmsDmMpcI5EOCSjTQpKNsBRm55dXDmm3fMxa5YwqlpL6QgpgvQtNgMc8KAHjDk91eFfenGH/zz1hloqGcCUhtYh5/WpgvrInb1j31obPbnx1uqtuFFZdFngRWYSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62f277546abso8783217a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:56:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758128213; x=1758733013;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9U8MKFNdluOhv4aa38RV9TP5AYkB3xRCykBzF0UIvoM=;
+        b=ug5x9JAb4P0stiNZdYoJBY1UVXkcjsMjIm4Xj5H7pBd71DT0PNhszi4QXJWHbrRLT/
+         3GQXHBc4XYldx7AAtGTlUGlBIgOXugV8PLVAXIU+EwJL/2YDM57XQuniHT9SBdjeW4c1
+         /I2WRvWdtgCrew/oFlUXR3gjofHbNDQvxtQLBTNz+rGN3xhwny8YT46XXvUwq/d9wYq5
+         ghV7KvS84GMfRqAN1wfVkRCPOzXRFqWEOaLvrdRPhftkROwtcDceEdR8Nzst1+pyA4K6
+         fHRLQQtII5iFNXJHor/qnIbpdgK4Hl6DcVmjzbhsbRdMSw5R4+vmFKiveCUzuB677u1t
+         AIJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGxcs4Ca6ULYgIkyrrvb1dwG21LDhHncL3ZTkRl7PgKryCGaAjKTshWMozNJyiOhN3ddGIkFZoUsmWQQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1PD+VmN5VS+mrFuIept7PPeUy2lPd7Tv26Lf4ADpmjtRz6SDr
+	z8gU70LBt7aicKscoHh3Fx6lnLwj/iKjzNiYwt0uINUeE1O9RH4SE4ceSR8rkQ==
+X-Gm-Gg: ASbGncuP3V2aKQBScaQ+YFn0D4JHFNUEd39KFgCf6IyMTPIE20wCbwfwDVlwFYGL1ij
+	37/ePXAeTkOzEi6m5THGtV3u1v9VBtNlkAf7tipSGSH3SeE1Jr0LwC100OTOS6cfh/BgYKNNolv
+	2xCCmcz7zThXV25sKcJ+rd8dKCKWt6ZDGqqO/7YSnWOOgAbMFl8VzhV/P2B4LXI/CbIr4yJV47k
+	WaFqI2hxq03rowhBI2T96B5dCV/e6bhEDH732VjNkMMqKTr+d4ZupAUhuFRL/Iemotyn7cK2Gzk
+	9QKxeH1Fuv2NbK/1sTeowjXcE20A5kzLtGVAcv24wVFKF1NBJlH97+UqNpjgIiEQJs9Li44FOh4
+	8hHL8frEN+q3+
+X-Google-Smtp-Source: AGHT+IHJpIlHY2aCZmF0CH+nbnFOFzfFn3bboh6zZrx2bP16Eyzb6LmBuSNHyS/M1WQcJVBhRlM65A==
+X-Received: by 2002:a05:6402:2816:b0:61c:e1d6:6bf6 with SMTP id 4fb4d7f45d1cf-62f83a06fcemr2995700a12.7.1758128212480;
+        Wed, 17 Sep 2025 09:56:52 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:5::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62efe17e03esm10425340a12.47.2025.09.17.09.56.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 09:56:52 -0700 (PDT)
+Date: Wed, 17 Sep 2025 09:56:49 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, calvin@wbinvd.org, 
+	kernel-team@meta.com, jv@jvosburgh.net
+Subject: Re: [PATCH net v4 4/4] selftest: netcons: add test for netconsole
+ over bonded interfaces
+Message-ID: <xskolllpk7re4qptsyznfbqngns55hetjwy2psdio2b5fyr7qe@26qv7rpschzs>
+References: <20250917-netconsole_torture-v4-0-0a5b3b8f81ce@debian.org>
+ <20250917-netconsole_torture-v4-4-0a5b3b8f81ce@debian.org>
+ <20250917091309.1149dc5a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917091309.1149dc5a@kernel.org>
 
-On Sep 16 2025, Brad Boyer wrote:
+On Wed, Sep 17, 2025 at 09:13:09AM -0700, Jakub Kicinski wrote:
+> On Wed, 17 Sep 2025 05:51:45 -0700 Breno Leitao wrote:
+> >  tools/testing/selftests/drivers/net/Makefile       |   1 +
+> >  .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 167 +++++++++++++++++++--
+> >  .../selftests/drivers/net/netcons_over_bonding.sh  |  76 ++++++++++
+> 
+> We need to add bonding to selftests/drivers/net/config:
 
-> I believe it depends on the exact CPU. The 68060 user manual has a
-> section called "Emulating CAS2 and CAS Misaligned" discussing the
-> handling of such instances through software emulation. The 68040
-> user manual doesn't have any similar section.
+Oh, I though it was using selftests/net/config. I even wrote on 
+the commit message:
 
-The 68040 still handles them in hardware.
+```
+This depends on CONFIG_BONDING, which is already set in
+tools/testing/selftests/net/config.
+```
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+but, in fact, It should be selftests/drivers/net/config. I will update.
 
