@@ -1,90 +1,132 @@
-Return-Path: <linux-kernel+bounces-820475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FB7B7EB37
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:58:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DCBB7FA1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22801C029CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:27:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E65320604
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCAC2F83CD;
-	Wed, 17 Sep 2025 10:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE77D305975;
+	Wed, 17 Sep 2025 10:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBLt2+9R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mnz3pZO2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C3C2EA721;
-	Wed, 17 Sep 2025 10:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAF62F39D7;
+	Wed, 17 Sep 2025 10:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104794; cv=none; b=Wz3hyaZXcqfTEHLrFCi/I0KWrutF1hCTVtOsoOE986WI9ZDSumxdeOOeM/SDuBVjmq8mCVrsmi7IGYuAoOoasVQIh7SYHpzgcWO8Gu3hkf/LoTYnvcCRAdqpCfuo1LSnxrUWR0aPvyfle5z5uV3L58FHdfIU28CTmoaNTAIzTqg=
+	t=1758104875; cv=none; b=aE/+/Oek/qr8sqVkvi9yiSq7zEVHlmd2lgpauZ8yNcl05GnZ4MHYW8jJ4lHIhhkCdJq0e0eVxHPCc6NC2va/FayByl6VtaPuOyOp69UwXD8Q6hly8TtSt3qkyceV+L1jypD8nHfEsYARubye22dhi058hRWFnuOjELpq8ytLAx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104794; c=relaxed/simple;
-	bh=T3ISxIPvcZvhmhbtWB1fP3pff0PITh55eSJO6Jdh7AI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dwi1jZBq23baXk0QnlarQnTNl1sl72w5q9JSVajr85Hl8tNbM5SovZTzXDk28HRVLuN+Ak6NLnKdJdYygxTPBgDnozgTnCZ/Q3D0JBLvRHPxMt+Ys1YrAlfNGxijtogjmlg+TRzQjWfKZ56JDuEXVo+QmoxPwIxMIyIN0fO+dmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBLt2+9R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50FE9C4CEF0;
-	Wed, 17 Sep 2025 10:26:32 +0000 (UTC)
+	s=arc-20240116; t=1758104875; c=relaxed/simple;
+	bh=9EIowYvEPZOqg+KYd0lf5vl3N9XVhtAKVJH7AC+KA5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6nsbmGSL+XknFh2EcFTS8dify1nZydgseK6FMqvRr3AMb7bK4QSP/1yVEoMOnrUADqS0OUb5svUBY0MRGnwyU2pW8z+A8EW/rh1Mrzct/DGGIeyqAIEfAh3hudQN99x71rDV1X5KNIUckwJgrtpZcwSkITus2y22JM1UEnY188=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mnz3pZO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB82BC4CEF0;
+	Wed, 17 Sep 2025 10:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758104793;
-	bh=T3ISxIPvcZvhmhbtWB1fP3pff0PITh55eSJO6Jdh7AI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LBLt2+9R5ViUWWr6NoMg5QzzzaTg+h7deFeMsyejRjy0HEFvBSh0xe2ujbShleWoj
-	 NKVkjQWlZt1JhZs77BLsRGveU2MyoLfV22Rf8icd0HghaH6Q78ZS5pIF31jkWBDkwS
-	 rFlSvfdimzAEtFPRP3O/06M5R4A5R3ZuiWQ0DQyKNMQAD8JFnxXuSAXbOQc/pr1c85
-	 Pq/W+3ZFZzAI93AnBaBbQHCcqr0nfb41HbGWXhscn+Tni72zxhnweSnMlo9NTqWrk6
-	 RsYdeoWvJdeEmBktqQfqe6nYE5j7+DZp1z7gHJvvaBDmv6STpyIAPNu3bwY00DR2Jh
-	 SMhIbUNTuiWvA==
-Date: Wed, 17 Sep 2025 11:26:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Missing signoffs in the slab tree
-Message-ID: <6cc0566d-ba5b-4676-9b90-bf3d1fea4c7e@sirena.org.uk>
+	s=k20201202; t=1758104874;
+	bh=9EIowYvEPZOqg+KYd0lf5vl3N9XVhtAKVJH7AC+KA5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mnz3pZO2LNyBtk9R4cClLiheWHz4cq6ok9vEM/tCuO6cscaqpT/AsxDF5zr/L9cSk
+	 2aOl//VZAqW+Bo9UjsWrbdftYsHImwwL6IXsiTQHofRd/wHsfiMh3vvYqiJUIhdctl
+	 jyOHMo53h5SSdEIkIGCQxJ5d+MA0LcUm+OyR3rqJ4EAOsN1wlhMXP8nU0ICF0j27i5
+	 +nOH/i3CFmM7YzoPY/OnfTPPn+X/NV+EuyocoRRQpdfmN59X1sGZn7lv6AxQ1JvUuB
+	 /kyCCMXcQ8WUJzPoBDXzfDmumnUrWK1SW4F46ajIfjm/rrc0+l0qF3AtiiqpfPAj+r
+	 qDXrv7JO3z7aw==
+Date: Wed, 17 Sep 2025 15:57:46 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
+ by BIOS for devicetree platforms
+Message-ID: <5fifyei5gt2ypvk3hzj4lyc476thcou3g7u7x2lnup2eerazlx@66cbcjzvo5dg>
+References: <20250916-pci-dt-aspm-v1-0-778fe907c9ad@oss.qualcomm.com>
+ <20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com>
+ <ccf1b22b-8b6d-4aae-ac27-e84943b7ffd0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OQN2g4LYmcg72YgM"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Cookie: Limited delivery area.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ccf1b22b-8b6d-4aae-ac27-e84943b7ffd0@oss.qualcomm.com>
 
+On Tue, Sep 16, 2025 at 06:28:58PM GMT, Konrad Dybcio wrote:
+> On 9/16/25 6:12 PM, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > 
+> > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
+> > the BIOS (through LNKCTL) during device initialization. This was done
+> > conservatively to avoid issues with the buggy devices that advertise
+> > ASPM capabilities, but behave erratically if the ASPM states are enabled.
+> > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
+> > states that were known to work for the devices.
+> > 
+> > But this turned out to be a problem for devicetree platforms, especially
+> > the ARM based devicetree platforms powering Embedded and *some* Compute
+> > devices as they tend to run without any standard BIOS. So the ASPM states
+> > on these platforms were left disabled during boot and the PCI subsystem
+> > never bothered to enable them, unless the user has forcefully enabled the
+> > ASPM states through Kconfig, cmdline, and sysfs or the device drivers
+> > themselves, enabling the ASPM states through pci_enable_link_state() APIs.
+> > 
+> > This caused runtime power issues on those platforms. So a couple of
+> > approaches were tried to mitigate this BIOS dependency without user
+> > intervention by enabling the ASPM states in the PCI controller drivers
+> > after device enumeration, and overriding the ASPM/Clock PM states
+> > by the PCI controller drivers through an API before enumeration.
+> > 
+> > But it has been concluded that none of these mitigations should really be
+> > required and the PCI subsystem should enable the ASPM states advertised by
+> > the devices without relying on BIOS or the PCI controller drivers. If any
+> > device is found to be misbehaving after enabling ASPM states that they
+> > advertised, then those devices should be quirked to disable the problematic
+> > ASPM/Clock PM states.
+> > 
+> > In an effort to do so, start by overriding the ASPM and Clock PM states set
+> > by the BIOS for devicetree platforms first. Separate helper functions are
+> > introduced to set the default ASPM and Clock PM states and they will
+> > override the BIOS set states by enabling all of them if CONFIG_OF is
+> > enabled. To aid debugging, print the overridden ASPM and Clock PM states.
+> > 
+> > In the future, these helpers could be extended to allow other platforms
+> > like VMD, newer ACPI systems with a cutoff year etc... to follow the path.
+> > 
+> > Link: https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
+> > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> 
+> [...]
+> 
+> > +	/* Override the BIOS disabled Clock PM state for devicetree platforms */
+> > +	if (IS_ENABLED(CONFIG_OF) && !enabled) {
+> 
+> JFYI CONFIG_OF=y && CONFIG_ACPI=y is valid, at least on arm64
 
---OQN2g4LYmcg72YgM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ouch! I didn't know this, thanks for pointing it out.
 
-Commits
+> Maybe something like of_have_populated_dt()?
+> 
 
-  cbcc3da4e7bfc ("slab: Disallow kprobes in ___slab_alloc()")
-  dfc415682b11d ("slab: Clarify comments regarding pfmemalloc and NUMA preferences")
+Yep, this looks like the correct API.
 
-are missing a Signed-off-by from their committers.
+- Mani
 
-
---OQN2g4LYmcg72YgM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjKjNMACgkQJNaLcl1U
-h9AL5wf/cY4oAMRm0Hgklab3zCrDkwSOD7gJ6mgTuhs7J9knLFt6wYUUmxBtY5Rn
-mhjUAIdnicH7hqqOsLRsNi4fdcHoYRkPH/aG5c+S1T8/N/8iXJkJ16YYbezR6Rve
-7UV8USLM1tigK+YdcmzEJ8bSnSJVW3O8hk/kb+jzJrPVrLdBX/JlVaiU4h1RkA1a
-h1LHf3Vm2Yoy85qi15HA8fiCRRj5aOssFa+VXVR0NdJ0QghCZX5b3xpGu9XEc2ZN
-NJzeqyR8/9DPFsAqPUgE8YxOwlCDH56d26BZWg6oJFoomNFC7J0YIlhqmUr5ED8g
-Y/RxvlOl5bxMT51e5/YF7EuAQWHfcA==
-=uYmg
------END PGP SIGNATURE-----
-
---OQN2g4LYmcg72YgM--
+-- 
+மணிவண்ணன் சதாசிவம்
 
