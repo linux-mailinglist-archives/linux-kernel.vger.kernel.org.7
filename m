@@ -1,237 +1,177 @@
-Return-Path: <linux-kernel+bounces-820906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BEFB7F9EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:57:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE73AB7F9F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF54E522AEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CA1523FAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BAB3195EF;
-	Wed, 17 Sep 2025 13:51:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2CA3161A8;
+	Wed, 17 Sep 2025 13:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AXcZf2Un"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F3C30CB4D;
-	Wed, 17 Sep 2025 13:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CC0316193
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758117065; cv=none; b=DhnWlPxCljLPM1WHTvMnkkRIc/UV6yZ2gs3iJVI98Im8HkFuV6nG26AQEbpaqmjiidTLGkyNTiyt+60ajurBRyQli6qjj2TIybblW6mytRCrVShtzv13DYN69iHKJiDuaeRdQ4hOD7uW7tOYKMtvJhWaTGYr7hv50IPHw0tC9XI=
+	t=1758117082; cv=none; b=lKMkc/ruiI7JZk/lGVoVYZTqaYBuuitl6YlRfhyqdfCqOakKA/imLqKdVeVB3LEE1wfDwQGB5FpbZLxtvRfDbERwIhQHbcjCQTW1btvbuB8g5nHUPURrSbwoIKNXpZRHFJzwzQKzREWmNoS9e2XtJwm2RK2se8faopic/SqHcRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758117065; c=relaxed/simple;
-	bh=boEYEWWGuIll2ZXIfmMgBp73rwLn8ybPaQSKKJAvJ+g=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RmRgPwkxu1uolVxaxv0Lq11n7Lc6t01qUf1qMKfyXNRVdCF/kponr2WOMvGbXkt+RrTpYwkMF+v0Pr9EiJQ1GjxOnpnj6VvY3iVLoo/AzXzSIPifBGrx5h8AiOiftyyfceA6YScIlYcjytaDD3bsY8/PhI+mRn+/fV8wKQF+P/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cRg9g33JRz6GDKy;
-	Wed, 17 Sep 2025 21:49:27 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E411140371;
-	Wed, 17 Sep 2025 21:51:00 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 17 Sep
- 2025 15:50:59 +0200
-Date: Wed, 17 Sep 2025 14:50:58 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 11/11] cxl: Enable AMD Zen5 address translation using
- ACPI PRMT
-Message-ID: <20250917145058.00006183@huawei.com>
-In-Reply-To: <aMqCy670eTu-ZYUO@rric.localdomain>
-References: <20250912144514.526441-1-rrichter@amd.com>
-	<20250912144514.526441-12-rrichter@amd.com>
-	<20250915115948.0000415a@huawei.com>
-	<aMqCy670eTu-ZYUO@rric.localdomain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1758117082; c=relaxed/simple;
+	bh=9qUZT1crtWOUyoXXJQPP9NGJvBK9M9uYfI2FKUWxdrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQ+YgDEfzO1JaHiUl8f4gbLCX5ixwx7adzgweQaWTN/N+EfAEWuDLsWDm/Wa1lTlF+av2Yj/SRKYlnaPkqGQ319V3o8HhXCnJWzbhd7TbuamFyrQskDVzKlvhz0Txc4DRA7kqYtaL5Pq0QMbnuJ8i1WsRAD7PuEqjUyYY9F+VnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AXcZf2Un; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b079c13240eso1082051266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:51:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758117078; x=1758721878; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzslX0FAKCyHzwTYwPr7j8DXDFar2BwYpUuekbel1A0=;
+        b=AXcZf2UnBLuwIlDUshwn6WFU9rx72byeRJ0ehBiSlDtYApLa5m+zxZRHCasQWSNuCi
+         lnWwRAqYBA02kO7i+grK4GzTht/wUv/s8yuo2DMTLD4UpiN2S4sBzYihkKMkZEOyilGy
+         Ir1aHhFAJzuDfgvqb0d6pZqr44A1U/JwnKuRIJhwh31PTBDXD7HoV3GLHSiwRswHqDNH
+         5gqISLrQ9UjO6HNHx0Rz4V0R+WW1X0lDkLnaXjFk7Xu7xHOXzfzgWz8F0TEj5cKmnBqk
+         xRJqyeHwx9vfE9KtniZjchj1J305Hvddd0CtXDzJ5qjogtabOZV4FjsTUyjnpeMqPH7G
+         KmNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758117078; x=1758721878;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tzslX0FAKCyHzwTYwPr7j8DXDFar2BwYpUuekbel1A0=;
+        b=jtheZiXx0zr8WJ06hA4vTBgrFRB2z9qHdNUDpONGQ4LFeXFdtNECV9NL9omfYzhVFm
+         uy9A7BAS6y0y1ej4+1H3bMRwmR+TwNFAsm4OF00tbGScM8AeUXPkTopxWlFgBbVk6ktx
+         mW7jChGgWbP/rjF1wQmqsIYZb9ARBMy+4K72KjgDXrNseM20wemVgGZQfIo5aITMFv+z
+         k2kypMYGLHjZENLyXH/AshA37mMD+xAyM9446isQ7OyE9wtZFarQARFnJWLYa+ajEkWj
+         qPOS0oUi32Uqv1o5I0+X26UQwD4u/6YKHETIgc4TYNsZXfoJqclqtdkq53zQW4IKHPA1
+         XgPg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5o0t4g9pRZhXokNExXiZ9zNiwDrg3rTMVVIe5E4Eeg1cWuowrAXKmi1nt/XNXBfVRak5dE7T7wBK2QjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVIdL8Rc7z6Ufj60cx53K2fCSYeE+NJNuCNW4IN84s2QD7gVA+
+	zlGDrU0z2Efq9w6QIA4fh/mpGAa9FelXPiwX5s6T4eRc+RSfUZK4uVOG3ZGCt2pt0d8=
+X-Gm-Gg: ASbGncsBPZ8rCF1xUh/CAhmn0aSsDYwsK0rBh7UxkrXbiTmS/im4g106yD7RfhYfS7u
+	Y2TdgT1z+UmGs8jt/CkJA3Ix5ZrygLxGNr/0hNXJNYXeZxssciQ4WrEbItPc4r242MPfxxMeUMG
+	0l4xFpeJSB9gz0U62YQOWYF0bJZbZ53vvH4wWR1dzRgNY+zVFpbFcpIGGFprd42A8WBZvmNo63W
+	id1PdHZQNrEGNEh/05kR4ETUON4Uzi2p5BiALF1+KBdF7mKNdlmPmcpjh3XblF7PZayuHUeTJ8I
+	cRfvAQUz3qzffcFEV1RzDRQU1jBnLv/B2Wjc+r7WWH/GRkH8YsOfVu5YXaMa/tNRe2TmOxJwsP9
+	RAZknhn4+T9M6x/5L0rHX22QIog==
+X-Google-Smtp-Source: AGHT+IGwu+AJb+gKhXwbC2yXSQf9ZU6BEokD8jxRPRis8SFvc9K+rEszxY1TnNayznY2p3lr0ZywHg==
+X-Received: by 2002:a17:907:8691:b0:afe:ea93:ddbb with SMTP id a640c23a62f3a-b1bb8300984mr268616766b.45.1758117077953;
+        Wed, 17 Sep 2025 06:51:17 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f054b5522sm8971375a12.19.2025.09.17.06.51.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 06:51:17 -0700 (PDT)
+Date: Wed, 17 Sep 2025 15:51:15 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v1 1/1] printk: nbcon: Allow unsafe write_atomic()
+ for panic
+Message-ID: <aMq80xcRtQbthDiT@pathway.suse.cz>
+References: <20250912121852.2666874-1-john.ogness@linutronix.de>
+ <20250912121852.2666874-2-john.ogness@linutronix.de>
+ <aMl8xX9QCM9jslLH@pathway.suse.cz>
+ <848qidw8ip.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <848qidw8ip.fsf@jogness.linutronix.de>
 
-On Wed, 17 Sep 2025 11:43:39 +0200
-Robert Richter <rrichter@amd.com> wrote:
+On Wed 2025-09-17 14:53:26, John Ogness wrote:
+> On 2025-09-16, Petr Mladek <pmladek@suse.com> wrote:
+> >> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> >> index 646801813415..8c2966b85ac3 100644
+> >> --- a/kernel/printk/nbcon.c
+> >> +++ b/kernel/printk/nbcon.c
+> >> @@ -972,14 +972,18 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
+> >>  	/*
+> >>  	 * This function should never be called for consoles that have not
+> >>  	 * implemented the necessary callback for writing: i.e. legacy
+> >> -	 * consoles and, when atomic, nbcon consoles with no write_atomic().
+> >> +	 * consoles and, when atomic, nbcon consoles with no write_atomic()
+> >> +	 * or an unsafe write_atomic() without allowing unsafe takeovers.
+> >>  	 * Handle it as if ownership was lost and try to continue.
+> >>  	 *
+> >>  	 * Note that for nbcon consoles the write_thread() callback is
+> >>  	 * mandatory and was already checked in nbcon_alloc().
+> >>  	 */
+> >> -	if (WARN_ON_ONCE((use_atomic && !con->write_atomic) ||
+> >> -			 !(console_srcu_read_flags(con) & CON_NBCON))) {
+> >> +	if (WARN_ON_ONCE(!(console_srcu_read_flags(con) & CON_NBCON) ||
+> >> +			 (use_atomic &&
+> >> +			  (!con->write_atomic ||
+> >> +			   (!ctxt->allow_unsafe_takeover &&
+> >> +			    (console_srcu_read_flags(con) & CON_NBCON_ATOMIC_UNSAFE)))))) {
+> >
+> > The condition seems to be correct. But it is evil. I wonder whether
+> > it would make sense to replace this with:
+> >
+> > 	flags = console_srcu_read_flags(con);
+> >
+> > 	if (WARN_ON_ONCE(!(flags & CON_NBCON) ||
+> > 			 !console_is_usable(con, flags, use_atomic, ctxt->allow_unsafe_takeover))) {
+> >
+> >
+> > Note that I have added the 4th parameter intentionally, see below.
+> 
+> ...
+> 
+> > It would be more reliable when the check was integrated into
+> > console_is_usable(). I guess that you did not do it because
+> > it added another parameter...
+> 
+> Not all console_is_usable() call sites have a printing context. That is
+> why I only added the checks only to the actual ->write_atomic() paths
+> that were possible via nbcon_atomic_flush_unsafe().
 
-> On 15.09.25 11:59:48, Jonathan Cameron wrote:
-> > On Fri, 12 Sep 2025 16:45:13 +0200
-> > Robert Richter <rrichter@amd.com> wrote:
-> >  =20
-> > > Add AMD Zen5 support for address translation.
-> > >=20
-> > > Zen5 systems may be configured to use 'Normalized addresses'. Then,
-> > > CXL endpoints use their own physical address space and are programmed
-> > > passthrough (DPA =3D=3D HPA), the number of interleaving ways for the
-> > > endpoint is set to one. The Host Physical Addresses (HPAs) need to be
-> > > translated from the endpoint to its CXL host bridge. The HPA of a CXL
-> > > host bridge is equivalent to the System Physical Address (SPA).
-> > >=20
-> > > ACPI Platform Runtime Mechanism (PRM) is used to translate the CXL
-> > > Device Physical Address (DPA) to its System Physical Address. This is
-> > > documented in:
-> > >=20
-> > >  AMD Family 1Ah Models 00h=E2=80=930Fh and Models 10h=E2=80=931Fh
-> > >  ACPI v6.5 Porting Guide, Publication # 58088
-> > >  https://www.amd.com/en/search/documentation/hub.html
-> > >=20
-> > > To implement AMD Zen5 address translation the following steps are
-> > > needed:
-> > >=20
-> > > AMD Zen5 systems support the ACPI PRM CXL Address Translation firmware
-> > > call (Address Translation - CXL DPA to System Physical Address, see
-> > > ACPI v6.5 Porting Guide above) when address translation is enabled.
-> > > The existence of the callback can be identified using a specific GUID
-> > > as documented. The initialization code checks firmware and kernel
-> > > support of ACPI PRM.
-> > >=20
-> > > Introduce a new file core/atl.c to handle ACPI PRM specific address
-> > > translation code. Naming is loosely related to the kernel's AMD
-> > > Address Translation Library (CONFIG_AMD_ATL) but implementation does
-> > > not dependent on it, nor it is vendor specific. Use Kbuild and Kconfig
-> > > options respectively to enable the code depending on architecture and
-> > > platform options.
-> > >=20
-> > > Implement an ACPI PRM firmware call for CXL address translation in the
-> > > new function cxl_prm_to_hpa(). This includes sanity checks. Enable the
-> > > callback for applicable CXL host bridges using the new cxl_atl_init()
-> > > function.
-> > >=20
-> > > Signed-off-by: Robert Richter <rrichter@amd.com> =20
-> > A few minor additions inline. =20
-> >=20
-> > J =20
-> > > ---
-> > >  drivers/cxl/Kconfig       |   4 ++
-> > >  drivers/cxl/core/Makefile |   1 +
-> > >  drivers/cxl/core/atl.c    | 138 ++++++++++++++++++++++++++++++++++++=
-++
-> > >  drivers/cxl/core/core.h   |   1 +
-> > >  drivers/cxl/core/port.c   |   8 +++
-> > >  5 files changed, 152 insertions(+)
-> > >  create mode 100644 drivers/cxl/core/atl.c
-> > >=20
-> > > diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> > > index 48b7314afdb8..31f9c96ef908 100644
-> > > --- a/drivers/cxl/Kconfig
-> > > +++ b/drivers/cxl/Kconfig
-> > > @@ -233,4 +233,8 @@ config CXL_MCE
-> > >  	def_bool y
-> > >  	depends on X86_MCE && MEMORY_FAILURE
-> > > =20
-> > > +config CXL_ATL
-> > > +       def_bool y =20
-> >=20
-> > Given no help we can't turn this off manually and it's down to
-> > whether ACPI_PRMT is configured or not.
-> >=20
-> > To me this feels like something we should be able to control.
-> > Not a huge amount of code, but none the less 'so far' it only
-> > applies to particular AMD platforms yet ACPI_PRMT gets built
-> > on ARM platforms and other stuff even on AMD (CONFIG_AMD_ATL_PRM) =20
->=20
-> How about default y where possible but have a menu entry to disable
-> address translation?
->=20
-> config CXL_ATL
-> 	bool "CXL Address Translation support"
-> 	default y
-> 	depends on ACPI_PRMT
->=20
-> I don't want to make it specific to AMD.
-Can we drop the default y?
-
-That feels to me like a defconfig thing rather than a thing we should
-apply generally.
-
-Also remember to add some detailed help text given it's now visible in
-menuconfig etc.
-
->=20
-> >=20
-> >=20
-> >  =20
-> > > +       depends on ACPI_PRMT
-> > > +
-> > >  endif =20
-> >  =20
-
-> > > +static void cxl_prm_init(struct cxl_port *port)
-> > > +{
-> > > +	u64 spa;
-> > > +	struct prm_cxl_dpa_spa_data data =3D { .out =3D &spa, };
-> > > +	int rc;
-> > > +
-> > > +	if (!check_prm_address_translation(port))
-> > > +		return;
-> > > +
-> > > +	/* Check kernel (-EOPNOTSUPP) and firmware support (-ENODEV) */
-> > > +	rc =3D acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
-> > > +	if (rc =3D=3D -EOPNOTSUPP || rc =3D=3D -ENODEV)
-> > > +		return; =20
-> >=20
-> > So other error values are fine?  IF they don't occur no need to be expl=
-icit
-> > just check rc < 0 and return. =20
->=20
-> This is just to check the existence of the PRM, but it will fail (if
-> exists) here as parameters are a stub only. Both error codes are
-> reserved for firmware or kernel support respectively. Else, it returns
-> the PRM's error code, which is ignored here.
-
-Why is the PRM error code not something we want to pay attention to?
-Perhaps that's the comment that is missing.  I guess because we will
-see any consistent failure later?
+I see. But I still believe that it fits well into console_is_usable().
+It is similar to the "use_atomic" parameter which depends on the
+context as well. We could guess the context most of the time,
+so that we hardcode the "use_atomic" value, ...
 
 
->=20
-> >  =20
-> > > +
-> > > +	port->to_hpa =3D cxl_prm_to_hpa;
-> > > +
-> > > +	dev_dbg(port->host_bridge, "PRM address translation enabled for %s.=
-\n",
-> > > +		dev_name(&port->dev));
-> > > +}
-> > > +
-> > > +void cxl_atl_init(struct cxl_port *port)
-> > > +{
-> > > +	cxl_prm_init(port); =20
-> > Why not just rename cxl_prm_init() to cxl_atl_init() and get rid of thi=
-s wrapper? =20
->=20
-> cxl_prm_init() handles the PRM specifics, while cxl_atl_init() is used
-> as an entry for the core module to enable address translation. I
-> thought it would be misleading to name cxl_prm_init() different. The
-> compiler result should be the same for both.
-Ok.  I'm not sure it's worth the separation but as you say it'll almost
-certainly get flattened anyway!
+> > Or maybe, we could define @allow_unsafe_takeover via a global variable,
+> > e.g. panic_nbcon_allow_unsafe_takeover. And it might be valid
+> > only on the panic CPU, e.g.
+> >
+> > static inline
+> > bool nbcon_allow_unsafe_takeover(void)
+> > {
+> > 	return panic_on_this_cpu() && panic_nbcon_allow_unsafe_takeover;
+> > }
+> >
+> > It is a kind of hack. But it might be better than the 4th parameter.
+> > And it would simplify few other APIs.
+> 
+> After weighing the pros/cons I think that a global variable makes the
+> most sense. It will simplify internal APIs and provide all
+> console_is_usable() users a correct value. And the end result is no
+> different than what we do now.
+> 
+> We could also keep its setting inside nbcon_atomic_flush_unsafe() so
+> that the variable remains a printk-internal variable.
 
-Jonathan
+Sounds good to me.
 
->=20
-> -Robert
->=20
-> >  =20
-> > > +} =20
-> >=20
-> >  =20
-
+Best Regards,
+Petr
 
