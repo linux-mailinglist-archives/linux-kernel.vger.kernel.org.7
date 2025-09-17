@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-821099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75912B80670
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:11:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B453B80625
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44BA189C11B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F4458582E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6652F7477;
-	Wed, 17 Sep 2025 15:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7CC37058B;
+	Wed, 17 Sep 2025 15:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxMhbcJa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eyxr26a/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F30F35AAB7;
-	Wed, 17 Sep 2025 15:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C203333AB6;
+	Wed, 17 Sep 2025 15:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758121236; cv=none; b=jSCyvTEN3+x9R1RSY7zcWLLGQ30e8UvGtu22yE/RAOJn02Gr6xY8dcuDtWkhRuddfrs06pr4fEypDntPZNuYBjxetk3pnGuhcveEdCrhkMR4MQzQSjLK2LUf1VOKnaMkmkvfL7S/augtlgrHLRwf9xP3in6cRjSfOzzZrlBol2A=
+	t=1758121243; cv=none; b=ljwlsU9JldhiePKBungNqptbABCjWb3eczbkIkz2CFRdPg7UrxgP+2EwUGIr0HGxwKR0a6KcjAOdQFeZ0OPcGYxJsTTJTWjIPG49eriDkvCTWW8jvUwsI4n08srV9wvhHLiU+1tcJq21KqaYVzz+2APyFOopdaj+D+y7ahAi1es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758121236; c=relaxed/simple;
-	bh=HDiQWb20Rtx+E1H2UYAaRAIpBHG5/mnMO3quayCJMb8=;
+	s=arc-20240116; t=1758121243; c=relaxed/simple;
+	bh=uKTzGagGhtTrXiBZUakEIOCIX+NG+7SQ5Y4JJ+cUDsU=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=OKC8/rxwzafZ1jrY/heQqisqMkGILLLHDASU4Q722rkXciWObLbaBorMk8+2H5nT7rHHOvA6L40fuK4mIGhwe+YG0UOFvTbYL8A1w+TEunHqY1JlBwB98uvk8n4GU4uexLfdsr70dYGkEDeFfvDa2X5M/YNLAjCMj+tzu8cMH8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxMhbcJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78850C4CEF5;
-	Wed, 17 Sep 2025 15:00:35 +0000 (UTC)
+	 Message-Id:Subject; b=PYJH65qChf1bybMR/6sqQpx1GMZznOuyF8dBeqxXeGr6Uqw+x3VmR6tPyB73yPh8hPw/BEiIQKEBcl+hP1ZtBzTEJVFbFBbuplOfyO33UD2u3oaXcCTyFLDjopSciFRHys5dKhgdHUQdzKbEtWrbaOu73huYv0AlO6k0JLsfIU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eyxr26a/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DA32C4CEF0;
+	Wed, 17 Sep 2025 15:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758121235;
-	bh=HDiQWb20Rtx+E1H2UYAaRAIpBHG5/mnMO3quayCJMb8=;
+	s=k20201202; t=1758121242;
+	bh=uKTzGagGhtTrXiBZUakEIOCIX+NG+7SQ5Y4JJ+cUDsU=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=kxMhbcJaCqlaesBAyz9ojQ5gfElOWK6fTHmyiSiuEcBm6WaKozjkyVJ5H7yzSBzM4
-	 g9fV9aZ6h7kKG6tewZw5FxRV32BwoxJ1vea2SnKK7jrm3euzAAaOikKCaMllXeDDvz
-	 rjL5bXi3jwKnQEYXVqHvgE5OFUo+CMWmQm8nUd2zfLQIn+0eg84FndzMwXsqbnhcPO
-	 wEuE7ia+whWx3768oewU75PUQxQZyn/L0pPj73bR44EMcxhpt2hE6tDafjD2VqmEd3
-	 Vy7DTOjjpS37zxbQo7axGtZObUvwwOyEorcPQFHMKNiFtEmvYToo1NNmz6WVviz8pQ
-	 mq6LFmcvoX0fA==
-Date: Wed, 17 Sep 2025 10:00:34 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	b=Eyxr26a/Rt2KgGizbTuCA2IUVZrVVuRqbvmp5/HB46TnrhJjoaS1XiCgpsy1jf/Dj
+	 x/AMKfw3rxqmADP0Dl4eTN7KKfF+cmtv0VXAtlGM5qL1X7jpPFkVikhJcwwmaDa9jU
+	 cZf/0lVYVhLKpzKHn28CrVjtCkGxC630FMJsaOmMQou1rjraFT8OoRaBhp8A+LZUef
+	 k4Qocg0FSHWgg4ZYg+KR5aX5jTMRvvct7QBoKzraeez73o4it6FqoaA6JIjm+HS8CX
+	 TKuH1IftkU2oAVoj2VsKCN0xGVkhMFW1dAEF4RWy9W7Ht5ql5+fyoRZldBAey5qDec
+	 R2/nUG3wlipEA==
+Date: Wed, 17 Sep 2025 10:00:36 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,35 +50,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
- Peter Robinson <pbrobinson@gmail.com>, linux-arm-kernel@lists.infradead.org, 
- Dragan Simic <dsimic@manjaro.org>, Andy Yan <andy.yan@rock-chips.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Jonas Karlman <jonas@kwiboo.se>, 
- Quentin Schulz <quentin.schulz@cherry.de>, FUKAUMI Naoki <naoki@radxa.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Chaoyi Chen <kernel@airkyi.com>
-In-Reply-To: <20250916080802.125-1-kernel@airkyi.com>
-References: <20250916080802.125-1-kernel@airkyi.com>
-Message-Id: <175812100320.2051529.8331047555950941186.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: Enable DisplayPort for
- rk3588-evb2
+Cc: phone-devel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Amir Dahan <system64fumo@protonmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ David Heidelberg <david@ixit.cz>, Christopher Brown <crispybrown@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org
+To: Paul Sajna <sajattack@postmarketos.org>
+In-Reply-To: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
+References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
+Message-Id: <175812100543.2051686.13703690250183906386.robh@kernel.org>
+Subject: Re: [PATCH v2 00/13] arm64: dts: qcom: sdm845-lg-{common, judyln}:
+ Improve HW support in dts
 
 
-On Tue, 16 Sep 2025 16:08:02 +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+On Tue, 16 Sep 2025 18:09:46 -0700, Paul Sajna wrote:
+> Rollup of improved hardware support via devicetree for LG G7 ThinQ
+> (judyln) from sdm845-mainline kernel fork
 > 
-> The rk3588 evb2 board has a full size DisplayPort connector, enable
-> for it.
+> Notably, this patch-series enables full DRM acceleration and wifi,
+> among other small improvements in individual commits
 > 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> after this patch-series the main things that remain to be worked
+> on include touchscreen, audio, and modem.
+> 
+> Depends upon panel driver patch-series https://lore.kernel.org/all/20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org/T/#r9a976ca01e309b6c03100e984a26a0ffc2fe2002
+> 
+> Co-developed-by: Amir Dahan <system64fumo@protonmail.com>
+> Co-developed-by: Christopher Brown <crispybrown@gmail.com>
+> Signed-off-by: Amir Dahan <system64fumo@protonmail.com>
+> Signed-off-by: Christopher Brown <crispybrown@gmail.com>
+> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 > ---
->  .../boot/dts/rockchip/rk3588-evb2-v10.dts     | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
+> Changes in v2:
+> - sort at the start
+> - drop unnecessary labels
+> - drop unnecessary gmu
+> - multi-led
+> - split fb-panel changes
+> - expand upon firmware commit message
+> - use qcom,calibration-variant instead of
+>   qcom,ath10k-calibration-variant
+> - change firmware paths to include "LG"
+> - remove framebuffer reservation
+> - add lab/ibb
+> 
+> - Link to v1: https://lore.kernel.org/r/20250913-judyln-dts-v1-0-23b4b7790dce@postmarketos.org
+> 
+> ---
+> Amir Dahan (1):
+>       arm64: dts: qcom: sdm845-lg-common: Add leds
+> 
+> Christopher Brown (1):
+>       arm64: dts: qcom: sdm845-lg-judyln: Add battery and charger
+> 
+> Paul Sajna (11):
+>       arm64: dts: qcom: sdm845-lg-common: Sort nodes and properties
+>       arm64: dts: qcom: sdm845-lg-common: Add uarts and Bluetooth
+>       arm64: dts: qcom: sdm845-lg-judyln: Add display panel
+>       arm64: dts: qcom: sdm845-lg-judyln: Add firmware nodes
+>       arm64: dts: qcom: sdm845-lg-{common, judyln}: Add wifi node
+>       arm64: dts: qcom: sdm845-lg-common: Add chassis-type
+>       arm64: dts: qcom: sdm845-lg-judyln: Add fb_panel dimensions
+>       arm64: dts: qcom: sdm845-lg-common: Add camera flash
+>       arm64: dts: qcom: sdm845-lg-common: Add bootloader-compatible board and MSM IDs
+>       arm64: dts: qcom: sdm845-judyln-common: Remove framebuffer reserved-mem
+>       arm64: dts: qcom: sdm845-lg-judyln: Add lab/ibb
+> 
+>  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 222 ++++++++++++++++++-------
+>  arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts  | 136 ++++++++++++++-
+>  2 files changed, 296 insertions(+), 62 deletions(-)
+> ---
+> base-commit: 8394712bc1340df993cb167199568f44013b45d3
+> change-id: 20250911-judyln-dts-17c41e59dc0f
+> prerequisite-message-id: <20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org>
+> prerequisite-patch-id: e51151ea7f8fdad6ad7d90713febc5c6b6fc4f9c
+> prerequisite-patch-id: b3dd44250da9cd12bc5b2d0d7e865dbe19ceed92
+> prerequisite-patch-id: fd6c8077806cb03fcf37d0e0d730314c2760e334
+> 
+> Best regards,
+> --
+> Paul Sajna <sajattack@postmarketos.org>
+> 
+> 
 > 
 
 
@@ -97,16 +151,29 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
+ Base: base-commit 8394712bc1340df993cb167199568f44013b45d3 not known, ignoring
  Base: attempting to guess base-commit...
- Base: tags/next-20250915 (exact match)
+ Base: tags/next-20250916 (exact match)
+ Deps: looking for dependencies matching 3 patch-ids
+ Deps: Applying prerequisite patch: [PATCH 1/3] drm/panel: Add LG SW49410 Panel
+ Deps: Applying prerequisite patch: [PATCH 2/3] dt-bindings: display: panel: Add devicetree documentation for lg,sw49410
+ Deps: Applying prerequisite patch: [PATCH 3/3] Update MAINTAINERS for lg,sw49410
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250916080802.125-1-kernel@airkyi.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org:
 
-arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dtb: dp-con (dp-connector): type:0: 'full size' is not one of ['full-size', 'mini']
-	from schema $id: http://devicetree.org/schemas/display/connector/dp-connector.yaml#
+arch/arm64/boot/dts/qcom/sdm845-lg-judyp.dtb: displayport-controller@ae90000 (qcom,sdm845-dp): clocks: [[206, 0], [206, 28], [206, 32], [206, 34], [206, 37]] is too short
+	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
+arch/arm64/boot/dts/qcom/sdm845-lg-judyp.dtb: wifi@18800000 (qcom,wcn3990-wifi): 'qcom,snoc-host-cap-skip-quirk' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath10k.yaml#
+arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dtb: framebuffer@9d400000 (simple-framebuffer): 'fb-panel' does not match any of the regexes: '^[a-zA-Z0-9-]+-supply$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/simple-framebuffer.yaml#
+arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dtb: displayport-controller@ae90000 (qcom,sdm845-dp): clocks: [[209, 0], [209, 28], [209, 32], [209, 34], [209, 37]] is too short
+	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
+arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dtb: wifi@18800000 (qcom,wcn3990-wifi): 'qcom,snoc-host-cap-skip-quirk' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath10k.yaml#
 
 
 
