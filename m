@@ -1,267 +1,204 @@
-Return-Path: <linux-kernel+bounces-821119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3469B807A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:19:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22337B7FE32
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37160466313
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:19:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644B8580AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CEF335932;
-	Wed, 17 Sep 2025 15:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02942DC35A;
+	Wed, 17 Sep 2025 14:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WfX4KE76"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="fWVXhKSj"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010013.outbound.protection.outlook.com [52.101.84.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762D430506C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122341; cv=none; b=mzFeCrCItYTXKDC+CNrT/svwhTxfWJ0RXFPNmbvWz7zMC6MeWOG5ef+nA4F9G14c1icwEx/Dxaj9xF3ommACDbhDokEcatcl/OlT9SSYn/8Cv2aDRruFIvdABjKQS3mD57dNyUOpW652RAq2qF3+0Su15gLZ1sS9KCmVn45V33A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122341; c=relaxed/simple;
-	bh=7jPZ96BclSCEIxwrjZ4n9aZB42Mvnx+aGDoeaEHGo3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pLK+yTWr9+oXLAmhyrIbL+HuhgEEKhRijBDMmnVoLB1m2xIhTW9HxpuVK3GFDbiVldhAQmA1Vahu4NK2VqdpOIidts6I007Q7kqnjHmV1PliwQbMLK4Ve5i9tLhGii4KV0V29x7GUyvzr8U0qQVZwTzdQ8Gy3F0zoMQqjG5IUZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WfX4KE76; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758122338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Hy7kdzIRoahwzaXq+ZGvnPXEqK5VVBRIst3tKW3Ibxs=;
-	b=WfX4KE76zKuM5i2NUQrJiTpMmqfGB0/QRkGZ4jAveYCTh7XhIk+ebvPO3zcPefYIMjbdFs
-	IeP4Ra/1FZQ+7NFOPGJf4/dZYsWK2T478PrT0WUOkU5z5xkKjsGJO4UCEDQ/A8uaj107Fo
-	KauyGMtfNLr9y2s9HyRPl7PtKXqQXIU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-112-jy5N6E64PQaZXSfXOmtpLw-1; Wed, 17 Sep 2025 11:18:57 -0400
-X-MC-Unique: jy5N6E64PQaZXSfXOmtpLw-1
-X-Mimecast-MFC-AGG-ID: jy5N6E64PQaZXSfXOmtpLw_1758122336
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45f2b9b99f0so7225475e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:18:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758122336; x=1758727136;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hy7kdzIRoahwzaXq+ZGvnPXEqK5VVBRIst3tKW3Ibxs=;
-        b=VB332o5J8PHd+4oo8VF0gp9VBsvzLdqvNrSJyRX1jJf4O0fhg+QvXZQLOjnFivQOmQ
-         Ad36wfLzxjVoyWCIaX7obsoexAbsiCC7LkjyN1d7SLJhyAFe0IA95TqIxO74bTUf/P/Z
-         0Jrgp3BEUSudQ2hitJTrLHBTGjO0O5mk1Xa9R9SG4eZRB+VSfL9BjeKN9Ru2qxWGnPud
-         D67QFAlWT8LnkmWTPRZGdNI9IfE6YPojDkYV5+AYqZsD7RD71LionSlXGsQdXwhczQMi
-         RGGQ8Vr9LzNt2ZhIK5Sd8lEZoQgdzHp4+r6PPODnEeCu481aOF2tGfLxMTN9lZMt5kPt
-         VBfA==
-X-Forwarded-Encrypted: i=1; AJvYcCV31jTOGme1+mQD6Rs6H0GnvVoR+ZUc7tBZsYJiA+p9+ivA8dqy6dWH0gUqaQikuDlu81YM1LP8TpsaA28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRMAGqp9nlbfDJ3Ecdq5lurlwBRZqB5o+9lJ4rAsToixeQkVBU
-	WwHGbkCiqCYUhp0zzgGsCLf4RytJS9rom1SOD1HGlrJNDzYwBTxt1bdtUXNSbdzZIBrbNtLLDLR
-	VpKIQwasV3Hd4gtpcBh/G9QdWuSEqJrQ2QdWGZO5bojBpXKAgSB+trcaGN5v0A2GY7Q==
-X-Gm-Gg: ASbGncuVqEmB93tt0KfpCfVwU9A4dBmOCxVK4sJHXBcB3/intXTR/+13S9kaTmwt5EY
-	pWhG2Lulb4uLhEyEq9urfMBRJvMD8X3fQSh4MPy9SSwCqWAfFcGf24BMfeQH4oJ8b2ICxYwSR3G
-	48FNJ4ah3l1OgQqVChi8EzGO721iaE97gVMnHAcEji9X0IaxpNBZglRqfExjJpKNG5dN2OvfOE9
-	o9pxSHz3rZeOnd3wp2cR3p7QaX8SvZ9hd9JvJuO+K/KIbph/FUGBfU3Gnqdg15B31TXVnT3D6z1
-	tTZ9ejMVMHUlCak55ktDiTA0AkN/+diOX0YFDHWLOPXxoCJn1nCFtIzgVwiU1+U96volR8Qe/wL
-	/yIa8/NabEZHDFZho9Ig6XOvxUfr8iqlDqFyOJSyFb+Q0/ceE+cnlGedeSan/h28B
-X-Received: by 2002:a05:600c:c0c2:b0:45d:e201:1603 with SMTP id 5b1f17b1804b1-45ffbb87d0fmr44805965e9.15.1758122335859;
-        Wed, 17 Sep 2025 08:18:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZJXZpzuRjgrByrwR+JkhhVX9lJLsNt0iPyJ6yeH+tCAOWNZvmbwXLVLzskDHw5XXeFtjkaQ==
-X-Received: by 2002:a05:600c:c0c2:b0:45d:e201:1603 with SMTP id 5b1f17b1804b1-45ffbb87d0fmr44805575e9.15.1758122335350;
-        Wed, 17 Sep 2025 08:18:55 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f3211e8c7sm40537455e9.3.2025.09.17.08.18.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 08:18:52 -0700 (PDT)
-Message-ID: <7f4aa4c6-7b77-422b-9f7a-d01530c54bff@redhat.com>
-Date: Wed, 17 Sep 2025 17:18:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A7A28B51E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758118063; cv=fail; b=df2HMAoT8Mk4fHCYQIOfDBwIi0LNaif1Khexyyoh8nhoVTPOBK9QKwh8fuLd904pRNpSY17VSi1Kv3a63Spi2nbSxiFpmQ7vGGN1ydOXTI8UVATKtVP9ziRdgc7XWbQdCwB0zm6FieikvcYh+wR0gPHKeHffGDy3PiC//+Ok1AM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758118063; c=relaxed/simple;
+	bh=x/AVriynXZDmsxABAb1PLThcn9f0JsC7G4xD0chOZ9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gLQMcDGyZARHO0xILk2UnIXDPAxOPwuy8PF0Geh59STuZIYOR9oS4NcNJyKkyZ1SWeCv0gVnihHPpTwTH/yFKMxSfNp5UaEUG4bv067OBQOopo6o8lHdRIuOZ38suTZ97VS62ED11hyXj4XOpHXFYnvSU9VJtRQ4eiVe0MvBk5Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=fWVXhKSj; arc=fail smtp.client-ip=52.101.84.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mj0dnr9QdM49CDAyS9ARItjkOp4+lunlkQhkQ9LBRqAW8brZtNtZnStN9QUPIo2/wQYlco41IVjaXAVpnqIj34Vm88ckrKWBaaNjTF7CR+tjKeB1rduZXtoC5W6eiYucTvL6OBGYY1BKce7GkOhfVcShhALChDKAtFCapMbUDQrbdlK1i3mIg7Hr1mCTkhfLBERSckFbicDznYDafU4NsmJB9XHEVvdMRl71hVOB22OZZ7s9Lt/w7g117R3ZBG6ndjDxZpGvqQSu2Wr/u9VuRQouFNtJigVe+haedvM2OBblBblBMc1K8eWztrT2bHUdUdJnDgwgBKw2oDcnMtqQIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DVzTBm/tI9gVEFvDmpDxe/dtE35WzaS9lWXlcTQESCU=;
+ b=k2rAJwiMrdLS2tbzZ4UWUmO081NDCD+cQKvXDzyD5m53zwlpwEu5chrfgC7Ji+xTInu802N1xVUTBmg2M9H5H+CB7MOBGUUYbO1V9RyZuWj9Q5G2oQVjCIP/KZdkyErXJcEDnO4o3Nc2aSS6yPYclHw5KJCWjNJyTEZXv/3ujpdftY7HebMPcGUO4RlJrrE2S6uzzyIvAdPHKOROvrdKFkN3Jt2hWrs8vmh/88rc0op5xZkLKQpmDM0dV933XySaLRJzg712RSMAvgu58S5dRJpvtPEFkjSwj4zRFcJPNY3myMVY0eKJyID/5CaZX03DBcJTmHjSyJVLQEVUA+T+Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DVzTBm/tI9gVEFvDmpDxe/dtE35WzaS9lWXlcTQESCU=;
+ b=fWVXhKSjma8DIDu8AgpUH1OLtV8M30YNv0p9Ve09r0g/QxR8e3BhOPkmSibfL6umb1Jxl8+KRYOLf1ViIcDM9KlNLTiMmBCxV6ZkcrXfvVKZ9zaMx5yOlpG9Ebw6rKqf5QPj+RzjM71HBnazTY/8CwFBpPqVI5iADe1MEalJ4z0cHhQqJ+zvth4qNvh7Xbx8P/YZ5IvGf92pf5uKP1KXd6TH81+X9QCwQ6sFswu2mYjqwcfgZ7uy8JEe6RRrUOgmz/j4CRjK89lrZDTHw+U80cE8pIk4pBqw5EhNVvwn1kBDV2kDv504GJCnpFdBKSMe0cTtYpYkwuenRVS5jYorUg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by GV1PR04MB10656.eurprd04.prod.outlook.com (2603:10a6:150:20e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Wed, 17 Sep
+ 2025 14:07:37 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 14:07:37 +0000
+Date: Wed, 17 Sep 2025 23:19:15 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Harini T <harini.t@amd.com>
+Cc: jassisinghbrar@gmail.com, michal.simek@amd.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	git@amd.com
+Subject: Re: [PATCH 1/3] mailbox: zynqmp-ipi: Remove redundant
+ mbox_controller_unregister() call
+Message-ID: <20250917151915.GC28673@nxa18884-linux.ap.freescale.net>
+References: <20250822045732.1068103-1-harini.t@amd.com>
+ <20250822045732.1068103-2-harini.t@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822045732.1068103-2-harini.t@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2P153CA0035.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::14) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
-To: Eugen Hristev <eugen.hristev@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
- pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
- <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
- <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
- <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com> <87v7lh891c.ffs@tglx>
- <95ff36c2-284a-46ba-984b-a3286402ebf8@redhat.com>
- <24d6a51d-f5f8-44d7-94cb-58b71ebf473a@linaro.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <24d6a51d-f5f8-44d7-94cb-58b71ebf473a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV1PR04MB10656:EE_
+X-MS-Office365-Filtering-Correlation-Id: d8b45885-861f-45d3-220e-08ddf5f38e65
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|19092799006|366016|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NkPV8ZZkuEKg4DzQN3yDW3fxFH45x2XIC/pw2HUk+kUR6/gcOhcW9/i8nRW+?=
+ =?us-ascii?Q?Jt0i8QZW8I4EqpS56H7TOkNfYCPddVRNkuMQRimxAdu/C4CrNqmgvhSPWzJ9?=
+ =?us-ascii?Q?mrsnEmoEQ5O0AEdT8eTBhsVmWMfMoH5RvZ7J6gAqQCwk8iUHIjvM9zfyCgZX?=
+ =?us-ascii?Q?mS1TwvVbu+6bmv+vawzlZPF7WRg70B7XUgvB0dE4Dn6HO2TdGmFSQKKmrcmz?=
+ =?us-ascii?Q?3MZGyP9zN25urpAOfvLTrYV0ikR3jsO8SZxwGKM4/QCHXe4QoRvpOToic9ye?=
+ =?us-ascii?Q?FBK7QKcbY2ik6/d9IVGj55DBIv6OEztQVwv7f8i2jUlUo2AprLfCfrBq6exQ?=
+ =?us-ascii?Q?6swX94W3UZgwznYrCptfGjXZhxwDNR+g2OiSMYUohUP6D6lpNT07zs+aS61u?=
+ =?us-ascii?Q?mdauU16Ty2sxwLgVhzrcuniJ1ilS06S8vT16AFbrQasq6Vv+E/NMLOIykyP+?=
+ =?us-ascii?Q?kqXLBMzAXjXIY+vmoz5RcKJRRhFIj9XcZOcqNq5XGK0ptBJvyZXii699XIfl?=
+ =?us-ascii?Q?r79KBuoriEqqQURnbX2LXuSzw9MCKq+2aC5G8v6vb3CZktFy/fj6bC2i+Lge?=
+ =?us-ascii?Q?JnrgWZU89q1q3HLBY+QQkE4XX1tkQhPlbepMUXHkLpzEeOpznOOdGXhkdHX/?=
+ =?us-ascii?Q?KMB5EX61HZ30xNfSyhyNDDkUrzswLrYCGn/Wsm3AF/NA8I4tBKhBkCO1FkfW?=
+ =?us-ascii?Q?MdLgfS+2MxHa0GH6RQLtB+FhBePzu/VYTm6teeITkOOXKq1ckNHqjwDSzU+h?=
+ =?us-ascii?Q?gP0FlJvSKi1sXRueCOKKkx6w4Mm+AuDcStYojPJhiMovPgj7qabhqX8N8pky?=
+ =?us-ascii?Q?5Rg3rcBt9rkaiaQgnp4SK0qs/+/QQUikTBS4smj+blRsjqTFxodImaoHb9Ro?=
+ =?us-ascii?Q?u0ueeH4nRb5Tik59e+BYK1EFPoW3h5xkTLzY9TtmAjckyTec2CtW38m9SLvR?=
+ =?us-ascii?Q?2ZA2EckgtyyqYz7SZt+/dSP5xO+ZagUivrzzIlr5ofOUIjcz47AhUmQDsDfQ?=
+ =?us-ascii?Q?R7ZGGaNprANYO7HyeOVubws1nAAhxAI0zNE97t7JktokX0GTANuXu3iFQeLD?=
+ =?us-ascii?Q?1DeuAhKYkv7/M9RgXuYNei7aSyoZMSKa/0F9aZ/4NTuWLNFXOBgWXLOM8E7e?=
+ =?us-ascii?Q?T0H6Z2gtPdJSZqKCliFTdaXGb8s0Co3lI4GBPRCXwtCBnWXPc5Usmao2riKe?=
+ =?us-ascii?Q?9vBdTifS7kWVB9dWM1dmrgw0Ijln6CC779kR1fhtCkuJSxqUf8QwCUQyRrNn?=
+ =?us-ascii?Q?Bt/NM4qh/23cjxykWKItpO5yyMTYNcM7aNb2vgxywzS6kjw5+wKkZ+YVu3WI?=
+ =?us-ascii?Q?zlH5RZS7YHs5pIaL9unAHCyKidrf1aKcnL+ox/2GOBjyfv8z39FVrNs+czeR?=
+ =?us-ascii?Q?QtPagM6LcPRV+gJbQup64+f7Sycj9p/0jtGGkeHmUiTdRNyUN1H1/sDznhyR?=
+ =?us-ascii?Q?Qs+CK3pUrWE594+LUSqgNevN5wSUlp2/Dps3EHAH52o75mV/09Jn2Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(19092799006)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?G49Zj6ZXHxCpa0NDjWa/sGMelwMNmFZ0911R825tXWw3d4t+hoHQ+5a5ZKeH?=
+ =?us-ascii?Q?Af4v3zjJT0q6fMc5dE0Zj4BNzfSk+5UtkJNQ+FjtHeZTZttIqFoQ8ECDUGBK?=
+ =?us-ascii?Q?Me0EnVtaL2bIyDKZqn8h6AGG4aGQrTJ3lCSLfHKBAcVcgUE3n2uYunGbbVrG?=
+ =?us-ascii?Q?AFveXUgf4m0enEvblpbKwgVkQ8V9OEJYBF1SKVlDocHNVsQ0pk1UKMHHNHoC?=
+ =?us-ascii?Q?3EuUHTHTNmFzWo2RoMEEW+YWZ6jF2K2803mLgHSm7T70QbWVE09V2/bYcYFw?=
+ =?us-ascii?Q?XPNCU8sgZfYI4z7JsH+p1Mrlo3MaJ0eLUGPIHClFuE02jeahP14T2nhnKFdA?=
+ =?us-ascii?Q?wndJz9NSP4Xi2rU8vYgzoCu7HWnMC/6DBr6Uc8mpVpFs9mwfdeVmmD5Z8H9V?=
+ =?us-ascii?Q?Y1D5p/ssBNyZohrHKrVeqEQ7Vsc/ZbB/hgEL8cuV3jR7nfJ4/aJqxOKje6N2?=
+ =?us-ascii?Q?lYg3iPzsoHKB8Wcz7IornjKRgizX2WAI4pJULbt7x697/mwCa51ViCuk+U8t?=
+ =?us-ascii?Q?651jM899q2WORggxGLlpbpwxsngndtl/GEC62bOX4++BDujjESa8OU2evVXZ?=
+ =?us-ascii?Q?C6O2GoI5C3d8Tt/QcMbSU1FIFrydlkxoKhA2WpO5HyXRObpn5c/ySRuvOLmO?=
+ =?us-ascii?Q?CYGzGmKkI1+WplvqMAntzqJvZHRCTEpEms0+WOJ/kWkQldh2vaBX65nLnoQt?=
+ =?us-ascii?Q?Yhntnrfg6Ci2OSryzznqhg5ZtBKEuR8kLAgEblwOitncSqoPpGNCEfbHarNJ?=
+ =?us-ascii?Q?1sTMRglOWSTevPenjUoPQHW45Uj48MkYWNVC/jD51lDp/mHMaqBB+cY9NwJN?=
+ =?us-ascii?Q?fhtlNgvhXEeDcxOaldIscdsus0QbRnbsFWQmAPY5L//X5v5iQrPUYAXNz2Bg?=
+ =?us-ascii?Q?pScLzHh/xCBvsJ6HbkHw9pE4r1Dxt66exB7MRMN6c2lUe1pzx5mUuGL6tM/E?=
+ =?us-ascii?Q?IPJhZYCrLLts9X0tBLbHNjBxVV3ZKueinetJgDuNAGmtIkfHz9r0FpTn543/?=
+ =?us-ascii?Q?BS+od9fcIz5EhO4AVM2RTowsO5kC4aMT9KeP6FRL5z+O/j+F+/Us7TsOtivb?=
+ =?us-ascii?Q?6j+s6PMBrFqV7PdSNO4RMe6LaxF/rXBLdjgfHzUadcDCiQDwxBr6xKlJdWhU?=
+ =?us-ascii?Q?8DsOQ8y9ALfYmuPwPg+6T7rucx0rU/8/8LxLNzDRvdXdjJkYPiW3v/CF0hj4?=
+ =?us-ascii?Q?Kl2QtbsbachrM74OagB0ETsUDS0oRBnoQE0AVT4v41+7kRb7n31FRAzVrFDE?=
+ =?us-ascii?Q?XhPTsYskOpG7TM99P5H2q71j/37qbESzcA1v9CiW5hFxVkdEU/BroLgKsYiC?=
+ =?us-ascii?Q?fEXg+DHr/Bj5c2SfZsEdVrGj5TzBLP4T860pFRVbPM2BC/3qGwx0RBHtt5ZU?=
+ =?us-ascii?Q?5mOMJ9e+KqrZF/6BpQs+97jGNwllgUm39XeNotNheP87bc9lNNih2D7bvOoL?=
+ =?us-ascii?Q?Vd09TbUZrFb5h6bizKqwmeLPMGzKp9Spanj/7bNhQAp0PLCknwVaXgE2ZX4g?=
+ =?us-ascii?Q?XhhyErQ7CdmDob37wGSWU/IZIFLypnZMziu6y78gJX4sTBta67wwc1E6dy17?=
+ =?us-ascii?Q?W2qAKvfCod03vABKH/BBndJ75qdVuLknbGJh7Fea?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8b45885-861f-45d3-220e-08ddf5f38e65
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 14:07:37.4526
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NjMKT9X+SBJLAILWfbmwq5a63lOzi/6J6sAfmiVS8b6P7ZXOC/Ywi/r61aAse5bfy8X/OvgS+V33kazWQ23PZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10656
 
-On 17.09.25 17:02, Eugen Hristev wrote:
+On Fri, Aug 22, 2025 at 10:27:30AM +0530, Harini T wrote:
+>Remove redundant mbox_controller_unregister() call as
+>device_unregister() handles controller cleanup.
+>
+
+Should Fixes tag be added here?
+
+Not sure whether device_unregister to trigger devres managed
+mbox_controller_unregister would have any issue.
+
+>Signed-off-by: Harini T <harini.t@amd.com>
+>---
+> drivers/mailbox/zynqmp-ipi-mailbox.c | 7 ++-----
+> 1 file changed, 2 insertions(+), 5 deletions(-)
+>
+>diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+>index 0c143beaafda..bdcc6937ee30 100644
+>--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
+>+++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+>@@ -893,11 +893,8 @@ static void zynqmp_ipi_free_mboxes(struct zynqmp_ipi_pdata *pdata)
+> 	i = pdata->num_mboxes;
+> 	for (; i >= 0; i--) {
+> 		ipi_mbox = &pdata->ipi_mboxes[i];
+>-		if (ipi_mbox->dev.parent) {
+>-			mbox_controller_unregister(&ipi_mbox->mbox);
+>-			if (device_is_registered(&ipi_mbox->dev))
+>-				device_unregister(&ipi_mbox->dev);
+>-		}
+>+		if (device_is_registered(&ipi_mbox->dev))
+>+			device_unregister(&ipi_mbox->dev);
+
+The commit does not explain removing the check of ipi_mbox->dev.parent.
+But I think this change is valid.
+
+Regards
+Peng
+
+> 	}
+> }
 > 
-> 
-> On 9/17/25 17:46, David Hildenbrand wrote:
->> On 17.09.25 16:10, Thomas Gleixner wrote:
->>> On Wed, Sep 17 2025 at 09:16, David Hildenbrand wrote:
->>>> On 17.09.25 07:43, Eugen Hristev wrote:
->>>>> On 9/17/25 00:16, Thomas Gleixner wrote:
->>>>>> I pointed you to a solution for that and just because David does not
->>>>>> like it means that it's acceptable to fiddle in subsystems and expose
->>>>>> their carefully localized variables.
->>>>
->>>> It would have been great if we could have had that discussion in the
->>>> previous thread.
->>>
->>> Sorry. I was busy with other stuff and did not pay attention to that
->>> discussion.
->>
->> I understand, I'm busy with too much stuff such that sometimes it might
->> be good to interrupt me earlier: "David, nooo, you're all wrong"
->>
->>>
->>>> Some other subsystem wants to have access to this information. I agree
->>>> that exposing these variables as r/w globally is not ideal.
->>>
->>> It's a nono in this case. We had bugs (long ago) where people fiddled
->>> with this stuff (I assume accidentally for my mental sanity sake) and
->>> caused really nasty to debug issues. C is a horrible language to
->>> encapsulate stuff properly as we all know.
->>
->> Yeah, there is this ACCESS_PRIVATE stuff but it only works with structs
->> and relies on sparse IIRC.
->>
->>>
->>>> I raised the alternative of exposing areas or other information through
->>>> simple helper functions that kmemdump can just use to compose whatever
->>>> it needs to compose.
->>>>
->>>> Do we really need that .section thingy?
->>>
->>> The section thing is simple and straight forward as it just puts the
->>> annotated stuff into the section along with size and id and I definitely
->>> find that more palatable, than sprinkling random functions all over the
->>> place to register stuff.
->>>
->>> Sure, you can achieve the same thing with an accessor function. In case
->>> of nr_irqs there is already one: irq_get_nr_irqs(), but for places which
->>
->> Right, the challenge really is that we want the memory range covered by
->> that address, otherwise it would be easy.
->>
->>> do not expose the information already for real functional reasons adding
->>> such helpers just for this coredump muck is really worse than having a
->>> clearly descriptive and obvious annotation which results in the section
->>> build.
->>
->> Yeah, I'm mostly unhappy about the "#include <linux/kmemdump.h>" stuff.
->>
->> Guess it would all feel less "kmemdump" specific if we would just have a
->> generic way to tag/describe certain physical memory areas and kmemdump
->> would simply make use of that.
-> 
-> The idea was to make "kmemdump" exactly this generic way to tag/describe
-> the memory.
-
-That's probably where I got lost, after reading the cover letter 
-assuming that this is primarily to program kmemdump backends, which I 
-understood to just special hw/firmware areas, whereby kinfo acts as a 
-filter.
-
-> If we would call it differently , simply dump , would it be better ?
-> e.g. include linux/dump.h
-> and then DUMP(var, size) ?
-> 
-> could we call it maybe MARK ? or TAG ?
-> TAG_MEM(area, size)
-
-I'm wondering whether there could be any other user for this kind of 
-information.
-
-Like R/O access in a debug kernel to these areas, exporting the 
-ranges/names + easy read access to content through debugfs or something.
-
-Guess that partially falls under the "dump" category.
-
-Including that information in a vmcore info would probably allow to 
-quickly extract some information even without the debug symbols around 
-(I run into that every now and then).
-
-> 
-> this would go to a separate section called .tagged_memory.
-> 
-
-Maybe just "tagged_memory.h" or sth. like that? I'm bad at naming, so I 
-would let others make better suggestions.
-
-> Then anyone can walk through the section and collect the data.
-> 
-> I am just coming up with ideas here.
-> Could it be even part of mm.h instead of having a new header perhaps ?
-> Then we won't need to include one more.
-
-I don't really have something against a new include, just not one that 
-sounded like a very specific subsystem, not something more generic.
-
--- 
-Cheers
-
-David / dhildenb
-
+>-- 
+>2.43.0
+>
 
