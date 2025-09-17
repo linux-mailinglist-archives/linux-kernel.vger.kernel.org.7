@@ -1,196 +1,143 @@
-Return-Path: <linux-kernel+bounces-820712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602A9B7E7A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:49:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98489B7E7AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6831BC5775
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:48:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 770BE7B6DA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AE4323416;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0695323417;
 	Wed, 17 Sep 2025 12:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xl0pRa4B"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4qOjxg6y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IPLSbxpP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F9A2FBDFF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D35A3233F2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113251; cv=none; b=adV++IPuOg3OjC4h7KcBx/KT6ba1lDLnZLdex0KXcUdw4hmFRclMRAh8IO/FHJgehdj2QqY/y+wtqQOkAfQYO+U63VmjxW9BZ6Sl7Jj0f5/9J5jFO1URqDl9DiKW5amlL9PkBxpATqA0Md3bBpczdTb+mcnLQEB7CX4dFSwZil4=
+	t=1758113251; cv=none; b=jdQLJIyAqmwcZp4FNqZKJGLFtacMqMNHnI4eXbYm7xEk4qyOsIARuyd4m5x6P0ar942qQ4uBG1g5blqzm5cQGkWtX2NVaso3SJ8cnlw0duowtA9nGYB26G68DnHd2X1sOCNlTX6xZbmBdxI28OK9xwGro1VVMYsZHlNooNNPAdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758113251; c=relaxed/simple;
-	bh=OpFjrz8zqyAOuDDEavL83RJ8Trpvvw84g1TSZSRsq/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K28jvXqpd5R58ugRQcv+MNhZdWraaT1ZgVUf45ES5tYnstzyhg0M13wowPvkxdOFHGaHi/QSv3mAI4LZJt0ouLDU/fsBHiFuYWY1P9yx0XBa+7m2n9c1O2NUz7oDA8093szTxR796spNZ07/Iwa9sww3L4Ghv3DfLOpDH1BQlbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xl0pRa4B; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b0787fc3008so937263966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758113246; x=1758718046; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpFjrz8zqyAOuDDEavL83RJ8Trpvvw84g1TSZSRsq/o=;
-        b=xl0pRa4BIirS0C0dFTJ/dW+xk8U5t6HlNa1G/ySOuv+k0h/p7O4dLGjFTF/MGExHAW
-         TPzml1vDfNLBlCqwa/UBJwzmgP2Sdy83nOUA8zBHQtqIazy0D2PaM2A3RPhLlXcr/BKr
-         DG2HJ6bFsq2b6395UWCEjRYKyqmw0xFNcBzKYnfxRYQbd0uyglQZ98AtCHVCL1qQm3gz
-         tiTvJPReFqvyGJKGAOmnPEd4bnpdA+9+pFXcclg3XCyYKXe+SiAH4Jnl5J28WPE5DEUs
-         n0IPqIvc4z9rDp835TH3OafrV66TqAtQBZeChXtqORbqLLoDXt4HWcy1vXkfPF6NX6fh
-         lpbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758113246; x=1758718046;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OpFjrz8zqyAOuDDEavL83RJ8Trpvvw84g1TSZSRsq/o=;
-        b=PJHxO3TLGHiBXywHmkBYiAElArPqy6RFWXJC9oSmI9wmbyCFrsUw5EP72bxKTgawiR
-         RTVuwTE/DysaulDObD1OZyAJVBJNp4fdipGvHOKfhZAmlw7YF/KmHuQgbte19Or3aXfD
-         yKANUQYp1sx0NKoCGEyS9eHJoyLOGWxr4d9woWK4q+vg6RJ0BeIO3/7+4o+sy53KkuOB
-         DS0K/lm/2rn07AHzYd7/QyAzKn2I05iBcG+sFfgq8/aCya3AXxCOb+Kfjy0yB/R5mdM2
-         qgIPf4Zo0ojj1mrYW06+2o7uwRM+qlOXAuPSFQaktnKP3uMV7GUrZs6N/JD7Fh3qx041
-         pndA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ6K9kaK2RuPQZBaTiSe05l0rYQHBrGrmsh/EBQ1mpsXfrUVNsSa8PAdxatP3r4R/H3KFLAShM5UwXVac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQotGKCQ5GGyX0E09lZIJ1tOHJu7IP+G1jMa/HfsQlth5t2718
-	4W5M/sCM6d5A+9nENNQ+DxzGBpuJregLu03+6NEb3RvnF/k2wXuEJiHbmvY4v+7In1o=
-X-Gm-Gg: ASbGnctkl/EcIKdXOcMkKyjOwei68ghdiCiU3bZKE8T4CJLyHhPu8UuqK8TckQSKMp8
-	KLrfwTQIOjQEwsbotJdZBGxq6pU+p223/NyOs150+j6UPTQcxG2q5rzIA95tzrIbhlDMUx577qd
-	+vMU8Wg/6+kBsDbEjGE0MEG4pxOKtlKt2IAUme4XlE5btRPtYi/YMU/0uGFnKn54mprG47DhQIe
-	1jX/MzjJPpn4+aZ3MN9CcaIcLMkivi7/s3Paf1Xy498wD0bZyf9tCskmaU3J2ZSTL2Hm6EeuN0v
-	rsgqOBE6p1RqjyURYZg4vmalXqRd7/oRWdM7CHF70hP8GtUpT9u1F2pN5aaqSn1uQ7h9mSBTT+Y
-	5aB4ASaQAPYtWH09imy0WoLpr97M=
-X-Google-Smtp-Source: AGHT+IHgG+feaLFS5lYK61xigE0As4f8SIEZukBQyUiZyyvMqVLGwJC7y1Bl5VWs3fMe9SZIDZZJTw==
-X-Received: by 2002:a17:906:f591:b0:b07:c905:af33 with SMTP id a640c23a62f3a-b1bc02f669dmr228527266b.65.1758113246285;
-        Wed, 17 Sep 2025 05:47:26 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b30da289sm1339567666b.17.2025.09.17.05.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 05:47:25 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:47:22 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org, 
-	krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
-	kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-Message-ID: <er7dkmzutsu3ooegeihjzngi6l3hol5iaohecr3n5bolfse3tj@xeedlx2utwym>
-References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
- <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
- <t3uk3k4h3l53yajoe3xog2njmdn3jhkmdphv3c4wnpvcqniz4n@opgigzazycot>
- <aMlnp4x-1MUoModr@smile.fi.intel.com>
- <mknxgesog6aghc6cjzm63g63zqbqvysxf6ktmnbrbtafervveg@uoiohk3yclso>
- <CAHp75Vf7KrsN7Ec9zOvJoRuKvkbrJ5sMv7pVv6+88tPX-j_9ZA@mail.gmail.com>
+	bh=WffBdoWpcz5PkzF8NZicaXUSgruJ1zcsmHD6nDlP4Fw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CmyL8Fxj3DLEs/Eymyd6O6VjGJU2rsrcIqLoN4+rVrG/S6IqCr1TjAek5xhjMfXU0WKZqe5MlrGA6zBXy8//KL0ug7xVkLDlJUpTS5pP+/uSVhfSbipkSUlnCefni8xFrwEpmddebeAWGg4BVzFRNcDXzG/l2gNcGc1ojPjISio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4qOjxg6y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IPLSbxpP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758113246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1DuNpjx2WI4QDN0equ+r1Kgbp0viQJM///xaQ5DpHfM=;
+	b=4qOjxg6ybCilTD7GsMqd5OKQoSHa5fXDUR4rsxXWyKHrEEozUIIKeqyr+wMbLuP0gtmYL/
+	2YROpCtx2ym2lp0ydekFWHLQNfd75uQt0nSVFeT/+UkKyKTNVWhnObT5VM7lyc94jciJR8
+	+a3X4I1ohcxxj7LDB+cRNQTZV9JtfuJV5usMQdZgO7gzInm7UzyteKhwLz1xOncqRBl1Ah
+	ADNKZqbzHtAGf5lauB5gynWNGb6Yv/SjUiqrf0XZuvgGWuziFrJ4fhAH1f+y0TVT2wPuaM
+	zJTrJn9wA0J06Z7MQPCux2+vK5dTa3Cc8Spf9ZiFlmtdK33iafQFGVFkIq00JQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758113246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1DuNpjx2WI4QDN0equ+r1Kgbp0viQJM///xaQ5DpHfM=;
+	b=IPLSbxpPfgPdL8B/3mC5XaKGk8pZM3T9rOLu9vWanDtFbVSCR8S3xpLs7YBKC53U1tjsQB
+	LoBwB2BZBwNxT3Cw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Breno Leitao <leitao@debian.org>, Mike Galbraith
+ <efault@gmx.de>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v1 1/1] printk: nbcon: Allow unsafe
+ write_atomic() for panic
+In-Reply-To: <aMl8xX9QCM9jslLH@pathway.suse.cz>
+References: <20250912121852.2666874-1-john.ogness@linutronix.de>
+ <20250912121852.2666874-2-john.ogness@linutronix.de>
+ <aMl8xX9QCM9jslLH@pathway.suse.cz>
+Date: Wed, 17 Sep 2025 14:53:26 +0206
+Message-ID: <848qidw8ip.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ah6qgcyytq6i6rrs"
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vf7KrsN7Ec9zOvJoRuKvkbrJ5sMv7pVv6+88tPX-j_9ZA@mail.gmail.com>
+Content-Type: text/plain
 
+On 2025-09-16, Petr Mladek <pmladek@suse.com> wrote:
+>> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+>> index 646801813415..8c2966b85ac3 100644
+>> --- a/kernel/printk/nbcon.c
+>> +++ b/kernel/printk/nbcon.c
+>> @@ -972,14 +972,18 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
+>>  	/*
+>>  	 * This function should never be called for consoles that have not
+>>  	 * implemented the necessary callback for writing: i.e. legacy
+>> -	 * consoles and, when atomic, nbcon consoles with no write_atomic().
+>> +	 * consoles and, when atomic, nbcon consoles with no write_atomic()
+>> +	 * or an unsafe write_atomic() without allowing unsafe takeovers.
+>>  	 * Handle it as if ownership was lost and try to continue.
+>>  	 *
+>>  	 * Note that for nbcon consoles the write_thread() callback is
+>>  	 * mandatory and was already checked in nbcon_alloc().
+>>  	 */
+>> -	if (WARN_ON_ONCE((use_atomic && !con->write_atomic) ||
+>> -			 !(console_srcu_read_flags(con) & CON_NBCON))) {
+>> +	if (WARN_ON_ONCE(!(console_srcu_read_flags(con) & CON_NBCON) ||
+>> +			 (use_atomic &&
+>> +			  (!con->write_atomic ||
+>> +			   (!ctxt->allow_unsafe_takeover &&
+>> +			    (console_srcu_read_flags(con) & CON_NBCON_ATOMIC_UNSAFE)))))) {
+>
+> The condition seems to be correct. But it is evil. I wonder whether
+> it would make sense to replace this with:
+>
+> 	flags = console_srcu_read_flags(con);
+>
+> 	if (WARN_ON_ONCE(!(flags & CON_NBCON) ||
+> 			 !console_is_usable(con, flags, use_atomic, ctxt->allow_unsafe_takeover))) {
+>
+>
+> Note that I have added the 4th parameter intentionally, see below.
 
---ah6qgcyytq6i6rrs
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-MIME-Version: 1.0
+...
 
-Hello Andy,
+> It would be more reliable when the check was integrated into
+> console_is_usable(). I guess that you did not do it because
+> it added another parameter...
 
-On Tue, Sep 16, 2025 at 07:20:20PM +0300, Andy Shevchenko wrote:
-> On Tue, Sep 16, 2025 at 6:11=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@baylibre.com> wrote:
-> > On Tue, Sep 16, 2025 at 04:35:35PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Sep 16, 2025 at 03:24:56PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > > > On Tue, Sep 16, 2025 at 10:44:40AM +0200, AngeloGioacchino Del Regn=
-o wrote:
->=20
-> ...
->=20
-> > > > > +MODULE_IMPORT_NS("SPMI");
-> > > >
-> > > > If it's exactly the files that #include <linux/spmi.h> should have =
-that
-> > > > namespace import, you can put the MODULE_IMPORT_NS into that header.
-> > >
-> > > Which makes anyone to import namespace even if they just want to use =
-some types
-> > > out of the header.
-> >
-> > Notice that I carefully formulated my suggestion to cope for this case.
->=20
-> And I carefully answered.
+Not all console_is_usable() call sites have a printing context. That is
+why I only added the checks only to the actual ->write_atomic() paths
+that were possible via nbcon_atomic_flush_unsafe().
 
-I tend to disagree. If that anyone only wants some type from the header
-but not the namespace, the if part of my statement isn't given any more.
-Still your reply felt like objection while logically it's not.
+> Or maybe, we could define @allow_unsafe_takeover via a global variable,
+> e.g. panic_nbcon_allow_unsafe_takeover. And it might be valid
+> only on the panic CPU, e.g.
+>
+> static inline
+> bool nbcon_allow_unsafe_takeover(void)
+> {
+> 	return panic_on_this_cpu() && panic_nbcon_allow_unsafe_takeover;
+> }
+>
+> It is a kind of hack. But it might be better than the 4th parameter.
+> And it would simplify few other APIs.
 
-> Your proposal won't prevent _other_ files to
-> use the same header in the future without needing a namespace to be
-> imported.
+After weighing the pros/cons I think that a global variable makes the
+most sense. It will simplify internal APIs and provide all
+console_is_usable() users a correct value. And the end result is no
+different than what we do now.
 
-Oh yes. But that's true for every change: If you change it further you
-have to cope for what is already there.
+We could also keep its setting inside nbcon_atomic_flush_unsafe() so
+that the variable remains a printk-internal variable.
 
-> > > This is not good solution generally speaking. Also this will
-> > > diminish one of the purposes of _NS variants of MODULE*/EXPORT*, i.e.=
- make it
-> > > invisible that some of the code may become an abuser of the API just =
-by someone
-> > > include the header (for a reason or by a mistake).
-> >
-> > Yeah, opinions differ. In my eyes it's quite elegant.
->=20
-> It's not a pure opinion,
-
-That's your opinion :-)
-
-> it has a technical background that I
-> explained. The explicit usage of MODULE_IMPORT_NS() is better than
-> some header somewhere that might even be included by another and be
-> proxied to the code that doesn't need / want to have this namespace to
-> be present. Puting MODULE_IMPORT_NS() into a _header_ is a minefield
-> for the future.
-
-Well, for a deliberate abuser the hurdle to have to add the explicit
-MODULE_IMPORT_NS() isn't that big. And a mistaken abuser won't explode,
-just generate a few bytes overhead that can be fixed when noticed.
-
-In my opinion that is an ok cost for the added elegance.
-
-Best regards
-Uwe
-
---ah6qgcyytq6i6rrs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjKrdcACgkQj4D7WH0S
-/k5EEgf8CdFx6+6iEV1AE4GeSJAKaBL6T9A2o7N08nLq8lg9b0873yxBoHXcU5fC
-aJjF55sEwR98xGntE7kk39pH49RCG8ugwvBfJUnq75LJiKU4gyhg9P3OPFnLShiJ
-I6m5bqGNDlAwq3dSuYSiDSr/4wi/Rq4mPKqRZoCT0WHQz9CWes6CdQPuRMSKYeJF
-5VvswQqZGx5s73s0oi9UinWZ1/t/tX8KTjVeEgkmosNDtXb8rSwQbmfIUqnuCv0m
-ZjvuFwKtei8Q90Ro1LSW+QP0R1bN1ydWluw6cGH65qE7Yqpb/P49Yupan3C0YEsr
-nJJjRh4HIIADYdzeEZWvvrOcN8LC8Q==
-=NvWc
------END PGP SIGNATURE-----
-
---ah6qgcyytq6i6rrs--
+John
 
