@@ -1,80 +1,117 @@
-Return-Path: <linux-kernel+bounces-821617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE465B81BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:20:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C8BB81BFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD711C2612A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC9814A1C27
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B93D2C15AA;
-	Wed, 17 Sep 2025 20:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDAE2C1583;
+	Wed, 17 Sep 2025 20:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="k1y4C/2k"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIh4oIWx"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3748F27E040;
-	Wed, 17 Sep 2025 20:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BF434BA47
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758140439; cv=none; b=aZ1h1O/FGDAfiGLx9bidvO4gGPqSvvVb3wibRMpbJjJVF2yT+ftRVEsYMWcl/4Al238nukkqPg8Kqiu1JCWg1ytUVn6weHfmYYZybhJ9siF6Ex64ZGjcqhaHMxjHFpoupyFESXnC2pU8TpCKNeWmSwuaYCndcjIyCM+JRMZUKj4=
+	t=1758140711; cv=none; b=DkYI2LL1D08AsImLOvRBaDsuDUdWkazoOceBFsOMD8j8F79bfHYU70gpBVNQs5qpKQsGgNjA+VhMUIrnweS1jNk2NCcihNADDLvX1sTvVRdz4bp6IsQak98Swux8tvKX0aq5L8+JEBE/FJ9bqVJpD/FL8UA8x5Ulh973ELSBlZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758140439; c=relaxed/simple;
-	bh=glhqlOnfKMnauJ8Fygiqi0Dw8+zleynbR5MdeN9v1kU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NyxVuab4NGlSq7ghSghiJzRgIQ0W8Oz3mZR18yuLN1pP0HzFQTzSFoqdYrAWm/9hfPKqWgSaAZKZhfuKRI9Cw5kUng6ISUnWEpVstTiEVX4McmCag/Jox997QjZT+ewh9i5YC0MHuLgCEAemgO8GZPS3oY5rmkGgNg+42Vn7MII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=k1y4C/2k; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O7lufThkntzMoSvlQD132Nedr3MEU/c4BaRfi31q/AM=; b=k1y4C/2kTJ1GFD8XbaylSvuocS
-	T91Ow2UGAym3pQz7E2dxhlmTWZlkqOgeIkv4N5zis8BbTvXlCMzlWx6OBqv1xmnLEzyWtTIWFUOC5
-	hsO3h3CMGyOAQer635CaY4Z7UHViJNMk79nMVQoMj8A4qrMJH5EkZ5xU180GVBtkO7jwfKah+G0+4
-	KMWCqmBMl6Ywn+e+Rt2kZ4ZwfjdRwSc4NMB4RMpcuLDikYa1vlZc/11gBh2Kd0gFeUehApFVMdEEL
-	Rrjw91LfAMOba8IbOBnr3Cwq/hItSnHUMtcoFs8O7YuxXeHYqyIDzApo0QySCgDfHmmKqKe9IE14E
-	Q4fnMoOg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uyydl-00000007gRK-1k57;
-	Wed, 17 Sep 2025 20:20:33 +0000
-Date: Wed, 17 Sep 2025 21:20:33 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com,
-	amarkuze@redhat.com, ceph-devel@vger.kernel.org,
-	netfs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls
- asynchronous
-Message-ID: <20250917202033.GY39973@ZenIV>
-References: <20250917135907.2218073-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1758140711; c=relaxed/simple;
+	bh=7dc/T3NiAPYzmFFFppCpGvV8e6oL7rv+p6bbY4Wwh64=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gV15xUAFtRPxqPhYmR9bTQ3EjnszwMYrrOaxx2DmwSyA2+SFlWsLR0765FdCPc08+FxoHKqQ/C1YFbHs5NgEObHLP9L/qvN3QsUrxFMy0Lv6/r75YHg0RRcHw1R1cW9UFu3c3EArvKzPMNb7rNc7SiJwyszn7kSBq7bewMiyIP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KIh4oIWx; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-61e6ee53d2dso70187eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:25:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758140709; x=1758745509; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7dc/T3NiAPYzmFFFppCpGvV8e6oL7rv+p6bbY4Wwh64=;
+        b=KIh4oIWxmqpI+L8QKpmBLPbyMWGZ8UR3nUnENDJG+RP5tFgP4F0bsstTpwgszAtka8
+         Gzu/iBkih0j4IDx/qWS3asDPzzmvHcfXl8KD/MrVFMNW6wCKhOmInhH7+PpTn9Hf342T
+         oXMG8u9ZVoV6CU32xCnEUkg6HGxl505GM8OiYIRXuuasvlRIXCyE9hxCy9XWzwqTs2DG
+         +eyI+JNY540ZcWoogv+CeOzATDGKZEIgtz2V19kYRJDuNSSfbEj2/5DyyMP3Zg2aKVru
+         uvVrqQ5TxAZMxHI0KuW8INt9Zoy07aqeIoQvfv7nvs8PUlK+2WjpfaFVhtkSlsVX9wMA
+         j2uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758140709; x=1758745509;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7dc/T3NiAPYzmFFFppCpGvV8e6oL7rv+p6bbY4Wwh64=;
+        b=uB+BUb4nwSIH4QA6vQXN5h86O171oY96/OlQnrS3dmKEMCVf8oLuwsrRpZqqy88EHM
+         yBnQY+buHEz5LAPhCdDfXHM6RR3iLPaMGKA3VnVpu4bMmfHQN5YmleT/FKDLsvYCjgcK
+         CT1AJEEqSURjSIWR+mVpjY6xvac0HawznBeSbDCLiPm7q4iBVFDuPFUSPKmLq1Sn7J98
+         mR9jeExD1K+87ZKxErmjiSL0hPLYiHDdjyIsdK9IVQJgaNxumRkpuNStbLrX4XrmJYyv
+         Sk+cV8J75f9/44pf61LuAKVG/349IjHKwnktOyW+Kjtl1dyLee3QicmsSxuaRug7lLuy
+         2JCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRTtHwi1tig8fhmfa9d5sU30dV5WMIgPyBk31AYgP0ET+u7WTfAcoj9V17Eoh5+NtiLUnEI69xuaJV2S0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQIGfJfgT0fQY3P11Ddul1ffWQUpn5HV3GN0NUC5Zj9qCJupiz
+	7cXlW62QekB2TWf8CLPlZBHaUoE4CngXAzz7pfA9Rgo/YbUyrF9xHc1N
+X-Gm-Gg: ASbGnctS4tJHmgRvbF2Qx8JO1XEZXZfPb+JFJX6Gn09Tj1T4XfWcBBuuCT4AtF0IXw8
+	Rq5iutIpW0a0QYIIs0OlPmlMpQARvUmQxHtMEWs3vqAob3DwWypbUVLzrDuONUG7G4fSQngtHx2
+	gz7jBK4e81FNtJdImOh9fnsZNyV1u/CCicHNpqj5oevMNO91WBJetAhhtPYzfgH1N9OdrAQ/0gF
+	s9gIIaxnZYbjwMqA7UMwnEZZD8IY+eVlncJpfAJ7xPjSQp+aXCi3FxFRRWgLyGpIt8sRkiAjDkJ
+	lD/lEUtlZJBPXSBLlLRPAlyFrmkzhTTiNihy7iHtQNIwsPvPwqr8d4LyBNk7PZ9QkbaZOqGNm1V
+	ipeV3KtHCaIBeFY7PqgeXIWX37oLkJALduBjOYCXWPVOsTIcIdFnfvBmOy6Rz3J98/bH6jZkXzY
+	6HKihpN7yRi1jbObMW4vJaC0OGFE7OGn6SbppJLUphO69oGXkMqmQqDg==
+X-Google-Smtp-Source: AGHT+IGhOKVNgPbUMi5QcAEGdZZUFZp3baLhtVrdFIanYhMPSKuTqGIV0Rw8Y8CUPJ7y9QLOU5wEkQ==
+X-Received: by 2002:a05:6808:4f62:b0:43d:20c9:9783 with SMTP id 5614622812f47-43d50d83b3amr1772003b6e.40.1758140709345;
+        Wed, 17 Sep 2025 13:25:09 -0700 (PDT)
+Received: from [10.0.11.20] (57-132-132-155.dyn.grandenetworks.net. [57.132.132.155])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-43d5c6c7532sm101903b6e.12.2025.09.17.13.25.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 13:25:08 -0700 (PDT)
+Message-ID: <caa08e5b15bc35b9f3c24f679c62ded1e8e58925.camel@gmail.com>
+Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
+From: brian.scott.sampson@gmail.com
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: christian@heusel.eu, davem@davemloft.net, difrost.kernel@gmail.com, 
+	dnaim@cachyos.org, edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	kuni1840@gmail.com, linux-kernel@vger.kernel.org,
+ mario.limonciello@amd.com, 	netdev@vger.kernel.org, pabeni@redhat.com,
+ regressions@lists.linux.dev
+Date: Wed, 17 Sep 2025 15:25:07 -0500
+In-Reply-To: <20250917184307.999737-1-kuniyu@google.com>
+References: <d994dd8855c3977190b23acbe643c536deb3af71.camel@gmail.com>
+		 <20250917184307.999737-1-kuniyu@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917135907.2218073-1-max.kellermann@ionos.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 17, 2025 at 03:59:07PM +0200, Max Kellermann wrote:
+> Thanks for testing the painful scenario.
+>=20
+> Could you apply this on top of the previous diff and give it
+> another shot ?
+>=20
+> I think the application hit a race similar to one in 43fb2b30eea7.
+Just tested again with latest mainline, but no change. Once suspended,
+keyboard becomes inactive and no longer accepts any input, so no way to
+switch to tty to view dmesg. The only way to move forward after
+suspending is holding down power to hard shutdown, then power back on.
+I tried enabling persistence in the systemd journal, then checking
+journalctl -k -b -1, but nothing is recorded from dmesg after the
+suspend.=20
 
-> After advice from Mateusz Guzik, I decided to do the latter.  The
-> implementation is simple because it piggybacks on the existing
-> work_struct for ceph_queue_inode_work() - ceph_inode_work() calls
-> iput() at the end which means we can donate the last reference to it.
-> 
-> This patch adds ceph_iput_async() and converts lots of iput() calls to
-> it - at least those that may come through writeback and the messenger.
 
-What would force those delayed calls through at fs shutdown time?
+
+--=20
+ Brian Sampson <brian.scott.sampson@gmail.com>
 
