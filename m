@@ -1,316 +1,201 @@
-Return-Path: <linux-kernel+bounces-821604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE73CB81B7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:07:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF190B81B8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785F13ACABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613A13BAD27
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A55272803;
-	Wed, 17 Sep 2025 20:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2104271468;
+	Wed, 17 Sep 2025 20:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzJBJu0s"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G8E/21lB"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010000.outbound.protection.outlook.com [40.93.198.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97AC26E16A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758139619; cv=none; b=uZX8XEZqBNZLjlggtjgcQV5oFtoFZCV9DcNxDbFDmYgcUKpyd7qEVPCekz4KcqWbZHrb/NFR+cN+IEKnyflSXd7Ig//lUKHjwRy7e7qP4d9dU6p4vGPCX1GU30GaqFXKuhpQe4fIjwVGO5dg/xS/d8LlVZjIpqWo2/IsrJypJSE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758139619; c=relaxed/simple;
-	bh=uk0f/jb3Tj9XsJt8rx5PWMAF8eB/0DbZGV6iarNBAyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMRAEAWOz9VVceWPBDheoPt01yVGiSY7IFrGPyCSZWWq1bCHVvEwU28MJPBzy0ttRbAkQUlwBY/uYkG6s7pknhgCSNDcit5v8c/o0s2OOVknSjGMKikDLl2O2UyTNYzf/PSNRUx31yiN9+9e9HAOMYw8FE1vS/P7wOGpabVM9Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BzJBJu0s; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b5500891f00so53970a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758139617; x=1758744417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAoo4cL1dIYweQDzrk/O9/maigv0J12ua5s1T9IZZIQ=;
-        b=BzJBJu0sl7Ot/aa/y4ipoWenR7W1XYwuHfYqZRntlmHYFhwX1d1n5ISbGLOWg6MV9J
-         ILKXZL/dPEKBh6CN5osdjky9h7ZpWdH2CPtjJu29hjBfa9FjlFWneM3HN2jGlDB2lwQI
-         n6DfCO7u/99Od3MOivDB5HvXA58ZJahlptoVCxXm++yAb0A5jWNiity/l1nqYd+pL0rO
-         dhrYmt0yX+s70ypiurlJvni+34oWFTJpXZ16Pv64CMWx5aLkZL434OnfD4Acb/3j+c9+
-         RMP1bBIcny77PNWmtMUbinZfpMaU54hdMc7w3Q0dorKq8bLqF3KEVanjvMPRSXPjf/aA
-         smwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758139617; x=1758744417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nAoo4cL1dIYweQDzrk/O9/maigv0J12ua5s1T9IZZIQ=;
-        b=GgUfxGjIlyk45ZsmaogBrf5/0jpDJfjFCo+CjIK9Cja/+y/qhxC0KH/0GGIMsGh5Pu
-         0nOwqdNeuoiz+cbyor6J9h9EPucqGxKW1YGezge06Bq6UhW7+Y2KrErEfCbd7FdIugI7
-         8jBcIvUHdhdfsItOLP4oRpZTG23fuMBw57wFIhR1zSgqcZ023ZahVqk5AT8yCYvlmvTe
-         QYYvgyHFeDwEie8F0A6Saf3G+eZcI6k8HVOGAzhAUYXwBBpOsg0h59Nraz62xgz0Oj/e
-         wXHeIv7dsdVFT7SKH6nvxa2p71k21Z2xIZBU5deG6Pdlkq+aBhCz2SnliLAAyf/pbq9K
-         TM8g==
-X-Forwarded-Encrypted: i=1; AJvYcCX/wPru5AnOk5kFyzMNx2PS4oqQgt21bm35XjxNrsIAcVVtwcoi1LoZH1kxo5WKVekVPyrdJ85R0I84oGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrc6+tGQsEIUnz7lPwXbP+mHyR2p3hBk1NLv7gA0PbEZZe3cSe
-	rM4a9sVk6SPwkhNEgK1k6jn8ntAATxlzwz/l5GzLA1aH4hr5sDt+ZvED
-X-Gm-Gg: ASbGnctvQfLWY2U8vhy65xLZ7XmAN1qboRoMXlq4hMVvVR5TLuHnfK0ibgsMy1SpJxe
-	XWXnURu1FixCY+GmKKxcv8AgVa5jh4EFEbQhkc55OnMKx/8lphJq46v2jjTBybNaOWNECa+sSag
-	u78FQOw48BCgzcIcL1NaF1SDqhv2vmdJ6TjQiYcaNeB5rIcpAUcwKzVevO/rOzd/th/irT2odpY
-	jEReecYBfkYLPIOHjKUsLViQ8sF/d9GWK9hhulMqMxBAwiHS8Gunw7pmluxNZBSApMsvoZJZV72
-	UREqxX49tLzBYVIW8RsdVh/uv9Ma8k+LAQYslGYFyDtof5S2NnUuBHA3IBYjDCI/z386E4vNjPl
-	8E3qbDMZRju5hqNEK6xIOr5YT9BdRAxq5c5grqf4ZOQ==
-X-Google-Smtp-Source: AGHT+IH4ljt2vti7NSBWoLRl1Y3YBR7ak2BF6N3DsrRX2rCMF4AUdMIoGbFRGc1NosrFKmMz+WdEHw==
-X-Received: by 2002:a17:903:2c7:b0:264:567b:dd92 with SMTP id d9443c01a7336-26813e02d08mr43177195ad.52.1758139616771;
-        Wed, 17 Sep 2025 13:06:56 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:c3d9:b11c:3856:2d3a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698035cd39sm3762225ad.146.2025.09.17.13.06.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 13:06:56 -0700 (PDT)
-Date: Wed, 17 Sep 2025 13:06:53 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] Input: s6sa552 - add a driver for the Samsung
- A552 touchscreen controller
-Message-ID: <zh2cvvhvdklwnrnhmzsgajk5ryk7gwd5sayde656ddysi53d7b@frw2ph3opmoe>
-References: <20250914134458.2624176-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914134458.2624176-3-ivo.ivanov.ivanov1@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3C61E4BE;
+	Wed, 17 Sep 2025 20:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758139716; cv=fail; b=lGbdyGZNOa6dVTRwoxOhdWjkg1NSGTQ4hYHOPA0I8jL3VLt+hcomvYf0w0E0zx/qTKCad2T8j850SjMFlfW6s3w799VZuu+km67qcGjoaKisGlw6ZcMhy/9Rrwt4YAzs0oyiEHz/MHzZFv6RfdxO4adUvtDFM1eBG2OD6D3F/Q0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758139716; c=relaxed/simple;
+	bh=1NDJejMN/EdupTkGF7onrNOlXOJQ2Sl5IxQd3b/J8aY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=ea/oZWjrHMjg7wAsqG19r0ibFiCmM2FaJCP69hG65MK17E1ZlKMRlSJR9ztjqdkgjh306OLioqQpKy3hFHea/ncS56F4gHqtFEIGMMfd9SNaSwvgyHewYHL1K7Gef6d7Y2cd1TqWD5mxPZH7rj9CfnlfZtC0htI4HBMSUROkqfQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G8E/21lB; arc=fail smtp.client-ip=40.93.198.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ImUuBw2YvcJBg/CFj7qT4kJzxe5KBR4Jt+S930Q1fQGOtP615tKSaD15VOaOYCzM2//5y4lZhRf80ElNvtsld7pugk+yhw0PiudJmjRAK0DP7Paa6ZB3HmolYSTPLiy0x5oclaXAr9gEFHgE+F8V1nqbyrWB3CatwanbIjpgz6jdU/RO921h60oHHOfz9nYWkD6aKu9RUYU47C3u5k0Ov8ITwfcm4CS383P66B2mxuwWPMqHkHdzSCd2x3VCYqe9LgKJ4kDL1T7vYsQnrhQYp2UgenzXQUnIiqz9nAKYrPKcAD/Ym0Y6wraca48Gs5yEncVUERmU9ZgS8E7DsyO1lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BScIGFHc73nflkgQgBKCmW38zOWz1zsUJ3E3ObEjo70=;
+ b=YMH6NJW9VSsCN3/3oHhYtLYlDQF/cvrF4236DeIT4RjuWer35no570ooa8NsQnifC+6RR7ooMMeYbWwJjXPhavNi2gX5dByM8HKkPJWMffB9on71h0RzUJ0pghNtJVyfSbRK0BOPmR3jWgWUl4A1RfPTs7jkEd6i666CBxMAglC0nRsebo+YteMIUhbnUr5MCQtmJoMd+hBON9lRQ3h389QZrT8Eo0+vzvdBaaRG0490p5W1eMiJV7mgumlU4VwHRGRUkbRbvjPpC/Yvnj+5fyIx6Y1/XUU0+JzSue2Gl9+xVfYGbZLi4s8Fnfvm8Mepv5r9Q+I4OPnUTBXip3/mTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BScIGFHc73nflkgQgBKCmW38zOWz1zsUJ3E3ObEjo70=;
+ b=G8E/21lBrn3qInLbQoVbN8Eu2TaYyUXRU+W/wloyvgGXDBjvj/qKcrt5VUAgKB7t6oWpVbPxYMigGRPLUeaifaBVhMYOKN/iBJ1IA00QklPjK90bx0SljW9+0xfriKquNYNJvm72fq09wVafxDAX7sblkZuuwStaEKuf5WRJV4R4cO/lYICCZQngEiBo9ixuNNrMLC6Dk79L4Z9GuNIdqiwRjOejI9sTVVMNxnqfrR2qzaYSW95QI22q91tEDbXt4bYqYVaRe3ZSZY7IxVEmpDfE8N/yzXwe0opF9yDgwtnXNbYOv+cqolypJDy5c0S6eKnZ7n+ozQfJ5PocKIPW5Q==
+Received: from BY3PR03CA0030.namprd03.prod.outlook.com (2603:10b6:a03:39a::35)
+ by CH1PR12MB9720.namprd12.prod.outlook.com (2603:10b6:610:2b2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
+ 2025 20:08:31 +0000
+Received: from SN1PEPF000397B0.namprd05.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::6b) by BY3PR03CA0030.outlook.office365.com
+ (2603:10b6:a03:39a::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Wed,
+ 17 Sep 2025 20:08:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF000397B0.mail.protection.outlook.com (10.167.248.54) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Wed, 17 Sep 2025 20:08:30 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
+ 2025 13:08:06 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
+ 2025 13:08:06 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 17 Sep 2025 13:08:06 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <achill@achill.org>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 00/78] 6.1.153-rc1 review
+In-Reply-To: <20250917123329.576087662@linuxfoundation.org>
+References: <20250917123329.576087662@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914134458.2624176-3-ivo.ivanov.ivanov1@gmail.com>
+Message-ID: <85f0b77a-d651-4ec6-a20d-342793cdcc73@rnnvmail204.nvidia.com>
+Date: Wed, 17 Sep 2025 13:08:06 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B0:EE_|CH1PR12MB9720:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57bb2f15-a4a0-4502-3687-08ddf625f8e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WVpLZzlnaU16c0lRQVhIcGpIWGhxSXZsSGdXV1oyRFU2SGl5TkpUSjdySmht?=
+ =?utf-8?B?ZFpNY2ExckhkckpuaHpVc3lBSzdkdGlhbnllWlNsaFJqb1lUZzhIVkNaN3lY?=
+ =?utf-8?B?ZjN1Z3JsTGhiUDN5YWdwMWlpbzdqU0oxeW1ua0lZbkZ3K2xhK016KzJlVysy?=
+ =?utf-8?B?MEZQSEpkVUVadUhraE5PWDNDb00vWWtHT0lVNCtJN0xObjlTeWhhMk9paTJp?=
+ =?utf-8?B?c3BhcmxnK09Yc2s4MzJMTGE5NVk3Z0JnemFqTmdWZFZUNVFLeW9BT25PZTI0?=
+ =?utf-8?B?clBtbTdQTy9wR3ZpVkk0cWFyOXJwM0l6ZXVZWFl5ZGdHUkFxYm5DdnJCL3Mw?=
+ =?utf-8?B?K3ZibG5vMkxZNDJlbk0vMkR4d3FGeWZKQVdNdU90ZG9rN0ViUGdTblRXVCtr?=
+ =?utf-8?B?c0J6b0NZRTRibzJqaG0rUnpoUWZ6SjFrODFsemRxOElJd3MzK2hWUW1mRHRq?=
+ =?utf-8?B?bTBqZmVCejl4VWZSWkVaOTcyVnpTeHdvbEhYN25OcnBDbDZwRGdRVHlWUHhy?=
+ =?utf-8?B?N3oyN0NoMEFMVWNzWDV0OHEzYlhDaHRLU2p3ZDh3SE9kWWlQL0NRNmNIR2k2?=
+ =?utf-8?B?b1BycjVBaFNnLy9TUmVKa0pJM1FleEkyRWY3VGtXT1pNblZ4eG9Wb0ZMYkpo?=
+ =?utf-8?B?RUhqYjE4UEI1dGZZVnd1blR6UVhyYU5TaTVwcWpNbEY1SUxyd2RRVUdUQXNX?=
+ =?utf-8?B?N2hWVE1hbVhaS2t3V1gya0VNeldNZVpid3V6VVpxY0pzVnFrNjN4UE81dm1Q?=
+ =?utf-8?B?ekdBRjcyd1REWTdRaHZPT1Bsb1dYN3lkcHQzSnlZc1cwRlZBTWtOb3RHdVVD?=
+ =?utf-8?B?MkpIektDaldKTWU2SnVQWUZycmVzRlA1YUdkajdXWFBzS21ITDZoMVQ1a3ZK?=
+ =?utf-8?B?RktKOEVMTjB6eUFoa1pBQzc5RllQNHM0WnlPa05vb2o4R1ZWRWpkRkpuZVJU?=
+ =?utf-8?B?SFZlRGNHTzViWVFJQnU5TklTYmp2T0JCTys5MVJybHZFTE1JRUd3R1JPcGw4?=
+ =?utf-8?B?Mjh3blh2YUdoR2l0bFZvNmhqdnp5dHNRUWhBL2VXc2l3NmlqQWV1VUIrMDF3?=
+ =?utf-8?B?VkFBSWxhVmtlbDlMU0hpV2Jac3RIOHhUWUdQd28ySFhVR0x3dndBN1JvUE1H?=
+ =?utf-8?B?NjdLeEg3cFoyU3ZHaVF6dDNwMTM5cUQrTHZjSUFwZGljeVRjRVo4RFlJOVlo?=
+ =?utf-8?B?RnpLWGxoY1haK2ZSNHJtMktnRnZLVEdtLzM5TExOSUdOWlBTMXIwd2FOQkpj?=
+ =?utf-8?B?QUhGUm8zeTQ3NXZZdUZ3ZmJ2WUtMSDhYSFRJN00xWEExU1JBWGR2b0FsZ3JU?=
+ =?utf-8?B?RWZSYWxBQXRhYVlmTEVlL0NMV2hRc2NOZE40UWYzOHZPVWxwdG1ORDk1bVlJ?=
+ =?utf-8?B?R3JIY2t4OEM1UTh2SjRxVjZDYkJaS1E3bGFNeWZIVi9idmNnODdidXdIUGwv?=
+ =?utf-8?B?QkE5dWhXQTNBSHgvS1VKSkRtQTlaS2svYW9xM21KLzdRSllIV0lURFE2OFZW?=
+ =?utf-8?B?bjZiRnZMUnJHS21xNi9EQStpblNDa1NCcjdUMEZXOXJ0MGxQOGVnSnV4SEdt?=
+ =?utf-8?B?YUNZMnRreW1DNVkxZTdPcTJFVGR1NlF4SlpSVUc3VTlnam1PdEk5WFczRjFK?=
+ =?utf-8?B?dU13dFd2SzJkQVl6a1lKQVV4ZHRScjlYZ0JTVk16dnprN0EvcDZQWFJsQW50?=
+ =?utf-8?B?bHpvMGlhN2Q2U1Fmb1hiUGFmdnhvU1RENHFVajlLZUYyY2NXRG5vL0xwZ0tB?=
+ =?utf-8?B?WXBIV3Bpem9NdnZnbkYwYVVWSU5oSzlrazV0MVRyaFM5V2NCK2wrNzVPejd1?=
+ =?utf-8?B?UEw5L0pGc1NaaUx6a21ZNzdrM2ZMSTZvSEFSa0hWcFBTM0VrdnNpMGJWdlZZ?=
+ =?utf-8?B?djVDSExWcXlGbkl5YUJyS1lwQzg5TCsrQjNWNTZFTDA1NlZWcXA3d3kzeWpL?=
+ =?utf-8?B?MU5rV3ArSTlBZWJqMGFJTWNleUtKZ25xL2lndjBxenhPbVNXcEdFUnc0eWVw?=
+ =?utf-8?B?UXI5bTFzalJBUGlxOElXOTkrVE9DaXRnL1JVNWQ0ZjhIZVZLbUdWQ3ZaRXhR?=
+ =?utf-8?B?RXJKWmNJOFVFVmRlcG1YTFNCM3BrdVNWcUYwUT09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 20:08:30.4907
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57bb2f15-a4a0-4502-3687-08ddf625f8e4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9720
 
-Hi Ivaylo,
-
-On Sun, Sep 14, 2025 at 04:44:57PM +0300, Ivaylo Ivanov wrote:
-> The S6SA552 touchscreen is a capacitive multi-touch controller for
-> mobile use. It connects via i2c at the address 0x48.
+On Wed, 17 Sep 2025 14:34:21 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.153 release.
+> There are 78 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Introduce a basic driver, which can handle initialization, touch events
-> and power states.
+> Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
+> Anything received after that time might be too late.
 > 
-> At least the firmware for this IC on Galaxy S7 differs from S6SY761
-> in register layout and bits, as well as some missing registers/functions,
-> for example for retrieving the max X/Y coordinates and the amount
-> of TX/RX channels.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.153-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I am not sure why you are using runtime PM in the driver, given that you
-enable it on probe and disable it in remove and otherwise do not touch.
+All tests passing for Tegra ...
 
-If you want to use it then you should probably call runtime_pm_get() and
-runtime_pm_put() from open()/close() methods instead of toggling power
-directly.
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    119 tests:	119 pass, 0 fail
 
-[...]
+Linux version:	6.1.153-rc1-gb31770c84f52
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-> +
-> +static void s6sa552_input_close(struct input_dev *dev)
-> +{
-> +	struct s6sa552_data *sdata = input_get_drvdata(dev);
-> +	int ret;
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-	int error;
-
-> +
-> +	ret = i2c_smbus_write_byte(sdata->client, S6SA552_SENSE_OFF);
-> +	if (ret)
-> +		dev_err(&sdata->client->dev, "failed to turn off sensing\n");
-> +}
-> +
-> +static ssize_t s6sa552_sysfs_devid(struct device *dev,
-> +				   struct device_attribute *attr, char *buf)
-> +{
-> +	struct s6sa552_data *sdata = dev_get_drvdata(dev);
-> +
-> +	return sprintf(buf, "%#x\n", sdata->devid);
-> +}
-> +
-> +static DEVICE_ATTR(devid, 0444, s6sa552_sysfs_devid, NULL);
-> +
-> +static struct attribute *s6sa552_sysfs_attrs[] = {
-> +	&dev_attr_devid.attr,
-> +	NULL
-> +};
-> +ATTRIBUTE_GROUPS(s6sa552_sysfs);
-> +
-> +static int s6sa552_power_on(struct s6sa552_data *sdata)
-> +{
-> +	u8 buffer[S6SA552_EVENT_SIZE];
-> +	int ret;
-
-	int error;
-
-Use "error" for storing error values from APIs that return negative or
-0. For APIs that also return real values "ret" is fine.
-
-> +
-> +	ret = regulator_bulk_enable(ARRAY_SIZE(sdata->regulators),
-> +				    sdata->regulators);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(140);
-> +
-> +	/* double check whether the touch is functional */
-> +	ret = i2c_smbus_read_i2c_block_data(sdata->client,
-> +					    S6SA552_READ_ONE_EVENT,
-> +					    S6SA552_EVENT_SIZE,
-> +					    buffer);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (buffer[0] != S6SA552_EVENT_TYPE_ACK ||
-> +	    buffer[1] != S6SA552_EVENT_ACK_BOOT) {
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = i2c_smbus_read_byte_data(sdata->client, S6SA552_BOOT_STATUS);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* for some reasons the device might be stuck in the bootloader */
-> +	if (ret != S6SA552_BS_APPLICATION)
-> +		return -ENODEV;
-> +
-> +	/* enable touch functionality */
-> +	ret = i2c_smbus_write_byte_data(sdata->client,
-> +					S6SA552_TOUCH_FUNCTION, 0x01);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mdelay(20); /* make sure everything is up */
-> +
-> +	return 0;
-> +}
-> +
-> +static int s6sa552_hw_init(struct s6sa552_data *sdata)
-> +{
-> +	u8 buffer[S6SA552_DEVID_SIZE];
-> +	int ret;
-> +
-> +	ret = s6sa552_power_on(sdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = i2c_smbus_read_i2c_block_data(sdata->client,
-> +					    S6SA552_DEVICE_ID,
-> +					    S6SA552_DEVID_SIZE,
-> +					    buffer);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	sdata->devid = get_unaligned_be16(buffer + 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static void s6sa552_power_off(void *data)
-> +{
-> +	struct s6sa552_data *sdata = data;
-> +
-> +	disable_irq(sdata->client->irq);
-> +	regulator_bulk_disable(ARRAY_SIZE(sdata->regulators),
-> +			       sdata->regulators);
-> +}
-> +
-> +static int s6sa552_probe(struct i2c_client *client)
-> +{
-> +	struct s6sa552_data *sdata;
-> +	int err;
-> +
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
-> +						I2C_FUNC_SMBUS_BYTE_DATA |
-> +						I2C_FUNC_SMBUS_I2C_BLOCK))
-> +		return -ENODEV;
-> +
-> +	sdata = devm_kzalloc(&client->dev, sizeof(*sdata), GFP_KERNEL);
-> +	if (!sdata)
-> +		return -ENOMEM;
-> +
-> +	i2c_set_clientdata(client, sdata);
-> +	sdata->client = client;
-> +
-> +	sdata->regulators[S6SA552_REGULATOR_VDD].supply = "vdd";
-> +	sdata->regulators[S6SA552_REGULATOR_AVDD].supply = "avdd";
-> +	err = devm_regulator_bulk_get(&client->dev,
-> +				      ARRAY_SIZE(sdata->regulators),
-> +				      sdata->regulators);
-> +	if (err)
-> +		return err;
-> +
-> +	err = devm_add_action_or_reset(&client->dev, s6sa552_power_off, sdata);
-> +	if (err)
-> +		return err;
-> +
-> +	err = s6sa552_hw_init(sdata);
-> +	if (err)
-> +		return err;
-> +
-> +	sdata->input = devm_input_allocate_device(&client->dev);
-> +	if (!sdata->input)
-> +		return -ENOMEM;
-> +
-> +	sdata->input->name = S6SA552_DEV_NAME;
-> +	sdata->input->id.bustype = BUS_I2C;
-> +	sdata->input->open = s6sa552_input_open;
-> +	sdata->input->close = s6sa552_input_close;
-> +
-> +	input_set_abs_params(sdata->input, ABS_MT_POSITION_X, 0, S6SA552_MAX_X,
-> +			     0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_POSITION_Y, 0, S6SA552_MAX_Y,
-> +			     0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_TOUCH_MINOR, 0, 255, 0, 0);
-> +	input_set_abs_params(sdata->input, ABS_MT_PRESSURE, 0, 255, 0, 0);
-> +
-> +	touchscreen_parse_properties(sdata->input, true, &sdata->prop);
-> +
-> +	if (!input_abs_get_max(sdata->input, ABS_X) ||
-> +	    !input_abs_get_max(sdata->input, ABS_Y)) {
-> +		dev_warn(&client->dev, "the axis have not been set\n");
-> +	}
-> +
-> +	err = input_mt_init_slots(sdata->input, S6SA552_TX_CHANNELS,
-> +				  INPUT_MT_DIRECT);
-> +	if (err)
-> +		return err;
-> +
-> +	input_set_drvdata(sdata->input, sdata);
-> +
-> +	err = input_register_device(sdata->input);
-> +	if (err)
-> +		return err;
-> +
-> +	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
-> +					s6sa552_irq_handler,
-> +					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-
-Do not hardcode trigger type, just use IRQF_ONESHOT.
-
-> +					"s6sa552_irq", sdata);
-> +	if (err)
-> +		return err;
-> +
-> +	pm_runtime_enable(&client->dev);
-> +
-> +	return 0;
-> +}
-
-Thanks.
-
--- 
-Dmitry
+Jon
 
