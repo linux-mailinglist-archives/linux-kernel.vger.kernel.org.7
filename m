@@ -1,247 +1,230 @@
-Return-Path: <linux-kernel+bounces-820146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAE1B7CFD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29ED8B7D711
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB9054808EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:28:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF2F97A6436
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E6E302CC3;
-	Wed, 17 Sep 2025 07:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6B4204583;
+	Wed, 17 Sep 2025 07:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YHY41hDE"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011009.outbound.protection.outlook.com [40.107.130.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g69OeIxE"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6534A271468;
-	Wed, 17 Sep 2025 07:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758094074; cv=fail; b=OPSfpyWz2XAyu622DDw62CXHklNuCep6o55PYXwqXyb5ztbHKqIjOUjmwMzJIV/KM4dOq49hPhrG61d1k74EMeso2xfGHrNiQWKFvnOveGsLGvlr/3jOFTJg1XJiTfa8UG4ujAzZmXZXhgv0DfmwhIFWqLr7oZLRlemBvR6TJHM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758094074; c=relaxed/simple;
-	bh=+aJ92F3gnNgw/1jCe1LYU2CFm2OJgpxxN8BwsUKbwY0=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=qoU0hX54A73PGHZuTX8hkz3tnbbDZU3gkbqtlQyISVOUuhZyDNcZDSwHf2Nf26Ky0m6caJYjoQaGE+6dqNYuEuDRtABylLW1NgylnAdwCnvavGtPFZ2UeQ8TupK0Ze3mE0OCI4iMYzoPSr9Em7VBfAbZ5Nf6sWpNFrwonTrl9aE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YHY41hDE; arc=fail smtp.client-ip=40.107.130.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WYwbTxBZ4uR6JH2Ppj1w4pJRLdsIYYX/h4rKjpR9qwqx2T4BKtemD+s6kMfQOxw8LJG/i0yHLliqzIKcZDqdXpGR8FYNmwufQUHZwiqmqndrlLYATac86ESU1JKSD+bkISaIvwhUvZhIOtaTdnFCxN63LtyH0KPYTA2+mtIpxj39pCMFvnh3ZDfxZIRlhS81VRUcctxIqcfAthS7uQbxwDADTTZM5Ya9fdWm069jkMHghVg900q9fyp/YVlyQulBdyeIt7Ly6VhXmKMiZYvD6KqARNZNl9xzwFXgmKMBuPlpQmezYkS2q8BpWtuH0I0s6YkavSdUJqj0kpWd72AAMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2jPe6vbW3xMGag555bqGSeSR94VvjTg6eNt7zQ+0na4=;
- b=PR28Vr3r+tdtxGJ01FtMoQnepnXaNJKGzhlERea1qEq7W2ERzMdUnXAAKqEvPzfKoyEtPgjlnwzs1pdMJ30N1pdCcX3ZFACsadQKHfbFP3SpT8oWuyKlLukPDNg+3vz71QbzbH9ZXTr29AolIKl0yZqrY0GNkEclkW9fRfm+262V9/LNtSpFURkYjvk1Zswy5+8O2l3rCRhBTfShZhD/eRedazvS10/xwEf+hEYX3sXgpL4Iy1+Lc6MLeK09WhBteQ6NHfpJSyKbWUjwr+A9XFqLo/thAWE+LELz8VNlJtwrQ2kE0OtPBPifN8hI+wxhsnPU7AqhwhybvpycUHrbOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2jPe6vbW3xMGag555bqGSeSR94VvjTg6eNt7zQ+0na4=;
- b=YHY41hDEANe9jBwgtHuBj4Qa9gOfICAZMQjH7ud9ATF4sY7p70DJ4lIfvGEnJf4vmYGE/EcBmtVxzhhIDNfx/Dv14LVnRIxHiCKAgxA3XwuU9jNqqcRuGtiFFq4ULHj+Kau2U6/FA/JtQ7MSxJgqRecYFtEcHspEbF0hI+LGGTQZGlcCS6EeVhEOGDCU12523dL6lnT/yJBf7Gl07THhv7HJqC4UkVpvtO0YpdMjcjncUQDMIgETNH4jM5ACuptosVzJEO2uOYTupcAWLOJD7Fmj/KRF3RVsWzO+UvAeP5j1NY9HfjyCOa0Ttqgtd4wuh4gFE8NztrxEFsKy/bmSUw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
- by GV1PR04MB10800.eurprd04.prod.outlook.com (2603:10a6:150:203::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 07:27:50 +0000
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::868b:3935:5e0f:6a33]) by DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::868b:3935:5e0f:6a33%4]) with mapi id 15.20.9137.010; Wed, 17 Sep 2025
- 07:27:50 +0000
-From: Haibo Chen <haibo.chen@nxp.com>
-Date: Wed, 17 Sep 2025 15:27:10 +0800
-Subject: [PATCH v2 5/5] spi: spi-nxp-fspi: Add OCT-DTR mode support
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-flexspi-ddr-v2-5-bb9fe2a01889@nxp.com>
-References: <20250917-flexspi-ddr-v2-0-bb9fe2a01889@nxp.com>
-In-Reply-To: <20250917-flexspi-ddr-v2-0-bb9fe2a01889@nxp.com>
-To: Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Frank Li <frank.li@nxp.com>
-Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Haibo Chen <haibo.chen@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758094070; l=2074;
- i=haibo.chen@nxp.com; s=20250421; h=from:subject:message-id;
- bh=+aJ92F3gnNgw/1jCe1LYU2CFm2OJgpxxN8BwsUKbwY0=;
- b=wasocU6rYgQVf6YX4dsrjUdX64W4eqt/bM+n/Q1aVR0RpUa5x/VkNXlLYvp711cpcQmSE/pRd
- rubQzqQU4XTCNrZSBwbvKUDN2OagpdLlVoK4lK4eHtZ06Qo36FLMuUO
-X-Developer-Key: i=haibo.chen@nxp.com; a=ed25519;
- pk=HR9LLTuVOg3BUNeAf4/FNOIkMaZvuwVJdNrGpvKDKaI=
-X-ClientProxiedBy: SI1PR02CA0051.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::6) To DU0PR04MB9496.eurprd04.prod.outlook.com
- (2603:10a6:10:32d::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653042253E4
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758094155; cv=none; b=qGDEXnRbiK/4ocMPxr49asfTGUsohr69uZEAYXFtTvX/LimdHL+vcLI2Fkumqiw34cLJvPIUIBw8otISpGBuDwk9C1zeHL3wKapY5Jc8z7RxFdz4VLjklifsW8wYk68HUVVSb6G++0aE5/SQB1MHPQ0Pemfx+st97liveaNxFDk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758094155; c=relaxed/simple;
+	bh=WunjDCY/mmceQf0OoZj3CKqUHoFgA6QT9izcm/iJq1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CF1jVvdDM1ZbM/CIPoRwwyV/61bkJrYnnoVz8q/bVKULGjbws6dpaVr0GeX3hlPs0zIAJjIYvA1sYUwXUcEVvaxddwG/1RB4rtMJAkCLr8yJpmlUtmhTf9G/dpErwc63cHIuuUhzIgC4SfDkgdkUnsP6YnfKOgQR6VkMKhwz92Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g69OeIxE; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-32e6f3ed54dso2538109a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758094153; x=1758698953; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pGMxyAVQkLmt2nM51SfjyMANS8EMy8Kdk2x4MsTxGUg=;
+        b=g69OeIxERLzWtNsjisWNvSqWujJTjZL/nr1XhIkDkspfTkatecJFuRuW1posFaTe3p
+         0gsNqqHIVSqP/bMLV1yLP5sFV4IOsN3BBTg22bPMP2Z1iJ66ELfi+bDLiGjleiWHcf6z
+         N8DuW6ONINH1rPDDYGY8jh+lO0YzePqWz0Tu55xmkAMW6Qw6z/UwbsDn1Cae2mnMx/hq
+         sTH4tPhdAj49Hd2ZY70q7jhI0nIALbWgPYh+6R/Um6hUOpT/6zaMEjOgfcXcN3r4UkCA
+         8TmkSHF2P9RhKrUeZ2uEFn2BVcx2CGgMSZfUouHDhPzdjCztAiajEB7aw52nAJHQmJOR
+         AamQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758094153; x=1758698953;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pGMxyAVQkLmt2nM51SfjyMANS8EMy8Kdk2x4MsTxGUg=;
+        b=TQ/dsXBxRgazhx52o8kSAjRlkNNbLQ9PLEKKiXzHfttQ5By9o1kKwSjvGiNnRd4i/1
+         HNjsR4qspDlBAQfu8Jv/rXL+0GgTQuEE6NdCMU4DfmgtU4zWYRuAQzOSPsKfQYIsPzGm
+         marNQv4QSIOJLYgvDa04dCkRk9fVqFQQbhVwSvEEDr/E+3yYT2z4y/c/WLri4V9+3+H/
+         Jn2tJ89k/dsMIkpD2MKoSfjVUrVZPOc6xxBq7nczdESY1DWp7Gtc44GO3cP0PhJV/wVO
+         ZMh56+6gtAbSHdCnZbgEAT16fYnQyXxcQ6HNsgs2c7XZrBU/qTP4EuO5BdMBJjt7q7Au
+         5h4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVFhoth+sKlwwSggKIRuCS0+IqUOMPH0jxx9qyCA+ijlu3XEW1OGZpoql7EUktuOquvWxTRCnUfOaHS91Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw94fo/co823hFjI8t9JFa5bTpQjAkvLHDWr0uNk+KQKTGjnFiI
+	Pl0u7V29fsMQt1MH5SLbE00Uyxxsb2bt1NeDHW85Go3+F4xeOEXgFOiQ
+X-Gm-Gg: ASbGncvheWelDBGUILIDkB9elbg22er6VnA9ufvPsGPhHuaEjzlhohCCFK4A77/P3fr
+	KSCnvVDy1suxyMm5DHLSfEflVYYIKRcvwMD9ohIavJVdOGN2CLoDmqEo+smQZuGrESQ5KEOOHSa
+	NxNit+sip1WXZwC1gUgGFG5ofWzoJDo3BeTO/pQUJ+EktjhOSGmvH2ju/UHX1gVfjfehNg3wjAF
+	7ZhXeiCCJqlb3PEmEt55bBbwDpg5sJCEQ2zGLKoZNq0F4RMmWzim87Qgz0+2sDKj6Yk4qSzC5pz
+	wYtpTgUE1SiP+7ASjT7ssKv1bHixLzybTG8RxABAlBcqaxPXKSQbneQYOTGTpFPpkcOgzNIHx2h
+	cBIzrpzsPU3xDBUfCs6fKEq21
+X-Google-Smtp-Source: AGHT+IHUtcafhAyiAUgRuMgzIXX3ncYg9PIYU74U7gBGjUqm2CSWekMPflPgAWzrA95Bfx/ozkOv8Q==
+X-Received: by 2002:a17:90b:3c05:b0:32e:32f8:bf9f with SMTP id 98e67ed59e1d1-32ee3f8df41mr1386261a91.30.1758094152532;
+        Wed, 17 Sep 2025 00:29:12 -0700 (PDT)
+Received: from [192.168.0.13] ([172.92.174.142])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed275e795sm1581943a91.19.2025.09.17.00.29.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 00:29:11 -0700 (PDT)
+Message-ID: <58439862-945d-4b7d-bf6a-6d398e6dd744@gmail.com>
+Date: Wed, 17 Sep 2025 00:27:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|GV1PR04MB10800:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66c75660-85ad-4cfb-d453-08ddf5bbb4f3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|1800799024|376014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NFZPRVpoQTRzK0o3OXhtcnBqVGYwZE05ZUswMUhXamZBK3Z4U0lYNkpocDE3?=
- =?utf-8?B?aWZWaXBZUjR0aUdIOEZEZUMxWitUZGsrYTY0RDdkdXcrUFhOUTM2QTNUQklJ?=
- =?utf-8?B?OE1XUi93NjFrenpIZkEwdXVhUWRVUHZPalg5Y2RKaEw5ZCs2c09DeDYxMGc0?=
- =?utf-8?B?eDF3b0Fra2NBT1lUUGhGeWo2QUMzVE8zNCtnVDYva0NmVmt0MGIzcHozSy9R?=
- =?utf-8?B?UkhxV3pvRjVVK2hZTk9BSEFOR0Zsd1JnUmtMOGtSRWNsRjNNQldvWXlvdGZU?=
- =?utf-8?B?RitaUTBKelhzbktQa040NW05ZXI5cjRtMndvdkJNMkNVbFZiRkVldkwya1I2?=
- =?utf-8?B?dC9ZWStMbDFyQ3pYb1NxeXRybFBLSVloQ3BKNGF3Q21jU09lTVdCT2xKeWtL?=
- =?utf-8?B?R0JYaVVhUVpKRlJKT2l2S3plQXY0aDFzRTRKODRoREVMTzIrZVp3YnVXbDBt?=
- =?utf-8?B?bmErWUh0eFB3NzBIa3ZWaS9nVnd3SjhrNnZRM0tuTndqc0xVTS80Q3o1SkNN?=
- =?utf-8?B?eGRNNW9KV1RvVVBacFl5NC9SME9JUDFubWJyMi9UTGhjV3dad2lGZ1BVT0Rs?=
- =?utf-8?B?S3M0TDBkV3VsOElEbXVXZ05kQk0rTkpMc2lpWW9Xc1BrSm1hbytJTHpmemRT?=
- =?utf-8?B?SHlOSk1hL01tZGQ1TXVLRURaeDlSVEp2clZRYitVVUhDNUl6MEVSQUpaT1dF?=
- =?utf-8?B?R01ESWExVVFJbEJZL1ZJZm53TGxXcGhmNjF1bEVlZ1JkMzVtV09ibklYV1BB?=
- =?utf-8?B?S1MyU2Jtd1JFWFVSdEVPZjgrVGhGbEdhQ3l6V0hpTXJ3YldBbGh5b0hVbEJh?=
- =?utf-8?B?czJIVW5wNUJ0SFZTbDd0YUdHd0kwaDdMWVFDNnVKdEd1VjJmYnBtdFdRYWFD?=
- =?utf-8?B?dTh3OWllbXUyU3VabUFSRVFVc0dGVGxZSUh2QUk3RVlOZ0NQUUpycU9aUUhr?=
- =?utf-8?B?SmxJV2RaV2tZV1MvUDdBbVgvZHlmNTZ2cjVGZllpUkpZcmowMjlBTW9zMFli?=
- =?utf-8?B?bElhdkoydWhnK1paK3pDYWFQUGowdTRRME1zZmF2bGg1WXZUNjZ5Zzh4N1Zm?=
- =?utf-8?B?OVdXZit6aytucDRjNXBxdDNkNGZGNnVjdlQzOWU3U3RCWnVMUjVCU05yUGI2?=
- =?utf-8?B?cHVsSzJuanRmOXVCSW1vbDY3MEtQQ2huajNMWS9WNVJhUDJLU1N0OFlxUmhy?=
- =?utf-8?B?Z1JDMm03ME9JWng4bUQwdXN2T3ZzWWQ2ZTNKcjVKSUxKOTh3U0V2MnBwMmdh?=
- =?utf-8?B?Q0NOZDJ3VVJsZVUyMEN6VmI5VU9FWEdURTMzN0NLZnZPV3Z4Vk1YZnpxcFNo?=
- =?utf-8?B?KzRJRHVzQjVNRmIveWhsNkIwblpnSk1ubjIrZ1ZxL2VYdXlzbHQwTG1GUWtw?=
- =?utf-8?B?dStjb3BZWkg3S093N1hFMnpKVURMSmtQNDk1aXdhOGplOVMyQ2hlSXdNRjVW?=
- =?utf-8?B?OWpzNURUcnVyWmY2WFJ1WUdZUXREc3B6VEpweUQrRjJxNDJ6SHpsWTJmY2FQ?=
- =?utf-8?B?Tk9kNkdWRGp5UXByempvSTQ3SVQxbFJxVlB6U1EvQTdRYzZ3WWZoYVhZVkN2?=
- =?utf-8?B?NzVXYjUvWlppU2lkbUo3VmVDaExMSzZxQWhkTFdrOGI5TWNYME5CbC9XRGd2?=
- =?utf-8?B?cVkyYVZTODhwSkpqMHBjVCtSWlNQY3MyZ3J4dkVGNFl2cnp5VUw5YzEvWW9k?=
- =?utf-8?B?Mm9uU2hxcktBU1J3MTRmQmhoaXlJVW9Pdzk5YUhHYWp0OEhjckhyeEpueG9i?=
- =?utf-8?B?Wjh2eEZjU3l3cXdhRHFkTUgxUXpkMW5ocS9MaUFUUHh1UTlMMEptMDllQlkx?=
- =?utf-8?B?RVRuOHpxeGduQlJVSlY1M2tlNFJYZzd3TG5nQzlReU1LZm5ScHZGbVVRZXEr?=
- =?utf-8?B?dlBLRWlYejJkWTZHaUF4c3ZlMUN0dnRvbHFjbVZ4VlJJNHVRWWxOYmZ5RTJY?=
- =?utf-8?B?WXdESUdOL1daR3RWMkM1VUIyQlZYYkovZTl3VER3S3J4UHJROGJIY3NHWkc5?=
- =?utf-8?B?NVV3WHQwN1lBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(1800799024)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bWJxU2JJeFVESHUvV2hkMUw0WTByZ3pUWGowQkdiR1IxdEd3RHlTdld1bDRK?=
- =?utf-8?B?dktwZVp0aThVaGZ5SnVLeXUzeEl2Q1ZtTnJJSEtGSjJuZGdmR3JWTnQwSmpD?=
- =?utf-8?B?d3JNeVdpYXVIdENBQnFrZG04Ri82MDdxTFZ5SGtBVmd3bkRJN0lnSFhNcFlQ?=
- =?utf-8?B?QzdyNWtwd0ZWUFcwR0VRNW5hRmlqNkUwZ1BnYTZmTVgwYzdCOENtWDg5WktJ?=
- =?utf-8?B?bjFZKzdtWEJTY2haQnMrb1labEtjeWUySjM3dW5zLy8zM2dqVTczcmNEV2VG?=
- =?utf-8?B?WExLMzJrN2oxakZjQlBsczViNmlTdXR6cmVpMnhHU0hucnBZWmMyQWIrNlg3?=
- =?utf-8?B?M0lvSCthalFkczdqNlFSUTVwVE9zeEtqYlV1S0JXRUpqRDBudmNhMVc3cGZl?=
- =?utf-8?B?dGVTUmZTNVd0Z2FpWndVaDhXMmNtblBpZ1NwVU1Hb1RrTUcwaVZkSlBkcitI?=
- =?utf-8?B?WVV2c2V2ZXhVSGl4NW1mNC9wLzZNSzhZbGVxSW5tY0NCOVB4V20yeVhlVklz?=
- =?utf-8?B?bHkvMklHNWRaclVHeGh1Yk9ONTdGbVNKY1NoWS9GWGpwc0xHY1pyaUV4NGdi?=
- =?utf-8?B?aWlHRjYyNjREaEwvZy9QTnVnSkcycEl5WnRzd1VHdndmMlZFOTVLTHg3SEVx?=
- =?utf-8?B?dEdRQ1MyYURXWFI2eDNsSWZDc3gxR2dXNHJ1S3pzUnB3djhLVVNaNE5SanBm?=
- =?utf-8?B?WFFDUnE0akEvSXdhcEFCbUx0SWhHTXVLNnlpbSt5Nndjbno4ZzYvRDMvelJZ?=
- =?utf-8?B?SUtKMHRrNDkrQUFoVmhzc3lieDV6cjBkZFRYWkJNdW5VWmMzMVFqV2V3UzQy?=
- =?utf-8?B?RTYwaUxpcnI3d0ZnL3JuVzU3TVFoTnB6eDRRWVMvdUZDYWpBM2pTRS8zS01H?=
- =?utf-8?B?end1WFgwaWM5UzM4MFp4aGh1VTlVQmhLWWRZUWZ1OXUwVktaYkdjUHQxYTVY?=
- =?utf-8?B?Y09lYjlGMWpiZVBiWkVtcW1LQXZxaU1kNTFvWlBiYkYwdlkycG5nclFZVmk2?=
- =?utf-8?B?ZytTU3AwZGt0TmtycDNtYlA4eWgzalNmRjJ3bWZXclczenluTGZLQnYwY1ZV?=
- =?utf-8?B?bGE0c2ZwT213WEREcWMwZUg4QnlSTlRTaGE1NkR4RGVFWkV2WUpNNGo2aWFF?=
- =?utf-8?B?aE9IQ1A2Nm1KeWU1RitKYWJ0Y214ZUo1TENQMURDeXZxcmZKV05PTU5YKzJa?=
- =?utf-8?B?eFpNSUpkR3pLRmxJY0EvM3dTUG5QNmFIcXp2ekRtK3ZLdHpja1k1UWJ1WWg0?=
- =?utf-8?B?eDlVQndXZEtrVTJJRjBCQ1hzMjkyeDUveURkWDJGY1pWOUtZSGRUcUN2dGNG?=
- =?utf-8?B?L21YQis4SWZTY3VzampGMEJvZ3pENzhHNjdnVjZrVjZJVmhqVjh0MG0rNDdk?=
- =?utf-8?B?U003ditvT0FaSDZ3V0w0KzZiNi9oV0g3SXRidUZqcURaVmw4cUhOaXUvVnJ5?=
- =?utf-8?B?TWhsNkRjQUN1aWhMMS9QOVpnaWhLN2JZVW90d3VGZVZKNjRJVjFxK1JGWW03?=
- =?utf-8?B?KzB5ZWhLbkpocXFSM0Q0bTFlcFAvUWRRZkdPRlFnTHAyTDhrV2RVbE83S01V?=
- =?utf-8?B?U0JFTHo5WTNXSEJTMzlOZU9TZ3FQNnRqb082WHBPTy9oVUJ0TW9vOGUwSVZN?=
- =?utf-8?B?empPSEFOZGpiemI3QXlPRDM4Ky9icC9Tc3ZKZ0hJRnJvOVo0aGo4dkMydWhZ?=
- =?utf-8?B?anFoendLL3N0cWhHZkhkWlNRakZ5bUlBUkg4akt2Z0lSSUhLWUV2K0ltdWx6?=
- =?utf-8?B?VEt0ZVN3ZCt0aWRFdDFKSFVSbG91Y0gzZGJBYnU0cGMxOG4rNE5JSGlHazdy?=
- =?utf-8?B?ejl4M1pLazlxTU5UN1paTDRwaTFHL2NKemdkTnp3QkxyMkt2eCtGNVYxd1Zo?=
- =?utf-8?B?MTREWGZCUzJKL0hGbWZqK2R0Sm5VTXhHRFJHelZxSWdTQjJJTVAvQzN5UjI1?=
- =?utf-8?B?U2NnOU92RmNoQXVKNHBNWk1HZ2FUeGVBeVpCNFdXejJWVUhtQzB6Ni84OXNp?=
- =?utf-8?B?SldZZVprS2lLdTROMGdSSTdhYXUwSUdhVVFId3VFbHFMbDQ1bk14aXBtdmdx?=
- =?utf-8?B?Y3RhZGtLSnNmYWxQUXJkSnY2WVY1QzZuWHJOMmdtQUFYaEJVKzhud3QrY28v?=
- =?utf-8?Q?vpPHedBGxHY14pr1ci5taRCqd?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66c75660-85ad-4cfb-d453-08ddf5bbb4f3
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 07:27:50.2710
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: szw+jXv6Fhzyl2yWBTcg/CjgwqEJc0Zk1ycsIf1IqatcEDFrr4MYU6gD0sngj8OxmyxJVrkpscF63ispai6kHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] riscv: tarce: Implement riscv trace pmu driver
+ and perf support
+To: cp0613@linux.alibaba.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, guoren@kernel.org
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250911124448.1771-1-cp0613@linux.alibaba.com>
+Content-Language: en-US
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <20250911124448.1771-1-cp0613@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add OCT-DTR mode support in default, since flexspi do not supports
-swapping bytes on a 16 bit boundary in OCT-DTR mode, so mark swap16
-as false.
+On 9/11/25 05:44, cp0613@linux.alibaba.com wrote:
+> From: Chen Pei <cp0613@linux.alibaba.com>
+> 
+> The RISC-V Trace Specification defines a standardized framework for
+> capturing and analyzing the execution of RISC-V processors. Its main
+> uses include: instruction and data tracing, real-time debugging, etc.
+> Similar to Intel-PT and ARM-CoreSight.
+> 
+> According to the RISC-V Trace Control Interface specification [1].
+> There are two standard RISC-V trace protocols which will utilize
+> this RISC-V Trace Control Interface:
+> - RISC-V N-Trace (Nexus-based Trace) Specification
+> - Efficient Trace for RISC-V Specification
+> So, this is a complete guideline for any standard RISC-V trace
+> implementation.
+> 
+> This series of patches is mainly used to start related work and
+> communication. It completes the following tasks:
+> 1. dt-bindings completes the basic definition of riscv trace
+>     component properties, but is still incomplete.
+> 2. Implemented the basic RISC-V Trace PMU driver, including
+>     support for the aux buffer.
+> 3. Implemented basic support for AUXTRACE integration with perf
+>     tools.
+> 
+> There's still more work to be done, such as:
+> 1. Complete RISC-V Trace PMU implementation.
+> 2. The perf.data generation and parsing including AUXTRACE events.
+> 3. Taking RISC-V N-Trace as an example, implement the parsing of
+>     Nexus Trace data format, including support for perf report and
+>     perf script commands.
+> We are still sorting out.
+> 
+> Any comments or suggestions are welcome.
+> 
+> [1] https://github.com/riscv-non-isa/tg-nexus-trace.git
+> 
 
-lx2160a do not support DQS, so add a quirk to disable DTR mode for this
-platform.
+Hi Chen, thanks for starting this series. I have done a N-trace driver
+in user space: https://github.com/ganboing/riscv-trace-umd, and I'd love
+to see someone finally taking the effort to try a proper kernel driver.
 
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
----
- drivers/spi/spi-nxp-fspi.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+My overall suggestions:
 
-diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-index d25679fafad7a94a7ea2a79d7e3da53f4939c9fa..f9371f98a65bdc7e5eaa612c0770a6228bdda364 100644
---- a/drivers/spi/spi-nxp-fspi.c
-+++ b/drivers/spi/spi-nxp-fspi.c
-@@ -330,6 +330,8 @@
- 
- /* Access flash memory using IP bus only */
- #define FSPI_QUIRK_USE_IP_ONLY	BIT(0)
-+/* Disable DTR */
-+#define FSPI_QUIRK_DISABLE_DTR	BIT(1)
- 
- struct nxp_fspi_devtype_data {
- 	unsigned int rxfifo;
-@@ -344,7 +346,7 @@ static struct nxp_fspi_devtype_data lx2160a_data = {
- 	.rxfifo = SZ_512,       /* (64  * 64 bits)  */
- 	.txfifo = SZ_1K,        /* (128 * 64 bits)  */
- 	.ahb_buf_size = SZ_2K,  /* (256 * 64 bits)  */
--	.quirks = 0,
-+	.quirks = FSPI_QUIRK_DISABLE_DTR,
- 	.lut_num = 32,
- 	.little_endian = true,  /* little-endian    */
- };
-@@ -1231,6 +1233,13 @@ static const struct spi_controller_mem_ops nxp_fspi_mem_ops = {
- };
- 
- static const struct spi_controller_mem_caps nxp_fspi_mem_caps = {
-+	.dtr = true,
-+	.swap16 = false,
-+	.per_op_freq = true,
-+};
-+
-+static const struct spi_controller_mem_caps nxp_fspi_mem_caps_disable_dtr = {
-+	.dtr = false,
- 	.per_op_freq = true,
- };
- 
-@@ -1346,7 +1355,12 @@ static int nxp_fspi_probe(struct platform_device *pdev)
- 	ctlr->bus_num = -1;
- 	ctlr->num_chipselect = NXP_FSPI_MAX_CHIPSELECT;
- 	ctlr->mem_ops = &nxp_fspi_mem_ops;
--	ctlr->mem_caps = &nxp_fspi_mem_caps;
-+
-+	if (f->devtype_data->quirks & FSPI_QUIRK_DISABLE_DTR)
-+		ctlr->mem_caps = &nxp_fspi_mem_caps_disable_dtr;
-+	else
-+		ctlr->mem_caps = &nxp_fspi_mem_caps;
-+
- 	ctlr->dev.of_node = np;
- 
- 	ret = devm_add_action_or_reset(dev, nxp_fspi_cleanup, f);
+1. We need a way to expose proper topology to user-space like coresight.
+    Thus, I'm thinking of using similar logic in coresight to export the
+    topology through sysfs. Potentially we can abstract some logic out of
+    coresight and make it a common core path that can be reused by riscv
+    trace driver. Thus, we don't reinvent the wheel. This also helps
+    debugging trace driver issues if anything goes wrong.
 
--- 
-2.34.1
+2. IMO, The driver should be moved to drivers/hwtracing/. It's not tightly
+    coupled with arch, and there are many platform related logic where it
+    doesn't belong to arch/riscv/. Having said that, I do believe we'll need
+    something in arch/riscv/ eventually for trace once the self-hosted trace
+    spec is finalized. Self-hosted trace behaves more like Intel PT, where
+    the control will be done through some CSR(s), and it doesn't need those
+    funnel/sink topology, and can emit trace stream to virtual memory directly.
+    It's a per-hart thing with LAMBI and all that. I'd imagine that eventually
+    riscv trace will be two parts. One is more coresight-alike, where you have
+    encoders/funnel/sink/bridge that are described through DT and controlled by
+    MMIO. The other part is more PT-alike, where the feature is described by
+    ISA-string (I guess?), and it's much easier to program. For the time being,
+    IMO, a coresight-alike driver, e.g., drivers/hwtracing/rvtrace, is more
+    suited for existing platforms implementing N-trace or E-trace. Also, don't
+    assume the memory sink is available. People using this "coresight-alike"
+    driver can very-well be HW engineers who's collecting traces using external
+    probes, so again I think we may want to abstract out part of coresight's
+    logic and reuse then in riscv.
 
+3. I've already implemented a N-trace decoder:
+    https://github.com/ganboing/libnexus-rv
+    It can decode N-trace on real HW (ESWIN EIC7700/Sifive P550). I'll try to
+    see if I have the time to code up N-trace decoding in perf tool, once the
+    driver and the perf trace collection part is stabilized. If not, I will be
+    happy to review yours. Please include me in future series.
+
+BTW, perhaps you want to also CC riscv Task Groups such as
+   - Sig-Debug-Trace-Perf-Mon (DTPM)
+   - Tech-Self-Hosted-Trace
+
+to keep people like Beeman/Robert/Bruce/Iain/Greg posted. Robert mentioned
+they tried to contact Sifive to see if they had similar driver upstreaming
+effort just like yours, but there were no reply. Keep them posted anyway to
+avoid duplicate work. We should also discuss this during riscv NA summit if
+you or Guo's attending.
+
+> Chen Pei (4):
+>    dt-bindings: riscv: Add trace components description
+>    riscv: event: Initial riscv trace driver support
+>    tools: perf: Support perf record with aux buffer for riscv trace
+>    riscv: trace: Support sink using dma buffer
+> 
+>   .../riscv/trace/riscv,trace,encoder.yaml      |  41 +++
+>   .../riscv/trace/riscv,trace,funnel.yaml       |  46 ++++
+>   .../riscv/trace/riscv,trace,sink.yaml         |  37 +++
+>   arch/riscv/Kbuild                             |   1 +
+>   arch/riscv/Kconfig                            |   2 +
+>   arch/riscv/events/Kconfig                     |  11 +
+>   arch/riscv/events/Makefile                    |   3 +
+>   arch/riscv/events/riscv_trace.c               | 253 ++++++++++++++++++
+>   arch/riscv/events/riscv_trace.h               | 133 +++++++++
+>   arch/riscv/events/riscv_trace_encoder.c       | 109 ++++++++
+>   arch/riscv/events/riscv_trace_funnel.c        | 160 +++++++++++
+>   arch/riscv/events/riscv_trace_sink.c          | 100 +++++++
+>   tools/perf/arch/riscv/util/Build              |   3 +
+>   tools/perf/arch/riscv/util/auxtrace.c         |  33 +++
+>   tools/perf/arch/riscv/util/pmu.c              |  18 ++
+>   tools/perf/arch/riscv/util/riscv-trace.c      | 183 +++++++++++++
+>   tools/perf/arch/riscv/util/tsc.c              |  15 ++
+>   tools/perf/util/Build                         |   1 +
+>   tools/perf/util/auxtrace.c                    |   4 +
+>   tools/perf/util/auxtrace.h                    |   1 +
+>   tools/perf/util/riscv-trace.c                 | 162 +++++++++++
+>   tools/perf/util/riscv-trace.h                 |  18 ++
+>   22 files changed, 1334 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv,trace,encoder.yaml
+>   create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv,trace,funnel.yaml
+>   create mode 100644 Documentation/devicetree/bindings/riscv/trace/riscv,trace,sink.yaml
+>   create mode 100644 arch/riscv/events/Kconfig
+>   create mode 100644 arch/riscv/events/Makefile
+>   create mode 100644 arch/riscv/events/riscv_trace.c
+>   create mode 100644 arch/riscv/events/riscv_trace.h
+>   create mode 100644 arch/riscv/events/riscv_trace_encoder.c
+>   create mode 100644 arch/riscv/events/riscv_trace_funnel.c
+>   create mode 100644 arch/riscv/events/riscv_trace_sink.c
+>   create mode 100644 tools/perf/arch/riscv/util/auxtrace.c
+>   create mode 100644 tools/perf/arch/riscv/util/pmu.c
+>   create mode 100644 tools/perf/arch/riscv/util/riscv-trace.c
+>   create mode 100644 tools/perf/arch/riscv/util/tsc.c
+>   create mode 100644 tools/perf/util/riscv-trace.c
+>   create mode 100644 tools/perf/util/riscv-trace.h
+> 
+Bo
 
