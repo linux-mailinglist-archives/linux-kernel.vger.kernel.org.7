@@ -1,78 +1,62 @@
-Return-Path: <linux-kernel+bounces-821374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F74B8117D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:57:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EADFB81189
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388CB620BA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:57:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB152A20B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA12FB62F;
-	Wed, 17 Sep 2025 16:56:56 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCB72FB998;
+	Wed, 17 Sep 2025 16:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WsU5spqP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A5F34BA33
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F942FB97E;
+	Wed, 17 Sep 2025 16:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758128216; cv=none; b=M19n0VsFZao/L/fHKcFHsZbl3tdLM1MgzAPbdX2kpUtjspg+lEjLBVl4X+ZPmknQbJW7T2fGp3rcTOPy9WkMh78HywKak5S9jVIZsZZ1ze4p+hVDL9E7vfYTe2OdIkFEpFHiSXpfHxxIMWeFrLcNuemJw6ZRH2t5sbrwG4MbYFY=
+	t=1758128359; cv=none; b=F4XgyXH9H17rhlFDxnd2ydLHSxcejS1dt19bkacreS1/z6viuMdxLVBUs1qqNO+2BCtQYQ1Us2rnb+4MxnEQxDhciRmzTdF17rsxrzapUueUlaTp2TaHkFLVMY6vOJu1xN+0AqqPNH9d4tTTunOE+jRjDBx+B8zKLXHKPcTTy3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758128216; c=relaxed/simple;
-	bh=2hPN7ILfVqTEJ+c3AG1t5AUjGGnDy82Y4ctwGuvzzZM=;
+	s=arc-20240116; t=1758128359; c=relaxed/simple;
+	bh=LyRoG4EagDIB2pRE+5aY/rsh9XhcSfatt0XDUTGFxQ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EDdp3S0uCJLCwmixX02Ld7n1+lXk6im7msHivQFt5MDtrx6rmsDmMpcI5EOCSjTQpKNsBRm55dXDmm3fMxa5YwqlpL6QgpgvQtNgMc8KAHjDk91eFfenGH/zz1hloqGcCUhtYh5/WpgvrInb1j31obPbnx1uqtuFFZdFngRWYSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62f277546abso8783217a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:56:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758128213; x=1758733013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9U8MKFNdluOhv4aa38RV9TP5AYkB3xRCykBzF0UIvoM=;
-        b=ug5x9JAb4P0stiNZdYoJBY1UVXkcjsMjIm4Xj5H7pBd71DT0PNhszi4QXJWHbrRLT/
-         3GQXHBc4XYldx7AAtGTlUGlBIgOXugV8PLVAXIU+EwJL/2YDM57XQuniHT9SBdjeW4c1
-         /I2WRvWdtgCrew/oFlUXR3gjofHbNDQvxtQLBTNz+rGN3xhwny8YT46XXvUwq/d9wYq5
-         ghV7KvS84GMfRqAN1wfVkRCPOzXRFqWEOaLvrdRPhftkROwtcDceEdR8Nzst1+pyA4K6
-         fHRLQQtII5iFNXJHor/qnIbpdgK4Hl6DcVmjzbhsbRdMSw5R4+vmFKiveCUzuB677u1t
-         AIJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGxcs4Ca6ULYgIkyrrvb1dwG21LDhHncL3ZTkRl7PgKryCGaAjKTshWMozNJyiOhN3ddGIkFZoUsmWQQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1PD+VmN5VS+mrFuIept7PPeUy2lPd7Tv26Lf4ADpmjtRz6SDr
-	z8gU70LBt7aicKscoHh3Fx6lnLwj/iKjzNiYwt0uINUeE1O9RH4SE4ceSR8rkQ==
-X-Gm-Gg: ASbGncuP3V2aKQBScaQ+YFn0D4JHFNUEd39KFgCf6IyMTPIE20wCbwfwDVlwFYGL1ij
-	37/ePXAeTkOzEi6m5THGtV3u1v9VBtNlkAf7tipSGSH3SeE1Jr0LwC100OTOS6cfh/BgYKNNolv
-	2xCCmcz7zThXV25sKcJ+rd8dKCKWt6ZDGqqO/7YSnWOOgAbMFl8VzhV/P2B4LXI/CbIr4yJV47k
-	WaFqI2hxq03rowhBI2T96B5dCV/e6bhEDH732VjNkMMqKTr+d4ZupAUhuFRL/Iemotyn7cK2Gzk
-	9QKxeH1Fuv2NbK/1sTeowjXcE20A5kzLtGVAcv24wVFKF1NBJlH97+UqNpjgIiEQJs9Li44FOh4
-	8hHL8frEN+q3+
-X-Google-Smtp-Source: AGHT+IHJpIlHY2aCZmF0CH+nbnFOFzfFn3bboh6zZrx2bP16Eyzb6LmBuSNHyS/M1WQcJVBhRlM65A==
-X-Received: by 2002:a05:6402:2816:b0:61c:e1d6:6bf6 with SMTP id 4fb4d7f45d1cf-62f83a06fcemr2995700a12.7.1758128212480;
-        Wed, 17 Sep 2025 09:56:52 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:5::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62efe17e03esm10425340a12.47.2025.09.17.09.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 09:56:52 -0700 (PDT)
-Date: Wed, 17 Sep 2025 09:56:49 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
-	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, calvin@wbinvd.org, 
-	kernel-team@meta.com, jv@jvosburgh.net
-Subject: Re: [PATCH net v4 4/4] selftest: netcons: add test for netconsole
- over bonded interfaces
-Message-ID: <xskolllpk7re4qptsyznfbqngns55hetjwy2psdio2b5fyr7qe@26qv7rpschzs>
-References: <20250917-netconsole_torture-v4-0-0a5b3b8f81ce@debian.org>
- <20250917-netconsole_torture-v4-4-0a5b3b8f81ce@debian.org>
- <20250917091309.1149dc5a@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7CJnUu/UPZOtxXUDaKkaZSZqGkZcwXZGTW95Btw6PSyRsbrm7ZIjrofZHYFzLo/k5Y7qpDerhy666sxvSWoc42zV6AiBF/KvnHx5miLdSyhux04LRz5tr8cLpv/DmZPm1PtAuuCPjgLLn+C5f7ClO/I0oXtVG3pCYdOeBpTD+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WsU5spqP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=BVoadd5F/9NL1Kfvm2TxEXN3h6uo1IEKqiMc/UGEVZY=; b=WsU5spqPHlpgxmikqRVXl5+fBm
+	mJ/dwE3WD9XA/CEjjeQxsmCReWAj+HiEi+ooG5ZMvEVdYZaWC6eF+T8hkdYiOLgLWs5cSYxo4FdPV
+	l/0FVSTGq7eirPyu1KjfVt7SIn+aIF9knbf4acZiaFMVj0aBoSmoQuj/jZNA5QPpuMuw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uyvUd-008iUe-T2; Wed, 17 Sep 2025 18:58:55 +0200
+Date: Wed, 17 Sep 2025 18:58:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	shenjian15@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, lantao5@huawei.com,
+	huangdonghua3@h-partners.com, yangshuaisong@h-partners.com,
+	huangdengdui@h-partners.com, jonathan.cameron@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 1/3] net: hns3: fix loopback test of serdes and phy
+ is failed if duplex is half
+Message-ID: <a060e5cf-c1cf-4dfa-b534-ddb72e8652f8@lunn.ch>
+References: <20250917122954.1265844-1-shaojijie@huawei.com>
+ <20250917122954.1265844-2-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,23 +65,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250917091309.1149dc5a@kernel.org>
+In-Reply-To: <20250917122954.1265844-2-shaojijie@huawei.com>
 
-On Wed, Sep 17, 2025 at 09:13:09AM -0700, Jakub Kicinski wrote:
-> On Wed, 17 Sep 2025 05:51:45 -0700 Breno Leitao wrote:
-> >  tools/testing/selftests/drivers/net/Makefile       |   1 +
-> >  .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 167 +++++++++++++++++++--
-> >  .../selftests/drivers/net/netcons_over_bonding.sh  |  76 ++++++++++
-> 
-> We need to add bonding to selftests/drivers/net/config:
+On Wed, Sep 17, 2025 at 08:29:52PM +0800, Jijie Shao wrote:
+> If duplex setting is half, mac and phy can not transmit and receive data
+> at the same time.
 
-Oh, I though it was using selftests/net/config. I even wrote on 
-the commit message:
+Lets think about the fundamentals of Ethernet, MII and half duplex.
 
-```
-This depends on CONFIG_BONDING, which is already set in
-tools/testing/selftests/net/config.
-```
+Is this specific to your MAC/PHY combination, or just generally true?
 
-but, in fact, It should be selftests/drivers/net/config. I will update.
+Should this is solved in phylib, because it is true for every MAC/PHY
+combination? phylib returning -EINAL to phy_loopback() would seem like
+the correct thing to do.
+
+Is it specific to your PHY, but independent of the MAC?  Then the PHY
+should return -EINVAL in its set_loopback() method.
+
+> +	hdev->hw.mac.duplex_last = phydev->duplex;
+> +
+> +	ret = phy_set_bits(phydev, MII_BMCR, BMCR_FULLDPLX);
+
+A MAC driver should not be doing this. What if the PHY is C45 only?
+And Marvell PHYs need a soft reset before such an operation take
+effect.
+
+    Andrew
+
+---
+pw-bot: cr
+
+
 
