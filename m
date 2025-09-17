@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-820794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14332B7F577
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDD1B7F38E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5914A25F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF120586BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AE74086A;
-	Wed, 17 Sep 2025 13:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A28633C741;
+	Wed, 17 Sep 2025 13:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OxzQxuNr"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rRINjgm9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oVzuygt4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rRINjgm9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oVzuygt4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7793D1A76DE
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8605C1DE894
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115288; cv=none; b=a1cddjDBCfAeRcvUviACFHuuhWs2LFl0eRPQrWgN23e0wusm2PgtDEAjaeaQ2uUe5JKkcGrrjHDkUSvDCs3x6pJcetz8aQT0AwGtw6OjQTXTJc/EzJjAxwoJZi9o413XqVnqxhH02nWlaCB2U7bX/ik01WKr1WS/QV0QvnDGx54=
+	t=1758115307; cv=none; b=uknZqj1vu7dTOVHb0wp9DZgTSP9LQ5JBnL36k0V7zP165ckMXkwP4gGXGL6h0U7R14G4BtrLBQHyt5pyxm/7t7vjdQqaYf+Louhb2hRCyhHPKFgkQhiiFjkd+JKOn9Nc2267fcJ32KAkrxXyGREDvJEA+Ts1YaUnZns76R9Qhl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115288; c=relaxed/simple;
-	bh=tVbJPcBeoKD4E2eLTValdOE7YaeP4d+rsifsM5w1ty0=;
+	s=arc-20240116; t=1758115307; c=relaxed/simple;
+	bh=r4ov91MIeMuw40nHteEZZFOnlD9OgzAli4sw1EF/K9A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BdBvMPxeojlEOodkcet7Qcxchj7vvVZshSKU8Ro3vCp9mAf/gMTJ8CmnKteIG2coulGGObWQwNz4TrT5nsM6tRRYGPmmgMigfnX95kpwSrImYMWhl3g0Q9cSPSqzRsc3KT07WESVOSXOKL1vSEKM6xokp3lCzwyUns0i7MpER4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OxzQxuNr; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74382048b8cso5052591a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758115285; x=1758720085; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J1WE5yP4DbJ+DbETyxuSMK6o5TNVpZIHadGbqPQdU5Q=;
-        b=OxzQxuNrPdP4ucTIBsVKMFQwqnkx4WEbheFqJHl/kNzSj9NkSKc37iOtPZrUgkJRS/
-         /7wL7g9P0Vf0g9RzykccWTMKaGxtGlwSY8gPeSsB3po2twURLY6t3JbyEUjG2hGszacL
-         HPQLlug9d3OU6jHrHNc3OZfnM2tqQ6fmYt2LTvvmxTh1MceF6XhqifDZrH6UyoXYULoi
-         W9I0QgfSYPOgZv7JXYlRtImlcyAcIAaTX0rr95Iql356JHb14klzrshf2m0KNVJj4Okd
-         /06QVRXlkxm+fYYkvZeZlljopI6LNiH/NsqaQXgK24z/i+nPlVTKuZ+5WuGo3ZdAUosl
-         b50g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758115285; x=1758720085;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J1WE5yP4DbJ+DbETyxuSMK6o5TNVpZIHadGbqPQdU5Q=;
-        b=HyCZYj2zRP+yaydGkmtjbbJadPXLzWHA+hO8V0SKD+MxQCHKg5MUUyS3MwhWHfiUdt
-         qGUqdWnXCixBLrijJV6rWsVpXM+T3rM8GTBiFy5ao2knHj/Jd8SbxmZtzLxd4r9F1LMS
-         5kZy03WTVibzY7tU5KRAmWhcf4JRPDISpcB8Z98dswD4PwQupqS62gjgu58gTJ10+MUT
-         L3Wu0JZlTTvgNjIcmEabv1mD1aTdPK4kL6m96KMhB/ts3zAHDeNHlipdzTmDfulBo1CR
-         5ZGbjpMf+/ZscRyZwZdOXn25ybKRnXlJHvIaqzxp7CQu0SI/Fy0oAZ/EC3dlnOSAJgpH
-         YNng==
-X-Forwarded-Encrypted: i=1; AJvYcCU0jap9WKKHueYPyb81V1NETsq+8YOmAlCweJbHKAp6zZZkrhGRPdt7yraeqZRXHQlbCO6ppEd6eEvAZr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6XfhDrvTE+m3lsqrsniNd9vcQlhwU5kYy4YsyjdtyWKV4rm5L
-	4BdThKDqH8QPz2JCI15m/yt369putzQfW0zI44WOdd//Thnf+hCqBWp/ljilqBz22Eo=
-X-Gm-Gg: ASbGnctBLQPkVSV4PfSZP/PLp5XiwIpLLzbH3xdEdQWZGJSNWORbr+/SjDuAcP5pban
-	98nQKdbqlwsBGHnvaHbo6s7Nd+CGjGgsZWzE/EJet3gQ159nDfxAe503Ydgd9b7bK+ubQMz5Vil
-	0si+M1KJl9MABUJZjLDjMNeLcFM1N8cB8QhPrZU5BAN7oxLxsKhhMKNKTNBjlsK72dkKfl7IYzB
-	oAxHTmee6BiKaqLZkehrW51mm37uAEwXnXv9cyaRup2b3Jmw8vOXh1OsGyrNTUBK6w/dVY1iIph
-	g9l/3GV2vHQUFSBIKn5bf2P7saH1IUpLXCeOz/R8DGT/v3g5R5K8r32+v/7yp36bE/GCm0Re1ix
-	KHYwu2Za+rRVwDg1pAF9J4SoXfl5Fkf30vhB9W/2d1WcNvD+jlJf7yUqMzeehdEN7T/0HKzKWun
-	AzhbRpqE0=
-X-Google-Smtp-Source: AGHT+IGWJXUGjhFmvzG+cfrT/10TsR9+S6JiUBCX0ZatkVgBtopJDnkuwzCKZMKEqeVlNvBdt0SvCw==
-X-Received: by 2002:a05:6808:6ecb:b0:438:2199:6874 with SMTP id 5614622812f47-43d50ecb217mr1038224b6e.50.1758115285481;
-        Wed, 17 Sep 2025 06:21:25 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:72c:cb37:521d:46e2? ([2600:8803:e7e4:1d00:72c:cb37:521d:46e2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b82922de2sm4271063b6e.10.2025.09.17.06.21.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 06:21:23 -0700 (PDT)
-Message-ID: <6ab0cee1-846f-4f90-bc61-141f74144a50@baylibre.com>
-Date: Wed, 17 Sep 2025 08:21:23 -0500
+	 In-Reply-To:Content-Type; b=kOWaOT/4VFXwIFqU4DjW5CBe/zC2K6vCQgUdCnYssvJ6p++GNk+XZOtCxs9fgUA81xHRPib1pmIb9JPVVbZb73enu/amkOfyVAaSXmRneUCjZjPocN6150yMtr6XXFURDf1e96cB5uNOxMsDBAiJmgOZemQWc/OLnf3jEU+S3jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rRINjgm9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oVzuygt4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rRINjgm9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oVzuygt4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7B7A1227FE;
+	Wed, 17 Sep 2025 13:21:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758115303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
+	b=rRINjgm9XXftmCaFqE42aDxmpGTm2BIkPOrnkkwjG9lrcnauCu+UPkoyNHx60HU59KQ9dk
+	mns/v9v8O83c7irrcJByzpDm36S4ZEcFL6DyEGYUF0qd849sAbAxLTl5ATT24D+R5cdmIF
+	0i6g1uZWnJ8LTeKTEuGzguBcvbqoLVU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758115303;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
+	b=oVzuygt4YW03vGLdPSeVFvAVpQWFlQBvv/EAL9t7q1HZe1begUvNrilsf79hgVrA2LQU6u
+	ytwwursrUCx7SECg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rRINjgm9;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=oVzuygt4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758115303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
+	b=rRINjgm9XXftmCaFqE42aDxmpGTm2BIkPOrnkkwjG9lrcnauCu+UPkoyNHx60HU59KQ9dk
+	mns/v9v8O83c7irrcJByzpDm36S4ZEcFL6DyEGYUF0qd849sAbAxLTl5ATT24D+R5cdmIF
+	0i6g1uZWnJ8LTeKTEuGzguBcvbqoLVU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758115303;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x9155gyRlp80SfDBgbiQCHV4RbmEErA6nXhhU6covV8=;
+	b=oVzuygt4YW03vGLdPSeVFvAVpQWFlQBvv/EAL9t7q1HZe1begUvNrilsf79hgVrA2LQU6u
+	ytwwursrUCx7SECg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B116137C3;
+	Wed, 17 Sep 2025 13:21:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vICNFee1ymiQcgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 17 Sep 2025 13:21:43 +0000
+Message-ID: <bf8b4741-1025-4cc8-b9ed-5b566bdcb2d7@suse.cz>
+Date: Wed, 17 Sep 2025 15:21:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,97 +97,178 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/3] iio: adc: max14001: New driver
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Kim Seer Paller <kimseer.paller@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>,
- Jonathan Santos <Jonathan.Santos@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>
-References: <cover.1757971454.git.marilene.agarcia@gmail.com>
- <c257f7feb92dcf33bf7a55810fe69d13890374d5.1757971454.git.marilene.agarcia@gmail.com>
- <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
- <aMptAUsQaUIYpVNG@smile.fi.intel.com> <aMptaOOmQ6SUoMLj@smile.fi.intel.com>
+Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu()
+ operations
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aMptaOOmQ6SUoMLj@smile.fi.intel.com>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org, "Paul E . McKenney" <paulmck@kernel.org>
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+ <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
+ <aMpxnACqmsQl-lp0@hyeyoo> <bbda8c25-b575-4e98-b1ae-b103c6598d38@suse.cz>
+ <aMqcXyKRlZggLxu_@hyeyoo> <6f92eca3-863e-4b77-b2df-dc2752c0ff4e@suse.cz>
+ <aMqyn6nenR8V_p1y@hyeyoo>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aMqyn6nenR8V_p1y@hyeyoo>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 7B7A1227FE
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,oracle.com,gentwo.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-On 9/17/25 3:12 AM, Andy Shevchenko wrote:
-> On Wed, Sep 17, 2025 at 11:10:42AM +0300, Andy Shevchenko wrote:
->> On Tue, Sep 16, 2025 at 01:04:41PM -0500, David Lechner wrote:
->>> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
+On 9/17/25 15:07, Harry Yoo wrote:
+> On Wed, Sep 17, 2025 at 02:05:49PM +0200, Vlastimil Babka wrote:
+>> On 9/17/25 13:32, Harry Yoo wrote:
+>> > On Wed, Sep 17, 2025 at 11:55:10AM +0200, Vlastimil Babka wrote:
+>> >> On 9/17/25 10:30, Harry Yoo wrote:
+>> >> > On Wed, Sep 10, 2025 at 10:01:06AM +0200, Vlastimil Babka wrote:
+>> >> >> +				sfw->skip = true;
+>> >> >> +				continue;
+>> >> >> +			}
+>> >> >>
+>> >> >> +			INIT_WORK(&sfw->work, flush_rcu_sheaf);
+>> >> >> +			sfw->skip = false;
+>> >> >> +			sfw->s = s;
+>> >> >> +			queue_work_on(cpu, flushwq, &sfw->work);
+>> >> >> +			flushed = true;
+>> >> >> +		}
+>> >> >> +
+>> >> >> +		for_each_online_cpu(cpu) {
+>> >> >> +			sfw = &per_cpu(slub_flush, cpu);
+>> >> >> +			if (sfw->skip)
+>> >> >> +				continue;
+>> >> >> +			flush_work(&sfw->work);
+>> >> >> +		}
+>> >> >> +
+>> >> >> +		mutex_unlock(&flush_lock);
+>> >> >> +	}
+>> >> >> +
+>> >> >> +	mutex_unlock(&slab_mutex);
+>> >> >> +	cpus_read_unlock();
+>> >> >> +
+>> >> >> +	if (flushed)
+>> >> >> +		rcu_barrier();
+>> >> > 
+>> >> > I think we need to call rcu_barrier() even if flushed == false?
+>> >> > 
+>> >> > Maybe a kvfree_rcu()'d object was already waiting for the rcu callback to
+>> >> > be processed before flush_all_rcu_sheaves() is called, and
+>> >> > in flush_all_rcu_sheaves() we skipped all (cache, cpu) pairs,
+>> >> > so flushed == false but the rcu callback isn't processed yet
+>> >> > by the end of the function?
+>> >> > 
+>> >> > That sounds like a very unlikely to happen in a realistic scenario,
+>> >> > but still possible...
+>> >> 
+>> >> Yes also good point, will flush unconditionally.
+>> >> 
+>> >> Maybe in __kfree_rcu_sheaf() I should also move the call_rcu(...) before
+>> >> local_unlock().
+>> >>
+>> >> So we don't end up seeing a NULL pcs->rcu_free in
+>> >> flush_all_rcu_sheaves() because __kfree_rcu_sheaf() already set it to NULL,
+>> >> but didn't yet do the call_rcu() as it got preempted after local_unlock().
+>> > 
+>> > Makes sense to me.
 > 
-> ...
+> Wait, I'm confused.
 > 
->>>> Change I was not able to do:
->>>> - I could not remove bitrev16 because I am using an SPI controller that
->>>> does not support SPI_LSB_FIRST. So I suggest keeping bitrev16 and not using
->>>> the spi-lsb-first devicetree property for now, since this driver currently
->>>> works for both types of controllers: those that support it and those that
->>>> do not. I left a TODO comment to address this issue as soon as the SPI
->>>> kernel code starts handling the bit-reverse operation for controllers that
->>>> do not have this support. Once I finish my work on this driver, if the SPI
->>>> code still does not include this handling, I can submit patches to add it.
->>>
->>> I looked more at what it would take to implement this in the SPI core code
->>> and found that it would actually be quite difficult to do in a generic way
->>> because there are so many edge/corner/n-dim cases. We can't change tx_buf
->>> data in-place because it might be const data that is in some memory area
->>> that can't be modified. And things would get complicated if different
->>> transfers pointed to the same buffer memory addresses anyway. So we would
->>> basically have to allocate new memory for all buffers, copy all tx data to
->>> that new memory, reverse all of the tx bits, and update all the pointers in
->>> the transfer structs. Then when the message was finished, we would have to
->>> reverse all of the rx bits, copy all of the rx buffers back to the original
->>> buffers and put all the buffer pointers back the way they were. But this
->>> could write over some of the original tx data if tx_buf and rx_buf point to
->>> the same original buffer, which would break things if a peripheral driver
->>> expected the tx data to persist.
->>
->> And what's the problem here? We do the same with bounce-buffers in case
->> of DMA/IOMMU (okay, without actual data modification, but it's possible
->> on-the-fly).
+> I think the caller of kvfree_rcu_barrier() should make sure that it's invoked
+> only after a kvfree_rcu(X, rhs) call has returned, if the caller expects
+> the object X to be freed before kvfree_rcu_barrier() returns?
 
-OK, maybe not as much problem as I thought. Just rather inefficient.
-I might have another look. We could perhaps allocate the buffers
-during the spi_optimize phase and only swap bits on each transfer to
-make it as efficient as possible.
+Hmm, the caller of kvfree_rcu(X, rhs) might have returned without filling up
+the rcu_sheaf fully and thus without submitting it to call_rcu(), then
+migrated to another cpu. Then it calls kvfree_rcu_barrier() while another
+unrelated kvfree_rcu(X, rhs) call on the previous cpu is for the same
+kmem_cache (kvfree_rcu_barrier() is not only for cache destruction), fills
+up the rcu_sheaf fully and is about to call_rcu() on it. And since that
+sheaf also contains the object X, we should make sure that is flushed.
 
+> IOW if flush_all_rcu_sheaves() is called while __kfree_rcu_sheaf(s, X) was
+> running on another CPU, we don't have to guarantee that
+> flush_all_rcu_sheaves() returns after the object X is freed?
 > 
-> Actually, can this be done on a regmap level instead? We have a lot of custom
-> regmap IO accessors, bulk accessor that does something to a data can be also
-> implemented.
+>> >> But then rcu_barrier() itself probably won't mean we make sure such cpus
+>> >> finished the local_locked section, if we didn't queue work on them. So maybe
+>> >> we need synchronize_rcu()?
 > 
-
-Currently, if you have a peripheral that has the SPI_LSB_FIRST flag connected
-to a controller that does not have that flag, the SPI core code will refuse to
-make a SPI device for the peripheral. So to make anything work at all, the
-core SPI code is going to have to be made aware one way or another.
-
->>> And we can't do this during the SPI optimize
->>> step because that currently allows the tx_buf data values to be modified after
->>> optimization.
->>
->> This I don't know, so perhaps it's indeed a showstopper.
->>
->>> So perhaps it is best to just handle it in the peripheral driver. It will
->>> be much more efficent that way anyway.
->>>
->>> However, we still do want to handle SPI_LSB_FIRST now so that people with
->>> hardware support can be more efficient and we don't want things to break
->>> if someone puts spi-lsb-first in the devicetree.
+> So... we don't need a synchronize_rcu() then?
 > 
+> Or my brain started malfunctioning again :D
 > 
 
 
