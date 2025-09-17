@@ -1,144 +1,247 @@
-Return-Path: <linux-kernel+bounces-820043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428F8B7D2F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF3CB7C6D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061DE582B2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:21:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D755D163B4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0932F2606;
-	Wed, 17 Sep 2025 06:20:14 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85C5261B92;
+	Wed, 17 Sep 2025 06:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ODoFRTIY"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F9E244681;
-	Wed, 17 Sep 2025 06:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758090013; cv=none; b=Q4BZ2QJcZ1F+uf/hslCj2oQXULrWqnyaEIayoVjocy4Op1zk9rlfNWeO33k0Qb2F/1JHMZO+gASItOrEmTMsSl0xu3FENmz6DuGXp97NmBuJ1V0uNFOiPzgLKtHRjZZ45bCSktZFM5aFLsXkeeJQdDdBfJRymBQm909FRl2nvPk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758090013; c=relaxed/simple;
-	bh=GMBRMOA2p/PyuNseR2ex9BFzG79Tgd6ppzrNQ7iO2Zc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gq3igK/idvHQbcvwED8qY4Jil0rGLky9KKOAyP80y/SwAXel/l22kvN0WUn7Dz9PaDxg7yVTRtyTXP7WcJV7XmsKc3QqHxaIHNzAsWI0q7QO3xlPpFHjSYtu5N/00YMC5EHlRpOf6ky/ga5vaE+F9dvtdcmtzJVdiraFoaYtZmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cRTCC04XWzKHN5q;
-	Wed, 17 Sep 2025 14:20:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B2E5D1A14C5;
-	Wed, 17 Sep 2025 14:20:07 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgCn74sNU8pos3slCw--.39134S13;
-	Wed, 17 Sep 2025 14:20:07 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH -next 11/11] cpuset: use partition_cpus_change for setting exclusive cpus
-Date: Wed, 17 Sep 2025 06:04:54 +0000
-Message-Id: <20250917060454.2885698-12-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250917060454.2885698-1-chenridong@huaweicloud.com>
-References: <20250917060454.2885698-1-chenridong@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DE625FA3B;
+	Wed, 17 Sep 2025 06:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758089167; cv=fail; b=RAthldBJnxe9EAAArvPPNQfEB7nUW7+ukVPC24LuizCG9VTI+86f7iT8K2oxsE9RDCBwgJ6rMnAviXVyM5dBLK1Vry9PUntZQfbQ2lqukPXj2wEHa6Iq4UrW676zQajFZ+8ToyhWLZeXvRQr1TPIL2SepKJGKx/s/tNt/psNHVI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758089167; c=relaxed/simple;
+	bh=IgKX2KiOuuXbCNg+imLlXtkBmUy6ASxtz9bwbehpia4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GZxSM6fDnz8I/pZYvNmKebsmis/ZdTXCHsk21XzucMRDUuUiTQO+V+zZrFGcVurnzrLptscuKLzG0iN6UkDK1ju8HW8eKBwLs3Xgy+Sx5GEOkpndK19Va2pwig4hFHyV8EuX8+tEoJ1r8n1NKwe5hu/bK8v2lf/2N9nr11SO2j4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ODoFRTIY; arc=fail smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H61f4a029124;
+	Wed, 17 Sep 2025 08:05:32 +0200
+Received: from mrwpr03cu001.outbound.protection.outlook.com (mail-francesouthazon11011007.outbound.protection.outlook.com [40.107.130.7])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 497fxcsma0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 08:05:32 +0200 (MEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GD6mqawb8evG9uyfgz3FXwN/VMSY2VUOOy5affd+WgN3bPMGMOkJYOjb4tzKL60yI/RrlhavzJ0L7T1VGmqLWgWWljB3qR39iIYRHAPbP3ZJEgB34KMckkIyb+FcYbRduIKhjQlwIRHSXrQXnukLTvZEDH1nm7g4RRa/pjamKov8zHV8G0h2fZSLxiBeApeBFxt0VvBe5CC/lEqYMZDKchLbt3Y0rQubV+TOLy841fWWYjAh9eoH7KOq0JXUo1ATydNxV/e1vQoh0W0ci0WalgPdiWP9vPClG32782ew2ngpNZpcbiQfiYXA2UtoOMNAfmCsRc5/fr0NV9/ofF1S7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KwIMnJmI7baPt3PJC7IBPZTYC1JxZHLV7rKYgamji9U=;
+ b=hgYqT4b4Tca8O1/XGQZIdChRVDsZzjXYO/50UMemsysOHZEluqE/Yjwh7PijIUoKhObphzT3cmnkGBcYQawOkQ0tO3s+f7rrAZxIi8c88+C6Y9fMXnp2bcnaQ29pULKoeEnyF3+3qj2ZBqxSUgeKr1KcjxNesFx6wWSTrg4xrQ/MSJf+TZxJHHtWICGZlmEvXlM03nV8MLEQbaDS4KYsWjPEHQ8s278L8lisiz3U7jGZoZ6K3Fccjbvvy8V2yTg8MqnTDpcrizJDuBLbVwiI8f1oPR28b7alio/LaBEBbfYY6lX7l91tl0Yujhqe9NP7dCxc0oyBlgpN8UU3LqDOJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.43) smtp.rcpttodomain=gmail.com smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KwIMnJmI7baPt3PJC7IBPZTYC1JxZHLV7rKYgamji9U=;
+ b=ODoFRTIY5BLZn8FZcI+ta8+15zXTlsfb2UO3VK1519ODi0dL3pctXP+7WBa6rla4XYS2HRc84rTDz16VPfyPRq5qlyVam1wFVKsWA8ksO+ALUBt8Pj4FDoXh7K1F3PS2JaKBjznKgbALz/IjvTQ9oRIWr7hpCIQs2aSA/kGu111Zeb+7mOOUHWDfiL59CpaQgbm+m+/KsucEMD3WPAWGEgXMFdDsO3sNX3ZS0fWlCEziYlGlbgxsPUNcCgfY0wkBg/qWQk0PXqBvbd6HOpwT3k+E88llCa1PlnrDU+Hv3UbLCNWyR+Ker4To+PsgTDJrdNYWW5ZowQw6PKshlkqhBQ==
+Received: from DUZPR01CA0181.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b3::22) by PRAPR10MB5180.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:278::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Wed, 17 Sep
+ 2025 06:05:27 +0000
+Received: from DU2PEPF00028D02.eurprd03.prod.outlook.com
+ (2603:10a6:10:4b3:cafe::aa) by DUZPR01CA0181.outlook.office365.com
+ (2603:10a6:10:4b3::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Wed,
+ 17 Sep 2025 06:05:34 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.43)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.43 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.43; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.43) by
+ DU2PEPF00028D02.mail.protection.outlook.com (10.167.242.186) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Wed, 17 Sep 2025 06:05:27 +0000
+Received: from SHFDAG1NODE1.st.com (10.75.129.69) by smtpO365.st.com
+ (10.250.44.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 17 Sep
+ 2025 08:03:02 +0200
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 17 Sep
+ 2025 08:05:26 +0200
+Message-ID: <31279611-bf8a-45b9-854e-7fd09d725661@foss.st.com>
+Date: Wed, 17 Sep 2025 08:05:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] STi device-tree display subsystem rework
+To: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>,
+        Alain Volmat
+	<alain.volmat@foss.st.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+References: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
+ <235312e0-b912-4e10-874a-e6364131aaee@gmail.com>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <235312e0-b912-4e10-874a-e6364131aaee@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn74sNU8pos3slCw--.39134S13
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFW8Jw18CFyDZr48JF47Jwb_yoW8uF4rpF
-	yfCr42qrW5Xr15W3yqg3sF9wn8KwsFq3WDt3ZrJ34fGFy2yanava4UWwsavFy5XasrCr18
-	Za90vrWavF17CwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1l_M7UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D02:EE_|PRAPR10MB5180:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5135fca-b16f-4083-38e7-08ddf5b03301
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|36860700013|82310400026|7053199007|921020|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Uk5pZ2dHZkZ5Yk9DcWlxSDhhT21ZcmU0VXZTQkhKdWpkUEJxZkUyVGlqWnFX?=
+ =?utf-8?B?ckM5SnpneTRrK3BDbzdlVjZrRGFqSlpSQzBPRmUwbGowTTJ0Z3ZRTGo3Qlds?=
+ =?utf-8?B?RU9KVTliYTVlTDBvcFNUNmszUlpFeU1vMWFxZDF1V2xPd2RxTmxuV1VkdGJZ?=
+ =?utf-8?B?QitRejZDODlPZ2VOck13M21rdGlvV1dkNkxrelJyODBLdDAxdEFoemhqL3FJ?=
+ =?utf-8?B?NUl5ZWVqRTN2WTJxWGliejM5SHAvOVBzNHRTeVhIZm1XczBURmkzOS9rak5M?=
+ =?utf-8?B?T1ExVTNvem9rUVJrV2tuSjVVT0VlcXBtekgxTVFyWWpxMXlnSjNpN3A1N0Ns?=
+ =?utf-8?B?NWd2ZGw4V0tXYjdqL3p3d1lDczZEK3FUZkF1N1o4bE5DTkZXQjlLQmJYd1ZF?=
+ =?utf-8?B?SmFNZFlleFJvWkdHNnlWQWFDdFZHcGJodW9PcFhxQTZ6QnRudGpuNU1melZs?=
+ =?utf-8?B?UGg2cDc1dWFzNHAzOXZUVmFDaVFCL1dobjVvMkZ0Z3NaQzZDZERidkhQdzZm?=
+ =?utf-8?B?bjBxQ0RjWXN1N2pCQXpnYnM4MGNoS0hlVHlQak1MWW5JT094UGRTUlJoMnRi?=
+ =?utf-8?B?Q2xOT3dEQytHcG4yTG5DMXR5R1pSS3NZRUN4ckJDUFZQbTRzWEFrM3MvMlFh?=
+ =?utf-8?B?VFBuSG9HTTJabDZrdXRwd3FPQWgza0VIRENGM09SZFYwbFRFNGhock1KM2tO?=
+ =?utf-8?B?UUZLYndYM25iT2tSN0dKelZWSDd4NVl0WjhBWnRQSmtMSFZaOUZMWFNLL1ZQ?=
+ =?utf-8?B?ZERIMEdabUVYY242QnpKZnBVTzA1bDk4alppdDErYUVWaUdmZm1mUjdHTHlP?=
+ =?utf-8?B?NjFvTzRIWXdhZ25RSU55TmQvMVpRYnZybnE5TWM5MXJWYXhFTU1XM3kzRStl?=
+ =?utf-8?B?SHNUclRxN1ZlMEpDNW9sN3JxN2piWlMrZjVseHVyOCtkY2MzV2xIbGJxdlVx?=
+ =?utf-8?B?MEVwVWRpbWR6WEFqYi9MSXdRSFkveXRpWGRMdEZ2K0gyQnFuU3VTdW1qcUhO?=
+ =?utf-8?B?NWlyYm5XOGxCV2NjZ3JxZ21XZHNKalh1SldwQ25ENTJoZFUzbHZLMEREWlM4?=
+ =?utf-8?B?M0J0cXBLeWx4THlUbVYvMXQrL292TFIxVEt5U0NpMGgwcTRGQVQvWFpMc3Zy?=
+ =?utf-8?B?SUVKNkkzMUN3Q01KL1MzbFhjSnBVdVUreTBGa1FjRzhFZGVncStxWVJ3MDJX?=
+ =?utf-8?B?c3JPaGMyaDNXaitoS0xWM2tCVUFhdWczU3FKcHRrME1UZGsvY1ZJYWcrbkY5?=
+ =?utf-8?B?bGFhSEFEUWtMYmI5ZmowcGoybG5qdU1yYlVFY21wMFdZZDZTcGNvang3dS94?=
+ =?utf-8?B?UjhhdXdSM3M4cnFsUFEvYU9HVTJZTHdBbzdWOWF3ckY0UlRNL0lMVTFzVmpR?=
+ =?utf-8?B?Wm5sV3hLWEFsbkpBRW8zZlcvNkFGMWhxWndKaEkzS1FtbTVnMUwyeW9IcDk0?=
+ =?utf-8?B?QTBtS1VKL3lCM3c4QTI1dHV2UXdnOHRVUFRKR05qV1JPeXlRTTd3c2t3SE0r?=
+ =?utf-8?B?V01pNC91YzN5RDhYa21WWno4dk00WHBzNk40QmZPOWkxZG4xcUpOOU05ajNP?=
+ =?utf-8?B?Z1BFbUxXS2wzUDQyZlhac1JCOW9qQklya3k4S1N5SkxybXp2TEg0Q3ZrSnBS?=
+ =?utf-8?B?QisvRFZnQWVicHZraS9qWlUzcGFzQTR3YVExS3I1b0RHR2tvZkh3MzJiclhh?=
+ =?utf-8?B?WTlLWnJTa3hMelY1ZjRYYWY1NFNyRTREZFRjdGZzcW9vUnlCcmgxbW9sVjhT?=
+ =?utf-8?B?VFUzV2tkZElMSm5oL1BJUVVkMlllUGN0TzFiVW9FWC9zTTVjWnh2VVpkc1E5?=
+ =?utf-8?B?YjJCVXVOVktZOXUrSVphMitza2t2Rm5FanV6K2c1K1hDNm1zMnhKRElyZzJB?=
+ =?utf-8?B?ekNtL0d1cVVWWFYyeGtHZEgxcUNva2pHU2pTbmg4Y3dzbDNJYmExR3BDa0xz?=
+ =?utf-8?B?T3RKYUphWWd3TnpVMHZtV0YrSTRHWUY3WWVNN3BseC91WlJBQW9jSGNNODRj?=
+ =?utf-8?B?cUNWYS9IcURoU0dnQmFydnFOTEVxa1k5K25tTE9adE41TEkxbUdhY01LS1FW?=
+ =?utf-8?B?b0dqUThvMzNPS3dFZ1ZJR3QwWWRXUkJLbDMyQT09?=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.43;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(36860700013)(82310400026)(7053199007)(921020)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 06:05:27.2821
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5135fca-b16f-4083-38e7-08ddf5b03301
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.43];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028D02.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5180
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX1sD9JOflCye5 GlmPdzALFxa10wJjU72GJI5P05zrW4CDx0T7hf4weGr9xpcyaRhANsffisF+OHGgiVDmSMfEhVp iwOW/jaTB8wPJYCk/dUqQSgUq3nQzBKWdaCV4Ygqvtppp8tCwYaahxgevm2H6ZF3wmNOLa9xDtP
+ 36es3RoXFDd8pbZcH/Y8iO6VHJv1UpwaQq6sN0r0+qZ5nyVJgoZVfSTK/w7RR58pNRDNBJ5fDT/ J8bMBbLj9PWuU/CjbOxdObSibQxpqwZVuPqITCdVtmYe461v/4ku9OlSgXkSWw3hle+HVF6sR5q dvfT4UzFGSQmeKenpSANYj2C20smCST7DEJRzirKJz/26IMF7FCksLKXL0v3QvLt2n+l5bj1XKR 3bIG1hiL
+X-Proofpoint-ORIG-GUID: yIyG_56eU0F8pKgYqNzw6Id7HGk-Nn4W
+X-Authority-Analysis: v=2.4 cv=XPQwSRhE c=1 sm=1 tr=0 ts=68ca4fac cx=c_pps a=xROmSCIA31MF1jNH4FQa8A==:117 a=peP7VJn1Wk7OJvVWh4ABVQ==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=SAHXIHsbQyQA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=49RGCd1ShMPX65mifRcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: yIyG_56eU0F8pKgYqNzw6Id7HGk-Nn4W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 priorityscore=1501
+ phishscore=0 suspectscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 classifier=typeunknown authscore=0 authtc=
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509160202
 
-From: Chen Ridong <chenridong@huawei.com>
 
-A previous patch has introduced a new helper function
-partition_cpus_change(). Now replace the exclusive cpus setting logic
-with this helper function.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 29 ++---------------------------
- 1 file changed, 2 insertions(+), 27 deletions(-)
+On 9/17/25 00:03, Raphaël Gallais-Pou wrote:
+> 
+> 
+> Le 17/07/2025 à 21:15, Raphael Gallais-Pou a écrit :
+>> This serie aims to rework the display-subsystem node, which was
+>> previously included directly within the SoC node.  This was wrong
+>> because it is an abstraction and describes how IPs behave together, not
+>> what the hardware is.  Instead, extract display-subsystem outside of the
+>> SoC node, and let IPs describe their connections.  Doing so helps the
+>> readability, and eases the understanding of the hardware.
+>>
+>> Several nodes have been renamed to stick to the generic names defined in
+>> the device-tree specification.
+>>
+>> This series depends on another sent a few days ago.  It is not critical
+>> though, since not having it only triggers warnings when building
+>> deprecated device-trees.  Please see link below.
+>>
+>> Link: https://lore.kernel.org/lkml/20250714-sti-rework-v2-0-f4274920858b@gmail.com
+>>
+>> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+>> ---
+>> Raphael Gallais-Pou (4):
+>>        drm/sti: check dma_set_coherent_mask return value
+>>        drm/sti: make use of drm_of_component_probe
+>>        ARM: dts: sti: extract display subsystem out of soc
+>>        ARM: dts: sti: remove useless cells fields
+>>
+> Hi,
+> 
+> @Patrice
+> Would you agree to make the device-tree patches go through drm-misc instead of your tree ? So that the breaking change lands in -next in the same time as the driver changes.
+> 
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index c1eefbb7d941..5cfc960f7b15 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2561,8 +2561,6 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
- {
- 	int retval;
- 	struct tmpmasks tmp;
--	struct cpuset *parent = parent_cs(cs);
--	bool invalidate = false;
- 	bool force = false;
- 	int old_prs = cs->partition_root_state;
- 
-@@ -2594,32 +2592,9 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
- 	if (alloc_tmpmasks(&tmp))
- 		return -ENOMEM;
- 
--	if (old_prs) {
--		if (cpumask_empty(trialcs->effective_xcpus)) {
--			invalidate = true;
--			cs->prs_err = PERR_INVCPUS;
--		} else if (prstate_housekeeping_conflict(old_prs, trialcs->effective_xcpus)) {
--			invalidate = true;
--			cs->prs_err = PERR_HKEEPING;
--		} else if (tasks_nocpu_error(parent, cs, trialcs->effective_xcpus)) {
--			invalidate = true;
--			cs->prs_err = PERR_NOCPUS;
--		}
-+	trialcs->prs_err = PERR_NONE;
-+	partition_cpus_change(cs, trialcs, &tmp);
- 
--		if (is_remote_partition(cs)) {
--			if (invalidate)
--				remote_partition_disable(cs, &tmp);
--			else
--				remote_cpus_update(cs, trialcs->exclusive_cpus,
--						   trialcs->effective_xcpus, &tmp);
--		} else if (invalidate) {
--			update_parent_effective_cpumask(cs, partcmd_invalidate,
--							NULL, &tmp);
--		} else {
--			update_parent_effective_cpumask(cs, partcmd_update,
--						trialcs->effective_xcpus, &tmp);
--		}
--	}
- 	spin_lock_irq(&callback_lock);
- 	cpumask_copy(cs->exclusive_cpus, trialcs->exclusive_cpus);
- 	cpumask_copy(cs->effective_xcpus, trialcs->effective_xcpus);
--- 
-2.34.1
+Hi Raphael
 
+Yes of course.
+
+Thanks
+Patrice
+
+> I will send another series to convert display subsystem bindings to DT schema as soon as the series is merged.
+> 
+> @Alain
+> Do you prefer to merge it yourself or you rather let me do it ?
+> 
+> Best regards,
+> Raphaël>   arch/arm/boot/dts/st/stih410.dtsi | 316 ++++++++++++++++++++++----------------
+>>   drivers/gpu/drm/sti/sti_drv.c     |  18 +--
+>>   2 files changed, 192 insertions(+), 142 deletions(-)
+>> ---
+>> base-commit: b9a572f471993d3e8bf874fcb57f331d66650440
+>> change-id: 20250401-sti-rework-b009551a362c
+>>
+>> Best regards,
+> 
 
