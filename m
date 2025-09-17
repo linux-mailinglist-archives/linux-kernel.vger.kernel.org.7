@@ -1,52 +1,87 @@
-Return-Path: <linux-kernel+bounces-820519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699EFB7CFAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC5BB7CFC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92FE581777
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD6F5816DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358DC2EAB89;
-	Wed, 17 Sep 2025 10:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796C92EAB89;
+	Wed, 17 Sep 2025 10:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b="ERtky+rV"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gohQAgu+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FE4275B1F;
-	Wed, 17 Sep 2025 10:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3C72BDC25
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758106736; cv=none; b=Sv2KjVyvdsQKB1jE4BQw4kZR5IAQ7msr6w0b/N1r9HfyrWpkVjdnSi4SgwyHzsqlHlRd/vNl+NcEjymUusPYJQmp2uRDPY2CDQOgfJF5dSrNdLOh3uJxVeeC9dF9c4in47+OuwmindqikI5b/tgm69LGjEMMmfDfZJ/JtnCIgNo=
+	t=1758106723; cv=none; b=bi1DPCPYX4oiUXFlfSzZoC1uk8eb3es/Ikcb32sq3KaKjKiXeoOHf+pcKiZ5j6qxVNayHOsSIPJc22if6PCMeMJyOn/PAgzbi4ZmxdTjAMiN19cOllr1MYHV9X6jiBAEWf70lI/dy7YQ1e1Ujfir+cpexdvApVN2jP4K3Ddedt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758106736; c=relaxed/simple;
-	bh=yCrM5j6YeGUGRgl4TEvoOMyPTxDAD2ZUM2GFXLrAUgM=;
+	s=arc-20240116; t=1758106723; c=relaxed/simple;
+	bh=Izdcts6h65LPN1G5a3zTjxcIrlr+ukYYyT16tAVPvkQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N5GXoaiS/2XbMNtLDoe0ew9cD4mzhVGoNom2T9H35Vsm4zhuJg51hJky0eJIEdlJupCN3uXxS8ajOYqM2MhhaX+1cjbYCmFBicKuFXAwa27T+0sZbyK/DSddvpys5ZrjmJ30AENaegIOV1Ff/SfA1Hyteuk/afVSxd2gzj3GJVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com; spf=pass smtp.mailfrom=simcom.com; dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b=ERtky+rV; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simcom.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=simcom.com;
-	s=oxqy2404; t=1758106696;
-	bh=xGKblNdb+UxaZlG0+v+TKTamCcDdaFF/sMJbnNCUAI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ERtky+rVxt6v6aRDNR3JnCnLPJkfcYaBhdE6anG1IUCDwpwEaEXQL6FmwqfCweYUV
-	 RzzxVwMj7QjIapnS4ZIJPdFqSm2WEjSsWic54CQTP283Fi7fRECBUGnQs62QInOElj
-	 W+3mNXWnCIoFZAsdA9tyQaDfltlcs3uFaniakNtU=
-X-QQ-mid: esmtpsz19t1758106691te935c0a6
-X-QQ-Originating-IP: uzvmPhEmSBHpiYyFT4gYG8RF0OGhw0UXKsFniBjTn6c=
-Received: from [127.0.0.1] ( [60.17.15.194])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 17 Sep 2025 18:58:09 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11535672838644639261
-Message-ID: <8338C8A316C4CE7E+7fea7917-ab90-4db2-91d0-ff64ff74f894@simcom.com>
-Date: Wed, 17 Sep 2025 18:58:09 +0800
+	 In-Reply-To:Content-Type; b=N9Sp8tmmpTtqS6pNpOQmtiMwcedRa1VLbrmf1jcHKz/AwGnqGziKVT5rWmy1JJ+E0+Qa9NDjPuYdCg/HAvdIQTU5atxfQeyBvUrmVI9G+EGdYQ+pu9eJK50H1sBI/vDvNIztPJWu+TQvYSblKQb9RIWXO85M4B8p6Vc6k9Qve24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gohQAgu+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758106721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7JkjtbRP7dMtBFUCBqCV1SQcXuhyJiXUoZv2gn/Tp1M=;
+	b=gohQAgu+Xl71BuVyh7mtMqDaDLwB4NwEMQsHmXViV+HWZwDsK8DaFm5DvRkcqo0Q++r0Sa
+	mEuT4vA7Z1yzKCEOAdyljutkCaNOpRJs2N0iHDl+aKkq3a9wv/P0y1TOoCS+VLMirLG7rv
+	Krc6SSQQD4fztR8QgdDWuierUkuut2I=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-163-8OnEMNkONMygkNPxJVPnzQ-1; Wed, 17 Sep 2025 06:58:39 -0400
+X-MC-Unique: 8OnEMNkONMygkNPxJVPnzQ-1
+X-Mimecast-MFC-AGG-ID: 8OnEMNkONMygkNPxJVPnzQ_1758106719
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b990eb77cso6392245e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:58:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758106718; x=1758711518;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7JkjtbRP7dMtBFUCBqCV1SQcXuhyJiXUoZv2gn/Tp1M=;
+        b=BLo7Y2tITwGME7kf2AK5agqqzO4dkTUVu/3YTZ9Vxh426oOHZhMcdpqhR710g1IUMA
+         h0gLuwT66N9aFzndmN1AnVIL3qC0LpHKv3++mEkfoByjk4OwI2d7noBsT05mT8H8F61y
+         cCK+3eF66p18urF0kYwmqGfDWVNiazlD3vpNDgoRd7wewuwfdqmLeKUNwn50dfprccpd
+         EBZV6/KUEXoVp6Avtc97opPcRwRjmo1fdHEurRroFPRl63S4HaszyC2moQorwPngRpPV
+         nCaqGSZboDOg+PK8/yr1d8sB8SAJvKMpwKRRX5G6xVxNmlA9J2UtvWdR2e6AKjAALic1
+         +LAA==
+X-Forwarded-Encrypted: i=1; AJvYcCU08Ys5nxE0ejT2qELZeANNlqgt4p4jkQU5r7Ywmgz7h+ze+hGBDLQzUv4E8LikQ/x88Hv+MOeUU07bHUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3ZXPS2/ppNUHP0sCChod7ZVVBtPVMx3MyDBA0ldWSDA4Hb1uB
+	R5QRV+dCzpP9Onbv/vkyi+nibWNpA1C2SeRs8s+nmheXLc9eo3al9TIG+RusjNWo4hIUG6aG0EJ
+	SciyWaGgRvT6k7Xyl27reexaj0mRXE+zF+g7ddNwIvEmD1wtqTz0bz5a4vXkDtBNxIA==
+X-Gm-Gg: ASbGnctcutwi3VmtJi59DtmzktfZ0V64xEul6qNxuFpZZRWTZaGy23IO/45AiWMohat
+	lp5js76iPbgjmtMxIn+m3Uyrk/fCyujNEdXGnwQ0ZV0arRyPNnwXoTVJJUKLBaOxpU4FmpBHSnn
+	q1iEqfYC3Mq3AjtY7l+5HyHeMp94i6u6IK936Zvreplsz9JGEytBw4bMTAaJVsfhzBID0aVuDsv
+	o9eMBo+7hVd6c9zZnZ+MjbQsnirqKTeRXY1pvAHRPIUJodkFwPxVUYrjo4nJhMJOx3L2q21QK9/
+	Z+CutaEJvTkAmDhqiwDdnfJyJjca3Q4OoT83tuj24Bd4qIIaNoASCjNO0pqeEI4b+gX05w6m1Eu
+	Ya5xGPxC/lHAbGLoOt6liMd6UCNL/Q+wSZetYoY5Pt6n897vg/LQV+7ETWRg/7Fp4
+X-Received: by 2002:a05:600c:608b:b0:45d:e775:d8b8 with SMTP id 5b1f17b1804b1-45f32d002bamr64516665e9.1.1758106718659;
+        Wed, 17 Sep 2025 03:58:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGYHfjJCnarL426rUzCpUmPlFf0QrjHqktYk5gtQG/LD4ICoTbUxGn3yS+4cVVuXKN0QVM+1w==
+X-Received: by 2002:a05:600c:608b:b0:45d:e775:d8b8 with SMTP id 5b1f17b1804b1-45f32d002bamr64516205e9.1.1758106718247;
+        Wed, 17 Sep 2025 03:58:38 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ece199ad24sm745170f8f.50.2025.09.17.03.58.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 03:58:37 -0700 (PDT)
+Message-ID: <1308de0e-bb5a-481f-a447-ee4440ffb419@redhat.com>
+Date: Wed, 17 Sep 2025 12:58:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,200 +89,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] USB: serial: option: add SIMCom 8230C compositions
-To: Johan Hovold <johan@kernel.org>
-Cc: Lars Melin <larsm17@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250807075215.300961-1-xiaowei.li@simcom.com>
- <58ac9a75-6b0d-4b13-9be4-89a46b8e4136@gmail.com>
- <DDC9EDC62A6DE38C+2d02241f-8f5d-49c8-bdca-53e982d889e3@simcom.com>
- <aK2EIRdqgEafWT0a@hovoldconsulting.com>
-From: "xiaowei.li@simcom.com" <xiaowei.li@simcom.com>
-In-Reply-To: <aK2EIRdqgEafWT0a@hovoldconsulting.com>
+Subject: Re: [PATCH v2 2/7] mm/selftests: add max_vma_count tests
+To: Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org,
+ minchan@kernel.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ rppt@kernel.org, pfalcato@suse.de
+Cc: kernel-team@android.com, android-mm@google.com,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>,
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+ <20250915163838.631445-3-kaleshsingh@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250915163838.631445-3-kaleshsingh@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:simcom.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N5Iui8YkiXhhSEX9PRqLptezddGPtn8BwibEWatB3I60EGPjpfTGESJT
-	KeAS7cbG1z2ZLwJNj4r+Vp7zlqvlg5LTS+FfT8aEatqvF9MFFf/vbHKniu9Ej65koncAXLZ
-	bEBYZ3TtongjZ17FmyT/ExQT3g28kh/qdm1ZTyCxyl+g6zXE+3dhBaTgRBIQpSWw/S9l5jk
-	lB41fhHWD9omtRXWAa27Bn6vu3t6QwQqL9xVzcdo3tFexvQR9TFsruTgObkTD2SgqhcRFat
-	dDLJV209UYbH+rREp4mNRbm5+ymKsAUp/UXQDm7/9R+6FDOkoVpBNRheHe637yVOV7Ll6P2
-	rRLJIUGZ9fXRiwmZcPYFVx5zAyjfc9D6UukpFUbSwRlDEe/ptwMcH5XWCDUo8pftbx6caAv
-	5cBu3Mx5axCrLZS62eH7dnbL1dHtPlhud5F6fQ4m6g7j5my7HU/nO0hAYOeJovYLKb5UjZK
-	c6TfmAhCWOadou+jZz0JBANUYjxECLlMDr8zug/Lrw9o097bxMSaN6D0DtzAB5oo0EAXNwW
-	q9s72cHppFi/oXCJC7q5PCUNKjayiBxKp5lV0ZKiB6l7bF982FQtJpkZyZXfQDpqO7HJure
-	Epudp4TRqZTcO6rmgMthmwA68gBev+MJQQ0/5FqsWOe7kwmVaTphCYf3BTlOmDWVxgNlvZF
-	M3fQZ5eAKpJljiaC2seorwLWZhdjzntA8/FOw+wDTjd6xKQ6zmYmzyZoxAW9T6tEv/0ERvl
-	mdSFnHV+fozJMhOgZoxkFH/4AETmAJ5twRvRumpBcGXk5WIZ6wJcLssK/OlpZcgQI70XBrr
-	b8veJITQrX0AzJZvsX1ObJuZEBeSuCBDeeMehoj8f3X4jbYY4/7wI1e82HEvJVlal+tBS9u
-	I1wd6wXdMU+UGv2kntuC17llrjs3CJBwcnXFi2gzAiDP6VZV0DLS+h9mI7U+kwW9VU1jcpx
-	Ov7l55B2dadwIU15E2XCY5JOUedqzChjgEW0aQxzzcRqA4+fo1x2+7tNyf3i0NHMO+iy8ej
-	TxEa5/uHP3hBoake5IleHobynPR7/qGm2j2oXWNsrhcVEXRpHv+M4J8+lqvICeg5kd48GXa
-	A==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 7bit
 
-I have resubmitted the following patch.
+> + * test_suite_setup - Set up the VMA layout for VMA count testing.
+> + *
+> + * Sets up the following VMA layout:
+> + *
+> + * +----- base_addr
+> + * |
+> + * V
+> + * +--------------+----------------------+--------------+----------------+--------------+----------------+--------------+-----+----------------+--------------+
+> + * |  Guard Page  |                      |  Guard Page  |  Extra Map 1   | Unmapped Gap |  Extra Map 2   | Unmapped Gap | ... |  Extra Map N   | Unmapped Gap |
+> + * |  (unmapped)  |      TEST_AREA       |  (unmapped)  | (mapped page)  |  (1 page)    | (mapped page)  |  (1 page)    | ... | (mapped page)  |  (1 page)    |
+> + * |   (1 page)   | (unmapped, 3 pages)  |   (1 page)   |    (1 page)    |              |    (1 page)    |              |     |    (1 page)    |              |
+> + * +--------------+----------------------+--------------+----------------+--------------+----------------+--------------+-----+----------------+--------------+
+> + * ^              ^                      ^              ^                                                                  ^
+> + * |              |                      |              |                                                                  |
+> + * +--GUARD_SIZE--+                      |              +-- EXTRA_MAPS points here             Sufficient EXTRA_MAPS to ---+
+> + *    (PAGE_SIZE) |                      |                                                         reach MAX_VMA_COUNT
+> + *                |                      |
+> + *                +--- TEST_AREA_SIZE ---+
+> + *                |   (3 * PAGE_SIZE)    |
+> + *                ^
+> + *                |
+> + *                +-- TEST_AREA starts here
+> + *
+>
 
-USB Device Listings:
-0x9071: tty (DM) + tty (NMEA) + tty (AT) + rmnet (QMI mode) + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#= 10 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=9071 Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=86(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Just wondering if we could find a different name than "guard page" here, 
+to not confuse stuff with guard ptes
 
-0x9078: tty (DM) + tty (NMEA) + tty (AT) + ECM + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  9 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=9078 Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=06 Prot=00 Driver=cdc_ether
-E:  Ad=86(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
-I:  If#= 4 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:* If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Will the current "guard page" we a valid vma or just a hole?
 
-0x907b: RNDIS + tty (DM) + tty (NMEA) + tty (AT) + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  8 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=907b Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=ef(misc ) Sub=04 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=ef(misc ) Sub=04 Prot=01 Driver=rndis_host
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+-- 
+Cheers
 
-Signed-off-by: Xiaowei Li <xiaowei.li@simcom.com>
----
-drivers/usb/serial/option.c | 6 ++++++
-1 file changed, 6 insertions(+)
-
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index fc869b7f803f..8eadcfe33ecd 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2114,6 +2114,12 @@ static const struct usb_device_id option_ids[] = {
-{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) }, /* Simcom 
-SIM7500/SIM7600 MBIM mode */
-{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9011, 0xff), /* Simcom 
-SIM7500/SIM7600 RNDIS mode */
-   .driver_info = RSVD(7) },
-+ { USB_DEVICE(0x1e0e, 0x9071),
-+   .driver_info = RSVD(3) | RSVD(4) },
-+ { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9078, 0xff),
-+   .driver_info = RSVD(5) },
-+ { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x907b, 0xff),
-+   .driver_info = RSVD(5) },
-{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9205, 0xff) }, /* Simcom 
-SIM7070/SIM7080/SIM7090 AT+ECM mode */
-{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9206, 0xff) }, /* Simcom 
-SIM7070/SIM7080/SIM7090 AT-only mode */
-{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
---
-2.34.1
-
-在 2025/8/26 17:53, Johan Hovold 写道:
-> On Fri, Aug 08, 2025 at 11:03:01AM +0800, xiaowei.li@simcom.com wrote:
->> 在 2025/8/8 1:27, Lars Melin 写道:
->>> On 2025-08-07 14:52, xiaowei.li wrote:
->>>> Add the following SIMCom 8230C compositions:
->>>> 0x9071: tty (DM) + tty (NMEA) + tty (AT) + rmnet
-> 
->>>> @@ -2097,6 +2097,12 @@ static const struct usb_device_id option_ids[] = {
->>>>        { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },    /*
->>>> Simcom SIM7500/SIM7600 MBIM mode */
->>>>        { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9011, 0xff),    /* Simcom
->>>> SIM7500/SIM7600 RNDIS mode */
->>>>          .driver_info = RSVD(7) },
->>>> +    { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x907b, 0xff),
->>>> +      .driver_info = RSVD(5) },
->>>> +    { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9078, 0xff),
->>>> +      .driver_info = RSVD(5) },
->>>> +    { USB_DEVICE(0x1e0e, 0x9071),
->>>> +      .driver_info = RSVD(3) | RSVD(4) },
-> 
-> Please keep the entries sorted by VID/PID.
-> 
->>>>        { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9205, 0xff) },    /*
->>>> Simcom SIM7070/SIM7080/SIM7090 AT+ECM mode */
->>>>        { USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9206, 0xff) },    /*
->>>> Simcom SIM7070/SIM7080/SIM7090 AT-only mode */
->>>>        { USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
-> 
->>> you are blacklisting interfaces 4 and 5 which are not present in your
->>> usb-devices listings and which are also not included in your interface
->>> function description.
->>> You need to state the interface function which you can do as  .....tty
->>> (AT) + rmnet + {ADB} and also explain why the interface is hidden in
->>> your usb-devices listings.
-> 
->> Interfaces 4 (for 0x9071) and 5 (for 0x9078 and 0x907b) are reserved in
->> the option.c driver using RSVD() to prevent the option driver from
->> binding to the ADB interface.The ADB function is optional, so it was
->> hidden in the previous usb-devices listings.I have attached the new
->> usb-devices listings.
-> 
-> And please send a v2 with the updated commit message (e.g. usb-devices
-> output and SoB).
-> 
-> Johan
-> 
+David / dhildenb
 
 
