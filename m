@@ -1,217 +1,211 @@
-Return-Path: <linux-kernel+bounces-819783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBDB0B7D324
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FCDB7D490
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B7171B27CC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96DFB1763E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE787145B16;
-	Wed, 17 Sep 2025 00:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43DC149E17;
+	Wed, 17 Sep 2025 00:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kGULXJ8f"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="hzGOvnNs"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011018.outbound.protection.outlook.com [52.101.125.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E23736B
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758069060; cv=none; b=uyQ0jgNG8jFHiP7rdvQnplb+A0fe9S9+k82wvuVJuCThhibDTvp8ReEIYSDO9I06C1MwPgCoqyZH+ToBwZmD9RrE2LifAKvOPkLOMhGWrbw7reqvwcqSMFn1B+qKh9pUhi+AH7pHbTEFX7/7ddetmhVpu73zGUYTqAgAT/ntI9M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758069060; c=relaxed/simple;
-	bh=X+PlxhuoYBa9kCs/1qjvLCder9DZCDn37XvCstjg3Ps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hEtDrE/qR78acEnkQsDCAACaIAf0E3kJ/GUOpKoFWswM45+RU0ibzxPvB2K/NAPmPZe3C6t2sYw6hNZJlUjTLq4hCrxvPG+Q16F1M/a6DH5rneJZZFHeHh5j5mszLzCG4B2n2J7DSC2ii7UeohIFnc+x4IGyPIeNdcBLJQjeaDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kGULXJ8f; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8a967f3a873so1769801241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:30:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758069058; x=1758673858; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CAKa0U7jZSpuvuM4buIty/jYeCtOj2xsvZscq/9Zh0w=;
-        b=kGULXJ8f2q8c0gJRw3E7g+n3VQk+skk7LwjGPpbPMcaLXm5L4zKI9bodkKkWT8ooUG
-         eMLlSftVfb5EgEI295HPnhPTfoRV/U10TfipHrPv5oEab48rgq/39U8DGHvCzPRTcB+r
-         2glxliFDy+vAZPtt6iqWA9Wos0B6ih56XhSLcOGajMBKWJvuV0ketzgPRxbVuFmZ4+YQ
-         sPxk2wpAwPNdlE/147QjzJKO51BeBZzOE9197A0tDftYYpkbr+JnNptNyxXjoUoaIytD
-         kd45yN6DCWKzPoXhe4XTm07ny4QCbu/PVIWyL3Ms+TA6baco6cuiGOibPW1OFvQRUFlc
-         osTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758069058; x=1758673858;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CAKa0U7jZSpuvuM4buIty/jYeCtOj2xsvZscq/9Zh0w=;
-        b=dzdcmBt2iKHN4dschteNRD8cc5tQ57PgeKlAB9b2Nk/KyeUW0FlHGZ2o9Ukqj58bVP
-         QqUnWxKqe2PqTU9+84OImb7i+IkJKJ/bgyD67ckHyPo/OpfzMAScBawU8U6uUC71V/5r
-         EFZglQZ36COCi3QGmLVonZhAuEa8mOFb1Q31L8FbxprSxs/E62WHo8lMQZZFA4lnBqLk
-         cJpROnGBkEkUZwen6rHGtz3gIXh8OSl693aWfpHlBcl2MAYBn5lcHF/NLywYtRBMnm9v
-         Snuzswe8y73NDww0OCQmpv/5SK0auKg0HquQRUmZuVKRxWx1cJQSe0xrOxIDlVIsBwMC
-         ojsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZU9H+NOra4RW8kA0KdlnUltEtG5B6BjVaCK84vfGIcqm4ce6gYPTU42wojLVVMZP/c+zoBUs8x3Zw9hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh+YTNv7m0teBn0kD8EKcKem4+yGagxKsIGJXtA4JUPjLHx5sI
-	a1eKFt21xZrSBrxrxHDy3CvUSWNmbNxO3UZdQg4HNcFhg3l3d/veCm3p0i7uhJtlbAzEtAE91tv
-	U/LkvMN8HQg6nqaCb2ON8KfsYTBPU4sQGa1sN3FS1
-X-Gm-Gg: ASbGncuTWbz8y0KvSxFZdViZk2ntsETOdeIhRa2veGt4w/IjEJ2FEsHNpUCt3RWwDoU
-	4SELissMHsHka6jQWUOaBcyQX3pV/0frBGas9x+X3pwWU8HTqnENeUoNa9Yn8e20ioLpwGnqZ9w
-	8R14j31COoxbmrFpIruycovhNi6Xa4v6r1ClOJy43Uj0kxxk/DKu4SwcoWMVuExgO8NCoxj8CPX
-	UM/7bM3uQRXLqLSYohql6Hd/ytPRR+LJXcxxvbRHF87
-X-Google-Smtp-Source: AGHT+IGpcvzQc7vHHG+kc4oHBhDjO4zKXCvjee+xT79Ol/YyeJ/1u96xFdzMVFkD0elqQQ4hUMuBMrxsaBUf0oG58gU=
-X-Received: by 2002:a05:6102:2c15:b0:522:b5e6:2f46 with SMTP id
- ada2fe7eead31-56d4d993fdbmr67674137.5.1758069057773; Tue, 16 Sep 2025
- 17:30:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C71736B;
+	Wed, 17 Sep 2025 00:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758069139; cv=fail; b=mEISGmzas5PHL6YJfPbiQrXzRgC0QTzOtMHCOeR+lJ9MnDf0L/p6phBHvdSYayPwnJsaROBtz5BTcfnzYUkfaOzA9P0kfHm84FlGZjvUGKnVXeHpadIHIqpafGvxT4hhea2xZU9Ew5XThj6KkSHucbCDIl0Er0C3UwQYvphQm5Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758069139; c=relaxed/simple;
+	bh=mnZdmCZx2ngA9Zbv82bXVZATnQ2R2u3a0GkR/nDhxms=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=J96qnT3oM4PWqmGf2QGsmJYStrJIRkbTAEjFf6JGwRcKiYt/BVnCfHgZ/S88/j24wukSJbT/F38Rz/14YibZaxXkJmLBh8Ssm9rMeOfId+WFRZDL5NSTCWqqqlTjzvuftiw4RxTrdmjVZJu0P8fqX33TL+VQ3kdM27N7M3xWw5k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=hzGOvnNs; arc=fail smtp.client-ip=52.101.125.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RZjKpP6rqdpkvrvguXtfsUciB2wKVanSFQ7RjxqaJfpa9Xzz9jSxtWOTxvj2fmlKm3i/WuS2vhLtOvIMB6S6HZ2AIWjEfZ7ohuVmPPuEZRz6uK+xcMNLMwXXQ+UxdWKiVI0J1kVV9EtNXPyfpd9Il8w7/rMWziEUkMoLbrcpXMmij/ClHCePbTw20+VzQPAvckBA9bcAP9dwYA7d7G+B3i0Tiq6qprOfvGKdLyGgTUMPQvyuXo4UWEm009Z/G+XGII4nBNWUHVZ2pMUe8j4biM5OjH4eWymGwGXmSYCi+McC/vo2Esqqu4r9LqaAkpTkcv+xFrWoueBsTnrwX6ErxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oo4aqY6u5AZwm5E2yJT5QfEE3m6c8vD9SNxbiB+Mit4=;
+ b=vT0+GtkY0Qn740xwUS4Gh2kOBK99d2VP78VIuKKQJSNTJ1fA7Saj4MwkttByHxNa5Dsbb8TtD7kuL8mg6+w8tRiXQGepFMPy/jqoxbNYEyYcKyesHpchXg/BMejwfHUAt/SykiS6uMC2H+DR8s0PBi5t6qj+w/P9iHGbgScWKn/NuV0JfeGT62pNKrPH4mnIy0FYqBk3fwQ0uYSGFh/ERg5VILWagqs+A/maMoJaf2vozaLYcKwtzygUyfk7vQ0QPD551Rfwz1o2P7q6WMGMvbmSaWjm3B8LVZmG7yqW9SgdHzectDFfXJQmt7582lvjKZ6ILAf62jjbNn32r5K6fA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oo4aqY6u5AZwm5E2yJT5QfEE3m6c8vD9SNxbiB+Mit4=;
+ b=hzGOvnNsKVLzDAOSdZDdnT9Z97rdAu8A0olqX3OXzsVc1TH4TTIIeIXjosOC9EysmxE8Mfx7dWWsWj7bOuaDe04bVp2ualOdhVX/LGOaGp94MgdkU/ghLelgDhf3xuNrEyJEPBuMFDCu1UA5z9mhP+p3yoLiqXifWNIc21Efn2g=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TY4PR01MB14650.jpnprd01.prod.outlook.com
+ (2603:1096:405:235::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
+ 2025 00:32:12 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11%3]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 00:32:11 +0000
+Message-ID: <87ms6taph0.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	"Mark\
+ Brown" <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai
+	<tiwai@suse.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	"Alexandre\
+ Torgue" <alexandre.torgue@foss.st.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: stm32: sai: manage context in set_sysclk callback
+In-Reply-To: <20250916123118.84175-1-olivier.moysan@foss.st.com>
+References: <20250916123118.84175-1-olivier.moysan@foss.st.com>
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 17 Sep 2025 00:32:11 +0000
+X-ClientProxiedBy: TYCP286CA0356.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:7c::8) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910144653.212066-1-bharata@amd.com> <aMGbpDJhOx7wHqpo@casper.infradead.org>
- <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F> <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
-In-Reply-To: <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
-From: Wei Xu <weixugc@google.com>
-Date: Tue, 16 Sep 2025 17:30:46 -0700
-X-Gm-Features: AS18NWA9y0jYxcd9ms5fIx1WiL1jSVSZ98u37raOtlChuyNgOvkjQE1POFTfnB4
-Message-ID: <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion infrastructure
-To: David Rientjes <rientjes@google.com>
-Cc: Gregory Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>, 
-	Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Jonathan.Cameron@huawei.com, dave.hansen@intel.com, hannes@cmpxchg.org, 
-	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org, 
-	raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net, 
-	nifan.cxl@gmail.com, xuezhengchu@huawei.com, yiannis@zptcorp.com, 
-	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com, 
-	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com, 
-	balbirs@nvidia.com, alok.rathore@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TY4PR01MB14650:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce3fb69f-2112-4f74-2a71-08ddf581a479
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RpGNp8vtGdPR6Ob+bWXZ2BuX2vMvJawcao5fSZOwL7B+PzKJ4H/jt5afxqkG?=
+ =?us-ascii?Q?H8zO23qZdYmZP/QXWR2J1AS/IhhgSrVt8Qd7pK6Qc9XYKp3MHYJXfZU/Zxj+?=
+ =?us-ascii?Q?oEdiz4g3hf8nAGiHwOT9JwXCNYfKB6p/yzaJaeXIhtwTAzl8vP3i9tRJPMZr?=
+ =?us-ascii?Q?jAKHcRyDQ2UsDp8cTXiJ6GzqI2MTZBBI+hupWOiLOBlJkXUpNi6xru2Bg3wm?=
+ =?us-ascii?Q?cR+LO53e0um4SiwvLwLQ5AdlIx8jQJLLKuN5DlzaY5zVUnPktzL/nn7bstCV?=
+ =?us-ascii?Q?pDQf2JfAl5apCBymMshwQ5HPFHtPW5WP6xJO4zPle1I6LmoRI08iJYeVLVpe?=
+ =?us-ascii?Q?P0qJ0hs0nMmtAKlKN9/PAsa3QeoLPJxSEeSfpz86sFePD+G+/ZO9+bBeI/DE?=
+ =?us-ascii?Q?CN+sariJNV4jE2bW2eTPP2G2uuGLf8GRfad8WxdQJWQkc4cTRWJVx/QhJlHV?=
+ =?us-ascii?Q?7Kv88hPln3XGBV8f71DJ4mHAyGkNtmrA3JTHfciGHK1AfWXBwd+TsP5s/Fxj?=
+ =?us-ascii?Q?wvd9l1yP5T/di4txvLWPQG/71Ul+R5uz0mX1BhX6RCkG20If07GH0eJrSeUv?=
+ =?us-ascii?Q?eTUyx4VdHK6nOw/1Syw8DnDZcIa1TdgI4qw7Kjh5I00DwVq8xfdi+BfhPKLX?=
+ =?us-ascii?Q?eH/ldhRtWXlHnI06NJbLmr6g6hDPbJaikcIebd4pZEOYEL9SKHgYWdxCfYV9?=
+ =?us-ascii?Q?GbUU9cfa41tRL9CJILdpm9C6EQLxqBy2RiyMW+spsXkAzleqGB3LoI6jMoGt?=
+ =?us-ascii?Q?fIuvS2zOrOizrs11TWdmxRocPJfAZlif7pQffh8o3k9lutw9Hi/qpBwhV7G1?=
+ =?us-ascii?Q?1WdCgrOlgsXG+WKqZ40ZwheRmW2++7wq6TYkb0Jlz4yKKFBXoHCMTLhVhh2A?=
+ =?us-ascii?Q?58e+5XqlmGzuFXrSVIod33Qzt5ALZOe2hY/bb44WCTAzgP1v4yuPhn6hukZB?=
+ =?us-ascii?Q?NUBGHs2MdT+ghUvGwZxBqsRtICoss3oso26VKed03XtpETgsg7HjQLM8Fril?=
+ =?us-ascii?Q?di5jKOKy7uqTTZXcYJEiqnxP19e/8t3HHCy/DbnELyhlO6lNfDMAOMKlioEJ?=
+ =?us-ascii?Q?04CM65Mp0d5w16wJPZeY6QZli8zstq+8CQ8yDW8akc+ojJg/mKXP4ZqqKKXv?=
+ =?us-ascii?Q?IdxUxExR2/PV6ID9B+t7t2Qynj2NCPbBoCRAkCuKe4AsuvrhMoe2rPOK3aQq?=
+ =?us-ascii?Q?QrYEE8wcIPWUfiPSlP++BTwhOytKK3M2AxBKE11nS9dFVupsyPcGsklybMp6?=
+ =?us-ascii?Q?ZhUsUB7MjI3YOxKToq7lKH1OPMxspmdVTerpByH88if+h3LUKxWass70GJwn?=
+ =?us-ascii?Q?lB/vWtrKzyXhQi+446XNCgIpQvHZhhNRozfSg8z0j+UY+k4N9YT5btShO/HW?=
+ =?us-ascii?Q?6+3TGEFg3GK6wpc8XWO/evYewbsDqJ49Lap59yZGr5kLYEiIOamd1jk1fsye?=
+ =?us-ascii?Q?JnLW03HroMV0JopxlVeUno3HC1YN9eSRjXyliLq1+pkpU/CTspgPOQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qc9YNDBcVlvTNiwiS/zWUk53pun2jsIqAkt8ii5wLx2smi79VrEZmOXrmHY2?=
+ =?us-ascii?Q?dhpxEaNb82Ctff0Wp2M8eAj/GcLS1oDLwWRguNllwAShyLviZKolVktW4q9U?=
+ =?us-ascii?Q?oXPyYJmWMZPbMG7LmaUgTUJJM0UcVfe9OTtgjbCeyT7wp5pw8hnzOGJuo2UI?=
+ =?us-ascii?Q?sS6/QINu7HEZLtkI5ScrCheZnmbg51Q1EX5lu3OHhJBV8FrJr/A9ArFNH+8z?=
+ =?us-ascii?Q?elMdapyeBGbZjWBXAfYlvupSpMsZLY01pk9nwj0ftEj7IkoH3DL0c8ympEP5?=
+ =?us-ascii?Q?St5kg+oszguXmYhMQos0E911CyKWmb+Rs0SLSep2mrfHkvZZxP7AIAkz9ZGA?=
+ =?us-ascii?Q?MKSkfZ6PqtRIOdar5WTLpQWg3hK3Fww9MiadBi8GMf0QWdF8RQpJMHRlvjrK?=
+ =?us-ascii?Q?gEtG6yFCJVTtJ5MAxWLggJUtIMK0fUt6nTRCo2jMJhHdyEWKp0+WiX11Oa68?=
+ =?us-ascii?Q?AqwXyEo6mHXALzu/5qygx8E71rMvso+6qjwQ77hr4713Pd8h5DmNSH+Ws7MQ?=
+ =?us-ascii?Q?IqDACXur6XhHLqp2jyfV1YHDIMoXNHPD0fI7RSYdqnMxHUFgl1K3oxfqwv3T?=
+ =?us-ascii?Q?CZW+fztckthjZZAirHUElJm0f9Vu1m+iuUZ4ZkA/DpYOh/ApW3YZ9w9DThbV?=
+ =?us-ascii?Q?3HWTyFqCsQ/yH+MS/y+35Jh14+OHFnEyQ2TprJ3iNrjDm5UeAJXaX+ZeZOeR?=
+ =?us-ascii?Q?4l9NbL90umu2ShuCC9vKhMWuY6vyr2bUiWHKu5GJh9VS47YDN991Y3Davkaf?=
+ =?us-ascii?Q?YmcYmVRaAKklvbpQbSAk3ehDTHeO6rmtzmwVtcE/4sxGUuuayqB8bjI9bGPk?=
+ =?us-ascii?Q?MDxl51x661G5gOriGb4K482bCASxEGNDg2CIT4TclF/nLWTk9YEJ7DTsiLjX?=
+ =?us-ascii?Q?Pc/Uerq5dhFgtYsH6zqSJw75TbZREZUUr6dxD8hpta4tVL8iJASuiQOFfMIO?=
+ =?us-ascii?Q?skMfMEj2gX1qJr8qDq6MTTjE7cvhL9fCiNX7U3Zg79MW1tTd1ewIRKRxCDWF?=
+ =?us-ascii?Q?SpPfQ3KG6kHYTAm4azDCmyEmZVaWdrMjHuPeSoJWwRU5by8p5KGTXFQ49IZT?=
+ =?us-ascii?Q?81sMGGCZ//ejea/dMjimUXrsdv+utnIQdqjw4Y5jvr1p8CYvrb/e15Onl9Mh?=
+ =?us-ascii?Q?hLrTzu+86WYIJwFaKlszwKOZJ47enLzvRUOALAmDGoJkoMmI5WuJRoynQ+Ha?=
+ =?us-ascii?Q?SvTDLHHv0rL26JAJ9ACNfzTwc8Y7XRmHaK6BZ/RVgtx+t6OS2O8Sg8XKzPRO?=
+ =?us-ascii?Q?UEF0uwcKBdEk4YVA5jn7u3vlp9kt+ZpXq2cOtBucrAfVoWPZdGVoTKOOz2g9?=
+ =?us-ascii?Q?4ACH9eBB81vw/z0Ok/PBgrkgGFMixPvUFhEzo57iOEZKkM4zXcHKYnNuyTfa?=
+ =?us-ascii?Q?yhMwHVfQdjFAfBOpZv0n/RgAPBYFrgdbeuVfav73KgDsRmCMYf3J9IFiM2qr?=
+ =?us-ascii?Q?Gz3ijzfklfSS+tBV/5GBbjtmVrPouHtNp0xudvjFDw9kYZWFBBNN61ovL0tn?=
+ =?us-ascii?Q?YrC86DZTgO/FShzDcfZFLPY3kof52jF3eX9L/bWGfeybrhpCShjZ8HkKoeaZ?=
+ =?us-ascii?Q?69ez12Pq8nGJPcGik33tYGcw9G4MD25lskJq8K3kCEr/f8YkYZvXDqlICPhV?=
+ =?us-ascii?Q?M/S9aVUtqWUkJHUBiGHZbLw=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce3fb69f-2112-4f74-2a71-08ddf581a479
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 00:32:11.7685
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3XCwOn2PeMzuY3UcKjmH6vASB+TzWA8Ey9n+7LK7e8FFo4HnaRvtHcBgwZMo93HqooUYLHA+9c70TDx6DgStG5iHHS8PZR9akLzEZIWwY2H+VKZnMsps4ddk1uWH8yjw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14650
 
-On Tue, Sep 16, 2025 at 12:45=E2=80=AFPM David Rientjes <rientjes@google.co=
-m> wrote:
->
-> On Wed, 10 Sep 2025, Gregory Price wrote:
->
-> > On Wed, Sep 10, 2025 at 04:39:16PM +0100, Matthew Wilcox wrote:
-> > > On Wed, Sep 10, 2025 at 08:16:45PM +0530, Bharata B Rao wrote:
-> > > > This patchset introduces a new subsystem for hot page tracking
-> > > > and promotion (pghot) that consolidates memory access information
-> > > > from various sources and enables centralized promotion of hot
-> > > > pages across memory tiers.
-> > >
-> > > Just to be clear, I continue to believe this is a terrible idea and w=
-e
-> > > should not do this.  If systems will be built with CXL (and given the
-> > > horrendous performance, I cannot see why they would be), the kernel
-> > > should not be migrating memory around like this.
-> >
-> > I've been considered this problem from the opposite approach since LSFM=
-M.
-> >
-> > Rather than decide how to move stuff around, what if instead we just
-> > decide not to ever put certain classes of memory on CXL.  Right now, so
-> > long as CXL is in the page allocator, it's the wild west - any page can
-> > end up anywhere.
-> >
-> > I have enough data now from ZONE_MOVABLE-only CXL deployments on real
-> > workloads to show local CXL expansion is valuable and performant enough
-> > to be worth deploying - but the key piece for me is that ZONE_MOVABLE
-> > disallows GFP_KERNEL.  For example: this keeps SLAB meta-data out of
-> > CXL, but allows any given user-driven page allocation (including page
-> > cache, file, and anon mappings) to land there.
-> >
->
-> This is similar to our use case, although the direct allocation can be
-> controlled by cpusets or mempolicies as needed depending on the memory
-> access latency required for the workload; nothing new there, though, it's
-> the same argument as NUMA in general and the abstraction of these far
-> memory nodes as separate NUMA nodes makes this very straightforward.
->
-> > I'm hoping to share some of this data in the coming months.
-> >
-> > I've yet to see any strong indication that a complex hotness/movement
-> > system is warranted (yet) - but that may simply be because we have
-> > local cards with no switching involved. So far LRU-based promotion and
-> > demotion has been sufficient.
-> >
->
-> To me, this is a key point.  As we've discussed in meetings, we're in the
-> early days here.  The CHMU does provide a lot of flexibility, both to
-> create very good and very bad hotness trackers.  But I think the key poin=
-t
-> is that we have multiple sources of hotness information depending on the
-> platform and some of these sources only make sense for the kernel (or a
-> BPF offload) to maintain as the source of truth.  Some of these sources
-> will be clear-on-read so only one entity would be possible to have as the
-> source of truth of page hotness.
->
-> I've been pretty focused on the promotion story here rather than demotion
-> because of how responsive it needs to be.  Harvesting the page table
-> accessed bits or waiting on a sliding window through NUMA Balancing (even
-> NUMAB=3D2) is not as responsive as needed for very fast promotion to top
-> tier memory, hence things like the CHMU (or PEBS or IBS etc).
->
-> A few things that I think we need to discuss and align on:
->
->  - the kernel as the source of truth for all memory hotness information,
->    which can then be abstracted and used for multiple downstream purposes=
-,
->    memory tiering only being one of them
->
->  - the long-term plan for NUMAB=3D2 and memory tiering support in the ker=
-nel
->    in general, are we planning on supporting this through NUMA hint fault=
-s
->    forever despite their drawbacks (too slow, too much overhead for KVM)
->
->  - the role of the kernel vs userspace in driving the memory migration;
->    lots of discussion on hardware assists that can be leveraged for memor=
-y
->    migration but today the balancing is driven in process context.  The
->    kthread as the driver of migration is yet to be a sold argument, but
->    are where a number of companies are currently looking
->
-> There's also some feature support that is possible with these CXL memory
-> expansion devices that have started to pop up in labs that can also
-> drastically reduce overall TCO.  Perhaps Wei Xu, cc'd, will be able to
-> chime in as well.
->
-> This topic seems due for an alignment session as well, so will look to ge=
-t
-> that scheduled in the coming weeks if people are up for it.
 
-Our experience is that workloads in hyper-scalar data centers such as
-Google often have significant cold memory. Offloading this to CXL memory
-devices, backed by cheaper, lower-performance media (e.g. DRAM with
-hardware compression), can be a practical approach to reduce overall
-TCO. Page promotion and demotion are then critical for such a tiered
-memory system.
+Hi Olivier
 
-A kernel thread to drive hot page collection and promotion seems
-logical, especially since hot page data from new sources (e.g. CHMU)
-are collected outside the process execution context and in the form of
-physical addresses.
+Thank you for your feedback
 
-I do agree that we need to balance the complexity and benefits of any
-new data structures for hotness tracking.
+> Here is feedback regarding commit 5725bce709db1c001140d79398581e067e28c031
+> ASoC: simple-card-utils: Unify clock direction by clk_direction
+(snip)
+> To accommodate the change introduced by this commit, I added the property
+> "system-clock-direction-out" in the SAI device tree node.
+(snip)
+> * Before the change:
+> - Initialization:
+> simple_init_dai() -> set_sysclk(id=0, freq=sai_ck freq, dir=out)
+> 	Calls clk_set_rate_exclusive()
+> simple_util_shutdown() -> set_sysclk(id=0, freq=0, dir=out)
+> 	Calls clk_rate_exclusive_put() (releases the mclk clock)
 
-> > It seems the closer to random-access the access pattern, the less
-> > valuable ANY movement is. Which should be intuitive.  But, having
-> > CXL beats touching disk every day of the week.
-> >
-> > So I've become conflicted on this work - but only because I haven't see=
-n
-> > the data to suggest such complexity is warranted.
-> >
-> > ~Gregory
-> >
+Here, about "Before the change". Does this "change" mean "before adding
+system-clock-direction-out" or "before commit 5725bce709db1..." ?
+
+> * After the change:
+> - Initialization:
+> simple_init_dai() -> set_sysclk(id=0, freq=sai_ck freq, dir=out)
+> 	Calls clk_set_rate_exclusive()
+> simple_util_shutdown() -> set_sysclk(id=0, freq=0, dir=in)
+> 	clk_rate_exclusive_put() NOT called (mclk clock is not released)
+
+Hmm...
+If it was latest kernel, and if you added "system-clock-direction-out" in DT,
+dir should be "out" in my understanding. dir=in means it doesn't have
+"system-clock-direction-out".
+
+And, dir will not be changed (out/in) in init / shutdown.
+Are these same DAI ? Both "struct snd_soc_dai" and "struct simple_util_dai"
+have "*name". Could you please double-check it ?
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
 
