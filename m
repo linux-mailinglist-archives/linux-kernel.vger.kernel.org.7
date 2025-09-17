@@ -1,132 +1,148 @@
-Return-Path: <linux-kernel+bounces-821795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9096B824EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:37:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB47B824EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6711C24A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F30B48822C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9081932950F;
-	Wed, 17 Sep 2025 23:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE9832950E;
+	Wed, 17 Sep 2025 23:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nu6DHH9U"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QW8/rVmq"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00A9265630;
-	Wed, 17 Sep 2025 23:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D497B265630
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758152264; cv=none; b=t+8ubhf6eQvEdZYRtgd+xd02BpvlamlSXjzy0GHHowL7Ak0JxUnSzpFcAd7wvK/SUua0gRFDas5GPFtcFULszma/irukqjsESc0q3ys1EvfCv+blxH0//QLYRSvDJZU3Kal+U/ZUCy6KvINoL8xWtJctq6DAJS4mVKaKuMN2LuQ=
+	t=1758152288; cv=none; b=n8o1NXPYp028f4UvOTg9lisNJxQ12ToMlAT/ykFuPcLpTvMyn9euJ6DaEs/m/M1n3J94mn8hqc0nLPtgF7EQL66BWFob3trmHKogn23lEQ59YKHT2kKpBt0wWmkeMJPq9pdnWQ826wFWLNlXg9dikxOvSHdaZtOuKyY72aX+Bcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758152264; c=relaxed/simple;
-	bh=Tm7LDGQYbF/5OYizYxd41PtQk/zW0KgP6XlgKNQteR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9AQtZ5ZUFfc9bsC45tTkrpAjeWifZXVJKu54chBOqs3sHOZbTmUO4OtZf826SmD7V7NjPPsa12zYav0foVHG5BsLvQgI0fcAAMWq/PFJibgkkO0kD12sFbYmy1SUVWgylNkZ3rhpJd/jSisPVV/dfoofZCzG+b95PwqkgrqRAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nu6DHH9U; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758152261; x=1789688261;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Tm7LDGQYbF/5OYizYxd41PtQk/zW0KgP6XlgKNQteR0=;
-  b=nu6DHH9UbBjEWEyc1mfHdH/H1FyDHdgWj/8YZCm1Qa62yvGwxiO5wIaE
-   etdhv7+wBJoaS7crC3xRDQD5O2hqk0AUl412UmqGX3c5Re99H99rPnYGA
-   +rSMhDZefpsaBNuW5a21mAxC129mw9TTXm9NA5GyOe9l0Ly/JkF/CkRnq
-   5bhvNoXkgHPsGFyg6hWP5c7nmc94+jBCMsxTSOVXgIqfj/8nHE8jEk6ZH
-   fAE2fVTmpmCCb+1s6ioSyqKDROiKLr/eDbWV4X+pfZj3MlbaJvAO8uUVG
-   5IshS48TtDL0MwNoDUvHuGyq+kDtA0RzVfDfiaML5oWiHL01xap4MQ0HD
-   A==;
-X-CSE-ConnectionGUID: Odo81/UKTpmQL/LmmFvATA==
-X-CSE-MsgGUID: PJMy3xVGRu+syXYgICIrVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="71576745"
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="71576745"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 16:37:41 -0700
-X-CSE-ConnectionGUID: QcxZYuG2QOyvuJ2rkRherg==
-X-CSE-MsgGUID: 5O/Z75r0RRWd2IesMQAMfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="175779636"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 17 Sep 2025 16:37:34 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uz1iN-0002ZT-2Q;
-	Wed, 17 Sep 2025 23:37:31 +0000
-Date: Thu, 18 Sep 2025 07:37:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com,
-	glider@google.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	andreyknvl@gmail.com, andy@kernel.org, brauner@kernel.org,
-	brendan.higgins@linux.dev, davem@davemloft.net, davidgow@google.com,
-	dhowells@redhat.com, dvyukov@google.com, elver@google.com,
-	herbert@gondor.apana.org.au, ignat@cloudflare.com, jack@suse.cz,
-	jannh@google.com, johannes@sipsolutions.net,
-	kasan-dev@googlegroups.com, kees@kernel.org,
-	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
-	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com
-Subject: Re: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7
- and RSA parsing
-Message-ID: <202509180721.GaBOMCkp-lkp@intel.com>
-References: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
+	s=arc-20240116; t=1758152288; c=relaxed/simple;
+	bh=J5xOsOuE7mqFHBoN0AADm8mFAldkd/OpLs/yDFgnsng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kWnLFAqsHqjfEB/ROpVTL4MDIxHqvrm5FfZh/eW/LtSPftOIlBONHAzWMPnjMnVD7gVID9ZgJrZ/iVZ+8/v6+vYe9Jv4iNg38tAvismw+tn6wdjWBtuo8CKty3KTK/RC4eC2+QQfcN41ylnYBJu4z3WWHJX5UXzZb/gnRq4/l6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QW8/rVmq; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-544c15d4eeaso80784e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758152286; x=1758757086; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J5xOsOuE7mqFHBoN0AADm8mFAldkd/OpLs/yDFgnsng=;
+        b=QW8/rVmqvzl0vzpP/V+Gfv2/os4zz0jXLboKqVl6/Swdbq5nt5BsRvuIWP++qzYdgo
+         IyEZ/YavkHG75bEo6QR/5DD31MxVkb8SiOec8+rPzzVp/Pd6G4I/RWf2gMIbRH2e9eb6
+         MF9l8O4iWdG7OX73kegAXBC6JmFdbuH9ZYesfLW6FL3Q/nWk0LrCkw3B5XsIMlX/rLzM
+         99YlwM7u5ewpxjlW6R19EVEzELXSGYPpVz5WknObdNb/do9OcezmcgA4HVjANBw0TtYM
+         UgqTliw9Sm1WududrLhGiDfkL52juidDFkD1DQuzanFPavgEiP+aDA+ZdM6Z080Ve+Bx
+         CWRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758152286; x=1758757086;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J5xOsOuE7mqFHBoN0AADm8mFAldkd/OpLs/yDFgnsng=;
+        b=IuuVB21/+Nbqo4HO+ysdJPOeYA+e+swS/NVAMlncSOuWLOyLtmqReURdMPR54CPd7B
+         p0Rr7ttN8uJ2f23PD4SwwYEZBhKMbvpR1ZoJHsW5amoebXNb1kIBqI2X6Z+H+ROqveN5
+         1rmzgeaSr9/BtiRGo82K3wHki9yF6hzJskjgeYLmRvMX2PFvbnoyDVbvsCmA1HGJeITP
+         cbU/hzfY1tzwUkI7h44ssjqtXHj2qntppuOJCNRm8n0aYVZaCsStAaI4nmlOSFQybMPJ
+         i2yuHxmuFKf5hxKMKkOjNmxbkVaplLgrSTRWgmZrFP5Z1pvnUgbxBcJz4zhf/6S3wCju
+         MYuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIQwhZ8QoyuHkAUB9qdJ1wEP9p2lIT1Bbng6c4JYnn8P8zez0UmosNbhCn6VFynx//cjDdrNpSgPMoQ3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTH32xEOJVDzquEebB1WnsH/VDrdnlDA32H+CiRjf4gdJ+Dz/1
+	TqZNPUzcheBoo73cArqVV81vaep5IHAjHMVRfB9odr9tMTL5m89srSQbFsyR8qVHNTPE1ZimzT8
+	IpFZoK94byvhJ2lsJeq1KWoavpCy9sqE=
+X-Gm-Gg: ASbGnctAviDfL93mYZ9rZVewOo8jt5cqDt8bc5d/GmuUUjRL9kQW9Eb7Kuoh0lyRAFa
+	YcBPj6imRS7obQmGDfzGPJClpqMHzWUuJgXQTLBD7SVxEhmxFD1GDM/c1nyCOG1JuoKqwHKXAUW
+	Uw/ga7p/eDimiBNlxOC/TppZClNx9SOUbNFVW52UYOPINeG9cLskSxyW/62EvGtZ7hzg1BUouTv
+	Rr2kjP9kzzFfgYbYHNLsLavi7EfW3BGowniUDFLAZsGv213OuGuvE6MyDBYltFIZmN7nFw=
+X-Google-Smtp-Source: AGHT+IGuqRn72jg+dK+mDqGoNA+LUSb6AsSThdLpogcwx40T2F6VAgrf5kHi3x1xlQcu937+V7+9oMNPzX+vYBPG/lE=
+X-Received: by 2002:a05:6122:1d56:b0:544:90b1:1a with SMTP id
+ 71dfb90a1353d-54a60a7a22dmr1414035e0c.13.1758152285466; Wed, 17 Sep 2025
+ 16:38:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
+ <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+ <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+ <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
+ <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
+ <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com> <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+In-Reply-To: <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 18 Sep 2025 07:37:50 +0800
+X-Gm-Features: AS18NWBcPj9Qd_aVSIjWDbzxxGvwYyUsh2BZYSK1JiFlFC7naijW-G7wdpR2M18
+Message-ID: <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
+To: Chris Li <chrisl@kernel.org>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ethan,
+> > This approach still seems to work, so the 32-bit system appears to be
+> > the only exception. However, I=E2=80=99m not entirely sure that your de=
+scription
+> > of =E2=80=9Cthe second last level=E2=80=9D is correct. I believe it ref=
+ers to the PTE,
+> > which corresponds to the last level, not the second-to-last.
+> > In other words, how do you define the second-to-last level page table?
+>
+> The second-to-last level page table page holds the PMD. The last level
+> page table holds PTE.
+> Cluster size is HPAGE_PMD_NR =3D 1<<HPAGE_PMD_ORDER
+> I was thinking of a PMD entry but the actual page table page it points
+> to is the last level.
+> That is a good catch. Let me see how to fix it.
+>
+> What I am trying to say is that, swap table size should match to the
+> PTE page table page size which determines the cluster size. An
+> alternative to understanding the swap table is that swap table is a
+> shadow PTE page table containing the shadow PTE matching to the page
+> that gets swapped out to the swapfile. It is arranged in the swapfile
+> swap offset order. The intuition is simple once you find the right
+> angle to view it. However it might be a mouthful to explain.
+>
+> I am fine with removing it, on the other hand it removes the only bit
+> of secret sauce which I try to give the reader a glimpse of my
+> intuition of the swap table.
 
-kernel test robot noticed the following build errors:
+Perhaps you could describe the swap table as similar to a PTE page table
+representing the swap cache mapping.
+That is correct for most 32-bit and 64-bit systems,
+but not for every machine.
 
-[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
-[also build test ERROR on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250917]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The only exception is a 32-bit system with a 64-bit physical address
+(Large Physical Address Extension, LPAE), which uses a 4 KB PTE table
+but a 2 KB swap table because the pointer is 32 bit while each page
+table entry is 64 bit.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Graham/mm-kasan-implement-kasan_poison_range/20250916-210448
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20250916090109.91132-8-ethan.w.s.graham%40gmail.com
-patch subject: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7 and RSA parsing
-config: x86_64-randconfig-075-20250918 (https://download.01.org/0day-ci/archive/20250918/202509180721.GaBOMCkp-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509180721.GaBOMCkp-lkp@intel.com/reproduce)
+Maybe we can simply say that the number of entries in the swap table
+is the same as in a PTE page table?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509180721.GaBOMCkp-lkp@intel.com/
+>
+> Thanks for catching that.
+>
+> Chris
 
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: pkcs7_parse_message
-   >>> referenced by pkcs7_kfuzz.c:21 (crypto/asymmetric_keys/tests/pkcs7_kfuzz.c:21)
-   >>>               vmlinux.o:(kfuzztest_write_cb_test_pkcs7_parse_message)
---
->> ld.lld: error: undefined symbol: rsa_parse_pub_key
-   >>> referenced by rsa_helper_kfuzz.c:22 (crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:22)
-   >>>               vmlinux.o:(kfuzztest_write_cb_test_rsa_parse_pub_key)
---
->> ld.lld: error: undefined symbol: rsa_parse_priv_key
-   >>> referenced by rsa_helper_kfuzz.c:37 (crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:37)
-   >>>               vmlinux.o:(kfuzztest_write_cb_test_rsa_parse_priv_key)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks
+Barry
 
