@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-819898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B6BB7CE5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:12:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A534AB7D30E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BBDB4E069D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6A21B27695
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B992F616F;
-	Wed, 17 Sep 2025 02:46:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3037C2F3C21;
+	Wed, 17 Sep 2025 02:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CieJUJwU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA2918BBB9
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8322F6181
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758077166; cv=none; b=Z0ibNuPTp7kxAwe23omNxu/wkn6ymMMZTUDDolfBvTP2vuqdXScQsmaJegrQ0+sINOvGUVZII4xA7HjvZYt5jVy3LoaqfEXMln3ZQp1DpDkQQ39NNIM+KqO3nvSxspqols9ohXY7JdwAOev7s6e88+aMMmvrN4hcVT89fy8gL/8=
+	t=1758077455; cv=none; b=JbaIDuSoQ5Q4ibnllu64J5iMr5OGL8o7dWlzLteV9blaxkkgcpOAewLNdWZNw97odGJFUJw2HJoMUFk4OBTTSVtIQF5/C/9erWF9e/O3MzfdiMwGRe1Yh7qHTA1BFiohymZnzrBb8H9sdyBkElIZEJ0Eoxb+2k2F+pTdGL24oUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758077166; c=relaxed/simple;
-	bh=ajMBj6W+ciqqQBnUackz3l2ePoV67IEOqT90PQWj854=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cmQ1m4IhlQZbeTJ8jSf8NpxJPpl+VQrmbuEOuxmPyffqUIjYgvVozXNImAbt1dog+xQ7DaPgvyb0swm83Wb+JQRAVdQhiSOQLCv+dKZvA5sxkK5LZ9BVttz+O6fahHPOxdU5O9dOOREYNNpmHN5TsjsxqHsqHGKXXgvH3SXsjYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88d4b38d080so608400839f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:46:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758077164; x=1758681964;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXr93dir4iArTuEqabwmLHhqxFVOiWIYvzd2a7vrolw=;
-        b=QCb6rUf0cbT2rmoSnDyuldyP1LVcDZPUR1NdYs+4I53J4GTtuZzJtC3SJ3Bgq5F7jx
-         +dovkUae6WanJH1jpzPE1UzAZKgsScuRklL8rwlaMr4gnOq3UizmB2diiGM9Ll5oqOZB
-         wBsJphp/Foj60iqdqhCHurp10SH163//L1xq8MxOYL0X1B+MVIW66qw4ZUslXWLEcLwc
-         iB2R47NiSnte45toRKluRSs5epUQA1/X/M6VB8raK6PouSM3YWMfFcrL3KDn8et7bOEY
-         rPN7R3MuI8XEQnYANpBLRYhEFY9yJOArrJSx3+xeXCR9SPggPVIzZWFWKfHI227bPhlp
-         KPZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWme/gzolkPh8Gs82pLxd/caAXal5GsVxBFIg6eIcA5mhERcuTFo485WNNQJPlm9zqGGYyOQIsNldOi5cA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0qNvUI4GdOmjsPKvhQ1Vt7+Arr2RT/sHFD4KPpFLEu/pbbYjF
-	/TDMSzI6OuCVylw6lJ77l3/Bz/QFnJM/MhaRbpX0cUZQPJkp++7ffCpomGzjjIbPVu6n83Ts8Yq
-	HytumfRROOT+7QLJET/slEN8eyT8UXYa61OXHe16QL8kog/Huq2PWFUDS7KI=
-X-Google-Smtp-Source: AGHT+IFT5F3SOVBYBfpTEN1r6Ryn4zXzRSfOjTM0hOyB/W7+O9YdgM3mtKGVFhjZgYGArN1kEvCJtF1uI8n1FOmdeBD4UX7+lmya
+	s=arc-20240116; t=1758077455; c=relaxed/simple;
+	bh=TAbNBSS4RHNcQXrq8QpBB8Oyu1q8Yt8ZtOgysNs1Ep0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ng8GvB06U940WklPwokPRPLO/sMHd7RSX0bTVbEkgY6DaYW3tTnR6eGeq7fmfu8niT9YAt0SCzulA+JYdV1ShTkscPzYhwkd+qPKZ72NPZje3bYfpQdOnb7PnraWMYVwvJTH5CmjhnbnMQVXCaAsm/uElDCxCEY+9efc0rBN754=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CieJUJwU; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758077452; x=1789613452;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TAbNBSS4RHNcQXrq8QpBB8Oyu1q8Yt8ZtOgysNs1Ep0=;
+  b=CieJUJwU9N+nis3YcfYEduqW0Z9uEV3gHWNBlUcM4iuzx2xm9vL72RUU
+   3x4R/nOLLmBaRGwCUT9HM8GC1OXmSribinl1/roLXctj5WMAo+M5Pd3G1
+   yYANGmMhWS4nPLKMuChCgi3Uu9vlLPmThAbbQrbBmciYNWgyUX7vY8iO4
+   sfV2o6ED54+7Ry4RdRgmXWedIzgyQp3xvYmnbVbzFF4SmkLZ88wncOYnP
+   dRN/clL1lEhkRhzfQcF0wOHkEXtHdINB7heM1+dk5cc+6BQaQYketi3OY
+   tUsRhRaeHsU6yUNSVq1dAVXmj/sx47AoknMqTTYweQUuzvO70ywx8r9wi
+   Q==;
+X-CSE-ConnectionGUID: GyuK6deKRZSXMFEprz4GwQ==
+X-CSE-MsgGUID: TlnC+RMcQyq9/9i+JkdNIQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="64005550"
+X-IronPort-AV: E=Sophos;i="6.18,270,1751266800"; 
+   d="scan'208";a="64005550"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 19:50:52 -0700
+X-CSE-ConnectionGUID: Hd5sgRXaRmW3RKBpNBg/Sw==
+X-CSE-MsgGUID: +zA34w+hReGH382sp8Agkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,270,1751266800"; 
+   d="scan'208";a="175516559"
+Received: from allen-box.sh.intel.com ([10.239.159.52])
+  by fmviesa008.fm.intel.com with ESMTP; 16 Sep 2025 19:50:50 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Removal of Advanced Fault Logging
+Date: Wed, 17 Sep 2025 10:48:50 +0800
+Message-ID: <20250917024850.143801-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1355:b0:88d:3818:afe9 with SMTP id
- ca18e2360f4ac-89d224fb995mr110124039f.1.1758077163875; Tue, 16 Sep 2025
- 19:46:03 -0700 (PDT)
-Date: Tue, 16 Sep 2025 19:46:03 -0700
-In-Reply-To: <00ce3ed1-f2a6-4366-b01c-34cd6a45ae87@huawei.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ca20eb.050a0220.2ff435.04ad.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in napi_gro_frags (2)
-From: syzbot <syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, hawk@kernel.org, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	lorenzo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, toke@redhat.com, wangliang74@huawei.com, 
-	yuehaibing@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The advanced fault logging has been removed from the specification since
+v4.0. Linux doesn't implement advanced fault logging functionality, but
+it currently dumps the advanced logging registers through debugfs. Remove
+the dumping of these advanced fault logging registers through debugfs to
+avoid potential access to non-present registers.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/debugfs.c | 1 -
+ drivers/iommu/intel/iommu.h   | 1 -
+ 2 files changed, 2 deletions(-)
 
-failed to apply patch:
-checking file drivers/net/tun.c
-Hunk #1 FAILED at 1875.
-1 out of 1 hunk FAILED
-
-
-
-Tested on:
-
-commit:         5e87fdc3 Merge tag 'batadv-next-pullrequest-20250916' ..
-git tree:       net-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a6c33a7db07dbea2
-dashboard link: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14240c7c580000
+diff --git a/drivers/iommu/intel/debugfs.c b/drivers/iommu/intel/debugfs.c
+index 38790ff50977..765edb3740e2 100644
+--- a/drivers/iommu/intel/debugfs.c
++++ b/drivers/iommu/intel/debugfs.c
+@@ -63,7 +63,6 @@ static const struct iommu_regset iommu_regs_64[] = {
+ 	IOMMU_REGSET_ENTRY(ECAP),
+ 	IOMMU_REGSET_ENTRY(RTADDR),
+ 	IOMMU_REGSET_ENTRY(CCMD),
+-	IOMMU_REGSET_ENTRY(AFLOG),
+ 	IOMMU_REGSET_ENTRY(PHMBASE),
+ 	IOMMU_REGSET_ENTRY(PHMLIMIT),
+ 	IOMMU_REGSET_ENTRY(IQH),
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index 21d79414385c..ef7a1ae8e0db 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -77,7 +77,6 @@
+ #define	DMAR_FEDATA_REG	0x3c	/* Fault event interrupt data register */
+ #define	DMAR_FEADDR_REG	0x40	/* Fault event interrupt addr register */
+ #define	DMAR_FEUADDR_REG 0x44	/* Upper address register */
+-#define	DMAR_AFLOG_REG	0x58	/* Advanced Fault control */
+ #define	DMAR_PMEN_REG	0x64	/* Enable Protected Memory Region */
+ #define	DMAR_PLMBASE_REG 0x68	/* PMRR Low addr */
+ #define	DMAR_PLMLIMIT_REG 0x6c	/* PMRR low limit */
+-- 
+2.43.0
 
 
