@@ -1,89 +1,180 @@
-Return-Path: <linux-kernel+bounces-820399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBCFB7D713
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89BAB7D61E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9E867B0173
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC53B3B16B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294FD34AAEE;
-	Wed, 17 Sep 2025 09:55:34 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DDD34AB0D;
+	Wed, 17 Sep 2025 09:55:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C8034AB00;
-	Wed, 17 Sep 2025 09:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A229834DCD7
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102933; cv=none; b=nEPLEqzDbWnEZC09x3PxTFoaUiKf5uIQjAQw03bTvMoHvjfnlEWXmE5hof5SysZI2CC2izR+DgxJFqr9C41aNCXhR7s+gvZayr0g5mcO15fVAv3y/Xk92oC6hhfdBXcctTqqNZuApIpPRVVt8TRDRBtkhSUQCq766C2Fq74cLp4=
+	t=1758102921; cv=none; b=BmGbRvlsQ1isXrH3WTh1yRvaWaHcFI3Mkvmi9piaUrrHrPEZKt4EeggzNO8m9+mazvbdOlYGafh+zJXXf3l/i4gsq+3ZGaUe8BBufpz2dTuoBV6k4x/oWCZ3w4c+gpiqfdjILL5Md/ayk0soBT1DWqhmPrxwGtfvHUZ/w0wi3UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102933; c=relaxed/simple;
-	bh=1ZcejynwqKIf3ztV1ioOpuoDxNtc/nW44Mr7lEuPChg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jC6AV3RvLnTd+kVcSp26jrhTLqjNpCfR53xCf3RmQ/iJdH2Xb3vjWaQAsDshbVsPi17oCIxhEIsD3wYa5TBcelvGvYRootf/9Va+x2VAE35IblJXpseYRkioqw3iYK5y1+LEssIGsuy1+s3Xb8SwnYBzKchxxmyFncmSdDmKrWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Fushuai Wang <wangfushuai@baidu.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Fushuai Wang <wangfushuai@baidu.com>
-Subject: [PATCH] perf trace: Fix IS_ERR() vs NULL check bug
-Date: Wed, 17 Sep 2025 17:54:22 +0800
-Message-ID: <20250917095422.60923-1-wangfushuai@baidu.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1758102921; c=relaxed/simple;
+	bh=kMPNSqfXiTA47FxCKgCB2/oJ9gSc4/KzV97yHyY8Ha4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sMgfQWkwBxyOY9HL4ZBLGBJYDEj7EKmIG43vzioA/VrzcI5Q655Ew0UARAL3+YEDw0FMjXN6bsV322WwpIAy2WgmsDC8jhEppB3lilCtmec0hhFICpwy20dh0riH6GcvGSHk6o6rqOg2kBOTUbHGnUs29hSh+SPyR/v3JdY16tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyosO-0002zq-En; Wed, 17 Sep 2025 11:55:00 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyosM-001jx6-32;
+	Wed, 17 Sep 2025 11:54:58 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyosM-00000008pAy-3bgU;
+	Wed, 17 Sep 2025 11:54:58 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Hubert=20Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	stable@vger.kernel.org,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Xu Yang <xu.yang_2@nxp.com>,
+	linux-usb@vger.kernel.org
+Subject: [PATCH net v1 1/1] net: usb: asix: forbid runtime PM to avoid PM/MDIO + RTNL deadlock
+Date: Wed, 17 Sep 2025 11:54:57 +0200
+Message-ID: <20250917095457.2103318-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc7.internal.baidu.com (172.31.3.17) To
- bjkjy-exc17.internal.baidu.com (172.31.50.13)
-X-FEAS-Client-IP: 172.31.50.13
-X-FE-Policy-ID: 52:10:53:SYSTEM
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The alloc_syscall_stats() function always returns an error pointer
-(ERR_PTR) on failure. So replace NULL check with IS_ERR() check
-after calling alloc_syscall_stats() function.
+Forbid USB runtime PM (autosuspend) for AX88772* in bind.
 
-Fixes: fc00897c8a3f ("perf trace: Add --summary-mode option")
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+usbnet enables runtime PM by default in probe, so disabling it via the
+usb_driver flag is ineffective. For AX88772B, autosuspend shows no
+measurable power saving in my tests (no link partner, admin up/down).
+The ~0.453 W -> ~0.248 W reduction on 6.1 comes from phylib powering
+the PHY off on admin-down, not from USB autosuspend.
+
+With autosuspend active, resume paths may require calling phylink/phylib
+(caller must hold RTNL) and doing MDIO I/O. Taking RTNL from a USB PM
+resume can deadlock (RTNL may already be held), and MDIO can attempt a
+runtime-wake while the USB PM lock is held. Given the lack of benefit
+and poor test coverage (autosuspend is usually disabled by default in
+distros), forbid runtime PM here to avoid these hazards.
+
+This affects only AX88772* devices (per-interface in bind). System
+sleep/resume is unchanged.
+
+Fixes: 4a2c7217cd5a ("net: usb: asix: ax88772: manage PHY PM from MAC")
+Reported-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
+Closes: https://lore.kernel.org/all/20220622141638.GE930160@montezuma.acc.umu.se
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Closes: https://lore.kernel.org/all/b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- tools/perf/builtin-trace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Link to the measurement results:
+https://lore.kernel.org/all/aMkPMa650kfKfmF4@pengutronix.de/
+---
+ drivers/net/usb/asix_devices.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index fe737b3ac6e6..25c41b89f8ab 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -4440,7 +4440,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 792ddda1ad49..0d341d7e6154 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -625,6 +625,22 @@ static void ax88772_suspend(struct usbnet *dev)
+ 		   asix_read_medium_status(dev, 1));
+ }
  
- 	if (trace->summary_mode == SUMMARY__BY_TOTAL && !trace->summary_bpf) {
- 		trace->syscall_stats = alloc_syscall_stats();
--		if (trace->syscall_stats == NULL)
-+		if (IS_ERR(trace->syscall_stats))
- 			goto out_delete_evlist;
- 	}
++/*
++ * Notes on PM callbacks and locking context:
++ *
++ * - asix_suspend()/asix_resume() are invoked for both runtime PM and
++ *   system-wide suspend/resume. For struct usb_driver the ->resume()
++ *   callback does not receive pm_message_t, so the resume type cannot
++ *   be distinguished here.
++ *
++ * - The MAC driver must hold RTNL when calling phylink interfaces such as
++ *   phylink_suspend()/resume(). Those calls will also perform MDIO I/O.
++ *
++ * - Taking RTNL and doing MDIO from a runtime-PM resume callback (while
++ *   the USB PM lock is held) is fragile. Since autosuspend brings no
++ *   measurable power saving for this device with current driver version, it is
++ *   disabled below.
++ */
+ static int asix_suspend(struct usb_interface *intf, pm_message_t message)
+ {
+ 	struct usbnet *dev = usb_get_intfdata(intf);
+@@ -919,6 +935,16 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
+ 	if (ret)
+ 		goto initphy_err;
  
-@@ -4748,7 +4748,7 @@ static int trace__replay(struct trace *trace)
++	/* Disable USB runtime PM (autosuspend) for this interface.
++	 * Rationale:
++	 * - No measurable power saving from autosuspend for this device.
++	 * - phylink/phylib calls require caller-held RTNL and do MDIO I/O,
++	 *   which is unsafe from USB PM resume paths (possible RTNL already
++	 *   held, USB PM lock held).
++	 * System suspend/resume is unaffected.
++	 */
++	pm_runtime_forbid(&intf->dev);
++
+ 	return 0;
  
- 	if (trace->summary_mode == SUMMARY__BY_TOTAL) {
- 		trace->syscall_stats = alloc_syscall_stats();
--		if (trace->syscall_stats == NULL)
-+		if (IS_ERR(trace->syscall_stats))
- 			goto out;
- 	}
+ initphy_err:
+@@ -948,6 +974,10 @@ static void ax88772_unbind(struct usbnet *dev, struct usb_interface *intf)
+ 	phylink_destroy(priv->phylink);
+ 	ax88772_mdio_unregister(priv);
+ 	asix_rx_fixup_common_free(dev->driver_priv);
++	/* Re-allow runtime PM on disconnect for tidiness. The interface
++	 * goes away anyway, but this balances forbid for debug sanity.
++	 */
++	pm_runtime_allow(&intf->dev);
+ }
  
+ static void ax88178_unbind(struct usbnet *dev, struct usb_interface *intf)
+@@ -1600,6 +1630,10 @@ static struct usb_driver asix_driver = {
+ 	.resume =	asix_resume,
+ 	.reset_resume =	asix_resume,
+ 	.disconnect =	usbnet_disconnect,
++	/* usbnet will force supports_autosuspend=1; we explicitly forbid RPM
++	 * per-interface in bind to keep autosuspend disabled for this driver
++	 * by using pm_runtime_forbid().
++	 */
+ 	.supports_autosuspend = 1,
+ 	.disable_hub_initiated_lpm = 1,
+ };
 -- 
-2.36.1
+2.47.3
 
 
