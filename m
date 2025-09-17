@@ -1,225 +1,127 @@
-Return-Path: <linux-kernel+bounces-821504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33ED9B816C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:06:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F4D7B816CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE26D1C26C33
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:06:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D1497B89E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C0C284880;
-	Wed, 17 Sep 2025 19:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8BB2F616C;
+	Wed, 17 Sep 2025 19:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1RiB5ql"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="PTHfsjrf"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4983E1A315C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7B725A630
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758135953; cv=none; b=j64OKzvS/g2+XRynTir6hsenuRoVpyaKpNdzcfJ58lK2jyVdluBkeuS6yJjxSBfZLWnolubpiFzS0kESYUH1cZvOzDVzG7sQWlEB35sr7L0Gz0j0/OfsT+wXSot9C8Ct4nLjMFXiFVJsaCCpqs06xznkXr6WSJfXhwUcxsVz8sw=
+	t=1758135997; cv=none; b=FsGfWONrG2zJXX0uM45GnkrkM1y6b3GXE4T+TOAEvsueJG50qtMruOsmWHDt6sBkkssM3ZQ6P6/zh/rth3V2/DBEDXYpejNhAtpt9RPOBO+wdRNHGhCDm5emBkySycdJhZROG2Hfv1hUnfUoV93UFbnvnhKicwAJt6tl0AU64A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758135953; c=relaxed/simple;
-	bh=4r3OnglhmQv5f95g1m3EPAqqkjghukFweMHUd+HyG0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aeocy6Ev1K7118FZTgbcMj1FyMigENQdBEuXbB5SibnDtQwF6tF+53vBYsgXD3XGDnaGEiy+1WCQrcyy9LPkQjl7SsnhdZHFArBK7lh+zz+j1sNJrgitLtwEFTuxFRCBTG/qZC8U9IfTQGkcHz+/83jv4ORmSWm7ME8KQ9FPRm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1RiB5ql; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758135951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iYdTqhfdz9F3OSmNWg0L2Bcl9ZF1XfZz244Dszls6io=;
-	b=G1RiB5qlvpnPm6CnS1p3/Xs5XNpJEOAaEhdCFOl6Hfj4bLQ7nRD8r7+zwF3WudFJseFC1Q
-	sAv9F3/zvCkngIkJ6QTIEItfCz5Bu564U8MZQ63JS24oTwZhvW6cBGSA7evrjpJrxL9FsI
-	y5t47PTIieTv10idDoIaei/kKAg9HCM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-541-ee87USS9N3CMNWZwWOxY_Q-1; Wed, 17 Sep 2025 15:05:49 -0400
-X-MC-Unique: ee87USS9N3CMNWZwWOxY_Q-1
-X-Mimecast-MFC-AGG-ID: ee87USS9N3CMNWZwWOxY_Q_1758135949
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3df07c967e9so21184f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:05:49 -0700 (PDT)
+	s=arc-20240116; t=1758135997; c=relaxed/simple;
+	bh=qZtcZTnWxUnymv6cAIxmqQfBFbRdLOm34vdUr0A1Em8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+TP9VjlDUDLWNmPe7BniVSfQch86uEHFPJzi1Vga3mZmh6+v0XDmkz/YHLV0q4tEdhfkIJzTkZTxdNFgeUoQYQKyb5wEhwIqlg62lSRd2S8ijBc7hoL8JkKxs+8/62rBpds+OHnIJITmP9FepK+LI7+eYuIPnZK0ZJhcVpgx0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=PTHfsjrf; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b07c081660aso27577166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:06:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1758135994; x=1758740794; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjAKk6dDrc+RS53N4L4L2Jhabpo688uVi5jmIwo6nKw=;
+        b=PTHfsjrfyhcQnQLsWb5SBhCmL/MwmqOCnlntj1nspqEudKf4VMuQ2S2wks60O/dTm2
+         CDN/3ao14fIyx6fTEACZ+Hjo/2wYmSc9oBR8OvBQfIFrpHJh74YJugnpk1T5ZoODEAeH
+         C79z1AwtaRJt5j8dE4UIhhm/kzT9AJZer62gdSUAqTaLoNGJON8GRyKNRomKpdq+r9r2
+         JT8cAyhn6IAI1GB0jOEbDhV8KR8ZH9RvYdw3xgiqHsANQ8kaLSIFVeJtOfldNcl1URKR
+         YWI/WWY8X9/1w0Cxhot9uqbdiJq512soJ7PXQKqQZdeM+pAmepHCy1HaN8ScLTxwbKvf
+         CAaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758135949; x=1758740749;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iYdTqhfdz9F3OSmNWg0L2Bcl9ZF1XfZz244Dszls6io=;
-        b=Jfbyp8jv+b7fPGDhLDf7KPEBDITWggBcl8hs848AxL32JLjFXsqXWJXFt3rmKNm542
-         +4IwaGpwHQZpUK1S6sgnWXohVDPkmhQHoiPLuWr/j+/PKHGhnrsKLhtSitkosS+lSVPt
-         4HY5fVasjd/zwxa4/UDY4bMcphsIxiN+m58Lmh0RRy+RyuKh5NW3A0Skm4jFpN3rA+LO
-         cudSBTdlMYsAkxXhDXWLDM8ejQRB1t6VW3HzFJKDjqKADnxSdTgFd6pWN9OrYNAgeY/e
-         Jq/akk1ByaiBt4CBmNy7QuuGLXrsG6sDcn17wP0kHMMkQ96GZeNOIN3/Ry8NVNSkgsKE
-         P3FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjP7elvHurB5mld5Wr06tpnmlBAZpu6LKT64X2DwOuDQVxp/Yu4nkECfVAkZ9krdVXQdcIsuG26ilmgNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy9omSgdj3XYtvaqW64cjce2JWZOyzACW7hsMmlZUW0Z1Kv3aN
-	Sbd5j8SoIg4RaG+KiaVeFODu8ehLw5r+pVsqLl2LWIy/dZlbaNwfC8OIDZGA9G0+oN33C0YY6XC
-	pWiznVA+nE9uTBRtA8Y3w+l2the6FSij0TC/GUkJ+3PZqBh5SQCveaKYbP7ifqGPAsw==
-X-Gm-Gg: ASbGnctsWBXBwPXBVgOmd5s30hqYsO0JCbaMgyKdXRcIak4OQCTKUEdaMMHAxUOqta4
-	+Ly9du6kCtjY/VRTt3nWfu2pc+psyka/1BP5BbxndwYMS/i/Ycrx0EpciCKFwnSzQv4MHKUeZJL
-	hah0bFGrAkVP90Q2K38nlKXki/2R1k/aH8Jw5Ps1GmlOsg9qjzIvKvYAdO3ysUq1eXJr92KmJVG
-	QwdnOjxdP4moB8qGsvQXFz1JthQis0eRGjuGd5ThAUg4+b55YD/aVWQ304bewibNnEW/2OREW7v
-	LmjRwvdGgOJ6ubvjseZV8Mux13cyzAWhZkUrqjhvRnobclnRiSW/ghzT5Rlcut1E5Jao3/r5NbP
-	z7waUgkUimj+Zv98QRvD8h37thjQ2KFk8H04oY45YrYSnCoxyfhIUQuuStikiUZTv
-X-Received: by 2002:a5d:64c8:0:b0:3ea:e0fd:290b with SMTP id ffacd0b85a97d-3ecdfa0d2f1mr3067884f8f.40.1758135948732;
-        Wed, 17 Sep 2025 12:05:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHkB9K5+m3ks5tDl26fGtwUBcSZFKAuJY0U4QfQl4kZMxsZJ5NivU//n+3kzLJsG+tBhuQWwg==
-X-Received: by 2002:a5d:64c8:0:b0:3ea:e0fd:290b with SMTP id ffacd0b85a97d-3ecdfa0d2f1mr3067845f8f.40.1758135948270;
-        Wed, 17 Sep 2025 12:05:48 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07412111sm453030f8f.28.2025.09.17.12.05.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 12:05:47 -0700 (PDT)
-Message-ID: <cd71fac2-bb9d-4e84-a074-2b695654e655@redhat.com>
-Date: Wed, 17 Sep 2025 21:05:44 +0200
+        d=1e100.net; s=20230601; t=1758135994; x=1758740794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WjAKk6dDrc+RS53N4L4L2Jhabpo688uVi5jmIwo6nKw=;
+        b=IYKoCAl6RwhO+b99X1+3USJbYsvy/8zN4mvTy8yYeZTwJZ4vnjM3fJsCFhCxj+Uqdu
+         Gi9Aj1DGeG7VxPcCx9r6TGeCyUrnKXKR5ISbLXp7Ur9z6nMUyjraqREcRR26W37eeFel
+         lPdnSSbiyEkrvz27ZtyWB5uXNr2etqpR2nD/FKQst8kqFnE7/93U/tdQoXLompjcJPFX
+         L/VPyF/Cokvc5fN7+5GVZ5QytrJuPnR0OxWSPcUFRzqHJaFk8Cgxt/i+/XYgpULMeftL
+         s3UKcCY/RGjIDI1Wav6aCcrnHhituMPNadKPWZcdZCiNlkntJMIzEs/1dVVioPZpzIMa
+         so4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUtRDvgEQAUna4KI4S+D5Nn7vvngbewHsz8PyIv8ZSElYSzQqvdAPrRVBKEbT095mVxKP0FIKeaJjYbyts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrXpwsotImoG8N59HcdLRVBY0RURHXJYacN+M3xI6qEjuOeAro
+	o7vjo/XHxdY36kEQgdm3U+Fu9CYe2ZFTYhe9qMUVlDqrdDANYfuBQd/qPIlDYDHab0Jt0v4/AND
+	FqSqxZ6hLHEwYKQ0SWL3cv4I5hNOF40Mrc3DKveTiAg==
+X-Gm-Gg: ASbGncueAxLoWzOf8aUkzYIzTXYDTLS+a62dK5Z4UiZ3m1WQrX6aHw918sKbMcotPyw
+	ueHG/9uD1pMEJ33Q30kvm37RqCmigSWSdmTh2AguAFR6kfOBcRc+zFSRYJm2P0cEbCAIG8t46MS
+	F2VdhCg3OGxovdnGdwY1fUztBrueeuH6YqFeuCMCXod1f9C6k00y8vtTEvAJfxxsEZFQ+4x0IF6
+	lCTVq4n+mByj4ThW4cepvlZOkCqGLQfDtOLz4wzuj+9YEo=
+X-Google-Smtp-Source: AGHT+IEeoKIGF0DJUkr9LeE+86k79ccZaCCG4KjCllo1uxTbF5z8DSBt0gp58w9mSuOWqhXnNBwuDlyHfOioj70SCBs=
+X-Received: by 2002:a17:907:969e:b0:b04:85f2:d26f with SMTP id
+ a640c23a62f3a-b1bb73a737bmr455871666b.25.1758135993911; Wed, 17 Sep 2025
+ 12:06:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
- HugeTLB pages
-To: Kyle Meyer <kyle.meyer@hpe.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, akpm@linux-foundation.org,
- corbet@lwn.net, linmiaohe@huawei.com, shuah@kernel.org, tony.luck@intel.com,
- jane.chu@oracle.com, jiaqiyan@google.com, Liam.Howlett@oracle.com,
- bp@alien8.de, hannes@cmpxchg.org, jack@suse.cz, joel.granados@kernel.org,
- laoar.shao@gmail.com, lorenzo.stoakes@oracle.com, mclapinski@google.com,
- mhocko@suse.com, nao.horiguchi@gmail.com, osalvador@suse.de,
- rafael.j.wysocki@intel.com, rppt@kernel.org, russ.anderson@hpe.com,
- shawn.fan@intel.com, surenb@google.com, vbabka@suse.cz,
- linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org
-References: <aMiu_Uku6Y5ZbuhM@hpe.com>
- <a99eb11f-a7ac-48a3-a671-c5f0f6b5b491@arm.com>
- <8c3188da-7078-4099-973a-1d0d74db2720@redhat.com> <aMsDJ3EU1zVJ00cX@hpe.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aMsDJ3EU1zVJ00cX@hpe.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250917135907.2218073-1-max.kellermann@ionos.com> <832b26f3004b404b0c4a4474a26a02a260c71528.camel@ibm.com>
+In-Reply-To: <832b26f3004b404b0c4a4474a26a02a260c71528.camel@ibm.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 17 Sep 2025 21:06:22 +0200
+X-Gm-Features: AS18NWAgiPxioh1hBxBItSQjz6PB8OC4EFRxWlPBDaP02Mv4xKOQfrE0EdtFsAM
+Message-ID: <CAKPOu+_xxLjTC6RyChmwn_tR-pATEDLMErkzqFjGwuALgMVK6g@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>, 
+	"idryomov@gmail.com" <idryomov@gmail.com>, "netfs@lists.linux.dev" <netfs@lists.linux.dev>, 
+	Alex Markuze <amarkuze@redhat.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "mjguzik@gmail.com" <mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17.09.25 20:51, Kyle Meyer wrote:
-> On Wed, Sep 17, 2025 at 09:02:55AM +0200, David Hildenbrand wrote:
->>
->>>> +
->>>> +	0 - Enable soft offline
->>>> +	1 - Disable soft offline for HugeTLB pages
->>>> +
->>>> +Supported values::
->>>> +
->>>> +	0 - Soft offline is disabled
->>>> +	1 - Soft offline is enabled
->>>> +	3 - Soft offline is enabled (disabled for HugeTLB pages)
->>>
->>> This looks very adhoc even though existing behavior is preserved.
->>>
->>> - Are HugeTLB pages the only page types to be considered ?
->>> - How the remaining bits here are going to be used later ?
->>>
->>
->> What I proposed (that could be better documented here) is that all other
->> bits except the first one will be a disable mask when bit 0 is set.
->>
->> 2 - ... but yet disabled for hugetlb
->> 4 - ... but yet disabled for $WHATEVER
->> 8 - ... but yet disabled for $WHATEVERELSE
->>
->>> Also without a bit-wise usage roadmap, is not changing a procfs
->>> interface (ABI) bit problematic ?
->>
->> For now we failed setting it to values that are neither 0 or 1, IIUC
->> set_enable_soft_offline() correctly?
-> 
-> Yes, -EINVAL will be returned.
-> 
->> So there should not be any problem, or which scenario do you have in mind?
-> 
-> Here's an alternative approach.
-> 
-> Do not modify the existing sysctl parameter:
-> 
-> /proc/sys/vm/enable_soft_offline
-> 
-> 0 - Soft offline is disabled
-> 1 - Soft offline is enabled
-> 
-> Instead, introduce a new sysctl parameter:
-> 
-> /proc/sys/vm/enable_soft_offline_hugetlb
-> 
-> 0 - Soft offline is disabled for HugeTLB pages
-> 1 - Soft offline is enabled for HugeTLB pages
-> 
-> and note in documentation that this setting only takes effect if
-> enable_soft_offline is enabled.
-> 
-> Anshuman (and David), would you prefer this?
+On Wed, Sep 17, 2025 at 7:55=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+> > +     doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", i=
+node, ceph_vinop(inode));
+>
+> What's about this?
+>
+> struct ceph_fs_client *fsc =3D ceph_inode_to_fs_client(inode);
+>
+> doutc(fsc, "%p %llx.%llx\n", inode, ceph_vinop(inode));
 
-Hmm, at least I don't particularly like that. For each new exception we 
-would create a new file, and the file has weird semantics such that it 
-has no meaning when enable_soft_offline=0.
+That means I have to declare this variable at the beginning of the
+function because the kernel unfortunately still doesn't allow C99
+rules (declare variables where they are used). And that means paying
+the overhead for chasing 3 layers of pointers for all callers, even
+those 99.99% who return early. Or declare the variable but initialize
+it later in an extra line. Is that the preferred coding style?
 
--- 
-Cheers
+> > +     WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq=
+,
+> > +                              &ceph_inode(inode)->i_work));
+>
+> This function looks like ceph_queue_inode_work() [1]. Can we use
+> ceph_queue_inode_work()?
 
-David / dhildenb
+No, we can not, because that function adds an inode reference (instead
+of donating the existing reference) and there's no way we can safely
+get rid of it (even if we would accept paying the overhead of two
+extra atomic operations).
 
+> Do you imply "if i_work were already"?
+
+Yes, it's a typo.
 
