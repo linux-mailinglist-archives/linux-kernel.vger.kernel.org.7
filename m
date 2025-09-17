@@ -1,120 +1,227 @@
-Return-Path: <linux-kernel+bounces-820328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC953B7EE64
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0591B7F790
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C503B1891D44
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 394AE3A2D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECE82EAB68;
-	Wed, 17 Sep 2025 09:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V5ZhfZe+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E632F9DAB;
+	Wed, 17 Sep 2025 09:25:05 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7998D2BDC02
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE032EAB68;
+	Wed, 17 Sep 2025 09:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758100999; cv=none; b=iRbOajGAFUBiJ96in/CuRl5O5k+LM+l5r1nwufnheB2N41CGODwlv54tgpdazDQ/lvrEtOsrEKdA009+VQOwh/JvmSoTm9LvHleYUn7qfEwRAOdzEgLX1V/1S+SroupIdhBOnIwz2V8/6WLQoQ6O++HTCrw03A2q4qD7cfDJu3I=
+	t=1758101104; cv=none; b=u5LgkhNliIDasCex3fD2V6ItQtMMBHsXALfD3o1F6Jg0FBofshmrQiJvotNKGmm0SiDSYxHxeMNOV73KGYHPfki/IgDsZ8lmilebmdenqlMsCZ1GDt4CORGJL3EzeVsJVH0wUxCC40/I6TEW2QA58OAb3/z8ORKUmLpH7QGK5YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758100999; c=relaxed/simple;
-	bh=/OnTDpiYLJaTVNQZMsEE0kOpeeQejpU4GhdSqVsquuY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EfJKFlzbbHIzPGv7RB7dOCThSWGYeQFQL65B8ccxamSZwL+cA7QkkuS0NMCB+++JAYmh9harO2feh5YSHuTt9mq3D1Dnr2aelAzCOuQRcob5+uNlcl+rg0WV00tYFEITNzGdtExA3Q8rnkVBQJ7osrjkJveCmzFLhAndp3Wif2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V5ZhfZe+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758100995;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OvSCxZfh1AeN+mbSyVIIhh7UrokaGa4ZRWUpU2AZ1oA=;
-	b=V5ZhfZe+8qzgs48rURRn+0xj6l9oO590K/Jr8D6+ECXVTcMnPJifMPCmXw3xZzu6JW4hwP
-	YvbOc5xcTlLN26RXZlTlCwBRYjR7aEzpAFXSMnru8acCGQ+udMn26VbYvzzZKoQnhG5bsa
-	NEAgXyU9KrTQMBdd+/ZFWykr8ia8dKo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-lYq4uFdVMAudwg-e0rYh0g-1; Wed, 17 Sep 2025 05:23:08 -0400
-X-MC-Unique: lYq4uFdVMAudwg-e0rYh0g-1
-X-Mimecast-MFC-AGG-ID: lYq4uFdVMAudwg-e0rYh0g_1758100987
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3e997eb7232so1782270f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:23:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758100987; x=1758705787;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OvSCxZfh1AeN+mbSyVIIhh7UrokaGa4ZRWUpU2AZ1oA=;
-        b=oBPkgbHwU48iDPsnI7ZK0Wlqu+tKvymcCW3U92UGeV+3SzM9RNz+IRiQ+Mf5V2A/m+
-         A9r9uT3PKbFcE9pyKX2HSrxdYcRK3g1VWLtMVj3PieKsh13c6LZ37q7WbCEvA3oo34/v
-         sOn+hjswKpNUNZRiwHY21flc4mRsN1byd4/UiRBYni3C1vDhKJ2jOGG4/SmqdjLRx4n/
-         IieOeHO5g+5mXZKIvHW75noa6yuAZ/X/+ZMVlLDXiNBBmLExo1BKKbMmn0+Mh4z14qN8
-         I1Vh2084z+emQrQNKDolZqGtTBU0SENW5lhFZJ6f9fKtIkxlp09kN5VB7o28Gz5BBd3K
-         JuBw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5c0JpKjyrMFsM8L9fxk6GHekIGjXMVX6D+HR6bA/OOuU33mmZe4nhOy/JpPVkzSqKLu0ru+Y5uGQd4ZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbmLSQmNvc4+9OIEVUu0DXz+1HNnthcbBk1ni+7iZ+Uvu5GiEP
-	YOKMrKm//VekuXaKe8tE718wVtY2WP+3am8MHn50iSXFlYxP1hq76RkN3FIf7KwT37S428x3tjw
-	DuPH4NtrvowDefpiMR9vXDOzUclOL6H5oso+mRjO0/3f7EN0bmV3WliUSlhqYfLwFyw==
-X-Gm-Gg: ASbGncssE7KMMpVirnU9JT7bz85CrgaSkvKxQ3tKBeNcAv5rf4LY9wpcLGI78nhctb5
-	vxXtUf9Wym2EmJuPrcHVkrmxdsWcibB/LzlO2O4Eb/w/tITLGDaYVvxGQ634B2DHZPOv9bVIC+n
-	s5AzO9nn8D0beRTeiwfSJwO8t4EJ3EQGX7tu1WiKakVlA18rNgZe8Y7FTASddGg28sTaWwbpUCw
-	fcwWSPYZGnoYbNKwbAJyRum6hdEEPVT4OhplDxQ+2ZD5lFnGFsHgkhwgqbPHrlMU/1olWk9lUO1
-	u4QCllqipfus1nR1dmMR29vYcFANak3AQoTLUYnDCCKzAwR7PtJmcw+oLnZYrUV/1aMiwXpmolO
-	kKX9ZBFgKLjLno7KHMVuXdA==
-X-Received: by 2002:a05:6000:4287:b0:3ec:db87:e9d2 with SMTP id ffacd0b85a97d-3ecdfa4d33bmr1584042f8f.44.1758100987069;
-        Wed, 17 Sep 2025 02:23:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFqihtnYAqZ3D3nSwkTZLk2BK6pesDEk8SJPPmPKbgYsWaRJlkSUXI+rL4TmJt9PjMeujIMQ==
-X-Received: by 2002:a05:6000:4287:b0:3ec:db87:e9d2 with SMTP id ffacd0b85a97d-3ecdfa4d33bmr1584015f8f.44.1758100986681;
-        Wed, 17 Sep 2025 02:23:06 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e900d8f0e9sm16348063f8f.35.2025.09.17.02.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 02:23:06 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Iker Pedrosa <ikerpedrosam@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Iker
- Pedrosa <ikerpedrosam@gmail.com>
-Subject: Re: [PATCH 2/5] drm/solomon: Use drm_WARN_ON_ONCE instead of WARN_ON
-In-Reply-To: <20250912-improve-ssd130x-v1-2-bc9389ed299e@gmail.com>
-References: <20250912-improve-ssd130x-v1-0-bc9389ed299e@gmail.com>
- <20250912-improve-ssd130x-v1-2-bc9389ed299e@gmail.com>
-Date: Wed, 17 Sep 2025 11:23:04 +0200
-Message-ID: <871po5ph53.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1758101104; c=relaxed/simple;
+	bh=slEQ1mNfqMRsV3a08Jsr5k+RAqQYYttn6OA+jBPRlxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQ7dmlMake4BXIstblH9SBc4A8VVJsnoYL3wp0MNOq6ExPgWDQxQyYpReSzv+hrclG+39fVHyyxd7tnVG8TP9qJlS8s+bFagZ+aXGf9rXNzV6/pVpa9bcjnt7bB5FWnBgnCJjmgIdvLRP6Hw+OGE5RIm3fAZ/AF8CcEwyHqe6Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cRYJW4YrczYQvNY;
+	Wed, 17 Sep 2025 17:24:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 40C7A1A148E;
+	Wed, 17 Sep 2025 17:24:58 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgD3QY5pfspohUY0Cw--.51384S3;
+	Wed, 17 Sep 2025 17:24:58 +0800 (CST)
+Message-ID: <837a4dd4-045f-a956-a241-cab1e8bc20fe@huaweicloud.com>
+Date: Wed, 17 Sep 2025 17:24:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 5/9] md/raid1,raid10: Set R{1,10}BIO_Uptodate when
+ successful retry of a failed bio
+To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+ Shaohua Li <shli@fb.com>, Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250915034210.8533-1-k@mgml.me>
+ <20250915034210.8533-6-k@mgml.me>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250915034210.8533-6-k@mgml.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3QY5pfspohUY0Cw--.51384S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF47Gw45AFWkCr4DKr18uFg_yoW7Ww48pa
+	yDKasayFWqq342qrnrAFWUWF9Ykw1xtFW2kr4rG3srW3Z8tr93KF48XryYgryUZr9xu3W2
+	qFs8WrWUCFsrJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Yb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
+	o4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjxUrsjjDUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Iker Pedrosa <ikerpedrosam@gmail.com> writes:
 
-> To prevent log spam, convert all instances to the DRM-specific
-> drm_WARN_ON_ONCE() macro. This ensures that a warning is emitted only
-> the first time the condition is met for a given device instance, which
-> is the desired behavior within the graphics subsystem.
->
-> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
+
+在 2025/9/15 11:42, Kenta Akagi 写道:
+> In the current implementation, when a write bio fails, the retry flow
+> is as follows:
+> * In bi_end_io, e.g. raid1_end_write_request, R1BIO_WriteError is
+>    set on the r1bio.
+> * The md thread calls handle_write_finished corresponding to this r1bio.
+> * Inside handle_write_finished, narrow_write_error is invoked.
+> * narrow_write_error rewrites the r1bio on a per-sector basis, marking
+>    any failed sectors as badblocks. It returns true if all sectors succeed,
+>    or if failed sectors are successfully recorded via rdev_set_badblock.
+>    It returns false if rdev_set_badblock fails or if badblocks are disabled.
+> * handle_write_finished faults the rdev if it receives false from
+>    narrow_write_error. Otherwise, it does nothing.
+> 
+> This can cause a problem where an r1bio that succeeded on retry is
+> incorrectly reported as failed to the higher layer, for example in the
+> following case:
+> * Only one In_sync rdev exists, and
+> * The write bio initially failed but all retries in
+>    narrow_write_error succeed.
+> 
+> This commit ensures that if a write initially fails but all retries in
+> narrow_write_error succeed, R1BIO_Uptodate or R10BIO_Uptodate is set
+> and the higher layer receives a successful write status.
+> 
+> Signed-off-by: Kenta Akagi <k@mgml.me>
 > ---
+>   drivers/md/raid1.c  | 32 ++++++++++++++++++++++++++------
+>   drivers/md/raid10.c | 21 +++++++++++++++++++++
+>   2 files changed, 47 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 8fff9dacc6e0..806f5cb33a8e 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -2517,6 +2517,21 @@ static void fix_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>   	}
+>   }
+>   
+> +/**
+> + * narrow_write_error() - Retry write and set badblock
+> + * @r1_bio:	the r1bio containing the write error
+> + * @i:		which device to retry
+> + *
+> + * Rewrites the bio, splitting it at the least common multiple of the logical
+> + * block size and the badblock size. Blocks that fail to be written are marked
+> + * as bad. If badblocks are disabled, no write is attempted and false is
+> + * returned immediately.
+> + *
+> + * Return:
+> + * * %true	- all blocks were written or marked bad successfully
+> + * * %false	- bbl disabled or
+> + *		  one or more blocks write failed and could not be marked bad
+> + */
+>   static bool narrow_write_error(struct r1bio *r1_bio, int i)
+>   {
+>   	struct mddev *mddev = r1_bio->mddev;
+> @@ -2614,9 +2629,9 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
+>   	int m, idx;
+>   	bool fail = false;
+>   
+> -	for (m = 0; m < conf->raid_disks * 2 ; m++)
+> +	for (m = 0; m < conf->raid_disks * 2 ; m++) {
+> +		struct md_rdev *rdev = conf->mirrors[m].rdev;
+>   		if (r1_bio->bios[m] == IO_MADE_GOOD) {
+> -			struct md_rdev *rdev = conf->mirrors[m].rdev;
+>   			rdev_clear_badblocks(rdev,
+>   					     r1_bio->sector,
+>   					     r1_bio->sectors, 0);
+> @@ -2628,12 +2643,17 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
+>   			 */
+>   			fail = true;
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+'fail' should be false when re-write is successful.
+
+>   			if (!narrow_write_error(r1_bio, m))
+> -				md_error(conf->mddev,
+> -					 conf->mirrors[m].rdev);
+> +				md_error(conf->mddev, rdev);
+>   				/* an I/O failed, we can't clear the bitmap */
+> -			rdev_dec_pending(conf->mirrors[m].rdev,
+> -					 conf->mddev);
+> +			else if (test_bit(In_sync, &rdev->flags) &&
+> +				 !test_bit(Faulty, &rdev->flags) &&
+> +				 rdev_has_badblock(rdev,
+> +						   r1_bio->sector,
+> +						   r1_bio->sectors) == 0)
+
+Clear badblock and set R10BIO_Uptodate if rdev has badblock.
+
+> +				set_bit(R1BIO_Uptodate, &r1_bio->state);
+> +			rdev_dec_pending(rdev, conf->mddev);
+>   		}
+> +	}
+>   	if (fail) {
+>   		spin_lock_irq(&conf->device_lock);
+>   		list_add(&r1_bio->retry_list, &conf->bio_end_io_list);
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b73af94a88b0..21c2821453e1 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -2809,6 +2809,21 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
+>   	}
+>   }
+>   
+> +/**
+> + * narrow_write_error() - Retry write and set badblock
+> + * @r10_bio:	the r10bio containing the write error
+> + * @i:		which device to retry
+> + *
+> + * Rewrites the bio, splitting it at the least common multiple of the logical
+> + * block size and the badblock size. Blocks that fail to be written are marked
+> + * as bad. If badblocks are disabled, no write is attempted and false is
+> + * returned immediately.
+> + *
+> + * Return:
+> + * * %true	- all blocks were written or marked bad successfully
+> + * * %false	- bbl disabled or
+> + *		  one or more blocks write failed and could not be marked bad
+> + */
+>   static bool narrow_write_error(struct r10bio *r10_bio, int i)
+>   {
+>   	struct bio *bio = r10_bio->master_bio;
+> @@ -2975,6 +2990,12 @@ static void handle_write_completed(struct r10conf *conf, struct r10bio *r10_bio)
+>   				fail = true;
+>   				if (!narrow_write_error(r10_bio, m))
+>   					md_error(conf->mddev, rdev);
+> +				else if (test_bit(In_sync, &rdev->flags) &&
+> +					 !test_bit(Faulty, &rdev->flags) &&
+> +					 rdev_has_badblock(rdev,
+> +							   r10_bio->devs[m].addr,
+> +							   r10_bio->sectors) == 0)
+
+Same as raid1.
+
+> +					set_bit(R10BIO_Uptodate, &r10_bio->state);
+>   				rdev_dec_pending(rdev, conf->mddev);
+>   			}
+>   			bio = r10_bio->devs[m].repl_bio;
 
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+Thanks,
+Nan
 
 
