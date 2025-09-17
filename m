@@ -1,150 +1,128 @@
-Return-Path: <linux-kernel+bounces-821451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB791B814A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:03:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A6BB814AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48FD51C80D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:03:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54E932A06E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90262FF167;
-	Wed, 17 Sep 2025 18:03:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138C42FB0A7;
-	Wed, 17 Sep 2025 18:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E292F99BC;
+	Wed, 17 Sep 2025 18:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AlZHjY5p"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE5C34BA24
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758132188; cv=none; b=cXPOiuAni4IHqP15Yc15s0+gVHKeE2kZYYlR7HwLaI0DB67cB00pz+30+6oiDmaZQr9pCOKY/Ds+VHT9QYNNtsGVslQISKyl4jROUYzoEVxTFdbrhY7dxrQrppeJFQSfZ/JxqdJfy1f4NW0DnbE9kowJKETb+deLFRMfqG+Nid8=
+	t=1758132232; cv=none; b=V/mfzNhgbI6yRJwHxj2zzf5ruaB7lyooSh4S1Opw7IpxUdtNszwtAgU8sQin6fT/uVdVygFbmvlxr6AUlsq7HRPfeR8V3Ej42vXeClei6MqGjMW91L+i94jhPVttDnohQksy1Jt09xDpXqtS8yCUv/TTSAIxpa0QGDwzs5pW+pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758132188; c=relaxed/simple;
-	bh=5mTNq1WHtB2fcgWJR2HTorTj3tzZ5HURH3I9tm1WOZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Si1lpuGimfgEoUzgIcPtvs8f7dFKXnGrRTTX8cuz/r/k/q3raYld9jYgH3BuABD6DgE8DTcfkgaKj8tGP2bBJSf0l8EDdN9Xpg9o6hMEsFoA9qeUorOwsW4zZb/xil0eBtuXUXt817ovM/V9gPOMKO+uM/GqKZvWiQqUz87pqgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5124B2696;
-	Wed, 17 Sep 2025 11:02:57 -0700 (PDT)
-Received: from [10.57.63.94] (unknown [10.57.63.94])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6EC53F673;
-	Wed, 17 Sep 2025 11:03:01 -0700 (PDT)
-Message-ID: <d73e5026-ccb0-4a19-9742-099a0443f878@arm.com>
-Date: Wed, 17 Sep 2025 19:02:52 +0100
+	s=arc-20240116; t=1758132232; c=relaxed/simple;
+	bh=Dl8/1xbvll9SNNPORV5wD3aLW8Yo2wXdT32MfHewHgw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dqnup94ZP7EdhCP+Cga3oOmw211MfbRauQurQS5xd/d9FnljQoCJa8KqYhE+rNcZgsWb8s8p9tVpMq6L4Fpm6ZF2TwhB9SCmqEhv4DDgjlBr0td2530EQ+GP238OVoi1z6Q4DTKoeNt/N0V5z0Uz81Zd8qSNm/IFWhD1i5Bd464=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AlZHjY5p; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-78e9f48da30so881286d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1758132229; x=1758737029; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dl8/1xbvll9SNNPORV5wD3aLW8Yo2wXdT32MfHewHgw=;
+        b=AlZHjY5pLbNMOLakalGc92MW5ePib8g7OHqRT2sEY33nSgBFhY8X7mpVm29Uum3FvS
+         Rt3CjHUzM0yRxa9wRBDa2dRvvk4EObjiDQNPwSkvxCeJN0/Ww1xjBACMVLvkZG5hRpGN
+         YuRbBSPbTuO7AWeEph1h+d1a0m3lQY9Y9BtzA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758132229; x=1758737029;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dl8/1xbvll9SNNPORV5wD3aLW8Yo2wXdT32MfHewHgw=;
+        b=qR8BW9PWSOhQNQQqKvy1K13pol4LfpdFKdIXac9fXOz9H1n6jCxRXAWhnN7QhDddOp
+         RUjCI02Q5yIRAHRNCLWo0Byd0+Kodrnzt136AqfV5dpGRb187kmPeZGgzbGV0+CGVBX8
+         IGMMeIZxjAl5eVvvXi8G6b3rTDeG0tSAsp5b5iG9gqE2PF4b0VPCdg41ZrcMnWwdLo+E
+         DX/IovWE7uX63kW326XtijXuhDmv73Wh3ldOaGtnWeZ/v5m8jevep95tg8xoP4AK4oBD
+         uGnMeDlV9S3ilEFzxusM6Y1X7JyRl7Adc4xAET6ZslPErEzgb07YPf+JBrSJE1ODyh5l
+         mmsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtirB7clZJMkJip1ngeQ3YfRuxAkXUNhPdBiat7EiEyXHbuNXfpCah5VB3HDt2JQjYks3vRgHU38cA8gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFFKh9+KmA6aZRKMXZPkpwvruh4qiphFdBgBaLd7LVfkpJSbMn
+	aHseN7bkYlYtQz8bWVH834fgrwiae1CWBkgNjDprw2IHWg/j001Jq0myAL/2loDr531aRqlSpAC
+	GWho7ow==
+X-Gm-Gg: ASbGncukVwCIDe+MBCUnTcjw79RVriaXaZAGiWh3rXny2DcGCkYavBEZRC9YF8mmT5H
+	1hkawNhq0xd4aS5mN51h/H2WNFM30gWUYA3BHEavSWj2fDsdNsYPR6ufyCa1KsgQHQSTMV+87Rd
+	ZIBnyYqQlmcOmJNYKYvmhYnewpnR6DSI1A4uh0b8LxxWRtr5QudeRb+awg+yPX5bRr9YXNAY7GO
+	jcCIO86S5g4z8+r7W3SbkG/lpG/CfvxW31rlnaTpocgdPWquADMaMTx1jvK9eTYS9pbDxF7thAF
+	wQoS6BCkId39SFnuM/q87DuugZZjiLCbXMd0voXqHF/7Zr+CjNOMjQTYd+6mvQmmlnEhCFLKCji
+	nZlB3+N6w2JOU5zaOfEk9DZQ7quyJcz8pBLglO1aHJbUbmnjOncrVxd3zI5dE+H01jljNrBmU8Q
+	==
+X-Google-Smtp-Source: AGHT+IHwQuq1P0w4jPRut7OxKhGjL5IpRk+b2/Hdq3y57O8RMEjQGGR+DBK4+G2CGJP8WoeaW0/tcg==
+X-Received: by 2002:a05:6214:2aa7:b0:792:f4be:2432 with SMTP id 6a1803df08f44-792f4be38bamr3686656d6.28.1758132229120;
+        Wed, 17 Sep 2025 11:03:49 -0700 (PDT)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-78e6a1bf6d9sm18011816d6.48.2025.09.17.11.03.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 11:03:48 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b78657a35aso41311cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:03:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV8/vJKU1FoG9zVZ3474LZM+01NOpQYy1+7FcPmw4jZkYQI8f5K1h7Xw51d1qE90K8AxkAd40zQdhrEroI=@vger.kernel.org
+X-Received: by 2002:ac8:7f91:0:b0:4b4:9863:5d76 with SMTP id
+ d75a77b69052e-4b9dd3c17d4mr9004781cf.8.1758132227600; Wed, 17 Sep 2025
+ 11:03:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm-smmu-qcom: Enable use of all SMR groups when
- running bare-metal
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Will Deacon <will@kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Rob Clark <robin.clark@oss.qualcomm.com>,
- Manivannan Sadhasivam <mani@kernel.org>, Johan Hovold <johan@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, iommu@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250821-arm-smmu-qcom-all-smr-v1-1-7f5cbbceac3e@linaro.org>
- <aMAkJ7CfPQuhvhfm@willie-the-truck> <aMBJNzXpQTMg4Ncs@linaro.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <aMBJNzXpQTMg4Ncs@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1752824628.git.namcao@linutronix.de> <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+ <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+ <87zfat19i7.fsf@yellow.woof> <CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
+ <CAGudoHE=iaZp66pTBYTpgcqis25rU--wFJecJP-fq78hmPViCg@mail.gmail.com>
+In-Reply-To: <CAGudoHE=iaZp66pTBYTpgcqis25rU--wFJecJP-fq78hmPViCg@mail.gmail.com>
+From: Khazhy Kumykov <khazhy@chromium.org>
+Date: Wed, 17 Sep 2025 11:03:35 -0700
+X-Gmail-Original-Message-ID: <CACGdZYKcQmJtEVt8xoO9Gk53Rq1nmdginH4o5CmS4Kp3yVyM-Q@mail.gmail.com>
+X-Gm-Features: AS18NWBTH_B8R-w_buHc5fkH54TOh_tt5uj3eXyk2xndepoDoKd89R4ajv-MBKE
+Message-ID: <CACGdZYKcQmJtEVt8xoO9Gk53Rq1nmdginH4o5CmS4Kp3yVyM-Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Nam Cao <namcao@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Shuah Khan <shuah@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Soheil Hassas Yeganeh <soheil@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Eric Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-09-09 4:35 pm, Stephan Gerhold wrote:
-> On Tue, Sep 09, 2025 at 01:57:11PM +0100, Will Deacon wrote:
->> On Thu, Aug 21, 2025 at 10:33:53AM +0200, Stephan Gerhold wrote:
->>> Some platforms (e.g. SC8280XP and X1E) support more than 128 stream
->>> matching groups. This is more than what is defined as maximum by the ARM
->>> SMMU architecture specification. Commit 122611347326 ("iommu/arm-smmu-qcom:
->>> Limit the SMR groups to 128") disabled use of the additional groups because
->>> they don't exhibit the same behavior as the architecture supported ones.
->>>
->>> It seems like this is just another quirk of the hypervisor: When running
->>> bare-metal without the hypervisor, the additional groups appear to behave
->>> just like all others. The boot firmware uses some of the additional groups,
->>> so ignoring them in this situation leads to stream match conflicts whenever
->>> we allocate a new SMR group for the same SID.
->>>
->>> The workaround exists primarily because the bypass quirk detection fails
->>> when using a S2CR register from the additional matching groups, so let's
->>> perform the test with the last reliable S2CR (127) and then limit the
->>> number of SMR groups only if we detect that we are running below the
->>> hypervisor (because of the bypass quirk).
->>>
->>> Fixes: 122611347326 ("iommu/arm-smmu-qcom: Limit the SMR groups to 128")
->>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
->>> ---
->>> I modified arm_smmu_find_sme() to prefer allocating from the SMR groups
->>> above 128 (until they are all used). I did not see any issues, so I don't
->>> see any indication that they behave any different from the others.
->>> ---
->>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 27 +++++++++++++++++----------
->>>   1 file changed, 17 insertions(+), 10 deletions(-)
->>
->> Is the existing workaround causing you problems somehow? Limiting the SMR
->> groups to what the architecture allows still seems like the best bet to
->> me unless there's a compelling reason to do something else.
->>
-> 
-> Yes, the problem is the following (copied from commit message above):
-> 
->> The boot firmware uses some of the additional groups, so ignoring them
->> in this situation leads to stream match conflicts whenever we allocate
->> a new SMR group for the same SID.
-> 
-> This happens e.g. in the following situation on SC8280XP when enabling
-> video decoding acceleration bare-metal without the hypervisor:
-> 
->   1. The SMMU is already set up by the boot firmware before Linux is
->      started, so some SMRs are already in use during boot. I added some
->      code to dump them:
-> 
->       arm-smmu 15000000.iommu: Found SMR0 <0xe0 0x0>
->        ...
->       arm-smmu 15000000.iommu: Found SMR8 <0x800 0x0>
->       <unused>
->       arm-smmu 15000000.iommu: Found SMR170 <0x2a22 0x400>
->       arm-smmu 15000000.iommu: Found SMR171 <0x2a02 0x400>
->        ...
->       arm-smmu 15000000.iommu: Found SMR211 <0x400 0x3>
-> 
->   2. We limit the SMRs to 128, so all the ones >= 170 just stay as-is.
->      Only the ones < 128 are considered when allocating SMRs.
-> 
->   3. We need to configure the following IOMMU for video acceleration:
-> 
-> 	video-firmware {
-> 		iommus = <&apps_smmu 0x2a02 0x400>;
-> 	};
-> 
->   4. arm-smmu 15000000.iommu: Picked SMR 14 for SID 0x2a02 mask 0x400
->      ... but SMR170 already uses that SID+mask!
-> 
->   5. arm-smmu 15000000.iommu: Unexpected global fault, this could be serious
->      arm-smmu 15000000.iommu: GFSR 0x80000004, GFSYNR0 0x0000000c, GFSYNR1 0x00002a02, GFSYNR2 0x00000000
-> 
->      SMCF, bit[2] is set -> Stream match conflict fault
->      caused by SID GFSYNR1 0x00002a02
-> 
-> With my patch this does not happen anymore. As I wrote, so far I have
-> seen no indication that the extra groups behave any different from the
-> standard ones defined by the architecture. I don't know why it was done
-> this way (rather than e.g. implementing the Extended Stream Matching
-> Extension), but we definitely need to do something with the extra SMRs
-> to avoid stream match conflicts.
+I think the justification for the original comment is: epoll_wait
+returns either when events are available, or the timeout is hit -> and
+if the timeout is hit, "event is available" is undefined (or another
+way: it would be incorrect to interpret a timeout being hit as "no
+events available"). So one could justify this missed event that way,
+but it does feel against the spirit of the API, especially since the
+event may have existed for an infinite amount of time, and still be
+missed.
 
-I'm also a little wary of exposing more non-architectural stuff to the 
-main driver - could we not keep the existing logic and simply add an 
-extra loop at the end here to ensure any "extra" SMRs are disabled?
+Glancing again at this code, ep_events_available() should return true
+if rdllist is not empty, is actively being modified, or if ovflist is
+not EP_UNACTIVE_PTR.
 
-Thanks,
-Robin.
+One ordering thing that sticks out to me is ep_start_scan first
+splices out rdllist, *then* clears ovflist (from EP_UNACTIVE_PTR ->
+NULL). This creates a short condition where rdllist is empty, not
+being modified, but ovflist is still EP_UNACTIVE_PTR -> which we
+interpret as "no events available" - even though a local txlist may
+have some events. It seems like, for this lockless check to remain
+accurate, we should need to reverse the order of these two operations,
+*and* ensure the order remains observable. (and for users using the
+lock, there should be no observable difference with this change)
 
