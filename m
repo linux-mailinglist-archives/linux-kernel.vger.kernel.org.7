@@ -1,124 +1,105 @@
-Return-Path: <linux-kernel+bounces-820500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EB3B7C642
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:00:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36D3B7C6DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75699188CB99
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4D616CAA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F5EEAD7;
-	Wed, 17 Sep 2025 10:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1452345724;
+	Wed, 17 Sep 2025 10:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DukI9feJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cNqFvcTO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DukI9feJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cNqFvcTO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="hFl85Ne2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JdN24G+t"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CCB304BBF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BE954262
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105714; cv=none; b=AxdMwsnhbtKYvGnY6LSpkTiznFYLYc7iaU2H3HIRnD8NMm4msWvWfy9J4NM9WYdOCbULsGEUf35Tq2b2Pas12FmKJTBZtKyYDV7C8wl+Def2hg2U/aWpfZ4MSU4jIfJV9TdIyjixHEK+c7WtpQ9SZrT+u1oeK6yF/BGlEOKVdnc=
+	t=1758105795; cv=none; b=CBVRKpW9gLKMGB2IfXGDSlSmvzwO0f98mUQmVVzlfzsegJsn2VW4TqHOyge1XnWW/niH5rU3yXNE3/RPDJuJLNWgUPPtzt4kQn2UYeeooFky9aTvzD2PTByEsfht5uVUI7DR8bNlO7UXaNKX8vLd1H/+vHRKV5mXjR3mRtvsvJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105714; c=relaxed/simple;
-	bh=EeQIzYruA0FedL169V+W6uX8pts0cRiItZjv2xk0G+8=;
+	s=arc-20240116; t=1758105795; c=relaxed/simple;
+	bh=xVUHSQEV9R1i8qu4QCvBkFYy7lo2qBzQfwY2XYBsUJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETubGkfPDKNmoutBbX/j8YJwnq/2/W1aZmqGh+qEmEnkm3k4uU3gsCkfUU8cinfZw/lyUXn2QcnpKgl3OEc5gQ09ZVvtagCa5CxoY8p+qyJrEsOIquKmvmqoYT0AriBKR8XnV/Wp00aABRf8ZE8tRqZ7Xfgls3/w/fDEz78SC7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DukI9feJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cNqFvcTO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DukI9feJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cNqFvcTO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AC395221AE;
-	Wed, 17 Sep 2025 10:41:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758105709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ofj744S0hdgV+oqudN+JHGPXOpDjYVMC07hCO7WqjNw=;
-	b=DukI9feJZ9PHgr6VTWS5HiVn6jlBgHPZpHg9NAZaFM1yw3drJVaDQdEhCoGEF+xCybfKQi
-	KigTRbEqW8N/WTK5cnGsrUK8yI1e3tSEiEHWYw63RkG5+wJoQRAlGRnyBLdbAweJqhkvFG
-	K+M9ZwPSAHpES21BjOxPwep1vHqojMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758105709;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ofj744S0hdgV+oqudN+JHGPXOpDjYVMC07hCO7WqjNw=;
-	b=cNqFvcTO/C5yxY1VCi5d3aNqbq/TGtGlWg7DF48yF4jgUx+6Nw9p12MfcKeo18wD1Fyfa/
-	aIyR+xrwgNcBRQCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DukI9feJ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cNqFvcTO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758105709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ofj744S0hdgV+oqudN+JHGPXOpDjYVMC07hCO7WqjNw=;
-	b=DukI9feJZ9PHgr6VTWS5HiVn6jlBgHPZpHg9NAZaFM1yw3drJVaDQdEhCoGEF+xCybfKQi
-	KigTRbEqW8N/WTK5cnGsrUK8yI1e3tSEiEHWYw63RkG5+wJoQRAlGRnyBLdbAweJqhkvFG
-	K+M9ZwPSAHpES21BjOxPwep1vHqojMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758105709;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ofj744S0hdgV+oqudN+JHGPXOpDjYVMC07hCO7WqjNw=;
-	b=cNqFvcTO/C5yxY1VCi5d3aNqbq/TGtGlWg7DF48yF4jgUx+6Nw9p12MfcKeo18wD1Fyfa/
-	aIyR+xrwgNcBRQCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33E9F1368D;
-	Wed, 17 Sep 2025 10:41:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gAoOCWqQymiEOgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 10:41:46 +0000
-Date: Wed, 17 Sep 2025 11:41:44 +0100
-From: Pedro Falcato <pfalcato@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=boelGVFfc/MCeIT7dMPJ4LOwvN+xI1ivglrXLfoohrAviSvqnF2H4UmjwAfQw1uhdp/6WXQlX1unYwb/N0WPmQW93y7FRlaJJY0yVDR9UPAMk66Wmf7a7pemXJsjagSuvCYgQaAogxxZtGdMm8iSRlg+flyKKcP4ijCPrl8Ldn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=hFl85Ne2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JdN24G+t; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7F16C14001DE;
+	Wed, 17 Sep 2025 06:43:12 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 17 Sep 2025 06:43:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1758105792; x=
+	1758192192; bh=74X70xzEhBM0tW2lzuA0ESFpEqnjRQx9KPWr7O/CNbQ=; b=h
+	Fl85Ne2Dxf0+e1Zeyn7iSeFwbs1zURwloVh9+uV8sDF5i1ken+c3N4OhSMEE4fQg
+	Rk73PcExtwPGu218/Bbyf4cmiYoD18pMdXqedlDABkGssmJ25oAEZutDusHh3cd3
+	E70xlH9tnyS/RfTocqX1vNRl1qyvU+Yo/0o6ln4GwEZLstIPDTO2pavC5/kusANU
+	xmRNJIutJ5xqpqXfENe6L+5llIO1dQfXBUQS+iPBiBeW83Q24RZ3sTWP6iHBWGDg
+	Q4Z9fIv2mOejCKC3w7mjmAQnk5b8voSGGciJRpicNECWi/sgrtmHOsKNZkLuqS68
+	29uBu41oNwNM7SHHE9kVg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758105792; x=1758192192; bh=74X70xzEhBM0tW2lzuA0ESFpEqnjRQx9KPW
+	r7O/CNbQ=; b=JdN24G+t3tAtKEaF3xy9/usv8GaFHeYOqrUsOtCLEG6H2AVjKO/
+	z/ppztjGiIb2oTuLYhiWs+2ju8J1UsnTxCuiQbv9++JILxhJT7qoqX4OvGRKdCb5
+	Y/x5WMYXYfptlZ4UZqJZmavoaPQUTghqltZ1eJ7Z05RxKczDbWUmy+O2UmTscZf/
+	cemk+T/thmz/ZDwEygZ0gVZSVF9fWeC42+dv7O02TIlE7m5xdGmNmGuLP0AumUJu
+	zI8cie3GJqgZ8AZ4daWsLEjU70a6WzrXYPOypYn8SScKkXCmbzhHw6Hu7VVFoWyS
+	BFHPfaAgeYkkDxZQDF6SqlFVAC0zNDvbyRQ==
+X-ME-Sender: <xms:v5DKaBRX0yS8FD8qt-AC-V9tRJXQSOqPMmBBXmawkd6AGirEwgFPOw>
+    <xme:v5DKaGpLZXUvscnwH8ZoLoYQu60UwnreKcKWMpLjuSyhpIZUoznDQP5YKSEwe0M2I
+    2plbZmz-0lK9T1uQCA>
+X-ME-Received: <xmr:v5DKaPpoduEQ_2ZSaPZQhsv35CIYWOQYDw7kUpOzkkw_8FNKShG1wLRys9Qjjg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfedvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
+    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepvdeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhrvghniihordhsthhorghkvg
+    hssehorhgrtghlvgdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhn
+    uggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpd
+    hrtghpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsggrohhlihhn
+    rdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlihgrmh
+    drhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehr
+    vgguhhgrthdrtghomhdprhgtphhtthhopehrhigrnhdrrhhosggvrhhtshesrghrmhdrtg
+    homhdprhgtphhtthhopeguvghvrdhjrghinhesrghrmhdrtghomh
+X-ME-Proxy: <xmx:v5DKaB2h-8I5FINeZ6DBBIlYuR_mhdfk2nOhP7ciKrwWZxmBlZRgdw>
+    <xmx:v5DKaDi56MNn6yD1nQTgCCscQozH7ovo2yNCKXIqJT2yUCfn6qO_Dw>
+    <xmx:v5DKaAlTECDEQqK1XmSv90WalG12KPOQqFTlbRQzWHt-_cfNQyqAvA>
+    <xmx:v5DKaL-fewQ-QpdswZuFxLosxSXD-E6n6etTZSaSiz37hzJuDd1vog>
+    <xmx:wJDKaDk6zs0RS8-cvQBQ7seUyblylVYSAniu0Q5CbRWqR30Q8LGNwC2i>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 17 Sep 2025 06:43:10 -0400 (EDT)
+Date: Wed, 17 Sep 2025 11:43:08 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
-	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
-	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
-	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 04/13] relay: update relay to use mmap_prepare
-Message-ID: <jrxexcuzlxpnfs2jhm7ecdh4kak5i4a6e5od4cm72fn3twwzms@vptu5rfimbez>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <ae3769daca38035aaa71ab3468f654c2032b9ccb.1758031792.git.lorenzo.stoakes@oracle.com>
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] mm/khugepaged: Do not fail collapse_pte_mapped_thp()
+ on SCAN_PMD_NULL
+Message-ID: <l6yjv4b2xvcwgpq5q3esyat56jdfj7flcokbqptsxlzgesrwe2@sxxzcp477ldi>
+References: <v5ivpub6z2n2uyemlnxgbilzs52ep4lrary7lm7o6axxoneb75@yfacfl5rkzeh>
+ <ecac1e7f-1709-4348-b8ff-fa1c0f087548@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -127,49 +108,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae3769daca38035aaa71ab3468f654c2032b9ccb.1758031792.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: AC395221AE
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.de:dkim,suse.de:email];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[62];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -2.51
+In-Reply-To: <ecac1e7f-1709-4348-b8ff-fa1c0f087548@lucifer.local>
 
-On Tue, Sep 16, 2025 at 03:11:50PM +0100, Lorenzo Stoakes wrote:
-> It is relatively trivial to update this code to use the f_op->mmap_prepare
-> hook in favour of the deprecated f_op->mmap hook, so do so.
+On Tue, Sep 16, 2025 at 10:54:12AM +0100, Lorenzo Stoakes wrote:
+> On Mon, Sep 15, 2025 at 02:52:53PM +0100, Kiryl Shutsemau wrote:
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> >
+> > MADV_COLLAPSE on a file mapping behaves inconsistently depending on if
+> > PMD page table is installed or not.
+> >
+> > Consider following example:
+> >
+> > 	p = mmap(NULL, 2UL << 20, PROT_READ | PROT_WRITE,
+> > 		 MAP_SHARED, fd, 0);
+> > 	err = madvise(p, 2UL << 20, MADV_COLLAPSE);
+> >
+> > fd is a populated tmpfs file.
+> >
+> > The result depends on the address that the kernel returns on mmap().
+> > If it is located in an existing PMD table, the madvise() will succeed.
+> > However, if the table does not exist, it will fail with -EINVAL.
+> >
+> > This occurs because find_pmd_or_thp_or_none() returns SCAN_PMD_NULL when
+> > a page table is missing, which causes collapse_pte_mapped_thp() to fail.
+> >
+> > SCAN_PMD_NULL and SCAN_PMD_NONE should be treated the same in
+> > collapse_pte_mapped_thp(): install the PMD leaf entry and allocate page
+> > tables as needed.
+> >
+> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
 > 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+> There was a v1 with tags, you've not propagated any of them? Did you feel
+> the change was enough to remove them?
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+I moved code around and was not comfortable to carry tags over.
+
+> Anyway, LGTM so:
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+> > ---
+> >
+> > v2:
+> >  - Modify set_huge_pmd() instead of introducing install_huge_pmd();
+> >
+> > ---
+> >  mm/khugepaged.c | 20 +++++++++++++++++++-
+> >  1 file changed, 19 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index b486c1d19b2d..986718599355 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -1472,15 +1472,32 @@ static void collect_mm_slot(struct khugepaged_mm_slot *mm_slot)
+> >  static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
+> >  			pmd_t *pmdp, struct folio *folio, struct page *page)
+> >  {
+> > +	struct mm_struct *mm = vma->vm_mm;
+> >  	struct vm_fault vmf = {
+> >  		.vma = vma,
+> >  		.address = addr,
+> >  		.flags = 0,
+> > -		.pmd = pmdp,
+> >  	};
+> > +	pgd_t *pgdp;
+> > +	p4d_t *p4dp;
+> > +	pud_t *pudp;
+> >
+> >  	mmap_assert_locked(vma->vm_mm);
+> 
+> NIT: you have mm as a local var should use here too. Not a big deal though
+> obviously...
+
+Do you want v3 for this?
+
+> >
+> > +	if (!pmdp) {
+> > +		pgdp = pgd_offset(mm, addr);
+> > +		p4dp = p4d_alloc(mm, pgdp, addr);
+> > +		if (!p4dp)
+> > +			return SCAN_FAIL;
+> > +		pudp = pud_alloc(mm, p4dp, addr);
+> > +		if (!pudp)
+> > +			return SCAN_FAIL;
+> > +		pmdp = pmd_alloc(mm, pudp, addr);
+> > +		if (!pmdp)
+> > +			return SCAN_FAIL;
+> > +	}
+> > +
+> > +	vmf.pmd = pmdp;
+> >  	if (do_set_pmd(&vmf, folio, page))
+> >  		return SCAN_FAIL;
+> >
+> > @@ -1556,6 +1573,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+> >  	switch (result) {
+> >  	case SCAN_SUCCEED:
+> >  		break;
+> > +	case SCAN_PMD_NULL:
+> >  	case SCAN_PMD_NONE:
+> >  		/*
+> >  		 * All pte entries have been removed and pmd cleared.
+> > --
+> > 2.50.1
+> >
 
 -- 
-Pedro
+  Kiryl Shutsemau / Kirill A. Shutemov
 
