@@ -1,216 +1,310 @@
-Return-Path: <linux-kernel+bounces-821503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D8DB816B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 813C2B816A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A3B1C26C1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:05:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A8F1C277D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523C2314D14;
-	Wed, 17 Sep 2025 19:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D2B288C14;
+	Wed, 17 Sep 2025 19:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="QaXa9zVl"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11021135.outbound.protection.outlook.com [40.93.194.135])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GHK1ajhj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F42092FE565
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.135
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758135863; cv=fail; b=pyf+2EedkRMlbNHTiHATQ/WgDcGdgIciTlrzMhMG9Z9LImqxY4nwXstjrpDnjHg3kTUrac7xv+/pGlCm/Y3uN7r4WuyMn9rdMjeRgcxE5Vp1mZitVgZAdVJf47Ya14zbpVl9TeHq5jcCDfYKugOLIQwifpmRmBaZrJM9yr4jfIk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758135863; c=relaxed/simple;
-	bh=9L5BsawL4DoGGMLpHpqB+UomeefKCrLYWboutELUKFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CQKZ8/u2ml/ZdxxocpsPeIkrcmdOHJVqMgNnxhOspQos9Dt+NEeOZtS2ob1fuJWCffMUpGPLgPTiLMP6ME5ol2QDr/Q91cFf0fsr6Y21obMO1/TWyMRBi6QkykJlmWM6BUcYwqk26X5FwZP+5eRdM/8pk0AfNAOQRR6pbKdtBq4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=QaXa9zVl; arc=fail smtp.client-ip=40.93.194.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sro1GpR7LO1K9Z8e/DuveA7iwvWBnLVO+OCjkuI7U2jxwskraipCORvtHcweC32beNOVoNFXzvP5KQ7ZFJrxJNv3odQ/FPXF39y94SG4aBGzyZN5wtW22FS2Yy1n9+nG2bVbxJaOvJOIzEMP0ng5hPYc2bFrLvI4QwJqHartuYKlPWQ7SknTDgJN2EWxdfgH9HOSue03R5+M0RPG+9RRoSQzC0wfgZ8t2ZaQJ8zJW5HawU6kpuc1RjSQNnsQiSTgiyP9WfvbVE+xUtZXHb+vJftblltvBbXBURvbW39uO2ah0SuxZshmxUgZZADmRgqmHrItSCCTWSefgL9fvu4+wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8lLiP0q5IFLMxnjMShTLnnnDTwSWv5Fa39Icu54ILZE=;
- b=KpEYhVG2YiPPzpBW2ol03ARP5kbbfD42Is/Zn+9zGZvdzpWZhvhtQDRXaD4ZS0eN47XNmebrLd1bhhxZVPx6v6OUsxtZIzjq4wxW1pvptz+Xe5Z7qtmzetZtRtxpMeVSPnyjbLxnwn2RAhWRquX3Qo89i1xgQFn+Xq2x/2OeKRQm1FhuiSxHWQwGufJVUNhNBxT/naahf60KX3ZhoJtTvuk9BLlQ0iA3xcsyjUR3rIMHpNVHuEKe5r2EM7S7czemKu4mrOjqfQi6CV4XIE5tmnS3N3323kcdU+QhRmCjKAdDMTZCRj8O8Gdfoh+FcRfEY2WZHKmpGrttJV3eLdgtQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8lLiP0q5IFLMxnjMShTLnnnDTwSWv5Fa39Icu54ILZE=;
- b=QaXa9zVl2v9pRn+a+RPk0PEepiL3DHfjMKFySB8MmLPuI6XpKYZbMZMQyaZvQ/UO/bBK19PccXXiah0b/A157GOylwBLOpRaug7PP5K2bF3iKh9JwdOUCBVc3Pi9t8ji8bjLSDwkcZ4RJAWMhrRD7ndPLWmDfUHN2/qFyZhtvyM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- LV8PR01MB8429.prod.exchangelabs.com (2603:10b6:408:189::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.19; Wed, 17 Sep 2025 19:04:19 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 19:04:18 +0000
-From: Yang Shi <yang@os.amperecomputing.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	ryan.roberts@arm.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	ardb@kernel.org,
-	dev.jain@arm.com,
-	scott@os.amperecomputing.com,
-	cl@gentwo.org
-Cc: yang@os.amperecomputing.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH v8 5/5] arm64: kprobes: call set_memory_rox() for kprobe page
-Date: Wed, 17 Sep 2025 12:02:11 -0700
-Message-ID: <20250917190323.3828347-6-yang@os.amperecomputing.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250917190323.3828347-1-yang@os.amperecomputing.com>
-References: <20250917190323.3828347-1-yang@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CY8PR10CA0010.namprd10.prod.outlook.com
- (2603:10b6:930:4f::16) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9568E4690
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758135846; cv=none; b=N2VHSL8s3SshAkGJ75X3zonheiPqZzuq8gF4X7XnYP41Xtusyy+Mt+F1uDBzm1myMrTyJUR99ikzbx6+tAWYEuZ5FUXhUvvMwoNamdtpJ/JrCHWKWA9Z9VM+4UIiH+lgRKT2nPqW+cffYTRJIow5H7p3/q73TrbUvLlvDQpMvs0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758135846; c=relaxed/simple;
+	bh=uHriSmtS7Lxm0GPG+EDQP+ngN4Ody8EIz+QPxFS4Sww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F7YU24qz+dsW3y9mwH/DaRk0yNxEyaOO7R7WtPo7QH7suOZz171SIFxqfXFrDY8sz+x56G/I+BXY9djZhfRX2rRtX/5+NsnZ1VZAyf975Md3V7qAI0KQydRJm44jtQ8YFQMBtj4HwB8MXAvN7nL97QuZFQsRf2UJlABul3cWOoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GHK1ajhj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758135843;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aHCH0VCzsWU4m239VlHHtfDVtMJrBZLoOpM6kxyrkrM=;
+	b=GHK1ajhjLGVWVadVIFhJZ7+5tQhrQczoRsozozfdC9m22cEJUrgB/fc9oPtMa0iqowg26+
+	8RqkTueGPmowGqnu8iOp0T3SncDZEmP3rf79hQDQQ1kzo3gfXB5gn4cy6CDSzG5l2FvLLp
+	hvvKkARcio4blrFTOj9UQtH/b7e9Wp8=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-644-NKqyGYQZOwqR7ofjZbX_uw-1; Wed, 17 Sep 2025 15:04:00 -0400
+X-MC-Unique: NKqyGYQZOwqR7ofjZbX_uw-1
+X-Mimecast-MFC-AGG-ID: NKqyGYQZOwqR7ofjZbX_uw_1758135839
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ecb79fe202so26966f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:03:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758135839; x=1758740639;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aHCH0VCzsWU4m239VlHHtfDVtMJrBZLoOpM6kxyrkrM=;
+        b=ObUCae2BPTk6vMRa4lhki72N7C7zfWDRalFtrqAlQ1OeHqOetCGYhTOO2BNgRsMNKK
+         RkwjSu4ATL+gesVzGoqcxJ9Y+1rxmCdHmZNuaJMvclR9PxerRL0Zp1BK5e9a9jCjRAWz
+         iCmtT8j9tU9acq680C0LbLkuZSDgBP8AcHArbKMTYMw47ZxKbhW1hUu6Pjvuht+gDiY0
+         n7wm746/iF+q9Bbq/4QFCjaLb/QKPB6jJAxmTM6feGQPPrcjZQvI1EOLol7PGDKjkN3F
+         fXJEVCK0iUcoSiU99WQsFAY9oCXBaW+uy5CKXU/nkRJ54UwzkbKr/uRvBtd8Vjj0+oc4
+         WyNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYhjdgwp8K18Mc3qDlmZRoNjLo+Oh+JsFTxrv9fQVwfAytGBKVbr7Qk8lpPkKc08A84nkOZvNmhtPhcZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5fT2c6+mFly6CJ3XmoOJliNl+sxEBuZ/oJTrTAoeQAYEvJEmB
+	At5A6NO61trHJU3aTYf45Jx5uA1c+tbnnLcr+1g5fbgtk3lY5NozzgLTRNidIMtcLqC5JFC1GLE
+	O0Tl0tsVdjdhYGa5CLKu3Xff7FwiGJNBNSNNcF/+Ha31mFN2LGULWnlUeOgvm1Ijs8Q==
+X-Gm-Gg: ASbGncv1U6kbpumkvfOwk24naz7Z1pCG9mVb1t69MgIZHxIaZClYAwO12FBI91D6Xbs
+	yk+Bs/N8AedKXFcVNWiH0rtZzwEgZE3LFAsUo92jJPEiu6LOZ0w/D/a87P7woDl0NkvpKHUo30+
+	eMRvzMqbqGmc7In7v+1OPOEcHxRloHynUxfHpw0h+PEJIa4S6Yux4IlElsedlzc7KIAHkkXgM7/
+	/n+ibjq+WaDtg3UwxHq63vwLVjsgUeGaUNiRnKdvLbfPdZ5hIstSFOJ4nMhz1fiOBVhJ3X8Z8AA
+	1tpd3RRoniwanGTNuleHrQQ/g79kbPuZwqrxYwcpWBG+WMK7rHyjfBGLNSJ8HoGH2tfLeKAD6Ty
+	+zV+MTLeQEXBjaCO3lqDBNeIw4Sb/3+MMxj5GWe/Fmvxx6VA62O2nCh33cWIybm6g
+X-Received: by 2002:a05:6000:200c:b0:3ec:d789:b35e with SMTP id ffacd0b85a97d-3ecdf9f3e2bmr2220744f8f.8.1758135838646;
+        Wed, 17 Sep 2025 12:03:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHH1jtQqXfA5qQMVLv888l0a3c36h370u+0P0yyGL+jfEOy01vR98KIIIx9Ov3RHgb7jlDtug==
+X-Received: by 2002:a05:6000:200c:b0:3ec:d789:b35e with SMTP id ffacd0b85a97d-3ecdf9f3e2bmr2220727f8f.8.1758135838182;
+        Wed, 17 Sep 2025 12:03:58 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f3d68sm446010f8f.10.2025.09.17.12.03.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 12:03:56 -0700 (PDT)
+Message-ID: <f8d3c2d4-8399-4169-8527-3c87922f2ef1@redhat.com>
+Date: Wed, 17 Sep 2025 21:03:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|LV8PR01MB8429:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1858c89f-7f5b-45f7-96a3-08ddf61cfeef
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1JtawaK/mkDWiXpIKt/cJAWxwvDIj4IMxBHkNO6MuHPLZ+l1mQTAIIFuaEgN?=
- =?us-ascii?Q?gGBesFt6zFrLRsx9Np/aH0F9P25K2Rhnz/lLcEG3XEbZTiO3wrv1/pWvkXgV?=
- =?us-ascii?Q?bxuZBxI9yGEodhang7H3oc0hGUWrE3D1q+nhgmgr+s4msW/2pR5Rqj03SlNw?=
- =?us-ascii?Q?cJvstd5hK8UDV71OMhVGJ6Y8+CJ2sD3pjGuHp3wr06TggvRIVaDQMwjT6sKz?=
- =?us-ascii?Q?kMG7LuXq1vNy31rcY1InpsCdWTCUHa5aq4cLzVisvhw9MfiDD5zz5RRfDJav?=
- =?us-ascii?Q?nbKeTPwjDD9GoyJPNDae74K3NwX9f/j0PmRhOeg2JKoGFbbZ1KbLj6WgVn3n?=
- =?us-ascii?Q?DRjqJVS6DBDkzACKJVEBzcH5sq6HZSxn9xbranJld8VycZtndKYss5KPmVgf?=
- =?us-ascii?Q?06AEeeSIcyptHC9Z7KIwZIy4NSeAcJAoKMDEOwHaZgzXcSjKzV90/v97o8NX?=
- =?us-ascii?Q?DFRqCE8p9/eKd5rSGo69xLe62RzMTFfZclomPqJGfcKSexzRqpfxORY1JirT?=
- =?us-ascii?Q?bYC713YAReW0OvExyT+MoPqVWJtV9vaCYqijCOWFw56e97LOsFiF9VNl1vo1?=
- =?us-ascii?Q?ZIG9gsEeqSQwxo6EhEeOn8X2WA5k9bZ7ZZ2LRB3K+mI90BMXCuDx0cfVqzy7?=
- =?us-ascii?Q?109mgmgqoDSGlZ0Y0FfJe5gF58IuzOi1slXBrKLBJxcUm6F3Ev2mvQSCNFou?=
- =?us-ascii?Q?kw1k4JAgwa8PLuMQpim2iprxx7o80dW6LY64lMd4buiFPRhzLKYEgEPBXzE2?=
- =?us-ascii?Q?IV1tT4RBLyoXjI99y9znXmVyEu63gRPeNzJfki+jPa+AIaT8gr+NUtFr6GY9?=
- =?us-ascii?Q?1Cgb9hHEKF+/EKIlzPAq++3yp0GsA/14BeznPyJYjxUJGdnvv2r2m6HiaEJA?=
- =?us-ascii?Q?eEpugy9UqzdJcpMfIbWvdNSWKMTfBr9rOlQjmcwZFpA5Cxk3D0xH9EjMhWTP?=
- =?us-ascii?Q?ebxkDS9soxj+FcVybywK6U/AD3ZHQ1/R8HGOCdAbEK7hbHSNxPJN94QtVv6n?=
- =?us-ascii?Q?TGYQNi21+mNnyirJOEJaioW9BQ7euT73lnCOlFwOJI+8UW+K2e36BeUw1EPW?=
- =?us-ascii?Q?TVE6YWVZhSn8JbsZEeSyOFgjxFtcDwtykPP5ydja6LSpx5mMcqFRGCvpeo3C?=
- =?us-ascii?Q?9ooL+4Tp7SAqfoa19zMl3nfyazyFIWRxwIvDjyNHWbQQYwyTDW5RyGPy8Bij?=
- =?us-ascii?Q?+CtN5y8ph+kWjqNpq7J6mdx5okp+NM0namJpUM89rxm5s34fZYWgB6iDQ9vs?=
- =?us-ascii?Q?+1phgvhFKsTg9Xb55ek+lxIZdFuN5d2ZPwPiElWzZl1jWviV49Mf2sgFpRPa?=
- =?us-ascii?Q?9Y6bHHBomtTdkbqi3qN3P7L/LEoLYC/kM7W5AYblGMIomsH4SaafqGWNOSqz?=
- =?us-ascii?Q?QmbW/rvIfEZT8WooWTTCCeArL3zAQCgpvT6jAiWLTCcimaLhmNGVNHlXmYRu?=
- =?us-ascii?Q?Di9HBbpZCg0Bt27/h+OwsTQ+E3Xrugu18JkcxAglGIAAU+5MCSlwFUTx8Y6O?=
- =?us-ascii?Q?3kb66Vj5qnzSivM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?laP4Py5Bt0LKoJIrwbKKSekAN/757xgenTFh4i57Rxep09lwcLwwoNzfDwHb?=
- =?us-ascii?Q?ZctA57yPMcZA7FKwAujdX0ylI5YKfdzzqgocCHyMYDk+sDPMUKWAA3UWbF4D?=
- =?us-ascii?Q?RGDRF7pwnChO6UWUISegN+SAX98mcB8hd9GDCKbO1rL+yREWkIozVDL1054V?=
- =?us-ascii?Q?krOP2eaIXzLq9N6qOhOcL2yA8v660YhefwPym/RdXJ/gXiCCxCx8j6J12f2d?=
- =?us-ascii?Q?uQiarNbM4R0ZHLoQqnAquKqbZsPQ0YoiNCghwrXjVAeNmiZ5rrm78mt/MWiL?=
- =?us-ascii?Q?t+EfI435FlMuNS+Cun2MkJ6UIYI7c4S391dsBKjvZqwdNyAmk9LWW60me27l?=
- =?us-ascii?Q?6hlig8ueOCWwJ2uTg3lmgt8zBJr9KTT7zIS4nkp7xruQL3qmMUjkkbj6rOVh?=
- =?us-ascii?Q?IPuu7ebN0eF7POGf61UzwhI42jQlc/9OHLxPhbZlXQxYqZYg6DJIG6FRzRPH?=
- =?us-ascii?Q?ksEk50usiEvM99VFCf4I/LkC8KNadLCFCwvw4JszjzfiHrp/PjGh+ANHthD8?=
- =?us-ascii?Q?9ShP/+LjuEJpi2TiuKCpXxaczoLpw+qeg0N20FrqMiQj731hSzX2QXNbMK1+?=
- =?us-ascii?Q?/3O8LNifePkF9WMAXmRGVZZxGbZlIL4YbmIV2KTUGDhUx5+LX6LPZs1PXLj8?=
- =?us-ascii?Q?sOyoa3RxQZwPWQkiBc+4WdCsi1gkcUJPYYC+iPcpnDu6BA9PEayaoYBxvsKW?=
- =?us-ascii?Q?ig14jKzyIKHLNeqUZfkjL29Cnrfnby101Nic83JJ1NRiLyGF/xoNRAoZBCcP?=
- =?us-ascii?Q?TWmxeS7y+o+PrrAVd4HUQsCURemeAuxCBInROsDHMlczyiWncpEuFvQ4Wvdt?=
- =?us-ascii?Q?KRNl6jRpFwrke/XcPPqec1IyR6hPS8I2DR+VooQXlqG+O10xMRSgbtg4X2IG?=
- =?us-ascii?Q?IUU6/VFEL0opLYT9ck0ZgvGU+jo46yXbV4skjmnqd/Syu12JxGgaiPC/PdTi?=
- =?us-ascii?Q?cmYJHpaoM0v63kPWJPYYq6OAmLa5GyZdDVlK3mtypxCbJJJM4DzElyLXcr7F?=
- =?us-ascii?Q?6irJH31iw2ekkL6kBdIf6hCHqM5j6KcCD98u0E1dYSkl4GU5KlsvBLqAnLXa?=
- =?us-ascii?Q?0X7HwIUPpN6sn0ByBSIrBdgnlZwN49opBPfLXpqTMvDA3xZFRXlhipXLxWHQ?=
- =?us-ascii?Q?gFqKYXQrQeAtFJV1g5lMFKlxx/RfL5jY0pgkcjRf4yesiAkGpHhnJKgUpB/L?=
- =?us-ascii?Q?jvLQ4eaQSjGxCxrOb5dwr7AXQkT0OWNzPjfmYb8KFBhildiD7LXnPaHo6DuM?=
- =?us-ascii?Q?OED0yNSVvWyi0DiiAv5CEcfIn9lKk92S+0mIlzW925L2cixfokT+ukaHNsgs?=
- =?us-ascii?Q?ThG9xU81mjAAevxntIuyU6Wyfa+FzqjvjeCXrpDMIxFTK95ZUVQKeGuGsuz4?=
- =?us-ascii?Q?Gk6yw/5tDqgx/VOpZet3X0TKFjO5PmFndnRtT+Wl5yiJ8YlI2o6ip0Vf4x0d?=
- =?us-ascii?Q?B/Aoi29b7baC5FphINenupPEk236Q5Qe0m6L+rrAQA2deErvdW09NBK7+GIe?=
- =?us-ascii?Q?+4mmQf+1E/bvK5FwkPfMWndz8OdU+5WR73KZPjInCaisJ2DGh+C2XCSxxlCk?=
- =?us-ascii?Q?Siw4sBoRNN5h2Gkl0lhngdScxfhNoCtVXzM6IYDYRIepvnOtQcMZSTbGw1eM?=
- =?us-ascii?Q?Weuj2vYtxiRORGHUG+1tW3s=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1858c89f-7f5b-45f7-96a3-08ddf61cfeef
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 19:04:18.8237
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /okpRiSN3QJi/7yFi8vfAyuV4FzfqbNg3DvveobKiDqxnpF0NbWBLtBHKnCaRU0VXt8ir5Zuk/58HyjyuWTj/mGJy5GGrgfpgHenYxfxJRo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR01MB8429
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
+To: Thomas Gleixner <tglx@linutronix.de>,
+ Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
+ pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
+ <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
+ <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com> <87v7lh891c.ffs@tglx>
+ <95ff36c2-284a-46ba-984b-a3286402ebf8@redhat.com>
+ <24d6a51d-f5f8-44d7-94cb-58b71ebf473a@linaro.org>
+ <7f4aa4c6-7b77-422b-9f7a-d01530c54bff@redhat.com> <87segk9az5.ffs@tglx>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <87segk9az5.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The kprobe page is allocated by execmem allocator with ROX permission.
-It needs to call set_memory_rox() to set proper permission for the
-direct map too. It was missed.
+> 
+>>> this would go to a separate section called .tagged_memory.
+> 
+> That'd be confusing vs. actual memory tags, no?
 
-And the set_memory_rox() guarantees the direct map will be split if it
-needs so that set_direct_map calls in vfree() won't fail.
+Yeah, I came to the conclusion just after an upstream call we just had 
+about that topic (bi-weekly MM alignment session).
 
-Fixes: 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in alloc_insn_page")
-Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
----
- arch/arm64/kernel/probes/kprobes.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+I'm open for any suggestions that make it more generic. My first 
+instinct was "named memory regions".
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 0c5d408afd95..c4f8c4750f1e 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -10,6 +10,7 @@
- 
- #define pr_fmt(fmt) "kprobes: " fmt
- 
-+#include <linux/execmem.h>
- #include <linux/extable.h>
- #include <linux/kasan.h>
- #include <linux/kernel.h>
-@@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
- static void __kprobes
- post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs *);
- 
-+void *alloc_insn_page(void)
-+{
-+	void *page;
-+
-+	page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
-+	if (!page)
-+		return NULL;
-+	set_memory_rox((unsigned long)page, 1);
-+	return page;
-+}
-+
- static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
- {
- 	kprobe_opcode_t *addr = p->ainsn.xol_insn;
+>   
+>> Maybe just "tagged_memory.h" or sth. like that? I'm bad at naming, so I
+>> would let others make better suggestions.
+> 
+> inspect.h :)
+> 
+> I'm going to use 'inspect' as prefix for the thoughts below, but that's
+> obviously subject to s/inspect/$BETTERNAME/g :)
+> 
+>>> Then anyone can walk through the section and collect the data.
+>>>
+>>> I am just coming up with ideas here.
+>>> Could it be even part of mm.h instead of having a new header perhaps ?
+>>> Then we won't need to include one more.
+>>
+>> I don't really have something against a new include, just not one that
+>> sounded like a very specific subsystem, not something more generic.
+> 
+> Right. We really don't want to have five different mechanisms for five
+> infrastructures which all allow to inspect kernel memory (life or
+> dead) in one way or the other. The difference between them is mostly:
+> 
+>     - Which subset of the information they expose for inspection
+> 
+>     - The actual exposure mechanism: crash dump, firmware storage,
+>       run-time snapshots in a filesystem, ....
+> 
+> Having one shared core infrastructure to expose data to those mechanisms
+> makes everyones life simpler.
+> 
+> That obviously needs to collect the superset of data, but that's just a
+> bit more memory consumed. That's arguably significantly smaller than
+> supporting a zoo of mechanisms to register data for different
+> infrastructures.
+> 
+> I'm quite sure that at least a substantial amount of the required
+> information can be collected at compile time in special section
+> tables. The rest can be collected in runtime tables, which have the same
+> format as the compile time section tables to avoid separate parsers.
+> 
+> Let me just float some ideas here, how that might look like. It might be
+> completely inpractical, but then it might be at least fodder for
+> thoughts.
+
+Thanks a bunch for writing all that down!
+
+> 
+> As this is specific for the compiled kernel version you can define an
+> extensible struct format for the table.
+> 
+> struct inspect_entry {
+> 	unsigned long	properties;
+>          unsigned int	type;
+>          unsigned int	id;
+>          const char	name[$MAX_NAME_LEN];
+> 	unsigned long	address;
+>          unsigned long	length;
+>          ....
+> };
+> 
+> @type
+>         refers either to a table with type information, which describes
+>         the struct in some way or just generate a detached compile time
+>         description.
+> 
+> @id
+>         a unique id created at compile time or via registration at
+>         runtime. Might not be required
+
+We discussed that maybe one would want some kind of a "class" 
+description. For example we might have to register one pgdat area per 
+node. Giving each one a unique name might be impractical / unreasonable.
+
+Still, someone would want to select / filter out all entries of the same 
+"class".
+
+Just a thought.
+
+> 
+> @name:
+>         Name of the memory region. That might go into a separate table
+>         which is referenced by @id, but that's up for debate.
+
+Jup.
+
+> 
+> @address:
+> @length:
+>         obvious :)
+> 
+> ...
+>          Whatever a particular consumer might require
+> 
+> @properties:
+> 
+>          A "bitfield", which allows to mark this entry as (in)valid for a
+>          particular consumer.
+> 
+>          That obviously requires to modify these properties when the
+>          requirements of a consumer change, new consumers arrive or new
+>          producers are added, but I think it's easier to do that at the
+>          producer side than maintaining filters on all consumer ends
+>          forever.
+
+Question would be if that is not up to a consumer to decide ("allowlist" 
+/ filter) by class or id, stored elsewhere.
+
+> 
+> Though I might be wrong as usual. IOW this needs some thoughts. :)
+> 
+> The interesting engineering challenge with such a scheme is to come up
+> with a annotation mechanism which is extensible.
+> 
+>       Runtime is trivial as it just needs to fill in the new field in the
+>       datastructure and all other runtime users have that zero
+>       initialized automatically, if you get the mechanism correct in the
+>       first place. Think in templates :)
+> 
+>       Compile time is a bit more effort, but that should be solvable with
+>       key/value pairs.
+> 
+>       Don't even waste a thought about creating the final tables and
+>       sections in macro magic. All the annotation macros have to do is to
+>       emit the pairs in a structured way into discardable sections.
+> 
+>       Those section are then converted in post processing into the actual
+>       section table formats and added to the kernel image. Not a
+>       spectacular new concept. The kernel build does this already today.
+> 
+>       Just keep the compile time annotation macro magic simple and
+>       stupid. It can waste 10k per entry at compile time and then let
+>       postprocessing worry about downsizing and consolidation. Nothing to
+>       see here :)
+
+Sounds interesting!
+
 -- 
-2.47.0
+Cheers
+
+David / dhildenb
 
 
