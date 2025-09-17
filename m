@@ -1,101 +1,196 @@
-Return-Path: <linux-kernel+bounces-820324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DDAB7F4ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD32B7ECD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC33A3A9F07
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:20:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9994328475
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5E22F3C34;
-	Wed, 17 Sep 2025 09:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FFC31BC8E;
+	Wed, 17 Sep 2025 09:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKe5MBSV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOSe7VCM"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E808E26B2DB;
-	Wed, 17 Sep 2025 09:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8665430596D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758100813; cv=none; b=cV8NlTojlalOC+7vBnlxZjW9Jii6DOYkJyvttk5w2CSsaQ1CZ30EQzz3fMXZ3JIT1St/F0Z/HdMDrobnp+aHI00ndaa1xat2wcHy+fzR6C4k6sMXcLqsGPWpw/wjQ0rpCELmbrCOdgMzDC25VqssQIb9OprdE/O+Cq7cN2Fz5og=
+	t=1758100853; cv=none; b=bgnTwaHZB+pd3/Quk7VdhXUSy/huyQCjKE4W0mnK8AZ2ewA+2RabdEhBENBugx9LmIxjTGD+vgWdNoGk4S9CKjLZkvB8i1yt/SZFu3GF+q550Hzz2gwvAkbnkxX3CF6exWeH0KNf5SarvUWS23ygQ2QJ9JJb69Wk/iQciCmtqOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758100813; c=relaxed/simple;
-	bh=StpFawo19worA0rs0jnoMKx2iOV9C2fa705i8857O34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lO+lv++traLORtBqUE0O3lOXNLqJATRpSx4N5E7VVFYhgv0QPfAxziO9vZmQd5PgUF55TNchJ8hfG6oHnyZn7qX9eo0mkr/C2Dj8lxjomppny/g8IIynfErZCjBZ67WTxNjkwKIonZ5x+gt9TnmK0GlOzCphD5iY10aU4EC4Qtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKe5MBSV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DF9C4CEF0;
-	Wed, 17 Sep 2025 09:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758100812;
-	bh=StpFawo19worA0rs0jnoMKx2iOV9C2fa705i8857O34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZKe5MBSVZJTvg/kPE+wl63bGOoWBIU9dsidqfP5sOi4Eqbcuw6V76OWnV/vzJDJia
-	 rJ94dAK92ul1sRmg8xy+3SeYIJIrdK0DUdfXfTKmxvIYqhcQ7i8IPx3Mixbxs0VNia
-	 mm4+IPH+7fNe08PZWGD7HtrhAiKN+bmdhU3DRiQt+1/4evpbTnDfTjB1SNB5d61zzR
-	 Z2IetMWjKo09Hfxg3JGNkY1rJn05GQDC4CAH5Uan37XX9aoeocBaQZuE5vFoS3Kysx
-	 aRbGKmAtcAzNWScXIV1684qBIulB40m/W+MJp4oop8eWDkdjru8Oj5kRrqT5exfAKd
-	 hHomotwtsAG3Q==
-Date: Wed, 17 Sep 2025 10:20:06 +0100
-From: Lee Jones <lee@kernel.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v3 04/10] mfd: simple-mfd-i2c: add compatible string for
- LX2160ARDB
-Message-ID: <20250917092006.GC3893363@google.com>
-References: <20250917090422.870033-1-ioana.ciornei@nxp.com>
- <20250917090422.870033-5-ioana.ciornei@nxp.com>
+	s=arc-20240116; t=1758100853; c=relaxed/simple;
+	bh=GPrMgKLIF76NvpNeh03mLIHEOaiBvol3hzVk3son8tE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mNhVgXhcSmpzX29aPt1Rak6xwmOhOA1vJ1iNsI8x8Aws/7GXKPIB/QMpPOIOLn+XCI/aMgE0KJUXBkOMFByTj5774wdbx9+6VFDTWTifSsTyy/q0edzDpbvXE5084G6PP3CsCvDA9nRDkqPBivCVLk+QP5XrhZaDwow5QROtm2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOSe7VCM; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3357b8aeddaso968481fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758100850; x=1758705650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ox09wceLheN9CV/GNKAbltAUFRxxk0VbuNEPceF8/DQ=;
+        b=SOSe7VCMhoCLfGmUaYB6GzCdWwStBaaY2tOuKd2oo+GJyneR5SYpsEdYYIgPoTu58s
+         /P8BrPZ+AY9skH1sKfJBZNpx2fMK5qPx90ZcCmLu8B0mBFrVw35eoAn7XGDWRCbUx2fT
+         AYOyLvXzoXkq4eolmfS2JeG81abYUpAvgF5ZhjdilnMCZrJMKfVKuFHVtMwxl6DAbur7
+         Frci7n+jXhNdLXtJ2wui2OP8h81JQBnoNXXyedY7Av63BxERfqOfjgstBFx1+3bwJ0sh
+         2njAnl4Rdv896JknCeJMxUzvtOwTipYdnVVCI3uqqVdj3GLmmYbRJG/DWxFGYm2P4AxB
+         +SLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758100850; x=1758705650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ox09wceLheN9CV/GNKAbltAUFRxxk0VbuNEPceF8/DQ=;
+        b=XlpGRmQ6gRMk61c0QDQG6NpUAxHf8lkD96GZASNucp+mrXOa3xXr31g/1XsPvoFvqM
+         GPg7XRvVJS9YiRoPy0Ks3frqWMqrPgNVER/Yb0UcCs1N4a7srOHBXT/r7B/qDSoef3U6
+         ZYEDRVOp7aX/Wv+Zlsi/h4P6aSmZHAuojusBsQDg1RtOlLDf5mdo5072DR8AAW3lzv8F
+         5tWi4sQ/upleP6uKq9dpBRccCqjZs/ol7m/Z4BLDa9Og94y4seznfr6exxdfx3R4rwWe
+         A/A8TQhU5HgWXnBgnlsBbOIU3+xyuqrmBMsUhwO3ZGitLgt8XBj+p5dC0f9R0/i8V1on
+         iFQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG0eIjThf2HtzGim0/uatf2I3de346L5Jv9bvyGbsQ6S6ZSJlavt8IfFRf1mrJy/LSl4IBvlfGGPkcIc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSxtPnN1vKNhiXb6gSqbyj3HrffPlBWjZhRFq7f4xS3+L217JG
+	zIxBYLA+7I4LSxKVd+I5wxFuHSB4IUM/78kBM46eU9xBfjaj6+qcRF8No1WYMLvMtTc8vc7poop
+	h+yRJ/1FvhRY1mPg+ac4XX4lb3S+cnxY=
+X-Gm-Gg: ASbGncufPn9B+1JmB61bTot3+gWd6tYgNx7dMDW6ieHRE5sTREHSJVMoZOEU49SL6Dy
+	PzwvqZ+NbrYoaH0f0s8bnTpKYIv5NFM9xwO00Tq0gxbnWC/H/ChHRocsewkJjlQpTpDQbDMBXf2
+	75ITCiqVHbj73oVnuORwq9Aj3IkIIfiBU4ugsuS+QaJ1r5iZYmnaZW+Qwpw+ODgBQaYkthDkdmw
+	eQtWA==
+X-Google-Smtp-Source: AGHT+IEvi/vcvuNXEKryAobinAuQaOybDNziHzvdIl5fQxCUxTSrL6UDLu1P/TgPbjPopqUhtAHphiQym0mzQtaf3UA=
+X-Received: by 2002:a05:6871:d618:b0:31d:6467:3ddd with SMTP id
+ 586e51a60fabf-335be8c863emr772149fac.3.1758100850540; Wed, 17 Sep 2025
+ 02:20:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250917090422.870033-5-ioana.ciornei@nxp.com>
+References: <20250917033703.1695933-1-zhangchunyan@iscas.ac.cn>
+ <20250917033703.1695933-3-zhangchunyan@iscas.ac.cn> <bc87f2a8-7a9c-4416-9106-bdf4b98e40a8@redhat.com>
+In-Reply-To: <bc87f2a8-7a9c-4416-9106-bdf4b98e40a8@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 17 Sep 2025 17:20:14 +0800
+X-Gm-Features: AS18NWA4SAC8zxdE-h5_sRhBzgX8xMPmN4jL9phgOErltDfEWb2iq0mEGYtEXpk
+Message-ID: <CAAfSe-vjgcgFyvVoci8F9ra4JwbDcdbhsxjSL0j8=0CCKAzFHQ@mail.gmail.com>
+Subject: Re: [PATCH V13 2/6] mm: userfaultfd: Add pgtable_supports_uffd_wp()
+To: David Hildenbrand <david@redhat.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>, Deepak Gupta <debug@rivosinc.com>, 
+	Ved Shanbhogue <ved@rivosinc.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 17 Sep 2025, Ioana Ciornei wrote:
+On Wed, 17 Sept 2025 at 15:25, David Hildenbrand <david@redhat.com> wrote:
+>
+> On 17.09.25 05:36, Chunyan Zhang wrote:
+> > Some platforms can customize the PTE/PMD entry uffd-wp bit making
+> > it unavailable even if the architecture provides the resource.
+> > This patch adds a macro API that allows architectures to define their
+> > specific implementations to check if the uffd-wp bit is available
+> > on which device the kernel is running.
+> >
+> > Also this patch is removing "ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP" and
+> > "ifdef CONFIG_PTE_MARKER_UFFD_WP" in favor of pgtable_supports_uffd_wp()
+> > and uffd_supports_wp_marker() checks respectively that default to
+> > IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP) and
+> > "IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP) && IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP)"
+> > if not overridden by the architecture, no change in behavior is expected.
+> >
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+>
+> [...]
+>
+> Taking another look.
+>
+> >   /* mm helpers */
+> > @@ -415,68 +475,24 @@ static inline bool vma_has_uffd_without_event_remap(struct vm_area_struct *vma)
+> >       return false;
+> >   }
+> >
+> > -#endif /* CONFIG_USERFAULTFD */
+> > -
+> >   static inline bool userfaultfd_wp_use_markers(struct vm_area_struct *vma)
+> >   {
+> > -     /* Only wr-protect mode uses pte markers */
+> > -     if (!userfaultfd_wp(vma))
+> >               return false;
+>
+> Isn't this indented one level too deep?
 
-> Extend the list of supported devices with the QIXIS FPGA found on the
-> LX2160ARDB board.
-> 
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
-> Changes in v2:
-> - none
-> Changes in v3:
-> - none
-> 
->  drivers/mfd/simple-mfd-i2c.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-> index 63ac26388860..6fbe85437d8d 100644
-> --- a/drivers/mfd/simple-mfd-i2c.c
-> +++ b/drivers/mfd/simple-mfd-i2c.c
-> @@ -115,6 +115,7 @@ static const struct of_device_id simple_mfd_i2c_of_match[] = {
->  	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
->  	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
->  	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
-> +	{ .compatible = "fsl,lx2160ardb-fpga" },
->  	{ .compatible = "fsl,lx2160aqds-fpga" },
->  	{ .compatible = "fsl,ls1028aqds-fpga" },
->  	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
+Oh right, I will fix these.
 
-Please keep alphabetical.
+Thanks to you spotting them out!
 
--- 
-Lee Jones [李琼斯]
+Chunyan
+
+>
+> > -
+> > -     /* File-based uffd-wp always need markers */
+> > -     if (!vma_is_anonymous(vma))
+> > -             return true;
+> > -
+> > -     /*
+> > -      * Anonymous uffd-wp only needs the markers if WP_UNPOPULATED
+> > -      * enabled (to apply markers on zero pages).
+> > -      */
+> > -     return userfaultfd_wp_unpopulated(vma);
+> >   }
+> >
+> >   static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
+> >   {
+> > -#ifdef CONFIG_PTE_MARKER_UFFD_WP
+> > -     return is_pte_marker_entry(entry) &&
+> > -         (pte_marker_get(entry) & PTE_MARKER_UFFD_WP);
+> > -#else
+> > -     return false;
+> > -#endif
+> > +             return false;
+>
+> Same here.
+>
+> >   }
+> >
+> >   static inline bool pte_marker_uffd_wp(pte_t pte)
+> >   {
+> > -#ifdef CONFIG_PTE_MARKER_UFFD_WP
+> > -     swp_entry_t entry;
+> > -
+> > -     if (!is_swap_pte(pte))
+> >               return false;
+>
+> Same here.
+>
+> > -
+> > -     entry = pte_to_swp_entry(pte);
+> > -
+> > -     return pte_marker_entry_uffd_wp(entry);
+> > -#else
+> > -     return false;
+> > -#endif
+> >   }
+>
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
