@@ -1,319 +1,146 @@
-Return-Path: <linux-kernel+bounces-821667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C3BB81E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:15:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F94CB81E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9114189B6CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605CB3AA460
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C887930C35A;
-	Wed, 17 Sep 2025 21:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C74F308F09;
+	Wed, 17 Sep 2025 21:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dzZYdfTh"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010001.outbound.protection.outlook.com [40.93.198.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fRT8zgYp"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B972430BF6B;
-	Wed, 17 Sep 2025 21:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143726; cv=fail; b=pw8p2UE1Ek3LfFz+rEXuOY4BZVErBEoTft9qliHgNsi188SjvoG3w24rB7+c6YtO0ioDQZR9gZWJpyuAvYFDi35h1ZDvBJysRJ+A1bDi83eaDgdnbLRkCXIwf8sMKBa23HE1GKjaB5ohi9jaNolHaLHcB6K3Hxaar7ceDS6pIdY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143726; c=relaxed/simple;
-	bh=foGnFFjYMb7QVnOg1/MXC2SSm+edRp1VpbVF6+yWwpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MPtyHWp52FPmtB43/0nr3LZVI95GBmYtfLdcX3HNSFNAGrhsBDXVs/T3YMTZLCwRuk42pZZcGI8TTXDLIW5+vtKT0pqWUxBRGwuJSa8b+JU6U3DfkGwIlQycI7o9Bwkhc1JVs/mRZXxPM5C2xyFylpKh6hy9UN2LhOVp2Zf8CbU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dzZYdfTh; arc=fail smtp.client-ip=40.93.198.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RSGL2aiJiHhjihq4aIR7Jclcjyf7GP7rELknMEYiHFhTeRCLkyugLz5jotzYppEdzK7YKUJNW42hcRctIbHwgl5Tr5IdJEMMXEByALUAcdN17X+mNCyybN8Q1xrWY76eNtgi7tNIK7EEV6lU/hvkh5NYMK28TxlDg3wRbJVRzFugL2wSvq0dJT7WsS7EALSrcZqW6k33+UemywJFsUlCP19qDxsVX/2U7SEyIF20kS0AzOAWR9EkdbGMh2rxyEcGR3yqQOJSc+fsEM/mFO0e5DNp/5AiESkTfwZpXpNpnQDopSp4kozDPDxfEOIm5Scv8AfdoCXPyWbn40LcXDn2ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rUJ7ZqJa9JiU1bTTVXc6fxffxoHPgw2v+VWonIJq/ks=;
- b=OA9k3PVnnaZfwESw3GfgSIb9oHyoUGXMXo0aM9M8jl2y1CDutRWWlnzrFVNtUqYSkFhajNpOpQUFTyYm0n1drpyH4sDkiU7jkHbRiac3ljmcfEfyHOePWH9uFVYtZxVmgckZdD6qBN+l+/fmZrKHyfEg4QFZ9A0R3tMMEbMiAuJOTZJuQdnckB5o+/XAJNVsA5PMgjpZQehBL0i2OOoqTipDZ1uq7kHYBavoBYlqfKJolMAVM1KUAmGx3WVfqevcCedjBadh5YZLnJevqF1QjhkDQ2fhhQ7e6AjMN06GV/3xQwTScONHGHOFd5dm9U/wvi62z/SHdAyvz0cvESX5WA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rUJ7ZqJa9JiU1bTTVXc6fxffxoHPgw2v+VWonIJq/ks=;
- b=dzZYdfTh63SSIadoojNz0jD4Js4Cgl1n8ooZG4c9ZaP1SCE0P24Kt528Ay4O8HiAjaZuP/nyVU3E8BAJ+7Hq082iFTyOJCLQEXiFAKuqXe6+C3yUe6Q9qHXRpU4M7UcJsShYms+Mg1ffjTPdH//cZqqn8lBkyogsWuj8CQuCWzk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- SA1PR12MB8699.namprd12.prod.outlook.com (2603:10b6:806:389::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 21:15:22 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%4]) with mapi id 15.20.9115.020; Wed, 17 Sep 2025
- 21:15:22 +0000
-Date: Wed, 17 Sep 2025 17:15:09 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	linux-edac@vger.kernel.org, linux-acpi@vger.kernel.org,
-	x86@kernel.org, rafael@kernel.org, qiuxu.zhuo@intel.com,
-	nik.borisov@suse.com, Smita.KoralahalliChannabasappa@amd.com
-Subject: Re: spurious mce Hardware Error messages in next-20250912
-Message-ID: <20250917211509.GB1610597@yaz-khff2.amd.com>
-References: <20250915175531.GB869676@yaz-khff2.amd.com>
- <45d4081d93bbd50e1a23a112e3caca86ce979217.camel@web.de>
- <426097525d5f9e88a3f7e96ce93f24ca27459f90.camel@web.de>
- <20250916091055.GAaMkpn72GrFnsueCF@fat_crate.local>
- <20250916140744.GA1054485@yaz-khff2.amd.com>
- <9488e4bf935aa1e50179019419dfee93d306ded9.camel@web.de>
- <be9e2759c1c474364e78ef291c33bc0506942669.camel@web.de>
- <20250917144148.GA1313380@yaz-khff2.amd.com>
- <6e1eda7dd55f6fa30405edf7b0f75695cf55b237.camel@web.de>
- <20250917192652.GA1610597@yaz-khff2.amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917192652.GA1610597@yaz-khff2.amd.com>
-X-ClientProxiedBy: MN2PR05CA0039.namprd05.prod.outlook.com
- (2603:10b6:208:236::8) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBB2308F24
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758143719; cv=none; b=oMA3yE/xzYPAjyNyD/rKlzIKlKHfb/iT3sBbPPjzbv+OPi9c4oFOP3P8IErA2FDkIjo5/GQL2IkH+BXs4hHUSNR2ngK7uhhioFFEOuei7btg10slFNrBd0MhSsWIclUaP9Nz6OJEiQR60RsL7QxBf6HXHeb2O0oAyRwcqxwui2M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758143719; c=relaxed/simple;
+	bh=aOsBVV1Tpb4mhK2PfFogLLFA+uKbhmaEQcibYeJBiMc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YL6cu9lG3uAwLUk8hreQiR1GrXEVzXDEthqdDgTcO3+RUQQCRkHSodU4rdj2Aomwwc/0UQ8ZDrr3lYM+q3SaxDGI6Gv0M9OUKtq7s2TFtRSzpmLs1kfRI88yoRORLAC2o8l3YFeoH9HhQHoNY5Jcq8soxxh/9mnkLuh9OG0L7uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fRT8zgYp; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b4e796ad413so213700a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758143717; x=1758748517; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zf/y0HmWPOZ3dErMq/oUtcRItkhIQW6aNr62qVpQuQM=;
+        b=fRT8zgYpLgCO77DcdRAFmm6LMK8e+40lsvfGOFFM49bwqpaQDpb263GPYNnoD6fwcn
+         yH+7uOA9paLVsq6oljCxhOp2sBRvf+8te+AJHfr586nBzU0A5mlr3ezGqzFJQlhdK2TM
+         OuSoJZ7AVIkhNp/sVI4NzZqexVGAhNeo3Jzq/b1taiuqa5gbZzA8/D05EXjqfa6bIlCr
+         /ayi5vSBx9nVXSfqjAdxsuG9gGSqiOIflPi/i0i/l+WGFfmJbrgZRJt5BkX6YvdF1SJa
+         O+SRk/eallZVUTntgulkpNZM0otK4aBuct+PNQOFGQ1c64tXzyBPEyt5otst5wTQXoKl
+         yGvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758143717; x=1758748517;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zf/y0HmWPOZ3dErMq/oUtcRItkhIQW6aNr62qVpQuQM=;
+        b=KYQQDH/pLcT3hHzQYUg13TeuVTnoQ+mBYVOciOjblLed/W0xx2fIVR+TOggoVPHJYI
+         t9ilxLda+1G2fu3bs8Ha2cpVg93PHaG3i2y+RBeP4jsZmhjEDEs4U0wMkSfC1rsHEJ1E
+         1CUARNcUgvbUlVLTcQFLAUVP8asYYkCNIf3AI+UlAhSlSMY2tn88ar6A/3B7P1YOaeGg
+         dcOGE+zyw6lz/N4d5ZKY9iOiWA5C9zPhbH9+l0fWFnQtFJ4RXIUTfXJXjjAmjxONOn1P
+         NJzUUMW4+rde4lx7AwB3wI+AGKxIc0VkihiHrRzBzebbo2lH0/rT9b5IaFxflj/fBOev
+         JeKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbPWKzUgMBtrBNqtxxBtEmj5oaqMTlDUo0CXEuEi3Cqmdsk+cTc4G1BeQQrDS7x/cb4iQF9iMpinWEkps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnMzLK8UxIg03TSv3OG281dIR27p5fQOVEv7DuZHsDnjVGan6L
+	TipdXVWp2e8jw/hIaTHIKlwDBm6Uc2qdK0rGiPB8uDZp9hLDZROwTINOpRxeT3YOZznr5H7XI3M
+	p2ruWuA==
+X-Google-Smtp-Source: AGHT+IEx2ToSGxWphNk2FKfxD2yst1MtFncBvHa8DVnpZZzTslJr/R25DqHaOFbX/k7CmOZUhV/Ax0gsm+0=
+X-Received: from pjbst3.prod.google.com ([2002:a17:90b:1fc3:b0:330:49f5:c0b1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d89:b0:252:525c:2c2c
+ with SMTP id adf61e73a8af0-27a9f267877mr5474946637.14.1758143717363; Wed, 17
+ Sep 2025 14:15:17 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:15:15 -0700
+In-Reply-To: <aMpuaVeaVQr3ajvB@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SA1PR12MB8699:EE_
-X-MS-Office365-Filtering-Correlation-Id: 678a0f20-fa7e-41d4-bfe5-08ddf62f4fb8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?H9N6+jialJXqLs2SBgb4u5jEwNo/CAkT/j8W8J/U3V3W3yyZ2Mcp5L0crANA?=
- =?us-ascii?Q?gKrUr7PVw9noH/ROVSz4m21bfUVqSjY0Bia8qE9Luf86T/0M9N5UGpml4tUD?=
- =?us-ascii?Q?unxwvYrObUnMK7DkberdpGMZaydnDCQZV3svDrKQwxCeyc7+RiC/gDjzzP92?=
- =?us-ascii?Q?T+uW1zxOAwPO1DfApRuspi1hVSbgUEp8Z24eHJ3cQKWsI7k1+DCbXfwR07Q5?=
- =?us-ascii?Q?auEswtaDQB6I+KSNPXUxiH02i/QuWnMdz4lS9afsW2RBEpli1BZmrKC7dDPZ?=
- =?us-ascii?Q?ZixKcojb+qEjbpOj1u7Y3LsNLbyNUGkycYJ3ms1LKipCB8LXoYfQvkUnRJ4D?=
- =?us-ascii?Q?167CfacX+EeZAs9sNVV6agIc00rXQWrnTHlUn8NPI6lMYhQriv7YYSbySnBs?=
- =?us-ascii?Q?KzQQOjIe/ZWkCN3PdiXz4Ths3XHh31QN9neHEMiy0GhsjfIULpRaPqkPBpmZ?=
- =?us-ascii?Q?mDSLTqtscoNL/R1sJv9RJ1mb3J8egJSDqD2WNnFJi28FDtlgjz8QqJs33TE5?=
- =?us-ascii?Q?rPkngv20FCDmyit+Wu7Q5FVkPf2HgdkLojhDaonmhGY7w76wWiAYOepPT6YQ?=
- =?us-ascii?Q?XvlU8lx9eBuwuxd32q3xjWdtkUigC0/SwfqAPDnT6gjqLSKJewRtEBeMbcWu?=
- =?us-ascii?Q?++c5DvoP93KS2Jrk/y8uC+QfGK6bYhih/gULrb+r4kWkpRPVW4OS5dtnMvuu?=
- =?us-ascii?Q?lyx+P28zLj3tWhdmhCA1VvtIlQfgEvFbAsKKRfbbSG6TwFoMkK9BFK1+8M5m?=
- =?us-ascii?Q?75Igij+HE3gOswRUYMJakK6GlovEO3h/xrkkGnQTsIT+gvx3bafE0lamPoxK?=
- =?us-ascii?Q?e2nw5ot9R9vtDbGv4B06Rp5M1FSL1y/QMG1deRTTajh4BeAwxfJBfYoCz3nB?=
- =?us-ascii?Q?dpFc40N23C887q4hiKb0gPvwZVoxISCVkLZZrHmFcmZ+djApLkglG2YopWPS?=
- =?us-ascii?Q?wZnfoLJ9ZECIY4eob6dZeLRBGkG96RN6TMc/YIpzVx4i2+BFSNZHdW/ak77e?=
- =?us-ascii?Q?GicHhljGeq6XdnwgKQeszzqLGHiVRxtH0LJrOImr7Eww1X19AGB96Uv4KGeF?=
- =?us-ascii?Q?CEWksyPYWp+lI/k8s9n2afKZzQtuZFq/RVzkNahOFiH9I22l7GrZprs96sK9?=
- =?us-ascii?Q?tz2DJWsfq5XEopB0XShWgELSkFRlV+l9UM92J0WMNFcd5crUSzl1MtSbOQQK?=
- =?us-ascii?Q?k6Fy18EsDmnPPfngy1mISn+c9gV6r+na4m4nWC5vucnM6Z79LAUqGtvsneNr?=
- =?us-ascii?Q?5GlzXAyBPC5Kw6NCZ8/RZiL+hAP8O88J3OYvInlDl639Zeaj2H7sztcdj8Jd?=
- =?us-ascii?Q?Trwz2eC6pdynjXe2LZo/G6Agg25KBBx1LeI1nW7myPG1dekQL3duo25F+28/?=
- =?us-ascii?Q?aBQ0Rz5zyQMzL7jMH5eBZuFuGUiOVfkCpf0qsBxGpHi1tfhd80EUBuy4ENy2?=
- =?us-ascii?Q?+dzr9XNkkGw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RXi/Q8B5JuU2vAhYHPBRlhx9BsgjyojquYxf9UJ72WWzzlh+4tEsJQmdWlFs?=
- =?us-ascii?Q?Ims75O9nHYsO75wdeTuctziomBNNPMNzjQhuqZatpqb7XQr25wZwSr+ozn2G?=
- =?us-ascii?Q?DixL7CJlJ18eew2vWuDvuXzGkjecoGgvEKAtENxw3zU1eS2z4ha+H6HeaF0p?=
- =?us-ascii?Q?uOR+63+gdDqN6ajIJoMXzKqrYsjvQ4VChcehJTPqn86Djf6sAKn6Gmhv/9NO?=
- =?us-ascii?Q?wu1nGKXuYYJlQfmPAVelhU1iB4Em7Rvk+CogAmF40TBxcgB6BIfYCDBuACr7?=
- =?us-ascii?Q?uinAN0A4EyF3iJRsTPLfANkgXjYekc3NvXIMgiuHFaY/QsM6P9dUVg57SCcb?=
- =?us-ascii?Q?Obeb2mkNbZRbyDTMPvKy+zASNkVZximrDYB9EbwZJn/MAfzmGZj1vLxsQfbe?=
- =?us-ascii?Q?xgh2LIpD1gIosJvNNLVBjuLl1ol4f8MWwWgDvRlzjPSPE40hY4nIp3Zsmje6?=
- =?us-ascii?Q?5kd+eiS/JxO7O9cdnMq0jSobHPIDy7d2N2vWm3BPh8xEGmplPuaVSjY+HcQJ?=
- =?us-ascii?Q?nB6Et1yNcNB7eeSEFb3O4VohjjO7yDlefUrYJSGFpZxPoYkTyKG4S1c8hZRl?=
- =?us-ascii?Q?5YgQTQAd5drnRabvJIqI68nNEkNvnYIB/CiZHhKs54HxdHg+qIasccTjXWhP?=
- =?us-ascii?Q?BWN7/Au6XS9DM7KmwE864i22jhXImM3OCYVM0roOx1mkDqfbuYIyyS/ueKmH?=
- =?us-ascii?Q?0CZIoweqlYewWM/T8RswD4dJjCy6zvtuaBcXVoQIiUjp+3m6d4FEVEXh8Xou?=
- =?us-ascii?Q?KHb3z2glcE6vN6lIAHLe6H8BiV7w7m31RiRg9aIrmTgkHh6i1fNmHhCzVO+b?=
- =?us-ascii?Q?LR07qZKMq5FpmuAyT3MVbyJKJK36x6sA1umLSgF9sdR2Y7/lnVS4WnWlrwa5?=
- =?us-ascii?Q?cszfm27vIcSoadG15SP7otwdz2dlmu8R6s19utquq0NxCOnz2/FTVk6xfHkI?=
- =?us-ascii?Q?O29qdEbMNWzpdmGr1visaMggSGT4XzaPphkkXTYFSmDVcQPqIYXyr97m04Sy?=
- =?us-ascii?Q?LCB4wmSkasYuS0OlZbEf/MmtUjcRtzDo4otNg0CqLq0VsyLecmgo/gHZRd/i?=
- =?us-ascii?Q?tSRvzpAKRZaZPz8eXAmdmLId10yGSbnkYTO8pkMd1zeTzPnNBmvYb5fnrq9v?=
- =?us-ascii?Q?mRttamKKfemKQGeJZpy8VeILlBo2xb0XMB1T4CDzAlSNQe6PAyugtj4ixcVv?=
- =?us-ascii?Q?CMMc2fq62A/omWbZ/TI84aukyQOedYe7/tx0d+pd/F95Qq8LYMmRsBauQnPR?=
- =?us-ascii?Q?CJsd5KDtFSs/wl823S7eGIAEZKpJA/IhjRjaJpd16NYt3idJqjCvNNZynDlz?=
- =?us-ascii?Q?W1waYAKB7pHjbqD9iKW6CFVsfjKGy6KZkvV7j3K+mmmBOwqC3rQw/doTj5rS?=
- =?us-ascii?Q?49vpPs6mwRHvhduL6xHIoWqEJiC0VaswBDhRwnLVFTr0PZWoU9ahUIR/Kh6i?=
- =?us-ascii?Q?H86fhZf970BtFgF/vB5LhmKA4wuLhAPX2cQ7k+k7f3eVoW6qhERBD8CrYHSk?=
- =?us-ascii?Q?oHP5jwfgz4aSz/kY/g91ARYcEwEGwtQgCeUDaP4NmDUYHHmNbw3RcwXpxR0y?=
- =?us-ascii?Q?QFD09FxsMukycGFXac6cqQ+BrPlkC2rZ6Xs+5rvF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 678a0f20-fa7e-41d4-bfe5-08ddf62f4fb8
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 21:15:22.0133
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 82oaIgnoWu0yFkOkgZaCSogg3zW2f9HiAy4L9F6PSh0re7BxDNmsJqFLMiEOt/qnzHX3THHt702PRfDjE42yhw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8699
+Mime-Version: 1.0
+References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-19-seanjc@google.com>
+ <aMpuaVeaVQr3ajvB@intel.com>
+Message-ID: <aMsk43I7UkGbmL88@google.com>
+Subject: Re: [PATCH v15 18/41] KVM: x86: Don't emulate instructions affected
+ by CET features
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
+	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Zhang Yi Z <yi.z.zhang@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Sep 17, 2025 at 03:26:52PM -0400, Yazen Ghannam wrote:
-> On Wed, Sep 17, 2025 at 05:33:29PM +0200, Bert Karwatzki wrote:
-> > Am Mittwoch, dem 17.09.2025 um 10:41 -0400 schrieb Yazen Ghannam:
-> > > On Wed, Sep 17, 2025 at 09:13:11AM +0200, Bert Karwatzki wrote:
-> > > > Am Dienstag, dem 16.09.2025 um 22:27 +0200 schrieb Bert Karwatzki:
-> > > [...]
-> > > > 
-> > > > I ran a test for 10h and got one real deferred error, I also looked through
-> > > > older logs (which only go back to 2025-08-17) and they do not contain any
-> > > > mce Hardware errors. Here's the output of
-> > > > 
-> > > > $ dmesg | grep -E "mce|Hardware Error"
-> > > > [...]
-> > > > [10163.739261] [   T9326] mce: [Hardware Error]: Machine check events logged
-> > > > [10163.739265] [   T9326] [Hardware Error]: Deferred error, no action required.
-> > > > [10163.739267] [   T9326] [Hardware Error]: CPU:0 (19:50:0) MC14_STATUS[-|-|-|AddrV|PCC|-|-|Deferred|-|-]: 0x8700900800000000
-> > > > [10163.739275] [   T9326] [Hardware Error]: Error Addr: 0x0095464100000020
-> > > > [10163.739276] [   T9326] [Hardware Error]: IPID: 0x000700b040000000
-> > > > [10163.739278] [   T9326] [Hardware Error]: L3 Cache Ext. Error Code: 0
-> > > > [10163.739279] [   T9326] [Hardware Error]: cache level: RESV, tx: INSN
-> > > > [...]
-> > 
-> > This seems to be a real deferred errror.
+On Wed, Sep 17, 2025, Chao Gao wrote:
+> On Fri, Sep 12, 2025 at 04:22:56PM -0700, Sean Christopherson wrote:
+> >From: Yang Weijiang <weijiang.yang@intel.com>
+> >
+> >Don't emulate branch instructions, e.g. CALL/RET/JMP etc., that are
+> >affected by Shadow Stacks and/or Indirect Branch Tracking when said
+> >features are enabled in the guest, as fully emulating CET would require
+> >significant complexity for no practical benefit (KVM shouldn't need to
+> >emulate branch instructions on modern hosts).  Simply doing nothing isn't
+> >an option as that would allow a malicious entity to subvert CET
+> >protections via the emulator.
+> >
+> >Note!  On far transfers, do NOT consult the current privilege level and
+> >instead treat SHSTK/IBT as being enabled if they're enabled for User *or*
+> >Supervisor mode.  On inter-privilege level far transfers, SHSTK and IBT
+> >can be in play for the target privilege level, i.e. checking the current
+> >privilege could get a false negative, and KVM doesn't know the target
+> >privilege level until emulation gets under way.
 > 
-> The "Deferred" status bit is set, but that seems to be coincidence. This
-> error code shouldn't have this bit set. Likewise, in previous examples
-> we saw the "Poison" status bit set when it shouldn't be.
+> I modified KUT's cet.c to verify that near jumps, near returns, and far
+> transfers (e.g., IRET) trigger the emulation failure logic added by this
+> patch when guests enable Shadow Stack or IBT.
 > 
-> > 
-> > > 
-> > > Summary so far:
-> > > 1) Errors are found on CPU0 banks 11 and 14.
-> > > 2) Errors are found during MCA timer-based polling.
-> > > 3) The data is coming from MCA_DESTAT register.
-> > > 4) The status bits are not consistent with documentation.
-> > > 5) Likely these errors are not generating a deferred error interrupt.
-> > > 
-> > > Bert, can you please collecting the following data?
-> > > 
-> > > 1) Output of "/proc/interrupts".
-> > >   a) The MCE, MCP, THR, and DFR lines are of interest.
-> > >   b) We should verify if any other notification types occur besides
-> > >      "MCP" (MCA polling).
-> > 
-> > This is from next-20250916 (without the debug patch), unfortunately I've
-> > already rebooted after the testrun with next-20250912 and your debug patch.
-> > 
-> > $ cat /proc/interrupts | grep -E "DFR|THR|MCE|MCP"
-> >  THR:          0          0          0          0          0          0          0          0          0          0          0          0          0          0
-> > 0          0   Threshold APIC interrupts
-> >  DFR:          0          0          0          0          0          0          0          0          0          0          0          0          0          0
-> > 0          0   Deferred Error APIC interrupts
-> >  MCE:          0          0          0          0          0          0          0          0          0          0          0          0          0          0
-> > 0          0   Machine check exceptions
-> >  MCP:         39         39         39         39         39         39         39         39         39         39         39         39         39         39
-> > 39         39   Machine check polls
-> > 
-> > 
-> > 
-> > > 2) Using an older kernel, read the MCA_DESTAT registers for L3 cache.
-> > >   a) CPU0 bank 11: "sudo rdmsr -p 0 0xC00020b8"
-> > >   b) CPU0 bank 14: "sudo rdmsr -p 0 0xC00020e8"
-> > >   c) If these are non-zero, then I think we can confirm that the
-> > >      spurious data was always there.
-> > > 
-> > > Thanks,
-> > > Yazen
-> > 
-> > This is from 6.12.43+deb13-amd64 (the stock debian trixie kernel, currently the
-> > oldest version I have installed):
-> > 
-> > # rdmsr -p 0 0xC00020b8
-> > 8700aa0800000000
-> > # rdmsr -p 0 0xC00020e8
-> > 8700a28800000000
-> > 
-> 
-> Right, so it seems we have bogus data logged in these registers. And
-> this is unrelated to the recent patches.
-> 
-> We have some combination of bits set in MCA_DESTAT registers. The
-> deferred error interrupt hasn't fired (at least from the latest
-> example).
-> 
-> There does seem to be some combination of bits that are always set and
-> others flip between examples.
-> 
-> I'll highlight this to our hardware folks. But I don't think there's
-> much we can do other than filter these out somehow.
-> 
-> I can add two checks to the patch to make it more like the current
-> behavior.
-> 
-> 1) Check for 'Deferred' status bit when logging from the MCA_DESTAT.
-> This was in the debug patch I shared.
-> 2) Only check MCA_DESTAT when we are notified by the deferred error
-> interrupt.
-> 
-> Technically, both of these shouldn't be necessary based on the
-> architecture.
-> 
-> So there's a third option: add this error signature to our filter_mce()
-> function.
-> 
-> As I write this out, I feel more inclined to option #3. I think it would
-> be better to stick to the architecture. We may get error reports like
-> this. But that may be preferable so that any potential hardware issues
-> can be investigated sooner. If there's a real problem, better to get it
-> fixed in future products rather than implicitly mask it by our code
-> flow.
-> 
-> Any thoughts from others?
-> 
+> I found only one minor issue: near return instructions were not tagged with
+> ShadowStack.
 
-Bert, can you please run the following script to print all MCA
-registers? We'd like to see if there are any other unusual values.
+Heh, I had just found this through inspection.
 
-Also, can you please share the complete dmesg output from any boot?
+> The following diff fixes this issue:
+> 
+> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+> index e4be54a677b0..b1c9816bd5c6 100644
+> --- a/arch/x86/kvm/emulate.c
+> +++ b/arch/x86/kvm/emulate.c
+> @@ -4326,8 +4326,8 @@ static const struct opcode opcode_table[256] = {
+> 	X8(I(DstReg | SrcImm64 | Mov, em_mov)),
+> 	/* 0xC0 - 0xC7 */
+> 	G(ByteOp | Src2ImmByte, group2), G(Src2ImmByte, group2),
+> -	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch, em_ret_near_imm),
+> -	I(ImplicitOps | NearBranch | IsBranch, em_ret),
+> +	I(ImplicitOps | NearBranch | SrcImmU16 | IsBranch | ShadowStack, em_ret_near_imm),
+> +	I(ImplicitOps | NearBranch | IsBranch | ShadowStack, em_ret),
 
-Thanks,
-Yazen
+Tangentially directly related to this bug, I think we should manual annotation
+where possible.  I don't see an easy way to do that for ShadowStack, but for IBT
+we can use IsBranch, NearBranch and the SrcXXX operance to detect IBT-affected
+instructions.  It's obviously more complex, but programmatically detecting
+indirect branches should be less error prone.  I'll do so in the next version.
 
+> 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2ES, em_lseg),
+> 	I(DstReg | SrcMemFAddr | ModRM | No64 | Src2DS, em_lseg),
+> 	G(ByteOp, group11), G(0, group11),
+> 
+> 
+> And for reference, below are the changes I made to KUT's cet.c
 
-#!/bin/bash
-
-regnames=(
-		"CTL"
-		"STATUS"
-		"ADDR"
-		"MISC0"
-		"CONFIG"
-		"IPID"
-		"SYND"
-		"RESV"
-		"DESTAT"
-		"DEADDR"
-		"MISC1"
-		"MISC2"
-		"MISC3"
-		"MISC4"
-		"SYND1"
-		"SYND2"
-	 )
-
-for bank in $(seq 0 31)
-do
-	echo Bank ${bank}
-	for reg in $(seq 0 15)
-	do
-		echo -n "${regnames[$reg]}:	"
-		rdmsr -p 0 -c0x $(printf 0x%x $((0xC0002000 + 0x10 * bank + reg)))
-	done
-	echo
-done
+I now have a more comprehensive set of testcases, and it can be upstreamed
+(relies on KVM's default behavior of injecting #UD at CPL==3 on failed emulation).
 
