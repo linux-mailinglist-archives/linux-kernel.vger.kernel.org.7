@@ -1,217 +1,222 @@
-Return-Path: <linux-kernel+bounces-820163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD443B7DA4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA3DB7DA16
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD971BC3DF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA621B271DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D762027B34D;
-	Wed, 17 Sep 2025 07:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEF7302141;
+	Wed, 17 Sep 2025 07:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VzMt3d0U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aieTGuxr"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013002.outbound.protection.outlook.com [40.107.159.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610E4226D04
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758094860; cv=none; b=kb0lT3yET4uk84eT5YvCpenrTCmq8dgmzI6X4sDiLm7L/iop0P4s8SHUaNI+66sOAIvaCMshOvNqM/u0oIYlwSqwfFRgYAu7nnNfYyKcEoHSY/Mi7kbWkKsielDugWPOaP3I5YumJ8TM93NQRzEgEcw7+vUu7BGfyen6D0M8glQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758094860; c=relaxed/simple;
-	bh=18bpwHtErb5vCbN1kZz48PXrp6N12ofSDxcENCQubrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aspmm3L1Du44/hPi1sEWXgUnFLcG+7nvOfwmKrQUGOu6Yhc0rMpJYoYQoPqFOh312x0KV4VBKo51XzsYZ1AfpulV9GKV1X+JU9RmSq7L/pPIu2cWXQ0pTXy0sm9C6JsV8pCgiSqx5lP4z/wrt26p6TVSkHgkW20kYBZ0InD9e7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VzMt3d0U; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758094857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8sUfnI24jFzcwd8XU/KgXpzRD8VbKCrbOhCqit8MucI=;
-	b=VzMt3d0Uweyy9dcjibg/LkB43EfOiAvaKbI4cuAsNBRVA211zDPySOqfeB0Lm/MYJ2gi2T
-	bKpHxt3lBby0rWqmnmBbhK0cTZAbMlBZlVNM8kysflKaDnQqwxDaz01310zanxyeEPHWcS
-	Pljt6iZCcXr4MvB0u2fAiupx4fPQmLc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-494-xstIXQ-LMqqOJSL6Fg8Vnw-1; Wed, 17 Sep 2025 03:40:55 -0400
-X-MC-Unique: xstIXQ-LMqqOJSL6Fg8Vnw-1
-X-Mimecast-MFC-AGG-ID: xstIXQ-LMqqOJSL6Fg8Vnw_1758094855
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45f2c41c819so21885735e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:40:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758094854; x=1758699654;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8sUfnI24jFzcwd8XU/KgXpzRD8VbKCrbOhCqit8MucI=;
-        b=UK7JoIx3Tz2mEPCMbim7oS080Oogt8kovPX5aRufKB1R6AXYFapEdLNZ9y5OZvKkG/
-         q7KgG5hPnqzbXD30+vZbrPEnqtt/J+gvJiUHf/K9Mlq5Sqfz9kpDW/absuxTt1AosNwj
-         b1A+X3njJ5Rhq3SbOXAl7rec5WI3AjYC8oRm/nirrpWY71yBLyOIEBE2AjPpNb89IJFs
-         qw36GJ4nKYfOlLjj2cBDPE30u59WMXjTO1ycYsAFb2XCNnE1NmgIcf0tnSzjBCDZaL7K
-         Y2UXb2xi9d+0LhtxTfvkEzpw4i3h+sO7X2aC5Jb3OAl/3nQ6oSZ7P2FKmM8Fp9+rckvH
-         vLGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1pq0Bjy0juk0KXRfyFf8jPA7ZuQMsqL/Luto51j+YqquEewAH5j17O73qdwrmtnOdofpTE+i/zlVVRm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJaZ3o3Nk8O1odSfawzlvwf9uBJY9Zlkv3zL/Q4LcN1yEvEnEL
-	yiaGMZtrGgq+2RxzqV3DyyMysedWYwG+PqJUCnwOfUitT5uLQXzWN87Vw+5PitUmpB+MwLemsPm
-	/7xnaafMzARniXb1d1pOALDPzFQao8jxpzR3fJbKLH82/b+DVsqnqInd+FvHaBHpiSQ==
-X-Gm-Gg: ASbGncuIgJOBvf4tTWeFgFbe+VGYNVQWCj011nFQMCDxgh3ZEekl17WdsVyRpuNEQ0e
-	xTep4W8W4IxCkbjtraeNtzg8i3Rne1x98u68LKVKw0kBn5vacr3U2p7/ALwN3lLkgApz921rUp+
-	L41uDenuPTBLfw/J0++2c89QIuPXMwxwvPYjXtGTAwSNK4kJHWvgDecjjvRUAgCTi7jqsgfapyH
-	6MSytw6Vke2sjM7hvJdumHiTHzTaplTdmvDbA9EfwX7JyDRZWWbv5a230i1P2EDHH3MmJyEcQG9
-	2jks/InZq5j0QR8Oy4Vtgf30nCV+MaeXIcAGy2OdwAQLJs27yFWfnc+JLhDAIkytlaTPLXVHxi1
-	BSgfhQygS6BjvXMVUlf0xKLKPNwY97yCMbjD4leourYLKuK/efpEfDWVvB0iAhXom
-X-Received: by 2002:a05:600c:3b02:b0:45b:43cc:e557 with SMTP id 5b1f17b1804b1-462074c5382mr8713905e9.34.1758094854469;
-        Wed, 17 Sep 2025 00:40:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5wZM4SkH5EiKp1IscU1Dt+bW/Z0tUdh0H6cNhqcWGNGy5NEAEwmxp1KwF0uBi6Jw2iei8sw==
-X-Received: by 2002:a05:600c:3b02:b0:45b:43cc:e557 with SMTP id 5b1f17b1804b1-462074c5382mr8713595e9.34.1758094854060;
-        Wed, 17 Sep 2025 00:40:54 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdb0a2752sm4034782f8f.56.2025.09.17.00.40.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 00:40:53 -0700 (PDT)
-Message-ID: <377db013-4850-4501-a810-552e2f821dd9@redhat.com>
-Date: Wed, 17 Sep 2025 09:40:52 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0712226D04;
+	Wed, 17 Sep 2025 07:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758094932; cv=fail; b=c8S7uZXyZg9Mx/wOSYEE8MEoL/JHWZQkrFd93umQzDlPWxuC8YLxXdjYZuRpbFZX0M6F7oUHB762B+0z2wSc/w+iWWprhv4FCw3n+arqpJXDx4N6L3JCNuouC14wf5hUsJ4JdQC35QnUjF1NNIsm+iJ3aiwonBZ4g4TKqKqy6mk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758094932; c=relaxed/simple;
+	bh=/JqCVpoFOc//IPpPHLFrR8P0Nhh+JvmKBQYC4usMCxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tmulSZUheR90BECWi6xyhZif/FJuxysjfjm8wWbI44M6imF7xd8Q5jtKpiTvHKcgAx0Sb9lzv8B7tlebNOYT5/Aupfj2eFp/lcehplhZljNT1HRds6o0PAR/1y4wWFi3QzAkyhF+V3MsMPZoxAWZzDXxeSHII5+ufDU10iIzwkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aieTGuxr; arc=fail smtp.client-ip=40.107.159.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QzP4SJiU8E3ytY2NnmCgd3wzjbRyP8hDLLJ0UYBjExuqxZAb5u21FzcsSdEjslB/1jx+LNIpwMmy7i+xd4yG29tZu/67PL9k2fkvRfU5YQ5zYl6kmyWQx2/UXfzemiDnmpBPF8jkkwTNwdQsNlznehs2HV/R3T1v4C7WwTiQpkkt4OyPlqOi5V/k1EnvG4Dp5bLhgsXyvLMPHb3W8TikN3Ms/qKsQ7u5kOO8kGUg98uftVT1iRsIhyWUT1AXTtFepxy9oQ1OiNVR1NKFCP8HWQju8c4OQ3apKRbSrrHZGRy4/NkTQnhySq16oP0Te/oGF5gRLjgD1AH5b1PHn5b9tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TiseNnHn5bvdqv4QnzJbu3gPCfz6zgkUqM7sZo4DpQg=;
+ b=Hc1kyzSXQVyixFv2K5PHoagprEiXXc9/XsxQtyTsyv9XOq+f8PH9KdqTrGr7xnON4uuBbCLZWUww8fDpoYWEOtBw7kNB6qdlQmphh4NO1l+upFdKzrcfGNtY5e7xcNrRv9lhz3lzQA6hxcM3jZaTkTYLofnK4MVtp3B8mq0qWjPBJEuh4HZqf5q+keKQWHq+6iqK7l5AM0ic2kHWkLDf3WdqJb6sJMMfY0+tEJjtnAVetf044kKaFzzJwTZq4L5H6/MQV/HCaQl0f3OmbRfLXToax/SU5u4mSpVq4a73eQ8ieBC8Ncsq15sz9m6BCSBy3vbFHADSwan5biABCKQljg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TiseNnHn5bvdqv4QnzJbu3gPCfz6zgkUqM7sZo4DpQg=;
+ b=aieTGuxrjpFWwZLu1afCwWIMCvq8HWPM7IZHPiRH2V4HgwZ0Jbsgz67Z8gB1Ho2nkApz5saCFAzWR3wDeocOPBNdBvMdDmFXrzCKhj1rYsbphVIplPCWRvzOSRVLC4k4CshnGV52Ce+5sfNoA54tm0Bek8O7CTi42uNPqZpdW5Pw5c7aZ0YAL/tt47R3woyDoTDCyO1oW7WGenulx2pxcvs8Z/4d9sogDrcgo+bilXYc/4/+CJKrsXJGot+FzgRqAHyO4T056sJUaQNkQieXr+31qzTTM5HkV5VnR9nwBtO3Yoxvc3/si5BWAEwuAL43BVZNEHvWo4SQHh+nRPKNEw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by VI1PR04MB7183.eurprd04.prod.outlook.com (2603:10a6:800:128::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
+ 2025 07:42:07 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 07:42:07 +0000
+Date: Wed, 17 Sep 2025 10:42:03 +0300
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/9] arm64: dts: lx2160a-rdb: fully describe the two
+ SFP+ cages
+Message-ID: <kvjrakmqdvfzsdj7klue3m7ishx6achmil4vekuuggqcmo5gye@ggnxhsaxsh24>
+References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
+ <20250915122354.217720-9-ioana.ciornei@nxp.com>
+ <aMmUYmIFOsue+rkK@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMmUYmIFOsue+rkK@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: AS4P191CA0037.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:657::16) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/hugetlb: fix copy_hugetlb_page_range() to use
- ->pt_share_count
-To: Jane Chu <jane.chu@oracle.com>, harry.yoo@oracle.com, osalvador@suse.de,
- liushixin2@huawei.com, muchun.song@linux.dev, akpm@linux-foundation.org,
- jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250916004520.1604530-1-jane.chu@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250916004520.1604530-1-jane.chu@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|VI1PR04MB7183:EE_
+X-MS-Office365-Filtering-Correlation-Id: daaddec5-431d-475b-d472-08ddf5bdb3a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|19092799006;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?L0DAsjj5mLWmqaThpPypVxXMuY6EV65QPU1NYWuvY84nUBslaPDy7Aurzmqq?=
+ =?us-ascii?Q?OcLn4pXsvxEkFJweFgDUC54PyjN+jXwy8gPccru3RQfe7IT0GquD9p6sSseQ?=
+ =?us-ascii?Q?MLedaI3ju6kTwPKvlWZr75SwPsLZEdKtiKuSREivTYvvO2cLO24Jph+k2cMZ?=
+ =?us-ascii?Q?rFyESo1ClNKWl+aQQKso4aE3GQ8+gipfOO3o0Z0MjQIgbQmLCFpu6QP5mGZL?=
+ =?us-ascii?Q?vrEo4xiqp7yPRudSdRpcSru8DoSvqzdbJJ8GYVEAU5RfP2B9QVnRxZULqM+O?=
+ =?us-ascii?Q?VQE3aJRdR2RJiJtSn9lG4f12xsznKFEOWMsXrQD42uReEsOHHj8HoqblxtrG?=
+ =?us-ascii?Q?+xOpYISVcUr23QqVvSRICtiMiJmPd2iKsRhlajW0bunWncTM75iaK0chAUIx?=
+ =?us-ascii?Q?TiAoxm4eqX8qD6er/0haxWT4kpFqKuFPgACqlC0PqIAu98i//RbbJcd2cXH+?=
+ =?us-ascii?Q?IOrc530ZpEmrGIPSdB5YO8LayT4jGYEufUA5Q08dPI6UGNNrEPA/MCghEljH?=
+ =?us-ascii?Q?KaGukK5v3JXMclGwp2o7qcXAZzanONlOR4bYTKZkAmR6pZWFu2pQ1HQBu0+u?=
+ =?us-ascii?Q?BvHXHDufO4WgZxAsd7sIWjLK9lJNhOx0sfYrj7jQlOumQLiGe7YNZMQlC3Na?=
+ =?us-ascii?Q?JjTESqiiX0jzUAvHlh1ophzA5c5JaZeTZqL/qjutokxcZrMgPIuhCRqsQIOO?=
+ =?us-ascii?Q?fOc1DY1S/YNHNFOmzjz01FjOyqRDt87Wsr5QB32AYKBhDh4QQNYUUcydCiKP?=
+ =?us-ascii?Q?3DSV53B5vYtme3iu35uegRgvW/XtYF6yAbBm3ChULVAQuBkCzVvWaH03uZUi?=
+ =?us-ascii?Q?irmyf4lVaNpGEXZXi0w9ODqWf3jNPVqCNBdnRdVLFvEZpIc+BeTEctP7csyC?=
+ =?us-ascii?Q?JC5STmJDAiyW+KqcpImRkK7ObmAi1Kdg2n63LSXY3HBZm8S30Itz2MkDtraC?=
+ =?us-ascii?Q?Of5QKULFdMHWdZ0KuvsGo3vNUEnuQVdqBUYUuLflbT9yxngFRZ6M38YMhbn0?=
+ =?us-ascii?Q?eThPjU6wnWEDOpjHXkdDK/t2UAa+hmPyiJWbA2/25P9i6S47ZXjNNk88HwpV?=
+ =?us-ascii?Q?o7CP6p0EeyAsuwTHHbOu2mjJF/TFuF5LpLxKHd8QgBL1CWamxMBu3etYv+He?=
+ =?us-ascii?Q?sm0KUDyMliqFhOBFeXo3FUSBA6b7Sc92wVkNs6UabDW2CmYWZg9QmhMP69RB?=
+ =?us-ascii?Q?fDRywpgtr05vnhtIF/rd39fRPLB9bPwBi0YHc8NpFzqDpHQSfi5Xhnik4Mdt?=
+ =?us-ascii?Q?iljqoFmYynd/DEw+ILRYDeR3XLDKjUK7TyGMbDZF7E/VT0TJ3uWERpS5dPkQ?=
+ =?us-ascii?Q?EIZDoQJhVyK1T4l2tHwCn07+XXrfuC6U+pcKEfi6WkkkOdFt7f0kbKZ8201B?=
+ =?us-ascii?Q?9hsa6TlJt6n3V0UIJ6kOttzji3mhhil3bcfLqFbdIX9QOcTGekg+8JB/6woj?=
+ =?us-ascii?Q?7a9JRL+2yWc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(19092799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eSBMKFA13jVD5/8BU3g1y2/nx+ID5xSV2+Av3gQMaDEiM2PzThe/FPTOodRF?=
+ =?us-ascii?Q?vzYOH1KI9OXI0YK0in9vEFBUC9g6y0pgwEq9dB8ZCHuZgzH+PfI1Xb6owglF?=
+ =?us-ascii?Q?7Ej99VC7BDQCg1xsabKxjpdasHtSS1Aqe2pM3hlNaxlRA8nVmvA/vyVa0Lcv?=
+ =?us-ascii?Q?mryfXFzVXcrzcfHH7DpGa4n/sv7IFG6bCeJT4ABTqaqIiq01TNdz21+UuHzW?=
+ =?us-ascii?Q?pR3msgaGtfb5Kao0Z3f04BMqptE1XXgLoG3WcYVuhIqDwul1wqrtTJfmRzgX?=
+ =?us-ascii?Q?AxVW/7ePWSz1HNrQnA73l8KwhljxohLitx4n5hOVlTHAESS8s7PTGeNG9VtA?=
+ =?us-ascii?Q?HLcYeesZvbxpy4csd+3hp8kLNmOvMCDgepYQvvGToufumnEhV91FXKCXnoWZ?=
+ =?us-ascii?Q?O0C3/iQMNeHJ8/Xcq9xP2gUMPnsXQ53sWkmsWNimjszEp+aYabIT06Y4XMUg?=
+ =?us-ascii?Q?RvOv1J884pTvVaroAuhjIW7rE+S3JVE08SDiqpSmDUiipGv5FMpUUzbw4OMt?=
+ =?us-ascii?Q?fd9YdtZJVA1t+mMIGk11yx80Yag2WtLqzKEl9Zkq6JadmMO1ObsiJRNWXEFl?=
+ =?us-ascii?Q?xraUhvgiVJbTjMerBf/zTYHkbthDqyhvRrEA+JB2/4tjmn6qoCBVTgQiD+xD?=
+ =?us-ascii?Q?gSWslcotlPcMgVuzWaICExO3uOOIjeGo1LlYBCJ9xqbk+41CeDKU9DX6aUHk?=
+ =?us-ascii?Q?/E62kF6UR/pRdStjLtacF0zeNc2/UVa49i/L8sO2PPKaMjFYH+DNBuDDPQSH?=
+ =?us-ascii?Q?YpsIOQOjUDNlt/eT3cDX0C2ymA1h/3NCt5dmUfa38Abc9sfq366IXrO4wUv5?=
+ =?us-ascii?Q?KbRvCz7qGEo2gbmvwnHhbyFKGg+foSlt/v7m/jnbJttyM2XhpXJRYUZT5i+b?=
+ =?us-ascii?Q?n9XtpzVg2jq7ZAxcqBgG5xZK2SfH50dbBSXsU7kyvXsVjv0BS4vGSVozb0lg?=
+ =?us-ascii?Q?PNYoLvwWt5/9tpU6UAwwNg3bmdskgXN8qHVVB1dJg9JbgZ7D7B5kWyLgV0s4?=
+ =?us-ascii?Q?1ThzgI4JH8H+Kr9ma0H7NEgXsloW1mJF2/s89W4KHmk6MBkQ8KMaxBYGiHue?=
+ =?us-ascii?Q?9qo/nKe1ShZ0+SBKjd1pHSgJj9Nolyx9KdrO/PuT4oV+xtzYf1WMafJRiUAv?=
+ =?us-ascii?Q?KVtl0bXGmLZxlaaC2lcyrAWh+aIoaYTwOwoefdz998/+dMbzN1ivmn6GSEKe?=
+ =?us-ascii?Q?BCgR8gX/0ybh4YClA5Tii++8scy61q7GAOScS31QKqH9q402l5bQp3ZiFlIp?=
+ =?us-ascii?Q?MqakR/MnLHWN0Ya7Ly/oB5dko/RuKS/sBRWi/ZxCRlJMKOw7mEroK0Vi30oO?=
+ =?us-ascii?Q?yDPc+kJAhCq8l4pmSvnDgTgXKkA21uJzuYXDbCyGx694DDIpxURmowMdhyZ9?=
+ =?us-ascii?Q?mgHrFggFE+xxavD01cTg1vVEhjLZASX5rFBE8xnRtD5LWvbn08wqWSji/1rA?=
+ =?us-ascii?Q?pB/Kv0xtG0/XZDrHlK0O1NpWOwajnatwF4vIZUBdcug0NJWFwpVNM8PxsOy9?=
+ =?us-ascii?Q?QqC93msroorqlGZxvsKAMtKFgJumysPT2XldcDwPPfFe9VPNuevHhsixHlE6?=
+ =?us-ascii?Q?n2QXndBS35FF9nSZWztBhyVAWkQwVSJx/gHbitjT?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: daaddec5-431d-475b-d472-08ddf5bdb3a7
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 07:42:07.0344
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q+/ExhEFealJCHO3s59O/sVbVzTuJrQaugPbRF9w9TCNfTzWtlbUa9avjHp5RT3It8a0CidI38A8gHxbgKHimw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7183
 
-On 16.09.25 02:45, Jane Chu wrote:
-> commit 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
-> introduced ->pt_share_count dedicated to hugetlb PMD share count tracking,
-> but omitted fixing copy_hugetlb_page_range(), leaving the function relying on
-> page_count() for tracking that no longer works.
+On Tue, Sep 16, 2025 at 12:46:26PM -0400, Frank Li wrote:
+> On Mon, Sep 15, 2025 at 03:23:53PM +0300, Ioana Ciornei wrote:
+> > Describe the two SFP+ cages found on the LX2160ARDB board with their
+> > respective I2C buses and GPIO lines.
+> >
+> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> > ---
+> > Changes in v2:
+> > - none
+> >
+> >  .../boot/dts/freescale/fsl-lx2160a-rdb.dts    | 47 +++++++++++++++++++
+> >  1 file changed, 47 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> > index 4ede1295f29d..62329a93a67a 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> > @@ -31,6 +31,28 @@ sb_3v3: regulator-sb3v3 {
+> >  		regulator-boot-on;
+> >  		regulator-always-on;
+> >  	};
+> > +
+> > +	sfp2: sfp-2 {
+> > +		compatible = "sff,sfp";
+> > +		i2c-bus = <&sfp2_i2c>;
+> > +		maximum-power-milliwatt = <2000>;
+> > +		/* Leave commented out if using DPMAC_LINK_TYPE_FIXED mode */
+> > +		/* tx-disable-gpios = <&sfp2_csr 0 GPIO_ACTIVE_HIGH>; */
+> > +		los-gpios = <&sfp2_csr 4 GPIO_ACTIVE_HIGH>;
+> > +		tx-fault-gpios = <&sfp2_csr 5 GPIO_ACTIVE_HIGH>;
+> > +		mod-def0-gpios = <&sfp2_csr 7 GPIO_ACTIVE_LOW>;
+> > +	};
+> > +
+> > +	sfp3: sfp-3 {
+> > +		compatible = "sff,sfp";
+> > +		i2c-bus = <&sfp3_i2c>;
+> > +		maximum-power-milliwatt = <2000>;
+> > +		/* Leave commented out if using DPMAC_LINK_TYPE_FIXED mode */
+> > +		/* tx-disable-gpios = <&sfp3_csr 0 GPIO_ACTIVE_HIGH>; */
+> > +		los-gpios = <&sfp3_csr 4 GPIO_ACTIVE_HIGH>;
+> > +		tx-fault-gpios = <&sfp3_csr 5 GPIO_ACTIVE_HIGH>;
+> > +		mod-def0-gpios = <&sfp3_csr 7 GPIO_ACTIVE_LOW>;
+> > +	};
+> >  };
+> >
+> >  &crypto {
+> > @@ -236,6 +258,31 @@ temperature-sensor@4d {
+> >  				vcc-supply = <&sb_3v3>;
+> >  			};
+> >  		};
+> > +
+> > +		i2c@7 {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +			reg = <0x7>;
 > 
-> When lazy page table copy for hugetlb is disabled, that is, revert
-> commit bcd51a3c679d ("hugetlb: lazy page table copies in fork()")
-> fork()'ing with hugetlb PMD sharing quickly lockup -
+> reg should be first property.
 > 
-> [  239.446559] watchdog: BUG: soft lockup - CPU#75 stuck for 27s!
-> [  239.446611] RIP: 0010:native_queued_spin_lock_slowpath+0x7e/0x2e0
-> [  239.446631] Call Trace:
-> [  239.446633]  <TASK>
-> [  239.446636]  _raw_spin_lock+0x3f/0x60
-> [  239.446639]  copy_hugetlb_page_range+0x258/0xb50
-> [  239.446645]  copy_page_range+0x22b/0x2c0
-> [  239.446651]  dup_mmap+0x3e2/0x770
-> [  239.446654]  dup_mm.constprop.0+0x5e/0x230
-> [  239.446657]  copy_process+0xd17/0x1760
-> [  239.446660]  kernel_clone+0xc0/0x3e0
-> [  239.446661]  __do_sys_clone+0x65/0xa0
-> [  239.446664]  do_syscall_64+0x82/0x930
-> [  239.446668]  ? count_memcg_events+0xd2/0x190
-> [  239.446671]  ? syscall_trace_enter+0x14e/0x1f0
-> [  239.446676]  ? syscall_exit_work+0x118/0x150
-> [  239.446677]  ? arch_exit_to_user_mode_prepare.constprop.0+0x9/0xb0
-> [  239.446681]  ? clear_bhb_loop+0x30/0x80
-> [  239.446684]  ? clear_bhb_loop+0x30/0x80
-> [  239.446686]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> There are two options to resolve the potential latent issue:
->    1. warn against PMD sharing in copy_hugetlb_page_range(),
->    2. fix it.
-> This patch opts for the second option.
-> While at it, simplify the comment, the details are not actually relevant
-> anymore.
-> 
-> Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-> ---
->   include/linux/mm_types.h |  5 +++++
->   mm/hugetlb.c             | 15 +++++----------
->   2 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 08bc2442db93..a643fae8a349 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -631,6 +631,11 @@ static inline int ptdesc_pmd_pts_count(struct ptdesc *ptdesc)
->   {
->   	return atomic_read(&ptdesc->pt_share_count);
->   }
-> +
-> +static inline bool ptdesc_pmd_is_shared(struct ptdesc *ptdesc)
-> +{
-> +	return !!ptdesc_pmd_pts_count(ptdesc);
 
-No need for the !!, the compiler will do that automatically.
+Ok. Will change all occurrences.
 
-LGTM
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers
-
-David / dhildenb
-
+Ioana
 
