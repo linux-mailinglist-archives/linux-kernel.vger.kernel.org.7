@@ -1,47 +1,77 @@
-Return-Path: <linux-kernel+bounces-819772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F039B8013A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477BFB80296
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB473324EA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1291C02EF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F3163B9;
-	Wed, 17 Sep 2025 00:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64286AD51;
+	Wed, 17 Sep 2025 00:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oqc7vNAH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YF8WLnmW"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3CC801;
-	Wed, 17 Sep 2025 00:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74A910E0
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758067518; cv=none; b=bIC+7gjZTDG9qvpSrcuaFuAMAW11+PvEAsnI2NvhSnDtEoHSkrl/Qh1qiOWOi2HbxsdKV+D4atVacvBlP7JN6ueEQaNQ0cJih6t3YillnVFAIhxtniw+/eGmFV7iaaWFTNP0s7SC+teozRkhItsr0WJFD0cb+U3NznVc311T9ng=
+	t=1758067594; cv=none; b=ssh/yPPynXyy3ztW6KcF/jdjmgClXKw46MEL7oawFKRtI5ATQdcG3rRLfihOdmsbhtP6mXGCqvGZ8Dj/hgIDJ7rZRbUmt/26DrFo8bdLVqRkCZFjTsuJX12AyDzDw3L4nTiLFW76mTZY994EeTLEiziLi2hvAfQ/JtDNP09WQUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758067518; c=relaxed/simple;
-	bh=1RZ5nOXLOssfoNGWTh3CNAAwGPi/q+jrnOxCNhPlCEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsA7E/HN0M4Ff1PGakhffik8ypJJOdrcARyqK5kZZIQsnAqauPEW1gcGZa/MM4VRTo+pbxDlM37JoFi1zDjk+dTaL4774KViVKRpQsp/uJs2yqSh3TAxuScm6okxFYKB7jLUd5DrGzBeTolYEP4aUMgyORQEZXAqTfaVIv+SMSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oqc7vNAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57979C4CEEB;
-	Wed, 17 Sep 2025 00:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758067517;
-	bh=1RZ5nOXLOssfoNGWTh3CNAAwGPi/q+jrnOxCNhPlCEI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Oqc7vNAHOeYPP5hDIOU7lsZ2RUiY6RQFG1YWoPm+5rm5ZlN8AW3HqiJzsjkPrL0xB
-	 /oHKbhsuFZbYiXZ5tpT3amlw3My+y2OnYTLclrtAlkUXWpc8x2aSoZNK/sEWowpSVB
-	 1wzvbhjHS4GrV57odOwpkTekt+Q6FkXBfDGNJf+MFrGZwB0jZ4m3S9w8d9QZf9Zwcb
-	 JMAw0oQnYMcl24RvTdNYzJqH59onPjaymTl8wvagBJb+iAvDM9SCPxsIIwpWxOAdrj
-	 MST/elaF/t8kzSJh9eawGlGIEO+Df4oZTPucnXgFouKcKuWgIIHqBpsBpF8uJeXuKc
-	 ABfDCirbZ+AOA==
-Message-ID: <0d644b94-c674-429b-9ed8-64cb89f168f8@kernel.org>
-Date: Wed, 17 Sep 2025 09:05:13 +0900
+	s=arc-20240116; t=1758067594; c=relaxed/simple;
+	bh=ngJ4kkJ7aphmAfgCY+dWMJwxPcmplYJ6YWrKkonh64U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=osbfbeu98DD5EJXyjzGZJpYBcoSgQb5xIlndIYraDIy2plyIusF93NHTIiy1Fxb00n5RjvKYcg1Yi2chbGKgz+HnqwC6/rKW6EPvnCVMds5Xxkd9nalWN+Qv38y4sbFZs4PP+A4oLLB5vS4pBDYN2YBzb6NI1cAF+QHzVPweJgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YF8WLnmW; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8072bb631daso572540185a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1758067591; x=1758672391; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=i6mI7kMMJCYUaZU1FUYIKeSfbHM2lLryh9bTV5PX1CI=;
+        b=YF8WLnmWg2kLtLqc9AX6/3+NaOSgCpq5kLQAUnwU5Nc8rtEji9suXSIeQKDerjue8Y
+         9sTJRTE8ipMf7ZM9HrtXOC5ThFDPKoOVVqYpJImweH9R6s5dmhy3EVZFl7fRxk+Yyvgh
+         2lJeuwBtOGZKpAPJJSMS61lAFdDpIFgUEvEnw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758067591; x=1758672391;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i6mI7kMMJCYUaZU1FUYIKeSfbHM2lLryh9bTV5PX1CI=;
+        b=NjtWrlwlfd4KJWheC8o4VoHV8Ao+WKp09DG0LY/QjpHUPs7fG0lsPJvdnc/5Pm3ZSb
+         MbClgi34V37ec8CWGlauiqCrmbD44hQ+uTM0qQJIiVm9DPgo8ghro9J+4wlTf1zTBVw1
+         S+fYRmBSgffGFcLmSXV7piW8975T8ixkp6aEfmLLAWtN7PM8/F0das3xFDuIEh33oP10
+         +JW8lZFIW5mHvbnCK4RYvkHrTchv9OBCMVpzTn6ya139Bwgn9FE2gLSzMeF7bq4+RzuL
+         CvRXAuH0r+LY0AL3fVuDC6K7b37ztM6bLDgEEdlneRAE8jGslz2VOFa/gkv5IlVexevq
+         jlew==
+X-Forwarded-Encrypted: i=1; AJvYcCUU/988VrqroEP3ZhEiOiZ3G0K4kXQ7PupSoUwcQ4s0wLjdlntVI5cTILeCy6WRHin1FTmbZzffmamahIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr7DUM44gNbiUCnSMHe99BrvXD2Y+2dX4Ur+woVC1kie9ei3pg
+	T283hD2xAc8ZqWD8Qwuj/Qxvnm0a8u97BM861LRDPdPNTficfONovDHsuusdoOPEmdU=
+X-Gm-Gg: ASbGncvHdvVlwHgR+J5dfY12L5HpBfd55Fp7/Ja6ozh/s93l7SFQflNQwM0kC9tR4Fx
+	Si8mP4dD5f4sZh1+yyJFQ1Qq6rzXcNyTzcAsm2+21m5+uSyaSlQ1l96ivTcyEwwvLBau7YBagwD
+	1RPRem5yrKpYhfw7qJJ01pjckc0Qp7SMddpGOehunW1KqEQZkaNF0h7oAd6zsKI2ZBowaIM4xm5
+	7RWkSvxI14URe7nrDppLQlXSnrB5Ty94X1uR4BEAacfTEgJled5MwLVfwoacyqx2PdyKS+TRjpW
+	YJsHYZYfDoocfPqpoWRosogr3+1nM0P/W93PWhBt7vSPe18BHollyDAjfBulP0g1wlHY13SH7S6
+	t3OESiogMUEKGDH/xD97DrkYY1HOeLz6xhnlBOomfH9f0r9CSWONHbWmFzndYRJ9BXpVayZu+g5
+	DZjuJaymbiMfjdmqYzpF9GAfLJWROvCMW0lFt2qqZOzO8=
+X-Google-Smtp-Source: AGHT+IH5c4maWyfkVF5FZpUNfpUKnCiWWiu0hC91XpGrz9njbNR8U16fgNo/b40+XvnCWlfU+uhSmw==
+X-Received: by 2002:a05:620a:4607:b0:82b:988:11bb with SMTP id af79cd13be357-831162653fdmr28239185a.73.1758067591381;
+        Tue, 16 Sep 2025 17:06:31 -0700 (PDT)
+Received: from [192.168.226.35] (207-181-222-53.s5939.c3-0.hnc-cbr1.chi-hnc.il.cable.rcncustomer.com. [207.181.222.53])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-82b19347ef5sm285484585a.44.2025.09.16.17.06.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 17:06:30 -0700 (PDT)
+Message-ID: <39da8772-a44f-466b-ba2e-425ae464abb2@linuxfoundation.org>
+Date: Tue, 16 Sep 2025 18:06:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,224 +79,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] serial: qcom-geni: Fix pinctrl deadlock on runtime
- resume
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Praveen Talari <praveen.talari@oss.qualcomm.com>,
- Praveen Talari <quic_ptalari@quicinc.com>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
- quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
- quic_arandive@quicinc.com, quic_shazhuss@quicinc.com
-References: <20250908164532.2365969-1-praveen.talari@oss.qualcomm.com>
- <DCNLSFVPCKMV.K1UE3J3K6JQD@linaro.org>
- <DCOJFRU8KNFL.14VPXK9QZC9T4@linaro.org>
- <5b7b8c9f-48c5-45cd-8366-c8c048eaa757@oss.qualcomm.com>
- <DCPUJPHR8NUB.1SRB4D7ONSRBY@linaro.org>
- <2c5fd01a-543b-4108-ac54-80d1d87b65a3@oss.qualcomm.com>
- <DCT9VWQYD4VM.1NV5FJJCJG4PI@linaro.org>
- <cb96f3cd-7427-4644-b7ca-26b763867db4@oss.qualcomm.com>
- <df05da7e-fd9d-48a6-bffc-e84749cd8e96@oss.qualcomm.com>
- <aMl2hOYTjBuCo4AM@trex> <aMl9Fbuyq7hdXvQC@trex>
- <DCUE5AXJ99BG.150SRQMY7EJG6@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] selftests/kselftest_harness: Add
+ harness-selftest.expected to TEST_FILES
+To: Yi Lai <yi1.lai@intel.com>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, shuah@kernel.org, wad@chromium.org,
+ luto@amacapital.net, kees@kernel.org, thomas.weissschuh@linutronix.de,
+ usama.anjum@collabora.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250909082619.584470-1-yi1.lai@intel.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DCUE5AXJ99BG.150SRQMY7EJG6@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250909082619.584470-1-yi1.lai@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 17/09/2025 19:12, Alexey Klimov wrote:
-> Hi Praveen,
+On 9/9/25 02:26, Yi Lai wrote:
+> The harness-selftest.expected is not installed in INSTALL_PATH.
+> Attempting to execute harness-selftest.sh shows warning:
 > 
-> On Tue Sep 16, 2025 at 4:07 PM BST, Jorge Ramirez wrote:
->> On 16/09/25 16:39:00, Jorge Ramirez wrote:
->>> On 16/09/25 12:20:25, Praveen Talari wrote:
->>>> Hi Alexey
->>>>
->>>> Thank you for your support.
->>>>
->>>> On 9/15/2025 7:55 PM, Praveen Talari wrote:
->>>>> Hi Alexey,
->>>>>
->>>>> On 9/15/2025 3:09 PM, Alexey Klimov wrote:
->>>>>> (removing <quic_mnaresh@quicinc.com> from c/c -- too many mail not
->>>>>> delivered)
->>>>>>
->>>>>> Hi Praveen,
->>>>>>
->>>>>> On Mon Sep 15, 2025 at 7:58 AM BST, Praveen Talari wrote:
->>>>>>> Hi Alexey,
->>>>>>>
->>>>>>> Really appreciate you waiting!
->>>>>>>
->>>>>>> On 9/11/2025 2:30 PM, Alexey Klimov wrote:
->>>>>>>> Hi Praveen,
->>>>>>>>
->>>>>>>> On Thu Sep 11, 2025 at 9:34 AM BST, Praveen Talari wrote:
->>>>>>>>> Hi Alexy,
->>>>>>>>>
->>>>>>>>> Thank you for update.
->>>>>>>>>
->>>>>>>>> On 9/10/2025 1:35 AM, Alexey Klimov wrote:
->>>>>>>>>>
->>>>>>>>>> (adding Krzysztof to c/c)
->>>>>>>>>>
->>>>>>>>>> On Mon Sep 8, 2025 at 6:43 PM BST, Alexey Klimov wrote:
->>>>>>>>>>> On Mon Sep 8, 2025 at 5:45 PM BST, Praveen Talari wrote:
->>>>>>>>>>>> A deadlock is observed in the
->>>>>>>>>>>> qcom_geni_serial driver during runtime
->>>>>>>>>>>> resume. This occurs when the pinctrl
->>>>>>>>>>>> subsystem reconfigures device pins
->>>>>>>>>>>> via msm_pinmux_set_mux() while the serial device's interrupt is an
->>>>>>>>>>>> active wakeup source. msm_pinmux_set_mux() calls disable_irq() or
->>>>>>>>>>>> __synchronize_irq(), conflicting with the active wakeup state and
->>>>>>>>>>>> causing the IRQ thread to enter an uninterruptible (D-state) sleep,
->>>>>>>>>>>> leading to system instability.
->>>>>>>>>>>>
->>>>>>>>>>>> The critical call trace leading to the deadlock is:
->>>>>>>>>>>>
->>>>>>>>>>>>        Call trace:
->>>>>>>>>>>>        __switch_to+0xe0/0x120
->>>>>>>>>>>>        __schedule+0x39c/0x978
->>>>>>>>>>>>        schedule+0x5c/0xf8
->>>>>>>>>>>>        __synchronize_irq+0x88/0xb4
->>>>>>>>>>>>        disable_irq+0x3c/0x4c
->>>>>>>>>>>>        msm_pinmux_set_mux+0x508/0x644
->>>>>>>>>>>>        pinmux_enable_setting+0x190/0x2dc
->>>>>>>>>>>>        pinctrl_commit_state+0x13c/0x208
->>>>>>>>>>>>        pinctrl_pm_select_default_state+0x4c/0xa4
->>>>>>>>>>>>        geni_se_resources_on+0xe8/0x154
->>>>>>>>>>>>        qcom_geni_serial_runtime_resume+0x4c/0x88
->>>>>>>>>>>>        pm_generic_runtime_resume+0x2c/0x44
->>>>>>>>>>>>        __genpd_runtime_resume+0x30/0x80
->>>>>>>>>>>>        genpd_runtime_resume+0x114/0x29c
->>>>>>>>>>>>        __rpm_callback+0x48/0x1d8
->>>>>>>>>>>>        rpm_callback+0x6c/0x78
->>>>>>>>>>>>        rpm_resume+0x530/0x750
->>>>>>>>>>>>        __pm_runtime_resume+0x50/0x94
->>>>>>>>>>>>        handle_threaded_wake_irq+0x30/0x94
->>>>>>>>>>>>        irq_thread_fn+0x2c/xa8
->>>>>>>>>>>>        irq_thread+0x160/x248
->>>>>>>>>>>>        kthread+0x110/x114
->>>>>>>>>>>>        ret_from_fork+0x10/x20
->>>>>>>>>>>>
->>>>>>>>>>>> To resolve this, explicitly manage the wakeup IRQ state within the
->>>>>>>>>>>> runtime suspend/resume callbacks. In the
->>>>>>>>>>>> runtime resume callback, call
->>>>>>>>>>>> disable_irq_wake() before enabling resources. This preemptively
->>>>>>>>>>>> removes the "wakeup" capability from the IRQ, allowing subsequent
->>>>>>>>>>>> interrupt management calls to proceed
->>>>>>>>>>>> without conflict. An error path
->>>>>>>>>>>> re-enables the wakeup IRQ if resource enablement fails.
->>>>>>>>>>>>
->>>>>>>>>>>> Conversely, in runtime suspend, call
->>>>>>>>>>>> enable_irq_wake() after resources
->>>>>>>>>>>> are disabled. This ensures the interrupt is configured as a wakeup
->>>>>>>>>>>> source only once the device has fully
->>>>>>>>>>>> entered its low-power state. An
->>>>>>>>>>>> error path handles disabling the wakeup IRQ
->>>>>>>>>>>> if the suspend operation
->>>>>>>>>>>> fails.
->>>>>>>>>>>>
->>>>>>>>>>>> Fixes: 1afa70632c39 ("serial: qcom-geni:
->>>>>>>>>>>> Enable PM runtime for serial driver")
->>>>>>>>>>>> Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
->>>>>>>>>>>
->>>>>>>>>>> You forgot:
->>>>>>>>>>>
->>>>>>>>>>> Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>>>>>>>>>
->>>>>>>>>>> Also, not sure where this change will go, via
->>>>>>>>>>> Greg or Jiri, but ideally
->>>>>>>>>>> this should be picked for current -rc cycle since regression is
->>>>>>>>>>> introduced during latest merge window.
->>>>>>>>>>>
->>>>>>>>>>> I also would like to test it on qrb2210 rb1 where this regression is
->>>>>>>>>>> reproduciable.
->>>>
->>>> Since I don't have this board, could you kindly validate the new change and
->>>> run a quick test on your end?
->>>>
->>>> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> b/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> index 83eb075b6bfa..3d6601dc6fcc 100644
->>>> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> @@ -215,7 +215,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev
->>>> *pctldev,
->>>>          */
->>>>         if (d && i != gpio_func &&
->>>>             !test_and_set_bit(d->hwirq, pctrl->disabled_for_mux))
->>>> -               disable_irq(irq);
->>>> +               disable_irq_nosync(irq);
->>>>
->>>>         raw_spin_lock_irqsave(&pctrl->lock, flags);
->>>
->>>
->>> sorry Praveen, didnt see this proposal. testing on my end as well.
->>>
->>
->> just tested on my end and all modules load - deadlocked before this
->> update so there is progress (now we can load the network driver)
+> diff: ./kselftest_harness/harness-selftest.expected: No such file or
+> directory
 > 
-> Is it supposed to be orginal patch here plus disable_irq_nosync()?
-> Meaning changes for qcom_geni_serial_runtime_{suspend,resume}
-> + disable_irq_nosync() in msm_pinmux_set_mux()?
+> Add harness-selftest.expected to TEST_FILES.
 > 
-> It seems to work here but let me know few more runs.
+> Fixes: df82ffc5a3c1 ("selftests: harness: Add kselftest harness selftest")
+> Signed-off-by: Yi Lai <yi1.lai@intel.com>
+> Reviewed-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+>   tools/testing/selftests/kselftest_harness/Makefile | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/kselftest_harness/Makefile b/tools/testing/selftests/kselftest_harness/Makefile
+> index 0617535a6ce4..d2369c01701a 100644
+> --- a/tools/testing/selftests/kselftest_harness/Makefile
+> +++ b/tools/testing/selftests/kselftest_harness/Makefile
+> @@ -2,6 +2,7 @@
+>   
+>   TEST_GEN_PROGS_EXTENDED := harness-selftest
+>   TEST_PROGS := harness-selftest.sh
+> +TEST_FILES := harness-selftest.expected
+>   EXTRA_CLEAN := harness-selftest.seen
+>   
+>   include ../lib.mk
 
+Applied to linux-kselftest next for Linux 6.18-rc1
 
-So this bug, after 5 weeks is still not fixed?!?
-
-This is just and should be reverted long time ago.
-
-Best regards,
-Krzysztof
+thanks,
+-- Shuah
 
