@@ -1,343 +1,417 @@
-Return-Path: <linux-kernel+bounces-820237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9082B7CCD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 899FDB7CD27
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA6348051E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:31:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE1A3BF920
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0D13054C6;
-	Wed, 17 Sep 2025 08:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4331309F17;
+	Wed, 17 Sep 2025 08:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BhCXa4t1";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TfLYVEYL"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PBDACiDF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QJ+Z0pNd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PBDACiDF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QJ+Z0pNd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B15723D7E5;
-	Wed, 17 Sep 2025 08:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758097859; cv=fail; b=bLa18egxAthlGPFnoc3Qu/zW85pOpCfBshZTBQmvb10QNAmRUAFC+rNfPf9z8J+D+ZPkG8bT2fgmxHtYSPQtnwhwqr6f8PXC40k/k34BvcfcfFB2U4nViQKX3bXSzoZKbK099CGjlVScuPAW7Z6cGEE84KcXtM/FTHPOxOQIENs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758097859; c=relaxed/simple;
-	bh=9MZ9ykG3SUCVwKHf2qq04X+JLu+Sj1L6ZTzviX0B6ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dS7+h8R4gWckmp7mJ7SJ9c77Gfsq+c4FXiEzCXyJVWK+OnbJ5ELEizXgpA/JdT7WmJiDCkpiKtvieYDW3phxxeLFgMig66d+1T3Gal7T/7g5tYZAX0UnBrUb9r8OoLdR6Vf7zkl6GeG9s71tHOTvshDGzGyhy3M1qouRqLZAHo4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BhCXa4t1; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TfLYVEYL; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H7uMNw011142;
-	Wed, 17 Sep 2025 08:30:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Mcqsu8Lk7h4/w8njXk
-	mzdfaxhnlB9skKDMKmqcHx1ns=; b=BhCXa4t1+AksHe4QXOMRcKS3Q73LwQknZe
-	l6FmoqP644s0sHnmIaMyXBCPoHn7u2HHpKjgObfbvUiuyhbFsK/AlATpRwNY4kaw
-	oVWxPrcv79P0zQ8OvORLa7TPmTgGrGBvMcxAd99xar7XFNmiK9crbItloDCOTX9I
-	zCuqYFKFqtkC8XvxdGyr1eETC8bKedLE4GuEVyKN+YoBebIU+EQ5aWU+dUpQ0JLr
-	zejjx0nSV2CtplK34CBJo1yc7AFRc70LhaF13oee2eEKmecpeHhCzkkzuuoj2F+9
-	4fYwB1/FnD3npvKTDBEEYtIqnV2XnPrYaVReUAN6YKdrKN6A0PSw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497fx9rqkq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 08:30:33 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58H83W0a036935;
-	Wed, 17 Sep 2025 08:30:32 GMT
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11010042.outbound.protection.outlook.com [52.101.85.42])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2dg1wr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 08:30:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rYq9vAOEVpcQhBlfzEhfS4sEDr2GgVgX1g7jh2bhFVKk2yAqF6480YFADVjxro4tJDkbHRYUD4NpncPM+Y23iSTNeIOjy6mH1blJ0/WdbnkCrnGNxsTnnUldAZUuyh4H2WLdvb5/OXpuZowp+a+HzjGwAU3LHEzuudivmAP/ITu7MnNDX2ZlpPH9tt/jAsO2QqTeToSh+UDDyKM88H40C0jo/iaQ7S/0QnryWDoBoxW0wI88A3vJavxKgSLG9aq5PTe5E5S3+w3dViJ9RxwBsAJETgm+uI5F0sJvY1DYoUcZCrnuZlMc5LYnBIyQNuqRkXYGjI7DZ+sk1BpqkDIAHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mcqsu8Lk7h4/w8njXkmzdfaxhnlB9skKDMKmqcHx1ns=;
- b=lhI1huGYyggJ2H/m7KJwHkbVU+i6APM02aCNBbasDYeDtmmSNIbbtUp2knUXYUiLJPCRJ9RCVR8qXZ1xKC0m+UuiD4LZL0mseLJc/L5zIEGXewkgpzG01xuE922euL8ODxWWv0U4dRB4IyzFzmj0kBHx9Pr6Y0ists6yuI9uh+Glw0588beW/MIw/vnTVHwO1b1FsrVAjbsrSmtaFVLSP9YHMQ71noxEoNr/x1lFD0ObLXPLzJvCrYrQ/IJcpWN6Eb55c7fP4NiEJQ/fdaSDbezqAc8T5lg403Hwssb458WqiTbB7MHm9BDFsn8GBFlkmv2SgsCr04eHTP50+b4EFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mcqsu8Lk7h4/w8njXkmzdfaxhnlB9skKDMKmqcHx1ns=;
- b=TfLYVEYLYq5Ci5JbpfEVyc+Kex/JAw9OwVzhKopgVXTXyTzuiZ+EYlV2wvehufBbTd5GupH7kz3weJZYMzEpGLIqZ1mC/9TUS3IBSroiqQiCcA93qGu++8aGCmyuI2e4Yi/xMK+jGXrD6U3fZ3zEkQFe/NjR5lHIOAEq2AX+v0E=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by CH2PR10MB4279.namprd10.prod.outlook.com (2603:10b6:610:a8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 08:30:29 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9115.018; Wed, 17 Sep 2025
- 08:30:29 +0000
-Date: Wed, 17 Sep 2025 17:30:20 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Christoph Lameter <cl@gentwo.org>,
-        David Rientjes <rientjes@google.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        maple-tree@lists.infradead.org
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching
- kfree_rcu() operations
-Message-ID: <aMpxnACqmsQl-lp0@hyeyoo>
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
-X-ClientProxiedBy: SEWP216CA0031.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2b5::16) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F94309EF9
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758097830; cv=none; b=dPD5mJc6Tb2y6mt6apKN89E+u3V83afAhv+UU8UH3D8IXBfKMdSr0E6sZNYtwF+D38r6wX3WfDetV1iRijTrc8rjH0NEUyCrqDFTUC1J/KHAQzdWtEpjBEgSfVDu75kDKV6xI7L1LDWebwmHv7+QmbNn1YV0/VQuZirPACeMmaM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758097830; c=relaxed/simple;
+	bh=r263QZaH/haYY7y8AZaPb5WwBGwfKTlrzV6p9bDwxOo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pZio7dtmThJ7I9/6qnVOKxZvwE6Pacmo51iXzu3FkZFiKytIoXvOQRLD35dxYSyPZTR/FY0SWSmNyarKn/fkTT7Zu0K5wsVqLvWVfJkyHdtcaD67CzZCwWFhY1jNFS7QYKwAgIQVDUrillBNKqriNjgJVwGJ9+9XiMttxGgb+jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PBDACiDF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QJ+Z0pNd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PBDACiDF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QJ+Z0pNd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0A32D21F5C;
+	Wed, 17 Sep 2025 08:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758097826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+sqIYlTOc4VvhFqB052+i+xcgnDcdZsbd/L/En7eu28=;
+	b=PBDACiDFdn2ni2peRlj+dANQNN7RIyVXFhNIG2f33EAQz0Xtb2qY9FmnmFGpW3TRV9MZVJ
+	pwUeqm52mOJ2YAWvz8ydZaNsjqaA7wkQjfXYx8HshKet85In8is06Ssgx66BF64d2+tNgo
+	4aFzg9ck7ux32CQ6tasCJcWKS7uP2fU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758097826;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+sqIYlTOc4VvhFqB052+i+xcgnDcdZsbd/L/En7eu28=;
+	b=QJ+Z0pNdBrDOwjQm9vLsHet4EO1oJDXtcDbQLtPVObS4SCu1z8+e3Pec03VwPnVh1+IwpQ
+	IFoqVU6IAnRDWBBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758097826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+sqIYlTOc4VvhFqB052+i+xcgnDcdZsbd/L/En7eu28=;
+	b=PBDACiDFdn2ni2peRlj+dANQNN7RIyVXFhNIG2f33EAQz0Xtb2qY9FmnmFGpW3TRV9MZVJ
+	pwUeqm52mOJ2YAWvz8ydZaNsjqaA7wkQjfXYx8HshKet85In8is06Ssgx66BF64d2+tNgo
+	4aFzg9ck7ux32CQ6tasCJcWKS7uP2fU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758097826;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+sqIYlTOc4VvhFqB052+i+xcgnDcdZsbd/L/En7eu28=;
+	b=QJ+Z0pNdBrDOwjQm9vLsHet4EO1oJDXtcDbQLtPVObS4SCu1z8+e3Pec03VwPnVh1+IwpQ
+	IFoqVU6IAnRDWBBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A51E61368D;
+	Wed, 17 Sep 2025 08:30:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id O/f0JqFxymhnCQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 17 Sep 2025 08:30:25 +0000
+Date: Wed, 17 Sep 2025 10:30:25 +0200
+Message-ID: <87v7lhwkf2.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Luca Weiss" <luca.weiss@fairphone.com>
+Cc: "Takashi Iwai" <tiwai@suse.de>,
+	"Arnd Bergmann" <arnd@arndb.de>,
+	"Arnd Bergmann" <arnd@kernel.org>,
+	"Mark Brown" <broonie@kernel.org>,
+	"Wesley Cheng"
+ <quic_wcheng@quicinc.com>,
+	"Jaroslav Kysela" <perex@perex.cz>,
+	"Takashi Iwai" <tiwai@suse.com>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Dan Carpenter" <dan.carpenter@linaro.org>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
+In-Reply-To: <DCUXFIZ5KRCU.3JANM98BSE8SE@fairphone.com>
+References: <20250513123442.159936-1-arnd@kernel.org>
+	<20250513123442.159936-4-arnd@kernel.org>
+	<DBR2363A95M1.L9XBNC003490@fairphone.com>
+	<87v7n72pg0.wl-tiwai@suse.de>
+	<DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com>
+	<87ms8j2on6.wl-tiwai@suse.de>
+	<DCKUCB8A1JCV.1GK0TW2YMXNZP@fairphone.com>
+	<87bjnpqe45.wl-tiwai@suse.de>
+	<a2a6843f-7e03-4b7e-b5fc-415ac9fc6621@app.fastmail.com>
+	<DCU39JVDVFAG.2EOCQ37KAS3N0@fairphone.com>
+	<87o6raxtu9.wl-tiwai@suse.de>
+	<DCUXFIZ5KRCU.3JANM98BSE8SE@fairphone.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|CH2PR10MB4279:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddc386e9-0607-4acf-cf69-08ddf5c4752e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1xK7K8yoLagc65MLxFXdNlIRIy1eWPqJIBFvqvJ3tZ4wH4/v0oU5bwmBR2Ko?=
- =?us-ascii?Q?DPQzneOHh3OO7neGC+zODTphzaD6ljBZuuPXJvtXSJKCBTI/la6Ekf32tTfy?=
- =?us-ascii?Q?Rukdo9ZZh7iehkgInClyySniRmQopZ3qkbi+f7SyFVn4LB8Dnn9Ybr2C9Swu?=
- =?us-ascii?Q?rupxUczFZCQynNB31oj27SdJqfoOROjVJh1SqhlPWRQG3krVVdtTZ1s6Ofkn?=
- =?us-ascii?Q?zOMhqMYOAai1Q30mFnGD0vRlxDy2RyKqnQivc27Ld8ERlsnkWjTMwecLi4Kq?=
- =?us-ascii?Q?yXkcAdbijRPwte6GHWootIBlilryLpwNPWu9ck7W4LEyMtXoR7Sorge34YFV?=
- =?us-ascii?Q?POYeffM0iGj+BUmXBwFVSOXXpK4mzL3n//O+xuOVKXLlRCBMpyBR2+7CciEU?=
- =?us-ascii?Q?BViFMLD5oapDB384gkQkhycaCxI4a+xlNf3AaP7r6RdqMJ/4VChY++ansvNB?=
- =?us-ascii?Q?+iGHkxU2Pho0hXas6F5Qw4+8O13GZUOSSmLxJu4pQ3+ZgjFN+2deNcOBpP08?=
- =?us-ascii?Q?IyaLoMKKhq4Vwowte7fNO5WAjF3rQVMGo9Rp/0cfkmNOXLBaclOx9rsp4ExD?=
- =?us-ascii?Q?QkGyRqLlB3ln+TQhXybs0OzkOgL5rzxS2y+Rla2t7GPFp5gPpIEi25QUFVvN?=
- =?us-ascii?Q?bMB+qvW+98qVCC4v+yDMs+SwQkfy/VryMAZwM8fKaf6mhA3aN5S9kfgD5l9y?=
- =?us-ascii?Q?vD8QW5wlwGg04ZSHmWOl65ruoglnOOA5xNwP2Tq9mD28djlN/ARkV2dXPBU3?=
- =?us-ascii?Q?oQeqHChQZHil782mTmCLS3lZqNm2yg7Pr2iaqvHFU7gdN42B+EKSz+1GEYBM?=
- =?us-ascii?Q?O5dFLkIDVkwjsX6J3OpFuTM0Vff43wtGcvf5n9PHH1WnbgXXKtzKPoW8i8aw?=
- =?us-ascii?Q?Zz5WKilVVV8a+v5v5/A//IB4qROvx+9nfi2OyzDdgm5oXplOrT4fpmWvh1vS?=
- =?us-ascii?Q?uQWsKVdP7Rul13QyTbCU8lAFE679OCLs86f7WAK9Sb0efDu0n9o4UAWlwCnM?=
- =?us-ascii?Q?IaXT8LR9+kSiQlV77tppu7rSV4BCOB7xVGBQKbYWGYHHat1Cj/ZbLPkfaI8X?=
- =?us-ascii?Q?bJlVpGUgK615Mi7HpHT4aqZmCzbTpg+qhfiWU/hr6wBYL55R1R/e4Jvmgh25?=
- =?us-ascii?Q?Hg4v8tbwiE1vXVho2zYQsy9gm01neqxnATOJLjinF4Wg3oFLxbvxbjgEltkf?=
- =?us-ascii?Q?nMUf/dYfsVUqmHtTzViELICzDLEjZAUuhQhRumNA8HbGCGOly+s/2MZK3qyi?=
- =?us-ascii?Q?4V3iMXNm3TI2Y/uRo9jfGLquG7knu/fWboEULwI/r4Q7v53e4LRj7vayungx?=
- =?us-ascii?Q?cJVgiBMGtLFuWBRD5CVV5+OKKDxKIBzDb8UWElmqH08K+xoAkhYgKyobHB3O?=
- =?us-ascii?Q?94g1DLM2AT02n+BvgYmPpRUNZPh2vFNwmPQYzEcBMhKI9yoxf3r63A+c676e?=
- =?us-ascii?Q?N+SUY6oJHfQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gePPqtN+3F6PQ+MgQhk2ILGOHDCxnAHjYFlFTEnLm6OgYo/vkTs1uuo07Ec+?=
- =?us-ascii?Q?3EZuL1jxXUNa5pdHTn49eGauw5IWmZj1wg27ZqGZgEc2dk137rxA4VmomY6e?=
- =?us-ascii?Q?977cNolQRQ2bCUwCmfMABRD4qdEGcAzhlJq7h60HirKKRN/HMWxnc0ImOhyT?=
- =?us-ascii?Q?zLTzFNuWouvVD1CVABLICh+pNFGKHncfRI3cd1k8HKJ3rWG1CgD4F2OKvwZt?=
- =?us-ascii?Q?d/pecdQ7nUHBBl/EGuGmYrbLUV6wpLPalBRID0KkOmH0s5v7cSl4l3Rz1DMT?=
- =?us-ascii?Q?XqwB1LvZkcuGAuaZZIa+4CXqVSHg+FK4OP/RuYkMYu+VsTz5pISz8uc/j0Ql?=
- =?us-ascii?Q?iclUD5W8IcpoZhKq2UddsdmtknaBU3Iu+wH+C9nzBxOthxhUFgSOeWfXhHI9?=
- =?us-ascii?Q?3+87b9KUuL+uK5ughgfN921atTN0mNPU+xc5G0kV3eZ5JkTmT6x1+s3DTrXO?=
- =?us-ascii?Q?oy7T2uhisu0pDw9cjTWH2SaDdGn47RTHINyCZn4WGGkU9P4W/t37GKlc+aE5?=
- =?us-ascii?Q?auQjIrg0LqPos0vcZ9Wnk7xqtloH2TznghI1cp1aL8TRwniozZKUnqI4f8+d?=
- =?us-ascii?Q?ggmAWxuM6bT1VKmz+rLohrIeEwafi9HNLI6KJKbzuNf8NcWkXkpvXsyaesnp?=
- =?us-ascii?Q?4CbPbdYsxqRrKGueXI03moK5GJufX85PFrd0hQHDP33fx0B0hKDY5QBkow3f?=
- =?us-ascii?Q?8ImN3JojL09zxSHz8i9luWQWTvKa/+2kV03gjN5kVq/2jSEoOjUlb+R8ALQP?=
- =?us-ascii?Q?0jywQX7PCsrGTyCiRnoi+UAathfN84MVIoJ38yVyGLkAFFhfs1j0OkR6U+K0?=
- =?us-ascii?Q?IQRyoicCLirF/9lIQCJqxcO3b2UAGFRtW6XTMLx7atsqxS+74X051Od7iXis?=
- =?us-ascii?Q?mhiBYwYhtQYbnc8+CWWct6YAr24/s+t6rn4h5pOthqC1dHFr34Aguzh0GtP6?=
- =?us-ascii?Q?uze576+86hpgh+otEfKysBMXi7TEQQa+lJFN1TFegSmAPYkn5eRo9yH7bgOm?=
- =?us-ascii?Q?QEzJVitIEsLj5lGOVWxj+V+hcwwrB7hxljpnKr7TtZjiKGXPIl0FsgFbi4LR?=
- =?us-ascii?Q?bOf7hBl0Y4OnkCqmEsnAa4+KQ4RzF8utUo/W9hmdSiDj2PQEMlqF4GoG/Aw5?=
- =?us-ascii?Q?ybUtqWfgXbUWmRp1ZtEws5Q8yHKKJhMpUBxkDP3rAaIwTjSguhaxQd8NeEnI?=
- =?us-ascii?Q?UDQW6jBl1zLv6OfnDQccaVh8xg4C33qQb4hYgOmPUonA8iwMQLYjnNye30VW?=
- =?us-ascii?Q?a2qq+npr8y33NnBvOeg9j5p8Pl8fUcyNYbsSbP7sikfZelZU5h/L1WWka/Xv?=
- =?us-ascii?Q?CItpCUqib5w2kf7nr7iR8jXwcUre1qjhSW+2gIY/Z/HF7vom5q2jwbjMMdJi?=
- =?us-ascii?Q?Bl/N8p4wvF9gp9BZiIOnpLKpss1bCL3svQQYnTLhCUveMzRHxqxwyqtKI+xQ?=
- =?us-ascii?Q?vP2U4yRSTQQ5CjX1kIhuHfw11C/rYRh9TjHrB6vJxHpfk6Wp3gUiXtNOUb/j?=
- =?us-ascii?Q?KZ2XWmGxjKkPkLPNBPFLTuNVB7OM6oR8C6Ql7/oJ8JldnmwWT4KC3N0iSrVB?=
- =?us-ascii?Q?m7G1zE8RpQZChB4FfijvoH6BqEqSWM1IgujxtF51?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rnz6BoKjIdWQsUVyk7ghsC6Sdez1L+hg4AUw8JGcOcYlJLc9M+mdEDpVsUBvZJSaMkCraxI960svdJBJSKTjeRBGqmib7VvUcpduWZlpAxZTwheT6ZYr3uiasaVOKhIidJFToaNnFI2JwFSOZvRA9+Ra419CbTJvfxAbn9GLxqwW1jlwz5kK51hOCm7sXu22aKUilstd4dnzKr7EEsX1R5WSBjeBMK8+jb+8pl9XLMLXxKxyX6zEkngNuQ1tacQrgQc9sVolXPoka91Y8ZAgjIsJi65nIEdLL5b2z9lU1yfYo4hB5g/nnbvrtaIx8q53YBLcnJ9dcw1gXlML+2K++qwgqQlcxGXsVHMJxQ5/35LVTFfASEUWAUUnuIeHNb2YivtthU7+oKzfPksQkBD2dlvfJveZqB+8ETTvSK7JDLMPsp2Em4QGh+m3QP36ft4hAID8XlVlptwvWnP92HlQlqAMhLrH+RCXE6xdo5JrD7BgGi3/vP1mriSpkwUaXR958SK/sEfN1ZQgwp4hIXKW6g8KXCqj5OnBDO4RrzqZhzN+CzwpR4H33HdMl8Spq0vD9Pfmi/9sqLCySOq09wtl6HacqCRvHFBRTh7L65OVjfc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddc386e9-0607-4acf-cf69-08ddf5c4752e
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 08:30:28.9183
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OKmBFijoY4mhHY/t3UzmlcBOwbJGXrh1rVR2/g99ptGe8YJbqxcQHcUjilyMT6v/9W1YZ/klbKxxAlvIgyN6tQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4279
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509170081
-X-Proofpoint-ORIG-GUID: bdZZebJWY_CE7Izh2FgGUyYwcSwXOHK0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX0thbfIGoC350
- btQWd0YrTxzv/W1v9MKOn6GWgMjo4whTCpHy6w75fQjnW7vK2nnmsa7vw5Hb5FYUT16zHw3q+ui
- P0AtDHvpQI7wHPAKxB3RQhntJGblxQMTp4vwlUGRD7z+p5VtPT6BtMID1G8ZNJDOZjV3cmqrfxP
- SrhpWFKi3tve+85CiKKaNYU8lFGvy7Ms2peJX/vdqx/ZunNIzBST9i8jaM/n5OB8oBDqNrAOaG6
- RgeBpt+gnknFDk9CiJtDOXvfACluOVHPSsZhMDqt/2NFcYkn20MAKUxRzsu0kEe/o7fIB1A2Fjw
- aobL26gqlB2r8ziaoNQOaGlWjV+vjtcTeL0epzrBmYF9QZfxIrDBUnhJMsN9D87WFPi4ivpjpUY
- lLyI0oLterpc2IlGO7KJrWd9meNHXg==
-X-Proofpoint-GUID: bdZZebJWY_CE7Izh2FgGUyYwcSwXOHK0
-X-Authority-Analysis: v=2.4 cv=C7vpyRP+ c=1 sm=1 tr=0 ts=68ca71a9 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VaE9Vu_GMSX9YVFyq8oA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12084
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-On Wed, Sep 10, 2025 at 10:01:06AM +0200, Vlastimil Babka wrote:
-> Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
-> For caches with sheaves, on each cpu maintain a rcu_free sheaf in
-> addition to main and spare sheaves.
+On Wed, 17 Sep 2025 10:19:23 +0200,
+Luca Weiss wrote:
 > 
-> kfree_rcu() operations will try to put objects on this sheaf. Once full,
-> the sheaf is detached and submitted to call_rcu() with a handler that
-> will try to put it in the barn, or flush to slab pages using bulk free,
-> when the barn is full. Then a new empty sheaf must be obtained to put
-> more objects there.
+> Hi Takashi,
 > 
-> It's possible that no free sheaves are available to use for a new
-> rcu_free sheaf, and the allocation in kfree_rcu() context can only use
-> GFP_NOWAIT and thus may fail. In that case, fall back to the existing
-> kfree_rcu() implementation.
+> On Tue Sep 16, 2025 at 6:09 PM CEST, Takashi Iwai wrote:
+> > On Tue, 16 Sep 2025 10:41:01 +0200,
+> > Luca Weiss wrote:
+> >> 
+> >> Hi Arnd,
+> >> 
+> >> On Fri Sep 5, 2025 at 4:54 PM CEST, Arnd Bergmann wrote:
+> >> > On Fri, Sep 5, 2025, at 14:26, Takashi Iwai wrote:
+> >> >> On Fri, 05 Sep 2025 13:47:28 +0200,
+> >> >
+> >> >> @@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct 
+> >> >> snd_usb_substream *subs,
+> >> >>  	if (!xfer_buf)
+> >> >>  		return -ENOMEM;
+> >> >> 
+> >> >> -	/* Remapping is not possible if xfer_buf is outside of linear map */
+> >> >> -	xfer_buf_pa = virt_to_phys(xfer_buf);
+> >> >> -	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+> >> >> -		ret = -ENXIO;
+> >> >> -		goto unmap_sync;
+> >> >> -	}
+> >> >>  	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+> >> >>  			xfer_buf_dma, len);
+> >> >> 
+> >> >>  	/* map the physical buffer into sysdev as well */
+> >> >> +	/* note: 0 is passed to pa argument as we use sgt */
+> >> >>  	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+> >> >> -					       xfer_buf_pa, len, &xfer_buf_sgt);
+> >> >> +					       0, len, &xfer_buf_sgt);
+> >> >>  	if (!xfer_buf_dma_sysdev) {
+> >> >>  		ret = -ENOMEM;
+> >> >>  		goto unmap_sync;
+> >> >
+> >> >
+> >> > Makes sense. I had to rework the code a little more to actually
+> >> > understand how it fits together, for reference the below version
+> >> > (I don't expect it to build cleanly) would split up
+> >> > uaudio_iommu_map() into one function that takes a physical
+> >> > address and another function that takes an sg table.
+> >> 
+> >> Are you planning to post this as a proper patch? It's a bit late in the
+> >> 6.17 cycle already but good to still get this fixed for final release.
+> >> 
+> >> Or revert the original commit that broke it for now.
+> >> 
+> >> I couldn't really test your patch since there's a couple of compile
+> >> errors where I wasn't sure how to resolve them correctly.
+> >
+> > Could you check the patch below, then?  At least it compiles without
+> > errors.
 > 
-> Expected advantages:
-> - batching the kfree_rcu() operations, that could eventually replace the
->   existing batching
-> - sheaves can be reused for allocations via barn instead of being
->   flushed to slabs, which is more efficient
->   - this includes cases where only some cpus are allowed to process rcu
->     callbacks (Android)
+> It does compile as well for me, but looks like it's not working.
 > 
-> Possible disadvantage:
-> - objects might be waiting for more than their grace period (it is
->   determined by the last object freed into the sheaf), increasing memory
->   usage - but the existing batching does that too.
+> It's still triggering the WARN_ON from
 > 
-> Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
-> implementation favors smaller memory footprint over performance.
+>   if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
 > 
-> Also for now skip the usage of rcu sheaf for CONFIG_PREEMPT_RT as the
-> contexts where kfree_rcu() is called might not be compatible with taking
-> a barn spinlock or a GFP_NOWAIT allocation of a new sheaf taking a
-> spinlock - the current kfree_rcu() implementation avoids doing that.
+> [  214.157471] ------------[ cut here ]------------
+> [  214.157491] WARNING: CPU: 4 PID: 12 at sound/usb/qcom/qc_audio_offload.c:1067 handle_uaudio_stream_req+0xecc/0x13c4
+> [  214.157510] Modules linked in:
+> [  214.157522] CPU: 4 UID: 0 PID: 12 Comm: kworker/u32:0 Tainted: G        W           6.16.0-00047-gfa3c1e37ba38 #1 NONE 
+> [  214.157531] Tainted: [W]=WARN
+> [  214.157535] Hardware name: Fairphone 4 (DT)
+> [  214.157541] Workqueue: qmi_msg_handler qmi_data_ready_work
+> [  214.157553] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [  214.157560] pc : handle_uaudio_stream_req+0xecc/0x13c4
+> [  214.157568] lr : handle_uaudio_stream_req+0xcdc/0x13c4
+> [  214.157575] sp : ffff8000800b39d0
+> [  214.157579] x29: ffff8000800b3b40 x28: ffff0000895eb6b0 x27: 0000000000008000
+> [  214.157589] x26: ffff0000d6bae960 x25: ffffa11dbe275e28 x24: 0000000000008000
+> [  214.157598] x23: ffffa11dbe0a4ec0 x22: ffff8000800b3c00 x21: 0000000000000000
+> [  214.157608] x20: ffff8000800b3cc8 x19: ffff00008b128ac0 x18: ffffa11dbdfaa258
+> [  214.157617] x17: ffff0000803e9388 x16: ffff0000800162c0 x15: ffffa11dbdfaa000
+> [  214.157626] x14: 0000000000000500 x13: ffffa11dbe03c000 x12: 0000000000000000
+> [  214.157636] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffa11dbe0f78a0
+> [  214.157645] x8 : ffffdee36909b000 x7 : ffff0000d6ac8418 x6 : 0000000000000000
+> [  214.157654] x5 : 0000000000000000 x4 : ffff8000800b3968 x3 : 0000000000000000
+> [  214.157663] x2 : 0000000000000000 x1 : ffff0000801a4100 x0 : 0000000000000000
+> [  214.157672] Call trace:
+> [  214.157677]  handle_uaudio_stream_req+0xecc/0x13c4 (P)
+> [  214.157687]  qmi_invoke_handler+0xb4/0x100
+> [  214.157694]  qmi_handle_message+0x88/0x1a0
+> [  214.157702]  qmi_data_ready_work+0x208/0x35c
+> [  214.157709]  process_one_work+0x144/0x2c4
+> [  214.157719]  worker_thread+0x280/0x45c
+> [  214.157726]  kthread+0xfc/0x1dc
+> [  214.157733]  ret_from_fork+0x10/0x20
+> [  214.157744] ---[ end trace 0000000000000000 ]---
 > 
-> Teach kvfree_rcu_barrier() to flush all rcu_free sheaves from all caches
-> that have them. This is not a cheap operation, but the barrier usage is
-> rare - currently kmem_cache_destroy() or on module unload.
-> 
-> Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
-> count how many kfree_rcu() used the rcu_free sheaf successfully and how
-> many had to fall back to the existing implementation.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/slab.h        |   3 +
->  mm/slab_common.c |  26 ++++++
->  mm/slub.c        | 266 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  3 files changed, 293 insertions(+), 2 deletions(-)
-> 
-> @@ -3840,6 +3895,80 @@ static void flush_all(struct kmem_cache *s)
->  	cpus_read_unlock();
->  }
->  
-> +/* needed for kvfree_rcu_barrier() */
-> +void flush_all_rcu_sheaves()
-> +{
-> +	struct slub_percpu_sheaves *pcs;
-> +	struct slub_flush_work *sfw;
-> +	struct kmem_cache *s;
-> +	bool flushed = false;
-> +	unsigned int cpu;
-> +
-> +	cpus_read_lock();
-> +	mutex_lock(&slab_mutex);
-> +
-> +	list_for_each_entry(s, &slab_caches, list) {
-> +		if (!s->cpu_sheaves)
-> +			continue;
-> +
-> +		mutex_lock(&flush_lock);
-> +
-> +		for_each_online_cpu(cpu) {
-> +			sfw = &per_cpu(slub_flush, cpu);
-> +			pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
-> +
-> +			if (!pcs->rcu_free || !pcs->rcu_free->size) {
+> Should that code be removed with the new code now?
 
-Is the compiler allowed to compile this to read pcs->rcu_free twice?
-Something like:
+Yes, please try the revised patch below.
 
-flush_all_rcu_sheaves()			__kfree_rcu_sheaf()
 
-pcs->rcu_free != NULL
-					pcs->rcu_free = NULL
-pcs->rcu_free == NULL
-/* NULL-pointer-deref */
-pcs->rcu_free->size
+thanks,
 
-> +				sfw->skip = true;
-> +				continue;
-> +			}
->
-> +			INIT_WORK(&sfw->work, flush_rcu_sheaf);
-> +			sfw->skip = false;
-> +			sfw->s = s;
-> +			queue_work_on(cpu, flushwq, &sfw->work);
-> +			flushed = true;
-> +		}
-> +
-> +		for_each_online_cpu(cpu) {
-> +			sfw = &per_cpu(slub_flush, cpu);
-> +			if (sfw->skip)
-> +				continue;
-> +			flush_work(&sfw->work);
-> +		}
-> +
-> +		mutex_unlock(&flush_lock);
-> +	}
-> +
-> +	mutex_unlock(&slab_mutex);
-> +	cpus_read_unlock();
-> +
-> +	if (flushed)
-> +		rcu_barrier();
+Takashi
 
-I think we need to call rcu_barrier() even if flushed == false?
-
-Maybe a kvfree_rcu()'d object was already waiting for the rcu callback to
-be processed before flush_all_rcu_sheaves() is called, and
-in flush_all_rcu_sheaves() we skipped all (cache, cpu) pairs,
-so flushed == false but the rcu callback isn't processed yet
-by the end of the function?
-
-That sounds like a very unlikely to happen in a realistic scenario,
-but still possible...
-
--- 
-Cheers,
-Harry / Hyeonggon
+--- a/sound/usb/qcom/qc_audio_offload.c
++++ b/sound/usb/qcom/qc_audio_offload.c
+@@ -538,38 +538,33 @@ static void uaudio_iommu_unmap(enum mem_type mtype, unsigned long iova,
+ 			umap_size, iova, mapped_iova_size);
+ }
+ 
++static int uaudio_iommu_map_prot(bool dma_coherent)
++{
++	int prot = IOMMU_READ | IOMMU_WRITE;
++
++	if (dma_coherent)
++		prot |= IOMMU_CACHE;
++	return prot;
++}
++
+ /**
+- * uaudio_iommu_map() - maps iommu memory for adsp
++ * uaudio_iommu_map_pa() - maps iommu memory for adsp
+  * @mtype: ring type
+  * @dma_coherent: dma coherent
+  * @pa: physical address for ring/buffer
+  * @size: size of memory region
+- * @sgt: sg table for memory region
+  *
+  * Maps the XHCI related resources to a memory region that is assigned to be
+  * used by the adsp.  This will be mapped to the domain, which is created by
+  * the ASoC USB backend driver.
+  *
+  */
+-static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+-				      phys_addr_t pa, size_t size,
+-				      struct sg_table *sgt)
++static unsigned long uaudio_iommu_map_pa(enum mem_type mtype, bool dma_coherent,
++					 phys_addr_t pa, size_t size)
+ {
+-	struct scatterlist *sg;
+ 	unsigned long iova = 0;
+-	size_t total_len = 0;
+-	unsigned long iova_sg;
+-	phys_addr_t pa_sg;
+ 	bool map = true;
+-	size_t sg_len;
+-	int prot;
+-	int ret;
+-	int i;
+-
+-	prot = IOMMU_READ | IOMMU_WRITE;
+-
+-	if (dma_coherent)
+-		prot |= IOMMU_CACHE;
++	int prot = uaudio_iommu_map_prot(dma_coherent);
+ 
+ 	switch (mtype) {
+ 	case MEM_EVENT_RING:
+@@ -583,20 +578,41 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+ 				     &uaudio_qdev->xfer_ring_iova_size,
+ 				     &uaudio_qdev->xfer_ring_list, size);
+ 		break;
+-	case MEM_XFER_BUF:
+-		iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
+-				     &uaudio_qdev->xfer_buf_iova_size,
+-				     &uaudio_qdev->xfer_buf_list, size);
+-		break;
+ 	default:
+ 		dev_err(uaudio_qdev->data->dev, "unknown mem type %d\n", mtype);
+ 	}
+ 
+ 	if (!iova || !map)
+-		goto done;
++		return 0;
+ 
+-	if (!sgt)
+-		goto skip_sgt_map;
++	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
++
++	return iova;
++}
++
++static unsigned long uaudio_iommu_map_xfer_buf(bool dma_coherent, size_t size,
++					       struct sg_table *sgt)
++{
++	struct scatterlist *sg;
++	unsigned long iova = 0;
++	size_t total_len = 0;
++	unsigned long iova_sg;
++	phys_addr_t pa_sg;
++	size_t sg_len;
++	int prot = uaudio_iommu_map_prot(dma_coherent);
++	int ret;
++	int i;
++
++	prot = IOMMU_READ | IOMMU_WRITE;
++
++	if (dma_coherent)
++		prot |= IOMMU_CACHE;
++
++	iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
++			       &uaudio_qdev->xfer_buf_iova_size,
++			       &uaudio_qdev->xfer_buf_list, size);
++	if (!iova)
++		goto done;
+ 
+ 	iova_sg = iova;
+ 	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
+@@ -618,11 +634,6 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+ 		uaudio_iommu_unmap(MEM_XFER_BUF, iova, size, total_len);
+ 		iova = 0;
+ 	}
+-	return iova;
+-
+-skip_sgt_map:
+-	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
+-
+ done:
+ 	return iova;
+ }
+@@ -1020,7 +1031,6 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 	struct sg_table xfer_buf_sgt;
+ 	dma_addr_t xfer_buf_dma;
+ 	void *xfer_buf;
+-	phys_addr_t xfer_buf_pa;
+ 	u32 len = xfer_buf_len;
+ 	bool dma_coherent;
+ 	dma_addr_t xfer_buf_dma_sysdev;
+@@ -1051,18 +1061,12 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 	if (!xfer_buf)
+ 		return -ENOMEM;
+ 
+-	/* Remapping is not possible if xfer_buf is outside of linear map */
+-	xfer_buf_pa = virt_to_phys(xfer_buf);
+-	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+-		ret = -ENXIO;
+-		goto unmap_sync;
+-	}
+ 	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+ 			xfer_buf_dma, len);
+ 
+ 	/* map the physical buffer into sysdev as well */
+-	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+-					       xfer_buf_pa, len, &xfer_buf_sgt);
++	xfer_buf_dma_sysdev = uaudio_iommu_map_xfer_buf(dma_coherent,
++							len, &xfer_buf_sgt);
+ 	if (!xfer_buf_dma_sysdev) {
+ 		ret = -ENOMEM;
+ 		goto unmap_sync;
+@@ -1143,8 +1147,8 @@ uaudio_endpoint_setup(struct snd_usb_substream *subs,
+ 	sg_free_table(sgt);
+ 
+ 	/* data transfer ring */
+-	iova = uaudio_iommu_map(MEM_XFER_RING, dma_coherent, tr_pa,
+-			      PAGE_SIZE, NULL);
++	iova = uaudio_iommu_map_pa(MEM_XFER_RING, dma_coherent, tr_pa,
++				   PAGE_SIZE);
+ 	if (!iova) {
+ 		ret = -ENOMEM;
+ 		goto clear_pa;
+@@ -1207,8 +1211,8 @@ static int uaudio_event_ring_setup(struct snd_usb_substream *subs,
+ 	mem_info->dma = sg_dma_address(sgt->sgl);
+ 	sg_free_table(sgt);
+ 
+-	iova = uaudio_iommu_map(MEM_EVENT_RING, dma_coherent, er_pa,
+-			      PAGE_SIZE, NULL);
++	iova = uaudio_iommu_map_pa(MEM_EVENT_RING, dma_coherent, er_pa,
++				   PAGE_SIZE);
+ 	if (!iova) {
+ 		ret = -ENOMEM;
+ 		goto clear_pa;
 
