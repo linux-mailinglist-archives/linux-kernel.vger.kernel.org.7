@@ -1,166 +1,137 @@
-Return-Path: <linux-kernel+bounces-821112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216C8B80739
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:14:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3753BB80748
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1082B46533B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:14:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 070314E1C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C08332A34;
-	Wed, 17 Sep 2025 15:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC9F330D20;
+	Wed, 17 Sep 2025 15:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kdxUpA6n"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b="Jr3RJMxq"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D0636D;
-	Wed, 17 Sep 2025 15:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A460309EF4
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122054; cv=none; b=rmUYSjaTPcF8aZgRANMr4s0kKdN2VVgWZyI5Rq00P0VKSKNXYm9k4dbx1MYxV/vlN1JxmYqL0YKy9kblxUSFqWalu7h7GGowm0ILfJTxQ3lTdZ8tR1f5QJiQ2abDQvhIA7xzgdyez2kDtKd/jkfJcu6eEMoSHDj2i+41uEOSDjU=
+	t=1758122090; cv=none; b=gdTtwxr7R5rNv1pVis3lEeDzHayboVGmk5KbW2xqDRZ3AiXmHqjbxkjb7JgQUOlmvbY6hut0CdMga1jN8dS+F5slXyj3OKMCZxGmq1QyQH1I4Pf/hZqoO2o32E9sjLx0OPAi/3LfIE3wnbd7Jus30kI67fl/f/BIIHXufde3h9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122054; c=relaxed/simple;
-	bh=GY7K1aT3tuUAjWTK54bkuu3gu8Ndi5nWOnazTRGkPWQ=;
+	s=arc-20240116; t=1758122090; c=relaxed/simple;
+	bh=BJGW2dTrJ5vL37y1VD5hJsGeiolH7Qgx6xvbYYe2VoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2ZW8zduobd/GibzooqG1DwBE4ehXyjHO8NbynAm/H+oUT91w77fMzd5H+ZIhw2HYIhh+GrDsFg6rb4NNnX4+spUGv7T7z/SmJwb4NAm/k8kslNrhGGIO4M2G/8gYUuWR9zaq4UCHFROT/WMxwoUtPJukTOzy1Wr/U987z7aBbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kdxUpA6n; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HB2heh031364;
-	Wed, 17 Sep 2025 15:13:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Gpbsl9
-	9AcwvMMY8pjAz45RrL3lV0my41naP5Lagcwqg=; b=kdxUpA6nW5Tmi7rGB3AJGR
-	NM/xNi5WIURhafGfjEHgdYGB/psocIFarKbLZ7LR+Xi/jETeHKEloI5I2HX/qqfU
-	Bw/WhoOHsJKnFaPkecwpriLEG/ZyJitxlMMNELYp7qCZLx5Npqe/zn8hm3XPgwhC
-	l+PBZEdcPvlprtcxn3x5dt84pRqYpc7U3cfTn3dW2pzL+3/lWD/I6q7U46UHtbji
-	IqD0yPQyJs7nSLrExCmTcnhUGCyGTEK2EOM1a2I6/Ufxa+rqU7cP2qp3dmd79kFq
-	WX+YEdoojkGTAJa3RoNX4kIiWGtUajT7XIe8Y9oTHLdeXx/vRgxo1jzZ2CbTPo6Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hmj47-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 15:13:07 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58HEej22030065;
-	Wed, 17 Sep 2025 15:13:06 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hmj43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 15:13:06 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58HDRm4L029498;
-	Wed, 17 Sep 2025 15:13:04 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kb122kc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 15:13:04 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58HFD1rn61604222
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 15:13:01 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4A51020043;
-	Wed, 17 Sep 2025 15:13:01 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DFF1620040;
-	Wed, 17 Sep 2025 15:13:00 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.133])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 17 Sep 2025 15:13:00 +0000 (GMT)
-Date: Wed, 17 Sep 2025 17:12:59 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Shuah Khan <shuah@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-        Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 20/36] s390/time: Set up vDSO datapage later
-Message-ID: <20250917151259.29680Ba8-hca@linux.ibm.com>
-References: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
- <20250917-vdso-sparc64-generic-2-v3-20-3679b1bc8ee8@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ReSy4pk59XSIQVzDOBFGjdDzX5kNRspRkwMrUjPF2PxlH9P1VdCGGYhgKYv4kJx9qpyRE99dS+2KBID8mlbmEIEiCx6IIAkXGUBgkzDhAjKZIvbEvAW0QzAY1JeKiFiRPqrAqoUyjUVD2zNBz/yQVwq/tnAWupxd8NcLSXBsKkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca; spf=none smtp.mailfrom=draconx.ca; dkim=pass (2048-bit key) header.d=draconx-ca.20230601.gappssmtp.com header.i=@draconx-ca.20230601.gappssmtp.com header.b=Jr3RJMxq; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=draconx.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=draconx.ca
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78f15d58576so5204806d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=draconx-ca.20230601.gappssmtp.com; s=20230601; t=1758122088; x=1758726888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v6NrCcDiMgz4BfT37/6MfLkoGQSFwd3bQQCaY08TYjM=;
+        b=Jr3RJMxqr8A1MbkPS9ZoIPOFuGreY4uY6Fm/UhOyJyUwEzzJyufmCl7LU/XU6iO6iX
+         r85EZ0HmonvXhwWiVRV7DL7FLFJFugPxaaekd2qm1+3kFhw3dDhrS+4moqKNcMqzsBGW
+         mgLYwPKhN4rvHkiN7YX6YyNJ0NE2VrDQEtuVo7MizcLi6hwQ5O8O9c8SxkuoJ8V4ylDT
+         bi3/rNVU/pnBpAD5/HxRsgDKoKqNMeMNje9dB49nN7dls8FNPFamaBhrFpObjl66Tt+J
+         zHLdigkXNEzyDXfui8fCjnao46shpTOAS60J1tyR9XTf+xGHyoreVl2zutNMvGRDn7E8
+         U8rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758122088; x=1758726888;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v6NrCcDiMgz4BfT37/6MfLkoGQSFwd3bQQCaY08TYjM=;
+        b=Uqn4zo9ykDRNF+xykHOyz1dBP3DuQ7B4LZXTShp+DjoKukWHSwrWRVWKgyfX7Mu9Ue
+         5Dj60b8uzkH669oLjxTnoc9657q0E9krUUiYNfcAJzIfp9Tva1avTbUlbC9IGpJXECS9
+         GJGMZT36EDF5mgvhSvlF1CPAnypZpZ1TWVxmkzG2mFRQuPe9I7x0QRQtlLuIvV7wV8wb
+         hq44//pzOg8m1Rq+8JIeRnFgQoeZSf/BVOqWUoNUo0/9Ob5rLqhJMeFChWe/r4YfAejA
+         a473AqUSC5ag1LNkH3W/i7GTANlSFlm1uJPpG0PBBhHE8a+N9l2MZtQTAVVlekSsU2t4
+         Rb+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+hjtLAsfGrSaXD0m/jBbjp+ED56QndpuneKo/IHgl0dpwvqdTelRLBq0hfrYElc8aFzre9jPwfgeJs3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweZybkuDBBNr4mlxE5FJAn44OAZsmyZg08dwDSimSv9/solqvP
+	hsQT7gjJ3vrQwVX7pk91qQut40TzszH0rfN6lgOOmfaMhfyxtCr+ol4uXJ/JQ8m5IAwJ9jWA4sL
+	dK27X
+X-Gm-Gg: ASbGncsf+2QNoH3bCxEqvA/s9/y2RkFbJPJPE0KC+D8lhg9qW4HQNOpacXfCwHcWuy8
+	RVR+jkK2hs/iM8XTl4dQ/i7W/k5/VKKCKC8pzzhU11eYvCR+3eUettQtsGavbW2gztT/EqHWtV4
+	FMxp/a6UQEiHnuoEiwBDUBJYqCj5zJ1+n5ljexYZq+Q9mPVYZ8GlgXu3SIXnBZfJ01zncAQOF0Z
+	JBVQwmW7MKFnsYh3cjgnmvlQXaeAeZI0Isnz59lgbGhkhHVpJIbmHqt04Ii3Ngxs6u7/6Wd+YgO
+	x7/RO8dPDEW3dRSowdkrlrkOhhV96+iDZArIk5Adbn6Cc8mXw2QJesmwrE/0dVPOOAvCUa1/B8y
+	34Uc423p+WtyBdyAXEuYqmpc9wWbrDX6K0Iu4IqI9NZzBx/MUkPQ=
+X-Google-Smtp-Source: AGHT+IGd/ABHMF4f3Hvae/ZzKRbwMwLDu0yyj04cHbrYciDrdwe6HnEu0vohHTaXLEoMoD8R1qEw/Q==
+X-Received: by 2002:ad4:5b84:0:b0:77e:8d71:c335 with SMTP id 6a1803df08f44-78ec6177b6bmr28182516d6.19.1758122087595;
+        Wed, 17 Sep 2025 08:14:47 -0700 (PDT)
+Received: from localhost (ip-24-156-181-135.user.start.ca. [24.156.181.135])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-77cb4cf2a35sm65042936d6.51.2025.09.17.08.14.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 08:14:46 -0700 (PDT)
+Date: Wed, 17 Sep 2025 11:14:45 -0400
+From: Nick Bowler <nbowler@draconx.ca>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, regressions@lists.linux.dev
+Subject: Re: PROBLEM: AST2500 BMC video output disabled by reboot (regression)
+Message-ID: <xeipdyk2i2lpkg4rrvz4cl2l3ch62sl4zoa73qvlms3ek3zkci@y7xqbgjulaet>
+References: <wpwd7rit6t4mnu6kdqbtsnk5bhftgslio6e2jgkz6kgw6cuvvr@xbfswsczfqsi>
+ <CAD=FV=Xp7zOQ2iEVf896P074RW911F-e2Qa36deD0e8fWksFBA@mail.gmail.com>
+ <u7ek3ccya4c3c4rteliskjjfczpmrt4vmqo5c6kjdotxdgitn7@ko24dpb35pq4>
+ <ef6558a9-c44a-4c66-967c-187f260f73e1@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250917-vdso-sparc64-generic-2-v3-20-3679b1bc8ee8@linutronix.de>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -lB8-8Z2vm3Dr2RcdiTeItlnik0kFd3-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX0LRupd/nMATB
- xRH1x3KPf+TeGsBgHzb9CxxubzjsPM3xnWjDFBXVrXb1xnl8dkY4T15BQGOP8AXD1NzuOTVMI9T
- vyt++8gNnq27pcVi2bYCJP2Zpv85C47f6+JnGasi5qzD4b22Pw8Tfd54sawYgj/G0nN6qX4T+2t
- KxWPoCxw7oflQSA8CrXDGMKVfJ2GY1fGWARKyxRnD13aQtZjs6NrRvJl8QAdmjvZRG/l8MnuZhS
- 1G/MCeX/1CDgCgS9UnA+Qf1KwX9KGF/03p/MXyO2dxPmZjecD5qvqxQ2OqtIWFAs2LDX0H7HXO2
- 1nPDh0fFMqwAjjUFIZbTuRTKdnI0IGr7TwS3bye7rcJIUN/UE+jxDh65KInj/nk1m1BgQN9b8vk
- KjCbgU2p
-X-Proofpoint-GUID: 9tPi08vdJaon8TFVV3QLHKMPbM8_3wa7
-X-Authority-Analysis: v=2.4 cv=co2bk04i c=1 sm=1 tr=0 ts=68cad003 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=IMH0LFUbUW6ywGf4fkUA:9
- a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=0lgtpPvCYYIA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160204
+In-Reply-To: <ef6558a9-c44a-4c66-967c-187f260f73e1@suse.de>
 
-On Wed, Sep 17, 2025 at 04:00:22PM +0200, Thomas Weißschuh wrote:
-> Upcoming changes to the generic vDSO library will mean that the vDSO
-> datapage will not yet be usable during time_early_init().
+On Fri, Aug 29, 2025 at 03:07:14PM +0200, Thomas Zimmermann wrote:
+> it's been a while since you sent this report. I assume, the problem is this
+> there?
+
+Sorry, I haven't had much time to try the latest versions, the most
+recent version tested is 6.15-rc7 and the problem occurs there.
+
+I have just patched out the shutdown call in the ast driver and
+everything is fine.
+
+> Am 30.04.25 um 15:28 schrieb Nick Bowler:
+> > On Mon, Apr 28, 2025 at 01:40:25PM -0700, Doug Anderson wrote:
+[...]
+> > > 2. Could you give more details about what panel you're using?
+> > According to the documentation I have for the machine, the video output
+> > of the AST2500 BMC is connected to an IT66121 HDMI transmitter.
 > 
-> Move the initialization to time_init() which is called later. This is
-> valid as the value of tod_clock_base.tod does not change during the
-> lifetime of the machine and the vDSO datapage is only used much later.
+> That dmesg refers to a SIL164. I always thought these where only for DVI.
+> With the IT66121, I'd expect the warning from [1] in the dmesg.
 
-This is not true; tod_clock_base is a union and the tod member is changed
-implicitly within clock_sync_global():
+It's not impossible that there is an error in the documentation.
 
-	tod_clock_base.eitod += delta;
+Although the comment in the driver right above the linked code suggests
+that it might just report SIL164 even for other kinds of transmitter
+chips?
 
-However that happens only in stop_machine() context. Therefore moving the
-initialization to time_init() is indeed ok, since it is called very early
-when even preemption is still disabled.
+> [1] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_main.c#L196
+> 
+> 
+> The ast driver doesn't do much during shutdown. Could you please out-comment
+> the lines at either [2] xor [3] and report on either effect? These calls
+> turn of the video chip's memory access and sync pulses. Not doing that might
+> resolve the problem.
+> 
+> [2] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L835
+> [3] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L839
 
-I would appreciate if you would change the commit message a bit.
+I can try this.
 
-In any case:
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Thanks,
+  Nick
 
