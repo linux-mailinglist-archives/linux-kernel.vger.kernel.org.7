@@ -1,141 +1,182 @@
-Return-Path: <linux-kernel+bounces-820429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F88B7DC93
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:34:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BCFB7DDBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55DA0189B793
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C003AC0E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F8D34AAE3;
-	Wed, 17 Sep 2025 10:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C64634A339;
+	Wed, 17 Sep 2025 10:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJ5DJzue"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovJNpLtF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C96285073
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD15285406;
+	Wed, 17 Sep 2025 10:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758103661; cv=none; b=rzEyo5Ez7ULQor0EHb/Sfx/Xj24xdI+kX36A3kI3i/G8aFvEDqOwxjm8gxzPLNq8/rreY0h/V+E3VeSfKrk2nvOO6G1khbybxurB7RgSx/TNd3772KdZIlIM/X2GmsPLYcXRf3KYoQVhChHaMSx+yIgmYiElccmO2MuHOUa5qBQ=
+	t=1758103693; cv=none; b=mu5xJfyXsfHsMOAmqB6ZFdFK1LiGRek50DMZmvX1NSKHgPPppAeZJx1OKvLV79Xi0jYjUoPlifOZqKXcFlhKR1az27jQd1JAPwy0K2vZSbDqYUg7Oy5WOyTFUBkFaZ2I0uLFp4vwrmMEPItzbEqpcZozq61ap1IhRXaKW+QVqCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758103661; c=relaxed/simple;
-	bh=79XxpwCu3fVL4v7JYlGHjCi3NPeqcX6mf5J7x6f3YwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MquOKAgBJs+y9fwA/3K9DT4yqgjjzQAh4MaToMEAAX2o6L7mkb/rdjygVC6zCZ4U0ahbk3o+Alk1wlpgo/Z5FvfsjVYphIp/spNugGAHIbIOCxSzUsbxuT4Ysl7Okm1tpEpxGAmPNPVWu1cOylXXwJfuPK2V/PFX8Nuxz4YkQZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gJ5DJzue; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7761bca481dso3699291b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758103659; x=1758708459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PWKk+L+NgCa/CznAlFierH4EX24Xz9GhhvirFRfuiOk=;
-        b=gJ5DJzue+GpiW6zYJkTRyOIFd8VFq4TL1fJDtQVv+D8L1pTBk8J0WAbZW8PfHwuMsY
-         TMQ6ExinwYOzNjw13XKeM81GCNxSHGe1JTMz3ObPjJIg6H+qH43FjBCT7O3gdYF/HKUS
-         6qciQAWqKMKp9kEu0Gqi5N4Z6WFn91u0VlD9wBB+vRgtlzgGuc60cK1Ce97LLO0Vhdqy
-         vNJUhRe5XczyMEFj7JBNtA3ovTd1BIjGRhabZjY9O0i2h4yG7DS6V0mSSJSAwtodBrla
-         jhnoqgVc6BBduahNVctkgJkmri/5+lHO+ZWM9EUynjuZapdrfac2W0OIUYsEZ415v/HH
-         GtJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758103659; x=1758708459;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PWKk+L+NgCa/CznAlFierH4EX24Xz9GhhvirFRfuiOk=;
-        b=rlJZfwiia1r4jgPc+GS4IZX86EagMvX/ASzoSOpi2VFejYSm99u/1r6wlmNsiO4moD
-         GYus0SbmRkg8eOOsrHhi1jjPF58JX+07tPvlcPAOKmiEG8wl1Y0fpz0VhcKEr086fgUA
-         0b1sthtIWV3a1EHteSVEwB1Ycl+G7+rdiHCEXpfuJ9Nn0La7yjb8vDwTqK2YH+M3QPJK
-         4FFiFgI9z9rlpBBDEtaGtjV7lANd9Ou0JV0VQiCEzwD1ojOFFM/pS31nZMkq+aIxyD0O
-         EGmMaj6Aun/D4zyNgnbZku6+oeBdPUc9nXWcddeM1l8cteouki2H4IxP4E6bmZN3ZwX1
-         xT0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWTQ/Tp+643aP9+CHZthn1JX9g+G+thsr7SBIIac57eB6bRJyRq8ZJhaTSMhRhb27Hr2MXfzHUrDX65OS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9vwWrSwza8hM2yOfmmFUXomdx7m1USab+4mLw2pOo1VQBkFXg
-	u1QRy3BK0DtxG1gpHPajoqukrpuhoq3bofV981Ldmw9b+4Y/zTfbDXPm
-X-Gm-Gg: ASbGncuQmHf6NE6oLXZhiFgbAdrqsOXNsTxE8xYLtq6QdMvNNS3eO04YnrSWZAOB5Qj
-	EVQGPiJL8QR6h8s7laYk57/nyVqKAeMJ1yoPKAvvB7umipYBCHgQTlNyIYYBVEwER7N9n7Bwe1+
-	p5VjurTURwku0gEf6teCAvLF5fI4SxafdWf3O6DR+63j3Icf0yyUqIISFjxRy8uOH9sXMTsibmJ
-	NCiWrNxh8JwB/mFIeCNos2bnzeFjdmCuwfkWWWCW1XP41OH1+S8u9ALWpMygSHafTrsliRO0ma8
-	EaiIzWOBChbsJtXzmGpo3TsjLhaH+a9Q3OXTIdR/JDVoDmXTdVMP/1PLtTgZFEO+tGp3GbyE9Or
-	lgMDjjs/h8xqEq7JYilWFHa8cXEt7Bv4KJd1YqXSok8VRpA==
-X-Google-Smtp-Source: AGHT+IF9K3dVlb8ccRBiSP5pGnBRvctukZ7RbjT4DoZUseVEPPY5yGUGZzfk2a28zPdCsJkcLZP4uQ==
-X-Received: by 2002:a05:6a20:431c:b0:250:9175:96e8 with SMTP id adf61e73a8af0-27ab36d0dc4mr2205624637.45.1758103659082;
-        Wed, 17 Sep 2025 03:07:39 -0700 (PDT)
-Received: from localhost.localdomain ([115.42.62.9])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a398d26asm16652750a12.45.2025.09.17.03.07.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 03:07:38 -0700 (PDT)
-From: Gui-Dong Han <hanguidong02@gmail.com>
-To: zyjzyj2000@gmail.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Gui-Dong Han <hanguidong02@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] RDMA/rxe: Fix race in do_task() when draining
-Date: Wed, 17 Sep 2025 10:06:57 +0000
-Message-Id: <20250917100657.1535424-1-hanguidong02@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1758103693; c=relaxed/simple;
+	bh=2UJitnxHH4ITOpk1XyAJb3VMT4TKF/dbAik6uHRq8es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsnvN75Juu8aium7KsYCB1oHZcRJHwiFNal6RKwlvh7xYEv9SO4WPZl4LhqFIhwzckQCSviSubIX00rl4wf7dOxSwbGDnb3KjUNETErGSP08Hw5hvrSbVe7zHJUoWABZ+YVYamM5EuXVUjpjaSnLR1REw+ufCWxnCEbZ0V9vkhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovJNpLtF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7A77C4CEF0;
+	Wed, 17 Sep 2025 10:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758103692;
+	bh=2UJitnxHH4ITOpk1XyAJb3VMT4TKF/dbAik6uHRq8es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ovJNpLtF4n+pjUrxXR2L10rGFPRCmARWfvMI5X0a6r826Alh0O8fuD+srvriol0UJ
+	 WRBUf4EkEfFTrELGrXFX5sOBpC70dg/IHX8C+xkPaLS2NeALteU18AXXHIR/F3Lh9T
+	 t9VYsSo8iUaZ92OEKuWj6qB07Nw5tzRs+ngR811nvwcnMdtIXpLQXPmdfPT0Stjzfr
+	 beS98qwrhSs5V0mE6ZEtlz7+wVPlHEoTpxbSAedZuh1E6wH0ivx6ow3ZRWlVA5L1qO
+	 yAscsMSqjmQzgIW4ZU0TI1xZkdnpFxwghGyYMcoXwP86PGucRtK+RmNFotqwywcMNt
+	 itYVQE6CpBFHQ==
+Date: Wed, 17 Sep 2025 15:38:04 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v19 4/6] dt-bindings: remoteproc: Add compatibility for
+ TEE support
+Message-ID: <aMqIhFdIqp5auH22@sumit-X1>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+ <20250625094028.758016-5-arnaud.pouliquen@foss.st.com>
+ <aMkqifHSdlCs4VjA@sumit-X1>
+ <62bdb238-7440-451b-84ef-79f846b10ba0@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <62bdb238-7440-451b-84ef-79f846b10ba0@foss.st.com>
 
-When do_task() exhausts its RXE_MAX_ITERATIONS budget, it unconditionally
-sets the task state to TASK_STATE_IDLE to reschedule. This overwrites
-the TASK_STATE_DRAINING state that may have been concurrently set by
-rxe_cleanup_task() or rxe_disable_task().
+On Tue, Sep 16, 2025 at 03:26:47PM +0200, Arnaud POULIQUEN wrote:
+> Hello Sumit,
+> 
+> On 9/16/25 11:14, Sumit Garg wrote:
+> > Hi Arnaud,
+> > 
+> > First of all apologies for such a late review comment as previously I
+> > wasn't CCed or involved in the review of this patch-set. In case any of
+> > my following comments have been discussed in the past then feel free to
+> > point me at relevant discussions.
+> 
+> No worries, there are too many versions of this series to follow all the
+> past discussions. I sometimes have difficulty remembering all the
+> discussions myself :)
+> 
+> > 
+> > On Wed, Jun 25, 2025 at 11:40:26AM +0200, Arnaud Pouliquen wrote:
+> > > The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+> > > where the Cortex-M4 firmware is loaded by the Trusted Execution Environment
+> > > (TEE).
+> > Having a DT based compatible for a TEE service to me just feels like it
+> > is redundant here. I can see you have also used a TEE bus based device
+> > too but that is not being properly used. I know subsystems like
+> > remoteproc, SCMI and others heavily rely on DT to hardcode properties of
+> > system firmware which are rather better to be discovered dynamically.
+> > 
+> > So I have an open question for you and the remoteproc subsystem
+> > maintainers being:
+> > 
+> > Is it feasible to rather leverage the benefits of a fully discoverable
+> > TEE bus rather than relying on platform bus/ DT to hardcode firmware
+> > properties?
+> 
+> The discoverable TEE bus does not works if the remoteproc is probed
+> before the OP-TEE bus, in such case  no possibility to know if the TEE
+> TA is not yet available or not available at all.
+> This point is mentioned in a comment in rproc_tee_register().
 
-This race condition breaks the cleanup and disable logic, which expects
-the task to stop processing new work. The cleanup code may proceed while
-do_task() reschedules itself, leading to a potential use-after-free.
+The reason here is that you are mixing platform and TEE bus for remoteproc
+driver. For probe, you rely on platform bus and then try to migrate to
+TEE bus via rproc_tee_register() is the problem here. Instead you should
+rather probe remoteproc device on TEE bus from the beginning.
 
-This bug was introduced during the migration from tasklets to workqueues,
-where the special handling for the draining case was lost.
+> 
+> Then, it is not only a firmware property in our case. Depending on the
+> compatible string, we manage the hardware differently. The same compatibles
+> are used in both OP-TEE and Linux. Based on the compatible, we can assign
+> memories, clocks, and resets to either the secure or non-secure context.
+> This approach is implemented on the STM32MP15 and STM32MP2x platforms.
 
-Fix this by restoring the original behavior. If the state is
-TASK_STATE_DRAINING when iterations are exhausted, continue the loop by
-setting cont to 1. This allows new iterations to finish the remaining
-work and reach the switch statement, which properly transitions the
-state to TASK_STATE_DRAINED and stops the task as intended.
+You should have rather used the DT property "secure-status" [1] to say
+the remoteproc device is being managed by OP-TEE instead of Linux. Then
+the Linux driver will solely rely on TEE bus to have OP-TEE mediated
+remoteproc device.
 
-Fixes: 9b4b7c1f9f54 ("RDMA/rxe: Add workqueue support for rxe tasks")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
----
- drivers/infiniband/sw/rxe/rxe_task.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+[1] https://github.com/devicetree-org/dt-schema/blob/4b28bc79fdc552f3e0b870ef1362bb711925f4f3/dtschema/schemas/dt-core.yaml#L52
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_task.c b/drivers/infiniband/sw/rxe/rxe_task.c
-index 6f8f353e9583..f522820b950c 100644
---- a/drivers/infiniband/sw/rxe/rxe_task.c
-+++ b/drivers/infiniband/sw/rxe/rxe_task.c
-@@ -132,8 +132,12 @@ static void do_task(struct rxe_task *task)
- 		 * yield the cpu and reschedule the task
- 		 */
- 		if (!ret) {
--			task->state = TASK_STATE_IDLE;
--			resched = 1;
-+			if (task->state != TASK_STATE_DRAINING) {
-+				task->state = TASK_STATE_IDLE;
-+				resched = 1;
-+			} else {
-+				cont = 1;
-+			}
- 			goto exit;
- 		}
- 
--- 
-2.25.1
+> 
+> More details are available in the ST WIKI:
+> https://wiki.st.com/stm32mpu/wiki/OP-TEE_remoteproc_framework_overview#Device_tree_configuration
+> https://wiki.st.com/stm32mpu/wiki/Linux_remoteproc_framework_overview#Device_tree_configuration
+> 
+> > 
+> > > For instance, this compatible is used in both the Linux and OP-TEE device
+> > > trees:
+> > > - In OP-TEE, a node is defined in the device tree with the
+> > >    "st,stm32mp1-m4-tee" compatible to support signed remoteproc firmware.
+> > >    Based on DT properties, the OP-TEE remoteproc framework is initiated to
+> > >    expose a trusted application service to authenticate and load the remote
+> > >    processor firmware provided by the Linux remoteproc framework, as well
+> > >    as to start and stop the remote processor.
+> > > - In Linux, when the compatibility is set, the Cortex-M resets should not
+> > >    be declared in the device tree. In such a configuration, the reset is
+> > >    managed by the OP-TEE remoteproc driver and is no longer accessible from
+> > >    the Linux kernel.
+> > > 
+> > > Associated with this new compatible, add the "st,proc-id" property to
+> > > identify the remote processor. This ID is used to define a unique ID,
+> > > common between Linux, U-Boot, and OP-TEE, to identify a coprocessor.
+> > This "st,proc-id" is just one such property which can rather be directly
+> > probed from the TEE/OP-TEE service rather than hardcoding it in DT here.
+> Do you mean a topology discovery mechanism through the TEE remoteproc
+> service?
+> 
+> For the STM32MP15, it could work since we have only one remote processor.
+> However, this is not the case for the STM32MP25, which embeds both a
+> Cortex-M33 and a Cortex-M0.
 
+I rather mean here whichever properties you can currently dicovering via
+DT can rather be discovered by invoke command taking property name as input
+and value as output.
+
+> 
+> Could you please elaborate on how you see the support of multiple remote
+> processors without using an hardcoded identifier?
+
+By multiple remote processors, do you mean there can be multiple
+combinations of which remote processor gets managed via OP-TEE or not?
+
+> 
+> > I think the same will apply to other properties as well.
+> Could you details the other properties you have in mind?
+
+I think the memory regions including the resource table can also be
+probed directly from the TEE service too. Is there any other DT property
+you rely upon when remoteproc is managed via OP-TEE?
+
+-Sumit
 
