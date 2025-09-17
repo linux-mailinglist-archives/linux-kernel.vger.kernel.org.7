@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-820074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C087BB7E0D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D27B7E0E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE0C4843F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CE6484C32
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568E228B4FA;
-	Wed, 17 Sep 2025 06:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A4928B4FA;
+	Wed, 17 Sep 2025 06:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lw+hKY8x"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMisa/Rv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4461E3DF8;
-	Wed, 17 Sep 2025 06:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6BF1E3DF8
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758091249; cv=none; b=b3BzRXFKncFf3Js12eUVxE+I4NeThJYApD07RyfiD7MsmzSuUtXOZhle+Tq6xPvVQb6V1DB+mN4pxdhkHV5uxKqQARR7TcmInlWn2PRqCMb8aLfw0kvBIsRF/ovY5MOwNO1TdoF+RWzKudyTtFFVyTY9KxrIiduqo5Hw+AvoLhE=
+	t=1758091302; cv=none; b=OnHrKoAcg8QzeSBKFQ5L/GmHkoaVHrJ8JbmDGUrhWWpxtzu+Wpv9uAhV+q+JTKyGDUaAQXKkVPv7bFGrY+NiGzvV68CEL9AJWVNeMwwABlI/aPH2eAlDqbWo3sEbJbPmmY6dCOWvS1cXYmHJ2+3BzUpqHmoxV0KARijyO4VZtKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758091249; c=relaxed/simple;
-	bh=d3CvzUjYSYYXdVvGb5ln+NyyqN5yoOhS5Tx0XiWdVPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlW3S4r4HIxGQPuctWh1wIgkm+IYbxV8oa+8Uwv63aCDhC5J/RVfGMfyodyXxoT/TcydwSgGg29Owzd9nAYrqZv3hyeG401/sOnDhaLGYMRxRGro2bQsrqXvzM7eBnzJ6cWZQurqXbZ6XrngqMetvB1dtrcWzh+ex2ipj4ixHTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lw+hKY8x; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 17 Sep 2025 14:40:27 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758091235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H5UUIFMPHoohc3Fdvc8WcHTl6i/bRaOEpCuA/zGUknE=;
-	b=Lw+hKY8x9PeYcU+BuVv/eoxt1nvmC4NdQsoL9qf4eabtzRuqnHdbnFlTc7zbqM8Z5JScnp
-	+GqPfyW8wvz70sJpNoYwFpVFe1O0XVqApx+mKfnQReQrmpTX7udCuW6JEEjabvWPhlh1MG
-	N2xXN+8nqrJYfshZOgCtU7KFQsWbago=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Troy Mitchell <troy.mitchell@linux.dev>
-To: Rob Herring <robh@kernel.org>, Troy Mitchell <troy.mitchell@linux.dev>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: Add CTF2301 devicetree bindings
-Message-ID: <aMpX2wTqXCSvEegs@LT-Guozexi>
-References: <20250916-ctl2301-v1-0-97e7c84f2c47@linux.dev>
- <20250916-ctl2301-v1-2-97e7c84f2c47@linux.dev>
- <20250916135216.GA3674673-robh@kernel.org>
+	s=arc-20240116; t=1758091302; c=relaxed/simple;
+	bh=T0iVRqYjMl2xvDtrQJ16kWmCb8PF43r3K+G5IOGlLhc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=n5zE+wtclGfBfSb0lKw8T95mwapK3nX+d3AZ7tLkakUpbOYuw63ZfKYVqAAKg9CB/EcaDOepd0YYtkecNm26xyle/WZZUGr4nIo3ubQTNeduFcRfIqsQdOwZxHFrbT9mRnITkDK1nIlceJkWfV+/sFzCCcl7Bxyq3GnB3A4tzMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMisa/Rv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B8DC4CEF0;
+	Wed, 17 Sep 2025 06:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758091302;
+	bh=T0iVRqYjMl2xvDtrQJ16kWmCb8PF43r3K+G5IOGlLhc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=hMisa/RvND4bb/dave5KS+GBDAZAZVR5esdP59RdY9gVhIyPdxgVwSOuSpbeVafXi
+	 TlFp7W/OFxNNhhcUbThltBYfxCG/mFZdeguy9I6q5MDsBrVdW9RgYbezGwfpBdQmyC
+	 LiOC2L9Af4aRVNEllF9IoyH5VXsBdORWLzcoNhJXo7VFe2DY6EyFTzT0Msva73pdaG
+	 jX3LLIfRmsoG5HUxHPtxtKMk/PrCsL4ujuQTi9Fre7UPEWNkIQniQvTFS1PJMVIPAS
+	 /CvyDs85oKnkj1DzXn2pkiZjLWwR0XL5RZFda12WPzl/IKpHHdknu4QEzkVygw2EpM
+	 QtHXV15jRTAJQ==
+Message-ID: <760669e9-22ec-490f-adc2-2981d2a56709@kernel.org>
+Date: Wed, 17 Sep 2025 14:41:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250916135216.GA3674673-robh@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, bintian.wang@honor.com, feng.han@honor.com
+Subject: Re: [f2fs-dev] [PATCH v3 1/2] f2fs: fix zero-sized extent for
+ precache extents
+To: wangzijie <wangzijie1@honor.com>, jaegeuk@kernel.org
+References: <20250917023622.516052-1-wangzijie1@honor.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250917023622.516052-1-wangzijie1@honor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Rob, Thanks for your review.
-
-On Tue, Sep 16, 2025 at 08:52:16AM -0500, Rob Herring wrote:
-> On Tue, Sep 16, 2025 at 12:46:45PM +0800, Troy Mitchell wrote:
-> > Add dt-binding for the hwmon driver of Sensylink's CTF2301 chip.
-> > 
-> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
-> > ---
-> >  .../bindings/hwmon/sensylink,ctf2301.yaml          | 49 ++++++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> > +description: |
-> > +  The CTF2301B is an I2C/SMBus compatible device featuring:
-> > +    - One local temperature sensor with ±0.5°C accuracy and 0.0625°C resolution.
-> > +    - One remote temperature sensor for external diode-connected transistors, offering ±1°C accuracy and 0.125°C resolution (temperature range: -40°C to +125°C).
+On 9/17/25 10:36, wangzijie wrote:
+> Script to reproduce:
+> f2fs_io write 1 0 1881 rand dsync testfile
+> f2fs_io fallocate 0 7708672 4096 testfile
+> f2fs_io write 1 1881 1 rand buffered testfile
+> fsync testfile
+> umount
+> mount
+> f2fs_io precache_extents testfile
 > 
-> Wrap at 80 chars.
-I'll fix it in the next version.
+> When the data layout is something like this:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    NEW_ADDR
+> [1]      A+1                [1]    0x0
+> ...
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
 > 
-> > +    - An integrated PWM fan controller.
-> > +    - A 1-channel fan speed monitor (TACH input) for RPM measurement.
-> > +
-> > +  Datasheets:
-> > +    https://www.sensylink.com/upload/1/net.sensylink.portal/1689557281035.pdf
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const:
-> > +      - sensylink,ctf2301
-I will fix this warning in the next version (your robot reported)
+> During precache_extents, we map the last block(valid blkaddr) in dnode1:
+> map->m_flags |= F2FS_MAP_MAPPED;
+> map->m_pblk = blkaddr(valid blkaddr);
+> map->m_len = 1;
+> then we goto next_dnode, meet the first block in dnode2(hole), goto sync_out:
+> map->m_flags & F2FS_MAP_MAPPED == true, and we make zero-sized extent:
+> 
+> map->m_len = 1
+> ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
+> ei.fofs = start_pgofs = 1882
+> ei.len = map->m_len - ofs = 1 - 1 = 0
+> 
+> 
+> Rebased on patch[1], this patch can cover these cases to avoid zero-sized extent:
+> A,B,C is valid blkaddr
+> case1:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    NEW_ADDR
+> [1]      A+1                [1]    0x0
+> ...                         ....
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
+> 
+> case2:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    C (C!=B+1)
+> [1]      A+1                [1]    C+1
+> ...                         ....
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
+> 
+> case3:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    C (C!=B+2)
+> [1]      A+1                [1]    C+1
+> ...                         ....
+> [1015]   A+1015
+> [1016]   B (B!=A+1016)
+> [1017]   B+1                [1017] 0x0
+> 
+> [1] https://lore.kernel.org/linux-f2fs-devel/20250912081250.44383-1-chao@kernel.org/
+> 
+> Fixes: c4020b2da4c9 ("f2fs: support F2FS_IOC_PRECACHE_EXTENTS")
+> Signed-off-by: wangzijie <wangzijie1@honor.com>
 
-                - Troy
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        ctf2301@4c {
-> > +            compatible = "sensylink,ctf2301";
-> > +            reg = <0x4c>;
-> > +        };
-> > +    };
-> > 
-> > -- 
-> > 2.51.0
-> > 
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
 
