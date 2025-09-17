@@ -1,121 +1,128 @@
-Return-Path: <linux-kernel+bounces-820114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFA8B7F2F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A60EB7F62E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CA824885E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:14:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F87525478
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05122F25E6;
-	Wed, 17 Sep 2025 07:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED31B2E7F0E;
+	Wed, 17 Sep 2025 07:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IkhBcOsO"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eB3yTlpr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606072DEA8F
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B7531BCBA;
+	Wed, 17 Sep 2025 07:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758093237; cv=none; b=S3s6/98iQiqjZ+r0W+zZJKSYLV9weUAWPpo/LDwSp5Xr0Q84wZNuXfLbIP+JOdcq+3klSQPNuce9v4E2AY/d55lLQgDu2hc1oV7wXg3HSs/+ZHtwNcfG8+4nItqBIdCQxZz6+T/VmtuaVlpguT7SIbRvhUhaAGSJ9de+PmaY96M=
+	t=1758093294; cv=none; b=Ly6TdJzWEJhM9ZHnpGzR814uzrq5uwlytJJoW58NWwEjb15EdNZ8KHMTj7iLaQ+NSxEzHHo4DfN95hizNA33TbTQDrclQF1nPxU4ztmkLw8ZDSQUo2Yj78SOJKG5UdWYTVqO5/7t+mKlw/a5K6bdrIk8RZsug5Tp/DiSR4gAxlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758093237; c=relaxed/simple;
-	bh=Pw6SwIvC5HR9FxU8AOn+X7vEoKNviSLnMBUiSV7KSE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=RhBe6u852wPCnJaHa3NIq6vN8gN1AqLLOpkxSPFp0jNPGcC7I5vE1Uh12X8eUNVNJFDgS4mAA7QvWdEZf9WlBHOy8/seDBFpS2dWtoG4Ao0+IFD8RPCjYQ6XxyLTIQVKOPO+wQRA7TZWqTYkKtOGF7XIqQb/k5L3BBLAGdXxrW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IkhBcOsO; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250917071353epoutp0413d53756bf012e7072a76a54f0c8e031~mAHslXJ5p0063000630epoutp04F
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:13:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250917071353epoutp0413d53756bf012e7072a76a54f0c8e031~mAHslXJ5p0063000630epoutp04F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758093233;
-	bh=fRXYlmwUu6J4W4Dm8/+PyXnDw1pO78eFLKDecT7iP3Q=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=IkhBcOsO1SthYRbXoWHJz+2L9H/I4JO0BLwsHti1vnokQ98mdeefJSKq5BNsaqMRP
-	 1Z5ros+Sq4hwj/GzIREwGGDFQEJPo5R/UzLlout+Ag5yhshDFoBy7HJquWG9T9jjmC
-	 xL/HCImsuYxb2uxIqo6AKs+BMa5tXZ+p07oZZbTQ=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250917071352epcas5p1c5e369c59b060161eb5975ca16bb60cd~mAHrjoBOM3047430474epcas5p1R;
-	Wed, 17 Sep 2025 07:13:52 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cRVPC1nfxz6B9mF; Wed, 17 Sep
-	2025 07:13:51 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250917071350epcas5p339e015f976f63e2df03544679ad6e6cb~mAHqCzFfd1682016820epcas5p3x;
-	Wed, 17 Sep 2025 07:13:50 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250917071347epsmtip206f2559e389a17ba327d8aef0e18009d~mAHnOrkgR3178131781epsmtip2e;
-	Wed, 17 Sep 2025 07:13:47 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, ksk4725@coasia.com, pjsin865@coasia.com,
-	gwk1013@coasia.com, bread@coasia.com, jspark@coasia.com,
-	limjh0823@coasia.com, lightwise@coasia.com, hgkim05@coasia.com,
-	mingyoungbo@coasia.com, smn1196@coasia.com, shradha.t@samsung.com,
-	swathi.ks@samsung.com, kenkim@coasia.com, Ravi Patel
-	<ravi.patel@samsung.com>
-Subject: [PATCH] dt-bindings: serial: samsung: Add compatible for ARTPEC-9
- SoC
-Date: Wed, 17 Sep 2025 12:43:42 +0530
-Message-ID: <20250917071342.5637-1-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1758093294; c=relaxed/simple;
+	bh=+SEj6xYX/EWfxD7ME+D5evkEJEd+ldO13clpGMiIubE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OynvgVhSY+s5Ai4+cr6Dh7Q4V9KNxfILzEzef4NfUgcPtQ1MPzBz2udZjrcTxRgvqdca561HmMNv9kWIjT0QfwGIemNGOtp0X5i7at9V51BsrzDW+rODpQyIRLWHrgr8/ZVO9f8OLi3Yla51Ka+zPYXumQSNF/XdxJEzJmEf03w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eB3yTlpr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAEAC4CEF0;
+	Wed, 17 Sep 2025 07:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758093293;
+	bh=+SEj6xYX/EWfxD7ME+D5evkEJEd+ldO13clpGMiIubE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=eB3yTlprGYoL95eR8DwgCRLPTWIb0VclyCs3Z/rrBg2ahxJKL1In23VY5ydz+mfUF
+	 yTfE4vnd6kd95goSx08kaz+CNwg2FEE9xTxx9wfelzQDt95rNasUnaOgGr2KZdPTl3
+	 NSrKuu5nOiecUMyHyBOJeJ/3VbrsN0PvyQZwNlcB5LJZ9jSt112H8n/10TL94w1c9L
+	 2MyP655KenpSWSd6a8NaJAb+s4migGmh6gjkZwAiArwopL3+ud12NnDUr2jYwYBuyG
+	 AuBW1NiBCU4jjfW4R78/LN+LauMhduxR+L11JrT/Yp98ZgGB8Ym9z6N+CVanTNDu4a
+	 R5etlgOR1Xr6Q==
+From: Andreas Kemnade <akemnade@kernel.org>
+Subject: [PATCH v3 0/3] regulator: sy7636a: define and init all resources
+ needed
+Date: Wed, 17 Sep 2025 09:14:28 +0200
+Message-Id: <20250917-sy7636-rsrc-v3-0-331237d507a2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250917071350epcas5p339e015f976f63e2df03544679ad6e6cb
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917071350epcas5p339e015f976f63e2df03544679ad6e6cb
-References: <CGME20250917071350epcas5p339e015f976f63e2df03544679ad6e6cb@epcas5p3.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANRfymgC/22MQQ6CMBAAv0L2bE1ZoFBP/sN4qGULjQbI1jQSw
+ t8tnCTxOJPMLBCIPQW4ZAswRR/8OCQoThnY3gwdCd8mBpRYSS2VCHOtCiU4sBUWpTHqYQzaElI
+ xMTn/2W+3e+Leh/fI8z6P+Wb/f2IupCBsGmV0sqa+PokHep1H7mAbRfyN9THGFFvXaleWrsVKH
+ +J1Xb9XMLYn5AAAAA==
+X-Change-ID: 20250906-sy7636-rsrc-c20aa6baa2c4
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alistair Francis <alistair@alistair23.me>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.li@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Andreas Kemnade <akemnade@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.15-dev-50721
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1931; i=akemnade@kernel.org;
+ h=from:subject:message-id; bh=+SEj6xYX/EWfxD7ME+D5evkEJEd+ldO13clpGMiIubE=;
+ b=owGbwMvMwCUm/rzkS6lq2x3G02pJDBmn4l9a31Y8Odk5cG7r/iix43+v9OTwF/mc742cvCte+
+ 7DiueBHHaUsDGJcDLJiiiy/rBXcPqk8yw2eGmEPM4eVCWQIAxenAEyETZThv+vUL6V1VouVt3NJ
+ bIyQYLGpsvQ7JZgqoyG9yViq8MG+vYwMs0rn3IuWj1rPHXv8OkvghaYTjezzPZLm3bz0zEEus8u
+ TAQA=
+X-Developer-Key: i=akemnade@kernel.org; a=openpgp;
+ fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
 
-Add Axis ARTPEC-9 uart compatible to the bindings documentation.
-It is similar to the older samsung,exynos8895-uart design.
+The SY7636A has some pins which can be hardwired or used to have more
+more advanced power management available. As several devices containing
+this regulator have these pins not hardwired, but instead connected to some
+GPIO, enhance the driver to have them defined and initialized.
+Also add the ability to power off the chip completely by defining some
+input power supply.
 
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Actually implementing better power management is planned to be
+implemented as a second step. The regulators in the SY7636A should only
+be on for a short time during display refresh, but currently they are
+unconditionally forcefully enabled by the hwmon part of this chip.
+
+Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
 ---
- Documentation/devicetree/bindings/serial/samsung_uart.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v3:
+- shorten descriptions in binding
+- Link to v2: https://lore.kernel.org/r/20250909-sy7636-rsrc-v2-0-cfd9f44fd259@kernel.org
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index 1a1f991d5364..3895049c954c 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -48,6 +48,7 @@ properties:
-           - const: samsung,exynos850-uart
-       - items:
-           - enum:
-+              - axis,artpec9-uart
-               - samsung,exynos7870-uart
-           - const: samsung,exynos8895-uart
+Changes in v2:
+- en[-gpios] -> enable[-gpios] in yaml/dts/driver
+- fix en vs vcom_en in error handling
+- comment delay
+- drop applied commit (rebased to regulator/for-linus)
+- Link to v1: https://lore.kernel.org/r/20250906-sy7636-rsrc-v1-0-e2886a9763a7@kernel.org
 
-@@ -168,6 +169,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - axis,artpec9-uart
-               - google,gs101-uart
-               - samsung,exynos8895-uart
-     then:
---
-2.17.1
+---
+Andreas Kemnade (3):
+      dt-bindings: mfd: sy7636a: Add missing gpio pins and supply
+      regulator: sy7636a: add gpios and input regulator
+      ARM: dts: imx: e70k02: add sy7636
+
+ .../devicetree/bindings/mfd/silergy,sy7636a.yaml   | 11 +++++++++
+ arch/arm/boot/dts/nxp/imx/e70k02.dtsi              | 25 +++++++++++++++++++-
+ .../arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts | 24 +++++++++++++++++++
+ .../arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts | 24 +++++++++++++++++++
+ drivers/regulator/sy7636a-regulator.c              | 27 ++++++++++++++++++++++
+ 5 files changed, 110 insertions(+), 1 deletion(-)
+---
+base-commit: c05d0b32eebadc8be6e53196e99c64cf2bed1d99
+change-id: 20250906-sy7636-rsrc-c20aa6baa2c4
+
+Best regards,
+--  
+Andreas Kemnade <akemnade@kernel.org>
 
 
