@@ -1,164 +1,114 @@
-Return-Path: <linux-kernel+bounces-821001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E06B7FFEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025A0B80047
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EFD43BA4FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C481B2041A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8722D3EC7;
-	Wed, 17 Sep 2025 14:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F692D8375;
+	Wed, 17 Sep 2025 14:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Um3WIhCl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="iPeTG/S7"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F77D28B51E;
-	Wed, 17 Sep 2025 14:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB942BE7CC;
+	Wed, 17 Sep 2025 14:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119138; cv=none; b=Mo3t1gu0FHZxXks7X3n1nhGf+jtA7rpzSl8VCOkT4x805epAkPcLAkBobJq9kY7mhaLh/RGtdYt6GDYVvXYoO1rkaYb5/cdD2uF+j2ULp6dcoQ43pgLoJHQf2Q/wSRRjuwZP85P3L3yPlUG/H+i0tW05An2qh3qH59ZPl6X1+5Y=
+	t=1758119183; cv=none; b=dT11vjdY8vI8FQeFq2j7z00Enfqa+KfG0msV96IrjuYU/eJzxxjjzKYmkx1kdVWRMs1N2CExWkzdh1tV/H/epEbJQzqZa0uxkMYl7W4WTdMvrKL3b7WRzEq59ILgHuyFdJ1dQvngngK0AgQkazFYGD0b0Xrf5O6z43mMOKuj+Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119138; c=relaxed/simple;
-	bh=gdQ4bVQx9UsfgOGWthahXwQYrBNrMjs0pw9DZQGxUVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DnnpFdu7O1cv4J+NFJEC4qJ3es2aGzy56MpJdKJhcgN33wmC3XAkCcu5C7CH/vnG+i4f1Ub1aSQ39uW3PpgwczbmVgTCGSE6gFX67zCRE4PlSskls6Pg9vQIsVw6A+ZbR41hzbrct/vqxOw1AzApfOIBypYTROuFAun33Brayvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Um3WIhCl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758119134;
-	bh=gdQ4bVQx9UsfgOGWthahXwQYrBNrMjs0pw9DZQGxUVU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Um3WIhClnacJr72kepL51Jb68Z6nP193VKArJdLLLDO+57zbEiMA24rF69RpT4rG1
-	 /4/nyURj22/z2h8xSlC08eecHlawBsUoNFMHSJ0w1yU9stIMhvchJxiy+sIUGzX2fI
-	 Hby58O3agOef0ZXi3l1MZ1lJ3S5KrUrVCIUyEC5x/ctJFEzID1ZLuytvPtDBX6IYQ/
-	 Ib1G78e26a4x3RWEjHV8JFzEqCnvUjbrWC4NOuC93gWUZDMGdg3+0WY7YjAwwjl6Ni
-	 KT0GC/L6ePfl8fshgUywT3SE819dhSBguV34jB1VYLFlF5X0ZASXHcmtTkdVWWd96l
-	 oyXFp4qv1/bIA==
-Received: from [10.40.0.100] (185-251-200-65.lampert.tv [185.251.200.65])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7AC0F17E0237;
-	Wed, 17 Sep 2025 16:25:33 +0200 (CEST)
-Message-ID: <f9f8fb39-51d5-415c-b2dd-3fd837252edb@collabora.com>
-Date: Wed, 17 Sep 2025 16:25:32 +0200
+	s=arc-20240116; t=1758119183; c=relaxed/simple;
+	bh=TR78DtXxPqTbF32P0w4pzB/KzzVQFhn8kipZmGGzaKs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FmQL7xN09dJii1tmugaoRi8nKN2ymiQdXA2pd7X6V7ND0ZDNRNrRuCUQMujyWs2CnoRP++0U1LXm3PSH6EbtrKhrTfgj7jh1x4nkn74auclcGaZ1+ZVf06tFyPsWuWjH7njo0cOiWiZ5wL+AFYRB2XnPbT10WhihS8p69YMOUgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=iPeTG/S7; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=XBxKHfRCGcE5Q/eepg5aPjxUu8diqcOmzAvEs6SS1gU=; b=iPeTG/S7BlbqBcsqvb6s5BzW8C
+	+K5i7IF5xnqnky7+WluHCxzTVYLW/nX5SZ4xz1RRqfPrwlRCIPUb2l7VwS8EZtUMDFXIBh3I1HiUV
+	v6hOiPZ6kgUyWn/QyT7HAVCmge5ATcGHua9nehvN3uHnUDWteZpHXyEn6D5RGt1RDNxDKovDDrJIc
+	gJg9Nsh5XBjMoTJjI3znoDVX2LidNsR2MS/d43s+VfKZ+LKV3CvGmQqADqCP5zowN84MEkKpPt0q3
+	zY+XFX1H7akSvKHeWA5keKDUxePGwWuDjYuqh8Al6wqSXQWXEdYAh1OLPVtTVu1XKLDVFvdfAi6sP
+	fktAFmTw==;
+Received: from i53875a9d.versanet.de ([83.135.90.157] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uyt6e-0000pg-Tg; Wed, 17 Sep 2025 16:26:00 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Ed Wildgoose <lists@wildgooses.com>, Dragan Simic <dsimic@manjaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 2/2] rockchip: dts: Enable UART DMA by adding default dma-names
+ property
+Date: Wed, 17 Sep 2025 16:25:59 +0200
+Message-ID: <4007782.fW5hKsROvD@diego>
+In-Reply-To: <7c8576e3d9fc73ba45830833f5281706@manjaro.org>
+References:
+ <20250917114932.25994-1-lists@wildgooses.com>
+ <20250917114932.25994-3-lists@wildgooses.com>
+ <7c8576e3d9fc73ba45830833f5281706@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 07/13] media: rockchip: add driver for mipi csi-2
- receiver
-To: Philipp Zabel <p.zabel@pengutronix.de>,
- Mehdi Djait <mehdi.djait@linux.intel.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Markus Elfring <Markus.Elfring@web.de>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Collabora Kernel Team <kernel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20240220-rk3568-vicap-v10-0-62d8a7b209b4@collabora.com>
- <20240220-rk3568-vicap-v10-7-62d8a7b209b4@collabora.com>
- <c5d8d527ca6194b606b5627e51abbb82ab6dd76c.camel@pengutronix.de>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <c5d8d527ca6194b606b5627e51abbb82ab6dd76c.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Philipp,
+Am Mittwoch, 17. September 2025, 14:22:52 Mitteleurop=C3=A4ische Sommerzeit=
+ schrieb Dragan Simic:
+> Hello Ed,
+>=20
+> On 2025-09-17 13:49, Ed Wildgoose wrote:
+> > Kernel appears to need a dma-names set for DMA to actually enable. Set=
+=20
+> > a
+> > default dma-names property for all UARTs defined in the base=20
+> > rk356x-base
+> > dtsi
+> >=20
+> > This is tested on a Radxa Zero 3W (which has 5x UARTs) and removes the
+> > warnings and enables DMA on this platform
+>=20
+> Thanks for the patches.
+>=20
+> We should (still) stay away from defining the "dma-names" property
+> at the SoC level, because doing that causes serious issues in certain
+> cases.  Thus, I'd suggest that this patch is dropped, and that the
+> "dma-names" property is defined instead at the board level, where
+> it's needed and tested to work as expected.
+>=20
+> Please see commit bf6f26deb0e8 (arm64: dts: rockchip: Add dma-names
+> to uart1 on quartz64-b, 2024-06-28) for further explanation.
+>=20
+> If/when the underlying issues are debugged and resolved, we can get
+> back to defining the "dma-names" property at the SoC level.
 
-On 8/25/25 12:37, Philipp Zabel wrote:
-> On Di, 2025-08-19 at 01:25 +0200, Michael Riesch via B4 Relay wrote:
->> From: Michael Riesch <michael.riesch@collabora.com>
->>
->> The Rockchip RK3568 MIPI CSI-2 Receiver is a CSI-2 bridge with one
->> input port and one output port. It receives the data with the help
->> of an external MIPI PHY (C-PHY or D-PHY) and passes it to the
->> Rockchip RK3568 Video Capture (VICAP) block.
->>
->> Add a V4L2 subdevice driver for this unit.
->>
->> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
->> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
->> ---
->>  MAINTAINERS                                    |   1 +
->>  drivers/media/platform/rockchip/Kconfig        |   1 +
->>  drivers/media/platform/rockchip/Makefile       |   1 +
->>  drivers/media/platform/rockchip/rkcsi/Kconfig  |  16 +
->>  drivers/media/platform/rockchip/rkcsi/Makefile |   3 +
->>  drivers/media/platform/rockchip/rkcsi/rkcsi.c  | 741 +++++++++++++++++++++++++
->>  6 files changed, 763 insertions(+)
->>
-> [...]
->> diff --git a/drivers/media/platform/rockchip/rkcsi/rkcsi.c b/drivers/media/platform/rockchip/rkcsi/rkcsi.c
->> new file mode 100644
->> index 000000000000..5658ffb60769
->> --- /dev/null
->> +++ b/drivers/media/platform/rockchip/rkcsi/rkcsi.c
->> @@ -0,0 +1,741 @@
-> [...]
->> +static int rkcsi_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct rkcsi_device *csi_dev;
->> +	int ret;
->> +
->> +	csi_dev = devm_kzalloc(dev, sizeof(*csi_dev), GFP_KERNEL);
->> +	if (!csi_dev)
->> +		return -ENOMEM;
->> +	csi_dev->dev = dev;
->> +	dev_set_drvdata(dev, csi_dev);
->> +
->> +	csi_dev->base_addr = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(csi_dev->base_addr))
->> +		return PTR_ERR(csi_dev->base_addr);
->> +
->> +	ret = devm_clk_bulk_get_all(dev, &csi_dev->clks);
->> +	if (ret != RKCSI_CLKS_MAX)
->> +		return dev_err_probe(dev, -ENODEV, "failed to get clocks\n");
->> +	csi_dev->clks_num = ret;
->> +
->> +	csi_dev->phy = devm_phy_get(dev, NULL);
->> +	if (IS_ERR(csi_dev->phy))
->> +		return dev_err_probe(dev, PTR_ERR(csi_dev->phy),
->> +				     "failed to get MIPI CSI PHY\n");
->> +
->> +	csi_dev->reset = devm_reset_control_array_get_exclusive(dev);
-> 
-> Why array? rockchip,rk3568-mipi-csi bindings specify a single reset.
+And apart from the whole stability thing, on a number of socs the pl330
+dma controller has more possible sources for dma operations than it
+has available channels ... and right now the driver does not support
+handling this.
 
-Hm. Copy-paste issue, I guess. Good catch, thanks for pointing it out.
+So you can (and if I remember correctly we did) end up with some uart
+requesting dma channels (and not needing them) and then sound not
+getting any.
 
-Best regards,
-Michael
 
-> 
-> regards
-> Philipp
+Heiko
+
 
 
