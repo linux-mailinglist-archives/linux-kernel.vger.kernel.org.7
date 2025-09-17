@@ -1,127 +1,137 @@
-Return-Path: <linux-kernel+bounces-820978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE47B7FEBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:22:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0524B7FF0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2417A624460
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3AD23B2F81
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46842E9ED5;
-	Wed, 17 Sep 2025 14:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4992D3EFC;
+	Wed, 17 Sep 2025 14:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZKpSI+WP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TbymsR0+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWqjDtYK"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2664296BDE;
-	Wed, 17 Sep 2025 14:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C46522F757
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758118212; cv=none; b=EkyqG5oF6dziFrcRncYRELKtaOkFwowLbeaWswwoK3RODzDQHPfVtKxVbEA28Atg5Pc6RqadNLjk/U/rKbYw33JYuImLYUxXcRB+8cEay1yy5tGEmeI3yIS866nA1TwXhRbsAJsnGiwDGjQZEVFW9qytCA9PZiKcA24QTA/lS4Y=
+	t=1758118363; cv=none; b=K47yt6b0c1xgBbelh4fTQwkZqQPehaI7NYQqiCemXqliWiAzGp6HSetcm0khbfPUmtKQeoUAfvfQP+QV1HQTUWg3O8VODTWTTbPT6ew2joUGUFygIRWxL/a8S3S7fpp2KKTL6jgXDSQrlrJdJA8AnQXluEL2d0vb1QFITEoXzHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758118212; c=relaxed/simple;
-	bh=OsPdev5btX3JT4/2C8Z8laOOG2vZwe7o17n1YeULHOM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g5+rvo3BWECpBk2uJyogW3RAj0x5L6H/tEs07XaXrzHxnwNY3iFd+gmVkPO7UX+fIN6tzLhr+lverINRVgIqfiOdK8iYzo7giqsEjhfHaVP7lpKAA1DQUk8eD1bxughaGhfF5QfRLJ1mbqmGu2rM5NF7HrSrmEV8Kz3H2XFRxEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZKpSI+WP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TbymsR0+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758118208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=75mN+9VZdw4CLEq0UoX/nuXZgFL03Q5pomSFYWw9c2o=;
-	b=ZKpSI+WPydnrumYQ7gxnajAs+lz48YaqiNN3+WhYNwWXlUic0xCBsG6f6GfE8taQbHcIgJ
-	h7Kh1tpSx++CpIjdk2mOz5C8qrezCvij4Bk8iMJhmpa16eSQBcomARzZeXmkJinMK6glwU
-	/UoCFWaheNWZeinES9gkwAgNZHQGwrhZjReOwblCiBhi00hbE5NYnMlrnONnM1S91JYtLJ
-	5CckReOcFW3rJ1+heNZD7lLCRl+2mHJx7WPMA6JZ7bGl0gGxnrhAb0Qs6EzKVgYT+Ot1sw
-	h1UyJfZDjAyn+2j60JTop8cvG2RTrlkVsVVpCCok6p2oOoIhbLO/tvfT4Jfbiw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758118208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=75mN+9VZdw4CLEq0UoX/nuXZgFL03Q5pomSFYWw9c2o=;
-	b=TbymsR0+lk/yBTMUwla0JPYo6VaReyftRSNu6ml7UoTThH0F5HVkZGBsfwFUiwKRK5kBjM
-	+sfN3Y9Q7FzbGVAw==
-To: David Hildenbrand <david@redhat.com>, Eugen Hristev
- <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
- pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
-In-Reply-To: <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com>
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
- <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
- <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
- <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com>
-Date: Wed, 17 Sep 2025 16:10:07 +0200
-Message-ID: <87v7lh891c.ffs@tglx>
+	s=arc-20240116; t=1758118363; c=relaxed/simple;
+	bh=vAYyAJ+N5WTUxHpW/2g+4xRdn898OyOEJIqpwPj9b/M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RQXw95PXm13OId1/mgOZe0ghfp0npuEvrKXevKESJUe70yePZU1COpyIG9bwB4LScUU4EVDhgrONDnmTwwi3yq92NKORlijzL0971t+2SnkI0PAoYDBD7CXGcQZw/SlGTG/I8SAxZQS4WmQuqdJQoYy6WCpOt6Z5ups+uCdLFlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWqjDtYK; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62598fcf41aso9458724a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758118360; x=1758723160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WvQvK494s3Wti/cOQyypkRIXGy03yU4MOudBoB5xafc=;
+        b=gWqjDtYKZECXpoL15ydkDavMXNNUrgcroJ92oeqmnJahgeou3sqTIMw/IR4Ol69Gws
+         Xe0nQgydGx1c4lN9VwCVJYWLjUSRUeQpV9UAqcAV6JF/QNSpwe+NC6OkyrOS6kYBE9Js
+         7qeqZCLVidgNsx+l65NWdctxNpFII+qNR8T2a75KIak9Os8bPLfy2WAkFl6hjDgSIKNh
+         AwQodrsyY67qeRvHv0hewe370P/v0/KN9KewGy/YVGKIlJmHolIPjpZwr+5ewL6H3+pl
+         wxun/kUooymxpzTUGwf/2VtPX1m+jrYI2mmo/ptkYWpfymsCKvfsriWpgsWNxyPdJ8kl
+         3QwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758118360; x=1758723160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WvQvK494s3Wti/cOQyypkRIXGy03yU4MOudBoB5xafc=;
+        b=qAMnV2sYPxzO5QhbQT/+NfHswr88v9JKPA2WNhWTN3tZL1LpqnPaihRWXibDufPvyJ
+         sQATdPLXqV+DWNrMPSzit/YWEYPsBqUz9kvKZpthwRdoJhhKPaVQ+8UgOn88Kh9ZnFaN
+         WVIE75lkS2EZbGRKbPQDaXhI9fzbfcng75lG0LIj2jjqtIFFmPYx+GFblflMTBVgjEvH
+         x1DVooJG3dO2GjmsenqdglTBwmomk63/N6HyGM83STAiyDDK8Zr0u6JynJkbDf/BgvH3
+         GSfXpiqenlohNPKKtp/tbjE8juMSuQgrkh9LCWP2NC7xqQIX9v21MDfWTRMuU2E7/AMM
+         Q7YA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfvTVfrxOxUWHE0tYyY9Zru/5fxNPU8UgVSUxc7tcHmn1WIVaMywOU0OQIq8d2FOYeb8TmAmnc5G1FeOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdTg/Mh+CKj/KPxzuBwxu+K/VyKCxbwkxb71ElyTFCyI4aJ3V8
+	wqfGIpCMJfMqv46DZsHv0Nr6dlBWqDHA80a3/USyBFqd45AtdUOIB/ujC3v/YoDu0DwMmAQaMb0
+	b/K57UTLLeJaN+9ikebzNpAY/bYvgGDI=
+X-Gm-Gg: ASbGncuTcHwDIIB7xMnOtaBHV+yqPVm31JJpyvMpoSOzwflMyQjfXfSKXsE056prIgJ
+	BnhcZvec3g8oFoXXdw+RqQvxVTrX8QTajNaY5kmc9kIU2MC31gCV0rvAzbiYXZcwFY229HXw3Ct
+	na8eZzYRZKw3eg+OnVG/xhvmwpunLye20ioHiMdoAhJ6D2nwpLEYofjypIvZGmlf4W+AO2r5KuG
+	0T3v4kFvJ5MAV78Uz6WZPPHCRivFcqOxKXfu0k=
+X-Google-Smtp-Source: AGHT+IE9tr65JazvM/P627oMjCH4lIxKxEXEjsbR4TaPhmEPiMyOp6W2xKFTSemRXPP2tElpIwdULTqBUJpCrnwZP+8=
+X-Received: by 2002:a05:6402:280a:b0:629:949c:a653 with SMTP id
+ 4fb4d7f45d1cf-62f8422dd27mr2681936a12.24.1758118359355; Wed, 17 Sep 2025
+ 07:12:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250917135907.2218073-1-max.kellermann@ionos.com>
+In-Reply-To: <20250917135907.2218073-1-max.kellermann@ionos.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 17 Sep 2025 16:12:26 +0200
+X-Gm-Features: AS18NWBVEzgWJelbyAZl8OravcOrQ3fPpZBJDvJxRNN-yXIAsbshHF34p8BX9gc
+Message-ID: <CAGudoHF0+JfqxB_fQxeo7Pbadjq7UA1JFH4QmfFS1hDHunNmtw@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
+	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17 2025 at 09:16, David Hildenbrand wrote:
-> On 17.09.25 07:43, Eugen Hristev wrote:
->> On 9/17/25 00:16, Thomas Gleixner wrote:
->>> I pointed you to a solution for that and just because David does not
->>> like it means that it's acceptable to fiddle in subsystems and expose
->>> their carefully localized variables.
->
-> It would have been great if we could have had that discussion in the 
-> previous thread.
+On Wed, Sep 17, 2025 at 3:59=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+> +/**
+> + * Queue an asynchronous iput() call in a worker thread.  Use this
+> + * instead of iput() in contexts where evicting the inode is unsafe.
+> + * For example, inode eviction may cause deadlocks in
+> + * inode_wait_for_writeback() (when called from within writeback) or
+> + * in netfs_wait_for_outstanding_io() (when called from within the
+> + * Ceph messenger).
+> + */
+> +void ceph_iput_async(struct inode *inode)
+> +{
+> +       if (unlikely(!inode))
+> +               return;
+> +
+> +       if (likely(atomic_add_unless(&inode->i_count, -1, 1)))
+> +               /* somebody else is holding another reference -
+> +                * nothing left to do for us
+> +                */
+> +               return;
+> +
 
-Sorry. I was busy with other stuff and did not pay attention to that
-discussion.
+LGTM, I see the queue thing ends up issuing iput() so it's all good, thanks=
+.
 
-> Some other subsystem wants to have access to this information. I agree 
-> that exposing these variables as r/w globally is not ideal.
+No idea about the other stuff it is doing concerning ceph flags so no comme=
+nt.
 
-It's a nono in this case. We had bugs (long ago) where people fiddled
-with this stuff (I assume accidentally for my mental sanity sake) and
-caused really nasty to debug issues. C is a horrible language to
-encapsulate stuff properly as we all know.
-
-> I raised the alternative of exposing areas or other information through 
-> simple helper functions that kmemdump can just use to compose whatever 
-> it needs to compose.
->
-> Do we really need that .section thingy?
-
-The section thing is simple and straight forward as it just puts the
-annotated stuff into the section along with size and id and I definitely
-find that more palatable, than sprinkling random functions all over the
-place to register stuff.
-
-Sure, you can achieve the same thing with an accessor function. In case
-of nr_irqs there is already one: irq_get_nr_irqs(), but for places which
-do not expose the information already for real functional reasons adding
-such helpers just for this coredump muck is really worse than having a
-clearly descriptive and obvious annotation which results in the section
-build.
-
-The charm of sections is that they don't neither extra code nor stubs or
-ifdeffery when a certain subsystem is disabled and therefore no
-information available.
-
-I'm not insisting on sections, but having a table of 2k instead of
-hundred functions, stubs and whatever is definitely a win to me.
-
-Thanks,
-
-        tglx
+> +       doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", i=
+node, ceph_vinop(inode));
+> +
+> +       /* simply queue a ceph_inode_work() (donating the remaining
+> +        * reference) without setting i_work_mask bit; other than
+> +        * putting the reference, there is nothing to do
+> +        */
+> +       WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq=
+,
+> +                                &ceph_inode(inode)->i_work));
+> +
+> +       /* note: queue_work() cannot fail; it i_work were already
+> +        * queued, then it would be holding another reference, but no
+> +        * such reference exists
+> +        */
+> +}
+> +
 
