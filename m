@@ -1,78 +1,140 @@
-Return-Path: <linux-kernel+bounces-821627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07248B81C6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:33:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B2EB81CAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D1E1709EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00C20620055
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CE62DEA6F;
-	Wed, 17 Sep 2025 20:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEFD2D5930;
+	Wed, 17 Sep 2025 20:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJVVsJDM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C8234BA33;
-	Wed, 17 Sep 2025 20:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kF4TbRiJ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E442C0F92;
+	Wed, 17 Sep 2025 20:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141175; cv=none; b=Chu2yHC4p49WBfrD2UyESIdx2anrCm0XVC0jJG2WOh6wGvs4g45Jmz6umffwBmSDoHvIpiZa2rFBHhvbFJRQYmxlyo3N3tKdeMNUDGqY0AN3tQbd9QH1crGffdjfNTQR08VB3WY/sBqEqcNTlfUZyLzd25u3aJdywPU0SdTFNEM=
+	t=1758141449; cv=none; b=M6nIT5brlYoe9rEYzUNRiGIELnBnmEoI+0bg9jnN/kyuzVbj555A8hx7d8vIOdUrtvNgCsS3SH4KUCX3f/xU3dJbeiIULI7YEObvmotla6C/OV69wxx1FhPZiJt5w5UgrXWpJjuG/IK4iBVVmM+y3wbeNnln31VFP7rhuQc4v1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141175; c=relaxed/simple;
-	bh=7dkQ0MXvrehDY8SyWwsj+uuEY5sOcrIXtvipFIaBpRs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qW73kvw2OAqqn/fh0z93/3bWf7sV7nWIJ+RC/BQ88opQFvWZR2Gmpl3kg9eBKkfXqdyq7bdpzcT/bgXBMzn6V4rpjth2H4wsO4tjL+9btSIjrSjKvpqqJWNukhiemPSasp2n+2khE6Sb6e1CH6zRUC2SoXab9z9GHkBMoyMVfxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJVVsJDM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9734C4CEE7;
-	Wed, 17 Sep 2025 20:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758141174;
-	bh=7dkQ0MXvrehDY8SyWwsj+uuEY5sOcrIXtvipFIaBpRs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=MJVVsJDM3tsh8qKJyvL5JsA3KCBIxHPPKbJcwAbQ9px9/9oOdp00fsNHBDt3QrdLx
-	 buQDLVdv88/Vv+j5ny7gtC67/WiwlGJuMSrH4ux4D5ZalON33QYOa9PMH1jZRUr04y
-	 J1FqDt8DYiAPkjHGgnKHRgQG0qPjit8zfNZHgSDrEIuzlDWf93YkQtjVz5bSoJcYiy
-	 DrEzBLOdKGnPW5eLQMbK+W3T/a6ojJwV7DaZsKhLsAnxS1BUlIkmc8y3e+bnO+SH5d
-	 nKqDrJsybvSBsjYHY6y7cyw0CEu5jWLZe8tz/0ulvT5R7uxXXrkq9DfiFhKJ0Aj1B0
-	 NGe2V9kKxToXQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC9039D0C20;
-	Wed, 17 Sep 2025 20:32:56 +0000 (UTC)
-Subject: Re: [GIT PULL] sched_ext: Fixes for v6.17-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aMsOe0f9m4YN4Mes@slm.duckdns.org>
-References: <aMsOe0f9m4YN4Mes@slm.duckdns.org>
-X-PR-Tracked-List-Id: <sched-ext.lists.linux.dev>
-X-PR-Tracked-Message-Id: <aMsOe0f9m4YN4Mes@slm.duckdns.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git tags/sched_ext-for-6.17-rc6-fixes
-X-PR-Tracked-Commit-Id: a1eab4d813f7b6e606ed21381b8cfda5c59a87e5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 37889ceadde0329621a1a1f253febb2019dfdec2
-Message-Id: <175814117546.2137494.8536516515947754010.pr-tracker-bot@kernel.org>
-Date: Wed, 17 Sep 2025 20:32:55 +0000
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev
+	s=arc-20240116; t=1758141449; c=relaxed/simple;
+	bh=AWnh0NDS/NEl3/tOmsRcC/Zo8FnKWT24coEwr6CX2WM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=A5/dB+D5ITqVq4StCbbUhoJwnmCNX4lPsv0DHUFYcEo03QnJjcApASBz31bXaYljbw5Fh/dKFSr99/9eEcSsoVUJdgX/PvwV23OA9KRbcPlOaOJSuT2yky/2/or/MS5o6AOMYvWISaJKGnoyKN7SC0ohH88+hhwTSvbNB9Vfovc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kF4TbRiJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 029C32018E76;
+	Wed, 17 Sep 2025 13:37:25 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 029C32018E76
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758141446;
+	bh=+4I7C7Q7CI6dsIGmNlx01sNT/RMz5ftV/bvrE7ITfI0=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=kF4TbRiJ/nRP0Y9pFPSvvhykjMiKyFCCghTNptUZAw8wEPuyEuJwweRwE617btrQ3
+	 rBAA3qpifxa8OGo3i0OaQHFnUlhF4Olwj5noyi4U5mgJeWySRpKKro6ARr+5Hcl8ht
+	 xQGn0+AzC7V7/WHFWHMT6gbL+fh4EqP5e4VRFxO0=
+Message-ID: <f5877c92-e66b-e530-3431-a91e68388899@linux.microsoft.com>
+Date: Wed, 17 Sep 2025 13:37:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v1 5/6] x86/hyperv: Implement hypervisor ram collection
+ into vmcore
+Content-Language: en-US
+From: Mukesh R <mrathor@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "arnd@arndb.de" <arnd@arndb.de>
+References: <20250910001009.2651481-1-mrathor@linux.microsoft.com>
+ <20250910001009.2651481-6-mrathor@linux.microsoft.com>
+ <SN6PR02MB4157CD8153650CC9D379A03DD415A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <87cab5ec-ab76-b1cf-4891-30314e5dace6@linux.microsoft.com>
+In-Reply-To: <87cab5ec-ab76-b1cf-4891-30314e5dace6@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Wed, 17 Sep 2025 09:39:39 -1000:
+On 9/16/25 18:13, Mukesh R wrote:
+> On 9/15/25 10:55, Michael Kelley wrote:
+>> From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Tuesday, September 9, 2025 5:10 PM
+>>>
+>>> Introduce a new file to implement collection of hypervisor ram into the
+>>
+>> s/ram/RAM/ (multiple places)
+> 
+> a quick grep indicates using saying ram is common, i like ram over RAM
+> 
+>>> vmcore collected by linux. By default, the hypervisor ram is locked, ie,
+>>> protected via hw page table. Hyper-V implements a disable hypercall which
+>>
+>> The terminology here is a bit confusing since you have two names for
+>> the same thing: "disable" hypervisor, and "devirtualize". Is it possible to
+>> just use "devirtualize" everywhere, and drop the "disable" terminology?
+> 
+> The concept is devirtualize and the actual hypercall was originally named
+> disable. so intermixing is natural imo.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git tags/sched_ext-for-6.17-rc6-fixes
+[snip]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/37889ceadde0329621a1a1f253febb2019dfdec2
+>>> +
+>>> +/*
+>>> + * Setup a temporary gdt to allow the asm code to switch to the long mode.
+>>> + * Since the asm code is relocated/copied to a below 4G page, it cannot use rip
+>>> + * relative addressing, hence we must use trampoline_pa here. Also, save other
+>>> + * info like jmp and C entry targets for same reasons.
+>>> + *
+>>> + * Returns: 0 on success, -1 on error
+>>> + */
+>>> +static int hv_crash_setup_trampdata(u64 trampoline_va)
+>>> +{
+>>> +	int size, offs;
+>>> +	void *dest;
+>>> +	struct hv_crash_tramp_data *tramp;
+>>> +
+>>> +	/* These must match exactly the ones in the corresponding asm file */
+>>> +	BUILD_BUG_ON(offsetof(struct hv_crash_tramp_data, tramp32_cr3) != 0);
+>>> +	BUILD_BUG_ON(offsetof(struct hv_crash_tramp_data, kernel_cr3) != 8);
+>>> +	BUILD_BUG_ON(offsetof(struct hv_crash_tramp_data, gdtr32.limit) != 18);
+>>> +	BUILD_BUG_ON(offsetof(struct hv_crash_tramp_data,
+>>> +						     cs_jmptgt.address) != 40);
+>>
+>> It would be nice to pick up the constants from a #include file that is
+>> shared with the asm code in Patch 4 of the series.
+> 
+> yeah, could go either way, some don't like tiny headers...  if there are
+> no objections to new header for this, i could go that way too.
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+yeah, i experimented with creating a new header or try to add to existing.
+new header doesn't make sense for just 5 #defines, adding C struct there
+is not a great idea given it's scope is limited to the specific function
+in the c file. adding to another header results in ifdefs for ASM/KERNEL,
+so not really worth it. I think for now it is ok, we can live with it.
+If arm ends up adding more declarations, we can look into it.
+
+
+Thanks,
+-Mukesh
+
+[ .. deleted.. ]
 
