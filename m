@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-820569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27803B7D5C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E1DB7C6E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA005487B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D1B32149C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A221F369988;
-	Wed, 17 Sep 2025 11:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D2E369964;
+	Wed, 17 Sep 2025 11:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAEu3P8+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OAJzNkEC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ASGw3wUD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055B2BA45;
-	Wed, 17 Sep 2025 11:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8F4BA45;
+	Wed, 17 Sep 2025 11:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758109039; cv=none; b=XIDSOsUW6NdmfY8KSKorkWgHtSH1nDhRMhGq1E3+tR7vE6D4sKWhwiq610vvk6UI9nZwXKq2J/4PKFxItECcIK6MVo9d5hKG5sM+0DTixqovHDXJOIhKUGeRLUzBVJtMSgdqCnXA8khoT1DLglEX2X2Z1UE0X2ePWzrW+f8OKnk=
+	t=1758109132; cv=none; b=jGIFkwaKcGRZxLeO9ItkCb9pbNgumaiv4PCk9/VSX36VSJ403mbTZtcVjl2YaJ8cE0Uafa6dcge77ytp7cueXxhkk+k2QAzJRX1vH6Jq4929DAV3duxoCaR3l4d19EtFhcPiKx+P1UZ2CRSCEHqgKYFtL2X74Vbt82g/v+BFDW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758109039; c=relaxed/simple;
-	bh=MhGnNnjxCsusBSIoICY8/qvPgGMLOIsv9J/v7VpkAro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfJF9TBMPWoIMSW8H4cUFaVko8FHXOSvRjLB+N6l25LA98ztoxAvCTAHj075zAS9BCryRx2h7bePIS9E71lnYf1zNND1MH5MiDX7pLoIT77M2Zjeu2xGDK6M1bkx/ecxT+YCa30afwvTYtbEPQu7EOov/1i1KaX+qODDCK94b1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAEu3P8+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F74C4CEF0;
-	Wed, 17 Sep 2025 11:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758109038;
-	bh=MhGnNnjxCsusBSIoICY8/qvPgGMLOIsv9J/v7VpkAro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WAEu3P8+KUng/mEvczw6TyBP1sOPwgx9woe0T7sYojCuWnxoZ+2MW4NsAbCPuuK6w
-	 6H0Izyizp1Ko/ek+tUIGbelcjRhvFsmj5gehPJrSYG1BYN/r1bYuZMpc+KNLZ+v8qb
-	 eb/IVK+0hfzgErnUAW2kbK7zlBzVQQVALl6wmqwrqU01+hHFZ7WyXgfmQCUxC5NJ6G
-	 afo7s5UhBFT+KR3TWHwHk+/3JwwYgKNyMyNoQe+CUOZjdw+Zw5F92XzQ9nQDxiW/Ua
-	 DXpVR1ncJ28w27KLPzn+rdmAgM68qEvY+q1pOwkvz+9Fop+9sW7Amwk4PKJGtElr0+
-	 ffnFZ949G7/ww==
-Date: Wed, 17 Sep 2025 12:37:12 +0100
-From: Will Deacon <will@kernel.org>
-To: pengyu <pengyu@kylinos.cn>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	boqun.feng@gmail.com, longman@redhat.com,
-	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	t.haas@tu-bs.de, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, paulmck@kernel.org,
-	jonas.oberhauser@huaweicloud.com, r.maseli@tu-bs.de,
-	lkmm@lists.linux.dev, stern@rowland.harvard.edu
-Subject: Re: [PATCH] locking/qspinlock: use xchg with _mb in slowpath for
- arm64
-Message-ID: <aMqdaCkflusKi2hA@willie-the-truck>
-References: <20250916033903.3374794-1-pengyu@kylinos.cn>
- <20250916141032.GJ3245006@noisy.programming.kicks-ass.net>
- <aMmJlv8JrzyHRCxR@willie-the-truck>
- <31861b75-02ee-495e-b839-15d7510bf7c6@kylinos.cn>
+	s=arc-20240116; t=1758109132; c=relaxed/simple;
+	bh=Fu294uvDHkvaxx9vtTFd3tnCDy6Uee/EKf+YTIELVlw=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=oZWhSAm5wuJv2LjcTsYoY0KaV654iObYjzOZP/vpyO8TQFw8fThGxlrDT53ednyXltmYDuHsFMDAVDE98/fKsmdBY2/JaydTpkOQ0TsWn4TqgpRFzHmS92XcTjBTQW4ZcveI/jXhTHu9hAGVwXSHBMB3EIjvc2K/sRr3Ui6kocw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OAJzNkEC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ASGw3wUD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 17 Sep 2025 11:38:47 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758109128;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=+RsCEHSSq0tvUC9rutGfPfSrwIgdcINQECQvTyB3HeA=;
+	b=OAJzNkEChMKviWKo2yxY80rX3YUr/9FnsagXr+xi4n+/MV+kw0tSuvNzvoiH7Br0sgAjvD
+	5x+itlLDW6O7lnzvOgKhtaAx9EVtKZ1wQNcLkuHjKNl/wHsNppG3izfL92gMiwgxjnPDAD
+	r3+8Cl3JmPHzwv7Ij8attrzjDtVB7GYDoBLh9o1Mt66u5LLF0bhsnSSbDpR7VEpy3x6+l8
+	rh9bbktZetzZIqydVYt13StSKLyVUw36ssg2RA+XBgExCXILx3HWYXaP4EK+tEu2Wr0Qrk
+	xQ+qa0THyHaNs8PzemZHpGzuA7h5Kg4bYCH6DcU4UjUXHSLOJr+gdatLlY0okQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758109128;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=+RsCEHSSq0tvUC9rutGfPfSrwIgdcINQECQvTyB3HeA=;
+	b=ASGw3wUDIxEvC9VrjxGR/032dOMDTbpSim6DOgEyeBHDQkreLnD937h5vk/mRsliVPS5au
+	X5S2A5Pac9QDXeDg==
+From: "tip-bot2 for Fernand Sieber" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched/fair: Forfeit vruntime on yield()
+Cc: Fernand Sieber <sieberf@amazon.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <31861b75-02ee-495e-b839-15d7510bf7c6@kylinos.cn>
+Message-ID: <175810912711.709179.3678143545870319102.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 06:51:18PM +0800, pengyu wrote:
-> Yes, this issue occurred on a kunpeng920 96-core machine and only
-> affected a small number of systems that had been running for over a
-> year.
-> 
-> Vmcore Analysis:
-> • Panic triggered by CPU 83 detecting a hard lockup at
->     queued_spin_lock_slowpath+0x1d8/0x320.
-> 
-> • Corresponding code:
->     arch_mcs_spin_lock_contended(&node->locked);
-> 
-> • The qspinlock involved was the rq lock, which showed a cleared state:
->     crash> rq.lock,cpu ffffad96ff2907c0
->       lock = {
->         raw_lock = {
->           {
->             val = {
->               counter = 0
->             },
->             {
->               locked = 0 '\000',
->               pending = 0 '\000'
->             },
->             {
->               locked_pending = 0,
->               tail = 0
->             }
->           }
->         }
->       },
->       cpu = 50,
-> 
-> • CPU 83’s MCS node remained in a locked=0 state, with no previous
-> node found in the qnodes list.
->     crash> p qnodes:83
->     per_cpu(qnodes, 83) = $292 =
->      {{
->         mcs = {
->           next = 0x0,
->           locked = 0,
->           count = 1
->         }
->       },
->     crash> p qnodes | grep 83
->       [83]: ffffadd6bf7914c0
->     crash> p qnodes:all | grep ffffadd6bf7914c0
->     crash>
-> 
-> • Since rq->lock was cleared, no CPU could notify CPU 83.
-> 
-> This issue has occurred multiple times, but the root cause remains
-> unclear. We suspect that CPU 83 may have failed to enqueue itself,
-> potentially due to a failure in the xchg_tail atomic operation.
+The following commit has been merged into the sched/urgent branch of tip:
 
-Hmm. For the lock word to be clear with a CPU spinning on its MCS node
-then something has gone quite badly wrong. I think that would mean that:
+Commit-ID:     78f8764d34c0a1912ce209bb2a428a94d062707f
+Gitweb:        https://git.kernel.org/tip/78f8764d34c0a1912ce209bb2a428a94d06=
+2707f
+Author:        Fernand Sieber <sieberf@amazon.com>
+AuthorDate:    Tue, 16 Sep 2025 16:02:28 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 16 Sep 2025 16:44:12 +02:00
 
-  1. The spinning CPU has updated tail to point to its node (xchg_tail())
-  2. The lock-owning CPU then erroneously cleared the tail field
-     (atomic_try_cmpxchg_relaxed())
+sched/fair: Forfeit vruntime on yield()
 
-But for the cmpxchg() to succeed in (2) then the xchg() in (1) must be
-ordered after it and the lock word wouldn't end up as zero. This is
-because RmW atomics must be totally ordered for a given memory location
-and that applies regardless of their memory ordering properties.
+If a task yields, the scheduler may decide to pick it again. The task in
+turn may decide to yield immediately or shortly after, leading to a tight
+loop of yields.
 
-Of course, there could be _a_ bug here but, given the information you've
-been able to provide, it's not obviously as "simple" as a missing memory
-barrier. Have you confirmed that adding memory barriers makes the problem
-go away?
+If there's another runnable task as this point, the deadline will be
+increased by the slice at each loop. This can cause the deadline to runaway
+pretty quickly, and subsequent elevated run delays later on as the task
+doesn't get picked again. The reason the scheduler can pick the same task
+again and again despite its deadline increasing is because it may be the
+only eligible task at that point.
 
-If you're able to check the thread_info (via sp_el0) of CPU83 in your
-example, it might be interesting to see whether or not the 'cpu' field
-has been corrupted. For example, if it ends up being read as -1 then we
-may compute a tail of 0 when enqueuing our MCS node into the lock word.
+Fix this by making the task forfeiting its remaining vruntime and pushing
+the deadline one slice ahead. This implements yield behavior more
+authentically.
 
-> It has been noted that the _relaxed version is used in xchx_tail, and we
-> are uncertain whether this could lead to visibility issues—for example,
-> if CPU 83 modifies lock->tail, but other CPUs fail to observe the
-> change.
-> 
-> We are also checking if this is related：
->     https://lkml.kernel.org/r/cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de
+Fixes: 147f3efaa24182 ("sched/fair: Implement an EEVDF-like scheduling  polic=
+y")
+Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250401123622.584018-1-sieberf@amazon.com
+Link: https://lore.kernel.org/r/20250911095113.203439-1-sieberf@amazon.com
+---
+ kernel/sched/fair.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hopefully I (or somebody from Arm) can provide an update soon on this
-topic but I wouldn't necessarily expect it to help you with this new
-case.
-
-Will
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a05..c4d91e8 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8921,6 +8921,7 @@ static void yield_task_fair(struct rq *rq)
+ 	 */
+ 	rq_clock_skip_update(rq);
+=20
++	se->vruntime =3D se->deadline;
+ 	se->deadline +=3D calc_delta_fair(se->slice, se);
+ }
+=20
 
