@@ -1,168 +1,173 @@
-Return-Path: <linux-kernel+bounces-820608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D14B7CBCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:08:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B57EB7CAD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC6253286D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AD6582D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEAD31A7F2;
-	Wed, 17 Sep 2025 12:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAFD393DD9;
+	Wed, 17 Sep 2025 12:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iZtB4d0x"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jHbDbffl"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5AE30CB44
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E482374294;
+	Wed, 17 Sep 2025 12:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758110864; cv=none; b=MAkPKs3h+AUTuf0cGq+F/Zk+RZScmzc75LtMk0oKjgddJwq7a5iSMQ1GWxRBVaGqm67bNMDl7zUnWB0zN49VEqe1W9KRT/LSeqbN9BkabdYpj84Cnq+pQ6fqsmojVxUxyjodAaszw2YrvzCzs7g8yg6lhBzmIj/oAWfzbMehBsk=
+	t=1758110857; cv=none; b=YjXXzG5rK7JfO7+g1MzmHEMdhuZPdh1wUq+ropmiWIvlkVJYE8REvPE99Wg8Qdw8U0Y/jkm5R0ireuvAj6ts06WSX4uqhdQxEzN10utSQ40oi5zG257F4kLSv7iTSICZ5VxbUB/2lbhwi2AZ9W/DTOzPc+Gc3FeL0a3TpMzafaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758110864; c=relaxed/simple;
-	bh=jtSocMDOLb1lorJOj5v0eJtZ0mT23dw3ZAUJoypwP80=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wis8luBqKXeVeXPFsvtFogGKR3GqM9Nf2Rs8IQ2NDBwgUyyj1gs3tf3Q+UI3rdyS/Yyfz8RSwsYGX/OnV68E1u/11SG/XmGbNDh5NIn2QokOWvi0wVNR7ldc2GGgWsokc75oAwqIuzNUlVCvcdBrx4v9Ga4MY7ZpFPWi+I7j1kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--srosek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iZtB4d0x; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--srosek.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-61d2d2b792aso6917115a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:07:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758110861; x=1758715661; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TnmIhuAryfUThPrOWha9IORVkxR4s5Wy0BMv2x6APvY=;
-        b=iZtB4d0xv4+08+cBkCxACRFMY9y62n+j6IZfGI0ZEoLlSo1GJpja/QXQsjqrpO4+kE
-         IE7TnGETo55allGLQW8JBHWfBPlwQNdxHL7gwIQSUmDVetepGKjw9whjJLY+1bqhGOR/
-         fdPK4SZoCrxlwsvvPefGLBoE9b7s0djLC1hpMnxNTMBYV3Nkk7vxDOKsru7ObecrtG4V
-         KMv/QSQWacTL6cTgmuFpTMdkApUDNzBX9zuE0aGAVok3FlUlNu/kgdaJo39sJguaPZoV
-         pKVch1h8R1H0XX/iijPSk+H9HkC2nZw5yomBKAnrlYuttDr2tyxfNCLB5atr6eDtUh41
-         3Yug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758110861; x=1758715661;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TnmIhuAryfUThPrOWha9IORVkxR4s5Wy0BMv2x6APvY=;
-        b=MKJZWqtBQeP7a+SJqr9H3Jz13TwuHFUVLIEH7Lq8JjYozjyQXJ994LtrELSj0S0W4c
-         64gXf7bGlT/Jc392XI7K/MvdLxRhz3WmVlNn4cWZhW6Ecmt9s4WDxeGYEFSUfSrxIAVM
-         Iowrwkzk9QxelSiyzUcwLwj/JH/zNmPXMTLaqF2lOhTBqTixzNgUfGhADvEVN3MxOQI5
-         WDEx3cm6YoMamw7OXuFeKA9b65EP5ErHNV8Nx7p0nuHKx8Ke+lThr2laj57QB6XPidv8
-         z+rv+bB7T/mtJAjtkv/vu+Rk66acWtEwlitGAf/L6i5ySeqWCxOUQkATknkJXIoHvWnS
-         poBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9PhCkwKQSJ5fa8cbmoMjD7fzkd4vq8PtQqvGsZvv9wEl5nEKs9G1WJ5zeq9FvcAxvnSoT1mP5PglS3kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQN8R7wVl0kMauom0FRfoZJiT7m1/CaPAd/V18YiXOwpgniA0y
-	aUr0LUDhLN/2862tuey4D86IvhQoaXjmBAyIPJ/m0H6UPKmtgRX1vx8ys5hqct/105E1Pi2bA/q
-	hIoLIew==
-X-Google-Smtp-Source: AGHT+IE9JxQINOgMAD00LdxNBgiaiiAyNPHD+AyZlkNGA2Dk6RD20m5WkWGC1DsTYu+3JzPdr74YOVTETzw=
-X-Received: from edbin5.prod.google.com ([2002:a05:6402:2085:b0:61c:9195:6148])
- (user=srosek job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:84f:b0:62f:7bf4:c65e
- with SMTP id 4fb4d7f45d1cf-62f83a0cbb8mr2093077a12.2.1758110860857; Wed, 17
- Sep 2025 05:07:40 -0700 (PDT)
-Date: Wed, 17 Sep 2025 12:07:16 +0000
-In-Reply-To: <20250917120719.2390847-1-srosek@google.com>
+	s=arc-20240116; t=1758110857; c=relaxed/simple;
+	bh=pJcGCE36z51ZQ9SEhe8pzYZ6tyKqt39NT2zDGKWtQN0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=deQTUjBMpV1TuLl84t/6LHvuB71Hy6Q4ZhXB5+K/c6crM3dfCQX0dskzlJ/a80aL/1bc3rPH7aLS4OUZR7+v7bvt2QAfbuUiOfMwgWIdqzPPV4aeSya+/qOXnjnrdM3touZmcCiv6O0aa5fjkYLp6GPVB6LSGDcI+M9RPinfc6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jHbDbffl; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: e246e08e93be11f0b33aeb1e7f16c2b6-20250917
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=RzRjl0wuxO05mFaAmxgC9m8FQ896f26iiNfacinIM/I=;
+	b=jHbDbfflYFXVLDYswj9M4IoMedHtwugDjp3yJh8LhZe3ZhuCofXWoE0pcq5FOAFi+uEZmLxK5hPpiQ8TYcWUWzRS7FHlyI1t/Qb6HP6QDKqE7KL65ISWs59gGqBlFabeAjAM22UALiXm2/MqwyDieVhtcBZtUL8+i4+TK6yiHzk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:545da3a7-9766-4657-bebd-ded1ac78bde7,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:b69566f8-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836,TC:-5,Content:0|15|50,
+	EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: e246e08e93be11f0b33aeb1e7f16c2b6-20250917
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <friday.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 212379600; Wed, 17 Sep 2025 20:07:29 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 17 Sep 2025 20:07:28 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 17 Sep 2025 20:07:27 +0800
+From: Friday Yang <friday.yang@mediatek.com>
+To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rob Herring" <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>
+CC: Friday Yang <friday.yang@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v11 1/2] dt-bindings: memory: mediatek: Add SMI reset and clamp for MT8188
+Date: Wed, 17 Sep 2025 20:07:16 +0800
+Message-ID: <20250917120724.8650-2-friday.yang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20250917120724.8650-1-friday.yang@mediatek.com>
+References: <20250917120724.8650-1-friday.yang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250917120719.2390847-1-srosek@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250917120719.2390847-4-srosek@google.com>
-Subject: [PATCH v2 3/6] ACPI: DPTF: Move PCH FIVR device IDs to header
-From: Slawomir Rosek <srosek@google.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
-	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
-	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Slawomir Rosek <srosek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The ACPI PCH FIVR device IDs are shared between the DPTF core
-and PCH FIVR driver, thus they are moved to the common header.
+Add 'resets' and 'reset-names' properties for SMI LARBs to support
+SMI reset operations.
+On the MediaTek platform, some SMI LARBs are directly connected to
+the SMI Common, while others are connected to the SMI Sub-Common,
+which in turn is connected to the SMI Common. The hardware block
+diagram can be described as follows.
 
-Signed-off-by: Slawomir Rosek <srosek@google.com>
+             SMI-Common(Smart Multimedia Interface Common)
+                 |
+         +----------------+------------------+
+         |                |                  |
+         |                |                  |
+         |                |                  |
+         |                |                  |
+         |                |                  |
+       larb0       SMI-Sub-Common0     SMI-Sub-Common1
+                   |      |     |      |             |
+                  larb1  larb2 larb3  larb7       larb9
+
+Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/acpi/dptf/dptf_pch_fivr.c   | 8 ++------
- drivers/acpi/dptf/int340x_thermal.c | 7 +------
- drivers/acpi/int340x_thermal.h      | 8 ++++++++
- 3 files changed, 11 insertions(+), 12 deletions(-)
+ .../mediatek,smi-common.yaml                  |  2 ++
+ .../memory-controllers/mediatek,smi-larb.yaml | 19 +++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/drivers/acpi/dptf/dptf_pch_fivr.c b/drivers/acpi/dptf/dptf_pch_fivr.c
-index 952216c67d58..cb81636a5d63 100644
---- a/drivers/acpi/dptf/dptf_pch_fivr.c
-+++ b/drivers/acpi/dptf/dptf_pch_fivr.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include "../int340x_thermal.h"
- 
- struct pch_fivr_resp {
- 	u64 status;
-@@ -147,12 +148,7 @@ static void pch_fivr_remove(struct platform_device *pdev)
- }
- 
- static const struct acpi_device_id pch_fivr_device_ids[] = {
--	{"INTC1045", 0},
--	{"INTC1049", 0},
--	{"INTC1064", 0},
--	{"INTC106B", 0},
--	{"INTC10A3", 0},
--	{"INTC10D7", 0},
-+	ACPI_PCH_FIVR_DEVICE_IDS,
- 	{"", 0},
- };
- MODULE_DEVICE_TABLE(acpi, pch_fivr_device_ids);
-diff --git a/drivers/acpi/dptf/int340x_thermal.c b/drivers/acpi/dptf/int340x_thermal.c
-index 43afb6141b98..26522ddfcbaa 100644
---- a/drivers/acpi/dptf/int340x_thermal.c
-+++ b/drivers/acpi/dptf/int340x_thermal.c
-@@ -20,16 +20,11 @@ static const struct acpi_device_id int340x_thermal_device_ids[] = {
- 	ACPI_INT3404_DEVICE_IDS,
- 	ACPI_INT3406_DEVICE_IDS,
- 	ACPI_INT3407_DEVICE_IDS,
-+	ACPI_PCH_FIVR_DEVICE_IDS,
- 	{"INT3408"},
- 	{"INT3409"},
- 	{"INT340A"},
- 	{"INT340B"},
--	{"INTC1045"},
--	{"INTC1049"},
--	{"INTC1064"},
--	{"INTC106B"},
--	{"INTC10A3"},
--	{"INTC10D7"},
- 	{"INTC10FF"},
- 	{"INTC1102"},
- 	{""},
-diff --git a/drivers/acpi/int340x_thermal.h b/drivers/acpi/int340x_thermal.h
-index 854e4d3bb739..dee53c444a32 100644
---- a/drivers/acpi/int340x_thermal.h
-+++ b/drivers/acpi/int340x_thermal.h
-@@ -65,4 +65,12 @@
- 	{"INTC1100"},	\
- 	{"INTC1101"}
- 
-+#define ACPI_PCH_FIVR_DEVICE_IDS	\
-+	{"INTC1045"},	\
-+	{"INTC1049"},	\
-+	{"INTC1064"},	\
-+	{"INTC106B"},	\
-+	{"INTC10A3"},	\
-+	{"INTC10D7"}
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+index 0762e0ff66ef..3d98c08b2149 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.yaml
+@@ -40,6 +40,7 @@ properties:
+           - mediatek,mt8186-smi-common
+           - mediatek,mt8188-smi-common-vdo
+           - mediatek,mt8188-smi-common-vpp
++          - mediatek,mt8188-smi-sub-common
+           - mediatek,mt8192-smi-common
+           - mediatek,mt8195-smi-common-vdo
+           - mediatek,mt8195-smi-common-vpp
+@@ -108,6 +109,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - mediatek,mt8188-smi-sub-common
+               - mediatek,mt8195-smi-sub-common
+     then:
+       required:
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+index 2e7fac4b5094..fc5feb2eac1f 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml
+@@ -70,6 +70,12 @@ properties:
+     description: the hardware id of this larb. It's only required when this
+       hardware id is not consecutive from its M4U point of view.
+
++  resets:
++    maxItems: 1
 +
- #endif
--- 
-2.51.0.384.g4c02a37b29-goog
++  reset-names:
++    const: larb
++
+ required:
+   - compatible
+   - reg
+@@ -126,6 +132,19 @@ allOf:
+       required:
+         - mediatek,larb-id
+
++  - if:  # only for image, camera and ipe subsys
++      properties:
++        compatible:
++          const: mediatek,mt8188-smi-larb
++        mediatek,larb-id:
++          enum:
++            [ 9, 10, 11, 12, 13, 16, 17, 18, 19, 20 ]
++
++    then:
++      required:
++        - resets
++        - reset-names
++
+ additionalProperties: false
+
+ examples:
+--
+2.46.0
 
 
