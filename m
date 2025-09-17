@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-821744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7702DB821FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:13:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51743B821F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DFA93250D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29E01C80283
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80CD30DED0;
-	Wed, 17 Sep 2025 22:13:26 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A145630E0C6;
+	Wed, 17 Sep 2025 22:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaKTMrT1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3598830BBA2;
-	Wed, 17 Sep 2025 22:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11832FBDFD;
+	Wed, 17 Sep 2025 22:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758147206; cv=none; b=nUNxRgOdrukHygfjeRRoXtxGZ6Xlq0EIwoAPj8H8NE9/pM90ajTDBD2ICw++GjSzEunJSQkBUt3IaAgz13o6PoU2/tclVJ1gXEqVKJDSz6dK+nq6LkAYLASnfi0sNLD2q0XxH4QP40I8srQShbVUCpM4RRH1NvNU3D0u8lqkA2U=
+	t=1758147189; cv=none; b=evenklO/PM0n6nmUjCn+pJAfkpFufAZCQdHu5wLIskLktPykO69WMY2fNz5Kv2FNY7+IrssMvJ0wphKxQ6d2DtrHcYJQRPkP5RVfSyfIENPf8xzd4Xeohz+uToWrjEPhxzdNwBlWUS14aqvgWQ8TFB2sZNbN6QtW/F4sL4E+kRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758147206; c=relaxed/simple;
-	bh=GrdDBAfmSXiAltqk82o1oRjarAsneKhZi0ywhKVk+a0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cDicY2tU6X8nWZ+21E03kB+K89IzspjqGlrujCD0rw2zQZoRgdMaKWR9dtZBLaKM9DbvpnG7Q18/F1b5AkyDO/BsNBtkls8mo48LvdTirn/w8rAnAIhFBsCNZyOUpEC3+9IVo6YjPph7GX60NoTilGMnN86MaPCwlOT+Otb1Ivs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.5] (ip5f5af79c.dynamic.kabel-deutschland.de [95.90.247.156])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C798861E647BB;
-	Thu, 18 Sep 2025 00:13:05 +0200 (CEST)
-Message-ID: <53b303e1-4e75-4fb1-a700-ba4011c02e26@molgen.mpg.de>
-Date: Thu, 18 Sep 2025 00:13:05 +0200
+	s=arc-20240116; t=1758147189; c=relaxed/simple;
+	bh=nRhOXcIKGpSGtX2j3Z7sQdDPzcHkUdRka8dIo7+u2MM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fsJDga/zl3nZjDlxtap2/TMvBdqlk9TT2+nQrOvi1fMOCDRkoE8DOiDFHVzMjhP2LIJCikzSZA3qD+g4nCTYaHCQx/nOzx974QwcH13LG5+eJ+A62DZ9c/xx+u4QEVMhUF5tfHnuVz70IYG5b6VNrA3Y/193/SiNQy2gCCqt8s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BaKTMrT1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C506C4CEE7;
+	Wed, 17 Sep 2025 22:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758147188;
+	bh=nRhOXcIKGpSGtX2j3Z7sQdDPzcHkUdRka8dIo7+u2MM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BaKTMrT1udkFpO61y+Hb4PIDaqrTRP5+K4vQcHhu3ukTFmGGuFhiyBJFYJrcVQOb9
+	 Yp+FgtddGxOhXyXQ479M/AYNZAjCbF7W3oTzy0AOE7LQIGXEV+GEmcWss7f11dqTde
+	 JNK2/5fySEjH8S3B5iDRzx79wWjGU+JjbX1/h0WdEColE08kYHmT+nU2pIluwYB1rA
+	 T9p/acvm2s8Slk8W+oRgopfbQSJ05X8ixNAO+H8hVoF+SwQ8ZtxZMh8WOcFsE375Xf
+	 0IjqXKbOYV9D5j9+YmPhWEDZCPnelCPCPIGlzcyKHXk2KJ7XQMJREtdO/irULVANoL
+	 d9uVDvLmgJAFQ==
+Date: Wed, 17 Sep 2025 17:13:06 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, bhelgaas@google.com,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] dt-bindings: PCI: dwc: Add one more reference
+ clock
+Message-ID: <20250917221306.GA1878395@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tpm_tis: Fix undefined behavior in
- tpm_tis_spi_transfer_half()
-To: Gunnar Kudrjavets <gunnarku@amazon.com>
-Cc: peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
- kyarlagadda@nvidia.com, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org, Justinien Bouron <jbouron@amazon.com>
-References: <20250917153022.18567-1-gunnarku@amazon.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250917153022.18567-1-gunnarku@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917045238.1048484-2-hongxing.zhu@nxp.com>
 
-Dear Gunnar,
+In the subject, can you replace "one more" with something specific?
+E.g., maybe "Add external reference clock input" or similar?
 
-
-Thank you very much for your patch.
-
-Am 17.09.25 um 17:29 schrieb Gunnar Kudrjavets:
-> When len is 0, the while loop in tpm_tis_spi_transfer_half() never
-> executes, leaving ret uninitialized. This will lead to undefined
-> behavior when the function returns.
+On Wed, Sep 17, 2025 at 12:52:36PM +0800, Richard Zhu wrote:
+> Add one more reference clock "extref" for a reference clock that comes
+> from external crystal oscillator.
 > 
-> The issue was introduced when tpm_tis_spi_transfer() was refactored
-> to call tpm_tis_spi_transfer_half() or tpm_tis_spi_transfer_full().
-> While ret is properly initialized in tpm_tis_spi_transfer_full(), it
-> was missed in tpm_tis_spi_transfer_half().
-> 
-> Initialize ret to 0 at the beginning of the function to ensure
-> defined behavior in all code paths.
-> 
-> Found by GCC 14.2.0 static analyzer with -fanalyzer.
-> 
-> Fixes: a86a42ac2bd6 ("tpm_tis_spi: Add hardware wait polling")
-> Signed-off-by: Gunnar Kudrjavets <gunnarku@amazon.com>
-> Reviewed-by: Justinien Bouron <jbouron@amazon.com>
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > ---
->   drivers/char/tpm/tpm_tis_spi_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../devicetree/bindings/pci/snps,dw-pcie-common.yaml        | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-> index 61b42c83ced8..1b6d79662ca1 100644
-> --- a/drivers/char/tpm/tpm_tis_spi_main.c
-> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
-> @@ -85,7 +85,7 @@ static int tpm_tis_spi_transfer_half(struct tpm_tis_data *data,	u32 addr,
->   	struct spi_transfer spi_xfer[3];
->   	struct spi_message m;
->   	u8 transfer_len;
-> -	int ret;
-> +	int ret = 0;
+> diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> index 34594972d8db..0134a759185e 100644
+> --- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> +++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> @@ -105,6 +105,12 @@ properties:
+>              define it with this name (for instance pipe, core and aux can
+>              be connected to a single source of the periodic signal).
+>            const: ref
+> +        - description:
+> +            Some dwc wrappers (like i.MX95 PCIes) have two reference clock
+> +            inputs, one from an internal PLL, the other from an off-chip crystal
+> +            oscillator. If present, 'extref' refers to a reference clock from
+> +            an external oscillator.
+> +          const: extref
+>          - description:
+>              Clock for the PHY registers interface. Originally this is
+>              a PHY-viewport-based interface, but some platform may have
+> -- 
+> 2.37.1
 > 
->   	while (len) {
->   		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
 
