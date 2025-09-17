@@ -1,150 +1,105 @@
-Return-Path: <linux-kernel+bounces-820367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84F7B7CCBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51836B7CC32
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA21582B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:41:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC401BC60E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC09D303C83;
-	Wed, 17 Sep 2025 09:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38CB34320A;
+	Wed, 17 Sep 2025 09:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Jm77f02G"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CK3wcRbP"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC872F9DB7;
-	Wed, 17 Sep 2025 09:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61F1225390;
+	Wed, 17 Sep 2025 09:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102092; cv=none; b=Av/KvfyPlyGQ3mWWcyVFB6/TY1kVr+0qw4C+CNxThkGwQ4HG353vG46xJhbmX/3qcLEN3U3RwY74N1N/dPG2t2AaKJuCWfj9BovFuVlwutMbGTyT5ylFL8M2I4/HwTxKcquTa2CKQds/lhckpDnDiMum7oAv/Kk0pushuPDNhrU=
+	t=1758102065; cv=none; b=SQIT2K5ja5GTwmyAaiw+2zJIXiguRt7SV7iZaa8AIW+HMhN4o7vzMhQODgBnygiL/6ZRwo8Inowxv6i6nET3PDOXQsC++HakqFxxSTmOXacw9uIo80c3lkQ1m0NdH012ibHXfOI/r2Ou6niR8GbGkEAufVAe0THsEeth0CdiVk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102092; c=relaxed/simple;
-	bh=EzgT5uVZvbQGIN9UGL1/RHHGWl3JjFuxCL15z3aAxFo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KuI5JhZaDGsKKMUM+XV2O1JQI4RqN7R6R+Hm2Pe9JrWLSSprAt2qK0I0PoRbUsEAo0MC9ca4YOhhkYnLWqFdo5ao6wRkUdlARUzt4UIxO7/HgtDzvco6wLEAGCH2Zl0gsbKofix6EQm+WZ+fTeu+jk47SYaqvJ7HKo0O2pkV/OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Jm77f02G; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=wc
-	uuwU3W+I4CmXssHuzyWQWl3YczewIOBpW6e7iYBqg=; b=Jm77f02GAIvB2LtqOW
-	eyHPd41Ec0t0483DCiJ2XtHBi8NLz8MYEjwovKtAtYfkNasuB8Fol++3ydbgwike
-	Fr2gx4wPkUF6wTVo4OhpHISm3GKCHMYrEVtrFIUwEcCNc2p5SpRYBrWQxxZUZPg7
-	51GcGObyoNoq73IdemJMjVaqA=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgDXe9UfgsporHBlDA--.28795S4;
-	Wed, 17 Sep 2025 17:40:48 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: minghsiu.tsai@mediatek.com,
-	houlong.wei@mediatek.com,
-	andrew-ct.chen@mediatek.com,
-	mchehab@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	hans.verkuil@cisco.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] media: mtk-mdp: Fix some issues in mtk_mdp_core.c
-Date: Wed, 17 Sep 2025 17:40:45 +0800
-Message-Id: <20250917094045.28789-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1758102065; c=relaxed/simple;
+	bh=yiTw2Nyg3T/+NeQdCbVD+R8TqqELRHWmLB+xAh+cjrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XKbnxUGYW/KNJkGHodL/HQuvFRVxgDcTeZnk/1wcqCwks4fHx/eT7dkaXK5swEUBb/1e0bdlxts4mUfmCfellTD3hJnN4qWCNAEVMmKoYp3lEuOfOfh6q63E86lYjWIgSf/pFME/AoyvhlTCCi4vegRyzbWMPqe+t7/0ZgNWqa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CK3wcRbP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758102060;
+	bh=yiTw2Nyg3T/+NeQdCbVD+R8TqqELRHWmLB+xAh+cjrM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CK3wcRbPkUm/RD5cSFPvZM85dvFTYOF3yu5E7DFatwJfUPDGPSfA9ptmYukX9piJx
+	 ZBN8sTreTr5vm4js3HyQnoK5Wdyfvq+hWQNVp4gPIPDESkAzdLv7sFsMjD1dMKnkd3
+	 /xr8GCfR3FiLA3+OadvuT6qMvGSsNmjhCSsyrwHyYfJyVl22Qo7GFPFIxOrTfY7Sqp
+	 nKVYfMTFLW4oODubiq+pC4GgWqwa7/JFkrivm0sgSXqUru1yF93QI+2+EQuULIdBvc
+	 3zhuk7kjqnMNw86+kyltd7H192mXMLr+/BVXjz2nIUfardinEdVPcPNKjqRwrI+/lj
+	 xNgaeYiCaGW8g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E6A5017E0202;
+	Wed, 17 Sep 2025 11:40:59 +0200 (CEST)
+Message-ID: <eb2b4c98-44b1-4e9a-8e6a-1bc19b42eaf5@collabora.com>
+Date: Wed, 17 Sep 2025 11:40:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgDXe9UfgsporHBlDA--.28795S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJFWUGw48ZFyrtw1DWryxGrg_yoW5Xr18pr
-	yUKayFkrWj9FW29w47Ja18Z3W5Cr1S9w48uw1xJw4xC345Wr95J34rJa4xt3y8tr97Ca43
-	Jw4aqFWrCFWYvr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piCD73UUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEhrLbmjKfcCUUQAAs3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] pmdomain: mediatek: Add power domain driver for
+ MT8189 SoC
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org, netdev@vger.kernel.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
+ vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
+References: <20250912120508.3180067-1-irving-ch.lin@mediatek.com>
+ <20250912120508.3180067-5-irving-ch.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250912120508.3180067-5-irving-ch.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add check for the return value of vpu_get_plat_device() to prevent null
-pointer dereference. And vpu_get_plat_device() increases the reference
-count of the returned platform device. Add platform_device_put() to
-prevent reference leak. Also add platform_device_put() in mtk_mdp_remove().
+Il 12/09/25 14:04, irving.ch.lin ha scritto:
+> From: Irving-ch Lin <irving-ch.lin@mediatek.com>
+> 
+> Introduce a new power domain (pmd) driver for the MediaTek mt8189 SoC.
+> This driver ports and refines the power domain framework, dividing
+> hardware blocks (CPU, GPU, peripherals, etc.) into independent power
+> domains for precise and energy-efficient power management.
+> 
+> Signed-off-by: Irving-ch Lin <irving-ch.lin@mediatek.com>
 
-Add mtk_mdp_unregister_m2m_device() on the error handling path.
+No. This driver is legacy and shall not be used for new platforms.
 
-Fixes: c8eb2d7e8202 ("[media] media: Add Mediatek MDP Driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
-Changes in v2:
-- Add check for vpu_get_plat_device()
-- Add platform_device_put() in mtk_mdp_remove()
-- Add mtk_mdp_unregister_m2m_device() on the error handling path.
-- Modify the patch title and description. I think you are right.
-  Thanks, CJ!
----
- .../media/platform/mediatek/mdp/mtk_mdp_core.c  | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+Please integrate the MT8189 CMOS in mtk-pm-domains instead.
 
-diff --git a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-index 80fdc6ff57e0..8432833814f3 100644
---- a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-+++ b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-@@ -194,11 +194,17 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 	}
- 
- 	mdp->vpu_dev = vpu_get_plat_device(pdev);
-+	if (!mdp->vpu_dev) {
-+		dev_err(&pdev->dev, "Failed to get vpu device\n");
-+		ret = -ENODEV;
-+		goto err_vpu_get_dev;
-+	}
-+
- 	ret = vpu_wdt_reg_handler(mdp->vpu_dev, mtk_mdp_reset_handler, mdp,
- 				  VPU_RST_MDP);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register reset handler\n");
--		goto err_m2m_register;
-+		goto err_reg_handler;
- 	}
- 
- 	platform_set_drvdata(pdev, mdp);
-@@ -206,7 +212,7 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 	ret = vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to set vb2 dma mag seg size\n");
--		goto err_m2m_register;
-+		goto err_reg_handler;
- 	}
- 
- 	pm_runtime_enable(dev);
-@@ -214,6 +220,12 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+err_reg_handler:
-+	platform_device_put(mdp->vpu_dev);
-+
-+err_vpu_get_dev:
-+	mtk_mdp_unregister_m2m_device(mdp);
-+
- err_m2m_register:
- 	v4l2_device_unregister(&mdp->v4l2_dev);
- 
-@@ -242,6 +254,7 @@ static void mtk_mdp_remove(struct platform_device *pdev)
- 
- 	pm_runtime_disable(&pdev->dev);
- 	vb2_dma_contig_clear_max_seg_size(&pdev->dev);
-+	platform_device_put(mdp->vpu_dev);
- 	mtk_mdp_unregister_m2m_device(mdp);
- 	v4l2_device_unregister(&mdp->v4l2_dev);
- 
--- 
-2.25.1
+Regards,
+Angelo
 
+> ---
+>   drivers/pmdomain/mediatek/mt8189-scpsys.h |  75 ++
+>   drivers/pmdomain/mediatek/mtk-scpsys.c    | 967 +++++++++++++++++++++-
+>   2 files changed, 999 insertions(+), 43 deletions(-)
+>   create mode 100644 drivers/pmdomain/mediatek/mt8189-scpsys.h
+> 
 
