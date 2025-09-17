@@ -1,107 +1,183 @@
-Return-Path: <linux-kernel+bounces-821486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B785B81613
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:44:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D40DB8161C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18C961C263D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02C7F527CAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055F630149C;
-	Wed, 17 Sep 2025 18:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F13B302770;
+	Wed, 17 Sep 2025 18:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TXH1VgXh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6+8bpede"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8PqONEN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB4627C178;
-	Wed, 17 Sep 2025 18:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDA127C178;
+	Wed, 17 Sep 2025 18:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758134659; cv=none; b=moIxVPAN+hOiX/HcDRgZgoH0Vp4V0FypEe0wslVtm9hJWlRMbe1Y51sLQpCJgsbfnsXnLVvV57uq5VaF+MK8HhtByMrlgoA406sGxJrJOXvSqllS2pjRrTqmpUqGXvPxCHWQrVOO6WDUrvKIsVXVHuKf8hB8HF8kuENheKtZfwI=
+	t=1758134669; cv=none; b=DG7O2IIvUMw2zhWA3N8enBBRWS7mtd2nOhoV3XfLBIZoRa7krVYHnO4GP5Jd6i7WtsmN5gBvCau/6LuEPA1FrXrm5Ha+uPdwwytLRbePhXWtzHZRsmYgGGELa+WwwLQEfBmNu1+9Hdlp9HWTglVu356nJ5unnvfdMYVAZwf1DR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758134659; c=relaxed/simple;
-	bh=mLQvr83zXMuYbaFkYFpVFQjJVMPu9z91kx6ntqCZRyc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a7lM4fDy4qQ7SSUvMgbNggYgrMoRmJDcIWbh+5fYfSjhzm2el4zLzZYKkz3ByWtgxDGkzL0SR2A2gfJKZUjM0/2X0LWzb5by4p8LVfzG697SDFnXyQMRxZavBb2jU4rDQOIaKObllEnb1qp+LpuWrKVqk2GtullPAJCyMKUzpjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TXH1VgXh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6+8bpede; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758134653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZdhtdKmHa4dcSzhRJFOXRlBZfjh3uIPp6tQ1wYV5bo=;
-	b=TXH1VgXhl9TJVLj2OH7Oa+fCy5KEUeSVC6i7C/B3Ch+CUD092lLvRy8+xwQTjJSvI/f5e/
-	eCeA/9+a0bV7sx0ApCME8sCLslc16fzzcvXWQZ69KshZDFeqfU75hwHdmZr4qRoDeUJfnV
-	9Nvgr5Lv5QN9HIQ2fRBqTfQeGJF+2Gs3D0qJRxGLtoyFEGkhf3MA/PsqA06mrLAr9+AjlH
-	Ts7pW6mp6BXFXIy6/0gYGmjzC3OgGy444zbBQKIPt+n8ivbeJN5ObybKfgMwVR4iZez9Ym
-	Qw2V7y+ci52ovVJ8vEvO6KZ+He1hJaLHm5MUQ9r1a9TJPSE5WSLv56nl/yZlrA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758134653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QZdhtdKmHa4dcSzhRJFOXRlBZfjh3uIPp6tQ1wYV5bo=;
-	b=6+8bpede4VR2LubUInjqoSUX1qxsOYmZ26JvPspTyzYGmmDUQGN/m43/bFNknXNpngwOQc
-	ccNZYt4Gya//BQCA==
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
- kernel test robot <lkp@intel.com>, linux-arm-kernel@lists.infradead.org,
- Nathan Chancellor <nathan@kernel.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
- <andrealmeid@igalia.com>, x86@kernel.org, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
- __get_user_asm_dword()
-In-Reply-To: <aMrREvFIXlZc1W5k@shell.armlinux.org.uk>
-References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk> <875xdhaaun.ffs@tglx>
- <aMqCPVmOArg8dIqR@shell.armlinux.org.uk> <87y0qd89q9.ffs@tglx>
- <aMrREvFIXlZc1W5k@shell.armlinux.org.uk>
-Date: Wed, 17 Sep 2025 20:44:12 +0200
-Message-ID: <87plbo9awz.ffs@tglx>
+	s=arc-20240116; t=1758134669; c=relaxed/simple;
+	bh=OLoxa48QuwEBcofnDByK3uh1SCi2Z/yYPHdY5JEg1PI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mse3c3iHbPPRDQ6dWpZDLr42c9ZT1alileM1bTUxshysMdhAEWRs74ZVW57+Sjro4DQ0t5DyWOFNQ7Hf4VqMyos0mBY9sjBOGbi+aS1JtPgAx17B0Z4MBOY4PwP5KohntzW0z69g7nSQ7A4/3rUnfV/SE6YCbT3GVUGR4YiccM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8PqONEN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33005C4CEE7;
+	Wed, 17 Sep 2025 18:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758134668;
+	bh=OLoxa48QuwEBcofnDByK3uh1SCi2Z/yYPHdY5JEg1PI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f8PqONENfOsX3iVnNu8gzDMdRStH7GoSN2gCmJumNxzU3dDXCWnKNl4/l6kfWb4LF
+	 tMPEko7Uxgu1oKN9QLzKTPw3vzijJvwTniwwi1XZdP9ocASlZFr6Xv5fP2btY8LA1m
+	 08UDfu7ijq2Vcndt64HGPL6kxN573aML1YCymlHCdtJmkqdb16Kvz1DoDVXDJv0f0n
+	 xqqKHWVaim5WsMbsY/6tS6/0VpPFmbkMNYj8aYyZAqvlUooCSpwv6gyUzjsjlLHXSp
+	 1W8KCDyXYPB33CHdXqrE9EgkeAw6/Dkh2S3gpiOdgXY8Q/Un712FbTj7PGc7comhQi
+	 kqT+zU22sKBBg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uyx8j-00000007Bv9-3g4d;
+	Wed, 17 Sep 2025 18:44:25 +0000
+Date: Wed, 17 Sep 2025 19:44:25 +0100
+Message-ID: <86ms6s2a2e.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Itaru Kitayama <itaru.kitayama@linux.dev>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	K Poulose Suzuki <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Itaru Kitayama <itaru.kitayama@fujitsu.com>
+Subject: Re: [PATCH] PMCR_EL0.N is RAZ/WI. At least a build failes in Ubuntu 22.04 LTS. Remove the set function.
+In-Reply-To: <0524084A-9E82-408A-9F22-369ED25E42E9@linux.dev>
+References: <867by4c4v1.wl-maz@kernel.org>
+	<3FEB4D87-EEAF-4A21-BCBC-291A4A7C2230@gmail.com>
+	<86348rdg5o.wl-maz@kernel.org>
+	<0524084A-9E82-408A-9F22-369ED25E42E9@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: itaru.kitayama@linux.dev, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, pbonzini@redhat.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, itaru.kitayama@fujitsu.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Sep 17 2025 at 16:17, Russell King wrote:
-> On Wed, Sep 17, 2025 at 03:55:10PM +0200, Thomas Gleixner wrote:
->> But it actually can be solved solvable by switching the casting to:
->> 
->>     (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;
->> 
->> Not pretty, but after upping the frame size limit it builds an
->> allmodconfig kernel.
->
-> For me, this produces:
->
-> get-user-test.c:41:16: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
->    41 |         (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;                \
->       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> with arm-linux-gnueabihf-gcc (Debian 14.2.0-19) 14.2.0
->
-> Maybe you're using a different compiler that doesn't issue that
-> warning?
+On Mon, 15 Sep 2025 22:31:31 +0100,
+Itaru Kitayama <itaru.kitayama@linux.dev> wrote:
+>=20
+>=20
+>=20
+> > On Sep 12, 2025, at 21:11, Marc Zyngier <maz@kernel.org> wrote:
+> >=20
+> > On Fri, 12 Sep 2025 12:33:39 +0100,
+> > Itaru Kitayama <itaru.kitayama@gmail.com> wrote:
+> >>=20
+> >>=20
+> >>=20
+> >>> On Sep 12, 2025, at 20:01, Marc Zyngier <maz@kernel.org> wrote:
+> >>>=20
+> >>> =EF=BB=BFOn Fri, 12 Sep 2025 09:27:40 +0100,
+> >>> Itaru Kitayama <itaru.kitayama@linux.dev> wrote:
+> >>>>=20
+> >>>> Signed-off-by: Itaru Kitayama <itaru.kitayama@fujitsu.com>
+> >>>=20
+> >>> This isn't an acceptable commit message.
+> >>>=20
+> >>>> ---
+> >>>> Seen a build failure with old Ubuntu 22.04 LTS, while the latest rel=
+ease
+> >>>> has no build issue, a write to the bit fields is RAZ/WI, remove the
+> >>>> function.
+> >>>> ---
+> >>>> tools/testing/selftests/kvm/arm64/vpmu_counter_access.c | 6 ------
+> >>>> 1 file changed, 6 deletions(-)
+> >>>>=20
+> >>>> diff --git a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c=
+ b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+> >>>> index f16b3b27e32ed7ca57481f27d689d47783aa0345..56214a4430be90b3e1d8=
+40f2719b22dd44f0b49b 100644
+> >>>> --- a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+> >>>> +++ b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+> >>>> @@ -45,11 +45,6 @@ static uint64_t get_pmcr_n(uint64_t pmcr)
+> >>>>   return FIELD_GET(ARMV8_PMU_PMCR_N, pmcr);
+> >>>> }
+> >>>>=20
+> >>>> -static void set_pmcr_n(uint64_t *pmcr, uint64_t pmcr_n)
+> >>>> -{
+> >>>> -    u64p_replace_bits((__u64 *) pmcr, pmcr_n, ARMV8_PMU_PMCR_N);
+> >>>> -}
+> >>>> -
+> >>>> static uint64_t get_counters_mask(uint64_t n)
+> >>>> {
+> >>>>   uint64_t mask =3D BIT(ARMV8_PMU_CYCLE_IDX);
+> >>>> @@ -490,7 +485,6 @@ static void test_create_vpmu_vm_with_pmcr_n(uint=
+64_t pmcr_n, bool expect_fail)
+> >>>>    * Setting a larger value of PMCR.N should not modify the field, a=
+nd
+> >>>>    * return a success.
+> >>>>    */
+> >>>> -    set_pmcr_n(&pmcr, pmcr_n);
+> >>>>   vcpu_set_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0), pmcr);
+> >>>>   pmcr =3D vcpu_get_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0));
+> >>>>=20
+> >>>>=20
+> >>>=20
+> >>> So what are you fixing here? A build failure? A semantic defect?
+> >>> Something else? What makes this a valid change?
+> >>>=20
+> >>> Frankly, I have no idea.
+> >>>=20
+> >>> But KVM definitely allows PMCR_EL0.N to be written from userspace, and
+> >>> that's not going to change.
+> >>>=20
+> >>=20
+> >> Then I=E2=80=99ll drop this patch.
+> >=20
+> > I'm not asking you to drop it, I'm asking you to explain. If you found
+> > a problem, let's discuss it and fix it. But as it stands, you're not
+> > giving me much to go on.
+> >=20
+>=20
+> You are right, while the bit fields are write ignored, to be
+> consistent with the handling of other bit fields of the register,
+> I=E2=80=99m fully convinced that checking the write operation in the
+> vpmu_counter_access.c file should be kept.
 
-Yes :)
+The bit field is *not* ignored when written from userspace. That's how
+we configure the PMU if the guest runs at EL1.
 
-Was this with the one-line change or with the full conversion?
+> The build error I=E2=80=99ve seen with Ubuntu 22.04 LTS is below:
 
-Thanks,
+[snip]
 
-        tglx
+Can you please detail what compiler version this is? I'm unlikely to
+install an ancient version of Ubuntu, but I can pick the corresponding
+compiler version.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
