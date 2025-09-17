@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-819891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A704EB7CA10
+	by mail.lfdr.de (Postfix) with ESMTPS id 50898B7CA0E
 	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC071786E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:36:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF0C16C5B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9812C2F3C2A;
-	Wed, 17 Sep 2025 02:36:35 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28E02222AA;
+	Wed, 17 Sep 2025 02:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SgeB0ro/"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981E6101F2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E7101F2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758076595; cv=none; b=TyyuMrvtCWz3oHMmxc5dsoPYrtA+GgzP/C9T3qTmA51XjNkCPZeUliLScz5lQwmBZXb+dyvJISHoStee+cKQ989Ty+HqtvboQ4bZO/xNp8MjzGfyOs8+AT2dAjDlOLKR7tbA1KdIVDqh5+J6jGa9YQjdyZl5g+zxXCH7OJLXeAw=
+	t=1758076674; cv=none; b=g4gJzkpNHzRK/nguksOhjhoyIb1omwFJ2BM/l2xOLUtGguMVNeFtdWiLLnuZjpSWgXgMRz4wUBw5ZLAT8OVkZj3j9OUZwFJ5kvXi/e1sWssK/aE4mE1+++nOEoJZAxTllH9s3iev31ZPvipowRCpublFbrapM9WZa5BUr4Mt3Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758076595; c=relaxed/simple;
-	bh=SmmhcPPu8rUjh9oP/7HG3yfQq7opmUncZheBEIXBnWo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oR7X8o1AcYdujIu770Web5ouatmnrTBZVaYR6Olt9nfcP1pf9TjMca+zJ+qW9ATiAPmp/T1+0HI2nMx2Jd8AX6EvDLSlluD8pUMaKgKnuSK/dZcioVpUdCr9bfo9n1jFvSIV9ZsOnzNEfPQPamayQuhJFQ7JglK2F2eQyPAdQOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w002.hihonor.com (unknown [10.68.28.120])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cRNDV0vvBzYl0F7;
-	Wed, 17 Sep 2025 10:35:54 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w002.hihonor.com
- (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 17 Sep
- 2025 10:36:25 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 17 Sep
- 2025 10:36:25 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<bintian.wang@honor.com>, <feng.han@honor.com>, wangzijie
-	<wangzijie1@honor.com>
-Subject: [f2fs-dev] [PATCH v3 2/2] f2fs: fix infinite loop in __insert_extent_tree()
-Date: Wed, 17 Sep 2025 10:36:22 +0800
-Message-ID: <20250917023622.516052-2-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250917023622.516052-1-wangzijie1@honor.com>
-References: <20250917023622.516052-1-wangzijie1@honor.com>
+	s=arc-20240116; t=1758076674; c=relaxed/simple;
+	bh=+Oqv1htTU1oUQjoIW05xzrckf/ASgORwl3N7cCZXE1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gvexAaSJ6ox3ByiEwviLT2Z5bg9pfBF9BccH/p2R1VkR/ehW326OMs++Shr0eOV3jet24QLRjwoCqHw9A/RswSEcK3BhdVhBjaD0DwapC0r3+0UAfIWcdtvbzlveASvxqtgEompnIqvIflaAcdFbpMKNRhoNwXHEbF+UnisDfv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SgeB0ro/; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b8d641d6-9afc-4bfe-bf50-25ac4a3702a1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758076668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p3MY+R4WlGn4rtSW55R1LJoHIL+0MIVP772CgyYCMxU=;
+	b=SgeB0ro/uuX3tDAlrYKbDux+d4sXbPUojiloZ7f+4R1MxgMa6Dk0dhrp62MhLOYXFKrWgw
+	LO50glCVjyagbyRBpecTHT8TSQimV9YRjUL96CU5JFGSBHnoc8QnAO+6EtbUCoTlaq3Pkn
+	bArAlUljAap/rTfb4Z1g0eTOWkC9kM8=
+Date: Wed, 17 Sep 2025 10:37:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next 2/2] bpftool: Fix UAF in get_delegate_value
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250916054111.1151487-1-chen.dylane@linux.dev>
+ <20250916054111.1151487-2-chen.dylane@linux.dev>
+ <CAADnVQKfH6QnLHfsGO_sL10LhTjL+YUWDist2+xGM_PiPjM9Wg@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAADnVQKfH6QnLHfsGO_sL10LhTjL+YUWDist2+xGM_PiPjM9Wg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a011.hihonor.com
- (10.68.31.243)
+X-Migadu-Flow: FLOW_OUT
 
-When we get wrong extent info data, and look up extent_node in rb tree,
-it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
-return NULL and print some kernel messages in that case.
+在 2025/9/17 01:07, Alexei Starovoitov 写道:
+> On Mon, Sep 15, 2025 at 10:42 PM Tao Chen <chen.dylane@linux.dev> wrote:
+>>
+>> The return value ret pointer is pointing opts_copy, but opts_copy
+>> gets freed in get_delegate_value before return, fix this by strdup
+>> a new buffer.
+>>
+>> Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   tools/bpf/bpftool/token.c | 47 ++++++++++++++++++++++-----------------
+>>   1 file changed, 27 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+>> index 82b829e44c8..c47256d8038 100644
+>> --- a/tools/bpf/bpftool/token.c
+>> +++ b/tools/bpf/bpftool/token.c
+>> @@ -28,6 +28,12 @@ static bool has_delegate_options(const char *mnt_ops)
+>>                 strstr(mnt_ops, "delegate_attachs");
+>>   }
+>>
+>> +static void free_delegate_value(char *value)
+>> +{
+>> +       if (value)
+>> +               free(value);
+>> +}
+>> +
+>>   static char *get_delegate_value(const char *opts, const char *key)
+>>   {
+>>          char *token, *rest, *ret = NULL;
+>> @@ -40,7 +46,7 @@ static char *get_delegate_value(const char *opts, const char *key)
+>>                          token = strtok_r(NULL, ",", &rest)) {
+>>                  if (strncmp(token, key, strlen(key)) == 0 &&
+>>                      token[strlen(key)] == '=') {
+>> -                       ret = token + strlen(key) + 1;
+>> +                       ret = strdup(token + strlen(key) + 1);
+> 
+> Instead of adding more strdup-s
+> strdup(mntent->mnt_opts) once per cmd/map/prog and
+> remove another strdrup/free in print_items_per_line().
+> 
+> pw-bot: cr
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
-v3:
-- followed by Jaegeuk's suggestion to print some kernel messages 
----
- fs/f2fs/extent_cache.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+will remove it in v2, thanks.
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 199c1e7a8..ba0a07bfd 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -604,7 +604,13 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
- 			p = &(*p)->rb_right;
- 			leftmost = false;
- 		} else {
-+			f2fs_err_ratelimited(sbi, "%s: corrupted extent, type: %d, "
-+				"extent node in rb tree [%u, %u, %u], age [%llu, %llu], "
-+				"extent node to insert [%u, %u, %u], age [%llu, %llu]",
-+				__func__, et->type, en->ei.fofs, en->ei.blk, en->ei.len, en->ei.age,
-+				en->ei.last_blocks, ei->fofs, ei->blk, ei->len, ei->age, ei->last_blocks);
- 			f2fs_bug_on(sbi, 1);
-+			return NULL;
- 		}
- 	}
- 
 -- 
-2.25.1
-
+Best Regards
+Tao Chen
 
