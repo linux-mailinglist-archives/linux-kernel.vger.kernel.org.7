@@ -1,218 +1,200 @@
-Return-Path: <linux-kernel+bounces-819852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8947BB7CD3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C60B7CDDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0945D522A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FB3B2A2A56
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E80721C194;
-	Wed, 17 Sep 2025 01:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C787215077;
+	Wed, 17 Sep 2025 01:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qe+wNvvg"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vn0VS5S/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631C61A9F86
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8213A55
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758072835; cv=none; b=giT6P7znZu6dIL8A39qSofGqcdCNNmjxJvu/6M3S7m8b7ukG3psBiCrouxYnAPRfmq1DroIoVMQCakhTCMNGsJCjlH88gxKZE2vuVlI30TMywLH49ah0oXC7gCsXpoHQmk1N3bD/fwfeG1dx/G7/JWrc+hfX3FTt5cSritbE2qY=
+	t=1758072972; cv=none; b=ZCH+cqE5//DN0t51YlkgaZ6LLtyg8mWO7brZXOu6LLnjmWF6ORprb5sdoo7F++cmwLkSy8yu/h6iOczzGKzCFcUVHdXttwrrEdAt40DqhuaxDuUlBDyTc1ghTrpG7AaSpxVwR4Gfw/GoZgUMt4UDo2RDBF6nbY/hKvzOVGtHgRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758072835; c=relaxed/simple;
-	bh=0heUhGb7g54M8ozu1OASeuvS0XjRgdig+E1hh5iT4sY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YHZ/fxkW2vgSNYEkhkypmeO6w2EfckyKdDYK4tNz1rsCG6wg251FjxKauvuhChLEKCdh0yhIbBdfI74WaHNqjD9Da0BYJEwfQWd2e4tufg0C8rmjnuD+k0vBBBk52bSNB7aNNxZDSF6bhZwZmnexvdYhazmJ0RudNuyTeE7Wt7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qe+wNvvg; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24457f59889so63150355ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758072834; x=1758677634; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IXpZpJMeVhGYO9gIBZ2NZsGYecTrOOiKqT7H+6noy3Y=;
-        b=Qe+wNvvggsZZTW+ApbqFkhyGIDoKsJbRBKMPBclAM8lUB3EVbPFcifIwnE0803ava9
-         fMIlcvwe7/iy3nxyPsXsu9sx0MNCkDEKUsgeq3dIWgAp5/yYSEy2mbSxH5XbkZrYVOpE
-         DVE62EgxkeDDnjFQDg3nnoM5EmFiGg4i9YGKuEp/SSGSALLtliIjGB0R1QoPjL5M9Dhx
-         uhhRD6K02WPHIEcHB2u4bdwES6mn1XOY6cjNC+UM3iwoefGFPzdSd1zxKF7pChg7zw/Z
-         1hEj1lvhOSnB/XHnVdKZ2YtR/A3K2ZgkSw6vmZM2sgP/u1D7RQ19Sb4RTbY8k7vZzi7k
-         1dfQ==
+	s=arc-20240116; t=1758072972; c=relaxed/simple;
+	bh=KNkzGOUNM3E41ugSz21A0/wII/YCjpGTcJKU/Xe1zK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifxOuvdnjiuOOk1/fvh4zrq9SAlXiOevlTWHeUryctxbGiFx8XIXduu5LJdzpEPlvbsy762wMNqS0rFAwRd1vOLjuiR3psAii8peGvlsqWQbcg86LyBvw8n/epuDSPCq7Qe4yDnhp9Mp/YAe7PPmTGwqxdMJVWRxLZbyWuY57sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vn0VS5S/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLaO4e014976
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:36:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vbrL7SaMgW5EyV4CgmYacYgOsDFSLKeaecH2Z9zl2cQ=; b=Vn0VS5S/9xi60LMI
+	BPmCg7yppM+lRo3rQY+5Pk03oj51L2Hy0iwKvTOy/JxuoWzZ3aaa18tmcZ7Inrt/
+	yNmTpkDgAX4IC4RsHxeH0oPJliD/BdKy5V8nzJZHQ3PITso66ew7ysd6HHMhVwga
+	FkzRajMOTPSoMBGHgGorxIeip2HVQbVRVV7eox8q6Nelf2NT8Q4jv5LCoigfgDTD
+	14aoFEwjFgUE12vdVFMvidNP27DKDe25VZIOJETdNX/VqJ/PkW6q2oVy1bqqphIq
+	y2o2ncyYnRKc/o/0TYtG9/U5rWAfO1AmrFILIM7FqSBKDy2M64XLhU4Uu5uR/PqZ
+	kZ7LFg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy1rfkv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:36:02 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-265e92cc3aeso31567945ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:36:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758072834; x=1758677634;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IXpZpJMeVhGYO9gIBZ2NZsGYecTrOOiKqT7H+6noy3Y=;
-        b=IJ63Jx1CbK+yxi1d3cHS3yb/Yditgu2bwBmcD4sOYjXqAeq5RwcU9j4o3/qYuZ4CYz
-         ETVto/09od68vmHVAcUitSa4DB1HAuS/aIQyTYiwtfRQVXKJBHTj/HnvcEkFAx84Fb3s
-         QJ740AAmGvqtxqzggN9CN8fbKQWyjns7UQBRhEA7au9bRqBrWGDTE+5NCPgGvE2eb3Kz
-         hu6y1JlatMLqc+tthRLQFF3zNRleUZqHMqqXLFqyX4d/9EjgcNlqGExfKSCQu2WDwd/F
-         3JJzyVls5iuRY2tGA+cCLYdCQc8AV9QIOUmGGYwVbllSvEsnejB2CvInykORnsMkQdr0
-         7wbA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0Heg0B3kgxJEBIY0ZK9Ko5HKww1vBejE3/HE/snF5J8N3uNecYj1kAC0MbY8ry3LY/11pr+/ZXgx5Zlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYu6hkO0gGInXISZjNBTl/oWSFcbvPItUAV2PJ2bdo/VCJJqg0
-	Thv/uEvZ+az1+MawCZzcom6gZElMoOzRp/whjHbC/GBgenDuqDNaUvGN0+D6F5jJYRCdGikL6OJ
-	hwlp/Bg==
-X-Google-Smtp-Source: AGHT+IEMVleSkK89gkmfEHssr+X+W6hD8LJmFm5iv+hvPkzIpLwz9m1GYDcafkkn4/PO2fHFkjoJDXasCUI=
-X-Received: from plbix5.prod.google.com ([2002:a17:902:f805:b0:249:3ba9:c64])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e888:b0:234:9656:7db9
- with SMTP id d9443c01a7336-268136f9e3emr3836345ad.32.1758072833656; Tue, 16
- Sep 2025 18:33:53 -0700 (PDT)
-Date: Wed, 17 Sep 2025 01:33:33 +0000
-In-Reply-To: <c36676c1640cefad7f8066a98be9b9e99d233bef.camel@gmail.com>
+        d=1e100.net; s=20230601; t=1758072961; x=1758677761;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vbrL7SaMgW5EyV4CgmYacYgOsDFSLKeaecH2Z9zl2cQ=;
+        b=jFPJyDn66LqO0vZpdf8uGCVuYFy9Qlw3wXrmA/pipEK/TriJNwKxJxfihIIR1qByc3
+         LxakWCuRQyxliJ3L5eAbhHh9FS0p/D4KbMzeUxDG8AcPq6zXSB+jZ/KZBD3IIDGzqknr
+         UmXuEcq0WHl3Kbt09RUs+TJK3XjdK1dI9dQ4ikh8mzkfHGrT8F0cBW2IXxdyXQORy89N
+         vWNqSKjvTM3xwNyHDmOAt7mkbswon4GAk5BUdfl/Wu/1njCDn9jSYW6XkcUZ3p3DAMJv
+         Ipr/986ijxS7euBjhb9awIC5f9X4VfBpjEkWp6kwj2jzji0sq5JhwCV95GRVC7VUFg11
+         Ltzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVw+c9NOIkQIjizbtk1heKhC4F8lNBH+dqpcSZgfS+3InsjhbTS0tzAxtoppleIzenHCL1gOnEwVflI8iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+U4M0ADfBV/YeKz+flFfQaIY7I2937yNNhi3zqGJFLqix699z
+	sqSCMy6oQkBXIa2B+btGIh9JfqGlsVBdgM0ILNRmg8IayXVbcZOolHgVKJ1WGUKU/Euybu6/Klr
+	+krst7IRUcS9XSDnM5Dup1LXyqfGur06mR1ERphb5a7rMtlLTmRxQL+VwWbMQRDotXK8=
+X-Gm-Gg: ASbGncty8PZIIHkqOLBcoHDN0pGUUcvbX5pbpst6BeeXV0OPe5bVdKWRyGw368xFi6k
+	SHWxFmfGxQH03iX1VcIPHVF1jKHElAQR0A5jJC1RgCOJuoRjQNvn9MvwpdCZyh+LTCOjOTyOMOO
+	AXtLIFfT83JaoGWKlJ/fMQyiMv0uvHFGxt4RJd0vvatGZsMGAWEFwXFzVIcNROPPuX+jeD2oE35
+	zdUk9J0tlkRNjEvSbe7Uq5PhNWjhS+M/0DM74oAKdyuRc+d5by2ge/I168OfeBOdz8hTAJO8RzG
+	nHZLolAvUoTsgcNbDOtNEg0SYHtUadi6SfzOQVHucZhqQGtY5uEAIIwRGQnTISygHdfm323eHSP
+	GpmiXXCd12RuQaeUrK/vdGyM8468b
+X-Received: by 2002:a17:902:ec90:b0:263:671e:397b with SMTP id d9443c01a7336-268118b9895mr4989955ad.7.1758072961252;
+        Tue, 16 Sep 2025 18:36:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHylmZ+tGvjOIZumm372gek4AXZFCL6OxaO2OU0fsz5O59DxdnMl6rUMyBX4IQ7iysNn9tp7w==
+X-Received: by 2002:a17:902:ec90:b0:263:671e:397b with SMTP id d9443c01a7336-268118b9895mr4989345ad.7.1758072960404;
+        Tue, 16 Sep 2025 18:36:00 -0700 (PDT)
+Received: from [10.133.33.43] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-265819a61a7sm81502865ad.48.2025.09.16.18.35.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 18:36:00 -0700 (PDT)
+Message-ID: <a331eceb-ec49-4396-a61d-78a75789b090@oss.qualcomm.com>
+Date: Wed, 17 Sep 2025 09:35:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <c36676c1640cefad7f8066a98be9b9e99d233bef.camel@gmail.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250917013352.722151-1-kuniyu@google.com>
-Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
-From: Kuniyuki Iwashima <kuniyu@google.com>
-To: brian.scott.sampson@gmail.com
-Cc: christian@heusel.eu, davem@davemloft.net, difrost.kernel@gmail.com, 
-	dnaim@cachyos.org, edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
-	kuni1840@gmail.com, kuniyu@google.com, linux-kernel@vger.kernel.org, 
-	mario.limonciello@amd.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coresight: Fix data argument to coresight_enable_helpers
+To: Carl Worth <carl@os.amperecomputing.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+ <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Sabrina Dubroca <sd@queasysnail.net>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20250916224441.3008824-1-carl@os.amperecomputing.com>
+Content-Language: en-US
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <20250916224441.3008824-1-carl@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: A6r-2xrzOixhkUFENt7U-PjGjk0kxJmQ
+X-Proofpoint-ORIG-GUID: A6r-2xrzOixhkUFENt7U-PjGjk0kxJmQ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX6BqM2sflsebk
+ vChaf+Ac/oppU47GQP3wKqoK9ZAbwfBXwJ7RH0fnFqsP5SLLpMRmzJCSqICiwcHZiQ6k7iR95Vt
+ aLOGmGnbr65gaUeOtSsdTDOwcUdUc8bUGPWfzGMhz4UMUL34qqlR/QJQTflNFI3+bgmWLD0XYKt
+ NQoqL/04YUNyqPieexiEakz+04NxsvT72sV9ATDi/G/ZRcskCAd1vIiiZpaPkjA/lvdyYTo+Mnq
+ 1mM3+uR+KNTboHBSwAFPYMmPdijIf7+uoVJOlHSQE0HxrmzJWrcBNsJuNL9oX64XkL9u96SEwKf
+ ZypJk2g480Rh9JfRQNVJPlA7SpU1XEca3hEdbiPTJYHggt0orblyeEzOOVsPdjx8967i3ZqMuGz
+ kT44Wz7Y
+X-Authority-Analysis: v=2.4 cv=cf7SrmDM c=1 sm=1 tr=0 ts=68ca1082 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=vzhER2c_AAAA:8 a=6_jK5pOYWtS4egWhfC4A:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22 a=0YTRHmU2iG2pZC6F1fw2:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 adultscore=0 bulkscore=0 priorityscore=1501
+ spamscore=0 phishscore=0 impostorscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-From: brian.scott.sampson@gmail.com
-Date: Tue, 16 Sep 2025 17:16:40 -0500
-> > Thanks for the report.
-> > 
-> > Could you test the diff below ?
-> > 
-> > look like some programs start listen()ing before setting
-> > SO_PASSCRED or SO_PASSPIDFD and there's a small race window.
-> > 
-> > ---8<---
-> > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> > index fd6b5e17f6c4..87439d7f965d 100644
-> > --- a/net/unix/af_unix.c
-> > +++ b/net/unix/af_unix.c
-> > @@ -1971,7 +1971,8 @@ static void unix_maybe_add_creds(struct sk_buff
-> > *skb, const struct sock *sk,
-> >  	if (UNIXCB(skb).pid)
-> >  		return;
-> >  
-> > -	if (unix_may_passcred(sk) || unix_may_passcred(other)) {
-> > +	if (unix_may_passcred(sk) || unix_may_passcred(other) ||
-> > +	    !other->sk_socket) {
-> >  		UNIXCB(skb).pid = get_pid(task_tgid(current));
-> >  		current_uid_gid(&UNIXCB(skb).uid, &UNIXCB(skb).gid);
-> >  	}
-> > ---8<---
-> Just came across this when troubleshooting a resume from suspend issue
-> where I'm get a black screen after suspend. Initially saw this with my
-> distribution's(Linux 6.16.7-2-cachyos) kernel, and confirmed the issue
-> in the latest version of the vanilla mainline kernel. Bisection is also
-> pointing to commit 3f84d577b79d2fce8221244f2509734940609ca6.
+
+
+On 9/17/2025 6:44 AM, Carl Worth wrote:
+> In the commit being fixed, coresight_enable_path() was changed to call
+> coresight_enable_helpers() with a final argument of 'path' rather than
+> 'sink_data'. This was invalid, resulting in derefencing a pointer to
+> a 'struct coresight_path' as if it were a 'struct perf_output_handle'.
 > 
-> This patch appears to be already applied in the mainline kernel, so
-> this might be something different. I'm new to mailing lists, so wasn't
-> sure if I should report this issue here or start a new email chain.
+> The compiler could not flag the error since there are several layers
+> of function calls treating the pointer as void*.
+> 
+> Fix to correctly pass the sink_data pointer as the final argument to
+> coresight_enable_helpers(), exactly as it was before the buggy commit.
+> 
+> Bug can be reproduced with:
+> 
+> $ perf record -e cs_etm//k -C 0-9 dd if=/dev/zero of=/dev/null
+> 
+> Showing an oops as follows:
+> 
+> [   88.696535] Unable to handle kernel paging request at virtual address 000f6e84934ed19e
+> ...
+> [   88.911293] Call trace:
+> [   88.913728]  tmc_etr_get_buffer+0x30/0x80 [coresight_tmc] (P)
+> [   88.919463]  catu_enable_hw+0xbc/0x3d0 [coresight_catu]
+> [   88.924677]  catu_enable+0x70/0xe0 [coresight_catu]
+> [   88.929542]  coresight_enable_path+0xb0/0x258 [coresight]
+> 
+> Fixes: 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
+> Signed-off-by: Carl Worth <carl@os.amperecomputing.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index fa758cc21827..b1077d73c988 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -510,7 +510,7 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
+>   		type = csdev->type;
+>   
+>   		/* Enable all helpers adjacent to the path first */
+> -		ret = coresight_enable_helpers(csdev, mode, path);
+> +		ret = coresight_enable_helpers(csdev, mode, sink_data);
 
-Could you test it with this diff and see if 2 or 3 splats are logged
-in dmesg ?  and in that case, please share the stack traces.
+I dont think we can change back to sink_data since we introduced 
+coresight_path to wrap 'data' which is needed by the path.
 
-I expect this won't trigger the black screen and you can check dmesg
-after resume.
+I suggest you to add the struct perf_output_handle to the 
+coresight_path, then retrieving it with data->perf_handle in 
+tmc_etr_get_buffer.
 
-Thanks!
+before:
+struct perf_output_handle *handle = data;
 
----8<---
-diff --git a/include/net/sock.h b/include/net/sock.h
-index fb13322a11fc..211084602e01 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -539,7 +539,9 @@ struct sock {
- 				sk_scm_security : 1,
- 				sk_scm_pidfd : 1,
- 				sk_scm_rights : 1,
--				sk_scm_unused : 4;
-+				sk_scm_embryo_cred: 1,
-+				sk_scm_parent_cred: 1,
-+				sk_scm_unused : 2;
- 		};
- 	};
- 	u8			sk_clockid;
-diff --git a/net/core/scm.c b/net/core/scm.c
-index 072d5742440a..e603bf5400e0 100644
---- a/net/core/scm.c
-+++ b/net/core/scm.c
-@@ -510,7 +510,7 @@ static bool __scm_recv_common(struct sock *sk, struct msghdr *msg,
- 		return false;
- 	}
- 
--	if (sk->sk_scm_credentials) {
-+	if (sk->sk_scm_credentials || sk->sk_scm_parent_cred) {
- 		struct user_namespace *current_ns = current_user_ns();
- 		struct ucred ucreds = {
- 			.pid = scm->creds.pid,
-@@ -518,6 +518,11 @@ static bool __scm_recv_common(struct sock *sk, struct msghdr *msg,
- 			.gid = from_kgid_munged(current_ns, scm->creds.gid),
- 		};
- 
-+		WARN_ON_ONCE(!sk->sk_scm_credentials && sk->sk_scm_parent_cred &&
-+			     sk->sk_scm_embryo_cred);
-+		WARN_ON_ONCE(!sk->sk_scm_credentials && sk->sk_scm_parent_cred &&
-+			     !sk->sk_scm_embryo_cred);
-+
- 		put_cmsg(msg, SOL_SOCKET, SCM_CREDENTIALS, sizeof(ucreds), &ucreds);
- 	}
- 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 158bddd23134..ff68b8f7c119 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1545,6 +1545,9 @@ int sk_setsockopt(struct sock *sk, int level, int optname,
- 		break;
- 
- 	case SO_PASSCRED:
-+		WARN_ON_ONCE(sk_is_unix(sk) && sk->sk_state == TCP_LISTEN &&
-+			     skb_queue_len_lockless(&sk->sk_receive_queue));
-+
- 		if (sk_may_scm_recv(sk))
- 			sk->sk_scm_credentials = valbool;
- 		else
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 6d7c110814ff..c8ea44f6d1d7 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1897,6 +1897,7 @@ static int unix_accept(struct socket *sock, struct socket *newsock,
- 	unix_state_lock(tsk);
- 	unix_update_edges(unix_sk(tsk));
- 	newsock->state = SS_CONNECTED;
-+	tsk->sk_scm_parent_cred = sk->sk_scm_credentials;
- 	sock_graft(tsk, newsock);
- 	unix_state_unlock(tsk);
- 	return 0;
-@@ -2037,7 +2038,7 @@ static void unix_skb_to_scm(struct sk_buff *skb, struct scm_cookie *scm)
-  * Return: On success zero, on error a negative error code is returned.
-  */
- static int unix_maybe_add_creds(struct sk_buff *skb, const struct sock *sk,
--				const struct sock *other)
-+				struct sock *other)
- {
- 	if (UNIXCB(skb).pid)
- 		return 0;
-@@ -2047,6 +2048,9 @@ static int unix_maybe_add_creds(struct sk_buff *skb, const struct sock *sk,
- 		struct pid *pid;
- 		int err;
- 
-+		if (!other->sk_socket)
-+			other->sk_scm_embryo_cred = true;
-+
- 		pid = task_tgid(current);
- 		err = pidfs_register_pid(pid);
- 		if (unlikely(err))
----8<---
+after:
+struct coresight_path *path = data;
+struct perf_output_handle *handle = path->perf_handle;
+
+We can assign the perf_output_handle to the coresight_path after we 
+constructed the coresight_path in perf mode.
+
+
+Thanks,
+Jie
+
+>   		if (ret)
+>   			goto err_disable_path;
+>   		/*
+
 
