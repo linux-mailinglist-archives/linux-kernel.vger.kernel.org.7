@@ -1,96 +1,82 @@
-Return-Path: <linux-kernel+bounces-821545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88DA0B81956
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:23:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609BEB81991
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3850B188A07E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:23:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43C716E94F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77923002AF;
-	Wed, 17 Sep 2025 19:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A32E3054D9;
+	Wed, 17 Sep 2025 19:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfesLqj8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2qW8YAV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A1672614;
-	Wed, 17 Sep 2025 19:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80CE27CB35;
+	Wed, 17 Sep 2025 19:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758136984; cv=none; b=gJ9JNnZ0iCUAZMA+oUw8HPz+X+1CWlTALQKbIzCsafybHwNz3XgRROGftTpozEYFmmaWvAK2kbZAv9DqHK+9hq4a8lVnLDPUIev5vVjSK3JwObeAM9+vUbSyfdE70hniFpwb9eyuL8SoNMLM+dSeMae+xz8k/XXsFidZ/6btYMo=
+	t=1758137002; cv=none; b=f4eUrRZnE8kdhfiGtX27w9LHxqSV67H8p+kyRa+lKUKoKUbLootpHI8TaNjCChbqNmA1DUbG/K8B97sLK8a9+9e0R1en1a6aPi2vWK7qp/1LADY1EYA/OXWTh12KfGz5IJs3nJLQ7gNIZTraP8fNBN4aL6ZvfmRs8sOGGrcLmwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758136984; c=relaxed/simple;
-	bh=B9bY8LkLWVpeRTueT+AQrRldMPFWGbnXdHepPnAE6bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X02tmKWEEXGzFJ1JGnvqv8duaxYbgORT+lEG4JAy4xph0IvhgdpHrgtNTc4Pb9iHRA73igxyvgiu0+5rwyJnL1VS+lIu+MEzpQxZyKqNPnnuBuWLNgS+u2UF1TWRKgdDeYDSIiNv5uehLdhxqy1knm1++cSUDO3eDrnx44+rsVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfesLqj8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD10C4CEE7;
-	Wed, 17 Sep 2025 19:22:59 +0000 (UTC)
+	s=arc-20240116; t=1758137002; c=relaxed/simple;
+	bh=qOW7Zmeb4Vk6bFv10n7Qzf8eSn6vy5RSfxhU9LUVEU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pb9JX/WDTzFBPPLqTwGXdjcI3gAZrzxeg/hHNNam3UHUz284jQSje5ZoXg4xsQaUYygZLwvrZpvOsrOphAvbcAgGbqibzXqyucE5t5wvvfcOgSqEY8F8Dr6VkgmLX2fxXdDg9O3aRnUqVmdC5qtZlzgXb95MWfdr3u9xlrouBhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2qW8YAV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E257C4CEE7;
+	Wed, 17 Sep 2025 19:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758136983;
-	bh=B9bY8LkLWVpeRTueT+AQrRldMPFWGbnXdHepPnAE6bg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VfesLqj88ovMJM1rM6zwayKbjkXOqiv/dyQ4YMIE+lwgfVizxq4oEVYmz7vP2ZUBV
-	 9bSnZF4yq7EluFAqnPRO7qiZZWaP3ucsKI4lnytjq5U5X9+z+RUaHG4C+IlF14smgl
-	 yCXkBdYlWULwu2EM0gd5vLWE0TPlOiLqHlpFC+601dBKvq72e7IAVc3tkGVWH5N0BM
-	 FkIAAkzfhrU0hGOWfzJt8tlgstGzkGdwA2TXqOBGfGSZCAS6uLLRHfIOdfKBxNKnkj
-	 5RzkA0o1SBvf5lUcxrB0wHz1NfdWrVM9yzQf0Iqft3M3QzyY4iWVYJFe/6E5oYCNfA
-	 Domg3ov07gi8A==
-Date: Wed, 17 Sep 2025 20:22:57 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	s=k20201202; t=1758137002;
+	bh=qOW7Zmeb4Vk6bFv10n7Qzf8eSn6vy5RSfxhU9LUVEU0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=d2qW8YAVtZk8AIUAWA2mDJC5WpChvgAg0/Vgm0qCs+pA9YCCegSJCZl/OviaufLib
+	 HWrz6vPoe7F8k1tXE+YudS9KrSq7nkVY/NpxmT52qJwykUyQ1hnDFLTSZ78qOv/fP/
+	 KDQF9doM/faq66Dvw2lolJVntXDmBRQzLCTryzT8JXtuo/rwFtaDbIC2WphbvhgguC
+	 NyE9ecyTkcoMYtSItWQs/MXw9c6UaEdDfSkBNMWGsD2s2cuOIa6dMeR0xCmGRqR1w0
+	 k2jTXOtB75VOzCV2rocm1EjmGB9JMR97RNZ7IkdGWEbclzir73WxUidHYypevdjX0l
+	 p9smO6WU1IoVw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH v6 1/5] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8ULP compatible string
-Message-ID: <20250917-splendor-marxism-5b42f0cc670f@spud>
-References: <20250917-csi2_imx8ulp-v6-0-23a355982eff@nxp.com>
- <20250917-csi2_imx8ulp-v6-1-23a355982eff@nxp.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	George Moussalem <george.moussalem@outlook.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Subject: Re: [PATCH] arm64: dts: qcom: ipq5018: add QUP1 UART2 node
+Date: Wed, 17 Sep 2025 14:23:17 -0500
+Message-ID: <175813699402.66282.8568877854290348810.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250917-ipq5018-uart2-v1-1-f8680bbf947f@outlook.com>
+References: <20250917-ipq5018-uart2-v1-1-f8680bbf947f@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3gOtejRn2XFUqrqT"
-Content-Disposition: inline
-In-Reply-To: <20250917-csi2_imx8ulp-v6-1-23a355982eff@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---3gOtejRn2XFUqrqT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, 17 Sep 2025 15:49:00 +0400, George Moussalem wrote:
+> Add node to support the second UART node controller in IPQ5018.
+> 
+> 
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Applied, thanks!
 
---3gOtejRn2XFUqrqT
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/1] arm64: dts: qcom: ipq5018: add QUP1 UART2 node
+      commit: b410d25fb349bc32132749bd2cb17aa17054287d
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsKkQAKCRB4tDGHoIJi
-0vIXAP4qdNUMoU6s3FuP9N4PxLJBIPEjbbVI6iWrhBQus6CD4gEAmj5DYjCBn7Dy
-M4eTOl2YLYgtqjEPWGGm9HGE2xFHLAQ=
-=xNYR
------END PGP SIGNATURE-----
-
---3gOtejRn2XFUqrqT--
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
