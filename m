@@ -1,118 +1,173 @@
-Return-Path: <linux-kernel+bounces-821649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC36B81D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:02:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F49BB81DAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B9547B06C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C61444665ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0C71D516C;
-	Wed, 17 Sep 2025 21:02:20 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3B7288C81;
+	Wed, 17 Sep 2025 21:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dQgWyPrY"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E12F17A2E8;
-	Wed, 17 Sep 2025 21:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D81928488F;
+	Wed, 17 Sep 2025 21:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758142940; cv=none; b=rIuew8gstH2+L+8e4BCR2iDaMohK4ikiPQtYIAN7wzFD602ls7I0El3vN9gxacSb4DS3W4WB069MzPcK+ztr20HM2fLtyxElJR4+4I9H5Pj834u8FeJSNJOXcHH3PIsoBcxLJrfhct4nQffn/uAGR7PNZOpmBhQd7NlowC962KM=
+	t=1758143024; cv=none; b=bBGu5+R1s++qe83Wu05TElHTOJMkjwUtZENLSu2Lx1AgTtfIIs8D4me3ssUmQR1AWDlb50xEPi92iXGBgCpq0TQqS0Os3zoIls36X4c6kaN3SFweUdhe6cOocuFl73/+2YF7ExWRMqibSdBC7EojoYEkz2NubWjd258GA6ws54k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758142940; c=relaxed/simple;
-	bh=sYlqoIyTzMEuSzyl+07qVwSB9yyJ6vJQDdgi8k64bc8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L0JaH/JXnGos7LVWkIi9mw3dAY+GtidO81KBsKUATcvXYzm1GO8iJrgWBjo5RU6kgjOyT8VQxaT6PtFdJDzJHbddTcfv8mBN37uxmTPGH5YCCMmoSpFR+6zCQ1iw/vNRrlDJEjQA5JkROBxnBnkUR32Pbk2yb9DbeNkZnbN3XOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 5B694340EAF;
-	Wed, 17 Sep 2025 21:02:14 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Thu, 18 Sep 2025 05:02:01 +0800
-Subject: [PATCH] dt-bindings: iio: light: APDS9160: fix missing type
- definition warning
+	s=arc-20240116; t=1758143024; c=relaxed/simple;
+	bh=IwFFZCXQOLVb7GZ4/qN58iqaw9529gFbX/J7lxnDmvo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oGqnb75mBquL3ILYGkqyLHSlSMIRJuHu6tg3phAqf545r9zSeDHpKsWOwI2Jyja87GV3LoZY6+gnIAPkYYMmhfxHF0msjPnl0BNRXHW2Ktjvjl3hpNfQvDDkjx0t9bSQL7llnHpcSArLJRfyYlB5QvTzQ9B0cqLFgnSUheE3aFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dQgWyPrY; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758143023; x=1789679023;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IwFFZCXQOLVb7GZ4/qN58iqaw9529gFbX/J7lxnDmvo=;
+  b=dQgWyPrY4r8hKi4gKM6R+W1Nz+ORQcB/h6kzvvKvdYDMsMiGxhbRZU2m
+   kzcTw80j6PjuLMq/eK0mQ5vYVYg14eBiUgDDtDat8CVvY13tGE1tzzH+q
+   Mxk6RftMDoagzja9KXbQ9qNYXEDnv6wqIs83hsly676sX96r6fXohNEj7
+   SPrmb848Ve+H30YIr3nhrqJInJwkQXAMQv/akmXRgZbDe8fr06jEVvlwV
+   6LNIJqjHIxTUrnCRkLOLyL+AXkidFr7HDBRqCcF6FnH3fJOcyRhxErjhD
+   7JXPfO9wP3f9wHoAjBXgbSEiMqWuwkF7Dws65HmwCK3Kd7jHQDTUqrW7c
+   g==;
+X-CSE-ConnectionGUID: CmOguM3+R+yjf+NdgD1gwA==
+X-CSE-MsgGUID: +CrTMq7GRbqgNcYR2svHqQ==
+X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
+   d="scan'208";a="47182889"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 14:03:42 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 17 Sep 2025 14:03:28 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Wed, 17 Sep 2025 14:03:28 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>, Ryan Wanner
+	<Ryan.Wanner@microchip.com>
+Subject: [PATCH v2] ARM: dts: microchip: sama7d65: Add GPIO buttons and LEDs
+Date: Wed, 17 Sep 2025 14:04:08 -0700
+Message-ID: <20250917210409.503830-1-Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250918-60-dt-iio-apds9160-v1-1-0bd6bcbc547d@gentoo.org>
-X-B4-Tracking: v=1; b=H4sIAMghy2gC/x3MPQqAMAxA4atIZgNpof5dRRysiZqlSisiFO9uc
- fyG9zIkiSoJhipDlFuTHqHA1BUs+xw2QeVisGQd9abDhpAvVD1wPjn1ptizb61jb4gYSnhGWfX
- 5p+P0vh8Af3N/ZAAAAA==
-X-Change-ID: 20250918-60-dt-iio-apds9160-bdb725db100d
-To: Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1563; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=sYlqoIyTzMEuSzyl+07qVwSB9yyJ6vJQDdgi8k64bc8=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBoyyHSeKum7Gav6n92XEDWDkSry0+fF7eUrY7qH
- hceEMXqrrWJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaMsh0l8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277cqCD/9l6zHx84NN8qYx4I
- kWm/gko41KHfSV04f9DPbVuWUoRU4rimok58e7YCEGnm/JDL3GeN62W1AohHUz3kA41ERZouw69
- aLtKINbLMc772rsPG5UoN/AXkI9jgWjiN2vWQGYECxYAqTjHx7OQc1+hbL9E/lXmGTRh5qBxTzW
- mMi/O5uR5XAzCG9tLc58IQpRIwWaO+squDbt9NuBvyboMtnUhIRIc85XGzrsw0ln7yH4thLGPx8
- 8jkWYZVoWIZLUnvC/A0G/Zqk3s3wfnuKXmAJB8AqagBamCgWhv3htLivR7SxWkNt3WUH0DofcKm
- dYJGaGP6JouUiFSXzRDJT7bgkwrmXo9CAsIdiOIP6J3N/SgxbEE7d7I3GFohUxaGTp7I/NldF2K
- kLQWWDHeDi/d9RhcKy+tJFUsXSb5DRDQfBrLvc9dX1ih0rABaaAMmA+MKKTK0ntetw/Qb8nnVI7
- F1yfUaD38c+kEZveeK6n/7CkJZXjeZTnzjIYlrz9juYgePTsNVLgY9b278av6Si6p/Y6Rge/sCi
- LoGwAnze/nmWmkp/gR6+bUrWrHfEsh8QFqmn90Jd0JTvHWaNbBIMcKCK24joy37As02PEaB+Dlg
- QOnWi7IfHA3+CdBf9CjCqMCvSWOiuSaNcY9PNuovke3ezGrPzp7bAEsMKH1v93VdUqew==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-DT validation will report missing type definition warning for the property of
-'ps-cancellation-current-picoamp', explicitly add type definition to fix it.
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
+Add the USER button as a GPIO input as well as add the LEDs and enable
+the blue LED as a heartbeat.
+
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
-I got following DT warning, when running dtbs_check
+Changes v1 -> v2:
+- Remove the label node in the LEDs.
+- Use properties color and function to describe the LEDs.
+- Add phandles for the LEDs.
 
-$ make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- dtbs_check W=1
-generic check all files
-  UPD     include/config/kernel.release
-  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-/home/work/linux-6.y/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml: ps-cancellation-current-picoamp: missing type definition
----
- Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../dts/microchip/at91-sama7d65_curiosity.dts | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml b/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
-index bb1cc4404a55760d3f2ef3818d8f5c14782dc5b8..f9c35c29fe04c3623349b636a0dd7ffa4ea24a14 100644
---- a/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
-+++ b/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
-@@ -37,6 +37,7 @@ properties:
-     maximum: 63
+diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+index f091cc40a9f0..927c27260b6c 100644
+--- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
++++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+@@ -11,6 +11,8 @@
+ #include "sama7d65-pinfunc.h"
+ #include "sama7d65.dtsi"
+ #include <dt-bindings/mfd/atmel-flexcom.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pinctrl/at91.h>
  
-   ps-cancellation-current-picoamp:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-     description:
-       Proximity sensor crosstalk cancellation current in picoampere.
-       This parameter adjusts the current in steps of 2400 pA up to 276000 pA.
-
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250918-60-dt-iio-apds9160-bdb725db100d
-
-Best regards,
+ / {
+@@ -26,6 +28,43 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_key_gpio_default>;
++
++		button {
++			label = "PB_USER";
++			gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_PROG1>;
++			wakeup-source;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_led_gpio_default>;
++
++		led0: led-red {
++			color = <LED_COLOR_ID_RED>;
++			gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
++		};
++
++		led1: led-green {
++			color = <LED_COLOR_ID_GREEN>;
++			gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
++		};
++
++		led2: led-blue {
++			color = <LED_COLOR_ID_BLUE>;
++			function = LED_FUNCTION_HEARTBEAT;
++			gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
+ 	memory@60000000 {
+ 		device_type = "memory";
+ 		reg = <0x60000000 0x40000000>;
+@@ -352,6 +391,18 @@ pinctrl_i2c10_default: i2c10-default {
+ 		bias-pull-up;
+ 	};
+ 
++	pinctrl_key_gpio_default: key-gpio-default {
++		pinmux = <PIN_PC10__GPIO>;
++		bias-pull-up;
++	};
++
++	pinctrl_led_gpio_default: led-gpio-default {
++		pinmux = <PIN_PB15__GPIO>,
++			 <PIN_PB17__GPIO>,
++			 <PIN_PA21__GPIO>;
++		bias-pull-up;
++	};
++
+ 	pinctrl_sdmmc1_default: sdmmc1-default {
+ 		cmd-data {
+ 			pinmux = <PIN_PB22__SDMMC1_CMD>,
 -- 
-Yixun Lan
+2.43.0
 
 
