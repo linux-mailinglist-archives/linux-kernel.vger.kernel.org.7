@@ -1,81 +1,100 @@
-Return-Path: <linux-kernel+bounces-821460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43889B814DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:09:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC1BB814E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90AC3BAFA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:09:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B47188A712
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49FB2FF179;
-	Wed, 17 Sep 2025 18:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C60F2FF179;
+	Wed, 17 Sep 2025 18:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Woj+43d4"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F6C2FB0B6;
-	Wed, 17 Sep 2025 18:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uavdsPqC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF6734BA42;
+	Wed, 17 Sep 2025 18:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758132553; cv=none; b=X+kofC4NREzYNJ5GplIB57vuuLrhtm5OvVL9WaYUYTntHtpsnU3h7ygzLYOWJcmzOMWPLM4ufsUHfy1Bk4/Dpl33qP6dT7R0AwKz19wexOXmUIeV93T0yMfVK6ozEibC4zLTU6qedhGVj3r0tsrPbNGk+7KuJ87HeGeUFVwfYaY=
+	t=1758132600; cv=none; b=i2gxSroYM7lhvbuuT2dZdlaDo2yAD4l3l8FuhArqMiNVnyqJOQgWM/t+F81g9Z2rXejiexd8ttYKAjjfdKD8JFqWV+6JDtRNFAl59IkXcD4yHefwiLjGw/T6RB/bxS6NcSJ+aTeWai6W45hP/PROvY1d6J9hPyp+zSspNbmglzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758132553; c=relaxed/simple;
-	bh=A/g6yV8OwHRMixXofvXoksUXU4c9BCDZkHauOGy8f90=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=BYSAAiXD4zoWqW8lYit0QklqHHvpTB3hkKd7jyzhg/kBQIu5OALqCOmvkhCK8yiEcmjGCpXeSvPHDerBC35VKm7uOZxgy4Nxul3x0L70IczGJAlIzF/BridK2MeKiWTRd+rxsyuBiPEjWXAc8cvCNnHotwBeCxiAsVTwIzpTsBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Woj+43d4; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id 88A34211AF09; Wed, 17 Sep 2025 11:09:11 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 88A34211AF09
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758132551;
-	bh=A/g6yV8OwHRMixXofvXoksUXU4c9BCDZkHauOGy8f90=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Woj+43d44IRh35lM/EUdlNyy6kOv2+FP755dsMbAQlIWyCZnjYxBvIPhAPdnrpNMB
-	 ofX0bXLVydNIC/9/9Hd73X3BlJXVygWH2BK2U8nHXpEs2vrVR8aS30jXZm2TM0rbgk
-	 z2bfRqEThdNWjGNlEvdaRJH+cG0Xq+7LBswZfCHY=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: achill@achill.org,
-	akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 6.16 000/189] 6.16.8-rc1 review
-Date: Wed, 17 Sep 2025 11:09:11 -0700
-Message-Id: <1758132551-18432-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20250917123351.839989757@linuxfoundation.org>
-References: <20250917123351.839989757@linuxfoundation.org>
+	s=arc-20240116; t=1758132600; c=relaxed/simple;
+	bh=F9+3GVUhzFcwpqijgKs+YwigkMGUZiAao3Wxu3NDEuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XeEFUiThJ82NTPv2h/TDoW0wwMa8oRJGQeCsFTg1dE/nEUBQCbB5NpqG641w/ArvA73wyGkxrgD5Cuxjl6n5yz4ExY13iN1O6OXEtHPtVInGsyq7qYZ5ORj4SDr4JABWfvR+Zg0NKY2S+Cy6ISx8bp8ODwY4zmRdKC4GQam/Fqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uavdsPqC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA9F1C4CEE7;
+	Wed, 17 Sep 2025 18:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758132599;
+	bh=F9+3GVUhzFcwpqijgKs+YwigkMGUZiAao3Wxu3NDEuQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uavdsPqCGhpVWfaAkCxr/8YoAtx9F/c7I4V4GyF/E2j3QYOPirel2fDnBaKJcbP1F
+	 D3TkPQ+mvKJCFLbzg/P1kyQfjeWVw1lsvme32pF8eWqVQjMs0R4rD1sloG2CeJwANN
+	 PmgvMOFoKMRV7RGILfudouxhnAlgQafvgj7qpW4e9bT8jCGS4xCWeAqclRwrcgdPyi
+	 V3/7Lx1tsJ5QSBe7yGIBzchrCekujbLNDCPRWuB/3IClOnjcSzW1fJ5yJNhmEZIk5g
+	 ZV3mck5XCt9FjDa8CzbxqNAvMztT24Ddsw7BBz07d0u54vCVWF4vea6SRJy+DaAh08
+	 3kpfHXqhGeTsw==
+Date: Wed, 17 Sep 2025 19:09:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Haibo Chen <haibo.chen@nxp.com>, Han Xu <han.xu@nxp.com>,
+	Yogesh Gaur <yogeshgaur.83@gmail.com>, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] spi: spi-nxp-fspi: Add OCT-DTR mode support
+Message-ID: <f927f641-4af5-41ab-b48e-4a03dd46ac43@sirena.org.uk>
+References: <20250917-flexspi-ddr-v2-0-bb9fe2a01889@nxp.com>
+ <20250917-flexspi-ddr-v2-5-bb9fe2a01889@nxp.com>
+ <aMriG3Sp4Ns93Mxd@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FWM1IKwhAJNrjOSI"
+Content-Disposition: inline
+In-Reply-To: <aMriG3Sp4Ns93Mxd@lizhi-Precision-Tower-5810>
+X-Cookie: Lake Erie died for your sins.
 
-The kernel, bpf tool, perf tool, and kselftest builds fine for v6.16.8-rc1 on x86 and arm64 Azure VM.
 
+--FWM1IKwhAJNrjOSI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+On Wed, Sep 17, 2025 at 12:30:19PM -0400, Frank Li wrote:
+> On Wed, Sep 17, 2025 at 03:27:10PM +0800, Haibo Chen wrote:
+> > Add OCT-DTR mode support in default, since flexspi do not supports
+> > swapping bytes on a 16 bit boundary in OCT-DTR mode, so mark swap16
+> > as false.
+> >
+> > lx2160a do not support DQS, so add a quirk to disable DTR mode for this
+>=20
+> does?
 
+Yes, that's more correct (though the above is perfectly comprehensible).
 
-Thanks,
-Hardik
+--FWM1IKwhAJNrjOSI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjK+XIACgkQJNaLcl1U
+h9CZfwf/UGHK0wCfWbCBim9KZPj2c4M6pKLuG/HZW0r6MAscgje8PfrmUrv5MGjU
+iWYxmnEL+wZKOgvBLhuv7LkK06qXVQ/8QcihQi5Om16xX+OGvCFNao7EQS1eZdTV
+5BNseKvWrhzYng6pJpXD3eNyV5uEphyyFa5HhaT8SZJN+Imdc+AuIpMjvN3I/8mS
+oS7m2MhXKa8hnRAQJJoyX2VDfRGq3Vys/Yft++GlySqm+qsHpEOu+v69T2cI1YkY
+AK/V8YjXtHi5xRd5JuVuaENeDfSazIjS0R0FyPMRn1iOPu5kY5EZXRE/0kdUKwUX
+5BjDArmbQHjsG7SbUuKcGrw7bNhFeQ==
+=1zzy
+-----END PGP SIGNATURE-----
+
+--FWM1IKwhAJNrjOSI--
 
