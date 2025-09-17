@@ -1,113 +1,127 @@
-Return-Path: <linux-kernel+bounces-821020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC841B8012E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:38:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9625B7F92E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1B43AE1C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FD00B61091
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422F933C753;
-	Wed, 17 Sep 2025 14:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757253397E6;
+	Wed, 17 Sep 2025 13:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="atlWqzmu"
-Received: from smtp116.ord1d.emailsrvr.com (smtp116.ord1d.emailsrvr.com [184.106.54.116])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cXn5m+wJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MIdBY3Z1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67AB1B424F
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C890D33594B;
+	Wed, 17 Sep 2025 13:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119806; cv=none; b=jQkshn3G8QHaDzr9ACrtigtrDXYjB+wMNENqsyjwRlqqPO+gqAdO3axQhAlbHsrFk3NmTRgM/hUXp2+g1TSUDMaZJjRi2lGM1Ac4xkwmSKXvP+tkw/6/Pt6sprDXt46RoN5hDut1FACcOVIiJmQdMfog7ULavlbM+1tJE7J7XNo=
+	t=1758116518; cv=none; b=M+RpSGFCSTZ7h0v7CLAgP80o6HumG37YOk9frTtmcGId7HnLRCZqBHbaHlzRISMwKElpI+2QF3eswPDYkcqYGkUvNrJOKM3KHhoLXMQs95UKQJZ6y7Y45Q+J+Zn7PlabhAHEGCRaNS5FV6R35Xp3T2DPb/MLRe+28DcMxC83Y/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119806; c=relaxed/simple;
-	bh=6XJlOdSHt3GNlI8A881kDrPY5wrdxGec00yn5gpXLeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFWB2mFGxdiR6gYOXVTWIuN4zk2NcFYNTMzdjAuPtXDkwWoKhe9UySJ0Oa/tHIfDRLCWosIdFME6j2bk6e8d35DJgDgTCvlUPwfM3haVOeGLGFsTWPEJaabiwMJkZHO/uNeTOLcGTKSTI7vQp/+UAzXMYStYgARNstLyxE7bsgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=atlWqzmu; arc=none smtp.client-ip=184.106.54.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1758116510;
-	bh=6XJlOdSHt3GNlI8A881kDrPY5wrdxGec00yn5gpXLeA=;
-	h=Date:Subject:To:From:From;
-	b=atlWqzmuJpSS2Kr8f147iZ1c66OsYm6c4zRa5o7suyjxZqmMih6jgwYknBza+UyKQ
-	 n6UDz9WJU5swCu1I+0pfUcBVcr4bngJo2GgBkhoIFn6XSCXRmuYpFmCAFNoIsEFF9P
-	 nAmPNheMxmbfM0SgHbPty+y0D7er8ysxV3ZmiwHU=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp23.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 6132A20194;
-	Wed, 17 Sep 2025 09:41:49 -0400 (EDT)
-Message-ID: <19be6d8a-e923-49ab-93e4-0996b7d3ddf2@mev.co.uk>
-Date: Wed, 17 Sep 2025 14:41:48 +0100
+	s=arc-20240116; t=1758116518; c=relaxed/simple;
+	bh=eAM7emcnF0+KyTwHDruGIDalO4MkhIrArjiMVGnxXd8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C9RH/ShvZuhZtrRz21Bih5LVKI7pcOPjO7EhI5HtlpTwY4LNxKDtCi9edrolfgJEEKHI8nVFaSgyA2ZyCT1VroHhqwpkaetuqRIbG/pCki+weLH12/mw6p9pWFtqUEoIm8mICLo1kdarvayTYWRt44SaJ567ykX53u+dIuWJ9Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cXn5m+wJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MIdBY3Z1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758116513;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eAM7emcnF0+KyTwHDruGIDalO4MkhIrArjiMVGnxXd8=;
+	b=cXn5m+wJdSnDJcufV3fK/n5bCG13Z0iLUJXoStYyxkW9w1euLJ6/Xr6DlWUpMOH11+WXWo
+	tTVxGBkkef4Nf9gcjecTrrU+427mz6qL/iGJ56qjJkJScNSOSOtq+iLzf/GefzsXuGq5se
+	CZE0TaoHSTcK1lIq4tGJGoh/0flh6neP1TQq6nCdZkd5gK2v8RggwHP8b7OqEHiiZ6oay5
+	ovUFq7F60GNjkSAWl0pi//aJ7yqxGrSlwgXuVxuTXjqvLEBxBGYmG7xlVS0wuicWVuhW7S
+	XmAJXYQNaMPz8iuaphUpZrhrMfdYkF4e2dUM+cb7lTCz09k54u7EpB6eAF4+oQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758116513;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eAM7emcnF0+KyTwHDruGIDalO4MkhIrArjiMVGnxXd8=;
+	b=MIdBY3Z1wIvhd4Xt2SRaWEpUMvEK+HhdABZClqhIvz548Y1F9LEFAA9AjvjNwdfDYvSP8f
+	+9OanZ/JfH/rlbDQ==
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Shuah Khan
+ <shuah@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Soheil Hassas
+ Yeganeh <soheil@google.com>, Khazhismel Kumykov <khazhy@google.com>,
+ Willem de Bruijn <willemb@google.com>, Eric Dumazet <edumazet@google.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+In-Reply-To: <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+References: <cover.1752824628.git.namcao@linutronix.de>
+ <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+ <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+Date: Wed, 17 Sep 2025 15:41:52 +0200
+Message-ID: <87zfat19i7.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] comedi: Replace kcalloc + copy_from_user with
- memdup_array_user
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- H Hartley Sweeten <hsweeten@visionengravers.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jann Horn
- <jannh@google.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org
-References: <20250917131349.117642-2-thorsten.blum@linux.dev>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <20250917131349.117642-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: 6083aa3f-d9ca-4ffd-9bfe-fb53020c92af-1-1
+Content-Type: text/plain
 
-On 17/09/2025 14:13, Thorsten Blum wrote:
-> Replace kcalloc() followed by copy_from_user() with memdup_array_user()
-> to improve and simplify comedi_unlocked_ioctl().
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->   drivers/comedi/comedi_fops.c | 13 ++++---------
->   1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-> index 7e2f2b1a1c36..dea698e509b1 100644
-> --- a/drivers/comedi/comedi_fops.c
-> +++ b/drivers/comedi/comedi_fops.c
-> @@ -2284,15 +2284,10 @@ static long comedi_unlocked_ioctl(struct file *file, unsigned int cmd,
->   		rc = check_insnlist_len(dev, insnlist.n_insns);
->   		if (rc)
->   			break;
-> -		insns = kcalloc(insnlist.n_insns, sizeof(*insns), GFP_KERNEL);
-> -		if (!insns) {
-> -			rc = -ENOMEM;
-> -			break;
-> -		}
-> -		if (copy_from_user(insns, insnlist.insns,
-> -				   sizeof(*insns) * insnlist.n_insns)) {
-> -			rc = -EFAULT;
-> -			kfree(insns);
-> +		insns = memdup_array_user(insnlist.insns, insnlist.n_insns,
-> +					  sizeof(*insns));
-> +		if (IS_ERR(insns)) {
-> +			rc = PTR_ERR(insns);
->   			break;
->   		}
->   		rc = do_insnlist_ioctl(dev, insns, insnlist.n_insns, file);
+Mateusz Guzik <mjguzik@gmail.com> writes:
+> I'll say upfront I'm not an epoll person, just looked here out of
+> curiosity.
 
-Looks good to me.  Thanks!
+Feedbacks always welcomed.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+> I can agree there is a bug. The event is generated before any of the
+> threads even exist and they only poll for it, none of them consume it.
+>
+> However, the commit message fails to explain why the change fixes
+> anything and I think your patch de facto reverts e59d3c64cba6 ("epoll:
+> eliminate unnecessary lock for zero timeout"). Looking at that diff
+> the point was to avoid the expensive lock trip if timeout == 0 and there
+> are no events.
+>
+> As for the bug is, from my reading the ep_start_scan()/ep_done_scan()
+> pair transiently disturbs the state checked by ep_events_available(),
+> resulting in false-negatives. Then the locked check works because by the
+> time you acquire it, the damage is undone.
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+Exactly so. I can add this into the description.
+
+> Given the commits referenced in Fixes:, I suspect the real fix would be
+> to stop destroying that state of course.
+>
+> But if that's not feasible, I would check if a sequence counter around
+> this would do the trick -- then the racy ep_events_available(ep) upfront
+> would become safe with smaller overhead than with your proposal for the
+> no-event case, but with higher overhead when there is something.
+>
+> My proposal is trivial to implement, I have no idea if it will get a
+> buy-in though.
+
+My question is whether the performance of epoll_wait() with zero
+timeout is really that important that we have to complicate
+things. If epoll_wait() with zero timeout is called repeatedly in a loop
+but there is no event, I'm sure there will be measurabled performance
+drop. But sane user would just use timeout in that case.
+
+epoll's data is protected by a lock. Therefore I think the most
+straightforward solution is just taking the lock before reading the
+data.
+
+Lockless is hard to get right and may cause hard-to-debug problems. So
+unless this performance drop somehow bothers someone, I would prefer
+"keep it simple, stupid".
+
+Best regards,
+Nam
 
