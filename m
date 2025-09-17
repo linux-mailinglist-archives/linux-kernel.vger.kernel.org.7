@@ -1,143 +1,154 @@
-Return-Path: <linux-kernel+bounces-821116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89EE6B80785
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:18:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3AAB8078D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29634587EAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:17:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2258466171
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2BF333AB7;
-	Wed, 17 Sep 2025 15:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696FE2F3635;
+	Wed, 17 Sep 2025 15:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AXqMWWLO"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="K1wQ1gNx"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B228C22576E;
-	Wed, 17 Sep 2025 15:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1C62C235A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122269; cv=none; b=QNCAp32MKxElWCX4JYxkyuRIYZ/EwP7tl/7BgjG57dqc+LcNH7CbuRsuwts2F5GVaCEpfgVRnUL+AnEX2F/u3Jv9kjt5mUnUPOU+J/0M+P5rUy0YnrJQtBDq3GbBcGGMaRRVUD3BLkbMpH1rupy/FmoWcJY8ZtvrBe94w+ogfs4=
+	t=1758122310; cv=none; b=YreWhEMfNrls8uMsZodlzVrc9EfheNPLM/DbHkBjWpECtY7YM22mMGu3C6Eg6AJwVqdwhvvDRvJYQ+bJ6/vAR6Bu8vhcpyYN2CTL5fx1CypZaImwGfMfLUh9ZoXmdHmFchdZm2d3xQkPDuv5pARv61/AvwPhzKXpN/bywT9FKl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122269; c=relaxed/simple;
-	bh=dr4qqB+gUQjpx9BPl5XmLoEZyK9T8SJYsWEaVlVRIQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rG/bScRPit3e/nWanfgM7MjaEgHYmCarHJlhNAQ49QzgYGjBRWl2I/N3See1FTPu68zoWrjyN1lo66sh7INVBgJenhUXsbADu/tQ7QmmN0AxCwk35+aryEOU3dM5hh6jRWVcLNfXx2Lme2eO6R0nzPvjz0F9gDw2MgMAJ6DGK6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=AXqMWWLO; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=d2rOtavN8Yu5wp1NcVsRpxDZLel/3IAuBK2KE2s78bs=; b=AXqMWWLOmPyRphOsbmVfXMxScx
-	BvFgiufLKJWsHtvi3uUbeWEc2oY0SA/fHNKXxM650FCV4woIljD4ramthXo4iNMBYhqK3UpJ8urAI
-	oNYWczNXp8U4ZI2MPeCdij3j7WPW5tN8oYv5wUaPNzUZYuG3/fYejTM4KsEMC/uuEhOzAum5lSUev
-	y6iVlG6nM9qom0+6IU8Skhg3J5m/d0bWYCArtFXZMmkqhVWA/O+xCZzKQQZ+KT81ZxGJ9KpLwqQ+l
-	ry/4hO5Nnr8PyWYjPO8CTax/TsxCv6qEdYqI4F2UHngp6KcQASfyK7LOAiiaLMzdejC+XOAwgT1jY
-	Mylix9gQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46120)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uytug-000000004qV-2pGK;
-	Wed, 17 Sep 2025 16:17:42 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uytud-000000000ID-028Q;
-	Wed, 17 Sep 2025 16:17:39 +0100
-Date: Wed, 17 Sep 2025 16:17:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	kernel test robot <lkp@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	x86@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [patch V2 1/6] ARM: uaccess: Implement missing
- __get_user_asm_dword()
-Message-ID: <aMrREvFIXlZc1W5k@shell.armlinux.org.uk>
-References: <aMnV-hAwRnLJflC7@shell.armlinux.org.uk>
- <875xdhaaun.ffs@tglx>
- <aMqCPVmOArg8dIqR@shell.armlinux.org.uk>
- <87y0qd89q9.ffs@tglx>
+	s=arc-20240116; t=1758122310; c=relaxed/simple;
+	bh=oTm6Kno/A/RV/QvjQ0c4Y28+JRucs4g2C/pMQmU1ytA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ma3oR9dXdFT8SiVGOwZ0BURFXimRK38GZ6sp3cgGqucjVdJ6qdnBn001YWsZyeFUM5o7O0K8Rz92VVKkb955+VGDZJbjvuL5mVofFxDsbVcjXzmraxWVVHeQc5axJHbYEHm0CS+GfK/PGZwVt5X11f560zJCWoLS96IjfBtucdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=K1wQ1gNx; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oTm6Kno/A/RV/QvjQ0c4Y28+JRucs4g2C/pMQmU1ytA=; b=K1wQ1gNxlechhgJrAfzTg8HUHN
+	r1nlHrjACWGE4H3a98mR1Uh2qXL0DP8/qzebriJgOrJFR1MkOIL5hOAJLMzy1VwdccGVaJCjf5jUE
+	9QkwnMeDyyrIGCTSAFNBN0j8y57ijrbjfPQXKsePh3rkQnlPa82Q3LUuY13Uirh4MqV3FjCqwiccG
+	Sbedlel5FqmnhKbTdXQgVXKbB+hTPSQ1sJUJ/ENUOzEnoN0y4/jxScrSc79lhqajn6tc/n3shI1ne
+	4nxP6YsroVhaJuVuVkwd9sFAnS+x1+yWUg4Z/kSI9aofmaBr0mMXCPSApad5rpYAcv0qq1caBayEQ
+	cIpzzwew==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uytuc-0000000014L-2ZhN;
+	Wed, 17 Sep 2025 11:17:38 -0400
+Message-ID: <3d5fc5eb4ec225b693c59fb1b888c5161794f869.camel@surriel.com>
+Subject: Re: [RFC PATCH 09/12] mm/cma: introduce CMA balancing
+From: Rik van Riel <riel@surriel.com>
+To: Frank van der Linden <fvdl@google.com>, akpm@linux-foundation.org, 
+	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev
+Date: Wed, 17 Sep 2025 11:17:38 -0400
+In-Reply-To: <20250915195153.462039-10-fvdl@google.com>
+References: <20250915195153.462039-1-fvdl@google.com>
+	 <20250915195153.462039-10-fvdl@google.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87y0qd89q9.ffs@tglx>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Sep 17, 2025 at 03:55:10PM +0200, Thomas Gleixner wrote:
-> On Wed, Sep 17 2025 at 10:41, Russell King wrote:
-> > On Wed, Sep 17, 2025 at 07:48:00AM +0200, Thomas Gleixner wrote:
-> >
-> > Putting together a simple test case, where the only change is making
-> > __gu_val an unsigned long long:
-> >
-> > t.c: In function ‘get_ptr’:
-> > t.c:40:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-> >    40 |         (x) = (__typeof__(*(ptr)))__gu_val;                             \
-> >       |               ^
-> > t.c:21:9: note: in expansion of macro ‘__get_user_err’
-> >    21 |         __get_user_err((x), (ptr), __gu_err, TUSER());                  \
-> >       |         ^~~~~~~~~~~~~~
-> > t.c:102:16: note: in expansion of macro ‘__get_user’
-> >   102 |         return __get_user(p, ptr);
-> >       |                ^~~~~~~~~~
-> >
-> > In order for the code you are modifying to be reachable, you need to
-> > build with CONFIG_CPU_SPECTRE disabled. This is produced by:
-> >
-> > int get_ptr(void **ptr)
-> > {
-> >         void *p;
-> >
-> >         return __get_user(p, ptr);
-> > }
-> 
-> Duh, yes. I hate get_user() and I did not notice, because the
-> allmodconfig build breaks early due to frame size checks, so I was too
-> lazy to find that config knob and built only a couple of things and an
-> artificial test case for u64.
-> 
-> But it actually can be solved solvable by switching the casting to:
-> 
->     (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;
-> 
-> Not pretty, but after upping the frame size limit it builds an
-> allmodconfig kernel.
+On Mon, 2025-09-15 at 19:51 +0000, Frank van der Linden wrote:
+> A longstanding problem with having a lot of CMA pageblocks in
+> the system (through hugetlb_cma), is that this limits the amount
+> of memory that the kernel can use for its allocations. Kernel
+> allocations are unmovable and can not come from CMA pageblocks.
+>=20
+> This can lead to situations where kernel allocations cause OOMs,
+> when in fact there might still enough memory available.=20
 
-For me, this produces:
+We are seeing this situation happen even when the
+CMA region is relatively small.
 
-get-user-test.c:41:16: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
-   41 |         (x) = *(__force __typeof__(*(ptr)) *) &__gu_val;                \
-      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When a system has multiple cgroups, and has been
+reclaiming the non-CMA memory for a particular cgroup
+for long enough, at some point essentially all the
+remaining reclaimable memory for that cgroup can be
+in CMA, and you get early OOM kills.
+>=20
 
-with arm-linux-gnueabihf-gcc (Debian 14.2.0-19) 14.2.0
+> To counter this issue, introduce interfaces to explicitly
+> move pages in to CMA areas. The number of pages moved
+> depends on cma_first_limit. It will use that percentage to
+> calculate the target number of pages that should be moved.
+>=20
+I've been working on some code for this situation
+as well, but your code seems to handle a lot more
+corner cases than the small hack I was working on.
 
-Maybe you're using a different compiler that doesn't issue that warning?
+I hope this issue can be fixed upstream soon-ish :)
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> A later commit will call one of these interfaces to move pages
+> to CMA if needed, after CMA-allocated hugetlb pages have been
+> freed.
+
+Is that the right place?
+
+The CMA region will also be used by regular 4kB
+pages and 2MB THPs, and we may also need to do
+CMA balancing if the cgroup is up against its memory
+limit, needs to do a kernel allocation, but its
+remaining freeable memory is in movable allocations
+in the CMA region.
+
+I have the hook for migrating pages to CMA on the
+page reclaim side, when the reclaim code notices
+that it is doing direct reclaim on behalf of a
+non-movable (kernel) allocation, but it has been
+reclaiming a bunch of CMA pages.
+
+Hugetlb is not the only case triggering this issue.
+
+>=20
+> Signed-off-by: Frank van der Linden <fvdl@google.com>
+>=20
+
+Reviewed-by: Rik van Riel <riel@surriel.com>
+
+--=20
+All Rights Reversed.
 
