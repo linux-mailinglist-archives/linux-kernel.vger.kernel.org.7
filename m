@@ -1,86 +1,186 @@
-Return-Path: <linux-kernel+bounces-819841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841D4B7EF19
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:07:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF70B7C40D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A1A67B8B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10A8179AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A1E1E260A;
-	Wed, 17 Sep 2025 01:18:11 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A4B221265;
+	Wed, 17 Sep 2025 01:20:28 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D722635947
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C05E1E32B9;
+	Wed, 17 Sep 2025 01:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758071891; cv=none; b=uXzd5qBOlgx7ibB/PdSZ+yv+uadxoMZfHciILfbw05x0//YVAh8YjtiX7U9VwpZhwnflqFMp8e3TwonYAQVm2cY/RV2wFsoZSdpWOxFtTwiIDFxJyc0RyTTGTiyzzyMVH1A/oEyLfMxG6BFkVvAeBdU3O9/tbs6g5wnMxhkb9C0=
+	t=1758072027; cv=none; b=WUDQTGbb0sgHS7Qa1ePtygyIH6NmOFuciutz9+eOt9XQWTJF/sgjw9SHRLOYmaBy8OB8vh5+c1UkMwsRhRfSJPXso6QE3VXC8Ru9IyyQmND/Hs0z7w8r4FPGzn2ME+6i4YZ4Mj9CO5mnDUt5wyVMlwLbqjkfGW0KC2t7nV9ntw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758071891; c=relaxed/simple;
-	bh=caMCpgQWQD+y0iBmSs7jbTFl18542RchJgEgnH61wbY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FnlcbVgZszb5KXHx4NV91TT7yW27LGz9xX8DPytKUoMAFFFLZ5xrpgMGgROOTbQKGPIpL3B0NOHpxL7jvO3IRimOWzxdI/C2/Q8O1O9yT3d8w93uhW/1UTUeiBz45jZ5Oq5ExA7E4nkcvZLJGKF1oJ63SKHC4T8ZIpqJGJgds9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cRLVN47byz14Mdd;
-	Wed, 17 Sep 2025 09:17:48 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id CAE541402E9;
-	Wed, 17 Sep 2025 09:18:04 +0800 (CST)
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Sep 2025 09:18:04 +0800
-From: Qinxin Xia <xiaqinxin@huawei.com>
-To: <21cnbao@gmail.com>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-	<jonathan.cameron@huawei.com>
-CC: <prime.zeng@huawei.com>, <fanghao11@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<xiaqinxin@huawei.com>, <yangyicong@huawei.com>
-Subject: [PATCH] MAINTAINERS: add myself and Barry to dma_map_benchmark maintainers
-Date: Wed, 17 Sep 2025 09:17:59 +0800
-Message-ID: <20250917011759.2228019-1-xiaqinxin@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1758072027; c=relaxed/simple;
+	bh=jGZHf18wvFCOhPTzRINGLkXZD67i3bQzutmJMhFhaiI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VbJiwlNdZl1jmR/pqV31/CUoADR7dzBNV/P5rqvxdp5MRbkc57IQTAZ4YBfzNBNw9gO/mjR0bd7jGrwx3/4EzJWOtGkKsIp+y+L41YcJicAv2CYk+SCBjGTNEzMSXyY3z3eoD4ENQCrR+yheTZur22RCv9s5EaZIhXxkfrweeQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cRLYL6xhxzYQv00;
+	Wed, 17 Sep 2025 09:20:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9022C1A166F;
+	Wed, 17 Sep 2025 09:20:21 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8IzRDMporI0NCw--.40294S3;
+	Wed, 17 Sep 2025 09:20:19 +0800 (CST)
+Subject: Re: [PATCH v2 1/2] md: init
+ queue_limits->max_hw_wzeroes_unmap_sectors parameter
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-block@vger.kernel.org,
+ linux-raid@vger.kernel.org, drbd-dev@lists.linbit.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ john.g.garry@oracle.com, pmenzel@molgen.mpg.de, hch@lst.de,
+ martin.petersen@oracle.com, axboe@kernel.dk, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250910111107.3247530-1-yi.zhang@huaweicloud.com>
+ <20250910111107.3247530-2-yi.zhang@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <f0cbf355-df20-d8a3-94d9-1ada83647a5a@huaweicloud.com>
+Date: Wed, 17 Sep 2025 09:20:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250910111107.3247530-2-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+X-CM-TRANSID:gCh0CgCn8IzRDMporI0NCw--.40294S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFWUXw1fWrWDWrW5CFy7Awb_yoWrtF45pa
+	y7XFySvryUJayUAa98J34UuF4rXa45GrZFkFy3Xw1kur17Wr9rWF4fXa98XFsrZw15C3W7
+	t3W0kFZru3WYgrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Since Chenxiang has left HiSilicon, Barry and I will jointly
-maintain this module.
+ÔÚ 2025/09/10 19:11, Zhang Yi Ð´µÀ:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The parameter max_hw_wzeroes_unmap_sectors in queue_limits should be
+> equal to max_write_zeroes_sectors if it is set to a non-zero value.
+> However, the stacked md drivers call md_init_stacking_limits() to
+> initialize this parameter to UINT_MAX but only adjust
+> max_write_zeroes_sectors when setting limits. Therefore, this
+> discrepancy triggers a value check failure in blk_validate_limits().
+> 
+>   $ modprobe scsi_debug num_parts=2 dev_size_mb=8 lbprz=1 lbpws=1
+>   $ mdadm --create /dev/md0 --level=0 --raid-device=2 /dev/sda1 /dev/sda2
+>     mdadm: Defaulting to version 1.2 metadata
+>     mdadm: RUN_ARRAY failed: Invalid argument
+> 
+> Fix this failure by explicitly setting max_hw_wzeroes_unmap_sectors to
+> max_write_zeroes_sectors. Since the linear and raid0 drivers support
+> write zeroes, so they can support unmap write zeroes operation if all of
+> the backend devices support it. However, the raid1/10/5 drivers don't
+> support write zeroes, so we have to set it to zero.
+> 
+> Fixes: 0c40d7cb5ef3 ("block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits")
+> Reported-by: John Garry <john.g.garry@oracle.com>
+> Closes: https://lore.kernel.org/linux-block/803a2183-a0bb-4b7a-92f1-afc5097630d2@oracle.com/
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> Tested-by: John Garry <john.g.garry@oracle.com>
+> Reviewed-by: Li Nan <linan122@huawei.com>
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   drivers/md/md-linear.c | 1 +
+>   drivers/md/raid0.c     | 1 +
+>   drivers/md/raid1.c     | 1 +
+>   drivers/md/raid10.c    | 1 +
+>   drivers/md/raid5.c     | 1 +
+>   5 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+> index 5d9b08115375..3e1f165c2d20 100644
+> --- a/drivers/md/md-linear.c
+> +++ b/drivers/md/md-linear.c
+> @@ -73,6 +73,7 @@ static int linear_set_limits(struct mddev *mddev)
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_hw_sectors = mddev->chunk_sectors;
+>   	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+> +	lim.max_hw_wzeroes_unmap_sectors = mddev->chunk_sectors;
+>   	lim.io_min = mddev->chunk_sectors << 9;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err)
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index f1d8811a542a..419139ad7663 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -382,6 +382,7 @@ static int raid0_set_limits(struct mddev *mddev)
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_hw_sectors = mddev->chunk_sectors;
+>   	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+> +	lim.max_hw_wzeroes_unmap_sectors = mddev->chunk_sectors;
+>   	lim.io_min = mddev->chunk_sectors << 9;
+>   	lim.io_opt = lim.io_min * mddev->raid_disks;
+>   	lim.chunk_sectors = mddev->chunk_sectors;
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index bf44878ec640..d30b82beeb92 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -3211,6 +3211,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>   
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_write_zeroes_sectors = 0;
+> +	lim.max_hw_wzeroes_unmap_sectors = 0;
+>   	lim.features |= BLK_FEAT_ATOMIC_WRITES;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err)
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b60c30bfb6c7..9832eefb2f15 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4008,6 +4008,7 @@ static int raid10_set_queue_limits(struct mddev *mddev)
+>   
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_write_zeroes_sectors = 0;
+> +	lim.max_hw_wzeroes_unmap_sectors = 0;
+>   	lim.io_min = mddev->chunk_sectors << 9;
+>   	lim.chunk_sectors = mddev->chunk_sectors;
+>   	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index 023649fe2476..e385ef1355e8 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -7732,6 +7732,7 @@ static int raid5_set_limits(struct mddev *mddev)
+>   	lim.features |= BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
+>   	lim.discard_granularity = stripe;
+>   	lim.max_write_zeroes_sectors = 0;
+> +	lim.max_hw_wzeroes_unmap_sectors = 0;
+>   	mddev_stack_rdev_limits(mddev, &lim, 0);
+>   	rdev_for_each(rdev, mddev)
+>   		queue_limits_stack_bdev(&lim, rdev->bdev, rdev->new_data_offset,
+> 
+Apply patch 1 to md-6.17.
 
-Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
----
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f6206963efbf..512bc67aa02c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7218,7 +7218,8 @@ F:	include/linux/dmaengine.h
- F:	include/linux/of_dma.h
- 
- DMA MAPPING BENCHMARK
--M:	Xiang Chen <chenxiang66@hisilicon.com>
-+M:	Barry Song <baohua@kernel.org>
-+M:	Qinxin Xia <xiaqinxin@huawei.com>
- L:	iommu@lists.linux.dev
- F:	kernel/dma/map_benchmark.c
- F:	tools/testing/selftests/dma/
--- 
-2.33.0
+Thanks,
+Kuai
 
 
