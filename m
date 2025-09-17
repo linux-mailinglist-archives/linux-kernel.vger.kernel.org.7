@@ -1,75 +1,101 @@
-Return-Path: <linux-kernel+bounces-820080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0F6B7E6D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59FFB7E5CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8C72322060
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F3F3A685D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9852025EFBE;
-	Wed, 17 Sep 2025 06:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D121271468;
+	Wed, 17 Sep 2025 06:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXd15Vly"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZsqPIvW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29162629D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7452629D;
+	Wed, 17 Sep 2025 06:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758091716; cv=none; b=icr4fKODgAyP4RinN0ATd3lmsia3QMoHYHA/lgsNuvGT972fsQt9+UOruF8nN4bvMCVqjgjxUYXz5/G0XzI/fbgZAC/ytl2hpM2VxezAXnz2tZgAeBHgchr2FZfKGFu6b+qn1QBzwh3RG8hNmh8GU1IXePpXenoFZ4MGuzECA+w=
+	t=1758091751; cv=none; b=ChY4KDPuGDu2N+dmusm0FYNcOri9mn489MDeTb+n5YlsQmpYiHreP5wGPwM3B8c2ZURQ/hdLqQvtQ/IGx10T2H3LAPI4ZVjbfiE1J32NNpJIupXmlNr1Dxr264tN/xDEAVYzCUHORn8+8OHMbMcU7DM6+qNODvpilc7QRe8XK8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758091716; c=relaxed/simple;
-	bh=iTstyyfCiGsfuRaBINTgbE7P5G52Z1XmAqxvblvR3BU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AB8/OF+knM9EYi3AoNL00avUok4tk1Ixw/GHHYl4AyVMo7WpjJcQu7U1Lm4ekKK8G8sUcl2XmSUFsoTwSH1WdETlD1YPvgpMxRxd/6/A5if9aNb55CbYNKHEmRREMmErCPZ4fStaRs26+FVqAPRcZIy7179W4vdHWbfwiazHknE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXd15Vly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5379C4CEF0;
-	Wed, 17 Sep 2025 06:48:33 +0000 (UTC)
+	s=arc-20240116; t=1758091751; c=relaxed/simple;
+	bh=hp7Yz1S2kHTO0qwTAezzgUOk9pUddyG5XB6EsyJvNEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNzFf488RFR5AesROFAhccalHu3yeNJRa+78K1js+al9Ppwr9KOCM0f8gtTE7nH+Fqvd07pHr6ZpR7U8EzQF4KI643BOEWufOIQC9NjH5eCnMkGl5bErjwSzUoBRPfUE9oYpXijzcNLMgZYZpgYd06G5X21An5RGZuTkdJWBm7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZsqPIvW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5CF3C4CEF0;
+	Wed, 17 Sep 2025 06:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758091715;
-	bh=iTstyyfCiGsfuRaBINTgbE7P5G52Z1XmAqxvblvR3BU=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=KXd15VlymOXUj2cCehgceb0CPdWS4+egvZbP2DPqny28s31RuHIgsaqHiyfgQesCJ
-	 iql1xsPQl43bPLva3+LqwgQRhW9IGayHxuUx/zEtjxRnRrwme/slbwdDIBQDcW4vbZ
-	 HSNWHFnjClIwnVMUMtXLzDens3ADMI935BzyzdOk6EHHn+EaEflmqJDhsFozHKFQqO
-	 Zp1v7oUefdF4xagDw1iYd4c/he2rMChRlcpoFM0jWx5zylGt3xh1fnhEsooxh8dZQZ
-	 ljf669u09s2MyWeRZu71WIyuSTjxSFHDkWX4qP2Qw7Kpmutni0hTpk7enH9TI8Dzxk
-	 9oNcVaBDlSrbQ==
-Message-ID: <a625f1dd-ec3b-4e2c-9b3f-8a772cdc69dc@kernel.org>
-Date: Wed, 17 Sep 2025 14:48:31 +0800
+	s=k20201202; t=1758091751;
+	bh=hp7Yz1S2kHTO0qwTAezzgUOk9pUddyG5XB6EsyJvNEQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SZsqPIvWt3Xhy9tCaKqp208t+70uypGsX5qeq20ozCnIGQE/nCrgQuMYZK8WOiuFZ
+	 gHGn/lGfCrfhenGkx2Lyjbm6rfj5L0n7CWdVpOsLJYr8kaKhS4U/G5hBWHi++ousra
+	 tSsdeYgU6eUTMOF4uiL370gN2G0R/hKoPcdV1O/9RQ/yBOudYo6qvmXTuUMu+BchJU
+	 DpK3vYz42piUpDo+hhBfX5gBPS01bqbJ18icANgK7mngqr6TOl2+cvBlVWaSbnTUcS
+	 VAYGUifjtKemMOQTnmS0GR4XDQIMCo8sCRuj+M85fuRtNuIwQMO/TcqrMTUWaVAoa2
+	 gTaUV5FECLbGw==
+Date: Wed, 17 Sep 2025 08:49:05 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nsc@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
+ vmlinux.unstripped
+Message-ID: <aMpZ4Q6VFMFtXEkH@example.org>
+References: <cover.1755535876.git.legion@kernel.org>
+ <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
+ <aMeqgPVfJcjBLhl8@levanger>
+ <aMkN1m55vejTii_H@example.org>
+ <aMkvtg55F1gJ5feM@levanger>
+ <aMlKTPpNXrRW6v_7@example.org>
+ <aMlbSEnwGOPM39Op@levanger>
+ <aMlgMkB2nL31K2OB@example.org>
+ <aMll6cHPhIY2yswz@levanger>
+ <20250917011010.GA3106929@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, bintian.wang@honor.com, feng.han@honor.com
-Subject: Re: [f2fs-dev] [PATCH v3 2/2] f2fs: fix infinite loop in
- __insert_extent_tree()
-To: wangzijie <wangzijie1@honor.com>, jaegeuk@kernel.org
-References: <20250917023622.516052-1-wangzijie1@honor.com>
- <20250917023622.516052-2-wangzijie1@honor.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250917023622.516052-2-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917011010.GA3106929@ax162>
 
-On 9/17/25 10:36, wangzijie wrote:
-> When we get wrong extent info data, and look up extent_node in rb tree,
-> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
-> return NULL and print some kernel messages in that case.
+On Tue, Sep 16, 2025 at 06:10:10PM -0700, Nathan Chancellor wrote:
+> On Tue, Sep 16, 2025 at 03:28:09PM +0200, Nicolas Schier wrote:
+> > yeah, it's actually because I dislike modifying vmlinux.unstripped in
+> > the vmlinux rule.
+> > 
+> > But it may be that Nathan does not see it this way.
 > 
-> Signed-off-by: wangzijie <wangzijie1@honor.com>
+> Yeah, I would agree that it is good form to avoid modifying the inputs
+> of a rule.
+> 
+> This warning is pretty annoying since it is intentional but we do not
+> have great tools to hide just this one instance it seems... This is
+> probably worth a comment.
+> 
+> It would be nice if this section could be marked as NOLOAD from the
+> beginning but that will mess with extracting .modinfo via objcopy from
+> my brief testing.
+> 
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Yeah, I was thinking about that too.
 
-Thanks,
+Ok, I will make a new version of the patchset with fixes.
+
+-- 
+Rgrds, legion
+
 
