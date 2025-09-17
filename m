@@ -1,209 +1,90 @@
-Return-Path: <linux-kernel+bounces-819972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545EDB7F5E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF87B7F847
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254BA526BAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD3B526BF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 04:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D6D29898B;
-	Wed, 17 Sep 2025 04:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA082676F4;
+	Wed, 17 Sep 2025 04:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWCmQsFn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgixDBAV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83FB2853ED;
-	Wed, 17 Sep 2025 04:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4F1F4C90;
+	Wed, 17 Sep 2025 04:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758084538; cv=none; b=Hi6yV2Ef1xxBAnVQVzQc0Ny3Yg9UoJq0VV0c6S1ZFYzbfiVNyem8niJp4s6ZCjAIWyJ2bV6gHnUjyp17uYIkL+gbHnlh3RGk2oW+tGep6p7omt5953wk7XxWhZer+irE2apnEUNSUUFq5L3yF4NxuuT7NBp/+o8BaolqgEkvpEU=
+	t=1758084578; cv=none; b=efMhu+dYxBc/w390jb+ESMA5NPnS721riQzt419Sr32sMpsZVY4J7EQizokuZD3ekNby/C2Us9CM4TTEkICXxBkh9x/LPu745JUPLjse3I08sH2063+0kFj4In1SMwrF14Qm1aP0XSC/htuG9svUHcfN/IQNnG1TJu6xuDq/zlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758084538; c=relaxed/simple;
-	bh=PqBU4lww/+186uiwZ0u17g3aZEZ98fu4Q3fznlo6ETw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uuHm5L/Eyq22ZSnkPh+Ge2DOPOwX1sQQvIId1+naj0/PhopSmZEOCbaSsyoKjIt3NcgQ3Rj7ht2olc7rmsPJ+aeY7hp40FMbNhbiycSKphiFRBPaYqPL7+jSZLwqf8NChFaeFgEwEXjUw43jrtO+PheWmuIebBf0sw5XmYXZVuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWCmQsFn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91ECEC4CEF0;
-	Wed, 17 Sep 2025 04:48:57 +0000 (UTC)
+	s=arc-20240116; t=1758084578; c=relaxed/simple;
+	bh=6iKUJefCEfN6dN0bjyWGNmIlwawpbU6TIZlivM2qAv0=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=qRyHxN5NVcHoaFLjzP9M5GTFWxbnHgIcsDXmLNP5/nEODYQN7VGeE4TXpFhFRDCQyBH4YzVpJle46VPJ7Vi0Xu6YDG0VnloG5adQuqQ+yNMlnMKAK1TFOW9atoibXwo4DFzBSY2lMTcOf60oNsRuf0c/ywXmbkL6+dbOXsx5/tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgixDBAV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00976C4CEF0;
+	Wed, 17 Sep 2025 04:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758084538;
-	bh=PqBU4lww/+186uiwZ0u17g3aZEZ98fu4Q3fznlo6ETw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=AWCmQsFnk7zrtgRqzbuzPE4wBTI33NUziSghiv/um0+Qw6n2BhUQkxwuAOBAoTYoq
-	 gABl7a3TSSyVcPnDpMeHcdRUnMoP+Sgro8Xo0aVj9Udvi3J1wmdxZZW3LJeCvlZKbe
-	 /uKGlfNH/w+qJQ5violzgo6MknrnlkW+EdRA67a2hEDCAJTxQZn0nxG+BRLH1ta/7u
-	 JvcvXbwrb70kcBOy3rGBMqL098eD4YKsPh0hvCNrCzZ8GN9g9iF56fwSfZIoOlrQrQ
-	 RDYCjQK3DKLdnmFGSpe/eT0lacFdl5ruNqfQoY7I1TVtJsQpDSW8X0JBTCMKKb3c5q
-	 2hBf+HIByXlNw==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Wed, 17 Sep 2025 13:48:26 +0900
-Subject: [PATCH v2 3/3] can: raw: reorder struct raw_sock's members to
- optimise packing
+	s=k20201202; t=1758084578;
+	bh=6iKUJefCEfN6dN0bjyWGNmIlwawpbU6TIZlivM2qAv0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=kgixDBAV4DcV+vsxuyDQuN9mAKXk+Fwp1Rj7x5YjbvblULsWAjF/aqf4SdHA+PpDb
+	 xk6vGGX2Pdx3p0E6YVCaxuf9Npu0VVrTCj+g6jBSg4IS/a+GDGRM0aEzmu6edX0sb+
+	 TT0qZcVpdp0GVLpmFTHtS2mZjfEa8B03vsV1Kh5dlnL8V6JkVuZxgJJstbKNy4AUDl
+	 PJP3twPd6gCUe25poKni14DRAuiG/qn+PKKys2pNGF20j8V0BePISlvbx/+kDqj6GY
+	 NTzE0nbNhO6j5bAs55i9Ua3Eo4y5mz5bdi9u0ho52p1NplYz4sR4/DrcwyfKSj2soL
+	 eEeRl/PG2KFpQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-can-raw-repack-v2-3-395e8b3a4437@kernel.org>
-References: <20250917-can-raw-repack-v2-0-395e8b3a4437@kernel.org>
-In-Reply-To: <20250917-can-raw-repack-v2-0-395e8b3a4437@kernel.org>
-To: Oliver Hartkopp <socketcan@hartkopp.net>, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>, 
- Vincent Mailhol <mailhol@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5552; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=PqBU4lww/+186uiwZ0u17g3aZEZ98fu4Q3fznlo6ETw=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBmnbDf7NBwOz9n869FB5jIpW2HlbU8PNQnfkdh8zbaqK
- 1NqW+KUjlIWBjEuBlkxRZZl5ZzcCh2F3mGH/lrCzGFlAhnCwMUpABM58ZaR4VGx5GsZE4ubXB7y
- e5U7mfaYXPYP0VN6sXP1zD2ddqFCGowMDQu+tV+v0r0WJMipqvX7P/ej7H2CPb+sqz04IxhZRJw
- YAA==
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
+References: <20250916080545.9310-1-nicolas.ferre@microchip.com> <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
+Subject: Re: [GIT PULL] ARM: microchip: clk for 6.18 #1
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, oe-kbuild-all@lists.linux.dev, llvm@lists.linux.dev, kbuild test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>, Nicolas Ferre <nicolas.ferre@microchip.com>, SoC Team <soc@kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com
+Date: Tue, 16 Sep 2025 21:49:37 -0700
+Message-ID: <175808457715.4354.11044142356915096975@lazor>
+User-Agent: alot/0.11
 
-struct raw_sock has several holes. Reorder the fields to save 8 bytes.
+Quoting Nicolas Ferre (2025-09-16 06:19:11)
+> On 16/09/2025 at 10:05, nicolas.ferre@microchip.com wrote:
+> > From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >=20
+> > Dear clock maintainers,
+> >=20
+> > Here are the first clk changes for 6.18.
+> > I don't think they have conflict with changes for the deprecated round_=
+rate()
+> > to determine_rate() topic.
+> > They are in linux-next for a couple of days.
+>=20
+> But... this series depends on this patch:
+> https://lore.kernel.org/r/20250827145427.46819-4-nicolas.ferre@microchip.=
+com
+>=20
+> Which will be part of a pull-request to-be-sent soon to arm-soc (which=20
+> is part of linux-next, so the build error doesn't appear there).
+>=20
+> Once the pull-request is done, do you prefer that I do an immutable=20
+> branch between CLK and ARM, that I queue this at91 PM patch into the clk =
 
-Statistics before:
+> pull-request or that everything goes through arm-soc?
 
-  $ pahole --class_name=raw_sock net/can/raw.o
-  struct raw_sock {
-  	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
-
-  	/* XXX last struct has 1 bit hole */
-
-  	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
-  	int                        ifindex;              /*   776     4 */
-
-  	/* XXX 4 bytes hole, try to pack */
-
-  	struct net_device *        dev;                  /*   784     8 */
-  	netdevice_tracker          dev_tracker;          /*   792     0 */
-  	struct list_head           notifier;             /*   792    16 */
-  	unsigned int               bound:1;              /*   808: 0  4 */
-  	unsigned int               loopback:1;           /*   808: 1  4 */
-  	unsigned int               recv_own_msgs:1;      /*   808: 2  4 */
-  	unsigned int               fd_frames:1;          /*   808: 3  4 */
-  	unsigned int               xl_frames:1;          /*   808: 4  4 */
-  	unsigned int               join_filters:1;       /*   808: 5  4 */
-
-  	/* XXX 2 bits hole, try to pack */
-  	/* Bitfield combined with next fields */
-
-  	struct can_raw_vcid_options raw_vcid_opts;       /*   809     4 */
-
-  	/* XXX 3 bytes hole, try to pack */
-
-  	canid_t                    tx_vcid_shifted;      /*   816     4 */
-  	canid_t                    rx_vcid_shifted;      /*   820     4 */
-  	canid_t                    rx_vcid_mask_shifted; /*   824     4 */
-  	int                        count;                /*   828     4 */
-  	/* --- cacheline 13 boundary (832 bytes) --- */
-  	struct can_filter          dfilter;              /*   832     8 */
-  	struct can_filter *        filter;               /*   840     8 */
-  	can_err_mask_t             err_mask;             /*   848     4 */
-
-  	/* XXX 4 bytes hole, try to pack */
-
-  	struct uniqframe *         uniq;                 /*   856     8 */
-
-  	/* size: 864, cachelines: 14, members: 20 */
-  	/* sum members: 852, holes: 3, sum holes: 11 */
-  	/* sum bitfield members: 6 bits, bit holes: 1, sum bit holes: 2 bits */
-  	/* member types with bit holes: 1, total: 1 */
-  	/* forced alignments: 1 */
-  	/* last cacheline: 32 bytes */
-  } __attribute__((__aligned__(8)));
-
-...and after:
-
-  $ pahole --class_name=raw_sock net/can/raw.o
-  struct raw_sock {
-  	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
-
-  	/* XXX last struct has 1 bit hole */
-
-  	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
-  	struct net_device *        dev;                  /*   776     8 */
-  	netdevice_tracker          dev_tracker;          /*   784     0 */
-  	struct list_head           notifier;             /*   784    16 */
-  	int                        ifindex;              /*   800     4 */
-  	unsigned int               bound:1;              /*   804: 0  4 */
-  	unsigned int               loopback:1;           /*   804: 1  4 */
-  	unsigned int               recv_own_msgs:1;      /*   804: 2  4 */
-  	unsigned int               fd_frames:1;          /*   804: 3  4 */
-  	unsigned int               xl_frames:1;          /*   804: 4  4 */
-  	unsigned int               join_filters:1;       /*   804: 5  4 */
-
-  	/* XXX 2 bits hole, try to pack */
-  	/* Bitfield combined with next fields */
-
-  	struct can_raw_vcid_options raw_vcid_opts;       /*   805     4 */
-
-  	/* XXX 3 bytes hole, try to pack */
-
-  	canid_t                    tx_vcid_shifted;      /*   812     4 */
-  	canid_t                    rx_vcid_shifted;      /*   816     4 */
-  	canid_t                    rx_vcid_mask_shifted; /*   820     4 */
-  	can_err_mask_t             err_mask;             /*   824     4 */
-  	int                        count;                /*   828     4 */
-  	/* --- cacheline 13 boundary (832 bytes) --- */
-  	struct can_filter          dfilter;              /*   832     8 */
-  	struct can_filter *        filter;               /*   840     8 */
-  	struct uniqframe *         uniq;                 /*   848     8 */
-
-  	/* size: 856, cachelines: 14, members: 20 */
-  	/* sum members: 852, holes: 1, sum holes: 3 */
-  	/* sum bitfield members: 6 bits, bit holes: 1, sum bit holes: 2 bits */
-  	/* member types with bit holes: 1, total: 1 */
-  	/* forced alignments: 1 */
-  	/* last cacheline: 24 bytes */
-  } __attribute__((__aligned__(8)));
-
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
- net/can/raw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/can/raw.c b/net/can/raw.c
-index 5a5ded519cd1768456c234c42dc4e865f7350dab..bf65d67b5df0135bf02d90c5e1070898a4f5592e 100644
---- a/net/can/raw.c
-+++ b/net/can/raw.c
-@@ -82,10 +82,10 @@ struct uniqframe {
- 
- struct raw_sock {
- 	struct sock sk;
--	int ifindex;
- 	struct net_device *dev;
- 	netdevice_tracker dev_tracker;
- 	struct list_head notifier;
-+	int ifindex;
- 	unsigned int bound:1;
- 	unsigned int loopback:1;
- 	unsigned int recv_own_msgs:1;
-@@ -96,10 +96,10 @@ struct raw_sock {
- 	canid_t tx_vcid_shifted;
- 	canid_t rx_vcid_shifted;
- 	canid_t rx_vcid_mask_shifted;
-+	can_err_mask_t err_mask;
- 	int count;                 /* number of active filters */
- 	struct can_filter dfilter; /* default/single filter */
- 	struct can_filter *filter; /* pointer to filter(s) */
--	can_err_mask_t err_mask;
- 	struct uniqframe __percpu *uniq;
- };
- 
-
--- 
-2.49.1
-
+Whatever is required to build the code should be included in the PR. If
+the same commit goes into arm-soc tree that's OK, just make sure the
+branches aren't broken if you checkout a commit anywhere along the
+branch that is sent to clk or arm-soc trees. Broken includes
+functionally broken.
 
