@@ -1,137 +1,249 @@
-Return-Path: <linux-kernel+bounces-820893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31E4B7FD05
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:12:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B212BB7F96D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F8A2B63588
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FEA3BB5B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9130637C0FC;
-	Wed, 17 Sep 2025 13:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714EE332A42;
+	Wed, 17 Sep 2025 13:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OtTJ71C2"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cL4dI1cm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2EAcp0KX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cL4dI1cm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2EAcp0KX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6197332A5C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43784332A4C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758116732; cv=none; b=htxCRQpv18lh5zxBhQbOz9JD3P4oxuAp3gB0/NJtaMgjwO95F5idAphvxCqSYBGZoB2GM7aHf+YM3OxZNT+i0nugbyKMIrxVjJk5wgZLkc+tFdlbTEkQdPB4fFM2eCwMjJXMpJVPJjXHQ0KHRC7MXSAmGmM+2uekL4pCvwvQszY=
+	t=1758116745; cv=none; b=eBLLEjPQiOcQJUp69xQfEteLs/DvEh2DMu9yJJs2f88PkekyWO/cmITyubKgMCyuNGF0rEmQPRuLHjsB+hA+Pcyt2zucHmGdRbUZ9fIHGTesUbv/+bjFI3TOE8RAkfVfL05S969DgGLk8cxs9YnKKGVN/fqch4jR3WvSeM85Lac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758116732; c=relaxed/simple;
-	bh=4rCjPUqBe5hDzKQsNZsZO0Si8lwcnSgwqoA91a8w/qA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PMY9ZkWU7q5U5ZHtgwZADpg6129I/yjdjROvGho//+QOS2vZSmEI/ZyQlUf1aOadXhJHxxAdQtDYud6RGU/Q3shRvAd4HskXa9t92Z2V3jsbTb3U9FxFdVnNGMGAQE8cnP0GZQ0laUAFgmOm8yvYDUD7qWtfmbo4iAKK18Sam+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OtTJ71C2; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b07883a5feeso1158434466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758116729; x=1758721529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4rCjPUqBe5hDzKQsNZsZO0Si8lwcnSgwqoA91a8w/qA=;
-        b=OtTJ71C2+f60SZTiEhIWHBQ4o7kLP6xIlRwXDOQmyb2tfI7Ixqe3jdodyDCZ6I/pci
-         VrYugBtsM39gl26uU6q8zCgyF3duHSoLIBD9gl91+nd7Px5uTUgcH93KyfqjILZ45oob
-         2hyQT1b5NVbgDk8Otqi+IB+ja1semJyZPKvQsfEAC7hIng7aXqM1XAr15ts6n9oJs0l/
-         gNxXp4EOLAnzzRWO/qH2GU7yPe4BIjcYQBgQAwknAMvNqZL7IxAeaJvAQQmxzrM6U+58
-         Kh1khv7J8EK+n1DRN18PQrohtPa6NfRFhGUeWL6KmBB8uCPW5EUPeAG+sA/Av8BLTks9
-         vfxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758116729; x=1758721529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4rCjPUqBe5hDzKQsNZsZO0Si8lwcnSgwqoA91a8w/qA=;
-        b=sFFlGCvLh7+cJrPm+ZTJgTqyx+5cJWZeZipmXyaSqTY35y+KkRlQwh5VlsZyDNqaBy
-         IQLA51eC12sC9jj7nVRkDzAjnxrjQ883ZfeJDk3Mo222qZAQoaGHtWIBZSya4wWUOzVx
-         779P1V5W740c3h4mB/J2Xh1E0BBPOwRwIprFFKR0VpLcKI18sRgibzA1NceHECBp77vK
-         uIskzkkmxVfoR1OW2ivwfpcvJs1IUGPVawtslImuEUViXhTJGdJhK/u6XSPTDTixsIpW
-         UuqfDfuXDia0KYMypksZkoJRzb9e5kI1ZfeopqDMiXkJThDan0JKFDOcR8goraRGUyxv
-         zuxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWWjVwrgknsR22aPFBwT3hFvFuEWepk9foHBl3Fuci0oXtYQeV29hpkNCLB8MwNn5UQlR//j0gXVSz20w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFdJM21qbH7hvN6wHpiyvY/rMcVgSkRn8jlEAFEDU6FSHXF6s/
-	dDQepCeYCcsc6fMLMxWrwF44QB49p2/vukDXmV8oXmdAJFJS9yss+I4PGNlhbtCe4tXY3Jv/H9+
-	El72Cgv75OZuHX6kgVPn95spm3Rkff2E=
-X-Gm-Gg: ASbGncuEDc7mMJ39UkYelCUUtVAEOoVbMsaIFVHssqQFymWM4yNC5enxm6392lfQQT6
-	+T/Gmo80vNTfbbgnC4uv/Kg+lHAJrzJ8DIYpbTLwDhA1jozEZ3tcdioOmaHd4scsZrEZL9B+OYr
-	In9OriLu4vF7ntDlqIh5++cjCGcg9BPR0CftCfTAypvHktyTtRSbeRzF6u9U6JGfP68B10h/eWL
-	htyfrrs2UNcD0QIQFQJuGsJd6TTa1IHTccdRMHP8/boWQICXg==
-X-Google-Smtp-Source: AGHT+IHJjSAqFzQR7vsvzpBHIle/SM7pkbfcfwBMTr+P1896d+alN/SQihemXVKbkiSRCNaNWJtZu6qP46KZEuNFGWc=
-X-Received: by 2002:a17:907:3c8b:b0:b04:aadd:b8d7 with SMTP id
- a640c23a62f3a-b1bb5e56d85mr276690166b.13.1758116728681; Wed, 17 Sep 2025
- 06:45:28 -0700 (PDT)
+	s=arc-20240116; t=1758116745; c=relaxed/simple;
+	bh=pttNoyrVMO9HIku9QnhGRBuzxeRAlRZhE0Pn0ymP/IQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NFv5C1MISS/qIGXH4ZQDc2TbQ3ldMeyNVipSAz+AzSQYMrPMK91jOwPq1vQydyyTkCy68zKUmN6a4ENh9DQv8HqjBufinUbTs85/F39V0z3mZuE2RnNLPR+DrJ+htt6uJdz8g3jLC8g3eM4VufTbLYvVjMi9Ntg4fpDIuG1PKgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cL4dI1cm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2EAcp0KX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cL4dI1cm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2EAcp0KX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5DEFA2017A;
+	Wed, 17 Sep 2025 13:45:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758116741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
+	b=cL4dI1cmxNNbqLFkGrb4NyRAZTyFbeuZF+xxNpPZ2N81pZalZxmq4CWKUrNn6i+rA6ubuf
+	AEG6oFms1U1siTsakc4T4ZxZTSzkr6joyvt/dKdjDRGoArAt0zs+OP07UBSe+bjOYutorx
+	XP6Rlp6EVfMgu53jEne01ufQCs5fNmg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758116741;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
+	b=2EAcp0KXYGQcDdwOmvXzIJ8hQvle/WjeSQ64vwBKJQRt2kfS1NFNz8daDq7mZlF33rHkih
+	NVNazWta+c4320AQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=cL4dI1cm;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2EAcp0KX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758116741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
+	b=cL4dI1cmxNNbqLFkGrb4NyRAZTyFbeuZF+xxNpPZ2N81pZalZxmq4CWKUrNn6i+rA6ubuf
+	AEG6oFms1U1siTsakc4T4ZxZTSzkr6joyvt/dKdjDRGoArAt0zs+OP07UBSe+bjOYutorx
+	XP6Rlp6EVfMgu53jEne01ufQCs5fNmg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758116741;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=13Ej0a5LcZRESyka9zE9AK+QSaGitNj9CQUgrUKtJJo=;
+	b=2EAcp0KXYGQcDdwOmvXzIJ8hQvle/WjeSQ64vwBKJQRt2kfS1NFNz8daDq7mZlF33rHkih
+	NVNazWta+c4320AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B968B137C3;
+	Wed, 17 Sep 2025 13:45:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D/tkK4S7ymjGegAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 17 Sep 2025 13:45:40 +0000
+Date: Wed, 17 Sep 2025 15:45:40 +0200
+Message-ID: <87ms6tchvf.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: cryolitia@uniontech.com,
+	Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Nie Cheng <niecheng1@uniontech.com>,
+	Zhan Jun <zhanjun@uniontech.com>,
+	Feng Yuan <fengyuan@uniontech.com>,
+	qaqland <anguoli@uniontech.com>,
+	kernel@uniontech.com,
+	linux-modules@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>
+Subject: Re: [PATCH v3 3/4] ALSA: usb-audio: add module param device_quirk_flags
+In-Reply-To: <20250917-sound-v3-3-92ebe9472a0a@uniontech.com>
+References: <20250917-sound-v3-0-92ebe9472a0a@uniontech.com>
+	<20250917-sound-v3-3-92ebe9472a0a@uniontech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250917124404.2207918-1-max.kellermann@ionos.com>
- <CAGudoHHSpP_x8MN5wS+e6Ea9UhOfF0PHii=hAx9XwFLbv2EJsg@mail.gmail.com> <CAKPOu+9nLUhtVBuMtsTP=7cUR29kY01VedUvzo=GMRez0ZX9rw@mail.gmail.com>
-In-Reply-To: <CAKPOu+9nLUhtVBuMtsTP=7cUR29kY01VedUvzo=GMRez0ZX9rw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 17 Sep 2025 15:45:16 +0200
-X-Gm-Features: AS18NWBMJGX1M7gmLnyGCZI8UTIw8c6hYUtKDGdB2cO4qtZ9mDWgO1MIhRf_XYA
-Message-ID: <CAGudoHEhvNyQhHG516a6R+vz3b69d-5dCU=_8JpXdRdGnGsjew@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
-	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 5DEFA2017A
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[cryolitia.uniontech.com];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -2.01
 
-On Wed, Sep 17, 2025 at 3:39=E2=80=AFPM Max Kellermann <max.kellermann@iono=
-s.com> wrote:
->
-> On Wed, Sep 17, 2025 at 3:14=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com>=
- wrote:
-> > Does the patch convert literally all iput calls within ceph into the
-> > async variant? I would be worried that mandatory deferral of literally
-> > all final iputs may be a regression from perf standpoint.
->
+On Wed, 17 Sep 2025 14:46:42 +0200,
+Cryolitia PukNgae via B4 Relay wrote:
+> 
+> From: Cryolitia PukNgae <cryolitia@uniontech.com>
+> 
+> For apply and unapply quirk flags more flexibly though param and sysfs
+> 
+> Co-developed-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-ok, in that case i have no further commentary
+I think an easier approach would be to rather parse the string value
+at each time when probing a device and seeking for options.
 
-> I don't think this affects performance at all. It almost never happens
-> that the last reference gets dropped by somebody other than dcache
-> (which only happens under memory pressure).
+That is, let's code without a mutex at first (for the permission
+0444):
 
-Well only changing the problematic consumers as opposed *everyone*
-should be the end of it.
+void snd_usb_init_dynamic_quirks(int idx, struct snd_usb_audio *chip)
+{
+	....
+	/* old style option found: the position-based integer value */
+	if (quirk_flags[idx] &&
+	    !kstrtou32(quirk_flags[idx], 0, &chip->quirk_flags)) {
+		usb_audio_dbg(....);
+		return;
+	}
 
-> (Forgot to reply to this part)
-> No, I changed just the ones that are called from Writeback+Messenger.
->
-> I don't think this affects performance at all. It almost never happens
-> that the last reference gets dropped by somebody other than dcache
-> (which only happens under memory pressure).
-> It was very difficult to reproduce this bug:
-> - "echo 2 >drop_caches" in a loop
-> - a kernel patch that adds msleep() to several functions
-> - another kernel patch that allows me to disconnect the Ceph server via i=
-octl
-> The latter was to free inode references that are held by Ceph caps.
-> For this deadlock to occur, all references other than
-> writeback/messenger must be gone already.
-> (It did happen on our production servers, crashing all of them a few
-> days ago causing a major service outage, but apparently in all these
-> years we're the first ones to observe this deadlock bug.)
->
+	/* take the default quirk from the quirk table */
+	snd_usb_init_quirk_flags(chip);
 
-This makes sense to me.
+	for (i = 0; i < ARRAY_SIZE(quirk_flags); i++) {
+		if (quirk_flags[i] && *quirk_flags[i]) {
+			err = parse_quirk_option(chip, quirk_flags[i]);
+			if (err < 0)
+				return;
+		}
+	}
+}
 
-The VFS layer is hopefully going to get significantly better assert
-coverage, so I expect this kind of trouble will be reported on without
-having to actually run into it. Presumably including
-yet-to-be-discovered deadlocks. ;)
+and the parser would be something like:
+
+static int parse_quirk_option(struct snd_usb_audio *chip, const char *str)
+{
+	char *val __free(kfree) = NULL;
+	char *field;
+	int pid, vid;
+
+	if (!strchr(str, ':'))
+		return 0;
+
+	val = kstrdup(str, GFP_KERNEL);
+	if (!val)
+		return -ENOMEM;
+
+	/* Each entry consists of VID:PID:flags */
+	field = strsep(&p, ":");
+	if (!field)
+		return 0;
+	if (strcmp(field, "*") == 0)
+		vid = 0;
+	else if (kstrtou16(field, 16, &vid))
+		return 0; // can spew warning message, too
+
+	field = strsep(&p, ":");
+	if (!field)
+		return 0;
+	if (strcmp(field, "*") == 0)
+		pid = 0;
+	else if (kstrtou16(field, 16, &pid))
+		return 0; // can spew warning message, too
+
+	.... // evaluate the tokens, set or clear chip->quirk_flags accordingly
+	return 0;
+}
+
+So you can just use the normal charp type for the parameters.
+
+Once after this working, we may want to allow the dynamic module
+parameter change.  Then make the parameter a special type just to take
+the device_quirk_mutex at set callback, while the set callback simply
+calls parm_set_charp() for the rest.  For get and free callbacks, we
+can use param_get_charp() and param_free_charp() as is.
+Finally, snd_usb_init_dynamic_quirks() takes the device_quirk_mutex,
+and that's all.  No need for heavy cleanups or linked list handling.
+
+Of course, it's a bit inefficient from the performance POV, but the
+device probing is rather a very rare event, so the speed doesn't
+matter at all.
+
+
+thanks,
+
+Takashi
 
