@@ -1,229 +1,140 @@
-Return-Path: <linux-kernel+bounces-821576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65F5B81AA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC8EB81AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7305829C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ACE74646A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416A13009CA;
-	Wed, 17 Sep 2025 19:40:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770A818D656
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D32330B50F;
+	Wed, 17 Sep 2025 19:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yi67W+xl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C18C18D656;
+	Wed, 17 Sep 2025 19:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758138049; cv=none; b=tIw5M2lKwzjkwrLYuTpoygMzwpY98bmCmQhIcer25Zyne0LsTVpCmfIp7agoXKoXoAsU2HKWWvUV0NbJ2HVvAOIg2oQrXBxACFqtqhGp+FoaYkYFwZ+mu9iGLgkHTOUr1kjR12uB6pzU80pM5SmyjQW85S3QVlrnV4fuh3+q9Ug=
+	t=1758138236; cv=none; b=NzgoMZyCPgma9lpgcsB8TOCALbmtwAnZkI1EBW304wPvhLU5u3PZq6inQuxWZ9RRlonL+zu+eGPRi3JH0zV3a66+NzzVcNQyi4Bl3snNsT+Kh7budw53C838g5m4DG45T92gF5dJm4ukAXCoXrW7wF9fDueFZtWgjjWgn9cH8To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758138049; c=relaxed/simple;
-	bh=FCGXz0w7Rb4baiKk2KU8OhaYUbEnOpCe/h9+95S5IdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uf0TnEPkd8i7URrmzFowOcrqCdvcmbuK7o0DEAgExvVDvdp+2M8F8dB3STLqprKz6rv75DZkxDddZhgwU4CjZ2KwxsqSzSdR/Wh2VVdujWeLg8y0LP+JV2LiqfHcD0fWxwY7BPe5pvKBcScaXhEVu4bHZcukYyoYOlxHqfGdmHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 803762696;
-	Wed, 17 Sep 2025 12:40:38 -0700 (PDT)
-Received: from [10.57.80.26] (unknown [10.57.80.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F053F3F694;
-	Wed, 17 Sep 2025 12:40:44 -0700 (PDT)
-Message-ID: <3cbda17c-4c1c-4c04-a1fe-bd6ea6714de8@arm.com>
-Date: Wed, 17 Sep 2025 20:40:43 +0100
+	s=arc-20240116; t=1758138236; c=relaxed/simple;
+	bh=q+Lt8bH7T373kamJB5/tW5TmCsjbKI0EIvvyC2SNLBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lwrg6bFz9xrsBR146YJPFf6xEGq9r7E9o4TZg9uxwL3+qWN28NbiXN5qz0SVCmOLBeAxE9fPs5cJcpJaRZhT41Z88aL/pyPVUi3fKTK0Z6mxUMuswXdPCYbBkWqcP1QJYtm4/VILwDftDfjBe1vfwaBaol/OIb0cGraLydpRnFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yi67W+xl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C9AC4CEE7;
+	Wed, 17 Sep 2025 19:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758138235;
+	bh=q+Lt8bH7T373kamJB5/tW5TmCsjbKI0EIvvyC2SNLBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yi67W+xlyLhhvg7XND+78Cx7G7AW4F9jGoY5/Kd9uVeWBMKDBf1iMzIwktyPSbibR
+	 hmEE8+7Rg/Dn7EjkUIl+9dVmyYg2PADd3MlugSPmwTk5IiMx2zUauAn2QNBwrMnEV+
+	 mZXO3Qv6vW9zWmSNxlhP8G7Nrb6uyL9iUo2zdKzUTK1rBt/QZKET7df+/rEPOtfSTZ
+	 CBxM88mVDHzCM2/UdCBbITHLnZuqYsCy3OnChqVUiJssJpaqSE/IpEAyRWXM/NQlTw
+	 Tkwl/YwctXk2/ACsm271DrynM5sZ8sFl/bBHmyked2o3HryaxSYO3Px0QzqXUfyo1c
+	 RKF90lq6nfOZw==
+Date: Wed, 17 Sep 2025 14:43:51 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	agross@kernel.org, lumag@kernel.org, konradybcio@kernel.org, 
+	daniel.lezcano@linaro.org, sboyd@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com, 
+	lee@kernel.org, rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com, 
+	david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com, 
+	kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, cros-qcom-dts-watchers@chromium.org, 
+	quic_kotarake@quicinc.com, neil.armstrong@linaro.org, stephan.gerhold@linaro.org
+Subject: Re: [PATCH V7 0/5] Add support for QCOM SPMI PMIC5 Gen3 ADC
+Message-ID: <uvgeuxf7cpnlypif35lvzatdkwrnxynhvf43qw2nc2bvt3zcf3@75kkwp3raqfm>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+ <20250829-demonic-soft-guppy-512c13@kuoka>
+ <zgm2k2osmasdal6anba66pw24a7fiypgwlf3c36kvteshz7uef@wee4had7x54u>
+ <8fdc99b6-4ad2-4a08-9dca-6289c8fdddd6@linaro.org>
+ <nsyhau4pnn2nbxdf35npwq4gvjiphocrftrwi4seirxqzurww6@6jgyzzmjyg7q>
+ <20250829173117.000029e6@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
- mapping when rodata=full
-Content-Language: en-GB
-To: Yang Shi <yang@os.amperecomputing.com>, Dev Jain <dev.jain@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <612940d2-4c8e-459c-8d7d-4ccec08fce0a@os.amperecomputing.com>
- <1471ea27-386d-4950-8eaa-8af7acf3c34a@arm.com>
- <f8cf1823-1ee9-4935-9293-86f58a9e2224@arm.com>
- <bf1aa0a4-08de-443f-a1a3-aa6c05bab38c@os.amperecomputing.com>
- <39c2f841-9043-448d-b644-ac96612d520a@os.amperecomputing.com>
- <d7cd4004-bacf-47b0-9cd8-f99125e02238@arm.com>
- <fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com>
- <8c363997-7b8d-4b54-b9b0-1a1b6a0e58ed@arm.com>
- <4aa4eedc-550f-4538-a499-504dc925ffc2@os.amperecomputing.com>
- <1cfda234-1339-4d83-bd87-b219fbd72664@arm.com>
- <55a79826-48e3-41c0-8dbd-b6398e7e49a6@os.amperecomputing.com>
- <92719b15-daf8-484f-b0db-72e23ae696ad@os.amperecomputing.com>
- <e86e2aa5-c66c-41a9-a56d-74451df0d105@arm.com>
- <f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com>
- <047c0f7b-e46d-4a3f-8bc0-ce007eac36a7@arm.com>
- <45dc2746-153a-482d-954f-11fe1cd8d18e@os.amperecomputing.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <45dc2746-153a-482d-954f-11fe1cd8d18e@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829173117.000029e6@huawei.com>
 
-On 17/09/2025 20:15, Yang Shi wrote:
+On Fri, Aug 29, 2025 at 05:31:17PM +0100, Jonathan Cameron wrote:
+> On Fri, 29 Aug 2025 12:20:45 +0300
+> Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
 > 
+> > On Fri, Aug 29, 2025 at 11:11:48AM +0200, Krzysztof Kozlowski wrote:
+> > > On 29/08/2025 10:09, Dmitry Baryshkov wrote:  
+> > > > On Fri, Aug 29, 2025 at 09:12:59AM +0200, Krzysztof Kozlowski wrote:  
+> > > >> On Tue, Aug 26, 2025 at 02:06:52PM +0530, Jishnu Prakash wrote:  
+> > > >>>  create mode 100644 drivers/iio/adc/qcom-spmi-adc5-gen3.c
+> > > >>>  create mode 100644 drivers/thermal/qcom/qcom-spmi-adc-tm5-gen3.c
+> > > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550-adc5-gen3.h
+> > > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550b-adc5-gen3.h
+> > > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550vx-adc5-gen3.h
+> > > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pmk8550-adc5-gen3.h
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm7325.h (98%)
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350.h (98%)
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350b.h (99%)
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmk8350.h (97%)
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735a.h (95%)
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735b.h (95%)
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-smb139x.h (93%)
+> > > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-vadc.h (78%)
+> > > >>>  create mode 100644 include/linux/iio/adc/qcom-adc5-gen3-common.h
+> > > >>>
+> > > >>>
+> > > >>> base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf  
+> > > >>
+> > > >> What's the base commit?
+> > > >>
+> > > >> git show 0f4c93f7eb861acab537dbe94441817a270537bf
+> > > >> fatal: bad object 0f4c93f7eb861acab537dbe94441817a270537bf  
+> > > > 
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250822&id=0f4c93f7eb861acab537dbe94441817a270537bf  
+> > > 
+> > > I see:
+> > > "Notice: this object is not reachable from any branch."
+> > > 
+> > > I guess you think this is 20250822?  
+> > 
+> > Well, it kinda is. It's a commit by Stephen, it has proper contents,
+> > etc.  next-20250822 is not a branch, but a tag, that's why you observe
+> > the warning from gitweb. You can verify it yourself by manually pulling
+> > the tag from the repo.
+> > 
 > 
-> On 9/17/25 11:58 AM, Ryan Roberts wrote:
->> On 17/09/2025 18:21, Yang Shi wrote:
->>>
->>> On 9/17/25 9:28 AM, Ryan Roberts wrote:
->>>> Hi Yang,
->>>>
->>>> Sorry for the slow reply; I'm just getting back to this...
->>>>
->>>> On 11/09/2025 23:03, Yang Shi wrote:
->>>>> Hi Ryan & Catalin,
->>>>>
->>>>> Any more concerns about this?
->>>> I've been trying to convince myself that your assertion that all users that set
->>>> the VM_FLUSH_RESET_PERMS also call set_memory_*() for the entire range that was
->>>> returned my vmalloc. I agree that if that is the contract and everyone is
->>>> following it, then there is no problem here.
->>>>
->>>> But I haven't been able to convince myself...
->>>>
->>>> Some examples (these might intersect with examples you previously raised):
->>>>
->>>> 1. bpf_dispatcher_change_prog() -> bpf_jit_alloc_exec() -> execmem_alloc() ->
->>>> sets VM_FLUSH_RESET_PERMS. But I don't see it calling set_memory_*() for
->>>> rw_image.
->>> Yes, it doesn't call set_memory_*(). I spotted this in the earlier email. But it
->>> is actually RW, so it should be ok to miss the call. The later
->>> set_direct_map_invalid call in vfree() may fail, but set_direct_map_default call
->>> will set RW permission back. But I think it doesn't have to use execmem_alloc(),
->>> the plain vmalloc() should be good enough.
->>>
->>>> 2. module_memory_alloc() -> execmem_alloc_rw() -> execmem_alloc() -> sets
->>>> VM_FLUSH_RESET_PERMS (note that execmem_force_rw() is nop for arm64).
->>>> set_memory_*() is not called until much later on in module_set_memory().
->>>> Another
->>>> error in the meantime could cause the memory to be vfreed before that point.
->>> IIUC, execmem_alloc_rw() is used to allocate memory for modules' text section
->>> and data section. The code will set mod->mem[type].is_rox according to the type
->>> of the section. It is true for text, false for data. Then set_memory_rox() will
->>> be called later if it is true *after* insns are copied to the memory. So it is
->>> still RW before that point.
->>>
->>>> 3. When set_vm_flush_reset_perms() is set for the range, it is called before
->>>> set_memory_*() which might then fail to split prior to vfree.
->>> Yes, all call sites check the return value and bail out if set_memory_*() failed
->>> if I don't miss anything.
->>>
->>>> But I guess as long as set_memory_*() is never successfully called for a
->>>> *sub-range* of the vmalloc'ed region, then for all of the above issues, the
->>>> memory must still be RW at vfree-time, so this issue should be benign... I
->>>> think?
->>> Yes, it is true.
->> So to summarise, all freshly vmalloc'ed memory starts as RW. set_memory_*() may
->> only be called if VM_FLUSH_RESET_PERMS has already been set. If set_memory_*()
->> is called at all, the first call MUST be for the whole range.
-> 
-> Whether the default permission is RW or not depends on the type passed in by
-> execmem_alloc(). It is defined by execmem_info in arch/arm64/mm/init.c. For
-> ARM64, module and BPF have PAGE_KERNEL permission (RW) by default, but kprobes
-> is PAGE_KERNEL_ROX (ROX).
-
-Perhaps I missed it, but as far as I could tell the prot that the arch sets for
-the type only determines the prot that is set for the vmalloc map. It doesn't
-look like the linear map is modified at all... which feels like a bug to me
-since the linear map will be RW while the vmalloc map will be ROX... I guess I
-must have missed something...
-
-> 
->> If those requirements are all met, then if VM_FLUSH_RESET_PERMS was set but
->> set_memory_*() was never called, the worst that can happen is for both the
->> set_direct_map_invalid() and set_direct_map_default() calls to fail due to not
->> enough memory. But that is safe because the memory was always RW. If
->> set_memory_*() was called for the whole range and failed, it's the same as if it
->> was never called. If it was called for the whole range and succeeded, then the
->> split must have happened already and set_direct_map_invalid() and
->> set_direct_map_default() will therefore definitely succeed.
->>
->> The only way this could be a problem is if someone vmallocs a range then
->> performs a set_memory_*() on a sub-region without having first done it for the
->> whole region. But we have not found any evidence that there are any users that
->> do that.
-> 
-> Yes, exactly.
-> 
->>
->> In fact, by that logic, I think alloc_insn_page() must also be safe; it only
->> allocates 1 page, so if set_memory_*() is subsequently called for it, it must by
->> definition be covering the whole allocation; 1 page is the smallest amount that
->> can be protected.
-> 
-> Yes, but kprobes default permission is ROX.
-> 
->>
->> So I agree we are safe.
->>
->>
->>>> In summary this all looks horribly fragile. But I *think* it works. It would be
->>>> good to clean it all up and have some clearly documented rules regardless.
->>>> But I
->>>> think that could be a follow up series.
->>> Yeah, absolutely agreed.
->>>
->>>>> Shall we move forward with v8?
->>>> Yes; Do you wnat me to post that or would you prefer to do it? I'm happy to do
->>>> it; there are a few other tidy ups in pageattr.c I want to make which I
->>>> spotted.
->>> I actually just had v8 ready in my tree. I removed pageattr_pgd_entry and
->>> pageattr_pud_entry in pageattr.c and fixed pmd_leaf/pud_leaf as you suggested.
->>> Is it the cleanup you are supposed to do?
->> I was also going to fix up the comment in change_memory_common() which is now
->> stale.
-> 
-> Oops, I missed that in my v8. Please just comment for v8, I can fix it up later.
-
-Ahh no biggy. If there is a chance Will will take the series, let's not hold it
-up for a comment.
-
-> 
-> Thanks,
-> Yang
-> 
-> 
->>
->>> And I also rebased it on top of
->>> Shijie's series (https://git.kernel.org/pub/scm/linux/kernel/git/arm64/
->>> linux.git/commit/?id=bfbbb0d3215f) which has been picked up by Will.
->>>
->>>>> We can include the
->>>>> fix to kprobes in v8 or I can send it separately, either is fine to me.
->>>> Post it on list, and I'll also incorporate into the series.
->>> I can include it in v8 series.
->>>
->>>>> Hopefully we can make v6.18.
->>>> It's probably getting a bit late now. Anyway, I'll aim to get v8 out
->>>> tomorrow or
->>>> Friday and we will see what Will thinks.
->>> Thank you. I can post v8 today.
->> OK great - I'll leave it all to you then - thanks!
->>
->>> Thanks,
->>> Yang
->>>
->>>> Thanks,
->>>> Ryan
->>>>
->>>>> Thanks,
->>>>> Yang
->>>>>
+> Kind of immaterial.  Typically subsystem maintainers want a base of
+> *-rc1 unless there is a dependency in their tree.
 > 
 
+Basing the work on -rc1 is nice, but unless I'm missing something, patch
+1 depend on changes that only exists in your -next branch and changes
+that only exists in my (the qcom/dts) -next branch.
+
+So, it seems that this can only be merged into next-20250822, not into
+any actual maintainer's branch.
+
+
+In the current form, the only sensible way I see to merge this is to get
+a version freshly rebased on v6.18-rc1 (before we pile up any other
+conflicts), we merge patch 1 into a immutable branch and then you take
+the rest of the patches on top of this in your tree. Does this sound
+reasonable? I'm open for suggestions...
+
+Regards,
+Bjorn
 
