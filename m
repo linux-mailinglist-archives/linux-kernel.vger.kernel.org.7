@@ -1,120 +1,122 @@
-Return-Path: <linux-kernel+bounces-821324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9424FB80F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:26:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B53B80F67
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3400B1C2547A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:23:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5F63A92A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6EC34BA4F;
-	Wed, 17 Sep 2025 16:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D36434BA3E;
+	Wed, 17 Sep 2025 16:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kfzj1gnh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="TgrRAWqJ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99EF34BA21;
-	Wed, 17 Sep 2025 16:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19B734BA2E;
+	Wed, 17 Sep 2025 16:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126192; cv=none; b=NpYwiB8dct36TYMDxfxwZtOLBNi3PNERRJKkTcRlumWc4kcTZHAuBDxSX6MtLAGDV8pVVFKhyIXhZqvDwI0y9IRqzw3+eKeu/+bA3bYMW1QnO0etkkopJk1zwv6tUBcMXg+S0i3k5aI+f8GCfUYR4fuvfBETGqAcUvZaveJ6Nlc=
+	t=1758126257; cv=none; b=dZi3UjX1ayZYDNsogaQD+wc0/iGLzNft6N6velZd07L/VA6KdM2jQdzek7+uiwjFtWY2JTxTYeHPuv/8k6RQpru3JvJbfReHkyEEWKCWf4K0HbrnipGY2KnRuHOs0uveMMWqkqzTmoEZrRzX0jfBK5wAQjU3HIhi9yKsA0aDhBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126192; c=relaxed/simple;
-	bh=9WSFumWUM+iDYPWeZ4g7rzOwgg3/uhk4ULpV1IZjzl0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pq7bWJ5urgYPa9xswjhKBud9X5GWKWia3I0z1p/k/W2B9lOEUI3IKi31cuAslkAALlezchjtSKFPcdtRn+XaUH+3sSZlrVBUXCtXMwLqZwsXCGJl+8nB7kF9Y7HClLsnRX9dhnyZDvlQ7CojsPrjiMbYeHWnryv7F8akovLNOTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kfzj1gnh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65058C4CEE7;
-	Wed, 17 Sep 2025 16:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758126191;
-	bh=9WSFumWUM+iDYPWeZ4g7rzOwgg3/uhk4ULpV1IZjzl0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Kfzj1gnhpIZIlSPLY/n2BOgor5Q8F4ztJr6k1ThhlxR+9gsvxo33Its/rk0lxWDEa
-	 kQMdfrnrLDl4nFOaB8Rp1etdML05U2P1DIxf8tbpfbCHL7R5d7R9ZFVsR8H0uV7JhE
-	 BH+95ZqPe7PISfmGarbuBioxBTAXfUP7jg5saw4yLgYpNB6RwTgNaOYux39yx7hB3e
-	 FET/o+5vB5i3A9XWDEqsUualCOk6gxTzumiLMP1GbDQ9+6LOekeCvcQCOIXWug3AlP
-	 D6nvLVHTS0IJadn4FFX/GbvGR63mT/jj+VNRCG6b0DA1DZHMZh8lFc3v/K9PX4QOYa
-	 ALNAw4EYVBjPA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uyuw1-000000079gN-05oW;
-	Wed, 17 Sep 2025 16:23:09 +0000
-Date: Wed, 17 Sep 2025 17:23:08 +0100
-Message-ID: <86o6r9121f.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sascha Bischoff <Sascha.Bischoff@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	nd <nd@arm.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	Joey Gouly
-	<Joey.Gouly@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org"
-	<will@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	Timothy Hayes
-	<Timothy.Hayes@arm.com>
-Subject: Re: [PATCH 1/5] KVM: arm64: Allow ICC_SRE_EL2 accesses on a GICv5 host
-In-Reply-To: <20250828105925.3865158-2-sascha.bischoff@arm.com>
-References: <20250828105925.3865158-1-sascha.bischoff@arm.com>
-	<20250828105925.3865158-2-sascha.bischoff@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1758126257; c=relaxed/simple;
+	bh=ee0Fihprx00Irt1b2uNyIYyx46h/WRE1AhiXBYr0/Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kuM3y4hz39vJAmqKHcsArJbLqCXB7N/C3DEfnEmIPHM7mbGs6lV5JZQA+wqg5RPtQs8DlFuGPwQY5QKzbWMs2op0N4YLsx+jP4vHqzz5bHnamc8N3cvQDewHOxVzojeLv2T8iCaHBiVamNjRoFypVL9BHcR5bzdB18GN4+2krnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=TgrRAWqJ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1758126253;
+	bh=ee0Fihprx00Irt1b2uNyIYyx46h/WRE1AhiXBYr0/Xg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TgrRAWqJvWypJvGtCRQDXPQqq59D7Dqxb2bVm70spnRUbnCk6qdM9RrExj3dlcXNW
+	 CSmuaEmg5E2735yhs5qryPq4U2Yd4DwpC3uEjUv4Aqp1SpSjl3QH6pgEnNg670qpbl
+	 UYGnzvDBOu5eSd/CGusWWHOEUdGQs0d5diZ18l+E=
+Date: Wed, 17 Sep 2025 18:24:13 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Willy Tarreau <w@1wt.eu>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2 16/16] selftests: vDSO: vdso_standalone_test_x86:
+ Switch to nolibc
+Message-ID: <1f64966f-ef7a-474a-9641-561b6b7cb0d2@t-8ch.de>
+References: <20250226-parse_vdso-nolibc-v2-0-28e14e031ed8@linutronix.de>
+ <20250226-parse_vdso-nolibc-v2-16-28e14e031ed8@linutronix.de>
+ <20250917153209.GA2023406@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Sascha.Bischoff@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, nd@arm.com, oliver.upton@linux.dev, Joey.Gouly@arm.com, Suzuki.Poulose@arm.com, yuzenghui@huawei.com, will@kernel.org, tglx@linutronix.de, lpieralisi@kernel.org, Timothy.Hayes@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250917153209.GA2023406@nvidia.com>
 
-On Thu, 28 Aug 2025 11:59:42 +0100,
-Sascha Bischoff <Sascha.Bischoff@arm.com> wrote:
+Hi Jason,
+
+On 2025-09-17 12:32:09-0300, Jason Gunthorpe wrote:
+> On Wed, Feb 26, 2025 at 12:44:55PM +0100, Thomas Weißschuh wrote:
 > 
-> The bet0 release of the GICv5 specification didn't include the
-> ICC_SRE_EL2 register as part of FEAT_GCIE_LEGACY. This was an
-> oversight, and support for this register has been added as of the bet1
-> release of the specification.
+> > -$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
+> > -$(OUTPUT)/vdso_standalone_test_x86: CFLAGS +=-nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
+> > +$(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c | headers
+> > +$(OUTPUT)/vdso_standalone_test_x86: CFLAGS:=$(CFLAGS_NOLIBC) $(CFLAGS)
 > 
-> Remove the guarding in the vGICv3 code that skipped the ICC_SRE_EL2
-> accesses for a GICv5 host. As a result of this change, it now becomes
-> possible to use nested virtualisation on a GICv5 host when running
-> legacy GICv3-based VMs.
+> This addition of "| headers" breaks O=build builds. ie this:
 > 
-> Signed-off-by: Sascha Bischoff <sascha.bischoff@arm.com>
+> $ make O=build-x86 allnoconfig -s -j 14
+> $ make O=build-x86 -s -j 14
+> $ make O=build-x86 kselftest-all -s -j 16 &> /dev/null || true
+> $ make O=build-x86 -s -j 14
+> 
+> Fails with:
+> 
+> ***
+> *** The source tree is not clean, please run 'make mrproper'
+> *** in /home/jgg/oss/wip/kselftests_dirty
+> ***
+> 
+> Because the build now spews stuff outside the build directory that it
+> should not do.. Bisection points to this patch and removing the "|
+> headers" makes it stop doing that..
 
-I just remembered my promise from almost 3 weeks ago, and just posted
-this:
+Sorry for the breakage and thanks for the report.
 
-https://lore.kernel.org/r/20250917161935.1630908-1-maz@kernel.org
+> Any idea how to fix it?
 
-which kills two birds with one stone. I'll take it as a prefix to this
-series.
+Care to try this:
 
-Thanks,
+diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+index 530390033929..a448fae57831 100644
+--- a/tools/testing/selftests/lib.mk
++++ b/tools/testing/selftests/lib.mk
+@@ -228,7 +228,10 @@ $(OUTPUT)/%:%.S
+        $(LINK.S) $^ $(LDLIBS) -o $@
+ endif
 
-	M.
++# Extract the expected header directory
++khdr_output := $(patsubst %/usr/include,%,$(filter %/usr/include,$(KHDR_INCLUDES)))
++
+ headers:
+-       $(Q)$(MAKE) -C $(top_srcdir) headers
++       $(Q)$(MAKE) -f $(top_srcdir)/Makefile -C $(khdr_output) headers
 
--- 
-Without deviation from the norm, progress is not possible.
+ .PHONY: run_tests all clean install emit_tests gen_mods_dir clean_mods_dir headers
+
+
+Thomas
 
