@@ -1,190 +1,134 @@
-Return-Path: <linux-kernel+bounces-820091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A36B7EFA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:09:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3183B7CD13
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE227AF77B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66A0484D23
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CA12F5467;
-	Wed, 17 Sep 2025 07:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QFMhEa2s"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8255A2F25EB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD692F83B9;
+	Wed, 17 Sep 2025 07:20:53 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9611F099C;
+	Wed, 17 Sep 2025 07:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758092450; cv=none; b=ZDGoAePN8EgXFtEeZduTtYwgGUZL4a2Al0aRJdr53mklI5LAtnxSq1MMhsr5+M426z3sf6KHKnLlBXVtqc7/oHIBR1J//zYb9h0UDYL4kSJNRt1bAgAwjyLqSCUU/YYKgbAEtOCjbqagAYLQwOePbZeeHZYTKZvIQxZO0J4gS+4=
+	t=1758093653; cv=none; b=QgQoV4HY0HKUu5FfcpqXmIT9MKKMbb4RxsF14Cxv7z55h5/s1IvKGsGfwMy3snk1mDD5mPsOTIh0qg13793siY2ySLuZkQQALgNBIyBxhYGnTBXfcSVT2NSPDhJokM9JM5KdvWHiBBl7arBzS9Rohzvjk0KUqRuZmosSmFtcp2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758092450; c=relaxed/simple;
-	bh=YjwP6sZixK4ypMXmPktinGSovQSbCWxf6IKVN/Kk4to=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=Q9hJv7osgS+o/U5jiohLnqPlMx6eSAQX4T28BGA2GYSXcD56HAfGwVVtmX5BJ4pwRtq6iqfziEq2tfNG4KyLm+vqFk+IKhtbUEPLzAr1GpZwscef+FXVnZwTfNSZSDI+mSU8A1qzxnFiR0d5Xl5kUFzrBGSdwKwU/p3ZgHzB8E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QFMhEa2s; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250917070046epoutp0447b73e304a0c2758b149d0351075ceb3~l-8QCqrly2030120301epoutp04V
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:00:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250917070046epoutp0447b73e304a0c2758b149d0351075ceb3~l-8QCqrly2030120301epoutp04V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758092446;
-	bh=/vCiTZ3N3P7ShOU4paNexYZlCAZ7bWu+BU5oOPi+Y7g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QFMhEa2sWKII3lgNKD534UbFbCHYKceyDOejV/OFIvSWxLJbB+RAbU+q9b9eZP8J5
-	 VUtL0VfBV1yotttCOXkon6IwzJr1q6IDA00fZCvxHKTIq7cQxzczfc7Xm8cXByagrx
-	 rzcCWoZZk+ZQ+KPeI0b6nR0MYkZpIO9GtYn6lyyY=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250917070046epcas5p42fbee3393da460327da4513e759edfd5~l-8PYbXlg1695016950epcas5p4n;
-	Wed, 17 Sep 2025 07:00:46 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cRV652hTpz3hhT9; Wed, 17 Sep
-	2025 07:00:45 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250917070044epcas5p4562c860c2ff5a3f848a91aa619c3a610~l-8OGYbc62143621436epcas5p4A;
-	Wed, 17 Sep 2025 07:00:44 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250917070041epsmtip10fe57999ad4f62cfcc5ef67bf230eb7a~l-8K5q-Ij2859728597epsmtip1e;
-	Wed, 17 Sep 2025 07:00:41 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com,
-	linus.walleij@linaro.org, robh@kernel.org, conor+dt@kernel.org
-Cc: tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ksk4725@coasia.com, pjsin865@coasia.com, gwk1013@coasia.com,
-	bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com,
-	lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
-	smn1196@coasia.com, shradha.t@samsung.com, swathi.ks@samsung.com,
-	kenkim@coasia.com, Ravi Patel <ravi.patel@samsung.com>
-Subject: [PATCH 2/2] pinctrl: samsung: Add ARTPEC-9 SoC specific
- configuration
-Date: Wed, 17 Sep 2025 12:30:04 +0530
-Message-ID: <20250917070004.87872-3-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250917070004.87872-1-ravi.patel@samsung.com>
+	s=arc-20240116; t=1758093653; c=relaxed/simple;
+	bh=T7exeBmULLWJga5OH37VIX/fG1+uHZkVbo/pMfIxDCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B9z3vnv3JgwWLd4d8KUQznGSDlNr5JqijdWGGnfb2XkoGvV8EBLNFKAXzuvlTWPuXajSffsrx+eFq0nMDweCIbCPsahh7Iy8Nz5/eb+cE6paso6W/aaIYqm40Y1g2zEEBqPxgafiJhVQUB6kPynUJcXzaLtTsDu3BJerjS1FLFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cRV5W1bycz9sxf;
+	Wed, 17 Sep 2025 09:00:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 11XSx90_uVxX; Wed, 17 Sep 2025 09:00:15 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cRV5W0cBKz9sxd;
+	Wed, 17 Sep 2025 09:00:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D2F708B766;
+	Wed, 17 Sep 2025 09:00:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id fs-jRcZF6hG5; Wed, 17 Sep 2025 09:00:14 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8BAFE8B763;
+	Wed, 17 Sep 2025 09:00:13 +0200 (CEST)
+Message-ID: <c7b767f3-168e-41dd-8c72-3d40f766c018@csgroup.eu>
+Date: Wed, 17 Sep 2025 09:00:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 06/18] dt-bindings: net: dp83822: Deprecate
+ ti,fiber-mode
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+References: <20250909152617.119554-1-maxime.chevallier@bootlin.com>
+ <20250909152617.119554-7-maxime.chevallier@bootlin.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250909152617.119554-7-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250917070044epcas5p4562c860c2ff5a3f848a91aa619c3a610
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917070044epcas5p4562c860c2ff5a3f848a91aa619c3a610
-References: <20250917070004.87872-1-ravi.patel@samsung.com>
-	<CGME20250917070044epcas5p4562c860c2ff5a3f848a91aa619c3a610@epcas5p4.samsung.com>
 
-From: SeonGu Kang <ksk4725@coasia.com>
 
-Add Axis ARTPEC-9 SoC specific configuration data to enable pinctrl.
 
-Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
----
- .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 49 +++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c     |  2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h     |  1 +
- 3 files changed, 52 insertions(+)
+Le 09/09/2025 à 17:26, Maxime Chevallier a écrit :
+> The newly added ethernet-connector binding allows describing an Ethernet
+> connector with greater precision, and in a more generic manner, than
+> ti,fiber-mode. Deprecate this property.
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-index 323487dfa8c2..5a64fb428142 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-@@ -1866,3 +1866,52 @@ const struct samsung_pinctrl_of_match_data artpec8_of_data __initconst = {
- 	.ctrl		= artpec8_pin_ctrl,
- 	.num_ctrl	= ARRAY_SIZE(artpec8_pin_ctrl),
- };
-+
-+/* pin banks of artpec9 pin-controller (FSYS0) */
-+static const struct samsung_pin_bank_data artpec9_pin_banks0[] __initconst = {
-+	ARTPEC_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x020, "gpf1", 0x04),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x040, "gpe0", 0x08),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x060, "gpe1", 0x0c),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x080, "gpe2", 0x10),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x0a0, "gpe3", 0x14),
-+	ARTPEC_PIN_BANK_EINTG(2, 0x0c0, "gpe4", 0x18),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x0e0, "gps0", 0x1c),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x100, "gps1", 0x20),
-+	ARTPEC_PIN_BANK_EINTG(5, 0x120, "gpi0", 0x24),
-+};
-+
-+/* pin banks of artpec9 pin-controller (FSYS1) */
-+static const struct samsung_pin_bank_data artpec9_pin_banks1[] __initconst = {
-+	ARTPEC_PIN_BANK_EINTG(2, 0x000, "gpu0", 0x00),
-+};
-+
-+/* pin banks of artpec9 pin-controller (PERIC) */
-+static const struct samsung_pin_bank_data artpec9_pin_banks2[] __initconst = {
-+	ARTPEC_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-+	ARTPEC_PIN_BANK_EINTG(8, 0x020, "gpa1", 0x04),
-+};
-+
-+static const struct samsung_pin_ctrl artpec9_pin_ctrl[] __initconst = {
-+	{
-+		/* pin-controller instance 0 FSYS0 data */
-+		.pin_banks	= artpec9_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(artpec9_pin_banks0),
-+		.eint_gpio_init	= exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 1 FSYS1 data */
-+		.pin_banks	= artpec9_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(artpec9_pin_banks1),
-+		.eint_gpio_init	= exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 2 PERIC data */
-+		.pin_banks	= artpec9_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(artpec9_pin_banks2),
-+		.eint_gpio_init	= exynos_eint_gpio_init,
-+	},
-+};
-+
-+const struct samsung_pinctrl_of_match_data artpec9_of_data __initconst = {
-+	.ctrl		= artpec9_pin_ctrl,
-+	.num_ctrl	= ARRAY_SIZE(artpec9_pin_ctrl),
-+};
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index c099195fc464..1d978443bd1b 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1484,6 +1484,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- #ifdef CONFIG_PINCTRL_EXYNOS_ARM64
- 	{ .compatible = "axis,artpec8-pinctrl",
- 		.data = &artpec8_of_data },
-+	{ .compatible = "axis,artpec9-pinctrl",
-+		.data = &artpec9_of_data },
- 	{ .compatible = "google,gs101-pinctrl",
- 		.data = &gs101_of_data },
- 	{ .compatible = "samsung,exynos2200-pinctrl",
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 3e8ef91d94a3..94334bd860ca 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -382,6 +382,7 @@ struct samsung_pmx_func {
- 
- /* list of all exported SoC specific data */
- extern const struct samsung_pinctrl_of_match_data artpec8_of_data;
-+extern const struct samsung_pinctrl_of_match_data artpec9_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos2200_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos3250_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos4210_of_data;
--- 
-2.17.1
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+>   Documentation/devicetree/bindings/net/ti,dp83822.yaml | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/ti,dp83822.yaml b/Documentation/devicetree/bindings/net/ti,dp83822.yaml
+> index 28a0bddb9af9..dc6c50413a67 100644
+> --- a/Documentation/devicetree/bindings/net/ti,dp83822.yaml
+> +++ b/Documentation/devicetree/bindings/net/ti,dp83822.yaml
+> @@ -47,6 +47,9 @@ properties:
+>          is disabled.
+>          In fiber mode, auto-negotiation is disabled and the PHY can only work in
+>          100base-fx (full and half duplex) modes.
+> +       This property is deprecated, for details please refer to
+> +       Documentation/devicetree/bindings/net/ethernet-connector.yaml
+> +    deprecated: true
+>   
+>     rx-internal-delay-ps:
+>       description: |
+> @@ -141,7 +144,12 @@ examples:
+>           tx-internal-delay-ps = <1>;
+>           ti,gpio2-clk-out = "xi";
+>           mac-termination-ohms = <43>;
+> +        mdi {
+> +          connector-0 {
+> +            lanes = <1>;
+> +            media = "BaseF";
+> +          };
+> +        };
+>         };
+>       };
+> -
+>   ...
 
 
