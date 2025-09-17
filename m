@@ -1,133 +1,147 @@
-Return-Path: <linux-kernel+bounces-819814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85ED0B7EB59
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:58:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF6AB7F120
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9711C0391E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:09:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A3647B64E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C76920F08E;
-	Wed, 17 Sep 2025 01:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF60422FE0D;
+	Wed, 17 Sep 2025 01:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Unar2SXg"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="rByKNAjH"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B6C21CC68
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1807121CC64;
+	Wed, 17 Sep 2025 01:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758071350; cv=none; b=UmN4sNPt1TmH5iDS3OERYRTSFZdpdHiFPtUtNIWaBrWCGk0D/wY8eUDqJGtjELRi5AxEgW+1ECQ5xo5kWvFfKIUWZiROpVnUug3TsxGSo7Y1UBFqs5T1y1ly+VriuLFaCtEgmK3uxkXdAaSY9Vu1AMEMuMH8GOECXNHfGgX+hSE=
+	t=1758071433; cv=none; b=Icm8vtxnxwkajRuONwgP4iyr+9nD/Z6m2xGcrAUUOoWRY+SL7fh8TvyWBz1oFS78wilPeosafXLIRthtvUBeh/D+1FVbgAF07ktT1XEAb1cNZFfxqZH+Y33a+W4c2sO31YRNlWF0piAy/XYgAR0Qk4Ew/DpNK401eZV6YcWuZSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758071350; c=relaxed/simple;
-	bh=8iy6YFiMxYbnPM1Dh+uja0UiONhMccJeOfORlYkOyIs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Z0oICYGhSbeyPfs4vVg2snIIES3s4r6eQ0xD3skhb5lETcrjmtJanNIaoCZSJBZ34j2orpGrGB24JdUofHGzen/U7lwtDeOAGpQGbS5Bd9oiOtWkVnB/vqk4/E9YbXUXcqNZcatsiMi7y473qrWahpV93jhi3mIhESMXTMgzD9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Unar2SXg; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77b0a93e067so1079742b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758071348; x=1758676148; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ef1jPHXRXlSyQcsCWb/rEyZIu3SGLb3odWcJ1kdair4=;
-        b=Unar2SXgzSUEx0wr24FmcBWnA5JppBUwuyT62CLGJihOapX1TQqQBu5AoPjrQYPPns
-         g5s/AR3vYJBlhYh4C+I6kPvTs0bXtnt6gQ7z0NjGuErjm8faXS3Pvi9813eQl5MN7Rl8
-         7E3v4YViZ1rbQ5cgPC85RGtBX4mD2OCMWr/Du7+AOchWV7vimYZjZ3A3lGrvih+4RVt/
-         LDYQPivshyIK0FoK/kMPnDw461h7pfwpcVERgCct9lZOA2J/acmerAMOZgnv8PhIRApC
-         rcU3XOqXMF7b2iRmoWYQBsr5Lz/mVWDc4qNGXi8Si6nVRN6AVk9TZmeCmFeu8NIE/Mrz
-         ULFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758071348; x=1758676148;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ef1jPHXRXlSyQcsCWb/rEyZIu3SGLb3odWcJ1kdair4=;
-        b=HLJWW7a1Bm+NCY0ylvTgsbUPPXv7f+S43G8M1QQfCiWsYyKQ18Xx3PQ2HEbD6TvpKA
-         Fy1+iOkhcUu8z7lw5ZcaIj62JgYfA5mXAqYc5ibUNE7KocIBvAA6X1fAGBW+RzygtM6f
-         lcSiHLUuE0yHVsM/gg4iuK5/u505wBikmMpy9gpZFyCD6urTEQ9x9zFKOEOKXHXU1i33
-         y67D7mcf3uYqf5PB1EaGulH5J5UQJxPpoZ1tWkeXzy2Hx4c+G4OlDJasEbgGZejRX92z
-         /ZOPbvTliFYZM3r9FHjUAZI1YmkAEg5xAmq0no288jVBRAyujYKCGeHMc2H97u1w85d3
-         gjQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqGG148bikoSQWjg6yBvnpcmPtp6SHsv56U+nEhW7oBBTe+lweIL2iFwWfrJE6X/HsqEtIysL4KVpIWmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLhkvttqUG6UvwgItd4x3iihRmE9A1wWGIQGNHQZ0MBsRG1nDx
-	zDMCZKb49zu0W8dfGX/0sqkM4UH6CcshXl6oroYXgzz9xSwjt9dODW/x
-X-Gm-Gg: ASbGncvuQ4uePWTzOSinNKBaz5+EISW35Gzm9nspARJViDSnRB1jDvDKFazRhnNXgAU
-	sAI5Tc9JgsRJhubL3xmSuX4SSfzmADWYd8vkzFA/X4gbLaA831/Lom7+CP+Xx0uATot9uF7TA2J
-	+F+NeBWxprxYQ69VcP+5NevQf0hza2G1WPvHnOlSL6yCNAiUZ0w1zJhvTDNMEJIw209CxHyyRWA
-	7e2c036AamjwjzuTQxTi0hjQ2Ecv1aVrEMQys2NZ5IgIUimAnXsMeANpshZangJxPAO9ULZdXm9
-	rPFHocTsTZKz3/LdpRmz3pW1jkKAyMt/QADrRB/j+Uo86BaKGL/X/btva5Z6wqrNRPMaCsTnaX2
-	u6XrAQuXK6Yl0s2YPxDcNqfj8iVPeplvqrJnUD1RTFmpQcv6rMsuYrOW7tvkYeMuzesad
-X-Google-Smtp-Source: AGHT+IEkeWcnuAAqrcdSXAM4DGEipqHMYe63kvODT4I36ORImDYKQTXkHaAIEz84039vOsF1h25Hsg==
-X-Received: by 2002:a05:6a20:394b:b0:24b:bae4:9c67 with SMTP id adf61e73a8af0-27a9303f03emr318222637.7.1758071348500;
-        Tue, 16 Sep 2025 18:09:08 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed266eed7sm789472a91.3.2025.09.16.18.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 18:09:08 -0700 (PDT)
-Message-ID: <52932ede-eb04-4275-a051-952bc2859cf6@gmail.com>
-Date: Wed, 17 Sep 2025 10:09:05 +0900
+	s=arc-20240116; t=1758071433; c=relaxed/simple;
+	bh=83hlTojNpMHUMhNQlSYHxajM36tMhM0Trd8zSojDxFA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bKPcflSVpvnGRhuEuXzfIeBZcj90SbpZbsY3yDanCTA4nIk/UFTIE9ZcaSNStiTNNYiEnPO9VxqhrPx7l7Y5KWJResFX/xjFh/RWV6rsNDPf6uThyV1QuZXKDcaXOyWCJkvmQJW2l1Ik2a/uHwa7kY3j/xGXizJEWf0F2K7zB/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=rByKNAjH; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1758071420;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nGEaWmxy+OrwGhatLDdMArPdkkpGy3vthm4epzwHO1Y=;
+	b=rByKNAjHmpq181LQG1zlOYpLWxF/snRF6a6mwqMbZAgmRMvLRBLgdg6RTcRSMpG5PQ0k4v
+	QllJD4oSzhSYzB3lKIgKChoaFoPVRD4/AI1KGYSMtUN0JwddGHnJilSI06DwXGB7gHK2L6
+	EUjIoKtfEnV91tM5++bUn6tfqQ82bZ1Tnv/u/xSPEKiAUG/KNKVMVhLcIjmfxTc7s3ceRw
+	7G2ysqTkew3CJZuAorjM/utT/8bR+6NsWfLXbW1LlMkCNzI3n9cwTeHBwkWFTVz/CIiN2b
+	Cc3lLemLicRgy9aA9JAwlNHNkcgJDIQVpBAUG3Jg+oSFzn2PfVuZOlgIZ4nOrQ==
+From: Paul Sajna <sajattack@postmarketos.org>
+Subject: [PATCH v2 00/13] arm64: dts: qcom: sdm845-lg-{common, judyln}:
+ Improve HW support in dts
+Date: Tue, 16 Sep 2025 18:09:46 -0700
+Message-Id: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: mchehab+huawei@kernel.org
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>
-References: <8a77212d5459eac2a98db442691930425a2cbefd.1758018030.git.mchehab+huawei@kernel.org>
-Subject: Re: [PATCH v6 04/21] scripts: check-variable-fonts.sh: convert to
- Python
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <8a77212d5459eac2a98db442691930425a2cbefd.1758018030.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFsKymgC/2XO0QqCMBTG8VeRc91im4opEb1HdOG2k63U2c6SI
+ nz3lhUEXf4PnB/fAwi9RYIqeYDH0ZJ1fQy5SEAf675BZk1skFzmvBSCna7m3vbMBGKi0JnAvDS
+ aHyA+DB4P9jZju/27PV6u0QzvI3RIVM9mlaw/JP+SQ91jy0bBBFvJXBdZxlOl1HZwFLranzE4W
+ jrfbOCFHy0F5+/z8FHM+gdMfzdGjjOZqkwVRcmNxj8O9tM0PQEStQDVCAEAAA==
+X-Change-ID: 20250911-judyln-dts-17c41e59dc0f
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ Amir Dahan <system64fumo@protonmail.com>, 
+ Christopher Brown <crispybrown@gmail.com>, 
+ Paul Sajna <sajattack@postmarketos.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758071415; l=2827;
+ i=sajattack@postmarketos.org; s=20250422; h=from:subject:message-id;
+ bh=83hlTojNpMHUMhNQlSYHxajM36tMhM0Trd8zSojDxFA=;
+ b=KfxKLPGB1FMZwZ+v6MCQ7koPkTwUCKP70sPR06U0BdyQCmKKwigxluK6151GzMz0GEToL7q5Z
+ hfqEGe5L8oxBaJt6cHqE5JA3YnOg6+KLFlu4eDoxaIBB/eIKt43lJTH
+X-Developer-Key: i=sajattack@postmarketos.org; a=ed25519;
+ pk=TwacvEOiRJ2P2oAdEqIDrtQTL18QS4FfcHfP/zNsxkQ=
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 16 Sep 2025 12:22:40 +0200, Mauro Carvalho Chehab wrote:
-> This script handle errors when trying to build translations
-> with make pdfdocs.
-> 
-> As part of our cleanup work to remove hacks from docs Makefile,
-> convert this to python, preparing it to be part of a library
-> to be called by sphinx-build-wrapper.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Rollup of improved hardware support via devicetree for LG G7 ThinQ 
+(judyln) from sdm845-mainline kernel fork
 
-I could apply up to 05/21 of v6 and did some quick tests under
-Fedora (where Noto CJK VF fonts are installed).
+Notably, this patch-series enables full DRM acceleration and wifi,
+among other small improvements in individual commits
 
-At 3/21, "./scripts/check-variable-fonts.sh" doesn't say a word.
+after this patch-series the main things that remain to be worked
+on include touchscreen, audio, and modem.
 
-At 4/21, "./scripts/check-variable-fonts.py" complains:
+Depends upon panel driver patch-series https://lore.kernel.org/all/20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org/T/#r9a976ca01e309b6c03100e984a26a0ffc2fe2002
 
-=============================================================================
-XeTeX is confused by "variable font" files listed below:
-    /usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
-    /usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
-    /usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+Co-developed-by: Amir Dahan <system64fumo@protonmail.com>
+Co-developed-by: Christopher Brown <crispybrown@gmail.com>
+Signed-off-by: Amir Dahan <system64fumo@protonmail.com>
+Signed-off-by: Christopher Brown <crispybrown@gmail.com>
+Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+---
+Changes in v2:
+- sort at the start
+- drop unnecessary labels
+- drop unnecessary gmu
+- multi-led
+- split fb-panel changes
+- expand upon firmware commit message
+- use qcom,calibration-variant instead of
+  qcom,ath10k-calibration-variant
+- change firmware paths to include "LG"
+- remove framebuffer reservation
+- add lab/ibb
 
-For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
-Or, CJK pages can be skipped by uninstalling texlive-xecjk.
+- Link to v1: https://lore.kernel.org/r/20250913-judyln-dts-v1-0-23b4b7790dce@postmarketos.org
 
-For more info on denylisting, other options, and variable font, see header
-comments of scripts/check-variable-fonts.py.
-=============================================================================
+---
+Amir Dahan (1):
+      arm64: dts: qcom: sdm845-lg-common: Add leds
 
-Of course, I have followed the suggestions in the header comments.
+Christopher Brown (1):
+      arm64: dts: qcom: sdm845-lg-judyln: Add battery and charger
 
-So I have to NAK on 4/21.
+Paul Sajna (11):
+      arm64: dts: qcom: sdm845-lg-common: Sort nodes and properties
+      arm64: dts: qcom: sdm845-lg-common: Add uarts and Bluetooth
+      arm64: dts: qcom: sdm845-lg-judyln: Add display panel
+      arm64: dts: qcom: sdm845-lg-judyln: Add firmware nodes
+      arm64: dts: qcom: sdm845-lg-{common, judyln}: Add wifi node
+      arm64: dts: qcom: sdm845-lg-common: Add chassis-type
+      arm64: dts: qcom: sdm845-lg-judyln: Add fb_panel dimensions
+      arm64: dts: qcom: sdm845-lg-common: Add camera flash
+      arm64: dts: qcom: sdm845-lg-common: Add bootloader-compatible board and MSM IDs
+      arm64: dts: qcom: sdm845-judyln-common: Remove framebuffer reserved-mem
+      arm64: dts: qcom: sdm845-lg-judyln: Add lab/ibb
 
-Regards,
-Akira
+ arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 222 ++++++++++++++++++-------
+ arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts  | 136 ++++++++++++++-
+ 2 files changed, 296 insertions(+), 62 deletions(-)
+---
+base-commit: 8394712bc1340df993cb167199568f44013b45d3
+change-id: 20250911-judyln-dts-17c41e59dc0f
+prerequisite-message-id: <20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org>
+prerequisite-patch-id: e51151ea7f8fdad6ad7d90713febc5c6b6fc4f9c
+prerequisite-patch-id: b3dd44250da9cd12bc5b2d0d7e865dbe19ceed92
+prerequisite-patch-id: fd6c8077806cb03fcf37d0e0d730314c2760e334
+
+Best regards,
+-- 
+Paul Sajna <sajattack@postmarketos.org>
 
 
