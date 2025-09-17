@@ -1,325 +1,296 @@
-Return-Path: <linux-kernel+bounces-819919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79BBB7E6F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BB3B800E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DFE325783
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:21:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C07F7AE1DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6632777E0;
-	Wed, 17 Sep 2025 03:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7000B2F3C22;
+	Wed, 17 Sep 2025 03:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WRVUfNBX"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013006.outbound.protection.outlook.com [40.107.201.6])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gFbCT5Ae"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BC2149E17
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758079262; cv=fail; b=UAPOwbdPLywbiqgWHyLWQ+vJNy1HsQhpFJ7VZNThr5Fn2iFcLSabfgCl7Y6IFRmaEVL5jxpA3fJCPbyOY+6cGnnJwvWjHf3wPffJ18dwQdBB1Hi3GPfZA4Hjks4fSghhuuEargmPauyEpYFlus1N+IVtnLktHrUphewOoE8+VYk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758079262; c=relaxed/simple;
-	bh=P54Q12FDEkrWfsDo90Xxbqmxdql+WXiJqcgpbumCU2M=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H8Ex5A+IurGk8vtj772ZU5f0Z7wkrwK66Z0rL0yKWKG8VSokpb0t5VqsPme8bLsVw4GVe8hcc8IeJln9At/fySqgezRI2bmTNFdDFuYaIWYjQ7PYWlCk1kHePf5wnP5O9ZVn6v/2VRWXaaIgsWGw/wY3vbMalHoNlBBPlasHqmY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WRVUfNBX; arc=fail smtp.client-ip=40.107.201.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YEAQY1JwtLGvU+ZVUA7i577XLOWiAVUvGDQ+6pY5BZURlTOqbqORCfIl1xC3dw5ESHA0NjLPKLhgtvDAYIfqTsAX91kCscsmHWO3TAtVlzvPg298BjwuYP3gnEIFInplH0UyW1fStsf3K3Zbkw3Wwt/UKOFRcLcZL7X5dIcqGv5Hx/gUoxEYvEjlgpiTIeiox6GrqFQKausn0BFNyyCKXttjAksMeyNVDQKlq+N9KLtDCHlOBJzvqQSdkPRyyAlGv2mZJXa4oO9gDA1DpU6U7BfSyErRLdafveLwpq7FqDoUdttRmvAYEUALMox/YVX2uFH0G9Bj+1cYqzE1/t7rEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qwCsTvqgCNM9qgcrjQ3QpR/kZrfenU2IUrVEuCcgctQ=;
- b=sr8/DTkIJrEv947EnzBmfZcAETQmVN9wIBMvgsRlkyuWZh64ja+hkjYSI5caBY2cGKLQeFjL0a7e5udChW6E+QmxlJbB8+dg/nW1NKpEDuATZMrNTxm61QxTmjQO8NeIjJyvpWHSZUA1qxO3VZ5ArKEuOvt4eAo/uj9JQfy32xAV7KQE44+zbiTUyZrLEXsvNYn0RwA0ar/rfOUvMflT9A3cy9p5wgKWh9XOs3qlWOtWZxuaDlmAXbMdkMKZu46JILyxDwxOI5CVe/oJguwvxeYMn7po/6d/lBT6wSc7SjCouvWigr7UhHJmdBAQZ3guwa6h+xlcmyUsNQ4bb6rINA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qwCsTvqgCNM9qgcrjQ3QpR/kZrfenU2IUrVEuCcgctQ=;
- b=WRVUfNBX0K81LhWeWZqOewRKmE53em042bH/jQvckn92IkzRJmT2NDJr5vKrAzw9iUyw8Q84kSYHUeMXdxCPlwSPYHyMPYB6EBaF8GzErgS1SL9cfLQN7i4gqzyK9DF03IZqSmoGdFpU02YeQ4IC3FEsOG4qQ5DVTowDxfLGYZVTfyCTHIiqT6UlmvpcihU1Q1XQwMuyIcFen174a+sZSsNQo68NDDxIeK2wGufQKxd3qd4calnhgvNbU6BkEKhgjqPNCZMvjbbxxhW7S89jDlQyoNhw4Eaizs6Mkf+SO+Gg9einPtO42hbOzqcAushSp8UJc6iQb5osz9KxU88HFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by IA0PR12MB7627.namprd12.prod.outlook.com (2603:10b6:208:437::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 17 Sep
- 2025 03:20:57 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9115.018; Wed, 17 Sep 2025
- 03:20:57 +0000
-Message-ID: <71ac5779-d535-4b0f-bf8d-7a60bf6a6ecf@nvidia.com>
-Date: Wed, 17 Sep 2025 13:20:49 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-To: Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>,
- Bharata B Rao <bharata@amd.com>
-Cc: Gregory Price <gourry@gourry.net>, Matthew Wilcox <willy@infradead.org>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Jonathan.Cameron@huawei.com, dave.hansen@intel.com, hannes@cmpxchg.org,
- mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org,
- raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org,
- ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
- nifan.cxl@gmail.com, xuezhengchu@huawei.com, yiannis@zptcorp.com,
- akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com,
- kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com,
- alok.rathore@samsung.com
-References: <20250910144653.212066-1-bharata@amd.com>
- <aMGbpDJhOx7wHqpo@casper.infradead.org>
- <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
- <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
- <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0140.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::25) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E478821D596
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758079585; cv=none; b=o6l887TOxmxirxcZrVbrzf6/9aARpB3QacISuqfxHPc2pfuiLGLZBFwGHociq/pi/EArYsEoiNii++xlelMTKJT6m9xVTndKEUMsBkNQQukb/2+rkq/fHyrSSxpzvYpTS9q66+b1Qzj6amQP9D01UDx9OREp8kiS02QXQxZ5hF4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758079585; c=relaxed/simple;
+	bh=8ts0F0K+Jc0lwgkQ/xSNE7ECANa/vNb5ZeLpV9g8uWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pEOZPttVQvI2h2iuBCDRlWfS3ztTL7NaB7tNpknKoRfri33Vv+PnbXzrsd+CgCMg20o9Iv8lmQHwX2HlvLoMxaEbM+x3nr3w1cdc8dsL/jjSG+/RYzVNE5P01nWY9q732xaiquKdt01wuq+TUuSSvM00uwSxWzbWknGlOmTs7vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gFbCT5Ae; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLZjmv017763
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:26:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D5Ze7fBfF5bOpW6nOK7lzrEeHW+SnZky8WuncUBAOwc=; b=gFbCT5AeCRUdBBGv
+	tavMaaYdL3ZCkhRk6bXBiqC9F5Pjt/vWaEQUVlFlmrn0zzKHDaMXqsruzNiHORR7
+	XCJz2fEEgFsVQoeiIjBvbjka/VxuV06fuh1CfD8bHbI/Ovv2rn9zBX165s5zgD0L
+	LDwVhlCQ5uBx812XeKUcx/HixfYI1yiJbvUqD8v+Z1aHI3awA7HRh29SmGZdrGEe
+	Aj409MEPJMS/89nW0jVUtc+hCpV7rDU8Eng3CCBKLlLtxb36Ww4qp4Bg1AQwgMPh
+	LurbBqJmeH30XKQusx+Daskw7Lee/m1u8EE9xRK+kSiY/jxVi/DMtr8zo4Qq0A0N
+	9/J6EQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxt0qwa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:26:23 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-25177b75e38so73087865ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:26:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758079582; x=1758684382;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D5Ze7fBfF5bOpW6nOK7lzrEeHW+SnZky8WuncUBAOwc=;
+        b=fqMFEsx6Q6R5hEQHPoGjQO7sy5AnXsyVWx90e9Xku2fEBEmSsfXbI8Q3PpEdeHgWHY
+         cQhklJZCKJcj7m8uQMJGKqAuBuYM2ZyZgKrolMjbtlIOsQp3YsN1TLqWxlkMGRocxcn2
+         rLRZFRNYDy7pjUXzi4DLYTfuzcd6LDzX9g/B/qda63ekMDBMDBVjJciIambIp4Vr3WkA
+         38SvaHwVAu/WwSUaWUK2SkZwQIYaWBHia6VMvAaracLAlgiPrDa+Ip4aGeSsULVgFsxN
+         cq3lIdBtFbAdfgo13r1nCPDh7ytPBDzleLOQvaaas8sjzg09fwRNBqqtVg/vOSeMp6X7
+         GX9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuzhkrCyw52eUOKypKv33YKasG1VVxJbrAb5YraC99qbpBBVAYcKT+ECqa7k/ObK+X+WepHlLyh054VtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVLmb16UB/q5bWix163l1MMv/Wm6dlfcr4rew1FBOpSL23KBk3
+	ITAmgWqZJgigpHIkwQChckruPTB1oCQoTOdNfXowU/EzAquOaJkaQEPzh2NbFovhtaY3+IpgKEI
+	hkG1GPGAkT66asjSehLlOnEtDJjI6N7Mv97JFRiWnWE+iwE+BT7mm5B9jP6063jWyQtk=
+X-Gm-Gg: ASbGncsKUTTNvBVuNOHN24ea8zAQTkFiNFW7I38uNjKFSzXjspXhDr0NZzRjZGZce6u
+	PCzWDaQA300UVNuL/dphrDGMrJtV3CiBpcx+a0xil6SeICVV3uBd4IEkplsAeVR1Ubph3QD78CT
+	Y5NTX4Ia1eznw/S9gmK6ZJ8jIXbWZB+FgNjXA+qBrElOEMEEjcj6bVf7c+WEn/bgydvkOfRrf5R
+	IGA2KUxj1GtUvJMKET0dkjrbEgt7PU/tS6fXBbj8vGKbxb6YwDCOweGu4lkEjZoaS6H3UhUm1+z
+	YHXddXcyI0XfL3xbvG+1yfT3SM4kpQwrjnoXo5/flcHcOc8hjx0QOeSKZSPaZ4i8+s1AVUp6
+X-Received: by 2002:a17:902:f548:b0:267:a5df:9b07 with SMTP id d9443c01a7336-268118b95c2mr8163565ad.12.1758079582135;
+        Tue, 16 Sep 2025 20:26:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqu8JXr3DLXFVqyhAiPyWwY3CsgpScBJki2HbdMSZofPzvbaZpZpPop/u36XjzDnXudTckuQ==
+X-Received: by 2002:a17:902:f548:b0:267:a5df:9b07 with SMTP id d9443c01a7336-268118b95c2mr8163265ad.12.1758079581517;
+        Tue, 16 Sep 2025 20:26:21 -0700 (PDT)
+Received: from [10.218.32.171] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-267de22b719sm28237545ad.85.2025.09.16.20.26.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 20:26:21 -0700 (PDT)
+Message-ID: <7f0e6f0b-942f-4903-bee6-9c8f6ab5ec36@oss.qualcomm.com>
+Date: Wed, 17 Sep 2025 08:56:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|IA0PR12MB7627:EE_
-X-MS-Office365-Filtering-Correlation-Id: 237f59e9-74f4-410e-0058-08ddf59937b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z20vdDI2QUhFMzBUOHh1Tzh2dUV6R0lxeHBzWlRTUXlOUCtCK09NZE9tQVVH?=
- =?utf-8?B?VjI0c0Q3UFY2UWhKcjk3MGRHM0xQd0lVOHZ0SXhMTndtcWxtVmJyK2tRWnZ5?=
- =?utf-8?B?UnV3djhIb1BFak1yN1E4WXJOaFhnQlo1MFhkOXdHRDRyc2Nsc2lUU2swRDRH?=
- =?utf-8?B?ZmR4SEFlRHFIc1I3S3E5djFBVHBiaUpTQkxBY2ZWaU1yb1Q1VmZuczdUSFF0?=
- =?utf-8?B?NU5qMFRNNjh5ekFXdHNqekZ1T0dvZ0RJbWFUQnVKejJSS1RBdG5VYlZLR3RK?=
- =?utf-8?B?YWZETkxwVnEyRm5hSjVBdENqV0NHM2V4ckxtTUVTNmQ3ZlB6dEF6bUlYTzhG?=
- =?utf-8?B?VzRJMVRmS000TGZkajdWTVpNUHYyY0EvbW5IU2tneHNvSjBVT0pYNDRvU2ZZ?=
- =?utf-8?B?WEVsdzhlaXd5ckdlc0ZVQnVMUnIzTVhKcEZqeXNDK0ViV09ZaHJEV0UrQWxZ?=
- =?utf-8?B?QXlZaGlLejk0S3l5R0VRQVQvOUpjSzgybUNtMVU5bWNVK080d0J5cXdxOURU?=
- =?utf-8?B?eGpDWi9hRitQU0kreGp6aUVMV1QyNXEzOWdFeGJnNTQwSExkZEY1UkZxZEVs?=
- =?utf-8?B?VmErS0M4SXR1U3M2RVZsYjlrcUlYWUlkc2E4eE5TM3JERXBtU21SdTQybVMz?=
- =?utf-8?B?L1BOZHJWazh1R0dJYnUrNy9OWVRNeWpqemg1ZWR2ZnoxMEJiejQ4ZzBibU4x?=
- =?utf-8?B?SXhtbFhTYVR2cG9zL2VDaTNiaFM3cnY2R3VUdnFmdm8wSzIzdXgrUlRYcU5x?=
- =?utf-8?B?elF6TVFHNSsrU1J5YWNrRVliMXZnbVp6enpJRVBkeHdrOXBoQnlkM1ZNeWk2?=
- =?utf-8?B?M2xVck91RG5XOXk3R2kreDllSk1PaVFUa0JuNEYzMVZ4dThVSmxtSmhFRTRS?=
- =?utf-8?B?WG9leHRDQ0l0dGxZN1NaK3BSMDcrbml0NXdSTlJkblRxNCtpUGxDeCsyNjZt?=
- =?utf-8?B?b3ZLdncrZmVRTXZQL2l3amZFMWJ1aW1IMWVEVEwxb3BWSHYxNmtkNmdneWFn?=
- =?utf-8?B?bTBsZzRrMnA1VXRPeHp5cHVCb2t3aXVsU3o3L05UaDJkdURudHlaYm0vTlF6?=
- =?utf-8?B?NE55eFhnUjRKcFlwZWh0TXFYdGRRUjkyOXdEc2dsbjRxYTErOEk0Z1ZFSGpu?=
- =?utf-8?B?NXZSQk5ERlpzN3R1a0FSUm9Gb1lVWTE2ME9LUjBucEppdFIwRHpQTzlJdU1n?=
- =?utf-8?B?b1BBd0hNd2Y4OUpudVZhaklZQWtGampFUTZFbFFDaEFGMHVrdlFNWjJYVkdN?=
- =?utf-8?B?dUNMVENhaFNmUjNQS1ZEamNnLzRvVUVLaTNiUG9SWGlVT3Y4a3N2WUJReDkw?=
- =?utf-8?B?dHZqV3lBT1pCVTExck51SGdBZk9FS1lIOXBES0NzUTl3WUlpQmdwaU9qdm1k?=
- =?utf-8?B?UE9wZVc1UmgxbmFrZ2pzcEJXSHRVVUdlOFdwUjN4elVhbXhjQUx5RmZHdm5a?=
- =?utf-8?B?bGc5ZGRhMUNwWUlZc2FQVGpGY2dGR1k1UU1xWDNIMkpCNm44Szg3S3RmUnk2?=
- =?utf-8?B?Q1ZWUURpN2FhdDRHbVF6T3V3NGxEMUlwN1JFblhJZ0lNYTl6bFRZcmN0UzRQ?=
- =?utf-8?B?T3B3N3FJMWlpbnhrR1h3Vmo0cnJyTlo4WUNnUlZvanRFS1Q2SlRqQjZWL1Jl?=
- =?utf-8?B?a0djRDhxOWZjS1VydFo3STYrQmxQNm5JUk5USnF6MkdnVXIrRnBFNmxMd05X?=
- =?utf-8?B?SWZSdlB0WDRuZHhXMTNtVERPOHcxU0J0UGkzNzR6WCt1WmVTVVh3clNoT3RE?=
- =?utf-8?B?TURtNlNHdi80S010Y21QWFZXZzJaZ2hQOVpmYXl5RGd2NkJad3lmTVNrYlJx?=
- =?utf-8?B?dEFicFhvRmFLcHQ5LzRSbjgwRUsxZnplL3oxL1dweVZTQ2tGd3FLUll4eFp4?=
- =?utf-8?B?YkpMZTUwZ0xmNlBTNnR6VFd0SEtydUUzTUk2YnQvZ1haV1VJK3paVjJYU0ZP?=
- =?utf-8?Q?asSVtBKCEMk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aHNqam1wNEsva2ZOZi82MU50T1lXSFRRb0NIU0JDSzVWS1hDaVFSYjhIQkpn?=
- =?utf-8?B?MnBhQUFHZTFCNzhGYml0NUlXN0dVQTY5cGFvc2EraTAxd2FUS1lFSytBY2l6?=
- =?utf-8?B?QlFNaDRFcHVTRzVxU2cydmZFUllpM2Y0NWdFb2dWSTcvTTI0a0ZEc1JUdUZ3?=
- =?utf-8?B?TXgxazVCOFBBdjFuS0NhVFN5RzFpajBjTkdKSDNVQ3pEWURHY3FFUGFPYjJv?=
- =?utf-8?B?SEtYcExrU2tlNXN6aFJ0ZUNlbXMrRGt5N1BkS3ZSV1prY3l3bExrc3c5ZmVY?=
- =?utf-8?B?WkFiYUk0QkZ4R3dSY092UHpUb1NBYi9Da1hIaGE4UTVLMGJSS0hoQUNMYUhH?=
- =?utf-8?B?ekN6K0NTSGsvT3RRSGQyVnlRZ01BSzg4cSs3RmZBbWhOZU81SDVvNFc2QjR0?=
- =?utf-8?B?MHBLOXlGYXRreTcyNS90RndrZ3AwOFp5M21FR2pZc2kxaW5MYytHN3dad3Fh?=
- =?utf-8?B?ZlBqZ2QwRnhkZGZsYUJiK3BsNTA3NlJyWm93YlBpQXhwQmhCbmFFY1huYzdH?=
- =?utf-8?B?aEcrSGtqK3R0blFuSlMzVUlnMjhvQTdJUHVOODBFWVlVZ3hLbGVqcmVjdVNV?=
- =?utf-8?B?L1JNR3kzbXllSi8rZzZWZVZ4Zm85QitwMHJ6d0MxUHVnM3NSSTVpNzJjbzcy?=
- =?utf-8?B?Q3ZiVjdUc1JXTGwrU3c1S2RRY2pjVER6NTNjZGI5SkcxYkpRb1AvK1pqMGlY?=
- =?utf-8?B?amxhWFpVcENBMzdFVlk0ODVqSVk0WnUxUzlUT1JRTkc5dlVoOWFNcjdFdWhw?=
- =?utf-8?B?dTZESTJ1dWZUejUyL2JBTlRWTlE0SFBJM1FzQTBHZHAzMGNwTVIwZEl2Wjla?=
- =?utf-8?B?T1Q4ejF5MUQwNGZrSmxZL2hPanVxQlI4R09JbHdEVldPZXd4Ui9KZDRpTlk2?=
- =?utf-8?B?RllMMDZRVjhGb0RvRVI5K3FTTE9nbFZBek43RUQ3bjUyY2N6YzFXZXJKS1lG?=
- =?utf-8?B?SThMdjdSOW8vV1IxMjh6eXJ1emZwSTQ2TUhla1BodDBVTk1vcWVEVkxKR0Yy?=
- =?utf-8?B?d0xTUWt1UGsrRXVuVzlUeG1BcW93cjhWWE5HblVGeEl4bkl1bzBkTlVLdUdS?=
- =?utf-8?B?ejFQanRZYUVTNC9JUGRzQWVXUW1XZUhWSVhuYnMySlEva0MveUw0NE9SL0lN?=
- =?utf-8?B?UHM4UGdQOHdEWDBMYUpRdWlycmREMkNaK3BIZjQycm1TdDJRRTVKSlM2Q0hY?=
- =?utf-8?B?R0pjeXgyR2lJWHJCR1RQdzBKMlZRTStHZVRGTGJGK3B4TWowamdObUcxaU9F?=
- =?utf-8?B?Y0RkYlk3bk8zaEpYMXFTYlQ4ZXJVR1ZQUFhnRXk4bjFJU0R1RUlMM1JQNFNW?=
- =?utf-8?B?Q3EvR2QyYnM4WXFUQ05CQy9VREkweHQ0L3ZKSFBxM3VWMFZZdW83N2trZHM3?=
- =?utf-8?B?c05mVk93YkJLb0dsd2ZEc3I2YlA1TGtDZXRKSTI2Q1A5YXJMRTdud1pHSlBk?=
- =?utf-8?B?UnhtQjlVd3Q0aXVFTy8xSExPNEhmdUt5ZkxHWXVvZkVKTnhXNDd3My8rZmJR?=
- =?utf-8?B?MFE0V2lWaUtUeHVIaVRFN2piWnlRYjE1T0hrMkI5WGQyMWRQUklGaW9vbldB?=
- =?utf-8?B?RVpkaERkcmxDenR2ak10NHJPRlNlS3JOZTFPNG8vRXBUaXlJb1VtK01sZjF1?=
- =?utf-8?B?ZGNGa1RKeGcxTkxtcU94NWZqVUszSlFldi8yNnZEUzBWVW5XZ2tIeGFXRlZO?=
- =?utf-8?B?TDVCekdQNjFGeTBUUEJlZ094RW92SHdBb1ZuUWtUZU5ETlc5QkVUUmdEMUJw?=
- =?utf-8?B?MmZEa1lhK1JITGh6Ty9LVEkweVJvcFR5V3BTZTNzelJpcG5CbzU2Y1NNVkxE?=
- =?utf-8?B?dW5TNzc5M2k4UzZNZzFOUVY2OU9BNjFyVDZlNTRZTExBK3hvTS9rYi91ZjFX?=
- =?utf-8?B?alFrbjZ6SHJta0tTejRsS3F6UXZoNTVObFVaeGUrbWZBOWdNWlZoc3VjbGZp?=
- =?utf-8?B?K094S2M1bnFVZlhoTkRMR0VZZWhvR1BIdnZFYzIrNFpFYlZIQVRwckVuZ2tS?=
- =?utf-8?B?TEhJdzRYWEY3azBKZ2pYR1ZlRHc4SjFWWVVHcCt3bklDeUlyVVBHbWhKREtX?=
- =?utf-8?B?Z1ovc2Y5TndXcytaTVJqYzRpVlJwUUZvc3IydURrbjBFNzRxck0wQTJ0MGZE?=
- =?utf-8?B?ekErYzVBNnp5VStTdEJrZDRNMEZ1ZXNMbnJkVlNTQ3g5cW1IbE1SbXhYaDNZ?=
- =?utf-8?Q?X4N4IMgfk0EZZ6PUYY/rZ4Cfm5pm/oCnltX9qGfbf4w1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 237f59e9-74f4-410e-0058-08ddf59937b2
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 03:20:57.1102
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MowUSxVVptBmYq6lrfVUnMJ2xkLCgpw91+b2LwzabuYqjhRp2hYWNyMrI0z6HFsXvl0yREqPRPOF8Z7tsdadKg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7627
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] serial: qcom-geni: Fix pinctrl deadlock on runtime
+ resume
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+        Praveen Talari <quic_ptalari@quicinc.com>
+Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
+        quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
+        quic_arandive@quicinc.com, quic_shazhuss@quicinc.com, krzk@kernel.org
+References: <20250908164532.2365969-1-praveen.talari@oss.qualcomm.com>
+ <DCNLSFVPCKMV.K1UE3J3K6JQD@linaro.org>
+ <DCOJFRU8KNFL.14VPXK9QZC9T4@linaro.org>
+ <5b7b8c9f-48c5-45cd-8366-c8c048eaa757@oss.qualcomm.com>
+ <DCPUJPHR8NUB.1SRB4D7ONSRBY@linaro.org>
+ <2c5fd01a-543b-4108-ac54-80d1d87b65a3@oss.qualcomm.com>
+ <DCT9VWQYD4VM.1NV5FJJCJG4PI@linaro.org>
+ <cb96f3cd-7427-4644-b7ca-26b763867db4@oss.qualcomm.com>
+ <df05da7e-fd9d-48a6-bffc-e84749cd8e96@oss.qualcomm.com>
+ <aMl2hOYTjBuCo4AM@trex> <aMl9Fbuyq7hdXvQC@trex>
+ <DCUE5AXJ99BG.150SRQMY7EJG6@linaro.org>
+Content-Language: en-US
+From: Praveen Talari <praveen.talari@oss.qualcomm.com>
+In-Reply-To: <DCUE5AXJ99BG.150SRQMY7EJG6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: yZHYKJFLpJROe4Rkzv6t9HYjcNfvLsLH
+X-Authority-Analysis: v=2.4 cv=bIMWIO+Z c=1 sm=1 tr=0 ts=68ca2a5f cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=KKAkSRfTAAAA:8 a=3zEiWGLsQ94HuRbx9vcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX/8Lrs2r2vPjX
+ WagiY9rvlEwP/jL5Ddz+mBZ+YyRgnyjmyfZzRspv/AeI+leK9xEudWiE2/0GU1U+djbqOgvLtQl
+ 62wMtc/DLnX362HudGNOjxYNNnhG8WCPCe+ZLPZY+v3NqlYaFYdOa5O6q1USTKISr+Z2rce+uQW
+ 3enZ07TruFBX/cScFdfDDvTQZlj8kfbm6vnsggBzcgRMugYgzneaAMBRlxuH/IoMp0lgvSCbrWn
+ n9excfymZ/BxTmbEkwvr6Z7eIy7hVIDzicdnMeBuZiCCrCkPJ3TE7PeUYeZiPvbM8D72mVj28FR
+ c6IJSoe7qakvrr0SB2727hvYkDVMKqkhcI2t6d65ZwTK7W2Y2HjX9mMd3r7PnPGWkpeKLou1KRP
+ y9+Prrdy
+X-Proofpoint-ORIG-GUID: yZHYKJFLpJROe4Rkzv6t9HYjcNfvLsLH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509160202
 
-On 9/17/25 10:30, Wei Xu wrote:
-> On Tue, Sep 16, 2025 at 12:45 PM David Rientjes <rientjes@google.com> wrote:
->>
->> On Wed, 10 Sep 2025, Gregory Price wrote:
->>
->>> On Wed, Sep 10, 2025 at 04:39:16PM +0100, Matthew Wilcox wrote:
->>>> On Wed, Sep 10, 2025 at 08:16:45PM +0530, Bharata B Rao wrote:
->>>>> This patchset introduces a new subsystem for hot page tracking
->>>>> and promotion (pghot) that consolidates memory access information
->>>>> from various sources and enables centralized promotion of hot
->>>>> pages across memory tiers.
+Hi Alexey,
+
+On 9/16/2025 10:42 PM, Alexey Klimov wrote:
+> Hi Praveen,
+> 
+> On Tue Sep 16, 2025 at 4:07 PM BST, Jorge Ramirez wrote:
+>> On 16/09/25 16:39:00, Jorge Ramirez wrote:
+>>> On 16/09/25 12:20:25, Praveen Talari wrote:
+>>>> Hi Alexey
 >>>>
->>>> Just to be clear, I continue to believe this is a terrible idea and we
->>>> should not do this.  If systems will be built with CXL (and given the
->>>> horrendous performance, I cannot see why they would be), the kernel
->>>> should not be migrating memory around like this.
+>>>> Thank you for your support.
+>>>>
+>>>> On 9/15/2025 7:55 PM, Praveen Talari wrote:
+>>>>> Hi Alexey,
+>>>>>
+>>>>> On 9/15/2025 3:09 PM, Alexey Klimov wrote:
+>>>>>> (removing <quic_mnaresh@quicinc.com> from c/c -- too many mail not
+>>>>>> delivered)
+>>>>>>
+>>>>>> Hi Praveen,
+>>>>>>
+>>>>>> On Mon Sep 15, 2025 at 7:58 AM BST, Praveen Talari wrote:
+>>>>>>> Hi Alexey,
+>>>>>>>
+>>>>>>> Really appreciate you waiting!
+>>>>>>>
+>>>>>>> On 9/11/2025 2:30 PM, Alexey Klimov wrote:
+>>>>>>>> Hi Praveen,
+>>>>>>>>
+>>>>>>>> On Thu Sep 11, 2025 at 9:34 AM BST, Praveen Talari wrote:
+>>>>>>>>> Hi Alexy,
+>>>>>>>>>
+>>>>>>>>> Thank you for update.
+>>>>>>>>>
+>>>>>>>>> On 9/10/2025 1:35 AM, Alexey Klimov wrote:
+>>>>>>>>>>
+>>>>>>>>>> (adding Krzysztof to c/c)
+>>>>>>>>>>
+>>>>>>>>>> On Mon Sep 8, 2025 at 6:43 PM BST, Alexey Klimov wrote:
+>>>>>>>>>>> On Mon Sep 8, 2025 at 5:45 PM BST, Praveen Talari wrote:
+>>>>>>>>>>>> A deadlock is observed in the
+>>>>>>>>>>>> qcom_geni_serial driver during runtime
+>>>>>>>>>>>> resume. This occurs when the pinctrl
+>>>>>>>>>>>> subsystem reconfigures device pins
+>>>>>>>>>>>> via msm_pinmux_set_mux() while the serial device's interrupt is an
+>>>>>>>>>>>> active wakeup source. msm_pinmux_set_mux() calls disable_irq() or
+>>>>>>>>>>>> __synchronize_irq(), conflicting with the active wakeup state and
+>>>>>>>>>>>> causing the IRQ thread to enter an uninterruptible (D-state) sleep,
+>>>>>>>>>>>> leading to system instability.
+>>>>>>>>>>>>
+>>>>>>>>>>>> The critical call trace leading to the deadlock is:
+>>>>>>>>>>>>
+>>>>>>>>>>>>         Call trace:
+>>>>>>>>>>>>         __switch_to+0xe0/0x120
+>>>>>>>>>>>>         __schedule+0x39c/0x978
+>>>>>>>>>>>>         schedule+0x5c/0xf8
+>>>>>>>>>>>>         __synchronize_irq+0x88/0xb4
+>>>>>>>>>>>>         disable_irq+0x3c/0x4c
+>>>>>>>>>>>>         msm_pinmux_set_mux+0x508/0x644
+>>>>>>>>>>>>         pinmux_enable_setting+0x190/0x2dc
+>>>>>>>>>>>>         pinctrl_commit_state+0x13c/0x208
+>>>>>>>>>>>>         pinctrl_pm_select_default_state+0x4c/0xa4
+>>>>>>>>>>>>         geni_se_resources_on+0xe8/0x154
+>>>>>>>>>>>>         qcom_geni_serial_runtime_resume+0x4c/0x88
+>>>>>>>>>>>>         pm_generic_runtime_resume+0x2c/0x44
+>>>>>>>>>>>>         __genpd_runtime_resume+0x30/0x80
+>>>>>>>>>>>>         genpd_runtime_resume+0x114/0x29c
+>>>>>>>>>>>>         __rpm_callback+0x48/0x1d8
+>>>>>>>>>>>>         rpm_callback+0x6c/0x78
+>>>>>>>>>>>>         rpm_resume+0x530/0x750
+>>>>>>>>>>>>         __pm_runtime_resume+0x50/0x94
+>>>>>>>>>>>>         handle_threaded_wake_irq+0x30/0x94
+>>>>>>>>>>>>         irq_thread_fn+0x2c/xa8
+>>>>>>>>>>>>         irq_thread+0x160/x248
+>>>>>>>>>>>>         kthread+0x110/x114
+>>>>>>>>>>>>         ret_from_fork+0x10/x20
+>>>>>>>>>>>>
+>>>>>>>>>>>> To resolve this, explicitly manage the wakeup IRQ state within the
+>>>>>>>>>>>> runtime suspend/resume callbacks. In the
+>>>>>>>>>>>> runtime resume callback, call
+>>>>>>>>>>>> disable_irq_wake() before enabling resources. This preemptively
+>>>>>>>>>>>> removes the "wakeup" capability from the IRQ, allowing subsequent
+>>>>>>>>>>>> interrupt management calls to proceed
+>>>>>>>>>>>> without conflict. An error path
+>>>>>>>>>>>> re-enables the wakeup IRQ if resource enablement fails.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Conversely, in runtime suspend, call
+>>>>>>>>>>>> enable_irq_wake() after resources
+>>>>>>>>>>>> are disabled. This ensures the interrupt is configured as a wakeup
+>>>>>>>>>>>> source only once the device has fully
+>>>>>>>>>>>> entered its low-power state. An
+>>>>>>>>>>>> error path handles disabling the wakeup IRQ
+>>>>>>>>>>>> if the suspend operation
+>>>>>>>>>>>> fails.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Fixes: 1afa70632c39 ("serial: qcom-geni:
+>>>>>>>>>>>> Enable PM runtime for serial driver")
+>>>>>>>>>>>> Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
+>>>>>>>>>>>
+>>>>>>>>>>> You forgot:
+>>>>>>>>>>>
+>>>>>>>>>>> Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
+>>>>>>>>>>>
+>>>>>>>>>>> Also, not sure where this change will go, via
+>>>>>>>>>>> Greg or Jiri, but ideally
+>>>>>>>>>>> this should be picked for current -rc cycle since regression is
+>>>>>>>>>>> introduced during latest merge window.
+>>>>>>>>>>>
+>>>>>>>>>>> I also would like to test it on qrb2210 rb1 where this regression is
+>>>>>>>>>>> reproduciable.
+>>>>
+>>>> Since I don't have this board, could you kindly validate the new change and
+>>>> run a quick test on your end?
+>>>>
+>>>> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c
+>>>> b/drivers/pinctrl/qcom/pinctrl-msm.c
+>>>> index 83eb075b6bfa..3d6601dc6fcc 100644
+>>>> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+>>>> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+>>>> @@ -215,7 +215,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev
+>>>> *pctldev,
+>>>>           */
+>>>>          if (d && i != gpio_func &&
+>>>>              !test_and_set_bit(d->hwirq, pctrl->disabled_for_mux))
+>>>> -               disable_irq(irq);
+>>>> +               disable_irq_nosync(irq);
+>>>>
+>>>>          raw_spin_lock_irqsave(&pctrl->lock, flags);
 >>>
->>> I've been considered this problem from the opposite approach since LSFMM.
 >>>
->>> Rather than decide how to move stuff around, what if instead we just
->>> decide not to ever put certain classes of memory on CXL.  Right now, so
->>> long as CXL is in the page allocator, it's the wild west - any page can
->>> end up anywhere.
->>>
->>> I have enough data now from ZONE_MOVABLE-only CXL deployments on real
->>> workloads to show local CXL expansion is valuable and performant enough
->>> to be worth deploying - but the key piece for me is that ZONE_MOVABLE
->>> disallows GFP_KERNEL.  For example: this keeps SLAB meta-data out of
->>> CXL, but allows any given user-driven page allocation (including page
->>> cache, file, and anon mappings) to land there.
+>>> sorry Praveen, didnt see this proposal. testing on my end as well.
 >>>
 >>
->> This is similar to our use case, although the direct allocation can be
->> controlled by cpusets or mempolicies as needed depending on the memory
->> access latency required for the workload; nothing new there, though, it's
->> the same argument as NUMA in general and the abstraction of these far
->> memory nodes as separate NUMA nodes makes this very straightforward.
->>
->>> I'm hoping to share some of this data in the coming months.
->>>
->>> I've yet to see any strong indication that a complex hotness/movement
->>> system is warranted (yet) - but that may simply be because we have
->>> local cards with no switching involved. So far LRU-based promotion and
->>> demotion has been sufficient.
->>>
->>
->> To me, this is a key point.  As we've discussed in meetings, we're in the
->> early days here.  The CHMU does provide a lot of flexibility, both to
->> create very good and very bad hotness trackers.  But I think the key point
->> is that we have multiple sources of hotness information depending on the
->> platform and some of these sources only make sense for the kernel (or a
->> BPF offload) to maintain as the source of truth.  Some of these sources
->> will be clear-on-read so only one entity would be possible to have as the
->> source of truth of page hotness.
->>
->> I've been pretty focused on the promotion story here rather than demotion
->> because of how responsive it needs to be.  Harvesting the page table
->> accessed bits or waiting on a sliding window through NUMA Balancing (even
->> NUMAB=2) is not as responsive as needed for very fast promotion to top
->> tier memory, hence things like the CHMU (or PEBS or IBS etc).
->>
->> A few things that I think we need to discuss and align on:
->>
->>  - the kernel as the source of truth for all memory hotness information,
->>    which can then be abstracted and used for multiple downstream purposes,
->>    memory tiering only being one of them
->>
->>  - the long-term plan for NUMAB=2 and memory tiering support in the kernel
->>    in general, are we planning on supporting this through NUMA hint faults
->>    forever despite their drawbacks (too slow, too much overhead for KVM)
->>
->>  - the role of the kernel vs userspace in driving the memory migration;
->>    lots of discussion on hardware assists that can be leveraged for memory
->>    migration but today the balancing is driven in process context.  The
->>    kthread as the driver of migration is yet to be a sold argument, but
->>    are where a number of companies are currently looking
->>
->> There's also some feature support that is possible with these CXL memory
->> expansion devices that have started to pop up in labs that can also
->> drastically reduce overall TCO.  Perhaps Wei Xu, cc'd, will be able to
->> chime in as well.
->>
->> This topic seems due for an alignment session as well, so will look to get
->> that scheduled in the coming weeks if people are up for it.
+>> just tested on my end and all modules load - deadlocked before this
+>> update so there is progress (now we can load the network driver)
 > 
-> Our experience is that workloads in hyper-scalar data centers such as
-> Google often have significant cold memory. Offloading this to CXL memory
-> devices, backed by cheaper, lower-performance media (e.g. DRAM with
-> hardware compression), can be a practical approach to reduce overall
-> TCO. Page promotion and demotion are then critical for such a tiered
-> memory system.
+> Is it supposed to be orginal patch here plus disable_irq_nosync()?
+
+Only this disable_irq_nosync() change from pinctrol subsystem.
+
+Thanks,
+Praveen Talari
+> Meaning changes for qcom_geni_serial_runtime_{suspend,resume}
+> + disable_irq_nosync() in msm_pinmux_set_mux()?
+
+No, only disable_irq_nosync() in msm_pinmux_set_mux().
 > 
-> A kernel thread to drive hot page collection and promotion seems
-> logical, especially since hot page data from new sources (e.g. CHMU)
-> are collected outside the process execution context and in the form of
-> physical addresses.
+> It seems to work here but let me know few more runs.
 > 
-> I do agree that we need to balance the complexity and benefits of any
-> new data structures for hotness tracking.
-
-
-I think there is a mismatch in the tiering structure and
-the patches. If you see the example in memory tiering
-
-/*
- * ...
- * Example 3:
- *
- * Node 0 is CPU + DRAM nodes, Node 1 is HBM node, node 2 is PMEM node.
- *
- * node distances:
- * node   0    1    2
- *    0  10   20   30
- *    1  20   10   40
- *    2  30   40   10
- *
- * memory_tiers0 = 1
- * memory_tiers1 = 0
- * memory_tiers2 = 2
- *..
- */
-
-The topmost tier need not be DRAM, patch 3 states
-
-"
-[..]
- * kpromoted is a kernel thread that runs on each toptier node and
- * promotes pages from max_heap.
-"
-
-Also, there is no data in the cover letter to indicate what workloads benefit from
-migration to top-tier and by how much?
-
-
-Balbir
-
+> Best regards,
+> Alexey
+> 
+> 
+> 
 
