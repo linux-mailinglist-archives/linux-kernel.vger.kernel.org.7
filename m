@@ -1,87 +1,218 @@
-Return-Path: <linux-kernel+bounces-820134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC06B7CDA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:11:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72105B7CF1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DFF44634BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1311D1C05576
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A49B2F25F9;
-	Wed, 17 Sep 2025 07:23:18 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DFC2264CC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803FF3016EF;
+	Wed, 17 Sep 2025 07:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jrv27L5J"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBD22FFF8A;
+	Wed, 17 Sep 2025 07:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758093797; cv=none; b=LM0gLJuquoeykp1eiSbWVkBeBoVFM1iISSlRZvI8iSbmglRgCdqi6+eYFU3vYzeH0F4DBaMm8Ctut1BSeX+8vQFuQu5VAIyf2oQBTzuNjXaWvOHaExftXr1FzDspdriXoEnz0uVNFpf0AQcycxw8/dHY6B0QV2UKSbKKS72hn6Q=
+	t=1758093930; cv=none; b=fFmpmH3YlCxBS9soyDucaPayYMmVxql+wdAeC+d1roruFpD4BpzVLXPl325FVEqc0rVSpUsELa0qGj51w4Nl74ohUDPzmNViSf4Xvy7xfSYYmEQ7nfVUjGFoLes5Argfxl5ei4/SlI4U9C6z7SWaNIjSAfX0ZTb1ZPcPAu/6mKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758093797; c=relaxed/simple;
-	bh=mnowoztyNFk7rEsFWORNMEgvHDk9y/GDoOV6hiIhPpo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uMTUrEtr9FQgAljiCizJ9f8s6AXSZPJMwdCcB7lttKxhWy/CpW7r/aTXlgY0R/E8z6f/OmqoIcYWay8DKppOnM4omSA5vTL8kfDk4H5GZW8h535/O2QL+CkfkdA0M3nC/YD9bynzyWBVroU9HS9wIkCB7igjX+ehexjpM5tPR8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Dx_7_ZYcpo9kMLAA--.23734S3;
-	Wed, 17 Sep 2025 15:23:05 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJCxM+TRYcpo6fGaAA--.35942S3;
-	Wed, 17 Sep 2025 15:22:57 +0800 (CST)
-Subject: Re: [PATCH v2 2/4] objtool/LoongArch: Fix unreachable instruction
- warnings about image header
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250917011007.4540-1-yangtiezhu@loongson.cn>
- <20250917011007.4540-3-yangtiezhu@loongson.cn>
- <CAAhV-H6L6nSuDxn_8cpexmSdLjO6DLLG0+9faPdhuD9iFMfdVw@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <21f7af56-5ec8-2922-3f19-ab1085238aec@loongson.cn>
-Date: Wed, 17 Sep 2025 15:22:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1758093930; c=relaxed/simple;
+	bh=K05yOHkQJxqh+1NnuwPgO9RURX/RB+Vt4f5T83pIFBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fV7OIR5JmYmnshNXMe9bt7rzxcivXs7KphZk8DIRlgot8DU73sV+skT9LMAir82ShNAP/jtdxkcWFTxKN/MfI5pqcUF+C4oEZrYXi5F4kjEOiZoafNqoMiyfJ79sKivRPs8bb2fih1J6MupszxUXxiiRfv/5S3EYKuUL7A5MMDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jrv27L5J; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 11F341A0E2F;
+	Wed, 17 Sep 2025 07:25:24 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D65826063E;
+	Wed, 17 Sep 2025 07:25:23 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC40D102F179E;
+	Wed, 17 Sep 2025 09:25:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758093922; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=GZJ8sPcO3Cf+QQuAdpx3fIteLOXORrAouzZNLpZWsvA=;
+	b=jrv27L5Jlz6dFN0ujcqzXwnK9gIQ1V0dU4tBuCf7OAqdaZnjc+2nbXry5EnSBiMZaAbLom
+	wVs2Vf2NuaQszYM42A4SDHQ05Sj1/hMzk3EaNUmjjfUauDW/2rzgXhkgINxRtunslVub4l
+	DPzS0A9pFPlibNVRTWdiauuPeWqDO8rAQhXtCdkSCKYboxRBUz4WJcwwWjO/q8aR8Vd71Z
+	iTbiTGCmU+bnx+SqevI3I5XDZuMrB+uaOd8hLDjJbkoeiC9bGLBpk7ygAhXsTFp9rFBDK9
+	2lY9ODIJng2lK1cHK/jbGHlwJhwpLbaydfsVka6ga0llgK4aNRWk+xlAU2QRrA==
+Date: Wed, 17 Sep 2025 09:25:06 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
+ <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
+ <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
+ <digetx@gmail.com>, Jonas =?UTF-8?B?U2Nod8O2YmVs?=
+ <jonasschwoebel@yahoo.de>, Charan Pedumuru <charan.pedumuru@gmail.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 11/23] staging: media: tegra-video: csi: add a check
+ to tegra_channel_get_remote_csi_subdev
+Message-ID: <20250917092506.311c314c@booty>
+In-Reply-To: <CAPVz0n1Nvun5yBf_i3NB=kDmLfNFRjbFt1uTUW-hpLbp-h0g4w@mail.gmail.com>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+	<20250906135345.241229-12-clamor95@gmail.com>
+	<20250916180418.3fa270a9@booty>
+	<CAPVz0n1Nvun5yBf_i3NB=kDmLfNFRjbFt1uTUW-hpLbp-h0g4w@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H6L6nSuDxn_8cpexmSdLjO6DLLG0+9faPdhuD9iFMfdVw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxM+TRYcpo6fGaAA--.35942S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
-	BjDU0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
-	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
-	14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
-	vfC2KfnxnUUI43ZEXa7IU8vApUUUUUU==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2025/9/17 下午3:04, Huacai Chen wrote:
-> Hi, Tiezhu,
-> 
-> Patch-2 and Patch-3 can be squashed.
+Hello Svyatoslav,
 
-OK, no problem.
+On Tue, 16 Sep 2025 19:24:52 +0300
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Thanks,
-Tiezhu
+> =D0=B2=D1=82, 16 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:04 Lu=
+ca Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > Hello Svyatoslav,
+> >
+> > On Sat,  6 Sep 2025 16:53:32 +0300
+> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > =20
+> > > By default tegra_channel_get_remote_csi_subdev returns next device in=
+ pipe
+> > > assuming it is CSI but in case of Tegra20 and Tegra30 it can also be =
+VIP
+> > > or even HOST. Lets check if returned device is actually CSI by compar=
+ing
+> > > subdevice operations. =20
+> >
+> > This is just for extra safety, or is there a real case where the lack
+> > of this check creates some issues in your use case?
+> > =20
+> > > --- a/drivers/staging/media/tegra-video/csi.c
+> > > +++ b/drivers/staging/media/tegra-video/csi.c
+> > > @@ -445,6 +445,22 @@ static const struct v4l2_subdev_ops tegra_csi_op=
+s =3D {
+> > >       .pad    =3D &tegra_csi_pad_ops,
+> > >  };
+> > >
+> > > +struct v4l2_subdev *tegra_channel_get_remote_csi_subdev(struct tegra=
+_vi_channel *chan)
+> > > +{
+> > > +     struct media_pad *pad;
+> > > +     struct v4l2_subdev *subdev;
+> > > +
+> > > +     pad =3D media_pad_remote_pad_first(&chan->pad);
+> > > +     if (!pad)
+> > > +             return NULL;
+> > > +
+> > > +     subdev =3D media_entity_to_v4l2_subdev(pad->entity);
+> > > +     if (!subdev)
+> > > +             return NULL;
+> > > +
+> > > +     return subdev->ops =3D=3D &tegra_csi_ops ? subdev : NULL;
+> > > +} =20
+> >
+> > I tested your series on a Tegra20 with a parallel camera, so using the
+> > VIP for parallel input.
+> >
+> > The added check on subdev->ops breaks probing the video device:
+> >
+> >   tegra-vi 54080000.vi: failed to setup channel controls: -19
+> >   tegra-vi 54080000.vi: failed to register channel 0 notifier: -19
+> >
+> > This is because tegra20_chan_capture_kthread_start() is also calling
+> > tegra_channel_get_remote_csi_subdev(), but when using VIP subdev->ops
+> > points to tegra_vip_ops, not tegra_csi_ops.
+> > =20
+>=20
+> Your assumption is wrong. 'tegra_channel_get_remote_csi_subdev' is
+> designed to get next device which is expected to be CSI, NOT VIP
+> (obviously, Tegra210 has no VIP). It seems that VIP implementation did
+> not take into account that CSI even exists.
 
+IIRC it's rather the initial VI implementation was meant to be open to
+supporting both VIP and CSI but some CSI assumptions sneaked in. Which
+is somewhat unavoidable if only CSI could be tested, isn't it? So I had
+to change some when adding VIP (trying hard myself to not break CSI and
+T210).
+
+>  -19 errors are due to
+> tegra_vi_graph_notify_complete not able to get next media device in
+> the line. Correct approach would be to add similar helper for VIP and
+> check if next device is VIP.
+
+I think it's almost correct.
+
+tegra_channel_get_remote_csi_subdev() is called:
+ * in vi.c, where it is expeted to return either a CSI or VIP subdev
+ * in tegra210.c, which apparently supports CSI only=20
+   (I don't know whether the hardware has parallel input)
+ * in tegra20.c [added by patch 23 in this series] where only a CSI
+   subdev is wanted
+
+Based on that,  you're right that we need two functions, but they
+should be:
+
+ 1. one to return the remote subdev, be it CSI or VIP
+    a. perhaps called tegra_channel_get_remote_subdev()
+    b. perhaps in vi.c
+    c. not checking subdev->ops (or checking for csi||vip)
+ 2. one to return the remote subdev, only if it is CSI
+    a. perhaps called tegra_channel_get_remote_csi_subdev()
+    b. perhaps in csi.c
+    c. checking subdev->ops =3D=3D tegra_csi_ops
+
+The function in mainline as of now complies with 2a, 1b, 1c, so it is a
+hybrid.
+
+In other words, what I propose is:
+
+ * rename the current tegra_channel_get_remote_csi_subdev()
+   to remove the "_csi" infix, so the name reflects what it does
+   - optionally add the check for (csi||vip)
+ * add tegra_channel_get_remote_csi_subdev() for where a CSI-only
+   subdev is needed: that's exactly the function you are adding to csi.c
+   in this patch
+
+Does it look correct?
+
+> Since I have no devices with VIP support
+> I could not test this properly.
+
+Of course, no problem. I can test it (but I cannot test CSI).
+
+> I can add this in next iteration if
+> you are willing to test.
+
+Yes, please do, thanks.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
