@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-821360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568F6B81102
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:42:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1567DB81108
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7491D527A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:42:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1461171C64
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF942FAC07;
-	Wed, 17 Sep 2025 16:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F922FA0EE;
+	Wed, 17 Sep 2025 16:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBBB0OG7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Twr6BXe3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CAC1A9FBE;
-	Wed, 17 Sep 2025 16:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA302F3C3A;
+	Wed, 17 Sep 2025 16:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758127318; cv=none; b=BcVYxJamP7u0k8gnPtGfpzNjSYWa+mMFlMCd73Jt8g16HvkvgeeYAZo2VS8CDN5DH2EtVhTRlksq8vyKu1f2tQkXlWQZl20DnZne+ZS6iBbRvXFPl8WGoRFNb3blAmTr5wJC7gp70zNJiFFSECDnB8sMgC8xCiFq6PviojXy/iE=
+	t=1758127348; cv=none; b=YScKqKgQtJs5IoxvIMD0JS4kus07WAxOiRRyolc1fijocMai6DK1By15d8fmZQJPp1Y9MpDKORElokSBb+InQz2x11i6aVDRd/4sYD12FVL+6oBxKJmdN6EqfYitLE/N7S+KwH8clPSZ0fN24Vznb9RfWuS0wqlJKE5Lz5Z2sFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758127318; c=relaxed/simple;
-	bh=H5+WBnWe3MWBYM4eBRe3qCY0iIElJYW8j9sDBLad/TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hONZLhwJe7sbNNYz8M0gEuSy7CS2HGYKobyaEm2ERNju3B/8tl+Xw13J/pWLsM4DDEBso/a/3N7DwbSW+Ulp48ht5I1YkEmKYlWPjGZGCnXiiBwpAyD0ZVjQrVxnzd/00gG5TC/9KzBPH2AYqkpVU/9bBBgNuLphhvT5/26JSlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBBB0OG7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D58C4CEF9;
-	Wed, 17 Sep 2025 16:41:57 +0000 (UTC)
+	s=arc-20240116; t=1758127348; c=relaxed/simple;
+	bh=sDmYzAVvLUWz02x4KttZh7bEAnkvy0jlE24JN3RphD8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OBe2Q+cXSX0NUBpOuqCJZxwGmkGzdZUQIRDlcaqlNdlqHJ33ZcMe3EU20UQfe4c1v2hx0vkr3xiLdcaPtE2+V2lkDp7qJ0nrWgfbllj3xf+oDaC+vJb44cYNUhoR8FvoSgRO05FY9tcxRovzXbnQNMVEjrDEp1edcvMT1m4dX4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Twr6BXe3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2B3C4CEE7;
+	Wed, 17 Sep 2025 16:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758127318;
-	bh=H5+WBnWe3MWBYM4eBRe3qCY0iIElJYW8j9sDBLad/TM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lBBB0OG7azD8+aZC4yztyVTFFJsbnR8c9A0zNn09pkMImVCBqnFCPu+DylHUzUsLQ
-	 QgkdQzzkA8vOcLieykYHo+CzAVvLg+PS5W4LQBQ6syR7DPTnHBvDEtL9m53oOWyQLA
-	 2MsUCxb724GoankvFPSBHyl5NXsAagxrEyMlKOMkBslFr03n4PsP/yQ+SAfFB6DBMl
-	 D78GFTmrd58ToaHL9Hy6Kq5D44V0sOnEtgPn6ppyWG1YV4uc5+dYc/GZx4n682ks//
-	 QZoFUP7ygKrsR6F9c8+sktLqz5QcCHfZJtHuennehowcZoxU/IGGMfn7eNR5suUySF
-	 ECduk+XwEQ0fA==
-Date: Wed, 17 Sep 2025 13:41:55 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Gautam Menghani <gautam@linux.ibm.com>, peterz@infradead.org,
-	mingo@redhat.com, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	maddy@linux.ibm.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] perf python: Add an example for sampling
-Message-ID: <aMrk03gigBlGcYLK@x1>
-References: <20250728055937.58531-1-gautam@linux.ibm.com>
- <aMlmiHATn5WHUcSM@mac.in.ibm.com>
- <aMm5uvPsMfXEv8Oo@x1>
- <CAP-5=fW4JQYJ2NCRsRVePidCcZ9+JcQbfY=xQ00xZG-bSn96ew@mail.gmail.com>
- <aMqrmmDG65BGeZp0@x1>
- <CAP-5=fXnM15Zj5mCYcsd9usUMtHoPOd3Wz8-L1N5UaB-YvKuHQ@mail.gmail.com>
+	s=k20201202; t=1758127347;
+	bh=sDmYzAVvLUWz02x4KttZh7bEAnkvy0jlE24JN3RphD8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Twr6BXe3WCu6jxGVx+sQE0MdQCydPBXeCkRNwPm12DNUXpQgMsaGRxeN242HdBfgs
+	 g5Fc7Zeg1VQtAVbgNwwk2772RbCSoxsfZZdbZFfOPACoyNPdH7A8Ysfmy1eADzPC/w
+	 LwJ8UEs0ozzRt3lK/0HWqqBWc3iVQ26KVHDKMjHpYuq7rwt29UP0OkpV7xHhfWExA7
+	 qxSRIGuo0PYJovFKeV0vwa6+xkUUwMEcXpXZsRfrpvqmu7QZ8TT3XGM0kizlwsL5Vq
+	 HmvvP6BqSZryj+7MnGKRW8OJmcZTvVb/820BXM4US5UL5uF/Tj1TI2A/2/X+gkN3ft
+	 4Z117DwucYWoQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uyvEf-00000007ACT-1qGd;
+	Wed, 17 Sep 2025 16:42:25 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Sascha Bischoff <Sascha.Bischoff@arm.com>
+Cc: nd <nd@arm.com>,
+	oliver.upton@linux.dev,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	yuzenghui@huawei.com,
+	will@kernel.org,
+	tglx@linutronix.de,
+	lpieralisi@kernel.org,
+	Timothy Hayes <Timothy.Hayes@arm.com>
+Subject: Re: [PATCH 0/5] KVM: arm64: GICv5 legacy (GCIE_LEGACY) NV enablement and cleanup
+Date: Wed, 17 Sep 2025 17:42:21 +0100
+Message-Id: <175812733344.1632579.17001899303582807634.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250828105925.3865158-1-sascha.bischoff@arm.com>
+References: <20250828105925.3865158-1-sascha.bischoff@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXnM15Zj5mCYcsd9usUMtHoPOd3Wz8-L1N5UaB-YvKuHQ@mail.gmail.com>
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Sascha.Bischoff@arm.com, nd@arm.com, oliver.upton@linux.dev, Joey.Gouly@arm.com, Suzuki.Poulose@arm.com, yuzenghui@huawei.com, will@kernel.org, tglx@linutronix.de, lpieralisi@kernel.org, Timothy.Hayes@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Sep 17, 2025 at 08:29:24AM -0700, Ian Rogers wrote:
-> On Wed, Sep 17, 2025 at 5:37 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > And make:
+On Thu, 28 Aug 2025 10:59:41 +0000, Sascha Bischoff wrote:
+> This series enables nested virtualization for GICv3-based VMs on GICv5
+> hosts (w/ FEAT_GCIE_LEGACY) in KVM/arm64. In addition, it adds a CPU
+> capability to track support for FEAT_GCIE_LEGACY across all CPUs.
+> 
+> The series fixes ICC_SRE_EL2 access handling for GICv5 hosts (to match
+> the updated bet1+ specification [1]), and extends nested
+> virtualization support to vGICv3 guests running on compatible GICv5
+> systems. With these changes, it becomes possible to run with
+> kvm-arm.mode=nested, and these changes have been tested with three
+> levels of nesting on simulated hardware (Arm FVP).
+> 
+> [...]
 
-> > perf script rwtop
+Applied to next, thanks!
 
-> > Just call 'python PATH_TO_PYTHON_SCRIPTS/rwtop.py' transparently?
- 
-> Yeah, that's it. The perf script libpython stuff is just providing
-> trace_begin, process_event and trace_end. Using the sampling
-> mechanism, as shown in Gautum's patches, it is pretty easy to migrate
-> them to being stand alone bits of python.
- 
-> > That looks interesting indeed, that way we would stop linking with
-> > libpython, etc.
+[1/5] KVM: arm64: Allow ICC_SRE_EL2 accesses on a GICv5 host
+      (no commit info)
+[2/5] KVM: arm64: Enable nested for GICv5 host with FEAT_GCIE_LEGACY
+      commit: d5a012af348d4d84287267547eb8637b937545af
+[3/5] arm64: cpucaps: Add GICv5 Legacy vCPU interface (GCIE_LEGACY) capability
+      commit: 7847f51189343b29a24ca7edafb60a9032d5acf8
+[4/5] KVM: arm64: Use ARM64_HAS_GICV5_LEGACY for GICv5 probing
+      commit: 754e43b09561f59dd04e0b8aafe4f5c9a71a4d1f
+[5/5] irqchip/gic-v5: Drop has_gcie_v3_compat from gic_kvm_info
+      commit: 5c5db9efe323dd0b0d7917dbe5b9c0999c95e79e
 
-> > I wonder if there are out of tree scripts using the current tools/perf/util/scripting-engines/trace-event-python.c
-> > mechanism...
+Cheers,
 
-> > But even that can fallback to a python based mechanism, right?
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
 
-> I think so. Like I said about the use of a Dict for process_event, we
-> may want to streamline things so there is a tension with what the API
-> should be and compatibility. We can always have 2 APIs and try to
-> deprecate one of them.
 
-> > Import the script, if it has a given structure, use the new way, if not,
-> > call a glue that reads the events and feed to the old style code.
-
-> > Seems doable and would save code on the main perf binary and headaches
-> > with the libpython and libperl build processes.
-
-> So I see this for libpython, and I think it'd be pretty cool if we
-> could have things work like this for say "perf script ilist" and
-
-I think we could even try to, not having a builtin-ilist.c convert
-'perf ilist' to 'perf script ilist' automagically.
-
-> Alice's textual flamegraph work. I worry what the work for libperl
-> would be like and whether it is worth it (hence sending the patch to
-> at least start to make it opt-in rather than opt-out).
-
-Maybe we should be a tad more cautious and start with emitting a warning
-that "libperl is deprecated (holler if you disagree if you use it!)" and
-then make it opt-in, and then remove it.
-
-> Do you need my tags for these changes or wdyt about making the
-> kwlist/API surface smaller?
-
-Lemme look at the original post...
-
-- Arnaldo
 
