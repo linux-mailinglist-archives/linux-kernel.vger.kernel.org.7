@@ -1,115 +1,149 @@
-Return-Path: <linux-kernel+bounces-820757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B02B7F183
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836C2B7F16F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53124624482
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ECF118933AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156F23233E9;
-	Wed, 17 Sep 2025 13:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6842F328962;
+	Wed, 17 Sep 2025 13:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="E+r4h8g3"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AU/8gpi7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B0131A814
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B67316189;
+	Wed, 17 Sep 2025 13:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758114113; cv=none; b=qWy+qmLXpkMYyQI52iJ+I+9rpW2guKqZHv70wkTcstvN+0zoUJowZXhC/MANWOVKXMlquxM64UCHg+KdnPFOzrbcrnJu/QM3X3zejPSFhodhgzCjj2nD+XBf+u7yAbLAi8Vt625Nid2ScuArRjOSR7koo1oxCRo9lx5tEE4jWAQ=
+	t=1758114143; cv=none; b=SUxRdGBCKY1yztMhEx1rsScC+7w8FEJ5ZPbUUeWxddanvr9aZmOjQJ++LwfRjZaLFX9ebKGtC3qAiusQCiHs24RjTabDVhReXb53iFWbNCs5BfIw2dTWPFOPAH6Wj1zzPby4WeYV4m5m4Tu4nmOvQgsr1MiUUvTwAgjVtm8BmRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758114113; c=relaxed/simple;
-	bh=LQ4u/583uE1+dOOVzGmM3HhS72iikorD+a/SwNVox+M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=slqbtcVT65cJMVs1BazyZPFom61RJ/kWrVr4kSRK65FUTdoj7h3a3ok+6GQh/GQgs5w7KIbWoZyyei4GM3cozkxtRyIn4Dv7o3XW4qxRE16jWQdOsK6/gYWILP8oZ3DI8NVNjXGl7CD05XbomYaiGoNOkEi2QKJG3hJqv93N9xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=E+r4h8g3; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cRf6g2dVmz9sq6;
-	Wed, 17 Sep 2025 15:01:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758114107; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LQ4u/583uE1+dOOVzGmM3HhS72iikorD+a/SwNVox+M=;
-	b=E+r4h8g3Ro/vE8nUHJ5jxNaby3Ap8GG1KHyuF2GxWd1gfCdy5Gru10GOlDyqIFdogaN98a
-	gNm3W/myhA/8Dj7XxImyvZ8nmgPqPQmhFno5Cv4VKlKmFMhMrCvPGTYzWcfBSkk8QvBq4H
-	uLSzkaKotcqeZ3T5xjvRYKpxL7zuVHjn5QQIoMGmDZlIaZWJ58L+Y2mq2M4EM8tlqbJTUN
-	Q+pJbeVfWeMGkEBfG43HJVKrp02RMfNPHx/oW9zZiHDqoTImmyR15MCIRhoO4so7k59pvU
-	5geT4zEnUS9p1AAFq0NVLd1qIOESaLTEqrFqtTMdx9+Pv1NhRxmQeXNHGdMoxQ==
-Message-ID: <e640f2abdf1503f5687ca0d79ec3dc061ff6d2c9.camel@mailbox.org>
-Subject: Re: [PATCH v2] drm/sched: struct member doc fix
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Luc Ma <onion0709@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
- <dakr@kernel.org>,  Philipp Stanner <phasta@kernel.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,  David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Date: Wed, 17 Sep 2025 15:01:42 +0200
-In-Reply-To: <20250915132327.6293-1-onion0709@gmail.com>
-References: <20250915132327.6293-1-onion0709@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758114143; c=relaxed/simple;
+	bh=dPiFt84MgSZMJL8F7rVZ3drtPWc+6MIvEOdIXuJLADM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=juGaHgakmsDLjPA+qJzTTeOGX6XQeiFMH2CGoyyymQQBc8J8ZgS67beWs8JGHu3/bbF/UC6guID1KkpUkspon7SYUm8qLPp5CN9JUHQ89oInAoDO7RYPTPpyDIbgIIsf11iux6x+IsGJZibRAx0YjkoE/W0bQbAU5l0S+zPpe4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AU/8gpi7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25802C4CEF7;
+	Wed, 17 Sep 2025 13:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758114141;
+	bh=dPiFt84MgSZMJL8F7rVZ3drtPWc+6MIvEOdIXuJLADM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AU/8gpi7sNmUx/Nf9wIA2FehS4sn47LhGNOVC3O40Xxy5OAutbAunP9dP+7cYaWab
+	 HGg5kSNfJGQxLCAuepnRxIMCQBx55x3LFGEd214iJYd7fGVTX0wFhg66ZjvUuO4vHA
+	 thIKXio6Nlu/H/MHSU4H49Grf4/Nb2VR/XQs2D031jZ+vfOMIh2jOpM9CmqZ2AIq1V
+	 DGtS+Nxnys1ABCiGVyfEbOYcIDyuyRThH/oY+Zkkmz7zBZe4Q9eb/9UflEA5+sf+oJ
+	 Ry+/jWzPBvk/EgPjLNVHtbuqhE+mWJ7Je5HQJg1gfPAXzRRo7xPeqyZ/Hz1YTD8iuk
+	 SqV0M+8ifZniQ==
+Date: Wed, 17 Sep 2025 14:02:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee@kernel.org>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mfd tree
+Message-ID: <aMqxWGx0asGTWZ2V@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: 6rzetnuy3m91itdsjtof9m1bym1t9ffc
-X-MBO-RS-ID: 2d479856e6987a114d2
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w8pjyQ3tH91vQJag"
+Content-Disposition: inline
 
-On Mon, 2025-09-15 at 21:23 +0800, Luc Ma wrote:
-> The mentioned function has been renamed since commit 180fc134d712
-> ("drm/scheduler: Rename cleanup functions v2."), so let it refer to
-> the current one.
->=20
-> v2: use proper pattern for function cross-reference
->=20
-> Signed-off-by: Luc Ma <onion0709@gmail.com>
 
-Applied to drm-misc-next, thx.
+--w8pjyQ3tH91vQJag
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For the next time: In drm/sched we agreed to not include change logs in
-the commit messages because they aren't really useful.
+Hi all,
 
-P.
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-> ---
-> =C2=A0include/drm/gpu_scheduler.h | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> index 323a505e6e6a..fb88301b3c45 100644
-> --- a/include/drm/gpu_scheduler.h
-> +++ b/include/drm/gpu_scheduler.h
-> @@ -546,7 +546,7 @@ struct drm_sched_backend_ops {
-> =C2=A0 * @num_rqs: Number of run-queues. This is at most DRM_SCHED_PRIORI=
-TY_COUNT,
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as t=
-here's usually one run-queue per priority, but could be less.
-> =C2=A0 * @sched_rq: An allocated array of run-queues of size @num_rqs;
-> - * @job_scheduled: once @drm_sched_entity_do_release is called the sched=
-uler
-> + * @job_scheduled: once drm_sched_entity_flush() is called the scheduler
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 waits on this wait queue until all the sc=
-heduled jobs are
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 finished.
-> =C2=A0 * @job_id_count: used to assign unique id to the each job.
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get':
+gpio-stmpe.c:(.text+0x213ed29): undefined reference to `stmpe_reg_read'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get_direction':
+gpio-stmpe.c:(.text+0x213eeb2): undefined reference to `stmpe_reg_read'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq_sync_unlock':
+gpio-stmpe.c:(.text+0x213f266): undefined reference to `stmpe_reg_write'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x213f3ef): undefined reference to=
+ `stmpe_reg_read'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x213f472): undefined reference to=
+ `stmpe_reg_read'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq':
+gpio-stmpe.c:(.text+0x213fd27): undefined reference to `stmpe_block_read'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140005): undefined reference to=
+ `stmpe_reg_write'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140089): undefined reference to=
+ `stmpe_reg_write'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_disable':
+gpio-stmpe.c:(.text+0x21402dc): undefined reference to `stmpe_disable'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_set':
+gpio-stmpe.c:(.text+0x21404a4): undefined reference to `stmpe_reg_write'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x214051e): undefined reference to=
+ `stmpe_set_bits'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_output':
+gpio-stmpe.c:(.text+0x21406a4): undefined reference to `stmpe_set_bits'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_input':
+gpio-stmpe.c:(.text+0x2140805): undefined reference to `stmpe_set_bits'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_request':
+gpio-stmpe.c:(.text+0x214093e): undefined reference to `stmpe_set_altfunc'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_dbg_show_one':
+gpio-stmpe.c:(.text+0x2140ac0): undefined reference to `stmpe_reg_read'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140c8c): undefined reference to=
+ `stmpe_reg_read'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140cb1): undefined reference to=
+ `stmpe_reg_read'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140d61): undefined reference to=
+ `stmpe_reg_read'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140f6c): undefined reference to=
+ `stmpe_reg_read'
+x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_probe':
+gpio-stmpe.c:(.text+0x21416b2): undefined reference to `stmpe_enable'
+x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x214193e): undefined reference to=
+ `stmpe_disable'
+make[3]: *** [/tmp/next/build/scripts/Makefile.vmlinux:91: vmlinux.unstripp=
+ed] Error 1
+make[2]: *** [/tmp/next/build/Makefile:1242: vmlinux] Error 2
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/tmp/next/build/Makefile:248: __sub-make] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+Command exited with non-zero status 2
 
+Caused by commit
+
+   df6a44003953f ("mfd: stmpe: Allow building as module")
+
+which needs commit
+
+   03db20aaa3ba3 ("gpio: stmpe: Allow to compile as a module")
+
+=66rom the gpio tree.  I have used the version from yesterday instead.
+
+--w8pjyQ3tH91vQJag
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjKsVgACgkQJNaLcl1U
+h9CnHQf/aajt810ODmcanLS2KXawWloDaNsWz3Kqgu4ECFsEqKm5p0R/wjpYRYU9
+CpKZdwUoiA0PNKsR3q9lBMWSEPvbrpepb4L3v9wQSyhlQWmPNWniaZeysDWPISQI
+UKH7AUEfGBgiNFC6y5yUvIfjepg2SlxAdJnCqaLRowEyJB9fd6/sAEtLTROmjbsK
+YBhh7rPDbv4kiiaD6zDkEfGrzGaQwbtq4XKwdi59UN0+SkiYxLKAly34x9KA/2hp
+mo3w/M5pGQunl/lY8LlYTTvzQ3/IO3VQYFCwGXov0kvgk2nRPmIeuPg5mu2cqFzF
+ccVBGaYT1pQPZqZfipF6/bySxwESJQ==
+=duvI
+-----END PGP SIGNATURE-----
+
+--w8pjyQ3tH91vQJag--
 
