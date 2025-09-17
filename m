@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-819935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10194B7C3DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F04B7C4E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7996B327D4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A501D327A71
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1EC2F8BDC;
-	Wed, 17 Sep 2025 03:38:50 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B5C2FB995;
+	Wed, 17 Sep 2025 03:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1I9eY7L"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AB42FB09F;
-	Wed, 17 Sep 2025 03:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1D42FB987
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758080330; cv=none; b=rj4zwnBb7MzPyyHJXeRWHKBkGZJlniOYCxt1N3KxxhzpO5t0vzSFejRVDUa5SvvXIBpv8vDwmEXWP3RFKFN1e8w44NbbgEql7uVsSwYsO59DIcHPKEhqdpM516Ko0WgLrcOzSxD3CawzuMqqj3aeY5RRGL2oaTlHmZgNA8neGWc=
+	t=1758080336; cv=none; b=Uz/QlBDGZOCtuaAJZr5T2PLekiULgS3iu1IsPncxo5OICxLScsY9hhGsYmAWs85+LUHX29avpLeXYk50tvyHcJ7wLXk4LnFahyL8zpCxJlHg6+7glKNIzEr8nVq3wdAOcCpvr4YMo+nD+mJ373Eb8EAngz1vp7RKyC0ftWKru+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758080330; c=relaxed/simple;
-	bh=kCJWp3JQo7Ul2VLXlTTjnxcurS4jfdZsVWUeoxEaPHo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aPPuEBXUwXUKW89vtulQRan+gvledwnh0zY1o0OF8NglPczkYoc2FtJIXQG/PEHT5TsobiyjkRQ/NgII9v8VcsS8XL9favuTY+dFvPv0ORGygnM7BwaYBQJLoCBIGFJFQB3+WSyFWhP2b9iR1pXMhNRPEhgcyx6RTNj9hr1JkvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id A319A341455;
-	Wed, 17 Sep 2025 03:38:42 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Wed, 17 Sep 2025 11:38:13 +0800
-Subject: [PATCH] dt-bindings: i2c: spacemit: extend and validate all
- properties
+	s=arc-20240116; t=1758080336; c=relaxed/simple;
+	bh=7lmroYbXZ3jYHLQWLFzJWOCaxrUS0F0MWWUAjtp4xGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iHNi7P+PNBbcH4zrbEm84Deb3psmicQEBKLAKGDyNwFuGJGQnVsEFAKlS7edRj0CFH3dkkgfIZpRYa21GwxNeoMkFvqMXb/PDcoapx3OE2dWHqmB8PmpKxSvDJv82RKU4my9hYZoinjC/gzt/e2kVcBP5J2741K0xjZQ8aJWZ2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1I9eY7L; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b5488c409d1so4097548a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758080334; x=1758685134; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+PEicOZlOrq/FatAZZFuiytqhYw1ERpH48QYBjUJ8E=;
+        b=a1I9eY7L4WwuK83vH9xx08zVvSfHMhzZfA60/xQR2TFgGraN5TuVT+aNhVwFiWtXZw
+         xF1SRExlqY7XRgq1pt071o+UC6SI5DbdET2t5agwdxu3J7yyi63MpGTM2KM4dMcm81EZ
+         iGO67X5T7C4QhX6IWEQzYaZTQtgPgxnSOkZwI5Ro18UbFy387KROsGmwNr1nsiQL21VM
+         B2gAnZ+dHVZVhp9oukxinEUZh1U/vjxslRZg+/WCY8Nq6Fe5nyEnsNrVvpm3tsD6TjCg
+         QMPhhZFKbjmuCwafVrRoPPhgTyzZeEXN2hoNIOSZ0TgzojdRYiaW55bNigcG1onCdKbo
+         XoTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758080334; x=1758685134;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+PEicOZlOrq/FatAZZFuiytqhYw1ERpH48QYBjUJ8E=;
+        b=Wyq9XlvhEEdiH/kqWsWUynGZBHyVIHjG+Qo/v7+6H80MUQB7opBDi4D4zjCsgeqzp8
+         vK/Fiw9xg4Ug1fOzYz0gjKgvgtOmCN+t0eXd6ltGbcQCYMvgwodermFIH/k9e9qBiVJl
+         /XT9/F3r5/Kf1Z2tsBeEKGiME7HO+HvxtoshJmx9RRkI9l7P8bZSGYJJE5kViy9x97vf
+         51DwRBsMVk+A/YVxqvB1aBNTeVqiEOzXZkLJB8a3mKREIfUjUt4QqgLUy/mS1dbGsYzB
+         fP1BY+R6HUuw9NAJNkziBZpc4iNBLhttRhxoS6G34wj9fVdTiTCJ1fDQMuMvAwBguGZ7
+         ZALw==
+X-Gm-Message-State: AOJu0Yyfrqhq9K/Ldq8sxgWkVvNZ0UDIbsI5qgPcyopGONzADDAwRScC
+	M09IgEPZ46etWjtPzGenRaKNdlsv4Oob4Dze2u7GO3AbN0fC+XXvSVEfFBLhQaoAqbsQFTLBUwk
+	=
+X-Gm-Gg: ASbGnct0I9UijITa+zLJ+V1XgZpXjdiNI8yeMNkLctMwktQLbcidwsIVsiusEwL6yrh
+	oxf/3BsOMbyDyfK+J7pMGeIUS2bvcB/0ST9LAjpZ07BoXQbs4dBhAAhmbprY1gu4qMtX41kX4bY
+	31SDKRmfhQgvKaRqik9a/hocidvzCgkLQX+6mwGd6733KW2/J5AmIDAnyRKEB4m9o4V+MeIcTdE
+	sWuwoO3gBKigEsVGHI+k3TiESudZDu2hRN8y36N5HmxrtCvssqdrRI1C1mLfy/eyYE2zJzHhyDu
+	hzsY52Pq68CANZjcHlhPPsVF/SJ0hxVLjE6JYlkOr7gtfCVs1cDMhLYVmFBXOoCEl4bn6UWFGXb
+	pakxRd56bU+NMwgNx0AbHYmgkJAGSWzyJOsITqSM9
+X-Google-Smtp-Source: AGHT+IHy+1k8k3fFOOqCUZ2yFSZz0O/pwBaT70fSXPSBqjZ3VXyi425K3IsoaOXB3a6ERrNNVccGLQ==
+X-Received: by 2002:a17:903:2acd:b0:25d:d848:1cca with SMTP id d9443c01a7336-268136f9cccmr6032175ad.35.1758080334177;
+        Tue, 16 Sep 2025 20:38:54 -0700 (PDT)
+Received: from LAPTOP-1SG6V2T1 ([149.22.88.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26804b83afasm8002275ad.68.2025.09.16.20.38.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 20:38:53 -0700 (PDT)
+From: djfkvcing117@gmail.com
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: Onur <work@onurozkan.dev>,
+	gregkh <gregkh@linuxfoundation.org>,
+	lossin@kernel.org,
+	gary@garyguo.net,
+	Tong Li <djfkvcing117@gmail.com>
+Subject: [PATCH] rust/fs: use intra-doc link for `EBADF` in `BadFdError` docs
+Date: Wed, 17 Sep 2025 11:38:33 +0800
+Message-ID: <20250917033838.8171-1-djfkvcing117@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-01-k1-i2c-schema-v1-1-bd276b366d9c@gentoo.org>
-X-B4-Tracking: v=1; b=H4sIACQtymgC/x3MTQqAIBBA4avErBtwhNK6SrQwHWuIflCIILp70
- vJbvPdA5iScoa8eSHxJlmMvoLoCv7h9ZpRQDFrpRnVkUBGuhKI9Zr/w5jC62BpqgpmshZKdiaP
- c/3IY3/cD7ZfnZ2IAAAA=
-X-Change-ID: 20250917-01-k1-i2c-schema-faf6715d7b88
-To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Troy Mitchell <troymitchell988@gmail.com>, 
- Alex Elder <elder@riscstar.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1307; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=kCJWp3JQo7Ul2VLXlTTjnxcurS4jfdZsVWUeoxEaPHo=;
- b=kA0DAAoBMarqR1lNu+0ByyZiAGjKLT+jcVbQ9mbdO+pc6V7MsBoyymoCp7WSndSvDE1LSGBct
- okCkwQAAQoAfRYhBLW6uMnDG3EVZwIj3DGq6kdZTbvtBQJoyi0/XxSAAAAAAC4AKGlzc3Vlci1m
- cHJAbm90YXRpb25zLm9wZW5wZ3AuZmlmdGhob3JzZW1hbi5uZXRCNUJBQjhDOUMzMUI3MTE1Njc
- wMjIzREMzMUFBRUE0NzU5NERCQkVEAAoJEDGq6kdZTbvtWmkP/1G7yZg775d2eLm6/NDSng5Lfk
- dnzQ0QplcxlL0ZOCEBOLadQmfSeEupPkxzV9BqFcDNbKtCedUGNAQLUB/KeqmPDo7uny4adSBhL
- 66sudGMt7WjVxUXh2sC4h9p6skCD91iuOhEz4TS4eYJhWXF2R7pWieIf0I7qBfEAoMr755V7o3k
- e5DnNPoGlOQ53Fg0bPgA+teKfHQCn1bGiowidkboXFO5YLDJv7geWRoUEkj9hdSqE9Ry6A+ivVA
- q1fTN4GNogKmGRSIhlBVxZWg+MPMxW3SiSwYZh+ThMWefgMSowE6HLA5qP+EVkpOtul2Oj2vkHZ
- S2iIrbmC7/HHX2ty4WZNNSeoAC2YzZ951QsgAKsa3baME+gVYdKmHZClSfCbb/nxU6ttaM/TXHo
- EkffZcfv57vGmfIwT6Clj9zaW8EN1+8aWlO5M9e9khTfof4esde1wBBUkG6bvR46OS20AmSUGzT
- 7i02riLBSwUy6eo8HCQ3qUg5FtTTnoSv288YUuYdyjkanc7mfN+SMpHYLUGtob5RG1ovSVH5wMl
- BNnlgGb7GsFCWmj8oPL2x8CBAdHn/7BXQw5fcoigfggX0AP/wPd+kpOCNpXK8jtnjJeHBHCCpBb
- 1wKI0XYQz/je1IlIQndhnU2GiEScRHe77dkNqSpfPXfR6hLVT0t6z32sOM
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Extend the K1 I2C properties by including generic i2c-controller schema.
-and this will enable it to do the DT validation check later.
+From: Tong Li <djfkvcing117@gmail.com>
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
+In rust/kernel/fs/file.rs, replace plain-text `EBADF` in the doc comment for BadFdError with an intra-doc link [`EBADF`].
+
+This improves the generated documentation (so the `EBADF` constant is linked), and helps tools such as rust-analyzer to resolve such references from the docs.
+
+Suggested-by: Onur Özkan <work@onurozkan.dev>
+Link: https://github.com/Rust-for-Linux/linux/issues/1186
+Signed-off-by: Tong Li <djfkvcing117@gmail.com>
 ---
-arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dtb: i2c@d401d800: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'pmic@41' were unexpected)
+ rust/kernel/fs/file.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Link: https://lore.kernel.org/all/20250825172057.163883-6-elder@riscstar.com/ [1]
----
- Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-index 3d6aefb0d0f185ba64e414ac7f5b96cd18659fd3..226c600deae142413277117e25baae09f0918381 100644
---- a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
-@@ -9,6 +9,9 @@ title: I2C controller embedded in SpacemiT's K1 SoC
- maintainers:
-   - Troy Mitchell <troymitchell988@gmail.com>
+diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+index 67a3654f0fd3..f3153f4c8560 100644
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@ -448,9 +448,9 @@ fn drop(&mut self) {
+     }
+ }
  
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
-+
- properties:
-   compatible:
-     const: spacemit,k1-i2c
-
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250917-01-k1-i2c-schema-faf6715d7b88
-
-Best regards,
+-/// Represents the `EBADF` error code.
++/// Represents the [`EBADF`] error code.
+ ///
+-/// Used for methods that can only fail with `EBADF`.
++/// Used for methods that can only fail with [`EBADF`].
+ #[derive(Copy, Clone, Eq, PartialEq)]
+ pub struct BadFdError;
+ 
 -- 
-Yixun Lan
+2.34.1
 
 
