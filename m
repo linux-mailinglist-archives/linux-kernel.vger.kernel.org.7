@@ -1,190 +1,221 @@
-Return-Path: <linux-kernel+bounces-821583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E529CB81AF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:50:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27ABFB81B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6015C3B69CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE52E1C24A4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808E42566E9;
-	Wed, 17 Sep 2025 19:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A78278170;
+	Wed, 17 Sep 2025 19:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b="I1kIrN/j"
-Received: from seahorse.cherry.relay.mailchannels.net (seahorse.cherry.relay.mailchannels.net [23.83.223.161])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xfn3iAUN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AAE8BEE;
-	Wed, 17 Sep 2025 19:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61E2288D5;
+	Wed, 17 Sep 2025 19:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758138615; cv=pass; b=aoxi9cfi8A9whAjol4zGT0idhxgWx1kTA908HMGH0lGe4tZvc6FT1CsotlLtKaMG0QGMtma2oL5Yi4jEzTGXYR4nfAKXn1tevRhi56Gzfgz4lyRJgfjSqsCMZxWIm6SJeXZKAnPj2Cpug2UekvBRvnUhgf+uDPMsSQoFEiu15FQ=
+	t=1758138858; cv=fail; b=u9/XrfCWs96mcyWEU2GYhGlBD3rk4zxUoW4VTQXO9L99DWU2RwedpxpOY4i9Trlimq4jGL87y3RgnSwacjrZwx+yHn1H7IhOtzXZgV9bC1LZ0T4ab0gB8nRgESW1/9HH9zQhWR8n3qN2d8XM5Kgt7TLwX4NcQdTLLwRE/aZ41wU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758138615; c=relaxed/simple;
-	bh=OPBtjuECZg3uxpC0LLvIT0G5nRV07fTiaDqxfhEnLQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYQTSP7ft9YUVaFwBqSbM4onuTBOYRL0X6D8WqdVzzhL7k5MkGR8wsKUbmMUi2HKj8/0Drk5FvT8usHm4UcTTGmoQKUgEC4S8FizkEhfOHsOK+gMt7XjtCAM5W0OkDEKwT5nGYFhA3IkIWTWyOQt/b+sBdLwho3H0mgYbT6J/R0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org; spf=pass smtp.mailfrom=ewhac.org; dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b=I1kIrN/j; arc=pass smtp.client-ip=23.83.223.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ewhac.org
-X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 04331863873;
-	Wed, 17 Sep 2025 19:50:07 +0000 (UTC)
-Received: from pdx1-sub0-mail-a237.dreamhost.com (100-106-206-65.trex-nlb.outbound.svc.cluster.local [100.106.206.65])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 59B94863634;
-	Wed, 17 Sep 2025 19:50:06 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1758138606; a=rsa-sha256;
-	cv=none;
-	b=zQAYJ0FASi7Gw1ybqpgJB+VL1cQz0hrlxgfANYpjPLRE2ACCon9k9t4Yo/+ICebVD0nDqk
-	WwVyxkuCFDozA+Naa1ZO58/BJ1fUu0cE6Jq5c11Lzq/c4dp65zVDU0NUJGXxhMXdoSUOqY
-	KFE3C262yVKJui4hz02qBuktrldKlWS1MVB7t4dkZf/Cimij3FgWS+JJ/0Sllbs1Qo7a5n
-	nXf+HYSUTBEMpDdtum6FfdPPmPnO8DgKyfhI0hnheEv8eUDQLuTpnI2Cc0ZbNGREyScv1b
-	iCnehIT6QGHXlwCUU2YEpbKAKvwV/Aua8OZWdnW7jdiLcFIw8Rzi4xXlSbYaVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1758138606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=QR8h4trdEJjxl7YHEhgieYLK6DcncYNCR6sVg12kusg=;
-	b=KvhBwxsi7k+YQEN2j7H+pGkKTp6yMdkEj9S3rHD+2ExT7OpHoy59Vx8aZeu83BCAFtP3EI
-	B67grENit2ygeQtpPiXM/IHgKJQMrPQZ08DZTudC/y6X/ss9u2DwUeFDAzciYx9Uk257b3
-	0aFJtL8RVr0sHvGSBp7Fp+8yhJfVSdcCce4bP99RtD+UdGS+4DY6kP58u77krbCu5GL0kX
-	Y/yYPv08FRhX0jTnDrGJN8ORE5sfR98Wv5ayG9X31RL6gnK3Nt5xFD+bdTQPD17qWimwnI
-	AFQpSWiykk735di9Fa0/E3ejaKRu24qWc4svel6aBARgCAbnl0w3wW9BxrGL9Q==
-ARC-Authentication-Results: i=1;
-	rspamd-7c7bd86f7-rxkpx;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=ewhac@ewhac.org
-X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|ewhac@ewhac.org
-X-MailChannels-Auth-Id: dreamhost
-X-Hysterical-Skirt: 4b73acc84715a5e4_1758138606615_2153499060
-X-MC-Loop-Signature: 1758138606615:2407148932
-X-MC-Ingress-Time: 1758138606615
-Received: from pdx1-sub0-mail-a237.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.106.206.65 (trex/7.1.3);
-	Wed, 17 Sep 2025 19:50:06 +0000
-Received: from ewhac.org (unknown [135.180.175.143])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ewhac@ewhac.org)
-	by pdx1-sub0-mail-a237.dreamhost.com (Postfix) with ESMTPSA id 4cRq9p12HfzB1;
-	Wed, 17 Sep 2025 12:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ewhac.org;
-	s=dreamhost; t=1758138606;
-	bh=QR8h4trdEJjxl7YHEhgieYLK6DcncYNCR6sVg12kusg=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=I1kIrN/jA0DXeMVm2HOvo9q3YddsSLBKKMYuzYcmZSnzdr9WgzvPq0FaDUMSAgNzV
-	 ofpvFKQ3NomYp0AgZhc5dwN7dekE//Sp2EGWRBwD45PMGWA8P5+vPpDzeP0GzRPtZX
-	 PjzbZ7il2Dxo0IyX8GxokKyPzyyikXG1V8YzpWbsK4BJUEETiOxh5ADDKTU7YUI2OE
-	 HVAvMBr0YYqGyg7LHPu3NUs4oFkn1+LR9N+hIoeHh3Hy88xkTBbWYOrkCaIlSZW5KV
-	 fZlJBm2xhIxaq0kZhSMGeSdO3wifQ0Ns+f92bvL2nDRB+B3U3PtZ4JKUagcglhD4YS
-	 mOAMfsS/rft6g==
-Received: from ewhac by walkies with local (Exim 4.98.2)
-	(envelope-from <ewhac@ewhac.org>)
-	id 1uyyAH-00000000O92-2UjG;
-	Wed, 17 Sep 2025 12:50:05 -0700
-Date: Wed, 17 Sep 2025 12:50:05 -0700
-From: "Leo L. Schwab" <ewhac@ewhac.org>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
-Message-ID: <aMsQ7dBJrwpWbdJk@ewhac.org>
-References: <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
- <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
- <aLiZbkKgIC8jIqE9@ewhac.org>
- <c12adb45-fa6d-4bb8-afd2-a02e3026d646@kernel.org>
- <aMESMcFLrzqrCdbq@ewhac.org>
- <a6ea0b5d-7586-4529-bf91-d8b966aa986e@kernel.org>
- <aMG9L2566Hh6b0Kf@ewhac.org>
- <64b1c076-f1f7-45a3-900a-dd52ab50cd4e@kernel.org>
- <aMiQsMtyX9POrXof@ewhac.org>
- <8e2c3560-6cba-4808-8207-ba3e1dd0e661@kernel.org>
+	s=arc-20240116; t=1758138858; c=relaxed/simple;
+	bh=NeWOajKF9JEeeBlQbH4dfr33hNOjJzIj0QUxb/hu+7k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fnWtyuOPjlwMm7HEpyp86xLdo2mmr2E+EvAY6pJ9mWL4HazY49EkdmB7TxP/mRA2GASVpvg5NWbvwoUD11MMvDOqsa0MD31hOXYzhDyhZbDYLl2zoI9XANx+CfEpeiEjlDkcihX9hiDurV6evOBQ9ikVBg8yBfalEguDwGWS57I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xfn3iAUN; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758138857; x=1789674857;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=NeWOajKF9JEeeBlQbH4dfr33hNOjJzIj0QUxb/hu+7k=;
+  b=Xfn3iAUNHu4w5zHiyEMxTHtEtgPK7vhuF1lm/9NA+adZ8n41gwO9uohE
+   Pqh2qjgzK9LKgOvGFscd6iVlyLwuC5ijlySaocUA75Mw76ru5WywGRoRj
+   qjEgziUOtKYJKOpi1AG523G24B+tkiiOFd6wsTcEozgrWCcKlkj89vlx0
+   7u4Fo+I2Zk4VaVCs/BDPJTEw/2C01NR0xS6fROWpChMCptJF+VrQLcWCV
+   ujGrx8YDJo141Hn9Tqd9pi3TWq11LeMBjh+hZtBU/59jiU7oRFuD9ZSz2
+   1bxZZuDAfcdzRP8EEYLR+IV4kJLHU6A2GnowWdbYoV1nt/+rJh/Dv53Un
+   w==;
+X-CSE-ConnectionGUID: NjrzzPJ7SJiTuBkcKVzOKw==
+X-CSE-MsgGUID: KZduPRSrSACiTUu44w8VbA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="70710259"
+X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
+   d="scan'208";a="70710259"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 12:54:16 -0700
+X-CSE-ConnectionGUID: quOpwUCiQUqnzm3Ykv3TYg==
+X-CSE-MsgGUID: WPhl8cezSkWnmCBARoV2Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
+   d="scan'208";a="175746499"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 12:54:15 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 17 Sep 2025 12:54:15 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 17 Sep 2025 12:54:14 -0700
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.32) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 17 Sep 2025 12:54:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fGDW/HZNZhLm2PMMSE0PL2JJonHMqhzyAS2Sj5v2ATlMUnx1Omq1O7X8oopEZE69EltJougONYlWc+s03t4OB8XZ73ESYEn+FwLujvDK3JmEBRISS26/D6aQfeG4rMgnFuaK/tFCoQPTitcg72oHLJL0aPSZcEUDZ/W5kRu6qTSmX/j0VxVHcNQIHK2QHSd7zzA5DybXSO6Uaeliqp6AiLXHhdpN/F/GXEE09ZG4vPtfeyctUlUu5d5CDuCZexpLxVI5f85GH54JFYn4wRhJC9L18mpEShKQ77179zFnormVelN7Bv1C18tclSW5YxNJTr+/EBGL9lXMFl0r34pK+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BjbzDrXqBlJpKAXjAy0G668i+JjK85/17jDi6aKDexg=;
+ b=x/LQ0AYZaQ5ZDC52/tG6z2j4YuLZjlR3j/yTGedNqs/k09yR+Xnsw+WAi8qZrXdKScTTq2CQDFU/962hk6GoEYT+6WhSkBunFdHpJ9qn77YH0KtBk4DoJj1cYquwA2k9CT+ua2/7LZ85pZHZSjtgRjGvl545zIzNxLSzC2xx1hBpk1vxcMqZ4K7UgPOkd0VHK9Ih9UcdCGCsB4Xly8oSGK175iD5Qxak62NfUwn4v/l84j3G/ATcMOmjuQtx3b827oc8xnlQhDRrgBLU5oU6d0f4DI18iQYjc6Hwksi+RKZA8nlprvX5P4MZz1GAJO8jyZoyDYoEWz7szTBUQxK+sA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by DS0PR11MB7484.namprd11.prod.outlook.com (2603:10b6:8:14c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
+ 2025 19:54:11 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 19:54:11 +0000
+Date: Wed, 17 Sep 2025 12:54:09 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Jiaqi Yan <jiaqiyan@google.com>
+CC: David Hildenbrand <david@redhat.com>, Kyle Meyer <kyle.meyer@hpe.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>, <akpm@linux-foundation.org>,
+	<corbet@lwn.net>, <linmiaohe@huawei.com>, <shuah@kernel.org>,
+	<jane.chu@oracle.com>, <Liam.Howlett@oracle.com>, <bp@alien8.de>,
+	<hannes@cmpxchg.org>, <jack@suse.cz>, <joel.granados@kernel.org>,
+	<laoar.shao@gmail.com>, <lorenzo.stoakes@oracle.com>,
+	<mclapinski@google.com>, <mhocko@suse.com>, <nao.horiguchi@gmail.com>,
+	<osalvador@suse.de>, <rafael.j.wysocki@intel.com>, <rppt@kernel.org>,
+	<russ.anderson@hpe.com>, <shawn.fan@intel.com>, <surenb@google.com>,
+	<vbabka@suse.cz>, <linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-mm@kvack.org>
+Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
+ HugeTLB pages
+Message-ID: <aMsR4Tr9ov1pfucC@agluck-desk3>
+References: <aMiu_Uku6Y5ZbuhM@hpe.com>
+ <a99eb11f-a7ac-48a3-a671-c5f0f6b5b491@arm.com>
+ <8c3188da-7078-4099-973a-1d0d74db2720@redhat.com>
+ <aMsDJ3EU1zVJ00cX@hpe.com>
+ <cd71fac2-bb9d-4e84-a074-2b695654e655@redhat.com>
+ <CACw3F52p45t3iSZPjx_Lq9kBn1ZGTDZsxk+iQ-xFA1zdvdqqrw@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CACw3F52p45t3iSZPjx_Lq9kBn1ZGTDZsxk+iQ-xFA1zdvdqqrw@mail.gmail.com>
+X-ClientProxiedBy: SJ0PR13CA0033.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::8) To SJ1PR11MB6083.namprd11.prod.outlook.com
+ (2603:10b6:a03:48a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e2c3560-6cba-4808-8207-ba3e1dd0e661@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|DS0PR11MB7484:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0990d6e1-ba22-4f4d-a84d-08ddf623f8ce
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2cIyO/yAJFXyw9JDrQ2tbRe2otXph9SSvUyjji0kB+KfpvtxRv2PkPOt+AnA?=
+ =?us-ascii?Q?cI1uWpkr0zcQ8Yad+f6TdeKe28b+w9eGQia0ZUSSKBVQYRJA/xxTUskVSTCY?=
+ =?us-ascii?Q?eGa6iC4WiG4M+jVsks+An2wur209ZlVfjxfI12Ne1QD2guj/NCFcCXJjn8/k?=
+ =?us-ascii?Q?eAxSv4eUdn9NC/GrOUg383Nyri8rpHSg/KvcHIMVSQRMXTfc8mxyJ2Oaon98?=
+ =?us-ascii?Q?byLxZWLDlNcWguMck3e+C1FdpqENH9mZnGc6vP0GkaOvr7xjp3K1zxf0Nlq1?=
+ =?us-ascii?Q?BB+H4qAhvgIza5bE4Hit/oEC4STomsy9pCTxeV71v3vsbymEQCeVOekkbzbD?=
+ =?us-ascii?Q?QoOwhs87cxY0PSVX/d9UVXqBdxZEAXpHO2SXd6GUF3AHvRMKCXqJczyehf0O?=
+ =?us-ascii?Q?TXjSHbl4HUQBKCQ/0hg2WEsu5qahKp6fg5tUfM9hNIzWpJdAuiHULqWyXlJU?=
+ =?us-ascii?Q?+s7Txay6PoFd6h0YHerpdNuqfNPHtEwzfzUcJQ2gMaUJDr45tV0HDbjQXW4L?=
+ =?us-ascii?Q?h5IGRe7/Zbu/fybXSJqP3W4Hy6hd7lzVvrdSKOXFUsmvCuPczhK6WdUQbH2W?=
+ =?us-ascii?Q?oR/p0iI3O/6vjP8UB/Fmj6fZ0CAa6rBK0AVbBnLowTldCJ2znOjE53Xflc1i?=
+ =?us-ascii?Q?WUi7ggMCuVz5tgro9lugnMj5XiTxhzC+UiM5MGq8qiSwKrrC/ryGymuNrp08?=
+ =?us-ascii?Q?GFuodkwkCZBy+qykdk8SinLLkqoWC1uw+6je/kgNiez88FNDNVQ66EpRnyNm?=
+ =?us-ascii?Q?vC4sQekf4G37wwH+6tnnqNqc9IitGPcGJZp1W8XXJEglNWnlt5np140VGo1G?=
+ =?us-ascii?Q?Mk5YZ/06a6c8oXE/WRbQ7iGQkT83invJhPRpBiJbp4OpGRp7PndCnwYnqMcD?=
+ =?us-ascii?Q?7HajFBAf3yCTG+JVhTcL08A3/43Y3DS8f8jL7tejabWN3bAVSKDQ2+k9GbOa?=
+ =?us-ascii?Q?UdqJoV1YusKYdHL7GDWn7p8XP0mvwb3U87smhkPJA4prU5CweexyGOUR2ut+?=
+ =?us-ascii?Q?BuYZO/WThcpxHC56fu5sAUfBarJacYgfTOr43bakFNboQoCAl6YH+UW1wA5O?=
+ =?us-ascii?Q?uPUq1otKwrSEAhjurcs6r/DmDPfMXPMhAYeWs0FnzSsWmPAHPkHWOV0D2pDv?=
+ =?us-ascii?Q?pBWNMirL/fhgJhm6eyXt1E/CNtwWhI7oF7Icm+bjS+C54fJ7RiCNq4j8ubhe?=
+ =?us-ascii?Q?MLxl24bGPwaL3PskOXMOyzzIK9v5zS6mu/3jmuFLUSyl2+P1oJSCIA8Oei1z?=
+ =?us-ascii?Q?ewWeDccpqHi3jL8MOnQKazM2f9Mz6Jq/W/vkDAyfwzbDbBh/OXCwVqioDKTi?=
+ =?us-ascii?Q?zb8AdKBmxtHe9PzbMnAm4dLfEgOC01fBWVZFX1j2/M1SzdvJh6vJd/8L4vYz?=
+ =?us-ascii?Q?BNzOJ9UQcKpQxBtcgtNKPe/ixv5ydslGM17iLwTLYcxrOsfeZg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?M6crN171rxd77tvxSDiYuR3YHTjhSIm5WnhapKQVnOHYs37pfoiJqQ64GNmq?=
+ =?us-ascii?Q?si4vKELwHFjH3RYAnQZ2Mb3LZBSIbjRsTGMMtC9+rG1VhMQuGpZXg9Q8IgHO?=
+ =?us-ascii?Q?nhAChOC/Bhr37F9FA6uHwdyqOmPzLzLuGEy6Ygc/naKVCyorprScE2ePTN/D?=
+ =?us-ascii?Q?vPYtMPg6ttOas3DBLh3M0QsR4zXokRMBdgAZ3mAt4sgOot9+z4E3tIQjWE+Q?=
+ =?us-ascii?Q?+qQtF8+ORVefeYYM4qmUyldTAb9a/OxNnlyVnAtS4SN0vvtTHKDoI2BoEUtY?=
+ =?us-ascii?Q?xHlFDUa7TnYOP++gGavGOAqsZudRjEKEMY2315v50jQcZnBl/FR60THcNT2Y?=
+ =?us-ascii?Q?cWA3nYZolPfGNPyHc5AWkWls3Thh5r6MUvxHE7TGkgj9ujcu1dYupEpQrzE6?=
+ =?us-ascii?Q?8Ks6/2gJHCuPMkukur2lWDckmZUeuPDnXXzvY5jzyFlA/4Xwq67AUd6kj0b7?=
+ =?us-ascii?Q?Tk9n1gHs2z2KJBZk71ID5aidbecUDtHIbFIkT9N4snEqsQrljf+d+ddw28ub?=
+ =?us-ascii?Q?U7/4wUdaoFVzssVsesmjrMdEPV6vt5cezbCbi8XoX1picJlCDJWi/DzK31U8?=
+ =?us-ascii?Q?ROjLoyttYnSKE5DE+sOqdAPyB6k8L32CG9DDxdn4AcxnentEFSLgsgtfhJlK?=
+ =?us-ascii?Q?71SPEducoogMUBXzi8jrH3SJCc572pgLXMg35sb5YqMQBSbltL7UL2ucck4Y?=
+ =?us-ascii?Q?lMwUBduNCPx8SmllkgdsBjRQxpwstAjz1PUdsQdO9riZmBEMvJsQdiBUDge7?=
+ =?us-ascii?Q?090RyhnVWD5P9S/AZuOP4aDHjKISMEBpf1KGqYtPfGbyAJZ65TXm+7EBTR1Q?=
+ =?us-ascii?Q?OqSONzqJh6NbtBAXm52nYkAhAcCOe/qkXt51FNrZenRxIFoId5bvQ5ZjAn3V?=
+ =?us-ascii?Q?huA2jjFH3GHGenqbpUR044131ENJXvZuJLBFQkJwB7aX838+nanXhzxxJdvr?=
+ =?us-ascii?Q?4T8gGgXwbyymWL+1m0GSTfVsMyBvaJJIUgtcEoO8xtm2JrMtDc6jWtJs2mNv?=
+ =?us-ascii?Q?gTZSWk39pdj5ZznWa4+tHyxmKcpB0HTJWY2uHAotjQT2YRsY7tTANnpHXy9R?=
+ =?us-ascii?Q?xLkyd2iaPRm4+4eKyf4h6NWrpXK92kh1PhZ0LwKRPuu+RMS5vaZyiGAwupCt?=
+ =?us-ascii?Q?vJm9cSUOj3TxNDOPMTGaDbuhR0vWCl0XzUga9fJAh6beM6BWm15N/UiLK9V0?=
+ =?us-ascii?Q?VNOsKbgCrubLoh60gAg+CilQipbVqk4n9BnGDBxtnh2PyDiGztwC0vMAjiOM?=
+ =?us-ascii?Q?Rd3M2XoIWYAQkxR5S/1Wn6m0i1k4JTEgSitd/F+UYjX5iab0Z3sZq6ol064D?=
+ =?us-ascii?Q?ma1RhUBS9azF94lhbtU21KMS4/uFnSk8Wgcq334RmWCaCDsI+go17DkjGk2b?=
+ =?us-ascii?Q?dBTAS9zgX2O0vy0kev/dSc9e8O+lF0uMyzNuVt3w5TDpGSnw/HNJzApOVrhX?=
+ =?us-ascii?Q?05HxyMZ8uYVOIxGNi0nNndg85wuM84tPvNnBmOaDWoga4D45xY2KjhDTZuSw?=
+ =?us-ascii?Q?Hez9yHGdnFE1dKo97/RwSsn1aMfFzjywW8eEtpCzp8wBfvsddOxNxkzNnluQ?=
+ =?us-ascii?Q?Fb8hJ2F//pM8yqc4x58ECAHhBTqKPSAOdfzcVNQZ?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0990d6e1-ba22-4f4d-a84d-08ddf623f8ce
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 19:54:11.6631
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1EM7GklcIJHLD+GvMxf8sJIxrtPXvUGGFdQv+56LNXimmjwIF3MUvKOiUhDBl/4l+J7oGNfpsp4UYHurQeSemQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7484
+X-OriginatorOrg: intel.com
 
-On Wed, Sep 17, 2025 at 12:33:36PM +0200, Hans de Goede wrote:
-> On 16-Sep-25 00:18, Leo L. Schwab wrote:
-> > 	What do you want to happen to `brightness_hw_changed` when
-> > `brightness` is changed in sysfs while the backlight is on?  As it stands,
-> > the current behavior is:
-> > 	* Driver loads and probes; `brightness` and `brightness_hw_changed`
-> > 	  both set to 255.
+On Wed, Sep 17, 2025 at 12:32:47PM -0700, Jiaqi Yan wrote:
+> +1. Given /proc/sys/vm/enable_soft_offline is extensible, I would
+> prefer a compact userspace API.
 > 
-> Ack, except that as mentioned above I would not touch brightness_hw_changed
-> and just leave it at -1.
-> 
-> > 	* sysfs `brightness` changed to 128.  `brightness_hw_changed`
-> > 	  remains at 255.
-> > 	* Toggle backilght off.  `brightness_hw_changed` changed to 0.
-> > 	  `brightness` remains at 128.
-> > 	* Toggle backlight back on.  `brightness_hw_changed` gets a copy of
-> > 	  `brightness`, and both are now 128.
-> 
-> Ack this is all correct.
->
-	...Oy.
+> > would create a new file, and the file has weird semantics such that it
+> > has no meaning when enable_soft_offline=0.
 
-	Okay, I can give you that.
+So the expand the bitmask idea from earlier in this thread?
 
-> > 	This seems inconsistent to me.
-> 
-> This is working as intended / how the API was designed as
-> Documentation/ABI/testing/sysfs-class-led says:
-> 
->                 Reading this file will return the last brightness level set
->                 by the hardware, this may be different from the current
->                 brightness. Reading this file when no hw brightness change
->                 event has happened will return an ENODATA error.
->
-	First: Why isn't this mentioned in Documentation/leds/leds_class.rst?
+Bit0	0 = soft offline disabled. 1 = Enabled (but see other bits)
+Bit1	0 = allow offline of 4K pages, 1 = suppress 4K offline
+Bit2	0 = allow offline of hugetlb, 1 = suppress hugetlb offline
+Bit3	0 = allow breakup of transparent huge pages to just offline 4K, 1 = suppress transparent breakup
+Bit4+	Reserved for suppressing other page types we invent in the future
 
-	And second: This doesn't really clarify anything.  That paragraph
-may be legitimately interpreted to mean that `brightness_hw_changed` is
-completely independent of `brightness`, as it was in my original
-implementation.
+Values 0 and 1 keep their original meaning.
 
-> >  Hence my earlier suggestion that
-> > `brightness_hw_changed` should track all changes to `brightness`, except
-> > when the backlight is toggled off.
-> 
-> Then it also would be reporting values coming from sysfs writes,
-> which it explicitly should not do.
->
-	Okay, fair, but having `brightness_hw_changed` read as 255, then
-later as 128 after hitting the toggle button a couple of times strikes me as
-inconsistent behavior.
+Value 5 means: offline 4K, keep hugetlb, breakup transparent huge pages.
 
-> Summarizing in my view the following changes are necessary on v4:
-> 
-> 1. Add backlight_disabled (or backlight_enabled) flag to struct lg_g15_data
-> 2. Init that flag from prope()
-> 3. Use that flag on receiving input reports to see if notify()
->    should be called
-> 4. Replace the LED_FULL passed to notify() (for off->on)
->    with g15_led->brightness
-> 
-	Will do; will post v6 shortly.  And someone should update the docs
-describing the expected interaction between `brightness` and
-`brightness_hw_changed`.
-
-					Schwab
+-Tony
 
