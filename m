@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-820627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED82B7D0CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:16:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6B1B7D1C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 020207AA043
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:14:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE87483FC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49499323407;
-	Wed, 17 Sep 2025 12:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B89E330ED9;
+	Wed, 17 Sep 2025 12:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mb73G6p/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQFj/nqS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C47631A7FD;
-	Wed, 17 Sep 2025 12:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF98F2FBDE8;
+	Wed, 17 Sep 2025 12:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758111355; cv=none; b=nUlgpdC70A9AgAHSHSFB4SbWestd3il1zsn90e7wRBHPt5MCTO9FpcwWn76N2favJtxXYnFN0lmBII7PZE3byxjnUDSzsrwvFMa7ZqkHArP9SlIRBJZM5ChffRDHiuRL8PXm+UJAFk6LlwAtRUpfaZ4HxMdBcVCQJo6Usg37y/s=
+	t=1758111358; cv=none; b=dreLXmktjuCZ+7ZslDe3hXcXN4UfYst6tp07N+k20ABKDad7KNg1sNVBaIqJvxNuAhzShHqV1p2CMA9AF2F7B7G9OdFhzcCsSgzGB/4PnlRr7gSP9XUIvzQt7j4wuAkh4WhWMA2jvyBADN8t0mNOsv+kGhb2/1TM6LHXvnDYl20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758111355; c=relaxed/simple;
-	bh=mOGPpjFInnJF5ficZgf3c7TZFdWiehGB3ZFVn3w7fEg=;
+	s=arc-20240116; t=1758111358; c=relaxed/simple;
+	bh=PUUaTyw8rlc0Hc2z+x0BdPRC+RKe/Sri73mjZjht+w8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YppNsrJRsL2aCthDwV7FcFEmgfoLzUi/nP5fQoXIfIlDagUIFT/UJN/ideUPksvnQ+DtJzGSI0o4hUHZW4kt7JEovpp5SY0cVJxrgdv8BaMkOfibK5Vr3K4nQ9dd4PwTynvcoG3e+isd3muKyJ9IXat0gmPhXQtJGbTgo34cLd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mb73G6p/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB6FC4CEFD;
-	Wed, 17 Sep 2025 12:15:55 +0000 (UTC)
+	 MIME-Version; b=buHOeact7041/VkGo4Cwv/+/NB/OBbaTue8XGMD5EY0US7KRZCB5iDhdY4EYn8dzvNSIFg8o1Cp1vf/ikONCgZkSlqFaB5oD/d+XQAwFGgOkK5Xcm/PqpuURb1aYFpA3oH1vosPuR4V2CM+D/GYezFLRADyzCtbOaNP0vFRdVQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQFj/nqS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBEDC4CEF5;
+	Wed, 17 Sep 2025 12:15:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758111355;
-	bh=mOGPpjFInnJF5ficZgf3c7TZFdWiehGB3ZFVn3w7fEg=;
+	s=k20201202; t=1758111358;
+	bh=PUUaTyw8rlc0Hc2z+x0BdPRC+RKe/Sri73mjZjht+w8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mb73G6p/MvHTbaZemWskx/A9k3EmwRPf8L50Vgu916lpBnMg97Sb6QnzyuKLVBhd+
-	 5BOI61zeGUS/abs3dj+02VPFeW4Kr63K54vhIlU94glf9tYxMw91/BQBsm959rqVAA
-	 DKTkrMcl3gWTv6FqsAJDrvbxVSFPeTj7FnyNcxpoeqUPwWJk2mHRNt7dTPI2iU792U
-	 yKT55gGq9ZAlYkmWnicFDvNhkgp1GRVuXtJZUrtzEu/sx5g5KSmanRzGIKfaOgwjaS
-	 zxpaNu97+uBKsms6vYnsOA1+d/4CN15VCsw5yhIAVTOQKBWhyxWnawIMngcK6dLdTi
-	 AL/txEBiydQnA==
+	b=aQFj/nqSwFzfj++u4XcOZwP5aN8k6g6yaU9dLkvDKnoAq204Qy5szO+u/j+Nn1fzo
+	 njTPyCogL1XTpEPZxKn0q3GeNmSc0t2mGtFzfYLb0qCxBTshOzQOS0h1vAMF3kpqGI
+	 D+YKuq8Iq/p41aLdmkDd342nP1ceAZ63bwK9fwmEb+DJPc0nhThiKlj/Mz/8maLgqZ
+	 CsYC8iwp/8WcRC4/3DJki7c9ez3EcGKraK7aO/hYtsbsv/BYYRzCIGkysQwuACXfbb
+	 m5n+lJcqN6jobKmnYZMe84PAbBqPFjk/NGBpsK7Jxu6qAHqV0ybJlUfkGqWLK6jfJx
+	 ns26zxHzece1g==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uyr4h-0000000CGe4-1jQ5;
+	id 1uyr4h-0000000CGe8-1qN7;
 	Wed, 17 Sep 2025 14:15:51 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -51,9 +51,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Akira Yokosawa" <akiyks@gmail.com>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 14/24] docs: Makefile: document FONTS_CONF_DENY_VF= parameter
-Date: Wed, 17 Sep 2025 14:15:08 +0200
-Message-ID: <e26b0a4421a0ff05f5e18d46606e6d5bda7bb502.1758111077.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v7 15/24] tools/docs: sphinx-build-wrapper: add an argument for LaTeX interactive mode
+Date: Wed, 17 Sep 2025 14:15:09 +0200
+Message-ID: <48d17b80c88d5f54ed63713fa2410f75ef15bc58.1758111077.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1758111077.git.mchehab+huawei@kernel.org>
 References: <cover.1758111077.git.mchehab+huawei@kernel.org>
@@ -66,29 +66,75 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-This parameter is there for some time, but it doesn't have anything
-documenting it at make help.
+By default, we use LaTeX batch mode to build docs. This way, when
+an error happens, the build fails. This is good for normal builds,
+but when debugging problems with pdf generation, the best is to
+use interactive mode.
 
-Add some documentation, pointing to the place where one can find
-more details.
+We already support it via LATEXOPTS, but having a command line
+argument makes it easier:
+
+Interactive mode:
+	./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs peci -v -i
+	...
+	Running 'xelatex --no-pdf  -no-pdf -recorder  ".../Documentation/output/peci/latex/peci.tex"'
+	...
+
+Default batch mode:
+        ./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs peci -v
+	...
+	Running 'xelatex --no-pdf  -no-pdf -interaction=batchmode -no-shell-escape -recorder  ".../Documentation/output/peci/latex/peci.tex"'
+	...
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/docs/sphinx-build-wrapper | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index a52b311cdadc..05397b9d844d 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -126,4 +126,7 @@ dochelp:
- 	@echo
- 	@echo  '  make PAPER={a4|letter} Specifies the paper size used for LaTeX/PDF output.'
- 	@echo
-+	@echo  '  make FONTS_CONF_DENY_VF={path} sets a deny list to block variable Noto CJK fonts'
-+	@echo  '  for PDF build. See tools/docs/lib/latex_fonts.py for more details'
-+	@echo
- 	@echo  '  Default location for the generated documents is Documentation/output'
+diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
+index c57c732b879c..50761f125bc9 100755
+--- a/tools/docs/sphinx-build-wrapper
++++ b/tools/docs/sphinx-build-wrapper
+@@ -173,7 +173,7 @@ class SphinxBuilder:
+         if not verbose:
+             self.sphinxopts += ["-q"]
+ 
+-    def __init__(self, builddir, verbose=False, n_jobs=None):
++    def __init__(self, builddir, verbose=False, n_jobs=None, interactive=None):
+         """Initialize internal variables"""
+         self.verbose = None
+ 
+@@ -183,7 +183,11 @@ class SphinxBuilder:
+         self.kernelversion = os.environ.get("KERNELVERSION", "unknown")
+         self.kernelrelease = os.environ.get("KERNELRELEASE", "unknown")
+         self.pdflatex = os.environ.get("PDFLATEX", "xelatex")
+-        self.latexopts = os.environ.get("LATEXOPTS", "-interaction=batchmode -no-shell-escape")
++
++        if not interactive:
++            self.latexopts = os.environ.get("LATEXOPTS", "-interaction=batchmode -no-shell-escape")
++        else:
++            self.latexopts = os.environ.get("LATEXOPTS", "")
+ 
+         if not verbose:
+             verbose = bool(os.environ.get("KBUILD_VERBOSE", "") != "")
+@@ -584,12 +588,16 @@ def main():
+     parser.add_argument('-j', '--jobs', type=jobs_type,
+                         help="Sets number of jobs to use with sphinx-build")
+ 
++    parser.add_argument('-i', '--interactive', action='store_true',
++                        help="Change latex default to run in interactive mode")
++
+     args = parser.parse_args()
+ 
+     PythonVersion.check_python(MIN_PYTHON_VERSION)
+ 
+     builder = SphinxBuilder(builddir=args.builddir,
+-                            verbose=args.verbose, n_jobs=args.jobs)
++                            verbose=args.verbose, n_jobs=args.jobs,
++                            interactive=args.interactive)
+ 
+     builder.build(args.target, sphinxdirs=args.sphinxdirs, conf=args.conf,
+                   theme=args.theme, css=args.css, paper=args.paper,
 -- 
 2.51.0
 
