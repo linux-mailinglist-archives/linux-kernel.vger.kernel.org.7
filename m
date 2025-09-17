@@ -1,186 +1,122 @@
-Return-Path: <linux-kernel+bounces-820536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D835BB7D771
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A113B7D888
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 669AE7B0123
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 209DA3A62EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621632DAFA9;
-	Wed, 17 Sep 2025 11:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95F2EA483;
+	Wed, 17 Sep 2025 11:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qRDp6TyL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qXsXFJUG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qRDp6TyL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qXsXFJUG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="Wh0bEuct"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5202D7DEF
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B54F2DAFA5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758107546; cv=none; b=OEWBVwIKIKIl7hBQENbhk6qS6Epyz1XM6ew4B4VY6VdinzjzCzy8QLKxEpiqPjtkqQqMaOg10x/g8H7QfvQQJyppTkRnoVIrFaMp0cwg49Y1DDt2831iEfBdRto0FZn7aM8Lt9JH+yivDM9IWSDeEiVwK1+ovIyJPpPgHxBsm68=
+	t=1758107620; cv=none; b=WM1j3PCUmE/IvSC64i5gTc74tFvFoki5zgZqzOBKlWgOe5F5V9JRHcw8QXtuvJuHYikIpfi5+u320xN+RaN3XND4UXWJYqNbnWUyROAFzPO2jvvhp3dhZFtG2vWRHSh1/D3xo+7qDUSw+27H65Tx9N/uRdJA2BbIOTrcBOcB9A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758107546; c=relaxed/simple;
-	bh=NQfY+SprSXLyPq3eJMFyQdhX7konENPtq9Plg9em2mU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ywy4RPb0EOgN5r5Pm9/6FjMY+G6Q1edSsk5jDENVAZUmUBE0CIDaTwm0h69BzHHLiEXMxFgYCz3iF7FXK1CZCpsV5fXqebns4dqIKSHz26n5mYYr8Og1ZvkxDN6TXNGbKZisRXniRMf6LTBAWPjO8/34m8Nh2zV7Cm0rjQtxFQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qRDp6TyL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qXsXFJUG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qRDp6TyL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qXsXFJUG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9120A1F7B8;
-	Wed, 17 Sep 2025 11:12:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758107542; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qlHRHVHtHHtuuDqiW+QVhwCo9b5r8skmryrvZTDKlw8=;
-	b=qRDp6TyL80LuJ4tMZvgKAmj8yXTrwYKIhNs5bqbLNAGiZQiJ+EpFejI3viuKISLeK2aUSW
-	UV6hEmeha1xrUMXqimuA6nOF4oXhscwJpjLOCW7JNsMh8sp9f1QdyfIcA+jv9qOfo7WIub
-	snNW9rF695OrEwT2/Xwm2ndPKK/6ljE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758107542;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qlHRHVHtHHtuuDqiW+QVhwCo9b5r8skmryrvZTDKlw8=;
-	b=qXsXFJUGGX96shLz4Web5WHYiKLK6P1KIVDe5fic2PzZsrfigCFNZePQdSaMNUe/nxYUDQ
-	RhxoO7Oh0pwJAEAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qRDp6TyL;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qXsXFJUG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758107542; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qlHRHVHtHHtuuDqiW+QVhwCo9b5r8skmryrvZTDKlw8=;
-	b=qRDp6TyL80LuJ4tMZvgKAmj8yXTrwYKIhNs5bqbLNAGiZQiJ+EpFejI3viuKISLeK2aUSW
-	UV6hEmeha1xrUMXqimuA6nOF4oXhscwJpjLOCW7JNsMh8sp9f1QdyfIcA+jv9qOfo7WIub
-	snNW9rF695OrEwT2/Xwm2ndPKK/6ljE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758107542;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qlHRHVHtHHtuuDqiW+QVhwCo9b5r8skmryrvZTDKlw8=;
-	b=qXsXFJUGGX96shLz4Web5WHYiKLK6P1KIVDe5fic2PzZsrfigCFNZePQdSaMNUe/nxYUDQ
-	RhxoO7Oh0pwJAEAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B4E01368D;
-	Wed, 17 Sep 2025 11:12:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MRcsO5KXymghRQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 11:12:18 +0000
-Date: Wed, 17 Sep 2025 12:12:17 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
-	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
-	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
-	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 07/13] mm: introduce io_remap_pfn_range_[prepare,
- complete]()
-Message-ID: <hfczgna46ok6zvh3xxgzdhf5t5nzqybpxkmvuulbzncagmgrcy@ase57zw2xsj5>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <3d8f72ece78c1b470382b6a1f12eef0eacd4c068.1758031792.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1758107620; c=relaxed/simple;
+	bh=eG+anZAs6P+Glc2UxgKY37GDZ4SxG7Px6jdpQoKTKMo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gBsxB7CCE4FIRDq6+xQ4doDOrxj+9ov4FXDkXG39Y6IFlKBh+9pv/5qG07Qm5q/EDn/AVntjA0fGoITglHT7FA4ogtkSF2wkQ4kWKTcRdlvc+xfP4B/on+ia35N65HsZ2DpvjSFnKw9Yqe4JMSNH++B8QfC6gFYzI2AR44W6ngc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=Wh0bEuct; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b5241e51764so4807382a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 04:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1758107618; x=1758712418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZaGycjt36+NJT+7JRNn303P5y+ponQJAIIaK3c+nUEw=;
+        b=Wh0bEuctkcn7dV2S0DWX9kClXp3ax6W3PRWLzV29X2irsjBgjRmzASo3HkMs52GvMN
+         jmtp9y+mky4b3EwihCZVJOQpvOFIwdU9WC2j1V6UAM1x+/66U5GVK0W3/EDMhQfAhQWR
+         9ARI9aqb8Y2i6AYwsNIz/8K9vo2SXJGGis1R6E+Q8BsCRMN1F7909MZgUh7SP0ylfxK5
+         0PZ0G+Gr5EzW6kxEf58uyFmeYxbUXD17bYjxkaxFfIjYKyjTQHId0GeAP/VpKWHiMQZA
+         pfi6uWxDKhMS3sC5g17+a3AOsZjrojlyKD2aD8Zfl5KrwqPdh8DMPlgpSvPnLhMIipQ0
+         hEnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758107618; x=1758712418;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZaGycjt36+NJT+7JRNn303P5y+ponQJAIIaK3c+nUEw=;
+        b=Xtaj/aSkOJFypTXhul6NWB5rtj4eTglGO2cn+4Iis64jGX4i4gactFzgt4blrQGAdo
+         uvFUafmP1I/uJTD2W9srwyjfe2UZqKwELD736hUgeVyyEG0+mi+Wu5hs6q7QCOPv/B9Z
+         SIFywG608gw+Lt/Zt3bWYn2lz5sILFHDLYlwE0dsNbMYQmfcni9i1tER/XwvoYOwJLwE
+         LgfpzpqtWvtgYyDGLhlBYY+QUNdhsZfugXPhxXqjS0I3f8oZcY1bjG7C89v74ep85dqt
+         V6Zy1+UOKELf7QYHdTPdA16E7CDwEYjqKDHi8ZccPISTlwBovTjeZ8eD5kZmRdMm40DK
+         4v6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuVWA6Cmww0WK1PYod8mQD4NWzbphoaCjMkymn2b/PXN+MFxCGxRIuYAgObYmUGIJg4eVTBBevMJxeR+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFEqryrv02uxgcssggsqZgkOKIuqShaL5NuX/ufC5tJxYF2VB5
+	Mwr2tHyXi2IglqRcsV/UW6C42TbkL//+IrBKSlCX9a9BIc1BCohH3yrP3+jGo7xvSMU=
+X-Gm-Gg: ASbGncuoe+nNE+rJEvhlpaWG2Q1CnuLVIMQCzgM5omhU4Mj4uIGD8CEvnTi/bO7JTL9
+	2iGG+MvuLzSLachfDnn5vUXQDKXleYI3oa/FWtc4rPuva8mYARisUd1b1D5hfWpcILoq9jgCK62
+	MqvgngFsBPcR4NxafN8sn2r/j8iWuF/4wsRjF95HrdaLOyKVNRLDxUBe6UiTsqZOXFNoLc9n25E
+	z0fzSSxd/3f4Earb9rchCSNYJ29vbvzhkwgu3uO8pnk6BAcTECYHSX5V/KnFC6c3H1dklMCkz73
+	cqv4dAIYGmF0YyJ7/YhVObaAUmoa1Ig9jgGRbZqOV8I+NzLpPYAAsi1bZ/f2RVWst1vD4bEv6Kr
+	oStOHAYcHdH03XilqPBhupewZ1z5Xru963AaND7ecAlB6aXiFmaN5HL2O
+X-Google-Smtp-Source: AGHT+IH6X33FWxaAtcbZuf8x752Ux8OoEIl6JrI53rne57TK5RbZLOWAhZftzg4xVFvnL1vFWW1L2Q==
+X-Received: by 2002:a17:903:2f03:b0:25c:e2c:6678 with SMTP id d9443c01a7336-268118b3ecdmr23173225ad.5.1758107618458;
+        Wed, 17 Sep 2025 04:13:38 -0700 (PDT)
+Received: from fedora (cpezg-94-253-146-122-cbl.xnet.hr. [94.253.146.122])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-267b4ae8808sm59079655ad.132.2025.09.17.04.13.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 04:13:37 -0700 (PDT)
+From: Robert Marko <robert.marko@sartura.hr>
+To: p.zabel@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	lars.povlsen@microchip.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: luka.perkov@sartura.hr,
+	benjamin.ryzman@canonical.com,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH 1/2] dt-bindings: reset: microchip: Add LAN969x support
+Date: Wed, 17 Sep 2025 13:12:35 +0200
+Message-ID: <20250917111323.60781-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d8f72ece78c1b470382b6a1f12eef0eacd4c068.1758031792.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 9120A1F7B8
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_GT_50(0.00)[62];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:email]
-X-Spam-Score: -2.51
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 03:11:53PM +0100, Lorenzo Stoakes wrote:
-> We introduce the io_remap*() equivalents of remap_pfn_range_prepare() and
-> remap_pfn_range_complete() to allow for I/O remapping via mmap_prepare.
-> 
-> We have to make some architecture-specific changes for those architectures
-> which define customised handlers.
-> 
-> It doesn't really make sense to make this internal-only as arches specify
-> their version of these functions so we declare these in mm.h.
+LAN969x also uses the Microchip reset driver, so document its compatible.
 
-Similar question to the remap_pfn_range patch.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+ Documentation/devicetree/bindings/reset/microchip,rst.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Looks ok, but again, i'm no expert on this.
-
-Acked-by: Pedro Falcato <pfalcato@suse.de>
-
+diff --git a/Documentation/devicetree/bindings/reset/microchip,rst.yaml b/Documentation/devicetree/bindings/reset/microchip,rst.yaml
+index f2da0693b05a..4d4dd47f830e 100644
+--- a/Documentation/devicetree/bindings/reset/microchip,rst.yaml
++++ b/Documentation/devicetree/bindings/reset/microchip,rst.yaml
+@@ -23,6 +23,7 @@ properties:
+     enum:
+       - microchip,sparx5-switch-reset
+       - microchip,lan966x-switch-reset
++      - microchip,lan969x-switch-reset
+ 
+   reg:
+     items:
 -- 
-Pedro
+2.51.0
+
 
