@@ -1,120 +1,87 @@
-Return-Path: <linux-kernel+bounces-820195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2452B7EA1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:55:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4382B7E91D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651B24637A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B4A1BC8810
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EC63054FB;
-	Wed, 17 Sep 2025 08:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBED305E01;
+	Wed, 17 Sep 2025 08:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="OAE11JPL"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="phryVV42";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pgY3va0K"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA8B305951;
-	Wed, 17 Sep 2025 08:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2443D303A27
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758096231; cv=none; b=tTaXDyAkMkQhY3/bgGtizQIZz+fflD8IlKDJ00/lGRnCmdvQdFD9hTKGOf9XyzMll/3kveHv3F/HhpDfxkeWmUP8NTYs3eLk9NrCztDfIIIbaC0okN4Ae34oAe74TwkxmGdfWIYcoeOmqChTtgTLq6/E75PxDOIupEp2Nyuk3Ow=
+	t=1758096285; cv=none; b=NxNZg7d6DgEsxDT953TXfpaTItgLaoYUTe1LLQqJsVVtLfeWHl7MI6VpAk6+/IDzfRRAq1WaK4ehvFi7AnZt87F0CaGQ0zxljRIAQR9N7B5lLaqky+HVDJ3JsqbE1ixVKK3HovL4AM3BpDb+m8vDl1GM9RaHFCx1pNvprVVIETE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758096231; c=relaxed/simple;
-	bh=tbUL94MeCSSF6v3N6bymIhC/nccgeSjQ8Ybg/zu20B8=;
+	s=arc-20240116; t=1758096285; c=relaxed/simple;
+	bh=konjTvPypzFucVLDYC5mnEcgUPFyOEdeHqQYGVd/HAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0maPHenPy3v6R51DRInsdEzoWOLgtp0VicsS+5NDAXW5iopKn6NS9VJf8R1p0nMT3HuER+2uSNLytArelB4c3fCjmPbqyNZvm5g13fQnwDtwYRHgdNOAPuP9LDHuOkqaXgOfII6+mALbc2NAVIwCHp/AZnd08x50iiu7Us0OOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=OAE11JPL; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0547B1038C113;
-	Wed, 17 Sep 2025 10:03:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1758096220; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=6O/cG7X0J8S8E44BGSbpUb2egFNSU+5ywZqLm1L0xGw=;
-	b=OAE11JPL5mQrsKVYWy3+Nqn9ErIRl+aLIyUuczVr8bWoTPQBkGQlqTIckPXgqT6mWMpKr3
-	LtwpI1m1UVGilT4VqGGNATYDsymbIpaq7MTCarM9PW+DGxn620BqGWVWvclREEfe0zAEgO
-	JF1jvPmrKumgpFdc2gSTZyyCkhTyk7QclB10JnojuiD/TSXbipSPWDVzSqARnhwdNWVPba
-	tKHKGuV5N1WEGqaRJplwRhfypike+F63z/VuAxdLFTs/ptfxXpUpcm83cIEW9uxcrWwb2u
-	7kUcWH7PCXVYxQx1g3n7e91iEma2/+R/H7uO+DEEaW7p5HsuOvRw4H6ue6J40g==
-Date: Wed, 17 Sep 2025 10:03:30 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Vijayendra Suman <vijayendra.suman@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-Subject: Re: [PATCH 5.15 00/64] 5.15.192-rc1 review
-Message-ID: <aMprUig11RJudhWO@duo.ucw.cz>
-References: <20250907195603.394640159@linuxfoundation.org>
- <66ec2897-ac66-4f6e-b884-1609391239d1@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BqD4V0cBLNiy0ARPlyxTGaIK2wtAALGBR6YhwICRqkuGUt5mn4WDKj2+xA4rgLeW826ubs1phcFQ5as/jXv44uO5FyznvJbxiMLQYE4zlO4usGkOKNs+JEnUVzFDmU8qZ6dwm3TDtBgvQTVyKt65T+xICxj+iT89OmQcIBWQEGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=phryVV42; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pgY3va0K; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 17 Sep 2025 10:04:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758096276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lvayRVsTXb1GHZyI/5B0A9TO76BVx4lkIJl2VHNdOYA=;
+	b=phryVV42XPPBOnEB5AgeGedpdyXTEOTRbuqjvPM+i4HKPXMPjVq3PYRW06wbzm7GqOa3jb
+	choKkddmBsn7zjMQg3kdh5C7+oSigMqM03Nlyp9PVZ3u1aeeyXnRACmROdsW4Z3OX/iteE
+	8cVMSk5LZAZDWjG+6VQyCOKQTmiZ46t6bm8vC/GcnXGNok3Up/PODRoSA643Lm5agDWoHs
+	fyR76OzG/lNV+78ksFarwfksstlOxpSxMiQr2VRwntqvwjVgDSMOr68cZoiuI/azk6HCmo
+	247Jvi1q/n5EJdLRE30y21/KyoyYKrsr73rvarYH5eNoXcTvcBtm5e5tfHdFdw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758096276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lvayRVsTXb1GHZyI/5B0A9TO76BVx4lkIJl2VHNdOYA=;
+	b=pgY3va0Kb5jQ6Moc093JH0heX4NyrRUsAIYKsUbNZbffR65bOi/vMEBiIZSJV2oNYEMIui
+	Gtjrxrwxu/kVA/Cw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Andr?? Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2 0/3] selftest/futex: Collected mpol fixes
+Message-ID: <20250917080435.m16PMr4t@linutronix.de>
+References: <20250915212630.965328-1-bigeasy@linutronix.de>
+ <20250916183502.GA2800598@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wQkK7mwbUUTBElZC"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <66ec2897-ac66-4f6e-b884-1609391239d1@oracle.com>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20250916183502.GA2800598@noisy.programming.kicks-ass.net>
 
+On 2025-09-16 20:35:02 [+0200], Peter Zijlstra wrote:
+> 
+> Queued these for tip/locking/futex, if they were intended for another
+> branch, please holler.
 
---wQkK7mwbUUTBElZC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+no all good. Thank you.
 
-On Tue 2025-09-09 19:40:49, Vijayendra Suman wrote:
->=20
->=20
-> On 08/09/25 1:27 am, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.192 release.
-> > There are 64 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >=20
-> > Responses should be made by Tue, 09 Sep 2025 19:55:53 +0000.
-> > Anything received after that time might be too late.
-> >=20
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/
-> > patch-5.15.192-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.g=
-it linux-5.15.y
-> > and the diffstat can be found below.
->=20
-> No issues were seen on x86_64 and aarch64 platforms with our testing.
->=20
-> Tested-by: Vijayendra Suman <vijayendra.suman@oracle.com>> >
+> Thanks!
 
-A little bit too many ">"s there. I guess there's missing \n or two
-there :-).
-
-Best regards,
-								Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---wQkK7mwbUUTBElZC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaMprUgAKCRAw5/Bqldv6
-8maNAJ4ydZ9lk45SbXD2KsyokDnqUrLUVgCgiMyXtpjxDC2qXlD2LmitTDlDym0=
-=97Le
------END PGP SIGNATURE-----
-
---wQkK7mwbUUTBElZC--
+Sebastian
 
