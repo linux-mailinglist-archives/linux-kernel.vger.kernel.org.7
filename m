@@ -1,206 +1,129 @@
-Return-Path: <linux-kernel+bounces-819955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63588B7CEEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32428B7D08F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14271B2361E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EB46460C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C342874E0;
-	Wed, 17 Sep 2025 03:56:32 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E8026C3BF;
+	Wed, 17 Sep 2025 03:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q5mMTb8o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2228226C3BF;
-	Wed, 17 Sep 2025 03:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1257323D281
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758081392; cv=none; b=AVZ6mUkhPeX0kPJOMrvhvwBYcogpdIDprUlUwRcnMJmLR20S87ei7DNReYMh6BTJYNTzaga+/ZNDEMKb0Likq3NQmwIFHSwK4LdXZ8DxHgayGE3KIsIdmHyp2A9pRQBnTA3DUuedrNDhNnhTqSAZspEkmUCLyhB7iJbfpzGmgE4=
+	t=1758081427; cv=none; b=nrdWM+RMUSIvUF0AA2/MCvDasbc1Bw02Df/J6DW0QV5uqrXT9IY3FoBFxe91JL0xs/f1sA4q7V4Xf8GvzNQm04k/wu6ZFDMU1t2D7o1n3VlIYyaXUyjV8WWiqX+UM9sYxVXl0HdS5LPx+qQv6kEHprBllLY1HxNLv6FwZ9t3ewM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758081392; c=relaxed/simple;
-	bh=Vi4px5gPpTMSOb83mlAHWIropGYjp+awVuhhQS+6Np8=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=PYOTbPh+5aqpfml0hg/hx+XBUOWjJVZiSmX3OJ2M+6y7jNI7MfqjFnTP581j0gcChwJW2cwkU1sLNlt9P60N/A1nnxatOXbpNFyLRGnNu/sCVr2Kl4GrFyykJEIw/XelhipD+0IxmV7pcQeDXoclIpBzx3RSc7IJBJbSQrAi4js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cRQ1Q191Tz5B13f;
-	Wed, 17 Sep 2025 11:56:26 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 58H3uEL8045964;
-	Wed, 17 Sep 2025 11:56:14 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 17 Sep 2025 11:56:15 +0800 (CST)
-Date: Wed, 17 Sep 2025 11:56:15 +0800 (CST)
-X-Zmail-TransId: 2afb68ca315fda7-eb23f
-X-Mailer: Zmail v1.0
-Message-ID: <20250917115615772z-3xvYjsdrrS6f9y5h6YY@zte.com.cn>
-In-Reply-To: <20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn>
-References: 20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn
+	s=arc-20240116; t=1758081427; c=relaxed/simple;
+	bh=BK2vt+oVFag+vs2ay9fYOX68fPEFL7tR8PLO+nSyEB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B+mJiY02+rPbyDQpK48E4UULyHRvebWAaUuGnrhiuE34KwKVC0Ao5zkSwvqQ5P39z9GbC12R/yFkRWpDiX/oZyIsxYnsRYpRSXhCaKo6DGjkawzehXpXMC2Bt5ZUETJ1KgZqOHCzT7suXb5mUMceYaHX+dfvBxNK/HgIttSNrfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q5mMTb8o; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758081425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XTGV/Lpx58Ur4YHkEVEE/DLD/lQA5hgEBF0FsirS0AA=;
+	b=Q5mMTb8o5tAQu1gUCc+kS4QOA9+ygq5Dp/d2t6kxaKfUR4vIGNVFyIDlwYl1I5Ah/nG+c/
+	pyUkrU74gvZoEb8MkGkP3kWcMnWq/meMrICFf731QOO+tOLwUqcrlq6rE/+Z+QoaBJgmyb
+	SQwBJ83Bfhqg6VfWFDIwCV6rNR7DKOE=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-156-LhD66Vn2Pjm0By07QaE8oA-1; Tue, 16 Sep 2025 23:57:03 -0400
+X-MC-Unique: LhD66Vn2Pjm0By07QaE8oA-1
+X-Mimecast-MFC-AGG-ID: LhD66Vn2Pjm0By07QaE8oA_1758081422
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77260707951so8785872b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758081422; x=1758686222;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XTGV/Lpx58Ur4YHkEVEE/DLD/lQA5hgEBF0FsirS0AA=;
+        b=P8bpwfXScQsS6vumtoI4rwuP+RmkH7uVuFjQywpYNOhzYR/lcckriarviPDEhwC2XG
+         P+Z3BVffqKfMM9wAhXnZpE+K95swNGRZ9juFa6thWAll/o29syoIn0uI6/c6GvzbCDkL
+         AOwpQ9s5v8C/DTRVCsAi5h/0uUKXHud91J1zLEne2Hv4mOX1rIGXKqkcARe9e++LDZ//
+         pdYEIrAv9p23T/lDcaM2l2xcEpf/p6lamqBdtcFQkNGiKzMGiq2XwWzxaDk6+COEinAO
+         U6BTpJALoxtQdSBnQ66fRADcX5Pdy22BEJhPgXrj3g6z7D2eKxFj9ti1SFBRYTNLXiNQ
+         4B1w==
+X-Gm-Message-State: AOJu0YxiTHLNRFstTTJ9aQLSK7E0HcZvUk22D7TfmNdzNch/dQRLyL5k
+	3nClcNdyLMvdsXieIFrzs+gj+GWtpBbPDXH2C221z1vj09RIQDZEOHIwdZFSkGCfmCTk1nglQSu
+	wYHqwhx3CMiY3TWM3gn8B3WCdefk5IERrU5C6B/JTTZbmk2Q9SH2pxCrkpmLaazGBcg==
+X-Gm-Gg: ASbGnctzIZ9rfKeXGd7cpKleOhTDFeQjdh5CHousV4QB1eeuc+vmmEVQE23EKR3EVwz
+	noPGFV+h+ovOC0zf4OrlXpDnt0zv7clY398Qh2li1wYRIVltMW/CJwkoS5ggwGpnFzFO/jHAqMo
+	45eWOqywRJCUWnANtq8+6ScdoOp+r0GFAcVHyuvk6TrWQvXlelR9jOAUwBCzyn/u01j8Do3PTTU
+	1G8L3sZ7TPnGJtDQfQVnzoF21+ri/useLEx1q3+t8p/uaFqLFCTo6blDeKS48EFin7yLW2elu/3
+	Fr1Gc/fjn4mAt329NiYAqfFcZT7+f8Zj+y8082UNA1HOyBgOD4UicM8W1HJ8RhHzQ6LHEVA6FGs
+	wz1RB
+X-Received: by 2002:a05:6a20:430d:b0:252:f0b6:bde with SMTP id adf61e73a8af0-27aa2e9fe25mr909370637.24.1758081422419;
+        Tue, 16 Sep 2025 20:57:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMc2O27tB3E/QqyAooDB3y7jr/wt0/Bey9oUtK/NtFfEn70CrDz7Artb0At8viujU7do8N/g==
+X-Received: by 2002:a05:6a20:430d:b0:252:f0b6:bde with SMTP id adf61e73a8af0-27aa2e9fe25mr909353637.24.1758081422069;
+        Tue, 16 Sep 2025 20:57:02 -0700 (PDT)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77613e4308csm14709454b3a.73.2025.09.16.20.56.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 20:57:01 -0700 (PDT)
+Message-ID: <4e618201-05dd-46e1-8ca8-3956dc738300@redhat.com>
+Date: Wed, 17 Sep 2025 13:56:55 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <shao.mingyin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
-        <wang.longjie1@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY1IDQvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczItdWV2ZW50cy5yc3QgdG8gU2ltcGxpZmllZCBDaGluZXNl?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 58H3uEL8045964
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Wed, 17 Sep 2025 11:56:26 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68CA316A.000/4cRQ1Q191Tz5B13f
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: acpi: Enable ACPI CCEL support
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+ catalin.marinas@arm.com, will@kernel.org, aneesh.kumar@kernel.org,
+ sami.mujawar@arm.com, sudeep.holla@arm.com, steven.price@arm.com
+References: <20250908223519.1759020-1-suzuki.poulose@arm.com>
+ <20250908223519.1759020-4-suzuki.poulose@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250908223519.1759020-4-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+On 9/9/25 8:35 AM, Suzuki K Poulose wrote:
+> Add support for ACPI CCEL by handling the EfiACPIMemoryNVS type memory.
+> As per UEFI specifications NVS memory is reserved for Firmware use even
+> after exiting boot services. Thus map the region as read-only.
+> 
+> Cc: Sami Mujawar <sami.mujawar@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+> Cc: Steven Price <steven.price@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Gavin Shan <gshan@redhat.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v1
+>   - Map NVS region as read-only, update comment to clarify that the region
+>     is reserved for firmware use.
+> 
+> ---
+>   arch/arm64/kernel/acpi.c | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+> 
 
-translate the "gfs2-uevents.rst" into Simplified Chinese.
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-Update to commit 5b7ac27a6e2c("docs: filesystems: convert
-gfs2-uevents.txt to ReST")
-
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Signed-off-by: yang tao <yang.tao172@zte.com.cn>
----
-v4->v5
-fix some format issues.
- .../zh_CN/filesystems/gfs2-uevents.rst        | 97 +++++++++++++++++++
- .../translations/zh_CN/filesystems/index.rst  |  1 +
- 2 files changed, 98 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
-
-diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
-new file mode 100644
-index 000000000000..8ac820aa8dd5
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
-@@ -0,0 +1,97 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/filesystems/gfs2-uevents.rst
-+
-+:翻译:
-+
-+   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
-+
-+:校译:
-+
-+   - 杨涛 yang tao <yang.tao172@zte.com.cn>
-+
-+===============
-+uevents 与 GFS2
-+===============
-+
-+在 GFS2 文件系统的挂载生命周期内，会生成多个 uevent。
-+本文档解释了这些事件的含义及其用途（被 gfs2-utils 中的 gfs_controld 使用）。
-+
-+GFS2 uevents 列表
-+=================
-+
-+1. ADD
-+------
-+
-+ADD 事件发生在挂载时。它始终是新建文件系统生成的第一个 uevent。如果挂载成
-+功，随后会生成 ONLINE uevent。如果挂载失败，则随后会生成 REMOVE uevent。
-+
-+ADD uevent 包含两个环境变量：SPECTATOR=[0|1] 和 RDONLY=[0|1]，分别用
-+于指定文件系统的观察者状态（一种未分配日志的只读挂载）和只读状态（已分配日志）。
-+
-+2. ONLINE
-+---------
-+
-+ONLINE uevent 在成功挂载或重新挂载后生成。它具有与 ADD uevent 相同的环
-+境变量。ONLINE uevent 及其用于标识观察者和 RDONLY 状态的两个环境变量是较
-+新版本内核引入的功能（2.6.32-rc+ 及以上），旧版本内核不会生成此事件。
-+
-+3. CHANGE
-+---------
-+
-+CHANGE uevent 在两种场景下使用。一是报告第一个节点成功挂载文件系统时
-+（FIRSTMOUNT=Done）。这作为信号告知 gfs_controld，此时集群中其他节点可以
-+安全挂载该文件系统。
-+
-+另一个 CHANGE uevent 用于通知文件系统某个日志的日志恢复已完成。它包含两个
-+环境变量：JID= 指定刚恢复的日志 ID，RECOVERY=[Done|Failed] 表示操作成
-+功与否。这些 uevent 会在每次日志恢复时生成，无论是在初始挂载过程中，还是
-+gfs_controld 通过 /sys/fs/gfs2/<fsname>/lock_module/recovery 文件
-+请求特定日志恢复的结果。
-+
-+由于早期版本的 gfs_controld 使用 CHANGE uevent 时未检查环境变量以确定状
-+态，若为其添加新功能，存在用户工具版本过旧导致集群故障的风险。因此，在新增用
-+于标识成功挂载或重新挂载的 uevent 时，选择了使用 ONLINE uevent。
-+
-+4. OFFLINE
-+----------
-+
-+OFFLINE uevent 仅在文件系统发生错误时生成，是 "withdraw" 机制的一部分。
-+当前该事件未提供具体错误信息，此问题有待修复。
-+
-+5. REMOVE
-+---------
-+
-+REMOVE uevent 在挂载失败结束或卸载文件系统时生成。所有 REMOVE uevent
-+之前都至少存在同一文件系统的 ADD uevent。与其他 uevent 不同，它由内核的
-+kobject 子系统自动生成。
-+
-+
-+所有 GFS2 uevents 的通用信息（uevent 环境变量）
-+===============================================
-+
-+1. LOCKTABLE=
-+-------------
-+
-+LOCKTABLE 是一个字符串，其值来源于挂载命令行（locktable=）或 fstab 文件。
-+它用作文件系统标签，并为 lock_dlm 类型的挂载提供加入集群所需的信息。
-+
-+2. LOCKPROTO=
-+-------------
-+
-+LOCKPROTO 是一个字符串，其值取决于挂载命令行或 fstab 中的设置。其值将是
-+lock_nolock 或 lock_dlm。未来可能支持其他锁管理器。
-+
-+3. JOURNALID=
-+-------------
-+
-+如果文件系统正在使用日志（观察者挂载不分配日志），则所有 GFS2 uevent 中都
-+会包含此变量，其值为数字形式的日志 ID。
-+
-+4. UUID=
-+--------
-+
-+在较新版本的 gfs2-utils 中，mkfs.gfs2 会向文件系统超级块写入 UUID。若存
-+在 UUID，所有与该文件系统相关的 uevent 中均会包含此信息。
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 26b7ee6be3b1..7051fd9d94f3 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -29,3 +29,4 @@ Linux Kernel中的文件系统
-    ubifs
-    ubifs-authentication
-    gfs2
-+   gfs2-uevents
--- 
-2.27.0
 
