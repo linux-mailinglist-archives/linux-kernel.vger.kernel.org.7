@@ -1,227 +1,238 @@
-Return-Path: <linux-kernel+bounces-820329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0591B7F790
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76860B7F463
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 394AE3A2D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D24E63BC3B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E632F9DAB;
-	Wed, 17 Sep 2025 09:25:05 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F32F2BEC5A;
+	Wed, 17 Sep 2025 09:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ofa7FySs"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE032EAB68;
-	Wed, 17 Sep 2025 09:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754483074BA;
+	Wed, 17 Sep 2025 09:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758101104; cv=none; b=u5LgkhNliIDasCex3fD2V6ItQtMMBHsXALfD3o1F6Jg0FBofshmrQiJvotNKGmm0SiDSYxHxeMNOV73KGYHPfki/IgDsZ8lmilebmdenqlMsCZ1GDt4CORGJL3EzeVsJVH0wUxCC40/I6TEW2QA58OAb3/z8ORKUmLpH7QGK5YY=
+	t=1758101559; cv=none; b=ISoOB3KHqf/nZyy+WvQXOzPjmOLCT0OZzaQ+8YxZ6/Dd7HZrMdBt1GSr0Pdl4Gk+IWOMc65kCyV6V8R4Eu1s46DWtFrGuR1tk6xEJ4qr5LP8aY9j/3vl9pQL4E4ZZWP5VMZO3IT1YTSr/25M44PlZfrrFNCW2F2BP4GqBqKOlSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758101104; c=relaxed/simple;
-	bh=slEQ1mNfqMRsV3a08Jsr5k+RAqQYYttn6OA+jBPRlxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AQ7dmlMake4BXIstblH9SBc4A8VVJsnoYL3wp0MNOq6ExPgWDQxQyYpReSzv+hrclG+39fVHyyxd7tnVG8TP9qJlS8s+bFagZ+aXGf9rXNzV6/pVpa9bcjnt7bB5FWnBgnCJjmgIdvLRP6Hw+OGE5RIm3fAZ/AF8CcEwyHqe6Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cRYJW4YrczYQvNY;
-	Wed, 17 Sep 2025 17:24:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 40C7A1A148E;
-	Wed, 17 Sep 2025 17:24:58 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgD3QY5pfspohUY0Cw--.51384S3;
-	Wed, 17 Sep 2025 17:24:58 +0800 (CST)
-Message-ID: <837a4dd4-045f-a956-a241-cab1e8bc20fe@huaweicloud.com>
-Date: Wed, 17 Sep 2025 17:24:57 +0800
+	s=arc-20240116; t=1758101559; c=relaxed/simple;
+	bh=tl0TsG2e6GDs5NmAO38DZ+18yVqnIjSBVq1pvWcs22I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KH/0ojJXv3DX77iuOckwRjwAcyYmbKFmlWtfJE9hr326aegdyDBjeeAidKmtZehhgumPsEcvkPRb039AdA6D1NbA9FHoVF3/1QOklqSKZnu4pLBDd82C8mV8DPgpZ0lsFlgZLhBpuh3ubkEGHCU3yNVSlS8rHOp+KseK2RAKgLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ofa7FySs; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 0E6A540762F3;
+	Wed, 17 Sep 2025 09:25:09 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 0E6A540762F3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1758101109;
+	bh=n3b2nPejUENpVHaajjMk59jl6pFrmTsX4tUpLwh41X4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ofa7FySs0IMCHADNxPsVY66DhgV2JAToobyCUX5TAPgXyy0rmxfotOe/Idzb33e2E
+	 01KXKdhLbEJKYqn7AZRID7julNHqmhxSrB8eYy91WOu0DgYv78yDb0sGgeFMC8Ygu7
+	 Y4GWZT3s1HnLNIKZrNcUxMUyvtCAljEBhzAsPKZw=
+Date: Wed, 17 Sep 2025 12:25:08 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, 
+	Zong-Zhe Yang <kevin_yang@realtek.com>, Po-Hao Huang <phhuang@realtek.com>, 
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH rtw v3 3/5] wifi: rtw89: perform tx_wait completions for
+ USB part
+Message-ID: <20250917104047-82a166f58532dffcb0a8d1a3-pchelkin@ispras>
+References: <20250828211245.178843-1-pchelkin@ispras.ru>
+ <20250828211245.178843-4-pchelkin@ispras.ru>
+ <bc1857a0-86d9-40aa-a1ab-f4bc83adf6fa@gmail.com>
+ <20250901194743-62fc282f96aeeb9804c34e2f-pchelkin@ispras>
+ <0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v4 5/9] md/raid1,raid10: Set R{1,10}BIO_Uptodate when
- successful retry of a failed bio
-To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
- Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
- Shaohua Li <shli@fb.com>, Guoqing Jiang <jgq516@gmail.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250915034210.8533-1-k@mgml.me>
- <20250915034210.8533-6-k@mgml.me>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250915034210.8533-6-k@mgml.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3QY5pfspohUY0Cw--.51384S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF47Gw45AFWkCr4DKr18uFg_yoW7Ww48pa
-	yDKasayFWqq342qrnrAFWUWF9Ykw1xtFW2kr4rG3srW3Z8tr93KF48XryYgryUZr9xu3W2
-	qFs8WrWUCFsrJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Yb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
-	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aV
-	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
-	o4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjxUrsjjDUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com>
 
-
-
-在 2025/9/15 11:42, Kenta Akagi 写道:
-> In the current implementation, when a write bio fails, the retry flow
-> is as follows:
-> * In bi_end_io, e.g. raid1_end_write_request, R1BIO_WriteError is
->    set on the r1bio.
-> * The md thread calls handle_write_finished corresponding to this r1bio.
-> * Inside handle_write_finished, narrow_write_error is invoked.
-> * narrow_write_error rewrites the r1bio on a per-sector basis, marking
->    any failed sectors as badblocks. It returns true if all sectors succeed,
->    or if failed sectors are successfully recorded via rdev_set_badblock.
->    It returns false if rdev_set_badblock fails or if badblocks are disabled.
-> * handle_write_finished faults the rdev if it receives false from
->    narrow_write_error. Otherwise, it does nothing.
+On Mon, 01. Sep 21:46, Bitterblue Smith wrote:
+> On 01/09/2025 20:45, Fedor Pchelkin wrote:
+> > On Fri, 29. Aug 22:57, Bitterblue Smith wrote:
+> >> The USB side doesn't have real TX ACK status reporting yet. I only
+> >> learned recently how to do that. It looks like it will work about the
+> >> same as in rtw88.
+> > 
+> > Do you mean similar pattern already exists in rtw88?  Could you give a
+> > hint on how USB side TX ACK status reporting works there?  At a quick
+> > glance, I don't see how those TX URB complete callbacks differ from what
+> > rtw89 has.
 > 
-> This can cause a problem where an r1bio that succeeded on retry is
-> incorrectly reported as failed to the higher layer, for example in the
-> following case:
-> * Only one In_sync rdev exists, and
-> * The write bio initially failed but all retries in
->    narrow_write_error succeed.
+> Well, I assume we are talking about ACK status reporting. For example,
+> when mac80211 detects beacon loss it sends a null frame, or a probe
+> request (I'm not sure which is used when). It flags the frame with
+> IEEE80211_TX_CTL_REQ_TX_STATUS, which means the driver has to report
+> whether the AP sent ACK for the null frame/probe request or not. If
+> the AP doesn't reply for a while, the connection is considered lost.
 > 
-> This commit ensures that if a write initially fails but all retries in
-> narrow_write_error succeed, R1BIO_Uptodate or R10BIO_Uptodate is set
-> and the higher layer receives a successful write status.
+> A URB status of 0 only means that the URB was submitted successfully.
+> It doesn't mean the chip actually transmitted anything, and it doesn't
+> mean the chip received ACK from the AP.
 > 
-> Signed-off-by: Kenta Akagi <k@mgml.me>
-> ---
->   drivers/md/raid1.c  | 32 ++++++++++++++++++++++++++------
->   drivers/md/raid10.c | 21 +++++++++++++++++++++
->   2 files changed, 47 insertions(+), 6 deletions(-)
+> In order to receive these ACK status reports rtw89 will have to set
+> a bit in the TX descriptor and place the skb in a queue to wait for
+> a message from the firmware. ieee80211_tx_status_irqsafe() can be
+> called when the firmware sends the message. 
 > 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 8fff9dacc6e0..806f5cb33a8e 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -2517,6 +2517,21 @@ static void fix_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->   	}
->   }
->   
-> +/**
-> + * narrow_write_error() - Retry write and set badblock
-> + * @r1_bio:	the r1bio containing the write error
-> + * @i:		which device to retry
-> + *
-> + * Rewrites the bio, splitting it at the least common multiple of the logical
-> + * block size and the badblock size. Blocks that fail to be written are marked
-> + * as bad. If badblocks are disabled, no write is attempted and false is
-> + * returned immediately.
-> + *
-> + * Return:
-> + * * %true	- all blocks were written or marked bad successfully
-> + * * %false	- bbl disabled or
-> + *		  one or more blocks write failed and could not be marked bad
-> + */
->   static bool narrow_write_error(struct r1bio *r1_bio, int i)
->   {
->   	struct mddev *mddev = r1_bio->mddev;
-> @@ -2614,9 +2629,9 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
->   	int m, idx;
->   	bool fail = false;
->   
-> -	for (m = 0; m < conf->raid_disks * 2 ; m++)
-> +	for (m = 0; m < conf->raid_disks * 2 ; m++) {
-> +		struct md_rdev *rdev = conf->mirrors[m].rdev;
->   		if (r1_bio->bios[m] == IO_MADE_GOOD) {
-> -			struct md_rdev *rdev = conf->mirrors[m].rdev;
->   			rdev_clear_badblocks(rdev,
->   					     r1_bio->sector,
->   					     r1_bio->sectors, 0);
-> @@ -2628,12 +2643,17 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
->   			 */
->   			fail = true;
+> This is for USB. It seems to work differently for PCIE in rtw89
+> (rtw89_pci_release_rpp()). In rtw88 it's one mechanism for PCIE, USB,
+> and SDIO.
+> 
+> These are some functions to look at in rtw88:
+> 
+> rtw_tx_report_enable()
+> rtw_usb_write_port_tx_complete()
+> rtw_tx_report_enqueue()
+> 
+> rtw_usb_rx_handler()
+> rtw_fw_c2h_cmd_rx_irqsafe()
+> rtw_fw_c2h_cmd_handle() / rtw_fw_c2h_cmd_handle_ext()
+> rtw_tx_report_handle()
 
-'fail' should be false when re-write is successful.
+Thanks for the detailed explanation of the above!
 
->   			if (!narrow_write_error(r1_bio, m))
-> -				md_error(conf->mddev,
-> -					 conf->mirrors[m].rdev);
-> +				md_error(conf->mddev, rdev);
->   				/* an I/O failed, we can't clear the bitmap */
-> -			rdev_dec_pending(conf->mirrors[m].rdev,
-> -					 conf->mddev);
-> +			else if (test_bit(In_sync, &rdev->flags) &&
-> +				 !test_bit(Faulty, &rdev->flags) &&
-> +				 rdev_has_badblock(rdev,
-> +						   r1_bio->sector,
-> +						   r1_bio->sectors) == 0)
+Apologies for the delay. So I've got the RTL8851BU chip in the meantime.
 
-Clear badblock and set R10BIO_Uptodate if rdev has badblock.
+As rtw89-usb part is designated for not yet released v6.17 and is rather
+a thing on its own, I'd better address it in a separate series.
 
-> +				set_bit(R1BIO_Uptodate, &r1_bio->state);
-> +			rdev_dec_pending(rdev, conf->mddev);
->   		}
-> +	}
->   	if (fail) {
->   		spin_lock_irq(&conf->device_lock);
->   		list_add(&r1_bio->retry_list, &conf->bio_end_io_list);
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index b73af94a88b0..21c2821453e1 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -2809,6 +2809,21 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
->   	}
->   }
->   
-> +/**
-> + * narrow_write_error() - Retry write and set badblock
-> + * @r10_bio:	the r10bio containing the write error
-> + * @i:		which device to retry
-> + *
-> + * Rewrites the bio, splitting it at the least common multiple of the logical
-> + * block size and the badblock size. Blocks that fail to be written are marked
-> + * as bad. If badblocks are disabled, no write is attempted and false is
-> + * returned immediately.
-> + *
-> + * Return:
-> + * * %true	- all blocks were written or marked bad successfully
-> + * * %false	- bbl disabled or
-> + *		  one or more blocks write failed and could not be marked bad
-> + */
->   static bool narrow_write_error(struct r10bio *r10_bio, int i)
->   {
->   	struct bio *bio = r10_bio->master_bio;
-> @@ -2975,6 +2990,12 @@ static void handle_write_completed(struct r10conf *conf, struct r10bio *r10_bio)
->   				fail = true;
->   				if (!narrow_write_error(r10_bio, m))
->   					md_error(conf->mddev, rdev);
-> +				else if (test_bit(In_sync, &rdev->flags) &&
-> +					 !test_bit(Faulty, &rdev->flags) &&
-> +					 rdev_has_badblock(rdev,
-> +							   r10_bio->devs[m].addr,
-> +							   r10_bio->sectors) == 0)
+With RTL8851BU there appears a possible firmware bug related to hardware
+scan channel list, already reported at [1].  Eventually after some time of
+hardware unresponsiveness it leads to the splat [2] and the device has to
+be replugged.  So I had to apply your proposed workaround to avoid
+experiencing these failures.  It happens with the first available firmware
+version, too (0.29.41.0 (e210be8a)).
 
-Same as raid1.
+[1]: https://lore.kernel.org/linux-wireless/0abbda91-c5c2-4007-84c8-215679e652e1@gmail.com/
 
-> +					set_bit(R10BIO_Uptodate, &r10_bio->state);
->   				rdev_dec_pending(rdev, conf->mddev);
->   			}
->   			bio = r10_bio->devs[m].repl_bio;
-
--- 
-Thanks,
-Nan
+[2]:
+rtw89_8851bu 2-1:1.2: rtw89_hw_scan_offload failed ret -110
+rtw89_8851bu 2-1:1.2: c2h reg timeout
+rtw89_8851bu 2-1:1.2: FW does not process h2c registers
+rtw89_8851bu 2-1:1.2: HW scan failed: -110
+rtw89_8851bu 2-1:1.2: Update probe request failed
+rtw89_8851bu 2-1:1.2: Update probe request failed
+rtw89_8851bu 2-1:1.2: timed out to flush queues
+rtw89_8851bu 2-1:1.2: timed out to flush queues
+rtw89_8851bu 2-1:1.2: FW does not process h2c registers
+rtw89_8851bu 2-1:1.2: FW does not process h2c registers
+rtw89_8851bu 2-1:1.2: [ERR]FWDL path ready
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x23
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x70000
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a77
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a55
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a53
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a6f
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a73
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a59
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a67
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a57
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a67
+rtw89_8851bu 2-1:1.2: [ERR]FWDL path ready
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x23
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x70000
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a75
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a55
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a69
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce5
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb8900a51
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0xb890cce3
+rtw89_8851bu 2-1:1.2: [ERR]FWDL path ready
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x23
+rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=0
+rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=1
+rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=2
+rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=3
+rtw89_8851bu 2-1:1.2: usb read32 0x83f0 fail ret=-110 value=0x0 attempt=4
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]H2C path ready
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]H2C path ready
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x1E0 = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fwdl 0x83F0 = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: [ERR]fw PC = 0x0
+rtw89_8851bu 2-1:1.2: mac init fail, ret:-110
+rtw89_8851bu 2-1:1.2: failed to leave idle state
+rtw89_8851bu 2-1:1.2: Update probe request failed
+rtw89_8851bu 2-1:1.2: rfkill hardware state changed to disable
 
 
