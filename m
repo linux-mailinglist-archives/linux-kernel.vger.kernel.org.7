@@ -1,139 +1,100 @@
-Return-Path: <linux-kernel+bounces-821635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD6FB81CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:41:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D010B81CFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C77481A86
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:41:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73C8F7BC5B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D470D2E2F0E;
-	Wed, 17 Sep 2025 20:40:32 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E0B2DEA6F;
+	Wed, 17 Sep 2025 20:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NNss7U4D"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8472DAFCA
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E635B34BA47;
+	Wed, 17 Sep 2025 20:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141632; cv=none; b=YDrF6axDNpMVHnfYLNsjXBVAr77Dllzts9skVvxfMVgUuDNje4OlT1SS0orz0L2vJXQ6H1JzKDgNRrol0cgCODc7a50Fuizksrw9Gk3gbIwXcJIPVVodit22XwYeqTPCAsojq0GBdO8RBF+CDmzFb2OCzPc3kBtXnMRwlPETewc=
+	t=1758141724; cv=none; b=nM0OcTMaEhYKwT2y1PHHq9I7zteg3KRLZ8zIrJs7jSRBvJxab05gUGC35CQXiLxWCDS5m3PfU5WWR9AEmZdtPWKrfeQWkwZz+mHfKn/RRV7SmOoPq/J7xMHHeOmzBTeAurwdms1cSDG0V5KoZnE92tsV3Jc8I2j78F6W5pEbh0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141632; c=relaxed/simple;
-	bh=vwP0GenJdk6bZCTcVwM7MWlgruFCVXuQFEX+unH5AEM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ueNejyD0c3eypRRy8RdhzYaq6oubd29EHBZ+WgKqN2PbHvHjgIPj7WG3F83+fab6ZF7Rt7W6C1REYuivN9T367NH+jRGSkN1e+519fRXiHs35Ct44u6tFGnLERcYeookBv0FUDc6GfaSOlm28Qh+nqnogdPw3sSCZ1lw2eyKOHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3f65e91bfa9so3402165ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:40:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758141630; x=1758746430;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KUCYj0fhxjvce8cBgXv45Gpv57iRXT6SbAGiU7Ajbu0=;
-        b=EdrEGlWUHswJ84i5l9WCzCWb+G8YUe6t1v+iynsRd2PwZbJDUn2Y7Oqxa32csmAOes
-         VdT7ocbzT4etliH08V42+Dpcu57y7tYMbZXkGuf0Qj5XGpa4ZagFdQn4gYFcPnbMmB6z
-         8P/U55v0IF8wqLEjoVKBBDWCpZVb8mk2dxW/py/UTcJW+HpI3xA1dFcE/adLrMkjn0wL
-         OX1HoHHpZwyfkImAMoV21XbssYqisVFNjicnfTd8HPC4gDDvY3MuDSLmaSJahADU1QSt
-         fBAHukR0qzAy8R6LCqrlhqUMmLfdbkd7wrBi7NktAM/EkWPf9tUU14Xy1oQj0qB835vI
-         nDJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs1OHNwtCMQxJDuWAxW/WaBCmF//ja9gEeuyL/ddL0RSdrUY7AoP8MJLbRO86RcTAw0ubRCWRqQjiI4tE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyohvPYhwokPv0Qp7zkeuNVc4w5l/FWQMtS5Amz3G9cNUuEDDmF
-	w60lFIneGc6xhLCHlio+BTkasS4SqlnGkq9VRqmsLAEz9CkfZePEOVwfHzZNT6KxNVUKyhqKdXI
-	jL82608qy3hbnu9URrNfcz1eNPXiD17iGuYK0QyTRXz3+bxZqLEuN+czY6VI=
-X-Google-Smtp-Source: AGHT+IGdPxS4H9dRvFlHe6Wk8P+TELA29Ig2qHHSvPSczHZXvjurzZu60fowB+sTUUIXjlKJVMIyB7j3CQDGyoJXkfcafvV894vG
+	s=arc-20240116; t=1758141724; c=relaxed/simple;
+	bh=GkCmDPW/1syrsYw1G+YvayDwOfOwzuCS/5C5ZTGXcbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DDWGR9Pr+G9Xn5BsuUGv2RuKJlkBf8xnuveUYJnZnKRz/+INDxpRmJUWOQgyO1HXMpaQauarnnTvDAW4jCDAABNFirizmUuZhIp9J/76ohx/8etj/MIAMnjkHiuvcqVPv2rYJdPNdUaMGPpY5VT41uC357sRvkYygml91n/j8SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=NNss7U4D; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rNKB4VtExzuPbc4Hd37NwogNpAaP97VYa9OnljT/b9E=; b=NNss7U4DEBakFnvQygITpcjDWe
+	12Ciy5WVlrHsRsn5cI32Mba/U4Z9Rbntizwj0kkYXgGSWcLQo6+zchYqjpsrAzdczp09xuT7oolf5
+	gzkhmdrW/Yr2LXKjEQtC+uQ+PtHtZtfk7RDX22uyyNpyYLAodm2UZiC92b2GJ9STuuZ9D7z+dlpnz
+	umGb7+gGwvjPzi92nuT08LPP/oL+1m1/PoUwoWcq6mhCtWh11QcB+i9H6YnIED7zLvkIpmkI1RFwG
+	dkzqPG7hRkICMHY57abE/CYGb7BfvsN7WRXgoQ4CjgRRd8OicK9TQtwfz0uXZ7nSGZcc77IUGIjjD
+	ifEixOGg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyyyW-000000084Iv-1L50;
+	Wed, 17 Sep 2025 20:42:00 +0000
+Date: Wed, 17 Sep 2025 21:42:00 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jakub Acs <acsjakub@amazon.de>,
+	linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <20250917204200.GB39973@ZenIV>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+ <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+ <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cf:b0:423:f9c6:f21b with SMTP id
- e9e14a558f8ab-4241a4deb08mr46830165ab.8.1758141629862; Wed, 17 Sep 2025
- 13:40:29 -0700 (PDT)
-Date: Wed, 17 Sep 2025 13:40:29 -0700
-In-Reply-To: <683adb33.a70a0220.1a6ae.000b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cb1cbd.050a0220.2ff435.0599.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING: bad unlock balance in copy_process
-From: syzbot <syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, bsegall@google.com, 
-	david@redhat.com, dietmar.eggemann@arm.com, juri.lelli@redhat.com, 
-	kees@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, 
-	mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, rppt@kernel.org, 
-	surenb@google.com, syzkaller-bugs@googlegroups.com, vbabka@suse.cz, 
-	vincent.guittot@linaro.org, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-syzbot has found a reproducer for the following issue on:
+On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
 
-HEAD commit:    6edf2885ebeb Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d14c7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8b6789b42526d72
-dashboard link: https://syzkaller.appspot.com/bug?extid=80cb3cc5c14fad191a10
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179d9f62580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d14c7c580000
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 60046ae23d514..8c9d0d6bb0045 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
+> 
+>         if (root_inode) {
+>                 res = d_alloc_anon(root_inode->i_sb);
+> -               if (res)
+> +               if (res) {
+> +                       root_inode->i_opflags |= IOP_ROOT;
+>                         d_instantiate(res, root_inode);
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c72239eb6d76/disk-6edf2885.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b67e9820b2be/vmlinux-6edf2885.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0c4ab7e562f6/Image-6edf2885.gz.xz
+Umm...  Not a good idea - if nothing else, root may end up
+being attached someplace (normal with nfs, for example).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com
+But more fundamentally, once we are into ->kill_sb(), let alone
+generic_shutdown_super(), nobody should be playing silly buggers
+with the filesystem.  Sure, RCU accesses are possible, but messing
+around with fhandles?  ->s_root is not the only thing that might
+be no longer there.
 
-=====================================
-WARNING: bad unlock balance detected!
-syzkaller #0 Not tainted
--------------------------------------
-syz.1.48/6865 is trying to release lock (&sighand->siglock) at:
-[<ffff8000803b8634>] spin_unlock include/linux/spinlock.h:391 [inline]
-[<ffff8000803b8634>] copy_process+0x22d4/0x31ec kernel/fork.c:2432
-but there are no more locks to release!
-
-other info that might help us debug this:
-1 lock held by syz.1.48/6865:
- #0: ffff80008fa00450 (cgroup_threadgroup_rwsem){++++}-{0:0}, at: copy_process+0x2228/0x31ec kernel/fork.c:2274
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6865 Comm: syz.1.48 Not tainted syzkaller #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
- __dump_stack+0x30/0x40 lib/dump_stack.c:94
- dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_unlock_imbalance_bug+0xf4/0xfc kernel/locking/lockdep.c:5298
- __lock_release kernel/locking/lockdep.c:-1 [inline]
- lock_release+0x244/0x39c kernel/locking/lockdep.c:5889
- __raw_spin_unlock include/linux/spinlock_api_smp.h:141 [inline]
- _raw_spin_unlock+0x24/0x78 kernel/locking/spinlock.c:186
- spin_unlock include/linux/spinlock.h:391 [inline]
- copy_process+0x22d4/0x31ec kernel/fork.c:2432
- kernel_clone+0x1d8/0x84c kernel/fork.c:2605
- __do_sys_clone kernel/fork.c:2748 [inline]
- __se_sys_clone kernel/fork.c:2716 [inline]
- __arm64_sys_clone+0x144/0x1a0 kernel/fork.c:2716
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x5c/0x254 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+What the fuck is fsnotify playing at?
 
