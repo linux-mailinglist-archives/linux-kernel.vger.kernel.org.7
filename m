@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-821127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DDAB807F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:23:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9BEB807DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE99B621057
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F7E1BC3CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B8A335950;
-	Wed, 17 Sep 2025 15:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F43333AB3;
+	Wed, 17 Sep 2025 15:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="Ng+nOdOv"
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DMzvxYE1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66983064A2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257F8333AB5
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758122630; cv=none; b=vAapH/E7gKDvdUvDF69EmWHKALOWpjf+ST33aqIIm7ciW5jUrh1Dq9xRv0ngujYzbMzhTvwmFEx8kbvNnOSGEalDPWhWM4Tqb9luONVr7mU93AhBVRpKJo4Q3FVFR5BHd5E4OdM5hSAo/Q9RW1ie7OXaTJl/3lsMOnkahmMR4qs=
+	t=1758122542; cv=none; b=vC5Z0elY9ei1rlgKVDoyOgA6ZBA91tTpdec/a7OfzteO3YNyCfEHnq4EG7vnABMRDLZmiB2sXAC9tv3Em5o+gbIXFIu0gp6/uvh8GFeK5bpqgqfJWlLASBvSPWi/D4/5aEl+GFiHOBmivVLadpiDPxCqLt5EPdHGruH3YlzF6Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758122630; c=relaxed/simple;
-	bh=ISiQrcVdWLeRJhsxH1iqkkyhKFxhbNjQMJSoqqRl0Qw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H1C9n4GP6xV1hMpjnhUD6o8u2ttm0sbCI4Htn81SplfwjCsq2yAIduUrooBvKJ6wCNp1bcxUCJeLyKfNd/B1YcGi8AzkSBEECa4Effi9cchG3QDepV0dZ6b/yLHx8LX0tnaV262QlylIIlJHn7r7PDkYNvs+QaUXHUZ8VI0pahY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=Ng+nOdOv; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
-	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ISiQrcVdWLeRJhsxH1iqkkyhKFxhbNjQMJSoqqRl0Qw=; b=Ng+nOdOvgJJASAaP4YgZLM/a66
-	Je3VLwcz1rtLpZXJ117EJswsQcpcsnV4XcrcKn7KlZhPQIo00nUxQDHUuutrZzbmtu6/XNGOl95fn
-	y6DY+QcliaAW2+5RO7r4vWydfIk/ie78ohPllI3iE3OmzQSxz8R33OgfgDA5kzgub4c+Guirat1Xf
-	rCoo7Dpau0+SO2YcTTd2UK/YIuJJp08TQWT3h3tzs0TyJDVx7PbVz8miYLq73Ajd3ha/Cx+7W7V9X
-	OPLiNSIAwbLLZqdVbYJmrxkcZTc+s0z7y9D2kD8/lIW34uoFVrM6cqwFSPEkJ8U6vehJ7gnIiw0Uj
-	7I36BhRg==;
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@surriel.com>)
-	id 1uytz5-000000001B6-1fYM;
-	Wed, 17 Sep 2025 11:22:15 -0400
-Message-ID: <1c799faa2a1b6d79080f4ad378b5a1d583813c2f.camel@surriel.com>
-Subject: Re: [RFC PATCH 11/12] mm/cma: rebalance CMA when changing
- cma_first_limit
-From: Rik van Riel <riel@surriel.com>
-To: Frank van der Linden <fvdl@google.com>, akpm@linux-foundation.org, 
-	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev
-Date: Wed, 17 Sep 2025 11:22:15 -0400
-In-Reply-To: <20250915195153.462039-12-fvdl@google.com>
-References: <20250915195153.462039-1-fvdl@google.com>
-	 <20250915195153.462039-12-fvdl@google.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1758122542; c=relaxed/simple;
+	bh=G/bV8fRNuXhxBDfwwFFEsp0hzSbHLbcHv/U1NKTsReY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KofaKr6jOhKsyijKEiEr+q+o9BEwJYfBD9xFxuIYNg5Jk/wcbAW2ha2hAsjvViuuVVi9QixjQvAB3BrRevkFMtYORJFHVvgog+hNUdMlZlTmuoUyT5CSiMbBU4IdRzy3uPhz7CAW0S+Pwrr+qprDX9FDcsyV9/s/xtKOxhEK654=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DMzvxYE1; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758122540; x=1789658540;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=G/bV8fRNuXhxBDfwwFFEsp0hzSbHLbcHv/U1NKTsReY=;
+  b=DMzvxYE1sCRMNxSbs5aRwbQikdpkn+Se4CAaeQ04qWHcl4J9DJoPFYun
+   ua8x2WPHGq62PckU5H3PTdLeONQU9htxUXQfTP1PoDZqF08atREqWpcBv
+   P2BpdBTYVtec8JzdJ0QZqnHHuP7YErdbWDZH8PQ+3J9gFjsvmtONUY4ur
+   3tY4Qcw2ZvZDjYLMh/UCNvETko6cYCKB264skTCy+IHldQx40cEwZpYw5
+   zOdMpgRonlormIfaTbuD1aICVJ2zg0GNBdGdrrhR9K1Vognd/0iyxy9F3
+   8tZ1JmI79GRwrrhwqgUPW5/7i3JyEIJIcU7OZLkcAfMcI/pwOReYlcSM/
+   Q==;
+X-CSE-ConnectionGUID: eSI5QQimSXCvqmaZYvat5w==
+X-CSE-MsgGUID: TGd3uvGbQEu1zOoBvxnvlQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="48007032"
+X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
+   d="scan'208";a="48007032"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 08:22:18 -0700
+X-CSE-ConnectionGUID: Y3ZkmuDhSEeH0TMd+gKnWQ==
+X-CSE-MsgGUID: xZCP5nuQSGq+oATXotjpyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
+   d="scan'208";a="212421123"
+Received: from msatwood-mobl.amr.corp.intel.com (HELO [10.125.111.223]) ([10.125.111.223])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 08:22:18 -0700
+Message-ID: <4ba6e926-c658-45bd-a1ba-96255a7d3279@intel.com>
+Date: Wed, 17 Sep 2025 08:22:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pds_fwctl: Replace kzalloc + copy_from_user with
+ memdup_user in pdsfc_fw_rpc
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Brett Creeley <brett.creeley@amd.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Saeed Mahameed <saeedm@nvidia.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20250917150941.168887-1-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917150941.168887-1-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-09-15 at 19:51 +0000, Frank van der Linden wrote:
-> To keep things consistent, rebalance CMA when changing the
-> cma_first_limit sysctl.
->=20
-> Signed-off-by: Frank van der Linden <fvdl@google.com>
->=20
-Reviewed-by: Rik van Riel <riel@surriel.com>
 
 
---=20
-All Rights Reversed.
+On 9/17/25 8:09 AM, Thorsten Blum wrote:
+> Replace kzalloc() followed by copy_from_user() with memdup_user() to
+> improve and simplify pdsfc_fw_rpc().
+> 
+> Return early if an error occurs and remove the obsolete 'err_out' label.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/fwctl/pds/main.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/fwctl/pds/main.c b/drivers/fwctl/pds/main.c
+> index 9b9d1f6b5556..04d84f892fb8 100644
+> --- a/drivers/fwctl/pds/main.c
+> +++ b/drivers/fwctl/pds/main.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/pci.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/bitfield.h>
+> +#include <linux/string.h>
+>  
+>  #include <uapi/fwctl/fwctl.h>
+>  #include <uapi/fwctl/pds.h>
+> @@ -366,18 +367,10 @@ static void *pdsfc_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
+>  		return ERR_PTR(err);
+>  
+>  	if (rpc->in.len > 0) {
+> -		in_payload = kzalloc(rpc->in.len, GFP_KERNEL);
+> -		if (!in_payload) {
+> -			dev_err(dev, "Failed to allocate in_payload\n");
+> -			err = -ENOMEM;
+> -			goto err_out;
+> -		}
+> -
+> -		if (copy_from_user(in_payload, u64_to_user_ptr(rpc->in.payload),
+> -				   rpc->in.len)) {
+> +		in_payload = memdup_user(u64_to_user_ptr(rpc->in.payload), rpc->in.len);
+> +		if (IS_ERR(in_payload)) {
+>  			dev_dbg(dev, "Failed to copy in_payload from user\n");
+> -			err = -EFAULT;
+> -			goto err_in_payload;
+> +			return in_payload;
+>  		}
+>  
+>  		in_payload_dma_addr = dma_map_single(dev->parent, in_payload,
+> @@ -453,7 +446,6 @@ static void *pdsfc_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
+>  				 rpc->in.len, DMA_TO_DEVICE);
+>  err_in_payload:
+>  	kfree(in_payload);
+> -err_out:
+>  	if (err)
+>  		return ERR_PTR(err);
+>  
+
 
