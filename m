@@ -1,274 +1,217 @@
-Return-Path: <linux-kernel+bounces-820827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D42B7F63A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23587B7F748
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B6052058B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:33:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A541C27ECA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA560332A53;
-	Wed, 17 Sep 2025 13:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Sks7Q1R/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA22831A7F4;
+	Wed, 17 Sep 2025 13:34:00 +0000 (UTC)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA71A330D37
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E434E31960E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115856; cv=none; b=QKjLU3MTWy5OurU0FFE9ZADSLru1/ZEruAHi7ATEG6sQXhqVix50bSAV9oaO2v65nPjdEM9aJQJXtEi/zj9Vu2lUC5luMGnD3DcE8AI/etL7TCSVU8LYzAIIK7UySA7Vp7NHUkUTa2wsGZJDY2AId77ul/lH+chTWkjiTSX0j70=
+	t=1758116040; cv=none; b=JF67YDvyVF7mV/5TPK49N6S+Tkgpz7DWYx4hfP8HRJFdf4kS4gu1BFssrlzTKDecFut9C+C+fPNHP0cTxLj84n3SZIg9cvoCUiuLmtPQPyXFIuuuZn5Bgkpmk4I0uEVbDJFa+KgRCmDiGUzbiuc3yQYobTI2/SPLm39jCec/DTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115856; c=relaxed/simple;
-	bh=nvKvYdZuF2KuOij1uNzJYqCctNXuBj+u4pDWG2C7DaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HE+HLTqJ1lxQcmq7SM+jb4UKaVN4YeFfvWs1wHUsgk1z8xowFj0VzxI7FowN5FgivL0aJl2BYpcKPIsKdMNF7Vs0HShaqfEhGyvxlnIVDDhMRjtEHrMj8rhD98iaKOmtuv89fk+QoO+M25uMUbtgoIf3RGTlEh1Dq/Byqw4C3Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Sks7Q1R/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HBLfgn028290
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:30:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6F3vROBNhzZrHYgeXkrr5B6ePIdHP+GJRW3Yn7Th6js=; b=Sks7Q1R/9l20CVd6
-	qlxz8kpOgPh729qw6VgACGKCQOrS3He5pUO/o3l5kpBxCotGvZ/FvzHc1fz23nbb
-	XVNkwbg4b2/I58Nn5Wf6fBXpWHmMR/GD95cCBRMD/qqHcFGGSjDCdaq/782fwr0Q
-	Z6aIYAcbuPdiw4HlUlWgOvCigLlWjmF+zLV6oveKBwqT+kf7TyO/v3gSU9VWyHrY
-	uALtzbStm1lqAn6hRVIocImbandhOgjgaoABPrmRMpvlmezJiUVKMiSDKGZrKop2
-	MIYhWegzh1dUF1EjV8nS5PbdMVErRIKilmF2jUd2B0lH9QmIpRIUfSxL0d3W3dvU
-	aah4EA==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497v1j8cy9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:30:52 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7725b77b795so6138543b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:30:52 -0700 (PDT)
+	s=arc-20240116; t=1758116040; c=relaxed/simple;
+	bh=GuO132UD6kDNK7GM80KvsDR2s46lSBmWg2yAjSMD2iA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rw9z9OKij+VPdHin+Ki8h/06K0mubg61mpyAe9BZZCMaScaGPzkPlfupJNjxlZOJXqnC3u5cuWs74E74JAn9krrLHFEPEsl75TCTe/SKG13MmTNXTo+kWRbSe3YMWxn27F6Wg7+JUs3wZeHbhIQKf8Ny1Wy8nNgY0L2FZdxOZr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso59850285e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:33:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758115851; x=1758720651;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6F3vROBNhzZrHYgeXkrr5B6ePIdHP+GJRW3Yn7Th6js=;
-        b=b9Ql8lopl22ykOyxnFHVw2xPJaTvNTYtZTGvBX+610clYryg2EImu75DCg+AqxpWoA
-         jhfWG7Q1ODJUutqv0pdQE1k3O6/Zg1w+akDskVUuZmzuJro0R/WfhRfQP6IWte9Pz5lI
-         CLOXk+08P33Mc1PZxcP8X5b4kcePiNluSojSmBzmuukBASTYpXXKhkJ3XnRukk9k01MT
-         znckprovDckasJ/7u9OHaecVpmE+nkM9aFSRtrEPs19w8d2fty3652WHcvKIRBF1EHMC
-         7IZ6xZoXesNocTl70o+gJjYmK/hZS29ZtM+z0vG9zHqg88chzTFU7Hh+XsEjhIL79M0e
-         Rx5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVu3D254ENfoCyltA9zEBaETNrhbbIIgxZBoFT2BDXkdkfjxVOh7ck4KEsUwPn9+wMgqydypRcnAFSkDTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAE0wqINxjewjnjpq0LLV/ype/JhMXQMyOksY1CuEo4kz9pcX0
-	6EqWzH4Z7KMcwuF5aBn8rDuAqIAC+FdlLQ8QRPSCHDTi7jjA1hEy8ScxN2GVurPfs2knuO4A6cY
-	A5vHXvx32hNisAZJXhy+Ij5p3Dp28O48/OmxRn8YyVcWbXdV+MqyH8CmDX0dlkRQaukU=
-X-Gm-Gg: ASbGncsiC1XKilC6YRph4nf1nrkdbA+7hFt5Ful0yeJoSM7YFpWa6dtWhEfix893j1r
-	Pp6JZLk6bCwP2QhAffdMmD2JfgLH0PkIdrenDTRv1c17jZTHAQMDQ/OtaEee6L8UeZlrDSGoTso
-	CNZ3rabqQhxFhoJTIIhnRWuJZosv2AGC6OmZD2WmA12PEw/yd+9Oja55OvLK2ynH0GPyd8MTN48
-	XZuCK6x9goLcrwUgqdZ0i0WX2chB4BSgIyc1a5TBXJ21tE54rUUM4r5/p/N8fBCA4MMICgMtTux
-	TGOCDbGgi0SEsfUuZJU7ZDle+JXpCCl+7ZXupP2Ok3fXy3c8nuiqg7b9PrmvfX3ALbSo1Q3jmoA
-	=
-X-Received: by 2002:a05:6a00:2d15:b0:772:1a0:f772 with SMTP id d2e1a72fcca58-77bf94686eamr2332551b3a.28.1758115851389;
-        Wed, 17 Sep 2025 06:30:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNHH4xtklKs82fBpyasVZs9Ht06BM93FkMXvT9OfwzfqSo5YpKjkN4fmWL+AhpdPnf2HK0Ew==
-X-Received: by 2002:a05:6a00:2d15:b0:772:1a0:f772 with SMTP id d2e1a72fcca58-77bf94686eamr2332451b3a.28.1758115850308;
-        Wed, 17 Sep 2025 06:30:50 -0700 (PDT)
-Received: from [192.168.29.113] ([49.43.227.74])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b347f8sm18790862b3a.82.2025.09.17.06.30.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 06:30:49 -0700 (PDT)
-Message-ID: <d2d17266-68a1-4a63-954b-9076db5315a5@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 19:00:43 +0530
+        d=1e100.net; s=20230601; t=1758116035; x=1758720835;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PB/dLP6okMS4UB2K8/m8T0leXGzvWyq468DHfShm8FI=;
+        b=sjTb2vGB6cOa4i+wEVyqQp8B2lG9a0KsJDRHSivlPxYKge7WS9LhqC2Gs+bmGEEFqK
+         edLa/7Aaoz0wk1i+w1XoZINnslixwU/rCqwZnkzcTBJvdS8Xrj1DC96uhpdTFoBIgWiH
+         DLr68x5Y5y4FGdRjqq5FoUwqnIK+P5bjuEjqyN9P67quPaA12VZQNlz1uoxKPHvmZyO4
+         fFO8dPg8e807eaGqe4ZFerHVGS4bkHjfSVdvIh3Y/GxfUUmaDs0yzoM/nLHW0vWt/xjz
+         BHZO4T73enAzenYu0VQJN8ZHHsJVFHPAV6wtiEoFwQOBHkqM30PS5VP/BIPKFhsRkbDp
+         XR3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkd/EWmXgTg00sDPed8p9CdAkmIbdvOPC85fwlFzM+nE9Wl7vjLDwAypRVB858iZvsH0XgIsPSJle9Gqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcqk9/TtiS13l2r3M6V+fTcneF2+Naq4MSVz5zvrCe3gsngfzA
+	h54DFkDV3U5RsQuZeXzYLICiieRApHg/g75iNsbFmQmt+5yzeBgKLJid
+X-Gm-Gg: ASbGnctlmfrotSuVveCvWD2EIcz8kaRbJyvQU4LqY7KbeKHPl+CpWcnuERCj/mYVNIr
+	KAppeD4y5tEhSgKeW9PHElgfrb+nP4F3n5tSxE4ncC7RlH3tlHWbMsu3tJnEtnuTa+nMqzRrn4l
+	zgtbAMkV74S9px41RxziTMdKQgogZaeteQyQdj/ZhzdcXqWehkYHsW6uJmY2DZuw0PRkdQWH32O
+	o6zgffAMGHSTasfIP6t+JBcW1TguHQacQZeuOGTDdnIOnjfVIHx+El+mWLjWS3uohABnSST38xJ
+	GPKs/qVhBARvw5U0TpIej5LNfAPC+AuEQDzKYIDziCquKuU9koIElysGmzzLJbqiGd7Ke4YRzpK
+	SuFH/u5fpuGg=
+X-Google-Smtp-Source: AGHT+IHct0Y/HPdTudotgDrMkhOC/Gqh0P/h5DFuXgasUmqgBiIUkvyCvRBlCVJGcbLI22/xe1VfaA==
+X-Received: by 2002:a05:600c:3547:b0:45b:8039:6196 with SMTP id 5b1f17b1804b1-46201e96069mr23430525e9.4.1758116034842;
+        Wed, 17 Sep 2025 06:33:54 -0700 (PDT)
+Received: from localhost.localdomain ([2a09:0:1:2::30b2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdd4d15ecsm3871446f8f.11.2025.09.17.06.33.49
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 17 Sep 2025 06:33:54 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com
+Cc: shuah@kernel.org,
+	ioworker0@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH v3 1/1] selftests/mm: skip soft-dirty tests when CONFIG_MEM_SOFT_DIRTY is disabled
+Date: Wed, 17 Sep 2025 21:31:37 +0800
+Message-ID: <20250917133137.62802-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/10] arm64: dts: qcom: lemans-evk: Enable PCIe
- support
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-        Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
-References: <20250916-lemans-evk-bu-v5-0-53d7d206669d@oss.qualcomm.com>
- <20250916-lemans-evk-bu-v5-5-53d7d206669d@oss.qualcomm.com>
- <h2t7ajhtyq3vivbw67tifrn73i4zisicoktsgab76zptxre6at@vl2q4d6i3lms>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <h2t7ajhtyq3vivbw67tifrn73i4zisicoktsgab76zptxre6at@vl2q4d6i3lms>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: p4PwY30-cbNtdUwkmyPJip7ESvflZDKx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDExMCBTYWx0ZWRfX2eNsa1MmKs95
- 80PiijbdfHwKBq0UgH10GpptfPcvbq0E/1JKbWPwBWNHyxI+0Q7x7mD1Fikq5VycNOa4j02Q+Y7
- n41W1TXjt6JuSeNK5TnohmlULu2UxHn3Qdi0Rxu1fL2M/+GWQD/epFeNjCS7YYk0oUTDhq/oG7r
- QZRNPDgBZsOXn+vrbP0bqsvQZfWjotptrMO3SA2aPHYnZ4lslHdHhgVUMQ9KDPqfSqmSi51XSR/
- FstOx2mZAdaKvbU01Xlykrle+u++Y3CXai6C4Mj15XvZXjWbOcq4rAzeeoqKvvoK33QPpUuWcMk
- C43/pPIsCwAskJtvikmJ0LleMP1rJ5dCMlMnTIWGcje5siUTYn+AuFy4baVNarPdsWhkZBq8R/H
- LENcj1TD
-X-Authority-Analysis: v=2.4 cv=AeqxH2XG c=1 sm=1 tr=0 ts=68cab80c cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=1mPCZV2InQEjkM8ljLdqcA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=nPE1BBKPTxE4yRdvQxsA:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: p4PwY30-cbNtdUwkmyPJip7ESvflZDKx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170110
+Content-Transfer-Encoding: 8bit
 
+From: Lance Yang <lance.yang@linux.dev>
 
+The madv_populate and soft-dirty kselftests currently fail on systems where
+CONFIG_MEM_SOFT_DIRTY is disabled.
 
-On 9/17/2025 1:36 PM, Manivannan Sadhasivam wrote:
-> On Tue, Sep 16, 2025 at 04:16:53PM GMT, Wasim Nazir wrote:
->> From: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
->>
->> Enable PCIe0 and PCIe1 along with the respective phy-nodes.
->>
->> PCIe0 is routed to an m.2 E key connector on the mainboard for wifi
->> attaches while PCIe1 routes to a standard PCIe x4 expansion slot.
->>
-> 
-> Where did you define the supply for M.2 connector? We don't have a proper
-> binding for M.2 today, but atleast the supply should be modeled as a fixed
-> regulator with EN GPIOs as like other boards.
-> 
-> - Mani
-Hi Mani,
+Introduce a new helper softdirty_supported() into vm_util.c/h to ensure
+tests are properly skipped when the feature is not enabled.
 
-This board doesn't have any power supply for m.2 connector they are
-always powered on.
+Acked-by: David Hildenbrand <david@redhat.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+v2 -> v3:
+ - Optimize softdirty_supported() by directly assigning check_vmflag()
+   result (per David)
+ - Pick AB from David - thanks!
+ - https://lore.kernel.org/lkml/20250917122750.36608-1-lance.yang@linux.dev
 
-- Krishna Chaitanya.
-> 
->> Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
->> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
->> ---
->>   arch/arm64/boot/dts/qcom/lemans-evk.dts | 82 +++++++++++++++++++++++++++++++++
->>   1 file changed, 82 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
->> index 97428d9e3e41..99400ff12cfd 100644
->> --- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
->> +++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
->> @@ -431,6 +431,40 @@ &mdss0_dp1_phy {
->>   	status = "okay";
->>   };
->>   
->> +&pcie0 {
->> +	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
->> +	wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
->> +
->> +	pinctrl-0 = <&pcie0_default_state>;
->> +	pinctrl-names = "default";
->> +
->> +	status = "okay";
->> +};
->> +
->> +&pcie0_phy {
->> +	vdda-phy-supply = <&vreg_l5a>;
->> +	vdda-pll-supply = <&vreg_l1c>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&pcie1 {
->> +	perst-gpios = <&tlmm 4 GPIO_ACTIVE_LOW>;
->> +	wake-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
->> +
->> +	pinctrl-0 = <&pcie1_default_state>;
->> +	pinctrl-names = "default";
->> +
->> +	status = "okay";
->> +};
->> +
->> +&pcie1_phy {
->> +	vdda-phy-supply = <&vreg_l5a>;
->> +	vdda-pll-supply = <&vreg_l1c>;
->> +
->> +	status = "okay";
->> +};
->> +
->>   &qupv3_id_0 {
->>   	status = "okay";
->>   };
->> @@ -447,6 +481,54 @@ &sleep_clk {
->>   	clock-frequency = <32768>;
->>   };
->>   
->> +&tlmm {
->> +	pcie0_default_state: pcie0-default-state {
->> +		clkreq-pins {
->> +			pins = "gpio1";
->> +			function = "pcie0_clkreq";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +
->> +		perst-pins {
->> +			pins = "gpio2";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +
->> +		wake-pins {
->> +			pins = "gpio0";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +	};
->> +
->> +	pcie1_default_state: pcie1-default-state {
->> +		clkreq-pins {
->> +			pins = "gpio3";
->> +			function = "pcie1_clkreq";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +
->> +		perst-pins {
->> +			pins = "gpio4";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +
->> +		wake-pins {
->> +			pins = "gpio5";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +	};
->> +};
->> +
->>   &uart10 {
->>   	compatible = "qcom,geni-debug-uart";
->>   	pinctrl-0 = <&qup_uart10_default>;
->>
->> -- 
->> 2.51.0
->>
-> 
+v1 -> v2:
+ - Rename softdirty_is_supported() to softdirty_supported() (per David)
+ - Drop aarch64 specific handling (per David)
+ - https://lore.kernel.org/lkml/20250917055913.49759-1-lance.yang@linux.dev
+
+ tools/testing/selftests/mm/madv_populate.c | 21 ++-------------------
+ tools/testing/selftests/mm/soft-dirty.c    |  5 ++++-
+ tools/testing/selftests/mm/vm_util.c       | 17 +++++++++++++++++
+ tools/testing/selftests/mm/vm_util.h       |  1 +
+ 4 files changed, 24 insertions(+), 20 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/madv_populate.c b/tools/testing/selftests/mm/madv_populate.c
+index b6fabd5c27ed..d8d11bc67ddc 100644
+--- a/tools/testing/selftests/mm/madv_populate.c
++++ b/tools/testing/selftests/mm/madv_populate.c
+@@ -264,23 +264,6 @@ static void test_softdirty(void)
+ 	munmap(addr, SIZE);
+ }
+ 
+-static int system_has_softdirty(void)
+-{
+-	/*
+-	 * There is no way to check if the kernel supports soft-dirty, other
+-	 * than by writing to a page and seeing if the bit was set. But the
+-	 * tests are intended to check that the bit gets set when it should, so
+-	 * doing that check would turn a potentially legitimate fail into a
+-	 * skip. Fortunately, we know for sure that arm64 does not support
+-	 * soft-dirty. So for now, let's just use the arch as a corse guide.
+-	 */
+-#if defined(__aarch64__)
+-	return 0;
+-#else
+-	return 1;
+-#endif
+-}
+-
+ int main(int argc, char **argv)
+ {
+ 	int nr_tests = 16;
+@@ -288,7 +271,7 @@ int main(int argc, char **argv)
+ 
+ 	pagesize = getpagesize();
+ 
+-	if (system_has_softdirty())
++	if (softdirty_supported())
+ 		nr_tests += 5;
+ 
+ 	ksft_print_header();
+@@ -300,7 +283,7 @@ int main(int argc, char **argv)
+ 	test_holes();
+ 	test_populate_read();
+ 	test_populate_write();
+-	if (system_has_softdirty())
++	if (softdirty_supported())
+ 		test_softdirty();
+ 
+ 	err = ksft_get_fail_cnt();
+diff --git a/tools/testing/selftests/mm/soft-dirty.c b/tools/testing/selftests/mm/soft-dirty.c
+index 8a3f2b4b2186..4ee4db3750c1 100644
+--- a/tools/testing/selftests/mm/soft-dirty.c
++++ b/tools/testing/selftests/mm/soft-dirty.c
+@@ -200,8 +200,11 @@ int main(int argc, char **argv)
+ 	int pagesize;
+ 
+ 	ksft_print_header();
+-	ksft_set_plan(15);
+ 
++	if (!softdirty_supported())
++		ksft_exit_skip("soft-dirty is not support\n");
++
++	ksft_set_plan(15);
+ 	pagemap_fd = open(PAGEMAP_FILE_PATH, O_RDONLY);
+ 	if (pagemap_fd < 0)
+ 		ksft_exit_fail_msg("Failed to open %s\n", PAGEMAP_FILE_PATH);
+diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
+index 56e9bd541edd..e33cda301dad 100644
+--- a/tools/testing/selftests/mm/vm_util.c
++++ b/tools/testing/selftests/mm/vm_util.c
+@@ -449,6 +449,23 @@ bool check_vmflag_pfnmap(void *addr)
+ 	return check_vmflag(addr, "pf");
+ }
+ 
++bool softdirty_supported(void)
++{
++	char *addr;
++	bool supported = false;
++	const size_t pagesize = getpagesize();
++
++	/* New mappings are expected to be marked with VM_SOFTDIRTY (sd). */
++	addr = mmap(0, pagesize, PROT_READ | PROT_WRITE,
++		    MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
++	if (!addr)
++		ksft_exit_fail_msg("mmap failed\n");
++
++	supported = check_vmflag(addr, "sd");
++	munmap(addr, pagesize);
++	return supported;
++}
++
+ /*
+  * Open an fd at /proc/$pid/maps and configure procmap_out ready for
+  * PROCMAP_QUERY query. Returns 0 on success, or an error code otherwise.
+diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+index 07c4acfd84b6..26c30fdc0241 100644
+--- a/tools/testing/selftests/mm/vm_util.h
++++ b/tools/testing/selftests/mm/vm_util.h
+@@ -104,6 +104,7 @@ bool find_vma_procmap(struct procmap_fd *procmap, void *address);
+ int close_procmap(struct procmap_fd *procmap);
+ int write_sysfs(const char *file_path, unsigned long val);
+ int read_sysfs(const char *file_path, unsigned long *val);
++bool softdirty_supported(void);
+ 
+ static inline int open_self_procmap(struct procmap_fd *procmap_out)
+ {
+-- 
+2.49.0
+
 
