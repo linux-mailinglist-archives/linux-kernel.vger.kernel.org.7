@@ -1,215 +1,233 @@
-Return-Path: <linux-kernel+bounces-819788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DEFB7D705
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A352AB7D5AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B14E1BC0C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED634E49A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E984F1F9F70;
-	Wed, 17 Sep 2025 00:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5481D5ABA;
+	Wed, 17 Sep 2025 00:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lLhPqSRK"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QmDskpRi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C381C4A0A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7BB1CEADB
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758069351; cv=none; b=sjkdAFowMGy/DRqJEea4PB7oCq86Aulo+S93N54j2ca3lU8ReMOthMGeb4axfvZvrsbi0K397TeWa7879UwVrZuMDYm6nBQT6fpn+GSZiALgVgMOu2E0FkEp9HigobBkuMlWsMRg7ihSqRkBtLU5GN/hksDCLs3x48WbEp0cdjI=
+	t=1758069359; cv=none; b=BwJUqKB2eFGvyS+e/VA/pVQblSg5a8qFDRUTpTridQNyGx5+BUDWOWBAMfHHs7MG0ViKqdVdk5D3xptaeV7ajnPm0EK1KiaPExMlDn0vOUw86FAaSNoW0IUtM07MMzlgpD7umQgLwLmE/TcJY4xzpL+b3m8aSMpBNHSZja4kbtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758069351; c=relaxed/simple;
-	bh=OHJWfaJyWpGK0VAeh46ZpICOh7jiXlPJ5BpYZKqe+RA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AGCmxzNg0jQH+yrG8S8fC5YELyrlKEfPe4vGj6PP8e4ItdhhwxHIZnpABpM2Ck7BwZfw1Q4LyhxnZn+qr4V6IqNOaFhCBF4OfFM03mvi4USCv6h/qKiOhcDgkLL6NexC1qtPYVfpB4dMGWsGrMt2ZnF55b83mGX/cI+LEDFjj8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lLhPqSRK; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26808b24a00so302825ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758069349; x=1758674149; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yKyuCdjvfHTZC/Lr1XyLH1f+wAtJ15tCU/+O5Qcke0=;
-        b=lLhPqSRKbnFfKl3NAkquB86O6TfEGoXuDrGiRhKJKg9E1zciy59vy/NFVGHXdViMqZ
-         z1K8U+yWTs8g3TNtTCGzfW+iS88EY9hXIq3ZuFQIKEta5WejW2BkuoviZy1Wn5VKZQ7h
-         iE2A3ZGASFOyfxXZom1hgXZB9rwx/AoygmCWn0BmAbPje14j+feKlpv8uEFA8zNvuMB+
-         Rk1T1o1f8Ibn1sLPcvRz+3vFo/SVM1ueNsoO+LrAR90RLmZucEHNZ6cyyqenZ3wipaHT
-         sU2U/oPwDiLNHHpHQzaiiK1E/UOGHz1XBUz1kjo6iCXLHhfUQSb6EuXSSjAkEaS+NQfZ
-         KvSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758069349; x=1758674149;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+yKyuCdjvfHTZC/Lr1XyLH1f+wAtJ15tCU/+O5Qcke0=;
-        b=KCiKX1H1KiqRGVykhtRB/fhAC15zGaDIQV8G1YS3wpCqnvq0BWfZGrxnnCy8xyA/QO
-         PXQb6KQStNexCVSaNQEH/cgXXRdTTcczHtv5UBI2/gGW2NLnqu7DRofBHw/++5HJF5AF
-         66cA+nG+obFCGWknTfqPJZBc4UaN/P4aHA71GhWUr9oBERt2CXyeWW2VNzpinJOmrmSE
-         vfkoZTaIZ+rVUxN/u6GbZM7MhQOwifstUClFCLZgsKCft25tS+qvd0vhPe/SpqGnFRKU
-         HvLlqbIdKB+AmyL+Zza/hUqA9K5TW1QprHIDOfQiHzYfyy8VsKo8t/emVqsvVX4SiZ08
-         lUIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsmu+oi1LgV6ojS3bSJUAM8kjJrfKcN2dCzUP3KX1+LzzVCRm8Amp9pGWmeiqdSOJ8WMdIS5sj9+7Sqgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1bBp21BpMGaranwJpoZsIHXvwHLOFocjzVPrrm+8xhBAl4i2Q
-	Pa6rTmkHuO+jLLbM+n9MBLSxK4avAYAL1ca4L4rrMI22vl6yHBE3ydUAsKn7Ruh5ATw=
-X-Gm-Gg: ASbGncvzomQmTzb+HosoxfHkUDadv2sdNVZE7IoUvVqVCpEWRvabOlbVO9jgWN74M/N
-	1yTH9leAXHL5Z7HiePvXw1/60zImOxvaVOwZITIrLdyujJqC8Td1svK1y0rXLvsTZ1UraEgXSgk
-	qrWWDw09gA7mMWtE80tAgmi6q9x2HA6LPSropZEL/Bsee3IDk4TOOePS3KhbxE1TWdZKxA5ww8J
-	PZWNWEn29aNpvWTEDbhgAXe/TCHNewgnRYIjhzTGsF2h8UirEzI1pPiSsKX7mTWeoGyrAyKi8bB
-	Lv2zeJsp/fTjwt4+15lxvOlgOH9NbXnjjubzRXNJ5Li8h5O90Num+qzLTtw2xoaA9Vew5O5ejpK
-	au44C+s0D5DiqB8I9sBE+heKL8DjLVDW9CK8ub8E5Oog=
-X-Google-Smtp-Source: AGHT+IF390E63ZU9vuARjO+nw1ZUI7FtlCAawkFr1p8xl1+Uo1mLtRWneXPuNPAB/asviLaSXJOoEA==
-X-Received: by 2002:a17:902:c94a:b0:261:500a:5742 with SMTP id d9443c01a7336-26813f75090mr1125965ad.10.1758069348416;
-        Tue, 16 Sep 2025 17:35:48 -0700 (PDT)
-Received: from [192.168.35.228] ([218.51.42.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25fc8285639sm118508945ad.134.2025.09.16.17.35.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 17:35:47 -0700 (PDT)
-Message-ID: <e874339e-f802-4793-8c0f-db85575be8e5@linaro.org>
-Date: Wed, 17 Sep 2025 09:35:38 +0900
+	s=arc-20240116; t=1758069359; c=relaxed/simple;
+	bh=b6EDHQBLsyrVIP0TxL+zPufHeo/CggP32M+Tq2y/M5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOyEJj4DKBZDmM+OwyjbKGLHvaiuc+JbLq12JFTObAVMXlgRlSDJD77SL3zHiZXcn7ELDe47qHqjftDGfcPzmlZPt6mgnznfezbA78VaJLevqeHRAEn2o5jD+Sa3SewNWC+FtieqejFFsqznUb0nvSsxJc90lvW9gShLlRL1tao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QmDskpRi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758069354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=unXRLvM1TxOfalUS+vT3Rs0LbksjKu+IOcTVgG5tswg=;
+	b=QmDskpRi2Sf9X6COsj+5RQCIq6Hf+Q4yRscmLEcUwbwhiWlZ2vYS75Nw0lR1qR1NFTlmWr
+	iqPoIug4NeRZiNAwiAP5Cl/zJv8TlE6aqNUedtsEWV6dr7EBANbVPBlYuvwqy1Cn7zDlRo
+	L7CRry7FkSZ2p2wTL0Gwxau8E7kUcg0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-dy2Z1e5yMLaAqKHNqwyatQ-1; Tue,
+ 16 Sep 2025 20:35:50 -0400
+X-MC-Unique: dy2Z1e5yMLaAqKHNqwyatQ-1
+X-Mimecast-MFC-AGG-ID: dy2Z1e5yMLaAqKHNqwyatQ_1758069349
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A7645180034F;
+	Wed, 17 Sep 2025 00:35:48 +0000 (UTC)
+Received: from localhost (unknown [10.22.80.155])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 71E16195608E;
+	Wed, 17 Sep 2025 00:35:47 +0000 (UTC)
+Date: Tue, 16 Sep 2025 21:35:45 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Crystal Wood <crwood@redhat.com>,
+	Wander Lairson Costa <wander@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	aubrey.li@linux.intel.com, yu.c.chen@intel.com
+Subject: Re: [linus:master] [sched]  8671bad873:
+ INFO:task_blocked_for_more_than#seconds
+Message-ID: <aMoCYelz87V8bSzA@uudg.org>
+References: <202509051010.e06823ab-lkp@intel.com>
+ <aL8NGXiYUAukMCGY@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/10] dt-bindings: clock: Add required
- "interconnect-cells" property
-To: Luo Jie <quic_luoj@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Varadarajan Narayanan <quic_varada@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
- Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
- Devi Priya <quic_devipriy@quicinc.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Richard Cochran <richardcochran@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
- quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
- quic_suruchia@quicinc.com
-References: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
- <20250909-qcom_ipq5424_nsscc-v5-2-332c49a8512b@quicinc.com>
- <20250912-nocturnal-horse-of-acumen-5b2cbd@kuoka>
- <b7487ab1-1abd-40ca-8392-fdf63fddaafc@oss.qualcomm.com>
- <0aa8bf54-50e4-456d-9f07-a297a34b86c5@linaro.org>
- <1e7d7066-fa0b-4ebc-8f66-e3208bb6f948@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <1e7d7066-fa0b-4ebc-8f66-e3208bb6f948@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aL8NGXiYUAukMCGY@uudg.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 16/09/2025 16:03, Luo Jie wrote:
+On Mon, Sep 08, 2025 at 02:06:37PM -0300, Luis Claudio R. Goncalves wrote:
+> On Fri, Sep 05, 2025 at 10:49:35AM +0800, kernel test robot wrote:
+> > 
+> > 
+> > Hello,
+> > 
+> > kernel test robot noticed "INFO:task_blocked_for_more_than#seconds" on:
+> > 
+> > commit: 8671bad873ebeb082afcf7b4501395c374da6023 ("sched: Do not call __put_task_struct() on rt if pi_blocked_on is set")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > 
+> > [test failed on      linus/master 08b06c30a44555a8b1d14950e4462a52bfa0758b]
+> > [test failed on linux-next/master 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7]
+> > 
+> > in testcase: rcutorture
+> > version: 
+> > with following parameters:
+> > 
+> > 	runtime: 300s
+> > 	test: cpuhotplug
+> > 	torture_type: tasks-rude
 > 
-> 
-> On 9/12/2025 5:16 PM, Krzysztof Kozlowski wrote:
->> On 12/09/2025 11:13, Konrad Dybcio wrote:
->>> On 9/12/25 9:04 AM, Krzysztof Kozlowski wrote:
->>>> On Tue, Sep 09, 2025 at 09:39:11PM +0800, Luo Jie wrote:
->>>>> The Networking Subsystem (NSS) clock controller acts as both a clock
->>>>> provider and an interconnect provider. The #interconnect-cells property
->>>>> is mandatory in the Device Tree Source (DTS) to ensure that client
->>>>> drivers, such as the PPE driver, can correctly acquire ICC clocks from
->>>>> the NSS ICC provider.
->>>>>
->>>>> Although this property is already present in the NSS CC node of the DTS
->>>>> for CMN PLL for IPQ9574 SoC which is currently supported, it was previously
->>>>> omitted from the list of required properties in the bindings documentation.
->>>>> Adding this as a required property is not expected to break the ABI for
->>>>> currently supported SoC.
->>>>>
->>>>> Marking #interconnect-cells as required to comply with Device Tree (DT)
->>>>> binding requirements for interconnect providers.
->>>>
->>>> DT bindings do not require interconnect-cells, so that's not a correct
->>>> reason. Drop them from required properties.
->>>
->>> "Mark #interconnect-cells as required to allow consuming the provided
->>> interconnect endpoints"?
->>
->>
->> The point is they do not have to be required.
-> 
-> The reason for adding this property as required is to enforce
-> the DTS to define this important resource correctly. If this property
-> is missed from the DTS, the client driver such as PPE driver will not
-> be able to initialize correctly. This is necessary irrespective of
-> whether these clocks are enabled by bootloader or not. The IPQ9574 SoC
-> DTS defines this property even though the property was not marked as
-> mandatory in the bindings, and hence the PPE driver is working.
-> 
-> By now marking it as required, we can enforce that DTS files going
-> forward for newer SoC (IPQ5424 and later) are properly defining this
-> resource. This prevents any DTS misconfiguration and improves bindings
-> validation as new SoCs are introduced.
+> I ran tests with the boxes I had at hand, x86_64 and arm64, and was unable
+> to reproduce the problem. Tomorrow, when I am back from a holiday,, I will
+> try to reproduce the problem with x86 (32 bits) VMs and x86 baremetal as it
+> seems to be the case on the report.
 
-So you explain to the DT maintainer how the DT works. Well, thank you,
-everyday I can learn something.
+I have been trying to reproduce the problem for a week now, on both
+baremetal and VMs, x86 32 bits, without success. I tried to limit the
+amount of CPUs and memory, to mimic as well as possible the test
+environment but that has not changed the test results at all.
 
-You wasted a lot of our (multiple maintainers) time in the past, so I
-will just NAK your patches instead of wasting time again.
+Are there any other pointers to reproduce this problem? Other than what can
+be extracted from the log excerpts available, I mean.
 
-Best regards,
-Krzysztof
+Best regards.
+Luis
+
+> In any case, I sent a follow-up patch that isolated those changes to
+> kernels with PREEMPT_RT enabled, as initially intended. That should solve
+> this case (if really caused by the commit in question). The patch I
+> mentioned is:
+> 
+>     [RESEND PATCH] sched: restore the behavior of put_task_struct() for non-rt
+>     https://lore.kernel.org/all/aKxqGLNOp2sWJwnZ@uudg.org/
+> 
+> Best regards,
+> Luis
+>  
+> > 
+> > 
+> > config: i386-randconfig-017-20250830
+> > compiler: gcc-12
+> > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> > 
+> > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> > 
+> > 
+> > the issue happens randomly and we observed various issues in tests by this
+> > commit, while parent keeps clean.
+> > 
+> > =========================================================================================
+> > tbox_group/testcase/rootfs/kconfig/compiler/runtime/test/torture_type:
+> >   vm-snb/rcutorture/debian-11.1-i386-20220923.cgz/i386-randconfig-017-20250830/gcc-12/300s/cpuhotplug/tasks-rude
+> > 
+> > 7de9d4f946383f48 8671bad873ebeb082afcf7b4501
+> > ---------------- ---------------------------
+> >        fail:runs  %reproduction    fail:runs
+> >            |             |             |
+> >            :200         16%          32:200   dmesg.BUG:kernel_hang_in_boot_stage
+> >            :200          0%           1:200   dmesg.BUG:soft_lockup-CPU##stuck_for#s![swapper:#]
+> >            :200          1%           2:200   dmesg.BUG:workqueue_lockup-pool
+> >            :200          0%           1:200   dmesg.EIP:kthread_affine_preferred
+> >            :200          0%           1:200   dmesg.EIP:lock_release
+> >            :200          0%           1:200   dmesg.EIP:tick_clock_notify
+> >            :200         12%          23:200   dmesg.INFO:task_blocked_for_more_than#seconds
+> >            :200         12%          23:200   dmesg.Kernel_panic-not_syncing:hung_task:blocked_tasks
+> >            :200          0%           1:200   dmesg.Kernel_panic-not_syncing:softlockup:hung_tasks
+> >            :200          0%           1:200   dmesg.WARNING:at_kernel/kthread.c:#kthread_affine_preferred
+> > 
+> > 
+> > 
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > | Closes: https://lore.kernel.org/oe-lkp/202509051010.e06823ab-lkp@intel.com
+> > 
+> > 
+> > [  994.935251][   T26] INFO: task swapper/0:1 blocked for more than 491 seconds.
+> > [  994.947414][   T26]       Not tainted 6.16.0-rc6-00086-g8671bad873eb #1
+> > [  994.951523][   T26] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > [  994.960576][   T26] task:swapper/0       state:D stack:5016  pid:1     tgid:1     ppid:0      task_flags:0x0140 flags:0x00004000
+> > [  994.972581][   T26] Call Trace:
+> > [ 994.998429][ T26] __schedule (kernel/sched/core.c:5354 kernel/sched/core.c:6954) 
+> > [ 995.035758][ T26] schedule (kernel/sched/core.c:7037 kernel/sched/core.c:7051) 
+> > [ 995.044863][ T26] async_synchronize_cookie_domain (kernel/async.c:317 kernel/async.c:310) 
+> > [ 995.050698][ T26] ? do_wait_intr (kernel/sched/wait.c:384) 
+> > [ 995.059798][ T26] wait_for_initramfs (init/initramfs.c:778) 
+> > [ 995.067798][ T26] populate_rootfs (init/initramfs.c:789) 
+> > [ 995.070767][ T26] do_one_initcall (init/main.c:1274) 
+> > [ 995.074441][ T26] ? initramfs_async_setup (init/initramfs.c:782) 
+> > [ 995.098384][ T26] do_initcalls (init/main.c:1335 init/main.c:1352) 
+> > [ 995.136744][ T26] kernel_init_freeable (init/main.c:1588) 
+> > [ 995.136744][ T26] ? rest_init (init/main.c:1466) 
+> > [ 995.158663][ T26] kernel_init (init/main.c:1476) 
+> > [ 995.177750][ T26] ret_from_fork (arch/x86/kernel/process.c:154) 
+> > [ 995.178146][ T26] ? rest_init (init/main.c:1466) 
+> > [ 995.230129][ T26] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+> > [ 995.230129][ T26] entry_INT80_32 (arch/x86/entry/entry_32.S:945) 
+> > [  995.268743][   T26]
+> > [  995.268743][   T26] Showing all locks held in the system:
+> > [  995.336987][   T26] 1 lock held by khungtaskd/26:
+> > [ 995.446697][ T26] #0: 830cce10 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks (kernel/locking/lockdep.c:6768 (discriminator 1)) 
+> > [  995.464546][   T26] 4 locks held by kworker/u4:2/29:
+> > [  995.470758][   T26] 2 locks held by kworker/0:3/38:
+> > [  995.498593][   T26]
+> > [  995.599251][   T26] =============================================
+> > [  995.599251][   T26]
+> > [  995.729940][   T26] Kernel panic - not syncing: hung_task: blocked tasks
+> > [  995.729940][   T26] CPU: 0 UID: 0 PID: 26 Comm: khungtaskd Not tainted 6.16.0-rc6-00086-g8671bad873eb #1 PREEMPT(full)
+> > [  995.729940][   T26] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > [  995.729940][   T26] Call Trace:
+> > [ 995.729940][ T26] dump_stack_lvl (lib/dump_stack.c:124) 
+> > [ 995.729940][ T26] dump_stack (lib/dump_stack.c:130) 
+> > [ 995.729940][ T26] panic (kernel/panic.c:382) 
+> > [ 995.729940][ T26] check_hung_uninterruptible_tasks (kernel/hung_task.c:311) 
+> > [ 995.729940][ T26] watchdog (kernel/hung_task.c:470) 
+> > [ 995.729940][ T26] kthread (kernel/kthread.c:464) 
+> > [ 995.729940][ T26] ? check_hung_uninterruptible_tasks (kernel/hung_task.c:453) 
+> > [ 995.729940][ T26] ? kthread_complete_and_exit (kernel/kthread.c:413) 
+> > [ 995.729940][ T26] ret_from_fork (arch/x86/kernel/process.c:154) 
+> > [ 995.729940][ T26] ? kthread_complete_and_exit (kernel/kthread.c:413) 
+> > [ 995.729940][ T26] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+> > [ 995.729940][ T26] entry_INT80_32 (arch/x86/entry/entry_32.S:945) 
+> > 
+> > 
+> > 
+> > The kernel config and materials to reproduce are available at:
+> > https://download.01.org/0day-ci/archive/20250905/202509051010.e06823ab-lkp@intel.com
+> > 
+> > 
+> > 
+> > -- 
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+> > 
+> ---end quoted text---
+---end quoted text---
+
 
