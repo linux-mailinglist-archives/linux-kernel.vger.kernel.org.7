@@ -1,258 +1,120 @@
-Return-Path: <linux-kernel+bounces-821101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73C9B8063A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:10:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4957B80658
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44BFC1C26202
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1001C838DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF81372892;
-	Wed, 17 Sep 2025 15:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C132333AB3;
+	Wed, 17 Sep 2025 15:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZekiJBnx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pI7nT7cW"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C5F19CC0C;
-	Wed, 17 Sep 2025 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D05617BB21
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758121246; cv=none; b=lEungVWkaZ50En2t61GbalJUwxPGY6tEnLFVt2s8oithE0VUufKAe/CiXt/B6psLOH7Lpsq+gX+wMB+bUmONnCy7/biftMLtQq5jqzKzP3Zuax+WY9Xl91lkX4YM8mSa5J+zjAphMKN8ch8RCrAA8Gv+k/AwKGHhgHHMzByjUAk=
+	t=1758121263; cv=none; b=D8ZyE1Ca88xo0Ztjp3bhthgSlLP/WqZUtsdO5SsOVv2ni6iIhKb6Q5vJwTRdiKETOLKTl2guKg+1lEi8uRs+MK2WDOa/X/ScbI1QOBQysSoUOP9jomtsXofa3ce7x09cDq9k48dVgKWOv0hU8gdV6zjaq8K5OmQuD6aR8thmFKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758121246; c=relaxed/simple;
-	bh=n8b7BCp5JPPR7LVBqJbWYtWx0G87/2qE/nO7QOyYb94=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=kEuj/AahQvjEcmpDbze5yOxObPJiAB1gQ0yNI4DTY6vMF0tFMejHFzd0S4CzCW34TZ+Cvy66rue6Yy3xenSmjsHj5glOejLtrVzyZd2s/BnMCu/dzznTOHRzV1tne8put9KFSP+dfn+NypdOcGwPYVsSkMUOKdHioBaGnWQIo8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZekiJBnx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E83C4CEE7;
-	Wed, 17 Sep 2025 15:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758121245;
-	bh=n8b7BCp5JPPR7LVBqJbWYtWx0G87/2qE/nO7QOyYb94=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ZekiJBnxnAXSJunQHScmVci1aFkwUH3Bh9u0Mmdtm6LfiGIzJiYiiyrRbVuPcDYEa
-	 4bmMB4DDPS7AFxpc/0yBbThk4WqvgYiBFFHbLHqF8j0CUowpoBjeiwVdh1SYCWko6j
-	 vQp5Zpuy34nWfdDsvgkhnb0pjbnps70A4bAC0ygbt/ipKVqlVSYcPuZ2d+DNBaqG/6
-	 isw3hIm43JafCd+wG7dw+Vfcm+160vOr80cswynjD94NMoapg8pp+tPArrjS266Ipf
-	 ZQPRjQ/akDXHsF8JEsIejtndCy/qZBHEbkVvk+BuL/6NuECBFhNm9uOlDEpZ8n3+LQ
-	 JriYcOrnbi1ww==
-Date: Wed, 17 Sep 2025 10:00:43 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1758121263; c=relaxed/simple;
+	bh=Hk7PlUV7DRaB6Y8+MXwxOd574HrHX06n8TKlKCQ5qK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVtdOMuZr+5lRjZuhZjHZshTwc5fJA0lvqn8eZQldoZI3Vzp7Ek4TO0HK7dp8rxDahgRHwEhAMu7VqCFkuwf6mOVDZSG0c2NKuB+TflNt9Wx9wDLYIKWFoh6vDxjBG/gj2egjhS42qNtamqQDrt+uP/4iJ9FrKVk5Z2yK5tQ724=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pI7nT7cW; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45f2d21cbabso68065e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758121260; x=1758726060; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PQv8x46eYXApZo970LUOsV6mmTMwe7go+DO7Uot/fuU=;
+        b=pI7nT7cWpyHghujHfdRux1GJ57Y/Fes0XjTFLQnMptHYAWaMVGqN2KrxcEDqHUvhEp
+         cxOTox3zZEPRb8MAzaVTwsz35vPoCD0Wl4cxmrwJYb4BVUOYvhbYdC/igJO+Tn/Wr4Nc
+         WNFGk8EPg9j9zMJY0hg82zPqZFfqGrVgZKXWZ/rrrMpqEh8zlM/Urh6HkeAkQgI2YNya
+         joC2thEW0lcWT1YVhH6AUqgWVlSyTizilikiJRFhV3qmCCt9GXlsmkQ3B0KjHygXc4qo
+         6rHMoTM9Rv+6OGkYNpKn8MHmyR0ywkTbKae27ejunqKwAJdsJizc4lHmzns97dVL6UUA
+         XM1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758121260; x=1758726060;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PQv8x46eYXApZo970LUOsV6mmTMwe7go+DO7Uot/fuU=;
+        b=We/Mw49ZxlC96eFSQ1zEVX+SkvbewrqFOL/zIY5hA0Lz2zNtbcavJOCsJpvjKxwfW1
+         O3mayAiBi/J8PEYbotE6fjvVCQf2aflkhhBV1opz5VliFJTgap+NWs7OQ3D/GyF2vkWY
+         8o0oP3y6woA0mbPaUX2I3uxGpLTMkU12qjyN0G9tZ7mWk7EKiJuhJZ4Zjd5i66AP27fl
+         HzSS7rHvJiSvnDIjVbLWm4sa+xlM0FuRCfd6wliSckdG9G9KaaUrmze+jf//lsUnlG8x
+         5IX2fOznMGYBcU4x3OcJNcgKJD3jvsURONcZ34NHboFNs2q5ZOXWb+KamOkcNJfTIS0N
+         AvJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDR5L6Js4SmBWrBqZ6WM7IXfSsZBTuG04yB9A9WRJruZJxW9WsFpk1vKtAUitvEpsJmGQycSU2g0yvvak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKLPoFciCUm0SuEh3KkPNGf4cje9OJmE8NnPD/XvbtJ5fDm691
+	s9nO2rr7a429LKYZk7s8NmZpFTMCGKGAZbY5WcmpUKS9CGJrLcOvKHEzf+khCow089kBoWEgGlD
+	3K2T2uw==
+X-Gm-Gg: ASbGnctRTsEaFel747/N/zmtIbkBP8Kxmb2PS9y8Wy1vablkStpPtVVk/VWe8RynCCP
+	uiaHnZAlWwiPvMlz+kNl8tGxkxNxGH043s+EKnJYxscvMBVJFG7O1rJ/f68hdQSUvqNmCdS9gMP
+	fYLb0KuVg1wik+tYwFUUCBb/6s5zH8RJd2p/s/kyBs2qShV4VnEJlrOeJjwPegiYgytIaXBClps
+	63glIm+QSrTteqQdAfW9webqOZiQ8uFlZsGJJTk67sOAYosonvZaIe68dvk7Obv1lE+W/0I827T
+	FjCxChfoVZrn4mL/wN7mmKWFK8tj/+j6mVzc6GdHDxcSti254nJlwYXyoSh775hVjaiuwdbZ5Ol
+	Lmfx0LS7x3dCb11LZ48hGVlrPy24WYYB0k3jehRzuKswk3RbiAxptVyG8EZfrAjzfSjCJGA==
+X-Google-Smtp-Source: AGHT+IENFLjDgY/V9nMPy/hERD3SF2EFRD4h9LqOWJ4wBVjA8e0W/iIDo4QRwD9b9SDaGu4uXHig9g==
+X-Received: by 2002:a05:600c:4850:b0:45c:b621:9199 with SMTP id 5b1f17b1804b1-461a1cdbcf5mr875645e9.7.1758121260129;
+        Wed, 17 Sep 2025 08:01:00 -0700 (PDT)
+Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-462d525fdb2sm18471915e9.13.2025.09.17.08.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 08:00:59 -0700 (PDT)
+Date: Wed, 17 Sep 2025 15:00:55 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+	joro@8bytes.org, praan@google.com
+Subject: Re: [PATCH 0/2] Move io-pgtable-arm selftest to KUnit
+Message-ID: <aMrNJw3obyu8IvBL@google.com>
+References: <20250917140216.2199055-1-smostafa@google.com>
+ <20250917144435.GE1326709@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
- Monish Chunara <quic_mchunara@quicinc.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Konrad Dybcio <konradybcio@kernel.org>, kernel@oss.qualcomm.com, 
- Conor Dooley <conor+dt@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, linux-i2c@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>, 
- Sushrut Shree Trivedi <quic_sushruts@quicinc.com>, 
- Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>, netdev@vger.kernel.org, 
- Ulf Hansson <ulf.hansson@linaro.org>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>, 
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-mmc@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-In-Reply-To: <20250916-lemans-evk-bu-v6-0-62e6a9018df4@oss.qualcomm.com>
-References: <20250916-lemans-evk-bu-v6-0-62e6a9018df4@oss.qualcomm.com>
-Message-Id: <175812100719.2051822.15573385822403919775.robh@kernel.org>
-Subject: Re: [PATCH v6 00/10] arm64: dts: qcom: lemans-evk: Extend board
- support for additional peripherals
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250917144435.GE1326709@ziepe.ca>
 
+On Wed, Sep 17, 2025 at 11:44:35AM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 17, 2025 at 02:02:01PM +0000, Mostafa Saleh wrote:
+> > Instead, we can remove the __init constraint, and be able to run the tests
+> > on-demand, and possibly compile it as a module.
+> 
+> I think you can just put the kunit in a module to avoid all this?
 
-On Tue, 16 Sep 2025 20:29:22 +0530, Wasim Nazir wrote:
-> This series extend support for additional peripherals on the Qualcomm
-> Lemans EVK board to enhance overall hardware functionality.
-> 
-> It includes:
->   - New peripherals like:
->     - I2C based devices like GPIO I/O expander and EEPROM.
->     - GPI (Generic Peripheral Interface) DMA controllers and QUPv3 controllers
->       for peripheral communication.
->     - PCIe HW with required regulators and PHYs.
->     - Remoteproc subsystems for supported DSPs.
->     - Iris video codec.
->     - First USB controller in device mode.
->     - SD card support on SDHC v5.
->     - Qca8081 2.5G Ethernet PHY.
-> 
-> Dependency:
->   - The ethernet PHY QCA8081 depends on CONFIG_QCA808X_PHY, without
->     which ethernet will not work.
-> 
-> ---
-> Changes in v6:
-> - Update commit message of patch 02/10 (v5) to reflect QUP interfaces and
->   its ports - Dmitry.
-> - Link to v5: https://lore.kernel.org/r/20250916-lemans-evk-bu-v5-0-53d7d206669d@oss.qualcomm.com
-> 
-> Changes in v5:
-> - Dropping these changes from the series, as they are already part of
->   linux-next:
->   - Audio change [1]
->   - MMC dt-bindings change 01/14 (v4)
->   - EEPROM dt-bindings change 05/14 (v4)
-> - Change bias to 'pull-up' for PCIe 'perst-pins' - Konrad.
-> - Link to v4: [2]
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/20250822131902.1848802-1-mohammad.rafi.shaik@oss.qualcomm.com/
-> [2] https://lore.kernel.org/r/20250908-lemans-evk-bu-v4-0-5c319c696a7d@oss.qualcomm.com
-> 
-> Changes in v4:
-> - Move 'bus-width' property of SDHC to Board DT and also keep the width
->   to 4 bits - Dmitry/Konrad.
-> - Update commit text of eeprom bindings to describe the reason for the
->   change 05/14 (v3) - Dmitry.
-> - Bring all tags from v3.
-> - Link to v3: https://lore.kernel.org/r/20250904-lemans-evk-bu-v3-0-8bbaac1f25e8@oss.qualcomm.com
-> 
-> Changes in v3:
-> - Re-order QUP patch 05/13 (v2) to not break i2c node enablement in patch
->   03/13 (v2) - Dmitry.
-> - Update commit text for QUP patch to highlight which all clients each
->   QUP is accessing.
-> - Add dedicated compatible for Giantec EEPROM, because usage of generic
->   compatible "atmel,24c256" alone is not advised.
-> - Update commit text for EEPROM patch 04/13 (v2) to emphasize on EEPROM
->   enablement - Konrad.
-> - Put 'reg' property after 'compatible' in Expander - Konrad.
-> - Put 'pinctrl-names' after 'pinctrl-n' in PCIe - Konrad.
-> - SDHC:
->     - Update interconnect nodes with ICC_TAG macro - Konrad.
->     - Put new lines for each entry in interrupt-names, clock-names,
->       interconnect-names - Konrad.
->     - Put bias properties below drive-strength for consistency in
->       sdc-default-state - Konrad.
->     - Move 'bus-width' property to SOC DT - Konrad.
->     - Move 'no-mmc' and 'no-sdio' properties to board DT - Dmitry/Konrad.
-> - Add 'Reviewed-by' tag from Konrad [3] on Audio patch 13/13 (v2),
->   although the commit text is changed now.
-> - Link to v2: [4]
-> 
-> [3] https://lore.kernel.org/linux-arm-msm/b4b6678b-46dd-4f57-9c26-ff0e4108bf79@oss.qualcomm.com/
-> [4] https://lore.kernel.org/r/20250903-lemans-evk-bu-v2-0-bfa381bf8ba2@oss.qualcomm.com
-> 
-> Changes in v2:
-> - Split the patch 3/5 in v1 into separate patch per author - Bjorn.
-> - Use generic node names for expander - Krzysztof.
-> - Change video firmware to 16MB comapatible - Dmitry.
-> - SDHC:
->     - Arrange SDHCI-compatible alphanumerically - Dmitry.
->     - Move OPP table and power-domains to lemans.dtsi as these are
->       part of SoC.
->     - Move bus-width to board file - Dmitry.
->     - Change 'states' property to array in vreg_sdc and also re-arrange
->       the other properties.
-> - Remove the redundant snps,ps-speed property from the ethernet node as
->   the MAC is actually relying on PCS auto-negotiation to set its speed
->   (via ethqos_configure_sgmii called as part of mac_link_up).
-> - Refine commit text for audio patch - Bjorn.
-> - Link to v1: https://lore.kernel.org/r/20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com
-> 
-> ---
-> Krishna Kurapati (1):
->       arm64: dts: qcom: lemans-evk: Enable first USB controller in device mode
-> 
-> Mohd Ayaan Anwar (1):
->       arm64: dts: qcom: lemans-evk: Enable 2.5G Ethernet interface
-> 
-> Monish Chunara (3):
->       arm64: dts: qcom: lemans: Add SDHC controller and SDC pin configuration
->       arm64: dts: qcom: lemans-evk: Add EEPROM and nvmem layout
->       arm64: dts: qcom: lemans-evk: Enable SDHCI for SD Card
-> 
-> Nirmesh Kumar Singh (1):
->       arm64: dts: qcom: lemans-evk: Add TCA9534 I/O expander
-> 
-> Sushrut Shree Trivedi (1):
->       arm64: dts: qcom: lemans-evk: Enable PCIe support
-> 
-> Vikash Garodia (1):
->       arm64: dts: qcom: lemans-evk: Enable Iris video codec support
-> 
-> Viken Dadhaniya (1):
->       arm64: dts: qcom: lemans-evk: Enable GPI DMA and QUPv3 controllers
-> 
-> Wasim Nazir (1):
->       arm64: dts: qcom: lemans-evk: Enable remoteproc subsystems
-> 
->  arch/arm64/boot/dts/qcom/lemans-evk.dts | 365 ++++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/lemans.dtsi    |  92 ++++++++
->  2 files changed, 457 insertions(+)
-> ---
-> base-commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
-> change-id: 20250814-lemans-evk-bu-ec015ce4080e
-> 
-> Best regards,
-> --
-> Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> 
-> 
-> 
+Yes, I don’t see the point of trying to run everything from __init,
+relaxing that allows us to use more of the kunit infrastructure.
+But, it’s more code to do so (it’s just longer to explain :)),
+I can add a patch in between, modularizing the selftest before kunit.
 
+> 
+> alloc_io_pgtable_ops() is always exported, and I didn't notice any
+> symbols crossing from io-pgtable-arm-selftests.c to io-pgtable-arm??
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+No there is not.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Thanks,
+Mostafa
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit c3067c2c38316c3ef013636c93daa285ee6aaa2e
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250916-lemans-evk-bu-v6-0-62e6a9018df4@oss.qualcomm.com:
-
-arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: displayport-controller@af54000 (qcom,sa8775p-dp): clocks: [[251, 1], [251, 11], [251, 15], [251, 18], [251, 19]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: displayport-controller@af54000 (qcom,sa8775p-dp): clocks: [[250, 1], [250, 11], [250, 15], [250, 18], [250, 19]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/sa8775p-ride.dtb: displayport-controller@af5c000 (qcom,sa8775p-dp): clocks: [[251, 1], [251, 28], [251, 32], [251, 35], [251, 36]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride.dtb: displayport-controller@af5c000 (qcom,sa8775p-dp): clocks: [[250, 1], [250, 28], [250, 32], [250, 35], [250, 36]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: displayport-controller@af54000 (qcom,sa8775p-dp): clocks: [[250, 1], [250, 11], [250, 15], [250, 18], [250, 19]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dtb: displayport-controller@af5c000 (qcom,sa8775p-dp): clocks: [[250, 1], [250, 28], [250, 32], [250, 35], [250, 36]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: displayport-controller@af54000 (qcom,sa8775p-dp): clocks: [[251, 1], [251, 11], [251, 15], [251, 18], [251, 19]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/lemans-evk.dtb: displayport-controller@af54000 (qcom,sa8775p-dp): clocks: [[236, 1], [236, 11], [236, 15], [236, 18], [236, 19]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: displayport-controller@af5c000 (qcom,sa8775p-dp): clocks: [[251, 1], [251, 28], [251, 32], [251, 35], [251, 36]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/lemans-evk.dtb: displayport-controller@af5c000 (qcom,sa8775p-dp): clocks: [[236, 1], [236, 28], [236, 32], [236, 35], [236, 36]] is too short
-	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
-arch/arm64/boot/dts/qcom/lemans-evk.dtb: ethernet@23040000 (qcom,sa8775p-ethqos): Unevaluated properties are not allowed ('interconnect-names', 'interconnects' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
-
-
-
-
-
+> 
+> Jason
 
