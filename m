@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-820273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43709B7D803
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE29B7D5EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0849617E718
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F1C84E19F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08B7306487;
-	Wed, 17 Sep 2025 08:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6576305E0A;
+	Wed, 17 Sep 2025 08:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kGmkMkmt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B82kULZG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAC6285CA9;
-	Wed, 17 Sep 2025 08:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B37027EFFA;
+	Wed, 17 Sep 2025 08:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758098858; cv=none; b=ZV4YCksEQrfiKhcs1vLiDI22S04spf5CFDOwouVWDtecRaOQFKtkPmGm2axlOv3BD07ZYu1wYgtqy8SA8WdXYiB37wVA4uzjOP4xgQ6bmCnBYu4NHtJstoU4R9ex6TRrvhZl3kFkWcPT/QpjZfGw9ogRfqyPfAeRTfZ6MRY63j4=
+	t=1758098903; cv=none; b=kPw5VQSOYw6kBulhB0mVPiFx95dky318gPdn+GeeVrEQcXnXgU35Dvl6ssMtNKft/QDFkMUhUZjRwoyGeIu9l2aM1hKkP8KerytWMXmW0nZcBtTqFldm/dih0WMaXl6jWdGdt+y/+GdzNY/OD9xYb4PJSi4cqGL4vWMRvcISeHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758098858; c=relaxed/simple;
-	bh=WkzohTudC0x+vl+4/fcJ6KBEZ7BqS45IMhaCRsr5tz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxKquFE/RCmBF/dD7kf0Bj5KOPTYi/O/gKmDH5sRUR1IXggXljkdXe7LfyIcvL0BLs8gIsVnjtnKR+dZrmn/E6y0zu7wWIHxFai83b32xGs59axQz9WEL6PzjeeFSDHS8ADVcRd9mXf6QCrbwA/UvXAw0T7YlaBg7YfOW8GAVSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kGmkMkmt; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758098856; x=1789634856;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WkzohTudC0x+vl+4/fcJ6KBEZ7BqS45IMhaCRsr5tz4=;
-  b=kGmkMkmtRUZONGElO2fp7izoEdkxJZ+BIQdAzYcE+JM5Q7aK8PYySyQA
-   DlQ0LOvGVoKmjaTuwZs0Di8wu+uG4Wt7qeFvnt+Q907OTjKuEG2nKeuUe
-   ElNTyijAilu8h1cBDvOt124QIAO7NJpEpbfyjMylYh77rR39pF+KdxNDm
-   c33RjeQBNWKW4Qy4IxIVB06oaKkfOzJmouAmUGjwZkEEWoFr8jqzV5xCF
-   2PGS8eZl5O++DwYrqyV4TSe6PPPsdoC4qpm8dOdQ6DzWnU1OwAgi4FSdc
-   NbIrwuMR7t2unos2KeyTZ9paqChUMalYxx67zTSH8czc+LfD5U08lBJ3y
-   g==;
-X-CSE-ConnectionGUID: dKY9MTl4SveKOaV5bj0bow==
-X-CSE-MsgGUID: Mei8hZy3QaiOsA0bCmj2fg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="64215358"
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="64215358"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:47:36 -0700
-X-CSE-ConnectionGUID: 4kOutKrdR4+/3lllUWX+dQ==
-X-CSE-MsgGUID: oiC2OLyRQe2kCrB/Zsl4cQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="175101917"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:47:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uynp5-00000003l5i-0dqx;
-	Wed, 17 Sep 2025 11:47:31 +0300
-Date: Wed, 17 Sep 2025 11:47:30 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] iio: ABI: document accelerometer event attributes
-Message-ID: <aMp1orvA-SSSZeN2@smile.fi.intel.com>
-References: <20250916-bmi270-v6-0-6acd8d26a862@gmail.com>
- <20250916-bmi270-v6-2-6acd8d26a862@gmail.com>
+	s=arc-20240116; t=1758098903; c=relaxed/simple;
+	bh=iwfyvsXvjemSs8NGZTUJivWchTPlegpRIGmh6EEMldc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cyvKrbOhyclCIGkiv+NG0gVS6ijRvkqWPVoT/71jo4jvOroMekgiMSxJ/UoZ2XkmjdRAPQZIuiKPm9Y3iztlsQoB+YBMQfUpFuMZiTUNi0Qbr6YHcCYWCghESht8TXGzqHFkk7EKB+Hhjd9wgheh1exeJe9ZBri6iV+JREH4uZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B82kULZG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6D79C4CEF7;
+	Wed, 17 Sep 2025 08:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758098903;
+	bh=iwfyvsXvjemSs8NGZTUJivWchTPlegpRIGmh6EEMldc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=B82kULZGMIivsbQvojRzNVID3EXweoN8jE8E/p7tNM0zV1wTYROnzd89QDB6D0Heu
+	 G62wFozrAPZ5bGabQwdXANwbb39xen/voiu0sJmtHernEd38yjMYnOMDX9Hsq39Tpr
+	 zsHIbwlVFXjHFFpTblrEo5SvE9sxqxJB8nrRgR0+BsNFcCFCK8Y15YRDbK+tNwsAu+
+	 qyHZxhpOu2OkPkj70lHwemPBW33zpomBHUQhgOpIfW6EHBNAuGwZaqYht65pHeUDJd
+	 e4gujxuHguCTss6ZObciVT5/GT2H6/ez/Kp5t4qkUxcvGAuIWaQ9oui942BE4pCgb6
+	 8QLgf1YmBENCw==
+Date: Wed, 17 Sep 2025 10:48:18 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/21] scripts: check-variable-fonts.sh: convert to
+ Python
+Message-ID: <20250917104818.62862b48@foz.lan>
+In-Reply-To: <52932ede-eb04-4275-a051-952bc2859cf6@gmail.com>
+References: <8a77212d5459eac2a98db442691930425a2cbefd.1758018030.git.mchehab+huawei@kernel.org>
+	<52932ede-eb04-4275-a051-952bc2859cf6@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-bmi270-v6-2-6acd8d26a862@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 08:38:24PM -0300, Gustavo Silva wrote:
-> Add ABI documentation for accelerometer event-related sysfs attributes
-> exposed by the bmi270 driver. These include threshold, period, and
-> enable controls for adaptive magnitude (any-motion) and rate of change
-> (no-motion) event detection.
+Em Wed, 17 Sep 2025 10:09:05 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-...
+> On Tue, 16 Sep 2025 12:22:40 +0200, Mauro Carvalho Chehab wrote:
+> > This script handle errors when trying to build translations
+> > with make pdfdocs.
+> > 
+> > As part of our cleanup work to remove hacks from docs Makefile,
+> > convert this to python, preparing it to be part of a library
+> > to be called by sphinx-build-wrapper.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> 
+> I could apply up to 05/21 of v6 and did some quick tests under
+> Fedora (where Noto CJK VF fonts are installed).
+> 
+> At 3/21, "./scripts/check-variable-fonts.sh" doesn't say a word.
+> 
+> At 4/21, "./scripts/check-variable-fonts.py" complains:
 
-> What:		/sys/.../iio:deviceX/events/in_accel_y_roc_rising_en
+I got a little bit confused with the above. I guess you picked the
+wrong patch numbers, but yeah, there is a bisect issue, caused by
+the part reorder I did moving this change to happen before adding
+the script. Basically, I updated docs Makefile the wrong way.
 
->  What:		/sys/.../iio:deviceX/events/in_accel_y_roc_falling_en
->  What:		/sys/.../iio:deviceX/events/in_accel_z_roc_rising_en
->  What:		/sys/.../iio:deviceX/events/in_accel_z_roc_falling_en
-> +What:		/sys/.../iio:deviceX/events/in_accel_x&y&z_roc_rising_en
->  What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_rising_en
->  What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_falling_en
->  What:		/sys/.../iio:deviceX/events/in_anglvel_y_roc_rising_en
+Thanks for pointing it!
 
-> What:		/sys/.../events/in_accel_y_raw_thresh_rising_value
+For v7 I'll ensure that all patches will properly print the suggestions
+from the script.
 
->  What:		/sys/.../events/in_accel_y_raw_thresh_falling_value
->  What:		/sys/.../events/in_accel_z_raw_thresh_rising_value
->  What:		/sys/.../events/in_accel_z_raw_thresh_falling_value
-> +What:		/sys/.../events/in_accel_mag_adaptive_rising_value
->  What:		/sys/.../events/in_anglvel_x_raw_thresh_rising_value
->  What:		/sys/.../events/in_anglvel_x_raw_thresh_falling_value
->  What:		/sys/.../events/in_anglvel_y_raw_thresh_rising_value
+> =============================================================================
+> XeTeX is confused by "variable font" files listed below:
+>     /usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+>     /usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+>     /usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+> 
+> For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
+> Or, CJK pages can be skipped by uninstalling texlive-xecjk.
+> 
+> For more info on denylisting, other options, and variable font, see header
+> comments of scripts/check-variable-fonts.py.
+> =============================================================================
+> 
+> Of course, I have followed the suggestions in the header comments.
 
-> +What:		/sys/.../events/in_accel_roc_rising_value
->  What:		/sys/.../events/in_accel_x_raw_roc_rising_value
->  What:		/sys/.../events/in_accel_x_raw_roc_falling_value
->  What:		/sys/.../events/in_accel_y_raw_roc_rising_value
+I didn't try to follow the suggestions to solve the issue on Fedora yet.
+It is on my todo list to test it.
 
->  What:		/sys/.../events/in_accel_x_thresh_rising_period
->  What:		/sys/.../events/in_accel_x_thresh_falling_period
-> +What:		/sys/.../events/in_accel_roc_rising_period
->  What:		/sys/.../events/in_accel_x_roc_rising_period
->  What:		/sys/.../events/in_accel_x_roc_falling_period
->  What:		/sys/.../events/in_accel_y_thresh_rising_period
+The new script has an exact copy of the instructions of the previous one.
 
-With the given context (above and below) I'm not sure this is the best place of
-putting an attribute in the list. Perhaps something below will not disrupt the
-xyz structure (like mag cases)?
+So, up to patch 09/21 from this series, there won't be any change at
+doc build, except for the script conversion and some code cleanups
+and reordering.
 
-> What:		/sys/.../events/in_accel_z_thresh_rising_period
+Patch 09/21 moves the env logic of FONTS_CONF_DENY_VF to the wrapper.
+So, in thesis, fixing it before-after the series shouldn't have any
+impact (I didn't test yet. Will do on my next respin). Btw, we should
+probably document it at make help.
 
->  What:		/sys/.../events/in_accel_z_thresh_falling_period
->  What:		/sys/.../events/in_accel_z_roc_rising_period
->  What:		/sys/.../events/in_accel_z_roc_falling_period
-> +What:		/sys/.../events/in_accel_mag_adaptive_rising_period
->  What:		/sys/.../events/in_anglvel_x_thresh_rising_period
->  What:		/sys/.../events/in_anglvel_x_thresh_falling_period
->  What:		/sys/.../events/in_anglvel_x_roc_rising_period
+If the instructions from the header is wrong, we need to update it
+on a separate patch series.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> So I have to NAK on 4/21.
+> 
+> Regards,
+> Akira
+> 
 
 
+
+Thanks,
+Mauro
 
