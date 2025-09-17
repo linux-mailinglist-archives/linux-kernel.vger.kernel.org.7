@@ -1,60 +1,65 @@
-Return-Path: <linux-kernel+bounces-820686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF19B7DF49
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:38:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8851AB7DFD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E60E17B4A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:36:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E5358749B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED56A1F09B3;
-	Wed, 17 Sep 2025 12:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE20C2F39BC;
+	Wed, 17 Sep 2025 12:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhyHl4V5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MF8oaL0u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049A118BBAE;
-	Wed, 17 Sep 2025 12:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36960238140;
+	Wed, 17 Sep 2025 12:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758112670; cv=none; b=KfrbSBzLuGgYFVR4iZ66eJW6bbQ+UMVZdGHhdC+I3IBsDiePOoGDijYctZEhQKnx5pPxlNYjHIG5m4fU4Q/BBhlSqS4jFbITF7Ay48mHmP3vfWPL6zoffTUI6S00y4DKX4+5apgx2Sk3ZG+fRLpuF4+9qFtlcocgo/4Ib8UF7Vc=
+	t=1758112692; cv=none; b=Poai1bf7LBkB8mXiDpZTc1Ygls7ITxqRuYC78vvU16fXLLTSslywt+9AZN9QDtPKtspxMn/0KIeWvzmrj9jT0zBQ+FXBJHTuUlg8Id36KAfNItSOhAoLDHuO/Dt1TlUBrUo4V+H6OJTbSNOCxBax8ciVHuoBmyCsiQ6gkEu0kuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758112670; c=relaxed/simple;
-	bh=KmE6GFJA9XfhK+PXLx0nlAJebkPR9q5xDm8AcowCOQg=;
+	s=arc-20240116; t=1758112692; c=relaxed/simple;
+	bh=njQagFFNmXLDsU0106/ybuoQRu4ry9/hROx7T9egjxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGRuW4Kt9pB2RvJo+vCXqXcyre4CKaXWEWp2iZ1EkY13lSNHHv9kClPSQe6XTOiNDfrWPuXsK21USYkbq4ahVPlY344jti8EKnxHejOMe13iizI5UdyAv5JhuMJiFylshw2bwTezB8XCXRy3Y0LA9JLlp+iwEGXKAu8p3gpPSS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhyHl4V5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B673C4CEF0;
-	Wed, 17 Sep 2025 12:37:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GogadFq9YaGk46JR+01vTSYFxrnCOSY6CdiC4+OBbDlYtb2FiAReRzY5p1FC4Oqo7wF9h76vKI5aYDEr/59jc//wUoNwqvfml1cCvUxlCOGFDOP6pPSEIgJqzs82oRGBDKL429jg2fcTg4vwWUdqMj610P5FBG1vTycuSmEq1J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MF8oaL0u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0E4C4CEF7;
+	Wed, 17 Sep 2025 12:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758112669;
-	bh=KmE6GFJA9XfhK+PXLx0nlAJebkPR9q5xDm8AcowCOQg=;
+	s=k20201202; t=1758112691;
+	bh=njQagFFNmXLDsU0106/ybuoQRu4ry9/hROx7T9egjxo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RhyHl4V5kJ2LdJKzcEBOz7Wkwc9LVirxwz4tp5A1yiYfBGlY46LjoCkFAJ4IAkzUi
-	 p/jloLsW//HzEuIsFBgfidqKV9NnM4glvediAVJ6v3H8dHwn35EQccl4XSluHEw/+y
-	 CXMP5opyDF63z2J+fgPShI3XrZFByyazRYZG8qVJi+hrdP3B3TKm/bTNiPRXI1AHJP
-	 qtGL4ckNON+dG9sBZnzPPsMY+Ha/dqz5yYYjMmiwSpO5+FA667rP+BfeZqko11QiFA
-	 pEe/JvFXqKkJxAy9nHbwOoibAsDL86DzA8Cqp/p0F57riluMCU8fpba7cRLruNkFUa
-	 oQcKvEfAYNxog==
-Date: Wed, 17 Sep 2025 09:37:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Gautam Menghani <gautam@linux.ibm.com>, peterz@infradead.org,
-	mingo@redhat.com, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	maddy@linux.ibm.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] perf python: Add an example for sampling
-Message-ID: <aMqrmmDG65BGeZp0@x1>
-References: <20250728055937.58531-1-gautam@linux.ibm.com>
- <aMlmiHATn5WHUcSM@mac.in.ibm.com>
- <aMm5uvPsMfXEv8Oo@x1>
- <CAP-5=fW4JQYJ2NCRsRVePidCcZ9+JcQbfY=xQ00xZG-bSn96ew@mail.gmail.com>
+	b=MF8oaL0uphBz+qhs3WC3BNMbMAOKI3ee9eEd/ZshuvwwEgPEjzDPSfnEC09lVhfQL
+	 FQK7c9HzvmaoTpE/8ZxQRRlcWSJ7cUEevMH7JJZGA6pHlawQOLK7aJrnBHVWYahnu/
+	 df2z1DtH/sfueiZ3KLcNWHqWZnKB5e17sRjwY4JnxGNIX578u4ApLMqaemI2qA1EL6
+	 HVzUoeYeaJewBmvnkL0yy1h7+1jjuUdWN4OiGnWTm/YwcEtFk0bkMDf5W4I43ReV1X
+	 +opOw/8u2BHWillMaGWO9FHKhyaA+KnQvwl6VG3DNWXVBPGnrvymDbCj+poyvWSJYv
+	 qm1jgNPdJnx4w==
+Date: Wed, 17 Sep 2025 14:38:06 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
+ vmlinux.unstripped
+Message-ID: <aMqrrjXZxYXN0zdY@example.org>
+References: <cover.1755535876.git.legion@kernel.org>
+ <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
+ <aMeqgPVfJcjBLhl8@levanger>
+ <aMkN1m55vejTii_H@example.org>
+ <aMkvtg55F1gJ5feM@levanger>
+ <aMlKTPpNXrRW6v_7@example.org>
+ <aMlbSEnwGOPM39Op@levanger>
+ <aMqhuFQGAGtYFbRV@levanger>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,167 +69,92 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fW4JQYJ2NCRsRVePidCcZ9+JcQbfY=xQ00xZG-bSn96ew@mail.gmail.com>
+In-Reply-To: <aMqhuFQGAGtYFbRV@levanger>
 
-On Tue, Sep 16, 2025 at 01:07:43PM -0700, Ian Rogers wrote:
-> On Tue, Sep 16, 2025 at 12:25 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Tue, Sep 16, 2025 at 07:00:48PM +0530, Gautam Menghani wrote:
-> > > Hi Ian/Arnaldo,
-> > >
-> > > Can you please review this series and let me know if any changes are
-> > > needed?
-> >
-> > Looking at it now, sry for the delay,
+On Wed, Sep 17, 2025 at 01:55:36PM +0200, Nicolas Schier wrote:
+> On Tue, Sep 16, 2025 at 02:42:48PM +0200, Nicolas Schier wrote:
+> > On Tue, Sep 16, 2025 at 01:30:20PM +0200, Alexey Gladkov wrote:
+> ...
+> > > I think in the case of .modinfo, we can change the flag in the section
+> > > since we are going to delete it anyway.
+> > > 
+> > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > > index dbbe3bf0cf23..9a118b31d0dc 100644
+> > > --- a/scripts/Makefile.vmlinux
+> > > +++ b/scripts/Makefile.vmlinux
+> > > @@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> > >  remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> > >  
+> > >  quiet_cmd_strip_relocs = OBJCOPY $@
+> > > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+> > > +      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< && \
+> > > +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+> > >                           $(remove-symbols) $< $@
+> > >  
+> > >  targets += vmlinux
+> > 
+> > Ah, great!  I thought we had to fiddle around with linker scripts et al.
+> > I needed to use an intermediate file:
+> > 
+> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > index e2ceeb9e168d..516d51ca634b 100644
+> > --- a/scripts/Makefile.vmlinux
+> > +++ b/scripts/Makefile.vmlinux
+> > @@ -90,6 +90,9 @@ remove-section-y                                   := .modinfo
+> >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> >  
+> >  quiet_cmd_strip_relocs = OBJCOPY $@
+> > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $< $@
+> > +      cmd_strip_relocs = set -e; \
+> > +                        trap 'rm $<.noload' EXIT HUP INT; \
+> > +                        $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $<.noload && \
+> > +                        $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $<.noload $@
+> >  
+> >  targets += vmlinux
 > 
-> I think the patches look good. I'm a little concerned that the python
-> APIs are a chance to do something better than the C APIs that have
-> evolved. For example, we removed UID out of target recently [1] as the
-> BPF alternative was better. Had this patch come earlier then it seems
-> likely we'd have had target with UIDs. I wonder rather than having a
-> kwlist of:
+> I'd like to suggest another version closer to yours, as mine has several flaws:
 > 
-> + static char *kwlist[] = { "target", "inherit_stat", "no_buffering",
-> "no_inherit",
-> + "no_inherit_set", "no_samples", "raw_samples",
-> + "sample_address", "sample_phys_addr", "sample_data_page_size",
-> + "sample_code_page_size", "sample_weight", "sample_time",
-> + "sample_time_set", "sample_cpu", "sample_identifier",
-> + "sample_data_src", "period", "period_set", "running_time",
-> + "full_auxtrace", "auxtrace_snapshot_mode",
-> + "auxtrace_snapshot_on_exit", "auxtrace_sample_mode",
-> + "record_namespaces", "record_cgroup", "record_switch_events",
-> + "record_switch_events_set", "all_kernel", "all_user",
-> + "kernel_callchains", "user_callchains", "tail_synthesize",
-> + "overwrite", "ignore_missing_thread", "strict_freq", "sample_id",
-> + "no_bpf_event", "kcore", "text_poke", "build_id", "freq",
-> + "mmap_pages", "auxtrace_mmap_pages", "user_freq", "branch_stack",
-> + "sample_intr_regs", "sample_user_regs", "default_interval",
-> + "user_interval", "auxtrace_snapshot_size", "auxtrace_snapshot_opts",
-> + "auxtrace_sample_opts", "sample_transaction", "use_clockid",
-> + "clockid", "clockid_res_ns", "nr_cblocks", "affinity", "mmap_flush",
-> + "comp_level", "nr_threads_synthesize", "ctl_fd", "ctl_fd_ack",
-> + "ctl_fd_close", "synth", "threads_spec", "threads_user_spec",
-> + "off_cpu_thresh_ns",  NULL };
+> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> index dbbe3bf0cf23..9a118b31d0dc 100644
+> --- a/scripts/Makefile.vmlinux
+> +++ b/scripts/Makefile.vmlinux
+> @@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+>  remove-symbols := -w --strip-symbol='__mod_device_table__*'
+>  
+>  quiet_cmd_strip_relocs = OBJCOPY $@
+> -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+> +      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
+> +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+>                           $(remove-symbols) $@
+>  
+>  targets += vmlinux
 > 
-> but then just using this subset:
 > 
-> +    opts = perf.record_opts(freq=1000, target=tgt, sample_time=True,
-> +                            sample_cpu=True, no_buffering=True,
-> no_inherit=True)
 > 
-> The kwlist should be kept to just those necessary values for the
-> example to work? I kind of see this as Arnaldo's baby, so he may just
-> want everything, so this needn't be a blocker.
+> Rationale (mainly for myself to not walk into that trap too often again):
 > 
-> Bigger picture I wonder about migrating the `perf script` code to just
-> being regular python programs like the example here.
+>   * Use ';' instead of '&&' as 'cmd_' is evaluated in a 'set -e'
+>     environment ('cmd') and thus '&&' may hide a possible error exit
+>     code.
 
-You mean:
+No, it can't hide exit code. The exit code will be correct even if
+‘set -e’ is not used.
 
-acme@number:~/git/perf-tools-next$ ls -la tools/perf/scripts/python/
-total 452
-drwxr-xr-x. 1 acme acme    902 Aug 20 14:18 .
-drwxr-xr-x. 1 acme acme     30 Sep 17 09:27 ..
--rwxr-xr-x. 1 acme acme  11865 Aug 20 14:06 arm-cs-trace-disasm.py
-drwxr-xr-x. 1 acme acme   1640 Aug 20 14:18 bin
--rw-r--r--. 1 acme acme   2461 Apr 16 10:06 check-perf-trace.py
--rw-r--r--. 1 acme acme   7923 Apr 16 10:06 compaction-times.py
--rw-r--r--. 1 acme acme   7497 Apr 16 10:06 event_analyzing_sample.py
--rwxr-xr-x. 1 acme acme 157369 Aug 20 14:18 exported-sql-viewer.py
--rw-r--r--. 1 acme acme  39845 Apr 16 10:06 export-to-postgresql.py
--rw-r--r--. 1 acme acme  24671 Apr 16 10:06 export-to-sqlite.py
--rw-r--r--. 1 acme acme   2173 Apr 16 10:06 failed-syscalls-by-pid.py
--rwxr-xr-x. 1 acme acme  10377 Aug 20 14:18 flamegraph.py
--rw-r--r--. 1 acme acme   1717 Apr 16 10:06 futex-contention.py
--rw-r--r--. 1 acme acme  13302 Apr 16 10:06 gecko.py
--rw-r--r--. 1 acme acme  14636 Apr 16 10:06 intel-pt-events.py
--rw-r--r--. 1 acme acme   3395 Apr 16 10:06 libxed.py
--rw-r--r--. 1 acme acme   4230 Aug 20 14:13 mem-phys-addr.py
--rw-r--r--. 1 acme acme  15420 Aug 20 14:05 netdev-times.py
--rwxr-xr-x. 1 acme acme   1833 Apr 16 10:06 net_dropmonitor.py
--rwxr-xr-x. 1 acme acme  30683 Aug 20 14:05 parallel-perf.py
-drwxr-xr-x. 1 acme acme     34 Sep 17 09:27 Perf-Trace-Util
--rw-r--r--. 1 acme acme   4509 Apr 16 10:06 powerpc-hcalls.py
--rw-r--r--. 1 acme acme  12095 Apr 16 10:06 sched-migration.py
--rw-r--r--. 1 acme acme   2183 Apr 16 10:06 sctop.py
--rwxr-xr-x. 1 acme acme   4408 Apr 16 10:06 stackcollapse.py
--rw-r--r--. 1 acme acme   2444 Apr 16 10:06 stat-cpi.py
--rw-r--r--. 1 acme acme   2055 Apr 16 10:06 syscall-counts-by-pid.py
--rw-r--r--. 1 acme acme   1673 Apr 16 10:06 syscall-counts.py
--rwxr-xr-x. 1 acme acme  34014 Apr 16 10:06 task-analyzer.py
-acme@number:~/git/perf-tools-next$
+$ (exit 0) && (exit 2) && (exit 3); echo $?
+2
 
-And then make:
+Actually ‘&&’ is protection against the absence of ‘set -e’.
 
-acme@number:~/git/perf-tools-next$ perf script -l
-List of available trace scripts:
-  compaction-times [-h] [-u] [-p|-pv] [-t | [-m] [-fs] [-ms]] [pid|pid-range|comm-regex] display time taken by mm compaction
-  event_analyzing_sample               analyze all perf samples
-  export-to-postgresql [database name] [columns] [calls] export perf data to a postgresql database
-  export-to-sqlite [database name] [columns] [calls] export perf data to a sqlite3 database
-  failed-syscalls-by-pid [comm]        system-wide failed syscalls, by pid
-  flamegraph                           create flame graphs
-  futex-contention                     futext contention measurement
-  gecko                                create firefox gecko profile json format from perf.data
-  intel-pt-events                      print Intel PT Events including Power Events and PTWRITE
-  mem-phys-addr                        resolve physical address samples
-  net_dropmonitor                      display a table of dropped frames
-  netdev-times [tx] [rx] [dev=] [debug] display a process of packet and processing time
-  powerpc-hcalls                       
-  sched-migration                      sched migration overview
-  sctop [comm] [interval]              syscall top
-  stackcollapse                        produce callgraphs in short form for scripting use
-  syscall-counts-by-pid [comm]         system-wide syscall counts, by pid
-  syscall-counts [comm]                system-wide syscall counts
-  task-analyzer                        analyze timings of tasks
-  failed-syscalls [comm]               system-wide failed syscalls
-  rw-by-file <comm>                    r/w activity for a program, by file
-  rw-by-pid                            system-wide r/w activity
-  rwtop [interval]                     system-wide r/w top
-  wakeup-latency                       system-wide min/max/avg wakeup latency
-acme@number:~/git/perf-tools-next$
+>   * Create 'vmlinux' already with the first objcopy and let the second
+>     one modify it in order to not need a temporary file; iff one or the
+>     other objcopy exists with an error exit code, the 'set -e + trap'
+>     ('delete-on-interrupt') shell will remove a possibly existing
+>     vmlinux file.
 
-And make:
+That makes totally sense. This will avoid a temporary file. I will use it
+in the new version.
 
-perf script rwtop
+-- 
+Rgrds, legion
 
-Just call 'python PATH_TO_PYTHON_SCRIPTS/rwtop.py' transparently?
-
-That looks interesting indeed, that way we would stop linking with
-libpython, etc.
-
-I wonder if there are out of tree scripts using the current tools/perf/util/scripting-engines/trace-event-python.c
-mechanism...
-
-But even that can fallback to a python based mechanism, right?
-
-Import the script, if it has a given structure, use the new way, if not,
-call a glue that reads the events and feed to the old style code.
-
-Seems doable and would save code on the main perf binary and headaches
-with the libpython and libperl build processes.
-
-- Arnaldo
-
-> I sent out
-> deprecating the libperl code to this ends (looking for reviews):
-> https://lore.kernel.org/linux-perf-users/20250908181918.3533480-1-irogers@google.com/
-> The issue is that `perf script` being the main thread inhibits things
-> like textual running until trace_end. This means we can't do things
-> like incremental loading support. We may want to make the perf events
-> support something like an asyncio interface for that.
-> 
-> Refactoring that support will likely raise backward compatibility
-> concerns. It'd be a really nice thing to do as the API has some fairly
-> major overheads like turning everything in a sample into a Dict
-> whether needed or not:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/util/scripting-engines/trace-event-python.c#n838
-> I mention this just to say why I'd like to minimize the API when possible.
-> 
-> Thanks,
-> Ian
-> 
-> [1] https://lore.kernel.org/r/20250604174545.2853620-10-irogers@google.com
 
