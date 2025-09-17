@@ -1,255 +1,216 @@
-Return-Path: <linux-kernel+bounces-820011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408A5B7F640
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:36:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7E1B8005C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4AA523822
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:59:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA11B1C001D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 05:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064DE27467F;
-	Wed, 17 Sep 2025 05:59:19 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22FD27FD48;
+	Wed, 17 Sep 2025 05:59:25 +0000 (UTC)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474CD26A0C6;
-	Wed, 17 Sep 2025 05:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E83270EBC
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758088758; cv=none; b=U91QrxcAOFok39e/sQoZxFQ4axNPYjt7J7FoNJzjP23BW+vjcIDf5BwAVfMRsT36MOU+lnstt1wrMXy3EAiFPYTcD8hrR5Linwyasuchls2qCie5hHM52n4MDkqaPxaKF4P1tgoycAU0tV/UKyVqbRo0NF4MMYayL88fcc3hjT4=
+	t=1758088765; cv=none; b=rfRJBJSX6X6IZ8sGZ+uXVqY4zxohFGtYQPy30aNZCPW+G1U5w5yQEKYlWtjoyRZTiFepzhj35p7Bsqrhuk/ZHJzXAEbX7H1iDdCFcThLXFReaFj+7YHwbQqBI53x7t1QWKefWKy4qHEkvBuQEDhmqFVbRKEaKkAm2JplyF544do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758088758; c=relaxed/simple;
-	bh=irGb2tCK8V9AXriyo2po71taRAj7Acd6lGMFqXqOAtk=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=uuHLYl8BREG2AcM9tkEAYccmJPeO6jLdq2Ds1uK0dI70Tx12CZzMuC/lw27FGsr0t23qJZ9I4zakye2Sq0rt/JodA2ksYGaJtUKWyoX8o28ksVQj3h2HJN8RU0I7shmdVdmm7neFHZ/xM3xVmEPfIoOFHz0UlW60OAKkCg15ehs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cRSl51lRZz5PM3X;
-	Wed, 17 Sep 2025 13:59:13 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 58H5x1Dm042421;
-	Wed, 17 Sep 2025 13:59:01 +0800 (+08)
-	(envelope-from wang.yaxin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 17 Sep 2025 13:59:03 +0800 (CST)
-Date: Wed, 17 Sep 2025 13:59:03 +0800 (CST)
-X-Zmail-TransId: 2afc68ca4e2789d-71caf
-X-Mailer: Zmail v1.0
-Message-ID: <20250917135903668qgqF-5_MhJ7vCMmdlgxiX@zte.com.cn>
-In-Reply-To: <20250917135406432vKZ2pELx-bRkvOdfP10Zb@zte.com.cn>
-References: 20250917135406432vKZ2pELx-bRkvOdfP10Zb@zte.com.cn
+	s=arc-20240116; t=1758088765; c=relaxed/simple;
+	bh=8R658MgjSKQ6OjkgZybldgeN9jzE69wFj18W4yvtA1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NjmH5V/h3BtivTaBDM51XUsPQwnFr6Rty2tu1jaCj8x95vHxsVhHA/hoTryZ519VTmKx3zn/6k+HdO+Yjbi5ynTUr8KH8Ka5xtFjhzwtGLKpRAF6auk1gxhJvAYnv4ekSTfAvzC0DqDXMzTKKeouVn/8HV26NwA23axK4Y+c2fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso44942085e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:59:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758088762; x=1758693562;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XlrrbpNOChtNjzl9J83pPts581jGsxoyMpwY2SqwJY4=;
+        b=DwCOT9Nl8PNjflvEIuZASUhmMfcJozQWvkGHTaBxN2i5l8RxGaVFyZo7wFwuoasa1x
+         TcLt8TbQjYKU/5PJ2Lsj5DgIojavPdowIzZQMFIJfWcWHSM0/9tHg2qnvlgzjKIWN2kX
+         JNNl0HL0hS95BwN4gH1PeuR5J3HiUoij7AWjf5vfZUskJFv5SKihLL8zVUv+JnyK2hlI
+         Nn2QCHPoRHL3kpOfKwaFE7ki7MBuJk/aJLKCvDjVEz0w989SY7zpLYjvbtNwV/KBRvZq
+         Yidq6WFomQz1OLyZPMR6/ng4fn8JtjHFqT1+otKHQl0dW4W1J5vaWtoKwIPn41BVEQgm
+         FM9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWYKFm54f2Fq0sixxoZ/J/dvhl6ic6mXP9ZkBQzBbYUHEvLdtBB45RmoGP+AxAuScbhwNhvE9HRviWsFZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywccg5pUD7dQ54goWP0o63rOH5wPQNFom/ENlpAOLOQCgVsgBvF
+	WoQjncPRC+dbZ7dUng5QPG2EgN+ULfW9ZDCB2ejyZ3S/CLpQ+mGC3YNh
+X-Gm-Gg: ASbGncsEhSlpOZiBCTYdhJ/AZ/yEVs0Rdt7c9k9w2LRw8OqwzcwRvr2ZofAgt7pmkGO
+	8TWtioacpd8gGPZsNDlIkQUc6/+EGBYNW5fI+zWtCqzzJ/6aiwWEesxuwG3fJWjQXgE8eEF1tO0
+	T4TuPuxyL8ajYhkz+amw4oszbuLq4xjYk2uE/4+qJhbIDGMtzvbK6wHm65KWUVJtvP0KKbCbg0A
+	vOOVWMem9gAtWQLmR9KB1fPfx6eS9a8jNw9plUR7tG577TPeU5hEAyFo1FHd7urKnmBASfwfn6S
+	oCNkMiJCa6AyQ0rfI5ZY2FbhfLVdrVb4WA1mi1CrSRDoJpYOg6gErOg/LuCOUoZn3dNy+8VXazI
+	PsYmBGRzIJ92y2a8vouk=
+X-Google-Smtp-Source: AGHT+IH9W7esOzFT5IkroJVMwtaxdDK6d7E9R4NeEsWdBedzAfyvLtUnHVT1+OGn9VtvheonzXFrmg==
+X-Received: by 2002:a05:6000:1863:b0:3e7:6474:1b63 with SMTP id ffacd0b85a97d-3ecdfa3d20fmr589203f8f.63.1758088761975;
+        Tue, 16 Sep 2025 22:59:21 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::3086])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7c778f764sm19485191f8f.57.2025.09.16.22.59.19
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 16 Sep 2025 22:59:21 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com
+Cc: shuah@kernel.org,
+	ioworker0@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH RESEND 1/1] selftests/mm: skip soft-dirty tests when CONFIG_MEM_SOFT_DIRTY is disabled
+Date: Wed, 17 Sep 2025 13:59:13 +0800
+Message-ID: <20250917055913.49759-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <wang.yaxin@zte.com.cn>
-To: <wang.yaxin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>,
-        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY0IDEvNF0gRG9jcy96aF9DTjogVHJhbnNsYXRlIG1wdGNwLXN5c2N0bC5yc3QgdG8gU2ltcGxpZmllZAoKQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 58H5x1Dm042421
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Wed, 17 Sep 2025 13:59:13 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68CA4E31.000/4cRSl51lRZz5PM3X
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Sun yuxi <sun.yuxi@zte.com.cn>
+From: Lance Yang <lance.yang@linux.dev>
 
-translate the "mptcp-sysctl.rst" into Simplified Chinese.
+The madv_populate and soft-dirty kselftests currently fail on systems where
+CONFIG_MEM_SOFT_DIRTY is disabled.
 
-Update the translation through commit fa3ee9dd8067
-("mptcp: sysctl: add available_path_managers")
+Introduce a new helper softdirty_is_supported() into vm_util.c/h to ensure
+tests are properly skipped when the feature is not enabled.
 
-Signed-off-by: Sun yuxi <sun.yuxi@zte.com.cn>
-Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
 ---
-../translations/zh_CN/networking/index.rst   |   2 +-
-../zh_CN/networking/mptcp-sysctl.rst         | 139 ++++++++++++++++++
-2 files changed, 140 insertions(+), 1 deletion(-)
-create mode 100644 Documentation/translations/zh_CN/networking/mptcp-sysctl.rst
+ tools/testing/selftests/mm/madv_populate.c | 21 ++--------------
+ tools/testing/selftests/mm/soft-dirty.c    |  5 +++-
+ tools/testing/selftests/mm/vm_util.c       | 28 ++++++++++++++++++++++
+ tools/testing/selftests/mm/vm_util.h       |  1 +
+ 4 files changed, 35 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
-index bb0edcffd144..6e1c1df4a980 100644
---- a/Documentation/translations/zh_CN/networking/index.rst
-+++ b/Documentation/translations/zh_CN/networking/index.rst
-@@ -27,6 +27,7 @@
-xfrm_proc
-netmem
-alias
-+   mptcp-sysctl
-Todolist:
-@@ -96,7 +97,6 @@ Todolist:
-*   mctp
-*   mpls-sysctl
-*   mptcp
--*   mptcp-sysctl
-*   multiqueue
-*   multi-pf-netdev
-*   net_cachelines/index
-diff --git a/Documentation/translations/zh_CN/networking/mptcp-sysctl.rst b/Documentation/translations/zh_CN/networking/mptcp-sysctl.rst
-new file mode 100644
-index 000000000000..0b1b9ed7c647
---- /dev/null
-+++ b/Documentation/translations/zh_CN/networking/mptcp-sysctl.rst
-@@ -0,0 +1,139 @@
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/testing/selftests/mm/madv_populate.c b/tools/testing/selftests/mm/madv_populate.c
+index b6fabd5c27ed..43dac7783004 100644
+--- a/tools/testing/selftests/mm/madv_populate.c
++++ b/tools/testing/selftests/mm/madv_populate.c
+@@ -264,23 +264,6 @@ static void test_softdirty(void)
+ 	munmap(addr, SIZE);
+ }
+ 
+-static int system_has_softdirty(void)
+-{
+-	/*
+-	 * There is no way to check if the kernel supports soft-dirty, other
+-	 * than by writing to a page and seeing if the bit was set. But the
+-	 * tests are intended to check that the bit gets set when it should, so
+-	 * doing that check would turn a potentially legitimate fail into a
+-	 * skip. Fortunately, we know for sure that arm64 does not support
+-	 * soft-dirty. So for now, let's just use the arch as a corse guide.
+-	 */
+-#if defined(__aarch64__)
+-	return 0;
+-#else
+-	return 1;
+-#endif
+-}
+-
+ int main(int argc, char **argv)
+ {
+ 	int nr_tests = 16;
+@@ -288,7 +271,7 @@ int main(int argc, char **argv)
+ 
+ 	pagesize = getpagesize();
+ 
+-	if (system_has_softdirty())
++	if (softdirty_is_supported())
+ 		nr_tests += 5;
+ 
+ 	ksft_print_header();
+@@ -300,7 +283,7 @@ int main(int argc, char **argv)
+ 	test_holes();
+ 	test_populate_read();
+ 	test_populate_write();
+-	if (system_has_softdirty())
++	if (softdirty_is_supported())
+ 		test_softdirty();
+ 
+ 	err = ksft_get_fail_cnt();
+diff --git a/tools/testing/selftests/mm/soft-dirty.c b/tools/testing/selftests/mm/soft-dirty.c
+index 8a3f2b4b2186..98e42d2ac32a 100644
+--- a/tools/testing/selftests/mm/soft-dirty.c
++++ b/tools/testing/selftests/mm/soft-dirty.c
+@@ -200,8 +200,11 @@ int main(int argc, char **argv)
+ 	int pagesize;
+ 
+ 	ksft_print_header();
+-	ksft_set_plan(15);
+ 
++	if (!softdirty_is_supported())
++		ksft_exit_skip("soft-dirty is not support\n");
 +
-+.. include:: ../disclaimer-zh_CN.rst
++	ksft_set_plan(15);
+ 	pagemap_fd = open(PAGEMAP_FILE_PATH, O_RDONLY);
+ 	if (pagemap_fd < 0)
+ 		ksft_exit_fail_msg("Failed to open %s\n", PAGEMAP_FILE_PATH);
+diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
+index 56e9bd541edd..3173335df775 100644
+--- a/tools/testing/selftests/mm/vm_util.c
++++ b/tools/testing/selftests/mm/vm_util.c
+@@ -449,6 +449,34 @@ bool check_vmflag_pfnmap(void *addr)
+ 	return check_vmflag(addr, "pf");
+ }
+ 
++bool softdirty_is_supported(void)
++{
++	char *addr;
++	int ret = 0;
++	size_t pagesize;
 +
-+:Original: Documentation/networking/mptcp-sysctl.rst
++	/* We know for sure that arm64 does not support soft-dirty. */
++#if defined(__aarch64__)
++	return ret;
++#endif
++	pagesize = getpagesize();
++	/*
++	 * __mmap_complete() always sets VM_SOFTDIRTY for new VMAs, so we
++	 * just mmap a small region and check its VmFlags in /proc/self/smaps
++	 * for the "sd" flag.
++	 */
++	addr = mmap(0, pagesize, PROT_READ | PROT_WRITE,
++		    MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
++	if (!addr)
++		ksft_exit_fail_msg("mmap failed\n");
 +
-+:翻译:
++	if (check_vmflag(addr, "sd"))
++		ret = 1;
 +
-+   孙渔喜 Sun yuxi <sun.yuxi@zte.com.cn>
++	munmap(addr, pagesize);
++	return ret;
++}
 +
-+================
-+MPTCP Sysfs 变量
-+================
-+
-+/proc/sys/net/mptcp/* Variables
-+===============================
-+
-+add_addr_timeout - INTEGER (秒)
-+   设置ADD_ADDR控制消息的重传超时时间。当MPTCP对端未确认
-+   先前的ADD_ADDR消息时，将在该超时时间后重新发送。
-+
-+   默认值与TCP_RTO_MAX相同。此为每个命名空间的sysctl参数。
-+
-+   默认值：120
-+
-+allow_join_initial_addr_port - BOOLEAN
-+   控制是否允许对端向初始子流使用的IP地址和端口号发送加入
-+   请求（1表示允许）。此参数会设置连接时发送给对端的标志位，
-+   并决定是否接受此类加入请求。
-+
-+   通过ADD_ADDR通告的地址不受此参数影响。
-+
-+   此为每个命名空间的sysctl参数。
-+
-+   默认值：1
-+
-+available_path_managers - STRING
-+   显示已注册的可用路径管理器选项。可能有更多路径管理器可用
-+   但尚未加载。
-+
-+available_schedulers - STRING
-+   显示已注册的可用调度器选项。可能有更多数据包调度器可用
-+   但尚未加载。
-+
-+blackhole_timeout - INTEGER (秒)
-+   当发生MPTCP防火墙黑洞问题时，初始禁用活跃MPTCP套接字上MPTCP
-+   功能的时间（秒）。如果在重新启用MPTCP后立即检测到更多黑洞问题，
-+   此时间段将呈指数增长；当黑洞问题消失时，将重置为初始值。
-+
-+   设置为0可禁用黑洞检测功能。此为每个命名空间的sysctl参数。
-+
-+   默认值：3600
-+
-+checksum_enabled - BOOLEAN
-+   控制是否启用DSS校验和功能。
-+
-+   当值为非零时可启用DSS校验和。此为每个命名空间的sysctl参数。
-+
-+   默认值：0
-+
-+close_timeout - INTEGER (seconds)
-+   设置"先断后连"超时时间：在未调用close或shutdown系统调用时，
-+   MPTCP套接字将在最后一个子流移除后保持当前状态达到该时长，才
-+   会转为TCP_CLOSE状态。
-+
-+   默认值与TCP_TIMEWAIT_LEN相同。此为每个命名空间的sysctl参数。
-+
-+   默认值：60
-+
-+enabled - BOOLEAN
-+   控制是否允许创建MPTCP套接字。
-+
-+   当值为1时允许创建MPTCP套接字。此为每个命名空间的sysctl参数。
-+
-+   默认值：1（启用）
-+
-+path_manager - STRING
-+   设置用于每个新MPTCP套接字的默认路径管理器名称。内核路径管理将
-+   根据通过MPTCP netlink API配置的每个命名空间值来控制子流连接
-+   和地址通告。用户空间路径管理将每个MPTCP连接的子流连接决策和地
-+   址通告交由特权用户空间程序控制，代价是需要更多netlink流量来
-+   传播所有相关事件和命令。
-+
-+   此为每个命名空间的sysctl参数。
-+
-+   * "kernel"        - 内核路径管理器
-+   * "userspace"      - 用户空间路径管理器
-+
-+   默认值："kernel"
-+
-+pm_type - INTEGER
-+   设置用于每个新MPTCP套接字的默认路径管理器类型。内核路径管理将
-+   根据通过MPTCP netlink API配置的每个命名空间值来控制子流连接
-+   和地址通告。用户空间路径管理将每个MPTCP连接的子流连接决策和地
-+   址通告交由特权用户空间程序控制，代价是需要更多netlink流量来
-+   传播所有相关事件和命令。
-+
-+   此为每个命名空间的sysctl参数。
-+
-+   自v6.15起已弃用，请改用path_manager参数。
-+
-+   * 0 - 内核路径管理器
-+   * 1 - 用户空间路径管理器
-+
-+   默认值：0
-+
-+scheduler - STRING
-+   选择所需的调度器类型。
-+
-+   支持选择不同的数据包调度器。此为每个命名空间的sysctl参数。
-+
-+   默认值："default"
-+
-+stale_loss_cnt - INTEGER
-+   用于判定子流失效（stale）的MPTCP层重传间隔次数阈值。当指定
-+   子流在连续多个重传间隔内既无数据传输又有待处理数据时，将被标
-+   记为失效状态。失效子流将被数据包调度器忽略。
-+   设置较低的stale_loss_cnt值可实现快速主备切换，较高的值则能
-+   最大化边缘场景（如高误码率链路或对端暂停数据处理等异常情况）
-+   的链路利用率。
-+
-+   此为每个命名空间的sysctl参数。
-+
-+   默认值：4
-+
-+syn_retrans_before_tcp_fallback - INTEGER
-+   在回退到 TCP（即丢弃 MPTCP 选项）之前，SYN + MP_CAPABLE
-+   报文的重传次数。换句话说，如果所有报文在传输过程中都被丢弃，
-+   那么将会：
-+
-+   * 首次SYN携带MPTCP支持选项
-+   * 按本参数值重传携带MPTCP选项的SYN包
-+   * 后续重传将不再携带MPTCP支持选项
-+
-+   0 表示首次重传即丢弃MPTCP选项。
-+   >=128 表示所有SYN重传均保留MPTCP选项设置过低的值可能增加
-+   MPTCP黑洞误判几率。此为每个命名空间的sysctl参数。
-+
-+   默认值：2
---
-2.25.1
+ /*
+  * Open an fd at /proc/$pid/maps and configure procmap_out ready for
+  * PROCMAP_QUERY query. Returns 0 on success, or an error code otherwise.
+diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+index 07c4acfd84b6..87ad8e0d92c0 100644
+--- a/tools/testing/selftests/mm/vm_util.h
++++ b/tools/testing/selftests/mm/vm_util.h
+@@ -104,6 +104,7 @@ bool find_vma_procmap(struct procmap_fd *procmap, void *address);
+ int close_procmap(struct procmap_fd *procmap);
+ int write_sysfs(const char *file_path, unsigned long val);
+ int read_sysfs(const char *file_path, unsigned long *val);
++bool softdirty_is_supported(void);
+ 
+ static inline int open_self_procmap(struct procmap_fd *procmap_out)
+ {
+-- 
+2.49.0
+
 
