@@ -1,124 +1,148 @@
-Return-Path: <linux-kernel+bounces-820570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E1DB7C6E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D383B7CFD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D1B32149C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8734A4880BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D2E369964;
-	Wed, 17 Sep 2025 11:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347E93451BF;
+	Wed, 17 Sep 2025 11:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OAJzNkEC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ASGw3wUD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxhB8vrb"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8F4BA45;
-	Wed, 17 Sep 2025 11:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2696FBA45
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758109132; cv=none; b=jGIFkwaKcGRZxLeO9ItkCb9pbNgumaiv4PCk9/VSX36VSJ403mbTZtcVjl2YaJ8cE0Uafa6dcge77ytp7cueXxhkk+k2QAzJRX1vH6Jq4929DAV3duxoCaR3l4d19EtFhcPiKx+P1UZ2CRSCEHqgKYFtL2X74Vbt82g/v+BFDW0=
+	t=1758109139; cv=none; b=XD72z14wqpSa8q7V7t54wY7wWvNkg87i0z1w/eViwfigoVcXkCYE1QrX8W5m5Fp8rn4zKpW58t0jVAp+rYHd15GrE8oyDkylduXaU/1wORpdNYFevFAWvIGiGwGAdgeP7HBfRqm/6RQ8A0miNBTGbGIwg5RcUbQJO9qWccC3Fpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758109132; c=relaxed/simple;
-	bh=Fu294uvDHkvaxx9vtTFd3tnCDy6Uee/EKf+YTIELVlw=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=oZWhSAm5wuJv2LjcTsYoY0KaV654iObYjzOZP/vpyO8TQFw8fThGxlrDT53ednyXltmYDuHsFMDAVDE98/fKsmdBY2/JaydTpkOQ0TsWn4TqgpRFzHmS92XcTjBTQW4ZcveI/jXhTHu9hAGVwXSHBMB3EIjvc2K/sRr3Ui6kocw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OAJzNkEC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ASGw3wUD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 17 Sep 2025 11:38:47 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758109128;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=+RsCEHSSq0tvUC9rutGfPfSrwIgdcINQECQvTyB3HeA=;
-	b=OAJzNkEChMKviWKo2yxY80rX3YUr/9FnsagXr+xi4n+/MV+kw0tSuvNzvoiH7Br0sgAjvD
-	5x+itlLDW6O7lnzvOgKhtaAx9EVtKZ1wQNcLkuHjKNl/wHsNppG3izfL92gMiwgxjnPDAD
-	r3+8Cl3JmPHzwv7Ij8attrzjDtVB7GYDoBLh9o1Mt66u5LLF0bhsnSSbDpR7VEpy3x6+l8
-	rh9bbktZetzZIqydVYt13StSKLyVUw36ssg2RA+XBgExCXILx3HWYXaP4EK+tEu2Wr0Qrk
-	xQ+qa0THyHaNs8PzemZHpGzuA7h5Kg4bYCH6DcU4UjUXHSLOJr+gdatLlY0okQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758109128;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=+RsCEHSSq0tvUC9rutGfPfSrwIgdcINQECQvTyB3HeA=;
-	b=ASGw3wUDIxEvC9VrjxGR/032dOMDTbpSim6DOgEyeBHDQkreLnD937h5vk/mRsliVPS5au
-	X5S2A5Pac9QDXeDg==
-From: "tip-bot2 for Fernand Sieber" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/fair: Forfeit vruntime on yield()
-Cc: Fernand Sieber <sieberf@amazon.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1758109139; c=relaxed/simple;
+	bh=+eHjxgaEecbcTbWLpznRL2cg9KRJdjhCDJbZsX+LnqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgSSNMyz1NvaxSkrLrUpOmAD2vscGnPmcLiCvH4rVCwm5+OCXlUg8oLJB6WcFRevpVnjH4MsJ4Y8ED9F7gu0XQlzE/quE8J+u+7J7HQh23XFqRbQ+F9D5DCiYTBtvEBpCtDC0RG3nxC7ep1aAaBJMtaK9xXmFoE8e5d13Skckz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxhB8vrb; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7761b83fd01so4866118b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 04:38:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758109137; x=1758713937; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=neR9szXF+jYu0k0oU1DH93F32CcLNg0Qg7FVjsgIc9A=;
+        b=PxhB8vrbsX5dN/u9YRiYJ3tIYehcJ8fZ88ZGBZ48rTNLe5zta4oS2JF86ClgwU1yqQ
+         rjqFxz3xbik94rWyRxVrs2SgT8rUK6wi4dbkG2xrNtdPwQylvgOYiC3Vw4y1WH+DzEy2
+         v3aKdyFQs8sqTQG9IaXW0ThWmYhAi/QeOQGJAUdH2iD0oAVt5bKhw4f/+d1B/gC8hmMe
+         vO+wpdm/WRY1LZzFrso2Drh4K1X5I2HCLvEZsmugkBopuL3809XjZAkU+uUAsppa51XN
+         qPeGLy6dPxK+HxzLq00IHOt6lhAlmek1jriglApSERLdLHq5SBDGqPg1IclNJdp5SobT
+         JH8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758109137; x=1758713937;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=neR9szXF+jYu0k0oU1DH93F32CcLNg0Qg7FVjsgIc9A=;
+        b=Y4rTf3GDqrdexVq4NtEAvPaNRePUCmo07TBL5Ze4ae5sYMLrDD2kUtrqHAD6yHXfBm
+         yW6/6l1Q1/Gj454Ib5bGrfywPM2zmEEgtRUCGwyBHGIMQmPQaTbqvum1KTgDi4CVYkyq
+         8v4f+B2+aDWzqMB0kCRGG1wtqewON0FrqkZ4erjFLoQ5wD3hmuEBFeJgtRR2O5cb5d8j
+         uLI8zMvUL1JCLUVzzKYUHN5WHTD0joUGjpmdv8UHxQuJLOmsN7gjBprqclOzgEyr3bZl
+         9QnMSu2g3IQ6aDIhNI+A5FicOLrbGS0WKm1mcYWW4N2JOW9akU+dqcPr4flC0d9Bsjfr
+         C5CA==
+X-Gm-Message-State: AOJu0Ywgtf5C3BxUFUY8x94sK/BBpDkw7OVrTWJ/5uc50vJKhDz/jvF9
+	dLFTvQmaFXpZ9zBSZYcFhfT7JW8UsOWgD5HXxKMc+7LLYPgd+81RsSmE
+X-Gm-Gg: ASbGncsagMvJ+um+toRugjQDFgXx1NjDkAQxW7vg62tCtFcld/zhz3DAkikQId9P+/f
+	2RV9iZxznxlNpgC6NFTGYboLgice2sKoEU22D2E8wAolp7V7uUwn1VD2zKL22tE30eb+Hq0yoIZ
+	vRwAFfzGQw54YQVsZ6e2t8O76Xn6C3H+Hc+Wm7zzWuha5kSjjKSn0qQIdmidfecUy/bI6/ncvoX
+	u8O7QUObl0ukWr9gcecO7uZQghRw9nRGTH3Hl0aKkjPbwRYFV9J5WHigaPb2T8UXrl4HCdnnrWJ
+	TrjiShKl72vbINnzJklgPg3MLUiLvUSbOW28dlS0GTL2UVbP9UPQi9aedIWcuuT6E3LPpCty0E/
+	768Vrl9fnNj/t4IgtL1E3Gg==
+X-Google-Smtp-Source: AGHT+IGGJ4nITeama32y10Yw/ToZmDhS7TuvXI/+z5L697loYAj1gT+EekIjPh+p/tzTcWk4EgD/Fg==
+X-Received: by 2002:a05:6a21:33a7:b0:248:92f6:b5ac with SMTP id adf61e73a8af0-27aa1c7a831mr2230084637.32.1758109137365;
+        Wed, 17 Sep 2025 04:38:57 -0700 (PDT)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a3a9e9ddsm16533212a12.51.2025.09.17.04.38.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 04:38:56 -0700 (PDT)
+Date: Wed, 17 Sep 2025 07:38:53 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v12 8/9] cpumask: Add initialiser CPUMASK_NULL to use
+ cleanup helpers
+Message-ID: <aMqdzQcwvkjl5WNA@yury>
+References: <20250915145920.140180-11-gmonaco@redhat.com>
+ <20250915145920.140180-19-gmonaco@redhat.com>
+ <aMg5EzmxG3hG7aJK@yury>
+ <820443ea-56d7-4fd0-9535-b1339e53240c@redhat.com>
+ <aMhcYCCJDFWoxcyw@yury>
+ <aMlJqDjWNyak07LX@localhost.localdomain>
+ <6aeda48661359eedd232c9bb0c337d93c36dae70.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175810912711.709179.3678143545870319102.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6aeda48661359eedd232c9bb0c337d93c36dae70.camel@redhat.com>
 
-The following commit has been merged into the sched/urgent branch of tip:
+On Wed, Sep 17, 2025 at 09:51:47AM +0200, Gabriele Monaco wrote:
+> 
+> 
+> On Tue, 2025-09-16 at 13:27 +0200, Frederic Weisbecker wrote:
+> > Le Mon, Sep 15, 2025 at 02:35:12PM -0400, Yury Norov a écrit :
+> > > On Mon, Sep 15, 2025 at 05:02:45PM +0000, Gabriele Monaco wrote:
+> > > > 2025-09-15T16:04:53Z Yury Norov <yury.norov@gmail.com>:
+> > > > > So why don't you pick the original patch instead?
+> > > > 
+> > > > In my opinion, the /juice/ of that patch was included with [1],
+> > > > here I'm just adding part of it.
+> > > > If you prefer I can pick that patch and adapt the commit message
+> > > > to reflect only the part included here.
+> > > > 
+> > > > [1] -
+> > > > https://lore.kernel.org/lkml/1706509267-17754-3-git-send-email-schakrabarti@linux.microsoft.com/
+> > > 
+> > > Yes please.
+> 
+> Alright, will use your commit in v13 while changing the macro name to
+> CPUMASK_VAR_NULL as suggested.
+> 
+> > And can we rename CPUMASK_NULL to CPUMASK_VAR_NULL to avoid
+> > accidents/confusion with real
+> > cpumasks initializations?
+> 
+> Note that in the linked commit message, you have what I believe is an
+> incorrect assumption:
+> 
+> > So define a CPUMASK_VAR_NULL macro, ... and effectively a no-op
+> > when CPUMASK_OFFSTACK is disabled.
+> 
+> According to what I can understand from the standard, the C list
+> initialisation sets to the default value (e.g. 0) all elements not
+> present in the initialiser. Since in {} no element is present, {} is
+> not a no-op but it initialises the entire cpumask to 0.
+> 
+> Am I missing your original intent here?
+> It doesn't look like a big price to pay, but I'd still reword the
+> sentence to something like:
+> "and a valid struct initializer when CPUMASK_OFFSTACK is disabled."
 
-Commit-ID:     78f8764d34c0a1912ce209bb2a428a94d062707f
-Gitweb:        https://git.kernel.org/tip/78f8764d34c0a1912ce209bb2a428a94d06=
-2707f
-Author:        Fernand Sieber <sieberf@amazon.com>
-AuthorDate:    Tue, 16 Sep 2025 16:02:28 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 16 Sep 2025 16:44:12 +02:00
+The full quote is:
 
-sched/fair: Forfeit vruntime on yield()
+  So define a CPUMASK_NULL macro, which allows to init struct cpumask
+  pointer with NULL when CPUMASK_OFFSTACK is enabled, and effectively
+  a no-op when CPUMASK_OFFSTACK is disabled.
 
-If a task yields, the scheduler may decide to pick it again. The task in
-turn may decide to yield immediately or shortly after, leading to a tight
-loop of yields.
-
-If there's another runnable task as this point, the deadline will be
-increased by the slice at each loop. This can cause the deadline to runaway
-pretty quickly, and subsequent elevated run delays later on as the task
-doesn't get picked again. The reason the scheduler can pick the same task
-again and again despite its deadline increasing is because it may be the
-only eligible task at that point.
-
-Fix this by making the task forfeiting its remaining vruntime and pushing
-the deadline one slice ahead. This implements yield behavior more
-authentically.
-
-Fixes: 147f3efaa24182 ("sched/fair: Implement an EEVDF-like scheduling  polic=
-y")
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250401123622.584018-1-sieberf@amazon.com
-Link: https://lore.kernel.org/r/20250911095113.203439-1-sieberf@amazon.com
----
- kernel/sched/fair.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a05..c4d91e8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8921,6 +8921,7 @@ static void yield_task_fair(struct rq *rq)
- 	 */
- 	rq_clock_skip_update(rq);
-=20
-+	se->vruntime =3D se->deadline;
- 	se->deadline +=3D calc_delta_fair(se->slice, se);
- }
-=20
+If you read the 'which allows' part, it makes more sense, isn't?
 
