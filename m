@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-821402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46A1B81298
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93235B8129E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D52C463CEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:24:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7FF1464859
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA2E2FCC19;
-	Wed, 17 Sep 2025 17:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BAE2FD1B2;
+	Wed, 17 Sep 2025 17:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhENdb70"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Zxmdz0Sw"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A7A2F99BD;
-	Wed, 17 Sep 2025 17:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C511EBFE0;
+	Wed, 17 Sep 2025 17:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758129873; cv=none; b=E1FbuWwZw1QvCoPtFjipaH4Go9N0yaSouX7mRIKIKEU5Sq/bDkZEg/C8qeZGp5i8odjPjNMMcPPjV6ea2TcjpD96u5wvHWA2iJvtL9YMNQodELlJ607HLCeOUh5+ra4UjwWcQaqmgof/uuLpjLdslLschvyyvIAyAMJFTF/0RV8=
+	t=1758130008; cv=none; b=pH6tjwh3KGZkBPbEMRk2Bc4bwE7xM0aSDxbp/3cQqi5k+E1ERRrxKjorybWtTIi4VZqvIyvnT47TwYJrGETI8GL+e+kuJf/AYtLUPMF8mT26mtjXluTVO9YBLVkhWCeyBmzcDdaE8OL3Hz3pNJtOJ/RXf29qbcfPvIH/Uvm2skE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758129873; c=relaxed/simple;
-	bh=4UoXPczKg9TI8gT2C8XoVlv2Ynl1q/uZ3VhRzWWWyL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TRfhYuzkSjF5ap36pkCTKP9loCR6wgfhe9tHLcSEBI5JYxreRiANBbnVNjz2KfMk+yf+zw7ij+7ExBwmQKfMxGmkVI5czn5r7A4fkUy9q1u5AzAQCXsdn0++MJOiv4QTAZMvypIaFu1b54oV3fL/SCg2xNsX4fYQhTL+I3D/wb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhENdb70; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F226AC4CEE7;
-	Wed, 17 Sep 2025 17:24:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758129872;
-	bh=4UoXPczKg9TI8gT2C8XoVlv2Ynl1q/uZ3VhRzWWWyL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mhENdb70ih5gEPAaGFnU9gvOL5vnLYRihU/D1e97SBANv3lOG9ooDfnxdId2zkmRL
-	 /P6thmnX0eCCuNi/lvxGQkj9nr3VSv4mUr9aliqnlnnD7sNDR+GOZy3fQQDfEc/yce
-	 cBNxIkPUd/2YHXWpJD1ZJp9cx4yWAixjHilt9qTLg5E/XQiJogwZyiTuP3l7VyXz1z
-	 3ulFWme/QBIAOptneJigS3xJIGophNq4birSAF3ZI+OS0cAOleG+s7zxMxoMFGu5G6
-	 hvncvb8HMzSZg1XqmChn0bAgVbr60lrNuvupZSS6lLxHqoRUcruFa8rXLNqv9htg+G
-	 2ByyKb4ozUbdQ==
-Date: Wed, 17 Sep 2025 14:24:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: James Clark <james.clark@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v6 00/12] perf: arm_spe: Armv8.8 SPE features
-Message-ID: <aMruzdTu74rZ0RZ9@x1>
-References: <20250808-james-perf-feat_spe_eft-v6-0-6daf498578c8@linaro.org>
- <20250808123913.GD3420125@e132581.arm.com>
+	s=arc-20240116; t=1758130008; c=relaxed/simple;
+	bh=cg2Q0FlEjLdV7xx3QS3qDQh0+DMnBCJ9c9DsM3OkmHc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ogDws/JMxM8yRERuXzgEuLDd8OPIuXjsfEUY3UGXang7+gBC/Nzf8EBmHtFPn0T7Jpyb1jDiWpPJ/1j1w0YdCIc+tsjwtfaSY3RaJbvJ2kG6VE/H5Oa+DkTYMJUacnrPdUrXaMMW5r5SoECnVh6wDl5Sh1o8O1qxBTXB784uJEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Zxmdz0Sw; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58HHQEZ00567363, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1758129975; bh=cg2Q0FlEjLdV7xx3QS3qDQh0+DMnBCJ9c9DsM3OkmHc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=Zxmdz0SwwYLKrxtaVsjhGW5yQzRxPIuRFpzqhf64k1w6xtLyfYY/i5ZHoheSNlPV+
+	 Wte/lmSNxYvdNANiOc3bn0x0bxrJp0hoVezwtCahZjrZD1QxGT4IBYq5EyWABJ2m5R
+	 pOrInlRiAUQ3K7T6pGZYde2KBJ2B5JPr+JSuH5e/OYBfuWl3UzKTSm+pdj3pnZ4HyJ
+	 GoUeFcKTcGNa21wwsKc5Yv/rx7TzGjgqyofFZMx7dYjEbivSndO0Vg9FKSsujM+LM0
+	 wn31jziTEL86Lp+Ce2ZS3Ne2m54+hTvlHG4ltbF9g4EPu0SpzyGN5UICMZRix06mJC
+	 DUUgGiLFduOFw==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58HHQEZ00567363
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Sep 2025 01:26:15 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 18 Sep 2025 01:26:14 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Thu, 18 Sep 2025 01:26:14 +0800
+From: Hau <hau@realtek.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd <nic_swsd@realtek.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] r8169: set EEE speed down ratio to 1
+Thread-Topic: [PATCH net-next] r8169: set EEE speed down ratio to 1
+Thread-Index: AQHcHUE6wESi95i7Y0uNfg+X46GTibSEfc2AgBMKn0D//6TSgIAAiFIw
+Date: Wed, 17 Sep 2025 17:26:13 +0000
+Message-ID: <f5494952210a4f12a20f691a4ef03201@realtek.com>
+References: <20250904021123.5734-1-hau@realtek.com>
+ <292e1b4d-b00d-4bb5-b55e-5684666c0229@gmail.com>
+ <a710550463da4b4281f9db1a8d0b29e1@realtek.com>
+ <0c5f8ebd-5ac0-4ac5-ae66-24a5acea371c@gmail.com>
+In-Reply-To: <0c5f8ebd-5ac0-4ac5-ae66-24a5acea371c@gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808123913.GD3420125@e132581.arm.com>
 
-On Fri, Aug 08, 2025 at 01:39:13PM +0100, Leo Yan wrote:
-> On Fri, Aug 08, 2025 at 12:22:57PM +0100, James Clark wrote:
-> > Support 3 new SPE features: FEAT_SPEv1p4 filters, FEAT_SPE_EFT extended
-> > filtering, and SPE_FEAT_FDS data source filtering. The features are
-> > independent can be applied separately:
-> > 
-> >   * Prerequisite sysreg changes - patch 1
-> >   * FEAT_SPEv1p4 - patches 2 - 3
-> >   * FEAT_SPE_EFT - patch 4
-> >   * FEAT_SPE_FDS - patches 5 - 9
-> >   * FEAT_SPE_FDS Perf tool changes - patches 10 - 12
-> > 
-> > The first two features will work with old Perfs but a Perf change to
-> > parse the new config4 is required for the last feature.
-> 
-> I tested FEAT_SPE_EFT (xxx_filter_mask), inv_data_src_filter
-> and inv_event_filter, all of them work as expected.
-> 
-> Tested-by: Leo Yan <leo.yan@arm.com>
-
-Please let me know when I can merge the tools/perf bits.
-
-- Arnaldo
+PiA+Pg0KPiA+PiBFeHRlcm5hbCBtYWlsIDogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0
+c2lkZSB0aGUgb3JnYW5pemF0aW9uLg0KPiA+PiBEbyBub3QgcmVwbHksIGNsaWNrIGxpbmtzLCBv
+ciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UgcmVjb2duaXplDQo+ID4+IHRoZSBzZW5kZXIg
+YW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCj4gPj4NCj4gPj4NCj4gPj4NCj4gPj4gT24g
+OS80LzIwMjUgNDoxMSBBTSwgQ2h1bkhhbyBMaW4gd3JvdGU6DQo+ID4+PiBFRUUgc3BlZWQgZG93
+biByYXRpbyAobWFjIG9jcCAweGUwNTZbNzo0XSkgaXMgdXNlZCB0byBjb250cm9sIEVFRQ0KPiA+
+Pj4gc3BlZWQgZG93biByYXRlLiBUaGUgbGFyZ2VyIHRoaXMgdmFsdWUgaXMsIHRoZSBtb3JlIHBv
+d2VyIGNhbiBzYXZlLg0KPiA+Pj4gQnV0IGl0IGFjdHVhbGx5IHNhdmUgbGVzcyBwb3dlciB0aGVu
+IGV4cGVjdGVkLCBidXQgd2lsbCBpbXBhY3QNCj4gPj4+IGNvbXBhdGliaWxpdHkuIFNvIHNldCBp
+dCB0byAxIChtYWMgb2NwIDB4ZTA1Nls3OjRdID0gMCkgdG8gaW1wcm92ZQ0KPiA+PiBjb21wYXRp
+YmlsaXR5Lg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IENodW5IYW8gTGluIDxoYXVAcmVh
+bHRlay5jb20+DQo+ID4+PiAtLS0NCj4gPj4NCj4gPj4gUmV2aWV3ZWQtYnk6IEhlaW5lciBLYWxs
+d2VpdCA8aGthbGx3ZWl0MUBnbWFpbC5jb20+DQo+ID4NCj4gPiBUaGlzIHBhdGNoIHNlZW1zIGhh
+cyBiZWVuIHJldmlld2VkLiBCdXQgSSBkaWQgbm90IHNlZSBpdCBiZWVuIGFjY2VwdGVkLg0KPiBT
+aG91bGQgSSByZXN1Ym1pdCB0aGUgcGF0Y2g/DQo+IA0KPiBJdHMgc3RhdHVzIGluIHBhdGNod29y
+ayBpcyAiY2hhbmdlcyByZXF1ZXN0ZWQiLCBsaWtlbHkgZHVlIHRvIHRoZSBmYWN0IHRoYXQgd2UN
+Cj4gaGFkIGEgY29udmVyc2F0aW9uIGFib3V0IHRoZSBwYXRjaC4gU28geWVzLCBwbGVhc2UgcmVz
+dWJtaXQsIHdpdGggbXkgUmIsDQo+IGFuZCBiZXN0IGFsc28gYWRkIHRoZSBmb2xsb3dpbmcsIHRo
+YXQgeW91IHdyb3RlLCB0byB0aGUgY29tbWl0IG1lc3NhZ2UuDQo+IA0KSSB3aWxsIHJlc3VibWl0
+IHRoZSBwYXRjaC4gVGhhbmtzLg0KDQo+IEl0IG1lYW5zIGNsb2NrIChNQUMgTUNVKSBzcGVlZCBk
+b3duLiBJdCBpcyBub3QgZnJvbSBzcGVjLCBzbyBpdCBpcyBraW5kIG9mDQo+IFJlYWx0ZWsgc3Bl
+Y2lmaWMgZmVhdHVyZS4NCj4gSXQgbWF5IGNhdXNlIHBhY2tldCBkcm9wIG9yIGludGVycnVwdCBs
+b3NzIChkaWZmZXJlbnQgaGFyZHdhcmUgbWF5IGhhdmUNCj4gZGlmZmVyZW50IGlzc3VlKS4NCg0K
 
