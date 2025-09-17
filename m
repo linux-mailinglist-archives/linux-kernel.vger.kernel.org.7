@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-821003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025A0B80047
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:33:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8BBB7FFFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C481B2041A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8B25221D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F692D8375;
-	Wed, 17 Sep 2025 14:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C032DC33D;
+	Wed, 17 Sep 2025 14:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="iPeTG/S7"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vr0eQWPg"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB942BE7CC;
-	Wed, 17 Sep 2025 14:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F29A1CDFD5;
+	Wed, 17 Sep 2025 14:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119183; cv=none; b=dT11vjdY8vI8FQeFq2j7z00Enfqa+KfG0msV96IrjuYU/eJzxxjjzKYmkx1kdVWRMs1N2CExWkzdh1tV/H/epEbJQzqZa0uxkMYl7W4WTdMvrKL3b7WRzEq59ILgHuyFdJ1dQvngngK0AgQkazFYGD0b0Xrf5O6z43mMOKuj+Y8=
+	t=1758119188; cv=none; b=gMYFzFtKXAgSw7q7qACbrZMsKGiJZMv0QLx4ofqsCFzEUViIo1A3lrjQac8HqcDGcxwlxy6n/D6WcIeMUHYWvidmjkHkVfG1JV967bAQNcZUASgdXXf8fu+0sTbhKE3xXINDkTj8nJ2bCd5HOi0k6V/jq9FzM915eoxAGGjxIII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119183; c=relaxed/simple;
-	bh=TR78DtXxPqTbF32P0w4pzB/KzzVQFhn8kipZmGGzaKs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FmQL7xN09dJii1tmugaoRi8nKN2ymiQdXA2pd7X6V7ND0ZDNRNrRuCUQMujyWs2CnoRP++0U1LXm3PSH6EbtrKhrTfgj7jh1x4nkn74auclcGaZ1+ZVf06tFyPsWuWjH7njo0cOiWiZ5wL+AFYRB2XnPbT10WhihS8p69YMOUgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=iPeTG/S7; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=XBxKHfRCGcE5Q/eepg5aPjxUu8diqcOmzAvEs6SS1gU=; b=iPeTG/S7BlbqBcsqvb6s5BzW8C
-	+K5i7IF5xnqnky7+WluHCxzTVYLW/nX5SZ4xz1RRqfPrwlRCIPUb2l7VwS8EZtUMDFXIBh3I1HiUV
-	v6hOiPZ6kgUyWn/QyT7HAVCmge5ATcGHua9nehvN3uHnUDWteZpHXyEn6D5RGt1RDNxDKovDDrJIc
-	gJg9Nsh5XBjMoTJjI3znoDVX2LidNsR2MS/d43s+VfKZ+LKV3CvGmQqADqCP5zowN84MEkKpPt0q3
-	zY+XFX1H7akSvKHeWA5keKDUxePGwWuDjYuqh8Al6wqSXQWXEdYAh1OLPVtTVu1XKLDVFvdfAi6sP
-	fktAFmTw==;
-Received: from i53875a9d.versanet.de ([83.135.90.157] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uyt6e-0000pg-Tg; Wed, 17 Sep 2025 16:26:00 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Ed Wildgoose <lists@wildgooses.com>, Dragan Simic <dsimic@manjaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 2/2] rockchip: dts: Enable UART DMA by adding default dma-names
- property
-Date: Wed, 17 Sep 2025 16:25:59 +0200
-Message-ID: <4007782.fW5hKsROvD@diego>
-In-Reply-To: <7c8576e3d9fc73ba45830833f5281706@manjaro.org>
-References:
- <20250917114932.25994-1-lists@wildgooses.com>
- <20250917114932.25994-3-lists@wildgooses.com>
- <7c8576e3d9fc73ba45830833f5281706@manjaro.org>
+	s=arc-20240116; t=1758119188; c=relaxed/simple;
+	bh=CEMDjEZ/mnQiP0gOxvoYTIsm9kEz18K1AgKACsQi870=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfmOuI+owKsRixh+BNTCgpoOqDQLV8KbcClgwtXfg2h3DR6/7Q8coImfdAUiKvEO7NFuPvlqoe8m1NWdQbk3l/pe7rbY2K5slF/lV94tLUF9c3CCV7abDqhICoIe/X0zS49j8VQBqxGMJdfuHHEaEJfu1A20/Euc0TV8DPvzEU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vr0eQWPg; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/ZxtDJ8NDcYS0cSetpXt7raMXbyInlYYiFA0w5yReZ0=; b=vr0eQWPgmDBkic8/GVQiu43zFP
+	uc/rYJqtnhoAciwrfHu+jkE3Ox8j2JAlJfTbQ//7gO9xX2bnoIFPZYxUgxHeulz+hKj56q+1r29E3
+	7Lk5XS9KE3VP41UrUye2FWA5ucMVt6cF/H8fkRLCseZYqDZNlkZSkz43uCc3DwmJB10uN9LEffXGD
+	vGYXokojPtUciD2QFQ4ZfTUAxF6BihQsZjLSG+TMWEji9mdGYre38hjcPP5xyGLMV/fwkix62hy7j
+	YyrFUnU92vsZK12eC4FE8kEhqUv1mwAn6cN9K1zvhn7ySvBjKs+wbjEOo1A5HdsSpoRpm3cCCbriP
+	sGt/buQQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44676)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uyt6l-000000004Ti-01AJ;
+	Wed, 17 Sep 2025 15:26:07 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uyt6h-000000000Fo-2Qq3;
+	Wed, 17 Sep 2025 15:26:03 +0100
+Date: Wed, 17 Sep 2025 15:26:03 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	UNGLinuxDriver@microchip.com, jacob.e.keller@intel.com,
+	Robert Marko <robert.marko@sartura.hr>, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: sparx5/lan969x: Add support for ethtool
+ pause parameters
+Message-ID: <aMrE-9rtW20A9Xnj@shell.armlinux.org.uk>
+References: <20250917-802-3x-pause-v1-1-3d1565a68a96@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917-802-3x-pause-v1-1-3d1565a68a96@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Am Mittwoch, 17. September 2025, 14:22:52 Mitteleurop=C3=A4ische Sommerzeit=
- schrieb Dragan Simic:
-> Hello Ed,
->=20
-> On 2025-09-17 13:49, Ed Wildgoose wrote:
-> > Kernel appears to need a dma-names set for DMA to actually enable. Set=
-=20
-> > a
-> > default dma-names property for all UARTs defined in the base=20
-> > rk356x-base
-> > dtsi
-> >=20
-> > This is tested on a Radxa Zero 3W (which has 5x UARTs) and removes the
-> > warnings and enables DMA on this platform
->=20
-> Thanks for the patches.
->=20
-> We should (still) stay away from defining the "dma-names" property
-> at the SoC level, because doing that causes serious issues in certain
-> cases.  Thus, I'd suggest that this patch is dropped, and that the
-> "dma-names" property is defined instead at the board level, where
-> it's needed and tested to work as expected.
->=20
-> Please see commit bf6f26deb0e8 (arm64: dts: rockchip: Add dma-names
-> to uart1 on quartz64-b, 2024-06-28) for further explanation.
->=20
-> If/when the underlying issues are debugged and resolved, we can get
-> back to defining the "dma-names" property at the SoC level.
+On Wed, Sep 17, 2025 at 01:49:43PM +0200, Daniel Machon wrote:
+> Implement get_pauseparam() and set_pauseparam() ethtool operations for
+> Sparx5 ports.  This allows users to query and configure IEEE 802.3x
+> pause frame settings via:
+> 
+> ethtool -a ethX
+> ethtool -A ethX rx on|off tx on|off autoneg on|off
+> 
+> The driver delegates pause parameter handling to phylink through
+> phylink_ethtool_get_pauseparam() and phylink_ethtool_set_pauseparam().
+> 
+> The underlying configuration of pause frame generation and reception is
+> already implemented in the driver; this patch only wires it up to the
+> standard ethtool interface, making the feature accessible to userspace.
+> 
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 
-And apart from the whole stability thing, on a number of socs the pl330
-dma controller has more possible sources for dma operations than it
-has available channels ... and right now the driver does not support
-handling this.
+It is nice to see drivers not having to implement complicated code
+to add support for pause configuration!
 
-So you can (and if I remember correctly we did) end up with some uart
-requesting dma channels (and not needing them) and then sound not
-getting any.
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
+Thanks!
 
-Heiko
-
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
