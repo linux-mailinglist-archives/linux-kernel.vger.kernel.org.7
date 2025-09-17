@@ -1,62 +1,39 @@
-Return-Path: <linux-kernel+bounces-820459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712AFB7E69B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFBAB7E6FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BF1632645E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:19:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FF1325FF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D1C35A289;
-	Wed, 17 Sep 2025 10:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a0uIKsaU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464F76ADD;
-	Wed, 17 Sep 2025 10:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9681835FC31;
+	Wed, 17 Sep 2025 10:17:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B514296BA2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104230; cv=none; b=LQR21EmbZtpDumu4OkFuUQQE1mlBeXNjKjpJ3cLodA1cc/ClkliBFcwN319Ckh+vQp957Fx1c3oKOsKQgR6iI3dK0Jb2r49QjF6S7JLIuyiYJ1gVBgxjPWOTiHmImvozGMaVXGJVh2pG1Mb/YRl3V0rrbeKSTzyuRqWdXvpocqY=
+	t=1758104250; cv=none; b=pNnS2LP8f25GOxSv6IEfadDEHima4LRtyGuzGCKV4M5jmWXnPTCmTia+hOE+84rK2QH31/GXEtaMaagOO89kbBkg+MeHmmQsMTXvTZ/9hv9AMuSJ9t47SiXV4db2+vdKoyuU+6pMnnxVquReruiDqnsYOPwNc+77VSV+YeWhfrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104230; c=relaxed/simple;
-	bh=I1gr9r69jlTdi7WrDbcTVQMuxftBJAz2+Ve90aHs+vw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bft6z6uxRatOppMIf+DHJUwbNNct81IozkGWrwrFGV3V18GdcEmtxlqPWfciaOnjWXKJOgcr7qUi5ea4LFEz7d5lJziwgr0P/31lEtDsDgu4ZP9y9gpkdg7BNbb1KbKTM4IpRtvZooqacS2cBB8oFeAm+wzUS/A1K1fnp21BH8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a0uIKsaU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8XZqH021413;
-	Wed, 17 Sep 2025 10:17:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S96CBZmI5ch+MiqlOIvzqqQqE9xu7ajb8Vt6h82T5OU=; b=a0uIKsaUOj1Or+0s
-	UB9U6QZP7hUOPHlXzkdkPYIv6moU5MnJGQD59Y0T8czqYuSi1/EcIcbZYNAXKOM8
-	5Ldscp/Pc3pKNOSLCD89kA//QondBgPw2Uaq7DZ31KOrTY8yu8CyG9PD5MPn9R/3
-	2sNypl6Quiu5qlvAqTtloX11LWlaXgjQBazFW6cgPSi4hmqkd92JVDFv5KVxY4B1
-	Pusb4bPFzkAk6PmqYOzJB0ASqzWTDNg+4damQvnjA5Ysyv38xkwr7UYo4NAy8r/R
-	1AiabdvW5jarxpyR5df43Y4ScYyqc31t4SZn0SLKX3xGb8p+Q7NhQj1F+xp4+gDl
-	v+AKDA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy59wd3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 10:17:04 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58HAH2TK015659
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 10:17:02 GMT
-Received: from [10.64.69.186] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 17 Sep
- 2025 03:16:59 -0700
-Message-ID: <cdcc53e9-c616-405c-85c7-f65e83bd4918@qualcomm.com>
-Date: Wed, 17 Sep 2025 18:16:57 +0800
+	s=arc-20240116; t=1758104250; c=relaxed/simple;
+	bh=SNJXGDyrpeyQlcc1Ww/8BPiLx8XrpL40MncirSx/QZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VyYBHWCJr1NDEzt4YvZooqFPeyiNE37ppJ1Bd5519Vlm5kGbl8URuVFPIZ2dojGm5YTgP6Ti+g5rhvAQfW8e9rLnLEEQDt9xsue0tyLDAALLCDVrG2PM6UZUwySmdeY5PWv/EFZfYU3lCo8K4GX8e4Dbd3yvGpfHmBd+IL521BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7F2E25DC;
+	Wed, 17 Sep 2025 03:17:18 -0700 (PDT)
+Received: from [10.1.26.46] (e122027.cambridge.arm.com [10.1.26.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C3113F673;
+	Wed, 17 Sep 2025 03:17:24 -0700 (PDT)
+Message-ID: <e64440cb-4b7d-4b42-861b-4e6b529e13d5@arm.com>
+Date: Wed, 17 Sep 2025 11:17:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,116 +41,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] media: qcom: camss: Add sa8775p camss TPG support
-To: Wenmeng Liu <quic_wenmliu@quicinc.com>, Robert Foss <rfoss@kernel.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20250822-camss_tpg-v3-0-c7833a5f10d0@quicinc.com>
-Content-Language: en-US
-From: Wenmeng Liu <quic_wenmliu@qualcomm.com>
-In-Reply-To: <20250822-camss_tpg-v3-0-c7833a5f10d0@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eFLV-Wijl7nmYVNtly7q0-ouNTLoPrs-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX01U6X3gdu2kb
- MCkSk8ZL3+GwAR4koFl1gKSqN/SIANQOPbjSJ1tEZizCoR4vk4ZPZpsONq+6wDomzwqUaQ/pAXO
- DfwhDpLgvpqiW1BGTNWzg7FsPBnJVDS5ob66PjD7xmpG8APJfuB4dfzccTouK7BxJtF38vpiWv/
- pHSTKki618fbaf9cOZOP9piO6/N18EoQQS5FdVBepwjAEvRxrmqwlOklf7UzMx+kMI9d1TfsFyR
- C7mMaqb2lSDFE5WIAAxLZle5Yhp8wRReOqgDM9xLF/zvizIRgJ9Y52/PuS/QoVsJfSBBQL8fgB0
- LoW8L29HPD8UreSObfc0w3J1/6wom/fUMECgaZfeF5ORNu6YjnpX6u4+2I19+SH0QC2IwArd5ZG
- O5cqvdJ/
-X-Authority-Analysis: v=2.4 cv=Y+f4sgeN c=1 sm=1 tr=0 ts=68ca8aa0 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=Olb3F6Lyt1vXxSobhcoA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: eFLV-Wijl7nmYVNtly7q0-ouNTLoPrs-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
- malwarescore=0 bulkscore=0 spamscore=0 clxscore=1011 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+Subject: Re: [PATCH v3 3/4] drm/panfrost: Expose JM context IOCTLs to UM
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20250912132002.304187-1-adrian.larumbe@collabora.com>
+ <20250912132002.304187-4-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250912132002.304187-4-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 12/09/2025 14:19, Adrián Larumbe wrote:
+> From: Boris Brezillon <boris.brezillon@collabora.com>
+> 
+> Minor revision of the driver must be bumped because this expands the
+> uAPI. On top of that, let UM know about the available priorities so that
+> they can create contexts with legal priority values.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-On 8/22/2025 8:09 PM, Wenmeng Liu wrote:
-> SA8775P is a Qualcomm SoC. This series adds driver changes to
-> bring up the TPG interfaces in SA8775P.
-> 
-> We have tested this on qcs9100-ride board with 'Test Pattern Generator'.
-> Unlike CSID TPG, this TPG can be seen as a combination of CSIPHY and sensor.
-> 
-> Tested with following commands:
-> - media-ctl --reset
-> - media-ctl -V '"msm_tpg0":0[fmt:SRGGB10/4608x2592 field:none]'
-> - media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4608x2592 field:none]'
-> - media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4608x2592 field:none]'
-> - media-ctl -l '"msm_tpg0":1->"msm_csid0":0[1]'
-> - media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-> - v4l2-ctl -d /dev/v4l-subdev4 -c test_pattern=9
-> - yavta -B capture-mplane -n 5 -f SRGGB10P -s 4608x2592 /dev/video0
->    --capture=7
-> 
-> Dependencies:
-> https://lore.kernel.org/all/20250814101615.1102795-10-quic_vikramsa@quicinc.com/
-> https://lore.kernel.org/all/20250813053724.232494-1-quic_vikramsa@quicinc.com/
-> 
-> changes in v3:
-> - Change the payload mode string
-> - Change the method for setting the TPG clock rate
-> - Remove the TPG IRQ
-> - Format correction
-> - Remove unused variables
-> - Merge functions and eliminate redundancy
-> - Modify the register write method
-> - Change TPG matching method to use grp_id
-> - Encapsulate magic numbers as macros
-> - Link to v2: https://lore.kernel.org/all/20250717-lemans_tpg-v2-0-a2538659349c@quicinc.com/
-> 
-> Changes in v2:
-> - rebase tpg changes based on new versions of sa8775p and qcs8300 camss patches
-> - Link to v1: https://lore.kernel.org/all/20250211-sa8775p_tpg-v1-0-3f76c5f8431f@quicinc.com/
-> 
 > ---
-> Wenmeng Liu (3):
->        media: qcom: camss: Add support for TPG common
->        media: qcom: camss: Add link support for TPG common
->        media: qcom: camss: tpg: Add TPG support for SA8775P and QCS8300
+>  drivers/gpu/drm/panfrost/panfrost_drv.c | 36 ++++++++++++++++++++++---
+>  1 file changed, 33 insertions(+), 3 deletions(-)
 > 
->   drivers/media/platform/qcom/camss/Makefile         |   2 +
->   .../media/platform/qcom/camss/camss-csid-gen3.c    |  17 +
->   drivers/media/platform/qcom/camss/camss-csid.c     |  43 +-
->   drivers/media/platform/qcom/camss/camss-csiphy.c   |   1 +
->   drivers/media/platform/qcom/camss/camss-csiphy.h   |   2 +
->   drivers/media/platform/qcom/camss/camss-tpg-gen1.c | 219 +++++++
->   drivers/media/platform/qcom/camss/camss-tpg.c      | 696 +++++++++++++++++++++
->   drivers/media/platform/qcom/camss/camss-tpg.h      | 125 ++++
->   drivers/media/platform/qcom/camss/camss.c          | 130 ++++
->   drivers/media/platform/qcom/camss/camss.h          |   5 +
->   10 files changed, 1226 insertions(+), 14 deletions(-)
-> ---
-> base-commit: 6afac82056e38e02266cd30f458b25a1f9017508
-> change-id: 20250822-camss_tpg-718db678d984
-> 
-> Best regards,
-
-Gently reminder to Bryan.
-
-Thanks,
-Wenmeng
-
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index be384b18e8fd..69e72a800cd1 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -109,6 +109,14 @@ static int panfrost_ioctl_get_param(struct drm_device *ddev, void *data, struct
+>  #endif
+>  		break;
+>  
+> +	case DRM_PANFROST_PARAM_ALLOWED_JM_CTX_PRIORITIES:
+> +		param->value = BIT(PANFROST_JM_CTX_PRIORITY_LOW) |
+> +			       BIT(PANFROST_JM_CTX_PRIORITY_MEDIUM);
+> +
+> +		if (panfrost_high_prio_allowed(file))
+> +			param->value |= BIT(PANFROST_JM_CTX_PRIORITY_HIGH);
+> +		break;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -286,9 +294,6 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
+>  	if (args->pad)
+>  		return -EINVAL;
+>  
+> -	if (args->jm_ctx_handle)
+> -		return -EINVAL;
+> -
+>  	if (!args->jc)
+>  		return -EINVAL;
+>  
+> @@ -552,6 +557,27 @@ static int panfrost_ioctl_set_label_bo(struct drm_device *ddev, void *data,
+>  	return ret;
+>  }
+>  
+> +static int panfrost_ioctl_jm_ctx_create(struct drm_device *dev, void *data,
+> +					struct drm_file *file)
+> +{
+> +	return panfrost_jm_ctx_create(file, data);
+> +}
+> +
+> +static int panfrost_ioctl_jm_ctx_destroy(struct drm_device *dev, void *data,
+> +					 struct drm_file *file)
+> +{
+> +	const struct drm_panfrost_jm_ctx_destroy *args = data;
+> +
+> +	if (args->pad)
+> +		return -EINVAL;
+> +
+> +	/* We can't destroy the default context created when the file is opened. */
+> +	if (!args->handle)
+> +		return -EINVAL;
+> +
+> +	return panfrost_jm_ctx_destroy(file, args->handle);
+> +}
+> +
+>  int panfrost_unstable_ioctl_check(void)
+>  {
+>  	if (!unstable_ioctls)
+> @@ -619,6 +645,8 @@ static const struct drm_ioctl_desc panfrost_drm_driver_ioctls[] = {
+>  	PANFROST_IOCTL(PERFCNT_DUMP,	perfcnt_dump,	DRM_RENDER_ALLOW),
+>  	PANFROST_IOCTL(MADVISE,		madvise,	DRM_RENDER_ALLOW),
+>  	PANFROST_IOCTL(SET_LABEL_BO,	set_label_bo,	DRM_RENDER_ALLOW),
+> +	PANFROST_IOCTL(JM_CTX_CREATE,	jm_ctx_create,	DRM_RENDER_ALLOW),
+> +	PANFROST_IOCTL(JM_CTX_DESTROY,	jm_ctx_destroy,	DRM_RENDER_ALLOW),
+>  };
+>  
+>  static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
+> @@ -715,6 +743,8 @@ static void panfrost_debugfs_init(struct drm_minor *minor)
+>   * - 1.3 - adds JD_REQ_CYCLE_COUNT job requirement for SUBMIT
+>   *       - adds SYSTEM_TIMESTAMP and SYSTEM_TIMESTAMP_FREQUENCY queries
+>   * - 1.4 - adds SET_LABEL_BO
+> + * - 1.5 - adds JM_CTX_{CREATE,DESTROY} ioctls and extend SUBMIT to allow
+> + *	   context creation with configurable priorities/affinity
+>   */
+>  static const struct drm_driver panfrost_drm_driver = {
+>  	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
 
 
