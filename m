@@ -1,129 +1,91 @@
-Return-Path: <linux-kernel+bounces-820299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE442B7DD83
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:35:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7B3B7E020
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E8B4E4A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FE51890D98
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C8A314B76;
-	Wed, 17 Sep 2025 08:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF483016F6;
+	Wed, 17 Sep 2025 09:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kHNElPPR"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I1mEL4GL"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6418D314B66;
-	Wed, 17 Sep 2025 08:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE8531BCB7;
+	Wed, 17 Sep 2025 09:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758099585; cv=none; b=MA63Cb/VQO69HdmouQqZR/ehGlHp5aT3f5Cl/DCjAv0MKqp3iRDk/956gdWRKIY0F+Gqkz3ij0vjSsfElCGliXG8F0ZdnDpCHwSFNRdloKTT3vxJAV+sBux8f2l31921nL6xS3SmrYEXtgBi+wvkuc8ELOXqOg0EHfFxGsq12Sw=
+	t=1758099759; cv=none; b=fljXRELYl17XnZtDRZDYfkT46PjkfFAgPzLVLyJy/UvZcYA/Z7F+f7FSsecS9Dw01fajjScOVtqhKSFkZ5jYSgGK3oW5eKJTb5q+EWUcvSYFZL1By9RNGI34A+FXmfBbfGZsLvrc2rvZhYtsdJ7LWDTKiMg6iusjnbnu2KE0kvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758099585; c=relaxed/simple;
-	bh=GaAXfcTh843LsuGrj+gpha5YWJVQdszk4nBFNnuIcVg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t2gI0GFA+aI0hTRmOStL/qKh+KO0wbUFkm4Q4FDfGyUjZhJtGh3bjxQuQLtZOsCe2HfKsdwBFbepdD0g8PMf299UqFFMP4bW6FGx18BrOP2Ea+jzuHLZTnLVJuWaUyGfbTBdYwmSTigN67JXOPlWcqAlZOBIjBfCaXmGvoGoF88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kHNElPPR; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H7tuWL007715;
-	Wed, 17 Sep 2025 08:59:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=UOc5Wc7rd0WEOuTac1iTQtUAvLIUR
-	A01alqCUgytTrw=; b=kHNElPPRGougfzHsT9R9ea7JT0hGzO2LBML8gOYDQMpax
-	MMf745tnQmbv10Vm7Fj5nM2JT6MFAo69QQRH4FrIA8NWsmOWrJn6sYckK3zOWw5v
-	K4MKp4uFEWeuWxuhEJppZdiSW1XPjJrfS2qkptImHGw6AHVHl+udPWhZyFtPPjQ5
-	qq8Lc1EH3KIwGw1VguPyjUKr47XFWDSKEzwIE/sQrP42mhjEetpkbYC2Dpyg4VYF
-	6fbAEhAHIFxiIUF2smMP8l/fevfLCub8DKc5jSS4VVO+G5hZUE+e7PjS8qXMEGtd
-	aMPFE3AD74kNWpZSgYq+ZE0mI6Lxe6TJduUp2E6QA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497fxbrsr8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 08:59:38 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8CBob035223;
-	Wed, 17 Sep 2025 08:59:37 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2kssay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 08:59:37 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58H8wk21016268;
-	Wed, 17 Sep 2025 08:59:36 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 494y2kssap-1;
-	Wed, 17 Sep 2025 08:59:36 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
-        wei.liu@kernel.org, decui@microsoft.com, linux-hyperv@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drivers: hv: vmbus: Clean up sscanf format specifier in target_cpu_store()
-Date: Wed, 17 Sep 2025 01:59:31 -0700
-Message-ID: <20250917085933.129306-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1758099759; c=relaxed/simple;
+	bh=3I0xAujrqXNySvA/jSJripSl2wkgTi/oVKNIpzfHs9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e+Da7OC5i0J8wtyunX0ttloQ/asv8pIMRA4XBk1YU2mhCmwv1eTNZx4ZCsy3px9u2phQKmHIGqsK0j8W3wllxEFyH2M7TCtEXsedne3ZWfjL1OhN/mCL6O1wwX5q/yjIQDxULFCPMwSCGrMygWY/lQeISfbWpvSEYp2z/mEdFW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I1mEL4GL; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758099748;
+	bh=3I0xAujrqXNySvA/jSJripSl2wkgTi/oVKNIpzfHs9M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I1mEL4GLjKOLZ+oD5m3q+2PtWZkCh/9PCnI1oZipqtsmQD8jAHOrbVIn1YLWaYvxx
+	 rHVLBrGXicm0PZ8z27I/HuQYNXClfsHKunUbNFwih5wKnUJGIFhOO4MwPzNAXziPxL
+	 IyY8iaIpTarkTausOqGxDoGDqMv9yEOPQof9L3hoMjKlUFiU9Uu2s94u43VUNT1Y5g
+	 N6OzPJ+32KLoy+vMrcjc2iSkTFAOA98Rye8nNXUGdcion8S8BNvC2CZr1OA6Ttet4j
+	 lqSxcvB2DHZq39ruAEmANP/YuTZknEnlZiNsWCDCsh0LZO1tNIYq3Hv7/FVFdT8BzA
+	 0u6wMHNgvQEDA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 46C1417E0AC3;
+	Wed, 17 Sep 2025 11:02:28 +0200 (CEST)
+Message-ID: <d1c26107-6365-4681-9f7f-5a8bbb2ba08b@collabora.com>
+Date: Wed, 17 Sep 2025 11:02:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- adultscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509170086
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX9a0n5zNe2c6a
- RAns7M7CRspJpRRnTq3vgXtTWYM0V9V/W2sYovnmeb/FFVajeBFc/0jomj+JgrhYwD+VkGeJry6
- Hwu6Z+qp9Ry/8zhub0dxs3O33nHkH0OAx25YpOuoC1pr3eXACGWNmX6V9ll8YF+qSV6zoMLNpBR
- OMwTZzOQYGf+0+3tJbUvueWVQiHq6qGMmR2lq9oQrRaf14jvru8wKNZ05TVOWcarFbaGEpKPMzy
- TmaAsbJoOm2d74Q1bKOZQLQv0vj2nVqdr9o3Z9WibHEJJAg0efTM+fXNn8mMM8hREQtxCWYZJRv
- OrHUBIfu+KAHHlq8e/dK9E92NddamA33dGeTkfp845n/LSQNXEz3uh7xTyuCORnLZwJTDyPIU6b
- 9JrFXy0S/ecUoOzXtVTZKFLXzZJFGg==
-X-Authority-Analysis: v=2.4 cv=X5RSKHTe c=1 sm=1 tr=0 ts=68ca787a b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=g1XmVNSvLlnCP4BV7pMA:9 cc=ntf
- awl=host:13614
-X-Proofpoint-GUID: fAqcF2aU1vkabhApqY-Bon3j45ZCVvVa
-X-Proofpoint-ORIG-GUID: fAqcF2aU1vkabhApqY-Bon3j45ZCVvVa
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: mt65xx: add dual and quad mode for standard spi
+ device
+To: Tim Kuo <Tim.Kuo@mediatek.com>, Mark Brown <broonie@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Steven Liu <Steven.Liu@mediatek.com>, Sky Huang <Skylake.Huang@mediatek.com>
+References: <20250917055839.500615-1-Tim.Kuo@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250917055839.500615-1-Tim.Kuo@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The target_cpu_store() function parses the target CPU from the sysfs
-buffer using sscanf(). The format string currently uses "%uu", which
-is redundant. The compiler ignores the extra "u", so there is no
-incorrect parsing at runtime.
+Il 17/09/25 07:58, Tim Kuo ha scritto:
+> From: "Tim Kuo" <Tim.Kuo@mediatek.com>
+> 
+> Mediatek SPI hardware natively supports dual and quad modes, and these
+> modes are already enabled for SPI flash devices under spi-mem framework
+> in MTK SPI controller spi-mt65xx. However, other SPI devices, such as
+> touch panels, are limited to single mode because spi-mt65xx lacks SPI
+> mode argument parsing from SPI framework for these SPI devices outside
+> spi-mem framework.
+> 
+> This patch adds dual and quad mode support for these SPI devices by
+> introducing a new API, mtk_spi_set_nbits, for SPI mode argument parsing.
+> 
+> Signed-off-by: Tim Kuo <Tim.Kuo@mediatek.com>
 
-Update the format string to use "%u" for clarity and consistency.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
-v1 -> v2
-Rephrase commit message and subject to clarify
-that there is no incorrect parsing at runtime.
----
- drivers/hv/vmbus_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 5b4f8d009ca5..69591dc7bad2 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -1742,7 +1742,7 @@ static ssize_t target_cpu_store(struct vmbus_channel *channel,
- 	u32 target_cpu;
- 	ssize_t ret;
- 
--	if (sscanf(buf, "%uu", &target_cpu) != 1)
-+	if (sscanf(buf, "%u", &target_cpu) != 1)
- 		return -EIO;
- 
- 	cpus_read_lock();
--- 
-2.50.1
 
 
