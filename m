@@ -1,103 +1,293 @@
-Return-Path: <linux-kernel+bounces-820181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E25A6B7DFAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB687B7E098
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 902A67B7076
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA62582E1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835406ADD;
-	Wed, 17 Sep 2025 07:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE2930215A;
+	Wed, 17 Sep 2025 07:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R2Krbm7U"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjRVpkSb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4510229B775;
-	Wed, 17 Sep 2025 07:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A3E3016FB;
+	Wed, 17 Sep 2025 07:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758095564; cv=none; b=buoIbHvNRwtFt7jQScXRxYv5LiRwSwcF/8Wylf4XDMJBTiJggEMHhU++fs2eq95Tl9UZcdRooZ/BqNTbu/v/RbQ7VImM98bHsUhLSbq5Hm6aipvOrg5N4NR0LkEc77GclF6vJubUkH9cR/4B7nFwtfXbgqJ+FWc7Xsy0vidKEnw=
+	t=1758095574; cv=none; b=ja0BF4KFp8TQ+B9Gi2wki47f3AVIcIIWztpcltQdKEWcG/VX28EEIMJB5vZL7XytAlEXx4Nu+sem8fRP81Ih1xNcg1uLNXA45gutJ1CgL8Z3CB7cXEMaKbGNEivdqrNqMtubF4VKr7kAqstRPwEhBV0eUnns+zZ9xkfuTOs9WEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758095564; c=relaxed/simple;
-	bh=sq+35NiLodqZTUndAQ068vCXGUmPl5MRsZErPDPB4PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IwoFw1aUcBdH/sGn0+YyjGqS//1Gu/di4a7kdEnF54MPSkUIynQIjHXRpj/Q2jxot8CQyll5Iwhu6HCRmjS363Tq55OOtQWUT6/JaS69hd6fLHQul2Kq7hgrxvDCB8Q4lpefTVoEBwE2Vp5yvCzgDVt2vCAyViH7uyhBc6phOIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R2Krbm7U; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 07571C00784;
-	Wed, 17 Sep 2025 07:52:23 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6444A6063E;
-	Wed, 17 Sep 2025 07:52:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E1A45102F1727;
-	Wed, 17 Sep 2025 09:52:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758095558; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ap2y+Npu+kLF/Mrdl1WuStE4nxuZYwysNcBQ5q95FJY=;
-	b=R2Krbm7U0/4oorf1biGdW5mKYpGEbYe/25FeznSsZ6Z94DSXAspeBLOFJcukQhLo1NvmUp
-	r6kWnLlT1sUnJtIJdL/Y/fxK65YtCCvOGuZyeVfCHHIGMvm/jhOhQ/34nGsmDTv2HCKom7
-	PE1qLong5NeYcuvJus3EG7/+aHMPfUI3Id5qcZhAUISqLqFRf/+d1LLBRMfQhwpaSNN+00
-	HwMjTZQsYg8iMZnb1n56GBggyn4KnkDnGo+ABUnkMIxr9Sc/qZoduseJpIaAAu2AEMl6jT
-	XwsWypEI5qzBUzmTKEc0qkEDzWVEbC5RJGKWl4PI3Gci+tVxPjh9lBY5D1RZ1w==
-Date: Wed, 17 Sep 2025 09:52:15 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
- <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
- <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
- <digetx@gmail.com>, Jonas =?UTF-8?B?U2Nod8O2YmVs?=
- <jonasschwoebel@yahoo.de>, Charan Pedumuru <charan.pedumuru@gmail.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 13/23] staging: media: tegra-video: csi: move
- avdd-dsi-csi-supply from VI to CSI
-Message-ID: <20250917095215.12c6a7cd@booty>
-In-Reply-To: <20250906135345.241229-14-clamor95@gmail.com>
-References: <20250906135345.241229-1-clamor95@gmail.com>
-	<20250906135345.241229-14-clamor95@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758095574; c=relaxed/simple;
+	bh=gyoQcxtNHAtLPFBTGHfMfAQDZ5NbzkzJ9ytGya+BF1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PZveXeALv4G0cVanVkdQTTM+Y5I7JXOrPIxVBzraSR2LqiI9CwLjjofeexKBPMvn7u/vN4REfhDYfk3Ye/KQuxZcBkT/Qk7/eB1iSGTkVrlYxd/B/EO/WHSxpq/4pT+ueRRi+TYzxEX3suTW77Onze9JjFj/uoHgodtL6+Svkss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjRVpkSb; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758095572; x=1789631572;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gyoQcxtNHAtLPFBTGHfMfAQDZ5NbzkzJ9ytGya+BF1c=;
+  b=gjRVpkSb3F9n0IPYpTHDZYH4ZiffOh2RDeXLOFxeLDqXLLQKqITXD7XU
+   GUTB1p2EieVSSCiWOeh9Ky0z0/nWu5LdzC8kHViwhe3B7AmYFlSJtpNVg
+   eD81mEfWSYmbL/5spzzJ8NmsTIgP0LlMmFc4YoiHmYJ3sZG1iAFqqje1G
+   zmRkhhJHUa42rab9JiMHs0DCxyQj1RUFsDelVgQTIMz+JTz/OF3K1AVMB
+   vbz2dPoQNZVnxwuqWyC74VDEb7S7+DDQB0JkQAI4GnIywNNqFiJtweXIi
+   bG3JLM6KYX/KCRNP5k5IttlyZ2wgGBgDFiV4Kb69iuvS2m7r6NQDAPjsi
+   Q==;
+X-CSE-ConnectionGUID: gBQEzn3lSR+OBX6zwdEGpA==
+X-CSE-MsgGUID: xU8gOzMXTtWrBTqQPWwbOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60537074"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="60537074"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 00:52:52 -0700
+X-CSE-ConnectionGUID: BhUp0NYpTRycbzhcYYNRzQ==
+X-CSE-MsgGUID: XyAuoljnTtaVYW61vpPTzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="174279658"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 00:52:49 -0700
+Message-ID: <47d96d1e-a09e-4f0b-8dc3-bdf87ead1dfe@linux.intel.com>
+Date: Wed, 17 Sep 2025 15:52:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 14/41] KVM: VMX: Emulate read and write to CET MSRs
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-15-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250912232319.429659-15-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-On Sat,  6 Sep 2025 16:53:34 +0300
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-> The avdd-dsi-csi-supply is CSI power supply not VI, hence move it to
-> proper place.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
-Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # Tegra20 VIP
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+>
+> Add emulation interface for CET MSR access. The emulation code is split
+> into common part and vendor specific part. The former does common checks
+> for MSRs, e.g., accessibility, data validity etc., then passes operation
+> to either XSAVE-managed MSRs via the helpers or CET VMCS fields.
+>
+> SSP can only be read via RDSSP. Writing even requires destructive and
+> potentially faulting operations such as SAVEPREVSSP/RSTORSSP or
+> SETSSBSY/CLRSSBSY. Let the host use a pseudo-MSR that is just a wrapper
+> for the GUEST_SSP field of the VMCS.
+>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> [sean: drop call to kvm_set_xstate_msr() for S_CET, consolidate code]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> ---
+>   arch/x86/kvm/vmx/vmx.c | 18 ++++++++++++
+>   arch/x86/kvm/x86.c     | 64 ++++++++++++++++++++++++++++++++++++++++--
+>   arch/x86/kvm/x86.h     | 23 +++++++++++++++
+>   3 files changed, 103 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 227b45430ad8..4fc1dbba2eb0 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2106,6 +2106,15 @@ int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		else
+>   			msr_info->data = vmx->pt_desc.guest.addr_a[index / 2];
+>   		break;
+> +	case MSR_IA32_S_CET:
+> +		msr_info->data = vmcs_readl(GUEST_S_CET);
+> +		break;
+> +	case MSR_KVM_INTERNAL_GUEST_SSP:
+> +		msr_info->data = vmcs_readl(GUEST_SSP);
+> +		break;
+> +	case MSR_IA32_INT_SSP_TAB:
+> +		msr_info->data = vmcs_readl(GUEST_INTR_SSP_TABLE);
+> +		break;
+>   	case MSR_IA32_DEBUGCTLMSR:
+>   		msr_info->data = vmx_guest_debugctl_read();
+>   		break;
+> @@ -2424,6 +2433,15 @@ int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		else
+>   			vmx->pt_desc.guest.addr_a[index / 2] = data;
+>   		break;
+> +	case MSR_IA32_S_CET:
+> +		vmcs_writel(GUEST_S_CET, data);
+> +		break;
+> +	case MSR_KVM_INTERNAL_GUEST_SSP:
+> +		vmcs_writel(GUEST_SSP, data);
+> +		break;
+> +	case MSR_IA32_INT_SSP_TAB:
+> +		vmcs_writel(GUEST_INTR_SSP_TABLE, data);
+> +		break;
+>   	case MSR_IA32_PERF_CAPABILITIES:
+>   		if (data & PMU_CAP_LBR_FMT) {
+>   			if ((data & PMU_CAP_LBR_FMT) !=
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 460ceae11495..0b67b1b0e361 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1890,6 +1890,44 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data,
+>   
+>   		data = (u32)data;
+>   		break;
+> +	case MSR_IA32_U_CET:
+> +	case MSR_IA32_S_CET:
+> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
+> +		    !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT))
+> +			return KVM_MSR_RET_UNSUPPORTED;
+> +		if (!kvm_is_valid_u_s_cet(vcpu, data))
+> +			return 1;
+> +		break;
+> +	case MSR_KVM_INTERNAL_GUEST_SSP:
+> +		if (!host_initiated)
+> +			return 1;
+> +		fallthrough;
+> +		/*
+> +		 * Note that the MSR emulation here is flawed when a vCPU
+> +		 * doesn't support the Intel 64 architecture. The expected
+> +		 * architectural behavior in this case is that the upper 32
+> +		 * bits do not exist and should always read '0'. However,
+> +		 * because the actual hardware on which the virtual CPU is
+> +		 * running does support Intel 64, XRSTORS/XSAVES in the
+> +		 * guest could observe behavior that violates the
+> +		 * architecture. Intercepting XRSTORS/XSAVES for this
+> +		 * special case isn't deemed worthwhile.
+> +		 */
+> +	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
+> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
+> +			return KVM_MSR_RET_UNSUPPORTED;
+> +		/*
+> +		 * MSR_IA32_INT_SSP_TAB is not present on processors that do
+> +		 * not support Intel 64 architecture.
+> +		 */
+> +		if (index == MSR_IA32_INT_SSP_TAB && !guest_cpu_cap_has(vcpu, X86_FEATURE_LM))
+> +			return KVM_MSR_RET_UNSUPPORTED;
+> +		if (is_noncanonical_msr_address(data, vcpu))
+> +			return 1;
+> +		/* All SSP MSRs except MSR_IA32_INT_SSP_TAB must be 4-byte aligned */
+> +		if (index != MSR_IA32_INT_SSP_TAB && !IS_ALIGNED(data, 4))
+> +			return 1;
+> +		break;
+>   	}
+>   
+>   	msr.data = data;
+> @@ -1934,6 +1972,20 @@ static int __kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data,
+>   		    !guest_cpu_cap_has(vcpu, X86_FEATURE_RDPID))
+>   			return 1;
+>   		break;
+> +	case MSR_IA32_U_CET:
+> +	case MSR_IA32_S_CET:
+> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
+> +		    !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT))
+> +			return KVM_MSR_RET_UNSUPPORTED;
+> +		break;
+> +	case MSR_KVM_INTERNAL_GUEST_SSP:
+> +		if (!host_initiated)
+> +			return 1;
+> +		fallthrough;
+> +	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
+> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
+> +			return KVM_MSR_RET_UNSUPPORTED;
+> +		break;
+>   	}
+>   
+>   	msr.index = index;
+> @@ -3864,12 +3916,12 @@ static __always_inline void kvm_access_xstate_msr(struct kvm_vcpu *vcpu,
+>   	kvm_fpu_put();
+>   }
+>   
+> -static __maybe_unused void kvm_set_xstate_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> +static void kvm_set_xstate_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   {
+>   	kvm_access_xstate_msr(vcpu, msr_info, MSR_TYPE_W);
+>   }
+>   
+> -static __maybe_unused void kvm_get_xstate_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> +static void kvm_get_xstate_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   {
+>   	kvm_access_xstate_msr(vcpu, msr_info, MSR_TYPE_R);
+>   }
+> @@ -4255,6 +4307,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		vcpu->arch.guest_fpu.xfd_err = data;
+>   		break;
+>   #endif
+> +	case MSR_IA32_U_CET:
+> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> +		kvm_set_xstate_msr(vcpu, msr_info);
+> +		break;
+>   	default:
+>   		if (kvm_pmu_is_valid_msr(vcpu, msr))
+>   			return kvm_pmu_set_msr(vcpu, msr_info);
+> @@ -4604,6 +4660,10 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		msr_info->data = vcpu->arch.guest_fpu.xfd_err;
+>   		break;
+>   #endif
+> +	case MSR_IA32_U_CET:
+> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> +		kvm_get_xstate_msr(vcpu, msr_info);
+> +		break;
+>   	default:
+>   		if (kvm_pmu_is_valid_msr(vcpu, msr_info->index))
+>   			return kvm_pmu_get_msr(vcpu, msr_info);
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index a7c9c72fca93..076eccba0f7e 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -710,4 +710,27 @@ int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, int cpl,
+>   
+>   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
+>   
+> +#define CET_US_RESERVED_BITS		GENMASK(9, 6)
+> +#define CET_US_SHSTK_MASK_BITS		GENMASK(1, 0)
+> +#define CET_US_IBT_MASK_BITS		(GENMASK_ULL(5, 2) | GENMASK_ULL(63, 10))
+> +#define CET_US_LEGACY_BITMAP_BASE(data)	((data) >> 12)
+> +
+> +static inline bool kvm_is_valid_u_s_cet(struct kvm_vcpu *vcpu, u64 data)
+> +{
+> +	if (data & CET_US_RESERVED_BITS)
+> +		return false;
+> +	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
+> +	    (data & CET_US_SHSTK_MASK_BITS))
+> +		return false;
+> +	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) &&
+> +	    (data & CET_US_IBT_MASK_BITS))
+> +		return false;
+> +	if (!IS_ALIGNED(CET_US_LEGACY_BITMAP_BASE(data), 4))
+> +		return false;
+> +	/* IBT can be suppressed iff the TRACKER isn't WAIT_ENDBR. */
+> +	if ((data & CET_SUPPRESS) && (data & CET_WAIT_ENDBR))
+> +		return false;
+> +
+> +	return true;
+> +}
+>   #endif
+
 
