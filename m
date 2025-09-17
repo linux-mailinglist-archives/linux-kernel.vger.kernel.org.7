@@ -1,110 +1,201 @@
-Return-Path: <linux-kernel+bounces-821549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A06AB819B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:25:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77660B8199A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C66627435
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33324188A1A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D4C314D2D;
-	Wed, 17 Sep 2025 19:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEA12FFDDA;
+	Wed, 17 Sep 2025 19:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hztTDeD5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5VU0dxO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E709730C110;
-	Wed, 17 Sep 2025 19:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0451898F8
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137005; cv=none; b=YYlOapJGumFNKbKugnKGj8jWVBlq0+/vMvQDv/fSuJ2xUXLNw6+O00jM8mLj4CiWVNnuG4o4RT6pzA3uOolpRpCcrhfG2cZmxa6f9/dQCjAOwwW2IRKyw3klZUhVWR9cW3K2bDA5kNuNJE6R8nhEAU1av+TNwRL3sky4WJJ97CY=
+	t=1758137097; cv=none; b=INBk55ML01eMUb7xrqOjhuwYnlGujFdudVIN6syQ8ssJMI2zC3lKJCxKNv1FifVwev2SFNhtD38/nLiRF5y21Lv4mx7W+MCxR6f0GlzhPz74OHuFDA2jrMxf0+iwQzJKMuPXafKy/HPGZeDzNxb5GCwwBXrquSYYIRLHgljgMwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137005; c=relaxed/simple;
-	bh=MFa4MrLLeBxJ4spNgJzdHnMZEO1qEG9apiibEMwKF+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dGu13itbM5cWhtbPkm7DPCwbwwo/aogCGIihXFgNUxsSBIZpy/GLBGifnN3xdz6U1n80H7HKhK/p2OtGTAMuAbrHtpsAF7d6nkpMYUwSZNrykT/z9A6Nv0RvPcfuPf5wH5JEtr2D22+6tgx/UOTfHAVhbTAbCwVvgWpq2a+OntQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hztTDeD5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3109DC4CEFB;
-	Wed, 17 Sep 2025 19:23:23 +0000 (UTC)
+	s=arc-20240116; t=1758137097; c=relaxed/simple;
+	bh=MkXdp5H1QizaH7xbpVpdsbU78Mw7LqyxRZxu3pFlAHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fk1RAyzqGVn6DKnKNu1Rpj1f6CXFxSUGdUKLBLLUML9CrKbFmr2rvKU3Z2YasWmIjh8OD3Hn/z2UYqA1udzCAlbSvfjpCDKufuEaHQK7MOZs7R4RXc4l2vMPdosxvROlyEtGa2/JZwHgqP/mWGWkvLzZds/tfxuJs4jrMBj+0t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5VU0dxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E7AC4CEFA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758137004;
-	bh=MFa4MrLLeBxJ4spNgJzdHnMZEO1qEG9apiibEMwKF+Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hztTDeD5xlD8jRixl4Pxqbhj8i+b07MKO4vukji5FOvcufnEFBVDnUG3O39XqxEDf
-	 fRfRqP9SzSW+KP9YaaoIOGCbEGdM+/jH9zvtgkeb1fk21D0+Woe/fz4mx+4nkTwi8t
-	 pI0F4pL4JR1rij724ydjdyWMqqm1SmfSaS0M0ZYYyHU6tr0Hh43jZy3SDWqKIDH8BL
-	 V8o35BqbbsomC6B9QR0d5mM/lCO9neVYWqrcCfLAsnPfjuwFR/QRHSj9pPcRtGKc1t
-	 9JObbpttreKLKaZxdOPbdiny+a14JCdMCRGm3Y0swnxHw2i4zX8ohFjE/+jhCjdYcp
-	 RhV6wSpUEI5kQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: andi.shyti@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	konradybcio@kernel.org,
-	broonie@kernel.org,
-	johan+linaro@kernel.org,
-	dianders@chromium.org,
-	agross@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Cc: mukesh.savaliya@oss.qualcomm.com
-Subject: Re: [PATCH v7 0/6] Add support to load QUP SE firmware from
-Date: Wed, 17 Sep 2025 14:23:19 -0500
-Message-ID: <175813699406.66282.993438408948834854.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250911043256.3523057-1-viken.dadhaniya@oss.qualcomm.com>
-References: <20250911043256.3523057-1-viken.dadhaniya@oss.qualcomm.com>
+	s=k20201202; t=1758137097;
+	bh=MkXdp5H1QizaH7xbpVpdsbU78Mw7LqyxRZxu3pFlAHQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T5VU0dxOFrWrfxNgJWgMV4FGBsKbQ9U3SvtJriDRYLf9wnjO+kawn5JvOIg3CoMwC
+	 fBjR1fBjfaRJPbSmqoKlUci5+g02vaI2xBfRDASP0dbil9s9qix+J3O2Mf4fxML3l6
+	 vmPFZVUvr+WYUjDVs+L81L96vyFhr5KyxFa1+8baaoFwQa0/OFgJJFjDdw7qYVBe26
+	 eRzkdY5QsV6fGq7BovNtrBSXtb9TEnjaGrDLJfpPQYeY8/kSP2AlfycYKuulP1wAjP
+	 l5L7VzpNBeNMJXoOUHahF2eT4HOghjfIZ4nlRM02tffhJAEWzMPOIJgZ7MLH0ArtuR
+	 cqJKVgA20kAeQ==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6234b298d84so121246eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:24:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWUaBGt0iPEWRc/Sia9rhLxARa8ATHGrN+KSicKNGtPf2zOqaWNytzFBFO1SdTIHAP9Uq/O+SI0JqnEeeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTw1Tp5gsV+3zsLqw2NCU8R74fuIy9teJl6f3y52gRqpXc3UvP
+	KbSpjN0+DBB0qqd6pjXOgEPlixlIMeaV/XRgdAwM99uuT+ywHNYryc1ZAQbqrIc0DQjwB2BrtdR
+	pQAUC+vrJd2vMqwZQSxMEGeNpue4sbTo=
+X-Google-Smtp-Source: AGHT+IETE6XaTQ10uIZrWGowaqdYF0YKB6mD5x4nZTrZAEKpPxRu7UPLchElkP0/N7Qt6VAMt9vHa2laz1aT4trGBaA=
+X-Received: by 2002:a05:6808:4f60:b0:437:eb1d:cddb with SMTP id
+ 5614622812f47-43d50a810e7mr1695229b6e.1.1758137096275; Wed, 17 Sep 2025
+ 12:24:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250716123323.65441-1-ulf.hansson@linaro.org>
+ <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
+ <7hldnp6apf.fsf@baylibre.com> <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
+ <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com> <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com>
+In-Reply-To: <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 17 Sep 2025 21:24:45 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
+X-Gm-Features: AS18NWDYb399cWlUNG8aNGGu8-I0YDNj2FcRr7Wo8J3qWzgzNb67RsnHzjNVCYM
+Message-ID: <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
+Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@baylibre.com>, linux-pm@vger.kernel.org, 
+	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-On Thu, 11 Sep 2025 10:02:50 +0530, Viken Dadhaniya wrote:
-> In Qualcomm SoCs, firmware loading for Serial Engines (SE) in the QUP
-> hardware has traditionally been managed by TrustZone (TZ). This setup
-> handled Serial Engines(SE) assignments and access control permissions,
-> ensuring a high level of security but limiting flexibility and
-> accessibility.
-> 
-> This limitation poses a significant challenge for developers who need more
-> flexibility to enable any protocol on any of the SEs within the QUP
-> hardware.
-> 
-> [...]
+Sorry for the delay.
 
-Applied, thanks!
+On Fri, Sep 12, 2025 at 3:58=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> On Tue, 12 Aug 2025 at 11:26, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kernel.org> wro=
+te:
+> > >
+> > > On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilman@baylibr=
+e.com> wrote:
+> > > >
+> > > > "Rafael J. Wysocki" <rafael@kernel.org> writes:
+> > > >
+> > > > > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.hansson@=
+linaro.org> wrote:
+> > > > >>
+> > > > >> Some platforms and devices supports multiple low-power-states th=
+an can be
+> > > > >> used for system-wide suspend. Today these states are selected on=
+ per
+> > > > >> subsystem basis and in most cases it's the deepest possible stat=
+e that
+> > > > >> becomes selected.
+> > > > >>
+> > > > >> For some use-cases this is a problem as it isn't suitable or eve=
+n breaks
+> > > > >> the system-wakeup latency constraint, when we decide to enter th=
+ese deeper
+> > > > >> states during system-wide suspend.
+> > > > >>
+> > > > >> Therefore, let's introduce an interface for user-space, allowing=
+ us to
+> > > > >> specify the system-wakeup QoS limit. Subsequent changes will sta=
+rt taking
+> > > > >> into account the QoS limit.
+> > > > >
+> > > > > Well, this is not really a system-wakeup limit, but a CPU idle st=
+ate
+> > > > > latency limit for states entered in the last step of suspend-to-i=
+dle.
+> > > > >
+> > > > > It looks like the problem is that the existing CPU latency QoS is=
+ not
+> > > > > taken into account by suspend-to-idle, so instead of adding an
+> > > > > entirely new interface to overcome this, would it make sense to a=
+dd an
+> > > > > ioctl() to the existing one that would allow the user of it to
+> > > > > indicate that the given request should also be respected by
+> > > > > suspend-to-idle?
+> > > > >
+> > > > > There are two basic reasons why I think so:
+> > > > > (1) The requests that you want to be respected by suspend-to-idle
+> > > > > should also be respected by the regular "runtime" idle, or at lea=
+st I
+> > > > > don't see a reason why it wouldn't be the case.
+> > > > > (2) The new interface introduced by this patch basically duplicat=
+es
+> > > > > the existing one.
+> > > >
+> > > > I also think that just using the existing /dev/cpu_dma_latency is t=
+he
+> > > > right approach here, and simply teaching s2idle to respect this val=
+ue.
+> > > >
+> > > > I'm curious about the need for a new ioctl() though.  Under what
+> > > > conditions do you want normal/runtime CPUidle to respect this value=
+ and
+> > > > s2idle to not respect this value?
+> > >
+> > > In a typical PC environment s2idle is a replacement for ACPI S3 which
+> > > does not take any QoS constraints into account, so users may want to
+> > > set QoS limits for run-time and then suspend with the expectation tha=
+t
+> > > QoS will not affect it.
+> >
+> > Yes, I agree. To me, these are orthogonal use-cases which could have
+> > different wakeup latency constraints.
+> >
+> > Adding an ioctl for /dev/cpu_dma_latency, as suggested by Rafael would
+> > allow this to be managed, I think.
+> >
+> > Although, I am not fully convinced yet that re-using
+> > /dev/cpu_dma_latency is the right path. The main reason is that I
+> > don't want us to limit the use-case to CPU latencies, but rather allow
+> > the QoS constraint to be system-wide for any type of device. For
+> > example, it could be used by storage drivers too (like NVMe, UFS,
+> > eMMC), as a way to understand what low power state to pick as system
+> > wide suspend. If you have a closer look at patch2 [1] , I suggest we
+> > extend the genpd-governor for *both* CPU-cluster-PM-domains and for
+> > other PM-domains too.
+> >
+> > Interested to hear your thoughts around this.
+>
+> Hey, just wanted to see if you have managed to digest this and have
+> any possible further comment?
 
-[1/6] dt-bindings: qcom: se-common: Add QUP Peripheral-specific properties for I2C, SPI, and SERIAL bus
-      commit: 9bc7130822c4c7f3ef39f20174a379e476586ab3
-[2/6] soc: qcom: geni-se: Cleanup register defines and update copyright
-      commit: b44a593fb53a6f5e135af2c5351546f80c1285ac
-[3/6] soc: qcom: geni-se: Add support to load QUP SE Firmware via Linux subsystem
-      commit: d4bf06592ad68ac4353a81c73e8e662cf88aa2cc
-[4/6] i2c: qcom-geni: Load i2c qup Firmware from linux side
-      commit: b645df76536c5b7d40e60450bf8011f70f34415f
-[5/6] spi: geni-qcom: Load spi qup Firmware from linux side
-      commit: 99cf351ee1c46b39c0581220807290b1dd56488e
-[6/6] serial: qcom-geni: Load UART qup Firmware from linux side
-      commit: 3f1707306b79cafc5a11350befd5a4081b807760
+The reason why I thought about reusing /dev/cpu_dma_latency is because
+I think that the s2idle limit should also apply to cpuidle.  Of
+course, cpuidle may be limited further, but IMV it should observe the
+limit set on system suspend (it would be kind of inconsistent to allow
+cpuidle to use deeper idle states than can be used by s2idle).
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I also don't think that having a per-CPU s2idle limit would be
+particularly useful (and it might be problematic).
+
+Now, it is not as straightforward as I thought because someone may
+want to set a more restrictive limit on cpuidle, in which case they
+would need to open the same special device file twice etc and that
+would be quite cumbersome.
+
+So in the end I think that what you did in the $subject patch is
+better, but I still would like it to also affect cpuidle.
+
+And it needs to be made clear that this is a limit on the resume
+latency of one device.  Worst case, the system wakeup latency may be a
+sum of those limits if the devices in question are resumed
+sequentially, so in fact this is a limit on the contribution of a
+given device to the system wakeup latency.
 
