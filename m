@@ -1,105 +1,123 @@
-Return-Path: <linux-kernel+bounces-820520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89FFB7D326
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81139B7D448
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C9321C02679
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E363B1658A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D62F29B8DB;
-	Wed, 17 Sep 2025 11:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C845029BD88;
+	Wed, 17 Sep 2025 11:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REFQ9J/t"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="ZtzQoxrb"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402D0253956
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D954645C14
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758106830; cv=none; b=mrwIgf+/OMX1mS+25fxrpcuzUoLI6+iLMspBXqMLN5jAT2wYTaLonuQbFhvK4yRlJ4VyckMMTkHG62aX9tnjPzuo30ulHKHg/Kmu3rxV0YxPNrFTA0Tu+1ihxitAZGRd3M+sCLVjwPzIkMfrhT2EzbPcoNZli1QBzNdBG5N6jiM=
+	t=1758106884; cv=none; b=rfWP2vWXQ7GlR/qxi7v/XkcNfly64cAFB+n1qqPBULV5V/F+aYGyDUdLi8dJUIxi3A0lc9VTqt0eQSMFXlxB4EIr6T36+Lx3WLbFZUDPdAqLjSUazaoLulaIKs9sAZpI90l54oBDZeun7g3oPAsXUVYlPyb6ackPY899N53ig2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758106830; c=relaxed/simple;
-	bh=iOpYV/CrvsvUnku/0QkvP3IDl3KIs1iAJKOOZesxXbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cMmyaofm4x+y7rF6LT9hruzp9A/Akf2Y7GwyW0D28YYeWQYK6FYejT0yeMzX6PV0QujxwsTP5uQHwhPcnpuvg5G1mSjgKGxFYgg5MQei6lIZn/wCbdw/9FTArWmVoQ0ZAXY00MSeN2ZeEcNdQvzkljg7K78gGYlFCJdGGh2WfNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REFQ9J/t; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-ea473582bcaso911213276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 04:00:29 -0700 (PDT)
+	s=arc-20240116; t=1758106884; c=relaxed/simple;
+	bh=DXe+3PYozcWXl57aBr5WezaAMdVFPw3kN1QoS1BjuR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FF+73HBW8QTuPAkjIQWaPZvPQudizmXp8RNFvU0uM/x/t3u5UBYiaM8pq/lYUpKePbrfT/LJLk6LdsQ68qB6AOJE+V32Bol3PDvtkYzGNFSQ18k3QG42A2KQ1HEXVFqnNW+Oxus3hBiH7hsIwNFWkBlMdTR9/pFo0yzxl6kK+do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=ZtzQoxrb; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-244582738b5so54814865ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 04:01:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758106828; x=1758711628; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iOpYV/CrvsvUnku/0QkvP3IDl3KIs1iAJKOOZesxXbs=;
-        b=REFQ9J/ti1q0ctWu3QtcK7nHBvfNDnbSJ+rRT+BI9KKorSnWIlqEUZDSjs+5RDWa2Z
-         cZYIHVUFJ+bwb8/unvb26fwaUd88qkypbmWBMXx0FgJGP1dd5eLXiMIRj1iv1Od4uhpg
-         l5HtUUGHK8N4AE1t1oiWN3FZP3e4495ZSLO+sMDe+l6eSZ40NqQyUbUd9LQW1B+YghkD
-         mrxJ6JaJApqHXgjgRu5uVXwPkXkaJwDWJgR+glyVmWw/1GNkglW8vMI66u5n3kieplQP
-         dzywh88U3RCkmspLuFyXcJx/MW0dFVtUi8mcNffjrHdbBnNo0SbagevI57sc3w0y2lJR
-         ZSiA==
+        d=sartura.hr; s=sartura; t=1758106881; x=1758711681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMQsS7dEiEcn1XR+6VViCf5cMvlHhDrANmtU1f3oLC4=;
+        b=ZtzQoxrbB/VnwBnWRvWG3K85BKlJGdwoNTM1+O0esT1jio4TWqZWs+yKdSV5yMouXY
+         y1S4YXcJsNMzqwiiIiD0G+50MiAYCiSl3/Av13EyBpbjWczenQpABZMWeu4vcY44lryr
+         d6s/5/3i9ZHFAcv2KqIXXkP5CUHMqv/XqGRrMwIcnNVNaSh8JSkJN/Zvx2XVEidroZM/
+         Moiz9Zovqw1b2GeKTVrUibHz6Tti21WnzIcvAZmKevieerpgiV5eCa0ysqrOhySuMiwi
+         qzNIQQ5yNBDImOHRWYxR3Fe7XKiTeA13YiG+F/m3f9o4YQFh9uBu9Q/AaCDztmdMRFzY
+         6Q/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758106828; x=1758711628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iOpYV/CrvsvUnku/0QkvP3IDl3KIs1iAJKOOZesxXbs=;
-        b=TLE01RMT1WkJpX5FfDLlw/Xxk+5d3v+7a1aDezNLEz4I7ezOi12gXMe6Nh/qAksrqV
-         0TXmtp63Z4NN3r4QIt3J5jA2nHg1T/FLNuMcPwl0NVeijLfbG5EnFrknftAJdqNp/r7p
-         mO/acuyELhAc6XcvikLXB4SXxcbGCIOqsww37QggaCaRwNA6rkCxxCBye8cjl6mAOcDu
-         Q7dJYWGVVCheOJTAuPjdrEDWLorVwCbSdUx7xiVGzE9zfQKwEVp6+Mzvw4icljzJVucZ
-         euZwccRwOVMGCiFpMFVzqn0QwYCPP/jGHyvtJP33acTHkkafu2vMxG59u11yV8J7XGxn
-         8J8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXByhl3gcBumv+jlHbVENMiYkw3A/fQqgPtsNojOm6DYElERjidLnWvvnJ8ENfjIhLlBwGKckDF6R9bfmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFz56mDWH5uq1WlY/LEA6GhFAKsJbqrGxrur1N4GijLG6m29Nq
-	0fxOoxAB9HyXYdptt2ikvT1JQ7DQAKqSQ04ZghwX7vRYcwOJgbTQvmbHrQiYmaY4yORWt/tRtnH
-	B1yfQCWONQ/23Jnqv5P6M521HuDbiHwDxQ90+T4o=
-X-Gm-Gg: ASbGncvHPj/qEIxkKsM5J4HSea2+dX3j3Rsic3szXwsZEIWYYuVFLMCfBc9Zm5PTaIU
-	zD3+TcLerIRCRcUUrWL22qXrnbLHLNn3wIIswN2futr32vuk1lU9ZQB5seTs9Mv4AdTwceXiYpN
-	7tz7tBSVS+qa9QY/Z6qmG3qtGtDcb61f2eIlC+Km0IbXRnDQIqDvM9L9KUlSruHlF0cx1vnqN+t
-	qyVs6U6/30IJahj/N6bHvmLtGhsoGXJz3VxMZ19VZAoULq49xI=
-X-Google-Smtp-Source: AGHT+IGfnuwSEGf3ha0nSdQ2bBtn723dyi/fioLa2ryAVJS390NdpOSQEFlC22tsMhWb9EgeYLp9ZMfDh/dzPGnq+7Q=
-X-Received: by 2002:a05:690e:159c:20b0:62a:c4a6:bfea with SMTP id
- 956f58d0204a3-633b126d5edmr1034403d50.17.1758106828070; Wed, 17 Sep 2025
- 04:00:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758106881; x=1758711681;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VMQsS7dEiEcn1XR+6VViCf5cMvlHhDrANmtU1f3oLC4=;
+        b=JGqpFEQrPY8BkzA5BsicHIlHvNav2jap/pumJzblMJV2J2Gzwp5q6emxJixe48wGZb
+         o5NDjv8wrawh8EpFxZfnirUFRcpH/VlfzGuZmY9NHieVnfjblKHIsm0wCx1Xh0kkHeVE
+         VdpfgZPIqrKfBX3dYq3YOEjxz4V2D8LiyrDr1P0nhB1kp3imotocrOJMtxC6RaW3shI9
+         O5S+VGN6hYdsniuAm1fqAAKYkCszRom9IZFxvLxF1sxXhghhQcVR9mUD2R2G5MknNjWJ
+         7B7BtAPh6qTRDniOwW+PdqGCRH+8tgHlsL63d9QSDBQZu49UB2rDcHZh7ZDHU9uXqY2A
+         LK8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvnTUZcUQm/EcFggEefHw1dYVALJc3pOlMB1hpKBLPtKI5gNrqt6MzERWKZofTPMrhFnB+rojMI4rl8c0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl+8BJDuZBp9uEyLkESC6gO3YhDuOexCNKOmyDTR3tCacLozyz
+	kAdTGyn7UfftJBa2QbfRrCbMWvkB+Ew5Qt4tYZxoyEd/TM0Ri4+6C5a4vYOlvTRprxc=
+X-Gm-Gg: ASbGncvNOBykeDHtvKoUBIdNrgikNrOblsCjMu1b+ysIE1ZJob/X5iruBSIPxBlq1pm
+	wQanD6cVfH8wNlFgVrCrE3ZD2GkfAuNSBBlr1W3n3HncWXui0f3qOFK99nqOk8n6Qc340etf0Wt
+	wm8l5Ry+yfqFxql3DrcEzO7o5uBqLw6S8YJT93uwzihtgdmzNxCi0S3Ab6PVKHruUKPUtx2WQKT
+	cp6V5GUysm0HisYtpDO8OVvb+C8kn22mOe//QGKYSXju2bbjZTr/A9JRcDVxpEjeShDAZnpmh+v
+	BfQnbhtyq3JMW4sNLoeZWIoP4w/LIZ2NLM0gmq/M+j+o/vrCt4Im4hekZmh1IZA7vz7pGQ9AJ4j
+	FPUDD1FcKTe2NKrUQm9pmmm1l5ZKK9yVnVEkpMywxp5E2dwTiUW/LR+rn
+X-Google-Smtp-Source: AGHT+IFzHlVzYa/q3MnbGUKmGNaxoTqhiBZhkinwoVOAqXMfYX6776FYQwngWLp/NNcoxyCfaQZaUA==
+X-Received: by 2002:a17:902:d4c9:b0:246:eb4d:80c8 with SMTP id d9443c01a7336-268137fd08fmr17646195ad.34.1758106880901;
+        Wed, 17 Sep 2025 04:01:20 -0700 (PDT)
+Received: from fedora (cpezg-94-253-146-122-cbl.xnet.hr. [94.253.146.122])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-265819a6212sm94231445ad.57.2025.09.17.04.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 04:01:20 -0700 (PDT)
+From: Robert Marko <robert.marko@sartura.hr>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	Steen.Hegelund@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: luka.perkov@sartura.hr,
+	benjamin.ryzman@canonical.com,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH net-next] net: ethernet: microchip: sparx5: make it selectable for ARCH_LAN969X
+Date: Wed, 17 Sep 2025 13:00:24 +0200
+Message-ID: <20250917110106.55219-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912095928.1532113-1-dqfext@gmail.com> <20250915181015.67588ec2@kernel.org>
- <CALW65jYgDYxXfWFmwYBjXfNtqWqZ7VDWPYsbzAH_EzcRtyn0DQ@mail.gmail.com> <20250916075721.273ea979@kernel.org>
-In-Reply-To: <20250916075721.273ea979@kernel.org>
-From: Qingfang Deng <dqfext@gmail.com>
-Date: Wed, 17 Sep 2025 19:00:16 +0800
-X-Gm-Features: AS18NWB_hpDqfpIABkrd-Pvpolw7w2H4ujFI3yYvFt7f0E3V1zdjLMakXthxI2E
-Message-ID: <CALW65jZaDtchy1FFttNH9jMo--YSoZMsb8=HE72i=ZdnNP-akw@mail.gmail.com>
-Subject: Re: [PATCH net-next] ppp: enable TX scatter-gather
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Felix Fietkau <nbd@nbd.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 10:57=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
-rote:
->
-> On Tue, 16 Sep 2025 10:57:49 +0800 Qingfang Deng wrote:
-> > Can I modify dev->features directly under the spin lock (without
-> > .ndo_fix_features) ?
->
-> Hm, I'm not aware of a reason not to. You definitely need to hold
-> rtnl_lock, and call netdev_update_features() after.
+LAN969x switchdev support depends on the SparX-5 core,so make it selectable
+for ARCH_LAN969X.
 
-Will the modification race against __netdev_update_features(), where
-dev->features is assigned a new value?
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+ drivers/net/ethernet/microchip/sparx5/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/microchip/sparx5/Kconfig b/drivers/net/ethernet/microchip/sparx5/Kconfig
+index 35e1c0cf345e..a4d6706590d2 100644
+--- a/drivers/net/ethernet/microchip/sparx5/Kconfig
++++ b/drivers/net/ethernet/microchip/sparx5/Kconfig
+@@ -3,7 +3,7 @@ config SPARX5_SWITCH
+ 	depends on NET_SWITCHDEV
+ 	depends on HAS_IOMEM
+ 	depends on OF
+-	depends on ARCH_SPARX5 || COMPILE_TEST
++	depends on ARCH_SPARX5 || ARCH_LAN969X || COMPILE_TEST
+ 	depends on PTP_1588_CLOCK_OPTIONAL
+ 	depends on BRIDGE || BRIDGE=n
+ 	select PHYLINK
+-- 
+2.51.0
+
 
