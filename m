@@ -1,113 +1,100 @@
-Return-Path: <linux-kernel+bounces-820564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D323B7CCA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF57CB7D5B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBF752844E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AD4C487EAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B971A369983;
-	Wed, 17 Sep 2025 11:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66E636999F;
+	Wed, 17 Sep 2025 11:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyv+EuqV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UisjxDyZ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F50DBA45;
-	Wed, 17 Sep 2025 11:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E7B3451AE;
+	Wed, 17 Sep 2025 11:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758108850; cv=none; b=UrMYhwTQSefSspuQMmyZlK9WzpZdb2NeLto6FIJlfENUQDOG/4FBIQoW4RuY/kqpGk+ke1kaaWYtsEwVGn3qLEcXR6oh/ewrwPBk8nED/C5edQ6t94YNAsPHquYI5/8xV818+Y2tnJ6d9eVHzKkXTMZEtoz+0WENpIo667YCeRU=
+	t=1758108985; cv=none; b=TqTuaAZPmgH+aN/lK1fERqSxUH1ouFbUwnSQjb1TEEDALpTpa2ORfBJk8DliesiA3+rKfiVr/Uq1ec6Ouai1AjJz6npA3vfNn9C4dE7kGOOt88nBc2RyjNyyC0wqsvQIjMPQPk9hgwbkdzubKgY2QvmSY7cn3W1pbSoHCnJdKEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758108850; c=relaxed/simple;
-	bh=Pym4Hl/uD7n31XzfGlFJ4FP0sMyge/+RVU8nqvrtyiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KWfIN71x6qa/jHEk9K1LQ6NqBoxiSMo5xVaBzBF0e5ey894Z4tliEOcmuIEgQYir8P9yi4OUwn8mb9D/G2pyLG79ydX06ITCOUswIxS6YHM+QAD/u5cYLxiU8zgClCKfLva/319p7A80fK8tFDGeE0i2pdWtaGDfv3meTFQ0OJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyv+EuqV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA19C4CEF0;
-	Wed, 17 Sep 2025 11:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758108849;
-	bh=Pym4Hl/uD7n31XzfGlFJ4FP0sMyge/+RVU8nqvrtyiY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lyv+EuqV07hL0GuHD7TeWVXWWaG+xc5kVHkJUUZDsv2+KHsWh53DFp3wLwU7kms37
-	 uRnuyla+zzv4hxBL0+rYbuFwy443Y6odqVNbO9gNiIYCYQYQPr7WSB+bTXJRzC567h
-	 Q92nfT+ljIG+bnpOCNy6GySuMK9HFCE2okGVDnYfOJz5rdyF/NhB3oiZ+JiKLXFaX4
-	 5DvVigR6mtrTeGQSkUKOrxIIyzDFpL13hsugVM5/ieHEhRC0zCUsS9sxcXCSJXka+8
-	 foL5aE/q6yQnJ6HtoPS196jhaqr0x1E17zoFkx09DQoZnKzLbLWCy5a+C44KwgoNK1
-	 TgDwnVl3b5wTA==
-Date: Wed, 17 Sep 2025 12:34:05 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Pavel Shpakovskiy <pashpakovskii@salutedevices.com>
-Subject: linux-next: manual merge of the bluetooth tree with the origin tree
-Message-ID: <aMqcrced3cFk9SCl@sirena.org.uk>
+	s=arc-20240116; t=1758108985; c=relaxed/simple;
+	bh=U9daN9h/Rq5DkreMjSWcA27ljnCEl/j+/TsM04nyJTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=O2KITTl8htzjfUJqrNfhP/k36h35B93prhHb668owvLTKWAJ4tUkOENHvYPiANhSIh3Ow3jspiMQXbk1Q03dKe58/1t8RWvk2gWb0/6rj6DKWOcBin6xib6z9E63HYXd0VSFtL5I6goPBjCWgcI+28MdEWUmccs/3NE0i/RHph8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UisjxDyZ; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=/o
+	BE8vrkjBcb2gv0f+kFmkhC3kasnGmTcU9eWhgDVXw=; b=UisjxDyZW9BJGOFfjx
+	iC0UHaYAzjmA3pb8w7qmBktRf/Rqcy+qFUgiVfHksdhF9oZtUoDQwjgnxBS4f3oh
+	+rnlInsa8Fp22ucWkqEiMpi+mjSAhH038h7C0lo87IHDncA2jq+osuhMOCmzfjuy
+	GndH7rmdqTPw24XZnrJyAN9yY=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgCnNvQNncpoH1CSDQ--.15275S2;
+	Wed, 17 Sep 2025 19:35:42 +0800 (CST)
+From: YanLong Dai <dyl_wlc@163.com>
+To: kalesh-anakkur.purayil@broadcom.com
+Cc: jgg@ziepe.ca,
+	leon@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	selvin.xavier@broadcom.com,
+	daiyanlong@kylinos.cn,
+	dyl_wlc@163.com
+Subject: [PATCH] drivers: fix the potential memory leak in bnxt_re_destroy_gsi_sqp()
+Date: Wed, 17 Sep 2025 19:35:39 +0800
+Message-ID: <20250917113539.6139-1-dyl_wlc@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250916134915.GC82444@unreal>
+References: <20250916134915.GC82444@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hhaGiQv3TnEaUrV3"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgCnNvQNncpoH1CSDQ--.15275S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Wr1fZrW3ZFyUXw13Gw17KFg_yoWkWrg_GF
+	yjqr92qryUCF4rur17XF15Gry09rsFgw4v93Z2qa4UKry2yw45ZayDt3sxZw47W3y8Grnx
+	tFy5G340kF1FkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRZID7UUUUUU==
+X-CM-SenderInfo: 5g1os4lof6il2tof0z/1tbiSALLImjKmRF+6gAAsd
 
+From: daiyanlong <daiyanlong@kylinos.cn>
 
---hhaGiQv3TnEaUrV3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As suggested by Kalesh Anakkur Purayil, fix the potential memory leak in bnxt_re_destroy_gsi_sqp() by continuing the teardown even if bnxt_qplib_destroy_qp() fails, we should not fail the resource destroy operations
 
-Hi all,
+Signed-off-by: daiyanlong <daiyanlong@kylinos.cn>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Today's linux-next merge of the bluetooth tree got a conflict in:
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index 260dc67b8b87..adee44aa0583 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -931,10 +931,9 @@ static int bnxt_re_destroy_gsi_sqp(struct bnxt_re_qp *qp)
+ 
+ 	ibdev_dbg(&rdev->ibdev, "Destroy the shadow QP\n");
+ 	rc = bnxt_qplib_destroy_qp(&rdev->qplib_res, &gsi_sqp->qplib_qp);
+-	if (rc) {
++	if (rc)
+ 		ibdev_err(&rdev->ibdev, "Destroy Shadow QP failed");
+-		goto fail;
+-	}
++
+ 	bnxt_qplib_free_qp_res(&rdev->qplib_res, &gsi_sqp->qplib_qp);
+ 
+ 	/* remove from active qp list */
+-- 
+2.43.0
 
-  net/bluetooth/mgmt.c
-
-between commit:
-
-  6bbd0d3f0c23f ("Bluetooth: hci_sync: fix set_local_name race condition")
-
-=66rom the origin tree and commit:
-
-  c49a788e88e48 ("Bluetooth: hci_sync: fix set_local_name race condition")
-
-=66rom the bluetooth tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc net/bluetooth/mgmt.c
-index 50634ef5c8b70,b9c53810bf06b..0000000000000
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-
---hhaGiQv3TnEaUrV3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjKnK0ACgkQJNaLcl1U
-h9Cu9Qf+Kz+BnB5CGxNKW3jKFrg74sRPQfOl2F0Cu8IggZF303B8EaIqje3wBCeH
-29SyFW3pTKk8oom5CTiC+XiA+6i1zdi4K4jQJ5EkLscDkvYflW0458cL3wMwlYHv
-D3XV2ovmFQlR9SHIkNZSyvd9qX/NEsNJIVCHvt2F3PrM0KXZIZ1zUluaj2or5qAi
-PtQ8iD1l3jW4fACeQHmW1Gqsf5K/47OtdUvdDqOzL3LKqWVaDs1U2jk0yIaaFOdF
-SmnHY+qp6YedS7M0NbqKCmgIauIV4T76EI/hW65xLbuvmSYoHkIqIqkgD6SkEf5a
-vxoF/aHxIQGA28EVg0wrIb8bGM7cqA==
-=D2VM
------END PGP SIGNATURE-----
-
---hhaGiQv3TnEaUrV3--
 
