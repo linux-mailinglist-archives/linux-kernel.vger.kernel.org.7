@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-821760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC21B822D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:40:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5900CB822E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4643C48096C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:40:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AD077B94E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11E930FC27;
-	Wed, 17 Sep 2025 22:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15D5310762;
+	Wed, 17 Sep 2025 22:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xScshUvX"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t13Cxn2e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24D630E83C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2E02C0F84;
+	Wed, 17 Sep 2025 22:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758148822; cv=none; b=Ji6ouMG/8un/H2MHdsHh5+FOvC+B2E58D1s2snfxq30RGsQpFvA0GhynYlNjOZ4UKUoQBQHVpSsYvBVJsP9Ztv53abZQQ06yxWq/X8Y2E3qwJtpipBtra8O1DrBBoOjfWYk5KIlggri0lb3fy57Lcb2ADaUt3uwiNEsQNOjoqsk=
+	t=1758148922; cv=none; b=G3am9ArYtjbfdlaZThjoREJ+LZHdNHcGOs4ZRj7h/a5xtkh/dFj1FC6QyaX2NGKQdD4jaWcEvtiLj/V9KSiParbb0iS9iOvfSWu0SAIZMbGvZ/2Od6SWvGHi3THcFKNf4VtOzvnDy/i/eqSNbUTIEnsINK3rghPUCrunxp6HH+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758148822; c=relaxed/simple;
-	bh=WSfFooN5Bw7kAHcBSRwXJG4k3j5I4pDgZn1B6oXDRa0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MKAj5hMcleF89/jfPwkGcG03ATP0Q6b0yN6Mn7LUhgWKrT2hQT4sCvbsICvmEgfR/7cSO70VicA9sLpSz9t365UxkYENZcG+y6TmAbapXwQoYL1gNLVrA2IYzB4+rboEoWAcc08clN/UT5N6LPu6wfbcdcq7694/+sT5ovV6U2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xScshUvX; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77621c54731so432397b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758148820; x=1758753620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m2gITbjAhZLVDTe91+pv60FMHVz/PyRihO/dG6TrQ1g=;
-        b=xScshUvXozX1uxER7qZsO8p7Ucy0JMRPftF2Qc4iW+jUzt2v+z7shzzTO01oxCZEkq
-         051hR+Gj4XdNfQu3CBsi2wZ/EH6w9tdtqjod+Kc1XRG0O89bnsuI7loyoUxiUnZGJjMe
-         RCcV2iaR48KpLhO0wVK0FVGOFqVC0u6SHuSflHNj9mda6XvYExKSVhsTN67EiEq1Idi5
-         0xmZ5a+QInviQ7LhmASPABrbGQyWowkK6Dj7GE/ISc3Z7Thrvt6udxsJEK7A9GUwwmqc
-         SYYllHDx/tEr61hZr1eAqBMi0W5M25jIPqfsNYUNmR3C0R2D5r1NtYnjirXfnjWeOKcx
-         cHyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758148820; x=1758753620;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=m2gITbjAhZLVDTe91+pv60FMHVz/PyRihO/dG6TrQ1g=;
-        b=L/+ugbyKMSzd/w+KFNUQyenr077M4OPQGXIB0HmYZ/ekyYdNOKUBkm74B1ky1D1RQP
-         BMt9ag9UNZdc/IAexKdr56RAYpFf2dM4gGBXKYBX5Jkv/CUItMoWbJFwOrXnwdNkpKjY
-         6P1Rnqyb4clV4ORq2eeh8YaxdW4Cz28POf4D9YzMJ3K/0E6Evv6tZSKdXU3ElrmPHmco
-         7iS7hb8LoZ73sRn0uAoRcsb5Ucqu78f7lu+rMeUoQ/7AoMtbhITPfCv2Sr8L5hlMGXYW
-         W0aP0OGPfTlwb1DjHvSL4neOliY/X3Kwgq7WSpMVqGZ02n4nZAq6gt/kMUlwpqa/CY25
-         sZWA==
-X-Forwarded-Encrypted: i=1; AJvYcCULbgLxQ6s2Uf9DfmDenqbywF57msLf8snKUx8xc233GhWOqvpI8h8rZaGZ29IXTqzQNnQomSSQWVJSDPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsvTTXOQicNqjhLtORzAXjxz1rjM+fYmZm33azzHr3wW0OhZaO
-	P/fxmI7bOF1bVJ5NI6GJ/KkMU4C0uSyY3Ltb+IQAGvjp+vSrU2p9HjsWQ0XIlJPJc4QI7eA0urZ
-	1MTJWQQ==
-X-Google-Smtp-Source: AGHT+IFI0s+9qm/ZBuqtuCHVVai9MRluhJYduJgd1o773c0GWF5zKPkcHTokW+JlTa7DRlVZN5DukGxMcIA=
-X-Received: from pjzz6.prod.google.com ([2002:a17:90b:58e6:b0:327:e172:e96])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:e082:b0:262:8bce:33bd
- with SMTP id adf61e73a8af0-27aa12ef6ffmr5224302637.28.1758148820303; Wed, 17
- Sep 2025 15:40:20 -0700 (PDT)
-Date: Wed, 17 Sep 2025 15:40:18 -0700
-In-Reply-To: <f533d3a4-183e-4b3d-9b3a-95defb1876e0@zytor.com>
+	s=arc-20240116; t=1758148922; c=relaxed/simple;
+	bh=m7NPlDhPmAcPAf4wPj+fVtjHQZr8RMeY8ahVFsVwYeE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=jop+S9d01fOmKsy0etm8QFvQLhZc6f1SItuveIsazQ8ztcLFqfJeuATmlk3M8jkFJpiyJ23KNFUQ5PeCYeW46lCEBcnr505EG67B2+vP3CpIYnWFwqwb/pt8ggQgfwBRvGoft5k2l8+E18pEtXbTIGLmscTKaRPQlA4RCyhmur0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t13Cxn2e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD20C4CEF9;
+	Wed, 17 Sep 2025 22:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758148920;
+	bh=m7NPlDhPmAcPAf4wPj+fVtjHQZr8RMeY8ahVFsVwYeE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=t13Cxn2eKh95GIakDQTlj2IMpzHlAoH2zEMOgBiBq8/HzB3778rdLmsLI3/eA03zH
+	 ITMoUimwmU2KC/3VP7uU70Zgk2IWdAxkqHb/MWozBY7PJwplAHTvdkXgAsg0RCcdeo
+	 b2sEBfJhOZ/k5zKJz1XkOx5MuAuqHbeQi3JihIN7mSCYRjgQCnZ/0LaTdE33cwhyO/
+	 SMztgF4ePRMj8ifIxK2LovupR+XEFfTitbO/b19+HaCIMd+HQlJNeQjd+tK9efSiix
+	 UhOnUXmE+8KBCWJAq7RjK7QR0gCHKmKzVw2VDjk3sd3NOACp995wAQoVVeDAnBSisz
+	 4vXLAtuicGSnA==
+Date: Wed, 17 Sep 2025 17:41:53 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250909182828.1542362-1-xin@zytor.com> <aMLakCwFW1YEWFG4@google.com>
- <0387b08a-a8b0-4632-abfc-6b8189ded6b4@linux.intel.com> <aMmkZlWl4TiS2qm8@google.com>
- <f533d3a4-183e-4b3d-9b3a-95defb1876e0@zytor.com>
-Message-ID: <aMs40gVA4DAHex6A@google.com>
-Subject: Re: [RFC PATCH v1 0/5] x86/boot, KVM: Move VMXON/VMXOFF handling from
- KVM to CPU lifecycle
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-pm@vger.kernel.org, pbonzini@redhat.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	pavel@kernel.org, brgerst@gmail.com, david.kaplan@amd.com, 
-	peterz@infradead.org, andrew.cooper3@citrix.com, kprateek.nayak@amd.com, 
-	chao.gao@intel.com, rick.p.edgecombe@intel.com, dan.j.williams@intel.com, 
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-iio@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, devicetree@vger.kernel.org, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>
+To: Yixun Lan <dlan@gentoo.org>
+In-Reply-To: <20250918-60-dt-iio-apds9160-v1-1-0bd6bcbc547d@gentoo.org>
+References: <20250918-60-dt-iio-apds9160-v1-1-0bd6bcbc547d@gentoo.org>
+Message-Id: <175814891315.3653519.7976478405350498859.robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: iio: light: APDS9160: fix missing type
+ definition warning
 
-On Wed, Sep 17, 2025, Xin Li wrote:
-> On 9/16/2025 10:54 AM, Sean Christopherson wrote:
-> > On Thu, Sep 11, 2025, Arjan van de Ven wrote:
-> > > Hi,
-> > > > I also want to keep the code as a module, both to avoid doing VMXON=
- unconditionally,
-> > >=20
-> > > can you expand on what the problem is with having VMXON unconditional=
-ly enabled?
-> >=20
-> > Unlike say EFER.SVME, VMXON fundamentally changes CPU behavior.  E.g. b=
-locks INIT,
-> > activates VMCS caches (which aren't cleared by VMXOFF on pre-SPR CPUs, =
-and AFAIK
-> > Intel hasn't even publicly committed to that behavior for SPR+), restri=
-cts allowed
-> > CR0 and CR4 values, raises questions about ucode patch updates, trigger=
-s unique
-> > flows in SMI/RSM, prevents Intel PT from tracing on certain CPUs, and p=
-robably a
-> > few other things I'm forgetting.
->=20
-> Regarding Intel PT, if VMXON/VMXOFF are moved to CPU startup/shutdown, as
-> Intel PT is initialized during arch_initcall() stage, entering and leavin=
-g
-> VMX operation no longer happen while Intel PT is _active_, thus
-> intel_pt_handle_vmx() no longer needs to "handles" VMX state transitions.
 
-The issue isn't handling transitions, it's that some CPUs don't support Int=
-el PT
-post-VMXON:
+On Thu, 18 Sep 2025 05:02:01 +0800, Yixun Lan wrote:
+> DT validation will report missing type definition warning for the property of
+> 'ps-cancellation-current-picoamp', explicitly add type definition to fix it.
+> 
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+> I got following DT warning, when running dtbs_check
+> 
+> $ make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- dtbs_check W=1
+> generic check all files
+>   UPD     include/config/kernel.release
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+> /home/work/linux-6.y/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml: ps-cancellation-current-picoamp: missing type definition
+> ---
+>  Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-  If bit 14 is read as 1, Intel=C2=AE Processor Trace (Intel PT) can be use=
-d in VMX
-  operation. If the processor supports Intel PT but does not allow it to be=
- used
-  in VMX operation, execution of VMXON clears IA32_RTIT_CTL.TraceEn (see
-  =E2=80=9CVMXON=E2=80=94Enter VMX Operation=E2=80=9D in Chapter 32); any a=
-ttempt to write IA32_RTIT_CTL
-  while in VMX operation (including VMX root operation) causes a general-pr=
-otection
-  exception.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-And again, unconditionally doing VMXON is a minor objection in all of this.
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/light/brcm,apds9160.example.dtb: light-sensor@53 (brcm,apds9160): ps-cancellation-current-picoamp: 62400 is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/property-units.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250918-60-dt-iio-apds9160-v1-1-0bd6bcbc547d@gentoo.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
