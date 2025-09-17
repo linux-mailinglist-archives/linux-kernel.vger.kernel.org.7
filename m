@@ -1,435 +1,122 @@
-Return-Path: <linux-kernel+bounces-821597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A023B81B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:00:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86391B81B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE431189B427
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74141588088
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599E92FFF9D;
-	Wed, 17 Sep 2025 19:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7926D261B97;
+	Wed, 17 Sep 2025 19:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2JbsR2oR"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="eERBNmkg"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2F73019B7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B6E2C0276
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758139105; cv=none; b=W067YlOklDpVEfgUJvd5qppAvo91V4FqrW9u795//tk9Yx+HcYJyh5vBmhGDVlBx3x8TzbvmWhvQ6P+WwYRzgoPUmdGjHct6Vxo5HBh/SnZhkB9+W/tzfyo3PQ0+iPRWV6S5br4z1OGx1lk4uEMNxJMiDn9T6EsKNQhT/DDaRFw=
+	t=1758139135; cv=none; b=C9+oPz1iMZu6kg8uFq0Yemuf2WO4cqX47DPXZYJaeixDlnllB0LszcHlfB3WfRLowftz8Fi8CIAj5JGRTWLfjH5VATaD9BAtooEymtIlg9PQbtttesHoJLSd3iTy4+glfPzMrRhpa6DPKwLN8ZGIkui5Xmx6hKXZsxHyllTBNiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758139105; c=relaxed/simple;
-	bh=/F58P/YxjYrKoka+7vu+bHrQcwHs2hOyARDQ5uPmEic=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GDPmE+9io3VMN1isnneI/+j4hqT5Y0LUQCdKaj2X0n0n3Reivf8YiWKMK231j96E4hM3p/H2vndi+m9ZJjgbq/jHf3VvzUKhJaNFyGpH77njdPVM42zG5TJhHk/zMg1JWKlMlbJ59Giup6HC17MYMW+rpI7JvAZ9WM9XjlWyhrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2JbsR2oR; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--zecheng.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-ea40041ab9eso192040276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:58:23 -0700 (PDT)
+	s=arc-20240116; t=1758139135; c=relaxed/simple;
+	bh=dxkk8tG7hK5JdTJzWjjKydDl+hoVXSV6oyTVGZWUjEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qkkmfwt6zlo012bhtsIsc03NwkiC0rCd1m25bKcFwljPE4fVCiKij1c0QYQKtvTUwr0gaUYP/WJKmdPkVMMGmUcwJCwrZ/v9uAIFZREk6g9r/w9BC2DN7PgjbN+rpRl4jrVsn4F7d01jhiL82jA7nrmtvCI2ABgPPp2IBh+lJ3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=eERBNmkg; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-82884bb66d6so23281785a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758139102; x=1758743902; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JWTEtgPxSrBsYU6g+cDk31HXjxfCjijkteP7xD/xTbc=;
-        b=2JbsR2oRp2w/JP0bucN5N+OM5jwZr6ctySyksWldznRdxDkds+yDBn1xxlHh0fHjl+
-         uFpetk/a4EYDslynmtpsTTliDDYqznZ5nzlI0CRIJOVd+Oes8452cprxmDab8WnEYA07
-         zoSiDcSfZLCoG+ShwwoX/ELy6jrzIpYKpZWqmuiFvRM3ymq6NF2fwlL6ACQ0kb2Vd3Ao
-         Gv5LSBu8TA76ARL0qkbLPgcwZIq36/5hxVpE2QLTFX0VE8Ni/Cv2p77USamXGR6PGt+2
-         CeX2L6OITfgrTGQF0yoqn/kbcn5ErPCK1ZVSEcti+YBuOZTaw/dk3MVDO+Tmf7aONTeL
-         xNwg==
+        d=gourry.net; s=google; t=1758139133; x=1758743933; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=58ejY8lKzPUFnBka1rlupB1Kz/9dcjqxS2QMacOwEpg=;
+        b=eERBNmkgWA3cSVVsKGfw5IaOGFyIH/ym+gmi6zvoehP7+M2Ix647vDLZ2fUR5QLlkA
+         A+gfMsD/Ega05PmHKTt+SrDvykiLtDd7HeN0oS9Q1MAQ2zKO2pKLbgLqU6wFR9yO1DGr
+         wM5HiWk8EuCvX8ncyJ3esO0DFLBxvCSeYALyowpWX8L2FfdYLU1PFAovziSO0NQZUO5n
+         2S13j07ZYT5F11UU4FAO+9hMTSysEqmqprZP+cx1JDEyuUFHi6uvDjnHeMl3+sJs877J
+         O7+j1l9fyxG+VnVTYTXwZCFFUyxiFpd5q6HFw+Y3g9p92vuEPkShA0F7rPAt9k4flq6/
+         p7Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758139102; x=1758743902;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JWTEtgPxSrBsYU6g+cDk31HXjxfCjijkteP7xD/xTbc=;
-        b=cvop9p0kIyIF8l/a4/vdIz2NODBo3x/tlnT5CggsBnMv7mnjkkIIQQvFic5qD+lBwd
-         CVzE9uktYZXPiVvZGUDW4sr8tzwhYN60uWcVfo9tOyYWrEH/tEvrh4c4hYomzyNeazzo
-         6yP91mCd0F7afIKvZWlbvWoZF+MMNkSbOwBb27HNPzfFXupr5A/Dz7h+1hnNimjGn+17
-         M9w6ikW7qmVL6EY4u3NCBSXly/tsIMnlxzUaC8BBKlDHFye8L9+6qFoo+r8cDpLFx5cu
-         7plFSDq+j/Nh1/s4gTn3/iGYTLMjtsT1c/j0fvoo5+KIgcR8EW09yEUs4zwQYIJhgqUe
-         bdqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSd6A3U114TVH1GVya7/Bgf1apyprPnfQX3Ec0x8KIJ1yncMtsyjuB7OAdQyiB3YLHzdV2CRZdqlpSuRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyehc0C45ApLmEFFhiztjeYDEH6d1OA+CLBna5Ug0p8bvAsHvu/
-	h+SY0mPkrvKhqX2cRWj1qdJppsYcB63mzLHRNfFtqdDlI0nQnzK76oRc/mrpVG9ZMetqRJBfXLh
-	LR0vnkuvEwQ==
-X-Google-Smtp-Source: AGHT+IG08BhZhawfTdGuzjbiqhrvEhyIzX6FKnBqwOT1ntDkoB5dGR4kb9fm9mCJPrVKQHGeFQAz3moO6Y+J
-X-Received: from ybbgo2.prod.google.com ([2002:a05:6902:4202:b0:ea4:16f0:d3f6])
- (user=zecheng job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6902:120f:b0:e96:f587:cb21
- with SMTP id 3f1490d57ef6-ea5c044ce30mr2422450276.27.1758139102335; Wed, 17
- Sep 2025 12:58:22 -0700 (PDT)
-Date: Wed, 17 Sep 2025 19:58:08 +0000
-In-Reply-To: <20250917195808.2514277-1-zecheng@google.com>
+        d=1e100.net; s=20230601; t=1758139133; x=1758743933;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=58ejY8lKzPUFnBka1rlupB1Kz/9dcjqxS2QMacOwEpg=;
+        b=vVThMi44j2bqEWX7Lm6MCGdjOH5otxd00mvs6s+MNRRk6WarwmS3fu7tPW5IEFuaBZ
+         j4wkZ4e493eIcNdrsIDl+yDWkBOgk+Xy9Dcqr2jjEejq8IS63yFouM2nUB7hYH1rKUdD
+         EkajEwx27U6+R2xQxIJ1E4W6HFW4KpvAoc+6AfhTGeMELpqGIXUeTwPCq5rdDfCk37im
+         xqe/xYQsbS3+bN2+giUnkF93xEMSCf1d5XcfYfe996Osa4W4VidaiQy3Nw2U7fuZRtVJ
+         sU7aW6mEjoKkc6h7F/ALOTVQbBFVJZOTCxfl2kWHWlV15UrhbKkum+eH5wNU/PxudRNV
+         5tDw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3s9OC/HdW+ErvKe9lA85l76yLcSa9uLMMfZkY0TpR3qrN3Jnap9jZAMk0RUSCbNKKV9UD9DEDWjECrs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcD3q3p1lpP5kkyKde0Y68DuYCffwB7AXS1KnZDRxLwCa0rKcX
+	3Xlv9TGrjaHYjFm/SXf3WNoEmXgdlCc0HcI/rzqvwYPu4uXvi/kWX/SOYB80Ss/Fd3E=
+X-Gm-Gg: ASbGncswzBFAARa1KXI6+p0jAgluPw16RGk1P4SkT6uexJQEi2XGcZZhVb2UpVT5xes
+	ymHfTeZOvPJQ/Da+3iUhSnUx2detpsU+GT+wuS+O5Md+tBxVsUNOFu/HVErmvncRS68BgLsW3Ps
+	XezVurRK9cuqLyA2jNGPKqZVic6mOqtAURMLwxIZPdGJfwG0RuupkXkiRGV6YTxNpw2OyS48tgF
+	dNyir/RimDMdbnYKLXoXk/s9NBhl52vwo9siWCQVTK0CEWu+huJxvm694eFFy1I/vkOnhuabBxK
+	MWEdVZ6DSkVAwl8kYrCV3BOgGzWrupKZKO/5CJvbFamxBQpkULkUg1/SHH44V4dCqUh/UzwQQx4
+	AH+NveHm9x9gQcVf1mXou5F4dAb3neCYO81YR8as5jSXmqLZVtHRlaeOuUsY9oKTzbxMqM9KPfR
+	J0rJM=
+X-Google-Smtp-Source: AGHT+IFo5mUXlgWJqSrwW3Ag53sh8YnNIU8HxG9er19Nkhdl6k6VD/pvyTugHUvkMVjI7UpywYGlJw==
+X-Received: by 2002:a05:620a:414d:b0:808:2794:7c40 with SMTP id af79cd13be357-8363bf2f1e1mr123738985a.37.1758139133063;
+        Wed, 17 Sep 2025 12:58:53 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8363240f538sm34971585a.56.2025.09.17.12.58.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 12:58:52 -0700 (PDT)
+Date: Wed, 17 Sep 2025 15:58:50 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v3 02/11] cxl/region: Store HPA range in struct cxl_region
+Message-ID: <aMsS-lJqZCmcDQDF@gourry-fedora-PF4VCD3F>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-3-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250917195808.2514277-1-zecheng@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250917195808.2514277-11-zecheng@google.com>
-Subject: [PATCH v3 10/10] perf dwarf-aux: Support DW_OP_piece expressions
-From: Zecheng Li <zecheng@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Zecheng Li <zecheng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912144514.526441-3-rrichter@amd.com>
 
-Support variables split across multiple registers or stack locations by
-handling DW_OP_piece in DWARF expressions. This enables correct matching
-of such variables by iterating over all pieces in the expression.
+On Fri, Sep 12, 2025 at 04:45:04PM +0200, Robert Richter wrote:
+> Each region has a known host physical address (HPA) range it is
+> assigned to. Endpoint decoders assigned to a region share the same HPA
+> range. The region's address range is the system's physical address
+> (SPA) range.
+> 
+> Endpoint decoders in systems that need address translation use HPAs
+> which are not SPAs. To make the SPA range accessible to the endpoint
+> decoders, store and track the region's SPA range in struct cxl_region.
+> Introduce the @hpa_range member to the struct. Now, the SPA range of
+> an endpoint decoder can be determined based on its assigned region.
+> 
+> Patch is a prerequisite to implement address translation which uses
+> struct cxl_region to store all relevant region and interleaving
+> parameters.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-There are two cases for matching memory access on the target register:
-
-1. Accessing a struct member:
-   - The type is the original variable's type.
-   - The offset is the sum of the piece's offset and the operand's
-     offset.
-
-2. Dereferencing a member:
-   - The type is the member of the original variable (the member must be
-     a pointer).
-   - The size must match the piece size.
-   - The access offset is the operand's offset.
-
-This change improves support for piece-wise variable locations in DWARF
-expressions.
-
-Signed-off-by: Zecheng Li <zecheng@google.com>
----
- tools/perf/util/dwarf-aux.c | 244 +++++++++++++++++++++++++++---------
- 1 file changed, 187 insertions(+), 57 deletions(-)
-
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index b2189de07daf..aae15a2cb7d0 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -1390,21 +1390,44 @@ struct find_var_data {
- #define DWARF_OP_DIRECT_REGS  32
- 
- static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
--			     s64 addr_offset, s64 addr_type, bool is_pointer)
-+					s64 addr_offset, s64 addr_type, s64 piece_offset,
-+					s64 piece_size, bool is_pointer)
- {
--	Dwarf_Word size;
-+	Dwarf_Word size = 0;
- 	s64 offset = addr_offset - addr_type;
- 
--	if (offset < 0)
-+	if (piece_size == 0 || offset < 0)
- 		return false;
- 
-+	if (piece_size > 0 && !is_pointer) {
-+		offset += piece_offset;
-+		size = piece_offset + piece_size;
-+	}
-+
- 	if (__die_get_real_type(die_mem, &data->type) == NULL)
- 		return false;
- 
--	if (is_pointer && dwarf_tag(&data->type) == DW_TAG_pointer_type) {
--		/* Get the target type of the pointer */
--		if (__die_get_real_type(&data->type, &data->type) == NULL)
--			return false;
-+	if (is_pointer) {
-+		if (piece_size < 0 && dwarf_tag(&data->type) == DW_TAG_pointer_type) {
-+			/* Get the target type of the pointer */
-+			if (__die_get_real_type(&data->type, &data->type) == NULL)
-+				return false;
-+		}
-+
-+		if (piece_size > 0) {
-+			Dwarf_Die member_die;
-+
-+			if (die_get_member_type(&data->type, piece_offset, &member_die) == NULL)
-+				return false;
-+
-+			if (dwarf_aggregate_size(&member_die, &size) < 0)
-+				return false;
-+
-+			if (size == (u64)piece_size &&
-+			    dwarf_tag(&data->type) == DW_TAG_pointer_type)
-+				if (__die_get_real_type(&member_die, &data->type) == NULL)
-+					return false;
-+		}
- 	}
- 
- 	if (offset == 0) {
-@@ -1413,7 +1436,7 @@ static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
- 		return true;
- 	}
- 
--	if (dwarf_aggregate_size(&data->type, &size) < 0)
-+	if (size == 0 && dwarf_aggregate_size(&data->type, &size) < 0)
- 		return false;
- 
- 	if ((u64)offset >= size)
-@@ -1452,6 +1475,67 @@ static bool is_breg_access_indirect(Dwarf_Op *ops, size_t nops)
- 	return false;
- }
- 
-+struct op_piece_iter {
-+	/* Pointer to the beginning of the op array */
-+	Dwarf_Op *ops;
-+	size_t nops;
-+	/* The index where the next search will begin */
-+	size_t current_idx;
-+	size_t next_offset;
-+
-+	/* Pointer to the start of the current piece's ops */
-+	Dwarf_Op *piece_ops;
-+	/* The number of ops in the current piece */
-+	size_t num_piece_ops;
-+	size_t piece_offset;
-+};
-+
-+static void op_piece_iter_init(struct op_piece_iter *it, Dwarf_Op *ops, size_t nops)
-+{
-+	it->ops = ops;
-+	it->nops = nops;
-+	it->current_idx = 0;
-+	it->next_offset = 0;
-+	it->piece_ops = NULL;
-+	it->num_piece_ops = 0;
-+	it->piece_offset = 0;
-+}
-+
-+/* Finds the next non-empty piece segment. */
-+static bool op_piece_iter_next(struct op_piece_iter *it)
-+{
-+	/* Loop until a non-empty piece is found */
-+	while (it->current_idx < it->nops) {
-+		size_t start;
-+		size_t end;
-+
-+		start = it->current_idx;
-+		end = start;
-+
-+		while (end < it->nops && it->ops[end].atom != DW_OP_piece)
-+			end++;
-+
-+		/* The number of ops in this segment, including DW_OP_piece */
-+		it->num_piece_ops = min(end - start + 1, it->nops - start);
-+		it->piece_ops = &it->ops[start];
-+		it->piece_offset = it->next_offset;
-+
-+		it->current_idx = end;
-+		if (it->current_idx < it->nops) {
-+			const Dwarf_Op *piece_op = &it->ops[it->current_idx];
-+			size_t piece_size = (size_t)piece_op->number;
-+
-+			it->next_offset += piece_size;
-+			it->current_idx++;
-+		}
-+
-+		if (end > start)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- /* Only checks direct child DIEs in the given scope. */
- static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
- {
-@@ -1470,48 +1554,65 @@ static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
- 		return DIE_FIND_CB_SIBLING;
- 
- 	while ((off = dwarf_getlocations(&attr, off, &base, &start, &end, &ops, &nops)) > 0) {
-+		struct op_piece_iter piece_iter;
- 		/* Assuming the location list is sorted by address */
- 		if (end <= data->pc)
- 			continue;
- 		if (start > data->pc)
- 			break;
- 
--		/* Local variables accessed using frame base register */
--		if (data->is_fbreg && ops->atom == DW_OP_fbreg &&
--		    check_allowed_ops(ops, nops) &&
--		    match_var_offset(die_mem, data, data->offset, ops->number,
--				     is_breg_access_indirect(ops, nops)))
--			return DIE_FIND_CB_END;
-+		op_piece_iter_init(&piece_iter, ops, nops);
-+		while (op_piece_iter_next(&piece_iter)) {
-+			Dwarf_Op *pops = piece_iter.piece_ops;
-+			size_t pnops = piece_iter.num_piece_ops;
-+			size_t piece_offset = piece_iter.piece_offset;
-+			int piece_size = -1;
-+			bool is_pointer = true;
-+			int access_offset = data->offset;
- 
--		/* Only match with a simple case */
--		if (data->reg < DWARF_OP_DIRECT_REGS) {
--			/* pointer variables saved in a register 0 to 31 */
--			if (ops->atom == (DW_OP_reg0 + data->reg) &&
--			    check_allowed_ops(ops, nops) &&
--			    match_var_offset(die_mem, data, data->offset, 0,
--					     /*is_pointer=*/true))
--				return DIE_FIND_CB_END;
-+			if (pops[pnops - 1].atom == DW_OP_piece)
-+				piece_size = (int)pops[pnops - 1].number;
- 
--			/* variables accessed by a register + offset */
--			if (ops->atom == (DW_OP_breg0 + data->reg) &&
--			    check_allowed_ops(ops, nops) &&
--			    match_var_offset(die_mem, data, data->offset, ops->number,
--					     is_breg_access_indirect(ops, nops)))
--				return DIE_FIND_CB_END;
--		} else {
--			/* pointer variables saved in a register 32 or above */
--			if (ops->atom == DW_OP_regx && ops->number == data->reg &&
--			    check_allowed_ops(ops, nops) &&
--			    match_var_offset(die_mem, data, data->offset, 0,
--					     /*is_pointer=*/true))
--				return DIE_FIND_CB_END;
-+			if (!check_allowed_ops(pops, pnops))
-+				continue;
- 
--			/* variables accessed by a register + offset */
--			if (ops->atom == DW_OP_bregx && data->reg == ops->number &&
--			    check_allowed_ops(ops, nops) &&
--			    match_var_offset(die_mem, data, data->offset, ops->number2,
--					     is_breg_access_indirect(ops, nops)))
-+			if ((data->is_fbreg && pops->atom == DW_OP_fbreg) ||
-+			    (pops->atom == DW_OP_breg0 + data->reg) ||
-+			    (pops->atom == DW_OP_bregx && data->reg == pops->number))
-+				is_pointer = is_breg_access_indirect(pops, pnops);
-+
-+			/* Local variables accessed using frame base register */
-+			if (data->is_fbreg && pops->atom == DW_OP_fbreg &&
-+				match_var_offset(die_mem, data, access_offset,
-+					pops->number, piece_offset, piece_size, is_pointer))
- 				return DIE_FIND_CB_END;
-+
-+			/* Only match with a simple case */
-+			if (data->reg < DWARF_OP_DIRECT_REGS) {
-+				/* pointer variables saved in a register 0 to 31 */
-+				if (pops->atom == (DW_OP_reg0 + data->reg) &&
-+					match_var_offset(die_mem, data, access_offset,
-+					    0, piece_offset, piece_size, is_pointer))
-+					return DIE_FIND_CB_END;
-+
-+				/* variables accessed by a register + offset */
-+				if (pops->atom == (DW_OP_breg0 + data->reg) &&
-+					match_var_offset(die_mem, data, access_offset,
-+					    pops->number, piece_offset, piece_size, is_pointer))
-+					return DIE_FIND_CB_END;
-+			} else {
-+				/* pointer variables saved in a register 32 or above */
-+				if (pops->atom == DW_OP_regx && pops->number == data->reg &&
-+					match_var_offset(die_mem, data, access_offset,
-+					    0, piece_offset, piece_size, is_pointer))
-+					return DIE_FIND_CB_END;
-+
-+				/* variables accessed by a register + offset */
-+				if (pops->atom == DW_OP_bregx && data->reg == pops->number &&
-+					match_var_offset(die_mem, data, access_offset,
-+					    pops->number2, piece_offset, piece_size, is_pointer))
-+					return DIE_FIND_CB_END;
-+			}
- 		}
- 	}
- 	return DIE_FIND_CB_SIBLING;
-@@ -1572,7 +1673,7 @@ static int __die_find_var_addr_cb(Dwarf_Die *die_mem, void *arg)
- 			continue;
- 
- 		if (check_allowed_ops(ops, nops) &&
--		    match_var_offset(die_mem, data, data->addr, ops->number,
-+		    match_var_offset(die_mem, data, data->addr, ops->number, 0, -1,
- 				     /*is_pointer=*/false))
- 			return DIE_FIND_CB_END;
- 	}
-@@ -1613,6 +1714,7 @@ static int __die_collect_vars_cb(Dwarf_Die *die_mem, void *arg)
- 	Dwarf_Op *ops;
- 	size_t nops;
- 	struct die_var_type *vt;
-+	struct op_piece_iter piece_iter;
- 
- 	if (tag != DW_TAG_variable && tag != DW_TAG_formal_parameter)
- 		return DIE_FIND_CB_SIBLING;
-@@ -1634,25 +1736,53 @@ static int __die_collect_vars_cb(Dwarf_Die *die_mem, void *arg)
- 	if (__die_get_real_type(die_mem, &type_die) == NULL)
- 		return DIE_FIND_CB_SIBLING;
- 
--	vt = malloc(sizeof(*vt));
--	if (vt == NULL)
--		return DIE_FIND_CB_END;
-+	op_piece_iter_init(&piece_iter, ops, nops);
-+	while (op_piece_iter_next(&piece_iter)) {
-+		Dwarf_Op *pops = piece_iter.ops;
-+		size_t pnops = piece_iter.num_piece_ops;
-+		size_t piece_offset = piece_iter.piece_offset;
-+		size_t offset = offset_from_dwarf_op(pops);
-+		s64 piece_size = -1;
-+		/* Usually a register holds the value of the variable */
-+		bool is_reg_var_addr = false;
-+
-+		if (((pops->atom >= DW_OP_breg0 && pops->atom <= DW_OP_breg31) ||
-+		      pops->atom == DW_OP_bregx || pops->atom == DW_OP_fbreg) &&
-+		      !is_breg_access_indirect(pops, pnops))
-+			/* The register holds the address of the variable. */
-+			is_reg_var_addr = true;
-+
-+		if (pops[pnops - 1].atom == DW_OP_piece)
-+			piece_size = (s64)pops[pnops - 1].number;
-+
-+		if (piece_size > 0) {
-+			if (!is_reg_var_addr) {
-+				size_t size;
-+
-+				if (die_get_member_type(&type_die, piece_offset, &type_die) == NULL)
-+					continue;
- 
--	/* Usually a register holds the value of a variable */
--	vt->is_reg_var_addr = false;
-+				if (dwarf_aggregate_size(&type_die, &size) < 0)
-+					continue;
- 
--	if (((ops->atom >= DW_OP_breg0 && ops->atom <= DW_OP_breg31) ||
--	      ops->atom == DW_OP_bregx || ops->atom == DW_OP_fbreg) &&
--	      !is_breg_access_indirect(ops, nops))
--		/* The register contains an address of the variable. */
--		vt->is_reg_var_addr = true;
-+				if (size != (u64)piece_size)
-+					continue;
-+			} else
-+				offset += piece_offset;
-+		}
- 
--	vt->die_off = dwarf_dieoffset(&type_die);
--	vt->addr = start;
--	vt->reg = reg_from_dwarf_op(ops);
--	vt->offset = offset_from_dwarf_op(ops);
--	vt->next = *var_types;
--	*var_types = vt;
-+		vt = malloc(sizeof(*vt));
-+		if (vt == NULL)
-+			return DIE_FIND_CB_END;
-+
-+		vt->is_reg_var_addr = is_reg_var_addr;
-+		vt->die_off = dwarf_dieoffset(&type_die);
-+		vt->addr = start;
-+		vt->reg = reg_from_dwarf_op(pops);
-+		vt->offset = offset;
-+		vt->next = *var_types;
-+		*var_types = vt;
-+	}
- 
- 	return DIE_FIND_CB_SIBLING;
- }
--- 
-2.51.0.384.g4c02a37b29-goog
-
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
