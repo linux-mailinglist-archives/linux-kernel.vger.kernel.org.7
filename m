@@ -1,102 +1,170 @@
-Return-Path: <linux-kernel+bounces-821431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40B6B81397
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:48:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0802DB813B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6390B62779A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:48:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C87C7B8BFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870842FFDFE;
-	Wed, 17 Sep 2025 17:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE882FE07F;
+	Wed, 17 Sep 2025 17:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="lmGhiiIt"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iZgOCoNi"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B9D2FF16B;
-	Wed, 17 Sep 2025 17:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9E02FE56B;
+	Wed, 17 Sep 2025 17:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758131321; cv=none; b=Eylruk6XsmWkbRDYViArxFPDwb4lA/Zc625bAbz4SNYzLarjpZVqLU9SFLg8VbNOXkmTIFKubRK46qvzsNLjbExtA83KlWuxM2o1x0+TBcEjNvNxljJZP4YQGdwEpY+rp5WGFdXVcpfcRICtqnjuhVXAwlxEltpqocfFxVGLFNI=
+	t=1758131469; cv=none; b=M95HAL1e5+1xjbVIsRiTZwCaOWvryW3notThhbIKfqFwiuo/D3hpcG3yEBgT5T/yf6VeoxW9i5dVLpX+FWs5NWNv1dXvs1UpBNzJt3lBhmlIRKXdWYSABEH4TlWmUU71zKAvJbftyuKyA8p5hZrhRI7naFej8nM0uAQMZRs0jWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758131321; c=relaxed/simple;
-	bh=/tS5VN8wqJ0W6f79Uht7zyfEMcAvhg6Jn1SC8qgkuXk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UFpZ2JqLqU1v9ExRR9RwJbtgSBNsT9lY2u7i6JTURZPwl2XH/YdsuHO/pKWqIhvgQjouLqABEuC+MBg7ySk9hb6g72l6Iq91nm7CT3FErQC9ivqIy8T+6WM/IeER9epih7v9suy9ekVwFiFKmvdN/YRujAjh7EmPfNgUvqxxF/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=lmGhiiIt; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:In-Reply-To:References:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=3q5kiib1kd62l3L+MK1D9QnKWb3L2UjvT/k4OiP6KHs=; b=lmGhiiItEIEn4oHqn9ygwJ2xTy
-	p3yRTkwf/diZ/RkOkOFIij3iPe7/Is1o2vW3k3imaDonJYd0Bn36PUoIb/DpRbfN9jP2JdJTDG4TE
-	umakduLqcB7QFk7k6idX3t8/GFVrJ2nPeQYWD0xFCyBO+94uMEkUFqPSZ4Sa2mrOWBiZYptxEBrhZ
-	9RFucdZT1SmlQwT4eqxuesEr6dpQ1QA/0Y63APO36ZDkyYwMFaOLE92u1id0BGfr7gxai7fKBp6W+
-	EtujfNVwHJbyWqL7H3dHq/6GcRmfuJEN1FNoArCuCdiRad9Co8/QIfbnYlbCSftt1qhs1tSYR5KyI
-	wSPrSAkw==;
-From: Andreas Kemnade <andreas@kemnade.info>
-Date: Wed, 17 Sep 2025 19:48:04 +0200
-Subject: [PATCH v4 3/3] MAINTAINERS: Add entry for BD71828 charger
+	s=arc-20240116; t=1758131469; c=relaxed/simple;
+	bh=brl3rUJ7PHhbScsa8OjzCWBMtqQju8gphFm/i7O0YIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GAKuhOHC3pZCaNHGwiydf+M0lqtbDGKjPtT7HLUoogSjiPmVEiNvVO3tCSqHUzu4ye6KLqRd8+IRC9oUXY9CLH7KFPNY282ftjzGH8Lm+Qq7fpy7XHj26okJyjRIrZGvK/4cRjOIVuMMGD6rL/GoymGtrUD3i7KFrto6e6yh6yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iZgOCoNi; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HB47Op031401;
+	Wed, 17 Sep 2025 17:51:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=VSb8bE
+	4XA/Ua9GKH9sL1VLxuwv8W4LaMgmb1OJHJR6w=; b=iZgOCoNiSdWEsGhANdLOOg
+	/5Az7NYqZoSEkMvNVukXsxy8MiHEftUehCzoIoo0yovfQx/vcnlW54+WZU90IDmY
+	lDwZnzhFMQeFcqDvvCofSZql2zPleME3E2qU7urZ9eCOTRCF/gh/IMeXQTIIQqdf
+	qhOJpQjqQu4rtyUwLiTuYkn8YjzjgqAgfr5GVdQBiO3cPxBC6+GKVWf77NPKVAq/
+	0ar9pyQ6RJWsok9SPwS04SVJPGEeVCXF79IJbN1RhrebKZFjlTao0OuYl9mOGDcq
+	ouFKWhDtobft57qcYO6QgUlbNydGBWRDuoS7/aoUprawKBh5B6Pw4oAPLveu0pcQ
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hndde-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 17:51:00 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58HHR1db022297;
+	Wed, 17 Sep 2025 17:50:59 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kxptj9q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 17:50:59 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58HHowjB63176996
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 17 Sep 2025 17:50:58 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5C5B75805C;
+	Wed, 17 Sep 2025 17:50:58 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CC28058051;
+	Wed, 17 Sep 2025 17:50:56 +0000 (GMT)
+Received: from [9.61.250.96] (unknown [9.61.250.96])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 17 Sep 2025 17:50:56 +0000 (GMT)
+Message-ID: <28a56c75-9e45-4855-b555-49237cacba3a@linux.ibm.com>
+Date: Wed, 17 Sep 2025 10:50:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-bd71828-charger-v4-3-fbc85a910499@kemnade.info>
-References: <20250917-bd71828-charger-v4-0-fbc85a910499@kemnade.info>
-In-Reply-To: <20250917-bd71828-charger-v4-0-fbc85a910499@kemnade.info>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: b4 0.15-dev-50721
-X-Developer-Signature: v=1; a=openpgp-sha256; l=782; i=andreas@kemnade.info;
- h=from:subject:message-id; bh=/tS5VN8wqJ0W6f79Uht7zyfEMcAvhg6Jn1SC8qgkuXk=;
- b=owGbwMvMwCUm/rzkS6lq2x3G02pJDBmnvmRJ2/T7mJxfkTn/YuAv0ZbG29mHNK7fdt9aJj+za
- kboMhGNjlIWBjEuBlkxRZZf1gpun1Se5QZPjbCHmcPKBDKEgYtTACaS3crwV7p+qd3qBbdqBT9a
- /Tq38av1Bu2ivcciGjgjBWTfOe09KsPwT/EOm7HHDf7DJZ12n0u/hu157XZQWjQ77sqGUDFVa31
- RHgA=
-X-Developer-Key: i=andreas@kemnade.info; a=openpgp;
- fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/10] PCI: Allow per function PCI slots
+To: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@redhat.com>,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: alex.williamson@redhat.com, helgaas@kernel.org, schnelle@linux.ibm.com,
+        mjrosato@linux.ibm.com
+References: <20250911183307.1910-1-alifm@linux.ibm.com>
+ <20250911183307.1910-4-alifm@linux.ibm.com>
+ <07205677-09f0-464b-b31c-0fb5493a1d81@redhat.com>
+ <e86caff6-8af0-48c9-9058-c1991e23160f@linux.ibm.com>
+ <f6f59318-c462-404b-bf4f-ae121950be8c@redhat.com>
+Content-Language: en-US
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <f6f59318-c462-404b-bf4f-ae121950be8c@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nkD6okS8y5FMS1TA12UjqrsOPnxcqlL6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfXyrUpHLqs3GpL
+ xCHsiRpSr6M/vGiYHrUDiU/3T8aVW3wZJXoxPP39XRhF16wr21ZVeNCcTU8ZDE3NQtoNz1wAIec
+ gWscSNOojQzJ1Q8pBvn5k6um6MyEJf95ktFQVBs/+qjUfMq6I29xW3yFz6iOipFywHbaeZx/6tZ
+ aAzf5miXquFt8x8YSB8MWmdT1Y1vKpVI6g1QO9YGPM6/9FnLzUbCF7NHzpzoV6nTDV+PHwe8BIo
+ QOJeZdqPB5Xbu861mqiJbMb6UIXqmg9/+dxw0sy7ZVwav1D0PBe9+2TGjDjZtNCmGuk1tT3PgxV
+ sgWt3ozaq3FFXycfW5SE0Z3TsIpdC+ID46Sr5+TM9tKSr9IoyfhYeKZ9jKXV7PtMCBuJfA8iNYW
+ EaMqw7FT
+X-Proofpoint-GUID: nkD6okS8y5FMS1TA12UjqrsOPnxcqlL6
+X-Authority-Analysis: v=2.4 cv=co2bk04i c=1 sm=1 tr=0 ts=68caf505 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=3iO8Xu5d0OMkKlL8vZAA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509160204
 
-Add an entry for BD71828 charger driver.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Suggested-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+On 9/16/2025 11:21 PM, Cédric Le Goater wrote:
+> Hi Farhan,
+>
+>> Hi Cedric,
+>>
+>> Thanks for pointing this out. I missed that dev->slot could be NULL 
+>> and so the per_func_slot check should be done after the check for 
+>> !dev->slot. I tried this change on top of the patch in an x86_64 VM 
+>> and was able to boot the VM without the oops.
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 70296d3b1cfc..3631f7faa0cf 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -5061,10 +5061,9 @@ static int pci_reset_hotplug_slot(struct 
+>> hotplug_slot *hotplug, bool probe)
+>>
+>>   static int pci_dev_reset_slot_function(struct pci_dev *dev, bool 
+>> probe)
+>>   {
+>> -       if (dev->multifunction && !dev->slot->per_func_slot)
+>> -               return -ENOTTY;
+>>          if (dev->subordinate || !dev->slot ||
+>> -           dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET)
+>> +           dev->dev_flags & PCI_DEV_FLAGS_NO_BUS_RESET ||
+>> +           (dev->multifunction && !dev->slot->per_func_slot))
+>>                  return -ENOTTY;
+> All good.
+>
+> I have pushed the Linux branch I use for vfio :
+>
+>    https://github.com/legoater/linux/commits/vfio/
+>
+> These commits have small changes :
+>
+>     PCI: Allow per function PCI slots
+>     vfio-pci/zdev: Add a device feature for error information
+>
+> Thanks,
+>
+> C.
+>
+>
+Hi Cedric,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe168477caa45..044eb41ba4797 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21848,6 +21848,12 @@ L:	linux-serial@vger.kernel.org
- S:	Odd Fixes
- F:	drivers/tty/serial/rp2.*
- 
-+ROHM BD71828 CHARGER
-+M:	Andreas Kemnade <andreas@kemnade.info>
-+M:	Matti Vaittinen <mazziesaccount@gmail.com>
-+S:	Maintained
-+F:	drivers/power/supply/bd71828-charger.c
-+
- ROHM BD79703 DAC
- M:	Matti Vaittinen <mazziesaccount@gmail.com>
- S:	Supported
+Thanks again for your help in reviewing the patches.
 
--- 
-2.47.3
+Thanks
+Farhan
+
 
 
