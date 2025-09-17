@@ -1,127 +1,196 @@
-Return-Path: <linux-kernel+bounces-821805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDBDB8253A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73C3B82540
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071312A88A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:55:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4381BC1366
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DC32853F9;
-	Wed, 17 Sep 2025 23:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCE82C158F;
+	Wed, 17 Sep 2025 23:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOS9w0Uh"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HGgUr0jW"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AED527FB03
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BA127FB03
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758153295; cv=none; b=J6bDSY2xklJRd6B/kMyOp0CiIF1Q4E352AdqFtND3Chzp4ibYpxWBo2VfkZoXZuYaUmoSVcYwhjKpzqQK8oUNMfvC1CJNqF0tFoJW00akdyBfyuNO4MSLs4AXtHosNnc1Kri5SmJVptoGMbZJm7QVmkwERmfykD1IzB60GPHNVQ=
+	t=1758153351; cv=none; b=IQdGkIpl8PqTk5CZdfTnXGFAeQW0UjnhwR+VI9ixpAljBZAl7++N9g7r0Zbpm5Le7UCJDCRpugZwvK73yqWQniCijnGJd749Herxj2RM+Z+/i54vIK/63AZU8H4u6xmv1G/ipkuMIwZcuYNRmcMhkIp1613ONfhW4D7YuFHCBAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758153295; c=relaxed/simple;
-	bh=xVqmq1XyM68IuWPFvf/CwgC6VPWqheMQfHU/6sGfhXY=;
+	s=arc-20240116; t=1758153351; c=relaxed/simple;
+	bh=s3kx4Yc+B/QQMXBOgQOpaOW3sMuakNxguXeeY6yqNeA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iaJmtVNkkZjHjhV+0DH222Nl7aQieUoAiPqzLgWIkSrA7cloJrjRTLDDySca0CviS1ZhmsxeOMwTRJPePmf9wpwVWbb5EThFTkERTPQKnwRHCdW/FoccIcs/bBeIvYLh9SltBiEAV1VWYac9K3845i+0qa3biIZjOryCel6ZU6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOS9w0Uh; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8276e579242so37643985a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:54:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=MxJiWeiJK7CaYIidpqFW8bFESOpl4zKUGdDHWydODrIuClaRGBS2Vl4Ee+3D+eJ2g4lGP+VcfbVGtMA0P+qnb4WKh6W9s9G2TEV3X3iTErpTu1bseubnShR1zHbD3ZOxUg7jh+Mb5fLTXzKKBTU9FrsVawHKLmCSye+C6eRgDhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HGgUr0jW; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-560885b40e2so4288e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758153293; x=1758758093; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758153348; x=1758758148; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xVqmq1XyM68IuWPFvf/CwgC6VPWqheMQfHU/6sGfhXY=;
-        b=WOS9w0UhirDrRo4jqUBGHvednn4QLzsGfLSLugjvsS9GQ3H+jVEbX78dXLBKR9Z+Wd
-         iaUxras/3HIxxMtIFaxzoOWpunygyn3QhbE5PGRagHyP+TVpoXD9ZYubqFQ3Su/4Lcuw
-         iNFYQtEtkgB0ZD2wrUmEXGWLtXHno7aRwed/snK1au87FNCqmr0GfxPCeQkPyqlNzJ1r
-         DIwbhOJan8Y6QLg1K6Znjo689olZyOTUDAtm8pyspmL2Mn4E6DoYykVZUk3A0BR6ElF/
-         /uipPCEtnNW7+zoHVddw7jZFW0zA1T1ERcyNVQtu8MYCacphMx6SPe9Akk+46Epd8Fjl
-         PL6A==
+        bh=h2BqbA+mdt4TSxAifBWwgyG/76v4E1bDgqDxwYgdDNY=;
+        b=HGgUr0jWdlWBtEfv/9You9L4DZ8VNxIvnv9mtumi9UpOk9tnnwr2inzAoKbirIP/cR
+         2NcRDbEdUqzxEsy5XwxP3+NdtiSWWkdUuItzPOhOVqXYJnZk3mB9u6PyO+IbS3mACy2r
+         1cJ87drey8X8DM8gkr5HTXdV8UOfAmBNSbu89USaHr5WVlIL8U3VXGcpm7XBhudwjusb
+         6l39C2NkXtQ3YmpKOXTQZL9elWCj7ehRW/eaQNaGNww/50jZ4ivjkLf/hCMArj8q2wd1
+         9mvzlSVn6vCXztokFpftcHgFFYk16CIYZPiJtkh2wR8ygqd5zGUDvT87wlGfmagG0taW
+         iaLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758153293; x=1758758093;
+        d=1e100.net; s=20230601; t=1758153348; x=1758758148;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xVqmq1XyM68IuWPFvf/CwgC6VPWqheMQfHU/6sGfhXY=;
-        b=t+JWkkxYOWpg+4PJjwGD+lsHuxRr9j55UVHFXqKDu/evc2calvW0if1WKLVVym/CWP
-         6y2KPH1gc1rkKQuGo7ObNTCtmN+ReHJx8SvazWiTAU6TMk/JQty6i+ZmXzI/TEUuhWfp
-         5Of8r9V1iw8ANIrvhcbatH9wsvr2UrNFIUDMmhF5egKosc5BYzCyTQDTeZhWaORtXtza
-         gqgGAsy1gDBDADiruNhFdMcQZ9VbLVhsBWQGl/jqN39wr/jQPkmB5rUQOQUs7ZMtQgUZ
-         2+uWqhDZWjtm2aYt5poWXazklkQkkyJKVDZq2ZROR5HtDFcKM1OO8lALIMYXQgd1m2CI
-         g/Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWxbQcJrllgU8DtcMZ6PwQoWebM3hW4spuJ2nd3LSF98Na4gZX/+W5120bhmpXEsiPTaD7bTOyZ6eNEgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn3quvNmE5ZjC2MIzbSE1a9FfMZ8sclaWFCn75OH+LFBYX7H7y
-	20CGB1bF5oGr0SqEIsAcI+/epFAfD1uYlnfL98CeFiZn1Rlpo+vkSxPHbieI6vhxhBHyChxnBac
-	7nlh1af0IWKeWFjHGLANMrIpsMPQ596MkUtjZ9Xk=
-X-Gm-Gg: ASbGnctr9F62NgTvzwhuFYSLhaKJOB9mkE9sJ19l7Qbi6V5+pSrKJgQiSmityf3YV+l
-	Xc2blagivoVjxBH7gxxoE7E4k0iSwC3DXNrRDIIgQ0A3A+b7BwPRBFKhkqn6abSrk0s7oPnLH61
-	81uheykP5vTssqvgbaX8McK6YNBKyUSS9F4/a2UsI10IQnKC/FosexMOHyF6GqKoD5PmN0EKWoN
-	6EeUk2vJ/XDF6rzOd7L3s1fkWUM+7F6AesAdcz/dAmfdSqLMzhI57ZS8c3o
-X-Google-Smtp-Source: AGHT+IGder1j1Rwbf0cQacLg5ALStnZiI32aSbbV6lf0Xs9drtdSw2rF92r3+LPRUslUoss8jtrhYKBhZNjGSi29rjo=
-X-Received: by 2002:a05:620a:4116:b0:815:dab2:1ea8 with SMTP id
- af79cd13be357-831162658a2mr458884485a.79.1758153292929; Wed, 17 Sep 2025
- 16:54:52 -0700 (PDT)
+        bh=h2BqbA+mdt4TSxAifBWwgyG/76v4E1bDgqDxwYgdDNY=;
+        b=eAlMcTTDBo1Or76df4hp5P86OUrlnCDmvnaY3PCYRHpzB4IrqziHmau3HZMyEEhJgu
+         X+EVZoNOTapNO9h9/S8tR62Pm8b0fcWO7Pd8ZRwW32N3CB1lzEm4GRJP9Q/hAdXR51lL
+         ezhoBTfa2t4aULwZtCR74gN2vv+sXmZAJKSVh4e9EMJPpy6hhazj/+uHiEDcW9JZLQ7W
+         rWjDr1NjO3J3NAbh5KB2vmEL3FtqslJJaQoL96emFC17DNBhDMf1CO3505SJQucyIGFS
+         SLA7RvWQvG66Wt3/CjX82eGfK+xaap+HhRcpP8M6EJpS8V0bEJdASke+B8EO+0cYGAql
+         MR5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ7OKhu3J6PDMGG+lIef9X0BC5k56nEk6TsrXgZPql9Zkxk4yisnVxRKIPExvSf0wyVG76iSJLC+AbYHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsLwkNONLFecT75lnmAHU36i0sP0TBM6pwkzENbP5ucF/9wx3V
+	85Cqz7DYCUSOFxPjFBi1npAD+0Qoirio1VH5XVbucqkmc1O0H4t7Y+aLON+tgqByuI0feLgYD6C
+	s+NKNgI9/gtfaSflPEFIbIIi4lIHKZoULEpXkq99E
+X-Gm-Gg: ASbGncuaEDZmgrOhiaVYSzapwc/zUwJIc8YoDsjS2fRkvtXPlwkaayeBi48m2IX//E4
+	OpGH5GzbyLCXQWnZHk0PhgJbEu5ZQ+YZQ13Ia7kNBQt/pOXNDAu5s6A5uz7ksF9HH3Xlb9X54lt
+	Dpn5UrjIkr0y5JiaiPKMoyYQZLy7PGBaFOHwhrkhjEb9WNUQGbkPt0q70FJBrvLtCJfLTvCWoWE
+	sJKxfFSPyGYj+PD2DN0aQtUGUm0NOjgaeJvrmMMwxdOWEzGBD8zwbDmDhmRDmA=
+X-Google-Smtp-Source: AGHT+IGAuAFB/cjvpY7Y4AZju/AFSMn3Ds5rHS2LUoc+dpzjwn1K7OXUpwxzSZfe8tpiqg4YPaRsvQ/ih9HrDwCBidg=
+X-Received: by 2002:a05:6512:3ba6:b0:542:6b39:1d57 with SMTP id
+ 2adb3069b0e04-57778c48d17mr515140e87.3.1758153347419; Wed, 17 Sep 2025
+ 16:55:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-6-ryncsn@gmail.com>
-In-Reply-To: <20250916160100.31545-6-ryncsn@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 18 Sep 2025 07:54:41 +0800
-X-Gm-Features: AS18NWCbKRDQhueLJq3obspsewbZg-FyKMrsp6P91o-NQiGvqOCVRcKPSrRiGuk
-Message-ID: <CAGsJ_4zL2nVUOpV7aBsfHn=gS_bw6pdFYTp4G3frW-3ovupBew@mail.gmail.com>
-Subject: Re: [PATCH v4 05/15] mm, swap: always lock and check the swap cache
- folio before use
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+References: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
+ <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-2-c80d735bd453@meta.com>
+In-Reply-To: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-2-c80d735bd453@meta.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 17 Sep 2025 16:55:34 -0700
+X-Gm-Features: AS18NWDDuUAXlqLMWoiuJyipblvfnn6oVju_1frRroYSHlxNGTk3xhMxeaVEObI
+Message-ID: <CAHS8izPNC65OUr4j1AjWFwRi-kNFobQ=cS4UtwNSVJsZrw19nQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 2/3] net: devmem: use niov array for token management
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Neal Cardwell <ncardwell@google.com>, David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>, 
+	Bobby Eshleman <bobbyeshleman@meta.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 12:01=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
+On Thu, Sep 11, 2025 at 10:28=E2=80=AFPM Bobby Eshleman <bobbyeshleman@gmai=
+l.com> wrote:
 >
-> From: Kairui Song <kasong@tencent.com>
+> From: Bobby Eshleman <bobbyeshleman@meta.com>
 >
-> Swap cache lookup only increases the reference count of the returned
-> folio. That's not enough to ensure a folio is stable in the swap
-> cache, so the folio could be removed from the swap cache at any
-> time. The caller should always lock and check the folio before using it.
+> Improve CPU performance of devmem token management by using page offsets
+> as dmabuf tokens and using them for direct array access lookups instead
+> of xarray lookups. Consequently, the xarray can be removed. The result
+> is an average 5% reduction in CPU cycles spent by devmem RX user
+> threads.
 >
-> We have just documented this in kerneldoc, now introduce a helper for swa=
-p
-> cache folio verification with proper sanity checks.
+> This patch changes the meaning of tokens. Tokens previously referred to
+> unique fragments of pages. In this patch tokens instead represent
+> references to pages, not fragments.  Because of this, multiple tokens
+> may refer to the same page and so have identical value (e.g., two small
+> fragments may coexist on the same page). The token and offset pair that
+> the user receives uniquely identifies fragments if needed.  This assumes
+> that the user is not attempting to sort / uniq the token list using
+> tokens alone.
 >
-> Also, sanitize a few current users to use this convention and the new
-> helper for easier debugging. They were not having observable problems
-> yet, only trivial issues like wasted CPU cycles on swapoff or
-> reclaiming. They would fail in some other way, but it is still better to
-> always follow this convention to make things robust and make later
-> commits easier to do.
+> A new restriction is added to the implementation: devmem RX sockets
+> cannot switch dmabuf bindings. In practice, this is a symptom of invalid
+> configuration as a flow would have to be steered to a different queue or
+> device where there is a different binding, which is generally bad for
+> TCP flows. This restriction is necessary because the 32-bit dmabuf token
+> does not have enough bits to represent both the pages in a large dmabuf
+> and also a binding or dmabuf ID. For example, a system with 8 NICs and
+> 32 queues requires 8 bits for a binding / queue ID (8 NICs * 32 queues
+> =3D=3D 256 queues total =3D=3D 2^8), which leaves only 24 bits for dmabuf=
+ pages
+> (2^24 * 4096 / (1<<30) =3D=3D 64GB). This is insufficient for the device =
+and
+> queue numbers on many current systems or systems that may need larger
+> GPU dmabufs (as for hard limits, my current H100 has 80GB GPU memory per
+> device).
 >
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Chris Li <chrisl@kernel.org>
-> Acked-by: Nhat Pham <nphamcs@gmail.com>
+> Using kperf[1] with 4 flows and workers, this patch improves receive
+> worker CPU util by ~4.9% with slightly better throughput.
+>
+> Before, mean cpu util for rx workers ~83.6%:
+>
+> Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal =
+ %guest  %gnice   %idle
+> Average:       4    2.30    0.00   79.43    0.00    0.65    0.21    0.00 =
+   0.00    0.00   17.41
+> Average:       5    2.27    0.00   80.40    0.00    0.45    0.21    0.00 =
+   0.00    0.00   16.67
+> Average:       6    2.28    0.00   80.47    0.00    0.46    0.25    0.00 =
+   0.00    0.00   16.54
+> Average:       7    2.42    0.00   82.05    0.00    0.46    0.21    0.00 =
+   0.00    0.00   14.86
+>
+> After, mean cpu util % for rx workers ~78.7%:
+>
+> Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal =
+ %guest  %gnice   %idle
+> Average:       4    2.61    0.00   73.31    0.00    0.76    0.11    0.00 =
+   0.00    0.00   23.20
+> Average:       5    2.95    0.00   74.24    0.00    0.66    0.22    0.00 =
+   0.00    0.00   21.94
+> Average:       6    2.81    0.00   73.38    0.00    0.97    0.11    0.00 =
+   0.00    0.00   22.73
+> Average:       7    3.05    0.00   78.76    0.00    0.76    0.11    0.00 =
+   0.00    0.00   17.32
+>
+> Mean throughput improves, but falls within a standard deviation (~45GB/s
+> for 4 flows on a 50GB/s NIC, one hop).
+>
+> This patch adds an array of atomics for counting the tokens returned to
+> the user for a given page. There is a 4-byte atomic per page in the
+> dmabuf per socket. Given a 2GB dmabuf, this array is 2MB.
+>
 
-Reviewed-by: Barry Song <baohua@kernel.org>
+I think this may be an issue. A typical devmem application doing real
+work will probably use a dmabuf around this size and will have
+thousands of connections. For algorithms like all-to-all I believe
+every node needs a number of connections to each other node, and it's
+common to see 10K devmem connections while a training is happening or
+what not.
 
-Thanks
-Barry
+Having (2MB * 10K) =3D 20GB extra memory now being required just for
+this book-keeping is a bit hard to swallow. Do you know what's the
+existing memory footprint of the xarrays? Were they large anyway
+(we're not actually adding more memory), or is the 2MB entirely new?
+
+If it's entirely new, I think we may need to resolve that somehow. One
+option is implement a resizeable array... IDK if that would be more
+efficient, especially since we need to lock it in the
+tcp_recvmsg_dmabuf and in the setsockopt.
+
+Another option is to track the userrefs per-binding, not per socket.
+If we do that, we can't free user refs the user leaves behind when
+they close the socket (or crash). We can only clear refs on dmabuf
+unbind. We have to trust the user to do the right thing. I'm finding
+it hard to verify that our current userspace is careful about not
+leaving refs behind. We'd have to run thorough tests and stuff against
+your series.
+
+--
+Thanks,
+Mina
 
