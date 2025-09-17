@@ -1,94 +1,135 @@
-Return-Path: <linux-kernel+bounces-821668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01597B81E94
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 536C2B81E9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69285881A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:15:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1240C3AC5F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F011314D2F;
-	Wed, 17 Sep 2025 21:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0A6243371;
+	Wed, 17 Sep 2025 21:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="rUbvzeb6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAFvS4Aj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8112314D0D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC2610F1;
+	Wed, 17 Sep 2025 21:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143730; cv=none; b=YlTVdrm68S9lvmEjslp0pQyWEwbuZwQfbHuM8+8o0JGbroBGVGxjOvnarff6Yiwbk/LEWXUTsSc/RjMkn1zU+9UOGs6n/lkM1kVspFNCz4w/8Pf7ieZZMlCcm5ISBowWncDShAQUTCasmhlinSwv8J93dqTWFNghu0YEI0BP89Y=
+	t=1758143907; cv=none; b=OZjhohn4bDxOaPB4rU0WKXf99DdRPE9KKSbT2rCbw7nBXg8TSbc0SyK05HvAsjgYznf/d1ArlrCV/hJF3cNwJf71RzJRsL3aiv9KtZsxJl+WXr3v8Ib6FqfwQ8XnTydwUAJGWAXttd0iLQqptB1dUUYVn8y71Etr8/8amFwg/Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143730; c=relaxed/simple;
-	bh=DcxYPaU/C9Z8kxq2ijoz5I5wq5YK+7WzAtenGXmcCw8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=hfkM/UZcbs84YyvzHiQKCnNtiA2Jao6MOiEYzKvRB9RHj1BgtRaveA0nfBiobZoVp96Fus/2zxV9rtkF6zfpmgAQAb0eXefFMtzsvO4V3rmufjZKW8ndCjdh4Nm5sCHKI0KPCNLY8Y04MmdzlvOQdnRCUTx/NsxmwNWkBD52+uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=rUbvzeb6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA83BC4CEE7;
-	Wed, 17 Sep 2025 21:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758143729;
-	bh=DcxYPaU/C9Z8kxq2ijoz5I5wq5YK+7WzAtenGXmcCw8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rUbvzeb6lTZ+Whs/55k7lgnRyrOb9pGJ8yrG1X4a738PSNve1uqUlZcQLNspuugE5
-	 igqRsR7m7ZGW7YhWZbOsdqHura7PFNCHH12FdrnOJlBb9p1LgYcJsXXfuvBQcK1aBL
-	 Zpue6/TV2+E0fX526TLpn03YIXhPqX3qMwZoVtXo=
-Date: Wed, 17 Sep 2025 14:15:28 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>, Changyuan
- Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>, Jason Gunthorpe
- <jgg@nvidia.com>, Pasha Tatashin <pasha.tatashin@soleen.com>, Pratyush
- Yadav <pratyush@kernel.org>, kexec@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] kho: add support for preserving vmalloc
- allocations
-Message-Id: <20250917141528.cd619a95a19a33d71dcc4b1c@linux-foundation.org>
-In-Reply-To: <20250917174033.3810435-4-rppt@kernel.org>
-References: <20250917174033.3810435-1-rppt@kernel.org>
-	<20250917174033.3810435-4-rppt@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758143907; c=relaxed/simple;
+	bh=Dkf08spIxA201bgB3U6VQQ/RiMff9Y1iizvcrMd6Ipw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JT5m/XqCV4fp8idzWbVvXAah0RRoccijXt9Ldrh924OKAXBux8fdOamRqumUrsu7a8bxiwaOP3uanQ9Nzvh9jBIT3m0hTOCWFtoKpCqWuLmhjDCwWXnVylXr1cmeGi+csz1cmMoJ08fsY42IIRWrRPwIEmhTaWm0WEImfe/M0qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAFvS4Aj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A0DC4CEE7;
+	Wed, 17 Sep 2025 21:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758143907;
+	bh=Dkf08spIxA201bgB3U6VQQ/RiMff9Y1iizvcrMd6Ipw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eAFvS4Ajgc6dGXw+wpqk+89BbU6NxbLokTy88t5guS8V8kgaePfP/jBJ9cMNWnzG/
+	 91uRTY7+56XLBLzDMi+MfWFAb3cKziHq8Op1EUnuPj7A5jt0cIc3zH1+MaH0t2bxoy
+	 M74PI70kJJ7TH38wdUF0G+WuPgFK81TNHc4Iypc1a+5+uKmFR4i3hTg55ScwFiEZ3j
+	 ZKFZaL31t7v6IGmdDn6taTUJugECvKCNJL3iIt0iPM53wtdsq9KCFY/mBl0oRNGXmD
+	 1SXJ1JaF5aAGcpUWX6X2mSPDX1qEd4rjAiduq1luH+E/zBu70acdYR1EGl4uJaJIga
+	 SwMvK40TkXXpg==
+Date: Wed, 17 Sep 2025 16:18:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: chester62515@gmail.com, mbrugger@suse.com,
+	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
+	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
+	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: pcie: Add the NXP PCIe controller
+Message-ID: <20250917211825.GA1874549@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912141436.2347852-2-vincent.guittot@linaro.org>
 
-On Wed, 17 Sep 2025 20:40:32 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+Suggest following convention for subject lines (run "git log --oneline
+Documentation/devicetree/bindings/pci/"), e.g.,
 
-> A vmalloc allocation is preserved using binary structure similar to
-> global KHO memory tracker. It's a linked list of pages where each page
-> is an array of physical address of pages in vmalloc area.
-> 
-> kho_preserve_vmalloc() hands out the physical address of the head page
-> to the caller. This address is used as the argument to
-> kho_vmalloc_restore() to restore the mapping in the vmalloc address
-> space and populate it with the preserved pages.
-> 
-> ...
->
-> --- a/include/linux/kexec_handover.h
-> +++ b/include/linux/kexec_handover.h
-> @@ -39,12 +39,22 @@ struct page;
->  
->  struct kho_serialization;
->  
-> +struct kho_vmalloc_chunk;
-> +struct kho_vmalloc {
-> +        DECLARE_KHOSER_PTR(first, struct kho_vmalloc_chunk *);
+  dt-bindings: PCI: s32g: Add NXP PCIe controller
 
-offtopic nit: DECLARE_KHOSER_PTR() *defines* a union named "first".  It
-doesn't declare one.  A better name for this would have been DEFINE_...
+On Fri, Sep 12, 2025 at 04:14:33PM +0200, Vincent Guittot wrote:
+> Describe the PCIe controller available on the S32G platforms.
 
-And the world would be a better place if those three macros had a bit
-of documentation ;)
+> +        pcie0: pcie@40400000 {
+> +            compatible = "nxp,s32g3-pcie",
+> +                         "nxp,s32g2-pcie";
+> +            dma-coherent;
+> +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
+> +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
+> +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
+> +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
+> +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
+> +                  /* RC configuration space, 4KB each for cfg0 and cfg1
+> +                   * at the end of the outbound memory map
+> +                   */
+> +                  <0x5f 0xffffe000 0x0 0x00002000>,
+> +                  <0x58 0x00000000 0x0 0x40000000>; /* 1GB EP addr space */
+> +                  reg-names = "dbi", "dbi2", "atu", "dma", "ctrl",
+> +                              "config", "addr_space";
 
-The code looks nice though.
+Looks like an indentation error.  Shouldn't "reg-names" and subsequent
+properties be aligned under "reg"?
+
+> +                  #address-cells = <3>;
+> +                  #size-cells = <2>;
+> +                  device_type = "pci";
+> +                  ranges =
+> +                  /* downstream I/O, 64KB and aligned naturally just
+> +                   * before the config space to minimize fragmentation
+> +                   */
+> +                  <0x81000000 0x0 0x00000000 0x5f 0xfffe0000 0x0 0x00010000>,
+> +                  /* non-prefetchable memory, with best case size and
+> +                  * alignment
+> +                   */
+> +                  <0x82000000 0x0 0x00000000 0x58 0x00000000 0x7 0xfffe0000>;
+> +
+> +                  nxp,phy-mode = "crns";
+
+If "nxp,phy-mode" goes with "phys", should it be adjacent to it?
+
+> +                  bus-range = <0x0 0xff>;
+> +                  interrupts =  <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
+> +                                <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+> +                                <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+> +                                <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
+> +                                <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
+> +                                <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
+> +                                <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
+> +                                <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
+> +                  interrupt-names = "link_req_stat", "dma", "msi",
+> +                                    "phy_link_down", "phy_link_up", "misc",
+> +                                    "pcs", "tlp_req_no_comp";
+> +                  #interrupt-cells = <1>;
+> +                  interrupt-map-mask = <0 0 0 0x7>;
+> +                  interrupt-map = <0 0 0 1 &gic 0 0 0 128 4>,
+> +                                  <0 0 0 2 &gic 0 0 0 129 4>,
+> +                                  <0 0 0 3 &gic 0 0 0 130 4>,
+> +                                  <0 0 0 4 &gic 0 0 0 131 4>;
+> +                  msi-parent = <&gic>;
+> +
+> +                  num-lanes = <2>;
+> +                  phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
+> +        };
+> +    };
 
