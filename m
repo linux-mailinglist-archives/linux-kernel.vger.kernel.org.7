@@ -1,78 +1,121 @@
-Return-Path: <linux-kernel+bounces-821480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B8FB815BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:38:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31A5B815CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F03463F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:38:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF27466BF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6968D2FFDFE;
-	Wed, 17 Sep 2025 18:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BED3002BF;
+	Wed, 17 Sep 2025 18:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hjljpe5/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BV2wsGOB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A3E189F5C;
-	Wed, 17 Sep 2025 18:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838CA26D4C4;
+	Wed, 17 Sep 2025 18:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758134282; cv=none; b=PLScZ4VRDOGGpIiDlck/5oGJ+AcP1T0ZOfNMpQnyh9uL4FJMkKVu6dDwp/iMey8OpZHJjpfsdXWmJ33IdULSyVIBEu6V0CCDUd3j+f19iJVQl3P0JKdjZ/0HrbGD1hwfv3jro+EQElbrlvS5YEusAGq7yyp36k4MsOGyI6Nw21A=
+	t=1758134329; cv=none; b=XorcweviEGSsIh/ruCfXS04vcXTw69bN+JrNtUjxBlycJ/LBqRqGxgIFSvnXocl1e7GOKzVUYKMMwGBvFVurlFfeSj3b2q7VZMc+7LIwfVtaOiRAu52GwKRKUh9aVDE23vAGm+XKR4veeferjYeXZx/HjIcGF8Kn7Dx3xF9+TxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758134282; c=relaxed/simple;
-	bh=kc0lYyKR7zeTc5iDkUcwaVoI+tcbcKwqoeSqLa9YYZI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=L1bQqA/ZHOTYKOp/ifWIgw0TwO4red/dIfzbrL07OZ8sLTXlpo4KhJ+bEnEBBvXduW0T/ErDBj4dq1ejKklBapDdvEx64t7PIH0mk75SlbmajWq6d9MQg1UePIQQsfAmESlQ8algN3xTKncPZkLy8Gw2YzT9Lxs24KWwXPXwuLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hjljpe5/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE5BC4CEE7;
-	Wed, 17 Sep 2025 18:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758134282;
-	bh=kc0lYyKR7zeTc5iDkUcwaVoI+tcbcKwqoeSqLa9YYZI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Hjljpe5/XyhkV1qRIpqyl5dPo7hhodbH9W0o/N7iNbES81qwX6ZS/vOVPMmBZPm1Z
-	 3DwOJzpYnI+n6Q/cBZRbGpjr5XNDUVqulVfJ9xsCMwIhx3R0XT0u6eRgBGbS8HXq+3
-	 TaHOYxf1uX7V/9id9mRBGJNMQ33WuwJT4KmPuocl4hbyaoLvjQfk9QqPnE5ysl+ixe
-	 zgNrvGHZPmtz+aiR+9Nla/iC29l9NUcDcgwzUBXHmiIvqG+OkkFjQZhR6Q3aOkB1gw
-	 VRrnO6UezqYJ8yisnt+h+72ElO0gL65J53IBh2KWOtN2DDZpf5JaJ9VH/hZt+GD0T9
-	 Cei/sBelHKc+g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3418839D0C20;
-	Wed, 17 Sep 2025 18:38:04 +0000 (UTC)
-Subject: Re: [GIT PULL] Btrfs fixes fur 6.17-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1758085289.git.dsterba@suse.com>
-References: <cover.1758085289.git.dsterba@suse.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1758085289.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.17-rc6-tag
-X-PR-Tracked-Commit-Id: 80eb65ccf6f72dc37b972583fe71cd8a50ff7e51
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b6f456a76f7379fa4e30371e548f40b10a76b60f
-Message-Id: <175813428282.2102736.5321254657992813438.pr-tracker-bot@kernel.org>
-Date: Wed, 17 Sep 2025 18:38:02 +0000
-To: David Sterba <dsterba@suse.com>
-Cc: torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1758134329; c=relaxed/simple;
+	bh=TqE3A9l2moOt53Rhn4bLDHNCQxyxQLB0PPQkFw6K+aM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgpky+HnV6/DL2ioCU1CVgPmvgOHUp/nD5EZTGkPiy7iBtgZdyYBh6Lzqxzqyh/TEHxkvmJpbt75iPqkkMEKbIFrouIq8srH9hqVP2qO6+c7w9K0p7sIdxRlv3XevIRmojwvtChg9XTSaAQTXpSFq7kBVXqnTo/coMFW/LkH2pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BV2wsGOB; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 132B940E01A3;
+	Wed, 17 Sep 2025 18:38:43 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id pXxv3NKnGAaa; Wed, 17 Sep 2025 18:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758134319; bh=lz6EW2NlhQyAUDO56c2jj9Z9w8ykktjlbRhP7nmvwnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BV2wsGOBWx4hOvrDqeKBl2gXzCktne4YARKbnnjBrPQ2wPq2rOwK8Eso1B2mtKBt8
+	 bvAmijJl2FiJE9YATb/mkyN6sptLLotr0CBx+tELaPbYOjXUeFKEHeHY9tpute2bkh
+	 PyHB8gGWTXFRwo6jeqn0c6RQMPbJFvUarwt9CKFFzd5Z6glyKWFnYqqjzENXmm+RpS
+	 ZmygFc1OpgRk4pGGOzfg8I9b7kmnqai+nDbSHpsV2YzaNGDWLjla6ouFOvfci0heV8
+	 KSwfCVpWWzK7ZGA3RaBx/py22mrCmhNiM3VVd9ZxeYoylWRQ24VV+rFVS7grOlZh23
+	 eUHlqw9qyjdtcLWEcSYalx5rZY+kfUdtYg5OXtCofnUGhSm0f/j0MAKbi4GahxuUkX
+	 AHnEQotXFjVQ112PqM0u63cqd1sPU1EL/DDd6DQwzzvRKeoxkNGhL3pwwmAXmI3kxD
+	 6cSduszUliareX7IXQgtBZEadvY10iPOAhi/6JSlAZXcBb86duqnjJCxePGoEzXgOC
+	 up7GEaeNnph8pShUgdGWbmM3WuAplXK5BGzzwEJfPr1JePz3yfNw5o/ocU4G4ojWvd
+	 enQg9OSv77vZJOyJi6b2OD9vSO/ghSzL+M/zQBrenI1icUMkC0OxrNePAb4k/Uj5XI
+	 VaJG4gBrf2GPs7nzQB7IrM10=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id DE51440E019E;
+	Wed, 17 Sep 2025 18:38:27 +0000 (UTC)
+Date: Wed, 17 Sep 2025 20:38:21 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexey Kardashevskiy <aik@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Santosh Shukla <santosh.shukla@amd.com>,
+	"Nikunj A. Dadhania" <nikunj@amd.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [RFC PATCH] PCI: Add quirk to always map ivshmem as write-back
+Message-ID: <20250917183821.GDaMsAHa7kVPBt5HAV@fat_crate.local>
+References: <20250612082233.3008318-1-aik@amd.com>
+ <20250912164957.GCaMRPNf7P60wqBud9@fat_crate.local>
+ <c6e09d1e-c950-4ba7-8773-2062e0c62068@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c6e09d1e-c950-4ba7-8773-2062e0c62068@amd.com>
 
-The pull request you sent on Wed, 17 Sep 2025 07:20:40 +0200:
+On Mon, Sep 15, 2025 at 05:43:33PM +1000, Alexey Kardashevskiy wrote:
+> yeah, sadly, there is one - people are actually using it, for, like,
+> a decade, and not exactly keen on changing those user space tools :) Hence
+> "RFC".
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.17-rc6-tag
+Then this commit message needs a lot more explanation as it is something the
+kernel should support apparently when running as a guest...
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b6f456a76f7379fa4e30371e548f40b10a76b60f
+But then, if it has been used for a decade already, why do you need that quirk
+now? No one has noticed in 10 years time...?
 
-Thank you!
+> > >   	else
+> > > +	else if (!(pci_resource_flags(pdev, bar) & IORESOURCE_CACHEABLE))
+> > 	^^^^^^
+> > 
+> > This can't build.
+> 
+> Why? Compiles and works just fine.
+
+Here's a more detailed explanation:
+
+https://lore.kernel.org/r/202506131608.QlkxUPnI-lkp@intel.com
+
+You haven't replaced the "else" with "else if" but left it there.
+
+Thx.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
