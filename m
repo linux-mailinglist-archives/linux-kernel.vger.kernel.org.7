@@ -1,106 +1,105 @@
-Return-Path: <linux-kernel+bounces-819944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454FCB7CC62
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59871B7CDD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF06C18984CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92075327CFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912F0276028;
-	Wed, 17 Sep 2025 03:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KTABMtEw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216A527A456;
+	Wed, 17 Sep 2025 03:54:36 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE3426159E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7746126159E;
+	Wed, 17 Sep 2025 03:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758081050; cv=none; b=mrdbytYpK8gmqxqWGShgiDyqblTx5dibIYrOgfE2xNcllQaIL82cRLcbIhm2X8CZvnIXM227U904zowCJuPjxObQgq2Lkr+UqPpz7y/b7Ys7o6Z/Eja+y9vKkG9ECQRPgvCoPmPRxAgCPCD2hw/gMRzVbeiB0iCrIqz9V+9V/wU=
+	t=1758081275; cv=none; b=iO4H7qqdT6Q4CXQnViiWCbfCA5Ru6kKImF8N+Vo0hHtabxIYU0fizYirWk2bjnWc5IpCuPSm5jB6qlY+lK5CRWHwrUOWiwbYwclhQNjlAYFXtvmW2oQL9HYP+95/3r38fmF8x+RoQStzueW36XurtvDBh2HZAJeCdjRLhQ8N0VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758081050; c=relaxed/simple;
-	bh=7vLhl8PiXmXVo/k53RZQPlq8TNMi4jCCwMfMVJcYPEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGedNbmt5DGBNX0lbirr/L+Z6NVXo4AHUDU4jWMLwpnJjaSoWoBd/XedKdQ8xmOoQlFYxY5bDcpIqqEDhQaTEWCZKDgEcL15P+k78f1QzA1t+5Oa5nCmpBBPZ8kna3MIUTj8GpZXLTaI1hUZNnDWqvsJNULj6vI9lypwHl8Fjz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KTABMtEw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758081046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nDzqVgAqJ2wx4jnAAJfPreUIVHlLIK6MbeUbg5xoPKg=;
-	b=KTABMtEwoRSAdL3cT3fSeGRrLa2PGSvSDp2PoLQafquJBSwiTYpUwfa/v6wMQjg6ohgRir
-	rbfQ1UqftyVIhd2KFzc4yDueeSMKBeswBN4THnTMf1+VicF5J8C2CUt7NsdGGVDT3yMJts
-	ZWzaAAx2FO7vyMyD2XFTiIoZ9DwTtPE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-Af5xTZ6zMECvhoZixD5BFQ-1; Tue,
- 16 Sep 2025 23:50:43 -0400
-X-MC-Unique: Af5xTZ6zMECvhoZixD5BFQ-1
-X-Mimecast-MFC-AGG-ID: Af5xTZ6zMECvhoZixD5BFQ_1758081042
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1758081275; c=relaxed/simple;
+	bh=VrY1UoPIDLzL4/7sTCNvCpXw6Lzm0dHvd+Ryq1BOhsQ=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=LWuO1ldSdGvZkn0rqSAsfD7hm0bf0bsKRVyJGKu3VI9bi4H1ClCtlH5xReW7ebFcwspYjhAprgS/ivjqDgxzF67xF+cm70FVcQGs8fRbK9aEjLS/JLbCnzDLICNldfdwtKsbyPCpt8437ZRRQJ45smWVKld9igrc+8NR8uy0Cqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D1D1180035C;
-	Wed, 17 Sep 2025 03:50:42 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.8])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A45A819560B8;
-	Wed, 17 Sep 2025 03:50:38 +0000 (UTC)
-Date: Wed, 17 Sep 2025 11:50:33 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Shuah Khan <shuah@kernel.org>, linux-block@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] selftests: ublk: kublk: add
- UBLK_F_BUF_REG_OFF_DAEMON to feat_map
-Message-ID: <aMowCXGbmJ4Ob1h7@fedora>
-References: <20250916-ublk_features-v1-0-52014be9cde5@purestorage.com>
- <20250916-ublk_features-v1-2-52014be9cde5@purestorage.com>
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cRPz11Kfcz5B13f;
+	Wed, 17 Sep 2025 11:54:21 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 58H3oubU002266;
+	Wed, 17 Sep 2025 11:50:56 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 17 Sep 2025 11:50:57 +0800 (CST)
+Date: Wed, 17 Sep 2025 11:50:57 +0800 (CST)
+X-Zmail-TransId: 2afc68ca3021687-dcb2d
+X-Mailer: Zmail v1.0
+Message-ID: <20250917115057635tlnrFBfUcn1C1pBCZ02gN@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-ublk_features-v1-2-52014be9cde5@purestorage.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <alexs@kernel.org>
+Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.tao172@zte.com.cn>, <shao.mingyin@zte.com.cn>,
+        <wang.longjie1@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHY1IDAvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGZpbGVzeXN0ZW1zIGRvY3MgdG8gU2ltcGxpZmllZCBDaGluZXNl?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 58H3oubU002266
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Wed, 17 Sep 2025 11:54:21 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68CA30ED.000/4cRPz11Kfcz5B13f
 
-On Tue, Sep 16, 2025 at 04:05:56PM -0600, Uday Shankar wrote:
-> When UBLK_F_BUF_REG_OFF_DAEMON was added, we missed updating kublk's
-> feat_map, which results in the feature being reported as "unknown." Add
-> UBLK_F_BUF_REG_OFF_DAEMON to feat_map to fix this.
-> 
-> Signed-off-by: Uday Shankar <ushankar@purestorage.com>
-> ---
->  tools/testing/selftests/ublk/kublk.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/ublk/kublk.c b/tools/testing/selftests/ublk/kublk.c
-> index 4e5d82f2a14a01d9e56d31126eae2e26ec718b6c..b636d40b4889d88f7d64d0e71c6f09eca17e3989 100644
-> --- a/tools/testing/selftests/ublk/kublk.c
-> +++ b/tools/testing/selftests/ublk/kublk.c
-> @@ -1379,6 +1379,7 @@ static int cmd_dev_get_features(void)
->  		FEAT_NAME(UBLK_F_AUTO_BUF_REG),
->  		FEAT_NAME(UBLK_F_QUIESCE),
->  		FEAT_NAME(UBLK_F_PER_IO_DAEMON),
-> +		FEAT_NAME(UBLK_F_BUF_REG_OFF_DAEMON),
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+translate the filesystems docs into Simplified Chinese.
+v4->v5
+fix some format issues.
 
+Shao Mingyin (5):
+Docs/zh_CN: Translate ubifs.rst to Simplified Chinese
+Docs/zh_CN: Translate ubifs-authentication.rst to Simplified Chinese
+Docs/zh_CN: Translate gfs2.rst to Simplified Chinese
+Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chinese
+Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chinese
 
-Thanks,
-Ming
+Wang Longjie (2):
+Docs/zh_CN: Translate dnotify.rst to Simplified Chinese
+Docs/zh_CN: Translate inotify.rst to Simplified Chinese
 
+ .../zh_CN/filesystems/dnotify.rst             |  69 ++++
+ .../zh_CN/filesystems/gfs2-glocks.rst         | 211 +++++++++++
+ .../zh_CN/filesystems/gfs2-uevents.rst        |  97 +++++
+ .../translations/zh_CN/filesystems/gfs2.rst   |  57 +++
+ .../translations/zh_CN/filesystems/index.rst  |  17 +-
+ .../zh_CN/filesystems/inotify.rst             |  80 ++++
+ .../filesystems/ubifs-authentication.rst      | 356 ++++++++++++++++++
+ .../translations/zh_CN/filesystems/ubifs.rst  | 114 ++++++
+ 8 files changed, 1000 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/dnotify.rst
+ create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+ create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
+ create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2.rst
+ create mode 100644 Documentation/translations/zh_CN/filesystems/inotify.rst
+ create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs-authentication.rst
+ create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs.rst
 
