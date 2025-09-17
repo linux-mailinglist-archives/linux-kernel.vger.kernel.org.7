@@ -1,345 +1,133 @@
-Return-Path: <linux-kernel+bounces-819828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FD4B7FBDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:06:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85ED0B7EB59
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65FCF17BFAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9711C0391E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D649727874F;
-	Wed, 17 Sep 2025 01:11:02 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435F3224B09;
-	Wed, 17 Sep 2025 01:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C76920F08E;
+	Wed, 17 Sep 2025 01:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Unar2SXg"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B6C21CC68
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758071461; cv=none; b=YHZlrM4JvtfjwDKu9XLABQJzycjY/uKCS9NU9UmcDyZ9+8lBdrP3DDPOA0f/DEImiRkAGtnLsfd/cZvzHERTSYOBCjYyyTh5rZbLB5FuzdXyrZqK2RKHiF9cPIcBSkn3FAkhmmhZhKj+ly/x9p3I7/4aolE0KJdIobkHCouL57k=
+	t=1758071350; cv=none; b=UmN4sNPt1TmH5iDS3OERYRTSFZdpdHiFPtUtNIWaBrWCGk0D/wY8eUDqJGtjELRi5AxEgW+1ECQ5xo5kWvFfKIUWZiROpVnUug3TsxGSo7Y1UBFqs5T1y1ly+VriuLFaCtEgmK3uxkXdAaSY9Vu1AMEMuMH8GOECXNHfGgX+hSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758071461; c=relaxed/simple;
-	bh=p5MOrxNALnPdLniwGLdUchd89/VDK3rKO1Ya3OOUR2g=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FTqJHeOhFc7uwoJWb6sslQFhVzRSlytkUGWKYHu4H4Fi4hT8Zhz/jQAmFID83ZEzDRWCWWEY4TO2DFEoOlknM2p8QlKZL1zA+n6Jaw2o672RbJ3m/EaHWhiDq7Rw5Jb80NQkuLRqI37Im1Wl2bAYXt0jPJq09PXFmBG3TAnAPqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxndKhCsposi4LAA--.23751S3;
-	Wed, 17 Sep 2025 09:10:57 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJAxVOSeCspoamSaAA--.36958S3;
-	Wed, 17 Sep 2025 09:10:57 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: Fix VM migration failure with PTW enabled
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250910071429.3925025-1-maobibo@loongson.cn>
- <CAAhV-H65H_iREuETGU_v9oZdaPFoQj1VZV46XSNTC8ppENXzuQ@mail.gmail.com>
- <3d3a72c2-7c91-7640-5f0b-7b95bd5f0d2e@loongson.cn>
- <CAAhV-H4bEyeV7WkfSNBJnicMhhnSwj3PEr9K4ZpXwto1=JyWUw@mail.gmail.com>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <ff12ec30-b0df-aedd-a713-4fb77a4e092a@loongson.cn>
-Date: Wed, 17 Sep 2025 09:08:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1758071350; c=relaxed/simple;
+	bh=8iy6YFiMxYbnPM1Dh+uja0UiONhMccJeOfORlYkOyIs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Z0oICYGhSbeyPfs4vVg2snIIES3s4r6eQ0xD3skhb5lETcrjmtJanNIaoCZSJBZ34j2orpGrGB24JdUofHGzen/U7lwtDeOAGpQGbS5Bd9oiOtWkVnB/vqk4/E9YbXUXcqNZcatsiMi7y473qrWahpV93jhi3mIhESMXTMgzD9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Unar2SXg; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77b0a93e067so1079742b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758071348; x=1758676148; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ef1jPHXRXlSyQcsCWb/rEyZIu3SGLb3odWcJ1kdair4=;
+        b=Unar2SXgzSUEx0wr24FmcBWnA5JppBUwuyT62CLGJihOapX1TQqQBu5AoPjrQYPPns
+         g5s/AR3vYJBlhYh4C+I6kPvTs0bXtnt6gQ7z0NjGuErjm8faXS3Pvi9813eQl5MN7Rl8
+         7E3v4YViZ1rbQ5cgPC85RGtBX4mD2OCMWr/Du7+AOchWV7vimYZjZ3A3lGrvih+4RVt/
+         LDYQPivshyIK0FoK/kMPnDw461h7pfwpcVERgCct9lZOA2J/acmerAMOZgnv8PhIRApC
+         rcU3XOqXMF7b2iRmoWYQBsr5Lz/mVWDc4qNGXi8Si6nVRN6AVk9TZmeCmFeu8NIE/Mrz
+         ULFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758071348; x=1758676148;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ef1jPHXRXlSyQcsCWb/rEyZIu3SGLb3odWcJ1kdair4=;
+        b=HLJWW7a1Bm+NCY0ylvTgsbUPPXv7f+S43G8M1QQfCiWsYyKQ18Xx3PQ2HEbD6TvpKA
+         Fy1+iOkhcUu8z7lw5ZcaIj62JgYfA5mXAqYc5ibUNE7KocIBvAA6X1fAGBW+RzygtM6f
+         lcSiHLUuE0yHVsM/gg4iuK5/u505wBikmMpy9gpZFyCD6urTEQ9x9zFKOEOKXHXU1i33
+         y67D7mcf3uYqf5PB1EaGulH5J5UQJxPpoZ1tWkeXzy2Hx4c+G4OlDJasEbgGZejRX92z
+         /ZOPbvTliFYZM3r9FHjUAZI1YmkAEg5xAmq0no288jVBRAyujYKCGeHMc2H97u1w85d3
+         gjQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqGG148bikoSQWjg6yBvnpcmPtp6SHsv56U+nEhW7oBBTe+lweIL2iFwWfrJE6X/HsqEtIysL4KVpIWmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLhkvttqUG6UvwgItd4x3iihRmE9A1wWGIQGNHQZ0MBsRG1nDx
+	zDMCZKb49zu0W8dfGX/0sqkM4UH6CcshXl6oroYXgzz9xSwjt9dODW/x
+X-Gm-Gg: ASbGncvuQ4uePWTzOSinNKBaz5+EISW35Gzm9nspARJViDSnRB1jDvDKFazRhnNXgAU
+	sAI5Tc9JgsRJhubL3xmSuX4SSfzmADWYd8vkzFA/X4gbLaA831/Lom7+CP+Xx0uATot9uF7TA2J
+	+F+NeBWxprxYQ69VcP+5NevQf0hza2G1WPvHnOlSL6yCNAiUZ0w1zJhvTDNMEJIw209CxHyyRWA
+	7e2c036AamjwjzuTQxTi0hjQ2Ecv1aVrEMQys2NZ5IgIUimAnXsMeANpshZangJxPAO9ULZdXm9
+	rPFHocTsTZKz3/LdpRmz3pW1jkKAyMt/QADrRB/j+Uo86BaKGL/X/btva5Z6wqrNRPMaCsTnaX2
+	u6XrAQuXK6Yl0s2YPxDcNqfj8iVPeplvqrJnUD1RTFmpQcv6rMsuYrOW7tvkYeMuzesad
+X-Google-Smtp-Source: AGHT+IEkeWcnuAAqrcdSXAM4DGEipqHMYe63kvODT4I36ORImDYKQTXkHaAIEz84039vOsF1h25Hsg==
+X-Received: by 2002:a05:6a20:394b:b0:24b:bae4:9c67 with SMTP id adf61e73a8af0-27a9303f03emr318222637.7.1758071348500;
+        Tue, 16 Sep 2025 18:09:08 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed266eed7sm789472a91.3.2025.09.16.18.09.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 18:09:08 -0700 (PDT)
+Message-ID: <52932ede-eb04-4275-a051-952bc2859cf6@gmail.com>
+Date: Wed, 17 Sep 2025 10:09:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H4bEyeV7WkfSNBJnicMhhnSwj3PEr9K4ZpXwto1=JyWUw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+To: mchehab+huawei@kernel.org
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Akira Yokosawa <akiyks@gmail.com>
+References: <8a77212d5459eac2a98db442691930425a2cbefd.1758018030.git.mchehab+huawei@kernel.org>
+Subject: Re: [PATCH v6 04/21] scripts: check-variable-fonts.sh: convert to
+ Python
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxVOSeCspoamSaAA--.36958S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Wry3JFW8Cr1rAF15AF1UurX_yoWftF1xpF
-	WkGF4DAr48tr17GrW2g3Z0qr9FkrsrKF1xXF1UKw1UGF1DtryUuF18WrWY9F18A348G3W7
-	XF4rtry3u3y3tabCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
-	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8j-e5UU
-	UUU==
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <8a77212d5459eac2a98db442691930425a2cbefd.1758018030.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/9/16 下午10:21, Huacai Chen wrote:
-> On Mon, Sep 15, 2025 at 9:22 AM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2025/9/14 上午9:57, Huacai Chen wrote:
->>> Hi, Bibo,
->>>
->>> On Wed, Sep 10, 2025 at 3:14 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>
->>>> With PTW disabled system, bit Dirty is HW bit for page writing, however
->>>> with PTW enabled system, bit Write is HW bit for page writing. Previously
->>>> bit Write is treated as SW bit to record page writable attribute for fast
->>>> page fault handling in the secondary MMU, however with PTW enabled machine,
->>>> this bit is used by HW already.
->>>>
->>>> Here define KVM_PAGE_SOFT_WRITE with SW bit _PAGE_MODIFIED, so that it can
->>>> work on both PTW disabled and enabled machines. And with HW write bit, both
->>>> bit Dirty and Write is set or clear.
->>>>
->>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>>> ---
->>>>    arch/loongarch/include/asm/kvm_mmu.h | 20 ++++++++++++++++----
->>>>    arch/loongarch/kvm/mmu.c             |  8 ++++----
->>>>    2 files changed, 20 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/arch/loongarch/include/asm/kvm_mmu.h b/arch/loongarch/include/asm/kvm_mmu.h
->>>> index 099bafc6f797..efcd593c42b1 100644
->>>> --- a/arch/loongarch/include/asm/kvm_mmu.h
->>>> +++ b/arch/loongarch/include/asm/kvm_mmu.h
->>>> @@ -16,6 +16,13 @@
->>>>     */
->>>>    #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1)
->>>>
->>>> +/*
->>>> + * _PAGE_MODIFIED is SW pte bit, it records page ever written on host
->>>> + * kernel, on secondary MMU it records page writable in order to fast
->>>> + * path handling
->>>> + */
->>>> +#define KVM_PAGE_SOFT_WRITE    _PAGE_MODIFIED
->>> KVM_PAGE_WRITEABLE is more suitable.
->> both are ok for me.
->>>
->>>> +
->>>>    #define _KVM_FLUSH_PGTABLE     0x1
->>>>    #define _KVM_HAS_PGMASK                0x2
->>>>    #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) | pgprot_val(prot))
->>>> @@ -52,11 +59,16 @@ static inline void kvm_set_pte(kvm_pte_t *ptep, kvm_pte_t val)
->>>>           WRITE_ONCE(*ptep, val);
->>>>    }
->>>>
->>>> -static inline int kvm_pte_write(kvm_pte_t pte) { return pte & _PAGE_WRITE; }
->>>> -static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & _PAGE_DIRTY; }
->>>> +static inline int kvm_pte_soft_write(kvm_pte_t pte) { return pte & KVM_PAGE_SOFT_WRITE; }
->>> The same, kvm_pte_mkwriteable() is more suitable.
->> kvm_pte_writable()  here ?  and kvm_pte_mkwriteable() for the bellowing
->> sentense.
->>
->> If so, that is ok, both are ok for me.
-> Yes.
+On Tue, 16 Sep 2025 12:22:40 +0200, Mauro Carvalho Chehab wrote:
+> This script handle errors when trying to build translations
+> with make pdfdocs.
 > 
->>>
->>>> +static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & __WRITEABLE; }
->>> _PAGE_DIRTY and _PAGE_WRITE are always set/cleared at the same time,
->>> so the old version still works.
->> Although it is workable, I still want to remove single bit _PAGE_DIRTY
->> checking here.
-> I want to check a single bit because "kvm_pte_write() return
-> _PAGE_WRITE and kvm_pte_dirty() return _PAGE_DIRTY" looks more
-> natural.
-kvm_pte_write() is not needed any more and removed here. This is only
-kvm_pte_writable() to check software writable bit, kvm_pte_dirty() to 
-check HW write bit.
+> As part of our cleanup work to remove hacks from docs Makefile,
+> convert this to python, preparing it to be part of a library
+> to be called by sphinx-build-wrapper.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-There is no reason to check single bit with _PAGE_WRITE or _PAGE_DIRTY, 
-since there is different meaning on machines with/without HW PTW.
+I could apply up to 05/21 of v6 and did some quick tests under
+Fedora (where Noto CJK VF fonts are installed).
 
-Regards
-Bibo Mao
-> 
-> You may argue that kvm_pte_mkdirty() set both _PAGE_WRITE and
-> _PAGE_DIRTY so kvm_pte_dirty() should also return both. But I think
-> kvm_pte_mkdirty() in this patch is just a "reasonable optimization".
-> Because strictly speaking, we need both kvm_pte_mkdirty() and
-> kvm_pte_mkwrite() and call the pair when needed.
-> 
-> Huacai
-> 
->>
->> Regards
->> Bibo Mao
->>>
->>>>    static inline int kvm_pte_young(kvm_pte_t pte) { return pte & _PAGE_ACCESSED; }
->>>>    static inline int kvm_pte_huge(kvm_pte_t pte) { return pte & _PAGE_HUGE; }
->>>>
->>>> +static inline kvm_pte_t kvm_pte_mksoft_write(kvm_pte_t pte)
->>>> +{
->>>> +       return pte | KVM_PAGE_SOFT_WRITE;
->>>> +}
->>>> +
->>>>    static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
->>>>    {
->>>>           return pte | _PAGE_ACCESSED;
->>>> @@ -69,12 +81,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t pte)
->>>>
->>>>    static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
->>>>    {
->>>> -       return pte | _PAGE_DIRTY;
->>>> +       return pte | __WRITEABLE;
->>>>    }
->>>>
->>>>    static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
->>>>    {
->>>> -       return pte & ~_PAGE_DIRTY;
->>>> +       return pte & ~__WRITEABLE;
->>>>    }
->>>>
->>>>    static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
->>>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
->>>> index ed956c5cf2cc..68749069290f 100644
->>>> --- a/arch/loongarch/kvm/mmu.c
->>>> +++ b/arch/loongarch/kvm/mmu.c
->>>> @@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
->>>>           /* Track access to pages marked old */
->>>>           new = kvm_pte_mkyoung(*ptep);
->>>>           if (write && !kvm_pte_dirty(new)) {
->>>> -               if (!kvm_pte_write(new)) {
->>>> +               if (!kvm_pte_soft_write(new)) {
->>>>                           ret = -EFAULT;
->>>>                           goto out;
->>>>                   }
->>>> @@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
->>>>                   prot_bits |= _CACHE_SUC;
->>>>
->>>>           if (writeable) {
->>>> -               prot_bits |= _PAGE_WRITE;
->>>> +               prot_bits = kvm_pte_mksoft_write(prot_bits);
->>>>                   if (write)
->>>> -                       prot_bits |= __WRITEABLE;
->>>> +                       prot_bits = kvm_pte_mkdirty(prot_bits);
->>>>           }
->>>>
->>>>           /* Disable dirty logging on HugePages */
->>>> @@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
->>>>           kvm_release_faultin_page(kvm, page, false, writeable);
->>>>           spin_unlock(&kvm->mmu_lock);
->>>>
->>>> -       if (prot_bits & _PAGE_DIRTY)
->>>> +       if (kvm_pte_dirty(prot_bits))
->>>>                   mark_page_dirty_in_slot(kvm, memslot, gfn);
->>>>
->>>>    out:
->>> To save time, I just change the whole patch like this, you can confirm
->>> whether it woks:
->>>
->>> diff --git a/arch/loongarch/include/asm/kvm_mmu.h
->>> b/arch/loongarch/include/asm/kvm_mmu.h
->>> index 099bafc6f797..882f60c72b46 100644
->>> --- a/arch/loongarch/include/asm/kvm_mmu.h
->>> +++ b/arch/loongarch/include/asm/kvm_mmu.h
->>> @@ -16,6 +16,13 @@
->>>     */
->>>    #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1)
->>>
->>> +/*
->>> + * _PAGE_MODIFIED is SW pte bit, it records page ever written on host
->>> + * kernel, on secondary MMU it records page writable in order to fast
->>> + * path handling
->>> + */
->>> +#define KVM_PAGE_WRITEABLE     _PAGE_MODIFIED
->>> +
->>>    #define _KVM_FLUSH_PGTABLE     0x1
->>>    #define _KVM_HAS_PGMASK                0x2
->>>    #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) |
->>> pgprot_val(prot))
->>> @@ -56,6 +63,7 @@ static inline int kvm_pte_write(kvm_pte_t pte) {
->>> return pte & _PAGE_WRITE; }
->>>    static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte &
->>> _PAGE_DIRTY; }
->>>    static inline int kvm_pte_young(kvm_pte_t pte) { return pte &
->>> _PAGE_ACCESSED; }
->>>    static inline int kvm_pte_huge(kvm_pte_t pte) { return pte &
->>> _PAGE_HUGE; }
->>> +static inline int kvm_pte_writeable(kvm_pte_t pte) { return pte &
->>> KVM_PAGE_WRITEABLE; }
->>>
->>>    static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
->>>    {
->>> @@ -69,12 +77,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t
->>> pte)
->>>
->>>    static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
->>>    {
->>> -       return pte | _PAGE_DIRTY;
->>> +       return pte | __WRITEABLE;
->>>    }
->>>
->>>    static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
->>>    {
->>> -       return pte & ~_PAGE_DIRTY;
->>> +       return pte & ~__WRITEABLE;
->>>    }
->>>
->>>    static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
->>> @@ -87,6 +95,11 @@ static inline kvm_pte_t kvm_pte_mksmall(kvm_pte_t
->>> pte)
->>>           return pte & ~_PAGE_HUGE;
->>>    }
->>>
->>> +static inline kvm_pte_t kvm_pte_mkwriteable(kvm_pte_t pte)
->>> +{
->>> +       return pte | KVM_PAGE_WRITEABLE;
->>> +}
->>> +
->>>    static inline int kvm_need_flush(kvm_ptw_ctx *ctx)
->>>    {
->>>           return ctx->flag & _KVM_FLUSH_PGTABLE;
->>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
->>> index ed956c5cf2cc..7c8143e79c12 100644
->>> --- a/arch/loongarch/kvm/mmu.c
->>> +++ b/arch/loongarch/kvm/mmu.c
->>> @@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu
->>> *vcpu, unsigned long gpa, bool writ
->>>           /* Track access to pages marked old */
->>>           new = kvm_pte_mkyoung(*ptep);
->>>           if (write && !kvm_pte_dirty(new)) {
->>> -               if (!kvm_pte_write(new)) {
->>> +               if (!kvm_pte_writeable(new)) {
->>>                           ret = -EFAULT;
->>>                           goto out;
->>>                   }
->>> @@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
->>> unsigned long gpa, bool write)
->>>                   prot_bits |= _CACHE_SUC;
->>>
->>>           if (writeable) {
->>> -               prot_bits |= _PAGE_WRITE;
->>> +               prot_bits = kvm_pte_mkwriteable(prot_bits);
->>>                   if (write)
->>> -                       prot_bits |= __WRITEABLE;
->>> +                       prot_bits = kvm_pte_mkdirty(prot_bits);
->>>           }
->>>
->>>           /* Disable dirty logging on HugePages */
->>> @@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
->>> unsigned long gpa, bool write)
->>>           kvm_release_faultin_page(kvm, page, false, writeable);
->>>           spin_unlock(&kvm->mmu_lock);
->>>
->>> -       if (prot_bits & _PAGE_DIRTY)
->>> +       if (kvm_pte_dirty(prot_bits))
->>>                   mark_page_dirty_in_slot(kvm, memslot, gfn);
->>>
->>>    out:
->>>
->>> Huacai
->>>
->>>>
->>>> base-commit: 9dd1835ecda5b96ac88c166f4a87386f3e727bd9
->>>> --
->>>> 2.39.3
->>>>
->>>>
->>
+At 3/21, "./scripts/check-variable-fonts.sh" doesn't say a word.
+
+At 4/21, "./scripts/check-variable-fonts.py" complains:
+
+=============================================================================
+XeTeX is confused by "variable font" files listed below:
+    /usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+    /usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+    /usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+
+For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
+Or, CJK pages can be skipped by uninstalling texlive-xecjk.
+
+For more info on denylisting, other options, and variable font, see header
+comments of scripts/check-variable-fonts.py.
+=============================================================================
+
+Of course, I have followed the suggestions in the header comments.
+
+So I have to NAK on 4/21.
+
+Regards,
+Akira
 
 
