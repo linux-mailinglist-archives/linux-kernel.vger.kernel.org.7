@@ -1,201 +1,156 @@
-Return-Path: <linux-kernel+bounces-821607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFD2B81B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:08:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2573B81B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207741C263CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:09:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB0894E16B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6E529ACEE;
-	Wed, 17 Sep 2025 20:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AED27E040;
+	Wed, 17 Sep 2025 20:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ky283DZn"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011069.outbound.protection.outlook.com [40.93.194.69])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avAxU2Po"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5AE293C44;
-	Wed, 17 Sep 2025 20:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758139725; cv=fail; b=fqedBTziRco6tHCYRWOzGWfnxhh6wIjU9k/8VaWsUtYaWCYZQR9r7Zvltn8jXj3YrHFg4S4XxAeQL80IZRz32NCPCYnjMYtX8D/LoGuPapZfhukI8k0KbQG+T1AulSDJDFGz3rHhUgnWRs0jwBg9mgdBI9Fi6fOtrMuJoNARoco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758139725; c=relaxed/simple;
-	bh=Gilftmz7cRzsoZ8DkyccsLA/QAiL3UboPFqvmxkbGhQ=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=IztBWPRCDqR+jJEIPksX/KEevQXt7EwXirtFOphLUE5PH1lizzsT+mpWwJi6923exqm2tuSDVC9OzfFG+6FS9tlYn1brbYD2Xwin6H3gpGvHrIEZpetYTywXzo4VR4UTxKq+fF5G6XshuzE15uP5NZQ0sjw+KmPgENST38G3WZo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ky283DZn; arc=fail smtp.client-ip=40.93.194.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dWKNU/G03l21ETzSyClsABI8tPTv4y/AKbs5kGIjfJh+ISGYdRtW9Cn2QUR/eGCfky6WPPzDaDSzy3bgkZ2DELTSfC4cA3E3o+7X5h6836wjt3jkn1pOOHyMWT0urqj4sXj8FrAI5545BGBRidCshM6Et/MfVwrXJB0n5w8kXdQQYxKCv+F3sJ1c6urPOd7LdxIqWWU5xvAvKGBVPv1xqGoetZvDoMi64blColJhmgQPvDttFnVnHN5O8XT62MX7UgTfVUcmzEweVLKKtYjzY2fTdxj8W+cOvlzh8aZN795Veyivh8DwLF/ClHWAKQ/sg8ld7u9EM1SNLGpR2exZzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YvpPJ2du6id/Z46SUmEKMmDF9xgQmdTUxyri1aRxPQ0=;
- b=fMIn9Lf8E1Ij2vyqHKw7oJieKRSLly9kgi1QWhagffxVwUjS2AIR1Nqq/9fdTKXNR+HxtxGAbtHlgWQTUyslLWxOSHPOczG4p5qdIM3SY5LOgUgzhj9JVyvSJPJLAVHZ7fGC+K5aH68Bnag+y2r53CpoSPX0oehE0GWDAV0Hr7CbisPO802RlAQHOXOv9hTyasYX7CDD/wOcqnnoX9LUsHdjUltPv7+wxeLgJtJ4EikzQNt0SVGeO1uZW1KOeocbKWesVI9kc07HgB/V9iKYAhNFleYz7zBEwqg0owrJp2w+B/qtcAldVXakkY2KZ9+2qw7QeHrzx8yo0sbJmOZrZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YvpPJ2du6id/Z46SUmEKMmDF9xgQmdTUxyri1aRxPQ0=;
- b=ky283DZnJfZ8fX5nI4QV4E3bj4+5XLsEuiiokpvP5nu8fVdEqAoukibWefoco6rJiyuHk6FCmaS+qIBWif6kjSP1q1fJIMI4Za90lcpOiA7l5rY3gxLsHp3tnFiAEM3xrTV8+v8xPbNdUPutPo1OpeFjWwfeX6kAsnNQoazKmikcOUf3N2gT5T/8nJr+z7T0FDG9tgWT7+5slbTcY3+8pPLbOrJb6YSmuIgS4lfNER3tyZ+jPF/lhcL3FWIey2rt89pX48ez/NwjGQ3Yx7AjDvmnEsxyh7Uw8Lg4w184fDDL+vSeDzrXgtt1mergCl7PyUKXslg6sGzjP+ESOcMtaQ==
-Received: from SA1P222CA0134.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c2::7)
- by DS0PR12MB7512.namprd12.prod.outlook.com (2603:10b6:8:13a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
- 2025 20:08:37 +0000
-Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
- (2603:10b6:806:3c2:cafe::91) by SA1P222CA0134.outlook.office365.com
- (2603:10b6:806:3c2::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.14 via Frontend Transport; Wed,
- 17 Sep 2025 20:08:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Wed, 17 Sep 2025 20:08:37 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 13:08:15 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 13:08:14 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 17 Sep 2025 13:08:14 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <achill@achill.org>, <linux-tegra@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH 6.6 000/101] 6.6.107-rc1 review
-In-Reply-To: <20250917123336.863698492@linuxfoundation.org>
-References: <20250917123336.863698492@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107031E4BE;
+	Wed, 17 Sep 2025 20:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758139697; cv=none; b=MGmnd25bADQ4ZYO4EBVIKU1O9X6SDmOblmUpW7DsJyie/pvrscyryZH1E3oMDx50OMFyZm2r5HQKWDlc8GUJvmqhwj11gVI6ZwCR5o0gDv5dWTEJIAoSBjWta6c+z/hHOWz200fR+YqgfWBGV5+0dKprCGIGKl09/P9tlgKT79Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758139697; c=relaxed/simple;
+	bh=C2l07gKv9oUofg16haxjhhZY+dVl35j0/BCf4Jr6Gpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fjdIYrhBuExbE3siPu0SGg9T0MY8AReLdO9REqsjxhiNYa+J9lRnKL+PqVfBzdE/U4LBZlw8658h8EccElfLT0Bi6zP84XhXuby9sjAs2gDXWl7Ps26GVP/5kq+GAhRgBE136Eo35dh1AJywJJFSUSUUI55G/1j6MM7p19+k7QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avAxU2Po; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B75E2C4CEE7;
+	Wed, 17 Sep 2025 20:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758139696;
+	bh=C2l07gKv9oUofg16haxjhhZY+dVl35j0/BCf4Jr6Gpk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=avAxU2PoSQgXWU1mBBdyRdl6s40B/u+AJkIInXtSF90qMaIZtMm6z4jA8IBHNhT0B
+	 uVocZCRXUoDi5cnZHxUP8LzbcBoJvwT9acfe4N7Gs+iPRKhb3ZbLDw33KApnenGiRl
+	 EyrsD1Me+Dga3UUMDCKce037c58a8NliJsTCFW14njegkEIe1y82RoVt/9zBO/TgFc
+	 mNQDcybk4fQgCTN96KIm3L4YCRkN7rC+OjZwNf9eT2b2pO6n9R8qr3870T5vvlNATF
+	 YDPacV+pL26cY5A3rqhjVRKX3eS6SF+BNXtoEXH5+2GczmMMhWGpnbF/uPu33Ko+d0
+	 ZNTfqATvymc2A==
+Date: Wed, 17 Sep 2025 15:08:15 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Verma, Devendra" <Devendra.Verma@amd.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"mani@kernel.org" <mani@kernel.org>,
+	"vkoul@kernel.org" <vkoul@kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>
+Subject: Re: [PATCH v2 1/2] dmaengine: dw-edma: Add AMD MDB Endpoint Support
+Message-ID: <20250917200815.GA1872720@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <a67264bd-e207-4cef-a3ad-edf15390365c@rnnvmail205.nvidia.com>
-Date: Wed, 17 Sep 2025 13:08:14 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|DS0PR12MB7512:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8982ae90-d815-4c1f-0997-08ddf625fcdd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b3ErdjJGN0xFRHg2ZTRxRHhKekdzQS8rSWtTK1dkdWNHQjRBaEV4QmdZbFNW?=
- =?utf-8?B?ZzJWNHYwR1N5eWlGZENRMjFrRHR2Y2dEZXpNVDFsSC9wbHFreGQza1B4ZDVC?=
- =?utf-8?B?aEYzWWxDT0ZBaVJKbUhtQk5Gc0dQK2pRQ29HQngwMTdvWWRnTFY1b1AyaE9z?=
- =?utf-8?B?WStRbmR1NWlmcFpzOVhUaDdSa0piQWo5NEZ6Z2ZUMEhzSnNqSzRrSm83ZEI3?=
- =?utf-8?B?ZFpJMnM1cDVyci9DZUxCc1c5aTFGdXBNN2xCNXQwZ0FzV3ZKUkJrNjRlSWVF?=
- =?utf-8?B?d2JVVWN6VTNYOUxwYjdJTWVtNFRiRzNZbFRVMk9UR3J2dG91OU1CckFPeDBM?=
- =?utf-8?B?MGNnSSs0Qmg2eWkrb2d0T1Y0K1hOdlRGcWlXQmhTSmx6cG9kakFVTXNjcysy?=
- =?utf-8?B?Uk5iMEFieDNvejNOSkNCNG9wemg5bjZBZWRtcFhkcGN5SlRSOTkyTnhYdlQv?=
- =?utf-8?B?Y1ZVQWVKYTdITk92dThFais5d1pxaFZrRlA3czIyUEErN1gwdDR5V3BzMnd3?=
- =?utf-8?B?eWlZZm1INTZBVDhyQmNjQnY3NDVaeFBTZzc2RVdqMll4YjVNNmU3b0VaWldl?=
- =?utf-8?B?RnJUSVlabHVGd2dxRTVKRmFlckd1cDZiNmZ5YlozeUxjaWNrL25FUENpWmZH?=
- =?utf-8?B?ektmVWN3L1VmRWU3UDVxc2xxTWI1TkQ0ZDBtMnJLMzhxd0FMdFVEZUpTeUhL?=
- =?utf-8?B?MkRjTzFzKzRxUWR2UkhEMXk1Tkh3emYySlBMRXBqZytjUXhxekpROUF0eEFj?=
- =?utf-8?B?RElmc0FPZko0RHJONWU0M3JkOHd3MWszeVUwTDRYWlh4WTVqTjhnMnlEeFBt?=
- =?utf-8?B?ZEVtUGtKWFlSYVlzOHVEenpEN2lxWWFtbU9HVHA1VUdvRzBJYzVIR0ZmdndQ?=
- =?utf-8?B?YURGME0vc041cGRmcnhIdTJHY2orYWRwTGRNdENmOEQvQ1hxb2dleERNUTh0?=
- =?utf-8?B?NlJoS0pBWVUrRm5MTmRFWXhDVzMzb3EvazF6R3N4NFlDazNSTUU2eTJWNGVZ?=
- =?utf-8?B?cng0aGtWQjgxVmFxdzZ1Q0ZjOGFJdWw5b0hiY3FoZVpNNTE3MnVwY2JDTXJa?=
- =?utf-8?B?WHVOSkF3QnNlajNWWnl3RkxkMEZoajlZTlRYL1I1TkowRWFrdkRSMTJ3OHlB?=
- =?utf-8?B?TkNiUWJsdkJzMlhiVjIvUy9vYkRLOHFHWjRsMUdndE1vTlV6UVdaT1VKK1FM?=
- =?utf-8?B?T0djb0k2MDc3TnJRRTh5dkErSy9pbXRlVW5XRVdFcnhPd3BHdEVNSmwycS92?=
- =?utf-8?B?ZGY1UkJVTzd2c2sycjBSakkwcFJrdlBod29LSWpTY3ZhU3hGTnNrZEZ1cmhv?=
- =?utf-8?B?ZStvV2lsU2R2MUNQdVpKS0VKajVjT1JDeG80VDNlRzRvcHNJdytaY05DZjRG?=
- =?utf-8?B?dFEwZk9rNXJyeGF0VU5rUVBnTjN0cVBab2dISFVJSk9tUWNiZDFTQlpaSFh6?=
- =?utf-8?B?cHdYZU5qc1JuVElWb2dEeXhYdHdqd01Ra0JaQkxyODkrZEI5TnpvallLYkJk?=
- =?utf-8?B?VDRWQXVmNVphdXdaZXVUL3hzakRHU0piazU0eklqT0NORW1vdXJXUUozTXdI?=
- =?utf-8?B?NmE1QmMzRDhNcDF4Yjc2T29wV3Q5UkVSWUtiKzVBa0hMRHNNMm1NcFpPZUs4?=
- =?utf-8?B?SXNGWXUwa0w5OFJmdy80ZDNRcXlEQ1pQTkhUMERoQy9Jbk1jL1A3WG9iVFh4?=
- =?utf-8?B?ak5tQ0gvcWJHUUYyc1dCSzA2eUpMT2VsalNsR205aE5JNDhROU45RHdVS25F?=
- =?utf-8?B?VERxWkdQVHZLeG02Uldac2FPZ21uUndKNkNUdmxFZytTZkMxSWlJSGVTam5R?=
- =?utf-8?B?Qm5pNm5wWU5qQStnSWgvTnQ2QXdHQ2ZNSW5mT2I5SHRHQSthVWNnazM1ZWt4?=
- =?utf-8?B?bEViM1h0ZWZ6aFQzbVhkTXRicUI2QzkwZkFYNHV0ZEVSa0F6V1FhZWxsR1FB?=
- =?utf-8?B?Z2R3U2s1MnVwSDV6YkV0THBRMDcxYW9VVXVDM2NjdTd2ZUNVdjJjWmZQTlls?=
- =?utf-8?B?NGo4ZUpwbkJ2S2s0MEZ4cDdvdHgrS3htM3VqLzVxTXBXL0hSQS9XYUVqV0dz?=
- =?utf-8?B?SGk0dTc2Uko0alZhOGZBbkRzYXA5WWFLa1Yrdz09?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 20:08:37.1482
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8982ae90-d815-4c1f-0997-08ddf625fcdd
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B5.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7512
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SA1PR12MB8120DB05E469F3645F3C18A09517A@SA1PR12MB8120.namprd12.prod.outlook.com>
 
-On Wed, 17 Sep 2025 14:33:43 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.107 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Sep 17, 2025 at 11:59:09AM +0000, Verma, Devendra wrote:
+> > -----Original Message-----
+> > From: Bjorn Helgaas <helgaas@kernel.org>
+> > Sent: Tuesday, September 16, 2025 20:34
+> > To: Verma, Devendra <Devendra.Verma@amd.com>
+> > Cc: bhelgaas@google.com; mani@kernel.org; vkoul@kernel.org;
+> > dmaengine@vger.kernel.org; linux-pci@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>
+> > Subject: Re: [PATCH v2 1/2] dmaengine: dw-edma: Add AMD MDB Endpoint
+> > Support
+> >
+> > Caution: This message originated from an External Source. Use proper caution
+> > when opening attachments, clicking links, or responding.
+> >
+> >
+> > On Tue, Sep 16, 2025 at 04:13:18PM +0530, Devendra K Verma wrote:
+> > > AMD MDB PCIe endpoint support. For AMD specific support added the
+> > > following
+> > >   - AMD supported PCIe Device IDs and Vendor ID (Xilinx).
+> > >   - AMD MDB specific driver data
+> > >   - AMD MDB specific VSEC capability to retrieve the device DDR
+> > >     base address.
+
+> > > -     vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_SYNOPSYS,
+> > > -                                     DW_PCIE_VSEC_DMA_ID);
+> > > +     /*
+> > > +      * Synopsys and AMD (Xilinx) use the same VSEC ID for the purpose
+> > > +      * of map, channel counts, etc.
+> > > +      */
+> > > +     if (vendor != PCI_VENDOR_ID_SYNOPSYS ||
+> > > +         vendor != PCI_VENDOR_ID_XILINX)
+> > > +             return;
+> > > +
+> > > +     cap = DW_PCIE_VSEC_DMA_ID;
+> > > +     if (vendor == PCI_VENDOR_ID_XILINX)
+> > > +             cap = DW_PCIE_XILINX_MDB_VSEC_ID;
+> > > +
+> > > +     vsec = pci_find_vsec_capability(pdev, vendor, cap);
+> >
+> > This looks correct, so it's OK as-is.  But it does require more
+> > analysis to verify than it would if you did it like this:
+> >
+> >   vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_SYNOPSYS,
+> >                                   DW_PCIE_SYNOPSYS_VSEC_DMA_ID);
+> >   if (!vsec) {
+> >     vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_XILINX,
+> >                                     DW_PCIE_XILINX_VSEC_DMA_ID);
+> >     if (!vsec)
+> >       return;
+> >   }
+> >
+> > This way it's obvious from the pci_find_vsec_capability() calls
+> > themselves (and could potentially be checked by coccinelle, etc)
+> > that we're using the Vendor ID and VSEC ID correctly.
 > 
-> Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.107-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Instead of the above format, a clear assignment to vendor and cap
+> would be good enough.  Reason for this is, if a third vendor comes
+> and supports the same VSEC=0x6 id with similar capabilities then it
+> looks bulky to put another clause as given above. Instead of this a
+> cleaner approach would be to have a single
+> pci_find_vsec_capability() and clear assignment to vendor and cap
+> variables to make it look cleaner. Eg:
 
-All tests passing for Tegra ...
+> switch (pdev->vendor) {
+> case PCI_VENDOR_ID_XILINX:
+>         vendor = pdev->vendor;
+>         cap = DW_PCIE_XILINX_MDB_VSEC_DMA_ID;
+> case PCI_VENDOR_ID_SYNOPSYS:
+>         ...
+> default:
+>         return;
+> }
+> vsec = pci_find_vsec_capability(pdev, vendor, cap);
 
-Test results for stable-v6.6:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    120 tests:	120 pass, 0 fail
+OK, that is less clumsy although not as mechanically checkable.
 
-Linux version:	6.6.107-rc1-g08094cf55442
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+There's not much point in assigning "vendor = pdev->vendor".  You
+could just do this:
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+  switch (pdev->vendor) {
+  case PCI_VENDOR_ID_XILINX:
+    cap = DW_PCIE_XILINX_MDB_VSEC_DMA_ID;
+    break;
+  case PCI_VENDOR_ID_SYNOPSYS:
+    cap = DW_PCIE_SYNOPSYS_VSEC_DMA_ID;
+    break;
+  default:
+    return;
+  }
 
-Jon
+  pci_find_vsec_capability(pdev, pdev->vendor, cap);
 
