@@ -1,104 +1,155 @@
-Return-Path: <linux-kernel+bounces-821205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF426B80BC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:51:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A5AB80F5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCEF16EB1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EDE1322285
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD292FD1B0;
-	Wed, 17 Sep 2025 15:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69472FD7B3;
+	Wed, 17 Sep 2025 16:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dmQca/Fa"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j+C4XBNL"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED482F7442
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A144B2F99BD;
+	Wed, 17 Sep 2025 16:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758123925; cv=none; b=FdfQp7TiOVj1P3rCEQTlGDHobUchBpuwDH1hTENOy468FzeRaIrIue8D+03z9BCZ977kYSuUqASZZQ0egdX8ghN0xjGUgVOhAKHXFskD+INBsdrIesYGoVYLUG8srutDtZukuHP10/V9IHe3b3+NFGfgGWD+UvjbE6wBvK3O9MQ=
+	t=1758125642; cv=none; b=SZq9Yl5HtTNg8ehIUaVUWrobP7YTTQHpBOquVnh6BRGooQvTnY1vYbZN6aUgx5vrzcp9UfWQW4FSGDh7uE63FrzXa+WGgUehV7u7KxZlK9wOwZkgH5hK2g5VKiWEYEbl+TPM4xnTmFYWqzCr3LivOtsLDdDDB1V2NKMQj/3kOTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758123925; c=relaxed/simple;
-	bh=sz7SYILff82DqDpxJ+4+erabvkbgg/Mq/k7fYb0hsCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e5DKfK3Ti8VUNzjUTrkiVHtyViaO/537MYkFJ/qo93nAcKEIttfzi39WVAzedu8hfrMhPpf7WWGuCI9uSZGv5qZ9rfbBeK3yPuZgpsj8c0iXVFzekab0rSzO7JrSGPU+V3/ptVUy5o/ouAY/JuMcqSJpFw/dBBcKs76k3oZ1qDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dmQca/Fa; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-336dc57f562so9469451fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:45:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758123920; x=1758728720; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sz7SYILff82DqDpxJ+4+erabvkbgg/Mq/k7fYb0hsCk=;
-        b=dmQca/FaBOY0gnQJKQvFZb/KZL2u1gu/netj69fp0mrbA9nY3lUC+fEoidrFyXNz20
-         0cR99orveHey/KGAVdiNhpaS+nbVKLAVgLy76QKJbi454MJksAra2WEslHaCR3x+Yo08
-         6x9SNTesyVQRl9jhI79SQzOKc8AtplmaR/r0WAstT/5p0C+1RD1I+Ew1Q6bfdWOftb9w
-         juugSoNEhKEQRAtC0YX+be9n+I0MalK72q0pFHAWHKiwyUxPmGLIaVQFt+kUBQGcLWkY
-         zQxk0IQSQG9Od3PU7ONZj36cY3fX4cAug34T/jyxiMNtMjoFZj/+JEPRfEHz+k/j44Cj
-         XUxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758123920; x=1758728720;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sz7SYILff82DqDpxJ+4+erabvkbgg/Mq/k7fYb0hsCk=;
-        b=g2hXsS8Y91SGN45B/+LY7VeCzYK4CiQ0QwMbjuABDWN4avlNXtMPgRVRtIga2J52cv
-         o4fI+eDdTgaWUIqsZ8rIB5WiFh07dCmnvSmq7gef9Z13wxwKwKEPV5ekurVXEhf/pUtj
-         gmStgcJH7VjehVvybBwBs4IF9K4M3Vxhlll8UtnipE/cHIGzAnwBV9/ORLcxdcF/mHP2
-         HQlQs7DDVq0G6EYfSZGXPIZ9d/Hoxxp25D0C0I/l/D9+vGKcNwYRrrAIIt4s3AAqlUzt
-         yBxFR9pb4/it4QVmc/JaT0saynJVQqMVsTJyTHXLNMFiz9o76vQqvC6I3xRqXTMHDxZl
-         maWw==
-X-Gm-Message-State: AOJu0YziE/WkZViMvjt4FWLBcKGneINn7QTxdiytn+Q5cL7qCAHnYeRv
-	B7jbG54FCldIvYbolK16piLPht9Zuo4+CVKMFdfdI40Lcc6zkj3njLIe/RfKnINfvWZdl7qnkRm
-	OofP7tnFrWE1kdo/B94wgwQrMNP6XBVBhAC7I/AADJQ==
-X-Gm-Gg: ASbGncvryrepqVTNLnS3UdfGEGo8Q2VdgMI0PINeutuEh/9tlUpNB9bc00yixCBw8mz
-	pXkiRcbReuAYpe+TYrORaGm/9u+fRDCI4elNgMwqQVigdRo2aUmTAGDiNUxCmczA8ApbEKebzaG
-	4yGNpkR4BVFdq2QPseMO4eqRfVjMKVwbgFkMJu0xTOCxkvL4HfgsSM1r8bW7UXjhelepY4qyMfm
-	PkWbPpk/vuKEZEWOk94zvf81gmX7KO/rfpvIIDl
-X-Google-Smtp-Source: AGHT+IHaQop1vRGZ5Gk+j1PzwXk+VYonaqfFJM7yvDR050nmE4+hPgSj1kpGWDRYAvKK2mxhuA23eHMkUjo7qjvxHUU=
-X-Received: by 2002:a2e:a615:0:b0:360:3acd:e3a8 with SMTP id
- 38308e7fff4ca-3616c671504mr316881fa.10.1758123920295; Wed, 17 Sep 2025
- 08:45:20 -0700 (PDT)
+	s=arc-20240116; t=1758125642; c=relaxed/simple;
+	bh=dZ4C35iruyQNbn469wZyDtWWanNafQVMjSIp3KQ/Ggc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b77HHNBnGrTBUfwegJiLhU66lOcGdVbjK2SwneUkJjq+2j7v2q2TS6J0gGH2cn3K90OGYvszJPNBLF4jkgCNpo8RxAdsw1tAcIv7Of2NgzI8vny9m2idiBG5cXyOF/k6aoAguZS3PufcLo7LC7rm22iDb5Ot76fluiUcu2h9Ksk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j+C4XBNL; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id E99195822F9;
+	Wed, 17 Sep 2025 15:46:13 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F22804434C;
+	Wed, 17 Sep 2025 15:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1758123966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ridci+3pZanjzKBje+PEIIesuCm7dyWPxeONcp0CpGs=;
+	b=j+C4XBNLZyUmIr86DKte0VI/MvkxCk/IUKCXgiVuobITD8F8fYadOfhbV3Voe6K60xRAGX
+	WOdOha6/kOoUhD4pEifx/AB11vt+1zjti7CZQpzK20gHBQ42M2u0qeXPquhohND4dau2zJ
+	Vf/5kQIishCjM/ljrej578wByc83X/0YrIbS/rMu1oTpFsE9w4i/VjCOhFGE2Pan4//4xD
+	0X1Hf28jBKNWhj5rTFj/4xc1ysCDoGXhGeFVc45JIAxLaNC9pC7Crdo7Qp55byla9ADSYa
+	To740E0+NLD2PBleaVbIEPyStSU+WLOmNgZEbcgQExQwS9SuWXBO4X+iDGWGUw==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH 2/4] iio: add processed write API
+Date: Wed, 17 Sep 2025 17:46:00 +0200
+Message-ID: <2893324.mvXUDI8C0e@fw-rgant>
+In-Reply-To: <decdb75c-b61e-4e0f-bddd-cfc8986f3b6f@baylibre.com>
+References:
+ <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <20250916-ltm8054-driver-v1-2-fd4e781d33b9@bootlin.com>
+ <decdb75c-b61e-4e0f-bddd-cfc8986f3b6f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905090953.109082-1-marco.crivellari@suse.com>
- <20250905090953.109082-2-marco.crivellari@suse.com> <77b495f8-177d-4977-9d09-1dffc29db269@paulmck-laptop>
-In-Reply-To: <77b495f8-177d-4977-9d09-1dffc29db269@paulmck-laptop>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Wed, 17 Sep 2025 17:45:08 +0200
-X-Gm-Features: AS18NWAsOEJGo8EtUKJm47DROikfEhUYQ0-D6YnIBL6bh6Q5V5-FKnG25GD6-2w
-Message-ID: <CAAofZF78KLU0-qj5EdvYnYGw4suCRcKHwQpAcHxUc7V8-q+P0w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] smp: replace use of system_wq with system_percpu_wq
-To: paulmck@kernel.org
-Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, Ingo Molnar <mingo@redhat.com>, 
-	Rik van Riel <riel@surriel.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart12838243.O9o76ZdvQC";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfeekgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepteevieelgeekteevgfdtgeffvdeigfdvveekhffgteeiffdvvdekudejfedvgfdtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohept
+ ghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihgtvdefsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnuhhnohdrshgrsegrnhgrlhhoghdrtghomhdprhgtphhtthhopegrnhguhieskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Fri, Sep 12, 2025 at 4:24=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
-g> wrote:
-> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+--nextPart12838243.O9o76ZdvQC
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH 2/4] iio: add processed write API
+Date: Wed, 17 Sep 2025 17:46:00 +0200
+Message-ID: <2893324.mvXUDI8C0e@fw-rgant>
+In-Reply-To: <decdb75c-b61e-4e0f-bddd-cfc8986f3b6f@baylibre.com>
+MIME-Version: 1.0
 
-Thank you!
+Hello David,
+
+On Tuesday, 16 September 2025 21:23:04 CEST David Lechner wrote:
+> On 9/16/25 5:24 AM, Romain Gantois wrote:
+> > Add a function to allow IIO consumers to write a processed value to a
+...
+> > +		case IIO_VAL_FRACTIONAL:
+> > +			tmp_num = (s64)processed * (s64)scale_val2;
+> > +			tmp_den = scale_val;
+> > +			break;
+> > +		case IIO_VAL_FRACTIONAL_LOG2:
+> > +			tmp_num = (s64)processed << scale_val2;
+> > +			tmp_den = scale_val;
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +		tmp_den *= scale;
+> > +
+> > +		*raw = div64_s64(tmp_num, tmp_den);
+> > +	}
+> 
+> It can be quite tricky to get all of these combinations right. I would
+> prefer if added some unit tests like we did in [1].
+> 
+> [1]:
+> https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=tes
+> ting&id=c732e60ee10ed0611a59513cbf9c8d35fbe7cf65
+
+Agreed, that would be nice, I'll look into it.
+
+Thanks,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart12838243.O9o76ZdvQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjK17gACgkQKCYAIARz
+eA5qwg/8CGvK7nUAKsA4+5nhVKamKMPMwjoQ3hNFMgn84LjQHTFOmAGZ/mYudC2V
+UAbeMpoN0e7pcnQkXZS8NHOTymfsv7aCd5aqi76zi4RCJ5+AvNIxGMaYf+QgOjZ+
+F3Jt5BuhRgnDimOc3d8qQaBkSS3BX4ImU0F0zd4oLGF6tqUMFmeXCEAM+A+B60aO
+BOL5RNtPyfq1U8/aO+gts1Vf3OHZ4msFjEwWeMDFdpUPH7NA3Zw8aRss2GdmPhcc
+OnhqSh/CJUgpciCCF85Wi6rc2nlTpIIcTUIh7xcBFRtlez7GElalQKuvhDy1GE21
+njBvMTNT5gEVZjZiEbUhBa1eQ+ElXHKwgriCjRsYCbhTsjrWMLv/L1nTs/zH7E5B
+4OQFL8lqhntwRLwppwQnUZKWR+sARcZnWRjhFgjh3cNj4/hNkTzQXHZr8HYAygM9
+WW5wkLugK8q3anqb1SrGyOs4JvkIHTzJx4gnsU/DpOxNpGxwxUofPLGplAPFfZqn
+Q68EF5gNNykr5MLV/r9fTNXlWG1dSNfHcSJH9XhpUT2Kmok6sbCmhUOjCQVblbeN
+yKi+2wrAvFEc1UbYBv2zhJMBTR7OfwwSvHPacFRSInpxE2f7sKg0rcJnQH9PrtSW
+tr4xDMIHZXG8bLD75UE/1ASL1deX10iUN6X5s0gjgC+8bPzjXQo=
+=I+94
+-----END PGP SIGNATURE-----
+
+--nextPart12838243.O9o76ZdvQC--
 
 
---=20
 
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
 
