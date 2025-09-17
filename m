@@ -1,200 +1,120 @@
-Return-Path: <linux-kernel+bounces-820384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4564BB7D2FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53242B7D082
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4408188D564
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:50:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC76517B19D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62F4345722;
-	Wed, 17 Sep 2025 09:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3DF34AAEA;
+	Wed, 17 Sep 2025 09:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NXmDKAf2"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSuYhjIB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9933A274676
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1598884A3E;
+	Wed, 17 Sep 2025 09:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102594; cv=none; b=VL3uBIQLqk2LZSyg4plhRwS5ADuZRW74hAlxLJYvvNFkgxWOqMKGC14201tVrq3hurJIEEErWTr5hU9rKNbLBXVg7a9NnRTtJmqc+6xZ6SJYVo2QeqFLFJ8YC8MvnnjCGSeA1EbXMWUzsp19ZxtNLgRT6XwqPqhZvD2fr4rmOmg=
+	t=1758102638; cv=none; b=IhFJoLDj3Abj7EB6k8YepCEXmLpc7sP2caWygZWllac7LIBvT64ff8qLdXPIB+RJnfWNtMdwMgSfwc4QTc7yaz9Yk8ht6gfgMDbtNBR74V/3IJF6fNRHUJURpI0iOibNHjtzjjp9fdC7bL4QHSPbjeQwN2zES9S7CmFdI4wdhUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102594; c=relaxed/simple;
-	bh=xPtTczU75jbOwSggNkBH3jHb0rKetM4qm0iJHnzquJQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=awPdq6WwZiuy31M2QsqHciYG14qeQ7OuEEYzs8xXqky8FT9sbnTpzVt8+/GX5mX90W1km8zN1ysA09pqtlIktjjuiWIn7bkF4cVXoLdi0VxwuuobuSpvPNdijvwP7DwE/UV/EbVEJKy7D9KTotlrg3DQq9IlCRkDktwf0VOFhEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NXmDKAf2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLm2d3032503;
-	Wed, 17 Sep 2025 09:49:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=xPtTcz
-	U75jbOwSggNkBH3jHb0rKetM4qm0iJHnzquJQ=; b=NXmDKAf2cTNiSDIaGo4hjQ
-	VQpmksKuwb2Fvm92pkB+1LWG63Sso+K7CDUFtIboOfFqzieVWHD4LhZosV37STVV
-	wjb6u33gOFM5P/sR1zu8qiWh6EOz4wC7/PsS5MJqOmJVRemvLEJqC1V50D1+gblv
-	ZLUYp9+yuTmBwVtlHaeXrWfkst5+nsBUbYqS2N2uazXl1rlBZgvTC0UfifKH7vvG
-	0BP2/+xRthFKjfpJ4RmbC+190/HSZaXJ7X31+mFdMiuvyOoXdkRIN3nzAzksdi3u
-	F6hZqWH3uV30OG2Pzl+p6xj/1Y1P7IoMm4byBQxVE3L+O7xnwsfqOrKvSUx7pjSQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hjtxg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 09:49:44 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58H9nh54018066;
-	Wed, 17 Sep 2025 09:49:43 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hjtxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 09:49:43 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58H844q2009363;
-	Wed, 17 Sep 2025 09:49:42 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 495nn3g91a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 09:49:42 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58H9neCa47907218
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 09:49:40 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C631220043;
-	Wed, 17 Sep 2025 09:49:40 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 34C0B20040;
-	Wed, 17 Sep 2025 09:49:40 +0000 (GMT)
-Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.ibm.com (unknown [9.111.5.195])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 17 Sep 2025 09:49:40 +0000 (GMT)
-Message-ID: <f6e9109b19063892db91b15c73247f4dd1af30ce.camel@linux.ibm.com>
-Subject: Re: [PATCH] Revert "virtio_console: fix order of fields cols and
- rows"
-From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
-To: Filip Hejsek <filip.hejsek@gmail.com>,
-        "Michael S. Tsirkin"
- <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
-        virtualization@lists.linux.dev
-Date: Wed, 17 Sep 2025 11:49:39 +0200
-In-Reply-To: <7d29cca832103f70584a9bd88c32b77f508e9045.camel@gmail.com>
-References: 
-	<7ebfa9a5ec3f07506b3d8f01cd4f2a35e2135679.1757666355.git.mst@redhat.com>
-		 <32bc2a49fabd619ea7dcafd7f5d50fca206b38ac.camel@linux.ibm.com>
-	 <7d29cca832103f70584a9bd88c32b77f508e9045.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1758102638; c=relaxed/simple;
+	bh=R8bBc8E+Z3IqtxfpLmr+7QmObySQ+mWruEPNJ7MrlFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRMeF4W6ekx/PijDAcV0ISs+X7z2Fnxendp9khd5uOsLWypBXhciz274l4BSp27TOccjsthLtGBKGdXbtUbQpBt4ZhXoZWDFW7PZMzNRCyQgyMu5o0nZVERtxsGUdLsE+Nb0tDKvBgLzt4dp7fsb1xF3BMA8dCjUzHOmtm07ie4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSuYhjIB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A16DC4CEF0;
+	Wed, 17 Sep 2025 09:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758102637;
+	bh=R8bBc8E+Z3IqtxfpLmr+7QmObySQ+mWruEPNJ7MrlFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fSuYhjIBPQXozMo1k0MYS23BlFjFflyKzb9M1olal1DqbotYr5zJO8l0sSMemANvr
+	 JIZm0E5KcqWHVcq+UJR7QNrEUu2z+Rqrfyhj932a9O2x1WDTMZMU4LHeGU+0J4eyuJ
+	 K4kixSlqEBJGjJYTr3gob3XKckJSRylgsFH58XOdeqYKnyayTN6YBRMdf+fctC4SK3
+	 AWzPoJBDk4fWUyo6RG6EQbGarou/c5TaQLpI7f38fr8zD+Df32I8yfBtDATeVEFvmA
+	 MZx+1PLSxEuhCwUODD21YBZbHLhi2AHw+SNDcQEVNHcWpClXy2uRenMP8fORyCC7zI
+	 kZFU+jQ0ZIGfA==
+Date: Wed, 17 Sep 2025 11:50:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>, 
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 18/33] mnt: support ns lookup
+Message-ID: <20250917-garten-nirgendwo-f65f951a9268@brauner>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-18-1a247645cef5@kernel.org>
+ <20250916035633.GM39973@ZenIV>
+ <20250916035949.GO39973@ZenIV>
+ <20250916044648.GP39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: A2XWjbpHdOTtMPyz1CYcgiDm6YYA0VmK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX8RXu9+rwCiTv
- lXlndl0+EfM47hLYeTTuthtK1nE5ySniGGQc+LMAOybSXB9B1N1IgyPRJoRAGMCgybBJYowcVX8
- qar7FZGUwkFhl5taXwexyBh3Dhn3nSNnyY2EczcpN/52UQEPLUykERgQxl5s01WnnYMiBrVICnN
- uQZyVpHPFFu0Hrn9ZI5PgxBmxPtTZGPHs3BdKBr3ItpMv3oyFDqUrvChv5+iBcneM6H5S8cyf2O
- eGoQ0rjXmqQmO0M7WqohMHlrUpzi0iDzYy8HQ6lDEUEBhR53wp+67JppwESmbizKeFNUZYS2NIp
- sXmIf1QqF7I1nte5VN6spVXmuh7zDXlwba7Qv9PRA3J4dtQC1+8Q7wJHI0gkCCkqsRG/vDDyQWZ
- F5TNbCg5
-X-Proofpoint-GUID: g2c-RVtScm76_BMVaKTADUTKz9OyiyLX
-X-Authority-Analysis: v=2.4 cv=co2bk04i c=1 sm=1 tr=0 ts=68ca8438 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=KTf-2ZXJcRCJ3dXJ6e0A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160204
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250916044648.GP39973@ZenIV>
 
-On Mon, 2025-09-15 at 23:37 +0200, Filip Hejsek wrote:
-> Hi,
->=20
-> On Mon, 2025-09-15 at 18:44 +0200, Maximilian Immanuel Brandtner
-> wrote:
-> > [...]
-> > As I already mentioned in the QEMU discussion, I proposed the fix,
-> > because I was working on a similar implementation to bring resizing
-> > to
-> > QEMU.
->=20
-> I couldn't find any mention of your implementation on the QEMU ML.
->=20
-> > Unfortunately, the patch-set was stuck in limbo for a while and
-> > now that someone else has picked up the slack, I've descided that
-> > it's
-> > better to contribute to the patch-set that is upstream instead of
-> > sending a competing patch-set that does the same thing.
->=20
-> Would it be OK for me to take a look at your WIP patches? I would
-> like
-> to see if you did anything differently.
->=20
+On Tue, Sep 16, 2025 at 05:46:48AM +0100, Al Viro wrote:
+> On Tue, Sep 16, 2025 at 04:59:49AM +0100, Al Viro wrote:
+> > On Tue, Sep 16, 2025 at 04:56:33AM +0100, Al Viro wrote:
+> > > 	if (!RB_EMPTY_NODE(to_ns_common(ns)->ns_tree_node))
+> > 
+> >  	if (!RB_EMPTY_NODE(&to_ns_common(ns)->ns_tree_node))
+> > 
+> > obviously...
+> 
+> FWIW, how about the following - I put the commit below into never-rebased
+> branch, pull it into #work.mount and you do the same to your branch
+> just prior to 18/33?  The difference from one in #work.mount is that
+> this variant checks RB_EMPTY_NODE(&ns->mnt_ns_tree_node) instead of
+> list_empty(&ns->mnt_ns_list).  The reasons why it's safe lockless are
+> pretty much the same...
+> 
+> Objections?  Does vfs/vfs.git #no-rebases-mnt_ns_tree_remove look sane
+> for you?
 
-For the stuff I can get clearance for anyways. The tl:dr of what's
-different about my patch-set is as follows:
-- introduce a new IOResizeHandler instead of using a chr backend event
-- dynamically add a QOM-property to every character device that
-supports resizing (instead of the qmp-command that you have
-implemented)
-- guest chardev implementations
+Perfect, thank you!
 
-I also used a g_unix_signal_source instead of a signal notifier and it
-worked during testing, but I prefer your solution
-
-> Also, you mentioned before that you were also working on patches for
-> Libvirt. These will still be useful, because I won't be implementing
-> that part.
->=20
-
-I haven't properly implemented it for libvirt either. The libvirt patch
--set would have to be somewhat sizeable as well as virStream currently
-doesn't implement a handle to perform hypervisor specific calls (which
-a resize QMP call would be). Accordingly, the virStream implementation
-would have to be changed on a deeper level which is why I just didn't
-come around to it (I would also need to familiarize myself first with
-libvirt more which I haven't done yet).
-
-> > [...]
-> > I don't really care if this discrepancy is fixed one way or the
-> > other,
-> > but it should most definitely be fixed.
->=20
-> I'm of the same opinion, but if it is fixed on the kernel side, then
-> (assuming no device implementation with the wrong order exists) I
-> think
-> maybe the fix should be backported to all widely used kernels. It
-> seems
-> that the patch hasn't been backported to the longterm kernels [1],
-> which I think Debian kernels are based on.
->=20
-> [1]:
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/driv=
-ers/char/virtio_console.c?h=3Dv6.12.47
->=20
-
-Then I guess the patch-set should be backported
-
-> > Kind regards,
-> > Max Brandtner
->=20
-> Regards,
-> Filip Hejsek
-
+> 
+> mnt_ns_tree_remove(): DTRT if mnt_ns had never been added to mnt_ns_list
+>     
+> Actual removal is done under the lock, but for checking if need to bother
+> the lockless RB_EMPTY_NODE() is safe - either that namespace had never
+> been added to mnt_ns_tree, in which case the the node will stay empty, or
+> whoever had allocated it has called mnt_ns_tree_add() and it has already
+> run to completion.  After that point RB_EMPTY_NODE() will become false and
+> will remain false, no matter what we do with other nodes in the tree.
+>     
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index ae6d1312b184..39afeb521a80 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -187,7 +187,7 @@ static void mnt_ns_release_rcu(struct rcu_head *rcu)
+>  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
+>  {
+>  	/* remove from global mount namespace list */
+> -	if (!is_anon_ns(ns)) {
+> +	if (!RB_EMPTY_NODE(&ns->mnt_ns_tree_node)) {
+>  		mnt_ns_tree_write_lock();
+>  		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
+>  		list_bidir_del_rcu(&ns->mnt_ns_list);
 
