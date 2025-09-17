@@ -1,142 +1,115 @@
-Return-Path: <linux-kernel+bounces-821701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6C4B82045
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882A5B8205D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A731BC5789
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1738C3BAAB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98882C0F84;
-	Wed, 17 Sep 2025 21:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE00530C110;
+	Wed, 17 Sep 2025 21:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="j/ApczdH"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uTtD2/8g"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A1128C864
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73962E6CCC
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758145708; cv=none; b=C3qyAKHxBARFVVLIm6tThNxj94Xo635CplfHrOJX7YxeNzYP8bPpWBfybPTwBrUDdfTHHfbiZpwGsaNuGq4wC+HOT+zTRAy7s0NczOeujd2d6ZbcT267c5J93XnF0+GiPyXYFImZki6spPA1eqgHwO2YCL8n5QodyLQ5JnSFVBI=
+	t=1758145872; cv=none; b=gw4Ts5ZYGlyV2zS4WQKuRcfmI0cA97/gouPYGmQqvJ7Oz9nKcM06VHl1Q7+Dqmtcv0AZ5NVKTS7QW82sTeRhGycYtQ8DY087K1VblyxmG9A5q+mQY3xM/kN4Gty23q8HqZRl8fPpSaqkUQ2mG3nY529ItwFpoHRNn4o4quSUXjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758145708; c=relaxed/simple;
-	bh=tvO4JycTDd5hLOR4zxWrgeg1TmYixYOGyaOl4qqzl7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WROvwQDwR/IAHp37YMBzdJT8oDhLueUMppV8JVuOVVYni9JWvznXD2kDvn/hs/sRK9Bh0icJUbLyNqPT9T65mqk8oS89CYu1GNUZ0VG8i+S2zuuihdMZ4p+r0PeNJzlbXq2ZD2YlLWH1nqx8LHJhzPb5gYlozWCjDK26QJt3t4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=j/ApczdH; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-78f58f4230cso2618246d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:48:26 -0700 (PDT)
+	s=arc-20240116; t=1758145872; c=relaxed/simple;
+	bh=7Kikigzj6v7xQLQkTso8DrWCMmvI9Q61cMxM45M2JCk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eMCVltz/e02QgpR1cHr1z/S917ai3J55RcdMTHJg5ht6cnQGFvG/YZMrbmiWgYBKScB38DGNA8nkoizvOccWL8IKdGLd7Lm0hA13PjkIMDQHOYOVd/1tJf7gO0p3qdG75Jzm6kFEz402qbf7Uu0k/dGnPQKzIzOgQ51KnT0tjBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uTtD2/8g; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32edda89a37so217151a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:51:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758145705; x=1758750505; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M5pjsrH0NuPhJAa2Q4JnWo3JaksS0ES3ehHxy8GX7zY=;
-        b=j/ApczdHlSyrXgjFSF0FFXP4IB+4AZeJJiv44S6Gwp3VGSyqEnkbUvWN0dykiv1K2R
-         0KLBkTZFVuzUl2SbmKuuybuoOjAuLOTyp24CRB9fJ2+SGuPBL96+Pz47mpk9/XfNAb5h
-         GCceN5qFNLaMmIYU1STwfpW2m2MTiiJYdDPpmfJiP37pFDGFPYt38Zluc3soWVpjxXT3
-         dCojrM+eLtnaWFMLW6HMXJlefj4130a2R6KZ7vESVTR27D+Wx1P/AZwA79EFm5ZHXuoM
-         0tG/ARat3clScMnHBUsPu0k403SMMfzDMZqPUUzhLIAePoO1R+NLgy+2mLGNTfcj/iFj
-         8RKw==
+        d=google.com; s=20230601; t=1758145870; x=1758750670; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ajM88/oUy/Yl0c0O6x2AHxAgHs6Y/TSXT+30tD2YHi4=;
+        b=uTtD2/8gWgJ7p0YrhfzpLA3sTUGCQuuGJ24bGofdsTBkQiYkbm9qpHhKvRmQGUsjtb
+         gE1z9MqTgOJt+d6tII2srs3avatl49bEJ6QbEXrs6iO7p21pZXAdOHQ42h/xpXWrptmN
+         9AaQAybRMuKrdmA/3mk1mGVok9sbzvJJX1fw+XNsR31sqSoEbqvQCYYCKLWHMkXs2klf
+         EIl0eI1Bsr/ghcdDdNueV2D2xOfmAPRttF2h6gg3jXIizjFJYFUJzsXna/5r8/rktuHC
+         bTxAliiaYPRKi8iMHezte7o3CIDJRaZecjmiF9vBLrxt7yjKM6vOCc849DKBzLxRLO8c
+         Nxpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758145705; x=1758750505;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5pjsrH0NuPhJAa2Q4JnWo3JaksS0ES3ehHxy8GX7zY=;
-        b=GVAVIvX98tHarzqpfd+17oxwPXYKYt28cIvxkVJqCJ4eYEcRri773h4h76vGGJp2SB
-         /GEMsNiGBSdlSfQCSTjaIdSEB1g6K8SiwOc1zMq2rv84UBCLRM++1q5dkZJ/iwegTfvh
-         b1y1HO+hfxQhLRXOE98pXC9J1fpqGKZJwjWTZ2X9QeaB3PExBGkM+ldyE1M8nrEgnefA
-         eY5wSwK11slGjtDqtEQv9wkjxa8kijy5m9j7tZDGcFy7PKTGgiP3I+GxWUEEMF0tLZ/g
-         pwpl/AYlMqfVczyE4lk7bDu7ounexoJ2o5OEhlYQ2AGsAXCBIvBP+RYUnN7/ty9CM70O
-         cdWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfTTR/KSKVBe55vD1X4OUPOaXizSdYti+MaM4xWyFKY8WtzzeyZSSzTVFyEJg/WqSOOaLtasEW/uzS068=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ8S89mrlwuGNxBP+zYrk2R6z5QwSrNb9uIWUzpueKaJ0vvR9t
-	JfYODDYAg28EaEEKWplAskfGvprPdEvxKGDvgYCDMN/GfgajNxVL+F+Fn6u3u12RsZ4=
-X-Gm-Gg: ASbGncuWtwPR6rSYqoBtvhJG8iTx0be1hLW6d7Z14zaTlwfZiR8IJIyMoRHujxrZo5d
-	n+XzAbo/w5mpCiFGw9j3VMY/LSOBbyQlmu3vLFB2H+d3hdjV8m9hZrqicXojvJ+CMi7PigEcwBL
-	ZkMLyiv/idx/VG9dP2/zqGSuGTm02N2WurpvNp1CbqIgF40CAqEcoSjRn4y4u0tPFd95m7a3Wkn
-	jpXhqsf9zfViQQ6eJSe2s+9VYEkf6H9SbG6zGR/5eoUgIGVlfKH8Hp2nW+40atk63tVaJ6EfQzx
-	WalA7TlvJYZyT51furfXyoaSUC3LdtggMdQpKuIw2uurEuD0UG11QgK2t8iKiZZbbKl/+yHRGIx
-	G5K2qnPk4m2IqGi195+EEO282lr5vqCZuG6yMpcovlXN6+sbYPj5pAPkbVjSV+2T7QF0AwqbuvL
-	vc+U91O25OUnU=
-X-Google-Smtp-Source: AGHT+IGqltdD4fDq4evbzVSSO987bVfhcgn3SKxWfDcujX+SUfkoa+t2KVNljJJgOxNmqIWdaHiAsA==
-X-Received: by 2002:ad4:4ee4:0:b0:720:e4bd:d3e6 with SMTP id 6a1803df08f44-78ecca1699cmr47085396d6.15.1758145705595;
-        Wed, 17 Sep 2025 14:48:25 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-79346931b67sm2589176d6.22.2025.09.17.14.48.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 14:48:25 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uz00m-00000008ots-2fnK;
-	Wed, 17 Sep 2025 18:48:24 -0300
-Date: Wed, 17 Sep 2025 18:48:24 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
-	joro@8bytes.org, praan@google.com
-Subject: Re: [PATCH v2 1/3] iommu/io-pgtable-arm: Move selftests to a
- separate file
-Message-ID: <20250917214824.GN1326709@ziepe.ca>
-References: <20250917191143.3847487-1-smostafa@google.com>
- <20250917191143.3847487-2-smostafa@google.com>
- <20250917193818.GK1326709@ziepe.ca>
- <aMsX_HafW3rLs5dQ@google.com>
+        d=1e100.net; s=20230601; t=1758145870; x=1758750670;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ajM88/oUy/Yl0c0O6x2AHxAgHs6Y/TSXT+30tD2YHi4=;
+        b=cBtBggSLwJwFaXDta0BDU3OWuThMYeOhmYQnKX0RkD1sZuaiX4A53Cx01KSEIS1IxT
+         oRF0tjmiSRszqg4O2gc0oMQ7pQSEwpImFMAQCvIAVrQ40XmuWgHBb9k7W1tddYJ7bllV
+         EZRaDqWAtKBYnUI2pydE++A4mqUPRTkdzaBJYJKSRd2bhWZRVXGLvHINA9/NuJDAyDQW
+         19S92TvXTvC3YOzpzI2jZ9F3TMUwkP69VxcqHN/qPmhCJKy5qQ0Si+1FP9fgdsrcfF+V
+         qSI4mvZJ7RjJZOomVIlBCKvDvwr/vXvZRfMApJTqNSB0BoCt5fqqYDUQBzNq6S3IfJ6V
+         G6GA==
+X-Forwarded-Encrypted: i=1; AJvYcCUm9PVU3VZelqCjuD/Wj0gFfVTjigWi7sj10/E4sx5Iw9P9NRvI1E2L6VD1PLdzwBfyNnZf9wxX+igez60=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymp8cI7sd4e7gIZnwM8iAUZVMi8UXwYD4nto1U5wGE4wNHopdB
+	zXG2hXeFakH6buVu7iSNi9Dlkd7HKMTk92qi/KFAgVelEgkJdljdQgyYg1D7bwFm3XlQ8hBzjV3
+	4dUOMMXDg1LCoxw==
+X-Google-Smtp-Source: AGHT+IGuJ6InU1uwz1vQZt4vJlEgwJ4Yf4LegHTymtlEqGFSXxcpP7nsg41o2ag4+s55H5sX67g9OdL22Qxqig==
+X-Received: from pjbhl16.prod.google.com ([2002:a17:90b:1350:b0:32d:a0b1:2b03])
+ (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:264d:b0:329:e4d1:c20f with SMTP id 98e67ed59e1d1-32ee3e9047bmr4178903a91.9.1758145870033;
+ Wed, 17 Sep 2025 14:51:10 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:48:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMsX_HafW3rLs5dQ@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250917215031.2567566-1-jmattson@google.com>
+Subject: [PATCH 0/4] KVM: selftests: Add test of SET_NESTED_STATE with 48-bit
+ L2 on 57-bit L1
+From: Jim Mattson <jmattson@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Cc: Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 17, 2025 at 08:20:12PM +0000, Mostafa Saleh wrote:
-> On Wed, Sep 17, 2025 at 04:38:18PM -0300, Jason Gunthorpe wrote:
-> > On Wed, Sep 17, 2025 at 07:11:38PM +0000, Mostafa Saleh wrote:
-> > > +static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
-> > > +{
-> > > +	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-> > > +	struct io_pgtable_cfg *cfg = &data->iop.cfg;
-> > 
-> > Can be:
-> > 
-> >        struct io_pgtable_cfg *cfg =
-> >                &io_pgtable_ops_to_pgtable(pgtbl_ops)->cfg;
-> 
-> There are a bunch of other formatting issues here also, but I wanted to
-> move the code as is, so with “--color-moved” you can see the exact
-> difference, otherwise, it’s harder to review.
-> 
-> I can add a patch before to fix those + the printing as you suggested
-> next.
+Prior to commit 9245fd6b8531 ("KVM: x86: model canonical checks more
+precisely"), KVM_SET_NESTED_STATE would fail if the state was captured
+with L2 active, L1 had CR4.LA57 set, L2 did not, and the
+VMCS12.HOST_GSBASE (or other host-state field checked for canonicality)
+had an address greater than 48 bits wide.
 
-Yeah, I brought it up because with the above you don't need
-arm_lpae_io_pgtable
+Add a regression test that reproduces the KVM_SET_NESTED_STATE failure
+conditions. To do so, the first three patches add support for 5-level
+paging in the selftest L1 VM.
 
-> I don’t have a strong opinion about this, but I am more inclined to
-> keep the prints considering it’s a low-level test for the page table,
-> and such parameters would be useful to understand the failures.
+Jim Mattson (4):
+  KVM: selftests: Use a loop to create guest page tables
+  KVM: selftests: Use a loop to walk guest page tables
+  KVM: selftests: Add VM_MODE_PXXV57_4K VM mode
+  KVM: selftests: Add a VMX test for LA57 nested state
 
-My general view has been that there is alot of debug prints I've added
-to kunits to debug them but once they are debugged I tend to drop them
-off as they may not be useful to debug the next issue.
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   1 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  21 +++
+ .../testing/selftests/kvm/lib/x86/processor.c |  66 ++++-----
+ tools/testing/selftests/kvm/lib/x86/vmx.c     |   7 +-
+ .../kvm/x86/vmx_la57_nested_state_test.c      | 137 ++++++++++++++++++
+ 6 files changed, 195 insertions(+), 38 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
 
-> I know this is not relevant to this series, but the KVM driver will
-> need to expose arm_lpae_io_pgtable anyway.
+-- 
+2.51.0.470.ga7dc726c21-goog
 
-Really? That sounds like wrong layering, why does it need to break the
-iopgtable abstraction? :(
-
-Jason
 
