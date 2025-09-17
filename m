@@ -1,246 +1,133 @@
-Return-Path: <linux-kernel+bounces-820673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADA9B7D9BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E4CB7D9CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D7E1BC0805
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF44B176BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273A624C076;
-	Wed, 17 Sep 2025 12:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B33C337EAE;
+	Wed, 17 Sep 2025 12:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UKHve4Zm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wgryn0H3"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECFE21FF5B
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC39B337E82
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758111991; cv=none; b=UHdT/zN6/ScJcjTJTYoi7X9bW+FzxJKgtYtBmTDNuK2L43Z/LRwl+rMBr2g7HtkQwXN5AQW8yGnChlnLYXFVvZQO9K7N1XHPJYfwpMEYNwEvxHutdWNqJWhxBFu+V5xufiBDvEUlsrSYXHgW7Lbx9OEG2J2O86ilKNmNpGlbyOI=
+	t=1758112056; cv=none; b=VajrtV+/CxJ0fzBDFj5FPLwEkI1xNRSY8RlO4ew8BeEZ//3ZoxoUuwr0hm8BPEz8fRyLPO+VqDn2NHmuqeaLDhnEgJqR9KvYeVTErBBS4r+GR/BWHeB20xBGmHXKHXUNTpffXlvOPG1EgWLn9BggfN9ceWhwSTe9x8lpr5sw848=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758111991; c=relaxed/simple;
-	bh=jfWi3kvxLwaivOaLF/QYtCJaijQx5hWXWay926//8EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmRlnc2pG2GKxtz+TH1WLQTcxJFk7YvOeBr8yhjihtw/MAtpJtVo1zCAZ+QV/DqQ3uDt6EZa/EmcJLqDsHPWZ5Sk60UwBW1oSlRekd7ITRc/878XT4ewl+9ZJJZfO0vF7oORzUSs+E/HyexbgwFdjSrdRI6zIoyC9SgAvV94O1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UKHve4Zm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VtS6ju9MSgbkGY/XtCYESN8ItEESiSccYZhTWeb/iec=; b=UKHve4ZmGVG2YjKNJ0F8ISiP7x
-	hDi0RWuMTPAdJvtBYQJMoykzsAQ8xOv8ELu7qHvw202MwJjQ/DInSNyErWhfyBR9qkxO95A7WYjZk
-	FpEzHUiccbGr2pQzugypHRBOWs8QsQa5l6cmPtUXl1JwGLBBgqZPa0WWT5W301lnu+K7cJ1+8sV52
-	if4MY8e+Dx8tiY3a75aJcREAbxVlzk5s4BuTyate3goEHN0FXkx72rdZM0HTz1KbXK/GSf2qAu0sJ
-	GMT8Y4euO59Q7sxeeD7qh9lGeo0OF6Gq1mcNtbq+kMM17Kkxx0PqGmsMGgwnCvhel2FqSKnNPP+QK
-	aOyOpZMw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uyrEn-0000000CY5t-0Lk0;
-	Wed, 17 Sep 2025 12:26:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0C06B30056B; Wed, 17 Sep 2025 14:26:16 +0200 (CEST)
-Date: Wed, 17 Sep 2025 14:26:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
-	kernel-team@android.com
-Subject: Re: [RFC][PATCH] sched/deadline: Fix dl_server getting stuck,
- allowing cpu starvation
-Message-ID: <20250917122616.GG1386988@noisy.programming.kicks-ass.net>
-References: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
- <20250916052904.937276-1-jstultz@google.com>
- <aMklFqjbmxMKszkJ@jlelli-thinkpadt14gen4.remote.csb>
- <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
- <CANDhNCqJbnemY8EBYu=4w3ABfrDkuc+dUShDDcjufFpsh7qv1g@mail.gmail.com>
- <20250916213036.GC2800598@noisy.programming.kicks-ass.net>
- <CANDhNCqK3VBAxxWMsDez8xkX0vcTStWjRMR95pksUM6Q26Ctyw@mail.gmail.com>
- <20250917093441.GU3419281@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1758112056; c=relaxed/simple;
+	bh=DXFEV0L75NK8DITxIbJ6qV1/IjtmIINM9eo+5QDAZHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pu1J7K11XJiELS+3rANrN0fUFIUo/alK557r0GtTLX3g5eUOe9xyPrvFyLFqGoXGcRSa50kYKgETVvsGvsy7Lw1BZfNSQVvy0/zP9T0N/YHkJY1eG9PeHzsKqRo4zJB0ABIBP7gp/CyIDdBJAYRokk+lt2bXxUb5JtXXoTQrDmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wgryn0H3; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bc91d995-b964-4eb7-8b4d-c11c9f00eaef@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758112052;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qjlcBWvXVjLJDUhAtJSvzuP30qgjG2/ZCnjDSBqbMg=;
+	b=Wgryn0H33P8UysTg54ZpjWuLjfWsAt4PmDSksu+LiEiB2saOKADDVoBwCCc+kNyuc/nEt8
+	LsB1ToI91cgwN6UQmtQq/H4IxUN2RZUHfshkkq/Q7Hyr/jVnFlQNGxd3T72V153HtuaDUB
+	brbJyccBio7DwPP7qAJb51BOasuNk/o=
+Date: Wed, 17 Sep 2025 20:27:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917093441.GU3419281@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
+ mm_struct during fork
+To: Donet Tom <donettom@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Wei Yang <richard.weiyang@gmail.com>,
+ Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
+ stable@vger.kernel.org
+References: <cover.1757946863.git.donettom@linux.ibm.com>
+ <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 17, 2025 at 11:34:42AM +0200, Peter Zijlstra wrote:
-
-> Yes. This makes sense.
+On 2025/9/15 23:03, Donet Tom wrote:
+> Currently, the KSM-related counters in `mm_struct`, such as
+> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
+> inherited by the child process during fork. This results in inconsistent
+> accounting.
 > 
-> The old code would disable the dl_server when fair tasks drops to 0
-> so even though we had that yield in __pick_task_dl(), we'd never hit it.
-> So the moment another fair task shows up (0->1) we re-enqueue the
-> dl_server (using update_dl_entity() / CBS wakeup rules) and continue
-> consuming bandwidth.
+> When a process uses KSM, identical pages are merged and an rmap item is
+> created for each merged page. The `ksm_merging_pages` and
+> `ksm_rmap_items` counters are updated accordingly. However, after a
+> fork, these counters are copied to the child while the corresponding
+> rmap items are not. As a result, when the child later triggers an
+> unmerge, there are no rmap items present in the child, so the counters
+> remain stale, leading to incorrect accounting.
 > 
-> However, since we're now not stopping the thing, we hit that yield,
-> getting this pretty terrible behaviour where we will only run fair tasks
-> until there are none and then yield our entire period, forcing another
-> task to wait until the next cycle.
+> A similar issue exists with `ksm_zero_pages`, which maintains both a
+> global counter and a per-process counter. During fork, the per-process
+> counter is inherited by the child, but the global counter is not
+> incremented. Since the child also references zero pages, the global
+> counter should be updated as well. Otherwise, during zero-page unmerge,
+> both the global and per-process counters are decremented, causing the
+> global counter to become inconsistent.
 > 
-> Let me go have a play, surely we can do better.
+> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
+> during fork, and the global ksm_zero_pages counter is updated with the
+> per-process ksm_zero_pages value inherited by the child. This ensures
+> that KSM statistics remain accurate and reflect the activity of each
+> process correctly.
+> 
+> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
+> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each process")
+> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
+> cc: stable@vger.kernel.org # v6.6
+> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
 
-Can you please try:
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/urgent
+Thanks.
 
-That's yesterdays patch and the below. Its compile tested only, but
-with a bit of luck it'll actually work ;-)
-
----
-Subject: sched/deadline: Fix dl_server behaviour
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed Sep 17 12:03:20 CEST 2025
-
-John reported undesirable behaviour with the dl_server since commit:
-cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling").
-
-When starving fair tasks on purpose (starting spinning FIFO tasks),
-his fair workload, which often goes (briefly) idle, would delay fair
-invocations for a second, running one invocation per second was both
-unexpected and terribly slow.
-
-The reason this happens is that when dl_se->server_pick_task() returns
-NULL, indicating no runnable tasks, it would yield, pushing any later
-jobs out a whole period (1 second).
-
-Instead simply stop the server. This should restore behaviour in that
-a later wakeup (which restarts the server) will be able to continue
-running (subject to the CBS wakeup rules).
-
-Notably, this does not re-introduce the behaviour cccb45d7c4295 set
-out to solve, any start/stop cycle is naturally throttled by the timer
-period (no active cancel).
-
-Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
-Reported-by: John Stultz <jstultz@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/sched.h   |    1 -
- kernel/sched/deadline.c |   23 ++---------------------
- kernel/sched/sched.h    |   33 +++++++++++++++++++++++++++++++--
- 3 files changed, 33 insertions(+), 24 deletions(-)
-
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -706,7 +706,6 @@ struct sched_dl_entity {
- 	unsigned int			dl_defer	  : 1;
- 	unsigned int			dl_defer_armed	  : 1;
- 	unsigned int			dl_defer_running  : 1;
--	unsigned int			dl_server_idle    : 1;
- 
- 	/*
- 	 * Bandwidth enforcement timer. Each -deadline task has its
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1571,10 +1571,8 @@ void dl_server_update_idle_time(struct r
- void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
- {
- 	/* 0 runtime = fair server disabled */
--	if (dl_se->dl_runtime) {
--		dl_se->dl_server_idle = 0;
-+	if (dl_se->dl_runtime)
- 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
--	}
- }
- 
- void dl_server_start(struct sched_dl_entity *dl_se)
-@@ -1602,20 +1600,6 @@ void dl_server_stop(struct sched_dl_enti
- 	dl_se->dl_server_active = 0;
- }
- 
--static bool dl_server_stopped(struct sched_dl_entity *dl_se)
--{
--	if (!dl_se->dl_server_active)
--		return true;
--
--	if (dl_se->dl_server_idle) {
--		dl_server_stop(dl_se);
--		return true;
--	}
--
--	dl_se->dl_server_idle = 1;
--	return false;
--}
--
- void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
- 		    dl_server_pick_f pick_task)
- {
-@@ -2384,10 +2368,7 @@ static struct task_struct *__pick_task_d
- 	if (dl_server(dl_se)) {
- 		p = dl_se->server_pick_task(dl_se);
- 		if (!p) {
--			if (!dl_server_stopped(dl_se)) {
--				dl_se->dl_yielded = 1;
--				update_curr_dl_se(rq, dl_se, 0);
--			}
-+			dl_server_stop(dl_se);
- 			goto again;
- 		}
- 		rq->dl_server = dl_se;
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -371,10 +371,39 @@ extern s64 dl_scaled_delta_exec(struct r
-  *   dl_server_update() -- called from update_curr_common(), propagates runtime
-  *                         to the server.
-  *
-- *   dl_server_start()
-- *   dl_server_stop()  -- start/stop the server when it has (no) tasks.
-+ *   dl_server_start() -- start the server when it has tasks; it will stop
-+ *			  automatically when there are no more tasks, per
-+ *			  dl_se::server_pick() returning NULL.
-+ *
-+ *   dl_server_stop() -- (force) stop the server; use when updating
-+ *                       parameters.
-  *
-  *   dl_server_init() -- initializes the server.
-+ *
-+ * When started the dl_server will (per dl_defer) schedule a timer for its
-+ * zero-laxity point -- that is, unlike regular EDF tasks which run ASAP, a
-+ * server will run at the very end of its period.
-+ *
-+ * This is done such that any runtime from the target class can be accounted
-+ * against the server -- through dl_server_update() above -- such that when it
-+ * becomes time to run, it might already be out of runtime and get deferred
-+ * until the next period. In this case dl_server_timer() will alternate
-+ * between defer and replenish but never actually enqueue the server.
-+ *
-+ * Only when the target class does not manage to exhaust the server's runtime
-+ * (there's actualy starvation in the given period), will the dl_server get on
-+ * the runqueue. Once queued it will pick tasks from the target class and run
-+ * them until either its runtime is exhaused, at which point its back to
-+ * dl_server_timer, or until there are no more tasks to run, at which point
-+ * the dl_server stops itself.
-+ *
-+ * By stopping at this point the dl_server retains bandwidth, which, if a new
-+ * task wakes up imminently (starting the server again), can be used --
-+ * subject to CBS wakeup rules -- without having to wait for the next period.
-+ *
-+ * Additionally, because of the dl_defer behaviour the start/stop behaviour is
-+ * naturally thottled to once per period, avoiding high context switch
-+ * workloads from spamming the hrtimer program/cancel paths.
-  */
- extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
- extern void dl_server_start(struct sched_dl_entity *dl_se);
+> ---
+>   include/linux/ksm.h | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+> index 22e67ca7cba3..067538fc4d58 100644
+> --- a/include/linux/ksm.h
+> +++ b/include/linux/ksm.h
+> @@ -56,8 +56,14 @@ static inline long mm_ksm_zero_pages(struct mm_struct *mm)
+>   static inline void ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
+>   {
+>   	/* Adding mm to ksm is best effort on fork. */
+> -	if (mm_flags_test(MMF_VM_MERGEABLE, oldmm))
+> +	if (mm_flags_test(MMF_VM_MERGEABLE, oldmm)) {
+> +		long nr_ksm_zero_pages = atomic_long_read(&mm->ksm_zero_pages);
+> +
+> +		mm->ksm_merging_pages = 0;
+> +		mm->ksm_rmap_items = 0;
+> +		atomic_long_add(nr_ksm_zero_pages, &ksm_zero_pages);
+>   		__ksm_enter(mm);
+> +	}
+>   }
+>   
+>   static inline int ksm_execve(struct mm_struct *mm)
 
