@@ -1,296 +1,147 @@
-Return-Path: <linux-kernel+bounces-819923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BB3B800E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3F9B8025A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C07F7AE1DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6FA1C02820
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7000B2F3C22;
-	Wed, 17 Sep 2025 03:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gFbCT5Ae"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E478821D596
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97BA2F83BC;
+	Wed, 17 Sep 2025 03:38:07 +0000 (UTC)
+Received: from chinatelecom.cn (smtpnm6-10.21cn.com [182.42.147.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF9C25FA34
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.147.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758079585; cv=none; b=o6l887TOxmxirxcZrVbrzf6/9aARpB3QacISuqfxHPc2pfuiLGLZBFwGHociq/pi/EArYsEoiNii++xlelMTKJT6m9xVTndKEUMsBkNQQukb/2+rkq/fHyrSSxpzvYpTS9q66+b1Qzj6amQP9D01UDx9OREp8kiS02QXQxZ5hF4=
+	t=1758080287; cv=none; b=vBo+HJIFHi/hrLA0Wg30ui0psMAaqEEk+gkRy4D/UuRA/oEouTqjeVpsGc4DeWNfVwnaKGFW2Xsbw680WD0vy1uzbFhP6VSL/7mVQTVrciLCLh/IgMv6ZwlV2c9KDyqcCyAbvkoQMiu6ve4bbKtHVw7MVnmB8WO1CJF3gu84JkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758079585; c=relaxed/simple;
-	bh=8ts0F0K+Jc0lwgkQ/xSNE7ECANa/vNb5ZeLpV9g8uWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pEOZPttVQvI2h2iuBCDRlWfS3ztTL7NaB7tNpknKoRfri33Vv+PnbXzrsd+CgCMg20o9Iv8lmQHwX2HlvLoMxaEbM+x3nr3w1cdc8dsL/jjSG+/RYzVNE5P01nWY9q732xaiquKdt01wuq+TUuSSvM00uwSxWzbWknGlOmTs7vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gFbCT5Ae; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLZjmv017763
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:26:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D5Ze7fBfF5bOpW6nOK7lzrEeHW+SnZky8WuncUBAOwc=; b=gFbCT5AeCRUdBBGv
-	tavMaaYdL3ZCkhRk6bXBiqC9F5Pjt/vWaEQUVlFlmrn0zzKHDaMXqsruzNiHORR7
-	XCJz2fEEgFsVQoeiIjBvbjka/VxuV06fuh1CfD8bHbI/Ovv2rn9zBX165s5zgD0L
-	LDwVhlCQ5uBx812XeKUcx/HixfYI1yiJbvUqD8v+Z1aHI3awA7HRh29SmGZdrGEe
-	Aj409MEPJMS/89nW0jVUtc+hCpV7rDU8Eng3CCBKLlLtxb36Ww4qp4Bg1AQwgMPh
-	LurbBqJmeH30XKQusx+Daskw7Lee/m1u8EE9xRK+kSiY/jxVi/DMtr8zo4Qq0A0N
-	9/J6EQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxt0qwa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:26:23 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-25177b75e38so73087865ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:26:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758079582; x=1758684382;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D5Ze7fBfF5bOpW6nOK7lzrEeHW+SnZky8WuncUBAOwc=;
-        b=fqMFEsx6Q6R5hEQHPoGjQO7sy5AnXsyVWx90e9Xku2fEBEmSsfXbI8Q3PpEdeHgWHY
-         cQhklJZCKJcj7m8uQMJGKqAuBuYM2ZyZgKrolMjbtlIOsQp3YsN1TLqWxlkMGRocxcn2
-         rLRZFRNYDy7pjUXzi4DLYTfuzcd6LDzX9g/B/qda63ekMDBMDBVjJciIambIp4Vr3WkA
-         38SvaHwVAu/WwSUaWUK2SkZwQIYaWBHia6VMvAaracLAlgiPrDa+Ip4aGeSsULVgFsxN
-         cq3lIdBtFbAdfgo13r1nCPDh7ytPBDzleLOQvaaas8sjzg09fwRNBqqtVg/vOSeMp6X7
-         GX9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuzhkrCyw52eUOKypKv33YKasG1VVxJbrAb5YraC99qbpBBVAYcKT+ECqa7k/ObK+X+WepHlLyh054VtI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVLmb16UB/q5bWix163l1MMv/Wm6dlfcr4rew1FBOpSL23KBk3
-	ITAmgWqZJgigpHIkwQChckruPTB1oCQoTOdNfXowU/EzAquOaJkaQEPzh2NbFovhtaY3+IpgKEI
-	hkG1GPGAkT66asjSehLlOnEtDJjI6N7Mv97JFRiWnWE+iwE+BT7mm5B9jP6063jWyQtk=
-X-Gm-Gg: ASbGncsKUTTNvBVuNOHN24ea8zAQTkFiNFW7I38uNjKFSzXjspXhDr0NZzRjZGZce6u
-	PCzWDaQA300UVNuL/dphrDGMrJtV3CiBpcx+a0xil6SeICVV3uBd4IEkplsAeVR1Ubph3QD78CT
-	Y5NTX4Ia1eznw/S9gmK6ZJ8jIXbWZB+FgNjXA+qBrElOEMEEjcj6bVf7c+WEn/bgydvkOfRrf5R
-	IGA2KUxj1GtUvJMKET0dkjrbEgt7PU/tS6fXBbj8vGKbxb6YwDCOweGu4lkEjZoaS6H3UhUm1+z
-	YHXddXcyI0XfL3xbvG+1yfT3SM4kpQwrjnoXo5/flcHcOc8hjx0QOeSKZSPaZ4i8+s1AVUp6
-X-Received: by 2002:a17:902:f548:b0:267:a5df:9b07 with SMTP id d9443c01a7336-268118b95c2mr8163565ad.12.1758079582135;
-        Tue, 16 Sep 2025 20:26:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqu8JXr3DLXFVqyhAiPyWwY3CsgpScBJki2HbdMSZofPzvbaZpZpPop/u36XjzDnXudTckuQ==
-X-Received: by 2002:a17:902:f548:b0:267:a5df:9b07 with SMTP id d9443c01a7336-268118b95c2mr8163265ad.12.1758079581517;
-        Tue, 16 Sep 2025 20:26:21 -0700 (PDT)
-Received: from [10.218.32.171] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-267de22b719sm28237545ad.85.2025.09.16.20.26.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 20:26:21 -0700 (PDT)
-Message-ID: <7f0e6f0b-942f-4903-bee6-9c8f6ab5ec36@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 08:56:14 +0530
+	s=arc-20240116; t=1758080287; c=relaxed/simple;
+	bh=08VUFcXpF6AYclk8y6n1SHrN774oN8kabGwclYrzuCI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ac69WKIykLEsf9JSpMbWg8qq3f/PMEMjM1rdhlAHHDDzODfpXIR+B/jurDbBpeZni7PNsFWzB2OXIwxdTOgO8KOKFFGgJjPFj0RADugg8bMeWtvLH7mTjrIVfmN87zGqTg6f3wMEyi7oF3tae/sxBS/thzkMQmuZFLxCEs0k6u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=182.42.147.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
+HMM_SOURCE_IP:192.168.139.44:0.1676807570
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-36.111.64.84 (unknown [192.168.139.44])
+	by chinatelecom.cn (HERMES) with SMTP id 46200B023C14;
+	Wed, 17 Sep 2025 11:29:15 +0800 (CST)
+X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
+Received: from  ([36.111.64.84])
+	by gateway-ssl-dep-79cdd9d55b-z742x with ESMTP id 5da354203705446287f19055e82e39d7 for tglx@linutronix.de;
+	Wed, 17 Sep 2025 11:29:28 CST
+X-Transaction-ID: 5da354203705446287f19055e82e39d7
+X-Real-From: liuq131@chinatelecom.cn
+X-Receive-IP: 36.111.64.84
+X-MEDUSA-Status: 0
+Sender: liuq131@chinatelecom.cn
+From: Qiang Liu <liuq131@chinatelecom.cn>
+To: tglx@linutronix.de
+Cc: bp@alien8.de,
+	peterz@infradead.org,
+	jpoimboe@kernel.org,
+	pawan.kumar.gupta@linux.intel.com,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Qiang Liu <liuq131@chinatelecom.cn>
+Subject: [PATCH] x86/bugs: Rate-limit the SPECTRE_V2 messages
+Date: Wed, 17 Sep 2025 11:28:57 +0800
+Message-Id: <20250917032857.22441-1-liuq131@chinatelecom.cn>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] serial: qcom-geni: Fix pinctrl deadlock on runtime
- resume
-To: Alexey Klimov <alexey.klimov@linaro.org>,
-        Praveen Talari <quic_ptalari@quicinc.com>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
-        quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
-        quic_arandive@quicinc.com, quic_shazhuss@quicinc.com, krzk@kernel.org
-References: <20250908164532.2365969-1-praveen.talari@oss.qualcomm.com>
- <DCNLSFVPCKMV.K1UE3J3K6JQD@linaro.org>
- <DCOJFRU8KNFL.14VPXK9QZC9T4@linaro.org>
- <5b7b8c9f-48c5-45cd-8366-c8c048eaa757@oss.qualcomm.com>
- <DCPUJPHR8NUB.1SRB4D7ONSRBY@linaro.org>
- <2c5fd01a-543b-4108-ac54-80d1d87b65a3@oss.qualcomm.com>
- <DCT9VWQYD4VM.1NV5FJJCJG4PI@linaro.org>
- <cb96f3cd-7427-4644-b7ca-26b763867db4@oss.qualcomm.com>
- <df05da7e-fd9d-48a6-bffc-e84749cd8e96@oss.qualcomm.com>
- <aMl2hOYTjBuCo4AM@trex> <aMl9Fbuyq7hdXvQC@trex>
- <DCUE5AXJ99BG.150SRQMY7EJG6@linaro.org>
-Content-Language: en-US
-From: Praveen Talari <praveen.talari@oss.qualcomm.com>
-In-Reply-To: <DCUE5AXJ99BG.150SRQMY7EJG6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: yZHYKJFLpJROe4Rkzv6t9HYjcNfvLsLH
-X-Authority-Analysis: v=2.4 cv=bIMWIO+Z c=1 sm=1 tr=0 ts=68ca2a5f cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=KKAkSRfTAAAA:8 a=3zEiWGLsQ94HuRbx9vcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX/8Lrs2r2vPjX
- WagiY9rvlEwP/jL5Ddz+mBZ+YyRgnyjmyfZzRspv/AeI+leK9xEudWiE2/0GU1U+djbqOgvLtQl
- 62wMtc/DLnX362HudGNOjxYNNnhG8WCPCe+ZLPZY+v3NqlYaFYdOa5O6q1USTKISr+Z2rce+uQW
- 3enZ07TruFBX/cScFdfDDvTQZlj8kfbm6vnsggBzcgRMugYgzneaAMBRlxuH/IoMp0lgvSCbrWn
- n9excfymZ/BxTmbEkwvr6Z7eIy7hVIDzicdnMeBuZiCCrCkPJ3TE7PeUYeZiPvbM8D72mVj28FR
- c6IJSoe7qakvrr0SB2727hvYkDVMKqkhcI2t6d65ZwTK7W2Y2HjX9mMd3r7PnPGWkpeKLou1KRP
- y9+Prrdy
-X-Proofpoint-ORIG-GUID: yZHYKJFLpJROe4Rkzv6t9HYjcNfvLsLH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
 
-Hi Alexey,
+During stress-ng testing, excessive SPECTRE_V2 messages overwhelmed the
+low-speed serial device, causing system soft lockup. This issue can be
+resolved by implementing rate-limiting for the relevant log outputs.
 
-On 9/16/2025 10:42 PM, Alexey Klimov wrote:
-> Hi Praveen,
-> 
-> On Tue Sep 16, 2025 at 4:07 PM BST, Jorge Ramirez wrote:
->> On 16/09/25 16:39:00, Jorge Ramirez wrote:
->>> On 16/09/25 12:20:25, Praveen Talari wrote:
->>>> Hi Alexey
->>>>
->>>> Thank you for your support.
->>>>
->>>> On 9/15/2025 7:55 PM, Praveen Talari wrote:
->>>>> Hi Alexey,
->>>>>
->>>>> On 9/15/2025 3:09 PM, Alexey Klimov wrote:
->>>>>> (removing <quic_mnaresh@quicinc.com> from c/c -- too many mail not
->>>>>> delivered)
->>>>>>
->>>>>> Hi Praveen,
->>>>>>
->>>>>> On Mon Sep 15, 2025 at 7:58 AM BST, Praveen Talari wrote:
->>>>>>> Hi Alexey,
->>>>>>>
->>>>>>> Really appreciate you waiting!
->>>>>>>
->>>>>>> On 9/11/2025 2:30 PM, Alexey Klimov wrote:
->>>>>>>> Hi Praveen,
->>>>>>>>
->>>>>>>> On Thu Sep 11, 2025 at 9:34 AM BST, Praveen Talari wrote:
->>>>>>>>> Hi Alexy,
->>>>>>>>>
->>>>>>>>> Thank you for update.
->>>>>>>>>
->>>>>>>>> On 9/10/2025 1:35 AM, Alexey Klimov wrote:
->>>>>>>>>>
->>>>>>>>>> (adding Krzysztof to c/c)
->>>>>>>>>>
->>>>>>>>>> On Mon Sep 8, 2025 at 6:43 PM BST, Alexey Klimov wrote:
->>>>>>>>>>> On Mon Sep 8, 2025 at 5:45 PM BST, Praveen Talari wrote:
->>>>>>>>>>>> A deadlock is observed in the
->>>>>>>>>>>> qcom_geni_serial driver during runtime
->>>>>>>>>>>> resume. This occurs when the pinctrl
->>>>>>>>>>>> subsystem reconfigures device pins
->>>>>>>>>>>> via msm_pinmux_set_mux() while the serial device's interrupt is an
->>>>>>>>>>>> active wakeup source. msm_pinmux_set_mux() calls disable_irq() or
->>>>>>>>>>>> __synchronize_irq(), conflicting with the active wakeup state and
->>>>>>>>>>>> causing the IRQ thread to enter an uninterruptible (D-state) sleep,
->>>>>>>>>>>> leading to system instability.
->>>>>>>>>>>>
->>>>>>>>>>>> The critical call trace leading to the deadlock is:
->>>>>>>>>>>>
->>>>>>>>>>>>         Call trace:
->>>>>>>>>>>>         __switch_to+0xe0/0x120
->>>>>>>>>>>>         __schedule+0x39c/0x978
->>>>>>>>>>>>         schedule+0x5c/0xf8
->>>>>>>>>>>>         __synchronize_irq+0x88/0xb4
->>>>>>>>>>>>         disable_irq+0x3c/0x4c
->>>>>>>>>>>>         msm_pinmux_set_mux+0x508/0x644
->>>>>>>>>>>>         pinmux_enable_setting+0x190/0x2dc
->>>>>>>>>>>>         pinctrl_commit_state+0x13c/0x208
->>>>>>>>>>>>         pinctrl_pm_select_default_state+0x4c/0xa4
->>>>>>>>>>>>         geni_se_resources_on+0xe8/0x154
->>>>>>>>>>>>         qcom_geni_serial_runtime_resume+0x4c/0x88
->>>>>>>>>>>>         pm_generic_runtime_resume+0x2c/0x44
->>>>>>>>>>>>         __genpd_runtime_resume+0x30/0x80
->>>>>>>>>>>>         genpd_runtime_resume+0x114/0x29c
->>>>>>>>>>>>         __rpm_callback+0x48/0x1d8
->>>>>>>>>>>>         rpm_callback+0x6c/0x78
->>>>>>>>>>>>         rpm_resume+0x530/0x750
->>>>>>>>>>>>         __pm_runtime_resume+0x50/0x94
->>>>>>>>>>>>         handle_threaded_wake_irq+0x30/0x94
->>>>>>>>>>>>         irq_thread_fn+0x2c/xa8
->>>>>>>>>>>>         irq_thread+0x160/x248
->>>>>>>>>>>>         kthread+0x110/x114
->>>>>>>>>>>>         ret_from_fork+0x10/x20
->>>>>>>>>>>>
->>>>>>>>>>>> To resolve this, explicitly manage the wakeup IRQ state within the
->>>>>>>>>>>> runtime suspend/resume callbacks. In the
->>>>>>>>>>>> runtime resume callback, call
->>>>>>>>>>>> disable_irq_wake() before enabling resources. This preemptively
->>>>>>>>>>>> removes the "wakeup" capability from the IRQ, allowing subsequent
->>>>>>>>>>>> interrupt management calls to proceed
->>>>>>>>>>>> without conflict. An error path
->>>>>>>>>>>> re-enables the wakeup IRQ if resource enablement fails.
->>>>>>>>>>>>
->>>>>>>>>>>> Conversely, in runtime suspend, call
->>>>>>>>>>>> enable_irq_wake() after resources
->>>>>>>>>>>> are disabled. This ensures the interrupt is configured as a wakeup
->>>>>>>>>>>> source only once the device has fully
->>>>>>>>>>>> entered its low-power state. An
->>>>>>>>>>>> error path handles disabling the wakeup IRQ
->>>>>>>>>>>> if the suspend operation
->>>>>>>>>>>> fails.
->>>>>>>>>>>>
->>>>>>>>>>>> Fixes: 1afa70632c39 ("serial: qcom-geni:
->>>>>>>>>>>> Enable PM runtime for serial driver")
->>>>>>>>>>>> Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
->>>>>>>>>>>
->>>>>>>>>>> You forgot:
->>>>>>>>>>>
->>>>>>>>>>> Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>>>>>>>>>
->>>>>>>>>>> Also, not sure where this change will go, via
->>>>>>>>>>> Greg or Jiri, but ideally
->>>>>>>>>>> this should be picked for current -rc cycle since regression is
->>>>>>>>>>> introduced during latest merge window.
->>>>>>>>>>>
->>>>>>>>>>> I also would like to test it on qrb2210 rb1 where this regression is
->>>>>>>>>>> reproduciable.
->>>>
->>>> Since I don't have this board, could you kindly validate the new change and
->>>> run a quick test on your end?
->>>>
->>>> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> b/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> index 83eb075b6bfa..3d6601dc6fcc 100644
->>>> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
->>>> @@ -215,7 +215,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev
->>>> *pctldev,
->>>>           */
->>>>          if (d && i != gpio_func &&
->>>>              !test_and_set_bit(d->hwirq, pctrl->disabled_for_mux))
->>>> -               disable_irq(irq);
->>>> +               disable_irq_nosync(irq);
->>>>
->>>>          raw_spin_lock_irqsave(&pctrl->lock, flags);
->>>
->>>
->>> sorry Praveen, didnt see this proposal. testing on my end as well.
->>>
->>
->> just tested on my end and all modules load - deadlocked before this
->> update so there is progress (now we can load the network driver)
-> 
-> Is it supposed to be orginal patch here plus disable_irq_nosync()?
+The log as below:
+[121017.083236] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.098606] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.102398] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.102421] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.102532] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.102550] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.102569] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.133670] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.148497] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.163674] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.185720] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.287675] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.300205] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.335075] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.346428] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.428517] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.450328] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.592131] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121017.592865] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+[121037.642577] watchdog: BUG: soft lockup - CPU#68 stuck for 23s! [stress-ng-procf:2483051]
+[121037.642578] Modules linked in: ...
+[121037.642697] CPU: 68 PID: 2483051 Comm: stress-ng-procf Kdump: loaded Tainted: ...
+[121037.642698] Hardware name: XFUSION 2288H V6/BC13MBSBC, BIOS 1.29 11/25/2022
+[121037.642706] RIP: 0010:console_unlock+0x283/0x350
+[121037.642709] Code: 00 e8 01 15 00 00 55 9d 45 84 f6 0f 84 46 ff ff ff e8 71 f8 ff ff 85 c0 0f 85 e8 fd ff ff e9 34 ff ff ff e8 df 14 00 00 55 9d <8b> 44 24 04 85 c0 0f 84 f8 fd ff ff e8 9c 84 99 00 e9 ee fd ff ff
+[121037.642710] RSP: 0018:ff607726b60abc00 EFLAGS: 00000246
+[121037.642711] RAX: 0000000000000000 RBX: ffffffffaef699cc RCX: 0000000000000008
+[121037.642712] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffffaef6c228
+[121037.642713] RBP: 0000000000000246 R08: ffffffffadabd540 R09: 0000000000aaaaaa
+[121037.642713] R10: 0000000000000001 R11: ff2cf962c6a5b550 R12: ff2cf962c2700000
+[121037.642714] R13: 0000000000000000 R14: ffffffffaef6c228 R15: 000000000000008c
+[121037.642715] FS:  00007f2021c07640(0000) GS:ff2cf9e0be700000(0000) knlGS:0000000000000000
+[121037.642715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[121037.642716] CR2: 0000000000e3b7a0 CR3: 0000003f41266005 CR4: 0000000000771ee0
+[121037.642716] PKRU: 55555554
+[121037.642717] Call Trace:
+[121037.642722]  vprintk_emit+0x118/0x120
+[121037.642727]  printk+0x58/0x73
+[121037.642731]  bpf_unpriv_handler+0xbf/0x180
+[121037.642733]  ? proc_taint+0x1d0/0x1d0
+[121037.642738]  proc_sys_call_handler+0x13e/0x250
+[121037.642742]  new_sync_read+0x10d/0x1b0
+[121037.642745]  vfs_read+0x14e/0x1b0
+[121037.642747]  ksys_read+0x5f/0xe0
+[121037.642750]  do_syscall_64+0x3d/0x80
+[121037.642753]  entry_SYSCALL_64_after_hwframe+0x61/0xc6
 
-Only this disable_irq_nosync() change from pinctrol subsystem.
+Fixes: 0de05d056afd ("x86/speculation: Warn about eIBRS + LFENCE + Unprivileged eBPF + SMT")
+Fixes: 44a3918c8245 ("x86/speculation: Include unprivileged eBPF status in Spectre v2 mitigation reporting")
+Signed-off-by: Qiang Liu <liuq131@chinatelecom.cn>
+---
+ arch/x86/kernel/cpu/bugs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Praveen Talari
-> Meaning changes for qcom_geni_serial_runtime_{suspend,resume}
-> + disable_irq_nosync() in msm_pinmux_set_mux()?
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 36dcfc5105be..22fb2113cbe6 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1809,11 +1809,11 @@ void unpriv_ebpf_notify(int new_state)
+ 
+ 	switch (spectre_v2_enabled) {
+ 	case SPECTRE_V2_EIBRS:
+-		pr_err(SPECTRE_V2_EIBRS_EBPF_MSG);
++		pr_err_ratelimited(SPECTRE_V2_EIBRS_EBPF_MSG);
+ 		break;
+ 	case SPECTRE_V2_EIBRS_LFENCE:
+ 		if (sched_smt_active())
+-			pr_err(SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG);
++			pr_err_ratelimited(SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG);
+ 		break;
+ 	default:
+ 		break;
+-- 
+2.46.0
 
-No, only disable_irq_nosync() in msm_pinmux_set_mux().
-> 
-> It seems to work here but let me know few more runs.
-> 
-> Best regards,
-> Alexey
-> 
-> 
-> 
 
