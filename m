@@ -1,227 +1,139 @@
-Return-Path: <linux-kernel+bounces-821366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2110B8113B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:47:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9B6B8113E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2AE17E857
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74023BB600
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F6F2F745D;
-	Wed, 17 Sep 2025 16:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5D12F4A17;
+	Wed, 17 Sep 2025 16:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N0w3m6Zw"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011035.outbound.protection.outlook.com [40.107.208.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjwqC0BK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB46224B04;
-	Wed, 17 Sep 2025 16:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758127661; cv=fail; b=pYmiCyk7x9vglikknR323fFgeA3VBYWwLaG0WEEOV4s1MfqYe4W+cGQoKfPi1mzM0NbBZwNiNF+vG0YHZ1x2xMzdY3aGbIxj6EjEHM65dd0omJpFF8cOEvES8DOyyl453GxjjE7fvaK2KqZX8fRcET3g02lxmGZ1fxufYxvrWqA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758127661; c=relaxed/simple;
-	bh=NPz39gSVNqZ9IFiTZbA8FVFvgK6YJCwPvbTjthLe1BU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cABrye2tukMDmpWz14HP8P2RCHcnevxn7woAgbmZQwQcTu60//Q0uEcd1h3jADvPBQne2x8WMcy05BhYN16ntfi9z98fHUzUb1/ZT44x4bK5tnzspbaYxfVQPgze78FP16ueLJ2AjMvzi7eJ8WtJCnCE/vUREWJ1nCxPNhCzou8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N0w3m6Zw; arc=fail smtp.client-ip=40.107.208.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I8IMGtcnAgjkclNEPeSyLMSgwnFT/t0tPbC6N6nPyONWmqsCfLdAQmxEJQXC9xLEXxxJftQsfPVMtVroDFLx8lhDGnQl92pMuJNhgDxeAZEMyE3Z+WYDPbtT5cwJFDLiVCJ092liwP2dkH1N3dHJKO3heGcWUsx5klV+h1pxYmuJU7X8VIh6vINI2uolyc71r5Nox77sFGWNLS4KMhnXi5+4STr/3ku8WzUhhdksUDvLVo53Q77FesCYdpLjrUAQpq5NsCbqXziFJShCvBRdneeG9Iwd+aUBF8RzSl/SEQyyC7N9OinHrIPxUzG7lHsw9u3PNmUQvjvDMuB/isNrQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OKHYKAfqScRJyJgTm6DuVwXKlj+lku0G0GAsCsqyuuc=;
- b=l961PD249CulytHf99DX3JucxIXlS3yLq6Jed72zbPtMsNAjnPtbbWdWEsqk/SM9cGB7+S1V55Fphi9CLqZ98ZS62r3dH7OE+8lk5v8WTg90aWqbtAz/Oc/a6uvgf3fQ8vdJ/rLTfODvKsD6rsIgZYzrmdTubMmV1Q3dx+bk+O/3NTt4E4yMyRKl52vvx/Ch5LcaeqOpO9Qh931vS6VQSEyx+hHogvvRJvzZIT1hqzoXuDge0pEzyexOVLc+rqsWNe097b7uXz9rUT+xEzsT6d6p3MhOKfkTAEmPfv9d0cdgph+tknVNxguAyUwnS5HlHed2Bz0VrMZDI1d5AOpHFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OKHYKAfqScRJyJgTm6DuVwXKlj+lku0G0GAsCsqyuuc=;
- b=N0w3m6Zw/qc4YYXkPpHdP4lUZ3QivHxjE1bPGY4PO6hKWNzoYHlrQk8P3QpjWmyIQB2RrgymP1nDVzYBIXrBpQwV162HTjAvspIRixzOk3loo5RXrZmcZgu+x9nPu8/EOAXHH+vvppK17aP+ezdXVWZ5vxd3YjewBEA6QUsLT/SAvyOFW58OIB2AD3Ahc5eJtv1BX7dhvBUI3z9C7WEJUPcQfLPEtzKDyjQ6KQz0FhGks5QYi2RvxdBooB5fraZWWtvvBni6eKj8QUiJrwUc3A63vBYgjanG64JXJK5mRzE5iHWM+eUiH85X7exuBn9Tk24pxXC35t8j2jQpw5i5mA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by SA3PR12MB9092.namprd12.prod.outlook.com (2603:10b6:806:37f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
- 2025 16:47:36 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
- 16:47:36 +0000
-Date: Wed, 17 Sep 2025 13:47:34 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Willy Tarreau <w@1wt.eu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 16/16] selftests: vDSO: vdso_standalone_test_x86:
- Switch to nolibc
-Message-ID: <20250917164734.GA2047227@nvidia.com>
-References: <20250226-parse_vdso-nolibc-v2-0-28e14e031ed8@linutronix.de>
- <20250226-parse_vdso-nolibc-v2-16-28e14e031ed8@linutronix.de>
- <20250917153209.GA2023406@nvidia.com>
- <1f64966f-ef7a-474a-9641-561b6b7cb0d2@t-8ch.de>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1f64966f-ef7a-474a-9641-561b6b7cb0d2@t-8ch.de>
-X-ClientProxiedBy: BN9PR03CA0521.namprd03.prod.outlook.com
- (2603:10b6:408:131::16) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4591224B04
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758127739; cv=none; b=YjVkVvN6rMWA9neiR5Q6Jy1wyLIUrsT5rnJ6JOvGWiqgPpXs9ol5njiANclihE5adop9bAWKgSYIv8xZQ45h6PEDBbS3y09wtzh79GEpYZ3cPcli1NSttvSzJdEMrCjUp64+3ST02380hi1RribrWn1yg5Vh9E9bIH2ti7Tpkig=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758127739; c=relaxed/simple;
+	bh=yUPC1zdWN5kKx+k6dBvxwjTFs2977h19xDLTjdHgTTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o1P26egAN1gb+mkO5dZQAtGuVaj4idz9iLIo6W97YRXrrO0CgXuG/J6Rv7zSica23BYu2bA57hd6Gds1fP5WH0e8RSvA6ONHyreL+LphA5IRWhi1k9eUkgDjtDLxqOMwft22280yTtVS9oQ5/v5GCwVpytvGa6N2LZgp0bQNfAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjwqC0BK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E86FC4CEFA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758127739;
+	bh=yUPC1zdWN5kKx+k6dBvxwjTFs2977h19xDLTjdHgTTw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OjwqC0BK5syFJ4ucBTiiaVfcojW8yy4lWxQUj0EGvgLResgn5JCf6ls1LuwvzPhY6
+	 Nxfxshvnn0chhXgjaGus7TyRITxO9UUnSa5fE/e3MQnEO4fyiioga+673diyYidIwR
+	 VLpJ6m1aJ0LKl3IVzbcoNhZ04l5ieFGqC3tVHkZcKaetueQrpK6yZBTiBgd4shU1wd
+	 sKzkv291oAbLsZgP1r80MzbcGz5vvZfVJGWq4+eMkvMdJ4EOAeU3F6p2xcS1QVI0o8
+	 ixN96A8J+gaaRlkIRBauPV0qGNSwOVpJeD1TkfHvl7rtdht7JcGXE3J/RlRDKWVYQ8
+	 NJd6jVM4KjBMw==
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-72e565bf2feso472647b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:48:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWArqqdp9szm8zDs/Jz0u2VSk5r0q3qCPU65BUxqZOxzrsBJIu+dGtrHcifKHF6ujgiw+azyy6U05J9fkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOHTbI/9WiZxttCaFCCSpBfdwf456p4+zHIHTzwtpS0MMbZ9b7
+	Nf2ktutgSsB0+BpGnpn6Mr5o1ThD0nxr1iH6oX7pKJ5P51Q/9gROzf3CrHEevzCm/81uZOUbzLd
+	pw6Ls2Q43KuhQZ10AWXQuny2/JgWqJo5s2PcitgQzYA==
+X-Google-Smtp-Source: AGHT+IF0pKHAAeegJZZWoeLW97bU+nM2aZay5XgoAAF9236iZFlM4qN22XQNvUtyEBR/AyicnuDETAMdJbBTFlco/OA=
+X-Received: by 2002:a05:690c:4b07:b0:724:bcb8:7d57 with SMTP id
+ 00721157ae682-73893141fe3mr22032967b3.54.1758127738739; Wed, 17 Sep 2025
+ 09:48:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|SA3PR12MB9092:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a08dc1a-79ab-4696-b8e3-08ddf609e79c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L2hhSHBLZm1Ld0s1c1MwWW90cEdCNThXOHU1T3FSTnN1cTFPbVNZbXdmWHIy?=
- =?utf-8?B?VGMyWnh6ZVNSU2wrR0srSGpSRkZhem9COVhYM2tPTFFpV3dLZVIzb3ZkdG1u?=
- =?utf-8?B?YVJWb3ROeGs2WElabjZVSkFoNUV6cUdRS2Vod2tJZ2l0ZDA0YVlMSlNzbkVD?=
- =?utf-8?B?MWIrdnBqRFFWR2xWUHpSeW14dHl0R2wxRVk3LzVJZXo2dGtiNWZTVTY2d0ZD?=
- =?utf-8?B?QlorTG5aRGViQW5Db2J5NmNmNlYrRFArbnlUbGoxdGVOMmYwTEIrU01Sdi90?=
- =?utf-8?B?YXVqZXczcGNtK2ZnUTZYSzZDWmpxZEJJY2x2V0ZteGMya3ZkNEhCRm9LakhS?=
- =?utf-8?B?RC9aNG5MZStibzZ5bGkxNWpPaUtVNlpuVlY4bU9LVXIydTJTSFdDL0hqb2Jx?=
- =?utf-8?B?QnFZTTJXeEJWd1BKRnhkYjZDQk5CY1Zld3VFZmgrZHo1ZGU4ODYrYkx0K3k1?=
- =?utf-8?B?cVpwMkNHNjJTdGR1dWlyNjEzZC8yMGNUaytFaXc3ZHFvUmtYbUpGaTAxcnRC?=
- =?utf-8?B?N3VhanMvM0daK0UxaFBueXdRb0trd2pEb2dOQ1ZtdFRKZDJBRUtZTlJpM3V3?=
- =?utf-8?B?K1J2N1F3cnBnSlN2OVhWd3dGcTJYNHVRbTBPcVlNeEI3eXlQNGtWa1Y0cjYw?=
- =?utf-8?B?NjB2MFpmNDJncGpWOFZOSWhuTVkrY3g0T3B3UWR3Mm1JYmdwUGNsclZtN1Ru?=
- =?utf-8?B?VzZLbWovSFNZekRHQzA2UkcxcEhZSWsrcDFSRnZwSU9QdFlOM0gwemRTVEhJ?=
- =?utf-8?B?TTFENHduczYwTmVOc1NralJBNHE1UHdWaUFVMHh4cFp4MUlvcnBsM1FRTVhk?=
- =?utf-8?B?S2tod0dZTW9XclI4cGNYbnhBSGtvZXlYSHo3NFZoQTQzUTRBOVpRcVFzSHh1?=
- =?utf-8?B?TlBiMnIvMlRlQ2pNdDJpLzNFRTZUbzRsQXA3RWMwamxmRHlDMnIzRUlwZEI4?=
- =?utf-8?B?OSsvR0dVRWdHRWxvVElCVGVMNldvektDU1J3UDJndnZCN3VjMUQ0L3Q1cVJu?=
- =?utf-8?B?OTdXRlZyWU05NHNmd3ZVR3ZIbWc5NFZmQ2RWbnBDVXprWXlySk5CU3ZtaTg1?=
- =?utf-8?B?cVNkbDdWMXRBK0puTVFSaHFUWG0zOXU3UzFXbG1uMjYxdlpqY1Vvc0dBV2NH?=
- =?utf-8?B?OWZWbStNMmdxYkZQQXdLSlF6T1FFRWErSmZaR0QvQnlyeWtyUUNscDFaZURa?=
- =?utf-8?B?Szgray90WmFGaGt0dk16dEdDT0hoWEVxeHFzTklmSXRiL3Y5L3B5ckk4c1lH?=
- =?utf-8?B?OCtVbUxGSDRQQkxDNDBIRWJ0T1l6SE83T080dWZ4VFFrbk56MHphOUFUcjRD?=
- =?utf-8?B?TTZ4RzUydENXazZkTUpQT2x5NExXdDdTN1RBU3Z6VEgzQ2FsWXQyYzFEd0FU?=
- =?utf-8?B?ZXo5ZDREeTZIc2FDc3VWdi9kNGtWbTBJc284bnllNXBhbjdyRDBPZWF3UFdt?=
- =?utf-8?B?QXh0RjNDZ1U3dEZKVmY2UUE5TDVhelZEQnFML1lOMFRxTVFEN0IxM2xPS1VJ?=
- =?utf-8?B?N1lkM2NObWMxMTlKT3loQUltMGhhYldiUnd0Z3A5bFRlSmIyMlI4YzBCVGhI?=
- =?utf-8?B?K3FpN3dTVWliZnIwZzB3ZlRvRm5ZT0Iwd1E0YnJNUTI3ZW5mdHNnMHRSNDZs?=
- =?utf-8?B?Y3R0ZC9xQ2V5WE1Yb2pQZ2lGUjhXRUU3dXZTa3hlaTZidXVxMlVwWDFaZjQz?=
- =?utf-8?B?NGtkQzIrclU2VG1hK0Z3eloxaU9yeEtoOEx2WEhkT3g0QTdmOXNwbnlYRy8y?=
- =?utf-8?B?R2hiQmNyUHlzQjRUV1pINWRlTWdDNkF5SHVYczBwdVQyZUlNeHF3ckNyeGxj?=
- =?utf-8?B?RUhhL2RQSTZyem11QkM5S0tqa0ZrWi9vTVBFaC9JSENPa0UzVm1tRHRPQkxX?=
- =?utf-8?B?aTdyWklBUUlyUU1LMWtJN2ZvWnQwSk1pcTZaV1Y5M09aUkxSdUw0cldwN3Mv?=
- =?utf-8?Q?EFn3PHIgiLU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?akVKd2lMN1U3T1U4RVBUVFdMK1BVUFlLdHZlbHRQNStWdDk1K2F1cVAyV2t6?=
- =?utf-8?B?Yi9YbStrSTNEU3Z6THdEV2wzVnlkSWN1OGh1OVAyZG5iWE1TUHBZS214d3F2?=
- =?utf-8?B?UE5ZN0ZaYlAvWlA0RFVHQVY1TC8ycVR3Z0NLemYrZWozSFM2TWNHcGZWb3dT?=
- =?utf-8?B?ZDRiQTFKVERCaU1YRXNwVFQvdkVwd1FzWlYzM3l6dXBIRkFpd3dicEpyVGRa?=
- =?utf-8?B?RWlQckdVdjQwRDUrdi9KTDR6UGoxUnYrSFlseXZBU1dxckJ2UEt1dDRDNEVm?=
- =?utf-8?B?aktxa3ZFZ1dVMGU5dVJGeCtKZ1pubkhIZnMxa3ZtV3VFVkVxakVRcjNIMkVr?=
- =?utf-8?B?ell6c0ZjdjhKUzRZdGVRMTFRdytDOGhwY2Fram5iY3hxTFZXd005bmpXSlhj?=
- =?utf-8?B?L0U3SE1EMXVuQ044cHllY0JNOGErZG85UmJaRjJ2Vi9BNWRDZklzcThBb3BO?=
- =?utf-8?B?YWJ3eFc3OTI0eGhNVjRuMXFrZWo3ZDZmQWVUeVdsem9NbjBEMTdLalh4Q0Vv?=
- =?utf-8?B?ZURnQUd3Ni9neklmOFpSc3ZKMHkxbVpwRzJ5MWV0NmR4Q0dqVFJBSVBhaTE4?=
- =?utf-8?B?ZU1MTU5BUlJ6M3IwNk1wekVwQmwvWC83SEtiUGljd3N6Nk1pS2tXM2hGQkZw?=
- =?utf-8?B?V1YwbmdGb2lLWjMzS0VndGZYTXZ5UGhwdWlCNEJxSU16bjdEczgzTURBSDc2?=
- =?utf-8?B?TWpNTDJ2dHlVM28vTEcrMFBIQkttd2pndWV6bHJua2tyVkNTN0Q2dGNwVkVh?=
- =?utf-8?B?V2hPSXRaODJ0cHpyYWdZR0lxUlZFVmpUcEtSaEFIazRNbjNXVkRDK0FCc1Ra?=
- =?utf-8?B?ZE5FN3hFNzVKS2FiSFE4dThQQndCVzZsSFAycmFSd3kzcE5hQzRwSitZSGdm?=
- =?utf-8?B?djBoaHNGYVc5aHJLTzBSSEFmZmdNeGgzaFB4RGtGSXBKV2h3MXVYcG1NQUNX?=
- =?utf-8?B?aWMxWnVnRXNIellHMHovemRoMkx6cHhPWUxiMXZUeXM1OXBXY21LQ2xvYjBL?=
- =?utf-8?B?OVE5V1Vram85WG5sZ25CTVZ0L1dXVTdqd2ViOFdLSGQ1TDl3T1pteG9pdDNo?=
- =?utf-8?B?N0NnY1FCUHQvL3dQNkl6MU5SaEhSZUluMFZvK3ZjYnF4ZkZLSDdhWFdidTV1?=
- =?utf-8?B?Y0k1T2phWVRwUVdETy9NUDJYY3RpSWZuSWNPZmtsNEFhLzRiZ0xDdi81WHRR?=
- =?utf-8?B?SUwveFBSZnBtSFRnQS9HV3VOZmV6QWNoNlFILzRmU1hWWTQ4bzRwenlWRjRr?=
- =?utf-8?B?VHVBSENDL21UcGFYdEo2SWZTaDd2cCt4VDhkcXNlRENXZkU0YUt0SjU5KzJt?=
- =?utf-8?B?L3VJNVJkQ2JvODFUaml1VmZTeXRiZVNrYlQralhkejZJNDFXK0lxcGg1cEt1?=
- =?utf-8?B?N1JoMHgvb2hJQUxBYTg0Z09qWnZVZ3ViVDE3eU1YSENOUDBPWVk1a3VBZis1?=
- =?utf-8?B?VzNWbk9VQ1RjL05tSkZPZFlVVEUyUFNNUkRBUC9wK0JOSnM1K1crNkkrZTVs?=
- =?utf-8?B?aUpMYzVCOW03YlgwaFBXN0czZ0l0UU9LOEhVQTdodmFFV1czTllkaVVtQnR2?=
- =?utf-8?B?Zk0yNGJHNmNLWU52aVMvTWNnRi9TRFFtUmZvY0ZmUzZwY1VVcWp2eGVXWVA4?=
- =?utf-8?B?c1BBczZyQ2REMS9IR1RZMm5DaExOei9XSnRmNVNPelAycms4aEp5TXBaZzEv?=
- =?utf-8?B?Um13OWt0NkppZjRkd1h4d0VlWHF1WUFyQ2NYeE5DVDB6bFk2VnBYU1VxeU1E?=
- =?utf-8?B?aEVXSjZSZDlhSkpUdkhpUERRVUdvcDdjYWY0ZFlNTXFvbDdPdDNERW9mUngw?=
- =?utf-8?B?NlBsanExSHZ5R251bHhzMnA1WXd0dEJySmdWUkY3RVZ2ZVVRNUFjSUZjTWVZ?=
- =?utf-8?B?OXlTS05PNmRBbXcyZTN5RVQvNzVBOWp6TThwRnVhVHNzZGl0eWJIbExNWGVs?=
- =?utf-8?B?d3FXR0ExaG1LMmdoeWJvb0FaZ3RUVjhlTnZtMkVIZXBkZ3VsLzNlOVE2bmRL?=
- =?utf-8?B?U0Z5NDVITWJXNWN4dDllNmJrRk5RdjhtbmRoaHNCTzZJRGF5MTVnL1NBb2ov?=
- =?utf-8?B?VUZEQlRTT1UyNXJkQ1dlR25HOUNEeWpDbzRscFBKZDBMVktZK0k3YnVJTjd5?=
- =?utf-8?Q?Vp/AuTmQJAhRBCpVrS/x7VKI1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a08dc1a-79ab-4696-b8e3-08ddf609e79c
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 16:47:35.9494
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eJFL1IDqFQiCJidNFfWiqR5h8yjvG3ya/IjgcCJr+JwLHA8JYFcr5z321IFDNak2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9092
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
+ <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+ <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+ <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
+ <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com> <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 17 Sep 2025 09:48:46 -0700
+X-Gmail-Original-Message-ID: <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+X-Gm-Features: AS18NWAcw0qwgnqmnCF1ULPrhYr_hOxdDMPg7RIERdgeixYVmG8XAhG_ABvnJZU
+Message-ID: <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
+To: Barry Song <21cnbao@gmail.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 06:24:13PM +0200, Thomas Weißschuh wrote:
-> Care to try this:
-> 
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index 530390033929..a448fae57831 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -228,7 +228,10 @@ $(OUTPUT)/%:%.S
->         $(LINK.S) $^ $(LDLIBS) -o $@
->  endif
-> 
-> +# Extract the expected header directory
-> +khdr_output := $(patsubst %/usr/include,%,$(filter %/usr/include,$(KHDR_INCLUDES)))
-> +
->  headers:
-> -       $(Q)$(MAKE) -C $(top_srcdir) headers
-> +       $(Q)$(MAKE) -f $(top_srcdir)/Makefile -C $(khdr_output) headers
-> 
->  .PHONY: run_tests all clean install emit_tests gen_mods_dir clean_mods_dir headers
+On Tue, Sep 16, 2025 at 4:48=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+> > In your above two examples, what is the respected swap cluster swap ent=
+ry size?
+> > In other words, how much entry does one swap cluster hold?
+> >
+> > Sorry I am not very familiar with the ARM page tables.
+>
+> Oh, my mistake=E2=80=94I recalculated:
+>
+> For a 16 KB page size, SWAPCLUSTER_SIZE will be 2^11 =3D 2048, so the swa=
+p
+> table is 2048 * 8 =3D 16 KB.
 
-Worked for me, thanks!
+So my original description is correct in the sense that, the 16KB page
+size, swap table is 16KB, this is not coincidental.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> For a 64 KB page size, SWAPCLUSTER_SIZE will be 2^13 =3D 8192, so the swa=
+p
+> table is 8192 * 8 =3D 64 KB.
 
-Though I notice it still spews stuff out of the build directory:
+Same here. For 64 KB page size, the swap table is 64KB as you just told me.
+I am just trying to give a bit of a glimpse of where I get the
+intuition for swap tables.
 
-tools/testing/selftests/mm/local_config.h
-tools/testing/selftests/mm/local_config.mk
-tools/testing/selftests/net/rds/include.sh
-tools/testing/selftests/prctl/disable-tsc-ctxt-sw-stress-test
-tools/testing/selftests/prctl/disable-tsc-on-off-stress-test
-tools/testing/selftests/prctl/disable-tsc-test
-tools/testing/selftests/prctl/set-anon-vma-name-test
-tools/testing/selftests/prctl/set-process-name
-tools/testing/selftests/uevent/uevent_filtering
+>
+> This approach still seems to work, so the 32-bit system appears to be
+> the only exception. However, I=E2=80=99m not entirely sure that your desc=
+ription
+> of =E2=80=9Cthe second last level=E2=80=9D is correct. I believe it refer=
+s to the PTE,
+> which corresponds to the last level, not the second-to-last.
+> In other words, how do you define the second-to-last level page table?
 
-It is not related to this
+The second-to-last level page table page holds the PMD. The last level
+page table holds PTE.
+Cluster size is HPAGE_PMD_NR =3D 1<<HPAGE_PMD_ORDER
+I was thinking of a PMD entry but the actual page table page it points
+to is the last level.
+That is a good catch. Let me see how to fix it.
 
-Jason
+What I am trying to say is that, swap table size should match to the
+PTE page table page size which determines the cluster size. An
+alternative to understanding the swap table is that swap table is a
+shadow PTE page table containing the shadow PTE matching to the page
+that gets swapped out to the swapfile. It is arranged in the swapfile
+swap offset order. The intuition is simple once you find the right
+angle to view it. However it might be a mouthful to explain.
+
+I am fine with removing it, on the other hand it removes the only bit
+of secret sauce which I try to give the reader a glimpse of my
+intuition of the swap table.
+
+Thanks for catching that.
+
+Chris
 
