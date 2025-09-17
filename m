@@ -1,242 +1,135 @@
-Return-Path: <linux-kernel+bounces-821507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07327B816E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:10:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D806FB816ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7BE1C27171
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:10:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E272581B3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4092BE04F;
-	Wed, 17 Sep 2025 19:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2D329DB99;
+	Wed, 17 Sep 2025 19:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZzCBwIaO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="QnwPvJgQ";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="sI+FMK6y"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDC84A04;
-	Wed, 17 Sep 2025 19:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2006D4A04;
+	Wed, 17 Sep 2025 19:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758136212; cv=none; b=qMZsT+VXWIUjudKsDeQV28hRiPlPHEfQxdlVp55np5M1fsFe5FqtvFgZ/jHyCBz4XFqryoFfjvxeNFWPVsetzb2yKTb9bZ5SUs5yfC7g6uOjrPVpKsRTGshhPDarJEftwK2INHVsgTo4gzLzYeP8KvsemXTKP1lg4WErNctb93A=
+	t=1758136258; cv=none; b=luQJ84HZ1m9/0S63HdfvW9QT+ZvRwuUBXk1G9rfXFRWab78JYYG8XPKFIrYV3thWZccoPyP4qUOEMnyTtwD2S76DKZ1ZQzyJsQ6A8Nc5r4TNucXl+kI328ZuxUO2SLnf3UbBly6M9ZuxjVf6qCi/QrII0TUiNOhuDOkgd5BiMe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758136212; c=relaxed/simple;
-	bh=7tRIZV6upeMWSvtkamc7GBh/C+JXZ89rhwhu8ilQuAg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CGpo/Mwalk+95Xw/obLV4WU2dUTGgBG86rsoTBA9JmZxGxKS4hlGo1Bno7YJmftVyDT4nDD7pCMMblqCKE95R3i8MorCaAGeBJ1eei1UbFS+UaZmr49Sfh9K8VucHtp6fcKzolFOOop7UNxESoWUkKS5nxtIVo21UTDNOuVGW18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZzCBwIaO; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758136211; x=1789672211;
-  h=message-id:date:mime-version:from:subject:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=7tRIZV6upeMWSvtkamc7GBh/C+JXZ89rhwhu8ilQuAg=;
-  b=ZzCBwIaO1v5OhAbHaEe8ZjPm66qLwWADvBXh67/TZpdXVF1542zJI6hI
-   Be/aWJwOyqi2OwZEKGbLtxfT1C6g5+BLUmDr1FS7MKLW5dUV9RG+GYDws
-   3SFOBb6OPxN+3fk54v5LtuEN6xxXZsF/FqGZOVIwLpNWKqGfjAdktG5WM
-   RNqJVUgdt5IUahNHMVvea2rQP9cXlMEDR/KDNyntr5AaL3C1aftNzkVza
-   R+TPwqkv/yV6KFiBBgpcUuuJ3vXBRj+EQY9NWE5/kifI5r5wswEeM4adR
-   J53ZfoZS4zbS9Gp7Y5wzP/YLuBhy1+aZaixN8tzVIqv7XtOEEgmnbOE9c
-   w==;
-X-CSE-ConnectionGUID: bNGzKyAsRI+CntU+jcGqcA==
-X-CSE-MsgGUID: bdm3PvuGQfKrCbS49BoSgA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60522238"
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="60522238"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 12:10:10 -0700
-X-CSE-ConnectionGUID: ewyB4kgSSX6E7fQdH84+Ew==
-X-CSE-MsgGUID: mElF4NHpS8mr9pu7oOl2FQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="179319190"
-Received: from skuppusw-desk2.jf.intel.com (HELO [10.165.154.101]) ([10.165.154.101])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 12:10:09 -0700
-Message-ID: <2712a56a-1e2f-4ad8-8ad9-8b7825f4eefd@linux.intel.com>
-Date: Wed, 17 Sep 2025 12:09:57 -0700
+	s=arc-20240116; t=1758136258; c=relaxed/simple;
+	bh=cvre8E18jeT6sBsn7mM9lLOpUG2V4cHMviqd0cUZ/Go=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=huhuWhYirdWQdQ3xDd0UGncfJktR3HpZIEafFo007VzIvVgvPN4oJqDeIA2r58EplV5M3Mt+X2E5QpqWTm9+ck5eJmnNy6+v5t+djbzPyPiJAnptrzGqEj0c5rqa5w9aES09qBUGs8mRD88GeVdZ42CAxGt0XYheY+fLwGAx6s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=QnwPvJgQ; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=sI+FMK6y; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1758136208; bh=jUDJNUGPMmGoGJReBhLdS9j
+	gZvs7HFmg75694Psa0N4=; b=QnwPvJgQgQEIjFUJ092WX+5VnetTc9mO2+VyZg01XYt/TScUWP
+	21vTdQsTv5Q9rtzwXYKBf/80zpphW2EulMDX2I5E70xIfHFzmYikvzSgn2Cwilk4plokXRKV5Sa
+	nL2cT9WsKXTeW0O+VPJ0wup8nPAQFP+LmH7nnI0nGbUZtKBqH0cUXkG+D3QfI0N2sPnMo6eAlP/
+	YVr+73UyuHMepSNeSvppQsrmGuiwOmHDw9TXPwUhzsO9Vxli1mcWiLj7WTzV4PXpXcBnstLdOBX
+	1W53fgYrdkMsVHKYyTDMWj0nK1tO6yYDNC0K2+sHKvzQQo5NfN+wWLPlK7TM59Hoh7w==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1758136208; bh=jUDJNUGPMmGoGJReBhLdS9j
+	gZvs7HFmg75694Psa0N4=; b=sI+FMK6yfNuHDv87ZLFSarK00xCSPeOjs/99JSwJ53Q458pgXA
+	XvCvnPw1of16KuDvpsg8rP6fbXCSEUU2QEDA==;
+From: Nickolay Goppen <setotau@mainlining.org>
+Date: Wed, 17 Sep 2025 22:10:01 +0300
+Subject: [PATCH] platform/x86: dell-lis3lv02d: Add Latitude E6530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: Re: [PATCH v5 3/3] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-To: Shuai Xue <xueshuai@linux.alibaba.com>, bhelgaas@google.com,
- mahesh@linux.ibm.com, mani@kernel.org, Jonathan.Cameron@huawei.com
-Cc: oohall@gmail.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <20250917063352.19429-1-xueshuai@linux.alibaba.com>
- <20250917063352.19429-4-xueshuai@linux.alibaba.com>
-Content-Language: en-US
-In-Reply-To: <20250917063352.19429-4-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250917-dell-lis3lv02d-latitude-e6530-v1-1-8a6dec4e51e9@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAIgHy2gC/x3MSwqEMAwA0KtI1gZq669eRWZR2swYCCptFUG8+
+ xSXb/NuSBSZEkzVDZFOTrytBU1dgV/c+iPkUAxa6U7ZZsBAIiicjJxKBxSXOR+BkPrOKBy8Ga3
+ 3rh2tgXLskb58vf/8eZ4/uGE/7m8AAAA=
+X-Change-ID: 20250917-dell-lis3lv02d-latitude-e6530-7c389cca4893
+To: Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nickolay Goppen <setotau@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758136207; l=2859;
+ i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
+ bh=cvre8E18jeT6sBsn7mM9lLOpUG2V4cHMviqd0cUZ/Go=;
+ b=5KwfJvyXXPUxxbHp8fEkCAufC3hdm0JeHRGtVBxrLGkx+o6ftF8JLYczSt3ibJMoSWqXAr4G7
+ +dygItdCGAaAuVu8Z4sDiYpL6WZy8+odkb91rIbuP9It+xgEiGNBggw
+X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
+ pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
+Add 0x29 as the accelerometer address for the Dell Latitude E6530 to
+lis3lv02d_devices[].
 
-On 9/16/25 23:33, Shuai Xue wrote:
-> The AER driver has historically avoided reading the configuration space of
-> an endpoint or RCiEP that reported a fatal error, considering the link to
-> that device unreliable. Consequently, when a fatal error occurs, the AER
-> and DPC drivers do not report specific error types, resulting in logs like:
->
-> 	pcieport 0015:00:00.0: EDR: EDR event received
-> 	pcieport 0015:00:00.0: EDR: Reported EDR dev: 0015:00:00.0
-> 	pcieport 0015:00:00.0: DPC: containment event, status:0x200d, ERR_FATAL received from 0015:01:00.0
-> 	pcieport 0015:00:00.0: AER: broadcast error_detected message
-> 	pcieport 0015:00:00.0: AER: broadcast mmio_enabled message
-> 	pcieport 0015:00:00.0: AER: broadcast resume message
-> 	pcieport 0015:00:00.0: pciehp: Slot(21): Link Down/Up ignored
-> 	pcieport 0015:00:00.0: AER: device recovery successful
-> 	pcieport 0015:00:00.0: EDR: DPC port successfully recovered
-> 	pcieport 0015:00:00.0: EDR: Status for 0015:00:00.0: 0x80
->
-> AER status registers are sticky and Write-1-to-clear. If the link recovered
-> after hot reset, we can still safely access AER status and TLP header of the
-> error device. In such case, report fatal errors which helps to figure out the
-> error root case.
->
-> After this patch, the logs like:
->
-> 	pcieport 0015:00:00.0: EDR: EDR event received
-> 	pcieport 0015:00:00.0: EDR: Reported EDR dev: 0015:00:00.0
-> 	pcieport 0015:00:00.0: DPC: containment event, status:0x200d, ERR_FATAL received from 0015:01:00.0
-> 	pcieport 0015:00:00.0: AER: broadcast error_detected message
-> 	vfio-pci 0015:01:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
-> 	pcieport 0015:00:00.0: pciehp: Slot(21): Link Down/Up ignored
-> 	vfio-pci 0015:01:00.0:   device [144d:a80a] error status/mask=00001000/00400000
-> 	vfio-pci 0015:01:00.0:    [12] TLP                    (First)
-> 	vfio-pci 0015:01:00.0: AER:   TLP Header: 0x4a004010 0x00000040 0x01000000 0xffffffff
-> 	pcieport 0015:00:00.0: AER: broadcast mmio_enabled message
-> 	pcieport 0015:00:00.0: AER: broadcast resume message
-> 	pcieport 0015:00:00.0: AER: device recovery successful
-> 	pcieport 0015:00:00.0: EDR: DPC port successfully recovered
-> 	pcieport 0015:00:00.0: EDR: Status for 0015:00:00.0: 0x80
->
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> ---
->   drivers/pci/pci.h      |  3 ++-
->   drivers/pci/pcie/aer.c | 11 +++++++----
->   drivers/pci/pcie/dpc.c |  2 +-
->   drivers/pci/pcie/err.c | 11 +++++++++++
->   4 files changed, 21 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index de2f07cefa72..b8d364545e7d 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -629,7 +629,8 @@ struct aer_err_info {
->   	struct pcie_tlp_log tlp;	/* TLP Header */
->   };
->   
-> -int aer_get_device_error_info(struct aer_err_info *info, int i);
-> +int aer_get_device_error_info(struct aer_err_info *info, int i,
-> +			      bool link_healthy);
->   void aer_print_error(struct aer_err_info *info, int i);
->   
->   int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index e286c197d716..157ad7fb44a0 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1351,12 +1351,14 @@ EXPORT_SYMBOL_GPL(aer_recover_queue);
->    * aer_get_device_error_info - read error status from dev and store it to info
->    * @info: pointer to structure to store the error record
->    * @i: index into info->dev[]
-> + * @link_healthy: link is healthy or not
->    *
->    * Return: 1 on success, 0 on error.
->    *
->    * Note that @info is reused among all error devices. Clear fields properly.
->    */
-> -int aer_get_device_error_info(struct aer_err_info *info, int i)
-> +int aer_get_device_error_info(struct aer_err_info *info, int i,
-> +			      bool link_healthy)
->   {
->   	struct pci_dev *dev;
->   	int type, aer;
-> @@ -1387,7 +1389,8 @@ int aer_get_device_error_info(struct aer_err_info *info, int i)
->   	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->   		   type == PCI_EXP_TYPE_RC_EC ||
->   		   type == PCI_EXP_TYPE_DOWNSTREAM ||
-> -		   info->severity == AER_NONFATAL) {
-> +		   info->severity == AER_NONFATAL ||
-> +		   (info->severity == AER_FATAL && link_healthy)) {
->   
->   		/* Link is still healthy for IO reads */
->   		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
-> @@ -1420,11 +1423,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
->   
->   	/* Report all before handling them, to not lose records by reset etc. */
->   	for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
-> -		if (aer_get_device_error_info(e_info, i))
-> +		if (aer_get_device_error_info(e_info, i, false))
->   			aer_print_error(e_info, i);
->   	}
->   	for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
-> -		if (aer_get_device_error_info(e_info, i))
-> +		if (aer_get_device_error_info(e_info, i, false))
->   			handle_error_source(e_info->dev[i], e_info);
->   	}
->   }
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index f6069f621683..21c4e8371279 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -284,7 +284,7 @@ struct pci_dev *dpc_process_error(struct pci_dev *pdev)
->   		pci_warn(pdev, "containment event, status:%#06x: unmasked uncorrectable error detected\n",
->   			 status);
->   		if (dpc_get_aer_uncorrect_severity(pdev, &info) &&
-> -		    aer_get_device_error_info(&info, 0)) {
-> +		    aer_get_device_error_info(&info, 0, false)) {
->   			aer_print_error(&info, 0);
->   			pci_aer_clear_nonfatal_status(pdev);
->   			pci_aer_clear_fatal_status(pdev);
-> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> index de6381c690f5..744d77ee7271 100644
-> --- a/drivers/pci/pcie/err.c
-> +++ b/drivers/pci/pcie/err.c
-> @@ -196,6 +196,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   	struct pci_dev *bridge;
->   	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
->   	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-> +	struct aer_err_info info;
->   
->   	/*
->   	 * If the error was detected by a Root Port, Downstream Port, RCEC,
-> @@ -223,6 +224,15 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   			pci_warn(bridge, "subordinate device reset failed\n");
->   			goto failed;
->   		}
-> +
-> +		info.dev[0] = dev;
-> +		info.level = KERN_ERR;
-> +		info.severity = AER_FATAL;
-> +		/* Link recovered, report fatal errors of RCiEP or EP */
-> +		if ((type == PCI_EXP_TYPE_ENDPOINT ||
-> +		     type == PCI_EXP_TYPE_RC_END) &&
-> +		    aer_get_device_error_info(&info, 0, true))
-> +			aer_print_error(&info, 0);
->   	} else {
->   		pci_walk_bridge(bridge, report_normal_detected, &status);
->   	}
-> @@ -259,6 +269,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   	if (host->native_aer || pcie_ports_native) {
->   		pcie_clear_device_status(dev);
->   		pci_aer_clear_nonfatal_status(dev);
-> +		pci_aer_clear_fatal_status(dev);
+The address was verified as below:
 
-Above change looks unrelated to dumping the error info. It would be better if
-you move it to a separate patch.
+    $ cd /sys/bus/pci/drivers/i801_smbus/0000:00:1f.3
+    $ ls -d i2c-*
+    i2c-20
+    $ sudo modprobe i2c-dev
+    $ sudo i2cdetect 20
+    WARNING! This program can confuse your I2C bus, cause data loss and worse!
+    I will probe file /dev/i2c-20.
+    I will probe address range 0x08-0x77.
+    Continue? [Y/n] Y
+         0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+    00:                         08 -- -- -- -- -- -- --
+    10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    20: -- -- -- -- -- -- -- -- -- UU -- 2b -- -- -- --
+    30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    40: -- -- -- -- 44 -- -- -- -- -- -- -- -- -- -- --
+    50: UU -- 52 -- -- -- -- -- -- -- -- -- -- -- -- --
+    60: -- 61 -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    70: -- -- -- -- -- -- -- --
+    $ cat /proc/cmdline
+    BOOT_IMAGE=/vmlinuz-linux-cachyos-bore root=UUID=<redacted> rw loglevel=3 quiet dell_lis3lv02d.probe_i2c_addr=1
+    $ sudo dmesg
+    [    0.000000] Linux version 6.16.6-2-cachyos-bore (linux-cachyos-bore@cachyos) (gcc (GCC) 15.2.1 20250813, GNU ld (GNU Binutils) 2.45.0) #1 SMP PREEMPT_DYNAMIC Thu, 11 Sep 2025 16:01:12 +0000
+    […]
+    [    0.000000] DMI: Dell Inc. Latitude E6530/07Y85M, BIOS A22 11/30/2018
+    […]
+    [    5.166442] i2c i2c-20: Probing for lis3lv02d on address 0x29
+    [    5.167854] i2c i2c-20: Detected lis3lv02d on address 0x29, please report this upstream to platform-driver-x86@vger.kernel.org so that a quirk can be added
 
->   	}
->   
->   	pci_walk_bridge(bridge, pci_pm_runtime_put, NULL);
+Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
+---
+Add 0x29 as the accelerometer address for the Dell Latitude E6530 to
+lis3lv02d_devices[].
+---
+ drivers/platform/x86/dell/dell-lis3lv02d.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/platform/x86/dell/dell-lis3lv02d.c b/drivers/platform/x86/dell/dell-lis3lv02d.c
+index 732de5f556f83b4f91fbf174986331c02c2a5c79..77905a9ddde9dd5d44a3193d053fb3d4e319ceb8 100644
+--- a/drivers/platform/x86/dell/dell-lis3lv02d.c
++++ b/drivers/platform/x86/dell/dell-lis3lv02d.c
+@@ -48,6 +48,7 @@ static const struct dmi_system_id lis3lv02d_devices[] __initconst = {
+ 	DELL_LIS3LV02D_DMI_ENTRY("Latitude 5500",      0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6330",     0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6430",     0x29),
++	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6530",     0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Precision 3540",     0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Precision 3551",     0x29),
+ 	DELL_LIS3LV02D_DMI_ENTRY("Precision M6800",    0x29),
+
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250917-dell-lis3lv02d-latitude-e6530-7c389cca4893
+
+Best regards,
+-- 
+Nickolay Goppen <setotau@mainlining.org>
+
 
