@@ -1,373 +1,257 @@
-Return-Path: <linux-kernel+bounces-821085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88158B80583
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6F9B80574
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FB311C261E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA9C6243BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AC9332A42;
-	Wed, 17 Sep 2025 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="oiCeZZ6P"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEF3EAD7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F3F33AE90;
+	Wed, 17 Sep 2025 14:56:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE0D330D2A;
+	Wed, 17 Sep 2025 14:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758120983; cv=none; b=FV26RWbHSSOZ2AlF8jAu1P/TYoMi1XQBVltzBt9QT6bJG86ofHEzvDOIVtZd0kt4f1eVfY5eUIBTB8fWkNR62qpcXsuRAgtPcdLbCDPyBA/IuxUaWycBtDZY9CabpPRPeNRfJrjU1L6N/DPImKgvcHNJR/g/oHkZ2IdXRNSUie8=
+	t=1758120995; cv=none; b=Yvtt1VulOxLlHrTOfLGbtLIgxy7uw5rSoXXA0yQZ6yBE7d4Xgmy5ghRfj2Hag7ODsx8kIQ0TLE6DFkIwHOwnC8xytGSl8eJynswCg9pcx1Tf4inFmmp4qJjZQVa0HxsIjnGEB+90mKAXm5np1cmbmoQQ/AEh1GsmW8AVLYCJcG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758120983; c=relaxed/simple;
-	bh=gicOMBaesdNTccvEzddk/YN/oDXQeNuzFolMvo4isZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BYX5Cf+GNFN57TGlfn4xT9SyyGvHbUk3GGRyppGFeCumLAjYPsdhSweWAZnOcXkhD+p/lkb9WtraoAkKjp0uqZ4kwEROS86OKq/5ZjiwNH2eGrAQYMDLjL0PxnFvZ6qrGg8FNxdgxuL/2WfxY36yJlNZjKOTGqzejZpENVVpV7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=oiCeZZ6P; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso5986937b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1758120980; x=1758725780; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vGgjTNK+wdbeCWY6KMOb7s+5s0orqzod2SL7Bz5GX80=;
-        b=oiCeZZ6P3v1RY/DC/aT0/k64vHpcg+rmZ2WEzpger9u5LevHFgP87BPM/qEoqLJRCZ
-         RwPcvSWibYB9QJNIatvtrgO9JvgBpXrWlFGTws9S3N5pzMAjS6gvohm6UCK1ckqAhrCT
-         5oO6h2E793pbV82qF/AaVpIjwRJ2wf8qtP1O4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758120980; x=1758725780;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGgjTNK+wdbeCWY6KMOb7s+5s0orqzod2SL7Bz5GX80=;
-        b=NY49N6ZsCojGz6TrUG11r3swYAG4movuw3H1xHmKYBI7MC1bEeVxZMzMmn552wJMDH
-         tKWFRxJWi5a77z9rZMfXLDabd8ZF6vBhRtO4ig/rFCeRJg9tXWWXsCYZAGXIikQWu/FJ
-         NE+sSirwxBRwMIe1E4ajPhSIFaeTUpSW8Y5n/sJ6uzuSraVGyAYtMTW0GvWsGl/7YUcQ
-         jEu3DtZoeATig9V+jT18qwRzCDwS4tqfImPLHxwImLz8vYPQQL3P9PcqEW1dd8LDUp6B
-         GxqlVJ5bPjnwD0IFK30K3BLQZwznEfydAcpraLQu0mQgMNHecNDRrLHT40ujG/SFklgY
-         GdRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU91+M6EvSmwnMXnQj6RPvDT8PLHBqdz2eEkWoKjLxkBSBK45cRhJqmme6MR+zHS+s0446F8rpJEipszts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdKh5yjJiRWYqIByPTHPTFcsm6gjYUJmuCY5wmTD997iqgoDRg
-	e5FhexxcmdEm/lAnl24EQMW866jr4iO/eV4WRF1PTx1JE013Zw2Kge6jsjCkW4YGLto=
-X-Gm-Gg: ASbGncuIe65XP50buPDj7kSQIms/FVuU/Mxff9LhHznxfxuqS4Ey/wMks6mikk7teZY
-	LKfPI9fzIual6zO/Q92UoIqpq8BUIByc9BSA8ydX1LJHEtpx6lbuw9wrnPY1qeXsIvKdaWILox4
-	MJqrbiDcTEKtvIqTWBI9m8U27EKrxbc0/RFqeSKSEd+jCuyxtrwgISWxQY5+W+FFLZx2Nw5Nggm
-	zUAmFGLU4tVgJ17g2tzZ0awoL4t9zmUnGqJdBTerQjROXoPVGQdToPGfenGhKdntSBFoIAk/fJK
-	tWBSvMohFtC8f12518frqHHuGeLmK28AxwqDqqdBJACMEY05Y2MpCavMiJIlUuwWO+0Nw1cSWuk
-	6xTIeWZar7JWlr40fehcPV4l/da1uhqhbJ52i5HiXSXduQWPh7UbSbM7GA5rNGhzsXqk=
-X-Google-Smtp-Source: AGHT+IF38AXPY34Cdzv56BftkQZDZ9qSIcFh807nJJKWx6fVTWK3/9fTFBZvhx6xdeQWZibqjDWecQ==
-X-Received: by 2002:a05:6a00:986:b0:771:e4b0:4641 with SMTP id d2e1a72fcca58-77bf6dcfe59mr2978340b3a.1.1758120979976;
-        Wed, 17 Sep 2025 07:56:19 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([175.195.128.78])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607c49fe4sm19473921b3a.101.2025.09.17.07.56.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 07:56:18 -0700 (PDT)
-Date: Wed, 17 Sep 2025 23:56:13 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-Message-ID: <aMrMDd4kjxim0CkA@sidongui-MacBookPro.local>
-References: <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
- <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
- <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
- <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
- <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local>
- <CADUfDZppdnM2QAeX37OmZsXqd7sO7KvyLnNPUYOgLpWMb+FpoQ@mail.gmail.com>
- <aMRNSBHDM4nkewHO@sidongui-MacBookPro.local>
- <CADUfDZrHse9nDxfd0UDkxOEmVRg-b=KDEUZ9Hz08eojXJvgtng@mail.gmail.com>
- <aMVmm1Ydt4iOfxu5@sidongui-MacBookPro.local>
- <CADUfDZrULTJj99Bik3OhUEorMSnL5cWgJ-VqoHePZ6WWDoukTQ@mail.gmail.com>
+	s=arc-20240116; t=1758120995; c=relaxed/simple;
+	bh=zulPOX+mTVrJzGPMkGhEtoknSVygaW01iNtXdp3oCQ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OyikBeOtNxrNdSPfTaCumTNqXiVVd+wH93iF8k1J28HapU/BjPbXf5yTRlGdJqZXd5DSZU+kGTiHxrsP7f2Lw1FHJe/KATQA+6OI8WN19E0m6s5nGl0polrbmMBT3ib6fPaQo9tZLPsTpzukJCaKGEvxGxgh2kz68XYnHrmXWkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BCF3267F;
+	Wed, 17 Sep 2025 07:56:23 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 546EC3F66E;
+	Wed, 17 Sep 2025 07:56:28 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	anshuman.khandual@arm.com,
+	robh@kernel.org,
+	james.morse@arm.com,
+	mark.rutland@arm.com,
+	joey.gouly@arm.com,
+	Dave.Martin@arm.com,
+	ahmed.genidi@arm.com,
+	kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com,
+	mbenes@suse.cz,
+	james.clark@linaro.org,
+	frederic@kernel.org,
+	rafael@kernel.org,
+	pavel@kernel.org,
+	ryan.roberts@arm.com,
+	suzuki.poulose@arm.com,
+	maz@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v5 2/6] arm64: initialise SCTLR2_ELx register at boot time
+Date: Wed, 17 Sep 2025 15:56:14 +0100
+Message-Id: <20250917145618.1232329-3-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250917145618.1232329-1-yeoreum.yun@arm.com>
+References: <20250917145618.1232329-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZrULTJj99Bik3OhUEorMSnL5cWgJ-VqoHePZ6WWDoukTQ@mail.gmail.com>
 
-On Mon, Sep 15, 2025 at 09:54:50AM -0700, Caleb Sander Mateos wrote:
-> On Sat, Sep 13, 2025 at 5:42 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > On Fri, Sep 12, 2025 at 10:56:31AM -0700, Caleb Sander Mateos wrote:
-> > > On Fri, Sep 12, 2025 at 9:42 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > >
-> > > > On Tue, Sep 09, 2025 at 09:32:37AM -0700, Caleb Sander Mateos wrote:
-> > > > > On Tue, Sep 9, 2025 at 7:43 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > > > >
-> > > > > > On Mon, Sep 08, 2025 at 12:45:58PM -0700, Caleb Sander Mateos wrote:
-> > > > > > > On Sat, Sep 6, 2025 at 7:28 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
-> > > > > > > > > On Tue, Sep 2, 2025 at 3:23 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
-> > > > > > > > > > > On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > The pdu field in io_uring_cmd may contain stale data when a request
-> > > > > > > > > > > > object is recycled from the slab cache. Accessing uninitialized or
-> > > > > > > > > > > > garbage memory can lead to undefined behavior in users of the pdu.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
-> > > > > > > > > > > > each command starts from a well-defined state. This avoids exposing
-> > > > > > > > > > > > uninitialized memory and prevents potential misinterpretation of data
-> > > > > > > > > > > > from previous requests.
-> > > > > > > > > > > >
-> > > > > > > > > > > > No functional change is intended other than guaranteeing that pdu is
-> > > > > > > > > > > > always zero-initialized before use.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > > > > > > > > > ---
-> > > > > > > > > > > >  io_uring/uring_cmd.c | 1 +
-> > > > > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > > > > >
-> > > > > > > > > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > > > > > > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > > > > > > > > > --- a/io_uring/uring_cmd.c
-> > > > > > > > > > > > +++ b/io_uring/uring_cmd.c
-> > > > > > > > > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> > > > > > > > > > > >         if (!ac)
-> > > > > > > > > > > >                 return -ENOMEM;
-> > > > > > > > > > > >         ioucmd->sqe = sqe;
-> > > > > > > > > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > > > > > > > > > >
-> > > > > > > > > > > Adding this overhead to every existing uring_cmd() implementation is
-> > > > > > > > > > > unfortunate. Could we instead track the initialized/uninitialized
-> > > > > > > > > > > state by using different types on the Rust side? The io_uring_cmd
-> > > > > > > > > > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
-> > > > > > > > > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
-> > > > > > > > > > > PDU has been initialized.
-> > > > > > > > > >
-> > > > > > > > > > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
-> > > > > > > > > > the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
-> > > > > > > > > > But I don't know that we could call T::default() in miscdevice. If we
-> > > > > > > > > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
-> > > > > > > > > >
-> > > > > > > > > > How about assign a byte in pdu for checking initialized? In uring_cmd(),
-> > > > > > > > > > We could set a byte flag that it's not initialized. And we could return
-> > > > > > > > > > error that it's not initialized in read_pdu().
-> > > > > > > > >
-> > > > > > > > > Could we do the zero-initialization (or T::default()) in
-> > > > > > > > > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
-> > > > > > > > > isn't set (i.e. on the initial issue)? That way, we avoid any
-> > > > > > > > > performance penalty for the existing C uring_cmd() implementations.
-> > > > > > > > > I'm not quite sure what you mean by "assign a byte in pdu for checking
-> > > > > > > > > initialized".
-> > > > > > > >
-> > > > > > > > Sure, we could fill zero when it's the first time uring_cmd called with
-> > > > > > > > checking the flag. I would remove this commit for next version. I also
-> > > > > > > > suggests that we would provide the method that read_pdu() and write_pdu().
-> > > > > > > > In read_pdu() I want to check write_pdu() is called before. So along the
-> > > > > > > > 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
-> > > > > > > > initialized?
-> > > > > > >
-> > > > > > > Not sure what you mean about "20 bytes for pdu".
-> > > > > > > It seems like it would be preferable to enforce that write_pdu() has
-> > > > > > > been called before read_pdu() using the Rust type system instead of a
-> > > > > > > runtime check. I was thinking a signature like fn write_pdu(cmd:
-> > > > > > > IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
-> > > > > > > reason that wouldn't work and a runtime check would be necessary?
-> > > > > >
-> > > > > > I didn't think about make write_pdu() to return IoUringCmdPdu<T> before.
-> > > > > > I think it's good way to pdu is safe without adding a new generic param for
-> > > > > > MiscDevice. write_pdu() would return IoUringCmdPdu<T> and it could call
-> > > > > > IoUringCmdPdu<T>::pdu(&mut self) -> &mut T safely maybe.
-> > > > >
-> > > > > Yes, that's what I was thinking.
-> > > >
-> > > > Good, I'll change api in this way. Thanks!
-> > > >
-> > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > >
-> > > > > > > > But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> and
-> > > > > > > > issue_flags. How about some additional field for pdu is initialized like below?
-> > > > > > > >
-> > > > > > > > struct IoUringCmdArgs {
-> > > > > > > >   ioucmd: Pin<&mut IoUringCmd>,
-> > > > > > > >   issue_flags: u32,
-> > > > > > > >   pdu_initialized: bool,
-> > > > > > > > }
-> > > > > > >
-> > > > > > > One other thing I realized is that issue_flags should come from the
-> > > > > > > *current* context rather than the context the uring_cmd() callback was
-> > > > > > > called in. For example, if io_uring_cmd_done() is called from task
-> > > > > > > work context, issue_flags should match the issue_flags passed to the
-> > > > > > > io_uring_cmd_tw_t callback, not the issue_flags originally passed to
-> > > > > > > the uring_cmd() callback. So it probably makes more sense to decouple
-> > > > > > > issue_flags from the (owned) IoUringCmd. I think you could pass it by
-> > > > > > > reference (&IssueFlags) or with a phantom reference lifetime
-> > > > > > > (IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
-> > > > > > > ensure it can't be used after those callbacks have returned.
-> > > > > >
-> > > > > > I have had no idea about task work context. I agree with you that
-> > > > > > it would be better to separate issue_flags from IoUringCmd. So,
-> > > > > > IoUringCmdArgs would have a only field Pin<&mut IoUringCmd>?
-> > > > >
-> > > > > "Task work" is a mechanism io_uring uses to queue work to run on the
-> > > > > thread that submitted an io_uring operation. It's basically a
-> > > > > per-thread atomic queue of callbacks that the thread will process
-> > > > > whenever it returns from the kernel to userspace (after a syscall or
-> > > > > an interrupt). This is the context where asynchronous uring_cmd
-> > > > > completions are generally processed (see
-> > > > > io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy()). I
-> > > > > can't speak to the history of why io_uring uses task work, but my
-> > > > > guess would be that it provides a safe context to acquire the
-> > > > > io_ring_ctx uring_lock mutex (e.g. nvme_uring_cmd_end_io() can be
-> > > > > called from an interrupt handler, so it's not allowed to take a
-> > > > > mutex). Processing all the task work at once also provides natural
-> > > > > opportunities for batching.
-> > > >
-> > > > Thanks, I've checked io_uring_cmd_complete_in_task() that it receives
-> > > > callback that has issue_flags different with io_uring_cmd(). I'll try to add
-> > > > a api that wrapping io_uring_cmd_complete_in_task() for next version.
-> > > >
-> > > > >
-> > > > > Yes, we probably don't need to bundle anything else with the
-> > > > > IoUringCmd after all. As I mentioned earlier, I don't think Pin<&mut
-> > > > > IoUringCmd> will work for uring_cmds that complete asynchronously, as
-> > > > > they will need to outlive the uring_cmd() call. So uring_cmd() needs
-> > > > > to transfer ownership of the struct io_uring_cmd.
-> > > >
-> > > > I can't think that how to take ownership of struct io_uring_cmd. The
-> > > > struct allocated with io_alloc_req() and should be freed with io_free_req().
-> > > > If taking ownership means having pointer of struct io_uring_cmd, I think
-> > > > it's no difference with current version. Also could it be called with
-> > > > mem::forget() if it has ownership?
-> > >
-> > > I don't mean ownership of the io_uring_cmd allocation; that's the
-> > > responsibility of the io_uring layer. But once the io_uring_cmd is
-> > > handed to the uring_cmd() implementation, it belongs to that layer
-> > > until it completes the command back to io_uring. Maybe a better way to
-> > > describe it would be as ownership of the "executing io_uring_cmd". The
-> > > problem with Pin<&mut IoUringCmd> is that it is a borrowed reference
-> > > to the io_uring_cmd, so it can't outlive the uring_cmd() callback.
-> > > Yes, it's possible to leak the io_uring_cmd by never calling
-> > > io_uring_cmd_done() to return it to the io_uring layer.
-> >
-> > Thanks, I understood that IoUringCmd could be outlive uring_cmd callback.
-> > But it's sad that it could be leaked without any unsafe code.
-> 
-> Safety in Rust doesn't require destructors to run, which means any
-> resource can be safely leaked
-> (https://faultlore.com/blah/everyone-poops/ has some historical
-> background on why Rust decided leaks had to be considered safe).
-> Leaking an io_uring_cmd is analogous to leaking a Box, both are
-> perfectly possible in safe Rust.
+The value of the SCTLR2_ELx register is UNKNOWN after reset.
+If the firmware initializes these registers properly, no additional
+initialization is required.
+However, in cases where they are not initialized correctly,
+initialize the SCTLR2_ELx registers during CPU/vCPU boot
+to prevent unexpected system behavior caused by invalid values.
 
-Thanks for the reference. If driver just drops `IoUringCmd` without taking,
-the request wouldn't be completed until io-uring instance deinitialized.
-I understood that we cannot handle this.
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+---
+ arch/arm64/include/asm/assembler.h   | 15 +++++++++++++++
+ arch/arm64/include/asm/el2_setup.h   |  7 +++++++
+ arch/arm64/include/asm/sysreg.h      |  5 +++++
+ arch/arm64/kernel/head.S             |  5 +++++
+ arch/arm64/kernel/hyp-stub.S         | 13 +++++++++++++
+ arch/arm64/kvm/hyp/nvhe/psci-relay.c |  3 +++
+ 6 files changed, 48 insertions(+)
 
-> 
-> >
-> > >
-> > > I would imagine something like this:
-> > >
-> > > #[derive(Clone, Copy)]
-> > > struct IssueFlags<'a>(c_uint, PhantomData<&'a ()>);
-> > >
-> > > // Indicates ownership of the io_uring_cmd between uring_cmd() and
-> > > io_uring_cmd_done()
-> > > struct IoUringCmd(NonNull<bindings::io_uring_cmd>);
-> > >
-> > > impl IoUringCmd {
-> > >         // ...
-> > >
-> > >         fn done(self, ret: i32, res2: u64, issue_flags: IssueFlags<'_>) {
-> > >                 let cmd = self.0.as_ptr();
-> > >                 let issue_flags = issue_flags.0;
-> > >                 unsafe {
-> > >                         bindings::io_uring_cmd_done(cmd, ret, res2, issue_flags)
-> > >                 }
-> > >         }
-> > > }
-> > >
-> > > // Can choose whether to complete the command synchronously or asynchronously.
-> > > // If take_async() is called, IoUringCmd::done() needs to be called to
-> > > complete the command.
-> > > // If take_async() isn't called, the command is completed synchronously
-> > > // with the return value from MiscDevice::uring_cmd().
-> > > struct UringCmdInput<'a>(&mut Option<NonNull<bindings::io_uring_cmd>>);
-> >
-> > Thanks for a detailed example!
-> >
-> > But rather than this, We could introduce new return type that has a callback that
-> > user could take IoUringCmd instead of returning -EIOCBQUEUED.
-> 
-> I'm not following what you're suggesting, maybe a code sample would help?
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 23be85d93348..c25c2aed5125 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -738,6 +738,21 @@ alternative_endif
+ 	set_sctlr sctlr_el2, \reg
+ .endm
+ 
++/* Set SCTLR2_ELx to the @reg value. */
++.macro set_sctlr2_elx, el, reg, tmp
++	mrs_s	\tmp, SYS_ID_AA64MMFR3_EL1
++	ubfx	\tmp, \tmp, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
++	cbz	\tmp, .Lskip_sctlr2_\@
++	.if	\el == 2
++	msr_s	SYS_SCTLR2_EL2, \reg
++	.elseif	\el == 12
++	msr_s	SYS_SCTLR2_EL12, \reg
++	.else
++	msr_s	SYS_SCTLR2_EL1, \reg
++	.endif
++.Lskip_sctlr2_\@:
++.endm
++
+ 	/*
+ 	 * Check whether asm code should yield as soon as it is able. This is
+ 	 * the case if we are currently running in task context, and the
+diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+index d9529dfc4783..2addf7c096fc 100644
+--- a/arch/arm64/include/asm/el2_setup.h
++++ b/arch/arm64/include/asm/el2_setup.h
+@@ -48,6 +48,12 @@
+ 	isb
+ .endm
+ 
++.macro __init_sctlr2_el2
++	mov_q	x0, INIT_SCTLR2_EL2
++	set_sctlr2_elx	2, x0, x1
++	isb
++.endm
++
+ .macro __init_el2_hcrx
+ 	mrs	x0, id_aa64mmfr1_el1
+ 	ubfx	x0, x0, #ID_AA64MMFR1_EL1_HCX_SHIFT, #4
+@@ -411,6 +417,7 @@
+  */
+ .macro init_el2_state
+ 	__init_el2_sctlr
++	__init_sctlr2_el2
+ 	__init_el2_hcrx
+ 	__init_el2_timers
+ 	__init_el2_debug
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 6604fd6f33f4..8cf489d38724 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -868,6 +868,8 @@
+ #define INIT_SCTLR_EL2_MMU_OFF \
+ 	(SCTLR_EL2_RES1 | ENDIAN_SET_EL2)
+ 
++#define INIT_SCTLR2_EL2			UL(0)
++
+ /* SCTLR_EL1 specific flags. */
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+ #define ENDIAN_SET_EL1		(SCTLR_EL1_E0E | SCTLR_ELx_EE)
+@@ -888,6 +890,8 @@
+ 	 SCTLR_EL1_LSMAOE | SCTLR_EL1_nTLSMD | SCTLR_EL1_EIS   | \
+ 	 SCTLR_EL1_TSCXT  | SCTLR_EL1_EOS)
+ 
++#define INIT_SCTLR2_EL1			UL(0)
++
+ /* MAIR_ELx memory attributes (used by Linux) */
+ #define MAIR_ATTR_DEVICE_nGnRnE		UL(0x00)
+ #define MAIR_ATTR_DEVICE_nGnRE		UL(0x04)
+@@ -1161,6 +1165,7 @@
+ 	msr	hcr_el2, \reg
+ #endif
+ 	.endm
++
+ #else
+ 
+ #include <linux/bitfield.h>
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index ca04b338cb0d..e42664246e15 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -276,6 +276,8 @@ SYM_INNER_LABEL(init_el1, SYM_L_LOCAL)
+ 	mov_q	x0, INIT_SCTLR_EL1_MMU_OFF
+ 	pre_disable_mmu_workaround
+ 	msr	sctlr_el1, x0
++	mov_q	x0, INIT_SCTLR2_EL1
++	set_sctlr2_elx	1, x0, x1
+ 	isb
+ 	mov_q	x0, INIT_PSTATE_EL1
+ 	msr	spsr_el1, x0
+@@ -308,6 +310,7 @@ SYM_INNER_LABEL(init_el2, SYM_L_LOCAL)
+ 	isb
+ 
+ 	mov_q	x1, INIT_SCTLR_EL1_MMU_OFF
++	mov_q	x2, INIT_SCTLR2_EL1
+ 
+ 	mrs	x0, hcr_el2
+ 	and	x0, x0, #HCR_E2H
+@@ -315,11 +318,13 @@ SYM_INNER_LABEL(init_el2, SYM_L_LOCAL)
+ 
+ 	/* Set a sane SCTLR_EL1, the VHE way */
+ 	msr_s	SYS_SCTLR_EL12, x1
++	set_sctlr2_elx	12, x2, x0
+ 	mov	x2, #BOOT_CPU_FLAG_E2H
+ 	b	3f
+ 
+ 2:
+ 	msr	sctlr_el1, x1
++	set_sctlr2_elx	1, x2, x0
+ 	mov	x2, xzr
+ 3:
+ 	mov	x0, #INIT_PSTATE_EL1
+diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
+index 36e2d26b54f5..7a59725fdbb6 100644
+--- a/arch/arm64/kernel/hyp-stub.S
++++ b/arch/arm64/kernel/hyp-stub.S
+@@ -178,6 +178,19 @@ SYM_CODE_START_LOCAL(enter_vhe)
+ 	mov_q	x0, INIT_SCTLR_EL1_MMU_OFF
+ 	msr_s	SYS_SCTLR_EL12, x0
+ 
++	mrs_s	x0, SYS_ID_AA64MMFR3_EL1
++	ubfx	x0, x0, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
++	cbz	x0, .Lskip_sctlr2
++
++	// setup SCTLR2_EL2 from EL1
++	mrs_s	x0, SYS_SCTLR2_EL12
++	msr_s	SYS_SCTLR2_EL1, x0
++
++	// clean SCTLR2_EL1
++	mov_q	x0, INIT_SCTLR2_EL1
++	msr_s	SYS_SCTLR2_EL12, x0
++
++.Lskip_sctlr2:
+ 	mov	x0, xzr
+ 
+ 	eret
+diff --git a/arch/arm64/kvm/hyp/nvhe/psci-relay.c b/arch/arm64/kvm/hyp/nvhe/psci-relay.c
+index c3e196fb8b18..df1180cad7f8 100644
+--- a/arch/arm64/kvm/hyp/nvhe/psci-relay.c
++++ b/arch/arm64/kvm/hyp/nvhe/psci-relay.c
+@@ -4,6 +4,7 @@
+  * Author: David Brazdil <dbrazdil@google.com>
+  */
+ 
++#include <asm/cpufeature.h>
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_hyp.h>
+ #include <asm/kvm_mmu.h>
+@@ -219,6 +220,8 @@ asmlinkage void __noreturn __kvm_host_psci_cpu_entry(bool is_cpu_on)
+ 		release_boot_args(boot_args);
+ 
+ 	write_sysreg_el1(INIT_SCTLR_EL1_MMU_OFF, SYS_SCTLR);
++	if (cpus_have_final_cap(ARM64_HAS_SCTLR2))
++		write_sysreg_el1(INIT_SCTLR2_EL1, SYS_SCTLR2);
+ 	write_sysreg(INIT_PSTATE_EL1, SPSR_EL2);
+ 
+ 	__host_enter(host_ctxt);
+-- 
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
-maybe like below...
-
-#[vtable]
-pub trait MiscDevice: Sized {
-    /// ...
-
-    /// If user returns `EIOCBQUEUED`, this function would be called for
-    /// users who want to take `IoUringCmdAsync`. It could call `done()` for complete
-    /// request.
-    fn uring_cmd_async_prep(
-          device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-          io_uring_cmd_async: IoUringCmdAsync);
-    /// ...
-}
-
-impl<T: MiscDevice> MiscdeviceVTable<T> {
-    // ...
-    unsafe extern "C" fn uring_cmd(
-          ioucmd: *mut bindings::io_uring_cmd,
-          issue_flags: ffi::c_uint,
-      ) -> c_int {
-          // ...
-          let result = T::uring_cmd(device, ioucmd, issue_flags);
-
-          if let Err(EIOCBQUEUED) = result {
-              T::uring_cmd_async_prep(device, ioucmd.to_async());
-          }
-
-          from_result(|| result)
-      }
-}
-> 
-> >
-> > But I prefer that we provide just one type IoUringCmd without UringCmdInput.
-> > Although UringCmdInput, user could call done() in uring_cmd callback and
-> > it makes confusion that whether task_async() called and returning -EIOCBQUEUED
-> > is mismatched that returns -EINVAL. We don't need to make it complex.
-> 
-> Sure, if you only want to support asynchronous io_uring_cmd
-> completions, than you can just pass IoUringCmd to
-> MiscDevice::uring_cmd() and require it to call IoUringCmd::done() to
-> complete the command. There's a small performance overhead to that
-> over just returning the result from the uring_cmd() callback for
-> synchronous completions (and it's more verbose), but I think that
-> would be fine for an initial implementation.
-
-I appreciate for your understanding. I think it would be good to have just one
-simple struct `IoUringCmd`. I'll make next version patch soon.
-
-Thanks,
-Sidong
-
-> 
-> Best,
-> Caleb
 
