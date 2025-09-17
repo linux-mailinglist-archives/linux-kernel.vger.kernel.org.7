@@ -1,173 +1,194 @@
-Return-Path: <linux-kernel+bounces-820565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9723AB7CE85
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:13:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAC8B7CF2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99C917AACAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC331B279A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDCE302774;
-	Wed, 17 Sep 2025 11:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1476536C077;
+	Wed, 17 Sep 2025 11:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SV9r/9JX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="J7W0TKO9"
+Received: from pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.34.181.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4442ABA45;
-	Wed, 17 Sep 2025 11:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F862EB5D5;
+	Wed, 17 Sep 2025 11:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.34.181.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758108973; cv=none; b=ePy+pEhd5XZ5+sTqsJxqu0AY7qYpUNQYitxDHX52WbzpR3vbhuIkJEwwEWHPGNUul7bu7MOK1PqZVsu4mQO13rJcl0QYmqITDNKj5eOsDVeWzlrXZ4EIY2BaIBgnfZtTRgp4ZsyOH0ZSBNRu1Jn6bzkRWL3YzFzBP9BxhIpx5KA=
+	t=1758108996; cv=none; b=iqT5kqZylJcWoHiS2bCZFNIHVpo9ucUIx6HT2Zer0Wm74SlAFEEphFn+2kMyQE7Oe88HZE0Nz6x5wtPJj7KEAselwLwjUq5A62z7PUbHSLy6Tu8B1xiV/NJ8pZtD5s8IiVEGwQ02CO2y4nxUf8519ElzmKupCTZx4oMFNvFuB2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758108973; c=relaxed/simple;
-	bh=NwEiTfpgf+XTMOx0qaKYlHuyF0sM6sOxEUWxLoQPSSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TP3nEXtujmTD1SwPp9hEKi+CqIVCbIiMOnrXRKQbd5rf8urRsuRrT99rbK1J4p9d5vXMrV4r4OYsTcFh8hofe+sylj8HjejWp4Cekz90cMxuRRNMPfavmsvx6av38qXtMWzJknTiBT5KW23sQrrE3S5AJaOlVsbAb2eNORSEvqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SV9r/9JX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2138C4CEF0;
-	Wed, 17 Sep 2025 11:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758108972;
-	bh=NwEiTfpgf+XTMOx0qaKYlHuyF0sM6sOxEUWxLoQPSSA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=SV9r/9JXKIcmnOEZMb51WiDXHCOhHj+aXNaj2OPTpFJO2xs+tVmBeZ13GVmBJG4HY
-	 pYOPZQcL5ByXlhy9Ck3vCF3DjE6HbEDubm1VfpGdaHn/7P/bYRPm0y2m5oy+HwuO3w
-	 suJ0Pfc2QadTM0xkTUuji1xz5ThlJelyR8rjnQu9vhCYeHSPKwiG17nCVR2VUFxUNj
-	 omw1y/kq02xlQyU5VECjXEGwaG/XdwXYya9npYizCi6k8DJ6mKUAOuipL5Dnn4QuUV
-	 Ts7drRnN0RtxIG6icTkn/3hWdKGyjJiESLomoQEK+xiT9nt3ZvJgEvRxYT2wB6b6Dp
-	 jgq2ng2Rv6cwA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2222ECE0836; Wed, 17 Sep 2025 04:36:12 -0700 (PDT)
-Date: Wed, 17 Sep 2025 04:36:12 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Harry Yoo <harry.yoo@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	maple-tree@lists.infradead.org
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching
- kfree_rcu() operations
-Message-ID: <8e7055a9-f899-4aad-8ed7-6543077c05d1@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
- <aMpxnACqmsQl-lp0@hyeyoo>
- <bbda8c25-b575-4e98-b1ae-b103c6598d38@suse.cz>
+	s=arc-20240116; t=1758108996; c=relaxed/simple;
+	bh=wRXgDn7HywfAgrTjrDN0yqYd57MJsiJj40hGha2SdgA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEAUdPxDYuK7SJxoaxPVR9+musAETjQpNd9JyzeCdXBBAh89pNl3C4YDyr1eRnNtmkmmiAUWBddrLiTilLOgOp8sfVAc+sCrhVajzinpsItiZbuJ1UZo6CAkocuUrDy/L5SUT0L/jg2MqfOf0GGl84zQUcYEUbCGR3YuFMpw+X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=J7W0TKO9; arc=none smtp.client-ip=52.34.181.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1758108994; x=1789644994;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dWbPeUw7wRMdj3193lZI9i/Wb7Z9FK8CyLLo3CIDTyU=;
+  b=J7W0TKO9JJbtwzA/KDWqDK0oSH7h8b6rDkysJ29/nwBk/k/r5pNoat1e
+   7MIiLQxSt4djiCdB9ZXVTEfCVT6GV1QaHwF69P/zrLnAKU937F2TGSIPy
+   FKtHtrBvzqiwJnE05uBWJHorC+8PrZmvjeUKgWsmpQDuHaCYYS/MP9lTI
+   z1ooHGTk8EXOVg4wn9qcnDVcmnRq8yFaOX/9KoODiwI9yeJIt7s4ujdOe
+   QPBzne+lkpuM+OJc9n/KoDi/xPO3EvkZU5ITE2d0I8mnAqqMl9OFPEGz6
+   e9FqmhhCKM8KbbV1sucbMrU1Jd5gEVWCdW1r9uLN5LkFCHb0cgUwmkgqv
+   g==;
+X-CSE-ConnectionGUID: 3Vojkt4tS96bxJte7xtpaw==
+X-CSE-MsgGUID: OVp1OPtcR5+yogFIzkg6NQ==
+X-IronPort-AV: E=Sophos;i="6.18,263,1751241600"; 
+   d="scan'208";a="3150228"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 11:36:32 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:33744]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.9.60:2525] with esmtp (Farcaster)
+ id 7ed5f850-98bb-4f32-9e4d-0ddd3fe41eee; Wed, 17 Sep 2025 11:36:31 +0000 (UTC)
+X-Farcaster-Flow-ID: 7ed5f850-98bb-4f32-9e4d-0ddd3fe41eee
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 17 Sep 2025 11:36:31 +0000
+Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
+ (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Wed, 17 Sep 2025
+ 11:36:30 +0000
+Date: Wed, 17 Sep 2025 11:36:27 +0000
+From: Jakub Acs <acsjakub@amazon.de>
+To: Amir Goldstein <amir73il@gmail.com>
+CC: Jan Kara <jack@suse.cz>, <linux-unionfs@vger.kernel.org>, Miklos Szeredi
+	<miklos@szeredi.hu>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <20250917113627.GA51799@dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+ <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+ <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
+ <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
+ <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <bbda8c25-b575-4e98-b1ae-b103c6598d38@suse.cz>
+In-Reply-To: <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-ClientProxiedBy: EX19D033UWA001.ant.amazon.com (10.13.139.103) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Wed, Sep 17, 2025 at 11:55:10AM +0200, Vlastimil Babka wrote:
-> On 9/17/25 10:30, Harry Yoo wrote:
-> > On Wed, Sep 10, 2025 at 10:01:06AM +0200, Vlastimil Babka wrote:
-> >> +/* needed for kvfree_rcu_barrier() */
-> >> +void flush_all_rcu_sheaves()
-> >> +{
-> >> +	struct slub_percpu_sheaves *pcs;
-> >> +	struct slub_flush_work *sfw;
-> >> +	struct kmem_cache *s;
-> >> +	bool flushed = false;
-> >> +	unsigned int cpu;
-> >> +
-> >> +	cpus_read_lock();
-> >> +	mutex_lock(&slab_mutex);
-> >> +
-> >> +	list_for_each_entry(s, &slab_caches, list) {
-> >> +		if (!s->cpu_sheaves)
-> >> +			continue;
-> >> +
-> >> +		mutex_lock(&flush_lock);
-> >> +
-> >> +		for_each_online_cpu(cpu) {
-> >> +			sfw = &per_cpu(slub_flush, cpu);
-> >> +			pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
-> >> +
-> >> +			if (!pcs->rcu_free || !pcs->rcu_free->size) {
-> > 
-> > Is the compiler allowed to compile this to read pcs->rcu_free twice?
-> > Something like:
-> > 
-> > flush_all_rcu_sheaves()			__kfree_rcu_sheaf()
-> > 
-> > pcs->rcu_free != NULL
-> > 					pcs->rcu_free = NULL
-> > pcs->rcu_free == NULL
-> > /* NULL-pointer-deref */
-> > pcs->rcu_free->size
+On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
+> Might something naive as this be enough?
 > 
-> Good point, I'll remove the size check and simply pcs->rcu_free non-null
-> means we flush.
+> Thanks,
+> Amir.
 > 
-> >> +				sfw->skip = true;
-> >> +				continue;
-> >> +			}
-> >>
-> >> +			INIT_WORK(&sfw->work, flush_rcu_sheaf);
-> >> +			sfw->skip = false;
-> >> +			sfw->s = s;
-> >> +			queue_work_on(cpu, flushwq, &sfw->work);
-> >> +			flushed = true;
-> >> +		}
-> >> +
-> >> +		for_each_online_cpu(cpu) {
-> >> +			sfw = &per_cpu(slub_flush, cpu);
-> >> +			if (sfw->skip)
-> >> +				continue;
-> >> +			flush_work(&sfw->work);
-> >> +		}
-> >> +
-> >> +		mutex_unlock(&flush_lock);
-> >> +	}
-> >> +
-> >> +	mutex_unlock(&slab_mutex);
-> >> +	cpus_read_unlock();
-> >> +
-> >> +	if (flushed)
-> >> +		rcu_barrier();
-> > 
-> > I think we need to call rcu_barrier() even if flushed == false?
-> > 
-> > Maybe a kvfree_rcu()'d object was already waiting for the rcu callback to
-> > be processed before flush_all_rcu_sheaves() is called, and
-> > in flush_all_rcu_sheaves() we skipped all (cache, cpu) pairs,
-> > so flushed == false but the rcu callback isn't processed yet
-> > by the end of the function?
-> > 
-> > That sounds like a very unlikely to happen in a realistic scenario,
-> > but still possible...
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 60046ae23d514..8c9d0d6bb0045 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
 > 
-> Yes also good point, will flush unconditionally.
+>         if (root_inode) {
+>                 res = d_alloc_anon(root_inode->i_sb);
+> -               if (res)
+> +               if (res) {
+> +                       root_inode->i_opflags |= IOP_ROOT;
+>                         d_instantiate(res, root_inode);
+> -               else
+> +               } else {
+>                         iput(root_inode);
+> +               }
+>         }
+>         return res;
+>  }
+> diff --git a/fs/gfs2/export.c b/fs/gfs2/export.c
+> index 3334c394ce9cb..809a09c6a89e0 100644
+> --- a/fs/gfs2/export.c
+> +++ b/fs/gfs2/export.c
+> @@ -46,7 +46,7 @@ static int gfs2_encode_fh(struct inode *inode, __u32
+> *p, int *len,
+>         fh[3] = cpu_to_be32(ip->i_no_addr & 0xFFFFFFFF);
+>         *len = GFS2_SMALL_FH_SIZE;
 > 
-> Maybe in __kfree_rcu_sheaf() I should also move the call_rcu(...) before
-> local_unlock(). So we don't end up seeing a NULL pcs->rcu_free in
-> flush_all_rcu_sheaves() because __kfree_rcu_sheaf() already set it to NULL,
-> but didn't yet do the call_rcu() as it got preempted after local_unlock().
+> -       if (!parent || inode == d_inode(sb->s_root))
+> +       if (!parent || is_root_inode(inode))
+>                 return *len;
 > 
-> But then rcu_barrier() itself probably won't mean we make sure such cpus
-> finished the local_locked section, if we didn't queue work on them. So maybe
-> we need synchronize_rcu()?
+>         ip = GFS2_I(parent);
+> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> index 83f80fdb15674..7827c63354ad5 100644
+> --- a/fs/overlayfs/export.c
+> +++ b/fs/overlayfs/export.c
+> @@ -199,7 +199,7 @@ static int ovl_check_encode_origin(struct inode *inode)
+>          * Root is never indexed, so if there's an upper layer, encode upper for
+>          * root.
+>          */
+> -       if (inode == d_inode(inode->i_sb->s_root))
+> +       if (is_root_inode(inode))
+>                 return 0;
+> 
+>         /*
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ec867f112fd5f..ed84379aa06ca 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -665,6 +665,7 @@ is_uncached_acl(struct posix_acl *acl)
+>  #define IOP_DEFAULT_READLINK   0x0010
+>  #define IOP_MGTIME     0x0020
+>  #define IOP_CACHED_LINK        0x0040
+> +#define IOP_ROOT       0x0080
+>   /*
+>   * Keep mostly read-only and often accessed (especially for
+> @@ -2713,6 +2714,11 @@ static inline bool is_mgtime(const struct inode *inode)
+>         return inode->i_opflags & IOP_MGTIME;
+>  }
+> 
+> +static inline bool is_root_inode(const struct inode *inode)
+> +{
+> +       return inode->i_opflags & IOP_ROOT;
+> +}
+> +
+>  extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+>         int flags, const char *dev_name, void *data,
+>         int (*fill_super)(struct super_block *, void *, int));
+> 
 
-Do you need both rcu_barrier() and synchronize_rcu(), maybe along with
-kvfree_rcu_barrier() as well?  It would not be hard to make such a thing,
-using workqueues or some such.  Not sure what the API should look like,
-especially should people want other RCU flavors to get into the act
-as well.
+This would prevent the null-ptr-deref, but the encoding procedure would
+continue (for non-root inode), potentially reaching other code paths
+that assume fs is still mounted - could that maybe be a problem?
 
-							Thanx, Paul
+I had considered similar direction initially, too, but then decided I'm
+unable to verify the paths and that it's safer to just fail if we detect
+no root (or cannot take the lock).
+
+Am I thinking wrong?
+
+Jakub
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
