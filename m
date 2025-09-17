@@ -1,166 +1,595 @@
-Return-Path: <linux-kernel+bounces-820810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36421B7F4A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:29:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C7FB7F4E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF7A84E312E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:29:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61AC37B18E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D82301712;
-	Wed, 17 Sep 2025 13:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F2930CB31;
+	Wed, 17 Sep 2025 13:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QKP72mg9"
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vcCKxUV2"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FF72FBDE4
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F7520B22
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115779; cv=none; b=oTAEdCd6fIk7igr4wglHy0RD6vLU+PCAzroNehPyRym+2QOAoNfvzx06RtNzYlZY5qNo7v1j/fUQmbMeAuPfCt9JNSCdsJ7XV92l/ba0qoP0LLkECpz5hEDCpiwDyfn7AgEB/GSwUrTFFAnrKqNEhNr9F+UQUXc87VnqAcVBAVQ=
+	t=1758115827; cv=none; b=MRGkKuPrcnFyFaNLLWfD6cjJQSCuDlodYSt1keSBUA+7SBUXxuaZAablfL5I2JHF2Jho14ne9UvLqQ81D7J7F9zOQgSZCcPl/ueN7kV25EwaKU783UwUpOaKWJhV4kFurczxrzwewOpnTzo5aRheG8EBNiYrXtcX4LkPZzoMzBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115779; c=relaxed/simple;
-	bh=uW36CxPbpgNkRbAVrNYq1uP+W+fshOEviFJG8atk5HY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s2Ete0mLLt8fRsYxqaJ8S0/iaGAAjgrn1CP1puGn/Yfjw3cxiB9JJs9d1wYqOzXSzghaJ+Pt6pJlIDh7/r+khgYBMgvYNIA5tVG1xEoNrqAL55fx7e99pGnk7nYzS1NTzm0YbF0mL2DZhKUqQ7qGAGZPPT3GU5y6Bj3AHVD5MEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QKP72mg9; arc=none smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-632846547cfso1321997d50.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758115776; x=1758720576; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjnKuNKA4ji6kMyGHxtwUN6WBWnj7945LQCwoquyyQo=;
-        b=QKP72mg9NETDbPyeuuJGP/MMuclTloXJMARWueksLytqigwlfpjbBWEoXh1OVyAulL
-         ne7pZpPLq0dOUsLskgLx2GOcdjMNBWmb86G4cJgzz7eShI3rvGvqp0voimYaV9Z5S+80
-         WaiYwN2HyE6InLr23R9CVuLWzqEC9ONgkbgXxJRJKe7Ky4zgHSCs2H9nnaOpmJDcJUkH
-         GFslVvZnLuqLDOB87GaUJolG7MNLD8MzJpToLeNUjEYlbgHymzuB43apGDMdrt8/WQ0C
-         OZNAKDBk37W476fqcaNMJZbCbbhcfKbpHsfNKGXlZr65EQO1QKjYlDHgu6vILtjbonEL
-         UAog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758115776; x=1758720576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QjnKuNKA4ji6kMyGHxtwUN6WBWnj7945LQCwoquyyQo=;
-        b=q8ahBAqifeoyPxTwwWsJ/BghCCSPzn0l1Hw9gqi8TMN6/CrDK18Or7dyVUAQYqJEYX
-         GzZo21UStJo0EW5L0uL9nZP9wAlIojqUr/zE4mceuNRbUVECEwgO4n1Y0erKNZ+fadMa
-         VxaocxqeUpUcU1+CDgzacQWOqvDK3WsBUbQqU+RGpQVcOHa7US5L6dzkTK6bT4//p9by
-         JFCy/X9Wmlb46MjmwC4W4Sv9DS2D2Szu2SC49z8q21WRXnwzefG7yvz0hLDkpeL03WMG
-         +Jp2EvVolLI2I0C8hoDcZ2dcDwT/uByocI4K8ejdBurbtC9xsFsUZ4ddtfIW7vB4Sgu6
-         F7Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsPxDLoTMbPwK4/au5J2GyNr7Wa/4CYgdkZaHw/uPPCdHafPBcoYmmx2bwXjFcywmTyI5vZYxUHYa0FhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwitC4zooYd7ko5Dg7E4zQ2Nax+/fyREWznNtKr4VheDyGbx+Hg
-	7nBmmr8OknRwps9ugmE9ANGCIsbHOGjW+Y1n/EZYNC71wgMVHtptQTEd5//Yu6IYmIpqbZEoq84
-	i4nbZVAjNdqidhfZxjfIUWqOdgch6mlxuVBq9ZuKhcg==
-X-Gm-Gg: ASbGncu7t6c/jb//MVjBRhcYcjDduF179eNUDDwIvlsn3SGmNGgM+eANbS1A8/o5nog
-	AzOlcPDmbiRyfn6ZFsX79uZSWCJbmm/0CDhkorvEI3pSxhLBgQgNPVOqWdQaoMaqVIyUmEnMfnU
-	zyJlr0wiFFnacUlpSFaAi7R7Zg5PiD9JajoS6S/MePyNVUzf1v6aM7yyEjef7j50NhEeO3E4nDr
-	jYww7M8
-X-Google-Smtp-Source: AGHT+IHuI5AyhviMUE8d04CZKMsxw84ERhd0y58MB1DDZatjUo51eJKV0sipZSi6vcJejXizNerBql3FasBKpx0EYU8=
-X-Received: by 2002:a05:690e:1241:b0:62d:9854:f1c3 with SMTP id
- 956f58d0204a3-633b0731376mr1875395d50.33.1758115776183; Wed, 17 Sep 2025
- 06:29:36 -0700 (PDT)
+	s=arc-20240116; t=1758115827; c=relaxed/simple;
+	bh=cri4ZLrQ8k/OyXCTv6AWfwEotmZRbjBD3L8BK3gOOz0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=HW/buf1q53GFaRvRp37p/5Pz8MJ8gZYd8kfdK4R2T9yU82xutNtQdu3hjKPYFb8y4KvIokMqCd99GAv0FUSn5qBNd/xJMnw9tC4In7OZYYIEGUI4i9wqU3tehT2/Ca3sGcjunBCtzvFur6g+d9oEWrIhCcSp5/hNuXX5rXijiTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vcCKxUV2; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250917133021epoutp0250f8610851caf279d620852773e0b31f~mFQZi335L0519505195epoutp02X
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:30:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250917133021epoutp0250f8610851caf279d620852773e0b31f~mFQZi335L0519505195epoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758115821;
+	bh=83puCrk+Lpim3Ubd9lL/cK0apKQjtFv5CBv6PBUm5HU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=vcCKxUV2sOabDbpvpzFAHM21VhR2uwJoNzAgZzLFWlS6LWqVzkQ88a2Blt2xj7om5
+	 K/LeyHM4o2A61W5mV2mbCub2AUB9Amuw3mgrgB2WLhH36mVl9ji6bV/P4/0WUPPkNk
+	 pGTQc9lEnB4pr1WjgHvuLEnr/lrB3+5KTdYyXyo8=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250917133021epcas5p325001bfb5a0140e89bf1914d636ff477~mFQZPrm0f1910319103epcas5p3G;
+	Wed, 17 Sep 2025 13:30:21 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cRflc37PDz6B9m6; Wed, 17 Sep
+	2025 13:30:20 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250917133019epcas5p2310450fd207693b909b23bf818cd12dc~mFQXtfc8A0428204282epcas5p2U;
+	Wed, 17 Sep 2025 13:30:19 +0000 (GMT)
+Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
+	by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250917133016epsmtip199ed203d7a5cf5f68e211d0540f2b632~mFQUoARov0528305283epsmtip1b;
+	Wed, 17 Sep 2025 13:30:16 +0000 (GMT)
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	Neeraj Kumar <s.neeraj@samsung.com>
+Subject: [PATCH V3 00/20] Add CXL LSA 2.1 format support in nvdimm and cxl
+ pmem
+Date: Wed, 17 Sep 2025 18:59:20 +0530
+Message-Id: <20250917132940.1566437-1-s.neeraj@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com>
-In-Reply-To: <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 17 Sep 2025 15:28:59 +0200
-X-Gm-Features: AS18NWAFYxfdM-z9P24XcfzEBx3NAZQo5nY3cbJlHEFPJOB1W-fi7_dweQlyxBc
-Message-ID: <CAPDyKFoi9KcsP5k84cSxuXNuMHmcf3a8emfOc6hMjGm_0FMk8w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] MT8196 GPU Frequency/Power Control Support
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250917133019epcas5p2310450fd207693b909b23bf818cd12dc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250917133019epcas5p2310450fd207693b909b23bf818cd12dc
+References: <CGME20250917133019epcas5p2310450fd207693b909b23bf818cd12dc@epcas5p2.samsung.com>
 
-On Wed, 17 Sept 2025 at 14:23, Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> This series introduces two new drivers to accomplish controlling the
-> frequency and power of the Mali GPU on MediaTek MT8196 SoCs.
->
-> The reason why it's not as straightforward as with other SoCs is that
-> the MT8196 has quite complex glue logic in order to squeeze the maximum
-> amount of performance possible out of the silicon. There's an additional
-> MCU running a specialised firmware, which communicates with the
-> application processor through a mailbox and some SRAM, and is in charge
-> of controlling the regulators, the PLL clocks, and the power gating of
-> the GPU, all while also being in charge of any DVFS control.
->
-> This set of drivers is enough to communicate desired OPP index limits to
-> the aforementioned MCU, referred to as "GPUEB" from here on out. The
-> GPUEB is still free to lower the effective frequency if the GPU has no
-> jobs going on at all, even when a higher OPP is set. There's also
-> several more powerful OPPs it seemingly refuses to apply. The downstream
-> chromeos kernel also doesn't reach the frequencies of those OPPs, so we
-> assume this is expected.
->
-> The frequency control driver lives in panthor's subdirectory, as it
-> needs to pass panthor some data. I've kept the tie-in parts generic
-> enough however to not make this a complete hack; mediatek_mfg (the
-> frequency control driver) registers itself as a "devfreq provider" with
-> panthor, and panthor picks it up during its probe function (or defers if
-> mediatek_mfg is not ready yet, after adding a device link first).
->
-> It's now generic enough to where I'll ponder about moving the devfreq
-> provider stuff into a header in include/, and moving mediatek_mfg into
-> the drivers/soc/ subdirectory, but there were enough changes so far to
-> warrant a v3 without a move or further struct renames added, so that I
-> can get feedback on this approach.
->
-> The mailbox driver is a fairly bog-standard common mailbox framework
-> driver, just specific to the firmware that runs on the GPUEB.
+Introduction:
+=============
+CXL Persistent Memory (Pmem) devices region, namespace and content must be
+persistent across system reboot. In order to achieve this persistency, it
+uses Label Storage Area (LSA) to store respective metadata. During system
+reboot, stored metadata in LSA is used to bring back the region, namespace
+and content of CXL device in its previous state.
+CXL specification provides Get_LSA (4102h) and Set_LSA (4103h) mailbox
+commands to access the LSA area. nvdimm driver is using same commands to
+get/set LSA data.
 
-I had a brief look at the series and it seems to me that the devfreq
-thing here, may not be the perfect fit.
+There are three types of LSA format and these are part of following
+specifications: 
+ - v1.1: https://pmem.io/documents/NVDIMM_Namespace_Spec.pdf
+ - v1.2: https://uefi.org/sites/default/files/resources/UEFI_Spec_2_7.pdf
+ - v2.1: https://computeexpresslink.org/wp-content/uploads/2024/02/CXL-2.0-Specification.pdf
 
-Rather than using a new binding  (#performance-domain-cells) to model
-a performance domain provider using devfreq, I think it could be more
-straightforward to model this using the common #power-domain-cells
-binding instead. As a power-domain provider then, which would be
-capable of scaling performance too. Both genpd and the OPP core
-already support this, though via performance-states (as indexes).
+Basic differences between these LSA formats:
+ - v1.1: Support Namespace persistency. Size of Namespace Label is 128 bytes
+ - v1.2: Support Namespace persistency. Size of Namespace Label is 256 bytes
+ - v2.1: Support Namespace and Region persistency. Size of Namespace and
+   Region Label is 256 bytes.
 
-In fact, this looks very similar to what we have implemented for the
-Arm SCMI performance domain.
+Linux nvdimm driver supports only v1.1 and v1.2 LSA format. CXL pmem device
+require support of LSA v2.1 format for region and namespace persistency.
+Initial support of LSA 2.1 was add in [1].
 
-If you have a look at the below, I think it should give you an idea of
-the pieces.
-drivers/pmdomain/arm/scmi_perf_domain.c
-drivers/firmware/arm_scmi/perf.c
-Documentation/devicetree/bindings/firmware/arm,scmi.yaml (protocol@13
-is the performance protocol).
+This patchset adds support of LSA 2.1 in nvdimm and cxl pmem driver.
 
-That said, I don't have a strong opinion, but just wanted to share my
-thoughts on your approach.
+Patch 1:     Introduce NDD_REGION_LABELING flag and Update cxl label index as per v2.1
+Patch 2-4:   Update namespace label as per v2.1 along with code optimization
+Patch 5-12:  Introduce cxl region labels and modify existing change accordingly
+Patch 13:    Refactor cxl pmem region auto assembly
+Patch 14-18: Save cxl region info in LSA and region recreation during reboot
+Patch 19:    Segregate out cxl pmem region code from region.c to pmem_region.c
+Patch 20:    Introduce cxl region addition/deletion attributes
 
-[...]
 
-Kind regards
-Uffe
+Testing:
+========
+In order to test this patchset, I also added the support of LSA v2.1 format
+in ndctl. ndctl changes are available at [2]. After review, I’ll push in
+ndctl repo for community review.
+
+1. Used Qemu using following CXL topology
+   M2="-object memory-backend-file,id=cxl-mem1,share=on,mem-path=$TMP_DIR/cxltest.raw,size=512M \
+       -object memory-backend-file,id=cxl-lsa1,share=on,mem-path=$TMP_DIR/lsa.raw,size=1M \
+       -object memory-backend-file,id=cxl-mem2,share=on,mem-path=$TMP_DIR/cxltest2.raw,size=512M \
+       -object memory-backend-file,id=cxl-lsa2,share=on,mem-path=$TMP_DIR/lsa2.raw,size=1M \
+       -device pxb-cxl,bus_nr=10,bus=pcie.0,id=cxl.1 \
+       -device cxl-rp,port=1,bus=cxl.1,id=root_port11,chassis=0,slot=1 \
+       -device cxl-type3,bus=root_port11,memdev=cxl-mem1,lsa=cxl-lsa1,id=cxl-pmem1,sn=1 \
+       -device cxl-rp,port=2,bus=cxl.1,id=root_port12,chassis=0,slot=2 \
+       -device cxl-type3,bus=root_port12,memdev=cxl-mem2,lsa=cxl-lsa2,id=cxl-pmem2,sn=2 \
+       -M cxl-fmw.0.targets.0=cxl.1,cxl-fmw.0.size=4G,cxl-fmw.0.interleave-granularity=8k"
+
+2. Create cxl region on both devices
+	cxl create-region -d decoder0.0 -m mem0
+	cxl create-region -d decoder0.0 -m mem1
+
+	root@QEMUCXL6060pmem:~# cxl list
+	[
+	  {
+	    "memdevs":[
+	      {
+	        "memdev":"mem0",
+	        "pmem_size":536870912,
+	        "serial":2,
+	        "host":"0000:0c:00.0",
+	        "firmware_version":"BWFW VERSION 00"
+	      },
+	      {
+	        "memdev":"mem1",
+	        "pmem_size":536870912,
+	        "serial":1,
+	        "host":"0000:0b:00.0",
+	        "firmware_version":"BWFW VERSION 00"
+	      }
+	    ]
+	  },
+	  {
+	    "regions":[
+	      {
+	        "region":"region0",
+	        "resource":45365592064,
+	        "size":536870912,
+	        "type":"pmem",
+	        "interleave_ways":1,
+	        "interleave_granularity":256,
+	        "decode_state":"commit",
+	        "qos_class_mismatch":true
+	      },
+	      {
+	        "region":"region1",
+	        "resource":45902462976,
+	        "size":536870912,
+	        "type":"pmem",
+	        "interleave_ways":1,
+	        "interleave_granularity":256,
+	        "decode_state":"commit",
+	        "qos_class_mismatch":true
+	      }
+	    ]
+	  }
+	]
+
+3. Re-Start Qemu and we could see cxl region persistency using "cxl list"
+
+4. Create namespace for both regions
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region0 --size=128M
+	{
+	  "dev":"namespace0.0",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"124.00 MiB (130.02 MB)",
+	  "uuid":"8a125dcb-f992-406d-b3ad-be82fc518f05",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem0"
+	}
+	
+	real    0m31.866s
+	user    0m0.183s
+	sys     0m14.855s
+
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region1 --size=256M
+	{
+	  "dev":"namespace1.0",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"250.00 MiB (262.14 MB)",
+	  "uuid":"8e16d950-c11d-4253-94a0-5b2928926433",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem1"
+	}
+	
+	real    0m44.359s
+	user    0m0.196s
+	sys     0m26.768s
+
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region0 --size=256M
+	{
+	  "dev":"namespace0.1",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"250.00 MiB (262.14 MB)",
+	  "uuid":"f3170bfe-548a-4ce4-ae00-145a24e70426",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem0.1"
+	}
+	
+	real    0m44.004s
+	user    0m0.220s
+	sys     0m25.711s
+
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region1 --size=128M
+	{
+	  "dev":"namespace1.1",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"124.00 MiB (130.02 MB)",
+	  "uuid":"6318d2d9-bc78-4896-84f9-6c18c3a8f58c",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem1.1"
+	}
+	
+	real    0m36.612s
+	user    0m0.225s
+	sys     0m16.457s
+
+	root@QEMUCXL6060pmem:~# ndctl list
+	[
+	  {
+	    "dev":"namespace1.0",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":262144000,
+	    "uuid":"e07564eb-6653-4d67-ab07-434c22474001",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem1"
+	  },
+	  {
+	    "dev":"namespace1.1",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":130023424,
+	    "uuid":"27dfd65a-c428-426a-8316-f340a59e0671",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem1.1"
+	  },
+	  {
+	    "dev":"namespace0.1",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":130023424,
+	    "uuid":"689b4135-668d-4885-b138-b86f27d7602f",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem0.1"
+	  },
+	  {
+	    "dev":"namespace0.0",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":262144000,
+	    "uuid":"ed15c67a-842d-4d5d-8996-be3aa24985e4",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem0"
+	  }
+	]
+
+5. Re-Start Qemu and we could see
+	- Region persistency using "cxl list"
+	- Namespace persistency using "ndctl list" and cat /proc/iomem
+
+	root@QEMUCXL6060pmem:~# cat /proc/iomem
+	
+	a90000000-b8fffffff : CXL Window 0
+	  a90000000-aafffffff : Persistent Memory
+	    a90000000-aafffffff : region0
+	      a90000000-a97ffffff : namespace0.0
+	      a98000000-aa7ffffff : namespace0.1
+	  ab0000000-acfffffff : Persistent Memory
+	    ab0000000-acfffffff : region1
+	      ab0000000-abfffffff : namespace1.0
+	      ac0000000-ac7ffffff : namespace1.1
+	
+
+	- NOTE: We can see some lag in restart, Its WIP
+
+6. Also verify LSA version using "ndctl read-labels -j nmem0"
+	root@QEMUCXL6060pmem:~# ndctl read-labels -j nmem0
+	{
+	  "dev":"nmem0",
+	  "index":[
+	    {
+	      "signature":"NAMESPACE_INDEX",
+	      "major":2,
+	      "minor":1,
+	      "labelsize":256,
+	      "seq":2,
+	      "nslot":4090
+	    },
+	    {
+	      "signature":"NAMESPACE_INDEX",
+	      "major":2,
+	      "minor":1,
+	      "labelsize":256,
+	      "seq":1,
+	      "nslot":4090
+	    }
+	  ],
+	  "label":[
+	    {
+	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+	      "uuid":"cbb3fe1e-9345-4ae7-95ca-2638db27ee7d",
+	      "name":"",
+	      "flags":8,
+	      "nrange":1,
+	      "position":0,
+	      "dpa":134217728,
+	      "rawsize":268435456,
+	      "slot":0,
+	      "align":0,
+	      "region_uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+	      "lbasize":512
+	    },
+	    {
+	      "type":"529d7c61-da07-47c4-a93f-ecdf2c06f444",
+	      "uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "flags":0,
+	      "nlabel":1,
+	      "position":0,
+	      "dpa":0,
+	      "rawsize":536870912,
+	      "hpa":45365592064,
+	      "slot":1,
+	      "interleave granularity":256,
+	      "align":0
+	    },
+	    {
+	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+	      "uuid":"d9ef8d35-ef84-4111-b302-bce53c94a2ad",
+	      "name":"",
+	      "flags":0,
+	      "nrange":1,
+	      "position":0,
+	      "dpa":0,
+	      "rawsize":134217728,
+	      "slot":2,
+	      "align":0,
+	      "region_uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+	      "lbasize":512
+	    },
+	    {
+	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+	      "uuid":"cbb3fe1e-9345-4ae7-95ca-2638db27ee7d",
+	      "name":"",
+	      "flags":0,
+	      "nrange":1,
+	      "position":0,
+	      "dpa":134217728,
+	      "rawsize":268435456,
+	      "slot":3,
+	      "align":0,
+	      "region_uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+	      "lbasize":512
+	    }
+	  ]
+	}
+	read 1 nmem
+
+	- NOTE: We have following UUID types as per CXL Spec
+		"type":"529d7c61-da07-47c4-a93f-ecdf2c06f444" is region label
+		"type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c" is namespace label
+
+
+Limitation (TODO):
+==================
+Current changes only support interleave way == 1
+
+
+Observation:
+============
+First time namespace creation using ndctl takes around 10 to 20 second time
+while executing "devm_memremap_pages" at [3]
+
+As using this patchset, after auto region creation, namespace creation is
+happening in boot sequence (if nvdimm and cxl drivers are static), It is
+therefore boot sequence is increased by around 10 to 20 sec.
+
+Changes
+=======
+Changes from v2->v3
+-------------------
+- Find v2 link at [6]
+[MISC Changes]
+- Drop v2 prep patch 02/20 to avoid renaming noise [Jonathan/Dave/Ira]
+- Introduce v3 patch 03/20 to fix nd_label_base() signature [Dave]
+- Introduce v3 patch 04/20 to update mutex_lock() with guard(mutex)() [Ira]
+- Re-arrange v2 patch 04/20 to v3 patch 02/20
+- Re-arrange v2 patch 03/20 to v3 patch 05/20
+- Re-arrange v2 patch 12/20 to v3 patch 10/20
+[PATCH 01/20]
+- Rename NDD_CXL_LABEL to NDD_REGION_LABELING [Jonathan/Dave]
+[PATCH 02/20]
+- Elaborate comment message [Dave]
+- Add Jonathan RB tag
+- Add Ira AB tag
+[PATCH 06/20]
+- Region label update/delete in LSA without v2 patch 01/20 [Jonathan/Dave/Ira]
+- Use "union nd_lsa_label" inplace of "struct nd_lsa_label" [Jonathan/Dave]
+- Rename rgl/rg* to region_label* [Dave]
+- Use uuid_equal() without import_uuid() [Dave]
+- Refactor __pmem_label_update() to accomodate region label [Fabio/Ira]
+- Merge v2 patch 07/20 here [Ira]
+- Fix hardcoded value while using init_labels() [Ira]
+[PATCH 07/20]
+- Fix comment message [Johathan]
+- Replace mutex_lock() with guard(mutex)() [Jonathan]
+[PATCH 08/20]
+- Fix commit message [Johathan]
+- Add Jonathan RB tag
+[PATCH 09/20]
+- Fix comment message [Johathan]
+[PATCH 10/20]
+- Re-arranged with v2 patch 12/20
+- Fix commit message [Johathan]
+[PATCH 11/20]
+- Replace REVISIT with TODO [Johathan]
+[PATCH 12/20]
+- Fix commit message [Johathan]
+[PATCH 14/20]
+- Rename resize_or_free_dpa(() with alloc_region_dpa() [Dave]
+- Rename resize_or_free_region_hpa() to alloc_region_hpa() [Dave]
+- Elaborate comment message [Dave]
+- Use  "__free(put_cxl_region)" for cxlr allocation [Dave]
+
+
+Changes from v1 -> v2
+---------------------
+- v1 patch-set was broken. Find the v1 links at [4] and [5]
+[PATCH 01/20]
+- Simplify return in nvdimm_check_cxl_label_format() [Jonathan]
+- Add spec reference while updating LSA major/minor [Jonathan, Dave]
+[PATCH 02/20]
+- Elaborate commit message with more information [Jonathan, Ira]
+- Minimize extra re-naming to avoid churn & complexity [Jonathan]
+[PATCH 05/20]
+- Use guard(mutex)(&nd_mapping->lock) [Jonathan]
+[PATCH 06/20]
+- Use switch in place if condition check [Jonathan]
+- Fix wrong style for multiline comments in this file [Jonathan]
+- Fix wrong condition check in del_labels()
+- Bail out extra condition check using extra variable [Jonathan]
+[PATCH 07/20]
+- Modify init_labels function to init_labels() [Jonathan]
+[PATCH 08/20]
+- Simplify return in is_region_label() and flip if condition [Jonathan]
+[PATCH 12/20]
+- Fix comment syntax [Jonathan]
+[PATCH 13/20]
+- Elaborate commit message and remove history statement from comment [Jonathan]
+- Move cxl_region_discovery() from core/port.c to core/region.c [Dave]
+[PATCH 14/20]
+- Spell check fix in commit message [Jonathan]
+- Use ACQUIRE() instead of down_write_killable() [Jonathan]
+- Fix extra return check [Jonathan]
+- Rename port to root_port to avoid long indirection [Jonathan]
+- Remove cxl_wq_flush() as its not required [Jonathan, Dave]
+- Add comment of attaching just one target [Jonathan]
+- Rename update_region_size() to resize_or_free_region_hpa() [Dave]
+- Rename val to size in resize_or_free_region_hpa() [Dave]
+- Share common code using helper function in size_store() [Dave]
+- Rename update_region_dpa_size() to resize_or_free_dpa() [Dave]
+- Rename u64 in place of unsigned long long [Dave]
+- Share common code using helper function in dpa_size_store() [Dave]
+- Rename CXL_DECODER_PMEM with CXL_PARTMODE_PMEM [Dave]
+- Share common code using helper function in commit_store() [Dave]
+- Update verbose information about devm_cxl_pmem_add_region() [Dave]
+- Renamed and refactored __create_region() to cxl_create_region() [Dave]
+[PATCH 15/20]
+- Avoid blank line [Jonathan]
+- Rename root-cxl-port to CXL port [Dave]
+- Add comment to release device ref taken via device_find_child() [Dave]
+- Rename cxl_find_root_decoder() to cxl_find_root_decoder_by_port() [Dave]
+[PATCH 18/20]
+- Avoid extra nvdimm validity check [Jonathan]
+- Flip logic to check for unhandled case first [Jonathan]
+- Simplify return in match_ep_decoder() [Dave]
+- Use lockdep_assert_held() in create_pmem_region() [Dave]
+- To use lock moved create_pmem_region() from cxl/pmem.c to core/region.c
+[PATCH 19/20]
+- Spell check fix in commit message [Jonathan]
+- Fix LIBNVDIMM selection condition check in cxl/Kconfig [Jonathan]
+[PATCH 20/20]
+- Add Documentation/ABI/testing/sysfs-bus-cxl [Jonathan]
+- Use ACQUIRE() instead of down_write_killable() [Jonathan]
+- Drop trailing comma on terminating entries [Jonathan]
+
+
+[1]: https://lore.kernel.org/all/163116432405.2460985.5547867384570123403.stgit@dwillia2-desk3.amr.corp.intel.com/
+[2]: https://github.com/neerajoss/ndctl/tree/linux-cxl/CXL_LSA_2.1_Support
+[3]: https://elixir.bootlin.com/linux/v6.13.7/source/drivers/nvdimm/pmem.c#L520
+[4] v1 Cover Letter: https://lore.kernel.org/linux-cxl/1931444790.41750165203442.JavaMail.epsvc@epcpadp1new/
+[5] v1 Rest Thread: https://lore.kernel.org/linux-cxl/158453976.61750165203630.JavaMail.epsvc@epcpadp1new/
+[6] v2: https://lore.kernel.org/linux-cxl/20250730121209.303202-1-s.neeraj@samsung.com/ 
+
+
+Neeraj Kumar (20):
+  nvdimm/label: Introduce NDD_REGION_LABELING flag to set region label
+  nvdimm/label: CXL labels skip the need for 'interleave-set cookie'
+  nvdimm/label: Modify nd_label_base() signature
+  nvdimm/label: Update mutex_lock() with guard(mutex)()
+  nvdimm/namespace_label: Add namespace label changes as per CXL LSA v2.1
+  nvdimm/region_label: Add region label update support
+  nvdimm/region_label: Add region label delete support
+  nvdimm/label: Include region label in slot validation
+  nvdimm/namespace_label: Skip region label during ns label DPA reservation
+  nvdimm/namespace_label: Skip region label during namespace creation
+  nvdimm/region_label: Preserve cxl region information from region label
+  nvdimm/region_label: Export routine to fetch region information
+  cxl/mem: Refactor cxl pmem region auto-assembling
+  cxl/region: Add devm_cxl_pmem_add_region() for pmem region creation
+  cxl: Add a routine to find cxl root decoder on cxl bus using cxl port
+  cxl/mem: Preserve cxl root decoder during mem probe
+  cxl/pmem: Preserve region information into nd_set
+  cxl/pmem_region: Prep patch to accommodate pmem_region attributes
+  cxl/pmem_region: Add sysfs attribute cxl region label updation/deletion
+  cxl/pmem: Add CXL LSA 2.1 support in cxl pmem
+
+ Documentation/ABI/testing/sysfs-bus-cxl |  22 +
+ drivers/cxl/Kconfig                     |  14 +
+ drivers/cxl/core/Makefile               |   1 +
+ drivers/cxl/core/core.h                 |   8 +-
+ drivers/cxl/core/pmem_region.c          | 346 ++++++++++++++++
+ drivers/cxl/core/port.c                 |  29 +-
+ drivers/cxl/core/region.c               | 351 ++++++++--------
+ drivers/cxl/cxl.h                       |  50 ++-
+ drivers/cxl/cxlmem.h                    |   1 +
+ drivers/cxl/mem.c                       |  24 +-
+ drivers/cxl/pmem.c                      |  15 +-
+ drivers/cxl/port.c                      |  39 +-
+ drivers/nvdimm/dimm.c                   |   5 +
+ drivers/nvdimm/dimm_devs.c              |  25 ++
+ drivers/nvdimm/label.c                  | 509 +++++++++++++++++++-----
+ drivers/nvdimm/label.h                  |  16 +
+ drivers/nvdimm/namespace_devs.c         |  84 +++-
+ drivers/nvdimm/nd-core.h                |   2 +
+ drivers/nvdimm/nd.h                     |  74 +++-
+ drivers/nvdimm/region_devs.c            |  10 +
+ include/linux/libnvdimm.h               |  28 ++
+ tools/testing/cxl/Kbuild                |   1 +
+ 22 files changed, 1301 insertions(+), 353 deletions(-)
+ create mode 100644 drivers/cxl/core/pmem_region.c
+
+
+base-commit: c5dca38633daa1e240144bac453cf9065604a413
+-- 
+2.34.1
+
 
