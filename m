@@ -1,262 +1,344 @@
-Return-Path: <linux-kernel+bounces-819917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75001B7E077
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F706B7E273
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B6A13B928D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:12:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DC394E158D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872CB29BDBC;
-	Wed, 17 Sep 2025 03:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4A62F60CD;
+	Wed, 17 Sep 2025 03:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oGwtjH0E"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d92xco4P"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC472DFF22
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6448829BDBC
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758078734; cv=none; b=fU04yF2u3Ha8IzV2KeB96HK/XCIB8m2u+i3CN67HKScG0S2p6gdgRlgMMjN+L1kffxPVyYZDbRXh8mNf8qSNHXiWZnNY6YWF1kepWQzYP0gsb5ybf3xVDKb1oj4R5HwPsJ/VeKzAkKq6gATi0tfa/P3LkLhMayykxShl3VaGfos=
+	t=1758078884; cv=none; b=VIybmdd9jZYWSq52KVYps9FglW9vi/GcIEN33IX/78oihYIVAq+QMVZ1OfjHE3cRyIVYkU7tbbpNtOkhERr7gO4ySN70xg51czZ1MD7CZCv7VLJWfx5lpRF7nBOXFaLp/TGCDVZ/TK/hIXRapeF/2YA2ja4crZyF2yX6MuInUZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758078734; c=relaxed/simple;
-	bh=HGk0zHkNVuTcetYNXMVhF4YwwhvGPgQMOA5eFKT2YJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=lbx/+2x1ZsE2CHyNTOLEyVMnGN/QHBcmi2H2CMeygj2NQ88p2PvGAFoxmD5ODX6apviMbMDDpk7Hv3E1BqRz+IHjG+Z52lOflNsZAYoJo7tWIe1knGSeB1xJB2ePc7VP7pbigpvSltez8BOjw3JvVmfOaJ9AGMc6RTu1vMD5uyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oGwtjH0E; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLaOMe021182
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:12:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bIG1bOtImKnLmFSkvvJht6cuFZCgJS/l0Y73y0ey89k=; b=oGwtjH0Exgc4HJZ6
-	4LNgPy8k8wroe0yLplggfurthr8oAqn+Q5FKJ4OOs3YhWK5oqUa2JBku4nkVvU0i
-	cJMyidg0zNEdY520cjzriTQbt0TqdqNqr2WAP8bZUEDvUBlYXfjL3DcpsPpd40c4
-	/+W8LN8RH+Xzek48UJ3TraPDYOYWtbLh4GgwV/2uXEB9PeAZs/jFr6C3FhkehRXy
-	2mN2Qh+ObGJCWPmJJqTBCL43ZV2On770JPd+twZYZ3JTWixuyCgojwRbFPx3IQ2N
-	plMVPYcgdC2iGVnDL3c7BA2nmSolMByIediv0ySurzfJZ3DgERht8OkFvJheT90e
-	pepmUQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy0rpds-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:12:11 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-267ac96f558so26802545ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:12:11 -0700 (PDT)
+	s=arc-20240116; t=1758078884; c=relaxed/simple;
+	bh=Z/MSIFiN82eflkb7jv68WI+DTQ0JCLDeojkD3HLHZ4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PQp1uvgY9iFuq8xH6SVbwAGMvVc7cMRahp1y4OguI+H2aHtP43lbq5lGSuLpa/+62vXNRDWs5/pYnObqU5OoyNJcpLw/AWnfimGZjaLxApQn6/M4fAQOVHfYa+hhe+Due8u3+2B/w5jPvHOFAReRpiJVQe0eR1J4Jtq/FYSbluI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d92xco4P; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b07e3a77b72so73181866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758078881; x=1758683681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yYl9wW4dk4XbYzxIkLSJ4emAt8SgHCFiMbI64aRDGy8=;
+        b=d92xco4PqzBJcT5W/akKi+kMVu0J+lJA0lcepVZenhFJ15zhGProolxMpydYVoyaCx
+         KdQ7lgRWyAH3MsQ4EB6qQ9hfo5B3g1NPbH+uexCxLlEYO0uANbEYKdgxDs98ZFHvdVrG
+         KSHo9EXFX0NkUY6P1qNgMBU3SdIAi6icfSoAIH1gBwPFuZjcpATsIdr+1alklQjr3/y8
+         zfHHYSeEMlBwetLg8/1n1p25s3Gq4KEb5kPiz8sCnTtuKpc6Wf3MsXKP8XgGVqb7SODh
+         gAV28lDB0Wug44ArjSwpWHSfgZLRjAmZhGuoSBMSv0PJaoGvWXEhTxM9FJACG9lmePRE
+         pE2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758078731; x=1758683531;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bIG1bOtImKnLmFSkvvJht6cuFZCgJS/l0Y73y0ey89k=;
-        b=mQrWhEME/MBdhBF3t2NJUH+qcO92z03TeuDAnQGALY5H9oDrCMn+AqeFTgflwZIp+4
-         I4z4ylyO3mXwa2bJRaLtLnEbsqNR66IfUWjXZcO06+xEklWfz7wCMKCz75s94HlUv/T/
-         udtGeeoxo88Gku+XtTDVQjLhAiT4F9UpAf4Z9GuiQgQTyUpZFPvNiV7Zfu1SSKGnYril
-         1Y11lagHHWu0QsQdkZiaeJy3M2Bexa6hUN1IT5+uVM4hzWs1Shljhiapl7YE2A92oXhb
-         FLB9s8dZWPXm25+UKklnbuRT1IXZy3x2kd9DB+XNqv89ex9TrwHKhszB3Pr3doZJ7ABw
-         dR4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVPWo1aiLDauL21Eq4CnQlSThoB3iTICo99Wi0Iy+wUCqd5jyz+ypRT77HE44ajK2YPWNOjbNMMPl7v1rE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv8kvQMjezw2OeGod0ZEOAFQUc3u5vWo27lti838QGdK82im1g
-	y44KBmuNH/u/HfBtT78IH8m3eSLzLpJVK97QmGSedG1k7MoZtFZOQFmm9iT2H3ktVD8ek71jr02
-	nAfOOGXVbhT8T45pdUUG7hHv8XgvE1u5f8dXl3PNRubWrc2KyeykO8x7nIn8itQofAbc=
-X-Gm-Gg: ASbGncvDrlUnFQUGoPCKkusEapaDjpzOZijTm73AAt4vjV4rKfpdw5zQz7hQz5nAEr7
-	f8IRc6aLKl3bvY5TlmDZpoPVYALc9/OddcWfOxhLPtsLWk21w7On29NImV/3EfefvxgKpW/77M+
-	i7ePmzX8y28F+BfTUHa6/wNNCjzbz0gOwdBwMJys+WdGmNfrRl98ItHqSKmvMEjn8vaLNqVW7oQ
-	xzoTC1AwHuvJ+pONGXV+/es2en3HhI5XiBbCwxz+Uz+3v7ZUK0lCrN+TZaolA1drS66/L8QeLgR
-	MZNvG4V4IywHK8uZNHSAuzO/Ptw44+IAmrnAzAeC6Im9gWKh33inQR2RtkEbGJli/pTAmU0wcuV
-	+6qF26h4ZmuW+mZE/AkOH32JhfhpE7vZrTbR85so=
-X-Received: by 2002:a17:903:b0b:b0:264:a34c:c6d with SMTP id d9443c01a7336-268137f2232mr5877055ad.37.1758078730928;
-        Tue, 16 Sep 2025 20:12:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBCLcKRApHcGH30xII8GXUVK5/XOxilDiSXJooBQ2zL0Io8pE34P9hJiDzte0TVak6qxwcsA==
-X-Received: by 2002:a17:903:b0b:b0:264:a34c:c6d with SMTP id d9443c01a7336-268137f2232mr5876785ad.37.1758078730453;
-        Tue, 16 Sep 2025 20:12:10 -0700 (PDT)
-Received: from [10.133.33.235] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc6abcsm176125835ad.16.2025.09.16.20.12.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 20:12:10 -0700 (PDT)
-Message-ID: <634a38d3-0a20-471d-bc39-44a822df00dd@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 11:12:04 +0800
+        d=1e100.net; s=20230601; t=1758078881; x=1758683681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yYl9wW4dk4XbYzxIkLSJ4emAt8SgHCFiMbI64aRDGy8=;
+        b=Xo/E3dctAQEbBFyP/n6UyV0UHZtn1msiuYA2XPOMsfuazI91K1HPWaHXBWdV3v+nsM
+         cRoe61H3CwaHy3+B0G6gUeUgv4eMC8rjp+UT4CF3nJSgLLsiduwhHWZ0qg594ysAHus5
+         FiNcoYDmOaleSamWKbK3Izr3vSmw4HfZXA/v0uAH+CgxRzKcxWUHKTfnJfqIRVUtHqgF
+         AOGTpxuzM89JeVTkMo4SegjC63pdww6uEaHN8KVqRZZQhXdZWnChzYZRhhVMaoI3DZHd
+         kI+jvF2hoFDt8o5R9TvWT7BiBFKpWT8tMQrM41pq3ArQnJaWWfJN6KSSSB4Hpj9Us/0P
+         MxUw==
+X-Forwarded-Encrypted: i=1; AJvYcCW385VKmck/UYdMzhyTY6QJb8XdO+QkmBWfjj7oQQW3CzWTl7CYpMQ6SBsMfEF0TfMRSFnddQc/6ctfXRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjIYOM9nh1TgivFHRCCnat+Br4ALhWH9yjWAEvSKOaBHl/4Weo
+	UDpEq34H8DAPGmQKsm5aTjYXYOr3IJEzyPIFUd+uh9nOKSVAiSxB3cg8Xj3qOvcx7t2jaCKCC9I
+	4D3zRYKbC8FSQHMhomV2EIoAPnXoByUA=
+X-Gm-Gg: ASbGncuN/MvgPKiwGVhn1enNyONRtCpLpyPATWEYyqFs6rA/fZqgpmG1EfsXhYM2uX/
+	VAq5qSCukmfohIqImUxvInDj/Xwaq+9kIpZ3ZMhX3b9T/uhJRyD5ysWrFANwRr5n7dHyFjjvwgE
+	0nErAIhkJc+yaSITxTn8ywDDYt79l3Ic/I0q4QfiXSEFAYbx7Sg0700QMJilQKmNaIPTFnvR+sB
+	2gAAFhQ/k2+5LvFujOTdmbMllguMQ0aaEFAig==
+X-Google-Smtp-Source: AGHT+IGVGuR+PydNlyGT48zzkbhH6Jd/ETlW5flAIwO7dAryEXYAeMrXHZg9Ogqnyr7/1kVi1ExQPAkq73fN5EIrd0Y=
+X-Received: by 2002:a17:907:da8:b0:afe:159:14b1 with SMTP id
+ a640c23a62f3a-b1be49d7750mr65729166b.9.1758078880465; Tue, 16 Sep 2025
+ 20:14:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] coresight-tnoc: Add support for Interconnect TNOC
-To: Mike Leach <mike.leach@linaro.org>
-References: <20250831-itnoc-v4-0-f0fb0ef822a5@oss.qualcomm.com>
- <f9d3b3ec-dcf1-42ce-b925-70e5543771ed@oss.qualcomm.com>
- <CAJ9a7Vivhrx2zss_8Ti+QS1dzakp+4CrAsDj00RKojUaL_t7Sg@mail.gmail.com>
-Content-Language: en-US
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>, coresight@lists.linaro.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        kernel@oss.qualcomm.com, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Leo Yan <leo.yan@arm.com>
-From: yuanfang zhang <yuanfang.zhang@oss.qualcomm.com>
-In-Reply-To: <CAJ9a7Vivhrx2zss_8Ti+QS1dzakp+4CrAsDj00RKojUaL_t7Sg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: m-vJqRhT1qJUwRwxmi1zU5FUX6FIMEc8
-X-Authority-Analysis: v=2.4 cv=btZMBFai c=1 sm=1 tr=0 ts=68ca270b cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=WTqQPv3OPy9EuyCnVQMA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: m-vJqRhT1qJUwRwxmi1zU5FUX6FIMEc8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX1oVNw78rAPCb
- kL8kY6n6BRILQDaBFu9eUb5YoNmYenYkO2mLgcIJ1+TTIkIQFoau22AZIN594OOXr43A1VoDzGs
- dpg8oSl8j2WA3rkIFpHfy1MdCGCPlGQMNSf66sn8hixshkkg0mGjMZKqGSDmWtz1Jm3H+6almog
- H4d66ny5MIUGgUs5EBkkja3PBD18ZqyU2cZBA0iQqh4AqTjLGPgp9lfAKnq3NyHvvyOC17skEsN
- jYMRITMbOcYyVbHijUlnSGUkfcCJS7dDnr6OngICbaCKD8ZzQXZbGXU5+AGu3HRWmp7sL3visy+
- XFSsdTInPiTiexMDmrcbSSMfW06PUkQzEiiFqPRJTBDL70XUmU8ysppLPWWqCi1/npaYBl9KhjT
- cx02MILJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 malwarescore=0
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+References: <20250905024659.811386-1-alistair.francis@wdc.com>
+ <20250905024659.811386-7-alistair.francis@wdc.com> <f1a7b0b5-65e3-4cd0-9c62-50bbb554e589@suse.de>
+In-Reply-To: <f1a7b0b5-65e3-4cd0-9c62-50bbb554e589@suse.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Wed, 17 Sep 2025 13:14:14 +1000
+X-Gm-Features: AS18NWDcMpm1G2mFqhUogMiikl4B2cDYrd9t5Pbx1ZhvlPjk4QLZp7NlJuRUoZU
+Message-ID: <CAKmqyKM6_Fp9rc5Fz0qCsNq7yCGGb-o66XhycJez2nzcEs5GmA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] nvme-tcp: Support KeyUpdate
+To: Hannes Reinecke <hare@suse.de>
+Cc: chuck.lever@oracle.com, hare@kernel.org, 
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Sep 16, 2025 at 11:04=E2=80=AFPM Hannes Reinecke <hare@suse.de> wro=
+te:
+>
+> On 9/5/25 04:46, alistair23@gmail.com wrote:
+> > From: Alistair Francis <alistair.francis@wdc.com>
+> >
+> > If the nvme_tcp_try_send() or nvme_tcp_try_recv() functions return
+> > EKEYEXPIRED then the underlying TLS keys need to be updated. This occur=
+s
+> > on an KeyUpdate event.
+> >
+> > If the NVMe Target (TLS server) initiates a KeyUpdate this patch will
+> > allow the NVMe layer to process the KeyUpdate request and forward the
+> > request to userspace. Userspace must then update the key to keep the
+> > connection alive.
+> >
+> > This patch allows us to handle the NVMe target sending a KeyUpdate
+> > request without aborting the connection. At this time we don't support
+> > initiating a KeyUpdate.
+> >
+> > Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
+> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> > ---
+> > v2:
+> >   - Don't change the state
+> >   - Use a helper function for KeyUpdates
+> >   - Continue sending in nvme_tcp_send_all() after a KeyUpdate
+> >   - Remove command message using recvmsg
+> >
+> >   drivers/nvme/host/tcp.c | 73 +++++++++++++++++++++++++++++++++++++++-=
+-
+> >   1 file changed, 70 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+> > index 776047a71436..b6449effc2ac 100644
+> > --- a/drivers/nvme/host/tcp.c
+> > +++ b/drivers/nvme/host/tcp.c
+> > @@ -171,6 +171,7 @@ struct nvme_tcp_queue {
+> >       bool                    tls_enabled;
+> >       u32                     rcv_crc;
+> >       u32                     snd_crc;
+> > +     key_serial_t            user_session_id;
+> >       __le32                  exp_ddgst;
+> >       __le32                  recv_ddgst;
+> >       struct completion       tls_complete;
+> > @@ -210,6 +211,7 @@ static int nvme_tcp_start_tls(struct nvme_ctrl *nct=
+rl,
+> >                             struct nvme_tcp_queue *queue,
+> >                             key_serial_t pskid,
+> >                             handshake_key_update_type keyupdate);
+> > +static void update_tls_keys(struct nvme_tcp_queue *queue);
+> >
+> >   static inline struct nvme_tcp_ctrl *to_tcp_ctrl(struct nvme_ctrl *ctr=
+l)
+> >   {
+> > @@ -393,6 +395,14 @@ static inline void nvme_tcp_send_all(struct nvme_t=
+cp_queue *queue)
+> >       do {
+> >               ret =3D nvme_tcp_try_send(queue);
+> >       } while (ret > 0);
+> > +
+> > +     if (ret =3D=3D -EKEYEXPIRED) {
+> > +             update_tls_keys(queue);
+> > +
+> > +             do {
+> > +                     ret =3D nvme_tcp_try_send(queue);
+> > +             } while (ret > 0);
+> > +     }
+> >   }
+> >
+> >   static inline bool nvme_tcp_queue_has_pending(struct nvme_tcp_queue *=
+queue)
+> > @@ -1347,6 +1357,8 @@ static int nvme_tcp_try_send(struct nvme_tcp_queu=
+e *queue)
+> >   done:
+> >       if (ret =3D=3D -EAGAIN) {
+> >               ret =3D 0;
+> > +     } else if (ret =3D=3D -EKEYEXPIRED) {
+> > +             goto out;
+> >       } else if (ret < 0) {
+> >               dev_err(queue->ctrl->ctrl.device,
+> >                       "failed to send request %d\n", ret);
+> > @@ -1371,9 +1383,56 @@ static int nvme_tcp_try_recv(struct nvme_tcp_que=
+ue *queue)
+> >       queue->nr_cqe =3D 0;
+> >       consumed =3D sock->ops->read_sock(sk, &rd_desc, nvme_tcp_recv_skb=
+);
+> >       release_sock(sk);
+> > +
+> > +     /* If we received EINVAL from read_sock then it generally means t=
+he
+> > +      * other side sent a command message. So let's try to clear it fr=
+om
+> > +      * our queue with a recvmsg, otherwise we get stuck in an infinit=
+e
+> > +      * loop.
+> > +      */
+> > +     if (consumed =3D=3D -EINVAL) {
+> > +             char cbuf[CMSG_LEN(sizeof(char))] =3D {};
+> > +             struct msghdr msg =3D { .msg_flags =3D MSG_DONTWAIT };
+> > +             struct bio_vec bvec;
+> > +
+> > +             bvec_set_virt(&bvec, (void *)cbuf, sizeof(cbuf));
+> > +             iov_iter_bvec(&msg.msg_iter, ITER_DEST, &bvec, 1, sizeof(=
+cbuf));
+> > +
+> > +             msg.msg_control =3D cbuf;
+> > +             msg.msg_controllen =3D sizeof(cbuf);
+> > +
+> > +             consumed =3D sock_recvmsg(sock, &msg, msg.msg_flags);
+> > +     }
+> > +
+> >       return consumed =3D=3D -EAGAIN ? 0 : consumed;
+> >   }
+> >
+> > +static void update_tls_keys(struct nvme_tcp_queue *queue)
+> > +{
+> > +     int qid =3D nvme_tcp_queue_id(queue);
+> > +     int ret;
+> > +
+> > +     dev_dbg(queue->ctrl->ctrl.device,
+> > +             "updating key for queue %d\n", qid);
+> > +
+> > +     cancel_work(&queue->io_work);
+> > +     handshake_req_cancel(queue->sock->sk);
+> > +     handshake_sk_destruct_req(queue->sock->sk);
+> > +
+> Careful here. The RFC fully expects to have several KeyUpdate requests
+> pending (eg if both sides decide so initiate a KeyUpdate at the same
+> time). And cancelling a handshake request would cause tlshd/gnutls
+> to lose track of the generation counter and generate an invalid
+> traffic secret.
+> I would just let it rip and don't bother with other handshake
+> requests.
 
+Unfortunately that doesn't work as future calls to
+`handshake_req_hash_add()` will fail.
 
-On 9/16/2025 9:00 PM, Mike Leach wrote:
-> Hi,
-> 
-> I'm a little confused as to precisely what this component is.
-> 
-> From the description in the DT - it appears to be very much like a
-> static trace funnel - multiple inputs, and a single output.
-> The DT describes the inputs as "Coresight Trace". What is meant here?
-> - if this is ATB trace then this component is identical to the
-> coresight trace funnel in functionality so should probably use the
-> normal CS static funnel driver.
-> 
-> However - if it does not appear on the AMBA bus - how are the
-> coresight management registers read - these are a mandatory
-> requirement in the CoreSight specification for any coresight
-> compatible component?
-> 
-> Thanks
-> 
-> Mike
-> 
+I now think that's a bug in `handshake_complete()` and I have a better
+fix in the next version.
 
-Hi Mike,
+>
+> > +     nvme_stop_keep_alive(&(queue->ctrl->ctrl));
+> > +     flush_work(&(queue->ctrl->ctrl).async_event_work);
+> > +
+> Oh bugger. Seems like gnutls is generating the KeyUpdate message
+> itself, and we have to wait for that.
 
-"Coresight Trace" means ATB trace, the Video TNOC in the following example is an interconnect TNOC.
-It is used to replace TPDA and Funnel. Compared to Funnel, it is easier to configure and only
-requires enabling once, without the need to enable each inport separately.
+Yes, we have gnutls generate the message.
 
-it has "reg" parameter on DT, can use memory-map to read management registers.
+> So much for KeyUpdate being transparent without having to stop I/O...
+>
+> Can't we fix gnutls to make sending the KeyUpdate message and changing
+> the IV parameters an atomic operation? That would be a far better
 
-  +------------------------+                +-------------------------+
-  | Video Subsystem        |                |Video Subsystem          |
-  |       +-------------+  |                |       +------------+    |
-  |       | Video TPDM  |  |                |       | Video TPDM |    |
-  |       +-------------+  |                |       +------------+    |
-  |            |           |                |              |          |
-  |            v           |                |              v          |
-  |   +---------------+    |                |        +-----------+    |
-  |   | Video funnel  |    |                |        |Video TNOC |    |
-  |   +---------------+    |                |        +-----------+    |
-  +------------|-----------+                +------------|------------+
-               |                                         |
-               v-----+                                   |
-+--------------------|---------+                         |
-|  Multimedia        v         |                         |
-|  Subsystem   +--------+      |                         |
-|              |  TPDA  |      |                         v
-|              +----|---+      |              +---------------------+
-|                   |          |              |   Aggregator  TNOC  |
-|                   |          |              +----------|----------+
-|                   +--        |                         |
-|                     |        |                         |
-|                     |        |                         |
-|              +------v-----+  |                         |
-|              |  Funnel    |  |                         |
-|              +------------+  |                         |
-+----------------|-------------+                         |
-                 |                                       |
-                 v                                       v
-      +--------------------+                    +------------------+
-      |   Coresight Sink   |                    |  Coresight Sink  |
-      +--------------------+                    +------------------+
+I'm not sure I follow.
 
-       Current Configuration                            TNOC
+ktls-utils will first restore the gnutls session. Then have gnutls
+trigger a KeyUpdate.gnutls will send a KeyUpdate and then tell the
+kernel the new keys. The kernel cannot send or encrypt any data after
+the KeyUpdate has been sent until the keys are updated.
 
-This example is from the trace noce patch below:
-https://lore.kernel.org/all/20250710-trace-noc-v11-0-f849075c40b8@quicinc.com/
+I don't see how we could make it an atomic operation. We have to stop
+the traffic between sending a KeyUpdate and updating the keys.
+Otherwise we will send invalid data.
 
-> On Tue, 16 Sept 2025 at 03:35, yuanfang zhang
-> <yuanfang.zhang@oss.qualcomm.com> wrote:
->>
->> Hi Suzuki,
->>
->> Could this patch series be applied? Is there anything I need to update?
->>
->> thanks,
->> yuanfang.
->>
->> On 9/1/2025 2:58 PM, Yuanfang Zhang wrote:
->>> This patch series adds support for the Qualcomm CoreSight Interconnect TNOC
->>> (Trace Network On Chip) block, which acts as a CoreSight graph link forwarding
->>> trace data from subsystems to the Aggregator TNOC. Unlike the Aggregator TNOC,
->>> this block does not support aggregation or ATID assignment.
->>>
->>> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
->>> ---
->>> Changes in v4:
->>> - Fix unintended blank line removals in trace_noc_enable_hw.
->>> - Link to v3: https://lore.kernel.org/r/20250828-itnoc-v3-0-f1b55dea7a27@oss.qualcomm.com
->>>
->>> Changes in v3:
->>> - Add detail for changes in V2.
->>> - Remove '#address-cells' and '#size-cells' properties from in-ports field.
->>> - Fix comment indentation for packet description.
->>> - Link to v2: https://lore.kernel.org/r/20250819-itnoc-v2-0-2d0e6be44e2f@oss.qualcomm.com
->>>
->>> Changes in v2:
->>> - Removed the trailing '|' after the description in qcom,coresight-itnoc.yaml.
->>> - Dropped the 'select' section from the YAML file.
->>> - Updated node name to use a more generic naming convention.
->>> - Removed the 'items' property from the compatible field.
->>> - Deleted the description for the reg property.
->>> - Dropped clock-names and adjusted the order of clock-names and clocks.
->>> - Moved additionalProperties to follow the $ref of out-ports.
->>> - Change "atid" type from u32 to int, set it as "-EOPNOTSUPP" for non-AMBA device.
->>> - Link to v1: https://lore.kernel.org/r/20250815-itnoc-v1-0-62c8e4f7ad32@oss.qualcomm.com
->>>
->>> ---
->>> Yuanfang Zhang (3):
->>>       dt-bindings: arm: qcom: Add Coresight Interconnect TNOC
->>>       coresight-tnoc: add platform driver to support Interconnect TNOC
->>>       coresight-tnoc: Add runtime PM support for Interconnect TNOC
->>>
->>>  .../bindings/arm/qcom,coresight-itnoc.yaml         |  90 ++++++++++++++
->>>  drivers/hwtracing/coresight/coresight-tnoc.c       | 136 +++++++++++++++++++--
->>>  2 files changed, 215 insertions(+), 11 deletions(-)
->>> ---
->>> base-commit: 2b52cf338d39d684a1c6af298e8204902c026aca
->>> change-id: 20250815-itnoc-460273d1b80c
->>>
->>> Best regards,
->>
-> 
-> 
+> interface, as then we would not need to stop I/O and the handshake
+> process could run fully asynchronous to normal I/O...
+>
+> > +     ret =3D nvme_tcp_start_tls(&(queue->ctrl->ctrl),
+> > +                              queue, queue->ctrl->ctrl.tls_pskid,
+> > +                              HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED);
+> > +
+> > +     if (ret < 0) {
+> > +             dev_err(queue->ctrl->ctrl.device,
+> > +                     "failed to update the keys %d\n", ret);
+> > +             nvme_tcp_fail_request(queue->request);
+> > +             nvme_tcp_done_send_req(queue);
+> > +     }
+> > +}
+> > +
+> >   static void nvme_tcp_io_work(struct work_struct *w)
+> >   {
+> >       struct nvme_tcp_queue *queue =3D
+> > @@ -1389,15 +1448,21 @@ static void nvme_tcp_io_work(struct work_struct=
+ *w)
+> >                       mutex_unlock(&queue->send_mutex);
+> >                       if (result > 0)
+> >                               pending =3D true;
+> > -                     else if (unlikely(result < 0))
+> > +                     else if (unlikely(result < 0)) {
+> > +                             if (result =3D=3D -EKEYEXPIRED)
+> > +                                     update_tls_keys(queue);
+>
+> How exactly can we get -EKEYEXPIRED when _sending_?
 
+Good point. You can't with this current patch set. I have patches on
+top of this that will generate a KeyUpate as part of the send
+operation, which I plan to submit after this series.
 
+So this is a bit of prep work to setup the NVMe layer to handle
+sending and receiving KeyUpdate requests. I can drop this change from
+the series if that's prefered?
 
+> To my understanding that would have required userspace to intercept
+> here trying (or even sending) a KeyUpdate message, right?
+
+Not necessarily. The TLS layer can trigger a KeyUpdate independent of
+userspace. This would happen for example if the sequence count was
+about to overflow, which is what I use in my testing. Userspace has no
+idea of the current sequence number, so it can't be involved. The
+kernel will need to start the KeyUpdate send if the rec_seq is about
+to overflow.
+
+> So really not something we should see during normal operation.
+> As mentioned in my previous mail we should rather code the
+> KeyUpdate process itself here, too.
+> Namely: Trigger the KeyUpdate via userspace (eg by writing into the
+> tls_key attribute for the controller), and then have the kernel side
+> to call out into tlshd to initiate the KeyUpdate 'handshake'.
+
+Yeah, I agree about exposing a way for userspace to trigger an update.
+That would only be for testing though, as in normal operation
+userspace has no insight into the current connection state. In a
+production system the kernel TLS layer will need to initiate a
+KeyUpdate.
+
+> That way we have identical flow of control for both the sending
+> and receiving side.
+>
+> Incidentally: the RFC has some notion about 'request_update' setting
+> in the KeyUpdate message. Is that something we have to care about at
+> this level?
+
+It is something we will need to care about. At this stage it isn't
+supported as it adds a little bit of complexity, but I should be able
+to extend the current approach to support a request_update.
+
+Alistair
+
+>
+> Cheers,
+>
+> Hannes
+> --
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
+> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
