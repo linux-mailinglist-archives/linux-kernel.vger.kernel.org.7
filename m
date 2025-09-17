@@ -1,192 +1,113 @@
-Return-Path: <linux-kernel+bounces-820573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F30B7C5C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D323B7CCA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2251C07CBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBF752844E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B871B36C061;
-	Wed, 17 Sep 2025 11:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B971A369983;
+	Wed, 17 Sep 2025 11:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2kji8JiE"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyv+EuqV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBEC3451AE;
-	Wed, 17 Sep 2025 11:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F50DBA45;
+	Wed, 17 Sep 2025 11:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758109214; cv=none; b=IanIOQV/RDS4tOrH1HW1tztCz5H0yfbkDZCLtWO7AcH9MhIUD4I6e8a5yluUunSicitGvtNiYTVog1gDm0uM9GlJ/WNsKLdv9pmZCaxxptumxx1YdRFFGHAQDCmU0fJ3+oX8VL0xD4E7WuYlmVT+lITwzlAu/nanhom0SwM3sHU=
+	t=1758108850; cv=none; b=UrMYhwTQSefSspuQMmyZlK9WzpZdb2NeLto6FIJlfENUQDOG/4FBIQoW4RuY/kqpGk+ke1kaaWYtsEwVGn3qLEcXR6oh/ewrwPBk8nED/C5edQ6t94YNAsPHquYI5/8xV818+Y2tnJ6d9eVHzKkXTMZEtoz+0WENpIo667YCeRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758109214; c=relaxed/simple;
-	bh=0CFr4L7/ydIfSU2skwYgtJgnhmnNMA/TEnIk4Hyxj0U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q80Um/KQZ1OoUchnCZneubjTsb+hX9FtuPsVvr/6r3WZeMopeKJmJce1d6suYhqjlOP3CXdzdSRfKIjX4fqVf4xFQl9AG7hWU5/rODIsDNbHaY94vEfp0m2SLYE3+g/kr1C8PrnpuL2B2h25xU5IpBORVObrqv5dHA3QxvQWwBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2kji8JiE; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758109212; x=1789645212;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0CFr4L7/ydIfSU2skwYgtJgnhmnNMA/TEnIk4Hyxj0U=;
-  b=2kji8JiEFlo66ByxOR11f6NnZNfrKTEFaLo8VbJdb3MrJxvz898lVXbd
-   la3cRh53VTy2Y0PtQxC7p5qC8oFVoHxX1LBTQTEeHvRW8RHJhgLCbpiCB
-   wTmhTQzF/aNmDZS17HjlE+RIn/wDtMCuTdPLEW1DhDReMAYj0SroxxKWt
-   KbAn4z76p8wYa9zj4qM5ZC1bZ41YKFqonI0fLww/U6kZamiyvkAX3rtPh
-   TrQgqjaeNXaOUKGrLogq7cVv8NzlwnsY9U5kGXGvl6UvZAWMxwGD0E3fX
-   iCn4z50IrGNJTvqisF7xd9ihgAI77qrpkIx5VnEK2SSm0ZWzycrfYQNCV
-   Q==;
-X-CSE-ConnectionGUID: k5qsnvPHRd6rN6b8ix7Vog==
-X-CSE-MsgGUID: jUuy+zBPTualp0eC8tgmZQ==
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="46619847"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 04:39:09 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 17 Sep 2025 04:38:09 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Wed, 17 Sep 2025 04:38:06 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
-	<vadim.fedorenko@linux.dev>, <rmk+kernel@armlinux.org.uk>,
-	<christophe.jaillet@wanadoo.fr>, <rosenp@gmail.com>,
-	<steen.hegelund@microchip.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net v2] phy: mscc: Fix PTP for vsc8574 and VSC8572
-Date: Wed, 17 Sep 2025 13:33:16 +0200
-Message-ID: <20250917113316.3973777-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758108850; c=relaxed/simple;
+	bh=Pym4Hl/uD7n31XzfGlFJ4FP0sMyge/+RVU8nqvrtyiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KWfIN71x6qa/jHEk9K1LQ6NqBoxiSMo5xVaBzBF0e5ey894Z4tliEOcmuIEgQYir8P9yi4OUwn8mb9D/G2pyLG79ydX06ITCOUswIxS6YHM+QAD/u5cYLxiU8zgClCKfLva/319p7A80fK8tFDGeE0i2pdWtaGDfv3meTFQ0OJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyv+EuqV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA19C4CEF0;
+	Wed, 17 Sep 2025 11:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758108849;
+	bh=Pym4Hl/uD7n31XzfGlFJ4FP0sMyge/+RVU8nqvrtyiY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lyv+EuqV07hL0GuHD7TeWVXWWaG+xc5kVHkJUUZDsv2+KHsWh53DFp3wLwU7kms37
+	 uRnuyla+zzv4hxBL0+rYbuFwy443Y6odqVNbO9gNiIYCYQYQPr7WSB+bTXJRzC567h
+	 Q92nfT+ljIG+bnpOCNy6GySuMK9HFCE2okGVDnYfOJz5rdyF/NhB3oiZ+JiKLXFaX4
+	 5DvVigR6mtrTeGQSkUKOrxIIyzDFpL13hsugVM5/ieHEhRC0zCUsS9sxcXCSJXka+8
+	 foL5aE/q6yQnJ6HtoPS196jhaqr0x1E17zoFkx09DQoZnKzLbLWCy5a+C44KwgoNK1
+	 TgDwnVl3b5wTA==
+Date: Wed, 17 Sep 2025 12:34:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	Pavel Shpakovskiy <pashpakovskii@salutedevices.com>
+Subject: linux-next: manual merge of the bluetooth tree with the origin tree
+Message-ID: <aMqcrced3cFk9SCl@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hhaGiQv3TnEaUrV3"
+Content-Disposition: inline
 
-When trying to enable PTP on vsc8574 and vsc8572 it is not working even
-if the function vsc8584_ptp_init it says that it has support for PHY
-timestamping. It is not working because there is no PTP device.
-So, to fix this make sure to create a PTP device also for this PHYs as
-they have the same PTP IP as the other vsc PHYs.
 
-Fixes: 774626fa440e ("net: phy: mscc: Add PTP support for 2 more VSC PHYs")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+--hhaGiQv3TnEaUrV3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-v1->v2:
-- rename vsc8574_probe to vsc8552_probe and introduce a new probe
-  function called vsc8574_probe and make sure that vsc8504 and vsc8552
-  will use vsc8552_probe.
----
- drivers/net/phy/mscc/mscc_main.c | 51 +++++++++++++++++++++++++++++---
- 1 file changed, 47 insertions(+), 4 deletions(-)
+Hi all,
 
-diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
-index ef0ef1570d392..e9a8dc6096868 100644
---- a/drivers/net/phy/mscc/mscc_main.c
-+++ b/drivers/net/phy/mscc/mscc_main.c
-@@ -2253,7 +2253,7 @@ static int vsc8514_probe(struct phy_device *phydev)
- 	return vsc85xx_dt_led_modes_get(phydev, default_mode);
- }
- 
--static int vsc8574_probe(struct phy_device *phydev)
-+static int vsc8552_probe(struct phy_device *phydev)
- {
- 	struct vsc8531_private *vsc8531;
- 	u32 default_mode[4] = {VSC8531_LINK_1000_ACTIVITY,
-@@ -2282,6 +2282,49 @@ static int vsc8574_probe(struct phy_device *phydev)
- 	return vsc85xx_dt_led_modes_get(phydev, default_mode);
- }
- 
-+static int vsc8574_probe(struct phy_device *phydev)
-+{
-+	struct vsc8531_private *vsc8531;
-+	u32 default_mode[4] = {VSC8531_LINK_1000_ACTIVITY,
-+	   VSC8531_LINK_100_ACTIVITY, VSC8531_LINK_ACTIVITY,
-+	   VSC8531_DUPLEX_COLLISION};
-+	int ret;
-+
-+	vsc8531 = devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP_KERNEL);
-+	if (!vsc8531)
-+		return -ENOMEM;
-+
-+	phydev->priv = vsc8531;
-+
-+	vsc8584_get_base_addr(phydev);
-+	ret = devm_phy_package_join(&phydev->mdio.dev, phydev,
-+				    vsc8531->base_addr,
-+				    sizeof(struct vsc85xx_shared_private));
-+	if (ret)
-+		return ret;
-+
-+	vsc8531->nleds = 4;
-+	vsc8531->supp_led_modes = VSC8584_SUPP_LED_MODES;
-+	vsc8531->hw_stats = vsc8584_hw_stats;
-+	vsc8531->nstats = ARRAY_SIZE(vsc8584_hw_stats);
-+	vsc8531->stats = devm_kcalloc(&phydev->mdio.dev, vsc8531->nstats,
-+				      sizeof(u64), GFP_KERNEL);
-+	if (!vsc8531->stats)
-+		return -ENOMEM;
-+
-+	if (phy_package_probe_once(phydev)) {
-+		ret = vsc8584_ptp_probe_once(phydev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = vsc8584_ptp_probe(phydev);
-+	if (ret)
-+		return ret;
-+
-+	return vsc85xx_dt_led_modes_get(phydev, default_mode);
-+}
-+
- static int vsc8584_probe(struct phy_device *phydev)
- {
- 	struct vsc8531_private *vsc8531;
-@@ -2426,7 +2469,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
--	.probe		= &vsc8574_probe,
-+	.probe		= &vsc8552_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
-@@ -2573,7 +2616,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
--	.probe		= &vsc8574_probe,
-+	.probe		= &vsc8552_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
-@@ -2648,7 +2691,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_aneg    = &vsc85xx_config_aneg,
- 	.aneg_done	= &genphy_aneg_done,
- 	.read_status	= &vsc85xx_read_status,
--	.handle_interrupt = vsc85xx_handle_interrupt,
-+	.handle_interrupt = vsc8584_handle_interrupt,
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
--- 
-2.34.1
+Today's linux-next merge of the bluetooth tree got a conflict in:
 
+  net/bluetooth/mgmt.c
+
+between commit:
+
+  6bbd0d3f0c23f ("Bluetooth: hci_sync: fix set_local_name race condition")
+
+=66rom the origin tree and commit:
+
+  c49a788e88e48 ("Bluetooth: hci_sync: fix set_local_name race condition")
+
+=66rom the bluetooth tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc net/bluetooth/mgmt.c
+index 50634ef5c8b70,b9c53810bf06b..0000000000000
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+
+--hhaGiQv3TnEaUrV3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjKnK0ACgkQJNaLcl1U
+h9Cu9Qf+Kz+BnB5CGxNKW3jKFrg74sRPQfOl2F0Cu8IggZF303B8EaIqje3wBCeH
+29SyFW3pTKk8oom5CTiC+XiA+6i1zdi4K4jQJ5EkLscDkvYflW0458cL3wMwlYHv
+D3XV2ovmFQlR9SHIkNZSyvd9qX/NEsNJIVCHvt2F3PrM0KXZIZ1zUluaj2or5qAi
+PtQ8iD1l3jW4fACeQHmW1Gqsf5K/47OtdUvdDqOzL3LKqWVaDs1U2jk0yIaaFOdF
+SmnHY+qp6YedS7M0NbqKCmgIauIV4T76EI/hW65xLbuvmSYoHkIqIqkgD6SkEf5a
+vxoF/aHxIQGA28EVg0wrIb8bGM7cqA==
+=D2VM
+-----END PGP SIGNATURE-----
+
+--hhaGiQv3TnEaUrV3--
 
