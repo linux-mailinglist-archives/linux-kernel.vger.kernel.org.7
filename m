@@ -1,214 +1,221 @@
-Return-Path: <linux-kernel+bounces-820257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4455B7CED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F8C6B7CFC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7181C06CF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380915835F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFFC2206B1;
-	Wed, 17 Sep 2025 08:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C44B3054D9;
+	Wed, 17 Sep 2025 08:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kUejZVdb"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010040.outbound.protection.outlook.com [52.101.201.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K0CKpcQJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGmtl/eV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K0CKpcQJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aGmtl/eV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2128C2FC00E;
-	Wed, 17 Sep 2025 08:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758098279; cv=fail; b=gxlB9e2imdbt9g4Lld9KaS1nf0corv4vf7icnL61vXaNqQF4Pqzrr7IW5gCBWW3iGT7XJNOoqhCKcSI9xH0aZrfO9LFilcnxWVw0dK6/VoAzVogmRxcmqXGPIj3ePPYPHwO1LDlXyRAednL8KRGwKHeL/aLJ11L0aH7awo/nkgY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758098279; c=relaxed/simple;
-	bh=dCyMtahZDOWw9V2jfI1Ue6jCsRad/ueiZ8iUaDSRGdM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F9hoWdZafaqET28dHKMYivRZgNBUDuxF6eqDXM57wCBNvrPkjNhpaXj9ByknyeLYnsxhrQolOmj9+BkVWEd6iFpLEXG4uRGk7jRm4y6wpk1rWVx9VV2gwc4eXHtRjswoXjTc8/9b64yuGkuU9ynGDWmsBLK8GMiq/UzOWsMiTTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kUejZVdb; arc=fail smtp.client-ip=52.101.201.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xJtKxOywV1//MieyLKqWYlJ+snHP0LvVRVjf0XN3Omd+7LfseeCwW7oO2uKlMKSdI5Xi08iRrEbRvfp+4vKXjVJ7LF/MMnSTPcoIELvldaZCFfkELGaHAYPRCTpwpOKZUVou1rfo5upZlxc5G/jCTItxARqjeLbghUjfQdWTYjqHzSAYEx8j/Vi6mXWhHnR7i53nyqGK/9mzakS1yv+aOmoA23Mbi9zoggGCfAL9EQ+fMKgXY9YKKXWNUuIhh6JBcEpszPOfkU3HWDV/DqWtx8ZZ8v0qtpr3dDtpfEWYNJyKV5Rej7RlL+piPLnsTeV2NPBxxSAYU2NgX4037kGS6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vRiMGOhMUB30O/cAMA735TNfX1F0oSBqiD4jt5EU0N4=;
- b=ng0mH9Q81frqguv7JpN6emCURT74NwmHfEZvZpENikz+MacPGpZTUY6ffBWvXgWKedUXlrfCPKP0oBbFW0YtDJ6qnA2Z4BGtr316AaY0dhC3gLtbyMbbWzwnf1K8I/Dc0Q6X3HPdq14z8G7uEFDzrPvnDAH9hYOsDZebcprsgFVmRzOvbNAMqI7rmt9uVLT+zuvmyVZg/hz7zWmB9dGfvIBFYR5bqtJaGocoGi/aaZPpWrSd13lqCCYYNuIfUfJYagZ2SgR4xtNEpCf+XOgEKPX1LjCVaTPDN5/Pk8YBcJNeOGmhdBNyPFQmw5WBiAWcdP+bjPyEvrMtQsLZbvma7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vRiMGOhMUB30O/cAMA735TNfX1F0oSBqiD4jt5EU0N4=;
- b=kUejZVdbk9bOKtPbYj0L6Mxy7pGIFZhfl0puJ4zST70gHlPPBqNumKDFoPYt+et0Ex/mH6B0Yt58CO+Jhh3eOTERts8EQYC2ZKS5PQ1OFQ8gu7EUUgFeaHCc9SE8aqfhjQvFoRv7vSiqZEZca+7ce8yZjyUeHt2EnS9GkxPk8WltD0z+EdFLoH+m5cFGxn7BdAXZLZIPFpuojIv4RpCXs4U1RJ5tqc+1ahGeo9z+Tz5NPQHKYAwzAkxxPt+Rqkr4E/USYi29eUFvuC6if58EmWgpqVXVSF7ydXxAGXCDC8h3GJZQ5xwWr2zz52XWOn8nOZ+tiI97BMGkAjSuVJuoRA==
-Received: from BYAPR06CA0015.namprd06.prod.outlook.com (2603:10b6:a03:d4::28)
- by CH1PPF93AB4E694.namprd12.prod.outlook.com (2603:10b6:61f:fc00::61b) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
- 2025 08:36:32 +0000
-Received: from CO1PEPF000044EF.namprd05.prod.outlook.com
- (2603:10b6:a03:d4:cafe::2) by BYAPR06CA0015.outlook.office365.com
- (2603:10b6:a03:d4::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Wed,
- 17 Sep 2025 08:36:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000044EF.mail.protection.outlook.com (10.167.241.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Wed, 17 Sep 2025 08:36:32 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 01:36:11 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 01:36:10 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 17 Sep 2025 01:36:07 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <akhilrajeev@nvidia.com>, <andi.shyti@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <digetx@gmail.com>,
-	<linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kkartik@nvidia.com>
-Subject: [PATCH v7 4/4] i2c: tegra: Add Tegra264 support
-Date: Wed, 17 Sep 2025 14:05:45 +0530
-Message-ID: <20250917083545.594081-5-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250917083545.594081-1-kkartik@nvidia.com>
-References: <20250917083545.594081-1-kkartik@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574C2EC0A6
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758098160; cv=none; b=oGJJAnaAh6aDRKdwdbQfFYjHnpOFZn3mIX+amnUxKUISdLYFciJx6+QjPRaRzX0LZakGXiFXWLZb1GJXARjxUsb27clVBj1kH/Z6qJ5BKH9JZPsG8g4oHZr+ZTT1SzH3VpwzsGRGLYlSutTLFt5qvu5TcwZyZqgbDuKyeohoYR0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758098160; c=relaxed/simple;
+	bh=ofO0Q8oMta1PRDwIhLkYMub7GGndR7KtZQUqeFBiVPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JCmu0jN+NZsPkomnRfECT8y7Ma0s8Z8EZgTvYwmB09vIH4IS0NEwKMCh7FAEQHUvkwmQEtB4P/7jisIWtiIjp/AxMNfLqkFp3V3Pp2CTHwaoYWja00LdqnF52uFA4KdjGeeomhMeZRpJRCB6zBKu8TBF1JYa8zCvbnQ3yByTSkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K0CKpcQJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGmtl/eV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K0CKpcQJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aGmtl/eV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F73A1F79F;
+	Wed, 17 Sep 2025 08:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758098151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
+	b=K0CKpcQJHVMxSJ+0OTFPfYcV2OQ3IS7jig+x8ob4XXEYr/va3BZ90Lw30tMgFKMxGbQsRe
+	wWJgOOxdyvKIkGPA+QLwucu4EJLL2mBYylcaol6HmYxdEMQDGiMcoHTqSItojZq/0sEJVs
+	NlB55PNYrKpbGroyNlKHypEvgErFWrA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758098151;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
+	b=aGmtl/eVV6qvZej9Irm87pmJC9gTjqhA4sHTtOsVXSk0BcUzvZreilLZGDZCGSUx9rhB8s
+	W7+K9XDbHa/fxCBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758098151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
+	b=K0CKpcQJHVMxSJ+0OTFPfYcV2OQ3IS7jig+x8ob4XXEYr/va3BZ90Lw30tMgFKMxGbQsRe
+	wWJgOOxdyvKIkGPA+QLwucu4EJLL2mBYylcaol6HmYxdEMQDGiMcoHTqSItojZq/0sEJVs
+	NlB55PNYrKpbGroyNlKHypEvgErFWrA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758098151;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BasLqjHtVshfjdyLg2J6q/oyQyWJ9sPXGwCbgbGkmqs=;
+	b=aGmtl/eVV6qvZej9Irm87pmJC9gTjqhA4sHTtOsVXSk0BcUzvZreilLZGDZCGSUx9rhB8s
+	W7+K9XDbHa/fxCBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 158141368D;
+	Wed, 17 Sep 2025 08:35:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GcU6Bedyymj4CwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 08:35:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B774CA0A95; Wed, 17 Sep 2025 10:35:46 +0200 (CEST)
+Date: Wed, 17 Sep 2025 10:35:46 +0200
+From: Jan Kara <jack@suse.cz>
+To: David Hildenbrand <david@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Ryan Roberts <ryan.roberts@arm.com>, 
+	syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>, akpm@linux-foundation.org, chaitanyas.prakash@arm.com, 
+	davem@davemloft.net, edumazet@google.com, hdanton@sina.com, horms@kernel.org, 
+	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, perex@perex.cz, 
+	syzkaller-bugs@googlegroups.com, tiwai@suse.com, willemb@google.com
+Subject: Re: [syzbot] [sound?] kernel BUG in filemap_fault (2)
+Message-ID: <s5pl5yhhxyz7dn4r2v6c4ll53ejboe5xa5226ytgg7kjirgmh5@tofyas4lp4uy>
+References: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
+ <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
+ <lqzgi7abe2onda3faavn5ays6gdw4syiu32hmrfaibrh6cmozs@pjf3llvnnefk>
+ <7e338491-0c6b-4b65-93b7-df0af8b2fd87@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044EF:EE_|CH1PPF93AB4E694:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7868ae5b-425e-4581-3bc4-08ddf5c54e39
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XyGapMnJcWf1ktx6zHr2LtjruXxQiehF6E6pHXh6QLRfLm/urkrhnKSnkXZU?=
- =?us-ascii?Q?uzYv/iPCU2gbrk0hdj1W3PYVcfLSRt4HkaK0II/fEw0uz5nNP2BKAxgLwqsW?=
- =?us-ascii?Q?YIWjrvktCPHf58ua/USd3kY55rqmWH7Lqj8ajFERu4K/pCEaNv3IWarK3Xzz?=
- =?us-ascii?Q?DdQUoWvnP4eHCAsDvlVI6HaQoKgGzfqvR0ikO6/Amh8NqPvtbKS56uPH/efl?=
- =?us-ascii?Q?lrXf5j46nsV1xZq+CulNAerPhkEor/ZM4qtNPeYIQT2pGJ6N4/LOJgQkWjuN?=
- =?us-ascii?Q?NyazYovJeVFJUysR111ksvXIGqD3HTVARL+X30C96K8WLe2EizkxgPprGEsh?=
- =?us-ascii?Q?es2VxHXa+yHKc5RPuffigEG0zfrqKq1VrSXZFkYvw0F0Ti61U/Xd9uM5/ggX?=
- =?us-ascii?Q?J0Nt0h8KpInVY221nELpzgSsYcDdc5gts38I3N23ZU8+6YvLEso6XiCgA0Bi?=
- =?us-ascii?Q?QFlBvQGA2rTth5gVj6DrXQiy7kvCkBsH35LEHocI9oltJv1a6Q7o2Qn6f8iw?=
- =?us-ascii?Q?ZvgIvYgsxKVtc37FZxcAO5yl4HqvI/i76rG4Wv3Jl+zm1uhY4Yk8cIigfdSR?=
- =?us-ascii?Q?j1YVbgGMsAp3NOoKuzlOCnL6g56hrxZKUW8Xc/A7bFXlCkYvL4KxXU4Ahh1h?=
- =?us-ascii?Q?mHXWboBZ88MDRbdZkddGkPIedps3sXHNk/UMpKhih5T9vqeJnNcSqGDf8MJk?=
- =?us-ascii?Q?5Ns1CC4sTfia7d6nhkcVYTFFB6bO2z/rRRaFpNrm83DWtNpFr9mr0leBc3T5?=
- =?us-ascii?Q?6VUqy7jtGf9IsHokDp4++hHdWP4ejGkLg2T68uaW8OkgquDzTsiUbxpG0nLL?=
- =?us-ascii?Q?1ZgJ0h0UQINPY/djZUwHSQSxyDQ0zCyTbQ+6CZetwCLr5GhHPI7ce2M5aGun?=
- =?us-ascii?Q?WZYG345Uu7MDN2Vz5fRDOrJvUmMXpve3MdzBfLl+fCl/NICXFItPi9xoyeks?=
- =?us-ascii?Q?rG4cElUYavtcw5J7Yu0oW9nhD/yFYLZUO6LgWRf74goNli42pL3xSj0YUmT1?=
- =?us-ascii?Q?FOI2W3SCiay/cgU3OYW4vZvULt8wdAJTr9eI/iavXokJPBRxPQusggRf3oGf?=
- =?us-ascii?Q?NxfLPCPbsTcIcnJD34I2p/l2Or+A0/kHGaHxDERMMrCRnDfOABj4D/CUlr5L?=
- =?us-ascii?Q?ajcZKX8YkV1cH4HQyRmgfKQwneKWxl9j7ZKoX2v971OWpbU2wZ9FiX8wmMwp?=
- =?us-ascii?Q?+dDJpMoQoYk1tHAcFE1EFpDGecgZmCdBW239ODjAavN/zYKuin7Z2XtEjoW2?=
- =?us-ascii?Q?XpdkjjoUegyzRdVCBcNj6CxIxhc2qn6zK7tzFeDiqlka4J5ChmJtQjh/DyXa?=
- =?us-ascii?Q?kXtrTdCbVvUaGNUExHOT8MP4FZ5do3iAxaqNCc8BNnjef/KLZw+6ieXTxny9?=
- =?us-ascii?Q?et82OSPmTKxnKZhWdYgpJ3CYFi2zsKVnpR+hmO/vEydoWpl1SUlYkjOGn5EN?=
- =?us-ascii?Q?PCNLFJ/+ZovpOzBiBL/o+tgBrYgjcX8kCXObvbRW9uuMr3d0zvE+BBzMtFcj?=
- =?us-ascii?Q?2WCF4yUdjQtiD3gVDczVYvQ3h+SshqqRrBuEg+jKuR+8ESXBDTuvn9PITA?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 08:36:32.4823
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7868ae5b-425e-4581-3bc4-08ddf5c54e39
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044EF.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF93AB4E694
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e338491-0c6b-4b65-93b7-df0af8b2fd87@redhat.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[263f159eb37a1c4c67a4];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[sina.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,arm.com,syzkaller.appspotmail.com,linux-foundation.org,davemloft.net,google.com,sina.com,kernel.org,vger.kernel.org,redhat.com,perex.cz,googlegroups.com,suse.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
 
-From: Akhil R <akhilrajeev@nvidia.com>
+On Wed 17-09-25 09:57:19, David Hildenbrand wrote:
+> On 16.09.25 15:05, Jan Kara wrote:
+> > On Tue 16-09-25 13:50:08, Ryan Roberts wrote:
+> > > On 14/09/2025 11:51, syzbot wrote:
+> > > > syzbot suspects this issue was fixed by commit:
+> > > > 
+> > > > commit bdb86f6b87633cc020f8225ae09d336da7826724
+> > > > Author: Ryan Roberts <ryan.roberts@arm.com>
+> > > > Date:   Mon Jun 9 09:27:23 2025 +0000
+> > > > 
+> > > >      mm/readahead: honour new_order in page_cache_ra_order()
+> > > 
+> > > I'm not sure what original bug you are claiming this is fixing? Perhaps this?
+> > > 
+> > > https://lore.kernel.org/linux-mm/6852b77e.a70a0220.79d0a.0214.GAE@google.com/
+> > 
+> > I think it was:
+> > 
+> > https://lore.kernel.org/all/684ffc59.a00a0220.279073.0037.GAE@google.com/
+> > 
+> > at least that's what the syzbot email replies to... And it doesn't make a
+> > lot of sense but it isn't totally off either. So I'd just let the syzbot
+> > bug autoclose after some timeout.
+> 
+> Hm, in the issue we ran into was:
+> 
+> 	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
+> 
+> in filemap_fault().
+> 
+> Now, that sounds rather bad, especially given that it was reported upstream.
+> 
+> So likely we should figure out what happened and see if it really fixed it
+> and if so, why it fixed it (stable backports etc)?
 
-Add support for Tegra264 SoC which supports 17 generic I2C controllers,
-two of which are in the AON (always-on) partition of the SoC. In
-addition to the features supported by Tegra194 it also supports a
-SW mutex register to allow sharing the same I2C instance across
-multiple firmware.
+Ok, ok, fair enough ;)
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
-v1 -> v4:
-	* Update commit message to mention the SW mutex feature
-	  available on Tegra264.
----
- drivers/i2c/busses/i2c-tegra.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+> Could be that Ryans patch is just making the problem harder to reproduce, of
+> course (what I assume right now).
+> 
+> Essentially we do a
+> 
+> 	folio = filemap_get_folio(mapping, index);
+> 
+> followed by
+> 
+> 	if (!lock_folio_maybe_drop_mmap(vmf, folio, &fpin))
+> 		goto out_retry;
+> 
+> 	/* Did it get truncated? */
+> 	if (unlikely(folio->mapping != mapping)) {
+> 		folio_unlock(folio);
+> 		folio_put(folio);
+> 		goto retry_find;
+> 	}
+> 	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
+> 
+> 
+> I would assume that if !folio_contains(folio, index), either the folio got
+> split in the meantime (filemap_get_folio() returned with a raised reference,
+> though) or that file pagecache contained something wrong.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index bd254f5465f8..538711120976 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1804,7 +1804,36 @@ static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
- 	.has_interface_timing_reg = true,
- };
- 
-+static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
-+	.has_continue_xfer_support = true,
-+	.has_per_pkt_xfer_complete_irq = true,
-+	.clk_divisor_hs_mode = 1,
-+	.clk_divisor_std_mode = 0x1d,
-+	.clk_divisor_fast_mode = 0x15,
-+	.clk_divisor_fast_plus_mode = 0x8,
-+	.has_config_load_reg = true,
-+	.has_multi_master_mode = true,
-+	.has_slcg_override_reg = true,
-+	.has_mst_fifo = true,
-+	.quirks = &tegra194_i2c_quirks,
-+	.supports_bus_clear = true,
-+	.has_apb_dma = false,
-+	.tlow_std_mode = 0x8,
-+	.thigh_std_mode = 0x7,
-+	.tlow_fast_fastplus_mode = 0x2,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.tlow_hs_mode = 0x4,
-+	.thigh_hs_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x08080808,
-+	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
-+	.setup_hold_time_hs_mode = 0x090909,
-+	.has_interface_timing_reg = true,
-+	.has_hs_mode_support = true,
-+	.has_mutex = true,
-+};
-+
- static const struct of_device_id tegra_i2c_of_match[] = {
-+	{ .compatible = "nvidia,tegra264-i2c", .data = &tegra264_i2c_hw, },
- 	{ .compatible = "nvidia,tegra256-i2c", .data = &tegra256_i2c_hw, },
- 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
- 	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
+Right.
+
+> In __filemap_get_folio() we perform the same checks after locking the folio
+> (with FGP_LOCK), and weird enough it didn't trigger yet there.
+
+But we don't call __filemap_get_folio() with FGP_LOCK from filemap_fault().
+The folio locking is handled by lock_folio_maybe_drop_mmap() as you
+mentioned. So this is the first time we do the assert after getting the
+folio AFAICT. So some race with folio split looks plausible. Checking the
+reproducer it does play with mmap(2) and madvise(MADV_REMOVE) over the
+mapped range so the page fault may be racing with
+truncate_inode_partial_folio()->try_folio_split(). But I don't see the race
+there now...
+
+								Honza
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
