@@ -1,127 +1,97 @@
-Return-Path: <linux-kernel+bounces-821505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4D7B816CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:06:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2790BB818DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D1497B89E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAA7189C89F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8BB2F616C;
-	Wed, 17 Sep 2025 19:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5DD332A3B;
+	Wed, 17 Sep 2025 19:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="PTHfsjrf"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=achill.org header.i=@achill.org header.b="benAjWNm"
+Received: from mailout02.platinum-mail.de (mx02.platinum-mail.de [89.58.18.167])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7B725A630
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0912332A27
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.18.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758135997; cv=none; b=FsGfWONrG2zJXX0uM45GnkrkM1y6b3GXE4T+TOAEvsueJG50qtMruOsmWHDt6sBkkssM3ZQ6P6/zh/rth3V2/DBEDXYpejNhAtpt9RPOBO+wdRNHGhCDm5emBkySycdJhZROG2Hfv1hUnfUoV93UFbnvnhKicwAJt6tl0AU64A0=
+	t=1758136482; cv=none; b=dMrKzLT6J1FPVddMrDBfqj8m4tXJIlaIoX9ez4KQP9CACL5LZgrVOtLIaCZq1qS6aquIKWLKXzptYSBPG3Mc+e6uEdYPjA2wsXdsPfH+3ftzrnTYJdWzqEJJwrCEN8/g4c61EnwX32k+DVMnCsc63Erxc5dJQCagqtLX5HbQzms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758135997; c=relaxed/simple;
-	bh=qZtcZTnWxUnymv6cAIxmqQfBFbRdLOm34vdUr0A1Em8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G+TP9VjlDUDLWNmPe7BniVSfQch86uEHFPJzi1Vga3mZmh6+v0XDmkz/YHLV0q4tEdhfkIJzTkZTxdNFgeUoQYQKyb5wEhwIqlg62lSRd2S8ijBc7hoL8JkKxs+8/62rBpds+OHnIJITmP9FepK+LI7+eYuIPnZK0ZJhcVpgx0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=PTHfsjrf; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b07c081660aso27577166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:06:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758135994; x=1758740794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WjAKk6dDrc+RS53N4L4L2Jhabpo688uVi5jmIwo6nKw=;
-        b=PTHfsjrfyhcQnQLsWb5SBhCmL/MwmqOCnlntj1nspqEudKf4VMuQ2S2wks60O/dTm2
-         CDN/3ao14fIyx6fTEACZ+Hjo/2wYmSc9oBR8OvBQfIFrpHJh74YJugnpk1T5ZoODEAeH
-         C79z1AwtaRJt5j8dE4UIhhm/kzT9AJZer62gdSUAqTaLoNGJON8GRyKNRomKpdq+r9r2
-         JT8cAyhn6IAI1GB0jOEbDhV8KR8ZH9RvYdw3xgiqHsANQ8kaLSIFVeJtOfldNcl1URKR
-         YWI/WWY8X9/1w0Cxhot9uqbdiJq512soJ7PXQKqQZdeM+pAmepHCy1HaN8ScLTxwbKvf
-         CAaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758135994; x=1758740794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WjAKk6dDrc+RS53N4L4L2Jhabpo688uVi5jmIwo6nKw=;
-        b=IYKoCAl6RwhO+b99X1+3USJbYsvy/8zN4mvTy8yYeZTwJZ4vnjM3fJsCFhCxj+Uqdu
-         Gi9Aj1DGeG7VxPcCx9r6TGeCyUrnKXKR5ISbLXp7Ur9z6nMUyjraqREcRR26W37eeFel
-         lPdnSSbiyEkrvz27ZtyWB5uXNr2etqpR2nD/FKQst8kqFnE7/93U/tdQoXLompjcJPFX
-         L/VPyF/Cokvc5fN7+5GVZ5QytrJuPnR0OxWSPcUFRzqHJaFk8Cgxt/i+/XYgpULMeftL
-         s3UKcCY/RGjIDI1Wav6aCcrnHhituMPNadKPWZcdZCiNlkntJMIzEs/1dVVioPZpzIMa
-         so4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUtRDvgEQAUna4KI4S+D5Nn7vvngbewHsz8PyIv8ZSElYSzQqvdAPrRVBKEbT095mVxKP0FIKeaJjYbyts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrXpwsotImoG8N59HcdLRVBY0RURHXJYacN+M3xI6qEjuOeAro
-	o7vjo/XHxdY36kEQgdm3U+Fu9CYe2ZFTYhe9qMUVlDqrdDANYfuBQd/qPIlDYDHab0Jt0v4/AND
-	FqSqxZ6hLHEwYKQ0SWL3cv4I5hNOF40Mrc3DKveTiAg==
-X-Gm-Gg: ASbGncueAxLoWzOf8aUkzYIzTXYDTLS+a62dK5Z4UiZ3m1WQrX6aHw918sKbMcotPyw
-	ueHG/9uD1pMEJ33Q30kvm37RqCmigSWSdmTh2AguAFR6kfOBcRc+zFSRYJm2P0cEbCAIG8t46MS
-	F2VdhCg3OGxovdnGdwY1fUztBrueeuH6YqFeuCMCXod1f9C6k00y8vtTEvAJfxxsEZFQ+4x0IF6
-	lCTVq4n+mByj4ThW4cepvlZOkCqGLQfDtOLz4wzuj+9YEo=
-X-Google-Smtp-Source: AGHT+IEeoKIGF0DJUkr9LeE+86k79ccZaCCG4KjCllo1uxTbF5z8DSBt0gp58w9mSuOWqhXnNBwuDlyHfOioj70SCBs=
-X-Received: by 2002:a17:907:969e:b0:b04:85f2:d26f with SMTP id
- a640c23a62f3a-b1bb73a737bmr455871666b.25.1758135993911; Wed, 17 Sep 2025
- 12:06:33 -0700 (PDT)
+	s=arc-20240116; t=1758136482; c=relaxed/simple;
+	bh=e4+uMr+jK9MjVCUf13Vcm10orDiY6sPPMMsrDnuNaz4=;
+	h=Mime-Version:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=fsq1pzppuoCBdzH9hJpQUPK7sxYJbbCILDOqgQYL8sRIXjvLTaLMFDByGkAD2TgADCin3mTIE3Lutq0CxsJFNpgtemUFoUu08evXz/lIWrwVrB7iNAC/tDgrsRdA7iRt9u4W6KE62gS4p/oTvCNZd1mE4Ldp/AnKGM4QH3amN8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=achill.org; spf=pass smtp.mailfrom=achill.org; dkim=pass (2048-bit key) header.d=achill.org header.i=@achill.org header.b=benAjWNm; arc=none smtp.client-ip=89.58.18.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=achill.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=achill.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mailout02.platinum-mail.de (Mail Service) with ESMTPS id 3BBFB9A292C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; d=achill.org; s=mail; c=relaxed/simple;
+	t=1758136093; h=date:message-id:subject:from:to;
+	bh=e4+uMr+jK9MjVCUf13Vcm10orDiY6sPPMMsrDnuNaz4=;
+	b=benAjWNm+xrzfUO4QFHi+EseWDJm/N87fcCPy/+elvGKRsPsMRjwtpuZDaFyIjQ2sHaQvwZJ/Cx
+	RTS+racLuez55ElZMMXEkKT06AvRfgU78R9vCQfwKt4RrEb62jnKA1sntaPk1u4iz1v4rIkdTv6+5
+	u1tcYC5s54Uj8QZNP9SXPzSoBZ1dprhPGzb9HYLappJXUpfP3OKHIsBJjS9JP36dNj7pV005dCaFr
+	co3qlAGSbiwiCC6mejxfyHO7SUw5xdb+LIDCDnK/Xzg70vwMGSaAKtmTNMR67Qv+I43OrEVeCOa6h
+	HJ2Yx2MOA+OWwV8Okkyop6N5ylA3o0AMl3RQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250917135907.2218073-1-max.kellermann@ionos.com> <832b26f3004b404b0c4a4474a26a02a260c71528.camel@ibm.com>
-In-Reply-To: <832b26f3004b404b0c4a4474a26a02a260c71528.camel@ibm.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 17 Sep 2025 21:06:22 +0200
-X-Gm-Features: AS18NWAgiPxioh1hBxBItSQjz6PB8OC4EFRxWlPBDaP02Mv4xKOQfrE0EdtFsAM
-Message-ID: <CAKPOu+_xxLjTC6RyChmwn_tR-pATEDLMErkzqFjGwuALgMVK6g@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>, 
-	"idryomov@gmail.com" <idryomov@gmail.com>, "netfs@lists.linux.dev" <netfs@lists.linux.dev>, 
-	Alex Markuze <amarkuze@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "mjguzik@gmail.com" <mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Date: Wed, 17 Sep 2025 21:08:12 +0200
+Message-Id: <DCVB8AY7VTYK.1B8UFEG97596N@achill.org>
+Cc: <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+ <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+ <lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+ <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
+ <srw@sladewatkins.net>, <rwarsow@gmx.de>, <conor@kernel.org>,
+ <hargar@microsoft.com>, <broonie@kernel.org>, <achill@achill.org>
+Subject: Re: [PATCH 6.16 000/189] 6.16.8-rc1 review
+From: "Achill Gilgenast" <achill@achill.org>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ <stable@vger.kernel.org>
+X-Greeting: Hi mom! Look, I'm in somebodys mail client!
+X-Mailer: aerc 0.21.0
+References: <20250917123351.839989757@linuxfoundation.org>
+In-Reply-To: <20250917123351.839989757@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
 
-On Wed, Sep 17, 2025 at 7:55=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
-> > +     doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", i=
-node, ceph_vinop(inode));
+On Wed Sep 17, 2025 at 2:31 PM CEST, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.8 release.
+> There are 189 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> What's about this?
+> Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
+> Anything received after that time might be too late.
 >
-> struct ceph_fs_client *fsc =3D ceph_inode_to_fs_client(inode);
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.8-=
+rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
+ linux-6.16.y
+> and the diffstat can be found below.
 >
-> doutc(fsc, "%p %llx.%llx\n", inode, ceph_vinop(inode));
-
-That means I have to declare this variable at the beginning of the
-function because the kernel unfortunately still doesn't allow C99
-rules (declare variables where they are used). And that means paying
-the overhead for chasing 3 layers of pointers for all callers, even
-those 99.99% who return early. Or declare the variable but initialize
-it later in an extra line. Is that the preferred coding style?
-
-> > +     WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq=
-,
-> > +                              &ceph_inode(inode)->i_work));
+> thanks,
 >
-> This function looks like ceph_queue_inode_work() [1]. Can we use
-> ceph_queue_inode_work()?
+> greg k-h
 
-No, we can not, because that function adds an inode reference (instead
-of donating the existing reference) and there's no way we can safely
-get rid of it (even if we would accept paying the overhead of two
-extra atomic operations).
+Thanks! Builded on all Alpine architectures & booted on x86_64.
 
-> Do you imply "if i_work were already"?
-
-Yes, it's a typo.
+Tested-By: Achill Gilgenast <achill@achill.org>=
 
