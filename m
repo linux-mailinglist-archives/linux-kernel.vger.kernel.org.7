@@ -1,125 +1,159 @@
-Return-Path: <linux-kernel+bounces-821212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF29EB80BC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:50:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF8DB80BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407A73B16C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4FA482002
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E5D2D3756;
-	Wed, 17 Sep 2025 15:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BA619F115;
+	Wed, 17 Sep 2025 15:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQdcFHoL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E0DV8B4D"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603442F069F;
-	Wed, 17 Sep 2025 15:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F27341352;
+	Wed, 17 Sep 2025 15:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758124240; cv=none; b=PmNi1j4I0x9lHur6er5YMBGGykehlgjHE86tLQEqfFMgmFEIhOl6pLh7qNYPpFmtye04GzgxUiFVMUmJVturjiJyS0v5xC0ORx0474TfTY4qOz5TDD6/cGnhTwkqHoUsL2mzAv+dL4q4Y/l7ldbpKl5Wot9+bu94uIUFtZLIOWE=
+	t=1758124272; cv=none; b=PkrYLDgWZVlB/ZhZyu8XtH+kyYn7nqnXVdKuHwKzoxamMm49RYXDfVnayPJV/9xbaneu1HEI80T/YbW9ZPuk1WmgZptGBRcRxjhXWQg1zZSwupEpGJcobWHueu7DbFFI/dAMtvfNM20Pz3zGGBsCCzpd8zTUJIbKbazhyAkFMvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758124240; c=relaxed/simple;
-	bh=p0cL9e+1CI1l0mivxGy3X/fL5f/YaaMWCMYYpGS9RQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=TYQi6VxIfdkdx0GCIqRWEG3WXbZttORD0ib5KVBmwwDnCjUVwfmRASgVNyAgTcvxIzWwycX2NYohMbbDFiu50pxzFYoAA1RxTQDA361hFA19VVaTnnq1lbi996lodIt6OtVZvMtzaM5NIqAWBaYgrLQrFqKmvQD+CBp5c21FtFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQdcFHoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DF64C4CEE7;
-	Wed, 17 Sep 2025 15:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758124240;
-	bh=p0cL9e+1CI1l0mivxGy3X/fL5f/YaaMWCMYYpGS9RQA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nQdcFHoLRmrUmJeqTIw9u71kfyLBLDTV88iiwbJIejAW/3C+AXRXYfoXuKfcEpWvg
-	 RCBaiINhdDeEOt9UZ3DT2tvhN2zkFjdeaWFJEA1cBpX7em1q1DW4YKSf2tlC1i5UYr
-	 8wd0hFN0asAluYAmbcx9jw534P8l/5RCXpApyU1qTE/nA4BkKOhibjlDWg5+Mngt5n
-	 QGZGgjY3MUmUP1ClDZgHpoAqmETMpfFmHZwnm1Jx/cgmATVsimNYSp8pEswczaSO2E
-	 v4qzOzxkwuNTZJEllijXWZzAVZGHHDj++4xU8cCFkmX8iZ97dejGhgfq1qgtIC08b9
-	 G5Unw66MdVZRQ==
-Date: Wed, 17 Sep 2025 10:50:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-hardening@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] sparc: PCI: Replace deprecated strcpy() with
- strscpy()
-Message-ID: <20250917155038.GA1852582@bhelgaas>
+	s=arc-20240116; t=1758124272; c=relaxed/simple;
+	bh=najpjZb1c8KxKCDHMDrrfxyuWSzUEpLP6UkAhnhEuwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C1nQczvnKUA0XMiNjJXrWrbqogZCMJNRMREDA6isiIlLnGOXXhc8mCgnoT76Admhr/No9qj86VnghkjDaWHU9HD5ysS7zxWMoyCvI6pZ6a1SGwRNRnExPYUzeGsX+KRH8dqPJOVn/enPW7/QTKK5zG6JzsLTlp9kVn/WR+lWvxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E0DV8B4D; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E1C7843A63;
+	Wed, 17 Sep 2025 15:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1758124266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v1c79sUNcMVeE8q34apk1GvyhbBN1jZ6cmstvanDQC4=;
+	b=E0DV8B4D2a78odu/FKSlKYCGr7gdoXX7ABRE3ycoFBNQ4obfZNRRWWlERiRmdsdvr8aFNn
+	ydIkF+d33eaQ8jgDL88ExAsSE9U0RE60sDGdV+NjicQlG2rv+8Hb26akHE2ZvuDhXYy7xQ
+	x2flQhxaozQRNRS2b7fxhQkzfMBXl8PQWdqNF4n54dYz+frLGHrxH3S+RV3Mx56DrS4koT
+	qQ1IBMUL6zLVB2i1PmyhqomvDm9BlFyhuvtDUl8oSJnbZdbFzGbSVo22hGKc6iVvmD9708
+	93JhsesBGtxW6eZsIAmKvGt+c1nsDIBXsWxfrYS12jpRKHacFm/uk4rgQt3TUQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject:
+ Re: [PATCH 1/4] regulator: dt-bindings: Add Linear Technology LTM8054
+ regulator
+Date: Wed, 17 Sep 2025 17:51:05 +0200
+Message-ID: <5135820.31r3eYUQgx@fw-rgant>
+In-Reply-To: <936e16dd-d11f-4452-8942-64366f173d6f@baylibre.com>
+References:
+ <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com>
+ <936e16dd-d11f-4452-8942-64366f173d6f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917144733.118553-1-thorsten.blum@linux.dev>
+Content-Type: multipart/signed; boundary="nextPart4774077.LvFx2qVVIh";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfeekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehlghhirhgufihoohgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvr
+ hhnvghlrdhorhhgpdhrtghpthhtohepjhhitgdvfeeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhunhhordhsrgesrghnrghlohhgrdgtohhmpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Wed, Sep 17, 2025 at 04:47:30PM +0200, Thorsten Blum wrote:
-> strcpy() is deprecated; use strscpy() instead.
-> 
-> No functional changes intended.
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+--nextPart4774077.LvFx2qVVIh
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Wed, 17 Sep 2025 17:51:05 +0200
+Message-ID: <5135820.31r3eYUQgx@fw-rgant>
+In-Reply-To: <936e16dd-d11f-4452-8942-64366f173d6f@baylibre.com>
+MIME-Version: 1.0
 
-No objection from me, but no particular PCI core issue and I don't
-maintain this file, so up to the sparc folks if they want it.
-
-I would consider making a single patch to address this issue
-everywhere in arch/sparc so it can all be reviewed together.
-
-> ---
->  arch/sparc/kernel/pcic.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+On Tuesday, 16 September 2025 21:24:42 CEST David Lechner wrote:
+> On 9/16/25 5:24 AM, Romain Gantois wrote:
+> > The Linear Technology LTM8054 is a Buck-Boost voltage regulator with an
+> > input range of 5V to 36V and an output range of 1.2V to 36V.
+...
+> > +  The output current of the LTM8054 can be limited by tying the Iout pin
+> > to a +  current sense resistor. This limit can be further lowered by
+> > applying a +  voltage below 1.2V to the CTL pin.
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/regulator/regulator.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: lltc,ltm8054
 > 
-> diff --git a/arch/sparc/kernel/pcic.c b/arch/sparc/kernel/pcic.c
-> index 25fe0a061732..f894ae79e78a 100644
-> --- a/arch/sparc/kernel/pcic.c
-> +++ b/arch/sparc/kernel/pcic.c
-> @@ -16,6 +16,7 @@
->  #include <linux/init.h>
->  #include <linux/mm.h>
->  #include <linux/slab.h>
-> +#include <linux/string.h>
->  #include <linux/jiffies.h>
->  
->  #include <asm/swift.h> /* for cache flushing. */
-> @@ -352,7 +353,7 @@ int __init pcic_probe(void)
->  	pbm = &pcic->pbm;
->  	pbm->prom_node = node;
->  	prom_getstring(node, "name", namebuf, 63);  namebuf[63] = 0;
-> -	strcpy(pbm->prom_name, namebuf);
-> +	strscpy(pbm->prom_name, namebuf);
->  
->  	{
->  		extern int pcic_nmi_trap_patch[4];
-> @@ -477,7 +478,7 @@ static void pcic_map_pci_device(struct linux_pcic *pcic,
->  	int j;
->  
->  	if (node == 0 || node == -1) {
-> -		strcpy(namebuf, "???");
-> +		strscpy(namebuf, "???");
->  	} else {
->  		prom_getstring(node, "name", namebuf, 63); namebuf[63] = 0;
->  	}
-> @@ -536,7 +537,7 @@ pcic_fill_irq(struct linux_pcic *pcic, struct pci_dev *dev, int node)
->  	char namebuf[64];
->  
->  	if (node == 0 || node == -1) {
-> -		strcpy(namebuf, "???");
-> +		strscpy(namebuf, "???");
->  	} else {
->  		prom_getstring(node, "name", namebuf, sizeof(namebuf));
->  	}
-> -- 
-> 2.51.0
+> Looks like they got bought by Analog Devices Inc., so adi,ltm8054.
 > 
+
+Ah yes, I'll also change the Kconfig and driver descriptions in that case. I'd 
+like to keep the lltc,fb-voltage-divider property name though, since that's 
+already used in an identical way by two other regulator bindings.
+
+...
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +
+> > +    / {
+> 
+> Examples usually don't have a root node. Probably explains
+> the bot errors. (but you should have seen the same errors
+> locally with make dt_binding_check.)
+> 
+
+I didn't see the errors but I'm guessing that's due to an out-of-date dtschema
+dependency on my system, thanks for pointing it out.
+
+Thanks,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart4774077.LvFx2qVVIh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjK2OkACgkQKCYAIARz
+eA6jKw//RMj5RRwagLh2PF9GStE9vCC5p4+y4Eg0rXPlUlnUwWlVa7/7Lxo5iqGz
+INOVs4kGtJDjAgj39G1b3xf+fD2BBQ83kJBJpwqq9q7Qd/GXykUeeAJn2aro8Ben
+C3+uvKfkmYVseDEEmrve/AZ4q7SlbIGKfC/BuCOifh6DAmgXxeLLBuLjTV8DRGBR
+jQQplTyW/08LX8IGIv+n4A7nvboH+dkQgfyLz3TOwXOA56frqh607OQTxvfe0xq0
+rjR7hlQYI5F31Ta9uuYwp7ZYyGeEePyE+q2Ea1/Hu9yP+w6QWSQith3RGZ/u/cmS
+Z60FXYyHJ5PAkIoyo9yLiCX5VID5mDkpapL9/jEMd+VMkq+HWthpoq5+aAUrhqTz
+XZYyo+KS1gqZQO0Du70qvxUhodOjpsJYCt0JXnY4MYAkrAjREdTkDfjFQhkmtlG3
+0HoSLJtN+ZO2JjdmdfdgYHcuDPunS4oUvaMBt467d0MxqD8OZYYTwmiRvLOY9QF1
+hlW5VjT2w5V8Eb/wEFofbXfLJeO8tEblfLzUkM/YcgU9o9u0owheqd7xs9w2U5IH
+LC+bN/2ZziX1tz02PTOvgGyrMsRjcYIW2s8qIw8WALy003I1TBmf2vjmnxcOQYh2
+1o9aFwYvItHUzndWLCjmu7i0BEBX4NObUjgV23C3ZC1aBVvOxm0=
+=Ccw5
+-----END PGP SIGNATURE-----
+
+--nextPart4774077.LvFx2qVVIh--
+
+
+
 
