@@ -1,129 +1,164 @@
-Return-Path: <linux-kernel+bounces-820466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51545B7E906
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:53:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5ABFB7E69F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8A71C082FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5D61725FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C813836997C;
-	Wed, 17 Sep 2025 10:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27E5309DDD;
+	Wed, 17 Sep 2025 10:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndrW70/Z"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nIRWCGrg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D60309DAB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E393A22D78A;
+	Wed, 17 Sep 2025 10:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104325; cv=none; b=QPOO5qqXLD45rbCrHlubjW5sgpr5ShtudFsyHH5fU73fnbQl9a7NOTRHpWZUogSUJ3yzzzvRldIYfSzg7/arptqAVGhlcSXTdraG6kS2hWUnyIzgFUaBWJNJVadUFr2ihHVMk8LXZIqM7vARa540vlEsf80SuHeYYAehL4xh+gw=
+	t=1758104340; cv=none; b=XU1DPVGeYYXYnvjyKq77A05QWEIjqJxjTbu3qBwDDU0kD3/CUlbXaqp/LU30Nmfjgikrv7IDl/1GwfRh5Ff5GU/DMVee2HuGIRrP5UI2FTUQW0mH3Gjs/c6ogMGx+mL4dI9h0A0XNcYLlWl8VPbWaxMhu20sw4y3+BLNFuBWJQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104325; c=relaxed/simple;
-	bh=c9+1zzRffLrR0HrPRkGx6haKjpruqLr9G3y9t3Y58EI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M+oIbzS0BMb5MZYDs7o9RvqD45ZKLh1IXJUhd4+5OEzl/7/97qMLHmaw0o4e6HjAmvZwVymRTJzLp4d9GglmfKGFAFcPosIDS6N7vhONj27lGuZZ7Y3xZCkIjryLL6sqx4ojaf1P2IMQsqU63egLsgCstx8+uoWH04hPQobBy2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndrW70/Z; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-251fc032d1fso73166915ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:18:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758104323; x=1758709123; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5zZ72N87Qaim5aMPVYiT+iILb4wfsMlQ62gUTdmY8nk=;
-        b=ndrW70/ZyKiGyey30siE7OCImZ+NNRxsiTk4uf2PGGvvV0KL36BiMLJ15WU7qLAp13
-         BfvFsVyrFtDVGsPBtxU8KcvlDXFeHoNuyb1qteh5EHToTzZxzpnTgYy3hXBXQ1/9Eqs+
-         sR5NoeXEr+embhL4UCak9bzrH9m1ocz/Lk3E9Q32ysUyaCnZ7xTxaaf10bLDkzf4sNDg
-         oYRTqqDTfwfIPa78XvHIz+AIBlnofq8gLfCBa2Sm8o9gpxUw5STIW3F/or1lwwzQlKGs
-         zNKKtCmIiqcD0gqBxYTgtWFoW76Xz4Dd740rOfpGC608fUNMElTEiuaSUiK0Ds0y0YWb
-         XvyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758104323; x=1758709123;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5zZ72N87Qaim5aMPVYiT+iILb4wfsMlQ62gUTdmY8nk=;
-        b=qb5LYhP4nhrjxGRKGogSCVA0u64KHovqKVIgRgQS7LrUwkiuGk+Y1Du6RlHnomq9nb
-         CQs6LJQnXyrhwp9O8+sRapgP8Spgcu1Pyz7Z6wjs7z/19O4UrTWjiufHeetydM5ilIDf
-         OzVX87sJ9ar+HuqWiZIVoiITfq+Ps8TIIArDR0Aghpolgtx4vM36B7UVWvafSxjK007q
-         5KD5oY3pHstYYOFWcsPxIb78QN6F2ke8tm0ds5cOTyezIlmRUR/1WBT0+2eCQzZTLEaz
-         LSzsgEo8EkRBLgVScuO/HC9yjHkz7mBQ5tvx9U346/ByAEPN9pZmTd3WhAPsFoer64H0
-         NaiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXm3yiynhHSacDtsEi8QFttSYyqSHMIpF6Fc07wpPTb261ImkG4zeS1yCPpZMSZrTAm+Q2cIgEkiYFzs0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIrpTIpwiTlKAGrcsx1Q3P2BUIur8tKL2lNRwi5bgpSfm+zDJb
-	6721SeOiRW7j8DvgvpAqJfamLVhXGT6+/SO/rO6fGm37N6KPKdZZddrHFFt0dg==
-X-Gm-Gg: ASbGncsIHRJBlHGO/XxlGbrUzJmpoWEhjTvh8RXZJ47JXyHNjxgrs9qBIgKi6hOxg/c
-	8AfxwVZD42RPI8Q2nVAk38r+c+lDgqIYOlNW642xU9U8YWB1FLI5y1rRfkCF7+g10Mte9A+Uk47
-	uFLZbZ/lB88qSlTUn77i19zookqqQ9aivNvuhSFECuVDGhlaEns9wOFQ5/Wc7hMUHp2mNSixfH2
-	Hi23NrsxXG0FW1/AURGcF6Y2gnPN5uGA0NyQCtBYd2g7gVwwrtxQSTkDvGUpgP+OnxMU0EuQGuw
-	is4/YVbPUExSvhXZ6AgDHY+pT6Hqt78fMeVpX2NknmyOR6AdIF38hInoMV4flit5UVGLice9MtP
-	pZT+gbirnI1P6gjmKksLwP2CeFA96MWzIyHzxLSaUoqtRFIUVe+ZRJ/yRn8SQHdjeM8kW+iBYOr
-	u4YmtxuICn+uOUJxLrD8l77vE7Ww==
-X-Google-Smtp-Source: AGHT+IGJbBv49X8Fm3/hWIcTvxvlFS2nF6Nm7mbCdXfD2nMXpiK58GybyZRf/sFMYFcCCU2A4mYHkw==
-X-Received: by 2002:a17:903:11cc:b0:262:661d:eb1d with SMTP id d9443c01a7336-268118b9516mr20803485ad.1.1758104322723;
-        Wed, 17 Sep 2025 03:18:42 -0700 (PDT)
-Received: from eric-eric0420.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-267f4d286aesm28588755ad.63.2025.09.17.03.18.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 03:18:42 -0700 (PDT)
-From: Peter Yin <peteryin.openbmc@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: peteryin.openbmc@gmail.com
-Subject: [PATCH v1 4/4] ARM: dts: aspeed: harma: add retimer sgpio
-Date: Wed, 17 Sep 2025 18:18:25 +0800
-Message-ID: <20250917101828.2589069-5-peteryin.openbmc@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250917101828.2589069-1-peteryin.openbmc@gmail.com>
-References: <20250917101828.2589069-1-peteryin.openbmc@gmail.com>
+	s=arc-20240116; t=1758104340; c=relaxed/simple;
+	bh=xZ6oXqrCDIheh5tPbFkiJHA70YfhI8hMU67vH9KKc3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2iYE/yV8QGdnpKVJNB5GoC+De5R4s9NsZzwuvd369G3P+u2qaZ2F8MZXBX2FWP0js0BxKBydXYqW6vhPe3UjtluJUVHor+4Hik4kKoYWPEXy6IO1ZmHJrUat6bLT3p7tSOU3bPoHaFrhtRZAZ7OuxyVMxGe6k1iaCBtbchyGjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nIRWCGrg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E82BCC4CEF5;
+	Wed, 17 Sep 2025 10:18:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758104339;
+	bh=xZ6oXqrCDIheh5tPbFkiJHA70YfhI8hMU67vH9KKc3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nIRWCGrg8zQB1/9nrBX4+gIT93fXJCdHrLlOXraWkhHOcvMjix4bnG5nZTbs0tSRY
+	 9EwBETbwx3zQfpRxvrMC2J8fTlopiHG8JRa+7u3SksUwns+WleqzPeJN8/tC9uBBNO
+	 ifRxNVBVIPxSng0oLMdsXdf6K+eQ+uLXZFDH5pGY=
+Date: Wed, 17 Sep 2025 12:18:56 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: huangchenghai <huangchenghai2@huawei.com>
+Cc: zhangfei.gao@linaro.org, wangzhou1@hisilicon.com,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linuxarm@openeuler.org, fanghao11@huawei.com, shenyang39@huawei.com,
+	liulongfang@huawei.com, qianweili@huawei.com
+Subject: Re: [PATCH v2 1/4] uacce: fix for cdev memory leak
+Message-ID: <2025091746-starship-nearest-7c10@gregkh>
+References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
+ <20250916144811.1799687-2-huangchenghai2@huawei.com>
+ <2025091620-theft-glue-5e7f@gregkh>
+ <8e5d4afb-8a21-4a93-a80f-e1f2b6baa8ca@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e5d4afb-8a21-4a93-a80f-e1f2b6baa8ca@huawei.com>
 
-Add irq-retimer0-0v9-alert and irq-retimer1-0v9-alert
-for power fail monitor.
+On Wed, Sep 17, 2025 at 05:56:16PM +0800, huangchenghai wrote:
+> 
+> On Mon, Sep 16, 2025 at 11:15 PM +0800, Greg KH wrote:
+> > On Tue, Sep 16, 2025 at 10:48:08PM +0800, Chenghai Huang wrote:
+> > > From: Wenkai Lin <linwenkai6@hisilicon.com>
+> > > 
+> > > If cdev_device_add failed, it is hard to determine
+> > > whether cdev_del has been executed, which lead to a
+> > > memory leak issue, so we use cdev_init to avoid it.
+> > I do not understand, what is wrong with the current code?  It checks if
+> > add fails:
+> > 
+> > > Fixes: 015d239ac014 ("uacce: add uacce driver")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
+> > > Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+> > > ---
+> > >   drivers/misc/uacce/uacce.c | 13 ++++---------
+> > >   include/linux/uacce.h      |  2 +-
+> > >   2 files changed, 5 insertions(+), 10 deletions(-)
+> > > 
+> > > diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
+> > > index 42e7d2a2a90c..12370469f646 100644
+> > > --- a/drivers/misc/uacce/uacce.c
+> > > +++ b/drivers/misc/uacce/uacce.c
+> > > @@ -522,14 +522,10 @@ int uacce_register(struct uacce_device *uacce)
+> > >   	if (!uacce)
+> > >   		return -ENODEV;
+> > > -	uacce->cdev = cdev_alloc();
+> > > -	if (!uacce->cdev)
+> > > -		return -ENOMEM;
+> > This is the check.
+> > 
+> > 
+> > > -
+> > > -	uacce->cdev->ops = &uacce_fops;
+> > > -	uacce->cdev->owner = THIS_MODULE;
+> > > +	cdev_init(&uacce->cdev, &uacce_fops);
+> > > +	uacce->cdev.owner = THIS_MODULE;
+> > > -	return cdev_device_add(uacce->cdev, &uacce->dev);
+> > > +	return cdev_device_add(&uacce->cdev, &uacce->dev);
+> > And so is this.  So what is wrong here?
+> > 
+> > 
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(uacce_register);
+> > > @@ -568,8 +564,7 @@ void uacce_remove(struct uacce_device *uacce)
+> > >   		unmap_mapping_range(q->mapping, 0, 0, 1);
+> > >   	}
+> > > -	if (uacce->cdev)
+> > > -		cdev_device_del(uacce->cdev, &uacce->dev);
+> > > +	cdev_device_del(&uacce->cdev, &uacce->dev);
+> > >   	xa_erase(&uacce_xa, uacce->dev_id);
+> > >   	/*
+> > >   	 * uacce exists as long as there are open fds, but ops will be freed
+> > > diff --git a/include/linux/uacce.h b/include/linux/uacce.h
+> > > index e290c0269944..98b896192a44 100644
+> > > --- a/include/linux/uacce.h
+> > > +++ b/include/linux/uacce.h
+> > > @@ -126,7 +126,7 @@ struct uacce_device {
+> > >   	bool is_vf;
+> > >   	u32 flags;
+> > >   	u32 dev_id;
+> > > -	struct cdev *cdev;
+> > > +	struct cdev cdev;
+> > >   	struct device dev;
+> > You can not do this, you now have 2 different reference counts
+> > controlling the lifespan of this one structure.  That is just going to
+> > cause so many more bugs...
+> > 
+> > How was this tested?  What is currently failing that requires this
+> > change?
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> We analyze it theoretically there may be a memory leak
+> issue here, if the cdev_device_add returns a failure,
+> the uacce_remove will not be executed, which results in the
+> uacce cdev memory not being released.
 
-Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Then properly clean up if that happens.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-index fe72d47a7632..37b5e2614a9a 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-@@ -828,9 +828,10 @@ &sgpiom0 {
- 	"","",
- 	"irq-pvddcore0-ocp-alert","",
- 	"irq-pvddcore1-ocp-alert","",
--	"","",
-+	"irq-retimer0-0v9-alert","",
- 	/*O4-O7 line 232-239*/
--	"","","","","","","","",
-+	"irq-retimer1-0v9-alert","",
-+	"","","","","","",
- 	/*P0-P3 line 240-247*/
- 	"","","","","","","","",
- 	/*P4-P7 line 248-255*/
--- 
-2.43.0
+> Therefore, we have decided to align with the design of other
+> drivers by making cdev a static member of uacce_device and
+> releasing the memory through uacce_device.
 
+But again, this is wrong to do.
+
+> found one example in drivers/watchdog/watchdog_dev.h.
+> struct watchdog_core_data {
+>     struct device dev;
+>     struct cdev cdev;
+
+This is also wrong and needs to be fixed.  Please send a patch to
+resolve it as well, as it should not be copied as a valid example.
+
+thanks,
+
+greg k-h
 
