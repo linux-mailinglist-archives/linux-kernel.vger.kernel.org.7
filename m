@@ -1,180 +1,342 @@
-Return-Path: <linux-kernel+bounces-819886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DF8B7C3F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9651CB7F835
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0BE54609AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:28:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948963A983E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51682F6590;
-	Wed, 17 Sep 2025 02:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A479B2F5307;
+	Wed, 17 Sep 2025 02:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gcO+71mJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Smc/9ZS7"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB312F549C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDEE2222AA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758076060; cv=none; b=fgeo4dQebbBrRUUQyFJyOoUFq+HUbzeapxHrG+xPD7MP6PZob5U352KlidtDXW+kND+R6gjbN2S5U4VhGsXGXGF5cY3CNDa+6tJ4BocEpY4bj1XI697nhodNImlPDN9qbUVpkqDmNICBekNqCdoJMoXNuEi2pa4yVTXEnoUuYhM=
+	t=1758076220; cv=none; b=pWvSFKBs7vr0STuNZ3bV2oit017O8jY72K4pXY0urcSf473eybwMJzx+Al1AKtIEXgWzyHsEGAGFsw3ZtmmBbQ40RjHkGXeAAq91rPh4sATFqPPueIFywk3kgpvNMgIQqhYWwd9lQf2PmODnIvTICOHObyAFg01RcuTwLWRrIvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758076060; c=relaxed/simple;
-	bh=ZVOSah7WyUCxAwtViCyBrw8IIhcxsA5kP+tsBwbzwsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bqZ+UwoAMOw1X+AiwRXwyz3nCu9h2rfZzMNIE6eRYUzUssK3dcp6ih/R0k68a+BD/Sqgw5duPxd4KGW2S4kOpNvC43YJIUEy/vPWYrP+Oz89SWuzeebnOLP0EjH/8kC4vVn9ofeN6J7J2v/2fFdWrbEBqQsOJuCDZfXP8ecsL3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gcO+71mJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLaQwP027066
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:27:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VYlZBe92chnYNBC11wB4N82uu0aHrj9AIx2n54JzLec=; b=gcO+71mJL/8mZHVd
-	KTpDaJ5GD9zE9ZDehnMwHk6rKIja2rQLRRZgWlKeONk75jtlavNcmw90j2HVhWO8
-	8T+amM+VcWaGq8w9al1BypNRVR69vzy+Qn/xclMVMEvv9iXk2mscUkrrR/RLj66N
-	ceztjk2EYqB0VrSlUOMiZ+lg17bsIFEIL1V3kJtgtA1kOut9FtPFqLbHwrO80YtF
-	nzj8RUbROoDNrEPMJPV+Ct14KC9Gd5BzFw1jlJyptcEwmuPwCwgj1jVDSBoEjmqi
-	uAOmauBBVSfhuvAJql51f6bLwfL37i5S7YkJZgv/THUzbOU8F5SQOy8xp4BOGXRD
-	X84gvw==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxgkct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:27:36 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7760b6b7235so4636643b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:27:36 -0700 (PDT)
+	s=arc-20240116; t=1758076220; c=relaxed/simple;
+	bh=qL0Ox2fSDt+2G5ScGOEk8w9oM6fmzZPSbVEEvl2KDMA=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=spgz+GKg9OIdTmIcQN4sbPsJx7yEwb6/zD6hbZDQEekA5ua0bl5eAdTIxidVOe/pR/dAJJEmyTtztDYH3ZuIfBMJlaCbHIw2BukZPYPJXIXh6sAdB4mEHxON23UHAqvhy/Ico7xzSuXco0X5xabnF3bMIB9XfrIWaYfcyv0nrXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Smc/9ZS7; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77c1814ca1dso25158b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:30:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758076217; x=1758681017; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbfOHx4kxbLSRlZnJMRy2JtVsUEGR5+lIot3ZCtU+0E=;
+        b=Smc/9ZS7NaAOdnO1olRPOvTkY+f0/9gR2OL4il88MlVQYtyButwDa9SkWUSnjBKtVM
+         KDjjjH9FAkwpmbUdqbxH1jDLH5FYLLQ7LbOtomqeLDC9fziuhmyGEEdIEgJ24fCNuGJe
+         7kd/cBU92VZpf2dL7d2dC+sUBhjQoeXXNkW2Nf7ODftFTOePyExpR9ms1utWxTd4Rd3u
+         1cNzND3ZS9k/JxUpPoqKo7yxsobE1HCc1CStXmHEX9myDUC7ndgmRw/NIZPGbT2x/xPb
+         1yaX/C4bfwilRFXX9kx3yTBm8Yxrkw0GxZFHRyqDpsUsgpDHvJbFbY7PES8j2DqWc6e1
+         oDgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758076055; x=1758680855;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYlZBe92chnYNBC11wB4N82uu0aHrj9AIx2n54JzLec=;
-        b=gvKjHyz1waT/FtepNh1KtEVT9wcxW7/opV6A6aa4ywWZ5Y04p7M98e8LhJn8wltFbm
-         g7ZxrNeNsz/UKVs/3C/78aOa8YE7CK4b7EzfZuAOkt5af5Jo4fLW6bZbCaMq25ctyEAo
-         R2tQteVsJrBfWxKioXKdg7QecfE73MtbuBN2lskSihxXP6O9o2b9/VwwfuVpQx5j0FE1
-         BhRiUFwP7rJ54HBM0AFGKJxPE7hslC49fMNGtRuQR3VA5d8xD9tHHQUEn+azJHe0q9o7
-         ZhdKPJ805Q8hjDuK+6LtTbsLLsT9DsgiN2r46rmIEefTDSsg94UXsELSEILRcWFUTT1w
-         JrpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoneFBUlgiho1BlpIqRftJI+eOVDQ82p+Q0vMN7kY9MWIPlc84fRrQl+2jqxiiqB4kUGRgZoZkDckxfhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVkCnp6D8/awRiMqP+zzjX2dfHK4XvjGPKF7vYa8irFdqqkELt
-	ZyJwTRzQXTDt/SODBA/I4ySepMYn62jnZhMchjn2f1tT0bKz2xK2h1D1Pws1/82afbdY6UcbrZ9
-	m3oXixAwATysOY1aZ6cjwQ/c7ceMZ3EQC9yFqzp61VqO8Yav9/MKJm46ijPj/TZ62lYWsmn3ykH
-	k=
-X-Gm-Gg: ASbGnctDODO5VsZLyJ9SAdMcNgRnqw/rV3CDrrkekfZrHna3iM6pcoHyH5V/9zGJsSZ
-	TwnIYk+lihRH1IOAFHTQ7HfTVGR8ZvgXjqOOGTf4Y4f6AehKDbu8J0h6XzuJdzUS4AX90I4S6ss
-	BAC6MR087dlD+ACpsMLfbStl/KMP5eONruOqjipfSXHLad0TIPJntO+2WrTYg8anKqz/Sb+Cgy9
-	/Veb7CS1qHD+7o62gUdqsAVuu/XwlD7ej88zL+oCuQIh115GybvUS9sey5WKEA428a5N7NgbDPV
-	XQn+6JKstHxq33IW3yATbuW9z94joXKM9bHFKJ8vMbS5yRrM8sRmb071iH3h4RiRKe3tcIkrn/B
-	lI/5qdyCkexvX+D2uDS4EKIAErFqLzEw5Hg==
-X-Received: by 2002:a05:6a00:228c:b0:771:e1bf:bddc with SMTP id d2e1a72fcca58-77bf75c1492mr538628b3a.13.1758076055092;
-        Tue, 16 Sep 2025 19:27:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFa3nKVRZ5lcOuXaoBxQLObp2Qb9gc/ezSveqX2YOxEc/wcuth8hVIukLM4KDYuJgtiHtLYwA==
-X-Received: by 2002:a05:6a00:228c:b0:771:e1bf:bddc with SMTP id d2e1a72fcca58-77bf75c1492mr538603b3a.13.1758076054636;
-        Tue, 16 Sep 2025 19:27:34 -0700 (PDT)
-Received: from [10.133.33.240] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7761853866bsm14036121b3a.95.2025.09.16.19.27.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 19:27:34 -0700 (PDT)
-Message-ID: <a60a1d0e-0cdd-4e79-99cd-5dc543242a87@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 10:27:29 +0800
+        d=1e100.net; s=20230601; t=1758076217; x=1758681017;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbfOHx4kxbLSRlZnJMRy2JtVsUEGR5+lIot3ZCtU+0E=;
+        b=OmtbtRQ2JXXkcABgthbOFnqLepZOlKwDr24af/p6Jn4A6CFnIPlQO/dN6a6bg9S9eA
+         tnWMu7B5zGVLxqLroGxS2b/si/xigOcHjl0ebmqm32cyXmWdL2UFU7GBKBd9n/jr9PoN
+         LyWuwzwnz+ZqWX26ogHKKPZx5t9fmrwMkFmnriPDcVtYkNipqoOQXL62miP+SnS7NsJv
+         jCQJRLUFdx1gkmTWSG70Ht3mNmV4VvMf0NP/i/0tTSbgcUaDpca6rP4hdnUYC0W1oxSt
+         ZqRUlHIaSWiEohI+GUlzHHapShbKqCNIo5iP+XUY2Qyj3NvAhYyleV8tuRd7nYuTO03h
+         AAPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2q8itD/LajRAVWueNX26g8HZ32ROK4PHJFz0vcL2FS2l2iGUGRfsj79YZar+XfN+JW38Xh8OIY/A6nIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsDkF7EuhJxoP5Oxowtq0NBBlxWfZ9kKjPXGtmsJ7lnlVtkrAN
+	Nf9o/tLIxTwZIJ7xvU/wAb7jBE9GWGVmP0YWzyXwE9erwc6TjW8mvHc5QTiIT4yJGqI=
+X-Gm-Gg: ASbGncspXJjHImYok4EpksoJTCLSMShDE7Qr4ipYvAu6XBK1rfpP20JHujcWYqJqiId
+	CQdSVoRhjKKljpQxFQwUHMibtvLVoeKLaKVbA2TY7JacT8xp47EmRbXqb/y4+OfP20WBGpZ1TN2
+	Q1JFXFVOTMdUAYls/bWnU/R+KorKnqAesc4bsPM/oL/5BgIhbhgncUup8f13h1ZI737YCvtKRhY
+	qDxJOp4mdxwXAhgaoFV3Yu9ufJtb192zhZ4t0aPrR72C45i55j0vP9W5gCkpf/QsOsAkAYnJ+L3
+	6U4tg4C/sZJ2gelPGVP53cVVBLa8Wm+krGIDTTr/m0r/rHheUg1NtkAqxOFkMrwtG8k8YWvKfHX
+	8QZN8Bx+Iufi2iffWjr6WQTITFU+J+L5ZF7cDDqvP6PlEl8b5vHcJHyjHWHzI
+X-Google-Smtp-Source: AGHT+IHrVERgQmh7lAH6JDt1kYBBcduFHRx2UuVAjcsAgXlINws6Nn6ovQWKdf6zTTGNaVe31DCbfQ==
+X-Received: by 2002:a05:6a20:548d:b0:24f:f79d:66a8 with SMTP id adf61e73a8af0-27a96a993f3mr586251637.24.1758076217466;
+        Tue, 16 Sep 2025 19:30:17 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.10])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b1a031sm17829080b3a.57.2025.09.16.19.30.12
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 16 Sep 2025 19:30:17 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	sudeep.holla@arm.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	beata.michalska@arm.com,
+	sumitg@nvidia.com,
+	ptsm@linux.microsoft.com,
+	cuiyunhui@bytedance.com,
+	yangyicong@hisilicon.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arch_topology: move parse_acpi_topology() to common code
+Date: Wed, 17 Sep 2025 10:30:07 +0800
+Message-Id: <20250917023007.97637-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/8] power: supply: qcom_battmgr: update compats for
- SM8550 and X1E80100
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250915-qcom_battmgr_update-v4-0-6f6464a41afe@oss.qualcomm.com>
- <20250915-qcom_battmgr_update-v4-5-6f6464a41afe@oss.qualcomm.com>
- <f3s2srlmvuj7wmh4rndffmbfrzylbuq4rsu7pqqrnqa5fgsmch@t5f4dgmqtgys>
- <c5e3ac07-e91e-4c9f-9256-497991b75200@oss.qualcomm.com>
- <aiplezjbovtaghgblua5xj3rag5kjwzt6sjrnygzbez5dtaxm3@vn6kwmskc4e2>
-Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <aiplezjbovtaghgblua5xj3rag5kjwzt6sjrnygzbez5dtaxm3@vn6kwmskc4e2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX8OnFtpfBzSit
- ckpR9yQQfe4YhSA24UbeJhAB9P76lkckQ5gC3wO41TndS8F2ipYJ1VCwDHxLwgTr38f1u9/+qGj
- 2JsidvnsKi1l/Djmv+AajNe3AVZK76j1fMZFSF/e8WIIB7cF4Ovy8NnWxZU11iwSpdP2hZj8/gB
- IjZuIehoOyP9BN0CGsQ+IxXle6c2jNXIbmqqy7DuikUBkHqlGZMcsGF9XPsarJYrpeB6oxKYKxg
- YqIHxozv09QwqFh8k/4/by5B68A7nptF35ZQ8aFhWX1wRknzAmjrK/KFKFsWppa9Pz/nLBlgOsv
- nUUZw6rqSRzmqNxyXU0JH/4f25OGNM7XpplK7sR5ypB2A4pRJK9gHVCv0xaW1d3kOJqCbHhY9nO
- mnHXZGif
-X-Authority-Analysis: v=2.4 cv=MMFgmNZl c=1 sm=1 tr=0 ts=68ca1c98 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=lQXKqyNTGrdWrY9AsKwA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: MrGqTnDP-OjnAQESzK_WhJUzn1ltCbuN
-X-Proofpoint-GUID: MrGqTnDP-OjnAQESzK_WhJUzn1ltCbuN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-16_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 phishscore=0 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Transfer-Encoding: 8bit
 
+Currently, RISC-V lacks arch-specific registers for CPU topology
+properties and must get them from ACPI. Thus, parse_acpi_topology()
+is moved from arm64/ to drivers/ for RISC-V reuse.
 
-On 9/16/2025 6:16 PM, Dmitry Baryshkov wrote:
-> On Tue, Sep 16, 2025 at 10:40:03AM +0800, Fenglin Wu wrote:
->> On 9/15/2025 6:19 PM, Dmitry Baryshkov wrote:
->>> On Mon, Sep 15, 2025 at 04:49:57PM +0800, Fenglin Wu via B4 Relay wrote:
->>>> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->>>>
->>>> Add variant definitions for SM8550 and X1E80100 platforms. Add a compat
->>>> for SM8550 and update match data for X1E80100 specifically so that they
->>>> could be handled differently in supporting charge control functionality.
->>> Why?
->> Is the question about why this was submitted as a separate patch, or about
->> the need for the change itself? The reason for the change is explained in
->> the commit text.
-> It's not, and that was my question. Why do you need to handle them
-> differently?
->
-> Please always start your commit message with the description of the
-> issue that you are facing.
->
-The simple answer is, the charge control functionality is only supported 
-in battery management firmware starting from SM8550 and X1E80100.
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ arch/arm64/kernel/topology.c  | 87 +----------------------------------
+ drivers/base/arch_topology.c  | 85 +++++++++++++++++++++++++++++++++-
+ include/linux/arch_topology.h |  6 +++
+ 3 files changed, 91 insertions(+), 87 deletions(-)
 
-I will add this statement in the commit text.
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 5d07ee85bdae4..55650db53b526 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -26,7 +26,7 @@
+ #include <asm/topology.h>
+ 
+ #ifdef CONFIG_ACPI
+-static bool __init acpi_cpu_is_threaded(int cpu)
++bool __init acpi_cpu_is_threaded(int cpu)
+ {
+ 	int is_threaded = acpi_pptt_cpu_is_thread(cpu);
+ 
+@@ -39,91 +39,6 @@ static bool __init acpi_cpu_is_threaded(int cpu)
+ 
+ 	return !!is_threaded;
+ }
+-
+-struct cpu_smt_info {
+-	unsigned int thread_num;
+-	int core_id;
+-};
+-
+-/*
+- * Propagate the topology information of the processor_topology_node tree to the
+- * cpu_topology array.
+- */
+-int __init parse_acpi_topology(void)
+-{
+-	unsigned int max_smt_thread_num = 1;
+-	struct cpu_smt_info *entry;
+-	struct xarray hetero_cpu;
+-	unsigned long hetero_id;
+-	int cpu, topology_id;
+-
+-	if (acpi_disabled)
+-		return 0;
+-
+-	xa_init(&hetero_cpu);
+-
+-	for_each_possible_cpu(cpu) {
+-		topology_id = find_acpi_cpu_topology(cpu, 0);
+-		if (topology_id < 0)
+-			return topology_id;
+-
+-		if (acpi_cpu_is_threaded(cpu)) {
+-			cpu_topology[cpu].thread_id = topology_id;
+-			topology_id = find_acpi_cpu_topology(cpu, 1);
+-			cpu_topology[cpu].core_id   = topology_id;
+-
+-			/*
+-			 * In the PPTT, CPUs below a node with the 'identical
+-			 * implementation' flag have the same number of threads.
+-			 * Count the number of threads for only one CPU (i.e.
+-			 * one core_id) among those with the same hetero_id.
+-			 * See the comment of find_acpi_cpu_topology_hetero_id()
+-			 * for more details.
+-			 *
+-			 * One entry is created for each node having:
+-			 * - the 'identical implementation' flag
+-			 * - its parent not having the flag
+-			 */
+-			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
+-			entry = xa_load(&hetero_cpu, hetero_id);
+-			if (!entry) {
+-				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+-				WARN_ON_ONCE(!entry);
+-
+-				if (entry) {
+-					entry->core_id = topology_id;
+-					entry->thread_num = 1;
+-					xa_store(&hetero_cpu, hetero_id,
+-						 entry, GFP_KERNEL);
+-				}
+-			} else if (entry->core_id == topology_id) {
+-				entry->thread_num++;
+-			}
+-		} else {
+-			cpu_topology[cpu].thread_id  = -1;
+-			cpu_topology[cpu].core_id    = topology_id;
+-		}
+-		topology_id = find_acpi_cpu_topology_cluster(cpu);
+-		cpu_topology[cpu].cluster_id = topology_id;
+-		topology_id = find_acpi_cpu_topology_package(cpu);
+-		cpu_topology[cpu].package_id = topology_id;
+-	}
+-
+-	/*
+-	 * This is a short loop since the number of XArray elements is the
+-	 * number of heterogeneous CPU clusters. On a homogeneous system
+-	 * there's only one entry in the XArray.
+-	 */
+-	xa_for_each(&hetero_cpu, hetero_id, entry) {
+-		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
+-		xa_erase(&hetero_cpu, hetero_id);
+-		kfree(entry);
+-	}
+-
+-	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
+-	xa_destroy(&hetero_cpu);
+-	return 0;
+-}
+ #endif
+ 
+ #ifdef CONFIG_ARM64_AMU_EXTN
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index 1037169abb459..65ec1f3d2bd28 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -823,12 +823,95 @@ void remove_cpu_topology(unsigned int cpu)
+ 	clear_cpu_topology(cpu);
+ }
+ 
++__weak bool __init acpi_cpu_is_threaded(int cpu)
++{
++	int is_threaded = acpi_pptt_cpu_is_thread(cpu);
++
++	return !!is_threaded;
++
++}
++
++#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
++/*
++ * Propagate the topology information of the processor_topology_node tree to the
++ * cpu_topology array.
++ */
+ __weak int __init parse_acpi_topology(void)
+ {
++	unsigned int max_smt_thread_num = 1;
++	struct cpu_smt_info *entry;
++	struct xarray hetero_cpu;
++	unsigned long hetero_id;
++	int cpu, topology_id;
++
++	if (acpi_disabled)
++		return 0;
++
++	xa_init(&hetero_cpu);
++
++	for_each_possible_cpu(cpu) {
++		topology_id = find_acpi_cpu_topology(cpu, 0);
++		if (topology_id < 0)
++			return topology_id;
++
++		if (acpi_cpu_is_threaded(cpu)) {
++			cpu_topology[cpu].thread_id = topology_id;
++			topology_id = find_acpi_cpu_topology(cpu, 1);
++			cpu_topology[cpu].core_id   = topology_id;
++
++			/*
++			 * In the PPTT, CPUs below a node with the 'identical
++			 * implementation' flag have the same number of threads.
++			 * Count the number of threads for only one CPU (i.e.
++			 * one core_id) among those with the same hetero_id.
++			 * See the comment of find_acpi_cpu_topology_hetero_id()
++			 * for more details.
++			 *
++			 * One entry is created for each node having:
++			 * - the 'identical implementation' flag
++			 * - its parent not having the flag
++			 */
++			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
++			entry = xa_load(&hetero_cpu, hetero_id);
++			if (!entry) {
++				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++				WARN_ON_ONCE(!entry);
++
++				if (entry) {
++					entry->core_id = topology_id;
++					entry->thread_num = 1;
++					xa_store(&hetero_cpu, hetero_id,
++						 entry, GFP_KERNEL);
++				}
++			} else if (entry->core_id == topology_id) {
++				entry->thread_num++;
++			}
++		} else {
++			cpu_topology[cpu].thread_id  = -1;
++			cpu_topology[cpu].core_id    = topology_id;
++		}
++		topology_id = find_acpi_cpu_topology_cluster(cpu);
++		cpu_topology[cpu].cluster_id = topology_id;
++		topology_id = find_acpi_cpu_topology_package(cpu);
++		cpu_topology[cpu].package_id = topology_id;
++	}
++
++	/*
++	 * This is a short loop since the number of XArray elements is the
++	 * number of heterogeneous CPU clusters. On a homogeneous system
++	 * there's only one entry in the XArray.
++	 */
++	xa_for_each(&hetero_cpu, hetero_id, entry) {
++		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
++		xa_erase(&hetero_cpu, hetero_id);
++		kfree(entry);
++	}
++
++	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
++	xa_destroy(&hetero_cpu);
+ 	return 0;
+ }
+ 
+-#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+ void __init init_cpu_topology(void)
+ {
+ 	int cpu, ret;
+diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
+index d72d6e5aa2002..50d33b5a78ccd 100644
+--- a/include/linux/arch_topology.h
++++ b/include/linux/arch_topology.h
+@@ -70,6 +70,11 @@ struct cpu_topology {
+ 	cpumask_t llc_sibling;
+ };
+ 
++struct cpu_smt_info {
++	unsigned int thread_num;
++	int core_id;
++};
++
+ #ifdef CONFIG_GENERIC_ARCH_TOPOLOGY
+ extern struct cpu_topology cpu_topology[NR_CPUS];
+ 
+@@ -88,6 +93,7 @@ void update_siblings_masks(unsigned int cpu);
+ void remove_cpu_topology(unsigned int cpuid);
+ void reset_cpu_topology(void);
+ int parse_acpi_topology(void);
++bool acpi_cpu_is_threaded(int cpu);
+ void freq_inv_set_max_ratio(int cpu, u64 max_rate);
+ #endif
+ 
+-- 
+2.39.5
 
->> As for submitting it separately, that was done to address
->> Bryan's comments to split out the compats changes. Anyway, I will address
->> the further comments from Stephen to make the change bisectable.
->>>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
->>>> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->>>> ---
->>>>    drivers/power/supply/qcom_battmgr.c | 7 +++++--
->>>>    1 file changed, 5 insertions(+), 2 deletions(-)
->>>>
 
