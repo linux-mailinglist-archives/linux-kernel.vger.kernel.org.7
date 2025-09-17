@@ -1,394 +1,276 @@
-Return-Path: <linux-kernel+bounces-821203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16681B80B9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC71B80B63
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919EC16C7B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:47:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78923BFF86
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272F83362BB;
-	Wed, 17 Sep 2025 15:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F7833BB02;
+	Wed, 17 Sep 2025 15:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bVEYuTLn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cwkk3W7w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA29532129F;
-	Wed, 17 Sep 2025 15:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73D733BB01
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758123837; cv=none; b=AgXQ7uPMI7YUxaHtjkwleOm5F7rbxE2byiiub1mE0lxIzBWC/qcAwZIp9CLp/9yT6f2dX8f/xDnUdYWTvNGArr8sDc3rqCXl5j2YUfjXyXe/czRGty/eQ8+qjqBoKDj1txW7+ZmZvAKDonM9XkYcmXR0jffb3hB4XIx92zxnHic=
+	t=1758123879; cv=none; b=aI3u/Y154kFoMO5t4um4CitSyhbavd8kg470ivFHbpb5JYccBR3RS2p8el44vA1VHDtjBeQmQsgvKRzzHkgZuGE6hJ1yfGlNaRuNbNDlLSMNbn/IWnsbGKGWMKP4b25YTYNVxl0GrVDLwptC6awJjq88FahP0OavCr8h+0ZxcS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758123837; c=relaxed/simple;
-	bh=M7bmsCJOctouLMHagcFSejZI7FxeTupipz2eFgc7ACg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ok1u4A3ArdoXGAHRbUOQglaLiu6HyPBVXy46jQ8VJ+iHHBGw7DkmGuSfZ881SqAz+BoSwiE61loyJHEofbDSeAH2OOMHWQQ3Cb6YWEb7SaXZzu5CnjLIuzQp7cdgZf8BllA3hRAzsk+xvWIKsDmegmQHzAKreIxy9O+fYIZhd6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bVEYuTLn; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758123836; x=1789659836;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=M7bmsCJOctouLMHagcFSejZI7FxeTupipz2eFgc7ACg=;
-  b=bVEYuTLnL1WvhLCTCV+8iN6IKp4kM1LfBWsFoyyo8cXa+EAAB0KbPjEb
-   WtomC+py29WQBu+ffhWZ11CoyaownZ4JqDgubM6cxmj0d167ZDXg5CxER
-   LHUleDnz1rPjNn3CGDrX4+q5Ln8Y292hZNDZbDJwDamc1CEIWeURdD+jj
-   AKs1mKbIjiycXaq1ZzOwvOpEWVzs8e4GLgCt4ardySYAw8+IVgUsNi18j
-   mJtECa/e2+Re//hAwZIfuLmYmo9AiqygNZ+9U8Jg2KG28xgp0xFZcZONu
-   r8XmJCTcef8HgNmQ5Y6ey+HjzJAPwV2VO16lFBRxNSUNZsPGoCqjLLgV7
-   A==;
-X-CSE-ConnectionGUID: 5VOX7tGYQl6+gZdkxjPgwA==
-X-CSE-MsgGUID: VTL1abs8RWSFpbf9LBqAyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="70685734"
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="70685734"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 08:43:55 -0700
-X-CSE-ConnectionGUID: pbI9dMX5RNucmu4Zq5EiKQ==
-X-CSE-MsgGUID: sTvATFxVQ02Wzn7Nz8Emxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="206208885"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.41])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 08:43:52 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id B105711FC22;
-	Wed, 17 Sep 2025 18:43:49 +0300 (EEST)
-Date: Wed, 17 Sep 2025 18:43:49 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 04/10] Documentation: uAPI: media: add
- V4L2_CID_FLASH_{DURATION,HW_STROBE_SIGNAL}
-Message-ID: <aMrXNXexGBXCxbKd@kekkonen.localdomain>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-4-d58d5a694afc@linux.dev>
- <20250907194953.GA19568@pendragon.ideasonboard.com>
- <j337fpaqahmee3qutgtkavud6rbqyn4lpsj4yaha2xmvcvfhli@z67twdhybvqp>
- <20250908155917.GK26062@pendragon.ideasonboard.com>
- <mk77d6dn2qn6wrlgyu4sxpwufe7eupi4xcvx7yblo7bki4b5h6@brircux3j6ct>
+	s=arc-20240116; t=1758123879; c=relaxed/simple;
+	bh=z4tCoDZQOuh4LECbalwkAqS2zlkXL9yErxewejGxnWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OlXBsVTxl/PThg55x4uMnRIlB48WI/Dwi6DtYdhMDIpHKQz2dqAqabrGvOOVsyjffE1hOTYoXdLfLPikAxGwyxX0tq4kmNaO88M3nVBqaP0ytuz9u45YBSbrAxIJzrtGKRdM6/kWOAQt0P/8vLiliXxGlWFg9bUDVEBFMGPmGUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cwkk3W7w; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758123876;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NYmqILMx1xlw2m4tQW0RBlUiktKctlRRDbbC0EtpRGc=;
+	b=cwkk3W7wqYfsTE3pJwE+zWFsPvzk9U2WG81MTFCDaE9OBSHffX+6aXU3OUY2en6ElvxaYq
+	VQpV3ypV/9NamRM+vFhgqIIA8KCicxSPB7MPy+7CYtm7lWBude10nlnVASim+npPYFiVQQ
+	CVK+CnaaCG3Pt4jqjamfcelHzzZrPcE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-54-U03Zv4BUOnOkAfvMYXwyzg-1; Wed, 17 Sep 2025 11:44:35 -0400
+X-MC-Unique: U03Zv4BUOnOkAfvMYXwyzg-1
+X-Mimecast-MFC-AGG-ID: U03Zv4BUOnOkAfvMYXwyzg_1758123874
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45dcf5f1239so32331885e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:44:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758123874; x=1758728674;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NYmqILMx1xlw2m4tQW0RBlUiktKctlRRDbbC0EtpRGc=;
+        b=gn+8/1tq3rZVqJdyKt8r3gmytw9OypLmimv07RioUJ565IzyrwE4NOrlAxwII+l1Wi
+         SKBqF4Rez2aPOlV9tOejN9lw8QyTrp0ETtmkBF/nQwY0OTVu+d66bDhQMgJn2RJj7bQz
+         C0bFmYgLwG5HZNhcRD4MtcKN4W4nNaw7UBPUs+8dSwuP432ipRk4b51eNbk4qzBtzJV2
+         FIS54reKJAL2ROA5XFZ63O37Pnu5w6gCYiSrEwna8RX2zLpjUGYUKiwkIUoXRGxDZ6nD
+         Xr0R65UTtMu9J66Wm2T99tQH8vODoaObDjakrpfRbVoQ8PW3/rkLrAfrWezNSfqKDnZl
+         2zWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQooOXSItyAumfqAbcj4Kz8VBw/qnD2Yk7Vg+kUtWzQgoe3PCF4fak+VMOdS1NBs6eBSxsbNo7q+X7N8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqZI8NEzpH59vyODLhu4bqmsQSAlux1Xa/Fr3CA3W+2V6p/2Kh
+	jc4HHC13c1iOVq5SXhnBsdybzxYeidpuR1P282ZoQv9Xibv9LDVq48kICgVL+PsN36moLxYDiTk
+	LE968bJ1sY2Dnr4hK81pxa2C4xZkYJZYLvrZuAvKfuZq703yy9PDkzp5Jx1QW2c199A==
+X-Gm-Gg: ASbGncv5jJwSqwphfN50/ZP7VbwPJr3nv2RGTcn++zkifpVAYRGznCVW4OCtbO8r1+w
+	laH+zZDzpQSctwBgLH9TXDHy+zsFFSPbAHOolxtuBTT9sUkilM0FMtUKNHP9WaE1jNq5N1P4X3x
+	8cHFWXwama0pjhYivs9LiW5k/pGvTEpkK8vN+X9kEuU3VQwHRWW04jqYIdMGflMhGM6jbxNLncp
+	OMEPrDS0q1Ea4iIMINmHFh/yaM1m1hUU+fG3YvX/1CEzWm6mgpuHHSrAjbC5C3LP3iy1GD7OeLt
+	qTkBNjdlL8tKhpFIZhVBwYP9kSavTypr9UJ4vYVwck1dKVaTZnuIscqKKt0XGVWlcSWAJlIOYn0
+	GCQ0AtBZs90/48y1rB7mXkrTd8dQEDY+Hun4GcBwJaolSZUVUO3ECCwqOnTCocL+F
+X-Received: by 2002:a05:600c:548f:b0:45f:2c7c:c1ed with SMTP id 5b1f17b1804b1-46201f8b0f7mr24718585e9.2.1758123874115;
+        Wed, 17 Sep 2025 08:44:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8g1ZaRN7oJUXl7N8nfBOuCnjfDBEtxRyVeyDn4nu6ScGXDtKea6BR0IkCAuJ/wYcffRSBqQ==
+X-Received: by 2002:a05:600c:548f:b0:45f:2c7c:c1ed with SMTP id 5b1f17b1804b1-46201f8b0f7mr24718205e9.2.1758123873544;
+        Wed, 17 Sep 2025 08:44:33 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-462c17c9347sm10474045e9.0.2025.09.17.08.44.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 08:44:32 -0700 (PDT)
+Message-ID: <b532ab38-37a3-46d0-8a14-d7395421130d@redhat.com>
+Date: Wed, 17 Sep 2025 17:44:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <mk77d6dn2qn6wrlgyu4sxpwufe7eupi4xcvx7yblo7bki4b5h6@brircux3j6ct>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
+To: Eugen Hristev <eugen.hristev@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
+ pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
+ <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
+ <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com> <87v7lh891c.ffs@tglx>
+ <95ff36c2-284a-46ba-984b-a3286402ebf8@redhat.com>
+ <24d6a51d-f5f8-44d7-94cb-58b71ebf473a@linaro.org>
+ <7f4aa4c6-7b77-422b-9f7a-d01530c54bff@redhat.com>
+ <10540b3e-09ca-403d-bc20-b9412a7fe28a@linaro.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <10540b3e-09ca-403d-bc20-b9412a7fe28a@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Richard,
+On 17.09.25 17:32, Eugen Hristev wrote:
+> 
+> 
+> On 9/17/25 18:18, David Hildenbrand wrote:
+>> On 17.09.25 17:02, Eugen Hristev wrote:
+>>>
+>>>
+>>> On 9/17/25 17:46, David Hildenbrand wrote:
+>>>> On 17.09.25 16:10, Thomas Gleixner wrote:
+>>>>> On Wed, Sep 17 2025 at 09:16, David Hildenbrand wrote:
+>>>>>> On 17.09.25 07:43, Eugen Hristev wrote:
+>>>>>>> On 9/17/25 00:16, Thomas Gleixner wrote:
+>>>>>>>> I pointed you to a solution for that and just because David does not
+>>>>>>>> like it means that it's acceptable to fiddle in subsystems and expose
+>>>>>>>> their carefully localized variables.
+>>>>>>
+>>>>>> It would have been great if we could have had that discussion in the
+>>>>>> previous thread.
+>>>>>
+>>>>> Sorry. I was busy with other stuff and did not pay attention to that
+>>>>> discussion.
+>>>>
+>>>> I understand, I'm busy with too much stuff such that sometimes it might
+>>>> be good to interrupt me earlier: "David, nooo, you're all wrong"
+>>>>
+>>>>>
+>>>>>> Some other subsystem wants to have access to this information. I agree
+>>>>>> that exposing these variables as r/w globally is not ideal.
+>>>>>
+>>>>> It's a nono in this case. We had bugs (long ago) where people fiddled
+>>>>> with this stuff (I assume accidentally for my mental sanity sake) and
+>>>>> caused really nasty to debug issues. C is a horrible language to
+>>>>> encapsulate stuff properly as we all know.
+>>>>
+>>>> Yeah, there is this ACCESS_PRIVATE stuff but it only works with structs
+>>>> and relies on sparse IIRC.
+>>>>
+>>>>>
+>>>>>> I raised the alternative of exposing areas or other information through
+>>>>>> simple helper functions that kmemdump can just use to compose whatever
+>>>>>> it needs to compose.
+>>>>>>
+>>>>>> Do we really need that .section thingy?
+>>>>>
+>>>>> The section thing is simple and straight forward as it just puts the
+>>>>> annotated stuff into the section along with size and id and I definitely
+>>>>> find that more palatable, than sprinkling random functions all over the
+>>>>> place to register stuff.
+>>>>>
+>>>>> Sure, you can achieve the same thing with an accessor function. In case
+>>>>> of nr_irqs there is already one: irq_get_nr_irqs(), but for places which
+>>>>
+>>>> Right, the challenge really is that we want the memory range covered by
+>>>> that address, otherwise it would be easy.
+>>>>
+>>>>> do not expose the information already for real functional reasons adding
+>>>>> such helpers just for this coredump muck is really worse than having a
+>>>>> clearly descriptive and obvious annotation which results in the section
+>>>>> build.
+>>>>
+>>>> Yeah, I'm mostly unhappy about the "#include <linux/kmemdump.h>" stuff.
+>>>>
+>>>> Guess it would all feel less "kmemdump" specific if we would just have a
+>>>> generic way to tag/describe certain physical memory areas and kmemdump
+>>>> would simply make use of that.
+>>>
+>>> The idea was to make "kmemdump" exactly this generic way to tag/describe
+>>> the memory.
+>>
+>> That's probably where I got lost, after reading the cover letter
+>> assuming that this is primarily to program kmemdump backends, which I
+>> understood to just special hw/firmware areas, whereby kinfo acts as a
+>> filter.
+> 
+> If there is a mechanism to tag all this memory, or regions, into a
+> specific section, what we would do with it next ?
+> It would have a purpose to be parsed and reused by different drivers,
+> that would be able to actually use it.
+> So there has a to be some kind of middleman, that holds onto this list
+> of regions, manages it (unique id, add/remove), and allows certain
+> drivers to use it.
 
-On Tue, Sep 09, 2025 at 12:29:55PM +0200, Richard Leitner wrote:
-> Hi Laurent,
-> 
-> thanks for your great (and quick) feedback!
-> 
-> On Mon, Sep 08, 2025 at 05:59:17PM +0200, Laurent Pinchart wrote:
-> > On Mon, Sep 08, 2025 at 02:37:15PM +0200, Richard Leitner wrote:
-> > > On Sun, Sep 07, 2025 at 09:49:53PM +0200, Laurent Pinchart wrote:
-> > > > On Mon, Sep 01, 2025 at 05:05:09PM +0200, Richard Leitner wrote:
-> > > > > Add the new strobe duration and hardware strobe signal control to v4l
-> > > > > uAPI documentation. Additionally add labels for cross-referencing v4l
-> > > > > controls.
-> > > > > 
-> > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > > ---
-> > > > >  .../userspace-api/media/v4l/ext-ctrls-flash.rst    | 29 ++++++++++++++++++++++
-> > > > >  1 file changed, 29 insertions(+)
-> > > > > 
-> > > > > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > > index d22c5efb806a183a3ad67ec3e6550b002a51659a..6254420a8ca95929d23ffdc65f40a6e53e30a635 100644
-> > > > > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > > @@ -57,6 +57,8 @@ Flash Control IDs
-> > > > >  ``V4L2_CID_FLASH_CLASS (class)``
-> > > > >      The FLASH class descriptor.
-> > > > >  
-> > > > > +.. _v4l2-cid-flash-led-mode:
-> > > > > +
-> > > > >  ``V4L2_CID_FLASH_LED_MODE (menu)``
-> > > > >      Defines the mode of the flash LED, the high-power white LED attached
-> > > > >      to the flash controller. Setting this control may not be possible in
-> > > > > @@ -80,6 +82,8 @@ Flash Control IDs
-> > > > >  
-> > > > >  
-> > > > >  
-> > > > > +.. _v4l2-cid-flash-strobe-source:
-> > > > > +
-> > > > >  ``V4L2_CID_FLASH_STROBE_SOURCE (menu)``
-> > > > >      Defines the source of the flash LED strobe.
-> > > > >  
-> > > > > @@ -186,3 +190,28 @@ Flash Control IDs
-> > > > >      charged before strobing. LED flashes often require a cooldown period
-> > > > >      after strobe during which another strobe will not be possible. This
-> > > > >      is a read-only control.
-> > > > > +
-> > > > > +.. _v4l2-cid-flash-duration:
-> > > > > +
-> > > > > +``V4L2_CID_FLASH_DURATION (integer)``
-> > > > > +    Duration of the flash strobe pulse generated by the strobe source,
-> > > > > +    typically a camera sensor. This method of controlling flash LED strobe
-> > > > > +    duration has three prerequisites: the strobe source's
-> > > > > +    :ref:`hardware strobe signal <v4l2-cid-flash-hw-strobe-signal>` must be
-> > > > > +    enabled, the flash LED driver's :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
-> > > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH``, and the
-> > > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be configured to
-> > > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. The unit should be microseconds (µs)
-> > > > > +    if possible.
-> > > > 
-> > > > As mentioned in the review of 01/10, I think this needs to be clarified.
-> > > > Ideally we should add a new document in
-> > > > Documentation/userspace-api/media/v4l/ to explain the flash API, but in
-> > > > the meantime let's at lets improve the description of the duration
-> > > > control. Here's a proposal.
-> > > 
-> > > Understood. Thank you for your proposal!
-> > > 
-> > > > ``V4L2_CID_FLASH_DURATION (integer)``
-> > > >     Duration of the flash strobe pulse generated by the strobe source, when
-> > > >     using external strobe. This control shall be implemented by the device
-> > > >     generating the hardware flash strobe signal, typically a camera sensor,
-> > > >     connected to a flash controller. It must not be implemented by the flash
-> > > >     controller.
-> > > > 
-> > > >     This method of controlling flash LED strobe duration has three
-> > > >     prerequisites: the strobe source's :ref:`hardware strobe signal
-> > > >     <v4l2-cid-flash-hw-strobe-signal>` must be enabled, the flash controller's
-> > > >     :ref:`flash LED mode <v4l2-cid-flash-led-mode>` must be set to
-> > > >     ``V4L2_FLASH_LED_MODE_FLASH``, and its :ref:`strobe source
-> > > >     <v4l2-cid-flash-strobe-source>` must be configured to
-> > > >     ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``.
-> > > > 
-> > > >     The unit should be microseconds (µs) if possible.
-> > > > 
-> > > > 
-> > > > The second paragraph may be better replaced by expanding the
-> > > > documentation of V4L2_FLASH_STROBE_SOURCE_EXTERNAL, it seems a better
-> > > > place to document how external strobe works.
-> > > 
-> > > That's fine for me. I will adapt the V4L2_CID_FLASH_DURATION and
-> > > V4L2_FLASH_STROBE_SOURCE_EXTERNAL documentation accordingly and send in
-> > > v9.
-> > 
-> > Sakari, could you please check if you agree with the above ? Let's avoid
-> > going back and forth with reviews (and I'll try my best to review the
-> > next version quickly).
-> 
-> My current proposal:
-> 
->     * - ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``
->       - The flash strobe is triggered by an external source. Typically
->         this is a sensor, which makes it possible to synchronise the
->         flash strobe start to exposure start.
->         This method of controlling flash LED strobe has two additional
->         prerequisites: the strobe source's :ref:`flash strobe output
->         <v4l2-cid-flash-strobe-oe>` must be enabled (if available)
->         and the flash controller's :ref:`flash LED mode
->         <v4l2-cid-flash-led-mode>` must be set to
->         ``V4L2_FLASH_LED_MODE_FLASH``. Additionally the :ref:`flash duration
-> 	<v4l2-cid-flash-duration>` may be adjusted by the strobe source.
-> 
-> 
-> ``V4L2_CID_FLASH_DURATION (integer)``
->     Duration of the flash strobe pulse generated by the strobe source, when
->     using external strobe. This control shall be implemented by the device
->     generating the hardware flash strobe signal, typically a camera sensor,
->     connected to a flash controller. It must not be implemented by the flash
->     controller. Typically the flash strobe pulse needs to be activated by
+Right, just someone that maintains the list and possibly allows 
+traversing the list and possibly getting notifications on add/remove.
 
-I'd drop the sentence on flash controller as this is UAPI documentation.
+> Now it would be interesting to have different kind of drivers connect to
+> it (or backends how I called them).
+> One of these programs an internal table for the firmware to use.
+> Another , writes information into a dedicated reserved-memory for the
+> bootloader to use on the next soft reboot (memory preserved).
+> I called this middleman kmemdump. But it can be named differently, and
+> it can reside in different places in the kernel.
+> But what I would like to avoid is to just tag all this memory and have
+> any kind of driver connect to the table. That works, but it's quite
+> loose on having control over the table. E.g. no kmemdump, tag all the
+> memory to sections, and have specific drivers (that would reside where?)
+> walk it.
 
->     enabling the strobe source's :ref:`flash strobe output
->     <v4l2-cid-flash-strobe-oe>`.
-> 
->     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
->     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
->     mode of operation.
-> 
->     The unit should be number of lines if possible.
-> 
-> 
-> ``V4L2_CID_FLASH_STROBE_OE (boolean)``
->     Enables the output of a hardware strobe signal from the strobe source,
->     when using external strobe. This control shall be implemented by the device
-
-I'd remove the comma.
-
->     generating the hardware flash strobe signal, typically a camera sensor,
->     connected to a flash controller.
-> 
->     Provided the signal generating device driver supports it, the length of the
->     strobe signal can be configured by adjusting its
->     :ref:`flash duration <v4l2-cid-flash-duration>`. In case the device has a
->     fixed strobe length, the flash duration control must not be implemented.
-
-I don't see why the duration control wouldn't be implemented in this case:
-it's still relevant for the user space to know how long the duration is.
-I'd simply drop this sentence.
-
-> 
->     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
->     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
->     mode of operation.
-> 
-> > 
-> > > > As for the unit, is microseconds really the best option ? I would expect
-> > > > most sensors to express the strobe pulse width in unit of lines.
-> > > 
-> > > We had that discussion already somewhere during this series. Tbh for me
-> > > microseconds seems fine. Most (professional) flashes are configured with
-> > > s^-1, so that would also be an option, but as flash_timeout is
-> > > configured in microseconds, i chose it for flash_duration too.
-> > > 
-> > > Nonetheless technically it shouldn't be a problem to express it as
-> > > number of lines... Is there a reason to prefer this?
-> > 
-> > A few observations have confirmed my gut feeling that this is how
-> > sensors typically express the pulse width. Expressing the value in its
-> > hardware unit means we won't have rounding issues, and drivers will also
-> > be simpler. We're missing data though, it would be nice to check a wider
-> > variety of camera sensors.
-> 
-> I have done some more measurements and calculation on this for ov9281.
-> It seems you are (somehow?) right. The strobe_frame_span (aka strobe
-> duration) register value seems to represent the duration of the strobe in
-> number of lines plus a constant and variable offset based on the hblank
-> value. Other settings (e.g. vblank, exposure, ...) have no influence on
-> the duration.
-> 
-> After about 50 measurements using different strobe_frame_span and hblank
-> values and 1280x800 as resolution I came up with the following formulas:
-> 
->    line_factor = active_width + hblank * 1,04 + 56
-> 
->    t_strobe = strobe_frame_span * line_factor / pixel_rate
-> 
-> Which matches all tested cased nicely...
-> 
-> Nonetheless I'm still unsure on what unit to use for flash duration...
-> 
-> The exposure time for ov9282 is set as "number of row periods, where the
-> low 4 bits are fraction bits" in the registers. The v4l2 control should
-> on the other hand accept 100 µs units as value.
-> 
-> From a user perspective it would make sense to me to configure exposure
-> time, flash duration and flash/strobe offset using the same base units.
-> On the other hand we may have rounding issues and formulas based on
-> assumptions or reverse-engineering when implementing this for a
-> sensor...
-> 
-> What's your opinion on this, Sakari, Laurent, Dave?
-
-I checked what CCS defines exposure time as a function of the external
-clock frequency:
-
-	exposure time = tFlash_strobe_width_ctrl / ext_clk_freq *
-			flash_strobe_adjustment
-
-The added accuracy is relevant for xenon (admittedly rare these days, but
-depends on the device) flash but probably not so for LEDs.
-
-So I'm fine with keeping this as-is and perhaps adding CCS specific private
-controls separately.
+Yeah, you want just some simple "registry" with traversal+notification.
 
 > 
-> > 
-> > > > I think we also need to decide how to handle camera sensors whose flash
-> > > > strobe pulse width can't be controlled. For instance, the AR0144 can
-> > > > output a flash signal, and its width is always equal to the exposure
-> > > > time. The most straightforward solution seems to implement
-> > > > V4L2_CID_FLASH_HW_STROBE_SIGNAL but not V4L2_CID_FLASH_DURATION in the
-> > > > sensor driver. Could this cause issues in any use case ? Is there a
-> > > > better solution ? I would like this to be documented.
-> > > 
-> > > Sounds good to me. In this case the V4L2_CID_FLASH_DURATION could be
-> > > provided as a read-only property too. So userspace is explicitely aware
-> > > of the acutal value and doesn't have to make assumptions.
-> > 
-> > The value would change depending on the exposure time. Given how control
-> > change events are implemented that would be difficult to use from
-> > userspace at best. I think not exposing the control would be as useful
-> > as exposing a read-only value, and it would be simpler to implement in
-> > kernel drivers.
-> 
-> That's true. I guess keeping the drivers simple and moving this "logic"
-> to a possible client/userspace application (if needed) is fine with me.
-> 
-> As you may have seen above, I've tried to integrate this in the
-> documentation proposal already.
-> 
-> > 
-> > > Should I add documentation on this topic to this patch?
-> > 
-> > That would be nice, thank you.
-> > 
-> > > > Finally, I think we also need to standardize the flash strobe offset.
-> > > 
-> > > I guess I somewhere mentioned this already: I have some patches for
-> > > configuring the strobe offset of ov9282 and adding the corresponding
-> > > v4l2 control. But to keep this series simple I'm planning to send them
-> > > as soon as this one is "done".
-> > > 
-> > > IMHO the offset should then have the same unit as the flash_duration.
-> > 
-> > What's the unit for the OV9282 ? For AR0144, it's a 8-bit signed value
-> > expressed in units of half a line.
-> > 
-> > > > > +
-> > > > > +.. _v4l2-cid-flash-hw-strobe-signal:
-> > > > > +
-> > > > > +``V4L2_CID_FLASH_HW_STROBE_SIGNAL (boolean)``
-> > > > 
-> > > > Nitpicking a bit on the name, I would have called this
-> > > > V4L2_CID_FLASH_STROBE_OUTPUT_ENABLE (or _OE).
-> > > 
-> > > I'm always open to name-nitpicking ;-)
-> > > 
-> > > V4L2_CID_FLASH_STROBE_OE sounds great to me... It's clear and even
-> > > shorter than V4L2_CID_FLASH_HW_STROBE_SIGNAL.
-> > 
-> > Sakari, what's your opinion ?
+>>
+>>> If we would call it differently , simply dump , would it be better ?
+>>> e.g. include linux/dump.h
+>>> and then DUMP(var, size) ?
+>>>
+>>> could we call it maybe MARK ? or TAG ?
+>>> TAG_MEM(area, size)
 
-I slightly prefer the former, too.
-
-> > 
-> > > > > +    Enables the output of a hardware strobe signal from the strobe source,
-> > > > > +    typically a camera sensor. To control a flash LED driver connected to this
-> > > > > +    hardware signal, the :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
-> > > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH`` and the
-> > > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be set to
-> > > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. Provided the flash LED driver
-> > > > > +    supports it, the length of the strobe signal can be configured by
-> > > > > +    adjusting its :ref:`flash duration <v4l2-cid-flash-duration>`.
-> > > > 
-> > > > The V4L2_CID_FLASH_HW_STROBE_SIGNAL documentation needs to be clarified
-> > > > in a similar way as V4L2_CID_FLASH_DURATION.
-> > > 
-> > > Sure. I will adapt this for v9.
-> > 
-> > -- 
-> > Regards,
-> > 
-> > Laurent Pinchart
-> 
-> thanks & regards;rl
+Just because I thought about it again, "named memory" could be an 
+alternative to "tagged memory".
 
 -- 
-Kind regards,
+Cheers
 
-Sakari Ailus
+David / dhildenb
+
 
