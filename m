@@ -1,185 +1,222 @@
-Return-Path: <linux-kernel+bounces-820414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB424B7DFBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF09B7D865
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E4577B2FBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:59:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2CC4870F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E4B34DCF7;
-	Wed, 17 Sep 2025 09:59:44 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F09B30C341;
-	Wed, 17 Sep 2025 09:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2C134DCFD;
+	Wed, 17 Sep 2025 10:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFaCjwk+"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD8F2F25E1
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758103183; cv=none; b=DV8O4ielYA3K/d2kg4Vst2BYOlk4gCdG4tBuvuEIF90K2d3N/f7G5gj+4cwLouex3vo7joQybU4p2jxTx8KhAqOieEGBQod+d2434/X5UJKLiFoucIinQME3ePqPBdd7fqw9JuKp72eV3548buuwV8NeVHBYaJ6c41pV5uljP9c=
+	t=1758103265; cv=none; b=o2NV6puC2w3DFTL5ctaucQqJg2c3rHB1WfMm4TAOK/0YrwOls/6xuFnnd31zrBHHBTo0cQTCkJCZWxU2yVTAOQ5SlyNDmfLbyQfOnMG+N09SA2Q69e/ZHVNjbro+S0hoaXLx9WkY1BRpY03z6Bz4nT57pfBu50SUyTxaZ6C+7xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758103183; c=relaxed/simple;
-	bh=0Giy6+4iUL9MvNTjLoplBZjg9dOsb9KnyA0sVTN34Uk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UlbfG0o0WVWESpXrNMDh9OZn82osAVwpGm+rQ0S6hUH++jBr0JEw2oy6r/3XKmexdCik4ZQMYvccbKqoteVFFuXlirZj+WeU05FHYMYuYhFBLXxFhxjVTX/qsG97LSXGXlxy5quxMvjZJA0f3oJS32ph0OiiStEArvBhjZ62+50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [106.117.98.100])
-	by mtasvr (Coremail) with SMTP id _____wB3L1aDhspoO_BDAg--.6088S3;
-	Wed, 17 Sep 2025 17:59:31 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [106.117.98.100])
-	by mail-app1 (Coremail) with SMTP id yy_KCgCHCNF_hspoTKslAg--.17865S2;
-	Wed, 17 Sep 2025 17:59:30 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	mchehab@kernel.org,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH RESEND] media: b2c2: Fix use-after-free causing by irq_check_work in flexcop_pci_remove
-Date: Wed, 17 Sep 2025 17:59:26 +0800
-Message-Id: <20250917095926.15024-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758103265; c=relaxed/simple;
+	bh=d0g7iHoEoickygDghJK4uaSBc6nM+EN04zBd6gtpwf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=h10OdEntGmhz30wP8SoSvmpjmAQru9M04ayl6WuEqYqCaL6eJM1OotSUbB9l6u4S0sjMJsdF4wGM/PN3NzhaO6uwCaFwiwbk/NWkuoXpwamiG8OA81yekoBfCQZ+yNIZ7xMXP6kdj59KITSelBWGkZqstklCwj3QEhRTnjcCIN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFaCjwk+; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dcff2f313so40105005e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:01:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758103261; x=1758708061; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CGBsfleZ3i+8ylc+seLROZm49XcPG4nT0LLpkt3EpGc=;
+        b=iFaCjwk+cX9scV2M+Si7NuAUZbTQP9pE7nNs0j85OcpqVqAqyFNA6OQHchoUDVvpRO
+         31Shpt8agFEiZ/Bmn2fdmKIR53rrdLYrpr9LLvFW2un2LqF8kZQkKmREKe7wTRA1AOtj
+         6se/zWgmB0oCvv+rVbLiTbaianAA7enEGL9wjySFB1srqZWf+5Eif9lRJukgqqnLP1m5
+         9upghHwun3Rgnrt4dS/rVezJt1cHFYt9xfUfE8MCdBPyjATVXBy1djKkfF7q9sHhy8TM
+         hWTypocJk9rshMfLNqlsZt4iG/5pn9WJRWNfqjznQgDvtu9vbSS3dewfmfSnahIReCdO
+         UR3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758103261; x=1758708061;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CGBsfleZ3i+8ylc+seLROZm49XcPG4nT0LLpkt3EpGc=;
+        b=QaLtBQeRPbDBhs8gLW1j5VFnD3bQq6CiKHXCjIZ4B5HQ6rmQGPqd9KTephto+XXgjE
+         v9qO2XleMNVAwB9u+GjaUvD5Uvfrd9XwnL4lc5cmUIcbk0SUYBpHn2RX7BFvPPzYNj7n
+         jdso0Z0frucAA5vWmHO7Anxjrr+vWOP3o5n9g/qU9kgWLSxD9dbmsrwE77trdSzGtxuo
+         awzm6RpBxesl06L2sIn/M5KI94iO7hdOko/lqvg662k8xBKcZD+l+8mPquyIrPA0qGGO
+         eF58/Vp4l2hptZo5oFmcP+9vOVbGAXqUdF8LhiAXdGVyfMjTq89S3VKLcb+m0srNTKsx
+         GDpw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+LH+KUOlNUT1+ZYTI70wLVPzQ0R1AzbPhBSjcTmLZKVoLzB485flhtBPdurhhVe75Qhga1lcT3Oe+83I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd2uWZvm377J1CT6gBzRhkZ0SrJerjOhCqCsRJBnGPY6GTwvx0
+	pOF0vetMzdDJ7+6HhkRfzaiPHkWrWFx9jV5JAcRtVuIANu/AUPY7JOVo
+X-Gm-Gg: ASbGncvjqosdfJeIoSupEWkwSXqvj4B72t7rGB1h1qNkSgxfVfGedAYn3tpv55y0Tl5
+	RCcuj357u4mXEaGKpKZLp3mVnnpVWHmTZbVjdPISPcUmK8H43FRKBMVAKncD950aN4PjkdD5MgL
+	Ol8wf8vu2YV2FMcsW4Re7p/vjau7xCYkrbRd9yPzo5m1gZxv7bg9O4jZlNPUtVaOoLmnCvn831n
+	qTdYeLQw6mgrb7Xg4OjcF4kJMSwjl2wATLi1ufZm4FhlgusuEAKu0uaoBDBUrXtVrzkSwhWMVtU
+	QMamItCudoo2WrPwBowJ9T3yRfkuhq45+Kj/MxZ1ALszolHvLwvwatFD5jZVk/DZ1Ya15HqialK
+	OGG/tFqx3Xxe4d9wyv5Xmw9lxJY2p
+X-Google-Smtp-Source: AGHT+IGcDDfwcLKirIEgcdjZXbE5ytuoMBhtHdSVlqoGfPRQcdjcLqJrL77I4lSdU5uEF4DfuyU5cg==
+X-Received: by 2002:a05:600c:468f:b0:45f:28c9:4261 with SMTP id 5b1f17b1804b1-46205adf781mr14100095e9.20.1758103260560;
+        Wed, 17 Sep 2025 03:01:00 -0700 (PDT)
+Received: from [192.168.0.24] ([148.3.20.242])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdc2deb20sm4014209f8f.47.2025.09.17.03.00.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 03:00:59 -0700 (PDT)
+Message-ID: <939cea9e-d7bd-4a13-b462-17e483f61e4c@gmail.com>
+Date: Wed, 17 Sep 2025 12:00:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:yy_KCgCHCNF_hspoTKslAg--.17865S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwcMAWjJvXsO9QAJsc
-X-CM-DELIVERINFO: =?B?S6ssLgXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR12iKd4jvNs88B+wbnYVjPMmV7sT+aJ5LQQikwe3C7LYK+RLuxX0yIk+nYCurx9pIZ8wq
-	+tJujV6Fgi6rC5dpJmHB/9WAV9Rtg1syeINJy1T6UK0pMjzUrtEW+zP8/mmapg==
-X-Coremail-Antispam: 1Uk129KBj93XoWxGw13CF1fuw1Dur4Utr4DWrX_yoWrWFW8pr
-	Z8u34fJryUJryUXr47Aw10vF1UJa93t34Ykrn2kw1SgF4fWr1ava45K3Wv9F1UGFWvyFyf
-	Aa4Utr9rXF1DKabCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZE
-	Xa7IU8c4S7UUUUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] serial: 8250_mtk: Enable baud clock and manage in
+ runtime PM
+To: Daniel Golle <daniel@makrotopia.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Yu Jiaoliang <yujiaoliang@vivo.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Changqi Hu <changqi.hu@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
+ Steven Liu <steven.liu@mediatek.com>, John Crispin <john@phrozen.org>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <de5197ccc31e1dab0965cabcc11ca92e67246cf6.1758058441.git.daniel@makrotopia.org>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <de5197ccc31e1dab0965cabcc11ca92e67246cf6.1758058441.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The original code uses cancel_delayed_work() in flexcop_pci_remove(), which
-does not guarantee that the delayed work item irq_check_work has fully
-completed if it was already running. This leads to use-after-free scenarios
-where flexcop_pci_remove() may free the flexcop_device while irq_check_work
-is still active and attempts to dereference the device.
 
-A typical race condition is illustrated below:
 
-CPU 0 (remove)                         | CPU 1 (delayed work callback)
-flexcop_pci_remove()                   | flexcop_pci_irq_check_work()
-  cancel_delayed_work()                |
-  flexcop_device_kfree(fc_pci->fc_dev) |
-                                       |   fc = fc_pci->fc_dev; // UAF
+On 16/09/2025 23:37, Daniel Golle wrote:
+> Some MediaTek SoCs got a gated UART baud clock, which currently gets
+> disabled as the clk subsystem believes it would be unused. This results in
+> the uart freezing right after "clk: Disabling unused clocks" on those
+> platforms.
+> 
+> Request the baud clock to be prepared and enabled during probe, and to
+> restore run-time power management capabilities to what it was before commit
+> e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock
+> management") disable and unprepare the baud clock when suspending the UART,
+> prepare and enable it again when resuming it.
+> 
+> Fixes: e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock management")
 
-This is confirmed by a KASAN report:
+Most of the issues from this commit are already fixed in
+b6c7ff2693ddc ("serial: 8250_mtk: Simplify clock sequencing and runtime PM")
+which is more or less a revert of e32a83c70cf9.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in __run_timer_base.part.0+0x7d7/0x8c0
-Write of size 8 at addr ffff8880093aa8c8 by task bash/135
-...
-Call Trace:
- <IRQ>
- dump_stack_lvl+0x55/0x70
- print_report+0xcf/0x610
- ? __run_timer_base.part.0+0x7d7/0x8c0
- kasan_report+0xb8/0xf0
- ? __run_timer_base.part.0+0x7d7/0x8c0
- __run_timer_base.part.0+0x7d7/0x8c0
- ? __pfx___run_timer_base.part.0+0x10/0x10
- ? __pfx_read_tsc+0x10/0x10
- ? ktime_get+0x60/0x140
- ? lapic_next_event+0x11/0x20
- ? clockevents_program_event+0x1d4/0x2a0
- run_timer_softirq+0xd1/0x190
- handle_softirqs+0x16a/0x550
- irq_exit_rcu+0xaf/0xe0
- sysvec_apic_timer_interrupt+0x70/0x80
- </IRQ>
-...
+I think we should add
+Fixes: b6c7ff2693ddc ("serial: 8250_mtk: Simplify clock sequencing and runtime PM")
+here as well. It's a fix of a fix :)
 
-Allocated by task 1:
- kasan_save_stack+0x24/0x50
- kasan_save_track+0x14/0x30
- __kasan_kmalloc+0x7f/0x90
- __kmalloc_noprof+0x1be/0x460
- flexcop_device_kmalloc+0x54/0xe0
- flexcop_pci_probe+0x1f/0x9d0
- local_pci_probe+0xdc/0x190
- pci_device_probe+0x2fe/0x470
- really_probe+0x1ca/0x5c0
- __driver_probe_device+0x248/0x310
- driver_probe_device+0x44/0x120
- __driver_attach+0xd2/0x310
- bus_for_each_dev+0xed/0x170
- bus_add_driver+0x208/0x500
- driver_register+0x132/0x460
- do_one_initcall+0x89/0x300
- kernel_init_freeable+0x40d/0x720
- kernel_init+0x1a/0x150
- ret_from_fork+0x10c/0x1a0
- ret_from_fork_asm+0x1a/0x30
+Regards,
+Matthias
 
-Freed by task 135:
- kasan_save_stack+0x24/0x50
- kasan_save_track+0x14/0x30
- kasan_save_free_info+0x3a/0x60
- __kasan_slab_free+0x3f/0x50
- kfree+0x137/0x370
- flexcop_device_kfree+0x32/0x50
- pci_device_remove+0xa6/0x1d0
- device_release_driver_internal+0xf8/0x210
- pci_stop_bus_device+0x105/0x150
- pci_stop_and_remove_bus_device_locked+0x15/0x30
- remove_store+0xcc/0xe0
- kernfs_fop_write_iter+0x2c3/0x440
- vfs_write+0x871/0xd70
- ksys_write+0xee/0x1c0
- do_syscall_64+0xac/0x280
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-...
 
-Replace cancel_delayed_work() with cancel_delayed_work_sync() to ensure
-that the delayed work item is properly canceled and any executing delayed
-work has finished before the device memory is deallocated.
-
-This bug was initially identified through static analysis. To reproduce
-and test it, I simulated the B2C2 FlexCop PCI device in QEMU and introduced
-artificial delays within the flexcop_pci_irq_check_work() function to
-increase the likelihood of triggering the bug.
-
-Fixes: 382c5546d618 ("V4L/DVB (10694): [PATCH] software IRQ watchdog for Flexcop B2C2 DVB PCI cards")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
- drivers/media/pci/b2c2/flexcop-pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/pci/b2c2/flexcop-pci.c b/drivers/media/pci/b2c2/flexcop-pci.c
-index 486c8ec0fa60..ab53c5b02c48 100644
---- a/drivers/media/pci/b2c2/flexcop-pci.c
-+++ b/drivers/media/pci/b2c2/flexcop-pci.c
-@@ -411,7 +411,7 @@ static void flexcop_pci_remove(struct pci_dev *pdev)
- 	struct flexcop_pci *fc_pci = pci_get_drvdata(pdev);
- 
- 	if (irq_chk_intv > 0)
--		cancel_delayed_work(&fc_pci->irq_check_work);
-+		cancel_delayed_work_sync(&fc_pci->irq_check_work);
- 
- 	flexcop_pci_dma_exit(fc_pci);
- 	flexcop_device_exit(fc_pci->fc_dev);
--- 
-2.34.1
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> v3: squash into single patch
+> v2: add managing run-time PM in dedicated patch
+> 
+>   drivers/tty/serial/8250/8250_mtk.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+> index b44de2ed7413..5875a7b9b4b1 100644
+> --- a/drivers/tty/serial/8250/8250_mtk.c
+> +++ b/drivers/tty/serial/8250/8250_mtk.c
+> @@ -435,6 +435,7 @@ static int __maybe_unused mtk8250_runtime_suspend(struct device *dev)
+>   	while
+>   		(serial_in(up, MTK_UART_DEBUG0));
+>   
+> +	clk_disable_unprepare(data->uart_clk);
+>   	clk_disable_unprepare(data->bus_clk);
+>   
+>   	return 0;
+> @@ -445,6 +446,7 @@ static int __maybe_unused mtk8250_runtime_resume(struct device *dev)
+>   	struct mtk8250_data *data = dev_get_drvdata(dev);
+>   
+>   	clk_prepare_enable(data->bus_clk);
+> +	clk_prepare_enable(data->uart_clk);
+>   
+>   	return 0;
+>   }
+> @@ -475,13 +477,13 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
+>   	int dmacnt;
+>   #endif
+>   
+> -	data->uart_clk = devm_clk_get(&pdev->dev, "baud");
+> +	data->uart_clk = devm_clk_get_enabled(&pdev->dev, "baud");
+>   	if (IS_ERR(data->uart_clk)) {
+>   		/*
+>   		 * For compatibility with older device trees try unnamed
+>   		 * clk when no baud clk can be found.
+>   		 */
+> -		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
+> +		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>   		if (IS_ERR(data->uart_clk)) {
+>   			dev_warn(&pdev->dev, "Can't get uart clock\n");
+>   			return PTR_ERR(data->uart_clk);
 
 
