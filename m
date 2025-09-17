@@ -1,268 +1,76 @@
-Return-Path: <linux-kernel+bounces-820503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952F3B7F7C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:44:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207A8B7C7E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C5C3AB55E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E0F41890D45
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8A3350829;
-	Wed, 17 Sep 2025 10:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgcKSRLa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE4431B821;
+	Wed, 17 Sep 2025 10:45:10 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AC12641CA;
-	Wed, 17 Sep 2025 10:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC616331AF7
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105891; cv=none; b=SpfAU8AZEHrKzAtj4/vHUxEtnZaNaXPZNPEYfJIjuUuUdmoT9/RyUf9SuWUzFuN0RiDYqiZa3Kad+kWnTzLOBcp77tpFKnesmWeBLsMTkIuCKBH7OD98s2cvogpzlrU4a/NtMiH1UskRLSQ7k4AgByGv76eY6bWD/Uyn1gEFeyE=
+	t=1758105910; cv=none; b=ggOe1MRYcD5QDoFL0v/yd0bQbn2tMoNcL0YbbUZMqyFQl+GIFSq3B7tuxXAunmgZ4nY2GdJGCf0MbLTud22qRXCVW2DkAXEhS9883SOitUX0QVOvsUyDd8W/IQGnw6Bet95DvJDGHrVyDdSbRX4e7Wr/s1lJPwcktNO71fJ+S5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105891; c=relaxed/simple;
-	bh=C4TnItmUWUIRUSK3TbcDmRi0bbtRQFSg0p42mp/7DWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XX6jrbYlctv7OOJJ5tAPr1674SHiKz1C6azNqKaiQxADVBkg2Tn3kg3erCwOYAaeB1uLpdT9ldZRa+K7FsyJxA8Whq9WnjtAgaWN/OK4VeKxm1yC1Nf7npZKvuWPxVIw6op4HiKkyuSlCjglLlyu7mj0R4jElWszWcIuaSbDHNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgcKSRLa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DDA9C4CEF0;
-	Wed, 17 Sep 2025 10:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758105891;
-	bh=C4TnItmUWUIRUSK3TbcDmRi0bbtRQFSg0p42mp/7DWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TgcKSRLazVyMkDCnD6P3JB0NjdcDHEJq/eQ3OSd2vMP1cFo0XMNc3DijYrvI4vUil
-	 zE4XLv+dvBR2LadwZ++uZ9ZbGL6rhfyd12poCU56T6DtP6j495aVgtlqCvz/ITgEDb
-	 o2kTg6Eoa4YQWpAa5g5HKz4Ey9v5Yy5QB96n9/MuOX3RZxsU5KHFBCWbMB7lgUOyqn
-	 cD4SLpz926wI//7h5IHHqxYUQWaU8H7abWiHuRac0lZhwzkhEMiw3WDhNJFdkSy1XT
-	 ZYYam+SvE1KF286hjFHlCiEnRSkT9vFWx7KgM8UnGAR3OszVd5X0zz8IKYmdQ7G65r
-	 9LlguJhoD0ptw==
-Date: Wed, 17 Sep 2025 16:14:42 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	"David E. Box" <david.e.box@linux.intel.com>
-Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
- by BIOS for devicetree platforms
-Message-ID: <frmzvhnhljy23xds7lnmo23zg35wxpzu4pvabnc6v6vz7qn2lj@gk25cglbpn3q>
-References: <20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com>
- <20250916171546.GA1806498@bhelgaas>
+	s=arc-20240116; t=1758105910; c=relaxed/simple;
+	bh=+VFu257CmOCDm4rLx4tZSYFTfmUNu/Ni/5nCVJqhIDE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QiVlsRPR7uXzGw6QjZ6nVU8oqWvvfNCnms5AGXQUxiQQG7ig9W0Rz0vAXAnWA1Z4yrYXlNvOwOhVHUryEPWApbUXiihfDW2HgnjBejJX08CWNoo1nzcfoFGyodWNG7tTcUmRTgqZ5vcfId8s7MbD1IS2UfW6BEd75bsBFAlFWqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-401eba8efecso10154415ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:45:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758105908; x=1758710708;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3gwUo7pjMrAxK7sILCp9ZHQ9x8gVgyisw1GiCXJ8+5k=;
+        b=g3WteB8P3aluOsCSR8Yk/7Yu8BC8KlvwhT7Bc/CsMDYjSqWmvxqhQa/yg+8T+2c2Ti
+         OF+6CYW1B6KW1Aznr54onuNALlZhvQZ//D3UJKzSmmRdrY6ow0WDj/2oB/QxVt6RTjTX
+         yRIhqFe16gtH26TqRGDGKTt5GwsoYJrvlA80IEkTqcpVyfhFGudLrR5bxIhiFLcggLw4
+         MxHbrXaTlhcdUoiG6/wu7a8FQp3zDdOAE+trcNLfEc4eAMVR28z936LIbZ31kYQKl3PZ
+         F+U21ra8gtS2MdkhhMxytnEAqdSFdlhjhFVM2cYCDb0gvglXmyI1eTPIYdllEz76NmHI
+         VHkA==
+X-Gm-Message-State: AOJu0YwaV14aU0jxsgiCV9Brx+/cBul64VMHW2llFCTxMxJVZFM0zXTL
+	4/ekvPPCjdsqOK7dAXrwGrNmrS1vyPM8Rqm0oZn+ZoDijAJQ+sF941f+nhlvT5nrOFdlrE0+xWi
+	NqvLLmMdpb1utH4UfZ6wlF1NKmDFlbj/1eugozWoEVULE3M/Glljox4vT08w=
+X-Google-Smtp-Source: AGHT+IGREBGfiusehIC/dd5+tQCaLdiyILsW5ovR3jI97apby0kkAH1QVbz0R40zTf6souvBRI+OHOV8xl2valScjiA9oB9t02VG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250916171546.GA1806498@bhelgaas>
+X-Received: by 2002:a05:6e02:4504:b0:3fa:9b12:9e3b with SMTP id
+ e9e14a558f8ab-42411460ccbmr52186375ab.5.1758105907917; Wed, 17 Sep 2025
+ 03:45:07 -0700 (PDT)
+Date: Wed, 17 Sep 2025 03:45:07 -0700
+In-Reply-To: <6894dce2.050a0220.7f033.0049.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ca9133.050a0220.2ff435.052e.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+740e04c2a93467a0f8c8@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 16, 2025 at 12:15:46PM GMT, Bjorn Helgaas wrote:
-> On Tue, Sep 16, 2025 at 09:42:52PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
-> > the BIOS (through LNKCTL) during device initialization. This was done
-> > conservatively to avoid issues with the buggy devices that advertise
-> > ASPM capabilities, but behave erratically if the ASPM states are enabled.
-> > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
-> > states that were known to work for the devices.
-> 
-> Questions about what exactly "honoring ASPM states set by BIOS" means:
-> 
->   - I *think* honoring ASPM states set by BIOS means that Linux
->     doesn't change ASPM config at boot-time, and this only applies
->     when:
-> 
->     * CONFIG_PCIEASPM_DEFAULT=y, or
->     * booting with "pcie_aspm=off", or
->     * FADT has ACPI_FADT_NO_ASPM set, or
->     * platform retained control of PCIe Capability via _OSC (I'm not
->       sure we enforce this today, but I think we should)
-> 
->   - IIUC we always save the pre-Linux config in link->aspm_default,
->     but when CONFIG_PCIEASPM_POWERSAVE, CONFIG_PCIEASPM_POWER_SUPERSAVE,
->     or CONFIG_PCIEASPM_PERFORMANCE are set, Linux immediately
->     reconfigures ASPM.
-> 
->   - But I *think* the config option is not restrictive, and users can
->     do more aggressive ASPM configuration at run-time via sysfs, right?
->     (Assuming the platform hasn't prevented Linux from doing so)
-> 
-> If users can configure ASPM differently than BIOS did, we're liable to
-> trip over issues later even though we claim to honor ASPM states set
-> by BIOS, so I think CONFIG_PCIEASPM_DEFAULT is kind of a fig leaf that
-> only defers issues.
-> 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-True. Similar to how we allow users to fiddle with the PCI config space through
-sysfs even when a driver is bound to the device.
+***
 
-> I'd really like to get rid of all those CONFIG_PCIEASPM_* options
-> because I don't think they have any business being build-time things,
-> but I don't think that would have to be in this series.
-> 
-> > But this turned out to be a problem for devicetree platforms, especially
-> > the ARM based devicetree platforms powering Embedded and *some* Compute
-> > devices as they tend to run without any standard BIOS. So the ASPM states
-> > on these platforms were left disabled during boot and the PCI subsystem
-> > never bothered to enable them, unless the user has forcefully enabled the
-> > ASPM states through Kconfig, cmdline, and sysfs or the device drivers
-> > themselves, enabling the ASPM states through pci_enable_link_state() APIs.
-> > 
-> > This caused runtime power issues on those platforms. So a couple of
-> > approaches were tried to mitigate this BIOS dependency without user
-> > intervention by enabling the ASPM states in the PCI controller drivers
-> > after device enumeration, and overriding the ASPM/Clock PM states
-> > by the PCI controller drivers through an API before enumeration.
-> > 
-> > But it has been concluded that none of these mitigations should really be
-> > required and the PCI subsystem should enable the ASPM states advertised by
-> > the devices without relying on BIOS or the PCI controller drivers. If any
-> > device is found to be misbehaving after enabling ASPM states that they
-> > advertised, then those devices should be quirked to disable the problematic
-> > ASPM/Clock PM states.
-> > 
-> > In an effort to do so, start by overriding the ASPM and Clock PM states set
-> > by the BIOS for devicetree platforms first. Separate helper functions are
-> > introduced to set the default ASPM and Clock PM states and they will
-> > override the BIOS set states by enabling all of them if CONFIG_OF is
-> > enabled. To aid debugging, print the overridden ASPM and Clock PM states.
-> > 
-> > In the future, these helpers could be extended to allow other platforms
-> > like VMD, newer ACPI systems with a cutoff year etc... to follow the path.
-> > 
-> > Link: https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
-> > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/pcie/aspm.c | 48 +++++++++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 43 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > index 919a05b9764791c3cc469c9ada62ba5b2c405118..1e7218c5e9127699fdbf172c277aad3f847c43be 100644
-> > --- a/drivers/pci/pcie/aspm.c
-> > +++ b/drivers/pci/pcie/aspm.c
-> > @@ -235,13 +235,15 @@ struct pcie_link_state {
-> >  	u32 aspm_support:7;		/* Supported ASPM state */
-> >  	u32 aspm_enabled:7;		/* Enabled ASPM state */
-> >  	u32 aspm_capable:7;		/* Capable ASPM state with latency */
-> > -	u32 aspm_default:7;		/* Default ASPM state by BIOS */
-> > +	u32 aspm_default:7;		/* Default ASPM state by BIOS or
-> > +					   override */
-> >  	u32 aspm_disable:7;		/* Disabled ASPM state */
-> >  
-> >  	/* Clock PM state */
-> >  	u32 clkpm_capable:1;		/* Clock PM capable? */
-> >  	u32 clkpm_enabled:1;		/* Current Clock PM state */
-> > -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
-> > +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
-> > +					   override */
-> >  	u32 clkpm_disable:1;		/* Clock PM disabled */
-> >  };
-> >  
-> > @@ -373,6 +375,20 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
-> >  	pcie_set_clkpm_nocheck(link, enable);
-> >  }
-> >  
-> > +static void pcie_clkpm_set_default_link_state(struct pcie_link_state *link,
-> > +					      int enabled)
-> > +{
-> > +	struct pci_dev *pdev = link->downstream;
-> > +
-> > +	link->clkpm_default = enabled;
-> > +
-> > +	/* Override the BIOS disabled Clock PM state for devicetree platforms */
-> > +	if (IS_ENABLED(CONFIG_OF) && !enabled) {
-> > +		link->clkpm_default = 1;
-> > +		pci_info(pdev, "Clock PM state overridden\n");
-> 
-> It's obvious from the code that this message means we're going to
-> *enable* ClockPM, but I want to know from the message itself what the
-> resulting state is, not just that it was overridden.
-> 
-> Maybe "ClockPM+" or "ClockPM-" like lspci does?
-> 
+Subject: 
+Author: deepak.takumi.120@gmail.com
 
-We are not disabling ClockPM here, but just enabling it. So adding 'ClockPM+'
-would make sense.
-
-> Maybe we should have a pci_dbg() for the current state?
-> 
-
-Since we are always enabling ClockPM if it was disabled, printing the current
-state is redundant.
-
-> For debuggability, I wonder if we should have a pci_dbg() at the point
-> where we actually update PCI_EXP_LNKCTL, PCI_L1SS_CTL1, etc?  I could
-> even argue for pci_info() since this should be a low-frequency and
-> relatively high-risk event.
-> 
-
-I don't know why we should print register settings since we are explicitly
-printing out what states are getting enabled.
-
-> > +	}
-> > +}
-> > +
-> >  static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
-> >  {
-> >  	int capable = 1, enabled = 1;
-> > @@ -394,7 +410,7 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
-> >  			enabled = 0;
-> >  	}
-> >  	link->clkpm_enabled = enabled;
-> > -	link->clkpm_default = enabled;
-> 
-> I think both the patch and the resulting code would be easier to read
-> if we preserved the link->clkpm_enabled here and simply added the call
-> to pcie_clkpm_set_default_link_state().
-> 
-
-Ok, in that case the helper should be renamed to
-pcie_{clkpm/aspm}_override_default_link_state().
-
-> > +	pcie_clkpm_set_default_link_state(link, enabled);
-> >  	link->clkpm_capable = capable;
-> >  	link->clkpm_disable = blacklist ? 1 : 0;
-> >  }
-> > @@ -788,6 +804,29 @@ static void aspm_l1ss_init(struct pcie_link_state *link)
-> >  		aspm_calc_l12_info(link, parent_l1ss_cap, child_l1ss_cap);
-> >  }
-> >  
-> > +static void pcie_aspm_set_default_link_state(struct pcie_link_state *link)
-> > +{
-> > +	struct pci_dev *pdev = link->downstream;
-> > +	u32 override;
-> > +
-> > +	/* Set BIOS enabled states as the default */
-> > +	link->aspm_default = link->aspm_enabled;
-> > +
-> > +	/* Override the BIOS disabled ASPM states for devicetree platforms */
-> > +	if (IS_ENABLED(CONFIG_OF)) {
-> > +		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
-> > +		override = link->aspm_default & ~link->aspm_enabled;
-> > +		if (override)
-> > +			pci_info(pdev, "ASPM states overridden: %s%s%s%s%s%s\n",
-> > +				 (override & PCIE_LINK_STATE_L0S) ? "L0s, " : "",
-> > +				 (override & PCIE_LINK_STATE_L1) ? "L1, " : "",
-> > +				 (override & PCIE_LINK_STATE_L1_1) ? "L1.1, " : "",
-> > +				 (override & PCIE_LINK_STATE_L1_2) ? "L1.2, " : "",
-> > +				 (override & PCIE_LINK_STATE_L1_1_PCIPM) ? "L1.1 PCI-PM, " : "",
-> > +				 (override & PCIE_LINK_STATE_L1_2_PCIPM) ? "L1.2 PCI-PM" : "");
-> 
-> Same here.
-> 
-
-I will add '+' to make it clear that these states are getting enabled.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+#syz test
 
