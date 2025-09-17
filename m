@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-821764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65077B822F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:47:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACACB8230D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EAF77BA0B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417DC17D75E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8B730FC0F;
-	Wed, 17 Sep 2025 22:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2C430AAD0;
+	Wed, 17 Sep 2025 22:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+Z9zdoC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKZGADLE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4DF3112A1
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EB361FCE;
+	Wed, 17 Sep 2025 22:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758149216; cv=none; b=T10gDuOdtTyo6xJ/9U05weIbz382W4aFIdNnxjkZN5shZMr3pz+8FWdbsmbhEo3X4Yw9FbcLFGfCKl0ftH1uQjCuvqz21ECX7tyAdmZbtD17gpKVlKYOuncckmacngzhl6+6iO95qVqmzy3bd9nhIi0+SB5rgg1IQGn+SfYfHBI=
+	t=1758149362; cv=none; b=QO/Il5ZLtTWzl04tHMCBFEjsebhOg3AAzhcYgmlStH2LuflvBHvvcLL4klyBmI91Y3WttxB0z0HyIzZVRnuEXOWr8RXr5ZNTvtCEYVhOEF7ogdHCVY501/9TgoFjFoWIpkkXRW/5PnZ3hvyb7bgKfwMFATc/AR65uzeFi7LnyRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758149216; c=relaxed/simple;
-	bh=LlKlnIkb/uhYi19BID0vhoWyhvmzW1tnVCvq2ITLLwQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=WaTiLnYnICcciXtuCNdYvqCNAflLwe3mfpEYlBkhs82fuXh0VJ5me0zeKR9f2lIEDukd/LSpjwFKXSp3+B3NGHxKTDMvZ/qxO907W6+z/PCFThJNVc9uxul/bWXWHGNGFBVFmGKQZMN0W7JeXnSZXTLh+eDAYbO1oQZBMBjm5VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+Z9zdoC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A7FC4CEE7;
-	Wed, 17 Sep 2025 22:46:54 +0000 (UTC)
+	s=arc-20240116; t=1758149362; c=relaxed/simple;
+	bh=cVtEEHP0hFciXuQqvr7c6l2Vgd+VUUwi+9QRFbfG8v8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NaG6hI3x239dmVoAqBGbMNh9eqahmWZl0OE/Ng/4UCux1tp40rTbwB+Ce58TLI0otA4n9p9OfNfPtwkGEm//YXL/QsJyMHQTxq2PBUN0HtwFY2Ac0QYl0he/JvgKiu6x3JRm2UBOu3J9ozYCSfm+X/rrqEjuWAR5VxyqUStrtBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKZGADLE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC200C4CEE7;
+	Wed, 17 Sep 2025 22:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758149216;
-	bh=LlKlnIkb/uhYi19BID0vhoWyhvmzW1tnVCvq2ITLLwQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=G+Z9zdoCxNq/d1l83sbQDpfL/oe0NW7x+73bVPbeKAaBDqq2fkd2p79asYP/z7Nfw
-	 HLs8W3cqbignBwnpkNL8WFEcx7nExANHKPM0APB8wDEDVWWxOvBfBnCSkgGmtNLsI5
-	 rVcGLdWkbBeGqoVE4G2u07xEIh9obxWIF0IRqd0pZKaCZ5tKHKHszoaYtMk40vn2G9
-	 2MyBO0x8tGauRtNTJWv+jSnRY3A1P0EGxGRP5OxD7LVL0wk/t+wVDrxxixKMw3/7+U
-	 laYkdcF44n/PMTEAJNiiz4yYKziesVD1QQpJrwBjboboWM7wpSe3um/K0uX4XR4vvu
-	 HMR7MmVU0bc5Q==
-Date: Thu, 18 Sep 2025 07:46:52 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Wang Liang <wangliang74@huawei.com>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] probes: Fixes for v6.17-rc6
-Message-Id: <20250918074652.b9d4842fb41b5bd810b1add7@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1758149362;
+	bh=cVtEEHP0hFciXuQqvr7c6l2Vgd+VUUwi+9QRFbfG8v8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vKZGADLEvBTv0vZxeSm5mToARBDKSSk+Ap2iPtTlrvrjfKkQwWwu1lBaNOI2tSsi6
+	 vNkxVQdK1CU0+H6uXx5S+wacfyRoPQhB2e1ZVyUn3/yJDZmjQ26KOKF7LCQnqxnsov
+	 NA26JK0Wtq5Bx9hKIerITlpwYvMoGRieljqisAit1sggr0SzM6uSyD6QS+yA8CP10E
+	 yqAZE4Rz0surrfBkgzmjGy/NOiGaU+joM1H4/KbeFzUyOTn68iQ/eyAkG2tOR5fRYH
+	 SF24uGfpYnjMInBEzCTHjQ66mnCcXJsDNXILUecrxUh3BFEHCdWoiIQE84SYAwiV08
+	 4ROveW50na4Iw==
+Date: Wed, 17 Sep 2025 15:49:20 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rohan G Thomas via B4 Relay
+ <devnull+rohan.g.thomas.altera.com@kernel.org>
+Cc: rohan.g.thomas@altera.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+ <Jose.Abreu@synopsys.com>, Rohan G Thomas <rohan.g.thomas@intel.com>,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
+ Gerlach <matthew.gerlach@altera.com>, "Ng, Boon Khai"
+ <boon.khai.ng@altera.com>
+Subject: Re: [PATCH net v2 2/2] net: stmmac: Consider Tx VLAN offload tag
+ length for maxSDU
+Message-ID: <20250917154920.7925a20d@kernel.org>
+In-Reply-To: <20250915-qbv-fixes-v2-2-ec90673bb7d4@altera.com>
+References: <20250915-qbv-fixes-v2-0-ec90673bb7d4@altera.com>
+	<20250915-qbv-fixes-v2-2-ec90673bb7d4@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On Mon, 15 Sep 2025 16:17:19 +0800 Rohan G Thomas via B4 Relay wrote:
+> From: Rohan G Thomas <rohan.g.thomas@altera.com>
+> 
+> On hardware with Tx VLAN offload enabled, add the VLAN tag
+> length to the skb length before checking the Qbv maxSDU.
+> Add 4 bytes for 802.1Q an add 8 bytes for 802.1AD tagging.
+> 
+> Fixes: c5c3e1bfc9e0 ("net: stmmac: Offload queueMaxSDU from tc-taprio")
+> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 25 ++++++++++++++++-------
+>  1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 8c8ca5999bd8ad369eafa0cd8448a15da55be86b..c06c947ef7764bf40291a556984651f4edd7cb74 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -4537,6 +4537,7 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+>  	bool has_vlan, set_ic;
+>  	int entry, first_tx;
+>  	dma_addr_t des;
+> +	u32 sdu_len;
+>  
+>  	tx_q = &priv->dma_conf.tx_queue[queue];
+>  	txq_stats = &priv->xstats.txq_stats[queue];
+> @@ -4553,13 +4554,6 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+>  			return stmmac_tso_xmit(skb, dev);
+>  	}
+>  
+> -	if (priv->est && priv->est->enable &&
+> -	    priv->est->max_sdu[queue] &&
+> -	    skb->len > priv->est->max_sdu[queue]){
+> -		priv->xstats.max_sdu_txq_drop[queue]++;
+> -		goto max_sdu_err;
+> -	}
+> -
+>  	if (unlikely(stmmac_tx_avail(priv, queue) < nfrags + 1)) {
+>  		if (!netif_tx_queue_stopped(netdev_get_tx_queue(dev, queue))) {
+>  			netif_tx_stop_queue(netdev_get_tx_queue(priv->dev,
+> @@ -4575,6 +4569,23 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
+>  	/* Check if VLAN can be inserted by HW */
+>  	has_vlan = stmmac_vlan_insert(priv, skb, tx_q);
+>  
+> +	sdu_len = skb->len;
+> +	if (has_vlan) {
+> +		/* Add VLAN tag length to sdu length in case of txvlan offload */
+> +		if (priv->dev->features & NETIF_F_HW_VLAN_CTAG_TX)
+> +			sdu_len += VLAN_HLEN;
+> +		if (skb->vlan_proto == htons(ETH_P_8021AD) &&
+> +		    priv->dev->features & NETIF_F_HW_VLAN_STAG_TX)
+> +			sdu_len += VLAN_HLEN;
 
-Probes fixes for v6.17-rc6:
+Is the device adding the same VLAN tag twice if the proto is 8021AD?
+It looks like it from the code, but how every strange..
 
-- kprobe-event: Fix null-ptr-deref in trace_kprobe_create_internal(),
-  which handles NULL return of kmemdup() correctly.
+In any case, it doesn't look like the driver is doing anything with 
+the NETIF_F_HW_VLAN_* flags right? stmmac_vlan_insert() works purely
+off of vlan proto. So I think we should do the same thing here?
 
+> +	}
+> +
+> +	if (priv->est && priv->est->enable &&
+> +	    priv->est->max_sdu[queue] &&
+> +	    sdu_len > priv->est->max_sdu[queue]) {
+> +		priv->xstats.max_sdu_txq_drop[queue]++;
+> +		goto max_sdu_err;
+> +	}
+> +
+>  	entry = tx_q->cur_tx;
+>  	first_entry = entry;
+>  	WARN_ON(tx_q->tx_skbuff[first_entry]);
+> 
 
-Please pull the latest probes-fixes-v6.17-rc6 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-probes-fixes-v6.17-rc6
-
-Tag SHA1: 53d1ffce26bf97c7170952518cadb4445b4c1ba7
-Head SHA1: dc3382fffdec2c1d6df5836c88fa37b39cd8651e
-
-
-Wang Liang (1):
-      tracing: kprobe-event: Fix null-ptr-deref in trace_kprobe_create_internal()
-
-----
- kernel/trace/trace_kprobe.c | 2 ++
- 1 file changed, 2 insertions(+)
----------------------------
-commit dc3382fffdec2c1d6df5836c88fa37b39cd8651e
-Author: Wang Liang <wangliang74@huawei.com>
-Date:   Tue Sep 16 15:58:16 2025 +0800
-
-    tracing: kprobe-event: Fix null-ptr-deref in trace_kprobe_create_internal()
-    
-    A crash was observed with the following output:
-    
-    Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-    KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-    CPU: 1 UID: 0 PID: 2899 Comm: syz.2.399 Not tainted 6.17.0-rc5+ #5 PREEMPT(none)
-    RIP: 0010:trace_kprobe_create_internal+0x3fc/0x1440 kernel/trace/trace_kprobe.c:911
-    Call Trace:
-     <TASK>
-     trace_kprobe_create_cb+0xa2/0xf0 kernel/trace/trace_kprobe.c:1089
-     trace_probe_create+0xf1/0x110 kernel/trace/trace_probe.c:2246
-     dyn_event_create+0x45/0x70 kernel/trace/trace_dynevent.c:128
-     create_or_delete_trace_kprobe+0x5e/0xc0 kernel/trace/trace_kprobe.c:1107
-     trace_parse_run_command+0x1a5/0x330 kernel/trace/trace.c:10785
-     vfs_write+0x2b6/0xd00 fs/read_write.c:684
-     ksys_write+0x129/0x240 fs/read_write.c:738
-     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-     do_syscall_64+0x5d/0x2d0 arch/x86/entry/syscall_64.c:94
-     </TASK>
-    
-    Function kmemdup() may return NULL in trace_kprobe_create_internal(), add
-    check for it's return value.
-    
-    Link: https://lore.kernel.org/all/20250916075816.3181175-1-wangliang74@huawei.com/
-    
-    Fixes: 33b4e38baa03 ("tracing: kprobe-event: Allocate string buffers from heap")
-    Signed-off-by: Wang Liang <wangliang74@huawei.com>
-    Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index ccae62d4fb91..fa60362a3f31 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -908,6 +908,8 @@ static int trace_kprobe_create_internal(int argc, const char *argv[],
- 			return -EINVAL;
- 		}
- 		buf = kmemdup(&argv[0][1], len + 1, GFP_KERNEL);
-+		if (!buf)
-+			return -ENOMEM;
- 		buf[len] = '\0';
- 		ret = kstrtouint(buf, 0, &maxactive);
- 		if (ret || !maxactive) {
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
