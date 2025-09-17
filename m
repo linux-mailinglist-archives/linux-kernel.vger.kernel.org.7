@@ -1,235 +1,359 @@
-Return-Path: <linux-kernel+bounces-821731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD4BB82177
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB69B82183
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8843348106F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C08E18881A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7461230C36A;
-	Wed, 17 Sep 2025 22:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85EF29ACF7;
+	Wed, 17 Sep 2025 22:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHJOiA1Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b35XFQNy"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1F72DCBF7;
-	Wed, 17 Sep 2025 22:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50C028BABA
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758146550; cv=none; b=F6DA07EV6OEGIIrGn4DBNenV7zRJRY0ZC/iA87zgH6saz3s4QPFNCoeFfB7A1hqVqGZ0R5UbG7nAX/dv1MGYzsxyVJWszBgRpA2qZ9bx8FTIVRc6uO34WxNvKlCIdakE7fakRor1ayTaKNEmUJKUr39k/C90z1zXewA9lLgBWdY=
+	t=1758146682; cv=none; b=H1CqkK+eRpSAzghMao09RRIbF62gGWvnc/gBzyhnYNnHr87GZcWX/YIO5LidLk1c0rq4zsfUEqTIni3sjSRzfw79uItKq9MUDzZtHq8YErM3pK+ugjfXEjqwcrJXpoQIRl1Ik7PIuzRCXkKS4KO3UZtmFR8ukQ4LX1oD7sld7Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758146550; c=relaxed/simple;
-	bh=CVXw9uvZ4D6n5HmWG5IpYQjWsYYCqrfqLRvpe9sauYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qruwjzudyVNKhjSBIEJE3FvZKZFQJmn6jqypkqboxzdN9wG8hjZYVGUPISrqeD+NttnfltRmrXx92XR6HM5O5UogMxnqrdqZa4NQb9UVeaVtzRSZmxoa8+ilEHCD83ZTJ8+AJZN91b+uyq/lYy7Kam79Qn3EMj3SDLzjCtwIWTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHJOiA1Q; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758146548; x=1789682548;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CVXw9uvZ4D6n5HmWG5IpYQjWsYYCqrfqLRvpe9sauYg=;
-  b=iHJOiA1QZ42WrgQuwHkZbUfDHc4PYVkz/SuISR6saWIPk/mepbcHtAo4
-   axFBSdXeTF/WOhw22Q1AWZsk+PtR+cPiCt7etISQsFAB6nO1wU2OIcisM
-   KCtu8dQHKs2bSrfAQb/rkMPuLxvS4fDbruT2LcGS50EvfniUqOaeYsw3V
-   E7XbJjTnvfrsKg/H1SDPNXrLw0NNsR9N/c3tamDEukLQqrSu5gJAtXllB
-   tuFEfIFERCqn/xxUKVIOrkHYe7WpjPds4pn0kDEOZ2+cfDJGRrQpEjWmF
-   HhJnkZOx/TekY+QYZZzoc1vPREUR87K6nF0CgpheG5b9pf45OPsmKy96c
-   g==;
-X-CSE-ConnectionGUID: w7lW9iZ/T3qCNcQuq8kY3g==
-X-CSE-MsgGUID: YC0mldr8S4ekStCuQvQKlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60160885"
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="60160885"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 15:02:27 -0700
-X-CSE-ConnectionGUID: XCLV9Ns4SDyPh9+V1u4rVQ==
-X-CSE-MsgGUID: Xs5J8C6XSLqSRK49Z5F+eQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="175279710"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 17 Sep 2025 15:02:24 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uz0EI-0002VL-1R;
-	Wed, 17 Sep 2025 22:02:22 +0000
-Date: Thu, 18 Sep 2025 06:01:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>, bhelgaas@google.com,
-	mahesh@linux.ibm.com, mani@kernel.org, Jonathan.Cameron@huawei.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com
-Cc: oe-kbuild-all@lists.linux.dev, oohall@gmail.com,
-	xueshuai@linux.alibaba.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 2/3] PCI/DPC: Run recovery on device that detected the
- error
-Message-ID: <202509180501.eB8FJ5Vt-lkp@intel.com>
-References: <20250917063352.19429-3-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1758146682; c=relaxed/simple;
+	bh=gDUPk/m4rq1u3EYCb3lp0LjeYM8xElxylPHjyHrmMJo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FH7d7y5YYeVUP08e6y+9tXFwxdI5TdazRHuYtH9NUI6f3W0u+4Sok+PZCe0cIuO8ARVqZw204/ZfbIp9h2PqwS7uIuwv9a6+evFOgD629WK8JERGuDRSe1YSFAKZkUDk7NeMAzkw46v1PSZ37NJOYhMX0KzzOFIl/e9NpZNfPaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b35XFQNy; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-251fc032d1fso3436215ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758146680; x=1758751480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rKTYL9qZHCY6SX54g1CxCOHWNQkO0Dz6dIIx5JhUyuo=;
+        b=b35XFQNykfWQXCWjO5ftL4U5VJbu6bRpLiZ4Erw6q6njo8pyZLjuiBMTuNB2Up9r07
+         LDCFJSv0fx2tbb3XQOgID/WRrbcWauPMQl9alhJzvMK138k8ieuihDt/qpCtmbhKCNs4
+         GwOH/KNghHF0gPZ1hSW813W0+agO5h3a234Ieu/rYhsLZKth36/5Tog9gn91Lppjzywf
+         rq4C2nzFFxR6NFd44BjSRoKj/5MyaNGMmkQgXr0+MLrckAPtHW/tsX3us48LIdaKb+ys
+         KVuifK4tw0B2ndVVZJDEn9O8acByqWhiw+p0Y2TsNSpe/raj0z6k1orRQVz3atyusP2u
+         wyLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758146680; x=1758751480;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rKTYL9qZHCY6SX54g1CxCOHWNQkO0Dz6dIIx5JhUyuo=;
+        b=fdgZx6glgdLJfBtIq5ZHi/vBqTpbG4D0bOceJkzrdIYeXskQNmUCP15VIOeEz2yUb2
+         Ac7zC4jWR0EYGuZTwq/Qwj9+Tm63dIwEDIYUitFSBSauMEw9Na3eD/UWIpxZObIO3XQC
+         VzXK2fXswFxOqf5ncC+ANdP3RPRAmdyFVYUKxMoLrnTzFbTj7DKyQ7an8z2arzPF19YC
+         VoT3uYwNlvemLWHtKMc9pnI15z+y69b8YG1R7feBOrEG7kroRaZ/mR+FQaPfJuJDE9y5
+         zvnxzfSYyy358YcH2IvtEWdw25elclYyAifXozkbiQ/BYlm7hMKaHmWcPHKhVM4SI29F
+         fTxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjxFlIVp+jSjnm3urMuejpoM8yQhA+PIU5ECQoOIUvsaPfoGBP6pxz/Y20IC2XYk8V/bdXBt2xwN/S2L0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTenDFjspM6vFrQTsAoi5wkKt+PrEHFyjXOZ4Xv4d624gMmbRl
+	OcCzgRgwMtU7vBgka3oT+eq+Kw29Gf0rkcplwd8tW6/Q8X/7zAzXHL8=
+X-Gm-Gg: ASbGnctzXebvwd4MuESSDZnKgLEXuw2jcDjWLEe9zZARZTiaawlGLMrWDE++zUrr0hO
+	VggmtaSz6ket/4BNhwvfz7IfepK19721ya2KwI5gbdWoztWRjniluvJv2cYhCaPoCj4lU8MLpcT
+	Cja+Yhd3Vw1a58O85PXeCGBDqQ3aONfhFXWau1geHiJfnpcPtH9E8Gh/YnDBbTYn9emIeeqEJQ4
+	gLKFTcXl8GLYF5BwNHC1WrJEkQxX/Bn2k4K23i7JJlxMIqYvREApn1GfRAQ+AiyoOkFdWjOqR/+
+	a/pMkFP/aK1aBQ09Itr1iuqbpImje71RbzqR0vc3iw88t0obKbJNVoU+j27p4BhJV6csbEVzOEj
+	z/AbE3LkV6cW9GjEWgTnExKx4uGBrSX4xEZBr/D76GnYf/kBF02xsMXTPho4JLivyYOyVtsIzSJ
+	6anBs=
+X-Google-Smtp-Source: AGHT+IGDFPDGX4rb+kiQg3X4yL7z83rrDxrOSR5UfT6oA70G3VDh5bLbnnVZBylxLLb/1kX5EJEZLg==
+X-Received: by 2002:a17:903:283:b0:267:f121:6a88 with SMTP id d9443c01a7336-268138fe811mr54249485ad.42.1758146679810;
+        Wed, 17 Sep 2025 15:04:39 -0700 (PDT)
+Received: from Ubuntuv2.domain.name ([122.172.86.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016bf96sm5505275ad.38.2025.09.17.15.04.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 15:04:39 -0700 (PDT)
+From: Marneni PoornaChandu <poornachandumarneni@gmail.com>
+X-Google-Original-From: Marneni PoornaChandu <Poornachandumarneni@gmail.com>
+To: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alexandre.belloni@bootlin.com,
+	corey@minyard.net,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	linux-i3c@lists.infradead.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-media@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	Marneni PoornaChandu <Poornachandumarneni@gmail.com>
+Subject: [PATCH] docs: driver-api: fix spelling of "buses".
+Date: Thu, 18 Sep 2025 06:04:30 +0800
+Message-Id: <20250917220430.5815-1-Poornachandumarneni@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917063352.19429-3-xueshuai@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Shuai,
+Replace incorrect plural form "busses" with "buses" in
+multiple documentation files under "Documentation/driver-api".
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Marneni PoornaChandu <Poornachandumarneni@gmail.com>
+---
+ Documentation/driver-api/device-io.rst             | 4 ++--
+ Documentation/driver-api/driver-model/overview.rst | 2 +-
+ Documentation/driver-api/driver-model/platform.rst | 2 +-
+ Documentation/driver-api/eisa.rst                  | 6 +++---
+ Documentation/driver-api/i3c/protocol.rst          | 4 ++--
+ Documentation/driver-api/ipmi.rst                  | 4 ++--
+ Documentation/driver-api/media/tx-rx.rst           | 4 ++--
+ Documentation/driver-api/nvdimm/nvdimm.rst         | 2 +-
+ Documentation/driver-api/pm/devices.rst            | 4 ++--
+ Documentation/driver-api/scsi.rst                  | 4 ++--
+ Documentation/driver-api/spi.rst                   | 2 +-
+ Documentation/driver-api/usb/hotplug.rst           | 2 +-
+ Documentation/driver-api/usb/usb.rst               | 4 ++--
+ 13 files changed, 22 insertions(+), 22 deletions(-)
 
-[auto build test WARNING on pci/for-linus]
-[also build test WARNING on linus/master v6.17-rc6 next-20250917]
-[cannot apply to pci/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Shuai-Xue/PCI-DPC-Clarify-naming-for-error-port-in-DPC-Handling/20250917-143459
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git for-linus
-patch link:    https://lore.kernel.org/r/20250917063352.19429-3-xueshuai%40linux.alibaba.com
-patch subject: [PATCH v5 2/3] PCI/DPC: Run recovery on device that detected the error
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250918/202509180501.eB8FJ5Vt-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7c861bcedf61607b6c087380ac711eb7ff918ca6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509180501.eB8FJ5Vt-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509180501.eB8FJ5Vt-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from <built-in>:3:
-   In file included from include/linux/compiler_types.h:171:
-   include/linux/compiler-clang.h:28:9: warning: '__SANITIZE_ADDRESS__' macro redefined [-Wmacro-redefined]
-      28 | #define __SANITIZE_ADDRESS__
-         |         ^
-   <built-in>:371:9: note: previous definition is here
-     371 | #define __SANITIZE_ADDRESS__ 1
-         |         ^
->> drivers/pci/pcie/edr.c:188:6: warning: variable 'err_dev' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-     188 |         if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/pcie/edr.c:218:14: note: uninitialized use occurs here
-     218 |         pci_dev_put(err_dev);
-         |                     ^~~~~~~
-   drivers/pci/pcie/edr.c:188:2: note: remove the 'if' if its condition is always false
-     188 |         if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     189 |                 pci_err(err_port, "Invalid DPC trigger %#010x\n", status);
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     190 |                 goto send_ost;
-         |                 ~~~~~~~~~~~~~~
-     191 |         }
-         |         ~
-   drivers/pci/pcie/edr.c:181:6: warning: variable 'err_dev' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-     181 |         if (!err_port->dpc_cap) {
-         |             ^~~~~~~~~~~~~~~~~~
-   drivers/pci/pcie/edr.c:218:14: note: uninitialized use occurs here
-     218 |         pci_dev_put(err_dev);
-         |                     ^~~~~~~
-   drivers/pci/pcie/edr.c:181:2: note: remove the 'if' if its condition is always false
-     181 |         if (!err_port->dpc_cap) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-     182 |                 pci_err(err_port, FW_BUG "This device doesn't support DPC\n");
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     183 |                 goto send_ost;
-         |                 ~~~~~~~~~~~~~~
-     184 |         }
-         |         ~
-   drivers/pci/pcie/edr.c:153:50: note: initialize the variable 'err_dev' to silence this warning
-     153 |         struct pci_dev *pdev = data, *err_port, *err_dev;
-         |                                                         ^
-         |                                                          = NULL
-   3 warnings generated.
-
-
-vim +188 drivers/pci/pcie/edr.c
-
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  150  
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  151  static void edr_handle_event(acpi_handle handle, u32 event, void *data)
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  152  {
-267102466d7b592 Shuai Xue                  2025-09-17  153  	struct pci_dev *pdev = data, *err_port, *err_dev;
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  154  	pci_ers_result_t estate = PCI_ERS_RESULT_DISCONNECT;
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  155  	u16 status;
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  156  
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  157  	if (event != ACPI_NOTIFY_DISCONNECT_RECOVER)
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  158  		return;
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  159  
-774820b362b07b9 Bjorn Helgaas              2023-04-07  160  	/*
-774820b362b07b9 Bjorn Helgaas              2023-04-07  161  	 * pdev is a Root Port or Downstream Port that is still present and
-774820b362b07b9 Bjorn Helgaas              2023-04-07  162  	 * has triggered a containment event, e.g., DPC, so its child
-774820b362b07b9 Bjorn Helgaas              2023-04-07  163  	 * devices have been disconnected (ACPI r6.5, sec 5.6.6).
-774820b362b07b9 Bjorn Helgaas              2023-04-07  164  	 */
-af03958da0678c3 Kuppuswamy Sathyanarayanan 2020-04-15  165  	pci_info(pdev, "EDR event received\n");
-af03958da0678c3 Kuppuswamy Sathyanarayanan 2020-04-15  166  
-774820b362b07b9 Bjorn Helgaas              2023-04-07  167  	/*
-774820b362b07b9 Bjorn Helgaas              2023-04-07  168  	 * Locate the port that experienced the containment event.  pdev
-774820b362b07b9 Bjorn Helgaas              2023-04-07  169  	 * may be that port or a parent of it (PCI Firmware r3.3, sec
-774820b362b07b9 Bjorn Helgaas              2023-04-07  170  	 * 4.6.13).
-774820b362b07b9 Bjorn Helgaas              2023-04-07  171  	 */
-a56b1e47845b946 Shuai Xue                  2025-09-17  172  	err_port = acpi_dpc_port_get(pdev);
-a56b1e47845b946 Shuai Xue                  2025-09-17  173  	if (!err_port) {
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  174  		pci_err(pdev, "Firmware failed to locate DPC port\n");
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  175  		return;
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  176  	}
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  177  
-a56b1e47845b946 Shuai Xue                  2025-09-17  178  	pci_dbg(pdev, "Reported EDR dev: %s\n", pci_name(err_port));
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  179  
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  180  	/* If port does not support DPC, just send the OST */
-a56b1e47845b946 Shuai Xue                  2025-09-17  181  	if (!err_port->dpc_cap) {
-a56b1e47845b946 Shuai Xue                  2025-09-17  182  		pci_err(err_port, FW_BUG "This device doesn't support DPC\n");
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  183  		goto send_ost;
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  184  	}
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  185  
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  186  	/* Check if there is a valid DPC trigger */
-a56b1e47845b946 Shuai Xue                  2025-09-17  187  	pci_read_config_word(err_port, err_port->dpc_cap + PCI_EXP_DPC_STATUS, &status);
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23 @188  	if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
-a56b1e47845b946 Shuai Xue                  2025-09-17  189  		pci_err(err_port, "Invalid DPC trigger %#010x\n", status);
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  190  		goto send_ost;
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  191  	}
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  192  
-267102466d7b592 Shuai Xue                  2025-09-17  193  	err_dev = dpc_process_error(err_port);
-a56b1e47845b946 Shuai Xue                  2025-09-17  194  	pci_aer_raw_clear_status(err_port);
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  195  
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  196  	/*
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  197  	 * Irrespective of whether the DPC event is triggered by ERR_FATAL
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  198  	 * or ERR_NONFATAL, since the link is already down, use the FATAL
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  199  	 * error recovery path for both cases.
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  200  	 */
-267102466d7b592 Shuai Xue                  2025-09-17  201  	estate = pcie_do_recovery(err_dev, pci_channel_io_frozen, dpc_reset_link);
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  202  
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  203  send_ost:
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  204  
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  205  	/*
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  206  	 * If recovery is successful, send _OST(0xF, BDF << 16 | 0x80)
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  207  	 * to firmware. If not successful, send _OST(0xF, BDF << 16 | 0x81).
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  208  	 */
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  209  	if (estate == PCI_ERS_RESULT_RECOVERED) {
-a56b1e47845b946 Shuai Xue                  2025-09-17  210  		pci_dbg(err_port, "DPC port successfully recovered\n");
-a56b1e47845b946 Shuai Xue                  2025-09-17  211  		pcie_clear_device_status(err_port);
-a56b1e47845b946 Shuai Xue                  2025-09-17  212  		acpi_send_edr_status(pdev, err_port, EDR_OST_SUCCESS);
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  213  	} else {
-a56b1e47845b946 Shuai Xue                  2025-09-17  214  		pci_dbg(err_port, "DPC port recovery failed\n");
-a56b1e47845b946 Shuai Xue                  2025-09-17  215  		acpi_send_edr_status(pdev, err_port, EDR_OST_FAILED);
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  216  	}
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  217  
-267102466d7b592 Shuai Xue                  2025-09-17  218  	pci_dev_put(err_dev);
-a56b1e47845b946 Shuai Xue                  2025-09-17  219  	pci_dev_put(err_port);
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  220  }
-ac1c8e35a3262d0 Kuppuswamy Sathyanarayanan 2020-03-23  221  
-
+diff --git a/Documentation/driver-api/device-io.rst b/Documentation/driver-api/device-io.rst
+index 5c7e8194bef9..d1aaa961cac4 100644
+--- a/Documentation/driver-api/device-io.rst
++++ b/Documentation/driver-api/device-io.rst
+@@ -16,7 +16,7 @@ Bus-Independent Device Accesses
+ Introduction
+ ============
+ 
+-Linux provides an API which abstracts performing IO across all busses
++Linux provides an API which abstracts performing IO across all buses
+ and devices, allowing device drivers to be written independently of bus
+ type.
+ 
+@@ -71,7 +71,7 @@ can be compiler optimised, you can use __readb() and friends to
+ indicate the relaxed ordering. Use this with care.
+ 
+ While the basic functions are defined to be synchronous with respect to
+-each other and ordered with respect to each other the busses the devices
++each other and ordered with respect to each other the buses the devices
+ sit on may themselves have asynchronicity. In particular many authors
+ are burned by the fact that PCI bus writes are posted asynchronously. A
+ driver author must issue a read from the same device to ensure that
+diff --git a/Documentation/driver-api/driver-model/overview.rst b/Documentation/driver-api/driver-model/overview.rst
+index e98d0ab4a9b6..b3f447bf9f07 100644
+--- a/Documentation/driver-api/driver-model/overview.rst
++++ b/Documentation/driver-api/driver-model/overview.rst
+@@ -22,7 +22,7 @@ uniformity across the different bus types.
+ 
+ The current driver model provides a common, uniform data model for describing
+ a bus and the devices that can appear under the bus. The unified bus
+-model includes a set of common attributes which all busses carry, and a set
++model includes a set of common attributes which all buses carry, and a set
+ of common callbacks, such as device discovery during bus probing, bus
+ shutdown, bus power management, etc.
+ 
+diff --git a/Documentation/driver-api/driver-model/platform.rst b/Documentation/driver-api/driver-model/platform.rst
+index 7beb8a9648c5..cf5ff48d3115 100644
+--- a/Documentation/driver-api/driver-model/platform.rst
++++ b/Documentation/driver-api/driver-model/platform.rst
+@@ -4,7 +4,7 @@ Platform Devices and Drivers
+ 
+ See <linux/platform_device.h> for the driver model interface to the
+ platform bus:  platform_device, and platform_driver.  This pseudo-bus
+-is used to connect devices on busses with minimal infrastructure,
++is used to connect devices on buses with minimal infrastructure,
+ like those used to integrate peripherals on many system-on-chip
+ processors, or some "legacy" PC interconnects; as opposed to large
+ formally specified ones like PCI or USB.
+diff --git a/Documentation/driver-api/eisa.rst b/Documentation/driver-api/eisa.rst
+index b33ebe1ec9ed..3563e5f7e98d 100644
+--- a/Documentation/driver-api/eisa.rst
++++ b/Documentation/driver-api/eisa.rst
+@@ -8,9 +8,9 @@ This document groups random notes about porting EISA drivers to the
+ new EISA/sysfs API.
+ 
+ Starting from version 2.5.59, the EISA bus is almost given the same
+-status as other much more mainstream busses such as PCI or USB. This
++status as other much more mainstream buses such as PCI or USB. This
+ has been possible through sysfs, which defines a nice enough set of
+-abstractions to manage busses, devices and drivers.
++abstractions to manage buses, devices and drivers.
+ 
+ Although the new API is quite simple to use, converting existing
+ drivers to the new infrastructure is not an easy task (mostly because
+@@ -205,7 +205,7 @@ Random notes
+ Converting an EISA driver to the new API mostly involves *deleting*
+ code (since probing is now in the core EISA code). Unfortunately, most
+ drivers share their probing routine between ISA, and EISA. Special
+-care must be taken when ripping out the EISA code, so other busses
++care must be taken when ripping out the EISA code, so other buses
+ won't suffer from these surgical strikes...
+ 
+ You *must not* expect any EISA device to be detected when returning
+diff --git a/Documentation/driver-api/i3c/protocol.rst b/Documentation/driver-api/i3c/protocol.rst
+index 23a0b93c62b1..fe338f8085db 100644
+--- a/Documentation/driver-api/i3c/protocol.rst
++++ b/Documentation/driver-api/i3c/protocol.rst
+@@ -165,8 +165,8 @@ The first thing attached to an HDR command is the HDR mode. There are currently
+ for more details):
+ 
+ * HDR-DDR: Double Data Rate mode
+-* HDR-TSP: Ternary Symbol Pure. Only usable on busses with no I2C devices
+-* HDR-TSL: Ternary Symbol Legacy. Usable on busses with I2C devices
++* HDR-TSP: Ternary Symbol Pure. Only usable on buses with no I2C devices
++* HDR-TSL: Ternary Symbol Legacy. Usable on buses with I2C devices
+ 
+ When sending an HDR command, the whole bus has to enter HDR mode, which is done
+ using a broadcast CCC command.
+diff --git a/Documentation/driver-api/ipmi.rst b/Documentation/driver-api/ipmi.rst
+index 2cc6c898ab90..f52ab2df2569 100644
+--- a/Documentation/driver-api/ipmi.rst
++++ b/Documentation/driver-api/ipmi.rst
+@@ -617,12 +617,12 @@ Note that the address you give here is the I2C address, not the IPMI
+ address.  So if you want your MC address to be 0x60, you put 0x30
+ here.  See the I2C driver info for more details.
+ 
+-Command bridging to other IPMB busses through this interface does not
++Command bridging to other IPMB buses through this interface does not
+ work.  The receive message queue is not implemented, by design.  There
+ is only one receive message queue on a BMC, and that is meant for the
+ host drivers, not something on the IPMB bus.
+ 
+-A BMC may have multiple IPMB busses, which bus your device sits on
++A BMC may have multiple IPMB buses, which bus your device sits on
+ depends on how the system is wired.  You can fetch the channels with
+ "ipmitool channel info <n>" where <n> is the channel, with the
+ channels being 0-7 and try the IPMB channels.
+diff --git a/Documentation/driver-api/media/tx-rx.rst b/Documentation/driver-api/media/tx-rx.rst
+index 0b8c9cde8ee4..22e1b13ecde9 100644
+--- a/Documentation/driver-api/media/tx-rx.rst
++++ b/Documentation/driver-api/media/tx-rx.rst
+@@ -12,7 +12,7 @@ CSI-2 receiver in an SoC.
+ Bus types
+ ---------
+ 
+-The following busses are the most common. This section discusses these two only.
++The following buses are the most common. This section discusses these two only.
+ 
+ MIPI CSI-2
+ ^^^^^^^^^^
+@@ -36,7 +36,7 @@ Transmitter drivers
+ 
+ Transmitter drivers generally need to provide the receiver drivers with the
+ configuration of the transmitter. What is required depends on the type of the
+-bus. These are common for both busses.
++bus. These are common for both buses.
+ 
+ Media bus pixel code
+ ^^^^^^^^^^^^^^^^^^^^
+diff --git a/Documentation/driver-api/nvdimm/nvdimm.rst b/Documentation/driver-api/nvdimm/nvdimm.rst
+index c205efa4d45b..959ba1cc0263 100644
+--- a/Documentation/driver-api/nvdimm/nvdimm.rst
++++ b/Documentation/driver-api/nvdimm/nvdimm.rst
+@@ -230,7 +230,7 @@ LIBNVDIMM/LIBNDCTL: Bus
+ A bus has a 1:1 relationship with an NFIT.  The current expectation for
+ ACPI based systems is that there is only ever one platform-global NFIT.
+ That said, it is trivial to register multiple NFITs, the specification
+-does not preclude it.  The infrastructure supports multiple busses and
++does not preclude it.  The infrastructure supports multiple buses and
+ we use this capability to test multiple NFIT configurations in the unit
+ test.
+ 
+diff --git a/Documentation/driver-api/pm/devices.rst b/Documentation/driver-api/pm/devices.rst
+index 8d86d5da4023..36d5c9c9fd11 100644
+--- a/Documentation/driver-api/pm/devices.rst
++++ b/Documentation/driver-api/pm/devices.rst
+@@ -255,7 +255,7 @@ get registered:  a child can never be registered, probed or resumed before
+ its parent; and can't be removed or suspended after that parent.
+ 
+ The policy is that the device hierarchy should match hardware bus topology.
+-[Or at least the control bus, for devices which use multiple busses.]
++[Or at least the control bus, for devices which use multiple buses.]
+ In particular, this means that a device registration may fail if the parent of
+ the device is suspending (i.e. has been chosen by the PM core as the next
+ device to suspend) or has already suspended, as well as after all of the other
+@@ -493,7 +493,7 @@ states, like S3).
+ 
+ Drivers must also be prepared to notice that the device has been removed
+ while the system was powered down, whenever that's physically possible.
+-PCMCIA, MMC, USB, Firewire, SCSI, and even IDE are common examples of busses
++PCMCIA, MMC, USB, Firewire, SCSI, and even IDE are common examples of buses
+ where common Linux platforms will see such removal.  Details of how drivers
+ will notice and handle such removals are currently bus-specific, and often
+ involve a separate thread.
+diff --git a/Documentation/driver-api/scsi.rst b/Documentation/driver-api/scsi.rst
+index bf2be96cc2d6..8bbdfb018c53 100644
+--- a/Documentation/driver-api/scsi.rst
++++ b/Documentation/driver-api/scsi.rst
+@@ -18,7 +18,7 @@ optical drives, test equipment, and medical devices) to a host computer.
+ 
+ Although the old parallel (fast/wide/ultra) SCSI bus has largely fallen
+ out of use, the SCSI command set is more widely used than ever to
+-communicate with devices over a number of different busses.
++communicate with devices over a number of different buses.
+ 
+ The `SCSI protocol <https://www.t10.org/scsi-3.htm>`__ is a big-endian
+ peer-to-peer packet based protocol. SCSI commands are 6, 10, 12, or 16
+@@ -286,7 +286,7 @@ Parallel SCSI (SPI) transport class
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ The file drivers/scsi/scsi_transport_spi.c defines transport
+-attributes for traditional (fast/wide/ultra) SCSI busses.
++attributes for traditional (fast/wide/ultra) SCSI buses.
+ 
+ .. kernel-doc:: drivers/scsi/scsi_transport_spi.c
+    :export:
+diff --git a/Documentation/driver-api/spi.rst b/Documentation/driver-api/spi.rst
+index f28887045049..74eca6735042 100644
+--- a/Documentation/driver-api/spi.rst
++++ b/Documentation/driver-api/spi.rst
+@@ -13,7 +13,7 @@ additional chipselect line is usually active-low (nCS); four signals are
+ normally used for each peripheral, plus sometimes an interrupt.
+ 
+ The SPI bus facilities listed here provide a generalized interface to
+-declare SPI busses and devices, manage them according to the standard
++declare SPI buses and devices, manage them according to the standard
+ Linux driver model, and perform input/output operations. At this time,
+ only "master" side interfaces are supported, where Linux talks to SPI
+ peripherals and does not implement such a peripheral itself. (Interfaces
+diff --git a/Documentation/driver-api/usb/hotplug.rst b/Documentation/driver-api/usb/hotplug.rst
+index c1e13107c50e..12260f704a01 100644
+--- a/Documentation/driver-api/usb/hotplug.rst
++++ b/Documentation/driver-api/usb/hotplug.rst
+@@ -5,7 +5,7 @@ Linux Hotplugging
+ =================
+ 
+ 
+-In hotpluggable busses like USB (and Cardbus PCI), end-users plug devices
++In hotpluggable buses like USB (and Cardbus PCI), end-users plug devices
+ into the bus with power on.  In most cases, users expect the devices to become
+ immediately usable.  That means the system must do many things, including:
+ 
+diff --git a/Documentation/driver-api/usb/usb.rst b/Documentation/driver-api/usb/usb.rst
+index 976fb4221062..7f2f41e80c1c 100644
+--- a/Documentation/driver-api/usb/usb.rst
++++ b/Documentation/driver-api/usb/usb.rst
+@@ -13,7 +13,7 @@ structure, with the host as the root (the system's master), hubs as
+ interior nodes, and peripherals as leaves (and slaves). Modern PCs
+ support several such trees of USB devices, usually
+ a few USB 3.0 (5 GBit/s) or USB 3.1 (10 GBit/s) and some legacy
+-USB 2.0 (480 MBit/s) busses just in case.
++USB 2.0 (480 MBit/s) buses just in case.
+ 
+ That master/slave asymmetry was designed-in for a number of reasons, one
+ being ease of use. It is not physically possible to mistake upstream and
+@@ -42,7 +42,7 @@ two. One is intended for *general-purpose* drivers (exposed through
+ driver frameworks), and the other is for drivers that are *part of the
+ core*. Such core drivers include the *hub* driver (which manages trees
+ of USB devices) and several different kinds of *host controller
+-drivers*, which control individual busses.
++drivers*, which control individual buses.
+ 
+ The device model seen by USB drivers is relatively complex.
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
