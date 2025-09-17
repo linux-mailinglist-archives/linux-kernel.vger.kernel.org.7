@@ -1,249 +1,208 @@
-Return-Path: <linux-kernel+bounces-820304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9195DB7E196
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:42:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC00CB7DFEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4862326A04
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78B21BC069F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1D43016F6;
-	Wed, 17 Sep 2025 09:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2CB31BCB7;
+	Wed, 17 Sep 2025 09:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HVLPCzHL"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010009.outbound.protection.outlook.com [52.101.69.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OpfObiaw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AA830596D;
-	Wed, 17 Sep 2025 09:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758099896; cv=fail; b=GOJPj4n40n9NKwcu51ONuxduetNBZk6PiUZorEY6IBonmzzU+eZpvakZy2kzAmfu1wsYulMsHPZ6y5JVLStCe4tTMZs8ToyDL6GUHLIk90nbQ6wU9qvdl+n0lgao4vTGbNDFW04S+po+ES/u9Xdg/v4MxqBoat7E0qI2YtGCFDM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758099896; c=relaxed/simple;
-	bh=/IIv2tBZaaOa86vNSlxFM98voEr5KTOi9yTgQqenguE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ux2p4SaSxUizzD7+dwZzSbuv7wlbGVDNM5qjE1PESBdUgG4W91DUNGzjWomEoH9RpOvEm73jUMddLgSyKsMnjgvJzlgb2AuAWJs7FcHXR8jtylN5XjD/EaDh5/qPl7q6gnQ3xNCS9DKoDQLPiV2Tbg3HlHk/A1w2FwGWFp6USZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HVLPCzHL; arc=fail smtp.client-ip=52.101.69.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Af6HOKIdEwK17o7bRtscrsxjZDFWWNA6pvF9jFHVoWk2L9poDV+Fzt22ssR4dJrohO4qvHAVMjoxqi8oV4t5xsGkmHDI8vgsgbeDI1yLrtmPdlKbhp79wb3p400LjPs1cLf8PV9GTYAKRI3cDdXGOR+HfSPYhtJQOnVFWj32r/Ipg+xyXCBELERs40e1gRvbbRXC1KsgcOgcoha6SxrlKryaGSkWmSImRxFE6OMfgzZ7aISAMQ4wP5D/RN94g7Oakm/yiXODu9XQK25LRdut0dWCYNQkKDIqxtDcyRYBBbE4o1fGFVROVXWbnYPXPJ/G2WxLybtwP/7BxtFC4vuOIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o9GDZupTYQzu1HKqE5vXI9jXvA6AMTETBKkSWVCIQtI=;
- b=t0i749rIffUWIDf9mKMOCDoZPDkjoksttgN3/5lM1NwaCyACDBDMt1Ix+gWrwx/PpXjBnguZtgQlGxqg2NM22DOWxC2JBgqTUbybB3tazG6YtieXG8sl4QLTCCCbIf5Rc1nRNFWC1Lqx6ZcsoHZMjPhOadeQo2LobmcmAmwlcv5T4gqLosuJojsD5jeO7pyBsQZ702HAVIPc4H/DObnnOJE9eLukAQaSMJ2JOrfm1d4LmLyCSjXSRv8JkDmE9xmUYaUVCZPwEQ53Ujzfv4xlOGAilDac9PPYD3c3YS/qqZlR+pOyVHJqN52RbcvTIkoGFSt8vAs3dI43jauEh7vGhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o9GDZupTYQzu1HKqE5vXI9jXvA6AMTETBKkSWVCIQtI=;
- b=HVLPCzHLXNfBOsLK641uGCdOO7MsR3N8TOCpa4FFwbhk9/5jySkgY2gHrMJ1ftRFKueLkq51WAHLWJ+eMYCTw4rIdsg6xZZPye99ZOuKNQAB1NpwiJE/FyfShXFWt/MYTOzAQ4o8XpLjw5PTgKpLOg5I/0q1H+Lz5hNj3TkUZEXyJy0LtYsXE+xSi/vX4iW5sqonSQ38DQd3OBSbW2nsvr4zw4K1NxA0/4goF77nf8yFqQ7IrCrKAdzMMjT1dFbF1I7Z9TtY7hZw3/iOtXhbhozmu6jFMh2XQ77WTvARd0LmIur6D+PY9HT7QBv3flmp43OdRkTjnmcu5mt1i9f61g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by PR3PR04MB7387.eurprd04.prod.outlook.com (2603:10a6:102:91::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.13; Wed, 17 Sep
- 2025 09:04:51 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 09:04:49 +0000
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v3 00/10] drivers: gpio: and the QIXIS FPGA GPIO controller
-Date: Wed, 17 Sep 2025 12:04:12 +0300
-Message-Id: <20250917090422.870033-1-ioana.ciornei@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P195CA0005.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:5e2::14) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A636330BF6E
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758099860; cv=none; b=l37iI8Du0HelTdINjaz4+5dxvGeL+2RKdD5ddIfEpY8nlGHCc+AmyKPGfCuFJsMiS0+WUhQCs3UEoChTR198DwQbyYsyXNQ1FwruCQeONp5Tr60LqQHhdTgQnMyQivNZFmsZNiCV4X8aBxY41N6KtZAbuRpKwCwky23zujrlhbc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758099860; c=relaxed/simple;
+	bh=ZknuNHFq0tyeptFvJcnnsXRV6fSiqoXd5zwMcfSSKD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s9UthoJQBVzG2w12jd54BOlQ+SW/INXp1RcHODOvLs9uS8ieLTydzwYBTM5S9bynvkfnIjwGIwxJoeyTaKLgPpljU+Mz0Vcfg7l4BzClkMS80oeiQFuIN9hnBuk7UdWjTjvkkerrHz8Z/RVS6bB7SMl8+AxZvaIfnN1gQF48eJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OpfObiaw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758099857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=x5npCVbmbW8kT6qQZFnkl4JniL63oW0fDP/nvQRcCcY=;
+	b=OpfObiaw+QIOayctcet9ueFl1jBG2/jl4t9jb719btYLhvvAzFEDyw+CtwyDupyfDIeiP4
+	A1M+XeOfbsaXNfQ4I/lSvgcqzQRyLrOw+gpPyDktpsZh7uS/P/Ky1Wn8keG9bC/WyK7W5X
+	c6kkXNyisAfmlgyC8Gta5or64vhcMC4=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-386-LdHTl9GlPD6xKw6y99Qepg-1; Wed, 17 Sep 2025 05:04:16 -0400
+X-MC-Unique: LdHTl9GlPD6xKw6y99Qepg-1
+X-Mimecast-MFC-AGG-ID: LdHTl9GlPD6xKw6y99Qepg_1758099855
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ece14b9231so120823f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:04:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758099855; x=1758704655;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x5npCVbmbW8kT6qQZFnkl4JniL63oW0fDP/nvQRcCcY=;
+        b=K2gGEBma6YfX179x4u2ikb4rkViJAsbqUY/GFRzRk1xSQ1wPquIzWBbwnMQ7LEqe/+
+         K1CbLjaIvwg6KfHHwLVOW9QK2KdTQs6NIYatzDj+3ZljCjz9Cpnw1yvsYlRdloM2NEJy
+         RvpVYj++eToExQi1nXexEzXa3czSAIr3OqP6dNMFdS7HkBDQjJBOeAUSjKj6I23byAaj
+         ztW73vP+/mvDXyeKdLMyD+eicZ4V5ExRhH8BWs+MQg9p2yqif5Ij4DNScYHxCgcPs9pV
+         IihrzyVyjS1uiDm5RRBUJqhSPSLuQJ+AoE+NOxnZY4QLR3C5kjFiM3x+Q/2MC06Islgq
+         pY+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUFU+TgJEOL009KcliK647g+IUSRBvQwCJ1fl2OpezJCFXFuyamnS0t8LinZ78nC8A2RxGriP22JKkgRqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6LDWpkJ9A8Xu0k9sOJ3oLKKGcnFf58OiSaVW43m72DFBIlCb2
+	U8YxomKjzQshWVSYZxCU0/Z5voru+hR+lHl+drSkDe5Aki/xqgoAQViFqEvPzK8hn2sUUwJ3ICp
+	n0AWyTd695r8m+z3Z+Vxn0AdFZBNDt+6EPhXQ04WEguClYWHgzge8cH4PnO4LYeHAyQ==
+X-Gm-Gg: ASbGncsRp7GXEvW+ORooLZUKEx5OLmRDbgdzE0NWP0gfu7cg9EVLZ5KA1lwvJ40OjRm
+	b9t8hy4dOeHj5tzbdNHKPw02rslInOD0eF1XQSDJ98bpxlnX7vBBACdGimftikfQSOyLbBvosyk
+	0EaFotzpueTAWM+kdSQmRe9Zbmq7j6/L9EuAa+GcGVI7npvj88X2snrbhsyrqUhNYC3Gi5/Gw6X
+	aPyj6wLybkGwEqZQo8hTfDxyOgKudgRotRvmx4eT1CiIPFR9U/VTBOb7e0vJibyAWpuT1wQ+6Oe
+	rLBjwnbPHVdXvcLoTnWFjghenhPKzHq0DrHtu4FfadXLj0lBId1uAQw4eHz+WOPBcbqFFxula38
+	sOGTCOLLIXiCBrJljUPptIp5Zu9JSizkjylaDSdj7bbF+4tPvPjSN+NLdPe6yR6Jz
+X-Received: by 2002:a5d:588b:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-3ecdf9bec6cmr1252300f8f.10.1758099854809;
+        Wed, 17 Sep 2025 02:04:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdI4OELMUMHMlRwzj6+l/2Y9hePxscl3Z5Y6ewrNZjZAKUiJVhUKBuG0aAn+4uFmb0FpMAtQ==
+X-Received: by 2002:a5d:588b:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-3ecdf9bec6cmr1252248f8f.10.1758099854160;
+        Wed, 17 Sep 2025 02:04:14 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613a072a38sm30431035e9.24.2025.09.17.02.04.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 02:04:13 -0700 (PDT)
+Message-ID: <4551b48c-eba5-42a3-aa53-74d412a126b9@redhat.com>
+Date: Wed, 17 Sep 2025 11:04:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|PR3PR04MB7387:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00f85f86-70b1-4e86-0c38-08ddf5c94158
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wrv1M7xqK1NngkQTq9AwxG9QtU2UVC2TMjmX9dHkTbYWpvJ3JshIeWfrzHMf?=
- =?us-ascii?Q?DN0x46qhgO+yaPbmQ+54Rmh+67HxShA2ttU67joTUjhPq8Y3YzDOtE0zELjS?=
- =?us-ascii?Q?Wpo4QTly/UNSqwhtovwQaJSElyzAWJKXshzhnO3qk2z3j5d7mf5OUFWTZ9OM?=
- =?us-ascii?Q?jgpu2hZz0a9gjYMsMP8I42kz36/7ojhit/oFdVzcyyWMBcglw8pMJpd3kE2+?=
- =?us-ascii?Q?AgT78RQjLrdKP2EpPt1OAxB+W1iboymZ7lxwXBSucRRKY5OibUjn1BzicSwz?=
- =?us-ascii?Q?WBl9wkiiOhrAvPnCGRdRnJT6TUXHhHp9KjTbEUUbkudH4fhbZW1Rf2+BWJGe?=
- =?us-ascii?Q?McuUbDssNzeEnwirlSKsmHJXZ8RxH1KO3EKL1313CyOVFnL+eRyjsFqGQrEz?=
- =?us-ascii?Q?A9isIV44A/SbcvKiZs9Hd/kwScxPpYuxRFVgxfr6+ye5tGUCOSCJ/+1yuc7j?=
- =?us-ascii?Q?fVYRlK9yan1MLC9JxyW6wGelrtihkEz3uTHzRHpmuwtqOd5N3eCSSipOU/bk?=
- =?us-ascii?Q?F+jG5hKOxzgfH0tFhmWNeZFdX1Xhl/SfnPaxJMDCqNfDppvE0uUXEzSWNjkh?=
- =?us-ascii?Q?rW7sFNuCWBci+bzHKO0KboDMhU5hfIPu3mjJhpanCDNjqwIIutMlq2Qituz2?=
- =?us-ascii?Q?UW3kI9g/s28qJBQwInCo7LizGJw9MPEY9eXnpuvR7lGWQ75SIpVodv6nG2QL?=
- =?us-ascii?Q?9qCFKp25hBXv2HjY4MtnOlCHhGbpjpgWNwsQ09k2E0oBCfXtDnau2COOadq6?=
- =?us-ascii?Q?D5SkkrVIBaM/GAm55XAKsRy6FMteyNG1dHGLxoxDt8EnSJRZHr6mqyx/inBl?=
- =?us-ascii?Q?A8/wG2aFIcY7ifpoI/SULoN7nlNAldBv2mnmrC3hqOLLaf/UXuyIXRPpZBa/?=
- =?us-ascii?Q?FMK7H99lSMlqaDpqZdGtYhAUXt8Z7PESBvqixg6sV5ooa6yFNmJa9pC6EesB?=
- =?us-ascii?Q?tCEhQwmyh+z1sIX4uoDk43X+7ey34V91VE0HGCyBhlHS9sQLcosnbJnCLW5/?=
- =?us-ascii?Q?ApDH0s3TfryPxbb8RbIELhi/HNmkFeX1uhVLlVIevcjFawwY28UXtGUxvO9L?=
- =?us-ascii?Q?TcESFntKKSBRV2GoNMKy6h3qIl2sCZvTy7jBpPweSKrlglPmn95xKPhoTHu+?=
- =?us-ascii?Q?YNPaa8G/RCHkQHI8GWfiWGyb7UYul/81KZztVEImQ7u5KX+e/23FFMfR5zvL?=
- =?us-ascii?Q?mV4mrLB/PvqXfroJGSnY3Skx89Jlqw4Ls0ehyaB6L6muOGXQeqxUTPxRQgHJ?=
- =?us-ascii?Q?kAbyBxY3zSNWcmTZm93BBjAN9FMsONhn+jQpy3usvnUxJFSjVk9a3m6zdasE?=
- =?us-ascii?Q?W/UoLlPDA5WjmE5g5JqxBv8I/0TI+s8HKhZsGzm0VCW8gfkOEOp++6tfO784?=
- =?us-ascii?Q?wK2JdCJb8lsfn90t6MT2VebbNHmroWIe9j1T8vn/yS+6oE2TdcKxZ5RmjgIy?=
- =?us-ascii?Q?Pl1oX0fIGEI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UHWag2V0i18yuXRuf7MHtxvvGpzUEnVQPoF7P4rgjU4Pcs81fb4btbpGfgJ+?=
- =?us-ascii?Q?g2tkOtrt8RS6fe90nOAIEhJlUySkoI0EIHAbeHmfApjHQMlBaacHDoQOUNvA?=
- =?us-ascii?Q?vvZ7oJAGN+MHTS2UaDi2sCHpmOIGjoUkACrifvZzCdTfnjXUsuWpIQLamhLc?=
- =?us-ascii?Q?5BIhIkIH1kYrDsigzQ0uy41IWzSa+XLQIay0Q8p9I4AGnwDmjtA7Q+IasRCV?=
- =?us-ascii?Q?q13I4Td8Z7z34sdAi6AnJSQwLoFSnFOuFXnkAIiZa1NKDgycqnn2jU9kxz7/?=
- =?us-ascii?Q?SLiJEYZs+9r1JhZ5ggiyoJ1korKGI5Y4eT6Sdoykts6rDB2rf+Dh3YAJo5zR?=
- =?us-ascii?Q?F6mOm7lLIfdJURpS7d4jKPfqjenx5dGmTcHdkLu/iJtiJW/npaMeBxwg+C0+?=
- =?us-ascii?Q?BAbp7QGYpgno0RnNrQEox+fQ4n+RI0sG7tjg0TnFbuZe+sj9Dt8dcJUMQEzz?=
- =?us-ascii?Q?k1HTZRBdVMcnCpyQHbF0mVMioRJcTDe/2hjiSUaOyHIZA9AsA3TsRb8Iygvz?=
- =?us-ascii?Q?W5BQ4zbn4M5Vf6caDfeHFFxt/VGMkVLSzULLyW0cYf7KEG1M3YEAE1KtFLsO?=
- =?us-ascii?Q?M0iYPVgg4XYrXLF4FHrSrjTY6JtfYz8xTpZq7JWWzc0UcRPWcu7ObA87Wm7O?=
- =?us-ascii?Q?xdocniZcPGQ/m732CT/zsqxI6+s0gbCXjDp5i2jx5Fq5KNTRhUlFXQEyVCmH?=
- =?us-ascii?Q?7/Nk2tSJ+0H1D3KDSTmaVmnYEDx4exVeZkF0Mlts6hsX/H5S36xwG/vqc/x4?=
- =?us-ascii?Q?2XxoRV0UbeiGYyLD2OxD3r2795tRnNateHm9LmZJR7Xt7WZNKh9+QL3xg4G6?=
- =?us-ascii?Q?9zd5ou4JxR3MfkgcEOz5Q3ErH7upAI9jReVIbLwNayJfVCmacg4jqfZK0gv+?=
- =?us-ascii?Q?Guyz9Tx7Yg5LczgEnJMxw+sGol07WTYhKNO2Xj5pXpmqD5D20cCT12d8NacU?=
- =?us-ascii?Q?8m3JFCi/OEtGmgTp+YlO+205bi+JqI2Kd2wmv1qY/c5+9zurGHwGHuRYGd2A?=
- =?us-ascii?Q?9X8loO8ocpPOrFNOIL9Zjg8mSFxzbp/wFQnIm9CEEbtk7igWm3iHAfVYx6id?=
- =?us-ascii?Q?x4fwIJHPV6U5T69A6/Rlwmjho3dcOiu2o/80Fdfa7PLepy8RAhbU9GEq19/i?=
- =?us-ascii?Q?NxgM8igjfcSms9VpggWCABJMihVGpG0X7NLWIY2jNRZVG0k+RJmr5UawOxms?=
- =?us-ascii?Q?cXOUgcvHRDrizM58DlJYWHfWs1HDuT/FHzeAheHXlDaOvh3IqDUu45zft9PE?=
- =?us-ascii?Q?RlPqnZsI+Yy06AJU9Fw8NAJEr3wl8axTeRXSIjmK5lCf5hKftrb1oFumLwh1?=
- =?us-ascii?Q?KKt6PnpGM/w5+MyLrsngVD3ObNuDMffos3qwtgdbKXEDTuuI82MRWneTu76R?=
- =?us-ascii?Q?OqPxgH+85youbEspLWW25enGliWrXL/kchgDYsM7F1SJqJbC7HeqClEHQAo4?=
- =?us-ascii?Q?NkEIX0GM5ViQzSh6f03gzZmJRvDMA8R+4EDHN4aoe8pV29ciRTq9Y+PK7IOg?=
- =?us-ascii?Q?CkexClj3uNy7B7Kdhdh1Mc8eUu50tZNCkfN7q6gtjosKICcGEMcynoCI6kX7?=
- =?us-ascii?Q?je04mgYc2088cxo0CN9tnFf7avBos1IoXXIHqpSf?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00f85f86-70b1-4e86-0c38-08ddf5c94158
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 09:04:49.3437
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GVaTTheEvsu3BG8dRJQ4EYS9vje5oFmG+eVkRwVpBgzVgDOLxxnQQ2IypauHu9UUh0COWJl+Qy2riR8kDkLZwQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7387
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [sound?] kernel BUG in filemap_fault (2)
+To: Jan Kara <jack@suse.cz>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+ syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, chaitanyas.prakash@arm.com, davem@davemloft.net,
+ edumazet@google.com, hdanton@sina.com, horms@kernel.org, kuba@kernel.org,
+ kuniyu@google.com, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
+ willemb@google.com
+References: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
+ <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
+ <lqzgi7abe2onda3faavn5ays6gdw4syiu32hmrfaibrh6cmozs@pjf3llvnnefk>
+ <7e338491-0c6b-4b65-93b7-df0af8b2fd87@redhat.com>
+ <s5pl5yhhxyz7dn4r2v6c4ll53ejboe5xa5226ytgg7kjirgmh5@tofyas4lp4uy>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <s5pl5yhhxyz7dn4r2v6c4ll53ejboe5xa5226ytgg7kjirgmh5@tofyas4lp4uy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch set adds support for the GPIO controllers on the QIXIS FPGAs
-found on some Layerscape boards such as LX2160ARDB and LS1046AQDS. At
-the same time it describes the SFP+ cages found on these boards, which
-are the users of those GPIO lines.
+>>
+>> 	if (!lock_folio_maybe_drop_mmap(vmf, folio, &fpin))
+>> 		goto out_retry;
+>>
+>> 	/* Did it get truncated? */
+>> 	if (unlikely(folio->mapping != mapping)) {
+>> 		folio_unlock(folio);
+>> 		folio_put(folio);
+>> 		goto retry_find;
+>> 	}
+>> 	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
+>>
+>>
+>> I would assume that if !folio_contains(folio, index), either the folio got
+>> split in the meantime (filemap_get_folio() returned with a raised reference,
+>> though) or that file pagecache contained something wrong.
+> 
+> Right.
+> 
+>> In __filemap_get_folio() we perform the same checks after locking the folio
+>> (with FGP_LOCK), and weird enough it didn't trigger yet there.
+> 
+> But we don't call __filemap_get_folio() with FGP_LOCK from filemap_fault().
 
-Before actually adding the GPIO driver, patches #2 and #3 add and
-describe a new compatible string - fsl,lx2160ardb-fpga - which would be
-used for the QIXIS FPGA found on the LX2160ARDB board. As opposed to the
-other compatible strings found in fsl,fpga-qixis-i2c.yaml, the
-fsl,lx2160ardb-fpga imposes a unit address for its child devices. This
-will be used in the next patches when the gpio controller node will
-define its unit address as the address of its underlying register offset
-inside the FPGA. This requirement is described in the yaml file and it
-only affects the newly added compatible.
+Yes. I should have clarified that we haven't seen the VM_BUG_ON_FOLIO() 
+trigger on other callpaths that set FGP_LOCK, because I would think the 
+very same problem could happen there as well.
 
-Moving on to the GPIO subsystem, patch #4 is extending the gpio-regmap
-with the fixed_direction_output bitmap which could be used by user
-drivers to transmit directly the fixed direction of all the GPIO lines.
+> The folio locking is handled by lock_folio_maybe_drop_mmap() as you
+> mentioned. So this is the first time we do the assert after getting the
+> folio AFAICT. So some race with folio split looks plausible. Checking the
+> reproducer it does play with mmap(2) and madvise(MADV_REMOVE) over the
+> mapped range so the page fault may be racing with
+> truncate_inode_partial_folio()->try_folio_split(). But I don't see the race
+> there now...
 
-Even though this patch set touches multiple subsytems, each with their
-own tree, I submit everything at once so that we can have a clear
-picture on the overall intention. The hope is that each subsystem can
-pick up the related patches since there is no compile time dependency
-between them.
+__filemap_get_folio() will grab a reference and verify that the xarray 
+didn't change. So having a concurrent split succeed would be weird, 
+because freezing the refcount should fail. Of course, some refcounting 
+inconsistency could trigger something weird like that.
 
-Please note that CHECK_DTBS will fail without the following fixup patch.
-https://lore.kernel.org/all/20250912165916.3098215-1-ioana.ciornei@nxp.com/
-
-Changes in v2:
-- 1/9: Used the newly added trivial-gpio.yaml file
-- 1/9: Removed redundant "bindings" from commit title
-- 1/9: Added only one compatible string for the gpio controllers on
-  LX2160ARDB since both registers have the same layout.
-- 2/9: Enforce a unit address on the child gpios nodes (remove the ?)
-- 2/9: Enforce the use of unit addresses by having #address-size and
-  #size-cells only for the newly added fsl,lx2160ardb-fpga compatible
-- 4/9: Add the fixed_direction_output bitmap to the gpio_regmap_config
-- 5/9: Use the newly added .fixed_direction_output bitmap
-  representing the fixed direction of the GPIO lines.
-- 6/9: Use the same compatible string for both GPIO controller nodes.
-
-Changes in v3:
-- 2/10: Replace the trivial-gpio reference with an explicit mention of
-  the accepted child gpio compatible.
-- 2/10: Reword the commit message.
-- 2/10: Add the 'else' case to the if statement.
-- 3/10: New patch
-- 5/10: Make a deep copy of the new bitmap.
-- 5/10: Remove the offset check against the ngpio.
-- 5/10: Added documentation for the new config field.
-- 6/10: Remove 'drivers' from the commit title.
-- 6/10: Remove the qixis_cpld_gpio_type enum since its not needed.
-- 6/10: Remove the NULL check for device_get_match_data().
-- 6/10: Use a bitmap declared on the stack as the config field passed to
-  gpio-regmap.
-- 9,10/10: Moved the reg property before address/cells-size.
-
-Ioana Ciornei (10):
-  dt-bindings: gpio: add QIXIS FPGA based GPIO controller
-  dt-bindings: fsl,fpga-qixis-i2c: add support for LX2160ARDB FPGA
-  dt-bindings: fsl,fpga-qixis: describe the gpio child node found on
-    LS1046AQDS
-  mfd: simple-mfd-i2c: add compatible string for LX2160ARDB
-  gpio: regmap: add the .fixed_direction_output configuration parameter
-  gpio: add QIXIS FPGA GPIO controller
-  arm64: dts: lx2160a-rdb: describe the QIXIS FPGA and two child GPIO
-    controllers
-  arm64: dts: ls1046a-qds: describe the FPGA based GPIO controller
-  arm64: dts: lx2160a-rdb: fully describe the two SFP+ cages
-  arm64: dts: ls1046a-qds: describe the two on-board SFP+ cages
-
- .../bindings/board/fsl,fpga-qixis-i2c.yaml    |  58 ++++++++++
- .../bindings/board/fsl,fpga-qixis.yaml        |  10 ++
- .../bindings/gpio/trivial-gpio.yaml           |   2 +
- .../boot/dts/freescale/fsl-ls1046a-qds.dts    |  52 +++++++++
- .../boot/dts/freescale/fsl-lx2160a-rdb.dts    |  78 +++++++++++++
- drivers/gpio/Kconfig                          |   9 ++
- drivers/gpio/Makefile                         |   1 +
- drivers/gpio/gpio-qixis-fpga.c                | 107 ++++++++++++++++++
- drivers/gpio/gpio-regmap.c                    |  18 +++
- drivers/mfd/simple-mfd-i2c.c                  |   1 +
- include/linux/gpio/regmap.h                   |   6 +
- 11 files changed, 342 insertions(+)
- create mode 100644 drivers/gpio/gpio-qixis-fpga.c
+I can spot that we are also manually calling 
+__filemap_get_folio(FGP_CREAT|FGP_FOR_MMAP) on the else path if 
+filemap_get_folio() failed, maybe that's the problematic bit (and maybe 
+that's where readahead logic makes a difference).
 
 -- 
-2.25.1
+Cheers
+
+David / dhildenb
 
 
