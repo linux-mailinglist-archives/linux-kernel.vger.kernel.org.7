@@ -1,204 +1,162 @@
-Return-Path: <linux-kernel+bounces-820245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A370EB7CE54
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:12:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCB0B7CFB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 311D34E254E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F98485075
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B64D2AEFD;
-	Wed, 17 Sep 2025 08:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C352F60A2;
+	Wed, 17 Sep 2025 08:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bYY/7VuB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dkbu0d4M"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B894B2D949A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8AA2F291D
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758098133; cv=none; b=oXSM9+bVRR0pgOMVOFvj30hpKiAmd1Du2c7etit6s1Bg5sZ/KQIWtKGrcsiVDXMfSAOaEV4jgZdmBNPQfIrgTAv8fSXV8gl20ehLCeh8RBK2zSW+EqVQ7xLxS4aA1DblEOrvCo43yULUTS5yARMYb7qqJn3j4iRcILjSaK3Yzmo=
+	t=1758098141; cv=none; b=IYXnm59Q1WL8beuyqdrGsA6RyJjwaGp3748e7yYsGxgJt6HHFIhT/rf31uCOLLbFxNCFrjnt788WJxqKPmC8U+YuuLLx5lKMpO95n0zFVQmDZfpu4mwQ0o3KwSwoSlYMHON9lQ31f3LY2hsYFE35oDR2u0A7xvoFaMBr3lmDTd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758098133; c=relaxed/simple;
-	bh=q998US9DM6OvRET551aJFQGCAmTK69Gkhu3kFz33Lo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g0HGjhZth2ECvny1Ih4l3EQ7CFV652BAmXLps7TDTibjDgWnOfGa6JDAXkrt9/mqWm4zBAIoyMoRIezNgf6f1uE4tt7N10u0wYl6ziH9usF/Q2Ukin0vS47nJQ5ujj0pNknjHy08Jg3orr+5Pur6Zm4hJSUSylOQHYiw1FvBNvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bYY/7VuB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758098130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpJuW7ScxpFIrDm/6lY2N9UNppFzeLdJ57JW01ss3N0=;
-	b=bYY/7VuBDQgVnIvBa68t7Czgxs0EY88Ub4ilLZj+2DbhGWJkIBgACQiX34rQDvQPEMNr+W
-	pF3N6q1Ors9ZiIkG2hxipYAebcXvwbhUIn/bYJAsvvUR9NvnBq9ipRtt+Rv3WqK1DEBQZv
-	7arakdAFanKnOvLfntGGy72a5tw2EQY=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-plNWY3tmMTmZNc92YhgF3w-1; Wed, 17 Sep 2025 04:35:29 -0400
-X-MC-Unique: plNWY3tmMTmZNc92YhgF3w-1
-X-Mimecast-MFC-AGG-ID: plNWY3tmMTmZNc92YhgF3w_1758098129
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-72f7e04f805so60518307b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:35:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758098128; x=1758702928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+	s=arc-20240116; t=1758098141; c=relaxed/simple;
+	bh=/n/2Ydq41NthRlscbsdT3fErliiWg59u0VfLCJtALsc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NCBaPZYwUL4lMpwsGOZRohH66Orxx687L0N7kCgaY3Bi+NadQaBYP6yuRDooWI3MILB5KI+rcA3wO/182ZOTkkq3UZHhhChrE6o44boRGWj0siftdl2lTo426+AlUSob5X3Kz62cRK0rHDPTHcpxI/wnFOtcvMHd/DcnXJUDqrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dkbu0d4M; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso5675664a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758098139; x=1758702939; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rpJuW7ScxpFIrDm/6lY2N9UNppFzeLdJ57JW01ss3N0=;
-        b=NcOzSL1mQ07GXFDA0kYOxrNRc0HaK94iU3S18uJJdaeLVuaBnXRDs963/OKpuui4T0
-         8CrK4dURPiAqXtL/1zUzsU9gyX6wPXn5s0pDF2janZ1lx1wXjYgPrnYQbFyMM+WcR5ms
-         dC8I1aknllg0bZhd5891cdK+gD/4RRUcBeYmjYAyFS0GtJyOFBvjKXk0G7k7+mogjic0
-         CNIrmvwzCjG66Bp/DZ45J4RTH/6O8Ph049niVSZJXdoA1UJdcveOc84lHIfV4Ic104fa
-         7xY+1e/m2ORftxgw7cQZYbumTSy2TiaDquHYKJGwW1fDCmfp2ZyFfBaPqFXUac4UJCRN
-         YsRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU78ph9cxtmy8TSo/FtEqtyBG7KcoxOqLmEG8vfaKfcqOBMZp4RIj7HiJa7obA5DbByCvqEawaPJQUcUOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb5i83sqIH2QMD1p0WUMfgjNstNHwg1wtxCUDheiWcV+UAmHl0
-	hm0kjvsqh5sxVJaLgFx/vE1/QQiuIja2X9bvvT/qHmAl3HfXxm7TgatMvpl257X2FR7WXT3rUhu
-	wG41TpIWdbIn8LdgFFnWvAvka8pj8R4KDT+ydjlKTUM/KNLMRG7Eo/plppahseUpSSUM+LTP75q
-	7bnMlm2tTPCTpWSs5HPj6KW+DVbb4n3Y7hfA5D3rn2
-X-Gm-Gg: ASbGncv2sQnIbuDJAkPJcM/fI1kDno56dLXjxmR+HYl7K5RToa7z8j+8lAk4SBSQWmK
-	qqzIXbvWB+pQC5Wd5Ln7s8x3cPsS+t96pR7wxVP6Dd/Rx+F5bVQhyP4OsJI5Z81FXgGYBhy43tK
-	Jjr2f49GERHEqcIi7uaCkgr6/ke2j+nl4SPDiP1RK8Ue6uqDAMOohtKDqLZVVR/8Q0BNYq4AJ9z
-	cw1LW11
-X-Received: by 2002:a05:690c:6287:b0:734:4c38:8dd7 with SMTP id 00721157ae682-7389284e5e5mr9726447b3.37.1758098128452;
-        Wed, 17 Sep 2025 01:35:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFw7WOF0rEFwoWJH/Fs+cwlNlhklNtr7tfG2XSvbAwX8kIp4ppyqh9Npvtpo12WegIqko71EKOuElGMUL7KcsA=
-X-Received: by 2002:a05:690c:6287:b0:734:4c38:8dd7 with SMTP id
- 00721157ae682-7389284e5e5mr9726207b3.37.1758098127956; Wed, 17 Sep 2025
- 01:35:27 -0700 (PDT)
+        bh=/lmYNS88JeZ1WvUffFPJleae/MPP4g3/iZCdg2JbMw0=;
+        b=Dkbu0d4MVHd+c6GHrWLYOg9rxDCs7kiqtUmVqTieIMyxLqO6hBojDfQWuEk1KXdJW6
+         llzTdltVzHCiA3r4tDNDnrOO5oh7y4RsUVMUAPFlqomQ0HEE38kLRfO2I6ZKah558Ikn
+         9Kh3FxmJudlK3C1L5SzrQrLDm3aWuuOMPornXKRQ7dISLn7c7kqTa8RilTbM73MrJ5Ax
+         eT95RNhcg/ABGgQoqdSZDLk/L/3Veil0XE0p7EQY/+c2oxWeqqBAxqz/874cOKlKexNU
+         2FEBMzj7H6gRtNceZl2tyBQmv0Toykq9LJ5Cfx1UaEf+rjjKjl0MnHVtheh0s6eWjDe2
+         JyCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758098139; x=1758702939;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/lmYNS88JeZ1WvUffFPJleae/MPP4g3/iZCdg2JbMw0=;
+        b=oX/7c8DiSVRz8IgvKf1KLpn4oHUBVjol4mmNo6da8xibgqwbXoBFmtSUOowBh/+hZG
+         5oZ0F+SvC6HokDqulXPb1UbsJCzLY81MDgHkHefzhTMXAbJWtnz4BJ1lSBRBGaX0KFfS
+         KNNieR8WN4vqI5XxX9YMug9a/o4RwQE/CXkLvaYKiqKjEIYYrnbRKoQYaF1tPZoeFrrf
+         f91gmaM8biAmYsnkqdFimOj9GffOiHa7+JMJt7/p/4JRNY5uHtS8uq2JAre8Ayfpn/dS
+         ShEqGi+yiBKgG71qXk/ZLieqH3lsliqazAT53Btma6Qdbb/OO2nOG0SpgWvcd6lgc6V6
+         3ZIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYPWi6jR0seB4EnJJhxy+h9ujyt2gRsxnIvR1w6qfq/ekklVSePlJcuKGBWjCSqne3LKjZWG/AwE8Z4H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRWyJPtzvGjBstk0v/hUU3j0eSkZ89eiEnoDOcpax7KAlOhgey
+	jcYdzxwClxHXn0PodCGf9y/5AkF5gJ4lK80fpaV9+7yXi/7mS/5Z7FDfDbUP1g==
+X-Gm-Gg: ASbGncvnEEwRFMR37hd+UkBQjDrkDOeqPZbSc3z1OW7daylcEB2ug6WXxxlSS/sLvvP
+	O7qYrgblk7w9HOqhoj2yZCM8djA2qnmKGRZTr5N2vRRW+s4Q4pZLoR+wMxFWRFvpHgFX798tQif
+	nuQBnSFoGaX1slRNTm3UN3TfBcrTRZ5SgY332iW9lWGFC1FhqsfuJClsBLPe2rNNuv+TkG++2+r
+	dI/6KmvixLcUzgHqjcUXNFH3EsEak92oyJsUJRfnKqMlag49iCmHQgKTjpBFEZnXob1iIbokC0h
+	/qGTv1yYdJ+EL5ots+K3i/Btxm5sCv3XT87gtLHyJFGLgsoLyc9vPi7LTTcTy4vhU6ecWIGD0/3
+	7u2JxWMtSwQKDqUAAaIhQCHxQsZbOOGfLzq23L2oh6f1GtQF02ChhqrTGDK3oaAMF/z6F
+X-Google-Smtp-Source: AGHT+IGRQdCx6ga968qaUYa+JKSfQdk84gpbKGw+D4sGzhjwfk3QKsdlBJsPToWm8mvgfxI5eLXXvg==
+X-Received: by 2002:a17:903:2acb:b0:267:cdc8:b30b with SMTP id d9443c01a7336-26813cedee3mr17444115ad.53.1758098138902;
+        Wed, 17 Sep 2025 01:35:38 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-267fa950089sm20801595ad.100.2025.09.17.01.35.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 01:35:38 -0700 (PDT)
+Message-ID: <1d454604-288d-4185-8567-836e06b3cbea@gmail.com>
+Date: Wed, 17 Sep 2025 17:35:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917063045.2042-1-jasowang@redhat.com> <20250917063045.2042-2-jasowang@redhat.com>
-In-Reply-To: <20250917063045.2042-2-jasowang@redhat.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 17 Sep 2025 10:34:50 +0200
-X-Gm-Features: AS18NWCp8aMeKQoIpGNO8gXB409fPKuCuu417M71iyj7YQxnhfTZ79uY8_vwglw
-Message-ID: <CAJaqyWeWy9L322_-=MNno9JABegb+ByXEHmEyBsqXHUVTiBndg@mail.gmail.com>
-Subject: Re: [PATCH vhost 2/3] Revert "vhost/net: Defer TX queue re-enable
- until after sendmsg"
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, jonah.palmer@oracle.com, kuba@kernel.org, jon@nutanix.com, 
-	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: mchehab+huawei@kernel.org
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jani Nikula <jani.nikula@linux.intel.com>, Akira Yokosawa <akiyks@gmail.com>
+References: <4d4dc78a4e29f2478fd1c1a746378dc61a090ca3.1758018030.git.mchehab+huawei@kernel.org>
+Subject: Re: [PATCH v6 10/21] tools/docs: sphinx-build-wrapper: add a wrapper
+ for sphinx-build
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <4d4dc78a4e29f2478fd1c1a746378dc61a090ca3.1758018030.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 8:31=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> This reverts commit 8c2e6b26ffe243be1e78f5a4bfb1a857d6e6f6d6. It tries
-> to defer the notification enabling by moving the logic out of the loop
-> after the vhost_tx_batch() when nothing new is spotted. This will
-> bring side effects as the new logic would be reused for several other
-> error conditions.
->
-> One example is the IOTLB: when there's an IOTLB miss, get_tx_bufs()
-> might return -EAGAIN and exit the loop and see there's still available
-> buffers, so it will queue the tx work again until userspace feed the
-> IOTLB entry correctly. This will slowdown the tx processing and
-> trigger the TX watchdog in the guest as reported in
-> https://lkml.org/lkml/2025/9/10/1596.
->
-> To fix, revert the change. A follow up patch will being the performance
-> back in a safe way.
->
-> Reported-by: Jon Kohler <jon@nutanix.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 8c2e6b26ffe2 ("vhost/net: Defer TX queue re-enable until after sen=
-dmsg")
+[+CC: Jani, -CC: rust people and list]
 
-Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+On Tue, 16 Sep 2025 12:22:46 +0200, Mauro Carvalho Chehab wrote:
+> There are too much magic inside docs Makefile to properly run
+> sphinx-build. Create an ancillary script that contains all
+> kernel-related sphinx-build call logic currently at Makefile.
+> 
+> Such script is designed to work both as an standalone command
+> and as part of a Makefile. As such, it properly handles POSIX
+> jobserver used by GNU make.
+> 
+> On a side note, there was a line number increase due to the
+> conversion (ignoring comments) is:
+> 
+>  Documentation/Makefile          |  131 +++----------
+>  tools/docs/sphinx-build-wrapper |  293 +++++++++++++++++++++++++++++++
+>  2 files changed, 323 insertions(+), 101 deletions(-)
+> 
+> Comments and descriptions adds:
+>  tools/docs/sphinx-build-wrapper | 261 +++++++++++++++++++++++++++++++-
+> 
+> So, about half of the script are comments/descriptions.
+> 
+> This is because some things are more verbosed on Python and because
+> it requires reading env vars from Makefile. Besides it, this script
+> has some extra features that don't exist at the Makefile:
+> 
+> - It can be called directly from command line;
+> - It properly return PDF build errors.
+> 
+> When running the script alone, it will only take handle sphinx-build
+> targets. On other words, it won't runn make rustdoc after building
+> htmlfiles, nor it will run the extra check scripts.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
->  drivers/vhost/net.c | 30 +++++++++---------------------
->  1 file changed, 9 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 16e39f3ab956..57efd5c55f89 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -765,11 +765,11 @@ static void handle_tx_copy(struct vhost_net *net, s=
-truct socket *sock)
->         int err;
->         int sent_pkts =3D 0;
->         bool sock_can_batch =3D (sock->sk->sk_sndbuf =3D=3D INT_MAX);
-> -       bool busyloop_intr;
->         bool in_order =3D vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
->
->         do {
-> -               busyloop_intr =3D false;
-> +               bool busyloop_intr =3D false;
-> +
->                 if (nvq->done_idx =3D=3D VHOST_NET_BATCH)
->                         vhost_tx_batch(net, nvq, sock, &msg);
->
-> @@ -780,10 +780,13 @@ static void handle_tx_copy(struct vhost_net *net, s=
-truct socket *sock)
->                         break;
->                 /* Nothing new?  Wait for eventfd to tell us they refille=
-d. */
->                 if (head =3D=3D vq->num) {
-> -                       /* Kicks are disabled at this point, break loop a=
-nd
-> -                        * process any remaining batched packets. Queue w=
-ill
-> -                        * be re-enabled afterwards.
-> -                        */
-> +                       if (unlikely(busyloop_intr)) {
-> +                               vhost_poll_queue(&vq->poll);
-> +                       } else if (unlikely(vhost_enable_notify(&net->dev=
-,
-> +                                                               vq))) {
-> +                               vhost_disable_notify(&net->dev, vq);
-> +                               continue;
-> +                       }
->                         break;
->                 }
->
-> @@ -839,22 +842,7 @@ static void handle_tx_copy(struct vhost_net *net, st=
-ruct socket *sock)
->                 ++nvq->done_idx;
->         } while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)=
-));
->
-> -       /* Kicks are still disabled, dispatch any remaining batched msgs.=
- */
->         vhost_tx_batch(net, nvq, sock, &msg);
-> -
-> -       if (unlikely(busyloop_intr))
-> -               /* If interrupted while doing busy polling, requeue the
-> -                * handler to be fair handle_rx as well as other tasks
-> -                * waiting on cpu.
-> -                */
-> -               vhost_poll_queue(&vq->poll);
-> -       else
-> -               /* All of our work has been completed; however, before
-> -                * leaving the TX handler, do one last check for work,
-> -                * and requeue handler if necessary. If there is no work,
-> -                * queue will be reenabled.
-> -                */
-> -               vhost_net_busy_poll_try_queue(net, vq);
->  }
->
->  static void handle_tx_zerocopy(struct vhost_net *net, struct socket *soc=
-k)
-> --
-> 2.34.1
->
+>  Documentation/Makefile          | 131 ++-----
+>  tools/docs/sphinx-build-wrapper | 581 ++++++++++++++++++++++++++++++++
+>  2 files changed, 611 insertions(+), 101 deletions(-)
+>  create mode 100755 tools/docs/sphinx-build-wrapper
+> 
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index 7570d4cf3b13..4736f02b6c9e 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -23,21 +23,22 @@ SPHINXOPTS    =
+>  SPHINXDIRS    = .
+>  DOCS_THEME    =
+>  DOCS_CSS      =
+> -_SPHINXDIRS   = $(sort $(patsubst $(srctree)/Documentation/%/index.rst,%,$(wildcard $(srctree)/Documentation/*/index.rst)))
+
+Wait!  In the cover-letter, you said:
+
+    It should be noticed that it is out of the scope of this series
+    to change the implementation. Surely the process can be improved,
+    but first let's consolidate and document everything on a single
+    place.
+
+Removing current restriction on SPHINXDIRS does look inconsistent with
+your own words to me.
+
+So, I guess I have to NAK 06/21 as well.
+
+Regards,
+Akira
 
 
