@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-820736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285C6B7ED60
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFD8B7ED3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 232281888947
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3854583225
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FFD3195E5;
-	Wed, 17 Sep 2025 12:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B6232BC15;
+	Wed, 17 Sep 2025 12:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="AxZ+gCyV"
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpvVpZN9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4803195E6
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1162132898D;
+	Wed, 17 Sep 2025 12:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113665; cv=none; b=VDZKta5MUtTXYZ3jnCzvzkk0ddYr8hfLhS6fJ1SCUhfRwVPttHCbfMHzWvAnQw0pGWlFIYgoKBHD75iwRIjoRo29F2uEhyrMDLt3QH2XCDHV8awGk3LDvHoX4SkTLYV7Ep2Vm2hqyo+e/hiwtiu4zSHvhbeTEwQh7BiJfl/OZqI=
+	t=1758113653; cv=none; b=lDYkUZpZiA2dWp4uRxvtXWRuX9eKnC4WGZX7bTDjuNZxuSyN/Or+6IzOLM7HuWAz/Eongxc05Q9olTNt6BR+G9gmS5rBgFT+XuVzi2DdzLKjzefyI4VNb1fdzJzUSA2v+NQ2v751CBZNSBu/G8iseRSzezWfDf/x9TZS8XdF2U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113665; c=relaxed/simple;
-	bh=e37plFiUUr9y0+z9ZrhF1YSuWJZoWqH7Ks9RgK/emZU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mb/XVlD5p33Z+0NLpX2XnrTgSR4x0N0bV3BRNEM1lfc7EiUe33ri9lXbBNM3bDbhT246vAXs9h90tqsI6OxdlyxMVx/xmPdQ/v/jjaGokVlbILvK/8gDgH8j7V5VYkAOAzZTuCaR6mDbgeW5ra5c3648xWGc/G7HTh4q33WZVLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=AxZ+gCyV; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
-	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=e37plFiUUr9y0+z9ZrhF1YSuWJZoWqH7Ks9RgK/emZU=; b=AxZ+gCyVD8uNgvFs85iP1B6vWC
-	94RFaEgtyEbVYSf8e8SN5KlnrftU4FOgKUT83YpbH+yG0vBx+OaBxko4KR3cRqdM2q39q039lYFy+
-	Ad9fWDImnmIvmsUSasxWwRLCbwbFp53K+a1cOKIIe//bcs7FYe36iYccVWFL99yzfqn0+812vC4UU
-	em0VfzxCSU/qL9CNjiClrnJKDyuEa8jAtXe5kZJdAqsOF58fCFCxNRs9hA0DFY07Wof2JWjDxTtY0
-	vD2s0keWqf/9jIyhI/M5biSXfAfsmYn86uFxlh6B1VVNRolmRKIwd4o7lk3iMJdP4j8S06f2XJp8v
-	H/suobPw==;
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@surriel.com>)
-	id 1uyrfQ-000000001we-1V4D;
-	Wed, 17 Sep 2025 08:53:48 -0400
-Message-ID: <3cd6df1b7d202206507b53bdec7a352b766c1ae6.camel@surriel.com>
-Subject: Re: [RFC PATCH 07/12] mm/compaction: optionally use a different
- isolate function
-From: Rik van Riel <riel@surriel.com>
-To: Frank van der Linden <fvdl@google.com>, akpm@linux-foundation.org, 
-	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev
-Date: Wed, 17 Sep 2025 08:53:48 -0400
-In-Reply-To: <20250915195153.462039-8-fvdl@google.com>
-References: <20250915195153.462039-1-fvdl@google.com>
-	 <20250915195153.462039-8-fvdl@google.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1758113653; c=relaxed/simple;
+	bh=fKWWjan0F+DRvN6Ki79/EKzldq4RAA5ia6Zi71l1aRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsnT+9xVA/3OVT0qb7Pqx6VHMLbW6vJA0Dvl0UWj8/cEAgx92pmVv6Sq+3fqMlXTrI0pRuGsZslQ46+CqV9Z/QLLqhqkClbCgpIE+AnXvyhhxSM+ugWdM8NU3xj2H9A+/+dDdyKIeOTcz+dXgRAyfo5rsKCwH8Dafg8y3lG/Vlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpvVpZN9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64112C4CEF5;
+	Wed, 17 Sep 2025 12:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758113652;
+	bh=fKWWjan0F+DRvN6Ki79/EKzldq4RAA5ia6Zi71l1aRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DpvVpZN9xBesMlb6Pn3qnXkpdpFW1ofyyu/GQJBqb4b8yDGMnaPaznFWs1lfEBOqQ
+	 R/E2K0bv1x21mQf5V2gKWge/xzXGX4APCtz/i6VMXnSggX0ZtFRaaZQpHGk/7SK2AR
+	 lERP9qCaEwBqRlEBWfzcKSUEGv8l7HOof7y3Lof05rLRuNkMbxg/Bd5w2QbY+iZfoa
+	 YMebQ3v7ewFwC3yeQjhG1mwP+zgMfKdLsxnHfXUtRhS9OjrVs/0+Ty+z+V0hPsN3GG
+	 ER803p4bJmssPD9GHoNvXR/0iBZNI+OOUf9YZpsb7FIsmavwmdKQHj4rK4k8Smwy5j
+	 s+LjvGjauRjhg==
+Date: Wed, 17 Sep 2025 13:54:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>,
+	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>, Jiri Pirko <jiri@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH net-next V2 04/10] net/mlx5: Store the global doorbell in
+ mlx5_priv
+Message-ID: <20250917125406.GE394836@horms.kernel.org>
+References: <1758031904-634231-1-git-send-email-tariqt@nvidia.com>
+ <1758031904-634231-5-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758031904-634231-5-git-send-email-tariqt@nvidia.com>
 
-On Mon, 2025-09-15 at 19:51 +0000, Frank van der Linden wrote:
-> For CMA balancing, the compaction migration hooks can largely
-> be reused, except a different function to isolate free pages
-> is needed.
->=20
-> So, add a pointer to the isolation function in the compact_control
-> structure. If it's not NULL, use it, else use isolate_freepages as
-> usual.
->=20
-> No functional change.
->=20
-> Signed-off-by: Frank van der Linden <fvdl@google.com>
->=20
+On Tue, Sep 16, 2025 at 05:11:38PM +0300, Tariq Toukan wrote:
+> From: Cosmin Ratiu <cratiu@nvidia.com>
+> 
+> The global doorbell is used for more than just Ethernet resources, so
+> move it out of mlx5e_hw_objs into a common place (mlx5_priv), to avoid
+> non-Ethernet modules (e.g. HWS, ASO) depending on Ethernet structs.
+> 
+> Use this opportunity to consolidate it with the 'uar' pointer already
+> there, which was used as an RX doorbell. Underneath the 'uar' pointer is
+> identical to 'bfreg->up', so store a single resource and use that
+> instead.
+> 
+> For CQ doorbells, care is taken to always use bfreg->up->index instead
+> of bfreg->index, which may refer to a subsequent UAR page from the same
+> ALLOC_UAR batch on some NICs.
+> 
+> This paves the way for cleanly supporting multiple doorbells in the
+> Ethernet driver.
+> 
+> Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
+> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-A custom isolation function can certainly solve some
-of the issues!
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Acked-by: Rik van Riel <riel@surriel.com>
-
---=20
-All Rights Reversed.
 
