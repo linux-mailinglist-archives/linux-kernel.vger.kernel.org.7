@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-819835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45EBB80161
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A90B7FBC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72FA4460990
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2C21C02588
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9ED2D1F7B;
-	Wed, 17 Sep 2025 01:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="aw2RRCax"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51B822B584
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F2621CC55;
+	Wed, 17 Sep 2025 01:10:29 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E978E222594
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758071486; cv=none; b=qgI12KfXhvMbgweSxm/qRvVGRuT7oo/2Jz8Q9W/t2220GWX1Ax60a1ROsGohDExfJiA0/n8ucLN9K5HfITxkaRgPck5CyjlxvEh9zeU7NNN7PHik23jQ0NfMB4a0JJpJpbQZJ/pdhZGkEvmu19KfGnuO6JBaVhVrc1nBAK+c3M8=
+	t=1758071428; cv=none; b=PrNxiEwhZuLWxqSivai4+KEt6l3ta4JGHe29u86jFmv+YgTSTlbUlpxSrsV6vp8MOENPHR4uhK2s+rVI80TqZyAkmzNJHHpZhA2NDpsd9hsFOYdB2LrmzG4l2IJ7qeoXTG8FWh1fd0pJZwzV1CTcmouGK3iV27VA+xLUsyun8GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758071486; c=relaxed/simple;
-	bh=4A0pTY/r00iXG0eCKZOKSizZtOQKUJ6iVrZvAnx3Soo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DwYYSUZ1RJEZs6SUhw3aimpHPOeqsSgvFBZYUtMssmgGllNOmiDGnIT+mcIS32Qb+MW/vGwXapg2poaFu7b57Jwx3hBkI2NvhKXMn6dMevtCevCis+Y+LSQ3OG9DLOq9t7wyX1xqQ/UTmY3cS85kZXPsyXFWlSGhE7SYKh0uRjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=aw2RRCax; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1758071483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K5LsA6788TohTMhJyMFVGJXUVKzjVvS4nvp3+t+5CR4=;
-	b=aw2RRCaxjd0tn7HYqhtEIG3Ptzo5SqzP5Y15s2g8p9Xnf5hG5XDCZMCsED1aEWUpB9fNtz
-	MlCMWMmkEjkApP7a9KUynOJZ3MyWPruNnDAjdET/vz7Kw+N1l6LNYUMzmmmjhfoF3IVOjm
-	lJCCO33lEZ06scwFVt3WrVSOt7kFcw73iPODKmHHFh7dbVYDkeYH553523paJq5+pEZD4y
-	q65fR4Wr7iRXJ+/e9WY4sZmzaJS2JQwHRSbf8O4t3fKkK7XZiEWQBeBKKYSw3AaQZfRPBu
-	PB0oDsCShWDqgS5n/e7NmiVrYCh6JEWDZuCbxgrVYw6rtzmroHfqV8mGKbqAHA==
-From: Paul Sajna <sajattack@postmarketos.org>
-Date: Tue, 16 Sep 2025 18:09:59 -0700
-Subject: [PATCH v2 13/13] arm64: dts: qcom: sdm845-lg-judyln: Add lab/ibb
+	s=arc-20240116; t=1758071428; c=relaxed/simple;
+	bh=I0X2tXYkS1K5lUBZlYDUhEDPaSom/PRfWEqw7ItlcJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XBpghdZSoM67xfG1HXeGZGIhOzaNof2sAMM0jtFUJhRnwCO6BqeGlujRJqaIdXy0ijHS5elySzLqZAUG5eIEAlAuHNM/ix5hOXK51cFIckVQOPtdmHiB+pWuff026M54HhVUK8bLIOzq347C9hioSN+gvMoF6aTjb/B0g4WUYLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxHvB6CspoGS4LAA--.24143S3;
+	Wed, 17 Sep 2025 09:10:18 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJAxE+RwCsposWOaAA--.35728S2;
+	Wed, 17 Sep 2025 09:10:09 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] Fix objtool warnings if LTO is enabled for LoongArch (Part 2)
+Date: Wed, 17 Sep 2025 09:10:03 +0800
+Message-ID: <20250917011007.4540-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-judyln-dts-v2-13-5e16e60263af@postmarketos.org>
-References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
-In-Reply-To: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
- Amir Dahan <system64fumo@protonmail.com>, 
- Christopher Brown <crispybrown@gmail.com>, 
- Paul Sajna <sajattack@postmarketos.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758071415; l=1151;
- i=sajattack@postmarketos.org; s=20250422; h=from:subject:message-id;
- bh=4A0pTY/r00iXG0eCKZOKSizZtOQKUJ6iVrZvAnx3Soo=;
- b=zmhOGULntOrTwQvWewxGiOMTDxAebMYCnVHxCWd19YUqDtBTfcJQxax28nZIMokbi8GhPUfAd
- 5wPrYZRGB/ICSX+dSlg7rf14j64eVnH/njEKC7ns1eyJ5QG0fF2ibG/
-X-Developer-Key: i=sajattack@postmarketos.org; a=ed25519;
- pk=TwacvEOiRJ2P2oAdEqIDrtQTL18QS4FfcHfP/zNsxkQ=
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxE+RwCsposWOaAA--.35728S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kr4kKr15Kw4UAFW3Wr4kuFX_yoW8Aw4rpF
+	43uay7Kr4Fyr4kXw4DJw4S9Fy3AwsxGr1aqF1UK345A390vFsFqws7Ar4xXFyDK3sagryI
+	qF4rKa4UKF1DZ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
 
-`regulator-always-on;` in ibb improves display blanking issue
+The previous patches [1] [2] are to fix most of the warnings (total 3030):
 
-Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
----
- arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+  sibling call from callable instruction with modified stack frame
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-index beb1372dc6c17f5f06c2044412ee1c8165858cd1..44ab98964ffe722144e01efc41e135dc7700fe95 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-@@ -69,10 +69,28 @@ zap-shader {
- 	};
- };
- 
-+&ibb {
-+	regulator-min-microvolt = <4600000>;
-+	regulator-max-microvolt = <6000000>;
-+	regulator-over-current-protection;
-+	regulator-pull-down;
-+	regulator-soft-start;
-+	regulator-always-on;
-+	qcom,discharge-resistor-kohms = <300>;
-+};
-+
- &ipa {
- 	firmware-name = "qcom/sdm845/LG/judyln/ipa_fws.mbn";
- };
- 
-+&lab {
-+	regulator-min-microvolt = <4600000>;
-+	regulator-max-microvolt = <6000000>;
-+	regulator-over-current-protection;
-+	regulator-pull-down;
-+	regulator-soft-start;
-+};
-+
- &mdss {
- 	status = "okay";
- };
+This series is a follow up to fix 2 kinds of warnings (total 24), it only
+touches the objtool and LoongArch related code:
+
+  falls through to next function
+  unreachable instruction
+
+With this series, there is only 1 kind of warning (total 3), it does not
+only touch the objtool and LoongArch related code:
+
+  missing __noreturn in .c/.h or NORETURN() in noreturns.h
+
+In order to silence the above warnings, it needs to change the related
+code to give the functions __noreturn attribute, and have a NORETURN()
+annotation in tools/objtool/noreturns.h. IMO, it will touch all of the
+archs and the generic code, so this needs much more work to avoid the
+side effect or regression, once it is done I will send out the patch.
+
+How to reproduce:
+
+  $ make ARCH=loongarch LLVM=1 clean defconfig
+  $ scripts/config -d LTO_NONE -e LTO_CLANG_THIN
+  $ make ARCH=loongarch LLVM=1 olddefconfig all
+
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a47bc954cf0e [1]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5dfea6644d20 [2]
+
+Tiezhu Yang (4):
+  objtool/LoongArch: Fix fall through warning about efi_boot_kernel()
+  objtool/LoongArch: Fix unreachable instruction warnings about image
+    header
+  objtool/LoongArch: Fix unreachable instruction warnings about entry
+    points
+  LoongArch: Remove is_entry_func() related code
+
+ arch/loongarch/kernel/Makefile     |  2 --
+ arch/loongarch/kernel/head.S       |  7 +++----
+ arch/loongarch/kernel/unwind_orc.c | 11 -----------
+ tools/objtool/check.c              |  4 ++++
+ 4 files changed, 7 insertions(+), 17 deletions(-)
 
 -- 
-2.51.0
+2.42.0
 
 
