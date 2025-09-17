@@ -1,149 +1,161 @@
-Return-Path: <linux-kernel+bounces-819889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA01B7C653
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:00:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5739B7C80F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB15189AC95
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E23F1B24060
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEC52F60CD;
-	Wed, 17 Sep 2025 02:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08E6221F0A;
+	Wed, 17 Sep 2025 02:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2IjJp7i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="IUaW5o+7"
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3062F546D;
-	Wed, 17 Sep 2025 02:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04443101F2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758076222; cv=none; b=IX7MiagHAJ9PmXCRvgRhbxxa33sxzkOp4D/H2ojfEMpfhWtTx8gSt/qV/N7RD5Z5QWG45cv0msDy2t7SNU+orxS+m8hV9SjDa58MQlvAQBhqAgTNTF04qvbkCVms5DR0WltFJi6w+NqUsRBb+2zSjn2F2xAyZDBXb4gSzWWGbVc=
+	t=1758076590; cv=none; b=bKNDwqXoc+NnLpketWOf+q7Rckuc4NTDLXXUhGzGYYDK7QAfnfJa8Z3xuaJEoiRDZENJbF47qrpMHAd7S4FApA5qY7xiq1+mgZVYfqHGwqbjKAdhGxhvvTWLFFHCWfJQqkJ4UNi+TRJdW1e5a8E70Aie74a8DSTgDdVyDI1WT1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758076222; c=relaxed/simple;
-	bh=9X7QADcxt2zCen4jv6C9mftiuf17xh85fpQtuE7OSM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJUaFu9m55mYJg0hVFuI+S+PnYq68DekKodX9Y+6R4TYbv0IkmDtUroSVf6aTncGckzGgW89MVDInyAqGdhCqgnJkHZBCd8iS/ryPnSXyy9D+3UJe5FfqlOUvefIKSxFCK58uEh8WslE6sM3D5RA2paWi/KUbenHohjkoKGRLSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2IjJp7i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8F3C4CEFE;
-	Wed, 17 Sep 2025 02:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758076221;
-	bh=9X7QADcxt2zCen4jv6C9mftiuf17xh85fpQtuE7OSM8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F2IjJp7i0geiRr9f92HGSScUadmZ6+qWXyDpkJSiwVyNs91904DNhtSDuJbhhaj0J
-	 DJKcETxEWzNzBxsyhW7usZxODZD+xgUjmFC614GNYEbZbQwsw0dpeLBxPsCcNBGAAm
-	 /22ayxgBAuSTcnlHABRPG0MUY0z4e8po0p2SiK2dFhh7nhDHJz7GwWhBHU1yJcuQLJ
-	 exW4ZkNB5uaXDutsFJDYqObop2XHXw0CvvnXp7EzwCxcF77trENSy7QplSvBv3vKS4
-	 jDuk3O3FlOraGmLgFKmXx7v+Qqg8oWrsCQSC/M4tSYke5eVMO4wboVh9+IgNJL4b2X
-	 uYcs479yd3FIA==
-Date: Tue, 16 Sep 2025 19:30:16 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Juergen Christ <jchrist@linux.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v2 2/4] compiler_types: Add __assume macro
-Message-ID: <20250917023016.GA3935228@ax162>
-References: <20250916134803.874580-1-hca@linux.ibm.com>
- <20250916134803.874580-3-hca@linux.ibm.com>
+	s=arc-20240116; t=1758076590; c=relaxed/simple;
+	bh=OMrF60UrFESswdQqNKZ+KlKOqtgQLchhCNczyKVJCZA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=djHbDLKD9cx1ImEFINi8cwscw9vHyZ0MMp3qcNA16cSMPIRRDD/HHhApz4+JvXRT008YFqXE75h0rhUIs2syIWVAhpmTrNuhqvjXvD4awDAF+aPGANIVa0Swh+DoyG6Fma+FJegPiyd+rlumltttqMMighOJLnQ3BTx261/VVgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=IUaW5o+7; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=V8jRf/XdzOZu8DRuETfgfqD98J9cKAQM69d4lnejfFs=;
+	b=IUaW5o+7/875Ti9Fg/iLLZ6Ikhs2FXhAk4m6zwtOWvE8QtULP2OWF9hpyS9Gl2xodHOqz03A4
+	gVYwu1BgChHy9G3U343ajZbOlwVRL/GuODDSdDxCK0eaazHe6BtMi6O95yS2Ot+HeIQ5RMGGJ1m
+	VDmUoWERgF51PRJAOoauq0E=
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cRNDh5vbhzYl1N1;
+	Wed, 17 Sep 2025 10:36:04 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 17 Sep
+ 2025 10:36:24 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 17 Sep
+ 2025 10:36:24 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, <feng.han@honor.com>, wangzijie
+	<wangzijie1@honor.com>
+Subject: [f2fs-dev] [PATCH v3 1/2] f2fs: fix zero-sized extent for precache extents
+Date: Wed, 17 Sep 2025 10:36:21 +0800
+Message-ID: <20250917023622.516052-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916134803.874580-3-hca@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a011.hihonor.com
+ (10.68.31.243)
 
-On Tue, Sep 16, 2025 at 03:48:01PM +0200, Heiko Carstens wrote:
-> Make the statement attribute "assume" with a new __assume macro available.
-> 
-> The assume attribute is used to indicate that a certain condition is
-> assumed to be true. Compilers may or may not use this indication to
-> generate optimized code. If this condition is violated at runtime, the
-> behavior is undefined.
-> 
-> Note that the clang documentation states that optimizers may react
-> differently to this attribute, and this may even have a negative
-> performance impact. Therefore this attribute should be used with care.
-> 
-> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+Script to reproduce:
+f2fs_io write 1 0 1881 rand dsync testfile
+f2fs_io fallocate 0 7708672 4096 testfile
+f2fs_io write 1 1881 1 rand buffered testfile
+fsync testfile
+umount
+mount
+f2fs_io precache_extents testfile
 
-LGTM.
+When the data layout is something like this:
+dnode1:                     dnode2:
+[0]      A                  [0]    NEW_ADDR
+[1]      A+1                [1]    0x0
+...
+[1016]   A+1016
+[1017]   B (B!=A+1017)      [1017] 0x0
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+During precache_extents, we map the last block(valid blkaddr) in dnode1:
+map->m_flags |= F2FS_MAP_MAPPED;
+map->m_pblk = blkaddr(valid blkaddr);
+map->m_len = 1;
+then we goto next_dnode, meet the first block in dnode2(hole), goto sync_out:
+map->m_flags & F2FS_MAP_MAPPED == true, and we make zero-sized extent:
 
-> ---
->  include/linux/compiler_types.h | 23 +++++++++++++++++++++++
->  init/Kconfig                   | 10 ++++++++++
->  2 files changed, 33 insertions(+)
-> 
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index a910f9fa5341..41c16fb8eb40 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -329,6 +329,29 @@ struct ftrace_likely_data {
->  #define __no_sanitize_or_inline __always_inline
->  #endif
->  
-> +/*
-> + * The assume attribute is used to indicate that a certain condition is
-> + * assumed to be true. If this condition is violated at runtime, the behavior
-> + * is undefined. Compilers may or may not use this indication to generate
-> + * optimized code.
-> + *
-> + * Note that the clang documentation states that optimizers may react
-> + * differently to this attribute, and this may even have a negative
-> + * performance impact. Therefore this attribute should be used with care.
-> + *
-> + * Optional: only supported since gcc >= 13
-> + * Optional: only supported since clang >= 19
-> + *
-> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#index-assume-statement-attribute
-> + * clang: https://clang.llvm.org/docs/AttributeReference.html#id13
-> + *
-> + */
-> +#ifdef CONFIG_CC_HAS_ASSUME
-> +# define __assume(expr)			__attribute__((__assume__(expr)))
-> +#else
-> +# define __assume(expr)
-> +#endif
-> +
->  /*
->   * Optional: only supported since gcc >= 15
->   * Optional: only supported since clang >= 18
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 59ae2b967195..935eff59af97 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -112,6 +112,16 @@ config TOOLS_SUPPORT_RELR
->  config CC_HAS_ASM_INLINE
->  	def_bool $(success,echo 'void foo(void) { asm inline (""); }' | $(CC) -x c - -c -o /dev/null)
->  
-> +config CC_HAS_ASSUME
-> +	bool
-> +	# clang needs to be at least 19.1.0 since the meaning of the assume
-> +	# attribute changed:
-> +	# https://github.com/llvm/llvm-project/commit/c44fa3e8a9a44c2e9a575768a3c185354b9f6c17
-> +	default y if CC_IS_CLANG && CLANG_VERSION >= 190100
-> +	# supported since gcc 13.1.0
-> +	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106654
-> +	default y if CC_IS_GCC && GCC_VERSION >= 130100
-> +
->  config CC_HAS_NO_PROFILE_FN_ATTR
->  	def_bool $(success,echo '__attribute__((no_profile_instrument_function)) int x();' | $(CC) -x c - -c -o /dev/null -Werror)
->  
-> -- 
-> 2.48.1
-> 
+map->m_len = 1
+ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
+ei.fofs = start_pgofs = 1882
+ei.len = map->m_len - ofs = 1 - 1 = 0
+
+
+Rebased on patch[1], this patch can cover these cases to avoid zero-sized extent:
+A,B,C is valid blkaddr
+case1:
+dnode1:                     dnode2:
+[0]      A                  [0]    NEW_ADDR
+[1]      A+1                [1]    0x0
+...                         ....
+[1016]   A+1016
+[1017]   B (B!=A+1017)      [1017] 0x0
+
+case2:
+dnode1:                     dnode2:
+[0]      A                  [0]    C (C!=B+1)
+[1]      A+1                [1]    C+1
+...                         ....
+[1016]   A+1016
+[1017]   B (B!=A+1017)      [1017] 0x0
+
+case3:
+dnode1:                     dnode2:
+[0]      A                  [0]    C (C!=B+2)
+[1]      A+1                [1]    C+1
+...                         ....
+[1015]   A+1015
+[1016]   B (B!=A+1016)
+[1017]   B+1                [1017] 0x0
+
+[1] https://lore.kernel.org/linux-f2fs-devel/20250912081250.44383-1-chao@kernel.org/
+
+Fixes: c4020b2da4c9 ("f2fs: support F2FS_IOC_PRECACHE_EXTENTS")
+Signed-off-by: wangzijie <wangzijie1@honor.com>
+---
+Rebased on:
+https://lore.kernel.org/linux-f2fs-devel/20250912081250.44383-1-chao@kernel.org/
+v2:
+https://lore.kernel.org/linux-f2fs-devel/20250915035246.98055-1-wangzijie1@honor.com/
+---
+ fs/f2fs/data.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 838eae39d..7a5170b32 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1778,9 +1778,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 		if (map->m_flags & F2FS_MAP_MAPPED) {
+ 			unsigned int ofs = start_pgofs - map->m_lblk;
+ 
+-			f2fs_update_read_extent_cache_range(&dn,
+-				start_pgofs, map->m_pblk + ofs,
+-				map->m_len - ofs);
++			if (map->m_len - ofs > 0)
++				f2fs_update_read_extent_cache_range(&dn,
++					start_pgofs, map->m_pblk + ofs,
++					map->m_len - ofs);
+ 		}
+ 		if (map->m_next_extent)
+ 			*map->m_next_extent = is_hole ? pgofs + 1 : pgofs;
+-- 
+2.25.1
+
 
