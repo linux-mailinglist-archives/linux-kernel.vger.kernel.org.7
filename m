@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-820407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7FAB7D6F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FECFB7D69A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0FB1B228E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4731BC027E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2C5350D77;
-	Wed, 17 Sep 2025 09:58:23 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8B1353351;
+	Wed, 17 Sep 2025 09:58:25 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566C134DCF7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEFB350D4B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758103103; cv=none; b=AziViWQJVJEPQl7aXUfoRYYVxitKwAlmMWHTKRwShypskLpEcY/Fn/V2WWJ83XzFR3XkzZ7o7Mq/hpbx0rVOPjkaYKnNKVEFm4nHUUefCqwtJxU4KhiYnqIWo325VylnoqEshKJgu4R5J2el2joF0Wnp5OCYHcXmRoODc0/QX0w=
+	t=1758103104; cv=none; b=LV4/zYXMsjGRjur21mI+uMhS/Q2cXX1mVgGWI2XZ6/lYipdS1EX+MJdPdrkEPIQrmCSPSf20WKmybGBe5qu8tG40KjPEPze2bPZMWmcLpCRtCm2yOMByR5HPXJkNCtnMsZEpiFHIOj+rPPpptjwpIO2SXLkrZzy3T9a8IhLwQtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758103103; c=relaxed/simple;
-	bh=4qXNf5FPKeqB6oI1PmmIoli/4B/k2fYlPhoDMAj4Ltg=;
+	s=arc-20240116; t=1758103104; c=relaxed/simple;
+	bh=g5R+KO0zDOkxIkWQNfeVkn9e14oSE0vPMCqx5KVoKUc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bi+YLXdh4v/CP8KPq0x0jvBjCFd0ovZ1PjhRB9Lz4xSNNH0Je3cqcRontjr2v9oAoOv4/q4tjoU7u3KRhnko/EASBOApToKWEUN/sGlDAEuunRGJfgJvjgV2YN37qQYwuXdQbb/Lk7Z1WRy5f6Az/lefipoh/OsJojdwonpByb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+	 In-Reply-To:To:Cc; b=jYpYxmHZDbbMrdtWu9q+MqX/b9p0xpQiLmNC8PzPbiYRyFF+AH5VgDOD8bAc/1ppTqmmJD75eWOTAgIXylBG+dAGLdFZDUI6e3OTFXrdU34LueOSQTwmHTS5oG3DBoRE33KQaEnHTgq7NA1s3JLCiy/cb6CpLAd8UQ0+BhWI8JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b07c28f390eso884490066b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:58:21 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62f799a5b72so2245781a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:58:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758103100; x=1758707900;
+        d=1e100.net; s=20230601; t=1758103101; x=1758707901;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AEyyDJEjHIGcptoyVMY30XDmajElEFVLCjxYGTHfuEc=;
-        b=WlvP06gEV0yTvYFdrU4DHUTSRPWN6vx4N9cPVy1a9dZQ9qdvaRZ9qeNYCXMEYqEzR2
-         K9ohOgDzsIVO8CHbNpCR/gjrE90IerSJmyXzGABM5k8rcU566b5bHOHercwF3nKFrrts
-         Cuk4HG5WkYygVQIdo/FK+o5EIeOgPGrWdsrCgxYBsrOD/DGU830wK/YDiGd5Fkq+/d2K
-         K+W6cHLkShznNhokz02z3O038wHiMQ0tFJFWLIMcCYJvlK4IotmgTXC13rUJxzKxEYQI
-         APdQ/a22SpauKklta7opS6gfjom6yg58dhHWQD8bakP3+DFsAcxVC9V/2vybsmDYriQV
-         08Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvzpCu7UElRBMbwSe3a6lyBjQx7Q3nIlMFpgf0YN5171BfmdFaU/s/WRTVSA2MMOxHS/laEe0y4p5Jpsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0x87QnKaQBcEwZCb7LSTcpTWWa+qRMgMdeR9+SgvwjLAD2rnL
-	2y7O2vnVTOC+gn3a2kbS5dX2AKstcQ4KRP5AINrBFHQ5Chedr/rciQYT
-X-Gm-Gg: ASbGnctQkaez3RKmaU03cusf313hBGGHk2njTYyddLJQ/dwt/mccMO0bGAOAzZcPrhl
-	rKTEd2zu/Vg+yqkQqKGHd93NTXpAyXiXBxR5EfS51pOnLZdF2B9k8iwTIFVBNAn8xArzws9JMWb
-	aCxOUXchojxQwpCKbXmn893/PoaN1M/nukKwPM9J7VFOOdHZSKmUIWAhlCjNaGdDXNhuAnCc3EN
-	Oj+R+stirhxFGISKV1GpmBjkJk9GwpGdOH0XadQu+WG4yxYeuDVOjvbaaQbjUxKBY+hoNOAjKO7
-	pIdf+2MkXi76400Vr7TG0OAEkzVBDGgdbAohIkBMtu7AqPmu/eXb+GBWTmYvcRqW1A4OtMp7KVP
-	vHHpXzMEWITdpEA==
-X-Google-Smtp-Source: AGHT+IFmKSMVHhuFIvQinupVyiUNckMKMb5lWYss0WThxAB0V4vANhmyHX6vXQLprkM//2EeY/ySKg==
-X-Received: by 2002:a17:907:3c88:b0:b0c:a265:c02c with SMTP id a640c23a62f3a-b1bb5e572e9mr222242866b.12.1758103099498;
-        Wed, 17 Sep 2025 02:58:19 -0700 (PDT)
+        bh=BNdbybFK0ieLurW9tGv2v5Ky8Nf9YctW4a1t2pmLOlc=;
+        b=hHBsVhd0dNB15BwJ/JQpmb5vYOxQXdvfYQGUQFiGyoffdkYH2+d/vrquXWI/Cx1qJM
+         FwTAQITFBDVwoqeYDNrwk20Fa758N+HVRRMb9GCY9b/Eo3fdarBwAGFfGo1EFdHrsDHO
+         Kf68URCFULGEUKiNH2v0Ky7+uOaUcBMo66EC2VwKDP0x5Tt0P1W8/7nCPJjH1/fhA5ji
+         H5jiYr0LQ/wYJhKziMBm3bCrsvGf+XDTsD/JFaJDD8Nt2A/6C03BYzMKBfwz9KsFiha/
+         T+uWJX03/a3RGG0972mHOhzS8CEN8u2iQb9aTwb+xR4q1UZtBPORVMIDUgf4NNtby+lN
+         wi5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTmOiP+1iNKaG6a5kKED6eS8PYXCnRlSxHmEB4zUpwDA1R7PlHXug9zsfyTcA0f7gk5RDyVdHsOjRnmbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQS8dXgIIfn/o7w1pLZ7khBEyLRobZ+gOL7vjZIQXGxZ8/YVOR
+	n0YkkISkKzu8k63ueu4FuRptPh0EVQkvj/ZZkA3+j21yiA/kruBDnyBO
+X-Gm-Gg: ASbGnctflwugzWn4b90HCWO2z+DNIwvkVJKQNsc/j6U0X+CzU6ZGq2suhrim7dasJna
+	Nchq+FHYe5C4D9vJGGHc+yq7GYrY9cwvTAYF8oOmhgQRBebGdGiY7ZY9+3Qu1T5iLQnsRbyl+ms
+	dupVyYlhHvP2Mvwww6GzFolhbu/aWgyoR10R3yUuMJ1qoZBn0GMrpeWGyVUn9hTz0kbQWOTFmAB
+	Q7BIev9WB/la2h7ENvBDvDhRhuzYQN+KMFv8zrgSBtq9UeQmEGvvJCuFWlmhamvgvO0sntlhWy/
+	OsUDR/pTm1L8MzhZ64HI222YfPnCP2oMOIdJsfbyBl/aooxC1wRAuJiaPEw3SpgdPTK/AJeNG7r
+	zk3C7pDNxoGdXMA==
+X-Google-Smtp-Source: AGHT+IF9gsv9B/3Aw1b6/l4dkXEsvW7pOqKmAQvqfxUdHAIvZfVq35PFKiJfuHhddGDPZJBvWjF2VA==
+X-Received: by 2002:a05:6402:21d3:b0:62f:26cb:8072 with SMTP id 4fb4d7f45d1cf-62f83c2db1emr1820018a12.13.1758103100907;
+        Wed, 17 Sep 2025 02:58:20 -0700 (PDT)
 Received: from localhost ([2a03:2880:30ff:42::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b31291b0sm1343812366b.34.2025.09.17.02.58.18
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f86ecf183sm948650a12.12.2025.09.17.02.58.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 02:58:19 -0700 (PDT)
+        Wed, 17 Sep 2025 02:58:20 -0700 (PDT)
 From: Breno Leitao <leitao@debian.org>
-Date: Wed, 17 Sep 2025 02:58:09 -0700
-Subject: [PATCH net-next v4 2/8] net: ethtool: add support for
- ETHTOOL_GRXRINGS ioctl
+Date: Wed, 17 Sep 2025 02:58:10 -0700
+Subject: [PATCH net-next v4 3/8] net: ethtool: remove the duplicated
+ handling from ethtool_get_rxrings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-gxrings-v4-2-dae520e2e1cb@debian.org>
+Message-Id: <20250917-gxrings-v4-3-dae520e2e1cb@debian.org>
 References: <20250917-gxrings-v4-0-dae520e2e1cb@debian.org>
 In-Reply-To: <20250917-gxrings-v4-0-dae520e2e1cb@debian.org>
 To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
@@ -84,98 +84,98 @@ Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
  virtualization@lists.linux.dev, Breno Leitao <leitao@debian.org>, 
  Lei Yang <leiyang@redhat.com>, kernel-team@meta.com
 X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2335; i=leitao@debian.org;
- h=from:subject:message-id; bh=4qXNf5FPKeqB6oI1PmmIoli/4B/k2fYlPhoDMAj4Ltg=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoyoY2AU9fNvTISS+beBqpJEDcxAHhVAhTAHCq9
- srn6uWzgxqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaMqGNgAKCRA1o5Of/Hh3
- bav/EACG9P0Yxm8JP5TFsL1itesM8mMX5t+D87Z7fjw6n/bPC8stKFKiHf4HO5v6ao/MvPQu0c6
- a49OqGLI01YJ+gEMnKPZ0s0AaOGZsscXy9tIxTG+1SFZ3IThHyVa8bA7suuTJ00vfXfBxinTG6N
- /vQjRj4a+IA60KFNI89/iBpirfrMMsnSdDNMmPXcs6bQycFimuQEs8RZpCJC1JJxoT4Z4reolko
- ajaTnJ8EXw+lhqb4nx6wk8fDbuepbVVhkajeE0mSoNQz4hFJ69fc+stXB6qnluuG+XrvwisMhMw
- MgNzQVN+4DdcfxRZ+EJOWzGKyhg47SyLTZDKO+NwvJT0Wm9hFXDlAxWg0427Ba2zwPssv9vWFRT
- SyMaxhyNbAmHzZjndir82/49HKpIy9yGo2Nw/XyZLy740CSoZUnBLmxgykZf0P09szeo3s+yp1V
- 9CnOZipMsiD4/cHsLlnIgZZOlrl5V2SJ+1uJ1LIolKgGdajfCzotoOWJC9Uqo85dIYaeKifvtbG
- lU07fl8zCdwmRGI8hFt6PGiQotMAlaWXNnAQ2WQdEKAQ/VlDuQe9npNeKy5cgN3GwD7pgN4PjIz
- RTZ2eRKu1NI8kZU9/pDXFoCiz7JRobHeYh4xaE2Fir85ZF8XlLt2dCrZUkgXEHIp92TG2Fnna2r
- ajP6h36DirNPoVQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2140; i=leitao@debian.org;
+ h=from:subject:message-id; bh=g5R+KO0zDOkxIkWQNfeVkn9e14oSE0vPMCqx5KVoKUc=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoyoY2NykJuwtDfO+7ts1cC7uzwJBFwIMlPW4jm
+ PiXHqlFAseJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaMqGNgAKCRA1o5Of/Hh3
+ bTEiEACP/jgQA6Z2w3J5keCqjrA25kFufCckFxklkt0IibInyySwrZRb9Wecu3LAA6KJQKPRrjS
+ PikTENRkF4T7PpF/0Ue6Gnu3ng4ao+WIec1MfWoS2qMlEr7gnNuvDRkPDpRlq2RJECJAsq03bKr
+ xeCo3cif7l4Wq6KbYmH+6CFlcEULzPb7lalr5nBcvL24UedfPdidkZoqpbiTWYDWe9BKDtxPxJ/
+ ZBa7dqAzaAsqFBo7pe8PASZ37Ij6InKNDIBroMW+xSfczLGCPlqxdkYVWvQMCElR7/opXQOavtF
+ KcWeuJUCagNyiqMjXKEmz6VB9QU/PXp1U2I7YHbykFWUlP1OZa82xtgcjclEkPXj7vZkqas+HfO
+ m1/aHDDGFCrtETam1GytzfFCeLSOVEHKyH5jUZwO2wl/tvbx7EE7mAHOahgYQ0plo1cG2thaL9d
+ URO/JDy+VNm23sSQ121kuH9KS7qSTbCnK/pBpgJ+3mzPvcsNarMGnoh6IX343QdR1qVvDSJJnR6
+ 8uGxJL6D8jD4pAmnQS1m5Ni2QDl5XGEc4YzUwx4/73s8beybfs/zzHAJuojGw94ThlmyhZosS1m
+ zobe3dnkrzM9m1s0smXKerzjqXhE6PmiarndwYA23MbVJqhxmxFdxz4H8/duNhxpml4eQayO/Ny
+ LN8vq/ocCKgc8SA==
 X-Developer-Key: i=leitao@debian.org; a=openpgp;
  fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-This patch adds handling for the ETHTOOL_GRXRINGS ioctl command in the
-ethtool ioctl dispatcher. It introduces a new helper function
-ethtool_get_rxrings() that calls the driver's get_rxnfc() callback with
-appropriate parameters to retrieve the number of RX rings supported
-by the device.
-
-By explicitly handling ETHTOOL_GRXRINGS, userspace queries through
-ethtool can now obtain RX ring information in a structured manner.
-
-In this patch, ethtool_get_rxrings() is a simply copy of
-ethtool_get_rxnfc().
+ethtool_get_rxrings() was a copy of ethtool_get_rxnfc(). Clean the code
+that will never be executed for GRXRINGS specifically.
 
 Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- net/ethtool/ioctl.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ net/ethtool/ioctl.c | 33 ++++++++++-----------------------
+ 1 file changed, 10 insertions(+), 23 deletions(-)
 
 diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index 15627afa4424f..4214ab33c3c81 100644
+index 4214ab33c3c81..a0f3de76cea03 100644
 --- a/net/ethtool/ioctl.c
 +++ b/net/ethtool/ioctl.c
-@@ -1208,6 +1208,44 @@ static noinline_for_stack int ethtool_set_rxnfc(struct net_device *dev,
- 	return 0;
+@@ -1212,52 +1212,39 @@ static noinline_for_stack int ethtool_get_rxrings(struct net_device *dev,
+ 						  u32 cmd,
+ 						  void __user *useraddr)
+ {
+-	struct ethtool_rxnfc info;
+-	size_t info_size = sizeof(info);
+ 	const struct ethtool_ops *ops = dev->ethtool_ops;
++	struct ethtool_rxnfc info;
++	size_t info_size;
+ 	int ret;
+-	void *rule_buf = NULL;
+ 
+ 	if (!ops->get_rxnfc)
+ 		return -EOPNOTSUPP;
+ 
++	info_size = sizeof(info);
+ 	ret = ethtool_rxnfc_copy_struct(cmd, &info, &info_size, useraddr);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (info.cmd == ETHTOOL_GRXCLSRLALL) {
+-		if (info.rule_cnt > 0) {
+-			if (info.rule_cnt <= KMALLOC_MAX_SIZE / sizeof(u32))
+-				rule_buf = kcalloc(info.rule_cnt, sizeof(u32),
+-						   GFP_USER);
+-			if (!rule_buf)
+-				return -ENOMEM;
+-		}
+-	}
+-
+-	ret = ops->get_rxnfc(dev, &info, rule_buf);
++	ret = ops->get_rxnfc(dev, &info, NULL);
+ 	if (ret < 0)
+-		goto err_out;
+-
+-	ret = ethtool_rxnfc_copy_to_user(useraddr, &info, info_size, rule_buf);
+-err_out:
+-	kfree(rule_buf);
++		return ret;
+ 
+-	return ret;
++	return ethtool_rxnfc_copy_to_user(useraddr, &info, info_size, NULL);
  }
  
-+static noinline_for_stack int ethtool_get_rxrings(struct net_device *dev,
-+						  u32 cmd,
-+						  void __user *useraddr)
-+{
-+	struct ethtool_rxnfc info;
-+	size_t info_size = sizeof(info);
-+	const struct ethtool_ops *ops = dev->ethtool_ops;
-+	int ret;
-+	void *rule_buf = NULL;
-+
-+	if (!ops->get_rxnfc)
-+		return -EOPNOTSUPP;
-+
-+	ret = ethtool_rxnfc_copy_struct(cmd, &info, &info_size, useraddr);
-+	if (ret)
-+		return ret;
-+
-+	if (info.cmd == ETHTOOL_GRXCLSRLALL) {
-+		if (info.rule_cnt > 0) {
-+			if (info.rule_cnt <= KMALLOC_MAX_SIZE / sizeof(u32))
-+				rule_buf = kcalloc(info.rule_cnt, sizeof(u32),
-+						   GFP_USER);
-+			if (!rule_buf)
-+				return -ENOMEM;
-+		}
-+	}
-+
-+	ret = ops->get_rxnfc(dev, &info, rule_buf);
-+	if (ret < 0)
-+		goto err_out;
-+
-+	ret = ethtool_rxnfc_copy_to_user(useraddr, &info, info_size, rule_buf);
-+err_out:
-+	kfree(rule_buf);
-+
-+	return ret;
-+}
-+
  static noinline_for_stack int ethtool_get_rxnfc(struct net_device *dev,
  						u32 cmd, void __user *useraddr)
  {
-@@ -3377,6 +3415,8 @@ __dev_ethtool(struct net *net, struct ifreq *ifr, void __user *useraddr,
- 		rc = ethtool_set_rxfh_fields(dev, ethcmd, useraddr);
- 		break;
- 	case ETHTOOL_GRXRINGS:
-+		rc = ethtool_get_rxrings(dev, ethcmd, useraddr);
-+		break;
- 	case ETHTOOL_GRXCLSRLCNT:
- 	case ETHTOOL_GRXCLSRULE:
- 	case ETHTOOL_GRXCLSRLALL:
+-	struct ethtool_rxnfc info;
+-	size_t info_size = sizeof(info);
+ 	const struct ethtool_ops *ops = dev->ethtool_ops;
+-	int ret;
++	struct ethtool_rxnfc info;
+ 	void *rule_buf = NULL;
++	size_t info_size;
++	int ret;
+ 
+ 	if (!ops->get_rxnfc)
+ 		return -EOPNOTSUPP;
+ 
++	info_size = sizeof(info);
+ 	ret = ethtool_rxnfc_copy_struct(cmd, &info, &info_size, useraddr);
+ 	if (ret)
+ 		return ret;
 
 -- 
 2.47.3
