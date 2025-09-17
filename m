@@ -1,114 +1,161 @@
-Return-Path: <linux-kernel+bounces-821224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32942B80CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:58:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72235B80CDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB41A170155
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCADD167C75
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D39330C0E3;
-	Wed, 17 Sep 2025 15:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3263362A2;
+	Wed, 17 Sep 2025 15:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tA7yjSBf"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Drdwd+W5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28CB2F4A0B;
-	Wed, 17 Sep 2025 15:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CBD2F8BC0;
+	Wed, 17 Sep 2025 15:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758124499; cv=none; b=p2U1rIBCItuz4Ew0vBpmXiysMk2JHy8Yy0GvU3P9TrP78n4byTZePm+Y3kQkU64m71N8h7/fSYQYgejk/nEcZiZqFwmMhViSWxAy/WrUanTPQNrnRAsWnmgALr+29ujGUBWchlX3nij4VZ5HZiXmPN7rpibzJ4N769G+yVGBpsE=
+	t=1758124483; cv=none; b=X6lWBW9/9BNjOFKcqAXq7kXG9pTnIEx6g6+K3icHokLXHazkBoyk4dFYlPzrXGbUlz3pig5PNdjBnRJBuuJ0ncs7gxgWWVHzuae0/nQRVYC1q19nUOdQIsMbyFwDE4WfszLOe+82eQg5LnwjKJUhJgguOocOvlC8ITnJ7sMhIDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758124499; c=relaxed/simple;
-	bh=d6z5bQMduWywzCnsjkrsB8XpI7EB7r39k2dXtzSRP4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KWwDJ0rB4e3uoqp4tk5W0iV12ypzApEPkD3mLYiFwA2j8WNVYPt/l1JKHG41kTUI+1NLcWRYAhrYxkcc8OB8kcVGr1CsYCwNjFfTD8sMemCX9Z44fNJKpgWV/Cb8oLaXhAnGtd+1h5FD3XPbrkAKloZQrb0xktU9Lxi9Azz8jt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=tA7yjSBf; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AJktQMdqIHogk394FiivhFmOdjrHiCFPa1pHkmNNloE=; b=tA7yjSBfh1hpMlPKDhAteZScZ3
-	LWtL4OhwJkoeY112/UKM1Lj8dS10jvM+/d6/xo7uOMTYDiqIm1NQXobdmEP65om9Qn9i5wDxhEPd0
-	P+IcrmnIkqG20n8KABAmHw35SvqVVXkkU52TAhEpRjB553kSnPam6Gyb9lSssnWmtArp8+a58ynQ2
-	BDtXU4CWBHtd28yI7/zUBK8UQClI5b7KUxLuPnp+KI2wVmuPFgZljQtubiVf3vGnXc158jeQGCHYZ
-	QbXZ0eaG7ML9xwJ8sYFm6VONwlxAFv8YKbLmt62yyEzyVX9cwqj2YVfya/NnroZvUcrbbMUwW7293
-	2hky0hiA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45608)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uyuUV-0000000053e-1IFT;
-	Wed, 17 Sep 2025 16:54:43 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uyuUQ-000000000Jt-3aAP;
-	Wed, 17 Sep 2025 16:54:38 +0100
-Date: Wed, 17 Sep 2025 16:54:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 3/4] net: phy: smsc: fix and improve WoL
- support
-Message-ID: <aMrZvvVBwmWGjr4P@shell.armlinux.org.uk>
-References: <20250917-wol-smsc-phy-v2-0-105f5eb89b7f@foss.st.com>
- <20250917-wol-smsc-phy-v2-3-105f5eb89b7f@foss.st.com>
+	s=arc-20240116; t=1758124483; c=relaxed/simple;
+	bh=UDKHns4guwmE2200coxrhQggpkGcWHj4hwrRJ5rsEI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Bw5ekKdV4h4MAPonLvNBooIPUFoE/bD0gN/d4A3AVgaThdpNo81ITmztLAuAGiEarsjC6/cp45wRqbRyqnZadZe8sGioWnKD+E/jDbqgcK4rxeYf0OV0PWR+Nbk3zVAoup7zXR5F7PZaX6MdZwWSeBxZGPpRpZ04f+o4H/sU6DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Drdwd+W5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F273C4CEE7;
+	Wed, 17 Sep 2025 15:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758124483;
+	bh=UDKHns4guwmE2200coxrhQggpkGcWHj4hwrRJ5rsEI8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Drdwd+W5gzmqxl1xkWNspWAoU2IvCPW7oQ94QP8fDtRmZvVrvKwQHLyoudTbeSGCs
+	 ULvi7B753zcvTm8D8iBixG7Xzk82j2A5aGlKpjeKqHGIkOhWUe+Z1+/tsiC28UlDo8
+	 Qgdq+z8u5tipp3Rov4aaTGW9SYw4b5DWB5ZWbKxMm+T+zO70AjnObiQYqhhptMB0dJ
+	 05RgulLyqpejtYib26GdwDN1iCV2gx3rpBMvHVUzM5CdtQTmMqWr8Oi/c6qElIhgV2
+	 GVS5TIg+N4rcGUFlBQJwD3QTBpIy45iLW2gFocfd7Hxl8XAoJkIE2sjXLTjuV/6XMq
+	 l6S/yiBOB6n5Q==
+Date: Wed, 17 Sep 2025 10:54:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Matthew Wood <thepacketgeek@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Mario Limonciello <superm1@kernel.org>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v8 1/1] PCI/sysfs: Expose PCI device serial number
+Message-ID: <20250917155441.GA1854687@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250917-wol-smsc-phy-v2-3-105f5eb89b7f@foss.st.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250917125815.722952-2-thepacketgeek@gmail.com>
 
-On Wed, Sep 17, 2025 at 05:36:38PM +0200, Gatien Chevallier wrote:
-> @@ -673,6 +726,9 @@ int smsc_phy_probe(struct phy_device *phydev)
+On Wed, Sep 17, 2025 at 05:58:14AM -0700, Matthew Wood wrote:
+> Add a single sysfs read-only interface for reading PCI device serial
+> numbers from userspace in a programmatic way. This device attribute
+> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
+> capability output. If a device doesn't support the serial number
+> capability, the serial_number sysfs attribute will not be visible.
+> 
+> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
+> Reviewed-by: Mario Limonciello <superm1@kernel.org>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reviewed-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> Reviewed-by: Keith Busch <kbusch@kernel.org>
+> Reviewed-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+
+Applied to pci/misc for v6.18, thanks, and sorry for the inexcusable
+delay.
+
+> ---
+>  Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
+>  drivers/pci/pci-sysfs.c                 | 21 +++++++++++++++++++++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+> index 69f952fffec7..92debe879ffb 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-pci
+> +++ b/Documentation/ABI/testing/sysfs-bus-pci
+> @@ -612,3 +612,12 @@ Description:
 >  
->  	phydev->priv = priv;
+>  		  # ls doe_features
+>  		  0001:01        0001:02        doe_discovery
+> +
+> +What:		/sys/bus/pci/devices/.../serial_number
+> +Date:		December 2025
+> +Contact:	Matthew Wood <thepacketgeek@gmail.com>
+> +Description:
+> +		This is visible only for PCI devices that support the serial
+> +		number extended capability. The file is read only and due to
+> +		the possible sensitivity of accessible serial numbers, admin
+> +		only.
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 268c69daa4d5..b7b7412c9f00 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/msi.h>
+>  #include <linux/of.h>
+>  #include <linux/aperture.h>
+> +#include <linux/unaligned.h>
+>  #include "pci.h"
 >  
-> +	if (phydev->drv->set_wol)
-> +		device_set_wakeup_capable(&phydev->mdio.dev, true);
-
-This suggests that you know that this device is _always_ capable of
-waking the system up, irrespective of the properties of e.g. the
-interrupt controller. If this is not the case, please consider the
-approach I took in the realtek driver.
-
-In that case, you also need to add checks in the get_wol() and
-set_wol() methods to refuse WoL configuration, and to report that
-WoL is not supported.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+>  #ifndef ARCH_PCI_DEV_GROUPS
+> @@ -694,6 +695,22 @@ static ssize_t boot_vga_show(struct device *dev, struct device_attribute *attr,
+>  }
+>  static DEVICE_ATTR_RO(boot_vga);
+>  
+> +static ssize_t serial_number_show(struct device *dev,
+> +				  struct device_attribute *attr, char *buf)
+> +{
+> +	struct pci_dev *pci_dev = to_pci_dev(dev);
+> +	u64 dsn;
+> +	u8 bytes[8];
+> +
+> +	dsn = pci_get_dsn(pci_dev);
+> +	if (!dsn)
+> +		return -EIO;
+> +	put_unaligned_be64(dsn, bytes);
+> +
+> +	return sysfs_emit(buf, "%8phD\n", bytes);
+> +}
+> +static DEVICE_ATTR_ADMIN_RO(serial_number);
+> +
+>  static ssize_t pci_read_config(struct file *filp, struct kobject *kobj,
+>  			       const struct bin_attribute *bin_attr, char *buf,
+>  			       loff_t off, size_t count)
+> @@ -1698,6 +1715,7 @@ late_initcall(pci_sysfs_init);
+>  
+>  static struct attribute *pci_dev_dev_attrs[] = {
+>  	&dev_attr_boot_vga.attr,
+> +	&dev_attr_serial_number.attr,
+>  	NULL,
+>  };
+>  
+> @@ -1710,6 +1728,9 @@ static umode_t pci_dev_attrs_are_visible(struct kobject *kobj,
+>  	if (a == &dev_attr_boot_vga.attr && pci_is_vga(pdev))
+>  		return a->mode;
+>  
+> +	if (a == &dev_attr_serial_number.attr && pci_get_dsn(pdev))
+> +		return a->mode;
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.50.1
+> 
 
