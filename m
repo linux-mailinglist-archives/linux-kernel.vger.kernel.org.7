@@ -1,241 +1,181 @@
-Return-Path: <linux-kernel+bounces-820494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60428B7F4C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:30:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE9EB7F40F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E2DC7A2795
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F21527DF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E7A3451BF;
-	Wed, 17 Sep 2025 10:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71239309EFC;
+	Wed, 17 Sep 2025 10:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kNJ/uzXV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lCKrd/3S";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kNJ/uzXV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lCKrd/3S"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="kYy/23bx"
+Received: from fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.28.197.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2DC343D92
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756B028489B;
+	Wed, 17 Sep 2025 10:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.28.197.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758105445; cv=none; b=mypIUNqgISksrV/rGObedQU5ggRz6xnUg5eqSaU+gc93xJDnIJO/Y6IbqES1XgFgrz9nHbDl7yMdPRNLJofKFXGsvpYt7ecpI4R7nTikeNX9kxed7q3b9yCPvBOXrsJKdayzAomfTEFB0qIVVwPGs5oUx5DIuMgN3bD3ZW2JVp8=
+	t=1758105464; cv=none; b=OaDGyp2PQFOVZjaKxRx+3poMvAPGyfTq4F9ueNW3cqs/dhKnvXBTdxY2MTLywgkIih8RDsgLIpIBivkozBbtkfkXbPTSsoOZaKyoMt+tGVGeMeWI/vtB3jV4fdq/Hs/K2gm7B/ZpXvZbtUsGfX5kk3PLnkQlosKLF6skCb8feL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758105445; c=relaxed/simple;
-	bh=d7BrBasROwlOu738a4q4rF1WjwCSMVJlZ6ASYpcTTSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dSkOqYE5Rhmu93BZPRQMwj6q/0sFNTOi8dMe8nCSMYnOA4IiuFiK3i9sqBCx3VS1XjL6H/Prxc97ZDkTgjNHNpm1W6Cmts8RqTUtnJkuA8mJCa63dV0rQjCx7yG8w6qmWtVECE0q+ul2AYc+N524YESceWWGyceEW7SfVcBEyww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kNJ/uzXV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lCKrd/3S; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kNJ/uzXV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lCKrd/3S; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5B1141F7BB;
-	Wed, 17 Sep 2025 10:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758105441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nZoP7xI9bh5cuZAC2MMMkkaHSM2qArN4UzTRm8GitpU=;
-	b=kNJ/uzXVRbTatfy05IVGNQLIzQ9yPArYK0Vuo18L+EvSl9LkJwvDxVTm6ipLRjopRYl37Q
-	lmkvpfx9V6hiDWJ3AUH0fo1eVRtgsuz3WXVd+0UCwW7ZT7gSDrbreDLFTElddZkurFO0tw
-	GBvYGseZhe+WcZcn66UCFBOvcVxQJvE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758105441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nZoP7xI9bh5cuZAC2MMMkkaHSM2qArN4UzTRm8GitpU=;
-	b=lCKrd/3SMkAsu71vkV/44IEKXQSRO5fArYajtSwRNnnRLyN7UEpS4+bqwddhUAybMv2xHJ
-	mWtV6X5XQFK+a+CA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="kNJ/uzXV";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="lCKrd/3S"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758105441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nZoP7xI9bh5cuZAC2MMMkkaHSM2qArN4UzTRm8GitpU=;
-	b=kNJ/uzXVRbTatfy05IVGNQLIzQ9yPArYK0Vuo18L+EvSl9LkJwvDxVTm6ipLRjopRYl37Q
-	lmkvpfx9V6hiDWJ3AUH0fo1eVRtgsuz3WXVd+0UCwW7ZT7gSDrbreDLFTElddZkurFO0tw
-	GBvYGseZhe+WcZcn66UCFBOvcVxQJvE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758105441;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nZoP7xI9bh5cuZAC2MMMkkaHSM2qArN4UzTRm8GitpU=;
-	b=lCKrd/3SMkAsu71vkV/44IEKXQSRO5fArYajtSwRNnnRLyN7UEpS4+bqwddhUAybMv2xHJ
-	mWtV6X5XQFK+a+CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BE4BD1368D;
-	Wed, 17 Sep 2025 10:37:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SZxDK12Pymj2OAAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 10:37:17 +0000
-Date: Wed, 17 Sep 2025 11:37:07 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
-	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
-	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
-	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 02/13] device/dax: update devdax to use mmap_prepare
-Message-ID: <2jvm2x7krh7bkt43goiufksuxntncu2hxx67jos3i7zwj63jhh@rw47665pa25y>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <bfd55a49b89ebbdf2266d77c1f8df9339a99b97a.1758031792.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1758105464; c=relaxed/simple;
+	bh=Ytv1newusG7+bkOHV2/blNmqr9tI6rdENvNUJmTjzz0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Pj5HnbfNam3uj5CZBkrEVA70Cqfp43AsOyXlwP5gGJ+s5/Py9pg5ayFStLgvFtPEHvmXdXRyMvoCNioYrRLu4DgknRCvik1feDk0jlKrJ6hJLY9IFLCO7spqhgwJ3yNhxMqTNBFhzmi3etPSKRUSN2yrl7dbaGtHMAFOz8FbkXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=kYy/23bx; arc=none smtp.client-ip=52.28.197.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1758105462; x=1789641462;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=eLSWhg5NVrk5v8Kgwub/wl0fv0lwqhPjbvfwBqv7PuY=;
+  b=kYy/23bxnmi8b1Ar4vRrYiKTCpenbXe6D8rJCuVO43YSvISiX7lc0wWf
+   /+e6d7eRTWhrh7iEiRlfFDeufXabmr/+58QOtiX3vkn6C8FdDY1ogbZmz
+   svNppIULJA4HB7Pa5eXNqnORk7An0fP3koj3vhjAocJFopV8dmkd5ybyn
+   q2Lmnti9P6aK0Co13ThiFNLb53TXkfLiO0yfpGZK1YMgK5h4rt0TCTM6O
+   Elb+xwNfODmaNI/mAWGIyj6H7RscNRiFWhXVxwTVVK6mukdKLFS62em8w
+   8bo+qGbR8YcIxy/3ypD/4b4KQSd1TGNoNA2f2pHF8xVQw+KeYmS58Ulk+
+   w==;
+X-CSE-ConnectionGUID: CtGF1Dk7RPWFlQviryGv4w==
+X-CSE-MsgGUID: EBgriIOpTnCmIc2LiTXBrg==
+X-IronPort-AV: E=Sophos;i="6.18,271,1751241600"; 
+   d="scan'208";a="2137626"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 10:37:32 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:8555]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.1.3:2525] with esmtp (Farcaster)
+ id 6aec255b-397c-4ef4-9439-fab825e22f38; Wed, 17 Sep 2025 10:37:31 +0000 (UTC)
+X-Farcaster-Flow-ID: 6aec255b-397c-4ef4-9439-fab825e22f38
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 17 Sep 2025 10:37:31 +0000
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 17 Sep 2025 10:37:31 +0000
+Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
+ EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
+ 15.02.2562.020; Wed, 17 Sep 2025 10:37:31 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "luc.vanoostenryck@gmail.com" <luc.vanoostenryck@gmail.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>, "mingo@redhat.com"
+	<mingo@redhat.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"sj@kernel.org" <sj@kernel.org>, "David.Laight@aculab.com"
+	<David.Laight@aculab.com>, "Jason@zx2c4.com" <Jason@zx2c4.com>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"bvanassche@acm.org" <bvanassche@acm.org>, "keescook@chromium.org"
+	<keescook@chromium.org>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Chocron, Jonathan" <jonnyc@amazon.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, "Farber, Eliav" <farbere@amazon.com>
+Subject: RE: [PATCH 1/7 5.10.y] tracing: Define the is_signed_type() macro
+ once
+Thread-Topic: [PATCH 1/7 5.10.y] tracing: Define the is_signed_type() macro
+ once
+Thread-Index: AQHcJ78SUxQReVk2GUOsJiAxSQXGEw==
+Date: Wed, 17 Sep 2025 10:37:31 +0000
+Message-ID: <91da8ce3e4fb4a8991876a3ed130a873@amazon.com>
+References: <20250916212259.48517-1-farbere@amazon.com>
+ <20250916212259.48517-2-farbere@amazon.com>
+ <2025091717-snowflake-subtract-40f7@gregkh>
+In-Reply-To: <2025091717-snowflake-subtract-40f7@gregkh>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfd55a49b89ebbdf2266d77c1f8df9339a99b97a.1758031792.git.lorenzo.stoakes@oracle.com>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[62];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 5B1141F7BB
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
 
-On Tue, Sep 16, 2025 at 03:11:48PM +0100, Lorenzo Stoakes wrote:
-> The devdax driver does nothing special in its f_op->mmap hook, so
-> straightforwardly update it to use the mmap_prepare hook instead.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> On Tue, Sep 16, 2025 at 09:22:53PM +0000, Eliav Farber wrote:
+> > From: Bart Van Assche <bvanassche@acm.org>
+> >
+> > commit 92d23c6e94157739b997cacce151586a0d07bb8a upstream.
+>
+> This is only in 6.1, and not other trees, why is it needed here?
 
-Acked-by: Pedro Falcato <pfalcato@suse.de>
+It exists also in 5.15:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/inc=
+lude/linux/overflow.h?h=3Dv5.15.193&id=3Ded6e37e30826b12572636c6bbfe6319233=
+690c90
 
-> ---
->  drivers/dax/device.c | 32 +++++++++++++++++++++-----------
->  1 file changed, 21 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index 2bb40a6060af..c2181439f925 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -13,8 +13,9 @@
->  #include "dax-private.h"
->  #include "bus.h"
->  
-> -static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
-> -		const char *func)
-> +static int __check_vma(struct dev_dax *dev_dax, vm_flags_t vm_flags,
-> +		       unsigned long start, unsigned long end, struct file *file,
-> +		       const char *func)
->  {
->  	struct device *dev = &dev_dax->dev;
->  	unsigned long mask;
-> @@ -23,7 +24,7 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  		return -ENXIO;
->  
->  	/* prevent private mappings from being established */
-> -	if ((vma->vm_flags & VM_MAYSHARE) != VM_MAYSHARE) {
-> +	if ((vm_flags & VM_MAYSHARE) != VM_MAYSHARE) {
->  		dev_info_ratelimited(dev,
->  				"%s: %s: fail, attempted private mapping\n",
->  				current->comm, func);
-> @@ -31,15 +32,15 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  	}
->  
->  	mask = dev_dax->align - 1;
-> -	if (vma->vm_start & mask || vma->vm_end & mask) {
-> +	if (start & mask || end & mask) {
->  		dev_info_ratelimited(dev,
->  				"%s: %s: fail, unaligned vma (%#lx - %#lx, %#lx)\n",
-> -				current->comm, func, vma->vm_start, vma->vm_end,
-> +				current->comm, func, start, end,
->  				mask);
->  		return -EINVAL;
->  	}
->  
-> -	if (!vma_is_dax(vma)) {
-> +	if (!file_is_dax(file)) {
->  		dev_info_ratelimited(dev,
->  				"%s: %s: fail, vma is not DAX capable\n",
->  				current->comm, func);
-> @@ -49,6 +50,13 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  	return 0;
->  }
->  
-> +static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
-> +		     const char *func)
-> +{
-> +	return __check_vma(dev_dax, vma->vm_flags, vma->vm_start, vma->vm_end,
-> +			   vma->vm_file, func);
-> +}
-> +
+Without this change, I get many compilation errors when backporting
+commit d53b5d862acd ("minmax: allow min()/max()/clamp() if the
+arguments have the same signedness.")
 
-Side comment: I'm no DAX expert at all, but this check_vma() thing looks... smelly?
-Besides the !dax_alive() check, I don't see the need to recheck vma limits at
-every ->huge_fault() call. Even taking mremap() into account,
-->get_unmapped_area() should Do The Right Thing, no?
+  CALL    scripts/atomic/check-atomics.sh
+  CC      arch/arm64/kernel/asm-offsets.s
+In file included from ./include/linux/bits.h:22,
+                 from ./include/linux/ioport.h:15,
+                 from ./include/linux/acpi.h:12,
+                 from ./include/acpi/apei.h:9,
+                 from ./include/acpi/ghes.h:5,
+                 from ./include/linux/arm_sdei.h:8,
+                 from arch/arm64/kernel/asm-offsets.c:10:
+./include/linux/nodemask.h: In function '__first_node':
+./include/linux/minmax.h:30:39: error: implicit declaration of function 'is=
+_signed_type' [-Werror=3Dimplicit-function-declaration]
+   30 |  __builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))), \
+      |                                       ^~~~~~~~~~~~~~
+./include/linux/build_bug.h:78:56: note: in definition of macro '__static_a=
+ssert'
+   78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+      |                                                        ^~~~
+./include/linux/minmax.h:50:3: note: in expansion of macro 'static_assert'
+   50 |   static_assert(__types_ok(x, y),  \
+      |   ^~~~~~~~~~~~~
+./include/linux/minmax.h:30:24: note: in expansion of macro '__is_constexpr=
+'
+   30 |  __builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))), \
+      |                        ^~~~~~~~~~~~~~
+./include/linux/minmax.h:38:3: note: in expansion of macro '__is_signed'
+   38 |  (__is_signed(x) =3D=3D __is_signed(y) ||   \
+      |   ^~~~~~~~~~~
+./include/linux/minmax.h:50:17: note: in expansion of macro '__types_ok'
+   50 |   static_assert(__types_ok(x, y),  \
+      |                 ^~~~~~~~~~
+./include/linux/minmax.h:57:3: note: in expansion of macro '__cmp_once'
+   57 |   __cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
+      |   ^~~~~~~~~~
+./include/linux/minmax.h:160:27: note: in expansion of macro '__careful_cmp=
+'
+  160 | #define min_t(type, x, y) __careful_cmp(min, (type)(x), (type)(y))
+      |                           ^~~~~~~~~~~~~
+./include/linux/nodemask.h:265:9: note: in expansion of macro 'min_t'
+  265 |  return min_t(unsigned int, MAX_NUMNODES, find_first_bit(srcp->bits=
+, MAX_NUMNODES));
+      |         ^~~~~
+./include/linux/minmax.h:30:54: error: expected expression before 'typeof'
+   30 |  __builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))), \
+      |                                                      ^~~~~~
+./include/linux/build_bug.h:78:56: note: in definition of macro '__static_a=
+ssert'
+...
 
--- 
-Pedro
+
+> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org> (cherry=20
+> > picked from commit a49a64b5bf195381c09202c524f0f84b5f3e816f)
+>
+> This is not a valid git id in the tree at all.
+
+I will fix the mismatch here and above, but please notice that this
+hash appears in the link I shared.
+
+---
+Regards, Eliav
 
