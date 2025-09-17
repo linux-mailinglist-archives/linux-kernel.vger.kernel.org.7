@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-821651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46237B81DB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FF5B81DC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DA2620753
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:04:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201F146707D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11083287272;
-	Wed, 17 Sep 2025 21:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DD02E2644;
+	Wed, 17 Sep 2025 21:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hurrQ2MH"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sl1BYcI5"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ED0287242
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E15629ACF7
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143066; cv=none; b=cGZsKzcAq2/b8lAz4AuDjukmjrV5YViZVbWBUvwpaUmgzDuApISpswGeB8CkN9T1XaYjGHcofQzqzSIh83YSyMwJsT3HNvivAR4Tx3zHIfANV/pQRNqgc/qCQtUbJZXwQzVtLp4FT+vvQUupL1gnnofZ4prr7+hxgjRN1FXSEA4=
+	t=1758143067; cv=none; b=f6A08cFWUen/bzFoL1ZprGp4tP9LBSheB2y6vS1pKY0CBDawA3ClUYBnuDU08/iCVRtVZDAkiH2+I2YZme5kienJJiIMCk3P8aPsAkmtmkuOxsko+0ee6kiAjqMy9hcA1hZXiSc3PjzZqwdydxXhKvj4NLIXxp1e/bI24gWtyCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143066; c=relaxed/simple;
-	bh=yHu4BWyc9HYj0iZyDR9twQCdVLE01QwMnBaBNhjZ670=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TMtgjXDLyd1LufR1etqwCLsYs9h/00IJDa9L3bsY6FWB+NF3ime9S1KYwbTkUp0a4pBV2dPUSpqNrKe6k8ebKK9PJe3qbE5bF3jyWnH9VlqT81fvLgOyZZowTj8TpospzBv/KBgc7r0qMgzIesrjUAeeWSI2lAIvW5Y4tStlMmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hurrQ2MH; arc=none smtp.client-ip=209.85.219.47
+	s=arc-20240116; t=1758143067; c=relaxed/simple;
+	bh=XU1ekLOUNIJuvyNVZ49DfP0GKjHnS4C5v3J1EnzRwMc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Wrgu3UI5g1r+aW3h+BQIShbb5ijMHl8+vjdriAW2GZv2svNqU9e8TwOyklL/5MuCOaitoPbI9lfXD+OgP/qu0/Q8WcRy2+JI94PxxvSBoYBgz07WbWrb3E6i+fYLSVhAhHpn5H7Wl2E1WtJaLn40Jn677ta2YS/1BxLNJpSI6Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sl1BYcI5; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-7748879b06aso2352056d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:04:24 -0700 (PDT)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-81999b1e9ccso27707385a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758143063; x=1758747863; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xzsfBuCTTaW8xn6XXMC6wEsOLDhpMxnwzj4356j3YjM=;
-        b=hurrQ2MHcSLbhuEylLGCXryPVJr6bWQ7OfoVbwsHEu6/jtRiKOO5ckpvMtY70L+CHX
-         gPg9nUX1majHe5+mcM6t1pe1P8XkEE7H0zn51ciL4zaeOQtv97eE9MVTnu3PFxTj8CdD
-         VbvRi3AqLnmq9Il7XuxJQVXVgU2ck8mFxdNpPDd4KKUP+gavkfwGBfDJwFLG3Kb9feLS
-         cHGDQS4wi7i6IMhK1RKjyQeTaL803g7fIgtuj0CIVbVrnCG1Yo5W9v+kfPioWgzplBqN
-         Tj+AVee1WEdPXtMLg6On72fhuHYNbTlvakWT+F4usPOh3YZ/TqVrfscE9vC7KojYuANy
-         9wtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758143063; x=1758747863;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1758143064; x=1758747864; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xzsfBuCTTaW8xn6XXMC6wEsOLDhpMxnwzj4356j3YjM=;
-        b=TQutAEq3Q95tUlaUESHkIEl45RbZwxlT/9oUtxJ3XfwoFb+j5k/hBhOM4FSe0BKjku
-         7uaM4YFUCJwgkMiNDG/Xw0bXCtWZ9g4STAp8w6ewZW85Jpybty6jZWDAl74fUggIzIde
-         V9qfCo6Yw6lh5dj8zF0uMaWDPM9JFaWu0zEcMdfrFZu6BZvWQtfti+F7tO+DZb0uq61y
-         FFXefUeqVdEb1xOp4xoaLmRaI3Yob+lpXporQ5AqQT+12N0GR4eeZO+JTWP8TqRds391
-         LIbw/vEszkPE4nKbWVhOVd7Mgt5Z81VJEn8R00h0mQjl6k5elDx1bQU5qEgvsy0A8w2e
-         C6hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgvNuX7jRJwVE1t4LvPrviz/JBKzsZmvhDBlY225O5e8Do4V+AH2++K3I3b9fPzdAK+kCfSSNo9mFqXlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwGnYBtNZOFFULUBdkuAYqIe+oidVZAT55CHXoM1N/FENnRXme
-	n3WN1c4IOcMPhT4UmnBj1iVq/Ys+dXLLq0JZ9dnNwA1/2Ux9viG0/MaE
-X-Gm-Gg: ASbGnctC2PvRpllFIsHL2GOqi84QcMm3OB4aWUB5BdzYMbHpiNnMZ5N02y78SZqDyPw
-	6dagIEMI1me4+BL6btDXbwpicW/TwOl5nEGfPThV/UkMA0evpS6YVE7bTstEVQAUjgQJr4TBoVv
-	TDrUY1JZjgGw9RETyFiQa/ji5ArYsH1+v+WlCNqTQm04ZFVyPsbwqh0ULMEWAJHiTuDtGpqC3VL
-	fx+O+aoGL2cjxk1xUhsA+LVD2R1BFpmAWAzICYlSUItRbmZyDre1PjLsjEnnbn1TP5WbEwAqVX3
-	Drxdgtj4DIhloIFVOUfrZo+sAY4aFr90NPjMd3g4+aJVfR+bBMeGCWzpuKaJoaMPMCB5Fu3Da/D
-	bvQri2y9NgGYUlh2diXO2/ujUAYVb2opLf37DA5/Vv/7V
-X-Google-Smtp-Source: AGHT+IHnv8inMvR0MGYLXV31f4OfeVWLDpebkI2MOQJt/N/3XFYgiGfLh+fLfc8OxfXxmx24x5Cz4Q==
-X-Received: by 2002:a05:6214:301c:b0:783:cc80:1770 with SMTP id 6a1803df08f44-78eccf0315bmr41285266d6.25.1758143063400;
-        Wed, 17 Sep 2025 14:04:23 -0700 (PDT)
+        bh=j1PFOqUngE3WRT3vXoG+nn2/r+9Vx7zz/vfzR0o6Iog=;
+        b=Sl1BYcI5v/y1tOBssAu7aur7SWSRTrpAgZ6eXe57QHCEmO/alfzf/qiBAoO4YvDnW9
+         deMcPyaieRxEkz5RYpGig39GupK3Cja8td3kGx77tA5jVpwNIBJdD2P38TvvblhZAK0g
+         bgMbhI1lxT2L7pIU3PAchv9fk/lArarllEY7Vyt7csVOoarxp0zRw1cpb5aZsUdU9f9t
+         uaKUO90WRC/3YqRp+XGZDvUNwakNHjhe9aNfdZylRi6Qe6DkivoBU5peUf0s+4SB+w13
+         w+06rAOFgl9JCyFN0g6hNNaLq/LzD4TADv1ZBx7zqmQeGP2sqVi3i9mpWvz+zPLuDVzP
+         4WGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758143064; x=1758747864;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j1PFOqUngE3WRT3vXoG+nn2/r+9Vx7zz/vfzR0o6Iog=;
+        b=MLZLxdyEPzo2Rqf+2WWd1MaW/rnxn/d0LUuqwVO0SoRs9dlJIIcRG1zJKlOcqj49Jc
+         FF2bziLdtCo7aNRaYgWHO3OdjUwXaPRsLs/Ssu5I9qlZ5NBbFJwW2xK+JtXzDo+BavR9
+         sDKR3d0vUgGyQEhNmh0O4gC53oyWY+dsP0HH6/3nc81c0ysn3gLWMVhhRVtkMVCTSMFM
+         FCMsng0dLY/NoB1bo3l+KinSf6Zxww59K9NomMcIchtsNGwv4hkQL8uplxiUvWQIp11Q
+         OCyn4rjZnE3nmPWbVCPLXlPZp1TmWfB69IgYGvOtdR5e1o5g0T2CN/8oZMuSrBoTxZ0l
+         NcEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6vuEvx/3RBSl2wMIvATTtT6d7cTq3I2+wCTv3BuQ4pVjckIHoYScoiPJFRPOXI2dTOnwU5OUvSHB0WoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6dtX3j1lGwwZFrQaJuhxesjtUkqUwglBYkSLvCWfVH2Wjgjjq
+	oh51LAHuONAwcVRJBAb305WUh0I4AM1Gp7uhog4xsss/G50LkJTY32pF
+X-Gm-Gg: ASbGnctUzDjZX4F+cZijwGtGGevA5nUOKC2NJeI0jap6pfFhACfAcbOvAFUs20c14D3
+	PPgrJ/XGUmbYsuGDh/t5cBuEtoDWJtktZJlF2E8qiiiZZBWZIxuJCbq0GoCBW1p/sKpcCMHqWXq
+	oOoFUJc3fSYJ84itg/DgoBVN4Yrvh18R8IAkllrQ4XNOmn/kvMXq27eXd5/DYfWNQB48GXhHRgP
+	yT1B8YY2PHJfVVzvSw0s+I/ZdwWpszkvE7LPSLCs/+sfix3CpGdOwj3sYQyqPL/dpgtc3yrzdaq
+	keAjjOray8885zWgotyjpjzh9lksMLhWP9wGaCOOQ16pPA3hHXk9aO8haJH4Tg+mfn3Vf7smWqA
+	fpyjV52wjl+pyGgZuHwAAg5NhM4wdgGKmAtf6ax5MxlaS
+X-Google-Smtp-Source: AGHT+IEFvNOShzKL68uD+NxZ49K1VTzvBYDXSCZdxnB+s1jOD/P17yqwToxMfbv19rJqIh6/MPoAXQ==
+X-Received: by 2002:a05:620a:2a07:b0:822:f45b:a5ef with SMTP id af79cd13be357-8310a6416admr415410285a.29.1758143064276;
+        Wed, 17 Sep 2025 14:04:24 -0700 (PDT)
 Received: from [127.0.0.1] ([51.8.152.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793543ffae5sm1897226d6.53.2025.09.17.14.04.22
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793543ffae5sm1897226d6.53.2025.09.17.14.04.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 14:04:22 -0700 (PDT)
+        Wed, 17 Sep 2025 14:04:23 -0700 (PDT)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Subject: [PATCH v3 0/7] arm64: dts: exynos990: Add PERIC0/1 USI, UART and
- HSI2C support
-Date: Wed, 17 Sep 2025 21:04:20 +0000
-Message-Id: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
+Date: Wed, 17 Sep 2025 21:04:21 +0000
+Subject: [PATCH v3 1/7] dt-bindings: soc: samsung: exynos-sysreg: Add
+ Exynos990 PERIC0/1 compatibles
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,11 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFQiy2gC/43NwQ7CIAyA4VdZOIsBBkM8+R7GAxnd1sSNhSrRL
- Ht32U6ejMe/ab8ujCAhEDtXC0uQkTBOJepDxdrBTz1wDKWZEsoIJyyfy35L3IfAn4RTDEDcACj
- jtNASalYu5wQdvnb1eis9ID1ieu9Pstymv70sueAebCOEdtLb7tKPHu/HNo5s87L6w1DFMKdOS
- +uaoEL9bazr+gFSZ37b+gAAAA==
-X-Change-ID: 20250907-perics-add-usinodes-5ee2594041e3
+Message-Id: <20250917-perics-add-usinodes-v3-1-a3629e4666ef@gmail.com>
+References: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
+In-Reply-To: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
  Sam Protsenko <semen.protsenko@linaro.org>, 
@@ -96,58 +95,48 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzk@kernel.org>, linux-serial@vger.kernel.org, 
- linux-i2c@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ linux-i2c@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758143062; l=1502;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758143062; l=1475;
  i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
- bh=yHu4BWyc9HYj0iZyDR9twQCdVLE01QwMnBaBNhjZ670=;
- b=im0qQZJ8AKGgXuNpTZxbO1fV8vN+QksxCGdSj1+fa4lhBFH6jgpJF5rbT4cPHaiRoXCBhJikE
- 9D0TnXZWEGfBswCkVxsXExcCfpjpXAHtau1UtSXUsuMjRQk1l9W/36a
+ bh=XU1ekLOUNIJuvyNVZ49DfP0GKjHnS4C5v3J1EnzRwMc=;
+ b=qoi9lCpJ8AkWkqZ81/EvZO508mjaU6R+Gk9C1QakipPbjB8q7Q823odRC/wj3PM0v3lQ7YSMD
+ 4IM/iE8VhokCRIYYXwA20VgPFybc4sLeVrGugmXaVCYx7xAp7nD6t6s
 X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
  pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
 
-Hi,
-
-This series adds device tree support for PERIC0/1 blocks:
-
-- Add sysreg nodes required for peripheral configuration
-- Add USI, UART and HSI2C controller nodes
-- Update bindings with Exynos990 compatibles
-
-These changes enable serial communication interfaces
-(I2C, UART) for Exynos990 SoC.
-
-Changes in v2:
-- Remove unnecessary blank lines in HSI2C nodes.
-
-Changes in v3:
-- Add sintaxis ";" for parsing error parsing input tree.
-
-Denzeel Oliva
+Add compatible strings for Exynos990 PERIC0 and PERIC1 system register
+controllers.
 
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
-Denzeel Oliva (7):
-      dt-bindings: soc: samsung: exynos-sysreg: Add Exynos990 PERIC0/1 compatibles
-      arm64: dts: exynos990: Add sysreg nodes for PERIC0 and PERIC1
-      dt-bindings: soc: samsung: Add Exynos990 USI compatible
-      arm64: dts: exynos990: Add USI nodes for PERIC0 and PERIC1
-      dt-bindings: serial: samsung: Add Exynos990 UART compatible
-      arm64: dts: exynos990: Add UART nodes for PERIC0/1
-      arm64: dts: exynos990: Add HSI2C nodes for PERIC0/1
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- .../devicetree/bindings/serial/samsung_uart.yaml   |    1 +
- .../bindings/soc/samsung/exynos-usi.yaml           |    1 +
- .../soc/samsung/samsung,exynos-sysreg.yaml         |    4 +
- arch/arm64/boot/dts/exynos/exynos990.dtsi          | 1419 ++++++++++++++++++++
- 4 files changed, 1425 insertions(+)
----
-base-commit: 98ee0e036cfedf543c4728a604fd7870d0000efd
-change-id: 20250907-perics-add-usinodes-5ee2594041e3
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index d8b302f975474a87e4886006cf0b21cf758e4479..173c51b17d9684113bb8254ee0c83e8e74de2fca 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -30,6 +30,8 @@ properties:
+               - samsung,exynos8895-fsys1-sysreg
+               - samsung,exynos8895-peric0-sysreg
+               - samsung,exynos8895-peric1-sysreg
++              - samsung,exynos990-peric0-sysreg
++              - samsung,exynos990-peric1-sysreg
+               - samsung,exynosautov920-hsi2-sysreg
+               - samsung,exynosautov920-peric0-sysreg
+               - samsung,exynosautov920-peric1-sysreg
+@@ -93,6 +95,8 @@ allOf:
+               - samsung,exynos8895-fsys1-sysreg
+               - samsung,exynos8895-peric0-sysreg
+               - samsung,exynos8895-peric1-sysreg
++              - samsung,exynos990-peric0-sysreg
++              - samsung,exynos990-peric1-sysreg
+     then:
+       required:
+         - clocks
 
-Best regards,
 -- 
-Denzeel Oliva <wachiturroxd150@gmail.com>
+2.50.1
 
 
