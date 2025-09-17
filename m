@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-820738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE44BB7EE41
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7358DB7EE0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC2144635A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:58:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021E2188ACF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B713637C0E8;
-	Wed, 17 Sep 2025 12:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7705731618E;
+	Wed, 17 Sep 2025 12:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K+ByiqB7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3BYJEyu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97672319611;
-	Wed, 17 Sep 2025 12:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C468232E747;
+	Wed, 17 Sep 2025 12:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113672; cv=none; b=MQfe09PWPSGAQJi/aBOpKpdSWkIBW5mmV8+8CMrCm8Fi19SLx4vK8H6yzk9uF/6l10uddLCo4fhiAfEHlcMklRt7yO7HmwXSPMET0XYuhv8xh3wOMG//pdgzC9/TmM58meu5Xk1L48f5RFeYnfDoOO5OVaBbBXlclpm3ep29pl8=
+	t=1758113689; cv=none; b=EDawOLsV5gseakTEaJNNMB5n01n3YKXvEQ2lCIMVcAHMLjqOxD/rqFSFrKbxUg1EDBdHSUwA0nWdVi5yR/wj79bmBi5x+dStqGRKT3TkeYym1i4drgqO1N/+02PWrV9Omdr4x63JPxA4DF1ZSUUNFjIyge1LJ4Vij6WfT2z3p6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113672; c=relaxed/simple;
-	bh=KsLpdDb9EDz/2nzPdDmF4P1YvgEiDXBWVoR5B/mbGwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bzGA2uZ97MLJ/RMqvz6Xbcfw47K5OlLFYoAQ6qSvPSvYck02WviAWp7pb6cD90/R3u/cFiOdfv6vFEUj/M5Ba70fBL0oQ24XmXjWsRdZOI7c4COAIDAggEXGQcxOCi0VCRvBpnj2nIsyUOV/lw2QJWS0g78CYEnZhHEQm/DmisQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K+ByiqB7; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758113670; x=1789649670;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KsLpdDb9EDz/2nzPdDmF4P1YvgEiDXBWVoR5B/mbGwA=;
-  b=K+ByiqB7UKnEk+9UGJL+mw6b+dDZxRBS5+qt1JkmXJjnwMSezBoTzgW+
-   V2wy06/8qehFELUJ5bRDOgYBo62W+YjaayVS7UXSKxaWBUxvb9ASu8j3C
-   lqg/E/s8Eh1PqiR3wwb5fGYrCWApWfE6qR+x/KVmB3NOXiVyoNZ4iUVWY
-   +yx4lmcIxWqu23HtJD3AVnqCLETIxcN9M0KagyMOHUt6grLjEhxL6nYKz
-   yzKy3Z9qQ9NEpg/aDL7M0d6YSlCpYKSF+5AQVyvpRaHa0XD4JHUI3WZ03
-   vC4+xrwDh9wSQfNehtbxrWZGov3gv7hE1aR4DXSlil0NgRU2dw08iS7dQ
-   A==;
-X-CSE-ConnectionGUID: FGmr+EPzTpCpA6WrfrFZMg==
-X-CSE-MsgGUID: IXQv0mggRIecJTpx6WXdXw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="63051747"
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="63051747"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 05:54:30 -0700
-X-CSE-ConnectionGUID: oR2ODkYfQ4y1vxW+qKNyow==
-X-CSE-MsgGUID: aguxj3SpQyu9C+MX8A6uSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="180503357"
-Received: from kwachows-mobl.ger.corp.intel.com (HELO [10.245.124.106]) ([10.245.124.106])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 05:54:28 -0700
-Message-ID: <b1ef69f5-e485-4e05-b9ca-6ea73200455a@linux.intel.com>
-Date: Wed, 17 Sep 2025 14:54:25 +0200
+	s=arc-20240116; t=1758113689; c=relaxed/simple;
+	bh=QKyCgcFoodzH/FjHW6Oo6xspEoVjKBY4bFc4QI/M+Lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lcT1//uofUZvtgos10ojkPQ7gEtgeg8Cto3dstwVUukJs96toSb6w6dzzemjQEsnAMQE+sHTUY03NQcrACpAfS9GgK/++CER2ox1yhxoiAnczkCuPUfMafUr/5u+BRomlmklmI8nPjmtKlaASEspHALf3feqHU7lVBqT27UqGsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3BYJEyu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F0F7C4CEF0;
+	Wed, 17 Sep 2025 12:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758113689;
+	bh=QKyCgcFoodzH/FjHW6Oo6xspEoVjKBY4bFc4QI/M+Lo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E3BYJEyum9F9Q9bMawWXWL3Po3Ae+atpsDwX3Q+FQ75o8JTZ/2kkUo3PqeTZ+1/D+
+	 2UkXr1resBwbZJQV25aHZFcI0Ub8i4GeZVlRfq80lde8kBUypbzt6CFgm8/m959PVd
+	 q6TufeMBhErGqmhZRTtAS5ZlyRnf9M+9rrx78/OkMTIftqTYBS7VkaBCtdK1yKvuZE
+	 wl9tSSREmvXChtnHrPT+8mu0U4nE8x+DDSUeyMXp4hEo6ppYvz5CO1JivPT1FqbAeu
+	 ypGY14Snsf+iSzoSFEkRwCNBABSgrYkz55x+Tr6SFLH3K1ssPR7gPF9DWAWLiPVGeg
+	 aiM6n8LLloK8g==
+Date: Wed, 17 Sep 2025 13:54:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>,
+	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Saeed Mahameed <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>, Jiri Pirko <jiri@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH net-next V2 06/10] net/mlx5e: Prepare for using different
+ CQ doorbells
+Message-ID: <20250917125443.GG394836@horms.kernel.org>
+References: <1758031904-634231-1-git-send-email-tariqt@nvidia.com>
+ <1758031904-634231-7-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] accel/qaic: Replace kzalloc + copy_from_user with
- memdup_user
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
- Carl Vanderlip <carl.vanderlip@oss.qualcomm.com>,
- Oded Gabbay <ogabbay@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250917124805.90395-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Karol Wachowski <karol.wachowski@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <20250917124805.90395-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758031904-634231-7-git-send-email-tariqt@nvidia.com>
 
-Reviewed-by: Karol Wachowski <karol.wachowski@linux.intel.com>
+On Tue, Sep 16, 2025 at 05:11:40PM +0300, Tariq Toukan wrote:
+> From: Cosmin Ratiu <cratiu@nvidia.com>
+> 
+> Completion queues (CQs) in mlx5 use the same global doorbell, which may
+> become contended when accessed concurrently from many cores.
+> 
+> This patch prepares the CQ management code for supporting different
+> doorbells per CQ. This will be used in downstream patches to allow
+> separate doorbells to be used by channels CQs.
+> 
+> The main change is moving the 'uar' pointer from struct mlx5_core_cq to
+> struct mlx5e_cq, as the uar page to be used is better off stored
+> directly there. Other users of mlx5_core_cq also store the UAR to be
+> used separately and therefore the pointer being removed is dead weight
+> for them. As evidence, in this patch there are two users which set the
+> mcq.uar pointer but didn't use it, Software Steering and old Innova CQ
+> creation code. Instead, they rang the doorbell directly from another
+> pointer.
+> 
+> The 'uar' pointer added to struct mlx5e_cq remains in a hot cacheline
+> (as before), because it may get accessed for each packet.
+> 
+> Signed-off-by: Cosmin Ratiu <cratiu@nvidia.com>
+> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-On 9/17/2025 2:48 PM, Thorsten Blum wrote:
-> Replace kzalloc() followed by copy_from_user() with memdup_user() to
-> improve and simplify qaic_attach_slice_bo_ioctl().
->
-> No functional changes intended.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  drivers/accel/qaic/qaic_data.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
-> index 797289e9d780..202bdca58847 100644
-> --- a/drivers/accel/qaic/qaic_data.c
-> +++ b/drivers/accel/qaic/qaic_data.c
-> @@ -18,6 +18,7 @@
->  #include <linux/scatterlist.h>
->  #include <linux/spinlock.h>
->  #include <linux/srcu.h>
-> +#include <linux/string.h>
->  #include <linux/types.h>
->  #include <linux/uaccess.h>
->  #include <linux/wait.h>
-> @@ -984,18 +985,12 @@ int qaic_attach_slice_bo_ioctl(struct drm_device *dev, void *data, struct drm_fi
->  
->  	user_data = u64_to_user_ptr(args->data);
->  
-> -	slice_ent = kzalloc(arg_size, GFP_KERNEL);
-> -	if (!slice_ent) {
-> -		ret = -EINVAL;
-> +	slice_ent = memdup_user(user_data, arg_size);
-> +	if (IS_ERR(slice_ent)) {
-> +		ret = PTR_ERR(slice_ent);
->  		goto unlock_dev_srcu;
->  	}
->  
-> -	ret = copy_from_user(slice_ent, user_data, arg_size);
-> -	if (ret) {
-> -		ret = -EFAULT;
-> -		goto free_slice_ent;
-> -	}
-> -
->  	obj = drm_gem_object_lookup(file_priv, args->hdr.handle);
->  	if (!obj) {
->  		ret = -ENOENT;
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
