@@ -1,203 +1,90 @@
-Return-Path: <linux-kernel+bounces-820884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D543CB7F967
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC16B7F7F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C7D17C776
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:49:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCBD63B5972
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D6436CC8C;
-	Wed, 17 Sep 2025 13:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B19D3195F8;
+	Wed, 17 Sep 2025 13:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NjJfTOyw"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ax4ebU2V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC23E3705A2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9799A3195FE;
+	Wed, 17 Sep 2025 13:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758116538; cv=none; b=qifZ6OvL0jqUTuop/0XWzx0XW9OdzxQbjs4aWQjXr2PemJiEh0Mw2dxTp8P9TgQG2FtY6X7F2BvgGNIwTLMMgQa2x50Ms7EwxLTmiclvHdZ8YH3hPIz7CUIgQxzxuw4+bTUmZHXbvdQ9REbHk+jbEBf5tNDG5GinjY8FFVs9+4s=
+	t=1758116492; cv=none; b=k0jJ0ZEjcNzb4YPoEqrvUfO+6opf/RJJ7GtttLdgymFSGkcGNuXL1h/XChmHG/guzqZDrZwLZRWSbaNcQtcYuANlu8q8RNO7jUTRJpkRFONpCKlytc9Cop8RHlLD0PXC9KH6/A6h5TRPy/wDLV37BkwDK0l/9qVcDLSG1uZc8g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758116538; c=relaxed/simple;
-	bh=bBNRVqm0xNP2bUegYaeeW1aFmcjZpJaGNmJt5fBNr4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=a6giaSCS0znmHAQWtz0tbVQl+vcJjcR3Cm/FgOkMcYIrmZo+hMDVxiW2sCllKEZNsg2TkGfhV/GKh55nzFlwjQjFuXw5YJo/qrTfWW2BTJzXKwREtEcuBzdbJfDsrazkrG7sE9uPcTjblpR1osfQPT2c5QI8vz5YS4lpM4eufdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NjJfTOyw; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250917134215epoutp03d177504657ac660a33541616fa8a9c85~mFayJkiST0929209292epoutp03Y
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:42:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250917134215epoutp03d177504657ac660a33541616fa8a9c85~mFayJkiST0929209292epoutp03Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758116535;
-	bh=47MZ+V0NL7IUSooPzfSTYCMJEyy6bhIfvUpbYlXE654=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NjJfTOywhvVtgdV3eRZnWqlx3a+J3GUZGZI+F9sUu/ahIk/LcRVbQFzX4yXtGa/Qy
-	 E2l2xa6ooK9aUyQ2iec4JkHb6bta5sTUfdfous+i4DY8L3fZehX6FLsYl4dttOEQRe
-	 bxEqPUR2KRXcn7kmwxjtMgrk6FruWS30Ne3Z0JZs=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250917134214epcas5p102f95878dcffde6551eff24b69ddeb95~mFaxy6AHd1744017440epcas5p16;
-	Wed, 17 Sep 2025 13:42:14 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cRg1K75dHz6B9m6; Wed, 17 Sep
-	2025 13:42:13 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250917134213epcas5p139ba10deb2f4361f9bbab8e8490c4720~mFawftC-y3219032190epcas5p1o;
-	Wed, 17 Sep 2025 13:42:13 +0000 (GMT)
-Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
-	by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250917134211epsmtip219794a6baeaefdd01da7969c3905321b~mFautZlRJ0952109521epsmtip2F;
-	Wed, 17 Sep 2025 13:42:11 +0000 (GMT)
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	cpgs@samsung.com, Neeraj Kumar <s.neeraj@samsung.com>
-Subject: [PATCH V3 20/20] cxl/pmem: Add CXL LSA 2.1 support in cxl pmem
-Date: Wed, 17 Sep 2025 19:11:16 +0530
-Message-Id: <20250917134116.1623730-21-s.neeraj@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250917134116.1623730-1-s.neeraj@samsung.com>
+	s=arc-20240116; t=1758116492; c=relaxed/simple;
+	bh=sQdxo9SHlz51iSsTYeRMaDH1R61J5cb2/KGHfNquLPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+5wV6KIk+8+dg9DNWhCs5vamzFSTSEtEEUy8uQhdLM/AgXNCSjNwWwU382EMAhHX4lwINfzwdWx4pDHLv6HN2PkZz7nqQ+cCklG/XaMe61hpLbKy0U3/NafpC8rEgbdYhlJ5e8A7GNY9TbbVodhPNS6sLkpwfSRIEPdKD0XsbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ax4ebU2V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4BB3C4CEF0;
+	Wed, 17 Sep 2025 13:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758116492;
+	bh=sQdxo9SHlz51iSsTYeRMaDH1R61J5cb2/KGHfNquLPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ax4ebU2V58seIKiExQTG+K/Ojes9WRpuct4T/mglVB9AUokZ9llUAVlJTvAilmfjd
+	 pbEGgmRc2FMFiqRQKWisabz0AnTaRGCy/Oc2i/AyA2KEVynk9Zm2ChnPkeiA1iQyPY
+	 Pufr0WD+YSz/IhrOkbkAfxbOZ0WJVYSp4Z4EpE+LzF8AKKLobaT7JmZf0I8rczKOE4
+	 PRUtTDYFeZPBMZGEJ5/IJHg6YAPygnZsbEXLkAHWj+o0iltSRZtHaJm7ZrSSXCAube
+	 3JRBYiXu9Ckrhz7+Kt2Yr32kwHDfWvcRBWW2VFgbAN1lN9n2qcBM6FmmbkfFc1DMp8
+	 gMjH1mt0ITNUw==
+Date: Wed, 17 Sep 2025 16:41:28 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v3 3/4] ARM: dma-mapping: Switch to physical address
+ mapping callbacks
+Message-ID: <20250917134128.GC6464@unreal>
+References: <cover.1758006942.git.leon@kernel.org>
+ <5f96e44b1fb5d92a6a5f25fc9148a733a1a53b9d.1758006942.git.leon@kernel.org>
+ <20250916184617.GW1086830@nvidia.com>
+ <20250917103644.GB6464@unreal>
+ <20250917113248.GA1086830@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250917134213epcas5p139ba10deb2f4361f9bbab8e8490c4720
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917134213epcas5p139ba10deb2f4361f9bbab8e8490c4720
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
-	<CGME20250917134213epcas5p139ba10deb2f4361f9bbab8e8490c4720@epcas5p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917113248.GA1086830@nvidia.com>
 
-Add support of CXL LSA 2.1 using NDD_REGION_LABELING flag. It creates
-cxl region based on region information parsed from LSA.
+On Wed, Sep 17, 2025 at 08:32:48AM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 17, 2025 at 01:36:44PM +0300, Leon Romanovsky wrote:
+> > On Tue, Sep 16, 2025 at 03:46:17PM -0300, Jason Gunthorpe wrote:
+> > > On Tue, Sep 16, 2025 at 10:32:06AM +0300, Leon Romanovsky wrote:
+> > > > +	if (!dev->dma_coherent &&
+> > > > +	    !(attrs & (DMA_ATTR_SKIP_CPU_SYNC | DMA_ATTR_MMIO)))
+> > > > +		__dma_page_cpu_to_dev(phys_to_page(phys), offset, size, dir);
+> > > 
+> > > I'd keep going and get rid of the page here too, maybe as a second
+> > > patch in this series:
+> > 
+> > Thanks, it is always unclear how far to go with cleanups.
+> 
+> IMHO to maximally support what Matthew is working on I'd remove all
+> the struct page things and prefer the pfn/phys variations from the MM
+> side.
 
-Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
----
- drivers/cxl/core/pmem_region.c | 53 ++++++++++++++++++++++++++++++++++
- drivers/cxl/cxl.h              |  4 +++
- drivers/cxl/pmem.c             |  2 ++
- 3 files changed, 59 insertions(+)
+ok, my patches can be found here:
+https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/log/?h=dmabuf-vfio
 
-diff --git a/drivers/cxl/core/pmem_region.c b/drivers/cxl/core/pmem_region.c
-index 665b603c907b..3ef9c7d15041 100644
---- a/drivers/cxl/core/pmem_region.c
-+++ b/drivers/cxl/core/pmem_region.c
-@@ -290,3 +290,56 @@ int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
- 	return rc;
- }
- EXPORT_SYMBOL_NS_GPL(devm_cxl_add_pmem_region, "CXL");
-+
-+static int match_free_ep_decoder(struct device *dev, const void *data)
-+{
-+	struct cxl_decoder *cxld = to_cxl_decoder(dev);
-+
-+	return !cxld->region;
-+}
-+
-+static struct cxl_decoder *cxl_find_free_ep_decoder(struct cxl_port *port)
-+{
-+	struct device *dev;
-+
-+	dev = device_find_child(&port->dev, NULL, match_free_ep_decoder);
-+	if (!dev)
-+		return NULL;
-+
-+	/* Release device ref taken via device_find_child() */
-+	put_device(dev);
-+	return to_cxl_decoder(dev);
-+}
-+
-+void create_pmem_region(struct nvdimm *nvdimm)
-+{
-+	struct cxl_nvdimm *cxl_nvd;
-+	struct cxl_memdev *cxlmd;
-+	struct cxl_pmem_region_params *params;
-+	struct cxl_root_decoder *cxlrd;
-+	struct cxl_decoder *cxld;
-+	struct cxl_region *cxlr;
-+
-+	if (!nvdimm_has_cxl_region(nvdimm))
-+		return;
-+
-+	lockdep_assert_held(&cxl_rwsem.region);
-+	cxl_nvd = nvdimm_provider_data(nvdimm);
-+	params = nvdimm_get_cxl_region_param(nvdimm);
-+	cxlmd = cxl_nvd->cxlmd;
-+	cxlrd = cxlmd->cxlrd;
-+
-+	 /* TODO: Region creation support only for interleave way == 1 */
-+	if (!(params->nlabel == 1))
-+		dev_info(&cxlmd->dev,
-+			 "Region Creation is not supported with iw > 1\n");
-+	else {
-+		cxld = cxl_find_free_ep_decoder(cxlmd->endpoint);
-+		cxlr = cxl_create_region(cxlrd, CXL_PARTMODE_PMEM,
-+					 atomic_read(&cxlrd->region_id),
-+					 params, cxld);
-+		if (IS_ERR(cxlr))
-+			dev_info(&cxlmd->dev, "Region Creation failed\n");
-+	}
-+}
-+EXPORT_SYMBOL_NS_GPL(create_pmem_region, "CXL");
-diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index f01f8c942fdf..0a87ea79742a 100644
---- a/drivers/cxl/cxl.h
-+++ b/drivers/cxl/cxl.h
-@@ -910,6 +910,7 @@ cxl_create_region(struct cxl_root_decoder *cxlrd,
- bool is_cxl_pmem_region(struct device *dev);
- struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
- int devm_cxl_add_pmem_region(struct cxl_region *cxlr);
-+void create_pmem_region(struct nvdimm *nvdimm);
- #else
- static inline bool is_cxl_pmem_region(struct device *dev)
- {
-@@ -923,6 +924,9 @@ static inline int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
- {
- 	return 0;
- }
-+static inline void create_pmem_region(struct nvdimm *nvdimm)
-+{
-+}
- #endif
- 
- void cxl_endpoint_parse_cdat(struct cxl_port *port);
-diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-index 38a5bcdc68ce..0cdef01dbc68 100644
---- a/drivers/cxl/pmem.c
-+++ b/drivers/cxl/pmem.c
-@@ -135,6 +135,7 @@ static int cxl_nvdimm_probe(struct device *dev)
- 		return rc;
- 
- 	set_bit(NDD_LABELING, &flags);
-+	set_bit(NDD_REGION_LABELING, &flags);
- 	set_bit(NDD_REGISTER_SYNC, &flags);
- 	set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
- 	set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
-@@ -155,6 +156,7 @@ static int cxl_nvdimm_probe(struct device *dev)
- 		return -ENOMEM;
- 
- 	dev_set_drvdata(dev, nvdimm);
-+	create_pmem_region(nvdimm);
- 	return devm_add_action_or_reset(dev, unregister_nvdimm, nvdimm);
- }
- 
--- 
-2.34.1
+I converted "struct page" path from all archs with .map_page.
 
+Thanks
 
