@@ -1,94 +1,93 @@
-Return-Path: <linux-kernel+bounces-820971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2668CB7FE22
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:19:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7126B7FEC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB29527DC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B53618991D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9B72DC323;
-	Wed, 17 Sep 2025 14:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EC32E1EFF;
+	Wed, 17 Sep 2025 14:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MZVQcLEE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y4ZcVdux"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Oh+CJCHe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3E72DA756;
-	Wed, 17 Sep 2025 14:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A8D2E0926
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758118056; cv=none; b=BUD+1Zk+PBNr6Y11Tr0EmKnRmIAnsves0tD56MIwTQyzHdiMl6oiBQSfk/6tfv3IF/rsyOfH694XJNYs7DVkAgjEb5BG/NGM/6TOopx/Zh+nE/BMNAoxYbMVhJ1CFR19L6VB3T3HEmiTZhLO1oGzFI5oKM6e1RGLct/WGdsdu9o=
+	t=1758118072; cv=none; b=AZ6XkJDX0l/AEiomDTiPI4u3fpsR9H6yA1i92SFMRGUexeXxMsRCzTsdffOwObjIN+Z6WlqzoWBVM1ORMKwZIIL4vntzzVVGzGwAKmKBB/n6BdsTyaCsmL0X2+3ZlCXR4k2ec/OEsEe8xDAruFmPJ9qO6p6BKc89B902e+cIhHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758118056; c=relaxed/simple;
-	bh=m2pKt/ymqvqobJmR3ZiAxV+TWRlvODP62Gi843uPjm0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=roNaAP5L0BOVilsk1NWVRbhfM2+m7ByAB7YdwUbMrhMoXCkYz5kHHHbaLVmBGj8Ru3TWQVi4xxPSX+/+W+fWvZ1tgzppBSgHZSB4Bxzynn90LGJBZfXNa20xrzLh868Whs5bSlHwQgQKBxVGQh2F8LMK1oQLlGT2byh3i73o84c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MZVQcLEE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y4ZcVdux; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758118053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L4eYxqPW/RTKw76zOoPo67Ia8HYCFz046WwisbxEWDM=;
-	b=MZVQcLEE9Um2P9Kd1FSTIU5+F0l5pHPDx0qXVNHFk6c4ufFXW5uUkJh7Pxg41Ees1C4wD2
-	AP/o7BybqQAnwiIulL/EWPU0z6lXCU8YlHMkR+7Sj8CLSUvcQDOiCkfPf8auBPdBu6NeTd
-	Jusrztepx2BbQM0QMzdIyusOTN3DpXD4Y0B/A0PEPgyg/6QIQ0RIl8f7KF9jhUKzbCM5D4
-	eYPmz+vK4JtcswJp5QSp1Ob92aA/IzGjAU3W1cRBzytn2UUgR4hDWpX/GsJGM9Zt2fSK9h
-	ZaeDfdj0ziIxv2mfFR0TF2TdlqCp8UFpQ6xe7TOWl5+NOM11G9nxiA1NY6o3nw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758118053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L4eYxqPW/RTKw76zOoPo67Ia8HYCFz046WwisbxEWDM=;
-	b=Y4ZcVduxRnJAJJKKWIrc3Upg4CFpz8ThC1g6j5fu+b+1DWEsEHDJlM4EhJ7jaxJlH97nwq
-	J5le2MuXPjSg/CCg==
-To: Gabriele Monaco <gmonaco@redhat.com>, Xiu Jianfeng
- <xiujianfeng@huaweicloud.com>, rostedt@goodmis.org, mhiramat@kernel.org
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- nicolas.bouchinet@oss.cyber.gouv.fr, xiujianfeng@huawei.com
-Subject: Re: [PATCH] rv: Fix boot failure when kernel lockdown is active
-In-Reply-To: <b2c19df4c5036e956e4e892ac983d5488a8b9614.camel@redhat.com>
-References: <20250917125733.2346923-1-xiujianfeng@huaweicloud.com>
- <b2c19df4c5036e956e4e892ac983d5488a8b9614.camel@redhat.com>
-Date: Wed, 17 Sep 2025 16:07:32 +0200
-Message-ID: <87wm5x18bf.fsf@yellow.woof>
+	s=arc-20240116; t=1758118072; c=relaxed/simple;
+	bh=6zOh4sinXosIoKWFI9VsVS8BRJBsHrpLMDRZFthCN9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clVbUAOBhlZDq5Y8VddmftbuwkAsU1u2HH0pNuay84thfbJtgvf+2RcaCdc91QWmMpDK3XkAQvp0TSw93kuVEW5RrTjOnRRvI41N4xWP7mAP3SoJ+TXqcq1ZiL0kjp8WWQ4qRr0xsuK+0zufHJOh0HTuuhGYsf5okmwWk370G3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Oh+CJCHe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDECC4CEF5;
+	Wed, 17 Sep 2025 14:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758118071;
+	bh=6zOh4sinXosIoKWFI9VsVS8BRJBsHrpLMDRZFthCN9s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oh+CJCHeW9+Fy5a5DWVYNBd3hXEespitYxTccvFvbFAQ7/CZ2Fw84BrM/14NzQLtl
+	 U9uUTXf6QSta69Chhe0FM8yIY/0ZedE+QLkKLb4ex+KL2KD4xT9td0I1UxcQzPWsq0
+	 8B38PJ6R2+blsf43BGRy6sbBCz0yXEYlf13hbd3E=
+Date: Wed, 17 Sep 2025 10:07:47 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Petr Mladek <pmladek@suse.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>, 
+	Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, 
+	kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v4 1/5] printk: nbcon: Export console_is_usable
+Message-ID: <20250917-imaginary-vigorous-condor-fccdc1@lemur>
+References: <20250915-nbcon-kgdboc-v4-0-e2b6753bb566@suse.com>
+ <20250915-nbcon-kgdboc-v4-1-e2b6753bb566@suse.com>
+ <aMp4BrEpqXOW9nam@pathway.suse.cz>
+ <dad15813cfdc3b7c77ba71266e38a137d0015bcd.camel@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dad15813cfdc3b7c77ba71266e38a137d0015bcd.camel@suse.com>
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
-> On Wed, 2025-09-17 at 12:57 +0000, Xiu Jianfeng wrote:
->> From: Xiu Jianfeng <xiujianfeng@huawei.com>
->> 
->> When booting kernel with lockdown=confidentiality parameter, the
->> system
->> will hang at rv_register_reactor() due to waiting for
->> rv_interface_lock,
->> as shown in the following log,
->> 
->
-> Thanks for finding this, the problem was already fixed in [1], which is
-> on its way to getting merged.
->
-> [1] -
-> https://lore.kernel.org/all/20250903065112.1878330-1-zhen.ni@easystack.cn
+On Wed, Sep 17, 2025 at 09:21:48AM -0300, Marcos Paulo de Souza wrote:
+> > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > 
+> > It means that Macros developed a patch and Petr reviewed it.
+> > The patch was not longer modified.
 
-Yeah, but it is interesting that this is causing real boot problem. I
-thought that commit merely fixes a theoretical bug. I guess this is an
-even stronger motivation to use lock guards.
+That's not entirely correct. The signed-off trailer is used as the boundary
+indicating who was the person responsible for collecting the trailers. When
+the trailers are collected by the original author as part of their iteration
+cycles, their signed-off-by trailer goes below any trailers they have
+received.
 
-Nam
+When the trailers are collected by the maintainer, any trailers they retrieve
+will go below the original author's S-o-b, but above their own.
+
+> > 
+> > Note the Reviewed-by tag might be preserved even when Marcos
+> > later did some cosmetic changes, e.g. fixed a typo, formatting,
+> > or rebased.
+> 
+> Got it. I used b4 prep --update-trailers, and it added the Reviewed-by
+> before my Sign-off. But still, this patch didn't change since the last
+> submission, so I thought that it would be ok.
+
+That is the correct behaviour.
+
+-K
 
