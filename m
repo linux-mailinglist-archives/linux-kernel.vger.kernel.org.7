@@ -1,211 +1,264 @@
-Return-Path: <linux-kernel+bounces-820560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653EDB7C9EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13947B7CC1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C62232258E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1CAA1C03E5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11142DF712;
-	Wed, 17 Sep 2025 11:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013482ECE87;
+	Wed, 17 Sep 2025 11:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rSWmhwBv"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011006.outbound.protection.outlook.com [40.107.208.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fxQsuJDb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MQ0cdVXu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fxQsuJDb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MQ0cdVXu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4EE1D516F;
-	Wed, 17 Sep 2025 11:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758108663; cv=fail; b=UOGgd50UZu+lZhxoZRBSLZmwuGFQGPcVQBf11rCrOZrq25sOJRDLF+sBWKBta98MOirvLgkAtQ2scqHrephDUAUwSmXsg59AwjkEYP02UqyIafcMP7El8aerCrSXBHDb4KEHsjdeWn3hX2muvyPSakjdm8dUtoqMEBJqLTrtcDU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758108663; c=relaxed/simple;
-	bh=jMAXLmpuU/82mgrpLltGbFXwg7tNG9JC+72SFG+6kL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=M28EWfu/6ktwerNC4ukOMdq31PRa6HJqkjWMLOk2slQWW9h9ns5Io5l12nftWAcW6l1VZGPpPmXriwGqv6VAQ5sz8/DysHCL28D0RpWGOaYWRGhqzQ8cTibQXuDfx0dwcYR/O7pUX74WMxP9wrglzvRByWLHY2IHkEF+8ah3bAM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rSWmhwBv reason="signature verification failed"; arc=fail smtp.client-ip=40.107.208.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XxuzoUKpmNc4695V9yMF6OgHFdfbyLbCwvhbfTG4TbuYulxLbGWmeXeILrBFZPE/XRIIcJmbjvSTWNIjsmc4yjWbKrJ2ewSn7yM4bzpx4viplVL+IiZmQuAmfbG/wkmCpsElEyfTlWnSirWQHNRf2ROi1JGRLKOr8opif+nMLDbiEaOcDXV8N7k6OZ+fponhl2Ensq4S18H74lcVJ/hqgzzI0dM9FJm/fpE0GUx05z9x3LLRMVrRBwee/XyotW8YmBbeIEEM7CBe9NKWtCX8qqiuM+wXUTfX4UWRf9cRzma/NsXk/GWl2cQEfhRCAABgLBLGAWfoEv3yKJY4tQu9oQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nPSoQgkEFYCr0gi3flFOY7hzz5vT2FJWMhdZAFZQieU=;
- b=FGggVdNowTt8Ozth7RqPLmGVpqktYgAwC0zqjJab/w4McFAXg4vpoHvAM4XtTDh00AHoHMiLVU6GRo/rmAoI2TYBdtuDj035znSaW0Zlrr2/2Zly8h/gM5T9CVlZUabGwD0XpxAV+PqDClElz4kX+uQtalCpjsfbcDZsMzgH1auImBB9MLNzPEc6JQoXmDJTzWfXhQkHvkDcPqicaJr3751VkKRtdI86QxNFsTEHGf72MhF1j5/wLgTqE9CHkSUgw7xc2VAfwonw7TTFbZx4UGsgeJM0XnX6Y9WYebC0MDZ6s32U6KkLIsgdnhXKO+lriu6cZN61pLkn8qATvQAuig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nPSoQgkEFYCr0gi3flFOY7hzz5vT2FJWMhdZAFZQieU=;
- b=rSWmhwBvUXcSw7GYNbUXiPEYRZiWsFkHDD87WxDlFj36P5t8q0dJPWD2kAXtRvbN51j+BR4SCFX10P+k5WstIlUQgj8NFgCV/shIIZgXHy30r0r4dhzo3CQLW2DQDCcjgssrXxMpXbU7dMmnxRo5t2nzRBWVbRE2+SbE7LPk6EnAqwnTIuvj8yZ9gn9IN2UIEviXYCI/6arD6zU8lLjYJVnYr9ofhq4iPpcvrzyY7+9EdP3CNjNZD8NX7H1tSG4eouejLDprbzIaiahrx39QPX0+zwvOwVgKCy4TY0ASJH9UaWTm3E6ZJxM7zhmZdbTJyAI1h5CQg7G469A9Oz8DRQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by CYYPR12MB8990.namprd12.prod.outlook.com (2603:10b6:930:ba::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Wed, 17 Sep
- 2025 11:30:59 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::6f7f:5844:f0f7:acc2]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::6f7f:5844:f0f7:acc2%7]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 11:30:59 +0000
-Date: Wed, 17 Sep 2025 14:30:51 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: "Huang, Joseph" <joseph.huang.at.garmin@gmail.com>,
-	linus.luessing@c0d3.blue
-Cc: Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	David Ahern <dsahern@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org, bridge@lists.linux.dev
-Subject: Re: [PATCH net] net: bridge: Trigger host query on v6 addr valid
-Message-ID: <aMqb63dWnYDZANdb@shredder>
-References: <20250912223937.1363559-1-Joseph.Huang@garmin.com>
- <aMW2lvRboW_oPyyP@shredder>
- <be567dd9-fe5d-499d-960d-c7b45f242343@gmail.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <be567dd9-fe5d-499d-960d-c7b45f242343@gmail.com>
-X-ClientProxiedBy: TL2P290CA0017.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:3::7)
- To SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F0F302774
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758108747; cv=none; b=By8XOACyU5XuCbKT0oLjWIncQTaZCWo31IbSv1/6cWWqiVgZEOHhz14zFNVA/S3b8xP/hkewkGnG7wlL5Xf/MFCxxwug9sjRDyJNaaAGrnUHT574I90/CoV3lpKKHeIfI8fOWJ1zT5LwONEo9YGLM9PKOJ8FIjyPdU+GD+df0ao=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758108747; c=relaxed/simple;
+	bh=3LlU8D5Tj8BOKkc9McIo8H1J7S9pib7vCnIKwhUAK1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6Je9Qi8RaTk5WuYo3YnDvdQJ4ic0S9nFfEn/X3MUriBVgEc0aiSLXw7kI5VPzHOlPzZe+QjB2J0aCx81mmoh5J28JTrgVywYAAhBHPGpvGyrY/l7q/5cN+HVw9LSlyC7ywa2Rsg9mLNhongWEGrkEoVXU/F8f1K7TRGiVkDw+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fxQsuJDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MQ0cdVXu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fxQsuJDb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MQ0cdVXu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 99E6921D3E;
+	Wed, 17 Sep 2025 11:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758108739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
+	b=fxQsuJDbFPJ+Aq2i2N1EojNI/Hd1bpt5cNweVpv6AUqFIxUOJbm2qY66huYbwL8Tm3GUz5
+	SwH8SBvGIvkqn12PaatbE30ebxk6Fodkbs4w5BuVb54khNk0vMRWP/YIASKCUV0kXQR0cJ
+	CDZdoO2GTvamVOJk2LCTJZWR9rZcfqg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758108739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
+	b=MQ0cdVXu/Fgwg2bcVUOI0ttAv/c4z/ykaLMQuBWxTsaAFW5ZdcGVoWzN/qQnuXyDWnG4qD
+	lXTBNkGr95Rj2EDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758108739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
+	b=fxQsuJDbFPJ+Aq2i2N1EojNI/Hd1bpt5cNweVpv6AUqFIxUOJbm2qY66huYbwL8Tm3GUz5
+	SwH8SBvGIvkqn12PaatbE30ebxk6Fodkbs4w5BuVb54khNk0vMRWP/YIASKCUV0kXQR0cJ
+	CDZdoO2GTvamVOJk2LCTJZWR9rZcfqg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758108739;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+Ap5mPSoqW5VngVWaJTgyJfGx7MJPhwio1kMAlldw6U=;
+	b=MQ0cdVXu/Fgwg2bcVUOI0ttAv/c4z/ykaLMQuBWxTsaAFW5ZdcGVoWzN/qQnuXyDWnG4qD
+	lXTBNkGr95Rj2EDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 202B113A92;
+	Wed, 17 Sep 2025 11:32:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GSeHBECcymi0TAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 11:32:16 +0000
+Date: Wed, 17 Sep 2025 12:32:10 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
+	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
+	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
+	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
+	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 08/13] mm: add ability to take further action in
+ vm_area_desc
+Message-ID: <wabzfghapygwy3fzexbplmasrdzttt3nsgpmoj4kr6g7ldstkg@tthpx7de6tqk>
+References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
+ <9171f81e64fcb94243703aa9a7da822b5f2ff302.1758031792.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|CYYPR12MB8990:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6922c96a-7f7f-47f4-820c-08ddf5ddace2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?Xjsi71E3YurfAe3Bthdme86kpXzxupwrc9rjkWujaCEwgr7OiB6oprEKBd?=
- =?iso-8859-1?Q?ag1k6kErlCrg4jXnWRMuIoTEj+47+o56mmcglUtp7/qbraPuPu6iNa4Kd9?=
- =?iso-8859-1?Q?88d437RWmD86ojbRRRbryBIK0gaYA1Nb8pqA/zUVMQ7EC2k9HM/HKk+VPs?=
- =?iso-8859-1?Q?NWxBNzcqp00ebB7rp1hhsxPMpKI0eQcAAnQ7prvP4LDWBcwGIZpl5csz+4?=
- =?iso-8859-1?Q?bKSEdhiHvgIAVGyrNEUAXJj1uzWRuhJoHTCuRp+I/d5aONZlE2yCqcQJWb?=
- =?iso-8859-1?Q?tDY6kpVB5SwaQPTBgolysb/p+wzO5Ogfv3vVg++iqukNtojzqXNLMkCg+4?=
- =?iso-8859-1?Q?0pUlSaX5cRc4W0WtdLUVZrkfVLlDTdQ8rIm/SOAo7lK027l5Py9HId9BzJ?=
- =?iso-8859-1?Q?cs8CWzQeLM5RMS1FGdaZY4/YeY6moFHKalxsdqZYmVHy42BBiDuF21NRJy?=
- =?iso-8859-1?Q?1tDSzaME4r8BCi1Bi3m07ZlM2OVPPfUqsFiOp+CCJk5hJJHw6cKPAZRXhq?=
- =?iso-8859-1?Q?oijip9g8CXdL3IXZgut0HRa/ro4avF2xxDUtZpEVHseunrAdWLd0TSyYSY?=
- =?iso-8859-1?Q?3l5j8ZnQY9aLV8Z6tgTdeOnK9fdIbyMiSxXnQ7YRnSw8s1kYAag1tDjSGi?=
- =?iso-8859-1?Q?a2fnL12sq8Fx8jYZ1/pwZ5eim3kFmWfb8+GEt8VyLSF/jnW8dI8e9UI8Yd?=
- =?iso-8859-1?Q?5upD36lz9FUOTm1ch8EZ+GA6NT3aNVTD4zP6kwau5lNvi1vvgdKfgINtz1?=
- =?iso-8859-1?Q?2T9io8lxhPGet3jh4zsn8jMHnRVp3EOjdmkioXFR01FgcjVl0piRdIAtOb?=
- =?iso-8859-1?Q?24OSB1sh1OKWvwD2kQBYdcWjn9IJQ6sM/jXsDzgKGsUFG7kf1uuce+swIX?=
- =?iso-8859-1?Q?mFhtzue1iFddevuO3abATiKptv1NJjO/aU6S+0Sw3LR2etaPUFnTT3UzYI?=
- =?iso-8859-1?Q?PUUwGrEncnGFeR3unUPKO1j1KHhHePXH+4khf1WuA6albZYaD658d9a+XD?=
- =?iso-8859-1?Q?wIM7WgtW3PFSCzQaCcuxX+8xH/rVnGdmn0AKMTRpNf7EKVkifQ/vnKAfrl?=
- =?iso-8859-1?Q?gI53uSWdXg6CVHBmg4dfRJ0XXaTXJcYZpbX0bs0zMo3oVtuioT1JUIooKE?=
- =?iso-8859-1?Q?5F0hTtPqN2J9HCJuWtW3no3z+K/Vs9HL6ujyXmywql5ygLBFV+CSmrh2NC?=
- =?iso-8859-1?Q?900PVFViOUxcaOtD5xxdPGenPvYU3o0JEKeuKi5o/3FgRkdxWbzgPNT9Ze?=
- =?iso-8859-1?Q?PorMPn8jJJfgwPfdNoNmnnS53+K0eQ5JTQkHmm0eqOrxKvSoyGrAgfL19I?=
- =?iso-8859-1?Q?CWUHzc3Ft3fiKyuBZ2JtRGFbMb/PLx2oAHTmXFOjSEBq/VkEsO5FJoa6tP?=
- =?iso-8859-1?Q?XekGzgeBCcrc9XbGxfV2wo1hvIMTwLW8CkOnkRpQovNCxE67uP+Hc2e1GZ?=
- =?iso-8859-1?Q?pMcMTSgSCH8lEpxzrdLYlvvo5r3VThZrMjUqKXc/FCOrh03x8guVFKbTMh?=
- =?iso-8859-1?Q?w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?rYa8CXAirueSVIKi3oMwabCjOSf8sUeNn5AtAj1IBXfWlmaKYzVBSgHICD?=
- =?iso-8859-1?Q?xxGTQSFatMZ+fT1TYWdATw4LhEhC4ErrgnL4iydUs+atqO9vJQzLBybeQm?=
- =?iso-8859-1?Q?ft6V7JNcrqqM94nAgiF0HHvXclnG502gwwL8UWqHbSf8kstmF103BBi3uk?=
- =?iso-8859-1?Q?gjfR11VFEUgNFUhP99SA4I6w58lM90f6IBTmaItIwWArPAxTKoCQv1Cx6T?=
- =?iso-8859-1?Q?wZ6YkM3xFdDq/rODhnv1h9UyhVUDK9EuKZ96/8d4iXzxxEoiKi+kjOmcv+?=
- =?iso-8859-1?Q?YsB7tud4p7ZG/S1CRxf8c636ltw7PiOmKvspBUBRoIN8UdhWqWszg9sfg2?=
- =?iso-8859-1?Q?SYrvYq09XmFxll/bj73zqm7cEszLCy3c0ZDeVzpyF1mHfahmg2vE/oEgmK?=
- =?iso-8859-1?Q?nH0d6izuV9Ax7OnSUwB6v51y6g+Vu2OIjImExbh6CN+vsC4E6KJ1SD2Tk2?=
- =?iso-8859-1?Q?PLp1EhGmSdrZ6SWlVQx1Xh21yMKCdLIY39Xlo/+bGaUKM4K63CqTucpSro?=
- =?iso-8859-1?Q?9ZWUOrrZWnVirm0C1DwuLDdOA6hkDLIBNAvSTrczfB/JJqvnArIy2d0bb8?=
- =?iso-8859-1?Q?hn30Vta2XtIsy74uhBlJd39eLHK5Z7g8lj2T21U7xhKzYu8mEYh6wQ9Pt+?=
- =?iso-8859-1?Q?GvMGAHdVHV9VpbYvMO0l71QZusk+PgLgKv3Lz63nUj5O1E5BX8YjM7Chq8?=
- =?iso-8859-1?Q?O57VIUnBJ/vw+PY1sUOqdmEpsNLlULn4Fhmx6HyTLomAj+nRu/gt1wJ9wE?=
- =?iso-8859-1?Q?rtX+SmvGweyrRA8AI38VFeA/A5V1gs1IQuaY9ArGpWlfLjjW7IWUJwDVck?=
- =?iso-8859-1?Q?k/u+70qnP2jGlTc8nm5/UUKILnHM8r9EPN/s4G5QGJs21WF6dJo6NQValU?=
- =?iso-8859-1?Q?/nlWtGEDUpVLsETR+cuVzQduGyyztAhf1Vj2bcZVhOPKUF/tLAVP7imcgY?=
- =?iso-8859-1?Q?ug+coBak9IKH5s2uaMDBVUpv3I9j6usDveFSUtZVwEZ+uML0MR4IylTmAE?=
- =?iso-8859-1?Q?Y0GgwekALSTcYsPdtNErtEcBEk2APB1fSXSzvXdIyvr3LUvgPrPAPnSrLt?=
- =?iso-8859-1?Q?/77aCJpxNPBSNysXxmeVnybI1jMY5jttyj7AlaQmCZ37wbkrtpPPSQYsQM?=
- =?iso-8859-1?Q?StcAiVsGaDZBXr9O2pJzMUrdvRKIiGiznL5VG3qQkVM+ZfXj4VcS+iFx+n?=
- =?iso-8859-1?Q?aHY6N6TH+PrVYiwH3TFooypwhls/zlwiS4hj0694irXb/ZKPbduAQZ3D18?=
- =?iso-8859-1?Q?4qjANWEzyD8d8NJcdPVpA7lJ8n7WCHD1y/fuTLsDBFb82sbmfBMru8enIQ?=
- =?iso-8859-1?Q?wtwpwztsvigTJHM+/+NT8adA6DtTIBtRYMFyx5t2Yw98ihVKqTwl+yZ8Ki?=
- =?iso-8859-1?Q?YdcAcrWhEwK1V7KuJg71iOboRt84RS6vmeOKuL2W26KiDKYhEfrUh0ilxo?=
- =?iso-8859-1?Q?avbF5gxr+msXV6kMkQnaNtrrwdkr29IB13U3z6JKg+Fi7J05Acl9wUpsD3?=
- =?iso-8859-1?Q?J8qa5sWaV5IBWo+pzgUyIg1g0qkFEVuLau2l/HMfPv98ZNFqb8tzXL3jee?=
- =?iso-8859-1?Q?T+xA5ODmMfWV+Y9Rjxl/EcOtgv5VkKVHQvs7lR/ihLB7LRKsvuFHCSSJp7?=
- =?iso-8859-1?Q?8vXBVNCAnjsJJb6EZSZGRdsNs/oapDgAje?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6922c96a-7f7f-47f4-820c-08ddf5ddace2
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 11:30:59.5508
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eLlNnMVdjaDIZqq1AA+ukfunasKWx4FvEPyLJa5WTEhnvqqAli2O3xVB6tqHC6ChtkHhChJzI9O725bcplKpXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8990
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9171f81e64fcb94243703aa9a7da822b5f2ff302.1758031792.git.lorenzo.stoakes@oracle.com>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[62];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.30
 
-+ Linus Lüssing
-
-Original patch: https://lore.kernel.org/netdev/20250912223937.1363559-1-Joseph.Huang@garmin.com/
-
-On Mon, Sep 15, 2025 at 06:41:19PM -0400, Huang, Joseph wrote:
-> It seems that inet6addr_notifier_call_chain() can be called when the address
-> is still tentative, which means br_ip6_multicast_alloc_query() is still
-> going to fail (br_ip6_multicast_alloc_query() calls ipv6_dev_get_saddr(),
-> which calls __ipv6_dev_get_saddr(), which does not consider tentative source
-> addresses).
+On Tue, Sep 16, 2025 at 03:11:54PM +0100, Lorenzo Stoakes wrote:
+> Some drivers/filesystems need to perform additional tasks after the VMA is
+> set up.  This is typically in the form of pre-population.
 > 
-> What the bridge needs really is a notification after DAD is completed, but I
-> couldn't find such notification. Or did you mean reusing the same
-> notification inet6addr_notifier_call_chain() but with a new event after DAD
-> is completed?
+> The forms of pre-population most likely to be performed are a PFN remap
+> or the insertion of normal folios and PFNs into a mixed map.
+> 
+> We start by implementing the PFN remap functionality, ensuring that we
+> perform the appropriate actions at the appropriate time - that is setting
+> flags at the point of .mmap_prepare, and performing the actual remap at the
+> point at which the VMA is fully established.
+> 
+> This prevents the driver from doing anything too crazy with a VMA at any
+> stage, and we retain complete control over how the mm functionality is
+> applied.
+> 
+> Unfortunately callers still do often require some kind of custom action,
+> so we add an optional success/error _hook to allow the caller to do
+> something after the action has succeeded or failed.
 
-Adding a new event to the inet6addr notification chain makes more sense
-than adding a new event to the netdev notification chain.
+Do we have any idea for rules regarding ->mmap_prepare() and ->*_hook()?
+It feels spooky to e.g grab locks in mmap_prepare, and hold them across core
+mmap(). And I guess it might be needed?
 
-But before making changes, I want to better understand the problem you
-are seeing. Is it specific to the offloaded data path? I believe the
-problem was fixed in the software data path by this commit:
+> 
+> This is done at the point when the VMA has already been established, so
+> the harm that can be done is limited.
+> 
+> The error hook can be used to filter errors if necessary.
+> 
+> If any error arises on these final actions, we simply unmap the VMA
+> altogether.
+> 
+> Also update the stacked filesystem compatibility layer to utilise the
+> action behaviour, and update the VMA tests accordingly.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+<snip>
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 31b27086586d..aa1e2003f366 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -775,6 +775,49 @@ struct pfnmap_track_ctx {
+>  };
+>  #endif
+>  
+> +/* What action should be taken after an .mmap_prepare call is complete? */
+> +enum mmap_action_type {
+> +	MMAP_NOTHING,		/* Mapping is complete, no further action. */
+> +	MMAP_REMAP_PFN,		/* Remap PFN range. */
+> +};
+> +
+> +/*
+> + * Describes an action an mmap_prepare hook can instruct to be taken to complete
+> + * the mapping of a VMA. Specified in vm_area_desc.
+> + */
+> +struct mmap_action {
+> +	union {
+> +		/* Remap range. */
+> +		struct {
+> +			unsigned long start;
+> +			unsigned long start_pfn;
+> +			unsigned long size;
+> +			pgprot_t pgprot;
+> +			bool is_io_remap;
+> +		} remap;
+> +	};
+> +	enum mmap_action_type type;
+> +
+> +	/*
+> +	 * If specified, this hook is invoked after the selected action has been
+> +	 * successfully completed. Note that the VMA write lock still held.
+> +	 *
+> +	 * The absolute minimum ought to be done here.
+> +	 *
+> +	 * Returns 0 on success, or an error code.
+> +	 */
+> +	int (*success_hook)(const struct vm_area_struct *vma);
+> +
+> +	/*
+> +	 * If specified, this hook is invoked when an error occurred when
+> +	 * attempting the selection action.
+> +	 *
+> +	 * The hook can return an error code in order to filter the error, but
+> +	 * it is not valid to clear the error here.
+> +	 */
+> +	int (*error_hook)(int err);
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0888d5f3c0f183ea6177355752ada433d370ac89
+Do we need two hooks? It might be more ergonomic to simply have a:
 
-And Linus is working [1][2] on reflecting it to device drivers so that
-the hardware data path will act like the software data path and flood
-unregistered multicast traffic to all the ports as long as no querier
-was detected.
+	int (*finish)(int err);
 
-As a temporary workaround, you can either configure an IPv6 link-local
-address on the bridge before opening it:
 
- # ip -6 address add fe80::1/64 dev br0 nodad
+	int random_driver_finish(int err)
+	{
+		if (err)
+			pr_err("ahhhhhhhhh\n");
+		mutex_unlock(&big_lock);
+		return err;
+	}
 
-Or enable optimistic DAD:
+It's also unclear to me if/why we need the capability to switch error codes,
+but I might've missed some discussion on this.
 
- # sysctl -wq net.ipv6.conf.br0.optimistic_dad=1
 
-[1] https://lore.kernel.org/netdev/20250522195952.29265-1-linus.luessing@c0d3.blue/
-[2] https://lore.kernel.org/netdev/20250829085724.24230-1-linus.luessing@c0d3.blue/
+-- 
+Pedro
 
