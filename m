@@ -1,75 +1,69 @@
-Return-Path: <linux-kernel+bounces-821153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90F1B8094D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:32:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B080B80B5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F316C1C27264
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129DB17FD24
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4033397FF;
-	Wed, 17 Sep 2025 15:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9C9333A98;
+	Wed, 17 Sep 2025 15:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Xu0AM5za"
-Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
+	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="mUK7Y2JD"
+Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0851333AEA5;
-	Wed, 17 Sep 2025 15:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.1.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C6730BF5A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758123031; cv=none; b=laV2ffXOercer9WXSXr3DOew3zlEZSArDetQTbsSxgigOd9NxkM/mWoC9TE631YsW9y2G6L6Plp3dC8IceY6R8kaywSiPGtVeIir+0CUjOf0mhe/VJZy7X0TBuhoUBQH+eXjseYhhBm5CoWQJJ7/9b7yWtZ4PLrgJO+kkvb6MDI=
+	t=1758123618; cv=none; b=ZE0gjYo3xjnhgMi6ZScjEyw8wrtmgDc/0d2ckWXsmgJwcNf3Nz9bmR9mtnkmvg8fDIggpEY88MO1+puzOpvaNKc5nLLsfnMzEsMEoGXaUsNh4WmRAQCz1uu075QqV0VkcB/KoZfiB6b7LLZyia5aCFX/8VTbXstKCjp8h3+FS3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758123031; c=relaxed/simple;
-	bh=03m738mYZFGw7DqF+3/ej17Bgl12Et2apkKBZIqxzEo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rnYG3Oi5BM/8JFQphTZfDtaR6nchR4OL50yfeOEt3LU1rZXnPvBIMuR+CC+ABCrHg+/vnOXP002ZJ3ZOJBz6mCFxa/dzV5HRIwYoMsIgPw7Rl6qcbJdk/uoy499+ebrKGtuVqglIcj2niSg1yreSp3pQ4faG3f31PX6vRGP0O0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Xu0AM5za; arc=none smtp.client-ip=44.246.1.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758123030; x=1789659030;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=wdPvPCz9v4Nnl8hinv8Kyz8XT77i6h9HCms1Dt17du0=;
-  b=Xu0AM5zaAXj4a6f8YPc4j5iYvK7Yx8zXYt9V0VbwgVsNqGxY9ptxi5hi
-   uztBhkHrFNkXdAfXdKb3D6jivDH69koGU53zhX+0UF+W3YpYs+Yl6TWIY
-   bFB6lZiPFksoaoJ3Z/PVcHyiS70m7xEJfawitG9zHfAAdH/JZ1rhMZz05
-   +pOKJ7tPCxRF5pEC4OBtt8RqcN7JO1tPlvtlWvdQzLp5lEgNOIO6k4K9D
-   TcAw1iYr/ukOfawpCu+8cUx+iE0VWOTk1f/HOKolYNKFEdc9luuxSD491
-   MGUAyDqCHCnPdgcF0qEyVaI2rLpTE3W/hnKGSRkNgZgAjYyyyibQDIIpG
-   w==;
-X-CSE-ConnectionGUID: XcWyxDHAT8Szr1bu4+2w9g==
-X-CSE-MsgGUID: L83l5pOMShCZvzwEPLMpYA==
-X-IronPort-AV: E=Sophos;i="6.18,272,1751241600"; 
-   d="scan'208";a="3158007"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 15:30:29 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:5191]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.60.187:2525] with esmtp (Farcaster)
- id 048daeed-ba17-4417-8e0e-fc381c21ae8e; Wed, 17 Sep 2025 15:30:29 +0000 (UTC)
-X-Farcaster-Flow-ID: 048daeed-ba17-4417-8e0e-fc381c21ae8e
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 17 Sep 2025 15:30:29 +0000
-Received: from dev-dsk-gunnarku-2c-36117f29.us-west-2.amazon.com
- (172.23.139.22) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Wed, 17 Sep 2025
- 15:30:28 +0000
-From: Gunnar Kudrjavets <gunnarku@amazon.com>
-To: <peterhuewe@gmx.de>, <jarkko@kernel.org>
-CC: <jgg@ziepe.ca>, <kyarlagadda@nvidia.com>,
-	<linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Justinien
- Bouron" <jbouron@amazon.com>
-Subject: [PATCH] tpm_tis: Fix undefined behavior in tpm_tis_spi_transfer_half()
-Date: Wed, 17 Sep 2025 15:29:56 +0000
-Message-ID: <20250917153022.18567-1-gunnarku@amazon.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758123618; c=relaxed/simple;
+	bh=W+nAB7mlSdd0jKuQKWnzw6YNuQNulCyIVJxWcBkg+d0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ffFdkqn8Jmo154ru/6sbYWvMKWLQEPZpZgHPnt0P/D3gfjy4pQt/enMvzbZ5x5e/02KPay06OixiM6UoAV8ZlsGKv/MvDo2+kuQHisfoQa5K3iy+4vSk2qSBXGCRamBMIclUh4aU5zS5l/Ae3HMFkcLAIC3tCElk41RZS/xbLx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=mUK7Y2JD; arc=none smtp.client-ip=195.133.245.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
+Received: from mail.nppct.ru (localhost [127.0.0.1])
+	by mail.nppct.ru (Postfix) with ESMTP id 487691C1287
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:31:22 +0300 (MSK)
+Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
+	reason="pass (just generated, assumed good)" header.d=nppct.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:to:from:from; s=dkim; t=1758123080; x=
+	1758987081; bh=W+nAB7mlSdd0jKuQKWnzw6YNuQNulCyIVJxWcBkg+d0=; b=m
+	UK7Y2JDolCC4ftU69n3P0AGiWfHotidgiNjBSyT7VJzTPEEd0HaKE/GN6stqlu66
+	haIlkdCUTF96H/gv+sIkGAW7jlt1hWJagZhisNwuGuByGOiPGbbFiOjS78Edbr4+
+	Ts1eq5o6vgLqO6dcCSXlXmRMfzMjXKtfZmfT+97O8A=
+X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
+Received: from mail.nppct.ru ([127.0.0.1])
+	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id LmnvrL22j1He for <linux-kernel@vger.kernel.org>;
+	Wed, 17 Sep 2025 18:31:20 +0300 (MSK)
+Received: from localhost.localdomain (unknown [87.249.24.51])
+	by mail.nppct.ru (Postfix) with ESMTPSA id 024D61C0CC1;
+	Wed, 17 Sep 2025 18:31:18 +0300 (MSK)
+From: Alexey Nepomnyashih <sdl@nppct.ru>
+To: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] net: liquidio: fix overflow in octeon_init_instr_queue()
+Date: Wed, 17 Sep 2025 15:30:58 +0000
+Message-ID: <20250917153105.562563-1-sdl@nppct.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,47 +71,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D036UWB001.ant.amazon.com (10.13.139.133) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-When len is 0, the while loop in tpm_tis_spi_transfer_half() never
-executes, leaving ret uninitialized. This will lead to undefined
-behavior when the function returns.
+The expression `(conf->instr_type == 64) << iq_no` can overflow because
+`iq_no` may be as high as 64 (`CN23XX_MAX_RINGS_PER_PF`). Casting the
+operand to `u64` ensures correct 64-bit arithmetic.
 
-The issue was introduced when tpm_tis_spi_transfer() was refactored
-to call tpm_tis_spi_transfer_half() or tpm_tis_spi_transfer_full().
-While ret is properly initialized in tpm_tis_spi_transfer_full(), it
-was missed in tpm_tis_spi_transfer_half().
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Initialize ret to 0 at the beginning of the function to ensure
-defined behavior in all code paths.
-
-Found by GCC 14.2.0 static analyzer with -fanalyzer.
-
-Fixes: a86a42ac2bd6 ("tpm_tis_spi: Add hardware wait polling")
-Signed-off-by: Gunnar Kudrjavets <gunnarku@amazon.com>
-Reviewed-by: Justinien Bouron <jbouron@amazon.com>
+Cc: stable@vger.kernel.org # v4.2+
+Fixes: f21fb3ed364b ("Add support of Cavium Liquidio ethernet adapters")
+Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
 ---
- drivers/char/tpm/tpm_tis_spi_main.c | 2 +-
+ drivers/net/ethernet/cavium/liquidio/request_manager.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index 61b42c83ced8..1b6d79662ca1 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -85,7 +85,7 @@ static int tpm_tis_spi_transfer_half(struct tpm_tis_data *data,	u32 addr,
- 	struct spi_transfer spi_xfer[3];
- 	struct spi_message m;
- 	u8 transfer_len;
--	int ret;
-+	int ret = 0;
-
- 	while (len) {
- 		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
-
-base-commit: 5aca7966d2a7255ba92fd5e63268dd767b223aa5
---
-2.47.3
+diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+index de8a6ce86ad7..12105ffb5dac 100644
+--- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
++++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
+@@ -126,7 +126,7 @@ int octeon_init_instr_queue(struct octeon_device *oct,
+ 	oct->io_qmask.iq |= BIT_ULL(iq_no);
+ 
+ 	/* Set the 32B/64B mode for each input queue */
+-	oct->io_qmask.iq64B |= ((conf->instr_type == 64) << iq_no);
++	oct->io_qmask.iq64B |= ((u64)(conf->instr_type == 64) << iq_no);
+ 	iq->iqcmd_64B = (conf->instr_type == 64);
+ 
+ 	oct->fn_list.setup_iq_regs(oct, iq_no);
+-- 
+2.43.0
 
 
