@@ -1,160 +1,137 @@
-Return-Path: <linux-kernel+bounces-821623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F3BB81C3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:31:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B36BB81C5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3CE71C8040E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8FD6584CC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E0227E049;
-	Wed, 17 Sep 2025 20:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0EF2E2F0E;
+	Wed, 17 Sep 2025 20:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IQgoqrOt"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iPRBHiBB"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159AE7E0E8
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38DB28FA9A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141089; cv=none; b=Y95Rs1ySrQ5XIPGrMqEMrLOR615AGFHltP8OL4H2uPbFyQkBgz5At3caDmeSpWit/pf51UKUdAnMAEAOBPeZ13AGVLH3Y6JUa23UQ5RQJjFULS8ThLsUdr/uKLyarYk7Hq1zp0075hq6ot2FA7u+GZcVf3VgUMFdZn1PeAWZqsc=
+	t=1758141112; cv=none; b=nn+yyDsPqh4PrM/LMz8ipRpA5AwlV80l6k6uo+VDf/vPAsEJsm0iZVgqZeVJ/+WogW13etcjrbfLuXW1oGTytg7e81IjmpC3tDrq34pazKPpt3DuZi4+cQnPFa07kREZyssXPoaD97AmRHxjIwGJGikmp2ZGI/pYvmHNaWAMw2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141089; c=relaxed/simple;
-	bh=99YDcs9G/bJDwiYgqOzQYb9T04j0s9/yOXbqTbIoNy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7sGznCZth/PFz4Q9z7+Cx7ij3PBq10qp4hfBismS0ingfl0WWUFvrktUuRatxoLzGRnH7JW6sHjilpzjR5KuodwnvDaHePvidW4GBYjcM59JRpKUX32+oH2sx4jO5XaN/kbufHpDnwfFS7+q6LYjtA8H7q861DMBlOKVJZlPY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IQgoqrOt; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1758141112; c=relaxed/simple;
+	bh=5OBIs0bUsQlBfNz/o3OM/cckvzwG61wfY25aaGHql4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sbK3i+jDaUFqp1R7d2XQOqD5uxu8hG9dDmgyBlX4HO4ohFcg41UvayUo0yLeNHd62T6p1KeTIZrXzzYahoyY5DnQUno5ky3/sTvQJ/1Ui4nbLSG4ZSM9VPkrPRc4mv+XgTDnkjq8EMzrp7YeqAzMiPZE1yN/pcjEoY9mGieHQdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iPRBHiBB; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45f2f894632so20305e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:31:27 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-267c90c426dso13485ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:31:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758141086; x=1758745886; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t0Aw/ikfdZAzmeCUnWbRRZpCbzRiV+TMr1DdjVhlkr8=;
-        b=IQgoqrOtALdkw9M6/nsxCJfThjMuMaqJT/EnrF7p3nCPR7nMqfb2DmZdGXYfu+tCJX
-         99JhooNe83NQpmlkPux4fVcjflPDriweF3FTYCnOs8fmWyJAgT3NGoBIF4F2nfb/UnZI
-         wVzYZ54+JxZ6Kl3VfNurQHzEpgpz9u3eN9ClfK8PA7WItM4ff1K/xXfE5nx2kRKIrK1x
-         qqq6HoD42qq/C81X13HQz0Q+Zk1iVfJyC07T7hZwSiGYcG+iem9mhDtO4VHom9on7hEZ
-         ZLwXsz04kcf/JrhuTebX4/igybktnJrESiK2MrkmHS1Wb/CnRSkAfMmmtLg2tDfryQQ7
-         mClw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758141086; x=1758745886;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1758141110; x=1758745910; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t0Aw/ikfdZAzmeCUnWbRRZpCbzRiV+TMr1DdjVhlkr8=;
-        b=FmE4qI2tNNdvRYV7XJKTrjuXpAsoOcLIRXSwPb9Oq5VoIL+MyRT32TuNKID1LAQWJQ
-         nKvVGDWmdmLOC1aCCL84v4rKTP07zV4lC9DdpWLraQObrPf3KgnFLysdfuPk7dESsJuw
-         5ai+rE4HlIrYpg4Akv8HS67Cr0raC4seUMbBdvUsZHyzDwMnVhNWx63vuy1VMGWEj89n
-         Lysham9zKCZ9onCKQ+6+taZQyc/OBVjcMVJNmzP4bmpU76xkDzlU/bPYGRfAYZJRQQjt
-         6LnO5NrZCg2NvHG3092EDVkmxLkVl6+wsFH7OMoqokKEzdo5PDMQhYALGIQFkbe818nK
-         sWHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUufTaqCjAO1gxywjK1M9d0+FQ8c+xfiHMZaPHWTxVchebuzPlWPSrJQigcsswBJKGe2C9khfQNaRxGZ3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9MtX/wz3hIo9xhHUxoWmEP/Kl1GDp8OQ8ClpQg9DtLgDDDo0H
-	lO2Jvs+4ZOUmxlstIhd1oW0ZEe+JIzMCLMBn7Dll4Bcx1bJermdBPSZSDERf8Qtaww==
-X-Gm-Gg: ASbGnct1t1rTnkb+BoT7/aIHW9fstTUYoY3TMt8rlkjBksn1E8ItTj5E/rMvAKxxVrE
-	LBd0xcDvD1ytODHCSeZ32Mb9qGRi8MLrKbAEweHqU1XRwMH++N4WvXPQPq3604b5XILB2a4lbqg
-	XDB1LBP55uRFjhnrjEFBa8CwFFJ92IuPBbV8QeEIW5o0z43BEmCVL4QQi3CDNY24eKY35v6hpIV
-	YVnAYzwqOz7/MzytDMoHXl0WGS9vDyJglwDXMS5z7+lPcJdwMK+062ny0wxY9Lx5Jyu4YroXMJ4
-	0X8gVs5qjlijKqh9vYYC+Vt/2xgpq2FnozmoqAO0T54kytf1vkMu4WyzfC4daWJRWK1r1IhTHnD
-	grfK8MqiCmisj4/Yy7uvR9H2IFOzmKzDqGMekuxQu5NpFYiApWgARHBH1lphp9YKsawpJgKeF2l
-	cX0kSfIK7x3lDM+/4tLFVo9Rw=
-X-Google-Smtp-Source: AGHT+IGI+TRRIpc57be67hlvyGZzYort82ADBT/ieq1RpFHGCywCE3qx2LHW/vGr/9Ap+vWBFfN2VQ==
-X-Received: by 2002:a05:600c:8b55:b0:45a:2861:3625 with SMTP id 5b1f17b1804b1-462de4d0edamr1272285e9.4.1758141086300;
-        Wed, 17 Sep 2025 13:31:26 -0700 (PDT)
-Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac271sm9969975e9.3.2025.09.17.13.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 13:31:25 -0700 (PDT)
-Date: Wed, 17 Sep 2025 20:31:22 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
-	joro@8bytes.org, praan@google.com
-Subject: Re: [PATCH v2 3/3] iommu/io-pgtable-arm-selftests: Use KUnit
-Message-ID: <aMsamiTEssyR1wsd@google.com>
-References: <20250917191143.3847487-1-smostafa@google.com>
- <20250917191143.3847487-4-smostafa@google.com>
- <20250917194454.GM1326709@ziepe.ca>
+        bh=5OBIs0bUsQlBfNz/o3OM/cckvzwG61wfY25aaGHql4M=;
+        b=iPRBHiBBNchRzIgeBGxAgEvAguVI4ofWDB2FMokbFInew0Tlx5LZZoHFSAy6xQje6G
+         LZHaNDddx8SucnH7T4p7gYxOSxd8UTRqQYDckmQpUaAeU8xW7XXMNc1/pVsnM3FuirPI
+         4oJVfSH82hK6IDsB2wGXcrlEEyMd4iMBRA7S7usUq8QL+m1RT7ZpzqDAMMSuw9qURSGp
+         99vh8TslRh4UeIuJjt/yVQsmUTcBKjoU0RSax47ut2vz/nQzpfPJyZR5UHsIJGEIz4Zg
+         dxm5CwPRCA70dUPQBbQO7ETbURshVyia+iI9t6lrLp8wZuyQJmTJgFDfnFqF/2iFMhJf
+         4/gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758141110; x=1758745910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5OBIs0bUsQlBfNz/o3OM/cckvzwG61wfY25aaGHql4M=;
+        b=fFiFFvvcPuvtGbtV3spDVgY2Pr953baLCeNXCoTlpggStPQ+J8N+ejg4mNqNwEIuGj
+         +nOzOzueIH7IPlQvWWOrtRJXAwME5bf/sEL1ecxzmNftf4wPvl81DZ/n2KLRpXCh3jIf
+         w29yS4X2PbUL7O/lm58pZmBSJoA2pIgSl/RgEl9FCbHs2kzjfXWQRXzbn0LO2KckXMfv
+         unmBLMG1KfipmsxOGC+Htkg03EwPIv3LE7O4aq4BsEo9MGh910/bQU5Ml7yJlxDZV95G
+         m/8WQxAz3EeqZIOrkPPL0pSkRkF6PW6XEyhXfHSBBnqWjN05m1KFECyaHkQRS9LeWRvO
+         dDRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVXW1avS8OeFZCOEA0Rg6Sbss4NTs7m2WFCnmdGF0skKu3CoLCtXN1E+oioZbIRCKgf6+xkm48/9w+leo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkXAol5jaHT/P5aFLTbOtY1vmYWYQ/Nt8wZUjRUGNy58PPYCPG
+	T/T1eNAvSKvhrKFQtmelv8lQ5TNkawB3ZXz1mFomXdQVk0aIo/KAfQf6ihNf92HbOgiRC5aOAOp
+	dzeku1klcn9PtFEV49LAfdXLDwN1Wxr0dKK7q2x5B
+X-Gm-Gg: ASbGnctyzOG00PTVVPFQLAKcX1yWgQbocSlHBDDqK7sUHY6hnPl75aZbUnXRundTGN/
+	bIc5ShUS+Ihj5QEatayfkypBt0+xjpMwdvyfFYkvEefXVxcqiDVmEkMAqBPZZw7sH2IRL5tTBE8
+	3Yju0scos2u0cSZxXTVjocVM84QVQimpmQWgrkl5neDhQN98+zLZu4/dI+DDVL/vT7hnoW9vURM
+	L7Jx+qhkNwfaxCak8QlC6eTyI03/ta503lesXlDyFVK6+u3gz1Q9kYp54/+aAw=
+X-Google-Smtp-Source: AGHT+IGi1Cl1cxLljbDRwITE9vfhwz+DrDPsOJguUQv2zzG51+QwzyCb4weDhywo5yliSwxcW6sHs7Lpaphswpsb2Ak=
+X-Received: by 2002:a17:902:e550:b0:24c:f4b1:baaf with SMTP id
+ d9443c01a7336-26808a33cc5mr6423875ad.1.1758141109587; Wed, 17 Sep 2025
+ 13:31:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917194454.GM1326709@ziepe.ca>
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+ <20250915163838.631445-7-kaleshsingh@google.com> <eb7820ed-3351-4cb5-8341-d6a48ed7746f@redhat.com>
+ <CAC_TJvctkyGEKv8mVE83D2DzCd-HiXh9co_DuZfwuF86FJoiJw@mail.gmail.com> <322fd5d2-d7f4-40d8-8a06-6e7c5e9ef180@redhat.com>
+In-Reply-To: <322fd5d2-d7f4-40d8-8a06-6e7c5e9ef180@redhat.com>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Wed, 17 Sep 2025 13:31:37 -0700
+X-Gm-Features: AS18NWACcEbm1lm4H8WkQEbyfcTpHlrzU-8yyCAEibl_VJPt8WSVNJn2mY9O19Y
+Message-ID: <CAC_TJvf84Zerwe7-UiRW3AYnC=_Zu3tVSSWTRcaEyoRGEnBHug@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] mm: add assertion for VMA count limit
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
+	kernel-team@android.com, android-mm@google.com, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 04:44:54PM -0300, Jason Gunthorpe wrote:
-> On Wed, Sep 17, 2025 at 07:11:40PM +0000, Mostafa Saleh wrote:
-> > Integrate the selftests as part of kunit, this makes the test
-> > available through debugfs.
-> > 
-> > Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> > ---
-> >  drivers/iommu/Kconfig                    |  2 +-
-> >  drivers/iommu/io-pgtable-arm-selftests.c | 93 +++++++++++++-----------
-> >  2 files changed, 51 insertions(+), 44 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> > index 553522ef3ca9..f7e6d1db6ce6 100644
-> > --- a/drivers/iommu/Kconfig
-> > +++ b/drivers/iommu/Kconfig
-> > @@ -42,7 +42,7 @@ config IOMMU_IO_PGTABLE_LPAE
-> >  
-> >  config IOMMU_IO_PGTABLE_LPAE_SELFTEST
-> 
-> This should probably be renamed to xxx_KUNIT_TEST
+On Wed, Sep 17, 2025 at 11:34=E2=80=AFAM David Hildenbrand <david@redhat.co=
+m> wrote:
+>
+> >> Can't that fire when changing the max count from user space at just th=
+e
+> >> wrong time?
+> >
+> > You are right: technically it's possible if it was raised between the
+> > time of checking and when the new VMA is added.
+> >
+> >>
+> >> I assume we'll have to tolerated that and might just want to drop this
+> >> patch from the series.
+> >>
+> >
+> > It is compiled out in !CONFIG_VM_DEBUG builds, would we still want to d=
+rop it?
+>
+> Due to the racy nature I think any kinds of assertions would be wrong.
+> Without any such races possible I would agree that the checks would be
+> nice to have.
 
-Will do.
-
-> 
-> >  	tristate "LPAE selftests"
-> > -	depends on IOMMU_IO_PGTABLE_LPAE
-> > +	depends on IOMMU_IO_PGTABLE_LPAE && KUNIT
-> 
-> I wonder if it should be:
-> 
->   	select IOMMU_IO_PGTABLE_LPAE
->   	depends on KUNIT
->         default KUNIT_ALL_TESTS
-> 
-> ?
-> 
-> At least the default should be there
-
-Makes sense, will do.
-
-> 
-> >  	help
-> >  	  Enable self-tests for LPAE page table allocator. This performs
-> >  	  a series of page-table consistency checks during boot.
-> 
-> "kunit tests" here as well
-
-Will do.
-
-> 
-> > -subsys_initcall(arm_lpae_do_selftests);
-> 
-> Oh so it does drop the initcall, the coverletter is a bit confusing then.
-
-Yes, I will reword the cover letter.
+Alright I'll drop this in the next revision.
 
 Thanks,
-Mostafa
+Kalesh
 
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> 
-> Jason
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
