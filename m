@@ -1,296 +1,118 @@
-Return-Path: <linux-kernel+bounces-821785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11136B823C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:07:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189D7B823D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A822A7BB32B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4E71C215F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A28930DEDD;
-	Wed, 17 Sep 2025 23:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B0930F95A;
+	Wed, 17 Sep 2025 23:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dETDMApf"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3GfjjVD"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E2320370B
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349882F3C36
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758150447; cv=none; b=BUCla/ry40yLkDgxSM1gpzBvm5/R8RQRKzLSarHRWmDK1Za0/0QIAk35+eAPT9WzTKgvxhNGlv2NsrfG3IR+NAqQivz5pjZUBiPp9mhgehuIlV5BUIDkQvupZnm8DqKj/W3X/aeFPId5fjGPOsUdRwpfabdrdNITNGvkfCdLMCk=
+	t=1758150526; cv=none; b=iUmtOtfYLfP2x0qBsxG+H0546CTx5iI50SCXUn0uhjJmZjMb1ZX5cxJnm4jrUTX3cFvHTlh9/tiEmqupU2b/+C9mQjI/dizuAe8fUdmBFMDy7gryS8ldjOIjKcySOjoTc03uFkJao90ZoWL+R3/UnGe11BUDjflXLM5igV8TtEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758150447; c=relaxed/simple;
-	bh=S3jrLtlcMzBvuyu0sINZRmo6ZeqNO8QhvGmFA/nre8o=;
+	s=arc-20240116; t=1758150526; c=relaxed/simple;
+	bh=fiHidarY3es8NBA+LEW3pv6bjjvuMZYa+mJzlo0B1L4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OC4vcayGEyqWC8RtAhe+HzXOj3dZIhkki3l/OiLgEK9TVzNcTD4NFux8Z6uP0K7epshsjUMesjDilm93aVnOj1MR4vt0zA8FplPi8L7h4qzdtOaXWaGO3Tz8JzL7/Y80+HFOxb1P5I/w1UbHIaKsu2P8SoKRzdxo+i6c4m4MlIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dETDMApf; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-560885b40e2so4086e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:07:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=lAWTN5hOQD/tV5w4ZJyB9H0Nkq5oX8wlT0vhKdWy1UrivBmd7cd90fM/45aqWsDDkwmd827zjvBcdWnplObnjlUI1COICxdb1g+CMLYtGmNgqJyR44Zx6MMLYaGacnf/0R5XPwmCJplX66vQRJwfnh4go6/efzmkcx+gXDM0A5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3GfjjVD; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b0473327e70so55966866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:08:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758150443; x=1758755243; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758150522; x=1758755322; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kDsLp8i6pk3f7wj6TF4L7PgD7vKMWpVCl9g1m8uGMOw=;
-        b=dETDMApfseXqPRsTDGt/qvzxnVXourLa5gkekVjMMTJ8YtLuWq7XBCMdSEcZ//nzMv
-         qUsEkPVCnK93zJExlcID62YlMba/yKW5fzzG+YrptY9sEiOYkOvBtL1TJ3goLGE3QbWZ
-         8RB4ltdgum1VeLNlnIlMsYiOKwS8QuyU+82oiZKbOe7VR1mngb57hqmF3EeIU+CmD2Ve
-         BYesfLCo/hnNFXLBq7KvUKeOLzT3l2k6LMy6SKbdmerZj7VVfTzSrA+sTl9VeH6mezNl
-         3ZtsDZmzQHhUDSo9KRhUVkwtS6gR1DDrybEy027+UJf5LJfNUQkvu8y15ayqY6ayllFp
-         DHcg==
+        bh=hRGj/ILyJWi2Bsgex4Gvbo4N7e1wLDw4WJvnSHlYoZY=;
+        b=a3GfjjVDOZloiF3VHg1fDTK/uGAjwoqZxrDmljLKWUYqeFDkG4puWSop+iNpdtY33S
+         NdJ/cP+klOKHxsi6s4nCGtkbcYEDAr91Zn8tCT7GSnFwGfC6ggfa2Q5GgWRsLQpgHBpM
+         EpHymmtQJ0Lf27fTlyD1EBlsqIOChVPhkRy9Lf+4/l3T5KNkiTqz6hMJeKiwi5b3DZrB
+         AYGyHTdN5Je9sN4jCvevyClImXvu8bsCKeLyPITDphDybU3LBlBAkM1rHHfFUagqm+EG
+         iIJWJWDWxzZn54aHP90ddn90W5Mz38hCIIC1IFhAfEdK5vwq35TO1TBkGVofSdTYJNs0
+         2l7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758150443; x=1758755243;
+        d=1e100.net; s=20230601; t=1758150522; x=1758755322;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kDsLp8i6pk3f7wj6TF4L7PgD7vKMWpVCl9g1m8uGMOw=;
-        b=kvePdX0yZQb+DIEBTA3A5GsaBrpm6ZHNLK1KvAz5XaO/VGGnEAC0qn2vHKI3pv2Ztk
-         m7an9YyqtobnlCmhv0zKDTKvyJBPVDZA5bFuKXKyDTwMpGucGNJgrngTuuTK1Y6g86JU
-         F5E7+Tmd3hu0Kny5erM5OzqlyaKfptCGKN+mUw23QMdM/M9MHD+PI2ttXaAg0ZfUzz0t
-         z4AFsM6ieZfrAdTFlhY2OoEGqhYDF3J3bfsqCzFgbyb0bnOlKv+NOwBEY/j3C8eD8vIw
-         ZHYd3UhnCjc/7zs8xBSEk8PjYananOcSZou85XJQoVd8BZSlSO7kzLqabJPHZGvCoupQ
-         Jv9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Spy625sNpNIWuh61xJtbaizkU12N4xxCbmJnsom4SVcx6yxnnm67NqG7Gzqetdv8Ww4v2TSvWks5T7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtNJrbM4LAfASbIPTgqDGMVV632iBG2tfER64avfbJBwZMZW9B
-	3zbXMOmOzUVlrma2E4JnwL8QKZqgtOwnr4YsldAs2jrVU5JBAtlyeP15uTh03wPGOnrlhhexNzg
-	RoL55xdmYMb3A6ZubXXbBrniLthiiIKIvPfEvJp7p
-X-Gm-Gg: ASbGncuY+WaaT97S9XmbyqYmmC8wvKyFcfCEKOnutpktKP8ie2BohbTR26t1fiEW2Be
-	hwlcc0mX4yuTHg/0gVsRfAEMRrAFztCq9FQdCIDCIDIiwDLOpowcsQV+4J3gMwY0aaIXam0McP2
-	HozHCMzttzXquqvHedaP0eF1EbtIKX7qC4z3yGCmtwcCUNXeeJQKCXBRysSFQGhRh+ryher/jQO
-	cMGs+LTMu4OZEW4Jf0hR+07tmNjIpBhMPI87uBYQSNdoZ0SApjnDqYSUKgk1Is=
-X-Google-Smtp-Source: AGHT+IG3T19VMki7JRI65cCujBE6r2A9JlsYiin0vUxoc1mtJaVnauPFCusljRpzpLFUj4JjU7cRz0mnKdvO274X/CI=
-X-Received: by 2002:a19:644b:0:b0:578:b6dd:55bd with SMTP id
- 2adb3069b0e04-578b6dd575bmr73190e87.7.1758150443268; Wed, 17 Sep 2025
- 16:07:23 -0700 (PDT)
+        bh=hRGj/ILyJWi2Bsgex4Gvbo4N7e1wLDw4WJvnSHlYoZY=;
+        b=b/CQZ0pIMMoy28D7kiDIcUgGwVdbPCqzH84aR4Gxo7YAl8tJzq14/dcHPWwOGWrheP
+         DmF9b4gISmxsnJmr5xcWXzcMATBw8pSLVtWQ9G/+ozfuRwU7pW2AIEi7HYQNqFsX3B3o
+         q8T2nNq5PdvGj6zcogulIULRolbyeVxmd5CKnx7cndCAId2Uap9uv0ArgWVjpS8pEaV2
+         83cuiL19mT3AaTw6okvWE2S/iw6sGSSbVvj1s0nIHqDDW6rZfKiO4orKzrZFpntlH3h1
+         JU0GNzE1j5pB/Dee95RvbpZV2XA0eJHn9Dk+lX05GGT6IZxrbrx2imyoi8ddjMiaKQ1X
+         YXiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeqSBh/rdfr1Ber4/xwUP8ZTdO9+uPlBFXoPtAmO+ExYdgtQObYcAi/PvbJwXecz/il+l5V2RkziCl3HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjaw5ksYZ51Gipl719d/M55SESmWCDc4fnT9hmXqQUuZB1ianL
+	0cNgyk8jmFB5qrNvEZ6ul/l9tzyn9Xg0eUBprVHCMs/Pj3U67FCNEA1S1j8DgFPD3iA2jiJvA0a
+	AnE/19/5i/FYRgJRkTHxAcon1zX8dCGw=
+X-Gm-Gg: ASbGncuSLgIdKYwx23GsGKXf1sMGHwXggnhM5oBhHkx6pLLPOY0keDDKfwbBNq1j7jX
+	IztJE6durSAYJCaHY9dGLuHU7qL9n5P+tOgoA8i/TTFB67kuJXcPY13XU++ulGvRxjBUEGwXxkw
+	8iJQ5ft8rlOXt34+kpEcAE9Hz+Gi4sqv6cBxeuVzsNbHSDskUCp9Xe/KstxDol6nprKUcE1uKsC
+	xQOV1X2xiGJQmV+OgiMJjrEinWGYG5N7kNPrWBVRb/6SUaRb0I5rVzG4g==
+X-Google-Smtp-Source: AGHT+IFTShsh8t7nrREG3sNteTvvDWCztpJ0irdoYHone0kblikor9dVjpl7/+XtSzyEetSqaaCdKn/NmlZEPTV0vhE=
+X-Received: by 2002:a17:907:6093:b0:afd:d994:7d1a with SMTP id
+ a640c23a62f3a-b1bbc545b99mr380535666b.63.1758150522536; Wed, 17 Sep 2025
+ 16:08:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
- <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-3-c80d735bd453@meta.com>
- <aMSdT7lQDvLNEvsv@mini-arch>
-In-Reply-To: <aMSdT7lQDvLNEvsv@mini-arch>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 17 Sep 2025 16:07:11 -0700
-X-Gm-Features: AS18NWCZTaLPoL5R1lpvtP-Bki6oIiX2x8JL_5xSqIq2egAaN7Z0fu4kT7WPqUQ
-Message-ID: <CAHS8izOg+XyjsWEN8o=yAbiPxvt2XoatVcM0WY2+NDyaDM4Dww@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 3/3] net: ethtool: prevent user from breaking
- devmem single-binding rule
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Bobby Eshleman <bobbyeshleman@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Neal Cardwell <ncardwell@google.com>, 
-	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Stanislav Fomichev <sdf@fomichev.me>, Bobby Eshleman <bobbyeshleman@meta.com>
+References: <20250917124404.2207918-1-max.kellermann@ionos.com> <aMs7WYubsgGrcSXB@dread.disaster.area>
+In-Reply-To: <aMs7WYubsgGrcSXB@dread.disaster.area>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 18 Sep 2025 01:08:29 +0200
+X-Gm-Features: AS18NWAPWaGTXxRYRzp3XafBT13uBoehIcp4zLeoIa2AaJjHnaVuMpyaFs-UzhE
+Message-ID: <CAGudoHHb38eeqPdwjBpkweEwsa6_DTvdrXr2jYmcJ7h2EpMyQg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: Dave Chinner <david@fromorbit.com>
+Cc: Max Kellermann <max.kellermann@ionos.com>, slava.dubeyko@ibm.com, xiubli@redhat.com, 
+	idryomov@gmail.com, amarkuze@redhat.com, ceph-devel@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 3:23=E2=80=AFPM Stanislav Fomichev <stfomichev@gmai=
-l.com> wrote:
+On Thu, Sep 18, 2025 at 12:51=E2=80=AFAM Dave Chinner <david@fromorbit.com>=
+ wrote:
+> - wait for Josef to finish his inode refcount rework patchset that
+>   gets rid of this whole "writeback doesn't hold an inode reference"
+>   problem that is the root cause of this the deadlock.
 >
-> On 09/11, Bobby Eshleman wrote:
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
-> >
-> > Prevent the user from breaking devmem's single-binding rule by rejectin=
-g
-> > ethtool TCP/IP requests to modify or delete rules that will redirect a
-> > devmem socket to a queue with a different dmabuf binding. This is done
-> > in a "best effort" approach because not all steering rule types are
-> > validated.
-> >
-> > If an ethtool_rxnfc flow steering rule evaluates true for:
-> >
-> > 1) matching a devmem socket's ip addr
-> > 2) selecting a queue with a different dmabuf binding
-> > 3) is TCP/IP (v4 or v6)
-> >
-> > ... then reject the ethtool_rxnfc request with -EBUSY to indicate a
-> > devmem socket is using the current rules that steer it to its dmabuf
-> > binding.
-> >
-> > Non-TCP/IP rules are completely ignored, and if they do match a devmem
-> > flow then they can still break devmem sockets. For example, bytes 0 and
-> > 1 of L2 headers, etc... it is still unknown to me if these are possible
-> > to evaluate at the time of the ethtool call, and so are left to future
-> > work (or never, if not possible).
-> >
-> > FLOW_RSS rules which guide flows to an RSS context are also not
-> > evaluated yet. This seems feasible, but the correct path towards
-> > retrieving the RSS context and scanning the queues for dmabuf bindings
-> > seems unclear and maybe overkill (re-use parts of ethtool_get_rxnfc?).
-> >
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> > ---
-> >  include/net/sock.h  |   1 +
-> >  net/ethtool/ioctl.c | 144 ++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  net/ipv4/tcp.c      |   9 ++++
-> >  net/ipv4/tcp_ipv4.c |   6 +++
-> >  4 files changed, 160 insertions(+)
-> >
-> > diff --git a/include/net/sock.h b/include/net/sock.h
-> > index 304aad494764..73a1ff59dcde 100644
-> > --- a/include/net/sock.h
-> > +++ b/include/net/sock.h
-> > @@ -579,6 +579,7 @@ struct sock {
-> >               struct net_devmem_dmabuf_binding        *binding;
-> >               atomic_t                                *urefs;
-> >       } sk_user_frags;
-> > +     struct list_head        sk_devmem_list;
-> >
-> >  #if IS_ENABLED(CONFIG_PROVE_LOCKING) && IS_ENABLED(CONFIG_MODULES)
-> >       struct module           *sk_owner;
-> > diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-> > index 0b2a4d0573b3..99676ac9bbaa 100644
-> > --- a/net/ethtool/ioctl.c
-> > +++ b/net/ethtool/ioctl.c
-> > @@ -29,11 +29,16 @@
-> >  #include <linux/utsname.h>
-> >  #include <net/devlink.h>
-> >  #include <net/ipv6.h>
-> > +#include <net/netdev_rx_queue.h>
-> >  #include <net/xdp_sock_drv.h>
-> >  #include <net/flow_offload.h>
-> >  #include <net/netdev_lock.h>
-> >  #include <linux/ethtool_netlink.h>
-> >  #include "common.h"
-> > +#include "../core/devmem.h"
-> > +
-> > +extern struct list_head devmem_sockets_list;
-> > +extern spinlock_t devmem_sockets_lock;
-> >
-> >  /* State held across locks and calls for commands which have devlink f=
-allback */
-> >  struct ethtool_devlink_compat {
-> > @@ -1169,6 +1174,142 @@ ethtool_get_rxfh_fields(struct net_device *dev,=
- u32 cmd, void __user *useraddr)
-> >       return ethtool_rxnfc_copy_to_user(useraddr, &info, info_size, NUL=
-L);
-> >  }
-> >
-> > +static bool
-> > +__ethtool_rx_flow_spec_breaks_devmem_sk(struct ethtool_rx_flow_spec *f=
-s,
-> > +                                     struct net_device *dev,
-> > +                                     struct sock *sk)
-> > +{
-> > +     struct in6_addr saddr6, smask6, daddr6, dmask6;
-> > +     struct sockaddr_storage saddr, daddr;
-> > +     struct sockaddr_in6 *src6, *dst6;
-> > +     struct sockaddr_in *src4, *dst4;
-> > +     struct netdev_rx_queue *rxq;
-> > +     __u32 flow_type;
-> > +
-> > +     if (dev !=3D __sk_dst_get(sk)->dev)
-> > +             return false;
-> > +
-> > +     src6 =3D (struct sockaddr_in6 *)&saddr;
-> > +     dst6 =3D (struct sockaddr_in6 *)&daddr;
-> > +     src4 =3D (struct sockaddr_in *)&saddr;
-> > +     dst4 =3D (struct sockaddr_in *)&daddr;
-> > +
-> > +     if (sk->sk_family =3D=3D AF_INET6) {
-> > +             src6->sin6_port =3D inet_sk(sk)->inet_sport;
-> > +             src6->sin6_addr =3D inet6_sk(sk)->saddr;
-> > +             dst6->sin6_port =3D inet_sk(sk)->inet_dport;
-> > +             dst6->sin6_addr =3D sk->sk_v6_daddr;
-> > +     } else {
-> > +             src4->sin_port =3D inet_sk(sk)->inet_sport;
-> > +             src4->sin_addr.s_addr =3D inet_sk(sk)->inet_saddr;
-> > +             dst4->sin_port =3D inet_sk(sk)->inet_dport;
-> > +             dst4->sin_addr.s_addr =3D inet_sk(sk)->inet_daddr;
-> > +     }
-> > +
-> > +     flow_type =3D fs->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT | FLOW_RS=
-S);
-> > +
-> > +     rxq =3D __netif_get_rx_queue(dev, fs->ring_cookie);
-> > +     if (!rxq)
-> > +             return false;
-> > +
-> > +     /* If the requested binding and the sk binding is equal then we k=
-now
-> > +      * this rule can't redirect to a different binding.
-> > +      */
-> > +     if (rxq->mp_params.mp_priv =3D=3D sk->sk_user_frags.binding)
-> > +             return false;
-> > +
-> > +     /* Reject rules that redirect RX devmem sockets to a queue with a
-> > +      * different dmabuf binding. Because these sockets are on the RX =
-side
-> > +      * (registered in the recvmsg() path), we compare the opposite
-> > +      * endpoints: the socket source with the rule destination, and th=
-e
-> > +      * socket destination with the rule source.
-> > +      *
-> > +      * Only perform checks on the simplest rules to check, that is, I=
-P/TCP
-> > +      * rules. Flow hash options are not verified, so may still break =
-TCP
-> > +      * devmem flows in theory (VLAN tag, bytes 0 and 1 of L4 header,
-> > +      * etc...). The author of this function was simply not sure how
-> > +      * to validate these at the time of the ethtool call.
-> > +      */
-> > +     switch (flow_type) {
-> > +     case IPV4_USER_FLOW: {
-> > +             const struct ethtool_usrip4_spec *v4_usr_spec, *v4_usr_m_=
-spec;
-> > +
-> > +             v4_usr_spec =3D &fs->h_u.usr_ip4_spec;
-> > +             v4_usr_m_spec =3D &fs->m_u.usr_ip4_spec;
-> > +
-> > +             if (((v4_usr_spec->ip4src ^ dst4->sin_addr.s_addr) & v4_u=
-sr_m_spec->ip4src) ||
-> > +                 (v4_usr_spec->ip4dst ^ src4->sin_addr.s_addr) & v4_us=
-r_m_spec->ip4dst) {
-> > +                     return true;
-> > +             }
-> > +
-> > +             return false;
-> > +     }
-> > +     case TCP_V4_FLOW: {
-> > +             const struct ethtool_tcpip4_spec *v4_spec, *v4_m_spec;
-> > +
-> > +             v4_spec =3D &fs->h_u.tcp_ip4_spec;
-> > +             v4_m_spec =3D &fs->m_u.tcp_ip4_spec;
-> > +
-> > +             if (((v4_spec->ip4src ^ dst4->sin_addr.s_addr) & v4_m_spe=
-c->ip4src) ||
-> > +                 ((v4_spec->ip4dst ^ src4->sin_addr.s_addr) & v4_m_spe=
-c->ip4dst))
-> > +                     return true;
-> > +
+> All that adding a whacky async iput work around does right now is
+> make it harder for Josef to land the patchset that makes this
+> problem go away entirely....
 >
-> The ports need to be checked as well? But my preference overall would
-> be to go back to checking this condition during recvmsg. We can pick
-> some new obscure errno number to clearly explain to the user what
-> happened. EPIPE or something similar, to mean that the socket is cooked.
-> But let's see if Mina has a different opinion..
 
-Sorry for the late reply.
+Per Max this is a problem present on older kernels as well, something
+of this sort is needed to cover it regardless of what happens in
+mainline.
 
-IIU it looks to me like AF_XDP set the precedent that the user can
-break the socket if they mess with the flow steering rules, and I'm
-guessing io_uring zc does something similar. Only devmem tries to have
-the socket work regardless on which rxqueue the incoming packets land
-on, but that was predicated on the being able to do the tracking
-efficiently which seems to not entirely be the case.
+As for mainline, I don't believe Josef's patchset addresses the problem.
 
-I think I'm OK with dropping this patch. We should probably add to the
-docs the new restriction on devmem sockets. In our prod code we don't
-reprogram rules while the socket is running. I don't think this will
-break us, IDK if it will break anyone else, but it is unlikely.
+The newly added refcount now taken by writeback et al only gates the
+inode getting freed, it does not gate almost any of iput/evict
+processing. As in with the patchset writeback does not hold a real
+reference.
 
---=20
-Thanks,
-Mina
+So ceph can still iput from writeback and find itself waiting in
+inode_wait_for_writeback, unless the filesystem can be converted to
+use the weaker refcounts and iobj_put instead (but that's not
+something I would be betting on).
 
