@@ -1,348 +1,236 @@
-Return-Path: <linux-kernel+bounces-820923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F49B7FABE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:02:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67945B7FC2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42DB23B3B24
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1E84A2F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891F4223DEF;
-	Wed, 17 Sep 2025 14:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4363022FE15;
+	Wed, 17 Sep 2025 14:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TtqTsAnU"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011038.outbound.protection.outlook.com [40.107.208.38])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="isM+9kPQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="579HNYwo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCCD3A1DB;
-	Wed, 17 Sep 2025 14:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758117605; cv=fail; b=uahTM9M34cyTVy/9UkMdAjkpDJ/ZkjXNNdf003PmbFXPibbPanEpJ9JOKxqGt8M7VOv4OeVSw2QHSgqZsDPuAF/LjKG0KBuc9uRlSp/ycbnnmnv+2re079uy9FARsoLNJ176uUUdfTt2dvlVkWwI/V0umaWkWuGhcWTnaqblLCE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758117605; c=relaxed/simple;
-	bh=BN8bMjS7K5j0HkU1hoM9ECYSs/F323yJpCpb7rl4sj0=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=byv+fpsb9h7ni0wIhuhuXS2CJ9GEruwDBcaRGknzxFAlDqZjUKlI/Qx91znh1Qn8/bUj7i41cZ5jQ1YN4rn+mZl9+wf/AJFYEBmn6ZqdJfUsxduIzoIMb1/2LoW4R9HUsm+R8E7b6vKPHps+qcXQgGjqaBsKuu+LAzsF6qg625k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TtqTsAnU; arc=fail smtp.client-ip=40.107.208.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DsnTJYgAyHiUJlt+vscpObDIbVILIhC6bvEZT2r7cy8Gb29/pQXgVeSqSHjCuZj5DTNPL3iIeLyxenCSrjOVAZhIghq15rpknV8zTaajgnGOVi9fOlRqnLkpkOuk8hj7U+Phg3Ju6OsRBY1pWhk6zSyFYJncZ87ZzLeZkvrpp8bWBJSHMgPLCbTQ2PlBuQzeU8tO3rPv3b5eV341cdeehaXCiDpoSw1WTs0NCPQS8IdC56MjyxwVwwgECcmklr+O5AQEydHQc1juvcXMhlJEotaMjQV3dZmvsnwyfS8b22bZls/1GRdyBhXsQhXJC65MrEhh2MAeOaNM/fRNf/xA+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RwmlXE2eax1ilt3GgVBA2sCIPKLQgEzDymCZAamqiIM=;
- b=VFCYn6GZ/i64pekF//GMX8W3FUcPmzjonCy5iLBi6r1UhVT30yAZfvohQfkdbh2EFWmDgV8OmNEqeudjJdizXpyI6gSbf0S8y9mr7lqVBsKQhOqSyryJ9mKJfe2oBz6cDcGs1sRL+6SaHLyVjBTk1GRwk6I4xWIITKV2QVm+IF6qtrITYL9/E1wVsghKc/m0jq5PO5w7b4Ey4nHRR2yVW+xXcm/24QBJXb4BSQOnymtOG2aXbtLDyx1mzaPHvFoXW4ieanXjNyYCZVISEglFW7jH/v7y5v56shk8G11lhl1FsiaR4yDg8KDdyeAWM0cv8YL5MTi+06c1KLHK3ocoAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RwmlXE2eax1ilt3GgVBA2sCIPKLQgEzDymCZAamqiIM=;
- b=TtqTsAnUNCM3o10yKwbv3EkFLTKpCiVCioknHh9R23E0N1WPkKZNtjNadjnmjHaWQ5usjMWLz3Q6M0x8zmZq/bS3YpqKa4Z86cHiRGEZK+N78cTjdbxsZ2KwanPI8ZMIj4vjLcdk3Ox9VALtfwlWSrCjq+UWn+HnbOR+m4S45H6FqxoqgTSL2BBKCy/REcuTuu1QbcaLWb749dGUiQ6+izc9uAZFAxnZJ0jLazgwfg/mNoqkaIGQ3mwLqD7pCoDHqCwmFCj4nQLg2KH1AD2mwIH8O4mggIs1hXs8P49tQxcuXdTBxnkNk0d1GnP6NBv/X72Ga8MnhCDFhELm17uyPQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by IA0PR12MB8302.namprd12.prod.outlook.com (2603:10b6:208:40f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
- 2025 14:00:00 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
- 14:00:00 +0000
-Message-ID: <bceeb247-a8db-4ee7-9c7c-ea2f521ef376@nvidia.com>
-Date: Wed, 17 Sep 2025 14:59:54 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/4] i2c: tegra: Add HS mode support
-To: Kartik Rajput <kkartik@nvidia.com>, akhilrajeev@nvidia.com,
- andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
- digetx@gmail.com, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250917085650.594279-1-kkartik@nvidia.com>
- <20250917085650.594279-3-kkartik@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250917085650.594279-3-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO6P123CA0005.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:338::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7412309B0;
+	Wed, 17 Sep 2025 14:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758117717; cv=none; b=Mdeu9Q/ejbgtTHxLHIaYAiTVqI+/KAK0dX+gmLkYxrL/+llf+VVjwppQ0x21h4uYxRW6V90OgUF9YB0d5zzmfRDhR9nKmrl+jUU+CifHAf1B04wn0NWOivs3XzeVCIYMA9AlXFWGU5CYXWsg+FvwQN1LXxdLwJfN70V5LF3nyyY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758117717; c=relaxed/simple;
+	bh=PrQrNrZPLANUyTQvdEFoleoOlkRGgqFa1qlxQLnhL0w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mmlrus0ROeMz8yw6jpweYX+Th0MRnQmtjMK8qauDBVyqBiOEVqE/5MIm3MEYT1Cje6L2Z70MJj6bg0o0IT4khLavEQyc3aKrm5GSjFYUp6g50RhOYc2nDkKRr/PQVwUsJD15jLT/JJCE9sK5A2+TVn3uSU17xDxtqQ5I97/1IZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=isM+9kPQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=579HNYwo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758117713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HGi0V9974FREoLRsYHUwYZzsytUn6wSTNusjibrKdzs=;
+	b=isM+9kPQ4l7zxtX8UulQny4upPIBzL+iGzW+OuVMgrsoY1nvlFEmKYevQtn5yhFgrWt/pU
+	CRY2Aa35gbK/nUWa3/39YRMDaQHgzQ1QidjrXgu/tgl+RGOLYVyp4SaHFVH+xZCtE8ZlOm
+	5oakFizMU6n/DhZ0Nl+fDNcgh7+mO5wK7yzVS7ePMQOOD530S871KCmjCBSkqwk/NQHNNd
+	LEjug4R7c+67WGPSiBh3M4nsyDgbkJE6nrRNgU8YMu+HngkNbzzA+VIUweABHZGiniecdN
+	udUH0Ub97fUxgeucajFmJ000De2phTWRSaZFD2TuGb7TnA6+jEiTWF+lsjyS2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758117713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HGi0V9974FREoLRsYHUwYZzsytUn6wSTNusjibrKdzs=;
+	b=579HNYwobyuJgFBlYt8Ppl2Q6NCc+Xqj5++LG7IYiU6qjT2rfZs/Zi0bQ9HFGBmzfSqy6o
+	iFdQDKa+SFEPfaDw==
+Subject: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO library
+Date: Wed, 17 Sep 2025 16:00:02 +0200
+Message-Id: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|IA0PR12MB8302:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b449dc4-4a32-4da8-2c66-08ddf5f27dde
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eE9Xc3VDVGVWQ1JsckN0aW1zZnY3UmxqTjhldUpVcDhudVBETmpHRGc3SWg4?=
- =?utf-8?B?dmZ6VWxwREIyWnp3T3hIa2E5bmh3MXR3KzVPSVJSL2NiTXhucWlhRXd6Q1dX?=
- =?utf-8?B?VlROZ2RCcU4zQndadTF5MFhYdU9vN3pVRVBZMmtqci85VTNhcldsZUVLZHRI?=
- =?utf-8?B?anFqMmJQZkRZQURoa2dMZmdkN2pSZkFNZjRwT01XSUhKa2JaQ2xLcDFTMGZS?=
- =?utf-8?B?MDVWc1lVR2dMb0lDNnZKVjJHb0VoSDc0TTk5U0FZcWVQaXZ5UmVCTEt1cDA2?=
- =?utf-8?B?M0xRZGVpSnFuVGlaSCtXNy9hOXdoYm1JSUFmSGpkcWtmMTYzYkxqanovUjFm?=
- =?utf-8?B?UHpVd29PbDNRUjdzMkR2NXplMVBVSnE0T1pEdGhzS1g4UEFLSlBsdlBOeHBi?=
- =?utf-8?B?b3J3eEV4UlRwZ01EZWIwcUl5TUZ5ZHRFZ2tlZExkdklNRWVhcHBwa1pJTytW?=
- =?utf-8?B?YU5ZOHFNMWU2bjNvR1NncTNmaGFhbDV2YVpvdjVHQnlSNW1MdmtWTUh6a2d5?=
- =?utf-8?B?KzRLSUZtcnBXVEhhYmJPUnFDMWhyOVVuYUZyRjdiQllXN0pKdVhlSjg0UlhO?=
- =?utf-8?B?T2JoTFBzN1RNWWpUc21RWnMzVlExYWNHTU1EaUxlM01yck1yREpuZUZtcGNP?=
- =?utf-8?B?eE5kMmRnVWVNSUdBZlNQUkVZWmZpUE8yVzAwZFBsdHFGYW1RL3FZcFZoZDRU?=
- =?utf-8?B?UXBhcWpLTHpqTklVVTRCVW5yYmh6YXpXT2d6cmViUG0zS1d2aHovMFkzb01u?=
- =?utf-8?B?a3Q1TytWRWdLR3JZNURFM2wwV2pkemx0ckJ6dk9rS3hpZ25JUVZ5THZNME1F?=
- =?utf-8?B?dzMrZElSWVR3N0xZKzZwL2N4ZXhhNnVnWmpJdS9oYzVtRnIwNXJBQlRDTGZE?=
- =?utf-8?B?TnU4VDcwdXhnb0FUWnFGYndybUxGbEJsUzVRd045VG1xMkJMYW9xUjNyYktq?=
- =?utf-8?B?eDlaSEhjc1B1Mk9iM3N6RG40VTVqcmJyaUpWOVlMU3B6eURTQ090NHFkUXNL?=
- =?utf-8?B?L0F3ZVIzSUZ5RXozbzgwendwbkhLVlIvczA1bHg5Y1JMWnE5SEh2ZTR5WThu?=
- =?utf-8?B?cnpMbCt2dm10R3RWVmtpSXp1cGFnSzlvSzhLcEVQS3M2Q0YxWmdHTk1tcXJr?=
- =?utf-8?B?ZEdBWWxXK2tjZ3I4cEpicXA3dGRNak9OalJYZUtkMXcxdFdyaDVnSkZvbndM?=
- =?utf-8?B?M2doeTVwSTJDaUphODlqYm16TTZmTEdmVGs1cjFVVUtiMjF1cVBuRjFJem4v?=
- =?utf-8?B?Q3dZN3YxT0Nwak9wcmFjM0ZwbU9JbTRCNy9IdmIyakVncUkzdytDR2VyYkJH?=
- =?utf-8?B?REdsMS9mQUNuSHBESkZMU1hPU3hNWFZiUmVwQkJNd0x5aGJnalVJbHVwc2VL?=
- =?utf-8?B?R3oyZUt3MGxKWDE0VEdOcjEvYTJ0bjQzaHlVWXFFbjVnZzFwajZxaTFRaW9s?=
- =?utf-8?B?NitraWlIV05OcjR6Nm9ETmtkbnY2ZkRvN1IxUzhoY2pNOUdXZXNBckF5Y2Jl?=
- =?utf-8?B?dlN4US9aQW1tdEJRNkNCZW85Q2ZFeTcxdXBWM0lCQkE2aWt6UjFWQVlvQnJK?=
- =?utf-8?B?VzlFbGIwbWs0Yi9LTERXZFNEMVlZTW9DV1JQYXZzeUVzazFUaHZwMGUxMkVV?=
- =?utf-8?B?NWFCUFFUdDdWOS9hK0NiV0JPaWVUN2tTb29VcE9NOEJtZk9mNVMvQjdJSE9Z?=
- =?utf-8?B?eGlBZDJOYWdnWHVBTWU1cFZqNkhodENSdWJmMkJyTkYyeURmTXJQSmtpTmh2?=
- =?utf-8?B?L01pU2x3dU1KVWhwbDJ0TWdEL2ZjeUR1TDN4RG1MZWkzR3VmN1lmTG1QYjFx?=
- =?utf-8?B?VFh2c1pzSktoOWMyT1lWcFJOYTZsaDFJb0VqWGt6R3dacWFWeFpEWGtwNVpl?=
- =?utf-8?B?WDE5bkp4cXY2dUsrNGRyWmxuUGN3bmo2OTlSUWRBNDBzSVRZaXBsam10dFZN?=
- =?utf-8?B?MC8vdFNMVUNycW5qbGNwNVhYdXdEa2tqc1JyZDRVSjdMSWRnVGRsTUYvR3h6?=
- =?utf-8?B?SG53Zmo4aklnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SldDRWMxOWhLQU5WcnljdzQ3ZXc2V3VYM1BqWVRnTTV1bENsMHlEMDFMNWxL?=
- =?utf-8?B?cENFUjhPWjd5Y295N0Ewci9oTGdsVUl2ekg3RjJCQlZCL2JkOGxxRDJzQlNS?=
- =?utf-8?B?cGV1RlZlTEZnUlBZSVZxUEVsd1lueklIeDRiOGlsZWE0U0NCTUNJaVF4V29N?=
- =?utf-8?B?VkVKbnhqTkNJV3lEby9oeFhkM2F4alA4enFUVmRjTlpsY3RxeWR5SEh5UmNC?=
- =?utf-8?B?ZEFxNGFHc2c3Q3Q5em9MaTZoYVR0T1ExQWdvUEl4RHJVZFhreHZOamRUL0wv?=
- =?utf-8?B?alNMeU9YWnpaU1pjLzhwUjF6SmNYM2NMVG9JSUxBUEdoY3U1SUE5Snp5RHdu?=
- =?utf-8?B?dmFuSXBzaDhMNnJOL3NlY29qQXM2K093Ym5nVG1KZ0J1a25UMWhJYUFyaTZ5?=
- =?utf-8?B?U2NBUUhxOEZNdDE1K29qNXVzeDEwMHBnMkZDYzRzeEFENXhxMk9DUUcrYjZW?=
- =?utf-8?B?SWRsTTVrUHBDTWVlZnpScmdYUE5McXNJMTNZUkpwSVpub3lYSExmYTdHczRD?=
- =?utf-8?B?Ulp0UEdWdHVWYTRzSDZ4ZUdyYjRMdjloQVlMUmhqbDZvNmZja05xaEpCZUVB?=
- =?utf-8?B?aUtsZXhjR0xZT3BZcGMvazY4MjhPeFZ0aFliOTRCN2RleDBjVUJjUHFlQ05M?=
- =?utf-8?B?WjdxWEpWVElCbDd0enM5b2hFeC9qT25TdktidTdpeERnNnBqRFRPaTNDTzdZ?=
- =?utf-8?B?MXkvQWlqbHhYOFdUUG9rNjUvSE5QeDVYQ1lZSStEWVNIS1A1Qy94NGIrV3RG?=
- =?utf-8?B?RjM4K2ZkdDJjcGR0SVNLMlMrMEgvck9LbGw5TEpzblg0WldGN2xEUnl3Zkg4?=
- =?utf-8?B?ajc0STVjNlJpU01KTnNpVlFOL1dpUTlNMUx5R0RsRXc5aENIeUp6K1FPNFhj?=
- =?utf-8?B?MDJsTlZFWFFGV2J5b1dtTmRleFBoZlJjSHZBZnE5UEVLWE9FN3ljMS85OTBM?=
- =?utf-8?B?SlB5cmNqNXc4dndlRXl0blYvTUlpUDZTcEdwZ2lHWFY0dTh0N3NEQlQ0UHh0?=
- =?utf-8?B?WnVBbXRSb2FVVXBBTE92ZzVhay9aL1JDVmF5ZWw0UVhwT2xlQmtaVCtzeUZs?=
- =?utf-8?B?L242MGQ5OW9JV0s0YkRVOGJMUUlMMXl4RXZTa2pMc2pUcEFiLzI3RlY5MWpi?=
- =?utf-8?B?eG1JNG0rZU8ySktpUHljTnZ1czNDTXIrTFhHYllFNEp0d2xvNnFLMzRRT3Vp?=
- =?utf-8?B?eHRwUGJCRUZwQUx6alo2R3IrejNvQ3k4MjdaOFphSEdjOEZHKzN5ak0wS056?=
- =?utf-8?B?SjNROWRxVTQ2VERkOEVrbjFNa29iRUs3RkdKSDdEa3g4VE1jWHVBb3o0a2Zw?=
- =?utf-8?B?YnBUVFBWeDV1YW45S1dYTy9GWkdhc3dwb1AxS0hJV1Y2YThXUkd5Q2NLTkgz?=
- =?utf-8?B?Y3o2NSsyWHBIdjNRZ1N4RmdLQjQ0TU9lSVpMNjJYb21CUjRtajVDd1dCM0w0?=
- =?utf-8?B?b1F5V2R0L2VCSjJScFRSaWdlWW1uVWRDN0ozcVVpSXJabkFMQlJFSE5tUGZs?=
- =?utf-8?B?VG8vdTZxWHpZWFNnNWRGYlJ1ODNXcTZZY1BzeVJlWTBJT1RtblFrcFJ1TEZn?=
- =?utf-8?B?MW9Pb0NtYy9iQnk4VHRlMXhLZDhZTzlQbTJ1ZGg2T0xkL3RNbUw2YWNvYk5s?=
- =?utf-8?B?TUNHbnNwSjliMk05ZWhMRnFQMVpFeG13K0dnWTFDcG1qMjhEYzN6T0FadmZC?=
- =?utf-8?B?TE5NWGFFYWppNUI4Q1g4NHZQN0pXS09hOCtwN1FPUGp4SlBDOFU2NEg2NDRt?=
- =?utf-8?B?WkIwNjhWMTZzOHdxeXBoSXBBb2J3YzROdzc2SGczbDRYYUE1cFVNOVNLWHIy?=
- =?utf-8?B?UzdqbkkrbXVPcmVsM1l1cXpTaXRoTDNoNzduNEpkOXQzKzBWWjZZVThGSmJs?=
- =?utf-8?B?QU0vQTExVjFnTWhiRDhmSlI3MGFBV21EMzczQVJtNThTaTgyUHpxN0c2Um1P?=
- =?utf-8?B?aXNQTmY0aVc0MFNJMHFhazBzZHhiMEF1Nktmc1liQzdPNkNsUVRKUVc2MWYv?=
- =?utf-8?B?YjVXS1pRT3pEOXVLQjZQdzVtT3VYZC9YTEIxNjExdU4rczlpOFArTi9mNEpo?=
- =?utf-8?B?N3FoOU8wVzhwb3JOcCs3Ri9ZZjAva3hRVUVGVTdiUGxVeXNhTkgrSWI5cGtX?=
- =?utf-8?B?NmF1UmdpNndFbkZDOHk0aGMzNW8vNTl1R0NuM1QwMmovMXBWdFJGK1l2OVJ0?=
- =?utf-8?Q?n8vFnGyqoMWfZLMSAeg4oP/KE8Z/7txmzh6sW9wan7oq?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b449dc4-4a32-4da8-2c66-08ddf5f27dde
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 14:00:00.1802
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vex2u3p5vpYmugsh34Y4B3k6XSEtdR31Z3clJiDxpwlATB7tIXSkYZp6lAyiGQA1NaklZeV6gJhZYsoDTTeeCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8302
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOK+ymgC/3XNQQqDMBCF4atI1p0SJ4narnqP0oUmowZKlMQGi
+ 3j3RqEUCi7/gffNwgJ5S4Fds4V5ijbYwaUQp4zpvnYdgTWpGXJUvESEaMIAYay9LiR05NJcAwK
+ qFomrii6oWRqPnlo77/D9kbq3YRr8e/8T8+36JeURGXPgQKIsatEYlCa/Pa17TX5wdj4bYhsb8
+ UdVuTqkMFGNatuKFyUKWf5T67p+AEyRuJ0LAQAA
+X-Change-ID: 20250722-vdso-sparc64-generic-2-25f2e058e92c
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
+ John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Shuah Khan <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
+ Shannon Nelson <sln@onemain.com>
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Arnd Bergmann <arnd@kernel.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758117712; l=6775;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=PrQrNrZPLANUyTQvdEFoleoOlkRGgqFa1qlxQLnhL0w=;
+ b=rhvxKL65llIUv4MFPStdUaxOuEEw6BGbfC6VZC3v4dCQdq+8U8DPKTlIArAS9aZ+N1qJ7cLLA
+ Aa6EBs+7LpCDKyKWAM2Y6P4XpY3tF7YJ6gLKjXN+vA3qGKiEOoR0D5u
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
+The generic vDSO provides a lot common functionality shared between
+different architectures. SPARC is the last architecture not using it,
+preventing some necessary code cleanup.
 
+Make use of the generic infrastructure.
 
-On 17/09/2025 09:56, Kartik Rajput wrote:
-> From: Akhil R <akhilrajeev@nvidia.com>
-> 
-> Add support for HS (High Speed) mode transfers, which is supported by
-> Tegra194 onwards.
-> 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
-> v3 -> v5:
-> 	* Set has_hs_mode_support to false for unsupported SoCs.
-> v2 -> v3:
-> 	* Document tlow_hs_mode and thigh_hs_mode.
-> v1 -> v2:
-> 	* Document has_hs_mode_support.
-> 	* Add a check to set the frequency to fastmode+ if the device
-> 	  does not support HS mode but the requested frequency is more
-> 	  than fastmode+.
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 33 +++++++++++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index d908e5e3f0af..6f816de8b3af 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -91,6 +91,7 @@
->   #define I2C_HEADER_IE_ENABLE			BIT(17)
->   #define I2C_HEADER_REPEAT_START			BIT(16)
->   #define I2C_HEADER_CONTINUE_XFER		BIT(15)
-> +#define I2C_HEADER_HS_MODE			BIT(22)
->   #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
->   
->   #define I2C_BUS_CLEAR_CNFG			0x084
-> @@ -198,6 +199,8 @@ enum msg_end_type {
->    * @thigh_std_mode: High period of the clock in standard mode.
->    * @tlow_fast_fastplus_mode: Low period of the clock in fast/fast-plus modes.
->    * @thigh_fast_fastplus_mode: High period of the clock in fast/fast-plus modes.
-> + * @tlow_hs_mode: Low period of the clock in HS mode.
-> + * @thigh_hs_mode: High period of the clock in HS mode.
->    * @setup_hold_time_std_mode: Setup and hold time for start and stop conditions
->    *		in standard mode.
->    * @setup_hold_time_fast_fast_plus_mode: Setup and hold time for start and stop
-> @@ -206,6 +209,7 @@ enum msg_end_type {
->    *		in HS mode.
->    * @has_interface_timing_reg: Has interface timing register to program the tuned
->    *		timing settings.
-> + * @has_hs_mode_support: Has support for high speed (HS) mode transfers.
->    */
->   struct tegra_i2c_hw_feature {
->   	bool has_continue_xfer_support;
-> @@ -226,10 +230,13 @@ struct tegra_i2c_hw_feature {
->   	u32 thigh_std_mode;
->   	u32 tlow_fast_fastplus_mode;
->   	u32 thigh_fast_fastplus_mode;
-> +	u32 tlow_hs_mode;
-> +	u32 thigh_hs_mode;
->   	u32 setup_hold_time_std_mode;
->   	u32 setup_hold_time_fast_fast_plus_mode;
->   	u32 setup_hold_time_hs_mode;
->   	bool has_interface_timing_reg;
-> +	bool has_hs_mode_support;
->   };
->   
->   /**
-> @@ -717,6 +724,20 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
->   	if (i2c_dev->hw->has_interface_timing_reg && tsu_thd)
->   		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
->   
-> +	/* Write HS mode registers. These will get used only for HS mode*/
-> +	if (i2c_dev->hw->has_hs_mode_support) {
-> +		tlow = i2c_dev->hw->tlow_hs_mode;
-> +		thigh = i2c_dev->hw->thigh_hs_mode;
-> +		tsu_thd = i2c_dev->hw->setup_hold_time_hs_mode;
-> +
-> +		val = FIELD_PREP(I2C_HS_INTERFACE_TIMING_THIGH, thigh) |
-> +			FIELD_PREP(I2C_HS_INTERFACE_TIMING_TLOW, tlow);
-> +		i2c_writel(i2c_dev, val, I2C_HS_INTERFACE_TIMING_0);
-> +		i2c_writel(i2c_dev, tsu_thd, I2C_HS_INTERFACE_TIMING_1);
-> +	} else if (t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ) {
-> +		t->bus_freq_hz = I2C_MAX_FAST_MODE_PLUS_FREQ;
+Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
+https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org/
 
-No mention in the changelog about this part. Looks like this is a fallback.
+Tested on a Niagara T4 and QEMU.
 
-Should all of this be handled in the case statement for t->bus_freq_hz?
+This has a semantic conflict with my series "vdso: Reject absolute
+relocations during build". The last patch of this series expects all users
+of the generic vDSO library to use the vdsocheck tool.
+This is not the case (yet) for SPARC64. I do have the patches for the
+integration, the specifics will depend on which series is applied first.
 
-> +	}
-> +
->   	clk_multiplier = (tlow + thigh + 2) * (non_hs_mode + 1);
->   
->   	err = clk_set_rate(i2c_dev->div_clk,
-> @@ -1214,6 +1235,9 @@ static void tegra_i2c_push_packet_header(struct tegra_i2c_dev *i2c_dev,
->   	if (msg->flags & I2C_M_RD)
->   		packet_header |= I2C_HEADER_READ;
->   
-> +	if (i2c_dev->timings.bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ)
-> +		packet_header |= I2C_HEADER_HS_MODE;
-> +
->   	if (i2c_dev->dma_mode && !i2c_dev->msg_read)
->   		*dma_buf++ = packet_header;
->   	else
-> @@ -1502,6 +1526,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
->   	.setup_hold_time_fast_fast_plus_mode = 0x0,
->   	.setup_hold_time_hs_mode = 0x0,
->   	.has_interface_timing_reg = false,
-> +	.has_hs_mode_support = false,
->   };
->   
->   static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-> @@ -1527,6 +1552,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
->   	.setup_hold_time_fast_fast_plus_mode = 0x0,
->   	.setup_hold_time_hs_mode = 0x0,
->   	.has_interface_timing_reg = false,
-> +	.has_hs_mode_support = false,
->   };
->   
->   static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-> @@ -1552,6 +1578,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
->   	.setup_hold_time_fast_fast_plus_mode = 0x0,
->   	.setup_hold_time_hs_mode = 0x0,
->   	.has_interface_timing_reg = false,
-> +	.has_hs_mode_support = false,
->   };
->   
->   static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-> @@ -1577,6 +1604,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
->   	.setup_hold_time_fast_fast_plus_mode = 0x0,
->   	.setup_hold_time_hs_mode = 0x0,
->   	.has_interface_timing_reg = true,
-> +	.has_hs_mode_support = false,
->   };
->   
->   static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-> @@ -1602,6 +1630,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
->   	.setup_hold_time_fast_fast_plus_mode = 0,
->   	.setup_hold_time_hs_mode = 0,
->   	.has_interface_timing_reg = true,
-> +	.has_hs_mode_support = false,
->   };
->   
->   static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
-> @@ -1627,6 +1656,7 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
->   	.setup_hold_time_fast_fast_plus_mode = 0,
->   	.setup_hold_time_hs_mode = 0,
->   	.has_interface_timing_reg = true,
-> +	.has_hs_mode_support = false,
->   };
->   
->   static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-> @@ -1648,10 +1678,13 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
->   	.thigh_std_mode = 0x7,
->   	.tlow_fast_fastplus_mode = 0x2,
->   	.thigh_fast_fastplus_mode = 0x2,
-> +	.tlow_hs_mode = 0x8,
-> +	.thigh_hs_mode = 0x3,
->   	.setup_hold_time_std_mode = 0x08080808,
->   	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
->   	.setup_hold_time_hs_mode = 0x090909,
->   	.has_interface_timing_reg = true,
-> +	.has_hs_mode_support = true,
->   };
->   
->   static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
+Based on tip/timers/vdso.
 
+[0] https://lore.kernel.org/lkml/20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de/
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v3:
+- Allocate vDSO data pages dynamically (and lots of preparations for that)
+- Drop clock_getres()
+- Fix 32bit clock_gettime() syscall fallback
+- Link to v2: https://lore.kernel.org/r/20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de
+
+Changes in v2:
+- Rebase on v6.17-rc1
+- Drop RFC state
+- Fix typo in commit message
+- Drop duplicate 'select GENERIC_TIME_VSYSCALL'
+- Merge "sparc64: time: Remove architecture-specific clocksource data" into the
+  main conversion patch. It violated the check in __clocksource_register_scale()
+- Link to v1: https://lore.kernel.org/r/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de
+
+---
+Arnd Bergmann (1):
+      clocksource: remove ARCH_CLOCKSOURCE_DATA
+
+Thomas Weißschuh (35):
+      selftests: vDSO: vdso_test_correctness: Handle different tv_usec types
+      arm64: vDSO: getrandom: Explicitly include asm/alternative.h
+      arm64: vDSO: gettimeofday: Explicitly include vdso/clocksource.h
+      arm64: vDSO: compat_gettimeofday: Add explicit includes
+      ARM: vdso: gettimeofday: Add explicit includes
+      powerpc/vdso/gettimeofday: Explicitly include vdso/time32.h
+      powerpc/vdso: Explicitly include asm/cputable.h and asm/feature-fixups.h
+      LoongArch: vDSO: Explicitly include asm/vdso/vdso.h
+      MIPS: vdso: Add include guard to asm/vdso/vdso.h
+      MIPS: vdso: Explicitly include asm/vdso/vdso.h
+      random: vDSO: Add explicit includes
+      vdso/gettimeofday: Add explicit includes
+      vdso/helpers: Explicitly include vdso/processor.h
+      vdso/datapage: Remove inclusion of gettimeofday.h
+      vdso/datapage: Trim down unnecessary includes
+      random: vDSO: trim vDSO includes
+      random: vDSO: remove ifdeffery
+      random: vDSO: split out datapage update into helper functions
+      random: vDSO: only access vDSO datapage after random_init()
+      s390/time: Set up vDSO datapage later
+      vdso/datastore: Reduce scope of some variables in vvar_fault()
+      vdso/datastore: Drop inclusion of linux/mmap_lock.h
+      vdso/datastore: Map pages through struct page
+      vdso/datastore: Allocate data pages dynamically
+      sparc64: vdso: Link with -z noexecstack
+      sparc64: vdso: Remove obsolete "fake section table" reservation
+      sparc64: vdso: Replace code patching with runtime conditional
+      sparc64: vdso: Move hardware counter read into header
+      sparc64: vdso: Move syscall fallbacks into header
+      sparc64: vdso: Introduce vdso/processor.h
+      sparc64: vdso: Switch to the generic vDSO library
+      sparc64: vdso2c: Drop sym_vvar_start handling
+      sparc64: vdso2c: Remove symbol handling
+      sparc64: vdso: Implement clock_gettime64()
+      clocksource: drop include of asm/clocksource.h from linux/clocksource.h
+
+ arch/arm/include/asm/vdso/gettimeofday.h           |   2 +
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h  |   3 +
+ arch/arm64/include/asm/vdso/gettimeofday.h         |   2 +
+ arch/arm64/kernel/vdso/vgetrandom.c                |   2 +
+ arch/loongarch/kernel/process.c                    |   1 +
+ arch/loongarch/kernel/vdso.c                       |   1 +
+ arch/mips/include/asm/vdso/vdso.h                  |   5 +
+ arch/mips/kernel/vdso.c                            |   1 +
+ arch/powerpc/include/asm/vdso/gettimeofday.h       |   1 +
+ arch/powerpc/include/asm/vdso/processor.h          |   3 +
+ arch/s390/kernel/time.c                            |   4 +-
+ arch/sparc/Kconfig                                 |   3 +-
+ arch/sparc/include/asm/clocksource.h               |   9 -
+ arch/sparc/include/asm/processor.h                 |   3 +
+ arch/sparc/include/asm/processor_32.h              |   2 -
+ arch/sparc/include/asm/processor_64.h              |  25 --
+ arch/sparc/include/asm/vdso.h                      |   2 -
+ arch/sparc/include/asm/vdso/clocksource.h          |  10 +
+ arch/sparc/include/asm/vdso/gettimeofday.h         | 184 ++++++++++
+ arch/sparc/include/asm/vdso/processor.h            |  41 +++
+ arch/sparc/include/asm/vdso/vsyscall.h             |  10 +
+ arch/sparc/include/asm/vvar.h                      |  75 ----
+ arch/sparc/kernel/Makefile                         |   1 -
+ arch/sparc/kernel/time_64.c                        |   6 +-
+ arch/sparc/kernel/vdso.c                           |  69 ----
+ arch/sparc/vdso/Makefile                           |   8 +-
+ arch/sparc/vdso/vclock_gettime.c                   | 380 ++-------------------
+ arch/sparc/vdso/vdso-layout.lds.S                  |  26 +-
+ arch/sparc/vdso/vdso.lds.S                         |   2 -
+ arch/sparc/vdso/vdso2c.c                           |  24 --
+ arch/sparc/vdso/vdso2c.h                           |  45 +--
+ arch/sparc/vdso/vdso32/vdso32.lds.S                |   4 +-
+ arch/sparc/vdso/vma.c                              | 274 +--------------
+ drivers/char/random.c                              |  75 ++--
+ include/linux/clocksource.h                        |   8 -
+ include/linux/vdso_datastore.h                     |   6 +
+ include/vdso/datapage.h                            |  23 +-
+ include/vdso/helpers.h                             |   1 +
+ init/main.c                                        |   2 +
+ kernel/time/Kconfig                                |   4 -
+ lib/vdso/datastore.c                               |  73 ++--
+ lib/vdso/getrandom.c                               |   3 +
+ lib/vdso/gettimeofday.c                            |  17 +
+ .../testing/selftests/vDSO/vdso_test_correctness.c |   8 +-
+ 44 files changed, 451 insertions(+), 997 deletions(-)
+---
+base-commit: 5f84f6004e298bd41c9e4ed45c18447954b1dce6
+change-id: 20250722-vdso-sparc64-generic-2-25f2e058e92c
+
+Best regards,
 -- 
-nvpublic
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
