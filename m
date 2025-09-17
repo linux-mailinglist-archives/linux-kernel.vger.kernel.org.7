@@ -1,89 +1,137 @@
-Return-Path: <linux-kernel+bounces-820358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1EAB7C87B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AF2B7C89A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC38C3B8BA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A585828CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A390C30BBB0;
-	Wed, 17 Sep 2025 09:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C61E345730;
+	Wed, 17 Sep 2025 09:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQdhRnia"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aA123NGr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F213E306B06;
-	Wed, 17 Sep 2025 09:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC134306B22;
+	Wed, 17 Sep 2025 09:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758101888; cv=none; b=RyrnWdbA1+OPylVvFu552Ft9wpbSWmgkgLEjD18P3DiQT1+RXfMdeU6yrb25sfqjWfP87bU9hboz2hNGSwCCuPULzTgTjn/2Q9VgsSxZwo5D0D3MUj243hhi+TRVHtLrY6QZDBA12PuyRn2n7V7W1nHpxNbmfa5ICF6S74syYZM=
+	t=1758101909; cv=none; b=U0clGr+0Nfkwx4H2pJqWPUYByn57lHLMu+IYW36DZYXiiX3yHtzdJPNvY0LS42jXOQPx/oMXtgJmmneyTFZuBTuUmW71IME5kiJCyNtJ6ZDB/3crM+5suETAZqkHZOgrbVG3jYQk6yxLbt2bYIT+KnwaIK8YJ1ucqiPJeX+hTOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758101888; c=relaxed/simple;
-	bh=g6ox8okuU/GzLNmZU+zyA1i4cDtybsxCyJ5PXmVcXz0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VFvbAsXaq1LP/fkoe3MpT3YMxr45FOYeW4NUY0sg3CuCsPZpLmOWevvofqcHU+O06/PkccJfdUObKqCGpn5/+B+aAW/2Nd6IrsJ98PfIy/J+LpEh1O2PvWb/+26NDmS08/wMp6P/fuZaPSvEWbQL8jfpy05v7B6Q8c3gCKfr55A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gQdhRnia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 258CEC4CEF0;
-	Wed, 17 Sep 2025 09:38:06 +0000 (UTC)
+	s=arc-20240116; t=1758101909; c=relaxed/simple;
+	bh=Jio7bAVw9qSJCBnMd44EyKscciXyCsu3ThljIX/NLok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CywAvzDfVSHRKCbNY1C0JgYMcrlePGQvXSM2WXDEpFX3Bo9OIzG1tNExiPx6GCUoZwaiG0yKIHK6hTbeqkAJes1k22UO3Ku2VPEHCL9EeHirzTvtwZAhWTITj4SPjpfuneWsmp96yBnlGfRTYBPf8vvfb8hd8j3ryaPlsR4FKgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aA123NGr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D726C4CEF0;
+	Wed, 17 Sep 2025 09:38:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758101887;
-	bh=g6ox8okuU/GzLNmZU+zyA1i4cDtybsxCyJ5PXmVcXz0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=gQdhRnia76QDRyKpcClJlcEmA3GK+RAg8GYEv84CWhIf7RJqt11qlcYIhhovF8s5x
-	 Rfqc+cMl+6Y3Iu04KrJYZnAyt2MdEfR/VNJt9s4MaNhDJHFq34eYo74n+uz5jvwSy/
-	 H60zIVjUvI9kniKiYim6aCu/oSZGBgRHoITnkdkKO0FN2tcsAxnRJmmSVshDp5RY7t
-	 hjPhkcbUUMveBBcsqbmppVmDf2NFTNv0Hmegh3MFsMe/9SpAwhx8znraIsU7vnhQAv
-	 F5Dsx/ssig1hAr6YpAlbCh9A7U0FLw5hUV6EruNg91Fbkb0pefCxgm2DKeZ8Qbzii0
-	 Q4wl4diSzpd6Q==
-Date: Wed, 17 Sep 2025 11:38:04 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Benjamin Tissoires <bentiss@kernel.org>
-cc: Shuah Khan <shuah@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
-    linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 0/3] HID: hidraw: rework ioctls
-In-Reply-To: <20250912-b4-hidraw-ioctls-v3-0-cd2c6efd8c20@kernel.org>
-Message-ID: <6oo5opr2-30o4-s826-941n-n42179005p61@xreary.bet>
-References: <20250912-b4-hidraw-ioctls-v3-0-cd2c6efd8c20@kernel.org>
+	s=k20201202; t=1758101908;
+	bh=Jio7bAVw9qSJCBnMd44EyKscciXyCsu3ThljIX/NLok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aA123NGre/Y337CiqEBShrS4jPBc82oq0oClBDi8S5SoV4ZvC37x/MkzmPxmAqUuo
+	 f7mvhgd/sVw0LkDQrxwgKKWvn+qSTWyzSC8Xl7aHazts+ItYYStGeQWD9kDUPx/tXC
+	 zSekAoppOpm//P7gzr2SuoYlYAdgtSmDDjHx8Q6vfj4z+IZMqFZm9tsVnX7LT3afFV
+	 Mxuvu6W/FPyfB3igMdJmB0xl3HQshKJ56I17gmMAzVEv5OTaa4U/dOzoF8s70HT5zh
+	 JIFW9G3A0lzbHdy3hsoGaO4J5NrzwABG+2fh6w+pqqT9Qhycw6Sw30tMuPW9i5RHqo
+	 l6VFg19ajS9aQ==
+Date: Wed, 17 Sep 2025 10:38:23 +0100
+From: Lee Jones <lee@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>, herbert@gondor.apana.org.au,
+	jarkko@kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, davem@davemloft.net,
+	linux-crypto@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org, sgarzare@redhat.com
+Subject: Re: [GIT PULL] Immutable branch between MFD, Char and Crypto due for
+ the v6.18 merge window
+Message-ID: <20250917093823.GG3893363@google.com>
+References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
+ <20250902124205.GL2163762@google.com>
+ <20250912213256.GA3062565@ax162>
+ <20250916075835.GB1637058@google.com>
+ <20250916191658.GA1249009@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250916191658.GA1249009@ax162>
 
-On Fri, 12 Sep 2025, Benjamin Tissoires wrote:
+On Tue, 16 Sep 2025, Nathan Chancellor wrote:
 
-> Arnd sent the v1 of the series in July, and it was bogus. So with a
-> little help from claude-sonnet I built up the missing ioctls tests and
-> tried to figure out a way to apply Arnd's logic without breaking the
-> existing ioctls.
+> On Tue, Sep 16, 2025 at 08:58:35AM +0100, Lee Jones wrote:
+> > On Fri, 12 Sep 2025, Nathan Chancellor wrote:
+> > > > The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+> > > > 
+> > > >   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+> ...
+> > > > Qunqin Zhao (4):
+> > > ...
+> > > >       tpm: Add a driver for Loongson TPM device
+> > > 
+> > > This one needs a fix up due to commit 07d8004d6fb9 ("tpm: add bufsiz
+> > > parameter in the .send callback") in 6.17-rc1, as I am seeing the
+> > > following error in next-20250912.
+> > > 
+> > >   drivers/char/tpm/tpm_loongson.c:48:17: error: initialization of 'int (*)(struct tpm_chip *, u8 *, size_t,  size_t)' {aka 'int (*)(struct tpm_chip *, unsigned char *, long unsigned int,  long unsigned int)'} from incompatible pointer type 'int (*)(struct tpm_chip *, u8 *, size_t)' {aka 'int (*)(struct tpm_chip *, unsigned char *, long unsigned int)'} [-Wincompatible-pointer-types]
+> > >      48 |         .send = tpm_loongson_send,
+> > >         |                 ^~~~~~~~~~~~~~~~~
+> > >   drivers/char/tpm/tpm_loongson.c:48:17: note: (near initialization for 'tpm_loongson_ops.send')
+> > >   drivers/char/tpm/tpm_loongson.c:31:12: note: 'tpm_loongson_send' declared here
+> > >      31 | static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> > >         |            ^~~~~~~~~~~~~~~~~
+> > > 
+> > > Can you squash it or do you want a separate patch?
+> > > 
+> > > Cheers,
+> > > Nathan
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm_loongson.c b/drivers/char/tpm/tpm_loongson.c
+> > > index a4ec23639911..9e50250763d1 100644
+> > > --- a/drivers/char/tpm/tpm_loongson.c
+> > > +++ b/drivers/char/tpm/tpm_loongson.c
+> > > @@ -28,7 +28,7 @@ static int tpm_loongson_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> > >  	return cmd_ret->data_len;
+> > >  }
+> > >  
+> > > -static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> > > +static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz, size_t count)
+> > >  {
+> > >  	struct loongson_se_engine *tpm_engine = dev_get_drvdata(&chip->dev);
+> > >  	struct tpm_loongson_cmd *cmd = tpm_engine->command;
+> > 
+> > This will break my local branch.
+> > 
+> > Any chance of an immutable pull-request for:
+> > 
+> >   07d8004d6fb9 ("tpm: add bufsiz parameter in the .send callback")
 > 
-> The end result is in patch 3/3, which makes use of subfunctions to keep
-> the main ioctl code path clean.
+> I might be missing something but this commit is in Linux 6.17-rc1, which
+> this tree is based on according to both 'git log' and the lead in to
+> your pull request at the top, so your local branch is already broken.
+> That error message was taken from the tip of your tree and the fix was
+> tested against it as well.
 > 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> ---
-> Changes in v3:
-> - dropped the co-developed-by tag and put a blurb instead
-> - change the attribution of patch 3/3 to me as requested by Arnd.
-> - Link to v2: https://lore.kernel.org/r/20250826-b4-hidraw-ioctls-v2-0-c7726b236719@kernel.org
-> 
-> changes in v2:
-> - add new hidraw ioctls tests
-> - refactor Arnd's patch to keep the existing error path logic
-> - link to v1: https://lore.kernel.org/linux-input/20250711072847.2836962-1-arnd@kernel.org/
+> "tpm: Add a driver for Loongson TPM device" was sent back in early July,
+> so it was never updated for this conflict.
 
-Now queued in hid.git#for-6.18/hidraw, thanks a lot Arnd and Benjamin!
+Ah, gotcha.  I thought you were saying that 07d8004d6fb9 ("tpm: add
+bufsiz parameter in the .send callback") was applied somewhere else.  In
+which case, I need to figure out why my build testing didn't catch it.
+
+I'd be happy with a formal patch from you or I can create the patch and
+add your {Reported,Suggested}-by.  How would you like to proceed?
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+Lee Jones [李琼斯]
 
