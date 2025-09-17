@@ -1,250 +1,186 @@
-Return-Path: <linux-kernel+bounces-821328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBB6B80FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:27:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B0EB80FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A47188B14E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B451017B5FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8557E29E11D;
-	Wed, 17 Sep 2025 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724192940B;
+	Wed, 17 Sep 2025 16:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HC6D3Red";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s43KVGfF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HC6D3Red";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s43KVGfF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MUbOyKEz"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013065.outbound.protection.outlook.com [52.101.72.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3B234BA4C
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126364; cv=none; b=CmWnRzHJMcWbD/Ih9MHLiy2MMtEqlImJThGNnUBgnUjg9eD004pTI8bIQbN52OKrjRxuYRFs+mMV3sXNEsFdPsGUXxT6EQJfB3dnqX8pp2FWV7OhXMf7JPOjIC8NvIc0yM6Abb4sYvJTLfGL1/DulXpY92899ze1Qg99wh9hvoU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126364; c=relaxed/simple;
-	bh=NuedsL0u0jTMe5e963phUNbN5qwo3sq686mjG/Qm3ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOWFdvZYpU2qPLtwjs2lY96E2CFXftF7qi/zWI43hKBKPVfEKACL/YGMOxZ1vLYfFGDcu8nd3M5IuS4cJQRlqL/ghFO65JS/R1fCB0VdtZ6zESt9CPwxcZBLu9HJjR8imDvagW9WsO9cQZod5cWdrUft4jIqPKrDXcBllFv5e7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HC6D3Red; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s43KVGfF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HC6D3Red; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s43KVGfF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EA230218F1;
-	Wed, 17 Sep 2025 16:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758126361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
-	b=HC6D3Red6ZMCagXz6VhZuw2776xmW9QjS9PRYQXyx4/imvzewtef8k/CWoZZ2dvzX3UKeW
-	41ciJw33CQrcMWLar1CCl58cyXhwVWKI13YIfY9viND9OnILeKB47Mi218N1hYydkC9wd0
-	lEJRdFYGM2NVX5HJVD0HkUq936aCQv4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758126361;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
-	b=s43KVGfF3mcyEVqWiHDE87iRXJGMrhPq7n8S4Wod7psNXyKCL2H3TvgCE6yXiB8lNFMzHC
-	yu4fzvL2IdqPCiBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=HC6D3Red;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=s43KVGfF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758126361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
-	b=HC6D3Red6ZMCagXz6VhZuw2776xmW9QjS9PRYQXyx4/imvzewtef8k/CWoZZ2dvzX3UKeW
-	41ciJw33CQrcMWLar1CCl58cyXhwVWKI13YIfY9viND9OnILeKB47Mi218N1hYydkC9wd0
-	lEJRdFYGM2NVX5HJVD0HkUq936aCQv4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758126361;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wbajwTHpfXlHk5TsPesY8nKzZeFUWj6k4n1keKE4AFQ=;
-	b=s43KVGfF3mcyEVqWiHDE87iRXJGMrhPq7n8S4Wod7psNXyKCL2H3TvgCE6yXiB8lNFMzHC
-	yu4fzvL2IdqPCiBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C4A701368D;
-	Wed, 17 Sep 2025 16:26:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id A5qkLxjhymhKMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Sep 2025 16:26:00 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1C9A2A083B; Wed, 17 Sep 2025 18:26:00 +0200 (CEST)
-Date: Wed, 17 Sep 2025 18:26:00 +0200
-From: Jan Kara <jack@suse.cz>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH] fs: add might_sleep() annotation to iput() and more
-Message-ID: <4hczbhmpigwkkeeqaq2kgw4wumsbrlgis4ld7jz5lq2wdjsnzb@oolwamox5glq>
-References: <20250917153632.2228828-1-max.kellermann@ionos.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B1934BA29;
+	Wed, 17 Sep 2025 16:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758126407; cv=fail; b=n89yx6xvSGAwqGF6nqGTOY+zWP7xXogquOrwsVZ/3Ymincy9WsUBmrM+VVMOv4qdf0bCpZokW6Bf9oGBGcKDqJ2GcUUu+Ox95V8mccPfIVKChIKFrvQK/zJM1Xd+K5kaDTCyO2DiHWISzLYtGFgSzr5S2VPzRRIhl7MInFnSWJ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758126407; c=relaxed/simple;
+	bh=zOSWjhR/oQF+mmOXzIx5SvibBgt6zuMiYAvqWscoIOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=htMWTHQURUl9i+qeExUnkQv9IiEN1kUkt3kuycRzEvqJomzArm/47ptx/FKt54J72UMfV2XyJuFiX5UuOlS3H/l2s1QHa3YVT5YDe2mIl7MG6dcCKap1Unj2DJt32wYbN2rs2mVJSKiuWhfbq20d390DUV5cKMVsAXyhxMVnYGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MUbOyKEz; arc=fail smtp.client-ip=52.101.72.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jl0y4L+6HgsQxnGANpn6N8hv0ZPqRSEwTk6g4ZPLk7cT4m90A6AtDMyxbis+c2U9pRf3sk8wZKbyZt+AP+a7a2R53MfRL6p1ZFt5lnz7pp31lkcT13JiXgbW1YNksC+k68aJWxFnHUpGC+PA2mmpMFF4j4HH5HwneZjOX5g/cSq9Hn+Grv54GdVo30McMzuOXt6IwUhKMGo512cPVj8Iqht48b66fCZFluzD3CEHHFrTMqcIqm2ZWiYCqEiRXl1AA2qIRV4KOlVf5EP8K0YqMy1HUwCBUw+bKXYbQhqziTFgwNpuvleWdp2xPHDWX2dO1eBg/XPZBgX32OUY/jSuMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2fpcpqhUZYEbkqDAe+z9aXR0i835A1iwQeLfSGS2Bxg=;
+ b=BHdBeXq3PqD0HQv9DF17RaDXVIfS5TU2Y1ST3kYNjVo+qhJwaWXrZguq9g5ulezJrd0A+om0bGcm7dB/1wfJXPTqIwkqVt4nNufpD34Ecu9jI9DoFIn0K7p2tSVCXAgXZg9XHYJBMQ51Rxc5NQGYmm/SRCj9T0WlvmuDYyH7f9vjCQZry5hx4eZN8TPO/LBA5vl9dQoInsltiBy+o/9b5EGnT9+bQNxHv5K+ep7rTa874Vb6Uf92ZZ2Nnl1SyBnlwx+pcOAVOKCql34WYJJj9v04D2Dop0scvr1a/Cers4As/2uPt5pO3XEa+K1ZmEXTUPCxxvatyOQe5w0NhKtDGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2fpcpqhUZYEbkqDAe+z9aXR0i835A1iwQeLfSGS2Bxg=;
+ b=MUbOyKEzfoUT3Lb941bw2aHzUcjL+6PspoFG3QjAb0P2HUcbOx50gnfc4WwWMY/q8nQr0wVrnAV24z4IgZoG8gA0OzH0/Wb6QIdqsUC+OsMi+JoCTg3j3QBfm6uw7FkW8B3EczQjAq4VqQk0X901mV9Qtr2+Xk92LfD7TUbN38CumkfOyuRzKNmXuz8ucBPI8ZNZjZ3vAJXghmR8/LmqFiGzs9BnTUPTRe5AicrmlurPGvW11jJ5WII/8kPdffzmv5rmJ/T6Ng28adqYSqAhU8geo4vEPPKlTWSIMyjZ7RkEjrjOEo5M+3o2buZrHo4EdGp6jlym3jDH9/L4/gIfrA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by VI1PR04MB9859.eurprd04.prod.outlook.com (2603:10a6:800:1d9::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
+ 2025 16:26:43 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 16:26:42 +0000
+Date: Wed, 17 Sep 2025 12:26:35 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Haibo Chen <haibo.chen@nxp.com>
+Cc: Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] spi: spi-nxp-fspi: set back to dll override mode
+ when clock rate < 100MHz
+Message-ID: <aMrhO+//We97QeLL@lizhi-Precision-Tower-5810>
+References: <20250917-flexspi-ddr-v2-0-bb9fe2a01889@nxp.com>
+ <20250917-flexspi-ddr-v2-2-bb9fe2a01889@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917-flexspi-ddr-v2-2-bb9fe2a01889@nxp.com>
+X-ClientProxiedBy: BYAPR01CA0046.prod.exchangelabs.com (2603:10b6:a03:94::23)
+ To PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917153632.2228828-1-max.kellermann@ionos.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: EA230218F1
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,gmail.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -4.01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI1PR04MB9859:EE_
+X-MS-Office365-Filtering-Correlation-Id: a69d563f-37c9-4d97-da3a-08ddf606fcce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2sPBPXxKIlPDboIkq5T5GulcO5IUzijY9Wdw+2HgiCbEvqIgUn/6WKhgCUeL?=
+ =?us-ascii?Q?JD+hd+epnIGd2SQSz/yL12daZ9S/QoZIOKhgH+WyKFzP9aesza0/uvEyWYrK?=
+ =?us-ascii?Q?QBGItziL4B0qo5s1rmBUp49u56gsf94IebbSS+zPF8LDioohQ1AlXgiNXkDi?=
+ =?us-ascii?Q?ElgPXF0EKGY1d/98yX+Yn2zG9tNyf0MwUdYA1Qf5elC7SYupyMKQxSnRDcL2?=
+ =?us-ascii?Q?hCxxkSZk1EY0fkE6rD7KvqLw+Ytp3MdZFBVLEhBt0viPXi1f3ixWn2RPpaqG?=
+ =?us-ascii?Q?GMZRDMF7RRW8vol0qgryc4WYYMTCwFkDnWeBuU4kn/49E1AaH52Oc3cI8qbM?=
+ =?us-ascii?Q?CQBp9exNknkV39eRVqxhyyaEHdW+C0TXLRItkzQW6a2MxBZGawpjndRAKDoy?=
+ =?us-ascii?Q?EIPfgoG20P+gqBEWPvp/LpYH9AFYADUa82yFH+W5epo3Q75Zqn63tn4dCvEV?=
+ =?us-ascii?Q?YJ6ElX2DxpN98EKzUICqYEU1OYExuzin/h7hVsw1la3XVF/NX8PN9dwDCQBH?=
+ =?us-ascii?Q?c6ICvzEPv0g7v5A6ftq6OJKniKPRMLoGgrQ5ZWgPig4kLoFso3wlzntGkU18?=
+ =?us-ascii?Q?HNEBfci66laYRU4IJCqcJifY101541zXyuuVUIL27aq/b8AdnZWskY9QHX6t?=
+ =?us-ascii?Q?Tm7EcPAwyuuBW1GYlTio6eyQE4qp/DzPNNipLS1NbuQ8hTcWaDqTWwgVNL77?=
+ =?us-ascii?Q?vPg2pXR5ekgIqllGjrG+BWubntaGGP/Kaw7jx32JZ0EStM0cCeSHNNxS8G9k?=
+ =?us-ascii?Q?orOCVpklpwH55VpPHEupp3afi0vXmlA7MKdooZQTIiUis+dDW7wp1puXAIHB?=
+ =?us-ascii?Q?3lfi2V19KP+25u7GsXuq34/YBMVFTLipu5kDAXuqr5KjxETQaUqmNQKDT/4b?=
+ =?us-ascii?Q?7RLadng/poGy/ohFx4wLogHpbpOuHqmuAv2a17AJvRRseizny8A8e0EbNZlM?=
+ =?us-ascii?Q?Xtk3zxIFPkJzN3J5wTRl2Nn6D4iHBxyhA92KYjzerd43tR1n+V1JmwsFDPte?=
+ =?us-ascii?Q?Dqm8qbT+y9GOBu7kiGTGYYfgilyAIlNiUcyqCacS/IZ5a3dY9HN2h/lIC7Cm?=
+ =?us-ascii?Q?ZfHsipGzNu0oB6dTERWpaAeABHGo+yd3YcpS07f9KWN3uacsUFKEeW0VvH2w?=
+ =?us-ascii?Q?rEgu7zIhavRqB9nUxFy8Ncx4BAEOZXVbrkgYS7/tgnn53nxUzd/0Hsgz64m7?=
+ =?us-ascii?Q?U74Qs+WyjYEPRS5UMrywZwStA40fZVZcSRu/4xB6VfQf0ipkrmiZ4/dwyULt?=
+ =?us-ascii?Q?58IOUkdq9omhfiyLQCyqUoLiBWhay3xO4dy92aRZonmjmlwITG7cxFarmqaR?=
+ =?us-ascii?Q?gNFCX3ms1UMRAherJE/x63wCIj7i78dJ9aZ3i1xrTHaOYvyJBfbZeKkqOxy7?=
+ =?us-ascii?Q?7XYnbA8uYU5MI3A4cLgwzJGIUGrvG1oP6cmT+FmPY/cMufP/F9976FQqw5F/?=
+ =?us-ascii?Q?+eRBc5gxR5dsJbzDp7QXedZLWT7wEpB9IAKSur/yHRohv9j6grmqpw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pQY3m6v1uYdwrfFVcMyimTrzz5rpvhZTodkoQCKHF3XQB/Fm/LfWnt4z1sc0?=
+ =?us-ascii?Q?iqQxMw/jRN2sew1jm30jxBLj2sABjGPZzPZdHYX/fC6XN5cJyBEoIRixU04U?=
+ =?us-ascii?Q?X3a0iYgGQnTSAJT+MskO8Ktz8qgl6p1tfhNKMOSoFesvPitTdY3j1tGDqwlT?=
+ =?us-ascii?Q?Ib21XRPbMV9e+A9eOCv90/21XL40gDqFGJAeq/DkkcP8w+F2Emr/ypiqKRVd?=
+ =?us-ascii?Q?cHQ711q379QwWPTyAeXSg4Th/JXs4Qx31pOxjyqxxOvZqUd75sjqDjB5CLN5?=
+ =?us-ascii?Q?gm+tU1ZE38dqvnW4elGjZ1nOnN9I97W81ct7Mak6WA2zx/MnzLQZEeARJZoT?=
+ =?us-ascii?Q?UoNSdD8jxpssETWaY1mv/oSboguQiginY4sBRAa7Xd9MAEdgdPptAU8SYFFU?=
+ =?us-ascii?Q?40nGDepT8SK5RHJhAbTyp/gIbgzq7tQxX3L88nXLWWoKf0n1y792efheHq8W?=
+ =?us-ascii?Q?IhrDP8eQLfLvnRDTnMVK1yrgikZgj0kDHtJB8FdCiV2LDwxAyIfXrtgDr+Jk?=
+ =?us-ascii?Q?HzgifXDDifGDnq+AnhL7PYbYGd9osCXEGeRY3zaWzYBDAPMAeuhITaU9Ivaf?=
+ =?us-ascii?Q?T/mso7k6L3eWkJzpJdAQePPktn6q//Go5+twWNTk2SrPA8ErrInYSbhvHm0W?=
+ =?us-ascii?Q?9SL1i5OPnZbIFjIC9iJHrzNcAzDuzCNQbzprfQHfRuK2xBeSCrDhjCVMERF7?=
+ =?us-ascii?Q?fWH6j+Giy0JxDCwVJ7/+nWW/h4FY42ipNJJcuFLgvP0+Uy/nOUGJJHJLnS88?=
+ =?us-ascii?Q?H5tT9qaL25Ci69fRnJMM/pxg5uScCbEOf1kZkUfPmSe+E1McUBW94iHk1mNR?=
+ =?us-ascii?Q?rrqhplwgtCxSAdUKsbPAxWOoVHgW5CnOBSogyS1DqQ8E5AHZQciSacNJ6Rs0?=
+ =?us-ascii?Q?Ni3zbJBq4wjSgfhuFAfEsit282iupZ6Kdm+0pXZW0Y2fITzk3BBy8bg0gaGp?=
+ =?us-ascii?Q?e+2t+OV9n75H+NtlR4sr9XtO5owy1G1hEUr1xYcU+CQic6wduHWCAbWq73yu?=
+ =?us-ascii?Q?SIQgiUTJLBxe2hxCHYEfM/emI/vCLkvmSBleGEU+G7vDZmEZXzstBTslZMit?=
+ =?us-ascii?Q?LAIv3wKSPSQQO1k+5izeqiwwyuotbZ7lIKSoBD3uL7Y915sGCLCjK4XWSE1D?=
+ =?us-ascii?Q?UnAyOrN3kKdARXyqs9reYnqk1TSP2Ijpa94Fxkbvqulv2KALmi32W4RO/tkB?=
+ =?us-ascii?Q?4yDZ+b3hdL4vIv8eOZL4EeVFk9yzFS5EuXiEajpHC3Ubxw0Gr8+Rkn4VVTv8?=
+ =?us-ascii?Q?prOhbLBD9qnlIQ2ffK/IbDzx1kULmhU3UsiMBnMsC8qY9ra3JeeFqlvUUMuS?=
+ =?us-ascii?Q?xf4WMCVhYNZnVv+1YSSoq5xxNHNAZ38T1W1Z0MZ3ImidAQzQX10t14VwTL5v?=
+ =?us-ascii?Q?DfENRndY17a0tUcC7+LZO3l3KuShP8nrhxND9Gc0v6l7HtLG1vCsF56fA6fF?=
+ =?us-ascii?Q?51IefPFSwVA0qndErPT5YhXZiQOEahRBTbCTmc5F7AkF2cSG4oo9fJZWzpd+?=
+ =?us-ascii?Q?bwi6fehqwRY7dP3LQEiMcoQevkHuUgEF6UsYmWCA5W2wfUov5SSJfd0nESaT?=
+ =?us-ascii?Q?qomhTh1uGbOYPlMLZaV5ZbTCSOW1a7rax3usRRge?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a69d563f-37c9-4d97-da3a-08ddf606fcce
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 16:26:42.9205
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /qlP6EzqD2nmi490ABTysiLMA6v4//Ep3s1SvBL3I8gAd73OiAPubqurm011fFy+W6ekBcJfuK89AU2Fi0UBgg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9859
 
-On Wed 17-09-25 17:36:31, Max Kellermann wrote:
-> When iput() drops the reference counter to zero, it may sleep via
-> inode_wait_for_writeback().  This happens rarely because it's usually
-> the dcache which evicts inodes, but really iput() should only ever be
-> called in contexts where sleeping is allowed.  This annotation allows
-> finding buggy callers.
-> 
-> Additionally, this patch annotates a few low-level functions that can
-> call iput() conditionally.
-> 
-> Cc: Mateusz Guzik <mjguzik@gmail.com>
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-
-Looks sensible. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Wed, Sep 17, 2025 at 03:27:07PM +0800, Haibo Chen wrote:
+> Preparation of supportting DTR mode. In nor suspend, driver will disable
+> DTR mode, and enable DTR mode back in nor resume. This require the flexspi
+> driver has the ability to set back to dll override mode in STR mode when
+> clock rate < 100MHz.
+>
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 > ---
-> For discussion of a loosely-related Ceph deadlock bug, see:
->  https://lore.kernel.org/ceph-devel/CAKPOu+-xr+nQuzfjtQCgZCqPtec=8uQiz29H5+5AeFzTbp=1rw@mail.gmail.com/T/
->  https://lore.kernel.org/ceph-devel/CAGudoHF0+JfqxB_fQxeo7Pbadjq7UA1JFH4QmfFS1hDHunNmtw@mail.gmail.com/T/
-> ---
->  fs/inode.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index fc2edb5a4dbe..ec9339024ac3 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1279,6 +1279,8 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
->  	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
->  	struct inode *old;
->  
-> +	might_sleep();
-> +
->  again:
->  	spin_lock(&inode_hash_lock);
->  	old = find_inode(inode->i_sb, head, test, data, true);
-> @@ -1382,6 +1384,8 @@ struct inode *iget5_locked_rcu(struct super_block *sb, unsigned long hashval,
->  	struct hlist_head *head = inode_hashtable + hash(sb, hashval);
->  	struct inode *inode, *new;
->  
-> +	might_sleep();
-> +
->  again:
->  	inode = find_inode(sb, head, test, data, false);
->  	if (inode) {
-> @@ -1422,6 +1426,9 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
->  {
->  	struct hlist_head *head = inode_hashtable + hash(sb, ino);
->  	struct inode *inode;
-> +
-> +	might_sleep();
-> +
->  again:
->  	inode = find_inode_fast(sb, head, ino, false);
->  	if (inode) {
-> @@ -1605,6 +1612,9 @@ struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
->  		int (*test)(struct inode *, void *), void *data)
->  {
->  	struct inode *inode;
-> +
-> +	might_sleep();
-> +
->  again:
->  	inode = ilookup5_nowait(sb, hashval, test, data);
->  	if (inode) {
-> @@ -1630,6 +1640,9 @@ struct inode *ilookup(struct super_block *sb, unsigned long ino)
->  {
->  	struct hlist_head *head = inode_hashtable + hash(sb, ino);
->  	struct inode *inode;
-> +
-> +	might_sleep();
-> +
->  again:
->  	inode = find_inode_fast(sb, head, ino, false);
->  
-> @@ -1780,6 +1793,8 @@ int insert_inode_locked(struct inode *inode)
->  	ino_t ino = inode->i_ino;
->  	struct hlist_head *head = inode_hashtable + hash(sb, ino);
->  
-> +	might_sleep();
-> +
->  	while (1) {
->  		struct inode *old = NULL;
->  		spin_lock(&inode_hash_lock);
-> @@ -1826,6 +1841,8 @@ int insert_inode_locked4(struct inode *inode, unsigned long hashval,
->  {
->  	struct inode *old;
->  
-> +	might_sleep();
-> +
->  	inode->i_state |= I_CREATING;
->  	old = inode_insert5(inode, hashval, test, NULL, data);
->  
-> @@ -1908,6 +1925,7 @@ static void iput_final(struct inode *inode)
->   */
->  void iput(struct inode *inode)
->  {
-> +	might_sleep();
->  	if (unlikely(!inode))
->  		return;
->  
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+>  drivers/spi/spi-nxp-fspi.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+> index db4b92490de957580c6298baeb8b68a310c23615..a1c9ad03379682dc1fc2908fbd83e1ae8e91588f 100644
+> --- a/drivers/spi/spi-nxp-fspi.c
+> +++ b/drivers/spi/spi-nxp-fspi.c
+> @@ -767,6 +767,8 @@ static void nxp_fspi_select_mem(struct nxp_fspi *f, struct spi_device *spi,
+>  	 */
+>  	if (rate > 100000000)
+>  		nxp_fspi_dll_calibration(f);
+> +	else
+> +		nxp_fspi_dll_override(f);
+>
+>  	f->selected = spi_get_chipselect(spi, 0);
+>  }
+>
+> --
+> 2.34.1
+>
 
