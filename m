@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-820208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367BCB7FFA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:29:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F90B7ECEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DBB37A5C96
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B55D168BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FEF305E3E;
-	Wed, 17 Sep 2025 08:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91771305E3B;
+	Wed, 17 Sep 2025 08:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sS5tGHy1"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="StGD3ARx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B532724A07C;
-	Wed, 17 Sep 2025 08:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146A722A4EA;
+	Wed, 17 Sep 2025 08:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758096560; cv=none; b=YO7PPby8pCKnoKb+xuC+8wacd60LxSR94OcOpJmHylAwvHoNciqlv6bADcg5jAkmcwF9Lg6Z3X4LnHL8OOGPDHNbgxVNYoxkecAquB6t1JnoizZITZ+d3UyKtXR+Q0jnhEsiDKviyI5RY0OvXiLYOUhPBkQqyHU8EGVH6Gx03Sw=
+	t=1758096654; cv=none; b=gQO2K+EK9o57CVVFn73W2YIRSGONv4hnY+cD4dhyAeONYoiEn+IZnW/BABargy2znNZfixzraG6iZwaLF4m91J7HgrA7FOXp9KlDQCUyngHlhKcSq4//vwImAwtao0ABAulIZ2P9Q+EbUrSJT3FfdEqlpTOwcjOCNEMDxS+lGoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758096560; c=relaxed/simple;
-	bh=Vcy+jDHJHhRD/rmN9QS8IF0pLTLMLCOB8UldY2HzK+M=;
+	s=arc-20240116; t=1758096654; c=relaxed/simple;
+	bh=a2NGnZXyMk2WBG9QLMhqEkm3HJ2+sNYSVMHdCrgUh0E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2iAtxFbJt4ItroVKDH9LHvqjR9zzud/CDiPIS4OleW2l/J5d0m6fxFqQILeIv5ElnvfXw+hv75y2UWGwQnXU9uSjHjg6aQ7cXwtSXOy4RkhKs9Jwwxkc25ei7tk6HVN4uLhPzXCIYQ9LpxYG6UT8gaDZfICGG1BQ7rm+8KJf4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sS5tGHy1; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GLlrCb031198;
-	Wed, 17 Sep 2025 08:09:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=2efUd1CwyJUOEJO7ssZYdyFc1hpdDc
-	xzzUUYGc0jzLI=; b=sS5tGHy13aHJizpHNKOGKcDkA0+PfpIgCk3z8c1vPTM/e2
-	xkdAs8iTpwDpsRdVj0TyQ+d/D8HI48UFE4tLEDlZkU+P62hq3VH6+QymO8TYqnzZ
-	73SSHdsvtwVh666qvbY0ZuMBhQgHPycO3U0HWuklR8SMlRF0WbCYG6g0ISiOIQYf
-	wNuGO3IoG9R3OgQkjKeC4HTSfUofsXhJ29nRYkMwPL4es3MyjCowo8mZv+zhQJMn
-	oE9MTb8rJLJ9dlwXB9U0pftrZaGAzegn2rEGtpJErVc2eBi9WEcmSJSzc5bQQiAB
-	JhHjVWvVrDgRSslIl+UBSIyPEjOWO2LBgqb44+NA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hj9q4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 08:09:10 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58H89AA9028860;
-	Wed, 17 Sep 2025 08:09:10 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hj9q1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 08:09:10 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58H83CRf009486;
-	Wed, 17 Sep 2025 08:09:09 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 495nn3fve0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 08:09:09 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58H897ch30999012
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 08:09:07 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 89D2F20043;
-	Wed, 17 Sep 2025 08:09:07 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2271C20040;
-	Wed, 17 Sep 2025 08:09:04 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.21.137])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 17 Sep 2025 08:09:03 +0000 (GMT)
-Date: Wed, 17 Sep 2025 13:39:01 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 09/12] generic: Add sudden shutdown tests for multi
- block atomic writes
-Message-ID: <aMpsnQEYagLvPOw2@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1757610403.git.ojaswin@linux.ibm.com>
- <25f77aa7ac816e48b5921601e3cf10445db1f36b.1757610403.git.ojaswin@linux.ibm.com>
- <58214139-2e42-4480-a7c3-443dd931fd09@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYUBQ33ciBOSy1dkPTNT1fLTwR9g2zTbMEW8FfNVo7oGs73rBcseY0aecw472JCkPLUjFONIQ0r++YzSSFlpUwHLuPCpixUzAxPK2XluohvyAI7xPxA6yWlNRUxY2dvwaliF+G7hh45NUTGRiqGilvcaiChxLkPf9rc9ikk6M5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=StGD3ARx; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758096653; x=1789632653;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a2NGnZXyMk2WBG9QLMhqEkm3HJ2+sNYSVMHdCrgUh0E=;
+  b=StGD3ARxQ0t3B+MfdE2ZejedWUYhkBlgLlWFrUW2XDQGt2phSeCWYLYC
+   bceogOscj2XauQ1WRbA0YpLBFduFhIKJ1wW2CEHDxGpadOcC0JG9DA13f
+   BjCvEibR5YTJo9YGqwAThiztcpEg0T0y+gYJGqJVCqq5E9O4ADuucPzDy
+   QomfWdpD9MRXYZAho3pUO81pWIAGnzMnKXCapgObQQFIKi03VcfTjKkyZ
+   Q7+VzAWnM2eX7ctD5/+Ygz2Yl78lp2Fs5uk4+HJL/ePliZ3vsiPrId7cx
+   iSdY8FWLUIydeu4bMGMpriwRykWyYpkAUKtYw1AutnsTKqXksDqE2RWjr
+   g==;
+X-CSE-ConnectionGUID: rSzAGjOUS7qqrSI8EzwlNQ==
+X-CSE-MsgGUID: Xkey+w6XT5SjGA4TvBFxRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60452767"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60452767"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:10:50 -0700
+X-CSE-ConnectionGUID: /JvmjEfbQ1SQOf+a5IYzwA==
+X-CSE-MsgGUID: dTtc8jMtQhWeBa63wngxgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="180320252"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:10:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uynFS-00000003kRu-0aYO;
+	Wed, 17 Sep 2025 11:10:42 +0300
+Date: Wed, 17 Sep 2025 11:10:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: Re: [PATCH v11 2/3] iio: adc: max14001: New driver
+Message-ID: <aMptAUsQaUIYpVNG@smile.fi.intel.com>
+References: <cover.1757971454.git.marilene.agarcia@gmail.com>
+ <c257f7feb92dcf33bf7a55810fe69d13890374d5.1757971454.git.marilene.agarcia@gmail.com>
+ <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,287 +93,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <58214139-2e42-4480-a7c3-443dd931fd09@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9SnjrHcDzl0a84f8J8vTLMttKoGDatuL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfXyag6cUd+MZoE
- pncqklP0NnCXuf5/Cxe5aVDz/mYNnnwX0EJGWNSun2/xPP3KraxIuyxxmk0Dhn6Lgcxx9Q1xcbI
- u/zVcCBposR7YaD7QTz+yyhtgeZweO2LTW1GQdsTgV9DQ9WeoILMM2+xFZVSnwxAaudX8s4pXWR
- Iy4gJMTb7YtrL8nNqtvym8ukz6j6n6+gw15+86KnPSrc6SIY9nTYGHQDajgext/tWTlBS8N2/Qv
- TAQ/B1OhX9rmKoLEvGguJ2zRrS67j4+5tpWo6MFTALOCqijDYkievGeX5hNJXHbcL+wOk78td1s
- ldiOjCwBVGm3RhEg/qKCsO9zXw660ZF72ZCUutcLgP3lb6k3gtBhciTqsrGziUsMUk45qQ8FfEP
- bXcqh0aU
-X-Proofpoint-GUID: Ld_7u26JiXeUqa0kieLXRmx9cTYe33uQ
-X-Authority-Analysis: v=2.4 cv=co2bk04i c=1 sm=1 tr=0 ts=68ca6ca6 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8 a=rD5qyBoocmPsG8PDIDIA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160204
+In-Reply-To: <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Sep 15, 2025 at 02:26:46PM +0100, John Garry wrote:
-> On 11/09/2025 18:13, Ojaswin Mujoo wrote:
-> > This test is intended to ensure that multi blocks atomic writes
-> > maintain atomic guarantees across sudden FS shutdowns.
-> > 
-> > The way we work is that we lay out a file with random mix of written,
-> > unwritten and hole extents. Then we start performing atomic writes
-> > sequentially on the file while we parallelly shutdown the FS. Then we
-> > note the last offset where the atomic write happened just before shut
-> > down and then make sure blocks around it either have completely old
-> > data or completely new data, ie the write was not torn during shutdown.
-> > 
-> > We repeat the same with completely written, completely unwritten and completely
-> > empty file to ensure these cases are not torn either.  Finally, we have a
-> > similar test for append atomic writes
-> > 
-> > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> I still have some nits, which are close to being the same as last time. I
-> don't want this series to be held up any longer over my nitpicking, so:
-> 
-> Reviewed-by: John Garry <john.g.garry@oracle.com>
-> 
-> > ---
-> >   tests/generic/1230     | 368 +++++++++++++++++++++++++++++++++++++++++
-> >   tests/generic/1230.out |   2 +
-> >   2 files changed, 370 insertions(+)
-> >   create mode 100755 tests/generic/1230
-> >   create mode 100644 tests/generic/1230.out
-> > 
-> > diff --git a/tests/generic/1230 b/tests/generic/1230
-> > new file mode 100755
-> > index 00000000..28c2c4f5
-> > --- /dev/null
-> > +++ b/tests/generic/1230
-> > @@ -0,0 +1,368 @@
-> > +#! /bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-> > +#
-> > +# FS QA Test No. 1230
-> > +#
-> > +# Test multi block atomic writes with sudden FS shutdowns to ensure
-> > +# the FS is not tearing the write operation
-> > +. ./common/preamble
-> > +. ./common/atomicwrites
-> > +_begin_fstest auto atomicwrites
-> > +
-> > +_require_scratch_write_atomic_multi_fsblock
-> > +_require_atomic_write_test_commands
-> > +_require_scratch_shutdown
-> > +_require_xfs_io_command "truncate"
-> > +
-> > +_scratch_mkfs >> $seqres.full 2>&1
-> > +_scratch_mount >> $seqres.full
-> > +
-> > +testfile=$SCRATCH_MNT/testfile
-> > +touch $testfile
-> > +
-> > +awu_max=$(_get_atomic_write_unit_max $testfile)
-> > +blksz=$(_get_block_size $SCRATCH_MNT)
-> > +echo "Awu max: $awu_max" >> $seqres.full
-> > +
-> > +num_blocks=$((awu_max / blksz))
-> > +# keep initial value high for dry run. This will be
-> > +# tweaked in dry_run() based on device write speed.
-> > +filesize=$(( 10 * 1024 * 1024 * 1024 ))
-> > +
-> > +_cleanup() {
-> > +	[ -n "$awloop_pid" ] && kill $awloop_pid &> /dev/null
-> > +	wait
-> > +}
-> > +
-> > +atomic_write_loop() {
-> > +	local off=0
-> > +	local size=$awu_max
-> > +	for ((i=0; i<$((filesize / $size )); i++)); do
-> > +		# Due to sudden shutdown this can produce errors so just
-> > +		# redirect them to seqres.full
-> > +		$XFS_IO_PROG -c "open -fsd $testfile" -c "pwrite -S 0x61 -DA -V1 -b $size $off $size" >> /dev/null 2>>$seqres.full
-> > +		echo "Written to offset: $off" >> $tmp.aw
-> > +		off=$((off + $size))
-> > +	done
-> > +}
-> > +
-> > +start_atomic_write_and_shutdown() {
-> > +	atomic_write_loop &
-> > +	awloop_pid=$!
-> > +
-> > +	local i=0
-> > +	# Wait for atleast first write to be recorded or 10s
-> 
-> at least
-> 
-> > +	while [ ! -f "$tmp.aw" -a $i -le 50 ]; do i=$((i + 1)); sleep 0.2; done
-> > +
-> > +	if [[ $i -gt 50 ]]
-> > +	then
-> > +		_fail "atomic write process took too long to start"
-> > +	fi
-> > +
-> > +	echo >> $seqres.full
-> > +	echo "# Shutting down filesystem while write is running" >> $seqres.full
-> > +	_scratch_shutdown
-> > +
-> > +	kill $awloop_pid 2>/dev/null  # the process might have finished already
-> > +	wait $awloop_pid
-> > +	unset $awloop_pid
-> > +}
-> 
-> ...
-> 
-> > +
-> > +verify_data_blocks() {
-> > +	local verify_start=$1
-> > +	local verify_end=$2
-> > +	local expected_data_old="$3"
-> > +	local expected_data_new="$4"
-> > +
-> > +	echo >> $seqres.full
-> > +	echo "# Checking data integrity from $verify_start to $verify_end" >> $seqres.full
-> > +
-> > +	# After an atomic write, for every chunk we ensure that the underlying
-> > +	# data is either the old data or new data as writes shouldn't get torn.
-> > +	local off=$verify_start
-> > +	while [[ "$off" -lt "$verify_end" ]]
-> > +	do
-> > +		#actual_data=$(xxd -s $off -l $awu_max -p $testfile)
-> > +		actual_data=$(od -An -t x1 -j $off -N $awu_max $testfile)
-> > +		if [[ "$actual_data" != "$expected_data_new" ]] && [[ "$actual_data" != "$expected_data_old" ]]
-> > +		then
-> > +			echo "Checksum match failed at off: $off size: $awu_max"
-> > +			echo "Expected contents: (Either of the 2 below):"
-> > +			echo
-> > +			echo "Expected old: "
-> 
-> nit: I think that I mentioned this the last time - I would not use the word
-> "expected". We have old data, new data, and actual data. The only thing
-> which we expect is that actual data will be either all old or all new.
- 
-Hey John so I mentioned here [1] that the wording "expected new",
-"expected old", "actual" looked more clear to me than "new", "old" and
-"actual" and you replied with sure so I though we were good there :)
+On Tue, Sep 16, 2025 at 01:04:41PM -0500, David Lechner wrote:
+> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
 
-But no worries I can make this change. I'll keep the wording as 
-new, old and actual.
+...
 
+> > Change I was not able to do:
+> > - I could not remove bitrev16 because I am using an SPI controller that
+> > does not support SPI_LSB_FIRST. So I suggest keeping bitrev16 and not using
+> > the spi-lsb-first devicetree property for now, since this driver currently
+> > works for both types of controllers: those that support it and those that
+> > do not. I left a TODO comment to address this issue as soon as the SPI
+> > kernel code starts handling the bit-reverse operation for controllers that
+> > do not have this support. Once I finish my work on this driver, if the SPI
+> > code still does not include this handling, I can submit patches to add it.
 > 
-> > +			echo "$expected_data_old"
-> > +			echo
-> > +			echo "Expected new: "
-> > +			echo "$expected_data_new"
-> > +			echo
-> > +			echo "Actual contents: "
-> > +			echo "$actual_data"
-> > +
-> > +			_fail
-> > +		fi
-> > +		echo -n "Check at offset $off succeeded! " >> $seqres.full
-> > +		if [[ "$actual_data" == "$expected_data_new" ]]
-> > +		then
-> > +			echo "matched new" >> $seqres.full
-> > +		elif [[ "$actual_data" == "$expected_data_old" ]]
-> > +		then
-> > +			echo "matched old" >> $seqres.full
-> > +		fi
-> > +		off=$(( off + awu_max ))
-> > +	done
-> > +}
-> > +
-> > +# test data integrity for file by shutting down in between atomic writes
-> > +test_data_integrity() {
-> > +	echo >> $seqres.full
-> > +	echo "# Writing atomically to file in background" >> $seqres.full
-> > +
-> > +	start_atomic_write_and_shutdown
-> > +
-> > +	last_offset=$(tail -n 1 $tmp.aw | cut -d" " -f4)
-> > +	if [[ -z $last_offset ]]
-> > +	then
-> > +		last_offset=0
-> > +	fi
-> > +
-> > +	echo >> $seqres.full
-> > +	echo "# Last offset of atomic write: $last_offset" >> $seqres.full
-> > +
-> > +	rm $tmp.aw
-> > +	sleep 0.5
-> > +
-> > +	_scratch_cycle_mount
-> > +
-> > +	# we want to verify all blocks around which the shutdown happened
-> > +	verify_start=$(( last_offset - (awu_max * 5)))
-> > +	if [[ $verify_start < 0 ]]
-> > +	then
-> > +		verify_start=0
-> > +	fi
-> > +
-> > +	verify_end=$(( last_offset + (awu_max * 5)))
-> > +	if [[ "$verify_end" -gt "$filesize" ]]
-> > +	then
-> > +		verify_end=$filesize
-> > +	fi
-> > +}
-> > +
-> > +# test data integrity for file with written and unwritten mappings
-> > +test_data_integrity_mixed() {
-> > +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
-> > +
-> > +	echo >> $seqres.full
-> > +	echo "# Creating testfile with mixed mappings" >> $seqres.full
-> > +	create_mixed_mappings $testfile $filesize
-> > +
-> > +	test_data_integrity
-> > +
-> > +	verify_data_blocks $verify_start $verify_end "$expected_data_old_mixed" "$expected_data_new"
-> > +}
-> > +
-> > +# test data integrity for file with completely written mappings
-> > +test_data_integrity_written() {
-> 
-> nit: again, I am not so keen on using the word "integrity" at all.
-> "integrity" in storage world relates to T10 PI support in Linux. I know that
-> last time I mentioned it's ok to use "integrity" when close to words "atomic
-> write", but I still fear some doubt on whether we are talking about T10 PI
-> when we mention integrity.
+> I looked more at what it would take to implement this in the SPI core code
+> and found that it would actually be quite difficult to do in a generic way
+> because there are so many edge/corner/n-dim cases. We can't change tx_buf
+> data in-place because it might be const data that is in some memory area
+> that can't be modified. And things would get complicated if different
+> transfers pointed to the same buffer memory addresses anyway. So we would
+> basically have to allocate new memory for all buffers, copy all tx data to
+> that new memory, reverse all of the tx bits, and update all the pointers in
+> the transfer structs. Then when the message was finished, we would have to
+> reverse all of the rx bits, copy all of the rx buffers back to the original
+> buffers and put all the buffer pointers back the way they were. But this
+> could write over some of the original tx data if tx_buf and rx_buf point to
+> the same original buffer, which would break things if a peripheral driver
+> expected the tx data to persist.
 
-Okay got it, fine then how about using phrases like "test for torn
-data for file with completely written mapping" and such?
+And what's the problem here? We do the same with bounce-buffers in case
+of DMA/IOMMU (okay, without actual data modification, but it's possible
+on-the-fly).
 
+> And we can't do this during the SPI optimize
+> step because that currently allows the tx_buf data values to be modified after
+> optimization.
+
+This I don't know, so perhaps it's indeed a showstopper.
+
+> So perhaps it is best to just handle it in the peripheral driver. It will
+> be much more efficent that way anyway.
 > 
-> > +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
-> > +
-> > +	echo >> $seqres.full
-> > +	echo "# Creating testfile with fully written mapping" >> $seqres.full
-> > +	$XFS_IO_PROG -c "pwrite -b $filesize 0 $filesize" $testfile >> $seqres.full
-> > +	sync $testfile
-> > +
-> > +	test_data_integrity
-> > +
-> > +	verify_data_blocks $verify_start $verify_end "$expected_data_old_mapped" "$expected_data_new"
-> > +}
-> > +
-> > +# test data integrity for file with completely unwritten mappings
-> > +test_data_integrity_unwritten() {
-> > +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
-> > +
-> > +	echo >> $seqres.full
-> > +	echo "# Creating testfile with fully unwritten mappings" >> $seqres.full
-> > +	$XFS_IO_PROG -c "falloc 0 $filesize" $testfile >> $seqres.full
-> > +	sync $testfile
-> > +
-> > +	test_data_integrity
-> > +
-> > +	verify_data_blocks $verify_start $verify_end "$expected_data_old_zeroes" "$expected_data_new"
-> > +}
-> > +
+> However, we still do want to handle SPI_LSB_FIRST now so that people with
+> hardware support can be more efficient and we don't want things to break
+> if someone puts spi-lsb-first in the devicetree.
+
+...
+
+> > +	if (ret < 0)
+> > +		ret = 1250000;
+> > +	else
+> > +		ext_vrefin = 1;
+> > +	st->vref_mV = ret / (MICRO / MILLI);
+> 
+> Just a style choice here, but in other drivers with similar handling
+> we wrote it like this to avoid the extra if statement:
+
+I didn't get this. You move from clear if to not-so-clear ternary. How is
+the proposed code better?
+
+> 	if (ret < 0 && ret != -ENODEV)
+> 		return dev_err_probe(dev, ret, "Failed to get REFIN voltage\n");
+> 
+> 	ext_vrefin = ret != -ENODEV;
+> 	st->vref_mV = ext_vrefin ? ret / 1000 : 1250;
+> 
+> Keeping (MICRO / MILLI) instead of 1000 is fine too. There are varying opinions
+> on this.
+
+> Or we could drop ext_vrefin and have:
+
+It goes back and force. Can we keep the code as it's in this version?
+
+> 	if (ret < 0 && ret != -ENODEV)
+> 		return dev_err_probe(dev, ret, "Failed to get REFIN voltage\n");
+> 
+> 	if (ret != -ENODEV) {
+> 		st->vref_mV = ret / 1000;
+> 
+> 		/* regmap set bits goes here. */
+> 		... 
+> 	} else {
+> 		st->vref_mV = 1250;
+> 	}
+
+...
+
+> > +			return dev_err_probe(dev, ret, "Failed to set External REFIN in Configuration Register\n");
+> These lines are getting very long. We try to wrap to 80 characters
+> as much as we can in the IIO subsystem.
+
+Side note: checkpatch.pl almost never complained (okay, something like 15y+
+ago) on long string literals at the end of statements. For the code lines
+I fully support the wrapping.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
