@@ -1,109 +1,160 @@
-Return-Path: <linux-kernel+bounces-821403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93235B8129E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BB9B812B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7FF1464859
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:26:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8682E4648E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BAE2FD1B2;
-	Wed, 17 Sep 2025 17:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C3B2FDC30;
+	Wed, 17 Sep 2025 17:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Zxmdz0Sw"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q0VtpIJG"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C511EBFE0;
-	Wed, 17 Sep 2025 17:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F602FD7A7
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758130008; cv=none; b=pH6tjwh3KGZkBPbEMRk2Bc4bwE7xM0aSDxbp/3cQqi5k+E1ERRrxKjorybWtTIi4VZqvIyvnT47TwYJrGETI8GL+e+kuJf/AYtLUPMF8mT26mtjXluTVO9YBLVkhWCeyBmzcDdaE8OL3Hz3pNJtOJ/RXf29qbcfPvIH/Uvm2skE=
+	t=1758130032; cv=none; b=gR4QwXLhiYh894HwIBNz8ckFyJ2wCOoTjZlIxLoETXhDwDCGSoiBB4ZmW/kXHrkGw3XBAPJ+NMv06WdDsXj0aF9hUwQTm8cQuConuZ35ya+JHfosklIToaxkn7ut7SeqzgYP4s0QZTL0e52FrFp6AnArU2zyl//XpgC3ktLyXZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758130008; c=relaxed/simple;
-	bh=cg2Q0FlEjLdV7xx3QS3qDQh0+DMnBCJ9c9DsM3OkmHc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ogDws/JMxM8yRERuXzgEuLDd8OPIuXjsfEUY3UGXang7+gBC/Nzf8EBmHtFPn0T7Jpyb1jDiWpPJ/1j1w0YdCIc+tsjwtfaSY3RaJbvJ2kG6VE/H5Oa+DkTYMJUacnrPdUrXaMMW5r5SoECnVh6wDl5Sh1o8O1qxBTXB784uJEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Zxmdz0Sw; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58HHQEZ00567363, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1758129975; bh=cg2Q0FlEjLdV7xx3QS3qDQh0+DMnBCJ9c9DsM3OkmHc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=Zxmdz0SwwYLKrxtaVsjhGW5yQzRxPIuRFpzqhf64k1w6xtLyfYY/i5ZHoheSNlPV+
-	 Wte/lmSNxYvdNANiOc3bn0x0bxrJp0hoVezwtCahZjrZD1QxGT4IBYq5EyWABJ2m5R
-	 pOrInlRiAUQ3K7T6pGZYde2KBJ2B5JPr+JSuH5e/OYBfuWl3UzKTSm+pdj3pnZ4HyJ
-	 GoUeFcKTcGNa21wwsKc5Yv/rx7TzGjgqyofFZMx7dYjEbivSndO0Vg9FKSsujM+LM0
-	 wn31jziTEL86Lp+Ce2ZS3Ne2m54+hTvlHG4ltbF9g4EPu0SpzyGN5UICMZRix06mJC
-	 DUUgGiLFduOFw==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58HHQEZ00567363
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 01:26:15 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Thu, 18 Sep 2025 01:26:14 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Thu, 18 Sep 2025 01:26:14 +0800
-From: Hau <hau@realtek.com>
-To: Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd <nic_swsd@realtek.com>,
-        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] r8169: set EEE speed down ratio to 1
-Thread-Topic: [PATCH net-next] r8169: set EEE speed down ratio to 1
-Thread-Index: AQHcHUE6wESi95i7Y0uNfg+X46GTibSEfc2AgBMKn0D//6TSgIAAiFIw
-Date: Wed, 17 Sep 2025 17:26:13 +0000
-Message-ID: <f5494952210a4f12a20f691a4ef03201@realtek.com>
-References: <20250904021123.5734-1-hau@realtek.com>
- <292e1b4d-b00d-4bb5-b55e-5684666c0229@gmail.com>
- <a710550463da4b4281f9db1a8d0b29e1@realtek.com>
- <0c5f8ebd-5ac0-4ac5-ae66-24a5acea371c@gmail.com>
-In-Reply-To: <0c5f8ebd-5ac0-4ac5-ae66-24a5acea371c@gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1758130032; c=relaxed/simple;
+	bh=S37OsdqUcN/1D9qcDSXyTKya8uM8qxEd8mF6qCfkiR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CtUc9OLrVitmE6OLERjC23lO1Pes+XT04+/PyoUKXTglwjkdVij762E0L5syCoHNLsQffESNVaMAu4EXEwYSxTEh7h3PQ2+eF+dmPtSuvZJqj3l3AirpGOqsgZUobYE1Ki31DQaN5KPQT2n6VmUdi10ndvrR8Lll7srtc0Mewoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q0VtpIJG; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-265abad93bfso13375ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758130030; x=1758734830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S37OsdqUcN/1D9qcDSXyTKya8uM8qxEd8mF6qCfkiR8=;
+        b=q0VtpIJGfJh/qP71nH2P6QmHh6rMvGc0Z2KPBa9AcpxFosuUpJVTx+vfTOAOIzYw6C
+         i3mVkgGoUZVPfd/BXYDlC2qoklZUfR7KKZKki3wReghqzoesqFecS2Im41PuFPfFMOEM
+         xvdP6/wA5uVeVhekieTc4693FWp7LV3d78PEUYXMXYYb9Mw4nW84PKCznrVM3sifr81T
+         8NBt4XXR+a61UqiEaTUj+GTjGrYldDvKqt5yT6BXI8Ys5dv4CF0qaD5tYiaGQrL44d9f
+         bDdqaOBojWbH3PO5r6tnMXHoOItY0896GPhqdZsW/dNJbTZZ7NzVI0qD0ePnQi/NgpBD
+         ofqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758130030; x=1758734830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S37OsdqUcN/1D9qcDSXyTKya8uM8qxEd8mF6qCfkiR8=;
+        b=Z4lGX1eay+GiKjZBFG37QJC0bBVuUwMyWi/accVT2voHDxI0GrixjmGB64WZkO+qRz
+         mVVrsTIGSeyFs9eaXULil/tKRxr0UqkUOORwJutC4QqQCcOFsAOTQphxB4UOA2zlpCqa
+         ZdL18EtnlDXUzEW93TyWnWJrIhnX9jVxoc4zNH8FhJ7KzspFIr4oWU2X8nnKdoY4E6El
+         yI8rAtv4PTZNyhmy6VhDbIc5WhtDa028aJEVyYLj48FLzQCqJb/Own7DkFBlKhb/O6fg
+         RaTxxbqUJcTg7F7qkYDFq4iydny8uXNTbSBpCoIJTqC77uAuuNLOAW3Ng72k+5/BHEfE
+         qAKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwBH1vFgnkrEnehkhPEwpUh6vtBEq2MSUGG8vcXYUUaJsoAfi3vOB/YKhHr4I1himGsixFMlVXcp210nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDOyqt9huNOaBeEn+XrJ58SQrKvvPS2AQ0g5aI0nAcUs+Y/sA6
+	bkMlytDSaxeeMvM9e3hM3vttf+jjIITa+vtJmfiFJFGwSmTAlmLt5AvZ//GqqHibNvSDBQEkiTg
+	sDGcMnrotVn8dt+tZwnKmhKnZausx+WtZJWEuRFDT
+X-Gm-Gg: ASbGnctzoEy8xuUh+vMYAykj63fOeJIjuimlBnvUrRJig8bZ7MiT9YJ6svRJIFkzTXZ
+	ntGs8z2/2R1CnjNT5dG85cWsg+mEHFb+i2Dcit+/48HHzGigBIbOo1r01StbmUyKfRvg+TVbVoU
+	2RQ2JcYOkAU8X5ahWxXG4UOzwIgvudb0DvZdBc0FEFS8GOVwTxrcXa4ADMN+hUiAYk9kiu5vFOu
+	67amZydu9+0gRqbbZNZUBuux/gpkI/m74W08PRt6mKujgfktx0xBw==
+X-Google-Smtp-Source: AGHT+IHeUBellzdLWHrCsZiiMG3D+JkHT50wdPiqT3xzj955Zk+a1pdM36lRO+ssSn+Qo3yJMHxzBoFxnbqDHwzT+q8=
+X-Received: by 2002:a17:903:183:b0:267:d7f8:4054 with SMTP id
+ d9443c01a7336-26800f68420mr6432425ad.16.1758130029986; Wed, 17 Sep 2025
+ 10:27:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250728055937.58531-1-gautam@linux.ibm.com> <aMlmiHATn5WHUcSM@mac.in.ibm.com>
+ <aMm5uvPsMfXEv8Oo@x1> <CAP-5=fW4JQYJ2NCRsRVePidCcZ9+JcQbfY=xQ00xZG-bSn96ew@mail.gmail.com>
+ <aMqrmmDG65BGeZp0@x1> <CAP-5=fXnM15Zj5mCYcsd9usUMtHoPOd3Wz8-L1N5UaB-YvKuHQ@mail.gmail.com>
+ <aMrk03gigBlGcYLK@x1>
+In-Reply-To: <aMrk03gigBlGcYLK@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 17 Sep 2025 10:26:58 -0700
+X-Gm-Features: AS18NWCDCMZWW_hOMd5bnlhBoTlDxUUjbEdrSZ0E8xAR4aS_yxiC3kuYEDTQUGg
+Message-ID: <CAP-5=fVhBUCjL4qe23apzGwUBQ--VGCgZtzKaopiuv4enxF5xQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] perf python: Add an example for sampling
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Gautam Menghani <gautam@linux.ibm.com>, peterz@infradead.org, mingo@redhat.com, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	maddy@linux.ibm.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiA+Pg0KPiA+PiBFeHRlcm5hbCBtYWlsIDogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0
-c2lkZSB0aGUgb3JnYW5pemF0aW9uLg0KPiA+PiBEbyBub3QgcmVwbHksIGNsaWNrIGxpbmtzLCBv
-ciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UgcmVjb2duaXplDQo+ID4+IHRoZSBzZW5kZXIg
-YW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCj4gPj4NCj4gPj4NCj4gPj4NCj4gPj4gT24g
-OS80LzIwMjUgNDoxMSBBTSwgQ2h1bkhhbyBMaW4gd3JvdGU6DQo+ID4+PiBFRUUgc3BlZWQgZG93
-biByYXRpbyAobWFjIG9jcCAweGUwNTZbNzo0XSkgaXMgdXNlZCB0byBjb250cm9sIEVFRQ0KPiA+
-Pj4gc3BlZWQgZG93biByYXRlLiBUaGUgbGFyZ2VyIHRoaXMgdmFsdWUgaXMsIHRoZSBtb3JlIHBv
-d2VyIGNhbiBzYXZlLg0KPiA+Pj4gQnV0IGl0IGFjdHVhbGx5IHNhdmUgbGVzcyBwb3dlciB0aGVu
-IGV4cGVjdGVkLCBidXQgd2lsbCBpbXBhY3QNCj4gPj4+IGNvbXBhdGliaWxpdHkuIFNvIHNldCBp
-dCB0byAxIChtYWMgb2NwIDB4ZTA1Nls3OjRdID0gMCkgdG8gaW1wcm92ZQ0KPiA+PiBjb21wYXRp
-YmlsaXR5Lg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IENodW5IYW8gTGluIDxoYXVAcmVh
-bHRlay5jb20+DQo+ID4+PiAtLS0NCj4gPj4NCj4gPj4gUmV2aWV3ZWQtYnk6IEhlaW5lciBLYWxs
-d2VpdCA8aGthbGx3ZWl0MUBnbWFpbC5jb20+DQo+ID4NCj4gPiBUaGlzIHBhdGNoIHNlZW1zIGhh
-cyBiZWVuIHJldmlld2VkLiBCdXQgSSBkaWQgbm90IHNlZSBpdCBiZWVuIGFjY2VwdGVkLg0KPiBT
-aG91bGQgSSByZXN1Ym1pdCB0aGUgcGF0Y2g/DQo+IA0KPiBJdHMgc3RhdHVzIGluIHBhdGNod29y
-ayBpcyAiY2hhbmdlcyByZXF1ZXN0ZWQiLCBsaWtlbHkgZHVlIHRvIHRoZSBmYWN0IHRoYXQgd2UN
-Cj4gaGFkIGEgY29udmVyc2F0aW9uIGFib3V0IHRoZSBwYXRjaC4gU28geWVzLCBwbGVhc2UgcmVz
-dWJtaXQsIHdpdGggbXkgUmIsDQo+IGFuZCBiZXN0IGFsc28gYWRkIHRoZSBmb2xsb3dpbmcsIHRo
-YXQgeW91IHdyb3RlLCB0byB0aGUgY29tbWl0IG1lc3NhZ2UuDQo+IA0KSSB3aWxsIHJlc3VibWl0
-IHRoZSBwYXRjaC4gVGhhbmtzLg0KDQo+IEl0IG1lYW5zIGNsb2NrIChNQUMgTUNVKSBzcGVlZCBk
-b3duLiBJdCBpcyBub3QgZnJvbSBzcGVjLCBzbyBpdCBpcyBraW5kIG9mDQo+IFJlYWx0ZWsgc3Bl
-Y2lmaWMgZmVhdHVyZS4NCj4gSXQgbWF5IGNhdXNlIHBhY2tldCBkcm9wIG9yIGludGVycnVwdCBs
-b3NzIChkaWZmZXJlbnQgaGFyZHdhcmUgbWF5IGhhdmUNCj4gZGlmZmVyZW50IGlzc3VlKS4NCg0K
+On Wed, Sep 17, 2025 at 9:41=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Wed, Sep 17, 2025 at 08:29:24AM -0700, Ian Rogers wrote:
+> > On Wed, Sep 17, 2025 at 5:37=E2=80=AFAM Arnaldo Carvalho de Melo <acme@=
+kernel.org> wrote:
+> > > And make:
+>
+> > > perf script rwtop
+>
+> > > Just call 'python PATH_TO_PYTHON_SCRIPTS/rwtop.py' transparently?
+>
+> > Yeah, that's it. The perf script libpython stuff is just providing
+> > trace_begin, process_event and trace_end. Using the sampling
+> > mechanism, as shown in Gautum's patches, it is pretty easy to migrate
+> > them to being stand alone bits of python.
+>
+> > > That looks interesting indeed, that way we would stop linking with
+> > > libpython, etc.
+>
+> > > I wonder if there are out of tree scripts using the current tools/per=
+f/util/scripting-engines/trace-event-python.c
+> > > mechanism...
+>
+> > > But even that can fallback to a python based mechanism, right?
+>
+> > I think so. Like I said about the use of a Dict for process_event, we
+> > may want to streamline things so there is a tension with what the API
+> > should be and compatibility. We can always have 2 APIs and try to
+> > deprecate one of them.
+>
+> > > Import the script, if it has a given structure, use the new way, if n=
+ot,
+> > > call a glue that reads the events and feed to the old style code.
+>
+> > > Seems doable and would save code on the main perf binary and headache=
+s
+> > > with the libpython and libperl build processes.
+>
+> > So I see this for libpython, and I think it'd be pretty cool if we
+> > could have things work like this for say "perf script ilist" and
+>
+> I think we could even try to, not having a builtin-ilist.c convert
+> 'perf ilist' to 'perf script ilist' automagically.
+>
+> > Alice's textual flamegraph work. I worry what the work for libperl
+> > would be like and whether it is worth it (hence sending the patch to
+> > at least start to make it opt-in rather than opt-out).
+>
+> Maybe we should be a tad more cautious and start with emitting a warning
+> that "libperl is deprecated (holler if you disagree if you use it!)" and
+> then make it opt-in, and then remove it.
+
+Not sure I follow, let's move the conversation to that patch.
+
+> > Do you need my tags for these changes or wdyt about making the
+> > kwlist/API surface smaller?
+>
+> Lemme look at the original post...
+
+Thanks,
+Ian
+
+> - Arnaldo
 
