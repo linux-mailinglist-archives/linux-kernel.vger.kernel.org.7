@@ -1,119 +1,178 @@
-Return-Path: <linux-kernel+bounces-820224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DBFB7F795
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:44:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0FAB7C4CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D2F585292
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:18:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648152A0B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CE1307AE5;
-	Wed, 17 Sep 2025 08:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3235B308F0E;
+	Wed, 17 Sep 2025 08:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="AdwB6HDA";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="Wbvh7kr6"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QKy9gYy1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QQ98NDyL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O9pfrPeR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TWhAn3zE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2E4307486;
-	Wed, 17 Sep 2025 08:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73B23081DB
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758097102; cv=none; b=af5D0jKd0pm4nCRFGIyT4eZdiug+ciFIFL63VHGfNo2XgjP7wEZpqzrG0/Wpk77g1RxSZeLSHWDxoPrJWAeLLBltIM3tfrrBddWfzkpf/OmX6WFD7shG7aPdq78DP17zJgtZMRl7jm3a7yL4njrtPGLkL2ImVuI362JgvZkSQ4k=
+	t=1758097133; cv=none; b=EuR/ildqdnX2rktdYeZRB1svFL/ZvM71H4uo2D9EKEN3XtbT4Srxr0yMqaWQ+dDb7IeCGGackQpHLUo3g+tTFhOiNwFcSGQ0dKXgznGqzZ3eZX/LdNM22xjhJLOZULRaFOhN/GWwzDFbIzLM/gWloC1Gn2UaHk65+y4TBSx37O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758097102; c=relaxed/simple;
-	bh=PxX2wWK2AzUL3Kv8PxHLOuoo7uCUWpaXq79PBXnYeaY=;
+	s=arc-20240116; t=1758097133; c=relaxed/simple;
+	bh=tHTS98ix6fubxBMrfZDjVgQq/C9j1OXsT1BzpJOfVJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQtcNB3xSFSdNL8DhKiUZsGh+27E9qugykdNN1Bw1lrYgjOE00fTlxBAzR+0Zqtc7RSO1TS/3bxBgoJbZoSKV1Zg56A4wDIqjnFnlHlhiC7PdHgGCWT4ikkTyUo8e3gHvSmKYK7g+zAdK/1f7ySCaaTtTldA8cBMaf+5SbK8DaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=AdwB6HDA; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=Wbvh7kr6; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id C69B960272; Wed, 17 Sep 2025 10:18:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1758097095;
-	bh=RbG84KRk+ZARIr3NTuMvsr3teq8bq7o+LQmBa3ocmxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AdwB6HDAf15JmLsk1MytzPVu37WB9THdQt+wQGTu4uriwDLt2SZV4ibE/a0kf6g6B
-	 0IqIiezkQUxn+5YciilsPRIqmxrETQdCMuoHlbLmUF5GNKtkuHqYLBXdMdYKfgQ6oW
-	 kvTH4AUpgXUyAvRWhKRMh4E2DU7ctBlVNSw6ixqrAFdAJzeq3Qu3mOtf/U5uahet5P
-	 AaPI4Q9HYpQojZHy1nq+7GUEBxkmWVGzvdLBHQKp6qyyLyClNXXFeiMPoIhQgGVwc9
-	 ShGnIhkZm+NFXNnYm8L1iw/19MeOLFwrAhV+nqJU7INg5iiM/IMk0TXiXn6LOkaTSE
-	 hmOzf+DNlP8zw==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id E89D460254;
-	Wed, 17 Sep 2025 10:18:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1758097092;
-	bh=RbG84KRk+ZARIr3NTuMvsr3teq8bq7o+LQmBa3ocmxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wbvh7kr6OODQtOuwXTSScZOukMPX5FkGpmCRibj4SxfgahGIqk1pslNgLcIhmkf1g
-	 HHVZSYV4PoLgBF09PHCEeixzgb6catrzG/W0CLojfK/t3KQ/Wq5GQrbqXc0KrDFIhx
-	 X15fPPe1IfFX6tWaFzpGZgpA3tE45oVUcaxcuHRW17jkYCsQNkA5jQcJNQNXH+8dE7
-	 zVqP95kPx2k5UhFWshF+wK4S2tx/9BvXunmDVFXUH6gvFwPUyUeQbCUz/++HzKxIZX
-	 CYrkUjiVVEQAo5GF8cBUYwuhAty4ZuT590sx6GDQUELBnNGzxMIEy9kJZ1R3ywNOXc
-	 DhIKNyZer+0wg==
-Date: Wed, 17 Sep 2025 10:18:09 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Elad Yifee <eladwf@gmail.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next RFC] netfilter: flowtable: add CT metadata
- action for nft flowtables
-Message-ID: <aMpuwRiqBtG7ps30@calendula>
-References: <20250912163043.329233-1-eladwf@gmail.com>
- <CA+SN3sp6ZidPXhZnP0E4KQyt95pp_-M9h2MMwLozObp9JH-8LQ@mail.gmail.com>
- <aMnnKsqCGw5JFVrD@calendula>
- <CA+SN3srpbVBK10-PtOcikSphYDRf1WwWjS0d+R76-qCouAV2rQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZwpKuRT4c/egViKgCdcEjp9l3XkQBs63L3MO+l1tpTpY0XoutJlawvfaPn9Jz/4io+uy4bs9qPyKGMzYAZObYOZUzyvat98Uc1c2ZdIuQidjMggyT0gnt3QGkpLF3piPvUdhiZsFOfPC9MIyAzihHJrMebOlR8kyvD5KDTmgqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QKy9gYy1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QQ98NDyL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O9pfrPeR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TWhAn3zE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D9EF9221A4;
+	Wed, 17 Sep 2025 08:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758097130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
+	b=QKy9gYy1ComwTc+vQCBzK3bAN4dI0pAG2Q3EfLESztOs+tFGBj0U8DAYF1TqSK4Jpw7V+U
+	T62o8AE25X3FktxqSp4KPYalsKvs5STJLZK+VvVuSxE4u0uewYMaVIVgWgmJdzrdt+MRT0
+	F2Nlk4lHnWqGrzIOchrkGY/UB1CJANk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758097130;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
+	b=QQ98NDyL4IE5tPlNNPIwQyIjn4gEX7IDvrZR5d58smXRM3ZBwOfvSQDaafIavRKF4/3i8w
+	VVi2GX0dnULrtwBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758097129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
+	b=O9pfrPeRKeta0cqOznkr0QMpC4z2NnMdlI88YFcDhieFTcRoAJ/t+qciFLBxCp7d0L7gHx
+	GXOUDFc3yUodTyutNxefB2/W/GRo6ynt9drtotTOIhYOewFOf5zshtGKUCBUlGBvvhhpBZ
+	qgvG9DPoTBkvSa6+4EsUb/CFh7oB16U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758097129;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0gIuU9BfAksM0VCnmAs6vvgKEo+iRNtzKZCzt55LcHE=;
+	b=TWhAn3zEp97BkxWyLCYfe2R+zA/uCSQ9cg8Ale7wGXgldTdEbRYPVq5rAvexdSBOJ5Il1E
+	p6I64rVvp3X7APAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 156621368D;
+	Wed, 17 Sep 2025 08:18:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tmJsAeluymhZBAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 17 Sep 2025 08:18:49 +0000
+Date: Wed, 17 Sep 2025 10:18:47 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Jane Chu <jane.chu@oracle.com>
+Cc: david@redhat.com, harry.yoo@oracle.com, liushixin2@huawei.com,
+	muchun.song@linux.dev, akpm@linux-foundation.org, jannh@google.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 RESEND] mm/hugetlb: fix copy_hugetlb_page_range() to
+ use ->pt_share_count
+Message-ID: <aMpu58yNnLWszoqX@localhost.localdomain>
+References: <20250916191252.1653993-1-jane.chu@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+SN3srpbVBK10-PtOcikSphYDRf1WwWjS0d+R76-qCouAV2rQ@mail.gmail.com>
+In-Reply-To: <20250916191252.1653993-1-jane.chu@oracle.com>
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Wed, Sep 17, 2025 at 06:10:10AM +0300, Elad Yifee wrote:
-> On Wed, Sep 17, 2025 at 1:39 AM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> >
-> > May I ask, where is the software plane extension for this feature?
-> > Will you add it for net/sched/act_ct.c?
-> >
-> >
-> > Adding the hardware offload feature only is a deal breaker IMO.
-> Software plane: This doesn’t add a new user feature, it just surfaces
-> existing CT state to offload so the software plane already exists
-> today via nft/TC. In software you can already set/match ct mark/labels
-> (e.g., tag flows), and once offloaded the exporter snapshots that so a
-> driver can map the tag to a HW queue/class if it wants per-flow QoS in
-> hardware. Drivers that don’t need it can simply accept and ignore the
-> metadata.
-
-Hm, flowtable software datapath cannot do ct marks/label at this time.
-
-> act_ct.c: Yes - I’ll include a small common helper so TC and nft
-> flowtable offloads produce identical CT metadata.
+On Tue, Sep 16, 2025 at 01:12:52PM -0600, Jane Chu wrote:
+> commit 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
+> introduced ->pt_share_count dedicated to hugetlb PMD share count tracking,
+> but omitted fixing copy_hugetlb_page_range(), leaving the function relying on
+> page_count() for tracking that no longer works.
 > 
-> If there’s no objection to the direction, I’ll respin with:
-> - the common helper
-> - act_ct switched to it
-> - nft flowtable exporter appending CT metadata
+> When lazy page table copy for hugetlb is disabled, that is, revert
+> commit bcd51a3c679d ("hugetlb: lazy page table copies in fork()")
+> fork()'ing with hugetlb PMD sharing quickly lockup -
+> 
+> [  239.446559] watchdog: BUG: soft lockup - CPU#75 stuck for 27s!
+> [  239.446611] RIP: 0010:native_queued_spin_lock_slowpath+0x7e/0x2e0
+> [  239.446631] Call Trace:
+> [  239.446633]  <TASK>
+> [  239.446636]  _raw_spin_lock+0x3f/0x60
+> [  239.446639]  copy_hugetlb_page_range+0x258/0xb50
+> [  239.446645]  copy_page_range+0x22b/0x2c0
+> [  239.446651]  dup_mmap+0x3e2/0x770
+> [  239.446654]  dup_mm.constprop.0+0x5e/0x230
+> [  239.446657]  copy_process+0xd17/0x1760
+> [  239.446660]  kernel_clone+0xc0/0x3e0
+> [  239.446661]  __do_sys_clone+0x65/0xa0
+> [  239.446664]  do_syscall_64+0x82/0x930
+> [  239.446668]  ? count_memcg_events+0xd2/0x190
+> [  239.446671]  ? syscall_trace_enter+0x14e/0x1f0
+> [  239.446676]  ? syscall_exit_work+0x118/0x150
+> [  239.446677]  ? arch_exit_to_user_mode_prepare.constprop.0+0x9/0xb0
+> [  239.446681]  ? clear_bhb_loop+0x30/0x80
+> [  239.446684]  ? clear_bhb_loop+0x30/0x80
+> [  239.446686]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> There are two options to resolve the potential latent issue:
+>   1. warn against PMD sharing in copy_hugetlb_page_range(),
+>   2. fix it.
+> This patch opts for the second option.
+> While at it, simplify the comment, the details are not actually relevant
+> anymore.
+> 
+> Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
+> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 
-Just to make sure we are on the same page: Software plane has to match
-the capabilities of the hardware offload plan, new features must work
-first in the software plane, then extend the hardware offload plane to
-support it.
+Acked-by: Oscar Salvador <osalvador@suse.de>
+
+Thanks
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
