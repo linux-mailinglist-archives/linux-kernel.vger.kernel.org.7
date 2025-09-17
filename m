@@ -1,287 +1,283 @@
-Return-Path: <linux-kernel+bounces-819897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9734CB7CCCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C64F9B7E88A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4AC93B152C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC28B1B27D0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5144A2F60A6;
-	Wed, 17 Sep 2025 02:42:58 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC3423D281;
+	Wed, 17 Sep 2025 03:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Px5zmTtZ"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012047.outbound.protection.outlook.com [52.101.48.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC9931BC8B;
-	Wed, 17 Sep 2025 02:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758076977; cv=none; b=BKBk7EbLTm2dId7LfHaat2U5rYD8VhNufJyJDAmZg0rCpfoVD80P0m/OLpXxvg5zL4FJW/vro//BXi2EGF4aLOXNp5GW1p+fkiPB8Qk/cpQH/kW/gQGxeINnNIppHrrdVUkFJay3jPTfjSQQJNqTQe05NRwnngr+65Iw4cz5TNY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758076977; c=relaxed/simple;
-	bh=f/PXRMpBfdJOg/apFzc/tZRkAV2PwX6Tv9SgMWOry4Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=H01hGJIRTx1LwVlpqZ9tFNH6mXLVdauTvr96HKdUZlqlD8Zzo+Jx0fRQSa8d0N05zjXNv6PiSidPzRFSRwIHfB4oLaSEvr6QsgGTY6J0dEV2u7Q+6bI9+FOhGxkIFzaO66R9AgxBNXnNEi5ermlb12M5IisyhMWmwOta6eyxpOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cRNHk2XPDz13N9q;
-	Wed, 17 Sep 2025 10:38:42 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8B69C180064;
-	Wed, 17 Sep 2025 10:42:51 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 17 Sep 2025 10:42:50 +0800
-Message-ID: <00ce3ed1-f2a6-4366-b01c-34cd6a45ae87@huawei.com>
-Date: Wed, 17 Sep 2025 10:42:49 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837D82F3C3F;
+	Wed, 17 Sep 2025 03:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758079283; cv=fail; b=RaUr6ZkT0aR8xkB+a4CW9QQcqzy4RJfhGc83GuGTNRqKJOUJrC7A3C2fSQI1axTU+uPeoccvmlrvRhPrFwJhUYafkBVoiIn0c2JrsVn/+1dw8v5f1IaVU+JBj/AGBYWWnOu3qmC23LpePeW35s91wT251s4n+riKzcZazX5cD5I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758079283; c=relaxed/simple;
+	bh=sgyQSk7FzRjXPJGZ0gZoE2+MOcb7MPZ+njhInwoFfso=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CM+BWXPmsK9E6eMCYSNaZ/dCOrAf0aCYS1xfSYUhXdgAzonu8LajY0eAzvJnufsATbe7TMVBk0rNewLMHBtthrze6I1jKUunWFS4aiSN11YUOtBjEfZZuGeJwORbhaaH6hAZuYnXrV4rPj1uNjxFqEhheBI8n3QFJzW0NAdyVpo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Px5zmTtZ; arc=fail smtp.client-ip=52.101.48.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YdeY0s9guFYzMUC4cbrRMYX7Q/vC1Y7cv90lqSLehNoMd86vPgEVBn8efNECeoX6oaf3CKGuXhJxpd5PkLqaqIHpYqNaAXJtYGtfCgfLJDLSlYWA9cpYVBuCqxUlvuNwKNdmcyG61/wGBWAqB3OZuWT+jRJv3bEOa8ZrhLa7i3ehYHktV1HZGsOeB6ZDDQPg3imDUmPRAX5V32xL9aunEqXgzmJBdLCTM8H3C+6Tin9u/8fHzvn2tYqNR97ATI6menOdTY4mqhjAJXeYMGDhnpZNzFJp5pZ96cfJJ6U0N9GZA217HJRkaiNMZ6QQKlvw+QgHLCYFPVx/6QWmWXaqVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mR19jdIIFQzST2oCFzjsS7IvmyJQNnwfongCWyQ0GCc=;
+ b=JGbaUn1+Jgg+rdCH3WP0NUvMUfl4A/7WJ4ZD+xISEtxeo870EHYdDyn04SMOMGZUSzRPblkuGIwYhTMJnVpDJmBMcF3DJbrX2Ajd0tYVUxKnZBfy6ALrKoWySe7QTL8idcTAozOqmnDGhKKeOb9VsDfKu08MyoQw/EsUNhByICIqraeKiFkD+tKzvksaXY4o3qNvYG1gT6nuV2pd9jzcild8+B4yGTMMjWSPuopXWMDk+4uGPoCIDdT3jbV7mUonxED3OXcEIKcJp7YKBQW6vV2QHOF+OdfaZguu8/D+xhJB+IIvvlBhvVt499OpB6oYwHEkM5Bx5dTQVt1VnoUzOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mR19jdIIFQzST2oCFzjsS7IvmyJQNnwfongCWyQ0GCc=;
+ b=Px5zmTtZN0jmPpvGaeVOnjYfxs7RwPKTS9Nqbx9LKcs4PZS5LXIB3DlvdgFZJvB2ALzOqEcHxniFoZecvybQSlFmtAaQoVvf8eQWV1gsZCtMTyXlW9yEPjfhWfSIuK29EnoMadhqDif/nR7Fbu2TfLizLgLgB1CjzFxcf3Hth2qNrgOmRZIol6PVOpBOIX2oM4hGD9bxXfhpMDxqHCOdUyOBV10M1ZmtfJC3TugNCHXQQdD4qAvoo2S6GoLHc2t9OnYEtEpe0lrg/LxCFSuk8fZ4HSxdSL4b08gzAt667Ab86HJN5XUPMAxFvYXfiAAl143kU+s0Dw4whl5M5i4aBA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ SJ2PR12MB7943.namprd12.prod.outlook.com (2603:10b6:a03:4c8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
+ 2025 03:21:18 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Wed, 17 Sep 2025
+ 03:21:18 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] ARM: tegra114: add missing HOST1X device nodes
+Date: Wed, 17 Sep 2025 11:44:42 +0900
+Message-ID: <3549625.aeNJFYEL58@senjougahara>
+In-Reply-To: <20250827113734.52162-3-clamor95@gmail.com>
+References:
+ <20250827113734.52162-1-clamor95@gmail.com>
+ <20250827113734.52162-3-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP301CA0040.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:380::12) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in napi_gro_frags
- (2)
-To: syzbot <syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <hawk@kernel.org>,
-	<horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lorenzo@kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<syzkaller-bugs@googlegroups.com>, <toke@redhat.com>, yuehaibing
-	<yuehaibing@huawei.com>
-References: <68c9a275.050a0220.3c6139.0e62.GAE@google.com>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <68c9a275.050a0220.3c6139.0e62.GAE@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SJ2PR12MB7943:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a7449da-9678-45a3-aec0-08ddf5994487
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|10070799003|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MEhLc042S3Y3SGdrRGtIbzZPam1mNDFaSFhrdnpvd2dOYzNTOWN0c0JXNzhF?=
+ =?utf-8?B?RUVnTXgxZGJ2b21XNDg3S2o4cUdsNVVFRFNsT0YwYTJVY0UxN0EzS2d0SmNL?=
+ =?utf-8?B?MkdjdHNDNmZySUlwVDZ5YlR1Z0xWSFVJVC9NZEVxeFBqR2F3TjlDTUo1NGhN?=
+ =?utf-8?B?aFd6am82aVlydDZoN016ejBmU1RuemZLM1ZnMnFOTnpnNGZJWlVuWmQ3YTBG?=
+ =?utf-8?B?NTRUUDI2STdTMmdCNnR3STZhTlF1WksvcGJZdmxsMFhSdVB4SWNscngvM1c1?=
+ =?utf-8?B?c1pDRXM3b29NcTdjNzJaQnJHS0MrOEhiZkI5MW1jQ1NyVXhLRTNRUmpUdFJm?=
+ =?utf-8?B?NlJBdmx5SStPd1lKZlBxdGNVSTRneWE1SHpQRTJYMUZwZmhYb1J6aVFWWnNE?=
+ =?utf-8?B?T3NUdHMya0RZR1lGOVNhMFg5czRkK1o4QVkyaTFqbE8xNVBmQnBiKzdrb0g3?=
+ =?utf-8?B?aGE2ZmNFQzZMVkViWVZ3OVRWOUVVSVBZaVplcDcycDBYK3R1VGhGYzZMU1VX?=
+ =?utf-8?B?SFJ0cVgrY0pQKzBMR2syY3ltOGlVNHdjRXRORjgralZhTThOUk1JR2hkT3pw?=
+ =?utf-8?B?WkJKUzBMcjZCWXlSOHdzSTJFQWNPcmR4Z3FNV1hyaG1iSzY5ZnZxYlhiWkl6?=
+ =?utf-8?B?RFZxaHZObUkrblZaODJFR2IrbFVyMlJSelVPSGhBMklIQkJHTXdpaHJERXhU?=
+ =?utf-8?B?ZUdFcTBBdG1leGxPb3NUL21zTFZCZndrNmxJSVMvcWZkTFp2cWE1bDVRQnpQ?=
+ =?utf-8?B?clNtU21OVjVYMk40L3lTVmFjRXZWZDhxVzUyUExqclcrQzd6aWEyL1ZSR3c0?=
+ =?utf-8?B?SS9wVmNsWWF0cGhVUENaNDl3NDBaUzZQQi9hNklmUmFUN1FucUh3dVczcGIv?=
+ =?utf-8?B?cGhnamtDVFcxWWNFNTVva1daQWxmbFlOSEV4U1JFdFVCb3ZwWGlqQS91QnAr?=
+ =?utf-8?B?MmhpSGJBOHp5NzVJbVBWU0Q2MFBjd1c1em5COUlsc3ZOL1dkUkZNTnlkRkMy?=
+ =?utf-8?B?OE91TEd3dGJFdm84MmhaVjJKanRVS05Hc0ErMWV5MmN1K3U5Q2U4V2NWRGI2?=
+ =?utf-8?B?U2Zob3dTNHVtQlRyRkpGV01GT3Zib2VOMk1KMDlPb2ZJZ2F4WTJjQ01tZSs3?=
+ =?utf-8?B?U1dHMENGRjdlcjRLYkZMWU1kdS9vV3RSYVJCbW1ETEpUaENCMXZxeVlhbnZB?=
+ =?utf-8?B?cTBYc3N5cnpyYUFRNm9ieW1Jb1l5Q1pLTzZid25mdjJzaWJscGs5TzhzeERw?=
+ =?utf-8?B?Sk1UdnNmeFkvVlNHMy8wcnpNTUhOVWR4TVR3QVVIUjhLMWdwTE1UUENBMFRn?=
+ =?utf-8?B?Wk5BTmZJSmlFK0xoNVJabDZienFOUHRoRGNYankwdVBtNityT3diclp4VHVH?=
+ =?utf-8?B?N3YxYzNHc2l3bzRIWFVseEU0cnhKU1BJVlhnWCt6cjlWRmZ2ZjZ2c3ZQbW1y?=
+ =?utf-8?B?eExZbFVNNVd0bXpBTnBVNW1NZjEzTFh2VXNBbVNFRWNQK0xMUStkU2RMcXdz?=
+ =?utf-8?B?K1grUitrVUFmeE9xN1orUU84eGc0VTB3ZkdpTWtiRWc3bkd1YjB3U090Z1BS?=
+ =?utf-8?B?Vk02UDJuWUNCUDFjdVUxL3JwSnhBYlc3SDRaaXR5VEdxTy9wbnFIT2owVEZT?=
+ =?utf-8?B?ZDV1endDT2dCUWw4K0t1Zlp3UllQOFMwUUxwTVZpVThBMTY2dW5KN2txclhR?=
+ =?utf-8?B?WWFsaSs5UFhoelY5d2JQdERJdWwvZ0NGYnZnN3k2MlFYTjZ2TTh6K2xjY2Ru?=
+ =?utf-8?B?WEovMTlkOHE5bFlGUVQ0MXpsUUZpejU0OWN3RWt0Qnk0QlFNWCt1dlBKZVMw?=
+ =?utf-8?B?NnBHK2VWUkh1M1dycWFySGZYUGM5TWI1TFFUS1NEWXdrZm5Ja0FkZkhVZGRG?=
+ =?utf-8?B?czdFOVRtUS9HaWs2ZkpZUVFIME16K0loZy94dDFNYS9rbWdZc0hzSXp1MGdJ?=
+ =?utf-8?Q?t+My+5jyZ1s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RlA5bm0wNnVmSGhQeWQ4VHFrQjVsNDNhOTRTeThyR2o2WS9PamdleC9JL1dJ?=
+ =?utf-8?B?L0JVTzN2b3lsSkcrSU9ranRJMjJtZW1sQUo4R2dPSWJZVDA2Z2JXSU5CVkRj?=
+ =?utf-8?B?WVJqT3g2VDVSdVAvNVpucE9nSzloa2NwM2lUNEdmejVxOUF1VHpaRjVLM3I2?=
+ =?utf-8?B?K1ROY0VweTd0ZDRaU0FKUG1KZkRaTDdMcnQ4V1BFNm01NklmbXA0NEJVWk1k?=
+ =?utf-8?B?Nnc2ZlhOcTl3WERYLy9wRjU4bEwwRERZRHhHS0tzWmZldkJkS0YyVlYwNTNZ?=
+ =?utf-8?B?WmVyVnBWTUVsSjdvNjRINW91Q0J3ZlJsek8yUGgvVVNlREx3LzlpN3FmdU44?=
+ =?utf-8?B?d0FQWUVpWFh4ZnJHNGh6aW14TkRYU25rVGlxZmoydVRLUXcyZTA5eFQ4TkJz?=
+ =?utf-8?B?WjNJdURCL2ZzMUxzVzJ1VkwrajR6YmJkUEd3cTlQQVBJUGdvNnl3VWVhUGEw?=
+ =?utf-8?B?NDF4UURBY2xnSGdzeUJFdVFwNUJFMzQvMGV1a3Z2SkF1OTFlUGxlNlB1eHpl?=
+ =?utf-8?B?ZEhhZ1pKQnI0dVl6aWhtSGVMZnJrcS9UendIM1BzdlNNVnZuVGlJOVlpajhT?=
+ =?utf-8?B?RVp1ZGNTUXJHdlNLbEJKcTVYUUdNdmlYZE5JR2tIQjZ4c2JHdk95QlU4ckt3?=
+ =?utf-8?B?OUM0dGc5UzBGVThuWFFQelYvL0xCWGhDSkUydGlxSC9xM0QyUUQ2Yy93L1Fl?=
+ =?utf-8?B?NnJkaEJGdmhDN2FpNDBuLzRwRHM0dlA3bXpydENmQzUreFhiTHVFZlRhQ0cz?=
+ =?utf-8?B?bGNhd0lMSFVmeGpiVDd0QVlVNXFNVjlsZk1XbksrM2VYSDljTmhVRlN0Tjc4?=
+ =?utf-8?B?WEUzWExOOWVSeFNWNkpPOHRUSSs4YlZxWjQwWUxBNTJpQmFFYVdqOStxV2FF?=
+ =?utf-8?B?WUI0REZTTEFVL0E5T09hQXJRb0oyajkvTFowNzF5Zldlb04xaHVneS9aS2Qv?=
+ =?utf-8?B?SDl6bGk2UWdBd3UzMU5ZSDlpdkFJTmxPRUU0bXVkUEFBMXFKakdSL0JpZWdT?=
+ =?utf-8?B?bW9rV09DMzRYbkVVWElzSjRqTjNrWmFBcG1JMVRMbUsyMHFhL1VtYkM0TjdE?=
+ =?utf-8?B?RjBqV0JoVmhtWTR0V3ptclhhcFA3TTJ4dmNhMW5UYkJsNmovaGVOdDBIUUhD?=
+ =?utf-8?B?TnFRNlJSUUpmRldVRnU0aTVsejZvdHB2N05xT1hqVnd6SVZKZ1pDbk9ZYVpU?=
+ =?utf-8?B?MDhOd2F1OG4xd3FFVE5QRHl6Ukp6Q3BkczE2L3hMUG94MG1hZEl4QTBvSnhU?=
+ =?utf-8?B?OGxIeHgrb3ZuQW5lZ1l1bHpLWGJneVpCSk94VUtFV3QvSWF1NzNxSVFuMHVu?=
+ =?utf-8?B?cFVycmpnek1JbllJaVlGTVZ0WGoyM05BWFNUNlpDM3FjWjhnT3dTcVUyNVRD?=
+ =?utf-8?B?dGFnOVMzbFlkZWNQSkd5LzdJWm5lMEFUVmhqbmFBaFpQQ2U1WGJBendxb2U2?=
+ =?utf-8?B?YUc1QjNvalkzOWFRRk8xWkZtbGMxRGZlSlBobEthNzZmamIrU2MvVU9xMTRq?=
+ =?utf-8?B?V3dMajRwdVdPSnZtV3VjK3B2d0llRDBzRDVJSHVEaWtUcDF0UElBV1k1YkhD?=
+ =?utf-8?B?WnlsZzUyUkl4TWdVdlFCRFdENzByUWwxZE0vWEpvRlVPR2lVVzl4S2g5M1FR?=
+ =?utf-8?B?OU1vOTE0ZWFlakdnZUhod1I5dGhPUTBkeXFNZVRlbWhvWTZvMWcwQ29QT3RX?=
+ =?utf-8?B?N00vQWYwK0hzSnN2ci9FMWNoNWpqeWZzQTRONm1LNFlhVUVsRWlOYU9YdGRE?=
+ =?utf-8?B?VXpYOExTVFA3OG1sUkNEZEdwSW9BOVJNZC9HdVlyOWFUdDhCVEk3UHl2cXN4?=
+ =?utf-8?B?OTN6dE5Od0V3Y2YwM3BDVHNWaHZEWUFzcTVGamsrajN3VjBqS1ZvUkFVV3g4?=
+ =?utf-8?B?Tm5oeWJqOUpiOXZ3TjAvMTdaRW5UamhvOURsVFBVZ0EvSTlSR2JHNHlTZWxo?=
+ =?utf-8?B?Lytzc201VjJjUUp3UG1ESWllMUswMWFrbHRNNVg3ZStYcHpLMGd6bDY3eENu?=
+ =?utf-8?B?V2hwWGdZQ3l4N2NDcVo3RFk2M1lIelJoVEhRdTkvZjZ2TUlDN0dMdy9yTnJP?=
+ =?utf-8?B?STVGYkRiangvdlRjVUdWWGd6Ykc0SlZHa244djdsempXUXNPdC9tZFU4Ulhv?=
+ =?utf-8?B?VFRHbVNYelErZ0VKTytLdGdOL2NnL3ZmWThPdTg1MU5ZUjhXaFlVaEw1b2h1?=
+ =?utf-8?B?ditIc3VkY1JucXR2aThkVm5iTnhtWW12YlJNWkpwTWNudzcramIyeTZhVkRr?=
+ =?utf-8?B?MjlkUVo1MlhQUUFKbFRaZWZHUFl3PT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a7449da-9678-45a3-aec0-08ddf5994487
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 03:21:18.7637
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 33bGJpXbhwuj6rVoTRwqrWMHWIZlhXBVjveD8atX6i1RHQCokZUToNlZe9yKC4lDsg2l4vewpHStbvmlChqR6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7943
 
-#syz test
-
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 86a9e927d0ff..a95b1edb80bd 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1875,6 +1875,9 @@ static ssize_t tun_get_user(struct tun_struct 
-*tun, struct tun_file *tfile,
-                                 local_bh_enable();
-                                 goto unlock_frags;
-                         }
-+
-+                       if (skb != tfile->napi.skb)
-+                               tfile->napi.skb = skb;
-                 }
-                 rcu_read_unlock();
-                 local_bh_enable();
-
-在 2025/9/17 1:46, syzbot 写道:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    f3883b1ea5a8 selftests: net: move netlink-dumps back to pr..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=156f4642580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a6c33a7db07dbea2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1274d562580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1674d562580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/0ee19c85bfb5/disk-f3883b1e.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e4e07abc0c5d/vmlinux-f3883b1e.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d4ed4e8369cf/bzImage-f3883b1e.xz
->
-> The issue was bisected to:
->
-> commit e6d5dbdd20aa6a86974af51deb9414cd2e7794cb
-> Author: Lorenzo Bianconi <lorenzo@kernel.org>
-> Date:   Mon Feb 12 09:50:56 2024 +0000
->
->      xdp: add multi-buff support for xdp running in generic mode
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17377562580000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=14b77562580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10b77562580000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com
-> Fixes: e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in generic mode")
->
-> syz.0.17 uses obsolete (PF_INET,SOCK_PACKET)
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
-> BUG: KASAN: slab-use-after-free in napi_frags_skb net/core/gro.c:723 [inline]
-> BUG: KASAN: slab-use-after-free in napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
-> Read of size 8 at addr ffff88802ef22c18 by task syz.0.17/6079
->
-> CPU: 0 UID: 0 PID: 6079 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->   print_address_description mm/kasan/report.c:378 [inline]
->   print_report+0xca/0x240 mm/kasan/report.c:482
->   kasan_report+0x118/0x150 mm/kasan/report.c:595
->   skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
->   napi_frags_skb net/core/gro.c:723 [inline]
->   napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
->   tun_get_user+0x28cb/0x3e20 drivers/net/tun.c:1920
->   tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->   new_sync_write fs/read_write.c:593 [inline]
->   vfs_write+0x5c9/0xb30 fs/read_write.c:686
->   ksys_write+0x145/0x250 fs/read_write.c:738
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f2f9b98ebe9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fffe90190e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007f2f9bbc5fa0 RCX: 00007f2f9b98ebe9
-> RDX: 000000000000004b RSI: 0000200000000340 RDI: 0000000000000003
-> RBP: 00007f2f9ba11e19 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f2f9bbc5fa0 R14: 00007f2f9bbc5fa0 R15: 0000000000000003
->   </TASK>
->
-> Allocated by task 6079:
->   kasan_save_stack mm/kasan/common.c:47 [inline]
->   kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
->   unpoison_slab_object mm/kasan/common.c:330 [inline]
->   __kasan_mempool_unpoison_object+0xa0/0x170 mm/kasan/common.c:558
->   kasan_mempool_unpoison_object include/linux/kasan.h:388 [inline]
->   napi_skb_cache_get+0x37b/0x6d0 net/core/skbuff.c:295
->   __alloc_skb+0x11e/0x2d0 net/core/skbuff.c:657
->   napi_alloc_skb+0x84/0x7d0 net/core/skbuff.c:811
->   napi_get_frags+0x69/0x140 net/core/gro.c:673
->   tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
->   tun_get_user+0x77c/0x3e20 drivers/net/tun.c:1784
->   tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->   new_sync_write fs/read_write.c:593 [inline]
->   vfs_write+0x5c9/0xb30 fs/read_write.c:686
->   ksys_write+0x145/0x250 fs/read_write.c:738
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Freed by task 6079:
->   kasan_save_stack mm/kasan/common.c:47 [inline]
->   kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
->   kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
->   poison_slab_object mm/kasan/common.c:243 [inline]
->   __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
->   kasan_slab_free include/linux/kasan.h:233 [inline]
->   slab_free_hook mm/slub.c:2422 [inline]
->   slab_free mm/slub.c:4695 [inline]
->   kmem_cache_free+0x18f/0x400 mm/slub.c:4797
->   skb_pp_cow_data+0xdd8/0x13e0 net/core/skbuff.c:969
->   netif_skb_check_for_xdp net/core/dev.c:5390 [inline]
->   netif_receive_generic_xdp net/core/dev.c:5431 [inline]
->   do_xdp_generic+0x699/0x11a0 net/core/dev.c:5499
->   tun_get_user+0x2523/0x3e20 drivers/net/tun.c:1872
->   tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->   new_sync_write fs/read_write.c:593 [inline]
->   vfs_write+0x5c9/0xb30 fs/read_write.c:686
->   ksys_write+0x145/0x250 fs/read_write.c:738
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> The buggy address belongs to the object at ffff88802ef22b40
->   which belongs to the cache skbuff_head_cache of size 240
-> The buggy address is located 216 bytes inside of
->   freed 240-byte region [ffff88802ef22b40, ffff88802ef22c30)
->
-> The buggy address belongs to the physical page:
-> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2ef22
-> flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-> page_type: f5(slab)
-> raw: 00fff00000000000 ffff88801e29ca00 ffffea0000a31b80 dead000000000004
-> raw: 0000000000000000 00000000000c000c 00000000f5000000 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 19816261324, free_ts 18915708978
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
->   prep_new_page mm/page_alloc.c:1859 [inline]
->   get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
->   __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
->   alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
->   alloc_slab_page mm/slub.c:2492 [inline]
->   allocate_slab+0x8a/0x370 mm/slub.c:2660
->   new_slab mm/slub.c:2714 [inline]
->   ___slab_alloc+0xbeb/0x1420 mm/slub.c:3901
->   __slab_alloc mm/slub.c:3992 [inline]
->   __slab_alloc_node mm/slub.c:4067 [inline]
->   slab_alloc_node mm/slub.c:4228 [inline]
->   kmem_cache_alloc_node_noprof+0x280/0x3c0 mm/slub.c:4292
->   __alloc_skb+0x112/0x2d0 net/core/skbuff.c:659
->   alloc_skb include/linux/skbuff.h:1377 [inline]
->   nlmsg_new include/net/netlink.h:1055 [inline]
->   rtmsg_ifinfo_build_skb+0x84/0x260 net/core/rtnetlink.c:4392
->   rtmsg_ifinfo_event net/core/rtnetlink.c:4434 [inline]
->   rtmsg_ifinfo+0x8c/0x1a0 net/core/rtnetlink.c:4443
->   register_netdevice+0x1712/0x1ae0 net/core/dev.c:11307
->   register_netdev+0x40/0x60 net/core/dev.c:11371
->   nr_proto_init+0x145/0x710 net/netrom/af_netrom.c:1424
->   do_one_initcall+0x233/0x820 init/main.c:1269
->   do_initcall_level+0x104/0x190 init/main.c:1331
->   do_initcalls+0x59/0xa0 init/main.c:1347
-> page last free pid 920 tgid 920 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1395 [inline]
->   __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
->   vfree+0x25a/0x400 mm/vmalloc.c:3434
->   delayed_vfree_work+0x55/0x80 mm/vmalloc.c:3353
->   process_one_work kernel/workqueue.c:3236 [inline]
->   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
->   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
->   kthread+0x70e/0x8a0 kernel/kthread.c:463
->   ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->
-> Memory state around the buggy address:
->   ffff88802ef22b00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
->   ffff88802ef22b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->> ffff88802ef22c00: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
->                              ^
->   ffff88802ef22c80: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff88802ef22d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
-> ==================================================================
->
->
+On Wednesday, August 27, 2025 8:37=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Add nodes for devices on the HOST1X bus: VI, EPP, ISP, MSENC and TSEC.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi | 64 ++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/n=
+vidia/tegra114.dtsi
+> index 4caf2073c556..8600a5c52be9 100644
+> --- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
+> +++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
+> @@ -47,6 +47,45 @@ host1x@50000000 {
+> =20
+>  		ranges =3D <0x54000000 0x54000000 0x01000000>;
+> =20
+> +		vi@54080000 {
+> +			compatible =3D "nvidia,tegra114-vi";
+> +			reg =3D <0x54080000 0x00040000>;
+> +			interrupts =3D <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&tegra_car TEGRA114_CLK_VI>;
+> +			resets =3D <&tegra_car 20>;
+> +			reset-names =3D "vi";
+
+You are adding reset-names here, but in the last patch you're removing it w=
+here there's only one reset?
+
+> +
+> +			iommus =3D <&mc TEGRA_SWGROUP_VI>;
+> +
+> +			status =3D "disabled";
+> +		};
+> +
+> +		epp@540c0000 {
+> +			compatible =3D "nvidia,tegra114-epp";
+> +			reg =3D <0x540c0000 0x00040000>;
+> +			interrupts =3D <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&tegra_car TEGRA114_CLK_EPP>;
+> +			resets =3D <&tegra_car TEGRA114_CLK_EPP>;
+> +			reset-names =3D "epp";
+> +
+> +			iommus =3D <&mc TEGRA_SWGROUP_EPP>;
+> +
+> +			status =3D "disabled";
+> +		};
+> +
+> +		isp@54100000 {
+> +			compatible =3D "nvidia,tegra114-isp";
+> +			reg =3D <0x54100000 0x00040000>;
+> +			interrupts =3D <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&tegra_car TEGRA114_CLK_ISP>;
+> +			resets =3D <&tegra_car TEGRA114_CLK_ISP>;
+> +			reset-names =3D "isp";
+> +
+> +			iommus =3D <&mc TEGRA_SWGROUP_ISP>;
+> +
+> +			status =3D "disabled";
+> +		};
+> +
+>  		gr2d@54140000 {
+>  			compatible =3D "nvidia,tegra114-gr2d";
+>  			reg =3D <0x54140000 0x00040000>;
+> @@ -149,6 +188,31 @@ dsib: dsi@54400000 {
+>  			#address-cells =3D <1>;
+>  			#size-cells =3D <0>;
+>  		};
+> +
+> +		msenc@544c0000 {
+> +			compatible =3D "nvidia,tegra114-msenc";
+> +			reg =3D <0x544c0000 0x00040000>;
+> +			interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&tegra_car TEGRA114_CLK_MSENC>;
+> +			resets =3D <&tegra_car TEGRA114_CLK_MSENC>;
+> +			reset-names =3D "mpe";
+
+FWIW, I think 'msenc' is the appropriate name to use on Tegra114/Tegra124. =
+I believe MPE is a remnant from older chips, even if some downstream (and I=
+ guess upstreaming) naming still uses it.
+
+> +
+> +			iommus =3D <&mc TEGRA_SWGROUP_MSENC>;
+> +
+> +			status =3D "disabled";
+> +		};
+> +
+> +		tsec@54500000 {
+> +			compatible =3D "nvidia,tegra114-tsec";
+> +			reg =3D <0x54500000 0x00040000>;
+> +			interrupts =3D <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&tegra_car TEGRA114_CLK_TSEC>;
+> +			resets =3D <&tegra_car TEGRA114_CLK_TSEC>;
+> +
+> +			iommus =3D <&mc TEGRA_SWGROUP_TSEC>;
+> +
+> +			status =3D "disabled";
+> +		};
+>  	};
+> =20
+>  	gic: interrupt-controller@50041000 {
+>=20
+
+
+
 
