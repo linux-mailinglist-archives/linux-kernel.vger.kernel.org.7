@@ -1,333 +1,178 @@
-Return-Path: <linux-kernel+bounces-820793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32CC2B7F568
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:33:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14332B7F577
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9E9F4A24E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:21:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5914A25F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41FC3064B4;
-	Wed, 17 Sep 2025 13:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AE74086A;
+	Wed, 17 Sep 2025 13:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b="wD92EWGk";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="fxNnneOz"
-Received: from e234-58.smtp-out.ap-northeast-1.amazonses.com (e234-58.smtp-out.ap-northeast-1.amazonses.com [23.251.234.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OxzQxuNr"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF751F583D;
-	Wed, 17 Sep 2025 13:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.234.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7793D1A76DE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115236; cv=none; b=o+uziDyygMXJXkoMC+rfadzETAHzO/j2CY1cnPMMCHwlkjjl1wRsBmKrs65rbnAPhF102Ty6imbsb9k2MG5NU1mpG5JxqA48lLPzS4wXSgVC+HSxX7RoUoTFviMKhCgi7SRK+ilDFJVeMU66xI/XVtKqkDqHwcxs8EZkr7l+brM=
+	t=1758115288; cv=none; b=a1cddjDBCfAeRcvUviACFHuuhWs2LFl0eRPQrWgN23e0wusm2PgtDEAjaeaQ2uUe5JKkcGrrjHDkUSvDCs3x6pJcetz8aQT0AwGtw6OjQTXTJc/EzJjAxwoJZi9o413XqVnqxhH02nWlaCB2U7bX/ik01WKr1WS/QV0QvnDGx54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115236; c=relaxed/simple;
-	bh=N2GLUV+AX85e+F04tql32n0Mp67Yd7wpzerXq4DqFz8=;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Date:MIME-Version:
-	 Content-Type; b=A3eBU2QQmy/dGiWvCwq8pWf01H34cpvpu5+AIn+v12PqfDAn6aPmxovl1pWtosF6V+Sv3icAkCghmTajt7W7tG/iW49J9JBWmu02S3RcuM0LlXHKN6TljkTk2cYhJaPgb0slntppkHf4i2JrBDF8ccLHH+6AtXwM3PCzivj2SCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=send.mgml.me; dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b=wD92EWGk; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=fxNnneOz; arc=none smtp.client-ip=23.251.234.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.mgml.me
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
-	d=mgml.me; t=1758115232;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
-	bh=N2GLUV+AX85e+F04tql32n0Mp67Yd7wpzerXq4DqFz8=;
-	b=wD92EWGk44//Ydsa2pG05BXe4i/IjElZC2ZF83sksRwqCGCH2Segk1RvOaS5NhL2
-	9zq/UaYG4um5cEb7Uz5cx/jnl8B93qb5up832TSURaqL5yLzrvtV5CFCEaj3u1qouMt
-	wm1XbQi6ajjjZgNfxb0fVK72v/wfVf4gK3KmgEmE=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=suwteswkahkjx5z3rgaujjw4zqymtlt2; d=amazonses.com; t=1758115232;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
-	bh=N2GLUV+AX85e+F04tql32n0Mp67Yd7wpzerXq4DqFz8=;
-	b=fxNnneOzBZoKAke5WDWiZWVe37n8ri2bq2nm1dGTHE5jIwqhBgmQGzSe0SaPJNkv
-	JT31JAKjsPfrTTwSv2fj2O5KIkGOXFyuNHPGQnxwfpi52ZkGPnMmvve3Y072xLRB4bL
-	1pId5bhkPemSdH+SPcS4mRIw2Uec4jLUZxF+Ja38=
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-In-Reply-To: <837a4dd4-045f-a956-a241-cab1e8bc20fe@huaweicloud.com>
-From: Kenta Akagi <k@mgml.me>
-To: linan666@huaweicloud.com, song@kernel.org, yukuai3@huawei.com, 
-	mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, k@mgml.me
-Subject: Re: [PATCH v4 5/9] md/raid1,raid10: Set R{1,10}BIO_Uptodate when
- successful retry of a failed bio
-Message-ID: <0106019957d57c2f-0a8ed8f8-adad-4351-b86e-368f0bbd7069-000000@ap-northeast-1.amazonses.com>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 17 Sep 2025 13:20:32 +0000
+	s=arc-20240116; t=1758115288; c=relaxed/simple;
+	bh=tVbJPcBeoKD4E2eLTValdOE7YaeP4d+rsifsM5w1ty0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BdBvMPxeojlEOodkcet7Qcxchj7vvVZshSKU8Ro3vCp9mAf/gMTJ8CmnKteIG2coulGGObWQwNz4TrT5nsM6tRRYGPmmgMigfnX95kpwSrImYMWhl3g0Q9cSPSqzRsc3KT07WESVOSXOKL1vSEKM6xokp3lCzwyUns0i7MpER4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OxzQxuNr; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74382048b8cso5052591a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758115285; x=1758720085; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J1WE5yP4DbJ+DbETyxuSMK6o5TNVpZIHadGbqPQdU5Q=;
+        b=OxzQxuNrPdP4ucTIBsVKMFQwqnkx4WEbheFqJHl/kNzSj9NkSKc37iOtPZrUgkJRS/
+         /7wL7g9P0Vf0g9RzykccWTMKaGxtGlwSY8gPeSsB3po2twURLY6t3JbyEUjG2hGszacL
+         HPQLlug9d3OU6jHrHNc3OZfnM2tqQ6fmYt2LTvvmxTh1MceF6XhqifDZrH6UyoXYULoi
+         W9I0QgfSYPOgZv7JXYlRtImlcyAcIAaTX0rr95Iql356JHb14klzrshf2m0KNVJj4Okd
+         /06QVRXlkxm+fYYkvZeZlljopI6LNiH/NsqaQXgK24z/i+nPlVTKuZ+5WuGo3ZdAUosl
+         b50g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758115285; x=1758720085;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J1WE5yP4DbJ+DbETyxuSMK6o5TNVpZIHadGbqPQdU5Q=;
+        b=HyCZYj2zRP+yaydGkmtjbbJadPXLzWHA+hO8V0SKD+MxQCHKg5MUUyS3MwhWHfiUdt
+         qGUqdWnXCixBLrijJV6rWsVpXM+T3rM8GTBiFy5ao2knHj/Jd8SbxmZtzLxd4r9F1LMS
+         5kZy03WTVibzY7tU5KRAmWhcf4JRPDISpcB8Z98dswD4PwQupqS62gjgu58gTJ10+MUT
+         L3Wu0JZlTTvgNjIcmEabv1mD1aTdPK4kL6m96KMhB/ts3zAHDeNHlipdzTmDfulBo1CR
+         5ZGbjpMf+/ZscRyZwZdOXn25ybKRnXlJHvIaqzxp7CQu0SI/Fy0oAZ/EC3dlnOSAJgpH
+         YNng==
+X-Forwarded-Encrypted: i=1; AJvYcCU0jap9WKKHueYPyb81V1NETsq+8YOmAlCweJbHKAp6zZZkrhGRPdt7yraeqZRXHQlbCO6ppEd6eEvAZr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6XfhDrvTE+m3lsqrsniNd9vcQlhwU5kYy4YsyjdtyWKV4rm5L
+	4BdThKDqH8QPz2JCI15m/yt369putzQfW0zI44WOdd//Thnf+hCqBWp/ljilqBz22Eo=
+X-Gm-Gg: ASbGnctBLQPkVSV4PfSZP/PLp5XiwIpLLzbH3xdEdQWZGJSNWORbr+/SjDuAcP5pban
+	98nQKdbqlwsBGHnvaHbo6s7Nd+CGjGgsZWzE/EJet3gQ159nDfxAe503Ydgd9b7bK+ubQMz5Vil
+	0si+M1KJl9MABUJZjLDjMNeLcFM1N8cB8QhPrZU5BAN7oxLxsKhhMKNKTNBjlsK72dkKfl7IYzB
+	oAxHTmee6BiKaqLZkehrW51mm37uAEwXnXv9cyaRup2b3Jmw8vOXh1OsGyrNTUBK6w/dVY1iIph
+	g9l/3GV2vHQUFSBIKn5bf2P7saH1IUpLXCeOz/R8DGT/v3g5R5K8r32+v/7yp36bE/GCm0Re1ix
+	KHYwu2Za+rRVwDg1pAF9J4SoXfl5Fkf30vhB9W/2d1WcNvD+jlJf7yUqMzeehdEN7T/0HKzKWun
+	AzhbRpqE0=
+X-Google-Smtp-Source: AGHT+IGWJXUGjhFmvzG+cfrT/10TsR9+S6JiUBCX0ZatkVgBtopJDnkuwzCKZMKEqeVlNvBdt0SvCw==
+X-Received: by 2002:a05:6808:6ecb:b0:438:2199:6874 with SMTP id 5614622812f47-43d50ecb217mr1038224b6e.50.1758115285481;
+        Wed, 17 Sep 2025 06:21:25 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:72c:cb37:521d:46e2? ([2600:8803:e7e4:1d00:72c:cb37:521d:46e2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b82922de2sm4271063b6e.10.2025.09.17.06.21.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 06:21:23 -0700 (PDT)
+Message-ID: <6ab0cee1-846f-4f90-bc61-141f74144a50@baylibre.com>
+Date: Wed, 17 Sep 2025 08:21:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Feedback-ID: ::1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
-X-SES-Outgoing: 2025.09.17-23.251.234.58
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 2/3] iio: adc: max14001: New driver
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Kim Seer Paller <kimseer.paller@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>
+References: <cover.1757971454.git.marilene.agarcia@gmail.com>
+ <c257f7feb92dcf33bf7a55810fe69d13890374d5.1757971454.git.marilene.agarcia@gmail.com>
+ <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
+ <aMptAUsQaUIYpVNG@smile.fi.intel.com> <aMptaOOmQ6SUoMLj@smile.fi.intel.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aMptaOOmQ6SUoMLj@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-Thank you for reviewing.
-
-On 2025/09/17 18:24, Li Nan wrote:
->=20
->=20
-> =E5=9C=A8 2025/9/15 11:42, Kenta Akagi =E5=86=99=E9=81=93:
->> In the current implementation, when a write bio fails, the retry flow
->> is as follows:
->> * In bi_end_io, e.g. raid1_end_write_request, =
-R1BIO_WriteError is
->> =C2=A0=C2=A0 set on the r1bio.
->> * The md thread calls handle_write_finished corresponding to this r1bio.
->> * Inside handle_write_finished, narrow_write_error is invoked.
->> * narrow_write_error rewrites the r1bio on a per-sector basis, marking
->> =C2=A0=C2=A0 any failed sectors as badblocks. It returns true if all =
-sectors succeed,
->> =C2=A0=C2=A0 or if failed sectors are successfully =
-recorded via rdev_set_badblock.
->> =C2=A0=C2=A0 It returns false if =
-rdev_set_badblock fails or if badblocks are disabled.
->> * handle_write_finished faults the rdev if it receives false from
->> =C2=A0=C2=A0 narrow_write_error. Otherwise, it does nothing.
+On 9/17/25 3:12 AM, Andy Shevchenko wrote:
+> On Wed, Sep 17, 2025 at 11:10:42AM +0300, Andy Shevchenko wrote:
+>> On Tue, Sep 16, 2025 at 01:04:41PM -0500, David Lechner wrote:
+>>> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
+> 
+> ...
+> 
+>>>> Change I was not able to do:
+>>>> - I could not remove bitrev16 because I am using an SPI controller that
+>>>> does not support SPI_LSB_FIRST. So I suggest keeping bitrev16 and not using
+>>>> the spi-lsb-first devicetree property for now, since this driver currently
+>>>> works for both types of controllers: those that support it and those that
+>>>> do not. I left a TODO comment to address this issue as soon as the SPI
+>>>> kernel code starts handling the bit-reverse operation for controllers that
+>>>> do not have this support. Once I finish my work on this driver, if the SPI
+>>>> code still does not include this handling, I can submit patches to add it.
+>>>
+>>> I looked more at what it would take to implement this in the SPI core code
+>>> and found that it would actually be quite difficult to do in a generic way
+>>> because there are so many edge/corner/n-dim cases. We can't change tx_buf
+>>> data in-place because it might be const data that is in some memory area
+>>> that can't be modified. And things would get complicated if different
+>>> transfers pointed to the same buffer memory addresses anyway. So we would
+>>> basically have to allocate new memory for all buffers, copy all tx data to
+>>> that new memory, reverse all of the tx bits, and update all the pointers in
+>>> the transfer structs. Then when the message was finished, we would have to
+>>> reverse all of the rx bits, copy all of the rx buffers back to the original
+>>> buffers and put all the buffer pointers back the way they were. But this
+>>> could write over some of the original tx data if tx_buf and rx_buf point to
+>>> the same original buffer, which would break things if a peripheral driver
+>>> expected the tx data to persist.
 >>
->> This can cause a problem where an r1bio that succeeded on retry is
->> incorrectly reported as failed to the higher layer, for example in the
->> following case:
->> * Only one In_sync rdev exists, and
->> * The write bio initially failed but all retries in
->> =C2=A0=C2=A0 narrow_write_error succeed.
+>> And what's the problem here? We do the same with bounce-buffers in case
+>> of DMA/IOMMU (okay, without actual data modification, but it's possible
+>> on-the-fly).
+
+OK, maybe not as much problem as I thought. Just rather inefficient.
+I might have another look. We could perhaps allocate the buffers
+during the spi_optimize phase and only swap bits on each transfer to
+make it as efficient as possible.
+
+> 
+> Actually, can this be done on a regmap level instead? We have a lot of custom
+> regmap IO accessors, bulk accessor that does something to a data can be also
+> implemented.
+> 
+
+Currently, if you have a peripheral that has the SPI_LSB_FIRST flag connected
+to a controller that does not have that flag, the SPI core code will refuse to
+make a SPI device for the peripheral. So to make anything work at all, the
+core SPI code is going to have to be made aware one way or another.
+
+>>> And we can't do this during the SPI optimize
+>>> step because that currently allows the tx_buf data values to be modified after
+>>> optimization.
 >>
->> This commit ensures that =
-if a write initially fails but all retries in
->> narrow_write_error succeed=
-, R1BIO_Uptodate or R10BIO_Uptodate is set
->> and the higher layer receives=
- a successful write status.
+>> This I don't know, so perhaps it's indeed a showstopper.
 >>
->> Signed-off-by: Kenta Akagi <k@mgml.me>
->> ---
->> =C2=A0 drivers/md/raid1.c=C2=A0 | 32 ++++++++++++++++++++++++++--=
-----
->> =C2=A0 drivers/md/raid10.c | 21 +++++++++++++++++++++
->> =C2=A0 2 files changed, 47 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index 8fff9dacc6e0..806f5cb33a8e 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -2517,6 +2517,21 @@ static void =
-fix_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 }
->> =C2=A0 +/**
->> + * narrow_write_error() - Retry write and set badblock
->> + * @r1_bio:=C2=A0=C2=A0=C2=A0 the r1bio containing the write error
->> + * @i:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 which device to retry
->> + *
->> + * Rewrites the bio, splitting it at the least common multiple =
-of the logical
->> + * block size and the badblock size. Blocks that fail to=
- be written are marked
->> + * as bad. If badblocks are disabled, no write =
-is attempted and false is
->> + * returned immediately.
->> + *
->> + * Return:
->> + * * %true=C2=A0=C2=A0=C2=A0 - all blocks were written =
-or marked bad successfully
->> + * * %false=C2=A0=C2=A0=C2=A0 - bbl disabled=
- or
->> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 one or =
-more blocks write failed and could not be marked bad
->> + */
->> =C2=A0 static bool narrow_write_error(struct r1bio *r1_bio, int i)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mddev *mddev =3D =
-r1_bio->mddev;
->> @@ -2614,9 +2629,9 @@ static void =
-handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int m, idx;
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 bool fail =3D false;
->> =C2=A0 -=C2=A0=C2=A0=C2=A0 for (m =3D 0; m <=
- conf->raid_disks * 2 ; m++)
->> +=C2=A0=C2=A0=C2=A0 for (m =3D 0; m < =
-conf->raid_disks * 2 ; m++) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 struct md_rdev *rdev =3D conf->mirrors[m].rdev;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if =
-(r1_bio->bios[m] =3D=3D IO_MADE_GOOD) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct md_rdev *rdev =3D =
-conf->mirrors[m].rdev;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rdev_clear_badblocks(rdev,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 r1_bio->sector,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r1_bio->sectors, 0);
->> @@ -2628,12 +2643,17 @@ static void handle_write_finished(struct r1conf =
-*conf, struct r1bio *r1_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 fail =3D true;
->=20
-> 'fail' should be false when re-write is =
-successful.
-
-Thanks, it seems there is no need to handle it with =
-bio_end_io_list when successful re-write.
-I will fix it.
->=20
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (!narrow_write_error(r1_bio, m))
->> =
--=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 md_error(conf->mddev,
->> -=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 conf->mirrors[m].rdev);
->> =
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 md_error(conf->mddev, rdev);
->> =C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 /* an I/O failed, we can't clear the bitmap */
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-rdev_dec_pending(conf->mirrors[m].rdev,
->> -=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 conf->mddev);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else if (test_bit(In_sync, =
-&rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !test_bit(Faulty, =
-&rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rdev_has_badblock(rdev,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 r1_bio->sector,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r1_bio->sectors) =
-=3D=3D 0)
->=20
-> Clear badblock and set R10BIO_Uptodate if rdev has =
-badblock.
-
-narrow_write_error returns true when the write succeeds, or when=
- the write
-fails but rdev_set_badblocks succeeds. Here, it determines that =
-the re-write
-succeeded if there is no badblock in the sector to be written =
-by r1_bio.
-So we should not call rdev_clear_badblocks here.
-
->=20
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(R1BIO_Uptodate, &r1_bio->state);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-rdev_dec_pending(rdev, conf->mddev);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 }
->> +=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (fail) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock_irq(&conf->device_lock);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-list_add(&r1_bio->retry_list, &conf->bio_end_io_list);
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->> index b73af94a88b0..21c2821453e1 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -2809,6 +2809,21 @@ static void =
-fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 }
->> =C2=A0 +/**
->> + * narrow_write_error() - Retry write and set badblock
->> + * @r10_bio:=C2=A0=C2=A0=C2=A0 the r10bio containing the write error
->> + * @i:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 which device to retry
->> + *
->> + * Rewrites the bio, splitting it at the least common multiple =
-of the logical
->> + * block size and the badblock size. Blocks that fail to=
- be written are marked
->> + * as bad. If badblocks are disabled, no write =
-is attempted and false is
->> + * returned immediately.
->> + *
->> + * Return:
->> + * * %true=C2=A0=C2=A0=C2=A0 - all blocks were written =
-or marked bad successfully
->> + * * %false=C2=A0=C2=A0=C2=A0 - bbl disabled=
- or
->> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 one or =
-more blocks write failed and could not be marked bad
->> + */
->> =C2=A0 static bool narrow_write_error(struct r10bio *r10_bio, int i)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct bio *bio =3D =
-r10_bio->master_bio;
->> @@ -2975,6 +2990,12 @@ static void =
-handle_write_completed(struct r10conf *conf, struct r10bio *r10_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fail =3D true;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!narrow_write_error(r10_bio, m))
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-md_error(conf->mddev, rdev);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else if =
-(test_bit(In_sync, &rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 !test_bit(Faulty, &rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-rdev_has_badblock(rdev,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-r10_bio->devs[m].addr,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-r10_bio->sectors) =3D=3D 0)
->=20
-> Same as raid1.
-
-I think it is the same =
-as RAID1. should not call rdev_clear_badblocks.
-
-
-Thanks,
-Akagi
-
->=20
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(R10BIO_Uptodate, =
-&r10_bio->state);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-rdev_dec_pending(rdev, conf->mddev);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 bio =3D r10_bio->devs[m].repl_bio;
->=20
-> --=C2=A0
-> Thanks,
-> Nan
->=20
->=20
+>>> So perhaps it is best to just handle it in the peripheral driver. It will
+>>> be much more efficent that way anyway.
+>>>
+>>> However, we still do want to handle SPI_LSB_FIRST now so that people with
+>>> hardware support can be more efficient and we don't want things to break
+>>> if someone puts spi-lsb-first in the devicetree.
+> 
+> 
 
 
