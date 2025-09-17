@@ -1,249 +1,264 @@
-Return-Path: <linux-kernel+bounces-820118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AE6B7C76E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:02:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F100AB7C811
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7E624E261C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B44D189F118
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1832F60CE;
-	Wed, 17 Sep 2025 07:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ADD265CA8;
+	Wed, 17 Sep 2025 07:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3LPwGpB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="SL2jM3n0"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013050.outbound.protection.outlook.com [52.101.127.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E062F5A02;
-	Wed, 17 Sep 2025 07:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758093306; cv=none; b=eA5ACjfLFGDnmLtZ6lq1kc1t2b1hpcPMlRJlskrQ8EzCuF7f8ZGltogRyWFpJC9inoyJBtQH9Zlf6qeSHjWnQPqQt39z0ipZWT8E68afiK1wuoz10i8y+Qrk71BgCgJCvSv+068fvTIM5fIxnm/bfQ8h/VxZrjXtucMOFWq2DFM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758093306; c=relaxed/simple;
-	bh=RQIZLcbzug1xd2axJkwuNTLQ6QIKbtdJhsLxlQHH2Pg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZyebvT6G9Gqh0QBKQPQnPK+7A4gBNag4/PtzLw+Jg1aC18/Y9obpeLU/MnxPJe78Dma/z/S3kiI8+9W7PBN7YoEaAZ8O0zIyl9jvabAmqhCu5kisFwSE8EzKeu1+oRbgMoYdIuUtUyeWbWOjU/qpowBetcPBEG51uTVB+sVGvQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3LPwGpB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79813C4CEF5;
-	Wed, 17 Sep 2025 07:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758093306;
-	bh=RQIZLcbzug1xd2axJkwuNTLQ6QIKbtdJhsLxlQHH2Pg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=P3LPwGpBGkFBUu+NmlLc/L0GWtUBvjYm207/AG6CqVkEonQsP8+29nPORDKq1ufT9
-	 lv65t74pBC4870dlewl5lE4VVCFLL/0NbN9YEZvfLk9fBQawMtS0Ut2SIfc1aI9D5s
-	 BOoLMKMNU+uBchlg/nmlgvhX5Mv4p81lAvcwxxa6W/NXbDAwVUlpt2NUrwsxulGU6k
-	 d9aWmC0R1vYnM1bvVajEShpl9wUpe8+fKLy0Vda2fftczgV4wEjZla3gf+e0y2T/aj
-	 OoW2GXhTnFwcVIaf6E8saxAe5CYZ9jvw94KNaRoQC9bX1egmV05rTKDaDo+LwXaGSH
-	 WJ2Ip4MGt/Hrg==
-From: Andreas Kemnade <akemnade@kernel.org>
-Date: Wed, 17 Sep 2025 09:14:31 +0200
-Subject: [PATCH v3 3/3] ARM: dts: imx: e70k02: add sy7636
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5A6248F52
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758093348; cv=fail; b=nEhCmQjD6LfIr90UHdskvWVbpNrFbrxR8ohGEQJ0EQGZuzPgWkMfQO0/GlhtrJ7BDP4mGu+RCBuw71WMn99EeqiljbN7TjFzdOkpxfXFvKde946kiGD45kHbKtO8rSAWH4mCYgmLfpPf8A/g2RKVztw11ibGhSSselIXCyE50uQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758093348; c=relaxed/simple;
+	bh=26YeAbgx+04Wnu4xa93FH4E6zoEZKi3Co14ooeOXwok=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aamTYkUjVgNpp2g7UQPeb73Kisftf84lXY1tZXAg7xLxhyS2Em8FjTWldgKOuyrxMs6HSzED4aryhMoKEgSdbzgfNijGVMClU7c3VRzmDu6iuW3ioSyFs1ZbfMr62ZI/gNJMc9yAW2XYoiPmjvfmoMrrRD1L/n5TnPV0N+cVgqw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=SL2jM3n0; arc=fail smtp.client-ip=52.101.127.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fPzYw4JE2485IMpndDB0Jl6JNWi6OK2x7aKPd6NgTcj4fjvC6dp4LW9AcrxnS4GJd+L/Iy3n1UjjQtdmJzzKB14wTkMp5jPMvLqpfBNWh7Z938Mgftm1gdt6RSzOJPLDmjmrXqXQavEmsH74Vy+CuNPHIQ5VwMvkuN1j0AIxAVEXN0s1D+bTEpnwa+tcrfIQPmQyK/vD13swNT4jkZ6DuauOE+H9HS1IfxPaBxC0lpeiA8AYWWBJI0OiPqpu6t5jRuwhRyrSRGLeF2W5mjs7BnShEvOy3AkUSdi0BJWYwhNNnlqz41KRb1bGUIkekgDWXsMOHoVHV9Rh6JL0XJ9HpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TaSvyC0rr0YNAR4i/Peghj6SEuyofv2X3eloz17dKmU=;
+ b=YAts+8RaDgfU7T//3IxtXm8yGbH6uYlXaDF4Q9oISu5MtdpFXxjuw7el1V7JV9oq4RVF4UNa9ZEcTNdva3sn8wEsUyhl/ZfQyrJOpmGIKkGDR8ko9YJleLLoQj4a+b/jHaStvwZs0Y4GNczRLgmuhj8f15LoqgzyYkBVnHPwq+oL7gxlbIdzYjdMPzMzVaOVH8VXN8YspTKi0XoaVRtH8hzuKVI8iveq7vX3X/LoLiYj+dx+u74GmcUDopNG5z2y2ZoQIVGJ6Y+Oeqhk28Fh5VNQNUXfeKMY3iscD2fPcNGoSrWMroospaPfbr9APy0lkttqrpNoATLgNHLNoIrisA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TaSvyC0rr0YNAR4i/Peghj6SEuyofv2X3eloz17dKmU=;
+ b=SL2jM3n0YzHAtTxJRPpfH3MSnaUscmgFTTEWk+clbNg5hasUi98E6V56KAxfy6Vf+X7ueXsRRwI8AaEExKRVH0qi403nxOAx0kzuoLd2Tpexbe1llzJJBobTZ4xRLqe4oJtULFZNLb1OobBS03lSwExQBsIf063BYPKELv+VT0pbfxW3YOHuD4G7589afRH3SnVg6ZXkldMzSXOmWX7UARY14e6QfmuK/uKhCgvAMLCFD3QLff70mrHh6NIM+kzHLL8dQXn5OA/0+ZF4RN44/DmZ6ApMJj3m7kXeGWU/TFwcphLtcXhPLb9sq7Ste5Vgp1QoophJTtQTmG6sboRxVg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by OSQPR06MB7251.apcprd06.prod.outlook.com (2603:1096:604:29b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Wed, 17 Sep
+ 2025 07:15:43 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%4]) with mapi id 15.20.9115.020; Wed, 17 Sep 2025
+ 07:15:43 +0000
+Message-ID: <9c5db535-f10e-4743-a8c7-e74f2680f2d0@vivo.com>
+Date: Wed, 17 Sep 2025 15:15:38 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] f2fs: Optimize excessive write operations caused by
+ continuous background garbage collection in Zoned UFS
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>,
+ "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250909134418.502922-1-liaoyuanhong@vivo.com>
+ <20250909134418.502922-2-liaoyuanhong@vivo.com> <aMjLMwNDjabD8MVH@google.com>
+Content-Language: en-US
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+In-Reply-To: <aMjLMwNDjabD8MVH@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYCPR01CA0009.jpnprd01.prod.outlook.com (2603:1096:405::21)
+ To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-sy7636-rsrc-v3-3-331237d507a2@kernel.org>
-References: <20250917-sy7636-rsrc-v3-0-331237d507a2@kernel.org>
-In-Reply-To: <20250917-sy7636-rsrc-v3-0-331237d507a2@kernel.org>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alistair Francis <alistair@alistair23.me>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.li@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Andreas Kemnade <akemnade@kernel.org>, Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.15-dev-50721
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4927; i=akemnade@kernel.org;
- h=from:subject:message-id; bh=RQIZLcbzug1xd2axJkwuNTLQ6QIKbtdJhsLxlQHH2Pg=;
- b=owGbwMvMwCUm/rzkS6lq2x3G02pJDBmn4l+GtR14bW3btCyjWm9m3cTCGRYTMxWsD7LWeSyub
- DLu/MHfUcrCIMbFICumyPLLWsHtk8qz3OCpEfYwc1iZQIYwcHEKwETMXBgZdjieZwj8sm3FeV2Z
- lNfbOlVcuqummMWwdne0cFQueLxvKyND06Pmkx+m5s7hvfJort77q2ti/m827LBf9meDy3mVrB0
- fOAE=
-X-Developer-Key: i=akemnade@kernel.org; a=openpgp;
- fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|OSQPR06MB7251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d1803b5-2114-4ae2-04bb-08ddf5ba0382
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c1Y3VVcyTjZqUFBRU2J0N1NYMlRpZEV6cXZqeWg5U3pWRElsQjJ0OWlGVnZS?=
+ =?utf-8?B?L0dObEFEdG5EWlhrdGE0TXRYaWo5WGptcWpmYVA2TXprOG5CQzd4Yjg3cmVC?=
+ =?utf-8?B?S2hCc3NxYnAvZjNNb2NRNEVCajBFSnNoeEl2Q0JOd1pyemExdTVVWTNWeHp2?=
+ =?utf-8?B?ejl6RVRIZnVMdXJpRlRBNUxiSEErbUNkT2ZhOXYyY1N2L1A0VW00UVNSa0o0?=
+ =?utf-8?B?ampKS2NsRlh4NVlITWNvWG5jeE9DaXA2djgrWFhaWUREWVVJUXp5SmFjb1hk?=
+ =?utf-8?B?c0JULzZ1Q1Y3ZmlTanBmL1ZuQVJLcGV2cWpUdXMrZXF6dms1dmNRODZ3Uzls?=
+ =?utf-8?B?ZytvQ282K2dVaTk4aG9Yc0tXNnhXWWcyaCtBTGc0Z0xHWkZVcGNIQ0hiZG9x?=
+ =?utf-8?B?VENBRmpHK0dpMmN1M3cxUEtyUHNaNTlwcGQrSGFWbVF4TWpCQnRsTkJIYm43?=
+ =?utf-8?B?NFpWdnpFeDE0LzhBSHNPZkJQNEs4b1cwVlhicVphQ015VzJ2RWpuRlZwUmFP?=
+ =?utf-8?B?WVQwdlNlV1JwTk83azJYSlk5UGZTb0hXQWdEYkxQbUQ1Mmc4WUxwek1COWw5?=
+ =?utf-8?B?RkIxeGF1WlhxelRTL3FtQ3FTbzM0VUk5WHNqcTZrbFdNckVCRzFZb2JML0s1?=
+ =?utf-8?B?K2lNYXdYYjlvVlhIa25UMTY1K24rM0JGRkRZVktVTDYvZGhTeTVuL2dLbkIz?=
+ =?utf-8?B?T25wQ0t0Y042cXZJZzhkb0tlc1A0R1hsSGtRL1pDZXVlMkZheS9pWHErNGdi?=
+ =?utf-8?B?eU44TW9FaTlLc1dtWDI2RDBrRGxZNEkvZUM0MUo5Vi9jamJWbVJNdU1FRi8y?=
+ =?utf-8?B?R1NiUkpHRzNxSTZORjU5UjRVdlNCbDRVeWQ2M1ZRWmVBUEgyME1ZZFV1c09O?=
+ =?utf-8?B?Z3JqZGlDbXhuNDRYcjB6RGhDMUU1Ykg3Vk1RTnAvWHdZL1J3WFVoTy9nS3pK?=
+ =?utf-8?B?ZGpXN0ZWYTdzSEtCbnNLZ1dpSmxSaG5oU3JMTm1zeUJjUDFLQm51U3NKNm00?=
+ =?utf-8?B?RlhWQ0hWckF0dGp3c2FZTExhSUlqeXJRbmdwNXcwdUREMnQxRFJPU0xJYUZH?=
+ =?utf-8?B?RVNxMDQxR2llT1JnaWxTdHJucGI5akZUUWtsU1IzMTNsdmRDV0gvQWJyRmRN?=
+ =?utf-8?B?dXFIcjFEMVVUWngvRjlIc0E2bEFxL0xOeURDWk5DMXFjOFhoVldnZTBYMTlo?=
+ =?utf-8?B?blNzQURaRWQrUGw0U0xoM1NsWEp6TTdQeXFWN3hpelJYU2IwelhWWlhJSy93?=
+ =?utf-8?B?ZVQxZmFaVG03aHNzRnVQVjhuYi9tTkp5clpHVmdJT1ozZ3ZJbkRkMWZ6U2Jj?=
+ =?utf-8?B?Q1lEeVRmeG9zejVGOU1FRGdtYVJENnZDcE5kcEtEeUI2em9lYzNxNDdIY01k?=
+ =?utf-8?B?dUhhNmpSMmJiNTcwc2EzcTdEazdCa1cycHpnaUVaY0w5SlROMTUrRU9sckVX?=
+ =?utf-8?B?WXA3YmtNTVo4WDViTXhxbG53LzRVS0t5T0V2d3dubzk0VEhSWDFtcEdJcllI?=
+ =?utf-8?B?VW9tbmt4aFcvdUFENkIzMzFqbUt0SVo5YWhhY3F0VHoxeDc5T1ZISzJ4eHN2?=
+ =?utf-8?B?RmRsOFV2THNtUUJQYWlPcHJoblJGSVJHSzdxTzBBbHk4SmhrSDFEQnAwWGFL?=
+ =?utf-8?B?aUpkb2lOQ1ZHblQyaWVXUmZTWHRHYnFyOWtBWk5qcFhQelJ5WWhuUnRyd1lu?=
+ =?utf-8?B?cGM5VXFkSnZFVDJUNS9RUTJXMnhqajF6TFBQaFM3cTlQbVByNHZDUHoraTZ5?=
+ =?utf-8?B?TnNmanBaSlltcmp1WThYSlNGZmU0ZTFTK0p5VytxSVNPOVVuQWw0OHUxUXpN?=
+ =?utf-8?B?R2F1U0o4b291TjhPT1BwK2lyd0FhV3BmRWlkTGtTTDIxcFJxSExZbmdqZ3ps?=
+ =?utf-8?B?UzJmelF2M3JmcmY3OGJhT1JTUEZ1TjJ2S29lNFg5d3dkVFdxS1lGSnh2SkpE?=
+ =?utf-8?Q?FGDjQV92ZW8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L0lLRUc0cDdhN3pVSXhtZFh2YnV1eWhqL2hMN0hyaXNtR3UxYUZINFNuKzRi?=
+ =?utf-8?B?VjJTOFlUcVN5YzVEcE0zVm96d21wY2ROdk8wb2JCZVptTGdsMmlYUXhYd0Fs?=
+ =?utf-8?B?cWtsakFTSVV6am9BOU93dmtrcmFGU0NsTXVCUnB0V0JyWnd1T01OcC9uTkUy?=
+ =?utf-8?B?Nk5BS3pFZ2tRWU9vak9KbTNqYmZBemhmT3RaV1BjQzNBNGZMVnMrczgraXBD?=
+ =?utf-8?B?WmlZWnlleGVOL1dmY3ZNbEw4ck9NSUs3alpjakZBY2lzdlhCSWVObkE2Vitm?=
+ =?utf-8?B?NHJsNWR0a3FLcjVETGJkcUxyQmsxNGU4STREdEpqZnRwUFBrU3VQdTlObGhr?=
+ =?utf-8?B?VEtiNXBFQlpDaXBLWVBSNVdUY3JWc3ZyeXdVVnBCRkY0VnNhMFFwQnhuWDR5?=
+ =?utf-8?B?NU9nd3JPNXhzdU9lY2puWHBrVjl6eTQ5Ym5yeklZMlhLaGtBRDExNWN3eEgy?=
+ =?utf-8?B?MjdtT3ZJTzVKYXdCYnd2eWQvSEpGZG4wcEJtMnBYellLWVdENDdGZzhHSmQ2?=
+ =?utf-8?B?eTMzYXV3NWp1YzVKSXErTFZ5VElaWkZyaTNIek1BejVXLzYzVTdaMyt5VFFs?=
+ =?utf-8?B?aTNRREY1SWlKY2J0K1NJQUo1V1ZPT0NubzRudFo1MDFhbkxPNmMyNWtJV0JF?=
+ =?utf-8?B?RUpQNXVWZFNUSXBCMnJhTFpxcC9oM1liUm1zRFIxOThjVFNYQkxjOVQ3UW9w?=
+ =?utf-8?B?Vzc1aEpuc0wvd1UzNzBJNXFleXY0dXNzeWM0L3hiUGtoQWpnUTdkdE9qOUMw?=
+ =?utf-8?B?REZRYmdIRkpUUDk5L0R2TzV3ZVNPdG53c1l1Q2JWMFBNbldwUnNCL09XeHpX?=
+ =?utf-8?B?ZTBwN1NiSytJN1NtbFRXSGEwOStlSGlGT2pTcTBNbFRnZG5MNnQ5Rk5HcXRO?=
+ =?utf-8?B?WnNuc1dLOEdXckhSazljWTZkTU0zSktnSlMrL3cvYzVxSER4S21IOHhRZm8r?=
+ =?utf-8?B?QkdQd0dYdGYyOHJLaWQ5OERMNElQS2ZYbjJlOFFpZE9zM25RTmRRVkdhR2Fr?=
+ =?utf-8?B?Zkgzem9tcm5xOHVaV3FvUlB4a1NWN3FxUFlVeEQvTkdYRTNLUXJseGQ2L1lo?=
+ =?utf-8?B?S25hcGlxelhGRHNzOW1WL1B0c0J3Q3BFb0Y3akRJQmJqVjZ0bURkYStNZ1Js?=
+ =?utf-8?B?YUNtNTJkNG9Gd3pUVHVDbkpoYW5RRncyN0NRL1RFdi9qbmx3VjFra2Y0Sm5t?=
+ =?utf-8?B?aTRHVlhUMGhTd0t5TjVTdEJ3cERtd2hNcUo4dktRK25aQ3UvQTZ3VWpHMTBs?=
+ =?utf-8?B?bXBPSHZlMnpENFlseEtzYVJETzBzUGQ0eWdsUksxZXlSTnBzZjgzblVwYW5F?=
+ =?utf-8?B?RjJVS2M0NEtBcXluV2E5enZOejNIZ0VhbkpkbWl3U0NjeFBxLzdqUWI3ZnYz?=
+ =?utf-8?B?LzZ4dnIyNWhuS0laMGVtdHNsc01ra1dEVFRsSi9BU1ZsQXNLd1JTcUVoVTIy?=
+ =?utf-8?B?ODZSQmdpcjl4WmgyaTJNam5WZ1h5UFM0LzM1a1g3R2NoVEk1dHpiVzVuUFN5?=
+ =?utf-8?B?aSs1Q3MwbGQ5TWlKWHBiVHY1Z1J6ZnUvbVkxMm5aaWh6a2pPcmZlSkdQU2xi?=
+ =?utf-8?B?TTZTekI5SGtkYlR0L04wM21KdVdtM0NuM0lrVjdXbHNUYnJqbjMrbFc4NVc5?=
+ =?utf-8?B?S0tUNnZYSzY3bTlYTGc3amJoV1hUWDZBanhWZlowR0lZZytpOTN0UkMxR2JY?=
+ =?utf-8?B?Tis5cDR3ampSY2hCU0pBWkVLaGhOTWU2ZERWR08yUWJTdTlweVJrS1JMbVdi?=
+ =?utf-8?B?OS9mU2xVT2dBZ1R1Zk40dDh2OHlYU2xMT25LVWo3cUpKWjJoU1RDYkdtazNB?=
+ =?utf-8?B?QWF5Z2Q4NXBxTnN4SEMvdytQLytjQmM3bUdKUmRpemsxRkJGeUc4R1JGajRO?=
+ =?utf-8?B?MWpSbmtncWtyVzZncUl5aTVVVGROVG9hOUp1SDhheUlONTZ0OXMwUVowd3dr?=
+ =?utf-8?B?RWM4YzZHSnJENkI5V1F0S0QwRFpaZmZXT0E1NHI5UU01SkZhQU05VVBoRlVk?=
+ =?utf-8?B?SktEd1dHYU1vL3pqbzJtUmYyZGN2TENTOEQ0NUhLbmZKZ0VuUTN3KzVYMTdt?=
+ =?utf-8?B?Wi8zTXU0MDdJMStpRnJFN3U2d2VVNlJGRTh3Q3E2SFllR2hoRDlRMnZEc1VZ?=
+ =?utf-8?Q?mt6TMa5Iy2NyNCZIJw6eVq5BY?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d1803b5-2114-4ae2-04bb-08ddf5ba0382
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 07:15:43.0298
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: os3RE0hDN0ZRq2ONNISb6xC1o3DtzPcC88yeSEqNl3hS0L+Kl7GfEywulXzOwZN4EsgixjvhWdVMIzHJKokAHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7251
 
-Add the EPD PMIC for the e70k02 based devices as a step towards full EPD
-support.
 
-Acked-by: Alistair Francis <alistair@alistair23.me>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Andreas Kemnade <akemnade@kernel.org>
----
- arch/arm/boot/dts/nxp/imx/e70k02.dtsi              | 25 +++++++++++++++++++++-
- .../arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts | 24 +++++++++++++++++++++
- .../arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts | 24 +++++++++++++++++++++
- 3 files changed, 72 insertions(+), 1 deletion(-)
+On 9/16/2025 10:28 AM, Jaegeuk Kim wrote:
+> Could you please share some trends of relation between has_enough_free_blocks()
+> vs. has_enough_dirty_blocks()? I'm wondering whethere there's a missing case
+> where has_enough_free_blocks() is not enough.
 
-diff --git a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-index dcc3c9d488a88..b4f42f71c6c49 100644
---- a/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/e70k02.dtsi
-@@ -69,6 +69,14 @@ memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- 
-+	epd_pmic_supply: regulator-epd-pmic-in {
-+		compatible = "regulator-fixed";
-+		regulator-name = "epd_pmic_supply";
-+		gpio = <&gpio2 14 GPIO_ACTIVE_HIGH>;
-+		startup-delay-us = <20000>;
-+		enable-active-high;
-+	};
-+
- 	reg_wifi: regulator-wifi {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SD3_SPWR";
-@@ -133,7 +141,22 @@ touchscreen@24 {
- 		vdd-supply = <&ldo5_reg>;
- 	};
- 
--	/* TODO: SY7636 PMIC for E Ink at 0x62 */
-+	sy7636: pmic@62 {
-+		compatible = "silergy,sy7636a";
-+		reg = <0x62>;
-+		enable-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
-+		vcom-en-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-+		epd-pwr-good-gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&epd_pmic_supply>;
-+
-+		#thermal-sensor-cells = <0>;
-+
-+		regulators {
-+			reg_epdpmic: vcom {
-+				regulator-name = "vcom";
-+			};
-+		};
-+	};
- 
- };
- 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-index a2534c422a522..f8709a9524093 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6sl-tolino-vision5.dts
-@@ -26,6 +26,11 @@ / {
- 	compatible = "kobo,tolino-vision5", "fsl,imx6sl";
- };
- 
-+&epd_pmic_supply {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-+};
-+
- &gpio_keys {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio_keys>;
-@@ -59,6 +64,12 @@ MX6SL_PAD_FEC_RXD1__GPIO4_IO18          0x10059 /* TP_RST */
- 		>;
- 	};
- 
-+	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_PWRWAKEUP__GPIO2_IO14    0x40010059
-+		>;
-+	};
-+
- 	pinctrl_gpio_keys: gpio-keysgrp {
- 		fsl,pins = <
- 			MX6SL_PAD_FEC_CRS_DV__GPIO4_IO25	0x17059	/* PWR_SW */
-@@ -159,6 +170,14 @@ MX6SL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
- 		>;
- 	};
- 
-+	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-+		fsl,pins = <
-+			MX6SL_PAD_EPDC_VCOM0__GPIO2_IO03        0x40010059 /* VCOM_CTRL */
-+			MX6SL_PAD_EPDC_PWRCTRL1__GPIO2_IO08     0x40010059 /* EN */
-+			MX6SL_PAD_EPDC_PWRSTAT__GPIO2_IO13      0x17059 /* PWR_GOOD */
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX6SL_PAD_UART1_TXD__UART1_TX_DATA 0x1b0b1
-@@ -329,6 +348,11 @@ &ricoh619 {
- 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
- };
- 
-+&sy7636 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-index 660620d226f71..19bbe60331b36 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6sll-kobo-librah2o.dts
-@@ -36,6 +36,11 @@ &cpu0 {
- 	soc-supply = <&dcdc1_reg>;
- };
- 
-+&epd_pmic_supply {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_epd_pmic_supply>;
-+};
-+
- &gpio_keys {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio_keys>;
-@@ -69,6 +74,12 @@ MX6SLL_PAD_GPIO4_IO18__GPIO4_IO18	0x10059 /* TP_RST */
- 		>;
- 	};
- 
-+	pinctrl_epd_pmic_supply: epd-pmic-supplygrp {
-+		fsl,pins = <
-+			MX6SLL_PAD_EPDC_PWR_WAKE__GPIO2_IO14    0x40010059
-+		>;
-+	};
-+
- 	pinctrl_gpio_keys: gpio-keysgrp {
- 		fsl,pins = <
- 			MX6SLL_PAD_GPIO4_IO25__GPIO4_IO25	0x17059	/* PWR_SW */
-@@ -169,6 +180,14 @@ MX6SLL_PAD_KEY_COL2__GPIO3_IO28		0x1b8b1 /* ricoh619 bat_low_int */
- 		>;
- 	};
- 
-+	pinctrl_sy7636_gpio: sy7636-gpiogrp {
-+		fsl,pins = <
-+			MX6SLL_PAD_EPDC_VCOM0__GPIO2_IO03       0x40010059 /* VCOM_CTRL */
-+			MX6SLL_PAD_EPDC_PWR_CTRL1__GPIO2_IO08   0x40010059 /* EN */
-+			MX6SLL_PAD_EPDC_PWR_STAT__GPIO2_IO13    0x17059 /* PWR_GOOD */
-+		>;
-+	};
-+
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
-@@ -319,6 +338,11 @@ &ricoh619 {
- 	pinctrl-0 = <&pinctrl_ricoh_gpio>;
- };
- 
-+&sy7636 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sy7636_gpio>;
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
+Sure. I will find some time to test the data and create a table to see 
+if there are any omissions.
 
--- 
-2.47.3
 
+Thanks,
+
+Liao
+
+> On 09/09, Liao Yuanhong wrote:
+>> Incorporate a check using has_enough_dirty_blocks() to prevent redundant
+>> background GC in Zoned UFS. When there are insufficient dirty segments,
+>> continuous execution of background GC should be avoided, as it results in
+>> unnecessary write operations and impacts device lifespan. The initial
+>> threshold is set to 3 * section size (since f2fs data uses three write
+>> pointers).
+>>
+>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+>> ---
+>>   fs/f2fs/gc.c |  8 ++++++--
+>>   fs/f2fs/gc.h | 10 +++++++++-
+>>   2 files changed, 15 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index ed3acbfc83ca..4a8c08f970e3 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -120,7 +120,9 @@ static int gc_thread_func(void *data)
+>>   
+>>   		if (f2fs_sb_has_blkzoned(sbi)) {
+>>   			if (has_enough_free_blocks(sbi,
+>> -				gc_th->no_zoned_gc_percent)) {
+>> +				gc_th->no_zoned_gc_percent) ||
+>> +				!has_enough_dirty_blocks(sbi,
+>> +				LIMIT_GC_DIRTY_SECTION_NUM)) {
+>>   				wait_ms = gc_th->no_gc_sleep_time;
+>>   				f2fs_up_write(&sbi->gc_lock);
+>>   				goto next;
+>> @@ -1750,7 +1752,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>   
+>>   			if (f2fs_sb_has_blkzoned(sbi) &&
+>>   					!has_enough_free_blocks(sbi,
+>> -					sbi->gc_thread->boost_zoned_gc_percent))
+>> +					sbi->gc_thread->boost_zoned_gc_percent) &&
+>> +					has_enough_dirty_blocks(sbi,
+>> +					LIMIT_GC_DIRTY_SECTION_NUM))
+>>   				window_granularity *=
+>>   					sbi->gc_thread->boost_gc_multiple;
+>>   
+>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+>> index 24e8b1c27acc..1ef234c2702b 100644
+>> --- a/fs/f2fs/gc.h
+>> +++ b/fs/f2fs/gc.h
+>> @@ -36,6 +36,7 @@
+>>   #define DEF_MIGRATION_WINDOW_GRANULARITY_ZONED	3
+>>   #define BOOST_GC_MULTIPLE	5
+>>   #define ZONED_PIN_SEC_REQUIRED_COUNT	1
+>> +#define LIMIT_GC_DIRTY_SECTION_NUM	3
+>>   
+>>   #define DEF_GC_FAILED_PINNED_FILES	2048
+>>   #define MAX_GC_FAILED_PINNED_FILES	USHRT_MAX
+>> @@ -177,6 +178,12 @@ static inline bool has_enough_free_blocks(struct f2fs_sb_info *sbi,
+>>   	return free_sections(sbi) > ((sbi->total_sections * limit_perc) / 100);
+>>   }
+>>   
+>> +static inline bool has_enough_dirty_blocks(struct f2fs_sb_info *sbi,
+>> +						unsigned int limit_num)
+>> +{
+>> +	return dirty_segments(sbi) > limit_num * SEGS_PER_SEC(sbi);
+>> +}
+>> +
+>>   static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
+>>   {
+>>   	block_t user_block_count = sbi->user_block_count;
+>> @@ -197,6 +204,7 @@ static inline bool need_to_boost_gc(struct f2fs_sb_info *sbi)
+>>   {
+>>   	if (f2fs_sb_has_blkzoned(sbi))
+>>   		return !has_enough_free_blocks(sbi,
+>> -				sbi->gc_thread->boost_zoned_gc_percent);
+>> +				sbi->gc_thread->boost_zoned_gc_percent) &&
+>> +				has_enough_dirty_blocks(sbi, LIMIT_GC_DIRTY_SECTION_NUM);
+>>   	return has_enough_invalid_blocks(sbi);
+>>   }
+>> -- 
+>> 2.34.1
 
