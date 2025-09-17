@@ -1,189 +1,187 @@
-Return-Path: <linux-kernel+bounces-820072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFD4B7DE1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:36:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32029B7E00F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54752A739B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220721C03413
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D21F2853ED;
-	Wed, 17 Sep 2025 06:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C2927E076;
+	Wed, 17 Sep 2025 06:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="m+rH69no"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TsYit2XW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E752137932
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED1226D4F6
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758091156; cv=none; b=eJih/RnxVdlPToHQrcXvhZT9wvzyJi/iFAqCZPJcLzOXJkjnS6DE5YCQpiJRljg3fX9tUdIbArDyfQMU0X59UluEau0ROV9kjEiJTVsP2q9PZdpgV997kld0ry5oixAGP8k0EnxZrFEEFIRjQbHjpTjsUvFbrEKWBQUOTUZX6mo=
+	t=1758091262; cv=none; b=oghWZ0OgI2lI0c8oRWFh7OyT2MX68QOAjeQxfMYEpowjwKn6PnURJf1h1Lgv3ze3exvBm9QX0O4vsMGtzRj4zCdeoT0EHQE5qzoQVOvoldKRLnw0VeWjDLp6e+Q+VnrrbmUB6vj5h/p8wpPfqfMT84acZCPyUAqa6EZDQIGzS1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758091156; c=relaxed/simple;
-	bh=xX+N/SN6MUaa28wK4TLjv1haNtZLkkAoQ0rN+SnsVF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XhgLyx9O3DRKL2ksrX2/DjUM7MktFkoE1TodwNs9hVXLvcqwCYtUlMowp/7M374Cu5L4V0yYG8zDXukHmd7rT6MDx0+AaQwSfUxdZSLzglNZTPfQkEx3BFR1XCzT5kSpDRqYrowo9UGX+NElmGijCu7Lnx5doFgOuoHm9kbhl5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=m+rH69no; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ec4d6ba0c7so1435614f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:39:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1758091152; x=1758695952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=77F0eh5zIcs6VOlyvrc/5uKyRtamVm6y2K0LLyVNiHg=;
-        b=m+rH69no7YZRPl+4Xd+0aWlbj++OWjCYyIA5SRPhpvU/l/m4TbsdRC50c5ILRKWuWZ
-         ACot07tfWtO4iBTtyGMvFYdkpgGQDmZk3Omm/J38aQLr7hCH09SUiNUHnBq/taCfyH9L
-         Rlik1dn0iRayfpd+la/S+RNV8oP991XV6XhysI7Ejeh45x3n6ikm4y6XRPGS3h28IiNj
-         Rdz3KJGQJpGmrOphbG6qjuRWYwmYHUfjqc8tecQTEe8QJB4wQWXhFvdaktjHS+VUjkgA
-         NOTZlZrFgTRATuqIinCUHpRbu7if4ob3ybn8qGOOWogH41WGDy1pJef/f2vi9AmkdJR1
-         f/Sw==
+	s=arc-20240116; t=1758091262; c=relaxed/simple;
+	bh=GTsD+zDHi5iUxyCHZCjNne7OiB64xj+ttr+pkOj+OwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DRxDBja5eT5v0tveob8RxlXnaNw+JNEYp12fVWLI/xVkGTxBVlCLKYB9KsVciGR1o9C0jv73EJjDm8MRiHongq6NAdwUxKbrIkwTYEIE/CGQnX0Vsf4X+5K61sCLCJyWK5jNlm0o4LXPOyoqtvKayklHtnT50W+AKfhGSDD6gas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TsYit2XW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758091259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LTbbBlln6DCFneAUqcEqgaH8223TNkqnZLXB2rPiJQQ=;
+	b=TsYit2XWG+q/zCqkZemU2sfVZ597u7sAIosRsIKKbNbkV0VaKZxV57eWOYcO033fEARUJX
+	d3vy8Mo8nWt/W35H1qFMiO4LhqWiN2j7os3CfhQoktdmHrEDY2XYaON/uoF0oNTDltVGrV
+	sowSyKuDyaLjeEHj3KqPHzfD8uRXibs=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584-Fe6SkyBlP5ySATX_D0-y_g-1; Wed, 17 Sep 2025 02:40:58 -0400
+X-MC-Unique: Fe6SkyBlP5ySATX_D0-y_g-1
+X-Mimecast-MFC-AGG-ID: Fe6SkyBlP5ySATX_D0-y_g_1758091257
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-62ed2de7ee8so5578949a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:40:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758091152; x=1758695952;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=77F0eh5zIcs6VOlyvrc/5uKyRtamVm6y2K0LLyVNiHg=;
-        b=gxaPKoC9yV5mAflVfCtY5nvIGq46HwegZtPzVufNvSkZXkPLg/34Wfwa6h+LB9gpkh
-         o2jySENbp6HMxFlFVJZgMjY62sMhl7QWjEYRZwi+iq10sjrSiQBcNhd2kYFxbn8C50Uy
-         5DUjIFKQ9wE7ofGvqJRWwEmjpGc6FpKBaNt4EpqpB7gtx8qv2bYozEVddK7Zht9g3tNy
-         svsCr0iRrDVbSOoA7Fbugo1Fv7UzYCP6himCVzbom77rFH1q1Uw3UtTEMchk21/I4mKr
-         o6Ud4bCwcO+QscbTNwM54mkMMPrx0bfrz1T+59QkoC/OoFcvdb7sEgNG5qT4JvuKaG+k
-         TBzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXg09bJ8iBgcEq83SNDQdg59aaMX+R/6RBYvH6gl3X2DM2U0FtwkfQ9NdluUx/GLBhysA85iYRrc3og+so=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybec49HPYR0P6F4C+vfZxxUYBuozxBKz8d15oE5mekECZCvCdC
-	Tog60/I9Cwhhm+CEeNsT7Q3yV/VKDkrEj7YJyPmAioOVNgd32/2I/wsGTa1DuQTOZ94=
-X-Gm-Gg: ASbGncsV1zI57qIIOprh7Fx59jcUXWxG51OeLFA/fBBBkgwPkgUJPl36K1fFG4JGfZG
-	eBtdOElLdE0Q8g0tDPTTLWu8drr++1N8a8OQeX88Q/yyY36B1kxWNQjT/u96rC2ypO323eJw3tS
-	b8sZ3VVwJdRvNTvLHHpz2hzGcgtGNLKmpehkOf0h4AOz4VwvPJ5H2Sb3dnzKDN+Z2vXj0UJDcrO
-	u1jNYzWqg850FqwYT5Ib4j4xGf+pSyNIywjmD9/ZhBfo+gyvA74JGDIQ10IgSr+nGoKU0r8YcqS
-	UyqfnI7NYeWFC9I2MXlZl+72wOB3MSGiWnjQFbliE+mGDlbFia0Xm0+BLGSiuQBsWozBM8/bOle
-	+oyX3+i+7ZPv4c3SvKvlaN2sdvWUmUEqZ91fCuDujFjrr4Oh+QvWkOuA6BgvFYacFOwUcANcz2e
-	PY3+BTlJ9gkKP/4w==
-X-Google-Smtp-Source: AGHT+IG6Qsc5VU9s+KLN/ObymCbaRcvmgFQYQp7jQl2dFNfoKqhHY6bNfm9aOpDZbu6Xlk5fJjmiww==
-X-Received: by 2002:adf:a2d6:0:b0:3e9:d54:19a0 with SMTP id ffacd0b85a97d-3ecdfa4239cmr495573f8f.57.1758091151984;
-        Tue, 16 Sep 2025 23:39:11 -0700 (PDT)
-Received: from ?IPV6:2a02:1807:2a00:3400:1b1a:e580:5909:925c? ([2a02:1807:2a00:3400:1b1a:e580:5909:925c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdbc7fe1bsm3414155f8f.52.2025.09.16.23.39.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 23:39:11 -0700 (PDT)
-Message-ID: <55237b5d-c9b8-4606-8b5d-c7a97218c085@hammernet.be>
-Date: Wed, 17 Sep 2025 08:39:10 +0200
+        d=1e100.net; s=20230601; t=1758091257; x=1758696057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LTbbBlln6DCFneAUqcEqgaH8223TNkqnZLXB2rPiJQQ=;
+        b=TqDSkhQb/376VSYhwiXzpdTsSwCvJo506nhzaRkhQD5Li38TZVSQABb3vn9dozhYn0
+         MwqOfM0/udgQjyMKW5swg6YVIKEiQ/VrY+AaWKPIzuWpu8aK/Uof1PV/dGlmWIOlgCP5
+         xBEaWQ+kLR+Z7uKEqkW1N8n1bFQpfGMKC8FBcv5wrFYP7ed9iRLAnTbcBp+2ltZjXH/R
+         Gsb6bAcPQ+B/sBWzUl+euVI3D5hwIaihS0OWP1td+s2p3krndqU8EAZMoK7FHg1kllsT
+         mI37xj98SjQhsZHjZ/xUem9iCpJa7aRxG5qO/kRdDzLMuGBWuKpq8wiykkW48SZe2vu3
+         l3Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF/4OhnunvsDbnoY9n4/cHCWoBrcwaixKsM5j80Nt7lV/rwF2JRxZnQ7IMS8eXQ2/ElKp/SoGF0bVKMv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxoe3LgAkBIL2+8AiJvbnP6hCWSHNKDfegtUedo2n71wC64Vdu6
+	xuiJHOeh8t/c2jm77PGQMj4Eg1cyEgy6Vtbyi4EUeni0evC+JZu0UapkMIt+jie/HeT51imrVrx
+	7Tbl7xKiS7kiAKej4kAxJ+mNRpN8dAKikuugzpf7L1YAfSS9DvkGIQMJOw4k5tX28J0imQLDkej
+	I5JJy6pczAAR+SPHd/HbthICWBAUZYgu4J2PBdLdhI
+X-Gm-Gg: ASbGnctbw/K/Wj5Y3+5msdo6C/Hpfc2IeRCMNKCXuYO07HVBTpH/DoTILjdq11FIzN6
+	t77aG5oUNm6kadNYI/7WnYmiey5ZmTP1qwstW14dOvPdkH0LDFfSopeLdG1FzimHIMwaPcnczjF
+	/E9P3jP4d4AbrLTixTFPJ2fQ==
+X-Received: by 2002:a05:6402:40c8:b0:627:c739:ee36 with SMTP id 4fb4d7f45d1cf-62f83c34ad3mr933026a12.14.1758091256850;
+        Tue, 16 Sep 2025 23:40:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHuCx8Wm2NjgvVx8aU5k6RVtZU9jl0CgUhRhEkRJ87iAGzVB+vCxFRz69dVnXZ4ziFgE912UQsq1iIuOuRI/cM=
+X-Received: by 2002:a05:6402:40c8:b0:627:c739:ee36 with SMTP id
+ 4fb4d7f45d1cf-62f83c34ad3mr933005a12.14.1758091256362; Tue, 16 Sep 2025
+ 23:40:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] riscv: dts: spacemit: add UART pinctrl combinations
-To: Yixun Lan <dlan@gentoo.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250916064739.196695-1-hendrik.hamerlinck@hammernet.be>
- <20250917012941-GYA1263349@gentoo.org>
-Content-Language: en-US
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-In-Reply-To: <20250917012941-GYA1263349@gentoo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250915-gxrings-v3-0-bfd717dbcaad@debian.org>
+In-Reply-To: <20250915-gxrings-v3-0-bfd717dbcaad@debian.org>
+From: Lei Yang <leiyang@redhat.com>
+Date: Wed, 17 Sep 2025 14:40:19 +0800
+X-Gm-Features: AS18NWAdyteJLjS2OkZ5AwPMlO36O2pUFdRp0nHMdxW5VJOQ-UMOLbGst0il8i0
+Message-ID: <CAPpAL=wz5t4cMuVeksmpsv5aRyhJez=W4Uc2jOUqr7bNHHYJRw@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 0/8] net: ethtool: add dedicated GRXRINGS
+ driver callbacks
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, kuba@kernel.org, 
+	Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Yixun,
+Tested this series of patches v3 with virtio-net regression tests,
+everything works fine.
 
-On 9/17/25 03:29, Yixun Lan wrote:
-> Hi Hendrik,
->
-> On 08:47 Tue 16 Sep     , Hendrik Hamerlinck wrote:
->> Add UART pinctrl configurations based on the SoC datasheet and the
->> downstream Bianbu Linux tree. The drive strength values were taken from
->> the downstream implementation, which uses medium drive strength.
->> CTS/RTS are moved to separate *-cts-rts-cfg states so boards can enable
->> hardware flow control conditionally.
->>
->> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
->> ---
->> Changes in v3:
->> - Added /omit-if-no-ref/ to pinctrl states to reduce DT size
->>
->> Changes in v2:
->> - Split cts/rts into separate pinctrl configs as suggested
->> - Removed options from board DTS files to keep them cleaner
->> ---
->>  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi | 432 ++++++++++++++++++-
->>  1 file changed, 429 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
->> index 381055737422..7811fb485bd4 100644
->> --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
->> +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
->> @@ -11,12 +11,438 @@
->>  #define K1_GPIO(x)	(x / 32) (x % 32)
->>  
->>  &pinctrl {
->> +	/omit-if-no-ref/
->> +	uart0_0_cfg: uart0-0-cfg {
->> +		uart0-0-pins {
->> +			pinmux = <K1_PADCONF(104, 3)>,	/* uart0_txd */
->> +				 <K1_PADCONF(105, 3)>;	/* uart0_rxd */
->> +			power-source = <3300>;
->> +			bias-pull-up;
->> +			drive-strength = <19>;
->> +		};
->> +	};
->> +
->> +	/omit-if-no-ref/
->> +	uart0_1_cfg: uart0-1-cfg {
->> +		uart0-1-pins {
->> +			pinmux = <K1_PADCONF(108, 1)>,	/* uart0_txd */
->> +				 <K1_PADCONF(80, 3)>;	/* uart0_rxd */
->> +			power-source = <3300>;
-> ..
->> +			bias-pull-up;
-> here, see comment below
->> +			drive-strength = <19>;
->> +		};
->> +	};
->> +
->> +	/omit-if-no-ref/
->>  	uart0_2_cfg: uart0-2-cfg {
->>  		uart0-2-pins {
->> -			pinmux = <K1_PADCONF(68, 2)>,
->> -				 <K1_PADCONF(69, 2)>;
->> +			pinmux = <K1_PADCONF(68, 2)>,	/* uart0_txd */
->> +				 <K1_PADCONF(69, 2)>;	/* uart0_rxd */
->> +			bias-pull-up;
->> +			drive-strength = <32>;
->> +		};
->> +	};
->>  
->> -			bias-pull-up = <0>;
-> Sorry, I've overlooked this, the bias-pull-up need to explicitly set to
-> a vale of 0, 1 - normal pull up, or strong pull up.. for uart, the normal
-> pull up should be ok
->
-> please refer Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
->
-> Since the rc6 is already tagged, I'm about to prepare a PR, so If you able 
-> to respin a new version quickly, I'd be happy to take, otherwise let's wait
-> for next merge window (which shouldn't be a big problem)
->
-> btw, please always do a DT check: 
->   make ARCH=riscv dtbs_check W=1
->
-Oh, I wasn’t aware of this. I’ll update it accordingly and run the check
-before sending a new version. Thanks for the advice!
+Tested-by: Lei Yang <leiyang@redhat.com>
 
-Kind regards,
-Hendrik
+On Mon, Sep 15, 2025 at 6:47=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> This patchset introduces a new dedicated ethtool_ops callback,
+> .get_rx_ring_count, which enables drivers to provide the number of RX
+> rings directly, improving efficiency and clarity in RX ring queries and
+> RSS configuration.
+>
+> Number of drivers implements .get_rxnfc callback just to report the ring
+> count, so, having a proper callback makes sense and simplify .get_rxnfc
+> (in some cases remove it completely).
+>
+> This has been suggested by Jakub, and follow the same idea as RXFH
+> driver callbacks [1].
+>
+> This also port virtio_net to this new callback. Once there is consensus
+> on this approach, I can start moving the drivers to this new callback.
+>
+> Link: https://lore.kernel.org/all/20250611145949.2674086-1-kuba@kernel.or=
+g/ [1]
+>
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Tested-by: Lei Yang <leiyang@redhat.com>
+> ---
+> Changes in v3:
+> - Make ethtool_get_rx_ring_count() non static and use it in rss_set_prep_=
+indir()
+> - Check return function of ethtool_get_rx_ring_count() in
+>   ethtool_get_rx_ring_count() (Jakub)
+> - Link to v2: https://lore.kernel.org/r/20250912-gxrings-v2-0-3c7a60bbeeb=
+f@debian.org
+>
+> Changes in v2:
+> - rename get_num_rxrings() to ethtool_get_rx_ring_count() (Jakub)
+> - initialize struct ethtool_rxnfc() (Jakub)
+> - Link to v1: https://lore.kernel.org/r/20250909-gxrings-v1-0-634282f06a5=
+4@debian.org
+> ---
+> Changes v1 from RFC:
+> - Renaming and changing the return type of .get_rxrings() callback (Jakub=
+)
+> - Add the docstring format for the new callback (Simon)
+> - Remove the unecessary WARN_ONCE() (Jakub)
+> - Link to RFC: https://lore.kernel.org/r/20250905-gxrings-v1-0-984fc471f2=
+8f@debian.org
+>
+> ---
+> Breno Leitao (8):
+>       net: ethtool: pass the num of RX rings directly to ethtool_copy_val=
+idate_indir
+>       net: ethtool: add support for ETHTOOL_GRXRINGS ioctl
+>       net: ethtool: remove the duplicated handling from ethtool_get_rxrin=
+gs
+>       net: ethtool: add get_rx_ring_count callback to optimize RX ring qu=
+eries
+>       net: ethtool: update set_rxfh to use ethtool_get_rx_ring_count help=
+er
+>       net: ethtool: update set_rxfh_indir to use ethtool_get_rx_ring_coun=
+t helper
+>       net: ethtool: use the new helper in rss_set_prep_indir()
+>       net: virtio_net: add get_rxrings ethtool callback for RX ring queri=
+es
+>
+>  drivers/net/virtio_net.c | 15 ++-------
+>  include/linux/ethtool.h  |  2 ++
+>  net/ethtool/common.h     |  2 ++
+>  net/ethtool/ioctl.c      | 88 ++++++++++++++++++++++++++++++++++++++----=
+------
+>  net/ethtool/rss.c        | 15 ++++-----
+>  5 files changed, 84 insertions(+), 38 deletions(-)
+> ---
+> base-commit: 5b5ba63a54cc7cb050fa734dbf495ffd63f9cbf7
+> change-id: 20250905-gxrings-a2ec22ee2aec
+>
+> Best regards,
+> --
+> Breno Leitao <leitao@debian.org>
+>
 
 
