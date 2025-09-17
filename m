@@ -1,104 +1,134 @@
-Return-Path: <linux-kernel+bounces-821415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9B4B8133A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:37:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB468B81346
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F8324E3138
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:37:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9D674E358E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A19B2FF14E;
-	Wed, 17 Sep 2025 17:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBFD2FFDE2;
+	Wed, 17 Sep 2025 17:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="SelNXlLX"
-Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGSJoUG6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DB92FCC02;
-	Wed, 17 Sep 2025 17:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20422FFDC9;
+	Wed, 17 Sep 2025 17:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758130668; cv=none; b=NivbVMr6I564bKg3UNQzL8olhMEXGDTnAZBkN4Ja+j0ns0HfhCevBrPevaa7n5AJjyFofULjiCUKkAnWoVyKaBnqh/PS8bNyAcnby2WiGFRdFtnZ9Z5lTyV0/xPaYSzYpZ2mWGV2dcuD5gW44s889W0H52TfSapDeIpE/3TUeVQ=
+	t=1758130671; cv=none; b=T/duoK0gbwwX7bN16lpkIPa8syuKNpaWR6MqI2Z+ZuoQT6z0gxLJXWRT4aqnNZKH9XXJZQq13wdX1or2NVR3lUIHIV373VOZCbnhQb7dqvSQ70PJdw0VCh2Yv6ZSNzVuz6QV20i/y7mJHkV8eEOEsJSauKm7J9XNRB0eAfwyovI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758130668; c=relaxed/simple;
-	bh=FeHc2ONr7s04G4Tg/b/11N/b224Jf+60qRqcE40KnqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=afjvhpAsBjeqSQ9HaKzYRA6Cc/xtIhdEYsLyY+buyKAeKZlyS0QbPAHqvtnTV1HUHmX6Z+ziONP+XGuoPZvTPPPbYQ6cKPgoXo63+UkEpkwL/3Pjk5rd+zD1rlz3tHGNdjcudDvfgWF85EqmW0A77iUelPWwVb8fKRx6+k52e4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=SelNXlLX; arc=none smtp.client-ip=178.154.239.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:3d8d:0:640:b127:0])
-	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 9D33C804BE;
-	Wed, 17 Sep 2025 20:37:42 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id QbVY4BEMvqM0-mtIkOX9L;
-	Wed, 17 Sep 2025 20:37:41 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1758130662;
-	bh=FHA5v4PLTpxfi6OmrXgAH87gu7nGTp+EMy8vrMv+SVA=;
-	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=SelNXlLXJNz9b+6uAZEwM/oAtoQmGYYKpI0/IQgMgIHlB9l7yzyLcMoO5eHj7sJwc
-	 27yywaPXA2L58QhdMC7O79bR0filHEo+WsfsJg2QFJxTj/FRQrUYRZy+QN6CSB2TZR
-	 6ltc6A9rjIgEhg8AhQq3eoVx5NefY4buASypd6Zc=
-Authentication-Results: mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: linux-kernel@vger.kernel.org
-Cc: apw@canonical.com,
-	joe@perches.com,
-	dwaipayanray1@gmail.com,
-	lukas.bulwahn@gmail.com,
-	corbet@lwn.net,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH v2 2/2] checkpatch: document new check PLACEHOLDER_USE
-Date: Wed, 17 Sep 2025 20:37:25 +0300
-Message-ID: <20250917173725.22547-3-work@onurozkan.dev>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250917173725.22547-1-work@onurozkan.dev>
-References: <20250917173725.22547-1-work@onurozkan.dev>
+	s=arc-20240116; t=1758130671; c=relaxed/simple;
+	bh=Nc9e3rKn7AvDqrZmBkvvQLRNLGsv2pQ9yUUju53NSAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2syQWC6f4P0LQ3c6KjbJIWm/I8T7+iz+4UcNl/MLYFcFG0F7EFwQccr7pFsICh8fPJVqWivvkCWjfRzS41POqTA5lKXGcNEZKHjyejmVhUkyv/h30WHvb4jYSOJVz0YUydF4EzBNqCIoA6NvtIfuJrJpUB6U2vy1v8n/TKeLYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGSJoUG6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7CD8C4CEE7;
+	Wed, 17 Sep 2025 17:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758130671;
+	bh=Nc9e3rKn7AvDqrZmBkvvQLRNLGsv2pQ9yUUju53NSAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eGSJoUG67pPu+iD0wkjpAQvrDPZG4bI5Xje2GuQujgFKzdTbbKazQvszs+6HPVRVa
+	 RE985o8fqc5pcL6alcYf3CgjnjVYFVaYP2iW82kbJG0tJOLv70rc8KhLWqVmAhMaWI
+	 ILME6F9GZYsZKmsNrgFp0/mzz6SEKE+5xymxpuAC8KlmVhCucd0ctW7shntHPFsBf2
+	 M2sY5/ZvwDINaLts3FOK4MSMCM/+kVfjIJ7ryLGAH3MVueKXi25MtSjrZ4QkJ0cyMc
+	 eKmhlK7MZL9neb1K+3/F8ZLhVDSpqhOw9gW1BjJE19Ss9/HDv7TP9t9qVz4yOjDc/8
+	 lJzWi0NJxMOPg==
+Date: Wed, 17 Sep 2025 18:37:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Robert Marko <robert.marko@sartura.hr>
+Cc: p.zabel@pengutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
+	lars.povlsen@microchip.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	luka.perkov@sartura.hr, benjamin.ryzman@canonical.com
+Subject: Re: [PATCH 2/2] reset: sparx5: add LAN969x support
+Message-ID: <20250917-backfield-saint-98ade84229e5@spud>
+References: <20250917111323.60781-1-robert.marko@sartura.hr>
+ <20250917111323.60781-2-robert.marko@sartura.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w6SpiiCjI9ETMiFu"
+Content-Disposition: inline
+In-Reply-To: <20250917111323.60781-2-robert.marko@sartura.hr>
 
-Adds documentation for the new check PLACEHOLDER_USE
-in checkpatch.
 
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- Documentation/dev-tools/checkpatch.rst | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+--w6SpiiCjI9ETMiFu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
-index d5c47e560324..4dccd1036870 100644
---- a/Documentation/dev-tools/checkpatch.rst
-+++ b/Documentation/dev-tools/checkpatch.rst
-@@ -1245,6 +1245,16 @@ Others
-     The patch file does not appear to be in unified-diff format.  Please
-     regenerate the patch file before sending it to the maintainer.
- 
-+  **PLACEHOLDER_USE**
-+    Detects unhandled placeholder text left in cover letters or commit headers/logs.
-+    Common placeholders include lines like::
-+
-+      *** SUBJECT HERE ***
-+      *** BLURB HERE ***
-+
-+    These typically come from autogenerated templates. Replace them with a proper
-+    subject and description before sending.
-+
-   **PRINTF_0XDECIMAL**
-     Prefixing 0x with decimal output is defective and should be corrected.
- 
--- 
-2.51.0
+On Wed, Sep 17, 2025 at 01:12:36PM +0200, Robert Marko wrote:
+> LAN969x uses the same reset configuration as LAN966x so lets add support
+> for it as well.
+>=20
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> ---
+>  drivers/reset/Kconfig                  | 2 +-
+>  drivers/reset/reset-microchip-sparx5.c | 3 +++
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 78b7078478d4..35cb84d1de4e 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -170,7 +170,7 @@ config RESET_LPC18XX
+> =20
+>  config RESET_MCHP_SPARX5
+>  	tristate "Microchip Sparx5 reset driver"
+> -	depends on ARCH_SPARX5 || SOC_LAN966 || MCHP_LAN966X_PCI || COMPILE_TEST
+> +	depends on ARCH_SPARX5 || ARCH_LAN969X ||SOC_LAN966 || MCHP_LAN966X_PCI=
+ || COMPILE_TEST
+                                                 ^ missing space here.
 
+>  	default y if SPARX5_SWITCH
+>  	select MFD_SYSCON
+>  	help
+> diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset=
+-microchip-sparx5.c
+> index 6d3e75b33260..28ad8f1298a0 100644
+> --- a/drivers/reset/reset-microchip-sparx5.c
+> +++ b/drivers/reset/reset-microchip-sparx5.c
+> @@ -198,6 +198,9 @@ static const struct of_device_id mchp_sparx5_reset_of=
+_match[] =3D {
+>  	}, {
+>  		.compatible =3D "microchip,lan966x-switch-reset",
+>  		.data =3D &reset_props_lan966x,
+> +	}, {
+> +		.compatible =3D "microchip,lan969x-switch-reset",
+> +		.data =3D &reset_props_lan966x,
+
+These are identically handled, a fallback compatible will suffice.
+
+>  	},
+>  	{ }
+>  };
+> --=20
+> 2.51.0
+>=20
+
+--w6SpiiCjI9ETMiFu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMrx6gAKCRB4tDGHoIJi
+0ovNAQDum1mVIVbOnS+KAAkLu8Ws5eOGjVkudY5FCdxlugHYZAEArSKFvw4nI/zF
+Lha1SH2g+lAJrPIvFrwvGSP9W8o+dgk=
+=sLGi
+-----END PGP SIGNATURE-----
+
+--w6SpiiCjI9ETMiFu--
 
