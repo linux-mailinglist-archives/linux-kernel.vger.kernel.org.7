@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-820579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40885B7C889
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324A5B7C5A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A1F5485238
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88EB1894B10
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B331369988;
-	Wed, 17 Sep 2025 11:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F884370593;
+	Wed, 17 Sep 2025 11:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QP2YoTQO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="XkKJ3tj6"
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58731284886;
-	Wed, 17 Sep 2025 11:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494E7284886
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758109756; cv=none; b=L6vK08AkznmciEH2vz8lRq7UpAKR/Qzs49bIILtjsCeQQhyGoIUmE5/ufCxuKKPg+oxgkNMy/dfwCGrsm/t4SoVUwiaZxO4dAdDQZ35/MJ325FWeOUkOddUQyx3Drx4FG+NKGDMdLHui7zdDWiZsc3WUvaPRpa7R5aaV+3uEY0I=
+	t=1758109795; cv=none; b=L1cXocFCaKDiZyN683RQlYX35aL+0chqvvgHC3EeqaXBKHF0inDeSaZOnI4b9AXao9+3VGvJfs1R26qDcnzbeDUI6/SiECtrNiQa6yq5b3XET7yK9FkETFLR4AZeAmQg2iOst5nw/vGrHwbXfF5f0HlfJHlYeDTpgNSCrZjhRKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758109756; c=relaxed/simple;
-	bh=2VBJNSP8fXo+EzchoAha0gc1J5Zxa0OZ9HgKOI0/mRs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kg6AcvvfZRWyzfeyPBHhIJuOAxgAVNZnBpkDECpEvCMdGv8Rv36vSRSFk15hndq3h9Qzo+NZZqrL9rvuGQYb8rGbx2VTNJxEg9wQl+D0yjksHMhlEo9S4n1UF+0iIh0gxPVbsp0+2f5HTowxjXoxh50VDZ8kedrmXj6xPUaosvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QP2YoTQO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D403CC4CEF0;
-	Wed, 17 Sep 2025 11:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758109755;
-	bh=2VBJNSP8fXo+EzchoAha0gc1J5Zxa0OZ9HgKOI0/mRs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=QP2YoTQOJNFJtDfu8Ul5D4kvle8TkW5FFGNF7WSqpJcqM4duo5X8rcbGYwIOJahb4
-	 iODhrnKxSDVqhWScztYcgbCc/0iPHHEOfZ4upHrpvMKsfVQhCT2B9Bz+ifu5k/kmF3
-	 GahjKKximAaWXiq8kXchMeCdMngUVOPwqrp0v+XIt6O0c1ISm7AadJe19iu6HmyNpG
-	 w4w7afNBwMmzkSHwXvb9qN0sFM3XzPf+Evgzj3OnlupLJHAiffUeVRJyZxXxhO0rAR
-	 pG+5wKLzqUi4skWJTW3CPxqwH/+nM9zKzcqKEWIy4dGV9SO5ClG+6YcukCJ0LM6Xj4
-	 vXjRBW1A6QmZA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC982CAC59A;
-	Wed, 17 Sep 2025 11:49:15 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Wed, 17 Sep 2025 15:49:00 +0400
-Subject: [PATCH] arm64: dts: qcom: ipq5018: add QUP1 UART2 node
+	s=arc-20240116; t=1758109795; c=relaxed/simple;
+	bh=BjNgs3u7AaeqcRW+5e9NeOLlcacR6S74LKkdYyjyjkc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P+T2qE44aC/TdD263f7Q3UY4O8P0quYogSnfLy54B7TPH3R5upqnPkgkFYA6P6wrcXBH3AjB7t54JrG/ReXk4S6cds1gjNABKaTsrmqKvdf3R2wmXV65Rcn7JCwFH3bJ13Oi9EatVDbYXTDEeMN/MRFqGfT7zUKuYLL5JY9Tc8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=XkKJ3tj6; arc=none smtp.client-ip=178.154.239.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:149a:0:640:77a6:0])
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 9453E80CB5;
+	Wed, 17 Sep 2025 14:49:42 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id VnPA4b7M0W20-cxi65zQ6;
+	Wed, 17 Sep 2025 14:49:41 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1758109781;
+	bh=m33lJfHtMKJDuHDxhPbYb1HqKcrS+3xFCkuNddL5Yu4=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=XkKJ3tj6/4WZmnhUbpITG0Z1VCF+rZVWxJFP2B9x/frHnqjDttglKpjGWAmF8aWbg
+	 sWC5CU/mUYgspPJ4lpM4EyWGHQWVAFNbJGmvfA5vGMbqKfVMSo2X2jORq+CBo/G9A9
+	 +hLBI2zHK1QaAanbJD/ZFUQVV913uq8HeD13zkX8=
+Authentication-Results: mail-nwsmtp-smtp-production-main-77.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: linux-kernel@vger.kernel.org
+Cc: apw@canonical.com,
+	joe@perches.com,
+	dwaipayanray1@gmail.com,
+	lukas.bulwahn@gmail.com,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: [PATCH] checkpatch: warn on unhandled placeholders in cover letters
+Date: Wed, 17 Sep 2025 14:49:09 +0300
+Message-ID: <20250917114909.7678-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-ipq5018-uart2-v1-1-f8680bbf947f@outlook.com>
-X-B4-Tracking: v=1; b=H4sIACugymgC/x3MQQqAIBBA0avErBNGKdSuEi3EppqNmVYE0t2Tl
- m/xf4FMiSnD0BRIdHPmPVTItgG/ubCS4LkaFKoerdSC49GjNOJy6VTCWtsZRYhee6hNTLTw8//
- G6X0/WLnqal8AAAA=
-X-Change-ID: 20250917-ipq5018-uart2-999482e00c7c
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
- George Moussalem <george.moussalem@outlook.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758109754; l=1271;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=HM/nI43DAlY/zjakfQ1WPfyIyi8Yd5G24Lox3W+bASA=;
- b=tSA+wVVKSl7EQVIcar1wFpLWcYt4BMzrg8snAh1odR53zMJiIUMHLsb+W8lUSw7iKwSczqR2y
- BNZTG48ItJxDzNo5VATpWWHiuOBBvnjpKsG3jmVzkgh+zt+wQhmOEmM
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Adds a new check to detect unhandled placeholders in cover letters.
+This prevents sending patch series with incomplete cover letters
+containing auto generated subject or blurb lines such as:
 
-Add node to support the second UART node controller in IPQ5018.
+    *** SUBJECT HERE ***
+    *** BLURB HERE ***
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+These placeholders can be seen on mailing lists (e.g., searching
+for "BLURB HERE" on lore.kernel.org). With this patch, checkpatch
+will emit a warning when such text is found.
+
+Example output on an invalid cover letter:
+
+    WARNING: Incomplete cover letter: placeholder text detected
+    #4: FILE: ./0000-cover-letter.patch:4:
+    +Subject: [PATCH 0/4] *** SUBJECT HERE ***
+
+    WARNING: Incomplete cover letter: placeholder text detected
+    #9: FILE: ./0000-cover-letter.patch:9:
+    +*** BLURB HERE ***
+
+    total: 0 errors, 2 warnings, 24 lines checked
+
+    NOTE: For some of the reported defects, checkpatch may be able to
+	  mechanically convert to the typical style using --fix or --fix-inplace.
+
+    ./0000-cover-letter.patch has style problems, please review.
+
+    NOTE: If any of the errors are false positives, please report
+	  them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+Signed-off-by: Onur Özkan <work@onurozkan.dev>
 ---
- arch/arm64/boot/dts/qcom/ipq5018.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ scripts/checkpatch.pl | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index e88b52006566fd39c0690e6fb53be743eb56d11b..52840eb00a262a05fe2e7cbe5b77c47ff5937222 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -490,6 +490,16 @@ blsp1_uart1: serial@78af000 {
- 			status = "disabled";
- 		};
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e722dd6fa8ef..9d5ded376112 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3339,6 +3339,15 @@ sub process {
+ 				$fixed[$fixlinenr] =~ s/^/ /;
+ 			}
+ 		}
++# Check for unhandled placeholder text in cover letters
++		if ($filename =~ /cover-letter\.patch$/) {
++			if ($rawline =~ /^\+Subject:.*\*\*\* SUBJECT HERE \*\*\*/ ||
++				$rawline =~ /^\+\*\*\* BLURB HERE \*\*\*/) {
++				my $placeholder = $1 || $2;
++				WARN("COVER_LETTER_PLACEHOLDER",
++					 "Incomplete cover letter: placeholder text detected\n" . $herecurr);
++			}
++		}
  
-+		blsp1_uart2: serial@78b0000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x078b0000 0x200>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+
- 		blsp1_spi1: spi@78b5000 {
- 			compatible = "qcom,spi-qup-v2.2.1";
- 			#address-cells = <1>;
-
----
-base-commit: 05af764719214d6568adb55c8749dec295228da8
-change-id: 20250917-ipq5018-uart2-999482e00c7c
-
-Best regards,
+ # Check for git id commit length and improperly formed commit descriptions
+ # A correctly formed commit description is:
 -- 
-George Moussalem <george.moussalem@outlook.com>
-
+2.51.0
 
 
