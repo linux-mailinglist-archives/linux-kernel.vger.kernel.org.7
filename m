@@ -1,151 +1,115 @@
-Return-Path: <linux-kernel+bounces-821573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7606AB81A96
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:38:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9880B81A9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5D1487EB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA6346294B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978DB301715;
-	Wed, 17 Sep 2025 19:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1C30B50F;
+	Wed, 17 Sep 2025 19:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFbRYeMG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="L4IYsLRz"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90A22FDC47;
-	Wed, 17 Sep 2025 19:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37A318D656
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758137914; cv=none; b=KObQ724JlV82++g/8VymxotZcVfrQExxdz45HNh0/SOU541A9f2JNqqeGoxeXeHJw3aH1TrGmvGK3Ub9pGxxg2srket6NABZi89Dl4571JirrJq/YpZYJI9FgfBuRl0ot+pGM8roNuDxYH829xLEwYF39M0QQ9ohYzpzqifv4TE=
+	t=1758137981; cv=none; b=VjLJpqVDFvW3+UallYkTecyoEKIhoPcNuyqFfc4i7aV6B5271alKtAZy2cm3KdBCKzAFyLhN2AgzuJsWg4SnYuY3FpsFsFH0700Y9gta4Pq/OgKQD1RMhG3LJE7t7S61ztH79vq9vhTyD4ICD2bbfGGcP994IO4HalHb7YczyOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758137914; c=relaxed/simple;
-	bh=I2AI4BKkKagGVUrVHimGZofS8/2mTShePgfHGGxipNA=;
+	s=arc-20240116; t=1758137981; c=relaxed/simple;
+	bh=+QnggltKchDLGLemYARPWxsrB/q6KzZjJCOBzPmSvqg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IqsCB2woXKMcSsB61vgvRaq6OX7aK0Yvlr+P5DJHnF7ZG9aVjZWZ6H+vZVFsmGQ8/fnhobv7Jg2Xium3KOhQliiEW3Ekmlnarm5UZH2331t63I0b8p6BbH0JH9D1mQDx5PMME+wXu8225mh140wM2gRMlsyof7Lkuuno/BwMTUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFbRYeMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4B6C4CEE7;
-	Wed, 17 Sep 2025 19:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758137913;
-	bh=I2AI4BKkKagGVUrVHimGZofS8/2mTShePgfHGGxipNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XFbRYeMGR/o/BJukbFrXOw9dXANO1Q319+ChFzDZz1efuhl2AvFA4ZkUpf9Ja5Byj
-	 kAs2X3gD0hX3u+p+r5xqeicUbv6YWx4CRoURTLTM31KVA8xnO1fKX2kbOZT3k/pzzx
-	 SJFUNlBfWm0cugPN5PMsh8WVgZSWouoWOyEQ/3S1Wn5WB10C/e8sAABoEeynKJIWxJ
-	 MpDSc/I2Kr86NiO58vERp3J9nVueHTa0VzHluvRKyRywO5PXfA8DVz1rdCTpOQ9nYS
-	 WNveoFVE18QI60NNTM3cs4H/LXBZgPzL7nSVQ9RCqgzhEcBz01dE5xTJw77myyQozJ
-	 vtcHLQtlQnumA==
-Date: Wed, 17 Sep 2025 20:38:28 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ryan.Wanner@microchip.com
-Cc: claudiu.beznea@tuxon.dev, sre@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	linux@armlinux.org.uk, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Varshini Rajendran <varshini.rajendran@microchip.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: power: reset: atmel,sama5d2-shdwc:
- add lpm binding
-Message-ID: <20250917-zeppelin-stoppage-0d0f876df93e@spud>
-References: <cover.1758051358.git.Ryan.Wanner@microchip.com>
- <d8fc40a97008cb0b4001684b3c9e1cc4bf3fb706.1758051358.git.Ryan.Wanner@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EopDntjSHsbbwc4LvVQlAQXD+D+9VcFdYXWgZqSm7SVmrZf+g5CEgz4+aMIBpUS6JP1NN7FSjDmYhYZM9QxRX+rV0D6rtI72Vq9a+bhNOs9c9lQk8QS4t6dWoegSGSfIcRvvcbGZL5Z0XOB+ye8HANIpVD4z07TC5chpdey92/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=L4IYsLRz; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b61161dd37so1321421cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:39:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1758137978; x=1758742778; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=loCR1eKtWPQr2AOCV7oFDbaaSxP/4srZDyqT1RiPxjU=;
+        b=L4IYsLRzVhDUPxlEZAd3uaUTqyb51mW3hSSFrLGcEHjNZxkEGsYCcPj2Ly5P61+v5f
+         GQuwpVNGaJpznMf2VXx3D/JqUk2KqZWX2yVJJplljjvBLX1wjRG7u+64q7eYUWfEEkTD
+         FNuSlvu7hw8IAJkAGtsn8OjLl7nfxGi7ltMlHew0JXheW7e4qJE11wMruO8C4m/V1taI
+         ddkn+i7Ly4K7VxG7iaOVFl957p3ey/Uc5iNA4rtNfW9m+qRBGNIi97cIP8z4xg6CJZiC
+         BVE4hqdxhbvWQZii+bbGHIJkTJYkpjAEjg2Q/ilAcE6h5bpwRvu7lqCdSfeFTvNevAOs
+         fQng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758137978; x=1758742778;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=loCR1eKtWPQr2AOCV7oFDbaaSxP/4srZDyqT1RiPxjU=;
+        b=HIR4ldm784n9gYEO9C6gBzu/I7Dp36PGCPheiRfoQ4vrg9UyNvPe/UA0iIPasUptB9
+         jyuPqc+Tdz3UeXf1dqw3me8hrzwBrnEObnoiqxKKfKRn65oCIDj4Os/IY3mdk4ujUYpC
+         L+ZKtOccEeotAdJTujpd7o+brsLM2vEDLqnLpQTXQZlML3Jm4a18nJPmNlPLBeHhifmF
+         vx6TNl8CR16aRpYY57au5MOcqEv+unmfaQ0R2MaPguEmtYiS39y4H6HRFQvGoOVv0sv1
+         z/5JKr1hbM9jnMLlJB7gU+nvLrgKKWU7VA/yNfKI+q4T8/pT2mq1VTOXCIJtPOZNQ0w5
+         yKsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVltS05cM4D5E01FpK2HgdpJCT+w+kc2qSYmV2ROFuC+uPX/szq9XDO0/VreXhLQTkjI4904nuIwiGceHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3r9pKyr5JJyXoZuAKbDEtD6oGPDMI68aBh+xQqz1DQ2+dM4Nc
+	Q6jC2qnyURYXLhSSuS+qeR22ldKgf6Y7IAYDPUWpkQBFdsSGAH0N7/cZ7iYq2xYZf8M=
+X-Gm-Gg: ASbGncvMy5NUshWF3DjIvbNm7TE9okXdJm4NSdRyhcOYY3Tr3+Wpg3lnjD2WhfFeRLj
+	IXJ3N69VKBDiAGobPkDjz9cR4DQJkMwObc1vvS+3DatY8E0S4R2iYLZ3B5dE9ZzAIQayq/dn5fz
+	RmOfEZ1lkkhWj1svCfmliLmQPIitzX4ZdMXhQ7VBHG3HdeC1RLzXarAM2LLlttqRBSruv9O71ve
+	svS8Q8dGM3eYgkAXWnSvu988D/IRW6cNkBleOAQ9j47Tk7Ft5KtXuErB4U3oodXko/b7qGdAOUZ
+	TgNQPJ9t5V9Ik5qeqOcGKXhw5R2aO8QaO5VYqlpwXvx1XYRVEFoA3ZUNeM1iHt9dC071gVKbdb+
+	qW2B0dquaNKwZhstmLfUru3JDASjQHjXwlBzW7Sf4G3s197KA1VeGPKmCKLjfL+hwq2dAailNsl
+	EdLAdwBTlpaEc=
+X-Google-Smtp-Source: AGHT+IH8rddOOuj2183qpUVyyVFif6dJ3P2j8BhXdLVsUERS6zel3c3yU22dws8RNYbBXoaWy5oC5A==
+X-Received: by 2002:a05:622a:5e85:b0:4b4:eace:d0b4 with SMTP id d75a77b69052e-4ba655fa244mr47322681cf.16.1758137977567;
+        Wed, 17 Sep 2025 12:39:37 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda86b3cf7sm2702201cf.29.2025.09.17.12.39.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 12:39:37 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uyy08-00000008n9B-2ccZ;
+	Wed, 17 Sep 2025 16:39:36 -0300
+Date: Wed, 17 Sep 2025 16:39:36 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+	joro@8bytes.org, praan@google.com
+Subject: Re: [PATCH v2 2/3] iommu/io-pgtable-arm-selftests: Modularize the
+ test
+Message-ID: <20250917193936.GL1326709@ziepe.ca>
+References: <20250917191143.3847487-1-smostafa@google.com>
+ <20250917191143.3847487-3-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b4L9u9zjttjH2OaC"
-Content-Disposition: inline
-In-Reply-To: <d8fc40a97008cb0b4001684b3c9e1cc4bf3fb706.1758051358.git.Ryan.Wanner@microchip.com>
-
-
---b4L9u9zjttjH2OaC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250917191143.3847487-3-smostafa@google.com>
 
-On Tue, Sep 16, 2025 at 12:50:30PM -0700, Ryan.Wanner@microchip.com wrote:
-> From: Varshini Rajendran <varshini.rajendran@microchip.com>
->=20
-> Add microchip,lpm-connection binding which allows to specify the devices
-> the SHDWC's Low Power Mode pin is connected to.
->=20
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-> [ryan.wanner@microchip.com: Add sam9x7-shdwc SoC to properties check]
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Wed, Sep 17, 2025 at 07:11:39PM +0000, Mostafa Saleh wrote:
+> Remove the __init constraint, as the test will be converted to KUnit,
+> it can run on-demand after later.
+> 
+> Also, as KUnit can be a module, make this test modular.
+> 
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
 > ---
->  .../power/reset/atmel,sama5d2-shdwc.yaml      | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-=
-shdwc.yaml b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-sh=
-dwc.yaml
-> index 9c34249b2d6d..668b541eb44c 100644
-> --- a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.y=
-aml
-> +++ b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.y=
-aml
-> @@ -56,6 +56,13 @@ properties:
->      description: enable real-time timer wake-up
->      type: boolean
-> =20
-> +  microchip,lpm-connection:
-> +    description:
-> +      List of phandles to devices which are connected to SHDWC's Low Pow=
-er Mode Pin.
-> +      The LPM pin is used to idicate to an external power supply or devi=
-ce to enter
-> +      or exit a special powering state.
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>  drivers/iommu/Kconfig                    |  2 +-
+>  drivers/iommu/io-pgtable-arm-selftests.c | 36 +++++++++++++++---------
+>  2 files changed, 23 insertions(+), 15 deletions(-)
 
-This sounds like you're some kind of power-domain provider. Why doesn't
-that generic kind of thing work for you?
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-> +
->  patternProperties:
->    "^input@[0-15]$":
->      description:
-> @@ -96,6 +103,18 @@ allOf:
->        properties:
->          atmel,wakeup-rtt-timer: false
-> =20
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - atmel,sama5d2-shdwc
-> +              - microchip,sam9x60-shdwc
-> +              - microchip,sam9x7-shdwc
-> +    then:
-> +      properties:
-> +        microchip,lpm-connection: false
-> +
->  additionalProperties: false
-> =20
->  examples:
-> --=20
-> 2.43.0
->=20
-
---b4L9u9zjttjH2OaC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMsONAAKCRB4tDGHoIJi
-0khOAP4w+nqJZTDRdwIeHuDir6MUFS8oTf5bETZiaLu4/AUpSgD/X3WcFvUR5xsN
-MyuU9dCTT8Z0XR1E5SE8px0sU/PsJgs=
-=OrR5
------END PGP SIGNATURE-----
-
---b4L9u9zjttjH2OaC--
+Jason
 
