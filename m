@@ -1,110 +1,90 @@
-Return-Path: <linux-kernel+bounces-820590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E719CB7C39A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:55:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E39BB7C856
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDBA16A570
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:55:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9340580AD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC59A371EAF;
-	Wed, 17 Sep 2025 11:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01963728B0;
+	Wed, 17 Sep 2025 11:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZa3cJYp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DJ7Oc3+Q"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F61F1E32B9;
-	Wed, 17 Sep 2025 11:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8778D1E32B9;
+	Wed, 17 Sep 2025 11:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758110148; cv=none; b=aVzD9oD0Lj10M9jlrDnzrABWPuBHAxDL5CjZh/xrRzQUiEfvpyITG8+YzNxF+u5sbzlNan9fxyXPAzGAUg/5P9fnyhzCPx//KZBX8t9lBHNiRaQ+5hDQul/cRrdjIYh69ZedDwnex+euXsf9/YUc2XUFjtrhyPGN22YlDGK3/uk=
+	t=1758110156; cv=none; b=Zsh93UD4G+T3Kwhwm0L4n11viwaR0neryQhFkRCeqPZSU/oaMaco95AXbF5abQa+e/RFskqsQznqt/nO7Kb1hh38NECJhohH0mF5WupxbIZWU2Bb2dUSPJ7yi9VbxWB71bVitdABzLVBFcTjjYDgCBk0tLfBUFoUExXvxJ++SY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758110148; c=relaxed/simple;
-	bh=DU4gxgbx65FsLQiFOCl1ZpFN4B1SDz2XuaVWJL83vYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqOs+6vSy///uxQSMzJoeULoTBusQADDVNPgF220AB7tdxsOvQ6jZ7+B1YMKj7bDoyNxxaOVxtvBge9tpV7pxGgKAMhcvHlUoRz1I+4OFpqqfdwmcvOSfpIL4oLJpdw9RRyzn0MZArq0wVRgZcwyfPIiEhudsqEWxZIwaVGZc5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZa3cJYp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B5DC4CEF0;
-	Wed, 17 Sep 2025 11:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758110146;
-	bh=DU4gxgbx65FsLQiFOCl1ZpFN4B1SDz2XuaVWJL83vYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cZa3cJYpPOWrn2Y3HUiznWvb7PqCcanOlOp/absxm7F1zW4SWZTK3MKNzNekiAF9L
-	 rJfmsXWTbBf0pJRn50m8dHW51naVFpJChdsE4J0nvNiukmpOseJ64X+lpaPVdtBSnO
-	 Z1kYCFboqxI8/aI7LKXqhkFiqBauC2xmETqN8Eb/4P2/DyLYCgRI6U8gi5yH7nyRAV
-	 JEuEob9PvAE5UgRB5e4BSbObMZmH2lth1NEYrYGS5irhOPL4k/5OiayE4OwB199JIT
-	 AHAW9MHO17dWPi69tktp+vwW3wkhvswah9sWW57lQmwbc13vwd/JNmneeQZUd7F2wo
-	 x6XWoHXt0lrlA==
-Date: Wed, 17 Sep 2025 12:55:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sathesh B Edara <sedara@marvell.com>
-Cc: linux-kernel@vger.kernel.org, sburla@marvell.com, vburru@marvell.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org, hgani@marvell.com,
-	andrew@lunn.ch, srasheed@marvell.com
-Subject: Re: [net PATCH v2] octeon_ep: Clear VF info at PF when VF driver is
- removed
-Message-ID: <20250917115542.GA394836@horms.kernel.org>
-References: <20250916131225.21589-1-sedara@marvell.com>
+	s=arc-20240116; t=1758110156; c=relaxed/simple;
+	bh=DmgiD4DEdrbQnNYGlnmAnbNpRT8lQoVsqzh1+ujAqaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qMZB/1mCbwhXmKs4t/F8G3GyixyOip18yNdyqtz/q+jKrvuPPFi0arlwkXcLHCgmzZugsabbcDDpBXWOXH0+AoAjuPIZOaTTxyUeZWWqDHp6R+taVJN+T2qjOdrvTNMkrnudjoK6Kp6jvrPIAL6FVPagADnRfqBcr5OiezJ+0qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DJ7Oc3+Q; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758110152;
+	bh=DmgiD4DEdrbQnNYGlnmAnbNpRT8lQoVsqzh1+ujAqaw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DJ7Oc3+QEPhXBokQuv4YarUEQ2kkHTmOxbTbYeYB3IXrpK/llD0H0Pc4bjcPjeWuY
+	 lvsrZ1OLINCOiQVOn5xW3rtmyjqmX+V1SE3qq9OoZKx7TGw4KnYAX7MfvWKrJULRwe
+	 gIusMp4O6ezKqvEe0f5UFrUV71okOLgZXn8JHQ/OITzHj6iTZpQfdtxCnbDpDM3PN9
+	 lZoN0ZXCyGdaJTCrvu3HFfKTOjgXcxeGJJKJos7gRFV+yahs+byA5fJxeyFo2VGQaN
+	 CAM7DqjV9u5eE1L3h1Q8AKdRCd6FU+GOU8enAD4xyb8QOwL1nqvXU6mn1Qan4btO/Z
+	 qSOCBnfjtv/uA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3382F17E0DC2;
+	Wed, 17 Sep 2025 13:55:52 +0200 (CEST)
+Message-ID: <2bfaa40f-6391-4fdb-8fa5-1cb783c58616@collabora.com>
+Date: Wed, 17 Sep 2025 13:55:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916131225.21589-1-sedara@marvell.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: mediatek: vcodec: Fix a reference leak in
+ mtk_vcodec_fw_vpu_init()
+To: Haoxiang Li <haoxiang_li2024@163.com>, tiffany.lin@mediatek.com,
+ andrew-ct.chen@mediatek.com, yunfei.dong@mediatek.com, mchehab@kernel.org,
+ matthias.bgg@gmail.com, hverkuil@kernel.org, tzungbi@kernel.org,
+ jiasheng@iscas.ac.cn
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ stable@vger.kernel.org
+References: <20250915120938.177691-1-haoxiang_li2024@163.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250915120938.177691-1-haoxiang_li2024@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 06:12:25AM -0700, Sathesh B Edara wrote:
-> When a VF (Virtual Function) driver is removed, the PF (Physical Function)
-> driver continues to retain stale VF-specific information. This can lead to
-> inconsistencies or unexpected behavior when the VF is re-initialized or
-> reassigned.
+Il 15/09/25 14:09, Haoxiang Li ha scritto:
+> vpu_get_plat_device() increases the reference count of the returned
+> platform device. However, when devm_kzalloc() fails, the reference
+> is not released, causing a reference leak.
 > 
-> This patch ensures that the PF driver clears the corresponding VF info
-> when the VF driver is removed, maintaining a clean state and preventing
-> potential issues.
+> Fix this by calling put_device() on fw_pdev->dev before returning
+> on the error path.
 > 
-> Fixes: cde29af9e68e ("octeon_ep: add PF-VF mailbox communication")
-> Signed-off-by: Sathesh B Edara <sedara@marvell.com>
-> ---
-> Changes:
-> V2:
->   - Commit header format corrected.
+> Fixes: e25a89f743b1 ("media: mtk-vcodec: potential dereference of null pointer")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 
-Hi,
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I feel that I must be missing something terribly obvious.
-But this patch seems to be a subset of the one at the link below.
 
-* [net PATCH v2] octeon_ep: fix VF MAC address lifecycle handling
-  https://lore.kernel.org/netdev/20250916133207.21737-1-sedara@marvell.com/
-
-> 
->  drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
-> index ebecdd29f3bd..f2759d2073d1 100644
-> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
-> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
-> @@ -205,6 +205,8 @@ static void octep_pfvf_dev_remove(struct octep_device *oct,  u32 vf_id,
->  {
->  	int err;
->  
-> +	/* Reset VF-specific information maintained by the PF */
-> +	memset(&oct->vf_info[vf_id], 0, sizeof(struct octep_pfvf_info));
->  	err = octep_ctrl_net_dev_remove(oct, vf_id);
->  	if (err) {
->  		rsp->s.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
-> -- 
-> 2.36.0
-> 
-> 
 
