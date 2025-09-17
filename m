@@ -1,134 +1,120 @@
-Return-Path: <linux-kernel+bounces-820266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B6FB7D2DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E84B7D2EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87E74E0A6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0A04E0C55
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CFD30DD1E;
-	Wed, 17 Sep 2025 08:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068D530BB8C;
+	Wed, 17 Sep 2025 08:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoBk9H9/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ii0Zl474"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FF630C34F;
-	Wed, 17 Sep 2025 08:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AE13016F6
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758098571; cv=none; b=A8++vMTTRBYYVU1b264/iT9Rszddfe95dK+lMu/NKemHhI9h1Kwtp7wh/RaHSm/RWg9XrytL5jaL+8KQrGeI1i3nzE6rA3XwewxsITmRVWk8yersVOHwXxPc0Ghf1JXe/dyJOnUtusXWIzOFq460ZgTufJNrzEbCQNLsZP5zFro=
+	t=1758098683; cv=none; b=lHtAk94HkUtnWbZ8Pb5JwnZwBfGihrbLBxQNFKGUlN5hoOLKM0FBaG7Mw0o6K2IoZWSxiUWpDxJJDgt2WSt6HPnXOjWX/MVjGXVbgNa90pkOZGDLIWJ1eR2mybgtz+9Agm5hlgJ6vGF0lZmNw7XH9FhVx4NzSx7epKeDp2osOqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758098571; c=relaxed/simple;
-	bh=CMm0HgNBKMoHaAJh86JjHiEwTFlQgqebNAVg0nJ9CEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jNA9asDb0uxEAwAadMckUGTnki6hk/9rbuJVQgSMfXGm6+ON4qUA4qnIEv3hj0wRpOz5Bp11sqowiv8xaQZ46w6t2ADAbVitsGoWfGNYtYiuAdx2Kcm0Gefv/LZv8D0+0QYBHlj9fNGufkrsqJDTKRVWQ961Hh7k82bSEW/bbj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoBk9H9/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9EB6C4CEF5;
-	Wed, 17 Sep 2025 08:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758098570;
-	bh=CMm0HgNBKMoHaAJh86JjHiEwTFlQgqebNAVg0nJ9CEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XoBk9H9/fk3hEvvn+gAJu80NKRXPfW8GtIar0Vpe65NqcQI0fOFTf6+Ni4y4mQA6v
-	 uvy1/nwUiDDy754G6J1W3BifeTN6slbPxx++cVkO2M1G2ZAhmhRmaEy5aBMlnviDj0
-	 H5vOuebJLQVHpm6NBS9qLds5Lb+/OsKf0TcaOIGRvmxkeb55LAnq/PfCuz4tRCrNrw
-	 02Wc1kIXqFgn7Domq1qtNXu/90UOdKtL8VeTojPXYQ15DopqoMceKwQqh8d9J2lRQN
-	 b+Wy2Wj3gbqEiogu6BbIWJ0IRNug8dyHcCBfxchaxyrjagH9A0hCWX3A1SaP+9maaE
-	 KjAQcfOIBWRBg==
-Date: Wed, 17 Sep 2025 10:42:44 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: chester62515@gmail.com, mbrugger@suse.com,
-	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, Ionut.Vicovan@nxp.com,
-	larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: pcie: Add the NXP PCIe controller
-Message-ID: <aMp0hNnBUwTV5cbp@ryzen>
-References: <20250912141436.2347852-1-vincent.guittot@linaro.org>
- <20250912141436.2347852-2-vincent.guittot@linaro.org>
+	s=arc-20240116; t=1758098683; c=relaxed/simple;
+	bh=PiFxBCpuMdodZScO1SSMEYIZExFuzvOF8mO22B2C6c8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eSGY+D0HM0EZRjUNkk4Q2Sy1Uwk6cTLQjjC/glGmBX6E0y2wraffM0K/TUV0tS7NRV1jUzxqCzQTJ1xZzeHJgObcoK6BtbzvCK3MqOWeKI7qSG0eTaS3Xr2HOpY64szkEdIpTNZkGmxr7OryEiNiobWcBZQ4/PAWatu45XPn1VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ii0Zl474; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758098679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nGT7/wMZGjwaxFcND5f/WecVxHFIlONVRhdO12P5zHA=;
+	b=Ii0Zl474F2n6+tXzGM89gpiFOB/0NpPZBTdlCwQcQTkvrLhsLhVuEHus58Pp3f6d15Z2ny
+	LTBDrDjDnmCv8RcsF6xpikufF1l/Wcv+VpA3BUxc9ROfTEuKnyvKb4YQnZu4eHh3UONMSN
+	VOnm78djUC4BG1E1/4PZp614xZoouXE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-160-NbyG_BIwNQq_sVXKiYykUw-1; Wed,
+ 17 Sep 2025 04:44:35 -0400
+X-MC-Unique: NbyG_BIwNQq_sVXKiYykUw-1
+X-Mimecast-MFC-AGG-ID: NbyG_BIwNQq_sVXKiYykUw_1758098674
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7270119560B5;
+	Wed, 17 Sep 2025 08:44:33 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.170])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3E2C719560B8;
+	Wed, 17 Sep 2025 08:44:29 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>,
+	Nam Cao <namcao@linutronix.de>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Zhen Ni <zhen.ni@easystack.cn>
+Subject: [GIT PULL] rv fixes for 6.17-rc7
+Date: Wed, 17 Sep 2025 10:42:45 +0200
+Message-ID: <20250917084244.47053-2-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912141436.2347852-2-vincent.guittot@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hello Vincent,
+Steve,
 
-Nice to see you sending some PCIe patches :)
+The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
 
-Quite different from the scheduler and power management patches that you
-usually work on :)
+  Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
 
-(snip)
+are available in the Git repository at:
 
-> +  nxp,phy-mode:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: Select PHY mode for PCIe controller
-> +    enum:
-> +      - crns  # Common Reference Clock, No Spread Spectrum
-> +      - crss  # Common Reference Clock, Spread Spectrum
-> +      - srns  # Separate reference Clock, No Spread Spectrum
-> +      - sris  # Separate Reference Clock, Independent Spread Spectrum
+  git://git.kernel.org/pub/scm/linux/kernel/git/gmonaco/linux.git rv-6.17-rc7
 
-This does not seem to be anything NXP specific, so I really think that this
-should be some kind of generic property.
+for you to fetch changes up to 9b5096761c184b3923ae45c5e82da31005a765c7:
 
+  rv: Fix missing mutex unlock in rv_register_monitor() (2025-09-15 08:36:35 +0200)
 
-Note that I tried to add a similar property, but for the PCIe endpoint side
-rather that the PCIe root complex side:
-https://lore.kernel.org/linux-pci/20250425092012.95418-2-cassel@kernel.org/
+----------------------------------------------------------------
+Simple fixes like:
+- Fix build in some riscv flavours
+- Fix wrong cast, obsolete after refactoring
+- Fix missing unlock on failure
+- Fix duplicate import
 
-However, due to shifting priorities, I haven't been able to follow up with
-a new version/proposal.
+----------------------------------------------------------------
+Akhilesh Patil (1):
+      include/linux/rv.h: remove redundant include file
 
-My problem is not exactly the same, but even for a root complex, the PCI
-specification allows the endpoint side to provide the common clock, which
-means that the root complex would source the refclk from the PCIe slot,
-so I would say that our problems are quite similar.
+Nam Cao (1):
+      rv: Fix wrong type cast in enabled_monitors_next()
 
-Rob Herring suggested to use the clock binding rather than an enum.
-I can see his point of view, but personally I'm not convinced that his
-suggestion of not having a clock specified means "source the refclock from
-the slot" is better than a simple enum.
+Palmer Dabbelt (1):
+      rv: Support systems with time64-only syscalls
 
-To me, it seems way clearer to explicitly specify the mode in device tree,
-rather than the mode implictly being set if a "clk" phandle is there or not.
-That approach seems way easier to misunderstand, as the user would need to
-know that the clocking mode is inferred from a "clk" phandle being there or
-not.
+Zhen Ni (1):
+      rv: Fix missing mutex unlock in rv_register_monitor()
 
+ include/linux/rv.h                     | 6 ++----
+ kernel/trace/rv/monitors/sleep/sleep.c | 4 ++++
+ kernel/trace/rv/rv.c                   | 4 ++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
-I also note that Rob Herring was not really a fan of having separate spread
-spectrum options. Instead, it seems like he wanted a separate way to define
-if SSC was used or not.
+Cc: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: Nam Cao <namcao@linutronix.de>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Zhen Ni <zhen.ni@easystack.cn>
 
-I have seen the following patch merged:
-https://github.com/devicetree-org/dt-schema/pull/154
-https://github.com/devicetree-org/dt-schema/commit/d7c9156d46bd287f21a5ed3303bea8a4d66d452a
-
-So I'm not sure if that is the intended way they want SSC to be defined or
-not.
-
-
-I apologize for bringing up my own problem in this discussion, but at least
-it is clear to me that we cannot continue with each PCIe driver adding their
-own vendor specific properties (with completely different names) for this.
-Some kind of generic solution is needed, at least for new drivers.
-
-
-Kind regards,
-Niklas
 
