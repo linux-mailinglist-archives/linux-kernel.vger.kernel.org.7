@@ -1,170 +1,126 @@
-Return-Path: <linux-kernel+bounces-820083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FB6B7E699
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:48:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74013B7F361
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72BF93223D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893953A603A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F8D285C98;
-	Wed, 17 Sep 2025 06:50:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC2D23D281;
-	Wed, 17 Sep 2025 06:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A48F2627F9;
+	Wed, 17 Sep 2025 06:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPmfqhAe"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800B223BD1F
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758091837; cv=none; b=tiENIeOoexcaSYgjY+SaFwLattdZbdLXLAVn5lhj5vkP34wzPewONH1KP+hvTyWtpW+mQrPVRDXtUieLHs34bZZN1Hqd9y+n/1Q9q/NUVCIOdLPjzAykCb1a33wJe876N+apRmvN+Nhj8IRz6ECxub4owejZLW14pNZ4wsC3Rfg=
+	t=1758090305; cv=none; b=BdhWxjSmXIxh0Qsv8OcaqEQLj5wPA1kPWwG2+fkyzfc8FRGEaZvPPhlxWPM2cU5xwty6X0UYXZyqhhitwxcbMazlmUKANudaRUmF1TL+DG0bJlo0Jsl54NJHFF5Xsas21fnsFpgyy3l74BsPw13jQKjkzcVHYh7nBbt7M1hHX3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758091837; c=relaxed/simple;
-	bh=yUebgToB8fNqLYyOXSBAVPWT0p5rZMhaAsCibJB/MRE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wd99bOmdegSc2szX7RQVxSC993lf+ldMHVJ/qMSeQECeg9HVniTWEdmuKXLteb9zn+kS4gS462YbIGZkDzmZqVz58bAuvkbE5VVX1ZpMo0Yi7MmnAKISlSXSlVuOQqhvI+1rLQ4lp1/Eoa9Ez+8AsOaoAIxACiVEPhpO7c43TmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cRTHm5Xlbz9sxc;
-	Wed, 17 Sep 2025 08:24:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id cdMlgPgnLR0b; Wed, 17 Sep 2025 08:24:04 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cRTHm3mDVz9sxY;
-	Wed, 17 Sep 2025 08:24:04 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EAAC8B766;
-	Wed, 17 Sep 2025 08:24:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id ZNb0SINzbGae; Wed, 17 Sep 2025 08:24:04 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C684C8B763;
-	Wed, 17 Sep 2025 08:24:03 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v2] net: wan: framer: Add version sysfs attribute for the Lantiq PEF2256 framer
-Date: Wed, 17 Sep 2025 08:24:01 +0200
-Message-ID: <2e01f4ed00d0c1475863ffa30bdc2503f330b688.1758089951.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1758090305; c=relaxed/simple;
+	bh=rzXX/dtUq/UcfP9OSjnNzzhylkYRbWAAxbLeSuhvPHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PWkt7h8YZXt0X+aGfLx2Zam5PysxtfrFGVqIhcE171YUuM8aW/dxT6NLeFi2UybL8Lhh3n5NPXNNahlcwBvvCGCmtHIVT7H588oW4oDgDTs2t6suyJzArluG9EGNGZD9/O/cBKOpVffCe8Hd9EVEvdE9H8csQGrBaknmJTqMHZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPmfqhAe; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2445826fd9dso74886225ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:25:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758090304; x=1758695104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o4wyrSqJyB4cA3v/v5NTU3+JE/mrTp9rWbEkkkvfz28=;
+        b=ZPmfqhAegIQqMtzBEKU2pM+gSA1ma3vIBZU/sgEVUUOHMyvjn7N0EQawZUKjyGSEmR
+         IK+vEBrNns0yn125ZSWUqPkDhQzrVpiH5WKlJYd76a4q0gYd+yQYsrmRGLnjjgbjwkgp
+         cz1EaXswynYuwK9Xgp2DJlDJf+Qoo4Z9JeNdC04NNEFBbgWEOo8avDuDB4dlJwhEkeIo
+         C1D8ZXbrk0cSlbG6WnJ6XVtLMvwRmH1XD7zTqZFWX/sl8+B+HDWMozryUlXagzk9m6uc
+         PGnNXieUiBfKNg+SO/HH2xBebiFhbO2os+5viB9Dd9RjdS3J+7lj+Ks1zsvAO3jKOfg2
+         CSTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758090304; x=1758695104;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o4wyrSqJyB4cA3v/v5NTU3+JE/mrTp9rWbEkkkvfz28=;
+        b=NcEQLA6FBeULdOGtW2rFhGd9LtGX24MbcuMBnmKUDu2UxczZ4I2X0W+DkmlS8YI9jb
+         9VFB8SRj8CgPxCohTzA+HQ5JnfaUaeJg1YB7yyIUNjbAZfJFDACm/JRyNxV1Idvzc6h+
+         bImLnsMOkleDACmTaRd/ygLrXvP/VQVCHax/bF9/HrBXugwQjw8g/IDqs0nUPHFq4hnS
+         /MXcKgSuJ39OhZfI6Umg1/2MV/kxUPAIJGtyPsM0Hw3CgAQ1EUwMWnRXLSGf4dwfdoO1
+         dgGYvoe3ZWdVGJXvArj88YKbDodAhC+rJwUHLYFmYCtX8M1Yt7vG1LqWEtCib9ibfKAu
+         0loA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVR/eUKZF6iL7LidQ+EGs2Wb7Ck2aUwh9YWsSiJEo1KByREuFL0ZJ9dcFLQjXchBojnPDjVzu02XIwbvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzngjARdIXycuB64anGSoXshxGEW4iDc5EKZoahKCanA0lLX7cb
+	Vn8Op7i7Yrs/cAbniJSrPG0blDbhE30wKNUq4sJZPMeXEwZn6TRcQpEH
+X-Gm-Gg: ASbGnctu+damaNYiPRWll7GUSp/nWGNhNIayRaAVTmPkzisL/IU77trWjOUEMzjjCc/
+	z4ZphFIBGcMxh3sMYnElAlo6UN0gCmBk7TzdXoX4vdJ6X36Aiz21+ljSBwt2e/sBfZMQ2wqHUrK
+	T1iLcwLfCUv18Yx3yElk1KjFCLMXGdO/o8lG4KmTmxCxSfGkzf1y/S6BZwiNW3WLOWVyA+LeXrf
+	lbF7vdGmeMj9s2eA0bKTFDJ7NsQM90n4vZm8oQEUX5VRlmrc6QJL/4yuuoSEO3zKr49adocxdAR
+	+iwh3craD7xsRvd2DyWkSlFpF8migQqqo3gMLzJbzING1VA96jf6287ktgffUxxgD19PZ0yyJpD
+	R1xF0vFb6VyXtKF3DHA==
+X-Google-Smtp-Source: AGHT+IG4yhx/jw9zlmBHFiucCMISe3PpQu1zuHcOTs77I7QUK32j+zfTSaEaEBRwZZIrm3ySJSWT5A==
+X-Received: by 2002:a17:903:987:b0:267:6754:8fd9 with SMTP id d9443c01a7336-268137ffe09mr11586945ad.39.1758090303761;
+        Tue, 16 Sep 2025 23:25:03 -0700 (PDT)
+Received: from fedora ([119.161.98.68])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264eeab7c22sm91296235ad.17.2025.09.16.23.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 23:25:03 -0700 (PDT)
+From: Nirbhay Sharma <nirbhay.lkd@gmail.com>
+To: dakr@kernel.org
+Cc: Nirbhay Sharma <nirbhay.lkd@gmail.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: drm/gpuvm: Describe map member in drm_gpuvm_map_req
+Date: Wed, 17 Sep 2025 11:54:20 +0530
+Message-ID: <20250917062420.69986-2-nirbhay.lkd@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758090241; l=3036; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=yUebgToB8fNqLYyOXSBAVPWT0p5rZMhaAsCibJB/MRE=; b=XinTr0sQd/fycGPP9Ahs+KCsT52jn6P0PjWwxzML/HAyXtlvz85bQ/3HFUOcTJvz4KCIavxke xhO9gi/FA+vBoFKf2SdHRX9DHgHLs/OYBcq4bCVaw+bNMDGV58B+AJm
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-Lantiq PEF2256 framer has some little differences in behaviour
-depending on its version.
+The kernel doc build (makedocs) threw a warning because the @op_map comment
+did not match the 'map' member name in the struct.
 
-Add a sysfs attribute to allow user applications to know the
-version.
+Fix this by correcting the member name in the comment from @op_map to @map.
+While at it, improve the description from simply repeating the data
+type to explaining the member's purpose.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
 ---
-v2:
-- Make DEVICE_ATTR_RO(version) static
-- Split version_show() prototype into 2 lines to remain under 80 chars
+ include/drm/drm_gpuvm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v1: https://lore.kernel.org/all/f9aaa89946f1417dc0a5e852702410453e816dbc.1757754689.git.christophe.leroy@csgroup.eu/
----
- drivers/net/wan/framer/pef2256/pef2256.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
-index 1e4c8e85d598..a2166b424428 100644
---- a/drivers/net/wan/framer/pef2256/pef2256.c
-+++ b/drivers/net/wan/framer/pef2256/pef2256.c
-@@ -37,6 +37,7 @@ struct pef2256 {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	enum pef2256_version version;
-+	const char *version_txt;
- 	struct clk *mclk;
- 	struct clk *sclkr;
- 	struct clk *sclkx;
-@@ -114,6 +115,16 @@ enum pef2256_version pef2256_get_version(struct pef2256 *pef2256)
- }
- EXPORT_SYMBOL_GPL(pef2256_get_version);
- 
-+static ssize_t version_show(struct device *dev, struct device_attribute *attr,
-+			    char *buf)
-+{
-+	struct pef2256 *pef2256 = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%s\n", pef2256->version_txt);
-+}
-+
-+static DEVICE_ATTR_RO(version);
-+
- enum pef2256_gcm_config_item {
- 	PEF2256_GCM_CONFIG_1544000 = 0,
- 	PEF2256_GCM_CONFIG_2048000,
-@@ -697,7 +708,6 @@ static int pef2256_probe(struct platform_device *pdev)
- 	unsigned long sclkr_rate, sclkx_rate;
- 	struct framer_provider *framer_provider;
- 	struct pef2256 *pef2256;
--	const char *version_txt;
- 	void __iomem *iomem;
- 	int ret;
- 	int irq;
-@@ -763,18 +773,18 @@ static int pef2256_probe(struct platform_device *pdev)
- 	pef2256->version = pef2256_get_version(pef2256);
- 	switch (pef2256->version) {
- 	case PEF2256_VERSION_1_2:
--		version_txt = "1.2";
-+		pef2256->version_txt = "1.2";
- 		break;
- 	case PEF2256_VERSION_2_1:
--		version_txt = "2.1";
-+		pef2256->version_txt = "2.1";
- 		break;
- 	case PEF2256_VERSION_2_2:
--		version_txt = "2.2";
-+		pef2256->version_txt = "2.2";
- 		break;
- 	default:
- 		return -ENODEV;
- 	}
--	dev_info(pef2256->dev, "Version %s detected\n", version_txt);
-+	dev_info(pef2256->dev, "Version %s detected\n", pef2256->version_txt);
- 
- 	ret = pef2556_of_parse(pef2256, np);
- 	if (ret)
-@@ -835,6 +845,8 @@ static int pef2256_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	device_create_file(pef2256->dev, &dev_attr_version);
-+
- 	return 0;
- }
- 
-@@ -849,6 +861,8 @@ static void pef2256_remove(struct platform_device *pdev)
- 	pef2256_write8(pef2256, PEF2256_IMR3, 0xff);
- 	pef2256_write8(pef2256, PEF2256_IMR4, 0xff);
- 	pef2256_write8(pef2256, PEF2256_IMR5, 0xff);
-+
-+	device_remove_file(pef2256->dev, &dev_attr_version);
- }
- 
- static const struct of_device_id pef2256_id_table[] = {
+diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+index 8890ded1d907..1c851c3f778e 100644
+--- a/include/drm/drm_gpuvm.h
++++ b/include/drm/drm_gpuvm.h
+@@ -1078,7 +1078,7 @@ struct drm_gpuva_ops {
+  */
+ struct drm_gpuvm_map_req {
+ 	/**
+-	 * @op_map: struct drm_gpuva_op_map
++	 * @map: The GPUVA map operation and its arguments
+ 	 */
+ 	struct drm_gpuva_op_map map;
+ };
 -- 
-2.49.0
+2.51.0
 
 
