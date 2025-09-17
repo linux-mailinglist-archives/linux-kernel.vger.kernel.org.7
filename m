@@ -1,176 +1,118 @@
-Return-Path: <linux-kernel+bounces-820547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DC4B7C632
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA80B7C70B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494061BC3644
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9A0F164BC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670DB32B48F;
-	Wed, 17 Sep 2025 11:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EAF24A06A;
+	Wed, 17 Sep 2025 11:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eosiQvRq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JD/h670i"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E812EC0B9;
-	Wed, 17 Sep 2025 11:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BF42DEA74
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758107797; cv=none; b=lfiiQc6TJfLk/OimSsPDeNvXKW5rkyZNIHK3DdbwpCAq8zMsQvvpNPX65yTH+YsPZLFhEc9rMNVy46k4otRKKhui3LwbLhhTCOa1l05hDkGdXdGrsK5Bj+3UcN51yPhEa6cJG1A2EkAzsb+QmvwcX/6Pt8W0Us8S23mb71iLeoc=
+	t=1758107807; cv=none; b=iO4EqUWfCxUEakcpWe3k+QPglxcqzYyohNGmirfTkYFUqB9lOlkaBAF0CkYHx0bLRLMllHIVP+odP1g6VsotVJ7bcNGG819XkRhsphn9tHDU5AlI3k7rs5Iwp4ACogJWBqC4zLBB7tJbnDydCEu6Q0GC6TvHX68O845huRjzcVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758107797; c=relaxed/simple;
-	bh=Y+3nIrnvAgbnHI5g9PJ6WJ/KzCKFqJfuSMVVefbpSho=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O7X0m/WsqfxRHBm7oTpfAU+EZoEpOU3cQ9scpIrFuXiN3FOFfg+7B6y3sMzh9ueM4dLq+XUB69pmFShdLtABcfALM8HbSiighd2OJJ1Qz9xBxHpMdVK6YTgkX6JwBcfYYkCTFVtgQp4cAPgBeLwQGeM8gvsjekhwwwMK4rq4tHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eosiQvRq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAEEEC4CEF5;
-	Wed, 17 Sep 2025 11:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758107797;
-	bh=Y+3nIrnvAgbnHI5g9PJ6WJ/KzCKFqJfuSMVVefbpSho=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=eosiQvRq93/I0qbVOx7KCYCNCQ24Pki1pJ4jPP9OFmkQDG1PrlHw+X7sZBhSJ6v8u
-	 HuXXU09bgoqrDwUr59yAoWiPsI1lNRwSVWT7YaoO8t8SbmUmsWo692bmHlWt9XxKMf
-	 iuKYGrHly3HmcyZqBklZC//2sH3cn4GQyF0K8W7oZAZ1Xf9a+6TVZVQtNFLOVK6TAN
-	 zMbftgn3Tl2vt6GI3PL34iMY5uO8eps/6NisIWO1nugRexye6P3+tCTbC2YHfVFbuo
-	 wQJZSYEfYjXPF+Muf//8EgiTO6ZIGKqeTWNecoAU+neR7q4gaGddH8gzzXCd2kdzDs
-	 oNcqyc+vwLSuQ==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Wed, 17 Sep 2025 13:16:14 +0200
-Subject: [PATCH v3 4/4] media: gc2145: Fix the RGB MBUS format
+	s=arc-20240116; t=1758107807; c=relaxed/simple;
+	bh=V7DSFThcWOL031kOhRZSDL6u8F3ywlLhFKRAxEYz6/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y94dT6xOtvgdg/k4UaD7vtrbNlkeMzem9cLJNnnVIQG0YZcuuMl9CnoQH/EFXrj5EK0Aqj6fVbcaEXyHwBKbnv5s0foes2m7dVVmY/1V5psG1Gl61k3gVKGZtiAzfH1Pnk50f3BSWJQ0KwWMzR95Vd8O1XXEp4b8+Bl9FhH2Yes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JD/h670i; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-625e1dfc43dso4109530a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 04:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758107803; x=1758712603; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5+QCfd7AnWxO1Uiu+yxEm6oSJQvuzcwXael9gAjARo=;
+        b=JD/h670i9hlkK2XcCsZ+jIwKVOxk3AGf95Cn9Y7DtdkhcIW3KmcUv5JCbFLL5q4I8L
+         Mj3gGICtLPjAbujkdIxShmPtvzSprhea2aMbulILb8AOLwFrQXpXiHyJR0T4GtLXPxLT
+         77ch/8Y3NnKIH7KssMb28JMbbBxtEuhemH2mMwZpQ6raPjc2NNFcZYrZZoC8UGWAERf1
+         uHOJsMXzRCrTp3C1/UrWwywkSTw9PylcVILwgEHthwVXSRsSxfzHCD8AF7v6u71Ol2bz
+         6yWHL27pbxUreKbAoQfLYFlcSWIzqP7XIEpov0Mh7ZsobpdR8Gee3IkH5ATVXGJ2V+3j
+         eTfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758107803; x=1758712603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y5+QCfd7AnWxO1Uiu+yxEm6oSJQvuzcwXael9gAjARo=;
+        b=T4M9DNgCmXoEYWSnEYerqJfQ2OfJwREamO/f++nAXzFNbHzgAu2X0C7F1ipfFP7Npd
+         ryYvGFMooW7K6BS2Cq+oOpuON9cv2KBXjtO4zFrGzoJXooCozN1ePZNwEnY98EFsC8+2
+         Xq+p38CSWiK0Lr6pffdXlBSqIP8MDom8PXdF6KEHP2HzAC7zXQdFc5cI6TyPCml06Om3
+         eubni1ss96DPlW98S2zXATfYoyFDj0b22qZyhjFVDCYQB21cjSOH9HXdzZxfT+V7T5Rw
+         pxUmify7O2Ftx15d1aIWxiXJehge8ZD6Gz/imHTPs7NzNXyB8oOC/FMoLzeGU1EHCyyJ
+         qMYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYGlpna81Ny3COQ8kXrllXOMiswvtjQ25wwfwHnIxxdSZRjpARQXwHbgLUAJPVrl3G4/aP4zVU30f5Ff4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwCD2jymi6n78BCwN2QnxfTjZNce6yFlFhhLYxFKd1BiN6Fub2
+	ycgErb0Lvu/33ZBwgdVDwRsSLtzxV8d7VMN1sE1ThoXG0UtSqCGbxPhBKBuLARPkwo0=
+X-Gm-Gg: ASbGncsgJmgTH0GtuyLVEsdIeI8Tku5s8QKADht1g5Fn63Y8jVZQgE04/xBSSjx14Uz
+	iSOKO26wGyfKaAj786tStdiIef1js19IiSFvVMhNNdasqa5Xnsa0jXCapSKZDclzvcR3/RvTgJT
+	dzwTtlBcRRS5Q21JI9OX96TPv8u/Gav2+W1tT9rvixFs6DKFtwaIMMzQNAOZwUyDYzveIrWZQoJ
+	t9Tg1IPCAIZf133KnHy/Txu0XjKHJYmxVftpCnM+xkwuE1mlYZ9sBfhao29tJTFelXXQgrXfWLI
+	YCRog2hCiwKpuoGbW6NcmeH2Gmr7tpLuyNR75LwcMcxYlr0cZewilCZuVf17ZE6G+QKvYUV9llA
+	DpJ9pfVH77EPQ5+4+bT8UAmVgSWHIdU3hzMM0
+X-Google-Smtp-Source: AGHT+IFZy3mrCBpGywWYVRXU0ddDyLdCUVYtaMmLkV94TwlEwWXV8sRWsTgucNxGxD0epFiNoK0USQ==
+X-Received: by 2002:a17:906:dc91:b0:b04:48c5:340 with SMTP id a640c23a62f3a-b1bb43380a7mr171298366b.9.1758107803558;
+        Wed, 17 Sep 2025 04:16:43 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f22b1sm1361332966b.86.2025.09.17.04.16.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 04:16:43 -0700 (PDT)
+Date: Wed, 17 Sep 2025 13:16:41 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v4 2/5] printk: nbcon: Introduce KDB helpers
+Message-ID: <aMqYmaqMSohDluhZ@pathway.suse.cz>
+References: <20250915-nbcon-kgdboc-v4-0-e2b6753bb566@suse.com>
+ <20250915-nbcon-kgdboc-v4-2-e2b6753bb566@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-csi-bgr-rgb-v3-4-0145571b3aa4@kernel.org>
-References: <20250917-csi-bgr-rgb-v3-0-0145571b3aa4@kernel.org>
-In-Reply-To: <20250917-csi-bgr-rgb-v3-0-0145571b3aa4@kernel.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Mats Randgaard <matrandg@cisco.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans Verkuil <hverkuil@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans Verkuil <hans.verkuil@cisco.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3387; i=mripard@kernel.org;
- h=from:subject:message-id; bh=Y+3nIrnvAgbnHI5g9PJ6WJ/KzCKFqJfuSMVVefbpSho=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBmnZrR96y7SUXrs5tVudyVCzyVv87ppRXEJCgv/r6ovK
- +TYkbqoYyoLgzAng6yYIssTmbDTy9sXVznYr/wBM4eVCWQIAxenAExEtI+xhjOkklV0qtyEbh7h
- 7k0GD8oe8Jbb/Hiu2XLyy1PnNFmer4luosz1z17uelnauMzurv0kxoZVXBeU8ip3HVpiE85caJg
- 2LWO1vGi9+KepNi3HeJn5+NJ3uPAJ9y5RN8qSz1R0u5EgDwA=
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915-nbcon-kgdboc-v4-2-e2b6753bb566@suse.com>
 
-The GalaxyCore GC2145 is an MIPI-CSI2 sensor. Among others, it support
-the MIPI-CSI2 RGB565 format, listed in the driver as
-MEDIA_BUS_FMT_RGB565_1X16.
+On Mon 2025-09-15 08:20:31, Marcos Paulo de Souza wrote:
+> These helpers will be used when calling console->write_atomic on
+> KDB code in the next patch. It's basically the same implementation
+> as nbcon_device_try_acquire, but using NBCON_PRIO_EMERGENCY when
+> acquiring the context.
+> 
+> If the acquire succeeds, the message and message length are assigned to
+> nbcon_write_context so ->write_atomic can print the message.
+> 
+> After release try to flush the console since there may be a backlog of
+> messages in the ringbuffer. The kthread console printers do not get a
+> chance to run while kdb is active.
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
-Most CSI2 receiver drivers then map MEDIA_BUS_FMT_RGB565_1X16 to
-V4L2_PIX_FMT_RGB565.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-However, V4L2_PIX_FMT_RGB565 is defined as having its color components
-in the R, G and B order, from left to right. MIPI-CSI2 however defines
-the RGB565 format with blue first.
-
-This essentially means that the R and B will be swapped compared to what
-V4L2_PIX_FMT_RGB565 defines.
-
-The proper MBUS format would be BGR565, so let's use that.
-
-Fixes: 03cc7fefbb09 ("media: i2c: gc2145: Galaxy Core GC2145 sensor support")
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/media/i2c/gc2145.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/i2c/gc2145.c b/drivers/media/i2c/gc2145.c
-index 559a851669aaf57cfba4d8834d04de9a3e3d91e0..88c3d92accb71108d23fa305d2ccf5bca2dd1079 100644
---- a/drivers/media/i2c/gc2145.c
-+++ b/drivers/media/i2c/gc2145.c
-@@ -579,11 +579,11 @@ static const struct gc2145_format supported_formats[] = {
- 		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.datatype	= MIPI_CSI2_DT_YUV422_8B,
- 		.output_fmt	= 0x03,
- 	},
- 	{
--		.code		= MEDIA_BUS_FMT_RGB565_1X16,
-+		.code		= MEDIA_BUS_FMT_BGR565_1X16,
- 		.colorspace	= V4L2_COLORSPACE_SRGB,
- 		.datatype	= MIPI_CSI2_DT_RGB565,
- 		.output_fmt	= 0x06,
- 		.switch_bit	= true,
- 	},
-@@ -613,10 +613,25 @@ static const struct gc2145_format supported_formats[] = {
- 		.colorspace     = V4L2_COLORSPACE_RAW,
- 		.datatype       = MIPI_CSI2_DT_RAW8,
- 		.output_fmt     = 0x17,
- 		.row_col_switch = GC2145_SYNC_MODE_ROW_SWITCH,
- 	},
-+	{
-+	/*
-+	 * The driver was initially introduced with RGB565 support, but
-+	 * CSI really means BGR.
-+	 *
-+	 * Since we might have applications that would have hard-coded
-+	 * the RGB565, let's support both, with RGB being last to make
-+	 * sure it's only a last resort.
-+	 */
-+		.code		= MEDIA_BUS_FMT_RGB565_1X16,
-+		.colorspace	= V4L2_COLORSPACE_SRGB,
-+		.datatype	= MIPI_CSI2_DT_RGB565,
-+		.output_fmt	= 0x06,
-+		.switch_bit	= true,
-+	},
- };
- 
- struct gc2145_ctrls {
- 	struct v4l2_ctrl_handler handler;
- 	struct v4l2_ctrl *pixel_rate;
-@@ -658,12 +673,17 @@ static inline struct v4l2_subdev *gc2145_ctrl_to_sd(struct v4l2_ctrl *ctrl)
- }
- 
- static const struct gc2145_format *
- gc2145_get_format_code(struct gc2145 *gc2145, u32 code)
- {
-+	struct i2c_client *client = v4l2_get_subdevdata(&gc2145->sd);
- 	unsigned int i;
- 
-+	if (code == MEDIA_BUS_FMT_RGB565_1X16)
-+		dev_warn_once(&client->dev,
-+			      "RGB format isn't actually supported by the hardware. The application should be fixed to use BGR.");
-+
- 	for (i = 0; i < ARRAY_SIZE(supported_formats); i++) {
- 		if (supported_formats[i].code == code)
- 			break;
- 	}
- 
-@@ -696,11 +716,11 @@ static int gc2145_init_state(struct v4l2_subdev *sd,
- 	struct v4l2_rect *crop;
- 
- 	/* Initialize pad format */
- 	format = v4l2_subdev_state_get_format(state, 0);
- 	gc2145_update_pad_format(gc2145, &supported_modes[0], format,
--				 MEDIA_BUS_FMT_RGB565_1X16,
-+				 MEDIA_BUS_FMT_BGR565_1X16,
- 				 V4L2_COLORSPACE_SRGB);
- 
- 	/* Initialize crop rectangle. */
- 	crop = v4l2_subdev_state_get_crop(state, 0);
- 	*crop = supported_modes[0].crop;
-
--- 
-2.50.1
-
+Best Regards,
+Petr
 
