@@ -1,113 +1,164 @@
-Return-Path: <linux-kernel+bounces-820109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6F2B7C486
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031B2B7F53B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE153256A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:09:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5315811B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97D52DC34B;
-	Wed, 17 Sep 2025 07:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0501F2D480D;
+	Wed, 17 Sep 2025 07:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QliMOZ+A"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ndf2w8Mr"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F03A2D781E;
-	Wed, 17 Sep 2025 07:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9D92C2361
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758092976; cv=none; b=jDz0A+0YUAsG77suWOkysje46nSHyHRSwuSqrlPbP9u/4kJTDIof65gI2Q7v2lmOKAR/WbeGgEZua5y39q76XehAqML7ww0476db86e6l7/zHU0BscqB39GQmsnLB3b5qr2quRSLuCrenzI7fcgwLNIzgfbxXS+Vykg56TWNs/w=
+	t=1758092735; cv=none; b=PfPRrWa3mGYlcrQ0dCq+YNIm2OZ1tY4EpsfiiM3qNJo08WzUfVoYGEW5ApO9cLsvSGueNEVz6/5Jb27XyC7V48bEtpoJsOVE26fbEAaEy9xulcrYsoLqbcOwsv9WGAuqUfE/9d/lj5T/3FhCZ5lhCyNUYnSjot/HoFZFl08JGPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758092976; c=relaxed/simple;
-	bh=nMiL6Us8jF/5NVrU3nbcvoZY44eWUfuFxF0JqFTgPNk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g5ODMWOIn17IUWpgPt6eQPWDnQSoPlS7fG6uu4hF5NclDpR69rFrDuwHo4kvyEhUgXiKWOH7WK0sN6AbBLfuvdtfKZfvSA8vbL21z6iqT4pV7Nr5FWIId0e2RSu00JNxT4XV87Kqlbljp63bIRx3o3b9B4DalaZ/CL9RdywrLkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QliMOZ+A; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758092974; x=1789628974;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nMiL6Us8jF/5NVrU3nbcvoZY44eWUfuFxF0JqFTgPNk=;
-  b=QliMOZ+AOlriiKQ5/oPRO/1QtMEssfslfzee1sNTbPBoK1AK8vXQIJZv
-   IMDXtsUya01B3lcaY7BOVMXB0ZYNOGEY+Rc4YRT/6O2DC9DsUNJ8mndiO
-   9X7qY+sSeuk2QYNg7war4Xew80ippmwrtJmu1C7o+Xr9r7o0XgCyiulJ8
-   cbdZ3UbiPfFlYqgooeE30/mWG/2jI6+X+RDaRo81uyJWfYTMHlK/cCQnl
-   6ysrdHUXIk0GUZPv9d7jYhnpzC24iMbw1CcvqngpE+arEskWF+TIEN7PZ
-   oYW/Y8BGEpVI38KyAan11o8Ux+EC/NoDEoa6LLvCl8jXp505jUvR7Yoh4
-   w==;
-X-CSE-ConnectionGUID: LbPGE0rbRfKlE3mQvAcwsA==
-X-CSE-MsgGUID: ZFyuMrmYR7Sw165WoWhATA==
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="46029004"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 00:09:33 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 17 Sep 2025 00:09:14 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 17 Sep 2025 00:09:13 -0700
-Date: Wed, 17 Sep 2025 09:05:16 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: phy: micrel: Add Fast link failure support
- for lan8842
-Message-ID: <20250917070516.a5pykok2e6xfjyao@DEN-DL-M31836.microchip.com>
-References: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
- <698d4fbe-a84b-40cd-986f-1ebaecbf60b1@lunn.ch>
- <20250916073427.xohv2cywonkfzp5k@DEN-DL-M31836.microchip.com>
- <d0839c6b-1a6a-4043-bdaf-b0f572b26792@lunn.ch>
+	s=arc-20240116; t=1758092735; c=relaxed/simple;
+	bh=qel+sB8eI+vw5fI+IXJcuamEgWVr7FnrIkhWQFmMCoo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BzUvcfVtLCg5NtrxzGUjA9cV9NMGyylknnuPY2vFdQIxTHSJ2s1rFXX90ayF0ELiYkVpcQoYYq3zZOJC4OgXiyuopw0Nj1Sd4YCpf/ibrJVq5qWixhOczappWoyrwuehecs+SB0XPbeZ++xE9D5jppsNMHngHHkKFg42BY35jEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ndf2w8Mr; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so4633505e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:05:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758092732; x=1758697532; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1lELm1XWpGTgxI5pP/LWBGwSZ4uAGIlOCNe7xRYuVz0=;
+        b=Ndf2w8MrDvJ09zTwEX2ML8CNBujrVNHGYSU/PnDx6U8Aoru2ujsMEzmJtcDe8nVIz1
+         tlfK/o0UtBRVX4r+3hFEsD8Oi08bCJLMy6labEwqR+xGxzVjs9oaM8IAJzbz3gtl0auF
+         jGFa+u72GOadt93x7GkZFe/645O48ZApieVvkgreOOU6FVjJv2xPLEcqhyAUpHgyznPD
+         cZl/zndOsKelCUQhuLBx6K8LMwZrHy3yw+CmnApk2D9s/gARlZAMOp5Hhek07E8CH/5d
+         LxqlA3NwhoXbzSCC4Qm2m5OyL9nh6+tI4wHKhD7l4/ileTz+5h2ovp3JUEO8W99n8pc7
+         0XOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758092732; x=1758697532;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1lELm1XWpGTgxI5pP/LWBGwSZ4uAGIlOCNe7xRYuVz0=;
+        b=FkZLkwRkRvJZ5FZ3OD47oma5DrWX448xrBUxhl8AKp2I8C1mazqTEJltJMotenBHCU
+         ycfmFoPB0nQ875z1b5YQwluD27mLClPYRVi6gR6AupZ1GmnengpXB0hsEZgsMizF5KeD
+         MfSv4BhrZzLl6FYTigv5Mtsb3lXdESXT9URK35xSwYbZKC+KBU+eDEg306vlANH+fJlN
+         R4pextGhp+SDxftSS6hvsdewTunOhgi6BWNylrNJmX4EY4znmzp++yiGxbAGqlNbXDHt
+         pHSRVBtZqQJqDu4ap/h31h5IQJ2NoLehYod4A0neBAc8566+tl3aLHQWGWu7QSmrfN8E
+         cjXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVet4Hb7rpthY6NgLAN833DOErd6fIumkGHXTaV47qTq3wSspNOOYXB+KblKBt1JlnnG39kaDHTQ2KDCUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMPzMt3lh1Dv6QHaMS4G5FemaBvdeJK2iRUa2ffm3Ghqqv2iIs
+	meoTLbPSVUxDkT00RAsGxeUuVRQcnMQ8Oo/V3Xk1wVDU4nbp1e+UJrG4
+X-Gm-Gg: ASbGnctHqpkzy+bOT75DuDQmhLL8EIAVKmCYDGIOyC+BxyJnfd9H+QZ6gAlqV2Vis9+
+	44UmCoff/W+6+4UXMrBtQx4hJovzXAmo/W6AzoDzbjSOz+83RyBv9V3IjRQPqb2RFAyjorzyW8H
+	4LHiCVEraozU05Tg9n84iZ95hO4Nwzwk7LihmmXkhMjL5mIai91L7jQGNQWPl2c23nXw86hRF7a
+	e/Vpnd2sOg4N21E5sCi11RoR45LqrphXiXjTIH5L96UbMuvu9rhM93KO0wbMm0nNTwm1xZO1gMu
+	KfsI0MTiceOH9o5MSFjuGHMfFxInhbyIOQx9boHp2E5/aZ+ej6QOA+ucC0n5tmOpR7bw7wuTTup
+	PFu58qKJHhmj3EBZ9rV0rHg==
+X-Google-Smtp-Source: AGHT+IFlPuJM7gO5ArkZaq21I+GH1aAzibNklb9hk65tHGxbHIZmR7Qv5O6d6pSrCpHsc9ccC0z1IQ==
+X-Received: by 2002:a05:600c:4f54:b0:45f:2d7b:7953 with SMTP id 5b1f17b1804b1-461fa02bc5emr9192095e9.18.1758092731465;
+        Wed, 17 Sep 2025 00:05:31 -0700 (PDT)
+Received: from [10.5.0.2] ([45.94.208.90])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613dccb4fesm23735855e9.16.2025.09.17.00.05.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 00:05:31 -0700 (PDT)
+Message-ID: <ce724693ffd6bc8f3f10cb8d753fd69191a19d8d.camel@gmail.com>
+Subject: Re: [PATCH] drivers: iio: adc: ad7124: remove __ad7124_set_channel()
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
+	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 17 Sep 2025 08:05:57 +0100
+In-Reply-To: <20250916-iio-adc-ad7124-remove-__ad7124_set_channel-v1-1-aa7a2cbec8a0@baylibre.com>
+References: 
+	<20250916-iio-adc-ad7124-remove-__ad7124_set_channel-v1-1-aa7a2cbec8a0@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <d0839c6b-1a6a-4043-bdaf-b0f572b26792@lunn.ch>
 
-The 09/16/2025 14:53, Andrew Lunn wrote:
-> 
-> On Tue, Sep 16, 2025 at 09:34:27AM +0200, Horatiu Vultur wrote:
-> > The 09/15/2025 14:42, Andrew Lunn wrote:
-> >
-> > Hi Andrew,
-> >
-> > >
-> > > > +/**
-> > > > + * LAN8814_PAGE_PCS - Selects Extended Page 0.
-> > > > + *
-> > > > + * This page appaers to control the fast link failure and there are different
-> 
-> > And the reason why I say it 'appears' is because I have seen most of the
-> > registers are for debug and some timers.
-> 
-> So maybe change the comment to
-> 
->         This page contains timers and debug registers...
-> 
-> It does not matter if the document is public or not, the description
-> is then correct and does not give the suggestion it is guesswork.
+On Tue, 2025-09-16 at 16:39 -0500, David Lechner wrote:
+> Remove __ad7124_set_channel() wrapper function. This just added an
+> unnecessary layer of indirection with an extra call to container_of().
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> Just a small cleanup while I continue to work on this driver.
+> ---
 
-Yes, I will change this in the next version.
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-> 
->         Andrew
-
--- 
-/Horatiu
+> =C2=A0drivers/iio/adc/ad7124.c | 11 ++---------
+> =C2=A01 file changed, 2 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index
+> 910b40393f77de84afc77d406c17c6e5051a02cd..c24f3d5127cb83eeab0cf37882446fc=
+99417
+> 3274 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -657,20 +657,13 @@ static int ad7124_prepare_read(struct ad7124_state =
+*st,
+> int address)
+> =C2=A0	return ad7124_enable_channel(st, &st->channels[address]);
+> =C2=A0}
+> =C2=A0
+> -static int __ad7124_set_channel(struct ad_sigma_delta *sd, unsigned int
+> channel)
+> -{
+> -	struct ad7124_state *st =3D container_of(sd, struct ad7124_state, sd);
+> -
+> -	return ad7124_prepare_read(st, channel);
+> -}
+> -
+> =C2=A0static int ad7124_set_channel(struct ad_sigma_delta *sd, unsigned i=
+nt
+> channel)
+> =C2=A0{
+> =C2=A0	struct ad7124_state *st =3D container_of(sd, struct ad7124_state, =
+sd);
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	mutex_lock(&st->cfgs_lock);
+> -	ret =3D __ad7124_set_channel(sd, channel);
+> +	ret =3D ad7124_prepare_read(st, channel);
+> =C2=A0	mutex_unlock(&st->cfgs_lock);
+> =C2=A0
+> =C2=A0	return ret;
+> @@ -965,7 +958,7 @@ static int ad7124_update_scan_mode(struct iio_dev
+> *indio_dev,
+> =C2=A0	for (i =3D 0; i < st->num_channels; i++) {
+> =C2=A0		bit_set =3D test_bit(i, scan_mask);
+> =C2=A0		if (bit_set)
+> -			ret =3D __ad7124_set_channel(&st->sd, i);
+> +			ret =3D ad7124_prepare_read(st, i);
+> =C2=A0		else
+> =C2=A0			ret =3D ad7124_spi_write_mask(st, AD7124_CHANNEL(i),
+> AD7124_CHANNEL_ENABLE,
+> =C2=A0						=C2=A0=C2=A0=C2=A0 0, 2);
+>=20
+> ---
+> base-commit: df76e03e8127f756f314418d683bad24b460c61f
+> change-id: 20250916-iio-adc-ad7124-remove-__ad7124_set_channel-d8e5c30ec7=
+c6
+>=20
+> Best regards,
 
