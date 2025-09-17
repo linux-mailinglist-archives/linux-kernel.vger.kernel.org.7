@@ -1,108 +1,215 @@
-Return-Path: <linux-kernel+bounces-820760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48ADFB7F1BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51271B7F340
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEBFD1C802B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:10:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC6A541610
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450C632899D;
-	Wed, 17 Sep 2025 13:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZr6mxGv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C87529BDA3;
-	Wed, 17 Sep 2025 13:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0329D335958;
+	Wed, 17 Sep 2025 13:05:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A866D335955
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758114233; cv=none; b=UEQF8cJlHa30VgNJkf+SOBsHN8RzmlT65JqkC/zNFdymgvQcfv5RmjhdlU2rl1UGXiAjZE5Y0WFl4zg4KHs4erf4TwaRQsZC4Is4uG104EJdRMSEEYPwrLWC58SA37IbDZqQDSmHJ+AqkZWTpiYrJbKmgYMSTFLgUQES+GdbEbc=
+	t=1758114322; cv=none; b=Y865PyjPZjaaCaBvcjGShoxk9jqWdbIJsBI/uKnyO4YnQdBsEBYxkotY6KOIf3xGEYFX9h5JK0L4mIseyWOtwcYEZ389vneO1O3KNbimQrOLNv4sFnZuK+wpeXMTkoQvxHHhFZXzQl4EmaV/KbLEYy8dwbyAhGpa7aqG1xFjwLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758114233; c=relaxed/simple;
-	bh=mNCWQ7fqTtCLr0owwxZ4bFfSdq0S2SRt3AhVHe0ur5c=;
+	s=arc-20240116; t=1758114322; c=relaxed/simple;
+	bh=Zn7DP+iBhiHFFUKJovPoWHiMC8OI4Yo9zSaY/tnecGg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tk4VYdl0cspOuxKTM044nFkMhfCYBIouAskt+RJj1qYd5z+XbkTS5KT50snrPzB3wWc/Lv9C8VAahjd33zF7CE9gaAP3v5ct+O1zNat3DaizNRXMc5J9cm2BGANnrpzxjVIH68bWAWstPwbQLJYqV/CGXOkcCMYrjG407cPNDSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZr6mxGv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356B2C4CEF0;
-	Wed, 17 Sep 2025 13:03:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758114233;
-	bh=mNCWQ7fqTtCLr0owwxZ4bFfSdq0S2SRt3AhVHe0ur5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gZr6mxGvdVRKpfldxKeNfps3tSvpTNLGIV02tC7SsREh5Gcnf7e6396Ll9auP0Bwk
-	 rgGcSYT3AoEIxk09qx45vygEjdpJzqiwNS4u5ablxwVYqB+TXLCshUGar8Vpo/Bgck
-	 fDKygIzvomCaN7boM+MmrjxLSf0ri3Hc/kiDxYT1GhCRGnAw+jXXErcF+SIleAw7pn
-	 HP3mjxHxx/VKG0lhvwvFRm4GCLNva8hr1lPgau+gf0Ukc5IqnJCSla0X7U7ozEzP9O
-	 k2ll7GnK+siJSpGNnjPqYNKbFEKv6qE6lqsMLH7D4msvuJc8D0e2FYZaryzP0Ya5tY
-	 8TGIkJskD/EgQ==
-Date: Wed, 17 Sep 2025 18:33:43 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Chia-Lin Kao <acelan.kao@canonical.com>
-Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
- by BIOS for devicetree platforms
-Message-ID: <jgidvwogoopfgtmxywllxl76lap42s4fhzt23ldncgtzfvy5ir@xs7pnhuz2nxs>
-References: <frmzvhnhljy23xds7lnmo23zg35wxpzu4pvabnc6v6vz7qn2lj@gk25cglbpn3q>
- <20250917112218.GA1844955@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UoigDRiKxbL8rWnScEfBSUn6fgQstVNtzSxYJQ8zDKY0FsrFVvLEmup4ra/xMY8nVgn+Ug2sg2HcuBra5L6bhSpbzqb6FZErzZNsTrvYPuJD7khQITsjRQmK7bE5O73+z+vlI5RikSy7CzuBRzJRJa45QafwjdiwK6+/TzM6QdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83712267F;
+	Wed, 17 Sep 2025 06:05:09 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E86B3F66E;
+	Wed, 17 Sep 2025 06:05:15 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:04:43 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	james.morse@arm.com, ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 5/5] arm64: futex: support futex with FEAT_LSUI
+Message-ID: <aMqx67lZZEgYW-x5@J2N7QTR9R3>
+References: <20250917110838.917281-1-yeoreum.yun@arm.com>
+ <20250917110838.917281-6-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250917112218.GA1844955@bhelgaas>
+In-Reply-To: <20250917110838.917281-6-yeoreum.yun@arm.com>
 
-On Wed, Sep 17, 2025 at 06:22:18AM GMT, Bjorn Helgaas wrote:
-> [+cc Kai-Heng, Rafael, Heiner, AceLan; response to
-> https://lore.kernel.org/r/20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com]
-> 
-> On Wed, Sep 17, 2025 at 04:14:42PM +0530, Manivannan Sadhasivam wrote:
-> > On Tue, Sep 16, 2025 at 12:15:46PM GMT, Bjorn Helgaas wrote:
-> > > On Tue, Sep 16, 2025 at 09:42:52PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > > > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
-> > > > the BIOS (through LNKCTL) during device initialization. This was done
-> > > > conservatively to avoid issues with the buggy devices that advertise
-> > > > ASPM capabilities, but behave erratically if the ASPM states are enabled.
-> > > > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
-> > > > states that were known to work for the devices.
-> > ...
-> 
-> > > For debuggability, I wonder if we should have a pci_dbg() at the point
-> > > where we actually update PCI_EXP_LNKCTL, PCI_L1SS_CTL1, etc?  I could
-> > > even argue for pci_info() since this should be a low-frequency and
-> > > relatively high-risk event.
-> > 
-> > I don't know why we should print register settings since we are explicitly
-> > printing out what states are getting enabled.
-> 
-> My thinking here is that we care about is what is actually written to
-> the device, not what we *intend* to write to the device.
-> 
-> There's a lot of complicated aspm.c code between setting
-> link->clkpm_default/aspm_default and actually programming the device,
-> and when debugging a problem, I don't want to have to parse all that
-> code to derive the register values.
+On Wed, Sep 17, 2025 at 12:08:38PM +0100, Yeoreum Yun wrote:
+> +static __always_inline int
+> +__lsui_cmpxchg64(u64 __user *uaddr, u64 *oldval, u64 newval)
+> +{
+> +	int ret = 0;
+> +
+> +	asm volatile("// __lsui_cmpxchg64\n"
+> +	__LSUI_PREAMBLE
+> +"1:	casalt	%x2, %x3, %1\n"
+> +"2:\n"
+> +	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
+> +	: "+r" (ret), "+Q" (*uaddr), "+r" (*oldval)
+> +	: "r" (newval)
+> +	: "memory");
+> +
+> +	return ret;
+> +}
+> +
+> +static __always_inline int
+> +__lsui_cmpxchg32(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+> +{
+> +	u64 __user *uaddr_al;
 
-Sure, but that is not strictly related to this series I believe. I will add a
-patch for that at the start of this series so that you can merge it
-independently.
+Please use 'uaddr64' to match the other 64-bit variables.
 
-- Mani
+I assume that the '_al' suffix is meant to be short for 'aligned', but I
+think using '64' is more consistent and clearer.
 
--- 
-மணிவண்ணன் சதாசிவம்
+> +	u64 oval64, nval64, tmp;
+
+Likewise, 'orig64' would be clearer than 'tmp' here.
+
+> +	static const u64 hi_mask = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ?
+> +		GENMASK_U64(63, 32): GENMASK_U64(31, 0);
+> +	static const u8 hi_shift = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? 32 : 0;
+> +	static const u8 lo_shift = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? 0 : 32;
+> +
+> +	uaddr_al = (u64 __user *) PTR_ALIGN_DOWN(uaddr, sizeof(u64));
+> +	if (get_user(oval64, uaddr_al))
+> +		return -EFAULT;
+> +
+> +	if ((u32 __user *)uaddr_al != uaddr) {
+> +		nval64 = ((oval64 & ~hi_mask) | ((u64)newval << hi_shift));
+> +		oval64 = ((oval64 & ~hi_mask) | ((u64)oldval << hi_shift));
+> +	} else {
+> +		nval64 = ((oval64 & hi_mask) | ((u64)newval << lo_shift));
+> +		oval64 = ((oval64 & hi_mask) | ((u64)oldval << lo_shift));
+> +	}
+> +
+> +	tmp = oval64;
+> +
+> +	if (__lsui_cmpxchg64(uaddr_al, &oval64, nval64))
+> +		return -EFAULT;
+> +
+> +	if (tmp != oval64)
+> +		return -EAGAIN;
+
+This means that we'll immediately return -EAGAIN upon a spurious failure
+(where the adjacent 4 bytes have changed), whereas the LL/SC ops would
+retry FUTEX_MAX_LOOPS before returning -EGAIN.
+
+I suspect we want to retry here (or in the immediate caller).
+
+> +
+> +	*oval = oldval;
+> +
+> +	return 0;
+> +}
+
+Aside from the retry issue, I *think* you can simplify this to something
+like:
+
+static __always_inline int
+__lsui_cmpxchg32(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+{
+	uaddr64 = (u64 __user *)PTR_ALIGN_DOWN(uaddr, sizeof(u64));
+	u64 oval64, nval64, orig64;
+
+	if (get_user(oval64, uaddr64)
+		return -EFAULT;
+	
+	if (IS_ALIGNED(addr, sizeof(u64)) == IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN))  {
+		FIELD_MODIFY(GENMASK_U64(31, 0), &oval64, oldval);
+		FIELD_MODIFY(GENMASK_U64(31, 0), &nval64, newval);
+	} else {
+		FIELD_MODIFY(GENMASK_U64(63, 32), &oval64, oldval);
+		FIELD_MODIFY(GENMASK_U64(63, 32), &nval64, newval);
+	}
+	orig64 = oval64;
+
+	if (__lsui_cmpxchg64(uaddr_al, &oval64, nval64))
+		return -EFAULT;
+	
+	if (oval64 != orig64)
+		return -EAGAIN;
+
+	*oval = oldval;
+	return 0;
+}
+
+Mark.
+
+> +
+> +static __always_inline int
+> +__lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
+> +{
+> +	return __lsui_futex_atomic_andnot(~oparg, uaddr, oval);
+> +}
+> +
+> +static __always_inline int
+> +__lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
+> +{
+> +	u32 oldval, newval;
+> +
+> +	/*
+> +	 * there are no ldteor/stteor instructions...
+> +	 */
+> +	if (get_user(oldval, uaddr))
+> +		return -EFAULT;
+> +
+> +	newval = oldval ^ oparg;
+> +
+> +	return __lsui_cmpxchg32(uaddr, oldval, newval, oval);
+> +
+> +}
+> +
+> +static __always_inline int
+> +__lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+> +{
+> +	return __lsui_cmpxchg32(uaddr, oldval, newval, oval);
+> +}
+> +
+> +#define __lsui_llsc_body(op, ...)					\
+> +({									\
+> +	alternative_has_cap_likely(ARM64_HAS_LSUI) ?			\
+> +		__lsui_##op(__VA_ARGS__) : __llsc_##op(__VA_ARGS__);	\
+> +})
+> +
+> +#else	/* CONFIG_AS_HAS_LSUI */
+> +
+> +#define __lsui_llsc_body(op, ...)	__llsc_##op(__VA_ARGS__)
+> +
+> +#endif	/* CONFIG_AS_HAS_LSUI */
+> +
+> +
+>  #define FUTEX_ATOMIC_OP(op)						\
+>  static __always_inline int						\
+>  __futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)		\
+>  {									\
+> -	return __llsc_futex_atomic_##op(oparg, uaddr, oval);		\
+> +	return __lsui_llsc_body(futex_atomic_##op, oparg, uaddr, oval);	\
+>  }
+>  
+>  FUTEX_ATOMIC_OP(add)
+> -- 
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> 
 
