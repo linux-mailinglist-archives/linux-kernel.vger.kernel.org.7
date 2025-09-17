@@ -1,235 +1,225 @@
-Return-Path: <linux-kernel+bounces-820992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875CFB7FF75
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:27:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6E9B7FF2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542AE7226E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346F42A12D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79ED2EB866;
-	Wed, 17 Sep 2025 14:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A701298CAB;
+	Wed, 17 Sep 2025 14:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OF/geLdg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbWy3rTc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505FA24678C;
-	Wed, 17 Sep 2025 14:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64732DAFA2;
+	Wed, 17 Sep 2025 14:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758118621; cv=none; b=XqG6n+qx3PHFahjXnIrrlLbItY1cGqpG5dVu8B/g7/oRRJVCswsxUEWFEqLpdLePpWFFlRp8e1uLhoqgc7ZRpLv3IOk2tnicT2rMgDk8hMqm55nSV7UWm8LD4p8IwWLAl84vNGbD/fOroNCsq3lbMxWMn9WCOQ5jr7Y41L4zCOE=
+	t=1758118493; cv=none; b=gn/VFT+gopqEHxRZl50FFvhKzYDN+WTtlVqr9oiNM3W6iWQDGVqvcyH49YJGaFQ6WPaeertVaYtlpfIZW8taf2U/2JVXbuk3s/WiTMHQdjQBl/s7er22e0pYDoD6ELBtBFDduNLBrruCfeH5ciOSKL8g0vLATlGHUbw13bFQUb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758118621; c=relaxed/simple;
-	bh=pxWR+XPHwD8u/H+d81MIQ85y4IZyi6VrdGE5+beQLjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mwq0XuXvdvCcwfOqQKfw6RFYpoFuwVhKEY/Stw/92QRo6JlpbjDmKnDY3ZGNI1qxabVgVPk8m7LcLSX81WaWJakTVtagVk8e68T/3PJZaGJcanBEH6ZQ0Z+wlQV1ltqLQRm9OEURo0Bx3qBU4LE7mpGqukrLYSDJMS0igt1oh2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OF/geLdg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HBLC0T027215;
-	Wed, 17 Sep 2025 14:14:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zoj+wlQ+uNG8xDFI8Wrni2NVdSZoIYaSH4Z2x4VJjLo=; b=OF/geLdgnz34Hcig
-	5Gm/sHkZ/0CwOS3vnYvbkItunet24AY5KMo72PI6hT2slWNEjkfYzHJeqVo6WH0M
-	2wiwBU7BehJPuIG98w9/1/P7QbllPUj95TqYB0mgUoBWFR0eB7dTovEnloPsxNEI
-	LF1Uawzfix38sPG1klZntD/D0ftye90JwiUlcCe+qnp+maie0e5db5SByrI8cIV4
-	DQ7V5CNre3GwpVTpltLvY+2bvf3Mo7kiBCxiW+6L5wukbPSwS/vjxa2eEuVxULGu
-	9mGK3hLktMdoBEQjdAMFklGPqd1aH4z1VWnuWjXUlqfTpMTmFKhDqI+XSBvJ2er1
-	ICoEwg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497v1j8hhm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 14:14:45 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58HEEiY1011851
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 14:14:44 GMT
-Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 17 Sep
- 2025 07:14:40 -0700
-Message-ID: <3b2d0e8b-8d19-474d-91f8-d9195e1284fa@quicinc.com>
-Date: Wed, 17 Sep 2025 19:44:37 +0530
+	s=arc-20240116; t=1758118493; c=relaxed/simple;
+	bh=SYBZyU3y6PssYgKC8Xcv0Pcmj91XU5r/G3PYMmPrA7M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=cXVPIHQ72bmffwHXTyN42T/fl6M6/gXgojrsl1m2VHhaCoya/UCOepQ3BEiLfyV9nsyQkJuZ0knTotu2JM3vAEn+FHeAXetc92ZFxhKoUxkiZYxo49xk6j+skWBdQxtePkgGi3uA4xqWI/6Qz1tjd9Z+jbjLGWK1bIAktkiI39w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbWy3rTc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71F9C4CEF5;
+	Wed, 17 Sep 2025 14:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758118492;
+	bh=SYBZyU3y6PssYgKC8Xcv0Pcmj91XU5r/G3PYMmPrA7M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kbWy3rTcFfNWdTtWf3G0kn49VE1k7f+lU/C8PK4M6fjQelFRiFAziF/+Xr8+DTamf
+	 8u6Jdm8nYpqrUJTb95O292jWd+jhivf19IwAwtlYR1Sf5xDsUnhy7mBQ0F9PRf3r/B
+	 jynB4hGEfCDrq00t3FUJoSdrLQ2jz1F0ZMNi79+wvH26yrpVDV3cY1CAKSZqsy7kOh
+	 wK2oBzrFsG0JwznNR+Z9ZJitoEmxdOFFYpYftxD3qcFId3wUXNB9Wcjoa2kwfoBOC/
+	 A80cl8/m8uazfZA3/Au40z7bP6SxeLycczxm+H4+qCyrrsExUXPTq0bxbaY05+4Bs7
+	 hAi2zjQqHgXbA==
+Date: Wed, 17 Sep 2025 23:14:46 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
+ Jinchao Wang <wangjinchao600@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v4 5/8] tracing: wprobe: Add wprobe event trigger
+Message-Id: <20250917231446.670b2c9cac245c81b268b5b2@kernel.org>
+In-Reply-To: <fadb37f2-543a-4c4c-9cde-5ee7928edbe4@infradead.org>
+References: <175785897434.234168.6798590787777427098.stgit@devnote2>
+	<175785903073.234168.11080771050255081365.stgit@devnote2>
+	<fadb37f2-543a-4c4c-9cde-5ee7928edbe4@infradead.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 3/4] ufs: pltfrm: Allow limiting HS gear and rate via
- DT
-To: Alim Akhtar <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mani@kernel.org>,
-        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        "'Nitin
- Rawat'" <quic_nitirawa@quicinc.com>
-References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
- <CGME20250902164940epcas5p47c93faf63a98377e97f3f6d06fe23f96@epcas5p4.samsung.com>
- <20250902164900.21685-4-quic_rdwivedi@quicinc.com>
- <3a9001dc1c8b$2d303c40$8790b4c0$@samsung.com>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <3a9001dc1c8b$2d303c40$8790b4c0$@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Jk8kpkBeWsuSf4L5jRtZcnWVEEAGFYdC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDExMCBTYWx0ZWRfX9Fmfx4o5xpAF
- M8C+6W6RO7mC/xD0Y2ug78XBZCFH8FjJS2EbinfIHW5u1dnGjvhFqcfmRVirUOJlLUTDpG2IeGd
- PJQRnh3hWxuzY1b3hjqcPSlkqUUPS5LrEvC3QXCHaUD8PNeRaZp7ls7UdQ1VxvhelfCQvzZDL1u
- pxG50KfiL3YMyQ/WX1URgGpawgdraFxq09E6KIq5wwfrZA1foWzNPZaNp4cJyLShep600VB8a07
- QdfdJr8Fb81aSFDJ22OUfwEaM+PM8114G4rghPPlV82GndCykMdxUAfcOSOcN34KH8TOoX30v5Z
- ZuJ9PApaSKZbbu5Pyuo+l5a1wkR6zOEON9Ik+CeLmjr5gqflOLkbUjsJbRSd+zr0h3tMeY9MZWb
- snAeII7e
-X-Authority-Analysis: v=2.4 cv=AeqxH2XG c=1 sm=1 tr=0 ts=68cac255 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=hD80L64hAAAA:8 a=JF9118EUAAAA:8 a=N54-gffFAAAA:8 a=VwQbUJbxAAAA:8
- a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8 a=tQ2u9OearRdf7qOKD1cA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=xVlTc564ipvMDusKsbsT:22 a=zSyb8xVVt2t83sZkrLMb:22
-X-Proofpoint-GUID: Jk8kpkBeWsuSf4L5jRtZcnWVEEAGFYdC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170110
 
+Hi Randy,
 
-
-On 03-Sep-25 9:58 AM, Alim Akhtar wrote:
-> 
-> 
->> -----Original Message-----
->> From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->> Sent: Tuesday, September 2, 2025 10:19 PM
->> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
->> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
->> conor+dt@kernel.org; mani@kernel.org;
->> James.Bottomley@HansenPartnership.com; martin.petersen@oracle.com
->> Cc: linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org; Nitin Rawat
->> <quic_nitirawa@quicinc.com>
->> Subject: [PATCH V5 3/4] ufs: pltfrm: Allow limiting HS gear and rate via
-> DT
->>
->> Add support for parsing 'limit-hs-gear' and 'limit-rate' device tree
-> properties
->> to restrict high-speed gear and rate during initialization.
->>
->> This is useful in cases where the customer board may have signal
-> integrity,
->> clock configuration or layout issues that prevent reliable operation at
-> higher
->> gears. Such limitations are especially critical in those platforms, where
->> stability is prioritized over peak performance.
->>
->> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->> ---
->>  drivers/ufs/host/ufshcd-pltfrm.c | 36
->> ++++++++++++++++++++++++++++++++  drivers/ufs/host/ufshcd-pltfrm.h
->> |  1 +
->>  2 files changed, 37 insertions(+)
->>
->> diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-
->> pltfrm.c
->> index ffe5d1d2b215..4df6885f0dc0 100644
->> --- a/drivers/ufs/host/ufshcd-pltfrm.c
->> +++ b/drivers/ufs/host/ufshcd-pltfrm.c
->> @@ -430,6 +430,42 @@ int ufshcd_negotiate_pwr_params(const struct
->> ufs_host_params *host_params,  }
->> EXPORT_SYMBOL_GPL(ufshcd_negotiate_pwr_params);
->>
->> +/**
->> + * ufshcd_parse_limits - Parse DT-based gear and rate limits for UFS
->> + * @hba: Pointer to UFS host bus adapter instance
->> + * @host_params: Pointer to UFS host parameters structure to be updated
->> + *
->> + * This function reads optional device tree properties to apply
->> + * platform-specific constraints.
->> + *
->> + * "limit-hs-gear": Specifies the max HS gear.
->> + * "limit-rate": Specifies the max High-Speed rate.
->> + */
->> +void ufshcd_parse_limits(struct ufs_hba *hba, struct ufs_host_params
-> 
-> May be s/ufshcd_parse_limits/ ufshcd_parse_gear_limits()
-> 
-> "Limits" is very generic and also not aligning with the property names.
-> Also suggest to change limit-rate to limit-gear-rate.
-
-Hi Alim,
-
-I have addressed this in next patchset.
+On Sun, 14 Sep 2025 17:25:19 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
 > 
->> +*host_params) {
->> +	struct device_node *np = hba->dev->of_node;
->> +	u32 hs_gear;
->> +	const char *hs_rate;
->> +
->> +	if (!np)
->> +		return;
-> Probably a overkill here, please check if this will ever hit? 
+> 
+> On 9/14/25 7:10 AM, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Add wprobe event trigger to set and clear the watch event dynamically.
+> > This allows us to set an watchpoint on a given local variables and
+> > a slab object instead of static objects.
+> > 
+> > The trigger syntax is below;
+> 
+>                         below:
+> (just a nit :)
 
-I have addressed this in next patchset.
+OK.
 
 > 
->> +
->> +	if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
->> +		host_params->hs_tx_gear = hs_gear;
->> +		host_params->hs_rx_gear = hs_gear;
->> +	}
->> +
->> +	if (!of_property_read_string(np, "limit-rate", &hs_rate)) {
->> +		if (!strcmp(hs_rate, "rate-a"))
->> +			host_params->hs_rate = PA_HS_MODE_A;
->> +		else if (!strcmp(hs_rate, "rate-b"))
->> +			host_params->hs_rate = PA_HS_MODE_B;
->> +		else
->> +			dev_warn(hba->dev, "Invalid limit-rate: %s\n",
->> hs_rate);
->> +	}
->> +}
->> +EXPORT_SYMBOL_GPL(ufshcd_parse_limits);
->> +
->>  void ufshcd_init_host_params(struct ufs_host_params *host_params)  {
->>  	*host_params = (struct ufs_host_params){ diff --git
->> a/drivers/ufs/host/ufshcd-pltfrm.h b/drivers/ufs/host/ufshcd-pltfrm.h
->> index 3017f8e8f93c..1617f2541273 100644
->> --- a/drivers/ufs/host/ufshcd-pltfrm.h
->> +++ b/drivers/ufs/host/ufshcd-pltfrm.h
->> @@ -29,6 +29,7 @@ int ufshcd_negotiate_pwr_params(const struct
->> ufs_host_params *host_params,
->>  				const struct ufs_pa_layer_attr *dev_max,
->>  				struct ufs_pa_layer_attr *agreed_pwr);  void
->> ufshcd_init_host_params(struct ufs_host_params *host_params);
->> +void ufshcd_parse_limits(struct ufs_hba *hba, struct ufs_host_params
->> +*host_params);
->>  int ufshcd_pltfrm_init(struct platform_device *pdev,
->>  		       const struct ufs_hba_variant_ops *vops);  void
->> ufshcd_pltfrm_remove(struct platform_device *pdev);
->> --
->> 2.50.1
+> > 
+> >   - set_wprobe:WPROBE:FIELD[+OFFSET] [if FILTER]
+> >   - clear_wprobe:WPROBE[:FIELD[+OFFSET]] [if FILTER]
+> > 
+> > set_wprobe sets the address pointed by FIELD[+offset] to the WPROBE
+> > event. The FIELD is the field name of trigger event.
+> > clear_wprobe clears the watch address of WPROBE event. If the FIELD
+> > option is specified, it clears only if the current watch address is
+> > same as the given FIELD[+OFFSET] value.
+> > 
+> > The set_wprobe trigger do not change type and length. That should be
 > 
+>                          does                             should be done
+> ?
+
+OK.
+
+> 
+> > set when a new wprobe is created.
+> > 
+> > Also, the WPROBE event must be disabled when setting the new trigger
+> > and it will be busy afterwards. Recommended usage is to add a new
+> > wprobe at NULL address and keep disabled.
+> > 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  Changes in v3:
+> >   - Add FIELD option support for clear_wprobe and update document.
+> >   - Fix to unregister/free event_trigger_data on file correctly.
+> >   - Fix syntax comments.
+> >  Changes in v2:
+> >   - Getting local cpu perf_event from trace_wprobe directly.
+> >   - Remove trace_wprobe_local_perf() because it is conditionally unused.
+> >   - Make CONFIG_WPROBE_TRIGGERS a hidden config.
+> > ---
+> >  Documentation/trace/wprobetrace.rst |   88 +++++++
+> >  include/linux/trace_events.h        |    1 
+> >  kernel/trace/Kconfig                |   10 +
+> >  kernel/trace/trace_wprobe.c         |  430 +++++++++++++++++++++++++++++++++++
+> >  4 files changed, 529 insertions(+)
+> > 
+> > diff --git a/Documentation/trace/wprobetrace.rst b/Documentation/trace/wprobetrace.rst
+> > index 9774f57e2947..a1812a8ac491 100644
+> > --- a/Documentation/trace/wprobetrace.rst
+> > +++ b/Documentation/trace/wprobetrace.rst
+> > @@ -67,3 +67,91 @@ Here is an example to add a wprobe event on a variable `jiffies`.
+> >             <idle>-0       [000] d.Z1.  717.026373: my_jiffies: (tick_do_update_jiffies64+0xbe/0x130)
+> >  
+> >  You can see the code which writes to `jiffies` is `do_timer()`.
+> > +
+> > +Combination with trigger action
+> > +-------------------------------
+> > +The event trigger action can extend the utilization of this wprobe.
+> > +
+> > +- set_wprobe:WPEVENT:FIELD[+|-ADJUST]
+> > +- clear_wprobe:WPEVENT[:FIELD[+|-]ADJUST]
+> > +
+> > +Set these triggers to the target event, then the WPROBE event will be
+> > +setup to trace the memory access at FIELD[+|-ADJUST] address.
+> > +When clear_wprobe is hit, if FIELD is NOT specified, the WPEVENT is
+> > +forcibly cleared. If FIELD[[+|-]ADJUST] is set, it clears WPEVENT only
+> > +if its watching address is the same as the FIELD[[+|-]ADJUST] value.
+> > +
+> > +Notes:
+> > +The set_wprobe trigger do not change type and length. That should be
+>                           does not                          should be done
+
+OK.
+
+> 
+> 
+> > +set when a new wprobe is created.
+> > +
+> > +The WPROBE event must be disabled when setting the new trigger
+> > +and it will be busy afterwards. Recommended usage is to add a new
+> > +wprobe at NULL address and keep disabled.
+> > +
+> > +
+> > +For example, trace the first 8 byte of the dentry data structure passed
+> 
+>                                   bytes
+
+OK
+
+> 
+> > +to do_truncate() until it is deleted by __dentry_kill().
+> > +(Note: all tracefs setup uses '>>' so that it does not kick do_truncate())
+> > +
+> > +  # echo 'w:watch rw@0:8 address=$addr value=+0($addr)' > dynamic_events
+> 
+> Just using '>' here is OK?
+
+Yes, until this, no probe hooks do_truncate, so it should not kick any
+events. But maybe it is better to use '>>' to avoid confusing.
+
+> 
+> > +
+> > +  # echo 'f:truncate do_truncate dentry=$arg2' >> dynamic_events
+> > +  # echo 'set_wprobe:watch:dentry' >> events/fprobes/truncate/trigger
+> > +
+> > +  # echo 'f:dentry_kill __dentry_kill dentry=$arg1' >> dynamic_events
+> > +  # echo 'clear_wprobe:watch:dentry' >> events/fprobes/dentry_kill/trigger
+> > +
+> > +  # echo 1 >> events/fprobes/truncate/enable
+> > +  # echo 1 >> events/fprobes/dentry_kill/enable
+> > +
+> > +  # echo aaa > /tmp/hoge
+> > +  # echo bbb > /tmp/hoge
+> > +  # echo ccc > /tmp/hoge
+> > +  # rm /tmp/hoge
+> > +
+> > +Then, the trace data will show;
+> 
+> Usually that should be:      show:
+> 
+> but in .rst it might need to be    show::
+
+Ah,, yes, that's right. I missed that.
+
+Thank you!
+
+> 
+> I don't know. Haven't tested it.
+> 
+> 
+> -- 
+> ~Randy
 > 
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
