@@ -1,180 +1,118 @@
-Return-Path: <linux-kernel+bounces-821007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB2FB7FFD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC45B800AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E163C7AD3DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957EA1B22781
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE8B2D9784;
-	Wed, 17 Sep 2025 14:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041AD2ECE95;
+	Wed, 17 Sep 2025 14:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S9LDaaun"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BWfsuI5b"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010362D4B71;
-	Wed, 17 Sep 2025 14:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610602ED141;
+	Wed, 17 Sep 2025 14:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758119401; cv=none; b=IzYUVq2fHRFoF9GGhY2oQ1yOl6J3lSis7+Go1nDQi6lPlE59Gq3emRVzvC3Jo5dGNUvqfeTZ3/VYjoZA3rjFlwlEM+P+gR1rQBhPZoRRu1clkz1MYjK5D2nCpiLSI0v0h5X6OnFcLASPUyKS+Vzuk8TfhpKRuVVHe6DMARg2S/M=
+	t=1758119433; cv=none; b=o2paIf/4MmN5laWdtfBuZMeSWHc9M7ezvAjAV2/3/7lxjic8FGzaBl1Qj6cAZ3y7Lz6VxF+1xksjamvzrM4X4xIBVd09HDs3IgdZ5vUkx4IXCMGrcTg/cndikNaa/kzVQBh7c34Zgy6aq9M61aiWT4hGG8nfemd0iSYSC88JL+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758119401; c=relaxed/simple;
-	bh=6AC9IsRJupEPZp611yucaK3pIYA+QofGgL5/NzSNUgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uNSBOED+6iaLueZsuv6pS6uOyc+6Ln5EODgM8N5gpukwFwUYh0uk6QQi2M7g3rOfT8typIvkf4rseteOjYA1RgZOpZNoWZgYDiM5ssztnIempE/1fMltnskB0OFjkAmTUZU4WSpBNSXSatxqU6YPEXw6fct4S5iF/r4HoAgrOo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S9LDaaun; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8XfmS010827;
-	Wed, 17 Sep 2025 14:29:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jawXIxis37bWIPOnqourLw0/qXEIwvwtvxlta3lSn7I=; b=S9LDaaunSk35t9We
-	wqxw2m5U488RVf+3I1tfmC8Cs6JIYP2+9QEfSzdXUAnzgCIiS3cRMWROyuWqvpcB
-	6ZOQsGTUxu2uPDc6bsLfPDjM1f73fJRYk5Bt5pS/cuxD5lgvSdHga0d3Pjb1FK75
-	/WQW04C4/UfOiP4yoc2tCuot48MxZWQ0KUADbY6lxlhUEreN7l2IduTX014kLyXW
-	vXCDGIKdh6RaoRqQ2KkqTwQQfBCSXe9665dE+jbqrUXfyDv+DqeI5ofHHExVlzpc
-	sGZlI4KMgF7yBcKEa2718wS8EqfDGzrJWq4fBDRTD8l/7sWXKcNygUWePGCo5hHB
-	YjugkA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxtp9y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 14:29:48 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58HETl9v012967
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 14:29:47 GMT
-Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 17 Sep
- 2025 07:29:43 -0700
-Message-ID: <8138a25e-eb1b-4edc-92d1-270066b8fc85@quicinc.com>
-Date: Wed, 17 Sep 2025 19:59:40 +0530
+	s=arc-20240116; t=1758119433; c=relaxed/simple;
+	bh=cj6+/2eXBy09YqfNtn5AMsUZ2NewJPSo4MWBRtD/yXU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cQRe0JvwRWPgCY/2OG8q0VQs6F1fLRkNGyaCWSWkO79XlFHeD/uWgvN8rQLJ4l0YuX0oAN1oYnBZFilbzZxB6ZMink7DAtBjxRkribsZ/h7hJ1BmhNtSe9lUex/DZN/Yx4Imwo5pGrlz5S0EbTNf2uLyrY/sZLQHnX8Z3m8+t2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BWfsuI5b; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58HEUNOn271708;
+	Wed, 17 Sep 2025 09:30:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758119423;
+	bh=U9zDJhovKbcpmhyz3gEhzY99qKe9+nLbwMu+0klK/DU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=BWfsuI5bflyRxT+M7Vp+9nWqxUh09W2j/nE749ZUoc4yL2AHHm6AQACBdlB0hf0Pz
+	 I9lLFo109Ks+vYgX4qy8zWeO894+F4ncVu4vP93S7PKieT/xfMjxDjpFSPIYs9shkJ
+	 mfdQXfu8DyOsLAGtcNNZaR61sKesnyEFFSErIPxQ=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58HEUMLF1607512
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 17 Sep 2025 09:30:23 -0500
+Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 17
+ Sep 2025 09:30:22 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE209.ent.ti.com
+ (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 17 Sep 2025 09:30:22 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58HEUMAe3192299;
+	Wed, 17 Sep 2025 09:30:22 -0500
+Date: Wed, 17 Sep 2025 09:30:22 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Raag Jadav <raag.jadav@intel.com>
+CC: <kristo@kernel.org>, <ssantosh@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
+Message-ID: <20250917143022.vqp77wmu47yumwh2@revenge>
+References: <20250916124518.2857524-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
- hs_rate
-To: Alim Akhtar <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mani@kernel.org>,
-        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
- <CGME20250902164935epcas5p14139d20b5d385b99edfc0da60865dd98@epcas5p1.samsung.com>
- <20250902164900.21685-3-quic_rdwivedi@quicinc.com>
- <3a9201dc1c8e$affa1c10$0fee5430$@samsung.com>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <3a9201dc1c8e$affa1c10$0fee5430$@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX0z6uE4Lx1C4G
- NL+W9Rd4ytpvINNx8Z45mZuF697l16+nWLfZumhOpeosTWQvPaRR/QlmMYA522ZvC9SH1fuOLbj
- SN1LfnMT72plrSm9wEvPC6FYQkYIsoYNU1CHph1qfdBduju03AyzMhbM4UiJFuckAzGEcsGvD+4
- 165+wp8P3P/bPk97+WK1+6IALNaSOnjZpi6GLmw238XIiG+1zb4KjsfypYqhyuutamLt9hKwr5n
- 45UXPgbsREISEn5o+NvzyHSlAeUdz7GfT4k8Uu34Q/bd6cRPU5+dc2sOptB55Do6kom+U+Oy3Pl
- dtofFuMizxwjPnCD2mBmz+8WncKRSVLDUgmw/y8rwxKZCOQ+YsmtRVfvq5Ar+ZrchMThcAnmL73
- eU8rtdKo
-X-Proofpoint-ORIG-GUID: Zp6r04OFxRdBFBG5JyIeQwTXDFXOnjmT
-X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cac5dc cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=hD80L64hAAAA:8 a=JF9118EUAAAA:8 a=N54-gffFAAAA:8 a=VwQbUJbxAAAA:8
- a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8 a=OIpetahlEYfThk03V3EA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=xVlTc564ipvMDusKsbsT:22 a=zSyb8xVVt2t83sZkrLMb:22
-X-Proofpoint-GUID: Zp6r04OFxRdBFBG5JyIeQwTXDFXOnjmT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
- suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250916124518.2857524-1-raag.jadav@intel.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-
-On 03-Sep-25 10:23 AM, Alim Akhtar wrote:
+On 18:15-20250916, Raag Jadav wrote:
+> Convert to use devm_kmemdup_array() which is more robust.
 > 
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> ---
+>  drivers/clk/keystone/sci-clk.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
->> -----Original Message-----
->> From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->> Sent: Tuesday, September 2, 2025 10:19 PM
->> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
->> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
->> conor+dt@kernel.org; mani@kernel.org;
->> James.Bottomley@HansenPartnership.com; martin.petersen@oracle.com
->> Cc: linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
->> Subject: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
->> hs_rate
->>
->> Remove the redundant else block that assigns PA_HS_MODE_B to hs_rate,
->> as it is already assigned in ufshcd_init_host_params(). This avoids
->> unnecessary reassignment and prevents overwriting hs_rate when it is
->> explicitly set to a different value.
->>
->> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->> ---
-> Better to send non-dependent patches separately.
-
-Hi Alim,
-
-Thanks for the suggestion. This patch is essential for our
-ufs-qcom changes to function correctly. Without it,
-the rate limit would be overwritten.
-
-Thanks,
-Ram.> 
-> Feel free to add:
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>  
-> 
->>  drivers/ufs/host/ufs-qcom.c | 8 ++------
->>  1 file changed, 2 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index
->> 9574fdc2bb0f..1a93351fb70e 100644
->> --- a/drivers/ufs/host/ufs-qcom.c
->> +++ b/drivers/ufs/host/ufs-qcom.c
->> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct
->> ufs_hba *hba)
->>  	 * If the HS-G5 PHY gear is used, update host_params->hs_rate to
->> Rate-A,
->>  	 * so that the subsequent power mode change shall stick to Rate-A.
->>  	 */
->> -	if (host->hw_ver.major == 0x5) {
->> -		if (host->phy_gear == UFS_HS_G5)
->> -			host_params->hs_rate = PA_HS_MODE_A;
->> -		else
->> -			host_params->hs_rate = PA_HS_MODE_B;
->> -	}
->> +	if (host->hw_ver.major == 0x5 && host->phy_gear == UFS_HS_G5)
->> +		host_params->hs_rate = PA_HS_MODE_A;
->>
->>  	mode = host_params->hs_rate == PA_HS_MODE_B ?
->> PHY_MODE_UFS_HS_B : PHY_MODE_UFS_HS_A;
->>
->> --
->> 2.50.1
-> 
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index c5894fc9395e..a4b42811de55 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -480,13 +480,10 @@ static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
+>  		num_clks++;
+>  	}
+>  
+> -	provider->clocks = devm_kmalloc_array(dev, num_clks, sizeof(sci_clk),
+> -					      GFP_KERNEL);
+> +	provider->clocks = devm_kmemdup_array(dev, clks, num_clks, sizeof(sci_clk), GFP_KERNEL);
+>  	if (!provider->clocks)
+>  		return -ENOMEM;
+>  
+> -	memcpy(provider->clocks, clks, num_clks * sizeof(sci_clk));
+> -
+>  	provider->num_clocks = num_clks;
+>  
+>  	devm_kfree(dev, clks);
+> -- 
+> 2.34.1
 > 
 
+Reviewed-by: Nishanth Menon <nm@ti.com>
+
+Also ran a basic boot tests on K3 devices i have access to.. so all
+good.
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
