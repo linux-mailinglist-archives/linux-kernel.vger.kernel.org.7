@@ -1,97 +1,170 @@
-Return-Path: <linux-kernel+bounces-821082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A22B804FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6618BB8050B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B84AF5459B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C838617DF9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A299335937;
-	Wed, 17 Sep 2025 14:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DC933593B;
+	Wed, 17 Sep 2025 14:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEFR27Gz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=minlexx.ru header.i=@minlexx.ru header.b="Kr+SmylE"
+Received: from sm24.hosting.reg.ru (sm24.hosting.reg.ru [31.31.198.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05E032E751;
-	Wed, 17 Sep 2025 14:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082AA32E756;
+	Wed, 17 Sep 2025 14:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=31.31.198.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758120888; cv=none; b=KpagI1MfAgp6JXFUKPLj5vWZi9kk6u0GcMYI5AR81YllUoPSEWe0OZ5fS3yJNG414qidqViK9zyIsdxRoiV3fHga+7aZ0HxdOPrplbGZXYLFgLF/OrYByD3D+OXGrvALxiEPGrSe67iwYWoBCY8tYu2zYidiyo00uwgy+rscmp0=
+	t=1758120911; cv=none; b=MY9rUnCZkWHc7K+nPqWJmorNEwh0icOJ0klTETqEmIpccJmWELO07u5cND6VD42SdckNOytD5I2tZBQQ83rZ1smFJbfY4O3xVmYwv1WZLWaCTQElEeKBT96COtyBFEHQ3t/044ujcU+V+K7mfNuybGqcQROesKKXK8IIDLtWse8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758120888; c=relaxed/simple;
-	bh=tIoFj35d9AiZIRV4c88VMwpWprmFWHS7koL+OfmSgE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pi8MtHd8okcGVpwbFepkS+9BChMHaxCxmzxJM4JKcraRlomO2OXZ7jzNQYxZ/NAMn4UoJNoBjHX9nu7hl2OpaSMmPADtwgZFVQslXUZ6ZKlr96fz6ctXIaA8UA5KsbI3ll5os/evgiK+2i2SxVpP96sPs+ElJrqvJkFchIVqpE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEFR27Gz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE424C4CEE7;
-	Wed, 17 Sep 2025 14:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758120888;
-	bh=tIoFj35d9AiZIRV4c88VMwpWprmFWHS7koL+OfmSgE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OEFR27GzdFQz0RZxNjRtOzD1GE2CAtj7MNWO4v+zEUFNBFIyMkh/1D4Ck7i3PbssT
-	 1oWPBHhoLU8olr/yuyKulfA+ZLPpcEh59MbQfFTiVVwVHGMSlNB6Nlc5we6J16Fk/H
-	 fTajVaAz+J44hqSONlq/EBVkDZgxds4Eo2O+hSuV+EqwfqKH7MXLmUV2CCViRD6gHZ
-	 26dZdyig0w/6XkU2HK37GlHt2Rj4LwCBjdY+LJttd16znQmZ4U+Q5zS/bQ4GcWDmms
-	 LxdnjFsGDFEGj/GorHltWfAHwNiibuLcR5D2CEv+HSl1XnGmA5aAT8fbhwXW3SpuFb
-	 gamFhbK1YWXmg==
-Date: Wed, 17 Sep 2025 15:54:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Konrad Leszczynski <konrad.leszczynski@intel.com>
-Cc: davem@davemloft.net, andrew+netdev@lunn.ch, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cezary.rojewski@intel.com,
-	sebastian.basierski@intel.com,
-	Piotr Warpechowski <piotr.warpechowski@intel.com>,
-	Karol Jurczenia <karol.jurczenia@intel.com>
-Subject: Re: [PATCH net-next v3 1/3] net: stmmac: enhance VLAN protocol
- detection for GRO
-Message-ID: <20250917145443.GN394836@horms.kernel.org>
-References: <20250916124808.218514-1-konrad.leszczynski@intel.com>
- <20250916124808.218514-2-konrad.leszczynski@intel.com>
+	s=arc-20240116; t=1758120911; c=relaxed/simple;
+	bh=nJA8GDTU8VBse67HgpuXXx2PRQZBrnDPF8MjpbI7u/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IBXocLnhHSG5ucUTx0fb3Mzi5C4HZaFeUbz6lKeSWxB4LazCLsqsNecg0TX4eTxpnEhJObOzBFVG1GtwFnv4cEMZZQUuQGdXglQzyx/Bg4fOFKkhFb0jpifxV1SZ9L8sgVD4vyxgWk/oLiw4NmhBRjbMfH5ir4YB8t/Le1xvEcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minlexx.ru; spf=none smtp.mailfrom=minlexx.ru; dkim=pass (1024-bit key) header.d=minlexx.ru header.i=@minlexx.ru header.b=Kr+SmylE; arc=none smtp.client-ip=31.31.198.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minlexx.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minlexx.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=minlexx.ru;
+	s=dkim; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:
+	Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=lr//MT3EvIZWtAnrp9YlJUSITHvIatxfg7SqJqzZ7kk=; b=Kr+SmylEfF+MJMWOSPBbWNMKYr
+	yuRnejpuyr871uTaZv+METHqtUEcbcuqSEt8SHgBDulqYpcCrUkcDLpggI7zl90F3tRG8sxxFURnm
+	FKNNlGCuv5646s7BXRtrcNLxq6lGOqC1WF48duEkhJLnS15I7N1ESnSVMhcBF0k/ccCs=;
+Received: 
+	by sm24.hosting.reg.ru with esmtpsa (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(envelope-from <alexeymin@minlexx.ru>)
+	id 1uytYd-000000000nG-2HQ1;
+	Wed, 17 Sep 2025 17:54:55 +0300
+Message-ID: <ac2d419d-a1b4-4b3f-a07a-4f5d047901aa@minlexx.ru>
+Date: Wed, 17 Sep 2025 17:54:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916124808.218514-2-konrad.leszczynski@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/13] arm64: dts: qcom: sdm845-lg-judyln: Add fb_panel
+ dimensions
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Paul Sajna <sajattack@postmarketos.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+ Amir Dahan <system64fumo@protonmail.com>,
+ Christopher Brown <crispybrown@gmail.com>
+References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
+ <20250916-judyln-dts-v2-9-5e16e60263af@postmarketos.org>
+ <de1a7ecb-924d-4ed2-8034-721b8dce69d4@oss.qualcomm.com>
+Content-Language: en-US
+From: Alexey Minnekhanov <alexeymin@minlexx.ru>
+In-Reply-To: <de1a7ecb-924d-4ed2-8034-721b8dce69d4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 02:48:06PM +0200, Konrad Leszczynski wrote:
-> From: Piotr Warpechowski <piotr.warpechowski@intel.com>
+On 17.09.2025 16:59, Konrad Dybcio wrote:
+> On 9/17/25 3:09 AM, Paul Sajna wrote:
+>> Add display dimensions for proper scaling
+>>
+>> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
+>> index e84b45ed82fd13850ea7ec1f34ddac5b59fc1434..8c1692f86e6ceea7b718361965e78f95d39373bb 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
+>> @@ -23,6 +23,13 @@ framebuffer@9d400000 {
+>>   			format = "a8r8g8b8";
+>>   			lab-supply = <&lab>;
+>>   			ibb-supply = <&ibb>;
+>> +
+>> +			panel = <&fb_panel>;
+>> +
+>> +			fb_panel: fb-panel {
+>> +				width-mm = <65>;
+>> +				height-mm = <140>;
 > 
-> Enhance protocol extraction in stmmac_has_ip_ethertype() by introducing
-> MAC offset parameter and changing:
+> It'd be nicer if you moved these properties to the actual panel
+> node (the DSI one) and referenced that one instead (I think that
+> should work)
 > 
-> __vlan_get_protocol() ->  __vlan_get_protocol_offset()
+> Konrad
 > 
-> Add correct header length for VLAN tags, which enable Generic Receive
-> Offload (GRO) in VLAN.
-> 
-> Co-developed-by: Karol Jurczenia <karol.jurczenia@intel.com>
-> Signed-off-by: Karol Jurczenia <karol.jurczenia@intel.com>
-> Reviewed-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
-> Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
-> Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
-> Signed-off-by: Piotr Warpechowski <piotr.warpechowski@intel.com>
 
-Hi Konrad,
+Hi!
 
-As you are sending these patches, your Signed-off-by line is needed.
-I would suggest at the end of the tags. And when present,
-you can drop your Reviewed-by tag (it is implied).
+First of all this code doesn't work well for upstream, because it causes
+errors with dtbs checks like:
 
-Otherwise this patch looks good to me.
+   framebuffer@9d400000 (simple-framebuffer): 'fb-panel' does not match 
+any of the regexes: '^[a-zA-Z0-9-]+-supply$', '^pinctrl-[0-9]+$'
 
-Same for the other patches in this series.
+^^ The subnode is not allowed by bindings.
 
--- 
-pw-bot: changes-requested
+The whole reasoning for this little hack is that the upstream
+recommended approach to solve the "unknown DPI" for framebuffer issue
+is to put width-mm, height-mm into real panel node and and reference it
+in simple-fb node - sonds very nice in theory, but also doesn't work
+well in practice, and explanation why will take a bit longer, please
+bear with me for a minute.
+
+If we do as recommended, device tree structure will look like this:
+
+  framebuffer@9d400000 {
+      ...
+      panel = <&display_panel>;
+  };
+
+  soc@0 {
+      ....
+
+      mdss {
+          ...
+          dsi0 {
+              ...
+              display_panel: panel@0 {
+                  reg = <0>;
+                  compatible = "lg,sw49410";
+                  ...
+                  width-mm = <65>;
+                  height-mm = <140>;
+              };
+          ...
+
+Then, to my understanding, due to how fw-devlink works, the panel=<&..>
+link from simplefb node to display_panel node creates a probe-time
+dependency, so that the whole display stack probes first: MDSS, DSI
+controller, maybe even Adreno GPU, *AND* panel all probe first, thus
+making the mere existence of simple-framebuffer pointless.
+
+Additionally, simple-framebuffer probes succesfully after that,
+creating "second GPU" entry in as /dev/dri/card1 making it look like
+system has 2 GPUS, which confuses almost every window manager in
+userspace later. Normally, if simplefb probes first, it gets unloaded
+and replaced by MDSS and does not cause any chaos. In the end the whole
+situation looks even more silly than the fake panel subnode hack.
+
+Therefore for upstream I'd recommend to just drop any fb-panel hacks and
+to not use panel=<&...> with reference to real panel either.
+
+It would all be much much easier if we could just specify width-mm/
+height-mm directly in simplefb node, but DT maintainers rejected that idea.
+
+---
+Regards,
+Alexey Minnekhanov
 
