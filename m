@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-821230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC2AB80D16
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:02:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98486B80D10
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDFD2A040D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D40753B40B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CA32F83B7;
-	Wed, 17 Sep 2025 16:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D641A2F8BC8;
+	Wed, 17 Sep 2025 16:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjphx54c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQKQuJ6R"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A012877F7;
-	Wed, 17 Sep 2025 16:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501C11F7586
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758124846; cv=none; b=B7Sr8o8uMhpW6/wmxQUP7IBHafZlBS/o+KbP4DVQBq5PByEbHNqftXcwqBjoOJ3wFbsB7TyxnDbDrcoL1tnudC9aJUcWaxTzSG9Yzqa8gdRN4vrQbfoGLH3g27jtiTmQtNb1qtnyCx/YoyHxlgDbKZbizXTTtfiDJs0TSGxywwk=
+	t=1758124847; cv=none; b=Y+Do7IYxazSZB5Y6LzHSVbQJCv2X54yxmB7Oe6vaYCwYpF7Z+DsQiQnwpyp8FdnOABKMxFAiX16PgZkLCRPIlSL8E+2B1A/2jCYPdTAChfvGxGXMi4IH2WV89xLOlxg5496/X54gtaXKBB7QI4zEKlyjcgB2bbPHBU4r0n+c70E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758124846; c=relaxed/simple;
-	bh=Xn5cUrhSlYfU8D+L9SzM1MDf0JSuHHuyW2CfS7ldx4U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fwNVBG0qsKCE8/2QZDxAxi356xmvGHAntuc5RZcpUFtYRq0cO7nait4bjv1Duq4DDS9XHSUnlEcG41vN0ZfLXYARKFk7xCto/Ifs5Wxn5BtrwE1VQHNDIFsW6CWPSlL79Jk3WNM3Brpa/DTzpshk50yJnY6Yy96/aHvIBbtW0Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjphx54c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CA2C4CEE7;
-	Wed, 17 Sep 2025 16:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758124845;
-	bh=Xn5cUrhSlYfU8D+L9SzM1MDf0JSuHHuyW2CfS7ldx4U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rjphx54ch07/tjRjFKkF3By6vtvpnEoUncKbAEpNlvByUm0k6NJiK3Av1UQUAvA7/
-	 LneouAJG8afb9GBos2X2/BHT0+7oWwtTWaYdMGOH27C/1vsA8vR5XCj9KCRigfP3Bo
-	 7ad72wYPbbvz18kBhYzdme8W+ABuQfkCcb/v0HGDCCeUNmkyXDIU8/Cwy0Njj9wTV5
-	 Wt1hoamLPijmJsp5rkEo1Cnd2gpQGLnwFJLpr5vW83Y4IneF8pEqWZhH4R0jD5kiZb
-	 AtwYwkRHy3ufNQZWQM/Ikvip8S9PgWIOiSxcdZ1uHjRAI4dMhBWDg1s/ormnLgbIwE
-	 bLEcc8txhbO6w==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Quanmin Yan <yanquanmin1@huawei.com>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com,
-	Chris Mason <clm@fb.com>
-Subject: Re: [PATCH v3 11/11] mm/damon: add damon_ctx->min_sz_region
-Date: Wed, 17 Sep 2025 09:00:41 -0700
-Message-Id: <20250917160041.53187-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250828171242.59810-12-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1758124847; c=relaxed/simple;
+	bh=cD8Exi9brNnwxk4CGKeXJrxi7EGyVg5EqzWVR/Kg8Hg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TK9NwVmJpFh9sDP8i3WecRJH8y/FbDpHW4L7UQP6W5hMEdKSaBlloL0yZoNUSQ6nDhFkzfAMNtP/kWORcBXZzN1f2cdhrhsv+EduRrxUmBBNDEUn0gVXZ5rcwBlt9clJj3CmUv8mvm3tcEP/H9wQWV1SaLsBqqsDAHr3P2vwwOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FQKQuJ6R; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45dde353b47so41652305e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:00:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758124843; x=1758729643; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HY9GNBVfaU78Zi15MsrUTaDwBhrAZLVfvMeIDTUq1Hw=;
+        b=FQKQuJ6RoaFh0NBw04BAER1eDn8/B/d3aXvHiIcrMP567EAVqeL5h/p5uTY40cn3p+
+         QsRJJxqQBVBF+Ho+/ukpgNOY4KZhI3nL8nljrEahkHPjKUQhc9RAWpA4jxvvOp1o+cII
+         yvqpeLgvNm24aElS63KhSTtxKY024eJ1tU39Bt+pGVwr8eZ/z8NNVQHmGz1/0kTbLqrJ
+         k1lBK7ZgmTWaXxDbqtsvvFImkAJZ7Ewj4lM3q8kC+P45f29cPdM3XL8xOh8+S1ulYZd8
+         4omqP5EiJL9GkzSr3FnYSyNpqe3kks/srzL9nE/ObcUmu8VG+9KVU6euEmbYe8FNZb8j
+         vqBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758124843; x=1758729643;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HY9GNBVfaU78Zi15MsrUTaDwBhrAZLVfvMeIDTUq1Hw=;
+        b=JVq8h7zsimB7l+dQZUpng2RcOT/itXyP0VZ3vJUmmGc3emE+/wSgnQFzWm5wkY5sqQ
+         HV11CuKu4I0gOguMGnwL0Xkz3v2RElRJXLYJT/8SCnN4TFwveBfdUBoVkzOwH5xxsWBr
+         8l06/ZABjvirjL/I51agYIy/DBA08v8VX+jj1OThMSkR9ZmsqwA5ByVnF/x1hyL2ANat
+         W8aiYt0WshWXAuLfGrlBBbUnv/oiE4fGQShWD6bo8qX4KeZ3SQjoYFjBgACWGBgVZjCl
+         lLjMPlbevyrBYKXWTPmCWbxdjn2kVcvEHhOC5xp77cS4KENYuzVf+tmTt5IpFYWfnryO
+         gWBQ==
+X-Gm-Message-State: AOJu0YySPZ2+kyIrf3LpPAb6xmE1X0+kiMDeHwkKS5RBgC5XREKKyQIG
+	dAfisLZmjh13KOjIN7tRavMUG+IvKZ4X1vrM5IamFEc/LJTqymwLVjXyp74D6//m1Lk=
+X-Gm-Gg: ASbGncvIVkm7VWLe+5cwo+qP/OKtWtTXgm83c+zr1zKHGgnsI/95t3yUCxKukNr/kpr
+	uVbO3Q0QGcceAoikolgBTTHnq7SsBtbEHDIeuzGboSlrtDN3Cff0DvfI0vUoBR2aZB6YPenP11h
+	haKNj8RLgH+tkDccI1SXo2uxRdqSmpsA7hUWlMZyqqJLExE+112ydMcX7zbRjFJzx6tI6651CpK
+	XK04opiRGywvSqSCiSyBp2RfYvDsFE2X0iLvO+rUCTNbVabj33SateayEpZaYVdU+7DNUCilkKH
+	feOHpyXO7K1IibFHpSEzK6h9c/uJEDNf1xhMrdlIgkR7bIuUBqblk0W4Gs/9UR2Fx9+fxRqFVja
+	SLoAEHP7EGxDNXylImQr4L6poEfFicic2AzLYKb4ic1qEMzdGh/Cx7OIlIOi1DM27lz0W2X0BlJ
+	hBeg==
+X-Google-Smtp-Source: AGHT+IFdvnx2MCfjT67PESjHLOuQ2Cc22/VqlqrpQACnltzQ34seZGMzHbnTe1RzS+dbz1n7h2UeKQ==
+X-Received: by 2002:a05:600c:5248:b0:45b:6365:794e with SMTP id 5b1f17b1804b1-462068428ddmr30254755e9.24.1758124843389;
+        Wed, 17 Sep 2025 09:00:43 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:37e6:ed62:3c8b:2621? ([2a05:6e02:1041:c10:37e6:ed62:3c8b:2621])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4613186e5c7sm48091625e9.0.2025.09.17.09.00.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 09:00:42 -0700 (PDT)
+Message-ID: <db9c2cc8-d73b-4614-be9b-741510428070@linaro.org>
+Date: Wed, 17 Sep 2025 18:00:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] clocksource/drivers/arm_global_timer: Add
+ auto-detection for initial prescaler values
+To: Markus Schneider-Pargmann <msp@baylibre.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ "Mendez, Judith" <jm@ti.com>, Kevin Hilman <khilman@baylibre.com>
+References: <20250819-topic-am43-arm-global-timer-v6-16-v2-1-6d082e2a5161@baylibre.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250819-topic-am43-arm-global-timer-v6-16-v2-1-6d082e2a5161@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Thu, 28 Aug 2025 10:12:42 -0700 SeongJae Park <sj@kernel.org> wrote:
-
-> From: Quanmin Yan <yanquanmin1@huawei.com>
+On 19/08/2025 09:52, Markus Schneider-Pargmann wrote:
+> am43xx has a clock tree where the global timer clock is an indirect child
+> of the CPU clock used for frequency scaling:
 > 
-> Adopting addr_unit would make DAMON_MINREGION 'addr_unit * 4096'
-> bytes and cause data alignment issues[1].
+>    dpll_mpu_ck -- CPU/cpufreq
+>          |
+>          v
+>    dpll_mpu_m2_ck -- divider
+>          |
+>          v
+>    mpu_periphclk -- fixed divider by 2 used for global timer
 > 
-> Add damon_ctx->min_sz_region to change DAMON_MIN_REGION from a global
-> macro value to per-context variable.
+> When CPU frequency changes, the global timer's clock notifier rejects
+> the change because the hardcoded prescaler (1 or 2) cannot accommodate
+> the frequency range across all CPU OPPs (300, 600, 720, 800, 1000 MHz).
 > 
-> [1] https://lore.kernel.org/all/527714dd-0e33-43ab-bbbd-d89670ba79e7@huawei.com
+> Add platform-specific prescaler auto-detection to solve this issue:
+> 
+> - am43xx: prescaler = 50 (calculated as initial_freq/GCD of all OPP
+>    freqs) This allows the timer to work across all CPU frequencies after
+>    the fixed divider by 2. Tested on am4372-idk-evm.
+> 
+> - zynq-7000: prescaler = 2 (preserves previous Kconfig default)
+> 
+> - Other platforms: prescaler = 1 (previous default)
+> 
+> The Kconfig option now defaults to 0 (auto-detection) but can still
+> override the auto-detected value when set to a non-zero value,
+> preserving existing customization workflows.
+> 
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+> Changes in v2:
+> - Rebased to v6.17-rc1
+> - Link to v1: https://lore.kernel.org/r/20250808-topic-am43-arm-global-timer-v6-16-v1-1-82067d327580@baylibre.com
+> ---
 
-I think I found an issue of this patch.  Please refer to the attaching patch
-for details.
-
-This patch is in the mm tree and not yet merged into the mainline.  Andrew,
-could you please add the attached patch as a fixup of this one?
+Applied, thanks
 
 
-Thanks,
-SJ
-
-==== Attachment 0 (0001-mm-damon-sysfs-set-damon_ctx-min_sz_region-only-for-.patch) ====
-From af4a31405f4d8c4e5b32f7244f0cdcf960dce30f Mon Sep 17 00:00:00 2001
-From: SeongJae Park <sj@kernel.org>
-Date: Wed, 17 Sep 2025 08:31:54 -0700
-Subject: [PATCH] mm/damon/sysfs: set damon_ctx->min_sz_region only for paddr
- use case
-
-damon_ctx->addr_unit is respected only for physical address space
-monitoring use case.  Meanwhile, damon_ctx->min_sz_region is used by the
-core layer for aligning regions, regardless of whether it is set for
-physical address space monitoring or virtual address spaces monitoring.
-And it is set as 'DAMON_MIN_REGION / damon_ctx->addr_unit'.  Hence, if
-user sets ->addr_unit on virtual address spaces monitoring mode, regions
-can be unexpectedly aligned in <PAGE_SIZE granularity.  It shouldn't
-cause crash-like issues but make monitoring and DAMOS behavior difficult
-to understand.
-
-Fix the unexpected behavior by setting ->min_sz_region only when it is
-configured for physical address space monitoring.
-
-The issue was found from a result of Chris' experiments that thankfully
-shared with me off-list.
-
-Cc: Chris Mason <clm@fb.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/sysfs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index fe4e73d0ebbb..883b0d886d68 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -1435,7 +1435,10 @@ static int damon_sysfs_apply_inputs(struct damon_ctx *ctx,
- 	if (err)
- 		return err;
- 	ctx->addr_unit = sys_ctx->addr_unit;
--	ctx->min_sz_region = max(DAMON_MIN_REGION / sys_ctx->addr_unit, 1);
-+	/* addr_unit is respected by only DAMON_OPS_PADDR */
-+	if (sys_ctx->ops_id == DAMON_OPS_PADDR)
-+		ctx->min_sz_region = max(
-+				DAMON_MIN_REGION / sys_ctx->addr_unit, 1);
- 	err = damon_sysfs_set_attrs(ctx, sys_ctx->attrs);
- 	if (err)
- 		return err;
 -- 
-2.39.5
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
