@@ -1,144 +1,194 @@
-Return-Path: <linux-kernel+bounces-821662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD450B81E67
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9F2B81E6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C203A6EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:12:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1693AAD18
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD24C303C93;
-	Wed, 17 Sep 2025 21:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA7E302CB9;
+	Wed, 17 Sep 2025 21:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="twuEkCiE"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SHyNOYHM"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574E4302CB3
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBE3303CBE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143565; cv=none; b=h1Dp4SUHZioTCkgO3M9PsjuZQ/HgkBYvMLw5uJaBRnkaF4lnNzp/u1OtpF0/OgjppsBoABzq5PlPbVD+/W2AXlBpUjjuZD59ytUl0KsXE7iHjnV/J5gdEPRwCQ8i7kWqRSW2F4XLVF35Wd5AfD7/9J4IL4WSZECzf2bhs9a4seY=
+	t=1758143582; cv=none; b=jdfQMXVjOP2YCN9M9g2a6YxNuMZlK+kvwuG0nUTHdIZoTXAyw+Zvssz8z2DqBfwvpLdQJZ5lljztgZWuq6RQM1MfIO0NEyL09Q8AjYjsM9xnR3lWHZjkunK0GfXF4u07hWLOCIXfp0Ey+fswjZDd1kmVFmJZPSEBz16Rh2pIab0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143565; c=relaxed/simple;
-	bh=/pZUpGBHTmE6mbNDSvYncRjIgMqSNBgKDeqYVc3dpF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cqUW4XDEdrqnHU8/G+EIjk2zy9iOaEJ7P3GUpqE43PaSA2NKN2HQAplKBGRnFI+4pxIDntNRETG877uVsYfGcdYzNQZ5EOZpZYK8OiOeR8RfTEd9IEHC5S21rR9FNWEcdXDQ8kxCMuiKQYA6wNZe3nj+A23IUx9PdvyofdgzE1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=twuEkCiE; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30cceb749d7so85394fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:12:42 -0700 (PDT)
+	s=arc-20240116; t=1758143582; c=relaxed/simple;
+	bh=0NV118m/ucNL4hGNaRGYd0PW446G/5kdWpVvTpty/8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SBdmzvm1hrWjsph2g1NDembA4Bedw41pJzSv2Kbj+v4fkgDB5rB+VDzOqGPiGLj5SajFRiWEBJc/uzGDJzOk91+Z3ITGGZWoM1HuJVyNM17HOO3hPoLFZL4JlOMI9PAGqVqaQ536SEgfQP3GgiU8cLn+t+WeBJOVEAlECZvYU7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SHyNOYHM; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2681645b7b6so21365ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:13:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758143561; x=1758748361; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0iSXIXWGlC6CrncsGDJJsV/PQ7JiHZCG+7TpNAxXWjQ=;
-        b=twuEkCiEHfVrJ7qx/t03Z362603PQqJOAPvpoIOXzav7JaH10rdLMewO6otJpjlDTY
-         BguiDXIZ1lKXnuow2eMYQylnA5LzIc5IRB5nR/sXvAvIcKzTipQFOxOxW//PNoWB9nZX
-         2dGye2XVlabnzipZmhjR2oo6dxrNU7StICrJrgUadKuEhysMuEfaRyKzERoijDSkV3B+
-         IFRnnVsWuDIjzId1HBY64BM1FflSzTqkEEuQ9bfoqU8XbNM9A1CcA4Li8fy8jpq4QtOx
-         Pm9Fi+yglZ2FAaeh+5rNvd6fLrjSHnyNkPCPqJS19ZZUYBAs6BTRKV0l2InRpjjzGHUo
-         +hsQ==
+        d=google.com; s=20230601; t=1758143580; x=1758748380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mfu99aaPsl7lO5kkVqQHKSVhMr/04dLqdSGEmEMpZPY=;
+        b=SHyNOYHMHz2VNQt2xYBqBSWdZDqJVJ4apMi/ElR1tZtCab+9nPnsUrD2IKJ/6SE5QS
+         1PTG3bW803vhg/nhNUI/9dc2quWVTuZKAVveBxchMS2YIK/FHs5o5BK9OwWeqnpxLoaM
+         xORiAdPlkJRCvbJ9TPjy4MyUaIECh0jj66ZzA8OzWNF7t6PI9rY95rY2fuSut7YShVVC
+         H3BDW7CdGZkbWaPJxyAbYLAT9z22+kA7sekcZC9sSWe07Y3LcYrqLWZYUcJzAYt4lsrd
+         pVg2RfBNCqmz8xWl4lb39GUfcA+vZS9E0GMxvH1FbMPA5xcry2iB37Nt/v9sVVNiloXk
+         sxog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758143561; x=1758748361;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0iSXIXWGlC6CrncsGDJJsV/PQ7JiHZCG+7TpNAxXWjQ=;
-        b=UutizsQeHZQFzfvxqxCJXbotM3VjLA3x0zj/PyP8XroOO2Wa5Apxl4T5ReWOUCk+KA
-         Ve3UgE1Bl5I/NTERK+Rf5+S9LDJAjnObrM4Oe0oeMCkOLcMTI8Pk2g6V9V28295D3MoU
-         FVfqOTnySmpj0sYWnt/MW6xU+krNrBnRjvjexKs2QkFITOckmp4lpIETQ1KfCBrQQ4Rt
-         7Fix8+MIZ4R/OWSqGD95+JCGXWcA/pYIgA3bVv6Ple3DZAZfVr6qoEap9ocQAUHLuUPM
-         tQx447ylKq+iglSmFJEIOfH/1brUFALBHKSgi1MefFAIFMB6hoLDYcurMj7wzZDQ09D9
-         xyBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUndpos/ptiCw1x+GY19HVnYq0ihzW+LxmiihhG072BEE1vGPg5E3xUP4V2f2UdgMHmfvpjN/8vX6v80zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7MMR4oA9oKWbS7z9RmPwKRseHIKk0YhZ6Gizsf0FAx+1dxxa4
-	3jJZ/PMWCfg7QJWLfwtQtZX+g2l2pnZ/0NjziKBd+f3FDw5F2wcylJiJ2Cktul7/5Vg=
-X-Gm-Gg: ASbGncvvn74jgTVkhUnejBn4HGEPjeidhYE+2wrmABvqbH/WnNLbbug0NngXLk3t2mI
-	KNPX5ZDxo3yhDuIan/20TP0QrURjTd9QSaLOFLrnDlu+5lABDJ9PDQPez1kAEkOxsZvaqw0M0t5
-	G6cSgNjYLq+Xhg4kFMwcqs7PsSeBVP/xt+xcYqzaMtx4EtBuNSIM7da6mSjC8PL5dwwPCwgwi8Y
-	ijMr7Xs+8KUDNtbzfyv9lZVhFpsyhphy543Hgyoe/h8LyXtQL+zFvt+P0nFgwNBHGaaWqSsqCmc
-	xWcxkQfa6fgDagvu3AYG87IxmBXFDe3kmXYQDPlYYiIswAHrZZEiEL3HNuuqBMq6VYpuCYTqi3x
-	WERhA7JfDvo+4xstfNb3W+VfQq8WfyP9dZDG2n+svytxQ98jxIfAl62uW7N0WtBAe/C1qornssu
-	JGZyc22ecQFd6hy7x3dxzhurRWCQ==
-X-Google-Smtp-Source: AGHT+IESyBoa6fy5Yx804lUnxEgI0bjSNyCE0o/DwX9crp+DsZQn64gew1ZEZemPRgXYgahL8sIKxQ==
-X-Received: by 2002:a05:6871:3294:b0:315:ab22:8833 with SMTP id 586e51a60fabf-335bf629019mr1908198fac.38.1758143561391;
-        Wed, 17 Sep 2025 14:12:41 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:72c:cb37:521d:46e2? ([2600:8803:e7e4:1d00:72c:cb37:521d:46e2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7692a973dc1sm252607a34.30.2025.09.17.14.12.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 14:12:40 -0700 (PDT)
-Message-ID: <3a2096ed-a12b-4e36-aa3b-cec3353bb39d@baylibre.com>
-Date: Wed, 17 Sep 2025 16:12:40 -0500
+        d=1e100.net; s=20230601; t=1758143580; x=1758748380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mfu99aaPsl7lO5kkVqQHKSVhMr/04dLqdSGEmEMpZPY=;
+        b=ccDTFXqnJVeXlSR5bGCCgCkbAWS7uxJIPRV+Yxo4GUyS1EIyg39bnRxWkMC7mpEcnE
+         KTjTquib7fbC4pf/15RhtyAbnAdnqVc6gHEjzhMENKUj15bhFF0/609Qj+c5x3zEtj+d
+         +hLhRgj/l7SOC3k4YuKzhtZp10UbKP/nbGB/Y6xybwj2wn4+yM7CFhDBnsa2WmsZEbCC
+         RETxCwiRxl1xhuKlhqCYHs9rWwpLQc6JIBBGiKrODAAga6Cp1yUJJcgVDiOGA3hMnaIe
+         wQj4MLABgvd0yeBGT2F5MSKmZ3cVlNaztTFAOADOSjMj+yw/h9LdMN7mnD8Ybv095mWj
+         aNFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwGcR0tuPU7Pg7Z/xzgsocnxzngy+t6HqP7R2noeQS2JB3D0RXNo9ljN+0n3aVuELWT0EDL5xsybdDnuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXWzIkbqvf6041penDE3e+MGhUZwn5Or+/Nm5xd39DfXVUSk2N
+	8WZp51ALAH0tQyCHXnX4ZC5v3/pDVPjZQPu8gWBaCvQNuy8p+rIjyJFA4v6MdSWjIGnKr2nwStF
+	fSyeQB/AmWrpwcGfkDdkN/QvEI3TPg1jdMd3Phv++
+X-Gm-Gg: ASbGncvNx0sx9y+e/s38xJOZ+LAjTTcuZ5Hg7+8TE8w6VE32ERRUw+j8TIZc5rvGXC9
+	RO0WwmagzvhcVkSjpCSUa/1PURKk/dhylsNaAQRDBY3bBx+tbdw/+kTUxhppGsmd1EOwOyEk0W6
+	Zn3lW7eEHfinY+4zcZXIDfmFWJjl500KzbPr7ULtcG67hQUlubTbP3hE/M2yjifxlIF+prnQfHi
+	P+faVDCuj2lVQ6sltJ9Kma3ILC9ZHM6izegclaGZT0PmxeJ/t0gCrwmGJ2kOw==
+X-Google-Smtp-Source: AGHT+IGq0upiJh6JIgG1mEsxqUx8fQkSIiit6VnVAuHy0r/3lp3ren6BfVxVF/psZ+KwlIgBfaGdVXzFKRWJd3gGiLw=
+X-Received: by 2002:a17:902:ea06:b0:265:cb5f:3a66 with SMTP id
+ d9443c01a7336-26808aeb835mr6924825ad.13.1758143579562; Wed, 17 Sep 2025
+ 14:12:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: iio: light: APDS9160: fix missing type
- definition warning
-To: Yixun Lan <dlan@gentoo.org>,
- Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250918-60-dt-iio-apds9160-v1-1-0bd6bcbc547d@gentoo.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250918-60-dt-iio-apds9160-v1-1-0bd6bcbc547d@gentoo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 17 Sep 2025 14:12:48 -0700
+X-Gm-Features: AS18NWByQXui-cbq7Hni-JA9LsBVy0lAL2uPym6h4MIqguq_9wEQJ0SNhl04WP8
+Message-ID: <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
+Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/17/25 4:02 PM, Yixun Lan wrote:
-> DT validation will report missing type definition warning for the property of
-> 'ps-cancellation-current-picoamp', explicitly add type definition to fix it.
-> 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
-> I got following DT warning, when running dtbs_check
-> 
-> $ make ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- dtbs_check W=1
-> generic check all files
->   UPD     include/config/kernel.release
->   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-> /home/work/linux-6.y/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml: ps-cancellation-current-picoamp: missing type definition
-> ---
->  Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml b/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
-> index bb1cc4404a55760d3f2ef3818d8f5c14782dc5b8..f9c35c29fe04c3623349b636a0dd7ffa4ea24a14 100644
-> --- a/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml
-> @@ -37,6 +37,7 @@ properties:
->      maximum: 63
->  
->    ps-cancellation-current-picoamp:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
+On Sun, Aug 10, 2025 at 10:56=E2=80=AFPM Dapeng Mi <dapeng1.mi@linux.intel.=
+com> wrote:
+>
+> his patch-set fixes perf kvm commands issues, like missed memory
+> allocation check/free, out of range memory access and especially the
+> issue that fails to sample guest with "perf kvm record/top" commands on
+> Intel platforms.
+>
+> The commit 634d36f82517 ("perf record: Just use "cycles:P" as the
+>  default event") changes to use PEBS event to do sampling by default
+> including guest sampling. This breaks host to sample guest with commands
+> "perf kvm record/top" on Intel platforms.
 
-`-picoamp` is already a standard property suffix [1]. Git blame says it
-was added 8 months ago, so maybe you haven't updated dtschema in a while?
+Huh? That change is:
+```
+$ git show 634d36f82517
+commit 634d36f82517eb5c6a9b9ec7fe3ba19dbbcb7809
+Author: Namhyung Kim <namhyung@kernel.org>
+Date:   Tue Oct 15 23:23:58 2024 -0700
 
-[1]: https://github.com/devicetree-org/dt-schema/blob/4b28bc79fdc552f3e0b870ef1362bb711925f4f3/dtschema/schemas/property-units.yaml#L92
+    perf record: Just use "cycles:P" as the default event
 
->      description:
->        Proximity sensor crosstalk cancellation current in picoampere.
->        This parameter adjusts the current in steps of 2400 pA up to 276000 pA.
-> 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250918-60-dt-iio-apds9160-bdb725db100d
-> 
-> Best regards,
+    The fallback logic can add ":u" modifier if needed.
+...
+-               bool can_profile_kernel =3D perf_event_paranoid_check(1);
+-
+-               err =3D parse_event(rec->evlist, can_profile_kernel ?
+"cycles:P" : "cycles:Pu");
++               err =3D parse_event(rec->evlist, "cycles:P");
+...
+```
+isn't the precision the same before and after? I think you've blamed
+the wrong patch.
 
+The change to use cycles:P looks to come from commit 7b100989b4f6
+("perf evlist: Remove __evlist__add_default") but the old code was
+doing things like "evsel->precise_max =3D true;" so I think I was just
+carrying forward behavior. The use of precise_max comes from commit
+4e8a5c155137 ("perf evsel: Fix max perf_event_attr.precise_ip
+detection") from over 6 years ago, and the behavior before that also
+appears to have been to use the maximum supported precision.
+
+Apart from the blame and commit message being off I think the change
+is okay, delta my usual complaint that weak symbols are the devil's
+work.
+
+Thanks,
+Ian
+
+> Since the change "KVM: x86/pmu: Add basic support to enable guest PEBS
+>  via DS"[1] starts, host loses the capability to sample guest with PEBS
+> since all PEBS related MSRs are switched to guest value after vm-entry,
+> like IA32_DS_AREA MSR is switched to guest GVA at vm-entry. This leads
+> to PEBS events can't be used to sample guest by host, otherwise no guest
+> PEBS records can be really sampled. The patches 5-6/6 fix this issue by
+> using "cycles" event instead of PEBS event "cycles:P" to sample guest on
+> Intel platforms.
+>
+> Changes:
+>   v1 -> v2:
+>   * Free memory allocated by strdup().
+>   * Check "--pfm-events" in kvm_add_default_arch_event() as well.
+>   * Opportunistically fix the missed memory allocation and free issue in
+>     builtin-kwork.
+>   * Comments refine.
+>
+>
+> Tests:
+>   * Run command "perf kvm record -a && perf kvm report" and "perf kvm
+>     top" on Intel Sapphire Rapids platform, guest records can be
+>     captured successfully.
+>   * Since no powerpc platforms on hand, doesn't check the patches on
+>     powerpc. Any test on powerpc is appreciated.
+>
+> Ref:
+>   [1] https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.c=
+om/
+>
+>
+> Dapeng Mi (6):
+>   perf tools kvm: Add missed memory allocation check and free
+>   perf tools kwork: Add missed memory allocation check and free
+>   perf tools kvm: Fix the potential out of range memory access issue
+>   perf tools: Add helper x86__is_intel_cpu()
+>   perf tools kvm: Use "cycles" to sample guest for "kvm record" on Intel
+>   perf tools kvm: Use "cycles" to sample guest for "kvm top" on Intel
+>
+>  tools/perf/arch/x86/util/kvm-stat.c |  51 +++++++++++
+>  tools/perf/builtin-kvm.c            | 130 ++++++++++++++++++++--------
+>  tools/perf/builtin-kwork.c          |  27 ++++--
+>  tools/perf/util/env.c               |  22 +++++
+>  tools/perf/util/env.h               |   2 +
+>  tools/perf/util/kvm-stat.h          |  10 +++
+>  6 files changed, 203 insertions(+), 39 deletions(-)
+>
+>
+> base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
+> --
+> 2.34.1
+>
 
