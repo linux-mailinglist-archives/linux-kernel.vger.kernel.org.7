@@ -1,290 +1,217 @@
-Return-Path: <linux-kernel+bounces-820162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5FCB7D8D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD443B7DA4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AF053BD2C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:40:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD971BC3DF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BA423312D;
-	Wed, 17 Sep 2025 07:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D762027B34D;
+	Wed, 17 Sep 2025 07:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Qox4nZRe"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013068.outbound.protection.outlook.com [52.101.72.68])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VzMt3d0U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B732F618A;
-	Wed, 17 Sep 2025 07:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758094846; cv=fail; b=EtgSf7oLxYnRRXNSJCxLP21b6jV15MBDTDxGBCulCKCLxlfqsafoCViR3KZzMnZbv9uGfRuOiDEgMGBLSAva1n3yVVMjNniyv+ki4Cyzq2nzqJcQ7cQimqkyoiRtHAy0gTiFhoNItLjLr/UlCG067ERuVJOJ9qLPpBq0re1FxO4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758094846; c=relaxed/simple;
-	bh=jRrV8LcYU68ahx2PMI+977xZGStcKCQXLU3qpw+oiJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cnmelH3vYf5wIJ2Wa/EGJqoooX9ga/Lfm9P5UotlGNTLLYs8VRp8kBzFIBxHuttvS3wxaKfVeEMh7WjLDT7sSZMoAbNXBslZ9Jx0HX15EXFPUlsfdeqA/Kxmq7kkrtETXsw+fYRIoB/rr+8CUa+NkvtHEMLAIp2qx8xcG5Bcln0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Qox4nZRe; arc=fail smtp.client-ip=52.101.72.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dNVdGJqcHdtV7SbeLAtdAE5FMJCxEkVk6BMlZ0x+2OUmXrIf38UcZWvnrLjM1u/n1be36U74XaYCWoLIKTezIIDZe6GkuUrUdB5Cx6MNDYIivttJQeBAN6aOwbpK1ygHourp/teS5XQx9uer2HUypg4Z1MoIXCuzX3/yP7ThR0WP/7Ulzb4G9mLpu19LYb7QtitpySOrN6XBnPTi8O3fZ2+HAhgiUXRxHGHcgVLqdY3vzyDGst8fWwIgexwYMrcMmcZDgNFGut0oeXxEMrWfdWnye86JV6Vpsf7PrDxVg63azzXYlwk8HNJA95wGqDMYIGfQx2/4thS4D6Q1tx0dwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BUcq8i0jtjiwqGBNDn4JeCOIML6YOLMYISZEjoZGfm4=;
- b=aC+OA904pCghoMVJ1n3Zug/MEyrZzkXBV9nWR/nvoVW6MdoBxSsEJ3AYJPfuHBAWQvFD0iemohqjBqxxg4yq8so6uNqZfnsrEanoa6vGkJgaueWkMtSMkIfUzZLJA1qagx2zIVAx45Wj3wghJx545ZXTH3yNyHIayyBNoKZOW7DCYWZcXH0iSdbLr8tt9+7oe4IPytPjjD9KBrqgJfPK1f2ACThbGB4PUmnUA9jQE7GyNVzcetlXJwgR6CqoSUYe4V0Us0onX70euvFFQx9GPcbYVmpZkt/gG99W7cam8vLoGsYse41D4YgXWteRoJRQBqCjp7CU4aYPI6MQmFkVNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BUcq8i0jtjiwqGBNDn4JeCOIML6YOLMYISZEjoZGfm4=;
- b=Qox4nZReMIj86kE77vnRjODmpB9U6DLrX1bCxFdU3EQ6b1bRYh403LXGPUKMoGJYLDcjmN29D43tjsOJSUDADbWkzlHhHz4zcM5Nmly6hMYdhmG6w0GhhkVJHMGyA5WWqhmlTvOs5Rhe5lu3RYrLGIBC+6zlwlppjW2UE4yZz7kieH1N4gHe/Fi94ZF5ga5oRaRtRfjFNG2ct4mSCCELBXnf5r/EDpGuT5UezWmlcKqRjuTRHSKCfwNoG6O29bGBJebFGLW1W9bPrDeqAPLl51PMh+/79oPzZjBGM2dj0hD4i8YONdxK5dF38sBlVhl13sr0OkMko3+IYlVwQe1Y8A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by VI1PR04MB7183.eurprd04.prod.outlook.com (2603:10a6:800:128::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 07:40:39 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 07:40:39 +0000
-Date: Wed, 17 Sep 2025 10:40:37 +0300
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] drivers: gpio: add QIXIS FPGA GPIO controller
-Message-ID: <jfxasie7r3362tsxscd6bqpoprsj7pgmatlj6jsfgvorkwbor3@xsikgz67p6qb>
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-6-ioana.ciornei@nxp.com>
- <aMmSpu/TWOmpHJ60@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMmSpu/TWOmpHJ60@lizhi-Precision-Tower-5810>
-X-ClientProxiedBy: AS4P195CA0004.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:5e2::19) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610E4226D04
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758094860; cv=none; b=kb0lT3yET4uk84eT5YvCpenrTCmq8dgmzI6X4sDiLm7L/iop0P4s8SHUaNI+66sOAIvaCMshOvNqM/u0oIYlwSqwfFRgYAu7nnNfYyKcEoHSY/Mi7kbWkKsielDugWPOaP3I5YumJ8TM93NQRzEgEcw7+vUu7BGfyen6D0M8glQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758094860; c=relaxed/simple;
+	bh=18bpwHtErb5vCbN1kZz48PXrp6N12ofSDxcENCQubrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aspmm3L1Du44/hPi1sEWXgUnFLcG+7nvOfwmKrQUGOu6Yhc0rMpJYoYQoPqFOh312x0KV4VBKo51XzsYZ1AfpulV9GKV1X+JU9RmSq7L/pPIu2cWXQ0pTXy0sm9C6JsV8pCgiSqx5lP4z/wrt26p6TVSkHgkW20kYBZ0InD9e7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VzMt3d0U; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758094857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8sUfnI24jFzcwd8XU/KgXpzRD8VbKCrbOhCqit8MucI=;
+	b=VzMt3d0Uweyy9dcjibg/LkB43EfOiAvaKbI4cuAsNBRVA211zDPySOqfeB0Lm/MYJ2gi2T
+	bKpHxt3lBby0rWqmnmBbhK0cTZAbMlBZlVNM8kysflKaDnQqwxDaz01310zanxyeEPHWcS
+	Pljt6iZCcXr4MvB0u2fAiupx4fPQmLc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-494-xstIXQ-LMqqOJSL6Fg8Vnw-1; Wed, 17 Sep 2025 03:40:55 -0400
+X-MC-Unique: xstIXQ-LMqqOJSL6Fg8Vnw-1
+X-Mimecast-MFC-AGG-ID: xstIXQ-LMqqOJSL6Fg8Vnw_1758094855
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45f2c41c819so21885735e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:40:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758094854; x=1758699654;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8sUfnI24jFzcwd8XU/KgXpzRD8VbKCrbOhCqit8MucI=;
+        b=UK7JoIx3Tz2mEPCMbim7oS080Oogt8kovPX5aRufKB1R6AXYFapEdLNZ9y5OZvKkG/
+         q7KgG5hPnqzbXD30+vZbrPEnqtt/J+gvJiUHf/K9Mlq5Sqfz9kpDW/absuxTt1AosNwj
+         b1A+X3njJ5Rhq3SbOXAl7rec5WI3AjYC8oRm/nirrpWY71yBLyOIEBE2AjPpNb89IJFs
+         qw36GJ4nKYfOlLjj2cBDPE30u59WMXjTO1ycYsAFb2XCNnE1NmgIcf0tnSzjBCDZaL7K
+         Y2UXb2xi9d+0LhtxTfvkEzpw4i3h+sO7X2aC5Jb3OAl/3nQ6oSZ7P2FKmM8Fp9+rckvH
+         vLGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1pq0Bjy0juk0KXRfyFf8jPA7ZuQMsqL/Luto51j+YqquEewAH5j17O73qdwrmtnOdofpTE+i/zlVVRm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJaZ3o3Nk8O1odSfawzlvwf9uBJY9Zlkv3zL/Q4LcN1yEvEnEL
+	yiaGMZtrGgq+2RxzqV3DyyMysedWYwG+PqJUCnwOfUitT5uLQXzWN87Vw+5PitUmpB+MwLemsPm
+	/7xnaafMzARniXb1d1pOALDPzFQao8jxpzR3fJbKLH82/b+DVsqnqInd+FvHaBHpiSQ==
+X-Gm-Gg: ASbGncuIgJOBvf4tTWeFgFbe+VGYNVQWCj011nFQMCDxgh3ZEekl17WdsVyRpuNEQ0e
+	xTep4W8W4IxCkbjtraeNtzg8i3Rne1x98u68LKVKw0kBn5vacr3U2p7/ALwN3lLkgApz921rUp+
+	L41uDenuPTBLfw/J0++2c89QIuPXMwxwvPYjXtGTAwSNK4kJHWvgDecjjvRUAgCTi7jqsgfapyH
+	6MSytw6Vke2sjM7hvJdumHiTHzTaplTdmvDbA9EfwX7JyDRZWWbv5a230i1P2EDHH3MmJyEcQG9
+	2jks/InZq5j0QR8Oy4Vtgf30nCV+MaeXIcAGy2OdwAQLJs27yFWfnc+JLhDAIkytlaTPLXVHxi1
+	BSgfhQygS6BjvXMVUlf0xKLKPNwY97yCMbjD4leourYLKuK/efpEfDWVvB0iAhXom
+X-Received: by 2002:a05:600c:3b02:b0:45b:43cc:e557 with SMTP id 5b1f17b1804b1-462074c5382mr8713905e9.34.1758094854469;
+        Wed, 17 Sep 2025 00:40:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5wZM4SkH5EiKp1IscU1Dt+bW/Z0tUdh0H6cNhqcWGNGy5NEAEwmxp1KwF0uBi6Jw2iei8sw==
+X-Received: by 2002:a05:600c:3b02:b0:45b:43cc:e557 with SMTP id 5b1f17b1804b1-462074c5382mr8713595e9.34.1758094854060;
+        Wed, 17 Sep 2025 00:40:54 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdb0a2752sm4034782f8f.56.2025.09.17.00.40.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 00:40:53 -0700 (PDT)
+Message-ID: <377db013-4850-4501-a810-552e2f821dd9@redhat.com>
+Date: Wed, 17 Sep 2025 09:40:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|VI1PR04MB7183:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d6ddf1b-933b-4247-d88f-08ddf5bd7fb6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|19092799006;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?o0IF3ImQ3wKv7GODKPxpSog7zEAO7wAaoCtjVv7kwKwcSS2DxyD243azPiow?=
- =?us-ascii?Q?o0VAk53FJBb3SS1FfoQhRXqsrqX10AgCiGChaZaXF+Z8e3ySaa1AgvfTQ/qH?=
- =?us-ascii?Q?BiNS88fSUA18YbLGnFE9JYwPcIfGiTTUlnvvVnvR/sKnq6MEwcEoG/rspg2L?=
- =?us-ascii?Q?B/wmamZabrX5l6UJMUMqiaIV4rbxQbblsRXkfajXGjHrXjtHrT1eRG53JoEF?=
- =?us-ascii?Q?QWrUJqcxDhmf5cNxFIa37FWHj1GW3wr7C75BZxrlxdZMGNjWoE//8j7ThV/P?=
- =?us-ascii?Q?nZON3Al1V6c7oAbcugKB3Lj5Itf3mR2GG3gNxpkSvGflmZ1ye1Kdq9IRgLUb?=
- =?us-ascii?Q?2rtoN7HU0bOP5HjHiiKZ1Hvak3evi5rpJof/2zJq78Cw6VvAoLu/Vffqf6xt?=
- =?us-ascii?Q?MLRrhfIAaHkhWIkli1pI4Mrr6VR9WNXdnNn6Sm0qFsi/+ZxDm+Um+O5mShzV?=
- =?us-ascii?Q?aX4FH2U85FDeXDJoASVAcLu48vQiYLuLa9nHNb/5ipjaNQ4OsKZ2kMgFbmU7?=
- =?us-ascii?Q?H5UEAmfOl5cATpUkElvV+6OYMX4FtcW0PRYNiVHMr7zsD07+D8p5ctPYWZ0Z?=
- =?us-ascii?Q?K+IMlw8y0BeuLoTPg0ouXPUodd5uCAzHUd25w27q8fr2KKoG0gGD7ytAKv+J?=
- =?us-ascii?Q?oFYoeCDzNwjT4tylkGZwb26EabZgjiv6tJbu3TCXF3wx2LhqNF8KTW5Drgll?=
- =?us-ascii?Q?+vz7LM8Sf5aAgUuf6usJzJ+sVa2LxUAqvTBSjUUTRaAn+iS5RJ8qtd0+4+vX?=
- =?us-ascii?Q?is52iGCNm/F/hFtu5mGQf9bY8xQVbZwwGSF/muLpWqT7AFGzhliwPfpDkUUa?=
- =?us-ascii?Q?F0+lLCJO18ppIyOfvKpARqVsdHkKXHUJoocEPBL+KsTLp7R2Bri6wJXOiBGX?=
- =?us-ascii?Q?9MHEKTLdVW9UleHemX3PJKn87YT56LIdo6BHjsX0sKBozI2knLNJMCb8CFZN?=
- =?us-ascii?Q?8bTZXQbrLHz2XCNFDxMo6/7tYvvpJwwuOk4YX8lrAIunLdLIqES8PXVT3iNV?=
- =?us-ascii?Q?3CdBaQ9olSq1qO0KOiI0wNqG9O6sYSnAIajtptl0/SpTT/ZwXfnlhfPP9Dlo?=
- =?us-ascii?Q?0g1JAeSXO0JdzrX2NNarYGcaYqsTgL1kHKTdkyFxgKbHnFmmS2jc8rYHF1c9?=
- =?us-ascii?Q?p8R6C3fKcPZPD0vv/gd4cl/18JTVGvfad4qm4Db5RPSxi1Iy31iB7XrOyuWO?=
- =?us-ascii?Q?Gkq7zJovzKW/84iBPZtiIi3aedUdduI3H/IZ/QBCAm156Ps1k+tzrPBTbYUi?=
- =?us-ascii?Q?WsHiprvohkPg57ZWvZJiWfdAgHyHF4RwiIKfCIaLS5/5McbeAei2vB9iiUae?=
- =?us-ascii?Q?OJ/+RPr9w3c9zmSoT0o0gAbAlp4XEvrlad6niM6BV5H3VbC2kfgBBcxrKCYC?=
- =?us-ascii?Q?zdqNhnASTukkzWHRJEBn7yOxJmA4Y88HpEPXdyIsbUBmCjJb9MUHYCNNwcWt?=
- =?us-ascii?Q?3ca9ol0fr4s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(19092799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mHbechMrapvLB0cTTRXWrcJGPC+ppop/obVXjCKic/NvwW7DPb4BkERNDIF2?=
- =?us-ascii?Q?t0YhsE10qS9FoiFAzxL4W0/GcitU8ydTRxBxrrkR7M161xZg0rslbNuM80tw?=
- =?us-ascii?Q?s1St2VR3B0EF9uSTuISOASAG3voH5PFyREXiFgu61OVyTlh5aYqbIXiQXbOJ?=
- =?us-ascii?Q?VZmqzkYz6CIW2Ec8QkXLh6Byrsv2Vo4rnLaX5aN+kBdAv9OEhjcUa9279uQv?=
- =?us-ascii?Q?+y6bL20nicHJHisazqLrsvCy4G9s5Naa91bqYOg7K4AOO0fishf0/UOf2Pw1?=
- =?us-ascii?Q?4G4LWDx+ZyZXdEnQVoVp/fqBUANerMocSHcpudA4qjWxQamjXStKLk9u6g0Q?=
- =?us-ascii?Q?VJezMabEi2lgpYtNkoM1BSo5wT4yU54PCfAl4svbJhg7C6m+aQ6AMsbp1L/f?=
- =?us-ascii?Q?h0WKoq9AYM/gOJ6FlMLcwSGDPJs6jOHPT1FBEvB07eBAp33F+1Hi0gOB0o6s?=
- =?us-ascii?Q?+Hbz7tY6saLFHiJU7xNzMBytg2+RPxxYi3oREQ2WttQECgAeRD2IXRwWeYPv?=
- =?us-ascii?Q?V3m4v4Z6pVJoWok9lzoX9n3K11W9JfauRfslaXfxUW4pe+SZ9z9TXiEcc06F?=
- =?us-ascii?Q?Dwa9iPAITExIlyfcPbOsFj4gddC8Y3Sa72gxPRrCrETWrTTszMbdw/YppuKz?=
- =?us-ascii?Q?HXZKeq5HD40qIBloCMdVc6gHMawtF5fI0T1FBIKyOwBYXz8zTvCYHdlkKaup?=
- =?us-ascii?Q?eVSYSqTcFTSmxSGFtkKiwGcGNBpfP8o3+kiWumg/pZ5rBIfMCUDTRNs9Pvx3?=
- =?us-ascii?Q?K+pPCoSwlybMtROy0tAAlu0xDK2sYMGvC5L/r/dsA61uW3n0gg0kbj/1erfU?=
- =?us-ascii?Q?BbK+1Ny5VgUDgbFkydGiX///bhDQSc2/flQ8gnqBAwyBSw0HNHkimX79Q6Xc?=
- =?us-ascii?Q?yeTLdQIH225gKY2oA1/CFWRSuG4hy1gY6ORQ17sQfsw63tXNxXQi17OA38Di?=
- =?us-ascii?Q?tQFl4WVtctZGORY24lwjOgAvoEhDOumLVaae2s3D9SmDmjIHhInOn6CuhyUg?=
- =?us-ascii?Q?0NHvx8D0qnMSEIPYhQGqFYgdxYQZ8KYL34ViU3XqvFqJMi7bDibeKXNT1Hfa?=
- =?us-ascii?Q?2BENbspOAiS/Lo/f8+gXMxYtOTd8Yy7FUIE48FQ8gDP1OZaPoLdlOU6+mx2r?=
- =?us-ascii?Q?Z35SwdbSfGp97xijMipD//3fiCa/mevcWlXQDxZPtjK4GEtXlhq4w0AZpp53?=
- =?us-ascii?Q?XfTaF7M1IMydse+ukLaKToVHzBMZJKQEQsU/gsNbgRcm7LL9h4Sd34TUjpVU?=
- =?us-ascii?Q?1zBT1ccm1M8Qm9NU3t46PmPQYLYoHMajgDwwT2csJhy4QyNrd1y5d2ua7Zrn?=
- =?us-ascii?Q?VxkmE0SkdUcLiwxL1T9cYAbKhrrIgQaCpA9o+KBzen9no267WUi5KbDyFAWQ?=
- =?us-ascii?Q?Lm35oEKeZK3UFQs9ROo+zzr96bkhl5YpLcONnA9qyluEhIOY/iY9iscw8+dh?=
- =?us-ascii?Q?vv3rYJQhlRUr//QGO2sFpsYoeFr5uM0Zglp8DgnpEkk+fPQOMw3DDyf0hEq/?=
- =?us-ascii?Q?GMXFc8MEebaxyCsVzL1Yl3GBc9PVz3g5Rw5YJOZ3at71653QsSbHZbt9yXOY?=
- =?us-ascii?Q?Vwh3zaN9dVWYIi2DPVwiB4heisqyPliL4F03eTCE?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d6ddf1b-933b-4247-d88f-08ddf5bd7fb6
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 07:40:39.8175
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ugI+ITcYoimRRUCiHhFGhZV/Wudm/yxndJpRf2Fbrediy6rOLPKamrPcKsqUDZXBJMJHXl1LhKtj0Qs2AHB0WA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7183
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm/hugetlb: fix copy_hugetlb_page_range() to use
+ ->pt_share_count
+To: Jane Chu <jane.chu@oracle.com>, harry.yoo@oracle.com, osalvador@suse.de,
+ liushixin2@huawei.com, muchun.song@linux.dev, akpm@linux-foundation.org,
+ jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250916004520.1604530-1-jane.chu@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <20250916004520.1604530-1-jane.chu@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 12:39:02PM -0400, Frank Li wrote:
-> On Mon, Sep 15, 2025 at 03:23:50PM +0300, Ioana Ciornei wrote:
-> > Add support for the GPIO controller found on some QIXIS FPGAs in
-> > Layerscape boards such as LX2160ARDB and LS1046AQDS. This driver is
-> > using gpio-regmap.
-> >
-> > A GPIO controller has a maximum of 8 lines (all found in the same
-> > register). Even within the same controller, the GPIO lines' direction is
-> > fixed, which mean that both input and output lines are found in the same
-> > register. This is why the driver also passed to gpio-regmap the newly
-> > added .fixed_direction_output bitmap to represent the true direction of
-> > the lines.
-> >
-> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> > ---
-> > Changes in v2:
-> > - Use the newly added .fixed_direction_output bitmap representing
-> >   the fixed direction of the GPIO lines.
-> >
-> >  drivers/gpio/Kconfig           |   9 +++
-> >  drivers/gpio/Makefile          |   1 +
-> >  drivers/gpio/gpio-qixis-fpga.c | 123 +++++++++++++++++++++++++++++++++
-> >  3 files changed, 133 insertions(+)
-> >  create mode 100644 drivers/gpio/gpio-qixis-fpga.c
-> >
-> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> > index 886bef9106da..4ca5890007ff 100644
-> > --- a/drivers/gpio/Kconfig
-> > +++ b/drivers/gpio/Kconfig
-> > @@ -1951,6 +1951,15 @@ config GPIO_LATCH
-> >  	  Say yes here to enable a driver for GPIO multiplexers based on latches
-> >  	  connected to other GPIOs.
-> >
-> > +config GPIO_QIXIS_FPGA
-> > +	tristate "NXP QIXIS FPGA GPIO support"
-> > +	depends on MFD_SIMPLE_MFD_I2C || COMPILE_TEST
-> > +	select GPIO_REGMAP
-> > +	help
-> > +	  This enables support for the GPIOs found in the QIXIS FPGA which is
-> > +	  integrated on some NXP Layerscape boards such as LX2160ARDB and
-> > +	  LS1046AQDS.
-> > +
-> >  config GPIO_MOCKUP
-> >  	tristate "GPIO Testing Driver (DEPRECATED)"
-> >  	select IRQ_SIM
-> > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> > index 379f55e9ed1e..373b1f169558 100644
-> > --- a/drivers/gpio/Makefile
-> > +++ b/drivers/gpio/Makefile
-> > @@ -144,6 +144,7 @@ obj-$(CONFIG_GPIO_PL061)		+= gpio-pl061.o
-> >  obj-$(CONFIG_GPIO_PMIC_EIC_SPRD)	+= gpio-pmic-eic-sprd.o
-> >  obj-$(CONFIG_GPIO_POLARFIRE_SOC)	+= gpio-mpfs.o
-> >  obj-$(CONFIG_GPIO_PXA)			+= gpio-pxa.o
-> > +obj-$(CONFIG_GPIO_QIXIS_FPGA)		+= gpio-qixis-fpga.o
-> >  obj-$(CONFIG_GPIO_RASPBERRYPI_EXP)	+= gpio-raspberrypi-exp.o
-> >  obj-$(CONFIG_GPIO_RC5T583)		+= gpio-rc5t583.o
-> >  obj-$(CONFIG_GPIO_RCAR)			+= gpio-rcar.o
-> > diff --git a/drivers/gpio/gpio-qixis-fpga.c b/drivers/gpio/gpio-qixis-fpga.c
-> > new file mode 100644
-> > index 000000000000..23219a634f73
-> > --- /dev/null
-> > +++ b/drivers/gpio/gpio-qixis-fpga.c
-> > @@ -0,0 +1,123 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Layerscape GPIO QIXIS FPGA driver
-> > + *
-> > + * Copyright 2025 NXP
-> > + */
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/gpio/driver.h>
-> > +#include <linux/gpio/regmap.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +enum qixis_cpld_gpio_type {
-> > +	LX2160ARDB_GPIO_SFP = 0,
-> > +	LS1046AQDS_GPIO_STAT_PRES2,
-> > +};
+On 16.09.25 02:45, Jane Chu wrote:
+> commit 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
+> introduced ->pt_share_count dedicated to hugetlb PMD share count tracking,
+> but omitted fixing copy_hugetlb_page_range(), leaving the function relying on
+> page_count() for tracking that no longer works.
 > 
-> needn't type at all.
+> When lazy page table copy for hugetlb is disabled, that is, revert
+> commit bcd51a3c679d ("hugetlb: lazy page table copies in fork()")
+> fork()'ing with hugetlb PMD sharing quickly lockup -
 > 
-
-True, I can just pass the u64 bitmap directly as data. Will try.
-
-[snip]
-
-> > +	if (!pdev->dev.parent)
-> > +		return -ENODEV;
-> > +
-> > +	cfg = device_get_match_data(&pdev->dev);
-> > +	if (!cfg)
-> > +		return -ENODEV;
+> [  239.446559] watchdog: BUG: soft lockup - CPU#75 stuck for 27s!
+> [  239.446611] RIP: 0010:native_queued_spin_lock_slowpath+0x7e/0x2e0
+> [  239.446631] Call Trace:
+> [  239.446633]  <TASK>
+> [  239.446636]  _raw_spin_lock+0x3f/0x60
+> [  239.446639]  copy_hugetlb_page_range+0x258/0xb50
+> [  239.446645]  copy_page_range+0x22b/0x2c0
+> [  239.446651]  dup_mmap+0x3e2/0x770
+> [  239.446654]  dup_mm.constprop.0+0x5e/0x230
+> [  239.446657]  copy_process+0xd17/0x1760
+> [  239.446660]  kernel_clone+0xc0/0x3e0
+> [  239.446661]  __do_sys_clone+0x65/0xa0
+> [  239.446664]  do_syscall_64+0x82/0x930
+> [  239.446668]  ? count_memcg_events+0xd2/0x190
+> [  239.446671]  ? syscall_trace_enter+0x14e/0x1f0
+> [  239.446676]  ? syscall_exit_work+0x118/0x150
+> [  239.446677]  ? arch_exit_to_user_mode_prepare.constprop.0+0x9/0xb0
+> [  239.446681]  ? clear_bhb_loop+0x30/0x80
+> [  239.446684]  ? clear_bhb_loop+0x30/0x80
+> [  239.446686]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 > 
-> Needn't this check.
-
-Ok.
-
+> There are two options to resolve the potential latent issue:
+>    1. warn against PMD sharing in copy_hugetlb_page_range(),
+>    2. fix it.
+> This patch opts for the second option.
+> While at it, simplify the comment, the details are not actually relevant
+> anymore.
 > 
-> > +
-> > +	ret = device_property_read_u32(&pdev->dev, "reg", &base);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> > +	if (!regmap) {
-> > +		/* In case there is no regmap configured by the parent device,
-> > +		 * create our own.
-> > +		 */
+> Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
+> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> ---
+>   include/linux/mm_types.h |  5 +++++
+>   mm/hugetlb.c             | 15 +++++----------
+>   2 files changed, 10 insertions(+), 10 deletions(-)
 > 
-> /* Use MMIO space */
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 08bc2442db93..a643fae8a349 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -631,6 +631,11 @@ static inline int ptdesc_pmd_pts_count(struct ptdesc *ptdesc)
+>   {
+>   	return atomic_read(&ptdesc->pt_share_count);
+>   }
+> +
+> +static inline bool ptdesc_pmd_is_shared(struct ptdesc *ptdesc)
+> +{
+> +	return !!ptdesc_pmd_pts_count(ptdesc);
 
-Ok.
+No need for the !!, the compiler will do that automatically.
 
+LGTM
 
-[snip]
+Acked-by: David Hildenbrand <david@redhat.com>
 
-> +		config.reg_set_base = GPIO_REGMAP_ADDR(base);
-> 
-> 
-> only two compatibles string in qixis_cpld_gpio_of_match. so it can set
-> unconditional.
-> 
+-- 
+Cheers
 
-Fair point. Will change.
+David / dhildenb
 
-Ioana
 
