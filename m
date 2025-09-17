@@ -1,50 +1,87 @@
-Return-Path: <linux-kernel+bounces-820762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51271B7F340
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:24:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABCAB7F280
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC6A541610
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9715325EF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0329D335958;
-	Wed, 17 Sep 2025 13:05:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A866D335955
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337FD332A5A;
+	Wed, 17 Sep 2025 13:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="SniZKTw4"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CF032E750
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758114322; cv=none; b=Y865PyjPZjaaCaBvcjGShoxk9jqWdbIJsBI/uKnyO4YnQdBsEBYxkotY6KOIf3xGEYFX9h5JK0L4mIseyWOtwcYEZ389vneO1O3KNbimQrOLNv4sFnZuK+wpeXMTkoQvxHHhFZXzQl4EmaV/KbLEYy8dwbyAhGpa7aqG1xFjwLk=
+	t=1758114288; cv=none; b=r4bIjTMD769Vlwl4rRAndt7Ssv/NoI/qtc/cQPSACg1ch8KrLlH8IBQEDg6FEBbQLttUvH0MqJYm3GBk9irP878uw2SSTHpU+4ZJ1j6FckXqFF1E5jyMj1Xtz0uF7duAN7DzxQdNGyhZSeJsrMO6i8C51Uv6V1vogFFwVTaZpYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758114322; c=relaxed/simple;
-	bh=Zn7DP+iBhiHFFUKJovPoWHiMC8OI4Yo9zSaY/tnecGg=;
+	s=arc-20240116; t=1758114288; c=relaxed/simple;
+	bh=+zdNPWQFL0puv9nyYl9SDKbZ3Jj0RhvIEgvY8RBZEy8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UoigDRiKxbL8rWnScEfBSUn6fgQstVNtzSxYJQ8zDKY0FsrFVvLEmup4ra/xMY8nVgn+Ug2sg2HcuBra5L6bhSpbzqb6FZErzZNsTrvYPuJD7khQITsjRQmK7bE5O73+z+vlI5RikSy7CzuBRzJRJa45QafwjdiwK6+/TzM6QdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83712267F;
-	Wed, 17 Sep 2025 06:05:09 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E86B3F66E;
-	Wed, 17 Sep 2025 06:05:15 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:04:43 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	james.morse@arm.com, ardb@kernel.org, scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 5/5] arm64: futex: support futex with FEAT_LSUI
-Message-ID: <aMqx67lZZEgYW-x5@J2N7QTR9R3>
-References: <20250917110838.917281-1-yeoreum.yun@arm.com>
- <20250917110838.917281-6-yeoreum.yun@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2Qx+Ue8TQAlSWasHipjuFKwRLHjLvB0cwyUb2V+oTjzBrbYyRXOJdd5Uy/Sqy7D763DcUFhPSlbkPvzJ0EFQStJPIXj4tfbYBaBeXRY3LuEnRE7DJJOiKBoZKpw1kginEBTQWJgw6Sz+g6fBOTv+O9YDR2wSlV2uMzzceueKHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=SniZKTw4; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-721504645aaso50173186d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1758114286; x=1758719086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLhrbjuYEoMiGftx5s/ileTujV/lhI7mDznew01rfC8=;
+        b=SniZKTw4yvC9ONGb/07seKGZEIc6fIIabAEKGML60UW5UFdYE9k8AOW9oO/D+b/Pvl
+         VSJ18XKWa1vcjNKizGhrfIxaiVIC9PctAhj6XhbAm69FWvaMCHziljgClsREPZoLO5OX
+         Z+CXxdj5dPq7AmKoJHunyGzxBZbMhVp1YagQ9dnryGcvD/qEtiuNVIzObMOkCADuKyux
+         RiDqYtlJ9q6j3QerAaKuRlv+I/A/P5ILOwEsO3xtligWLozYGq+8tkIZqcjXLApUpAJJ
+         dR0rL/3WnhSkXs/rgfMxbpFE9QGuoOPXJ3C2tZahxehUh8jWOA871pJKAWJ2fZ2Nd7W8
+         Xnow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758114286; x=1758719086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YLhrbjuYEoMiGftx5s/ileTujV/lhI7mDznew01rfC8=;
+        b=HnUZGn8VOTW1Ih7k01VpWy3R5A4/eI/cg/UTm3DK+pkdmM99oQeG1P1Wyr0WodDS4k
+         vNBzgzXcMCKNGYnGkV5jKYuheZu0VMjLQSw/z/NHWIqxh2R7eosW/t4tDjghfkTSyRtj
+         J6iEbItWYYawEtqMBOlN1AyMXpFFmae3QyOgPWX+bhGNWd6lDT+ZhxS3Whn2Pk5w1JEN
+         XNA+Z+aNijVEnDaPQ3mNW8fec+psQOeooc53vAOzin5Bh7oEme1aJGvTOC4uAw+vuuav
+         3EZg/7pomgzEQLzTZGMy+sV2+I00aweUlGpO1fuXeuRmkYqgo0pqKppvUFM9U3ob+fKu
+         e0aA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdcraVf0P3DFXr1jfCNjYGtMJU6w++QSdRHCNdbst7qIsju65QKbzQ/KW+iqnbUr0yQOOdzFvxNiiq7aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTslaA0wq//43muvYdlNeQCi+ROXFQBMYEQf4v3lxRDsaqS1FL
+	mM8V8Z2u9J2hFsaPcOlgFE+dap0hum6rHTjCWfM+GUwgEx1MKNkmn+hvS2aa4MXKym0=
+X-Gm-Gg: ASbGncsbQ5Zt9hMfgzdM1x6E2OFH1PVpOEfBb4KggpqrVrAGc6exDlixruKyu2W/4VW
+	cMaAO3CmrJp3qxmNcjBmOIcN6Vju9LZR8jvoFdAQA/XhIaQp44yJlyD233KPtM+lDodHcaIHYt8
+	749mH7050SaSfNGqTYyUCKufcIXX60BJZbxDHYb83g4HzGT4HLBNBVh7PNmsi6a4qNPb5fFEOpR
+	JqtwayraieKOMMhiV3fx2c2Vaw8exUK/fZTquKGaZi6+UjuYTr6InjgNk05l79+qeb4ZeSZybLC
+	UXypLMl8qdkgrWZII8Idd4rlguPMOfNM2S76zo4PvcuvnIMNG+t/1fErFH5UL6mQEBiK0VS0
+X-Google-Smtp-Source: AGHT+IGtwG7f6zhhbCmm0iIrl0kznpxNaBR+G08FpkZToE+8YgnWqUSk/9Etu5606r4PattKK8Ms1g==
+X-Received: by 2002:a05:6214:d42:b0:729:17fd:e2cd with SMTP id 6a1803df08f44-78ecf30978dmr17502926d6.63.1758114285874;
+        Wed, 17 Sep 2025 06:04:45 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763c03ab5a3sm111542886d6.63.2025.09.17.06.04.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 06:04:45 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uyrq0-00000005q40-1H0d;
+	Wed, 17 Sep 2025 10:04:44 -0300
+Date: Wed, 17 Sep 2025 10:04:44 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Saeed Mahameed <saeed@kernel.org>
+Cc: Dave Jiang <dave.jiang@intel.com>, Avihai Horon <avihaih@nvidia.com>,
+	linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>
+Subject: Re: [PATCH fwctl 0/2] fwctl/mlx5: Add few new FW rpc commands
+Message-ID: <20250917130444.GD1326709@ziepe.ca>
+References: <20250908165256.1255985-1-saeed@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,163 +90,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250917110838.917281-6-yeoreum.yun@arm.com>
+In-Reply-To: <20250908165256.1255985-1-saeed@kernel.org>
 
-On Wed, Sep 17, 2025 at 12:08:38PM +0100, Yeoreum Yun wrote:
-> +static __always_inline int
-> +__lsui_cmpxchg64(u64 __user *uaddr, u64 *oldval, u64 newval)
-> +{
-> +	int ret = 0;
-> +
-> +	asm volatile("// __lsui_cmpxchg64\n"
-> +	__LSUI_PREAMBLE
-> +"1:	casalt	%x2, %x3, %1\n"
-> +"2:\n"
-> +	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-> +	: "+r" (ret), "+Q" (*uaddr), "+r" (*oldval)
-> +	: "r" (newval)
-> +	: "memory");
-> +
-> +	return ret;
-> +}
-> +
-> +static __always_inline int
-> +__lsui_cmpxchg32(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-> +{
-> +	u64 __user *uaddr_al;
-
-Please use 'uaddr64' to match the other 64-bit variables.
-
-I assume that the '_al' suffix is meant to be short for 'aligned', but I
-think using '64' is more consistent and clearer.
-
-> +	u64 oval64, nval64, tmp;
-
-Likewise, 'orig64' would be clearer than 'tmp' here.
-
-> +	static const u64 hi_mask = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ?
-> +		GENMASK_U64(63, 32): GENMASK_U64(31, 0);
-> +	static const u8 hi_shift = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? 32 : 0;
-> +	static const u8 lo_shift = IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? 0 : 32;
-> +
-> +	uaddr_al = (u64 __user *) PTR_ALIGN_DOWN(uaddr, sizeof(u64));
-> +	if (get_user(oval64, uaddr_al))
-> +		return -EFAULT;
-> +
-> +	if ((u32 __user *)uaddr_al != uaddr) {
-> +		nval64 = ((oval64 & ~hi_mask) | ((u64)newval << hi_shift));
-> +		oval64 = ((oval64 & ~hi_mask) | ((u64)oldval << hi_shift));
-> +	} else {
-> +		nval64 = ((oval64 & hi_mask) | ((u64)newval << lo_shift));
-> +		oval64 = ((oval64 & hi_mask) | ((u64)oldval << lo_shift));
-> +	}
-> +
-> +	tmp = oval64;
-> +
-> +	if (__lsui_cmpxchg64(uaddr_al, &oval64, nval64))
-> +		return -EFAULT;
-> +
-> +	if (tmp != oval64)
-> +		return -EAGAIN;
-
-This means that we'll immediately return -EAGAIN upon a spurious failure
-(where the adjacent 4 bytes have changed), whereas the LL/SC ops would
-retry FUTEX_MAX_LOOPS before returning -EGAIN.
-
-I suspect we want to retry here (or in the immediate caller).
-
-> +
-> +	*oval = oldval;
-> +
-> +	return 0;
-> +}
-
-Aside from the retry issue, I *think* you can simplify this to something
-like:
-
-static __always_inline int
-__lsui_cmpxchg32(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-{
-	uaddr64 = (u64 __user *)PTR_ALIGN_DOWN(uaddr, sizeof(u64));
-	u64 oval64, nval64, orig64;
-
-	if (get_user(oval64, uaddr64)
-		return -EFAULT;
-	
-	if (IS_ALIGNED(addr, sizeof(u64)) == IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN))  {
-		FIELD_MODIFY(GENMASK_U64(31, 0), &oval64, oldval);
-		FIELD_MODIFY(GENMASK_U64(31, 0), &nval64, newval);
-	} else {
-		FIELD_MODIFY(GENMASK_U64(63, 32), &oval64, oldval);
-		FIELD_MODIFY(GENMASK_U64(63, 32), &nval64, newval);
-	}
-	orig64 = oval64;
-
-	if (__lsui_cmpxchg64(uaddr_al, &oval64, nval64))
-		return -EFAULT;
-	
-	if (oval64 != orig64)
-		return -EAGAIN;
-
-	*oval = oldval;
-	return 0;
-}
-
-Mark.
-
-> +
-> +static __always_inline int
-> +__lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
-> +{
-> +	return __lsui_futex_atomic_andnot(~oparg, uaddr, oval);
-> +}
-> +
-> +static __always_inline int
-> +__lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
-> +{
-> +	u32 oldval, newval;
-> +
-> +	/*
-> +	 * there are no ldteor/stteor instructions...
-> +	 */
-> +	if (get_user(oldval, uaddr))
-> +		return -EFAULT;
-> +
-> +	newval = oldval ^ oparg;
-> +
-> +	return __lsui_cmpxchg32(uaddr, oldval, newval, oval);
-> +
-> +}
-> +
-> +static __always_inline int
-> +__lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-> +{
-> +	return __lsui_cmpxchg32(uaddr, oldval, newval, oval);
-> +}
-> +
-> +#define __lsui_llsc_body(op, ...)					\
-> +({									\
-> +	alternative_has_cap_likely(ARM64_HAS_LSUI) ?			\
-> +		__lsui_##op(__VA_ARGS__) : __llsc_##op(__VA_ARGS__);	\
-> +})
-> +
-> +#else	/* CONFIG_AS_HAS_LSUI */
-> +
-> +#define __lsui_llsc_body(op, ...)	__llsc_##op(__VA_ARGS__)
-> +
-> +#endif	/* CONFIG_AS_HAS_LSUI */
-> +
-> +
->  #define FUTEX_ATOMIC_OP(op)						\
->  static __always_inline int						\
->  __futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)		\
->  {									\
-> -	return __llsc_futex_atomic_##op(oparg, uaddr, oval);		\
-> +	return __lsui_llsc_body(futex_atomic_##op, oparg, uaddr, oval);	\
->  }
->  
->  FUTEX_ATOMIC_OP(add)
-> -- 
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+On Mon, Sep 08, 2025 at 09:52:54AM -0700, Saeed Mahameed wrote:
+> From: Saeed Mahameed <saeedm@nvidia.com>
 > 
+> Hi Jason and Dave,
+> 
+> This series adds few new commands to fwctl/mlx5 driver:
+> 1) Adjacent function query commands and their scope
+> 2) Modify congestion status command
+> 
+> For more details please see each patch description.
+> 
+> Thanks,
+> Saeed
+> 
+> Avihai Horon (1):
+>   fwctl/mlx5: Allow MODIFY_CONG_STATUS command
+> 
+> Saeed Mahameed (1):
+>   fwctl/mlx5: Add Adjacent function query commands and their scope
+
+Applied thanks
+
+Jason
 
