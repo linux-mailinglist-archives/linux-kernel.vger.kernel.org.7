@@ -1,253 +1,142 @@
-Return-Path: <linux-kernel+bounces-821689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE52DB81F67
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:26:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AD7B81F73
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36364A2D0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CF24A806B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C6A311C22;
-	Wed, 17 Sep 2025 21:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7787330BF71;
+	Wed, 17 Sep 2025 21:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Up/BQdzi"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="INGlmMM/"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2459831197F;
-	Wed, 17 Sep 2025 21:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63555302159
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758144217; cv=none; b=GPmIQ16EMpMXQlBxorADzCT5zMIOCGX8AU1lwWswJdawPyL845ecOSeohtDNhmmwyL6SyzBBwiKjxmFNe/ixMYH6KBcxrH6kW9FruZPC+zt9J+/NmiZM5IiCCCAjqxUO4/4zTTBNkzEAgXPa3PJc6wXjcxno64LEnzjB5gYBcAQ=
+	t=1758144329; cv=none; b=ee6QLFXxC2TdljyVrMPkDGeBfUPoApgoYREJkWs/9V8qAAQlPo83+qg0VD5L0O2PrYd4Z1HomqLkdxTFg9k2oonseSbBFwXiw+oJr184uMbBpQxHCNgNTeNYSdObh+vC9zmqCeDI4918QJ1CxhsRZ825o1f+g2G+CG1Ars7luZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758144217; c=relaxed/simple;
-	bh=684wNoj1MWEdeMobB+YxiUgzPPpaWFF1mzncYo2aXPc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uU+J62/HkZk+x7U7r0haN/gVK14Xvhfx/4chCc5SEbyX7crf+J6a2Y/1el1dDFqMENluQeQSZUFdq2O+rD1mLf//2oY8DZedNwuiyjZTYZAOycVOq60ulx6OwkUdU5rmDcEZjVZsDmkeF3JU3K6Qyxe2UfIvY4n+GOCTB2T27Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Up/BQdzi; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3P5HtVQ2Tt3lBmmjFmS96/9Icqhu8ftHeTOFI/efAlQ=; b=Up/BQdziiUcXVTFXWZ3Ls9je4z
-	aTyN45XR+wHSJFAaH3zKSzEbqGLRwrCBRSonafuY5KvL7FyH7k58f9fe5BA1H2BGbZa2+KEKYX0GY
-	ukFtqJNOOOpkhF2lEfVFN6UKm/w4JsZedINMbpcCW36rXEVlVhGMObJMX61KCYfa7aN0Sx+uEus3w
-	A2CT8+OlWN4LDUFpzkJ9sZt2StYHIgWmFkwEP4ly9lP8gL6VIcPywoLxg3UCChMyWmI1AoJwFBqJJ
-	LtdF2XPId3uRgvMRUB3n4x1FekUNo6fAOQsk+wx+1E6nKTZ0YDt5M0TOQOHTUd03xZqdmiXXotUFZ
-	tbapch0w==;
-Received: from [191.204.197.103] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uyzck-00CsMq-6Q; Wed, 17 Sep 2025 23:23:34 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Wed, 17 Sep 2025 18:21:54 -0300
-Subject: [PATCH v3 15/15] selftests/futex: Remove logging.h file
+	s=arc-20240116; t=1758144329; c=relaxed/simple;
+	bh=JP39cW2hbi9m89rYjm6fMmNO44J29P7MpA5dKQARQX4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RXgmipe2nW54+Efa1n1Jo1sp5amlhUgm/mkxnzKlgLL5D2gCWA4DCbIHc3JIYXbfgUjxzoxz0yFcqTiYNQgq091OUfk9j/U0GGTy6q3OfsU8Itj/b/Cfsxg/9dJX1yKJh84O341AaAxXymayDJd2IAZSN9RoVhKfXr75qUDyZ+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=INGlmMM/; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7760b6b7235so217882b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:25:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758144327; x=1758749127; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VzmS6vlS4aGQUGCsqqVnjAUV5zRiihlDMEI25Ee0wp4=;
+        b=INGlmMM/fqruNYqloxjtoLDdXmsbN7nWADs1/4SeUNXJRvVHjC8lsbfRkTWAgw7HT7
+         xDowFf32dY96D0DdPNfjyPfbkzwr58k/fzR+MeX9uMgzUahnP5Z4k17cSvbpPYZmN576
+         uy64LcKcWKGty50+qmaDXCulk3Ul033fm/fHDAhzGrp97mHiLURjOhZTgXiF7vzRe5N8
+         BDYXjRdaYCKBi8UMGWnp802D3zHk23GY4efh1JqejAapaxLS9OUcj8Mb+ZI96XvJXk4+
+         yTErfPpe08i5OF3iipcNLq70jQBFfvDQ+cOgYPHkmuiPcJ7FtNp3XBmYqHSnH6yiFlRy
+         ZXMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758144327; x=1758749127;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VzmS6vlS4aGQUGCsqqVnjAUV5zRiihlDMEI25Ee0wp4=;
+        b=TYo8BaalKixMxBwG6ebIJCYcwXkrDyi3L4KSig0dU/N2GyoeBXiOIkx2WOQVwCpZ+D
+         Z8bvuGArf8VlnNNqVGvt6Yim/IDhCh/P9lMVb+cNlFgdgED78rJQismsQ/xql4hooprU
+         +sVf5f4P8+tS3dHQcfVluF1xBTsXXJ5wUYrIoXjsKBuFs2dR78E5bLrO5wfhQac2+gYu
+         LUtyrKaOXvF5wi4m/VWba7NupdFrd4gnM00r9ao4g6dcE5y6oR/xxvRPepGUU4DkcpDp
+         WCJwh1GGW+uZUPQ+3IfieLJUNi2x+Qzfd9MLEJOQ3QcAOeHgUzqn+7KOSOrl6jJXgULp
+         eDcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXDEVaipUH80oPvZnCC1gI/PYvRt9EAbtWvrCUysvPapAe9xC8iMG2saDvXbt/C195csZi6OJVSUtk0ZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbgCcwzhUpwK0Gs2zA1/iaRGD+FeJU9HebyjDHFxUl8NVN3zDs
+	+66uR1TWgR/hbfn47G0Cr7SiOSlT3cR6icH0JetebDGYgcmy5yBI2h2g9ylYMGW3UB25h7IPFKp
+	tT7VYeQ==
+X-Google-Smtp-Source: AGHT+IEt9OdbWxtc6AYige90fBSwtnNPY6nA9lHy3V8mdb8lVXQEswni2xr/2m7RjmFhT4E+7RMjQTSbWpw=
+X-Received: from pjbhl16.prod.google.com ([2002:a17:90b:1350:b0:32d:a0b1:2b03])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3947:b0:243:c274:1a7f
+ with SMTP id adf61e73a8af0-27aac993578mr5089210637.46.1758144326668; Wed, 17
+ Sep 2025 14:25:26 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:25:25 -0700
+In-Reply-To: <65465d1e-a7bd-4eac-a0ba-8c6cce85e3ed@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250917-tonyk-robust_test_cleanup-v3-15-306b373c244d@igalia.com>
-References: <20250917-tonyk-robust_test_cleanup-v3-0-306b373c244d@igalia.com>
-In-Reply-To: <20250917-tonyk-robust_test_cleanup-v3-0-306b373c244d@igalia.com>
-To: Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0
+References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-18-seanjc@google.com>
+ <65465d1e-a7bd-4eac-a0ba-8c6cce85e3ed@intel.com>
+Message-ID: <aMsnRY9PG6UeTzGY@google.com>
+Subject: Re: [PATCH v15 17/41] KVM: VMX: Set host constant supervisor states
+ to VMCS fields
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
+	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Zhang Yi Z <yi.z.zhang@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Every futex selftest uses the kselftest_harness.h helper and don't need
-the logging.h file. Delete it.
+On Wed, Sep 17, 2025, Xiaoyao Li wrote:
+> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> ...
+> > +static inline bool cpu_has_load_cet_ctrl(void)
+> > +{
+> > +	return (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_CET_STATE);
+> > +}
+> 
+> When looking at the patch 19, I realize that
+> 
+>   { VM_ENTRY_LOAD_CET_STATE,		VM_EXIT_LOAD_CET_STATE }
+> 
+> is added into vmcs_entry_exit_pairs[] there.
+> 
+> So ...
+> 
+> >   static inline bool cpu_has_vmx_mpx(void)
+> >   {
+> >   	return vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_BNDCFGS;
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> > index adf5af30e537..e8155635cb42 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -4320,6 +4320,21 @@ void vmx_set_constant_host_state(struct vcpu_vmx *vmx)
+> >   	if (cpu_has_load_ia32_efer())
+> >   		vmcs_write64(HOST_IA32_EFER, kvm_host.efer);
+> > +
+> > +	/*
+> > +	 * Supervisor shadow stack is not enabled on host side, i.e.,
+> > +	 * host IA32_S_CET.SHSTK_EN bit is guaranteed to 0 now, per SDM
+> > +	 * description(RDSSP instruction), SSP is not readable in CPL0,
+> > +	 * so resetting the two registers to 0s at VM-Exit does no harm
+> > +	 * to kernel execution. When execution flow exits to userspace,
+> > +	 * SSP is reloaded from IA32_PL3_SSP. Check SDM Vol.2A/B Chapter
+> > +	 * 3 and 4 for details.
+> > +	 */
+> > +	if (cpu_has_load_cet_ctrl()) {
+> 
+> ... cpu_has_load_cet_ctrl() cannot ensure the existence of host CET fields,
+> unless we change it to check vmcs_config.vmexit_ctrl or add CET entry_exit
+> pair into the vmcs_entry_exit_pairs[] in this patch.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- tools/testing/selftests/futex/functional/Makefile |   3 +-
- tools/testing/selftests/futex/include/logging.h   | 148 ----------------------
- 2 files changed, 1 insertion(+), 150 deletions(-)
+I *love* the attention to detail, but I think we're actually good, technically.
 
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index bd50aecfca8a31d9545be1e44295594dc9eab6be..490ace1f017e8635a4bc2a414220f7657a9d8f85 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -8,8 +8,7 @@ LDLIBS := -lpthread -lrt -lnuma
- 
- LOCAL_HDRS := \
- 	../include/futextest.h \
--	../include/atomic.h \
--	../include/logging.h
-+	../include/atomic.h
- TEST_GEN_PROGS := \
- 	futex_wait_timeout \
- 	futex_wait_wouldblock \
-diff --git a/tools/testing/selftests/futex/include/logging.h b/tools/testing/selftests/futex/include/logging.h
-deleted file mode 100644
-index 874c69ce5cce9efa3a9d6de246f5972a75437dbf..0000000000000000000000000000000000000000
---- a/tools/testing/selftests/futex/include/logging.h
-+++ /dev/null
-@@ -1,148 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/******************************************************************************
-- *
-- *   Copyright © International Business Machines  Corp., 2009
-- *
-- * DESCRIPTION
-- *      Glibc independent futex library for testing kernel functionality.
-- *
-- * AUTHOR
-- *      Darren Hart <dvhart@linux.intel.com>
-- *
-- * HISTORY
-- *      2009-Nov-6: Initial version by Darren Hart <dvhart@linux.intel.com>
-- *
-- *****************************************************************************/
--
--#ifndef _LOGGING_H
--#define _LOGGING_H
--
--#include <stdio.h>
--#include <string.h>
--#include <unistd.h>
--#include <linux/futex.h>
--#include "kselftest.h"
--
--/*
-- * Define PASS, ERROR, and FAIL strings with and without color escape
-- * sequences, default to no color.
-- */
--#define ESC 0x1B, '['
--#define BRIGHT '1'
--#define GREEN '3', '2'
--#define YELLOW '3', '3'
--#define RED '3', '1'
--#define ESCEND 'm'
--#define BRIGHT_GREEN ESC, BRIGHT, ';', GREEN, ESCEND
--#define BRIGHT_YELLOW ESC, BRIGHT, ';', YELLOW, ESCEND
--#define BRIGHT_RED ESC, BRIGHT, ';', RED, ESCEND
--#define RESET_COLOR ESC, '0', 'm'
--static const char PASS_COLOR[] = {BRIGHT_GREEN, ' ', 'P', 'A', 'S', 'S',
--				  RESET_COLOR, 0};
--static const char ERROR_COLOR[] = {BRIGHT_YELLOW, 'E', 'R', 'R', 'O', 'R',
--				   RESET_COLOR, 0};
--static const char FAIL_COLOR[] = {BRIGHT_RED, ' ', 'F', 'A', 'I', 'L',
--				  RESET_COLOR, 0};
--static const char INFO_NORMAL[] = " INFO";
--static const char PASS_NORMAL[] = " PASS";
--static const char ERROR_NORMAL[] = "ERROR";
--static const char FAIL_NORMAL[] = " FAIL";
--const char *INFO = INFO_NORMAL;
--const char *PASS = PASS_NORMAL;
--const char *ERROR = ERROR_NORMAL;
--const char *FAIL = FAIL_NORMAL;
--
--/* Verbosity setting for INFO messages */
--#define VQUIET    0
--#define VCRITICAL 1
--#define VINFO     2
--#define VMAX      VINFO
--int _verbose = VCRITICAL;
--
--/* Functional test return codes */
--#define RET_PASS   0
--#define RET_ERROR -1
--#define RET_FAIL  -2
--
--/**
-- * log_color() - Use colored output for PASS, ERROR, and FAIL strings
-- * @use_color:	use color (1) or not (0)
-- */
--void log_color(int use_color)
--{
--	if (use_color) {
--		PASS = PASS_COLOR;
--		ERROR = ERROR_COLOR;
--		FAIL = FAIL_COLOR;
--	} else {
--		PASS = PASS_NORMAL;
--		ERROR = ERROR_NORMAL;
--		FAIL = FAIL_NORMAL;
--	}
--}
--
--/**
-- * log_verbosity() - Set verbosity of test output
-- * @verbose:	Enable (1) verbose output or not (0)
-- *
-- * Currently setting verbose=1 will enable INFO messages and 0 will disable
-- * them. FAIL and ERROR messages are always displayed.
-- */
--void log_verbosity(int level)
--{
--	if (level > VMAX)
--		level = VMAX;
--	else if (level < 0)
--		level = 0;
--	_verbose = level;
--}
--
--/**
-- * print_result() - Print standard PASS | ERROR | FAIL results
-- * @ret:	the return value to be considered: 0 | RET_ERROR | RET_FAIL
-- *
-- * print_result() is primarily intended for functional tests.
-- */
--void print_result(const char *test_name, int ret)
--{
--	switch (ret) {
--	case RET_PASS:
--		ksft_test_result_pass("%s\n", test_name);
--		ksft_print_cnts();
--		return;
--	case RET_ERROR:
--		ksft_test_result_error("%s\n", test_name);
--		ksft_print_cnts();
--		return;
--	case RET_FAIL:
--		ksft_test_result_fail("%s\n", test_name);
--		ksft_print_cnts();
--		return;
--	}
--}
--
--/* log level macros */
--#define info(message, vargs...) \
--do { \
--	if (_verbose >= VINFO) \
--		fprintf(stderr, "\t%s: "message, INFO, ##vargs); \
--} while (0)
--
--#define error(message, err, args...) \
--do { \
--	if (_verbose >= VCRITICAL) {\
--		if (err) \
--			fprintf(stderr, "\t%s: %s: "message, \
--				ERROR, strerror(err), ##args); \
--		else \
--			fprintf(stderr, "\t%s: "message, ERROR, ##args); \
--	} \
--} while (0)
--
--#define fail(message, args...) \
--do { \
--	if (_verbose >= VCRITICAL) \
--		fprintf(stderr, "\t%s: "message, FAIL, ##args); \
--} while (0)
--
--#endif
+cpu_has_load_cet_ctrl() will always return %false until patch 19, because
+VM_ENTRY_LOAD_CET_STATE isn't added to the set of OPTIONAL controls until then,
+i.e. VM_ENTRY_LOAD_CET_STATE won't be set in vmcs_config.vmentry_ctrl until
+the exit control is as well (and the sanity check is in place).
 
--- 
-2.51.0
-
+> > +		vmcs_writel(HOST_S_CET, kvm_host.s_cet);
+> > +		vmcs_writel(HOST_SSP, 0);
+> > +		vmcs_writel(HOST_INTR_SSP_TABLE, 0);
+> > +	}
+> >   }
 
