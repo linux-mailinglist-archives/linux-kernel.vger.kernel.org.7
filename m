@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-819848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20CCB7C86F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09137B7CB53
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45D2483BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:29:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 209297A8CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6519321D59C;
-	Wed, 17 Sep 2025 01:29:48 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373D7215F5C;
+	Wed, 17 Sep 2025 01:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NsCimc8J"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82059214A79;
-	Wed, 17 Sep 2025 01:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DA91F5433
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758072588; cv=none; b=usR5U7fJ277DC5AhMLStqtiuUpt/lGdSd9MQMU5isHaIJ2cKlrEc7s1skFWK5l77WWbm/WcuCXa3Qts8B8rOVLUngjdJSMRCqUUlpa2SFmwSugBeFC6rm6sWyV2E1aX8fPwsDIIROU3ZfbrHEN6/7PeQfYGb9V8koDQcJZPfKgg=
+	t=1758072684; cv=none; b=cHk3SvmFb4LXvEEmWrwnf4vKDPfQYCss62brDuif4pQahPWiIB4xL/Pwk7H6d7MFz1KoySecI9JdD0nLkdLTkWF/rmSoxbrv0IvpsIzvuLuQkcEp8+C74XjP07S2dy3BHg93utnvwcHz9vImrNR2affbZZo9CeqvAZx02Akk0ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758072588; c=relaxed/simple;
-	bh=hhZVsw3zt3A/oYqZ99Gjxd13hAnEOnscKFd/+BWn5Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SGsxPH/1pwf41HSLIhJeP8MWEFPYrbP5gMg3O07pwTnSoF5K0WADYVHZx73s5toLVekhCRA9iOKfnrSvxWIwGwFEJbeUTnQVBYLC5UiSFI9m0CELnw19DfOJcDPypjxta2Ev5aVcduKg4vhfQdqkOaqZPLUbsac2yPyKGAanhIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 71C89340EF8;
-	Wed, 17 Sep 2025 01:29:45 +0000 (UTC)
-Date: Wed, 17 Sep 2025 09:29:41 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] riscv: dts: spacemit: add UART pinctrl combinations
-Message-ID: <20250917012941-GYA1263349@gentoo.org>
-References: <20250916064739.196695-1-hendrik.hamerlinck@hammernet.be>
+	s=arc-20240116; t=1758072684; c=relaxed/simple;
+	bh=u5lW0pLv9+4EhUqqIY0EojsmYLqqRNzsPVGJzyPzyTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ee3SP+q3PQ4nKKQUqvlwl5RkBiY8BFYFF3pCf5Zr8UCul/vWxlwAQCqavjcwRTwQHXBvu7zoqv5gf0AlmaV7t6M/a2LuHL4taseij4CjdaIJBjk1n8/btANQ2iysEskRng/ZC/RSuyuOEV0Dl0PXc1cxyAZs8LItkjikrNXCDNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NsCimc8J; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758072678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wMoURYW4sWpgUzsRJYLqTrN7wpP/NRlYSdFQVLQpJhU=;
+	b=NsCimc8J7ba8Gd+n1xwEGaiyX/ESmyzNZnAV/C6ZU8u9xl4Pf0AwM5gJP8jaNqgSwgQvpz
+	tBBwvfDQktfmuF9biYsR3cDnByOHS1zDySMHxK+4O1klIFh+1v9BgKzajt/Vt8fH/DFAsM
+	C4hFu3mtfydmYcFki3ulbJRMlCR51iI=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Alexei Starovoitov <ast@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Benjamin Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, tzimmermann@suse.de, simona.vetter@ffwll.ch,
+ Jani Nikula <jani.nikula@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+ bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] sched: make migrate_enable/migrate_disable inline
+Date: Wed, 17 Sep 2025 09:30:50 +0800
+Message-ID: <2383379.ElGaqSPkdT@7940hx>
+In-Reply-To:
+ <CAADnVQ+KzOiDeq5WrM-08js7XEH_CU0D9cb+a5iV_JsMm+RyWA@mail.gmail.com>
+References:
+ <20250828060354.57846-1-menglong.dong@linux.dev> <5041847.31r3eYUQgx@7940hx>
+ <CAADnVQ+KzOiDeq5WrM-08js7XEH_CU0D9cb+a5iV_JsMm+RyWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916064739.196695-1-hendrik.hamerlinck@hammernet.be>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-Hi Hendrik,
+On 2025/9/17 09:29 Alexei Starovoitov <alexei.starovoitov@gmail.com> write:
+> On Tue, Sep 16, 2025 at 6:26=E2=80=AFPM Menglong Dong <menglong.dong@linu=
+x.dev> wrote:
+> >
+> > On 2025/9/16 19:07 Peter Zijlstra <peterz@infradead.org> write:
+> > > On Thu, Aug 28, 2025 at 02:03:53PM +0800, Menglong Dong wrote:
+> > >
+> > > > +/* The "struct rq" is not available here, so we can't access the
+> > > > + * "runqueues" with this_cpu_ptr(), as the compilation will fail in
+> > > > + * this_cpu_ptr() -> raw_cpu_ptr() -> __verify_pcpu_ptr():
+> > > > + *   typeof((ptr) + 0)
+> > > > + *
+> > > > + * So use arch_raw_cpu_ptr()/PERCPU_PTR() directly here.
+> > > > + */
+> > >
+> > > Please fix broken comment style while you fix that compile error.
+> >
+> > It's a little embarrassing. The compile error is caused by the commit
+> > 1b93c03fb319 ("rcu: add rcu_read_lock_dont_migrate()") in bpf-next tree,
+> > which uses migrate_enable/migrate_disable in include/linux/rcupdate.h
+> > but include the <linux/preempt.h>.
+> >
+> > I can fix it by replace the linux/preempt.h with linux/sched.h, but sho=
+uld
+> > I fix it in this series? I mean, the commit 1b93c03fb319 doesn't exist =
+in
+> > the tip for now :/
+>=20
+> If it's just a different include then go for it.
+> Make sure there are no nasty build issues during the merge window.
 
-On 08:47 Tue 16 Sep     , Hendrik Hamerlinck wrote:
-> Add UART pinctrl configurations based on the SoC datasheet and the
-> downstream Bianbu Linux tree. The drive strength values were taken from
-> the downstream implementation, which uses medium drive strength.
-> CTS/RTS are moved to separate *-cts-rts-cfg states so boards can enable
-> hardware flow control conditionally.
-> 
-> Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-> ---
-> Changes in v3:
-> - Added /omit-if-no-ref/ to pinctrl states to reduce DT size
-> 
-> Changes in v2:
-> - Split cts/rts into separate pinctrl configs as suggested
-> - Removed options from board DTS files to keep them cleaner
-> ---
->  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi | 432 ++++++++++++++++++-
->  1 file changed, 429 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> index 381055737422..7811fb485bd4 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> @@ -11,12 +11,438 @@
->  #define K1_GPIO(x)	(x / 32) (x % 32)
->  
->  &pinctrl {
-> +	/omit-if-no-ref/
-> +	uart0_0_cfg: uart0-0-cfg {
-> +		uart0-0-pins {
-> +			pinmux = <K1_PADCONF(104, 3)>,	/* uart0_txd */
-> +				 <K1_PADCONF(105, 3)>;	/* uart0_rxd */
-> +			power-source = <3300>;
-> +			bias-pull-up;
-> +			drive-strength = <19>;
-> +		};
-> +	};
-> +
-> +	/omit-if-no-ref/
-> +	uart0_1_cfg: uart0-1-cfg {
-> +		uart0-1-pins {
-> +			pinmux = <K1_PADCONF(108, 1)>,	/* uart0_txd */
-> +				 <K1_PADCONF(80, 3)>;	/* uart0_rxd */
-> +			power-source = <3300>;
-..
-> +			bias-pull-up;
-here, see comment below
-> +			drive-strength = <19>;
-> +		};
-> +	};
-> +
-> +	/omit-if-no-ref/
->  	uart0_2_cfg: uart0-2-cfg {
->  		uart0-2-pins {
-> -			pinmux = <K1_PADCONF(68, 2)>,
-> -				 <K1_PADCONF(69, 2)>;
-> +			pinmux = <K1_PADCONF(68, 2)>,	/* uart0_txd */
-> +				 <K1_PADCONF(69, 2)>;	/* uart0_rxd */
-> +			bias-pull-up;
-> +			drive-strength = <32>;
-> +		};
-> +	};
->  
-> -			bias-pull-up = <0>;
+OK!
 
-Sorry, I've overlooked this, the bias-pull-up need to explicitly set to
-a vale of 0, 1 - normal pull up, or strong pull up.. for uart, the normal
-pull up should be ok
+>=20
 
-please refer Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
 
-Since the rc6 is already tagged, I'm about to prepare a PR, so If you able 
-to respin a new version quickly, I'd be happy to take, otherwise let's wait
-for next merge window (which shouldn't be a big problem)
 
-btw, please always do a DT check: 
-  make ARCH=riscv dtbs_check W=1
 
--- 
-Yixun Lan (dlan)
 
