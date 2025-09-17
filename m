@@ -1,206 +1,89 @@
-Return-Path: <linux-kernel+bounces-820678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A05B7D7DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:29:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4784EB7DF46
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E473D3AF3E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5FF2189C077
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1232FBDE5;
-	Wed, 17 Sep 2025 12:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwS9hqiX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3762D480D;
+	Wed, 17 Sep 2025 12:37:52 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8D9337E95;
-	Wed, 17 Sep 2025 12:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED72036D;
+	Wed, 17 Sep 2025 12:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758112138; cv=none; b=aeCSIHO939bhiAT52Siw0D50QSj+6yGpIbdszcWSN5dbjSesUZGC/BeowuIJpCCjf3+jIOEuUjkq8GZ6VRAYbDDofniK+eI2hEugjcKJqvjo1/TEKbn/aTLAYER5EF5X/WDOMCKHVNtO7zR2ZLjt/0jYraOe/X9waVagZqhhozI=
+	t=1758112672; cv=none; b=ZYsiWSS6lt1e4RvNPtksRRDg5nfiGPDs7xa8cWqWTk42GcwhunBg8r9LOVmvy1yWtWlS/wYr4e5rzxSRdGKQT0AmciRtBkM7duRu7phqzJMCEvrU1k7EDKRqEu4BCMf4KHaM5KRtUC4Ko9O6v/MIucUvIv/C+V1VBtYetj9kubU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758112138; c=relaxed/simple;
-	bh=Jc5cZefQOsqzwrw385FaHizZ1tAIAUOOEeHJ5Yjfm0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CnUzUWSIEpmCQM33Q8zRZBSX8FEPopwRnjzbAiAkX3kvKU24wmTzLcohlxbn9DK2ZOFFAh8mSmbtVIujNssHo0sePxc/FqN71DNjerf/7MG4s3I1ghV0Gbbr7Nul48dtYkHFVZU87DMVVSsuiNNFSUXEX8rpkvcCyVT4WFeDKUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwS9hqiX; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758112137; x=1789648137;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Jc5cZefQOsqzwrw385FaHizZ1tAIAUOOEeHJ5Yjfm0w=;
-  b=bwS9hqiXRE1yA3gvAevlUMP27X+hyXm4fRzphe1/AziQXvrzFPZ6ebib
-   0pHJgCXE4U/BI+rKus2s+Z2KJ2FCuOdFB8TVzQxjtf7fx5WVE/JW4B2KE
-   iGophtcr/tOUm1D/UwClnxP4fPhf6WcObu7bip3WPvKrrshGAhgWY5F7a
-   AMWcJ5MDV5n+TXFeKkP6X3g00FxJtRVaBpAZ/yTYsE0o0rAjXTPnAzdwG
-   /2do1iZttkt0B/l9/PHUg/uHwJ/AADjwdRN+lRCHV1FAf5l1slbrOgS7J
-   6KO1gb/nPOFVNR6gnO4WUcJS9H8vUldqD2CVBRI3E+KRfRyN0sdYcUGWd
-   A==;
-X-CSE-ConnectionGUID: w5y+kXh2SjK+voJQiGfi6w==
-X-CSE-MsgGUID: TY5wzdWwR2qx6URUyWNOiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60561889"
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="60561889"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 05:28:48 -0700
-X-CSE-ConnectionGUID: K5qmC+vzRT67xqyBa8jxlw==
-X-CSE-MsgGUID: 45Z7hA3oSR2eq5VxMzngag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; 
-   d="scan'208";a="175152054"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa006.fm.intel.com with SMTP; 17 Sep 2025 05:28:44 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 17 Sep 2025 15:28:43 +0300
-Date: Wed, 17 Sep 2025 15:28:43 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: Andrei Kuchynski <akuchynski@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	Guenter Roeck <groeck@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/5] USB Type-C alternate mode selection
-Message-ID: <aMqpe68m3rhDYsCt@kuha.fi.intel.com>
-References: <20250909123028.2127449-1-akuchynski@chromium.org>
- <aMliLCWFKy5Esl0-@kuha.fi.intel.com>
- <CANFp7mXvpNXr=01nQR54d+Z+vSiiwiDLB+3B+1eR6Ks7b37gtg@mail.gmail.com>
+	s=arc-20240116; t=1758112672; c=relaxed/simple;
+	bh=4b0yS3bHw4hdRnAsU/fqET8C8on0HsorpTHay5/m+TA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f/KFqaQlk55DZpm2Lyevi5MS7PhicXxOC6KsgxHD7lMoOFWNUChL18xcEJx5UOenQJm7yNen8qz2em4b7GGVZHqvuHu9NVtODTaGFxCq2GVthE6d7KlHL/Xfwrfb0KbKlZ+q9LlBmY3X1ShWy+o2c9JOrRIIJd4Fzmx8SuQTeQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cRdTf4xJPzPtGY;
+	Wed, 17 Sep 2025 20:33:10 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 58747180486;
+	Wed, 17 Sep 2025 20:37:46 +0800 (CST)
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 17 Sep 2025 20:37:45 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <lantao5@huawei.com>,
+	<huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
+	<huangdengdui@h-partners.com>, <jonathan.cameron@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
+Subject: [PATCH net 0/3] There are some bugfix for the HNS3 ethernet driver
+Date: Wed, 17 Sep 2025 20:29:51 +0800
+Message-ID: <20250917122954.1265844-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANFp7mXvpNXr=01nQR54d+Z+vSiiwiDLB+3B+1eR6Ks7b37gtg@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Tue, Sep 16, 2025 at 09:47:44AM -0700, Abhishek Pandit-Subedi wrote:
-> On Tue, Sep 16, 2025 at 6:12 AM Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> >
-> > On Tue, Sep 09, 2025 at 12:30:23PM +0000, Andrei Kuchynski wrote:
-> > > This patch series introduces a flexible mechanism for USB Type-C mode
-> > > selection, enabling into USB4 mode, Thunderbolt alternate mode, or
-> > > DisplayPort alternate mode.
-> > >
-> > > New sysfs `mode_selection` attribute is exposed to provide user control
-> > > over mode selection. It triggers an alternate mode negotiation.
-> > > The mode selection logic attempts to enter prioritized modes sequentially.
-> > > A mode is considered successfully negotiated only when its alternate mode
-> > > driver explicitly reports a positive status. Alternate mode drivers are
-> > > required to report their mode entry status (either successful or failed).
-> > > If the driver does not report its status within a defined timeout period,
-> > > the system automatically proceeds to attempt entry into the next preferred
-> > > mode.
-> >
-> > I'm still struggling to understand what is the benefit from this - why
-> > would you want the user space to explicitly start the entry process
-> > like this? Instead why would you not just take full control over the
-> > alt modes in user space by enabling the them one by one in what ever
-> > order you want?
-> 
-> I think after the many patch iterations we went through upstreaming,
-> we may have lost the point a little bit wrt/ the mode selection task.
-> We talked about this on the very first iteration of this patchset
-> here: https://lore.kernel.org/linux-usb/CANFp7mVWo4GhiYqfLcD_wFV34WMkmXncMTOnmMfnKH4vm2X8Hg@mail.gmail.com/
-> 
-> The motivation behind it was to allow the kernel driver to own mode
-> selection entirely and not need user space intervention. The current
-> alt-mode drivers attempt to own the mode entry process and this fails
-> when you have two or more altmode drivers loaded (i.e. displayport,
-> thunderbolt). The original goal of the mode selection task was to move
-> the mode entry decision away from the alt-mode driver and to the port
-> driver instead.
-> 
-> What's missing in the current patch series to show this is probably
-> actually calling mode_selection once all partner modes are added :)
-> Andrei should be adding that to this patch series in the next patch
-> version.
-> 
-> Adding the mode_selection sysfs trigger is for another reason: to
-> re-run mode selection after priorities have been changed in userspace
-> and there is no partner hotplug. We specifically have some security
-> policies around PCI tunnels that result in the following need:
-> * When we enable pci tunneling, we PREFER tbt over dp and would like
-> to select the preferred mode. When we disable it, we PREFER dp over
-> TBT and would like to select the preferred mode.
-> * When users are logged out, we always prefer DP over TBT.
-> * When the system is locked, we prefer DP over TBT for new connections
-> (but existing connections can be left as TBT). When we unlock, we want
-> to enter the most preferred mode (TBT > DP).
-> 
-> While this is do-able with the alt-mode active sysfs field, we would
-> basically be re-creating the priority selection done in the kernel in
-> user space again. Hence why we want to expose the mode selection
-> trigger as done here.
+This patchset includes 3 fixes:
+1. Patch1 fixes the issue of loopback failure under half-duplex mode.
+  The driver will automatically switch to full-duplex mode
+  before loopback tests.
+2. Patch2 fixes an incorrect function return value.
+3. Patch4 fixes the potential loss of user rate and duplex configuration
+  after reset.
 
-But this would be a step backwards. You want to keep the kernel in
-control of the mode selection, which is fine, but then you have these
-special cases where you have to give some of the control to the user
-space. So instead of taking complete control of the mode selection in
-user space, you want to create this partial control method of
-supporting your special cases while still leaving "most" of the
-control to kernel.
+Jijie Shao (3):
+  net: hns3: fix loopback test of serdes and phy is failed if duplex is
+    half
+  net: hns3: return error code when function fails
+  net: hns3: use user configure after hardware reset when using kernel
+    PHY
 
-I don't believe this will work in all cases. I'm fine with the
-priority as a way to tell the kernel the preferred entry order, but if
-the user space needs to take control of the actual mode selection, it
-has to take full control of it instead of like this, partially. This
-just looks incredibly fragile.
-
-So I'm still not convinced that there is any use for this. Either the
-user space takes over the mode selection completely with the active
-attribute files, or just leaves the selection completely to the kernel.
-
-Br,
-
-> > I don't believe you can make this approach scale much if and when in
-> > the future the use cases change. Right now I don't feel comfortable
-> > with this at all.
-> >
-> > thanks,
-> >
-> > > This series was tested on an Android OS device with kernel 6.16.
-> > > This series depends on the 'USB Type-C alternate mode priorities' series:
-> > > https://lore.kernel.org/all/20250905142206.4105351-1-akuchynski@chromium.org/
-> > >
-> > > Andrei Kuchynski (5):
-> > >   usb: typec: Implement mode selection
-> > >   usb: typec: Expose mode_selection attribute via sysfs
-> > >   usb: typec: Report altmode entry status via callback
-> > >   usb: typec: ucsi: displayport: Propagate DP altmode entry result
-> > >   platform/chrome: cros_ec_typec: Propagate altmode entry result
-> > >
-> > >  Documentation/ABI/testing/sysfs-class-typec  |  11 +
-> > >  drivers/platform/chrome/cros_ec_typec.c      |   9 +
-> > >  drivers/platform/chrome/cros_typec_altmode.c |  32 +-
-> > >  drivers/platform/chrome/cros_typec_altmode.h |   6 +
-> > >  drivers/usb/typec/altmodes/displayport.c     |  19 +-
-> > >  drivers/usb/typec/altmodes/thunderbolt.c     |  10 +
-> > >  drivers/usb/typec/class.c                    |  37 ++
-> > >  drivers/usb/typec/class.h                    |   4 +
-> > >  drivers/usb/typec/mode_selection.c           | 345 +++++++++++++++++++
-> > >  drivers/usb/typec/mode_selection.h           |  25 ++
-> > >  drivers/usb/typec/ucsi/displayport.c         |  10 +-
-> > >  include/linux/usb/typec_altmode.h            |  11 +
-> > >  include/linux/usb/typec_dp.h                 |   2 +
-> > >  include/linux/usb/typec_tbt.h                |   3 +
-> > >  14 files changed, 516 insertions(+), 8 deletions(-)
-> > >
-> > > --
-> > > 2.51.0.384.g4c02a37b29-goog
+ .../ethernet/hisilicon/hns3/hns3_ethtool.c    |  26 ++--
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 139 ++++++++++++++----
+ .../hisilicon/hns3/hns3pf/hclge_main.h        |   3 +-
+ .../hisilicon/hns3/hns3pf/hclge_mdio.c        |   9 +-
+ .../hisilicon/hns3/hns3pf/hclge_mdio.h        |   2 +-
+ 5 files changed, 130 insertions(+), 49 deletions(-)
 
 -- 
-heikki
+2.33.0
+
 
