@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-820241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3C3B7CC47
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864D4B7CCEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7EE1C00CC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347D0580943
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EB4307491;
-	Wed, 17 Sep 2025 08:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AD52F25E0;
+	Wed, 17 Sep 2025 08:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DU3PJZHd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f75OQNSn"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF051C84B2;
-	Wed, 17 Sep 2025 08:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC69C2DCC04
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758097953; cv=none; b=bBsgesPYZ3/o5bMKH/NVXynjSzGrXW03o0h5uvkIU+uYR9TG3LhFSKmgq+cGuAm4/kvX5+fLUeb5KV6BaUOdSHpJbRgkgclYnwrMhQNj2uo+qvQmvy85oClDvrV+ANvYpgP+o9mLcfqlYyjRaO17pz5iV6BSpMJHd4fVdB31L+I=
+	t=1758097952; cv=none; b=Mzh0h2XR99X3SovmNgZ5OOidN/gbtYPQz2kozBAFiVy6ykxfWNk7esygoItbYS/fLbGqVIjH+IBAJVb5Ek7Ba/hrbtVI1oYuH15v5gwrTHu+x7lLHVVUKzbhih5LopjftXCBagIZmQ1SWj0C7HhnuHRkjqduybTEY6Z+BZ5MGtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758097953; c=relaxed/simple;
-	bh=yK+fpi+YCg3Em7+WVxTKXNM3K9lgx/Xg+UOZdBCfGHg=;
+	s=arc-20240116; t=1758097952; c=relaxed/simple;
+	bh=e1HqXtZJd/mh2DQlYKpY8+rgwoNAGd8qppLD4tEH3oo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DjDXv6K8xuvBhoVi7quoK9I9lNV7+vnASufqEHecq5Hir3oPZTjBN+ToV5omjSiRRWOwxmojye0I0ht9iTyGg4Bhzgwa3ASlEYJ2hFdHf/pgoU56NJrhQDWWhWcCxwHbS1RphlNwljkX4zGLVIihVqO6Avs1fjcHsyQo1O6D02w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DU3PJZHd; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758097952; x=1789633952;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yK+fpi+YCg3Em7+WVxTKXNM3K9lgx/Xg+UOZdBCfGHg=;
-  b=DU3PJZHdDd/pBMP03CW9ZmAFsWAICFE3gmktOg5uBdxgcsejuWv9AMoR
-   X7J6LoKFkCReyxMyxV9JmOSYnGoTg/RIDKDxel4MG43pzqh/ZmCRX+Vut
-   6hlcvEleO4H6tINm8XHzyFkImrtRD/mm8U4uDrwH4mW4+XCijoFrI8Thk
-   acz7Sm0R1+IxU2A37VW0u9AEWtrYJgFjdB7PgELdTvR92yomxF77wjqx5
-   9lDvWO8M+UYVOvmiXSiY//dMQr0M/kdNC/DjBWFPR726e6qDw26u/OLli
-   eISz4mPyRHa7A2lUtJfa1XqHAAO1+D6g3Guf7vikaoYPYMx/bw8PIKiaz
-   Q==;
-X-CSE-ConnectionGUID: hRMt2ybqSYiM/i0f2Awndw==
-X-CSE-MsgGUID: lgS4efPgTJmk+PR9uAyl/g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="78003056"
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="78003056"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:32:31 -0700
-X-CSE-ConnectionGUID: Tj0Lz4gmR0G9QfM760SH4w==
-X-CSE-MsgGUID: 6iXjYK52See01YtvSp5v+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
-   d="scan'208";a="206134021"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:32:28 -0700
-Message-ID: <52cc9795-970e-4940-80d1-490daed636c4@linux.intel.com>
-Date: Wed, 17 Sep 2025 16:32:26 +0800
+	 In-Reply-To:Content-Type; b=KQHKugDSRwo8DZakRFA/WMswTRt5kSvKDvB7D17wnaS7dgmC035v7c83ZLOFfM67asjy2YMHUUTJjIduVanuk4UFBtq5Ov+nQsMwefAoIUb/tfnTbz50HVApmIoKjbS7UtB5/lAhx75VT2oicwCV62VSgwVTVZRvgqy+U18L+m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f75OQNSn; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45f2b062b86so22978035e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758097949; x=1758702749; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iIl77ODDceGEz0pehinF+GLY6J4fc68QbX8V3FX9t7U=;
+        b=f75OQNSn+/YU2eSAvwOltb8qiau0B/h1zK8q4Y4c2Kk+XXjDIQsl9JHJZchhFdggPj
+         yOdkGbr2jyLbftZUuXfVAJ+J6EeoO3BlQ4EsVL7vZu0onAXjnhwrOQe8o1OiUpS6FSq1
+         s66sqpMUkqyYZ6QTzpIaC8VYi9qfHSXSCEX6Cm5AOgJQWHmwE7G7pq+ZOy6myDv8TK34
+         Xl5HfjqriijJ+P+kxBzZjdVBv94cYfRSokP98tpt+39TmligchTSlb6BR04pfoMRuDr+
+         hLt1Md4UO8f3V6psUZSWvgBHFf4AKoQ+ckTbsfoQQxFYYhkpgH4OBPubxMAyv55YDsji
+         sslA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758097949; x=1758702749;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iIl77ODDceGEz0pehinF+GLY6J4fc68QbX8V3FX9t7U=;
+        b=wS8VBuwlYmXddo5I9ts8vJLpa5hSOVvvHy1BLJlpG4qCkLUjn+BbIiJV3ihHGEzZd5
+         uenevGSFFSunYiquL0ZexOE9g5FBtj+1gjgPrFAWQFX1q8xPJr+N/Vj96dhGB4Sl24Ku
+         hTGpZHIxvbXZ8/FZ45CkakfUdTwRa/NdY7/K7CbLfysv6Rk9qnh2MwB+9JiECQmoCcZu
+         9ZTlkDcETkRcAqpgRWXZ6NBBzPX8LFhB1qo5MOOnOuIkSxDPUKTH+iHjmnOA7Kpb2WKm
+         92ktFnyktv+JzFkOtkFwdDiIlZD0CcVby/xRtf/WSuXBTo6gPxh10VHbW5K/dh1ftipd
+         Dt0g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0xBYkVfFO8KNNmwkkK8hmurqJZZgsOywbtU8Wqvu/IqWQAmPINOlrNXMN+5Nmh3uVdXFcNsfHPaGcUxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzz3vdI39SVViee9n74l05X5wtkA+ADMyhVZH/gDTgo5s7KWYT
+	MX1O9XvtLIvCLNGEwDIgAHYPZeQ/LJjxQYPUH6i84ACT8iF0i7l+xkfUZjJjx68NI4I=
+X-Gm-Gg: ASbGncvA7ez+CzbH29m3fgTv220tW1B+YQLf6rbuevr7dDTkW4BsLL1lZEzYk2Q4c4n
+	aNZvUxwSaqauwTZ3dvdYbSbAqB58BF/RHTfqp+IOzCTo9brxeh/ajU37osuZ5q9EV/VvZXxweYV
+	vmWzNSpMVHDxAFZN+VF4MZnrNZIgVUxAA3zpS2FPQjTlClJk6N8PjonPxgtJ3uvP/Fpv4llzWCG
+	cGjJRDustpu7GqJmXtzNOxK1aQ54THXWdlUYHvatyss40HJpkSm/sztooPItmQQx6sUXLnMuluZ
+	mYR3D8n6/VDqpUcZrTJx6Tm/m4sWlZe8AgOBCtFOzNZQJ6kRvRr8pwQkaxk9nYIfIphIS6BOJSD
+	drbtHiS8PagXG6LItrwGbKfylycYeZ3qi2b442geY63owZhMm0UGbC0gAanlxrBQWx+0lNFov5Q
+	IDTg==
+X-Google-Smtp-Source: AGHT+IHbchbH0zTDIhtvWBHzePerwa0GqNo06mWsjRIIJhssqnaVVC6k8oSRdp5XnAjDncSPkNhAWg==
+X-Received: by 2002:a05:600c:5492:b0:456:18cf:66b5 with SMTP id 5b1f17b1804b1-46206842695mr11181345e9.22.1758097948975;
+        Wed, 17 Sep 2025 01:32:28 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:37e6:ed62:3c8b:2621? ([2a05:6e02:1041:c10:37e6:ed62:3c8b:2621])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46139ba88d0sm26629015e9.10.2025.09.17.01.32.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 01:32:28 -0700 (PDT)
+Message-ID: <e30113f3-5562-44fa-8986-8a8889738517@linaro.org>
+Date: Wed, 17 Sep 2025 10:32:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,93 +82,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 16/41] KVM: VMX: Set up interception for CET MSRs
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-17-seanjc@google.com>
+Subject: Re: [PATCH] clocksource: ingenic-sysost: convert from round_rate() to
+ determine_rate()
+To: Brian Masney <bmasney@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250810-clocksource-round-rate-v1-1-486ef53e45eb@redhat.com>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250912232319.429659-17-seanjc@google.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250810-clocksource-round-rate-v1-1-486ef53e45eb@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Enable/disable CET MSRs interception per associated feature configuration.
->
-> Pass through CET MSRs that are managed by XSAVE, as they cannot be
-> intercepted without also intercepting XSAVE. However, intercepting XSAVE
-> would likely cause unacceptable performance overhead.
-Here may be a bit confusing about the description of "managed by XSAVE" because
-KVM has a function is_xstate_managed_msr(), and MSR_IA32_S_CET is not xstate
-managed in it.
-
-Otherwise,
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-> MSR_IA32_INT_SSP_TAB is not managed by XSAVE, so it is intercepted.
->
-> Note, this MSR design introduced an architectural limitation of SHSTK and
-> IBT control for guest, i.e., when SHSTK is exposed, IBT is also available
-> to guest from architectural perspective since IBT relies on subset of SHSTK
-> relevant MSRs.
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On 11/08/2025 00:37, Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> appended to the "under-the-cut" portion of the patch.
+> 
+> While changes are being made to 'struct clk_ops', let's also go ahead
+> and fix the formatting of set_rate so that everything lines up as
+> expected.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 > ---
->   arch/x86/kvm/vmx/vmx.c | 19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 4fc1dbba2eb0..adf5af30e537 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -4101,6 +4101,8 @@ void pt_update_intercept_for_msr(struct kvm_vcpu *vcpu)
->   
->   void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->   {
-> +	bool intercept;
-> +
->   	if (!cpu_has_vmx_msr_bitmap())
->   		return;
->   
-> @@ -4146,6 +4148,23 @@ void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->   		vmx_set_intercept_for_msr(vcpu, MSR_IA32_FLUSH_CMD, MSR_TYPE_W,
->   					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
->   
-> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
-> +		intercept = !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
-> +
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, intercept);
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL1_SSP, MSR_TYPE_RW, intercept);
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL2_SSP, MSR_TYPE_RW, intercept);
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL3_SSP, MSR_TYPE_RW, intercept);
-> +	}
-> +
-> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK) || kvm_cpu_cap_has(X86_FEATURE_IBT)) {
-> +		intercept = !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) &&
-> +			    !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
-> +
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_U_CET, MSR_TYPE_RW, intercept);
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_S_CET, MSR_TYPE_RW, intercept);
-> +	}
-> +
->   	/*
->   	 * x2APIC and LBR MSR intercepts are modified on-demand and cannot be
->   	 * filtered by userspace.
 
+Applied, thanks
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
