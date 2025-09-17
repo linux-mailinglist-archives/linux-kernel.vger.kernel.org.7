@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-820232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A08B7C87E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:05:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F22A2B7CA05
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E54E3B93EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:26:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18027162384
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE0A309DC1;
-	Wed, 17 Sep 2025 08:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C839309DB1;
+	Wed, 17 Sep 2025 08:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y7XNHAG5"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iOHyVUij"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537EA3093CD;
-	Wed, 17 Sep 2025 08:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46C73090EB
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758097571; cv=none; b=rYOY8RIwRuMaJLHVr8u1rrE9IQYr7SRe9PNdxJmXFsuPsJ5I7GdlZdLmrZX4wPAfOAd2QnP8fVAM5TLtuCLvJ7qEb4ta5PLV55AQPkBxPeAMjmU/w2D/85Y8+ZqJKCpPHdd/IY6fx+SF6IQ/4oLFqj0xpS8R2tmsapYALcu191E=
+	t=1758097695; cv=none; b=I4yp8kvDLI7072CB9XdGA90s+CUG9QxIqySr+B0t0p4AHHMf7DcBe46JR6DL6Gcb3zz8CdLAHOqEnFo03WUulrGHzrupywsgUEDn5HPMle+O3OMTGjLyvYAH4hTo7sgA3SBP72tBTmx+v3yC6+jmXCAA0fRDmx5rh+WE641tANI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758097571; c=relaxed/simple;
-	bh=wqrcB4gYD5mVJxcH2ytWpjivIlK8sLuOolm6xMajBcA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AS8KegV6JtSJCqFUFPSIsEZrDhUy5rsfRCSp37dWgLNMhIPQYZLFUBHGmfyBX6XhPuzL4mlU6mwMBvgqA6BRtBQ/oWTYyPbjF95w4tHvNHb0OCF5OVMkem+nD5HXvVD27j1Egg8FaD5Qx2BIw4Kuv9mIwuUTJxEK2ew7aSAq4to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y7XNHAG5; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=pdAyvfPdpXiDT5nwEE5JM65rIqzPvI29m/mgKeUTFRg=;
-	b=Y7XNHAG5lANhswermEkPD8FEkAPMDsI5v49iHOX1x3pFkplI0GMjwJ70FHytCl
-	b3Vohkrp79HmxUCoJxx5QB89z7Y+SBbF9jaa3Gh2kGy164HvtC/2NLy4/upRzPlZ
-	JvbK7r8PHXzwf+i5LZAyUJiarSVnMb4MVnxeksJZARYpY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wDn98VZcMpok55fBw--.48704S2;
-	Wed, 17 Sep 2025 16:24:57 +0800 (CST)
-From: yicongsrfy@163.com
-To: andrew@lunn.ch,
-	Frank.Sae@motor-comm.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	hkallweit1@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@armlinux.org.uk,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	yicong@kylinos.cn
-Subject: Re: [PATCH] net: phy: avoid config_init failure on unattached PHY during resume
-Date: Wed, 17 Sep 2025 16:24:57 +0800
-Message-Id: <20250917082457.1200792-1-yicongsrfy@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <9393c232-06d8-464e-ac94-597eaeda2630@lunn.ch>
-References: <9393c232-06d8-464e-ac94-597eaeda2630@lunn.ch>
+	s=arc-20240116; t=1758097695; c=relaxed/simple;
+	bh=MGVrxB/ZF16ux1N/bdvGH9wocGEyHCPQesgRGMarVsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6Dc7HZKtTDkGhR6t8G3gS0NB+89irFp/gHtMyjneFCAznYKKAzDsAFjtIJzlU6PyESr6pJQLB+JHeQuCgSizuTDJQaLurt6n0repWZv6uXwuhbR3+5E5OEQAQn1bZFjgBwlOxTGUXbBYpnLBEXrY2XDZeFa1UVHaN3gFkW8qhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iOHyVUij; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758097694; x=1789633694;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MGVrxB/ZF16ux1N/bdvGH9wocGEyHCPQesgRGMarVsE=;
+  b=iOHyVUijTXnZn1yN7kP4xjl4JF6CauRgZqhnf/5g6GwYdi5LjSo+asyH
+   yUXEVIClhU3U2sNxDK78YXeK/lSCPL4doPfk9t2tCjLR0FYGeCuoK/FAe
+   fcOkvbvQzF4CfuLN4jdD/prHnOsmMdWgTyDmtHwWd/wgBc1QfYZ+XH5kc
+   y+8XTHmo2upiNmURO8e0jmjCb4Y21a2eVIyQcpqHIUwpfnUT13kfWidg5
+   7U3mkdDQrfyczBq7aA4m62qq2FyRH0et65HwW9cadaEa1QmUbPps4MZfN
+   5hsLutLua7gaqX2S687qp/aOkjaGLOLqv+6gHRRkd7XEobJ6GIB9gnUtA
+   A==;
+X-CSE-ConnectionGUID: L1rXr0QgRQaTS8zPx8ADGg==
+X-CSE-MsgGUID: o8Jy5W2wSUC/K5EoJNe43A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="59440032"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="59440032"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 01:28:13 -0700
+X-CSE-ConnectionGUID: CHw4gGA6QPKatRWEth28wg==
+X-CSE-MsgGUID: ahFwTMAYQ5aJ04VbMOIVBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; 
+   d="scan'208";a="175957976"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 17 Sep 2025 01:28:09 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uynWJ-0001GF-1J;
+	Wed, 17 Sep 2025 08:28:07 +0000
+Date: Wed, 17 Sep 2025 16:27:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>, catalin.marinas@arm.com,
+	will@kernel.org, oleg@redhat.com, tglx@linutronix.de,
+	peterz@infradead.org, luto@kernel.org, kees@kernel.org,
+	wad@chromium.org, charlie@rivosinc.com, macro@orcam.me.uk,
+	deller@gmx.de, akpm@linux-foundation.org, ldv@strace.io,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, ruanjinjie@huawei.com
+Subject: Re: [PATCH -next v6 08/10] entry: Add
+ arch_ptrace_report_syscall_entry/exit()
+Message-ID: <202509171609.V2opqAfm-lkp@intel.com>
+References: <20250916082611.2972008-9-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn98VZcMpok55fBw--.48704S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUe3ktUUUUU
-X-CM-SenderInfo: p1lf00xjvuw5i6rwjhhfrp/1tbiUAnL22jKa2GznAAAsO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916082611.2972008-9-ruanjinjie@huawei.com>
 
-On Thu, 11 Sep 2025 14:58:32 +0200, Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > Some PHY chips support two addresses, using address 0 as a broadcast address
-> > and address 1 as the hardware address. Both addresses respond to GMAC's MDIO
-> > read/write operations. As a result, during 'mdio_scan', both PHY addresses are
-> > detected, leading to the creation of two PHY device instances (for example,
-> > as in my previous email: xxxxmac_mii_bus-XXXX:00:00 and xxxxmac_mii_bus-XXXX:00:01).
->
-> I would say the PHY driver is broken, or at least, not correctly
-> handling the situation. When the scan finds the PHY at address 0, the
-> PHY driver is probed, and it should look at the strapping and decided,
-> if the strapping has put the PHY at address 0, or its the broadcast
-> address being used. If it is the broadcast address, turn off broadcast
-> address, and return -ENODEV. phylib should then not create a PHY at
-> address 0. The scan will continue and find the PHY at its correct
-> address. Your problem then goes away, and phylib has a correct
-> representation of the hardware.
+Hi Jinjie,
 
-+To: Frank <Frank.Sae@motor-comm.com> (maintainer:MOTORCOMM PHY DRIVER)
+kernel test robot noticed the following build warnings:
 
-Hi Andrew, thank you again for your reply!
+[auto build test WARNING on next-20250915]
 
-Recently I conducted the following tests:
-Following your suggestion, to avoid compatibility issues caused by
-disabling broadcast address (after all, we don't know if any vendor
-might directly use address 0 as the PHY's hardware address——otherwise
-we could simply start scanning from address 1),I modified the logic
-only for one specific chip in motorcomm.c, aiming to prevent phylib
-from creating a phy_device instance at address 0:
+url:    https://github.com/intel-lab-lkp/linux/commits/Jinjie-Ruan/arm64-ptrace-Split-report_syscall-into-report_syscall_enter-exit/20250916-163202
+base:   next-20250915
+patch link:    https://lore.kernel.org/r/20250916082611.2972008-9-ruanjinjie%40huawei.com
+patch subject: [PATCH -next v6 08/10] entry: Add arch_ptrace_report_syscall_entry/exit()
+config: i386-buildonly-randconfig-001-20250917 (https://download.01.org/0day-ci/archive/20250917/202509171609.V2opqAfm-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250917/202509171609.V2opqAfm-lkp@intel.com/reproduce)
 
-static int yt8521_probe(struct phy_device *phydev) {
-    ...
-    if (/* phydev->mdio.addr == 0 AND phy_addr0 broadcast enable */)
-        return -ENODEV;
-    ...
-}
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509171609.V2opqAfm-lkp@intel.com/
 
-However, this had no effect, for the following reasons:
-1. `get_phy_device` does not invoke the driver's probe function,
-    so it always succeeds.
-2. Subsequently, during the `phy_device_register` probe, the entire
-   call chain contains calls without return value handling, so we
-   cannot rely on the driver's return value to determine whether to
-   create the `phy_device`.
+All warnings (new ones prefixed by >>):
 
-An example of `dump_stack()` output:
-```
-[    4.509504]  yt8521_probe+0x34/0x330 [motorcomm]  ==> checking inside driver
-[    4.509513]  phy_probe+0x78/0x2b0 [libphy]
-[    4.509529]  really_probe+0x184/0x3d0
-[    4.509532]  __driver_probe_device+0x80/0x178
-[    4.509534]  driver_probe_device+0x40/0x118
-[    4.509536]  __device_attach_driver+0xb8/0x158
-[    4.509538]  bus_for_each_drv+0x84/0xe8
-[    4.509540]  __device_attach+0xd4/0x1b0
-[    4.509542]  device_initial_probe+0x18/0x28     ==> allows asynchronous initialization
-[    4.509543]  bus_probe_device+0xa8/0xb8         ==> no return value here
-[    4.509545]  device_add+0x510/0x700
-[    4.509549]  phy_device_register+0x58/0xb0 [libphy]
-[    4.509562]  mdiobus_scan+0x80/0x1a8 [libphy]
-[    4.509576]  __mdiobus_register+0x208/0x4b0 [libphy]
-```
+>> Warning: kernel/entry/syscall-common.c:29 function parameter 'regs' not described in 'arch_ptrace_report_syscall_entry'
+>> Warning: kernel/entry/syscall-common.c:115 function parameter 'regs' not described in 'arch_ptrace_report_syscall_exit'
+>> Warning: kernel/entry/syscall-common.c:115 function parameter 'step' not described in 'arch_ptrace_report_syscall_exit'
 
-The existing framework appears unable to handle this situation.
-Yet, there are at least two vendors (I have hardware from two
-different vendors) whose PHY chips have broadcast addressing on
-address 0 enabled by default.
-
-Does this mean we can only force these vendors to disable it by default?
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
