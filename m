@@ -1,162 +1,138 @@
-Return-Path: <linux-kernel+bounces-821377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAAAB8118E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:01:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A32B811AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 19:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55EE481355
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C305835D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00A22FB618;
-	Wed, 17 Sep 2025 17:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TmuUoqkv"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1655A2F9D8B
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB272FC88A;
+	Wed, 17 Sep 2025 17:02:46 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C56E2FC008;
+	Wed, 17 Sep 2025 17:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758128487; cv=none; b=U3wzlJex/9+hJMyTE/5h8z4mB65uDKc7NwqVxGMTFbKrOkC33LXzntWNU2oMwNjlSN4EyUfNIkidsIvVAQqaRnWQUg1k++C/qit4zOftA0bqo9Xs/mylY0c4eVnh60LDNMyJmwicdQaA2KmRDOLJ7YKUYM9uTOh47x/QLh6D2D0=
+	t=1758128565; cv=none; b=kwd+ogfemeRXf8PA22iwQW/kS0ycq59vb7GYSfNA9MYW5su4hm1nzDpNfgTjN5qc37M9hv8A7bI8L+spw5BF8xrCBt8mOVknAYO3m5m6XPApj9lx+n4G70R+EsqaVMBJeWhDloPw9xd81msLkz2JuOi7sA5OMBtcKkk/3S5xm2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758128487; c=relaxed/simple;
-	bh=hJVKZkeRT4RlYlXpyr9p2g5aHiBMFf1ef3Yhwp5ZqPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z8Xx/cKtOLi4MrN8zDtV4AKqnsxgvjL8xV15iR+g0JEjLcOVdHAuZuXeK81rnddN7qKeDJpnBb8mv723AmXwHkCKcj+Oj/BhdKbWx9yLnLW2Z5g42kHkihDz6PS459p2yP2JtVCl0w2ryPXH6fce+2CjGm0J13Pdpn5PHsmPctY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TmuUoqkv; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <cb294591-7d23-42fd-901a-3466b586f437@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758128472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ojT4pPN0CvVUq05QTtka/Ya/G75lzlL/MTy5m+/ilvI=;
-	b=TmuUoqkvLx//R0qEB7Vp9qm0AgXS8Wf5F5sP7bdnpS6OEB36alJxV1SySMZVVu6BnaukS3
-	qLG22uZ8lFxgfTsRDe+uP59ht2qH+AHrqyntj4+ObdxXDS7bK+jc9390fIYGqkoNMJ0h+O
-	mO41XLdeKsZFN0ao3lbVrQBPuGHZQaU=
-Date: Wed, 17 Sep 2025 18:01:04 +0100
+	s=arc-20240116; t=1758128565; c=relaxed/simple;
+	bh=Ra7ELyvkrvjPj5kJJl1XqUiGbNP3FDS6arlEPpA0NnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RZJDz0UOuh9VEngB0zuWPhfsTjmjQ1Rf2GASbXox4Fd1r4hE4UUnjvRTwqpY3SzqubgyeNvSCtjhhwRPUMIF7mjLRUqWd6Es81aznu+8ZopdQdmyaBz3XKorPiI26mTeBpZLp4da3BUFZO7jBvEeM3Dn80U40QYWjvECyfa+JG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: nWiUG+2HTwmdvkbVXtXFOg==
+X-CSE-MsgGUID: WtFN+q4pQR6IBM9rkpKZbQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 18 Sep 2025 02:02:35 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.24.0.45])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0E67F400F755;
+	Thu, 18 Sep 2025 02:02:28 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: conor+dt@kernel.org,
+	daniel.lezcano@linaro.org,
+	geert+renesas@glider.be,
+	krzk+dt@kernel.org,
+	lukasz.luba@arm.com,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	robh@kernel.org,
+	rui.zhang@intel.com,
+	sboyd@kernel.org,
+	will@kernel.org
+Cc: biju.das.jz@bp.renesas.com,
+	catalin.marinas@arm.com,
+	devicetree@vger.kernel.org,
+	john.madieu@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	rafael@kernel.org,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v9 0/4] thermal: renesas: Add support for RZ/G3E
+Date: Wed, 17 Sep 2025 19:01:54 +0200
+Message-ID: <20250917170202.197929-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2] dpll: zl3073x: Allow to use custom phase
- measure averaging factor
-To: Ivan Vecera <ivecera@redhat.com>,
- "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
- Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250911072302.527024-1-ivecera@redhat.com>
- <20250915164641.0131f7ed@kernel.org>
- <SA1PR11MB844643902755174B7D7E9B3F9B17A@SA1PR11MB8446.namprd11.prod.outlook.com>
- <c60779d6-938d-4adc-a264-2d78fb3c5947@redhat.com>
- <SJ2PR11MB845273963D6C04DCDB222FF19B17A@SJ2PR11MB8452.namprd11.prod.outlook.com>
- <2ee83405-fd42-4a70-8a5f-f6f34b0b8731@redhat.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <2ee83405-fd42-4a70-8a5f-f6f34b0b8731@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 17/09/2025 15:55, Ivan Vecera wrote:
-> On 17. 09. 25 3:10 odp., Kubalewski, Arkadiusz wrote:
->>> From: Ivan Vecera <ivecera@redhat.com>
->>> Sent: Wednesday, September 17, 2025 2:18 PM
->>>
->>> On 17. 09. 25 1:26 odp., Kubalewski, Arkadiusz wrote:
->>>>> From: Jakub Kicinski <kuba@kernel.org>
->>>>> Sent: Tuesday, September 16, 2025 1:47 AM
->>>>>
->>>>> cc: Arkadiusz
->>>>>
->>>>> On Thu, 11 Sep 2025 09:23:01 +0200 Ivan Vecera wrote:
->>>>>> The DPLL phase measurement block uses an exponential moving average,
->>>>>> calculated using the following equation:
->>>>>>
->>>>>>                          2^N - 1                1
->>>>>> curr_avg = prev_avg * --------- + new_val * -----
->>>>>>                            2^N                 2^N
->>>>>>
->>>>>> Where curr_avg is phase offset reported by the firmware to the 
->>>>>> driver,
->>>>>> prev_avg is previous averaged value and new_val is currently measured
->>>>>> value for particular reference.
->>>>>>
->>>>>> New measurements are taken approximately 40 Hz or at the frequency of
->>>>>> the reference (whichever is lower).
->>>>>>
->>>>>> The driver currently uses the averaging factor N=2 which prioritizes
->>>>>> a fast response time to track dynamic changes in the phase. But for
->>>>>> applications requiring a very stable and precise reading of the 
->>>>>> average
->>>>>> phase offset, and where rapid changes are not expected, a higher 
->>>>>> factor
->>>>>> would be appropriate.
->>>>>>
->>>>>> Add devlink device parameter phase_offset_avg_factor to allow a user
->>>>>> set tune the averaging factor via devlink interface.
->>>>>
->>>>> Is averaging phase offset normal for DPLL devices?
->>>>> If it is we should probably add this to the official API.
->>>>> If it isn't we should probably default to smallest possible history?
->>>>>
->>>>
->>>> AFAIK, our phase offset measurement uses similar mechanics, but the
->>>> algorithm
->>>> is embedded in the DPLL device FW and currently not user controlled.
->>>> Although it might happen that one day we would also provide such knob,
->>>> if useful for users, no plans for it now.
->>>>   From this perspective I would rather see it in dpll api, especially
->>>> this relates to the phase measurement which is already there, the value
->>>> being shared by multiple dpll devices seems HW related, but also 
->>>> seem not
->>>> a
->>>> problem, as long as a change would notify each device it relates with.
->>>
->>> What if the averaging is implemented in different HW differently? As I
->>> mentioned the Microchip HW uses exponential moving average but
->>> a different HW can do it differently.
->>>
->>
->> Yeah good point, in that case we would also need enumerate those, and 
->> the new
->> HW would have to extend the uAPI to let the user know which method is 
->> used?
->> Different methods could require different parameters?
->> But for your current case only one attribute would be enough?
->> Or maybe better to provide those together like:
->> DPLL_A_PHASE_MEASUREMENT_EMA_N
->> Then different method would have own attributes/params?
->>
->> Next question if a HW could have multiple of those methods available and
->> controlled, in which case we shall also have in mind a plan for a
->> "turned-off" value for further extensions?
->>
->> Thank you!
->> Arkadiusz
-> 
-> Jiri, Vadim,
-> any comments / opinions?
+This series adds support for the temperature sensor unit (TSU) found on the
+Renesas RZ/G3E SoC.
 
-Our HW doesn't have such options, and it doesn't looks like we will be
-able to extend it this way. But I'm fine with providing UAPI if there
-will other users.
+The initial syscon patch [1] the series depends on has already been accepted.
+
+Changes:
+
+v9:
+ * Remove driver-specific read/write indirection and use readl/writel
+ * Use devm_mutex_init()
+ * Switch to syscon_regmap_lookup_by_phandle_args()
+
+v8:
+ * Use of_parse_phandle_with_fixed_args() for trim values
+ * Update binding doc and collect Rb tag from Rob
+ * Use millidegree computation to for better precision
+
+v6 -> v7
+ * Update DTS trim priperty name and specifier, updading the documentation
+ accordingly
+ * Refactor main driver: remove spinlock usage, using polling timeout as computed
+ from datasheet. Also use polling for get_temp() while using IRQ for trip-point
+ cross detection, and finally add both runtime and sleep PM support.
+ * Add new patch to update sys #address-cells as trim specifier now requires an
+ offset from sys base
+
+v5 -> v6
+ * Minor typo fix
+ * Constify regmap config in patch 1/5
+
+v4 -> v5
+ * Remove useless curly braces on single line-protected scoped guards
+
+v3 -> v4
+ * Improve commit messages
+
+v2 -> v3
+ * Remove useless 'renesas,tsu-operating-mode' property
+
+v1 -> v2
+ * Fix yaml warnings from dt-binding
+ * Update IRQ names to reflect TSU expectations
+
+Regards,
+
+[1] https://lore.kernel.org/linux-devicetree/20250818162859.9661-2-john.madieu.xa@bp.renesas.com/
+
+
+John Madieu (4):
+  dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
+  thermal: renesas: rzg3e: Add thermal driver for the Renesas RZ/G3E SoC
+  arm64: dts: renesas: r9a09g047: Add TSU node
+  arm64: defconfig: Enable the Renesas RZ/G3E thermal driver
+
+ .../thermal/renesas,r9a09g047-tsu.yaml        |  87 +++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  48 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/thermal/renesas/Kconfig               |   7 +
+ drivers/thermal/renesas/Makefile              |   1 +
+ drivers/thermal/renesas/rzg3e_thermal.c       | 547 ++++++++++++++++++
+ 7 files changed, 698 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+ create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
+
+-- 
+2.25.1
 
 
