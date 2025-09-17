@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-821696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118ADB82009
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AC4B8201E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E521A3A1361
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 523E63A8BCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6C630DED0;
-	Wed, 17 Sep 2025 21:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D27530E0C5;
+	Wed, 17 Sep 2025 21:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="TS+ImPEM"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="K4PKrvBx";
+	dkim=pass (2048-bit key) header.d=opensource.wdc.com header.i=@opensource.wdc.com header.b="Ywanj2ff"
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6B0224B04;
-	Wed, 17 Sep 2025 21:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB9129ACEE
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758145201; cv=none; b=OFtQsdEG2NU71VeMdXKF/OMS1SFEzcQrWO2DqxZVpoIN/Ou096f6voGvRiQN9ba0b0VLafkQGrEtZfd3RKncuSybf50ah3aWa1j9z2nFXOeYjDK/hFFSRlJNNbo/WQgv5uFARoqsyjKEhXUfdUvoSIsB3sJLgiuf1YdOyZqPUIw=
+	t=1758145358; cv=none; b=mj7b0ZPkHHdadvhmcohNHTPWA1/juw3Q7NGQitv1/Cm5hM9w1QlHZGKb7MFoKm6dGNdPx4+tvlhHCBejAFoieyNolmwpiwaJtesBrPeYykVHCOE13vB7jp/3p3Kfj5C0JO+9WVLs8C35mHT1E+WFMDfgOL/aekq4SL/nLLk1VkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758145201; c=relaxed/simple;
-	bh=j0oSCi9JCNB/n2boWWo+usbN9ISUZr1EE+q7YBlMKUE=;
+	s=arc-20240116; t=1758145358; c=relaxed/simple;
+	bh=x3uPm0xYDopT12eXOctOMhNA/7AZX0eI/ADHUbau0qM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMbDstpClRf44YsJGe16wTzhqmUyqm6ukRznoJOEELNNhDPvnlIOk7ZGHgSmnmaxLCoU2ejapegpF239H5WgAqn35kinHNh5zxd4wAom0XEf/+zyaLqiu1HbUv3braK8suq+BjYKIgKpsTuWH4lLbaX26LltznKL9813KYTgISw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=TS+ImPEM; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HLbTx2031830;
-	Wed, 17 Sep 2025 21:39:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=e7aywbVgoWACndDeOW0D7B3YoI
-	kDJpnENYBe2GyDpVE=; b=TS+ImPEM9BnHP3pjsIAzoxU99Ze3vLHdShH8ASvMm8
-	FwykYSUvQfUo4b69MoVprjuxbc5xtMnnAggTGlywAy1mRBGpw1hiiy7Pdr+GrtDh
-	mVYloPY8I5cBTrKCxWuGN+hgiJNRayFGiJhC6DOIrhD9QzHvcAz8UjP2qOgKlZpN
-	SQIXDNidMKF9KrtOobcTEPKv8CJ666Eftw+csaSfkhgIOAa4ufr1Oh0YrHveLsvH
-	8RGhGG/OZlOd/qUqz7jZA4r0pLWR3Z1j6G/VprUKBmshuhN32+XIhIu6dVqt/kHB
-	EFsgAN9OvseDuBWr5X/BdwI48sHnuTfa9mXjPp7wosEw==
-Received: from p1lg14878.it.hpe.com (p1lg14878.it.hpe.com [16.230.97.204])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 497y4f2xjm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Sep 2025 21:39:12 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 0A89D130D6;
-	Wed, 17 Sep 2025 21:39:11 +0000 (UTC)
-Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 1A621804CDB;
-	Wed, 17 Sep 2025 21:39:08 +0000 (UTC)
-Date: Wed, 17 Sep 2025 16:39:01 -0500
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Jiaqi Yan <jiaqiyan@google.com>, David Hildenbrand <david@redhat.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        akpm@linux-foundation.org, corbet@lwn.net, linmiaohe@huawei.com,
-        shuah@kernel.org, jane.chu@oracle.com, Liam.Howlett@oracle.com,
-        bp@alien8.de, hannes@cmpxchg.org, jack@suse.cz,
-        joel.granados@kernel.org, laoar.shao@gmail.com,
-        lorenzo.stoakes@oracle.com, mclapinski@google.com, mhocko@suse.com,
-        nao.horiguchi@gmail.com, osalvador@suse.de, rafael.j.wysocki@intel.com,
-        rppt@kernel.org, russ.anderson@hpe.com, shawn.fan@intel.com,
-        surenb@google.com, vbabka@suse.cz, linux-acpi@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
- HugeTLB pages
-Message-ID: <aMsqdesM1ImJp1yt@hpe.com>
-References: <aMiu_Uku6Y5ZbuhM@hpe.com>
- <a99eb11f-a7ac-48a3-a671-c5f0f6b5b491@arm.com>
- <8c3188da-7078-4099-973a-1d0d74db2720@redhat.com>
- <aMsDJ3EU1zVJ00cX@hpe.com>
- <cd71fac2-bb9d-4e84-a074-2b695654e655@redhat.com>
- <CACw3F52p45t3iSZPjx_Lq9kBn1ZGTDZsxk+iQ-xFA1zdvdqqrw@mail.gmail.com>
- <aMsR4Tr9ov1pfucC@agluck-desk3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOFUORKSDvR9wSC0RbQgEemaC249QbmIefol4qbogDgCjhd3rKw3UJGNXU09HxqcVxjg8+jhce1eWwHQrxRLKzrrTNCpXl6Of922X/XzsRO+FA0wAe7CO+JGSk5lA8+OWTKawlmWdyqIEUwkl0zf4U+kwAVjctV1nGKBSNyRNLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=opensource.wdc.com; spf=pass smtp.mailfrom=opensource.wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=K4PKrvBx; dkim=pass (2048-bit key) header.d=opensource.wdc.com header.i=@opensource.wdc.com header.b=Ywanj2ff; arc=none smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=opensource.wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1758145356; x=1789681356;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=x3uPm0xYDopT12eXOctOMhNA/7AZX0eI/ADHUbau0qM=;
+  b=K4PKrvBxufdpnsED2D8bCZU2cFawBGEpSrs4ZjoYoDBPWKV2AV8Wo3+R
+   Wc4CfxwioFBzzbNmyFJXdK9HiaAy2mBiw7oMWJ4OKCGrZEVIX2JVDMFM0
+   mXOIedaQFVwnaaqBGmrem2RQA2TGerF60KbpInv9nUqpptWd7XPxAxkjN
+   lAnmXgwZxRvxF5axDa1qzg/Re80qWGsZ4WRGla7AoJhj17M4JsYTAzTEU
+   WO+OZMIJlPdjnPRFsWPGtHEgWl8hT1msMNCRGcHoVpTpdWoHlBv0eMW3z
+   VKDLnGPsxp3yUjU9+3Sq+Jb7G5Wq+1W3YZOwPYlJNTelSi/U3XOJtM+M8
+   A==;
+X-CSE-ConnectionGUID: Y3PjLcbcRdOIF54W8GwFbQ==
+X-CSE-MsgGUID: 78sThphvQAedmIGM43VuTw==
+X-IronPort-AV: E=Sophos;i="6.18,273,1751212800"; 
+   d="scan'208";a="122921592"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Sep 2025 05:42:30 +0800
+IronPort-SDR: 68cb2b46_4gcJJy9jfY5UBzWMvkDFvMcSRsjTo3IZSyfSwUezl6x0lx9
+ ucGuW69MJJEmHMbGO7YqMkoTkYPHphBN4ODb3AQ==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 14:42:30 -0700
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Sep 2025 14:42:30 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+	by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4cRsgT5MpCz1SHvj
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:42:29 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavis); dkim=pass
+ reason="pass (just generated, assumed good)" header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+	opensource.wdc.com; h=in-reply-to:content-disposition
+	:content-type:mime-version:references:message-id:subject:to:from
+	:date; s=dkim; t=1758145349; x=1760737350; bh=x3uPm0xYDopT12eXOc
+	tOMhNA/7AZX0eI/ADHUbau0qM=; b=Ywanj2ffby068BMfzTQBw0cfLVzudeZtQX
+	hJRpKTxAjQcvgorsucp+M7wgqcZbQqP145E97i+J3EjQtNxsOPcfQVvdmmkZuKOl
+	vUSBndAcgYhROaM22rE+t8vHJM2BOyHLCWXpe3Zu8Ief1790BRw1OHudZvn+J9g4
+	0O8sKyE7fk142QNkyNDEWqolOHACe1X5AvAsDQ6HMjyA2nqkJoojkDgi0OL82Ye6
+	BcTToxW6zvYCxlvZ0qPAhxklhuzDLL90LzavCTanQ53wTpiy6DJemfoRr/JZKdhM
+	HjIVQ0sJkowwyd1pBfxRhKKekbUg2yzBGPEmPc8zxQ0vIBffyPYQ==
+X-Virus-Scanned: amavis at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+ by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id Elo0vSAxxXdq for <linux-kernel@vger.kernel.org>;
+ Wed, 17 Sep 2025 14:42:29 -0700 (PDT)
+Received: from opensource.wdc.com (ros-3.wdc.com [10.23.145.79])
+	by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4cRsgS3S2Rz1SHkR;
+	Wed, 17 Sep 2025 14:42:28 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:42:27 -0700
+From: Kamaljit Singh <kamaljit.singh@opensource.wdc.com>
+To: Hannes Reinecke <hare@suse.de>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	cassel@kernel.org, dlemoal@kernel.org, kamaljit.singh1@wdc.com
+Subject: Re: [PATCH v2 1/2] nvme-core: add method to check for an I/O
+ controller
+Message-ID: <aMsrQzOukUXB0TZ7@opensource.wdc.com>
+References: <20250905232550.1950307-1-kamaljit.singh@opensource.wdc.com>
+ <20250905232550.1950307-2-kamaljit.singh@opensource.wdc.com>
+ <d1db6858-75e7-4853-a5e8-d0f1f02fb389@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,54 +100,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aMsR4Tr9ov1pfucC@agluck-desk3>
-X-Authority-Analysis: v=2.4 cv=FoUF/3rq c=1 sm=1 tr=0 ts=68cb2a80 cx=c_pps
- a=UObrlqRbTUrrdMEdGJ+KZA==:117 a=UObrlqRbTUrrdMEdGJ+KZA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=-yUDYzNKurD68FfYE3YA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: -t5EYyscZvkXoKgU1Fr4v8bU1oBCB3c2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDE0NCBTYWx0ZWRfX3tXC0LyiZmGA
- EQSbxobfpqBJ2/TPQVKW8un6ill+kJamYAOG2TNuIPQIDu6vQ4oz/swV8qQUbtXFdefRyu3kzD0
- 0/RqovEVpnKbXv7WT+CSeihWkbOyM3Q26jnL2O0SNy9YpUBnXaDgXQP3fN1ANJRH6/e143PFK+T
- GnGm++4JBCUndCS1f4ekeoy7NuWS7nDFC+12d3b1Poz5lIJYQcxeEnzQtQGg9MTISmoyl3T+5ak
- 2uf60DEbMDNIuFuFx7GIuUHLszdqS7NMXf0Xd/ndH6KyLRmnmoqXKGPbmep0T4d23Pt9VhCo7Xp
- 4/orMAto6QC504pcbM8XW0vX4ybFk+kvdP1UNm7YC3ZKDuFlT8pguL5yvNbe34N6rR5o8EArpd9
- 0RfUBX9b
-X-Proofpoint-ORIG-GUID: -t5EYyscZvkXoKgU1Fr4v8bU1oBCB3c2
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170144
+In-Reply-To: <d1db6858-75e7-4853-a5e8-d0f1f02fb389@suse.de>
 
-On Wed, Sep 17, 2025 at 12:54:09PM -0700, Luck, Tony wrote:
-> On Wed, Sep 17, 2025 at 12:32:47PM -0700, Jiaqi Yan wrote:
-> > +1. Given /proc/sys/vm/enable_soft_offline is extensible, I would
-> > prefer a compact userspace API.
+On Mon, Sep 08, 2025 at 02:56:35PM +0200, Hannes Reinecke wrote:
+> On 9/6/25 01:25, Kamaljit Singh wrote:
+> > Add nvme_is_io_ctrl() to check if the controller is of type I/O
+> > controller. Uses negative logic by excluding an administrative
+> > controller and a discovery controller.
 > > 
-> > > would create a new file, and the file has weird semantics such that it
-> > > has no meaning when enable_soft_offline=0.
+> > Signed-off-by: Kamaljit Singh <kamaljit.singh@opensource.wdc.com>
+> > ---
+> >   drivers/nvme/host/core.c | 5 +++++
+> >   1 file changed, 5 insertions(+)
+> > 
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
 > 
-> So the expand the bitmask idea from earlier in this thread?
-> 
-> Bit0	0 = soft offline disabled. 1 = Enabled (but see other bits)
-> Bit1	0 = allow offline of 4K pages, 1 = suppress 4K offline
-> Bit2	0 = allow offline of hugetlb, 1 = suppress hugetlb offline
-> Bit3	0 = allow breakup of transparent huge pages to just offline 4K, 1 = suppress transparent breakup
-> Bit4+	Reserved for suppressing other page types we invent in the future
-> 
-> Values 0 and 1 keep their original meaning.
-> 
-> Value 5 means: offline 4K, keep hugetlb, breakup transparent huge pages.
-
-Do you happen to have any use cases or reasoning for why someone might want
-to disable soft offline for 4K pages or transparent huge pages? I'd like to
-understand the motivation for adding the extra bits.
+Please review and provide any feedback on these 2 patches.
 
 Thanks,
-Kyle Meyer
+Kamaljit Singh
 
