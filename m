@@ -1,199 +1,143 @@
-Return-Path: <linux-kernel+bounces-820527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1552CB7DB94
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:33:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C02B7D694
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0682B3202EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50FF1C04B51
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097C82EC090;
-	Wed, 17 Sep 2025 11:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ptkrptGs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CuqXr5mf";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ptkrptGs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CuqXr5mf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E9B2EBBB2
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA482DF6FA;
+	Wed, 17 Sep 2025 11:08:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ADF28489B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 11:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758107286; cv=none; b=Ap9kEFirq24RPXHN4cYOzzBht2q+/ZelJaznil9uf/YcqPkW2KUFH/gpe9FQyiLCMzOz3QDCqFJx2pZ0CuvbJfvuARd07SdS50s+ZQB5SpuAoh+kIsPItKPMwEOlphPd8D0Vj8sUsHBKM5pr8k7RL9/nqodDIsVAYqDToiqt7L4=
+	t=1758107333; cv=none; b=H8Zbv4LN3SN3cJDs7t3wOaSGH8QkTPd+B30nxsTbZGKs5LBc+movBK2HkLeXgQrXNwLqS+hQqn+fVU0GFBpKMt/ggxmwQdhk1qbb9PRjhlrGIQle2XZmvGFjeBlPwNdvRKmiJOdaizGTprb3/yq4qV8xeqqy8Me8g54QQ2COL48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758107286; c=relaxed/simple;
-	bh=ciZgr3saMqkC9Hg4J5Abkz6ma9TvnLFlCoi8tiRqVbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPQDTyTYl+PDYkii6Eb4yBs7d/QbwXGPnYp22TrrXaILo8xDemFyqfSk8GSw9rFUhsYQBlYwlDkWIAmemxHuYSZxOoN8aJBbgNCL854mUhL4plWWUdf4eeTPrytZsPysaqDs5qO/jbH18DuywkAV3R0DdBUDCPGu1VZAci+mpkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ptkrptGs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CuqXr5mf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ptkrptGs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CuqXr5mf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 732A82126F;
-	Wed, 17 Sep 2025 11:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758107282; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/j+TghCbMxS6Hr+M6Px03nxBiobgKniH+u2vLxerW8=;
-	b=ptkrptGseCISVsQSxi+p8tUW59Rrjz0N5sPnd1wzkFhKOxrWCHCwTIW4TWDHSpOespuFww
-	1e1PZQAzfRkjbo8bpdzp23GXJKOG2bLZpYH6zuvmfjqFO+esZfZXR+lBVUjtyUWkNHbwAY
-	0UVQEfLseGzXPrwa54eoqUh4Ta4r680=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758107282;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/j+TghCbMxS6Hr+M6Px03nxBiobgKniH+u2vLxerW8=;
-	b=CuqXr5mf1f5gVEyVE/lNW/q6XMjuaOaU8Fo7jUe67po6sdGNuF62L3WB6GMPs7nmsIzR+e
-	XeKtsoSUgaSSfvAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758107282; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/j+TghCbMxS6Hr+M6Px03nxBiobgKniH+u2vLxerW8=;
-	b=ptkrptGseCISVsQSxi+p8tUW59Rrjz0N5sPnd1wzkFhKOxrWCHCwTIW4TWDHSpOespuFww
-	1e1PZQAzfRkjbo8bpdzp23GXJKOG2bLZpYH6zuvmfjqFO+esZfZXR+lBVUjtyUWkNHbwAY
-	0UVQEfLseGzXPrwa54eoqUh4Ta4r680=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758107282;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/j+TghCbMxS6Hr+M6Px03nxBiobgKniH+u2vLxerW8=;
-	b=CuqXr5mf1f5gVEyVE/lNW/q6XMjuaOaU8Fo7jUe67po6sdGNuF62L3WB6GMPs7nmsIzR+e
-	XeKtsoSUgaSSfvAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D09581368D;
-	Wed, 17 Sep 2025 11:07:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1iOPL46WymikQwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 11:07:58 +0000
-Date: Wed, 17 Sep 2025 12:07:52 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
-	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
-	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
-	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 06/13] mm: add remap_pfn_range_prepare(),
- remap_pfn_range_complete()
-Message-ID: <fdkqhtegozzwx3p4fqzkar7dfbzffn7xiz7ht365c3pe4x6hk3@zbfwoktrhci3>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <7c050219963aade148332365f8d2223f267dd89a.1758031792.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1758107333; c=relaxed/simple;
+	bh=05uZFu3IKuX0kpCaKruqGtBvers6XUG06iFJSt1TbFI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pZQQ8Q3sx29lmKWue0GCpUF2Nlx5v8n6BulXP77LPbtdg2hAma7rUOANNi/iezcn9FOkZj91n/Kuq9P0b2OfqNMISl1QXMsrpFYhb8IOQOuI6n2JwF7n4KS34nePA7tOYfMQNyQ5OMBoh09na0O65gA0Unhyg6/4fp4RPGXGmW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 131EC267F;
+	Wed, 17 Sep 2025 04:08:43 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0A3983F66E;
+	Wed, 17 Sep 2025 04:08:48 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	broonie@kernel.org,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	james.morse@arm.com,
+	ardb@kernel.org,
+	scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	mark.rutland@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v8 0/5] support FEAT_LSUI and apply it on futex atomic ops
+Date: Wed, 17 Sep 2025 12:08:33 +0100
+Message-Id: <20250917110838.917281-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c050219963aade148332365f8d2223f267dd89a.1758031792.git.lorenzo.stoakes@oracle.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[62];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,oracle.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 03:11:52PM +0100, Lorenzo Stoakes wrote:
-> We need the ability to split PFN remap between updating the VMA and
-> performing the actual remap, in order to do away with the legacy
-> f_op->mmap hook.
-> 
-> To do so, update the PFN remap code to provide shared logic, and also make
-> remap_pfn_range_notrack() static, as its one user, io_mapping_map_user()
-> was removed in commit 9a4f90e24661 ("mm: remove mm/io-mapping.c").
-> 
-> Then, introduce remap_pfn_range_prepare(), which accepts VMA descriptor
-> and PFN parameters, and remap_pfn_range_complete() which accepts the same
-> parameters as remap_pfn_rangte().
-                remap_pfn_range
+Since Armv9.6, FEAT_LSUI supplies the load/store instructions for
+previleged level to access to access user memory without clearing
+PSTATE.PAN bit.
 
-> 
-> remap_pfn_range_prepare() will set the cow vma->vm_pgoff if necessary, so
-> it must be supplied with a correct PFN to do so.  If the caller must hold
-> locks to be able to do this, those locks should be held across the
-> operation, and mmap_abort() should be provided to revoke the lock should
-> an error arise.
-> 
-> While we're here, also clean up the duplicated #ifdef
-> __HAVE_PFNMAP_TRACKING check and put into a single #ifdef/#else block.
-> 
-> We would prefer to define these functions in mm/internal.h, however we
-> will do the same for io_remap*() and these have arch defines that require
-> access to the remap functions.
->
+This patchset support FEAT_LSUI and applies in futex atomic operation
+where can replace from ldxr/stlxr pair implmentation with clearing
+PSTATE.PAN bit to correspondant load/store unprevileged atomic operation
+without clearing PSTATE.PAN bit.
 
-I'm confused. What's stopping us from declaring these new functions in
-internal.h? It's supposed to be used by core mm only anyway?
+Patch Sequences
+================
+
+Patch #1 adds cpufeature for FEAT_LSUI
+
+Patch #2 expose FEAT_LSUI to guest
+
+Patch #3 adds Kconfig for FEAT_LSUI
+
+Patch #4 refactor former futex atomic-op implmentation with ll/sc &
+         clearing PSTATE.PAN
+
+Patch #5 support futext atomic-op with FEAT_LSUI
+
+Patch History
+==============
+from v7 to v8:
+  - implements futex_atomic_eor() and futex_atomic_cmpxchg() with casalt
+    with C helper.
+  - Drop the small optimisation on ll/sc futex_atomic_set operation.
+  - modify some commit message.
+  - https://lore.kernel.org/all/20250816151929.197589-1-yeoreum.yun@arm.com/
+
+from v6 to v7:
+  - wrap FEAT_LSUI with CONFIG_AS_HAS_LSUI in cpufeature
+  - remove unnecessary addition of indentation.
+  - remove unnecessary mte_tco_enable()/disable() on LSUI operation.
+  - https://lore.kernel.org/all/20250811163635.1562145-1-yeoreum.yun@arm.com/
+
+from v5 to v6:
+  - rebase to v6.17-rc1
+  - https://lore.kernel.org/all/20250722121956.1509403-1-yeoreum.yun@arm.com/
+
+from v4 to v5:
+  - remove futex_ll_sc.h futext_lsui and lsui.h and move them to futex.h
+  - reorganize the patches.
+  - https://lore.kernel.org/all/20250721083618.2743569-1-yeoreum.yun@arm.com/
+
+from v3 to v4:
+  - rebase to v6.16-rc7
+  - modify some patch's title.
+  - https://lore.kernel.org/all/20250617183635.1266015-1-yeoreum.yun@arm.com/
+
+from v2 to v3:
+  - expose FEAT_LUSI to guest
+  - add help section for LUSI Kconfig
+  - https://lore.kernel.org/all/20250611151154.46362-1-yeoreum.yun@arm.com/
+
+from v1 to v2:
+  - remove empty v9.6 menu entry
+  - locate HAS_LUSI in cpucaps in order
+  - https://lore.kernel.org/all/20250611104916.10636-1-yeoreum.yun@arm.com/
 
 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Yeoreum Yun (5):
+  arm64: cpufeature: add FEAT_LSUI
+  KVM: arm64: expose FEAT_LSUI to guest
+  arm64: Kconfig: Detect toolchain support for LSUI
+  arm64: futex: refactor futex atomic operation
+  arm64: futex: support futex with FEAT_LSUI
 
-The changes themselves look OK to me, but I'm not super familiar with these
-bits anyway.
+ arch/arm64/Kconfig             |   5 +
+ arch/arm64/include/asm/futex.h | 262 +++++++++++++++++++++++++++------
+ arch/arm64/kernel/cpufeature.c |  10 ++
+ arch/arm64/kvm/sys_regs.c      |   5 +-
+ arch/arm64/tools/cpucaps       |   1 +
+ 5 files changed, 235 insertions(+), 48 deletions(-)
 
-Acked-by: Pedro Falcato <pfalcato@suse.de>
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
--- 
-Pedro
 
