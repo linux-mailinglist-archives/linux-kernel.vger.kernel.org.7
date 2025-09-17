@@ -1,159 +1,95 @@
-Return-Path: <linux-kernel+bounces-821213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF8DB80BCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:51:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B954B80BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4FA482002
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99EE520DEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BA619F115;
-	Wed, 17 Sep 2025 15:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6611A341343;
+	Wed, 17 Sep 2025 15:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E0DV8B4D"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5CYZcEw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F27341352;
-	Wed, 17 Sep 2025 15:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD171341369
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758124272; cv=none; b=PkrYLDgWZVlB/ZhZyu8XtH+kyYn7nqnXVdKuHwKzoxamMm49RYXDfVnayPJV/9xbaneu1HEI80T/YbW9ZPuk1WmgZptGBRcRxjhXWQg1zZSwupEpGJcobWHueu7DbFFI/dAMtvfNM20Pz3zGGBsCCzpd8zTUJIbKbazhyAkFMvU=
+	t=1758124284; cv=none; b=lwkDktRUnd33wNPK8KRZssF+TJeOlnx0ttlqhR+V3Wt/0d7KCa24jybmu5NSz8OFgPtw8fDB77DCwQmNTGtltqmKfvgF0jksBf3Sk3GP11zESah2CTLh37rlIY4PyDaroYzkBkJI8Jfs+rorgcf/tvAZvCoxnBerUINjz5MWZiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758124272; c=relaxed/simple;
-	bh=najpjZb1c8KxKCDHMDrrfxyuWSzUEpLP6UkAhnhEuwQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C1nQczvnKUA0XMiNjJXrWrbqogZCMJNRMREDA6isiIlLnGOXXhc8mCgnoT76Admhr/No9qj86VnghkjDaWHU9HD5ysS7zxWMoyCvI6pZ6a1SGwRNRnExPYUzeGsX+KRH8dqPJOVn/enPW7/QTKK5zG6JzsLTlp9kVn/WR+lWvxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E0DV8B4D; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E1C7843A63;
-	Wed, 17 Sep 2025 15:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1758124266;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v1c79sUNcMVeE8q34apk1GvyhbBN1jZ6cmstvanDQC4=;
-	b=E0DV8B4D2a78odu/FKSlKYCGr7gdoXX7ABRE3ycoFBNQ4obfZNRRWWlERiRmdsdvr8aFNn
-	ydIkF+d33eaQ8jgDL88ExAsSE9U0RE60sDGdV+NjicQlG2rv+8Hb26akHE2ZvuDhXYy7xQ
-	x2flQhxaozQRNRS2b7fxhQkzfMBXl8PQWdqNF4n54dYz+frLGHrxH3S+RV3Mx56DrS4koT
-	qQ1IBMUL6zLVB2i1PmyhqomvDm9BlFyhuvtDUl8oSJnbZdbFzGbSVo22hGKc6iVvmD9708
-	93JhsesBGtxW6eZsIAmKvGt+c1nsDIBXsWxfrYS12jpRKHacFm/uk4rgQt3TUQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject:
- Re: [PATCH 1/4] regulator: dt-bindings: Add Linear Technology LTM8054
- regulator
-Date: Wed, 17 Sep 2025 17:51:05 +0200
-Message-ID: <5135820.31r3eYUQgx@fw-rgant>
-In-Reply-To: <936e16dd-d11f-4452-8942-64366f173d6f@baylibre.com>
-References:
- <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
- <20250916-ltm8054-driver-v1-1-fd4e781d33b9@bootlin.com>
- <936e16dd-d11f-4452-8942-64366f173d6f@baylibre.com>
+	s=arc-20240116; t=1758124284; c=relaxed/simple;
+	bh=wSDjAsdy1ct1IIj9UD58mmKxQTBpcvJkQYhQiEXcDx8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hKFi70mOnyl1We87XvitSlI+xRiKcal301CWjOOohvRU0pSuCdd9C9zBGECg0uEuD+GEIAkqbQnYIFFrjoAd6oGCcuMH2pnmBnZCJRl8kj+93usRllWGkrsDVkVYY20ZcWT6fg2QabP4S4LofIMzixmW1bxpM3SnyKeXvhHmkJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5CYZcEw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD42C4CEFD
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758124284;
+	bh=wSDjAsdy1ct1IIj9UD58mmKxQTBpcvJkQYhQiEXcDx8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=m5CYZcEw9I7nmEIE1Tq0HNpmDpKsZ1VUBbba1N5sdJ0CX8Q4ypsTVJjSlKRXJW2Rr
+	 NTgculME0vaLnuJuSi62owwSgX0hy5Dmi94lgSKJJnXK1zpWo4bTd/2/Uu4KycQYsj
+	 o0OpgT504LLvqN4xqLDUxA/UDM0aB15rOIERiroBl4rfx0EUD7zQpxIoW28L/Pgc0D
+	 7E6/qjsAbXGsTo/ck4fJFBqPj5fChfKABMOg32HCxB0QFRMS38DHSuzUqlIzkEimQT
+	 TieR8DnY0w3AeXYtKU14PvlDCupoO+78nYY8MsZmIJ+LepTvcqF6mPdOazTc/FBXzh
+	 uU9MDAKZ6GEgg==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62f799a5b72so3156448a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:51:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXTyaFKeQn65ehMJM6RtAF3xmKfTFVb7273oaOrlgN0/ztZDKsjFAdGrx/wnvte5zfokiBUTQAPdPa7Qbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7VtxNzX1Tw73Gb5tq9wnrTOZQud0TIzIpfgRDnWXDZsr/Rx2D
+	65ravCxGNJ60eey/A626B0mQ1EelQTUjZTJ5aydu+fspeSM//lazoQcQOrmwOL/1I+7vwy+LEkN
+	IjXZTh8g3ZeJw2DnPAb7UKzbt5YBYzg==
+X-Google-Smtp-Source: AGHT+IEQUNiSULF4RZPxrd843RJxsNMWcyn4gHHJzWTPo6m9QAE6ENXTlI1iqzcmMiugwwweVXgbQDyWGm2y+akvks8=
+X-Received: by 2002:a05:6402:254e:b0:62f:1e7a:f842 with SMTP id
+ 4fb4d7f45d1cf-62f84430f45mr3188147a12.27.1758124283072; Wed, 17 Sep 2025
+ 08:51:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4774077.LvFx2qVVIh";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfeekiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehlghhirhgufihoohgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvr
- hhnvghlrdhorhhgpdhrtghpthhtohepjhhitgdvfeeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhunhhordhsrgesrghnrghlohhgrdgtohhmpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: romain.gantois@bootlin.com
+References: <20250916171327.3773620-1-Frank.Li@nxp.com>
+In-Reply-To: <20250916171327.3773620-1-Frank.Li@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 17 Sep 2025 10:51:11 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLghe-hR--D_Mm_rCnEDegLeaEQyZm2=yVVwhnf93QTsg@mail.gmail.com>
+X-Gm-Features: AS18NWDNgIjfZE_pIRM9cY13pxhbKfJyaLfWDBALsl3X2phF46vfhhDL8g2VqE4
+Message-ID: <CAL_JsqLghe-hR--D_Mm_rCnEDegLeaEQyZm2=yVVwhnf93QTsg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] dt-bindings: input: convert tca8418_keypad.txt to
+ yaml format
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---nextPart4774077.LvFx2qVVIh
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Wed, 17 Sep 2025 17:51:05 +0200
-Message-ID: <5135820.31r3eYUQgx@fw-rgant>
-In-Reply-To: <936e16dd-d11f-4452-8942-64366f173d6f@baylibre.com>
-MIME-Version: 1.0
+On Tue, Sep 16, 2025 at 12:13=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> Convert tca8418_keypad.txt to yaml format.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change in v2
+> - add TCA8418 to title
+> ---
+>  .../bindings/input/tca8418_keypad.txt         | 10 ---
+>  .../devicetree/bindings/input/ti,tca8418.yaml | 61 +++++++++++++++++++
+>  2 files changed, 61 insertions(+), 10 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/tca8418_keypa=
+d.txt
+>  create mode 100644 Documentation/devicetree/bindings/input/ti,tca8418.ya=
+ml
 
-On Tuesday, 16 September 2025 21:24:42 CEST David Lechner wrote:
-> On 9/16/25 5:24 AM, Romain Gantois wrote:
-> > The Linear Technology LTM8054 is a Buck-Boost voltage regulator with an
-> > input range of 5V to 36V and an output range of 1.2V to 36V.
-...
-> > +  The output current of the LTM8054 can be limited by tying the Iout pin
-> > to a +  current sense resistor. This limit can be further lowered by
-> > applying a +  voltage below 1.2V to the CTL pin.
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/regulator/regulator.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: lltc,ltm8054
-> 
-> Looks like they got bought by Analog Devices Inc., so adi,ltm8054.
-> 
-
-Ah yes, I'll also change the Kconfig and driver descriptions in that case. I'd 
-like to keep the lltc,fb-voltage-divider property name though, since that's 
-already used in an identical way by two other regulator bindings.
-
-...
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +
-> > +    / {
-> 
-> Examples usually don't have a root node. Probably explains
-> the bot errors. (but you should have seen the same errors
-> locally with make dt_binding_check.)
-> 
-
-I didn't see the errors but I'm guessing that's due to an out-of-date dtschema
-dependency on my system, thanks for pointing it out.
-
-Thanks,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart4774077.LvFx2qVVIh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjK2OkACgkQKCYAIARz
-eA6jKw//RMj5RRwagLh2PF9GStE9vCC5p4+y4Eg0rXPlUlnUwWlVa7/7Lxo5iqGz
-INOVs4kGtJDjAgj39G1b3xf+fD2BBQ83kJBJpwqq9q7Qd/GXykUeeAJn2aro8Ben
-C3+uvKfkmYVseDEEmrve/AZ4q7SlbIGKfC/BuCOifh6DAmgXxeLLBuLjTV8DRGBR
-jQQplTyW/08LX8IGIv+n4A7nvboH+dkQgfyLz3TOwXOA56frqh607OQTxvfe0xq0
-rjR7hlQYI5F31Ta9uuYwp7ZYyGeEePyE+q2Ea1/Hu9yP+w6QWSQith3RGZ/u/cmS
-Z60FXYyHJ5PAkIoyo9yLiCX5VID5mDkpapL9/jEMd+VMkq+HWthpoq5+aAUrhqTz
-XZYyo+KS1gqZQO0Du70qvxUhodOjpsJYCt0JXnY4MYAkrAjREdTkDfjFQhkmtlG3
-0HoSLJtN+ZO2JjdmdfdgYHcuDPunS4oUvaMBt467d0MxqD8OZYYTwmiRvLOY9QF1
-hlW5VjT2w5V8Eb/wEFofbXfLJeO8tEblfLzUkM/YcgU9o9u0owheqd7xs9w2U5IH
-LC+bN/2ZziX1tz02PTOvgGyrMsRjcYIW2s8qIw8WALy003I1TBmf2vjmnxcOQYh2
-1o9aFwYvItHUzndWLCjmu7i0BEBX4NObUjgV23C3ZC1aBVvOxm0=
-=Ccw5
------END PGP SIGNATURE-----
-
---nextPart4774077.LvFx2qVVIh--
-
-
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
