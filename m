@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-820583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B62B7CD0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D6CB7C61C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED7A483788
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6316E1892AF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 11:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88C5369991;
-	Wed, 17 Sep 2025 11:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB9237058C;
+	Wed, 17 Sep 2025 11:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b="cAl2XOq+"
+	dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b="bi/dQE+5"
 Received: from mail1.nippynetworks.com (mail1.nippynetworks.com [91.220.24.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D9A2D3A6A;
-	Wed, 17 Sep 2025 11:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C756A34AAF1;
+	Wed, 17 Sep 2025 11:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.220.24.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758109887; cv=none; b=r/vR7Ru9IOdsybg4DeUSAMOSkrAmA9lj+4ips4fM77Y6cLmnJ7IdlZDiweyCpq1oNGCkcMHa/P84z4whKHYj8CTESU4w4xq35EaNbI2uzpSqgRLnTg+Q8K533QeMJ6lJRHZSCGZmh029bNuM2liiy5BA5XnmjOqCE9pCZ/HkDKU=
+	t=1758109893; cv=none; b=es6l7i3yD7WuDi8C36xtZ1pyJ9xXcc6EdYcquTvKaX1BTxcaEc2DcQqgTbTLMgsgsVnShb3ihapz3NFZtF9zXaah4GF/n9G+mDaq0Ni3XoCI7slxcIrQBmzKOOGetiRzLouSwTfQLugth+qA824NrdG+YACgXbO8Z0QHNIFvKCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758109887; c=relaxed/simple;
-	bh=0nohFhmKR9STftEE0DY+R/Mq89luR5NTFPyy97r3aJM=;
+	s=arc-20240116; t=1758109893; c=relaxed/simple;
+	bh=YROZrb4qm7aQw+ORnAcXurjrsYXoyTb1RNcMG1YUdtQ=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PBr+tvYGQBDTxTgL3tp7w/ZMTQtFsL8PNOnb32uzDQV4wvEpu1rMLI26kGPLYRxQGu9LecD4VccP09KF11l/G8gxTtsT84+Y0nHMgtvs/aLvvbtkTWoCuSjSjzE4H2+cQAHOJRvO6AT4puvLtfBQ8GW+4td9i0trm5of+VMpRz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wildgooses.com; spf=pass smtp.mailfrom=wildgooses.com; dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b=cAl2XOq+; arc=none smtp.client-ip=91.220.24.129
+	 MIME-Version; b=dBvtufiPTasm04cQhunHSTfFDNlpZriu4iw9sjT3Xfjv7DHRwRCHFhtm+sJwkZthYStyIJ6oTLMDVZCs0wPc5vH463BUcwB1nNwYbj6aMAY4Za+5yCi87ZFQg5rNblKgjvQukKl2P5j4Or0yyK+ExCdeII9s4kgqDM8My8oFPPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wildgooses.com; spf=pass smtp.mailfrom=wildgooses.com; dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b=bi/dQE+5; arc=none smtp.client-ip=91.220.24.129
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wildgooses.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wildgooses.com
 Received: from grunt.nippynetworks.lan (unknown [94.228.36.46])
@@ -35,18 +35,18 @@ Received: from grunt.nippynetworks.lan (unknown [94.228.36.46])
 	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: lists@wildgooses.com)
-	by mail1.nippynetworks.com (Postfix) with ESMTPSA id 4cRcYR1NVHzkd2x;
-	Wed, 17 Sep 2025 12:51:23 +0100 (BST)
+	by mail1.nippynetworks.com (Postfix) with ESMTPSA id 4cRcYY3dbvzkd2w;
+	Wed, 17 Sep 2025 12:51:29 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wildgooses.com;
-	s=dkim; t=1758109883;
+	s=dkim; t=1758109889;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/GxweiOVVTcEgVbzVlG+QY4Uckoc7fpLW+fnTNbNLkg=;
-	b=cAl2XOq+1DTiWZUTOf9eSqTYc8ZrsOs3EmhV62esiHsvB8JkqJ7y3Yjifv2AoqHinHsYRR
-	1fqM28Ob/n7PS5IpdT4dHmk045b1EtTKwUmM6C3UwI4TNTbjzTdrlxhfCw1vDuDO4ZqM8U
-	Xh0ncBjWaVNfo2OnS/eu76YQYoe5Mfc=
+	bh=3FCcXXM9l7ILpFzqFtjvNKikZTyNEREOH8NytkDV5b4=;
+	b=bi/dQE+5W/WC5AbtWSIh5zzd/w2Pv6MG4i27td2c5fN8P4GOIQFNGPb1RlByU73e2Ql7yO
+	juSdNoFPCA18pmdrY0YHyA07bt4CIdBWLI/VdpFw9P+Xy8NqLh8qbCUJSgqpCglsy4OabM
+	3RLo56ROxq0sBj7TVFqlMx11y8fXFrI=
 From: Ed Wildgoose <lists@wildgooses.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,9 +57,9 @@ To: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: rockchip: correct uart mux for Radxa ZERO 3
-Date: Wed, 17 Sep 2025 11:49:30 +0000
-Message-ID: <20250917114932.25994-2-lists@wildgooses.com>
+Subject: [PATCH 2/2] rockchip: dts: Enable UART DMA by adding default dma-names property
+Date: Wed, 17 Sep 2025 11:49:31 +0000
+Message-ID: <20250917114932.25994-3-lists@wildgooses.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250917114932.25994-1-lists@wildgooses.com>
 References: <20250917114932.25994-1-lists@wildgooses.com>
@@ -71,51 +71,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The rk3566 has multiplexed pins and the uarts can be moved to a choice
-of 2 pin groups. The default rk356x-base.dtsi appears to default to mux0
-for all uarts, however, specific hardware might choose to implement
-alternatives
+Kernel appears to need a dma-names set for DMA to actually enable. Set a
+default dma-names property for all UARTs defined in the base rk356x-base
+dtsi
 
-The Radxa zero 3 shows that is uses M1 for uarts:
-- uart4
-- uart5
-- uart9
-
-These aren't normally enabled, but we should at least correct the
-default pinctrl definitions. Without these changes there will be
-conflicts with mmc0/mmc1, leading to the SD or eMMC going missing.
+This is tested on a Radxa Zero 3W (which has 5x UARTs) and removes the
+warnings and enables DMA on this platform
 
 Signed-off-by: Ed Wildgoose <lists@wildgooses.com>
 ---
- .../boot/dts/rockchip/rk3566-radxa-zero-3.dtsi    | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-index 1ee5d96a4..41b3c4403 100644
---- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-@@ -492,6 +492,21 @@ &uart2 {
- 	status = "okay";
- };
- 
-+&uart4{
-+    pinctrl-names = "default";
-+    pinctrl-0 = <&uart4m1_xfer>;
-+};
-+
-+&uart5 {
-+    pinctrl-names = "default";
-+    pinctrl-0 = <&uart5m1_xfer>;
-+};
-+
-+&uart9 {
-+    pinctrl-names = "default";
-+    pinctrl-0 = <&uart9m1_xfer>;
-+};
-+
- &usb_host0_xhci {
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+index fd2214b6f..55240f76d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+@@ -1334,6 +1334,7 @@ uart1: serial@fe650000 {
+ 		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 2>, <&dmac0 3>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart1m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1348,6 +1349,7 @@ uart2: serial@fe660000 {
+ 		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 4>, <&dmac0 5>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart2m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1362,6 +1364,7 @@ uart3: serial@fe670000 {
+ 		clocks = <&cru SCLK_UART3>, <&cru PCLK_UART3>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 6>, <&dmac0 7>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart3m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1376,6 +1379,7 @@ uart4: serial@fe680000 {
+ 		clocks = <&cru SCLK_UART4>, <&cru PCLK_UART4>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 8>, <&dmac0 9>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart4m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1390,6 +1394,7 @@ uart5: serial@fe690000 {
+ 		clocks = <&cru SCLK_UART5>, <&cru PCLK_UART5>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 10>, <&dmac0 11>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart5m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1404,6 +1409,7 @@ uart6: serial@fe6a0000 {
+ 		clocks = <&cru SCLK_UART6>, <&cru PCLK_UART6>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 12>, <&dmac0 13>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart6m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1418,6 +1424,7 @@ uart7: serial@fe6b0000 {
+ 		clocks = <&cru SCLK_UART7>, <&cru PCLK_UART7>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 14>, <&dmac0 15>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart7m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1432,6 +1439,7 @@ uart8: serial@fe6c0000 {
+ 		clocks = <&cru SCLK_UART8>, <&cru PCLK_UART8>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 16>, <&dmac0 17>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart8m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
+@@ -1446,6 +1454,7 @@ uart9: serial@fe6d0000 {
+ 		clocks = <&cru SCLK_UART9>, <&cru PCLK_UART9>;
+ 		clock-names = "baudclk", "apb_pclk";
+ 		dmas = <&dmac0 18>, <&dmac0 19>;
++		dma-names = "tx", "rx";
+ 		pinctrl-0 = <&uart9m0_xfer>;
+ 		pinctrl-names = "default";
+ 		reg-io-width = <4>;
 -- 
 2.49.0
 
