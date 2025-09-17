@@ -1,148 +1,209 @@
-Return-Path: <linux-kernel+bounces-820603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8916CB7CAC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:07:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B369B7CADF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 379607B6206
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464F65814AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 12:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7EB37429D;
-	Wed, 17 Sep 2025 12:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7F0393DE8;
+	Wed, 17 Sep 2025 12:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W6qE10gz"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="gr5ali9U"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77F437C102
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 12:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E73C37C103;
+	Wed, 17 Sep 2025 12:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758110856; cv=none; b=c6Vclwd9IXRWLBY0FzmMMLE5+2CDVYBHdWSzYqo+/xL50RZCAp3X8OaacR9THSaLvro95hUjqJSC8HdbuEpkJUKrBlNxw32asnRrPllZ6uXjTL0fXAdqYRXNEo1d4gau9L+lwL35y3xKyDkMlTnBb+XUTUlJj4EASMxQtD0okJY=
+	t=1758110858; cv=none; b=sAlo2knjKQpUIziFIkWfMLNK82uGKOZM/eFWem0IWIgMGIHcy/+8hzkcuOdiFLlR6pt6u+sI9rpzNIsm7OCauNqfOxJX4iaeIgwnAiCcuEMFBqFoJrINlXGTjOak2avG8oURXN+LAbkB3sSJHS/H1WhA+mj0U17r6x7HyLDx6uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758110856; c=relaxed/simple;
-	bh=CfXS5/PPeqiRHOfIV/RY4aKkXODckn9t5qURcuM16r0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ShHrV3CQ/2A/TWsk/aOmjP/dE2z5Qd2U3k3x+U+VUKRD6Gx/gMlsypMGL05nj6Tcc5Vap/RGGDuNkEAnvng/peV+oyCIOplXp7NcgHFMPl2I8R6t3/uDdptMhEIuk3sceEeQcRcpwVcCiMQ0DNu1XuO07QhAYe0Cf/bK3P2raiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--srosek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W6qE10gz; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--srosek.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45f28552927so19463405e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 05:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758110853; x=1758715653; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SXPpYw5PptfhxuGeyMlPO4iaL9Igmx+1S+SUZwA7GbM=;
-        b=W6qE10gzXtVTlHE7Kgr0vxxauDXDlrd5kZ+zAg8KgvTVzLo15ZY/O1YuSdXeSNckGd
-         epX67hBza6sHzvUOl8yMKucNdfxMcLOYnZ5GDbQH1zQxzjAgZHG7iZKjlkIg1Y71fkHO
-         WmFGGxu+BhrOvlCx3UGAxinlbg5vnY4Vu49kJbR6KIIzeczBlPrM2hYSaUjkA/8dBlWm
-         lcP1xiD9a5wK8466Pcyh8fHb7IS8UsUe8MQta8cKvZa2aRgfLA7YJKEFUg3cFgSF6Lr4
-         WKNv4UXtjyIsx0e2CWb/BMruxdfl8eViWsnoIHgWNaeWDtbRz/bY/Q36kZAUgjkGaVv3
-         Oskw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758110853; x=1758715653;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SXPpYw5PptfhxuGeyMlPO4iaL9Igmx+1S+SUZwA7GbM=;
-        b=af62Xg7NO9PBS97KcgRMMqQ5Z9n8oSIhMlUJcXIf/a/IKlXBLtcRmm3p7pudQ+1Zhn
-         nzQuqAwAt7KdYO/WLj5UgPZD/T9n7y0IGitpFPbvVPpd6XZQxm9mAiAAjb43cm8GtN/+
-         Lkr3p2WKbrsiBbukvGKuym9hXMFxMzQktAnLxX8O47VKo+LN9UW/OLpkefqBloUBWFoZ
-         s8vnHPpCjpp+dE26yP9fp0lji73EdqmtrPHfe7kdIFeEpvuhYdOs3FWib0ViDRX0lbHH
-         JaDHpl2jNS/QXTIhYikk+7uk7Anw8jR2JghejrpVw4yhtfq9cKuUpp450VA3f7pMqe8J
-         uMTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF/62FICr9m+NdaVdZw75Czpzdc6S/ZF/VrOgeGn3v0tAMSzxKNHiEpbTL+Z3+FE+vphr4PY62+lpsLFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywei9AZ5TZC7c5crWowhJOBk5/NKUJ7m910v6Olq5725KrweIaG
-	DYBAoLMHYFyKm/+DEiYxlNBv5kT2P5SX12LXEyMnCn1sl4e4l8GPySIsZeGV6zevqwOekNCYnhi
-	Lbh3glQ==
-X-Google-Smtp-Source: AGHT+IG5EYuiZGTb0cN7pl1n8KbdAeBSylPX3GcroguKVU2xV9KwaI/F70l4wkEMjhLkEIA7QuUMhQPK0SM=
-X-Received: from wmsr5.prod.google.com ([2002:a05:600c:8b05:b0:459:7c15:15b9])
- (user=srosek job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3b09:b0:45f:27a3:6e0e
- with SMTP id 5b1f17b1804b1-46202de0b19mr20212145e9.14.1758110853279; Wed, 17
- Sep 2025 05:07:33 -0700 (PDT)
-Date: Wed, 17 Sep 2025 12:07:14 +0000
-In-Reply-To: <20250917120719.2390847-1-srosek@google.com>
+	s=arc-20240116; t=1758110858; c=relaxed/simple;
+	bh=BJhiBrqq2sloeNw+EH3KAeDY8MIsGLxoaYBZchWOtmQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UTp5mCQNX5vSl0KopS2ZbNkbhQdEwDDBSy30i7XpZqWDxIyrwRuD9JLLv3lAhnPO1u1+Qf2wTpw91huNwhJk/1onLkhA9ty2yR3jM+FrX2+S5WO6DcSOHolXBY7lRqyVMe9eAS4lrwYZ3aZfwdbjgbT9xZZnHlPf1GU2qOWZxgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=gr5ali9U; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: e148e22293be11f0b33aeb1e7f16c2b6-20250917
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=4bOud9qjAxW5fippeolvgsdJ9dk6b5FIb1o0FJOlHWU=;
+	b=gr5ali9UymmN1cDIkZECdrpRGYKmnAyOcwGnaj0nHgIs/v+NN0BMvukyoX52lxzm1NSHcz02o9fjscBBgrwcM3VK4WZjvUGvOzUXzGRJhTYPcOGQKSuWaRYs7HSQp8lPMPGg515gTDvGuyHhh3tgQ+cFKh0BwqdRa/FdXhim54E=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:b2488756-dde2-4a77-9395-f024854d0835,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:51fea76c-8443-424b-b119-dc42e68239b0,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836,TC:-5,Content:0|15|50,EDM:-3
+	,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: e148e22293be11f0b33aeb1e7f16c2b6-20250917
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <friday.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 900360238; Wed, 17 Sep 2025 20:07:28 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 17 Sep 2025 20:07:26 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 17 Sep 2025 20:07:25 +0800
+From: Friday Yang <friday.yang@mediatek.com>
+To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob
+ Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>
+CC: Friday Yang <friday.yang@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v11 0/2] Add SMI reset and clamp for MediaTek MT8188 SoC
+Date: Wed, 17 Sep 2025 20:07:15 +0800
+Message-ID: <20250917120724.8650-1-friday.yang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250917120719.2390847-1-srosek@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250917120719.2390847-2-srosek@google.com>
-Subject: [PATCH v2 1/6] ACPI: DPTF: Ignore SoC DTS thermal while scanning
-From: Slawomir Rosek <srosek@google.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
-	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
-	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Slawomir Rosek <srosek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The Intel SoC DTS thermal driver on Baytrail platform uses IRQ 86 for
-critical overheating notification. The IRQ 86 is described in the _CRS
-control method of INT3401 device, thus Intel SoC DTS thermal driver
-requires INT3401 device to be enumerated.
+Based on tag: next-20250916, linux-next/master
 
-Since dependency on INT3401 device is unrelated to DPTF the IS_ENABLE()
-macro is removed from ACPI DPTF INT340X scan handler, instead Kconfig
-is updated to ensure proper enumeration of INT3401 device.
+On the MediaTek MT8188 SoC platform, we encountered power-off failures
+and SMI bus hang issues during camera stress tests. The issue arises
+because bus glitches are sometimes produced when MTCMOS powers on or
+off. While this is fairly normal, the software must handle these
+glitches to avoid mistaking them for transaction signals. What's
+more, this issue emerged only after the initial upstreaming of SMI
+driver.
 
-Fixes: 014d9d5d0cc1 ("ACPI/int340x_thermal: enumerate INT3401 for Intel SoC DTS thermal driver")
-Signed-off-by: Slawomir Rosek <srosek@google.com>
+The software solutions can be summarized as follows:
+
+1. Use CLAMP to disable the SMI sub-common port after turning off the
+   LARB CG and before turning off the LARB MTCMOS.
+2. Use CLAMP to disable/enable the SMI sub-common port.
+3. Implement an AXI reset for SMI LARBs.
+
 ---
- drivers/acpi/dptf/int340x_thermal.c | 7 +------
- drivers/thermal/intel/Kconfig       | 1 +
- 2 files changed, 2 insertions(+), 6 deletions(-)
+Changes in v11:
+- Add error checking in the 'mtk_smi_genpd_callback' function and use
+  'switch-case' statement instead of 'if-else'.
+- Use 'larb->larb_gen->clamp_port[larb->larbid]' to determine
+  whether smi larb requires clamp and reset operations or not in
+  'mtk_smi_larb_probe'. Remove the '_optional' suffix from the
+  function name.
+- Replace 'devm_reset_control_get_optional_exclusive' with
+  'devm_reset_control_get_exclusive' in 'mtk_smi_larb_parse_reset',
+  return the error code if it fails to get the reset controller.
+- Remove genpd callback when smi larb probe fails.
 
-diff --git a/drivers/acpi/dptf/int340x_thermal.c b/drivers/acpi/dptf/int340x_thermal.c
-index a222df059a16..947fe50c2ef6 100644
---- a/drivers/acpi/dptf/int340x_thermal.c
-+++ b/drivers/acpi/dptf/int340x_thermal.c
-@@ -11,10 +11,9 @@
- 
- #include "../internal.h"
- 
--#define INT3401_DEVICE 0X01
- static const struct acpi_device_id int340x_thermal_device_ids[] = {
- 	{"INT3400"},
--	{"INT3401", INT3401_DEVICE},
-+	{"INT3401"},
- 	{"INT3402"},
- 	{"INT3403"},
- 	{"INT3404"},
-@@ -76,10 +75,6 @@ static int int340x_thermal_handler_attach(struct acpi_device *adev,
- {
- 	if (IS_ENABLED(CONFIG_INT340X_THERMAL))
- 		acpi_create_platform_device(adev, NULL);
--	/* Intel SoC DTS thermal driver needs INT3401 to set IRQ descriptor */
--	else if (IS_ENABLED(CONFIG_INTEL_SOC_DTS_THERMAL) &&
--		 id->driver_data == INT3401_DEVICE)
--		acpi_create_platform_device(adev, NULL);
- 	return 1;
- }
- 
-diff --git a/drivers/thermal/intel/Kconfig b/drivers/thermal/intel/Kconfig
-index e0268fac7093..47950859b790 100644
---- a/drivers/thermal/intel/Kconfig
-+++ b/drivers/thermal/intel/Kconfig
-@@ -45,6 +45,7 @@ config INTEL_SOC_DTS_IOSF_CORE
- config INTEL_SOC_DTS_THERMAL
- 	tristate "Intel SoCs DTS thermal driver"
- 	depends on X86 && PCI && ACPI
-+	select INT340X_THERMAL
- 	select INTEL_SOC_DTS_IOSF_CORE
- 	help
- 	  Enable this to register Intel SoCs (e.g. Bay Trail) platform digital
--- 
-2.51.0.384.g4c02a37b29-goog
+Changes in v10:
+- Rename 'smi_comm_inport_id' to 'smi_comm_in_port_id'.
+- Return 0 when it fails to get 'larb_id' in
+  'mtk_smi_larb_parse_clamp_optional'.
+- Link to v10:
+  https://lore.kernel.org/lkml/20250806085946.11383-1-friday.yang@mediatek.com/
+
+Changes in v9:
+- Add 'dev_pm_genpd_remove_notifier' in 'mtk_smi_larb_remove'.
+- Remove unused macros.
+- Rename 'sub_comm_syscon' to 'smi_comm_syscon'.
+- Rename 'sub_comm_inport_id' to 'smi_comm_inport_id'.
+- Add more detailed descriptions in change log.
+- Fix incorrect tags.
+- Link to v9:
+  https://lore.kernel.org/lkml/20250804125215.23076-1-friday.yang@mediatek.com/
+
+Changes in v8:
+- Fix incorrect tags.
+- Link to v8:
+  https://lore.kernel.org/lkml/20250521063347.31578-1-friday.yang@mediatek.com/
+
+Changes in v7:
+- We replaced 'pm_runtime_enable' with 'devm_pm_runtime_enable' in the
+  v6 patch. This changed the order of cleanup, and reviewers expressed
+  concerns that it could introduce unexpected issues. So v7 discard this
+  change and continue using 'pm_runtime_enable'. We need to conduct
+  further investigation to determine if there are any issues related
+  to the cleanup order. This might be resolved in the future, but for
+  now, we just maintain the current status.
+- Link to v7:
+  https://lore.kernel.org/lkml/20250430094545.23932-1-friday.yang@mediatek.com/
+
+Changes in v6:
+- Fix coding style.
+- Add another patch to replace 'pm_runtime_enable' with
+  'devm_pm_runtime_enable'.
+- Link to v6:
+  https://lore.kernel.org/lkml/20250408033206.12176-1-friday.yang@mediatek.com/
+
+Changes in v5:
+- Use 'devm_pm_runtime_enable' instead of 'pm_runtime_enable'.
+- Remove 'pm_runtime_disable' in 'mtk_smi_common_remove' and
+  'mtk_smi_larb_remove'.
+- Link to v5:
+  https://lore.kernel.org/lkml/20250311122327.20685-1-friday.yang@mediatek.com/
+
+Changes in v4:
+- Use 'devm_reset_control_get_optional_exclusive' instead of
+  'devm_reset_control_get'.
+- Link to v4:
+  https://lore.kernel.org/lkml/20250221074846.14105-1-friday.yang@mediatek.com/
+
+Changes in v3:
+- Remove redundant descriptions for 'resets' and 'reset-names'.
+- Modify the requirements for 'resets' and 'reset-names'.
+- Rename 'mtk_smi_larb_parse_clamp' to 'mtk_smi_larb_parse_clamp_optional'.
+- Rename 'mtk_smi_larb_parse_reset' to 'mtk_smi_larb_parse_reset_optional'.
+- Merge 'mtk_smi_larb_clamp_protect_enable' and
+  'mtk_smi_larb_clamp_protect_disble' into one function.
+- Modify the definition for mtk_smi_larb_clamp_port_mt8188,
+  use 'larbid' as the index of the array.
+- Use 'syscon_regmap_lookup_by_phandle' instead of 'device_node_to_regmap'.
+- Do Not parse 'resets', just check the return value of
+  'devm_reset_control_get'.
+- Add 'has_gals' flag for 'mtk_smi_sub_common_mt8188'.
+- Link to v3:
+  https://lore.kernel.org/lkml/20250121064934.13482-1-friday.yang@mediatek.com/
+
+Changes in v2:
+- According to previous discussions in v1, divided these four
+  patches into two topic separately.
+- Modify the description for 'resets' in binding.
+- Add const value 'larb' for 'reset-names' in binding.
+- Modify requirement for 'resets' and 'reset-names' in binding.
+- Delete 'mediatek,smi-sub-comm' in binding.
+- Delete 'mediatek,smi-sub-comm-in-portid' in binding.
+- Modify the example in binding.
+- Add 'mtk_smi_larb_clamp_port_mt8188' definition in SMI driver.
+- Change the way to parse the 'resets' in driver.
+- Change label from 'err_pm_disable' to 'err_link_remove'.
+- Link to v2:
+  https://lore.kernel.org/lkml/20241120063701.8194-1-friday.yang@mediatek.com/
+
+Friday Yang (2):
+  dt-bindings: memory: mediatek: Add SMI reset and clamp for MT8188
+  memory: mtk-smi: mt8188: Add SMI reset and clamp
+
+ .../mediatek,smi-common.yaml                  |   2 +
+ .../memory-controllers/mediatek,smi-larb.yaml |  19 +++
+ drivers/memory/mtk-smi.c                      | 151 ++++++++++++++++++
+ 3 files changed, 172 insertions(+)
+
+--
+2.46.0
 
 
