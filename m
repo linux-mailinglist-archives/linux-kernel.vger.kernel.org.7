@@ -1,96 +1,173 @@
-Return-Path: <linux-kernel+bounces-820286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F7EB7D65E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:27:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E8CB7F111
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0819E4E2CFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:52:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9767B66D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 08:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7A830CD84;
-	Wed, 17 Sep 2025 08:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA0B30C63E;
+	Wed, 17 Sep 2025 08:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m7XaImCj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qmqevQHC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="WkXgNAV/"
+Received: from sg-1-36.ptr.blmpb.com (sg-1-36.ptr.blmpb.com [118.26.132.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E6A30BB8C;
-	Wed, 17 Sep 2025 08:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A1030BB8C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758099162; cv=none; b=h+DTO0xU1VjQvrWyiIm8Xvw0h5hF/4CqLyCPe8873KM6x2w+lvio0SaiklUHauqHK7a2IyeCyv3Vuu+rPnjYtVyqGT+BWIB34njzXtJfZBZQbSXy57KO9JAPxBT5FFrRM1dWIcNihhWsvK2TfaQGN1JFA4j0spD1JJkpOGTUwBc=
+	t=1758099193; cv=none; b=aBMV2Y0fTQT8eTCcbPKAavn3QTJsc0mwwxPcnyAkZyBZlBqwWADdMmIaI40qKpToRU/ojfAHUkg8OTQ5Tps9mjZJHHqz9nnAtwzLwh+DdTC9N5eE9jJY4CDZuMT2VQ/T9GGT1ZMAwSp0ChBMI0hZ0sGwnSlZs/1elvAsUWsWdro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758099162; c=relaxed/simple;
-	bh=atzfQUupMVKU+GA+Iu1DsbU6neEf3EM253VZKHo6Rd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAOVcPJ2mv7I73x2veeL4j1EQ+uP38PLmvu+VOBFvie8ygkkNSAEGQuiMjP2zYeow5JPRkah5rCHhxOcb3ZWl2MACME7LQK8W32h75+eSW+ziXBjKZM0NIvE9cse7Fn7NMEJ/R8M8JaUB2hUiVQuqatFowL8hdemmQ5i/gVLR0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m7XaImCj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qmqevQHC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 17 Sep 2025 10:52:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758099157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UYemsYQ6UmORVQ9ttT2LJtc7WYrQwh8a7dWRsA0dztY=;
-	b=m7XaImCjj1w6bu6Q/iu/7hzN7vVejI1u/9BrJmF5jjAYM1UnNjT30A5ixhDMRWMOEfxOYw
-	mFQcp7mjiwg3Ch4vDtfxFu6qjrvu7FtsgHgIyoCNgDfcDOf8hnSpaQXAG1Pt9m34aIK0p+
-	/kdlAqotL1A+aeSxuuofGLGbM+Y4/sPvT95QQgCke3nxsGuWCaMBWz4XoGETl9jFXOeXCW
-	tsAgNiPSPhLaAob0q35GJUuWdQG3lJcrmK1AFVjMw9em82jhDH9PoK3Nxa4DUwa6HJmmJ1
-	Q0E3APNlQ2hEPlh/DZwM4tmuYAnK89bsL0OdnfwZGs0c4sBvmsLPUJE9Yw6zwg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758099157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UYemsYQ6UmORVQ9ttT2LJtc7WYrQwh8a7dWRsA0dztY=;
-	b=qmqevQHC0sScsGWYHXOnxVuxCrDzlz41JCRL6TK0s+1uD79dU6YDB+m0woRFcDU//o6d4I
-	YiLBX/y9urXoEfDw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Matthew Wood <thepacketgeek@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Mario Limonciello <superm1@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND PATCH v7 1/1] PCI/sysfs: Expose PCIe device serial number
-Message-ID: <20250917104859-6d38cb60-b638-4e5f-bf67-22683a441ae6@linutronix.de>
-References: <20250821232239.599523-2-thepacketgeek@gmail.com>
- <20250915193904.GA1756590@bhelgaas>
- <aMnmTMsUWwTwnlWV@kbusch-mbp>
- <20250917083422.GA1467593@rocinante>
+	s=arc-20240116; t=1758099193; c=relaxed/simple;
+	bh=5D6XPXshtkVYsGDcoT85wx+v/thY03p43cV+BvUTXqE=;
+	h=To:Mime-Version:Date:Content-Type:Subject:Message-Id:Cc:From; b=cwO4nkcS0NFlNMd1hKrMq+osw1D+HeXqvooQ7u4MUHyQCSscnAnmst4tD/0ltD8tv+IZDGzqfgER8QnaE7mZ9oXTbLqzwktuhnWG/C0YFMCM5kTJT9i3f5p/WNflXJmBk+RMgj3ElQYmh/pHiGIoK+aU0MwrFtQPEOPKi9zpN/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=WkXgNAV/; arc=none smtp.client-ip=118.26.132.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1758099181;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=h7Z/HOQPJW5/DLBofPfWPAnGx2zrqJmmsBycrRC0XrQ=;
+ b=WkXgNAV/SA8uP7jnNMyoR3dKk7+6PrGMp/9HHMySUNi4e7gkpZcmuhOqKluuU8k2iSkcpJ
+ p9dIJ7+5dUKz0CfO+WTijrdIukMfnq7sVTFtaebrZETwB2T2pBdEMp93gMofYfMfQSLhCU
+ EEl946pF3173RHATlpgr8YZD58iqByWkfveVTvX7oYuhYpFC0m2zXzaDWWVEQDr7Fwkgsx
+ 1KWc8YwwTN3iAjVdVisHiDss9INHsos9tVNYts7dAsj6IlpN3RoJ6crgPek6dJe1R05/yP
+ C2BpjqMd9kiM2LvGZ+tV6Lb9/2Pxa049Ii6ePaFxhtymjnYpo5fJ2koUDIj5tQ==
+To: <anup@brainfault.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250917083422.GA1467593@rocinante>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.43.0
+Date: Wed, 17 Sep 2025 16:52:46 +0800
+X-Original-From: BillXiang <xiangwencheng@lanxincomputing.com>
+X-Lms-Return-Path: <lba+268ca76eb+72b864+vger.kernel.org+xiangwencheng@lanxincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] riscv: Move user-visible sbi ext ids to uapi
+Message-Id: <20250917085246.1430354-1-xiangwencheng@lanxincomputing.com>
+Content-Transfer-Encoding: 7bit
+Cc: <kvm-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, 
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, 
+	<aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <atishp@rivosinc.com>, 
+	<ajones@ventanamicro.com>, 
+	"BillXiang" <xiangwencheng@lanxincomputing.com>
+From: "BillXiang" <xiangwencheng@lanxincomputing.com>
+Received: from Bill.localdomain ([222.128.9.250]) by smtp.feishu.cn with ESMTP; Wed, 17 Sep 2025 16:52:58 +0800
 
-On Wed, Sep 17, 2025 at 05:34:22PM +0900, Krzysztof Wilczyński wrote:
+Move those sbi ext ids to uapi because they will be forwarded
+to user space by kvm.
 
-(...)
+Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
+---
+ arch/riscv/include/asm/sbi.h      | 16 +-----------
+ arch/riscv/include/uapi/asm/sbi.h | 43 +++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 15 deletions(-)
+ create mode 100644 arch/riscv/include/uapi/asm/sbi.h
 
-> > It's a waste of resources to provide a handle just to say the capability
-> > doesn't exist when the handle could just not exist instead.
-> 
-> I haven't checked how the kernfs side looks like, admittedly, but I think
-> whether an attribute is visible or not, it does not unload and/or de-allocate
-> any space for the accompanying kernfs object...  So, the resources saving
-> here might not be in any way significant.
-
-If I read the sysfs code correctly (create_files() in fs/sysfs/group.c),
-the kernfs node should not even be allocated for invisible files.
-
-
-Thomas
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index 341e74238aa0..e196feaabb2e 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -10,13 +10,12 @@
+ #include <linux/types.h>
+ #include <linux/cpumask.h>
+ #include <linux/jump_label.h>
++#include <uapi/asm/sbi.h>
+ 
+ #ifdef CONFIG_RISCV_SBI
+ enum sbi_ext_id {
+ #ifdef CONFIG_RISCV_SBI_V01
+ 	SBI_EXT_0_1_SET_TIMER = 0x0,
+-	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
+-	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
+ 	SBI_EXT_0_1_CLEAR_IPI = 0x3,
+ 	SBI_EXT_0_1_SEND_IPI = 0x4,
+ 	SBI_EXT_0_1_REMOTE_FENCE_I = 0x5,
+@@ -37,13 +36,6 @@ enum sbi_ext_id {
+ 	SBI_EXT_NACL = 0x4E41434C,
+ 	SBI_EXT_FWFT = 0x46574654,
+ 
+-	/* Experimentals extensions must lie within this range */
+-	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
+-	SBI_EXT_EXPERIMENTAL_END = 0x08FFFFFF,
+-
+-	/* Vendor extensions must lie within this range */
+-	SBI_EXT_VENDOR_START = 0x09000000,
+-	SBI_EXT_VENDOR_END = 0x09FFFFFF,
+ };
+ 
+ enum sbi_ext_base_fid {
+@@ -263,12 +255,6 @@ enum sbi_pmu_ctr_type {
+ #define SBI_PMU_STOP_FLAG_RESET BIT(0)
+ #define SBI_PMU_STOP_FLAG_TAKE_SNAPSHOT BIT(1)
+ 
+-enum sbi_ext_dbcn_fid {
+-	SBI_EXT_DBCN_CONSOLE_WRITE = 0,
+-	SBI_EXT_DBCN_CONSOLE_READ = 1,
+-	SBI_EXT_DBCN_CONSOLE_WRITE_BYTE = 2,
+-};
+-
+ /* SBI STA (steal-time accounting) extension */
+ enum sbi_ext_sta_fid {
+ 	SBI_EXT_STA_STEAL_TIME_SET_SHMEM = 0,
+diff --git a/arch/riscv/include/uapi/asm/sbi.h b/arch/riscv/include/uapi/asm/sbi.h
+new file mode 100644
+index 000000000000..d29ac0abeefe
+--- /dev/null
++++ b/arch/riscv/include/uapi/asm/sbi.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Copyright (C) 2025 Lanxincomputing Corporation or its affiliates.
++ *
++ * Authors:
++ *     BillXiang <xiangwencheng@lanxincomputing.com>
++ */
++
++#ifndef _UAPI_ASM_RISCV_SBI_H
++#define _UAPI_ASM_RISCV_SBI_H
++
++
++enum SBI_EXT_ID {
++	/*
++	* The CONSOLE_GETCHAR/CONSOLE_PUTCHAR SBI calls cannot be
++	* handled in kernel so they will be forwarded to userspace by kvm.
++	*/
++	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
++	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
++	/*
++	* Both SBI experimental and vendor extensions are
++	* unconditionally forwarded to userspace by kvm.
++	*/
++	/* Experimentals extensions must lie within this range */
++	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
++	SBI_EXT_EXPERIMENTAL_END = 0x08FFFFFF,
++
++	/* Vendor extensions must lie within this range */
++	SBI_EXT_VENDOR_START = 0x09000000,
++	SBI_EXT_VENDOR_END = 0x09FFFFFF,
++};
++
++/*
++* The SBI debug console functions are unconditionally
++* forwarded to the userspace by kvm.
++*/
++enum sbi_ext_dbcn_fid {
++	SBI_EXT_DBCN_CONSOLE_WRITE = 0,
++	SBI_EXT_DBCN_CONSOLE_READ = 1,
++	SBI_EXT_DBCN_CONSOLE_WRITE_BYTE = 2,
++};
++
++#endif /* _UAPI_ASM_RISCV_SBI_H */
+\ No newline at end of file
+-- 
+2.43.0
 
