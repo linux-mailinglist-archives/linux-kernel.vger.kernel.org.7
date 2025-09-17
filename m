@@ -1,187 +1,215 @@
-Return-Path: <linux-kernel+bounces-819786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524F3B7D200
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DEFB7D705
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DA43AA1D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:35:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B14E1BC0C57
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E941D5ACE;
-	Wed, 17 Sep 2025 00:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E984F1F9F70;
+	Wed, 17 Sep 2025 00:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OhV3CkUR"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lLhPqSRK"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81B01534EC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C381C4A0A
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758069296; cv=none; b=H/pcpbvb9c/urt0lnxTGMpwvNlIfZ0vSaUFjSCCbifVK0LE1LRupu/KuTmHz4JhdXFVPm2axZa3/XzLmbQ8Zq4Ue3LU6SGfYdn3+T9sXuuVKOTT8XS77gUaBbFawoI9i5Da3slFwCxgNpo6tWqmJoyTP4XSWxGqfrNFqHtWtgEk=
+	t=1758069351; cv=none; b=sjkdAFowMGy/DRqJEea4PB7oCq86Aulo+S93N54j2ca3lU8ReMOthMGeb4axfvZvrsbi0K397TeWa7879UwVrZuMDYm6nBQT6fpn+GSZiALgVgMOu2E0FkEp9HigobBkuMlWsMRg7ihSqRkBtLU5GN/hksDCLs3x48WbEp0cdjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758069296; c=relaxed/simple;
-	bh=6/rB1l/eXWHaa3FIjR4b9vplzipgbYUFKcxcVcRHxEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IH8D/IkGNdiKa35TyoxGfv6Y/8na3cMKebwTr6ngJ9YDYhyJk3eJ0/5YdIdbCUXwjFaRBdcWahv+83mijHYW0ALYPAPJxfFKflemSaXXdHPX1sQzHeMjSBsAGw0x+3FncQHG4dLf0ADOuKNms1jrkMMUd7lgFoiDs0OP2EyYhiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OhV3CkUR; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5702b63d72bso3991e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:34:54 -0700 (PDT)
+	s=arc-20240116; t=1758069351; c=relaxed/simple;
+	bh=OHJWfaJyWpGK0VAeh46ZpICOh7jiXlPJ5BpYZKqe+RA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AGCmxzNg0jQH+yrG8S8fC5YELyrlKEfPe4vGj6PP8e4ItdhhwxHIZnpABpM2Ck7BwZfw1Q4LyhxnZn+qr4V6IqNOaFhCBF4OfFM03mvi4USCv6h/qKiOhcDgkLL6NexC1qtPYVfpB4dMGWsGrMt2ZnF55b83mGX/cI+LEDFjj8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lLhPqSRK; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26808b24a00so302825ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:35:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758069293; x=1758674093; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0AF9Zf/ufENcHrKMvHlrpWPSseQ/RzWNQreOKhevrxE=;
-        b=OhV3CkURQqmcrRTl0ac29G3gbVj0iibi6GClojK388ma6gLPbjDN7Kwz2j4bi5Ou8h
-         D/xA81kVVIOcxJZXPglu7BNbzHxNBRKbOfSJY+TJXYrCAQ9bigvXoM9o9QYUClqQVNr9
-         0PiqN5ybujC6Q8IDznsHQkR4a7ileIqbxdG4mjnrIRmlpT2LNbMmoDhbc0mFVro3atQu
-         Xo8JIAk4a8kn1ZvmZKUeXq8SNRtM18HA+BFdEfkjLOfydOPG9NBAg+tkmCq+sskKs+wW
-         mmdkED0nVPqvMZqRe31VQAb9cNmswsEZbgWk6RFWSIZuhGOXPR1XHDSmkS+CVXATo+GS
-         OnSg==
+        d=linaro.org; s=google; t=1758069349; x=1758674149; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+yKyuCdjvfHTZC/Lr1XyLH1f+wAtJ15tCU/+O5Qcke0=;
+        b=lLhPqSRKbnFfKl3NAkquB86O6TfEGoXuDrGiRhKJKg9E1zciy59vy/NFVGHXdViMqZ
+         z1K8U+yWTs8g3TNtTCGzfW+iS88EY9hXIq3ZuFQIKEta5WejW2BkuoviZy1Wn5VKZQ7h
+         iE2A3ZGASFOyfxXZom1hgXZB9rwx/AoygmCWn0BmAbPje14j+feKlpv8uEFA8zNvuMB+
+         Rk1T1o1f8Ibn1sLPcvRz+3vFo/SVM1ueNsoO+LrAR90RLmZucEHNZ6cyyqenZ3wipaHT
+         sU2U/oPwDiLNHHpHQzaiiK1E/UOGHz1XBUz1kjo6iCXLHhfUQSb6EuXSSjAkEaS+NQfZ
+         KvSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758069293; x=1758674093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0AF9Zf/ufENcHrKMvHlrpWPSseQ/RzWNQreOKhevrxE=;
-        b=aNoIM4eQP/W3IBWoiG57+fZooHoEQ6XKbIR5v/QJrlfOgp8G3Y1A2P2wGBQyEHC4xN
-         G00uNFWVUocZOSverNpwqFFO95Z9O9eQwEtcX5XG9ILWvNkHre4gX9pzKlTOcYIRPh5Q
-         bpeE4jBuTsbJeoEnuLGD01zXTyS7n5izk4itwEcZrA6A7M4yTiESk7CgMzhOSPbXeba7
-         9fBrcq+X9ZdPGf/qN+YKYfItDVsbjKKd3GgHEavGGGBgrUHpCWFVoDryzmmHOx/8o6p9
-         mKjLGKrNQflXRSrFiLJcCnJP3dTF1ar0EUg8XnS9e+dUFddXQZlp43MXtNHI/RuOd+gl
-         gpDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoeuIJhprsK/6ldlP56/it3MzHiBFVNcFOQvkuKu3RWDXVMMErNG2gq61NTKXKj7Q8wLRuc1r2xxQn8Ao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWoI6AH82DAdZVnjHwmTXkejLQLQWlJvOKRH62ML6WHKWhLEXG
-	YF9olG61QQiityh9JYaJWKGAX+9sKxBE4+iDTFJ/rlQ8r2Rb8EMVH0lS1rdtZohoA4CeCBpntro
-	KYg22JLjAspoaKYKFOIT5FkjGw8dlYSGh5bNDQb67
-X-Gm-Gg: ASbGncvDfxc3WUW6GvOg/LZF23No7GuaIvhybaqsmn1xQYwFTYfSJnBR10Sp9bEheFP
-	CGlBYFP2C4B3dTxe+8bg5y2/pgQBsuq9WvGYeJdw7xVz0HsiOeH8Aw/7m2ry8/Zu0DPZJT9hcqH
-	j1ao1Is8gETjQyVbNImURj+kigFYkuYtVZwgo/SDGhWAjyZmG2GIdK9aeyD9MdQ3KqwTmPCJfuM
-	dcLl8FTMwM/mAi7AeH5pO99ohBSrKvdcVnJjimZjPrXo87Kl4M=
-X-Google-Smtp-Source: AGHT+IFcyjJzZ4NT9Tir+GT9MJKYCt97IWoZnmQP2gWhP7KEs1D5HqDovMOSpMabAp7PkDXB7hRvrieMLGEHtt4HWvI=
-X-Received: by 2002:a05:6512:61d0:10b0:55f:6ac4:c3b2 with SMTP id
- 2adb3069b0e04-5774cebae57mr183502e87.0.1758069292874; Tue, 16 Sep 2025
- 17:34:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758069349; x=1758674149;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+yKyuCdjvfHTZC/Lr1XyLH1f+wAtJ15tCU/+O5Qcke0=;
+        b=KCiKX1H1KiqRGVykhtRB/fhAC15zGaDIQV8G1YS3wpCqnvq0BWfZGrxnnCy8xyA/QO
+         PXQb6KQStNexCVSaNQEH/cgXXRdTTcczHtv5UBI2/gGW2NLnqu7DRofBHw/++5HJF5AF
+         66cA+nG+obFCGWknTfqPJZBc4UaN/P4aHA71GhWUr9oBERt2CXyeWW2VNzpinJOmrmSE
+         vfkoZTaIZ+rVUxN/u6GbZM7MhQOwifstUClFCLZgsKCft25tS+qvd0vhPe/SpqGnFRKU
+         HvLlqbIdKB+AmyL+Zza/hUqA9K5TW1QprHIDOfQiHzYfyy8VsKo8t/emVqsvVX4SiZ08
+         lUIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsmu+oi1LgV6ojS3bSJUAM8kjJrfKcN2dCzUP3KX1+LzzVCRm8Amp9pGWmeiqdSOJ8WMdIS5sj9+7Sqgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1bBp21BpMGaranwJpoZsIHXvwHLOFocjzVPrrm+8xhBAl4i2Q
+	Pa6rTmkHuO+jLLbM+n9MBLSxK4avAYAL1ca4L4rrMI22vl6yHBE3ydUAsKn7Ruh5ATw=
+X-Gm-Gg: ASbGncvzomQmTzb+HosoxfHkUDadv2sdNVZE7IoUvVqVCpEWRvabOlbVO9jgWN74M/N
+	1yTH9leAXHL5Z7HiePvXw1/60zImOxvaVOwZITIrLdyujJqC8Td1svK1y0rXLvsTZ1UraEgXSgk
+	qrWWDw09gA7mMWtE80tAgmi6q9x2HA6LPSropZEL/Bsee3IDk4TOOePS3KhbxE1TWdZKxA5ww8J
+	PZWNWEn29aNpvWTEDbhgAXe/TCHNewgnRYIjhzTGsF2h8UirEzI1pPiSsKX7mTWeoGyrAyKi8bB
+	Lv2zeJsp/fTjwt4+15lxvOlgOH9NbXnjjubzRXNJ5Li8h5O90Num+qzLTtw2xoaA9Vew5O5ejpK
+	au44C+s0D5DiqB8I9sBE+heKL8DjLVDW9CK8ub8E5Oog=
+X-Google-Smtp-Source: AGHT+IF390E63ZU9vuARjO+nw1ZUI7FtlCAawkFr1p8xl1+Uo1mLtRWneXPuNPAB/asviLaSXJOoEA==
+X-Received: by 2002:a17:902:c94a:b0:261:500a:5742 with SMTP id d9443c01a7336-26813f75090mr1125965ad.10.1758069348416;
+        Tue, 16 Sep 2025 17:35:48 -0700 (PDT)
+Received: from [192.168.35.228] ([218.51.42.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25fc8285639sm118508945ad.134.2025.09.16.17.35.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 17:35:47 -0700 (PDT)
+Message-ID: <e874339e-f802-4793-8c0f-db85575be8e5@linaro.org>
+Date: Wed, 17 Sep 2025 09:35:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826031824.1227551-1-tweek@google.com> <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
- <92255d5e-7e0a-6ca3-3169-114ae7f6247f@google.com> <CAHC9VhQejS05C8AExkh32GidBdzXjauKPP6T_3eSGZDEwfwDuA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQejS05C8AExkh32GidBdzXjauKPP6T_3eSGZDEwfwDuA@mail.gmail.com>
-From: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Date: Wed, 17 Sep 2025 10:34:34 +1000
-X-Gm-Features: AS18NWBUShakTwgjwy447Q25zdtRhMIo7Iqnzp_7z4P3lmEl_tUSeuf2NkCr0RI
-Message-ID: <CA+zpnLe8Z=2qY3rVCyZXyGPOaO2a0V2BVrdMkuwKs789igGCzw@mail.gmail.com>
-Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
-To: Paul Moore <paul@paul-moore.com>, Hugh Dickins <hughd@google.com>
-Cc: James Morris <jmorris@namei.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/10] dt-bindings: clock: Add required
+ "interconnect-cells" property
+To: Luo Jie <quic_luoj@quicinc.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Varadarajan Narayanan <quic_varada@quicinc.com>,
+ Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
+ Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+ Devi Priya <quic_devipriy@quicinc.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
+ quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+ quic_suruchia@quicinc.com
+References: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
+ <20250909-qcom_ipq5424_nsscc-v5-2-332c49a8512b@quicinc.com>
+ <20250912-nocturnal-horse-of-acumen-5b2cbd@kuoka>
+ <b7487ab1-1abd-40ca-8392-fdf63fddaafc@oss.qualcomm.com>
+ <0aa8bf54-50e4-456d-9f07-a297a34b86c5@linaro.org>
+ <1e7d7066-fa0b-4ebc-8f66-e3208bb6f948@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <1e7d7066-fa0b-4ebc-8f66-e3208bb6f948@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 1:26=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Tue, Sep 16, 2025 at 1:07=E2=80=AFAM Hugh Dickins <hughd@google.com> w=
-rote:
-> > On Wed, 3 Sep 2025, Paul Moore wrote:
-> > > On Aug 25, 2025 "=3D?UTF-8?q?Thi=3DC3=3DA9baud=3D20Weksteen?=3D" <twe=
-ek@google.com> wrote:
-> > > >
-> > > > Prior to this change, no security hooks were called at the creation=
- of a
-> > > > memfd file. It means that, for SELinux as an example, it will recei=
-ve
-> > > > the default type of the filesystem that backs the in-memory inode. =
-In
-> > > > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it w=
-ill
-> > > > be hugetlbfs. Both can be considered implementation details of memf=
-d.
-> > > >
-> > > > It also means that it is not possible to differentiate between a fi=
-le
-> > > > coming from memfd_create and a file coming from a standard tmpfs mo=
-unt
-> > > > point.
-> > > >
-> > > > Additionally, no permission is validated at creation, which differs=
- from
-> > > > the similar memfd_secret syscall.
-> > > >
-> > > > Call security_inode_init_security_anon during creation. This ensure=
-s
-> > > > that the file is setup similarly to other anonymous inodes. On SELi=
-nux,
-> > > > it means that the file will receive the security context of its tas=
-k.
-> > > >
-> > > > The ability to limit fexecve on memfd has been of interest to avoid
-> > > > potential pitfalls where /proc/self/exe or similar would be execute=
-d
-> > > > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vector=
-s,
-> > > > similarly to the file class. These access vectors may not make sens=
-e for
-> > > > the existing "anon_inode" class. Therefore, define and assign a new
-> > > > class "memfd_file" to support such access vectors.
-> > > >
-> > > > Guard these changes behind a new policy capability named "memfd_cla=
-ss".
-> > > >
-> > > > [1] https://crbug.com/1305267
-> > > > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@goog=
-le.com/
-> > > >
-> > > > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
-> > > > Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->
-> ...
->
-> > > Hugh, Baolin, and shmem/mm folks, are you okay with the changes above=
-? If
-> > > so it would be nice to get an ACK from one of you.
-> >
-> > So far as I can tell, seems okay to me:
-> > Acked-by: Hugh Dickins <hughd@google.com>
-> >
-> > If I'd responded earlier (sorry), I would have asked for it just to use
-> > &QSTR("[memfd]") directly in the call, rather than indirecting through
-> > unnecessary #define MEMFD_ANON_NAME "[memfd]"; never mind, that's all.
-> >
+On 16/09/2025 16:03, Luo Jie wrote:
+> 
+> 
+> On 9/12/2025 5:16 PM, Krzysztof Kozlowski wrote:
+>> On 12/09/2025 11:13, Konrad Dybcio wrote:
+>>> On 9/12/25 9:04 AM, Krzysztof Kozlowski wrote:
+>>>> On Tue, Sep 09, 2025 at 09:39:11PM +0800, Luo Jie wrote:
+>>>>> The Networking Subsystem (NSS) clock controller acts as both a clock
+>>>>> provider and an interconnect provider. The #interconnect-cells property
+>>>>> is mandatory in the Device Tree Source (DTS) to ensure that client
+>>>>> drivers, such as the PPE driver, can correctly acquire ICC clocks from
+>>>>> the NSS ICC provider.
+>>>>>
+>>>>> Although this property is already present in the NSS CC node of the DTS
+>>>>> for CMN PLL for IPQ9574 SoC which is currently supported, it was previously
+>>>>> omitted from the list of required properties in the bindings documentation.
+>>>>> Adding this as a required property is not expected to break the ABI for
+>>>>> currently supported SoC.
+>>>>>
+>>>>> Marking #interconnect-cells as required to comply with Device Tree (DT)
+>>>>> binding requirements for interconnect providers.
+>>>>
+>>>> DT bindings do not require interconnect-cells, so that's not a correct
+>>>> reason. Drop them from required properties.
+>>>
+>>> "Mark #interconnect-cells as required to allow consuming the provided
+>>> interconnect endpoints"?
+>>
+>>
+>> The point is they do not have to be required.
+> 
+> The reason for adding this property as required is to enforce
+> the DTS to define this important resource correctly. If this property
+> is missed from the DTS, the client driver such as PPE driver will not
+> be able to initialize correctly. This is necessary irrespective of
+> whether these clocks are enabled by bootloader or not. The IPQ9574 SoC
+> DTS defines this property even though the property was not marked as
+> mandatory in the bindings, and hence the PPE driver is working.
+> 
+> By now marking it as required, we can enforce that DTS files going
+> forward for newer SoC (IPQ5424 and later) are properly defining this
+> resource. This prevents any DTS misconfiguration and improves bindings
+> validation as new SoCs are introduced.
 
-Thanks for the review Hugh. In our case, it is necessary to expose
-MEMFD_ANON_NAME as there is a string comparison done in
-security/selinux/hooks.c (see selinux_inode_init_security_anon
-changes).
-I would argue it is cleaner to reference the same constant. The
-alternative here would be to have 2 copies of it, with the risk of
-them being out-of-sync at some point.
+So you explain to the DT maintainer how the DT works. Well, thank you,
+everyday I can learn something.
 
-> > Please do take this, along with the rest, through your security tree:
-> > mm.git contains no conflicting change to mm/memfd.c at present.
->
-> Thanks Hugh, it turns out we ended up having a discussion on the
-> SELinux side (proper return values for error conditions) and I'm going
-> to hold off on this until after the upcoming merge window to give time
-> for that discussion to run its course.  The good news is that gives
-> Thi=C3=A9baud an opportunity to do the qstr fixup you wanted.
->
-> Thi=C3=A9baud, are you okay with making the change Hugh has requested?
->
-> --
-> paul-moore.com
+You wasted a lot of our (multiple maintainers) time in the past, so I
+will just NAK your patches instead of wasting time again.
+
+Best regards,
+Krzysztof
 
