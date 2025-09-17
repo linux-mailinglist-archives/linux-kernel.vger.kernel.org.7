@@ -1,116 +1,103 @@
-Return-Path: <linux-kernel+bounces-820180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC9CB7E099
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25A6B7DFAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA064871C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:52:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 902A67B7076
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384F5302CD6;
-	Wed, 17 Sep 2025 07:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835406ADD;
+	Wed, 17 Sep 2025 07:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHAbcxfZ"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R2Krbm7U"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430CB2DEA76
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 07:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4510229B775;
+	Wed, 17 Sep 2025 07:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758095522; cv=none; b=FqEQ0nf4eD6q5uskWbQnzYG64IJ09E01/IS45fLDVjVwOYNfO6klox5qZ/46GtLmY1yUaPHZNwoqFTcIZkVTtizZ9SbhGZylwSUJUd26u3f07tI14hpBkRse2xiFF3TZjxCZKUtfUUf3jULN6Z92HXZCVSoJw7M7nN9L/0P1b9M=
+	t=1758095564; cv=none; b=buoIbHvNRwtFt7jQScXRxYv5LiRwSwcF/8Wylf4XDMJBTiJggEMHhU++fs2eq95Tl9UZcdRooZ/BqNTbu/v/RbQ7VImM98bHsUhLSbq5Hm6aipvOrg5N4NR0LkEc77GclF6vJubUkH9cR/4B7nFwtfXbgqJ+FWc7Xsy0vidKEnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758095522; c=relaxed/simple;
-	bh=lNWmx7yIKu8Ud39Sxzz7MusXBYyYgUPRyESGPdOa9Do=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=OVbEtT69MM40+y19oEqjndiTePlwDZv/ImThF2QOX0YlAYVKyoI4CBwCYt4Mu1qyKASsq37UoO4/Nrvob2e8Vn1RPQTSM47Bc8d/OO/whizRgJRR9zNWnAApdig/nUhO+lKc/oVwdOx6nfrtlxNXG7mGZrcJKIBkgt39Dgj9dRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHAbcxfZ; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b54b3cafdcaso3297025a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758095520; x=1758700320; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=abYjL49SciLzOaOA35f0uMdKGEjHBbwqKbxX7MVH+24=;
-        b=nHAbcxfZJoj8RmLGGjg8oQYFh7UMV1QO8HE31vRsNm1DENwpmxTaChTbMTnPBZ0G58
-         CtDg8izLWptVKtGwK/ohsPtZRhm/NrkcWT1YpSTT24oZ5UqqndAqxoZMrO0xp1OcIcqr
-         nzJcYb0+Kd8o/DJFEzXdyBvU+bGLG+qjO8uU4buboEhp8Y0ibOxjiKLoVtgKX7honNtc
-         g/+rki6ZjZTMLiz8lGVa2UzqImPa1YaSxEARnYt6ro3D87xXDPByX3CjB5HgBcVxsXkj
-         W7NKkTVNa7arqbO+BmQYz0KUR6JXqbVblXivqe4fJfRJi1IpEEZptRIfzQcmmaS2OWjn
-         +cGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758095520; x=1758700320;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=abYjL49SciLzOaOA35f0uMdKGEjHBbwqKbxX7MVH+24=;
-        b=hZ5IYCf8XgN338HT46PfUKdaGZ14ehhAmw3V9MgAwMFNmN+U17fTZ4hN/iSUWV6BCg
-         aqHAe72gJDCoEhciBJbfCYUBXOqeUDbnYWaF5WQZjpci7ibNk2+JW81EQ+d+IbKFIKsG
-         GWw+QCcEshxaY1laXm9zDMojStaxQNbV/rsqwfdRTsJ7fWRRU7ErUAnIcUZgRhGGzfcU
-         js6u7SivbbkBTL2sYCSQWfKaUOO3B70pAjtzUQuOV73auZUezUqgtevoF6yAxa0DCn7f
-         cbdaV4vVN5vnRyxMMK14chUA0Na9SCsadNvZ4/ubMzuvvr11E1YjJJFwE+EVX/FgYnqx
-         fcaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmSoxq7SMnLFZIc6bIkIIC4fa3nCBw1kckmw7+o3t3NNzH4qK3NBM9XJT5YUwL9Gl9DalfW1/ZVcOCBWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZb0Q2U/QuV1fA8wgz0EwdUFEq384gHqo8CCHzyfKTqoUrOq+/
-	ENh206mWO8LwhESaBnq5dAzmjSFRZe2NE2HYV9/rAc8wToDs03ANCvg7WmPKgA==
-X-Gm-Gg: ASbGncvGflZoIIBT8kW/bkAg8w7B+MDC1023YYKWlYDsIKFr1HH2FUPPr08mxARXchk
-	iKGdPDNvrqvz4+t2iathjZj9U/Yh1AG4TREk1JP2QtWRYTi27MtBh2IbRr8v4yKUd5IYP5YAh11
-	9cj8w9IuCwXjMOpmBNPZL6RjA1/DMMtNFE60Si+ldPb+oJFPbIl02Cv4cOGEOhPyYz0pOvN8caC
-	PTFWxI4DJJHkdNvs7OyU1nZ9Mbr1sf0Rp5rI473/5htyNubPZ74+xtLxaYumoZIJf3s4SDvu71v
-	QDqRcexhE0hApxXUBJdid+IpgtezlEwnhtl3d9Rn2sVoVWXriBbsTTbTN0taJC0ZTWxKmLiwn0m
-	Fd5/RqGvtYqsAlkCCqnhzRG0cYlZLOlo6Rlt1
-X-Google-Smtp-Source: AGHT+IHUW/wTOhIs1KEMt39SwXanfpFrThAcQacQ2rNisK/1xxjIdZlvOMm825vyXwIFErVxjOFrJQ==
-X-Received: by 2002:a17:90b:2c8c:b0:324:e96a:2ada with SMTP id 98e67ed59e1d1-32ee3f2ffefmr1335606a91.21.1758095520454;
-        Wed, 17 Sep 2025 00:52:00 -0700 (PDT)
-Received: from meta-device ([2001:b400:e359:6d3b:3881:d7b4:5e6b:c23a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54f6d51fdbsm253168a12.26.2025.09.17.00.51.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 00:52:00 -0700 (PDT)
-From: Kevin Tung <kevin.tung.openbmc@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] dt-bindings: arm: aspeed: add Meta Yosemite5 board
-Date: Wed, 17 Sep 2025 15:51:56 +0800
-Message-ID: <20250917075156.4043936-1-kevin.tung.openbmc@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758095564; c=relaxed/simple;
+	bh=sq+35NiLodqZTUndAQ068vCXGUmPl5MRsZErPDPB4PE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IwoFw1aUcBdH/sGn0+YyjGqS//1Gu/di4a7kdEnF54MPSkUIynQIjHXRpj/Q2jxot8CQyll5Iwhu6HCRmjS363Tq55OOtQWUT6/JaS69hd6fLHQul2Kq7hgrxvDCB8Q4lpefTVoEBwE2Vp5yvCzgDVt2vCAyViH7uyhBc6phOIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R2Krbm7U; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 07571C00784;
+	Wed, 17 Sep 2025 07:52:23 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6444A6063E;
+	Wed, 17 Sep 2025 07:52:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E1A45102F1727;
+	Wed, 17 Sep 2025 09:52:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758095558; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ap2y+Npu+kLF/Mrdl1WuStE4nxuZYwysNcBQ5q95FJY=;
+	b=R2Krbm7U0/4oorf1biGdW5mKYpGEbYe/25FeznSsZ6Z94DSXAspeBLOFJcukQhLo1NvmUp
+	r6kWnLlT1sUnJtIJdL/Y/fxK65YtCCvOGuZyeVfCHHIGMvm/jhOhQ/34nGsmDTv2HCKom7
+	PE1qLong5NeYcuvJus3EG7/+aHMPfUI3Id5qcZhAUISqLqFRf/+d1LLBRMfQhwpaSNN+00
+	HwMjTZQsYg8iMZnb1n56GBggyn4KnkDnGo+ABUnkMIxr9Sc/qZoduseJpIaAAu2AEMl6jT
+	XwsWypEI5qzBUzmTKEc0qkEDzWVEbC5RJGKWl4PI3Gci+tVxPjh9lBY5D1RZ1w==
+Date: Wed, 17 Sep 2025 09:52:15 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding
+ <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni
+ <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko
+ <digetx@gmail.com>, Jonas =?UTF-8?B?U2Nod8O2YmVs?=
+ <jonasschwoebel@yahoo.de>, Charan Pedumuru <charan.pedumuru@gmail.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 13/23] staging: media: tegra-video: csi: move
+ avdd-dsi-csi-supply from VI to CSI
+Message-ID: <20250917095215.12c6a7cd@booty>
+In-Reply-To: <20250906135345.241229-14-clamor95@gmail.com>
+References: <20250906135345.241229-1-clamor95@gmail.com>
+	<20250906135345.241229-14-clamor95@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Document the new compatibles used on Meta Yosemite5.
+On Sat,  6 Sep 2025 16:53:34 +0300
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
----
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> The avdd-dsi-csi-supply is CSI power supply not VI, hence move it to
+> proper place.
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-index 456dbf7b5ec8..6f2b12f96bd6 100644
---- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-+++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-@@ -89,6 +89,7 @@ properties:
-               - facebook,minerva-cmc
-               - facebook,santabarbara-bmc
-               - facebook,yosemite4-bmc
-+              - facebook,yosemite5-bmc
-               - ibm,blueridge-bmc
-               - ibm,everest-bmc
-               - ibm,fuji-bmc
+Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # Tegra20 VIP
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 -- 
-2.47.1
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
