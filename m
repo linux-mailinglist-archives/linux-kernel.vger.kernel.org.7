@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-821704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C66B82069
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:51:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15C9B82072
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE62481388
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:51:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BEBC2A0797
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A7030E0C8;
-	Wed, 17 Sep 2025 21:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA8C30EF8C;
+	Wed, 17 Sep 2025 21:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mOuBjO3u"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z3aa4xQg"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AD82F746A
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E80830DEC0
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758145873; cv=none; b=gTd8rLa503hY2oVliQnty1BoSJ+mpLiI65lQzcuI74jioJCKFjyBWj0TkO176VGHSs6GGsDI58tnCS0w9PDpT1JmT0s7E3noEBGI7iPvXRB4GK65FGDLJiSrst0lhCDakAngpxyI0fOVr1rtFhkBC8o5a9DF/pBH58ToU2yQur0=
+	t=1758145875; cv=none; b=cOVOG9CKJguG5P0j3pVZqk2+k/HkcR5USHiJvGK6gv5/V8JWVmHoJZ9mcpAvnua9quiasAjlKVZ7q8xNTQY8VHJOkSjUXjw6YG8rysG6lH5yroVgFQHDHhdRAiHv3SOq4+3HTiDZi5XYLr55NH9YyQrzD/KOTYSAGLG3az+O46g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758145873; c=relaxed/simple;
-	bh=LqGmDErC+0rvfwTlCCv3MATKWOoGiTAPnRm7qx/uRIQ=;
+	s=arc-20240116; t=1758145875; c=relaxed/simple;
+	bh=fV7d+iMC4cNbWSys5ekBLpLRqjs3hfSfwJ8ddSNU6KM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jRh78uGn8AtNey8aj5boQvV1OpGuJx92//dUDqhbnGySj87HkC+sbjYwbZ4V0OFwpr5JWor1ph1isxYaMnCGjgTI+d/c/bbUxGgLjOi1DLQjvkecGofTBFVgBbWO/shQ6LW1Lpr8Q3lixVG5FOVA82IWeiMZXQH18ZOz8RNFMD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mOuBjO3u; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=sAa/WwT/0fOcaESBR0S4c8lQHhfWhu9vQ6qCRIhpt6a58vhO+16XQYr21eDai46DVRJj0Lyo6o2CiNR+t0knbM2XnZE5546gmcPRjTPCaT0Iz8UA7bE0GlYidxBfSlN6uHDO6gvog6yMa4TM6Vs+2UEZMIF02ClFuscptJZHZ/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z3aa4xQg; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-777d7c52cc3so465535b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:51:11 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32e8c800a79so241168a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758145871; x=1758750671; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758145873; x=1758750673; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=raX33s8++blO4FFDhhuZ1t5E6VYJ8jLOCEs3GGXrhy4=;
-        b=mOuBjO3uNlzXGe83rw/7pDmuO2CChgbdyCz8NaqLayWeQBsCc/WyAtoOp+hEnVxGGn
-         ulWLdl4GcNKz/6OZFFm2HpXm6Otxs3x+F05aVKYQ6EA17QKROAjkasrAugUgJ5s0dFf2
-         Yi/b1PokCjFLfClg0NQRStVxg+9HW2IcUxnQ006I8aEWVC5JmHyjYFeRjUDgLyyxO25n
-         PeJnDri2Aa4mM9iRS4DClZ9WuYDatCnwwyNMgofRmCsYmxuEcGOcPmuiqWIlutv0DLQ7
-         NPps1KlamvGCSEsipKclnxUn0ZuexsYe87NVwDXWKuHNz2VZ4RP7CypzpvxaVbM3Ak6J
-         H/JA==
+        bh=6ODBCbD440uYvQ8SizIyBgOxXgM+3hzOx7AmPapgbVc=;
+        b=z3aa4xQgQfrkctS0i6sPe9nVXl1EJCSbsu1n8C6siazFdEtDSmc7J3pFYBa225h7tr
+         bmhI8ToKIwhLjRxImcc1IvUfC/NYwi/ZIs0zwyN1Hk3cnQ8TjOpGLrr51uLHGCSz3xl3
+         n/3xN/4tIbUbwxUcsDi/34Pd4rfIbR/RwYs3nESS9PhPz0AAZRBEnz/PKQgjRe0ET3xi
+         rdeDt5XdClwVVn0kT68DN5zyQ5VSLrsyTKrcVX9GdqYLuP4HWa7pgqfAjbkLv8TuSQXW
+         Fkz/nI0YcsZU5O59Sae4wnd0rrAEEpdNlxIdcl5KCMq4umVi4uUzFJ8gpooubl0S8RbB
+         virg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758145871; x=1758750671;
+        d=1e100.net; s=20230601; t=1758145873; x=1758750673;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=raX33s8++blO4FFDhhuZ1t5E6VYJ8jLOCEs3GGXrhy4=;
-        b=GDTUyV+LulX+5X48FE76a69GbVbRcThiDZFw98s8a9+Izyof3g590QhdOvolWYxSJU
-         WriLCGh3Z17rW6lEec0SIVFRK+DnJhqBj2QgByC3I7Wcl7eT3fYVhvzCc3MmrRsziQaf
-         gE3A4C7BKbQ98tKZrNyVYDBWnS4ES6xb1JoeZf97XpXcxhqc6LoegmtWjzW5FTKyAmPI
-         rcRpplXFGHX+6WJVL5BOKmNZRR+JKn3gDCznPxWAGvJEM2WJHRBqXXAEH1rImLaIrDob
-         Cmqn728wbkx82w8s+sLkcY3mcZMJ69hiuGwx/EOu3/2VS5CLg2thuhoAZxyDFEmEYs7O
-         7tzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXej4YO4QC/ldIAHBE/Ou6+7JFG2Qx6riLadqDLhlWgRbZ6pnUl8WkeeMVB+0MITUiKk4Ik5iqMCIgCPF8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrp/AmkIX3B/LEB4WEc1xdFnqr7OyX0gYl/JdUcoDiExs9YciI
-	Sm08YHNii003P78NIyqn9cJEey2j5SF5ZnkOtKnKLVUgQA9h2nw9Fvqd3pviRgQqSY26p6kNexN
-	/horVUqkGZ0J9CA==
-X-Google-Smtp-Source: AGHT+IEXHIfe31iHTiPUjWBrijjL9dOd26voZYrj2f7+bWGKHk6sS7I2FWWtoOYTdxUvPxMvYQxGk7MANH51Kg==
-X-Received: from pfaq4.prod.google.com ([2002:a05:6a00:a884:b0:772:32b1:58f9])
+        bh=6ODBCbD440uYvQ8SizIyBgOxXgM+3hzOx7AmPapgbVc=;
+        b=bhGjYMwttxUTa/BYjAidHpxzQhCBDypKDhJYTAufUuhYZCEes97I8GbaJF9baShdyl
+         FKk+nOotLDZhX2U4QjNK2V1sUvKNhwo6BARCtNxYr1r4YOsL4fNvnOk7/z6IUxCpqMxG
+         NZpTzrxHRFESPZlyZ5C/3dTjL0MazB7bXfAxY8vH5xXReVy1SVK/NkyszvkanwNSiwkG
+         LhvPdCk/XZ4UWjIo9iv9Hx03Q3E0j50/P5wtnbjTeTjKFK7EFt0SreQlgQGFR2bVAwQ6
+         VySWilnJ2V6i+t6hwelQeuOCIJxIeXCRKGEkHHMnQbbWZ1RfE/fsgauCIQrPrzAmVELL
+         b8TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXm+r0zwPzbDOU1wd8g/suHWypgHac0JsYCZP5U8NLycncorbM1TTV1f5xvL+9Om8M5E5ptsYbDG+rcKAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ1TAF020iLKx8Drq8G3EjdskGo6gPkrMqXmwbL67L/Ya4j1Lg
+	qmUR673accgOvgQgrfI6U8d/5wyM2owkBKSx1/J4B7qoUq03Mpab1lbC0bkhmy+RRx6SzUcu4qj
+	pIMX0sbbDWlSkqA==
+X-Google-Smtp-Source: AGHT+IEKqExV4mnY2Fu8atlg1uW5FJCAPBPhVFdmQ/waPYSuPzIUgusN63xwE2wudFUpWp9CX3s3sXd5/AY5zA==
+X-Received: from pjbsv12.prod.google.com ([2002:a17:90b:538c:b0:32e:b87b:6c84])
  (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:4328:b0:24e:2cee:9585 with SMTP id adf61e73a8af0-27aa99bdb8fmr5600927637.54.1758145871359;
- Wed, 17 Sep 2025 14:51:11 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:48:37 -0700
+ 2002:a17:90b:39cc:b0:329:f535:6e48 with SMTP id 98e67ed59e1d1-32ee3fa2ccemr4100883a91.36.1758145872774;
+ Wed, 17 Sep 2025 14:51:12 -0700 (PDT)
+Date: Wed, 17 Sep 2025 14:48:38 -0700
 In-Reply-To: <20250917215031.2567566-1-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250917215031.2567566-1-jmattson@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250917215031.2567566-2-jmattson@google.com>
-Subject: [PATCH 1/4] KVM: selftests: Use a loop to create guest page tables
+Message-ID: <20250917215031.2567566-3-jmattson@google.com>
+Subject: [PATCH 2/4] KVM: selftests: Use a loop to walk guest page tables
 From: Jim Mattson <jmattson@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
 	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
@@ -86,7 +86,7 @@ To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
 Cc: Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Walk the guest page tables via a loop when creating new mappings,
+Walk the guest page tables via a loop when searching for a PTE,
 instead of using unique variables for each level of the page tables.
 
 This simplifies the code and makes it easier to support 5-level paging
@@ -94,51 +94,49 @@ in the future.
 
 Signed-off-by: Jim Mattson <jmattson@google.com>
 ---
- .../testing/selftests/kvm/lib/x86/processor.c | 22 +++++++------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ .../testing/selftests/kvm/lib/x86/processor.c | 21 +++++++------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
 diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-index d4c19ac885a9..0238e674709d 100644
+index 0238e674709d..433365c8196d 100644
 --- a/tools/testing/selftests/kvm/lib/x86/processor.c
 +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-@@ -184,8 +184,8 @@ static uint64_t *virt_create_upper_pte(struct kvm_vm *vm,
- void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
+@@ -270,7 +270,8 @@ static bool vm_is_target_pte(uint64_t *pte, int *level, int current_level)
+ uint64_t *__vm_get_page_table_entry(struct kvm_vm *vm, uint64_t vaddr,
+ 				    int *level)
  {
- 	const uint64_t pg_size = PG_LEVEL_SIZE(level);
 -	uint64_t *pml4e, *pdpe, *pde;
--	uint64_t *pte;
 +	uint64_t *pte = &vm->pgd;
 +	int current_level;
  
- 	TEST_ASSERT(vm->mode == VM_MODE_PXXV48_4K,
- 		    "Unknown or unsupported guest mode, mode: 0x%x", vm->mode);
-@@ -209,20 +209,14 @@ void __virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr, int level)
- 	 * Allocate upper level page tables, if not already present.  Return
- 	 * early if a hugepage was created.
- 	 */
--	pml4e = virt_create_upper_pte(vm, &vm->pgd, vaddr, paddr, PG_LEVEL_512G, level);
--	if (*pml4e & PTE_LARGE_MASK)
--		return;
+ 	TEST_ASSERT(!vm->arch.is_pt_protected,
+ 		    "Walking page tables of protected guests is impossible");
+@@ -291,19 +292,13 @@ uint64_t *__vm_get_page_table_entry(struct kvm_vm *vm, uint64_t vaddr,
+ 	TEST_ASSERT(vaddr == (((int64_t)vaddr << 16) >> 16),
+ 		"Canonical check failed.  The virtual address is invalid.");
+ 
+-	pml4e = virt_get_pte(vm, &vm->pgd, vaddr, PG_LEVEL_512G);
+-	if (vm_is_target_pte(pml4e, level, PG_LEVEL_512G))
+-		return pml4e;
 -
--	pdpe = virt_create_upper_pte(vm, pml4e, vaddr, paddr, PG_LEVEL_1G, level);
--	if (*pdpe & PTE_LARGE_MASK)
--		return;
+-	pdpe = virt_get_pte(vm, pml4e, vaddr, PG_LEVEL_1G);
+-	if (vm_is_target_pte(pdpe, level, PG_LEVEL_1G))
+-		return pdpe;
 -
--	pde = virt_create_upper_pte(vm, pdpe, vaddr, paddr, PG_LEVEL_2M, level);
--	if (*pde & PTE_LARGE_MASK)
--		return;
+-	pde = virt_get_pte(vm, pdpe, vaddr, PG_LEVEL_2M);
+-	if (vm_is_target_pte(pde, level, PG_LEVEL_2M))
+-		return pde;
 +	for (current_level = vm->pgtable_levels; current_level > 0; current_level--) {
-+		pte = virt_create_upper_pte(vm, pte, vaddr, paddr, current_level, level);
-+		if (*pte & PTE_LARGE_MASK)
-+			return;
++		pte = virt_get_pte(vm, pte, vaddr, current_level);
++		if (vm_is_target_pte(pte, level, current_level))
++			return pte;
 +	}
  
- 	/* Fill in page table entry. */
--	pte = virt_get_pte(vm, pde, vaddr, PG_LEVEL_4K);
-+	pte = virt_get_pte(vm, pte, vaddr, PG_LEVEL_4K);
- 	TEST_ASSERT(!(*pte & PTE_PRESENT_MASK),
- 		    "PTE already present for 4k page at vaddr: 0x%lx", vaddr);
- 	*pte = PTE_PRESENT_MASK | PTE_WRITABLE_MASK | (paddr & PHYSICAL_PAGE_MASK);
+-	return virt_get_pte(vm, pde, vaddr, PG_LEVEL_4K);
++	return pte;
+ }
+ 
+ uint64_t *vm_get_page_table_entry(struct kvm_vm *vm, uint64_t vaddr)
 -- 
 2.51.0.470.ga7dc726c21-goog
 
