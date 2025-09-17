@@ -1,76 +1,62 @@
-Return-Path: <linux-kernel+bounces-821355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C94B81093
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:35:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0734B810DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37A687B2CFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7131887247
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B68225A3D;
-	Wed, 17 Sep 2025 16:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC37C2FB09A;
+	Wed, 17 Sep 2025 16:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Lh6fc1ZB"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="q0ERZa5t"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3B12DF6E3
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289A22F9DBB;
+	Wed, 17 Sep 2025 16:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126907; cv=none; b=heVeYZa+5OZj86QDd3VoRuDc7FpyJKuY//5e0ksoP2YcT1HFtKAMQG/qy3B99bWxamhdA7KKPzU7jsD+tRfvZiRoThjm2aCfeXHiZ2za7gW/CmTbEMvqH4S+h5Ig//gxpEOeM0qNzkJ8d/98WK9dyd+yrPr0Qx848lQYrZG6jPg=
+	t=1758127111; cv=none; b=QRJSpHBBHKs2Iwz8IuIsK2p4Wbcc5nAlXhP0upPkJHZWOgD4wyTC4FXfluTclzacHbZ24q7SopDpeBBd6fjCFD4PMkoVwUswOln9QNeIMwDlr7ntaWucwqfRkSk/+/Gf514v3lhdjFiIV5gab03JCmeYloDVYS8zUYoyZHV5kZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126907; c=relaxed/simple;
-	bh=yAMcgMd4qaGJtg5+GEhkvXxXyrkYfeYYRP36/byTe7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cS08KAi+oLTtlnOcPWvDAnCw+tsg5PrZB81xlASTSiOH5SMd5d0ohmVAKTXh1X/FuV7JDmjpfASXB4tZfJ3N/Q5+b4dSWVaV3MujsDv//MVePMomx/hofA2tG+ZABPQkyYnTkJG2wc6krZXxNLihoOn+NR2JRXixBOJE8EP52PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Lh6fc1ZB; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8275237837fso1009085a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1758126904; x=1758731704; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jpfnBA2vdQ8tnFFrfpgXrqna4jBRok3uohcZGJE8WCw=;
-        b=Lh6fc1ZBSTtHDoUwgaHlambgQiskAd8NEqiV9/gWAY295RzhZqwsjshjzPBSxOmtIi
-         yz6XRbktiOjGIsBvuawhyYAMydZLLkltU5tJEhJutoTbfUvjTmq4UrPnoRJbi3XDqOrq
-         TXPX8g3F5UXH8Lzojr8jQjwuSSuJNxjv0uj/I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758126904; x=1758731704;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jpfnBA2vdQ8tnFFrfpgXrqna4jBRok3uohcZGJE8WCw=;
-        b=Q7LG24H8mIyPX/4+GrOPHMWU+GCrGfqv5i1yc7+jYRF13lMzwuo32UlZLcJX7iJH8l
-         5pQCIvkw6rn4KScjt07fxFnV+xAeU4x9JGqoFWwqIKmPicRtvJjC/FVJ5ui1L1p1x31k
-         2xpGiKDUtsmiBfnG0pMn9dfWvKCiJnOcMSnNA51+0SSHpP+5SzIBVCgSXml6yUY0/agg
-         OzLjc+IvBZNkI8Lm6W5hRutgmwNtcgHfMr3ktmFi3SkAiXiVmJM60k0EeFW61la/0Wdc
-         FubNi7qfFHCKBh7IpU80VS/2p7d6XK3LnHGNE4QyjlmylHcJVHO9u3dQw8EmxuXKTH5f
-         xefg==
-X-Gm-Message-State: AOJu0YxKmkWGl9Z3wfL3Rl+dS35dbbwjwNEaN0qzZn0QP3pKHB4qilzs
-	iPXMj6W9K0eB5I6P3C9LrP9LoOhzpYQpNioVESl1IxvccE1OFAD+RUflvCmEtUCVW2s=
-X-Gm-Gg: ASbGncv3fZrqw40+XSB4oKMhQ7XwOdBOrxnvHQXOoFLtV748ZOu7E35ra5UqpjINZU8
-	mBFJjsdRH5eh9cU7PQRokK9S3QbKzPFRl7E4LtEyAFnxIqT+apG38qShq7+ip++vmpuOfH3GXxA
-	YygoZKPjv0g85u4daHtTZg68Z6WgE6g69oAxncE9Ngugdf0bdZ3HX2GAKMJFLG1NaW36thit+2B
-	pyRzGOKMajzZ1tfD5LiFCNk2FhK4dAPoAZ8jRxNZ6sHr6H9BahOjZmPHO0WjDYhm9+SslmZqALm
-	+Q7PgnUABS6OmMgXsE1UpUcTibveDzWF0kiaKO/ArpsQwhAsyJCeKGfl8P8aAq0J1PFhT/ezGp4
-	zDzrxnBrrPQEA8XR7w0/iv49goy0kOYuJhkSk48Kmbqilq4UULwepOYA1Ehp+m1BInnidAkx2wG
-	Rk408ZilsiOQ+aeP2LjA3BYwd8T96r9ZRlJFiTsfztmw==
-X-Google-Smtp-Source: AGHT+IHSRgPyPHKs+hw4nMZ78oXBwO909FIf23ydsPc4Cf5pdlFtmiIRgZwz36e6SwRIpOyiGQtq+A==
-X-Received: by 2002:a05:620a:aa08:b0:835:b3d:5ee8 with SMTP id af79cd13be357-8350b3d5f52mr127780385a.86.1758126903785;
-        Wed, 17 Sep 2025 09:35:03 -0700 (PDT)
-Received: from [192.168.1.239] (207-181-222-53.s5939.c3-0.hnc-cbr1.chi-hnc.il.cable.rcncustomer.com. [207.181.222.53])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-83631a7fc2fsm9166685a.54.2025.09.17.09.35.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 09:35:03 -0700 (PDT)
-Message-ID: <9cacdd47-54ed-42cf-849f-14ed23156d0e@linuxfoundation.org>
-Date: Wed, 17 Sep 2025 10:35:02 -0600
+	s=arc-20240116; t=1758127111; c=relaxed/simple;
+	bh=OBlEWnVjEbpj1lDN0s0regPLqqWIbwrgcbV5Ph1zy7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q3ZwK8dCeaGi+9UXtBCiCs8hLbXGz8aCMjn8palgHPoXTsc1mS1SfATcjdlbWE1HgkNKNCQpIvYqyp7WXvXv2X4Rts60DK7jUqmxRvlCYmiD5RHSQCERlBA1Snwh9BRC0DJrab5VHdpZPD1np0Yr3jIKh0O9C63lFuQybQ8z5ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=q0ERZa5t; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58HGbcFp1655272;
+	Wed, 17 Sep 2025 11:37:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758127058;
+	bh=6BD0XefKDj9yNlwNGnApL1S2MWmUQptL4sGSYMNTzvM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=q0ERZa5tqZqU4zCPUnv1rj/OdqwUCgq2yIoNfx9SuMVkU4OcYwD5RChM1gSOiaI+8
+	 LrbmZdc1KQIlqXwSZbu9NpLP2ShxIdOn0BwI4vqHo/975hH3Odtd+Fg+QrvMp+Wx50
+	 JH1pfcoft4byTIaa6aw1dQu6syisj9+1ccjnz7F8=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58HGbcDA1459556
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 17 Sep 2025 11:37:38 -0500
+Received: from DLEE203.ent.ti.com (157.170.170.78) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 17
+ Sep 2025 11:37:37 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE203.ent.ti.com
+ (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 17 Sep 2025 11:37:37 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58HGbafA3364151;
+	Wed, 17 Sep 2025 11:37:36 -0500
+Message-ID: <65a98655-68a1-4bf9-b139-c4172f48dad4@ti.com>
+Date: Wed, 17 Sep 2025 11:37:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,100 +64,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] usbip: Fix locking bug in RT-enabled kernels
-To: Lizhi Xu <lizhi.xu@windriver.com>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- shuah@kernel.org, stern@rowland.harvard.edu,
- syzbot+205ef33a3b636b4181fb@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com, valentina.manea.m@gmail.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <c32f5c8b-0c62-4567-9d82-081ecb0889b1@linuxfoundation.org>
- <20250917005136.1801295-1-lizhi.xu@windriver.com>
+Subject: Re: [PATCH net-next v4 0/7] Add RPMSG Ethernet Driver
+To: MD Danish Anwar <danishanwar@ti.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Nishanth Menon
+	<nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>,
+        Lei Wei
+	<quic_leiwei@quicinc.com>, Xin Guo <guoxin09@huawei.com>,
+        Michael Ellerman
+	<mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
+        Lorenzo Bianconi
+	<lorenzo@kernel.org>,
+        Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>,
+        Lukas Bulwahn
+	<lukas.bulwahn@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20250911113612.2598643-1-danishanwar@ti.com>
+ <8a20160e-1528-4d0e-9347-0561fc3426b4@ti.com>
+ <7cd06f8f-bd74-429d-bf2c-71858178950a@ti.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250917005136.1801295-1-lizhi.xu@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <7cd06f8f-bd74-429d-bf2c-71858178950a@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 9/16/25 18:51, Lizhi Xu wrote:
-> On Tue, 16 Sep 2025 17:33:44 -0600, Shuah Khan wrote:
->> On 9/16/25 09:47, Alan Stern wrote:
->>> On Tue, Sep 16, 2025 at 09:41:43AM +0800, Lizhi Xu wrote:
->>>> Interrupts are disabled before entering usb_hcd_giveback_urb().
->>>> A spinlock_t becomes a sleeping lock on PREEMPT_RT, so it cannot be
->>>> acquired with disabled interrupts.
->>>>
->>>> Save the interrupt status and restore it after usb_hcd_giveback_urb().
->>>>
->>>> syz reported:
->>>> BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
->>>> Call Trace:
->>>>    dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->>>>    rt_spin_lock+0xc7/0x2c0 kernel/locking/spinlock_rt.c:57
->>>>    spin_lock include/linux/spinlock_rt.h:44 [inline]
->>>>    mon_bus_complete drivers/usb/mon/mon_main.c:134 [inline]
->>>>    mon_complete+0x5c/0x200 drivers/usb/mon/mon_main.c:147
->>>>    usbmon_urb_complete include/linux/usb/hcd.h:738 [inline]
->>>>    __usb_hcd_giveback_urb+0x254/0x5e0 drivers/usb/core/hcd.c:1647
->>>>    vhci_urb_enqueue+0xb4f/0xe70 drivers/usb/usbip/vhci_hcd.c:818
->>>>
->>>> Reported-by: syzbot+205ef33a3b636b4181fb@syzkaller.appspotmail.com
->>>> Closes: https://syzkaller.appspot.com/bug?extid=205ef33a3b636b4181fb
->>>> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
->>>> ---
->>>> V1 -> V2: fix it in usbip
->>>>
->>>>    drivers/usb/usbip/vhci_hcd.c | 6 +++---
->>>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
->>>> index e70fba9f55d6..eb6de7e8ea7b 100644
->>>> --- a/drivers/usb/usbip/vhci_hcd.c
->>>> +++ b/drivers/usb/usbip/vhci_hcd.c
->>>> @@ -809,15 +809,15 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
->>>>    no_need_xmit:
->>>>    	usb_hcd_unlink_urb_from_ep(hcd, urb);
->>>>    no_need_unlink:
->>>> -	spin_unlock_irqrestore(&vhci->lock, flags);
->>>>    	if (!ret) {
->>>>    		/* usb_hcd_giveback_urb() should be called with
->>>>    		 * irqs disabled
->>>>    		 */
->>>> -		local_irq_disable();
->>>> +		spin_unlock(&vhci->lock);
->>>>    		usb_hcd_giveback_urb(hcd, urb, urb->status);
->>>> -		local_irq_enable();
->>>> +		spin_lock(&vhci->lock);
->>>>    	}
->>>> +	spin_unlock_irqrestore(&vhci->lock, flags);
->>>>    	return ret;
->>>>    }
->>>
->>> This looks right to me; it's the same pattern that the other host
->>> controller drivers use.  However, the final decision is up to the usbip
->>> maintainers.
->>>
->>> Also, there are several other places in the usbip drivers where
->>> usb_hcd_giveback_urb() gets called; shouldn't they all be changed to
->>> follow this pattern?
+On 9/17/25 6:44 AM, MD Danish Anwar wrote:
+> Hi Andrew,
+> 
+> On 11/09/25 9:34 pm, Andrew Davis wrote:
+>> On 9/11/25 6:36 AM, MD Danish Anwar wrote:
+>>> This patch series introduces the RPMSG Ethernet driver, which provides a
+>>> virtual Ethernet interface for communication between a host processor and
+>>> a remote processor using the RPMSG framework. The driver enables
+>>> Ethernet-like packet transmission and reception over shared memory,
+>>> facilitating inter-core communication in systems with heterogeneous
+>>> processors.
 >>>
 >>
->> Looks good to me.
->> +1 on changing all other instances - can we do that?
-> I'm replying to both of you. Personally, I suggest this isn't necessary
-> right now; it's safer to wait until a problem is reported before fixing it.
+>> This is neat and all but I have to ask: why? What does this provide
+>> that couldn't be done with normal RPMSG messages? Or from a userspace
+>> TAP/TUN driver on top of RPMSG?
+>>
 > 
-> Also, the context of several other calls to usb_hcd_giveback_urb() in usbip
-> differs from the current issue. Enabling RT_PREEMPT shouldn't cause similar
-> issues.
+> This is different from RPMSG because here I am not using RPMSG to do the
+> actual TX / RX. RPMSG is only used to share information (tx / rx
+> offsets, buffer size, etc) between driver and firmware. The TX / RX
+> happens in the shared memory. This implementation uses a shared memory
 
-Fair enough reasoning to wait. Here is my Acked by.
+This is how RPMSG is supposed to be used, it is meant for small messages
+and signaling, bulk data should be send out-of-band. We have examples
+specifically showing how this should be done when using RPMSG[0], and our
+RPMSG backed frameworks do the same (like DSP audio[1] and OpenVX[2]).
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+> circular buffer with head/tail pointers for efficient data passing
+> without copies between cores.
+> 
+>> This also feels like some odd layering, as RPMSG sits on virtio, and
+>> we have virtio-net, couldn't we have a firmware just expose that (or
+>> would the firmware be vhost-net..)?
+>>
+> 
+> PMSG sits on virtio, and we do have virtio-net but I am not trying to do
+> ethernet communication over RPMSG. RPMSG is only used to exchange
+> information between cores regarding the shared memory where the actual
+> ethernet communication happens.
+> 
 
-Greg, please pick this up.
+Again nothing new here, virtio-net does control plane work though a
+message channel but the data plane is done using fast shared memory
+vqueues with vhost-net[3]. Using RPMSG would just be an extra unneeded
+middle layer and cause you to re-implement what is already done with
+virtio-net/vhost-net.
 
-thanks,
--- Shuah
+Andrew
+
+[0] https://git.ti.com/cgit/rpmsg/rpmsg_char_zerocopy
+[1] https://github.com/TexasInstruments/rpmsg-dma
+[2] https://github.com/TexasInstruments/tiovx
+[3] https://www.redhat.com/en/blog/deep-dive-virtio-networking-and-vhost-net
+
+>> Andrew
+>>
+> 
+> 
 
 
