@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-821351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15857B8105A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:33:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E9EB810A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE08B7B6D0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:31:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888E03B1181
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601392F83B6;
-	Wed, 17 Sep 2025 16:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4900D2F9DA2;
+	Wed, 17 Sep 2025 16:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fw0CuCSh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1XDHKkGE"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49B034BA44;
-	Wed, 17 Sep 2025 16:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BBD2F7AAE;
+	Wed, 17 Sep 2025 16:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126797; cv=none; b=JlDFyKN20i5bWJK1dyD3Kk/pKEU6IFMlbupDjzdH5l/l6RB3uMsIo08efvF5hdCFRMvCDBwQSS+O0+WdJJsWa0mufQ5TcjE0HALsGsDbqBdAmPr+I9nbF4kFD6DdV5WzD7ZpyuEKlmJIccrMigvIVD3c8zdl7VDwXuoAD+hGj34=
+	t=1758126852; cv=none; b=mhZeVLTLSFP2DgZpY8IpxBPGBWsqyKRqyl113t60YP4Y4RgiESuiNXBL0aN0bg2bJt4vNn18OND1lMVzjVGy1yjF2AedDVXDLBd0aJRfHbmHwP54Hf9dVI/0izVkiiFNfOZ1yS1pkAj9qXDmOeetInDtYDY8XHM9Da/tT1dX8oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126797; c=relaxed/simple;
-	bh=7Pq9Vkn3LvpDfUXp2KGV1ju+VyMgWYB99kGQLNzsa7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E32qQ+84UIbX7sIQdTAtrEwnrXNSpsKjS9HVHCIOZ8aAa8h2euKh66SYTBkzG0cFI+o+kAloibkhQeaETBjW2QQOdH6sJgWqSbANd8fN3wbe5StYtp7IsqTzlUNtQ5/AosXpaVtionLqLe7t28GHmOFEGogW9KFfzRP8jV0QEUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fw0CuCSh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D545C4CEE7;
-	Wed, 17 Sep 2025 16:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758126795;
-	bh=7Pq9Vkn3LvpDfUXp2KGV1ju+VyMgWYB99kGQLNzsa7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fw0CuCShDgulrp/D72QEtJJrtp/7HCHobvtz3nP34cdNcKz78+rCq/LA1AdZNMmAU
-	 AZr1L+mUy7IZzl7kuXF9ueS2eyEszYspMtBDvnZ2O95Sk47zYWyNG+cZrvnBnRI97O
-	 LniWxysAZbbBdZpEY/5/A0PeDCHv7V6ErC8YPik1RA4zGytNX7Ndgu4JJkZG6oUedi
-	 /U/mMk77WzaFjsse4tmm0AHnqjPfbsDW1eZXlp3ocH3ikphHCKtVkEN76J7P33YOLn
-	 Lq/MpuxceyhlViB0G+K0R/V9mgdEy6feN3smLXr0zHIXLkLPc5/i3CiqDyryfbm47o
-	 5n5pg+nOixcNQ==
-Date: Wed, 17 Sep 2025 17:33:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: wan: framer: Add version sysfs
- attribute for the Lantiq PEF2256 framer
-Message-ID: <20250917163311.GS394836@horms.kernel.org>
-References: <2e01f4ed00d0c1475863ffa30bdc2503f330b688.1758089951.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1758126852; c=relaxed/simple;
+	bh=aeS9l2tTCDKgWAxwJ8mToW14uNusa+g81dSkxQCfmxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SwZz3sARu6sS8Oc4VdK44T1MTe8wGPNbZu87jwOUjc23ZbgNSQrIeaZH15slqG7Ba9osw5Nt+gEAKIm4r/0hxMKqw0kRoYvm3Rgo74I1hd374DgqrNROCUy7FSCIuP5Lyx0s3R3J9RNn0CRXAZTaSqxMaqXbhFtTTy2LhobqWz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1XDHKkGE; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cRkqc2FS0zm10gb;
+	Wed, 17 Sep 2025 16:34:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1758126840; x=1760718841; bh=aeS9l2tTCDKgWAxwJ8mToW14
+	uNusa+g81dSkxQCfmxc=; b=1XDHKkGEGpHrx0LRQPUitQQsoYjNHCvGTCmMC+8a
+	zCT/OcU6aMv3IPKhABXFh054g/KaC05SdTNGr8RARkk8EeoABSf6T2k6QHmI/xi7
+	o5XzmiH0Asc0D7DL0f6qpa6Li2jt5UQN6VkCUaAByCEplKxcjaWpKTVM+Yea3G4P
+	QAjqakWq1YT6g0LacZSLub3kd9leW6hyDkXXNfzCmVaN+jjlJw6tEmrmZnNj6VaY
+	ofvhPY6zyoUFipog1/mFWzBPS3VZbT6WGKS6wURY7O+e7dfOdXjdhHOZft86NTxO
+	vhxv+g93LuqHdTH05SUx061HGmGtQUjCDighAO7xxeCfkQ==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id vvNpeq7vN_Z4; Wed, 17 Sep 2025 16:34:00 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cRkq72k82zm1744;
+	Wed, 17 Sep 2025 16:33:37 +0000 (UTC)
+Message-ID: <c276985b-dff1-48ea-a4b4-d9526b7dece6@acm.org>
+Date: Wed, 17 Sep 2025 09:33:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e01f4ed00d0c1475863ffa30bdc2503f330b688.1758089951.git.christophe.leroy@csgroup.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] scsi: ufs: core: Fix data race in CPU latency PM QoS
+ request handling
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
+ quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
+ adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
+ neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
+ quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com
+References: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 08:24:01AM +0200, Christophe Leroy wrote:
-> Lantiq PEF2256 framer has some little differences in behaviour
-> depending on its version.
-> 
-> Add a sysfs attribute to allow user applications to know the
-> version.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
-> v2:
-> - Make DEVICE_ATTR_RO(version) static
-> - Split version_show() prototype into 2 lines to remain under 80 chars
+On 9/17/25 2:41 AM, Zhongqiu Han wrote:
+> This patch introduces a dedicated mutex to serialize PM QoS operations,
+> preventing data races and ensuring safe access to PM QoS resources,
+> including sysfs interface reads.
 
-Thanks for these updates. Sparse and checkpatch are happy now.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-> 
-> v1: https://lore.kernel.org/all/f9aaa89946f1417dc0a5e852702410453e816dbc.1757754689.git.christophe.leroy@csgroup.eu/
-
-...
 
