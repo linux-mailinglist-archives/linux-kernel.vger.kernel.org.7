@@ -1,178 +1,529 @@
-Return-Path: <linux-kernel+bounces-820903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A94B7FB24
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:04:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DB3B7F9D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28A3AB64742
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E18587BD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596E032E743;
-	Wed, 17 Sep 2025 13:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0870D32E757;
+	Wed, 17 Sep 2025 13:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LE5vWGlu"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010043.outbound.protection.outlook.com [52.101.46.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xvu6r6zB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2C531A7E6;
-	Wed, 17 Sep 2025 13:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758117013; cv=fail; b=RLk7lwBORpktyvZuA7SuOoSLMRDxaf4G2B1dCgnCDPZMw/spPpjqydNyD2BzGfxWGEKnFdNE0HtdKz6JaIoiTVCciipFcU9d6Y367G1xHTLtPpVmxplLOZtYlX4b1HClyM4dCKE2YOx5WB3bsQTuxYQX1fGqA+0SULNFuC/KkV4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758117013; c=relaxed/simple;
-	bh=m/puMiprpzH5XhTHvGjFcs0BJcO6x3+rqFYc1wcg5mA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uJ4XlGu0Le+vONPKrdRyyO0Gf/p/ck3nJbL76ZIAAwyuTGlL5go03B6deoVick8iem3/jxlgvZaYFJy8WE7SWsfwvoHX7YnB1zxjdCub6sNc9iw8/LqjEvL/r71xJSfhSPcnZErceMhD9cwQpemlp0q2EHYBhdMpLuE3pZg+szk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LE5vWGlu; arc=fail smtp.client-ip=52.101.46.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jkViuHkqr9O4Ku9UcZasVOMU6PADyiH5aJG3+13X0tTvBMf0CraKGp5XU6s8GA2elRMb3jZE4HstvF8iaNwHkirNmhcpO5K1q5kuJKnl/z9IeFQXuMPSxYwVwIAirDBqVRNdHWWmKG4ccIAsaiuzQEDoYRBulHX5iaXNPUGFpAaR1QL7zGdItu8lugO4yDaSCXVRpBC+uymAf3djv9jUcR+flx8DpiipRQqMPJqbLWbxvu5BTevJ9YRSOGz2tSR23w3ktoUVFgPAUAAvwaoe1YDPeqP4WXMl8n5G+cXCo8keSWO3cwmUxp8RuraPAXZOb6MQ21eqpmgq/7HrvaRmiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Fq8LAk5O7OqCtTNTNTZ+C7KTVhTKS7FxzEdgvBWVI8=;
- b=eRLotu6rIPOdhqGp5gIAfUkiK5G+16L8pObHDVZ3C4TbgrHgR/e0HaJxawYvcNklTxFtfyo0c8IEbrWGkjGJJJOyK1B32+MQx7rSZZ2+6BldjhAntVfVYiUSHOVCK1Fyb+0WynOBbdNTMvrCgBR6bImcCkrYhfh5Vgws+BjZTNZNirJHHSnX5p/+f9eR9KeYW6ad25bsxw0p2+9uv4Yp93daja6C+ClCFUuu0WbG773SeqkueT0elsfG2gXvxcwvWnJfDi4lmIA8TCQsycOmaOLy/K7FnwwTIMc7aeXhbsH8FTw1VnmnvQieZa6dyqm3756aIufnLG/Mu97QQJ5CBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Fq8LAk5O7OqCtTNTNTZ+C7KTVhTKS7FxzEdgvBWVI8=;
- b=LE5vWGlusFk77J0ytcNLadXuxkLYGMc4RUySslG+7rtQiz9+kYixmdPTqujFx0Y6Xdg4eoZvv7kPN9xa9kd84nIZwtRQgduA4U1EIYbRbMv9JTa3Mq9Mz1P3I4qLLTln8V6If9XUkbf/MECGn9IJLoFSQYkSnOSn62hqLxxbgig3rEhcWELbkRIJKY8zFCBVPENCTbiTalCCeMDwE6kBOqxikv16mSZoXlsIbOb17TMcSEgZ1Q1Q7tUP+BDdMjiH6nToS6kf1u/bBfD4eBP9lSmwFzUhQ1LS0uAdhlh+0xP3CzXtOgwuV+Sm0Js8zMLp1YH1WXx5hwB0AzDO1a9qjQ==
-Received: from CH2PR12CA0014.namprd12.prod.outlook.com (2603:10b6:610:57::24)
- by CH3PR12MB7618.namprd12.prod.outlook.com (2603:10b6:610:14c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Wed, 17 Sep
- 2025 13:50:07 +0000
-Received: from CH3PEPF0000000A.namprd04.prod.outlook.com
- (2603:10b6:610:57:cafe::18) by CH2PR12CA0014.outlook.office365.com
- (2603:10b6:610:57::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Wed,
- 17 Sep 2025 13:50:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CH3PEPF0000000A.mail.protection.outlook.com (10.167.244.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Wed, 17 Sep 2025 13:50:06 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 06:49:53 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 17 Sep 2025 06:49:53 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 17 Sep 2025 06:49:49 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Alexei Lazar
-	<alazar@nvidia.com>, Daniel Zahka <daniel.zahka@gmail.com>
-Subject: [PATCH net] Revert "net/mlx5e: Update and set Xon/Xoff upon port speed set"
-Date: Wed, 17 Sep 2025 16:48:54 +0300
-Message-ID: <1758116934-644173-1-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B571607AC;
+	Wed, 17 Sep 2025 13:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758117022; cv=none; b=EiYzqQHkDt6RI065Z1/tC6aLWo5HmWGzm9MLRd6REC02p0siLsKIafaxUWILL9W7JuirYjeDF+5+dIKFjjwWKN4bO2NXSqdsktNh5zRoa5XqhiuHkEIznZ6CmXH1opYh/UnJI3wY6EdkkDmLw4/ZgvN6vwdYlzzAmAaWctuGCrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758117022; c=relaxed/simple;
+	bh=G3+GGKsqSvkauLB76fpYYc3vc/9bpSni8eIo0sKFWyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TKW+EuyX9XtzrUeb7GHccprftUGi50/loZ7dfF7Zw0hRN34vBLAL/nOoBajWvMgLli8cubDTmzHcofOfyRypIUMz+zt7cOMOmPotL97J4WyMn2ds+dHfYbUmGDT3dB6vHJ8gMkOuiFH1lP2GqE9Vyb/iPBpTetmpWMx21KpoGbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xvu6r6zB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FFBC4CEE7;
+	Wed, 17 Sep 2025 13:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758117021;
+	bh=G3+GGKsqSvkauLB76fpYYc3vc/9bpSni8eIo0sKFWyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xvu6r6zBIVthYPajjxtLN3gNaL9ExMAnu//U7TM3uqmkODEmY1ETD+oYTINaY/T9A
+	 ltrRWt2WlLa09bC5BXvWZqK/qeONVxCr+xUfSWI3crTZ9yH62xGVG0S3eTwXcM+8+C
+	 IShxVQ0PIFluVB/WebEm9V+SukEyhNcXGJbsYuaZDT/VR2Jn0DFJT08EgJQBz6YIQR
+	 F8C2Ly2BVCJ0otdHRIoIeqpafoy3fiehtJjI6tD9ZJkuy51A970VZ/v0mUT8Vx6q1W
+	 USCfWWuVtzq71vaju2kv35azy/NoHPQf1rvowrkUslbjOkkPGvCBlf6qYPWyPgd/ph
+	 mJeT6/XVUzdQQ==
+Date: Wed, 17 Sep 2025 15:50:16 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, 
+	Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] HID: playstation: Simplify locking with guard()
+ and scoped_guard()
+Message-ID: <dor5e2ugnp4k5iava3uwxltttrfopkqoo23uex6xdu5rcz6rqt@7ett6gqco32m>
+References: <20250625-dualsense-hid-jack-v2-0-596c0db14128@collabora.com>
+ <20250625-dualsense-hid-jack-v2-3-596c0db14128@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000A:EE_|CH3PR12MB7618:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6cc4fac-0374-4dd9-ba9c-08ddf5f11c7f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G8lvM6d/PMfMCvuc1TxLkCicDJMAaz+Ljc3OX6TdqkKo0d6EsTj0Z2+g8U6X?=
- =?us-ascii?Q?g5IZKnC2KEGQwR/3FT0ykwi2Cgg58dgLpsMW9K7tpliTig/RRwFkXlBG+nrL?=
- =?us-ascii?Q?jeVqspsNNa4mXlQMzt0Ddu/GvrLtuCj6ehfEE/nrUFWNCIZ8QYDvqUQQSQ/O?=
- =?us-ascii?Q?EIAEZAnZlZdM4NYxvLeiFKT3dFZJtoG25CDkUQ2zOwDNfMX2KFIZtm3O505c?=
- =?us-ascii?Q?kQCu3yP9U9kkMcqeE+yAYe8m97kTQ12Om3hkDlKNkWqmYnyDKBveqQycYQfm?=
- =?us-ascii?Q?jHMeoQ68i/R9ve10juMBOTUXUwA73C5h2kaXUPpmp/3oEAPlwETp1pjcWoxK?=
- =?us-ascii?Q?s5eDkuUR9Db8Cvb5GtKVaBribUFdfo5U/JHkDpLmRHk5bxRQaCAu737LTZ9N?=
- =?us-ascii?Q?ZZwCyeVzaX+cm5KY4EGxMOT7t1FKSV7I5dmbBgjni3gKCNVlBAfXC0Ye3jMK?=
- =?us-ascii?Q?qi2UsbQcJoUhNRr0JY+yNqjtTSb/8kK4HQ2LE1xA1KmvoWoGH+ll4iKWs2Y1?=
- =?us-ascii?Q?fgwoF6DAkkngs+q5UoZ8ezgOsMwrNcCk2NS9WN8Le5yvNHPF6u3R9DTYKTgk?=
- =?us-ascii?Q?ldJnkLqHjgfRNBlGjc/QomrFq2kyLLbGu0bnvQJTr06GuhAp1sZuN2YV/WWm?=
- =?us-ascii?Q?2ACnRdE1/k8s4Lm3haKfZO//C+NItQo4zHqptPXos88NzfIKVyySdSiG8Ot/?=
- =?us-ascii?Q?L6mSZcxMVPV9vz2mQVOTT8I6L0yQhZc4a24wm9zNY5JPWZcRFO6XBO+2RGea?=
- =?us-ascii?Q?/r6zn2nTEPt6Dm/nN6f3KQaMs72geMrdQNVYhLhMlENVwJyS3kHuyXrfGvbT?=
- =?us-ascii?Q?/G19PQnwErmxseyU8Hj8VSVMhykTpgH1TmNTWvK9UzzGb8Wzj2+hZz+/F9h4?=
- =?us-ascii?Q?AJLkPey2QxMTY5YDdGyGapP+uTBY1sCm0TQhp9cGZEl2bwX2Mu7VtVUvZue4?=
- =?us-ascii?Q?7fHKyUgq8UmmayKWK/PQ6sSar7Pix9qoNm2jpsur9MiESmjVXLdImirDkKSY?=
- =?us-ascii?Q?LG1+yEs1E+UmcFujqxzStIgNboSuiSwETKnCuQ3dJzN2esL03ZJc31whK7h7?=
- =?us-ascii?Q?MDQ4CVomjQega/IUEkBjQh1xzenJB+XerWZbTbqgSyvIPDXBPatbfI1o2JGm?=
- =?us-ascii?Q?tTVz44syHZE6Vj6tcKRXOK5kV5lTOa0UUqPGZZ6UEH0nwXuwjMzGW3kj8qlo?=
- =?us-ascii?Q?4jIa9HFI5zz2Bkwct6CIndUEcebrPX5u8z0WgnymMFdJCRGpRnS3jtOVi0hj?=
- =?us-ascii?Q?2eBIowKNj8M9EIvjW8ifLeLcTCJAWaVggrzdfO8vfwt4P6EG4zB9xJ5WVap2?=
- =?us-ascii?Q?CkVGiJsOtuQ5W1d9CTSHYZH0IyQ1fmlxX8m0Si/d5bkbo86fPSIGp5+PjyYh?=
- =?us-ascii?Q?GJ4+aWwGZFqvIamqyspULi57N8OLER9hzTjaKYHhOuyjn+KYCgzZ2c0jO4Yg?=
- =?us-ascii?Q?5m/qBqAyUzDNtbJPEoonuBvHSFGdHKzAFHPMsebbWPk8DYenqpUQw0wyjvNU?=
- =?us-ascii?Q?WcWgdLFKljKnolqeuhNUAIVl8aniC70H7hGnLATkS6biz7NS1fdh3E9veg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 13:50:06.9190
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6cc4fac-0374-4dd9-ba9c-08ddf5f11c7f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7618
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625-dualsense-hid-jack-v2-3-596c0db14128@collabora.com>
 
-This reverts commit d24341740fe48add8a227a753e68b6eedf4b385a.
-It caused a degradation, reported by Jakub here:
-https://lore.kernel.org/all/20250910170011.70528106@kernel.org/
+On Jun 25 2025, Cristian Ciocaltea wrote:
+> Use guard() and scoped_guard() infrastructure instead of explicitly
+> acquiring and releasing spinlocks and mutexes to simplify the code and
+> ensure that all locks are released properly.
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-Fixes: d24341740fe4 ("net/mlx5e: Update and set Xon/Xoff upon port speed set")
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 2 --
- 1 file changed, 2 deletions(-)
+It looks like the patch is now creating sparse errors:
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-index e680673ffb72..15eded36b872 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -139,8 +139,6 @@ void mlx5e_update_carrier(struct mlx5e_priv *priv)
- 	if (up) {
- 		netdev_info(priv->netdev, "Link up\n");
- 		netif_carrier_on(priv->netdev);
--		mlx5e_port_manual_buffer_config(priv, 0, priv->netdev->mtu,
--						NULL, NULL, NULL);
- 	} else {
- 		netdev_info(priv->netdev, "Link down\n");
- 		netif_carrier_off(priv->netdev);
+https://gitlab.freedesktop.org/bentiss/hid/-/jobs/84636162
 
-base-commit: 8c4748539985489b59a00b4c2ae919253b3d2762
--- 
-2.31.1
+with:
 
+drivers/hid/hid-playstation.c:1187:32: warning: context imbalance in 'dualsense_player_led_set_brightness' - wrong count at exit
+drivers/hid/hid-playstation.c:1403:9: warning: context imbalance in 'dualsense_parse_report' - different lock contexts for basic block
+drivers/hid/hid-playstation.c:1499:12: warning: context imbalance in 'dualsense_play_effect' - different lock contexts for basic block
+drivers/hid/hid-playstation.c:1552:13: warning: context imbalance in 'dualsense_set_lightbar' - wrong count at exit
+drivers/hid/hid-playstation.c:1564:13: warning: context imbalance in 'dualsense_set_player_leds' - wrong count at exit
+drivers/hid/hid-playstation.c:2054:33: warning: context imbalance in 'dualshock4_led_set_blink' - wrong count at exit
+drivers/hid/hid-playstation.c:2095:33: warning: context imbalance in 'dualshock4_led_set_brightness' - wrong count at exit
+drivers/hid/hid-playstation.c:2463:12: warning: context imbalance in 'dualshock4_play_effect' - different lock contexts for basic block
+drivers/hid/hid-playstation.c:2501:13: warning: context imbalance in 'dualshock4_set_bt_poll_interval' - wrong count at exit
+drivers/hid/hid-playstation.c:2509:13: warning: context imbalance in 'dualshock4_set_default_lightbar_colors' - wrong count at exit
+
+(the artifacts are going to be removed in 4 hours, so better document
+the line numbers here).
+
+I am under the impression that it's because the 2 *_output_worker
+functions are not using scoped guarding, but it could very well be
+something entirely different. Do you mind taking a look as well?
+
+Cheers,
+Benjamin
+
+> ---
+>  drivers/hid/hid-playstation.c | 216 ++++++++++++++++++------------------------
+>  1 file changed, 93 insertions(+), 123 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+> index 799b47cdfe034c2b78ec589ac19e3c7a764dc784..ab3a0c505c4db9110ae4d528ba70b32d9f90b81b 100644
+> --- a/drivers/hid/hid-playstation.c
+> +++ b/drivers/hid/hid-playstation.c
+> @@ -7,6 +7,7 @@
+>  
+>  #include <linux/bitfield.h>
+>  #include <linux/bits.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/crc32.h>
+>  #include <linux/device.h>
+>  #include <linux/hid.h>
+> @@ -566,26 +567,25 @@ static int ps_devices_list_add(struct ps_device *dev)
+>  {
+>  	struct ps_device *entry;
+>  
+> -	mutex_lock(&ps_devices_lock);
+> +	guard(mutex)(&ps_devices_lock);
+> +
+>  	list_for_each_entry(entry, &ps_devices_list, list) {
+>  		if (!memcmp(entry->mac_address, dev->mac_address, sizeof(dev->mac_address))) {
+>  			hid_err(dev->hdev, "Duplicate device found for MAC address %pMR.\n",
+>  					dev->mac_address);
+> -			mutex_unlock(&ps_devices_lock);
+>  			return -EEXIST;
+>  		}
+>  	}
+>  
+>  	list_add_tail(&dev->list, &ps_devices_list);
+> -	mutex_unlock(&ps_devices_lock);
+>  	return 0;
+>  }
+>  
+>  static int ps_devices_list_remove(struct ps_device *dev)
+>  {
+> -	mutex_lock(&ps_devices_lock);
+> +	guard(mutex)(&ps_devices_lock);
+> +
+>  	list_del(&dev->list);
+> -	mutex_unlock(&ps_devices_lock);
+>  	return 0;
+>  }
+>  
+> @@ -649,13 +649,12 @@ static int ps_battery_get_property(struct power_supply *psy,
+>  	struct ps_device *dev = power_supply_get_drvdata(psy);
+>  	uint8_t battery_capacity;
+>  	int battery_status;
+> -	unsigned long flags;
+>  	int ret = 0;
+>  
+> -	spin_lock_irqsave(&dev->lock, flags);
+> -	battery_capacity = dev->battery_capacity;
+> -	battery_status = dev->battery_status;
+> -	spin_unlock_irqrestore(&dev->lock, flags);
+> +	scoped_guard(spinlock_irqsave, &dev->lock) {
+> +		battery_capacity = dev->battery_capacity;
+> +		battery_status = dev->battery_status;
+> +	}
+>  
+>  	switch (psp) {
+>  	case POWER_SUPPLY_PROP_STATUS:
+> @@ -1173,19 +1172,17 @@ static int dualsense_player_led_set_brightness(struct led_classdev *led, enum le
+>  {
+>  	struct hid_device *hdev = to_hid_device(led->dev->parent);
+>  	struct dualsense *ds = hid_get_drvdata(hdev);
+> -	unsigned long flags;
+>  	unsigned int led_index;
+>  
+> -	spin_lock_irqsave(&ds->base.lock, flags);
+> -
+> -	led_index = led - ds->player_leds;
+> -	if (value == LED_OFF)
+> -		ds->player_leds_state &= ~BIT(led_index);
+> -	else
+> -		ds->player_leds_state |= BIT(led_index);
+> +	scoped_guard(spinlock_irqsave, &ds->base.lock) {
+> +		led_index = led - ds->player_leds;
+> +		if (value == LED_OFF)
+> +			ds->player_leds_state &= ~BIT(led_index);
+> +		else
+> +			ds->player_leds_state |= BIT(led_index);
+>  
+> -	ds->update_player_leds = true;
+> -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> +		ds->update_player_leds = true;
+> +	}
+>  
+>  	dualsense_schedule_work(ds);
+>  
+> @@ -1234,12 +1231,9 @@ static void dualsense_init_output_report(struct dualsense *ds, struct dualsense_
+>  
+>  static inline void dualsense_schedule_work(struct dualsense *ds)
+>  {
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&ds->base.lock, flags);
+> +	guard(spinlock_irqsave)(&ds->base.lock);
+>  	if (ds->output_worker_initialized)
+>  		schedule_work(&ds->output_worker);
+> -	spin_unlock_irqrestore(&ds->base.lock, flags);
+>  }
+>  
+>  /*
+> @@ -1337,7 +1331,6 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+>  	int battery_status;
+>  	uint32_t sensor_timestamp;
+>  	bool btn_mic_state;
+> -	unsigned long flags;
+>  	int i;
+>  
+>  	/*
+> @@ -1399,10 +1392,10 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+>  	 */
+>  	btn_mic_state = !!(ds_report->buttons[2] & DS_BUTTONS2_MIC_MUTE);
+>  	if (btn_mic_state && !ds->last_btn_mic_state) {
+> -		spin_lock_irqsave(&ps_dev->lock, flags);
+> -		ds->update_mic_mute = true;
+> -		ds->mic_muted = !ds->mic_muted; /* toggle */
+> -		spin_unlock_irqrestore(&ps_dev->lock, flags);
+> +		scoped_guard(spinlock_irqsave, &ps_dev->lock) {
+> +			ds->update_mic_mute = true;
+> +			ds->mic_muted = !ds->mic_muted; /* toggle */
+> +		}
+>  
+>  		/* Schedule updating of microphone state at hardware level. */
+>  		dualsense_schedule_work(ds);
+> @@ -1495,10 +1488,10 @@ static int dualsense_parse_report(struct ps_device *ps_dev, struct hid_report *r
+>  		battery_status = POWER_SUPPLY_STATUS_UNKNOWN;
+>  	}
+>  
+> -	spin_lock_irqsave(&ps_dev->lock, flags);
+> -	ps_dev->battery_capacity = battery_capacity;
+> -	ps_dev->battery_status = battery_status;
+> -	spin_unlock_irqrestore(&ps_dev->lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ps_dev->lock) {
+> +		ps_dev->battery_capacity = battery_capacity;
+> +		ps_dev->battery_status = battery_status;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1507,16 +1500,15 @@ static int dualsense_play_effect(struct input_dev *dev, void *data, struct ff_ef
+>  {
+>  	struct hid_device *hdev = input_get_drvdata(dev);
+>  	struct dualsense *ds = hid_get_drvdata(hdev);
+> -	unsigned long flags;
+>  
+>  	if (effect->type != FF_RUMBLE)
+>  		return 0;
+>  
+> -	spin_lock_irqsave(&ds->base.lock, flags);
+> -	ds->update_rumble = true;
+> -	ds->motor_left = effect->u.rumble.strong_magnitude / 256;
+> -	ds->motor_right = effect->u.rumble.weak_magnitude / 256;
+> -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ds->base.lock) {
+> +		ds->update_rumble = true;
+> +		ds->motor_left = effect->u.rumble.strong_magnitude / 256;
+> +		ds->motor_right = effect->u.rumble.weak_magnitude / 256;
+> +	}
+>  
+>  	dualsense_schedule_work(ds);
+>  	return 0;
+> @@ -1525,11 +1517,9 @@ static int dualsense_play_effect(struct input_dev *dev, void *data, struct ff_ef
+>  static void dualsense_remove(struct ps_device *ps_dev)
+>  {
+>  	struct dualsense *ds = container_of(ps_dev, struct dualsense, base);
+> -	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&ds->base.lock, flags);
+> -	ds->output_worker_initialized = false;
+> -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ds->base.lock)
+> +		ds->output_worker_initialized = false;
+>  
+>  	cancel_work_sync(&ds->output_worker);
+>  }
+> @@ -1561,14 +1551,12 @@ static int dualsense_reset_leds(struct dualsense *ds)
+>  
+>  static void dualsense_set_lightbar(struct dualsense *ds, uint8_t red, uint8_t green, uint8_t blue)
+>  {
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&ds->base.lock, flags);
+> -	ds->update_lightbar = true;
+> -	ds->lightbar_red = red;
+> -	ds->lightbar_green = green;
+> -	ds->lightbar_blue = blue;
+> -	spin_unlock_irqrestore(&ds->base.lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ds->base.lock) {
+> +		ds->update_lightbar = true;
+> +		ds->lightbar_red = red;
+> +		ds->lightbar_green = green;
+> +		ds->lightbar_blue = blue;
+> +	}
+>  
+>  	dualsense_schedule_work(ds);
+>  }
+> @@ -1755,7 +1743,6 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
+>  static void dualshock4_dongle_calibration_work(struct work_struct *work)
+>  {
+>  	struct dualshock4 *ds4 = container_of(work, struct dualshock4, dongle_hotplug_worker);
+> -	unsigned long flags;
+>  	enum dualshock4_dongle_state dongle_state;
+>  	int ret;
+>  
+> @@ -1774,9 +1761,8 @@ static void dualshock4_dongle_calibration_work(struct work_struct *work)
+>  		dongle_state = DONGLE_CONNECTED;
+>  	}
+>  
+> -	spin_lock_irqsave(&ds4->base.lock, flags);
+> -	ds4->dongle_state = dongle_state;
+> -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ds4->base.lock)
+> +		ds4->dongle_state = dongle_state;
+>  }
+>  
+>  static int dualshock4_get_calibration_data(struct dualshock4 *ds4)
+> @@ -2048,26 +2034,23 @@ static int dualshock4_led_set_blink(struct led_classdev *led, unsigned long *del
+>  {
+>  	struct hid_device *hdev = to_hid_device(led->dev->parent);
+>  	struct dualshock4 *ds4 = hid_get_drvdata(hdev);
+> -	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&ds4->base.lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ds4->base.lock) {
+> +		if (!*delay_on && !*delay_off) {
+> +			/* Default to 1 Hz (50 centiseconds on, 50 centiseconds off). */
+> +			ds4->lightbar_blink_on = 50;
+> +			ds4->lightbar_blink_off = 50;
+> +		} else {
+> +			/* Blink delays in centiseconds. */
+> +			ds4->lightbar_blink_on = min_t(unsigned long, *delay_on / 10,
+> +						       DS4_LIGHTBAR_MAX_BLINK);
+> +			ds4->lightbar_blink_off = min_t(unsigned long, *delay_off / 10,
+> +							DS4_LIGHTBAR_MAX_BLINK);
+> +		}
+>  
+> -	if (!*delay_on && !*delay_off) {
+> -		/* Default to 1 Hz (50 centiseconds on, 50 centiseconds off). */
+> -		ds4->lightbar_blink_on = 50;
+> -		ds4->lightbar_blink_off = 50;
+> -	} else {
+> -		/* Blink delays in centiseconds. */
+> -		ds4->lightbar_blink_on = min_t(unsigned long, *delay_on / 10,
+> -					       DS4_LIGHTBAR_MAX_BLINK);
+> -		ds4->lightbar_blink_off = min_t(unsigned long, *delay_off / 10,
+> -						DS4_LIGHTBAR_MAX_BLINK);
+> +		ds4->update_lightbar_blink = true;
+>  	}
+>  
+> -	ds4->update_lightbar_blink = true;
+> -
+> -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> -
+>  	dualshock4_schedule_work(ds4);
+>  
+>  	/* Report scaled values back to LED subsystem */
+> @@ -2081,36 +2064,33 @@ static int dualshock4_led_set_brightness(struct led_classdev *led, enum led_brig
+>  {
+>  	struct hid_device *hdev = to_hid_device(led->dev->parent);
+>  	struct dualshock4 *ds4 = hid_get_drvdata(hdev);
+> -	unsigned long flags;
+>  	unsigned int led_index;
+>  
+> -	spin_lock_irqsave(&ds4->base.lock, flags);
+> -
+> -	led_index = led - ds4->lightbar_leds;
+> -	switch (led_index) {
+> -	case 0:
+> -		ds4->lightbar_red = value;
+> -		break;
+> -	case 1:
+> -		ds4->lightbar_green = value;
+> -		break;
+> -	case 2:
+> -		ds4->lightbar_blue = value;
+> -		break;
+> -	case 3:
+> -		ds4->lightbar_enabled = !!value;
+> -
+> -		/* brightness = 0 also cancels blinking in Linux. */
+> -		if (!ds4->lightbar_enabled) {
+> -			ds4->lightbar_blink_off = 0;
+> -			ds4->lightbar_blink_on = 0;
+> -			ds4->update_lightbar_blink = true;
+> +	scoped_guard(spinlock_irqsave, &ds4->base.lock) {
+> +		led_index = led - ds4->lightbar_leds;
+> +		switch (led_index) {
+> +		case 0:
+> +			ds4->lightbar_red = value;
+> +			break;
+> +		case 1:
+> +			ds4->lightbar_green = value;
+> +			break;
+> +		case 2:
+> +			ds4->lightbar_blue = value;
+> +			break;
+> +		case 3:
+> +			ds4->lightbar_enabled = !!value;
+> +
+> +			/* brightness = 0 also cancels blinking in Linux. */
+> +			if (!ds4->lightbar_enabled) {
+> +				ds4->lightbar_blink_off = 0;
+> +				ds4->lightbar_blink_on = 0;
+> +				ds4->update_lightbar_blink = true;
+> +			}
+>  		}
+> -	}
+> -
+> -	ds4->update_lightbar = true;
+>  
+> -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> +		ds4->update_lightbar = true;
+> +	}
+>  
+>  	dualshock4_schedule_work(ds4);
+>  
+> @@ -2242,7 +2222,6 @@ static int dualshock4_parse_report(struct ps_device *ps_dev, struct hid_report *
+>  	uint8_t battery_capacity, num_touch_reports, value;
+>  	int battery_status, i, j;
+>  	uint16_t sensor_timestamp;
+> -	unsigned long flags;
+>  	bool is_minimal = false;
+>  
+>  	/*
+> @@ -2420,10 +2399,10 @@ static int dualshock4_parse_report(struct ps_device *ps_dev, struct hid_report *
+>  		battery_status = POWER_SUPPLY_STATUS_DISCHARGING;
+>  	}
+>  
+> -	spin_lock_irqsave(&ps_dev->lock, flags);
+> -	ps_dev->battery_capacity = battery_capacity;
+> -	ps_dev->battery_status = battery_status;
+> -	spin_unlock_irqrestore(&ps_dev->lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ps_dev->lock) {
+> +		ps_dev->battery_capacity = battery_capacity;
+> +		ps_dev->battery_status = battery_status;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -2441,7 +2420,6 @@ static int dualshock4_dongle_parse_report(struct ps_device *ps_dev, struct hid_r
+>  	 */
+>  	if (data[0] == DS4_INPUT_REPORT_USB && size == DS4_INPUT_REPORT_USB_SIZE) {
+>  		struct dualshock4_input_report_common *ds4_report = (struct dualshock4_input_report_common *)&data[1];
+> -		unsigned long flags;
+>  
+>  		connected = ds4_report->status[1] & DS4_STATUS1_DONGLE_STATE ? false : true;
+>  
+> @@ -2450,9 +2428,8 @@ static int dualshock4_dongle_parse_report(struct ps_device *ps_dev, struct hid_r
+>  
+>  			dualshock4_set_default_lightbar_colors(ds4);
+>  
+> -			spin_lock_irqsave(&ps_dev->lock, flags);
+> -			ds4->dongle_state = DONGLE_CALIBRATING;
+> -			spin_unlock_irqrestore(&ps_dev->lock, flags);
+> +			scoped_guard(spinlock_irqsave, &ps_dev->lock)
+> +				ds4->dongle_state = DONGLE_CALIBRATING;
+>  
+>  			schedule_work(&ds4->dongle_hotplug_worker);
+>  
+> @@ -2464,9 +2441,8 @@ static int dualshock4_dongle_parse_report(struct ps_device *ps_dev, struct hid_r
+>  			    ds4->dongle_state == DONGLE_DISABLED) && !connected) {
+>  			hid_info(ps_dev->hdev, "DualShock 4 USB dongle: controller disconnected\n");
+>  
+> -			spin_lock_irqsave(&ps_dev->lock, flags);
+> -			ds4->dongle_state = DONGLE_DISCONNECTED;
+> -			spin_unlock_irqrestore(&ps_dev->lock, flags);
+> +			scoped_guard(spinlock_irqsave, &ps_dev->lock)
+> +				ds4->dongle_state = DONGLE_DISCONNECTED;
+>  
+>  			/* Return 0, so hidraw can get the report. */
+>  			return 0;
+> @@ -2488,16 +2464,15 @@ static int dualshock4_play_effect(struct input_dev *dev, void *data, struct ff_e
+>  {
+>  	struct hid_device *hdev = input_get_drvdata(dev);
+>  	struct dualshock4 *ds4 = hid_get_drvdata(hdev);
+> -	unsigned long flags;
+>  
+>  	if (effect->type != FF_RUMBLE)
+>  		return 0;
+>  
+> -	spin_lock_irqsave(&ds4->base.lock, flags);
+> -	ds4->update_rumble = true;
+> -	ds4->motor_left = effect->u.rumble.strong_magnitude / 256;
+> -	ds4->motor_right = effect->u.rumble.weak_magnitude / 256;
+> -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ds4->base.lock) {
+> +		ds4->update_rumble = true;
+> +		ds4->motor_left = effect->u.rumble.strong_magnitude / 256;
+> +		ds4->motor_right = effect->u.rumble.weak_magnitude / 256;
+> +	}
+>  
+>  	dualshock4_schedule_work(ds4);
+>  	return 0;
+> @@ -2506,11 +2481,9 @@ static int dualshock4_play_effect(struct input_dev *dev, void *data, struct ff_e
+>  static void dualshock4_remove(struct ps_device *ps_dev)
+>  {
+>  	struct dualshock4 *ds4 = container_of(ps_dev, struct dualshock4, base);
+> -	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&ds4->base.lock, flags);
+> -	ds4->output_worker_initialized = false;
+> -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+> +	scoped_guard(spinlock_irqsave, &ds4->base.lock)
+> +		ds4->output_worker_initialized = false;
+>  
+>  	cancel_work_sync(&ds4->output_worker);
+>  
+> @@ -2520,12 +2493,9 @@ static void dualshock4_remove(struct ps_device *ps_dev)
+>  
+>  static inline void dualshock4_schedule_work(struct dualshock4 *ds4)
+>  {
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&ds4->base.lock, flags);
+> +	guard(spinlock_irqsave)(&ds4->base.lock);
+>  	if (ds4->output_worker_initialized)
+>  		schedule_work(&ds4->output_worker);
+> -	spin_unlock_irqrestore(&ds4->base.lock, flags);
+>  }
+>  
+>  static void dualshock4_set_bt_poll_interval(struct dualshock4 *ds4, uint8_t interval)
+> 
+> -- 
+> 2.49.0
+> 
 
