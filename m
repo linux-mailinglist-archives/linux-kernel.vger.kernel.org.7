@@ -1,127 +1,148 @@
-Return-Path: <linux-kernel+bounces-820388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DC6B7D23A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAE2B7CF21
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0A43BCD4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:52:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE751B29B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BADA345754;
-	Wed, 17 Sep 2025 09:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Jm0V5c7E"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F05A21C9FD
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22349283145;
+	Wed, 17 Sep 2025 09:47:25 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DFE341AD7
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102740; cv=none; b=EoquvpeGwYGa51ZxsNNsP9y3HBpRFt9GRYEWPvLv+J5cCCzzl7XZsLlNkQ3vW7inXdto2PmcWXAqg5iuAyR56szh2L46lDRrRrahJ7xD0TqnSyNsMH18SYJIMdDD2jR5r70xZyVyEJHjahHzC+1fSDaB+LT8C3D3PrqZpYi1S2I=
+	t=1758102444; cv=none; b=oGLyBeN+uNdXRL9IIK4oH/nT0dit/QdUsXHcqgJ8ROQyqehs+AwMEoX0EYdqpfL2qD8koYspsT52RUPUDWHUhtQoL+dwLeEsySpl8vOw7wYxLlM+MrDgwZeXSZl7xZITBj1hBD9QLySBXv3uXRtj90DPg0aTiq3QnlQKafdD1Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102740; c=relaxed/simple;
-	bh=yRVgBxhsfRXWMvPI/gNFnwX8qmyCe94NzBNJGzx88+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=urdZo0OgfwEZrofR6MHuN/2cF039MuLs6oeBGeQ/VJVd2T5wSJ39cP56L1GaFmfBA4CQvcUWbLoucpJGWqOLhHBRYTT/xzrnzrPxcJsVN5I7NWyzJtbJwCbVkC/uep5HLK44v3buZ90qd1NELF05xlCVmay8lVvGD9L0mq+8SFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Jm0V5c7E; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 90B521A0E8A;
-	Wed, 17 Sep 2025 09:47:14 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 655AC6063E;
-	Wed, 17 Sep 2025 09:47:14 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 462A9102F1A2F;
-	Wed, 17 Sep 2025 11:46:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758102433; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=yRVgBxhsfRXWMvPI/gNFnwX8qmyCe94NzBNJGzx88+w=;
-	b=Jm0V5c7E6m16Q7z2YqnrJqGWCeDmHnBNA9vbh7MSRz3bi3eZ9yJ+tDsAZowIJ2hzPPFB1n
-	AAmH3/NWJERfum+f5j9ahyNxGZ5ky5aeQFwyfibqwt4283S5efjsFs1+IR/jqlPJZad6LH
-	iNHMVfKMqjZ+5j0EUMByfJI8zW3mOl9r0vLHrcGGPSugZyzjNMKlfCARkFUvAPNJSKeo0g
-	sMyappaxT8ZFDdsSYHyA6OwiiXKUUVMzz8k45ILFpxbraCi6ilUXgb1rI68lxXrIKf/yIO
-	wAoWkIbEAbqWUrJ3sQmBPnUmMqbTk6pnnf3MUWUgiFm3eBF8qn7xT+OUnhM47g==
-Date: Wed, 17 Sep 2025 11:46:55 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
- <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
- kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org, Kyle Swenson
- <kyle.swenson@est.tech>
-Subject: Re: [PATCH net-next v3 0/5] net: pse-pd: pd692x0: Add permanent
- configuration management support
-Message-ID: <20250917114655.6ed579eb@kmaincent-XPS-13-7390>
-In-Reply-To: <20250916165440.3d4e498a@kernel.org>
-References: <20250915-feature_poe_permanent_conf-v3-0-78871151088b@bootlin.com>
-	<20250916165440.3d4e498a@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758102444; c=relaxed/simple;
+	bh=UTIf4txpaImQ0cFB7zAgM6nm9pOQSd8jCc/j9BwiWaA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=TbQebSHq7MVOZZgZyrM6Xwd5pIUZ1e9i8mqkbx/76CYk0DDwd93h30HytBqn51QA9Lk/zlB8JDnqMOwQlhVm4MeYEoA5TbkFGaHP2X0H2SA7O0BDnbgGFiH/yt4zWus1wrgm7D4o9qt2saRKvOPl77NiNieTBNiFS+pwZwYp59Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Bx37+mg8poME8LAA--.22981S3;
+	Wed, 17 Sep 2025 17:47:18 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJBxpeSjg8po9DebAA--.36350S3;
+	Wed, 17 Sep 2025 17:47:17 +0800 (CST)
+Subject: Re: [PATCH v2 3/4] objtool/LoongArch: Fix unreachable instruction
+ warnings about entry points
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250917011007.4540-1-yangtiezhu@loongson.cn>
+ <20250917011007.4540-4-yangtiezhu@loongson.cn>
+ <CAAhV-H6yKyqU+jQ=-RoOOc0fyRgjFfdorJAk1LashV0Gt=Y=AQ@mail.gmail.com>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <bfd7035b-ca08-66d2-bdc5-d28743144128@loongson.cn>
+Date: Wed, 17 Sep 2025 17:47:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <CAAhV-H6yKyqU+jQ=-RoOOc0fyRgjFfdorJAk1LashV0Gt=Y=AQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxpeSjg8po9DebAA--.36350S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kw47WF48CFy3tFWrWrW7trc_yoW5JF43pF
+	WUC390y3yvyF1qva1DJ3yagrWrZFn3Wr4aqFnxGryrA39Fv3ZFqw40yr1UXFyDKw47W340
+	qrWrtFZ0gayUA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8vApUUU
+	UUU==
 
-On Tue, 16 Sep 2025 16:54:40 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+On 2025/9/17 下午3:07, Huacai Chen wrote:
+> Hi, Tiezhu,
+> 
+> On Wed, Sep 17, 2025 at 9:10 AM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+>>
+>> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
+>> following objtool warnings:
+>>
+>>    vmlinux.o: warning: objtool: kernel_entry+0x0: unreachable instruction
+>>    vmlinux.o: warning: objtool: smpboot_entry+0x0: unreachable instruction
+>>
+>> kernel_entry() and smpboot_entry() are in arch/loongarch/kernel/head.S,
+>> there is "OBJECT_FILES_NON_STANDARD_head.o := y" to skip objtool checking
+>> for head.o, but the STACK_FRAME_NON_STANDARD macro does not work for link
+>> time validation of vmlinux.o according to objtool documentation, just give
+>> a proper unwind hint to fix the warnings.
+>>
+>> By the way, ASM_BUG() can be removed due to unnecessary, otherwise there
+>> are following warnings:
+>>
+>>    kernel_entry+0xf4: start_kernel() missing __noreturn
+>>    in .c/.h or NORETURN() in noreturns.h
+>>
+>>    smpboot_entry+0x68: start_secondary() missing __noreturn
+>>    in .c/.h or NORETURN() in noreturns.h
+>>
+>> This is because the previous instructions of kernel_entry+0xf4 and
+>> smpboot_entry+0x68 are the 'bl' instructions, start_kernel() and
+>> start_secondary() are the respective call destination symbols which
+>> are noreturn functions, then the 'bl' instructions are already marked
+>> as dead end in annotate_call_site().
+>>
+>> For now, it is time to remove "OBJECT_FILES_NON_STANDARD_head.o := y"
+>> in arch/loongarch/kernel/Makefile.
 
-> On Mon, 15 Sep 2025 19:06:25 +0200 Kory Maincent wrote:
-> > This patch series introduces a new devlink-conf uAPI to manage device
-> > configuration stored in non-volatile memory. This provides a standardiz=
-ed
-> > interface for devices that need to persist configuration changes across
-> > reboots. The uAPI is designed to be generic and can be used by any devi=
-ce
-> > driver that manages persistent configuration storage.
-> >=20
-> > The permanent configuration allows settings to persist across device
-> > resets and power cycles, providing better control over PSE behavior
-> > in production environments. =20
->=20
-> I'm still unclear on the technical justification for this.
-> "There's a tool in another project which does it this way"
-> is not usually sufficient upstream. For better or worse we
-> like to re-implement things from first principles.
->=20
-> Could you succinctly explain why "saving config" can't be implemented
-> by some user space dumping out ethtool configuration, saving it under
-> /etc, and using that config after reboot. A'la iptables-save /
-> iptables-restore?
+...
 
-I think the only reason to save the config in the NVM instead of the usersp=
-ace
-is to improve boot time. As Oleksij described:
-> I can confirm a field case from industrial/medical gear. Closed system,
-> several modules on SPE, PoDL for power. Requirement: power the PDs as
-> early as possible, even before Linux. The box boots faster if power-up
-> and Linux init run in parallel. In this setup the power-on state is
-> pre-designed by the product team and should not be changed by Linux at
-> runtime.
+>> -OBJECT_FILES_NON_STANDARD_head.o := y
+> This line should be kept, othewise we get:
+> 
+> arch/loongarch/kernel/head.o: warning: objtool: kernel_entry+0xf4:
+> start_kernel() missing __noreturn in .c/.h or NORETURN() in
+> noreturns.h
+> 
+> even without LTO. This is a regression, we can only remove it after
+> the above warning be fixed.
 
-He told me that he also had added support for switches in Barebox for the
-same reason, the boot time. I don't know if it is a reasonable reason to ad=
-d it
-in Linux.
+As said in the commit message, ASM_BUG() needs to be removed
+to fix the above warning.
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+I tested again with GCC and LLVM (with and without LTO),
+there is no the warning what you said, please double check.
+
+(1) GCC
+make ARCH=loongarch defconfig
+make ARCH=loongarch -j8
+
+(2) LLVM without LTO
+make ARCH=loongarch LLVM=1 clean defconfig
+make ARCH=loongarch LLVM=1 olddefconfig all -j8
+
+(3) LLVM with LTO
+make ARCH=loongarch LLVM=1 clean defconfig
+scripts/config -d LTO_NONE -e LTO_CLANG_THIN
+make ARCH=loongarch LLVM=1 olddefconfig all -j8
+
+Thanks,
+Tiezhu
+
 
