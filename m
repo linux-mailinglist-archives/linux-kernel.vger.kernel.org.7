@@ -1,149 +1,102 @@
-Return-Path: <linux-kernel+bounces-821748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064A2B82239
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35606B82253
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9584650FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12A1585AF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8310B30BBA2;
-	Wed, 17 Sep 2025 22:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E4C30F53C;
+	Wed, 17 Sep 2025 22:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="ZZhhSZtG"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rw09I1uC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B71FA55;
-	Wed, 17 Sep 2025 22:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758147526; cv=pass; b=NTcfRJmGbziD15OIgYq32MKi2rv7u9wXeQ9rG0fb4ZEUIPW01LAhWM5lfFkeADEhlWVrBvSfUqeKJT5UqxsQ2zu0hpvcx25bg+NFKewMkEd8Co3FgHClCaMjP61BlMNafJ5muyPuQAywY6/0cn6UDcHAp1yOWSjLuFxdAJBI/yU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758147526; c=relaxed/simple;
-	bh=SmRT7XrOnFZUcQSEEWJW9mAal75IRBUO1H/bYI3eI6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=By5fe57cgPfvBhxLyIaNTXwDg8LMoGfSBtn8pG3FjY+iVCxE7UUIK0V03TSyC/GiiAK3r2PqKPri3oIPeejLfeOLmobbYUaGceitg8xz9fieIKQUM+CO4lQtqHvNOo0TVy+SdrN9v07VxDndx0P4Hp0v4cjllIsjfM3yj8ClaSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=ZZhhSZtG; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758147502; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nBE0qAD96oeV19lQZr8E0NjaLxoWvB0jgBlajshoa/O5cKG/7nCHvmpr+1eNMJzoveQ1BYXhnOMrW73lxY/G4r05nzoOvGnDWKJ84jiFmdI1F5ulao5lk5ju9Q+WSEZjU2Uf9v9BEoeFs6MwJVjr9lXDCBifwGlGCfX2Nx+EZBE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758147502; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SmRT7XrOnFZUcQSEEWJW9mAal75IRBUO1H/bYI3eI6c=; 
-	b=NzVDIFHvdLSXB2uWjgClO8n7uCGKBWxMYNkRzHet++HlSp3NZX2R+Lxk+dkOhmFcBmLGMxVvwr+dV6PDFsk1d7P/3hkhqBbpUMVw6/F7X1/tCSHw8sMBrjcs22opQhuNNvHSbMBAJeHpXPsq5SoM0BlIpe6ibHminnhftacXorc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758147502;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=SmRT7XrOnFZUcQSEEWJW9mAal75IRBUO1H/bYI3eI6c=;
-	b=ZZhhSZtGafjSiuoJZoLSdScrJOKz28apFezuJMJK4TgwKEZ5HJkX5Dc8QWx9d1im
-	3JnT0E+2RU1c2fcqcTk9fFE+vR+VuaFXb7n8rf65Xjf07D35zTLYK7BcnqRK6TlFxsG
-	ayw7W3iN9nw/L8Q5jLXr1n8Wbr9nhNvW5lx4qXQo=
-Received: by mx.zohomail.com with SMTPS id 1758147499547326.778506325556;
-	Wed, 17 Sep 2025 15:18:19 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id D120F18067C; Thu, 18 Sep 2025 00:18:15 +0200 (CEST)
-Date: Thu, 18 Sep 2025 00:18:15 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Drew Fustini <fustini@kernel.org>
-Cc: Icenowy Zheng <uwu@icenowy.me>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/2] driver: reset: th1520-aon: add driver for
- poweroff/reboot via AON FW
-Message-ID: <7ru5tunm3vlmtuulkbc7kpunyim3ks3he4ielc77ivm7vxieqk@iw6xmwmsn3lk>
-References: <20250818074906.2907277-1-uwu@icenowy.me>
- <20250818074906.2907277-2-uwu@icenowy.me>
- <i6slr5csro54ys5g7diqyacq4deidwm6f2nhpm2uwmgjlu6tyn@otrbpij4vdya>
- <aMm6UIMTFOH0Z3Ug@x1>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D8B30E85E;
+	Wed, 17 Sep 2025 22:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758147624; cv=none; b=jUnGdugzfCWmbOrWN7RIOcnkjOWrxmkNYYCiP06grYCpu+upTDsGdau27KdHzlzeA16vskxNdTGEh2oHtT9Dg0VNYpF0YVIc8UIxVY2Cm2RW+RPbL/b0qFwKbqdMovwfDEUY79J/fsteFnj9cstHycz3M5Zvwgjz/ZPMz8FG2Vs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758147624; c=relaxed/simple;
+	bh=UAXtTYSSZXwRncb6qHR46TFy6fZj+ssxz42YvkNnIos=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YT9y5wPXTaf3HnKDfR2dJDQOlFts+LvZx7SKOavfX3rGgy7EgbTudVjSdATH/qLtIxEXFRBqg+2/NFm1V/9ypVbd+AcemCGpG8G//6LZKJKtT0IHYOyudZxy88+6y5yEC2M/1N693pVczLXXzcavwNGpPIx6yxRMN5m5Z+7eKtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rw09I1uC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E17BC4CEE7;
+	Wed, 17 Sep 2025 22:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758147624;
+	bh=UAXtTYSSZXwRncb6qHR46TFy6fZj+ssxz42YvkNnIos=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Rw09I1uCNEqwlDcoHmLxffqhGJuSYrqsfILM2GsfGu91XQDQL69XpD16n5/tCEARD
+	 kSYmvF156axjFpN7K6cstRnL8OMaZqHJ/asvKIe31HssvMj4mqYzSNZzxL+iqnK7vH
+	 CNoIIl89cN0GOr/ve7Cz3m4c8nzcqjeNrv5hpU3TG1P4IPlzkg9EjF/oVj3ASiVCeU
+	 5ez0vme/bXEhj7+PW0Q0BCu922cvFc/r0GKwxweaOqq1Lju8qr7ceqV8s/T8As6liD
+	 UzfAOcYHGfMKswCLzF6aWeIDjnuHiRpsq1XWSS7Lhikq5z/AE2F/WVyT3NYNXY6J9L
+	 fBnS8LG50mqtQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3402D39D0C3D;
+	Wed, 17 Sep 2025 22:20:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w6tltlbzi43cl2ip"
-Content-Disposition: inline
-In-Reply-To: <aMm6UIMTFOH0Z3Ug@x1>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.96.42
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <7ru5tunm3vlmtuulkbc7kpunyim3ks3he4ielc77ivm7vxieqk@iw6xmwmsn3lk>+zmo_0_sebastian.reichel@collabora.com
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3] net: cadence: macb: Add support for Raspberry Pi RP1
+ ethernet controller
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175814762499.2168096.11472987759617415372.git-patchwork-notify@kernel.org>
+Date: Wed, 17 Sep 2025 22:20:24 +0000
+References: <20250916081059.3992108-1-svarbanov@suse.de>
+In-Reply-To: <20250916081059.3992108-1-svarbanov@suse.de>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, florian.fainelli@broadcom.com, andrea.porta@suse.com,
+ nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev, phil@raspberrypi.com,
+ jonathan@raspberrypi.com, dave.stevenson@raspberrypi.com, andrew@lunn.ch
+
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 16 Sep 2025 11:10:59 +0300 you wrote:
+> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> 
+> The RP1 chip has the Cadence GEM block, but wants the tx_clock
+> to always run at 125MHz, in the same way as sama7g5.
+> Add the relevant configuration.
+> 
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v3] net: cadence: macb: Add support for Raspberry Pi RP1 ethernet controller
+    https://git.kernel.org/netdev/net-next/c/dc110d1b2356
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---w6tltlbzi43cl2ip
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] driver: reset: th1520-aon: add driver for
- poweroff/reboot via AON FW
-MIME-Version: 1.0
-
-Hi,
-
-On Tue, Sep 16, 2025 at 12:28:16PM -0700, Drew Fustini wrote:
-> On Tue, Sep 16, 2025 at 08:22:02PM +0200, Sebastian Reichel wrote:
-> > On Mon, Aug 18, 2025 at 03:49:05PM +0800, Icenowy Zheng wrote:
-> > > This driver implements poweroff/reboot support for T-Head TH1520 SoCs
-> > > running the AON firmware by sending a message to the AON firmware's W=
-DG
-> > > part.
-> > >=20
-> > > This is a auxiliary device driver, and expects the AON channel to be
-> > > passed via the platform_data of the auxiliary device.
-> > >=20
-> > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> > > ---
-> >=20
-> > Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> >=20
-> > Greetings,
-> >=20
-> > -- Sebastian
->=20
-> Thanks for looking at this patch.
->=20
-> What tree do you think it should go through?
-
-I'm fine with Uffe taking this together with the second patch or I
-can take it and provide an immutable branch once the second patch is
-ready.
-
-Greetings,
-
--- Sebastian
-
---w6tltlbzi43cl2ip
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjLM6cACgkQ2O7X88g7
-+poEjg/8CGap9CHM025XqzM6ldM8EKrDBwYRnSNsZPCtSkh4HGSAeUnsGbGG1qjw
-fW+0ntyctMO9qOE0xrHzc1KtvZnWiHgGeHwOs0MLMwGME1+TQ+qYe/dF/ED47Pcc
-4jsoTqjih39dmXMfA8xKBRO/cosIntrqGHGcNdEVyl1LFc8p3pNztPnYrSQiNYSL
-7iXgOZqMYGdSw3eEAtg9nEreog9CZkmbmEn4dj+KBdwir0x47WN05FmJlWlgX2mc
-5tul9fjvdK3oxVVT8FrmZ066hn8rpPH8+vdBxbWc43A/kJcF4rNIqf7rC2wrAHcL
-bNHmUN7Nc8dMkmjm+v2ozG7uIBSLvuLoighxWvVEAPDTe3FTaVh2BSfEr1mmrTrY
-uoIVF4TjEZGaMlwVUVUWhmPvKx0X9jsfO6z/YFqtQmwtLdJlnsydZAHQUNg0LG1W
-U+WkH5w1NI/xw3GR3TtiJeiUIaxRkUl9N8bhebabtbEWLihEpnPWxscaAJe/+Lmr
-OlcplQWPmKlkuioAzkdehZgKM4hquEblLuGtn/fNdOmFVwQY/T9/mhAFFAj2MPld
-qit6UU9AsyRZgpRkTfqkygKjQVb9rnDHnKEI4DPb/BfSTcjZUPIlv51y+/El61tr
-rxDw1ttlRlMmXArjnemcExbOhOeiftumhhoPlLln3A+Vj2d2j8A=
-=LvX1
------END PGP SIGNATURE-----
-
---w6tltlbzi43cl2ip--
 
