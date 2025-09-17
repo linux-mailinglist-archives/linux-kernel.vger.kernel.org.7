@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-819876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C1DB7F88C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:48:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D66B80464
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE24F326E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:19:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C780A7AE6A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A912F60A4;
-	Wed, 17 Sep 2025 02:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A392F617A;
+	Wed, 17 Sep 2025 02:19:33 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC32721CC55;
-	Wed, 17 Sep 2025 02:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71F82F5A25;
+	Wed, 17 Sep 2025 02:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758075571; cv=none; b=q2CukQDBnQnuYgwNki8CUQhEz/FzN19tKEqlSHHLx0y5zReGVdS3fSoYLQ3i73JtFd7GuRJclOPJ956KDPXDGKpouJCQIsgOE52/8LI+7P2T02XUqFuc01oBE10YjaKfejCheZeX5S3VDSqw1zV43IZHFgV6GAwMNfiyTnISNS0=
+	t=1758075573; cv=none; b=OFzs7+NLvW6lydfu26BS5U9j3IPJEDhWU4aEYR5zHqbd3Q55Vb4Uz7shKGWmS88unuV9PF/ZBHcWzeambOinlY+GLnNr7CXNg7JyRsv/KyCb+dgGpAORvWn+gBQQ8vCfc9SpGJioruLf+yymefuRIGFhEL+veNbOkh/J7eF+M2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758075571; c=relaxed/simple;
-	bh=qSuz+bKGDq7k+juHcdsrwoGO+rS155RqVm52v5DFmnA=;
+	s=arc-20240116; t=1758075573; c=relaxed/simple;
+	bh=0qCaAB4orV+9FkWVKVVys1cLVSC/Wx67cHArdp5KJm8=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XFsQ1HIO7vzApkIzdYiQZpdR9gxq5G2DDjJtk6b1mnnYt8drvHaYkL4Dm6UvAQm4LlKENmoeT5LdBouqWzGjVNyGJiQsAhOlwOS2h3ZTN5Fg6D0cXueMZ+Dl3+NeRmmQ7e08SCXSAlY9joR4R62OXtSTr5k/yfTaPkH7Y0Bo4Vg=
+	 MIME-Version:Content-Type; b=mrTdkwcKAhyEzy/hWxdNv6fsfqqOG7lHBrZa/K9Pf1/iP0neSTs0AOwEYq5fw3fCzgyyz+brZ0+CWoQvLiV/KTdFU1R/Z9rzlbu0dGyWhva0oolnPPDoe0CZdPCbeghJAG6212dHZgDa7yr6N/aaQq+ey2mKN5jBYcMVAzUkuX8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -42,9 +42,9 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Greg Kroah-Hartman
  Stern" <stern@rowland.harvard.edu>, Philipp Zabel <p.zabel@pengutronix.de>,
 	<linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/4] dt-bindings: usb: uhci: Add reset property
-Date: Wed, 17 Sep 2025 10:19:23 +0800
-Message-ID: <20250917021926.3692137-2-ryan_chen@aspeedtech.com>
+Subject: [PATCH v2 2/4] usb: uhci: Add reset control support
+Date: Wed, 17 Sep 2025 10:19:24 +0800
+Message-ID: <20250917021926.3692137-3-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250917021926.3692137-1-ryan_chen@aspeedtech.com>
 References: <20250917021926.3692137-1-ryan_chen@aspeedtech.com>
@@ -57,33 +57,76 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-The UHCI controller on Aspeed SoCs (including AST2700) requires
-its reset line to be deasserted before the controller can be used.
-Add an optional "resets" property to the UHCI device tree bindings
-to describe the phandle to the reset controller.
+Some SoCs, such as the Aspeed AST2700, require the UHCI controller
+to be taken out of reset before it can operate. Add optional reset
+control support to the UHCI platform driver.
 
-This property is optional for platforms which do not require
-explicit reset handling.
+The driver now acquires an optional reset line from device tree,
+deasserts it during probe, and asserts it again in the error path
+and shutdown.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 ---
- Documentation/devicetree/bindings/usb/usb-uhci.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/host/uhci-hcd.h      |  1 +
+ drivers/usb/host/uhci-platform.c | 17 +++++++++++++++--
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-uhci.yaml b/Documentation/devicetree/bindings/usb/usb-uhci.yaml
-index d8336f72dc1f..b1f2b9bd7921 100644
---- a/Documentation/devicetree/bindings/usb/usb-uhci.yaml
-+++ b/Documentation/devicetree/bindings/usb/usb-uhci.yaml
-@@ -28,6 +28,9 @@ properties:
-   interrupts:
-     maxItems: 1
+diff --git a/drivers/usb/host/uhci-hcd.h b/drivers/usb/host/uhci-hcd.h
+index 13ee2a6144b2..4326d1f3ca76 100644
+--- a/drivers/usb/host/uhci-hcd.h
++++ b/drivers/usb/host/uhci-hcd.h
+@@ -445,6 +445,7 @@ struct uhci_hcd {
+ 	short load[MAX_PHASE];			/* Periodic allocations */
  
-+  resets:
-+    maxItems: 1
+ 	struct clk *clk;			/* (optional) clock source */
++	struct reset_control *rsts;		/* (optional) clock reset */
+ 
+ 	/* Reset host controller */
+ 	void	(*reset_hc) (struct uhci_hcd *uhci);
+diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-platform.c
+index 62318291f566..1c1715bddc27 100644
+--- a/drivers/usb/host/uhci-platform.c
++++ b/drivers/usb/host/uhci-platform.c
+@@ -11,6 +11,7 @@
+ #include <linux/of.h>
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ 
+ static int uhci_platform_init(struct usb_hcd *hcd)
+ {
+@@ -132,17 +133,29 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
+ 		goto err_rmr;
+ 	}
+ 
++	uhci->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
++	if (IS_ERR(uhci->rsts)) {
++		ret = PTR_ERR(uhci->rsts);
++		goto err_clk;
++	}
++	ret = reset_control_deassert(uhci->rsts);
++	if (ret)
++		goto err_clk;
 +
-   '#ports':
-     $ref: /schemas/types.yaml#/definitions/uint32
+ 	ret = platform_get_irq(pdev, 0);
+ 	if (ret < 0)
+-		goto err_clk;
++		goto err_reset;
  
+ 	ret = usb_add_hcd(hcd, ret, IRQF_SHARED);
+ 	if (ret)
+-		goto err_clk;
++		goto err_reset;
+ 
+ 	device_wakeup_enable(hcd->self.controller);
+ 	return 0;
+ 
++err_reset:
++	if (!IS_ERR_OR_NULL(uhci->rsts))
++		reset_control_assert(uhci->rsts);
+ err_clk:
+ 	clk_disable_unprepare(uhci->clk);
+ err_rmr:
 -- 
 2.34.1
 
