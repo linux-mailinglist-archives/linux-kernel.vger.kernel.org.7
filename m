@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-819894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8003BB7C9E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86974B7CAB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7648616E871
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:40:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8C274E11E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4C12F3C3F;
-	Wed, 17 Sep 2025 02:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DB62F6182;
+	Wed, 17 Sep 2025 02:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTo0eG04"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fesirg5k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60402DF717;
-	Wed, 17 Sep 2025 02:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449A02F60CD;
+	Wed, 17 Sep 2025 02:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758076812; cv=none; b=e3IPwxndU4m8aAWftFQS7Rd9bweU0cZvJsjv1aSB+KahD8pm/pJ8E2vrIVovJBW4R49107Gv3XpYur99c7mYubW9qD/oNX9GioMsXvpzfgX0XvIRqlPDCn57oNL6djlruB6YU9N6X5fHU5obEP5lc2oHMQs0N33q3vZOriLODP0=
+	t=1758076814; cv=none; b=MNiY4pxQ9lGF/A4Ox80V36WM+q+fMpuFvVwIvmvdBjJ0Xu+pcuI9lTKHLZEhPYBj2+WhrJVSWPXx8FvnMD+ZDfC8R5wjTzI5S+wFXcHMD3ZS1JN/LxxcyDGL/6ebOogAcpX4Fxae1N/a5wq0n4CwhZXN2McsTtzFO2gr9eOt9WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758076812; c=relaxed/simple;
-	bh=/S2HMi3usPSz32wfGIPF+rTLYNKndealNpX9ovOTxRM=;
+	s=arc-20240116; t=1758076814; c=relaxed/simple;
+	bh=+jZ7a6Pk13YHDpGs8wTheZPKmacywLo2rDy2h3k/AKs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=EKt3gKhHE4ToNiee8f0t/8AO6oblsApkYu+DoSxbRMLFmb1JL1+/y67zKk0OYwA4NudBrruijdC3d3lRkuCsopO7g+jpWeV9+zIOIx3wImvqf0aWSdrsswlRDwEs14Iw62r93cAaFmPWCsPuXvsEPjx2UkaeXEzfuzIHi4kJ9w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTo0eG04; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A204C4CEEB;
-	Wed, 17 Sep 2025 02:40:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lCFiRUpv/QB4DR2n0hczhKg2AKk5v4LwONfD/g0vwV2xkmRYq6imfKWd3oRqoVElEgcjmo6FI+0GmigZhMmG1jWo/KHS4ko1KmLXOO+Yeo5X1UwIJONbRxTK/Cd2isNZpmMyajhQsnQxYwXQI6a8jew/1yehf8ABBDkk1m7j+PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fesirg5k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA03AC4CEFA;
+	Wed, 17 Sep 2025 02:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758076812;
-	bh=/S2HMi3usPSz32wfGIPF+rTLYNKndealNpX9ovOTxRM=;
+	s=k20201202; t=1758076813;
+	bh=+jZ7a6Pk13YHDpGs8wTheZPKmacywLo2rDy2h3k/AKs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OTo0eG04e9twFTepVCTYzVobxe+EIJigaScEgmbcQrfCSl44NK6jgQvJrqWyq46bq
-	 UU7PHRQI7K2R8k/ltzQGTEhl1cp4VAN3sgMphvR3Iowy2mudXgw+DUxOb1YSSNCNVy
-	 Q/HA8sVuG4lmN2gjW1SRwVhpkQ3cnYAxd+g4qGFSZByMlfh72pVBfnTE4h/fF+1MjE
-	 E1tt0zKjSSVoY2z5zj0ypYribQAEWoFpjfhU8d3a3C1dLLbsygz7oTa23UUO8GhG7x
-	 DEQ9df136oEN+iAjROowKLFnubG5BVoRYyqhuRYZYU+E2BAB7lHvFChY3gN7Ekc2bg
-	 gYiYlQiByDWXw==
+	b=Fesirg5kgQLTK51Yra+Cs7NyC4D0uT6CrsK2yI1aFs99mBAetN1RNUSRz2Vh1O1Xg
+	 1XTCrL+eW4m6kZadXl8URTjEv8qLKY/K59bmyrcszP6EG5nmV2HMd5/2kxFO/m34Ye
+	 A6TslhzP3g15MnaJhn7JpS7uYMy+qFiefQg0x8TrlLNihdDa6RvmaVxWnOxvBE6Ctl
+	 moNrptV9UuZR1t81oQGI0yClpznpt0hxF4vAKlh6j0UFN1vBZLs6kPkN3Ys1/kJ5UV
+	 SfODSPnYgi42iMUPcuscS8hAxZaU1QIXpAUbxCf61hB9VgYbXTrnUna1PKyVl7NuiT
+	 cZYP2sc3R/ZhA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D2639D0C1A;
-	Wed, 17 Sep 2025 02:40:14 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6BA39D0C1A;
+	Wed, 17 Sep 2025 02:40:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,42 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2] Fix riscv sparse warnings
+Subject: Re: [PATCH 0/2] riscv, bpf: fix reads of thread_info.cpu
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175807681324.1444719.6787626572646476134.git-patchwork-notify@kernel.org>
-Date: Wed, 17 Sep 2025 02:40:13 +0000
-References: 
- <20250903-dev-alex-sparse_warnings_v1-v1-0-7e6350beb700@rivosinc.com>
-In-Reply-To: 
- <20250903-dev-alex-sparse_warnings_v1-v1-0-7e6350beb700@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, lkp@intel.com, viro@zeniv.linux.org.uk,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, cyrilbur@tenstorrent.com, jszhang@kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
+ <175807681449.1444719.15338254509817798982.git-patchwork-notify@kernel.org>
+Date: Wed, 17 Sep 2025 02:40:14 +0000
+References: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
+In-Reply-To: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
+To: =?utf-8?b?UmFkaW0gS3LEjW3DocWZIDxya3JjbWFyQHZlbnRhbmFtaWNyby5jb20+?=@codeaurora.org
+Cc: linux-riscv@lists.infradead.org, bpf@vger.kernel.org, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bjorn@kernel.org, pulehui@huawei.com,
+ puranjay@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, memxor@gmail.com,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
 by Paul Walmsley <pjw@kernel.org>:
 
-On Wed, 03 Sep 2025 18:53:07 +0000 you wrote:
-> This series simply fixes 2 recently introduced sparse warnings.
+On Tue, 12 Aug 2025 11:02:54 +0200 you wrote:
+> Hello,
 > 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
-> Alexandre Ghiti (2):
->       riscv: Fix sparse warning in __get_user_error()
->       riscv: Fix sparse warning about different address spaces
+> These patches are related to a recently queued series [1] that fixes the
+> same bugs in normal code.  That series finishes with a patch that would
+> have exposed the BPF bugs, but luckily it won't get merged until v6.18.
+> 
+> I don't know enough about BPF to verify that it emits the correct code
+> now, so any pointers are welcome.
 > 
 > [...]
 
 Here is the summary with links:
-  - [1/2] riscv: Fix sparse warning in __get_user_error()
-    https://git.kernel.org/riscv/c/fef7ded169ed
-  - [2/2] riscv: Fix sparse warning about different address spaces
-    https://git.kernel.org/riscv/c/a03ee11b8f85
+  - [1/2] riscv, bpf: use lw when reading int cpu in BPF_MOV64_PERCPU_REG
+    https://git.kernel.org/riscv/c/ad5348c76591
+  - [2/2] riscv, bpf: use lw when reading int cpu in bpf_get_smp_processor_id
+    https://git.kernel.org/riscv/c/8a16586fa7b8
 
 You are awesome, thank you!
 -- 
