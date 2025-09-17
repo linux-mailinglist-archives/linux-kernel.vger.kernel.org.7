@@ -1,189 +1,185 @@
-Return-Path: <linux-kernel+bounces-821337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84FF7B80FEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:29:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B31CB81063
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 18:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BEC5189E385
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711042A456E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53112F39DA;
-	Wed, 17 Sep 2025 16:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F54B2EAD0C;
+	Wed, 17 Sep 2025 16:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Efgoo/3O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZiHXr1VS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5D82BE655
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F52224B04
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758126562; cv=none; b=mVoWCEHGX94Zu9YKu076v1UwzFTL5g57/eLOTkhsRhsdtidYuhcJAD/MQ9xWVU+aNnEylYU3dlzyR2qxkLxhK9RAO6sYQnai1xblhSUTQXpiLsmZgarEs/Iw9lkDEdCEwfbcVfV0AlJKAftH2dNqhz3CfwyeNklaQ4JtF84Nw+M=
+	t=1758126599; cv=none; b=l/0+EcKVM219t5aDKQXWRWN2B1qMrmyql03Ur+TD2Aa7fW+o8yzo6nPc3e9h6bnVgbuHDIqewQDLDzJj7+brwe4JdxqU1ZdJXShX3MoWfMbVIpUAEjbmRZlfYZ/9EMSrQaqwclTgrQ88MWdGkl85vYGg5Kdmpp1hpa/nrPhSWJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758126562; c=relaxed/simple;
-	bh=2OcN4+QE4vB9KSX+x87Cdk3l913EKng1ECYM1XJ4iNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQwFzDDvrvWV37vk2MfOzRXR+Bp3J2kxw8ePCtDH3coQMdDa/bhnlto0FwQ92Dj86vB+Wgb5q8GovVNR2JpqJZVS1+zP2/cL/O/sxge2Whi9R8tb+ZQD4FDBX/q34r0F0ZlD4GhwAUjtwCjfdiArNmnfOqXZQebWzZ5TuJ9VQZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Efgoo/3O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 591F7C4CEE7;
-	Wed, 17 Sep 2025 16:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758126560;
-	bh=2OcN4+QE4vB9KSX+x87Cdk3l913EKng1ECYM1XJ4iNY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Efgoo/3O0LeCmXH1rE1DrgEshaiVcNwoiGdG8gPR/qVy13CnvZhy67MLqQDbd1Nwu
-	 enTVAYHlzhaquq3xtN8aHEQJ43+ZMLVMdsXkEZIa+HcUfpRIV1k0dv2gdUGFQ4LcPp
-	 MLXKrgn89SIv2BNKLnINxK6b+AQdHaO1/9YvsrzW1bPzB0zZ+PH9NwTAvEnOWPivsk
-	 e1H/U0OCmG9hQDwRJ7dblDd0FZeTJpXJgS/cWqhzztqV2KHa56zWXi5lbfUt7zGwOX
-	 qsfIETUK9/JSo5CI5A/DO3GDqdyjekXMCAuVzOxn4Llo0FK3St0PJRf7PEYyzQJCps
-	 sptrXw5WzO+QA==
-Date: Wed, 17 Sep 2025 13:29:18 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	akpm@linux-foundation.org, david@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
-	mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
-	namhyung@kernel.org, tglx@linutronix.de, willy@infradead.org,
-	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com,
-	konrad.wilk@oracle.com
-Subject: Re: [PATCH v7 00/16] mm: folio_zero_user: clear contiguous pages
-Message-ID: <aMrh3h1gCIyYz873@x1>
-References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1758126599; c=relaxed/simple;
+	bh=j/kIpr44aITpYwfRH5MGrbeYBzQDUseVMB6E+aFtzw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=htzI4ThQtkTvN4fcQgcyacytpCbWoDdTVVhEv2/O6AtivQU199CGasW0OaKJwl6pK1IjDiLIjlYHNEsJDz4ha5ay6xLXKuLmetqHEHhZH1rOhNZytLYHw1WUPZGtyG1+pd1LxaEOqm6fzLN1UzBP9IDyafQIV7WjvgYkjajTb6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZiHXr1VS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HGTeJf010735
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:29:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aPbliOpcCjIzayrMLkNw1FIe5VlXIVH9kvQijQYZm20=; b=ZiHXr1VSwLPkG2/M
+	uN4aJnP3sUlNJHPGAh3ELOm4kQ4P2lX+AdVXRyMYk27T7PcAAhrVYwvHjtwZjgHF
+	uhuOh6Vaga2zVy0qbAVoknjr2A8srxFLICJWEY8Az8eL8D26lVz1ipfyB/knPy+c
+	Da0bx9l7qK2KqhohTPupv/taCjPhHh+M1NatXt3JMlxX+kA5Jm3XcYilL/PrlDlP
+	9BYLM72CjrJBhFMpW4UwRBQNImIzZL4c+7a75wZVGjDypcZu0PitzLFjaTDDo8p/
+	hxNDhMB4Xd2wobqCu7aH/QKoK07FdCpEX5kIu1EemxR72AIlYDL0IDdA+8s9lCkr
+	CVrLBA==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxxu416-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:29:55 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77619bb3871so68806b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:29:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758126595; x=1758731395;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aPbliOpcCjIzayrMLkNw1FIe5VlXIVH9kvQijQYZm20=;
+        b=Rb8dWoOizs3E9X8Jm6shdCiSQmOXm1qvRKv4khxTYVr0MlXSfa3Eh/PqxLHDZ0TDyW
+         vULeS+6NLNwooRM5h8E9wyXcyVInw2wa0z0oGIP4sxaiPruBCynrcGEJNKPGy1yetHJB
+         +msF3Ykw3wfBh2Ydn7hQN08XxokRGCLM6NhVc6oSoEEiLcvTt8z8icoc/zbuNzbrnxiP
+         QSGAa4YStBXi+kRTCEmLp+/jBREzKst2mV9SG2Gnh8EGJ+FdSiQsmiijoRv3F7xVo1/C
+         WI0+JR2tH/cJ/O894t+9oeUEB/Oal1lTJAvzasi2D9O3YqU4SCxVXUyCwy1QFeEUfdNU
+         g7eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaZRvroLQ6RSiUlDz0PCctDmdFaDtYsIkmNckL0mlwZwv8ri6lZJ/mUQwTV0NJCsKUsq/MFmpKuZU0yY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCBepLqhiS0CqFVEoGPS3WNMMYQV2gftcRwSk5qLa+bHzmIXKc
+	ISjI97/uNrWywyKv/GhwTUg18hmRiHaW0n1ytZc+ID2+7rPqv9pdnqTosg75wyP9FqWikQPRaX+
+	9Wx0YRngSwrqq1U18O2nrMztKKHKoQYXtgShWPnL/k4E4Exf/lRihFIpTDhXxSacL6uM=
+X-Gm-Gg: ASbGnct0VK7CX3JNU7CBqNAMzgbMS/7v+4bHxJLhkP5sDLo2micu4rmqhOXIwBbtfcT
+	5O84OBc4N06KHWsZ7erXmBvTpdulZVb2yPhGxSwTlGK90Y3OmzUD0dadtq7i2iwJUL2aIb6cHR5
+	WnOvdI4t+A+PC7/zGjgpNAbdRHaL4E7zrmSA8Om9Ico21hq0Jcaa50dtQsWepIExqWAIks5EQHN
+	Rf6+vgAw2dGj3ZHhyTGgAQvcDPoyZIp0mEDqyepFHiuBv7JMqThSHKO5Xxxtpgc37JVAq3HKgX8
+	0pLwjzxXIQhUX3C77HKvXmtBDMq74czXeKwVANXz+M6Q3R5cGphAfwzu4e2PT4c=
+X-Received: by 2002:a05:6a00:8d0:b0:776:1f45:904f with SMTP id d2e1a72fcca58-77bf9268104mr3162349b3a.28.1758126594827;
+        Wed, 17 Sep 2025 09:29:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSAETCbSP3vIIE9VWiyL8Alz3IwaM2MYDhGvePBLrTzg5i1/2OcH9B9+r9HC87lkyc+hFW4Q==
+X-Received: by 2002:a05:6a00:8d0:b0:776:1f45:904f with SMTP id d2e1a72fcca58-77bf9268104mr3162319b3a.28.1758126594363;
+        Wed, 17 Sep 2025 09:29:54 -0700 (PDT)
+Received: from [10.216.34.136] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b3603asm18872680b3a.84.2025.09.17.09.29.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 09:29:54 -0700 (PDT)
+Message-ID: <3c56cd00-770f-019a-d93b-5ebaa6b9374d@oss.qualcomm.com>
+Date: Wed, 17 Sep 2025 21:59:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v14 02/10] power: reset: reboot-mode: Add device tree
+ node-based registration
+Content-Language: en-US
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andre Draszik
+ <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Srinivas Kandagatla <srini@kernel.org>
+References: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
+ <20250815-arm-psci-system_reset2-vendor-reboots-v14-2-37d29f59ac9a@oss.qualcomm.com>
+ <in6bqvemnscvuxbumpxogxiiav7odmsc3iazktifninh6iqen7@qwhrhdidcx7y>
+From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+In-Reply-To: <in6bqvemnscvuxbumpxogxiiav7odmsc3iazktifninh6iqen7@qwhrhdidcx7y>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX9PNB4ms+Re5H
+ M8kucezoBJSPywvpFjtfe0LcO1tVmIZWzljIdZwKSWcnACZv9JlS0A0gQj4BtlX9l8WMcje81Ry
+ wfeqnxBl/oJzaqVTKYMnP6MsZjpFqpU4f0ALKnRCfTQYchHxMbJ56na3cvMifyKUcIslV/B80Z9
+ iqxQBL139aC+Wu6RL61EUGNAMWSmAjmBv3rAUD/n3jEJranwhSEeJL9zuIenXRKcNbCSd/YgKEX
+ h5bihZlszOO2YZMaNm3/Dc8IN92qvURa4CHZF5LOxE1mEGsS8wj+UkG3aylq1f3NkvNz8Ph97Qp
+ eAGp01EPYpTaiOLO7mu+kVjaAV6zrZv580+dku6thomjH8xW5euobRIggD/ScGca1qTar1skhSg
+ 0m27h76w
+X-Proofpoint-ORIG-GUID: jbThNhO8B7zwqHtlPz-_loZfMukGr80v
+X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cae203 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=6ImPWgPuv615vBLeUzsA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: jbThNhO8B7zwqHtlPz-_loZfMukGr80v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On Wed, Sep 17, 2025 at 08:24:02AM -0700, Ankur Arora wrote:
-> This series adds clearing of contiguous page ranges for hugepages,
-> improving on the current page-at-a-time approach in two ways:
-> 
->  - amortizes the per-page setup cost over a larger extent
-> 
->  - when using string instructions, exposes the real region size
->    to the processor.
-> 
-> A processor could use a knowledge of the extent to optimize the
-> clearing. AMD Zen uarchs, as an example, elide allocation of
-> cachelines for regions larger than L3-size.
-> 
-> Demand faulting a 64GB region shows performance improvements:
-> 
->  $ perf bench mem map -p $pg-sz -f demand -s 64GB -l 5
-> 
->                  mm/folio_zero_user    x86/folio_zero_user       change
->                   (GB/s  +- %stdev)     (GB/s  +- %stdev)
-> 
->    pg-sz=2MB       11.82  +- 0.67%        16.48  +-  0.30%       + 39.4%	preempt=*
-> 
->    pg-sz=1GB       17.14  +- 1.39%        17.42  +-  0.98% [#]   +  1.6%	preempt=none|voluntary
->    pg-sz=1GB       17.51  +- 1.19%        43.23  +-  5.22%       +146.8%	preempt=full|lazy
-> 
-> [#] Milan uses a threshold of LLC-size (~32MB) for eliding cacheline
-> allocation, which is higher than the maximum extent used on x86
-> (ARCH_CONTIG_PAGE_NR=8MB), so preempt=none|voluntary sees no improvement
-> with pg-sz=1GB.
 
-I'm picking up the tools/perf part for perf-tools-next (v6.18), already
-almost 100% reviewed by Namhyung.
 
-Thanks,
+On 9/17/2025 12:18 AM, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Fri, Aug 15, 2025 at 08:05:07PM +0530, Shivendra Pratap wrote:
+>> The reboot-mode driver does not have a strict requirement for
+>> device-based registration. It primarily uses the device's of_node
+>> to read mode-<cmd> properties and the device pointer for logging.
+>>
+>> Remove the dependency on struct device and introduce support for
+>> Device Tree (DT) node-based registration. This enables drivers
+>> that are not associated with a struct device to leverage the
+>> reboot-mode framework.
+>>
+>> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+>> ---
+> 
+> Please use fwnode instead of device_node, so that the same thing
+> can be used with non DT setups, if that becomes necessary. Otherwise
+> LGTM.
 
-- Arnaldo
- 
-> Raghavendra also tested v3/v4 on AMD Genoa and sees similar improvements [1].
-> 
-> Changelog:
-> 
-> v7:
->  - interface cleanups, comments for clear_user_highpages(), clear_user_pages(),
->    clear_pages().
->  - fixed build errors flagged by kernel test robot
->  - move all x86 patches to the tail end
-> 
-> v6:
->  - perf bench mem: update man pages and other cleanups (Namhyung Kim)
->  - unify folio_zero_user() for HIGHMEM, !HIGHMEM options instead of
->    working through a new config option (David Hildenbrand).
->    - cleanups and simlification around that.
->  (https://lore.kernel.org/lkml/20250902080816.3715913-1-ankur.a.arora@oracle.com/)
-> 
-> v5:
->  - move the non HIGHMEM implementation of folio_zero_user() from x86
->    to common code (Dave Hansen)
->  - Minor naming cleanups, commit messages etc
->  (https://lore.kernel.org/lkml/20250710005926.1159009-1-ankur.a.arora@oracle.com/)
-> 
-> v4:
->  - adds perf bench workloads to exercise mmap() populate/demand-fault (Ingo)
->  - inline stosb etc (PeterZ)
->  - handle cooperative preemption models (Ingo)
->  - interface and other cleanups all over (Ingo)
->  (https://lore.kernel.org/lkml/20250616052223.723982-1-ankur.a.arora@oracle.com/)
-> 
-> v3:
->  - get rid of preemption dependency (TIF_ALLOW_RESCHED); this version
->    was limited to preempt=full|lazy.
->  - override folio_zero_user() (Linus)
->  (https://lore.kernel.org/lkml/20250414034607.762653-1-ankur.a.arora@oracle.com/)
-> 
-> v2:
->  - addressed review comments from peterz, tglx.
->  - Removed clear_user_pages(), and CONFIG_X86_32:clear_pages()
->  - General code cleanup
->  (https://lore.kernel.org/lkml/20230830184958.2333078-1-ankur.a.arora@oracle.com/)
-> 
-> Comments appreciated!
-> 
-> Also at:
->   github.com/terminus/linux clear-pages.v7
-> 
-> [1] https://lore.kernel.org/lkml/fffd4dad-2cb9-4bc9-8a80-a70be687fd54@amd.com/
-> 
-> Ankur Arora (16):
->   perf bench mem: Remove repetition around time measurement
->   perf bench mem: Defer type munging of size to float
->   perf bench mem: Move mem op parameters into a structure
->   perf bench mem: Pull out init/fini logic
->   perf bench mem: Switch from zalloc() to mmap()
->   perf bench mem: Allow mapping of hugepages
->   perf bench mem: Allow chunking on a memory region
->   perf bench mem: Refactor mem_options
->   perf bench mem: Add mmap() workloads
->   mm: define clear_pages(), clear_user_pages()
->   mm/highmem: introduce clear_user_highpages()
->   arm: mm: define clear_user_highpages()
->   mm: memory: support clearing page ranges
->   x86/mm: Simplify clear_page_*
->   x86/clear_page: Introduce clear_pages()
->   x86/clear_pages: Support clearing of page-extents
-> 
->  arch/arm/include/asm/page.h                  |   7 +
->  arch/x86/include/asm/page_32.h               |   6 +
->  arch/x86/include/asm/page_64.h               |  72 +++-
->  arch/x86/lib/clear_page_64.S                 |  39 +-
->  include/linux/highmem.h                      |  18 +
->  include/linux/mm.h                           |  44 +++
->  mm/memory.c                                  |  82 +++-
->  tools/perf/Documentation/perf-bench.txt      |  58 ++-
->  tools/perf/bench/bench.h                     |   1 +
->  tools/perf/bench/mem-functions.c             | 390 ++++++++++++++-----
->  tools/perf/bench/mem-memcpy-arch.h           |   2 +-
->  tools/perf/bench/mem-memcpy-x86-64-asm-def.h |   4 +
->  tools/perf/bench/mem-memset-arch.h           |   2 +-
->  tools/perf/bench/mem-memset-x86-64-asm-def.h |   4 +
->  tools/perf/builtin-bench.c                   |   1 +
->  15 files changed, 560 insertions(+), 170 deletions(-)
-> 
-> -- 
-> 2.43.5
+To be more clear on this, have one question: the current unmodified
+design of reboot-mode is dt based:
+
+struct device_node *np = reboot->dev->of_node;
+and then parses the node using for_each_property_of_node(np, prop).
+
+We want to refactor reboot-mode to support non-DT setups by adding
+support for fwnode-based approach (struct fwnode_handle *fwnode)?
+
+Can you please explain a bit? Some more details would be helpful to
+make the change.
+
+thanks,
+Shivendra
 
