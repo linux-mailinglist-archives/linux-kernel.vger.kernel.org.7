@@ -1,404 +1,220 @@
-Return-Path: <linux-kernel+bounces-820048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECB6B7D43E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E394CB7CA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2358B17D54D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:22:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC24317A805
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16ED827E041;
-	Wed, 17 Sep 2025 06:20:39 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902BD27B34D
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7360267B90;
+	Wed, 17 Sep 2025 06:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLjj6oGE"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D801239E9B
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758090038; cv=none; b=CN3ukp2JKgj+XlldjBV8gqmD5wSA+MURt6Dkc4DYZhEv6GjA4NK76pEPko7MaelVieT7hP08dtf3l6waozLOYmlf20+IVD8wieASfSo0ey3bpowrLcF1/ajSoaX35QVyescsHZOJDwaMm1083ypU1onHE4pnaVPWqjXukakSbao=
+	t=1758089369; cv=none; b=YoSTY+/KgsyRmgC8fZ8HNmeHFnI1uoNToqQxjI5VgOKgC9eVoO22XS9NGfbbfelDn5oGgPGU1ZMPS80x/YYFzdA9rXIg/n92Tdg11Vit579zUNQhx1nrnCGE/ouySr5+72xf961Rsi9YTHlo5BKlu9HcyTdtFU+ywcvb9fRH7O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758090038; c=relaxed/simple;
-	bh=Fmmv55BBRuclIhB+qi4UV0FFzJ8QJF+fDBrCQDFb6Po=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ITQi4E1DAJg0JtZaGW+doN8CToTqs4pcrLC1mZLjf5CkJmVuRLpGt5kfpGjRKLmMtT/8c+JmoHv4jsWremxvBDpFnHrwZuycW5DHGN0ZmKA+RSETRXwXUb7CBqE8BtuY9+1LGrKORxVudHtzmOhehr0O75OkQeVeJ01rfH9mXeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cRSyR286zz9sxZ;
-	Wed, 17 Sep 2025 08:09:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id R82fgnutFXKf; Wed, 17 Sep 2025 08:09:03 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cRSyP661cz9sxl;
-	Wed, 17 Sep 2025 08:09:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 94AED8B767;
-	Wed, 17 Sep 2025 08:09:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id mP4MlamunvO4; Wed, 17 Sep 2025 08:09:01 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EFBB98B763;
-	Wed, 17 Sep 2025 08:08:58 +0200 (CEST)
-Message-ID: <f932d6da-cd9c-4307-8877-eeb947a5c1a6@csgroup.eu>
-Date: Wed, 17 Sep 2025 08:08:57 +0200
+	s=arc-20240116; t=1758089369; c=relaxed/simple;
+	bh=537NIBkFJBhNReff0J+Fy8gW6xggBG+duu5koX4j760=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S1Vs2XEymU00iAYfP0ZYyGX4eljvaANO8j54lCXEMTzoB8jV20491QniVjY7rsvilMq2TgdiWycsToH3imGlOqC490uTFf3NT/iU+T9SS5G/xHJ7RCgt3r3l/pG12iF0eQ6Udi7Z0CwhoX/RRiQBLSrOIsD4tFeUR5kkINq4Cs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLjj6oGE; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-77b0a93e067so1242124b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758089366; x=1758694166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1xAxRdoiO93y051F82K7suHB9wkzh4QlY9VZ+qgcZbE=;
+        b=gLjj6oGEQW9WBYcVPtkMIUofAWs4HEnt3DLX3J6PK8OmvWRyFlULJh5nYWVjFEUlRS
+         /Ls9ODwGJn3RBQ1foLdA8Jdh6ZG2D/VwQ7jyOoAVP9Pcwwi9zCh0p3OxBC7k7zzyj9cZ
+         HHX3jbCcaFsqu55S2iXjgq3EHJqan328wRywxpuQpddWlDod7CyLCOwwgmu851M6NJyx
+         Lgt0ZdUPm7t/xfKgYVaMqVZAAPWXDoV7gSI90F2UWMJR0Y6S+tTg+FA9rmfOyKBg6xlG
+         cvObCRf97zj1GNOpO+cgug2e/lKXs8P8JCJQlP2X+t7UgBMcf3MwSFcHurnYBXj8gaXj
+         x5bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758089366; x=1758694166;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1xAxRdoiO93y051F82K7suHB9wkzh4QlY9VZ+qgcZbE=;
+        b=mm6xCXX9bwvV7AZRBQNgDnavwca3wYk0d3bpr26wccm6E5t43DcRl99XcENu8m1drc
+         3KMx/aG0oN0n6W8UbVPB5OT2gVt1loWTpcW6eRgsRsNt+NmgnA9LpzO1MPxCo62yqlDh
+         nA0dOJa77daT1woNYdqzukKvi+ze31x5xWVk54EpBnE7wpEEJZ6xnFWKx/zOrcB94I/+
+         XA4C+Co6/hKknuURTGWpRRcS3YVS+C8eP9SZdCvvlTAsRyPAdCHaf0rWM8l3OCECbG+i
+         7QCGdfIeYuAguP4m32MKBsId3LTU4agcouBTGKKxhnfFpCwCKBaYXDLjrGxqOL4Jueku
+         9UBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Cdd6toqEOmBCbVGkBBevNpwvBwcNo5YGBLBj6uSfBl3Gl7Ltgv6FpVq9knlwGDFSPRtI7BMphXYMKnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE0x3QfAw3nBWQXfjPBlseb94Tyyt72Q7jfF1ar7n+UOF12Ygk
+	L4O3/DML2c8eDBo50lHNzqJ5K1li2LMx3GOhhTT2PdzKli5G0/djPQlz
+X-Gm-Gg: ASbGncvhvmzdu4/Zq5CW7yip5HqyCr9U01U6iQ8HucWW/nJztj8GdJzT7PLUjRgmVqi
+	YTtixZKFpGCZDbTm33reP1RIPvCmI0bUsfmkO1QmzKV9J/64TeylcXP4zkmwBjFGMEn3A9WLNKx
+	0AB3W8cPqiDuVleKBrlxBqxx8i/rcAaj2bHLuSs6CA2/6QopAEY3u6fMLhIOWSBjdJDwGBqIXlV
+	QXm4wWLf4EDxIZtzCINXx+4yecSC7BH6Q/gm0ZgCG0PFfNYpd0qn7v0JZGTNlqVM2sA9rqPI5JW
+	a77aVxvlh5Q+Mt1RgQtq/JHWsQrGA9UPU0ve8NyJmlObAeFpHX3xmPyiCPOnSulZ1UUD+hFjB8N
+	BWtIfS3JAOp0jzvC3vV4=
+X-Google-Smtp-Source: AGHT+IHnf2vcgwnne5LMBr01jvI4u6V0HHloejQpirvRzUIkVjeaIv5zalCRylDHZilavjHCejOVgg==
+X-Received: by 2002:a05:6a20:3d07:b0:249:d3d:a50b with SMTP id adf61e73a8af0-27ab286ee39mr1195856637.59.1758089365956;
+        Tue, 16 Sep 2025 23:09:25 -0700 (PDT)
+Received: from 7940hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a3aa1c54sm15845427a12.50.2025.09.16.23.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 23:09:25 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: peterz@infradead.org,
+	ast@kernel.org
+Cc: mingo@redhat.com,
+	paulmck@kernel.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	tzimmermann@suse.de,
+	simona.vetter@ffwll.ch,
+	jani.nikula@intel.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH v5 0/4] sched: make migrate_enable/migrate_disable inline
+Date: Wed, 17 Sep 2025 14:09:12 +0800
+Message-ID: <20250917060916.462278-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup
- detector
-To: Jinchao Wang <wangjinchao600@gmail.com>,
- Doug Anderson <dianders@chromium.org>, Peter Zijlstra
- <peterz@infradead.org>, Will Deacon <will@kernel.org>,
- Yunhui Cui <cuiyunhui@bytedance.com>, akpm@linux-foundation.org,
- catalin.marinas@arm.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
- npiggin@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, kees@kernel.org,
- masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org,
- thomas.weissschuh@linutronix.de, xur@google.com, ruanjinjie@huawei.com,
- gshan@redhat.com, maz@kernel.org, suzuki.poulose@arm.com,
- zhanjie9@hisilicon.com, yangyicong@hisilicon.com, gautam@linux.ibm.com,
- arnd@arndb.de, zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com,
- coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com,
- luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org,
- yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org,
- Ian Rogers <irogers@google.com>
-References: <https://lore.kernel.org/all/20250915035355.10846-1-cuiyunhui@bytedance.com/>
- <20250916145122.416128-1-wangjinchao600@gmail.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250916145122.416128-1-wangjinchao600@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+In this series, we make migrate_enable/migrate_disable inline to obtain
+better performance in some case.
 
+In the first patch, we add the macro "COMPILE_OFFSETS" to all the
+asm-offset.c to avoid circular dependency in the 3rd patch.
 
-Le 16/09/2025 à 16:50, Jinchao Wang a écrit :
-> Currently, the hard lockup detector is selected at compile time via
-> Kconfig, which requires a kernel rebuild to switch implementations.
-> This is inflexible, especially on systems where a perf event may not
-> be available or may be needed for other tasks.
-> 
-> This commit refactors the hard lockup detector to replace a rigid
-> compile-time choice with a flexible build-time and boot-time solution.
-> The patch supports building the kernel with either detector
-> independently, or with both. When both are built, a new boot parameter
-> `hardlockup_detector="perf|buddy"` allows the selection at boot time.
-> This is a more robust and user-friendly design.
-> 
-> This patch is a follow-up to the discussion on the kernel mailing list
-> regarding the preference and future of the hard lockup detectors. It
-> implements a flexible solution that addresses the community's need to
-> select an appropriate detector at boot time.
-> 
-> The core changes are:
-> - The `perf` and `buddy` watchdog implementations are separated into
->    distinct functions (e.g., `watchdog_perf_hardlockup_enable`).
-> - Global function pointers are introduced (`watchdog_hardlockup_enable_ptr`)
->    to serve as a single API for the entire feature.
-> - A new `hardlockup_detector=` boot parameter is added to allow the
->    user to select the desired detector at boot time.
-> - The Kconfig options are simplified by removing the complex
->    `HARDLOCKUP_DETECTOR_PREFER_BUDDY` and allowing both detectors to be
->    built without mutual exclusion.
-> - The weak stubs are updated to call the new function pointers,
->    centralizing the watchdog logic.
-> 
-> Link: https://lore.kernel.org/all/20250915035355.10846-1-cuiyunhui@bytedance.com/
-> Link: https://lore.kernel.org/all/CAD=FV=WWUiCi6bZCs_gseFpDDWNkuJMoL6XCftEo6W7q6jRCkg@mail.gmail.com/
-> 
-> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> ---
->   .../admin-guide/kernel-parameters.txt         |  7 +++
->   include/linux/nmi.h                           |  6 +++
->   kernel/watchdog.c                             | 46 ++++++++++++++++++-
->   kernel/watchdog_buddy.c                       |  7 +--
->   kernel/watchdog_perf.c                        | 10 ++--
->   lib/Kconfig.debug                             | 37 +++++++--------
->   6 files changed, 85 insertions(+), 28 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 5a7a83c411e9..0af214ee566c 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1828,6 +1828,13 @@
->   			backtraces on all cpus.
->   			Format: 0 | 1
->   
-> +	hardlockup_detector=
-> +			[perf, buddy] Selects the hard lockup detector to use at
-> +			boot time.
-> +			Format: <string>
-> +			- "perf": Use the perf-based detector.
-> +			- "buddy": Use the buddy-based detector.
-> +
->   	hash_pointers=
->   			[KNL,EARLY]
->   			By default, when pointers are printed to the console
-> diff --git a/include/linux/nmi.h b/include/linux/nmi.h
-> index cf3c6ab408aa..9298980ce572 100644
-> --- a/include/linux/nmi.h
-> +++ b/include/linux/nmi.h
-> @@ -100,6 +100,9 @@ void watchdog_hardlockup_check(unsigned int cpu, struct pt_regs *regs);
->   #endif
->   
->   #if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
-> +void watchdog_perf_hardlockup_enable(unsigned int cpu);
-> +void watchdog_perf_hardlockup_disable(unsigned int cpu);
-> +extern int watchdog_perf_hardlockup_probe(void);
+In the 2nd patch, we replace preempt.h with sched.h in
+include/linux/rcupdate.h to fix potential compiling issue.
 
-No 'extern' on function prototypes, this is pointless.
+In the 3rd patch, we generate the offset of nr_pinned in "struct rq" with
+rq-offsets.c, as the "struct rq" is defined internally and we need to
+access the "nr_pinned" field in migrate_enable and migrate_disable. Then,
+we move the definition of migrate_enable/migrate_disable from
+kernel/sched/core.c to include/linux/sched.h.
 
->   extern void hardlockup_detector_perf_stop(void);
->   extern void hardlockup_detector_perf_restart(void);
->   extern void hardlockup_config_perf_event(const char *str);
-> @@ -120,6 +123,9 @@ void watchdog_hardlockup_disable(unsigned int cpu);
->   void lockup_detector_reconfigure(void);
->   
->   #ifdef CONFIG_HARDLOCKUP_DETECTOR_BUDDY
-> +void watchdog_buddy_hardlockup_enable(unsigned int cpu);
-> +void watchdog_buddy_hardlockup_disable(unsigned int cpu);
-> +int watchdog_buddy_hardlockup_probe(void);
->   void watchdog_buddy_check_hardlockup(int hrtimer_interrupts);
->   #else
->   static inline void watchdog_buddy_check_hardlockup(int hrtimer_interrupts) {}
-> diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-> index 80b56c002c7f..85451d24a77d 100644
-> --- a/kernel/watchdog.c
-> +++ b/kernel/watchdog.c
-> @@ -55,6 +55,37 @@ unsigned long *watchdog_cpumask_bits = cpumask_bits(&watchdog_cpumask);
->   
->   #ifdef CONFIG_HARDLOCKUP_DETECTOR
->   
-> +#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
-> +/* The global function pointers */
-> +void (*watchdog_hardlockup_enable_ptr)(unsigned int cpu) = watchdog_perf_hardlockup_enable;
-> +void (*watchdog_hardlockup_disable_ptr)(unsigned int cpu) = watchdog_perf_hardlockup_disable;
-> +int (*watchdog_hardlockup_probe_ptr)(void) = watchdog_perf_hardlockup_probe;
+In the 4th patch, we fix some typos in include/linux/preempt.h.
 
-As this is set only once at startup, can we use static_call instead of 
-function pointers ?
+One of the beneficiaries of this series is BPF trampoline. Without this
+series, the migrate_enable/migrate_disable is hot when we run the
+benchmark for FENTRY, FEXIT, MODIFY_RETURN, etc:
 
-Also, can it me made __ro_after_init ?
+  54.63% bpf_prog_2dcccf652aac1793_bench_trigger_fentry [k]
+                 bpf_prog_2dcccf652aac1793_bench_trigger_fentry
+  10.43% [kernel] [k] migrate_enable
+  10.07% bpf_trampoline_6442517037 [k] bpf_trampoline_6442517037
+  8.06% [kernel] [k] __bpf_prog_exit_recur
+  4.11% libc.so.6 [.] syscall
+  2.15% [kernel] [k] entry_SYSCALL_64
+  1.48% [kernel] [k] memchr_inv
+  1.32% [kernel] [k] fput
+  1.16% [kernel] [k] _copy_to_user
+  0.73% [kernel] [k] bpf_prog_test_run_raw_tp
 
-> +#elif defined(CONFIG_HARDLOCKUP_DETECTOR_BUDDY)
-> +void (*watchdog_hardlockup_enable_ptr)(unsigned int cpu) = watchdog_buddy_hardlockup_enable;
-> +void (*watchdog_hardlockup_disable_ptr)(unsigned int cpu) = watchdog_buddy_hardlockup_disable;
-> +int (*watchdog_hardlockup_probe_ptr)(void) = watchdog_buddy_hardlockup_probe;
-> +#endif
-> +
-> +#ifdef CONFIG_HARDLOCKUP_DETECTOR_MULTIPLE
-> +static char *hardlockup_detector_type = "perf"; /* Default to perf */
-> +static int __init set_hardlockup_detector_type(char *str)
-> +{
-> +	if (!strncmp(str, "perf", 4)) {
+Before this patch, the performance of BPF FENTRY is:
 
-Why strncmp ?
+  fentry         :  113.030 ± 0.149M/s
+  fentry         :  112.501 ± 0.187M/s
+  fentry         :  112.828 ± 0.267M/s
+  fentry         :  115.287 ± 0.241M/s
 
-What if I set 'hardlockup_detector=performance" ?
+After this patch, the performance of BPF FENTRY increases to:
 
+  fentry         :  143.644 ± 0.670M/s
+  fentry         :  149.764 ± 0.362M/s
+  fentry         :  149.642 ± 0.156M/s
+  fentry         :  145.263 ± 0.221M/s
 
-> +		watchdog_hardlockup_enable_ptr = watchdog_perf_hardlockup_enable;
-> +		watchdog_hardlockup_disable_ptr = watchdog_perf_hardlockup_disable;
-> +		watchdog_hardlockup_probe_ptr = watchdog_perf_hardlockup_probe;
-> +	} else if (!strncmp(str, "buddy", 5)) {
-> +		watchdog_hardlockup_enable_ptr = watchdog_buddy_hardlockup_enable;
-> +		watchdog_hardlockup_disable_ptr = watchdog_buddy_hardlockup_disable;
-> +		watchdog_hardlockup_probe_ptr = watchdog_buddy_hardlockup_probe;
-> +	}
-> +	return 1;
-> +}
-> +
-> +__setup("hardlockup_detector=", set_hardlockup_detector_type);
-> +
-> +#endif
-> +
->   # ifdef CONFIG_SMP
->   int __read_mostly sysctl_hardlockup_all_cpu_backtrace;
->   # endif /* CONFIG_SMP */
-> @@ -262,9 +293,17 @@ static inline void watchdog_hardlockup_kick(void) { }
->    * softlockup watchdog start and stop. The detector must select the
->    * SOFTLOCKUP_DETECTOR Kconfig.
->    */
-> -void __weak watchdog_hardlockup_enable(unsigned int cpu) { }
-> +void __weak watchdog_hardlockup_enable(unsigned int cpu)
-> +{
-> +	if (watchdog_hardlockup_enable_ptr)
-> +		watchdog_hardlockup_enable_ptr(cpu);
-> +}
+Changes since V4:
+* add the 2nd patch to fix potential compiling issue
+* fix the comment style problem in the 3rd patch
 
-This is a weak function so it can be overloaded. What happens then, for 
-instance if the sparc architecture version of 
-watchdog_hardlockup_enable() is called instead ?
+Changes since V3:
+* some modification on the 2nd patch, as Alexei advised:
+ - rename CREATE_MIGRATE_DISABLE to INSTANTIATE_EXPORTED_MIGRATE_DISABLE
+ - add document for INSTANTIATE_EXPORTED_MIGRATE_DISABLE
 
->   
-> -void __weak watchdog_hardlockup_disable(unsigned int cpu) { }
-> +void __weak watchdog_hardlockup_disable(unsigned int cpu)
-> +{
-> +	if (watchdog_hardlockup_disable_ptr)
-> +		watchdog_hardlockup_disable_ptr(cpu);
-> +}
->   
->   /*
->    * Watchdog-detector specific API.
-> @@ -275,6 +314,9 @@ void __weak watchdog_hardlockup_disable(unsigned int cpu) { }
->    */
->   int __weak __init watchdog_hardlockup_probe(void)
->   {
-> +	if (watchdog_hardlockup_probe_ptr)
-> +		return watchdog_hardlockup_probe_ptr();
-> +
->   	return -ENODEV;
->   }
->   
-> diff --git a/kernel/watchdog_buddy.c b/kernel/watchdog_buddy.c
-> index ee754d767c21..390d89bfcafa 100644
-> --- a/kernel/watchdog_buddy.c
-> +++ b/kernel/watchdog_buddy.c
-> @@ -19,15 +19,16 @@ static unsigned int watchdog_next_cpu(unsigned int cpu)
->   	return next_cpu;
->   }
->   
-> -int __init watchdog_hardlockup_probe(void)
-> +int __init watchdog_buddy_hardlockup_probe(void)
->   {
->   	return 0;
->   }
->   
-> -void watchdog_hardlockup_enable(unsigned int cpu)
-> +void watchdog_buddy_hardlockup_enable(unsigned int cpu)
->   {
->   	unsigned int next_cpu;
->   
-> +	pr_info("ddddd %s\n", __func__);
+Changes since V2:
+* some modification on the 2nd patch, as Peter advised:
+  - don't export runqueues, define migrate_enable and migrate_disable in
+    kernel/sched/core.c and use them for kernel modules instead
+  - define the macro this_rq_pinned()
+  - add some comment for this_rq_raw()
 
-Leftover from debuging ?
+Changes since V1:
+* use PERCPU_PTR() for this_rq_raw() if !CONFIG_SMP in the 2nd patch
 
->   	/*
->   	 * The new CPU will be marked online before the hrtimer interrupt
->   	 * gets a chance to run on it. If another CPU tests for a
-> @@ -58,7 +59,7 @@ void watchdog_hardlockup_enable(unsigned int cpu)
->   	cpumask_set_cpu(cpu, &watchdog_cpus);
->   }
->   
-> -void watchdog_hardlockup_disable(unsigned int cpu)
-> +void watchdog_buddy_hardlockup_disable(unsigned int cpu)
->   {
->   	unsigned int next_cpu = watchdog_next_cpu(cpu);
->   
-> diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
-> index 9c58f5b4381d..270110e58f20 100644
-> --- a/kernel/watchdog_perf.c
-> +++ b/kernel/watchdog_perf.c
-> @@ -153,10 +153,12 @@ static int hardlockup_detector_event_create(void)
->    * watchdog_hardlockup_enable - Enable the local event
->    * @cpu: The CPU to enable hard lockup on.
->    */
-> -void watchdog_hardlockup_enable(unsigned int cpu)
-> +void watchdog_perf_hardlockup_enable(unsigned int cpu)
->   {
->   	WARN_ON_ONCE(cpu != smp_processor_id());
->   
-> +	pr_info("ddddd %s\n", __func__);
-> +
->   	if (hardlockup_detector_event_create())
->   		return;
->   
-> @@ -172,7 +174,7 @@ void watchdog_hardlockup_enable(unsigned int cpu)
->    * watchdog_hardlockup_disable - Disable the local event
->    * @cpu: The CPU to enable hard lockup on.
->    */
-> -void watchdog_hardlockup_disable(unsigned int cpu)
-> +void watchdog_perf_hardlockup_disable(unsigned int cpu)
->   {
->   	struct perf_event *event = this_cpu_read(watchdog_ev);
->   
-> @@ -257,10 +259,12 @@ bool __weak __init arch_perf_nmi_is_available(void)
->   /**
->    * watchdog_hardlockup_probe - Probe whether NMI event is available at all
->    */
-> -int __init watchdog_hardlockup_probe(void)
-> +int __init watchdog_perf_hardlockup_probe(void)
->   {
->   	int ret;
->   
-> +	pr_info("ddddd %s\n", __func__);
-> +
->   	if (!arch_perf_nmi_is_available())
->   		return -ENODEV;
->   
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index dc0e0c6ed075..443353fad1c1 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1167,36 +1167,33 @@ config HARDLOCKUP_DETECTOR
->   #
->   # Note that arch-specific variants are always preferred.
->   #
-> -config HARDLOCKUP_DETECTOR_PREFER_BUDDY
-> -	bool "Prefer the buddy CPU hardlockup detector"
-> -	depends on HARDLOCKUP_DETECTOR
-> -	depends on HAVE_HARDLOCKUP_DETECTOR_PERF && HAVE_HARDLOCKUP_DETECTOR_BUDDY
-> -	depends on !HAVE_HARDLOCKUP_DETECTOR_ARCH
-> -	help
-> -	  Say Y here to prefer the buddy hardlockup detector over the perf one.
-> -
-> -	  With the buddy detector, each CPU uses its softlockup hrtimer
-> -	  to check that the next CPU is processing hrtimer interrupts by
-> -	  verifying that a counter is increasing.
-> -
-> -	  This hardlockup detector is useful on systems that don't have
-> -	  an arch-specific hardlockup detector or if resources needed
-> -	  for the hardlockup detector are better used for other things.
-> -
->   config HARDLOCKUP_DETECTOR_PERF
-> -	bool
-> +	bool "Enable perf-based hard lockup detector (preferred)"
->   	depends on HARDLOCKUP_DETECTOR
-> -	depends on HAVE_HARDLOCKUP_DETECTOR_PERF && !HARDLOCKUP_DETECTOR_PREFER_BUDDY
-> +	depends on HAVE_HARDLOCKUP_DETECTOR_PERF
->   	depends on !HAVE_HARDLOCKUP_DETECTOR_ARCH
->   	select HARDLOCKUP_DETECTOR_COUNTS_HRTIMER
-> +	help
-> +	  This detector uses a perf event on the CPU to detect when a CPU
-> +	  has become non-maskable interrupt (NMI) stuck. This is the
-> +	  preferred method on modern systems as it can detect lockups on
-> +	  all CPUs at the same time.
->   
->   config HARDLOCKUP_DETECTOR_BUDDY
-> -	bool
-> +	bool "Enable buddy-based hard lockup detector"
->   	depends on HARDLOCKUP_DETECTOR
->   	depends on HAVE_HARDLOCKUP_DETECTOR_BUDDY
-> -	depends on !HAVE_HARDLOCKUP_DETECTOR_PERF || HARDLOCKUP_DETECTOR_PREFER_BUDDY
->   	depends on !HAVE_HARDLOCKUP_DETECTOR_ARCH
->   	select HARDLOCKUP_DETECTOR_COUNTS_HRTIMER
-> +	help
-> +	  This is an alternative lockup detector that uses a heartbeat
-> +	  mechanism between CPUs to detect when one has stopped responding.
-> +	  It is less precise than the perf-based detector and cannot detect
-> +	  all-CPU lockups, but it does not require a perf counter.
-> +
-> +config CONFIG_HARDLOCKUP_DETECTOR_MULTIPLE
-> +	bool
-> +	depends on HARDLOCKUP_DETECTOR_PERF && HARDLOCKUP_DETECTOR_BUDDY
->   
->   config HARDLOCKUP_DETECTOR_ARCH
->   	bool
+Menglong Dong (4):
+  arch: add the macro COMPILE_OFFSETS to all the asm-offsets.c
+  rcu: replace preempt.h with sched.h in include/linux/rcupdate.h
+  sched: make migrate_enable/migrate_disable inline
+  sched: fix some typos in include/linux/preempt.h
+
+ Kbuild                               |  13 ++-
+ arch/alpha/kernel/asm-offsets.c      |   1 +
+ arch/arc/kernel/asm-offsets.c        |   1 +
+ arch/arm/kernel/asm-offsets.c        |   2 +
+ arch/arm64/kernel/asm-offsets.c      |   1 +
+ arch/csky/kernel/asm-offsets.c       |   1 +
+ arch/hexagon/kernel/asm-offsets.c    |   1 +
+ arch/loongarch/kernel/asm-offsets.c  |   2 +
+ arch/m68k/kernel/asm-offsets.c       |   1 +
+ arch/microblaze/kernel/asm-offsets.c |   1 +
+ arch/mips/kernel/asm-offsets.c       |   2 +
+ arch/nios2/kernel/asm-offsets.c      |   1 +
+ arch/openrisc/kernel/asm-offsets.c   |   1 +
+ arch/parisc/kernel/asm-offsets.c     |   1 +
+ arch/powerpc/kernel/asm-offsets.c    |   1 +
+ arch/riscv/kernel/asm-offsets.c      |   1 +
+ arch/s390/kernel/asm-offsets.c       |   1 +
+ arch/sh/kernel/asm-offsets.c         |   1 +
+ arch/sparc/kernel/asm-offsets.c      |   1 +
+ arch/um/kernel/asm-offsets.c         |   2 +
+ arch/xtensa/kernel/asm-offsets.c     |   1 +
+ include/linux/preempt.h              |  11 +--
+ include/linux/rcupdate.h             |   2 +-
+ include/linux/sched.h                | 113 +++++++++++++++++++++++++++
+ kernel/bpf/verifier.c                |   1 +
+ kernel/sched/core.c                  |  63 ++++-----------
+ kernel/sched/rq-offsets.c            |  12 +++
+ 27 files changed, 181 insertions(+), 58 deletions(-)
+ create mode 100644 kernel/sched/rq-offsets.c
+
+-- 
+2.51.0
 
 
