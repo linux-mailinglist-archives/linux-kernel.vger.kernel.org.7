@@ -1,259 +1,91 @@
-Return-Path: <linux-kernel+bounces-821707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56F0B8208A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:52:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3ECB8204B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C149B626F47
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:52:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3FA51BC585C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B73130FC16;
-	Wed, 17 Sep 2025 21:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619CA2E0B68;
+	Wed, 17 Sep 2025 21:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zf/F+8ac"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S3VrwZvu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951AC30F7E4
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DA52BE03C
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758145878; cv=none; b=stZMjoayk6TXsVZeM9YS6ziVzVJ5Po3NrC8uXOo1U5JeT9H3h+2Ofi6139rLBoKVw8Ye1St2mxSyw8jfojas4UaBxa4z9uC6BkREWnSseqpLM2WlcAyAcLpNLOH4vORcQn8FWwQywSQ5YN5uTgPrLpJuLL54qEiAcA0uD6xpfAI=
+	t=1758145726; cv=none; b=czN9SUVA2tgRlkAZ01H2R8/n+brQ+ZQm5iOiKtqQ7WVrYfTWdSAPw+vavn1ndwtrwybVdXOlxgDG2QsN4Rj8Esoo7uoD09jJ/rPtkT8bk+ru4i4VjQ9lfsBrMrQF122486mzRx35Xag3qLr7MB9lbPYPoHIy/ioCMGjT8TcNyyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758145878; c=relaxed/simple;
-	bh=ZHa0B2RyRZZWLlneOhPUdWjyzFgnqipxJK7LB4AWbX0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fuZrLuzvH27FbjpU0O3zkqg/ztB7DnFi0S9lbmqi8kgpLb4Uh83fCnkYaYQRKmIVW+ze9qim6xkFWxBDoO+N1m6MRpmwzdVRmVHhk2JgvZPLlsJj4pKXbjn5WTdjDo2L5le8uz2MZM6Kj21+Ena0R9cR/tliF0WKPw9uhGi6CZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zf/F+8ac; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2697410e7f9so3768695ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 14:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758145876; x=1758750676; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LPrk/XrebsawKeQuGZAG8oqG4rtdkfDSdLwnedRBtY=;
-        b=zf/F+8acakUrGVvkPqJBm09jHumox5HWGxK10QenjcFR/HEOUrItbbDXG1FbHQF2LU
-         Yn42WGuivoJ8Es0aFhzM9LBGBXfEiSv8gs6D0/SwxsP9Ds9Q1wtpr5+r3eQ6BJkdHiLV
-         62ySUy9of21fXeKV1pM3tnbIM32f66Gs4D/kyek5iLdvvN4Y+M9Yzu+wfawFA/ly7Tei
-         MLcE/1AWMpNpCMUX51n+FN7afZln7UdVf5qDezlx91VPrq9VwQZ2ndPdhjWigze1wFVl
-         wp7N3gyZG44e5EKUer5rqcnpjNeySjSO0ZfpFslaLNvcq/6MqiYl1CZ9aBw/fFLpH550
-         ZGTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758145876; x=1758750676;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LPrk/XrebsawKeQuGZAG8oqG4rtdkfDSdLwnedRBtY=;
-        b=MODDDZ/CcRXwWJHx00g0dIOjmOpy3f14bbDTuPx/SB2w0/IQAcxtkR3FbfGTVhvqkC
-         +nq3V30pd8YdDw2m9wzt57ql8Dwdv2GDwKusX1EE/MDtYyahJHNRDBF67pUCYJdAVrcS
-         zu1f/UvfvCrocHGNVTnkzsH7WyiwSFOf7Sxet5dJmNQY6LK5wVpQo4M/1c7P1jLis46x
-         lBZH/33EA+7ZIT0f8uPs5IwM2lW0drQMFmJCaBkupqSUrpLhxoYSE1XewIySoG/hHlie
-         UobYBXbSqYOmq18Hk+Iht7OQVwUdaEXvocNSveY8Gt7w2nIyDhUfsyPJQUG7g+2qfPSj
-         +Mqg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8cFI2xlbU9/JQiZSNEmi2lwxkzyUl8PtwCSb+cGacEmn7RM7h7J0RW52b1IyD0bnJGwhyQEEwNBvCGLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVsYOa3zmxjxgrhgVcrneKLzo/HNV70no5dpI5fgNlpbBLpZcy
-	M8scjRo7sVniYv8O0uaYLsT3OFGEwyJ563qx5IDSd95u5crubASd7qMU4J0sydGluPwHCXi8tVC
-	QbYEbsi5UGo+ioQ==
-X-Google-Smtp-Source: AGHT+IFoisWsHyss64Oz8zIvxNbXaBwzLk0hgbLNl+OnOjuMwsVc60SyjmWex22OLqE66ILVy9fzMQNhZRGkuA==
-X-Received: from pjwx7.prod.google.com ([2002:a17:90a:c2c7:b0:327:d54a:8c93])
- (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:38c7:b0:264:3519:80d0 with SMTP id d9443c01a7336-268137f8405mr45310735ad.33.1758145875970;
- Wed, 17 Sep 2025 14:51:15 -0700 (PDT)
-Date: Wed, 17 Sep 2025 14:48:40 -0700
-In-Reply-To: <20250917215031.2567566-1-jmattson@google.com>
+	s=arc-20240116; t=1758145726; c=relaxed/simple;
+	bh=4JnhbEe5JE89mQvE/RjARCCmQh4RoVQ/5hH2rSV0bYw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KyffXVU7laGj1bXb3GNeka6y5FQjXIytnJ26FPgx+0dT0tTPUZOXul50HLhKfvdpPqjr0Eu+YIgKdLdOlg4BfHxaIKkduUgvKAHLpSUZTWgs+d28KHl6JQbePOu+COe0wXuFFU3TYo1TlPby5X5pxkxCa3gJTbUYIm0LO2GJ3EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S3VrwZvu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F57C4CEE7;
+	Wed, 17 Sep 2025 21:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758145726;
+	bh=4JnhbEe5JE89mQvE/RjARCCmQh4RoVQ/5hH2rSV0bYw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S3VrwZvuIUoHe0nbHYZad41XZdFdWZ7NJEddMUeLeK92tsiIAyP6/3CQyOXHBPvCR
+	 aDr3TuwL7uUf1R4BxaslOy0FDHegR+bJ4h6PUghpg1M0T8tPa8OSvC/SaMd64FPrLY
+	 DJIRVjSYqSaJq4mSkAyAt7A+LaledwS2ZtD1AXlk=
+Date: Wed, 17 Sep 2025 14:48:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Donet Tom <donettom@linux.ibm.com>
+Cc: Chris Mason <clm@meta.com>, David Hildenbrand <david@redhat.com>, Oscar
+ Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Ritesh Harjani <ritesh.list@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Alison Schofield
+ <alison.schofield@intel.com>, Yury Norov <yury.norov@gmail.com>, Dave Jiang
+ <dave.jiang@intel.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Subject: Re: [PATCH v2] drivers/base/node: Handle error properly in
+ register_one_node()
+Message-Id: <20250917144844.e8d9b9593aac9f3a4b52a0cb@linux-foundation.org>
+In-Reply-To: <676712d1-7b4f-4614-bd82-5b0c43881865@linux.ibm.com>
+References: <20250917134604.2149316-1-clm@meta.com>
+	<676712d1-7b4f-4614-bd82-5b0c43881865@linux.ibm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250917215031.2567566-1-jmattson@google.com>
-X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250917215031.2567566-5-jmattson@google.com>
-Subject: [PATCH 4/4] KVM: selftests: Add a VMX test for LA57 nested state
-From: Jim Mattson <jmattson@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Sean Christopherson <seanjc@google.com>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Andrew Jones <ajones@ventanamicro.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, "Pratik R. Sampat" <prsampat@amd.com>, 
-	Kai Huang <kai.huang@intel.com>, Eric Auger <eric.auger@redhat.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Cc: Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add a selftest that verifies KVM's ability to save and restore
-nested state when the L1 guest is using 5-level paging and the L2
-guest is using 4-level paging. Specifically, canonicality tests of
-the VMCS12 host-state fields should accept 57-bit virtual addresses.
+On Wed, 17 Sep 2025 20:25:48 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
 
-Signed-off-by: Jim Mattson <jmattson@google.com>
----
- tools/testing/selftests/kvm/Makefile.kvm      |   1 +
- .../kvm/x86/vmx_la57_nested_state_test.c      | 137 ++++++++++++++++++
- 2 files changed, 138 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
+> > Can this cause a double-free? Looking at register_node(), when
+> > device_register() fails, it calls put_device(&node->dev). The put_device()
+> > call triggers node_device_release() which does kfree(to_node(dev)), freeing
+> > the entire node structure. So when register_node() returns an error, the
+> > node memory is already freed, but this code calls kfree(node) again on the
+> > same memory.
+> >
+> > The call chain is: register_node()->device_register() fails->
+> > put_device()->node_device_release()->kfree(to_node(dev)).
+> 
+> 
+> Thank you for pointing this out. I will address it and send a v3.
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 41b40c676d7f..f1958b88ec59 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -116,6 +116,7 @@ TEST_GEN_PROGS_x86 += x86/vmx_exception_with_invalid_guest_state
- TEST_GEN_PROGS_x86 += x86/vmx_msrs_test
- TEST_GEN_PROGS_x86 += x86/vmx_invalid_nested_guest_state
- TEST_GEN_PROGS_x86 += x86/vmx_set_nested_state_test
-+TEST_GEN_PROGS_x86 += x86/vmx_la57_nested_state_test
- TEST_GEN_PROGS_x86 += x86/vmx_tsc_adjust_test
- TEST_GEN_PROGS_x86 += x86/vmx_nested_tsc_scaling_test
- TEST_GEN_PROGS_x86 += x86/apic_bus_clock_test
-diff --git a/tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c b/tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
-new file mode 100644
-index 000000000000..7c3c4c1c17f6
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * vmx_la57_nested_state_test
-+ *
-+ * Copyright (C) 2025, Google LLC.
-+ *
-+ * Test KVM's ability to save and restore nested state when the L1 guest
-+ * is using 5-level paging and the L2 guest is using 4-level paging.
-+ *
-+ * This test would have failed prior to commit 9245fd6b8531 ("KVM: x86:
-+ * model canonical checks more precisely").
-+ */
-+#include "test_util.h"
-+#include "kvm_util.h"
-+#include "processor.h"
-+#include "vmx.h"
-+
-+#define LA57_GS_BASE 0xff2bc0311fb00000ull
-+
-+static void l2_guest_code(void)
-+{
-+	/*
-+	 * Sync with L0 to trigger save/restore.  After
-+	 * resuming, execute VMCALL to exit back to L1.
-+	 */
-+	GUEST_SYNC(1);
-+	vmcall();
-+}
-+
-+static void l1_guest_code(struct vmx_pages *vmx_pages)
-+{
-+#define L2_GUEST_STACK_SIZE 64
-+	unsigned long l2_guest_stack[L2_GUEST_STACK_SIZE];
-+	u64 guest_cr4;
-+	vm_paddr_t pml5_pa, pml4_pa;
-+	u64 *pml5;
-+	u64 exit_reason;
-+
-+	/* Set GS_BASE to a value that is only canonical with LA57. */
-+	wrmsr(MSR_GS_BASE, LA57_GS_BASE);
-+	GUEST_ASSERT(rdmsr(MSR_GS_BASE) == LA57_GS_BASE);
-+
-+	GUEST_ASSERT(vmx_pages->vmcs_gpa);
-+	GUEST_ASSERT(prepare_for_vmx_operation(vmx_pages));
-+	GUEST_ASSERT(load_vmcs(vmx_pages));
-+
-+	prepare_vmcs(vmx_pages, l2_guest_code,
-+		     &l2_guest_stack[L2_GUEST_STACK_SIZE]);
-+
-+	/*
-+	 * Set up L2 with a 4-level page table by pointing its CR3 to L1's
-+	 * PML4 table and clearing CR4.LA57. This creates the CR4.LA57
-+	 * mismatch that exercises the bug.
-+	 */
-+	pml5_pa = get_cr3() & PHYSICAL_PAGE_MASK;
-+	pml5 = (u64 *)pml5_pa;
-+	pml4_pa = pml5[0] & PHYSICAL_PAGE_MASK;
-+	vmwrite(GUEST_CR3, pml4_pa);
-+
-+	guest_cr4 = vmreadz(GUEST_CR4);
-+	guest_cr4 &= ~X86_CR4_LA57;
-+	vmwrite(GUEST_CR4, guest_cr4);
-+
-+	GUEST_ASSERT(!vmlaunch());
-+
-+	exit_reason = vmreadz(VM_EXIT_REASON);
-+	GUEST_ASSERT(exit_reason == EXIT_REASON_VMCALL);
-+}
-+
-+void guest_code(struct vmx_pages *vmx_pages)
-+{
-+	if (vmx_pages)
-+		l1_guest_code(vmx_pages);
-+
-+	GUEST_DONE();
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	vm_vaddr_t vmx_pages_gva = 0;
-+	struct kvm_vm *vm;
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_x86_state *state;
-+	struct ucall uc;
-+	int stage;
-+
-+	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX));
-+	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_LA57));
-+	TEST_REQUIRE(kvm_has_cap(KVM_CAP_NESTED_STATE));
-+
-+	vm = vm_create_shape_with_one_vcpu(VM_SHAPE(VM_MODE_PXXV57_4K), &vcpu,
-+					   guest_code);
-+
-+	/*
-+	 * L1 needs to read its own PML5 table to set up L2. Identity map
-+	 * the PML5 table to facilitate this.
-+	 */
-+	virt_map(vm, vm->pgd, vm->pgd, 1);
-+
-+	vcpu_alloc_vmx(vm, &vmx_pages_gva);
-+	vcpu_args_set(vcpu, 1, vmx_pages_gva);
-+
-+	for (stage = 1;; stage++) {
-+		vcpu_run(vcpu);
-+		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-+
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_ABORT:
-+			REPORT_GUEST_ASSERT(uc);
-+			/* NOT REACHED */
-+		case UCALL_SYNC:
-+			break;
-+		case UCALL_DONE:
-+			goto done;
-+		default:
-+			TEST_FAIL("Unknown ucall %lu", uc.cmd);
-+		}
-+
-+		TEST_ASSERT(uc.args[1] == stage,
-+			    "Expected stage %d, got stage %lu", stage, (ulong)uc.args[1]);
-+		if (stage == 1) {
-+			pr_info("L2 is active; performing save/restore.\n");
-+			state = vcpu_save_state(vcpu);
-+
-+			kvm_vm_release(vm);
-+
-+			/* Restore state in a new VM. */
-+			vcpu = vm_recreate_with_one_vcpu(vm);
-+			vcpu_load_state(vcpu, state);
-+			kvm_x86_state_cleanup(state);
-+		}
-+	}
-+
-+done:
-+	kvm_vm_free(vm);
-+	return 0;
-+}
--- 
-2.51.0.470.ga7dc726c21-goog
+This patch is now in mm.git's non-rebasing mm-stable branch, so no
+replacements, please.
+
+A standalone patch with 
+
+	Fixes: 786eb990cfb7 ("drivers/base/node: handle error properly in register_one_node()")
+
+is the way to go.
 
 
