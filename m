@@ -1,208 +1,205 @@
-Return-Path: <linux-kernel+bounces-820303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC00CB7DFEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96609B7E45E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78B21BC069F
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774C11BC22DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2CB31BCB7;
-	Wed, 17 Sep 2025 09:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E1232D5D1;
+	Wed, 17 Sep 2025 09:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OpfObiaw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="k+LXCaPz"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010009.outbound.protection.outlook.com [52.101.69.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A636330BF6E
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758099860; cv=none; b=l37iI8Du0HelTdINjaz4+5dxvGeL+2RKdD5ddIfEpY8nlGHCc+AmyKPGfCuFJsMiS0+WUhQCs3UEoChTR198DwQbyYsyXNQ1FwruCQeONp5Tr60LqQHhdTgQnMyQivNZFmsZNiCV4X8aBxY41N6KtZAbuRpKwCwky23zujrlhbc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758099860; c=relaxed/simple;
-	bh=ZknuNHFq0tyeptFvJcnnsXRV6fSiqoXd5zwMcfSSKD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s9UthoJQBVzG2w12jd54BOlQ+SW/INXp1RcHODOvLs9uS8ieLTydzwYBTM5S9bynvkfnIjwGIwxJoeyTaKLgPpljU+Mz0Vcfg7l4BzClkMS80oeiQFuIN9hnBuk7UdWjTjvkkerrHz8Z/RVS6bB7SMl8+AxZvaIfnN1gQF48eJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OpfObiaw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758099857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x5npCVbmbW8kT6qQZFnkl4JniL63oW0fDP/nvQRcCcY=;
-	b=OpfObiaw+QIOayctcet9ueFl1jBG2/jl4t9jb719btYLhvvAzFEDyw+CtwyDupyfDIeiP4
-	A1M+XeOfbsaXNfQ4I/lSvgcqzQRyLrOw+gpPyDktpsZh7uS/P/Ky1Wn8keG9bC/WyK7W5X
-	c6kkXNyisAfmlgyC8Gta5or64vhcMC4=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-386-LdHTl9GlPD6xKw6y99Qepg-1; Wed, 17 Sep 2025 05:04:16 -0400
-X-MC-Unique: LdHTl9GlPD6xKw6y99Qepg-1
-X-Mimecast-MFC-AGG-ID: LdHTl9GlPD6xKw6y99Qepg_1758099855
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ece14b9231so120823f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:04:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758099855; x=1758704655;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x5npCVbmbW8kT6qQZFnkl4JniL63oW0fDP/nvQRcCcY=;
-        b=K2gGEBma6YfX179x4u2ikb4rkViJAsbqUY/GFRzRk1xSQ1wPquIzWBbwnMQ7LEqe/+
-         K1CbLjaIvwg6KfHHwLVOW9QK2KdTQs6NIYatzDj+3ZljCjz9Cpnw1yvsYlRdloM2NEJy
-         RvpVYj++eToExQi1nXexEzXa3czSAIr3OqP6dNMFdS7HkBDQjJBOeAUSjKj6I23byAaj
-         ztW73vP+/mvDXyeKdLMyD+eicZ4V5ExRhH8BWs+MQg9p2yqif5Ij4DNScYHxCgcPs9pV
-         IihrzyVyjS1uiDm5RRBUJqhSPSLuQJ+AoE+NOxnZY4QLR3C5kjFiM3x+Q/2MC06Islgq
-         pY+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFU+TgJEOL009KcliK647g+IUSRBvQwCJ1fl2OpezJCFXFuyamnS0t8LinZ78nC8A2RxGriP22JKkgRqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6LDWpkJ9A8Xu0k9sOJ3oLKKGcnFf58OiSaVW43m72DFBIlCb2
-	U8YxomKjzQshWVSYZxCU0/Z5voru+hR+lHl+drSkDe5Aki/xqgoAQViFqEvPzK8hn2sUUwJ3ICp
-	n0AWyTd695r8m+z3Z+Vxn0AdFZBNDt+6EPhXQ04WEguClYWHgzge8cH4PnO4LYeHAyQ==
-X-Gm-Gg: ASbGncsRp7GXEvW+ORooLZUKEx5OLmRDbgdzE0NWP0gfu7cg9EVLZ5KA1lwvJ40OjRm
-	b9t8hy4dOeHj5tzbdNHKPw02rslInOD0eF1XQSDJ98bpxlnX7vBBACdGimftikfQSOyLbBvosyk
-	0EaFotzpueTAWM+kdSQmRe9Zbmq7j6/L9EuAa+GcGVI7npvj88X2snrbhsyrqUhNYC3Gi5/Gw6X
-	aPyj6wLybkGwEqZQo8hTfDxyOgKudgRotRvmx4eT1CiIPFR9U/VTBOb7e0vJibyAWpuT1wQ+6Oe
-	rLBjwnbPHVdXvcLoTnWFjghenhPKzHq0DrHtu4FfadXLj0lBId1uAQw4eHz+WOPBcbqFFxula38
-	sOGTCOLLIXiCBrJljUPptIp5Zu9JSizkjylaDSdj7bbF+4tPvPjSN+NLdPe6yR6Jz
-X-Received: by 2002:a5d:588b:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-3ecdf9bec6cmr1252300f8f.10.1758099854809;
-        Wed, 17 Sep 2025 02:04:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdI4OELMUMHMlRwzj6+l/2Y9hePxscl3Z5Y6ewrNZjZAKUiJVhUKBuG0aAn+4uFmb0FpMAtQ==
-X-Received: by 2002:a5d:588b:0:b0:3e9:3b91:e846 with SMTP id ffacd0b85a97d-3ecdf9bec6cmr1252248f8f.10.1758099854160;
-        Wed, 17 Sep 2025 02:04:14 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f27:6d00:7b96:afc9:83d0:5bd? (p200300d82f276d007b96afc983d005bd.dip0.t-ipconnect.de. [2003:d8:2f27:6d00:7b96:afc9:83d0:5bd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613a072a38sm30431035e9.24.2025.09.17.02.04.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 02:04:13 -0700 (PDT)
-Message-ID: <4551b48c-eba5-42a3-aa53-74d412a126b9@redhat.com>
-Date: Wed, 17 Sep 2025 11:04:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D81E30648A;
+	Wed, 17 Sep 2025 09:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758099898; cv=fail; b=A1dfW/cByN96/24pXTPC9S7YRdSKLoIfP1QZhP6tdXHpJoPKfwqcMDlQHhhTr4Z6VqXVrh8GoM4v67b9jZsgeQHQ20lyVQ/RRgr/aGyi8R0z6K7ZWUeerbxahgXjQfvY6xsKYhUp2h2eTaA35Bks7RTt48ovkA+Mn1L0G9rwxJg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758099898; c=relaxed/simple;
+	bh=qM37cXikNZTV/GFv09zp4MF7YHvubVQgXE6/X3e0/cA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XinViNzJa9x3/+gtLszdAN8R/ctoDDOveyiXoeTTFI/tDwSq62OsZwqgGkFq2jHeI/mRZOvFNXt5H9JhsWz8lmcNNDzCniAwdQqCzPXR+mdttYKbTnkehhgsjs28vYP6Cwz7jyuswg64/BdXceq0EykBEJodasCwtsYPCQW+8kE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=k+LXCaPz; arc=fail smtp.client-ip=52.101.69.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oNJIOE+Aq7J5O36BjAElMHN22dt8Apk2NcqsRdzCG6Ir3Upal0GFr1e0Sd2RwCFWFxIpFPPvS9RrdfsBwey2ClkoPotDrVIczoe9oh8uFhsEfWQvw3KdyTNoAfYeQmN4qBga43MBG796QKkiAp36+DKP1RQ0VuM5HQDY9bjUwdnmZFQJMTMhJSIdD4s1e/BWdp7816cizeEWNwJdkINll0t0Sw7Rj078E/fiqMqumA9XSqOlP4lxFUbRQkXvfQB07Q297PlSXkvLJWRUDkWvuhlVuSmGx5YkzAQPTFzxfUOWU9WdGHoOTsgSnJV5e822iuUOG2losPXE6unKA6v2jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=brmMD+Flg6+nxw7zBw2cky0vRnxouR+kKR9x3GMpeBc=;
+ b=K6zhAhOp4VjZY5QZOXaJfDE1aOFTv1hzlldCf7qvMoHhmfaNJuzy8xet8JWe6pR4baY81Q17CEUB5Dqg40EiF2QO0wFTzqIYl+fqyt6H0xOA6RVW2huL2gesNs2bvAYNqxQXwB5yiApd0riU/ydDDWqYitlPDyRxM8zOTqvmv4rzgwN68R7D4DAkriLmMTKWeyC7Ro10JfPZazk1sFdKnAHPhRqKQbN93hmveh9hj01Tl2ooo4GN7bSavbf5rzEtKeTMLdYOwGtPksKJdJ2lWxuNe7o++H42EnUW7btbhmigC6rUssa4PyQWlhx/qAOcg7vz4zx5xUZVSqkBh+cBxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=brmMD+Flg6+nxw7zBw2cky0vRnxouR+kKR9x3GMpeBc=;
+ b=k+LXCaPzkoZPzzcZV9YhcOtDd9NMwnegthPgSKwNwIPCHzgwkaacAsxPIgl6AWzVkG5IJQFnZk1lSKwbL6zMsriiZxZSp/NvR3W6ghuknAUUz/MlisCRDyXvEojqhPmSWQvnaJ7X+u0IhSF2Jywm1prilNBbTg8ivtWXqvC5ys6+98QJWRpKHaz2opxtCONlFuVN0t0ttvbN3BfGlXaM13gM8HQGyao0pS/QnRfIjncJkV6rtvb9O0MuKPPQFX7ixnJSoVT0ahTUjiExd4DJRarfXmNMhHeyuFXXqQ0tJOoLEMxVK6OwY0m8JqdpPVh1XAdSYjpZmfwXGGV6N9hlVA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by PR3PR04MB7387.eurprd04.prod.outlook.com (2603:10a6:102:91::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.13; Wed, 17 Sep
+ 2025 09:04:51 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 09:04:51 +0000
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v3 01/10] dt-bindings: gpio: add QIXIS FPGA based GPIO controller
+Date: Wed, 17 Sep 2025 12:04:13 +0300
+Message-Id: <20250917090422.870033-2-ioana.ciornei@nxp.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250917090422.870033-1-ioana.ciornei@nxp.com>
+References: <20250917090422.870033-1-ioana.ciornei@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P195CA0010.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e2::20) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [sound?] kernel BUG in filemap_fault (2)
-To: Jan Kara <jack@suse.cz>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
- syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, chaitanyas.prakash@arm.com, davem@davemloft.net,
- edumazet@google.com, hdanton@sina.com, horms@kernel.org, kuba@kernel.org,
- kuniyu@google.com, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
- willemb@google.com
-References: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
- <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
- <lqzgi7abe2onda3faavn5ays6gdw4syiu32hmrfaibrh6cmozs@pjf3llvnnefk>
- <7e338491-0c6b-4b65-93b7-df0af8b2fd87@redhat.com>
- <s5pl5yhhxyz7dn4r2v6c4ll53ejboe5xa5226ytgg7kjirgmh5@tofyas4lp4uy>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <s5pl5yhhxyz7dn4r2v6c4ll53ejboe5xa5226ytgg7kjirgmh5@tofyas4lp4uy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|PR3PR04MB7387:EE_
+X-MS-Office365-Filtering-Correlation-Id: 562a0c84-bf6c-44df-d470-08ddf5c942ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|376014|7416014|1800799024|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RlLqvsfvt0MKlSPUzowuohg6CN2n3i0aMR0GUUHWlzr/gB6xIierjySAh0DR?=
+ =?us-ascii?Q?AiD59zMbrWyZ+YDJ/fZnr51pdHqLam/0CSv9WFpOiv9nlos9dInGm32BqcNh?=
+ =?us-ascii?Q?4E0w8XZsBRfeJkpESUqUcTVwe/Q4gIq/2foI86OM2SS1YPF3APwG7dhBLUIG?=
+ =?us-ascii?Q?Zx3fzvwegG3eZTO6atf5vY4y9r0BbUCnIXyscaTkSHyOSSY4oEkzz45Vzkd2?=
+ =?us-ascii?Q?F1NcTqnO3iIL4THzLV9EV7ayHJtDL3KGKM/8XcbenXvb9EpjhqxraGTb9e9l?=
+ =?us-ascii?Q?HS80ZyQP34h+NkpVIVX6USew/hpJoeJ5cWDDCZRSu0+WoWzUg9OgDJriK9yv?=
+ =?us-ascii?Q?KZrmyZJbg02iXG0j3YwxqoIRk4o6j4p5q+GsZEn+eQL8VCRjYoy6iwejCx43?=
+ =?us-ascii?Q?zFV/Zzv+QvGQrHObh7nnC4FhgWH7B1DFvNvl0qIPl2TOWKjtOEenlwZwITWV?=
+ =?us-ascii?Q?wBzDrAPwJzV/zG4F3Y6MiUwHGcm6N2Vnpfnz2pzhLSBb/+7lrSgXJ+0QQMxm?=
+ =?us-ascii?Q?B74/NFRLBRqXDcRla3HRjD2/rEcVaM2U5KFaQEw8EP1BJdpgiZvOzcaIsFVa?=
+ =?us-ascii?Q?gm2VE2COz1AsgL5/H42X3HmgNhhdOmFw1aW4TPH9zTj8qgHznCDeubnVN2fO?=
+ =?us-ascii?Q?ZXi2pC/TT4pUPaZVpdyAfEWvL19IO8/oW0cQaZgqCpHsYKk9eY7V6eZJe1ry?=
+ =?us-ascii?Q?FQt7eaVm4I1R5fLwhq/pcUoewdyG2jDw1bbJ7h0UkUsEoxCfn0hRTI+/YCdc?=
+ =?us-ascii?Q?l905Y1Q6OnxcG9uoyXZAKe0kuuWza2gXDNWzUqHujtudtRswQ5nlniOqI+4n?=
+ =?us-ascii?Q?GLZB8ne84vu8gxVN+kMS/6119Ti0GAzdwFO3g85txTYyG5eDhfKqEwj48XoU?=
+ =?us-ascii?Q?WuDr9s0iZ8MlYBpsFLyDW6quogi/EO4BFRntWMOg11IQkJTLa2xQps0D7oE0?=
+ =?us-ascii?Q?GrrtJC0HPkdNbAg2VMjGLPJNO6+6holczj2PqQ6cwhrNPFWaZ2hX29JV6xXK?=
+ =?us-ascii?Q?u2oa0l1AhShiyZ67yhpcoFEHTlUu43RGH7WJHdm5DQSkrVJ7Nt0+8Y4HrWhG?=
+ =?us-ascii?Q?7WE2EVRmuy/D/O9w2GZUa0FqCS+Tu7VSKScVxM4QadgtmyeDaG9wEfghEZ/A?=
+ =?us-ascii?Q?BTRU4WyyPNI2rW+jqVgHR7qVGONVsc/4FPAYtfYo9trmQIPSaccSPYfkRYdA?=
+ =?us-ascii?Q?yvUjO9IOTRXfPykk02kHqb3NKlmP9ZyqR7Gg0vCILS+T4HctxMU54JQFNpgJ?=
+ =?us-ascii?Q?Xwhyo2ja3aH25m9HF0v53pAdz/+O9xE0Na8ponN6d52IRL8RMgnUcR+LgIX6?=
+ =?us-ascii?Q?0iMp+qYLtD0b+j69UnWyGhydVJYdgB4jrTy1DVOaiMWyXiuO4HA2J0/53p/n?=
+ =?us-ascii?Q?f6vYzSWqSBuDF8HiNEgmVfEgq6xXEKcX+vRh0ZFVX0YgzNMgGsZjwEkqWS1u?=
+ =?us-ascii?Q?BQ+UNS2Y1FBJUVeNtDPD1/6HMoPzwI+t?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(7416014)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?I2E41Z4rdnjBK1+Idq3kj4R/4xyUNHvxSVkBsPANLq2FXvfXS7gwUmI0eDbd?=
+ =?us-ascii?Q?+fRHgQEFt5w0u34x4cBl36TmZxYrULoQ6rQD48SDLzxhsvRbVqMPi708HQqG?=
+ =?us-ascii?Q?yBz244rUUFv8ig7us2BBgcpCA+kclv4weuzH2uNAnI3JthcsIE8BTcTB2t+C?=
+ =?us-ascii?Q?q/GLSoQMcSp05rDu/AyhvdLlGQNBN8HcpOnbCi4AlUiUvXyrimQYDZclS50/?=
+ =?us-ascii?Q?L7UmjmlXvHx6nQlkPu1J/HBcbxS8zVBtSOkc18IJ1XciX0Euwz/Lu9ntOLNL?=
+ =?us-ascii?Q?IjGqITJtQRPk5bYqzu0fbnMx/xC77yjtja68BJGB8FNDLCuCyY6PCWX18kNc?=
+ =?us-ascii?Q?9Ve8iFwcMpnl2njMhaHwgxccGS7ACu5XuBvi1J1GCUxz8yNbM5MUVKc/75Rr?=
+ =?us-ascii?Q?AHmKQKELM04mm0xUZXoVYVzORfq0L4jwy7dAzXcSjF+Ge6vCo/qEbv82i/i5?=
+ =?us-ascii?Q?N3CSQjbL+gfZFaVYXL4Zph9dvRhuvYDOqGaY3oWBUKlDlTyoTD+e5DZ60GSQ?=
+ =?us-ascii?Q?CO4ks+O2ZaQ04BqOzWBhatgjg6B009kMOfTZiQrN6Xeqm588LNOVrQ9RsOOJ?=
+ =?us-ascii?Q?avNXVEn/vUTtKWkl4gOt5/uTnEsZx/eXK1Bw/qfnNbRoCxJiFOhbVvRMQ5wA?=
+ =?us-ascii?Q?lWxOv/YvFfufiVvneNYkfYjlvqWg2ewyKJRLTAm8McUHsC+Tch8uupES+ZAH?=
+ =?us-ascii?Q?ySwZHHwrF2C+eKLXT/fcNhpBhNNFbvCTIyXO35YwR7cOsBDRuj0jxCi693wA?=
+ =?us-ascii?Q?INr0YhHCfecBNzqjk5pHgOnBlXzE18Ki/5sJB75ZlBLeLIX9HLVGvKHsr1pm?=
+ =?us-ascii?Q?FmOZ3TWV/exv9lyM2Vj9FbHnY/vxfp8XQjL1Ie/yDmXD/Yo/i7zz9/FCSgvC?=
+ =?us-ascii?Q?FjJ2zgdezC3FJPDTliHE3KSLbl7S42tHXs+zJE4psmQDKcoE31iqIThF0kLX?=
+ =?us-ascii?Q?uhmr3sa+Mb3jNRg0rs6mN1Dj+n2q4axApQHtqg0/VMFdCGzNrnCIVuPFn7/L?=
+ =?us-ascii?Q?HHgLcMei2ln0NVpRJk7b/rlpT9c0UVQKAr0qko40hk/W6XqjgcF3dDH/0ELp?=
+ =?us-ascii?Q?Fl9gDiF9U+fxtnxi30Eo88+eF5/ANhdgxsrrPSVuDVUx9AD8WsRJfW/3mXE2?=
+ =?us-ascii?Q?0CEaE4MujRXNtGzKpU5wsPNPEiQhLpoaQToHF/M4UqilfTWor9HXvjCN20mo?=
+ =?us-ascii?Q?2OiqwIEhP9aDuCWyI5MjDxUZTML356zlgVRzbuhM3Cd9UUXe6opgtuLB3g0A?=
+ =?us-ascii?Q?kkUoQCuhq1B8T1CUvTYbutylKm6ioVyyCpR2dCvyt5eU7AEZwh5AnaFkI92B?=
+ =?us-ascii?Q?NLfFc4YZ/B4yyAYlhJ4fdoytaire/TrCSYOHTgM75n0H9sQBeSPIRiDo/vJn?=
+ =?us-ascii?Q?TpKgV0RasnH6+AnxX5st/bAhXVs0X2pUm1KpPBpPyB1KfAbczH9iRIDByW+/?=
+ =?us-ascii?Q?cDHAGjA4Sj68cczY+8/XCWbdLlKHWe3qPcQivUkYy5JFqFNLea0o5GujEaCr?=
+ =?us-ascii?Q?Rbt+XI8rQ2ZWZ4kYk3x8t0yJAebC+ZC36/S/pHyqhIrgE69EncLDarrEpotZ?=
+ =?us-ascii?Q?dgmNBZ8/o+uhvj+lSS2e76E7FvZs+CYhxiXOc73R?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 562a0c84-bf6c-44df-d470-08ddf5c942ab
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 09:04:51.4719
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6WT/S/2fwrl25C9hSJ6OePg8JrE3A8puE2qJKC1UJffQG1wsUOF35S+vYJm/qxcy7iAnSI5FMiw525MtX2N2Qw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7387
 
->>
->> 	if (!lock_folio_maybe_drop_mmap(vmf, folio, &fpin))
->> 		goto out_retry;
->>
->> 	/* Did it get truncated? */
->> 	if (unlikely(folio->mapping != mapping)) {
->> 		folio_unlock(folio);
->> 		folio_put(folio);
->> 		goto retry_find;
->> 	}
->> 	VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
->>
->>
->> I would assume that if !folio_contains(folio, index), either the folio got
->> split in the meantime (filemap_get_folio() returned with a raised reference,
->> though) or that file pagecache contained something wrong.
-> 
-> Right.
-> 
->> In __filemap_get_folio() we perform the same checks after locking the folio
->> (with FGP_LOCK), and weird enough it didn't trigger yet there.
-> 
-> But we don't call __filemap_get_folio() with FGP_LOCK from filemap_fault().
+Add a device tree binding for the QIXIS FPGA based GPIO controller.
+Depending on the board, the QIXIS FPGA exposes registers which act as a
+GPIO controller, each with 8 GPIO lines of fixed direction.
 
-Yes. I should have clarified that we haven't seen the VM_BUG_ON_FOLIO() 
-trigger on other callpaths that set FGP_LOCK, because I would think the 
-very same problem could happen there as well.
+Since each QIXIS FPGA layout has its particularities, add a separate
+compatible string for each board/GPIO register combination supported.
 
-> The folio locking is handled by lock_folio_maybe_drop_mmap() as you
-> mentioned. So this is the first time we do the assert after getting the
-> folio AFAICT. So some race with folio split looks plausible. Checking the
-> reproducer it does play with mmap(2) and madvise(MADV_REMOVE) over the
-> mapped range so the page fault may be racing with
-> truncate_inode_partial_folio()->try_folio_split(). But I don't see the race
-> there now...
+Since these GPIO controllers are trivial, make use of the newly added
+trivial-gpio.yaml file instead of creating an entirely new one.
 
-__filemap_get_folio() will grab a reference and verify that the xarray 
-didn't change. So having a concurrent split succeed would be weird, 
-because freezing the refcount should fail. Of course, some refcounting 
-inconsistency could trigger something weird like that.
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+---
+Changes in v2:
+- Used the newly added trivial-gpio.yaml file
+- Removed redundant "bindings" from commit title
+- Added only one compatible string for the gpio controllers on
+  LX2160ARDB since both registers have the same layout.
+Changes in v3:
+- none
 
-I can spot that we are also manually calling 
-__filemap_get_folio(FGP_CREAT|FGP_FOR_MMAP) on the else path if 
-filemap_get_folio() failed, maybe that's the problematic bit (and maybe 
-that's where readahead logic makes a difference).
+ Documentation/devicetree/bindings/gpio/trivial-gpio.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml b/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml
+index c994177de940..3f4bbd57fc52 100644
+--- a/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/trivial-gpio.yaml
+@@ -22,6 +22,8 @@ properties:
+           - cznic,moxtet-gpio
+           - dlg,slg7xl45106
+           - fcs,fxl6408
++          - fsl,ls1046aqds-fpga-gpio-stat-pres2
++          - fsl,lx2160ardb-fpga-gpio-sfp
+           - gateworks,pld-gpio
+           - ibm,ppc4xx-gpio
+           - loongson,ls1x-gpio
 -- 
-Cheers
-
-David / dhildenb
+2.25.1
 
 
