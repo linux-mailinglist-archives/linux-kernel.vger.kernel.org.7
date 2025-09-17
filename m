@@ -1,259 +1,346 @@
-Return-Path: <linux-kernel+bounces-820445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F581B7E43A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:45:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC91B805F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87398188777A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:15:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D99E7A9C65
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C373570CF;
-	Wed, 17 Sep 2025 10:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3F0352068;
+	Wed, 17 Sep 2025 10:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Zs+xoEvG";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="titzfDz4"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lr1ppb7u"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5865C2F3606;
-	Wed, 17 Sep 2025 10:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758104077; cv=fail; b=Tu2DsQlzwR3IvdpWLl7q2kIlWbVgWib6249pfgK2SO5Qg+uy6VzbsZeNvZ+5JOXYa31nj+D0mu1k56FKHfrv8ltljFrYTj4P7O9x105M4vE2lJ1GOn7Gj0+kNHi+qygsJD+MuSXAnHuwkaLUVHuxAipfwBNJ5heVEuL2AyoKVzA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758104077; c=relaxed/simple;
-	bh=ZkGfFk1z+41iqHAB0iKkadJtNnSm5oatsGyIx5ilvA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FQf8Yr3t9G5WXfkzGTehZmfuxsEO66S93EwdbLO0kuuFSqilAXGFBw7S7a0UEuOfFjssxnWxRjPzHLzpptMPzBooka7RfrK0CWT5pRJzHXA1VTDnNbXb/pT8PdQ4ZtEzR1S9lbkmLcKa14qI5MXlTcrS7u29YUJh3p9Zwy676Uo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Zs+xoEvG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=titzfDz4; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H9tx1C031993;
-	Wed, 17 Sep 2025 10:13:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=WHQl46h+sq5Uj3KXrT
-	LPSluU+FQuQ2sRVSzH8pXTIVs=; b=Zs+xoEvGg7XQucL2OIznHTbl+iTmJgKfXd
-	oKBz5j8Mmr5gUMjsUi3LgZQy9wsrfjqexQlmvuk/A7LOLofdglnlJRcdc1rNBurP
-	5aE1qTzyg+nVtkBIRPtiG4kmFyp7a3p1JA848gmRXu6JgK4jOOtEK710+VwIdzoz
-	7C4HC+/sKcikC9WKcPjZ18tDYTJl2NNLO2f0+t7iXGbw9d4/pX2YsAWBvqJhHqXD
-	CxcAiT9sH1F+T0uAaveewlsjzPkVU/iXFBJDAY4/cf7flfH+vsSDTj2tcsw+lbCN
-	rLe0E9AmkMPraSGg8sFWV5hF5+QSUwFSYQLs8wt5xrl2T8jfQONA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497fx9rwvf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 10:13:51 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58H9TrCN001635;
-	Wed, 17 Sep 2025 10:13:50 GMT
-Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010058.outbound.protection.outlook.com [52.101.201.58])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 494y2dt0q7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 17 Sep 2025 10:13:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HzdqQLcXy3VMnGEg8NVvNHdHSv0vdHUDI3843YIRoLKCwWRWzL7i8bFe+1ebpp0i/eTslGpgtKmubcdJY74LHs8NB+L5/4go5F093U3sCvylxHIdap1aHPZRsYQsrOlpknnJRChxUbg8oc5COw08pqEOWcm9FZt7ATQPZ6DAk4FVv8qdWycf9TzWLz+EiklkAcXXfu7z2C0yU+V7r++soK+7v0GcnYNB4+LizU7ev58w+qoU40yJNnH1vfjWtmh4f/lhm8TEt8+peS50gyUHuLCdrezi9YjI59xWYiHVTNYue/j6mfHRxuCmH3+vO6LwcgXrcvAevThUudu8KuECOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WHQl46h+sq5Uj3KXrTLPSluU+FQuQ2sRVSzH8pXTIVs=;
- b=FCcMz0ihneTwpnmMjdfRXIOtSenFfnFvJ2ecDC/Ug/NsX2DviAskuk+QLEwWWtU7P1yntlcnHRDreR0Lt4v7mwV8FYGYc1iEJ+g4UhD8huS9dLjn5C6jfAn8oKNMn4VTvhiaaLmnBjWiGxX9S4RZ18IH7PIsCQKXqh5TxPzrFoOxX+S9TuO5gijX6hx5nZ78VqzCvcxqEspVVUROTg+d01JV8ELgLho+MBYvEacKUDEuMyGKtXvUlV9gRMKbhl8fyRbksXqly4ICN7isD4XG5bVrCcrQ40Jb9ZtYMD9YUhpe1lxgbh6x565d161g8mdVsxta6BxA3H3dnqkbY86Bmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WHQl46h+sq5Uj3KXrTLPSluU+FQuQ2sRVSzH8pXTIVs=;
- b=titzfDz4exrUBhM1NxpJu3zIpoXZcs+k9lvjlnyFDWhqCQFw/dwgUQIv0yo8XQrNf2wmvvekqIVkB7vttaE9yW44gFMiFcvvXYTQnzCwiRkl9p8iH185Nv3dIlBwFcHAaRF2J3C1qvEoPo7MLA2HR20njkJsQmMfVs6uYowZ7t8=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by DM4PR10MB7525.namprd10.prod.outlook.com (2603:10b6:8:188::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Wed, 17 Sep
- 2025 10:13:47 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%3]) with mapi id 15.20.9115.022; Wed, 17 Sep 2025
- 10:13:47 +0000
-Date: Wed, 17 Sep 2025 11:13:44 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-        ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-        kasan-dev@googlegroups.com, iommu@lists.linux.dev,
-        Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 13/13] iommufd: update to use mmap_prepare
-Message-ID: <44f3cd3e-d0cc-46fb-b9d5-0ddfe678487a@lucifer.local>
-References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
- <59b8cf515e810e1f0e2a91d51fc3e82b01958644.1758031792.git.lorenzo.stoakes@oracle.com>
- <20250916154048.GG1086830@nvidia.com>
- <a2674243-86a2-435e-9add-3038c295e0c7@lucifer.local>
- <20250916183253.a966ce2ed67493b5bca85c59@linux-foundation.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916183253.a966ce2ed67493b5bca85c59@linux-foundation.org>
-X-ClientProxiedBy: LO2P265CA0514.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:13b::21) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16ADB2F3606
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758104068; cv=none; b=p3sxJa4Q8T7sDWnQ/TpJ78hkUVVAQmGTh4YEhhkC+CwMgDSW1hRBNzJd3hRkfulcL2R4w0lgdRLiCveTfl35eKNyYGkJVAcIBPAzcUafgq0KTavyDpm7fwBAYdA2iA7SqRWivn6OzTHrj1wKPS9WOlGikEmnPwhwsmqW7DOtHVw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758104068; c=relaxed/simple;
+	bh=u4zwrXzT6esvcbuq/jdZUWFS/YEojQJHh6vaqWF4shY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qb1ABHKDSTH6wwdmj5zVmpg8uszYvVxPqFiyLohNdDrOTBTxKstkwQ+RVgD0SlZmaleFBLV6ESyHgI1m92TKOlru1XHVvtRkEmiGzwNODZFoFm+W+yP2YX8ymCRe/j5hcb0C9eGMe9/umU94YUX7ghuOvNGUA9R6b/nIVkR9U1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lr1ppb7u; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 17 Sep 2025 12:14:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758104064;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yk6DpBpPq8n8MipKzyklGb8+4khNwiX8CnZ/+4BUYTE=;
+	b=lr1ppb7ufMEyGPJKgnNpK6Yjnt69LP0p4Aw/EOfq+ucD38KC3+qgU3kDKWcHYPif1YKV4A
+	EfI8pk02LT190uT8n7V5xZXyiGgUyyBL/6sTOv43HDa4NBERGCXmDCRGiceZYhgbq4uWzv
+	xYjxd4an3GWi0kcpCgUoAGmOcHpSr7E=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 04/10] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_{DURATION,HW_STROBE_SIGNAL}
+Message-ID: <7h6ni4u34hpmfpu56fbcx3sz7fxeqdskjkwbgatttycsljl2we@5wlox7llfa74>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-4-d58d5a694afc@linux.dev>
+ <20250907194953.GA19568@pendragon.ideasonboard.com>
+ <j337fpaqahmee3qutgtkavud6rbqyn4lpsj4yaha2xmvcvfhli@z67twdhybvqp>
+ <20250908155917.GK26062@pendragon.ideasonboard.com>
+ <mk77d6dn2qn6wrlgyu4sxpwufe7eupi4xcvx7yblo7bki4b5h6@brircux3j6ct>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|DM4PR10MB7525:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a66a104-5562-42d9-6dd0-08ddf5d2e3b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gQqTGSk8gMNIiB1hsVxd6NjjSEH2Li1VXVPWyIsU0KHpBgBfHJV0mrKOO+yM?=
- =?us-ascii?Q?U3gq8v56fPwhbeeDoFmpsWfj2QiqUg4tQui4/YkbR/bVv/1V/kx94GHuSmc0?=
- =?us-ascii?Q?a4PLoXjSlTvZRS98zvHHUssqjg+HL6XV4BiLhnrTyJWpPgw825+3hzDwCDHk?=
- =?us-ascii?Q?RIaeggmRybJS5MJ1MLaotfWO9BlKFq2Ewkm/OKv3niWtNzpNwRcZefx0s9Ul?=
- =?us-ascii?Q?wlcyy2CsV7DRMBisPEijO5Nidz/DxR1jVGXS0Gjz9SGqAM8ZZ1U/cdkuAVAC?=
- =?us-ascii?Q?sf4Ry6Ad0CnMSsVMTi5rOfl2PruywSdv51YMr1T+3GVnvTZTMgKmZLpgCd2W?=
- =?us-ascii?Q?ibX7ftH76SXf84/8jV49ZXXeBJCy+8r8zxndYK2PXpzbThwwgLdiZOIjjnoX?=
- =?us-ascii?Q?1zoW0azE7Q1OTucuxa7S+b5qFWsbNgLkqS1k2kKijuL3/d16EpCIbD5b9a4i?=
- =?us-ascii?Q?hbmeSpgfIE15AuqBzzIEf9HWHitO5Us3VxMPU726bewBBiBG4TBLsBCd+uSu?=
- =?us-ascii?Q?xhNmPRMo8x1vPVvpw72pZ5/DgPKp95fYt7/ox9DbITkKfhJ9Uh7Ob3tPj8sV?=
- =?us-ascii?Q?y2kOzEqqaZdm2S657JPFaYapZTAiYvvdOg1nrYLQ3Ti9I/SI+tjk2EwlX2EL?=
- =?us-ascii?Q?ZhPEKPCZW7fy1OcTNTR5LBANMaiYI8XJCYadlM521PYxZsY1UtHwTAScXMw1?=
- =?us-ascii?Q?NIoh/RW8GX7j2Bt2MPBlblHGfjWD4lh681K0Jr1/xdO3sHjc1+URPYRYxYOx?=
- =?us-ascii?Q?72g+I6e/8U40UeF5vGAMxMsVIHarU4hdy49/6zeDoM1ZKBoZ2uLAp+svnzAo?=
- =?us-ascii?Q?u3DaEiXhJuNWzGD8iNQuiokNGaQ2cat3Omc93WfG+DhgATG9JFqg92fdxgur?=
- =?us-ascii?Q?Y34c0T4L9re3uYr4ckovR5Ti1uOCHV11bzXe/dBobo54D5GuWWUWwQk9Dju1?=
- =?us-ascii?Q?rDP4RcBf1ndWcbSRK2dBvjutPprMIECV28p5/u+/g3WkT3SC8aUc52MF+5B/?=
- =?us-ascii?Q?amotvKcwPZt8glRjJvxAgWABZGr6TItTwZ1gDjPKENMNgnaI1txaacakXiKD?=
- =?us-ascii?Q?fVX9n8Wxt8iNueg8zPiv9Myz91yqyfXFGYN89Wv3UQjOiWb2AtPlFV+NLkap?=
- =?us-ascii?Q?j76QuVf4Q1DzRZqMOBiQYx/QhZi4XR/5aHcy0JRcXZ2RKRnpScbdesTkKU10?=
- =?us-ascii?Q?Kt8G/feyUlNN1ObSEclxoCbHqBzRZ7rh1Cn9GB/C7FTiz/oGNUbJJ1GjVLyL?=
- =?us-ascii?Q?7bSmsKdOPXtKDic4b4PoUhOYVA1t8hU4PO/jALsQq4Ivc9jPhBPCDB7P+Fd4?=
- =?us-ascii?Q?EhvtOjuM9nsDETkj3XV5i3xSwkWRIiMxdEzYeIwKKZdQKrjGiSz6eDJnXLO9?=
- =?us-ascii?Q?vokBkKwQqxoYsJf8nVfaC+X0tQ79p3mwCoodG48IPKLtKZqS6Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AMPwGHPUp1wjvrsq1w7trHnkLmNGdP3yLsHziVrv85+FuBIXtfdI4Gej6YIy?=
- =?us-ascii?Q?lggspXcQbrc/d7iEPS63LZ92iUzbTNV2TKPNzyN2pwtFVHcKSqAG0JrXl8XH?=
- =?us-ascii?Q?bGMXSAxOAP7DZBXpxhnT5XeAqnkEAgoXOUjvNDDhit4wUY0/qO2K91jduTrs?=
- =?us-ascii?Q?ayOtkP2JQ7XNt6q4PbXHoJtMrU9mSj+8RenEz/87txQ19ZAGT7+kdugG+PPx?=
- =?us-ascii?Q?izU8NkaT5kXMLSkG9Hu26Mg/8JLdJy4QP522LCUzqMraYJPAmfd9grhbH8BW?=
- =?us-ascii?Q?RyB5gDsfgmxmtr4fbBCTGTytXJb6em5pIohmYGzyCZ2spriRg2qt0Tvs4gua?=
- =?us-ascii?Q?9r6+eoJAYRjv476pPOdq4aiBBmQ7d/XSxGCPk/R68Q6koIe8tDvPsJDqmhdh?=
- =?us-ascii?Q?5YxCRq5At1FUB6GZQcjZdPTWmu1zCHhwiuZzqjtyiUmm+7vdhT1qSxWW4MMm?=
- =?us-ascii?Q?otCtcExtMU4oCDveY9gFiDvu0utFd6IY9jDf+FapVbEKGHaCUWSJCMavSOZV?=
- =?us-ascii?Q?C+r09mgEBuD0EPjstXzatSwhhp/dBBaByvMEzB2ASK+hjgc1kEhNS8uLn6sp?=
- =?us-ascii?Q?EmtaRpRxrTjTy04fIzx3k/3/IkE4nYh17iN5CZA6Fuv9AzbE0E+p/nbyoSKF?=
- =?us-ascii?Q?W25KIQ3D4sCmNhoHJ5c6fPYlhmukbqOcR5mZ5L4SSb1ocmn4u1PuuM4RqfTo?=
- =?us-ascii?Q?JHQmlXgxL0bC18rCPj/lOlqEVUeeLDBiPpp1KLgHqEoJkkr+Mt0GzeIXS+7N?=
- =?us-ascii?Q?oT+uKEvZEsh7vnV0tkB/3azG8y9z75naRX6oztGUplOYyKjmSfvXIsMSbkq3?=
- =?us-ascii?Q?IOhIXAXdORoreEKuTSRnyddRT267JT3MVOYjBeivdZK1bEcuvwRGfkWyPTdK?=
- =?us-ascii?Q?YHfyMrlUOBN6/V5jvy1mbCzJHxVF8aOGUr694HLa53u3lFLQEsOB3iuan8bP?=
- =?us-ascii?Q?jMEE9UuHcBRR91UXwSzKVOfKVxTNgGMHRLv1lmhdEWbITFFziGZ5Wjto8ebc?=
- =?us-ascii?Q?a5Jj5Kw331CfbYuoBo1wBS3gStRysOQ71VxJXYtgrAWMqjfo9aA5uSd8lDx8?=
- =?us-ascii?Q?A6it/x0G570yKwbSV+pKEwxtNSgDYUMw2imzgzknVm5ANocTWj2jK5g9SfQU?=
- =?us-ascii?Q?drK5suOBxt/k/bGU93RRLWZDuTKNfnTj+ShfzRnfg6eD3pfzNYZXk8pjuPBn?=
- =?us-ascii?Q?pciv6Fl8hITLex9ivgicW96xS3Ds9/U4X6ClpInb1LEY47NTQEjuDXR8TTMX?=
- =?us-ascii?Q?fxzeu2UbhMpZ1npbQDrLOYg5v1p10fxVrI4DZ01NyEaySAyoGRvlifC5zO/5?=
- =?us-ascii?Q?B079iDo2V+wgv1SBqEGoOyce+ZNqXbnYiX5BSKwxAdRbaS95wvEoY9BXsCUZ?=
- =?us-ascii?Q?RvTn67O2UoBbLbW+VkScPP7U1GirshkoHLQXbUY28aTpegeI8tN8HolEgyLi?=
- =?us-ascii?Q?o1hL3WjhNUZqKLHFe5KV8Aspa3Ccs9RLQcZrSiTsH3FPXwZ8fFpjHVP92zNP?=
- =?us-ascii?Q?Yn2a6NWFXnpqDvlxYFAquSS2W1BPJABrg4BjfZ8W1JwWZH5kuO/4gbby+ntJ?=
- =?us-ascii?Q?rmTJ9HcuLa5yEhtpLzwVVLuM5I69fE9jc1FZRNF5+FMWNIMhBm/jADJ5KdYK?=
- =?us-ascii?Q?rA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	XLeSukRZCD7D+wwn05jXehb0nU8uQ7ej9h7y2yWx+MWqxEaRcme5YpXzFm2vQms/DYNYrwGUT9Gy9dLn+VGZbt4VK3nQQYdgRv3pO1pMGuAT7szz4p0maJ98B33pldIhvcGhScKKK4kT2ekaBy5QqyZSJHoU34rQUPPhUvw2SXb9Z7M/e6hnSBv3Y+DSm66PZY/uTTy5VoFgECVLrzzcu2avVGdDtcfKyowPdEizWq6MwQQhlHT0bsu6z8UtVdsNN6jdZ0YNDnxXAg0TZRg/IdkJ2jCh9ojggqxvxyzAi3MdLDOMYB0bA5Jf39qrE9tJxZ2NmbAX573JAZsuUhgEJdNKs5Q5xu4xyiVKixosQ4uhSMC97Y7/bovjPBcdpGHZW2saoS0zyVOKFdSdgvj/8S1QSAeUQLHwmCOrJb0TeIFa/xCbbWG+tQHXnYPA2E0ZMQxeOi6Hnn9oxFnqXk2k9RUfCTdDpI1tSUTcABrHPmttM1Wr2ZNglkDu/r76JjXpd1/14oR5kdig8XBaNx/O9xwGWLZ4p+VNA4SlEYLl3JFHWMAEMScdQOYeCrvQKbPyQIQ+8LxElbkGf5VTdnrVgtgY3UapK5V6+s1SXsV2CTQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a66a104-5562-42d9-6dd0-08ddf5d2e3b7
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 10:13:46.9577
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tzsURELcWKaXvIBwtMXXktyJwGvqFUL0ZlyKnvcjYobyJzdvrniyM00CmgJHJSVYFYBP7q6W4u4vwwqNtKUP3oU4tqrr8ELycGWY0NdNgEw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB7525
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- suspectscore=0 spamscore=0 mlxscore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509170099
-X-Proofpoint-ORIG-GUID: hSqHHYD39s6lfhe3C-xgdK9xNOEttg2d
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXwomsjDNFYKyV
- Jjrrjnrv8u2k7dAbXfZPe13HMsDYiyi8in1E1Tl3exifWxY0NIhcmjZYieIArJGJLW9tIj5pV+V
- ZtpnEljb5jaZ3hBdPF/RMO30R0QohHwaisWkSWNRNH5SaCdcnTQsyih+NtiotCNUJlPpXrLJLVF
- /moPnPQysyXkjGe9N4v/vwxEwJSaeRRGn03dCBotJpWOoy4D3xl7VVItvJ4QN112O3tv3lgF7IF
- 64x6zqF+hqK6+DwcNezjUpiNklhn0OKKNuysHBprKlKbDtVzQUrl7+HO6zJSQxOE+ySl7ojoaxC
- FsY8f6r7zBDPLsjE+vsV+Ph0ZcjDzvF9i4VXv0Ppkjx4nzsXG1ThPKThG8RGXbFYqJAQVwATE4N
- NC5SUWhg
-X-Proofpoint-GUID: hSqHHYD39s6lfhe3C-xgdK9xNOEttg2d
-X-Authority-Analysis: v=2.4 cv=C7vpyRP+ c=1 sm=1 tr=0 ts=68ca89df cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=fsd4YKtpGBD9qYw4rf0A:9
- a=CjuIK1q_8ugA:10
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <mk77d6dn2qn6wrlgyu4sxpwufe7eupi4xcvx7yblo7bki4b5h6@brircux3j6ct>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Sep 16, 2025 at 06:32:53PM -0700, Andrew Morton wrote:
-> On Tue, 16 Sep 2025 17:23:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
->
-> > Andrew - Jason has sent a conflicting patch against this file so it's not
-> > reasonable to include it in this series any more, please drop it.
->
-> No probs.
->
-> All added to mm-new, thanks.  emails suppressed due to mercy.
+Hi Laurent and Sakari,
 
-Thanks, should have a new respin based on Jason's feedback today (with copious
-tags everywhere other than the bits I need to fixup so we should hopefully have
-this finalised very soon).
+just a friendly ping for the pending feedback on this series :-)
 
-Cheers, Lorenzo
+regards;rl
+
+On Tue, Sep 09, 2025 at 12:29:59PM +0200, Richard Leitner wrote:
+> Hi Laurent,
+> 
+> thanks for your great (and quick) feedback!
+> 
+> On Mon, Sep 08, 2025 at 05:59:17PM +0200, Laurent Pinchart wrote:
+> > On Mon, Sep 08, 2025 at 02:37:15PM +0200, Richard Leitner wrote:
+> > > On Sun, Sep 07, 2025 at 09:49:53PM +0200, Laurent Pinchart wrote:
+> > > > On Mon, Sep 01, 2025 at 05:05:09PM +0200, Richard Leitner wrote:
+> > > > > Add the new strobe duration and hardware strobe signal control to v4l
+> > > > > uAPI documentation. Additionally add labels for cross-referencing v4l
+> > > > > controls.
+> > > > > 
+> > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > > > ---
+> > > > >  .../userspace-api/media/v4l/ext-ctrls-flash.rst    | 29 ++++++++++++++++++++++
+> > > > >  1 file changed, 29 insertions(+)
+> > > > > 
+> > > > > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > > > index d22c5efb806a183a3ad67ec3e6550b002a51659a..6254420a8ca95929d23ffdc65f40a6e53e30a635 100644
+> > > > > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > > > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > > > @@ -57,6 +57,8 @@ Flash Control IDs
+> > > > >  ``V4L2_CID_FLASH_CLASS (class)``
+> > > > >      The FLASH class descriptor.
+> > > > >  
+> > > > > +.. _v4l2-cid-flash-led-mode:
+> > > > > +
+> > > > >  ``V4L2_CID_FLASH_LED_MODE (menu)``
+> > > > >      Defines the mode of the flash LED, the high-power white LED attached
+> > > > >      to the flash controller. Setting this control may not be possible in
+> > > > > @@ -80,6 +82,8 @@ Flash Control IDs
+> > > > >  
+> > > > >  
+> > > > >  
+> > > > > +.. _v4l2-cid-flash-strobe-source:
+> > > > > +
+> > > > >  ``V4L2_CID_FLASH_STROBE_SOURCE (menu)``
+> > > > >      Defines the source of the flash LED strobe.
+> > > > >  
+> > > > > @@ -186,3 +190,28 @@ Flash Control IDs
+> > > > >      charged before strobing. LED flashes often require a cooldown period
+> > > > >      after strobe during which another strobe will not be possible. This
+> > > > >      is a read-only control.
+> > > > > +
+> > > > > +.. _v4l2-cid-flash-duration:
+> > > > > +
+> > > > > +``V4L2_CID_FLASH_DURATION (integer)``
+> > > > > +    Duration of the flash strobe pulse generated by the strobe source,
+> > > > > +    typically a camera sensor. This method of controlling flash LED strobe
+> > > > > +    duration has three prerequisites: the strobe source's
+> > > > > +    :ref:`hardware strobe signal <v4l2-cid-flash-hw-strobe-signal>` must be
+> > > > > +    enabled, the flash LED driver's :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
+> > > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH``, and the
+> > > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be configured to
+> > > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. The unit should be microseconds (µs)
+> > > > > +    if possible.
+> > > > 
+> > > > As mentioned in the review of 01/10, I think this needs to be clarified.
+> > > > Ideally we should add a new document in
+> > > > Documentation/userspace-api/media/v4l/ to explain the flash API, but in
+> > > > the meantime let's at lets improve the description of the duration
+> > > > control. Here's a proposal.
+> > > 
+> > > Understood. Thank you for your proposal!
+> > > 
+> > > > ``V4L2_CID_FLASH_DURATION (integer)``
+> > > >     Duration of the flash strobe pulse generated by the strobe source, when
+> > > >     using external strobe. This control shall be implemented by the device
+> > > >     generating the hardware flash strobe signal, typically a camera sensor,
+> > > >     connected to a flash controller. It must not be implemented by the flash
+> > > >     controller.
+> > > > 
+> > > >     This method of controlling flash LED strobe duration has three
+> > > >     prerequisites: the strobe source's :ref:`hardware strobe signal
+> > > >     <v4l2-cid-flash-hw-strobe-signal>` must be enabled, the flash controller's
+> > > >     :ref:`flash LED mode <v4l2-cid-flash-led-mode>` must be set to
+> > > >     ``V4L2_FLASH_LED_MODE_FLASH``, and its :ref:`strobe source
+> > > >     <v4l2-cid-flash-strobe-source>` must be configured to
+> > > >     ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``.
+> > > > 
+> > > >     The unit should be microseconds (µs) if possible.
+> > > > 
+> > > > 
+> > > > The second paragraph may be better replaced by expanding the
+> > > > documentation of V4L2_FLASH_STROBE_SOURCE_EXTERNAL, it seems a better
+> > > > place to document how external strobe works.
+> > > 
+> > > That's fine for me. I will adapt the V4L2_CID_FLASH_DURATION and
+> > > V4L2_FLASH_STROBE_SOURCE_EXTERNAL documentation accordingly and send in
+> > > v9.
+> > 
+> > Sakari, could you please check if you agree with the above ? Let's avoid
+> > going back and forth with reviews (and I'll try my best to review the
+> > next version quickly).
+> 
+> My current proposal:
+> 
+>     * - ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``
+>       - The flash strobe is triggered by an external source. Typically
+>         this is a sensor, which makes it possible to synchronise the
+>         flash strobe start to exposure start.
+>         This method of controlling flash LED strobe has two additional
+>         prerequisites: the strobe source's :ref:`flash strobe output
+>         <v4l2-cid-flash-strobe-oe>` must be enabled (if available)
+>         and the flash controller's :ref:`flash LED mode
+>         <v4l2-cid-flash-led-mode>` must be set to
+>         ``V4L2_FLASH_LED_MODE_FLASH``. Additionally the :ref:`flash duration
+> 	<v4l2-cid-flash-duration>` may be adjusted by the strobe source.
+> 
+> 
+> ``V4L2_CID_FLASH_DURATION (integer)``
+>     Duration of the flash strobe pulse generated by the strobe source, when
+>     using external strobe. This control shall be implemented by the device
+>     generating the hardware flash strobe signal, typically a camera sensor,
+>     connected to a flash controller. It must not be implemented by the flash
+>     controller. Typically the flash strobe pulse needs to be activated by
+>     enabling the strobe source's :ref:`flash strobe output
+>     <v4l2-cid-flash-strobe-oe>`.
+> 
+>     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
+>     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
+>     mode of operation.
+> 
+>     The unit should be number of lines if possible.
+> 
+> 
+> ``V4L2_CID_FLASH_STROBE_OE (boolean)``
+>     Enables the output of a hardware strobe signal from the strobe source,
+>     when using external strobe. This control shall be implemented by the device
+>     generating the hardware flash strobe signal, typically a camera sensor,
+>     connected to a flash controller.
+> 
+>     Provided the signal generating device driver supports it, the length of the
+>     strobe signal can be configured by adjusting its
+>     :ref:`flash duration <v4l2-cid-flash-duration>`. In case the device has a
+>     fixed strobe length, the flash duration control must not be implemented.
+> 
+>     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
+>     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
+>     mode of operation.
+> 
+> > 
+> > > > As for the unit, is microseconds really the best option ? I would expect
+> > > > most sensors to express the strobe pulse width in unit of lines.
+> > > 
+> > > We had that discussion already somewhere during this series. Tbh for me
+> > > microseconds seems fine. Most (professional) flashes are configured with
+> > > s^-1, so that would also be an option, but as flash_timeout is
+> > > configured in microseconds, i chose it for flash_duration too.
+> > > 
+> > > Nonetheless technically it shouldn't be a problem to express it as
+> > > number of lines... Is there a reason to prefer this?
+> > 
+> > A few observations have confirmed my gut feeling that this is how
+> > sensors typically express the pulse width. Expressing the value in its
+> > hardware unit means we won't have rounding issues, and drivers will also
+> > be simpler. We're missing data though, it would be nice to check a wider
+> > variety of camera sensors.
+> 
+> I have done some more measurements and calculation on this for ov9281.
+> It seems you are (somehow?) right. The strobe_frame_span (aka strobe
+> duration) register value seems to represent the duration of the strobe in
+> number of lines plus a constant and variable offset based on the hblank
+> value. Other settings (e.g. vblank, exposure, ...) have no influence on
+> the duration.
+> 
+> After about 50 measurements using different strobe_frame_span and hblank
+> values and 1280x800 as resolution I came up with the following formulas:
+> 
+>    line_factor = active_width + hblank * 1,04 + 56
+> 
+>    t_strobe = strobe_frame_span * line_factor / pixel_rate
+> 
+> Which matches all tested cased nicely...
+> 
+> Nonetheless I'm still unsure on what unit to use for flash duration...
+> 
+> The exposure time for ov9282 is set as "number of row periods, where the
+> low 4 bits are fraction bits" in the registers. The v4l2 control should
+> on the other hand accept 100 µs units as value.
+> 
+> From a user perspective it would make sense to me to configure exposure
+> time, flash duration and flash/strobe offset using the same base units.
+> On the other hand we may have rounding issues and formulas based on
+> assumptions or reverse-engineering when implementing this for a
+> sensor...
+> 
+> What's your opinion on this, Sakari, Laurent, Dave?
+> 
+> > 
+> > > > I think we also need to decide how to handle camera sensors whose flash
+> > > > strobe pulse width can't be controlled. For instance, the AR0144 can
+> > > > output a flash signal, and its width is always equal to the exposure
+> > > > time. The most straightforward solution seems to implement
+> > > > V4L2_CID_FLASH_HW_STROBE_SIGNAL but not V4L2_CID_FLASH_DURATION in the
+> > > > sensor driver. Could this cause issues in any use case ? Is there a
+> > > > better solution ? I would like this to be documented.
+> > > 
+> > > Sounds good to me. In this case the V4L2_CID_FLASH_DURATION could be
+> > > provided as a read-only property too. So userspace is explicitely aware
+> > > of the acutal value and doesn't have to make assumptions.
+> > 
+> > The value would change depending on the exposure time. Given how control
+> > change events are implemented that would be difficult to use from
+> > userspace at best. I think not exposing the control would be as useful
+> > as exposing a read-only value, and it would be simpler to implement in
+> > kernel drivers.
+> 
+> That's true. I guess keeping the drivers simple and moving this "logic"
+> to a possible client/userspace application (if needed) is fine with me.
+> 
+> As you may have seen above, I've tried to integrate this in the
+> documentation proposal already.
+> 
+> > 
+> > > Should I add documentation on this topic to this patch?
+> > 
+> > That would be nice, thank you.
+> > 
+> > > > Finally, I think we also need to standardize the flash strobe offset.
+> > > 
+> > > I guess I somewhere mentioned this already: I have some patches for
+> > > configuring the strobe offset of ov9282 and adding the corresponding
+> > > v4l2 control. But to keep this series simple I'm planning to send them
+> > > as soon as this one is "done".
+> > > 
+> > > IMHO the offset should then have the same unit as the flash_duration.
+> > 
+> > What's the unit for the OV9282 ? For AR0144, it's a 8-bit signed value
+> > expressed in units of half a line.
+> > 
+> > > > > +
+> > > > > +.. _v4l2-cid-flash-hw-strobe-signal:
+> > > > > +
+> > > > > +``V4L2_CID_FLASH_HW_STROBE_SIGNAL (boolean)``
+> > > > 
+> > > > Nitpicking a bit on the name, I would have called this
+> > > > V4L2_CID_FLASH_STROBE_OUTPUT_ENABLE (or _OE).
+> > > 
+> > > I'm always open to name-nitpicking ;-)
+> > > 
+> > > V4L2_CID_FLASH_STROBE_OE sounds great to me... It's clear and even
+> > > shorter than V4L2_CID_FLASH_HW_STROBE_SIGNAL.
+> > 
+> > Sakari, what's your opinion ?
+> > 
+> > > > > +    Enables the output of a hardware strobe signal from the strobe source,
+> > > > > +    typically a camera sensor. To control a flash LED driver connected to this
+> > > > > +    hardware signal, the :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
+> > > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH`` and the
+> > > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be set to
+> > > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. Provided the flash LED driver
+> > > > > +    supports it, the length of the strobe signal can be configured by
+> > > > > +    adjusting its :ref:`flash duration <v4l2-cid-flash-duration>`.
+> > > > 
+> > > > The V4L2_CID_FLASH_HW_STROBE_SIGNAL documentation needs to be clarified
+> > > > in a similar way as V4L2_CID_FLASH_DURATION.
+> > > 
+> > > Sure. I will adapt this for v9.
+> > 
+> > -- 
+> > Regards,
+> > 
+> > Laurent Pinchart
+> 
+> thanks & regards;rl
 
