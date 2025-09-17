@@ -1,118 +1,86 @@
-Return-Path: <linux-kernel+bounces-819874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A27B7ECE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD6CB7ECD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4D8326B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC38326D6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 02:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D49C2F5A25;
-	Wed, 17 Sep 2025 02:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="u5BIwCmk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0662E03F1;
+	Wed, 17 Sep 2025 02:19:30 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D131BC58;
-	Wed, 17 Sep 2025 02:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC3B31BC82;
+	Wed, 17 Sep 2025 02:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758075407; cv=none; b=r+64dN4NcRFD+v4J11Xs8ManyHOONGTYqseK9lNSXatwuZcd7bRUzD+3DFCeBAU+OAZMU6/P4NCsiGAawrdhiE5jIHTQvf/2vwGRfZGPBsHgYfQT5s41qvCa6AYms9yFQP/8GbuPl9dICl8HZdOtFvgqcbGXAd23ujK8eVinVQ8=
+	t=1758075569; cv=none; b=styPSSP7elOlpMPV14AqtDnddWHBuyzmOvEu8N6abSYlM5ypbH/mSwr3N09pscDymHnjdCdi1qbUEqGNrzL72r5K2cYjo78yTnmZ/RmgDNb7kGGlx+0gcyBnfjWMoyMcEFtjKPMqrPhg5DGrsus0oWlIfEaKorEFg4intq9ygUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758075407; c=relaxed/simple;
-	bh=Y7E9FgWFmiluyPV1OTAKxPaUN0ogdOZyX5+tdyu3XVE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Q/vkwECJXugbp/pZmCk+tTj91vG+A7cj9WSryLsJxNx05QBdrRJ0HxrcRPsQd9r99B43fbZL6OJeMkMULo/JYq7Gaz/jsTgLeeKn34JqE38tCVF0O09Ee+Ni8ZoBIzarmoPK+wUMg+PTBprrWmce8hUnGe32nCAblruinuBJBUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=u5BIwCmk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B84ACC4CEFB;
-	Wed, 17 Sep 2025 02:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758075406;
-	bh=Y7E9FgWFmiluyPV1OTAKxPaUN0ogdOZyX5+tdyu3XVE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u5BIwCmk8zcWTJgkEDHluvpFKUJ+aQvEoMt5i7SU0M0JsqTjpt2DrYWLAnJKdQH6Z
-	 7dP4yqdgfiai+hLAEJW9o2X9KCuqnM3sRjwqylWH6wHaT1WnL3QPARHGYvjYGMeV2H
-	 7yZBaedhoZWKOqr6xIHnVhSligT+feIMD27ILX+s=
-Date: Tue, 16 Sep 2025 19:16:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>, minchan@kernel.org,
- david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- pfalcato@suse.de, kernel-team@android.com, android-mm@google.com, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, Vlastimil Babka
- <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan
- <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] vma count: fixes, test and improvements
-Message-Id: <20250916191645.15aae276992acafe7f7e723e@linux-foundation.org>
-In-Reply-To: <aa95777a-8012-4d08-abcf-7175f9e2691c@lucifer.local>
-References: <20250915163838.631445-1-kaleshsingh@google.com>
-	<20250915153401.61cbd5120871ee7a4e5b9cae@linux-foundation.org>
-	<aa95777a-8012-4d08-abcf-7175f9e2691c@lucifer.local>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758075569; c=relaxed/simple;
+	bh=Lh1Fyu0R6we48r05K/kArdT2TZftIHly1nA2h6zb9Aw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h7IttTa09JUNqSfBJkXoD5iAV/Uzl4hEtfIb/8fDvJU9yMtWYaXQhxwiPd41ArYUz+xiYZRMFuDVdcLLxv1WavTAhgOQxDZL0DZItySSBhBt0wH1VCYD3zeyiVfkZadu3cort/+eEZ2xrzshp2FJPQwtxkMLe2WqeRFYaK56Gcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 17 Sep
+ 2025 10:19:26 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Wed, 17 Sep 2025 10:19:26 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Alan
+ Stern" <stern@rowland.harvard.edu>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/4] Add Aspeed AST2700 uhci support
+Date: Wed, 17 Sep 2025 10:19:22 +0800
+Message-ID: <20250917021926.3692137-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, 16 Sep 2025 11:12:03 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+This patch series adds support for the UHCI controller found on the
+Aspeed AST2700 SoC.
 
-> On Mon, Sep 15, 2025 at 03:34:01PM -0700, Andrew Morton wrote:
-> > Anyhow, this -rc cycle has been quite the firehose in MM and I'm
-> > feeling a need to slow things down for additional stabilization and so
-> > people hopefully get additional bandwidth to digest the material we've
-> > added this far.  So I think I'll just cherrypick [1/7] for now.  A
-> > great flood of positive review activity would probably make me revisit
-> > that ;)
-> >
-> 
-> Kalesh - I do intend to look at this series when I have a chance. My review
-> workload has been insane so it's hard to keep up at the moment.
-> 
-> Andrew - This cycle has been crazy, speaking from point of view of somebody
-> doing a lot of review, it's been very very exhausting from this side too,
-> and this kind of work can feel a little... thankless... sometimes :)
+Compared to earlier SoCs (AST2400/2500/2600), AST2700 UHCI:
+ - requires a reset line to be deasserted before use
+ - supports 64-bit DMA addressing
 
-I hear you.  I'm shedding most everything now, to give us a couple of
-weeks to digest.
+This series updates the bindings and platform driver accordingly.
 
-> I feel like we maybe need a way to ask people to slow down, sometimes at
-> least.
+v2:
+- usb-uhci.yaml
+ - add required resets for aspeed,ast2700-uhci
+- uhci-platform.c
+ - change the err_clk before err_reset.
 
-Yup, I'm sending submitters private emails explaining the situation.
+Ryan Chen (4):
+  dt-bindings: usb: uhci: Add reset property
+  usb: uhci: Add reset control support
+  dt-bindings: usb: uhci: Add Aspeed AST2700 compatible
+  usb: uhci: Add Aspeed AST2700 support
 
-Maybe they should be public emails, I find it a hard call.
+ .../devicetree/bindings/usb/usb-uhci.yaml     | 13 ++++++++
+ drivers/usb/host/uhci-hcd.h                   |  1 +
+ drivers/usb/host/uhci-platform.c              | 32 +++++++++++++++----
+ 3 files changed, 40 insertions(+), 6 deletions(-)
 
-> Perhaps being less accepting of patches during merge window is one aspect,
-> as the merge window leading up to this cycle was almost the same review
-> load as when the cycle started.
+-- 
+2.34.1
 
-I'm having trouble understanding what you said here?
-
-> Anyway, TL;DR: I think we need to be mindful of reviewer sanity as a factor
-> in all this too :)
-> 
-> (I am spekaing at Kernel Recipes then going on a very-badly-needed 2.5 week
-> vacataion afterwards over the merge window so I hope to stave off burnout
-> that way. Be good if I could keep mails upon return to 3 digits, but I have
-> my doubts :P)
-
-I'd blow that in three days ;)
 
