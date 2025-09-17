@@ -1,178 +1,142 @@
-Return-Path: <linux-kernel+bounces-820908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE617B7F9F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:57:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC45BB7FA8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ECBE527204
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0957E17FBDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 13:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C2A3233F2;
-	Wed, 17 Sep 2025 13:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A49432E724;
+	Wed, 17 Sep 2025 13:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nJo4ThQW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="fmGapKok"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0089D31BCBB
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99C732BBF2
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758117114; cv=none; b=JP2C0TfwMCaZCXXw83q3AfBucJLhvtceWfl8UElCESvNQ7S+w3TVdOMyIkvUBUQIOpKGs+moyhf2FZpTRB0x4R+3qusZ4gJa9j3R1a5IwhAI4XFs4iLYg/rUVl2jtWio9Kkz2rpqSjBgSKHvRyavFdAiRDT9K4HKg8cPIVz56so=
+	t=1758117248; cv=none; b=c8cIZ0mk84wq8+39K6mrXR8n12+8Et6+WlRH9Pkn9NUEqbgunYEPpQeQI2RC1z2xn5QW+xkQijY5+iJsFXvLm+A03L0I0wfTmsLP6Gq9bnq7K1ovOECuh2XGg2LsVBsQubdnCRly4xyiijsn12UW9ad0mOahg0HYoCiRlUQYAyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758117114; c=relaxed/simple;
-	bh=wR1KKrdrNFpxEZ4xLE2CusGSA0Y1uaWQR4YSujvUvJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LdmS6Prd43Ykjz6oIYtHOsAsZJ2Pk6FTn68dFw3BwxcASHFMALhc6SbJjqEjHDjPvRYNEbg4FiWbxoqTaKvdtBIXYS91ftcy01g7wjZN36wrFSG8tUTBq8OPMmaP9KcC2l7Ni2HzUJlCmfw64rlzWZAIuXm3dWFSc/zovAFDK58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nJo4ThQW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8XYl2018234
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:51:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9UiNZluozOEiEosmrVsvrTLkx+n+8c5m7jOfXnNrm9g=; b=nJo4ThQWWrPRlGNB
-	AZONy7xqHJUy7oyVy3kQsfrPrHoOTND18WuR99jDhcc5hE5pYj8tP9wVDdZtO/Wi
-	RJCue49eQApAsUcFNEhb7g38VcsSPicU592AMa7v+/feIm6/NdKm4P1g6X0BcwLo
-	jcklEvP2IJ1MU0gIkwJhV14U+4Ua0aXnofrNOEH5Ptd8iTqwRixqHLh4qNqBodmE
-	Mn+tZQbKC9rbwZQYSmXb0USrmaBRgqUYivcBLK96tvylebSlHH/w6t+ABwCCDYnf
-	YmHAWifmHnVJgGyM4IwAzWWodHhjPE/x/Fp3ZR487eQqxLapSLoFFSy5tm55c7qN
-	wJAbqg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxwaj42-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:51:52 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b5eb710c8eso8737451cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:51:52 -0700 (PDT)
+	s=arc-20240116; t=1758117248; c=relaxed/simple;
+	bh=nV1QrshvRehJ/eXBSMMeuT6hGEcacS/VSfv5Aahy3qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ae52q80eaIjWxAVNu/1J1d6f/mj9dZJEIIE8aGN798/cBH9Ostyc1TnoHKFZMQo7OWTAT6eOHEb9ojnHRRrXqxZbz/Pwyuq37TdXhtCepJv2rO5sBMpZWrZT1KEFYUVHBKydzVSrVoAc1juDhhH45NwOKurdYQBiUtbIuNoQJnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=fmGapKok; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8112c7d196eso701449185a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1758117246; x=1758722046; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=to4BXgFyFuRjiSPORVXGshM37diVDi0cjrsHXYAgKmw=;
+        b=fmGapKokLz9Fcmrm+nnUjiBmvailZKN+eXBViNgThFZcWW19Vmx7mlOTKESzUXi37B
+         bs07Bfpv0vPwxX87e0/CVX7SE+rfHLbUu5LhZfHHxpBsWZxqJzUD7T1FQKiYBcELbr/3
+         tycxPy/BbxgZyi/OBh0MXs0wciy4FKRW0kBEXz6oAralAR8S31KhPOUKqNhM2flGyjZM
+         mXgAR0E2WSV7g6k3isAoALB1kzYFjlEA3OCIW6LBLdyOdKzDLffiipLxAO6PbpeHufyJ
+         vNbUOvar8vSc+A/xmQAycFDBypO9mTF1YRVvfp7sTLCP9qeXVh5hmitRiypaZHStkKYg
+         zQ7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758117111; x=1758721911;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9UiNZluozOEiEosmrVsvrTLkx+n+8c5m7jOfXnNrm9g=;
-        b=OBuhOb7NTEKaD+atv0JI5bMJkPYE5BMjXpUOen7+ybgMQz+W6CuSoSlrM44UwwY6ho
-         rBQu+qAb2r3ousie37Pj1jTShgE9RX2rZw8MnF2Tn8uNlQKjyT3P55M6AFj4Ix52WGcx
-         VdA5NGQA3I3jgQXRlqVm8wJsMpt7QzuSDQf02AQM5CqAGdQyeLXTWAkYHj4qwpWZHOP7
-         oiq2QMzdL17uTusuWJ9vUeYC+/SVr8RGzeveQYk+GLTb0Fs2+Q+WLysH9hFQwpIz5oXS
-         iPNN9MHdYrR4Il+sA/psSayPy8ZyAtEpnJSjtxpjeSgHhM41QgRJj7kkC4UwPOnICY4p
-         H8YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUOYoD2YvMxDhsiHf4gP09aJAxz3fnj1oPn9lZhwbMaIkwrwNG/aZvETDE0rZm0EDz58lkAGHFVlB1R4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyquHhOq799lY/5u4Yrf1jtBNQzoBfjH7iW6guN/z2UlkSIrxpX
-	PXCgCemZ7hpvASjGgzMSYn1c88CdHSQCTcjSz6UeLHj5yY0omKfgpj3W0tjatrieI+JuvOlEo2h
-	lvLVydzHlpGPD0QY7/1/jd8JCNCaDMyymz8rhzvxY1mfrKcth8dauQwDknxnqYeg2skc=
-X-Gm-Gg: ASbGncvFPWLl4omkwH3s5XEwhXwc7fNDkihB5y7MObA4fXZNLpUcVa/e67Z5X6YCajy
-	aTMCBErHJNueHkuAS8dlVaIJkrVbHvTBFI3U78uS7dnA6wbUV+UQyQ6z+YprcIf8GEkzFMJW6Px
-	Ov4CMIhs3qVynN6j+1wlfr0x4COiAPRZTJC2be5Fg4Q7b3vov9Scu/3hIFJDxE14ZmC75m8j9E+
-	AFQR0/YgO4EH0mqIQ0fGWbO3czP/xk9LABQHh0Ckypn6OlncScWYjmL5G5SQhE3PIrb7n/tiT4n
-	CE1vK+7o56WpJjC7rEUXhWK7NaISS/7fcF3KbI+r2WTQ/XMflDiQa87bTDiSnQTaMC00EI5tfwF
-	+RUazwsQf5Jqp/Doh+cmMGg==
-X-Received: by 2002:a05:622a:14ca:b0:4b5:e9b6:c96 with SMTP id d75a77b69052e-4ba67d75f2dmr16425051cf.7.1758117110650;
-        Wed, 17 Sep 2025 06:51:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2G5c62XRIZqyHsIUg5OGdC5gKqoJEvaDX2GNTMYr+lfCFleDAA/kpmUx+1QVXmO+VMX0cOw==
-X-Received: by 2002:a05:622a:14ca:b0:4b5:e9b6:c96 with SMTP id d75a77b69052e-4ba67d75f2dmr16424771cf.7.1758117110111;
-        Wed, 17 Sep 2025 06:51:50 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f2334sm1396605366b.78.2025.09.17.06.51.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 06:51:49 -0700 (PDT)
-Message-ID: <003840ad-b5a7-40da-800f-1fd880b8f831@oss.qualcomm.com>
-Date: Wed, 17 Sep 2025 15:51:47 +0200
+        d=1e100.net; s=20230601; t=1758117246; x=1758722046;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=to4BXgFyFuRjiSPORVXGshM37diVDi0cjrsHXYAgKmw=;
+        b=OKSNtWrn6uesv4cGGgYnSDyu8OOGA/IFXz443UlK023LurcmDeb0ITPCdGBAQaSb+z
+         FiO1gazrb5i9Ul7wxSv7WyDxJZ3YFkJ0A+Jjd4KDPGoMdbT49JsIpDkAV/9TqgbeD98W
+         zoOUCwa9nbm5v0I42tVuYLbRAHcWh6OVUh3WSLf9DQzZVgVmRRFtaZSdRZ4fcPBNq+P/
+         YlC5kH86eDf3NXrOiy0YAOnM/RbMuuoSM07S3JhAgMtZ1czybAxxOnNdPx+HnNaRLZpP
+         5phXP8Y9r6fkoh8e+XC2uxAq2imPXZD0pXgOeWMsyloD0oVtD2I8kgF+JAwsrfBNBkjn
+         zeCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXH3vaQh1+MIp0aJ5aqV42FzqYpEXxUxpmFCWaxQIWu1DnQ80s6bWFb79OFKitnwNgJWn3HmdwQiS6eGQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXFtqLA9efjhe6vlIlZn/ty0wFvLraPcWKH6dIdCGq38g0z8ak
+	r0evFmMsdlUoZU9ojkt1YXoViS8b06wREBxnBBA68xPEgRzUWQUZvDwF14GJVxJCYw==
+X-Gm-Gg: ASbGncuCR6UQzJIBDoRZUURzSTVTvqGn3FFCMeGAcIqvrG9j2B2hBme4jrbE9/RpB10
+	WN8EGE3cKE8ZaWd46ofK+sy5bvU9FoiAzZaaECkwYvkPJE+rKvfV/EsJIudORcESyq+pLrZGavA
+	Gn5xcXJwhGemLWWOqltBUIMdF5rqzYvK6TAEgGFKNY6D0si6hHnhvCaKxHmZ50GpbNVguoZ7vO0
+	0GyvjNjvl6UWk4x/YRKJhbNSEN9rJT2Y5L239bxwdk3AYki8soG3EJFFOyZ08JURwC8Ftxb/ZLr
+	CS5dk1+u+krHpxmGvaoWzp784Tdmy59knWBRKTeUwxKJb+yUvQo0x6BBCj3xBrBFIIAN/X0FmI3
+	4flMRei6K8gNtSIjsB8XlLo5lycajaO8HsHm4pOr5JSNUeBge2HCFVJ2X
+X-Google-Smtp-Source: AGHT+IGRBja0r5jLJ3qHXTLicrQ5EPV+1Dbg2srLDJPVrFlUWF3hlqL5YtcEGgwOtuhZt3aFjNDHDA==
+X-Received: by 2002:a05:620a:4009:b0:817:6fe8:dabd with SMTP id af79cd13be357-8310b59ae28mr257079385a.28.1758117245776;
+        Wed, 17 Sep 2025 06:54:05 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-82b15c2202dsm372471385a.55.2025.09.17.06.54.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 06:54:05 -0700 (PDT)
+Date: Wed, 17 Sep 2025 09:54:01 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+	Russell King <linux@armlinux.org.uk>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH net v1 1/1] net: usb: asix: forbid runtime PM to avoid
+ PM/MDIO + RTNL deadlock
+Message-ID: <c94af0e9-dc67-432e-a853-e41bfa59e863@rowland.harvard.edu>
+References: <20250917095457.2103318-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/13] arm64: dts: qcom: sdm845-lg-judyln: Add firmware
- nodes
-To: Paul Sajna <sajattack@postmarketos.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
- <20250916-judyln-dts-v2-6-5e16e60263af@postmarketos.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250916-judyln-dts-v2-6-5e16e60263af@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=HbIUTjE8 c=1 sm=1 tr=0 ts=68cabcf8 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=03C2xpsRYuwQbuPiX2cA:9
- a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX6EU2vnfGE8L8
- VUF1GsDYt79fNPVLoJPLlbu7I/l4z3nIAIApTsYsiB+mmVNSPjTCq9cj4aEnuiFrwAPfl1qDil5
- 1ZP+vMQPDUsWFWxxIkidieBlI05vR83CrDNvR01DxJNIHU+o+Uu4YZ4X7rAOJrhndrwI+uOjUBU
- sSWc9keyT3xW2OX1HefuDBqIvpTcNSNJVpejjhCq4o3n2CDh0PCLl/YiHUog4NGlRDUIOC4gC7q
- vrY0r4QFmsZ9y/Z7CD0wz3UzIJyBAOVTkr3/BlQHFKV4iGaG8Pqth3j7jTbLnG3j1ZJ+7cEuoeu
- Zy9dNgzcKJbf2zLjIMCGh4MRqODp4xMplOkW+CJiXPblzebPJDmmd1PMtQBtXRljUUkxv/sVgWh
- EVLPtUsB
-X-Proofpoint-GUID: SY3PvTlBKI3eej2O0wfXTWrKz2WshiJX
-X-Proofpoint-ORIG-GUID: SY3PvTlBKI3eej2O0wfXTWrKz2WshiJX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917095457.2103318-1-o.rempel@pengutronix.de>
 
-On 9/17/25 3:09 AM, Paul Sajna wrote:
-> Add paths for Qualcomm firmware, including:
-> ipa, modem, bluetooth, venus, gpu
+On Wed, Sep 17, 2025 at 11:54:57AM +0200, Oleksij Rempel wrote:
+> Forbid USB runtime PM (autosuspend) for AX88772* in bind.
 > 
-> Enable adsp and cdsp nodes since their firmware is present
+> usbnet enables runtime PM by default in probe, so disabling it via the
+> usb_driver flag is ineffective. For AX88772B, autosuspend shows no
+> measurable power saving in my tests (no link partner, admin up/down).
+> The ~0.453 W -> ~0.248 W reduction on 6.1 comes from phylib powering
+> the PHY off on admin-down, not from USB autosuspend.
+> 
+> With autosuspend active, resume paths may require calling phylink/phylib
+> (caller must hold RTNL) and doing MDIO I/O. Taking RTNL from a USB PM
+> resume can deadlock (RTNL may already be held), and MDIO can attempt a
+> runtime-wake while the USB PM lock is held. Given the lack of benefit
+> and poor test coverage (autosuspend is usually disabled by default in
+> distros), forbid runtime PM here to avoid these hazards.
+> 
+> This affects only AX88772* devices (per-interface in bind). System
+> sleep/resume is unchanged.
 
-This commit message is a little out of sync with the patch content
-
-[...]
-
->  &adsp_pas {
-> -	firmware-name = "qcom/sdm845/judyln/adsp.mbn";
-> +	firmware-name = "qcom/sdm845/LG/judyln/adsp.mbn";
->  };
+> @@ -919,6 +935,16 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
+>  	if (ret)
+>  		goto initphy_err;
 >  
->  &cdsp_pas {
-> -	firmware-name = "qcom/sdm845/judyln/cdsp.mbn";
-> +	firmware-name = "qcom/sdm845/LG/judyln/cdsp.mbn";
->  };
->  
->  &gpu {
->  	zap-shader {
-> -		firmware-name = "qcom/sdm845/judyln/a630_zap.mbn";
-> +		firmware-name = "qcom/sdm845/LG/judyln/a630_zap.mbn";
->  	};
->  };
->  
-> +&ipa {
-> +	firmware-name = "qcom/sdm845/LG/judyln/ipa_fws.mbn";
-> +};
-> +
->  &mdss {
->  	status = "okay";
->  };
-> @@ -101,7 +105,7 @@ &mdss_dsi0_out {
->  };
->  
->  &mss_pil {
-> -	firmware-name = "qcom/sdm845/judyln/mba.mbn", "qcom/sdm845/judyln/modem.mbn";
-> +	firmware-name = "qcom/sdm845/LG/judyln/mba.mbn", "qcom/sdm845/LG/judyln/modem.mbn";
+> +	/* Disable USB runtime PM (autosuspend) for this interface.
+> +	 * Rationale:
+> +	 * - No measurable power saving from autosuspend for this device.
+> +	 * - phylink/phylib calls require caller-held RTNL and do MDIO I/O,
+> +	 *   which is unsafe from USB PM resume paths (possible RTNL already
+> +	 *   held, USB PM lock held).
+> +	 * System suspend/resume is unaffected.
+> +	 */
+> +	pm_runtime_forbid(&intf->dev);
 
-You're changing all of these paths.. have the previous ones ever
-been used, e.g. in pmOS, to the best of your knowledge?
+Are you aware that the action of pm_runtime_forbid() can be reversed by 
+the user (by writing "auto" to the .../power/control sysfs file)?
 
-Konrad
+To prevent the user from re-enabling runtime PM, you should call 
+pm_runtime_get_noresume() (and then of course pm_runtime_put() or 
+equivalent while unbinding).
+
+Alan Stern
 
