@@ -1,570 +1,900 @@
-Return-Path: <linux-kernel+bounces-820086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18973B7FC9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A0EB7CCD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60FD37A8D1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 06:58:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 568194887B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 07:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398D123643E;
-	Wed, 17 Sep 2025 06:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="iGRfUjEX"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6B5238179
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 06:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FD22F6171;
+	Wed, 17 Sep 2025 07:21:29 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21FA2F5A2C;
+	Wed, 17 Sep 2025 07:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758092395; cv=none; b=uUZDPkMDGguLpd3Brbo983dTGq6D9fGSizGA2ZDWzQ3soNk6th60N7Pm/OkkSu7TTkWy+0inIGu0v2+lMz4yPP0Dqu7AtVdcE2vZD4THAp0erS//3p14zArTeSQtKvJfFzK5otfZLZ9K2HJeez7aJ0bio2nFogam89mFEfKcho8=
+	t=1758093687; cv=none; b=lKJXW3bK7JDcvqeueADEcUPqKHquuccHUey3iHfoHfeo7c+c2bvPmSc1fWOyaBzV3XYQFn4RdObc9p29qxa0oO++NZDKAMdM0AXY0wuX9dsCeSvbfJnJ5huUu4p/HmciL0tWeD2Yy0VWC+RiCe4ubojMbRJMxclOk2CUH2Ujojo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758092395; c=relaxed/simple;
-	bh=m7A9x62vNaAiuQT4LAU5s422w1g5UkDXyP3ODPgCMv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nzoN8bHAbQ3DPqNlb50alkbDwwypG3v62iucO+LHG1oNG+O5buT85JhlCF4mwZKJeRYlAXz6LBsB9/sfy908ClmgMuHCSuC5hiJ1Jol3p3nRmS8lsVeqSP7D3Lb9B9xgsEz3Faqv+T97BUCj37ALHvY5LB4GUuAfpCbIU9GBZoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=iGRfUjEX; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3dae49b117bso4885856f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1758092390; x=1758697190; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p7h2V7+XLJsHOcDetA21NTfGsO1i/U83vyv69RqPpe0=;
-        b=iGRfUjEXQQCMWlg8F6QDinJz/gGJFVZBg0In+KeK4mcqCHqPoBHP1sX/dInYEWjMmx
-         1Nqm4MH0TXMcBK3gFomtw/06WjFmsChpDHhwzp1QgPEHKD1nFbMeM/wXX6HJKgG0XSJU
-         KV/mMXkZDtE6+L4+/M7la4zMIUQ0pwaw7cJL/LzhkFTLcOtz2BOOrA7WQlZikkgM7Vwy
-         8jw1y6zOU8Ck764GFc2ekuaC18V9UaBMG2z1aEjRZi263SW/k2sPWxP7508B6kVO8jzs
-         J8YyV4jOBkkP2HvLVXlXm12bkoap/dvM+KcXPCK/cBtsvdtidfcueEzNixlcfs9U7Z/t
-         qz9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758092390; x=1758697190;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p7h2V7+XLJsHOcDetA21NTfGsO1i/U83vyv69RqPpe0=;
-        b=enPRibp7LbgsVt+ZnKvbNEnootjptU6VW1LAzdvnBuCcGSo2IAkIrAFUbAmSmCMHjM
-         dddfQ2Nk+FsQia7wt7/OfxzBl6vpU7zmznEWu4VVyv12wPNB0EtFp02L5foYuqS7XuI+
-         6A5cDrsB6CkLlr78GPL+UHn2SvYOvL/qbhjfbDTcYUwgfWpBRI+hbrG4yDpZgZc0nVMm
-         oEv+lmTQKe7IiICTWG6w9zdeXBvV9AnT68mNk1XR/8zVFayQuEYDDT4A9atrdRqAFXvn
-         UUOheiKh6YBjlNt5RtTBAYSq4rCCdw1wFjuZCWluBUTp+OlPnws3tF93t4mWfb3n1LxE
-         ZM/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVoeX45zzEAGY9+RhkDEFGh9vdgXUKj5854cL+fyYGIvy+eKNl6L+0/9mngIS0IqjrYtmiCI5MSlHeDbWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzphPfX2eNqLsgk+IA71UuJnWp81aRTohME37u/QiPyXC9TX3th
-	0aZryjCJOfm7ll+FjMGDDGYZXPOCRE4t+nQGrZTgXfogUO2PXiYCLc0M19aaGfOm12Q=
-X-Gm-Gg: ASbGncvET9FTsO/wzrQ/8j7mPjaiWTwxf+cNFQiFuFXUPjpZP7Zy2Cx/rSv9PdmSm5+
-	LFf+76rJqaUuKTvo+RtnuWq+dC+SW6AqEzUlT5vFhWOuPmDlWWXxve+kTd16rWjXfwj8xlapTrm
-	/z8ukkYJCzvQZHxuy92BJpWS62r/z/SgPUXAiHHe6LMHsVk0z8D7AtP4B8RTPoQYkNJJWPV/4Wk
-	MSsDgQ86ENBhWvXwkbWERR55TU5vxXbbtC0nx4KM0tQ1Y8ZKP06ItxUJR9SsEtJY3d4renpr2Vb
-	ihw2nKgdRugOIUf8s2OFwd+DHX3bayj/yqAuhIXr6EOiR8Yo2jYSXL91RDUdj9bAuXInfdLPKVU
-	l9O/dG4Yo+YyPLD80eApLjDlbK/8n6oxMNxVVUzwfJu6PNkJk8ik=
-X-Google-Smtp-Source: AGHT+IGge/PYhWtSCfabX/nrs/mY9m1ICW696JLt4kj2wQMv5DZNSfWYfAOgO/3DRfIWxtWOVhPBTg==
-X-Received: by 2002:a05:6000:288a:b0:3ec:4e41:fd97 with SMTP id ffacd0b85a97d-3ecdf9c8a38mr781809f8f.24.1758092389680;
-        Tue, 16 Sep 2025 23:59:49 -0700 (PDT)
-Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:1b1a:e580:5909:925c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7e645d1fcsm19202809f8f.48.2025.09.16.23.59.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 23:59:49 -0700 (PDT)
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-To: dlan@gentoo.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Subject: [PATCH v4] riscv: dts: spacemit: add UART pinctrl combinations
-Date: Wed, 17 Sep 2025 08:59:07 +0200
-Message-ID: <20250917065907.160615-1-hendrik.hamerlinck@hammernet.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758093687; c=relaxed/simple;
+	bh=K/s7HcZESjws0bq2LGvef7uiY11RRRz94B2mIjfbW9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WsNiGF4XzL7hShIU/oMJm8jRPsfaJxurT4OAXqBD26KSAS2aitQcrbDL5RpBWdz6nFtN/4xuYWCXjT4ZhCUsePNfrvCLVSBXX1uuzrM0pKAP1U/JzkH6UJAPIPhwvfl5/uS+OieG1zkwrSDm6hxfA0lijg1kflgwpfQnVLo16WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cRV4j0clgz9sxZ;
+	Wed, 17 Sep 2025 08:59:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 7hpVO_0AnSws; Wed, 17 Sep 2025 08:59:32 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cRV4h5Trqz9sVN;
+	Wed, 17 Sep 2025 08:59:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8FD848B766;
+	Wed, 17 Sep 2025 08:59:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Sx1kd9hIwVCV; Wed, 17 Sep 2025 08:59:32 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 941C88B763;
+	Wed, 17 Sep 2025 08:59:30 +0200 (CEST)
+Message-ID: <4ce2ed3e-a806-4a2f-8aba-e93a7c05a38d@csgroup.eu>
+Date: Wed, 17 Sep 2025 08:59:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 04/18] net: phy: Introduce PHY ports
+ representation
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+References: <20250909152617.119554-1-maxime.chevallier@bootlin.com>
+ <20250909152617.119554-5-maxime.chevallier@bootlin.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250909152617.119554-5-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add UART pinctrl configurations based on the SoC datasheet and the
-downstream Bianbu Linux tree. The drive strength values were taken from
-the downstream implementation, which uses medium drive strength.
-CTS/RTS are moved to separate *-cts-rts-cfg states so boards can enable
-hardware flow control conditionally.
 
-Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
----
-Changes in v4:
-- Explicitly use 0 as bias-pull-up value
 
-Changes in v3:
-- Added /omit-if-no-ref/ to pinctrl states to reduce DT size
+Le 09/09/2025 à 17:26, Maxime Chevallier a écrit :
+> Ethernet provides a wide variety of layer 1 protocols and standards for
+> data transmission. The front-facing ports of an interface have their own
+> complexity and configurability.
+> 
+> Introduce a representation of these front-facing ports. The current code
+> is minimalistic and only support ports controlled by PHY devices, but
+> the plan is to extend that to SFP as well as raw Ethernet MACs that
+> don't use PHY devices.
+> 
+> This minimal port representation allows describing the media and number
+> of lanes of a port. From that information, we can derive the linkmodes
+> usable on the port, which can be used to limit the capabilities of an
+> interface.
+> 
+> For now, the port lanes and medium is derived from devicetree, defined
+> by the PHY driver, or populated with default values (as we assume that
+> all PHYs expose at least one port).
+> 
+> The typical example is 100M ethernet. 100BaseT can work using only 2
+> lanes on a Cat 5 cables. However, in the situation where a 10/100/1000
+> capable PHY is wired to its RJ45 port through 2 lanes only, we have no
+> way of detecting that. The "max-speed" DT property can be used, but a
+> more accurate representation can be used :
+> 
+> mdi {
+> 	connector-0 {
+> 		media = "BaseT";
+> 		lanes = <2>;
+> 	};
+> };
+> 
+>  From that information, we can derive the max speed reachable on the
+> port.
+> 
+> Another benefit of having that is to avoid vendor-specific DT properties
+> (micrel,fiber-mode or ti,fiber-mode).
+> 
+> This basic representation is meant to be expanded, by the introduction
+> of port ops, userspace listing of ports, and support for multi-port
+> devices.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Changes in v2:
-- Split cts/rts into separate pinctrl configs as suggested
-- Removed options from board DTS files to keep them cleaner
----
- arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi | 430 ++++++++++++++++++-
- 1 file changed, 428 insertions(+), 2 deletions(-)
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-index 381055737422..44e78764f491 100644
---- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-@@ -11,11 +11,437 @@
- #define K1_GPIO(x)	(x / 32) (x % 32)
- 
- &pinctrl {
-+	/omit-if-no-ref/
-+	uart0_0_cfg: uart0-0-cfg {
-+		uart0-0-pins {
-+			pinmux = <K1_PADCONF(104, 3)>,	/* uart0_txd */
-+				 <K1_PADCONF(105, 3)>;	/* uart0_rxd */
-+			power-source = <3300>;
-+			bias-pull-up = <0>;
-+			drive-strength = <19>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart0_1_cfg: uart0-1-cfg {
-+		uart0-1-pins {
-+			pinmux = <K1_PADCONF(108, 1)>,	/* uart0_txd */
-+				 <K1_PADCONF(80, 3)>;	/* uart0_rxd */
-+			power-source = <3300>;
-+			bias-pull-up = <0>;
-+			drive-strength = <19>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
- 	uart0_2_cfg: uart0-2-cfg {
- 		uart0-2-pins {
--			pinmux = <K1_PADCONF(68, 2)>,
--				 <K1_PADCONF(69, 2)>;
-+			pinmux = <K1_PADCONF(68, 2)>,	/* uart0_txd */
-+				 <K1_PADCONF(69, 2)>;	/* uart0_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart2_0_cfg: uart2-0-cfg {
-+		uart2-0-pins {
-+			pinmux = <K1_PADCONF(21, 1)>,	/* uart2_txd */
-+				 <K1_PADCONF(22, 1)>;	/* uart2_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart2_0_cts_rts_cfg: uart2-0-cts-rts-cfg {
-+		uart2-0-pins {
-+			pinmux = <K1_PADCONF(23, 1)>,	/* uart2_cts */
-+				 <K1_PADCONF(24, 1)>;	/* uart2_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart3_0_cfg: uart3-0-cfg {
-+		uart3-0-pins {
-+			pinmux = <K1_PADCONF(81, 2)>,	/* uart3_txd */
-+				 <K1_PADCONF(82, 2)>;	/* uart3_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart3_0_cts_rts_cfg: uart3-0-cts-rts-cfg {
-+		uart3-0-pins {
-+			pinmux = <K1_PADCONF(83, 2)>,	/* uart3_cts */
-+				 <K1_PADCONF(84, 2)>;	/* uart3_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart3_1_cfg: uart3-1-cfg {
-+		uart3-1-pins {
-+			pinmux = <K1_PADCONF(18, 2)>,	/* uart3_txd */
-+				 <K1_PADCONF(19, 2)>;	/* uart3_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart3_1_cts_rts_cfg: uart3-1-cts-rts-cfg {
-+		uart3-1-pins {
-+			pinmux = <K1_PADCONF(20, 2)>,	/* uart3_cts */
-+				 <K1_PADCONF(21, 2)>;	/* uart3_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart3_2_cfg: uart3-2-cfg {
-+		uart3-2-pins {
-+			pinmux = <K1_PADCONF(53, 4)>,	/* uart3_txd */
-+				 <K1_PADCONF(54, 4)>;	/* uart3_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart3_2_cts_rts_cfg: uart3-2-cts-rts-cfg {
-+		uart3-2-pins {
-+			pinmux = <K1_PADCONF(55, 4)>,	/* uart3_cts */
-+				 <K1_PADCONF(56, 4)>;	/* uart3_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_0_cfg: uart4-0-cfg {
-+		uart4-0-pins {
-+			pinmux = <K1_PADCONF(100, 4)>,	/* uart4_txd */
-+				 <K1_PADCONF(101, 4)>;	/* uart4_rxd */
-+			power-source = <3300>;
-+			bias-pull-up = <0>;
-+			drive-strength = <19>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_1_cfg: uart4-1-cfg {
-+		uart4-1-pins {
-+			pinmux = <K1_PADCONF(83, 3)>,	/* uart4_txd */
-+				 <K1_PADCONF(84, 3)>;	/* uart4_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_1_cts_rts_cfg: uart4-1-cts-rts-cfg {
-+		uart4-1-pins {
-+			pinmux = <K1_PADCONF(81, 3)>,	/* uart4_cts */
-+				 <K1_PADCONF(82, 3)>;	/* uart4_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_2_cfg: uart4-2-cfg {
-+		uart4-2-pins {
-+			pinmux = <K1_PADCONF(23, 2)>,	/* uart4_txd */
-+				 <K1_PADCONF(24, 2)>;	/* uart4_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_3_cfg: uart4-3-cfg {
-+		uart4-3-pins {
-+			pinmux = <K1_PADCONF(33, 2)>,	/* uart4_txd */
-+				 <K1_PADCONF(34, 2)>;	/* uart4_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_3_cts_rts_cfg: uart4-3-cts-rts-cfg {
-+		uart4-3-pins {
-+			pinmux = <K1_PADCONF(35, 2)>,	/* uart4_cts */
-+				 <K1_PADCONF(36, 2)>;	/* uart4_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_4_cfg: uart4-4-cfg {
-+		uart4-4-pins {
-+			pinmux = <K1_PADCONF(111, 4)>,	/* uart4_txd */
-+				 <K1_PADCONF(112, 4)>;	/* uart4_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart4_4_cts_rts_cfg: uart4-4-cts-rts-cfg {
-+		uart4-4-pins {
-+			pinmux = <K1_PADCONF(113, 4)>,	/* uart4_cts */
-+				 <K1_PADCONF(114, 4)>;	/* uart4_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart5_0_cfg: uart5-0-cfg {
-+		uart5-0-pins {
-+			pinmux = <K1_PADCONF(102, 3)>,	/* uart5_txd */
-+				 <K1_PADCONF(103, 3)>;	/* uart5_rxd */
-+			power-source = <3300>;
-+			bias-pull-up = <0>;
-+			drive-strength = <19>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart5_1_cfg: uart5-1-cfg {
-+		uart5-1-pins {
-+			pinmux = <K1_PADCONF(25, 2)>,	/* uart5_txd */
-+				 <K1_PADCONF(26, 2)>;	/* uart5_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart5_1_cts_rts_cfg: uart5-1-cts-rts-cfg {
-+		uart5-1-pins {
-+			pinmux = <K1_PADCONF(27, 2)>,	/* uart5_cts */
-+				 <K1_PADCONF(28, 2)>;	/* uart5_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart5_2_cfg: uart5-2-cfg {
-+		uart5-2-pins {
-+			pinmux = <K1_PADCONF(42, 2)>,	/* uart5_txd */
-+				 <K1_PADCONF(43, 2)>;	/* uart5_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart5_2_cts_rts_cfg: uart5-2-cts-rts-cfg {
-+		uart5-2-pins {
-+			pinmux = <K1_PADCONF(44, 2)>,	/* uart5_cts */
-+				 <K1_PADCONF(45, 2)>;	/* uart5_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart5_3_cfg: uart5-3-cfg {
-+		uart5-3-pins {
-+			pinmux = <K1_PADCONF(70, 4)>,	/* uart5_txd */
-+				 <K1_PADCONF(71, 4)>;	/* uart5_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart5_3_cts_rts_cfg: uart5-3-cts-rts-cfg {
-+		uart5-3-pins {
-+			pinmux = <K1_PADCONF(72, 4)>,	/* uart5_cts */
-+				 <K1_PADCONF(73, 4)>;	/* uart5_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart6_0_cfg: uart6-0-cfg {
-+		uart6-0-pins {
-+			pinmux = <K1_PADCONF(86, 2)>,	/* uart6_txd */
-+				 <K1_PADCONF(87, 2)>;	/* uart6_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart6_0_cts_rts_cfg: uart6-0-cts-rts-cfg {
-+		uart6-0-pins {
-+			pinmux = <K1_PADCONF(85, 2)>,	/* uart6_cts */
-+				 <K1_PADCONF(90, 2)>;	/* uart6_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart6_1_cfg: uart6-1-cfg {
-+		uart6-1-pins {
-+			pinmux = <K1_PADCONF(0, 2)>,	/* uart6_txd */
-+				 <K1_PADCONF(1, 2)>;	/* uart6_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart6_1_cts_rts_cfg: uart6-1-cts-rts-cfg {
-+		uart6-1-pins {
-+			pinmux = <K1_PADCONF(2, 2)>,	/* uart6_cts */
-+				 <K1_PADCONF(3, 2)>;	/* uart6_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart6_2_cfg: uart6-2-cfg {
-+		uart6-2-pins {
-+			pinmux = <K1_PADCONF(56, 2)>,	/* uart6_txd */
-+				 <K1_PADCONF(57, 2)>;	/* uart6_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart7_0_cfg: uart7-0-cfg {
-+		uart7-0-pins {
-+			pinmux = <K1_PADCONF(88, 2)>,	/* uart7_txd */
-+				 <K1_PADCONF(89, 2)>;	/* uart7_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart7_1_cfg: uart7-1-cfg {
-+		uart7-1-pins {
-+			pinmux = <K1_PADCONF(4, 2)>,	/* uart7_txd */
-+				 <K1_PADCONF(5, 2)>;	/* uart7_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart7_1_cts_rts_cfg: uart7-1-cts-rts-cfg {
-+		uart7-1-pins {
-+			pinmux = <K1_PADCONF(6, 2)>,	/* uart7_cts */
-+				 <K1_PADCONF(7, 2)>;	/* uart7_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart8_0_cfg: uart8-0-cfg {
-+		uart8-0-pins {
-+			pinmux = <K1_PADCONF(82, 4)>,	/* uart8_txd */
-+				 <K1_PADCONF(83, 4)>;	/* uart8_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart8_1_cfg: uart8-1-cfg {
-+		uart8-1-pins {
-+			pinmux = <K1_PADCONF(8, 2)>,	/* uart8_txd */
-+				 <K1_PADCONF(9, 2)>;	/* uart8_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart8_1_cts_rts_cfg: uart8-1-cts-rts-cfg {
-+		uart8-1-pins {
-+			pinmux = <K1_PADCONF(10, 2)>,	/* uart8_cts */
-+				 <K1_PADCONF(11, 2)>;	/* uart8_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart8_2_cfg: uart8-2-cfg {
-+		uart8-2-pins {
-+			pinmux = <K1_PADCONF(75, 4)>,	/* uart8_txd */
-+				 <K1_PADCONF(76, 4)>;	/* uart8_rxd */
-+			power-source = <3300>;
-+			bias-pull-up = <0>;
-+			drive-strength = <19>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart8_2_cts_rts_cfg: uart8-2-cts-rts-cfg {
-+		uart8-2-pins {
-+			pinmux = <K1_PADCONF(77, 4)>,	/* uart8_cts */
-+				 <K1_PADCONF(78, 4)>;	/* uart8_rts */
-+			power-source = <3300>;
-+			bias-pull-up = <0>;
-+			drive-strength = <19>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart9_0_cfg: uart9-0-cfg {
-+		uart9-0-pins {
-+			pinmux = <K1_PADCONF(12, 2)>,	/* uart9_txd */
-+				 <K1_PADCONF(13, 2)>;	/* uart9_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart9_1_cfg: uart9-1-cfg {
-+		uart9-1-pins {
-+			pinmux = <K1_PADCONF(116, 3)>,	/* uart9_txd */
-+				 <K1_PADCONF(117, 3)>;	/* uart9_rxd */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
-+
-+	/omit-if-no-ref/
-+	uart9_1_cts_rts_cfg: uart9-1-cts-rts-cfg {
-+		uart9-1-pins {
-+			pinmux = <K1_PADCONF(110, 3)>,	/* uart9_cts */
-+				 <K1_PADCONF(115, 3)>;	/* uart9_rts */
-+			bias-pull-up = <0>;
-+			drive-strength = <32>;
-+		};
-+	};
- 
-+	/omit-if-no-ref/
-+	uart9_2_cfg: uart9-2-cfg {
-+		uart9-2-pins {
-+			pinmux = <K1_PADCONF(72, 2)>,	/* uart9_txd */
-+				 <K1_PADCONF(73, 2)>;	/* uart9_rxd */
- 			bias-pull-up = <0>;
- 			drive-strength = <32>;
- 		};
--- 
-2.43.0
+> ---
+>   MAINTAINERS                  |   1 +
+>   drivers/net/phy/Makefile     |   2 +-
+>   drivers/net/phy/phy-caps.h   |   5 +
+>   drivers/net/phy/phy-core.c   |   6 ++
+>   drivers/net/phy/phy_caps.c   |  56 +++++++++++
+>   drivers/net/phy/phy_device.c | 185 +++++++++++++++++++++++++++++++++++
+>   drivers/net/phy/phy_port.c   | 135 +++++++++++++++++++++++++
+>   include/linux/ethtool.h      |  26 +++++
+>   include/linux/phy.h          |  55 +++++++++++
+>   include/linux/phy_port.h     |  96 ++++++++++++++++++
+>   10 files changed, 566 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/net/phy/phy_port.c
+>   create mode 100644 include/linux/phy_port.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 384bb1dc8424..31e5293df595 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9127,6 +9127,7 @@ F:	include/linux/of_net.h
+>   F:	include/linux/phy.h
+>   F:	include/linux/phy_fixed.h
+>   F:	include/linux/phy_link_topology.h
+> +F:	include/linux/phy_port.h
+>   F:	include/linux/phylib_stubs.h
+>   F:	include/linux/platform_data/mdio-bcm-unimac.h
+>   F:	include/linux/platform_data/mdio-gpio.h
+> diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
+> index 402a33d559de..74922f350b0c 100644
+> --- a/drivers/net/phy/Makefile
+> +++ b/drivers/net/phy/Makefile
+> @@ -3,7 +3,7 @@
+>   
+>   libphy-y			:= phy.o phy-c45.o phy-core.o phy_device.o \
+>   				   linkmode.o phy_link_topology.o \
+> -				   phy_caps.o mdio_bus_provider.o
+> +				   phy_caps.o mdio_bus_provider.o phy_port.o
+>   mdio-bus-y			+= mdio_bus.o mdio_device.o
+>   
+>   ifdef CONFIG_PHYLIB
+> diff --git a/drivers/net/phy/phy-caps.h b/drivers/net/phy/phy-caps.h
+> index 157759966650..01df1bdc1516 100644
+> --- a/drivers/net/phy/phy-caps.h
+> +++ b/drivers/net/phy/phy-caps.h
+> @@ -60,4 +60,9 @@ const struct link_capabilities *
+>   phy_caps_lookup(int speed, unsigned int duplex, const unsigned long *supported,
+>   		bool exact);
+>   
+> +void phy_caps_medium_get_supported(unsigned long *supported,
+> +				   enum ethtool_link_medium medium,
+> +				   int lanes);
+> +u32 phy_caps_mediums_from_linkmodes(unsigned long *linkmodes);
+> +
+>   #endif /* __PHY_CAPS_H */
+> diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+> index 605ca20ae192..6f825f63c1bf 100644
+> --- a/drivers/net/phy/phy-core.c
+> +++ b/drivers/net/phy/phy-core.c
+> @@ -4,6 +4,7 @@
+>    */
+>   #include <linux/export.h>
+>   #include <linux/phy.h>
+> +#include <linux/phy_port.h>
+>   #include <linux/of.h>
+>   
+>   #include "phylib.h"
+> @@ -163,7 +164,12 @@ EXPORT_SYMBOL_GPL(phy_interface_num_ports);
+>   
+>   static void __set_phy_supported(struct phy_device *phydev, u32 max_speed)
+>   {
+> +	struct phy_port *port;
+> +
+>   	phy_caps_linkmode_max_speed(max_speed, phydev->supported);
+> +
+> +	phy_for_each_port(phydev, port)
+> +		phy_caps_linkmode_max_speed(max_speed, port->supported);
+>   }
+>   
+>   /**
+> diff --git a/drivers/net/phy/phy_caps.c b/drivers/net/phy/phy_caps.c
+> index 990c36ccd9e7..e4efd5c477b4 100644
+> --- a/drivers/net/phy/phy_caps.c
+> +++ b/drivers/net/phy/phy_caps.c
+> @@ -384,3 +384,59 @@ unsigned long phy_caps_from_interface(phy_interface_t interface)
+>   	return link_caps;
+>   }
+>   EXPORT_SYMBOL_GPL(phy_caps_from_interface);
+> +
+> +/**
+> + * phy_caps_medium_get_supported() - Returns linkmodes supported on a given medium
+> + * @supported: After this call, contains all possible linkmodes on a given medium,
+> + *	       and with the given number of lanes, or less.
+> + * @medium: The medium to get the support from
+> + * @lanes: The number of lanes used on the given medium
+> + *
+> + * If no match exists, the supported field is left untouched.
+> + */
+> +void phy_caps_medium_get_supported(unsigned long *supported,
+> +				   enum ethtool_link_medium medium,
+> +				   int lanes)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < __ETHTOOL_LINK_MODE_MASK_NBITS; i++) {
+> +		/* Special bits such as Autoneg, Pause, Asym_pause, etc. are
+> +		 * set and will be masked away by the port parent.
+> +		 */
+> +		if (link_mode_params[i].mediums == BIT(ETHTOOL_LINK_MEDIUM_NONE)) {
+> +			linkmode_set_bit(i, supported);
+> +			continue;
+> +		}
+> +
+> +		/* For most cases, min_lanes == lanes, except for 10/100BaseT that work
+> +		 * on 2 lanes but are compatible with 4 lanes mediums
+> +		 */
+> +		if (link_mode_params[i].mediums & BIT(medium) &&
+> +		    link_mode_params[i].min_lanes <= lanes)
+> +			linkmode_set_bit(i, supported);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(phy_caps_medium_get_supported);
+> +
+> +/**
+> + * phy_caps_mediums_from_linkmodes() - Get all mediums from a linkmodes list
+> + * @linkmodes: A bitset of linkmodes to get the mediums from
+> + *
+> + * Returns: A bitset of ETHTOOL_MEDIUM_XXX values corresponding to all medium
+> + *	    types in the linkmodes list
+> + */
+> +u32 phy_caps_mediums_from_linkmodes(unsigned long *linkmodes)
+> +{
+> +	const struct link_mode_info *linkmode;
+> +	u32 mediums = 0;
+> +	int i;
+> +
+> +	for_each_set_bit(i, linkmodes, __ETHTOOL_LINK_MODE_MASK_NBITS) {
+> +		linkmode = &link_mode_params[i];
+> +		mediums |= linkmode->mediums;
+> +	}
+> +
+> +	return mediums;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_caps_mediums_from_linkmodes);
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 7556aa3dd7ee..8f6bef8ee263 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -30,6 +30,7 @@
+>   #include <linux/phylib_stubs.h>
+>   #include <linux/phy_led_triggers.h>
+>   #include <linux/phy_link_topology.h>
+> +#include <linux/phy_port.h>
+>   #include <linux/pse-pd/pse.h>
+>   #include <linux/property.h>
+>   #include <linux/ptp_clock_kernel.h>
+> @@ -836,6 +837,13 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
+>   
+>   	dev->state = PHY_DOWN;
+>   	INIT_LIST_HEAD(&dev->leds);
+> +	INIT_LIST_HEAD(&dev->ports);
+> +
+> +	/* The driver's probe function must change that to the real number
+> +	 * of ports possible on the PHY. We assume by default we are dealing
+> +	 * with a single-port PHY
+> +	 */
+> +	dev->max_n_ports = 1;
+>   
+>   	mutex_init(&dev->lock);
+>   	INIT_DELAYED_WORK(&dev->state_queue, phy_state_machine);
+> @@ -1579,6 +1587,51 @@ void phy_sfp_detach(void *upstream, struct sfp_bus *bus)
+>   }
+>   EXPORT_SYMBOL(phy_sfp_detach);
+>   
+> +static int phy_add_port(struct phy_device *phydev, struct phy_port *port)
+> +{
+> +	int ret = 0;
+> +
+> +	if (phydev->n_ports == phydev->max_n_ports)
+> +		return -EBUSY;
+> +
+> +	/* We set all ports as active by default, PHY drivers may deactivate
+> +	 * them (when unused)
+> +	 */
+> +	port->active = true;
+> +
+> +	if (port->is_mii) {
+> +		if (phydev->drv && phydev->drv->attach_mii_port)
+> +			ret = phydev->drv->attach_mii_port(phydev, port);
+> +	} else {
+> +		if (phydev->drv && phydev->drv->attach_mdi_port)
+> +			ret = phydev->drv->attach_mdi_port(phydev, port);
+> +	}
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* The PHY driver might have added, removed or set medium/lanes info,
+> +	 * so update the port supported accordingly.
+> +	 */
+> +	phy_port_update_supported(port);
+> +
+> +	list_add(&port->head, &phydev->ports);
+> +
+> +	phydev->n_ports++;
+> +
+> +	return 0;
+> +}
+> +
+> +static void phy_del_port(struct phy_device *phydev, struct phy_port *port)
+> +{
+> +	if (!phydev->n_ports)
+> +		return;
+> +
+> +	list_del(&port->head);
+> +
+> +	phydev->n_ports--;
+> +}
+> +
+>   /**
+>    * phy_sfp_probe - probe for a SFP cage attached to this PHY device
+>    * @phydev: Pointer to phy_device
+> @@ -3312,6 +3365,131 @@ static int of_phy_leds(struct phy_device *phydev)
+>   	return 0;
+>   }
+>   
+> +static void phy_cleanup_ports(struct phy_device *phydev)
+> +{
+> +	struct phy_port *tmp, *port;
+> +
+> +	list_for_each_entry_safe(port, tmp, &phydev->ports, head) {
+> +		phy_del_port(phydev, port);
+> +		phy_port_destroy(port);
+> +	}
+> +}
+> +
+> +static int phy_default_setup_single_port(struct phy_device *phydev)
+> +{
+> +	struct phy_port *port = phy_port_alloc();
+> +
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	port->parent_type = PHY_PORT_PHY;
+> +	port->phy = phydev;
+> +
+> +	/* Let the PHY driver know that this port was never described anywhere.
+> +	 * This is the usual case, where we assume single-port PHY devices with
+> +	 * no SFP. In that case, the port supports exactly the same thing as
+> +	 * the PHY itself.
+> +	 *
+> +	 * However, this can also be because we have a combo-port PHY, with
+> +	 * only one port described in DT, through SFP for example.
+> +	 *
+> +	 * In that case, the PHY driver will be in charge of saying what we can
+> +	 * do on that non-represented port.
+> +	 */
+> +	port->not_described = true;
+> +	linkmode_copy(port->supported, phydev->supported);
+> +	port->mediums = phy_caps_mediums_from_linkmodes(port->supported);
+> +
+> +	phy_add_port(phydev, port);
+> +
+> +	return 0;
+> +}
+> +
+> +static int of_phy_ports(struct phy_device *phydev)
+> +{
+> +	struct device_node *node = phydev->mdio.dev.of_node;
+> +	struct device_node *mdi;
+> +	struct phy_port *port;
+> +	int err;
+> +
+> +	if (!IS_ENABLED(CONFIG_OF_MDIO))
+> +		return 0;
+> +
+> +	if (!node)
+> +		return 0;
+> +
+> +	mdi = of_get_child_by_name(node, "mdi");
+> +	if (!mdi)
+> +		return 0;
+> +
+> +	for_each_available_child_of_node_scoped(mdi, port_node) {
+> +		port = phy_of_parse_port(port_node);
+> +		if (IS_ERR(port)) {
+> +			err = PTR_ERR(port);
+> +			goto out_err;
+> +		}
+> +
+> +		port->parent_type = PHY_PORT_PHY;
+> +		port->phy = phydev;
+> +		err = phy_add_port(phydev, port);
+> +		if (err)
+> +			goto out_err;
+> +	}
+> +	of_node_put(mdi);
+> +
+> +	return 0;
+> +
+> +out_err:
+> +	phy_cleanup_ports(phydev);
+> +	of_node_put(mdi);
+> +	return err;
+> +}
+> +
+> +static int phy_setup_ports(struct phy_device *phydev)
+> +{
+> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(ports_supported);
+> +	struct phy_port *port;
+> +	int ret;
+> +
+> +	ret = of_phy_ports(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (phydev->n_ports < phydev->max_n_ports) {
+> +		ret = phy_default_setup_single_port(phydev);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	linkmode_zero(ports_supported);
+> +
+> +	/* Aggregate the supported modes, which are made-up of :
+> +	 *  - What the PHY itself supports
+> +	 *  - What the sum of all ports support
+> +	 */
+> +	list_for_each_entry(port, &phydev->ports, head)
+> +		if (port->active)
+> +			linkmode_or(ports_supported, ports_supported,
+> +				    port->supported);
+> +
+> +	if (!linkmode_empty(ports_supported))
+> +		linkmode_and(phydev->supported, phydev->supported,
+> +			     ports_supported);
+> +
+> +	/* For now, the phy->port field is set as the first active port's type */
+> +	list_for_each_entry(port, &phydev->ports, head)
+> +		if (port->active) {
+> +			phydev->port = phy_port_get_type(port);
+> +			break;
+> +		}
+> +
+> +	return 0;
+> +
+> +out:
+> +	phy_cleanup_ports(phydev);
+> +	return ret;
+> +}
+> +
+>   /**
+>    * fwnode_mdio_find_device - Given a fwnode, find the mdio_device
+>    * @fwnode: pointer to the mdio_device's fwnode
+> @@ -3449,6 +3627,11 @@ static int phy_probe(struct device *dev)
+>   		phydev->is_gigabit_capable = 1;
+>   
+>   	of_set_phy_supported(phydev);
+> +
+> +	err = phy_setup_ports(phydev);
+> +	if (err)
+> +		goto out;
+> +
+>   	phy_advertise_supported(phydev);
+>   
+>   	/* Get PHY default EEE advertising modes and handle them as potentially
+> @@ -3524,6 +3707,8 @@ static int phy_remove(struct device *dev)
+>   
+>   	phydev->state = PHY_DOWN;
+>   
+> +	phy_cleanup_ports(phydev);
+> +
+>   	sfp_bus_del_upstream(phydev->sfp_bus);
+>   	phydev->sfp_bus = NULL;
+>   
+> diff --git a/drivers/net/phy/phy_port.c b/drivers/net/phy/phy_port.c
+> new file mode 100644
+> index 000000000000..cf897ed74c4c
+> --- /dev/null
+> +++ b/drivers/net/phy/phy_port.c
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/* Framework to drive Ethernet ports
+> + *
+> + * Copyright (c) 2024 Maxime Chevallier <maxime.chevallier@bootlin.com>
+> + */
+> +
+> +#include <linux/linkmode.h>
+> +#include <linux/of.h>
+> +#include <linux/phy_port.h>
+> +
+> +#include "phy-caps.h"
+> +
+> +/**
+> + * phy_port_alloc() - Allocate a new phy_port
+> + *
+> + * Returns: a newly allocated struct phy_port, or NULL.
+> + */
+> +struct phy_port *phy_port_alloc(void)
+> +{
+> +	struct phy_port *port;
+> +
+> +	port = kzalloc(sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return NULL;
+> +
+> +	linkmode_zero(port->supported);
+> +	INIT_LIST_HEAD(&port->head);
+> +
+> +	return port;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_port_alloc);
+> +
+> +/**
+> + * phy_port_destroy() - Free a struct phy_port
+> + * @port: The port to destroy
+> + */
+> +void phy_port_destroy(struct phy_port *port)
+> +{
+> +	kfree(port);
+> +}
+> +EXPORT_SYMBOL_GPL(phy_port_destroy);
+> +
+> +/**
+> + * phy_of_parse_port() - Create a phy_port from a firmware representation
+> + * @dn: device_node representation of the port, following the
+> + *	ethernet-connector.yaml binding
+> + *
+> + * Returns: a newly allocated and initialized phy_port pointer, or an ERR_PTR.
+> + */
+> +struct phy_port *phy_of_parse_port(struct device_node *dn)
+> +{
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(dn);
+> +	enum ethtool_link_medium medium;
+> +	struct phy_port *port;
+> +	const char *med_str;
+> +	u32 lanes, mediums = 0;
+> +	int ret;
+> +
+> +	ret = fwnode_property_read_u32(fwnode, "lanes", &lanes);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	ret = fwnode_property_read_string(fwnode, "media", &med_str);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	medium = ethtool_str_to_medium(med_str);
+> +	if (medium == ETHTOOL_LINK_MEDIUM_NONE)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	mediums |= BIT(medium);
+> +
+> +	if (!mediums)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	port = phy_port_alloc();
+> +	if (!port)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	port->lanes = lanes;
+> +	port->mediums = mediums;
+> +
+> +	return port;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_of_parse_port);
+> +
+> +/**
+> + * phy_port_update_supported() - Setup the port->supported field
+> + * @port: the port to update
+> + *
+> + * Once the port's medium list and number of lanes has been configured based
+> + * on firmware, straps and vendor-specific properties, this function may be
+> + * called to update the port's supported linkmodes list.
+> + *
+> + * Any mode that was manually set in the port's supported list remains set.
+> + */
+> +void phy_port_update_supported(struct phy_port *port)
+> +{
+> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0 };
+> +	int i, lanes = 1;
+> +
+> +	/* If there's no lanes specified, we grab the default number of
+> +	 * lanes as the max of the default lanes for each medium
+> +	 */
+> +	if (!port->lanes)
+> +		for_each_set_bit(i, &port->mediums, __ETHTOOL_LINK_MEDIUM_LAST)
+> +			lanes = max_t(int, lanes, phy_medium_default_lanes(i));
+> +
+> +	port->lanes = lanes;
+> +
+> +	for_each_set_bit(i, &port->mediums, __ETHTOOL_LINK_MEDIUM_LAST) {
+> +		linkmode_zero(supported);
+> +		phy_caps_medium_get_supported(supported, i, port->lanes);
+> +		linkmode_or(port->supported, port->supported, supported);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(phy_port_update_supported);
+> +
+> +/**
+> + * phy_port_get_type() - get the PORT_* attribute for that port.
+> + * @port: The port we want the information from
+> + *
+> + * Returns: A PORT_XXX value.
+> + */
+> +int phy_port_get_type(struct phy_port *port)
+> +{
+> +	if (port->mediums & BIT(ETHTOOL_LINK_MEDIUM_BASET))
+> +		return PORT_TP;
+> +
+> +	if (phy_port_is_fiber(port))
+> +		return PORT_FIBRE;
+> +
+> +	return PORT_OTHER;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_port_get_type);
+> diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
+> index a0696cb840f7..baa5ec1d76ed 100644
+> --- a/include/linux/ethtool.h
+> +++ b/include/linux/ethtool.h
+> @@ -227,6 +227,10 @@ extern const struct link_mode_info link_mode_params[];
+>   
+>   extern const char ethtool_link_medium_names[][ETH_GSTRING_LEN];
+>   
+> +#define ETHTOOL_MEDIUM_FIBER_BITS (BIT(ETHTOOL_LINK_MEDIUM_BASES) | \
+> +				   BIT(ETHTOOL_LINK_MEDIUM_BASEL) | \
+> +				   BIT(ETHTOOL_LINK_MEDIUM_BASEF))
+> +
+>   static inline const char *phy_mediums(enum ethtool_link_medium medium)
+>   {
+>   	if (medium >= __ETHTOOL_LINK_MEDIUM_LAST)
+> @@ -235,6 +239,28 @@ static inline const char *phy_mediums(enum ethtool_link_medium medium)
+>   	return ethtool_link_medium_names[medium];
+>   }
+>   
+> +static inline enum ethtool_link_medium ethtool_str_to_medium(const char *str)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < __ETHTOOL_LINK_MEDIUM_LAST; i++)
+> +		if (!strcmp(phy_mediums(i), str))
+> +			return i;
+> +
+> +	return ETHTOOL_LINK_MEDIUM_NONE;
+> +}
+> +
+> +static inline int phy_medium_default_lanes(enum ethtool_link_medium medium)
+> +{
+> +	/* Let's consider that the default BaseT ethernet is BaseT4, i.e.
+> +	 * Gigabit Ethernet.
+> +	 */
+> +	if (medium == ETHTOOL_LINK_MEDIUM_BASET)
+> +		return 4;
+> +
+> +	return 1;
+> +}
+> +
+>   /* declare a link mode bitmap */
+>   #define __ETHTOOL_DECLARE_LINK_MODE_MASK(name)		\
+>   	DECLARE_BITMAP(name, __ETHTOOL_LINK_MODE_MASK_NBITS)
+> diff --git a/include/linux/phy.h b/include/linux/phy.h
+> index 04553419adc3..a6cd0465b059 100644
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -322,6 +322,7 @@ static inline long rgmii_clock(int speed)
+>   struct device;
+>   struct kernel_hwtstamp_config;
+>   struct phylink;
+> +struct phy_port;
+>   struct sfp_bus;
+>   struct sfp_upstream_ops;
+>   struct sk_buff;
+> @@ -616,6 +617,9 @@ struct macsec_ops;
+>    * @master_slave_state: Current master/slave configuration
+>    * @mii_ts: Pointer to time stamper callbacks
+>    * @psec: Pointer to Power Sourcing Equipment control struct
+> + * @ports: List of PHY ports structures
+> + * @n_ports: Number of ports currently attached to the PHY
+> + * @max_n_ports: Max number of ports this PHY can expose
+>    * @lock:  Mutex for serialization access to PHY
+>    * @state_queue: Work queue for state machine
+>    * @link_down_events: Number of times link was lost
+> @@ -753,6 +757,10 @@ struct phy_device {
+>   	struct mii_timestamper *mii_ts;
+>   	struct pse_control *psec;
+>   
+> +	struct list_head ports;
+> +	int n_ports;
+> +	int max_n_ports;
+> +
+>   	u8 mdix;
+>   	u8 mdix_ctrl;
+>   
+> @@ -775,6 +783,9 @@ struct phy_device {
+>   
+>   #define to_phy_device(__dev)	container_of_const(to_mdio_device(__dev), struct phy_device, mdio)
+>   
+> +#define phy_for_each_port(phydev, port) \
+> +	list_for_each_entry(port, &(phydev)->ports, head)
+> +
+>   /**
+>    * struct phy_tdr_config - Configuration of a TDR raw test
+>    *
+> @@ -1269,6 +1280,49 @@ struct phy_driver {
+>   	 * Returns the time in jiffies until the next update event.
+>   	 */
+>   	unsigned int (*get_next_update_time)(struct phy_device *dev);
+> +
+> +	/**
+> +	 * @attach_mii_port: Attach the given MII port to the PHY device
+> +	 * @dev: PHY device to notify
+> +	 * @port: The port being added
+> +	 *
+> +	 * Called when an MII port that needs to be driven by the PHY is found.
+> +	 *
+> +	 * The port that is being passed may or may not be initialized. If it is
+> +	 * already initialized, it is by the generic port representation from
+> +	 * devicetree, which superseeds any strapping or vendor-specific
+> +	 * properties.
+> +	 *
+> +	 * If the port isn't initialized, the port->mediums and port->lanes
+> +	 * fields must be set, possibly according to strapping information.
+> +	 *
+> +	 * The PHY driver must set the port->interfaces field to indicate the
+> +	 * possible MII modes that this PHY can output on the port.
+> +	 *
+> +	 * Returns 0, or an error code.
+> +	 */
+> +	int (*attach_mii_port)(struct phy_device *dev, struct phy_port *port);
+> +
+> +	/**
+> +	 * @attach_mdi_port: Attach the given MII port to the PHY device
+> +	 * @dev: PHY device to notify
+> +	 * @port: The port being added
+> +	 *
+> +	 * Called when a port that needs to be driven by the PHY is found. The
+> +	 * number of time this will be called depends on phydev->max_n_ports,
+> +	 * which the driver can change in .probe().
+> +	 *
+> +	 * The port that is being passed may or may not be initialized. If it is
+> +	 * already initialized, it is by the generic port representation from
+> +	 * devicetree, which superseeds any strapping or vendor-specific
+> +	 * properties.
+> +	 *
+> +	 * If the port isn't initialized, the port->mediums and port->lanes
+> +	 * fields must be set, possibly according to strapping information.
+> +	 *
+> +	 * Returns 0, or an error code.
+> +	 */
+> +	int (*attach_mdi_port)(struct phy_device *dev, struct phy_port *port);
+>   };
+>   #define to_phy_driver(d) container_of_const(to_mdio_common_driver(d),		\
+>   				      struct phy_driver, mdiodrv)
+> @@ -2023,6 +2077,7 @@ void phy_trigger_machine(struct phy_device *phydev);
+>   void phy_mac_interrupt(struct phy_device *phydev);
+>   void phy_start_machine(struct phy_device *phydev);
+>   void phy_stop_machine(struct phy_device *phydev);
+> +
+>   void phy_ethtool_ksettings_get(struct phy_device *phydev,
+>   			       struct ethtool_link_ksettings *cmd);
+>   int phy_ethtool_ksettings_set(struct phy_device *phydev,
+> diff --git a/include/linux/phy_port.h b/include/linux/phy_port.h
+> new file mode 100644
+> index 000000000000..f47ac5f5ef9e
+> --- /dev/null
+> +++ b/include/linux/phy_port.h
+> @@ -0,0 +1,96 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +
+> +#ifndef __PHY_PORT_H
+> +#define __PHY_PORT_H
+> +
+> +#include <linux/ethtool.h>
+> +#include <linux/types.h>
+> +#include <linux/phy.h>
+> +
+> +struct phy_port;
+> +
+> +/**
+> + * enum phy_port_parent - The device this port is attached to
+> + *
+> + * @PHY_PORT_PHY: Indicates that the port is driven by a PHY device
+> + */
+> +enum phy_port_parent {
+> +	PHY_PORT_PHY,
+> +};
+> +
+> +struct phy_port_ops {
+> +	/* Sometimes, the link state can be retrieved from physical,
+> +	 * out-of-band channels such as the LOS signal on SFP. These
+> +	 * callbacks allows notifying the port about state changes
+> +	 */
+> +	void (*link_up)(struct phy_port *port);
+> +	void (*link_down)(struct phy_port *port);
+> +
+> +	/* If the port acts as a Media Independent Interface (Serdes port),
+> +	 * configures the port with the relevant state and mode. When enable is
+> +	 * not set, interface should be ignored
+> +	 */
+> +	int (*configure_mii)(struct phy_port *port, bool enable, phy_interface_t interface);
+> +};
+> +
+> +/**
+> + * struct phy_port - A representation of a network device physical interface
+> + *
+> + * @head: Used by the port's parent to list ports
+> + * @parent_type: The type of device this port is directly connected to
+> + * @phy: If the parent is PHY_PORT_PHYDEV, the PHY controlling that port
+> + * @ops: Callback ops implemented by the port controller
+> + * @lanes: The number of lanes (diff pairs) this port has, 0 if not applicable
+> + * @mediums: Bitmask of the physical mediums this port provides access to
+> + * @supported: The link modes this port can expose, if this port is MDI (not MII)
+> + * @interfaces: The MII interfaces this port supports, if this port is MII
+> + * @not_described: Indicates to the parent driver if this port isn't described,
+> + *		   so it's up to the parent to filter its capabilities.
+> + * @active: Indicates if the port is currently part of the active link.
+> + * @is_mii: Indicates if this port is MII (Media Independent Interface),
+> + *          or MDI (Media Dependent Interface).
+> + */
+> +struct phy_port {
+> +	struct list_head head;
+> +	enum phy_port_parent parent_type;
+> +	union {
+> +		struct phy_device *phy;
+> +	};
+> +
+> +	const struct phy_port_ops *ops;
+> +
+> +	int lanes;
+> +	unsigned long mediums;
+> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported);
+> +	DECLARE_PHY_INTERFACE_MASK(interfaces);
+> +
+> +	unsigned int not_described:1;
+> +	unsigned int active:1;
+> +	unsigned int is_mii:1;
+> +};
+> +
+> +struct phy_port *phy_port_alloc(void);
+> +void phy_port_destroy(struct phy_port *port);
+> +
+> +static inline struct phy_device *port_phydev(struct phy_port *port)
+> +{
+> +	return port->phy;
+> +}
+> +
+> +struct phy_port *phy_of_parse_port(struct device_node *dn);
+> +
+> +static inline bool phy_port_is_copper(struct phy_port *port)
+> +{
+> +	return port->mediums == BIT(ETHTOOL_LINK_MEDIUM_BASET);
+> +}
+> +
+> +static inline bool phy_port_is_fiber(struct phy_port *port)
+> +{
+> +	return !!(port->mediums & ETHTOOL_MEDIUM_FIBER_BITS);
+> +}
+> +
+> +void phy_port_update_supported(struct phy_port *port);
+> +
+> +int phy_port_get_type(struct phy_port *port);
+> +
+> +#endif
 
 
