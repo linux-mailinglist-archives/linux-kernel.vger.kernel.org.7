@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-819794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A11B7DBFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:34:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8D1B7D8B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C542A6B9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58CDC3B5E50
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C301F1FF7C8;
-	Wed, 17 Sep 2025 00:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1A21F5433;
+	Wed, 17 Sep 2025 00:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2XTIt58"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="bRQrpbyn"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002AC20B22;
-	Wed, 17 Sep 2025 00:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B9C13B2A4;
+	Wed, 17 Sep 2025 00:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758069718; cv=none; b=TKrvN3EBURhuHfXa27yt3IShuQN8TMQtPYNNonkRbcAz6KbALHhUersgP+j+9gZ3OM32IAaRs7oFzloOt65IXvYmv/NX5DBOh58vG9zYxy/w7oCudqBvUI+AkUyKENrYYnVJcf0+kvtcUNqfS3Fld3BKTLlDwphsjmGW2WTJlg0=
+	t=1758069784; cv=none; b=k3vYo0Wa0OjRlVF9urmjH4IdKj2u9crQDnnJ99X/odI/RrlGy3wr3q1OmgKCIscT6I/OMoDzH79PJftk7zySiZMEb+pNZ0VTtVCW33w4JDeHwCUGD0H+Go0FfI0I2lL2D6sfs2oOTrHEuAbgWFLLxcb0YYvCgMXy/gAxbLr0yg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758069718; c=relaxed/simple;
-	bh=KrAohhpjRtkz5KJfrqqO1Lmok9J5C3yh16lfG9uAz3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p1FR1MQUoZ7U7VM8fwhuG4L/8rbu2B3Y6SthVw9K6H8jvn0vfZvXZYQtv3vFgXBkxXir0oMKdQDBxKzqVOVar74adKhTqWqoLcTrQYIDmhb4BNxUTvXlK5XIzWcVArEJY1Y+lXfGgCGs69v9/uYksKhCH1lUG2iqP12PCR3iikU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2XTIt58; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE0F6C4CEEB;
-	Wed, 17 Sep 2025 00:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758069717;
-	bh=KrAohhpjRtkz5KJfrqqO1Lmok9J5C3yh16lfG9uAz3I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G2XTIt58KH5FatByf/yE7to+twRwPtEml5k0XiBgPFh0OFPOayH/z73K/RIe6U556
-	 7pdv+0h1ZLDH9B7EK1sPt1tEOtQevVXbNubh6QSu02KnqZJNLTEyp68Sy/g4InRUSp
-	 Az1ogJ5ZNIvCSdlea7HMXAo7pqzm3X5vJwdsR7r9g04vkissg3oQk52NHLgQEtiOle
-	 S3plvzId1UExdIb4RWndvF9Q4HsbJYo2RZo9bm06DshTQme/bPsaZm4QYN8dicxBlf
-	 9rh0tkeiv4nfTJKu0XGD4DoFSfbT32cT6/7gQRt0H6fY0XktFCsEwJAsDeg6TuE4oE
-	 AjtnZwlapM19g==
-Message-ID: <7dcc85d0-7912-42c7-812e-a6d36aee4445@kernel.org>
-Date: Wed, 17 Sep 2025 09:41:52 +0900
+	s=arc-20240116; t=1758069784; c=relaxed/simple;
+	bh=SXkL13a8iG6GEI5p2NO+RC35HdW6nueOrqs/a8naP5k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B+tNpx31giw9p9iku/NKrgiRakTI9nQy7I2ifM2d4CSlfRzcVOiuHBM0gRgLwsTAfhMgim2g+wGXUpU7EYKeK5d4YG0jTe2F8oxaBTMI//M6rgV5YDmqC7lqTf3uxcqHlmRdkh8iNVb39wt4wHkqr+otdz5ASBdPPXJ+7AQYN78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=bRQrpbyn; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id D77C1C007A;
+	Wed, 17 Sep 2025 03:43:00 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru D77C1C007A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1758069780; bh=mMy7o1VKxSYYmV008tZxBY5ChzQiqbztmhJuX5eQfvU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=bRQrpbynxPG53Z7IHFd5LNs7TU7qMhRnu2bxAIP/K8dyD6u8p+WPKvXqLAg99wYsj
+	 yYR3pbeAoR49CTzfglEVL69Ig6NCos/6CRFlvTfoqnLMunWzZDphmXkirUSEAJ/i1V
+	 fuCiZvyqK6rSfJmPxmKzJ22Wd2/R878MmJV+mmkfMJOsk9uWxf9MUFxaUm8LASsQPR
+	 FFlaVhvOHZr9VtCK+/0thCCBiMu5CwR1enkpJEKYQ9fL8fGKyc+I+2I+UgbDrAhpAk
+	 GQlii6JK/Hkk3Gg72wWnJPQ3bHjrz/icY0BslHUShqOYZy7sdKfLgqNClee3Avq5Br
+	 qlM4cEqC360Mw==
+Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Wed, 17 Sep 2025 03:43:00 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 17 Sep 2025 03:42:59 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Andy Shevchenko <andy@kernel.org>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Hans de Goede
+	<hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus
+	<sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Colin Ian King <colin.i.king@gmail.com>, Alan
+ Cox <alan@linux.intel.com>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH v2 1/1] media: atomisp: Avoid memory leaks in ia_css_pipe_create_cas_scaler_desc_single_output()
+Date: Wed, 17 Sep 2025 03:42:36 +0300
+Message-ID: <20250917004240.506794-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/25] dts: unisoc: rda8810pl: Enable clock/reset driver
-To: dang.huynh@mainlining.org, Manivannan Sadhasivam <mani@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-mmc@vger.kernel.org
-References: <20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org>
- <20250917-rda8810pl-drivers-v1-11-9ca9184ca977@mainlining.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250917-rda8810pl-drivers-v1-11-9ca9184ca977@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 66 0.3.66 fc5dda3b6b70d34b3701db39319eece2aeb510fb, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;ksmg01.maxima.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 196326 [Sep 16 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/16 21:49:00 #27824829
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-On 17/09/2025 22:25, Dang Huynh via B4 Relay wrote:
-> From: Dang Huynh <dang.huynh@mainlining.org>
-> 
-> Enable RDA8810PL Clock and Reset driver so we can use it for various
-> subsystems.
-> 
-> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+If any of the memory allocations for descr struct members fail, goto ERR is
+executed, and none of the previously allocated memory is freed, which leads
+to leaking memory.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Fix this by freeing memory at the end of the function in case of an
+non-NULL err.
 
-You use random prefixes... This is "ARM: dts:" and the drivers ARE NOT
-"drivers:".
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
+Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
+Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+---
+v2: Fix code formatting.
+ drivers/staging/media/atomisp/pci/sh_css.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> ---
->  arch/arm/boot/dts/unisoc/rda8810pl.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-Best regards,
-Krzysztof
+diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
+index 73bd87f43a8c..d50bc81a59dc 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css.c
++++ b/drivers/staging/media/atomisp/pci/sh_css.c
+@@ -5907,6 +5907,10 @@ static int ia_css_pipe_create_cas_scaler_desc_single_output(
+ 	ia_css_debug_dtrace(IA_CSS_DEBUG_TRACE_PRIVATE,
+ 			    "ia_css_pipe_create_cas_scaler_desc() leave, err=%d\n",
+ 			    err);
++
++	if (err)
++		ia_css_pipe_destroy_cas_scaler_desc(descr);
++
+ 	return err;
+ }
+ 
+-- 
+2.39.5
+
 
