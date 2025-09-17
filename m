@@ -1,120 +1,172 @@
-Return-Path: <linux-kernel+bounces-820507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD32B7C9F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C38B7C9E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217A7320766
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:49:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2C9324BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 10:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8224228466C;
-	Wed, 17 Sep 2025 10:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB68A29BD91;
+	Wed, 17 Sep 2025 10:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JLW6BYxL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="niTkxtcE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7sXTFmdj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vHfdZFUB";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ysCFvFtO"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472D17464
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6881287515
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 10:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758106150; cv=none; b=T9EqVDXdOMC9gD5MvTiMEKW7uo6eot+jm4UZmkS75mR2XsGE6w+W/uwc9fBvecXVRM/PQEwtk2g0lA70WAYR4pcOEQtDma6UCrk7JgKFsl985X2NoYmmFjxCDF1zTYQtwS7xXBrKU4SWOR22Cj2BaWWlFiuyfhdshG1M+sXfP2M=
+	t=1758106168; cv=none; b=BHpsBipWMyBgat2hP8W7gur+TOhBHKUnj04Pdjj5JcNbupU0FS17ZippTvU2PX+bzhLBJVaa6fWdnt+OuGXG7jVvPgOJ+gCTqIXOTSziSDONoFZUoTJI54AMbKKzIhoig1c90nv5m8M1hKQ8DkLS1Wqn+4AzrlXgSt1+oZ7gPCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758106150; c=relaxed/simple;
-	bh=/Is+QhC1ppKcBnEuR82I+wnYLqHDhOXEU1Sx8//I0FU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Tw94FbDH4i+hKAQ7t1RO8/CnCPA5zJAhTAmE69K+WshnqjqjZ8CsoQ9gwc2BxcP9myr6M2hkiPqQZ2T5QSxvvPEcIbAoUBEiRg6FinD/IGa7nz/lXGS061tl0G2TGkj3y8zmilbe/jHgTuIahud/YBKx329skBqbCXTA3R00eGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JLW6BYxL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758106148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1758106168; c=relaxed/simple;
+	bh=Lv8lsxmw1T40EYS0DvJKScoRYDPLYB5fZTCwKGxV9KQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dsQxiZj47smmithZtl29Dj32iNRBK7tW2khhA+xyney5mQMbbZQf/T5TmESqOqG+1A1lDAYLPi51dZH/8Rzss8bf682q/8B26iAapG3BisQNa7kL0E4h2IXFgYH+mJZ/JbOyIc+wO/nfHuhxoVl3d4W0wQXHFPqrSRGOfvhUT5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=niTkxtcE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7sXTFmdj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vHfdZFUB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ysCFvFtO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EFB432225C;
+	Wed, 17 Sep 2025 10:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758106164; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7Gx+TdCKsbhxyY3jdn0KEhYYDqelpsIcgLkEZzRgBNo=;
-	b=JLW6BYxL718bQyeLTMPTMZ37GizK1d1JUb12DMAyf7B5DNw+TGTFYbNyQ0HH+MBXUPTnpQ
-	ZDHkg1qK3BYVSRNjqHb/hC1djOJo4FgRLl1tgGDQVtbvb1wnlNxmEj3L9jPf4lXatNcMUR
-	OJetGTN+fgDUXK8ics9a6MjDwMtOWDw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-499-QiuOPB37PzyM5e3OqyO0bA-1; Wed, 17 Sep 2025 06:49:07 -0400
-X-MC-Unique: QiuOPB37PzyM5e3OqyO0bA-1
-X-Mimecast-MFC-AGG-ID: QiuOPB37PzyM5e3OqyO0bA_1758106146
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b98de0e34so49330085e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:49:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758106146; x=1758710946;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Gx+TdCKsbhxyY3jdn0KEhYYDqelpsIcgLkEZzRgBNo=;
-        b=xS7gwwIPpNv9XB2zpNochb7XO8MJUpWfmYa2mC4QOrQVxVxTIjMVwYJ1xfBDAqNxJ/
-         MpYXSCVp8ahqBRdxKDCYEjJkPMVHLMikvWzSrbHCc0njZ6qbajL+SyuLb64+6UQ6MFAS
-         tulwoJI7c+POYm/tjwBsPErCYH+d8QNbjZR6qt/NZiiti1DLrlp4TT7C6pMQP75hajxG
-         hllCY3bJusYc+R6WNhr5QTEa4+3xwqdd/Zl6Oms7sT16FvdRj9pnr/zMEmK0hAU7H573
-         +FrPbbr51Qe0kyXv/2XwdrZXnE0E2HpObLvFOUz5Nm/FagMAmeKUbRDhvTQ3zJ4oDByO
-         qbJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAEk9Ec1I65bLX4DFk6iDDRLFgh1l0nbffqPVYOqGKZaEd+rDQL/47a/1Rmt3F+2Gkk4WHHnZQsCLGjuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz/5sdAgabJorLl8W6MmzHqQ4dDthckoZ4OwEFKhybvWxReniW
-	0KP/IMD5KyKlylnntvwqaldxa1ntNWgetghpa45GkNXEh0NlA6WMR9yhDFCx7+PkemrTcrkghHm
-	6jw2AwpxlmpuGnrifmyxoClDYWvJsuaN4YVJtY0OWiFGRNpaEJFkDYW+kFvdCvIZ5dw==
-X-Gm-Gg: ASbGncu9c2Bsm0quKSipP5zNotFEdMt7NWb2bjoKLcWKHT4GNk4798eekNTGqUNOBrY
-	t8qC5s3VIUOICfZWayUS4v9V3/N5URvHbq/Q81gUh2bokbrD/1ryhnMoFQBS0UZZz1RhHix8dNa
-	5dA8NKCd47mhsU7S46ktUyZ47i9f8FRZzwJBGt/fmFvmAuKEnpUYQhP9If07ub2XttrpC6hzzQO
-	OGX3FZOaRKmBQ9yyH8Ubyphl40LdxsOwMenkzmmWhEJWmDAFip+PXVByLryq++jZqDKFx+HkRnc
-	6Rg3DXUCv3Gb25xndDxL1v/yKBEcB9uMwH7iKmKsgUrDxwqRVQgtyD6fahaM0kf5yKrPiCZDMt0
-	Xwqc9X6tLJVPKog256WD2dA==
-X-Received: by 2002:a05:6000:420a:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-3ecdfa2af44mr1788142f8f.45.1758106145845;
-        Wed, 17 Sep 2025 03:49:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWDibHsRXwK4fNY6Iro6utVUGE4L1K31z5iDT3jS0cDkRWw/GZJYpDVS83FdGh12iI5IMZeA==
-X-Received: by 2002:a05:6000:420a:b0:3ec:db18:1695 with SMTP id ffacd0b85a97d-3ecdfa2af44mr1788111f8f.45.1758106145366;
-        Wed, 17 Sep 2025 03:49:05 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607870cfsm26394071f8f.19.2025.09.17.03.49.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 03:49:04 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: James Flowers <bold.zone2373@fastmail.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- skhan@linuxfoundation.com
-Cc: James Flowers <bold.zone2373@fastmail.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] drm/ssd130x: Use kmalloc_array() instead of kmalloc()
-In-Reply-To: <20250914073841.69582-1-bold.zone2373@fastmail.com>
-References: <20250914073841.69582-1-bold.zone2373@fastmail.com>
-Date: Wed, 17 Sep 2025 12:49:03 +0200
-Message-ID: <871po54an4.fsf@minerva.mail-host-address-is-not-set>
+	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
+	b=niTkxtcEsWHMLusW2uhOMmiQ+Zfat7dgrfB4F9HpeVv6d6//vidrvTnU/aJ4FYqBUF6/31
+	S8xdorf8fnri1Yz4VUshF2jJ8nD3YR9xyA5krXG5aE2bhuBHqd5dn3msDcKISdnCbwA/zG
+	3PnSCfyh+pAV2PK+IzaNWAQWDSAuWLw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758106164;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
+	b=7sXTFmdjfBvPh9vPl+957gltmt72YVjGoLfmTjzZc9/62+QYrp3JFMXUWd+wQo8Bl2PL++
+	hD8DSBFfFKYnHNBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758106163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
+	b=vHfdZFUBkQ+UKwx3ExzaOVaVfdytoF5pIPVJR8dzyBegHfGTA/i4xWB3CXo4LAWANrTple
+	GNzn6QM/qXSIiJuBT1bPSSxDRI13GV/Z0g0hLuxGiGFPI77KlcFQIUxMl4kbDbNuMRySEO
+	GuPcB2gc8dypv5uYz9RaDAFC1IdMfDk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758106163;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8t6SHPjmQz0qqNQrQ8pFqlRTGyimMO7f4zNnyjDmnw=;
+	b=ysCFvFtOC2J5k6ktL7EscaU0B5pQropJLEepc80lv0no7M6FC6O6ldyLix+zd/a0PHVk/b
+	HHBgqHjVk6P7FDAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66CFE1368D;
+	Wed, 17 Sep 2025 10:49:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 50PgFTCSymh8PQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 17 Sep 2025 10:49:20 +0000
+Date: Wed, 17 Sep 2025 11:49:18 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
+	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
+	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
+	kexec@lists.infradead.org, kasan-dev@googlegroups.com, Jason Gunthorpe <jgg@nvidia.com>, 
+	iommu@lists.linux.dev, Kevin Tian <kevin.tian@intel.com>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 05/13] mm/vma: rename __mmap_prepare() function to
+ avoid confusion
+Message-ID: <jokgdkyv4ca4sb7nl2wjkzxclhzhaee4p4luwj546tsdbylfei@laplfpugf3of>
+References: <cover.1758031792.git.lorenzo.stoakes@oracle.com>
+ <3063484588ffc8a74cca35e1f0c16f6f3d458259.1758031792.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3063484588ffc8a74cca35e1f0c16f6f3d458259.1758031792.git.lorenzo.stoakes@oracle.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[62];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,oracle.com:email,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
 
-James Flowers <bold.zone2373@fastmail.com> writes:
+On Tue, Sep 16, 2025 at 03:11:51PM +0100, Lorenzo Stoakes wrote:
+> Now we have the f_op->mmap_prepare() hook, having a static function called
+> __mmap_prepare() that has nothing to do with it is confusing, so rename
+> the function to __mmap_setup().
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
 
-> Documentation/process/deprecated.rst recommends against the use of
-> kmalloc with dynamic size calculations due to the risk of overflow and
-> smaller allocation being made than the caller was expecting.
-> kmalloc_array avoids this issue.
->
-> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
-> ---
+I would love to bikeshed on the new name (maybe something more descriptive?),
+but I don't really mind.
 
-Pushed to drm-misc (drm-misc-next). Thanks!
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+Pedro
 
