@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-819843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3414B7F58C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:33:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6222FB7C6F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:01:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6533AB71E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:22:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B9A1749C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 01:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19BA21B918;
-	Wed, 17 Sep 2025 01:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3526F21B9C9;
+	Wed, 17 Sep 2025 01:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l12U35td"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b0xCSGtA"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0EF1C3BF7
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 01:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51FE1C3BF7;
+	Wed, 17 Sep 2025 01:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758072151; cv=none; b=IOvCWXerssOL8yOBf5UENv3Q0cci+DkMhzVwgGGVn3/9nkLnumSlRkKrTmhOsJ/IwKqfY12Hz8MQdrc6uzQcN6FsdBiaZTBxk9Gl9z5e5zv0NGyuRO/f8D1Mh1kteyo/gOyU4rvcorBwFQxqwn6Xjvnf1vMbKjGBY4krbH6fmls=
+	t=1758072221; cv=none; b=f4lcMs6xnmF4B0+dhO8dwGLhy1kcx85pZeB2SbLjddxZRKQ5L9TVR8HywzYdWwk+Z3NwtRGQSIvPGXIlYhG+1yZBttiFzA536+8qEqlnadScbinls0E1QR8vonqXwloR/q5A7GVzbPBP7Gdxud96zBTDx0Oa0X72yTRUtPm3svo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758072151; c=relaxed/simple;
-	bh=rUwYUfEVwgtherHE5w2Lq98za4Mn+0GYvGErylseNA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z4dJ1Fx4e9nKHpf/D0/YwJ1Q42ZYnbZktZ4ZJPakJlLy+qheCw1DCqSa2HN2StnyfpRncKTdQPTCmPTqXMqNkasF92CGtIeXxgUtNv1BvYsRfleQSKi7+u86SOks9l/qx+EO/ffI59J6iEggx1z0RHuvlBK6rbOvCQ7I9qS0UPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l12U35td; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62f4a8dfadcso3487594a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758072148; x=1758676948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jtvpRw2skwIDYeLYnJtYbENzaRocLr8itc+rc0AxN3I=;
-        b=l12U35tdBy+CEfeOgwSa5RZGhG9ps4GzXotEeYBCc743an7P0JKRekUBh4TFcmg5ij
-         70WRaJEAHcXuH/A5Ws2ozJJoinRs2JEE0+FosZ8Q4sigaAOkM7XiBP1GV4ch4zVXxjMm
-         1PpdcLa6uw9i7NZ01xPshNc9qC4kFqlk2wGg6ZP+xxOZ/1l7lyrFhBdA196TcQW1K89A
-         ZQHDvGi94kbVW4MUx7kKmRbNEYZ6L6+xaY74m7h8iC5XXgRmJyShayfMkH8KqDBP13M2
-         GArTdTLdbRh0w7zNXWL9zUn3KLt0eJpYz89KI94FxWqwoEUmOyQJefjWn9OYmV2JWBOI
-         Tz2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758072148; x=1758676948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jtvpRw2skwIDYeLYnJtYbENzaRocLr8itc+rc0AxN3I=;
-        b=eStb6AKfaKg8OzaVW4D004cFTQsUSanWs45XezdsFCqxZ7L2/BRHiqOZKoG57xi85M
-         D1Y2OuwJUyOuVgzwAOIS08nLxRQQ+baSUaSbU0ACoesmOSZuowRX8O02DZQDR+DJ7Mg2
-         KFaZeaJ4im7jU6Pcxms/VkhcM//rktFz8sWwwC3OH/1zK/cIuob4g3yPyYnRYU3lijXw
-         Rp5IIuvl2gHDKlqDFf1jdgSBPhU4oUwkzreX6VzW6qGBzJcMFPfV4924/H66dVjL9Efu
-         WEoeAyJcj+DDhq8bwgDX2UcS4jilePwZuwkr3AL2PQb/aPTcAUcJk/cfBrkHo5DxndAA
-         bXCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXF2CkR6ydZWvyunYeglRXtXRUj5gV9iOEftpQoAofknPBP0vm/8Pzr4F5vo2X2Ji2nVE7dBzD89aycMeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzvrLyefZkm/x3U+Fi4PVzATi96neFE4CoJl3m+0EholzXXcew
-	RB7Ukvp9fFK4/8D1t9aQvc6pilwQxUrZ350+IdlhjJgOQSB8hCGW9d6USpo9zaGv4GshYfXY4k/
-	w8k/nkPOYPGoNMHHoxcMHAwZ0T3SlStFMnzTL+aiL
-X-Gm-Gg: ASbGncte9bUP/eLlYuiEUqz+rJYJ+IXyekx8zIVxj9ATiKstyVPXFpfTgqM2jDBVqxT
-	pr+df7qhm1qZ2/YM50WTGU6Z1KqsPTZtMTOq8tH3IBAm2WKg7nmdASvK6tLAKppN/nJTh0celWN
-	6VMwkeMXqwVBvFHtDg+7VSMZ0iSJv4MpfNEy1l6mZIOavS0/Nx4fknfOQCwtDcShtz5vT8Cbl/i
-	HyF2sL3FtoYJXFnPpc3SLG4latm/SHMICBoJFGsz04nmT5PKr7C5NL5CdJZp8Fct+/1
-X-Google-Smtp-Source: AGHT+IF3cY3woTYDfHAOdf6v8U3gfZQ2LkEiVSJvH8VmNjR6wN91SZk1ZTmjg3Ky/uZkx3qvCsBnZl9tkp2OSOIY83A=
-X-Received: by 2002:a17:907:3f10:b0:b07:dcc9:1186 with SMTP id
- a640c23a62f3a-b1bc30239acmr45850066b.60.1758072148051; Tue, 16 Sep 2025
- 18:22:28 -0700 (PDT)
+	s=arc-20240116; t=1758072221; c=relaxed/simple;
+	bh=elZaye91e8qISip9VYwoJU9m/6hwt6xIdF0JhijRWZ8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=P5UL8QuklNT3qldJjAiwIUYlN9F/hP6fbBGnY/ddaJuKdMRewI8wfwCAzgjQoHL6WpdE0B+lvZxsFDR7KHZ5yO8bBwTumOCIRBE1nE0omuEDgOfTNB/1Z+kHYXcXOmioIlJVayn8sjHsa86cDdkF66K9qW17u8VjlOUQ6+u5rn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b0xCSGtA; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1493EEC0113;
+	Tue, 16 Sep 2025 21:23:37 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 16 Sep 2025 21:23:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758072217; x=1758158617; bh=TSGB97yLofg2uIZKqJjxzc8sDNuHpNJb8zb
+	UQ4lmQ5U=; b=b0xCSGtAwgZ0fajqkMKZeE3PrjQOZjfAY+IzPJ1ha4wFoEHoljG
+	GvFSelvBkNo/GjI80CLbdonHKsltdBKSFBL5v9pfL3ecsqKzbF8a376LEimeUuLi
+	IPlA1bJLCMBQsPIHALHRZbem3AfU82PM8Zx0a72WKn/MgZr30aGn2/3mlPX1eRuT
+	3abwjCEY7fijSA8JHPlJ/gycI0lH6R9fSrHTsZcaZK/vlzvWd9krLrbOwc1gTqp4
+	BoMemN5l4Q8h3mxUsdXvID5xNSCuqVEXQy3exXxVJ7+jym9TxFOT6Q7bwhIeaBcI
+	zz0PJkm3+/sz8QKa+ScwjY+OfYQDvIsITCg==
+X-ME-Sender: <xms:mA3KaJx_xTY3hizY0Gm2NF4Q9a6qmXyVTyMw6fzbUyJ4uG9ZiQibGg>
+    <xme:mA3KaPOefStpnHwmP99bFE_Wv6hse7PrINnaXo8KXRKEprPV_tskA29IM0y3OAc9o
+    zCo0F8xagGJD37Cy9s>
+X-ME-Received: <xmr:mA3KaAefvAhQsrxuoPhKbKVOt6sMn_6R8ZjVAIW3TX0fifNCZq3j9SsCEXOHxeFsRXyJZsapfTeBELXhMztx3w5REVe8wsVKya8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegvdduvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
+    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepleeuheelheekgfeuvedtveetjeekhfffkeeffffftdfgjeevkeegfedvueehueel
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
+    grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdroh
+    hrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepphgvthgv
+    rhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdho
+    rhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpth
+    htoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgr
+    nhgusegrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:mA3KaMQKjnR1EadNaU8hG0R9igcsu0dr-L_lXf6zT8r28cUdRRBZGQ>
+    <xmx:mA3KaGf5gDAeZwLWIjluOA3ZoipWUfyNlUW7NlVQutXK-ZEddNW9ew>
+    <xmx:mA3KaNud3j0z_SgU_993CsC3WR_jdmoSh7Am4PszIe_hM1EAGKc7Eg>
+    <xmx:mA3KaKLrRWfaWDnQ26O-IW6duITAHV3fRbMu5ogQNdMeio54wn57KQ>
+    <xmx:mQ3KaMRaLqmmAniuowPBLiCD2ebEfL-KK7RD8giCN42kXMuy_y5OsDHB>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Sep 2025 21:23:33 -0400 (EDT)
+Date: Wed, 17 Sep 2025 11:23:28 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>, 
+    Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
+    Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org, 
+    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
+ operations
+In-Reply-To: <CAMuHMdV92Lu646bJ3cmEoR5C4rfkFsaf0E_uYPbSiLwrTtMbTw@mail.gmail.com>
+Message-ID: <aeb17f15-de44-e46e-cb3a-0edc1551d3e1@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org> <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org> <20250915080054.GS3419281@noisy.programming.kicks-ass.net> <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
+ <20250915100604.GZ3245006@noisy.programming.kicks-ass.net> <8247e3bd-13c2-e28c-87d8-5fd1bfed7104@linux-m68k.org> <57bca164-4e63-496d-9074-79fd89feb835@app.fastmail.com> <1c9095f5-df5c-2129-df11-877a03a205ab@linux-m68k.org>
+ <CAMuHMdV92Lu646bJ3cmEoR5C4rfkFsaf0E_uYPbSiLwrTtMbTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825195833.226839-1-zecheng@google.com> <aLKpmcHtdyaqzunq@google.com>
-In-Reply-To: <aLKpmcHtdyaqzunq@google.com>
-From: Zecheng Li <zecheng@google.com>
-Date: Tue, 16 Sep 2025 21:22:15 -0400
-X-Gm-Features: AS18NWCAA8jZTc1dXpHLv__FqTlwongv36MmfPHCHni_ZGI0wWlu5HxlQrx28O4
-Message-ID: <CAJUgMy+wP7t3Ss=JLOXDaxkLTZZHkirT5CJrz27K=HYiKU0ocw@mail.gmail.com>
-Subject: Re: [PATCH v2 10/10] perf dwarf-aux: support DW_OP_piece expressions
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 
-On Sat, Aug 30, 2025 at 3:34=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Mon, Aug 25, 2025 at 07:58:33PM +0000, Zecheng Li wrote:
-> > Support variables split across multiple registers or stack locations by
-> > handling DW_OP_piece in DWARF expressions. This enables correct matchin=
-g
-> > of such variables by iterating over all pieces in the expression.
->
-> Can you show me a real world example of these variables?
 
-An optimizing compiler can sometimes split a struct (mostly stack
-variable) to multiple locations, or even optimized out. DW_OP_piece
-describes the location of each part. For example,
+On Tue, 16 Sep 2025, Geert Uytterhoeven wrote:
 
-DW_OP_reg2 RCX, DW_OP_piece 0x4, DW_OP_breg7 RSP+28, DW_OP_piece 0x4
-
-The first part is in RCX, the second part is in the memory location
-RSP+28, each of size 0x4 byte. Memory access on 0(RCX) corresponds to
-case 2 and 28(RSP) corresponds to case 1.
-
+> On Tue, 16 Sept 2025 at 02:16, Finn Thain <fthain@linux-m68k.org> wrote:
+> > On Mon, 15 Sep 2025, Arnd Bergmann wrote:
+> > >
+> > > Has there been any progress on building m68k kernels with 
+> > > -mint-align?
 > >
-> > There are two cases for matching memory access on the target register:
+> > Not that I know of.
 > >
-> > 1. Accessing a struct member:
-> >    - The type is the original variable's type.
-> >    - The offset is the sum of the piece's offset and the operand's
-> >      offset.
-> > 2. Dereferencing a member:
-> >    - The type is the member of the original variable (the member must b=
-e
-> >      a pointer).
-> >    - The size must match the piece size.
-> >    - The access offset is the operand's offset.
+> > > IIRC there are only a small number of uapi structures that need 
+> > > __packed annotations to maintain the existing syscall ABI.
 > >
-> > This change improves support for piece-wise variable locations in DWARF
-> > expressions.
+> > Packing uapi structures (and adopting -malign-int) sounds easier than 
+> > the alternative, which might be to align certain internal kernel 
+> > struct members, on a case-by-case basis, where doing so could be shown 
+> > to improve performance on some architecture or other (while keeping 
+> > -mno-align-int).
+> 
+> indeed.
+> 
+
+Well, it "sounds easier". But I doubt that it really is easier.
+
+> > Well, it's easy to find all the structs that belong to the uapi, but 
+> > it's not easy to find all the internal kernel structs that describe 
+> > MMIO registers. For -malign-int, both kinds of structs are a problem.
+> 
+> For structures under arch/m68k/include/asm/, just create a single C file 
+> that calculates sizeof() of each structure, and compare the generated 
+> code with and without -malign-int.  Any differences should be 
+> investigated, and attributed when needed.
+> 
+> For structures inside m68k-specific drivers, do something similar inside 
+> those drivers ('git grep "struct\s*[a-zA-Z0-9_]*\s*{"' is your friend).
+> 
+
+There's something to be said for adding static_assert() checks for the 
+structs that belong to all fixed interfaces. The patches to actually pack 
+of struct members could take place after that.
+
+All of which is a lot of work, compared to specifying alignment for those 
+core kernel data structures where doing so improves performance. This 
+approach is platform neutral; it's not just m68k that benefits.
 
