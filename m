@@ -1,112 +1,127 @@
-Return-Path: <linux-kernel+bounces-820986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37141B7FF15
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE47B7FEBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E9D486E83
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2417A624460
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171FC28689B;
-	Wed, 17 Sep 2025 14:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46842E9ED5;
+	Wed, 17 Sep 2025 14:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Smggclrq"
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.77.159])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZKpSI+WP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TbymsR0+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D352BE648;
-	Wed, 17 Sep 2025 14:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.77.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2664296BDE;
+	Wed, 17 Sep 2025 14:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758118311; cv=none; b=OUUQBXpuDkfbkD3s8flDvjum9gmfOkLETsFkllDK2pFYOchTeTKNhkP9UcR8DUruXm156r8coInAp/GarBVA9MmxneFXwA7/UQNCbNv+mEdtgovvTwrCG+oIM+mXVuHZ/4T+A3HymOBBESDupqRMLYGdroYK5N0NQNWwe7hNiRw=
+	t=1758118212; cv=none; b=EkyqG5oF6dziFrcRncYRELKtaOkFwowLbeaWswwoK3RODzDQHPfVtKxVbEA28Atg5Pc6RqadNLjk/U/rKbYw33JYuImLYUxXcRB+8cEay1yy5tGEmeI3yIS866nA1TwXhRbsAJsnGiwDGjQZEVFW9qytCA9PZiKcA24QTA/lS4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758118311; c=relaxed/simple;
-	bh=rM4KQ3PkxhYr9FbhyaE5pBKuVvJZZAXxL7KkT6K2uPo=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=ira+5JHWhUQcjtx6DIM8jQh63+qSkw1UMo2Y/oQahKGEp+ZtXUhtHXhCUVNDKkoFTedHpFWi3n110eclJGYPbUnwUClLdTcaue7LbKAF8M4FrLuR1uW5UImHjMmn9iI3G4+7nq+RGRj/eA1GgSx+olbRNriguUNeIrMFTglq5c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Smggclrq; arc=none smtp.client-ip=114.132.77.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1758118281;
-	bh=rM4KQ3PkxhYr9FbhyaE5pBKuVvJZZAXxL7KkT6K2uPo=;
-	h=From:To:Subject:Mime-Version:Date:Message-ID;
-	b=Smggclrq/NtA5Cx0MxxW+GNweFUxjv1RYKFJzeiZDTvN/8BS/I1PNFgoESS/z57SK
-	 oKetg0UpCTquk56p6vkaAVa9g+OEJ+OLhGeU4v/dGAxPnjycGC8rRxZdxRpSYJFEca
-	 Emv1vCeAHm4OSx4yY9fMGJaAK0weJ/EcnN0bXP64=
-EX-QQ-RecipientCnt: 20
-X-QQ-GoodBg: 1
-X-BAN-DOWNLOAD: 1
-X-BAN-SHARE: 1
-X-QQ-SSF: 00420020000000F0
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-FEAT: haFBrozbn+y1w6iRDNE+jsz5WmkBWUHROWGtM7u1qAI=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: Bhcfj9TQaSmi2QK6UgxAhYAV4w31aPKffPMRkVHOBVLOcc7DfcOQQKtcL4GCPbP5iWAiPpfgO1S8DayM7EHLlw==
-X-QQ-STYLE: 
-X-QQ-mid: lv3gz7a-7t1758118183t7e572d69
-From: "=?utf-8?B?Q3J5b2xpdGlh?=" <cryolitia@uniontech.com>
-To: "=?utf-8?B?RHJhZ2FuIFNpbWlj?=" <dsimic@manjaro.org>
-Cc: "=?utf-8?B?SmFyb3NsYXYgS3lzZWxh?=" <perex@perex.cz>, "=?utf-8?B?VGFrYXNoaSBJd2Fp?=" <tiwai@suse.com>, "=?utf-8?B?Sm9uYXRoYW4gQ29yYmV0?=" <corbet@lwn.net>, "=?utf-8?B?THVpcyBDaGFtYmVybGFpbg==?=" <mcgrof@kernel.org>, "=?utf-8?B?UGV0clBhdmx1?=" <petr.pavlu@suse.com>, "=?utf-8?B?RGFuaWVsIEdvbWV6?=" <da.gomez@kernel.org>, "=?utf-8?B?U2FtaVRvbHZhbmVu?=" <samitolvanen@google.com>, "=?utf-8?B?bGludXgtc291bmQ=?=" <linux-sound@vger.kernel.org>, "=?utf-8?B?bGludXgtdXNi?=" <linux-usb@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bGludXgtZG9j?=" <linux-doc@vger.kernel.org>, "=?utf-8?B?TWluZ2NvbmcgQmFp?=" <jeffbai@aosc.io>, "=?utf-8?B?S2V4eSBCaXNjdWl0?=" <kexybiscuit@aosc.io>, "=?utf-8?B?6IGC6K+a?=" <niecheng1@uniontech.com>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>, "=?utf-8?B?5Yav5Zut?=" <fengyuan@uniontech.com>, "=?utf-8?B?5a6J5Zu956uL?=" <anguoli@uniontech.com>, "=?utf-8?B?a2VybmVs?=" <kernel@uniontech.com>, "=?utf-8?B?bGludXgtbW9kdWxlcw=
- =?=" <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] ALSA: doc: add docs about device_device_quirk_flags in snd-usb-audio
+	s=arc-20240116; t=1758118212; c=relaxed/simple;
+	bh=OsPdev5btX3JT4/2C8Z8laOOG2vZwe7o17n1YeULHOM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=g5+rvo3BWECpBk2uJyogW3RAj0x5L6H/tEs07XaXrzHxnwNY3iFd+gmVkPO7UX+fIN6tzLhr+lverINRVgIqfiOdK8iYzo7giqsEjhfHaVP7lpKAA1DQUk8eD1bxughaGhfF5QfRLJ1mbqmGu2rM5NF7HrSrmEV8Kz3H2XFRxEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZKpSI+WP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TbymsR0+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758118208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75mN+9VZdw4CLEq0UoX/nuXZgFL03Q5pomSFYWw9c2o=;
+	b=ZKpSI+WPydnrumYQ7gxnajAs+lz48YaqiNN3+WhYNwWXlUic0xCBsG6f6GfE8taQbHcIgJ
+	h7Kh1tpSx++CpIjdk2mOz5C8qrezCvij4Bk8iMJhmpa16eSQBcomARzZeXmkJinMK6glwU
+	/UoCFWaheNWZeinES9gkwAgNZHQGwrhZjReOwblCiBhi00hbE5NYnMlrnONnM1S91JYtLJ
+	5CckReOcFW3rJ1+heNZD7lLCRl+2mHJx7WPMA6JZ7bGl0gGxnrhAb0Qs6EzKVgYT+Ot1sw
+	h1UyJfZDjAyn+2j60JTop8cvG2RTrlkVsVVpCCok6p2oOoIhbLO/tvfT4Jfbiw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758118208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75mN+9VZdw4CLEq0UoX/nuXZgFL03Q5pomSFYWw9c2o=;
+	b=TbymsR0+lk/yBTMUwla0JPYo6VaReyftRSNu6ml7UoTThH0F5HVkZGBsfwFUiwKRK5kBjM
+	+sfN3Y9Q7FzbGVAw==
+To: David Hildenbrand <david@redhat.com>, Eugen Hristev
+ <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
+ pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
+In-Reply-To: <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com>
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
+ <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
+ <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com>
+Date: Wed, 17 Sep 2025 16:10:07 +0200
+Message-ID: <87v7lh891c.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Wed, 17 Sep 2025 22:09:43 +0800
-X-Priority: 3
-Message-ID: <tencent_3064F5D903EC827F710A50E1@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <20250917-sound-v3-0-92ebe9472a0a@uniontech.com>
-	<20250917-sound-v3-4-92ebe9472a0a@uniontech.com>
-	<0999abc5390bbfcb21e15bd140510540@manjaro.org>
-In-Reply-To: <0999abc5390bbfcb21e15bd140510540@manjaro.org>
-X-QQ-ReplyHash: 2225085134
-X-BIZMAIL-ID: 15805261366488725622
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Wed, 17 Sep 2025 22:09:48 +0800 (CST)
-Feedback-ID: lv:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-0
-X-QQ-XMAILINFO: NENUB7MpVQfJ93CEdpX6ez1dws86+xgtBEckcIaBvAgupFamReWYswWZ
-	E37x3dX0oE1yU/NEL1D5wrYBQif+GLbo1AY2NSKBji26oK+JeeO+dRZb+B17xjIoY+vVkVh
-	ZMFT2Tbw2d5EkmyLK1LvphdnGlA8+5H3jngWcBvEEF9pYOEduHnN3yGxxRWbeFfro0zd+NG
-	aHWiUJImrrV32QOc90nSgsHOavF8zzhv8qQETqwlhzO+202Uw8S14tIttJn45rcB5CkRuOA
-	Uy2AyA/7zj66+J5y49tWs+WGIVGIWRMtM0hSOvwW2Ye6NOCnkXf/iWn9CaMkdGjMm8RV/st
-	5hXImMLeNhb1keT+cK7FPVYlyQwGcoJDaABgCy29sb6LyySMzH/6nPwgExUWdHUv9xzj7qJ
-	zRh1ds/r6B+kZyBr761OQTjRcgMWE3CMXL7sjMQPnT1KLnKIaA85YgXZZmQLfiqzKwOXd0h
-	kyRV5iapHRUkjcTGcj0l5Vh/fo0JfRkwQTklUC1U+zB8rBl9fqwSosTciakf4pGeNWO3BUu
-	VJWONkLq5VXwH1GrshutfyTAoUa/HH1B7xZoKRgN+5JkW1fM4D4FEVGZ85uZDj2ghlJfgRq
-	Ip85xzTHxJtmiTBWyS0ibcgSgnpWC8cVdHPoo5yysTQgKM85AfD8ABblcr6uhhmQnVoFzM9
-	h63jmP7SuDq2nuuytytdkVD4ySK6eFU89BeyB/fZBsYNod0i4FsJdcgtQ4YiHkV5bLt0eRD
-	m0uEKv0whaufwUpXFS0aNnKM50A6pSAu0yXgsPnC7huX+g3v/PYXcadP0m8BGOzil6YH6e9
-	v5mYt2DBMU7VVHeNxeOG/h7D25wu2Mu8MlfcAiuTm6V+ebe4A54IkEFgMqs6Tm40IzUOCzR
-	AhsmAi1hOfd2AqHmgH1dQMT9xf75ryX5vB+KJEHYg0oqrbbT2PUStN7SMf2KPlKRbn9/9fc
-	xhQVHiD93L2wEjnuPTV7ZS/AZok1LJ8D6wlQmI1L/m0MxcwPm2Rt4/b9MF0mEX1wWYSmG++
-	SsAxhv44syPB4ZihVi5yjDE0eDMPn6M1jvIh4HXgZZ4AR4vsuv1QLaGoLsjV8rn+DuKyuZ0
-	Pk/T9L5pL3n
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain
 
-PiBIZWxsbyBDcnlvbGl0aWEsDQo+IA0KPiBPbiAyMDI1LTA5LTE3IDE0OjQ2LCBDcnlvbGl0
-aWEgUHVrTmdhZSB2aWEgQjQgUmVsYXkgd3JvdGU6DQo+PiBGcm9tOiBDcnlvbGl0aWEgUHVr
-TmdhZSA8Y3J5b2xpdGlhQHVuaW9udGVjaC5jb20+DQo+PiANCj4+IEp1c3QgYnJpZWZseSBk
-ZXNjcmliZWQgYWJvdXQgdGhlIG5ldyBvcHRpb24uDQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6
-IENyeW9saXRpYSBQdWtOZ2FlIDxjcnlvbGl0aWFAdW5pb250ZWNoLmNvbT4gDQoNCj4gSXNu
-J3QgdGhlIHBhdGNoIHN1YmplY3QgYSBiaXQgd3JvbmcsIGFuZCBzaG91bGQgY29udGFpbg0K
-PiAiZGV2aWNlIHF1aXJrX2ZsYWdzIiBpbnN0ZWFkIG9mICJkZXZpY2VfZGV2aWNlX3F1aXJr
-X2ZsYWdzIj8NCg0KU29ycnkgZm9yIHRoYXQsIEkgZm9yZ2V0IHRvIHJlLXdyaXRlIHRoZSBj
-b21taXQgbWVzc2FnZS4NClRoeCBmb3IgcG9pbnRpbmcgb3V0Lg0KDQpCZXN0IHJlZ2FyZHMs
-DQpDcnlvbGl0aWEgUHVrTmdhZQ==
+On Wed, Sep 17 2025 at 09:16, David Hildenbrand wrote:
+> On 17.09.25 07:43, Eugen Hristev wrote:
+>> On 9/17/25 00:16, Thomas Gleixner wrote:
+>>> I pointed you to a solution for that and just because David does not
+>>> like it means that it's acceptable to fiddle in subsystems and expose
+>>> their carefully localized variables.
+>
+> It would have been great if we could have had that discussion in the 
+> previous thread.
 
+Sorry. I was busy with other stuff and did not pay attention to that
+discussion.
+
+> Some other subsystem wants to have access to this information. I agree 
+> that exposing these variables as r/w globally is not ideal.
+
+It's a nono in this case. We had bugs (long ago) where people fiddled
+with this stuff (I assume accidentally for my mental sanity sake) and
+caused really nasty to debug issues. C is a horrible language to
+encapsulate stuff properly as we all know.
+
+> I raised the alternative of exposing areas or other information through 
+> simple helper functions that kmemdump can just use to compose whatever 
+> it needs to compose.
+>
+> Do we really need that .section thingy?
+
+The section thing is simple and straight forward as it just puts the
+annotated stuff into the section along with size and id and I definitely
+find that more palatable, than sprinkling random functions all over the
+place to register stuff.
+
+Sure, you can achieve the same thing with an accessor function. In case
+of nr_irqs there is already one: irq_get_nr_irqs(), but for places which
+do not expose the information already for real functional reasons adding
+such helpers just for this coredump muck is really worse than having a
+clearly descriptive and obvious annotation which results in the section
+build.
+
+The charm of sections is that they don't neither extra code nor stubs or
+ifdeffery when a certain subsystem is disabled and therefore no
+information available.
+
+I'm not insisting on sections, but having a table of 2k instead of
+hundred functions, stubs and whatever is definitely a win to me.
+
+Thanks,
+
+        tglx
 
