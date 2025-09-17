@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-821642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B267B81D6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:53:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B7DB81D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 22:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602921C23311
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:53:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0206468057
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 20:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0722C08AC;
-	Wed, 17 Sep 2025 20:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD2274B37;
+	Wed, 17 Sep 2025 20:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="k3FYtjxT"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="IqqFv8b3"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35BE25A630
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EEB25A630
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758142380; cv=none; b=A7FjfIV/2anAuGBWGYALjcfllX0tHDyX3iRYSE+isx64LZBsRXmw0FyZCv7mE6Ld5sSUCh2wUCtc1tkcjJedUaaoFQHMxDpq4LOxd8Ksdl/0A+kwJWnOvPvtb6L8DbNdEiKMaZQhexWGiJK4pVv2EI7PqczrtNU+TbSwtPp4LEw=
+	t=1758142449; cv=none; b=EZRJHxcfgWo5PcjR6eOan7/lnCdlecaTSq6YepQja2jVdbdLZ6ZjzMHP0oBEptLHtomDktlTH+EZ2xdaY6GnzkpxCZBu6wnHRyD8TW8tRJIPCxTM0rDM9c5g43tOnna9Z1h0Jni6kaEBJDmfts2dSUb0OsbVS1gI8Yc4nC35zvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758142380; c=relaxed/simple;
-	bh=vyVcKrjsi5rK4rxpJ2J+62BpiNtzCyvjQ6i5MbvZYaY=;
+	s=arc-20240116; t=1758142449; c=relaxed/simple;
+	bh=K+W1WDio6lk+ITDSHWIHjSqoEIPRhq3FXhhJkTR7mH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gb6JyY17oNZ+ZL4C1UmDGuLKCq6ARlxqsdGHw8pgkkA5l8oZkYoU4npuWrI99kGsSxuax3uD7/fljbYgHzsKo7kLctUFNTeNOD8AH7C8ZTGsac4MNGqKDuNxAAiVdYrOdTXyUpJzHAE1cLLvF8M2FwM2IDkcHiMEteYfgXJ+6N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=k3FYtjxT; arc=none smtp.client-ip=209.85.222.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBo0GmhDlOpeiaAp3RPbwgSfZx384a5y5CViX4TMnl/lptwsnupe49PXQxym3T4DK3P1S56Pc20sZ8EY7cmptQmu1FWi00AvzJ4oLq5mKbjf3GHdmbAe6UqVXXCz+uAAO2m9bggu1OL3hADd8R/auj8OpgFFgaFDdTOeJzj7814=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=IqqFv8b3; arc=none smtp.client-ip=209.85.219.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8287fedae95so34622485a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:52:57 -0700 (PDT)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-791fd6bffbaso2862756d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 13:54:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1758142377; x=1758747177; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1758142447; x=1758747247; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Slb/89aiZWbtb1+MHqNTYU2kFl97qu67CctbxFKmgbc=;
-        b=k3FYtjxTHDzwkMPd5GJEkRFr8fdqAFbPuulkg7EtXvq1L/RE7LwKWgftqH/Yy46PTD
-         LT+pO7ts/6c1PJGya3k5GHHNOu5GvFoiu0Nc4SoNzoex6PJkcuCL2aNUVDDkffQgpvAf
-         xv7vMwOyoa1qNv62Q4RPOL8ceTscqZFadhb2il6VdAROU8c8hoDptxn2ZidGrZ1pYDX4
-         H4cwgCe1fsdumIi8BKK61VjSvh4rJc+Hh2o1HlLscuJbqL4pPXzUVBKU5qmuC39tlwIp
-         eHXbqkLV4oThR6CXLSbWvfwiMwLQl0castCemdAht4dtRbUgx5wrJvb3OH5s8VTfUVhV
-         tqpw==
+        bh=wcmqKXFeHUqx/Zd3AQldL9H7ZjaJD86SN/59W2f2bAs=;
+        b=IqqFv8b3vcf2fDK44mE57FrYJTu6BxSHwlJTelsRxsGtobZ1Fz1uRI4u+FYpn3/r4i
+         fmgLy/Ul5Astyqprqyu2R5xh/36I4HnFGUgtPhGZWVWigfrmP8iDo3Ao8m+lf5v8njef
+         zQHNgT/EmoTOfkG1tn+jQ2FrkyQVTIDV+fU+9lIto0XtzMpR+FJ1Q4e96N3IP+rJIvIu
+         0vimjBM8q4Pss7QaTiv5XVi6EwNFJ0ZcInD5eOQFAw/bLe+CwNGu4SA6Vkuzp+5J+xqq
+         kFMIcvQDBswk+8cBzhQkj/iJ1LLCDebTwgS/lfjZ/RYqj5+DbuwKUDcS7iORFkoYQlc8
+         xhEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758142377; x=1758747177;
+        d=1e100.net; s=20230601; t=1758142447; x=1758747247;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Slb/89aiZWbtb1+MHqNTYU2kFl97qu67CctbxFKmgbc=;
-        b=qI1fEciqSeiZVyXkMug2gVMh2fMAhRcXvg+OU7K26vfO4OR5BdUr8OnGBW2gl7/r16
-         65sw0SgrADkqIc725HHCsXu0v8y22k7wTtkd/AxNvpGbTZqzCivkxJd+jG/v8cA1bBEk
-         at/0ZfNmQpzh6nEj77vXUVi7OI9fI6dz88tMIGG2MpDZbqQbuJi64e46UbzMu/Q7t62U
-         hD+iXt5aMF3t62H0AfHYytJdaqfp5mPvUkLT5p453UoMgRlB7pv+SPChhcxLVLVHvKve
-         1zNv16vSZpA3bCH2FvqpOU5lj2dztdYyi6Wo+jR113N8qxiHPdCixBJwJONIIf1hpVQH
-         ln6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXEUCCuwbvDggC3eSflvgvfYLLdJOOMGKA/1mCKv1BHtt5IdU3WcbNrf1RL8Hz7oNoAKZIzXEQygUpGOAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl3oI9eAvvv/durLNqTgmT4fWbI/k1OHtzX8M7PEdCYiTSJR30
-	+B5XXWzV0XoLlcnBhEauFL/Jh5g4hcNp1QFO1pts0p47lJirHZiwwLREKRX0OLU0Bt0=
-X-Gm-Gg: ASbGnct1NtxFi0hhxPaRethutJwINu23iQhpSuRKVWVIsUEwVo5Coy8rEY+9JWoTURX
-	1F1mirsgZcvAF8AZDxP0Oa2EGoPrK77/jygVE5piODirTsGs+DOBLWw/ru0kYvUXtpuyQ55g3zo
-	pR3eD54MvwwF8aOHrXawaCbB3gD2paZkNahY+YTHTC5E0TnRyoTk5LbdmIsokIKrS3upezt4UXG
-	PsRTV9r7FDx17chqnsK2mXu/TGKMBzLpYLPWuC+lWcAPndPQ8UINVqsF6JWBGX5XDHotThs+aiv
-	o62BVm+Hd4UPOlOyD3Y7xe1mw9UVh5keYiBApHqwClGerXpVB6uVFjLO7gUX375l02KjBzsMMzJ
-	HVu6qACcIvVcaDXS0QkDR6a/xi4RTBmf5SgxRtIUj9+o/KWVAxWeAX1GgPHRX3NQm+WrPVHq4nN
-	3XYoc6beBIgwzJWQ==
-X-Google-Smtp-Source: AGHT+IFdINzcp5ACzbS6sICuhrGg2dW+wCoDRQzC+nV6ZAWpS7tnpWl27o6tLSuka8FSPl31p1uORA==
-X-Received: by 2002:a05:620a:170f:b0:828:a0f7:7aa4 with SMTP id af79cd13be357-831085ac45fmr515569585a.23.1758142376686;
-        Wed, 17 Sep 2025 13:52:56 -0700 (PDT)
+        bh=wcmqKXFeHUqx/Zd3AQldL9H7ZjaJD86SN/59W2f2bAs=;
+        b=L3KL4NkMjgoFMIjPUwFP8nvjiMo+wgjdF6WhgwgwFUIup2gn4Si4UQknASqEe4ceFQ
+         +1g5ng/jX25ar1zidvmtOgZAEIb72bIAjqobh7+vKRjjSyJsUBg4kcETVPPueaUg7VZ3
+         pT+yLsmkWBpTE677MqPYh9YPqMISjzuu2ZlxqtrWlM8FwUvWAQXKZVSto4WLF6B3vp2H
+         Z3VSBd8B5VybikRoZ07h1jqeCemabfJvKWmhzAyra1lGsbSLr6/+6nndNBMdOSdxbqNd
+         S4RMNfMmFKixlayLWquj/9+5Skv8hcUuY96+2dxD07wUx60qKPtWb54Cv1QFPUV2obDX
+         1X8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIIIpWeTRB6/aDTPMz++J5r0sulHhs7KD9EmwJUb1qd/tHDQYEejxUSiMCx6WjItgI+F09zuYspxNhVuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU/T6XSYCTOKxD7dPfDlhr6V7nMnGM1fz1BMAP2/tD4uWZ+c7c
+	6cnWxC5A3IylCXxuGJ127ZD249XaVsSJNQNLVPOiooNzmjuYlXlDc1wgM+WC68M7kxDBly2Pelx
+	dZcft
+X-Gm-Gg: ASbGncv8MMYtRK79S4bxGB/0AMw0C0p4wOBy8RETpM8SdaoGoye/ltn2mAUMIBUqi4O
+	Wi8tJvTRkTw5WQSh9KBEUgPo4DqNsjyjXH420g0V1tvzWi6zNLiembjAukSUvHEFyLRcW0Cd4Iu
+	YJmARTI0r+lZTUdEaMHgjgf03NwEfeZ5mHrA1mW1mcyxpsWZX10B80gUBe72RMyLxx8WfgzETK9
+	GIK5FZR2kXcNcaTFkMRJArTHOsvC0OB2o9yJQDF/ae7SSArnzK+2uxyufMykQj8S62mINhy/bgW
+	zyaUqjJYPi0IpKRsf7z4iIbWYrOHzR7hh9F5UtJdOjO9TCOcQRZ6HeygWBCWqDbE2E9FlasIt8b
+	TiO7QWLxzZ6ODys9GVLuiYHNl7SzP+2D7IWaVQ27B9APgxVeEttWJwd0yAmySVqhnse6Z7AiCHw
+	vMbfErRANhLiZ8J7CrrpAHcw==
+X-Google-Smtp-Source: AGHT+IGDXIKr016Rx3/Xv8gq8Sj5/rMui3SP4djoDyXpvBJ2Prp8xro0Uk1OdXAiTR7V4JoBTmiKeA==
+X-Received: by 2002:a05:6214:2622:b0:76f:6972:bb89 with SMTP id 6a1803df08f44-78ecc438e04mr47323676d6.9.1758142446767;
+        Wed, 17 Sep 2025 13:54:06 -0700 (PDT)
 Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-836278b80bbsm44715585a.25.2025.09.17.13.52.55
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-79353c4d4b3sm1804606d6.51.2025.09.17.13.54.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 13:52:56 -0700 (PDT)
-Date: Wed, 17 Sep 2025 16:52:54 -0400
+        Wed, 17 Sep 2025 13:54:06 -0700 (PDT)
+Date: Wed, 17 Sep 2025 16:54:04 -0400
 From: Gregory Price <gourry@gourry.net>
 To: Robert Richter <rrichter@amd.com>
 Cc: Alison Schofield <alison.schofield@intel.com>,
@@ -86,11 +87,10 @@ Cc: Alison Schofield <alison.schofield@intel.com>,
 	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
 	Terry Bowman <terry.bowman@amd.com>,
 	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 09/11] cxl/region: Lock decoders that need address
- translation
-Message-ID: <aMsfpvHmTlfJVMK3@gourry-fedora-PF4VCD3F>
+Subject: Re: [PATCH v3 10/11] cxl/acpi: Prepare use of EFI runtime services
+Message-ID: <aMsf7EP8W99QJFTI@gourry-fedora-PF4VCD3F>
 References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-10-rrichter@amd.com>
+ <20250912144514.526441-11-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,45 +99,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250912144514.526441-10-rrichter@amd.com>
+In-Reply-To: <20250912144514.526441-11-rrichter@amd.com>
 
-On Fri, Sep 12, 2025 at 04:45:11PM +0200, Robert Richter wrote:
-> There is only support to translate addresses from an endpoint to its
-> parent port, but not in the opposite direction from the parent to the
-> endpoint. Thus, the endpoint address range cannot be determined and
-> setup manually for a given SPA range of a region. If the parent
-> implements the ->to_hpa() callback, address translation is
-> needed. Then, forbid reprogramming of the decoders and lock them.
+On Fri, Sep 12, 2025 at 04:45:12PM +0200, Robert Richter wrote:
+> In order to use EFI runtime services, esp. ACPI PRM which uses the
+> efi_rts_wq workqueue, initialize EFI before CXL ACPI.
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+> There is a subsys_initcall order dependency if driver is builtin:
+> 
+>  subsys_initcall(cxl_acpi_init);
+>  subsys_initcall(efisubsys_init);
+> 
+> Prevent the efi_rts_wq workqueue being used by cxl_acpi_init() before
+> its allocation. Use subsys_initcall_sync(cxl_acpi_init) to always run
+> efisubsys_init() first.
+> 
+> Reported-by: Gregory Price <gourry@gourry.net>
+> Tested-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
 Reviewed-by: Gregory Price <gourry@gourry.net>
 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 > ---
->  drivers/cxl/core/region.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  drivers/cxl/acpi.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 9fb1e9508213..44ea59252ff0 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3497,6 +3497,16 @@ static int setup_address_translation(struct cxl_endpoint_decoder *cxled,
->  		return -ENXIO;
->  	}
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 26c494704437..95a5ba395c1a 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -1012,8 +1012,12 @@ static void __exit cxl_acpi_exit(void)
+>  	cxl_bus_drain();
+>  }
 >  
-> +	/*
-> +	 * There is only support to translate from the endpoint to its
-> +	 * parent port, but not in the opposite direction from the
-> +	 * parent to the endpoint. Thus, the endpoint address range
-> +	 * cannot be determined and setup manually. If the address range
-> +	 * was translated and modified, forbid reprogramming of the
-> +	 * decoders and lock them.
-> +	 */
-> +	cxld->flags |= CXL_DECODER_F_LOCK;
-> +
->  	ctx->hpa_range = range;
->  	ctx->interleave_ways = ways;
->  	ctx->interleave_granularity = gran;
+> -/* load before dax_hmem sees 'Soft Reserved' CXL ranges */
+> -subsys_initcall(cxl_acpi_init);
+> +/*
+> + * Load before dax_hmem sees 'Soft Reserved' CXL ranges. Use
+> + * subsys_initcall_sync() since there is an order dependency with
+> + * subsys_initcall(efisubsys_init), which must run first.
+> + */
+> +subsys_initcall_sync(cxl_acpi_init);
+>  
+>  /*
+>   * Arrange for host-bridge ports to be active synchronous with
 > -- 
 > 2.39.5
 > 
