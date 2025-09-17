@@ -1,253 +1,284 @@
-Return-Path: <linux-kernel+bounces-820368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-820369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE59B7CC25
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B0AB7CC6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006E41C060AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9701D1C05722
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 09:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042DA30C37C;
-	Wed, 17 Sep 2025 09:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47972EC08E;
+	Wed, 17 Sep 2025 09:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lCNqGji/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9gOSWsS"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6A630BBB0
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188CB2F9D94
+	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758102115; cv=none; b=YR4ou9vkEGYcTdiwBruePD6qh+ppX5W645lv4NIrGaXAqiXoOIdfsFoNJqbJnRa5ElQ/aw6iEtxh4uA9xkMBx4AGgEc22pHXuh1jaVCXAD7d9/2MeTB2ctdYyTh5pSLcyk+yYZn8Mz6DoGpyq0/ueH0Qgy59yKQqcXY2d+QU+5A=
+	t=1758102145; cv=none; b=LJrz2R9D24TULMQBwaDZgZO36RgKn60fU3x0EjYsvUwhzO2M5f/6w6RyOygKpor1xxb9pl8ID6JfzL7GQpIzyWJ/hIYp3qty6OUQPJQcva7wzoNsL1NzdGJJ/OMstJD4u8KNbBxWGwwyHL1aBOu8uINUfMWcJxg+Wm4POWxvO5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758102115; c=relaxed/simple;
-	bh=p8S1VDimS2zg7uQi7pM+Tja1wksl8Fn6Vx8THIESBew=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcbswCgc2a4jzH6HH1bC4oqasY/3zJIv0ZOTGvDMppMNOydimJAqR3cfB0GswrobTYXraBxjS0lopCpfpUE1Q3FOnVFZYymujK4/qlpYH47XBZRSbAC2qYLvf16uid2lXKcrjujG274OVQXb9LxVkTJkGUWlEDBPmfMjJBJNsCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lCNqGji/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58H8XY6s018235
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:41:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=kFrYXA4FlnihNvw43zAu/XhZJbtjtQD7rqX
-	ygRQJ1VI=; b=lCNqGji/rSrM2TqKHp9NbZvIJ7VKJ0MGIg/w042GBHs4SJ+owPm
-	qLro/Kw+CAbhJ9to/74ZJlZtgdnQ5pjHM37lNNuHzaCnrJFG5RHPYe74gXt0n37P
-	8RPLOFuA5BcjfTnUiOftD86saaNOlE4uSP6Qecigs39D60wgR3aemWIRvaBk7u64
-	JLjwTjoZRki3HmyoN0OmxL8IF/BGrBH3KldIxepO/xC+AZE5lRy1TaSifvAFeMjd
-	lqqzEXECBOki9OofweX3KNBcNY7OLtvQ8husW7GTCzVSWMK497mZOiVoXyKhRnMT
-	dSfzfKqDZKc+LenSv06uIVHOzzhLIQRliwA==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxw9uay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 09:41:52 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2659a7488a2so65040635ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:41:52 -0700 (PDT)
+	s=arc-20240116; t=1758102145; c=relaxed/simple;
+	bh=YqpsgxicT/gLX63bde2BqsbreGFWowRoNFTiwd/r9zQ=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pluUSiUCAfnQ2kkmEca6VDtyo4lp0AwoFaQdViidwTjvE7YS8LZXXu0ayYZPRRB4c3seunXgRgaB/57o5+3wLBQN5+tlL0+mcdfNFbwUAXCoVkEfesVW22qEdf0SaWhFEKDF7tqWIC3HKEh9JGfoLJj/mhvLUQFL4MHi7iAm/tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9gOSWsS; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45f2a69d876so21992315e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 02:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758102141; x=1758706941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=i09V1V+8m07vXTofqYygiTDdC5J30D33C6bZzl31WR8=;
+        b=A9gOSWsSK/1gUnb4dnei3O75N19SaL/HXhgWEHSVcKBmWYOBZrggVJMZiQNWwXjYru
+         gkoMX5xQL/Asz8cL4dKCvJTBAer2lTCgoHPRigUc5A2Fu3qG3qOvf7j769aMV4hP/t2s
+         imOzXdzsdWK1LwupzD0U1OB1ZhtMxytxTcaM789RZlVUzhMA7HAz4sICQWSGHzqdaI59
+         X1fZ0yCMAs+aen6smtZn2clZwILTWr6QThHNhv3uNsw71wfjwoj/wqxBCx5jeiYrjxHF
+         fimvJAXvsG+lyoEr2wpZ4IfinWgo2UH1g3KhJqJPJMFg5AKSCgSmxfdb9zcTlH3oVygl
+         GQSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758102111; x=1758706911;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kFrYXA4FlnihNvw43zAu/XhZJbtjtQD7rqXygRQJ1VI=;
-        b=wKGSs0/ey/fFjMyfjnzYusaAGM8MHuquq0TG0nCLjXfu1k9+wW7lv67Vgj4Jy9gQMB
-         rIJm9uxR5iWEWmpcDA9T+E6/GW1Iigzyxx8u1bRqV8+mBIm4y+WRhTGUXDmdQGxie5Ol
-         IH8UMqTJevWznTKkWMIlBy7qhERJbiyvn3Ro7O0gYNjh+6agtUSHwog2xZ6ahPtf2obR
-         +4+TP5K0ttknqOUSXHov2wsdoX8xYAAFgvjQBlccmUZYW0MKs/tdPxxgVKDca6zD3rHw
-         Qdg+H6rNBH1BQmNPLlMrQCsS6gCrs4jLqdsPX8IV+WV46PheyKTpcbCKeGRfvF/JvDzM
-         WKxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ3N12sUHKELplq0vznnFEXgjtqzDM1D2F0LNzEDPRsKoSGy872BPWNTAuq60KJqJ11cUYEmqlyE/TOxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmpLM2XMQCHhygopbZHoxg0d3ieq4+P4ZxkxppPZpsCZCddG/o
-	J0B/V0T/NBPla6q8brobShj87G2aI8dT5BRwh5+CQuu/WqBB1EhRHedCPefq7boD438JPaXgyPD
-	fFqij01qFcqHpkLSzWTLWFtTveoXYSUTwYDxEcv9cFsPkiktY8cfzErxLiv1WChTjTYA=
-X-Gm-Gg: ASbGncuKzfBH95hsCoLSB1XFnuzchbHiX9UekU6RuOAiUKM+Be0BHFzw3e534T0+87M
-	RFGWRuPDddx9QMk9MaSa7iUMePTen++jPiQb/JBzgsmOHkIBjBCLRLy41bRrY4TUMqIk6K/FyU0
-	wjENAuyXXQ9IeLiczKKu1wZS9cQlQQmu0UnPKTwwPRamb9yr7CNbHKZr6P+nlMVbEsaKsOgBgZw
-	GYG9ljjmCmYGQQdUW/PZZHItPgn56cT0lFHXtMNBNHdMQ6RWUBIc3A/nDWcUryyIpQOdnmuq2Ks
-	fqqKkjPPCyW8CIi2vsj1KWswHC/ELAcWT0B9pGrGsstc9K7B0Pk91l0guLkrhjVN0BRFpS9DCUd
-	Kke6FOY4ILl4850sr3TGlemi9YgWoeBs=
-X-Received: by 2002:a17:903:1ace:b0:268:500:5ec7 with SMTP id d9443c01a7336-268118b4286mr21516925ad.2.1758102111373;
-        Wed, 17 Sep 2025 02:41:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGNGoIDfb5pzgXvPOENVt3HN3joOEiGJjfQkZC/ldkf9dnxcuviCUuY4vaqdKqUUX6HUT7N0g==
-X-Received: by 2002:a17:903:1ace:b0:268:500:5ec7 with SMTP id d9443c01a7336-268118b4286mr21516595ad.2.1758102110897;
-        Wed, 17 Sep 2025 02:41:50 -0700 (PDT)
-Received: from zhonhan-gv.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed257bbf8sm1942483a91.0.2025.09.17.02.41.45
+        d=1e100.net; s=20230601; t=1758102141; x=1758706941;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i09V1V+8m07vXTofqYygiTDdC5J30D33C6bZzl31WR8=;
+        b=aGZD0mkQuhhIDHAbd8Tse77UqFHDmVZQOagNjnMZnwaSI7UqewvfGQgjeWFrzLDcx3
+         z3TJTy7M/I4ye2NLQYnhL/SVFPjXiEfrfCYXB7QGGPXtY5qGfcf5aE/Hfq9NSm3Ch4T4
+         THPaIr2Y7RUriIx2aCOceQ7Hf3S7IM62Xv/u4vxP65vUY2GSaeugyyLcjNTi1CcUZZ0r
+         doMizSqVNfGfFLtIYuQfvt/fx6lsHDQdOhLmHrsx+UhMUCw4YGNMk/7lWff9+IDCazwo
+         fV1n4W3Tzu65EfTJJ755EMtxIndBKKgHXvzyh7bBe84YPM4VPnPmFSo8CKSxpU8ceDeu
+         HlnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWD6X67BD8TNHb7MNkLCE7lo5ozTgbsogU3nE6ANx+sTwyOzyckHrlRBIcLA3s516xyhO+cdSJL2KJdLuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEWapXCpDuL2scIAddyv1b/C/+aQv+bPTQGVck0u6FAzerQwlD
+	eRlFXgGaxmSvx3K3BTjvsvUrtrjcqVfh3P87u+T9/2nLGiLNl8B9WGRr
+X-Gm-Gg: ASbGncsBlaTwrL1Hr3a58/l0MDgvPBX0h9blObQay96qmV56t/cqYpfqosrwMBl/HL9
+	uDGr5tPD+S9C9/wRPLmPDuR62uqxgYWwGXrgCzP+YoPGR1MShnOLoroUHyp7WquRg3XVfy5R16d
+	26sMfM80Gv7cGTdMbNmeB7mvdzxZSyuXIZdaZODXziBdipMIgoNLr2qx6uo5jcpoAJpSmMa1C+u
+	hSdteftfTGSNvH3taP9kmsaGO4FxzybA0p56axzob04MwVr7BNKf0v52FOW6vHHTVpEvojCmiHK
+	/zdHrinqSFFBwL1/vdBI6nwFXl8g6FjGxz7M83LI2NTHc+yj8LAtSNAPPKFQaXw9HHSk/TM1PWX
+	LW5JLWPh4V6Jf8NQ37rb0iMBtVas7ITwxx9kj2yIWNoqh9Trm168S++fdbbc5OQWUkzJCOg==
+X-Google-Smtp-Source: AGHT+IEKiwJZQCrLPEgkzRNnTHskaZnK9OmVkfYp3uZ3v0rYXitoWfeTluLHukDJc9g2ASRO8v71/A==
+X-Received: by 2002:a05:600c:1c87:b0:45f:2cf9:c229 with SMTP id 5b1f17b1804b1-461fd2e4377mr14209635e9.0.1758102141144;
+        Wed, 17 Sep 2025 02:42:21 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46139e87614sm30184935e9.23.2025.09.17.02.42.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 02:41:50 -0700 (PDT)
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
-        quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
-        adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
-        neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
-        quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com,
-        zhongqiu.han@oss.qualcomm.com
-Subject: [PATCH v3] scsi: ufs: core: Fix data race in CPU latency PM QoS request handling
-Date: Wed, 17 Sep 2025 17:41:43 +0800
-Message-ID: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 17 Sep 2025 02:42:20 -0700 (PDT)
+Message-ID: <68ca827c.050a0220.11f9b4.a3f0@mx.google.com>
+X-Google-Original-Message-ID: <aMqCdW_r6QYeldBm@Ansuel-XPS.>
+Date: Wed, 17 Sep 2025 11:42:13 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v18 4/8] net: dsa: tag_mtk: add Airoha variant
+ usage of this TAG
+References: <20250915104545.1742-1-ansuelsmth@gmail.com>
+ <20250915104545.1742-1-ansuelsmth@gmail.com>
+ <20250915104545.1742-5-ansuelsmth@gmail.com>
+ <20250915104545.1742-5-ansuelsmth@gmail.com>
+ <20250917093541.laeswsgzunu3avzp@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=HbIUTjE8 c=1 sm=1 tr=0 ts=68ca8260 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=bwEYGBBtgshAin72mCkA:9
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX/VV8L32rjN/j
- dnetkD3n+Pw1ZW00qXe12zO2XzDoh9iZJAsQPzlRPpc7PjHGUBwAWlMKUYcT81Lc8+c7mjsZBIe
- mTuN4NGLzKvBCrAxbYhaOOV01yByWAMrZURTEzqS6F5wv7nzTFTPMI965OIotmth2KjNEhnZ/np
- 1IdNsP0+rG0518B2KJ5BhoqO5FTdklBdnghnLylWL4/dSh4Jqq0GTgToen0KxQvxcqj4x/Mr0Bm
- lI29f0o9/aM4Rt9RU3gYdx9NVZn6bThjPno1xjJSbp6/mFt7v/XDIWSKfO3gGcfH87Jy3VsJceb
- IzKcOK/QtMbr0rJm+jHGUvOKCkjL7yAGIbHFjey9aCOVGsWGRgpbiIo09wIxrpol2zfBv9ikEGE
- 2Q9PbYEW
-X-Proofpoint-GUID: rdM1CvUpc0fjXd2ZQF60jyXg7oiNMpCA
-X-Proofpoint-ORIG-GUID: rdM1CvUpc0fjXd2ZQF60jyXg7oiNMpCA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917093541.laeswsgzunu3avzp@skbuf>
 
-The cpu_latency_qos_add/remove/update_request interfaces lack internal
-synchronization by design, requiring the caller to ensure thread safety.
-The current implementation relies on the `pm_qos_enabled` flag, which is
-insufficient to prevent concurrent access and cannot serve as a proper
-synchronization mechanism. This has led to data races and list corruption
-issues.
+On Wed, Sep 17, 2025 at 12:35:41PM +0300, Vladimir Oltean wrote:
+> On Mon, Sep 15, 2025 at 12:45:40PM +0200, Christian Marangi wrote:
+> > Add variant of the MTK TAG for Airoha Switch and comments about difference
+> > between Airoha AN8855 and Mediatek tag bitmap.
+> > 
+> > Airoha AN8855 doesn't support controlling SA learning and Leaky VLAN
+> > from tag. Although these bits are not used (and even not defined for
+> > Leaky VLAN), it's worth to add comments for these difference to prevent
+> > any kind of regression in the future if ever these bits will be used.
+> > 
+> > Rework the makefile, config and tag driver to better report to
+> > external tool (like libpcap) the usage of this variant with a dedicated
+> > "Airoha" name.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  include/net/dsa.h |  2 ++
+> >  net/dsa/Kconfig   | 11 +++++++++++
+> >  net/dsa/Makefile  |  2 +-
+> >  net/dsa/tag_mtk.c | 36 +++++++++++++++++++++++++++++++++---
+> >  4 files changed, 47 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/include/net/dsa.h b/include/net/dsa.h
+> > index d73ea0880066..bf03493e64ab 100644
+> > --- a/include/net/dsa.h
+> > +++ b/include/net/dsa.h
+> > @@ -55,6 +55,7 @@ struct tc_action;
+> >  #define DSA_TAG_PROTO_LAN937X_VALUE		27
+> >  #define DSA_TAG_PROTO_VSC73XX_8021Q_VALUE	28
+> >  #define DSA_TAG_PROTO_BRCM_LEGACY_FCS_VALUE	29
+> > +#define DSA_TAG_PROTO_AIROHA_VALUE		30
+> >  
+> >  enum dsa_tag_protocol {
+> >  	DSA_TAG_PROTO_NONE		= DSA_TAG_PROTO_NONE_VALUE,
+> > @@ -69,6 +70,7 @@ enum dsa_tag_protocol {
+> >  	DSA_TAG_PROTO_KSZ9893		= DSA_TAG_PROTO_KSZ9893_VALUE,
+> >  	DSA_TAG_PROTO_LAN9303		= DSA_TAG_PROTO_LAN9303_VALUE,
+> >  	DSA_TAG_PROTO_MTK		= DSA_TAG_PROTO_MTK_VALUE,
+> > +	DSA_TAG_PROTO_AIROHA		= DSA_TAG_PROTO_AIROHA_VALUE,
+> >  	DSA_TAG_PROTO_QCA		= DSA_TAG_PROTO_QCA_VALUE,
+> >  	DSA_TAG_PROTO_TRAILER		= DSA_TAG_PROTO_TRAILER_VALUE,
+> >  	DSA_TAG_PROTO_8021Q		= DSA_TAG_PROTO_8021Q_VALUE,
+> > diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
+> > index 869cbe57162f..7d63ecda25c8 100644
+> > --- a/net/dsa/Kconfig
+> > +++ b/net/dsa/Kconfig
+> > @@ -98,12 +98,23 @@ config NET_DSA_TAG_EDSA
+> >  	  Say Y or M if you want to enable support for tagging frames for the
+> >  	  Marvell switches which use EtherType DSA headers.
+> >  
+> > +config NET_DSA_TAG_MTK_COMMON
+> > +	tristate
+> > +
+> >  config NET_DSA_TAG_MTK
+> >  	tristate "Tag driver for Mediatek switches"
+> > +	select NET_DSA_TAG_MTK_COMMON
+> >  	help
+> >  	  Say Y or M if you want to enable support for tagging frames for
+> >  	  Mediatek switches.
+> >  
+> > +config NET_DSA_TAG_AIROHA
+> > +	tristate "Tag driver for Airoha switches"
+> > +	select NET_DSA_TAG_MTK_COMMON
+> > +	help
+> > +	  Say Y or M if you want to enable support for tagging frames for
+> > +	  Airoha switches.
+> > +
+> >  config NET_DSA_TAG_KSZ
+> >  	tristate "Tag driver for Microchip 8795/937x/9477/9893 families of switches"
+> >  	help
+> > diff --git a/net/dsa/Makefile b/net/dsa/Makefile
+> > index 555c07cfeb71..7aba189a715c 100644
+> > --- a/net/dsa/Makefile
+> > +++ b/net/dsa/Makefile
+> > @@ -27,7 +27,7 @@ obj-$(CONFIG_NET_DSA_TAG_GSWIP) += tag_gswip.o
+> >  obj-$(CONFIG_NET_DSA_TAG_HELLCREEK) += tag_hellcreek.o
+> >  obj-$(CONFIG_NET_DSA_TAG_KSZ) += tag_ksz.o
+> >  obj-$(CONFIG_NET_DSA_TAG_LAN9303) += tag_lan9303.o
+> > -obj-$(CONFIG_NET_DSA_TAG_MTK) += tag_mtk.o
+> > +obj-$(CONFIG_NET_DSA_TAG_MTK_COMMON) += tag_mtk.o
+> >  obj-$(CONFIG_NET_DSA_TAG_NONE) += tag_none.o
+> >  obj-$(CONFIG_NET_DSA_TAG_OCELOT) += tag_ocelot.o
+> >  obj-$(CONFIG_NET_DSA_TAG_OCELOT_8021Q) += tag_ocelot_8021q.o
+> > diff --git a/net/dsa/tag_mtk.c b/net/dsa/tag_mtk.c
+> > index b670e3c53e91..32befcbdf4be 100644
+> > --- a/net/dsa/tag_mtk.c
+> > +++ b/net/dsa/tag_mtk.c
+> > @@ -11,6 +11,7 @@
+> >  #include "tag.h"
+> >  
+> >  #define MTK_NAME		"mtk"
+> > +#define AIROHA_NAME		"airoha"
+> >  
+> >  #define MTK_HDR_LEN		4
+> >  #define MTK_HDR_XMIT_UNTAGGED		0
+> > @@ -18,6 +19,9 @@
+> >  #define MTK_HDR_XMIT_TAGGED_TPID_88A8	2
+> >  #define MTK_HDR_RECV_SOURCE_PORT_MASK	GENMASK(2, 0)
+> >  #define MTK_HDR_XMIT_DP_BIT_MASK	GENMASK(5, 0)
+> > +/* AN8855 doesn't support SA_DIS and Leaky VLAN
+> > + * control in tag as these bits doesn't exist.
+> > + */
+> >  #define MTK_HDR_XMIT_SA_DIS		BIT(6)
+> >  
+> >  static struct sk_buff *mtk_tag_xmit(struct sk_buff *skb,
+> > @@ -94,6 +98,7 @@ static struct sk_buff *mtk_tag_rcv(struct sk_buff *skb, struct net_device *dev)
+> >  	return skb;
+> >  }
+> >  
+> > +#if IS_ENABLED(CONFIG_NET_DSA_TAG_MTK)
+> >  static const struct dsa_device_ops mtk_netdev_ops = {
+> >  	.name		= MTK_NAME,
+> >  	.proto		= DSA_TAG_PROTO_MTK,
+> > @@ -102,8 +107,33 @@ static const struct dsa_device_ops mtk_netdev_ops = {
+> >  	.needed_headroom = MTK_HDR_LEN,
+> >  };
+> >  
+> > -MODULE_DESCRIPTION("DSA tag driver for Mediatek switches");
+> > -MODULE_LICENSE("GPL");
+> > +DSA_TAG_DRIVER(mtk_netdev_ops);
+> >  MODULE_ALIAS_DSA_TAG_DRIVER(DSA_TAG_PROTO_MTK, MTK_NAME);
+> > +#endif
+> >  
+> > -module_dsa_tag_driver(mtk_netdev_ops);
+> > +#if IS_ENABLED(CONFIG_NET_DSA_TAG_AIROHA)
+> > +static const struct dsa_device_ops airoha_netdev_ops = {
+> > +	.name		= AIROHA_NAME,
+> > +	.proto		= DSA_TAG_PROTO_AIROHA,
+> > +	.xmit		= mtk_tag_xmit,
+> > +	.rcv		= mtk_tag_rcv,
+> > +	.needed_headroom = MTK_HDR_LEN,
+> > +};
+> > +
+> > +DSA_TAG_DRIVER(airoha_netdev_ops);
+> > +MODULE_ALIAS_DSA_TAG_DRIVER(DSA_TAG_PROTO_AIROHA, AIROHA_NAME);
+> > +#endif
+> > +
+> > +static struct dsa_tag_driver *dsa_tag_driver_array[] =	{
+> > +#if IS_ENABLED(CONFIG_NET_DSA_TAG_MTK)
+> > +	&DSA_TAG_DRIVER_NAME(mtk_netdev_ops),
+> > +#endif
+> > +#if IS_ENABLED(CONFIG_NET_DSA_TAG_AIROHA)
+> > +	&DSA_TAG_DRIVER_NAME(airoha_netdev_ops),
+> > +#endif
+> 
+> Unless the few tens of bytes saved matter on OpenWRT, I think this is
+> overkill (and you went too far with my previous suggestion).
+> Two Kconfig options are unnecessary from a maintainance point of view
+> (and config NET_DSA_AN8855 isn't even selecting the correct one!).
+> I suggest you register both tag drivers as part of CONFIG_NET_DSA_TAG_MTK,
+> at least until the differences increase to justify a new option.
+>
 
-A typical race condition call trace is:
+Ok, was following the pattern done by the other. Will drop the
+additional kconfig.
 
-[Thread A]
-ufshcd_pm_qos_exit()
-  --> cpu_latency_qos_remove_request()
-    --> cpu_latency_qos_apply();
-      --> pm_qos_update_target()
-        --> plist_del              <--(1) delete plist node
-    --> memset(req, 0, sizeof(*req));
-  --> hba->pm_qos_enabled = false;
+> > +};
+> > +
+> > +module_dsa_tag_drivers(dsa_tag_driver_array);
+> > +
+> > +MODULE_DESCRIPTION("DSA tag driver for Mediatek switches");
+> > +MODULE_LICENSE("GPL");
+> > -- 
+> > 2.51.0
+> > 
+> 
 
-[Thread B]
-ufshcd_devfreq_target
-  --> ufshcd_devfreq_scale
-    --> ufshcd_scale_clks
-      --> ufshcd_pm_qos_update     <--(2) pm_qos_enabled is true
-        --> cpu_latency_qos_update_request
-          --> pm_qos_update_target
-            --> plist_del          <--(3) plist node use-after-free
-
-This patch introduces a dedicated mutex to serialize PM QoS operations,
-preventing data races and ensuring safe access to PM QoS resources,
-including sysfs interface reads.
-
-Fixes: 2777e73fc154 ("scsi: ufs: core: Add CPU latency QoS support for UFS driver")
-Signed-off-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
----
-v2 -> v3:
-- Per Bart's comments, replaced READ_ONCE with a mutex for sysfs access to ensure
-  thread safety, and updated the commit message accordingly.
-- Also per Bart's suggestion, use guard(mutex)(&hba->pm_qos_mutex) instead of
-  explicit mutex_lock/mutex_unlock to improve readability and ease code review.
-- Link to v2: https://lore.kernel.org/all/20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com/
-
-v1 -> v2:
-- Fix misleading indentation by adding braces to if statements in pm_qos logic.
-- Resolve checkpatch strict mode warning by adding an inline comment for pm_qos_mutex.
-
- drivers/ufs/core/ufs-sysfs.c | 2 ++
- drivers/ufs/core/ufshcd.c    | 9 +++++++++
- include/ufs/ufshcd.h         | 3 +++
- 3 files changed, 14 insertions(+)
-
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index 4bd7d491e3c5..0086816b27cd 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -512,6 +512,8 @@ static ssize_t pm_qos_enable_show(struct device *dev,
- {
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
- 
-+	guard(mutex)(&hba->pm_qos_mutex);
-+
- 	return sysfs_emit(buf, "%d\n", hba->pm_qos_enabled);
- }
- 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 88a0e9289ca6..2ea7cf86cea1 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1047,6 +1047,7 @@ EXPORT_SYMBOL_GPL(ufshcd_is_hba_active);
-  */
- void ufshcd_pm_qos_init(struct ufs_hba *hba)
- {
-+	guard(mutex)(&hba->pm_qos_mutex);
- 
- 	if (hba->pm_qos_enabled)
- 		return;
-@@ -1063,6 +1064,8 @@ void ufshcd_pm_qos_init(struct ufs_hba *hba)
-  */
- void ufshcd_pm_qos_exit(struct ufs_hba *hba)
- {
-+	guard(mutex)(&hba->pm_qos_mutex);
-+
- 	if (!hba->pm_qos_enabled)
- 		return;
- 
-@@ -1077,6 +1080,8 @@ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
-  */
- static void ufshcd_pm_qos_update(struct ufs_hba *hba, bool on)
- {
-+	guard(mutex)(&hba->pm_qos_mutex);
-+
- 	if (!hba->pm_qos_enabled)
- 		return;
- 
-@@ -10765,6 +10770,10 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 	mutex_init(&hba->ee_ctrl_mutex);
- 
- 	mutex_init(&hba->wb_mutex);
-+
-+	/* Initialize mutex for PM QoS request synchronization */
-+	mutex_init(&hba->pm_qos_mutex);
-+
- 	init_rwsem(&hba->clk_scaling_lock);
- 
- 	ufshcd_init_clk_gating(hba);
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index ea0021f067c9..277dda606f4d 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -938,6 +938,7 @@ enum ufshcd_mcq_opr {
-  * @ufs_rtc_update_work: A work for UFS RTC periodic update
-  * @pm_qos_req: PM QoS request handle
-  * @pm_qos_enabled: flag to check if pm qos is enabled
-+ * @pm_qos_mutex: synchronizes PM QoS request and status updates
-  * @critical_health_count: count of critical health exceptions
-  * @dev_lvl_exception_count: count of device level exceptions since last reset
-  * @dev_lvl_exception_id: vendor specific information about the
-@@ -1110,6 +1111,8 @@ struct ufs_hba {
- 	struct delayed_work ufs_rtc_update_work;
- 	struct pm_qos_request pm_qos_req;
- 	bool pm_qos_enabled;
-+	/* synchronizes PM QoS request and status updates */
-+	struct mutex pm_qos_mutex;
- 
- 	int critical_health_count;
- 	atomic_t dev_lvl_exception_count;
 -- 
-2.43.0
-
+	Ansuel
 
