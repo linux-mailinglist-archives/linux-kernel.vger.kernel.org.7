@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-821659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F18B81E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9A3B81E34
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 23:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD811189C256
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:06:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3CA189E429
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 21:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246922E92AB;
-	Wed, 17 Sep 2025 21:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B5C287272;
+	Wed, 17 Sep 2025 21:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jzmqQ6yI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afyD9Sgn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879022D0626;
-	Wed, 17 Sep 2025 21:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C622BE647;
+	Wed, 17 Sep 2025 21:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758143104; cv=none; b=Bjm3waqedTE3sZPKeaMv7L4HOjJKsm7o+QQ+YNrOEc5U5TWEF4mhueMEQ72vxrq3o2QTloBKlEqMRgQL0nVmKWW9Eh725Ki1sfdBFHDMxQIx6Jhn7JwQsW6NxT9vYRN0u463LwdZRfvIviweeIqhoB53zkZmR49+QcZOuLcFrDE=
+	t=1758143177; cv=none; b=HS+s77Fx4TY2pjyG61/SwrnQ0BZLhBgO0iMkzGvm+1LBhbwCZUaFK0Utd/lLMvOrHNcoFuDtJY+XvXdy7X7Z2Yla2rOTbxzdVxGrnRQ4NBCK8aljg+cnPDIEL9mQG/FmntRUC1y7o15u2fyYM6jf1sdABa7pHdx7rJyBhxS4EAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758143104; c=relaxed/simple;
-	bh=5niVyKSUAzBe7bKqk5WL8/s3TWnbCi+pdhmUtgwwVhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6Z+5Dh7f6NvrpFexxxHSu3hrMbYyJrMhVJAzT/nLXacQU/My6kr4Y4wiZtCPDLNz5R8z/L8FAjGu64xPZEybRcXh0Tu22XHfdFljUG5a9vWtSJ1RuyxwQnRuOPx/jMkOr+zhGcaOQlmLIqbH7JjR2ar44UpCmcWGBtErcyMEpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jzmqQ6yI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=o6w4t3UC27bwnN6JWA8ZdKSrOmat1bxK0b+u8I2fnrs=; b=jzmqQ6yIl7UUKBiq97RnIjKZj7
-	p34gFEmXC9MwDRV9+6uLT4qFjXNHIf76KL5Y84EFWs4Uce2LBIombd4RQtFq40iJbn+w9qMGhBElA
-	cU4fBSc1/vemnhXbuckLVN2/RGWKQr/p3rb9O2IsS03Toq0H5cgnRB7R52igr/ntkn8o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uyzKX-008jg4-51; Wed, 17 Sep 2025 23:04:45 +0200
-Date: Wed, 17 Sep 2025 23:04:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rebecca Cran <rebecca@bsdio.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
- ALTRAD8 BMC
-Message-ID: <8b5625a5-56bf-49bc-b4cf-82c60460db65@lunn.ch>
-References: <20250917180428.810751-1-rebecca@bsdio.com>
- <20250917180428.810751-3-rebecca@bsdio.com>
+	s=arc-20240116; t=1758143177; c=relaxed/simple;
+	bh=35UybGgKhNcWAZVrr7NvF0Abs/dTBIH2JOc5W2o5PDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qc95S79h1u47mVnsE3V9GcoyaQ41V+Y8S+q6ESuQdBwdQWaJmYLSApEiERgchWX4wk/95lSuqvATuSzEBv4Tax26Fpr9TFV076OZ6skdZ+pC4UoDNQcjL+6kOezSM/wVYR9WEgKDDkTGOWewneTmeGpBlfU3GC2JbdAW+rBDDGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afyD9Sgn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4924C4CEE7;
+	Wed, 17 Sep 2025 21:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758143174;
+	bh=35UybGgKhNcWAZVrr7NvF0Abs/dTBIH2JOc5W2o5PDQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=afyD9SgnCCGPnG8KYUiRMaUNI1pKt4c+ZfAgVV2KVZoGY/Nu0ywarEttUykx8k7GA
+	 ttM6XYHqiq8WGRLNabrBd+E15GdG5L4VSXBDsqQf+ofE8cU1qz1BRUNx6cX7MtSGF+
+	 jRePHNmvKXGvwqYi8wv2vqAqt7XFx9MmL8W2WPlWf0VGJr8qkbI5D/P2pzL08y8x/U
+	 WDQI5iI48F4HOfce+pMEvyrBPVzzorispPpljeqKJcqEwnno4phlSSh/TW47yzd1Zi
+	 CK7jxZ+wDvhf1ionbRQJuuFIh00v4ljrvE6Z2JzbEt19Ut8VWWCbydXwif/8dgkgn0
+	 5Rj/WRviljHEA==
+Date: Wed, 17 Sep 2025 14:06:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Alexei Starovoitov <ast@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Eric Dumazet <edumazet@google.com>, Rob Herring <robh@kernel.org>, Florian
+ Fainelli <f.fainelli@gmail.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Daniel Borkmann <daniel@iogearbox.net>, Jonathan Corbet <corbet@lwn.net>,
+ John Fastabend <john.fastabend@gmail.com>, Lukasz Majewski <lukma@denx.de>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, Stanislav Fomichev
+ <sdf@fomichev.me>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
+ <jiri@resnulli.us>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Divya.Koppera@microchip.com, Kory Maincent <kory.maincent@bootlin.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, netdev@vger.kernel.org,
+ Sabrina Dubroca <sd@queasysnail.net>, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de, Krzysztof Kozlowski <krzk+dt@kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH net-next v4 0/3] Documentation and ynl: add flow control
+Message-ID: <20250917140612.0cd98bac@kernel.org>
+In-Reply-To: <aMqJhl2swbkiYx_p@pengutronix.de>
+References: <20250909072212.3710365-1-o.rempel@pengutronix.de>
+	<20250909143256.24178247@kernel.org>
+	<aMqJhl2swbkiYx_p@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917180428.810751-3-rebecca@bsdio.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rebecca
+On Wed, 17 Sep 2025 12:12:22 +0200 Oleksij Rempel wrote:
+> On Tue, Sep 09, 2025 at 02:32:56PM -0700, Jakub Kicinski wrote:
+> > On Tue,  9 Sep 2025 09:22:09 +0200 Oleksij Rempel wrote: =20
+> > > This series improves kernel documentation around Ethernet flow control
+> > > and enhances the ynl tooling to generate kernel-doc comments for
+> > > attribute enums.
+> > >=20
+> > > Patch 1 extends the ynl generator to emit kdoc for enums based on YAML
+> > > attribute documentation.
+> > > Patch 2 regenerates all affected UAPI headers (dpll, ethtool, team,
+> > > net_shaper, netdev, ovpn) so that attribute enums now carry kernel-do=
+c.
+> > > Patch 3 adds a new flow_control.rst document and annotates the ethtool
+> > > pause/pause-stat YAML definitions, relying on the kdoc generation
+> > > support from the earlier patches. =20
+> >=20
+> > The reason we don't render the kdoc today is that I thought it's far
+> > more useful to focus on the direct ReST generation. I think some of=20
+> > the docs are not rendered, and other may be garbled, but the main
+> > structure of the documentation works quite well:
+> >=20
+> >   https://docs.kernel.org/next/netlink/specs/dpll.html
+> >=20
+> > Could you spell out the motivation for this change a little more? =20
+>=20
+> The reason I went down the kdoc-in-UAPI route is mostly historical.
+> When I first started writing the flow control documentation, reviewers
+> pointed out that the UAPI parts should be documented in the header
+> files.  Since these headers are generated from YAML, the natural way was
+> to move  the docstrings into the YAML and let the generator emit them.
+> One step led  to another, and we ended up with this change.
+>=20
+> I don=E2=80=99t have a strong preference for where the documentation live=
+s, my
+> primary goal was to avoid duplicating text and make sure the UAPI enums
+> for pause / pause-stat are self-describing. If the consensus is that we
+> should concentrate on ReST output only, I=E2=80=99m happy to reduce the s=
+cope of
+> this series and drop the kernel-doc emission. The actual motivation of
+> my  series is to add flow_control.rst and document the ethtool API
+> there.
+>=20
+> So if you prefer, I can respin with just the flow_control.rst and YAML =20
+> annotations, and skip the generator changes.
 
-> +// Connected to host Intel X550 (ALTRAD8UD-1L2T) or
-> +// Broadcom BCM57414 (ALTRAD8UD2-1L2Q) interface
-> +&mac0 {
-
-Thanks for the comments.
-
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_rmii1_default>;
-> +
-> +	clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>,
-> +		 <&syscon ASPEED_CLK_MAC1RCLK>;
-> +	clock-names = "MACCLK", "RCLK";
-> +
-> +	use-ncsi;
-> +
-> +	nvmem-cells = <&eth0_macaddress>;
-> +	nvmem-cell-names = "mac-address";
-> +};
-> +
-> +// Connected to Realtek RTL8211E
-> +&mac1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_rgmii2_default &pinctrl_mdio2_default>;
-> +
-> +	nvmem-cells = <&eth1_macaddress>;
-> +	nvmem-cell-names = "mac-address";
-> +};
-
-I see you did not manage to get phy-handle to work.
-
-The problem i have is the lack of phy-mode = "rgmii-id".
-
-Aspeed has a long history have getting phy-mode wrong. This has mainly
-affected 2600, but as far as i understand, this is a 2500?
-
-I've been pushing back on any 2600 DT using phy-mode = "rgmii". This
-is 99% of the time wrong, since it indicates that the PCB has extra
-long clock lines.
-
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/devicetree/bindings/net/ethernet-controller.yaml#L287
-
-What aspeed get wrong is that they configure the MAC to insert 2ns
-delay. And this is hidden way, in the bootloader. As a result,
-PHY_INTERFACE_MODE_RGMII gets passed to phy_connect(), when
-PHY_INTERFACE_MODE_RGMII_ID should be passed. Its a case of two wrongs
-combine to give a working system.
-
-I've been pushing aspeed to clean up this mess. And to do that, i've
-been rejecting DT with phy-mode = "rgmii". Most submissions has ended
-up dropping ethernet support, and are now twiddling their thumbs
-waiting for aspeed to cleanup the mess. Or anybody actually, there is
-enough public information anybody could fix it, and probably end up
-with a crate of beer/box of wine, etc.
-
-Now, it is slightly different here. You don't have a phy-mode at
-all. And all the other 2500 i looked at also don't have phy-mode
-properties. You are relying on
-
-        /* Default to RGMII. It's a gigabit part after all */
-        err = of_get_phy_mode(np, &phy_intf);
-        if (err)
-                phy_intf = PHY_INTERFACE_MODE_RGMII;
-
-This is equally wrong :-(
-
-Now, there was somebody who tried getting around my push back on 2600
-by simply deleting the phy-mode, and relying on this fallback code. I
-said don't do that. Its just going to cause more problems when the code
-gets cleaned up, and we have to remember there is an oddball platform.
-
-At the time, i did not know 2500 was different, and none of the DTs
-use phy-mode. So, i'm humming and harring. I set a precedent, no
-phy-mode should get a patch rejected. But this is 2500, not 2600.
-
-O.K. I will accept it, for 2500. Since none of the 2500 boards have
-it, this is not an oddball platform. If the cleanup breaks it, it will
-break all 2500 and that should get noticed pretty quickly.
-
-So, for these two nodes only:
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+We can adapt our approach to the needs as we go. But yes, my
+recollection of the series was that there wasn't actually many
+touchpoints here between the generated kdoc and your newly written
+docs at this stage. So let's defer rendering into the uAPI headers.
 
