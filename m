@@ -1,344 +1,278 @@
-Return-Path: <linux-kernel+bounces-819918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F706B7E273
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:42:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD931B7FF9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DC394E158D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 681A47B29F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 03:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4A62F60CD;
-	Wed, 17 Sep 2025 03:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07852F39B1;
+	Wed, 17 Sep 2025 03:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d92xco4P"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="riApcGlx"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010066.outbound.protection.outlook.com [52.101.201.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6448829BDBC
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 03:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758078884; cv=none; b=VIybmdd9jZYWSq52KVYps9FglW9vi/GcIEN33IX/78oihYIVAq+QMVZ1OfjHE3cRyIVYkU7tbbpNtOkhERr7gO4ySN70xg51czZ1MD7CZCv7VLJWfx5lpRF7nBOXFaLp/TGCDVZ/TK/hIXRapeF/2YA2ja4crZyF2yX6MuInUZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758078884; c=relaxed/simple;
-	bh=Z/MSIFiN82eflkb7jv68WI+DTQ0JCLDeojkD3HLHZ4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PQp1uvgY9iFuq8xH6SVbwAGMvVc7cMRahp1y4OguI+H2aHtP43lbq5lGSuLpa/+62vXNRDWs5/pYnObqU5OoyNJcpLw/AWnfimGZjaLxApQn6/M4fAQOVHfYa+hhe+Due8u3+2B/w5jPvHOFAReRpiJVQe0eR1J4Jtq/FYSbluI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d92xco4P; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b07e3a77b72so73181866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758078881; x=1758683681; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yYl9wW4dk4XbYzxIkLSJ4emAt8SgHCFiMbI64aRDGy8=;
-        b=d92xco4PqzBJcT5W/akKi+kMVu0J+lJA0lcepVZenhFJ15zhGProolxMpydYVoyaCx
-         KdQ7lgRWyAH3MsQ4EB6qQ9hfo5B3g1NPbH+uexCxLlEYO0uANbEYKdgxDs98ZFHvdVrG
-         KSHo9EXFX0NkUY6P1qNgMBU3SdIAi6icfSoAIH1gBwPFuZjcpATsIdr+1alklQjr3/y8
-         zfHHYSeEMlBwetLg8/1n1p25s3Gq4KEb5kPiz8sCnTtuKpc6Wf3MsXKP8XgGVqb7SODh
-         gAV28lDB0Wug44ArjSwpWHSfgZLRjAmZhGuoSBMSv0PJaoGvWXEhTxM9FJACG9lmePRE
-         pE2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758078881; x=1758683681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yYl9wW4dk4XbYzxIkLSJ4emAt8SgHCFiMbI64aRDGy8=;
-        b=Xo/E3dctAQEbBFyP/n6UyV0UHZtn1msiuYA2XPOMsfuazI91K1HPWaHXBWdV3v+nsM
-         cRoe61H3CwaHy3+B0G6gUeUgv4eMC8rjp+UT4CF3nJSgLLsiduwhHWZ0qg594ysAHus5
-         FiNcoYDmOaleSamWKbK3Izr3vSmw4HfZXA/v0uAH+CgxRzKcxWUHKTfnJfqIRVUtHqgF
-         AOGTpxuzM89JeVTkMo4SegjC63pdww6uEaHN8KVqRZZQhXdZWnChzYZRhhVMaoI3DZHd
-         kI+jvF2hoFDt8o5R9TvWT7BiBFKpWT8tMQrM41pq3ArQnJaWWfJN6KSSSB4Hpj9Us/0P
-         MxUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW385VKmck/UYdMzhyTY6QJb8XdO+QkmBWfjj7oQQW3CzWTl7CYpMQ6SBsMfEF0TfMRSFnddQc/6ctfXRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjIYOM9nh1TgivFHRCCnat+Br4ALhWH9yjWAEvSKOaBHl/4Weo
-	UDpEq34H8DAPGmQKsm5aTjYXYOr3IJEzyPIFUd+uh9nOKSVAiSxB3cg8Xj3qOvcx7t2jaCKCC9I
-	4D3zRYKbC8FSQHMhomV2EIoAPnXoByUA=
-X-Gm-Gg: ASbGncuN/MvgPKiwGVhn1enNyONRtCpLpyPATWEYyqFs6rA/fZqgpmG1EfsXhYM2uX/
-	VAq5qSCukmfohIqImUxvInDj/Xwaq+9kIpZ3ZMhX3b9T/uhJRyD5ysWrFANwRr5n7dHyFjjvwgE
-	0nErAIhkJc+yaSITxTn8ywDDYt79l3Ic/I0q4QfiXSEFAYbx7Sg0700QMJilQKmNaIPTFnvR+sB
-	2gAAFhQ/k2+5LvFujOTdmbMllguMQ0aaEFAig==
-X-Google-Smtp-Source: AGHT+IGVGuR+PydNlyGT48zzkbhH6Jd/ETlW5flAIwO7dAryEXYAeMrXHZg9Ogqnyr7/1kVi1ExQPAkq73fN5EIrd0Y=
-X-Received: by 2002:a17:907:da8:b0:afe:159:14b1 with SMTP id
- a640c23a62f3a-b1be49d7750mr65729166b.9.1758078880465; Tue, 16 Sep 2025
- 20:14:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F4626FA5E;
+	Wed, 17 Sep 2025 03:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758079279; cv=fail; b=aPJayxpHvaZbD3ZtZelmzYNV2UIlNKgXFdLelTOqiVxaTgWhnRsffcdsWugDmvtVw/NpBbDW1DDFv14qXjtOY99O9S/HIXOLwcopUWTn9tnzpP2rpOLmKfwEryTgUeZomLBkYTBUkkXi5Zx9JOUhXgzJE+JQ2rTJs4a/VbgMoOY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758079279; c=relaxed/simple;
+	bh=J+kVYqjMIt2S10ZIqnS1Bi69yC2yJLl9RHiNoOORk94=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EY1hgvZROAVgPwsURiqM7ysExi+65xcFeHAb5huk9qJxnf1VStkOCKuNh9b6qmbjwgdMVXeRvMHspSGpCmZndISZRcHWT4ghTTZSNQ6rcDwHoQGIbEh0xcAyBIiwHmFRrgDhtZmxC5H0ySm88lbYfkw61GQT7SA3TXcFCYhOw2A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=riApcGlx; arc=fail smtp.client-ip=52.101.201.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CBGQMzKNngFz4xoXQpD1Tz6lPaFm+fy60Q1h9IyXJMcONu8tHZs7i8at+3ge17uItcPY7Bhb+aGIVwc+GBdVUgrAXNDbUbT9+bfTREzghwyL1OkMz5jf7XH5+HWgGKfZnTladq9xtIkA9wih4tOqSNvUr7ucCr22ZQq2GqIkPWwgHUtYzsNldtvlg9d7NBKN5m/TpSN2pZZ+ddsD0yMTA9zkh2MGULaS0VY3U284bkvUr5ow6OmVcLolAQzaVlakrftUKwpYVpHS3WKFrUCaw8GqlLZNDCT1N2lI+QGI+uyG9RXO2MuRwFV+xWOkeznth3f+CEuWD29QbbYhqr2A4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y297DNKXnGPYeabsTndoff8kk6meZO3xWRXaQEXsYpw=;
+ b=akJTRxvqIISyuwgXQdOsqVfZxhRcwk+lLEJ2BSYP+oq7dDTfZi0Egbjzyc91ileSzl8ztDjQxuc4TWopJs4aojuVB7IDyuoAZrabwVD95RngfLMOr+h8qXCtGP3vE8/5XNFA1g66fPf2Wjr+B/zUCLpJY9ByQ38pu9hKRG0l0mHW+5jzh2joIZ3pSMjJhQlqeDdixoBXI4FQ51/ikZHUdG5og+DltCxUsSkAVLPmXQLurUUfFDzqC7M8DRzKw7vDWDbqIOAyf+PMVTKJh6HCQdP83pfXQt1/FtwgNsmej7Fr36CfBAuRUfiUlo3JPO3OG3ZKUXBCagMrmCB2i7H2FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y297DNKXnGPYeabsTndoff8kk6meZO3xWRXaQEXsYpw=;
+ b=riApcGlx4LHILChMl4a3r0xgthEcBSiz7oa/ZWY+xqzMsa9Zb1O99ipa4yPoenhg7yEb2VhSt2oPScZmUxTdQnVmh4T6F35evBdUgf/lyTPMwMCWby6JUlIC2lJ/KaprLGiGvJRjhSFlIn60lTUNCbjWb25W+WoNpfCVTx/PGGcRAioj1sTtXPrx+nSdD2EbW9SevBHWZUcUx5fHqHnbfrovbg25U2SS+AZZR3n93pzCkgBC259ZvvCejsjGGqLVAhKWJCxfHcif4yVoxEZPDrR7gLv6UTSAvnYJvRPPz2g2ZAi+1zYo59Fy3fyQ6ZWY02cxd0BBGQWa5+4nymw6PQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ SJ2PR12MB7943.namprd12.prod.outlook.com (2603:10b6:a03:4c8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Wed, 17 Sep
+ 2025 03:21:15 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Wed, 17 Sep 2025
+ 03:21:15 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ "open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>,
+ "open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, Anand Moon <linux.amoon@gmail.com>
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject:
+ Re: [RFC v1 2/2] PCI: tegra: Use readl_poll_timeout() for link status polling
+Date: Wed, 17 Sep 2025 12:14:44 +0900
+Message-ID: <23013855.EfDdHjke4D@senjougahara>
+In-Reply-To: <20250831190055.7952-3-linux.amoon@gmail.com>
+References:
+ <20250831190055.7952-1-linux.amoon@gmail.com>
+ <20250831190055.7952-3-linux.amoon@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0169.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c6::12) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905024659.811386-1-alistair.francis@wdc.com>
- <20250905024659.811386-7-alistair.francis@wdc.com> <f1a7b0b5-65e3-4cd0-9c62-50bbb554e589@suse.de>
-In-Reply-To: <f1a7b0b5-65e3-4cd0-9c62-50bbb554e589@suse.de>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Wed, 17 Sep 2025 13:14:14 +1000
-X-Gm-Features: AS18NWDcMpm1G2mFqhUogMiikl4B2cDYrd9t5Pbx1ZhvlPjk4QLZp7NlJuRUoZU
-Message-ID: <CAKmqyKM6_Fp9rc5Fz0qCsNq7yCGGb-o66XhycJez2nzcEs5GmA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] nvme-tcp: Support KeyUpdate
-To: Hannes Reinecke <hare@suse.de>
-Cc: chuck.lever@oracle.com, hare@kernel.org, 
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SJ2PR12MB7943:EE_
+X-MS-Office365-Filtering-Correlation-Id: 287845cb-3a87-4f58-73e4-08ddf5994226
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MGxrazVRRzl1SnFodU1MdDE2b016bDJraExXY0s1UXBnUStkaVZ3YWhyRFlP?=
+ =?utf-8?B?L3F2SG41WWF0SkpLV08yakZqQTkxMGsxTDlJTUk3QVczMDc5NFVNUDl4ekV4?=
+ =?utf-8?B?M1dieTNTc1QwYkczcGVXaEo5cUtEZFhPNXAxbWkvWi9kTkkzaUxXV3NSQ1kx?=
+ =?utf-8?B?bkJDMjRkc3lJdVdyUDExVHhodlgwVVkzM25nL3AyazBQcXlua2pDTmlEYlZ5?=
+ =?utf-8?B?VU1PZHd1UU8rMVpOTGxoNXk3R2VjSDlCbWJDNERQZk9wTHhRWlhGWWpEcXpS?=
+ =?utf-8?B?MVpYL0JCbXYvRlNBTEkza0xjbnprTkpmVzhuY0FVTHNQcFJFWDZvbmwyaFpD?=
+ =?utf-8?B?M1VjaldpZ1NPVW1pUlJNOFN1dmc4NWpqYjkyQjVodmlUWXhUN01ubWhlbFpV?=
+ =?utf-8?B?SjVDbVdYQ2tpYnZCUTVzNGVoYWN3cXIrYmVkaks2RlBkblhITkRZRVdKbVNw?=
+ =?utf-8?B?SzFpcUNBY044MVhKYmtNN1FmVGVUa0xlSUFDQVRrWDlPbWJTcWRGOFhzSUcz?=
+ =?utf-8?B?MzNkelNlajFsNFB2aXA5b2xodm9Yd0w1NThVWk9DUTBoWEdTbUZLQ2ZNc1Z6?=
+ =?utf-8?B?NTJrMnpLcW9BVGI5VWhTU0FTRkhyV3MyaXpIMFRVUncxOVF0aUJsY21XNWZx?=
+ =?utf-8?B?MGF4WExlNFd6NnBSS2FMYW8yNVRyQlZQVS9tTTlPQm1wT0lCcUZ0cklHRmVJ?=
+ =?utf-8?B?WU1vSWxUVDdpWWd3Q0NxM25MZlo0S0pVN2FtWFJXbWdHbHk1b2k1UEdkSDNt?=
+ =?utf-8?B?RkswWjJUb3hZSW5rWGRTZnEvTmttOVZSVGw3OUxYT2FBNENIWVNYZE1EM1Qz?=
+ =?utf-8?B?eTQ3ZE0xSFVta3ZhOVVQdUQ3eEdmcVc4ZTY2ckNST2N0WXJQYzVTdURBM0JI?=
+ =?utf-8?B?UHcvSFpsT295UWYxRnBmQWtsRE1WemhrQk9DeGJtc1hPd1BBSk1Hem80amY0?=
+ =?utf-8?B?cDlDY05kL0VvT2dtQXdXdUZvejlma3NRYittaG1HaDRwMVNrdjBaWFR2YlJt?=
+ =?utf-8?B?SDFVYVNYUS9TMkpVSFErV3AyRHU3VUZGaEFTOGFkUzFORWVoaFdRb05RZllr?=
+ =?utf-8?B?VnJWY0tPTGFMcEZXWTMrY1Y5RzVxUGpGNXAreWY4ZWJGaUR1WXdvTVorWFVq?=
+ =?utf-8?B?U2hSRXNtOG9ERGZhaDVpaHBub3lJU3B5K09DR0haWERVdVNwdnVaamhpM0hs?=
+ =?utf-8?B?UDlESTdVRFlDTjJ3Uk14ZzcvcDZqRkJDeFZlQWl6VURJa0R1SGcrRUI2bHJw?=
+ =?utf-8?B?Q3ZWcmFLbFdJNVdCYlQ0dE43TlNqK00weXdEcE1DRWdtczUzTG11SnhNUTBW?=
+ =?utf-8?B?Z2hpVC9EN3NVamNaQ2NDOTFJZDFFdWJ5TVdEVFcvaUgvNjBmU005MWhkSTdC?=
+ =?utf-8?B?UmNvNFVyVE10dTdWRXFFOUlHOVZnRm1OU2w3RlpmcmRJRFhoY3lyWm1JOXZH?=
+ =?utf-8?B?TktPU1FmRGNmZktncmJVS1BaZFlaWGFRSXhNRVI4NnUyaFYwVzhka3BacVBE?=
+ =?utf-8?B?UjZQTjlxN1BpQ3JUWDZmd0lIS1Facml6L04xSmswUno5RWVhMlQ1TUh5SFpi?=
+ =?utf-8?B?Ny9XeVB3WTV4OCt6bnZGSjFObXR0TVB6OWt2NnM2ZVJsU2hybjNTNHFoZlA0?=
+ =?utf-8?B?MWo0UDg5UHBFdWwwamdYUDYxbzBaVVlYUmIwMjFQRk01OE1VOVZxd20zUlRs?=
+ =?utf-8?B?TzdTY2lpU3VGU1E3WWNWT3FmUmVrWjI0UXRLcWlRc0MrSVR2NEdOYlJCeEpL?=
+ =?utf-8?B?d05oK1drQm1GVy92cy9SWGhaKzAyWWRHSnJvOFE1YjZzSTJyWkwyOUVSclJy?=
+ =?utf-8?B?YjNlYkpqaHl5UFFXYlJCVTJWK3NJNmJZU20vWGRWb2JrTjdQRmtnOE9vNVFI?=
+ =?utf-8?B?TSsvT2x3c1gyMS9VWG5ISm9Pdml0S3RKbHFYV1pPR3h1cFhNaVFjMnhlSUc1?=
+ =?utf-8?B?bld6RG5zRHg1ZEtwY0JyZlNsa2Fhc2h1RC84RHNZREZZK2pNMmZ5dE8rNHpo?=
+ =?utf-8?B?UE5wbzlDM2JRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?d2k2NVJEU0lCajZWcHhheFdVQXhkTXUzNzFXMzZkK1Z4YUFkTWFPN0J0ZTRS?=
+ =?utf-8?B?dkVBUWhsVFFPNXp5Q0JGb1h2Nk93cWNnemxXN25uYzg2RHFzaVZ1dmR5aTRL?=
+ =?utf-8?B?N0hoWFM2QmozZWdVbGU5L0xvSnF2Rk1sL3RoYjc5d3NVeEg5cVh2SzAxblNY?=
+ =?utf-8?B?Mlo3ZjA0Y0FBNmJYSnBBOSsyS2M0akhadnpxWHllWXZDekJLZ0VYNExXRFF5?=
+ =?utf-8?B?dmVLaUpVclFLMGh5eFBXWkJhM0hGNGRWdE04R1NEVHFGSHdIUmhab3E0bGl3?=
+ =?utf-8?B?TEhHQTFyNGUrdEpBTEVqUExPajVBNWM5L0M0RjVLVUVvSVM5eHFrR29lNi9H?=
+ =?utf-8?B?UHB3TzA2T0N3bkVobGJlRm9QTzhYcWtmaFBIczB5dElVdFl1SHVyQk5mOGxU?=
+ =?utf-8?B?MzA0TW5lT0pBUE1wY1ZiUVlKczFncHFsUU1TSnk0S050QkVnYVozVTg3WVhn?=
+ =?utf-8?B?d25Cd05TcVo3STBsUDJzQzNCS0ZzVlVyanhFS2prT3JOWmhJK2tFU0tRZE9D?=
+ =?utf-8?B?MkUyaXVlVU0zS1dicXZWUXBXK2E2NVE5Nmp4WlZQRzhKYW45NVNtZkJRMGdr?=
+ =?utf-8?B?YWFUcFJteC9IZ0ljSXJUWFlGL3V4WWhkTmtEbFluMzJXOUVwN1pHSE8yNE5w?=
+ =?utf-8?B?ckRPRDZjeTVNdCtNcDlSY0YwYWJIK1BROVc1N2FWMndUSCs0blA0allITjA0?=
+ =?utf-8?B?ams1NnNjZ1hKcGNHVGpTa29XOUFoL2draVFIbVJMd2JwV2p3UUFzbkJhY2M2?=
+ =?utf-8?B?R04ydmpvdDd1bGVUbW5SdE05QUplZDVzd2llOHhmYmNPODJhdFFpa0NtL0Jo?=
+ =?utf-8?B?OFprcXFETHFxQ1JENDJHcHNXcUpaTjVtRlJuUGNreFdQdTBKcnhSd214blZW?=
+ =?utf-8?B?bVkzU21OTEEzL2NsSnVlMUdvTEdSamRHZG5tRWtJZjZzczFHZnNHRFhsdkNk?=
+ =?utf-8?B?VlBRcnFGaG1VNHBpTjdlanR6S2dEUzJFM3JlT2tLOXYvSC94aVVndjVSUlB6?=
+ =?utf-8?B?RjZxOHJtWTBJeXlXSVBXVDBqeStibmRUczRZL3BBM0dVN2JTM1RxcTAzS2Vi?=
+ =?utf-8?B?WE94blg0dVFnaElncW0ydzZNZityeUhkaG5EY3hyL0l5NGRKMGVMU1ZNeXdU?=
+ =?utf-8?B?bXJHR3c3V25uYWlESnkzaEsvMXJhUitNdFA4N3I4V0JOaHhuSzVqanAwRE5I?=
+ =?utf-8?B?Rkd5MVZLeUlXdHZzYkRUQ3V0RVlrRmE2OWFsM250SHVpaUhINGtrSVJmZ1d2?=
+ =?utf-8?B?eGxINnlOVEhNa1FhRDNRbGRVZS9OVk9pL24vVmJOQ1Z2UTExQzh6Nm9tT2pu?=
+ =?utf-8?B?WU96V1I5cXo2bjNrQjBmRXpBNWJud3BYK3lzZWNPR2FYOEJSOFZQWWJyczhk?=
+ =?utf-8?B?bVVWd2xnYjN1YVBEeDA1eVVobVBZTU8xTndhMkxld05oKzRnNWtXVGZuOElz?=
+ =?utf-8?B?ZkJBZm5VdEp4OEc2RzBYYTF0V1ZXMzNGWkhrSzJsOFpteFNWb2ExcHpKTkF3?=
+ =?utf-8?B?Y1A0OEs1NndiclhFSFIzWXNuRzRXMzZ4dWs0bCtFaTN6azdweWlkVVVlOW93?=
+ =?utf-8?B?K3gyN2YzTGJma3lxejhsY1A3NjcwMnIvT1ZKbkQxSC9xSzVXVjFjcDM1NVM1?=
+ =?utf-8?B?VTVXVDBYSGZkd3d6bmV6NGdxL25IYW9zVHhWa3prQXAxVjJMRHdxVnVKcU5U?=
+ =?utf-8?B?NmEyWklFcktmWlM4WFB3b01ZOXQ3UDk3NmUrQUJESzRUQnB0L0hDWDl3N055?=
+ =?utf-8?B?aVFpMSswZituNGF1TjhXb0tjNXAxRThKMVZpOGxpUE5ncFp3SytLcEtEY2t4?=
+ =?utf-8?B?d0hIaVFQWU9TK1NFVmVGQ3B5eDFuNUlkRzdKeGZHalJ3cWpYWDZOclFwWCtI?=
+ =?utf-8?B?RG5WcWVGRnFETGxuYjdYdXVES2syWWk1NUpWMUtmT1gzeFJmK3hJMFFXR3Zs?=
+ =?utf-8?B?QzI0QVZhMjJseEQ1dmFrcVA5NURKNmpNQURZRmRzVVcvd2JVZE14NXlaeVV0?=
+ =?utf-8?B?Q2dFRDFmV1NmZTl1QS9jcW1KZFpQWk1GT0sra1RpRHJqUmZkNkZHMmdwdHB4?=
+ =?utf-8?B?TzMxQzFlTjl5MGNVbnNhWkJxL2UyVEVtSmxCT2RZcXdJY0ExMlhIVUE2RCtP?=
+ =?utf-8?B?MkZTa3RqclBJNGgrOHJNcEpmWWVsb2paMVFVdXBCRGRONVhZNjk0VmppQVFX?=
+ =?utf-8?B?QUo4SkFYZTJDWTRYeCtwNHBBVFl3VVQwQTA2T2ZKc1pYNHp0Rml1ZnpoOG9r?=
+ =?utf-8?B?TGhLUDZYTW4zMkdnOU1MQi8xUDZBPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 287845cb-3a87-4f58-73e4-08ddf5994226
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 03:21:14.8152
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nlK8t5Rhl7rJN5YIEOosGIIzx4Wesi4mOTJOMu2C0dTSFyEltorGsPjLCnjcY9aTaDrhSvbrUTKvgBv/ylLUnw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7943
 
-On Tue, Sep 16, 2025 at 11:04=E2=80=AFPM Hannes Reinecke <hare@suse.de> wro=
-te:
->
-> On 9/5/25 04:46, alistair23@gmail.com wrote:
-> > From: Alistair Francis <alistair.francis@wdc.com>
-> >
-> > If the nvme_tcp_try_send() or nvme_tcp_try_recv() functions return
-> > EKEYEXPIRED then the underlying TLS keys need to be updated. This occur=
-s
-> > on an KeyUpdate event.
-> >
-> > If the NVMe Target (TLS server) initiates a KeyUpdate this patch will
-> > allow the NVMe layer to process the KeyUpdate request and forward the
-> > request to userspace. Userspace must then update the key to keep the
-> > connection alive.
-> >
-> > This patch allows us to handle the NVMe target sending a KeyUpdate
-> > request without aborting the connection. At this time we don't support
-> > initiating a KeyUpdate.
-> >
-> > Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> > ---
-> > v2:
-> >   - Don't change the state
-> >   - Use a helper function for KeyUpdates
-> >   - Continue sending in nvme_tcp_send_all() after a KeyUpdate
-> >   - Remove command message using recvmsg
-> >
-> >   drivers/nvme/host/tcp.c | 73 +++++++++++++++++++++++++++++++++++++++-=
--
-> >   1 file changed, 70 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> > index 776047a71436..b6449effc2ac 100644
-> > --- a/drivers/nvme/host/tcp.c
-> > +++ b/drivers/nvme/host/tcp.c
-> > @@ -171,6 +171,7 @@ struct nvme_tcp_queue {
-> >       bool                    tls_enabled;
-> >       u32                     rcv_crc;
-> >       u32                     snd_crc;
-> > +     key_serial_t            user_session_id;
-> >       __le32                  exp_ddgst;
-> >       __le32                  recv_ddgst;
-> >       struct completion       tls_complete;
-> > @@ -210,6 +211,7 @@ static int nvme_tcp_start_tls(struct nvme_ctrl *nct=
-rl,
-> >                             struct nvme_tcp_queue *queue,
-> >                             key_serial_t pskid,
-> >                             handshake_key_update_type keyupdate);
-> > +static void update_tls_keys(struct nvme_tcp_queue *queue);
-> >
-> >   static inline struct nvme_tcp_ctrl *to_tcp_ctrl(struct nvme_ctrl *ctr=
-l)
-> >   {
-> > @@ -393,6 +395,14 @@ static inline void nvme_tcp_send_all(struct nvme_t=
-cp_queue *queue)
-> >       do {
-> >               ret =3D nvme_tcp_try_send(queue);
-> >       } while (ret > 0);
-> > +
-> > +     if (ret =3D=3D -EKEYEXPIRED) {
-> > +             update_tls_keys(queue);
-> > +
-> > +             do {
-> > +                     ret =3D nvme_tcp_try_send(queue);
-> > +             } while (ret > 0);
-> > +     }
-> >   }
-> >
-> >   static inline bool nvme_tcp_queue_has_pending(struct nvme_tcp_queue *=
-queue)
-> > @@ -1347,6 +1357,8 @@ static int nvme_tcp_try_send(struct nvme_tcp_queu=
-e *queue)
-> >   done:
-> >       if (ret =3D=3D -EAGAIN) {
-> >               ret =3D 0;
-> > +     } else if (ret =3D=3D -EKEYEXPIRED) {
-> > +             goto out;
-> >       } else if (ret < 0) {
-> >               dev_err(queue->ctrl->ctrl.device,
-> >                       "failed to send request %d\n", ret);
-> > @@ -1371,9 +1383,56 @@ static int nvme_tcp_try_recv(struct nvme_tcp_que=
-ue *queue)
-> >       queue->nr_cqe =3D 0;
-> >       consumed =3D sock->ops->read_sock(sk, &rd_desc, nvme_tcp_recv_skb=
-);
-> >       release_sock(sk);
-> > +
-> > +     /* If we received EINVAL from read_sock then it generally means t=
-he
-> > +      * other side sent a command message. So let's try to clear it fr=
-om
-> > +      * our queue with a recvmsg, otherwise we get stuck in an infinit=
-e
-> > +      * loop.
-> > +      */
-> > +     if (consumed =3D=3D -EINVAL) {
-> > +             char cbuf[CMSG_LEN(sizeof(char))] =3D {};
-> > +             struct msghdr msg =3D { .msg_flags =3D MSG_DONTWAIT };
-> > +             struct bio_vec bvec;
-> > +
-> > +             bvec_set_virt(&bvec, (void *)cbuf, sizeof(cbuf));
-> > +             iov_iter_bvec(&msg.msg_iter, ITER_DEST, &bvec, 1, sizeof(=
-cbuf));
-> > +
-> > +             msg.msg_control =3D cbuf;
-> > +             msg.msg_controllen =3D sizeof(cbuf);
-> > +
-> > +             consumed =3D sock_recvmsg(sock, &msg, msg.msg_flags);
-> > +     }
-> > +
-> >       return consumed =3D=3D -EAGAIN ? 0 : consumed;
-> >   }
-> >
-> > +static void update_tls_keys(struct nvme_tcp_queue *queue)
-> > +{
-> > +     int qid =3D nvme_tcp_queue_id(queue);
-> > +     int ret;
-> > +
-> > +     dev_dbg(queue->ctrl->ctrl.device,
-> > +             "updating key for queue %d\n", qid);
-> > +
-> > +     cancel_work(&queue->io_work);
-> > +     handshake_req_cancel(queue->sock->sk);
-> > +     handshake_sk_destruct_req(queue->sock->sk);
-> > +
-> Careful here. The RFC fully expects to have several KeyUpdate requests
-> pending (eg if both sides decide so initiate a KeyUpdate at the same
-> time). And cancelling a handshake request would cause tlshd/gnutls
-> to lose track of the generation counter and generate an invalid
-> traffic secret.
-> I would just let it rip and don't bother with other handshake
-> requests.
+On Monday, September 1, 2025 4:00=E2=80=AFAM Anand Moon wrote:
+> Replace the manual `do-while` polling loops with the readl_poll_timeout()
+> helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
+> during link bring-up. This simplifies the code by removing the open-coded
+> timeout logic in favor of the standard, more robust iopoll framework.
+> The change improves readability and reduces code duplication.
+>=20
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  drivers/pci/controller/pci-tegra.c | 38 ++++++++++++------------------
+>  1 file changed, 15 insertions(+), 23 deletions(-)
+>=20
+> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/=
+pci-tegra.c
+> index 3841489198b64..8e850f7c84e40 100644
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/irqchip/chained_irq.h>
+>  #include <linux/irqchip/irq-msi-lib.h>
+>  #include <linux/irqdomain.h>
+> +#include <linux/iopoll.h>
 
-Unfortunately that doesn't work as future calls to
-`handshake_req_hash_add()` will fail.
+There is already an iopoll.h include in this file, so this adds a duplicate=
+.
 
-I now think that's a bug in `handshake_complete()` and I have a better
-fix in the next version.
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+> @@ -2157,37 +2158,28 @@ static bool tegra_pcie_port_check_link(struct teg=
+ra_pcie_port *port)
+>  	value |=3D RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
+>  	writel(value, port->base + RP_PRIV_MISC);
+> =20
+> -	do {
+> -		unsigned int timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
+> -
+> -		do {
+> -			value =3D readl(port->base + RP_VEND_XP);
+> -
+> -			if (value & RP_VEND_XP_DL_UP)
+> -				break;
+> -
+> -			usleep_range(1000, 2000);
+> -		} while (--timeout);
+> +	while (retries--) {
+> +		int err;
+> =20
+> -		if (!timeout) {
+> +		err =3D readl_poll_timeout(port->base + RP_VEND_XP, value,
+> +					 value & RP_VEND_XP_DL_UP,
+> +					 1000,
+> +					 TEGRA_PCIE_LINKUP_TIMEOUT * 1000);
 
->
-> > +     nvme_stop_keep_alive(&(queue->ctrl->ctrl));
-> > +     flush_work(&(queue->ctrl->ctrl).async_event_work);
-> > +
-> Oh bugger. Seems like gnutls is generating the KeyUpdate message
-> itself, and we have to wait for that.
+The logic change here looks OK to me. This makes the timeout 200ms (TEGRA_P=
+CIE_LINKUP_TIMEOUT is 200). Previously, the code looped 200 times with a 1 =
+to 2ms sleep on each iteration. So the timeout could have been longer than =
+200ms previously, but not in a way that could be relied on.
 
-Yes, we have gnutls generate the message.
+> +		if (err) {
+>  			dev_dbg(dev, "link %u down, retrying\n", port->index);
+>  			goto retry;
+>  		}
+> =20
+> -		timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
+> -
+> -		do {
+> -			value =3D readl(port->base + RP_LINK_CONTROL_STATUS);
+> -
+> -			if (value & RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE)
+> -				return true;
+> -
+> -			usleep_range(1000, 2000);
+> -		} while (--timeout);
+> +		err =3D readl_poll_timeout(port->base + RP_LINK_CONTROL_STATUS,
+> +					 value,
+> +					 value & RP_LINK_CONTROL_STATUS_DL_LINK_ACTIVE,
+> +					 1000, TEGRA_PCIE_LINKUP_TIMEOUT * 1000);
+> +		if (!err)
+> +			return true;
+> =20
+>  retry:
+>  		tegra_pcie_port_reset(port);
+> -	} while (--retries);
+> +	}
+> =20
+>  	return false;
+>  }
+>=20
 
-> So much for KeyUpdate being transparent without having to stop I/O...
->
-> Can't we fix gnutls to make sending the KeyUpdate message and changing
-> the IV parameters an atomic operation? That would be a far better
 
-I'm not sure I follow.
 
-ktls-utils will first restore the gnutls session. Then have gnutls
-trigger a KeyUpdate.gnutls will send a KeyUpdate and then tell the
-kernel the new keys. The kernel cannot send or encrypt any data after
-the KeyUpdate has been sent until the keys are updated.
 
-I don't see how we could make it an atomic operation. We have to stop
-the traffic between sending a KeyUpdate and updating the keys.
-Otherwise we will send invalid data.
-
-> interface, as then we would not need to stop I/O and the handshake
-> process could run fully asynchronous to normal I/O...
->
-> > +     ret =3D nvme_tcp_start_tls(&(queue->ctrl->ctrl),
-> > +                              queue, queue->ctrl->ctrl.tls_pskid,
-> > +                              HANDSHAKE_KEY_UPDATE_TYPE_RECEIVED);
-> > +
-> > +     if (ret < 0) {
-> > +             dev_err(queue->ctrl->ctrl.device,
-> > +                     "failed to update the keys %d\n", ret);
-> > +             nvme_tcp_fail_request(queue->request);
-> > +             nvme_tcp_done_send_req(queue);
-> > +     }
-> > +}
-> > +
-> >   static void nvme_tcp_io_work(struct work_struct *w)
-> >   {
-> >       struct nvme_tcp_queue *queue =3D
-> > @@ -1389,15 +1448,21 @@ static void nvme_tcp_io_work(struct work_struct=
- *w)
-> >                       mutex_unlock(&queue->send_mutex);
-> >                       if (result > 0)
-> >                               pending =3D true;
-> > -                     else if (unlikely(result < 0))
-> > +                     else if (unlikely(result < 0)) {
-> > +                             if (result =3D=3D -EKEYEXPIRED)
-> > +                                     update_tls_keys(queue);
->
-> How exactly can we get -EKEYEXPIRED when _sending_?
-
-Good point. You can't with this current patch set. I have patches on
-top of this that will generate a KeyUpate as part of the send
-operation, which I plan to submit after this series.
-
-So this is a bit of prep work to setup the NVMe layer to handle
-sending and receiving KeyUpdate requests. I can drop this change from
-the series if that's prefered?
-
-> To my understanding that would have required userspace to intercept
-> here trying (or even sending) a KeyUpdate message, right?
-
-Not necessarily. The TLS layer can trigger a KeyUpdate independent of
-userspace. This would happen for example if the sequence count was
-about to overflow, which is what I use in my testing. Userspace has no
-idea of the current sequence number, so it can't be involved. The
-kernel will need to start the KeyUpdate send if the rec_seq is about
-to overflow.
-
-> So really not something we should see during normal operation.
-> As mentioned in my previous mail we should rather code the
-> KeyUpdate process itself here, too.
-> Namely: Trigger the KeyUpdate via userspace (eg by writing into the
-> tls_key attribute for the controller), and then have the kernel side
-> to call out into tlshd to initiate the KeyUpdate 'handshake'.
-
-Yeah, I agree about exposing a way for userspace to trigger an update.
-That would only be for testing though, as in normal operation
-userspace has no insight into the current connection state. In a
-production system the kernel TLS layer will need to initiate a
-KeyUpdate.
-
-> That way we have identical flow of control for both the sending
-> and receiving side.
->
-> Incidentally: the RFC has some notion about 'request_update' setting
-> in the KeyUpdate message. Is that something we have to care about at
-> this level?
-
-It is something we will need to care about. At this stage it isn't
-supported as it adds a little bit of complexity, but I should be able
-to extend the current approach to support a request_update.
-
-Alistair
-
->
-> Cheers,
->
-> Hannes
-> --
-> Dr. Hannes Reinecke                  Kernel Storage Architect
-> hare@suse.de                                +49 911 74053 688
-> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
-> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
