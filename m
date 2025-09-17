@@ -1,232 +1,244 @@
-Return-Path: <linux-kernel+bounces-819795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76770B7D9E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6420B7DA2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9A81891EE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1516D188E428
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C911F4C89;
-	Wed, 17 Sep 2025 00:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9419720B22;
+	Wed, 17 Sep 2025 00:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="P889/CWc"
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7tiI+yJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A808213B2A4
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 00:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76E01FCF41;
+	Wed, 17 Sep 2025 00:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758069777; cv=none; b=Rt0tBGoI+9KTQ9rxRLNAvpJM3Zk3vZfzfPE867zTVlG3pEbz4J0ec7vFsZRPEe6BknKWsQFeREHmh7ZKB48sQ4mAcuZ7XdhdRJ60D6LaeH3auUjNrmYBD/DEpbI8OWznAP5f+844QwVft3+fdmgEytWryaf68Ths1jGO4bpdeg8=
+	t=1758069792; cv=none; b=AkcwIghmw1BRFk3JAyBvGlAodxGq6y3CwZxiiQBxFy5XJMnDf0SiCoEl0bD1+ULliQajr8X4RXtj5mM59mkM8JhZHZrvrkngo51/0Rw1rPPZ17+4nuy3DwVUe8l8ebPM6FyYdzFqObMup47tQG9gGvBp6kCVZr7Y9KG+Z0BjJPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758069777; c=relaxed/simple;
-	bh=IoCZ6ZPxfmj61WyHvtWW0iu+5wmp6Y5xJVRbIn3IzA4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U41K3nq7UWuoyCL5jy9sQlJfvP33TwEthjuhqS8EdZ8hfOR+5d04R+rZt1oNgx7fHhXIPfT3PnmAlNp+8fYSFHkhgmwnJ7eHJQmhEbiY3QyJYSd0rBmJnj1kuguzwDMb6bbB/Le9Xy1pe/XhqugbioAFNq66lSVU8WTPXU8tbxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=P889/CWc; arc=none smtp.client-ip=209.85.214.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-251fc032d1fso68516905ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1758069775; x=1758674575; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATmFGymkybyKAm0NHpJujWlpTamfL92YEA1XMkuNKxM=;
-        b=P889/CWcl31iCJ/5pcXBnFqq/b5z3SyNtnBDXY40wTLHcduH7ze3ouyLoqADDVWHmB
-         PsfoBXBVdNHRxIiQgRrEQ/e8hhaMnLYq7nXEU6/vKT9se3nSRnxCrDSI9njk04dDlc+B
-         jvwqr04b0veFRA0DZGJ42F4SQ8B4+JAuMw62dQkpwVT1M/bVLd03AUgohQqZduTN1gb5
-         JBwyobdKUUCAEcWm588ycAzCLMsUscLPLfr8NG+OWqunw3YvlKK54JuLMF2LZICa4MPT
-         55WAF8mqXvY2T179rl/c7/QgTb/MUCgj+9XxDeCIEdL+y8MIDYiTQefKn32IM/cIsIT7
-         ANFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758069775; x=1758674575;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ATmFGymkybyKAm0NHpJujWlpTamfL92YEA1XMkuNKxM=;
-        b=jSptbuES+0eXSF0K2Kysb29QuLNtUYL0hZ4lX+kx/XGb/z13AppbjtvCtrfkLERaCG
-         7zJlVf1kQ+fc0GSZ4N9BGga4sQNdLuHwx+kZL8rQXDNEnEKNpIo3/agcdEIy3ALlBm/c
-         n/YnPYY4bbwnpDbQ9qVR8AHDTleyh9rVT+neOmXBrFSAMrn+mMgAvQsg6IO1ZnOFovlc
-         kQtVXPA/tIy9sscxhzaVZaN3mihYCZeO1CeJhoOULDi+ozAVnV6FLbZy+5PJYnJ7hmaT
-         9nT+VN9ffsDmxxjSVCesJ85eGhtdE0HM4z+7Iaol6QiLzuey50y+aQvfrNgy2TTmGtLG
-         jp1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUy+tt+oqQYHlkAR8ZFThoH9BofVrdDzy0k3/22v0JzBg7iD++uvc3eT7r47ZxTQUjaD/yFq7i9Y2YQbRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxM0xDp239oNIqYrp+YB+O72T50EBm+zY8JqsLjC3vyYfVTT8q
-	hWnrt3vqyyL07WtHnsqrK9kfPwbBX0iLOYij8nb+oep69tKDW8YV3A1yZi3tDM/JikW1Du510eg
-	fbHFsMBCIFTm49vP0pqZ9uHUJIyWDr9I/zi2I5jx1VrOzJITlBSCy
-X-Gm-Gg: ASbGncthEubROVb1412NNcMO/QMjyHE8q7CyI4/CXng9Y+3Nmg/kfLyS6ZtxndY83Bh
-	QpibWI0tmiHQaln56NgfJ9niWTSAUzb0OHfXS3WvMrNZ0/y5GRtkStwuYqrtsvaBoWcCw11FOHS
-	0Wt+4/dhCGEVVsdpqvW+CNSfBAioa3QJ6u55gnrGFKKkk9GAfdQm9DueE0PFK265PjfSVG4xhi+
-	9fDxiZI9VZIuiTCpvbY/DbG2oBNnRxkA48u6tYXhd5tkygQtZwFi6ivGL/iQj/0TDHnRUqF+i5p
-	R4YRx1Ql6+ezT/A+aIOHaYfsWw4xRGUPMViOqYUXgyBWH/P5Gmd50sCXZw8=
-X-Google-Smtp-Source: AGHT+IGa74cu98ZPyPu6W012ECueI7Hm4NVYYwlDa0a5J3DAoHe3e4Ppjs5ycH+FwgrMvaLiDgzM7paLxaEo
-X-Received: by 2002:a17:903:19d0:b0:25c:25f1:542d with SMTP id d9443c01a7336-268137f2336mr2357405ad.36.1758069774981;
-        Tue, 16 Sep 2025 17:42:54 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-265c4769cccsm8241155ad.41.2025.09.16.17.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 17:42:54 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 49A0334028F;
-	Tue, 16 Sep 2025 18:42:54 -0600 (MDT)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 2DCDBE41646; Tue, 16 Sep 2025 18:42:54 -0600 (MDT)
-From: Uday Shankar <ushankar@purestorage.com>
-Date: Tue, 16 Sep 2025 18:42:52 -0600
-Subject: [PATCH v2] selftests: ublk: fix behavior when fio is not installed
+	s=arc-20240116; t=1758069792; c=relaxed/simple;
+	bh=urrfAhMmJ6Kb44KmW9Nxz3cezw7izNitJ3wa7v9K97Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EIvmzGCe7AnuTP9kHPqQ2co8Om0W92M2uIP7ST69812oLv7ap5opGL1Xr8zJSyifegrys10gqDlqp4ACxBl56I7zau/EoGTYyFqKvrrehFZpvyEnitSsJF3SebhN32K6rH8sIXZkcr0pIyJ+0RXDdMLa1dj8m2q1QljGF1+cOB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7tiI+yJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35FD7C4CEEB;
+	Wed, 17 Sep 2025 00:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758069792;
+	bh=urrfAhMmJ6Kb44KmW9Nxz3cezw7izNitJ3wa7v9K97Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u7tiI+yJ5vXDuuZpEd58bRVhwUKvd+vkdWn6eFrbnu9sidFirWqjY8vtV37x2rQy3
+	 sxnp1xdAdMX/ZNLQDlz+48/WaJZ9H3KIscwlR025r+O1LqyiQGCsFoG7068ozhyQkO
+	 ZpZ8SWL2DSSiXgAAnFYXmXMCHKGEsOop1iW5gTB4f/0sdsaW/PtKBTNZe1m8mE/Zjj
+	 lqPAZ/TIgvESg9RWGE8fCRVwqrgcXlptw9a6NADOuwl0LI/MejswHFlyIL5jYC6+zQ
+	 BZ4u4qIfexcHzZyzbzjS4a7jbuN/IR+cyUzX0tJ4RtCzOlksNxizaKwA6oD631m/90
+	 T9RFMrKnmv4ig==
+Message-ID: <8e1f4728-1ba6-4db7-8e04-a8dde165ca72@kernel.org>
+Date: Wed, 17 Sep 2025 09:43:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/25] dt-bindings: clock: Add RDA Micro RDA8810PL
+ clock/reset controller
+To: dang.huynh@mainlining.org, Manivannan Sadhasivam <mani@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+References: <20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org>
+ <20250917-rda8810pl-drivers-v1-9-9ca9184ca977@mainlining.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250917-rda8810pl-drivers-v1-9-9ca9184ca977@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-ublk_fio-v2-1-04852e6bf42a@purestorage.com>
-X-B4-Tracking: v=1; b=H4sIAAsEymgC/22MQQ6CMBBFr0JmbU2npEpdeQ9DDIUBJiolrTQa0
- rtbWLt8P/+9FQJ5pgCXYgVPkQO7KYM6FNCOzTSQ4C4zKKm0NHgSi30+7j07gQalMZWV0paQ77O
- nnj976lZnHjm8nf/u5Yjb+icSUaCoOq2ULg1Rd77Oi6dNbAY6tu4FdUrpB7jjgMKmAAAA
-X-Change-ID: 20250916-ublk_fio-1910998b00b3
-To: Mohit Gupta <mgupta@purestorage.com>, 
- Caleb Sander Mateos <csander@purestorage.com>, 
- Ming Lei <ming.lei@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>
-X-Mailer: b4 0.14.2
 
-Some ublk selftests have strange behavior when fio is not installed.
-While most tests behave correctly (run if they don't need fio, or skip
-if they need fio), the following tests have different behavior:
+On 17/09/2025 22:25, Dang Huynh via B4 Relay wrote:
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
 
-- test_null_01, test_null_02, test_generic_01, test_generic_02, and
-  test_generic_12 try to run fio without checking if it exists first,
-  and fail on any failure of the fio command (including "fio command
-  not found"). So these tests fail when they should skip.
-- test_stress_05 runs fio without checking if it exists first, but
-  doesn't fail on fio command failure. This test passes, but that pass
-  is misleading as the test doesn't do anything useful without fio
-  installed. So this test passes when it should skip.
+Use consistent quotes, either ' or "
 
-Fix these issues by adding _have_program fio checks to the top of all of
-these tests.
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rda,8810pl-apclk.h>
+> +
+> +    ap_syscon: syscon@0 {
+> +      compatible = "rda,8810pl-apsyscon", "syscon";
+> +      reg = <0x0 0x1000>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +    };
+> diff --git a/include/dt-bindings/clock/rda,8810pl-apclk.h b/include/dt-bindings/clock/rda,8810pl-apclk.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..372358e72436a28c0775519f49626c9c5f4c6046
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/rda,8810pl-apclk.h
+> @@ -0,0 +1,79 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_RDA8810_H_
+> +#define _DT_BINDINGS_CLK_RDA8810_H_
+> +
+> +/* soc clocks */
+> +#define CLK_CPU 0
+> +#define CLK_BUS 1
+> +#define CLK_MEM 2
+> +
+> +#define CLK_USB 3
+> +#define CLK_AXI 4
+> +#define CLK_GCG 5
+> +#define CLK_AHB1 6
+> +#define CLK_APB1 7
+> +#define CLK_APB2 8
+> +
+> +#define CLK_GPU 9
+> +#define CLK_VPU 10
+> +#define CLK_VOC 11
+> +#define CLK_SFLSH 12
+> +
+> +#define CLK_UART1 13
+> +#define CLK_UART2 14
+> +#define CLK_UART3 15
+> +
+> +#define CLK_VOC2 16
+> +#define CLK_EMMC 17
+> +
+> +#define CLK_COUNT (CLK_EMMC + 1)
 
-Signed-off-by: Uday Shankar <ushankar@purestorage.com>
----
-Changes in v2:
-- Also fix test_generic_01, test_generic_02, test_generic_12, which fail 
-  on systems where bpftrace is installed but fio is not (Mohit Gupta)
-- Link to v1: https://lore.kernel.org/r/20250916-ublk_fio-v1-1-8d522539eed7@purestorage.com
----
- tools/testing/selftests/ublk/test_generic_01.sh | 4 ++++
- tools/testing/selftests/ublk/test_generic_02.sh | 4 ++++
- tools/testing/selftests/ublk/test_generic_12.sh | 4 ++++
- tools/testing/selftests/ublk/test_null_01.sh    | 4 ++++
- tools/testing/selftests/ublk/test_null_02.sh    | 4 ++++
- tools/testing/selftests/ublk/test_stress_05.sh  | 4 ++++
- 6 files changed, 24 insertions(+)
+Drop, not a binding.
 
-diff --git a/tools/testing/selftests/ublk/test_generic_01.sh b/tools/testing/selftests/ublk/test_generic_01.sh
-index 9227a208ba53128e4a202298316ff77e05607595..21a31cd5491aa79ffe3ad458a0055e832c619325 100755
---- a/tools/testing/selftests/ublk/test_generic_01.sh
-+++ b/tools/testing/selftests/ublk/test_generic_01.sh
-@@ -10,6 +10,10 @@ if ! _have_program bpftrace; then
- 	exit "$UBLK_SKIP_CODE"
- fi
- 
-+if ! _have_program fio; then
-+	exit "$UBLK_SKIP_CODE"
-+fi
-+
- _prep_test "null" "sequential io order"
- 
- dev_id=$(_add_ublk_dev -t null)
-diff --git a/tools/testing/selftests/ublk/test_generic_02.sh b/tools/testing/selftests/ublk/test_generic_02.sh
-index 3e80121e3bf5e191aa9ffe1f85e1693be4fdc2d2..12920768b1a080d37fcdff93de7a0439101de09e 100755
---- a/tools/testing/selftests/ublk/test_generic_02.sh
-+++ b/tools/testing/selftests/ublk/test_generic_02.sh
-@@ -10,6 +10,10 @@ if ! _have_program bpftrace; then
- 	exit "$UBLK_SKIP_CODE"
- fi
- 
-+if ! _have_program fio; then
-+	exit "$UBLK_SKIP_CODE"
-+fi
-+
- _prep_test "null" "sequential io order for MQ"
- 
- dev_id=$(_add_ublk_dev -t null -q 2)
-diff --git a/tools/testing/selftests/ublk/test_generic_12.sh b/tools/testing/selftests/ublk/test_generic_12.sh
-index 7abbb00d251df9403857b1c6f53aec8bf8eab176..b4046201b4d99ef5355b845ebea2c9a3924276a5 100755
---- a/tools/testing/selftests/ublk/test_generic_12.sh
-+++ b/tools/testing/selftests/ublk/test_generic_12.sh
-@@ -10,6 +10,10 @@ if ! _have_program bpftrace; then
- 	exit "$UBLK_SKIP_CODE"
- fi
- 
-+if ! _have_program fio; then
-+	exit "$UBLK_SKIP_CODE"
-+fi
-+
- _prep_test "null" "do imbalanced load, it should be balanced over I/O threads"
- 
- NTHREADS=6
-diff --git a/tools/testing/selftests/ublk/test_null_01.sh b/tools/testing/selftests/ublk/test_null_01.sh
-index a34203f726685787da80b0e32da95e0fcb90d0b1..c2cb8f7a09fe37a9956d067fd56b28dc7ca6bd68 100755
---- a/tools/testing/selftests/ublk/test_null_01.sh
-+++ b/tools/testing/selftests/ublk/test_null_01.sh
-@@ -6,6 +6,10 @@
- TID="null_01"
- ERR_CODE=0
- 
-+if ! _have_program fio; then
-+	exit "$UBLK_SKIP_CODE"
-+fi
-+
- _prep_test "null" "basic IO test"
- 
- dev_id=$(_add_ublk_dev -t null)
-diff --git a/tools/testing/selftests/ublk/test_null_02.sh b/tools/testing/selftests/ublk/test_null_02.sh
-index 5633ca8766554b22be252c7cb2d13de1bf923b90..8accd35beb55c149f74b23f0fb562e12cbf3e362 100755
---- a/tools/testing/selftests/ublk/test_null_02.sh
-+++ b/tools/testing/selftests/ublk/test_null_02.sh
-@@ -6,6 +6,10 @@
- TID="null_02"
- ERR_CODE=0
- 
-+if ! _have_program fio; then
-+	exit "$UBLK_SKIP_CODE"
-+fi
-+
- _prep_test "null" "basic IO test with zero copy"
- 
- dev_id=$(_add_ublk_dev -t null -z)
-diff --git a/tools/testing/selftests/ublk/test_stress_05.sh b/tools/testing/selftests/ublk/test_stress_05.sh
-index 566cfd90d192ce8c1f98ca2539792d54a787b3d1..274295061042e5db3f4f0846ae63ea9b787fb2ee 100755
---- a/tools/testing/selftests/ublk/test_stress_05.sh
-+++ b/tools/testing/selftests/ublk/test_stress_05.sh
-@@ -5,6 +5,10 @@
- TID="stress_05"
- ERR_CODE=0
- 
-+if ! _have_program fio; then
-+	exit "$UBLK_SKIP_CODE"
-+fi
-+
- run_io_and_remove()
- {
- 	local size=$1
+> +
+> +/* resets */
+> +#define RST_CPU 0
 
----
-base-commit: da7b97ba0d219a14a83e9cc93f98b53939f12944
-change-id: 20250916-ublk_fio-1910998b00b3
+
+Missing indentation before the values, everywhere.
+
+> +
+> +#define RST_AXI_VOC 1
+> +#define RST_AXI_DMA 2
+> +#define RST_AXI_CONNECT 3
+> +#define RST_AXI_VPU 4
+> +
+> +#define RST_GCG_GOUDA 5
+> +#define RST_GCG_CAMERA 6
+> +#define RST_GCG_LCDC 7
+> +
+> +#define RST_AHB1_USBC 8
+> +#define RST_AHB1_SPIFLASH 9
+> +
+> +#define RST_APB1_TIMER 10
+> +#define RST_APB1_KEYPAD 11
+> +#define RST_APB1_GPIO 12
+> +#define RST_APB1_PWM 13
+> +#define RST_APB1_AIF 14
+> +#define RST_APB1_AUIFC 15
+> +#define RST_APB1_I2C1 16
+> +#define RST_APB1_I2C2 17
+> +#define RST_APB1_I2C3 18
+> +#define RST_APB1_COMREGS 19
+> +#define RST_APB1_DMC 20
+> +#define RST_APB1_DDRPHY_P 21
+> +
+> +#define RST_APB2_IFC 22
+> +#define RST_APB2_UART1 23
+> +#define RST_APB2_UART2 24
+> +#define RST_APB2_UART3 25
+> +#define RST_APB2_SPI1 26
+> +#define RST_APB2_SPI2 27
+> +#define RST_APB2_SPI3 28
+> +#define RST_APB2_SDMMC1 29
+> +#define RST_APB2_SDMMC2 30
+> +#define RST_APB2_SDMMC3 31
+> +#define RST_APB2_NAND 32
+> +
+> +#define RST_MEM_GPU 33
+> +#define RST_MEM_VPU 34
+> +#define RST_MEM_DMC 35
+> +#define RST_MEM_DDRPHY_P 36
+> +
+> +#define RST_COUNT (RST_MEM_DDRPHY_P + 1)
+
+Drop, not a binding.
+
+> +
+> +#endif /* _DT_BINDINGS_CLK_RDA8810_H_ */
+> 
+
 
 Best regards,
--- 
-Uday Shankar <ushankar@purestorage.com>
-
+Krzysztof
 
