@@ -1,127 +1,86 @@
-Return-Path: <linux-kernel+bounces-821109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9696B8074B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E0CB8075A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 17:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33422188E1F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A2218913D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE65A32E745;
-	Wed, 17 Sep 2025 15:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31FD330D3A;
+	Wed, 17 Sep 2025 15:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="LoOmsI2K"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GI2hr8NU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5900E32BC07
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 15:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDFA2EACF3;
+	Wed, 17 Sep 2025 15:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758121872; cv=none; b=CvWPc0xIaDcFyfZSIQtfezTB036RbWJXfLaqNkiWgFpIB3DeMLu44OKksl7hxkZW+e4A33kNU78+pXm3sJJ2oyoabJfndwmUYpJ3bTNVLk1tFXexHa694pTVp5x3iayBbPOnpTWkJDvx3wWBkpxxZ1d/l1C6KoWkYdp+X+Vk0PA=
+	t=1758121952; cv=none; b=GRC/rDHztz9SKGBW/LjdN8PLYkRTJa/gk8GcMMvhiB/5hR8Td/+gTkrqw8HEx4luZI5hIFjQQAQYGiPJebISL4la3DnU/NfUnkphNNKE3awDjMPlHhcWeTRYa21u1lW9+r3WyS3reV2ksG22LSJl4UFqc56gu/GhH98BlTJf0lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758121872; c=relaxed/simple;
-	bh=64hrnh+G03ii19qLsbC+gKG4i0vub0qBYZGHShiMxCw=;
+	s=arc-20240116; t=1758121952; c=relaxed/simple;
+	bh=fU8v0fIA14SUY+kAFYkLjnzFIT02aVtsijqSQ2zNf8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3Q1dtqpvSvnAM4Ab/+ABw1LXnk7OpwYf5cuVgBIE7kss+gnbyMUeey1S6Q3pAdriPi5fdYAwdxsNfk8m8pHNXws8fw+f4KfTP16Ra9kW3UBQOngKQbrlUrgwdE8sQbSm2Leq+4hWePOHHDsAFmNXbCAKsZgDO1fcn34hcPiD1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=LoOmsI2K; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2570bf6058aso87635855ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 08:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758121869; x=1758726669; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=weVpY5S2PB5qtPhKTuvCTrn7esiEfFzwXr1/dTkYFP8=;
-        b=LoOmsI2Ks/zUbNEF+n7QQuSDSGgM7521H/F7bpcAFz5soGS5OWWMIvOx7D2A705LyS
-         wzPdwzp+dpnx74tuW9tCfPTRq5GNu8Hy3ZC4XZ5nsaaFrAELNtxwuSAUdRFKbRRJllPO
-         ehDcrhfC+QWfPX8edW019IlBV4TS7he1XlvZCfbfOHahOQuXuvyqUpfUtLT6YdMijqGW
-         MEvLQb32snj70zkRsGaTEbxmIa+KwdvAnxXCZN+OcEpkfILFYhOGghhdduBGOjU85uq6
-         nMve4I/mPo8klnuNu742MN/6OLpPcLqqkm8P6rvdh1OjyVxbE4ia5hqPFry/MsT8kv/P
-         TUjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758121869; x=1758726669;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=weVpY5S2PB5qtPhKTuvCTrn7esiEfFzwXr1/dTkYFP8=;
-        b=CKcAWp9XnJdhgCiY8hpfJGfMR+vPyVIgV5KqHYv+o5plXbXAvHdBG70kLkpjBRw8x3
-         /gXdcUZNFeTz6K6HeQxzEDreg9WDafSb0SaHBF0SLlR2aDnFHArc47qEIN5vNF54iKIj
-         IFAIA7tvvRrP9gF0IGPK4kveefEBbpfHWekH/OW7BHmtt0Zey5iBV/bSj4J2fQShv867
-         ATkB8dXe4bosryPeQc1MiSMhWRKOrEcuqPpAwKDYhM6CY+pdUkWsFujN4xFr3oE9ik58
-         M7MZTKVfsdhEZudyIeJEK5ApuZjfcUJ3ObKo2PQG/pvZDFg38PbHrEP3XgbUxc4niQvR
-         g9wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNb3XomDr/scbzP9yQrzU2/f8vz2h90Q04XxSZpqRPs1Z7WBItGcztKn2xm/b2Hi15IYRz+SqceUeUjoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSq/4Gui6JEQOk/PNG7MhJiP9eFXe5RBkmzCQi88bfgoE7hzPs
-	mFDJM4mI3y9Gu+VgfrkSvOcxctBp2yfZN0Hb2ozrfbP/MAwnLFsbPf2uP5Q/b0KEsFo=
-X-Gm-Gg: ASbGncuNVuh1Pv8zfXgrHf/FTWsEP6LyzgqJFjlSB1PSnqcHLJAgl1uAioZDvHd+5Ga
-	G0cq2yMMIIV1DbGM+v3yNtsuqOXEr2W5pdkzXjRxoNKZQTPHrca+AHLqmW/MoOP5j/P5+NJfQ51
-	XJz3WT/06nrjIjQTlgtLJPrtJKh4Iz37QkHkTFbrkQsTxjLfhMW1e79ynn2gbD4D+8MAwC5tLq2
-	zB910GYtMg3zxWg9JM0CCp18Nu4kG+YRXuM9IIYY1hXnuswJNKKPBUB0WEMFgVRVT9bhk6rAcJH
-	4PG+s9rYJmmOfvU4gOYZVmENfKluay77FYU9dU/UVg58OuLtwpiDHN9HlHtjKnGXtEwADQl85Vr
-	LdSEN6mE=
-X-Google-Smtp-Source: AGHT+IFmYE7qlDUFZiho9mEwR2DSnCEfJp/r2TtZAeVeo8f4CW3I/2ig+DnSXAwTVwkjjffoimql8A==
-X-Received: by 2002:a17:902:d582:b0:25c:9688:bdca with SMTP id d9443c01a7336-26813bf1f32mr31633255ad.50.1758121869329;
-        Wed, 17 Sep 2025 08:11:09 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2623fd4d163sm127041555ad.80.2025.09.17.08.11.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 08:11:08 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uytoJ-00000008NeJ-3muR;
-	Wed, 17 Sep 2025 12:11:07 -0300
-Date: Wed, 17 Sep 2025 12:11:07 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
-	joro@8bytes.org, praan@google.com
-Subject: Re: [PATCH 0/2] Move io-pgtable-arm selftest to KUnit
-Message-ID: <20250917151107.GF1326709@ziepe.ca>
-References: <20250917140216.2199055-1-smostafa@google.com>
- <20250917144435.GE1326709@ziepe.ca>
- <aMrNJw3obyu8IvBL@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qs1pPcTUxiSVdKAGYrU9QIQ9nbvWNctQQ9d8AyKUlspN8j+9jM0N2emaOTGJEzwgPHEMUBJPjnGxw/I+qYk11KnEQ+tFx/NxmJAFQBRMVzI+g8flikLFwnDz9oKk/AkC2+FJRn1E+8G2IGsLROx8nWJe1FMSAXt1L5OLgfb0xok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GI2hr8NU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=SbUH+ytp/I7r/qS0bTCYNaSJzrM2N4H+oZ5XzytcBc8=; b=GI2hr8NUA/wBoWosZZr4g/4/8R
+	lh/GHsVJEfQBe1JCCzTQcDmOYfx8xG4Lb9qNRvwPqQmVv8MP8Qgy7rc/DDVgKctW/899gLrFqCP/t
+	VLGWtcNnnByIsFzV8Ahz0ux9ZpaNZ8sCdyE1SgnOcJj3s0pCJLVe4JZoNmBVJKweRSrM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uytpK-008hZD-5s; Wed, 17 Sep 2025 17:12:10 +0200
+Date: Wed, 17 Sep 2025 17:12:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kevin Tung <kevin.tung.openbmc@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] Add Meta (Facebook) Yosemite5 BMC (AST2600)
+Message-ID: <9bb9929a-8130-48da-983e-2901a7c3da36@lunn.ch>
+References: <20250917074812.4042797-1-kevin.tung.openbmc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMrNJw3obyu8IvBL@google.com>
+In-Reply-To: <20250917074812.4042797-1-kevin.tung.openbmc@gmail.com>
 
-On Wed, Sep 17, 2025 at 03:00:55PM +0000, Mostafa Saleh wrote:
-> On Wed, Sep 17, 2025 at 11:44:35AM -0300, Jason Gunthorpe wrote:
-> > On Wed, Sep 17, 2025 at 02:02:01PM +0000, Mostafa Saleh wrote:
-> > > Instead, we can remove the __init constraint, and be able to run the tests
-> > > on-demand, and possibly compile it as a module.
-> > 
-> > I think you can just put the kunit in a module to avoid all this?
+On Wed, Sep 17, 2025 at 03:48:08PM +0800, Kevin Tung wrote:
+> Summary:
+> Add device tree for the Meta (Facebook) Yosemite5 compute node,
+> based on the AST2600 BMC.
 > 
-> Yes, I don’t see the point of trying to run everything from __init,
-> relaxing that allows us to use more of the kunit infrastructure.
-> But, it’s more code to do so (it’s just longer to explain :)),
-> I can add a patch in between, modularizing the selftest before kunit.
+> The Yosemite5 platform provides monitoring of voltages, power,
+> temperatures, and other critical parameters across the motherboard,
+> CXL board, E1.S expansion board, and NIC components. The BMC also
+> logs relevant events and performs appropriate system actions in
+> response to abnormal conditions.
+> 
+> Kevin Tung (2):
+>   dt-bindings: arm: aspeed: add Meta Yosemite5 board
+>   ARM: dts: aspeed: yosemite5: Add Meta Yosemite5 BMC
 
-Sounds good, also it would be good to include the kunit.py
-instructions in the commit message:
+The threading between your patches are broken? How did you send them?
+git send-email? b4 send?
 
-Eg this is one from my iommpt series:
-
-    tools/testing/kunit/kunit.py run --build_dir build_kunit_arm64 --arch arm64 --make_options LLVM=-19 --kunitconfig ./drivers/iommu/generic_pt/.kunitconfig
-
-You can run that from x86, which is really how I'd recommend anyone
-actually use this kunit rather than booting a live system and trying
-to run the test before the system boots enough to explode on a buggy
-implementation :)
-
-Jason
+	Andrew
 
