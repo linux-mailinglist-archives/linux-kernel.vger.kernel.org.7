@@ -1,77 +1,126 @@
-Return-Path: <linux-kernel+bounces-819780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E08EB7CC50
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D2FB7D208
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1455C1B27039
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:21:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482C63A49D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38AA1C84A1;
-	Wed, 17 Sep 2025 00:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757571E7C27;
+	Wed, 17 Sep 2025 00:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F80H6A7q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="lxzQHwsR"
+Received: from ksmg01.maxima.ru (ksmg01.mt-integration.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237B61A9FAC;
-	Wed, 17 Sep 2025 00:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A863F1C3C18;
+	Wed, 17 Sep 2025 00:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758068468; cv=none; b=rzHNMGMvanmDOQ7PKiwrPqsW4pbc7zFv1QEWapV1Cvh8UcnYFf7vz/HbORmQE3V5vLnZTiA7S8uD4eKrst7x/QrEVayiacyxG57U1+q4CTdEe7qmkAmkMM5re8mXjqEr/NWrOvS2hAIm9vjzhAThyeK7DQkafvrxiwV097C0E3w=
+	t=1758069066; cv=none; b=Yns9MOatX/JxsRLgbbPhz2eTTJc0yiJGk3BUaqKmw3pdl7zQ9DBaqvyQ4xKD/LQx/oph4em/5z5lo3/mlZTl2PtbrU26AlA676lxaBJflDYPaXH4MtXAfFKUlPLVyHh31ocLM0XQjSVqSv2QbitKVd58zUBKdALC7qnKrR9Q6C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758068468; c=relaxed/simple;
-	bh=PRTYnd5lGudq20AWRXWYzr0PRxeNiLfx6nr9sfjl3KA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HVTSy/6piiUb0Xo+ESp0SYwHLZ3NU0p9oboxsz/1XLBO68gtB3JRYIgZqxWUvroOqcE6OOJfb9DvI9CQSildswPhzDmuT2zWUePL1YDjItrzkQqLHFZtP7uxcNdGa/jNrN+xkag3+rDOAwQtYd+OlILlgKaunI3C7ZTR60wim3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F80H6A7q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B75C4CEEB;
-	Wed, 17 Sep 2025 00:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758068467;
-	bh=PRTYnd5lGudq20AWRXWYzr0PRxeNiLfx6nr9sfjl3KA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F80H6A7q1t5maM3Z/OJMUJ+LHvz6cNtar88kJ9lNHJHCl1xxHtQ5Rtx09c1u1GbzI
-	 MWSB+W15h1SXyfhEXRr1TX9QgdRbVoBUQDfx+USvHOo6z9Zc7gEltkgQNH3eQhSKjc
-	 Y+/e5+k5+tIKLDAfGShLrasKIOvMMj69BbyWfAVYGhd+CtOjyHMWmJHYbCT6L2OIso
-	 k4pcgkU1mSkhNx2KKochXkrKP13P3fbTPABTaYK2vLj/LKM3XHwXJABt7ypcVA1wqD
-	 YE5x0+BC9eHHugiVJHWx8uVihBadgS6MQVEEA5BkMKxxIvQR/FndeP9oOJuweUqGR5
-	 Jb3gvh/ZeC71w==
-Date: Tue, 16 Sep 2025 17:21:06 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
- <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Jianbo Liu
- <jianbol@nvidia.com>
-Subject: Re: [PATCH net V2 2/3] net/mlx5e: Prevent entering switchdev mode
- with inconsistent netns
-Message-ID: <20250916172106.593683a8@kernel.org>
-In-Reply-To: <1757939074-617281-3-git-send-email-tariqt@nvidia.com>
-References: <1757939074-617281-1-git-send-email-tariqt@nvidia.com>
-	<1757939074-617281-3-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1758069066; c=relaxed/simple;
+	bh=jKMrePTVtH3GK5CWeu04sQVpD6lryLOx7JYCpiq1V1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dVVJ51YAo0UCFwBta7/CR71YR/fpjl9ide85GM2le4AzpNUIRY8Uli5vhrIRyVC91+mZ7UyXhrXeZ8BXTJbzgWAYFv2e3cOnMa7abVuYx+dq1p2/UaTCo24JUlF2zmQsI3JYEAOfcZX7INW6Bv2T5KgfKk06Jr0jZlKPkw2lt2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=lxzQHwsR; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 8B5EDC007A;
+	Wed, 17 Sep 2025 03:30:53 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 8B5EDC007A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1758069053; bh=q3FMmTN5hXMh2C/vbItSLhglx0g/rmCHO6yb27iSL2w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=lxzQHwsRMKVDhSzymQ1FelwfAX60PBlp7g38nKSrG3rk5PXjmby6opbidk26tULMW
+	 W+8ClSukFbxob6dWYc+iSJ7XMhU4p0VxU1L4jHPFt/YIXkBH/v5iq8C6YI+4nDNg0G
+	 5JunyfRMcM2f/yQ2ViKNOrLzxfPbPTUP5nzM7RYRybs/XbdsdE3bR37DXjaPhCQ1jO
+	 yJPtaiDX7ldFTHGL6iq28s+hQkOvdAZX1K3aecN1eO51F7YZNcu2ct1qDmapAUHPv6
+	 vYGsDDBFmRHLSCxqK6OHqVZMTd0qr7bA1hFWQ0wLpi02+s0NvWzrY1RaaUjKEOW5+k
+	 LoJyS9krCEWiw==
+Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Wed, 17 Sep 2025 03:30:53 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 17 Sep 2025 03:30:52 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Andy Shevchenko <andy@kernel.org>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Hans de Goede
+	<hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus
+	<sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Colin Ian King <colin.i.king@gmail.com>, Alan
+ Cox <alan@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH 1/1] media: atomisp: Avoid memory leaks in ia_css_pipe_create_cas_scaler_desc_single_output()
+Date: Wed, 17 Sep 2025 03:29:29 +0300
+Message-ID: <20250917002933.506138-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 66 0.3.66 fc5dda3b6b70d34b3701db39319eece2aeb510fb, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;ksmg01.maxima.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 196326 [Sep 16 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/16 21:49:00 #27824829
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-On Mon, 15 Sep 2025 15:24:33 +0300 Tariq Toukan wrote:
-> If the PF's netns has been moved and differs from the devlink's netns,
-> enabling switchdev mode would create a state where the OVS control
-> plane (ovs-vsctl) cannot manage the switch because the PF uplink
-> representor and the other representors are split across different
-> namespaces.
+If any of the memory allocations for descr struct members fail, goto ERR is
+executed, and none of the previously allocated memory is freed, which leads
+to leaking memory.
 
-I appreciate the extra paragraph of explanation but it's still not 
-a fix. 
+Fix this by freeing memory at the end of the function in case of an
+non-NULL err.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
+Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+---
+ drivers/staging/media/atomisp/pci/sh_css.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
+index 73bd87f43a8c..d50bc81a59dc 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css.c
++++ b/drivers/staging/media/atomisp/pci/sh_css.c
+@@ -5907,6 +5907,10 @@ static int ia_css_pipe_create_cas_scaler_desc_single_output(
+ 	ia_css_debug_dtrace(IA_CSS_DEBUG_TRACE_PRIVATE,
+ 			    "ia_css_pipe_create_cas_scaler_desc() leave, err=%d\n",
+ 			    err);
++
++        if (err)
++                ia_css_pipe_destroy_cas_scaler_desc(descr);
++
+ 	return err;
+ }
+ 
+-- 
+2.39.5
+
 
