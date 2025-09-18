@@ -1,179 +1,179 @@
-Return-Path: <linux-kernel+bounces-822305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA70B83800
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:19:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5169EB83809
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2E91899A0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:19:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B453AFC7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6022ED143;
-	Thu, 18 Sep 2025 08:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF67B2EC562;
+	Thu, 18 Sep 2025 08:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FcNfN5Ds"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KFxbazDx"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E971336B;
-	Thu, 18 Sep 2025 08:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F078239E6F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758183534; cv=none; b=kK0awDY5q50ZOgrxv7SUkbD/GYWLiHI5qIpEV6jrSE9AcsZZnA0k5pQ2sJFKk4uZca37ioMCfZxtYXkP7MPsvVniQ9CnNP5pXq1dskxPhfpaTGvUw8Mog0nnnUSnvXUtbCX1wmtiIaN6H7EPNf+RzlTcxOIalspYnJ0uaUXmt3A=
+	t=1758183643; cv=none; b=dFUxuq7vMYbOYumjXLhc8C+MMichwqi5Fo0NrAPRf4Trlr0rp9HsYUA8NOrILDO0kk8veKJunY49TP4VZyxEwehWdf/0WrQrBPTuxOfYUt4AOVS45TfbZAEV5XSSbbnAahk0KI3/mFR1tt4mHTAHSMEeN5IEigHklqCCLfJpc/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758183534; c=relaxed/simple;
-	bh=4/T8IJ3R5U+TdrJnbKh29YlwkhUFe974lRou1fa2E7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2zTnoAG8do0Mn3J8sUBZ0ST9NkmmZidkjkY0ij30Xl/0Wfl2AaGTH+RocGyQRVzQG8DI89ll2ywjwUrCK/9FBwDbNvH+tGLbia9kTrayIieD/M7zKIzztqc2sHTqSN81S6CxaxIutCwyO/ynu2PJOeFsF3hnwD0rzHP0W1orD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FcNfN5Ds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E82FC4CEE7;
-	Thu, 18 Sep 2025 08:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758183533;
-	bh=4/T8IJ3R5U+TdrJnbKh29YlwkhUFe974lRou1fa2E7c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FcNfN5Dsp2/+2pRUGmkXJcq9DGpjivbfcunS78JexfYqyGSwpm8ukyzqUK+y3T0qG
-	 0ju5aQVHi+CDWv44RzSf/vhCc4QoxmiLxD83O2spr3KiqAvYXltMaTuGTLqijZIfaJ
-	 iuy9zUkYcOaajp4cd0SVgQJTl+5F/JMPUhu9VdyGbJ/qKqkDNRv5UwJr9RnCbOyL71
-	 dzHGfYPhgHyxat3evqwN5IRRt4GLW+e1BV+M2PPjQAPQTdTtSQVyS8XBhRr7OAgD3F
-	 H+hgD4L2p/XUyA9kas0nZ8+tpGrXqVN/4qKKZlbj1852EjEvDCI22oh02I1vFLH/XX
-	 F6AmSmmpK0acw==
-Message-ID: <f0330c18-11fb-473b-8ed8-891dad16ca78@kernel.org>
-Date: Thu, 18 Sep 2025 17:18:45 +0900
+	s=arc-20240116; t=1758183643; c=relaxed/simple;
+	bh=wcF9GB1rMAVm5TCm+RmVvx4DtcHPo9o/GOtT/VP5vXg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=b5mirJC8JKcMmxxPS2pV30n8TCys6D+N7Zf+HEz5onuFtX+WVN3/8D0rsU8/tInhLxAee6V4xTC9pN4O7t0BA/WIYxP5pvFrnx+Dahz4daLI0c1H25AHOF2ji4NEniP5wQpQr6I3dSZu2ECr+b7PFd4v3HKgFUB6sAxMGp1iV58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KFxbazDx; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250918082039epoutp03e0830f4ee5355985ed156859c93c5642~mUrRgHP7j1349213492epoutp03d
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:20:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250918082039epoutp03e0830f4ee5355985ed156859c93c5642~mUrRgHP7j1349213492epoutp03d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758183639;
+	bh=G1sAa6fcz6csqtPywTkaHuC/J9PhwCV/rwBo//lJ5yY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=KFxbazDxKjLAE/14WthMr6fuZTIMiVQ5G8GsoSxp1ePwe7gY8WeU92Aqyvu9SMjsy
+	 i3fyPg/Xh1DwIujxxx4pFvjf2BLcvv1Pzl7G7BJwl3lO23snogVnH9VncGS6ISCOH8
+	 giER9UItmVYMQcvPCX1yTzWbGq2iNQoNwDcMvQ64=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250918082038epcas1p19c4e495928afed9bb8ed26c9829ef1ab~mUrQ-kf9d2767627676epcas1p1N;
+	Thu, 18 Sep 2025 08:20:38 +0000 (GMT)
+Received: from epcas1p3.samsung.com (unknown [182.195.38.248]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cS7qp3H3kz3hhTB; Thu, 18 Sep
+	2025 08:20:38 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250918082037epcas1p1eb201d3b6d5780c0bff3ba32740ccdcf~mUrQUeeYQ2767627676epcas1p1I;
+	Thu, 18 Sep 2025 08:20:37 +0000 (GMT)
+Received: from localhost.localdomain (unknown [10.253.100.173]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250918082037epsmtip2806780d30bdff83afa286d5fa7e42f86~mUrQR31l_0085600856epsmtip2k;
+	Thu, 18 Sep 2025 08:20:37 +0000 (GMT)
+From: Yunji Kang <yunji0.kang@samsung.com>
+To: jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	Yunji Kang <yunji0.kang@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>,
+	Sunmin Jeong <s_min.jeong@samsung.com>
+Subject: [PATCH v2] f2fs: readahead node blocks in F2FS_GET_BLOCK_PRECACHE
+ mode
+Date: Thu, 18 Sep 2025 17:20:23 +0900
+Message-Id: <20250918082023.57381-1-yunji0.kang@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
-To: Ravi Patel <ravi.patel@samsung.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, jesper.nilsson@axis.com, lars.persson@axis.com,
- mturquette@baylibre.com, sboyd@kernel.org, alim.akhtar@samsung.com,
- s.nawrocki@samsung.com, cw00.choi@samsung.com
-Cc: ksk4725@coasia.com, smn1196@coasia.com, linux-arm-kernel@axis.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, pjsin865@coasia.com, gwk1013@coasia.com,
- bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com,
- lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
- shradha.t@samsung.com, swathi.ks@samsung.com, kenkim@coasia.com
-References: <CGME20250917085019epcas5p273ef86028a90e78ada55cde48a28a949@epcas5p2.samsung.com>
- <20250917085005.89819-1-ravi.patel@samsung.com>
- <59d50dee-cd6a-4eab-860a-bf6d50d9bb0a@kernel.org>
- <020801dc284d$6f555b50$4e0011f0$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <020801dc284d$6f555b50$4e0011f0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250918082037epcas1p1eb201d3b6d5780c0bff3ba32740ccdcf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250918082037epcas1p1eb201d3b6d5780c0bff3ba32740ccdcf
+References: <CGME20250918082037epcas1p1eb201d3b6d5780c0bff3ba32740ccdcf@epcas1p1.samsung.com>
 
-On 18/09/2025 12:36, Ravi Patel wrote:
-> 
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 18 September 2025 06:35
->> To: Ravi Patel <ravi.patel@samsung.com>; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; jesper.nilsson@axis.com;
->> lars.persson@axis.com; mturquette@baylibre.com; sboyd@kernel.org; alim.akhtar@samsung.com; s.nawrocki@samsung.com;
->> cw00.choi@samsung.com
->> Cc: ksk4725@coasia.com; smn1196@coasia.com; linux-arm-kernel@axis.com; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
->> linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; pjsin865@coasia.com;
->> gwk1013@coasia.com; bread@coasia.com; jspark@coasia.com; limjh0823@coasia.com; lightwise@coasia.com; hgkim05@coasia.com;
->> mingyoungbo@coasia.com; shradha.t@samsung.com; swathi.ks@samsung.com; kenkim@coasia.com
->> Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
->>
->> On 17/09/2025 17:49, Ravi Patel wrote:
->>> Add basic support for the Axis ARTPEC-9 SoC which contains
->>> 6-core Cortex-A55 CPU and other several IPs. This SoC is an
->>> Axis-designed chipset used in surveillance camera products.
->>>
->>> This ARTPEC-9 SoC has a variety of Samsung-specific IP blocks and
->>> Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
->>>
->>> This patch series includes below changes:
->>> - CMU (Clock Management Unit) driver and its bindings (patch #1 to #3)
->>> - PMU bindings (patch #4)
->>> - Basic Device Tree for ARTPEC-9 SoC and boards (patch #5 to #7)
->>>
->>> The patch series has been tested on the ARTPEC-9 EVB with
->>> Linux Samsung SoC tree (for-next branch) and intended
->>> to be merged via the `arm-soc` tree.
->>>
->>> NOTE: This patch series is dependent on following floating patches:
->>> 1. https://lore.kernel.org/all/20250917070004.87872-1-ravi.patel@samsung.com/T/#t
->>
->> NAK, sorry, DTS cannot depend on the drivers. Please decouple the
->> dependencies.
-> 
-> Ok, so you want patch #1 - #5 in separate series and #6 - #7 (DTS patches) in another series.
+In f2fs_precache_extents(), For large files, It requires reading many
+node blocks. Instead of reading each node block with synchronous I/O,
+this patch applies readahead so that node blocks can be fetched in
+advance.
 
-No, I meant above dependencies. You said that these patchset, including
-DTS, depends on above. Above are drivers and that's a no go. I said it
-multiple times already in various occasions.
+It reduces the overhead of repeated sync reads and improves efficiency
+when precaching extents of large files.
 
-Patchset should be organized per maintainers subsystem, but that's
-different question.
+I created a file with the same largest extent and executed the test.
+For this experiment, I set the file's largest extent with an offset of 0
+and a size of 1GB. I configured the remaining area with 100MB extents.
 
-> Can you please review the patches, I will address review comments in v2 (if any) itself.
+5GB test file:
+dd if=/dev/urandom of=test1 bs=1m count=5120
+cp test1 test2
+fsync test1
+dd if=test1 of=test2 bs=1m skip=1024 seek=1024 count=100 conv=notrunc
+dd if=test1 of=test2 bs=1m skip=1224 seek=1224 count=100 conv=notrunc
+...
+dd if=test1 of=test2 bs=1m skip=5024 seek=5024 count=100 conv=notrunc
+reboot
 
-As mentioned in other threads, I closed my tree a week ago (if you are
-surprised, notice kernel cycles and development process), so review will
-happen a bit later.
+I also created 10GB and 20GB files with large extents using the same
+method.
 
-> 
->>
->> Maybe you wanted to point me where the bindings are, but then say so.
-> 
-> Yes, these dependencies are for bindings related.
-So not really a dependency so again: just provide links to the bindings.
+ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
+  +-----------+---------+---------+-----------+
+  | File size | Before  | After   | Reduction |
+  +-----------+---------+---------+-----------+
+  | 5GB       | 101.8ms | 72.1ms  | 29.2%     |
+  | 10GB      | 222.9ms | 149.5ms | 32.9%     |
+  | 20GB      | 446.2ms | 276.3ms | 38.1%     |
+  +-----------+---------+---------+-----------+
+Tested on a 256GB mobile device with an SM8750 chipset.
 
-Best regards,
-Krzysztof
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
+Signed-off-by: Yunji Kang <yunji0.kang@samsung.com>
+---
+v2:
+ - Modify the readahead condition check routine for better code
+readability.
+ - Update the title from 'node block' to 'node blocks'.
+
+ fs/f2fs/data.c | 3 +++
+ fs/f2fs/f2fs.h | 1 +
+ fs/f2fs/node.c | 5 ++++-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7961e0ddfca3..ab3117e3b24a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1572,6 +1572,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	pgofs =	(pgoff_t)map->m_lblk;
+ 	end = pgofs + maxblocks;
+ 
++	if (flag == F2FS_GET_BLOCK_PRECACHE)
++		mode = LOOKUP_NODE_PRECACHE;
++
+ next_dnode:
+ 	if (map->m_may_create) {
+ 		if (f2fs_lfs_mode(sbi))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9d3bc9633c1d..3ce41528d48e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -651,6 +651,7 @@ enum {
+ 					 * look up a node with readahead called
+ 					 * by get_data_block.
+ 					 */
++	LOOKUP_NODE_PRECACHE,		/* look up a node for F2FS_GET_BLOCK_PRECACHE */
+ };
+ 
+ #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush count */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 4254db453b2d..d4bf3ce715c5 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -860,7 +860,10 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
+ 			set_nid(parent, offset[i - 1], nids[i], i == 1);
+ 			f2fs_alloc_nid_done(sbi, nids[i]);
+ 			done = true;
+-		} else if (mode == LOOKUP_NODE_RA && i == level && level > 1) {
++		} else if ((i == level && level > 1) &&
++				(mode == LOOKUP_NODE_RA ||
++				(mode == LOOKUP_NODE_PRECACHE &&
++				offset[i - 1] % MAX_RA_NODE == 0))) {
+ 			nfolio[i] = f2fs_get_node_folio_ra(parent, offset[i - 1]);
+ 			if (IS_ERR(nfolio[i])) {
+ 				err = PTR_ERR(nfolio[i]);
+-- 
+2.34.1
+
 
