@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-822346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D90B83977
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C96B8395F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5817E1C03BD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87042A7DE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4392F9D82;
-	Thu, 18 Sep 2025 08:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B282FF173;
+	Thu, 18 Sep 2025 08:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IXNY93mR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X9M8txaz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DFA2FF141;
-	Thu, 18 Sep 2025 08:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89CB2F5315;
+	Thu, 18 Sep 2025 08:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185464; cv=none; b=N/6Xwz9COoTMGtKhokG5dQJ2c2bwxd6AaP9MxFX3fYiXMvISfHrRds1bwgu+9E1e3KKmDfh0Af9YEXrbalYPvzIdUCiZYPiIMqbSE03pu2EhHwLu4mo9w7UVxAGTko1Q/TxO72PpV8pY6w+b9Iq6gSPaU0BNwcCUPYIs3cwbbHA=
+	t=1758185333; cv=none; b=AU39NZtRFIapcGxKIbseoRh4zKgjjzbhGc4LLSYrSccmNe8SAoy0C+0M1eu6eUSeQzczQpaZVQi+nGWipCvuJ4kSt/DhJfUQ7vREejKVWRGQGolWAwmh4Y7vDz5Dj1rFzUYAX1kZYDNgmcat4R5NfIgOKUVn9d1fYH7ivaVCl1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185464; c=relaxed/simple;
-	bh=5YOyn+r75EASr5J9B8/mhrg6iM33iRQv6Vi25A5kHg4=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=WQZmlhbDfhbKvTGwCwTWLT+6/QrAZxrvhdzz1LtLIuTLOsQOpgyv4rjVneRnCNMn8WmvUKmIU0rjSzfyIdOZjyb9nqikoUZixOug/Mq8dmxfvUk9obK5pwXYh1POOfnTlBL+1aghmAcWD6bx3iDC7WxIoyco+HkKh2ZQwRWPJlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IXNY93mR; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1758185333; c=relaxed/simple;
+	bh=HXWQdDsbefm3PuZ+d8+OcEN8g08SGDzBtWifzKKgjfo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KShBCuzSSnHkqeXi5gEuGKkyFwxFIySbZ/q1VM0SV4vfKP8Kfj1ycAAoGT2etaTjSl4pJOgEC8/pu6G/ZZk0HpHr3hHlmykneWNHQ71Oy3xD4s7WqLxAySLHu2UQwBInBccOply/bWIbt/Ro0A5ji3Ki3N4B6jusiyQoH0iiI3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X9M8txaz; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758185463; x=1789721463;
-  h=from:to:cc:date:subject:message-id:mime-version:
+  t=1758185332; x=1789721332;
+  h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=5YOyn+r75EASr5J9B8/mhrg6iM33iRQv6Vi25A5kHg4=;
-  b=IXNY93mRf7Lnrtwuo0KUt0Ls7dgyqaTZj3iLwY32H7Kh7PmkYZD8szJD
-   DgxhYzFPtjkQRvOI/2F+EGNQ4LOhFhDVMH+AHmy/fYhW3d5E9ocfOsKn/
-   E5VYrUWjT/NHJhvmUQg1eXAK2+jNQsUsnXgfQcQ5F2qpAksGUYin6Ljgq
-   +r55L0aJ1XXkOUI7t5fERX7Sl980lmXOdd3tW7g0LyipqjuOJCZfnzklI
-   Z+fVBDTfmb4z0y+RKN04DVBcYNUo8o1cEgOUTvQ2pG3fol5N8Tg+vUQE/
-   fg9sr0KvU6Aj2NHJKAqJbAOMwbnEDamr3xKBT+nMGt+1aWY8mIrMKD1vI
-   g==;
-X-CSE-ConnectionGUID: k8uuS8cNSC+UAB7F2CcawQ==
-X-CSE-MsgGUID: BpLO0pMDQ1+EHSQXBGD3Xg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="77946924"
+  bh=HXWQdDsbefm3PuZ+d8+OcEN8g08SGDzBtWifzKKgjfo=;
+  b=X9M8txazkEZLRdtgk8odGIyYI4UoGnwY/3q/38Myfg9pssvI0JuS1OxK
+   NUNZfk86dTY/K3HDHwEBpxa0gO9XRPuvNP4GjMmhwuHg6xS1vo5pnMaPm
+   MPqaoKiS6KkKP52K8tqpl7CCfZAikYk/m8dH++2t1kMXWLu680zBcLSkL
+   SjNqN73OHdtdnzP/rvSIwwkcmjaCSgiKGfN3JhobKe4FeUuF9oeHV/uBA
+   x3je00QFd4tagpoGy2/jycvj3X5B/YmJSnmtgMZQxGDGRzKkakckwUudi
+   hdH76uC+y/LNn24+7UvkocKq1bZCjekzeHHcW6W9VfD0fMknAXmkKCSqR
+   w==;
+X-CSE-ConnectionGUID: JBhropZsSLe2OkTLpPKr/w==
+X-CSE-MsgGUID: m5n53isDT3izRBQgs6hSjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="64325708"
 X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="77946924"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 01:51:02 -0700
-X-CSE-ConnectionGUID: iqZZqgiHQaWu17Aii7rvrw==
-X-CSE-MsgGUID: eR5RytUtQFm+tc0oP2jrFA==
+   d="scan'208";a="64325708"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 01:48:51 -0700
+X-CSE-ConnectionGUID: tbd38+u4TguQK4ophI7O3w==
+X-CSE-MsgGUID: 8PsEr+wrTFS4EOzBGuQ9wg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="179484659"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.224])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 01:51:00 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Thu, 18 Sep 2025 11:49:18 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.17-4
-Message-ID: <pdx86-pr-20250918114918-1887020842@linux.intel.com>
+   d="scan'208";a="175404818"
+Received: from indlpbc065983.iind.intel.com ([10.49.120.87])
+  by fmviesa006.fm.intel.com with ESMTP; 18 Sep 2025 01:48:49 -0700
+From: George Abraham P <george.abraham.p@intel.com>
+To: bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	giovanni.cabiddu@intel.com,
+	George Abraham P <george.abraham.p@intel.com>
+Subject: [PATCH] PCI/TPH: Skip Root Port completer check for RC_END devices
+Date: Thu, 18 Sep 2025 14:19:40 +0530
+Message-Id: <20250918084940.1334124-1-george.abraham.p@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Root Complex Integrated Endpoint devices (PCI_EXP_TYPE_RC_END) are
+directly integrated into the root complex and do not have an
+associated Root Port in the traditional PCIe hierarchy. The current
+TPH implementation incorrectly attempts to find and check a Root Port's
+TPH completer capability for these devices.
 
-Here is a platform-drivers-x86 fixes PR for v6.17.
+Add a check to skip Root Port completer type verification for RC_END
+devices, allowing them to use their full TPH requester capability
+without being limited by a non-existent Root Port's completer support.
 
-Fixes and New HW Support
+For RC_END devices, the root complex itself acts as the TPH completer,
+and this relationship is handled differently than the standard
+endpoint-to-Root-Port model.
 
-- amd/pmc: Add MECHREVO Yilong15Pro to spurious_8042 list
+Signed-off-by: George Abraham P <george.abraham.p@intel.com>
+---
+ drivers/pci/tph.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-- amd/pmf: Support new ACPI ID AMDI0108
+diff --git a/drivers/pci/tph.c b/drivers/pci/tph.c
+index cc64f93709a4..c61456d24f61 100644
+--- a/drivers/pci/tph.c
++++ b/drivers/pci/tph.c
+@@ -397,10 +397,13 @@ int pcie_enable_tph(struct pci_dev *pdev, int mode)
+ 	else
+ 		pdev->tph_req_type = PCI_TPH_REQ_TPH_ONLY;
+ 
+-	rp_req_type = get_rp_completer_type(pdev);
++	/* Check if the device is behind a Root Port */
++	if (pci_pcie_type(pdev) != PCI_EXP_TYPE_RC_END) {
++		rp_req_type = get_rp_completer_type(pdev);
+ 
+-	/* Final req_type is the smallest value of two */
+-	pdev->tph_req_type = min(pdev->tph_req_type, rp_req_type);
++		/* Final req_type is the smallest value of two */
++		pdev->tph_req_type = min(pdev->tph_req_type, rp_req_type);
++	}
+ 
+ 	if (pdev->tph_req_type == PCI_TPH_REQ_DISABLE)
+ 		return -EINVAL;
 
-- asus-wmi: Re-add extra keys to ignore_key_wlan quirk
+base-commit: c29008e61d8e75ac7da3efd5310e253c035e0458
+-- 
+2.40.1
 
-- oxpec: Add support for AOKZOE A1X and OneXPlayer X1Pro EVA-02
-
-Regards, i.
-
-
-The following changes since commit aa28991fd5dc4c01a40caab2bd9af8c5e06f9899:
-
-  platform/x86/intel: power-domains: Use topology_logical_package_id() for package ID (2025-08-29 16:15:19 +0300)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.17-4
-
-for you to fetch changes up to 225d1ee0f5ba3218d1814d36564fdb5f37b50474:
-
-  platform/x86: asus-wmi: Re-add extra keys to ignore_key_wlan quirk (2025-09-16 11:30:39 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.17-4
-
-Fixes and New HW Support
-
-- amd/pmc: Add MECHREVO Yilong15Pro to spurious_8042 list
-
-- amd/pmf: Support new ACPI ID AMDI0108
-
-- asus-wmi: Re-add extra keys to ignore_key_wlan quirk
-
-- oxpec: Add support for AOKZOE A1X and OneXPlayer X1Pro EVA-02
-
-The following is an automated shortlog grouped by driver:
-
-amd/pmc:
- -  Add MECHREVO Yilong15Pro to spurious_8042 list
-
-amd/pmf:
- -  Support new ACPI ID AMDI0108
-
-asus-wmi:
- -  Re-add extra keys to ignore_key_wlan quirk
-
-oxpec:
- -  Add support for AOKZOE A1X
- -  Add support for OneXPlayer X1Pro EVA-02
-
-----------------------------------------------------------------
-Antheas Kapenekakis (3):
-      platform/x86: oxpec: Add support for OneXPlayer X1Pro EVA-02
-      platform/x86: oxpec: Add support for AOKZOE A1X
-      platform/x86: asus-wmi: Re-add extra keys to ignore_key_wlan quirk
-
-Shyam Sundar S K (1):
-      platform/x86/amd/pmf: Support new ACPI ID AMDI0108
-
-aprilgrimoire (1):
-      platform/x86/amd/pmc: Add MECHREVO Yilong15Pro to spurious_8042 list
-
- drivers/platform/x86/amd/pmc/pmc-quirks.c |  8 ++++++++
- drivers/platform/x86/amd/pmf/core.c       |  1 +
- drivers/platform/x86/asus-nb-wmi.c        |  2 ++
- drivers/platform/x86/oxpec.c              | 14 ++++++++++++++
- 4 files changed, 25 insertions(+)
 
