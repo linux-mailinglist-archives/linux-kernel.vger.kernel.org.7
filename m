@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-821893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1AFB82906
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:51:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC22DB82924
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2417234B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171041BC8D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986622459FF;
-	Thu, 18 Sep 2025 01:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F2D256C7E;
+	Thu, 18 Sep 2025 01:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IkrNHWib"
-Received: from mail-qt1-f225.google.com (mail-qt1-f225.google.com [209.85.160.225])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Z0ueULhW"
+Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B3623C4F3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23A423C507
 	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.225
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758160240; cv=none; b=HeoJ+d9tuRZtgfZ9YtCJCBasl0YGgULsuv+qaqD0Z4WNU8DvXDWq6ZfQR5ooXrK9u/cLY/CK3bb5iQ8JEaHeZGM7zjY0LwG6AT/oH94VDsVfZQD+hy2aWsHxhp9X/wLu5GGjRh9FHLtfHHTVWi12Qp5g7WoELVyt+dnche2Kb+U=
+	t=1758160242; cv=none; b=jpGCjcJKs4gVIyHBHW1WBmR9+vRtIZt8zYMFe4J+8vX7ZkVw8S9pUQFDOUk5DgFsmTy1vMgYq1ZlXX8UgtIwJECPBaMYrIheoJlCPEU3JHiR99nwxtD0eQ7gqZ7AK2BOE2ukw/gdyGw/7SUf//lFmirU1+9wnK1+CRyWJm4cpw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758160240; c=relaxed/simple;
-	bh=SADlHgrOrTEn79WvE5EtQJLfGlA1k13iJsqgAnWiaNI=;
+	s=arc-20240116; t=1758160242; c=relaxed/simple;
+	bh=SxYD5WuHLRPoT/cs6wVVOR8hP8iZlHeIqgfFLbpvcHQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TjTplKvjjyriy0ymUaWqY3lqo3iUn2GPNm6+8yaCahoczJ2BzmgWrqDNraDdBVgoPHCpbeXSCrYcoY/34YqjAnAxHFjLG5hTqteBx+NWvEpek1JTCiSLk5RhVPSsOPQdqXxw99ugkKjRzKncCHPnIeAP+9qmCDk1p4XcdcRXSNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IkrNHWib; arc=none smtp.client-ip=209.85.160.225
+	 MIME-Version; b=uNap+mBgsKR65sAJRufQmB7/4UqiZwb+jWy1n1hZu85V5tpSoYzxMntLzpVqE030xbhB55WKqqLhM4WgTIsn+HbvgjiOSjzJknekL3sdj6FyjOAcoC4KyNOkr/ZOwEiC2LJVw+klDDmFpyznOVgTLJUmqw3g7txXXqA0Nsrij3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Z0ueULhW; arc=none smtp.client-ip=209.85.166.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-qt1-f225.google.com with SMTP id d75a77b69052e-4b604c17182so225371cf.1
+Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-4240ff5652bso170425ab.1
         for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:50:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1758160237; x=1758765037; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1758160238; x=1758765038; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8QKZxZyP+vsEEnhv8Ftm0VexvVlHS9TFLKY4pSs7XGM=;
-        b=IkrNHWib0W+mKEJucZ+ukTsLPO44B0hauglDgo200XYzN81SwdL6LZacBor6catxTS
-         GjIKrebSBY+YyIfouLYc8W7H9Xr0gqKBUDf522DYix7Mt0osi76aVCpNq3R7LDVMBf0C
-         x+5nlHbTuJksu796y3x/6fGVG/gtnT1w//ZFmeUledf32i3/iqoeeM35ZR6dO3WXgvxK
-         pzjm7Qdt2bkk8I1j2RjVr+Q1fWjurx/8tg/Hi3zi/7Cd7JulsuE1KmWRoPO/zc3dgnLG
-         s98r90BwRdUlUe3KOLBOOM5ObrD4JwL/Xp7ccGbeucmQIcfsCSbs4ZDUnjipjaFoypeR
-         vAAw==
+        bh=EHN5LrAZcA9wf+X46VWuoZMibI+SFl5Bk6BxNvNG8fQ=;
+        b=Z0ueULhWplm7sJ2jk4hAVpBK2/dMWxuGipITS705kenj4lMxohAZQpFXOyIwvaVmKx
+         2t+RmjXC/c3iUk1sLg4bmFgv0btgNLpb61+qfQp5B2ARXzjgVV7YDT5JIoOACOQ9o1HM
+         kvn9m33SCegdXETp2Dr5heihU243+4CqbOn4RZW4csGFIfz63q7q1LNIQ8xxIFZEAL8D
+         GNfFxCYsQTw096AM0U/17eU688UmSdXil2xaJ1oKqd2FcNzRBQlmE+BLaBtHIMBrqcZN
+         zBFCM6DUQwElwpyacbhU0X7ip/PlYEOW+DbXBjpMn1M2JW8ZbP+GDtR1pOEc/D1H+8Oy
+         2a9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758160237; x=1758765037;
+        d=1e100.net; s=20230601; t=1758160238; x=1758765038;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8QKZxZyP+vsEEnhv8Ftm0VexvVlHS9TFLKY4pSs7XGM=;
-        b=QlGgV6IksBe7lLzgc6zIaPDKwivEsyGs1bEqhduZlC0SmRbQjq9KpPZZaFLF/5Blb2
-         pAbRtWkzSeKFZ82xSjbIsIjTN5iJnEakrk3KqzANdtK8B75W5xRtAEWXbn0BCtMDdj6L
-         noe07l/kDJ/IiGqdBDs0pB5hDSkbODwJzyZ5CEZBjSBdTQqZRk6wSpyC0WnlNg1f/XGv
-         9zm25+BRFQzdRycSVFJOZz52LGQ/v4P6yMqhI5L5k7qqKY9Jjg1oJ5p36BA1AzxsIQGt
-         fZKf6PqTUuTmbvWKeSWDtN0+m0j4koZ273CYjx0wgh/kF9/ZJdwobFKOkmmAGI+FkH1q
-         CTHw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/8BCZ7I+0bc5rGHAAkieq7Q2eXcIrWXnLCl1DyJ8u2FyWE/uvWmtWtCJ0jwvDlpjT97LYQt9VazOY2p4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyX2ReJvaWL4aJQWeQRLOUmmy+pNUMZklv+KPkN7Wad9ioZu3d
-	0oewrxoD5VYy6TY5TYdKduwSnzsfz2CSV8w096rOHGFhbwKbiqrTi4qsWheomdVk74CAmXCzjoJ
-	vZ9JEwBJ0HvOOZBDMwtW4cbYYtdAirvE8oBLgs4cjxHNCzf7ZhrGT
-X-Gm-Gg: ASbGncvWm75hQGwnDZqGJT3wwRnIpoTp8Cw1v+yTKtIovtIQdcl0TCw1VUNbdun1Dcf
-	ypIoIjVypJqoYrjpOfsizAJTiHrRJpika6sgnyhpdBQHXTK9IEvGjI9I5pgYhwB7HTJZF7c09A7
-	iqAzdzs+xP829aYkKgoYv/BRSDHocJB7x4aZNQMynuIV1rxIbJGoP/XzBOYqJzHIKICCJYHolFM
-	Fjs/6aCUKqcK4Z5hGj5REzDXRNbuNf6Zs1jtdmvkH6GUJNnxA3PJr1jHsA4fMaN8vmdWoxWaPpO
-	ZXHE/+McfiQxpBFDBfKqrwyaq71qJ6hdcAYcv/eIgLaDehoM0JLNzjzL4Q==
-X-Google-Smtp-Source: AGHT+IEsgIGsNSRRNT38WH7yzSqLp/Ktc3WgoI/FXMkTetjwhZhrLfnLD0dIVWr34qvWWxXEJ54m1NyDRmNv
-X-Received: by 2002:ac8:5dc7:0:b0:4b7:aa56:c0f8 with SMTP id d75a77b69052e-4ba66a30247mr35635721cf.4.1758160237404;
+        bh=EHN5LrAZcA9wf+X46VWuoZMibI+SFl5Bk6BxNvNG8fQ=;
+        b=LZpL6qMneJ4LypWgLSS/pA/d2NJeEh+1NNcDLedkjldUOTAns4fTCNn0FaJ8za2INR
+         pc8am0tX08HmNk5zRo/M+dHim2m4j5vC9jvyefWpI1y2I0coSyJVXjP6ebDJocjINKKh
+         l9CbxMxFuUeOFIqCjZPRf3AfKQwC0cr6H2xMKbQWZBerhSglXEiZaJtoGw0CiR7jgaFF
+         lXp73dPN0IoYlXPN9xtiGOf9ErUF1sueGsPiE1CzU3IoT9HCSjt1OmbB4wV61/TsHjB6
+         znylAB1eih7I9O1fhiLT9PnniLW62A93Tu36rk79yBEwDOoBDjegoyDhqklpN7DqAhE3
+         mLIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDXbwSdMb5N8ULyZ3yKUl8mPLsiC+RWuQecD6kWdYIGHlatKcox/guI6HIrJHNufkm9+pEl4V44jGLH/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0YwcHWtL2JOBghpvKaJ9hEosES7A7bo2F7hJSDjb7Y+bYc3Gc
+	12/hB07MKOt4XHxd3UEmJ5K1uwURmPZbhQZwh0Urr9kKSu4MENVMDGciMUXGqD9U631LlMqaGPH
+	eMJfUcGigtqCeNJsC5czorNvSNZosHsg8K0Ez
+X-Gm-Gg: ASbGncsyC4NPpin64HAamXlZVL44NkpmqIEIBVWzFQwBGDibOhE5zgCw0mAlmes/zIZ
+	OliqV4G7VQu7LmzZ6a3Brc2HtWJbBEaHZyAddTiTQphHCfG2SobQx5beYTXJG6axZHkY6qAZDUh
+	GEGHxPo8HXTb9KHPV6iToXK37bzZoD8LpdzsSKUhNlJO4pvLcZSm7Wk1nUd8pZfiIVzqt4QPNHC
+	3GtmZsUHN8UtmvQHXU9Ov9QurgJBF4j/BN9bdb3gxl0oV+I815V9HKu9G/V02BYjItjMl3dayrZ
+	EI7ZUHRh/T4CrO/B4E9Ua36vlvBhe37kgqcBtH6F2fo89ei6awCt1i0bncboL11p/lGHXiqZ
+X-Google-Smtp-Source: AGHT+IHg9ormGeHNVdb3lk5wKhpVB+m7oJDCUTFeC6NzfM31elgAomyyVQtn+PodMnXbWY3OkRmL+hjR4jJD
+X-Received: by 2002:a05:6e02:178e:b0:415:8117:d417 with SMTP id e9e14a558f8ab-4241a563cf4mr22899405ab.7.1758160237761;
         Wed, 17 Sep 2025 18:50:37 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-79350a538c8sm710306d6.33.2025.09.17.18.50.37
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-4247353db28sm47175ab.32.2025.09.17.18.50.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 17 Sep 2025 18:50:37 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id C303334059B;
-	Wed, 17 Sep 2025 19:50:36 -0600 (MDT)
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 1E83E340508;
+	Wed, 17 Sep 2025 19:50:37 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id BDB7BE41B42; Wed, 17 Sep 2025 19:50:36 -0600 (MDT)
+	id 17A29E41B42; Wed, 17 Sep 2025 19:50:37 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Ming Lei <ming.lei@redhat.com>,
 	Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 07/17] ublk: pass ublk_device to ublk_register_io_buf()
-Date: Wed, 17 Sep 2025 19:49:43 -0600
-Message-ID: <20250918014953.297897-8-csander@purestorage.com>
+Subject: [PATCH 08/17] ublk: don't access ublk_queue in ublk_register_io_buf()
+Date: Wed, 17 Sep 2025 19:49:44 -0600
+Message-ID: <20250918014953.297897-9-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250918014953.297897-1-csander@purestorage.com>
 References: <20250918014953.297897-1-csander@purestorage.com>
@@ -98,88 +98,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Avoid repeating the 2 dereferences to get the ublk_device from the
-io_uring_cmd by passing it from ublk_ch_uring_cmd_local() to
-ublk_register_io_buf().
+For ublk servers with many ublk queues, accessing the ublk_queue in
+ublk_register_io_buf() is a frequent cache miss. Get the flags from the
+ublk_device instead, which is accessed earlier in
+ublk_ch_uring_cmd_local().
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- drivers/block/ublk_drv.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/block/ublk_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index d6d8dcb72e4b..cb51f3f3cd33 100644
+index cb51f3f3cd33..751ec62655f8 100644
 --- a/drivers/block/ublk_drv.c
 +++ b/drivers/block/ublk_drv.c
-@@ -2123,15 +2123,15 @@ static void ublk_io_release(void *priv)
- 	else
- 		ublk_put_req_ref(io, rq);
- }
- 
- static int ublk_register_io_buf(struct io_uring_cmd *cmd,
-+				struct ublk_device *ub,
- 				const struct ublk_queue *ubq,
- 				struct ublk_io *io,
+@@ -2131,11 +2131,11 @@ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
  				unsigned int index, unsigned int issue_flags)
  {
--	struct ublk_device *ub = cmd->file->private_data;
  	struct request *req;
  	int ret;
  
- 	if (!ublk_support_zero_copy(ubq))
- 		return -EINVAL;
-@@ -2150,10 +2150,11 @@ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
- 	return 0;
- }
- 
- static int
- ublk_daemon_register_io_buf(struct io_uring_cmd *cmd,
-+			    struct ublk_device *ub,
- 			    const struct ublk_queue *ubq, struct ublk_io *io,
- 			    unsigned index, unsigned issue_flags)
- {
- 	unsigned new_registered_buffers;
- 	struct request *req = io->req;
-@@ -2163,11 +2164,12 @@ ublk_daemon_register_io_buf(struct io_uring_cmd *cmd,
- 	 * Ensure there are still references for ublk_sub_req_ref() to release.
- 	 * If not, fall back on the thread-safe buffer registration.
- 	 */
- 	new_registered_buffers = io->task_registered_buffers + 1;
- 	if (unlikely(new_registered_buffers >= UBLK_REFCOUNT_INIT))
--		return ublk_register_io_buf(cmd, ubq, io, index, issue_flags);
-+		return ublk_register_io_buf(cmd, ub, ubq, io, index,
-+					    issue_flags);
- 
- 	if (!ublk_support_zero_copy(ubq) || !ublk_rq_has_data(req))
+-	if (!ublk_support_zero_copy(ubq))
++	if (!ublk_dev_support_zero_copy(ub))
  		return -EINVAL;
  
- 	ret = io_buffer_register_bvec(cmd, req, ublk_io_release, index,
-@@ -2354,11 +2356,11 @@ static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
- 		/*
- 		 * ublk_register_io_buf() accesses only the io's refcount,
- 		 * so can be handled on any task
- 		 */
- 		if (_IOC_NR(cmd_op) == UBLK_IO_REGISTER_IO_BUF)
--			return ublk_register_io_buf(cmd, ubq, io, addr,
-+			return ublk_register_io_buf(cmd, ub, ubq, io, addr,
- 						    issue_flags);
- 
- 		goto out;
- 	}
- 
-@@ -2376,11 +2378,11 @@ static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
- 			^ (_IOC_NR(cmd_op) == UBLK_IO_NEED_GET_DATA))
- 		goto out;
- 
- 	switch (_IOC_NR(cmd_op)) {
- 	case UBLK_IO_REGISTER_IO_BUF:
--		return ublk_daemon_register_io_buf(cmd, ubq, io, addr,
-+		return ublk_daemon_register_io_buf(cmd, ub, ubq, io, addr,
- 						   issue_flags);
- 	case UBLK_IO_COMMIT_AND_FETCH_REQ:
- 		ret = ublk_check_commit_and_fetch(ubq, io, addr);
- 		if (ret)
- 			goto out;
+ 	req = __ublk_check_and_get_req(ub, ubq, io, 0);
+ 	if (!req)
+ 		return -EINVAL;
 -- 
 2.45.2
 
