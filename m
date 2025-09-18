@@ -1,234 +1,186 @@
-Return-Path: <linux-kernel+bounces-822658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E850B8469C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:50:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29B3B8469F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FA0D7BA471
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:48:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55340170F8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE87C2C3271;
-	Thu, 18 Sep 2025 11:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1576B2C15B8;
+	Thu, 18 Sep 2025 11:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TGWkFV+v"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFRXeW8V"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F10283153
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C30C2C11CC
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758196195; cv=none; b=a4lO6T41QMdppHGOL+Ozmr7NIY5wAihTB9jD4iJlVFn+atmqby5u3ue6Hm/p6jAjxLcLpSWyGHba3HlkwWMilqcs9zxqvitYpriZY+5W6XOt9Dv0vsnPojqko8qVymaqy3t8Wwpnl8dXCkdor5OjVhws5yq9U/YrugPTvwdrobE=
+	t=1758196219; cv=none; b=Qb1SK+HUtnEyYifOnEadFObXf3iZcd5jA2hjUgx+lfuR/T+792an7ML5GR2YMdvZ6BMkVDdXy5cJgKTESd37wS+sqYn+0kZPLUnqNQIOOFKiSr7vbFNw4kOH9i38olyK5T5fgpN2U0Dm3wBXC9lFuZj8BX/rcWw0+65a5R+ekx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758196195; c=relaxed/simple;
-	bh=+gk5KKF36ujB7nycJnCCTzw/u4iBDBaYYBO8dxVw9JE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=rkhXIlXDDKEu9ZekG2c3LKIZKYo7QlkxcweR8zoeN3heE++HP3nUS8bkoN0wQsnlFYKcnQorsXMNxi/IqAk03HkybKXP2ZP+GQn20lxbn5KNktgMpsaih9PbwCe9YPROPGBpc+3q/7PVWmrcKplffkPfa87lsNPVAwZtJ7//Qd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TGWkFV+v; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250918114950epoutp042e78bd0543c4ea72119b442c9e9110ec~mXh67Y0ff0581905819epoutp04d
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:49:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250918114950epoutp042e78bd0543c4ea72119b442c9e9110ec~mXh67Y0ff0581905819epoutp04d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758196190;
-	bh=FuCxKZOC5gMCxjvUIfysdvbKbIwAjaMklqaPwT6Cdlc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=TGWkFV+vyXk3M6D6IuqlvEcybwVaHrnNnW9UTGangKu78Dxid6hGC6Jp6+GP/8M4/
-	 K07WT+sAL/a7T+T93OpNKuIMJJCdbO2Vd0njOwz4MQ3Hb+pRUh8J12oYOcOwokCEJ2
-	 +M5oqwcj6WkE/+sf8JWveeiB8lg96xueIVHg6boM=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250918114949epcas5p4219721d84eadeb39ff7750e82a05c84f~mXh6Ld_2n0579905799epcas5p4a;
-	Thu, 18 Sep 2025 11:49:49 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cSDT863xpz6B9m9; Thu, 18 Sep
-	2025 11:49:48 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250918114947epcas5p1851912aadf4466cda635681b1a9fa798~mXh4OkerZ1378713787epcas5p1m;
-	Thu, 18 Sep 2025 11:49:47 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250918114943epsmtip210861e859c25dd4fcf3ce0fb14a9bf45~mXh0dCmTB3083330833epsmtip2O;
-	Thu, 18 Sep 2025 11:49:43 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
-	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <67c2b5c6-7559-4ae9-b2af-e839b6b8f4d5@kernel.org>
-Subject: RE: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Date: Thu, 18 Sep 2025 17:19:41 +0530
-Message-ID: <007701dc2892$553aded0$ffb09c70$@samsung.com>
+	s=arc-20240116; t=1758196219; c=relaxed/simple;
+	bh=AREG0Ed6XIrfjpFk2BxwkOHkPxkyb+CLxTDrPhGjcMI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCNi+0wI/V/HwDCpxY8Oxd071ckkAc9WsW3YbyUCrKdFCd424P66wGEVa2E5KWbkx9XRo1F5Tagyz6NRRwu4b/BZ22e0up1bvmu3LXDXv8634lHPKOkL0VJe9Y9z/86UMt8E82SyjgOVEoX4S0uwx/aWY/XqQgV5NdAkY6CrDfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFRXeW8V; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6bb0a364so1147746e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758196215; x=1758801015; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cinYAB168v/wb2VrppQflF57ZyFZxmkxcgnsCP7opUw=;
+        b=UFRXeW8VGCW9dO2yUbiqxnPkchB3DxnV8M9pt5GRF/bUTSSeZU7q17IEQdEo4O1qf1
+         XLKE3C4pc1NU3uJ+AC2LlWB9ssr+Iqxgg3NuCPW05A+NDwJp00uHqvqGmSRHt3UJYVYI
+         hp1Y2cPRXyfVEUjSIszeoVxgQC+BgEsr7HesXL01Vx60iNNUZOJbWL3Ds3wVOv8TuvOU
+         oAb0+rtZefWHJeKdTMvuRA/LQdw3HvuUGC/6ZL5c04X9V+l0ygZ7lOpASuw8nEE7cd0u
+         G+JRMpn3cFPBzAeBvam0dUgY3UnBZdUalM62sw2pSf3dhlU7oq67zFvctLbxRmBfglVJ
+         ciVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758196215; x=1758801015;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cinYAB168v/wb2VrppQflF57ZyFZxmkxcgnsCP7opUw=;
+        b=QQZxziUAerzjZDcWdE2PsWlZvLTOGQ0zAL8UPwy5oL1BiNLv0J0K+vj1peyr4iPN0G
+         8rSUfMlWH2YkFchRb2/Zu+V57V3zXL+ViglQyczu2695fruIzJncV8eZM9AwE75Uc4/b
+         mzKTfVK4SVjiJVo1JsqfUzepaQmZZPrbKLoql2cp0DGJTTAQKRdnvhFICQbXsvo1b84E
+         Wu6GzaG9HriIxGi8ggugFe/2IkUlQelkritnshiRgsrk3XS/zYnWr46SVS8Ybhw3wgeF
+         6t5hchJdvBytT/3o1PcKXli63O8fGg57wjXs7qEPceHbXB7qlrqrFCMknawE8Sh/sMGx
+         N0sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbf3xZid8MDuPF1lSbF/XIpjcvoVa1oCo5fUE9QEYJwznKqx/0a4oV6ukEC50DhSj3BEsdeWxRi+Pm0zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxriWQWXC8C+d8KlaksfJsGmsqwGIq+FhN6HhwNiS+tHKIo+L/U
+	YCtoxXzOIvgQquTvchTIAVgV0JlhzWhFaSzrczSoFdsooHZwvrN0Rkb1
+X-Gm-Gg: ASbGncuxHDYNaG/Yf0t9mrMfmPO8x9B2s6dDXdQgTFFhruagc45Wki8gPeUJ2OXM+1z
+	c1+935IEpA56c49KChvHuXyE7nkVO2rG9YEsWQc9Ewd276PjlO3Rx3VL3/xqsqWeVsxgFU+bK5G
+	SWHQTfTjoO/KYMoQf7l++7pcJnQbfRTe/goB0h9dReiSJCEI8aBNbExXDkP5WgzxyLTt82eE8rW
+	mRmFR0cSPKPvnPrQvlLs0+QhEnX6pBbUBOUPSpX7vTa7PmBPwYXnZ6BuMPYxRJv5Bw0AwhECl+b
+	euHmaILntklimBpLbb+aT5PZeGHWAJbv/bGaOYSEyKYm6y4nQIQnLwkCpKPvT56vY+xnuyJcSs+
+	G/NAmpcWA
+X-Google-Smtp-Source: AGHT+IGPXawyjl1pf4A0JhR7iwy1/wI6/9VL3klvy4kLXlBQi62TAUdK1LlD/gQhEjPPojUrq+oGdA==
+X-Received: by 2002:a05:6512:3e08:b0:55f:572e:2417 with SMTP id 2adb3069b0e04-57799ea9e63mr1847687e87.56.1758196214358;
+        Thu, 18 Sep 2025 04:50:14 -0700 (PDT)
+Received: from milan ([2001:9b1:d5a0:a500::24b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a68e26d2sm618824e87.54.2025.09.18.04.50.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 04:50:13 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@milan>
+Date: Thu, 18 Sep 2025 13:50:12 +0200
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+	paulmck@kernel.org, Jan Engelhardt <ej@inai.de>,
+	Sudarsan Mahendran <sudarsanm@google.com>, Liam.Howlett@oracle.com,
+	cl@gentwo.org, harry.yoo@oracle.com, howlett@gmail.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	maple-tree@lists.infradead.org, rcu@vger.kernel.org,
+	rientjes@google.com, roman.gushchin@linux.dev
+Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
+Message-ID: <aMvx9GKgIWtrkZ_R@milan>
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+ <20250913000935.1021068-1-sudarsanm@google.com>
+ <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
+ <f5792407-d2b9-42b3-bc85-ed14eac945ec@paulmck-laptop>
+ <d1ef1cbb-c18d-4da6-b56b-342e86dca525@suse.cz>
+ <CAJuCfpEQ=RUgcAvRzE5jRrhhFpkm8E2PpBK9e9GhK26ZaJQt=Q@mail.gmail.com>
+ <aMpE-oSjtlDU4TSl@pc636>
+ <CAJuCfpHQ_JedSRHKKoYXyVzaFOm=dDWzgFZwqerfEC1fn35j0w@mail.gmail.com>
+ <CAJuCfpE48n=QM0nY8yE3drqZU0wgC76=70EyftL1WZewEcykyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRMOVGdWg5oRjNsRBgEjzIeIB8IgGabj6EAmTXuDcB8lF0oAGjtHpaA19Hw4UBhGAZeAGHPhyts76/S3A=
-Content-Language: en-in
-X-CMS-MailID: 20250918114947epcas5p1851912aadf4466cda635681b1a9fa798
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
-	<CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
-	<20250903073827.3015662-2-pritam.sutar@samsung.com>
-	<20250904-interesting-lovely-ringtail-38bbef@kuoka>
-	<000001dc1d70$aebf7d80$0c3e7880$@samsung.com>
-	<87857202-b436-4476-9384-67566126d844@kernel.org>
-	<001001dc1d85$c0d56a60$42803f20$@samsung.com>
-	<67c2b5c6-7559-4ae9-b2af-e839b6b8f4d5@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpE48n=QM0nY8yE3drqZU0wgC76=70EyftL1WZewEcykyA@mail.gmail.com>
 
-Hi Krzysztof,
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 18 September 2025 08:13 AM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> andre.draszik=40linaro.org; peter.griffin=40linaro.org; kauschluss=40disr=
-oot.org;
-> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
-> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
-> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
-amsung-
-> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
-dd
-> ExynosAutov920 HS phy compatible
->=20
-> On 04/09/2025 19:21, Pritam Manohar Sutar wrote:
-> > Hi Krzysztof,
+On Wed, Sep 17, 2025 at 04:59:41PM -0700, Suren Baghdasaryan wrote:
+> On Wed, Sep 17, 2025 at 9:14 AM Suren Baghdasaryan <surenb@google.com> wrote:
 > >
-> >> -----Original Message-----
-> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> >> Sent: 04 September 2025 03:12 PM
-> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> >> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com=
-;
-> >> andre.draszik=40linaro.org; peter.griffin=40linaro.org;
-> >> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> >> igor.belwon=40mentallysanemainliners.org;
-> >> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
-> >> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> >> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> >> linux-samsung- soc=40vger.kernel.org; rosa.pila=40samsung.com;
-> >> dev.tailor=40samsung.com; faraz.ata=40samsung.com;
-> >> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
-> >> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy=
-:
-> >> add
-> >> ExynosAutov920 HS phy compatible
-> >>
-> >> On 04/09/2025 09:51, Pritam Manohar Sutar wrote:
-> >>> Hi Krzysztof,
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> >>>> Sent: 04 September 2025 12:18 PM
-> >>>> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> >>>> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> >>>> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.c=
-om;
-> >>>> andre.draszik=40linaro.org; peter.griffin=40linaro.org;
-> >>>> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
-> >>>> igor.belwon=40mentallysanemainliners.org;
-> >>>> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
-> >>>> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> >>>> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> >>>> linux-samsung- soc=40vger.kernel.org; rosa.pila=40samsung.com;
-> >>>> dev.tailor=40samsung.com; faraz.ata=40samsung.com;
-> >>>> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
-> >>>> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-p=
-hy:
-> >>>> add
-> >>>> ExynosAutov920 HS phy compatible
-> >>>>
-> >>>> On Wed, Sep 03, 2025 at 01:08:22PM +0530, Pritam Manohar Sutar wrote=
-:
-> >>>>> Document support for the USB20 phy found on the ExynosAutov920 SoC.
-> >>>>> The
-> >>>>> USB20 phy is functionally identical to that on the Exynos850 SoC,
-> >>>>> so no driver changes are needed to support this phy. However, add
-> >>>>> a dedicated compatible string for USB20 phy found in this SoC.
-> >>>>>
-> >>>>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> >>>>
-> >>>> You just dropped all tags without explaining why.
-> >>>
-> >>> Regretted inconvenience.
-> >>>
-> >>> There were significant changes in supplies' names in driver and
-> >>> schemas (patch-set v8). This led to make changes in patch no 5.  And
-> >>> review for these changes is needed.  Hence, removed RB tag in this pa=
-tch-
-> set.
-> >>>
-> >>> There was a ask for the same https://lore.kernel.org/linux-
-> >>
-> phy/000401dc18cd=24ec02a1b0=24c407e510=24=40samsung.com/=23:=7E:text=3DLe=
-t%20me%
-> >>
-> 20know%2C%20because%20of%20above%20changes%2C%20should%20be%20
-> >>
-> removing%20your%20%0A%27reviewed%2Dby%27%20tag%20from%20patch%
-> >> 201%20and%203.
-> >>>
-> >>
-> >>
-> >> Where in the changelog you explained why you dropped the tags?
+> > On Tue, Sep 16, 2025 at 10:19 PM Uladzislau Rezki <urezki@gmail.com> wrote:
+> > >
+> > > On Tue, Sep 16, 2025 at 10:09:18AM -0700, Suren Baghdasaryan wrote:
+> > > > On Mon, Sep 15, 2025 at 8:22 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+> > > > >
+> > > > > On 9/15/25 14:13, Paul E. McKenney wrote:
+> > > > > > On Mon, Sep 15, 2025 at 09:51:25AM +0200, Jan Engelhardt wrote:
+> > > > > >>
+> > > > > >> On Saturday 2025-09-13 02:09, Sudarsan Mahendran wrote:
+> > > > > >> >
+> > > > > >> >Summary of the results:
+> > > > >
+> > > > > In any case, thanks a lot for the results!
+> > > > >
+> > > > > >> >- Significant change (meaning >10% difference
+> > > > > >> >  between base and experiment) on will-it-scale
+> > > > > >> >  tests in AMD.
+> > > > > >> >
+> > > > > >> >Summary of AMD will-it-scale test changes:
+> > > > > >> >
+> > > > > >> >Number of runs : 15
+> > > > > >> >Direction      : + is good
+> > > > > >>
+> > > > > >> If STDDEV grows more than mean, there is more jitter,
+> > > > > >> which is not "good".
+> > > > > >
+> > > > > > This is true.  On the other hand, the mean grew way more in absolute
+> > > > > > terms than did STDDEV.  So might this be a reasonable tradeoff?
+> > > > >
+> > > > > Also I'd point out that MIN of TEST is better than MAX of BASE, which means
+> > > > > there's always an improvement for this config. So jitter here means it's
+> > > > > changing between better and more better :) and not between worse and (more)
+> > > > > better.
+> > > > >
+> > > > > The annoying part of course is that for other configs it's consistently the
+> > > > > opposite.
+> > > >
+> > > > Hi Vlastimil,
+> > > > I ran my mmap stress test that runs 20000 cycles of mmapping 50 VMAs,
+> > > > faulting them in then unmapping and timing only mmap and munmap calls.
+> > > > This is not a realistic scenario but works well for A/B comparison.
+> > > >
+> > > > The numbers are below with sheaves showing a clear improvement:
+> > > >
+> > > > Baseline
+> > > >             avg             stdev
+> > > > mmap        2.621073        0.2525161631
+> > > > munmap      2.292965        0.008831973052
+> > > > total       4.914038        0.2572620923
+> > > >
+> > > > Sheaves
+> > > >             avg            stdev           avg_diff        stdev_diff
+> > > > mmap        1.561220667    0.07748897037   -40.44%        -69.31%
+> > > > munmap      2.042071       0.03603083448   -10.94%        307.96%
+> > > > total       3.603291667    0.113209047     -26.67%        -55.99%
+> > > >
+> > > Could you run your test with dropping below patch?
 > >
-> > Along with supplies' names, there were similar commit messages for
-> > patch no 1, 3 as patch no 5 (v7). (though, they were explaining schema
-> > more than h/w). Changed commit messages of the patch no 1, 3, 5 (v7)
-> > as per reference commits and would like to get them reviewed again, so
-> > did not add RB for patch 1 and 3, which you had given RB (in v7).
->=20
-> I do not have time to review the same second time and I find such request=
- quite
-> a waste of my time. It's v8 so I am surprised to see it getting changed e=
-ven after
-> review.=09
->=20
+> > Sure, will try later today and report.
+> 
+> Sheaves with [04/23] patch reverted:
+> 
+>             avg             avg_diff
+> mmap     2.143948        -18.20%
+> munmap     2.343707        2.21%
+> total     4.487655        -8.68%
+> 
+With offloading over sheaves the mmap/munmap is faster, i assume it is
+because of same objects are reused from the sheaves after reclaim. Whereas we,
+kvfree_rcu() just free them.
+ 
+Thank you for your results.
 
-OK, those were only commit message changes, so I am going to retain your=20
-RB tags for patch 1 and 3. Sorry about noise.
-
-However, do you want me to send v9 by retaining RB tags in respective patch=
-es?
-
->=20
-> Best regards,
-> Krzysztof
-
-Thank you,
-
-Regards,
-Pritam
-
+--
+Uladzislau Rezki
 
