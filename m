@@ -1,95 +1,204 @@
-Return-Path: <linux-kernel+bounces-822148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0382BB832A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:37:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B24DB832A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD62C1C803DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:37:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25B0F1651C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4092DA762;
-	Thu, 18 Sep 2025 06:37:07 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643D12DA740;
+	Thu, 18 Sep 2025 06:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rKdUgwVB"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9652DA755;
-	Thu, 18 Sep 2025 06:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5098D2D7DD3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758177427; cv=none; b=m8RETRPuuKhnSL255lix1nHgq8hpH1HO1u5RifdSpEKL0rmnBMxnysBOrlnyIDJjT7h7iHatpqSOiATacykdftvn2a+VeQJPjsRtZSaF4yDfmu70J8UL8oHSOnLtqhvreoE6zRm9KKIj0pmW9zouirxom1R7lItnHePf96yodzk=
+	t=1758177499; cv=none; b=nDN7xDhaccnnMypN1IDeGEaVP+9niSWhvXM++9OhgQqr/iPhS0buEQYg6Zj/l2hSX+aQ2x76+DhRBAguCVXjo2vn6z9ZGgXRcchZp47eWHeqYSxdQV9QT57bSRWZiJFj7PE6cJ+nnMCuc33YYRDD1zDzrXc4cFpbkNLoFZkLljQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758177427; c=relaxed/simple;
-	bh=dB2D5X2TaDzSzcQxd72RVX4GNj0RdIORusioHfUXCgQ=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=iggVJRFHGnSxC9sC1Ui5TvoU3XNJajChV5Ff/795Skac3OBDa0T7qP7Wk+s5KFmrI75WGKwPehhQV0HI5ppUfr1XWX/8m8w3MApD8aXqgkoSB4Hb9Vmzaaalh/bQzL9T4hWM3by9LouG+NpeW3w31M/izGezjNXhm0UO2oX5500=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cS5X45Jtlz4xPS7;
-	Thu, 18 Sep 2025 14:36:52 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 58I6afdC068792;
-	Thu, 18 Sep 2025 14:36:41 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 18 Sep 2025 14:36:43 +0800 (CST)
-Date: Thu, 18 Sep 2025 14:36:43 +0800 (CST)
-X-Zmail-TransId: 2af968cba87b807-5753a
-X-Mailer: Zmail v1.0
-Message-ID: <20250918143643417OPRH_RjCXkCa3aCtQEX3Y@zte.com.cn>
+	s=arc-20240116; t=1758177499; c=relaxed/simple;
+	bh=oEAkMPokEPthqy/sYUaxWKjhNDV64NNbfnLb9g0p/f0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QeaNtsAnEzOQ+BGd675X+WX6QVTsoldI9NzsKsYwmYeUZqH+OgGkVVFGRLo1pKBp243IXap4VD+adPDF50znNOAVRquOp5TxFWVhVZHG0UHmXSBYi8SptVpyaht1GmUyswyYSBwMoXOeUVMMT9Ji3MUbLO6eIF/trd1X8jDzhTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rKdUgwVB; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec67fcb88so532369a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758177497; x=1758782297; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EhQgZCX3g/hqgKkVAO2ALoNMZAYeb5CdIihGIJQ0jtk=;
+        b=rKdUgwVBnpccRrpAHjyXiHImQVzf7FSNM4xbGaDma+o794KqHyzY9KS4FkbUm1nnM8
+         ctY86EL1vQoId5pHHxCGJ3RDhIk5Jz3rgg9JzDx76XFsLn8fhDMeY33foRU3MxWf9uwX
+         XfGFqwbeDPcPcYPiUDAO5y9G+g38CHy5cDEFWVf3W6NtB3sgCS2QRO7fcfWS2v5ZMl0n
+         pYqELeu/x7u5JamfNRrM79eoFW5OlwGOrULAd4pUo4gH7fvh04jJ/6bEmoMEFz85uJEn
+         cHHGObIs0Hxim88EulbnA0t6kIcqJaI2mwbg5ipSSXhTvlCszDQLC45kG7+IUF/SuPn9
+         fksg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758177497; x=1758782297;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EhQgZCX3g/hqgKkVAO2ALoNMZAYeb5CdIihGIJQ0jtk=;
+        b=WZohRAQ+gNK6zBcCHetmkfQ4Kf58rTz98WayUKT1RFHd0db0d3c0+YF92t7uJAOjHo
+         p1p5vazjLLqmKqgx4e6ElRMM4fa/PVZs+pQwH35uoIIQDYAi1xpfggOL5pmuds866djS
+         9XL9gKa1aEAPz0P5CWx3sCkDdKgUQWfY6v1exJP4hB3XsoY1fKrfkFTvIdmDAw1oK2Dk
+         UTxzw/rwsOpcdqAo5qnJx8MbvNP3M1rTNoAAviBg3901kestMrb62NNpjwxS2AnSBXJa
+         2nGN1jiokc9Cko0IXb4sUZj0iRROEeGpf/hEcBLrF7bBi1jgVWMlkZrnXGto6nwH0kU/
+         HqdA==
+X-Forwarded-Encrypted: i=1; AJvYcCU46g188wvuc4OHA7L5LeOZS9PDOVql51RLfN/ljv7q0H+bzX0SQ4PlqMjsWLblseABDn8lywL+tju9RKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEiSMT9Zvz0jXBxNxjJOOcbfc8aCoEzr9jkKzpe9mZH1GYE8uS
+	K6wLxIkZWVwBIunhAgVQ3P/mWsxxe3DWpUQT4GCePgV9l62Mrh4FgqdaGkV4JqQC7JzTumRjyvL
+	/7g5cpOdy/sjvMHXpdMu9FxXspA==
+X-Google-Smtp-Source: AGHT+IHY8aUBQSPecvIOlTBaO7WQ/oRvPgoE9Oznnfm9prH3oA8ybxcIs1MwL4W0ClARcwmzZJztakkHVEY0YIHinA==
+X-Received: from pjbpw5.prod.google.com ([2002:a17:90b:2785:b0:330:7dd8:2dc2])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:2c8c:b0:324:e96a:2ada with SMTP id 98e67ed59e1d1-32ee3f2ffefmr5352489a91.21.1758177497343;
+ Wed, 17 Sep 2025 23:38:17 -0700 (PDT)
+Date: Thu, 18 Sep 2025 06:38:16 +0000
+In-Reply-To: <20250916225528.iycrfgf4nz6bcdce@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <alexs@kernel.org>
-Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <yang.tao172@zte.com.cn>, <shao.mingyin@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBEb2NzL3poX0NOOiBhbGlnbiB0aXRsZSB1bmRlcmxpbmUgZm9yIHViaWZzLnJzdA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 58I6afdC068792
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Thu, 18 Sep 2025 14:36:52 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68CBA884.000/4cS5X45Jtlz4xPS7
+References: <cover.1747264138.git.ackerleytng@google.com> <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
+ <20250916225528.iycrfgf4nz6bcdce@amd.com>
+Message-ID: <diqzjz1wp8o7.fsf@google.com>
+Subject: Re: [RFC PATCH v2 29/51] mm: guestmem_hugetlb: Wrap HugeTLB as an
+ allocator for guest_memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Michael Roth <michael.roth@amd.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com, 
+	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
+	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
+	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
+	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: shaomingyin <shao.mingyin@zte.com.cn>
+Michael Roth <michael.roth@amd.com> writes:
 
-align title underline for ubifs.rst
+> On Wed, May 14, 2025 at 04:42:08PM -0700, Ackerley Tng wrote:
+>> 
+>> [...snip...]
+>> 
+>> +static void *guestmem_hugetlb_setup(size_t size, u64 flags)
+>> +
+>> +{
+>> +	struct guestmem_hugetlb_private *private;
+>> +	struct hugetlb_cgroup *h_cg_rsvd = NULL;
+>> +	struct hugepage_subpool *spool;
+>> +	unsigned long nr_pages;
+>> +	int page_size_log;
+>> +	struct hstate *h;
+>> +	long hpages;
+>> +	int idx;
+>> +	int ret;
+>> +
+>> +	page_size_log = (flags >> GUESTMEM_HUGETLB_FLAG_SHIFT) &
+>> +			GUESTMEM_HUGETLB_FLAG_MASK;
+>> +	h = hstate_sizelog(page_size_log);
+>> +	if (!h)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	/*
+>> +	 * Check against h because page_size_log could be 0 to request default
+>> +	 * HugeTLB page size.
+>> +	 */
+>> +	if (!IS_ALIGNED(size, huge_page_size(h)))
+>> +		return ERR_PTR(-EINVAL);
+>
+> For SNP testing we ended up needing to relax this to play along a little
+> easier with QEMU/etc. and instead just round the size up via:
+>
+>   size = round_up(size, huge_page_size(h));
+>
+> The thinking is that since, presumably, the size would span beyond what
+> we actually bind to any memslots, that KVM will simply map them as 4K
+> in nested page table, and userspace already causes 4K split and inode
+> size doesn't change as part of this adjustment so the extra pages would
+> remain inaccessible.
+>
+> The accounting might get a little weird but it's probably fair to
+> document that non-hugepage-aligned gmemfd sizes can result in wasted memory
+> if userspace wants to fine tune around that.
 
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
- Documentation/translations/zh_CN/filesystems/ubifs.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is there a specific use case where the userspace VMM must allocate some
+guest_memfd file size that isn't huge_page_size(h) aligned?
 
-diff --git a/Documentation/translations/zh_CN/filesystems/ubifs.rst b/Documentation/translations/zh_CN/filesystems/ubifs.rst
-index 16c28bfd6fc3..2491c059ec25 100644
---- a/Documentation/translations/zh_CN/filesystems/ubifs.rst
-+++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
-@@ -17,7 +17,7 @@ UBI 文件系统
- ============
+Rounding up silently feels like it would be hiding errors, and feels a
+little especially when we're doing so much work to save memory,
+retaining HVO, removing double allocation and all.
 
- 简介
--============
-+====
-
- UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 代表无序块镜
- 像（Unsorted Block Images）。UBIFS 是一种闪存文件系统，这意味着它专为闪
--- 
-2.27.0
+>
+> -Mike
+>
+>> +
+>> +	private = kzalloc(sizeof(*private), GFP_KERNEL);
+>> +	if (!private)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	/* Creating a subpool makes reservations, hence charge for them now. */
+>> +	idx = hstate_index(h);
+>> +	nr_pages = size >> PAGE_SHIFT;
+>> +	ret = hugetlb_cgroup_charge_cgroup_rsvd(idx, nr_pages, &h_cg_rsvd);
+>> +	if (ret)
+>> +		goto err_free;
+>> +
+>> +	hpages = size >> huge_page_shift(h);
+>> +	spool = hugepage_new_subpool(h, hpages, hpages, false);
+>> +	if (!spool)
+>> +		goto err_uncharge;
+>> +
+>> +	private->h = h;
+>> +	private->spool = spool;
+>> +	private->h_cg_rsvd = h_cg_rsvd;
+>> +
+>> +	return private;
+>> +
+>> +err_uncharge:
+>> +	ret = -ENOMEM;
+>> +	hugetlb_cgroup_uncharge_cgroup_rsvd(idx, nr_pages, h_cg_rsvd);
+>> +err_free:
+>> +	kfree(private);
+>> +	return ERR_PTR(ret);
+>> +}
+>> +
+>> 
+>> [...snip...]
+>> 
 
