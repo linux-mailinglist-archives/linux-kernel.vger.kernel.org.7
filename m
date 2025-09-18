@@ -1,270 +1,103 @@
-Return-Path: <linux-kernel+bounces-823046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478A8B85629
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:56:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41057B8562F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7353B2DB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:56:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A3054E276B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C554430C629;
-	Thu, 18 Sep 2025 14:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b="fPj0rIWN";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="5wsXgSa5"
-Received: from e234-53.smtp-out.ap-northeast-1.amazonses.com (e234-53.smtp-out.ap-northeast-1.amazonses.com [23.251.234.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6781E30CDAA;
+	Thu, 18 Sep 2025 14:56:53 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F57D236437;
-	Thu, 18 Sep 2025 14:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.234.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D92830CB4A;
+	Thu, 18 Sep 2025 14:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207409; cv=none; b=lj92RBnkYZEImq6pbgG5NaxP2XGmNqf4/TviLFMB2nS5UZHlab5v4Z0fSUC2vySdPLvj8knJmU5kAwS3wZnyJdw31Z+UJ4XKGYoSYY6DMpMduJFMbHbB5LOn6wkEr5yqVivdMHb31Ngbbr5XEslErQACNPonWoNbdJoHjCq5vFo=
+	t=1758207412; cv=none; b=TMz58m3mh520Xqm3ptey1qQTtV0nyfnTJXTTYZHPCVqZxZNVIJhMzVbhPzyCD9QvXUwx9mgeoCIvWYku7gAHOtD/5tg060vwjuGfyvSzS0LRvR108QyuYMpQTcCrKruJ6vdfQo7XJR6mSY3qkT+47LcVoDikB8TQSQxcXYwrg5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207409; c=relaxed/simple;
-	bh=mc5mz3FO6pRf5Hb1/8DjP0+gZ1L6uZ0XtJDpM4X/F08=;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Date:MIME-Version:
-	 Content-Type; b=E5NxHjMewMQl99Hv1nqoS/X9ZLAQ0ml46X7VFaUbWhHGyaQs6iiXJ1iV6C92dELJp7eopY7JStB+MUyE65k38XdHc940BFVXgfOlgGs3995gtTiWIVMPl9y2jWeccEsMmks6/cmHSZRLPS3259nVYg9ja5x++xU05P9sO8R4qQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=send.mgml.me; dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b=fPj0rIWN; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=5wsXgSa5; arc=none smtp.client-ip=23.251.234.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.mgml.me
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
-	d=mgml.me; t=1758207403;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
-	bh=mc5mz3FO6pRf5Hb1/8DjP0+gZ1L6uZ0XtJDpM4X/F08=;
-	b=fPj0rIWN8PGiMJ+dc9KdmD+tYRuy9BxIfSYrSIk5wHOjF3Z9POH9Lg87t4SmKkLA
-	xjMRO+5mafp2yannsdQWXXjGrxUo0zzhW3wN/DerQXuoX9nkY1zjI4Qp8kfmiFkcUwl
-	Z6QLRVDsHC5gUnBbXt61ZhnzoqDJDUYmiy9F6nu0=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=suwteswkahkjx5z3rgaujjw4zqymtlt2; d=amazonses.com; t=1758207403;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
-	bh=mc5mz3FO6pRf5Hb1/8DjP0+gZ1L6uZ0XtJDpM4X/F08=;
-	b=5wsXgSa5AQS68lA5ZFNaNyqZEKddaUUYpnt0lr4r28IYsImXIO9XDortEe+RB1FW
-	bB9V3ewdoh69kzEDvCUv22dlmLAW3PPx0yFLVJuS5odJWn0w2YYns8YbLjzKZ2FdPo8
-	YSD2+MnPM6kFmjIo3CpKukUXhxFHbbKRAQt1w1/U=
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-In-Reply-To: <bfe630fa-7668-4a11-6033-20dca0c112f9@huaweicloud.com>
-From: Kenta Akagi <k@mgml.me>
-To: yukuai1@huaweicloud.com, song@kernel.org, mtkaczyk@kernel.org, 
-	shli@fb.com, jgq516@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yukuai3@huawei.com, k@mgml.me
-Subject: Re: [PATCH v4 3/9] md: introduce md_bio_failure_error()
-Message-ID: <010601995d53e601-62141e26-a228-405c-a145-728744b06616-000000@ap-northeast-1.amazonses.com>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 18 Sep 2025 14:56:43 +0000
+	s=arc-20240116; t=1758207412; c=relaxed/simple;
+	bh=4Rea0CJn+cU52Kg9PUi0QQZVkVEYQqNrOKaPzqZ6jgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HzB5wlS10vt3MBHDPccx+eCtWAGooJ+WSoQBae+vUdvts7BZ7z6RcpCkWjr5t+KHeeDr0ucbcR/4YnDjYXw+N2GkP6lHP3AOxcPH7livrCk15KzPXJN/4pVrmdRQX2ud1QCwDiSyOz1lsD/OaKwQ4QJ3Udwj+IQ7HFJF/q/IF1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 51221341B26;
+	Thu, 18 Sep 2025 14:56:50 +0000 (UTC)
+Date: Thu, 18 Sep 2025 22:56:44 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] spi: spacemit: introduce SpacemiT K1 SPI controller
+ driver
+Message-ID: <20250918145644-GYC1274501@gentoo.org>
+References: <20250917220724.288127-1-elder@riscstar.com>
+ <20250917220724.288127-3-elder@riscstar.com>
+ <20250918124120-GYA1273705@gentoo.org>
+ <034cecd3-c168-4c8d-9ad5-10cc1853894b@riscstar.com>
+ <20250918143928-GYB1274501@gentoo.org>
+ <cedaad98-1eba-431f-af4a-b84e106e5f65@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Feedback-ID: ::1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
-X-SES-Outgoing: 2025.09.18-23.251.234.53
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cedaad98-1eba-431f-af4a-b84e106e5f65@riscstar.com>
 
+Hi Alex,
 
-
-On 2025/09/18 10:09, Yu Kuai wrote:
-> Hi,
->=20
-> =E5=9C=A8 2025/09/15 =
-11:42, Kenta Akagi =E5=86=99=E9=81=93:
->> Add a new helper function =
-md_bio_failure_error().
->> It is serialized with md_error() under the same =
-lock and works
->> almost the same, but with two differences:
->>
->> * Takes the failed bio as an argument
->> * If MD_FAILFAST is set in =
-bi_opf and the target rdev is LastDev,
->> =C2=A0=C2=A0 it does not mark the=
- rdev faulty
->>
->> Failfast bios must not break the array, but in the =
-current implementation
->> this can happen. This is because MD_BROKEN was =
-introduced in RAID1/RAID10
->> and is set when md_error() is called on an =
-rdev required for mddev
->> operation. At the time failfast was introduced, =
-this was not the case.
->>
->> Before this commit, md_error() has already =
-been serialized, and
->> RAID1/RAID10 mark rdevs that must not be set Faulty=
- by Failfast
->> with the LastDev flag.
->>
->> The actual change in bio error=
- handling will follow in a later commit.
->>
->> Signed-off-by: Kenta Akagi =
-<k@mgml.me>
->> ---
->> =C2=A0 drivers/md/md.c | 42 +++++++++++++++++++++++++=
-+++++++++++++++++
->> =C2=A0 drivers/md/md.h |=C2=A0 4 +++-
->> =C2=A0 2 files changed, 45 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index 5607578a6db9..=
-65fdd9bae8f4 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -8297,6 +8297,48 @@ void md_error(struct mddev *mddev, struct md_rdev=
- *rdev)
->> =C2=A0 }
->> =C2=A0 EXPORT_SYMBOL(md_error);
->> =C2=A0 +/** md_bio_failure_error() - md error handler for MD_FAILFAST =
-bios
->> + * @mddev: affected md device.
->> + * @rdev: member device to fail=
-.
->> + * @bio: bio whose triggered device failure.
->> + *
->> + * This is almost the same as md_error(). That is, it is serialized at
->> + * the same level as md_error, marks the rdev as Faulty, and changes
->> + * the mddev status.
->> + * However, if all of the following conditions=
- are met, it does nothing.
->> + * This is because MD_FAILFAST bios must not=
- stopping the array.
->> + *=C2=A0 * RAID1 or RAID10
->> + *=C2=A0 * LastDev - if rdev becomes Faulty, mddev will stop
->> + *=C2=A0 * The failed bio has MD_FAILFAST set
->> + *
->> + * Returns: true if _md_error() was called, false if not.
->> + */
->> +bool md_bio_failure_error(struct mddev *mddev, struct md_rdev *rdev, =
-struct bio *bio)
->> +{
->> +=C2=A0=C2=A0=C2=A0 bool do_md_error =3D true;
->> +
->> +=C2=A0=C2=A0=C2=A0 spin_lock(&mddev->error_handle_lock);
->> +=C2=A0=C2=A0=C2=A0 if (mddev->pers) {
->=20
-> With the respect this is =
-only called from IO path, mddev->pers must be
-> checked already while =
-submitting the bio. You can add a warn here like:
->=20
-> if (WARN_ON_ONCE(!mddev->pers))
-> =C2=A0=C2=A0=C2=A0=C2=A0/* return true =
-because we don't want caller to retry */
-> =C2=A0=C2=A0=C2=A0=C2=A0return =
-true;
-
-Thank you, Understood. I will fix it.
-
->> +=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 if (mddev->pers->head.id =3D=3D ID_RAID1 ||
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-mddev->pers->head.id =3D=3D ID_RAID10) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (test_bit(LastDev, =
-&rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test_bit(FailFast, &rdev->flags)=
- &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bio !=3D NULL && (bio->bi_opf & =
-MD_FAILFAST))
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 do_md_error =3D false;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> As I suggested in patch 1, this can be:
-> =C2=A0=C2=A0=C2=A0=C2=A0if (!=
-mddev->pers->lastdev ||
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !=
-mddev->pers->lastdev(mddev, rdev, bio)) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 __md_error(mddev, rdev);
-> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return true;
-> =C2=A0=C2=A0=C2=A0=C2=A0}
-
-Understood this too.
-
-Thanks,
-Akagi
-
->=20
-> Thanks,
-> Kuai
->=20
->> +=C2=A0=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0=C2=A0 if (do_md_error)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 _md_error(mddev, rdev);
->> +=C2=A0=C2=A0=C2=A0 else
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-pr_warn_ratelimited("md: %s: %s didn't do anything for %pg\n",
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-mdname(mddev), __func__, rdev->bdev);
->> +
->> +=C2=A0=C2=A0=C2=A0 =
-spin_unlock(&mddev->error_handle_lock);
->> +=C2=A0=C2=A0=C2=A0 return =
-do_md_error;
->> +}
->> +EXPORT_SYMBOL(md_bio_failure_error);
->> +
->> =C2=A0 /* seq_file implementation /proc/mdstat */
->> =C2=A0 =C2=A0 static void status_unused(struct seq_file *seq)
->> diff --git a/drivers/md/md.h b/drivers/md/md.h
->> index 5177cb609e4b..=
-11389ea58431 100644
->> --- a/drivers/md/md.h
->> +++ b/drivers/md/md.h
->> @@ -283,7 +283,8 @@ enum flag_bits {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LastDev,=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* This is the last working rdev=
-.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * so don't use FailFast any more=
- for
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * metadata.
->> =
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 * metadata and don't Fail rdev
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * when FailFast bio failure.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 CollisionCheck,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * check if there is collision =
-between raid1
->> @@ -906,6 +907,7 @@ extern void md_write_end(struct mddev =
-*mddev);
->> =C2=A0 extern void md_done_sync(struct mddev *mddev, int blocks=
-, int ok);
->> =C2=A0 void _md_error(struct mddev *mddev, struct md_rdev =
-*rdev);
->> =C2=A0 extern void md_error(struct mddev *mddev, struct md_rdev =
-*rdev);
->> +extern bool md_bio_failure_error(struct mddev *mddev, struct =
-md_rdev *rdev, struct bio *bio);
->> =C2=A0 extern void =
-md_finish_reshape(struct mddev *mddev);
->> =C2=A0 void =
-md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 struct bio *bio, sector_t start, sector_t size);
->>
->=20
->=20
-
+On 09:47 Thu 18 Sep     , Alex Elder wrote:
+> On 9/18/25 9:39 AM, Yixun Lan wrote:
+> >>>> +	u32 data_reg_addr;		/* DMA address of the data register */
+> >>> s/data_reg_addr/ssp_data/? I just feel uncomfortable with redundant 'reg_addr'
+> >> My convention is normally "virt" or maybe "base" to represent
+> >> a virtual address, and "addr" to represent I/O addresses.
+> >>
+> >> This symbol represents the physical address that underlies the
+> >> "SSP Data Register", which fills the TX FIFO when written and
+> >> drains the RX FIFO when read.
+> >>
+> >> How about "data_addr"?  I know you wouldn't like "reg_addr".
+> >>
+> > another idea here, instead of introducing a variable here,
+> > how about simply using plain iores->start + SSP_DATAR?
+> > 
+> > so you can cache "iores" instead..
+> 
+> This code has gone through a huge amount of refactoring.
+> 
+> I hadn't looked, but now I see this field is used exactly one
+> place in the code, in k1_spi_prepare_dma_io().  It's still
+> needed though.
+> 
+> Here's what I plan to do.  Rather than saving data_reg_addr,
+> I will simply save base_addr, which is the I/O resource start
+> address that corresponds to the mapped virtual pointer, "base".
+> 
+> Then in k1_spi_prepare_dma_io() I'll use base_addr + SSP_DATAR.
+> 
+> OK?
+> 
+Yes, this is what I'm suggesting
+-- 
+Yixun Lan (dlan)
 
