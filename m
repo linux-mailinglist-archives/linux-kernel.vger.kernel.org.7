@@ -1,195 +1,137 @@
-Return-Path: <linux-kernel+bounces-821808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1059B8254F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:00:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDFEB82564
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2716C4A458C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:00:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FD04A46D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6822EB5DE;
-	Wed, 17 Sep 2025 23:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A149A19343B;
+	Thu, 18 Sep 2025 00:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2JyInma7"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDDVgE8B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D34634BA47
-	for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00FD17E0;
+	Thu, 18 Sep 2025 00:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758153598; cv=none; b=Dny8quhY+0/x2CkpFvX3bTkrZpCVXtveuTEa2uoTE9HR9IkxUaLwVRziFmfGgxJ/yTKAV375nXAlH8OaW0M/wqmj/hvEaNtFnw8c9MTrRngnfQJYSJ57DcnfM+G5fLUyz9Q6a01YabKAWKvLXXhPsocDDg/2NgQXgV8tOcjxhsg=
+	t=1758153677; cv=none; b=ARBDxq9K+hjveg7PDrPJltEcVDxICdnZjdK0vi+bf49JbjKZIw7T2Ayj1wRePhxab60G6e4KBYdt0qLfqbGQKl764BuOKSoQ/UyjRWK1Y8JisMWHH3M6TFJOb9JmmvbpctvMZ5FCjJtcWS5dV6tjUGty12NyihdNnHjvDU5YaeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758153598; c=relaxed/simple;
-	bh=UbRTRpfsOGgfpZIioAFpAKOsaB1KVt6XbNZbqziAcT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T8eMW0M9S8NiF2KdyDv5seNDHLB3msYCtWA2aLmhGJ+I4E4r9zWN9B9K+QVydKIEV7DlIJXsPMDaPBsctILz0unaGB3uzQQoPlr87kuFGHrrsofm5Ja3Qn6OECkMFc94GWW76oJk5kH3lffQ3YJC02FpDNHo0BUx1KI4DpVwsW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2JyInma7; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so83a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 16:59:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758153595; x=1758758395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+k4UBANduixrTliP8GJRSvLIs5e04GQ1F54MlhsKt70=;
-        b=2JyInma7xf/gZzccMy4Qo3o+iMG9nhvU3BW/6g1q5+awfgdHy74BqmjRlLAMc+JtWz
-         978hIlzhwgAJyDvE2Ej7gC7rg9TaPx3JzhLVG9+dO+QedtVNzojkjexoee5oeouTXM2e
-         4qGG7LB9a37RWo3Mji7/nyndiJNWV53UyuhuwXZTAVJ7Kl03d6Uma2hqQHPOq7BTGh/g
-         8BRKEPvEqnQeR6sIDfAwjr9Wd0EYz2r0lBOuTDEk54MFz5NGRa6VM3OB5jESGHFab5XE
-         1UwfAO0romsZaA/sPC0kZrTM/d7duGpmNxfBZIkzC1rPefRmNB0ot4R0PAkDHKhIEep7
-         Bkkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758153595; x=1758758395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+k4UBANduixrTliP8GJRSvLIs5e04GQ1F54MlhsKt70=;
-        b=MFKxWmzN8XN82x3y2/jSLOnX+nbuVl6ucogP2Zu0pzzuvN8p71dAJQD04wZl6UAwqi
-         EKSMXx+sMDyTEu3vXz+XkgOnoehdrrv1SkeHKYadsfK2hw1lI0KEV/GI1W9C5v9QOICs
-         CVUUE5SMkxMtYZXyGBF7ruGMqZlJMQHMquPrfvB/Hc+16WEYxqXTt35IfoQwa+TMQaHw
-         dj1qUg0EG4uy0yRXt2q+a+7/p30LXhQXzCDnQqI2oxYX5+VcMe8qDz1J2JClASLV2OFx
-         ITTWoGyaRlkYUU5Im4JKGfx0HAa5CZpwLfJ9ZrNroc9F54CXxbifNbx3A+zFjolejTnt
-         5fFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2vdsP88vkJm8DDiMRFo8XwH27g62yaYgqCb8jUOVA5x2pp7VKshzlBuXj+ufdre0nEKRsn7E66FbNg2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx58UsVa1kNGUdnnM3ZgjGHTLB07iLT3LM0Wzzhp/dnTCzp5lBc
-	squUedysYiU+mygt8ea3777NUZ9WFCvctlFAHTPZaHc0ZrLd7k5sWu0xWVyRIKv+0UnxGbsrDzs
-	PQwo5phB4L2vLhc+fqHbq6t2momLR8B7jQyudGp0J
-X-Gm-Gg: ASbGncsL0hqmieNPJPmliQ8wzsgGHmbpAVLRWWo4jszBcU+5wazyMoji1C+TQ6R9XPr
-	pb1xWi2+UHbhSp203j9HFknrCPuOMdJsaFBYnBD1hJhZHdGbFqiMevGQMVzx6fTxfMmIvH5zGFf
-	5N4CnGFdK1ZPI6qVKk7jENSIOtbWxhVTPh9YwlrDA7CQqy4vSkiAsCVW/YP71qawkpt2ngeE24g
-	a6d9Mv4U5GSMXSftcmDSB30t+VjQ/s=
-X-Google-Smtp-Source: AGHT+IGwvBQ/ma4OjhAb3mJBBGrTHlUUNFKF6gBGTFjvv6da4khKOL5MOMEB4k37fIEHnqabA3kXBI6Biko6ndlOJCc=
-X-Received: by 2002:a50:c05c:0:b0:61c:c08d:359d with SMTP id
- 4fb4d7f45d1cf-62f7e134801mr85622a12.4.1758153594515; Wed, 17 Sep 2025
- 16:59:54 -0700 (PDT)
+	s=arc-20240116; t=1758153677; c=relaxed/simple;
+	bh=1B3/y6mC3x0Gb7mESrjJVqtP5iKoAmAQvn0c34F3HYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ufwV9JJypoiiCeWyE3qg7xJQfalAJ0nNLWTkITubpzpr7HvrYrYuUu8a34EQHnWk2iQYrrOo9xX3yUE42C56DVi82qJ3H+Jc/Zke+BtH/ykZnxWL8Npa4Kc4bqkalKmrbes1/HhHNxo3Z0fPQb6+IIKE1X//Eevmu/utDfPnxmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDDVgE8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DF7BC4CEE7;
+	Thu, 18 Sep 2025 00:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758153676;
+	bh=1B3/y6mC3x0Gb7mESrjJVqtP5iKoAmAQvn0c34F3HYY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VDDVgE8BCfMQPQ6fqgNJCfqaNGdgmJyEgRe2ykUFgjSd+ZBzPU5ulEDRfLPZY86Ko
+	 VBoiy9cHUAM3MMEw8uNXmNL3NRNtBZKopg3noLfc9RmH89sPqGS1rj4X/hhDxhpxYb
+	 8rQWdHRhbHk0pepfxNSTpcM2TK6bSNcEnXAduDi35HgQOH7CbMuxBzzU6kii96TMlp
+	 gn5Qs8BYvAgJNsOVkPbKuJWS5cTAoXW4qAos6D90t14uWlZ7hct0mISncgCmy8oFOI
+	 GEOQ15U7PkofWvlykkzLAFBGRkXIK43wUoGVZ8qjWIMcXP6AFmFK5g5VgtHYjhh77U
+	 hDovHNlhfh57w==
+Message-ID: <0daf1bda-d0f2-45bb-a68b-2437ba0579e7@kernel.org>
+Date: Thu, 18 Sep 2025 09:01:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
- <20250913000935.1021068-1-sudarsanm@google.com> <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
- <f5792407-d2b9-42b3-bc85-ed14eac945ec@paulmck-laptop> <d1ef1cbb-c18d-4da6-b56b-342e86dca525@suse.cz>
- <CAJuCfpEQ=RUgcAvRzE5jRrhhFpkm8E2PpBK9e9GhK26ZaJQt=Q@mail.gmail.com>
- <aMpE-oSjtlDU4TSl@pc636> <CAJuCfpHQ_JedSRHKKoYXyVzaFOm=dDWzgFZwqerfEC1fn35j0w@mail.gmail.com>
-In-Reply-To: <CAJuCfpHQ_JedSRHKKoYXyVzaFOm=dDWzgFZwqerfEC1fn35j0w@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 17 Sep 2025 16:59:41 -0700
-X-Gm-Features: AS18NWBx5aUJDxzgSbTWFT8kC_EPDfnr02N4rctMkVtLm9XJWaAMV1S3L1bSwvY
-Message-ID: <CAJuCfpE48n=QM0nY8yE3drqZU0wgC76=70EyftL1WZewEcykyA@mail.gmail.com>
-Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, paulmck@kernel.org, Jan Engelhardt <ej@inai.de>, 
-	Sudarsan Mahendran <sudarsanm@google.com>, Liam.Howlett@oracle.com, cl@gentwo.org, 
-	harry.yoo@oracle.com, howlett@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, maple-tree@lists.infradead.org, rcu@vger.kernel.org, 
-	rientjes@google.com, roman.gushchin@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] dt-bindings: media: nxp: Add support for FSD SoC
+To: Inbaraj E <inbaraj.e@samsung.com>, 'Rob Herring' <robh@kernel.org>
+Cc: rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com, martink@posteo.de,
+ kernel@puri.sm, mchehab@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ pankaj.dubey@samsung.com, ravi.patel@samsung.com, shradha.t@samsung.com
+References: <20250828085911.81266-1-inbaraj.e@samsung.com>
+ <CGME20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6@epcas5p1.samsung.com>
+ <20250828085911.81266-2-inbaraj.e@samsung.com>
+ <20250829174638.GA1054721-robh@kernel.org>
+ <024f01dc27cb$f167d370$d4377a50$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <024f01dc27cb$f167d370$d4377a50$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 9:14=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Tue, Sep 16, 2025 at 10:19=E2=80=AFPM Uladzislau Rezki <urezki@gmail.c=
-om> wrote:
-> >
-> > On Tue, Sep 16, 2025 at 10:09:18AM -0700, Suren Baghdasaryan wrote:
-> > > On Mon, Sep 15, 2025 at 8:22=E2=80=AFAM Vlastimil Babka <vbabka@suse.=
-cz> wrote:
-> > > >
-> > > > On 9/15/25 14:13, Paul E. McKenney wrote:
-> > > > > On Mon, Sep 15, 2025 at 09:51:25AM +0200, Jan Engelhardt wrote:
-> > > > >>
-> > > > >> On Saturday 2025-09-13 02:09, Sudarsan Mahendran wrote:
-> > > > >> >
-> > > > >> >Summary of the results:
-> > > >
-> > > > In any case, thanks a lot for the results!
-> > > >
-> > > > >> >- Significant change (meaning >10% difference
-> > > > >> >  between base and experiment) on will-it-scale
-> > > > >> >  tests in AMD.
-> > > > >> >
-> > > > >> >Summary of AMD will-it-scale test changes:
-> > > > >> >
-> > > > >> >Number of runs : 15
-> > > > >> >Direction      : + is good
-> > > > >>
-> > > > >> If STDDEV grows more than mean, there is more jitter,
-> > > > >> which is not "good".
-> > > > >
-> > > > > This is true.  On the other hand, the mean grew way more in absol=
-ute
-> > > > > terms than did STDDEV.  So might this be a reasonable tradeoff?
-> > > >
-> > > > Also I'd point out that MIN of TEST is better than MAX of BASE, whi=
-ch means
-> > > > there's always an improvement for this config. So jitter here means=
- it's
-> > > > changing between better and more better :) and not between worse an=
-d (more)
-> > > > better.
-> > > >
-> > > > The annoying part of course is that for other configs it's consiste=
-ntly the
-> > > > opposite.
-> > >
-> > > Hi Vlastimil,
-> > > I ran my mmap stress test that runs 20000 cycles of mmapping 50 VMAs,
-> > > faulting them in then unmapping and timing only mmap and munmap calls=
-.
-> > > This is not a realistic scenario but works well for A/B comparison.
-> > >
-> > > The numbers are below with sheaves showing a clear improvement:
-> > >
-> > > Baseline
-> > >             avg             stdev
-> > > mmap        2.621073        0.2525161631
-> > > munmap      2.292965        0.008831973052
-> > > total       4.914038        0.2572620923
-> > >
-> > > Sheaves
-> > >             avg            stdev           avg_diff        stdev_diff
-> > > mmap        1.561220667    0.07748897037   -40.44%        -69.31%
-> > > munmap      2.042071       0.03603083448   -10.94%        307.96%
-> > > total       3.603291667    0.113209047     -26.67%        -55.99%
-> > >
-> > Could you run your test with dropping below patch?
->
-> Sure, will try later today and report.
-
-Sheaves with [04/23] patch reverted:
-
-            avg             avg_diff
-mmap     2.143948        -18.20%
-munmap     2.343707        2.21%
-total     4.487655        -8.68%
+On 17/09/2025 21:09, Inbaraj E wrote:
+> Hi Rob,
+> 
+> Thanks for the review
+> 
+> 
+>>> +    description:
+>>> +      Syscon used to hold and release the reset of MIPI D-PHY
+>>
+>> Reset? Sounds like you should be using the reset binding.
+> 
+> The Tesla FSD Soc does not have a dedicated reset controller. Instead, we
+> are using the
+> system controller which is MMIO Space handled by syscon driver, to assert or
+> de-assert the D-PHY
 
 
->
-> >
-> > [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu() opera=
-tions
-> >
-> > mmap()/munmap(), i assume it is a duration time in average, is the time
-> > in microseconds?
->
-> Yeah, it ends up being in microseconds. The actual reported time is
-> the total time in seconds that all mmap/munmap in the test consumed.
-> With 20000 cycles of 50 mmap/munmap calls we end up with 1000000
-> syscalls, so the number can be considered as duration in microseconds
-> for a single call.
->
-> >
-> > Thank you.
-> >
-> > --
-> > Uladzislau Rezki
+But that's the reset controller, no?
+
+
+Best regards,
+Krzysztof
 
