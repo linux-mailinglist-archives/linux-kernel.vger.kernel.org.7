@@ -1,88 +1,77 @@
-Return-Path: <linux-kernel+bounces-822121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA5DB8310C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:58:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3805CB83114
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 810077A2D19
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA65C3A9B1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4592D6E7D;
-	Thu, 18 Sep 2025 05:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BF52D77FF;
+	Thu, 18 Sep 2025 06:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyV3OBci"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMEmJTd0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013E02D6E7C
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34C32D7D59;
+	Thu, 18 Sep 2025 06:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758175112; cv=none; b=XqbJgQj1E4FwUBoQaH+LFRF6PxQYgKLZutfwBZvTG3MnE0CBHj7CvfKL40tfIZJCskHol6xI+J1s36RT2Q5lPhoUoDFwWWmyEhhSMyaMpYEp840T9rzQsYIpnCHwMvOhetw083Lb0o+eEV7KQrBktIOPeN56gQMp14gvAXQW3+s=
+	t=1758175215; cv=none; b=o102ROSfNrNkwWkKDQplcnDaMXE8s7W+iKcRwDxg2KK/mdvH8ZDlX97Lza/hVdY4oSvYsDDnmGK7+7OKAyaAlCIYvBMAW/clgtTMyVWWNsqQBVreInSeIhLghMm2DcTMK2IYEGvSeQCX3mpHfAgTN57yTDIwqRofjlzCa2hr1HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758175112; c=relaxed/simple;
-	bh=e7yRxA2B68UWIKkdczYYijQsT9ZC4h4tFwI2brifv3E=;
+	s=arc-20240116; t=1758175215; c=relaxed/simple;
+	bh=0old9ctTyJsH/xFzWRZPdPpfchK49uoPWBzcpSBTL70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NyK15P4CIt2hC1kV2dK+u0A3bHOofC5B5QWc73GdnuIGDbXufOIsaMNmfLDQCG60IK630VoBy97t+SaLSXCBjrUcZyhCWp1dBuAIJJ9/FG4XFz30+0bZtAf/edCsgTBlWexpwZjfEL4YHJD8dJXTmKLiN0YDVsTWAnyrmUxINwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyV3OBci; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77287fb79d3so594166b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758175110; x=1758779910; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1M8K/x0sWMdi+p7zlur7P/Abek/ld1zdxtrufjSounw=;
-        b=TyV3OBciB6qhzJ4DdhcCjulEYOnOExKqaLoQAsOiTfqpMJMwVuXNZWAYksnXfxBXqT
-         1Y8zu/glvqt9pd8bJOah8UvJMmL06zfGb0cdh//qOHw4NxaFbiJrdFooqKkHgxdn91hD
-         EtbCeHaxl4naGo4FbxipOHoMuUufnoM/x3eiQoVZEyIqkJJE4qnvvBLbusOTiGpcjmcB
-         EvtJ67UN6uk32YgrA25u4W/+vRkvgkUr3YLwIWGD23oOWbuU9aqHR0yJL6U8GaiI1RHs
-         XbFA77Ykaku74TFvngzrM08k6voUHeIetAT9cHlsQxetKZUv9QyshrHB+DlMrmMqCwGd
-         EYQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758175110; x=1758779910;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1M8K/x0sWMdi+p7zlur7P/Abek/ld1zdxtrufjSounw=;
-        b=YH9i92mnUPXhWrlpi7h6xn1DrDc3st5eNs9wUHFdedTg+4Jg3APIAM1u9Yt1X0/vJY
-         mI9Aeb/9GzbjEW0P46EIgfJLkkoeMi5xYfiV/t/C9POmmucgXPAf3ImIthHDCMkJy8lc
-         maU8xMif29SslduxjVynlXsHAsBUFPhY34A+0w9TJX8ZKQiYFtdcxZ6dPkeHl5DvpMDN
-         wbFf8t0VcRlwIDlg/PA0vqfM2bx2c9At47sB86RAG9s9sZJc6MBII9yzVhoo4rccJI9e
-         tSh0a1S70ZMNVXNF56SkhKlrkUrJpasa7xqW23cqisuZa8MsHWcVPmrhuRFQborD0vAy
-         vUVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGRWvZlfG24a8/08zSBQ/uDvyMogvlXeo6WouNQwrJnoM1zeHtUmabqToWlUuG0gtkhc8duqrueAN9qPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCwY+MZgjI6N69r1FoyYKJex9N95Z4IhTNpOi6A6YOQ6+6flj2
-	e+DeUr1AdT2hoo9cIz5xe2x6cINPa36a+uxfcP0ZJ7NXNeYtno+fEtQMheT+Hw==
-X-Gm-Gg: ASbGncvOEJaxuxUaPpcz7gLvd8BskCM3V34d8PAp6YXQOOsk6u5zJfqHvvhOS0am1V8
-	NDXsko/GB/AotVjHMVRgwVeQA1HDg65I7TONrPUkpr72HwZ0bEZ0R7LoyMdLWCiMDT/Ue8o7j00
-	s2R4hEe5VXo9F16y5/9kQLbuYoZ9Cgfcn5y9C1Q4DyI2+pLiEdiaG9ZQez3btv22yhbwvEnlkmH
-	SxA9pooisW908RcDxZb9rzFEFJz6rDWEaUky0vYcBGHMhkRAtFn2XEapmdg1Kt9XOeNCpM7O5Eu
-	8zBPQ0smF1kEoSkRLbeisDfDJowCXtAUg1TGafIbEtqkD2qZv04L09/RC5bZIh4DloCuswuEwt4
-	m9K+e1ju51bLp/I4VALOtgEWb4XSywW+5iFURx1a1oQ==
-X-Google-Smtp-Source: AGHT+IGb+rdTMfwVbcT/i/JK1WiLKpQvT7aq4HHFKHQrPydPEVY0k2OXSVn7CE/ZKWO3IERNaHMXMw==
-X-Received: by 2002:a05:6a20:748c:b0:271:cdbb:4d26 with SMTP id adf61e73a8af0-27aac3da5a9mr6725643637.58.1758175110263;
-        Wed, 17 Sep 2025 22:58:30 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:194b:8358:5c91:3d3d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ff4002edsm1199838a12.33.2025.09.17.22.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 22:58:29 -0700 (PDT)
-Date: Wed, 17 Sep 2025 22:58:27 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, 
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: touchscreen: resistive-adc-touch:
- change to unevaluatedProperties
-Message-ID: <wbwtlcrlwnvvjyv7cnffu3sltrqfaddjf5f6dzizhgglwskjgb@zgxjfm5oafxz>
-References: <20250910224402.994046-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbY20LoljbBNmOp3iij7+DPI/JmXAbu+mYqIcilpTH4Ykk3rmil/xHsjYT+1sTue5JIyi2hB/83iXWYZsqaxueSXbm2sPsPgND0C6Fg8BBCEOuQrs1AYnjiyiyy+GiTEBLZIEaF2vyzyK0zyl95A86/uzx39PlDZez9qCgAbgJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMEmJTd0; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758175213; x=1789711213;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0old9ctTyJsH/xFzWRZPdPpfchK49uoPWBzcpSBTL70=;
+  b=mMEmJTd0/o4yamQdDZHyRV2YSB1YQAzi+sDhOWuL0NtBBliwa/36RWkj
+   uavc1r1cq5mN6/Qt0FaNjXh2VZJzhArFjhiUgeJkzovwPT6Y7RUwbGDD6
+   9EB+Ahzl1MqJfI2vVVfL3Mu6qlbWrHzh8SYeg6upQmdd4C51w/tYnTV+x
+   zFVMJRBWcAJvbR4yYParWjgW2TZ3TRL5sC5Z6Jjrpp4x3q2GA6jcn1tTq
+   JJADchVF/EgeH6w2bzEgVDINrdzlwO45ZnCu7xTb9Q8NEozqr9HCaI/Pl
+   5bNs9KqqJnLQco8K/ZgVEsifedgM/5VZa9TUZYBvDgs3b1gBkki1yrsC6
+   Q==;
+X-CSE-ConnectionGUID: UdGRbL31QfCR58r4ZDvPSQ==
+X-CSE-MsgGUID: kELJzKH9TqeLzGWN3YEEfA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60606193"
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="60606193"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 23:00:12 -0700
+X-CSE-ConnectionGUID: HqVbENHoSCCstfpcc2jBfA==
+X-CSE-MsgGUID: O/WEU7TfQCO7wMt5r4e3QA==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Sep 2025 23:00:10 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uz7gd-0002oN-0f;
+	Thu, 18 Sep 2025 06:00:07 +0000
+Date: Thu, 18 Sep 2025 13:59:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND 2/4] soc: qcom: fix QMI encoding/decoding for
+ basic elements
+Message-ID: <202509181302.j10W2wCw-lkp@intel.com>
+References: <20250917070428.2909-3-alexander.wilhelm@westermo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,20 +80,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250910224402.994046-1-Frank.Li@nxp.com>
+In-Reply-To: <20250917070428.2909-3-alexander.wilhelm@westermo.com>
 
-On Wed, Sep 10, 2025 at 06:44:01PM -0400, Frank Li wrote:
-> Change additionalProperties to unevaluatedProperties because it refs to
-> touchscreen.yaml.
-> 
-> Fix below CHECK_DTBS warnings:
-> arch/arm/boot/dts/nxp/imx/imx6dl-skov-revc-lt6.dtb: touchscreen (resistive-adc-touch): 'touchscreen-y-plate-ohms' does not match any of the regexes: '^pinctrl-[0-9]+$'
-> 	from schema $id: http://devicetree.org/schemas/input/touchscreen/resistive-adc-touch.yaml#
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Hi Alexander,
 
-Applied, thank you.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on ath/ath-next]
+[also build test WARNING on linus/master v6.17-rc6 next-20250917]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Wilhelm/soc-qcom-introduce-generic-QMI-encoding-decoding-macros/20250917-150826
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git ath-next
+patch link:    https://lore.kernel.org/r/20250917070428.2909-3-alexander.wilhelm%40westermo.com
+patch subject: [PATCH v2 RESEND 2/4] soc: qcom: fix QMI encoding/decoding for basic elements
+config: openrisc-randconfig-r132-20250918 (https://download.01.org/0day-ci/archive/20250918/202509181302.j10W2wCw-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509181302.j10W2wCw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509181302.j10W2wCw-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/soc/qcom/qmi_encdec.c:384:55: sparse: sparse: cast to restricted __le16
+   drivers/soc/qcom/qmi_encdec.c:384:55: sparse: sparse: cast to restricted __le16
+   drivers/soc/qcom/qmi_encdec.c:384:55: sparse: sparse: cast to restricted __le16
+   drivers/soc/qcom/qmi_encdec.c:384:55: sparse: sparse: cast to restricted __le16
+   drivers/soc/qcom/qmi_encdec.c:715:31: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] val32 @@     got restricted __le32 [usertype] @@
+   drivers/soc/qcom/qmi_encdec.c:715:31: sparse:     expected unsigned int [usertype] val32
+   drivers/soc/qcom/qmi_encdec.c:715:31: sparse:     got restricted __le32 [usertype]
+>> drivers/soc/qcom/qmi_encdec.c:188:25: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short [usertype] @@     got restricted __le16 [usertype] @@
+   drivers/soc/qcom/qmi_encdec.c:188:25: sparse:     expected unsigned short [usertype]
+   drivers/soc/qcom/qmi_encdec.c:188:25: sparse:     got restricted __le16 [usertype]
+>> drivers/soc/qcom/qmi_encdec.c:191:25: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] @@     got restricted __le32 [usertype] @@
+   drivers/soc/qcom/qmi_encdec.c:191:25: sparse:     expected unsigned int [usertype]
+   drivers/soc/qcom/qmi_encdec.c:191:25: sparse:     got restricted __le32 [usertype]
+>> drivers/soc/qcom/qmi_encdec.c:194:25: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned long long [usertype] @@     got restricted __le64 [usertype] @@
+   drivers/soc/qcom/qmi_encdec.c:194:25: sparse:     expected unsigned long long [usertype]
+   drivers/soc/qcom/qmi_encdec.c:194:25: sparse:     got restricted __le64 [usertype]
+   drivers/soc/qcom/qmi_encdec.c:485:25: sparse: sparse: cast to restricted __le16
+   drivers/soc/qcom/qmi_encdec.c:485:25: sparse: sparse: cast to restricted __le16
+   drivers/soc/qcom/qmi_encdec.c:485:25: sparse: sparse: cast to restricted __le16
+   drivers/soc/qcom/qmi_encdec.c:485:25: sparse: sparse: cast to restricted __le16
+>> drivers/soc/qcom/qmi_encdec.c:488:25: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/qmi_encdec.c:488:25: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/qmi_encdec.c:488:25: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/qmi_encdec.c:488:25: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/qmi_encdec.c:488:25: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/qmi_encdec.c:488:25: sparse: sparse: cast to restricted __le32
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+>> drivers/soc/qcom/qmi_encdec.c:491:25: sparse: sparse: cast to restricted __le64
+
+vim +188 drivers/soc/qcom/qmi_encdec.c
+
+   161	
+   162	/**
+   163	 * qmi_encode_basic_elem() - Encodes elements of basic/primary data type
+   164	 * @buf_dst: Buffer to store the encoded information.
+   165	 * @buf_src: Buffer containing the elements to be encoded.
+   166	 * @elem_len: Number of elements, in the buf_src, to be encoded.
+   167	 * @elem_size: Size of a single instance of the element to be encoded.
+   168	 *
+   169	 * This function encodes the "elem_len" number of data elements, each of
+   170	 * size "elem_size" bytes from the source buffer "buf_src" and stores the
+   171	 * encoded information in the destination buffer "buf_dst". The elements are
+   172	 * of primary data type which include u8 - u64 or similar. This
+   173	 * function returns the number of bytes of encoded information.
+   174	 *
+   175	 * Return: The number of bytes of encoded information.
+   176	 */
+   177	static int qmi_encode_basic_elem(void *buf_dst, const void *buf_src,
+   178					 u32 elem_len, u32 elem_size)
+   179	{
+   180		u32 i, rc = 0;
+   181	
+   182		for (i = 0; i < elem_len; i++) {
+   183			switch (elem_size) {
+   184			case sizeof(u8):
+   185				QMI_ENCDEC_ENCODE_N_BYTES(buf_dst, buf_src, u8);
+   186				break;
+   187			case sizeof(u16):
+ > 188				QMI_ENCDEC_ENCODE_N_BYTES(buf_dst, buf_src, u16);
+   189				break;
+   190			case sizeof(u32):
+ > 191				QMI_ENCDEC_ENCODE_N_BYTES(buf_dst, buf_src, u32);
+   192				break;
+   193			case sizeof(u64):
+ > 194				QMI_ENCDEC_ENCODE_N_BYTES(buf_dst, buf_src, u64);
+   195				break;
+   196			}
+   197	
+   198			rc += elem_size;
+   199		}
+   200	
+   201		return rc;
+   202	}
+   203	
 
 -- 
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
