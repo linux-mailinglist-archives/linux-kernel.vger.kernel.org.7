@@ -1,116 +1,136 @@
-Return-Path: <linux-kernel+bounces-823508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CA6B86AED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:32:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E084B86AF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 306573B46F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51B80466083
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F78F2D7D2A;
-	Thu, 18 Sep 2025 19:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F005B2D7D2A;
+	Thu, 18 Sep 2025 19:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ih3qsp01"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gYPJ/zd/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15B32D46BC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5312D4B44
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758223948; cv=none; b=QlcEygKpthxm0kqpi6P2NdeWlmobmaA8sev9irX4tiP5rd4JoHkkq779I6y0mqLMzAGxWpFQIX1+23/ngkCu6y/Khy4Rv/avclKtz1xTrvx+gI8Uft5b2gZe9BQBAKokIsN5gAGdQUUeg5w135T6P/KEp5OIFdloLlp5GHPUTzk=
+	t=1758223964; cv=none; b=FQXVssl4HYQRqez/cH8IxMaPeX9A3GKkeq/h4XClTZnig+HLW8QQuEybqw7UHBKzkzFdVq/OTLVUh2dBeCtBlY7m2PVPVfSvY0T1Xm0BdU/04Q+AerxYId2VqGbAX+CCae4+SeUtHjKQKk5fwu12i/CuSKkuKVA7nOH91UiaMkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758223948; c=relaxed/simple;
-	bh=qivYkST2C7b7yAkJHzipE9NJQefbbXWWzWHSNDOD73w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QK959b1vKvzjnslFQncB7mN7pDyAfobQIsMnKR+AwB8F5wEel9sihX+xaNC2/j/kUPlWLpqzqVAAagUx3JXc6PBFyNggS5bOKTr3+/dp3OofGSm7MsSj2RseB/ZCQBqJgGAexFcBg5Di9F5OVV5TyDHHDyXA7dD8cAjMvIMGPgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ih3qsp01; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-30ccec59b4bso976360fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758223945; x=1758828745; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8uC46HYcJYoz9+sBv/kVNcz3yRxRfTKz6LdiKNeN6Wo=;
-        b=Ih3qsp01kdSLJ2q/2QwIxMJN0GL/kcgzGrUyckPu227ZjWJJL6W5yap9lRy34m11MB
-         vGh3SJARh2b92Ugt2v4SFw9IZmd+529d+jyiTZpZeRJdPCTrBy88Meg9O0cOaww1R6Qh
-         chRmJ9UYbcR/ZXARIo7Jk9E27jp4RBVgBWQz6Cmz9V/bJmYHlffS7Q2xZsMdoY/5ub0+
-         kvPCv7ecBYr5MId493prXKdRR7MtW70zR3yfDi5WP+6JiVNJE1g/+8kM7BZzsfB4vSyZ
-         V+OYmP/VIUhL9oznThYpmBe5OHyFZ6Ryd4pRfqhZm21ILSWP54hW++EyF0Nv5dZcAeic
-         ERrQ==
+	s=arc-20240116; t=1758223964; c=relaxed/simple;
+	bh=lcg0mne/0P4+Payj2CrtKmUHmNb002KoZxCKpx1PeIk=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0EKoPCR5z4ooKLVmnvwGmRWus22mLbUHMkPjs5Dzvz1Az4sZAZbzgcwJOBcAk/KjdizHfCEo4sMRMFly4QhgyQYcY5OMJsAYjh2pX979Au5Mi1sBX+fYSpa/OyKMz5HlFWEfpgN0G5aeRw0EALHbSrHIwQLAuczXdAO+vqjjLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gYPJ/zd/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758223961;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FrxP5xNcG3tL5SGiDQEqP5O3t4o9iAHN60NtSVZIh5U=;
+	b=gYPJ/zd/sYqm9xaK7xbKI8wyzSku6VcEeGB5E6cVtibv57ow15GgwD+VuulV1PqXF+e8+C
+	UTlmfgY0ipbrpD9iMCOdQliGLNeugl06Ya746I9+eNjv8RwfaWcOhr5ha8NKf1R4yFWo5a
+	FsoHNE9Z0+pvbrX1CrLnaaxKYmMeqIs=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-527-VmxNMMp_PXyaZlGzXxqCiw-1; Thu, 18 Sep 2025 15:32:40 -0400
+X-MC-Unique: VmxNMMp_PXyaZlGzXxqCiw-1
+X-Mimecast-MFC-AGG-ID: VmxNMMp_PXyaZlGzXxqCiw_1758223960
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b60d5eca3aso32949721cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:32:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758223945; x=1758828745;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8uC46HYcJYoz9+sBv/kVNcz3yRxRfTKz6LdiKNeN6Wo=;
-        b=Hi539bVy/vkSu0NffrP2nSTBCD6JsRQuZqRCDe9QO9XJh/8mbLEI0UPE+0wj7cU49K
-         S11ZBQolJMgIjRak3oo7PdiUMZ0M1Qy3AXEGNPRW+RtyeU4e9FafhOdtncl93EFKYd3e
-         QApw65ghBOL37VRGxK958XsCECsJRcxb4pD5iH6qKv9m+xuL4VgaMWV4dvKzbTzZbsxo
-         H7UMgF1vTjLy6xv3iXMrDNcHlDi6kdJ+NTscCUBSSF2vWOrbYPuvLMCR4XSYJflFC2Fq
-         Xj8Nvk725PSZohLjkAu+eFLL7LeNOdfByiZayoJ7qVb8+tX7b7InrOC0ac418yu5LO2E
-         MNyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWhE4UCrB/eF9Klz6VwNkvhQygS76SCivoMUt3PYvbUxqw/f3AT60QBwf3ECYgDgwcFPxYRyoK3cjBqBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw50QCAhhBQ1F54ehcRBwD3SjNoyZQptF7V2JudjX6MGp+f2VPw
-	dKVmg7/w/S9iNSzWltFzPq1RhdQbUE0G2+byGVEDDI8xkVZ7JXAmze59m1qfiXaUxIU=
-X-Gm-Gg: ASbGncsLVsF6ylmujbdJUgLjZRyTMaOwvkjnIv3WtWoCJh8vLvw4AkuDdcspXANwNx5
-	rtp6hObKe7wt4HayCydpszh+esiyRzsPB6LsZb6Dlg4yu6LrjptNHItRpz4VmuP0Dwyfq6Bk97B
-	V5Y/yK0D/mB8rlM1WzvAkew8A43MB1bwaBU9/S9bWTaznY89mIn5ccNpql2U/t5dE/mluPazKJY
-	kZC1YtP0CcwkqfA1yOquv/Icbl7GN2tyvX1jpvVWY6dIfeFxXZE6qMT0NDwdlIV2x38KGvQsggT
-	LDmYEzAqn4EE6WkcbSkqCmdreFiVvkciWibZrbRfnemsmYToRpn/s0wrKDcm/qgpFhbf6Ub0aoB
-	m+5obbJWIvRXOJFBnyOEj5YKWzY6dRTHi6VEEA8jtxNnHTyw52V86AWSvZQX33nCYcCA2pKI6ec
-	1dCM70IqBQX3DLt3NtKQ==
-X-Google-Smtp-Source: AGHT+IERFs5Dq//LaVtzyCCdTNAhiZ4f4o05CjfcgmjDwNiiOFdseuqJHqY+PhbFovbfmMpCoV8JxQ==
-X-Received: by 2002:a05:6808:f94:b0:437:e3ab:fa02 with SMTP id 5614622812f47-43d6c24f008mr346527b6e.26.1758223944929;
-        Thu, 18 Sep 2025 12:32:24 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:55b7:b662:4c5b:a28e? ([2600:8803:e7e4:1d00:55b7:b662:4c5b:a28e])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43d5c6bcb8asm1132156b6e.8.2025.09.18.12.32.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 12:32:24 -0700 (PDT)
-Message-ID: <280f7145-8800-4f50-b316-3a604150a980@baylibre.com>
-Date: Thu, 18 Sep 2025 14:32:23 -0500
+        d=1e100.net; s=20230601; t=1758223960; x=1758828760;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FrxP5xNcG3tL5SGiDQEqP5O3t4o9iAHN60NtSVZIh5U=;
+        b=V7rTPyL321UOgno6zIqRdMgp/vqEfw2RFM5VUaWVqEkv7t2Yy2pSAWevvXslprup8Y
+         enizeELUdq0yg6Nu0UYx76Su4CLrvtLp47nsxD0k4Icf+bu5zz7YS6j3R2cpBZzLghrG
+         wyZ8fghlVRP+9ezE12dusPB3JUoPWRq5ryq7a9aGSZhWmO1zDrOwo4H6UnsEQg3HBeca
+         LoVRMNiNeSoY70gJ9kpqH/SAEBwgeZfrugt3BPdhVejyUNSLlC9saV/nGg1/XhbJGezo
+         DTOcghiO1i8D1ezmuqjY533IUBCthKVSPlwgwkwxipeVa+sxhvjreFCm4MKJr6u+JilX
+         fYBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGJLraWBZHdOop+UUTR3y1W6zmoITiNwxVa/7atkAE0w86sky+O8bmm9G5l01ObL9Qb3PMixzmUooDq2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV3L4vr+URq20KyN0ASnbYHAuHfU7yfTIbFHX5GuX7eVnjwMG0
+	u1dxNkOcInb6n7Yhi+fxc7+1UbdiFOTDXdvIu61MZ8N4SO7xNreicNpDMre8CjQwMNFeB2Q8GlL
+	hFHTl/M17DVNId+O8ee6923//pwpyjaFDSkXH2P+te5lUMouB9uZ3IBxDIOQ+e7b1Mg==
+X-Gm-Gg: ASbGnctHHt/8Foq/tG2ppFSuD+B5/3i/IokNSWTNnWUdCpkLFCgAdF2+LL0YFf4226s
+	hSx4kv0hw2HKATuNQjtZCEmG4WHEpKGB3Z09EMf2Px3gNi0Gdmf3uZzE7bHC4+nzI7twwJ6wn7V
+	FPaLv12Hx6FD4CTWQ75CRRCBaYWfO9M9Ez5Z8IKcxdBaxrP7mYMrmhOfMkcD8sq/xe17Fz3oaHX
+	B9QbeOf8g1ZA9EFUWUN8FDElKRapfrlxPt3jIyL7eKlHM+O2QhLAklRL43osxoze8OujKi5aKx5
+	fyI29GgDSNZRLGxqW+6n9oEnr/zUbFqsnCc37F5s6FhlNGp+Rl9RBM1mfpnkDV5ZNN93ZfOsaAW
+	Xqf1aA5+HYNEZNgtBqrf1aA==
+X-Received: by 2002:a05:622a:5793:b0:4b7:b44c:9fd4 with SMTP id d75a77b69052e-4c073d943efmr7226171cf.80.1758223959762;
+        Thu, 18 Sep 2025 12:32:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvFx9YHg5jdY/lipm2LL0MJse3fnFRollEDEK2u/yHDAZ3diTQ/mHqSJpJks7YE+ILPdXElw==
+X-Received: by 2002:a05:622a:5793:b0:4b7:b44c:9fd4 with SMTP id d75a77b69052e-4c073d943efmr7225721cf.80.1758223959270;
+        Thu, 18 Sep 2025 12:32:39 -0700 (PDT)
+Received: from x1.local (bras-base-aurron9134w-grc-11-174-89-135-121.dsl.bell.ca. [174.89.135.121])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda1fc418dsm17972111cf.12.2025.09.18.12.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 12:32:38 -0700 (PDT)
+Date: Thu, 18 Sep 2025 15:32:36 -0400
+From: Peter Xu <peterx@redhat.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Houghton <jthoughton@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aMxeVMkwLdkChhYd@x1.local>
+References: <aGfsaIIzHWfjcNFd@x1.local>
+ <e7vr62s73dftijeveyg6lfgivctijz4qcar3teswjbuv6gog3k@4sbpuj35nbbh>
+ <930d8830-3d5d-496d-80d8-b716ea6446bb@amazon.com>
+ <jxekhkhbn7uk23oe24svxrs3vfuhseae57sqagndqgh2e7h33o@kfkygmrvjb5n>
+ <aMp-kW3OLqtZs8sh@kernel.org>
+ <du5pzxmfk6lile3ykpaloylwz4eni6disj2oe25eq6ipzqemiw@ybcouflfnlev>
+ <aMvEu9m7fJLnj862@kernel.org>
+ <4czztpp7emy7gnigoa7aap2expmlnrpvhugko7q4ycfj2ikuck@v6aq7tzr6yeq>
+ <aMxJ3inEs_RRyqen@kernel.org>
+ <2rkvuudmsf5tv66wya4f7m5niwnodu42owzmro5jzyc4fcep5n@lre7hir4qjli>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] iio: adc: ad4030: Fix _scale value for common-mode
- channels
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org, michael.hennerich@analog.com, nuno.sa@analog.com,
- eblanc@baylibre.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, corbet@lwn.net, marcelo.schmitt1@gmail.com
-References: <cover.1758214628.git.marcelo.schmitt@analog.com>
- <b05f763506fdecf0d21a53dde82355418d6fb915.1758214628.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <b05f763506fdecf0d21a53dde82355418d6fb915.1758214628.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2rkvuudmsf5tv66wya4f7m5niwnodu42owzmro5jzyc4fcep5n@lre7hir4qjli>
 
-On 9/18/25 12:37 PM, Marcelo Schmitt wrote:
-> Previously, the driver always used the amount of precision bits of
-> differential input channels to provide the scale to mV. Though,
-> differential and common-mode voltage channels have different amount of
-> precision bits and the correct number of precision bits must be considered
-> to get to a proper mV scale factor for each one. Use channel specific
-> number of precision bits to provide the correct scale value for each
-> channel.
+On Thu, Sep 18, 2025 at 02:32:31PM -0400, Liam R. Howlett wrote:
+> I believe the location of the code that handles the folio.  One would
+> decouple the folio processing from the mm while the other would decouple
+> which processing of the folio is done within the mm.
 > 
-> Fixes: de67f28abe58 ("iio: adc: ad4030: check scan_type for error")
-> Fixes: 949abd1ca5a4 ("iio: adc: ad4030: add averaging support")
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+> Does that make sense?
+
+Not to me.
+
+do_fault() allows allocation and some other things (e.g. trappable),
+uffd_get_folio() doesn't. They're fundamentally exactly the same otherwise.
+
+-- 
+Peter Xu
 
 
