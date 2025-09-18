@@ -1,109 +1,246 @@
-Return-Path: <linux-kernel+bounces-822367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E1AB83A31
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D11B83A43
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6454A2822
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC4F3B4EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9E82FE592;
-	Thu, 18 Sep 2025 08:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mmz+ItoE"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72CC2D77ED
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8322FF14C;
+	Thu, 18 Sep 2025 08:59:39 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC8B1E32D6;
+	Thu, 18 Sep 2025 08:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185959; cv=none; b=o9Q9Q0pgtt5bvX0CozvpmixrWA76s8sg8tBj3J/H4o5Bm018u2BQ+OjeXBZYZorzUeV6hkZdOjiV7MWZkvtzVNmaEbVGV+5E8Qserbm7cbutvmMGfItg0kxC5/BWhvfkn9fb/UEUFkNOhEcvK1y09OYI6mHxV6JJphxFKZUXfow=
+	t=1758185978; cv=none; b=B0sayz5YcDTCiOLSMFs1amRaTkEDEuEkCoD7b7POl8rDRO7bPjMc3CciD/XQw+6v92wIcS6V+YA2VBHHyPWktFD5vHXMC2w8BqPX+Pl3WV2yv0e215YpIq0TIUor1yCUTIDn5zIm9g2ZujUPJRr4guXaJOTxKKgApPle+eivYC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185959; c=relaxed/simple;
-	bh=unL9Ce+kEywQKcq5iWYa3vbSFUfdn9EBm190tWDHYvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IjVm9WVR9BR/q4aRVYj6wCoKURLTW8wol696H/RkfNCDj4ViG4I8I9iIf5R/CuRBL5rC8tKETWqkk6Lhf7mtdEp8H3XdlOx2r5vh94bvtJRviqAxgAWW9Zt7uZY2eo+sSyB0YTVbpdlNDFyvxk4l+IBM2jqB69B8lK84sDiOpfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mmz+ItoE; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33c9efd65eeso6237821fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758185954; x=1758790754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oZmPfoqG0iiG2NY0syO47mgLNSYwy8f5A2cvO3evi8k=;
-        b=Mmz+ItoEJ8Z5FZjMt2jY/aSr7oj7aThqxij0DZGgtkpV51YMDfs+oOc9pN7riJusai
-         008GZweo55Nm685yDy89CgCNv9YeDOKh+QxA5J18FyL18fVpVMpf0hr84bY9bkv0QdXe
-         jjk4S4w4u6AfRVBW7q3oYYHG1kTCA1RWpnXQBY/i+Gj3LC/M4fQ8I5eA0o6zDg9qOyya
-         q88vhmkHR/nb5sXWLjHy35L4KKFutVNJuW1f48ojOQByMKnT/6ArYiu2YP+fF/KGIaYL
-         MyGPQYCycEFTZ1m7wzspDMSqLBtc90IJsbX8WtVlT/2JJrqCFRa5Oxw925bubOrqktIW
-         /tFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758185954; x=1758790754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oZmPfoqG0iiG2NY0syO47mgLNSYwy8f5A2cvO3evi8k=;
-        b=SKlLGcYSSCQPbCAEqlfZ/9iCElIKu7Gk/m9h6VTWCCgrJeEi/HWvgkbWx7n+ISP/QF
-         22sMW3XEhamMSbOqQXvmrcRVQrbOsIy4BANg9ox7dw1O2YM81ah2otuW2Z0s4ufYq8Tq
-         Ebtw3tnfM6hArJIYVOCMHtMbMy9rhI2EIhUP+8IQFlm4dA38/7yPxkdXmHkIgSaQA3mh
-         4Dr5uPb5XZ3XaNtyzzyjJXO7kBG/2tcypaNekpCDCiE43xt0TllDktPhrxA2ru/hw2PL
-         wAigQ0rdDNP0X0jFlEtXunjr4C0XZnZc76ysNC+tN731q4PJPNRQWfcoWg6VqXd0kUvt
-         Wnww==
-X-Gm-Message-State: AOJu0YycXpTTnuzFrjUC5veOfb1SuhenNQc42hnbfvwJCzy7KiZa4N8Z
-	IT3rbfiL6hDYkGfSLpyX1V0OeOO0n3CcT1kVimHZKKxjymEN0M24nTsy0W974wI61IjEupU0dtg
-	9URaZr6XGGn1RRBMacX9iISgywmQu2YYUaWN1/AqXKA==
-X-Gm-Gg: ASbGncv6pO9WRR8+q6rKXfZ5Xh/xsRD8rtIC6b9VB0AqpL1oZ8E73Ijj3p2sfdqcA95
-	d6svpEpZeCRfswGleq/zWZzHn1xBOZW4bxzXy1vqjyEhGCXBraHDmX//TPIa4KHI/uVI6ePB4Xu
-	bpocNLxz7EH7WUqHAiiUs5k3CS34RAXBx0mheOqX9loTqShWJdHb0w/qBKq0kcwxzR35sgN9ez6
-	puyWdqNLfLqQGL1Dse389uncyIZ/Wwoss9eT/f+mL8VXlZiCllosfiQJBA=
-X-Google-Smtp-Source: AGHT+IE82AqZgCsTk+PY/JWZbreeNfzQ9NGfzRX+YkofNIG1aunevV+FhkpoCPJrFrn6mDCYgSk9k8Ijxcn1IEQSyeI=
-X-Received: by 2002:a05:651c:19a9:b0:362:75fc:4681 with SMTP id
- 38308e7fff4ca-36275fc4983mr4139801fa.29.1758185953688; Thu, 18 Sep 2025
- 01:59:13 -0700 (PDT)
+	s=arc-20240116; t=1758185978; c=relaxed/simple;
+	bh=5F6IQvrBo8ahvMmezqk2JjwrZDVWlyeXm/zd57rSJHU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nRH+6zAeYjSxIho52gJ5nvUxXjIUHi21N7PadKFI+40ANQKb2l/z8fkt6YhRjPlFqHeguvP3MBebtkdpsLxWU3Titpxa6bGGn8XA8PeVh9wbMoAI75igLgWNBUsaF6zm3nK3u9kV4Bo+EvMkWYdmVD43GvA8SNnAa4MXvhqIkaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
+	by app1 (Coremail) with SMTP id TAJkCgBHXg_ayctoHpTUAA--.4697S2;
+	Thu, 18 Sep 2025 16:59:10 +0800 (CST)
+From: weishangjuan@eswincomputing.com
+To: devicetree@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	vladimir.oltean@nxp.com,
+	rmk+kernel@armlinux.org.uk,
+	yong.liang.choong@linux.intel.com,
+	anthony.l.nguyen@intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	jan.petrous@oss.nxp.com,
+	jszhang@kernel.org,
+	inochiama@gmail.com,
+	0x1207@gmail.com,
+	boon.khai.ng@altera.com,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Shangjuan Wei <weishangjuan@eswincomputing.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v7 1/2] dt-bindings: ethernet: eswin: Document for EIC7700 SoC
+Date: Thu, 18 Sep 2025 16:59:03 +0800
+Message-Id: <20250918085903.3228-1-weishangjuan@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250918085612.3176-1-weishangjuan@eswincomputing.com>
+References: <20250918085612.3176-1-weishangjuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905085141.93357-1-marco.crivellari@suse.com> <175743072839.109608.9014903338772554601.b4-ty@kernel.dk>
-In-Reply-To: <175743072839.109608.9014903338772554601.b4-ty@kernel.dk>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Thu, 18 Sep 2025 10:59:02 +0200
-X-Gm-Features: AS18NWDpfZjLQbuUq82kSpsqAhb5CTGCYTAr0k0mPYelJg4h9GAlfvANjno1wMM
-Message-ID: <CAAofZF4ysVOA05j3NeieeyPgXjJ_43SEKD=mHPrCz6eF4qXhTw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] block: replace wq users and add WQ_PERCPU to
- alloc_workqueue() users
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgBHXg_ayctoHpTUAA--.4697S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw1DtF1kCFyrZFyrZFyfXrb_yoWrGw15pa
+	97CrWDJr4fXr13Xa1UtF10kFn3ta1DCF1Ykrn7J3Waq390qas0q3WayFy5Ga43Cr47ZFW5
+	WFWYvay8A3Wjk3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26rWY6Fy7MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJ8nYUUUUU
+X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
 
-On Tue, Sep 9, 2025 at 5:12=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
-> Applied, thanks!
->
-> [1/3] drivers/block: replace use of system_wq with system_percpu_wq
->       commit: 51723bf92679427bba09a76fc13e1b0a93b680bc
-> [2/3] drivers/block: replace use of system_unbound_wq with system_dfl_wq
->       commit: 456cefcb312d90d12dbcf7eaf6b3f7cfae6f622b
-> [3/3] drivers/block: WQ_PERCPU added to alloc_workqueue users
->       commit: d7b1cdc9108f46f47a0899597d6fa270f64dd98c
+From: Shangjuan Wei <weishangjuan@eswincomputing.com>
 
-Many thanks, Jens!
+Add ESWIN EIC7700 Ethernet controller, supporting clock
+configuration, delay adjustment and speed adaptive functions.
 
---=20
+Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
+Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/net/eswin,eic7700-eth.yaml       | 127 ++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
 
-Marco Crivellari
+diff --git a/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+new file mode 100644
+index 000000000000..57d6d0efc126
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+@@ -0,0 +1,127 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 SOC Eth Controller
++
++maintainers:
++  - Shuang Liang <liangshuang@eswincomputing.com>
++  - Zhi Li <lizhi2@eswincomputing.com>
++  - Shangjuan Wei <weishangjuan@eswincomputing.com>
++
++description:
++  Platform glue layer implementation for STMMAC Ethernet driver.
++
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - eswin,eic7700-qos-eth
++  required:
++    - compatible
++
++allOf:
++  - $ref: snps,dwmac.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: eswin,eic7700-qos-eth
++      - const: snps,dwmac-5.20
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    const: macirq
++
++  clocks:
++    items:
++      - description: AXI clock
++      - description: Configuration clock
++      - description: GMAC main clock
++      - description: Tx clock
++
++  clock-names:
++    items:
++      - const: axi
++      - const: cfg
++      - const: stmmaceth
++      - const: tx
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    items:
++      - const: stmmaceth
++
++  rx-internal-delay-ps:
++    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
++
++  tx-internal-delay-ps:
++    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
++
++  eswin,hsp-sp-csr:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      - description: Phandle to HSP(High-Speed Peripheral) device
++      - description: Offset of phy control register for internal
++                     or external clock selection
++      - description: Offset of AXI clock controller Low-Power request
++                     register
++      - description: Offset of register controlling TX/RX clock delay
++    description: |
++      High-Speed Peripheral device needed to configure clock selection,
++      clock low-power mode and clock delay.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++  - interrupt-names
++  - phy-mode
++  - resets
++  - reset-names
++  - rx-internal-delay-ps
++  - tx-internal-delay-ps
++  - eswin,hsp-sp-csr
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    ethernet@50400000 {
++        compatible = "eswin,eic7700-qos-eth", "snps,dwmac-5.20";
++        reg = <0x50400000 0x10000>;
++        clocks = <&d0_clock 186>, <&d0_clock 171>, <&d0_clock 40>,
++                <&d0_clock 193>;
++        clock-names = "axi", "cfg", "stmmaceth", "tx";
++        interrupt-parent = <&plic>;
++        interrupts = <61>;
++        interrupt-names = "macirq";
++        phy-mode = "rgmii-id";
++        phy-handle = <&phy0>;
++        resets = <&reset 95>;
++        reset-names = "stmmaceth";
++        rx-internal-delay-ps = <200>;
++        tx-internal-delay-ps = <200>;
++        eswin,hsp-sp-csr = <&hsp_sp_csr 0x100 0x108 0x118>;
++        snps,axi-config = <&stmmac_axi_setup>;
++        snps,aal;
++        snps,fixed-burst;
++        snps,tso;
++        stmmac_axi_setup: stmmac-axi-config {
++            snps,blen = <0 0 0 0 16 8 4>;
++            snps,rd_osr_lmt = <2>;
++            snps,wr_osr_lmt = <2>;
++        };
++    };
+\ No newline at end of file
+--
+2.17.1
 
-L3 Support Engineer, Technology & Product
 
