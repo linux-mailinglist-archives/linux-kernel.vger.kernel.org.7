@@ -1,122 +1,147 @@
-Return-Path: <linux-kernel+bounces-822524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84AA2B84114
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:26:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB90BB8412D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BA2178795
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:25:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278B3189EE2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192311B394F;
-	Thu, 18 Sep 2025 10:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EC02882CE;
+	Thu, 18 Sep 2025 10:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvmtbncS"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azYhtVC3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD928750B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8062773F0;
+	Thu, 18 Sep 2025 10:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758191105; cv=none; b=e+7AVj0u9ICclT9nfXapIczqmAyBHKHEGpb7JonSyiim76+Q0FHJVUDQRASfzblnh1UPynOGEYPxK0BCVlNv+PoEq2vhj5f0bHYbehpPWeR3wW0PFjokO+kcsefRRZywrY4EoylfQk/ucQv3O4VtP4AVQnGlPgcz8KjRbh5Gb0E=
+	t=1758191201; cv=none; b=IFg35i7n/u6FkXWynBhHMvXtPGNH0pzyMXycg2wxKM2+zjnj2XXP87YarmsImAYx6CT+woPk51/Kc6BZNGHSYCjkPNt85vAW7R6bsqezSvV8zjX8ckvbM8UljeEahcf6ERK4MBKvi0ijY5MelcCEaxKCPrFuhfP/8caen1utwEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758191105; c=relaxed/simple;
-	bh=kOvm+FSRDMqrfRGWXwZTtgcmHLHOo9umbhIA218JDrg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HzkwwiVM3Mgck+8guF5gN8gc9BEp5Igsh7orYXbpD+tAiEdymZwCQ9ucj8wTokpo/WE/7NWxr1/R+MnU9LFwD6fetVlatNV50/baUuB9fphm/O9juOPW+nJlWxF2u0ZNygeAoF3NWI7Z/ALgDnI2KSMYGWy5ERivBOJeD/+ncrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cvmtbncS; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e98c5adbbeso481821f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758191102; x=1758795902; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kOvm+FSRDMqrfRGWXwZTtgcmHLHOo9umbhIA218JDrg=;
-        b=cvmtbncS4faW81Kst2F7UfgR/toi8Ef6z9b5bnLyxhpnScrKMWonjnsDVG6xDQq2t4
-         birFdasZXFjQgGnv0YDBiz2HrGCt8+yWq+ewegyJSRsMp/Cp5ztrfi/GJYPhWX5njIcO
-         gPU4l/+k4fKO3pnDdv2CwgmeOW76QiVXSlIyr7/RoB46+qjtZBnOsTsK/bOUVJc+DZaA
-         G8WWNtiJFZfkmoX1zPR6k8z1g7wlRfQkVNkJHXf/Zvux+ZcqOPPbyPiRsQx4FPRs52ba
-         9oYHS4K2doEIjH8ujdJy9tvL+2JpuavbZH4Yn75Ia1FOAvm0m0bojra+5q3FPUaRSfTy
-         tHlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758191102; x=1758795902;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kOvm+FSRDMqrfRGWXwZTtgcmHLHOo9umbhIA218JDrg=;
-        b=o3XzdnrLDfUJrD0nCDlerBISLGh7dn/X9FvpQylnTTJ1mc2Nm9rADZXci5d9LLRBjT
-         EqPNCWrpIHVx9LQIrdtEsEsgOFAiz3wqOTMa4+5NOTyYnje0c3sbDu9tgXg2CpmyovdZ
-         Naa2q2DZIKJmU3SMaNv1QNWhmpR9k8Ers1JrtJEtVkEX6KTwyeIFZDadq/45JlH3hjml
-         pea4+KC0Re25ZyyO7R1/Y5vmjhblwbAg2OLEUcpYAsMVpvBcPcV5pAI+1X+NSHzRDu5J
-         hoYeVOcwPuckEFowjkrqEsuZSIB3pioFuE3szMPtvJRTG7u0KE+qAcIzPNjEy8/DLJH6
-         Qzqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkAslURUhiGmEm07Y0YqB+1q/JqnzC6vq+MWVkF6TCMkXQzCHqYAm9EXRC8770Y226KWkyxZaUUIw6QqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh9XRke4M8J+roo35l+H9kjjJPGwkW7E92i5zuKTj/IYXkDbym
-	EMgfnSW5HY+vLQWbuDL794ZM9pVQPYDuLFquQCFwaHA52UMFP5WTlf0X
-X-Gm-Gg: ASbGncuAkSEyoW/LH84SMuvQw4pBVLAqt03ujylfQysm043gwVgQD+ifKkvz9quvCSE
-	uHM5YKD3GozaddGiX62NjuSw3Z5nXa54IeJx5lVPllRyOB0yQWZfBVKSQ1DIrrnoW/25Ca4iUJ4
-	rZWSko9giY4rhF8wtixmBw7y6uXWxKruCCiEVrOOI3kW7ul5YMiM/h06wkh3Jp982kBnCmXvb67
-	121WZpVt7nDk3a4np1ZeHRCCBVcZ930vUiSBtlqgo1JfdHmK6c1be5vpUy3KevCaj4WUcc7R/Fg
-	pENUyRqzkHbMZTId3+G78f/FBFzQPZvENSjXdUXyjVsPujDYssJx3gX5JbudSlam+6zNErwBqdK
-	bKQF5yGvH/hv8rfNNwYASeWY55VIoCYz3qIWSfGH81NOkiUb0tD/2WQ/K3vr4
-X-Google-Smtp-Source: AGHT+IE89bqEquEMvnJ2bVfT2RyzTCxqXtWFe3MTLksbWjUhUBkk1SNeRoutV4BeFiYIHxO9vGiHdg==
-X-Received: by 2002:a05:6000:40cb:b0:3ee:1461:1659 with SMTP id ffacd0b85a97d-3ee146119c6mr658186f8f.31.1758191101614;
-        Thu, 18 Sep 2025 03:25:01 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbf0a4fsm2962807f8f.52.2025.09.18.03.25.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 03:25:01 -0700 (PDT)
-Message-ID: <f2eb2424e4b3fc787d1f20b17852e97b1a708cc8.camel@gmail.com>
-Subject: Re: [PATCH 0/2] iio: adc: ad7124: drop nr field
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 18 Sep 2025 11:25:27 +0100
-In-Reply-To: <20250917-iio-adc-ad7124-drop-nr-field-v1-0-5ef5cdc387c6@baylibre.com>
-References: 
-	<20250917-iio-adc-ad7124-drop-nr-field-v1-0-5ef5cdc387c6@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1758191201; c=relaxed/simple;
+	bh=yj2eTWFg6tTTFj5zrGIcdAtT44odqMMwfL4AjM7REbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=L1QxMwR2Jjz3hyfFxGLU2dWSOPrw/ANEVoYLKxdL0B5zfk70Jl4CyOiFU3vIKlmjs9lcL41Hk6dWw9K/4hOzIYrU6g1jT9OCv/gHyQwDiHTYZU3L4yTJ+WWmfPjSM93jWOWd9j7TnXA4LByjPIGgAcFDiKa/S9obs95MetxViLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azYhtVC3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 247C2C4CEE7;
+	Thu, 18 Sep 2025 10:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758191201;
+	bh=yj2eTWFg6tTTFj5zrGIcdAtT44odqMMwfL4AjM7REbM=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=azYhtVC3tOHM9gLedI+p0yEO/L3PG38x1+4v/YEc+8zvOTWJAYiU4DFIINWthjIqW
+	 i5amzMnSFxW2U4Nvsx3A1/k0Sp1DIzQU5Yt7bkIqxArIVsgRpvTw0n/ymu1ytRnZKi
+	 IZsC2PzgkWKWcVOSn8Bt660Z8NDDGvxmtKQhNnZ3hCcCGabK/0UDhdpXVEUaP3hIZ0
+	 dCftSeM+Irv1++yEOhGgxsplXJIGwMaFLL1O1Fo0lBILI5WcrUzcpVuajF63BN2Gqu
+	 RS19CXirjp534wme1zpWvxcqCNJRIS9R+YlH+HbKB/IuzMASNYCJTxFfviFDmyMjQ+
+	 bEvZjkRoq0XDQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9432ECE0B32; Thu, 18 Sep 2025 03:26:40 -0700 (PDT)
+Date: Thu, 18 Sep 2025 03:26:40 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH v7 0/6] Provide RCU changes needed to switch
+ __DECLARE_TRACE() to SRCU for -rt
+Message-ID: <89b6f92e-2aa6-4869-ad4f-47bb3fbadfbb@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 2025-09-17 at 15:39 -0500, David Lechner wrote:
-> The motivation behind this series was to remove the `nr` field in struct
-> ad7124_channel since it is duplicating the same value as struct
-> iio_chan_spec.address (and duplicated again by .scan_index).
->=20
-> When it came to actually doing that though, I found that it was easier
-> to first clean things up by removing the ad7124_enable_channel()
-> function - which is a nice cleanup by itself. So ended up with 2 patches
-> that end with the same result without ever mentioning the duplication.
->=20
-> ---
-> David Lechner (2):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7124: inline ad7124_enable_cha=
-nnel()
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7124: remove unused `nr` field
->=20
-> =C2=A0drivers/iio/adc/ad7124.c | 19 ++++++-------------
-> =C2=A01 file changed, 6 insertions(+), 13 deletions(-)
-> ---
-> base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
-> change-id: 20250917-iio-adc-ad7124-drop-nr-field-518102218a61
->=20
-> Best regards,
+Hello!
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+This is version 7 of a patch series creating a new notrace variant of
+SRCU-fast for eventual use by the __DECLARE_TRACE() macro in place of the
+current preemption disabling for PREEMPT_RT kernels.  This change will
+enable preemption of BPF programs attached to tracepoints in PREEMPT_RT
+kernels, as is required for runtime use of BPF in real-time systems.
+Non-PREEMPT_RT kernels will continue to have such BPF programs be
+non-preemptible.
+
+The patches are as follows:
+
+1.	Move rcu_is_watching() checks to srcu_read_{,un}lock_fast().
+
+2.	Add srcu_read_lock_fast_notrace() and
+	srcu_read_unlock_fast_notrace().
+
+3.	Add guards for notrace variants of SRCU-fast readers.
+
+4.	Document __srcu_read_{,un}lock_fast() implicit RCU readers.
+
+5.	Document srcu_flip() memory-barrier D relation to SRCU-fast.
+
+6.	Remove preempt_disable/enable() in srcu_gp_start_if_needed(),
+	courtesy of Zqiang.
+
+Changes since v6:
+
+o	Deferred the application of SRCU-fast to __DECLARE_TRACE()
+	due to bugs located by the good services of kernel test robot.
+	Although the current version is looking good, it needs more
+	test time.
+
+o	Added patch 6.
+
+Changes since v5:
+
+o	Forward-port to v6.17-rc1.
+
+Changes since v4:
+
+o	Remove the redundant "notrace" tags per Boqun Feng feedback.
+
+o	Disable preemption for perf and ftrace per Steven Rostedt
+	feedback, which addresses the kernel test robot reports
+	provoked by earlier versions.
+
+	https://lore.kernel.org/all/45397494-544e-41c0-bf48-c66d213fce05@paulmck-laptop/
+
+Changes since v3:
+
+o	Add "notrace" per Joel, Steven, and Matthew feedback.
+
+o	Upgrade explanatory comments and add new ones per Joel feedback.
+
+	https://lore.kernel.org/all/20250721162433.10454-1-paulmck@kernel.org/
+
+Changes since v2:
+
+o	Posting standalone as opposed to a reply.
+
+	https://lore.kernel.org/all/3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop/
+
+Changes since RFC version:
+
+o	RFC patch 6/4 has been pulled into the shared RCU tree:
+	e88c632a8698 ("srcu: Add guards for SRCU-fast readers")
+
+o	RFC patch 5/4 (which removed the now-unnecessary special boot-time
+	avoidance of SRCU) has been folded into patch 4/4 shown above,
+	as suggested by Steven Rostedt.
+
+	https://lore.kernel.org/all/bb20a575-235b-499e-aa1d-70fe9e2c7617@paulmck-laptop/
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/include/linux/srcu.h     |    4 +++
+ b/include/linux/srcutree.h |    2 -
+ b/kernel/rcu/srcutiny.c    |    4 ---
+ b/kernel/rcu/srcutree.c    |   10 +++++++++
+ include/linux/srcu.h       |   30 ++++++++++++++++++++++++++++
+ include/linux/srcutree.h   |   47 ++++++++++++++++++++++++++++-----------------
+ 6 files changed, 75 insertions(+), 22 deletions(-)
 
