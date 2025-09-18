@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-823594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F0BB86F06
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:44:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB50B86F12
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2801C88590
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:45:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5ACA4E14D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1944C2F39C3;
-	Thu, 18 Sep 2025 20:44:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBFF2F5498;
+	Thu, 18 Sep 2025 20:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjZnR+kJ"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE562F28EC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5455E305E2B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758228271; cv=none; b=Lgf3DpUE0b2rGCT+KNLYJrK8acX7JrJk4PvQwt8xQJxu8W8xznJM84BOAhELnOo2WZ/1RZfbv3DeYxqZDlu2gen+yxSs9y+tuB0Kntf8OYn3iUifs1MK15fsH+QGGm6RL4swfVPv/jj0Cj+6KcPDpxqFyNZ54/vSKajmi6CSuYg=
+	t=1758228315; cv=none; b=MaKTl/TXdTPS6eJbdEFGDFy8I7fls2LYoH3fa0rd0Efh628FbHJg95nkUqKRvRhd0jNDRj/FF5a5ysyu+ZtAPyeheZvzRzWUyOuUf4IlQQ5MtRfuD+n8FFqBZy9tAnr0pc0W4m/Tq9+pMrCcAlUHSX3cotkbXMYrRxDGRPdkZAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758228271; c=relaxed/simple;
-	bh=NfiIJR6kIHevsUQujY5aQQ/4j2GVgOuNSAyAHQIKxjE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mS0AeQVDxl2foFiOTRxZZJt76w/yoEhWTV25sbRu7FgZybkI1/YciBzFF/nBCdsa1n/8jIGQB4z/itY9sf4oaG9avh1NR+R8h86vIJOgiUKhOwyV6Ytm3BWf1yyM/f8IcfTRNFlch1KnJpyQUkU8urwy2w1ivMB4h7lUVCJmgDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-40f7be8ecf2so34419785ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:44:29 -0700 (PDT)
+	s=arc-20240116; t=1758228315; c=relaxed/simple;
+	bh=GGg6d/r4jDGzehwcYIRRjIy+qluRFFKgKPsa5MqzzFw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=al9pi0fpTG3Tef9tRi/2u5Y7Z43OUeMcuMxuJEVcJF2rAQDD8dT/BYjLZaYw5zUp0a2DrF/k1KiAOQZp8ddU30mKAW/ndwakE+clpaJ5ajIOPnqNTdhf2lZ2Xcku1k7X1Ytb28iSgl0wPPT0UXE0EehwR0No4VcXadB1DFhYH04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjZnR+kJ; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77b0a93e067so1339535b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758228313; x=1758833113; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OndiLXsBaZlIfnc6wgFkQBsEvn2pe7regfwA2hv/6vI=;
+        b=TjZnR+kJHVwb7ZqsIxQ4Fplc2xS75O8S2fvbwi5MYYCasqvOcu2KwaE/LDe02VZbSA
+         PMtxNu6Soy+69zZQ0Hj0Qw5i9N16004aAnHZGGRU0Qm+vCiQq5yyVf8ch/WPQQppHB8g
+         +xzDvRAibDwvfxrDxVF1a6JL1yTVanROUTJlX8EiKyZ65tdOSa+H/An22mMGahXTMQ+A
+         sWfxMODtbJfTfLkKG+Bn+uej8+o+qA0NC3/YYOTf/Ydiz4vSDRN4SOVfU3RPsMOASVmm
+         q6RjtAq7fUzANCq0328g1V59/c2JFhZKf353SIevDTut6BD3tWuhBLg7BWTEBEjXe6ME
+         a3jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758228269; x=1758833069;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jy95kM/qgX/gO/SpA4ej+P7GNTHFDJ+aCcX1GcgB2yk=;
-        b=iFOL7w+VuWj95XVpYkMBXFi4tu4wKP8MczoPkowMPeIHuowmI68/tW1ptap1n9B1kR
-         BVmjGnsfyflNBrq5Z8VXW0VLt07gxXtQcJnldktfxpqAIy6gG/9b5wIJTBRzxCQSxtkE
-         AqICBnzDZMYo+UkNfhZ44tb93miOj85oPXndQZyzxD7JgIzQf3ZtWT8Igigl0IK+gLO4
-         wUSLipOc0CgVSJf8bEtUnssqlBOXZHrsFfynvD14qBH6nNbnksuw/Umvp+2Mx9+3332g
-         1xf2hCpPGt5YPhwVUFlKkOHhRyyqrc+nkWIYgmT/pLBJFwSLz3YtG6qx+H1AVBCJq7oT
-         3cSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhGb+/SGIc9KPoc/BwbMUEr7cEx7c5DR9o0sYBqk3WIuYKyS+m17H3D0G2NLqJSQlq6XdRW/QULZSBHzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyidG3Np/929uFhFib9u087npE8Lf5AmjQf2HUR2HSE8Cb7Ogpz
-	E1PxGCsuzgGRue8Nj1TP4z+uSQASNZCpxusI3E0jGMVKyTGSRDmZ9fFFRF4Jnk3rUTt4ozvp7jo
-	CLV3T3iKdvyUKC4rBkolLfKrihoX3RvFKJFunLWEkebTe53tAilx+BbA8tps=
-X-Google-Smtp-Source: AGHT+IFu1MADOFwiTOdU5yaJk1ZgNZavxLZ2jQpFx0eMPLtJmGm9swFNp0+N1yEJNO6C9z/DFUwMwah6rUU7Dl2Hk1mJlu3m/iVX
+        d=1e100.net; s=20230601; t=1758228313; x=1758833113;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OndiLXsBaZlIfnc6wgFkQBsEvn2pe7regfwA2hv/6vI=;
+        b=aFG/6rORSirx41zODKdaxrWAqu1BfsLRc8JFvve7uXk3L2yu96khTl+uMFW1WThuoF
+         KWrgcjiRItur04cS5jJZPa7EqJE194DGX1PVwO1wIjuDW8lo9YcFRxTzbN6f7J/38P20
+         X697RjG7POgkJPgvwoGniw5D9kn3Ta+h6UaytjW9+2ylzEvGF8meuJ/Sj6ODbyQZ12LR
+         SW+AitlL2WXdynuftPkHaENaE1rIlpXj2DSkwGaPCFgpE/h2lw4uBMkjTifptT7bKM+W
+         9cwxQUFJGhjosQw2CtrtuDPtH6HExykdpj4roF3fOOv8NlNMHQ3DvACFSS498UTYYlf9
+         2MRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDwp/ZeMaapQAQ7Xq2iQ7wxMIiq31oSJD1ZEQalGLWSlDjfFakBU/9LZnBLLJF44R1Fup3awlGxSFSbI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDklgqGMamloiOMFd6tugwvN1JPkef/I5QAbnQYK0gdwS/ZGk9
+	VfejPclxHyX1XSmOYauZRg/rhecfoNXEPY16IBf8SVfCGfBNzM7P1Fo5
+X-Gm-Gg: ASbGncvUT7NGy0hTKge4tOuUaG5bLltBtEz72tKrav/MXpEnlog/FKEPuFZH9ZoBqT2
+	unJ2jrbkuubPv88ah9vO9ZFd0odTOfP+G0+6jpVNG2ePSZswA0kv4jNJY67UqugYs3gLlvjxSLk
+	JRZOOXnKsk5EETA9bnEy6TvzWNhf7K792MVnkp8kmUAZ03XKSJQGQOo+NZFE2gfneCaIxeQc3p4
+	/AXO95CmgFW+GToIXLjD67si/AVXucNRkXA4Gx6c7HqQWbYvHqx6uhqowna3EoBKX/A4WNTsIf3
+	yxHnWyiq4Y+jGQpUi7Q4ccXsr8ooY4XuIE1vqyWb+7UnpvLcrfm0LSe4weC2o9tugNQH21CIjgh
+	etJZVlbK1YCcgVbgBLdV1fxgIDKg5ThA02pNS7gbk0cAvr6iNPEE=
+X-Google-Smtp-Source: AGHT+IH6nT7K0iPQvyubO2xs7c/GfuU5J21G9ftRRvl+G+ljHMvaAOMJ9VufECcV+u3dMud2d7dvVw==
+X-Received: by 2002:a05:6a20:7f9e:b0:245:fdeb:d26b with SMTP id adf61e73a8af0-2925e23aaa3mr1419052637.15.1758228313064;
+        Thu, 18 Sep 2025 13:45:13 -0700 (PDT)
+Received: from localhost.localdomain ([119.8.44.69])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ff35aff2sm3178181a12.1.2025.09.18.13.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 13:45:12 -0700 (PDT)
+From: Han Gao <rabenda.cn@gmail.com>
+To: devicetree@vger.kernel.org,
+	Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Han Gao <rabenda.cn@gmail.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] riscv: dts: thead: add more th1520 isa extension support
+Date: Fri, 19 Sep 2025 04:44:46 +0800
+Message-ID: <cover.1758228055.git.rabenda.cn@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdad:0:b0:424:8160:46de with SMTP id
- e9e14a558f8ab-424819bcc22mr16145105ab.28.1758228269425; Thu, 18 Sep 2025
- 13:44:29 -0700 (PDT)
-Date: Thu, 18 Sep 2025 13:44:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cc6f2d.a00a0220.37dadf.000a.GAE@google.com>
-Subject: [syzbot] Monthly smc report (Sep 2025)
-From: syzbot <syzbot+list16381c3f7f9f0890654e@syzkaller.appspotmail.com>
-To: alibuda@linux.alibaba.com, dust.li@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-s390@vger.kernel.org, netdev@vger.kernel.org, sidraya@linux.ibm.com, 
-	syzkaller-bugs@googlegroups.com, wenjia@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello smc maintainers/developers,
+Add xtheadvector & ziccrse & zfh for th1520
 
-This is a 31-day syzbot report for the smc subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/smc
+Updated the commit message for the patchset
 
-During the period, 1 new issues were detected and 1 were fixed.
-In total, 6 issues are still open and 46 have already been fixed.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 484     Yes   general protection fault in smc_diag_dump_proto
-                  https://syzkaller.appspot.com/bug?extid=f69bfae0a4eb29976e44
-<2> 128     Yes   possible deadlock in smc_release
-                  https://syzkaller.appspot.com/bug?extid=621fd56ba002faba6392
-<3> 5       Yes   general protection fault in __smc_diag_dump (4)
-                  https://syzkaller.appspot.com/bug?extid=f775be4458668f7d220e
+Thanks,
+Han
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1: https://lore.kernel.org/all/20250911184528.1512543-1-rabenda.cn@gmail.com/
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Han Gao (3):
+  riscv: dts: thead: add xtheadvector to the th1520 devicetree
+  riscv: dts: thead: add ziccrse for th1520
+  riscv: dts: thead: add zfh for th1520
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+ arch/riscv/boot/dts/thead/th1520.dtsi | 28 +++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-You may send multiple commands in a single email message.
+-- 
+2.47.3
+
 
