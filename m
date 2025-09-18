@@ -1,246 +1,115 @@
-Return-Path: <linux-kernel+bounces-822368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D11B83A43
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD309B83A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC4F3B4EEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983571C06618
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8322FF14C;
-	Thu, 18 Sep 2025 08:59:39 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC8B1E32D6;
-	Thu, 18 Sep 2025 08:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14FF1E3DE5;
+	Thu, 18 Sep 2025 09:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvtLc8mW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B5529D292;
+	Thu, 18 Sep 2025 09:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185978; cv=none; b=B0sayz5YcDTCiOLSMFs1amRaTkEDEuEkCoD7b7POl8rDRO7bPjMc3CciD/XQw+6v92wIcS6V+YA2VBHHyPWktFD5vHXMC2w8BqPX+Pl3WV2yv0e215YpIq0TIUor1yCUTIDn5zIm9g2ZujUPJRr4guXaJOTxKKgApPle+eivYC8=
+	t=1758186108; cv=none; b=uhqpHy+kYNcN4+dxTJ2eRhktQbW8ocDC4gQ8DkwoTzHrejR+qLyOnJzq4wqc3n8wUwjxHh6zG5NAlKkXiLywm2a0N5va6DV2hytc/dcciIOhIc9joeNrX6jW5pBzEVdrX84Cu/sfBsAO1JBbXoAG/QZNuRe/0zPYOLWyzWzVb3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185978; c=relaxed/simple;
-	bh=5F6IQvrBo8ahvMmezqk2JjwrZDVWlyeXm/zd57rSJHU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nRH+6zAeYjSxIho52gJ5nvUxXjIUHi21N7PadKFI+40ANQKb2l/z8fkt6YhRjPlFqHeguvP3MBebtkdpsLxWU3Titpxa6bGGn8XA8PeVh9wbMoAI75igLgWNBUsaF6zm3nK3u9kV4Bo+EvMkWYdmVD43GvA8SNnAa4MXvhqIkaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
-	by app1 (Coremail) with SMTP id TAJkCgBHXg_ayctoHpTUAA--.4697S2;
-	Thu, 18 Sep 2025 16:59:10 +0800 (CST)
-From: weishangjuan@eswincomputing.com
-To: devicetree@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	vladimir.oltean@nxp.com,
-	rmk+kernel@armlinux.org.uk,
-	yong.liang.choong@linux.intel.com,
-	anthony.l.nguyen@intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	jan.petrous@oss.nxp.com,
-	jszhang@kernel.org,
-	inochiama@gmail.com,
-	0x1207@gmail.com,
-	boon.khai.ng@altera.com,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Shangjuan Wei <weishangjuan@eswincomputing.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v7 1/2] dt-bindings: ethernet: eswin: Document for EIC7700 SoC
-Date: Thu, 18 Sep 2025 16:59:03 +0800
-Message-Id: <20250918085903.3228-1-weishangjuan@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250918085612.3176-1-weishangjuan@eswincomputing.com>
-References: <20250918085612.3176-1-weishangjuan@eswincomputing.com>
+	s=arc-20240116; t=1758186108; c=relaxed/simple;
+	bh=5rMvlimJ4W4wdpXOBkk6k7g6cY89cXqZ2dvZK554a0U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IZHDjtWRtul0iN2Kp9BU1JY5XCAchRdhl0kWyQESybWuOlkroYs7kt2yi2UFRBfgPZeyJS24K8CVZdwNM6uqoW1ACXxdau0OWxj8FTJzX8/zqV1uHk2QEt0ibEHgGx/ImOm+JptI9ZFtmqXt04zXylI95PkMe4qtJDb9/sPfq2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvtLc8mW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CA4C4CEE7;
+	Thu, 18 Sep 2025 09:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758186106;
+	bh=5rMvlimJ4W4wdpXOBkk6k7g6cY89cXqZ2dvZK554a0U=;
+	h=From:Subject:Date:To:Cc:From;
+	b=fvtLc8mWA99MkR1KcXW1Izmu9ujGbv8e7xYbBtE60LDXg7JFhQ9ZmuwsHQpAc5rfO
+	 kG1xtFLR9dx/2DJUVSBGk/BNs6/+c+UQEMCXaTKph/Xbfr6w9MHu2AkGX0ZAlz7NFl
+	 B+2Uj88Ro5eR6Dsk4lvljcTdAGy36gCQ913SDe7/GBWyxfPrtDddJE6195A4bU62M3
+	 G6rNraF+R5zbSzR/p4/wuBtv8zAYWrjRNBlG8f/6Ib24cMDkBZfJqpqCSxDB2X2kBs
+	 613xR/1lzWhzq+uJ3bVEhuP9xdCnDVa14Cqi+Yo05XPHibzGZmU7oO/XgWWAHrMf81
+	 /8bcduPo4XRHg==
+From: Vincent Mailhol <mailhol@kernel.org>
+Subject: [PATCH 0/4] can: populate ndo_change_mtu() to prevent buffer
+ overflow
+Date: Thu, 18 Sep 2025 18:00:23 +0900
+Message-Id: <20250918-can-fix-mtu-v1-0-0d1cada9393b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgBHXg_ayctoHpTUAA--.4697S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw1DtF1kCFyrZFyrZFyfXrb_yoWrGw15pa
-	97CrWDJr4fXr13Xa1UtF10kFn3ta1DCF1Ykrn7J3Waq390qas0q3WayFy5Ga43Cr47ZFW5
-	WFWYvay8A3Wjk3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26rWY6Fy7MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJ8nYUUUUU
-X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACjKy2gC/x2MQQqAIBAAvyJ7bsEVguwr0cF0qz1koRVB+Pek4
+ zDMvJA5CWfo1QuJb8myxwrUKPCriwujhMpgtGm1pQ69izjLg9t54dQaYuJAzlioxZG4qv82jKV
+ 86NIHbl0AAAA=
+X-Change-ID: 20250918-can-fix-mtu-b521e1ed1a29
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Arunachalam Santhanam <arunachalam.santhanam@in.bosch.com>, 
+ Akshay Bhat <akshay.bhat@timesys.com>, 
+ Wolfgang Grandegger <wg@grandegger.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
+ Gerhard Bertelsmann <info@gerhard-bertelsmann.de>, 
+ Yasushi SHOJI <yashi@spacecubics.com>, 
+ =?utf-8?q?Remigiusz_Ko=C5=82=C5=82=C4=85taj?= <remigiusz.kollataj@mobica.com>, 
+ linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ Vincent Mailhol <mailhol@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1393; i=mailhol@kernel.org;
+ h=from:subject:message-id; bh=5rMvlimJ4W4wdpXOBkk6k7g6cY89cXqZ2dvZK554a0U=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDBmnT2VySv215XKrFNlufMix5qL+53Wf9p0LSQzambRxC
+ d/uPU7bO0pZGMS4GGTFFFmWlXNyK3QUeocd+msJM4eVCWQIAxenAEyk4wIjwzwdy03yEWF7r/91
+ do/2FZNYwRHqnL9D2ogrevWtZzsVohn+Rzv28Yr+/3Gh9GNmZxWLiBLjufQ0br36fat9Mzf93c/
+ NCAA=
+X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 
-From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+Four drivers, namely etas_es58x, hi311x, sun4i_can and mcba_usb forgot
+to populate their net_device_ops->ndo_change_mtu(). Because of that,
+the user is free to configure any MTU on these interfaces.
 
-Add ESWIN EIC7700 Ethernet controller, supporting clock
-configuration, delay adjustment and speed adaptive functions.
+This can be abused by an attacker who could craft some skbs and send
+them through PF_PACKET to perform a buffer overflow of up to 247 bytes
+in each of these drivers.
 
-Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
-Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This series contains four patches, one for each of the drivers, to add
+the missing ndo_change_mtu() callback. The descriptions contain
+detailed explanations of how the buffer overflow could be triggered.
+
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
 ---
- .../bindings/net/eswin,eic7700-eth.yaml       | 127 ++++++++++++++++++
- 1 file changed, 127 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+Vincent Mailhol (4):
+      can: etas_es58x: populate ndo_change_mtu() to prevent buffer overflow
+      can: hi311x: populate ndo_change_mtu() to prevent buffer overflow
+      can: sun4i_can: populate ndo_change_mtu() to prevent buffer overflow
+      can: mcba_usb: populate ndo_change_mtu() to prevent buffer overflow
 
-diff --git a/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
-new file mode 100644
-index 000000000000..57d6d0efc126
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
-@@ -0,0 +1,127 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Eswin EIC7700 SOC Eth Controller
-+
-+maintainers:
-+  - Shuang Liang <liangshuang@eswincomputing.com>
-+  - Zhi Li <lizhi2@eswincomputing.com>
-+  - Shangjuan Wei <weishangjuan@eswincomputing.com>
-+
-+description:
-+  Platform glue layer implementation for STMMAC Ethernet driver.
-+
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - eswin,eic7700-qos-eth
-+  required:
-+    - compatible
-+
-+allOf:
-+  - $ref: snps,dwmac.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: eswin,eic7700-qos-eth
-+      - const: snps,dwmac-5.20
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    const: macirq
-+
-+  clocks:
-+    items:
-+      - description: AXI clock
-+      - description: Configuration clock
-+      - description: GMAC main clock
-+      - description: Tx clock
-+
-+  clock-names:
-+    items:
-+      - const: axi
-+      - const: cfg
-+      - const: stmmaceth
-+      - const: tx
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: stmmaceth
-+
-+  rx-internal-delay-ps:
-+    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
-+
-+  tx-internal-delay-ps:
-+    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
-+
-+  eswin,hsp-sp-csr:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      - description: Phandle to HSP(High-Speed Peripheral) device
-+      - description: Offset of phy control register for internal
-+                     or external clock selection
-+      - description: Offset of AXI clock controller Low-Power request
-+                     register
-+      - description: Offset of register controlling TX/RX clock delay
-+    description: |
-+      High-Speed Peripheral device needed to configure clock selection,
-+      clock low-power mode and clock delay.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - interrupt-names
-+  - phy-mode
-+  - resets
-+  - reset-names
-+  - rx-internal-delay-ps
-+  - tx-internal-delay-ps
-+  - eswin,hsp-sp-csr
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    ethernet@50400000 {
-+        compatible = "eswin,eic7700-qos-eth", "snps,dwmac-5.20";
-+        reg = <0x50400000 0x10000>;
-+        clocks = <&d0_clock 186>, <&d0_clock 171>, <&d0_clock 40>,
-+                <&d0_clock 193>;
-+        clock-names = "axi", "cfg", "stmmaceth", "tx";
-+        interrupt-parent = <&plic>;
-+        interrupts = <61>;
-+        interrupt-names = "macirq";
-+        phy-mode = "rgmii-id";
-+        phy-handle = <&phy0>;
-+        resets = <&reset 95>;
-+        reset-names = "stmmaceth";
-+        rx-internal-delay-ps = <200>;
-+        tx-internal-delay-ps = <200>;
-+        eswin,hsp-sp-csr = <&hsp_sp_csr 0x100 0x108 0x118>;
-+        snps,axi-config = <&stmmac_axi_setup>;
-+        snps,aal;
-+        snps,fixed-burst;
-+        snps,tso;
-+        stmmac_axi_setup: stmmac-axi-config {
-+            snps,blen = <0 0 0 0 16 8 4>;
-+            snps,rd_osr_lmt = <2>;
-+            snps,wr_osr_lmt = <2>;
-+        };
-+    };
-\ No newline at end of file
---
-2.17.1
+ drivers/net/can/spi/hi311x.c                | 1 +
+ drivers/net/can/sun4i_can.c                 | 1 +
+ drivers/net/can/usb/etas_es58x/es58x_core.c | 3 ++-
+ drivers/net/can/usb/mcba_usb.c              | 1 +
+ 4 files changed, 5 insertions(+), 1 deletion(-)
+---
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+change-id: 20250918-can-fix-mtu-b521e1ed1a29
+
+Best regards,
+-- 
+Vincent Mailhol <mailhol@kernel.org>
 
 
