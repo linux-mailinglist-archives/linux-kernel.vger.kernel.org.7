@@ -1,126 +1,194 @@
-Return-Path: <linux-kernel+bounces-822814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DF0B84BA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:02:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A64CB84BB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A49A27A906B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1E31896ECB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08D230277A;
-	Thu, 18 Sep 2025 13:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67851D88B4;
+	Thu, 18 Sep 2025 13:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YoAnsHq0"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UXxzNZJl"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB691E1E1B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41059305E1E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758200551; cv=none; b=S/U+bXydyJWFKFpJ+9jdO1KRLzu99waVGVHqK1byzJNdwPhGbzh1HJyafTxDDBmWo0CnFTz3EFj8swvzoqNoxxKO0jwaFKkXF9SdKpi9PS/yBnntxU7MszH7fNllbrj2xRvnUZ5ygFJ/8U20NHw7LVBWpeLnIgylyKGQkRoVazw=
+	t=1758200581; cv=none; b=cT277MR+uXSXp+w8lTNC4vLLVn+f1YmcY5Qk8Ap4DUUQR/+Zf1YGdRdb5LiqN+1elD7GwN9bHRHiATFhfbPkV7TxdiL7W8vw/NZ0GpIuimJIyJpjYJRl0pkj1smUyVAE9FB0iwZBpR1B6XhQUGSDRBie/beu+HhTC/lOYgCxNDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758200551; c=relaxed/simple;
-	bh=pNG+InEIeVE5jh10Z56aIojWZnOwbe1cuSvsD4fE6FY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9WTgF8sFoVhCLEqjS60L8wvAGCAVuyFtUnhpdmvv/n6EMIJslqSg5U1o6UxgzB2o1kd5jwQ236ovwThgm+qXByJRBWsP3eALBTfu1Fw6mK7eaDylVFQcq2h6lVnwSNTJVZ7zghanV9kIT5R6LoSgWiycMmL+cq6SCfkOlf8/Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YoAnsHq0; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-afcb7322da8so162894066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:02:28 -0700 (PDT)
+	s=arc-20240116; t=1758200581; c=relaxed/simple;
+	bh=xFgFQQBU+eaUTlmzE+vuY2J0SoHpSu7LpdqT0cdq3tI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uNwzo4LQCv/NDiXdh8WEBgXUBchYhGKK8DYkbZWJh/DPlQK7q24djfhqjkNsv6W2r8Di9O1D/OSBuFcXKsxoT4/wWXwfseaaj/GHo7PZdIBOAyOzBt5TsgdpzG5xBer/CZlNZYQhCwGCyLYnOcy0nLlt7YUDKi64zBZxGk1jk3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UXxzNZJl; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3d118d8fa91so369349f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:02:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758200547; x=1758805347; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aIzDbyhYpuaBXUrKMka7lKnhRt47H5xyoFzXDbV9fD0=;
-        b=YoAnsHq0edX7E6Jx0CU87FeFRTtyIDPqQaODc+Ir1iiR97/ckLeQsQWhV+J8RYUraW
-         YAhQ1NVCXipZOtjZHbJRBeuYeS4igmJXaPeqsKdgtlwiLBsfgy8Ax86y8UdOSOD5vabg
-         88enr4NdARSkttk+iunUX01enHmNIrHi0fcjdaLPIsEkejFnVXBFRpNRHjlUHf/Qe8u6
-         KmYf9SNAAmXO0rYQe/rQ/el3KqAoNBouOdBTs9MJkHHnUXpfsMkeJdlKxPtFMsOeyYs4
-         94Vdy5DvL82KGnZinOSY4drVZtFEkcLwpAdl39OmDZLtk4sAbdpYll06R/v6vd/QHeoG
-         HDRA==
+        d=linaro.org; s=google; t=1758200577; x=1758805377; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xFgFQQBU+eaUTlmzE+vuY2J0SoHpSu7LpdqT0cdq3tI=;
+        b=UXxzNZJlYwxqS2aMQJXXt8XjFFN2AyuJBeVxiD7DURnzmV79/h1WTluOjRLohmzf5t
+         EMbQbp4uPeHECQ6mfYvFdyiBqAU6fLodUxyHBgRAjSKOCUMsXevchLbkz4GXUwJbj2Ms
+         l4zBeTvBvCsn7+vcdKFymJGzR5NRNiCaqLV07fjpem4HY9kCtT1I930N+DxS3A5ZVHj1
+         E235VkEc834jUZozXnMbXVJC7wACBfGjCN6H+rDDtAhpKMJmQHJdr+m5trzZ8gX7s/8h
+         oD+C2Ch5aJLs7kK0I4/LinfIOVvcuR3QFxiQdOWuIadva57XtxpwnFHt+ssJe4+E6oc+
+         9JcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758200547; x=1758805347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aIzDbyhYpuaBXUrKMka7lKnhRt47H5xyoFzXDbV9fD0=;
-        b=neNW93BF46D+OK4pM4BQzHpw7VVu/2T4odLFBaeVru+bat+kUPSqDze7XkQEIUNI2j
-         bpfV8YL1J3ILzpzqFrrRwbhvRGdWMStj/n7q+klFFpZwoFb+nk5x0jb0degz500FHkFp
-         mACvNHhw7DCrlb452j/nCEATzNyWealc62pSUpIAuviuaEg5gNbSRLP/af3Xji5yN7Sw
-         4NwHqrl3+U4nzBKOiLufgHnPvgKdU/PukXFHqcGfPOi5hvE/mj8eU1d3D4E8TBL3FfZO
-         CGgbVviSE6JTOIA5yxTaRM26t1lQBZWOwsj4F8nG1hDpV3lcSVch9Oe3SjPNJZPC9R+L
-         G9Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRmHYMD33C8B2WYSNc7m8plfIWQJEjyzPbThG6YkjZzY7Xctf7h8JV8B0hREC3++igRsyPzSPBq9HFQ9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUuORuhvEQr1OMlUsM2EZQiY6QtWTR+qGQ8Jlwlt4DqYbH0n5j
-	bF3D1bwWltt/WqW4T7Gxep0rlVzk7RA0AS1355VUXrir+GYDu3X+AuIqW0uJSEb+D3I=
-X-Gm-Gg: ASbGnctoJHstJ6T116a4nYqa2hyaLuzUq5nPykIIgwnpbcZl42o5EIRqPQMFbtuSw6a
-	AgWE9MqE5yR/61VnIiA9Sf9T5v2vk62k5AN6pbA9qItml4XlRz35LgAtB+znmP7L+b/gmWSI7Iy
-	Vti2BBdWamPN1/O8Jc9s2wl0PTgJL61VZinZiqiJIUphHGl1DKGw6K39GIhZvzzmKh5eHf4RCos
-	dxVlDolyTSZJOKBXLGDSbUfB1P8dj2ztih95Yh7kLmt3tJFZKUfmGqO/EdQ7omSQCMe0SdAS1h5
-	3VB619E6lfb/FnGSHDJrzD0Z9GhGMRr4jDO11aiKyabTPFkXa3ByTWoZ6hoF1vQKH4xB42Ewysl
-	gdaDWZcEQV6pG5fSbRu7V2XuOTjngmhV0rxBysn5yD+NR
-X-Google-Smtp-Source: AGHT+IE4mI2rDB6qnxX4AnK+7Sl4B8jgUrUQKivo/eG6grifwlwBSBfvXGxUWSy1bqE3hTsahdhF/w==
-X-Received: by 2002:a17:907:9604:b0:b0a:aa7e:a191 with SMTP id a640c23a62f3a-b1bbb733fc4mr655010666b.57.1758200546741;
-        Thu, 18 Sep 2025 06:02:26 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62fa5d437b1sm1427249a12.22.2025.09.18.06.02.25
+        d=1e100.net; s=20230601; t=1758200577; x=1758805377;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xFgFQQBU+eaUTlmzE+vuY2J0SoHpSu7LpdqT0cdq3tI=;
+        b=YD3XU+xkVmNtAXK9D128rIXukK3DDdglzCWbIR2QeTMc1b7B8rLlmw+5Gi411Q1/Ph
+         tbI6oEJSi6Uy/Bq/uo8CqrI0Qq3UPXiEqg2K73f2q/v/bcBIgQxsvWfLUwHXswHdPP6b
+         P7P54hznFnbVk+BB0kochJAuP36cMV/H9PVG5wWI7kZ4B7aE7P+xN1Lnf8AweW0zk2dh
+         26N6IVQzVqB43ezz3DF1RpnaGcSA0cbJhh4agg7eqIWyaKq5GRvwRBIcyDuT01M/A9r7
+         g6NoQU21JnLgg3t4megbfgNFm61X+67jCn0UbwnVCoK1yP9TVACdLyl/vIKRLfM/0FUc
+         l1PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8nsmbAJGEM4J2h76EcRrrvXuKeTCVW9wiNdqJnxKJmUP3qfqd5cZmr2BFz6Q51MO1mJEF0jPVdOlhPTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOFllbusLZA7HN5ahOg00B4zEkDpNIa9XKJ8S23lLKboBOlsJW
+	XHCykWNsSqGSyQ+1u01V/WcXB0kxLPRWqoylH2qJsb0idiiuJTy5KP27r2rIyRuwouQ=
+X-Gm-Gg: ASbGncucMh+SchhdVjcBlAulNq6gIYi59CpMrOX0aqXrBlWJiCXaxYUhLF35i2YtrWn
+	o8B4pb+z+ZcEq1uKZDfgiLjgNG4+uF9sZ5UD0IR+DZf+M+qUwgEGawERbvIicnH4grFzEtxs5IG
+	/2h+tOJhFpDV00z05e0rhgUenDiabPigp9r5yc/SFCv5YpfcpufQaWBbVooPL01BPk/+ZINjKuv
+	5CeHTd4B99l4K6W9UzjwU2gjJiR59PoueQJvvjq5HVCUtTmiNulNaTIA3MCouOhgVZXlbgPGG4u
+	R8yX1tvmbynK8PpxjrgFDePZV32aujQcCLkxEtNW/mcZZ8rTfiCfJqikzsz9Bvd1XJtk26EYaAU
+	TPLMSEeeRPXORDOvpNz5TkKL8a50GuLDgtlbo/rv9jYzWkLCz0OQ9fcg=
+X-Google-Smtp-Source: AGHT+IH4qQOMI9kRkElC4uk5etAMC5b6ho5cgmHk+GAS+1rAKNDqsnHvTpg/dVWhQwEl7v3wwQvq3g==
+X-Received: by 2002:a05:6000:2501:b0:3ed:8e48:640f with SMTP id ffacd0b85a97d-3edd43b5ffbmr2760931f8f.8.1758200577315;
+        Thu, 18 Sep 2025 06:02:57 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407d0asm3646419f8f.17.2025.09.18.06.02.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 06:02:26 -0700 (PDT)
-Date: Thu, 18 Sep 2025 15:02:24 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Subject: Re: [PATCH v4 1/5] printk: nbcon: Export console_is_usable
-Message-ID: <aMwC4HAYjpWpZDMj@pathway.suse.cz>
-References: <20250915-nbcon-kgdboc-v4-0-e2b6753bb566@suse.com>
- <20250915-nbcon-kgdboc-v4-1-e2b6753bb566@suse.com>
- <aMp4BrEpqXOW9nam@pathway.suse.cz>
- <dad15813cfdc3b7c77ba71266e38a137d0015bcd.camel@suse.com>
- <20250917-imaginary-vigorous-condor-fccdc1@lemur>
+        Thu, 18 Sep 2025 06:02:56 -0700 (PDT)
+Message-ID: <a55d7e6e6d9515293ca735f25ffd5c925a6ec617.camel@linaro.org>
+Subject: Re: [PATCH v6 2/2] dt-bindings: power: supply: add support for
+ MAX77759 fuel gauge
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thomas Antoine <t.antoine@uclouvain.be>, Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Peter Griffin	 <peter.griffin@linaro.org>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Date: Thu, 18 Sep 2025 14:02:55 +0100
+In-Reply-To: <c5f2e6e8-2ada-476a-8557-85273b9a93b7@uclouvain.be>
+References: <20250915-b4-gs101_max77759_fg-v6-0-31d08581500f@uclouvain.be>
+	 <20250915-b4-gs101_max77759_fg-v6-2-31d08581500f@uclouvain.be>
+	 <20250915-presoak-answering-2df6fca532ad@spud>
+	 <c5f2e6e8-2ada-476a-8557-85273b9a93b7@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917-imaginary-vigorous-condor-fccdc1@lemur>
 
-On Wed 2025-09-17 10:07:47, Konstantin Ryabitsev wrote:
-> On Wed, Sep 17, 2025 at 09:21:48AM -0300, Marcos Paulo de Souza wrote:
-> > > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> > > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> > > 
-> > > It means that Macros developed a patch and Petr reviewed it.
-> > > The patch was not longer modified.
-> 
-> That's not entirely correct. The signed-off trailer is used as the boundary
-> indicating who was the person responsible for collecting the trailers. When
-> the trailers are collected by the original author as part of their iteration
-> cycles, their signed-off-by trailer goes below any trailers they have
-> received.
+Hi,
 
-This is an interesting interpretation. I am just curious. Has this
-already been discussed anywhere, please?
+On Thu, 2025-09-18 at 14:36 +0200, Thomas Antoine wrote:
+> Hello,
+>=20
+>=20
+> On 9/15/25 7:31 PM, Conor Dooley wrote:
+> > On Mon, Sep 15, 2025 at 12:14:11PM +0200, Thomas Antoine via B4 Relay w=
+rote:
+> > > From: Thomas Antoine <t.antoine@uclouvain.be>
+> > >=20
+> > > The Maxim MAX77759 is a companion PMIC for USB Type-C. It contains
+> > > Battery Charger, Fuel Gauge, temperature sensors, USB Type-C Port
+> > > Controller (TCPC), NVMEM, and additional GPIO interfaces
+> > >=20
+> > > Use max77759-fg compatible to avoid conflict with drivers for other
+> > > functions.
+> > >=20
+> > > The battery node is used to pass the REPCAP and ICHGTERM values
+> > > needed for the initialization of the fuel gauge.
+> > >=20
+> > > The nvmem cells are used to get initialization values and to backup
+> > > the learning and the number of cycles. It should work out of the box
+> > > with gs101-oriole and gs101-raven which were previously running
+> > > Android.
+> > >=20
+> > > Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> > > ---
+> > > =C2=A0.../bindings/power/supply/maxim,max77759.yaml=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 78 ++++++++++++++++++++++
+> > > =C2=A01 file changed, 78 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max=
+77759.yaml
+> > > b/Documentation/devicetree/bindings/power/supply/maxim,max77759.yaml
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..4d45739fcaf26273ec57b=
+60049d6d0421df38efb
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/power/supply/maxim,max77759.y=
+aml
+> > > @@ -0,0 +1,78 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/power/supply/maxim,max77759.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Maxim Integrated MAX77759 fuel gauge
+> > > +
+> > > +maintainers:
+> > > +=C2=A0 - Thomas Antoine <t.antoine@uclouvain.be>
+> > > +
+> > > +allOf:
+> > > +=C2=A0 - $ref: power-supply.yaml#
+> > > +
+> > > +properties:
+> > > +=C2=A0 compatible:
+> > > +=C2=A0=C2=A0=C2=A0 const: maxim,max77759-fg
+> >=20
+> > Compatible doesn't match the filename, why?
+> > I assume the "fg" is fuel-gauge, but can this device be anything else?
+>=20
+> The max77759 is a multifunction chip.
+> The following compatibles are already used for some of those functions:
+> - maxim,max77759 (for the pmic)
+> - maxim,max77759-gpio
+> - maxim,max77759-nvmem
+> - maxim,max77759-tcpci
+>=20
+> The fuel gauge functionality that is added with this patch is very simila=
+r
+> to the functionality of the max1720x which is why the filename was chosen
+> to fit other maxim fuel gauge chips pattern.
+>=20
+> Maybe it would be better to use the maxim,max77759-battery compatible to
+> match the filename? It would also fit with the already existing
+> maxim,max77705-battery and maxim,max77849-battery compatibles.
 
-It seems that the ordering of the trailers is not much described
-in the process documentation, see
-https://docs.kernel.org/process/submitting-patches.html
+It also has a (battery) charger, a -battery compatible could be misleading.
+The datasheet refers to these subblocks as FG (for fuelgauge) and CHARGER.
+I'd suggest keeping those terms.
 
-Best Regards,
-Petr
+Additionally, the FG block can also measure temperature and battery ID. For
+those, a combination of (top-level) PMIC and FG registers are needed
+unfortunately. Which means that the FG should probably be an MFD child
+device, even though the FG itself doesn't depend on the top-level. Otherwis=
+e
+it'd be hard to access the top-level PMIC register.
+
+
+Cheers,
+Andre'
+
 
