@@ -1,92 +1,84 @@
-Return-Path: <linux-kernel+bounces-823530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88541B86C0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:47:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36ED0B86C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43EB07AAC37
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9F0C1B26F60
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FE22DA771;
-	Thu, 18 Sep 2025 19:47:00 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355F12D8DD4;
+	Thu, 18 Sep 2025 19:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rwbRPg1T"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F3B2951A7
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D8117E0;
+	Thu, 18 Sep 2025 19:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758224820; cv=none; b=IIOuYgcp/wDhHrqxCBgAH2D4qCtdpvFeOmRXVPaIhlWKoD3alkAN9J+PBAxMzXIp0mpF7LG0zzKqi4HCBCXh67Yk1dD2m1pG7POTOcGeI2oj1wGSevgOk6NPoerqypZu4mBQebJwkIyJk7bM8r9HElYc15iSwDhyZvRxM4URS1A=
+	t=1758224925; cv=none; b=u9rz2T5970afcwVX9rrdQvuKq8CsgwtozOY879QtqPa4/4nmV1+WpzvcpuQ9WEafaLqoRjZcytD8ysHVbAPv18kQjUOHPqbyIJuK7fKafr53E7WS+kMvOM7yN5i4lbsjQSHWBV7YY9yT+WchimJ6mrwiN4ayETqis6eOJFoyLog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758224820; c=relaxed/simple;
-	bh=Zmve0uGZuciolv3j19p7n7UHO6gZ7x9yFsoGWkkq6eY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ak/VB+l0GKf/qL1ZSlxdCfTp+9B8cI8a0fDrRsVOSAin69jkiUQKzG8Hv5gX7fQN+X8ONa7XWqbI+6lHsW/qQnrUB2Ls6jhDmMlQyZiVcalX7WxLsT+//JRcACHiHZgKzQB6PHTot6/73jZPn/pEWpPhSIjwilkFuua/FPEB74U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88c34279992so115675039f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:46:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758224818; x=1758829618;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sbEwN6/iX/OxXmI8d/rNGwDAozfjHBd3/wXLlEs8T7M=;
-        b=DbOUTgnV/4/vlNM5dE6DR2Vst3rEi5NyxwvSex20os9quYHFeedMsA+tzZRrwjo2eF
-         xmk7zI3bMHu2i1Cs8GOTAJ44iSU2/VIx5FXmjphWRbGNHSdafY+zreTNJjml2T2meXjY
-         uaQ0mP5HE5z/DHvBBrjCb7ZMqI1MGhVGQNJjy+cZLBPnV9FQTLGSGGO0RJDcsifcjdH9
-         0o8VnNmCLl+EyQ/Sbc8pMWAkioUzZb2BaKxkoJmerxUWlmhjp3UR+I8E4Ly0twP6ifMF
-         apLkMXLqv+5ClC4q6iYanbYLQtqC+VVFc//rVoq8F2KnE1zLDeOkPAXbPtSdsoyiM63I
-         3/yQ==
-X-Gm-Message-State: AOJu0Yz/G6LmmKHd1JW/ShDJBuH5y/0KtgMvA65sllM5PC3ccF/Q226/
-	fpnKTGgoWW4slnCGwGkMNGDcZT/rIYogEwuGYwk9UqAHfFpZ2U2yECEObVWp6SXagKnXBlc/aFZ
-	VZ+f2Z+yU/XelY1u2gI+Pqp/l5ys5BpA+sR+PulAUUC6eTcJOGvGW6KCQm+8=
-X-Google-Smtp-Source: AGHT+IFPUmkbeqMtCn2sKoZ00zbp231iR42dhKe2NlMurk9ukA/jzgVpNf1hGHKVxoxvjqL5S/MkzZ/8hoUNXtmvuO+0qcTZTBsC
+	s=arc-20240116; t=1758224925; c=relaxed/simple;
+	bh=b8O9accht9zlMjkeiSVfUoiyThYZxQ8pzWQazD2pCPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AjutTRNe8FRFji/EOIPhgxYDerSHx8E/gB1j9yD0G9Hy54FkAXfYXbTZSDC/tjvZ2+BPMUc94Q8LjJveeYFsOR72gs4Wiz+F5wkc+vBj3ihfaJO+L/82xUui7mRb42HwJqLd8Mhm+6Zx6ogWQ+ptqgKa55eYHkUlCFWXXSR3kMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rwbRPg1T; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=w594/w6qwUYib2E14Uwus1v5HGGT/dcJmGxuZGLJuOQ=; b=rwbRPg1TDsbphsGucFCh6g3N2M
+	1F9JzhlVibz7jSnAhUlf9w8YHDnH5xICd0LTknt+ZkQS1NuL/vl3452Dv2CUBEico+k3TD+dM9uWC
+	pVLndRcUG/mBxgd8Np9ZMWntIoLyoI6xhPBUmFbJH0I/2FexKR2L3Gd4JAE4WhLlJeC4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uzKcL-008s4v-Im; Thu, 18 Sep 2025 21:48:33 +0200
+Date: Thu, 18 Sep 2025 21:48:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	Andre Edich <andre.edich@microchip.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH net v4 0/3] net: phy: smsc: use IRQ + relaxed polling to
+ fix missed link-up
+Message-ID: <a873e8e3-e1c9-4e82-b3e8-4b1cc8052a73@lunn.ch>
+References: <20250714095240.2807202-1-o.rempel@pengutronix.de>
+ <657997b5-1c20-4008-8b70-dc7a7f56c352@lunn.ch>
+ <aMqw4LuoTTRspqfA@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e8e:b0:418:a784:5e1f with SMTP id
- e9e14a558f8ab-424819961ddmr13081435ab.16.1758224817711; Thu, 18 Sep 2025
- 12:46:57 -0700 (PDT)
-Date: Thu, 18 Sep 2025 12:46:57 -0700
-In-Reply-To: <0000000000008441d006180678ad@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cc61b1.050a0220.28a605.000d.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+7567dc5c8aa8f68bde74@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMqw4LuoTTRspqfA@pengutronix.de>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+> How about a minimal change instead: conditionally call
+> phy_queue_state_machine() from lan87xx_config_aneg()? That would trigger
+> a poll in the broken mode without touching phydev->irq or core teardown
+> paths. Seems less intrusive than rewriting IRQ handling.
 
-***
+It is currently a static function, so that would have to change.
 
-Subject: 
-Author: kriish.sharma2006@gmail.com
+Or it might be better to add phy_trigger_machine_soon(), using the
+default 1 second delay? And i would document it as only to be used by
+broken PHYs, to try to stop it being abused. Anybody using it needs to
+acknowledge their PHY is broken.
 
-#syz test
-
-diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
-index 26d6c1eea559..a879e8030568 100644
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -760,7 +760,7 @@ static int compute_bitstructs(struct gfs2_rgrpd *rgd)
-        u32 bytes_left, bytes;
-        int x;
-
--       if (!length)
-+       if (!length || length > KMALLOC_MAX_SIZE / sizeof(struct
-gfs2_bitmap))
-                return -EINVAL;
-
-        rgd->rd_bits = kcalloc(length, sizeof(struct gfs2_bitmap),
-GFP_NOFS);
+	Andrew
 
