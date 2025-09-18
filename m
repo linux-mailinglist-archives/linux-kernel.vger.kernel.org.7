@@ -1,126 +1,157 @@
-Return-Path: <linux-kernel+bounces-822174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34C6B83383
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:53:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5A6B8338E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B0B5837CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E886C3AA4FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418AD2D9EF2;
-	Thu, 18 Sep 2025 06:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D4A2E1EFF;
+	Thu, 18 Sep 2025 06:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R39borod"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="caNOf/8b"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6F623CF12;
-	Thu, 18 Sep 2025 06:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865F927B4F7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758178345; cv=none; b=ap2eqHDZO3cWvpxBniwz1NCbocTHEEPb+hLMUQZmu4PkteqUp9+zWaLI7b3Ui4TA1dur9VFhBqQTjYZmQFG4T/4xSTgVaOEAJf13t6b0zPtbxGMTXp5nXF6q8hKaHG4qVT1yn2ZXuriTkrkIQ3mFjYAQa+2IbpnlY1xuI6ogTbc=
+	t=1758178424; cv=none; b=SL2VfDLiSjz2LsW3z3QNmG9yrxhtFFjYDGvDI9vSS2eOM1I2TKa50uO+I6IBWCCpHZo4Cpyoez4kcCd6/8ny2A9PWa6MhoH0BMjiRqIDgeOessVaPizH31hBLir0RqFruhQ+L1aSLfVXQVTGYday8AFQkN9VWF+BsUjsL/I+/Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758178345; c=relaxed/simple;
-	bh=8guvnPhfYkC4UXz0FVHEuKdw/NOn7dkFZfu4xpqkqzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nkh61g5q1D9O7MRZSjddL3oujx/WCr5xjq+AdFnnlqYzCziMqJbJ3lu5qG0B4xi+Pg6ulQsm0P4ezXXTO+CIr3bVWPthbdClZHqWGUlmp46ZQvJnfqG+YdfuUMI/FwK9UuSxM9mm/Yz8lYySphkJOxyb594ct3gEwM6tSbil14g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R39borod; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758178344; x=1789714344;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8guvnPhfYkC4UXz0FVHEuKdw/NOn7dkFZfu4xpqkqzY=;
-  b=R39borodOMahwic45e+0K3+PKBR5umzJtDlQ3OE2l4QgSURC6eEmE1Os
-   ZEAfRxbWm7wa0hzSkMoOPH2++E8gPD+nnz8iJ/qdKWSfyBhbHhhXM7YAL
-   yE49HPBtaUjcYfmDkrh8qdODw+++r7LEF1sqo5SDZhlf2QKOM0kieA1ML
-   chY9lNpIsgReKZMXuSC5sDMmILnXSSh8uw+76fIyqxxUJ2Oaiqn4yn+5B
-   Lk9GYeeSF2GvABi+cOv5Xbb9zOotA6c0AJcFaJJ0/tLRf5DT3SImlqm6Y
-   amEAwLnGmJ+8Zfjk8m04pyJCdFp5qfucLcRXAQK9HfBC53y2qiOyiF8Z2
-   Q==;
-X-CSE-ConnectionGUID: BQ6KcDJYTaWXuaAigxQNQQ==
-X-CSE-MsgGUID: 4mWpAyWoT6W7raRFZZUhHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="71925018"
-X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="71925018"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 23:52:23 -0700
-X-CSE-ConnectionGUID: Yc9nWOABRheo1JBzKZ9rOA==
-X-CSE-MsgGUID: t2vfJQZQSTmlR2nJnRGstw==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 17 Sep 2025 23:52:16 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uz8V3-0002ql-1m;
-	Thu, 18 Sep 2025 06:52:13 +0000
-Date: Thu, 18 Sep 2025 14:52:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com,
-	glider@google.com
-Cc: oe-kbuild-all@lists.linux.dev, andreyknvl@gmail.com, andy@kernel.org,
-	brauner@kernel.org, brendan.higgins@linux.dev, davem@davemloft.net,
-	davidgow@google.com, dhowells@redhat.com, dvyukov@google.com,
-	elver@google.com, herbert@gondor.apana.org.au, ignat@cloudflare.com,
-	jack@suse.cz, jannh@google.com, johannes@sipsolutions.net,
-	kasan-dev@googlegroups.com, kees@kernel.org,
-	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
-	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com
-Subject: Re: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7
- and RSA parsing
-Message-ID: <202509181410.XN0MIpCh-lkp@intel.com>
-References: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
+	s=arc-20240116; t=1758178424; c=relaxed/simple;
+	bh=D2tnMC/HBE68esSjs5GaQ2p4LH2Hgz5G8pAkimgNE84=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=crZHdr9LWMzyOQmw0Rlfzx86pDb/8RwXB74eph2aNoXqblrCHWJEgPrGxxFdIjIFtPIlvHyNHmZSniSr7u+2gys1THnqqTef8Fy72OT+QIsBk5u0mqPhtWVa2S4gzFiyyt0BWG1Q7vRAavxRpnRpjQwaQJ0Vr/Ym9ET/jVULdbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=caNOf/8b; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269880a7bd9so5672295ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:53:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758178423; x=1758783223; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kdY8CdA7D7v7QlqIXdHWhklcBLDBGklkP9F/ba8VEO0=;
+        b=caNOf/8b48DxO/KqrqevaCee6mjBDFns47DuHJyN8FGo1seRsHuT+EAzls3ObpSEW1
+         OnNvaS7JxBPSIYSoUUd69gqjrrYxhhFtap+BZRJq4Y4UDk/o8yGru9CDRQDQzYw6ykXb
+         0JDsIz/zy5ON5XyCOcw1YxO5agigrZ8TG+2WgmoTd63OfvEcRnPKYWLeUQGaXNiK+dNn
+         Wuvlznw6r7U9/hFfJ4RUsREPjPDuRfMlS15pO+GdOvwl3tLHdPRdOqVmlmP2P+UPYdY1
+         NDhRvNFIZtEObbScuDyscHE32WeaOdZRNYwD30KmY+i2GylczUb+UT+kj+BodNNCS1pQ
+         c4sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758178423; x=1758783223;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kdY8CdA7D7v7QlqIXdHWhklcBLDBGklkP9F/ba8VEO0=;
+        b=oa8qXLCbAz/K1RXngEF2BeV7KpbzNHWKr0eUY2YXbMUqwnJKpE9APTlNKeuZBUnqMJ
+         UXi25Th8VjT5mlR2GaEkgCOzuSJdX+lua+0r6VXStJCNuk+uEvfLXzlWh/fGNVf2rizN
+         9zhRGDeEkLMDzSSvL1SZeS9mnPheQJ9KChLjkUdCSE19UJ1bDVXSx7/3lrtPzZKZQAQA
+         vkmwvnnRtHBQmJfGR2x0DoellK3TmzDHDsblkjjYrkIOhS2eeA9cAI0GzLUM7sM+z6Lq
+         wK3XaW40YCVkG49ps42/8oxnmi5uN2Urw49p3f0koUTwSxAWjx2BeNLCaCB7aIYOgYrp
+         k8rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWclpQCmwx9wIJB+jRUdbQlvxN0jbxGqIs1231dRs5wTR9xTH7nt1Ng+gc7B45Out746h6HYQvnG6N7nec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpI9EyGIonvDsQzE5vQZlIqgPf5jY16dxzpwsYZdZ0jsddHr2V
+	qeuqsCCjpmWS2T39cxUcg92qpCMYiMwK/GmyrjX4eTJCeK/PjxbBX6RBz9JG0b/pWY/Suuji59m
+	PGYRxARhrasVK/F+Raf3TmsAu/w==
+X-Google-Smtp-Source: AGHT+IH4/xFas5qH9WkGtquuXdWcMilu78LEjzqF2BsDWfyKCYslt2SGwsXQ1h75MU0H2eQyEYDJZApNSPXmxa7tZQ==
+X-Received: from pjff12.prod.google.com ([2002:a17:90b:562c:b0:32e:ddac:6ea5])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ef0f:b0:24c:965a:f97e with SMTP id d9443c01a7336-26811ba541dmr70869245ad.2.1758178422688;
+ Wed, 17 Sep 2025 23:53:42 -0700 (PDT)
+Date: Thu, 18 Sep 2025 06:53:41 +0000
+In-Reply-To: <20250916222801.dlew6mq7kog2q5ni@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com>
+ <20250916222801.dlew6mq7kog2q5ni@amd.com>
+Message-ID: <diqzh5x0p7yi.fsf@google.com>
+Subject: Re: [RFC PATCH v2 35/51] mm: guestmem_hugetlb: Add support for
+ splitting and merging pages
+From: Ackerley Tng <ackerleytng@google.com>
+To: Michael Roth <michael.roth@amd.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com, 
+	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
+	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
+	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
+	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ethan,
+Michael Roth <michael.roth@amd.com> writes:
 
-kernel test robot noticed the following build warnings:
+> On Wed, May 14, 2025 at 04:42:14PM -0700, Ackerley Tng wrote:
+>> 
+>> [...snip...]
+>> 
+>
+> Hi Ackerley,
+>
+> We've been doing some testing with this series on top of David's
+> guestmemfd-preview branch with some SNP enablement[1][2] to exercise
+> this code along with the NUMA support from Shivank (BTW, I know you
+> have v3 in the works so let me know if we can help with testing that
+> as well).
+>
 
-[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
-[also build test WARNING on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250917]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thank you for offering! I'm quite backed up now with some internal
+work. Will definitely appreciate all the help I can get once I manage to
+push out an RFCv3!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Graham/mm-kasan-implement-kasan_poison_range/20250916-210448
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20250916090109.91132-8-ethan.w.s.graham%40gmail.com
-patch subject: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7 and RSA parsing
-config: x86_64-randconfig-121-20250918 (https://download.01.org/0day-ci/archive/20250918/202509181410.XN0MIpCh-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.4.0-5) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509181410.XN0MIpCh-lkp@intel.com/reproduce)
+> One issue we hit is if you do a split->merge sequence the unstash of the
+> private data will result in folio_test_hugetlb_vmemmap_optimized() reporting
+> true even though the hugetlb_vmemmap_optimize_folio() call hasn't been
+> performed yet, and when that does get called it will be skipped, so some HVO
+> optimization can be lost in this way.
+>
+> More troublesome however is if you later split the folio again,
+> hugetlb_vmemmap_restore_folio() may cause a BUG_ON() since the flags are in a
+> state that's not consistent with the state of the folio/vmemmap.
+>
+> The following patch seems to resolve the issue but I'm not sure what the
+> best approach would be:
+>
+>   https://github.com/AMDESE/linux/commit/b1f25956f18d32730b8d4ded6d77e980091eb4d3
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509181410.XN0MIpCh-lkp@intel.com/
+I saw your reply on the other thread. Thanks for informing me :)
 
-sparse warnings: (new ones prefixed by >>)
->> crypto/asymmetric_keys/tests/pkcs7_kfuzz.c:15:1: sparse: sparse: symbol '__fuzz_test__test_pkcs7_parse_message' was not declared. Should it be static?
---
->> crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:15:1: sparse: sparse: symbol '__fuzz_test__test_rsa_parse_pub_key' was not declared. Should it be static?
->> crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:30:1: sparse: sparse: symbol '__fuzz_test__test_rsa_parse_priv_key' was not declared. Should it be static?
-
-vim +/__fuzz_test__test_pkcs7_parse_message +15 crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
-
-    14	
-  > 15	FUZZ_TEST(test_pkcs7_parse_message, struct pkcs7_parse_message_arg)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Thanks,
+>
+> Mike
+>
+> [1] https://github.com/AMDESE/linux/commits/snp-hugetlb-v2-wip0/
+> [2] https://github.com/AMDESE/qemu/tree/snp-hugetlb-dev-wip0
 
