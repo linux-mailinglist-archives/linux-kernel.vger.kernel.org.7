@@ -1,155 +1,312 @@
-Return-Path: <linux-kernel+bounces-821949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1C4B82AD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:45:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E42B82AE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F0F3BBFE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B3C5832C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC55225416;
-	Thu, 18 Sep 2025 02:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8A623958C;
+	Thu, 18 Sep 2025 02:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYMIp0ty"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B+ASsvqf"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5838B23D7C9
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9DB231829;
+	Thu, 18 Sep 2025 02:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758163514; cv=none; b=nJYcpmMPC2gA3cWkMHNK7EOvDOQ4cIFTw51WuJ9npLbasjUxXlgVdbKVy+jQEDfKcmrLDK2BQu1WgCQr1yQZPo84SiE8xrQflLhCPgPl298iPLvI1xhq0kP9IqFK/MTiGICDcLmko8KYG6dsH2gXWcglnp/1aPKfslxX4VCEW94=
+	t=1758163518; cv=none; b=dcnKnGMgKJ+XpMMzWT9AACO7TRqiT8LP4RTASrNaGwM4em5NLfOq5JGh23ixaW6zzuWWH/1Q8rC9HaHNpks3F45cfSCKnF1+IJv6sb/kh9Yd15aHlbv7YdL5ZPx7pdzbiVpVv085/uZh9BBgKHq414oWniRaLQmgsONe/snCMbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758163514; c=relaxed/simple;
-	bh=J+MWoUKVfhh0snrSUTiNn9K7NIDSM7/SRpkDLL+TJX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FYoAQqH6RLj3lZdej8vdCgfWyXJAul35NQY9JP95cFYo1x4Ra+sWorRemrOfILwVrb9HtKUW32O3D6dolT7MDs63rBNV2ZnaMrjv47EkvqcdHZ1+Kn3OnXfCBwpkwGGhQLPob/rHXOivGhaY471/pc68Y9WIkTZxBd1mRuLvd7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYMIp0ty; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b7abed161bso5701771cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758163512; x=1758768312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cuZ9j3HCJ3WAla06YidRhhDL/e63d/UFWpY4b514TQs=;
-        b=HYMIp0tynfaKfCYFDPp6STBICdjH96aBD6nJnjjirO8zklW746dnQEU8ufMm87D6gN
-         dxT0rnX1y5CzGTWixkVLjDq9qABx2LDksva9YK9cGuTpAPdbUK4+CUMDK/IEcbYn6SNB
-         w2iglbPiaDQDTzYhZ5v+wlhN9v9hHqIugsgtp39C1/pk5Prcwfpnom6HDKDPXKIA83RY
-         n0C7Q5KHxPU5AaGrHD5+JQbrwm6xWMGBDc8Fn3BbTbHTfhmT2vBdZxFQk/srFYMMv+jX
-         Yy+id4SXQ2bGP7a3VXZlK+MUa1wLveChTbM+OvpIn7dFW3fFyFTC2jK0B6A+uqFom+S+
-         ND6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758163512; x=1758768312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cuZ9j3HCJ3WAla06YidRhhDL/e63d/UFWpY4b514TQs=;
-        b=PppmXsPnmnd/huGRd60/aZ2RRpZrELl3NnQoAh27Jj2TCI4UsyxODb7gsslCbdFnRA
-         B8S13iNOAm8P/bTbwaDox5XRlka+z89n4oDcz9D2CwRUepB9NAuS9LkgTDH9p7cwzJGY
-         xN1TXzKDVN4ArdvC731S8nfZlje5M356zTYCQNl+PtUWX6vlzTk1Kv+jBSgHmsNKrYZ0
-         gxL3+zgaehyND3GlFxEbrJ1i4/CZ7gXmceQ2mbRukuTx6XFRmAFzI9pXqs0izvUnGIYd
-         +/UK0ZcvccbtdQoGUxOlohikjMK+tD0pSmhCHlzIFJeDo2y5J4TuaUr4UwaFwPUaggtO
-         ahwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCUvaJm+iTk+oMeju3NeYIWuFvBFL1DCo5CeEP7Vm+XF6knGv678W43vG7YyRe6H4LnIQ1EthGX+TN7TU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0c8A0MlQx4JS9/hNwr1XQmGaUrC5gd9H7WEKAXUvoxqGHKkD/
-	oMHhcl/RtjJPVVwuiQIM/1N9DgGTdBHx2EFsxgIbnsLbH/12Vx8YAGMlqRHBB8oVNL4bIarBvzT
-	/XLKCkzKnv8iytDtB/JMzdG4tXqwzvc4=
-X-Gm-Gg: ASbGncvttxUnajVCfMlMm3O0oSxtjEB2ghajUyta+jHtQ3LBniCZ8RFnle21FV2qFol
-	Sior3x8ukEtQQQR8LufSGINBUcteVV8GxZMIktboJ/SL3ICX1oLCnSs0bpWduwUjKyDzoDlb/+E
-	JzbIZw5wnLLiv2P43Z2gCyiW/TMbeoYxlhEq0wsdJjtq+vg+7taG3VAkin5dBLpYH8ug8VPFd5w
-	P4jsc8eddVU2GtXCxMzvshs3yw=
-X-Google-Smtp-Source: AGHT+IEFTcSdZt1DQsLSH8OADTsF1wOtd767iT4GImK3n6wMmQ/SMPr3tSRNKQNgO9DkEQdsO9Ae0+IGNU5FqH9fwT0=
-X-Received: by 2002:a05:622a:4814:b0:4b5:d932:15c2 with SMTP id
- d75a77b69052e-4ba68fbba88mr56521591cf.34.1758163512136; Wed, 17 Sep 2025
- 19:45:12 -0700 (PDT)
+	s=arc-20240116; t=1758163518; c=relaxed/simple;
+	bh=YtcUlpXnBl4mjuNReiG1rpQBePBmwquTZ/zYBxbxMyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xr/dvRDhnfHK/lKEbCRnXbH6qpHdSQTT8IJzQ3ppdPN0+cslCP/+rMP5OWVA2haBudqG26xdcbcKIJK/cfkeYESWNcDDpkfx5C5TKHFn1N+DGNpsF8Q74fG6DXUkkvREYlggsP+p3GCuBpzhhuNzqeW+OaRVlhP02VZUz6JPIEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B+ASsvqf; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758163506; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=JPFeju941uQjjpYAR2xl+DKTC6UMtim0pjMt7+wMivk=;
+	b=B+ASsvqfYsuFgj66Uctcx8Ga9imeMS9ONZUzJuAIYoPqnb4dLBR7fZrm7Rr9Xu65665wLF28MR3l1NzIpGWMZ/XNhL/9zMoCqt+SBKq6KsWX17zCCY+XIVThl3z0R/8dR8zlwiZP6yHFnNVwR78Y74YAUCM+ZSnylWZDNAdfJxU=
+Received: from 30.246.178.33(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WoECel4_1758163504 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 18 Sep 2025 10:45:05 +0800
+Message-ID: <67f8beb8-faef-42c4-aae8-72ce4a441533@linux.alibaba.com>
+Date: Thu, 18 Sep 2025 10:45:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911095113.203439-1-sieberf@amazon.com> <20250916140228.452231-1-sieberf@amazon.com>
-In-Reply-To: <20250916140228.452231-1-sieberf@amazon.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Thu, 18 Sep 2025 10:45:00 +0800
-X-Gm-Features: AS18NWBAWJwd4iL7mK8PlM424T162DHKQTcoBeRQzdewRb2hCmxlwKPY2wU34Gw
-Message-ID: <CAB8ipk-zK+T+8NTnQzYex+CFpA3vaeLuPLJ_vyJpKi4MSem+rA@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/fair: Forfeit vruntime on yield
-To: Fernand Sieber <sieberf@amazon.com>
-Cc: peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org, 
-	juri.lelli@redhat.com, dietmar.eggemann@arm.com, bsegall@google.com, 
-	graf@amazon.com, jschoenh@amazon.de, dwmw@amazon.co.uk, wangtao554@huawei.com, 
-	tanghui20@huawei.com, zhangqiao22@huawei.com, linux-kernel@vger.kernel.org, 
-	vineethr@linux.ibm.com, Xuewen Yan <xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ bhelgaas@google.com, mahesh@linux.ibm.com, mani@kernel.org,
+ Jonathan.Cameron@huawei.com
+Cc: oohall@gmail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20250917063352.19429-1-xueshuai@linux.alibaba.com>
+ <20250917063352.19429-4-xueshuai@linux.alibaba.com>
+ <2712a56a-1e2f-4ad8-8ad9-8b7825f4eefd@linux.intel.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <2712a56a-1e2f-4ad8-8ad9-8b7825f4eefd@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 10:33=E2=80=AFPM Fernand Sieber <sieberf@amazon.com=
-> wrote:
->
-> If a task yields, the scheduler may decide to pick it again. The task in
-> turn may decide to yield immediately or shortly after, leading to a tight
-> loop of yields.
->
-> If there's another runnable task as this point, the deadline will be
-> increased by the slice at each loop. This can cause the deadline to runaw=
-ay
-> pretty quickly, and subsequent elevated run delays later on as the task
-> doesn't get picked again. The reason the scheduler can pick the same task
-> again and again despite its deadline increasing is because it may be the
-> only eligible task at that point.
->
-> Fix this by making the task forfeiting its remaining vruntime and pushing
-> the deadline one slice ahead. This implements yield behavior more
-> authentically.
->
-> Fixes: 147f3efaa24182 ("sched/fair: Implement an EEVDF-like scheduling  p=
-olicy")
-> Link: https://lore.kernel.org/r/20250401123622.584018-1-sieberf@amazon.co=
-m
-> Link: https://lore.kernel.org/r/20250911095113.203439-1-sieberf@amazon.co=
-m
-> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
->
-> Changes in v2:
-> - Implement vruntime forfeiting approach suggested by Peter Zijlstra
-> - Updated commit name
-> - Previous Reviewed-by tags removed due to algorithm change
-> ---
->  kernel/sched/fair.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 7a14da5396fb..cc4ef7213d43 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9036,6 +9036,7 @@ static void yield_task_fair(struct rq *rq)
->          */
->         rq_clock_skip_update(rq);
->
-> +       se->vruntime =3D se->deadline;
->         se->deadline +=3D calc_delta_fair(se->slice, se);
 
-Need we update_min_vruntime here?
 
->  }
->
-> --
-> 2.34.1
->
->
->
->
-> Amazon Development Centre (South Africa) (Proprietary) Limited
-> 29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Afri=
-ca
-> Registration Number: 2004 / 034463 / 07
->
->
+在 2025/9/18 03:09, Kuppuswamy Sathyanarayanan 写道:
+> 
+> On 9/16/25 23:33, Shuai Xue wrote:
+>> The AER driver has historically avoided reading the configuration space of
+>> an endpoint or RCiEP that reported a fatal error, considering the link to
+>> that device unreliable. Consequently, when a fatal error occurs, the AER
+>> and DPC drivers do not report specific error types, resulting in logs like:
+>>
+>>     pcieport 0015:00:00.0: EDR: EDR event received
+>>     pcieport 0015:00:00.0: EDR: Reported EDR dev: 0015:00:00.0
+>>     pcieport 0015:00:00.0: DPC: containment event, status:0x200d, ERR_FATAL received from 0015:01:00.0
+>>     pcieport 0015:00:00.0: AER: broadcast error_detected message
+>>     pcieport 0015:00:00.0: AER: broadcast mmio_enabled message
+>>     pcieport 0015:00:00.0: AER: broadcast resume message
+>>     pcieport 0015:00:00.0: pciehp: Slot(21): Link Down/Up ignored
+>>     pcieport 0015:00:00.0: AER: device recovery successful
+>>     pcieport 0015:00:00.0: EDR: DPC port successfully recovered
+>>     pcieport 0015:00:00.0: EDR: Status for 0015:00:00.0: 0x80
+>>
+>> AER status registers are sticky and Write-1-to-clear. If the link recovered
+>> after hot reset, we can still safely access AER status and TLP header of the
+>> error device. In such case, report fatal errors which helps to figure out the
+>> error root case.
+>>
+>> After this patch, the logs like:
+>>
+>>     pcieport 0015:00:00.0: EDR: EDR event received
+>>     pcieport 0015:00:00.0: EDR: Reported EDR dev: 0015:00:00.0
+>>     pcieport 0015:00:00.0: DPC: containment event, status:0x200d, ERR_FATAL received from 0015:01:00.0
+>>     pcieport 0015:00:00.0: AER: broadcast error_detected message
+>>     vfio-pci 0015:01:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>>     pcieport 0015:00:00.0: pciehp: Slot(21): Link Down/Up ignored
+>>     vfio-pci 0015:01:00.0:   device [144d:a80a] error status/mask=00001000/00400000
+>>     vfio-pci 0015:01:00.0:    [12] TLP                    (First)
+>>     vfio-pci 0015:01:00.0: AER:   TLP Header: 0x4a004010 0x00000040 0x01000000 0xffffffff
+>>     pcieport 0015:00:00.0: AER: broadcast mmio_enabled message
+>>     pcieport 0015:00:00.0: AER: broadcast resume message
+>>     pcieport 0015:00:00.0: AER: device recovery successful
+>>     pcieport 0015:00:00.0: EDR: DPC port successfully recovered
+>>     pcieport 0015:00:00.0: EDR: Status for 0015:00:00.0: 0x80
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   drivers/pci/pci.h      |  3 ++-
+>>   drivers/pci/pcie/aer.c | 11 +++++++----
+>>   drivers/pci/pcie/dpc.c |  2 +-
+>>   drivers/pci/pcie/err.c | 11 +++++++++++
+>>   4 files changed, 21 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index de2f07cefa72..b8d364545e7d 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -629,7 +629,8 @@ struct aer_err_info {
+>>       struct pcie_tlp_log tlp;    /* TLP Header */
+>>   };
+>> -int aer_get_device_error_info(struct aer_err_info *info, int i);
+>> +int aer_get_device_error_info(struct aer_err_info *info, int i,
+>> +                  bool link_healthy);
+>>   void aer_print_error(struct aer_err_info *info, int i);
+>>   int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+>> index e286c197d716..157ad7fb44a0 100644
+>> --- a/drivers/pci/pcie/aer.c
+>> +++ b/drivers/pci/pcie/aer.c
+>> @@ -1351,12 +1351,14 @@ EXPORT_SYMBOL_GPL(aer_recover_queue);
+>>    * aer_get_device_error_info - read error status from dev and store it to info
+>>    * @info: pointer to structure to store the error record
+>>    * @i: index into info->dev[]
+>> + * @link_healthy: link is healthy or not
+>>    *
+>>    * Return: 1 on success, 0 on error.
+>>    *
+>>    * Note that @info is reused among all error devices. Clear fields properly.
+>>    */
+>> -int aer_get_device_error_info(struct aer_err_info *info, int i)
+>> +int aer_get_device_error_info(struct aer_err_info *info, int i,
+>> +                  bool link_healthy)
+>>   {
+>>       struct pci_dev *dev;
+>>       int type, aer;
+>> @@ -1387,7 +1389,8 @@ int aer_get_device_error_info(struct aer_err_info *info, int i)
+>>       } else if (type == PCI_EXP_TYPE_ROOT_PORT ||
+>>              type == PCI_EXP_TYPE_RC_EC ||
+>>              type == PCI_EXP_TYPE_DOWNSTREAM ||
+>> -           info->severity == AER_NONFATAL) {
+>> +           info->severity == AER_NONFATAL ||
+>> +           (info->severity == AER_FATAL && link_healthy)) {
+>>           /* Link is still healthy for IO reads */
+>>           pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
+>> @@ -1420,11 +1423,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
+>>       /* Report all before handling them, to not lose records by reset etc. */
+>>       for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
+>> -        if (aer_get_device_error_info(e_info, i))
+>> +        if (aer_get_device_error_info(e_info, i, false))
+>>               aer_print_error(e_info, i);
+>>       }
+>>       for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
+>> -        if (aer_get_device_error_info(e_info, i))
+>> +        if (aer_get_device_error_info(e_info, i, false))
+>>               handle_error_source(e_info->dev[i], e_info);
+>>       }
+>>   }
+>> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+>> index f6069f621683..21c4e8371279 100644
+>> --- a/drivers/pci/pcie/dpc.c
+>> +++ b/drivers/pci/pcie/dpc.c
+>> @@ -284,7 +284,7 @@ struct pci_dev *dpc_process_error(struct pci_dev *pdev)
+>>           pci_warn(pdev, "containment event, status:%#06x: unmasked uncorrectable error detected\n",
+>>                status);
+>>           if (dpc_get_aer_uncorrect_severity(pdev, &info) &&
+>> -            aer_get_device_error_info(&info, 0)) {
+>> +            aer_get_device_error_info(&info, 0, false)) {
+>>               aer_print_error(&info, 0);
+>>               pci_aer_clear_nonfatal_status(pdev);
+>>               pci_aer_clear_fatal_status(pdev);
+>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+>> index de6381c690f5..744d77ee7271 100644
+>> --- a/drivers/pci/pcie/err.c
+>> +++ b/drivers/pci/pcie/err.c
+>> @@ -196,6 +196,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>       struct pci_dev *bridge;
+>>       pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+>>       struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+>> +    struct aer_err_info info;
+>>       /*
+>>        * If the error was detected by a Root Port, Downstream Port, RCEC,
+>> @@ -223,6 +224,15 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>               pci_warn(bridge, "subordinate device reset failed\n");
+>>               goto failed;
+>>           }
+>> +
+>> +        info.dev[0] = dev;
+>> +        info.level = KERN_ERR;
+>> +        info.severity = AER_FATAL;
+>> +        /* Link recovered, report fatal errors of RCiEP or EP */
+>> +        if ((type == PCI_EXP_TYPE_ENDPOINT ||
+>> +             type == PCI_EXP_TYPE_RC_END) &&
+>> +            aer_get_device_error_info(&info, 0, true))
+>> +            aer_print_error(&info, 0);
+>>       } else {
+>>           pci_walk_bridge(bridge, report_normal_detected, &status);
+>>       }
+>> @@ -259,6 +269,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>       if (host->native_aer || pcie_ports_native) {
+>>           pcie_clear_device_status(dev);
+>>           pci_aer_clear_nonfatal_status(dev);
+>> +        pci_aer_clear_fatal_status(dev);
+> 
+> Above change looks unrelated to dumping the error info. It would be better if
+> you move it to a separate patch.
+> 
+
+Hi, Kuppuswamy,
+
+Thanks for quick reply and valueable comments.
+Sure, I will add two new separate patches.
+
+The first is to use pcie_aer_is_native() to check for native AER control.
+
+--------- patch 1 start ------
+
+Subject: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for native AER control
+
+Replace the manual checks for native AER control with the
+pcie_aer_is_native() helper, which provides a more robust way
+to determine if we have native control of AER.
+
+No functional changes intended.
+
+Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+---
+  drivers/pci/pcie/err.c | 3 +--
+  1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 1397f62f13dc..86624ae61cb6 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -195,7 +195,6 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+  	int type = pci_pcie_type(dev);
+  	struct pci_dev *bridge;
+  	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+-	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+  	struct aer_err_info info;
+
+  	/*
+@@ -266,7 +265,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+  	 * it is responsible for clearing this status.  In that case, the
+  	 * signaling device may not even be visible to the OS.
+  	 */
+-	if (host->native_aer || pcie_ports_native) {
++	if (pcie_aer_is_native(dev)) {
+  		pcie_clear_device_status(dev);
+  		pci_aer_clear_nonfatal_status(dev);
+  	}
+-- 
+
+--------- patch 1 end ------
+
+The second is clear AER fatal status for err_dev:
+
+--------- patch 2 start ------
+
+Subject: [PATCH v6 5/5] PCI/AER: Clear both AER fatal and non-fatal status
+
+The DPC driver clears AER fatal status for the port that reported the
+error, but not for the downstream device that deteced the error.  The
+current recovery code only clears non-fatal AER status, leaving fatal
+status bits set in the error device.
+
+Use pci_aer_raw_clear_status() to clear both fatal and non-fatal error
+status in the error device, ensuring all AER status bits are properly
+cleared after recovery.
+
+Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+---
+  drivers/pci/pcie/err.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 86624ae61cb6..96d99eaf13d2 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -267,7 +267,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+  	 */
+  	if (pcie_aer_is_native(dev)) {
+  		pcie_clear_device_status(dev);
+-		pci_aer_clear_nonfatal_status(dev);
++		pci_aer_raw_clear_status(dev);
+  	}
+
+  	pci_walk_bridge(bridge, pci_pm_runtime_put, NULL);
+-- 
+2.39.3
+
+--------- patch 2 end ------
+
+I can also squash these two patches into one. Which way do you prefer?
+
+Thanks.
+Shuai
+
+
+
 
