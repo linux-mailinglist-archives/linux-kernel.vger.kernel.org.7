@@ -1,170 +1,87 @@
-Return-Path: <linux-kernel+bounces-823218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0B5B85D29
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:57:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A92BB85C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B38B2A4B8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C8027AEAD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA493148AF;
-	Thu, 18 Sep 2025 15:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Hqj8KHXv"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C58A312805;
+	Thu, 18 Sep 2025 15:52:08 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829A8313D64
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF392D879C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758210729; cv=none; b=WkQVTRzFQL8eoqBvaIrNVREefLI8NAEXc+SbHqKwGQBt9bm2TqmIRgjjrbdP5TcKeRe/hyqJy/y9Il05ObZ3M+leTGKFVPYwJyqfQmuPl9zFA0Qup2EdVuwGrTpq155tYJjoBm/qVUcHqH41UqOGYoiJw4XC2a0NZt7CsvsHPtQ=
+	t=1758210728; cv=none; b=XYlZIQN0nMEVuC5O+0/H5YUbwVV3thNF0elnP6IrtzxM241XrlqBoSC6lPqwffOUW6VP+HIOGyUAd7wgUiILsn8Ic8FEmmJ82bmoDHdMRjTIJruJvk+R1bEUVUGIBO02N707zcsogLpKJWC4Nw4/K/tnL7oZD1rIll7dR90zt2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758210729; c=relaxed/simple;
-	bh=s3V+V2LAckakdZsEF41B0aB9f19oz/vHCu2aN/xcjFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1dNEh/Hv3ZAJ9gTzhA/SN+Fwpi4RmEELD6rSIGlgwfRFR+LdHPA6z041UBhby1tXrMLlV5GH0dIlEdm/v99aREVUDLaEW0oPEdgP3swv02/FrkEUMBaTtSlY68mtCclI/5sLUcbftvbtHLXaHazbKPtfqVwQE1EXTMj4qMfyUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Hqj8KHXv; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3306d93e562so709784a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1758210727; x=1758815527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V04anXbncBY8pG9J//7xkYd/M3GClEPh+3YGabPQNsk=;
-        b=Hqj8KHXvIsWRal/Q0jbxZkJArUG30lDKizlsTUCAkAeecu92v4d8kSsIJhE4ACK7J2
-         NoBnrun1J46N6Bx4vtKN5PimAXiihr5PeWc1k/5alsrIOuMH3GXx20yZCT7mJ+m2DYIC
-         j8VOKWeNf2R7i2Ls8UdLjVOHLBF5E/YTxnjlBcrMvQqlYJ0JwWycgEenxOdoykfiFRas
-         8eAuDPuJuPi1DeuQ0QKdBsTQSG8+c2Bej5Qo0yN3pZgjYRAg1td3NPSNWLxmCHenkvvB
-         6Mp8rwdtCQpy1zg/jRIGSf7Imxl9DEp0z0S7Zbn+eJrsmfuDY4BDXjOxP0ixehcu9X+u
-         g2kg==
+	s=arc-20240116; t=1758210728; c=relaxed/simple;
+	bh=iSO4jFqbGqp/SMXiHzcHfZ4w5dIyIY8oEtvueueoH5A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PIRyHIGKxjRzmtBvoaIZqYYiCvCmKRKITgkoUE+dUM+HzgMe4XFrsgeC8Iz1vEBQBmp6CVWA0Lo+AO3xGdgXtSb+wIwMMXjfJPHxXCNB+FFFU+hHC8WKrRD1TTfwZZt9arbh4cpXR67izCWDpCm9f19NZxo+etr6uUeVUeHVwmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-424048cbe07so14576005ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:52:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758210727; x=1758815527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V04anXbncBY8pG9J//7xkYd/M3GClEPh+3YGabPQNsk=;
-        b=iPgVTba1xoG7jkRDb5vlPP8dxnwCSJQioWNNW0APlviZdP7NID46GFoA4fpe8buLX/
-         9S1T3Awb04vBSaAbgAsm7zP159waXNdXQZBTncsYR02ytO2BsiIWzz8KKLDqLSd0eEWf
-         +7eninaur+NxBGY/EJKJEP7Tt/oYY3Oj0/5/MIkax6eFKsDIzGb1WFN4hjkCfU2vh+jN
-         wyyaHKzwRpiFlkyLSneOmu74/nZoYIJAIOQqD88gV8pmV4jIDE2s2my03QPSbGtS8BXc
-         G967dEyrKUqBQIvCce8RmF/Mt5gq1tBQ5RRpkEJsokRCh+MJKPnrFlpai9xTARWAGBHS
-         95Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZwuL+TUJJeG7AD1OvplJQXj2+qXA94nufyz8HJR4lvcuHj3MT0oDJ8ZYubNO3OVrQK9MJuXh4D/FSYkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqVAZL2TsP783WdZxnliPlC7EyTgTmI6HAvPEoEgd/FnOg7Gxp
-	v4/374OlQp5H02J3MWGl0nRe5BRFZxYTTeVQhfrrK+ofAqpi8WuSbXb7P/mWl2hw9Bagt7twpHD
-	1jMLyxDALoS8NxDktaIg/a8yv0OKP0qJakVpXD0Rr
-X-Gm-Gg: ASbGnctjTQonLErFZR0V3DVGZdF0JXlWqQo+Py2034nMlfp7zQo9hWs9ZcecJNeZcHs
-	wYcztt/HSOt8ZuaQ+Zd0WYsdjb3LLkShZ3xu2/CskrdCY/k5c4hiP1gRr/9cYXvJoyEEAsyZa6Q
-	rIIjqQp8uaNyUlWJTDI8/qKOQlVbnTHaYnX9V6vSa47iaW3E/XIut3DSjLX+IHnKNqr9UVQ19Xq
-	pd5XQQRLZPub7SMrGEgtO9z3g==
-X-Google-Smtp-Source: AGHT+IGHK64MwYO04bSsnMMTx3l5xs6cc0c36CiG/JwzvP03YtDz7B8RYzBt6ZEJM2wYQ8zXLBs1hm/F2ebCi5vuLes=
-X-Received: by 2002:a17:90b:2e52:b0:32e:5cba:ae26 with SMTP id
- 98e67ed59e1d1-32ee3f5cad2mr7263871a91.23.1758210726665; Thu, 18 Sep 2025
- 08:52:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758210726; x=1758815526;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DEkgHzQVx1nJY3YTfcVkUHaUjVfk83/UlXuTvnuxo0E=;
+        b=Rek/yZoOS9mhMNJbRz2Ee2d009zAqphgHWd6UQVT2NdeDFjvKv+E/d3dyUFOOgzMN8
+         xxk4pjdW6iWvt1sFbkgqZITkAjUOXsLGnq9Os+06wEOFxi/uGuyVQW2kH3xGaCOazHV4
+         ZUyvH9sEMHRPKoqvqicyda3L7Qf9U+2LIavH0F5xlVRpMi4iwHYsADuWutP0eLIDDYGI
+         htuD9wANLTeBzImWLNlWQ7GGxeVBWyX8NKaBVLFR2/2/4clnwhb/Gmp6QsKXWYOfSs5T
+         7xkxQFGJjm4+grMgeIjYo4VPTzzv2Q0ieSxihygbdxDpu/1vn0+OuZBIHJCvwH5O2vxn
+         zPNA==
+X-Gm-Message-State: AOJu0YyYc+ZlT9UONCPkC9oa8FqjqBbPJIWbH0vrVjkQmhxzcdX7SMu+
+	lhZ68RO8d5GCFg0LE5LFvBq+VtCxIriBOVrBBSyFB37eXdqVr91f068fp8i+SrawOKbA4neRfBW
+	v5j5XiKKsq7uiqz5j2LVfznNKor6OYe6YRqaqgW915lrgy/FRM7YslOcL5ug=
+X-Google-Smtp-Source: AGHT+IFCP67oNGuYHaCgDdLqxs32OFjlHpOxDXX7RRhaD+08Ym/nKH37/lRdXe47pT3WNpl/T7TvSPIH49r5JcRshlPA/SsS/6Da
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918-rust-binder-v1-1-7a5559e8c6bb@google.com>
-In-Reply-To: <20250918-rust-binder-v1-1-7a5559e8c6bb@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 18 Sep 2025 11:51:54 -0400
-X-Gm-Features: AS18NWD0rI4CL8d-I3ThtruBnhZqOIxzK-M-XfFJiGvkJJ6szBoJDjngnfMmssI
-Message-ID: <CAHC9VhSPo4+gSqR2g-6yvDtYGyAnQ4scw2_vQCUrKzbBBd790A@mail.gmail.com>
-Subject: Re: [PATCH] rust_binder: add Rust Binder driver
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Serge Hallyn <sergeh@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Matt Gilbride <mattgilbride@google.com>
+X-Received: by 2002:a05:6e02:2192:b0:3f7:8b02:285c with SMTP id
+ e9e14a558f8ab-424819ac558mr485355ab.29.1758210725736; Thu, 18 Sep 2025
+ 08:52:05 -0700 (PDT)
+Date: Thu, 18 Sep 2025 08:52:05 -0700
+In-Reply-To: <aMwdsFGkM-tMjHwc@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cc2aa5.a00a0220.37dadf.0001.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in __vhost_task_wake
+From: syzbot <syzbot+a1a3cefd6148c781117c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, luto@kernel.org, mst@redhat.com, 
+	peterz@infradead.org, seanjc@google.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 6:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> Please see the attached link to the original RFC for motivation.
->
-> I did not include all of the tracepoints as I felt that the mechansim
-> for making C access fields of Rust structs should be discussed on list
-> separately. I also did not include the support for building Rust Binder
-> as a module since that requires exporting a bunch of additional symbols
-> on the C side.
->
-> Link: https://lore.kernel.org/r/20231101-rust-binder-v1-0-08ba9197f637@go=
-ogle.com
-> Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Co-developed-by: Matt Gilbride <mattgilbride@google.com>
-> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  drivers/android/Kconfig                       |   15 +-
->  drivers/android/Makefile                      |    1 +
->  drivers/android/binder/Makefile               |    9 +
->  drivers/android/binder/allocation.rs          |  602 +++++++++
->  drivers/android/binder/context.rs             |  180 +++
->  drivers/android/binder/deferred_close.rs      |  204 +++
->  drivers/android/binder/defs.rs                |  182 +++
->  drivers/android/binder/dummy.c                |   15 +
->  drivers/android/binder/error.rs               |   99 ++
->  drivers/android/binder/freeze.rs              |  388 ++++++
->  drivers/android/binder/node.rs                | 1131 +++++++++++++++++
->  drivers/android/binder/node/wrapper.rs        |   78 ++
->  drivers/android/binder/page_range.rs          |  746 +++++++++++
->  drivers/android/binder/page_range_helper.c    |   24 +
->  drivers/android/binder/page_range_helper.h    |   15 +
->  drivers/android/binder/process.rs             | 1696 +++++++++++++++++++=
-++++++
->  drivers/android/binder/range_alloc/array.rs   |  251 ++++
->  drivers/android/binder/range_alloc/mod.rs     |  329 +++++
->  drivers/android/binder/range_alloc/tree.rs    |  488 +++++++
->  drivers/android/binder/rust_binder.h          |   23 +
->  drivers/android/binder/rust_binder_events.c   |   59 +
->  drivers/android/binder/rust_binder_events.h   |   36 +
->  drivers/android/binder/rust_binder_internal.h |   87 ++
->  drivers/android/binder/rust_binder_main.rs    |  627 +++++++++
->  drivers/android/binder/rust_binderfs.c        |  850 +++++++++++++
->  drivers/android/binder/stats.rs               |   89 ++
->  drivers/android/binder/thread.rs              | 1596 +++++++++++++++++++=
-++++
->  drivers/android/binder/trace.rs               |   16 +
->  drivers/android/binder/transaction.rs         |  456 +++++++
->  include/uapi/linux/android/binder.h           |    2 +-
->  rust/bindings/bindings_helper.h               |    8 +
->  rust/helpers/binder.c                         |   26 +
->  rust/helpers/helpers.c                        |    1 +
->  rust/helpers/page.c                           |    8 +
->  rust/helpers/security.c                       |   24 +
->  rust/kernel/cred.rs                           |    6 +
->  rust/kernel/page.rs                           |    6 +
->  rust/kernel/security.rs                       |   37 +
->  rust/uapi/uapi_helper.h                       |    1 +
->  39 files changed, 10409 insertions(+), 2 deletions(-)
+Hello,
 
-This is a pretty big patch, in the future it might be nice to
-decompose things like this into a multi-part patchset.  Regardless,
-the LSM/security bits look okay to me.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Reported-by: syzbot+a1a3cefd6148c781117c@syzkaller.appspotmail.com
+Tested-by: syzbot+a1a3cefd6148c781117c@syzkaller.appspotmail.com
 
---=20
-paul-moore.com
+Tested on:
+
+commit:         ae2d2000 Add linux-next specific files for 20250917
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1070cf62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d737cfaddae0058c
+dashboard link: https://syzkaller.appspot.com/bug?extid=a1a3cefd6148c781117c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14bca534580000
+
+Note: testing is done by a robot and is best-effort only.
 
