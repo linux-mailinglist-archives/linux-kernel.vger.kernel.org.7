@@ -1,86 +1,88 @@
-Return-Path: <linux-kernel+bounces-823556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DAEB86D6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:09:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B92B86D72
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2BCB7BC3C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:07:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33B81CC4346
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450A431B10E;
-	Thu, 18 Sep 2025 20:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9Gsdkvh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BA12D191E;
+	Thu, 18 Sep 2025 20:09:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9DA27EC73;
-	Thu, 18 Sep 2025 20:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B830DEDC
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758226123; cv=none; b=YlVweRwYcilc0psHjEItFpSWV8meIExJ7kZW2VGTGvrSrrwiZ9zwA17wf+jxLG/Amfkvi6Z9WDGsLYOLtB1sRnrStw1IRa+gigpUmSp1rgGdoEKbsS/NDStdMdBgbkWUhgIeCiJsAdxM2KORN6fmT9cp6Qc3Gj974JWTV4Z3Ip8=
+	t=1758226145; cv=none; b=G8F7RBGVETQo0EJ2IVGPD5fE7Y9DESuE8szRT1D7skdARO+WRp506jDOkl61q5akKQjHq56GbuQ7WfqHl829BFRb0i+cbFqW+YB/l1N3QQUMrIMMj5yrhE8Zlx8U25BmIq0VtBapQQOW43AMaYxaMZSUmEEDMR8IyTFXT3sQZK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758226123; c=relaxed/simple;
-	bh=Vms/KylUpk9uvkMpfKe1ZNBexCpigHmUzXBTWL0d1ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUbrLV99BLELcuVq58AfABuwjybTBF8YAKO7kIK9vOlBDcRymIl9YXYtdaWdzMx5o8aEu41GnnwMvzLz2iPm0XF9gC6dlexuxI43gabNBLvzGM/lHNcAfF6qG/AQKl1DlFMro95qNwtX0kd0C0+SxXICwSYCksInV2gVGVjqJ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9Gsdkvh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B310AC4CEE7;
-	Thu, 18 Sep 2025 20:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758226123;
-	bh=Vms/KylUpk9uvkMpfKe1ZNBexCpigHmUzXBTWL0d1ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F9Gsdkvhmd/FG6NSz7hlzyU88v9DJBZ1Tto9fVZ5LT3gwAkWNbmP+eyqSFo6BhfdA
-	 /mh6u2ENOYiuYTIHAkYOclSdng7vK6goR1LDJpiou9FePr5Dez4XrRC6BXb6jbeSDa
-	 jVlBaUBqpVBcWHuulDMVwqfQunSq3Kj8VU5xqVNraxOhFzfOS8ktHW+j8OLjbrqLPR
-	 h7oaqRt3BQMWexq/I/YY9RcpQq7Xi2ms5A/wCuKVd6h0QIK73mJxttYG9C8E8ZIMq9
-	 xxJlXK7FSnmWXf/t0tF3XOx0Xfo8/7YPeRWZC/fOoFWM/l75B1wkJUIg4+hpKMzM5z
-	 91IcjGP0LuTDg==
-Date: Thu, 18 Sep 2025 15:08:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] dt-bindings: touchscreen: convert eeti bindings
- to json schema
-Message-ID: <20250918200840.GA2541285-robh@kernel.org>
-References: <20250918153630.2535208-1-dario.binacchi@amarulasolutions.com>
- <20250918153630.2535208-2-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1758226145; c=relaxed/simple;
+	bh=K/0RY+U//lNSiOUOsEZjBiDLkc7SGRjh8IM6gTefKVg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pbkhnO/YP8XChQp3eVS2q8Cgb4wzbTNGmcWuWjRmWZ/vvdb2gPOHd+TUcZ7q0gb3S7D156jwxqAfCc93SaL8Rn4+jhQ0gfEivmrA8/shOqfy8mJtVUBmLamdC3AjhmM0ionPvCy9x5OTy2cAgVehDbOCYyiRjDMo0FW0dm00n8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42408b5749aso35039505ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:09:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758226142; x=1758830942;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=voOjB2OWF6sLn5E5FBup+jJRLNg94HSD6qLWSkazTrM=;
+        b=VM+RRD1zZt2RVBj2E4xCZuErk1JiuioL5dAS9NBqs1tvo8xHrgCCSlg43InzreQEIp
+         7uyGld3/Us1UCIxiU1gZYxaZU6h08IZW/9xu6WeuXzEa2X5Z8mkPWXhHPKtVN+i8Mzfi
+         0ScI9OB5gjR1bs/T2vnTpsR/0mrwThhB19xryDFX8l2OlOpX5TVzou/Vf9XFopLBsvuD
+         fO+MxdS58NxKJi8UZQfmSJy9UUqoTDR6+TofbtzzLMI+s05PB6UTu+fP80m6ceLKeuxE
+         kHfDloVleh29UONsUSWIjRa1N3Boe8xh7CYpLyF8GGGLEoC8Oydp4ha0vanKhkWcTKHO
+         ffcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlRUMP/71CwXtSHQ2cGE22JHgqt/PGyZLrIOMTNgC7D922SzwCn5WI8cCWdX8YDfxAr5yj1Q+JFyXP7SU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy75toybBvd8F/O9kPaKdyFhTEtNyEbdp/BrOt90ty08n+5Ixct
+	wh+VKK3axV3OURoM0Ao3g2bGB7L/G6xpmLZ64Jo1eONFRz5AufMIfhG0FObl0aHKghxIWiul0XF
+	+q28WTJTx3cFmdGKR8PJnGgvvWNttXEo98AlcdSTItIwdHcnPl5zZaJ0QjWQ=
+X-Google-Smtp-Source: AGHT+IH3ZdFuIbjPRLldK4iEpnPMlB3ZUGt6lBPYBhiH+FqqHkTG/VwQqTMmqpKt+XPWTUGctUztPYcOiFDy6xCM4et1nFiZA2l3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918153630.2535208-2-dario.binacchi@amarulasolutions.com>
+X-Received: by 2002:a05:6e02:160d:b0:408:6044:8d1a with SMTP id
+ e9e14a558f8ab-424817203d1mr16617685ab.5.1758226142635; Thu, 18 Sep 2025
+ 13:09:02 -0700 (PDT)
+Date: Thu, 18 Sep 2025 13:09:02 -0700
+In-Reply-To: <CAL4kbRNSQxepAdHvkqS21qvRm2m1gtO1mKi90=QNsmetDB0jQA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cc66de.a00a0220.37dadf.0007.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] WARNING in gfs2_ri_update (2)
+From: syzbot <syzbot+7567dc5c8aa8f68bde74@syzkaller.appspotmail.com>
+To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 18, 2025 at 05:36:07PM +0200, Dario Binacchi wrote:
-> Convert EETI touchscreen controller device tree binding to json-schema.
-> 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> 
-> ---
-> 
-> (no changes since v2)
-> 
-> Changes in v2:
-> - Added in v2
-> 
->  .../bindings/input/touchscreen/eeti.txt       | 30 ---------
->  .../bindings/input/touchscreen/eeti.yaml      | 62 +++++++++++++++++++
+Hello,
 
-eeti,exc3000-i2c.yaml
+syzbot tried to test the proposed patch but the build/boot failed:
 
->  2 files changed, 62 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/eeti.txt
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/eeti.yaml
+failed to apply patch:
+checking file fs/gfs2/rgrp.c
+patch: **** unexpected end of file in patch
+
+
+
+Tested on:
+
+commit:         cbf658dd Merge tag 'net-6.17-rc7' of git://git.kernel...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
+dashboard link: https://syzkaller.appspot.com/bug?extid=7567dc5c8aa8f68bde74
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c6cf62580000
+
 
