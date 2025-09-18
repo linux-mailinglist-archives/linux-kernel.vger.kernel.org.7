@@ -1,198 +1,150 @@
-Return-Path: <linux-kernel+bounces-822215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79ECCB834FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:26:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28549B83506
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2693A48598B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2141C245A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76B22EA75A;
-	Thu, 18 Sep 2025 07:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC1F2EA75A;
+	Thu, 18 Sep 2025 07:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XongnQpY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HuC3m2ah"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67402248B0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9281F1921
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758180356; cv=none; b=nGSdQHK9TIW39moZQQFHxefaMgWjDZ9wotd0j09r6/qT/ybzOswc8OVCTseaxptLIkvGryrhA/SWwE0tKyC4mLbMDruQm9JWqDWaq/y/22IOj0Ogby1eH7vZoXFY70ZT5SvWEx/nMNHOUKAjvRfCjdoKalEiCVcsas6Osovr67A=
+	t=1758180458; cv=none; b=qXeNIfofHP5lC3QNcklkEOPARoIIp1c02JfLzG+7iylAK0rJ0IHo60Xp5ZjFBaJQBWY9xIKxasm3Gptsepui0sxahSN7PNLEL9IyV15QEcif1X10IBHszHsw9XpTSPxvmfa2QzvjVCmnqjUzwLFMxbczJfa9SKEvHpuWA50C0zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758180356; c=relaxed/simple;
-	bh=45P+u1tAv3iIaIuLoskmjiVZLMeXMtR6uk2qfhZEw8g=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jYag5oRugtBMSqQNfH0SDGDACKas43XG7+GvfbcrCibwGto+R6nISVTyKK1pCTUlhqFNKlo4aDlhRfpf2kShVWfc+0EcbtiLf/WiPAvV6+Fg0HpZmTqgb0yH+iot/qCMlOqgEcvOQHYtbQeHnRXyAD1DmBY2GFo0GYGPkY2azRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XongnQpY; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1758180458; c=relaxed/simple;
+	bh=+0pnqooJvvQ3guaL0gULSvIN3AU4QEO/1s7ZgLDrVyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IxOY3FThhgmeSLi8afEEfzUpz43/CJSY70G8EEACk1ERdezAi93LTeHXQgPCL0lySh/ABIAv8OhfeV2wgaM09/KPcRO3A9zSns48C3dw+rOQTNYKIZQ9HTaCSVQAMr8/YsL7k9wnrVh81tGTFlep9LCGbKylD4+IFSK6LONVxHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HuC3m2ah; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HMbIf5012608
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:25:53 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I3Qmkc014213
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:27:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wgWSHIxJ74v4zLjsbadVyxzqod/mpaz3qAfwUznSiDQ=; b=XongnQpYkvgKvGVn
-	VrnFIzKfWLlxMzav2ddn1gCVtt9Sm97uJ+egvupvTqanEq8wS7JR6IArYo6fR+eQ
-	cVAb0pjcFDQfyKAhAnoy9ai0SA6KxCVB9jIvKm3tTtFeRJNOIMnng1jJlqPNybJW
-	Blhi462XecdgtTCATGaNjAWHmFTnoZ+1fnfSbwDuUA7sI3Jh8521ycaOZs3P/by6
-	/yZoKpRDd1tc4E5RI8eVomU0SX6jAxsqbPNlxsFd0H7YqCCcptDUP0MKeyjtC4me
-	kzscr/EvrYgOpM2ywukseYup8MmBrwz1i2INr/5brPR/Rb1psu+jyabLcXrZT1yt
-	/gkn8g==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4985wx1a5c-1
+	QtCe2RN/Y8pRtGMrLYTfDuCnv7IysubE6DCnGz7W7B8=; b=HuC3m2ahB4bvgx80
+	qUemhJL76zjVnfWRorL9tTZoVdBfmD1OC6jLJzEjVNkgJBfpShrGwZsk+T8YdbwS
+	sCigaZjWyDCAflV9onILshlLErjzC4wpIRHWGllI6L+q8m9HPzMLqjWDvrmIU9+8
+	64ziix6Iliyjm4lJCj3SDi98XGn587KDUlHCaVBDqKnx3vqXFVrbFQcn5e1zSWgl
+	ySoijlIpz5VxP/ywgJEuho0vW69SISwqAYcX2wEkM0Pj1K50IVDOisxCYBcEBB+j
+	oxNGZwvGgatpO4N93z0otD7NyHASWnUBhdVUiI9+/lGmKnwH9CYpCRG2VJeJWwOI
+	izukew==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxu5cur-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:25:52 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-78ea15d3583so10578676d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:25:52 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:27:36 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-329c76f70cbso536381a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:27:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758180352; x=1758785152;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1758180455; x=1758785255;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgWSHIxJ74v4zLjsbadVyxzqod/mpaz3qAfwUznSiDQ=;
-        b=Xo3IVU+1FGZ8qBvGc4ofD0gHDM8/IO1eGJCbfht5+wJxYdwvkaxM69nWxW/AfbRZ2z
-         xdRMZgBilemH3dL7NZ8YJpr5qbIptmtGpB21ADGnigzGPBGrSKDEOaq4dnoLJdfgfhuU
-         ow5BszM2bIXhrQfheHanMKrv6QwSII4tSlegO/Y1JCv2uBaLekEtsOfPbOvSWGSrGxAX
-         kIcFausyq7l9fltFkn4r1gYi21AuhmlgThOWhWNKE0ek16nZwXan2QesLOkHfhctfmEK
-         WS2oHoKADQyeY1bXfrU29H6fJAv5iBE2qpbWLK2uroJ02WhO23MXPcfVYYxiD1dJ9asC
-         Gdvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBtBc+mCGLZ1SKyVIkBRCKzIIqUh6P71U8tjS2XHCZRlJJDfmOHAk0zd+upqctVb4qxuq+dbkbZb4Bl1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYoMOs9UhIUUDKDnK86OGOsmSxZ96CApUNMSypGwS3SzsucAeG
-	wRtrqttgDzkIdoTrexQNvwXHn0REjCd1fv34nroYqbNnZExz7EshEb+XStI4rnxi5DdpPOmQuMh
-	QXongZvs3LwEgncJoix0POcrelelQZMFxxo2Ee26FzNXzEPtHKGbBsVg4NfPkytu2VS4=
-X-Gm-Gg: ASbGnctcwFU0nM8LqJuMFewMH17KOczvJJ/N6Ubndi551tKC3BxBrdSjQ8vRHIIbaNk
-	od1w2R5mDF2aPDQydfVeT+wRbHqfYwYNpatIpMuxDxdyUp1PtcWf4YBoqvPNafYVox3mq4CN1fY
-	99OwFXJRYewjNHVtZYkjuwoMGyau0NQXts+WHidghvTRgQ9Wa1R0uUYeVpn/X6KLFQKGbEK4eds
-	nV7Dhj8gKCUzjDpHxpkXK96Eb+mh6QkymUj/Ibi+2neVvcWxSDu8KxKjPAsXpFmBfmP8CT7tNUX
-	DcjaeEfe0wRpkvQOpL1SqtWxA2y1EkzHFqNu9riEu5Caf2JaReTgBnhiSjqCRpxx+980zm1B7n0
-	=
-X-Received: by 2002:a05:6214:c22:b0:792:d0c5:7155 with SMTP id 6a1803df08f44-792d0c574efmr21812646d6.18.1758180351834;
-        Thu, 18 Sep 2025 00:25:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNAnAVp347GePapB/xQ1YAYCNvzrXi3Zwnb7APYVakX2+Y/D3TUU0hrhQldlXBUl+I3q+K5A==
-X-Received: by 2002:a05:6214:c22:b0:792:d0c5:7155 with SMTP id 6a1803df08f44-792d0c574efmr21812416d6.18.1758180351169;
-        Thu, 18 Sep 2025 00:25:51 -0700 (PDT)
-Received: from trex (152.red-79-144-196.dynamicip.rima-tde.net. [79.144.196.152])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f4f9f339sm30217505e9.14.2025.09.18.00.25.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 00:25:50 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Thu, 18 Sep 2025 09:25:48 +0200
-To: Praveen Talari <praveen.talari@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Praveen Talari <quic_ptalari@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, alexey.klimov@linaro.org,
-        jorge.ramirez@oss.qualcomm.com, dmitry.baryshkov@oss.qualcomm.com,
-        andersson@kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
-        quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
-        quic_arandive@quicinc.com, quic_shazhuss@quicinc.com,
-        quic_cchiluve@quicinc.com
-Subject: Re: [PATCH v2] serial: qcom_geni: Fix pinctrl deadlock on runtime
- resume
-Message-ID: <aMuz/C1iT8JtjXbQ@trex>
-References: <20250917185102.3763398-1-praveen.talari@oss.qualcomm.com>
- <dab18f70-4017-4c06-92c1-91cfd2229540@kernel.org>
- <8e2781ae-34d2-4009-bf8c-56aa1bb6fe85@oss.qualcomm.com>
+        bh=QtCe2RN/Y8pRtGMrLYTfDuCnv7IysubE6DCnGz7W7B8=;
+        b=IIrQLLgU49ag+FlmGws5NM05qTh5mAPJR3ylUkU2pfrt7XQ+aoUOGASL57DxrFRsDP
+         te7refYG2WgsYnX+D7gNfmBV2/EVV5RI2B+iGWSQ8ursAu3HXEtYTe0nSWLZGuuu4fEq
+         esVqxCoRSaEXbGJ488tvSjnHVGTH4QxHaq7HI50HTKkCFhK0T8NK5NZPqCcfbamP2u9u
+         NVAGLdQP1+eGTyEIcy3rjjKbJFkWzSVYLwiPtI4KNspQTA4hUZryhT1G0CN+31fwT0Yh
+         BK3C5uWWFRUVHRYak9z7iB2O18YM0wF3k0n1WoTspdtiZw/A6oy9fTkCAuRGYmYMDWhU
+         rG4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU24ysFTsaTUro9BQT+tV+Ddc+PM8kyq++NQGEISa3whCgC0j7/7wHWqAhJla6tovuod0DXx8FXHK0Sf1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2OIuGhY1TZHylQ8jHG/YmxlMY9LgV4NMVYOYEqr5GXN30H3+n
+	ghVDYY7EuD9nxprLJoGgqnib3foX9GVI27y0y+4HWwFcThxnpY53lx28HpUaT8MS8CCTp8XlfSt
+	CAu5EprPVIlkz5VpLBIamD5ddLpTsStM+GK7/cG2A+xvGQFsDIgM/Bt91QYrasFN1nK0=
+X-Gm-Gg: ASbGncs80kBT77qquynoJ5Uk8UOaxhAYCu8SQOk7IEFhSwhXdpURBUgZ/hZoY0FG4+O
+	prdrXNL7Myt/SMxg38T7MBQN/uoYlNi5/iSsS2wbDAQXrYqSWxlVgpw2jyIT4omyVbphOXTC/+u
+	/5y6g+a2fMYwdFsdeEukiMcKLiD7txIN69L6dSAUV1paMqUyAGgXAbrrr8zFx65rdLThxOjaUBe
+	c/d87WoTQ6wB/EZg9H8dV1bQCn+kKmc9ZsGd7K0jiAMJ8QmoaymroBGMpczWK9PfkWXvX8NJ0ou
+	LxojtFkPq0ZuivXZRPSE1tNrlGzKTWd58x0QGb/ANOg+D9gQbRYqLmaz4VV1sywOSAAEKu47N4a
+	nKJC4EQ==
+X-Received: by 2002:a17:903:186:b0:24c:9a51:9a33 with SMTP id d9443c01a7336-26812184917mr59001685ad.22.1758180455506;
+        Thu, 18 Sep 2025 00:27:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErLnyx0n30seI7eSnLwhrrBGTy+VTJlJ2pd6118rrdXNeRKTAy8YPNg5NJ/hm0KMGdyJ+OsA==
+X-Received: by 2002:a17:903:186:b0:24c:9a51:9a33 with SMTP id d9443c01a7336-26812184917mr59001265ad.22.1758180455032;
+        Thu, 18 Sep 2025 00:27:35 -0700 (PDT)
+Received: from [10.152.204.0] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802dfcbesm16608495ad.88.2025.09.18.00.27.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 00:27:34 -0700 (PDT)
+Message-ID: <d6ca6b1e-466b-f90c-a75a-b9f88ca63aa0@oss.qualcomm.com>
+Date: Thu, 18 Sep 2025 12:57:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e2781ae-34d2-4009-bf8c-56aa1bb6fe85@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 4TW2Kv4vO1I4VzGsOupBw1yiPqUVSpm-
-X-Proofpoint-GUID: 4TW2Kv4vO1I4VzGsOupBw1yiPqUVSpm-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDIxOSBTYWx0ZWRfXwV3GW6QCFdsg
- pjlKXOOCmoALl1bfW2rYj/1ajiRfZBJJOgJAo0ugEPco4VlrHAXXKbLF6c7KtwUxeMzWffEDSIy
- Veahf4aemTPfst3ovuwWKGDQ8yYHtWzZkVXY/2btnboRDhuMm890ePDbgHCh9Ez2MXMQOu6sBZr
- JZRupk6TeKC3ODI62B2pODM5vDrvllDYt42w3oLlq6nQ4vnD6zGfbNRjP58GQ3tyXk3AUvj9IsB
- iW/OesAoGiwVL28LvskhDtqa9cVTz/PmuJy8Hzmv9DpaQ0lPwEilp0kVoC8pEG4nEtkJxx/xFFz
- Gvi+bk7n2J+Jr+ZV+z+w9k09Y0gxLJCGCAgquc0YMMrAh+M+6UB5HkN9K7j3i3GzIW2IQPxCzqG
- fTX691TG
-X-Authority-Analysis: v=2.4 cv=Fq8F/3rq c=1 sm=1 tr=0 ts=68cbb400 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=UlsMzGb/nx+Jy78HFkoo8g==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=6bHfGmxriAW5vq4Uz9YA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22 a=cvBusfyB2V15izCimMoJ:22
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next] wifi: ath10k: avoid unnecessary wait for service
+ ready message
+Content-Language: en-US
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+        Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>
+References: <20250811-ath10k-avoid-unnecessary-wait-v1-1-db2deb87c39b@oss.qualcomm.com>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <20250811-ath10k-avoid-unnecessary-wait-v1-1-db2deb87c39b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX3gb5oRM5ebxx
+ CwIKvyok0eojdAwHIfo9rJu1XEoi3e6v7gujKH6mGXFIuvS9pqjy+0CxRY7gHKfsmmt5cg+yrA/
+ s2G7k9AkMH+X/TVFALu2f10GLjhX3lhG5UEzESarmir1+ryF/bgaho9wBdCihPlM/Upxi2yOUyS
+ vP5zv+oIyh490T5+/kKwosxq8TWqwyrUxLbbgJ34WkB+U3O33Sszq8+WJiOkvZzDSC/bdp2xMGE
+ coMINw/nmqQDVk6vxl0fHjPVGkNm+FsSQmwhJdXExY6p5ofr9rWeGWvptN/Eq5izw2Yn12C5m8C
+ ww6S9XrXHmWb2X6YiJHrZ5dmPgCGEG7NdQqzu8hOoH3QUUhD56nv5NuTfSEL3nm52lCV2x/U1YF
+ aOWnsbuK
+X-Proofpoint-ORIG-GUID: oTUmjnNT_Om3l2MMGDTVfFEo77F5j4OB
+X-Authority-Analysis: v=2.4 cv=R+UDGcRX c=1 sm=1 tr=0 ts=68cbb468 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=mpCJlUNt7pqHQ4OmjRMA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: oTUmjnNT_Om3l2MMGDTVfFEo77F5j4OB
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-17_01,2025-09-18_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 impostorscore=0 phishscore=0 priorityscore=1501
- bulkscore=0 spamscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509170219
+ spamscore=0 phishscore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 malwarescore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On 18/09/25 09:25:53, Praveen Talari wrote:
-> Hi Krzysztof,
+
+
+On 8/11/2025 2:56 PM, Baochen Qiang wrote:
+> Commit e57b7d62a1b2 ("wifi: ath10k: poll service ready message before
+> failing") works around the failure in waiting for the service ready
+> message by active polling. Note the polling is triggered after initial
+> wait timeout, which means that the wait-till-timeout can not be avoided
+> even the message is ready.
 > 
-> On 9/18/2025 5:28 AM, Krzysztof Kozlowski wrote:
-> > On 18/09/2025 03:51, Praveen Talari wrote:
-> > > A stall was observed in disable_irq() during
-> > > pinctrl_pm_select_default_state(), triggered by wakeup IRQ being active
-> > > while the UART port was not yet active. This led to a hang in
-> > > __synchronize_irq(), as shown in the following trace:
-> > > 
-> > > Call trace:
-> > >      __switch_to+0xe0/0x120
-> > >      __schedule+0x39c/0x978
-> > >      schedule+0x5c/0xf8
-> > >      __synchronize_irq+0x88/0xb4
-> > >      disable_irq+0x3c/0x4c
-> > >      msm_pinmux_set_mux+0x508/0x644
-> > >      pinmux_enable_setting+0x190/0x2dc
-> > >      pinctrl_commit_state+0x13c/0x208
-> > >      pinctrl_pm_select_default_state+0x4c/0xa4
-> > >      geni_se_resources_on+0xe8/0x154
-> > >      qcom_geni_serial_runtime_resume+0x4c/0x88
-> > >      pm_generic_runtime_resume+0x2c/0x44
-> > >      __genpd_runtime_resume+0x30/0x80
-> > >      genpd_runtime_resume+0x114/0x29c
-> > >      __rpm_callback+0x48/0x1d8
-> > >      rpm_callback+0x6c/0x78
-> > >      rpm_resume+0x530/0x750
-> > >      __pm_runtime_resume+0x50/0x94
-> > >      handle_threaded_wake_irq+0x30/0x94
-> > >      irq_thread_fn+0x2c/0xa8
-> > >      irq_thread+0x160/0x248
-> > >      kthread+0x110/0x114
-> > >      ret_from_fork+0x10/0x20
-> > > 
-> > > To fix this, wakeup IRQ setup is moved from probe to UART startup,
-> > > ensuring it is only configured when the port is active. Correspondingly,
-> > > the wakeup IRQ is cleared during shutdown. This avoids premature IRQ
-> > > disable during pinctrl setup and prevents the observed stall. The probe
-> > > and remove pathsare simplified by removing redundant wakeup IRQ handling.
-> > > 
-> > > Fixes: 1afa70632c39 ("serial: qcom-geni: Enable PM runtime for serial driver")
-> > > Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
-> > > Closes: https://lore.kernel.org/all/DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org/
-> > > Tested-by: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-> > 
-> > Where did you receive this tag for this patch exactly?
+> A possible fix is to do polling once before wait as well, however this
+> can not handle the race that the message arrives right after polling.
+> So the solution is to do periodic polling until timeout.
 > 
-> Since Jorge was involved in validating the change, I’ve added him under the
-> Tested-by tag.
+> Tested-on: QCA6174 hw3.2 PCI WLAN.RM.4.4.1-00309-QCARMSWPZ-1
 > 
-> Please correct me if I’m not supposed to add this tag myself.
+> Fixes: e57b7d62a1b2 ("wifi: ath10k: poll service ready message before failing")
+> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Closes: https://lore.kernel.org/all/97a15967-5518-4731-a8ff-d43ff7f437b0@molgen.mpg.de
+> Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 
-let's test a bit further Praveen - we need to validate/trace the wake
-path on a real scenairo to make sure it is not cpu intensive (although I
-suspect the 2% was due to the storm you described more than to the code
-path itself)
-
-I can then provide the tested-by on the list.
-
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
