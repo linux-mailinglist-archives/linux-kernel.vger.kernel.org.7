@@ -1,198 +1,237 @@
-Return-Path: <linux-kernel+bounces-822176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E8CB8339A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:57:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A62B833A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742552A6125
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFE44A2824
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C092DECA3;
-	Thu, 18 Sep 2025 06:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F00D2E3391;
+	Thu, 18 Sep 2025 06:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jqFLCJum"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vNEeGii1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0+3iP3ua"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1CA208A7
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FCC2E2EF2;
+	Thu, 18 Sep 2025 06:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758178617; cv=none; b=G/abZB5JZJWG6n2zfJCHI9E3B1SaaLQ0Vu/CoGaicIclZvGP/qap77w8Wg2xrsN781YpkxeU7qB9IHUf8H5e/xQNyLLlckcuG8HpqsTyfOaCf8LFa9eT7YJ948ha2GCUFAEZ+/xUmj0MCZvtci2LCSX+dmuOI5msHr4CG71fPkE=
+	t=1758178622; cv=none; b=tevV74QnlAw5lUzcbC/zI9CSz+Yge+Euj6CLcIzXCqHn405jW4LISSuYqL2wiDxydVNpRL8WiRsitGR29SILv34z2nC9DeXN/uPe0cyGxAnHCulz7YzxmO/85fIAzE7ZLSCUjIxO4TsLM1NjXy5mMHL0kEjbh9iIIzXOnzBl+rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758178617; c=relaxed/simple;
-	bh=AUnggU8SIwRLVQWpvVp5rs+tK6mEbR8WSnsx2HPE3yk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ICeo4E72D0OYtZkS2J64xA2I+Nl+aUFxMKcq3qRIh1kRC8ZQKNBPgJxuPZk9UXYpSWzH66nbchNKGw/CwXM58eicYEuAZAiPwZy3S1If43pPNh78iBtIpWUNFR3Hm5Q21pI/gEPxB1m77oPDhTJJj+FnwNibadDrdfQQcS1NwfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jqFLCJum; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I5vad7012241;
-	Thu, 18 Sep 2025 06:56:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=DchfFO
-	ibIA/BQXU5pOmwyka3D2iVlhZ/ewgmfO7fqmQ=; b=jqFLCJumqFYQwXRKysMlUD
-	WWS9B2Ht4KlSsQ7yRmuaxpmltQKg2I9lZJJ3wstXFwoMUfa3nefVFAn5OhqhsAWB
-	DfV3AnWg7W7sTgdXSA6xwmnPIOxNWyUTg0S5YFxy01/oKn427RPashdWjV/KUItp
-	yzOI8mc+WYfu0Tzy4YYjz678sd8bdbvm4m4p52JZ7ZKxt/LfXtMkf525mbLUG0ED
-	Xvcw3jfys1IR+wj2holSKEbYw/ob9R0W1tnRhwaXURdbFS+FY8gWV4f07anBmYle
-	R7qYSm6TBgCLCIHUJaInz6stfnKyIgLICRVLFBnVBgOkilGXU9roQG3KBWaobJyg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4j8jhe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 06:56:11 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58I6uAWV022879;
-	Thu, 18 Sep 2025 06:56:10 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4j8jhc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 06:56:10 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58I4lFpc005963;
-	Thu, 18 Sep 2025 06:56:09 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 495jxudjhq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 06:56:09 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58I6u5xD51052894
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 06:56:05 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4BA8A20043;
-	Thu, 18 Sep 2025 06:56:05 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 12DBD20040;
-	Thu, 18 Sep 2025 06:55:57 +0000 (GMT)
-Received: from [9.109.209.61] (unknown [9.109.209.61])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 18 Sep 2025 06:55:56 +0000 (GMT)
-Message-ID: <6a6de5ca-d105-466b-b44a-8bf084f2a924@linux.ibm.com>
-Date: Thu, 18 Sep 2025 12:25:55 +0530
+	s=arc-20240116; t=1758178622; c=relaxed/simple;
+	bh=zAYD7tDV592qw+j/krJ5rgIfIarGsWgaoXlOQYMUJPE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=BGmxwI4VlhJAFxsxvd5nak6H1EM3igHQpZAUyDV9PEbK4zy/aQiBOeCmrD1METHezuLoH7003TjFOvNFWw69FNebhrucBagFeuYwFN1IVRbfQRsBGyTSS4rs7HFPfDsck0Yt2s+6Izi7MgG8zpsTG0EVZpotK3mbEY9luOYZFNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vNEeGii1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0+3iP3ua; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 18 Sep 2025 06:56:54 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758178618;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ABM4Nf7Z+UJub0iX30CSyN2pItTmPzPPfM7EMbQPMi8=;
+	b=vNEeGii1fHEI6SsYsDhHzK3nP8CD9h3Wwi44oZx0Xg3PTs0nMA8nHL8iejeDmj82LZgeEz
+	8Y7VdNBkdH64WaAhoa2pZb5aJF6UlPzgsawrhZCCjqfllaFReI7zaq/ibpag2XcD0HI0a2
+	4a33BL3GxiQnHXDX3H38hdEr5pz+hmSViQwegLoCQl9FBE3y/p8Lewqu3YUiCBUnYiv5GE
+	b9dGOZ45+6Wvr0ugFYTWCxBY/afaM58BlcALcrTyj113yLPGhS21vRCueAgOjPVVdEI0lk
+	IqEzGT8vHdv390d+2Kv4C+dEEEHXcWDWTZHmhMR+SvEdmg7Q+bcHRo5tlP/Ltg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758178618;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ABM4Nf7Z+UJub0iX30CSyN2pItTmPzPPfM7EMbQPMi8=;
+	b=0+3iP3ualFtTbpWcgElTLILSK5PVmu+p9sZYazq7e71ReiLfs6Q67beltpfZCkNrH5Sf1d
+	0rKHSzSm0UIw7UBA==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched/deadline: Fix dl_server behaviour
+Cc: John Stultz <jstultz@google.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250917122616.GG1386988@noisy.programming.kicks-ass.net>
+References: <20250917122616.GG1386988@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V2 7/8] powerpc: Enable IRQ generic entry/exit path.
-To: Shrikanth Hegde <sshegde@linux.ibm.com>,
-        Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu
-Cc: oleg@redhat.com, kees@kernel.org, luto@amacapital.net, wad@chromium.org,
-        deller@gmx.de, ldv@strace.io, macro@orcam.me.uk, charlie@rivosinc.com,
-        akpm@linux-foundation.org, bigeasy@linutronix.de,
-        ankur.a.arora@oracle.com, naveen@kernel.org,
-        thomas.weissschuh@linutronix.de, Jason@zx2c4.com, peterz@infradead.org,
-        tglx@linutronix.de, namcao@linutronix.de, kan.liang@linux.intel.com,
-        mingo@kernel.org, oliver.upton@linux.dev, mark.barnett@arm.com,
-        atrajeev@linux.vnet.ibm.com, rppt@kernel.org, coltonlewis@google.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20250908210235.137300-2-mchauras@linux.ibm.com>
- <20250908210235.137300-10-mchauras@linux.ibm.com>
- <589f259e-1db9-4ec2-accc-b27966d09a3e@linux.ibm.com>
-Content-Language: en-US, en-IN, en-GB
-From: Mukesh Kumar Chaurasiya <mkchauras@linux.ibm.com>
-In-Reply-To: <589f259e-1db9-4ec2-accc-b27966d09a3e@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Qf5mvtbv c=1 sm=1 tr=0 ts=68cbad0b cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=q5CvZCToSJJqjgns3BoA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: IUAX_AP3EfalgYdLro8ulS_vbTnlZPn5
-X-Proofpoint-GUID: 2Okb0Q0M4TVWHetba6bcmpHlWN1t0k3g
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfXw1g9te6O2pOb
- rUM9pLlvWVxarW8Kehn6rEjCE98eFiQWC/Mg3Vome2eofKa2DNEX3xl+RXdBkxV/eO6Q4/nfSky
- bNHePQZHKxL/BtVKXhLUi5d7tFQUwqW3RM9kcwQKPb9ggqOjMG2qqfjyWLDku0TWQucfkIx23WI
- jwMjgSfVGKiB3C3loyQgGvhJSQ5Rj2ciHnnNMpc3KDzJXOAyCdO72sCIl0s0ViZRK8ro0Nyhm80
- /vq5Ju3iNzD/FRc/jv1ETdat/B82Jw1ZlJ6Agt5/+AGoowuBgaMHq7iIXcp+D91DVjQ7y8GgFAq
- qgBg8CJQsImg7vSi8NRt4Kue11lkH6xSR2XMs/I4JRZncQGIeEU+FGEmadjcoUoVlVUAP3Ok2qf
- EK9YCzrc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-18_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 phishscore=0 suspectscore=0 adultscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160204
+Message-ID: <175817861437.709179.10913499403372809816.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+The following commit has been merged into the sched/urgent branch of tip:
 
-On 9/16/25 9:46 AM, Shrikanth Hegde wrote:
->
->
-> On 9/9/25 2:32 AM, Mukesh Kumar Chaurasiya wrote:
->> Enable generic entry/exit path for ppc irq.
->>
->> Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
->> ---
->>   arch/powerpc/Kconfig                    |   1 +
->>   arch/powerpc/include/asm/entry-common.h |  93 ++---
->>   arch/powerpc/include/asm/interrupt.h    | 492 +++---------------------
->>   arch/powerpc/kernel/interrupt.c         |   9 +-
->>   arch/powerpc/kernel/interrupt_64.S      |   2 -
->>   5 files changed, 92 insertions(+), 505 deletions(-)
->>
->                                 \
->> diff --git a/arch/powerpc/kernel/interrupt.c 
->> b/arch/powerpc/kernel/interrupt.c
->> index f53d432f60870..7bb8a31b24ea7 100644
->> --- a/arch/powerpc/kernel/interrupt.c
->> +++ b/arch/powerpc/kernel/interrupt.c
->> @@ -297,13 +297,8 @@ notrace unsigned long 
->> interrupt_exit_kernel_prepare(struct pt_regs *regs)
->>           /* Returning to a kernel context with local irqs enabled. */
->>           WARN_ON_ONCE(!(regs->msr & MSR_EE));
->>   again:
->> -        if (need_irq_preemption()) {
->> -            /* Return to preemptible kernel context */
->> -            if (unlikely(read_thread_flags() & _TIF_NEED_RESCHED)) {
->> -                if (preempt_count() == 0)
->> -                    preempt_schedule_irq();
->> -            }
->> -        }
->> +        if (need_irq_preemption())
->> +            irqentry_exit_cond_resched();
->
-> irqentry_exit_cond_resched is also called in irqentry_exit. It would 
-> be better if we can find ways to avoid calling it again.
->
-> I see a loop here. But comment says it is not enabling irq again. so 
-> the loop is bounded. So might be okay to remove cond_resched here. do run
-> preemptirq, irq tracers to ensure that is case.
->
-Sure.
-> Also, what is this "soft_interrupts"?
+Commit-ID:     2dcbcce9bfac6ddc2e2f9243fa846a875371de79
+Gitweb:        https://git.kernel.org/tip/2dcbcce9bfac6ddc2e2f9243fa846a87537=
+1de79
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 17 Sep 2025 12:03:20 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 18 Sep 2025 08:50:05 +02:00
 
-You mean soft masked interrupts?
-It's a mechanism to buffer interrupts without disabling the ee bit so 
-that we can replay those interrupts later.
+sched/deadline: Fix dl_server behaviour
 
->>             check_return_regs_valid(regs);
->>   diff --git a/arch/powerpc/kernel/interrupt_64.S 
->> b/arch/powerpc/kernel/interrupt_64.S
->> index 1ad059a9e2fef..6aa88fe91fb6a 100644
->> --- a/arch/powerpc/kernel/interrupt_64.S
->> +++ b/arch/powerpc/kernel/interrupt_64.S
->> @@ -418,8 +418,6 @@ _ASM_NOKPROBE_SYMBOL(interrupt_return_\srr\())
->>       beq    interrupt_return_\srr\()_kernel
->>   interrupt_return_\srr\()_user: /* make backtraces match the _kernel 
->> variant */
->>   _ASM_NOKPROBE_SYMBOL(interrupt_return_\srr\()_user)
->> -    addi    r3,r1,STACK_INT_FRAME_REGS
->> -    bl    CFUNC(interrupt_exit_user_prepare)
->>   #ifndef CONFIG_INTERRUPT_SANITIZE_REGISTERS
->>       cmpdi    r3,0
->>       bne-    .Lrestore_nvgprs_\srr
->
+John reported undesirable behaviour with the dl_server since commit:
+cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling").
+
+When starving fair tasks on purpose (starting spinning FIFO tasks),
+his fair workload, which often goes (briefly) idle, would delay fair
+invocations for a second, running one invocation per second was both
+unexpected and terribly slow.
+
+The reason this happens is that when dl_se->server_pick_task() returns
+NULL, indicating no runnable tasks, it would yield, pushing any later
+jobs out a whole period (1 second).
+
+Instead simply stop the server. This should restore behaviour in that
+a later wakeup (which restarts the server) will be able to continue
+running (subject to the CBS wakeup rules).
+
+Notably, this does not re-introduce the behaviour cccb45d7c4295 set
+out to solve, any start/stop cycle is naturally throttled by the timer
+period (no active cancel).
+
+Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+Reported-by: John Stultz <jstultz@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: John Stultz <jstultz@google.com>
+---
+ include/linux/sched.h   |  1 -
+ kernel/sched/deadline.c | 23 ++---------------------
+ kernel/sched/sched.h    | 33 +++++++++++++++++++++++++++++++--
+ 3 files changed, 33 insertions(+), 24 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f89313b..e4ce0a7 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -706,7 +706,6 @@ struct sched_dl_entity {
+ 	unsigned int			dl_defer	  : 1;
+ 	unsigned int			dl_defer_armed	  : 1;
+ 	unsigned int			dl_defer_running  : 1;
+-	unsigned int			dl_server_idle    : 1;
+=20
+ 	/*
+ 	 * Bandwidth enforcement timer. Each -deadline task has its
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 5a5080b..72c1f72 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1571,10 +1571,8 @@ void dl_server_update_idle_time(struct rq *rq, struct =
+task_struct *p)
+ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+ {
+ 	/* 0 runtime =3D fair server disabled */
+-	if (dl_se->dl_runtime) {
+-		dl_se->dl_server_idle =3D 0;
++	if (dl_se->dl_runtime)
+ 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
+-	}
+ }
+=20
+ void dl_server_start(struct sched_dl_entity *dl_se)
+@@ -1602,20 +1600,6 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
+ 	dl_se->dl_server_active =3D 0;
+ }
+=20
+-static bool dl_server_stopped(struct sched_dl_entity *dl_se)
+-{
+-	if (!dl_se->dl_server_active)
+-		return true;
+-
+-	if (dl_se->dl_server_idle) {
+-		dl_server_stop(dl_se);
+-		return true;
+-	}
+-
+-	dl_se->dl_server_idle =3D 1;
+-	return false;
+-}
+-
+ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+ 		    dl_server_pick_f pick_task)
+ {
+@@ -2384,10 +2368,7 @@ again:
+ 	if (dl_server(dl_se)) {
+ 		p =3D dl_se->server_pick_task(dl_se);
+ 		if (!p) {
+-			if (!dl_server_stopped(dl_se)) {
+-				dl_se->dl_yielded =3D 1;
+-				update_curr_dl_se(rq, dl_se, 0);
+-			}
++			dl_server_stop(dl_se);
+ 			goto again;
+ 		}
+ 		rq->dl_server =3D dl_se;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index f10d627..cf2109b 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -371,10 +371,39 @@ extern s64 dl_scaled_delta_exec(struct rq *rq, struct s=
+ched_dl_entity *dl_se, s6
+  *   dl_server_update() -- called from update_curr_common(), propagates runt=
+ime
+  *                         to the server.
+  *
+- *   dl_server_start()
+- *   dl_server_stop()  -- start/stop the server when it has (no) tasks.
++ *   dl_server_start() -- start the server when it has tasks; it will stop
++ *			  automatically when there are no more tasks, per
++ *			  dl_se::server_pick() returning NULL.
++ *
++ *   dl_server_stop() -- (force) stop the server; use when updating
++ *                       parameters.
+  *
+  *   dl_server_init() -- initializes the server.
++ *
++ * When started the dl_server will (per dl_defer) schedule a timer for its
++ * zero-laxity point -- that is, unlike regular EDF tasks which run ASAP, a
++ * server will run at the very end of its period.
++ *
++ * This is done such that any runtime from the target class can be accounted
++ * against the server -- through dl_server_update() above -- such that when =
+it
++ * becomes time to run, it might already be out of runtime and get deferred
++ * until the next period. In this case dl_server_timer() will alternate
++ * between defer and replenish but never actually enqueue the server.
++ *
++ * Only when the target class does not manage to exhaust the server's runtime
++ * (there's actualy starvation in the given period), will the dl_server get =
+on
++ * the runqueue. Once queued it will pick tasks from the target class and run
++ * them until either its runtime is exhaused, at which point its back to
++ * dl_server_timer, or until there are no more tasks to run, at which point
++ * the dl_server stops itself.
++ *
++ * By stopping at this point the dl_server retains bandwidth, which, if a new
++ * task wakes up imminently (starting the server again), can be used --
++ * subject to CBS wakeup rules -- without having to wait for the next period.
++ *
++ * Additionally, because of the dl_defer behaviour the start/stop behaviour =
+is
++ * naturally thottled to once per period, avoiding high context switch
++ * workloads from spamming the hrtimer program/cancel paths.
+  */
+ extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
+ extern void dl_server_start(struct sched_dl_entity *dl_se);
 
