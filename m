@@ -1,97 +1,88 @@
-Return-Path: <linux-kernel+bounces-823144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601E8B85ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:37:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E468B85AB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD19C1888EE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7FC1894518
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C0930F942;
-	Thu, 18 Sep 2025 15:32:11 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123D53128A0;
+	Thu, 18 Sep 2025 15:31:37 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44B221D9E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C159730CDAC;
+	Thu, 18 Sep 2025 15:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209531; cv=none; b=imt1nj6eznJp8eWNhaxJAudWjssgZswC35Dk/1lsAGN0RZ+6yeo5YzDV2dKdOvt/AQdARpfF4gvGu5XRFO8woy5dgK/xLE2AYdnkwYA1L6BIbah9hk6yWTMDliRZbcXYZFZrSn2N28xdZUXTUcvJ5hXszn/v2KbFadDuwHuLLN4=
+	t=1758209496; cv=none; b=nKmkHqjKuH01FUco/sO2z9cjEbwz59cfdOZN1hYCKgkA+VC57tP7DeLexnGpvEoaPgJPinGELTvsPCXcH9VpWheZfOy78A2bdfsEs+gWebTDU5o4GDLdD6k0YDkyCbDa4PaXsqx93f4ap2Ijv0ZRQ4e/mUeXPBsi2HF2FVoTxaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209531; c=relaxed/simple;
-	bh=sOuh+/3C2BDX2PtBbL2DHWaBCqtyD3fg5lisiZclUPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AiiX73RrskobV37kJkbhaEKHCFrOIKyDoAjIOD7p/1A4gFXtL1g2dJkKB6Afc3jbL3bZASiZL+jDHoh6WbihdBKBOhqOxOmlrcR2HLN7Li48cGAKXKErD+fsl4Fn7PU7QEHm8PB9yo24zclMWf0iva5fVkVgJ++bQjX4HjK5KJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89847C4CEE7;
-	Thu, 18 Sep 2025 15:32:08 +0000 (UTC)
-Date: Thu, 18 Sep 2025 16:32:06 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: will@kernel.org, ryan.roberts@arm.com, akpm@linux-foundation.org,
-	david@redhat.com, lorenzo.stoakes@oracle.com, ardb@kernel.org,
-	dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v8 5/5] arm64: kprobes: call set_memory_rox() for kprobe
- page
-Message-ID: <aMwl9mujvFknSulA@arm.com>
-References: <20250917190323.3828347-1-yang@os.amperecomputing.com>
- <20250917190323.3828347-6-yang@os.amperecomputing.com>
- <aMv_nhEuCSHKp5J6@arm.com>
- <22732cbe-20f8-4d1e-b086-e34d0f9bbb35@os.amperecomputing.com>
+	s=arc-20240116; t=1758209496; c=relaxed/simple;
+	bh=QZCy1OJjqBJh0gFIG7MWM+0jYLNNxOxd2PqQq5mo5Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PnMScQxMII1i3+DAU1yEd0Zax+66YwGRoljzWM49Yw37sDMZD1aOBYX4T9O7hL4C+0LBhLJZ8dU2VETwrYz/+Fbp+TY9xR2Oj5N+jClZZsIMR+KW4i/vRKjXdCubPJmgHnMFzSAAM7r2wbA26ZOskSgjArNBzf0RBG60op8DMng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 90BC213A0CD;
+	Thu, 18 Sep 2025 15:31:31 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 26ACE20016;
+	Thu, 18 Sep 2025 15:31:26 +0000 (UTC)
+Date: Thu, 18 Sep 2025 11:32:34 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Fuyu Zhao <zhaofuyu@vivo.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Song Liu <song@kernel.org>,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, yonghong.song@linux.dev, haoluo@google.com,
+ eddyz87@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, shuah@kernel.org,
+ willemb@google.com, kerneljasonxing@gmail.com, paul.chaignon@gmail.com,
+ chen.dylane@linux.dev, memxor@gmail.com, martin.kelly@crowdstrike.com,
+ ameryhung@gmail.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ yikai.lin@vivo.com
+Subject: Re: [RFC PATCH bpf-next v1 0/3] bpf: Add BPF program type for
+ overriding tracepoint probes
+Message-ID: <20250918113234.3f9e556a@gandalf.local.home>
+In-Reply-To: <9cb5b3d5-97bb-4165-9a84-394d3d45a20e@vivo.com>
+References: <20250917072242.674528-1-zhaofuyu@vivo.com>
+	<CAPhsuW47BVGsszGU=27gKa1XOYLH+de1FgrHPVL4mftB2CvX9g@mail.gmail.com>
+	<b23ef4e0-afa1-4d94-b4aa-28c02c3499c6@vivo.com>
+	<aMvHE-iW5eAwf4km@krava>
+	<9cb5b3d5-97bb-4165-9a84-394d3d45a20e@vivo.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22732cbe-20f8-4d1e-b086-e34d0f9bbb35@os.amperecomputing.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: xexywcpfgjs6zafak66u594a4iimzte3
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 26ACE20016
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/5VKD1WZaH+qlJjD8FFIkR8XM8YVm/Fvc=
+X-HE-Tag: 1758209485-346587
+X-HE-Meta: U2FsdGVkX1/j1e4fDuVmFwYkOTLvvV2NOP6rFhn6Fkk6YvTNGBQsKDcC8yTW9CMKh9nnzfqWO430S3SN+A1gNHnPGJbdafl1IgHkggXCdvGXv3cV4YAjThA8kjwC/6+Ta1tMmod474GzfgIzXP2sGMDt4FTW704Q1mC7O6aRUK2aOt0h9KPmkcWRcOghUTCdRyhfAndY2VCWXPVZ5GvCtSubejUa1vn64VQ2rb+BHZXYqoLTJ7QLwzJdssI8sEbZpBmk9X92AzVZK8w/nOoNGIZy9XxvXLkd4i2r2qlcUbpZKsOUkpqsxz1YsvF0CdyPc/7DSIVfOImbMgwZUwVtBXaS3KBmlrnP
 
-On Thu, Sep 18, 2025 at 08:05:55AM -0700, Yang Shi wrote:
-> On 9/18/25 5:48 AM, Catalin Marinas wrote:
-> > On Wed, Sep 17, 2025 at 12:02:11PM -0700, Yang Shi wrote:
-> > > +	page = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
-> > > +	if (!page)
-> > > +		return NULL;
-> > > +	set_memory_rox((unsigned long)page, 1);
-> > It's unfortunate that we change the attributes of the ROX vmap first to
-> > RO, then to back to ROX so that we get the linear map changed. Maybe
-> > factor out some of the code in change_memory_common() to only change the
-> > linear map.
-> 
-> I want to make sure I understand you correctly, you meant set_memory_rox()
-> should do:
-> 
-> change linear map to RO (call a new helper, for example,
-> set_direct_map_ro())
-> change vmap to ROX (call change_memory_common())
+On Thu, 18 Sep 2025 21:15:57 +0800
+Fuyu Zhao <zhaofuyu@vivo.com> wrote:
 
-set_memory_rox() is correct. What I meant is that in alloc_insn_page(),
-execmem_alloc() already returns RX memory. Calling set_memory_rox() does
-indeed change the linear map to RO but it also changes the vmap memory
-to RO and then to RX. There's no need for the alloc_insn_page() to do
-this but we shouldn't change set_memory_rox() for this, the latter is
-correct. I was thinking of alloc_insn_page() calling a new function that
-only changes the linear map.
+> As for the reason not to unregister and register a new callback:
+> callbacks registered directly inside the kernel cannot be unregistered from
+> user space. From user space, we can only attach additional callbacks
+> with BPF programs, but can not remove or replace the ones already
+> registered in the kernel. Therefore, an override mechanism is needed.
 
-> And I think we should have the cleanup patch separate from this bug fix
-> patch because the bug fix patch should be applied to -stable release too.
-> Keeping it simpler makes the backport easier.
+The fact that user space cannot unregister or override the current
+callbacks, to me is a feature and not a bug.
 
-Yes, for now you can leave it as is, that's not a critical path.
-
-> Shall I squash the cleanup patch into patch #1?
-
-No, I'd leave it as a separate fix, especially if we want to backport
-it.
-
-Anyway, for now, with the nitpick on the address variable name:
-
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+-- Steve
 
