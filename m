@@ -1,332 +1,230 @@
-Return-Path: <linux-kernel+bounces-822040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4DEB82EB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:57:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE2BB82EC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F9F93BA6D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:57:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376E6464331
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A492750E3;
-	Thu, 18 Sep 2025 04:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F08274B3C;
+	Thu, 18 Sep 2025 05:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQ9NBvNz"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ln/LCSps"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCD6259CAB
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C942749DC
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758171439; cv=none; b=MzZGkoeuEiBiyv/YQTOhL6GF1qP7zOh8h/kyiBqCy9PNVigziGTl32fMTZj85tRgmQBX12pwYns1/0wfHb/lh02vpqrN/0WmygOjVqj9fcAVMQ3N0epVupCkCMO103vbIpTF6IDh35IUdjNTT4dOgD9HZYjj9d2Mx6ZL9uO235g=
+	t=1758171613; cv=none; b=cZNZy17PMldqna2uwKDIB6P2HqAIDZYkgV5y5IwCk4y84MeVlg8xpDMRrSIb3Fe2BoSFLmtJbWewH188J+loVBgYl5I25C4l76JEQz8BtD/OS9Q1dzi8CMHqmHqff7BVzurJL9iSFPVg9xV8YL7uwGkLM8G+6fXQNPXsuUGi21A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758171439; c=relaxed/simple;
-	bh=lkgMkw6Ydhe03adnRNAoBFKTwIQAJm/t0sG+KGJwiIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tzkdh8eAvFQJHmLK6kFBNF8jGdZ27WEg6iC6hIzE/oASFrmVL/P7/wSmCMcijiD+lN6TwIy+MxHQKfwnFZ62LvQCHYPzW5MI+aLBlGsD47QI9AvB3ZsAVDxXbyPcq2Tx2vX+Mjsucy3jIaOACyB1QbblXwGTNCLIwVLAKWB+Bqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQ9NBvNz; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24cde6c65d1so4923495ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758171435; x=1758776235; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WGymaOnCc4o9eO/QJxcY/8uIl/0McYtbmQsOfMiDvkQ=;
-        b=lQ9NBvNzNgd1jRsKWzn5mlDa/s5sf41Uymscr5CNYTNjMtabZVUGOG81RtUrwSvHw6
-         9j6waqZIsmUOIFM3UMVPiNknNlkxBeU2v2OWHWumk/QyRsTDuSV2vFA3f+AEs5PR7S5m
-         yHvdlkMhqK0NGYklwuUVtEbdWUmErWUSiskRRi6RFN68pWhQRcdTJssr6Ylh5AsmygRG
-         7tItkMVc2ab2orSefa+mrBZxv9mpFS1cBkstCndUeexqUsBjpXqsWlc91UxMYnY5b3g9
-         wyQNcnncrR3Z5RHJ70r1j9Y96nTBElrQfdBXS1YmXkOD5RX+xBZfhwXQmsAFl8unmvpS
-         U57g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758171435; x=1758776235;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WGymaOnCc4o9eO/QJxcY/8uIl/0McYtbmQsOfMiDvkQ=;
-        b=Z79XM9sxMQaXLG9U7O6If2Sq7XIQX93K6QzxzqspsnLYlx+EgNilMlkQDRFE7oTP91
-         9veQGvh4ip4NnUBCCN3A8SlnFF/cs97W8/QmMCoE99N440nseX4m+Gb8DY3PIgdhfiXo
-         e+WOiUBFqap+j/gWcT5fexkNOuIKTAhznp8ab+DpkPGw9Wh1x3JkFhBl5PkvDOR4Kewx
-         vNOPKPix83JvTg1vRvwRkcnyfKSrsdvWK3hodI59wbTS9GRq2w3qxV3z+kdHHt8/h95D
-         4GWoPEZYehvEAHKFI6bpdvRfeuOvBHlEeWa9uzn3SpvMp5oZlRLZEm/iX2JOR8wqnF/P
-         0eSw==
-X-Forwarded-Encrypted: i=1; AJvYcCULDMeY5tJEdZ4KOPr59LEaxhL+PbUcRKpCgterWHv7KSWKE+w2eJFS5LtpErmy2xXsC2piYCNrhNOXzSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFQx+pd99fpmcXUY5nSlxrgeEZ575Nt+ZQc/HDYYnYyAiyV/Kx
-	46GJNkqh4MP+etIQCTuFf7TsiGaznShB2jt+lbAG0hBtqAXUQjq0qVN8
-X-Gm-Gg: ASbGncv6DdEMhOTu3VY9f1UWuKNIrqzLJUdYxd7+mw9e3PuuA0KmJw22XZaXXuX84N2
-	7FRCsR/z4D9tesOS7UMlv9hqdNAZ/ZoW1FzGh9vtHZlZpN2c9ovRG+1izk+DPyBSBU13lKoP02m
-	XbrnYDxQ8tGmFiWurOG2HtD0OWrTco6IJH/SOFaPcnV2VJl0BlN1tgqXZ/OiWEnpfj7Mq8MmSVR
-	8B7q4r612Jb7vp8kd+dClF60BWpfog3oftyOBejQruGNHBt+TU2KCUhGLsXrH9ov8VwqkzHElWp
-	tCrjesyljlWE61M4g4qii9Ucqi3gB6DeQnRbVCeQCxIfmcm4sQkzdq4ab40gmRJWpKKgIzj4aSh
-	U8nSSMAew1yyFjae8q4uZsD/wShICX4MAHZLtj+B3Pzhwcf8ekQfH
-X-Google-Smtp-Source: AGHT+IF+Aq/tQGZ2xe55EOY/2o43Lc1MLCWnLjxi4HUvMhJ5KCylwUxEphTLkETS8bUOBSE9459K6w==
-X-Received: by 2002:a17:903:2312:b0:269:603f:41e2 with SMTP id d9443c01a7336-269603f4366mr45706565ad.21.1758171434394;
-        Wed, 17 Sep 2025 21:57:14 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:194b:8358:5c91:3d3d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016c081sm12493815ad.41.2025.09.17.21.57.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 21:57:14 -0700 (PDT)
-Date: Wed, 17 Sep 2025 21:57:11 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Vishnu Sankar <vishnuocv@gmail.com>
-Cc: hmh@hmh.eng.br, hansg@kernel.org, ilpo.jarvinen@linux.intel.com, 
-	derekjohn.clark@gmail.com, mpearson-lenovo@squebb.ca, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
-	platform-driver-x86@vger.kernel.org, vsankar@lenovo.com
-Subject: Re: [PATCH v3 1/3] input: mouse: trackpoint: Add doubletap
- enable/disable support
-Message-ID: <cr7jgtztf65balwxu6cpu6hqzzzluitrwu2f66o75kcip5k2zd@sxixvhotead5>
-References: <20250901135308.52340-1-vishnuocv@gmail.com>
+	s=arc-20240116; t=1758171613; c=relaxed/simple;
+	bh=NTRmcvXYWhctOV0qfIKNsbT/aCX4Xyo8YmGWgJa+rwI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=fG4ROIE6KI/EQ8dH9pLcydQIvnPRPJcQDtyxbnN7p7wJUDMwOeiByYJRgiAyj2EXVpN7QKFPmIT0CVANGNBwLXX7r0zZIJxLDE9O4Zi/LKOajHvy/8xbaXP21XQEPTnx/AC4Efd2R4KHbfF+VB+Ecg4l28BLCpbmoOLKZp38T6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ln/LCSps; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758171599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m/FjkSkLDSAX/k9/Gbj65Yvrj1MFYxv5iP6Le03/bMs=;
+	b=ln/LCSps8zLes3RmwkHzk3oLNtxgjosb7VfkXI2BR81smuUi/YNKFfLgMSO+cU1tjls5cT
+	G3RxjUzqC6vWEtfh25Syvy4Er+aiyCBV5LUydHP+2wf14DRzb+s7Av/LecWkaJP8PcrZug
+	BGCFC5hDBozOPrQETibLsCKxaT/oUKE=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901135308.52340-1-vishnuocv@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] PMCR_EL0.N is RAZ/WI. At least a build failes in Ubuntu
+ 22.04 LTS. Remove the set function.
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Itaru Kitayama <itaru.kitayama@linux.dev>
+In-Reply-To: <86ms6s2a2e.wl-maz@kernel.org>
+Date: Thu, 18 Sep 2025 13:59:36 +0900
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+ Joey Gouly <joey.gouly@arm.com>,
+ K Poulose Suzuki <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Itaru Kitayama <itaru.kitayama@fujitsu.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5C133488-95DD-4B1E-98C9-A9B13B6AF8F2@linux.dev>
+References: <867by4c4v1.wl-maz@kernel.org>
+ <3FEB4D87-EEAF-4A21-BCBC-291A4A7C2230@gmail.com>
+ <86348rdg5o.wl-maz@kernel.org>
+ <0524084A-9E82-408A-9F22-369ED25E42E9@linux.dev>
+ <86ms6s2a2e.wl-maz@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Vishnu,
 
-On Mon, Sep 01, 2025 at 10:53:05PM +0900, Vishnu Sankar wrote:
-> Add support for enabling and disabling doubletap on TrackPoint devices
-> that support this functionality. The feature is detected using firmware
-> ID and exposed via sysfs as `doubletap_enabled`.
-> 
-> The feature is only available on newer ThinkPads (2023 and later).The driver
-> exposes this capability via a new sysfs attribute:
-> "/sys/bus/serio/devices/seriox/doubletap_enabled".
-> 
-> The attribute is only created if the device is detected to be capable of
-> doubletap via firmware and variant ID checks. This functionality will be
-> used by platform drivers such as thinkpad_acpi to expose and control doubletap
-> via user interfaces.
-> 
-> Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
-> Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> Changes in v2:
-> - Improve commit messages
-> - Sysfs attributes moved to trackpoint.c
-> - Removed unnecessary comments
-> - Removed unnecessary debug messages
-> - Using strstarts() instead of strcmp()
-> - is_trackpoint_dt_capable() modified
-> - Removed _BIT suffix and used BIT() define.
-> - Reverse the trackpoint_doubletap_status() logic to return error first.
-> - Removed export functions as a result of the design change
-> - Changed trackpoint_dev->psmouse to parent_psmouse
-> - The path of trackpoint.h is not changed.
-> Changes in v3:
-> - No changes.
-> ---
->  drivers/input/mouse/trackpoint.c | 149 +++++++++++++++++++++++++++++++
->  drivers/input/mouse/trackpoint.h |  15 ++++
->  2 files changed, 164 insertions(+)
-> 
-> diff --git a/drivers/input/mouse/trackpoint.c b/drivers/input/mouse/trackpoint.c
-> index 5f6643b69a2c..c6f17b0dec3a 100644
-> --- a/drivers/input/mouse/trackpoint.c
-> +++ b/drivers/input/mouse/trackpoint.c
-> @@ -16,6 +16,8 @@
->  #include "psmouse.h"
->  #include "trackpoint.h"
->  
-> +static struct trackpoint_data *trackpoint_dev;
 
-Please do not use globals.
+> On Sep 18, 2025, at 3:44, Marc Zyngier <maz@kernel.org> wrote:
+>=20
+> On Mon, 15 Sep 2025 22:31:31 +0100,
+> Itaru Kitayama <itaru.kitayama@linux.dev> wrote:
+>>=20
+>>=20
+>>=20
+>>> On Sep 12, 2025, at 21:11, Marc Zyngier <maz@kernel.org> wrote:
+>>>=20
+>>> On Fri, 12 Sep 2025 12:33:39 +0100,
+>>> Itaru Kitayama <itaru.kitayama@gmail.com> wrote:
+>>>>=20
+>>>>=20
+>>>>=20
+>>>>> On Sep 12, 2025, at 20:01, Marc Zyngier <maz@kernel.org> wrote:
+>>>>>=20
+>>>>> =EF=BB=BFOn Fri, 12 Sep 2025 09:27:40 +0100,
+>>>>> Itaru Kitayama <itaru.kitayama@linux.dev> wrote:
+>>>>>>=20
+>>>>>> Signed-off-by: Itaru Kitayama <itaru.kitayama@fujitsu.com>
+>>>>>=20
+>>>>> This isn't an acceptable commit message.
+>>>>>=20
+>>>>>> ---
+>>>>>> Seen a build failure with old Ubuntu 22.04 LTS, while the latest =
+release
+>>>>>> has no build issue, a write to the bit fields is RAZ/WI, remove =
+the
+>>>>>> function.
+>>>>>> ---
+>>>>>> tools/testing/selftests/kvm/arm64/vpmu_counter_access.c | 6 =
+------
+>>>>>> 1 file changed, 6 deletions(-)
+>>>>>>=20
+>>>>>> diff --git =
+a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c =
+b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>>>>>> index =
+f16b3b27e32ed7ca57481f27d689d47783aa0345..56214a4430be90b3e1d840f2719b22dd=
+44f0b49b 100644
+>>>>>> --- a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>>>>>> +++ b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>>>>>> @@ -45,11 +45,6 @@ static uint64_t get_pmcr_n(uint64_t pmcr)
+>>>>>>  return FIELD_GET(ARMV8_PMU_PMCR_N, pmcr);
+>>>>>> }
+>>>>>>=20
+>>>>>> -static void set_pmcr_n(uint64_t *pmcr, uint64_t pmcr_n)
+>>>>>> -{
+>>>>>> -    u64p_replace_bits((__u64 *) pmcr, pmcr_n, ARMV8_PMU_PMCR_N);
+>>>>>> -}
+>>>>>> -
+>>>>>> static uint64_t get_counters_mask(uint64_t n)
+>>>>>> {
+>>>>>>  uint64_t mask =3D BIT(ARMV8_PMU_CYCLE_IDX);
+>>>>>> @@ -490,7 +485,6 @@ static void =
+test_create_vpmu_vm_with_pmcr_n(uint64_t pmcr_n, bool expect_fail)
+>>>>>>   * Setting a larger value of PMCR.N should not modify the field, =
+and
+>>>>>>   * return a success.
+>>>>>>   */
+>>>>>> -    set_pmcr_n(&pmcr, pmcr_n);
+>>>>>>  vcpu_set_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0), pmcr);
+>>>>>>  pmcr =3D vcpu_get_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0));
+>>>>>>=20
+>>>>>>=20
+>>>>>=20
+>>>>> So what are you fixing here? A build failure? A semantic defect?
+>>>>> Something else? What makes this a valid change?
+>>>>>=20
+>>>>> Frankly, I have no idea.
+>>>>>=20
+>>>>> But KVM definitely allows PMCR_EL0.N to be written from userspace, =
+and
+>>>>> that's not going to change.
+>>>>>=20
+>>>>=20
+>>>> Then I=E2=80=99ll drop this patch.
+>>>=20
+>>> I'm not asking you to drop it, I'm asking you to explain. If you =
+found
+>>> a problem, let's discuss it and fix it. But as it stands, you're not
+>>> giving me much to go on.
+>>>=20
+>>=20
+>> You are right, while the bit fields are write ignored, to be
+>> consistent with the handling of other bit fields of the register,
+>> I=E2=80=99m fully convinced that checking the write operation in the
+>> vpmu_counter_access.c file should be kept.
+>=20
+> The bit field is *not* ignored when written from userspace. That's how
+> we configure the PMU if the guest runs at EL1.
+>=20
+>> The build error I=E2=80=99ve seen with Ubuntu 22.04 LTS is below:
+>=20
+> [snip]
+>=20
+> Can you please detail what compiler version this is? I'm unlikely to
+> install an ancient version of Ubuntu, but I can pick the corresponding
+> compiler version.
+>=20
 
-> +
->  static const char * const trackpoint_variants[] = {
->  	[TP_VARIANT_IBM]		= "IBM",
->  	[TP_VARIANT_ALPS]		= "ALPS",
-> @@ -63,6 +65,21 @@ static int trackpoint_write(struct ps2dev *ps2dev, u8 loc, u8 val)
->  	return ps2_command(ps2dev, param, MAKE_PS2_CMD(3, 0, TP_COMMAND));
->  }
->  
-> +/* Read function for TrackPoint extended registers */
-> +static int trackpoint_extended_read(struct ps2dev *ps2dev, u8 loc, u8 *val)
-> +{
-> +	u8 ext_param[2] = {TP_READ_MEM, loc};
-> +	int error;
-> +
-> +	error = ps2_command(ps2dev,
-> +			    ext_param, MAKE_PS2_CMD(2, 1, TP_COMMAND));
-> +
-> +	if (!error)
-> +		*val = ext_param[0];
-> +
-> +	return error;
-> +}
-> +
->  static int trackpoint_toggle_bit(struct ps2dev *ps2dev, u8 loc, u8 mask)
->  {
->  	u8 param[3] = { TP_TOGGLE, loc, mask };
-> @@ -393,6 +410,131 @@ static int trackpoint_reconnect(struct psmouse *psmouse)
->  	return 0;
->  }
->  
-> +/* List of known incapable device PNP IDs */
-> +static const char * const dt_incompatible_devices[] = {
-> +	"LEN0304",
-> +	"LEN0306",
-> +	"LEN0317",
-> +	"LEN031A",
-> +	"LEN031B",
-> +	"LEN031C",
-> +	"LEN031D",
-> +};
-> +
-> +/*
-> + * checks if it’s a doubletap capable device
-> + * The PNP ID format eg: is "PNP: LEN030d PNP0f13".
-> + */
-> +static bool is_trackpoint_dt_capable(const char *pnp_id)
-> +{
-> +	const char *id_start;
-> +	char id[8];
-> +
-> +	if (!strstarts(pnp_id, "PNP: LEN03"))
-> +		return false;
-> +
-> +	/* Points to "LEN03xxxx" */
-> +	id_start = pnp_id + 5;
-> +	if (sscanf(id_start, "%7s", id) != 1)
-> +		return false;
-> +
-> +	/* Check if it's blacklisted */
-> +	for (size_t i = 0; i < ARRAY_SIZE(dt_incompatible_devices); ++i) {
-> +		if (strcmp(id, dt_incompatible_devices[i]) == 0)
-> +			return false;
-> +	}
-> +	return true;
-> +}
-> +
-> +/* Trackpoint doubletap status function */
-> +static int trackpoint_doubletap_status(bool *status)
-> +{
-> +	struct trackpoint_data *tp = trackpoint_dev;
-> +	struct ps2dev *ps2dev = &tp->parent_psmouse->ps2dev;
-> +	u8 reg_val;
-> +	int rc;
-> +
-> +	/* Reading the Doubletap register using extended read */
-> +	rc = trackpoint_extended_read(ps2dev, TP_DOUBLETAP, &reg_val);
-> +	if (rc)
-> +		return rc;
-> +
-> +	*status = reg_val & TP_DOUBLETAP_STATUS ? true : false;
-> +
-> +	return 0;
-> +}
-> +
-> +/* Trackpoint doubletap enable/disable function */
-> +static int trackpoint_set_doubletap(bool enable)
-> +{
-> +	struct trackpoint_data *tp = trackpoint_dev;
-> +	struct ps2dev *ps2dev = &tp->parent_psmouse->ps2dev;
-> +	static u8 doubletap_state;
-> +	u8 new_val;
-> +
-> +	if (!tp)
-> +		return -ENODEV;
-> +
-> +	new_val = enable ? TP_DOUBLETAP_ENABLE : TP_DOUBLETAP_DISABLE;
-> +
-> +	if (doubletap_state == new_val)
-> +		return 0;
-> +
-> +	doubletap_state = new_val;
-> +
-> +	return trackpoint_write(ps2dev, TP_DOUBLETAP, new_val);
-> +}
-> +
-> +/*
-> + * Trackpoint Doubletap Interface
-> + * Control/Monitoring of Trackpoint Doubletap from:
-> + * /sys/bus/serio/devices/seriox/doubletap_enabled
-> + */
-> +static ssize_t doubletap_enabled_show(struct device *dev,
-> +				struct device_attribute *attr, char *buf)
-> +{
-> +	struct serio *serio = to_serio_port(dev);
-> +	struct psmouse *psmouse = psmouse_from_serio(serio);
-> +	struct trackpoint_data *tp = psmouse->private;
-> +	bool status;
-> +	int rc;
-> +
-> +	if (!tp || !tp->doubletap_capable)
-> +		return -ENODEV;
-> +
-> +	rc = trackpoint_doubletap_status(&status);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return sysfs_emit(buf, "%d\n", status ? 1 : 0);
-> +}
-> +
-> +static ssize_t doubletap_enabled_store(struct device *dev,
-> +					struct device_attribute *attr,
-> +					const char *buf, size_t count)
-> +{
-> +	struct serio *serio = to_serio_port(dev);
-> +	struct psmouse *psmouse = psmouse_from_serio(serio);
-> +	struct trackpoint_data *tp = psmouse->private;
-> +	bool enable;
-> +	int err;
-> +
-> +	if (!tp || !tp->doubletap_capable)
-> +		return -ENODEV;
-> +
-> +	err = kstrtobool(buf, &enable);
-> +	if (err)
-> +		return err;
-> +
-> +	err = trackpoint_set_doubletap(enable);
-> +	if (err)
-> +		return err;
-> +
-> +	return count;
-> +}
-> +
-> +static DEVICE_ATTR_RW(doubletap_enabled);
-> +
->  int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
->  {
->  	struct ps2dev *ps2dev = &psmouse->ps2dev;
-> @@ -425,6 +567,9 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
->  	psmouse->reconnect = trackpoint_reconnect;
->  	psmouse->disconnect = trackpoint_disconnect;
->  
-> +	trackpoint_dev = psmouse->private;
-> +	trackpoint_dev->parent_psmouse = psmouse;
-> +
->  	if (variant_id != TP_VARIANT_IBM) {
->  		/* Newer variants do not support extended button query. */
->  		button_info = 0x33;
-> @@ -470,6 +615,10 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
->  		     psmouse->vendor, firmware_id,
->  		     (button_info & 0xf0) >> 4, button_info & 0x0f);
->  
-> +	tp->doubletap_capable = is_trackpoint_dt_capable(ps2dev->serio->firmware_id);
-> +	if (tp->doubletap_capable)
-> +		device_create_file(&psmouse->ps2dev.serio->dev, &dev_attr_doubletap_enabled);
+Sure, here it is:
 
-Please use existing facilities in psmouse driver to define and register
-protocol-specific attributes. Use is_visible() to control whether the
-attribute is accessible or not.
+[itaru@vm4 ~]$ apt-cache show gcc
+Package: gcc
+Architecture: arm64
+Version: 4:11.2.0-1ubuntu1
+Priority: optional
+Section: devel
+Source: gcc-defaults (1.193ubuntu1)
+Origin: Ubuntu
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian GCC Maintainers =
+<debian-gcc@lists.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Installed-Size: 50
+Provides: c-compiler, gcc-aarch64-linux-gnu (=3D 4:11.2.0-1ubuntu1)
+Depends: cpp (=3D 4:11.2.0-1ubuntu1), gcc-11 (>=3D 11.2.0-1~)
+Recommends: libc6-dev | libc-dev
+Suggests: gcc-multilib, make, manpages-dev, autoconf, automake, libtool, =
+flex, bison, gdb, gcc-doc
+Conflicts: gcc-doc (<< 1:2.95.3)
+Filename: pool/main/g/gcc-defaults/gcc_11.2.0-1ubuntu1_arm64.deb
+Size: 5128
+MD5sum: 2ec2c9fcec3deb45052f307f85f37f7f
+SHA1: 19491fe4fb89a6cbd389f573bf3abf46e841f3d6
+SHA256: 426deed543cc32f388ad8336354e312fb76a47450194d2d775d855ad5878f82e
+SHA512: =
+c7e16c35037b0987458bf51a341045cdc1ac8da5bada4eb1c43922a83c5e18203beca8df99=
+37b95de6c4185605f6e9054c92858d2842de0f6859cd21c0b33f01
+Description-en: GNU C compiler
+ This is the GNU C compiler, a fairly portable optimizing compiler for =
+C.
+ .
+ This is a dependency package providing the default GNU C compiler.
+Description-md5: c7efd71c7c651a9ac8b2adf36b137790
+Task: ubuntustudio-video, ubuntustudio-publishing, ubuntu-mate-core, =
+ubuntu-mate-desktop
+Build-Essential: yes
 
-Thanks.
+Thanks,
+Itaru.
 
--- 
-Dmitry
+> M.
+>=20
+> --=20
+> Without deviation from the norm, progress is not possible.
+
+
 
