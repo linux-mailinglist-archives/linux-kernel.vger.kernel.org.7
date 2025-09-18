@@ -1,76 +1,150 @@
-Return-Path: <linux-kernel+bounces-823234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7223B85D32
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:58:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB63B85DEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B2837B7328
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6DB92A4D36
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE75313D4B;
-	Thu, 18 Sep 2025 15:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A287225D6;
+	Thu, 18 Sep 2025 15:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="NB543TVh"
-Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="phDbi24B"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5912F83B4
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A131D314B8F;
+	Thu, 18 Sep 2025 15:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758211043; cv=none; b=Pt8G9ZVdPpBh6Vs8xgF3s7QA9ERHzJTb7uOeMmr5/jc4SE0zUjb2xNYmXijXaPQDIZPcLjztp+yD0kA57nAu0ygLV/AwDpyg+NteYxHs2UqEL7B26xqhjoOnTDFR57yl7VaObWg6kTQtV38lXN0yIwv7JG7+JFw078N5E+2ARx0=
+	t=1758211048; cv=none; b=IpyQvL5sRuK5r/vnwulU/uD4uCHoiX4jvpwXmUmGOTT5ztS4KBWrYyKKj1SKILFCgehoFERXIr7spXJ+iaDpE6ZhGglYVO9MSMWiOrYTcb8uIC1teAYdf9sn11RkMfYeE8jhRUgDySagR5BRvfTmRq0aTJCst9nH1dcY7Pn8kck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758211043; c=relaxed/simple;
-	bh=zA6/OnTfTyUR4ReMbBgbAS7Aeu9Shy3hTUxFOIVTxpw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PyS/BJa+poDs8nvqXEVeUofJHZG6j/Nz2ZdwRiB7UWLDTzmg4INYlRM2BcnvQXwp+XcIMvia7idA0gaKc0vABOyzm1ILDdVeTuAH+rHo4JbTA5amAUdUf9yPqkl8xkup6KSRwfSax6yQaCJGnC6J2NORs8Ywq85t1EOtq2mQHWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=NB543TVh; arc=none smtp.client-ip=185.70.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1758211040; x=1758470240;
-	bh=zA6/OnTfTyUR4ReMbBgbAS7Aeu9Shy3hTUxFOIVTxpw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=NB543TVhzB6EFCSkGtashONtbosi4Z00OvwULl8ovAseHr7H4D/WMtCVeEHVwK7qR
-	 wCA4OaOdaKObASbqnNxK3rq2VNAJWsQBuorAn65LXrJJQ5Nk4xYonqrMloxfwuPkCG
-	 07Pv3srXl8B4YdRqAYtVicr/R9CkqPOgSpLsB+8+7UqKT5x+PTVslh9BgDbAhZyAit
-	 a9tfkQkBPK/bHtOsmgwEDVHxpjP4bPbIhynAi5hJ2wsumna23s6fL39kgllEVo/XXU
-	 giPN2g8OVIQLf0a27rfkp5DuNwsKJ9F8AxWCnW/ozbd42tSBvg2IpwpThmo65YYR3Z
-	 MhjL7fmECQHGQ==
-Date: Thu, 18 Sep 2025 15:57:15 +0000
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-From: ManeraKai <manerakai@protonmail.com>
-Cc: "aliceryhl@google.com" <aliceryhl@google.com>, "arnd@arndb.de" <arnd@arndb.de>, "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] rust: miscdevice: Implemented `read` and `write`
-Message-ID: <5cf242fd-ded4-4aea-a5b7-9c856f75fdb6@protonmail.com>
-In-Reply-To: <2025091841-remindful-manned-a57f@gregkh>
-References: <20250918144356.28585-1-manerakai@protonmail.com> <20250918144356.28585-3-manerakai@protonmail.com> <2025091820-canine-tanning-3def@gregkh> <2025091841-remindful-manned-a57f@gregkh>
-Feedback-ID: 38045798:user:proton
-X-Pm-Message-ID: df1acba63728c7bb4ec2049c7df8555582ead7d6
+	s=arc-20240116; t=1758211048; c=relaxed/simple;
+	bh=7szmy2OW+pKdnxlLQgL5ZyztXZVlULEeY328f0dD5nM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MU31y+XAc6v6wsaowpgLQFVEW4VM8q07UBYXzxXB5C2mJeS8tQniNMsR3twW6RegNMJdQ/Q1wI8AKCAljtt5awPazND3b3BM4GLGLiNIo7v5bqr0cerTgxiy1QFUfVvX11GvgeIjCoPgxh6NT5qawks35D/WCJss9492AugoByM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=phDbi24B; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 47C94C003C9;
+	Thu, 18 Sep 2025 15:57:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C8AAF606A8;
+	Thu, 18 Sep 2025 15:57:24 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B467D102F1D0B;
+	Thu, 18 Sep 2025 17:57:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758211043; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=TxZksMSppeoI1kAjsorjjiU9ZV35lEO/QcgVtoJNdhk=;
+	b=phDbi24B+Am3HE81Qq/HYW6qFlByZ7uAfZgeuWMxFldWNrdNRyQ0Zz2upRDUHbSwCpqTuy
+	vBL5KxbtcXkaKq+rpt8meuUoefi3LQhDnd4/qdIbVQxdLgDPmur11ePGZGoRidCjg6ajLO
+	G7nac19LjQ+C7tZOR5spe+Vc51uSgaXvxrV/D6EDMJAAClWYlkJGtVeTX4/GhRg3IlDKJK
+	0xY6ixodMhtL36QoPnvxcrnRYnrp6t5EXuqLFYCI79znuQPsXAdAu6/2C37dT7O9CfZPUE
+	GEwhxeqCrUYtC8mAt6fjRj77g9PNxd8xmSUqOFGfIWLUCwxkemqhNI0UU2YS8w==
+Date: Thu, 18 Sep 2025 17:57:16 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
+ Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
+ Eberhard <pascal.eberhard@se.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+Message-ID: <20250918175716.6c3fd406@bootlin.com>
+In-Reply-To: <20250918-sterilize-malt-b0f182256617@spud>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
+	<20250918-sterilize-malt-b0f182256617@spud>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
- > What type of real misc driver do you want to write in rust that you
- > need a read/write callback and not just an ioctl one?
+Hi Conor,
 
-I don't have one in mind. I was reading your book and experimenting with=20
-char drivers. However, I found out that you prefer new developers to use=20
-misc instead:
-https://lore.kernel.org/rust-for-linux/2024101256-amplifier-joylessly-6ca9@=
-gregkh/
+On Thu, 18 Sep 2025 16:37:39 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-So, I wanted to safe-wrap misc for new Rust developers (me included).=20
-And go from there to write real drivers.
+> On Thu, Sep 18, 2025 at 12:39:58PM +0200, Herve Codina (Schneider Electric) wrote:
+> > Hi,
+> > 
+> > This series adds support for GPIO and GPIO IRQ mux available in the
+> > RZ/N1 SoCs.
+> > 
+> > The first patches in this series are related to a new helper introduced
+> > to parse an interrupt-map property.
+> >   - patch 1: Introduce the helper (for_each_of_imap_item)
+> >   - patch 2: Add a unittest for the new helper
+> >   - patch 3 and 4: convert existing drivers to use this new helper
+> > 
+> > Patch 4 will conflicts with commit 40c26230a1bf ("irqchip: Use int type
+> > to store negative error codes") available in linux-next.
+> > 
+> > Patch 5 adds support for GPIO (device-tree description)
+> > 
+> > The last patches (6, 7 and 8) of the series are related to GPIO
+> > interrupts and GPIO IRQ multiplexer.
+> > 
+> > In the RZ/N1 SoCs, GPIO interrupts are wired to a GPIO IRQ multiplexer.
+> > 
+> > This multiplexer does nothing but select 8 GPIO IRQ lines out of the 96
+> > available to wire them to the GIC input lines.
+> > 
+> > One upstreaming attempt have been done previously by Phil Edworthy [1]
+> > but the series has never been applied.
+> > 
+> > Based on my understanding, I have fully reworked the driver proposed by
+> > Phil and removed the IRQ domain. Indeed, the device doesn't handle
+> > interrupts. It just routes signals.
+> > 
+> > Also, as an interrupt-map property is used, the driver cannot be
+> > involved as an interrupt controller itself. It is a nexus node.
+> > 
+> > With that in mind,
+> >   - Patch 6 is related to the irq-mux binding.
+> > 
+> >   - Patch 7 introduces the irq-mux driver.
+> >     This driver uses the 'for_each_of_imap_item' helper introduced
+> >     previously. Indeed, the lines routing is defined by the
+> >     interrupt-map property and the driver needs to set registers to
+> >     apply this routing.
+> > 
+> >   - Patch 8 is the RZ/N1 device-tree description update to have the
+> >     support for the GPIO interrupts.
+> > 
+> > [1] https://lore.kernel.org/all/20190219155511.28507-1-phil.edworthy@renesas.com/
+> > 
+> > Best regards,
+> > Hervé  
+> 
+> This whole thing is super interesting to me. I have a gpio irq mux of my
+> own with a driver that is massively more complex than what you have here
+> (it's a full on irqchip driver). I'm definitely gonna have to see if I
+> can ape what you have done here and simplify what I have.
 
+Glad to see that this is giving some ideas!
+
+Best regards,
+Hervé
 
