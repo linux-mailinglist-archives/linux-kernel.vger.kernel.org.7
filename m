@@ -1,124 +1,85 @@
-Return-Path: <linux-kernel+bounces-823494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F275B86A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61EF0B86A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B9313B7B0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396CD1C878AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0EC2D29C4;
-	Thu, 18 Sep 2025 19:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FDB2D7814;
+	Thu, 18 Sep 2025 19:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MkL8S7Cb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAzz5vCz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BF92571BE;
-	Thu, 18 Sep 2025 19:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EE92571BE;
+	Thu, 18 Sep 2025 19:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758223089; cv=none; b=K/VgUBOyRqKDo8TRmyykQJxuwoQymAvcvPsfopjNch9cV8qR8rQ/MgER7hYs5r4U2/w0irrkNZTUcQiUlP6mkhvrCA3hcIjd39zJ47t537e5pR9P9AI6hbeb2gJdr3t3CMWysYKaLmjpv2yJVSALuFuN2U8WG6hkkWrrl0+P7Y4=
+	t=1758223099; cv=none; b=a7nn+PQucbWsQmQWa+lwOt0a57v3bsVVZ1UYA+OUci84dvmN/OfYkhK/Ajyn0dOzgdgQr3xHW/ZexXeEvf5v4LksXsuIQNFKfywYdaj30HV+0w+4XHkuH6kbQPacQgaMreiyhIQ7vr6DnJqLYZUw2v6ETPa5+Pa065kxx/8VbKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758223089; c=relaxed/simple;
-	bh=3kT4c/sD9alTJ2vJ5tBL3nY9kiB30T9WSIAU8ap2IFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1mjk+d28622WP8eu5faMpDod02RaR2N9dy01bXsXxK7W4ROm7e9Clr9Pug0+IunBL40q6IgKEFKbmzB5G/S7AFWRTOgVxzSsGKlGy4r8/nUtLTjNb3B3D/Ta89H8tZvSVJnCgwajw2wERsRDVs3+iVIdSU9tDQgI9zi6qxiqV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MkL8S7Cb; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758223087; x=1789759087;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3kT4c/sD9alTJ2vJ5tBL3nY9kiB30T9WSIAU8ap2IFo=;
-  b=MkL8S7CbFnfDCFu2JHC4beCT+25BkrbRrDuN2pCs3vv7s6WxuLEYxNyV
-   S2epHLfzQPLYFqX8PoHHlXYa9CmILiliNVWRpc4sSEIHDF0bBPaglHOob
-   DSkEf6AMpQNaMmALabqfRgfrKzFCq/50YiwdPBTWhhY9QddKIvB8O/wVO
-   aVDANMqhothpdbYF/wioZgHPDscJa8JPmT13VXR0IafN5/M8ASpsC4snz
-   MDu/tfEtFYZmxJDqNgJzjGYtnC3Ha9o/m3/v6oCbJajPj29aON7eNkeuP
-   4K0bhHYPGBQ47gHtTEllF597+XAGhWDCaHRjZ8wwMrS7RzQDIXumEnoZA
-   A==;
-X-CSE-ConnectionGUID: dzpmsl+LQLmUYGrHkSPoew==
-X-CSE-MsgGUID: ttU/52y8Qw+FevLXlJGMOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="71677837"
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="71677837"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 12:18:06 -0700
-X-CSE-ConnectionGUID: z4IH6bzYQ021h4VgeDsBXg==
-X-CSE-MsgGUID: ugXNOmAoQoajv0xQg7xISw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="176037873"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 12:18:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uzK8l-00000004Ass-3q1E;
-	Thu, 18 Sep 2025 22:17:59 +0300
-Date: Thu, 18 Sep 2025 22:17:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 3/4] regulator: Support the LTM8054 voltage regulator
-Message-ID: <aMxa5_LG3ADCjeHj@smile.fi.intel.com>
-References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
- <aMliRTuUDNPkeM8C@smile.fi.intel.com>
- <5205519.GXAFRqVoOG@fw-rgant>
- <12775482.O9o76ZdvQC@fw-rgant>
+	s=arc-20240116; t=1758223099; c=relaxed/simple;
+	bh=MUpffNQtTuMogr/Z0Ui88SDz5hy4fxKiznghbUNZqy4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OXmEwTswzkntU5CHcEUMJQULT2crmUO0499xHIBx3icvru/NrxQNBNveZOi6HujTyfY8VYjiLjLpQzffqZv+1I0t2rNCbHbHm2gh38KqF7Ay3Gm124og2R6dY+tqPaqF425xwwIUeErYldPsXVpaKUPi/VNsJnxQg1tfY1P0pqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAzz5vCz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F19C4CEE7;
+	Thu, 18 Sep 2025 19:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758223099;
+	bh=MUpffNQtTuMogr/Z0Ui88SDz5hy4fxKiznghbUNZqy4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lAzz5vCzn+2fe5ZhpKvi4G3vWsd5j9LSjYgh4ajOqVJZHJ360/AkSEHr0un0YwkgV
+	 2QjosqpmjgPauPghNP3QE0pBpijuUx0KrIgtG8Anns0O6fF/Iag0N6EwFK/0X3S4Y8
+	 lbBlQNgjY5y2+XkzaXhe+fP5CgNNlRSTm8MOd1VGLjRCouNzRhXxZelmCb4diq+hke
+	 nMCpCspQb5bR+cT0D5ilPryp4l6zGd4JuTsBb6BHYdbUlSnzi/pheWXD8lNNsmUGH8
+	 CS5eC+bQjXZwmHNLNSL9kqQgsoPChMfWcF+aj8m0kSZmEz+f3Drx6otOg4zZ6mqKkn
+	 HgnUKu2P78Tkg==
+From: Sven Peter <sven@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev,
+	j@jannau.net,
+	maz@kernel.org,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Cc: Sven Peter <sven@kernel.org>,
+	Neal Gompa <neal@gompa.dev>
+Subject: Re: [PATCH v2] MAINTAINERS: remove Alyssa Rosenzweig
+Date: Thu, 18 Sep 2025 21:18:14 +0200
+Message-Id: <175822308081.28767.18396895381445166904.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250908-kernel-retirement-v2-1-85c9d4d49f26@rosenzweig.io>
+References: <20250908-kernel-retirement-v2-1-85c9d4d49f26@rosenzweig.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12775482.O9o76ZdvQC@fw-rgant>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 18, 2025 at 11:31:50AM +0200, Romain Gantois wrote:
-> On Tuesday, 16 September 2025 16:17:56 CEST Romain Gantois wrote:
-> > On Tuesday, 16 September 2025 15:12:37 CEST Andy Shevchenko wrote:
-> > > On Tue, Sep 16, 2025 at 12:24:08PM +0200, Romain Gantois wrote:
-
-...
-
-> > > > +#include <linux/of.h>
-> > > 
-> > > I think we have already something agnostic in regulator API to get a
-> > > regulator from a firmware node (rather than from specific OF/etc one).
-> > 
-> > IIRC the "of_match" regulator descriptor property can be used for this, I'll
-> > have a second look and see if I can use that instead.
+On Mon, 08 Sep 2025 09:04:19 -0400, Alyssa Rosenzweig wrote:
+> I'm moving on to other projects [1] and no longer wish to be copied on
+> kernel patches. Remove my MAINTAINERS entries: both related to Apple
+> driver support. So long and thanks for all the fish.
 > 
-> Looks like I misread your comment sorry, the "of_match" property is pretty 
-> much irrelevant to using fwnode_* wrappers, and I didn't find any of those in 
-> the regulator subsystem. I'm missing a Kconfig dependency on "OF" though, I'll 
-> have to add that.
+> [1] https://rosenzweig.io/blog/asahi-gpu-part-n.html
+> 
+> 
+> [...]
 
-Why do we need to add that dependency? Yes, probably it won't function,
-but then it will decrease test coverage at compile time.
+Applied to git@github.com:AsahiLinux/linux.git (apple-soc/fixes-6.17), thanks!
 
+[1/1] MAINTAINERS: remove Alyssa Rosenzweig
+      https://github.com/AsahiLinux/linux/commit/07db1def8f0a
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Sven Peter <sven@kernel.org>
 
 
