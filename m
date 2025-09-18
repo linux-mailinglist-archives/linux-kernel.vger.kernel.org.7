@@ -1,207 +1,131 @@
-Return-Path: <linux-kernel+bounces-822397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BEAAB83C24
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:23:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACDDB83C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C353A4B1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0DF23AA551
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41782FF648;
-	Thu, 18 Sep 2025 09:23:40 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B51303A1E;
+	Thu, 18 Sep 2025 09:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqPEfk50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C82A2F9DB2
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B742FFDDB;
+	Thu, 18 Sep 2025 09:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758187420; cv=none; b=bPlUp4lOzxphsuyCU+1jj4Y3KDrul97UG7NnEytJIOCNmLazj31JjA5fm0Isf4eVyiMIiCmKRqws+mH4UoKXBxa3iS8zGXrnwegvtk1wkOVCtfsmWVKuYuvkiEkKhRGUB3kUoFHsLlsr1mHxY3KNbuE5BuTpYPjqPW9pv1e0gqc=
+	t=1758187475; cv=none; b=t7qEA3bahNBIFRbVffVLrgVWxKlDMRhe9VTANumRZ9ZOIW9CVJnvGMK4XyZrUuCJ1wLSq+YwJ8c1QK5Gjcb/AbrMdF6XfFfyAo3ITAwXvkULculkLOQeSdaga3uHCIK9tccXcoTJPylu9soY9UXuC7CvlG7QGHxK6grEfax6F2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758187420; c=relaxed/simple;
-	bh=nkO9Kl8XPHS7wZBNuU9uqvFUkKXv3uCXoQDj2IkZLIo=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=I4ULgPWammlk8P8Aq6dS2EPH5Paa31ppKDtekR6Ux2BhjaQs7s1CTYH/sEYbZK454Hg5HCyTGkEVklxkAHmJ7C2gte3DsmEQBdKhNQS2mMtJFrYGx93C+uZmkaqyhd0soGzW5obJI/j68qNpzG2fw/2T2szZtsAsmcVJiP6LekA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cS9764xnDzPtWM;
-	Thu, 18 Sep 2025 17:18:58 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id ABAAB1800B4;
-	Thu, 18 Sep 2025 17:23:34 +0800 (CST)
-Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 17:23:34 +0800
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 17:23:33 +0800
-Subject: Re: [PATCH v2] arch_topology: move parse_acpi_topology() to common
- code
-To: Yunhui Cui <cuiyunhui@bytedance.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <sudeep.holla@arm.com>, <gregkh@linuxfoundation.org>,
-	<rafael@kernel.org>, <dakr@kernel.org>, <beata.michalska@arm.com>,
-	<sumitg@nvidia.com>, <ptsm@linux.microsoft.com>, <yangyicong@hisilicon.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250918014828.78383-1-cuiyunhui@bytedance.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <0020389a-676c-74ab-b68f-cd0a44538980@huawei.com>
-Date: Thu, 18 Sep 2025 17:23:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1758187475; c=relaxed/simple;
+	bh=LGd4NE5xucIBmY8TEZN2nv2o/wj6Qe3DoMkc6uy1Dow=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cplvLqaQOynymCD1tKkSlSzBXCk3H1UeMWTkJ5L6oeXIbyhe0Wlutw/UrzsY/D2o3T2ksoPJj4cGaJJIRey76cOuSAsye8kfQqSXJ/O1eVX/doioIg1/ygElISHL7mfCxUUpKKH8abrVon8SQascw6SbyWORXEX4fwdwODIU5ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqPEfk50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1AD87C4CEE7;
+	Thu, 18 Sep 2025 09:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758187475;
+	bh=LGd4NE5xucIBmY8TEZN2nv2o/wj6Qe3DoMkc6uy1Dow=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=BqPEfk50DVBTf887LhVDzmEYLLhmkP6TMPB27PHynolPG4Y4Q2w+i+NG2zrZ650kh
+	 QK3cH/74bOfC3mymgnadBnCiFGAfRGORHEAxslQ+Q3rs6EtdvGdSCC7IalLn5VT+uZ
+	 kWX71tMTHGLQ2R3+MPQ97pxcEWwfCKdIVr7EjxKX8V8rMDkauF2kKtTlY+G/J+E8J7
+	 nIteoskJEFwRPa6D1kOUg2KnEYs3GidzPBfQF0c9/nPikiC6LnhbW5nZw+8SM5dSaF
+	 WIGvwF5zRIStTUfAZtB5MERxGG60NxO71L4DwAGAVL2ENYXqDPRB21Ue7iy/ONupV4
+	 z9LFm+whUlJ5Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DCECAC597;
+	Thu, 18 Sep 2025 09:24:35 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Subject: [PATCH v4 0/5] ALSA: usb-audio: add module param
+ device_quirk_flags
+Date: Thu, 18 Sep 2025 17:24:29 +0800
+Message-Id: <20250918-sound-v4-0-82cf8123d61c@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250918014828.78383-1-cuiyunhui@bytedance.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq200018.china.huawei.com (7.202.195.108)
+X-B4-Tracking: v=1; b=H4sIAM3Py2gC/23NQQ7CIBCF4as0rMXAtFrHlfcwLigMloXUQEs0T
+ e8ubWxiTJdvwvczskjBUWTnYmSBkouu83lUu4LpVvk7cWfyZiDgIFAKHrvBG65Q6tNRI5hGsfz
+ 2Gci619K53vJuXey78F6ySc7XtQDfQpJccK1RW4MWjJCXwee/e9LtXncPNlcSbErIUkhSpYEab
+ dVsyfJX1qsss0SghrCqQQn1L6dp+gB1mO8YEgEAAA==
+X-Change-ID: 20250910-sound-a91c86c92dba
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>, 
+ Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>, 
+ Sami Tolvanen <samitolvanen@google.com>
+Cc: linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, 
+ Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>, 
+ Feng Yuan <fengyuan@uniontech.com>, qaqland <anguoli@uniontech.com>, 
+ kernel@uniontech.com, linux-modules@vger.kernel.org, 
+ Cryolitia PukNgae <cryolitia@uniontech.com>, Takashi Iwai <tiwai@suse.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758187473; l=1700;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=LGd4NE5xucIBmY8TEZN2nv2o/wj6Qe3DoMkc6uy1Dow=;
+ b=o2HzUJjj8jUfJ9woKChJmX3gWxj5JbpwyEU3iaRqY0FfnwX6uiBX0fHNdH+fF0E5nfcvHmLBS
+ xu/wmAobUA0AZ7u5RdI2TJTlv9etPSjZ1pwL/8DdYCs3vLImHdcDw4m
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
 
-On 2025/9/18 9:48, Yunhui Cui wrote:
-> Currently, RISC-V lacks arch-specific registers for CPU topology
-> properties and must get them from ACPI. Thus, parse_acpi_topology()
-> is moved from arm64/ to drivers/ for RISC-V reuse.
-> 
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  arch/arm64/kernel/topology.c  | 87 +---------------------------------
->  drivers/base/arch_topology.c  | 89 ++++++++++++++++++++++++++++++++++-
->  include/linux/arch_topology.h |  1 +
->  3 files changed, 90 insertions(+), 87 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 5d07ee85bdae4..55650db53b526 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -26,7 +26,7 @@
->  #include <asm/topology.h>
->  
->  #ifdef CONFIG_ACPI
-> -static bool __init acpi_cpu_is_threaded(int cpu)
-> +bool __init acpi_cpu_is_threaded(int cpu)
->  {
->  	int is_threaded = acpi_pptt_cpu_is_thread(cpu);
->  
-> @@ -39,91 +39,6 @@ static bool __init acpi_cpu_is_threaded(int cpu)
->  
->  	return !!is_threaded;
->  }
-> -
-> -struct cpu_smt_info {
-> -	unsigned int thread_num;
-> -	int core_id;
-> -};
-> -
-> -/*
-> - * Propagate the topology information of the processor_topology_node tree to the
-> - * cpu_topology array.
-> - */
-> -int __init parse_acpi_topology(void)
-> -{
-> -	unsigned int max_smt_thread_num = 1;
-> -	struct cpu_smt_info *entry;
-> -	struct xarray hetero_cpu;
-> -	unsigned long hetero_id;
-> -	int cpu, topology_id;
-> -
-> -	if (acpi_disabled)
-> -		return 0;
-> -
-> -	xa_init(&hetero_cpu);
-> -
-> -	for_each_possible_cpu(cpu) {
-> -		topology_id = find_acpi_cpu_topology(cpu, 0);
-> -		if (topology_id < 0)
-> -			return topology_id;
-> -
-> -		if (acpi_cpu_is_threaded(cpu)) {
-> -			cpu_topology[cpu].thread_id = topology_id;
-> -			topology_id = find_acpi_cpu_topology(cpu, 1);
-> -			cpu_topology[cpu].core_id   = topology_id;
-> -
-> -			/*
-> -			 * In the PPTT, CPUs below a node with the 'identical
-> -			 * implementation' flag have the same number of threads.
-> -			 * Count the number of threads for only one CPU (i.e.
-> -			 * one core_id) among those with the same hetero_id.
-> -			 * See the comment of find_acpi_cpu_topology_hetero_id()
-> -			 * for more details.
-> -			 *
-> -			 * One entry is created for each node having:
-> -			 * - the 'identical implementation' flag
-> -			 * - its parent not having the flag
-> -			 */
-> -			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
-> -			entry = xa_load(&hetero_cpu, hetero_id);
-> -			if (!entry) {
-> -				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> -				WARN_ON_ONCE(!entry);
-> -
-> -				if (entry) {
-> -					entry->core_id = topology_id;
-> -					entry->thread_num = 1;
-> -					xa_store(&hetero_cpu, hetero_id,
-> -						 entry, GFP_KERNEL);
-> -				}
-> -			} else if (entry->core_id == topology_id) {
-> -				entry->thread_num++;
-> -			}
-> -		} else {
-> -			cpu_topology[cpu].thread_id  = -1;
-> -			cpu_topology[cpu].core_id    = topology_id;
-> -		}
-> -		topology_id = find_acpi_cpu_topology_cluster(cpu);
-> -		cpu_topology[cpu].cluster_id = topology_id;
-> -		topology_id = find_acpi_cpu_topology_package(cpu);
-> -		cpu_topology[cpu].package_id = topology_id;
-> -	}
-> -
-> -	/*
-> -	 * This is a short loop since the number of XArray elements is the
-> -	 * number of heterogeneous CPU clusters. On a homogeneous system
-> -	 * there's only one entry in the XArray.
-> -	 */
-> -	xa_for_each(&hetero_cpu, hetero_id, entry) {
-> -		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
-> -		xa_erase(&hetero_cpu, hetero_id);
-> -		kfree(entry);
-> -	}
-> -
-> -	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
-> -	xa_destroy(&hetero_cpu);
-> -	return 0;
-> -}
->  #endif
->  
->  #ifdef CONFIG_ARM64_AMU_EXTN
-> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> index 1037169abb459..c22746b45d57a 100644
-> --- a/drivers/base/arch_topology.c
-> +++ b/drivers/base/arch_topology.c
-> @@ -823,12 +823,99 @@ void remove_cpu_topology(unsigned int cpu)
->  	clear_cpu_topology(cpu);
->  }
->  
-> +__weak bool __init acpi_cpu_is_threaded(int cpu)
-> +{
-> +	int is_threaded = acpi_pptt_cpu_is_thread(cpu);
-> +
-> +	return !!is_threaded;
-> +}
-> +
+As an implementation of what has been discussed previously[1].
 
-you seem to miss the comment here in v1. acpi_pptt_cpu_is_thread() may return
--ENOENT, in which case the CPU shouldn't be threaded?
+1. https://lore.kernel.org/all/87h5xm5g7f.wl-tiwai@suse.de/
 
-thanks.
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+Changes in v4:
+- Split basic parse and dynamic change
+- Drop usage of linked list
+- Link to v3: https://lore.kernel.org/r/20250917-sound-v3-0-92ebe9472a0a@uniontech.com
+
+Changes in v3:
+- Instead of a new param, improve the existed one.
+- Link to v2: https://lore.kernel.org/r/20250912-sound-v2-0-01ea3d279f4b@uniontech.com
+
+Changes in v2:
+- Cleaned up some internal rebase confusion, sorry for that
+- Link to v1: https://lore.kernel.org/r/20250912-sound-v1-0-cc9cfd9f2d01@uniontech.com
+
+---
+Cryolitia PukNgae (5):
+      ALSA: usb-audio: add two-way convert between name and bit for QUIRK_FLAG_*
+      param: export param_array related functions
+      ALSA: usb-audio: improve module param quirk_flags
+      ALSA: usb-audio: make param quirk_flags change-able in runtime
+      ALSA: doc: add docs about improved quirk_flags in snd-usb-audio
+
+ Documentation/sound/alsa-configuration.rst | 108 ++++++++++-----
+ include/linux/moduleparam.h                |   3 +
+ kernel/params.c                            |   9 +-
+ sound/usb/card.c                           |  63 ++++++++-
+ sound/usb/quirks.c                         | 206 ++++++++++++++++++++++++++++-
+ sound/usb/quirks.h                         |   6 +-
+ sound/usb/usbaudio.h                       |   6 +
+ 7 files changed, 352 insertions(+), 49 deletions(-)
+---
+base-commit: 4c421c40c8b30ab7aae1edc7f7e294fcd33fc186
+change-id: 20250910-sound-a91c86c92dba
+
+Best regards,
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
+
+
 
