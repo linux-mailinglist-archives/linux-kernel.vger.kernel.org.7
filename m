@@ -1,78 +1,109 @@
-Return-Path: <linux-kernel+bounces-823324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D52BB86207
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:53:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290B4B86201
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4284754789C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97C361C88157
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3672571AD;
-	Thu, 18 Sep 2025 16:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA2525393B;
+	Thu, 18 Sep 2025 16:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWyxlZiD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c0T4xEja"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CA6256C7E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B2E248F57
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758214289; cv=none; b=mIkFcPUslT1E8GL6wYKzBRI/L904+LVyzSXRWOykXBCf6qaVNs+dunMg8iRZ49Gaq9w0yk1VrYmUeWMBxrvI2jEIqOcq7lEWNLODX7DhQCspAx7Fd+LhExNcjKCoZ4hLD7sIOwtcmStqkOy2B38eaLr7D0FcVoZedTOV6jBenoo=
+	t=1758214342; cv=none; b=NVFZsTpf0muJuC36YQHLZ9Grxls3J971UABLxRyit6MN5EhtYwNh++/WUnG2v10c1dHTqJqFErfi35OdTeYk2fOima49gNxK/YUjTFC0Yj5NtzJLpJW/W2rBn84bN0gWlw/kor28JgGeSV/L1/VVDX0YF8icN108iDT6SUJ+ka4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758214289; c=relaxed/simple;
-	bh=yp8L8OFoCDjm8nPw/36nCqPVec7FhsvIlFISIRupVi0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=a+c0CbSGkbrXXBXri3LrbCDIf8AqApe21vmTKbzWk8m/d6+RvEW0KMWs67+xRtq8lpBsR4zBNvNdFGSvmoAg0lGlvyXiV+irLn4ai6M2IhZyzwId8ZeDSRILYrhLNFKt2vgZLCGf2LW3JHYDBSV5oGgQQQijG9hd8XaI9fsgdc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWyxlZiD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3747C4CEE7;
-	Thu, 18 Sep 2025 16:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758214288;
-	bh=yp8L8OFoCDjm8nPw/36nCqPVec7FhsvIlFISIRupVi0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=YWyxlZiDde0/WKvsoDHkks4vgiC64/y67EDOEob0lVOZUwfVgwvc22FfsCu4tNuWW
-	 wiHuqk/TsC118dTi8jYUh5NBNDiNyMWbmvZutKLMkazz7QttADafyhMYTxvFZ4I0Hj
-	 c59hV8e+x+J7cGGxfszp1jm0ikRG3fhv9iVhcrJCm6jbGVqyCSQRpxBi4E+0I6sz8C
-	 /MDfMeE7YaxYj8d5ULIv9Pz4HWRlmlqW9s8YSTpVxa47Hh38C/VwmMCYokauxKeO6X
-	 8TvrWXC4I0gPji5G9MNCKY+n8jiVYprVyJEoy3Uq+O8BHaaVNINYocdP1oXrVx0IcA
-	 E6nvYxxON3Ugg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CCE39D0C20;
-	Thu, 18 Sep 2025 16:51:30 +0000 (UTC)
-Subject: Re: [GIT PULL] uml-for-6.17-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250918082219.6652-3-johannes@sipsolutions.net>
-References: <20250918082219.6652-3-johannes@sipsolutions.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250918082219.6652-3-johannes@sipsolutions.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-6.17-rc7
-X-PR-Tracked-Commit-Id: df447a3b4a4b961c9979b4b3ffb74317394b9b40
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f03e578c8afe514c82ec9bd9af548b8fe08694e5
-Message-Id: <175821428869.2499383.4059485629785074863.pr-tracker-bot@kernel.org>
-Date: Thu, 18 Sep 2025 16:51:28 +0000
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>
+	s=arc-20240116; t=1758214342; c=relaxed/simple;
+	bh=g+mvzN6J31AfqxKTFRmGGmksy1PcEAtdFhY3hfNn26E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PyChCrKtS297jEerI6BEEfI6f29EuyVjuiV6j3U9DZP2lS3LSFIXOPZ5Jyb8uHoKmiRmHoFr7e6mQwpeUdEmnKf7e5HcNxiRB70m3Ge3TJvrpxFV81fuyBdQW7UZdHLC004388vCGfnZX5glcPnAIc6GLki4LO7FGppWc2ucKPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c0T4xEja; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee157b9c9so1023694a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:52:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758214341; x=1758819141; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TsOm7EtOKhXmScTczmTf6QtxSQ4DX78bGCwpxVq0Ey0=;
+        b=c0T4xEjagwMG50CIaqueHk0sCeB2lgAViBiIgpzCcmdGsxt0rcUBDPSRGSho+SQgJu
+         bZQhZOGxzILqrD8SpT8kdz3EyBhU4E3b9bRQmzEuYiXpOyArjjbtE8EhAFORUUSGvWSk
+         vJhG+hkyad5fu7QCqiG1KAACD44dxb332xzWw0gLXaxsSdWYe/39UvbnPnRFNoixlzjR
+         V7j0l/AzIusZH3cQlmyh6ensJJHomRUlC/oeIt3BINHokq82dyIWdQkXE/3W3A5awF2I
+         fVQStxtxU7gc1/tP7fcKkuWN607h172P5uSbSUoOWLJyUlv6tvZfh8wWVxVSmUIW4DJV
+         jYng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758214341; x=1758819141;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TsOm7EtOKhXmScTczmTf6QtxSQ4DX78bGCwpxVq0Ey0=;
+        b=ovogrz+wlTtAaFGguSQkSFp2xZAeOm5D4lVQmln8ZsCCJ/4TV1TLiAXA/hT/Dn0AJV
+         ZhH4czvDv0Vm9mJNcstlWvqnreJn1mB7u9JxR0Y6r6m4xmGD2yxjrj5tFI8p+/anUuTr
+         g36kLBhlXHhCQXg/wF8aJgNC0qW4JBhf+TyWavMN7vdAewzRL4hMdGoRElS2GGlgi/gw
+         ZfBwD+AphVRSrTE26hpNpp8oq6IyavUtpBvVXXcSKOqYhxidqf7V1QRZcAOt5Tmtv2ZU
+         U5jMbfKjjPYNEIRRt4fUeFPP+Dq7/AZT/olNHGCbpKbeihKJojhGw1PwZuMaKmWqXtxL
+         kCvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgrsl8Q+xiG1IS9dKnmlYHQ7LEMNR5XLFHL7LfloEmxc+adG7Kwz9MqQK2byBZuHmA40ISBdbT5Tc3N40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHdfYGAiKdmIjpzCFJ2MJN+akF9hu1v8cBGYPcVx3gQS/iNu81
+	fAHKotWaA6QTnOqe4XbVO5A/OGpIih9Tmitqs+RavCYb/InoSJc+dSzNPV8w8PPzdm1UflYD/GD
+	yPlSZjw==
+X-Google-Smtp-Source: AGHT+IEZkwSUL2OHRLRPak5y7ADnxAbFSYdsmOIZcHrSCCNpbNhv66RerRTNz5VfhHWZmuNmvGLbT6SRYfY=
+X-Received: from pjl3.prod.google.com ([2002:a17:90b:2f83:b0:330:72b8:fcc0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:498e:b0:32e:2059:ee5a
+ with SMTP id 98e67ed59e1d1-33097fce1b2mr65859a91.8.1758214340696; Thu, 18 Sep
+ 2025 09:52:20 -0700 (PDT)
+Date: Thu, 18 Sep 2025 09:52:19 -0700
+In-Reply-To: <20250918120658-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20250827194107.4142164-1-seanjc@google.com> <20250827201059.EmmdDFB_@linutronix.de>
+ <20250918110828-mutt-send-email-mst@kernel.org> <20250918154826.oUc0cW0Y@linutronix.de>
+ <aMwtd40q44q5uqwr@google.com> <20250918120658-mutt-send-email-mst@kernel.org>
+Message-ID: <aMw4wx5ENt-odhYS@google.com>
+Subject: Re: [PATCH v2 0/3] vhost_task: Fix a bug where KVM wakes an exited task
+From: Sean Christopherson <seanjc@google.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-The pull request you sent on Thu, 18 Sep 2025 10:20:47 +0200:
+On Thu, Sep 18, 2025, Michael S. Tsirkin wrote:
+> On Thu, Sep 18, 2025 at 09:04:07AM -0700, Sean Christopherson wrote:
+> > On Thu, Sep 18, 2025, Sebastian Andrzej Siewior wrote:
+> > > On 2025-09-18 11:09:05 [-0400], Michael S. Tsirkin wrote:
+> > > > So how about switching to this approach then?
+> > > > Instead of piling up fixes like we seem to do now ...
+> > 
+> > I don't have a strong preference for 6.17, beyond landing a fix of some kind.
+> > I think there are three options for 6.17, in order of "least like to break
+> > something":
+> > 
+> >  1. Sebastian's get_task_struct() fix
+> 
+> 
+> I am just a bit apprehensive that we don't create a situation
+> where we leak the task struct somehow, given the limited
+> testing time. Can you help me get convinced that risk is 0?
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-6.17-rc7
+I doubt it, I share same similar concerns about lack of testing.  So I guess
+thinking about this again, #2 is probably safer since it'd only impact KVM?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f03e578c8afe514c82ec9bd9af548b8fe08694e5
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> >  2. This series, without the KILLED sanity check in __vhost_task_wake()
+> >  3. This series, with my fixup (with which syzbot was happy)
 
