@@ -1,140 +1,96 @@
-Return-Path: <linux-kernel+bounces-822638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EAEB845E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A86B845EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650984A1C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:34:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCA34A32EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813D42FFF86;
-	Thu, 18 Sep 2025 11:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F5730499B;
+	Thu, 18 Sep 2025 11:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVb35xF2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfJgonj9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60AE2EF660
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2E12EF660;
+	Thu, 18 Sep 2025 11:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758195241; cv=none; b=A5qpLzbi1xlw+WsXpYF7eM5aadZ2MZd2gbj8CpL8Z104N1kbYnXIY0LXIdnYHIdoTITcb3eAme8go7KxlptqYV0bDUo9LTBY0Hw+t2kQmedZIFzDsc1IrHAnoQfSmqSeKUj5KpZZ4UPBtyXs+b45oKGHUBBP0Em92dREXEUes/Y=
+	t=1758195245; cv=none; b=USmL6Ue3TKZK4TSGSo+P3BvJ4pry5lZ+0QIZO8U8LKbXTAqRg9AT54WV7V8I9pjzNxEXyk7HV9tsztcIOS9fMoaehYwZRD3gmzWBRkz/QGeyHayqd2rxRy1nYjjsI8HAvnDuBjMlAtkBHKnze3XcS4EnZzY9GhjKjS0kJHjO4eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758195241; c=relaxed/simple;
-	bh=sDruQ31RQWcxA9NQ6hpfjci9hEglxsgsiVScqoGOvCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VHVkjzx2RYZMaSe6rkpSK9S+/o6r6L+SdwnJvb5eGrlX2pogsZz2MJIERxv1pR2ocjO1tR6Zm6Cd0HHaO+4Gf4+gbxsOP+wyTPp8ObaCyT0gZmH7MbtnDYWGjYkbA3ueFldx3QbRGYd+zxnf0cTy8A7/qxscrQ34o9tM+WStwdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVb35xF2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660FBC4CEF7
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:34:01 +0000 (UTC)
+	s=arc-20240116; t=1758195245; c=relaxed/simple;
+	bh=DdjlEKFZ9NzMsLgN2AE+HdIRkMtuy3rMl1mEXsaBBR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjbPln3TrKh/hryTR8Ynk6ZDLd709kC1vA8dOXSTl5bY7UzdY/vvFX4FT8pJq9LZ/0mK2gvTD+r/VmN0RzvTZDkIoxXqboQ0oOHckpY2Te7Ik5f5fAgWewmFxU1tNUT9dumrEMfsHHaADhbmCaGScFiF6zFinWoVvdVOPkDOlZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfJgonj9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98794C4CEF7;
+	Thu, 18 Sep 2025 11:34:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758195241;
-	bh=sDruQ31RQWcxA9NQ6hpfjci9hEglxsgsiVScqoGOvCk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fVb35xF2JnZ5CrcL5/xgfPf9AAWIxH9atnakVT9ETUtGv74gLCtZtnmRc2CFvdQw8
-	 aUgH50kHDXv2DxukpJPGzpWnGsxsotjbpf77+vzvp9Ml1/agLX8heoCSGQA/X4p6+0
-	 hVm5ihb7yVv+f6Cs9MB8pseDN0FPgRfbuJyb4nt2fPYZEKJowWIsRAr/VzSvObLkKv
-	 qpebeKGfjakNjnjXqXxevqoxRIICnPWVk0rknnanpUzvzVGauE1RKnauSxnWVs+Ijk
-	 N4tJXCLmWLzMSAg1B1CEwueddeV/T38INbpCwLAgJlrtTgZw6AAp0D1FXJwwDoavZB
-	 ifGpjE3RZhqjg==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f7a34fb35so839599e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:34:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWRs+dkJkk+kDkCg11t4ANYkRpWg6c0dQgbtZrOLWnZfQUFRXJ3AGJD/uZMzIKTOz0tIKjGwHwialVXKVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMWWAWq6rRluNKbW+c2wPX6Yp0BDvNmk2XVb4P8yMIZMdQkud/
-	IkSpxamElqwZ0R2GwwcSeSKI70dQzhxt+jXXqqfhqYqGdZGnb/ZME3XcX/M72VOL2wi5YfJcySq
-	JWX9F2tXh9KLqQUzXDpjkuNAyP5F98vA=
-X-Google-Smtp-Source: AGHT+IHRO51P1kh8hrccEQ8EhjnKuluFz4Bw+DY0+jrlyrxJs/osMNkIFLqBmkEhBzI+UI7ewRamktzcJNUv/x12ltM=
-X-Received: by 2002:a05:6512:224b:b0:572:9791:203d with SMTP id
- 2adb3069b0e04-577982850e7mr1582931e87.21.1758195239718; Thu, 18 Sep 2025
- 04:33:59 -0700 (PDT)
+	s=k20201202; t=1758195244;
+	bh=DdjlEKFZ9NzMsLgN2AE+HdIRkMtuy3rMl1mEXsaBBR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TfJgonj9G78trjkdbZthUXy3M9CxmQXxteeJxfwCo4sh2OSpKsvib0CTJl0x7DC6A
+	 4UvQXTtDqkfp9TV9Ize8+X0zCMyVSXqX7mInHNC3VFcDEtTxyVSF+PQERu4Kx2/qY6
+	 gbTPSWKP1V/1P7bSGnEb2cDU4Ajy6t5OUENB/sKH1+mXH8nYH8U8qRrfxFEhJQFFxT
+	 wvKq4GPeDFn7586iQzlWlCjLZOKCOX0Jms1SIdx5o6TZi3J9VGQSWG4kKrZfLPlZj0
+	 lW9YTNLuXOdKsVVCI+9wZPWQt2iMTcj+ey26lu4GHCv75zxpXMUQGtqtjY5MuqIXaw
+	 48W+1JH1OwRmA==
+Date: Thu, 18 Sep 2025 12:33:59 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: pxa: Return -EOPNOTSUPP instead of -EINVAL
+Message-ID: <81926717-0884-4df5-aaf2-a938c58ce892@sirena.org.uk>
+References: <20250918112102.64314-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918103010.2973462-10-ardb+git@google.com>
-In-Reply-To: <20250918103010.2973462-10-ardb+git@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 18 Sep 2025 13:33:48 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGndZxxe+u3st6FCebrdutUibspA7tJUpqGMgpj9UTFnA@mail.gmail.com>
-X-Gm-Features: AS18NWBpKR-TPvng9fbMt92bDXPkedcwInqj0GFfa3493ydSnUglQQw7-ggQlLY
-Message-ID: <CAMj1kXGndZxxe+u3st6FCebrdutUibspA7tJUpqGMgpj9UTFnA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] arm64: Make EFI calls preemptible
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ut2fU8JBkxiT4pjD"
+Content-Disposition: inline
+In-Reply-To: <20250918112102.64314-1-thorsten.blum@linux.dev>
+X-Cookie: Victory uber allies!
 
-On Thu, 18 Sept 2025 at 12:30, Ard Biesheuvel <ardb+git@google.com> wrote:
->
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> The arm64 port permits the use of the baseline FP/SIMD register file in
-> kernel mode, and no longer requires preemption to be disabled. Now that
-> the EFI spec is being clarified to state that EFI runtime services may
-> only use baseline FP/SIMD, the fact that EFI may code may use FP/SIMD
-> registers (while executing at the same privilege level as the kernel) is
-> no longer a reason to disable preemption when invoking them.
->
-> This means that the only remaining reason for disabling preemption is
-> the fact that the active mm is swapped out and replaced with efi_mm in a
-> way that is hidden from the scheduler, and so scheduling is not
-> supported currently. However, given that virtually all (*) EFI runtime
-> calls are made from the efi_rts_wq workqueue, the efi_mm can simply be
-> loaded into the workqueue worker kthread while the call is in progress,
-> and this does not require preemption to be disabled.
->
-> Note that this is only a partial solution in terms of RT guarantees,
-> given that the runtime services execute at the same privilege level as
-> the kernel, and can therefore disable interrupts (and therefore
-> preemption) directly. But it should prevent scheduling latency spikes
-> for EFI calls that simply take a long time to run to completion.
->
-> Changes since v2:
-> - Permit ordinary kernel mode FP/SIMD with IRQs disabled, so that the
->   special EFI case only deals with invocations in hardirq or NMI context
-> - Disallow EFI runtime calls in hardirq or NMI context, so that the
->   special FP/SIMD handling for EFI can be dropped entirely
-> - Use a mutex rather than a semaphore for the arm64 EFI runtime lock,
->   now that it is never trylock()ed in IRQ or NMI context.
->
-> Changes since v1/RFC:
-> - Disable uaccess for SWPAN before updating the preserved TTBR0 value
-> - Document why disabling migration is needed
-> - Rebase onto v6.17-rc1
->
-> (*) only efi_reset_system() and EFI pstore invoke EFI runtime services
->     without going through the workqueue, and the latter only when saving
->     a kernel oops log to the EFI varstore
->
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Mark Brown <broonie@kernel.org>
->
-> Ard Biesheuvel (8):
->   efi: Add missing static initializer for efi_mm::cpus_allowed_lock
->   efi/runtime: Return success/failure from arch_efi_call_virt_setup()
->   efi/runtime: Deal with arch_efi_call_virt_setup() returning failure
 
-Unless anyone objects, I am going to queue up these 3 patches ^^^ via
-the EFI tree.
+--ut2fU8JBkxiT4pjD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->   arm64/fpsimd: Permit kernel mode NEON with IRQs off
->   arm64/fpsimd: Drop special handling for EFI runtime services
->   arm64/efi: Use a mutex to protect the EFI stack and FP/SIMD state
->   arm64/efi: Move uaccess en/disable out of efi_set_pgd()
->   arm64/efi: Call EFI runtime services without disabling preemption
->
+On Thu, Sep 18, 2025 at 01:21:02PM +0200, Thorsten Blum wrote:
 
-... so the rest can go in via the arm64 tree in the next cycle.
+> Return -EOPNOTSUPP from mmp_sspa_set_dai_sysclk() instead of -EINVAL for
+> unsupported clock ids, and remove the obsolete comment.
+
+Why?
+
+--ut2fU8JBkxiT4pjD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjL7iYACgkQJNaLcl1U
+h9AfpAf+PClvXVRNKry9PjFfChYkB5BWOoBVFPmgVT0lUGZ3XggLvtJefzT/qRU2
+rBNBg9rpCWQooNz2RhX/Q7HxETpUrJPMmQf+J6pU2343ygF1AGoQEjd6vUEYGQ0r
+ckwCMlN9H9eJLgKZiQc9fglni9sz5t02N94BiapFRwUZtZeVa1EE6X5S1umD0FTA
+gSaX5+jgfUa0F+ZO9ITpJcJcUdvMtOmWvIbRNicPsD2JulzQ/9d9XVKZxRignyQW
+qWNREApxKmepz++1TRstt6atFxVKaow1qcrrp3LkHekGssm7JTj0ELBk67Mf3OAD
+htz3PE/X0drg9KCFXC8WBT4oXPn6vA==
+=a/MZ
+-----END PGP SIGNATURE-----
+
+--ut2fU8JBkxiT4pjD--
 
