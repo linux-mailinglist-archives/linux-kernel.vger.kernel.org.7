@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-821816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DFDB825C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA788B825CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1251C20399
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9976A4609B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B978919004A;
-	Thu, 18 Sep 2025 00:16:40 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC828DF58;
+	Thu, 18 Sep 2025 00:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxyOFzYy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2E617E4;
-	Thu, 18 Sep 2025 00:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3397978F26
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758154600; cv=none; b=LwSZEYd3M6ooWX7DEpsZiI93RW42XnkFqw1rspltUvHBZzlfgqlefzKZdnhu300yHTNBd2Ss7iSWIEFBNBdr5sYxndxax3fBsAuJidIQA+Ub8nYnnR6kXlPheoiq0+LqBcnRmaYw12kEr7Y6GnSrRJfeSzqQ319u43a8SooZJPw=
+	t=1758154702; cv=none; b=IiEbAzg1QG19t7zeW1RU4ww/s7c8M5gtW48AZC0M8jxB4RYIBzApGMUhPnrO2SfVFr57jrL3Por+oOOaEPkxvMYdpzhvL0coDphDcsdyLEOaFwq7qpxN6yQF34RiJInABzDcDPVCnJ5toJucyqIYOSWlDCWhif2xf3mp1XdpDys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758154600; c=relaxed/simple;
-	bh=aM69JB3qcCuXtg0u/toiNobtTe6qDc1VMbFfyhjwRnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rU02ySiwhCsg+41cWzgkbeRGXUyyEcwnruAO/vMfxpCsuYdNmxgJx/aHHRUwOBCfTUtn4zqTABzatx0Bg0sOBj79uaorZ4F/6XjU8Dh1dIcdOP2hxI3XJzZK6B58zB/Y8S+zIAT3aNNOcNpKv16lTwJBsNhPBgNZyQH1Nt56Qqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 4A5493410AF;
-	Thu, 18 Sep 2025 00:16:37 +0000 (UTC)
-Date: Thu, 18 Sep 2025 08:16:32 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: spi: add SpacemiT K1 SPI support
-Message-ID: <20250918001632-GYA1270371@gentoo.org>
-References: <20250917220724.288127-1-elder@riscstar.com>
- <20250917220724.288127-2-elder@riscstar.com>
- <20250917231520-GYA1269891@gentoo.org>
- <3b815302-21f2-4ee2-bf83-c1dba77ce3d1@riscstar.com>
+	s=arc-20240116; t=1758154702; c=relaxed/simple;
+	bh=HJeHxvJ5os1bKgu/wmnW6eCYRB1USR4o2DaZhGqKWtU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=AWFxjxwFAE5bd7/RvNVRDdNpn4lVs/bxrERihQNM4FTeK5PZGHZ8BoG6sHq6hu9R0VVdSqCqfFaiaq9BTm0jQPVN65a+uIyC8sR5UA7/1w13ZQ/slMlf7LWsuiC4EpTjU9GEgloyL363mQpHSSCo4Y+evapqGaBIuzA1vr7JA6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxyOFzYy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6975C4CEE7;
+	Thu, 18 Sep 2025 00:18:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758154700;
+	bh=HJeHxvJ5os1bKgu/wmnW6eCYRB1USR4o2DaZhGqKWtU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=WxyOFzYy1NVSSHhHkYJHC7SXkLCsG7Wgxl9+vL07j8aJLH92dvJiHQ6NX2B207T8F
+	 fWJHb9NcHrNtKGTdTwu3a4iIAArJQq3hrOdwpSDGmLZJo/tfOSAVBMu42jLHhExRDC
+	 pmALorSp2NVh1sGb/N1dIsqZo+ueVht3VgmID6uIC7ylTXXm48UVDrwT4V2iJSPAv5
+	 sBGDaum44Ms1g32+vuoTAltMtgeckxQJT81Hcm1skJE2G6zz7zuoZ5p4CxQRL0096f
+	 hHyd0e1KvK1U8W7SbhsgLoA0v4Jhcu2oXERdKIIadyguxYOoTE8B6mT8KNhL/BbFqM
+	 sEXBwcQx9VmcQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710EE39D0C28;
+	Thu, 18 Sep 2025 00:18:22 +0000 (UTC)
+Subject: Re: [GIT PULL] probes: Fixes for v6.17-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250918074652.b9d4842fb41b5bd810b1add7@kernel.org>
+References: <20250918074652.b9d4842fb41b5bd810b1add7@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250918074652.b9d4842fb41b5bd810b1add7@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes-fixes-v6.17-rc6
+X-PR-Tracked-Commit-Id: dc3382fffdec2c1d6df5836c88fa37b39cd8651e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 992d4e481e958c6898fe750afd429d1b585fff93
+Message-Id: <175815470104.2197318.2065869104165887703.pr-tracker-bot@kernel.org>
+Date: Thu, 18 Sep 2025 00:18:21 +0000
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Wang Liang <wangliang74@huawei.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b815302-21f2-4ee2-bf83-c1dba77ce3d1@riscstar.com>
 
-Hi Alex,
+The pull request you sent on Thu, 18 Sep 2025 07:46:52 +0900:
 
-On 18:40 Wed 17 Sep     , Alex Elder wrote:
-> On 9/17/25 6:15 PM, Yixun Lan wrote:
-> > Hi Alex,
-> > 
-> > On 17:07 Wed 17 Sep     , Alex Elder wrote:
-> >> Add support for the SPI controller implemented by the SpacemiT K1 SoC.
-> >>
-> >> Signed-off-by: Alex Elder <elder@riscstar.com>
-> >> ---
-> >>   .../bindings/spi/spacemit,k1-spi.yaml         | 94 +++++++++++++++++++
-> >>   1 file changed, 94 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml b/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
-> >> new file mode 100644
-> >> index 0000000000000..5abd4fe268da9
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
-..
-> >> +
-> >> +  spacemit,k1-ssp-id:
-> >> +    description: SPI controller number
-> >> +    $ref: /schemas/types.yaml#/definitions/uint32
-> > could you explain a little bit why this vendor specific property should
-> > be introduced? I took a look at the code, and didn't get the reason
-> > behind.. or what's the problem of simply using "pdev->id"?
-> 
-> This property was carried over from the vendor code.  It is
-inherit from vendor code isn't a valid reason
+> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes-fixes-v6.17-rc6
 
-> optional, and if it isn't specified, the platform device ID (-1)
-> will be used.  It's just intended to provide a well-defined ID
-> for a particular SPI controller.
-> 
-while looking at the code, it seems you can use alias to map specific id
-to the spi controller, it even can do non-linear map, something like
-	spi0 = &spi3;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/992d4e481e958c6898fe750afd429d1b585fff93
 
-plese check of_alias_get_id()
-
-note, I haven't actually verified on board, just look through the code
-
-> > we should really be careful to introduce vendor specific property..
-> 
-> If there were a standard way of doing this I'd love to use it.
-> 
-> And if it isn't necessary, please just explain to me why.  I
-> have no problem removing it.
-> 
-on the opposite, please have explicit good reason to introduce vendor
-speifici property, and if there is generic way, then we shouldn't do it
+Thank you!
 
 -- 
-Yixun Lan (dlan)
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
