@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-821965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A1BB82B5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 319F7B82B66
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51ED1C21D03
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:08:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A471C20E2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954D9244675;
-	Thu, 18 Sep 2025 03:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38CF23BD05;
+	Thu, 18 Sep 2025 03:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="V9Oj/Lag"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="cp0oyt0Q"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F88224166D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090382248B0;
+	Thu, 18 Sep 2025 03:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758164880; cv=none; b=Uw/zcQjgz4AET4W/2cFdku25J2Mw8UCbqdPBCLmr41Wxi8c4JTP4j0q/CnLPJy9xey0TxranWddgrBqbeaO/Kh1ZnUOqN/mE/GhXLRuHqsvtO7axJOMOtkSQfceCLHbUlB77xuow54wBltWnZ/ryowqpN6NVVvm04pLftK32aX8=
+	t=1758165025; cv=none; b=GCGLFCjWpMBB6ypjPGn2VHd4cdJX3en7Am7Zvcyahk3x3B1Y4+7KSNRaELja6koHfKBymMZ8rcGJVWqVNYFLdcbhGIfWaaFmhTOexsizwcrT0EGf4WLhA5+kP5G/iVQU/kI1Pu97Oxp/FmsYI6HRhncfheoi3oVgXuxL+Uqu2zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758164880; c=relaxed/simple;
-	bh=ucCRcxsuGDClfG5heo1r5qIU5kMebbEElSVKOAPitJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hhx/qqusgRBQ7YgUO1zmcKEhfA8Qdr0i90NCAPD94kn3eQIBdVVQuXTr1K124e6X4Lr+nA5WyFP6FsmFXr/C4QQdxN1G+ZXJzR37D/RNDn12Cgdl3Q7aIKgpRKsDytU3jDhENJ6BjW/Tfymxi8Mnkol+0GDiCamzXzBVzg5rdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=V9Oj/Lag; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2445824dc27so4588595ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1758164878; x=1758769678; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cOr262x4SNCixfw6D+h2DN6gV7zkR61R9C2FM+lF078=;
-        b=V9Oj/LagAayBJWbzzAdIr+QLfFUypJLqCn0Q0otuGWv9ZLEa4CApHB8Oht7mBo2hV8
-         tfsbDddh0ow3pzDtJbOyxCVCrwcxEDRALxkXUlg5cxwXtSxsy9DAD/OJQP1Fc5P7tcjt
-         E65zpgnXmZ76x9ZeIykiXazJTL962d7zRByky+YCWQc7PG3WqRiqJv60gXswtiiLgwv3
-         gJhzbiqQIy8dkLCgz+V9TeC3aTLPmmJVgyPJ7V8Rp0GiDeaWU7mu6CKhZpyuRHjVv+bc
-         aXHlMWbVvePGIjFjlz90AICYWFTaCLm39Ah40bNvaGAtCGrx2XOhAFiqMG5rBNMdU6nb
-         H1PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758164878; x=1758769678;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cOr262x4SNCixfw6D+h2DN6gV7zkR61R9C2FM+lF078=;
-        b=oID/3AYVrKGkVeRu+zzUrSkF1hkVMuzcqCj6HxabC6S19hqap7LWeCbajdfouvSng5
-         wzaPNCKG5qSvBt9hGOCT/Da6jD0HP9h33p01JZDB0xcbQfbKon5N+IqkSnf5ryPANQ/7
-         Q1qvIprORoLmdRh5JjyMXGlbWsMug9+JHySWP6KvPV8HPo/kCUoIIhXzYQ0yhLRRMmfV
-         t8IdXM4XNzfCDIucLXSyr7BUA6fH7uEMS2bfig2SL3sVs4B2MNKQ+vmhw6pzcWpa6nhW
-         j8uKQUp+otxsDWbPNM5HnU496R/UbAd4Ej1SH8GKihPuQ49EkepoKE46YWBsU6eNIFAj
-         ciAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUMYazVnb5Fl0Cd8nW4oCprMXN8OUbBNdiQ3a+PzQd8Sg4FamBOif7hvtKadceuHD4vwsaAHGBOT9KwDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO8knlpSFNGdbNjz7kUZTHg7v1SutdnAGeo9xOnxM0eTjhooUl
-	2dYGoyGwirSm4qI/6vDCCNfkBdBi1RKP3AVMzRWitig5WE3gZ/4MOI4MKVTJDp6wtJsrPGiUPho
-	81lWpQEG7DwvfZM0vu8RFpcrxPDe7VQnBNtpsLMM0uQ==
-X-Gm-Gg: ASbGnctVfsBrLA/9/3LalcUDwhqtOsNUgn4+wpnCjJwEYzlcCTpBNchhJg/DeqtO10k
-	xdVZ0wGLx/6T4OYwQcOEqCEN1acGAQ+cBeSrUQx4NsyaLFssIV3GFA5+B6a/Vc08tqBr3dBNxVu
-	tEtyCnyC3SbBLsaG4ZvdXegOtYOyQzpkQdN4WnBxC6/JhlX/UNI6oBD+il1FO1vNKEgu/7/sYxF
-	ZF2RLmAaQleLMev/Myyz5eAOyo=
-X-Google-Smtp-Source: AGHT+IESFnLmLGxL7zVRW9/AAJMJ3eUyMJy5//Ofo8Y4ShmsKybTu8OCYOtVcM347qhv52LF3IQYEflH+bF5I5G6ezM=
-X-Received: by 2002:a17:902:d4cb:b0:24d:64bc:1495 with SMTP id
- d9443c01a7336-26813bf3d79mr48842325ad.41.1758164878562; Wed, 17 Sep 2025
- 20:07:58 -0700 (PDT)
+	s=arc-20240116; t=1758165025; c=relaxed/simple;
+	bh=szu3+YFCReXMzfUcogffIPXAAfsFvglxCgZKmD2ePkk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fiGoRHkVOGAmseDv7Wp1PR7UZxD3Y5E+WfcWOL+GahcoTtYzDEpI6//Kp/vKBgNfoit9Eao1ki1K0VWRow4hlqkg+VGYvx4wUVy9q64ukJ/rtm86dtRMLrDM3gVqmIu9e76PiHp3TTey7qUjIRaDjVtYjxhN7SGaacCBZm5AMmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=cp0oyt0Q; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1758165014;
+	bh=9gCOxxj8HcLtdDa0RY4gvkXPIDFZMu0DoSBNmq/f28k=; l=946;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=cp0oyt0QkoNqdIXN8kQUZmDeXQgwClLMwds76AqQMIEvslQB8OXjkCaO25bS7zPHc
+	 FYe23gOtMwqz6VZ6w2f7CcT0W5Rll24229cQ7sSF+acXqOLyk5xbVlqsNQszBggOP7
+	 IwRPbweCCWeW0+QRctll13DJeqLN9BAlH9b1joUvNFJHQuGw974LPNYTIAnYCzLdYS
+	 Rb0P8xZYQhNziHfr/uIGc4pQPLLcj4Y0j/oOQSEXqRcjhKYXHc1eAlu+A7LVdo5Ftf
+	 XU9S+CyKMWiyVLZnbmDJk9XedKIyY6RN8CldYZY0zTrbBUe3GrllMmZgvxzf4d4oXT
+	 KUHoyBibZT+Dg==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(2461096:0:AUTH_RELAY)
+	(envelope-from <cy_huang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Thu, 18 Sep 2025 11:09:54 +0800 (CST)
+Received: from ex4.rt.l (192.168.10.47) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.26; Thu, 18 Sep
+ 2025 11:09:54 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1748.26 via Frontend
+ Transport; Thu, 18 Sep 2025 11:09:54 +0800
+From: <cy_huang@richtek.com>
+To: Jonathan Cameron <jic23@kernel.org>
+CC: David Lechner <dlechner@baylibre.com>, =?UTF-8?q?Nuno=20S=C3=A1?=
+	<nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, ChiYuan Huang
+	<cy_huang@richtek.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Andy Hsu <andy_ya_hsu@wiwynn.com>
+Subject: [PATCH] iio: adc: rtq6056: Correct the sign bit index
+Date: Thu, 18 Sep 2025 11:10:59 +0800
+Message-ID: <7e43ad09f814d63b570ab6b2b9fe3fe17775d22d.1758164614.git.cy_huang@richtek.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917123351.839989757@linuxfoundation.org>
-In-Reply-To: <20250917123351.839989757@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Thu, 18 Sep 2025 12:07:42 +0900
-X-Gm-Features: AS18NWAHWPq2LKZaxfOvpUL1LbKclh98pn2Km87I8UZDUptfVR4FgiZQQobBzMs
-Message-ID: <CAKL4bV5MDKDWPKJvQke1Lah=HzeX3=hO0rfQYb3S_nXMcEYOvg@mail.gmail.com>
-Subject: Re: [PATCH 6.16 000/189] 6.16.8-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Greg
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-On Wed, Sep 17, 2025 at 9:36=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.16.8 release.
-> There are 189 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.16.8-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+The vshunt/current reported register is a signed 16bit integer. The
+sign bit index should be '15', not '16'.
 
-6.16.8-rc1 tested.
+Fixes: 4396f45d211b ("iio: adc: Add rtq6056 support")
+Reported-by: Andy Hsu <andy_ya_hsu@wiwynn.com>
+Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+---
+Hi, Andy:
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+Thanks for reporting the value convert issue.
+---
+ drivers/iio/adc/rtq6056.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+diff --git a/drivers/iio/adc/rtq6056.c b/drivers/iio/adc/rtq6056.c
+index ad9738228b7f..2bf3a09ac6b0 100644
+--- a/drivers/iio/adc/rtq6056.c
++++ b/drivers/iio/adc/rtq6056.c
+@@ -300,7 +300,7 @@ static int rtq6056_adc_read_channel(struct rtq6056_priv *priv,
+ 		return IIO_VAL_INT;
+ 	case RTQ6056_REG_SHUNTVOLT:
+ 	case RTQ6056_REG_CURRENT:
+-		*val = sign_extend32(regval, 16);
++		*val = sign_extend32(regval, 15);
+ 		return IIO_VAL_INT;
+ 	default:
+ 		return -EINVAL;
+-- 
+2.34.1
 
-[    0.000000] Linux version 6.16.8-rc1rv-gfb25a6be32b3
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.2.1 20250813, GNU ld (GNU
-Binutils) 2.45.0) #1 SMP PREEMPT_DYNAMIC Thu Sep 18 11:43:14 JST 2025
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
