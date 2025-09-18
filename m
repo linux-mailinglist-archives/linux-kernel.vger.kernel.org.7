@@ -1,97 +1,99 @@
-Return-Path: <linux-kernel+bounces-822975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5764AB8533F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:25:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D654BB85366
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C45C3ACB3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:21:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76EDF1C876AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8B61714B7;
-	Thu, 18 Sep 2025 14:15:23 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23124316194;
+	Thu, 18 Sep 2025 14:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="omiy0wMo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5171C31619B;
-	Thu, 18 Sep 2025 14:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53860315D43;
+	Thu, 18 Sep 2025 14:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204922; cv=none; b=Uwbf1/XfE+VWQk+LaGFMpcX0rTq34FVIoeVA3q48t6u5KcX8F1RsRVHdsVkzLoSKTcwMSYKel6JKZUhAW5SuFlIsd2xOBntqcb2iMKTnThbLwkzKSCdTmgbB1FcnbqPJO7ZTBqXkWEpGtcoG0hKazVuTiyHo+rLK70xmUPDKIM0=
+	t=1758204918; cv=none; b=R9NL7j8k9GPzWd9SGrUO5wvCK+we5gZKNcOChL1i6YuNAg4xu0i2a+diNwpuiPUkadktzVs7SnKBSj7nh8WosdD5EZDz4YUcXk3Q7/qPwoG0LaKZnBmgG/iBKZr6DFDEgJGXlHi0xgL13DAA3PTIjjAWEKQjTcY36fecIXFB2Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204922; c=relaxed/simple;
-	bh=ErXsUJy3/QQcCukzDk2n0JM8nm/bwmixx3wjjg7Df4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D1bNBvR+ybCRn6/L6GuzLUkElfdKJRpjgXzMUHcyLinS3mI5bBwBuVsbZ5TxAjNofB8DjIkTzYDRJoXLAF5SwvVhSYGHN/qKBKzQgzcvk09aSUMmJXADGgqOUBQNmCgKrERcJsXyL41mOLfrz5FklDX973qG2+yuvHwTl6fLyNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3F714227A88; Thu, 18 Sep 2025 16:15:11 +0200 (CEST)
-Date: Thu, 18 Sep 2025 16:15:11 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Marco Elver <elver@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, llvm@lists.linux.dev,
-	rcu@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and
- Locking-Analysis
-Message-ID: <20250918141511.GA30263@lst.de>
-References: <20250918140451.1289454-1-elver@google.com>
+	s=arc-20240116; t=1758204918; c=relaxed/simple;
+	bh=gWiH50s9H+3QCpy8Kdrf0c6cYqdlCgBeb7X+5UHAGoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f+xu3Clm4rj4+aUhNRPS7sdd+XXS+uzHQuBQo7VGxcaKywk9bJU6JBa+P0xrm5k9eHc6DEuFF3oqTt9IVmLRcR3+uK3sHLpfDZ3dB2PD1pu0qVg1pM9wdeZxWEgop0WT99l7UMDavgYt/pq79YnR9/Fxi/diNz/hURap2lsffiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=omiy0wMo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D56AC4CEE7;
+	Thu, 18 Sep 2025 14:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758204917;
+	bh=gWiH50s9H+3QCpy8Kdrf0c6cYqdlCgBeb7X+5UHAGoI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=omiy0wMoSXyYLTe/4zOJcqwtzcAPeEWcnCWNoU5Qrqd2AMoDon4wjy9pbcDRI0dMl
+	 YSkOUNEC1lO7PzfI7wL64JLySfrwI4dSX6fz6tz3jqByfNv90r1kVPTLbtDvW+Vg2p
+	 XZpFSXFQwvWui6rYBDaBTqlogMt1fiTiGxADYwTotvYkf2LF7oBOcRbtRBIJN6opax
+	 Xd5Q4amuPx/iYGm9XTkvGxaa9okcaH86Ku0TPyrOE1LYZlCuILzWMYfbOeJd2iCQWw
+	 zeXnp3I49s1TgB2O+7go/BPo3HC1dzkTe29JIRD+Ll1anf4GgW7LMTK6l2hUcuGUDh
+	 w70C7uZ9NvYjQ==
+Date: Thu, 18 Sep 2025 07:15:16 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Guangshuo Li <lgs201920130244@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, Jeff Garzik <jeff@garzik.org>, "Maciej W.
+ Rozycki" <macro@orcam.me.uk>, Mariusz Kozlowski <m.kozlowski@tuxland.pl>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: broadcom: sb1250-mac: Add checks for
+ kcalloc() in sbdma_initctx()
+Message-ID: <20250918071516.4ca7f752@kernel.org>
+In-Reply-To: <20250918121051.3504490-1-lgs201920130244@gmail.com>
+References: <20250918121051.3504490-1-lgs201920130244@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918140451.1289454-1-elver@google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 18, 2025 at 03:59:11PM +0200, Marco Elver wrote:
-> A Clang version that supports `-Wthread-safety-pointer` and the new
-> alias-analysis of capability pointers is required (from this version
-> onwards):
+On Thu, 18 Sep 2025 20:10:51 +0800 Guangshuo Li wrote:
+> Fixes: 73d739698017 ("sb1250-mac.c: De-typedef, de-volatile, de-etc...")
+> Fixes: c477f3348abb ("drivers/net/sb1250-mac.c: kmalloc + memset conversion to kcalloc")
+
+neither of these tags is correct, the bug existed before them
+The Fixes tag should point to the commit that added the bug,
+not the last commit that touched the line
+
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+> ---
+>  drivers/net/ethernet/broadcom/sb1250-mac.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> 	https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
+> diff --git a/drivers/net/ethernet/broadcom/sb1250-mac.c b/drivers/net/ethernet/broadcom/sb1250-mac.c
+> index 30865fe03eeb..e16a49e22488 100644
+> --- a/drivers/net/ethernet/broadcom/sb1250-mac.c
+> +++ b/drivers/net/ethernet/broadcom/sb1250-mac.c
+> @@ -625,6 +625,8 @@ static void sbdma_initctx(struct sbmacdma *d, struct sbmac_softc *s, int chan,
+>  	d->sbdma_dscrtable_unaligned = kcalloc(d->sbdma_maxdescr + 1,
+>  					       sizeof(*d->sbdma_dscrtable),
+>  					       GFP_KERNEL);
+> +	if (!d->sbdma_dscrtable_unaligned)
+> +		return;		/* avoid NULL deref in ALIGN/phys conversion */
 
-There's no chance to make say x86 pre-built binaries for that available?
+This comment is completely unnecessary
 
+Please make sure to read:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
+before proceeding
+-- 
+pw-bot: cr
 
