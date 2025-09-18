@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-822601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0541B84404
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:00:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF65EB84422
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11CEF7B23C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87812466865
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C592FFFB2;
-	Thu, 18 Sep 2025 10:59:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57A12882DB;
+	Thu, 18 Sep 2025 11:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DszInJVe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4442FFDE9
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7A723ABA0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758193171; cv=none; b=U5QdnNtyxJNFKUvI+uMH3+Ulei4mSSvErBRjuK5sVO0Slymq9SHrzDtWve5ouhRpaTa41A/dq8O6FMPUI10l4fS1EATQ94pY1yZcQswy+RQnU1cdG1GbWhe5nftFek3Ki6ujX3nTP7aJZyB62/N4j9CjnAylS6SF1kArNhFsJOQ=
+	t=1758193449; cv=none; b=rO5abHtjwfYWGd5ADkON9ZYhcMqZnBtcU2Y2XfjRTrp+NOuY9ETiA0JDzy/QvjY5fL/eBGoInebgQvDmuEX08+5jZYY8J6TkJNtLN3pF452OAP2uykevslt2mz8QGt3NfGxSrF2lBQRqakMIo9T758dzyH/TOr5avVTHUQzWPJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758193171; c=relaxed/simple;
-	bh=uQ0qyw5c8o/+colPeKujxDOwIHdwYhxWGqbj0nq87f4=;
+	s=arc-20240116; t=1758193449; c=relaxed/simple;
+	bh=KCM2an48/bEFBf8NS7uq6k/rwlRWv7+LUFybPERbT9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owpJuymupHOkQGEkEvdqlVcE8ciguW/yLdPkcrWdQStjBWB7Hw3EHhcuan4nLTQZ3KrFGvstGX1XN+rSz5BPtU+iFI0cOvChlVEIF36jobR0t/jDiudWh1fUYb+4NAp4aIjTvmJNRMT8Ko6Vyqy2cE6yJHTWF4TgG06D7z2Wg40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uzCLp-0003qI-WA; Thu, 18 Sep 2025 12:58:58 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uzCLo-001vOk-1I;
-	Thu, 18 Sep 2025 12:58:56 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 0A18D473F21;
-	Thu, 18 Sep 2025 10:58:56 +0000 (UTC)
-Date: Thu, 18 Sep 2025 12:58:54 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
-	mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com, 
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>, mani@kernel.org, thomas.kopp@microchip.com, 
-	mailhol.vincent@wanadoo.fr, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linus.walleij@linaro.org, linux-can@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] can: mcp251xfd: add gpio functionality
-Message-ID: <20250918-daffy-steady-griffin-5299ac-mkl@pengutronix.de>
-References: <20250918064903.241372-1-viken.dadhaniya@oss.qualcomm.com>
- <20250918064903.241372-6-viken.dadhaniya@oss.qualcomm.com>
- <CAMRc=Mf2ycyKbL35bdy5m1WBEap7Bu8OO2Q9AdZYgc04Uynf8g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XoPnOd1eMjHklOEcn/b5etuzPk5xWcb+gaL/5Z0i62lx4tKdAUfYBpOyUu8zpwnsJJktEPuIL+u7yVfIB/ugfqLX4LZHhkQB585tSBNL2Onodlj0oqButjNMQ4XXIQNQHFW1pFlsbGiGPqDRTrigUX1GE9rbiWZRmrnEB7Q0SUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DszInJVe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398A7C4CEEB;
+	Thu, 18 Sep 2025 11:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758193448;
+	bh=KCM2an48/bEFBf8NS7uq6k/rwlRWv7+LUFybPERbT9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DszInJVedDqIo9ecQpafmUEKYnRlqKAGgF9vtF+tMzodzbGhTryFMiKR1RiQKN+Wt
+	 +kmWJNflvgrf8kzc7bUZcd0otxxM9bU3STK6LqeEJ6azTLS6NYjF27koSDY0xLEA9h
+	 XxxV1YxeYHZvj92g/7oT1vZloB0YvEh+3C1zFz00qAFr4ReHrdI3+oCjY1YyKBLZpj
+	 HTqNYRpY+XbpIUKq1DbHXCNVAP4EWV/ngsouhcIaP1YDbyB/JM4syD9B3RatAp6Pu9
+	 +zQql+vcpfBZUaEthnFQ9gh75wnSdKjb8qSd5tDh4lcTv2knVxxbkfMDy1IQQhFFfs
+	 LTOkGJhqFSikw==
+Date: Thu, 18 Sep 2025 13:04:05 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
+Cc: "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>, 
+	"joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>, "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>, 
+	"tursulin@ursulin.net" <tursulin@ursulin.net>, "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"chentao325@qq.com" <chentao325@qq.com>, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v2 1/2] drm/i915: set O_LARGEFILE in __create_shmem()
+Message-ID: <fumkp34yvnyibpeyfqbiactmjhkuvpzhj52l45xjzygjwv6zny@ooydqcmamfr5>
+References: <20250822030651.28099-1-chentaotao@didiglobal.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ngvdfwkgcmvnjorf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMRc=Mf2ycyKbL35bdy5m1WBEap7Bu8OO2Q9AdZYgc04Uynf8g@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250822030651.28099-1-chentaotao@didiglobal.com>
 
+Hi Taotao,
 
---ngvdfwkgcmvnjorf
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 5/6] can: mcp251xfd: add gpio functionality
-MIME-Version: 1.0
+Both patches merged to drm-intel-gt-next.
 
-On 18.09.2025 05:46:44, Bartosz Golaszewski wrote:
-> > diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c b/drivers/n=
-et/can/spi/mcp251xfd/mcp251xfd-core.c
-> > index ea41f04ae1a6..8c253091f498 100644
-> > --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-> > +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/bitfield.h>
-> >  #include <linux/clk.h>
-> >  #include <linux/device.h>
-> > +#include <linux/gpio/driver.h>
-> >  #include <linux/mod_devicetable.h>
-> >  #include <linux/module.h>
-> >  #include <linux/pm_runtime.h>
-> > @@ -1797,6 +1798,178 @@ static int mcp251xfd_register_check_rx_int(stru=
-ct mcp251xfd_priv *priv)
-> >  	return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_GPIOLIB
->=20
-> Any reason why you don't just depend on GPIOLIB in Kconfig? There's no
-> reason to make it optional if the device always has the GPIO pins.
+Thank you,
+Andi
 
-I don't mind having the ifdef. But it's up to you.
-
-[...]
-
-> > +static void mcp251xfd_gpio_set(struct gpio_chip *chip, unsigned int of=
-fset,
-> > +			       int value)
->=20
-> You must be rebased on pre v6.17 code, this will not compile with current
-> mainline.
-
-You mean "post" v6.17? Best rebase to latest net-next/main, which
-already contains the new signatures for the GPIO callbacks.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ngvdfwkgcmvnjorf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjL5esACgkQDHRl3/mQ
-kZxWLAf9H29wR6UqS6bdRKZ4KlZYkl/42mdy3IWhfZlWgaDGqn3LdFB+d+Qo3N3d
-+Nq7YwbrAlnoFmWKeGDyORPEBHK6gswUuVo2MKrkm4zMqMAUa6df5SauSk2t4Vxd
-ooKnMVKZGpe5QvAvS44Uafb3CblPAkOs/l5zVaVUV2YmB+TL/GDmLHImdUgpuJte
-/PoK5bAuzMY/O5pFgC/bX2PLpZehnqMQcBULmn9vSWroleMiSgiOCWCgd4jyC6HH
-QBUN0Pn+KbCK+xoVcsInanEMZNX9Ygzv5BiEeFiSzXO4rahpb3m7Kvf23NkTnVJA
-Das1wTaBuKioOE1vXP46xAzFbfaatA==
-=U1R1
------END PGP SIGNATURE-----
-
---ngvdfwkgcmvnjorf--
+On Fri, Aug 22, 2025 at 03:06:59AM +0000, 陈涛涛 Taotao Chen wrote:
+> From: Taotao Chen <chentaotao@didiglobal.com>
+> 
+> Without O_LARGEFILE, file->f_op->write_iter calls
+> generic_write_check_limits(), which enforces a 2GB (MAX_NON_LFS) limit,
+> causing -EFBIG on large writes.
+> 
+> In shmem_pwrite(), this error is later masked as -EIO due to the error
+> handling order, leading to igt failures like gen9_exec_parse(bb-large).
+> 
+> Set O_LARGEFILE in __create_shmem() to prevent -EFBIG on large writes.
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202508081029.343192ec-lkp@intel.com
+> Fixes: 048832a3f400 ("drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter")
+> Signed-off-by: Taotao Chen <chentaotao@didiglobal.com>
+> ---
+> v2:
+>  - Add force_o_largefile() guard before setting O_LARGEFILE
+> 
+>  drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> index e3d188455f67..b9dae15c1d16 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
+> @@ -514,6 +514,13 @@ static int __create_shmem(struct drm_i915_private *i915,
+>  	if (IS_ERR(filp))
+>  		return PTR_ERR(filp);
+>  
+> +	/*
+> +	 * Prevent -EFBIG by allowing large writes beyond MAX_NON_LFS on shmem
+> +	 * objects by setting O_LARGEFILE.
+> +	 */
+> +	if (force_o_largefile())
+> +		filp->f_flags |= O_LARGEFILE;
+> +
+>  	obj->filp = filp;
+>  	return 0;
+>  }
+> -- 
+> 2.34.1
 
