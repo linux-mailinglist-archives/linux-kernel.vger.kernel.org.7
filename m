@@ -1,228 +1,100 @@
-Return-Path: <linux-kernel+bounces-823574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5AAB86E0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:19:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4398B86E10
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8541CC49FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:20:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161DB582D28
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0414F3126CB;
-	Thu, 18 Sep 2025 20:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D6131C57A;
+	Thu, 18 Sep 2025 20:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/qj3TiJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1TtGk9a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B15D305045
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687BA2FBDF8;
+	Thu, 18 Sep 2025 20:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758226776; cv=none; b=AI/VDKM0EhSXDFNhf01siz1JM3VXp1eyQSB+CX5Y002r8UDWyLVIOwfRex0Ka7jB1l0Z6ATKyq0W362LOglCw8XIF8Oe7d6fBQQSfcXHQlC9hGjzu90IXfW1vFcqU1E5eKFpolwQqNVSqZmzfh52VKksMyI/P6iifYAq/DKVnfg=
+	t=1758226790; cv=none; b=BOLnAlskEXCB64RuOsWTcTu3goxn+Oedx0WCuCF9au/qzbgDPiWbpcu6YJV/TXzR3ojxpiQT/Lvz2pGpdo2sZNNC6BYKO1yCg5IYQ1XKKbvA0lwRaIoo5/ZPVhKyHZDNUykf9j/zG4caenvc5Br2ADhkTDB2GVA16nW7GVv+/oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758226776; c=relaxed/simple;
-	bh=sEs1SmKhcZ+GDVVt7rB6DOcGfiNBSmPezwtXQFXwSos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RuKX54CKHGeDiMRcOIZCMklg68fzY5s7nDwJrEip7IhIYp8J0AkRHwWXF7xDRL9vPVoIATzSMg4kdK4WkS4eNIN27wzJcjLFCWlPmOJ0VRhDppuBu9aEhhoBgaQnWZG8WDiXAGiuCX9aZAGhzzK6bg/VvCWbx2XpF+snY4Oxtdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/qj3TiJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB73C4CEF1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:19:35 +0000 (UTC)
+	s=arc-20240116; t=1758226790; c=relaxed/simple;
+	bh=5v643+f4mhCNNCitIuEUQGOWs/3qK3dOdQaqXP7H++4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8DRhdfvr3/NHAfIBrbN8clf21WoCyk3WwtS9uvQ8zZQvyd0tGGMZsdbukOHcDFXz11gg/HD1HZDVAR0ELYnv2sGw47h+DFjOthAZjJ3U+yyvYrs8U1eeBHU+RZ+PUV4M1WG6PjRqfnrUC2qGgWnjVOUmu3d4XolQhMu60OVKKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1TtGk9a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BB3C4CEE7;
+	Thu, 18 Sep 2025 20:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758226775;
-	bh=sEs1SmKhcZ+GDVVt7rB6DOcGfiNBSmPezwtXQFXwSos=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r/qj3TiJppx9/1777X2B/KI7vj9qJNy1TcFjiqUCb6RE0EzGxL01fjXQPtL4VcGh3
-	 bk+Hy0ir1FiSnEcxLIk890JQ4tjrsp2CNT2v+4xqjdtxDQJsUXkh3J1Vpbduucp9Ru
-	 j/oc2bYAm1L+iH17tx10hgxpbcsfTnFTfKtlH4m6Mqw2lkFzXACL7u/MYsajP+140Q
-	 0PDFcErWk0YTxla48t+9sRAzUTNSA1FOJkKDlIpmG663su98AggKQ05InZ0BRu+yT1
-	 ooLDhInQMD+mXbj81xaBZ5SJUypei+g6c7qEomZ0LMe2sRUZf7vu3oO0o6HWOvWQF1
-	 OKqVcNdBaSJlg==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-62190d14a96so582471eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:19:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9t2ffjONADnAXEbQNVZYDegZh69tbF9wCmjpb3ipXP9wakHmL4VBcqNNOHR8uH2Dd7s4NBrK+oN/lNug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymrQSE4X7xRX9h4x8QShDDB2eLWO/NwxBKZR+WKxVWz5qyjWec
-	bOoEkid9WtU6gbzBowvDKmdOmCOXEoG4Yz5+5fbP1vACGg1UR2tIPmOFIJCJH1xIw8iHGkt2ev+
-	ojMAChIiAXn0URVcrgdu9c0U8gzHzUqU=
-X-Google-Smtp-Source: AGHT+IGvzE+sYuqO6iXoDFcYnRp6ftyzxJQiHKjhQlF8lpUcN2AarZyg2zDypOF+HgJ9wua0ZR9l3gDQ+CsgkcVnkiI=
-X-Received: by 2002:a05:6808:5091:b0:43d:2218:5e1a with SMTP id
- 5614622812f47-43d6c1cf595mr495885b6e.19.1758226775101; Thu, 18 Sep 2025
- 13:19:35 -0700 (PDT)
+	s=k20201202; t=1758226790;
+	bh=5v643+f4mhCNNCitIuEUQGOWs/3qK3dOdQaqXP7H++4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c1TtGk9acaMHlhl0KnNwMmIZrnQ53Ie/77CghdF9h5mKWNNTrynrlDVej9cl6SlbK
+	 rKUGUQrMokaXsmp5tBp5dRYtlunEd1tzcwHZlhwBRdmjvmyGETbHRsJPANiXi9N5Vt
+	 5TJgn0hLF/ICqJ4d2uixvrAOp7R4K+nRoFQeISZ5JaCPp9dS9PTpxknVeb8Vjj1Sm4
+	 BuNCZTPhVTVLnCQ6sDpE01BlgX8WnBMVmQNPQa3HzRHOGkqIcn62VYnZcS6sWTj8tN
+	 Su1qCm7a1pAsKvJrq4wGAy1uwdyNskLZcYn/QvcZ25WDw8M/njUbzjbLNRKbJCzQPC
+	 B2SIqSKLAv7xw==
+Date: Thu, 18 Sep 2025 21:19:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH RESEND v3 0/4] ASoC: fsl: fsl_qmc_audio: Reduce amount of
+ interrupts
+Message-ID: <d735d395-d56f-448e-8bfc-4fdc9bcffd9d@sirena.org.uk>
+References: <cover.1758209158.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <878qimv24u.wl-tiwai@suse.de> <87ikhptpgm.wl-tiwai@suse.de>
- <CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com>
- <87tt10b5hq.wl-tiwai@suse.de> <CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 18 Sep 2025 22:19:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jafoG--WrZNjt+euY0gtQSTqSDH2_cWotf92ziq5wdUw@mail.gmail.com>
-X-Gm-Features: AS18NWA9gkmEeABvNt2lJgoMvhlk30TGGJvw4wXcQK1ZzayO-Y3iEaRrxIqf9PI
-Message-ID: <CAJZ5v0jafoG--WrZNjt+euY0gtQSTqSDH2_cWotf92ziq5wdUw@mail.gmail.com>
-Subject: Re: PM runtime auto-cleanup macros
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OG03h1ZJQmsi4o6W"
+Content-Disposition: inline
+In-Reply-To: <cover.1758209158.git.christophe.leroy@csgroup.eu>
+X-Cookie: Victory uber allies!
 
-On Thu, Sep 18, 2025 at 1:28=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Thu, Sep 18, 2025 at 9:10=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wrot=
-e:
-> >
-> > On Wed, 17 Sep 2025 20:58:36 +0200,
-> > Rafael J. Wysocki wrote:
-> > >
-> > > Hi,
-> > >
-> > > Sorry for the delay.
-> > >
-> > > On Thu, Sep 11, 2025 at 9:31=E2=80=AFAM Takashi Iwai <tiwai@suse.de> =
-wrote:
-> > > >
-> > > > On Wed, 10 Sep 2025 16:00:17 +0200,
-> > > > Takashi Iwai wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > while I worked on the code cleanups in the drivers with the recen=
-t
-> > > > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*()=
- can
-> > > > > be also managed with the auto-cleanup gracefully, too.  Actually =
-we
-> > > > > already defined the __free(pm_runtime_put) in commit bfa4477751e9=
-, and
-> > > > > there is a (single) user of it in pci-sysfs.c.
-> > > > >
-> > > > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
-> > > > >
-> > > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
-> > > > >            if (_T) pm_runtime_put_autosuspend(_T))
-> > > > >
-> > > > > Then one can use it like
-> > > > >
-> > > > >       ret =3D pm_runtime_resume_and_get(dev);
-> > > > >       if (ret < 0)
-> > > > >               return ret;
-> > > > >       struct device *pmdev __free(pm_runtime_put_autosuspend) =3D=
- dev;
-> > > > >
-> > > > > that is similar as done in pci-sysfs.c.  So far, so good.
-> > > > >
-> > > > > But, I find putting the line like above at each place a bit ugly.
-> > > > > So I'm wondering whether it'd be better to introduce some helper
-> > > > > macros, e.g.
-> > > > >
-> > > > > #define pm_runtime_auto_clean(dev, var) \
-> > > > >       struct device *var __free(pm_runtime_put) =3D (dev)
-> > > >
-> > > > It can be even simpler by assigning a temporary variable such as:
-> > > >
-> > > > #define pm_runtime_auto_clean(dev) \
-> > > >         struct device *__pm_runtime_var ## __LINE__ __free(pm_runti=
-me_put) =3D (dev)
-> > >
-> > > Well, if there's something like
-> > >
-> > > struct device *pm_runtime_resume_and_get_dev(struct device *dev)
-> > > {
-> > >         int ret =3D pm_runtime_resume_and_get(dev);
-> > >         if (ret < 0)
-> > >                 return ERR_PTR(ret);
-> > >
-> > >         return dev;
-> > > }
-> > >
-> > > It would be a matter of redefining the FREE to also take error
-> > > pointers into account and you could do
-> > >
-> > > struct device *__dev __free(pm_runtim_put) =3D pm_runtime_resume_and_=
-get_dev(dev);
-> > > if (IS_ERR(__dev))
-> > >         return PTR_ERR(__dev);
-> >
-> > That'll work, too.  Though, I find the notion of __free() and a
-> > temporary variable __dev a bit too cumbersome; it's used only for
-> > auto-clean stuff, so it could be somewhat anonymous.
->
-> No, it is not used only for auto-clean, it is also used for return
-> value checking and it represents a reference on the original dev.  It
-> cannot be entirely anonymous because of the error checking part.
->
-> The point is that this is one statement instead of two and so it is
-> arguably harder to mess up with.
->
-> > But it's all about a matter of taste, and I'd follow what you and
-> > other guys suggest.
-> >
-> > FWIW, there are lots of code doing like
-> >
-> >         pm_runtime_get_sync(dev);
-> >         mutex_lock(&foo);
-> >         ....
-> >         mutex_unlock(&foo);
-> >         pm_runtime_put(dev);
-> >         return;
-> >
-> > or
-> >
-> >         ret =3D pm_runtime_resume_and_get(dev);
-> >         if (ret)
-> >                 return ret;
-> >         mutex_lock(&foo);
-> >         ....
-> >         mutex_unlock(&foo);
-> >         pm_runtime_put_autosuspend(dev);
-> >         return 0;
-> >
-> > and they can be converted nicely with guard() once when PM runtime can
-> > be automatically unreferenced.  With my proposed change, it would
-> > become like:
-> >
-> >         pm_runtime_get_sync(dev);
-> >         pm_runtime_auto_clean(dev);
->
-> For the case in which the pm_runtime_get_sync() return value is
-> discarded, you could define a guard and do
->
-> guard(pm_runtime_get_sync)(dev);
->
-> here.
->
-> The case checking the return value is less straightforward.
->
-> >         guard(mutex)(&foo);
-> >         ....
-> >         return;
-> >
-> > or
-> >
-> >         ret =3D pm_runtime_resume_and_get(dev);
-> >         if (ret)
-> >                 return ret;
-> >         pm_runtime_auto_clean_autosuspend(dev);
-> >         guard(mutex)(&foo);
-> >         ....
-> >         return 0;
-> >
 
-I guess what I'm saying means basically something like this:
+--OG03h1ZJQmsi4o6W
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-DEFINE_CLASS(pm_runtime_resume_and_get, struct device *,
-         if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put(_T),
-pm_runtime_resume_and_get_dev(dev), struct device *dev)
+On Thu, Sep 18, 2025 at 05:34:07PM +0200, Christophe Leroy wrote:
+> This is a RESEND of v3 sent one month ago, see:
+> https://lore.kernel.org/all/cover.1754993232.git.christophe.leroy@csgroup.eu/
 
-DEFINE_CLASS(pm_runtime_resume_and_get_auto, struct device *,
-         if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put_autosuspend(_T),
-pm_runtime_resume_and_get_dev(dev), struct device *dev)
+That's a link to v2 which had substantial review comments and build
+issues...  I did actually go searching for v3 and didn't see similar
+there though.
 
-and analogously for pm_runtime_get_sync().
+--OG03h1ZJQmsi4o6W
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMaV8ACgkQJNaLcl1U
+h9CZvgf8CPU7RnocQ9l6sM8liGp/RotKn2IBpogMBPMA+/oJ0/jeIohYua1IvRlB
+LYkPh0mbBziixdS5LLfoaIUwuOA1yaXmQp1VNwQWY9ECun37kSxQI64up7mVJV4H
+5YMl9DNWJzDAEYBeVbKPIfZ7dykLyMd/d/63kRyz4LBaQE6s7eLArLZBcKdtuitu
+4oX7hZm6NoxmftnYwv3vcrtpcR72IulbhSEAWSCBazblbL3iay2O/Y8oyM2B274L
+1ndxpotDDaK+ghauhqvnJeSousc0gEmQ7GNa5085nl9zKj0aigIBKZa9zc9/JvLf
+6zbu7eCxY4m0Xv4b6uBM7Nz4QDAC+g==
+=xY/X
+-----END PGP SIGNATURE-----
+
+--OG03h1ZJQmsi4o6W--
 
