@@ -1,100 +1,117 @@
-Return-Path: <linux-kernel+bounces-823575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4398B86E10
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:20:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57150B86E15
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161DB582D28
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2471B3A35EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D6131C57A;
-	Thu, 18 Sep 2025 20:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8960C30FF3B;
+	Thu, 18 Sep 2025 20:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1TtGk9a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHUkk8Wl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687BA2FBDF8;
-	Thu, 18 Sep 2025 20:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75412E36EC
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758226790; cv=none; b=BOLnAlskEXCB64RuOsWTcTu3goxn+Oedx0WCuCF9au/qzbgDPiWbpcu6YJV/TXzR3ojxpiQT/Lvz2pGpdo2sZNNC6BYKO1yCg5IYQ1XKKbvA0lwRaIoo5/ZPVhKyHZDNUykf9j/zG4caenvc5Br2ADhkTDB2GVA16nW7GVv+/oE=
+	t=1758226805; cv=none; b=EkB1tCvvXnw0KSQZ2XrlbYzfNfYaiPY3ZGJJF68T8JOTyuMN6dJ6yKaUEWd1ICbdquF3w8Jqp8mC/36FC0alUNuksl/WYR0KBTKZ6YFmRcAWbNvIfEUDolhyolv9+qWIowBh43suRoHVY6rAgBv1hyznw6AIwnSBHi7wl/h/4p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758226790; c=relaxed/simple;
-	bh=5v643+f4mhCNNCitIuEUQGOWs/3qK3dOdQaqXP7H++4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8DRhdfvr3/NHAfIBrbN8clf21WoCyk3WwtS9uvQ8zZQvyd0tGGMZsdbukOHcDFXz11gg/HD1HZDVAR0ELYnv2sGw47h+DFjOthAZjJ3U+yyvYrs8U1eeBHU+RZ+PUV4M1WG6PjRqfnrUC2qGgWnjVOUmu3d4XolQhMu60OVKKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1TtGk9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BB3C4CEE7;
-	Thu, 18 Sep 2025 20:19:47 +0000 (UTC)
+	s=arc-20240116; t=1758226805; c=relaxed/simple;
+	bh=FSbtJlfbEWpXTTAL2IWDvDc9bF4V5nwqxEsky0boeH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qiubx0jLKAPPUesoB4eOMVApcczkwuKKAlV8SPlz93ipGFoEpJ7Baz49/jmVMGrzPv2l3gIoEPIdC2v6GItfG95fCB15lfOQcV0VtyUIoMMaxg7lc+7BQRIP5PlNLf0RePK9lZWvWBG9eNj/qhlWjPegtczwEsUxORM2MPRt5Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHUkk8Wl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD256C4CEF0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:20:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758226790;
-	bh=5v643+f4mhCNNCitIuEUQGOWs/3qK3dOdQaqXP7H++4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c1TtGk9acaMHlhl0KnNwMmIZrnQ53Ie/77CghdF9h5mKWNNTrynrlDVej9cl6SlbK
-	 rKUGUQrMokaXsmp5tBp5dRYtlunEd1tzcwHZlhwBRdmjvmyGETbHRsJPANiXi9N5Vt
-	 5TJgn0hLF/ICqJ4d2uixvrAOp7R4K+nRoFQeISZ5JaCPp9dS9PTpxknVeb8Vjj1Sm4
-	 BuNCZTPhVTVLnCQ6sDpE01BlgX8WnBMVmQNPQa3HzRHOGkqIcn62VYnZcS6sWTj8tN
-	 Su1qCm7a1pAsKvJrq4wGAy1uwdyNskLZcYn/QvcZ25WDw8M/njUbzjbLNRKbJCzQPC
-	 B2SIqSKLAv7xw==
-Date: Thu, 18 Sep 2025 21:19:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH RESEND v3 0/4] ASoC: fsl: fsl_qmc_audio: Reduce amount of
- interrupts
-Message-ID: <d735d395-d56f-448e-8bfc-4fdc9bcffd9d@sirena.org.uk>
-References: <cover.1758209158.git.christophe.leroy@csgroup.eu>
+	s=k20201202; t=1758226804;
+	bh=FSbtJlfbEWpXTTAL2IWDvDc9bF4V5nwqxEsky0boeH8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PHUkk8WlH2WQSknXGdIkl0p8/1L5ZfUR160VJCNnolIpi0OXYJhra12Y6VWYgf/l1
+	 gkW4nCVKnIToZpxLhPtdor0Jg+a1q6W67huv2/WwpR7FjyOfgJOhAPVO+e0L9JMniX
+	 pUhblqSti95R9llSdqoILioc1KBBD/eZB7yG1GqCJQhDSGgwvjXIT4/QGDZ703PJrB
+	 RsFTEtkQpluxZqONKAHbFaDJ7dNSIgbHXmll8B4TneKQSl2kk5Cr4cXw8H2pHbzQc5
+	 8LleJ5x2HKN+UY3OAIn7++vKcDjp9XQC6mbOq82elDV9exy/Hp4D0/+4YyNKBfm4jb
+	 80mYiyl3zBUCQ==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7459d088020so832011a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:20:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXYRwCAlXLvaOv2P/+ik+oIkuSswMFk7K8ez1aH4mlZfI78jaub167lVL8HiZuDhaCKJ3NU+qNPoG9p57g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeGCgnxSLL0wilR0i/vhPWDs1HFFWLmJjMOpXMeaNXBIJ7HaUM
+	BTY4DtGJ7jUPiujrC4vk5YbnB5d1imjor6mmtqLvL9iCcsssNYclPYBCU9Irj4fqZPVeW7e8pky
+	tUj+IOlQL0FngNgtNLxRGG58CRoYS6rE=
+X-Google-Smtp-Source: AGHT+IFj8Evd9wrxrU9eEA0BZbG2dAGaKoOu93PO6e4DBK/ygFMiTGXFHDyw4LJmydZFqvSmBzO86Qgv961KHtPOF5w=
+X-Received: by 2002:a05:6808:2109:b0:439:ba45:96cd with SMTP id
+ 5614622812f47-43d6c252460mr359647b6e.31.1758226804076; Thu, 18 Sep 2025
+ 13:20:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OG03h1ZJQmsi4o6W"
-Content-Disposition: inline
-In-Reply-To: <cover.1758209158.git.christophe.leroy@csgroup.eu>
-X-Cookie: Victory uber allies!
+References: <6191405.lOV4Wx5bFT@rafael.j.wysocki> <CAJZ5v0gEh-xoKdgAgUvnGzPV6AO51=ZagHXNCrC4BfRZk6Oydw@mail.gmail.com>
+ <87h5x088mt.ffs@tglx> <CAJZ5v0h1DgQ2xWSEXjbiwAUES4DMKL8S+B5+ed9muWTwsfeNsA@mail.gmail.com>
+ <87ecs38qi5.ffs@tglx>
+In-Reply-To: <87ecs38qi5.ffs@tglx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 18 Sep 2025 22:19:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ivDy8DrAe0BBuN47eU0FZXb_FgEATCwMHL1HnwR7uDyQ@mail.gmail.com>
+X-Gm-Features: AS18NWDjRyOU3mVcIH-0Z7u0dM-a-ij1AMhSchzLRem42YD9hL8SFOslN2ZAgPk
+Message-ID: <CAJZ5v0ivDy8DrAe0BBuN47eU0FZXb_FgEATCwMHL1HnwR7uDyQ@mail.gmail.com>
+Subject: Re: [PATCH v1] smp: Fix up and expand the smp_call_function_many() kerneldoc
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 18, 2025 at 10:17=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> On Thu, Sep 18 2025 at 12:05, Rafael J. Wysocki wrote:
+> > On Thu, Sep 18, 2025 at 10:31=E2=80=AFAM Thomas Gleixner <tglx@linutron=
+ix.de> wrote:
+> >>
+> >> On Tue, Sep 16 2025 at 16:13, Rafael J. Wysocki wrote:
+> >>
+> >> > On Tue, Sep 9, 2025 at 1:44=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
+> >> >>
+> >> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> >>
+> >> >> The smp_call_function_many() kerneldoc comment got out of sync with=
+ the
+> >> >> function definition (bool parameter "wait" is incorrectly described=
+ as a
+> >> >> bitmask in it), so fix it up by copying the "wait" description from=
+ the
+> >> >> smp_call_function() kerneldoc and add information regarding the han=
+dling
+> >> >> of the local CPU to it.
+> >> >>
+> >> >> Fixes: 49b3bd213a9f ("smp: Fix all kernel-doc warnings")
+> >> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> >
+> >> > It's been a week and no feedback.
+> >> >
+> >> > Well, in the further absence of any, I'll assume no concerns and jus=
+t
+> >> > queue this up.
+> >>
+> >> Sorry, was distracted. No objections from my side. Did you queue it
+> >> already?
+> >
+> > No, I didn't.
+>
+> I pick it up
 
---OG03h1ZJQmsi4o6W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Sep 18, 2025 at 05:34:07PM +0200, Christophe Leroy wrote:
-> This is a RESEND of v3 sent one month ago, see:
-> https://lore.kernel.org/all/cover.1754993232.git.christophe.leroy@csgroup.eu/
-
-That's a link to v2 which had substantial review comments and build
-issues...  I did actually go searching for v3 and didn't see similar
-there though.
-
---OG03h1ZJQmsi4o6W
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMaV8ACgkQJNaLcl1U
-h9CZvgf8CPU7RnocQ9l6sM8liGp/RotKn2IBpogMBPMA+/oJ0/jeIohYua1IvRlB
-LYkPh0mbBziixdS5LLfoaIUwuOA1yaXmQp1VNwQWY9ECun37kSxQI64up7mVJV4H
-5YMl9DNWJzDAEYBeVbKPIfZ7dykLyMd/d/63kRyz4LBaQE6s7eLArLZBcKdtuitu
-4oX7hZm6NoxmftnYwv3vcrtpcR72IulbhSEAWSCBazblbL3iay2O/Y8oyM2B274L
-1ndxpotDDaK+ghauhqvnJeSousc0gEmQ7GNa5085nl9zKj0aigIBKZa9zc9/JvLf
-6zbu7eCxY4m0Xv4b6uBM7Nz4QDAC+g==
-=xY/X
------END PGP SIGNATURE-----
-
---OG03h1ZJQmsi4o6W--
+Thanks!
 
