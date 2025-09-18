@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-822941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B18B85222
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:17:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27DDB85146
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB34560440
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:12:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AF677B71B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6812236F0;
-	Thu, 18 Sep 2025 14:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA9F31A7EB;
+	Thu, 18 Sep 2025 14:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e6mf/cKh"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xpm1ceXy"
+Received: from mail-lf1-f74.google.com (mail-lf1-f74.google.com [209.85.167.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE38318157
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98FF3195E9
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204401; cv=none; b=eXUzbBL4K+w9cm2LjDwIsxsar65HQevkWUmZUJ2Kt7XA6FqtnrIqONBWeK54vqEiJ3pz7kylgmRn1k5ADh9fLApHy3MwM2aeNI2HAWeKbzMCVjraSSjqnOBzsaaKGYQLxFz4O4eebpXp9RSGWdgWJfL0ziLFqhKIsU6LAB7k2nw=
+	t=1758204405; cv=none; b=O3fVlNhkGKHNb9hL9lVn46/qJO9ga5knDi4fFFngkPhfBTwlndcVWl4UHpFgxdApNx0mmDNCWSqJ99ralPs2dxeRT6HJok6/tNZudaxoIdgXYmK8Foz/frESfYCSNW2NPI0tR9k9edQIr04YQ4n01Y/Ok7VnEoaiJcO5rl7ezWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204401; c=relaxed/simple;
-	bh=dlga7YnphSnOGIQrIQaBJBfVrzl27d5Bc0V7ZNGYDq0=;
+	s=arc-20240116; t=1758204405; c=relaxed/simple;
+	bh=UlJtETuiKnavOdqQ2uIKodawMPeKGzf4YyCRIIv6Cbk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NfM3RfxeWReOYYMw9dt49JFoefwPkGgl2TSNeH9XLGwdsfiXzLu5G3Ys7kzdRE4khYbiUbGKTQoF6vyKAM6NgauySK4TjouPQ3OBsUZzqOt/ZaPOoPyICbIboWptrs0NzjgRJwgqTpylcCbFbk2sIaOUVLayBUbPYBu5uhM5CHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e6mf/cKh; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=NxnRtOj57l9UgBRDjRPq0KjhDuJMcue/Rthu3urrIuat6CAgIfbBB3hQNuBduKXqW7viTDybTCeYtvOsIPdLKhfPvhYYrPbOjePn5hWJQcnirTa0JbTs66xPfW0rXj5ahX1MNqzHowxg7/VF7UZH4gInE/ys0HhHsWwwE2jDG3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xpm1ceXy; arc=none smtp.client-ip=209.85.167.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45de18e7eccso5840175e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:06:38 -0700 (PDT)
+Received: by mail-lf1-f74.google.com with SMTP id 2adb3069b0e04-55f6f4dea68so679093e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:06:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758204397; x=1758809197; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758204400; x=1758809200; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dhic53vYgugE24TxlxF+xx8w5glItenUyktwwUAacwI=;
-        b=e6mf/cKh23OtOLaa85mS/JtKU2kqvrYVFiAanqZ/8YAS6U1D6Xt0XqD5ThnU8uMT9t
-         AcWsQ8KiUXmovzqPiSL+AHPyL56ckk7WgWCOAdAi3gNkDHTUd0W9cinYfjkqwH8pc2p/
-         a1owrBxFfeTl4M9tJT8bWhopr2SoFw9WRXLfSl6QZjG2ErdXiE5ksrs7g3OrI8wANrf2
-         RLh1m3JDnSn6EVsebG8TGvDRdWUR44DmPK1THCP8KDwmR1RTph+3O7xib67D6xlIaTL4
-         sSn0Xkqe+OzxUNxLqxvIV86VJtM/eWxPLnxyz/2LTV2dUm5vXNwKqvWWy71yiWE2RwKS
-         CDCA==
+        bh=AbpPVjMmuER0ts34LQajNdvnhoooPemuy99n7ga7GVE=;
+        b=Xpm1ceXyUbilm0RyFmA7kcavZIKS4EvCv2LKlAjf3tZUhkW2/k5hO+hPWHT5GVmOVn
+         mFwIbI+ksJ+xb3QLaXCzyNmJGebZgBzJT3Q46IxJHsQBLTbbGDO/TQs0GNgDKdgjjKiz
+         yIFbuqH3asRselqyWti++ZpXxmN7Ng7vzHyMkPOrS3TbK/77YfEWxYjSoR/OoI5mnzht
+         v6lGohNJqndeaiYUYdMFBBzneHJu/o83MiFNJvrAUcAt/tFT72Z1Ijm50BT7Pd6CrJ/i
+         F0VkTUuf/jDSuoRyWtUalv5t6XDXxh3foCAej+FVtSzLVhOOLvk9D01vbOXI0ginUoYd
+         oMqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758204397; x=1758809197;
+        d=1e100.net; s=20230601; t=1758204400; x=1758809200;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dhic53vYgugE24TxlxF+xx8w5glItenUyktwwUAacwI=;
-        b=YA/+Psyw8vPsN4pAqxrcoXvHO5MRPa8ujvY3llGPQ44LBLUGfDlR3RS7Z/v5nxflwm
-         Hzile2lD2Q4WYY/9NxNhjgEBciwrymymh+vbdeV9lQucg5GJl3QcGnMEcBfK4jnVt5ed
-         XS77yqvDrKdewHcXgNsa3LELxATBacZ0kHe1ys+uk+xlot5WucQnzyvdkupr691w2bJL
-         EYjvQatsiH7TRNRw9IZRLyNdCOswoTHglDdbIraaks8SIvfzFSEBLF1d6JIK5k++7MoU
-         F1H8SR7Nhq26wMce0vJhKGKQPnUf0xpUeHWJle3WH5K4zg2RBQroFzA+uriKA64teUIY
-         vsfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXa9i98GAUri+JM02jXF8zqdM9Hz45hR0h8+SkRNzyb0C4D75pQzaJrjy73j9Bn8jE5rgmORcYP3NdftPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDlQiShFuPBi4oeMjDoGlTp83+fWt8RlCVWHL+cHoBJPCcNGQh
-	yMnnC82mHA0nsT2zEIgVV+d553CSYQ0rU+ODZ4i8avayirsU4Z+KSgQ70lKjlFrR5UEhmnmCjpl
-	mnA==
-X-Google-Smtp-Source: AGHT+IHZwXc50wF1UKzRkCSl9Zlzv0YXfIKjEUT7w3tckKijx1tkK0IOXg5OQwciPpS047ZOEU7YpUJVKQ==
-X-Received: from wmqb11.prod.google.com ([2002:a05:600c:4e0b:b0:45f:2306:167])
- (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1c9b:b0:45d:d9ab:b85a
- with SMTP id 5b1f17b1804b1-46201f8b09fmr54309365e9.7.1758204397465; Thu, 18
- Sep 2025 07:06:37 -0700 (PDT)
-Date: Thu, 18 Sep 2025 15:59:37 +0200
+        bh=AbpPVjMmuER0ts34LQajNdvnhoooPemuy99n7ga7GVE=;
+        b=JcemOR+Var9jWwmmwrAcyqsyXD7sgAF3xtDMCFE2zIhRzSUEM+p1DYjwD6gnTLmoEa
+         cdpzYjiHhSFKSE9i4EmQ6nAbio9O+L3I5tlN3AuSkwqQ+D8nZ6lNge26P227M/orT+fU
+         DZPDSRa4khO1rfGzm+NegEapGFMGpYYapzxWxbT275jd/aC/WqkKzy5h4hpetcsgVJ9Y
+         JCKSOfjqZ8Fc9lxsQGUlESnmg3keoiP7OojAzNM/jcCaJsM6e4rQ84SYEMfndsydfDhS
+         Sgqs8B6wsHjuUKyoFZJLWAbIjEi70gpJCdMH4Re2br0gI/4q+DghPyIuR07qHbfrof0l
+         JO6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXbC0c/0I3unbbIZPVqkFOHhscA92VltsMLgMMOyQgnB14bpLO56+ceUQkKgk5aV4eHSlnCPhnWuYi9EqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx962TIxuVwxhYOu5+Lmc/nV9cx4fyoH8Z0cJ0hIW32ZWF7mnk8
+	1BBjU3CPXcXGH+eOUjPQvLVGmDUFIHC+05wjMkQTFzVTXVH1gh8VDKzjPLr5zLdqeVFZDWK//Rf
+	pAQ==
+X-Google-Smtp-Source: AGHT+IEWYcZtiY85Y5TBe4RKI/DknR4t9xSRYv397N/k2+9V5y5Th2sq2ql+LNq1WKRQLl1+RDCJRaV51A==
+X-Received: from lfby21.prod.google.com ([2002:a19:6415:0:b0:577:abf1:7dcc])
+ (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6512:4041:b0:579:c485:8704
+ with SMTP id 2adb3069b0e04-579c4858934mr81687e87.42.1758204400078; Thu, 18
+ Sep 2025 07:06:40 -0700 (PDT)
+Date: Thu, 18 Sep 2025 15:59:38 +0200
 In-Reply-To: <20250918140451.1289454-1-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250918140451.1289454-1-elver@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250918140451.1289454-27-elver@google.com>
-Subject: [PATCH v3 26/35] MAINTAINERS: Add entry for Capability Analysis
+Message-ID: <20250918140451.1289454-28-elver@google.com>
+Subject: [PATCH v3 27/35] kfence: Enable capability analysis
 From: Marco Elver <elver@google.com>
 To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, 
 	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>
@@ -101,36 +101,216 @@ Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenry
 	llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Add entry for all new files added for Clang's capability analysis.
+Enable capability analysis for the KFENCE subsystem.
+
+Notable, kfence_handle_page_fault() required minor restructure, which
+also fixed a subtle race; arguably that function is more readable now.
 
 Signed-off-by: Marco Elver <elver@google.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 ---
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+v2:
+* Remove disable/enable_capability_analysis() around headers.
+* Use __capability_unsafe() instead of __no_capability_analysis.
+---
+ mm/kfence/Makefile |  2 ++
+ mm/kfence/core.c   | 20 +++++++++++++-------
+ mm/kfence/kfence.h | 14 ++++++++------
+ mm/kfence/report.c |  4 ++--
+ 4 files changed, 25 insertions(+), 15 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cd7ff55b5d32..da4c8196c1b7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5951,6 +5951,17 @@ M:	Nelson Escobar <neescoba@cisco.com>
- S:	Supported
- F:	drivers/infiniband/hw/usnic/
+diff --git a/mm/kfence/Makefile b/mm/kfence/Makefile
+index 2de2a58d11a1..b3640bdc3c69 100644
+--- a/mm/kfence/Makefile
++++ b/mm/kfence/Makefile
+@@ -1,5 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
  
-+CLANG CAPABILITY ANALYSIS
-+M:	Marco Elver <elver@google.com>
-+R:	Bart Van Assche <bvanassche@acm.org>
-+L:	llvm@lists.linux.dev
-+S:	Maintained
-+F:	Documentation/dev-tools/capability-analysis.rst
-+F:	include/linux/compiler-capability-analysis.h
-+F:	lib/test_capability-analysis.c
-+F:	scripts/Makefile.capability-analysis
-+F:	scripts/capability-analysis-suppression.txt
++CAPABILITY_ANALYSIS := y
 +
- CLANG CONTROL FLOW INTEGRITY SUPPORT
- M:	Sami Tolvanen <samitolvanen@google.com>
- M:	Kees Cook <kees@kernel.org>
+ obj-y := core.o report.o
+ 
+ CFLAGS_kfence_test.o := -fno-omit-frame-pointer -fno-optimize-sibling-calls
+diff --git a/mm/kfence/core.c b/mm/kfence/core.c
+index 0ed3be100963..53b81eb5f31a 100644
+--- a/mm/kfence/core.c
++++ b/mm/kfence/core.c
+@@ -132,8 +132,8 @@ struct kfence_metadata *kfence_metadata __read_mostly;
+ static struct kfence_metadata *kfence_metadata_init __read_mostly;
+ 
+ /* Freelist with available objects. */
+-static struct list_head kfence_freelist = LIST_HEAD_INIT(kfence_freelist);
+-static DEFINE_RAW_SPINLOCK(kfence_freelist_lock); /* Lock protecting freelist. */
++DEFINE_RAW_SPINLOCK(kfence_freelist_lock); /* Lock protecting freelist. */
++static struct list_head kfence_freelist __guarded_by(&kfence_freelist_lock) = LIST_HEAD_INIT(kfence_freelist);
+ 
+ /*
+  * The static key to set up a KFENCE allocation; or if static keys are not used
+@@ -253,6 +253,7 @@ static bool kfence_unprotect(unsigned long addr)
+ }
+ 
+ static inline unsigned long metadata_to_pageaddr(const struct kfence_metadata *meta)
++	__must_hold(&meta->lock)
+ {
+ 	unsigned long offset = (meta - kfence_metadata + 1) * PAGE_SIZE * 2;
+ 	unsigned long pageaddr = (unsigned long)&__kfence_pool[offset];
+@@ -288,6 +289,7 @@ static inline bool kfence_obj_allocated(const struct kfence_metadata *meta)
+ static noinline void
+ metadata_update_state(struct kfence_metadata *meta, enum kfence_object_state next,
+ 		      unsigned long *stack_entries, size_t num_stack_entries)
++	__must_hold(&meta->lock)
+ {
+ 	struct kfence_track *track =
+ 		next == KFENCE_OBJECT_ALLOCATED ? &meta->alloc_track : &meta->free_track;
+@@ -485,7 +487,7 @@ static void *kfence_guarded_alloc(struct kmem_cache *cache, size_t size, gfp_t g
+ 	alloc_covered_add(alloc_stack_hash, 1);
+ 
+ 	/* Set required slab fields. */
+-	slab = virt_to_slab((void *)meta->addr);
++	slab = virt_to_slab(addr);
+ 	slab->slab_cache = cache;
+ 	slab->objects = 1;
+ 
+@@ -514,6 +516,7 @@ static void *kfence_guarded_alloc(struct kmem_cache *cache, size_t size, gfp_t g
+ static void kfence_guarded_free(void *addr, struct kfence_metadata *meta, bool zombie)
+ {
+ 	struct kcsan_scoped_access assert_page_exclusive;
++	u32 alloc_stack_hash;
+ 	unsigned long flags;
+ 	bool init;
+ 
+@@ -546,9 +549,10 @@ static void kfence_guarded_free(void *addr, struct kfence_metadata *meta, bool z
+ 	/* Mark the object as freed. */
+ 	metadata_update_state(meta, KFENCE_OBJECT_FREED, NULL, 0);
+ 	init = slab_want_init_on_free(meta->cache);
++	alloc_stack_hash = meta->alloc_stack_hash;
+ 	raw_spin_unlock_irqrestore(&meta->lock, flags);
+ 
+-	alloc_covered_add(meta->alloc_stack_hash, -1);
++	alloc_covered_add(alloc_stack_hash, -1);
+ 
+ 	/* Check canary bytes for memory corruption. */
+ 	check_canary(meta);
+@@ -593,6 +597,7 @@ static void rcu_guarded_free(struct rcu_head *h)
+  * which partial initialization succeeded.
+  */
+ static unsigned long kfence_init_pool(void)
++	__capability_unsafe(/* constructor */)
+ {
+ 	unsigned long addr;
+ 	struct page *pages;
+@@ -1192,6 +1197,7 @@ bool kfence_handle_page_fault(unsigned long addr, bool is_write, struct pt_regs
+ {
+ 	const int page_index = (addr - (unsigned long)__kfence_pool) / PAGE_SIZE;
+ 	struct kfence_metadata *to_report = NULL;
++	unsigned long unprotected_page = 0;
+ 	enum kfence_error_type error_type;
+ 	unsigned long flags;
+ 
+@@ -1225,9 +1231,8 @@ bool kfence_handle_page_fault(unsigned long addr, bool is_write, struct pt_regs
+ 		if (!to_report)
+ 			goto out;
+ 
+-		raw_spin_lock_irqsave(&to_report->lock, flags);
+-		to_report->unprotected_page = addr;
+ 		error_type = KFENCE_ERROR_OOB;
++		unprotected_page = addr;
+ 
+ 		/*
+ 		 * If the object was freed before we took the look we can still
+@@ -1239,7 +1244,6 @@ bool kfence_handle_page_fault(unsigned long addr, bool is_write, struct pt_regs
+ 		if (!to_report)
+ 			goto out;
+ 
+-		raw_spin_lock_irqsave(&to_report->lock, flags);
+ 		error_type = KFENCE_ERROR_UAF;
+ 		/*
+ 		 * We may race with __kfence_alloc(), and it is possible that a
+@@ -1251,6 +1255,8 @@ bool kfence_handle_page_fault(unsigned long addr, bool is_write, struct pt_regs
+ 
+ out:
+ 	if (to_report) {
++		raw_spin_lock_irqsave(&to_report->lock, flags);
++		to_report->unprotected_page = unprotected_page;
+ 		kfence_report_error(addr, is_write, regs, to_report, error_type);
+ 		raw_spin_unlock_irqrestore(&to_report->lock, flags);
+ 	} else {
+diff --git a/mm/kfence/kfence.h b/mm/kfence/kfence.h
+index dfba5ea06b01..f9caea007246 100644
+--- a/mm/kfence/kfence.h
++++ b/mm/kfence/kfence.h
+@@ -34,6 +34,8 @@
+ /* Maximum stack depth for reports. */
+ #define KFENCE_STACK_DEPTH 64
+ 
++extern raw_spinlock_t kfence_freelist_lock;
++
+ /* KFENCE object states. */
+ enum kfence_object_state {
+ 	KFENCE_OBJECT_UNUSED,		/* Object is unused. */
+@@ -53,7 +55,7 @@ struct kfence_track {
+ 
+ /* KFENCE metadata per guarded allocation. */
+ struct kfence_metadata {
+-	struct list_head list;		/* Freelist node; access under kfence_freelist_lock. */
++	struct list_head list __guarded_by(&kfence_freelist_lock);	/* Freelist node. */
+ 	struct rcu_head rcu_head;	/* For delayed freeing. */
+ 
+ 	/*
+@@ -91,13 +93,13 @@ struct kfence_metadata {
+ 	 * In case of an invalid access, the page that was unprotected; we
+ 	 * optimistically only store one address.
+ 	 */
+-	unsigned long unprotected_page;
++	unsigned long unprotected_page __guarded_by(&lock);
+ 
+ 	/* Allocation and free stack information. */
+-	struct kfence_track alloc_track;
+-	struct kfence_track free_track;
++	struct kfence_track alloc_track __guarded_by(&lock);
++	struct kfence_track free_track __guarded_by(&lock);
+ 	/* For updating alloc_covered on frees. */
+-	u32 alloc_stack_hash;
++	u32 alloc_stack_hash __guarded_by(&lock);
+ #ifdef CONFIG_MEMCG
+ 	struct slabobj_ext obj_exts;
+ #endif
+@@ -141,6 +143,6 @@ enum kfence_error_type {
+ void kfence_report_error(unsigned long address, bool is_write, struct pt_regs *regs,
+ 			 const struct kfence_metadata *meta, enum kfence_error_type type);
+ 
+-void kfence_print_object(struct seq_file *seq, const struct kfence_metadata *meta);
++void kfence_print_object(struct seq_file *seq, const struct kfence_metadata *meta) __must_hold(&meta->lock);
+ 
+ #endif /* MM_KFENCE_KFENCE_H */
+diff --git a/mm/kfence/report.c b/mm/kfence/report.c
+index 10e6802a2edf..787e87c26926 100644
+--- a/mm/kfence/report.c
++++ b/mm/kfence/report.c
+@@ -106,6 +106,7 @@ static int get_stack_skipnr(const unsigned long stack_entries[], int num_entries
+ 
+ static void kfence_print_stack(struct seq_file *seq, const struct kfence_metadata *meta,
+ 			       bool show_alloc)
++	__must_hold(&meta->lock)
+ {
+ 	const struct kfence_track *track = show_alloc ? &meta->alloc_track : &meta->free_track;
+ 	u64 ts_sec = track->ts_nsec;
+@@ -207,8 +208,6 @@ void kfence_report_error(unsigned long address, bool is_write, struct pt_regs *r
+ 	if (WARN_ON(type != KFENCE_ERROR_INVALID && !meta))
+ 		return;
+ 
+-	if (meta)
+-		lockdep_assert_held(&meta->lock);
+ 	/*
+ 	 * Because we may generate reports in printk-unfriendly parts of the
+ 	 * kernel, such as scheduler code, the use of printk() could deadlock.
+@@ -263,6 +262,7 @@ void kfence_report_error(unsigned long address, bool is_write, struct pt_regs *r
+ 	stack_trace_print(stack_entries + skipnr, num_stack_entries - skipnr, 0);
+ 
+ 	if (meta) {
++		lockdep_assert_held(&meta->lock);
+ 		pr_err("\n");
+ 		kfence_print_object(NULL, meta);
+ 	}
 -- 
 2.51.0.384.g4c02a37b29-goog
 
