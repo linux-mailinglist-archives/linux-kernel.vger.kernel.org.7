@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-822008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA16B82D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:57:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6473FB82D73
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CCEA4A02C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2522948543F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A250F23E33D;
-	Thu, 18 Sep 2025 03:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB8324676E;
+	Thu, 18 Sep 2025 04:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vIM4io04"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="fPw3eB8w"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613C5225416
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BD7241664;
+	Thu, 18 Sep 2025 04:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758167860; cv=none; b=dXji7juhGu5jfhrBGDteoa8Q9iZtF1TrsB9U5zIMVCy7oiVwl2x+ilbnu6dn4/OvqbdVVR0TQFsKbRd/cwStkf/r2p3CV0J7kVvDyayaytVtRn8sXS8nBmGrEPmgAvNPjpuhoY9hUGrStmWWM/EIYN+7uwEdareFKbifBdcLD9g=
+	t=1758168037; cv=none; b=oAxaVuKFp0QTUXC8CnjZlYZYi2uxxomD4jz0BP03xF4Vr4Ts3If/WM5VlkspdeMUjTqVHG7NSFjYvKFdKBF4w2NIAJ2clobxR/okj3lBezcCwTe4T8wqnFhQxRIBdCVEIDwLxGmvZ6b3lnaRfKEdU1+pXfN57c2afB94RmdDhak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758167860; c=relaxed/simple;
-	bh=i8Edn55nxOCIaa5niYXYX/DJyG/lkCcCzwegzlb6vR0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=PKqzLUpQpP2j62CTz27K7NGoHhZA5Q3O1FlX4V5nng7W4W1ehyG6AHeHuYc5+/Y0DvbRFwMHe1a7XPq1uYuRZ6cVZqwxCLuujHbxnQNjbiRvhpZdstjeDKb9Vgwr5sVm81HGVZbUK+RGsp1T2CdnXIiHrxhILjtceXCfzJIdhwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vIM4io04; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250918035736epoutp036b0cbfbf0144d259432ca94f1a6d41f1~mRFmlCEwi3232232322epoutp03M
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:57:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250918035736epoutp036b0cbfbf0144d259432ca94f1a6d41f1~mRFmlCEwi3232232322epoutp03M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758167856;
-	bh=i8Edn55nxOCIaa5niYXYX/DJyG/lkCcCzwegzlb6vR0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=vIM4io042qiS1VxZYJO5P8rIaKDn9L5RLy9ABqzW7hFt+YhAOUgdzhnvzYOWoy20t
-	 d8pC2Nbdu3paBi9jfAeBDi+q+58VL82WhxFvXH/CZPHuYimZ2JL8Cd9lSqvmZky8tS
-	 LrvBiDJdtgKcpKy9yKFwZI0kWYHse4Ve/9Ll5gYQ=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250918035735epcas5p359effac4573f80c385f34c8c8af7d744~mRFmKc6vW1282212822epcas5p3T;
-	Thu, 18 Sep 2025 03:57:35 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cS20G6L6wz2SSKh; Thu, 18 Sep
-	2025 03:57:34 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250918035734epcas5p21939d1d9ee21776be24f0b4c2ad16706~mRFkwGRrd1421714217epcas5p2h;
-	Thu, 18 Sep 2025 03:57:34 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250918035729epsmtip1295610fe0f8feed24b94091dfc046bf7~mRFgXzEB50435304353epsmtip1Y;
-	Thu, 18 Sep 2025 03:57:29 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Sangwook Shin'" <sw617.shin@samsung.com>, <krzk@kernel.org>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>,
-	<semen.protsenko@linaro.org>, <dongil01.park@samsung.com>,
-	<khwan.seo@samsung.com>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <20250818021826.623830-5-sw617.shin@samsung.com>
-Subject: RE: [PATCH v6 4/5] watchdog: s3c2410_wdt: exynosautov920: Enable
- QUIRK_HAS_32BIT_CNT
-Date: Thu, 18 Sep 2025 09:27:24 +0530
-Message-ID: <06c601dc2850$5d468670$17d39350$@samsung.com>
+	s=arc-20240116; t=1758168037; c=relaxed/simple;
+	bh=afjM9h6h+iyrSkWCeooIuUGSF4sz2XGs7yO7jWty1uw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=N4o5ejX7DYyDGN4uUTQw3bgzMAtU9lzSN2TX3Fn6RdMz4H6Lhu7sgdA8eWJIQ6eLOTGF7xC/cT76rXmw4zOwPcGw90xXLPnXNhhl9sHNV6D7tBRvCJc9zzNvGxPb5lyrgS1aZ6S/v2NGs/yRdVuHFmT1qAmC1dW/WMT1bETs4R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=fPw3eB8w; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58I409oY41366026, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1758168009; bh=bSYjaCMBA5N0RZxLFxXWqR8CkeiHrM8cDyTs9gHcRyA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=fPw3eB8wn2WwuM/EruD0ofNNWCuzfp1f5//wtr0ReZYLVs7NhAVRcjdYltzcQIwix
+	 IFPj+KZuIpGSgya59q2ofnTjpLNyr4lI779PVSViT9kvC/ItcJairikEN3LTc5bb2A
+	 wYCfs4AX8jm4WW1BOl7aKfvaePdcoVHc3H7FNzQBpOyNlKcWcH7dWCSIdjxZ3g/u0M
+	 J0yk7si9DAI3Y2EzAdcqcZHrwni8QGC7xllmgeCoDmDJtTi7EB6cHcFkeKKzGML1/P
+	 cSqF8OjvgX5l/RyCmm5TYMbS9gJR3MN7TWdX/zoFXh2bc6S8oiMbSSOzucVJyX4nbe
+	 JRVLH6kzIdyXQ==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58I409oY41366026
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Sep 2025 12:00:09 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 18 Sep 2025 12:00:10 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 18 Sep 2025 12:00:09 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Thu, 18 Sep 2025 12:00:09 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Zong-Zhe Yang
+	<kevin_yang@realtek.com>
+CC: Bitterblue Smith <rtl8821cerfe2@gmail.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>,
+        "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: RE: [PATCH rtw v4 1/4] wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
+Thread-Topic: [PATCH rtw v4 1/4] wifi: rtw89: fix use-after-free in
+ rtw89_core_tx_kick_off_and_wait()
+Thread-Index: AQHcJ7j9ihvmCigyUEi4g4qppzNcU7SYSUhg
+Date: Thu, 18 Sep 2025 04:00:09 +0000
+Message-ID: <391e7cc762a549b7826e72090b61ebb2@realtek.com>
+References: <20250917095302.2908617-1-pchelkin@ispras.ru>
+ <20250917095302.2908617-2-pchelkin@ispras.ru>
+In-Reply-To: <20250917095302.2908617-2-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMf0cCJ9LyTM0wh7cHpv36iTCHVmgJ1QaGFAgkrzD2x7QmjoA==
-Content-Language: en-us
-X-CMS-MailID: 20250918035734epcas5p21939d1d9ee21776be24f0b4c2ad16706
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250818022433epcas2p4fec1cccd280fc73dccc5b00e2236f836
-References: <20250818021826.623830-1-sw617.shin@samsung.com>
-	<CGME20250818022433epcas2p4fec1cccd280fc73dccc5b00e2236f836@epcas2p4.samsung.com>
-	<20250818021826.623830-5-sw617.shin@samsung.com>
 
-Hi Sangwook
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
 
-> -----Original Message-----
-> From: Sangwook Shin <sw617.shin=40samsung.com>
-> Sent: Monday, August 18, 2025 7:48 AM
-> To: krzk=40kernel.org; alim.akhtar=40samsung.com; wim=40linux-watchdog.or=
-g;
-> linux=40roeck-us.net; semen.protsenko=40linaro.org;
-> dongil01.park=40samsung.com; khwan.seo=40samsung.com
-> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kern=
-el.org;
-> linux-watchdog=40vger.kernel.org; linux-kernel=40vger.kernel.org; Sangwoo=
-k Shin
-> <sw617.shin=40samsung.com>
-> Subject: =5BPATCH v6 4/5=5D watchdog: s3c2410_wdt: exynosautov920: Enable
-> QUIRK_HAS_32BIT_CNT
+[...]
+
+> @@ -6181,6 +6187,27 @@ rtw89_assoc_link_rcu_dereference(struct rtw89_dev =
+*rtwdev, u8 macid)
+>         list_first_entry_or_null(&p->dlink_pool, typeof(*p->links_inst), =
+dlink_schd); \
+>  })
 >=20
-> Enable QUIRK_HAS_32BIT_CNT to ExynosAutov920 SoC which has 32-bit
-> WTCNT.
->=20
-> Reviewed-by: Sam Protsenko <semen.protsenko=40linaro.org>
-> Signed-off-by: Sangwook Shin <sw617.shin=40samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> +static inline void rtw89_tx_wait_release(struct rtw89_tx_wait_info *wait=
+)
+> +{
+> +       dev_kfree_skb_any(wait->skb);
+> +       kfree_rcu(wait, rcu_head);
+> +}
+> +
+> +static inline void rtw89_tx_wait_list_clear(struct rtw89_dev *rtwdev)
+> +{
+> +       struct rtw89_tx_wait_info *wait, *tmp;
+> +
+> +       lockdep_assert_wiphy(rtwdev->hw->wiphy);
+> +
+> +       list_for_each_entry_safe(wait, tmp, &rtwdev->tx_waits, list) {
+> +               if (!wait_for_completion_timeout(&wait->completion,
+> +                                                RTW89_TX_WAIT_DEFAULT_TI=
+MEOUT))
+> +                       continue;
+
+
+Why should we wait 10ms? Just try_wait_for_completion()?
+
+Since TX completion might be missing (rtw89_core_stop(), for example),=20
+shouldn't we unconditionally free all in wait list for that case?
+
+
+> +               list_del(&wait->list);
+> +               rtw89_tx_wait_release(wait);
+> +       }
+> +}
+> +
+>  static inline int rtw89_hci_tx_write(struct rtw89_dev *rtwdev,
+>                                      struct rtw89_core_tx_request *tx_req=
+)
+>  {
+
 
 
