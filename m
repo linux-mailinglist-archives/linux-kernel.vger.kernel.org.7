@@ -1,140 +1,150 @@
-Return-Path: <linux-kernel+bounces-823678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A67FB8727C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CC8B872AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE88582F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D6B2A8920
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B9A2ED853;
-	Thu, 18 Sep 2025 21:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9CC2FB625;
+	Thu, 18 Sep 2025 21:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNjCJlMM"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v078hUY9"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D950F2D24BA
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80282D594D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758231344; cv=none; b=BpSZu4sn0ZcYZitlVkgSJJeuX9yztUCvoSjUEYr4xjH+L0AcUeO2nW2Bt/yVx0/kFAbZNVMj80BZGNBcYMIBO8S+KHjFtjqvybpXBSv4KHjY0i7gYaaGEIiZMCW7Df5Kl9QTbpYNFwbhWCxwZgKxCTcE1nKoQ1KLYdo0K0ORPk4=
+	t=1758231535; cv=none; b=hIG204+k4YjDyHWkDqJLWookQdmo9CL6DmgM8XPl4Kx5m2ENq681ejcuJzKCpDg9QRU4KAVFjXsfJGLDTdrnQYICM1QjDgnDViNIiayX4Nc5IRvEge8EJtZRAapvbKlMTU7vZxtNJdEvpXksfuqJBWpHfcn1YWTDpopIlP4ePF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758231344; c=relaxed/simple;
-	bh=jXnCKXVgE6hQ+FZVg5JB5sEK2bj0/Q1cT8SKrEgFiVE=;
+	s=arc-20240116; t=1758231535; c=relaxed/simple;
+	bh=mlY7FRbhytNYlxp/A30rSpN7iz0DKtsNb8dUg54WZYk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z/aLH+xA8yjAD0cgy6jccA0E2b06ofPr5hENE9MR/tbquM910BUmGJTCBZLYgUDm2zIUd2UdZfjDQT3woLP7tipIcke4ObSFJ3zt0Aq1Uu3pO46s0tYzc2DbWrBEXQuIw1JkiXTmPuSm9s4JFFb89nHplGvVOQh5YKJsh8F859o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bNjCJlMM; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b794e9a850so12044301cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:35:42 -0700 (PDT)
+	 To:Content-Type; b=CKSXoSU3Gik7OjkS13znCqGQpUYozA/ml7Yc5KHrI3svn6iDRfGZdLstlnlK//pm7I5gW4eitM1VflvJ0m7sP/A//k2I3TVYNg/ixgdRi8cB5AbEuJ0Ab2irrU1zx1sECYjyy0yl0sp9OtfvoQNjAf9kcsZIpNBfS/c+w9ksz9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v078hUY9; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2681645b7b6so24035ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758231341; x=1758836141; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=google.com; s=20230601; t=1758231533; x=1758836333; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jXnCKXVgE6hQ+FZVg5JB5sEK2bj0/Q1cT8SKrEgFiVE=;
-        b=bNjCJlMMk9U+TmCXETmxrNLUEg3Pw61OWrPd2OcJ6xZKXBcdTz9RinDpguXto2zA5e
-         IecU3MyxOKWcb1Q4KZUlx7EQWwm9Lc/kWUmIfQIDHuOqEevbaJcK4g4+YupfbDFye10Y
-         KTMGIPk+b4lqGXRNnuMhDoWVEtlO6i8uS1nEp7B2ZLDDK3pBVaaHuybAuPp+M9kzojSz
-         6vsx8zwSxzFCV+wOs6u/xhauwUfMpVPg2S96oacX6VsSHIunV63gztKnRB75oRtztO8p
-         VAsoXhU80mIfHVPwNlF+Pw0p1BjKhcbhoPMwsWEOY/ztDhaz7YvVpMPWFNf8SXFTQHBa
-         xIIA==
+        bh=Uvt9I2KpXbXrhZ6LPBcVnobYbaFag8C7jpCt8sntWwQ=;
+        b=v078hUY9duiEa8FFeoA1RRjhG+6sf1HZ2Jt7zw0bvx31GJaQrxyzwdRV1CEif1XVHS
+         MgU+tKd86qazkSuxQiNHppnb8gTVtvrFAtRjdqN1TDRuUe4waKaO49hXIJlq1lPr/yRF
+         KepV2jW04rK8m1MIRd/WM+vcRW/AODPAzK7YS+LTROoAMaRM9TtdLoD1Unghj3KNcB5S
+         XATMRhtIhbmwQ0D3cGraBwd+VTdHTXVj8HKl1MNRHmFxXEtabevcJP3+MKYqJ8mDUkL1
+         YdxC+DZRYrDXLsU0w2r0IhQfc0NfpjD+udPz+HJW8KiECpRAzlIO2LK299TjhREJgkc5
+         3a9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758231341; x=1758836141;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1758231533; x=1758836333;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jXnCKXVgE6hQ+FZVg5JB5sEK2bj0/Q1cT8SKrEgFiVE=;
-        b=F4LTwcIceTTYwPgf6g78FatYGUT33S+fxscK3EifgsbxO3LoEnKMfLO2OyaA0vxtJd
-         PHTgdopwEcYdI38nnjg10jz5eibVU28OI+4uII490V7h9k6YobABbLe4ttAL5tAU2gUf
-         7CnH/SN55epkdTspmqZogkVzdmYh99jDh+CGrAJNl28sV1K5hy29nhivZy7AfDEsXV8w
-         FJFpVupn6WxN8m+SGz9YIv/z3JiwK8MasrzfYgysglmOIyBwWWZQ5fMZDHXon9p3REOX
-         vR5XINQKSx7ZLYyh9jxnwBURrSNmaOALRNiXdMfM+LcXk4Uj3Q80VKPnkU+77oB3EFv9
-         vVdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWr+2bYBYNmnNR+PmlwxGLQRiS+AXyMdpyGgyUoy2DHH/zkWiwGTcdPF/pWbfcA7N9cTcIwvybRDZSltg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwinVE1cMQJ7DAD6KmE/lRJ8Y6gjEb6pGGdl7iCpnj9FIzcLiTU
-	MhZwltMYjo5lo7UOMeHSpMzGTDkFVQsQwt0hGggCQWvXqokOflKyuMiNMGx1fVgm9RsHznGV95i
-	2a0QWaQNHZ46TOtOwOB8YybKCK+ez9Po=
-X-Gm-Gg: ASbGncvh24fKB9VkNg2usabtKQAppJKq6AJdUlBI+VZlsA+LCa4X8rGP/QjkC3at+/I
-	IFL6MifK20KTS+olg944Qb4465d5eVwNPW+j06A+0UrTWz+73dkaJLgqHuHR2f2wM+2ezqGCDID
-	xCL7gO1BXgs7UCCEVWYmQNe1eEebBGSjptq4ustRYkBlsF91wYfv+EsrcMn1s2vKnA/uRoOhZ8e
-	2jtMXvjHklztrabPwj34uNrkKrbNa4s78BhthvwAI1ahuShacqvga4eUyvAOwUBkD4gJZk=
-X-Google-Smtp-Source: AGHT+IGiv+s5AouLfE/H+OI4d7OwQCqJOIBz2+RILHJ3o6xdlmWfK2Q4ZDqx59+U6xEoz6B2TESsbidYoVeBmWAkIXw=
-X-Received: by 2002:a05:622a:614:b0:4b7:a951:21cc with SMTP id
- d75a77b69052e-4c07444df71mr8113061cf.84.1758231341042; Thu, 18 Sep 2025
- 14:35:41 -0700 (PDT)
+        bh=Uvt9I2KpXbXrhZ6LPBcVnobYbaFag8C7jpCt8sntWwQ=;
+        b=ps4CHlmim1asAk2U8t7VsRDImFPd9KRX9bb8HBGC/bIqAvGxo3kCci27N9p/6zd02D
+         zYdBDm6R98+OXpS23iMlceg4QnxvLz1cHVTKRpuoVxgjtcaGQFoQjN7sn1ZjQKKvgEi9
+         F3pgcvktgQHzer6wN0innUV0te4rUHoYMH73enxzzjpSSc1KwfkOPKzoxx3BVe3a/qr3
+         wvOJWVRz8v3w9aB/EAjPU7key4A+S7jzInW2SuSCeXECwbFWzJXFkmTOgxLhlrU908vH
+         TaXDzQqbLa7dMMkhd7T/GK6vwx1oTCGoM5E2Wonr5JKhjGnE1/L4Bzq5pqCeGP/S1zQ9
+         HP7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXZhHv63ZtSbQyY5MLBr+a78ykc8e2NNNaOdjkdr4/V9NmlL8JhiZP6jx7UrFX4a/gb32RMKYySSFcz4dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjs6GfWCDzuMs7PNVsJ3BEDIbvz037CSUOobmu+mr5jTB3PQYb
+	D7fnHOR/ciarhkLkwT1ongj+E5cgphX1+tU1Czjskzt+uMIfXH4u4h+1uDILquZvYMs7A8S0JOC
+	SkuM1w2TQB8KdYx3P4uB4U7eztFsBj0zn/Rly2u7+
+X-Gm-Gg: ASbGncsO/xQSPNZxI1Xs6pq8p/WmHDvLq92urGOqkKHY7YXmmZqFPMB4iPYOyQoCU7J
+	9tCepPbIPtySqOnshHqzTfEzYCiIhh5/FRLyvo5AWlorNNUBV9BbAUhy562NK81cBiKifeMCLzt
+	qWBj9ZymwM+HwGsK0Vy/07RrntdP2fzXeDRwFRSHN1ETlKIWulK4746hOl9Mc5luYCxCs3vRUhA
+	EpGxG8ANZRoWP8gcqI12f6bYp8BVnRAF8SbGIIQOTwKCLuIJvqmuRPKt2m/QQ+3ILcLzAH8zw==
+X-Google-Smtp-Source: AGHT+IEaM4g2Y8nKc/gcP9AcbrDAw1aDgaCeO1MRm5LbJRIzEkkSSQzEpma1EJld9tYPD/d5gUX67e9HULwVBWwB//U=
+X-Received: by 2002:a17:902:e5cb:b0:24b:1741:1a4c with SMTP id
+ d9443c01a7336-26800b2b62cmr12430905ad.0.1758231532766; Thu, 18 Sep 2025
+ 14:38:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
- <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
- <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
- <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
- <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
- <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
- <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
- <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
- <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
- <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
- <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com> <CACePvbXae0zymE_BHydXtA_pjZ2NqabVyqxu1xKxLjLKmeYH9g@mail.gmail.com>
-In-Reply-To: <CACePvbXae0zymE_BHydXtA_pjZ2NqabVyqxu1xKxLjLKmeYH9g@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 19 Sep 2025 05:35:29 +0800
-X-Gm-Features: AS18NWCCgGfrK6FrQV50p4UjYkTXPoOuJcmQjaVmpdGYkQAzdS7lktT97iKTrKg
-Message-ID: <CAGsJ_4zB4ygGCN4JTx+AW+XAUm8WtFVLVesStuDHc8S-HT0ihQ@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
-To: Chris Li <chrisl@kernel.org>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+References: <20250830053549.1966520-1-irogers@google.com>
+In-Reply-To: <20250830053549.1966520-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 18 Sep 2025 14:38:39 -0700
+X-Gm-Features: AS18NWCtNfjGCSBOwnkEpIjtbpn08E3tdUXPQtKV_R7nWrrdnAAsLsdiNocA4uU
+Message-ID: <CAP-5=fUiSVg5QYBHKT2nM1JyaEqZ-mn2_YrTo+P92_GrwHTxgQ@mail.gmail.com>
+Subject: Re: [PATCH v1] perf bpf-filter: Fix opts declaration on older libbpfs
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Hao Ge <gehao@kylinos.cn>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> > I=E2=80=99m not entirely sure what you mean by =E2=80=9Cpage table page=
-.=E2=80=9D
+On Fri, Aug 29, 2025 at 10:35=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
+ote:
 >
-> The page that gets pointed by the page table, or the page that holds the =
-PTE.
+> Building perf with LIBBPF_DYNAMIC (ie not the default static linking
+> of libbpf with perf) is breaking as the libbpf isn't version 1.7 or
+> newer, where dont_enable is added to bpf_perf_event_opts. To avoid
+> this breakage add a compile time version check and don't declare the
+> variable when not present.
 >
-> > My understanding is that you=E2=80=99re saying:
-> > The swap table contains an array of pointers, each the same size as a P=
-TE,
-> > so its total size typically matches a PTE page table=E2=80=94one page o=
-n modern
-> > 64-bit systems.
->
-> That sounds good. Thanks for the suggestion.
-> I take your suggestion with some small modifications, mostly to
-> clarify the total size is the total size of one cluster of swap
-> tables. The total size of all swap tables in a swap file is much
-> bigger.
->
-> How about this:
->
-> A swap table is an array of pointers. Each pointer is the same size as a =
-PTE.
-> The size of a swap table for one swap cluster typically matches a PTE
-> page table,
-> which is one page on modern 64-bit systems.
+> Fixes: 5e2ac8e8571d ("perf bpf-filter: Enable events manually")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Acked.
+Ping.
 
+Thanks,
+Ian
+
+> ---
+>  tools/perf/util/bpf-filter.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >
-> Chris
-
-Thanks
-Barry
+> diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
+> index a0b11f35395f..92308c38fbb5 100644
+> --- a/tools/perf/util/bpf-filter.c
+> +++ b/tools/perf/util/bpf-filter.c
+> @@ -443,6 +443,10 @@ static int create_idx_hash(struct evsel *evsel, stru=
+ct perf_bpf_filter_entry *en
+>         return -1;
+>  }
+>
+> +#define LIBBPF_CURRENT_VERSION_GEQ(major, minor)                       \
+> +       (LIBBPF_MAJOR_VERSION > (major) ||                              \
+> +        (LIBBPF_MAJOR_VERSION =3D=3D (major) && LIBBPF_MINOR_VERSION >=
+=3D (minor)))
+> +
+>  int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+>  {
+>         int i, x, y, fd, ret;
+> @@ -451,8 +455,12 @@ int perf_bpf_filter__prepare(struct evsel *evsel, st=
+ruct target *target)
+>         struct bpf_link *link;
+>         struct perf_bpf_filter_entry *entry;
+>         bool needs_idx_hash =3D !target__has_cpu(target);
+> +#if LIBBPF_CURRENT_VERSION_GEQ(1, 7)
+>         DECLARE_LIBBPF_OPTS(bpf_perf_event_opts, pe_opts,
+>                             .dont_enable =3D true);
+> +#else
+> +       DECLARE_LIBBPF_OPTS(bpf_perf_event_opts, pe_opts);
+> +#endif
+>
+>         entry =3D calloc(MAX_FILTERS, sizeof(*entry));
+>         if (entry =3D=3D NULL)
+> --
+> 2.51.0.318.gd7df087d1a-goog
+>
 
