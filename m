@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-823601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3622B86F61
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:52:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C5CB86F73
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 588004E167C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:52:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8A7581068
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B0C2F360B;
-	Thu, 18 Sep 2025 20:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A152F39B9;
+	Thu, 18 Sep 2025 20:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVV2WfjC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hMwX8QrH"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0156E264A72;
-	Thu, 18 Sep 2025 20:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6901CCEE0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758228756; cv=none; b=fo0TmCk//WP1bxFTaATFuUziUwhKU7G2PyRca35SKCnqupux1dTNIHWbU/LvdNgQUfmipjvvsp5fgwY1yCSuDBRWOfffjwlB8xs0RPFetliKWlUEwnh+WXtTmVUzfKdOTpx0GcwtSwJXMvjQadBpRet63qPC8sgf6wpjEmL0yM0=
+	t=1758229045; cv=none; b=QhXWEt7NpCJ2w1i0+tMvTSjKbo/CHssjnmSt7XU2AJlBwKD7+3/nOwieH3feskE74y2FGxCz5eDVXzfLYIPK3S2Rrkei21hjeDsEHzhVkkXSP7caBZoT1IqlPLGDB4QMFxZkZL3rCndkAPRxI92//jS4d1jWICS9JM0O/vGmdcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758228756; c=relaxed/simple;
-	bh=ZkLGh94phtEema8WHbBi3csQqtKxGnStCf7APFvKzJU=;
+	s=arc-20240116; t=1758229045; c=relaxed/simple;
+	bh=13VJs7I563zMXcilTJ5ZSbYvZTg0GMtcoQCa3/06YfI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IijCFLCS5d5h1rWfXZ+nIIY/SmTQrXgtLCx7M6wmmiHMt3gL5Rw19i7IdH1BNfbfkYTVRnWZGchlvaiyQLMpKAT7f0G9h7TpMOXlkquYIRDTF/2+cVf4sjFPsUcmOzqw6xcdSNkeV5YnpaA4DB7qQhhOF2sKezpxOBVrDdzIjF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVV2WfjC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C96CC4CEE7;
-	Thu, 18 Sep 2025 20:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758228755;
-	bh=ZkLGh94phtEema8WHbBi3csQqtKxGnStCf7APFvKzJU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aVV2WfjC5H1gdj4iSWHYx271IJeBQTrxvJmiRDclZyHbaniBt9KROllyoJ9XucerC
-	 nWpb2S21nB6LeCdQjHbxhp16GVaVjXwXbPmRlm2NIAmPinOy6aeDzNhigfiQqDJCTf
-	 pU3s1u3xt0mGO/P9mDcEVmv8oZJO6xTBTGUpdWIJbPdh83gQ/YXPJnuLH6Eb3Dm5Je
-	 y78bCn/6uSd4nBMtJy1B5h4xydIouc0m+feX61ESKAphyetjGpVWyfGxAxv7FU+Qn/
-	 9bn2iI9fIr7zq83rNXunyOewOZyAMdN7m49optUtLZOPtFUZ+biJamhObLYAtyZgk+
-	 75pueFdQMlQEQ==
-Date: Thu, 18 Sep 2025 23:52:31 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Chris Fenner <cfenn@google.com>
-Cc: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org,
-	stable@vger.kernel.or, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Disable TPM2_TCG_HMAC by default
-Message-ID: <aMxxD1QvAgZyQkaM@kernel.org>
-References: <20250825203223.629515-1-jarkko@kernel.org>
- <aMxV9fB0E72QQY2G@earth.li>
- <aMxZlHn9bfa5LGEU@kernel.org>
- <CAMigqh2gJ+ALqxb8RcNFENJg-Z0FfKE2DZjaGdOER7G3AGZvKg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcioyp0WH6ny4kqhVU7nIBorNhbcbPhEuIpZI2zI8BTftNn4Xv0vyDixvLv3m8dDt9M6s7dMxtfb4qZ/eBIuSN2PSfANcbBZnuJFaHdJun8tJy3C9kpECIQCPNNeFN5GFt5Ske2jUlbKJ22g8R1HPf3DNobUHE8G6otxtzodE2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hMwX8QrH; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 18 Sep 2025 13:57:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758229041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YboiNlJLrHuwno2dTNAWyyWHcEmx4DdrrYbhMW2x15E=;
+	b=hMwX8QrH4fVXAwsA6C23vCpsbnXMcPQ5RT3fH0rwp8436N2NIRDg5prPa4eJl3ts0ENGgl
+	OnHiTWmb+Yba4LKkFNqLIietZ8lHLPmXh1JuiGOPdIJtj14t/ToyD4SSZmqzMts2ATW2cN
+	q31pKLvfhA9Rnm/xi0Hw7bSQ3xPvRAA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] KVM: arm64: Expose FEAT_LSFE to guests
+Message-ID: <aMxyKbnVjS35YuQi@linux.dev>
+References: <20250918-arm64-lsfe-v4-0-0abc712101c7@kernel.org>
+ <20250918-arm64-lsfe-v4-1-0abc712101c7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,15 +62,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMigqh2gJ+ALqxb8RcNFENJg-Z0FfKE2DZjaGdOER7G3AGZvKg@mail.gmail.com>
+In-Reply-To: <20250918-arm64-lsfe-v4-1-0abc712101c7@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 18, 2025 at 12:50:57PM -0700, Chris Fenner wrote:
-> Agreed, the feature needs some work in order to provide meaningful
-> security value, and disabling it by default facilitates that work.
+On Thu, Sep 18, 2025 at 08:42:06PM +0100, Mark Brown wrote:
+> FEAT_LSFE (Large System Float Extension), providing atomic floating point
+> memory operations, is optional from v9.5. This feature adds no new
+> architectural state, expose the relevant ID register field to guests so
+> they can discover it.
 > 
-> Reviewed-By: Chris Fenner <cfenn@google.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Thanks!
+We also need a test in set_id_regs.c selftest for the writability of
+this new feature field.
 
-BR, Jarkko
+Otherwise:
+
+Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+
+Thanks,
+Oliver
 
