@@ -1,91 +1,119 @@
-Return-Path: <linux-kernel+bounces-822818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9D4B84BCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:06:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888E1B84BD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C9527AFABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:04:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 141DA7B1D47
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F56A308F08;
-	Thu, 18 Sep 2025 13:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NpLQ5586"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADFD3081CD;
-	Thu, 18 Sep 2025 13:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1615308F08;
+	Thu, 18 Sep 2025 13:06:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3D4308F0F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758200754; cv=none; b=T8j6xKxHe2QKTMx8hlTqwnhKkMeGsllkyaHsrzgxjdWaYzhPS5Lf61NH+VQ8U067dDyAq5yoHSnUP3uo+xPzBdNnaqTyqbVpI8aK5B2rNeaK7Reud1LmjUFQoaP3Fkyi+SiL/aITohNTovz7JD/rzP/b7EYG4ud1ap+WhA1j0zk=
+	t=1758200790; cv=none; b=KRd0S/2gTbBwYHBIyqVokL8Lafq5VuBfMh4jr1Qpgx41a6BQit2pjHn/58f0kEzaD68SoNzPSUdONitbz6SQHQmfXgg3YVoDpaqDtVrU/67o1bQeYGCKEmSU4OvIV8QCmBn5yLoFdFoCpGmKneSvbE7h82tVVsTOuF7BAH56Mhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758200754; c=relaxed/simple;
-	bh=XoYGtPHukdd25GBUBWtfnmJWMGcLVLP9TqwVDZmOWf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyQcKnybnFbfQnVWJCGNcXnH66Y9pUwSPIvHVZcfV6XC+zgZZv9ImaENdKXUh/070WISzYP5fu+jDR+MxuCvIViMOi45k/9ep5keM0TOr2QYp5kA5o9NYqd+jzCfcIfUKb3Rcg705xFnu30Qj5LiGvy0ggWyJvv3w6zwtIp5if8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NpLQ5586; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2OUKW+7mtsPUgfqsMcetzwE/6SVcXcNuSgS0ac5rs4c=; b=NpLQ55866HVrCy1XxWWFmQmaaV
-	FVnLaQJCteP1u8utacN0kRyKyLASkIoT1IMF62GdhVFV7jHWVwcehpxNSFhH8NJlLGbZY5nl9C/Kd
-	/xnwr1rN7u3RNEjZNPXTlZB7D/QMxMSWukuxPGuyKd9d5ARqLSiGOXceRFCHbphrX7AXE8PiBRUjH
-	AuxY+yppN40JlHpf57phP2MfdXJupB2i09mLtLVgA1wJOeR6ZOCNfdVgLYZQu0B2ggoirPk28RaAI
-	Ei8Ef8Z1jIBbnJdtqjAuUdjVt3M9vPAFczZXTlEQVpIm+JopE9KzvC1ACSUmn1/3cQEJCHnQw47PH
-	cEQOfWpg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uzEKW-00000007bxb-2wZx;
-	Thu, 18 Sep 2025 13:05:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5E98D3003C4; Thu, 18 Sep 2025 15:05:43 +0200 (CEST)
-Date: Thu, 18 Sep 2025 15:05:43 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	kees@kernel.org, samitolvanen@google.com, rppt@kernel.org,
-	luto@kernel.org, mhiramat@kernel.org, ast@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
-Message-ID: <20250918130543.GM3245006@noisy.programming.kicks-ass.net>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1758200790; c=relaxed/simple;
+	bh=huBGB/mtoq5w27IOL1IUyamubFpIcE1AxvBiM7Mx9KY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QqO4Sw6KuIMTBuQtXFbjpdfAmUmKpsZQepZIkNqUilC5VfAmExh79mZRwxwqXlB7E44rFJ/AIbhRtuzZQsnXI5PmQQ2wSc8h7RTzn8Bq6domrlZXGt8PtoJe+L5lpKahJ0/GKh5ES5N2Ljo/B7YlKAsszsnyc456IGSN4TfmzEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8DE41A25;
+	Thu, 18 Sep 2025 06:06:19 -0700 (PDT)
+Received: from [10.1.33.171] (XHFQ2J9959.cambridge.arm.com [10.1.33.171])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33A873F66E;
+	Thu, 18 Sep 2025 06:06:27 -0700 (PDT)
+Message-ID: <d4019be7-e24c-4715-a42a-4f1fc39a9bd4@arm.com>
+Date: Thu, 18 Sep 2025 14:06:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Remove PMD alignment constraint in execmem_vmalloc()
+Content-Language: en-GB
+To: Mike Rapoport <rppt@kernel.org>, Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250918093453.75676-1-dev.jain@arm.com>
+ <aMvf_R4ttLibbnQ1@kernel.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <aMvf_R4ttLibbnQ1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 18, 2025 at 08:09:39PM +0800, Menglong Dong wrote:
-> is_endbr() is called in __ftrace_return_to_handler -> fprobe_return ->
-> kprobe_multi_link_exit_handler -> is_endbr.
+On 18/09/2025 11:33, Mike Rapoport wrote:
+> On Thu, Sep 18, 2025 at 03:04:53PM +0530, Dev Jain wrote:
+>> When using vmalloc with VM_ALLOW_HUGE_VMAP flag, it will set the alignment
+>> to PMD_SIZE internally, if it deems huge mappings to be eligible.
+>> Therefore, setting the alignment in execmem_vmalloc is redundant. Apart
+>> from this, it also reduces the probability of allocation in case vmalloc
+>> fails to allocate hugepages - in the fallback case, vmalloc tries to use
+>> the original alignment and allocate basepages, which unfortunately will
+>> again be PMD_SIZE passed over from execmem_vmalloc, thus constraining
+>> the search for a free space in vmalloc region.
+>>
+>> Therefore, remove this constraint.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
 > 
-> It is not protected by the "bpf_prog_active", so it can't be traced by
-> kprobe-multi, which can cause recurring and panic the kernel. Fix it by
-> make it notrace.
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-This is very much a riddle wrapped in an enigma. Notably
-kprobe_multi_link_exit_handler() does not call is_endbr(). Nor is that
-cryptic next line sufficient to explain why its a problem.
+Hijacking this thread to ask Mike a related question, which I noticed during
+code review...
 
-I suspect the is_endbr() you did mean is the one in
-arch_ftrace_get_symaddr(), but who knows.
+execmem_alloc() determines the pgprot from the descriptor set by the
+architecture, and for !CONFIG_ARCH_HAS_EXECMEM_ROX (a la arm64), passes the
+value into __vmalloc_node_range() (via execmem_vmalloc()). vmalloc then uses the
+pgprot to set the permissions of the vmap. But the linear map is left as is
+(i.e. RW).
 
-Also, depending on compiler insanity, it is possible the thing
-out-of-lines things like __is_endbr(), getting you yet another
-__fentry__ site.
+arm64 requests PAGE_KERNEL_ROX for the EXECMEM_KPROBES type. So by my reckoning,
+the memory ends up ROX in vmap and RW in linear map. Naively that sounds like
+something we should be avoiding? Is this intentional?
 
-Please try again.
+For arches using the ROX cache, execmem_cache_populate() calls set_memory_rox()
+which sets both vmap and linear map to ROX.
+
+Thanks,
+Ryan
+
+> 
+>> ---
+>> mm-selftests pass, but I am not sure if they touch execmem code, and I
+>> have no experience with this code.
+>>
+>>  mm/execmem.c | 3 ---
+>>  1 file changed, 3 deletions(-)
+>>
+>> diff --git a/mm/execmem.c b/mm/execmem.c
+>> index 0822305413ec..810a4ba9c924 100644
+>> --- a/mm/execmem.c
+>> +++ b/mm/execmem.c
+>> @@ -38,9 +38,6 @@ static void *execmem_vmalloc(struct execmem_range *range, size_t size,
+>>  	if (kasan)
+>>  		vm_flags |= VM_DEFER_KMEMLEAK;
+>>  
+>> -	if (vm_flags & VM_ALLOW_HUGE_VMAP)
+>> -		align = PMD_SIZE;
+>> -
+>>  	p = __vmalloc_node_range(size, align, start, end, gfp_flags,
+>>  				 pgprot, vm_flags, NUMA_NO_NODE,
+>>  				 __builtin_return_address(0));
+>> -- 
+>> 2.30.2
+>>
+> 
+
 
