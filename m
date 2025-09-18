@@ -1,211 +1,176 @@
-Return-Path: <linux-kernel+bounces-822632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D5AEB845AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46ED3B845BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F3317AA81F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 356ED4A4171
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB180303A06;
-	Thu, 18 Sep 2025 11:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B346302179;
+	Thu, 18 Sep 2025 11:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl2XmFWz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="elkMJm4M"
+Received: from mail-m3290.qiye.163.com (mail-m3290.qiye.163.com [220.197.32.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063932DA757
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D283303C9F;
+	Thu, 18 Sep 2025 11:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758194932; cv=none; b=mrwuLAuIMoIbKV0yq4sOeEdGDYMN/TN7kSPH56ZdB5rwbNUyvDqmpLnWECedUFNxG+iEWhMqFc/RHkB+WBa/fBw0RewSJNSmPm7lX0V9kru+sGHHVt99ltrebEnPaWdmUP0vibjk0Mp9Ut+vOpu2aSb3NAow/VPJDZhbzDmeijs=
+	t=1758194948; cv=none; b=dawTaAtzZTUgTzeTh09NNi8C81LEQpJbSPnk9K7yudl+fVt28QtDKQZex9Hs6t8ykbT5XP4lNSVWPTRMvbW8/MhxQR2MrwrWR2rEcFrTFLgLUh6TojXHkzjVmt0rT4h00XABZ1Wr9BD5Ux4C7h14MecGTUpELy4ycHAIsKks6Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758194932; c=relaxed/simple;
-	bh=aGX4zFbu6ixCH3Tv8vvb+Ir1zlZCuHzA62pjtMb8H9U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XL5k0Hqg0QLPQ2TBj8WYwkTi+Uww0jC57LRER2NvgSxbNF1JDVEha/uMZdz3/uPyYYqoT/GSFoVhot9ZlMa8JaUm+mitrIXg1sgoMkJfOteLDBWX+QexnmkAP0uvOUCdd83vn8cPyA2J7qX0wpuQbux6fXCzTJB27G6lXstkr5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl2XmFWz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809D2C4CEEB
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758194931;
-	bh=aGX4zFbu6ixCH3Tv8vvb+Ir1zlZCuHzA62pjtMb8H9U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Sl2XmFWziQwzMxXE4tAL7uEPE4V11Hf8IaCAsWJDZ0YQBRLZzEgMdeCZIMpHyu20d
-	 gNqX+5NlxMIrrtCDuEpNlma4oC7v2fE25cUx1itTYKYsHfwJQPpoWrN3w9GjdSX4mi
-	 iF1QdbkWNvSvVmTxc44xKpdsgnWETPBH/zUKt1GzYfjm7mKa9byRjWV9RQ3Q7FUxkx
-	 eloZUCZaCbFZo00WWk/g2aXVwi0y8YKYdVggu3kaahtGhK3uBz3LWJ8aPVO6YKarar
-	 qAJTr+Tn4DPqzOYAN9jD2hkFl8+CWfDUoXFDXdTz0QIAkCo8kCnqXbVlJ/FCfxJpnS
-	 f21l8veoIYuSA==
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-750b77699b4so630549a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:28:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwwz8dDsV6i66SiJ2a/3iDtb4/Ay2Joj/PNX97q+kZ6aev6Kj3EhcvxfAq+aqGoyE54I/stSti+av3fdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyaB5mNka4hJaaMgqIavKClH9DLNyNWFcD4u8qn7O6uJkMWMrt
-	lZkPudGRUykCKh01c1U9hQaczaFol5w6Zjqc+5LubqL67nMH7ePDsEgnuUVDc9nPVKcgtnTSHQI
-	6kwdsiYI8uHLOPHgJxWvJG56e97TPkbc=
-X-Google-Smtp-Source: AGHT+IHe7GVU0yxBg/xdy5kAVi+cnsgH8FVocDQJtOYW5b+idqPIhO8Ey8RCPsDzzIJoKeHKDMqWERmGkh05IbRrmiw=
-X-Received: by 2002:a05:6808:f94:b0:43d:2dc4:9d16 with SMTP id
- 5614622812f47-43d50a8e97bmr2588108b6e.9.1758194930823; Thu, 18 Sep 2025
- 04:28:50 -0700 (PDT)
+	s=arc-20240116; t=1758194948; c=relaxed/simple;
+	bh=vQI2TjYREI6b2KyqLW/S/h5Czv3Jrz2pSsHWszwquyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gd6td7WAzrcObSro6MOrYAZ+21t6mi/6pZwk5Zyz2dSuJ6dYjuwclPEv6QWDnpIzItxcOh18kfVQe4KH4emu+2Dg0VYesv7kzo+INcX3tAjXxxcGOn4cqzzQHqgKW3h8JQP59+i8DyGLVhiO3QpqYNTMjXGbzQ0ycHD2d3AMMXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=elkMJm4M; arc=none smtp.client-ip=220.197.32.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.153] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 23446c063;
+	Thu, 18 Sep 2025 19:28:53 +0800 (GMT+08:00)
+Message-ID: <404b35bb-e32b-4830-8d34-d0cfd0a262ff@rock-chips.com>
+Date: Thu, 18 Sep 2025 19:28:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <878qimv24u.wl-tiwai@suse.de> <87ikhptpgm.wl-tiwai@suse.de>
- <CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com> <87tt10b5hq.wl-tiwai@suse.de>
-In-Reply-To: <87tt10b5hq.wl-tiwai@suse.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 18 Sep 2025 13:28:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
-X-Gm-Features: AS18NWA4sJvRMM6lzUoIW98fo5qumY39WEP-CzBbiU-mbi_9Mil7xxpLJakcxfk
-Message-ID: <CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
-Subject: Re: PM runtime auto-cleanup macros
-To: Takashi Iwai <tiwai@suse.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Enable DisplayPort for
+ rk3588-evb2
+To: Quentin Schulz <quentin.schulz@cherry.de>, Chaoyi Chen
+ <kernel@airkyi.com>, Heiko Stuebner <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
+ FUKAUMI Naoki <naoki@radxa.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Peter Robinson <pbrobinson@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250918062825.194-1-kernel@airkyi.com>
+ <ecc96b5a-2062-43f4-9959-b4e2b126d9f3@cherry.de>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <ecc96b5a-2062-43f4-9959-b4e2b126d9f3@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a995c959e2a03abkunmced0bb073b07de
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0kYTlYZTUNCSE9DTktNShhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=elkMJm4McaadIkkxl9fxLZoKq6Ze48UUrVlEjcI3WVLV40memdMgXm0I6AlCiX9ppEReD/3c/Nm7xJFq6PpWmPM2GkBysoDpOXA7mmd0Zi3S9um4ewP5ED4b9LA5oLOuzjAq6qC//pV6KmZVkqUt5oA+K/XdNzWO1RJv+q3qbuo=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=oRwpANH20f3O41DZeZFj63uF99IcxizRzfbRD2S6WOw=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, Sep 18, 2025 at 9:10=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Wed, 17 Sep 2025 20:58:36 +0200,
-> Rafael J. Wysocki wrote:
-> >
-> > Hi,
-> >
-> > Sorry for the delay.
-> >
-> > On Thu, Sep 11, 2025 at 9:31=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wr=
-ote:
-> > >
-> > > On Wed, 10 Sep 2025 16:00:17 +0200,
-> > > Takashi Iwai wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > while I worked on the code cleanups in the drivers with the recent
-> > > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*() c=
-an
-> > > > be also managed with the auto-cleanup gracefully, too.  Actually we
-> > > > already defined the __free(pm_runtime_put) in commit bfa4477751e9, =
-and
-> > > > there is a (single) user of it in pci-sysfs.c.
-> > > >
-> > > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
-> > > >
-> > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
-> > > >            if (_T) pm_runtime_put_autosuspend(_T))
-> > > >
-> > > > Then one can use it like
-> > > >
-> > > >       ret =3D pm_runtime_resume_and_get(dev);
-> > > >       if (ret < 0)
-> > > >               return ret;
-> > > >       struct device *pmdev __free(pm_runtime_put_autosuspend) =3D d=
-ev;
-> > > >
-> > > > that is similar as done in pci-sysfs.c.  So far, so good.
-> > > >
-> > > > But, I find putting the line like above at each place a bit ugly.
-> > > > So I'm wondering whether it'd be better to introduce some helper
-> > > > macros, e.g.
-> > > >
-> > > > #define pm_runtime_auto_clean(dev, var) \
-> > > >       struct device *var __free(pm_runtime_put) =3D (dev)
-> > >
-> > > It can be even simpler by assigning a temporary variable such as:
-> > >
-> > > #define pm_runtime_auto_clean(dev) \
-> > >         struct device *__pm_runtime_var ## __LINE__ __free(pm_runtime=
-_put) =3D (dev)
-> >
-> > Well, if there's something like
-> >
-> > struct device *pm_runtime_resume_and_get_dev(struct device *dev)
-> > {
-> >         int ret =3D pm_runtime_resume_and_get(dev);
-> >         if (ret < 0)
-> >                 return ERR_PTR(ret);
-> >
-> >         return dev;
-> > }
-> >
-> > It would be a matter of redefining the FREE to also take error
-> > pointers into account and you could do
-> >
-> > struct device *__dev __free(pm_runtim_put) =3D pm_runtime_resume_and_ge=
-t_dev(dev);
-> > if (IS_ERR(__dev))
-> >         return PTR_ERR(__dev);
->
-> That'll work, too.  Though, I find the notion of __free() and a
-> temporary variable __dev a bit too cumbersome; it's used only for
-> auto-clean stuff, so it could be somewhat anonymous.
+Hi Quentin,
 
-No, it is not used only for auto-clean, it is also used for return
-value checking and it represents a reference on the original dev.  It
-cannot be entirely anonymous because of the error checking part.
+On 9/18/2025 6:39 PM, Quentin Schulz wrote:
+> Hi Chaoyi Chen,
+>
+> On 9/18/25 8:28 AM, Chaoyi Chen wrote:
+>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>
+>> The rk3588 evb2 board has a full size DisplayPort connector, enable
+>> for it.
+>>
+>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>> ---
+>>
+>> Changes in v2:
+>>
+>> - Link to V1: https://lore.kernel.org/all/20250916080802.125-1-kernel@airkyi.com/
+>> - Fix invalid DP connector type
+>> - Add more comment about dclk_vp2 parent clock
+>>
+>>   .../boot/dts/rockchip/rk3588-evb2-v10.dts     | 48 +++++++++++++++++++
+>>   1 file changed, 48 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
+>> index 91fe810d38d8..60ba6ac55b23 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
+>> @@ -25,6 +25,18 @@ chosen {
+>>           stdout-path = "serial2:1500000n8";
+>>       };
+>>   +    dp-con {
+>> +        compatible = "dp-connector";
+>> +        label = "DP OUT";
+>> +        type = "full-size";
+>> +
+>> +        port {
+>> +            dp_con_in: endpoint {
+>> +                remote-endpoint = <&dp0_out_con>;
+>> +            };
+>> +        };
+>> +    };
+>> +
+>>       hdmi-con {
+>>           compatible = "hdmi-connector";
+>>           type = "a";
+>> @@ -106,6 +118,24 @@ vcc5v0_usbdcin: regulator-vcc5v0-usbdcin {
+>>       };
+>>   };
+>>   +&dp0 {
+>> +    pinctrl-0 = <&dp0m0_pins>;
+>> +    pinctrl-names = "default";
+>> +    status = "okay";
+>> +};
+>> +
+>> +&dp0_in {
+>> +    dp0_in_vp2: endpoint {
+>> +        remote-endpoint = <&vp2_out_dp0>;
+>> +    };
+>> +};
+>> +
+>> +&dp0_out {
+>> +    dp0_out_con: endpoint {
+>> +        remote-endpoint = <&dp_con_in>;
+>> +    };
+>> +};
+>> +
+>>   &gpu {
+>>       mali-supply = <&vdd_gpu_s0>;
+>>       sram-supply = <&vdd_gpu_mem_s0>;
+>> @@ -916,6 +946,17 @@ &usb_host1_xhci {
+>>   };
+>>     &vop {
+>> +    /*
+>> +     * If no dedicated PLL was specified, the GPLL would be automatically
+>> +     * assigned as the PLL source for dclk_vop2. As the frequency of GPLL
+>> +     * is 1188 MHz, we can only get typical clock frequencies such as
+>> +     * 74.25MHz, 148.5MHz, 297MHz, 594MHz.
+>> +     *
+>> +     * So here we set the parent clock of VP2 to V0PLL so that we can get
+>> +     * any frequency.
+>> +     */
+>> +    assigned-clocks = <&cru DCLK_VOP2_SRC>;
+>> +    assigned-clock-parents = <&cru PLL_V0PLL>;
+>
+> Are those board-specific? Considering the VOP and DP/HDMI/... controllers/PHYs are all internal to the SoC, would it make sense to have those specified in the SoC DTSI? I'm not familiar with the video output stack so maybe it doesn't apply here or is a bad idea, so I'm not actually asking for a change here, just asking a question :)
 
-The point is that this is one statement instead of two and so it is
-arguably harder to mess up with.
+Yep, they are board-specific. Because the V0PLL may be used for non-display applications.
 
-> But it's all about a matter of taste, and I'd follow what you and
-> other guys suggest.
->
-> FWIW, there are lots of code doing like
->
->         pm_runtime_get_sync(dev);
->         mutex_lock(&foo);
->         ....
->         mutex_unlock(&foo);
->         pm_runtime_put(dev);
->         return;
->
-> or
->
->         ret =3D pm_runtime_resume_and_get(dev);
->         if (ret)
->                 return ret;
->         mutex_lock(&foo);
->         ....
->         mutex_unlock(&foo);
->         pm_runtime_put_autosuspend(dev);
->         return 0;
->
-> and they can be converted nicely with guard() once when PM runtime can
-> be automatically unreferenced.  With my proposed change, it would
-> become like:
->
->         pm_runtime_get_sync(dev);
->         pm_runtime_auto_clean(dev);
 
-For the case in which the pm_runtime_get_sync() return value is
-discarded, you could define a guard and do
 
-guard(pm_runtime_get_sync)(dev);
-
-here.
-
-The case checking the return value is less straightforward.
-
->         guard(mutex)(&foo);
->         ....
->         return;
 >
-> or
->
->         ret =3D pm_runtime_resume_and_get(dev);
->         if (ret)
->                 return ret;
->         pm_runtime_auto_clean_autosuspend(dev);
->         guard(mutex)(&foo);
->         ....
->         return 0;
+> Cheers,
+> Quentin
 >
 >
+-- 
+Best,
+Chaoyi
+
 
