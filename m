@@ -1,179 +1,142 @@
-Return-Path: <linux-kernel+bounces-822016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DA6B82DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:09:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0233AB82DEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA883320AF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41454A2669
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE682242D8C;
-	Thu, 18 Sep 2025 04:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F378248880;
+	Thu, 18 Sep 2025 04:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeE1FzUU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ShVjJBDQ";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="yG/LBgVK"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30EA1F4181;
-	Thu, 18 Sep 2025 04:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8D334BA4C;
+	Thu, 18 Sep 2025 04:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758168552; cv=none; b=NUHywVy/+94y7L/NFn6FdNd6TvvirjD3rGxVbuInGnE13E7HciYy05gQNtLS4dtKL912udd32L6uIKbpJpZBD3HoULpWRTVwtaOLHKkNRK2P6+VMyZIaBhAKjsVc8tF3/qWjmQF04DsqoAUP21dvyLUhEapQKx3G9O0VGodnnmM=
+	t=1758168987; cv=none; b=mg9ORFruJRQzuiEq0NbNbEA0yJXjZfFX8EzmLHjWa3nYuZYyU1FTbk7l9ba6WSvuT6GMJmTNMpYKIAHAdL/DoTKBuXpZohg/NfHv2DLA/IeKXY/SF0Vbj9GiO6rSxtc8XHl8OGngnc9UnWJJNWKNpN/4mVFZiU9FVxc/YBNSR5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758168552; c=relaxed/simple;
-	bh=DWbSGaeUDI+94RjG4nVLjU8+xda9a6RkuDCPS0NFvYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fStaQ5MjH98QJzcTNYf66ijrBM7cnrMLgRy7OFiqmHHAYk1nMCsFK/K7Jzqn+PSC760psJX6NzGxH9aFk+HpmXRPtqw8ia17rWJPRcgDdkCwgWjqo9Bz6+hNj6/WMA3lAa7Oo5DhOiRIsJXr4haHCwcTHWU4Yh977jmfOohnCFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeE1FzUU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC85C4CEE7;
-	Thu, 18 Sep 2025 04:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758168551;
-	bh=DWbSGaeUDI+94RjG4nVLjU8+xda9a6RkuDCPS0NFvYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CeE1FzUUm9Gp0s0l9dMYuEkT1qY9+hNwzO0zKMfnauL5MIxSYxRxRkQsMcnDF4+eB
-	 4+byZ7+cqmfE8LibXGsNEr1hXDyDnki3WkCPWY2zvwp5AOX+K9+FFXuMQVpdI8ILVB
-	 Elo3pDQHPobx5Jgnda8HvFzD5x1EE/mVL5HQ4NXc7emlRYALVJalPxTOJpQCpkx7cA
-	 /POob3n1wYHJnxF4wqrNErMCrc6QngfIh9jh4F39f+Hbx3lo6gGxAT5x0hLBr1RbqF
-	 T35D94prSMKkEabxTk75EP2UUtxTxGcb5id5V0r3ROuzUPkfrbjbn2381nX15coArj
-	 4I358aDxRP9ww==
-Date: Thu, 18 Sep 2025 06:08:51 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
- vmlinux.unstripped
-Message-ID: <aMuF0zY_3gusK1nz@levanger>
-References: <cover.1755535876.git.legion@kernel.org>
- <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
- <aMeqgPVfJcjBLhl8@levanger>
- <aMkN1m55vejTii_H@example.org>
- <aMkvtg55F1gJ5feM@levanger>
- <aMlKTPpNXrRW6v_7@example.org>
- <aMlbSEnwGOPM39Op@levanger>
- <aMqhuFQGAGtYFbRV@levanger>
- <aMqrrjXZxYXN0zdY@example.org>
+	s=arc-20240116; t=1758168987; c=relaxed/simple;
+	bh=BVY8Xj4e6MAs5x7hg6qQchNUfdSkglsNbtbLEad+y00=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=sYB70M0zifBu51S+ZR0NwSgPahL1BhDbP/XrT8MpzAZME4Lsz8eQeNmNc9kcJDdAP+Aivo5TqZLQFhQKzAZZ7Lsu9z/75P5q3Vyjk9QBygIvbywVPdCjsekU3CQrW8H6eJym4iNPbGPxbuxoIuJZ+5qR1pKt0mvYjvqPAFD3jv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ShVjJBDQ; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=yG/LBgVK; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758168671; bh=NJjbSSj5jhMk0HRinPCbRwY
+	9CFU4h6QcLpjE9fG/CGw=; b=ShVjJBDQtkoHl4zZviJw22Cn95HrMuMYoejLcf0xJzeQA7qKuJ
+	D5qGCh0b0urde73kHsIhQh0EsyeFnt6xLrCS4Wai/5YtjmNkkyeT1cTVXMvpBVRGs6RPCbRYT5d
+	KTQGQJbCq0HAA7aFbdsJbn+LX9CWR3mBsbAH5qHi+tbZeV4TPnjuZF1/f7ExusA6J2edVGY2bxx
+	XVh5ikQM3M4YuTAjivkFueiiTHxKhDNx0/PTewZ1HIP9kvQNpLjdZXXG4rVFwOslOgHB/JYldjK
+	OrVBQcOpVrOBMP7JPbckmUd1ygtraryn8HSnmM5jtXDJK4g7dnltryNpoL/GlzGe03Q==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758168671; bh=NJjbSSj5jhMk0HRinPCbRwY
+	9CFU4h6QcLpjE9fG/CGw=; b=yG/LBgVK91WyVeVJYLDzq2LIwSsiLwpyegB0yLgC8ixqUZuUMP
+	oEKedmOlTd3bIbX2/d7CiHNj6juQ1b/PrEAQ==;
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMqrrjXZxYXN0zdY@example.org>
+Date: Thu, 18 Sep 2025 11:11:10 +0700
+From: Dang Huynh <dang.huynh@mainlining.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Sebastian Reichel <sre@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>, Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-mmc@vger.kernel.org
+Subject: Re: [PATCH 05/25] dt-bindings: rtc: Add RDA Micro RDA8810PL RTC
+In-Reply-To: <20250917-contort-sassy-df07fd7515a0@spud>
+References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
+ <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
+ <20250917-contort-sassy-df07fd7515a0@spud>
+Message-ID: <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
+X-Sender: dang.huynh@mainlining.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 02:38:06PM +0200, Alexey Gladkov wrote:
-> On Wed, Sep 17, 2025 at 01:55:36PM +0200, Nicolas Schier wrote:
-> > On Tue, Sep 16, 2025 at 02:42:48PM +0200, Nicolas Schier wrote:
-> > > On Tue, Sep 16, 2025 at 01:30:20PM +0200, Alexey Gladkov wrote:
-> > ...
-> > > > I think in the case of .modinfo, we can change the flag in the section
-> > > > since we are going to delete it anyway.
-> > > > 
-> > > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > > > index dbbe3bf0cf23..9a118b31d0dc 100644
-> > > > --- a/scripts/Makefile.vmlinux
-> > > > +++ b/scripts/Makefile.vmlinux
-> > > > @@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> > > >  remove-symbols := -w --strip-symbol='__mod_device_table__*'
-> > > >  
-> > > >  quiet_cmd_strip_relocs = OBJCOPY $@
-> > > > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
-> > > > +      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< && \
-> > > > +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
-> > > >                           $(remove-symbols) $< $@
-> > > >  
-> > > >  targets += vmlinux
-> > > 
-> > > Ah, great!  I thought we had to fiddle around with linker scripts et al.
-> > > I needed to use an intermediate file:
-> > > 
-> > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > > index e2ceeb9e168d..516d51ca634b 100644
-> > > --- a/scripts/Makefile.vmlinux
-> > > +++ b/scripts/Makefile.vmlinux
-> > > @@ -90,6 +90,9 @@ remove-section-y                                   := .modinfo
-> > >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> > >  
-> > >  quiet_cmd_strip_relocs = OBJCOPY $@
-> > > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $< $@
-> > > +      cmd_strip_relocs = set -e; \
-> > > +                        trap 'rm $<.noload' EXIT HUP INT; \
-> > > +                        $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $<.noload && \
-> > > +                        $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $<.noload $@
-> > >  
-> > >  targets += vmlinux
-> > 
-> > I'd like to suggest another version closer to yours, as mine has several flaws:
-> > 
-> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > index dbbe3bf0cf23..9a118b31d0dc 100644
-> > --- a/scripts/Makefile.vmlinux
-> > +++ b/scripts/Makefile.vmlinux
-> > @@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> >  remove-symbols := -w --strip-symbol='__mod_device_table__*'
-> >  
-> >  quiet_cmd_strip_relocs = OBJCOPY $@
-> > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
-> > +      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
-> > +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
-> >                           $(remove-symbols) $@
-> >  
-> >  targets += vmlinux
-> > 
-> > 
-> > 
-> > Rationale (mainly for myself to not walk into that trap too often again):
-> > 
-> >   * Use ';' instead of '&&' as 'cmd_' is evaluated in a 'set -e'
-> >     environment ('cmd') and thus '&&' may hide a possible error exit
-> >     code.
+On 2025-09-18 03:46, Conor Dooley wrote:
+> On Wed, Sep 17, 2025 at 03:07:22AM +0700, Dang Huynh wrote:
+>> Add documentation describing the RTC found in RDA8810PL SoC.
+>> 
+>> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+>> ---
+>>  .../devicetree/bindings/rtc/rda,8810pl-rtc.yaml    | 30 
+>> ++++++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml 
+>> b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+>> new file mode 100644
+>> index 
+>> 0000000000000000000000000000000000000000..3ceae294921cc3211cd775d9b3890393196faf82
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
+>> @@ -0,0 +1,30 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/rtc/rda,8810pl-rtc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: RDA Micro RDA8810PL Real Time Clock
+>> +
+>> +maintainers:
+>> +  - Dang Huynh <dang.huynh@mainlining.org>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: rda,8810pl-rtc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
 > 
-> No, it can't hide exit code. The exit code will be correct even if
-> ‘set -e’ is not used.
-> 
-> $ (exit 0) && (exit 2) && (exit 3); echo $?
-> 2
-> 
-> Actually ‘&&’ is protection against the absence of ‘set -e’.
-
-That is correct for such a simple command sequence.
-
-Putting a compound 'command1 && command2' sequence in a cmd_* macro leads to a
-mixture of non-comound and compound statements:
-
-    ( set -e; (exit 0) && (exit 2) && (exit 3); printf 'bye\n' ); echo $?
-
-thus we have a case as described in [1, "-e"], so that the exit code 2
-gets lost due to the following successful 'printf'.
-
-[1]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_26
-
+> Your driver implements functions that turn on an alarm irq, but there 
+> is
+> none mentioned here. What's going on there?
+The RTC doesn't seem to have an AP IRQ associated. I can't find any
+reference to it on downstream kernel and the docs.
 
 > 
-> >   * Create 'vmlinux' already with the first objcopy and let the second
-> >     one modify it in order to not need a temporary file; iff one or the
-> >     other objcopy exists with an error exit code, the 'set -e + trap'
-> >     ('delete-on-interrupt') shell will remove a possibly existing
-> >     vmlinux file.
+> Additionally, there's no clocks property? For an onboard RTC I'd have
+> expected there to be a clock sourced outside of the block.
 > 
-> That makes totally sense. This will avoid a temporary file. I will use it
-> in the new version.
-> 
-> -- 
-> Rgrds, legion
-> 
-
--- 
-Nicolas
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    rtc@1a06000 {
+>> +      compatible = "rda,8810pl-rtc";
+>> +      reg = <0x1a06000 0x1000>;
+>> +    };
+>> 
+>> --
+>> 2.51.0
 
