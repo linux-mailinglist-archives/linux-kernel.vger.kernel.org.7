@@ -1,111 +1,161 @@
-Return-Path: <linux-kernel+bounces-823336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBE4B8625B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3F1B86261
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6851CC0FCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6DA87C27E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C9E3128B8;
-	Thu, 18 Sep 2025 17:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D6131327C;
+	Thu, 18 Sep 2025 17:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kddnwzKm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QusXKV+B"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12BC30F958
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEE030CB5E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758215182; cv=none; b=q0fdO7CLjbBSZFTrKtDpQw81S2eA+Otc77k/1t/0+pK0PxPo3B+VE/g3ufMB6MVvLlHE1daha9zbE98Ur+VUUkQvMxW9qRUemwXD+sjjtG2ZtP58kUmLjJbGcxnjxNlvJKFr5ZmY8nC81QK2zmRjDBchI75UkwOWfSoeCTIxeUk=
+	t=1758215212; cv=none; b=Myz+HVePU74wgjlM86WsqKVb/ySx7BJSrZepguxzZBuM3D8dc5S430kCQnlRZC+41/H7g9EGh+igqjCjdyMQUrj1igsQHIE/z7MTJCIA9TiOnthJ/YWp+FzcScySYwjgcARHUOkXqeI961JqumQyF7nw+HibDqZv7CUIDdkzm7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758215182; c=relaxed/simple;
-	bh=HucGv7/mPLt2Tx4zSzeFM4REnUTmnwAtJbV9JCXao8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZnfI5NzCkedoOcsh56j94fDrFk2CkKVOacAD/hS8MOHBK7B87Wup067ecIA/QYw5gaA26b35I7NRKDVyPjZn/dkQBiaZJkmDm4lWdAdLgPJXhISGgap8D3WmhniczsKbscBY0baK5DEFOpI+lKjzM3EgV8FQPF7qe8NMv4rTs9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kddnwzKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB2EC4CEE7;
-	Thu, 18 Sep 2025 17:06:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758215181;
-	bh=HucGv7/mPLt2Tx4zSzeFM4REnUTmnwAtJbV9JCXao8E=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kddnwzKmWI6C4Iu4GwObwD7eXUpHqQYaFf7UiiYU4177NZNU04zwGvlNXcj+sq5X3
-	 uA7hgyoOmSazGv3banrkOt/qWABfc7CLpjL/7U347ksm1J7Ud28eJBOwjRf5eatN9y
-	 7wJaZCFymw0VBIn/f+SyZFIIc/MTsxN41PtvW9iY9H8LEgkHjxdkGcj66K6IPyjLRx
-	 HbWRLZlb1MIzKWrSWDZnw2deKMmyfjgXNMNH+rIKt8LBbyJYTnPiKcii6GrH6/qAJE
-	 SP18i3039/LM6CD6gCk+g1VHd6vYur7zsOcnTX1m8ZszHjw5f4D9Not7u7Z3sFRbR9
-	 D75747c3a/Rqg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org,
-	linux-mm@kvack.org
-Subject: [PATCH] kho: only fill kimage if KHO is finalized
-Date: Thu, 18 Sep 2025 19:06:15 +0200
-Message-ID: <20250918170617.91413-1-pratyush@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758215212; c=relaxed/simple;
+	bh=Snu3DlC7DX4VFV981Eh74gFnhCpjPpOJJ95LxP+JvLE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Jm4QN5qMltM+RtsNQ19f3cMcGKc5vXMo8QRybCOrPNJbqN2WpGlO+UD74YMkKilxuLpGVf/y89RQL53Tv3uXYsDYqoIslL/+cBnkqWyiGlOy4IU+UxyP2lZRU4vAvl73tJ+dmORe+Nkd1rJdABcgqawNygbxP4P6j9wLXjkhzLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QusXKV+B; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b042cc3954fso237238366b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:06:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758215209; x=1758820009; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OgEPdidWZUCKfjqucDbsRTdLfQYdNUkekhd18tzklWA=;
+        b=QusXKV+BbPx+vg7lQlQjo5tg2fjbqYHtsgpENpDA7+SOcx7Nz/EwGYkoHZXummEm/o
+         1fx0+636QcWyPax4lb6gkO3X4TeWRObzLhth9k/mOc/XnvPgYLzAUw73eInEDxkjM0Sa
+         hSE26wPahO3QaMmTi6+MOU2shsk1wJ+wM+jzQZCOLQpixMFj4XIMbdVzFtMrfUsDh5Zh
+         qfaANS8SK6WbRLojbsH8grx1a5eTZy2a5Xq/aeFlAFYG+NM2y0YrJeD9FczfjG0me+XK
+         XztUvEHBDIDj8JypvruiX/3oUa8S0EanuSJKx5XJIZE2mlnaQb5t3H1Tax6CMC/7PJ6l
+         KglA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758215209; x=1758820009;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OgEPdidWZUCKfjqucDbsRTdLfQYdNUkekhd18tzklWA=;
+        b=QyeecEp2ixFwEWerFRM6RqsGjaa0OTjMI3gio7hjzgJsQCcPAK1oqVFo5mZSfiiRUP
+         AeipeFZTVhp86IxknyqsncmCdf5RA+SMTlN8dcRU0HeSWYER7SLtEl8ZtNhtVYRZEuYx
+         XV4/hhzDJjBtkAKZGuDYOz+RkddpUKu2Da8HslozJpoxchAk2uVxLeuCtiNJTU/byZwM
+         J94+Zb6cMv5r9oxW8fjnfTykZdauWY7PE3heB4cGbvaEQOxCYogf1KqQqTQ9hRl+prLZ
+         MScV8pabb//O1mvrAwQTHByfprQuNKwUjciP2D9cc6xoOEwiA0vtQa6Ojuxtm9H8lC2J
+         dTzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqYbKq6apJPzLyeqi+vdOnQMZ5IL68vlRjiHUzi+Bl5jdSOoOVCi6H/730gQoPfQ4fylnbgQGbP5Kxsz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjxktZlRChdCcK46QRVbDtJKrrsCJbxmxlboJja7a6DM0Mz59M
+	OXIaBiKh+gNVxczWnNq9K88Z3jPBi5QnJOxFhqWWabB/rTTw4JxBz4Jn
+X-Gm-Gg: ASbGncuyleWUPDlyrrx0d3ljhMv2Q0wdy8dcbr4mdvXwrK/froNstDVkGj6wWg2dZkh
+	dmmapZsR7jkQsRJqmL1lZbsQeAIy1SsbcAd/YqhURaBoCHaZRALKJh/DQTSDzQC4TlRVWjvW6sW
+	IOvA8oTFJwQYNiPAJpxK6glFRSkro6aafIv8qM1N+h/ZePG9mIM9OSIbirDB9S3U/LFR8+Z8ndE
+	MSTanpibo8cxGWcN8gS+ih+EJKUxtnL9wOAntrTu2DOzv+yJngKPSoKPId9m5LrinNP/jXFOeY3
+	5GkPAjqiLx1Oa8GAl9rPMulVHLXiVE/UyaKu6r/jWIZ/j4LKo/YId0/UWmf7aBbNpD2GHh0HgGo
+	feKwLsYRWlNTeuZnxrj4d7KfuHZnV9o6CFX1f4mE=
+X-Google-Smtp-Source: AGHT+IEa80hbsr27dP86R8EESZ/NUboAc4XQo4V5MaLrIyBAxmcmVYTLCjC7KQgkEfYpTXVruphemQ==
+X-Received: by 2002:a17:907:f497:b0:b07:6454:53f7 with SMTP id a640c23a62f3a-b1bb7f2ad5bmr626407566b.52.1758215208966;
+        Thu, 18 Sep 2025 10:06:48 -0700 (PDT)
+Received: from [127.0.1.1] ([46.53.240.27])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b1fd271f895sm225845366b.97.2025.09.18.10.06.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 10:06:48 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v4 0/9] power: supply: fixes and improvements for
+ max77(705,976) chargers
+Date: Thu, 18 Sep 2025 20:06:44 +0300
+Message-Id: <20250918-max77705_77976_charger_improvement-v4-0-11ec9188f489@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACQ8zGgC/5XOy06EMBQG4FeZdG2dXoCCK9/DGHJaTqEJFGyxj
+ pnw7rYuvK3G5X8uX/4riRgcRvJwupKAyUW3+hyquxMxE/gRqRtyJoKJmrWS0QUuSilW90p1qun
+ zURgx9G7ZwppwQb9TlLbiSluAuiEZ0hCR6gDeTIXS1TnuEF7mHc3kz1/ga9Sm39a3rA04u4Thv
+ XxvAa27fFZ8es55cnFf86o0TrxM/1Uuccoo5u2gpR0qKR7HBdx8b9aFFD6Jb7Jj3U2kyCS0g7A
+ aKsXr7i8pf5Cc30TKTMpaMNm0jQXxizyO4wMVfcMUuAEAAA==
+To: Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758215207; l=2240;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=Snu3DlC7DX4VFV981Eh74gFnhCpjPpOJJ95LxP+JvLE=;
+ b=PgajctlOTxV+Mbi/NAuoRUD72DElTHIGyiCp37Ks7HUicZKgSsAfKH3/jHZ7wlJR3Ge3v12lL
+ 6L9fYjoxc+XCdWewUXZIq2DS6k2s01Yaa/DsE4KR64mhjPbeRK+8Twa
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-kho_fill_kimage() only checks for KHO being enabled before filling in
-the FDT to the image. KHO being enabled does not mean that the kernel
-has data to hand over. That happens when KHO is finalized.
+This series consists of:
+- max77705: interrupt handling fix
+- max77705: make input current limit and charge current limit properties
+  writable
+- max77705: add adaptive input current limit feature
+- max77705: switch to regfields
+- max77705: refactoring
+- max77976: change property for current charge limit value
 
-When a kexec is done with KHO enabled but not finalized, the FDT page is
-allocated but not initialized. FDT initialization happens after
-finalize. This means the KHO segment is filled in but the FDT contains
-garbage data.
-
-This leads to the below error messages in the next kernel:
-
-    [    0.000000] KHO: setup: handover FDT (0x10116b000) is invalid: -9
-    [    0.000000] KHO: disabling KHO revival: -22
-
-There is no problem in practice, and the next kernel boots and works
-fine. But this still leads to misleading error messages and garbage
-being handed over.
-
-Only fill in KHO segment when KHO is finalized. When KHO is not enabled,
-the debugfs interface is not created and there is no way to finalize it
-anyway. So the check for kho_enable is not needed, and kho_out.finalize
-alone is enough.
-
-Fixes: 3bdecc3c93f9f ("kexec: add KHO support to kexec file loads")
-Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 ---
- kernel/kexec_handover.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v4:
+- fix commit message
+- use IRQF_TRIGGER_NONE, because non physical irqs
+- minor rename refactoring
+- rebase on latest linux-next
+- patch reorder: put fixes patch first
+- aicl feature cleanup
+- Link to v3: https://lore.kernel.org/r/20250911-max77705_77976_charger_improvement-v3-0-35203686fa29@gmail.com
 
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index 8079fc4b9189..5ff959a90165 100644
---- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -1242,7 +1242,7 @@ int kho_fill_kimage(struct kimage *image)
- 	int err = 0;
- 	struct kexec_buf scratch;
- 
--	if (!kho_enable)
-+	if (!kho_out.finalized)
- 		return 0;
- 
- 	image->kho.fdt = page_to_phys(kho_out.ser.fdt);
+Changes in v3:
+- move interrupt request before interrupt handler work initialization
+- Link to v2: https://lore.kernel.org/r/20250909-max77705_77976_charger_improvement-v2-0-a8d2fba47159@gmail.com
+
+Changes in v2:
+- fix charger register protection unlock
+- Link to v1: https://lore.kernel.org/r/20250830-max77705_77976_charger_improvement-v1-0-e976db3fd432@gmail.com
+
+---
+Dzmitry Sankouski (9):
+      power: supply: max77976_charger: fix constant current reporting
+      mfd: max77705: max77705_charger: move active discharge setting to mfd parent
+      power: supply: max77705_charger: refactoring: rename charger to chg
+      power: supply: max77705_charger: use regfields for config registers
+      power: supply: max77705_charger: return error when config fails
+      power: supply: max77705_charger: add writable properties
+      power: supply: max77705_charger: rework interrupts
+      power: supply: max77705_charger: use REGMAP_IRQ_REG_LINE macro
+      power: supply: max77705_charger: implement aicl feature
+
+ drivers/mfd/max77705.c                  |   3 +
+ drivers/power/supply/max77705_charger.c | 386 +++++++++++++++++++++-----------
+ drivers/power/supply/max77976_charger.c |  12 +-
+ include/linux/power/max77705_charger.h  | 149 ++++++------
+ 4 files changed, 344 insertions(+), 206 deletions(-)
+---
+base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+change-id: 20250830-max77705_77976_charger_improvement-e3f417bfaa56
+
+Best regards,
 -- 
-2.47.3
+Dzmitry Sankouski <dsankouski@gmail.com>
 
 
