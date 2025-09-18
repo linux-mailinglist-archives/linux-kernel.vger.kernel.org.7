@@ -1,221 +1,156 @@
-Return-Path: <linux-kernel+bounces-822979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD167B8538D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:27:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3B0B85387
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34991C87A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D4116538D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98CE223324;
-	Thu, 18 Sep 2025 14:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697133164AF;
+	Thu, 18 Sep 2025 14:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hAAO2o/R"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHO7PII1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281A13176E6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B87314D28;
+	Thu, 18 Sep 2025 14:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204968; cv=none; b=RlHrgwbs1iJhE3LIrFNMz02ls7rNOCSPAOdTOKqRiLb3G1AVn5SSyipUE6Gvder2mXkNb8nkJ9uP2Y5gh6fhIGox0GrJD47goKOYKQvlkmifp+56MGY6A+LRouz8MpJ91PBClv4SrDvuU+6z6FpHxa1YavgucH1+TYCQ4DhBJOs=
+	t=1758204950; cv=none; b=pDh90ijOzMneTd0dfrNgWT4gwBMQhQnTsvACLtFJIRwOHq1CZ4UNlMNZatmXJeARHvJmqVLEeZ+1B62hE/yj7P7gPcD8KVCtTZg2CS/7GJVhkyNqAVx1sz1aJuGt48738Kw3oUc6JrjtOcYA3MWb9yNZVkFSZq3kOUCFlWI2AyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204968; c=relaxed/simple;
-	bh=EA7vYi5ofvk1cKNAjb9IvxaMHv14pBRTDKOPF0eO/9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YkZ8WyBYVYc2yG+HjE/Nxyl9bLwlIAD4IYoQ6yE0ppKlbGc9lJpVUgVacrngBNSAYcPpa2k2U+cVzCDIXf//sy2wLmkcqJ9fy4NmPvZuqGkNp4OYT916eebMFJ+XVdugRD7b0z03Kc4hYyKt/AVSkOpdflxDfqkpKjbuaIWnLQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hAAO2o/R; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-78d73eef306so9142706d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758204965; x=1758809765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W1m9V0QnucGw1fYjnWnkHTlkfdmFSylGoU4nkl6jTtY=;
-        b=hAAO2o/RW29jJnKjlwzPfp+JBtsq3p3RoyZnPU1nP30Kkq+OTOsfka2SUcbzMnM9zY
-         A32COQJK6I5uv/AblMAslEvn0MLPo4cAwVHEy431i37YIHgiKfsyD4OdM+rJrGES4hSc
-         vMtvjJkAQnr93pkn2ZdO7LTPZokzW9zZjiYyu0b0wqxkoBjFUA77lh/IVCmof5J602T+
-         aja8YF0inSgW8GCIIXHbctSMVffyglA15+gbrQGlSLJmo/LH9XV66GEd9c9qyqGB+hRf
-         5a7U0sNTeqEjNgy8QkFRoAKLEnyevvgfAmOmeeCVUAfLIoGVDdMeqHJl1rdOGU3R5U9q
-         uf7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758204965; x=1758809765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W1m9V0QnucGw1fYjnWnkHTlkfdmFSylGoU4nkl6jTtY=;
-        b=mcHTxj1oPY0+aJutaxw8jvxtuEF9RwvJvOkaj5kqMXzrZj7EHEjB8yFz+JU0RhT/3S
-         bzLut4We2oxLxJX1vtOM6XfqIh+FYF+jUAk6pGgZ95/fHl4tOR2wUk8w/ZcOeUtzqRXg
-         knTonqNk+qZyA7b93kO7RNT4ABaeCZDpCm0l8lGFbagIoiuFzErBNnF8a0r9VtNEtPEA
-         fHrgBr8UDlk2wMaA8my4uY+PQy0aB0iBUqXunZILPC2Gl5+tAIYo5sXYVK9Lz6siwkKo
-         dU4SWorQoLciVMfUjB0SgyP7em3rN0fc54bH9DpQ3LCGeQ/R7ymB6Sjq4NXIgRWq9y7u
-         74aA==
-X-Forwarded-Encrypted: i=1; AJvYcCWk3L+DPy655AtNTV3Xq3EBya2exGCy5cZQ1oudoBPeSNregY3xxqqxNyBeG37dYmISIBM7PIRFpj5vZlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnwd7jgNRXPv9ZHKlpqwUHtxv+6gYjxbxYy2ysARE0OfVtffYS
-	W1NChmfcIfFAIdNQPEeM8Bra5xmkOFFJIFSLa87WeY9KDoCl+4OJaWgY4SvKLH+w291ykkNp6Oz
-	kkeKlrp6ixabNGo9cJWcAFwvhN6Vt1hJza7UMSz2p
-X-Gm-Gg: ASbGncvj9bNYYTsdCb90VBo5szDyjQtS0wLr5SfJiJw7G71oWsfVIAXCUv4jlVBg9Iw
-	QiOZ0UU+ZW7mN/auZLj3i9z1LC17gGiQGngY+G4h21R+E9NtFiE0CB+25B81M1XqBa/OLpcVg11
-	knTBbJjrmrsqTsmb+frErmVAPb5LuXSv/V2ih0bx8u0Gv1ModxldbJDekpfl4+9cSfFsC42FBL0
-	lMCMTbdWrAD1OVY/oYAkr6o9Fvc51xf58zxu0U6ocuhpFewK+KOerQc82iPgDA=
-X-Google-Smtp-Source: AGHT+IFBpnDsj/3XitirZWPzOjid3pk9f5ycO+u5s3pMsQEUT+8NOpONrRLGkmiWyeP3kqXiHfhufSRzIIkcKBIaTRI=
-X-Received: by 2002:a05:6214:2aa5:b0:782:1086:f659 with SMTP id
- 6a1803df08f44-78eccb0cae7mr65869736d6.26.1758204964157; Thu, 18 Sep 2025
- 07:16:04 -0700 (PDT)
+	s=arc-20240116; t=1758204950; c=relaxed/simple;
+	bh=MBjb3dNG3tkBuBacJDOOMyqs0vjIlyjvFY8EUa5pvX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=C9QFRD199c1GY2tiNJUMzkSD/dkMHLSZjVoVU6R66jU9X4tI5RpWNgSyM6xIbozUaCwPYxfSsz/reFMQVOf/evuu0UXnT8A2B1V39lQiemE//USu4OfORibEU48OjMwjYocW4C/kS+gIpTDmmjgTBHrdgKF8h43UpkaRXvMIDqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHO7PII1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9752FC4CEE7;
+	Thu, 18 Sep 2025 14:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758204950;
+	bh=MBjb3dNG3tkBuBacJDOOMyqs0vjIlyjvFY8EUa5pvX4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MHO7PII1MmiBquTUz1ni8U+YKzkdedbpjjU/j8sr26+vZ6THi+ZZRnMu949QjVBXU
+	 o11BxieZf0WqmQsIMSHLKoO9L/ZT5+JZzoSbcFI/4dwq44NluBAK6DSRmWQYEOkIEN
+	 S0SKDHY0P+yAeLh6fQT1GRb/o7rZodYtoQ6CtDwFaP/IKEM5h62pZgbZ1RPwC/qOOR
+	 8IUjoGF0ISX2QHVCZ+wpiVpfD0ZnCBP/Xjre7bqwdS4nMlXYFZiQ67Uyu3VhIF2BpA
+	 g4WFXRo3WCr7wTv/wNoZpGV3XUc6756koA3jQ0afeI5iZv2ehbl7a20osbQloUvHRE
+	 37mh5CEGEKO7Q==
+Date: Thu, 18 Sep 2025 15:15:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
+	Lee Jones <lee@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Ming Yu <a0282524688@gmail.com>
+Subject: linux-next: manual merge of the gpio-brgl tree with the usb tree
+Message-ID: <aMwUEV6nY4AaJT8X@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916090109.91132-1-ethan.w.s.graham@gmail.com> <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
-In-Reply-To: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Thu, 18 Sep 2025 16:15:27 +0200
-X-Gm-Features: AS18NWDFBwLJ1l73cBf4HqMXnx0YeCt1p-LK845oN4Qc3Ee7lXGT_Tt4s1Okcjk
-Message-ID: <CAG_fn=Xkig71cn1xCUP1t=OLAbk+YYLsec0HhciROuiTD6AELg@mail.gmail.com>
-Subject: Re: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7
- and RSA parsing
-To: Ethan Graham <ethan.w.s.graham@gmail.com>, ignat@cloudflare.com
-Cc: ethangraham@google.com, andreyknvl@gmail.com, andy@kernel.org, 
-	brauner@kernel.org, brendan.higgins@linux.dev, davem@davemloft.net, 
-	davidgow@google.com, dhowells@redhat.com, dvyukov@google.com, 
-	elver@google.com, herbert@gondor.apana.org.au, jack@suse.cz, jannh@google.com, 
-	johannes@sipsolutions.net, kasan-dev@googlegroups.com, kees@kernel.org, 
-	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de, 
-	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f1cBj7XY7g+wQXvZ"
+Content-Disposition: inline
+
+
+--f1cBj7XY7g+wQXvZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 11:01=E2=80=AFAM Ethan Graham
-<ethan.w.s.graham@gmail.com> wrote:
->
-> From: Ethan Graham <ethangraham@google.com>
->
-> Add KFuzzTest targets for pkcs7_parse_message, rsa_parse_pub_key, and
-> rsa_parse_priv_key to serve as real-world examples of how the framework
-> is used.
->
-> These functions are ideal candidates for KFuzzTest as they perform
-> complex parsing of user-controlled data but are not directly exposed at
-> the syscall boundary. This makes them difficult to exercise with
-> traditional fuzzing tools and showcases the primary strength of the
-> KFuzzTest framework: providing an interface to fuzz internal functions.
->
-> To validate the effectiveness of the framework on these new targets, we
-> injected two artificial bugs and let syzkaller fuzz the targets in an
-> attempt to catch them.
->
-> The first of these was calling the asn1 decoder with an incorrect input
-> from pkcs7_parse_message, like so:
->
-> - ret =3D asn1_ber_decoder(&pkcs7_decoder, ctx, data, datalen);
-> + ret =3D asn1_ber_decoder(&pkcs7_decoder, ctx, data, datalen + 1);
->
-> The second was bug deeper inside of asn1_ber_decoder itself, like so:
->
-> - for (len =3D 0; n > 0; n--)
-> + for (len =3D 0; n >=3D 0; n--)
->
-> syzkaller was able to trigger these bugs, and the associated KASAN
-> slab-out-of-bounds reports, within seconds.
->
-> The targets are defined within /lib/tests, alongside existing KUnit
-> tests.
->
-> Signed-off-by: Ethan Graham <ethangraham@google.com>
->
-> ---
-> v3:
-> - Change the fuzz target build to depend on CONFIG_KFUZZTEST=3Dy,
->   eliminating the need for a separate config option for each individual
->   file as suggested by Ignat Korchagin.
-> - Remove KFUZZTEST_EXPECT_LE on the length of the `key` field inside of
->   the fuzz targets. A maximum length is now set inside of the core input
->   parsing logic.
-> v2:
-> - Move KFuzzTest targets outside of the source files into dedicated
->   _kfuzz.c files under /crypto/asymmetric_keys/tests/ as suggested by
->   Ignat Korchagin and Eric Biggers.
-> ---
-> ---
->  crypto/asymmetric_keys/Makefile               |  2 +
->  crypto/asymmetric_keys/tests/Makefile         |  2 +
->  crypto/asymmetric_keys/tests/pkcs7_kfuzz.c    | 22 +++++++++++
->  .../asymmetric_keys/tests/rsa_helper_kfuzz.c  | 38 +++++++++++++++++++
->  4 files changed, 64 insertions(+)
->  create mode 100644 crypto/asymmetric_keys/tests/Makefile
->  create mode 100644 crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
->  create mode 100644 crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c
->
-> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Mak=
-efile
-> index bc65d3b98dcb..77b825aee6b2 100644
-> --- a/crypto/asymmetric_keys/Makefile
-> +++ b/crypto/asymmetric_keys/Makefile
-> @@ -67,6 +67,8 @@ obj-$(CONFIG_PKCS7_TEST_KEY) +=3D pkcs7_test_key.o
->  pkcs7_test_key-y :=3D \
->         pkcs7_key_type.o
->
-> +obj-y +=3D tests/
-> +
->  #
->  # Signed PE binary-wrapped key handling
->  #
-> diff --git a/crypto/asymmetric_keys/tests/Makefile b/crypto/asymmetric_ke=
-ys/tests/Makefile
-> new file mode 100644
-> index 000000000000..4ffe0bbe9530
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/tests/Makefile
-> @@ -0,0 +1,2 @@
-> +obj-$(CONFIG_KFUZZTEST) +=3D pkcs7_kfuzz.o
-> +obj-$(CONFIG_KFUZZTEST) +=3D rsa_helper_kfuzz.o
-> diff --git a/crypto/asymmetric_keys/tests/pkcs7_kfuzz.c b/crypto/asymmetr=
-ic_keys/tests/pkcs7_kfuzz.c
-> new file mode 100644
-> index 000000000000..37e02ba517d8
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * PKCS#7 parser KFuzzTest target
-> + *
-> + * Copyright 2025 Google LLC
-> + */
-> +#include <crypto/pkcs7.h>
-> +#include <linux/kfuzztest.h>
-> +
-> +struct pkcs7_parse_message_arg {
-> +       const void *data;
-> +       size_t datalen;
-> +};
-> +
-> +FUZZ_TEST(test_pkcs7_parse_message, struct pkcs7_parse_message_arg)
-> +{
-> +       KFUZZTEST_EXPECT_NOT_NULL(pkcs7_parse_message_arg, data);
-> +       KFUZZTEST_ANNOTATE_ARRAY(pkcs7_parse_message_arg, data);
-> +       KFUZZTEST_ANNOTATE_LEN(pkcs7_parse_message_arg, datalen, data);
-> +
-> +       pkcs7_parse_message(arg->data, arg->datalen);
+Hi all,
 
-As far as I understand, this function creates an allocation, so the
-fuzz test will need to free it using pkcs7_free_message() to avoid
-leaking memory.
-What do you think, Ignat?
+Today's linux-next merge of the gpio-brgl tree got a conflict in:
 
+  drivers/i2c/busses/Kconfig
 
-> +       struct rsa_key out;
-> +       rsa_parse_pub_key(&out, arg->key, arg->key_len);
-> +}
+between commit:
 
-Do we need to deallocate anything here?
+  daf161343a390 ("i2c: Add Intel USBIO I2C driver")
+
+=66rom the usb tree and commit:
+
+  c5cf27dbaeb6e ("i2c: Add Nuvoton NCT6694 I2C support")
+
+=66rom the gpio-brgl tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/i2c/busses/Kconfig
+index 9921fd9ea0983,63a2b5a9abc39..0000000000000
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@@ -1357,17 -1357,16 +1357,27 @@@ config I2C_LJC
+  	  This driver can also be built as a module.  If so, the module
+  	  will be called i2c-ljca.
+ =20
++ config I2C_NCT6694
++ 	tristate "Nuvoton NCT6694 I2C adapter support"
++ 	depends on MFD_NCT6694
++ 	help
++ 	  If you say yes to this option, support will be included for Nuvoton
++ 	  NCT6694, a USB to I2C interface.
++=20
++ 	  This driver can also be built as a module. If so, the module will
++ 	  be called i2c-nct6694.
++=20
+ +config I2C_USBIO
+ +	tristate "Intel USBIO I2C Adapter support"
+ +	depends on USB_USBIO
+ +	default USB_USBIO
+ +	help
+ +	  Select this option to enable I2C driver for the INTEL
+ +	  USBIO driver stack.
+ +
+ +	  This driver can also be built as a module.  If so, the module
+ +	  will be called i2c_usbio.
+ +
+  config I2C_CP2615
+  	tristate "Silicon Labs CP2615 USB sound card and I2C adapter"
+  	depends on USB
+diff --cc drivers/i2c/busses/Makefile
+index 401a79c9767e6,fe8cf6325fc98..0000000000000
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@@ -135,7 -135,7 +135,8 @@@ obj-$(CONFIG_I2C_GXP)		+=3D i2c-gxp.
+  obj-$(CONFIG_I2C_DIOLAN_U2C)	+=3D i2c-diolan-u2c.o
+  obj-$(CONFIG_I2C_DLN2)		+=3D i2c-dln2.o
+  obj-$(CONFIG_I2C_LJCA)		+=3D i2c-ljca.o
++ obj-$(CONFIG_I2C_NCT6694)	+=3D i2c-nct6694.o
+ +obj-$(CONFIG_I2C_USBIO)		+=3D i2c-usbio.o
+  obj-$(CONFIG_I2C_CP2615) +=3D i2c-cp2615.o
+  obj-$(CONFIG_I2C_PARPORT)	+=3D i2c-parport.o
+  obj-$(CONFIG_I2C_PCI1XXXX)	+=3D i2c-mchp-pci1xxxx.o
+
+--f1cBj7XY7g+wQXvZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMFBEACgkQJNaLcl1U
+h9Aa2wf8CT743rTsxr1EZVGbNF/Pp+0WO+VJoOkU4atIrIMnmtHy3IZTadUqK+zj
+szb7jhwkGUCx1VYOzaPR6Uh9794aG/go8iYA2rdehtDijd8A4JZSp1kBFEYtPYwi
+Xbnl/Uz+T+o8EffPVjtVJVHAxmEMcjgLbi6jJRnjlDvXuOVkWkImafklJwAHt7h4
+xUE+A1yyAvuRlMvfVnT6qFIWSkaf9iYCqYGgdYpWmK/hrn3Xg9tkut511rMW01rL
+DwE+dZFWKGb+b6mbaqMxTO0sOeMFpRGO//jacGptdcZGF4bAF7xY7jApVXjA4W7Q
+Lk2UrVh8/pllgVmNYNo8uVGOoGHhFA==
+=+den
+-----END PGP SIGNATURE-----
+
+--f1cBj7XY7g+wQXvZ--
 
