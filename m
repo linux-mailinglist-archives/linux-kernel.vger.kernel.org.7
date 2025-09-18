@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-822193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7AEB83433
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:07:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35338B83439
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD2A7BA433
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4C81C20520
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DEF2D8DD1;
-	Thu, 18 Sep 2025 07:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585092DFA26;
+	Thu, 18 Sep 2025 07:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bU5Z1lt4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="XlBglBRF"
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC672BE635
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0E623BCF0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758179225; cv=none; b=DHfS43XzCExzrAuDNFW7sDAsXwmSUGk0QcQvQmR2zcbtC4ZK6Ui9I9kVxHKi9An8Fat0tufL/AFL5wtE3t+huw10zioTOKRaoBgzDWAawNVqddG2cWxC3J5PvfDclE7H5m2spOaJNP5n8l9urFlfibqMNrkCjcNYyXWy5rQ02sQ=
+	t=1758179321; cv=none; b=UMo50IjMqmt6cAM+qaYnQ5fIDB+AZx6EOKmdCpvstl0mpV3LldS//cihPeeVEX09utrRf68mEO39z/H5PGsv9V7JRLSrvHW/fNOYibr2VgdgVaykQ8yPIAyJBrN4QUNLGnCM2nMxhQyEc9PomUQYsxnbAE/5GU1C7cBEBLlXlaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758179225; c=relaxed/simple;
-	bh=LIWh9rCdfk9QZIOUNYrRMXALV0xzQlmiVi96oKR3cJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bSa/2l+CvNbpJkFryFufAdxsxtwR2fsx2eiGOKhtwOe703E+MV7ZqcGZZ/o/GD2a0ol8L1jb1LDMywVnk3y+zujbMwNc/SZRqFldXVYJy0K2bqv0xvO7tkbDAlCPPTRnLJjukSZBDLosLE0vBuMt81EwV8azM32cMnLYpMSI92Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bU5Z1lt4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE42C4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:07:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758179224;
-	bh=LIWh9rCdfk9QZIOUNYrRMXALV0xzQlmiVi96oKR3cJU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bU5Z1lt47Lq0VkB4KKNYsVyisLJO8FFfkZ/yyMccp/uZss70isryVNw5E/RzHsj0N
-	 fvnriXofakA3oKEv2foRfNviHJ+hvfQf9gCHO3WZFrH348D8aWsWn0xo0nv6vVih+U
-	 Xs1LgeKSacudQOdjTskJd1nkl59TvgKg/0CBLc309dLM+dMgb3+Tyjxqumq6lVl116
-	 FPhC+ZgakWtvYPYsw1iot0fJqSNrnA1LZKzEBHKVdZhrc4elX+wZABZ3aTCBcLZ4NJ
-	 b24yJXOtSr3lmAVeNMIO1vyyICfVUTx6vChSh1MKJo6wWi+FSxKTgdefsDve7r7N4k
-	 cMsm6qTBjyW9g==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b046f6fb230so125406366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:07:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4v5+sBNw98yElPzu7nYGzrG9wCHY1pyx7WCq7PK2BEGdOEtcvc3RXKXqpMQxc9y+exCgCKYYn4o5iBEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrO7LmofKBGqoUy03JFe1qkcSs4NT8GG7lYmgnfssasKG9TPmi
-	f667GaCX+Tn+/M9eksf3dcXYaM4aY3Qi/zAs7RGcxzxRyllbO4BruTj2Sq3y8YjU1nI9j6/JoHa
-	qPkWDsmUj9e7aD2lu1zcuFUgYFcJzjRg=
-X-Google-Smtp-Source: AGHT+IHDwQed8QlPUnnnh18AjAw4YMW4KXcHgPP/wiHiSdIyFg9qXXASXGDcTOHAySLAH7fyN/psk4mX2ofDkgxKubU=
-X-Received: by 2002:a17:906:4a94:b0:b20:a567:8724 with SMTP id
- a640c23a62f3a-b20a567874dmr141766966b.1.1758179223191; Thu, 18 Sep 2025
- 00:07:03 -0700 (PDT)
+	s=arc-20240116; t=1758179321; c=relaxed/simple;
+	bh=2Fq72gcZ7a03LjbxYRbcM9QBgxuKhj6eC6DiaxDA8hY=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hRKtF9zWWCwDIXdwz1IgAGTK4MjkI4RVpdjBolGAVSNS5pE7wvyQfaGdHG740ywHwFWt1iI8EPJA8FAZ9Tjuxtt2f7PGcZ+yCCxrzuEXC4hdmJjauJAGU7dBhgacCHkZy2Eix7XN5uu10yGSPu6PvfHzFS78J8gZrZKPcTYCjjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=XlBglBRF; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1758179316; x=1758438516;
+	bh=G18Lwbk4LeVocyoPjOlUgmWjaKT4pQvEdGV2DKNp9MU=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=XlBglBRFcRSDdCkK21Y14twJhmv1Ihq+KUewWSo3gVwNCda3SPrFnTqJGkg5sjfUx
+	 K8d2kf7Kc/PTEjUT00qyAxNZkXIwIhaZv/jy880H+5aVCDasDPsd7LA9pVyupCHCJr
+	 +64WyRmHm9UduI0SGEQnm4HthWRpXya/STku7iga8j2mvGyx4c67hSD1VuycKKF1U7
+	 +1YPFSXN7v4UsPGG/iFPhTWrnpc558b5M7GxHJK8+9waaWzMYKxftulewzRPyoX6li
+	 7KJNn2Yl4QupMSnC3MRopoZ4HvTEdthImMGdN7mhqKpHxaj9WhEOkgJVGHuZKDMhtd
+	 sL7E4FVJOlR0g==
+Date: Thu, 18 Sep 2025 07:08:30 +0000
+To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, benjamin.tissoires@redhat.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, db48x@db48x.net, gary@garyguo.net, jikos@kernel.org, ojeda@kernel.org, peter.hutterer@who-t.net, tmgross@umich.edu, Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Subject: [PATCH v5 0/2] Initial work for Rust abstraction for HID device driver development
+Message-ID: <20250918070824.70822-1-sergeantsagara@protonmail.com>
+Feedback-ID: 26003777:user:proton
+X-Pm-Message-ID: a62392e7296436a68d693ede3507a9fb03c13dbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916145710.2994663-1-lgs201920130244@gmail.com>
-In-Reply-To: <20250916145710.2994663-1-lgs201920130244@gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 18 Sep 2025 15:06:51 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6hTFrUO5gTx6FYo89TAouEykTvKpLNkqFfhtsg0PVLiw@mail.gmail.com>
-X-Gm-Features: AS18NWC7cWrisYIT52dGDytiHP4tfAEgtfCVPbsy0njCO_2FdgqJJthiylvNoAg
-Message-ID: <CAAhV-H6hTFrUO5gTx6FYo89TAouEykTvKpLNkqFfhtsg0PVLiw@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: vDSO: check kcalloc() result in init_vdso
-To: lgs201920130244@gmail.com
-Cc: WANG Xuerui <kernel@xen0n.name>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Nam Cao <namcao@kernel.org>, Xi Ruoyao <xry111@xry111.site>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Guangshuo Li <202321181@mail.sdu.edu.cn>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks.
+Haa.... My v4 had a build system bug, so I never properly test
+GloriousRust. I did not implement the RawDeviceIdIndex trait in v4. My v5
+should properly exercise the reference driver.
 
-Huacai
+I wanted to thank Benjamin for his response on the previous v3 RESEND.
+Greatly appreciated. I have gone ahead with some minor logistical changes
+in the series, based on his response. I have dropped the C patch since he
+also took that patch into the hid tree in v3.
 
-On Tue, Sep 16, 2025 at 10:57=E2=80=AFPM <lgs201920130244@gmail.com> wrote:
->
-> From: Guangshuo Li <202321181@mail.sdu.edu.cn>
->
-> Add a NULL-pointer check after the kcalloc() call in init_vdso(). If
-> allocation fails, return -ENOMEM to prevent a possible dereference of
-> vdso_info.code_mapping.pages when it is NULL.
->
-> Fixes: 2ed119aef60d ("LoongArch: Set correct size for vDSO code mapping")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Guangshuo Li <202321181@mail.sdu.edu.cn>
-> ---
->  arch/loongarch/kernel/vdso.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
-> index 10cf1608c7b3..da7a7922fb24 100644
-> --- a/arch/loongarch/kernel/vdso.c
-> +++ b/arch/loongarch/kernel/vdso.c
-> @@ -53,7 +53,8 @@ static int __init init_vdso(void)
->         vdso_info.size =3D PAGE_ALIGN(vdso_end - vdso_start);
->         vdso_info.code_mapping.pages =3D
->                 kcalloc(vdso_info.size / PAGE_SIZE, sizeof(struct page *)=
-, GFP_KERNEL);
-> -
-> +       if (!vdso_info.code_mapping.pages)
-> +               return -ENOMEM;
->         pfn =3D __phys_to_pfn(__pa_symbol(vdso_info.vdso));
->         for (i =3D 0; i < vdso_info.size / PAGE_SIZE; i++)
->                 vdso_info.code_mapping.pages[i] =3D pfn_to_page(pfn + i);
-> --
-> 2.43.0
->
+Link: https://lore.kernel.org/rust-for-linux/wjfjzjc626n55zvhksiyldobwubr2i=
+mbvfavqej333lvnka2wn@r4zfcjqtanvu/
+Link: https://lore.kernel.org/rust-for-linux/175810473311.3076338.143091013=
+39951114135.b4-ty@kernel.org/
+
+Rahul Rameshbabu (2):
+  rust: core abstractions for HID drivers
+  rust: hid: Glorious PC Gaming Race Model O and O- mice reference
+    driver
+
+ MAINTAINERS                           |  14 +
+ drivers/hid/Kconfig                   |   2 +
+ drivers/hid/Makefile                  |   2 +
+ drivers/hid/hid-glorious.c            |   2 +
+ drivers/hid/hid_glorious_rust.rs      |  60 +++
+ drivers/hid/rust/Kconfig              |  28 ++
+ drivers/hid/rust/Makefile             |   6 +
+ drivers/hid/rust/hid_glorious_rust.rs |  60 +++
+ rust/bindings/bindings_helper.h       |   3 +
+ rust/kernel/hid.rs                    | 513 ++++++++++++++++++++++++++
+ rust/kernel/lib.rs                    |   2 +
+ 11 files changed, 692 insertions(+)
+ create mode 100644 drivers/hid/hid_glorious_rust.rs
+ create mode 100644 drivers/hid/rust/Kconfig
+ create mode 100644 drivers/hid/rust/Makefile
+ create mode 100644 drivers/hid/rust/hid_glorious_rust.rs
+ create mode 100644 rust/kernel/hid.rs
+
+
+base-commit: 657403637f7d343352efb29b53d9f92dcf86aebb
+--=20
+2.51.0
+
+
 
