@@ -1,188 +1,205 @@
-Return-Path: <linux-kernel+bounces-822262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A34B8367C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 767E4B83664
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2423A541EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B11C9163F52
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B842EE5F4;
-	Thu, 18 Sep 2025 08:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBB22EB868;
+	Thu, 18 Sep 2025 07:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Px6qwM72"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CDraqIwb"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6606B2EDD6C
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36CA257839;
+	Thu, 18 Sep 2025 07:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758182409; cv=none; b=HHNCYr6sK8kmsd67NXiqFavhHMnJkQDJwwRtJ99MuQv1vCSqnojQvocoWEhmemeiIp3akdYUHIQKClzTxquntk/TErusGRy2sRfTfqgt0wJ+u+o1/RRikPKeRqSTqUS8eacdFgpGe+BVirVpRRvhvFGYJzcZuyFCUoP+/jlSHsc=
+	t=1758182181; cv=none; b=JapED/Fg4c1LDcuT0vFrE8yrB/J87AK1AZ38EXhuIZiW6oEmJrYd1g8BlND94u5iZkvDP5470FIa2T3/gvQO8yx2DXq8Qv3kaqraaz19qMG4ZHTxpquXDx2LVp7QvMW1c+DcamBEPZy0E7hrMhhMuJocL58LMwumpfyfFyvSMDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758182409; c=relaxed/simple;
-	bh=yQaq1MtJUWsdSFkn8PxoOTJVgpr0gdM/z5Z+Dy+SxNI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=McCpzZSp4r/A5kEM2YoTDe6rUv+1rWbI6tCHMzNm4bdDCAF4lr6ObTezobgQJJkzQ0c7HvVawUinVpKCR9/0Y7+wPORRaNViLRYYS13s/ClrFloAncmY7KULftcZuOeeG9Rp2bI6cZr0/c1e9kHUiAnSA4ow5cEX3WDLHwZcktU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Px6qwM72; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250918080004epoutp020e0d447f9e38358c156bcc6ce2e96019~mUZTZvnCG2916029160epoutp02_
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:00:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250918080004epoutp020e0d447f9e38358c156bcc6ce2e96019~mUZTZvnCG2916029160epoutp02_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758182404;
-	bh=BQWuvDQWOorSsGfg30AXf3ZBtNtFugfs8ir2Lk4ezOU=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=Px6qwM72SlAV9PC03JAPyMsHLQj+YKsSc+sfE87tqhZuiE3p0+KrxZa20s/jVcldg
-	 ZCpMAfPUvqe79UP94eJf39Hm7GwNa81aoedibbo5dHGZKPAlSrBHiEdendm/EivAdQ
-	 bpeJfxCt+ruy25Am7E1GgnTMi+U8w2oXP6ErsyHI=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250918080003epcas5p4d00862289c2c5671655763a12eb126b1~mUZTC4DmI2542825428epcas5p4i;
-	Thu, 18 Sep 2025 08:00:03 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cS7N2672wz6B9mF; Thu, 18 Sep
-	2025 08:00:02 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250918075946epcas5p39a6793513e02e446b3e4801ba66b6925~mUZC34nsw0085400854epcas5p3-;
-	Thu, 18 Sep 2025 07:59:46 +0000 (GMT)
-Received: from node122.. (unknown [109.105.118.122]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250918075945epsmtip1d3121fffe60c85673fe20eba33ba7c5c~mUZCM4NO22598225982epsmtip1R;
-	Thu, 18 Sep 2025 07:59:45 +0000 (GMT)
-From: Xue He <xue01.he@samsung.com>
-To: axboe@kernel.dk, akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
-	<xue01.he@samsung.com>
-Subject: [PATCH v2] block: plug attempts to batch allocate tags multiple
- times
-Date: Thu, 18 Sep 2025 07:55:11 +0000
-Message-Id: <20250918075511.8197-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758182181; c=relaxed/simple;
+	bh=uSAoYEa5vURTdDpkdObQtAd9aCWTnzJfGsYg6n+H7Lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZvTbC2EZQbM3S1gjB3s9IXb5GG0vP1NxeqeCRq2xIykoOjMMmmLciEsouSEbE0Y6gz3omYbFK6q4N8QBN5onxOM0smuwi3rPkzhdhr5BN1GgW7C/A67jxBtHqrEBNqx06KOJ/3GLC5Hl7lhVmiYo7bKYchwtVekqq5iSBxFCHJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CDraqIwb; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9F00EEC021B;
+	Thu, 18 Sep 2025 03:56:18 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Thu, 18 Sep 2025 03:56:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758182178; x=1758268578; bh=G82LiYudmKV8yMFIaNNf+OsFpW+izJcMRlW
+	h8GNT/cw=; b=CDraqIwb2L0d3S+MRIGhDMUdBDxnG49DNVYwZqk4AbyXv537p9y
+	YNHvlKAlzVdcpMq6z2f2WJHJb/mrGHGDnnAzTnJBgaEgd0GHBCMA4cZBoxb3YTmL
+	8XSIaeivcHoIMdkn1unD7dOiUNFMYif5XSQR/4CBGz8bli2kXSRn5mBDomdPmG1L
+	UBPnuj8WdZ3eNYyyHZ1npgrW/PicTnj4KLD4w9hSfyz1VUZrUMKZOZ8X/IJUfuef
+	iVTHAC1ELMabQ4nE0lSy6E14aoJKmeSPK36aPMwyerxmhfBoRZzPabJybBC002lC
+	h5W48ZhpGvuBF9xh52h9djoA5X5N5Ikk0WQ==
+X-ME-Sender: <xms:IrvLaKF4iYE9tVnX3v1FC8UX6N85Sm0DrpvfpxYLvQVh1asZG62q4A>
+    <xme:IrvLaItrFRBbLW0H1PO6ApSUjBWnkkl6oMtemIp_S4rukLYApjkqKR6vRns-Am2mu
+    5if9NEfIbcWE6c>
+X-ME-Received: <xmr:IrvLaNq8U4im9hXrZO0PyjzrlrsyGvGatFkyEx4pvuqbw0sgfsttxEjFB719SPnovxuga46hkENgaV8LU1438xrIFO0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheejkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecuogfuuhhsphgvtghtffhomhgrihhnucdlgeelmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefkughoucfutghh
+    ihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtthgvrh
+    hnpeejgedtjedttdelvdffteeuleekkeejheduheeuffeukefhkeevjeeuheeiueetuden
+    ucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsphhothdrtghomhdpghhoohhglh
+    gvrghpihhsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepihguohhstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepud
+    dtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshiiisghothdoieehleeihedu
+    ieguugdvsgeifeehsggrvdefhedtsehshiiikhgrlhhlvghrrdgrphhpshhpohhtmhgrih
+    hlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgt
+    phhtthhopegushgrhhgvrhhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumh
+    griigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvg
+    hnihesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:IrvLaPUGxvW11A0m2C19j3bPwhMBJjJLo-1DlyA3dgatQiH4FjW_aw>
+    <xmx:IrvLaF2a5dE153Y_QT5egk4oHUGpPGXRxHgkJpFyU3cVxbL0aZxUXQ>
+    <xmx:IrvLaEuLfJIv1OoculLU3Co6OdGbaWKMVTE9mqkQ_M9O_IC-5m7N_Q>
+    <xmx:IrvLaNWDNa4YhRl0PEhQl3BibLfyBGLpxzcAgWosX9O_k1ZrB7E8Rw>
+    <xmx:IrvLaK2MwrsoqqpNmEcRebjpUurvNp4Mb3oVen5NYihWcGv9wJuJF8uC>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 18 Sep 2025 03:56:17 -0400 (EDT)
+Date: Thu, 18 Sep 2025 10:56:15 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: syzbot <syzbot+6596516dd2b635ba2350@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] general protection fault in find_match (6)
+Message-ID: <aMu7Hw-lJeFPEEUI@shredder>
+References: <68c9a4d2.050a0220.3c6139.0e63.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250918075946epcas5p39a6793513e02e446b3e4801ba66b6925
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250918075946epcas5p39a6793513e02e446b3e4801ba66b6925
-References: <CGME20250918075946epcas5p39a6793513e02e446b3e4801ba66b6925@epcas5p3.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68c9a4d2.050a0220.3c6139.0e63.GAE@google.com>
 
-In the existing plug mechanism, tags are allocated in batches based on
-the number of requests. However, testing has shown that the plug only
-attempts batch allocation of tags once at the beginning of a batch of
-I/O operations. Since the tag_mask does not always have enough available
-tags to satisfy the requested number, a full batch allocation is not
-guaranteed to succeed each time. The remaining tags are then allocated
-individually (occurs frequently), leading to multiple single-tag
-allocation overheads.
+On Tue, Sep 16, 2025 at 10:56:34AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    e2291551827f Merge tag 'probes-fixes-v6.16-rc6' of git://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=126aad8c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f62a2ef17395702a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6596516dd2b635ba2350
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1091958c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c89382580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-e2291551.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/8873881d7728/vmlinux-e2291551.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c85b06341ad0/bzImage-e2291551.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/6dce6e633409/mount_8.gz
+>   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=17c3e7d4580000)
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+6596516dd2b635ba2350@syzkaller.appspotmail.com
+> 
+> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000018: 0000 [#1] SMP KASAN NOPTI
+> KASAN: null-ptr-deref in range [0x00000000000000c0-0x00000000000000c7]
+> CPU: 0 UID: 0 PID: 3043 Comm: kworker/u4:11 Not tainted 6.16.0-rc6-syzkaller-00037-ge2291551827f #0 PREEMPT(full) 
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Workqueue: ipv6_addrconf addrconf_dad_work
+> RIP: 0010:__in6_dev_get include/net/addrconf.h:347 [inline]
 
-This patch aims to retry batch allocation of tags when the initial batch
-allocation fails to reach the requested number, thereby reducing the
-overhead of individual allocation attempts.
+Problem is that FDB nexthops can end up in non-FDB nexthop groups and
+FDB nexthops are not associated with a nexthop device.
 
---------------------------------------------------------------------
-perf:
-base code: __blk_mq_alloc_requests() 1.33%
-patch:__blk_mq_alloc_requests() 0.72%
--------------------------------------------------------------------
+The kernel rejects such configurations upon addition:
 
-Signed-off-by: hexue <xue01.he@samsung.com>
----
- block/blk-mq.c | 43 +++++++++++++++++++++++--------------------
- lib/sbitmap.c  |  7 ++++---
- 2 files changed, 27 insertions(+), 23 deletions(-)
+# ip nexthop add id 1 via 192.0.2.1 fdb
+# ip nexthop add id 2 group 1
+Error: Non FDB nexthop group cannot have fdb nexthops.
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ba3a4b77f578..3ed8da176831 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -456,28 +456,31 @@ __blk_mq_alloc_requests_batch(struct blk_mq_alloc_data *data)
- 	struct blk_mq_tags *tags;
- 	struct request *rq;
- 	unsigned long tag_mask;
--	int i, nr = 0;
- 
--	tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
--	if (unlikely(!tag_mask))
--		return NULL;
-+	do {
-+		int i, nr = 0;
- 
--	tags = blk_mq_tags_from_data(data);
--	for (i = 0; tag_mask; i++) {
--		if (!(tag_mask & (1UL << i)))
--			continue;
--		tag = tag_offset + i;
--		prefetch(tags->static_rqs[tag]);
--		tag_mask &= ~(1UL << i);
--		rq = blk_mq_rq_ctx_init(data, tags, tag);
--		rq_list_add_head(data->cached_rqs, rq);
--		nr++;
--	}
--	if (!(data->rq_flags & RQF_SCHED_TAGS))
--		blk_mq_add_active_requests(data->hctx, nr);
--	/* caller already holds a reference, add for remainder */
--	percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
--	data->nr_tags -= nr;
-+		tag_mask = blk_mq_get_tags(data, data->nr_tags, &tag_offset);
-+		if (unlikely(!tag_mask))
-+			return NULL;
-+
-+		tags = blk_mq_tags_from_data(data);
-+		for (i = 0; tag_mask; i++) {
-+			if (!(tag_mask & (1UL << i)))
-+				continue;
-+			tag = tag_offset + i;
-+			prefetch(tags->static_rqs[tag]);
-+			tag_mask &= ~(1UL << i);
-+			rq = blk_mq_rq_ctx_init(data, tags, tag);
-+			rq_list_add_head(data->cached_rqs, rq);
-+			nr++;
-+		}
-+		if (!(data->rq_flags & RQF_SCHED_TAGS))
-+			blk_mq_add_active_requests(data->hctx, nr);
-+		/* caller already holds a reference, add for remainder */
-+		percpu_ref_get_many(&data->q->q_usage_counter, nr - 1);
-+		data->nr_tags -= nr;
-+	} while (data->nr_tags);
- 
- 	return rq_list_pop(data->cached_rqs);
- }
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index 4d188d05db15..4ac303842aec 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -534,10 +534,11 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
- 		unsigned int map_depth = __map_depth(sb, index);
- 		unsigned long val;
- 
--		sbitmap_deferred_clear(map, 0, 0, 0);
- 		val = READ_ONCE(map->word);
--		if (val == (1UL << (map_depth - 1)) - 1)
--			goto next;
-+		if (val == (1UL << (map_depth - 1)) - 1) {
-+			if (!sbitmap_deferred_clear(map, map_depth, 0, 0))
-+				goto next;
-+		}
- 
- 		nr = find_first_zero_bit(&val, map_depth);
- 		if (nr + nr_tags <= map_depth) {
--- 
-2.34.1
+But not upon replacement:
 
+# ip nexthop add id 1 blackhole
+# ip nexthop add id 2 group 1
+# ip nexthop replace id 1 via 192.0.2.1 fdb
+# ip nexthop
+id 1 via 192.0.2.1 scope link fdb
+id 2 group 1
+
+I will try to send a fix later today.
+
+> RIP: 0010:ip6_ignore_linkdown include/net/addrconf.h:443 [inline]
+> RIP: 0010:find_match+0xa3/0xc90 net/ipv6/route.c:781
+> Code: 00 00 00 00 00 fc ff df 42 80 7c 25 00 00 74 08 48 89 df e8 cf c4 fc f7 48 89 d8 bb c0 00 00 00 48 03 18 48 89 d8 48 c1 e8 03 <42> 80 3c 20 00 74 08 48 89 df e8 ae c4 fc f7 48 8b 1b e8 f6 60 48
+> RSP: 0018:ffffc9000d5ce430 EFLAGS: 00010206
+> RAX: 0000000000000018 RBX: 00000000000000c0 RCX: 0000000000000000
+> RDX: ffff88803f90c880 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 1ffff1100b37b324 R08: ffffc9000d5ce7c0 R09: ffffc9000d5ce7d0
+> R10: ffffc9000d5ce620 R11: ffffffff8a26ecd0 R12: dffffc0000000000
+> R13: 0000000000000002 R14: 1ffff1100b37b326 R15: ffff888059bd9937
+> FS:  0000000000000000(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffd76fadfd8 CR3: 000000000df38000 CR4: 0000000000352ef0
+> Call Trace:
+>  <TASK>
+>  rt6_nh_find_match+0xd9/0x150 net/ipv6/route.c:821
+>  nexthop_for_each_fib6_nh+0x1cd/0x400 net/ipv4/nexthop.c:1516
+>  __find_rr_leaf+0x461/0x6d0 net/ipv6/route.c:862
+>  find_rr_leaf net/ipv6/route.c:890 [inline]
+>  rt6_select net/ipv6/route.c:934 [inline]
+>  fib6_table_lookup+0x39f/0xa80 net/ipv6/route.c:2232
+>  ip6_pol_route+0x222/0x1180 net/ipv6/route.c:2268
+>  pol_lookup_func include/net/ip6_fib.h:617 [inline]
+>  fib6_rule_lookup+0x348/0x6f0 net/ipv6/fib6_rules.c:125
+>  ip6_route_output_flags_noref net/ipv6/route.c:2683 [inline]
+>  ip6_route_output_flags+0x364/0x5d0 net/ipv6/route.c:2695
+>  ip6_route_output include/net/ip6_route.h:93 [inline]
+>  ip6_dst_lookup_tail+0x1ae/0x1510 net/ipv6/ip6_output.c:1128
+>  ip6_dst_lookup_flow+0x47/0xe0 net/ipv6/ip6_output.c:1259
+>  udp_tunnel6_dst_lookup+0x231/0x3c0 net/ipv6/ip6_udp_tunnel.c:165
+>  geneve6_xmit_skb drivers/net/geneve.c:957 [inline]
+>  geneve_xmit+0xd2e/0x2b70 drivers/net/geneve.c:1043
+>  __netdev_start_xmit include/linux/netdevice.h:5215 [inline]
+>  netdev_start_xmit include/linux/netdevice.h:5224 [inline]
+>  xmit_one net/core/dev.c:3830 [inline]
+>  dev_hard_start_xmit+0x2d4/0x830 net/core/dev.c:3846
+>  __dev_queue_xmit+0x1adf/0x3a70 net/core/dev.c:4713
+>  dev_queue_xmit include/linux/netdevice.h:3355 [inline]
+>  neigh_hh_output include/net/neighbour.h:523 [inline]
+>  neigh_output include/net/neighbour.h:537 [inline]
+>  ip6_finish_output2+0x11bc/0x16a0 net/ipv6/ip6_output.c:141
+>  __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
+>  ip6_finish_output+0x234/0x7d0 net/ipv6/ip6_output.c:226
+>  NF_HOOK+0x9e/0x380 include/linux/netfilter.h:317
+>  mld_sendpack+0x800/0xd80 net/ipv6/mcast.c:1868
+>  ipv6_mc_dad_complete+0x88/0x4b0 net/ipv6/mcast.c:2293
+>  addrconf_dad_completed+0x6d5/0xd60 net/ipv6/addrconf.c:4339
+>  addrconf_dad_work+0xc36/0x14b0 net/ipv6/addrconf.c:-1
+>  process_one_work kernel/workqueue.c:3238 [inline]
+>  process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+>  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+>  kthread+0x70e/0x8a0 kernel/kthread.c:464
+>  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
 
