@@ -1,144 +1,87 @@
-Return-Path: <linux-kernel+bounces-822137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56F2B831D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:20:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D8CB831AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AAD04E057A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:20:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA834A204B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18902D7D35;
-	Thu, 18 Sep 2025 06:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5245027B357;
-	Thu, 18 Sep 2025 06:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463A82D7DF1;
+	Thu, 18 Sep 2025 06:13:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E53929E109
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758176438; cv=none; b=kptzeGi7YXOpdsuM52DEj76JpHYPXIrPhLbSdKrwFO9ax0iF4P8pVKIYNMY26gU8IsKyaFvSs0ulodRYoW6yAasYcfKdHLqSusjABTrADcq84AZtthnFxZ3F5hsxVtz5ov2YkKa4+G7t+PhJeX7VvOqtGydffvN7UhwZJx8N5mI=
+	t=1758175984; cv=none; b=gD2+1NQNZz9Png3yqcNmpHWCRQ89E9h5aYNfL6cTcbqm27xuwjYId1KWabjjC7EYEnoq+uK5Vgl3CjE18jI2Sl6K2JoX6NuyhWBtLKqwlpts+AjB3y865yVrCwGfT8lVpgZgYqN18MfppeffsRy4vI3c0G0BLQURhZAb80AOT3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758176438; c=relaxed/simple;
-	bh=UtKz5/IYin2NYot8gke7h0Z7q9s5XgcbUcnm7u+9bcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bvJrRbcR6Dh3RJQCCZLZm4olzjggdnpWjWG9twXalQcBj24QnYxg0oyk+GPLSSqkLDEystfP8fMueqAUNhQFqBCw1P1WPKlO4t1Chd0PJmg0yWLrhs1g4whUC2j5xJd4GA20jGUEXZ5PxbGO7PK31LmmFCWrBxFZGW8TKthTxBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cS4zq5Xdlz9sg0;
-	Thu, 18 Sep 2025 08:12:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id FbE0_hDQWI6h; Thu, 18 Sep 2025 08:12:23 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cS4zq4ZMvz9sfy;
-	Thu, 18 Sep 2025 08:12:23 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 88BFD8B76C;
-	Thu, 18 Sep 2025 08:12:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wUtKhrQoSrmI; Thu, 18 Sep 2025 08:12:23 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C07208B767;
-	Thu, 18 Sep 2025 08:12:22 +0200 (CEST)
-Message-ID: <3d20d3ec-2f52-4cac-9c5c-fd2141a12a0b@csgroup.eu>
-Date: Thu, 18 Sep 2025 08:12:21 +0200
+	s=arc-20240116; t=1758175984; c=relaxed/simple;
+	bh=/iVxXANyReG7yaoK0bfYeA2u62svJzfCX8SMs9l+lGA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jtkA2rqeD58aFnFm1P17Gm6MIfYvn1DcNRcXaChDIhrNClGWie0OvUUAzz1VBE9pSqyZFX2ox0yRnKIrBIDsE7SI6BpWbqdXQGSQ5Zno3E7fCGr7SleEIOTMVxJfKI4D8PX1FMJxYC2ZwqutphxfAxjQVqNmE5wR/BuqAGn6anM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42404e7bc94so13286455ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:13:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758175982; x=1758780782;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l2JWCzIWYpnzfcU15QbHfuxLHwlgc1PtHcNs1eNhIAg=;
+        b=SKbb5yFfCae5DHTDHLxzCtvJe4tcTvvYYqBk/9TV8wxBuFiEXCdwbYxbgRzfgzkJhV
+         N5J8Xp5pzCBEKX/Rq7OddrNuj64uLCBymiPc9vkOK8xKofawcvzt5ZClGMUouL9kAqxe
+         jsg74WXVpBptldmqOgnbWG7cTYpZCg92uzNMX3S4L+xczqUfHIckbTZoiKzp7CoFQeva
+         h8VrWP8Z7zjDyr6c0XB0cAc3AFkb9aStfRfKboRTUeTUGEYDLH3/hvzzt5mO7ymUDxJT
+         H9hRghFiOE+NWEzSF5Y8Zq10iUBm+5omR72CGUMQodfl/f1FMdAwQad7+SJ7lc2OpjFF
+         AUsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxSmr7yYbFDli8Fp1K3tKkVWr2JAlwUJNLCpeMCcMC4bKP7yJrG4pT18NjOWOQRwPcORJ6RoFwcvE3JjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIFJ8qQ+AV3eewDvqq6P5D4gR1c/Ou3RVY7NYFUVmoutmpljbW
+	+IWKDzxYL+1Bul+o7YjXPNo+AxefzwRmdFy6nCpzPYCG0nuEnYHCBQZL89P2rf6GHr6y9Gj1I/7
+	aeZSugiLqus6/HNasKDxd2w83qbgSgP7W9FJ9RZt8XCVVm+MnYqdkAc4SRfE=
+X-Google-Smtp-Source: AGHT+IG7XvhKQSwhi5NGH7XbGyi8B535OwfeGdIuKq72tPRWQB/NFHXSLSugejmQaigbfTCVUcAmgTSpLRmf//C5NLztvQeMUIYH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] ASoC: fsl: fsl_qmc_audio: Reduce amount of
- interrupts
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Nicolin Chen <nicoleotsuka@gmail.com>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, linux-sound@vger.kernel.org,
- Qiang Zhao <qiang.zhao@nxp.com>, Fabio Estevam <festevam@gmail.com>,
- Takashi Iwai <tiwai@suse.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>
-References: <cover.1755504428.git.christophe.leroy@csgroup.eu>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <cover.1755504428.git.christophe.leroy@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1649:b0:424:9d5:fd6c with SMTP id
+ e9e14a558f8ab-4241a55d6f2mr61855105ab.23.1758175982456; Wed, 17 Sep 2025
+ 23:13:02 -0700 (PDT)
+Date: Wed, 17 Sep 2025 23:13:02 -0700
+In-Reply-To: <b0988506-dbc6-4d28-8f19-9c50bdc44f84@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cba2ee.050a0220.3c6139.0fb3.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Mark, Liam,
+Hello,
 
-Le 18/08/2025 à 10:19, Christophe Leroy a écrit :
-> This series reduces significantly the amount of interrupts on
-> fsl_qmc_audio device.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I can't see this series in linux-next.
+Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+Tested-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
 
-I see in patchwork [1] that this series still has status 'NEW' but also 
-state 'archived'.
+Tested on:
 
-What is the way forward to get it applied for v6.18 ?
+commit:         1924f741 RDMA/core: Check kref leak
+git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+console output: https://syzkaller.appspot.com/x/log.txt?x=11feae42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-Thanks
-Christophe
-
-[1] 
-https://patchwork.kernel.org/project/alsa-devel/patch/f0c5260651822e8003daf11c7a76921796517152.1755504428.git.christophe.leroy@csgroup.eu/
-
-> 
-> Patches 1 and 2 are preparatory patches.
-> Patch 3 is the main change
-> Patch 4 is a cleanup which is enabled by previous patch
-> 
-> Changes in v3:
-> - Properly check the buffer descriptor is unused (Patch 1, comment from Herve Codina)
-> - Fixed copy/paste error (patch 2, comment from Herve Codina)
-> - Fixed build failure (patch 2, comment from Herve Codina and Test robot)
-> 
-> Changes in v2:
-> - Don't remove UB bit (Patch 1, comment from Herve Codina)
-> - Make sure audio channels are ordered on TDM bus (Patch 2, new patch, comment from Herve Codina)
-> - Drop struct qmc_dai_chan  (patch 4, new patch)
-> 
-> Backgroup (copied from patch 3):
-> 
-> In non-interleaved mode, several QMC channels are used in sync.
-> More details can be found in commit 188d9cae5438 ("ASoC: fsl:
-> fsl_qmc_audio: Add support for non-interleaved mode.")
-> At the time being, an interrupt is requested on each channel to
-> perform capture/playback completion, allthough the completion is
-> really performed only once all channels have completed their work.
-> 
-> This leads to a lot more interrupts than really needed. Looking at
-> /proc/interrupts shows ~3800 interrupts per second when using
-> 4 capture and 4 playback devices with 5ms periods while
-> only 1600 (200 x 4 + 200 x 4) periods are processed during one second.
-> 
-> The QMC channels work in sync, the one started first is the one
-> finishing first and the one started last is the one finishing last,
-> so when the last one finishes it is guaranteed that the other ones are
-> finished as well. Therefore only request completion processing on the
-> last QMC channel.
-> 
-> On my board with the above exemple, on a kernel started with
-> 'threadirqs' option, the QMC irq thread uses 16% CPU time with this
-> patch while it uses 26% CPU time without this patch.
-> 
-> Christophe Leroy (4):
->    soc: fsl: qmc: Only set completion interrupt when needed
->    ASoc: fsl: fsl_qmc_audio: Ensure audio channels are ordered in TDM bus
->    ASoC: fsl: fsl_qmc_audio: Only request completion on last channel
->    ASoc: fsl: fsl_qmc_audio: Drop struct qmc_dai_chan
-> 
->   drivers/soc/fsl/qe/qmc.c      |  44 +++++++++---
->   sound/soc/fsl/fsl_qmc_audio.c | 125 +++++++++++++++-------------------
->   2 files changed, 87 insertions(+), 82 deletions(-)
-> 
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
