@@ -1,118 +1,193 @@
-Return-Path: <linux-kernel+bounces-823204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0684B85CDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:55:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE51B85C96
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3411CC3C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC56A561F0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB98257839;
-	Thu, 18 Sep 2025 15:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2972C30F958;
+	Thu, 18 Sep 2025 15:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YAf5jvzH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j7VBlfql"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I/tb+1YN"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA1430F954
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BB230DECA
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758210582; cv=none; b=AxMlwghOQwmFnuL51iIgo3Hm3+CEKrgTlnnN9qOPBP8AqmZXPsavArECwMpHEmT/VXLzTPLwyn0sVdrsxatxuXb6W9yZ/XjHaSXGUKYfTQMIlvmiITYWiIAYiD7BC54MajZLDfq4pdd7TVjE3X02xVclyfcY3ypGF0jsyF9wWEA=
+	t=1758210607; cv=none; b=gHEzEmRwLd690jyOVbVT/NBdjqPkQA+LemUWOgllhA+1Nqs/8KuMzH44ch1DRxCzUItIxeo+cv9sGaQci3zXlj04VDW+sPCDCOIYeodFwNxgYpHLaOU56VaLako7tFGZmluT7NYdpKI06kc7CGYt5Z3JQHK8DeMza9bWH8qFVKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758210582; c=relaxed/simple;
-	bh=Tu3hQmIplag6Boj37rOZRIxg+q0RX8nAwgJMMdLlaqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUh7gZzheKFevA+i6iMYFOMe3Ry1Mcu1YlXgbn7taAXELmAMxvXnQN7JMYqJFPn49KZdSzuXSENsl0JVXW2c5LKiDohHmsZrWhiMo6fzV90W5asD3yTwK9BrYLw8nOX8lxQvCMxX1EF6INo7tHoiSGr0akMqAzGQ1h76OGBDiKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YAf5jvzH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j7VBlfql; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 18 Sep 2025 17:49:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758210578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cmvTuuz6y83mxY1NenzRoJM8fQybFqPitezBXCcZxWI=;
-	b=YAf5jvzHjpFNeJIpII5+JOB0lqoLy501EnRxXWEnySIMsDkbOxtZuir0rHD7+npu15njWK
-	T843wDkG+Hsq6TohJ2QbYfN+7f1nX1y0ozFLJ7XFcZ0EZQrmJB45lrG0f8VuEHrmYHtyjb
-	M//nkcH228fZL/g3hopQVBiTgqKlxHI33uI64Zi+Ya7GVd1O5yFaQayGKIEGeRt0xQN+oQ
-	hJ5WabTPG3K06y+5O7j0PFDhIuuRl5PTOq5JXnfVjTSSOvH5wCAV1MChU6fkF6pGUR1Jc5
-	pVaNqHVkWd5uhW3EOK+4wiz/vt6BN2zZbMf3QGhLlSl8jmhM/nCWwv8u4Z4OBg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758210578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cmvTuuz6y83mxY1NenzRoJM8fQybFqPitezBXCcZxWI=;
-	b=j7VBlfqlasNpWNGrU6gu9/tS7qbT5SOLbXS9XpbyJfuTyJCaJhGEMIeN1CavzqhvZDYsxZ
-	AMlZlg6ZXGRZqMCA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Hillf Danton <hdanton@sina.com>
-Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3 2/3] softirq: Provide a handshake for canceling
- tasklets via polling
-Message-ID: <20250918154937.RQqkeYxI@linutronix.de>
-References: <20250915073933.L7UOtfkj@linutronix.de>
- <20250918134753.7122-1-hdanton@sina.com>
+	s=arc-20240116; t=1758210607; c=relaxed/simple;
+	bh=XhR1h2E8azi9+Iqslf03I/SakVc5s2CaBmw/N8HkwwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aiqIMvQZGTP+F21ZgBGaRgonXPw0DLuddm8PT8opSrT0FIX7UunIdIfjjdl96DcQzRKz1O/oqys6WS8uZHWaVjfSWP3CLtTTGJ8f/UFqsirXHV6oXRv0gxrHMjp2xzgqgWhmUyjEzCxqrWvSXHSNACcrJNKetn5mKt8AhK0E4kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I/tb+1YN; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-62f0702ef0dso4275373a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:50:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1758210603; x=1758815403; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hpKO6CsQCuex3g+QZ22KGPC+ZgcKRmVKS1THDCqCkXc=;
+        b=I/tb+1YNmJdGigww3E55wx/YJj7WCCcHO4P8XK04VfTym/nDbaK2/fCXQMFzqg76Ox
+         xCiBkE7h8uQ9Y/rq/xO0dFJhzUf10uuTh8NllkhWGV35gualMnC2HdF0WCmvAvS9etGj
+         a60E/sCJD1MRwUK/1qEKsDB2/cwHQLMajG5qo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758210603; x=1758815403;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hpKO6CsQCuex3g+QZ22KGPC+ZgcKRmVKS1THDCqCkXc=;
+        b=lWVYAttMAEWCHv/sqG6MKJoA9LnhQCU541nB3OiMU+UJv0xusO/a7CbytLHNiXMWw3
+         SwJouIBsvPGvQlwadGj7ZbQwpsSo5wh6tfEFQisVyLTpOM3PLhjeCPneIbYI1gC2bdwd
+         buikYArzSeMQarBvC1jvvC8PNEkQcWGskOCY9a3JfGAmAT9LKlxsQQNURSu6hJze20+8
+         khHXuOK2aOkpx5KRgT5tgSI1O1U2gxUwZeyMr7dDmIpkWDOTYviPaVrm/9nKC3kMypP+
+         jGxK7ce+tSlwu6GdUHoQ96WDubeyj0DhBUYI6legOZuyoM7FSvhkdtW+8pwyU9W8VaPB
+         NhZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCpZHPX0Y1naIFU9bhExe84S5rSg43pKbPnBavx+Yw6Q6rOVFevbh4Koy1hfzpRRxEJncwOe8QWt05rvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyukOgpWXqJ66DGr4szusZinnQGzuGjHG5n7GFJPpEyo4T6QFjH
+	K96luIH3uOpTiQrhU4p+J6dxUxZaffzQMV4pe6e7Or69rAMT+zIWdFY+jMms0rZAmiqTqaXaxiX
+	0er9pyt0=
+X-Gm-Gg: ASbGncs41XAZ7Ix61q7Zjt98AnLBz07d7rsxT6r2coWTzGOcm6rjsduBcUte602CA53
+	UTjB10pOTXBnK6k0Pnq7x9DYzGAd3MrvoaT0QPJPRim3XIF6Wy3nOjR+/1C2pK5J2P9AU81rK2K
+	VJn2X2q7cYM0njs0qfdc8hf3z/hHi4PzI62+v1+/BnpijaW6x8cAzXwdhAHoEzXBbEHZ6j8shvw
+	yBVeqbxHXUGqWrhV/eTJimiI+yfSWL3SqPGm1D0vJrwrt2/hcMX7/pIWZV7BMQjjaCds9+LM4uK
+	6gH6w0M3ws8gznnVLRTjfIS6X8kuO5/6Eba3HVjlOScHU2hL/p6O9y6y/gr+JvmopTthlvesABy
+	Ou5Z/f+3C8XSuSNQZhrp9rc0BLlK0sPGPjjdcXPTSKCMSYU7ERpZdWFuKSdl4rYLaXZ0W5eO6A/
+	Lq/uww4kbw/x5gGfg=
+X-Google-Smtp-Source: AGHT+IHC3kAsWYGrx8XDReGY3zoMJ+XR82D+qFvzdMiAEztTXUYPlSU5XWnOkJjEr8vKLLt9Ftpc1g==
+X-Received: by 2002:a17:907:86a9:b0:b07:6444:bce6 with SMTP id a640c23a62f3a-b24882999a7mr21232766b.7.1758210602785;
+        Thu, 18 Sep 2025 08:50:02 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fcfe88e40sm221705066b.59.2025.09.18.08.50.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 08:50:02 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b07dac96d1eso334381866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:50:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4bhZfUC91NcvrBMJhyBU7TJlr+v1lkS+69k4mwwUxPs496Fhdn3Cr4mGDXCdGOcPDHHQm7cBmcVgmTSk=@vger.kernel.org
+X-Received: by 2002:a17:907:9612:b0:b10:ecc6:5d8d with SMTP id
+ a640c23a62f3a-b1fac9c9b84mr417765966b.26.1758210601571; Thu, 18 Sep 2025
+ 08:50:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250918134753.7122-1-hdanton@sina.com>
+References: <20250918140451.1289454-1-elver@google.com>
+In-Reply-To: <20250918140451.1289454-1-elver@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 18 Sep 2025 08:49:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgd-Wcp0GpYaQnU7S9ci+FvFmaNw1gm75mzf0ZWdNLxvw@mail.gmail.com>
+X-Gm-Features: AS18NWBk4u9ObN57KesSGhJyt-aPlWZgKdxYhvzpAyoaxlNUF53WHe4dSKjzUBg
+Message-ID: <CAHk-=wgd-Wcp0GpYaQnU7S9ci+FvFmaNw1gm75mzf0ZWdNLxvw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+To: Marco Elver <elver@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-09-18 21:47:52 [+0800], Hillf Danton wrote:
-> On Mon, 15 Sep 2025 09:39:33 +0200 Sebastian Andrzej Siewior wrote:
-> >On 2025-09-05 18:15:01 [+0800], Hillf Danton wrote:
-> >> 	CPU0			CPU1
-> >> 	----			----
-> >> 	lock A
-> >> 				tasklet C callback
-> >> 				lock A
-> >> 	cancel tasklet B
-> >> 	DEADLOCK-01
-> >> 
-> >> After this work could DEADLOCK-01 be triggered, given no chance for DEADLOCK-02 ?
-> >> 
-> >> 	CPU2			CPU3
-> >> 	----			----
-> >> 	lock A
-> >> 				timer C callback
-> >> 				lock A
-> >> 	timer_delete_sync(timer B)
-> >> 	DEADLOCK-02
-> >
-> > You are not supposed to acquire the lock, that is also acquired in the
-> > callback, while canceling the timer/ tasklet.
-> > Tell me please, how is this relevant?
-> > 
-> > If lock A is acquired on CPU0/ 2 then tasklet/ timer on CPU1/ 3 can't
-> > make progress. Now CPU0/ 2 waits for the callback to complete. This
-> > deadlocks as of today regardless of PREEMPT_RT and this change.
-> > 
-> In case of !RT, the chance for DEADLOCK-02 is zero because deadlock is
-> detected based on per-timer instead of per-cpu.
+On Thu, 18 Sept 2025 at 07:05, Marco Elver <elver@google.com> wrote:
+>
+> Capability analysis is a C language extension, which enables statically
+> checking that user-definable "capabilities" are acquired and released where
+> required. An obvious application is lock-safety checking for the kernel's
+> various synchronization primitives (each of which represents a "capability"),
+> and checking that locking rules are not violated.
+>
+> Clang originally called the feature "Thread Safety Analysis" [1],
 
-But your "lock A" is global, isn't it?
+So this looks really interesting, but I absolutely *hate* the new
+"capability" name.
 
-> > The difference is that !RT requires two CPU for this to happen while RT
-> > is efficient and can trigger this with just one CPU.
-> 
-> In case of RT OTOH, false positive deadlock could be triggered because
-> canceling taskletB has nothing to do with the callback of taskletC.
-> 
-> In short I am highlighting the gap between per-timer/tasklet and per-cpu.
+We have existing and traditional - and very very different - meaning
+of "capabilities" in the kernel, and having this thing called
+"capability" is just wrong. Particularly as it then talks about
+"acquiring capabilities" - which is *EXACTLY* what our lon-existing
+capabilities are all about, but are something entirely and totally
+different.
 
-I don't see a problem here.
+So please - call it something else. Even if clang then calls it
+'capability analysis", within the context of a kernel, please ignore
+that, and call it something that makes more sense (I don't think
+"capabilities" make sense even in the context of clang, but hey,
+that's _their_ choice - but we should not then take that bad choice
+and run with it).
 
-Sebastian
+Sparse called it "context analysis", and while the "analysis" part is
+debatable - sparse never did much anything clever enough to merit
+calling it analysis - at least the "context" part of the name is I
+think somewhat sane.
+
+Because it's about making decisions based on the context the code runs in.
+
+But I'm certainly not married to the "context" name either. I'd still
+claim it makes more sense than "capability", but the real problem with
+"capability" isn't that it doesn't make sense, it's that we already
+*HAVE* that as a concept, and old and traditional use is important.
+
+But we do use the word "context" in this context quite widely even
+outside of the sparse usage, ie that's what we say when we talk about
+things like locking and RCU (ie we talk about running in "process
+context", or about "interrupt context" etc). That's obviously where
+the sparse naming comes from - it's not like sparse made that up.
+
+So I'm really happy to see compilers start exposing these kinds of
+interfaces, and the patches look sane apart from the absolutely
+horrible and unacceptable name. Really - there is no way in hell we
+can call this "capability" in a kernel context.
+
+I'd suggest just doing a search-and-replace of 's/capability/context/'
+and it would already make things a ton better. But maybe there are
+better names for this still?
+
+I mean, even apart from the fact that we have an existing meaning for
+"capability", just look at the documentation patch, and read the first
+sentence:
+
+  Capability analysis is a C language extension, which enables statically
+  checking that user-definable "capabilities" are acquired and released where
+  required.
+
+and just from a plain English language standpoint, the word
+"capability" makes zero sense. I think you even realized that, in that
+you put that word in quotes, because it's _so_ nonsensical.
+
+And if not "context", maybe some other word? But really, absolutely
+*not* "capability". Because that's just crazy talk.
+
+Please? Because other than this naming issue, I think this really is a
+good idea.
+
+           Linus
 
