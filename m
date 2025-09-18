@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-822222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8328AB8353F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97642B83545
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467F54A4A2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 864D84A4AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8632EA494;
-	Thu, 18 Sep 2025 07:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52402EA48F;
+	Thu, 18 Sep 2025 07:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r51iA/mc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="IegsR67w"
+Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DB32D5C7A;
-	Thu, 18 Sep 2025 07:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E72DAFA3;
+	Thu, 18 Sep 2025 07:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758180835; cv=none; b=di6uFn9Oo+NAzozaB/HK/qZ9S4ME8q/gU2j+hEDYChC6kQpSAQlyiQUnom/Zo/IL1QMPq5SLnR3rDJy0fkIKrpUf6ZjU/XYtv6bAJNdbw54f5LIE7ZG5bA/+iLH3CUSHLMYeI+xBLAY8xfPzJngomGoUrLO09kmSkpPJ/ZOOsS4=
+	t=1758180849; cv=none; b=izAs6C+l6TfytpXt6Kt9SWb48PPty1qF6MaCd2cBBjZjvuhvQoN7C+Eeet2nkiPknlZddwq1CILY5IDuPq6KcQSEfiKCZmMtMT9ajZySKRnxQ464OZfbcNaXzXOezI+N6ZmiFsOP9gmE6NIqioftIoUIZ7eyDqWU7aWGpNSjAWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758180835; c=relaxed/simple;
-	bh=zoF2TshriM3ZS0e8AelFve/OPI4XACW7RUZD7luL5+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=is6SAZAzyp1dNKkqDROU97B8H71BLHhE5IADgdgtvMUExgh4cQPjJhRTM6jXqO5S8oAv2TuEe8GURCjE4jalNbZX+c3Ea4DOWogwXfne9yUUZ2B3nzMIGK+TtgPZTyu1eCzLoaEYVwO/Q2Hhie60UJq15W/Fv16vlH1yoHKsi3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r51iA/mc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29A5C4CEE7;
-	Thu, 18 Sep 2025 07:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758180835;
-	bh=zoF2TshriM3ZS0e8AelFve/OPI4XACW7RUZD7luL5+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r51iA/mcdivvaemgqGMjjV2SmWFHkPwVzpmTtRhePCYe26CLPkKGj3HcX4F5JlKV5
-	 qDm5FACFLobIj3q/8ZcsJhYH99HHQ2SpNctsDXPmfvb80yT1XQLuRxVamq8E412s87
-	 lcUYjd9mb/ro0e6mBUMkIWaMzD9CE7FP1SvtOxmIRhsA4V2ACK4aU44Acb9lmwsnFR
-	 n+QWEXS83Vc8ouvf4je+z/BjXvAHD3EKyRVfYmLPOC6vVnqj2nOox1LNDJtGUsAmQ3
-	 zUKLEIhI0wi2p39tocUMmwELSXL7ogLHXCZChiia8MneNYC7Tot/4qbEKKmAnJ9KpL
-	 6i9OblXcdmSKw==
-Message-ID: <0b214249-958c-4e14-a4d8-512f1d90dff4@kernel.org>
-Date: Thu, 18 Sep 2025 09:33:51 +0200
+	s=arc-20240116; t=1758180849; c=relaxed/simple;
+	bh=LR/A2myjErcrF+TvmHD4Vp56qH5epTgq+Ts++mYNmn0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=Ib0aiUnGpf/nx+NX9jvjCJWzIED8i56jOF3dl1biK45v3MpZkK/yVoh7dVNO+hw0IxbLRt4VwPCXlQ+tjf4Ki8MCQDmxRcs1nZx9CROujqIkx1HynRKVoutD4rdrZFpeiBrUNAX/ZvjAYenNuVOnPZ7cd/Id2qUOHACdZgsPG48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=IegsR67w; arc=none smtp.client-ip=195.201.215.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=folker-schwesinger.de; s=default2212; h=In-Reply-To:References:To:From:Cc:
+	Subject:Message-Id:Date:Content-Type:Content-Transfer-Encoding:Mime-Version:
+	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=YTiiARvjYDiBVt7M/XCY8cwwyM5K4Ezubm3vBRd2AEY=; b=IegsR67wiIdFsX7vitr1JXNWdC
+	VF+EHnF3AQ/2W5TIaqQ3RTDUHhXbEP/D4m6RHSoa4RZhd9WIvxx1AewIf8AvfqeruuG9uDGS7XIFL
+	OUSaCosYU6pNCEhaghyv8W5TMPTZSphcP/Z/Iqc5oVaBJzQ+cf4tnexT6rK0tGqqJPc160awgcuGS
+	I2L9oWHmh9vAyMm41gjmmpJS3gL9lwR74QI7pDHXF+pnHeDWMblGFlBQvzFTmJ3v3jowcdm+eBk+N
+	LM07aW4aYtHEMEcRtLkDnYN28+ACjvVO8KcDYP5IEzqwwX4w1yM9CymriuPgTUvHcuM6qupTMLd2Q
+	fkY1Jt7w==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1uz99Z-000Cqq-1M;
+	Thu, 18 Sep 2025 09:34:05 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1uz99Y-000378-21;
+	Thu, 18 Sep 2025 09:34:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ACPI: video: Fix missing backlight node creation on
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, mario.limonciello@amd.com, rafael@kernel.org,
- stable@vger.kernel.org
-References: <17cc74d6-2e49-4370-ae37-39cddfe67d7d@kernel.org>
- <20250912103538.3657242-1-zhangzihuan@kylinos.cn>
- <f6afc998-f11e-4aac-a190-fbadb97e2d0c@kylinos.cn>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <f6afc998-f11e-4aac-a190-fbadb97e2d0c@kylinos.cn>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 18 Sep 2025 07:34:03 +0000
+Message-Id: <DCVR3DC53STM.3H636S2IWLLG9@folker-schwesinger.de>
+Subject: Re: [PATCH 3/3] dmaengine: xilinx_dma: Optimize control register
+ write and channel start logic in xilinx_dma_start_transfer
+Cc: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+From: "Folker Schwesinger" <dev@folker-schwesinger.de>
+To: "Suraj Gupta" <suraj.gupta2@amd.com>, <vkoul@kernel.org>,
+ <radhey.shyam.pandey@amd.com>, <michal.simek@amd.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250917133609.231316-1-suraj.gupta2@amd.com>
+ <20250917133609.231316-4-suraj.gupta2@amd.com>
+In-Reply-To: <20250917133609.231316-4-suraj.gupta2@amd.com>
+X-Virus-Scanned: Clear (ClamAV 1.0.9/27765/Tue Sep 16 10:26:41 2025)
 
-Hi Zihuan,
+On Wed Sep 17, 2025 at 3:36 PM CEST, Suraj Gupta wrote:
+> Optimize AXI DMA control register programming by consolidating
+> coalesce count and delay configuration into a single register write.
+> Previously, the coalesce count was written separately from the delay
+> configuration, resulting in two register writes. Combine these into
+> one write operation to reduce bus overhead.
+> Additionally, avoid redundant channel starts by only calling
+> xilinx_dma_start() when the channel is actually idle.
+>
+> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
 
-On 18-Sep-25 2:36 AM, Zihuan Zhang wrote:
-> 
-> 在 2025/9/12 18:35, Zihuan Zhang 写道:
->>> 1. There must be a GPU driver for these laptops somewhere?
->>> Even if out of tree using a laptop without a GPU these days
->>> just does not give a good user experience. So fix the GPU
->>> driver to call acpi_video_register_backlight().
->>>
->>> Note acpi_video_register_backlight() is deliberately exported
->>> without requiring the consuming out of tree kernel module to
->>> be GPL to allow this.
->>>
->>> Other options would be:
->>>
->>> 2. Add some special heuristics for Zhaoxin CPUs,
->>> the kernel already has a CPUID match mechanism for
->>> things like this. This could potentially be combined
->>> with a DMI system-vendor check to only do this special
->>> case handling on e.g. Lenovo and Inspur laptops.
->>>
->>> 3. Instead of adding the CPU-id based special case
->>> just outright use DMI quirks. In this case lets try
->>> to use substring matches to cover multiple models
->>> with a single entry so as to not grow the quirk
->>> table too much.
->>
->> Got it, thanks!
->>
->> In fact, we have tried a few approaches (cmdline option, CPU-ID based quirk, and DMI quirk),
->> and all of them work.
->> I will sync this information with Zhaoxin to see which way they prefer.
-> 
-> Zhaoxin has confirmed that they will handle this through their own GPU driver.
+Tested-by: Folker Schwesinger <dev@folker-schwesinger.de>
 
-That is good to hear, thank you for the update.
-
-Regards,
-
-Hans
-
-
+> ---
+>  drivers/dma/xilinx/xilinx_dma.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
+dma.c
+> index 7211c394cdca..6e9bf4732ded 100644
+> --- a/drivers/dma/xilinx/xilinx_dma.c
+> +++ b/drivers/dma/xilinx/xilinx_dma.c
+> @@ -1561,7 +1561,6 @@ static void xilinx_dma_start_transfer(struct xilinx=
+_dma_chan *chan)
+>  		reg &=3D ~XILINX_DMA_CR_COALESCE_MAX;
+>  		reg |=3D chan->desc_pendingcount <<
+>  				  XILINX_DMA_CR_COALESCE_SHIFT;
+> -		dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
+>  	}
+> =20
+>  	if (chan->has_sg && list_empty(&chan->active_list))
+> @@ -1571,7 +1570,8 @@ static void xilinx_dma_start_transfer(struct xilinx=
+_dma_chan *chan)
+>  	reg  |=3D chan->irq_delay << XILINX_DMA_CR_DELAY_SHIFT;
+>  	dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
+> =20
+> -	xilinx_dma_start(chan);
+> +	if (chan->idle)
+> +		xilinx_dma_start(chan);
+> =20
+>  	if (chan->err)
+>  		return;
 
 
