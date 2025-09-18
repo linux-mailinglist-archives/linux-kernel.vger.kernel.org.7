@@ -1,179 +1,211 @@
-Return-Path: <linux-kernel+bounces-822555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63D3B84201
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:35:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A44BB8420B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4111C8307B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC70480430
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD407305065;
-	Thu, 18 Sep 2025 10:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CA428643D;
+	Thu, 18 Sep 2025 10:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2v5hAYp"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smkYQj59"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432BE304BCC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90A623B62C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758191448; cv=none; b=jLFLmqx/FhJK/c7dZXhbEP/5MEYh7m6ef/RXSP7R3+EEQtb/qeRd1FPw3/Ie6PNabwac13AEYE4kf053oC1pieiGUm2E8BytZK1A8GR/Tx8uVPKwUmF7k2N6eSFMTg2nV6BcFvbnCeDLUgoJaGJWL2XTEbIxaXK6knD54rdhfNI=
+	t=1758191531; cv=none; b=t7y4DlihLEAQ+hhomWUIRR+he+Gje9HZ7ALXagg+Ka7MxM+OjtHTHHSZ7WIiQ3pZzHSpruBrUNzdmyNLn75r7YLrFyEYEZNBGFAa4Aj29xtvQ4tOcUz5SWrU++r/R2ZRJ7eoNDifT3KTM+9jIuV56VJI6TTBx/ZxGkho+e5n3oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758191448; c=relaxed/simple;
-	bh=nj7i29BJluBpWURQYZUxvNADD0EB9W2SAuUGs1F5qNo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cfPkLVLPj7+2kQ2Ir5+zGn2j2zmubxSNqykczUcjIs+4iWbYwg2/9zJthq7Q/4q3cggNz2osw7AODRzW9ZVEMbcEGjmZfiKI7R/Y1KD1B7NztGOIxAoif+AP5aM3923mgamT+NLx/o79IQvzIEi2Ph8+7V8FnxmplH8DnBGQ4ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2v5hAYp; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-62f9cfb8075so760288a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758191443; x=1758796243; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1LXz7drZR69NRcqoi9vT6ordOH/o85U4ZownXle33jo=;
-        b=z2v5hAYpnReyIWnakau8oe5tl49Qq1x1VQj4Saa27PvWAA8cW8lsMXNZAUNepZuBsu
-         n1QBXB209G1k6wmHEq1OOLfcmd5xXe6iF17CY6kbp6GbrKHJmCjTDIYdZhli562KCrF5
-         CIvW2LeiuGUXC4EL89PtQoBIXTtJl0qNOzMlpdh53gVGVs5egn40ghbipQ1yYrusaN2d
-         ZKfV31GniYO3vKveS06Cw/aef/sQFc8unE1BCNzfZ23Zvoxszzk1B/AJTfcYFjl/CwCG
-         v8A4747j21EHN2a9DmC8Ze8D0gHpChq8ue+J1xSSxrm22c5CGLYIKaMqrakuA3/BHWcu
-         KMSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758191443; x=1758796243;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1LXz7drZR69NRcqoi9vT6ordOH/o85U4ZownXle33jo=;
-        b=rkTIDe1NRVTsFNFN73KTq625dKBusQGYH8Z5wbAh9HCgAyn6VOS8J9LYdkUYUVsa2K
-         eh/Nc8FZsQlf/jyXjxmwOSLzOOIWknJ34mYlcyOiOTfzPx5Vt346RqgBETAaRWx3dnaT
-         Pcuh5RDDLxu5rossgichyQmrZ+O3bz8xc1D3wVQ1cHBd76GyE3oHGf9PhmjxC23KYDyf
-         u6v2ZKz/h0Xr5HOVnyixQ3Pt9deRNHZ/jeDGWpChIetBuG4LywTAQGFaN8AHThC45laC
-         6A2f5ktQfwCdArNxL+SaH2fjhj3IGcdlpMTwVzwPQsS4PYGMpZh9euJK5Yx3xCpGKrE6
-         ukWQ==
-X-Gm-Message-State: AOJu0YzJ0IBZgB6lcp3S0LNpKwhv/0C41QMIhId8FbwyY0E7pNIgNlcu
-	FtltYSFzD6I78plBf6GBGPUFgKCq/A7H6OEhiygtVh4ohvL+vUYFA+Q6HgWs1B1lS5STMjzSYA=
-	=
-X-Google-Smtp-Source: AGHT+IGUquYXpi2xrIo18MZawlB6gxNVwBfa77lbrIIZHKX8Fpb5Qx9xXEK4QYttljX7a5cizhaLtJAe
-X-Received: from edbev11.prod.google.com ([2002:a05:6402:540b:b0:62f:f6a:43ba])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:5210:b0:62f:3721:fc8c
- with SMTP id 4fb4d7f45d1cf-62f846a13f7mr4583585a12.37.1758191443543; Thu, 18
- Sep 2025 03:30:43 -0700 (PDT)
-Date: Thu, 18 Sep 2025 12:30:19 +0200
-In-Reply-To: <20250918103010.2973462-10-ardb+git@google.com>
+	s=arc-20240116; t=1758191531; c=relaxed/simple;
+	bh=yy2/qGmH2QA2swtXgVVOAHnOxEMhRZ0NhObdYrFdpP8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WPXD1h5rQt3zyynLG6Q0mx1w1Lv/ebbP2eQbwAJMPkJGFvuOGO+7f0wDeeco2pKeg/7rbvyhBVvbPvbvlYgkmZ3jUOu8p/HPdUlBCYMBGlOIfvAX0CWMOYl2m56gwU5lpnU2HHz3r+mY+1cIsaGkgj2qvrVfU5xssuGDQEbZj1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smkYQj59; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772E8C4CEFC;
+	Thu, 18 Sep 2025 10:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758191531;
+	bh=yy2/qGmH2QA2swtXgVVOAHnOxEMhRZ0NhObdYrFdpP8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=smkYQj59cJEB2MBpLMWEo/hAvXX7jkJTDCXOe2YP6B8kjmfCFAlaw29s3ux/BKgAB
+	 BN87ihWMAGN0M8GH5XkkXR5gSQpGbFfOkSdZVWemcu7XAPnuioH89tfzj4ndhqDfRM
+	 mrfhGj0JEG72SS2jkPZ4pVFACZ4hfclVKHHxc6f/4ESFCWacU7MYgbI6XOZ/g6HCZ9
+	 Vmq73d/+GCK2p37SXDMw+YFGDctVpPmeikPcp/k3Um83y5bPqrAZTTxnAGCeF2lpS7
+	 zLE1C7TdB7kXGrUvzq9wunjrmFRxhcoyiGYcu2Ij8YlqqHofGS5VPp0T5kp9hz09v+
+	 KWqav/GLcplpA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Alexander Graf
+ <graf@amazon.com>,  Baoquan He <bhe@redhat.com>,  Changyuan Lyu
+ <changyuanl@google.com>,  Chris Li <chrisl@kernel.org>,  Jason Gunthorpe
+ <jgg@nvidia.com>,  Pasha Tatashin <pasha.tatashin@soleen.com>,  Pratyush
+ Yadav <pratyush@kernel.org>,  kexec@lists.infradead.org,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] kho: replace kho_preserve_phys() with
+ kho_preserve_pages()
+In-Reply-To: <20250917174033.3810435-3-rppt@kernel.org>
+References: <20250917174033.3810435-1-rppt@kernel.org>
+	<20250917174033.3810435-3-rppt@kernel.org>
+Date: Thu, 18 Sep 2025 12:32:08 +0200
+Message-ID: <mafs05xdggifr.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250918103010.2973462-10-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3226; i=ardb@kernel.org;
- h=from:subject; bh=AwRe+ieGv51rAlmd3os99ZtjQYVM4Fjtomg80IO3BGI=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeP0ffu7Hx2rC6Yu2+C13jZCdw5DvK+nWau/35sVhftaX
- tp8npDfUcrCIMbFICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACbyIp6RYcV5l8DV7Qfd7C7x
- d5Wun8r8crV6ic8C9h1zMjXOSHO8v8rwP3F1/+/nc0s3B19zT/4R/KFS8CZb2eepvuv4xAMuFnN LcgMA
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250918103010.2973462-18-ardb+git@google.com>
-Subject: [PATCH v3 8/8] arm64/efi: Call EFI runtime services without disabling preemption
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Mike,
 
-The only remaining reason why EFI runtime services are invoked with
-preemption disabled is the fact that the mm is swapped out behind the
-back of the context switching code.
+On Wed, Sep 17 2025, Mike Rapoport wrote:
 
-The kernel no longer disables preemption in kernel_neon_begin().
-Furthermore, the EFI spec is being clarified to explicitly state that
-only baseline FP/SIMD is permitted in EFI runtime service
-implementations, and so the existing kernel mode NEON context switching
-code is sufficient to preserve and restore the execution context of an
-in-progress EFI runtime service call.
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> to make it clear that KHO operates on pages rather than on a random
+> physical address.
+>
+> The kho_preserve_pages() will be also used in upcoming support for
+> vmalloc preservation.
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>  include/linux/kexec_handover.h |  5 +++--
+>  kernel/kexec_handover.c        | 25 +++++++++++--------------
+>  mm/memblock.c                  |  4 +++-
+>  3 files changed, 17 insertions(+), 17 deletions(-)
+>
+> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
+> index 348844cffb13..cc5c49b0612b 100644
+> --- a/include/linux/kexec_handover.h
+> +++ b/include/linux/kexec_handover.h
+> @@ -18,6 +18,7 @@ enum kho_event {
+>  
+>  struct folio;
+>  struct notifier_block;
+> +struct page;
+>  
+>  #define DECLARE_KHOSER_PTR(name, type) \
+>  	union {                        \
+> @@ -42,7 +43,7 @@ struct kho_serialization;
+>  bool kho_is_enabled(void);
+>  
+>  int kho_preserve_folio(struct folio *folio);
+> -int kho_preserve_phys(phys_addr_t phys, size_t size);
+> +int kho_preserve_pages(struct page *page, unsigned int nr_pages);
+>  struct folio *kho_restore_folio(phys_addr_t phys);
+>  int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt);
+>  int kho_retrieve_subtree(const char *name, phys_addr_t *phys);
+> @@ -65,7 +66,7 @@ static inline int kho_preserve_folio(struct folio *folio)
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline int kho_preserve_phys(phys_addr_t phys, size_t size)
+> +static inline int kho_preserve_pages(struct page *page, unsigned int nr_pages)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> index f421acc58c1f..3ad59c5f9eaa 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/kexec_handover.c
+> @@ -698,26 +698,23 @@ int kho_preserve_folio(struct folio *folio)
+>  EXPORT_SYMBOL_GPL(kho_preserve_folio);
+>  
+>  /**
+> - * kho_preserve_phys - preserve a physically contiguous range across kexec.
+> - * @phys: physical address of the range.
+> - * @size: size of the range.
+> + * kho_preserve_pages - preserve contiguous pages across kexec
+> + * @page: first page in the list.
+> + * @nr_pages: number of pages.
+>   *
+> - * Instructs KHO to preserve the memory range from @phys to @phys + @size
+> - * across kexec.
+> + * Preserve a contiguous list of order 0 pages. Must be restored using
+> + * kho_restore_page() on each order 0 page.
 
-Most EFI calls are made from the efi_rts_wq, which is serviced by a
-kthread. As kthreads never return to user space, they usually don't have
-an mm, and so we can use the existing infrastructure to swap in the
-efi_mm while the EFI call is in progress. This is visible to the
-scheduler, which will therefore reactivate the selected mm when
-switching out the kthread and back in again.
+This is not true. The pages are preserved with the maximum order
+possible.
 
-Given that the EFI spec explicitly permits runtime services to be called
-with interrupts enabled, firmware code is already required to tolerate
-interruptions. So rather than disable preemption, disable only migration
-so that EFI runtime services are less likely to cause scheduling delays.
-To avoid potential issues where runtime services are interrupted while
-polling the secure firmware for async completions, keep migration
-disabled so that a runtime service invocation does not resume on a
-different CPU from the one it was started on.
+	while (pfn < end_pfn) {
+		const unsigned int order =
+			min(count_trailing_zeros(pfn), ilog2(end_pfn - pfn));
 
-Note, though, that the firmware executes at the same privilege level as
-the kernel, and is therefore able to disable interrupts altogether.
+		err = __kho_preserve_order(track, pfn, order);
+		[...]
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/arm64/kernel/efi.c | 23 ++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+So four 0-order pages will be preserved as one 2-order page. Restoring
+them as four 0-order pages is wrong. And my proposed patch for checking
+the magic [0] will uncover this exact bug.
 
-diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-index a60444dcec68..9b1603a69b69 100644
---- a/arch/arm64/kernel/efi.c
-+++ b/arch/arm64/kernel/efi.c
-@@ -10,6 +10,7 @@
- #include <linux/efi.h>
- #include <linux/init.h>
- #include <linux/kmemleak.h>
-+#include <linux/kthread.h>
- #include <linux/screen_info.h>
- #include <linux/vmalloc.h>
- 
-@@ -181,7 +182,19 @@ bool arch_efi_call_virt_setup(void)
- 	if (WARN_ON(!mutex_trylock(&efi_rt_lock)))
- 		return false;
- 
--	efi_virtmap_load();
-+	if (preemptible() && (current->flags & PF_KTHREAD)) {
-+		/*
-+		 * Disable migration to ensure that a preempted EFI runtime
-+		 * service call will be resumed on the same CPU. This avoids
-+		 * potential issues with EFI runtime calls that are preempted
-+		 * while polling for an asynchronous completion of a secure
-+		 * firmware call, which may not permit the CPU to change.
-+		 */
-+		migrate_disable();
-+		kthread_use_mm(&efi_mm);
-+	} else {
-+		efi_virtmap_load();
-+	}
- 
- 	/*
- 	 * Enable access to the valid TTBR0_EL1 and invoke the errata
-@@ -207,7 +220,13 @@ void arch_efi_call_virt_teardown(void)
- 	 */
- 	uaccess_ttbr0_disable();
- 
--	efi_virtmap_unload();
-+	if (preemptible() && (current->flags & PF_KTHREAD)) {
-+		kthread_unuse_mm(&efi_mm);
-+		migrate_enable();
-+	} else {
-+		efi_virtmap_unload();
-+	}
-+
- 	mutex_unlock(&efi_rt_lock);
- }
- 
+I think you should either change the logic to always preserve at order
+0, or maybe add a kho_restore_pages() that replicates the same order
+calculation.
+
+[0] https://lore.kernel.org/lkml/20250917125725.665-2-pratyush@kernel.org/
+
+>   *
+>   * Return: 0 on success, error code on failure
+>   */
+> -int kho_preserve_phys(phys_addr_t phys, size_t size)
+> +int kho_preserve_pages(struct page *page, unsigned int nr_pages)
+>  {
+> -	unsigned long pfn = PHYS_PFN(phys);
+> +	struct kho_mem_track *track = &kho_out.ser.track;
+> +	const unsigned long start_pfn = page_to_pfn(page);
+> +	const unsigned long end_pfn = start_pfn + nr_pages;
+> +	unsigned long pfn = start_pfn;
+>  	unsigned long failed_pfn = 0;
+> -	const unsigned long start_pfn = pfn;
+> -	const unsigned long end_pfn = PHYS_PFN(phys + size);
+>  	int err = 0;
+> -	struct kho_mem_track *track = &kho_out.ser.track;
+> -
+> -	if (!PAGE_ALIGNED(phys) || !PAGE_ALIGNED(size))
+> -		return -EINVAL;
+>  
+>  	while (pfn < end_pfn) {
+>  		const unsigned int order =
+> @@ -737,7 +734,7 @@ int kho_preserve_phys(phys_addr_t phys, size_t size)
+>  
+>  	return err;
+>  }
+> -EXPORT_SYMBOL_GPL(kho_preserve_phys);
+> +EXPORT_SYMBOL_GPL(kho_preserve_pages);
+>  
+>  /* Handling for debug/kho/out */
+>  
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 117d963e677c..6ec3eaa4e8d1 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -2516,8 +2516,10 @@ static int reserve_mem_kho_finalize(struct kho_serialization *ser)
+>  
+>  	for (i = 0; i < reserved_mem_count; i++) {
+>  		struct reserve_mem_table *map = &reserved_mem_table[i];
+> +		struct page *page = phys_to_page(map->start);
+> +		unsigned int nr_pages = map->size >> PAGE_SHIFT;
+>  
+> -		err |= kho_preserve_phys(map->start, map->size);
+> +		err |= kho_preserve_pages(page, nr_pages);
+
+Unrelated to this patch, but since there is no
+kho_restore_{phys,pages}(), won't the reserve_mem memory end up with
+uninitialized struct pages, since preserved pages are
+memblock_reserved_mark_noinit()?
+
+That would also be a case for kho_restore_pages() I suppose?
+
 -- 
-2.51.0.384.g4c02a37b29-goog
-
+Regards,
+Pratyush Yadav
 
