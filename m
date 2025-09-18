@@ -1,394 +1,201 @@
-Return-Path: <linux-kernel+bounces-822909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2742B84F2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:02:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215B4B84F36
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E16F3B68F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9857C16EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CC92206BB;
-	Thu, 18 Sep 2025 14:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AD121FF23;
+	Thu, 18 Sep 2025 14:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b="uXuD8uEl";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="tK3Jkuwd"
-Received: from e234-51.smtp-out.ap-northeast-1.amazonses.com (e234-51.smtp-out.ap-northeast-1.amazonses.com [23.251.234.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="U1kYPwFI"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA0C212566;
-	Thu, 18 Sep 2025 14:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.234.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3262E9ED5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204151; cv=none; b=nN4Hd9KUky0ekX5ekDv1m6gqHSUaSQ5wWILICiCTlfWT0osfGAmcFSgosqtDa6OHwWpu24iQxMukH2gtiFFUoRMk9vgFj3SvC/15nyD2n5nHXCe1G4WXY/2fRN+FXGWwMLVjaO2OXzfFFK4Yi0kJrenYKKebN+0Pz73WfyPGaOU=
+	t=1758204160; cv=none; b=NWJicXJ8HVa+37vVnA1gIP9PYY2Ezodfx/V8xXsOBhHy0p7/ujH0Mpe67wrybaDrvUdkhHZVjTNffF0v5w0TYl8lpBNkkP3GxSh3OB55PC9zUTubF3uIHVUnGSVlSJTRXKT7dTwS4eT09DUNtAXc1YP1h24v50Zlv2w8Kp8/Xk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204151; c=relaxed/simple;
-	bh=bVHzuRt80hSLf1PUL/bKwCBioVAjpVm/ohkwJoUKhoE=;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Date:MIME-Version:
-	 Content-Type; b=ZHjzYdmIgutNvIeu6oGuJPNOTENWGLmzBzIrUQj57CGSbXMKKAGtakiTe8MJZoKX014GHByRvWimRcCWsPtznyd4Zc7SMa+59KR3Ac4xkLJKmTJtEjQGBI1wbOaTa+gULHv5QcCLz5WocJRGOHNKSEfWTqm031d0ZUj1cDJR14k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=send.mgml.me; dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b=uXuD8uEl; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=tK3Jkuwd; arc=none smtp.client-ip=23.251.234.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.mgml.me
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
-	d=mgml.me; t=1758204147;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
-	bh=bVHzuRt80hSLf1PUL/bKwCBioVAjpVm/ohkwJoUKhoE=;
-	b=uXuD8uEl0JhbBj4BITQ7qmDiRiSiA9hZhZDTOXQ8o8RZxfgMGguQJpTNivBO5sTr
-	TfsPPUU2/dkpA1WqC25YgNrt46xHv2Eowb6aoIVY3SGCx78jwTDfN3RmlDGxDBFHkKf
-	zrpzF7XAJF3PH0Irqi3+cO697g1ZDFkafqf5WdF8=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=suwteswkahkjx5z3rgaujjw4zqymtlt2; d=amazonses.com; t=1758204147;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
-	bh=bVHzuRt80hSLf1PUL/bKwCBioVAjpVm/ohkwJoUKhoE=;
-	b=tK3JkuwdiDvpR8Gj8uE1JEdj5WVDugpuZWCv3PW+w2xIJC8GSMY37pMbXTqKiRxZ
-	0qeS3BqVEjDXyAZuTpTDGZcPaBB3PdIpbeUBKIJvOI4hbnhw9ZXVsGmch2nUN4NyQ5k
-	tCw8KVJQYU49Ub+b39v6jopumPskoEOs554odxH8=
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-In-Reply-To: <b86ac820-7864-5ec0-fa19-2887d5b44c69@huaweicloud.com>
-From: Kenta Akagi <k@mgml.me>
-To: yukuai1@huaweicloud.com, song@kernel.org, mtkaczyk@kernel.org, 
-	shli@fb.com, jgq516@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yukuai3@huawei.com, k@mgml.me
-Subject: Re: [PATCH v4 1/9] md/raid1,raid10: Set the LastDev flag when the
- configuration changes
-Message-ID: <010601995d223615-9dce9a18-2920-4097-8374-2fd4e873fff0-000000@ap-northeast-1.amazonses.com>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 18 Sep 2025 14:02:27 +0000
+	s=arc-20240116; t=1758204160; c=relaxed/simple;
+	bh=sGKZ00n5UDQXEyHBMBFXRLZojhXv5KW24a44k+cS0BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRwTV7AesQekIC5CPEBoSEhkdsyJuxsSnkAiKYzozJ9cnG5Db9oqjFAMntZ241n1PiW7sARQXGiDWdr6ZjSNy1ONAXSBu8YMWANZY6qgnYg1zkgRnfYiQZylk1ifjGWPn4JLyuseALbOCPQl/52RrglA3iKz9JdKGJ0LG51Cy24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=U1kYPwFI; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-7960d69f14bso3169616d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1758204156; x=1758808956; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mN2EtEp97sJogExyeUW2p5bKBNRveeYjjBUrQmZ9S8k=;
+        b=U1kYPwFI09c9NCUMeznb5gL6M14UadhybYyX9w1RfKhHjMfKUzDr7EsopyBjycR122
+         qK4Xb9ugumoxe5n+HKTQEPq8QRYbN26ewX7NDSKJozxAhBo9QJKvNlOZKh3N1n1PI81S
+         y7ZfeZdb/TdDQYmDMY66+GtH0ONrDdNqIYkDplhSIUChxMSgfZVqmIR0XSmakr3VJIFg
+         +XhPIumLdnwxacng2T+sYyjqZBz9MIn3DeejPTIyvXCHidwiEgrsF8akZI/QdhIOKmTu
+         Rz8Fu+8O0IbZymSIGEGSNGKQHlD3Rrq/2xi/HmS6WuNt+g5qZY52jpmhi/NPuo9tNPN+
+         mxQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758204156; x=1758808956;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mN2EtEp97sJogExyeUW2p5bKBNRveeYjjBUrQmZ9S8k=;
+        b=OOrTVO3RAi7o4go+HKdXenbVZ0iqqx711hPkkQjCgg3NysFIwOu/QPGpabfS7ILqEO
+         hemVlncK5x3u+CFAc3YyOrqRle2cQKUeEGUe74wmEBzLo9V9R/5J6w6Cre+Tv/ln724y
+         JUn+752UKItt9Ze19tQzJiQgMIXReGCjHbn+cKS2W+yIYNaixH7nNH+FJAQh62p4p98t
+         uDH9Y75bU5Y6m5zH94aE2zTuAfrMMgzmlbJbIgjKbFR8z8k72NWBsA7qlGwC2+i2S1lr
+         GOUoX4rgY6+MrraRBPMIi1iTQzgttIsvA9UBIEGcze/tO2B9AkYhYrvpwqkbIiZxhQzZ
+         kJzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5PKkbK/4t+ZEOwp9JIv3vj8J6bSHZd5+VzLTZsF0/lTEK/i8tblHSBhMKUYyh6STijgarlK630gJ+M+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS0blngAqZZ1BWQ77DFyOrFLex1TRBXm2g9seUPl143o5Qdffz
+	kLRQ1oFl1PbQkJb5C8FajlNejS5DkgQxMj1e36jnU931DUFaUuGKkmtxMPfSOSDDtw==
+X-Gm-Gg: ASbGncuUf35g0mI09ieu0trthp6+U+011GoBpr7u4J7KVrMGfcobFHx1oUlMKHNkYX/
+	f6I3EKaDocykE5nJXrI9RaECOfPotY3epUvIYKbn4VtRRJDHTQ52qIs98jsFLqw5EZsGHWqgxzI
+	AzO6wX/BdPjTHzwpzdWsbdwtKhgAEjsNoQgc9AiMAshiBf9TLrxdseztuE2/+XW5TRkE/icHcvz
+	TKZgzFDWUw39scezN7c6V4NQFadkGeVVfKifCMVYHXb/mbmSDqP8EWPIT9cLWiLljgvNTzZWt2y
+	a64yTS7knDsDDQz+ppaFGMoEvydhdclH3NmdjaMLtG6xdd55MY7PPWYRboLQQFrzIorXJnSlr+h
+	wC9A4R1N21CdMgCRE+X3VBWZ2MClSVT/r2Jrzm00cprAlXKsL0cFvDxjD+sH2Wa4w
+X-Google-Smtp-Source: AGHT+IGlt2hbobisXSeZHsNze0BfPPP53bsTOpqMhw+K8n1S/Ym1JROT13oEyZ3NdZHmGsAomrN0gQ==
+X-Received: by 2002:a05:6214:252b:b0:70d:6df3:9a88 with SMTP id 6a1803df08f44-78ecf4ffb35mr51718416d6.56.1758204154421;
+        Thu, 18 Sep 2025 07:02:34 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7934693139asm13525086d6.21.2025.09.18.07.02.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 07:02:33 -0700 (PDT)
+Date: Thu, 18 Sep 2025 10:02:29 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: ehci: Add Aspeed AST2700 support
+Message-ID: <95dfea8a-f5ec-488b-bdd0-fa12acd3dce8@rowland.harvard.edu>
+References: <20250918064919.224927-1-ryan_chen@aspeedtech.com>
+ <20250918064919.224927-3-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Feedback-ID: ::1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
-X-SES-Outgoing: 2025.09.18-23.251.234.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918064919.224927-3-ryan_chen@aspeedtech.com>
 
-Hi,
-Thank you for reviewing.
+On Thu, Sep 18, 2025 at 02:49:19PM +0800, Ryan Chen wrote:
+> Unlike earlier Aspeed SoCs (AST2400/2500/2600) which are limited to
+> 32-bit DMA addressing, the EHCI controller in AST2700 supports 64-bit
+> DMA. Update the EHCI platform driver to make use of this capability by
+> selecting a 64-bit DMA mask when the "aspeed,ast2700-ehci" compatible
+> is present in device tree.
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  drivers/usb/host/ehci-platform.c | 26 +++++++++++++++++++++-----
+>  1 file changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+> index 6aab45c8525c..edf1fb4033c2 100644
+> --- a/drivers/usb/host/ehci-platform.c
+> +++ b/drivers/usb/host/ehci-platform.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/reset.h>
+>  #include <linux/sys_soc.h>
+> @@ -122,10 +123,18 @@ static const struct ehci_driver_overrides platform_overrides __initconst = {
+>  	.extra_priv_size =	sizeof(struct ehci_platform_priv),
+>  };
+>  
+> +#define EHCI_PDATA_COMMON        \
+> +	.power_on		= ehci_platform_power_on,	\
+> +	.power_suspend	= ehci_platform_power_off,	\
+> +	.power_off		= ehci_platform_power_off
+> +
+>  static struct usb_ehci_pdata ehci_platform_defaults = {
+> -	.power_on =		ehci_platform_power_on,
+> -	.power_suspend =	ehci_platform_power_off,
+> -	.power_off =		ehci_platform_power_off,
+> +	EHCI_PDATA_COMMON,
+> +};
+> +
+> +static const struct usb_ehci_pdata ehci_ast2700_platform = {
+> +	EHCI_PDATA_COMMON,
+> +	.dma_mask_64 = 1,
+>  };
 
-On 2025/09/18 10:00, Yu Kuai wrote:
-> Hi,
->=20
-> =E5=9C=A8 2025/09/15 11:42, Kenta Akagi =E5=86=99=E9=81=93:
->> Currently, the LastDev flag is set on an rdev that failed a failfast
->> metadata write and called md_error, but did not become Faulty. It is
->> cleared when the metadata write retry succeeds. This has problems for
->> the following reasons:
->>
->> * Despite its name, the flag is only set =
-during a metadata write window.
->> * Unlike when LastDev and Failfast was =
-introduced, md_error on the last
->> =C2=A0=C2=A0 rdev of a RAID1/10 array =
-now sets MD_BROKEN. Thus when LastDev is set,
->> =C2=A0=C2=A0 the array is =
-already unwritable.
->>
->> A following commit will prevent failfast bios =
-from breaking the array,
->> which requires knowing from outside the =
-personality whether an rdev is
->> the last one. For that purpose, LastDev =
-should be set on rdevs that must
->> not be lost.
->>
->> This commit ensures that LastDev is set on the indispensable rdev in a
->> degraded RAID1/10 array.
->>
->> Signed-off-by: Kenta Akagi <k@mgml.me>
->> ---
->> =C2=A0 drivers/md/md.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +---
->> =C2=A0 drivers/md/md.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 +++---
->> =C2=A0 drivers/md/raid1.c=C2=A0 | 34 +++++++++++++++++++++++++++++++++-
->> =C2=A0 drivers/md/raid10.c | 34 +++++++++++++++++++++++++++++++++-
->> =C2=A0 4 files changed, 70 insertions(+), 8 deletions(-)
->>
-> After md_error() is serialized, why not check if rdev is the last rdev
-> from md_bio_failure_error() in patch 3 directly? I think it is cleaner
-> and code changes should be much less to add a new method like
-> pers->lastdev.
+Arggh!  This is dreadful.  Just have two copies of the initializers.
 
-That makes sense. I'll proceed that way.
+Better yet, change your of_match data into a boolean property for 
+overriding the default DMA mask and then use the original 
+ehci_platform_defaults structure.  Look at ohci_platform_probe() in 
+ohci-platform.c for an example.
 
-Thanks,
-Akagi
+>  
+>  /**
+> @@ -239,6 +248,7 @@ static int ehci_platform_probe(struct platform_device *dev)
+>  	struct usb_hcd *hcd;
+>  	struct resource *res_mem;
+>  	struct usb_ehci_pdata *pdata = dev_get_platdata(&dev->dev);
+> +	const struct of_device_id *match;
+>  	struct ehci_platform_priv *priv;
+>  	struct ehci_hcd *ehci;
+>  	int err, irq, clk = 0;
+> @@ -250,7 +260,10 @@ static int ehci_platform_probe(struct platform_device *dev)
+>  	 * Use reasonable defaults so platforms don't have to provide these
+>  	 * with DT probing on ARM.
+>  	 */
+> -	if (!pdata)
+> +	match = of_match_device(dev->dev.driver->of_match_table, &dev->dev);
+> +	if (match && match->data)
+> +		pdata = (struct usb_ehci_pdata *)match->data;
 
->=20
-> Thanks,
-> Kuai
->=20
->> diff --git a/drivers/md/md.c b/drivers/md/md.=
-c
->> index 4e033c26fdd4..268410b66b83 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -1007,10 +1007,8 @@ static void =
-super_written(struct bio *bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (!test_bit(Faulty, &rdev->flags)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 && (bio->bi_opf & MD_FAILFAST)) {
->> =C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
->> -=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(LastDev, =
-&rdev->flags);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> -=C2=A0=C2=A0=C2=A0 } else
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 clear_bit(LastDev, &rdev->flags);
->> +=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bio_put(bio);
->> =C2=A0 diff --git a/drivers/md/md.h b/drivers/md/md.h
->> index 51af29a03079..ec598f9a8381 100644
->> --- a/drivers/md/md.h
->> +++ b/drivers/md/md.h
->> @@ -281,9 +281,9 @@ enum flag_bits {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * It is expects that no bad =
-block log
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is present.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> -=C2=A0=C2=A0=C2=A0 =
-LastDev,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Seems to be the last =
-working dev as
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * it didn't fail, so don't use =
-FailFast
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * any more for metadata
->> +=C2=A0=C2=A0=C2=A0 LastDev,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-/* This is the last working rdev.
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * so =
-don't use FailFast any more for
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * metadata.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 CollisionCheck,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * check if there is collision =
-between raid1
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index bf44878ec640..32ad6b102ff7 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -1733,6 +1733,33 @@ static void =
-raid1_status(struct seq_file *seq, struct mddev *mddev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seq_printf(seq, "]");
->> =C2=A0 }
->> =C2=A0 +/**
->> + * update_lastdev - Set or clear LastDev flag for all =
-rdevs in array
->> + * @conf: pointer to r1conf
->> + *
->> + * Sets LastDev if the device is In_sync and cannot be lost for the =
-array.
->> + * Otherwise, clear it.
->> + *
->> + * Caller must hold =
-->device_lock.
->> + */
->> +static void update_lastdev(struct r1conf *conf)
->> +{
->> +=C2=A0=C2=A0=C2=A0 int i;
->> +=C2=A0=C2=A0=C2=A0 int alive_disks =
-=3D conf->raid_disks - conf->mddev->degraded;
->> +
->> +=C2=A0=C2=A0=C2=A0 =
-for (i =3D 0; i < conf->raid_disks; i++) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 struct md_rdev *rdev =3D conf->mirrors[i].rdev;
->> +
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rdev) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if =
-(test_bit(In_sync, &rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 alive_disks =
-=3D=3D 1)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(LastDev, &rdev->flags);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 clear_bit(LastDev, &rdev->flags);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> +=C2=A0=C2=A0=C2=A0 }
->> +}
->> +
->> =C2=A0 /**
->> =C2=A0=C2=A0 * raid1_error() - RAID1 error =
-handler.
->> =C2=A0=C2=A0 * @mddev: affected md device.
->> @@ -1767,8 +1794,10 @@ static void raid1_error(struct mddev *mddev, =
-struct md_rdev *rdev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 set_bit(Blocked, &rdev->flags);
->> -=C2=A0=C2=A0=C2=A0 if =
-(test_and_clear_bit(In_sync, &rdev->flags))
->> +=C2=A0=C2=A0=C2=A0 if =
-(test_and_clear_bit(In_sync, &rdev->flags)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->degraded++;
->> =
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> +=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(Faulty, =
-&rdev->flags);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock_irqrestore(&co=
-nf->device_lock, flags);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> @@ -1864,6 +1893,7 @@ static int raid1_spare_active(struct mddev *mddev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-mddev->degraded -=3D count;
->> +=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock_irqrestore(&conf->device_lock=
-, flags);
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 print_conf(conf);
->> @@ -3290,6 +3320,7 @@ static int raid1_run(struct mddev *mddev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rcu_assign_pointer(conf->thread, NULL);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->private =3D conf;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(MD_FAILFAST_SUPPORTED, =
-&mddev->flags);
->> +=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_set_array_sectors(mddev, =
-raid1_size(mddev, 0, 0));
->> =C2=A0 @@ -3427,6 +3458,7 @@ static int =
-raid1_reshape(struct mddev *mddev)
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- spin_lock_irqsave(&conf->device_lock, flags);
->> =C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 mddev->degraded +=3D (raid_disks - conf->raid_disks);
->> +=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 spin_unlock_irqrestore(&conf->device_lock, flags);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 conf->raid_disks =3D mddev->raid_disks =
-=3D raid_disks;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->delta_disks =3D 0;
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->> index b60c30bfb6c7..dc4edd4689f8 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -1983,6 +1983,33 @@ static int =
-enough(struct r10conf *conf, int ignore)
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 _enough(conf, 1, ignore);
->> =C2=A0 }
->> =C2=A0 +/**
->> + * update_lastdev - Set or clear LastDev flag for all =
-rdevs in array
->> + * @conf: pointer to r10conf
->> + *
->> + * Sets LastDev if the device is In_sync and cannot be lost for the =
-array.
->> + * Otherwise, clear it.
->> + *
->> + * Caller must hold =
-->reconfig_mutex or ->device_lock.
->> + */
->> +static void =
-update_lastdev(struct r10conf *conf)
->> +{
->> +=C2=A0=C2=A0=C2=A0 int i;
->> +=C2=A0=C2=A0=C2=A0 int raid_disks =3D max(conf->geo.raid_disks, =
-conf->prev.raid_disks);
->> +
->> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < =
-raid_disks; i++) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct =
-md_rdev *rdev =3D conf->mirrors[i].rdev;
->> +
->> +=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 if (rdev) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (test_bit(In_sync, &rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 !enough(conf, i))
->> +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-set_bit(LastDev, &rdev->flags);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-clear_bit(LastDev, &rdev->flags);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 }
->> +=C2=A0=C2=A0=C2=A0 }
->> +}
->> +
->> =C2=A0 /**
->> =C2=A0=C2=A0 * raid10_error() - RAID10 error handler.
->> =C2=A0=C2=A0 * @mddev: affected md device.
->> @@ -2013,8 +2040,10 @@ =
-static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> -=C2=A0=C2=A0=C2=A0 if =
-(test_and_clear_bit(In_sync, &rdev->flags))
->> +=C2=A0=C2=A0=C2=A0 if =
-(test_and_clear_bit(In_sync, &rdev->flags)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->degraded++;
->> =
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> +=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-set_bit(MD_RECOVERY_INTR, &mddev->recovery);
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 set_bit(Blocked, &rdev->flags);
->> @@ -2102,6 +2131,7 @@ static int =
-raid10_spare_active(struct mddev *mddev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-}
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock_irqsave(&conf->device_lock, =
-flags);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->degraded -=3D count;
->> +=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 spin_unlock_irqrestore(&conf->device_lock, flags);
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 print_conf(conf);
->> @@ -4159,6 +4189,7 @@ static int raid10_run(struct mddev *mddev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_set_array_sectors(mddev, size);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->resync_max_sectors =3D size;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_bit(MD_FAILFAST_SUPPORTED, =
-&mddev->flags);
->> +=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (md_integrity_register(mddev))
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto =
-out_free_conf;
->> @@ -4567,6 +4598,7 @@ static int raid10_start_reshape(str=
-uct mddev *mddev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock_irq(&conf->device_lock);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->degraded =3D calc_degraded(conf);
->> +=C2=A0=C2=A0=C2=A0 update_lastdev(conf);
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 spin_unlock_irq(&conf->device_lock);
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 mddev->raid_disks =3D conf->geo.raid_disks;
->> =
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mddev->reshape_position =3D =
-conf->reshape_progress;
->>
->=20
->=20
+Do you really want the of_match data to override the platform data?  
+Consider a system that has both.  Which one do you think would be more 
+important?
 
+(If you take my suggestion above, this question becomes moot.)
+
+Alan Stern
+
+> +	else if (!pdata)
+>  		pdata = &ehci_platform_defaults;
+>  
+>  	err = dma_coerce_mask_and_coherent(&dev->dev,
+> @@ -298,7 +311,9 @@ static int ehci_platform_probe(struct platform_device *dev)
+>  		if (of_device_is_compatible(dev->dev.of_node,
+>  					    "aspeed,ast2500-ehci") ||
+>  		    of_device_is_compatible(dev->dev.of_node,
+> -					    "aspeed,ast2600-ehci"))
+> +					    "aspeed,ast2600-ehci") ||
+> +		    of_device_is_compatible(dev->dev.of_node,
+> +					    "aspeed,ast2700-ehci"))
+>  			ehci->is_aspeed = 1;
+>  
+>  		if (soc_device_match(quirk_poll_match))
+> @@ -485,6 +500,7 @@ static const struct of_device_id vt8500_ehci_ids[] = {
+>  	{ .compatible = "wm,prizm-ehci", },
+>  	{ .compatible = "generic-ehci", },
+>  	{ .compatible = "cavium,octeon-6335-ehci", },
+> +	{ .compatible = "aspeed,ast2700-ehci",	.data = &ehci_ast2700_platform },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, vt8500_ehci_ids);
+> -- 
+> 2.34.1
+> 
 
