@@ -1,198 +1,135 @@
-Return-Path: <linux-kernel+bounces-823131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F72B859D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2637B85948
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507131B210DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:28:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DDF91644E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DA222D7B5;
-	Thu, 18 Sep 2025 15:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC3230DD14;
+	Thu, 18 Sep 2025 15:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lkU890kN"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d47hQZzP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15E8231A21
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B6B30F80C;
+	Thu, 18 Sep 2025 15:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209242; cv=none; b=jGvUM1kcKO2C8JdRK9qvzTWoA6zyTaK0yl1DuzkCYCS0Dq6FQSNoBGRhb9+FGFIA3jKqx/3Vc0fmVTvw3PeDjwflO29aN888zAb55i5plXzo8JvWi7Q+Z0UnxIlZaTMTPGw5LYztOviJxwaK0SmwDFGukKE0f5/Gjl3QwpRCsfo=
+	t=1758209225; cv=none; b=lyUkgx9eKo9YoOxzTAOLTaCE7TevRXfA5PSmeBrZO87ocBFsyq1zCIPtvVdZpuhyfvAiF4PvzOgkXXwBXAkyB719LiQy3UbpteLasAvTvaUTnwgnIZaP9TMzNPBHyYG1KqdB7SEowINqJLEAZtoY1H/zJomEzNq+eNx54HwD/ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209242; c=relaxed/simple;
-	bh=YBK/SyTZPuGX863Tcjtijt2T0fHp5LvG9rFeW7r66Mc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qbMw7N7UGjo2lCd6e3pJAkrRepeYOydotcdrjy+aSprggyYHG2tHRch1IgQFS1lwYIAjeUMmoySfc7zc004D+XffcuW6gslEuaqRgZhGUjrLdIsACEJRRSMv7EeMkFpMmFRmQ7A2m5xsP33rU/mTVm4OVnM1J/miQzgDFRnmxyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lkU890kN; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d5fe46572so12000207b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:27:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758209240; x=1758814040; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ohjdE7vsdp2mFA+MExTFcCWgNEkrk5a/T8KfjfgAz0o=;
-        b=lkU890kNry7mju+kcE2/yHzQwVoKlC/rh5L9iTThdKbYyq4QP1m2U8h3WeqeXi6jK1
-         aA4IDOaicxPNqrDdj7BnxFLWr5deDP+DS5FVXT9SdEVFdcQIewi69H5o+dOOtm6XqgK/
-         at0qhN1xe6aLSRPF2AgfwfvdGcwhR0pB+wu/5KGNJk7ZCnzABY+pO9h6rLVM3Ptd+RnU
-         0D5ivpUJsoEfegU9T/gc38vwpNqf4wSov2iyxHa5289SJodtvhGr3ovdM7J6Dedp0TQZ
-         oD8pipm3zeMK77+3PhGAz1yVcqhKUKshG96OQkXOzxZja6OGdSNZwDIXx/iTtv91i5M3
-         qcVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758209240; x=1758814040;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ohjdE7vsdp2mFA+MExTFcCWgNEkrk5a/T8KfjfgAz0o=;
-        b=BfngNtRYrRloC/bDS7HuT/bJwYcbWYWmiB0lOOsdzrEK/KgxmolPOmpcZJQ/xLts0Z
-         ju0H8Kog+sjAgBS+m+5AN0jKLrbvNJ2fm9TUbTPOFPLVfHVkoNbT/sm/4Z1uSQarj2VU
-         Yibjn81U7R7bPIfdMyZJrutqDvJ/wXm0Je1Vi6PHA5pQO9f6nBjF2o2rGyS7m1t5vnOi
-         PS27QaDMpqOW8T+3Zsbk1vwDSgDH4n1AOM4pk8GYrPkK9HmpXeWzL83SJRw+XT9SeZ4s
-         3Y0h4Htn/Q2Ho5i+h8SIPb3MFgxopd+X5XF4nWWASlU9rHhHsxo2jYhq7pVG5q8EghcN
-         8jLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4s6zB7s1Obv+Uh7Ow81v5WpP8m/KQ/F6UjikCZODHRQAFAu63HppjUxH1KLx+lmuQ9dWDMbVcMQQAR9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBtxc27qDfxnaxLd/Y75PUSCWjE/2rXUHyyeV1ZmdEHWdB1E30
-	9LyfNp8lZNzSPAFUj01uLPgHw3JISFuutASBbjswxCFlt2UAcD6GiRIj/S696yPxW1tpHHJ0MOC
-	3JHO6Gi2pb4V7BVDiUVCpVXj7MQmUMX6hYGnPCHBbvg==
-X-Gm-Gg: ASbGnctslneiHUhGRA0hAKRmT4mbc3HtxfD9xVn3IAAEbX8K/agLvjxZEeSUUIltKk5
-	QpcWEvfCiY/glvPR1cLRcX2jMeVbGUt5CeIyfCXepUIakrQca76kZlpSrB2whfkj6iMpQuVwx5a
-	ZNq4GbRHAh8SMRGN+kqyxzOt5uU5HiLDSkSHofMJb38X+26OZiG+RVVwEITm8MkXREIutDsbQJ4
-	LK2b0Ykas+7iMsiDXSZHEfuOgs=
-X-Google-Smtp-Source: AGHT+IEQCrv2rBD0HZ5Ef3kA7d83Z57qpN7uwi/iH7ea1Nc2x95VmWRF+4zmzOqyCpcnKa543iKVkH+EZRR/L9nuveg=
-X-Received: by 2002:a05:690c:6588:b0:734:61f:2b1b with SMTP id
- 00721157ae682-7396eafa4acmr29231447b3.0.1758209239669; Thu, 18 Sep 2025
- 08:27:19 -0700 (PDT)
+	s=arc-20240116; t=1758209225; c=relaxed/simple;
+	bh=BwqLfcPI4fqGMrRKoHaz7EZY8YKsYs2WAMxp5J73LSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aEYIAPrs0Hmy88n9p1wclR7m+/RFVY+Ok78IP7mOKnvflblr++WOx/EjF56Hb1IETpOgm7CAXQsf1iKPiIQvjYAaGgz4mud03uvst4kgZ6xNwIywffxKux3ksYCOAFH0PhYM0kiKD9yNwdPYw82ggMvHB2ooc0ojCJrB/4pfKCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d47hQZzP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4557DC4CEEB;
+	Thu, 18 Sep 2025 15:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758209225;
+	bh=BwqLfcPI4fqGMrRKoHaz7EZY8YKsYs2WAMxp5J73LSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d47hQZzPAIdH5mldPmUZH1IaZjVHNjMIpaGYdWoCs1oLr+6Tcxp9t8bMvuLu9gFEX
+	 lo+6brZG4IkWpzP/S3cUAVOjQrScbGC7Y5uCGuO5+s88oqc+30Jdi+8//okEH01f89
+	 85402JQ0/0K0U8B+w8PhY4YwZO9tf/OcyQhDrxJrllRDoGdR21TGOS6CVkez6ioeSK
+	 cdJjfZ4RiNrrQdljWW2p4sFo8z54nwCL1ALgo06kZasrnpCCTyEIMDiIsw46sVHSZ5
+	 G8Hh7Olv1zI/rjZvF2lSnSidLuI7YJAR81E9GmRs/H3sb7eV2LSCBjRinpLhVS52pO
+	 GwmwKUMIcFF+Q==
+Date: Thu, 18 Sep 2025 16:26:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
+ GPIO Interrupt Multiplexer
+Message-ID: <20250918-education-resource-aac71b87e979@spud>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
+ <20250918104009.94754-7-herve.codina@bootlin.com>
+ <20250918-majestic-mockup-0a0e090db0a7@spud>
+ <20250918171502.411c3527@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com>
- <CAPDyKFoi9KcsP5k84cSxuXNuMHmcf3a8emfOc6hMjGm_0FMk8w@mail.gmail.com> <2162077.CQOukoFCf9@workhorse>
-In-Reply-To: <2162077.CQOukoFCf9@workhorse>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 18 Sep 2025 17:26:43 +0200
-X-Gm-Features: AS18NWAglY0uDqlAxTVI2SesnRFzqdlGAX0p_bWMYckBiLfd4yldGayxKumI5X4
-Message-ID: <CAPDyKFqXVt5rF++GGTRxv6+S-2FevvdMVmJefvfqXkZ2iam1Rg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] MT8196 GPU Frequency/Power Control Support
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="04PZPDVvYnUHAPS9"
+Content-Disposition: inline
+In-Reply-To: <20250918171502.411c3527@bootlin.com>
 
-On Wed, 17 Sept 2025 at 17:45, Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> On Wednesday, 17 September 2025 15:28:59 Central European Summer Time Ulf Hansson wrote:
-> > On Wed, 17 Sept 2025 at 14:23, Nicolas Frattaroli
-> > <nicolas.frattaroli@collabora.com> wrote:
-> > >
-> > > This series introduces two new drivers to accomplish controlling the
-> > > frequency and power of the Mali GPU on MediaTek MT8196 SoCs.
-> > >
-> > > The reason why it's not as straightforward as with other SoCs is that
-> > > the MT8196 has quite complex glue logic in order to squeeze the maximum
-> > > amount of performance possible out of the silicon. There's an additional
-> > > MCU running a specialised firmware, which communicates with the
-> > > application processor through a mailbox and some SRAM, and is in charge
-> > > of controlling the regulators, the PLL clocks, and the power gating of
-> > > the GPU, all while also being in charge of any DVFS control.
-> > >
-> > > This set of drivers is enough to communicate desired OPP index limits to
-> > > the aforementioned MCU, referred to as "GPUEB" from here on out. The
-> > > GPUEB is still free to lower the effective frequency if the GPU has no
-> > > jobs going on at all, even when a higher OPP is set. There's also
-> > > several more powerful OPPs it seemingly refuses to apply. The downstream
-> > > chromeos kernel also doesn't reach the frequencies of those OPPs, so we
-> > > assume this is expected.
-> > >
-> > > The frequency control driver lives in panthor's subdirectory, as it
-> > > needs to pass panthor some data. I've kept the tie-in parts generic
-> > > enough however to not make this a complete hack; mediatek_mfg (the
-> > > frequency control driver) registers itself as a "devfreq provider" with
-> > > panthor, and panthor picks it up during its probe function (or defers if
-> > > mediatek_mfg is not ready yet, after adding a device link first).
-> > >
-> > > It's now generic enough to where I'll ponder about moving the devfreq
-> > > provider stuff into a header in include/, and moving mediatek_mfg into
-> > > the drivers/soc/ subdirectory, but there were enough changes so far to
-> > > warrant a v3 without a move or further struct renames added, so that I
-> > > can get feedback on this approach.
-> > >
-> > > The mailbox driver is a fairly bog-standard common mailbox framework
-> > > driver, just specific to the firmware that runs on the GPUEB.
-> >
-> > I had a brief look at the series and it seems to me that the devfreq
-> > thing here, may not be the perfect fit.
-> >
-> > Rather than using a new binding  (#performance-domain-cells) to model
-> > a performance domain provider using devfreq, I think it could be more
-> > straightforward to model this using the common #power-domain-cells
-> > binding instead. As a power-domain provider then, which would be
-> > capable of scaling performance too. Both genpd and the OPP core
-> > already support this, though via performance-states (as indexes).
-> >
-> > In fact, this looks very similar to what we have implemented for the
-> > Arm SCMI performance domain.
-> >
-> > If you have a look at the below, I think it should give you an idea of
-> > the pieces.
-> > drivers/pmdomain/arm/scmi_perf_domain.c
-> > drivers/firmware/arm_scmi/perf.c
-> > Documentation/devicetree/bindings/firmware/arm,scmi.yaml (protocol@13
-> > is the performance protocol).
-> >
-> > That said, I don't have a strong opinion, but just wanted to share my
-> > thoughts on your approach.
->
-> Yeah, I found out about the pmdomain set_performance_state callback
-> a few days ago. I've not looked into it much so far because not
-> unlike a veterinarian on a cattle ranch, I was elbow-deep in v3's
-> guts already and didn't want to pivot to something different before
-> pushing it out, but I'll look into it more seriously now.
 
-:-)
+--04PZPDVvYnUHAPS9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Even if it means I have to get rid of my fun array binary search
-> and rely on the opp core to do its linear time linked list
-> traversal. :'( (But moving OPP core to use XArrays instead is a
-> concern for the future.)
+On Thu, Sep 18, 2025 at 05:15:02PM +0200, Herve Codina wrote:
+> Hi Conor,
+>=20
+> On Thu, 18 Sep 2025 16:06:04 +0100
+> Conor Dooley <conor@kernel.org> wrote:
+>=20
+> > On Thu, Sep 18, 2025 at 12:40:04PM +0200, Herve Codina (Schneider Elect=
+ric) wrote:
+> > > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> > > interruption lines are multiplexed by the GPIO Interrupt Multiplexer =
+in
+> > > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+> > >=20
+> > > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> > > IRQ lines out of the 96 available to wire them to the GIC input lines.
+> > >=20
+> > > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootli=
+n.com>
+> > > ---
+> > >  .../soc/renesas/renesas,rzn1-gpioirqmux.yaml  | 87 +++++++++++++++++=
+++
+> > >  1 file changed, 87 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/soc/renesas/ren=
+esas,rzn1-gpioirqmux.yaml =20
+> >=20
+> > This is an interrupt controller, please move it to that subdirectory.
+>=20
+> Not so sure. It is a nexus node. It routes interrupt signals to the
+> interrupt controller (interrupt-map) but it is not an interrupt controller
+> itself.
+>=20
+> I am not sure that it should be moved to the interrupt-controller
+> directory.
 
-Sure!
+Your node name choice disagrees with you!
 
->
-> I've also been avoiding it because I didn't know how much
-> additional functionality we'll add later, but I've talked with
-> Angelo about it an hour ago and he agrees that I should go down
-> the pmdomain route for the current functionality.
->
-> Thank you for the hints!
+--04PZPDVvYnUHAPS9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Np! I am glad to help!
+-----BEGIN PGP SIGNATURE-----
 
-I will try my best to continue to review/comment on these things, if
-you need it.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMwkwwAKCRB4tDGHoIJi
+0mK2AQCYPHl4rF871L3zpt0NZtb7tH1ZVhuOQg0+r0MqiY6UyQEA2Dn0unSyWBQs
+L4iJKiNqXKFSDPbUt3IAV/KTVPzZeQY=
+=aBup
+-----END PGP SIGNATURE-----
 
-Kind regards
-Uffe
+--04PZPDVvYnUHAPS9--
 
