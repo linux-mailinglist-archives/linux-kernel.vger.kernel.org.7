@@ -1,188 +1,207 @@
-Return-Path: <linux-kernel+bounces-822992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5F6B85402
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FD1B8541D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5375631B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF88546BA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9533A288AD;
-	Thu, 18 Sep 2025 14:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE3330B513;
+	Thu, 18 Sep 2025 14:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gsVM/Gi5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RIEjBc34"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EFB217F24;
-	Thu, 18 Sep 2025 14:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF773220F2A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205394; cv=none; b=qbe6IoMlRy64leffl03UT03pCOQW79d4EDTVcmkvzsRP6D0bL3aLGW8cDIt222ZUw/q6t1bOY86wJOC7SxwNNpyZwAB6tJx/RyzoOsStjyRTItAOEOsRkicQE/lkXnqeCyJKAjo4m8LuaeJqFguNv6SVaSMf8BFexcrOapHzHGI=
+	t=1758205448; cv=none; b=mdjkcQhu/sjDtX02ScEjAvo17Wt8I1JGbtoA8qYMyUk+RATEniyHiQ0xz6kd1sEuCohCNxsSAS9QN1Ql/TfgWBtQlhlfT//rw/3EO7pHDSOCE58IWg0+PbO7IEJn/7CKntfTvIhJNtfQdzVrz9xqdx+RhHgoyE+h2xmpm8fly94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205394; c=relaxed/simple;
-	bh=JYI27Rz4siEIBkfczGeVSPn8FoTxcTNjfd248IzhWDY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KYqj6km3t0L9Dd8A9qt4XCv1Nv3I3CCEZ93pcRQJR/JmkirNDaganbGJ+bTNt3obi03nmv7uJ+rGUIujCy9+OrbTP5qhq0r93LzmdDI+5DoyvUHTKR3rzP3jfFXv8808Dc9Nmt9DLqwJNuZWnRRMcgTwHuaVKIAusD6GSfS5xEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gsVM/Gi5; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758205393; x=1789741393;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JYI27Rz4siEIBkfczGeVSPn8FoTxcTNjfd248IzhWDY=;
-  b=gsVM/Gi5ZC+DYoEc6cKRx3xbiLUwUy3KWFxRWYb/YSZKa6UBx2qxQMRt
-   fIdk1Od0zLe6ZPI626M5i26St/Bmv4s3E6+d7/1fpVkD+X66NzrJd6UCf
-   pA3lyzPaWxpEmw2Lnyr1hwRlndYAnOfFbgfMMFBwnWd5O2mf2015D11aK
-   WI/axdplGIRE8GhTWuCFnW7hL5kqXzpvp6lIGTNu1+lQx/4Ycf1acx6qs
-   1OYHm0/VVeT+pqkeESALJIkKtM9/yU6sCIMcfnab+5B7jWR+SURX+xMBx
-   +LFlrB7m7WCrlnCP3MUs6a7JH6lc6VOBHK7k6aqCBMSrCKNa2QVYMHYOf
-   g==;
-X-CSE-ConnectionGUID: Nqp38s5uRZqcTduOoROoOQ==
-X-CSE-MsgGUID: 6zoNVH0ZR8iAgIj1/uzlRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="60426318"
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="60426318"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 07:23:12 -0700
-X-CSE-ConnectionGUID: 2mAZMfHARk2djZs3t1J/gQ==
-X-CSE-MsgGUID: b7HFBvHCRlKDc/I0sE+pAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="212707393"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.245.29])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 07:23:08 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: "Cheatham, Benjamin" <benjamin.cheatham@amd.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Robert Richter <rrichter@amd.com>,
- ming.li@zohomail.com, linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Subject:
- Re: [PATCH 2/4 v4] cxl/core: Add helpers to detect Low Memory Holes on x86
-Date: Thu, 18 Sep 2025 16:23:03 +0200
-Message-ID: <7281194.9J7NaK4W3v@fdefranc-mobl3>
-In-Reply-To: <301195cf-dbb3-45cc-927d-ffd58988aa37@amd.com>
-References:
- <20250724142144.776992-1-fabio.m.de.francesco@linux.intel.com>
- <20250724142144.776992-3-fabio.m.de.francesco@linux.intel.com>
- <301195cf-dbb3-45cc-927d-ffd58988aa37@amd.com>
+	s=arc-20240116; t=1758205448; c=relaxed/simple;
+	bh=IDc6RQ3z8B8Ry/K9LKfQg3eL/rSFGyiNZ4wOOd5+bsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nwPqmXjxznfSng33qOPViQUmWJ0yebj77HiIqAHrW5WcFLDw7gAc0ZMius5fWqsjN6cCVNLKUtry5epLkhIfCo65wu9gDOnc/BqWSaorYb33AcHhgsLYnQxK/3OivP4qtXFl/JNS+vkO7PSoZLOF8dDdXjGIixYjBUkhsXKW1m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RIEjBc34; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77d37d71967so694185b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:24:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758205446; x=1758810246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VN6OUyLXfG28wohM8pGgYSaroM8kq146dlifB0TJ7X4=;
+        b=RIEjBc34s6VzMqJ3ErPcdVTEJstlYQJilyEPKqQwxJKWSjDl77WrafrS2uJ+XQeP9u
+         klEgThwMTkRy4FoooWn2T+jh6ecEh9yDlPzb+GjlBK8Losy+2EdMqesH32CF0wTTsY3t
+         SuKOqRfOm3J410tb5jmPArs5Gu0CxPCaeKPN4G8ONBBW87/iao84NJ5X1o0lGQHgsEew
+         egValb4BoX5PP3sTwn0EhQUYP91livNzsuc1ebwIZdUdncDdqVZ81DbjONrs/2RRPSBK
+         KzmFl+0PCvIBIQPv9ATWqCavAGU8vEV11B3Q2GUx2bUxBF10by+LSb0y8eT68zMiNeGi
+         zkEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758205446; x=1758810246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VN6OUyLXfG28wohM8pGgYSaroM8kq146dlifB0TJ7X4=;
+        b=WDyhnjIK+sm+WS4dk97PEg/ddzS2P/G7DrfQDTY6AzQkUet4dvM8hwlkyzTkUIPo6W
+         15i2CcNbaNywe4CRFroDVCiRcbzNyDvupy7mTSPoqDTQe1yEDQxgrhHyNSDJMX4N2gLG
+         bvz2dP1HAHYlN1HWk53VakNOA7qaXZ/L7c3HO9p/iW3FFUwpgwG69cyllXAmCt3NpQdA
+         6IO7JOpgED4vhdfBI0i1N6kjM8cG5K5URUZ8JaH2F7C4PqdxpUMM+fTl4h2h9B4gaRg/
+         2PH68nPlCec8686LzPpxOsXYiv9c0NqiJ/s4gRM4OVruEsqbgCz9sdUudyYBlgvtdua2
+         9ZDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVhNrcn1DFV4UQsGXox2rcoIYRaN/q4GIsF4h+E+pW2K2GgaxUR+CXrzVRJgB+GY11/ICkNhbQW5eb1Wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEcQsJJZu1qWK6wQ/4WaIzWkLto0G+6WWL7Zk3qUFAt0YUGf9K
+	SJMr/w40MUzE3TN27JWY20p10chQRno4eGnXAgc4lSv3HflEkN1X8NcE73z9jKkNF9pyHAIR3kW
+	ehJQHzPMrNeSAIdKPW6NgfQfgOm0b4YY=
+X-Gm-Gg: ASbGncvLyCUKDlQY3qGHHYHswE40VpEZlvAKti4AO0kkc/K3NvOwqYTSchUjlu6OcLY
+	ifiK0C+/IeKTXnafnvO/1gi8FGlnLYK4T8sDFhbuOI/bwkYWjd04QBqoNDZpyCREZ1nMfh4GaPg
+	FVh4ITn5IhK6gV2mooE8qF0KHzbDYWhA0CPkzihxr3gaDkLn6u8ql6whrMGwhi7AWxbGk1CmTpl
+	G0ItaUAKU1p2149yfezPRI2uzS5PHa/j1rxDnkeOAbfE/3OiATT82Xs9iw=
+X-Google-Smtp-Source: AGHT+IFhZD7k5FRjyNJx+sSzVwaeNyL2q4qjPlMlcQFnqYx6LT/d960WLfFakjpmqfqXBsKQLRHj7RaAt6fk5YjM5fQ=
+X-Received: by 2002:a05:6a20:2450:b0:249:467e:ba70 with SMTP id
+ adf61e73a8af0-2845641b90bmr4887486637.24.1758205445964; Thu, 18 Sep 2025
+ 07:24:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250913044404.63641-1-mmyangfl@gmail.com> <20250913044404.63641-4-mmyangfl@gmail.com>
+ <20250916231714.7cg5zgpnxj6qmg3d@skbuf>
+In-Reply-To: <20250916231714.7cg5zgpnxj6qmg3d@skbuf>
+From: Yangfl <mmyangfl@gmail.com>
+Date: Thu, 18 Sep 2025 22:23:29 +0800
+X-Gm-Features: AS18NWB6aHnLtegCP0Qrw-Qf-BcoCYte67EfE_oUYhQeFIVJUf2eO5bV4mq7rlU
+Message-ID: <CAAXyoMOpj1iCd6KZH0dQ-riuDSH_KOkvzB=cz66rWgykChda9g@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 3/3] net: dsa: yt921x: Add support for
+ Motorcomm YT921x
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hi Benjamin,
-
-I thought again and decided to do a few more changes that you suggested...=
-=20
-
-On Friday, August 1, 2025 10:04:16=E2=80=AFPM Central European Summer Time =
-Cheatham, Benjamin wrote:
-> On 7/24/2025 9:20 AM, Fabio M. De Francesco wrote:
-> > In x86 with Low memory Hole, the BIOS may publishes CFMWS that describe
->=20
-> s/publishes/publish
->=20
-> > SPA ranges which are subsets of the corresponding CXL Endpoint Decoders
-> > HPA's because the CFMWS never intersects LMH's while EP Decoders HPA's
-> > ranges are always guaranteed to align to the NIW * 256M rule.
->=20
-> s/to align to/to align due to/
->=20
-> Also a spec reference for the rule would be helpful (same with next patch=
-).
->=20
-> >=20
-> > In order to construct Regions and attach Decoders, the driver needs to
-> > match Root Decoders and Regions with Endpoint Decoders, but it fails and
-> > the entire process returns errors because it doesn't expect to deal with
-> > SPA range lengths smaller than corresponding HPA's.
-> >=20
-> > Introduce functions that indirectly detect x86 LMH's by comparing SPA's
-> > with corresponding HPA's. They will be used in the process of Regions
-> > creation and Endpoint attachments to prevent driver failures in a few
-> > steps of the above-mentioned process.
-> >=20
-> > The helpers return true when HPA/SPA misalignments are detected under
-> > specific conditions: both the SPA and HPA ranges must start at
-> > LMH_CFMWS_RANGE_START (that in x86 with LMH's is 0x0), SPA range sizes
->=20
-> maybe sub "that in x86 with LMH's is 0x0" with "0x0 on x86 with LMH's" al=
-so
-> s/SPA range sizes/SPA range's size/.
->=20
-> > be less than HPA's, SPA's range's size be less than 4G, HPA's size be
-> > aligned to the NIW * 256M rule.
->=20
-> s/be/is/ in above list.
->=20
-> >=20
-> > Also introduce a function to adjust the range end of the Regions to be
-> > created on x86 with LMH's.
-> >=20
-> > Cc: Alison Schofield <alison.schofield@intel.com>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Dave Jiang <dave.jiang@intel.com>
-> > Cc: Ira Weiny <ira.weiny@intel.com>
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> > ---
-> >  drivers/cxl/Kconfig         |  5 +++
-> >  drivers/cxl/core/Makefile   |  1 +
-> >  drivers/cxl/core/platform.c | 85 +++++++++++++++++++++++++++++++++++++
-> >  drivers/cxl/core/platform.h | 32 ++++++++++++++
-> >  4 files changed, 123 insertions(+)
-> >  create mode 100644 drivers/cxl/core/platform.c
-> >  create mode 100644 drivers/cxl/core/platform.h
-> >=20
-> > diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> > index 48b7314afdb8..eca90baeac10 100644
-> > --- a/drivers/cxl/Kconfig
-> > +++ b/drivers/cxl/Kconfig
-> > @@ -211,6 +211,11 @@ config CXL_REGION
-> > =20
-> >  	  If unsure say 'y'
-> > =20
-> > +config CXL_PLATFORM_QUIRKS
-> > +	def_bool y
-> > +	depends on CXL_REGION
-> > +	depends on X86
+On Wed, Sep 17, 2025 at 7:17=E2=80=AFAM Vladimir Oltean <olteanv@gmail.com>=
+ wrote:
+...
 > > +
->=20
-> I'm confused on the intention behind this symbol. The naming suggests it'=
-s for all platform quirks,
-> but the code and dependencies make this x86-specific.
->=20
-> I'm going to suggest making this x86-specific for now. I'm not aware of a=
-ny other platforms with quirks
-> (someone correct me if I'm wrong), so making this x86-specific is fine fo=
-r now. I would rename this
-> symbol to CXL_X86_QUIRKS, leave dependencies as-is, and rename platform.c=
- to something like platform_x86.c.
-> Then, if someone comes along with other platform quirks they can do their=
- own symbol and file (or come
-> up with a generic scheme).
->=20
-I'll make it x86-specific for now. platform.c will be renamed to platform_x=
-86.c
-and CXL_PLATFORM_QUIRKS to CXL_X86_QUIRKS.
+> > +     mutex_lock(&priv->reg_lock);
+> > +     res =3D yt921x_vlan_filtering(priv, port, vlan_filtering);
+> > +     mutex_unlock(&priv->reg_lock);
+> > +
+> > +     return res;
+> > +}
+> > +
+> > +static int
+> > +yt921x_dsa_port_vlan_add(struct dsa_switch *ds, int port,
+> > +                      const struct switchdev_obj_port_vlan *vlan,
+> > +                      struct netlink_ext_ack *extack)
+> > +{
+> > +     struct yt921x_priv *priv =3D to_yt921x_priv(ds);
+> > +     u16 vid =3D vlan->vid;
+> > +     u16 pvid;
+> > +     int res;
+> > +
+> > +     if ((priv->cpu_ports_mask & BIT(port)) !=3D 0)
+> > +             return 0;
+>
+> The CPU port is VLAN-unaware by default and the driver leaves it that
+> way, correct?
+>
 
-Thanks,
+Yes. Actually flows via CPU port are entirely up to the tag, and we
+actively isolate it from any other ports (see port_setup()) so packets
+without tag are automatically dropped.
 
-=46abio
+...
+>
+> > +static int yt921x_chip_setup(struct yt921x_priv *priv)
+> > +{
+> > +     struct dsa_switch *ds =3D &priv->ds;
+> > +     unsigned long cpu_ports_mask;
+> > +     u64 ctrl64;
+> > +     u32 ctrl;
+> > +     int port;
+> > +     int res;
+> > +
+> > +     /* Enable DSA */
+> > +     priv->cpu_ports_mask =3D dsa_cpu_ports(ds);
+> > +
+> > +     ctrl =3D YT921X_EXT_CPU_PORT_TAG_EN | YT921X_EXT_CPU_PORT_PORT_EN=
+ |
+> > +            YT921X_EXT_CPU_PORT_PORT(__ffs(priv->cpu_ports_mask));
+> > +     res =3D yt921x_reg_write(priv, YT921X_EXT_CPU_PORT, ctrl);
+> > +     if (res)
+> > +             return res;
+> > +
+> > +     /* Enable and clear MIB */
+> > +     res =3D yt921x_reg_set_bits(priv, YT921X_FUNC, YT921X_FUNC_MIB);
+> > +     if (res)
+> > +             return res;
+> > +
+> > +     ctrl =3D YT921X_MIB_CTRL_CLEAN | YT921X_MIB_CTRL_ALL_PORT;
+> > +     res =3D yt921x_reg_write(priv, YT921X_MIB_CTRL, ctrl);
+> > +     if (res)
+> > +             return res;
+> > +
+> > +     /* Setup software switch */
+> > +     ctrl =3D YT921X_CPU_COPY_TO_EXT_CPU;
+> > +     res =3D yt921x_reg_write(priv, YT921X_CPU_COPY, ctrl);
+> > +     if (res)
+> > +             return res;
+> > +
+> > +     ctrl =3D GENMASK(10, 0);
+> > +     res =3D yt921x_reg_write(priv, YT921X_FILTER_UNK_UCAST, ctrl);
+> > +     if (res)
+> > +             return res;
+> > +     res =3D yt921x_reg_write(priv, YT921X_FILTER_UNK_MCAST, ctrl);
+> > +     if (res)
+> > +             return res;
+> > +
+> > +     /* YT921x does not support native DSA port bridging, so we use po=
+rt
+> > +      * isolation to emulate it. However, be especially careful that p=
+ort
+> > +      * isolation takes _after_ FDB lookups, i.e. if an FDB entry (fro=
+m
+> > +      * another bridge) is matched and the destination port (in anothe=
+r
+> > +      * bridge) is blocked, the packet will be dropped instead of floo=
+ding to
+> > +      * the "bridged" ports, thus we need to handle those packets by
+> > +      * software.
+> > +      *
+> > +      * If there is no more than one bridge, we might be able to drop =
+them
+> > +      * directly given some conditions are met, but for now we trap th=
+em in
+> > +      * all cases.
+> > +      */
+> > +     ctrl =3D 0;
+> > +     for (int i =3D 0; i < YT921X_PORT_NUM; i++)
+> > +             ctrl |=3D YT921X_ACT_UNK_ACTn_TRAP(i);
+>
+> YT921X_ACT_UNK_ACTn_TRAP traps packets with FDB misses to the CPU, correc=
+t?
 
+Yes, and
 
+> How does that address the described problem, where an FDB entry is
+> found, but the destination port is isolated from the source?
+
+also in this case.
+
+...
 
