@@ -1,174 +1,118 @@
-Return-Path: <linux-kernel+bounces-821877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2782DB82894
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31EE9B828BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13CE328012
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2871B20CEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067FB238149;
-	Thu, 18 Sep 2025 01:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4BA4DyD"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8DD218AC1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AFF23BD13;
+	Thu, 18 Sep 2025 01:45:00 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1C3216E23;
+	Thu, 18 Sep 2025 01:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758159751; cv=none; b=atfGn4+Yb69U8MCMgowYcjDnNmXTSQ7jIrkb0LW6hb/BiJXSEJI93ed9dRWJUg/JN4D1EW0V6UBg0cqcntEdq5VdiVTDisvjteSVMmBEqAl3b7J9JMloi6KF88wrHMv97gTljirHOUBEHyQnoTWEblzbR6wg2BVKdvhXVEQgGRI=
+	t=1758159900; cv=none; b=CbHIBjaP7z6vQQC0+ip3VdQ4d44yhfJ83kl+qNzWRTzNeguLHRx7jn+8xwEP9x/DP7oB2UVfyOr/JzReGNx9maWDh+7b7wN++xa9JDAf8WQMRyA4IdA/8rmL2hFY1SBGivbVdceWoqadYSEaAHTaRj2McIFy61k60nJNsVgvQ5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758159751; c=relaxed/simple;
-	bh=c+zrwLe7+HLxrcq4q+hBHCEgF0dl/Nyc5R6TtdQ3zzM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pm3txCunU35DZftDi72vA6Dc46cDouvc9xLd1hpPJfVqO12cWzdWYVtlInUgxZ1g6Joj9uGGQJbO9bNzm3XcNnUoEsIFpEMizmPDMb0EQMWksBFSCFugumaWvVEOxP0jbEhoQ8lPx0AT8rjvC3HlDsvrd5f+suIO36NpnqRtZpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4BA4DyD; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77d2632f904so96928b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758159749; x=1758764549; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ulvs7K3ydlDyEpWR5MQzG7rfwOArTPkkxrt2MdB42Is=;
-        b=H4BA4DyDAL4QofPATXA1vU2N2K/Fmcnvjk+5s8l9MIAojPzWBwSOB+nqZ5ns2Nbj3J
-         j/RLiNfiQ8R/DVi7HAmlR9UjAtTdanmfKa3kMIdGgY7MwAchZqnE6Iu0OrR8Lscp126F
-         tj0/B54dfkWo/sXeg3nNCfiwpF+6llxZ/euW8ofwEg86BYlQUNpIjssNS9dKHBfXQN/c
-         L55TFvGqIxTY4EDx8r8Hmz0cTOgxrEhIrTv1IiCzzb/1wnrP18SPt0T4zxxVqdVma2KB
-         YfgUxH07fMG2KRuemVzEwPnMmrgbBOxnhwp3k8tiulCQ9yYgorEen5IRnACpDPtvGWxr
-         rztw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758159749; x=1758764549;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ulvs7K3ydlDyEpWR5MQzG7rfwOArTPkkxrt2MdB42Is=;
-        b=Z238Kn2yPPhs4wMezfjQlC2FWUyDNMplhWfcuVB7a0UzIP2ckt6WVopw08tj82/nUi
-         pN+XMS0yUkc+yA3Ok80jvBo/fS/C+HWn7b9jfiXrEVEt4ngUbsiRryie2WUXIAmf+ffG
-         MgfIRvF//1sJ5CUuPqDsZER81Wt1xCkhd4Lfx95FhlCdWftGgufYa+YL8rV6s81biXuY
-         v6fi68PbgLxanXG6BVZGFHmEqx1wnjetKVcPmNMiMvvsCPPhe7J2+TzkTUYZxqiuaE6y
-         YP4GXxlpdeYxwFh1ussClOtoQnKvVHE2gd3sGwDEmNiLFWsfHE5UabFmFh9+ou6jMpuC
-         m81g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Q8Vt9y3rOaKPmQ3BMJW9ixPwceGpeZruMNjXz9ljVO/Xwc8LXvl+h2awt0OXWgp7Wj2DQ6Ud/yD/KoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWO7ufxAoBVHhlmdJXAgMd+MyC2sOsBNpfXYg9GO/vS2Ua21P8
-	x7LiaFHqN4QDEjG2rnfHM4LjkGKd5afI+o++68e/BFi4N7dkMvqlml6u
-X-Gm-Gg: ASbGncsaLUlYupwV4v24rHDArSfD0ndkT+TzwOYYee12HWb8f09Yfj/256CEOeU6EcS
-	1DEW/i/lQaQAkubtBITZAm1Gf3OoiNJdo9I2rZhbPkx+9uv4t2UC5GACtuFM6QuAii6I62XvBDo
-	DCJO1EHsofwKCCz7iTgRuM4hruyNFhrfq6mOFSJwlMoqW+fXRg3LblSSt/biSoqDzbS4KFDIQJV
-	V/5IEx+KSYJ+d2LEvXpifPuWs3YSMuIyEmR3QP9dhtrUld2dEiMn52MCLwpeLdXRV8DFH4ZcXr5
-	tgxjGEX4t8nRemA34dvz1lzLKYFtV1AlSH34eNOpFMD3DuCFGP4jqARGnfuS86u+nbDGh/bm4Hn
-	Sh8HWDH81/u4DDfd8IN14pNdUG4BqQldketUOtVcTL2awWNBgxZQng2gn4+jNQu6gP5w=
-X-Google-Smtp-Source: AGHT+IFdcQcWFVUS1QCaJowNQlqmrKMadj3R+g3ibkhiKQd6PPuK1CiIPRFjs1gwggeFAwB+1AJwIA==
-X-Received: by 2002:a05:6a00:228c:b0:771:e1bf:bddc with SMTP id d2e1a72fcca58-77bf75c1492mr4848577b3a.13.1758159749067;
-        Wed, 17 Sep 2025 18:42:29 -0700 (PDT)
-Received: from [192.168.0.69] ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfc72b21csm687875b3a.44.2025.09.17.18.42.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 18:42:28 -0700 (PDT)
-Message-ID: <c7104a0d58c674bb1fec1a6093be6085ad0be0e0.camel@gmail.com>
-Subject: Re: [PATCH v3] net/tls: support maximum record size limit
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: Sabrina Dubroca <sd@queasysnail.net>, kuba@kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, 	corbet@lwn.net, john.fastabend@gmail.com,
- netdev@vger.kernel.org, 	linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	alistair.francis@wdc.com, dlemoal@kernel.org
-Date: Thu, 18 Sep 2025 11:42:23 +1000
-In-Reply-To: <aLllqGpa2gLVNRbw@krikkit>
-References: <20250903014756.247106-2-wilfred.opensource@gmail.com>
-	 <aLllqGpa2gLVNRbw@krikkit>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758159900; c=relaxed/simple;
+	bh=yObyqBIvnOk7MzWv7rFUNE1ZAMjFKISL+S39eQDndyg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=h5xxzrIHs82p6KJyAJ3eozLnEps2D0C7vv4yYLSmJzTpe5fSoHxHiTGCC7Nyl5JMmRc6oMJP90PgPodWHKhnG1mbAiMddP3zM5q+m5YCZuwDO86reSuUaUNaKQuHVps6sUk+GqQ3ZJxOWCqlE2X+Sq/4v6Rk7AS6sfbVhiEZVyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8DxO9IWZMto6J0LAA--.25085S3;
+	Thu, 18 Sep 2025 09:44:54 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowJDxK8ETZMtoO6acAA--.7691S2;
+	Thu, 18 Sep 2025 09:44:53 +0800 (CST)
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in LOONGSON SECURITY
+ ENGINE DRIVERS
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Lee Jones <lee@kernel.org>,
+ linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20250912074638.109070-1-lukas.bulwahn@redhat.com>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <f9b0ba8f-b2cc-3a24-3afe-247763d8ad71@loongson.cn>
+Date: Thu, 18 Sep 2025 09:43:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250912074638.109070-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowJDxK8ETZMtoO6acAA--.7691S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7KFy3KF1xuFyfGFWrtFW8GrX_yoW8Jw4rpF
+	srC3sIkF47Jr4UCwn8AFyYka4rX34furya9Fsrtw1DX3sIy3ZYqrWjkF1Dta1DAr1fGr42
+	vFZ3Cr45WF48uFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUU
+	U
 
-On Thu, 2025-09-04 at 12:10 +0200, Sabrina Dubroca wrote:
-> 2025-09-03, 11:47:57 +1000, Wilfred Mallawa wrote:
-> > +static int do_tls_setsockopt_tx_record_size(struct sock *sk,
-> > sockptr_t optval,
-> > +					=C2=A0=C2=A0=C2=A0 unsigned int optlen)
-> > +{
-> > +	struct tls_context *ctx =3D tls_get_ctx(sk);
-> > +	u16 value;
-> > +
-> > +	if (sockptr_is_null(optval) || optlen !=3D sizeof(value))
-> > +		return -EINVAL;
-> > +
-> > +	if (copy_from_sockptr(&value, optval, sizeof(value)))
-> > +		return -EFAULT;
-> > +
-> > +	if (ctx->prot_info.version =3D=3D TLS_1_2_VERSION &&
-> > +	=C2=A0=C2=A0=C2=A0 value > TLS_MAX_PAYLOAD_SIZE)
-> > +		return -EINVAL;
-> > +
-> > +	if (ctx->prot_info.version =3D=3D TLS_1_3_VERSION &&
-> > +	=C2=A0=C2=A0=C2=A0 value > TLS_MAX_PAYLOAD_SIZE + 1)
-> > +		return -EINVAL;
->=20
-> The RFC is not very explicit about this, but I think this +1 for
-> TLS1.3 is to allow an actual payload of TLS_MAX_PAYLOAD_SIZE and save
-> 1B of room for the content_type that gets appended.
->=20
-> =C2=A0=C2=A0 This value is the length of the plaintext of a protected rec=
-ord.=C2=A0
-> The
-> =C2=A0=C2=A0 value includes the content type and padding added in TLS 1.3=
- (that
-> =C2=A0=C2=A0 is, the complete length of TLSInnerPlaintext).
->=20
-> AFAIU we don't actually want to stuff TLS_MAX_PAYLOAD_SIZE+1 bytes of
-> payload into a record.
->=20
-> If we set tx_record_size_limit to TLS_MAX_PAYLOAD_SIZE+1, we'll end
-> up
-> sending a record with a plaintext of TLS_MAX_PAYLOAD_SIZE+2 bytes
-> (TLS_MAX_PAYLOAD_SIZE+1 of payload, then 1B of content_type), and a
-> "normal" implementation will reject the record since it's too big
-> (ktls does that in net/tls/tls_sw.c:tls_rx_msg_size).
->=20
-> So we should subtract 1 from the userspace-provided value for 1.3,
-> and
-> then add it back in getsockopt/tls_get_info.
-Yeah good point. I will fix this up
->=20
-> Or maybe userspace should provide the desired payload limit, instead
-> of the raw record_size_limit it got from the extension (ie, do -1
-> when
-> needed before calling the setsockopt). Then we should rename this
-> "tx_payload_size_limit" (and adjust the docs) to make it clear it's
-> not the raw record_size_limit.
->=20
-> The "tx_payload_size_limit" approach is maybe a little bit simpler
-> (not having to add/subtract 1 in a few places - I think userspace
-> would only have to do it in one place).
->=20
->=20
-> Wilfred, Jakub, what do you think?
-I'm in favour of keeping the RFC definition, as this would mean
-userspace only has to worry about passing up the value received from
-the record size limit extension.
 
-For V4, I'll add a note in the docs regarding the TLS 1.3 ContentType,
-and fixup tx_record_size_limit to account for ContentType.
+ÔÚ 2025/9/12 ÏÂÎç3:46, Lukas Bulwahn Ð´µÀ:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Commit 5c83b07df9c5 ("tpm: Add a driver for Loongson TPM device") adds a
+> driver at drivers/char/tpm/tpm_loongson.c, and commit 74fddd5fbab8
+> ("MAINTAINERS: Add entry for Loongson Security Engine drivers") adds a new
+> section LOONGSON SECURITY ENGINE DRIVERS intending to refer to that driver.
+> It however adds the entry drivers/char/tpm_loongson.c; note that it misses
+> the tpm subdirectory.
+>
+> Adjust the entry to refer to the intended file.
+>
+> Fixes: 74fddd5fbab8 ("MAINTAINERS: Add entry for Loongson Security Engine drivers")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fa7f80bd7b2f..a1339a8bb705 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14537,7 +14537,7 @@ LOONGSON SECURITY ENGINE DRIVERS
+>   M:	Qunqin Zhao <zhaoqunqin@loongson.cn>
+>   L:	linux-crypto@vger.kernel.org
+>   S:	Maintained
+> -F:	drivers/char/tpm_loongson.c
 
-Regards,
-Wilfred
->=20
->=20
-> > +	ctx->tx_record_size_limit =3D value;
-> > +
-> > +	return 0;
-> > +}
+My bad, Thanks
+
+Best regards,
+
+Qunqin.
+
+> +F:	drivers/char/tpm/tpm_loongson.c
+>   F:	drivers/crypto/loongson/
+>   F:	drivers/mfd/loongson-se.c
+>   F:	include/linux/mfd/loongson-se.h
+
 
