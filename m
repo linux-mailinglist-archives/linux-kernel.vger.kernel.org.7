@@ -1,283 +1,89 @@
-Return-Path: <linux-kernel+bounces-821850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D455B82729
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1466B82727
 	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A931C242CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76E4A1C2429B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06357183CC3;
-	Thu, 18 Sep 2025 00:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A874672628;
+	Thu, 18 Sep 2025 00:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCkaMBJj"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjaWvIFI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980AE2869E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F112869E;
+	Thu, 18 Sep 2025 00:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758156744; cv=none; b=TvnJGm1PY8Ed6trWgiQZNHwARm2J4USqvMmfk26KiAtMGTYdz0LTS6hTkgDcqtWPAr1DrbqXrqPWNBYNXtvb6yFcHy2y8p5DK70dod/bS9A+PpaE/h0JXVEjucaDeaU1CJPgfIMA2kTYUfZakvDdPTAJW4eBe0+mO/VNZIgPxqY=
+	t=1758156749; cv=none; b=jxZUK8lb/FKwb5MCDNG7z4OTcp2/XKdd3DT9yy5upP/MXIDlgwBeyb96xlFoyWl2On/BrLUcdXjtJbBNS35q1RM0/pfC44GhiUAjKZ+/flWN1XPPr2MLtttjgHxxDyqfnfPRLFKwzZztNHT4vd13Ayl0SQ3oEvay9hCYRC53aC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758156744; c=relaxed/simple;
-	bh=jXrD0GXja0Lm3Lw3thdNtsHfNVThEO7c5zpe5BVTGFQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A8q7rqJtqoHd6l6RG2GBRq765Y6s5Q2FoBboaYK3T3lk8R/8LXIYHNDKPp8CNCum9mfy8syKW+ouHytQSHLMsbSXB2vpMlGRf7OzjLZdc9qrxx15v+3d4hInyIZv4oLacqM8y9NJkeyBAC+x8RPb96eQNtPvD+eY3xVK4rW4LuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCkaMBJj; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso404748b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:52:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758156742; x=1758761542; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Yxv7uLRKATc0Q07our50qKqXbkjD8v5tzWWZDxiVATo=;
-        b=YCkaMBJj5IZp/KaQBfXIKMeTQRJ6QULPr1uwZuFKc8SwTfG+A1k0R6K7TPxRGaD1of
-         eUJ3A7LDeCsCq0wxkUUpPAki4d4+VqWlImS/NX1rWIXTLhVTQ8n1MzPq5gqEQIHpTZ3a
-         krjt2Ty2aOlEfXVOhBYi3wWHFdxJYhfcVOfwU0mm0Bd97qJv4SBq1rU9m2zM7zXat7Ei
-         Y7GTpiqZsLkGBx6QQ86dzo+CJx8sI+9O+S6gNl3sMkLfVtgM7kSwR++tpQCAhQLaAfAS
-         MY3B3bJCk+CwFayjjoH+z1gfGJOGFoZ9YqEfIWaj0WxZw4NiSXyIPaM/RhnGcvJSNY8d
-         IrUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758156742; x=1758761542;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yxv7uLRKATc0Q07our50qKqXbkjD8v5tzWWZDxiVATo=;
-        b=nPN5n+fLRyZXdkpQQaICj6gv2RyqR1jQ1rocEcRNkKrkZymboFe1wrarCybGWhBjCC
-         mR3BJmyICIz+ua8OvZOS/S0z8Ty3YjSGUPtM0+1P1Rb99qAelEos2evhQpbFkMgxNqE2
-         tiLKJlkkah0opIrTnxMX1Zm1RtS18Hdw55LV+wI/XTCcEK8dAjj/GhE2irmJYnsKASSN
-         sYnM4zySlSXXsK+YyzT+mRlBIXf35G1JHln1UedJEbg2mHTCCa5W050S/o6ACLR8/j9q
-         8c7zfZdZwuZkFcAcATsXwl+PlqJVXgw2gfVFP317Uy6Lnb0Jffe0qeRbjTqUzg7HPOfP
-         acrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLV2iFGUpGAJiptiA4K0jprpAW9cu9sWYT7yO819uLUzpxPF9NhCxPhqi54YpziXO0wlLRwPUl7LxAzUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznUGtxm7fWqaHvEbH+8l0zRme8KziSVqOqjxEsNcecdQKmmpZl
-	apOPeonPJtQa01N5coXsKQRvMbnMj0tlskS4ngh3iw6CFZNeWsuHy/30
-X-Gm-Gg: ASbGnctQT8YNOS0boXR+QIwhBtUjKd4jjxyFHLhuKM2/br6LyylRvhyBJ0i/Gix6XRc
-	pIXKEXxCvuGikh7PwBDJKS23YTT1Yzsm9VJvhRjdG4RSk4ZTJGw0yiBooTcRZnWbKRhdh/aNaGn
-	6pc+buECfFzamBjJ4xvDn7B52cJ2LhdDCMgkjIrNFIWl4zMBoUxfYHMAZunZWod+7E7VagJvMx6
-	Yoh7P/ssRKgwfQaQzP8yjvmtGecxPGLB6kL1VyFGQXPbDaAVEUMJ3Gbdi+18gVJjKqA2Gj4bz7f
-	5ogsCxe88rO/t6OywEY/Vl41VtGxiU0b0tYprNhTyQb4TAHSspsvOV1RvA2yVOxj5KzSkVjSUhf
-	RWnJ1JLEzCTolml7UJpNiuDVCTcky5vDgkxGC39J5/tYoQKKB6O7uVViy
-X-Google-Smtp-Source: AGHT+IGXmmHPEnY6H6+5F3iPmqIk0vAxTrpXRFEvnkjQcLB0Mhgn7u+aK1yYyWHFr/7bekRJ625OwA==
-X-Received: by 2002:a05:6a00:2d9d:b0:772:4d52:ce5a with SMTP id d2e1a72fcca58-77bf926aa20mr4335425b3a.26.1758156741707;
-        Wed, 17 Sep 2025 17:52:21 -0700 (PDT)
-Received: from [192.168.0.69] ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfe66916csm594713b3a.51.2025.09.17.17.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 17:52:21 -0700 (PDT)
-Message-ID: <05dc7efdb45363358825ff3782d3006ef9c6cea4.camel@gmail.com>
-Subject: Re: [PATCH v3] net/tls: support maximum record size limit
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, 	horms@kernel.org, corbet@lwn.net,
- john.fastabend@gmail.com, netdev@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	alistair.francis@wdc.com, dlemoal@kernel.org
-Date: Thu, 18 Sep 2025 10:52:14 +1000
-In-Reply-To: <aLgVCGbq0b6PJXbY@krikkit>
-References: <20250903014756.247106-2-wilfred.opensource@gmail.com>
-	 <aLgVCGbq0b6PJXbY@krikkit>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758156749; c=relaxed/simple;
+	bh=1P7eWHurPGkhwCHExphone9WUR9mnSjMxc2kjomNamc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOQNPMBRrtQL79lrzi2dFoDPi/6oTQXgYZ7KEuYMYV5J5PEuj+v/FyajhEUXpQP6TWfkvVjdw+lNJfO/gyL0eE5AbJmal9iUem1E3edCbUKGX2Pfu/E0KzLmZ8BL+zW44US7XgMPRFKanSIzrolbpsD9Vp7Vs4y7sI5oPLw4jms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjaWvIFI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 228CEC4CEE7;
+	Thu, 18 Sep 2025 00:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758156748;
+	bh=1P7eWHurPGkhwCHExphone9WUR9mnSjMxc2kjomNamc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sjaWvIFIkcsSfrFhYAsb6myd9B5uWoIuLug3tVi9NUkdc7Wkma9lAZVapes0mVhPF
+	 i7DdlEANt/EPH7jkS3RYX8K+x77Fg6MwAobeT1d7bjaegXyZ603tLZScDF5TQLKvYL
+	 sUY3UKIyH4REsSwfsZMldqiRCmUeQYlD8hgfcosFn40R+AGWGuOGxhCtvvhZxOy7Az
+	 fV2m1Ev78ax/x8G2T8xrxGEQc1IKMtHN60V1HqDOLFe/bUpdGucTmOChN8W8h9TeUi
+	 z5YTiFCYC0NtPAbTXwAwaD/0BiUJZOr6mF0yjPeJzuOG2YI7P3ZTQ7un7aH3MoA3Qd
+	 xaBJMgsJdipCg==
+Date: Thu, 18 Sep 2025 09:52:26 +0900
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 2/5] dt-bindings: display/msm: dp-controller:
+ document QCS8300 compatible
+Message-ID: <20250918-icy-dainty-bumblebee-2cee76@kuoka>
+References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
+ <20250911-qcs8300_mdss-v12-2-5f7d076e2b81@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250911-qcs8300_mdss-v12-2-5f7d076e2b81@oss.qualcomm.com>
 
-Hey Sabrina,
+On Thu, Sep 11, 2025 at 07:24:02PM +0800, Yongxing Mou wrote:
+> Add compatible string for the DisplayPort controller found on the
+> Qualcomm QCS8300 SoC.
+> 
+> The Qualcomm QCS8300 platform comes with one DisplayPort controller
+> that supports 4 MST streams, similar to the one found on the SA8775P.
+> 
+> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-Sorry for the delay in getting back to this! Responded inline.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Wed, 2025-09-03 at 12:14 +0200, Sabrina Dubroca wrote:
-> note: since this is a new feature, the subject prefix should be
-> "[PATCH net-next vN]" (ie add "net-next", the target tree for "new
-> feature" changes)
->=20
-> 2025-09-03, 11:47:57 +1000, Wilfred Mallawa wrote:
-> > diff --git a/Documentation/networking/tls.rst
-> > b/Documentation/networking/tls.rst
-> > index 36cc7afc2527..0232df902320 100644
-> > --- a/Documentation/networking/tls.rst
-> > +++ b/Documentation/networking/tls.rst
-> > @@ -280,6 +280,13 @@ If the record decrypted turns out to had been
-> > padded or is not a data
-> > =C2=A0record it will be decrypted again into a kernel buffer without
-> > zero copy.
-> > =C2=A0Such events are counted in the ``TlsDecryptRetry`` statistic.
-> > =C2=A0
-> > +TLS_TX_RECORD_SIZE_LIM
-> > +~~~~~~~~~~~~~~~~~~~~~~
-> > +
-> > +During a TLS handshake, an endpoint may use the record size limit
-> > extension
-> > +to specify a maximum record size. This allows enforcing the
-> > specified record
-> > +size limit, such that outgoing records do not exceed the limit
-> > specified.
->=20
-> Maybe worth adding a reference to the RFC that defines this
-> extension?
-> I'm not sure if that would be helpful to readers of this doc or not.
-Good idea, I'll add that in.
->=20
->=20
-> > diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-> > index a3ccb3135e51..94237c97f062 100644
-> > --- a/net/tls/tls_main.c
-> > +++ b/net/tls/tls_main.c
-> [...]
-> > @@ -1022,6 +1075,7 @@ static int tls_init(struct sock *sk)
-> > =C2=A0
-> > =C2=A0	ctx->tx_conf =3D TLS_BASE;
-> > =C2=A0	ctx->rx_conf =3D TLS_BASE;
-> > +	ctx->tx_record_size_limit =3D TLS_MAX_PAYLOAD_SIZE;
-> > =C2=A0	update_sk_prot(sk, ctx);
-> > =C2=A0out:
-> > =C2=A0	write_unlock_bh(&sk->sk_callback_lock);
-> > @@ -1065,7 +1119,7 @@ static u16 tls_user_config(struct tls_context
-> > *ctx, bool tx)
-> > =C2=A0
-> > =C2=A0static int tls_get_info(struct sock *sk, struct sk_buff *skb, boo=
-l
-> > net_admin)
-> > =C2=A0{
-> > -	u16 version, cipher_type;
-> > +	u16 version, cipher_type, tx_record_size_limit;
-> > =C2=A0	struct tls_context *ctx;
-> > =C2=A0	struct nlattr *start;
-> > =C2=A0	int err;
-> > @@ -1110,7 +1164,13 @@ static int tls_get_info(struct sock *sk,
-> > struct sk_buff *skb, bool net_admin)
-> > =C2=A0		if (err)
-> > =C2=A0			goto nla_failure;
-> > =C2=A0	}
-> > -
-> > +	tx_record_size_limit =3D ctx->tx_record_size_limit;
-> > +	if (tx_record_size_limit) {
->=20
-> You probably meant to update that to:
->=20
-> =C2=A0=C2=A0=C2=A0 tx_record_size_limit !=3D TLS_MAX_PAYLOAD_SIZE
->=20
-> Otherwise, now that the default is TLS_MAX_PAYLOAD_SIZE, it will
-> always be exported - which is not wrong either. So I'd either update
-> the conditional so that the attribute is only exported for non-
-> default
-> sizes (like in v2), or drop the if() and always export it.
->=20
-Yeah, that makes sense I'll drop the If() so that it's always exported
-then.
-> > +		err =3D nla_put_u16(skb,
-> > TLS_INFO_TX_RECORD_SIZE_LIM,
-> > +				=C2=A0 tx_record_size_limit);
-> > +		if (err)
-> > +			goto nla_failure;
-> > +	}
->=20
-> [...]
-> > diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
-> > index bac65d0d4e3e..28fb796573d1 100644
-> > --- a/net/tls/tls_sw.c
-> > +++ b/net/tls/tls_sw.c
-> > @@ -1079,7 +1079,7 @@ static int tls_sw_sendmsg_locked(struct sock
-> > *sk, struct msghdr *msg,
-> > =C2=A0		orig_size =3D msg_pl->sg.size;
-> > =C2=A0		full_record =3D false;
-> > =C2=A0		try_to_copy =3D msg_data_left(msg);
-> > -		record_room =3D TLS_MAX_PAYLOAD_SIZE - msg_pl-
-> > >sg.size;
-> > +		record_room =3D tls_ctx->tx_record_size_limit -
-> > msg_pl->sg.size;
->=20
-> If we entered tls_sw_sendmsg_locked with an existing open record,
-> this
-> could end up being negative and confuse the rest of the code.
->=20
-> =C2=A0=C2=A0=C2=A0 send(MSG_MORE) returns with an open record of length l=
-en1
-> =C2=A0=C2=A0=C2=A0 setsockopt(TLS_INFO_TX_RECORD_SIZE_LIM, limit < len1)
-> =C2=A0=C2=A0=C2=A0 send() -> record_room < 0
->=20
->=20
-> Possibly not a problem with a "well-behaved" userspace, but we can't
-> rely on that.
-Good catch! what if we don't allow tx_record_size_limit to be set if
-there's a pending open record. This should avoid userspace from atleast
-causing the record_room < 0 if we somehow end up there.
+Best regards,
+Krzysztof
 
-So for example:
-
-diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index 7c0367dc5d40..34bb6690016c 100644
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -841,20 +841,27 @@ static int
-do_tls_setsockopt_tx_record_size(struct sock *sk, sockptr_t optval,
-                                            unsigned int optlen)
- {
-        struct tls_context *ctx =3D tls_get_ctx(sk);
-+       struct tls_sw_context_tx *sw_ctx =3D tls_sw_ctx_tx(ctx);
-        u16 value;
-=20
-+       if (sw_ctx->open_rec)
-+               return -EBUSY;
-...
-
-And to your follow up response:
-
-```
-> I suspect it's not a problem in practice because of what the TLS
-> exchange between the peers setting up this extension looks like? (ie,
-> there should never be an open record at this stage - unless userspace
-> delays doing this setsockopt after getting the message from the peer,
-> but then maybe we can call that a buggy userspace)
-```
-
-Yeah, record size limit extension occurs during a handshake
-(Client/ServerHello). AFAIK, all of that is handled in tlshd/GnuTLS. We
-shouldn't have any open records here at this point. For user-space
-context, this is what support for record size limit looks like [1] in
-tlshd.
-
-If for whatever reason, as you mentioned, userspace decides to set it
-later, change above could mitigate it for the open record case? I don't
-think we need to try to fix things (or even can for records already
-submitted to TCP) in the kernel.
-
-[1]
-WIP:https://github.com/twilfredo/ktls-utils/commit/73cb755acb4589ba31e4c42e=
-f6b16cf5efdf3892
->=20
->=20
-> Pushing out the pending "too big" record at the time we set
-> tx_record_size_limit would likely make the peer close the connection
-> (because it's already told us to limit our TX size), so I guess we'd
-> have to split the pending record into tx_record_size_limit chunks
-> before we start processing the new message (either directly at
-> setsockopt(TLS_INFO_TX_RECORD_SIZE_LIM) time, or the next send/etc
-> call). The final push during socket closing, and maybe some more
-> codepaths that deal with ctx->open_rec, would also have to do that.
->=20
-> I think additional selftests for
-> =C2=A0=C2=A0=C2=A0 send(MSG_MORE), TLS_INFO_TX_RECORD_SIZE_LIM, send
-> and
-> =C2=A0=C2=A0=C2=A0 send(MSG_MORE), TLS_INFO_TX_RECORD_SIZE_LIM, close
-> verifying the received record sizes would make sense, since it's a
-> bit
-> tricky to get that right.
-Yeah I agree, I will work on that. Thanks for the feedback!
-
-Regards,
-Wilfred
 
