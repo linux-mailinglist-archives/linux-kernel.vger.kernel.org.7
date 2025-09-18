@@ -1,157 +1,198 @@
-Return-Path: <linux-kernel+bounces-822175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5A6B8338E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:53:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E8CB8339A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E886C3AA4FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 742552A6125
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D4A2E1EFF;
-	Thu, 18 Sep 2025 06:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C092DECA3;
+	Thu, 18 Sep 2025 06:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="caNOf/8b"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jqFLCJum"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865F927B4F7
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1CA208A7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758178424; cv=none; b=SL2VfDLiSjz2LsW3z3QNmG9yrxhtFFjYDGvDI9vSS2eOM1I2TKa50uO+I6IBWCCpHZo4Cpyoez4kcCd6/8ny2A9PWa6MhoH0BMjiRqIDgeOessVaPizH31hBLir0RqFruhQ+L1aSLfVXQVTGYday8AFQkN9VWF+BsUjsL/I+/Ps=
+	t=1758178617; cv=none; b=G/abZB5JZJWG6n2zfJCHI9E3B1SaaLQ0Vu/CoGaicIclZvGP/qap77w8Wg2xrsN781YpkxeU7qB9IHUf8H5e/xQNyLLlckcuG8HpqsTyfOaCf8LFa9eT7YJ948ha2GCUFAEZ+/xUmj0MCZvtci2LCSX+dmuOI5msHr4CG71fPkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758178424; c=relaxed/simple;
-	bh=D2tnMC/HBE68esSjs5GaQ2p4LH2Hgz5G8pAkimgNE84=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=crZHdr9LWMzyOQmw0Rlfzx86pDb/8RwXB74eph2aNoXqblrCHWJEgPrGxxFdIjIFtPIlvHyNHmZSniSr7u+2gys1THnqqTef8Fy72OT+QIsBk5u0mqPhtWVa2S4gzFiyyt0BWG1Q7vRAavxRpnRpjQwaQJ0Vr/Ym9ET/jVULdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=caNOf/8b; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269880a7bd9so5672295ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758178423; x=1758783223; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kdY8CdA7D7v7QlqIXdHWhklcBLDBGklkP9F/ba8VEO0=;
-        b=caNOf/8b48DxO/KqrqevaCee6mjBDFns47DuHJyN8FGo1seRsHuT+EAzls3ObpSEW1
-         OnNvaS7JxBPSIYSoUUd69gqjrrYxhhFtap+BZRJq4Y4UDk/o8yGru9CDRQDQzYw6ykXb
-         0JDsIz/zy5ON5XyCOcw1YxO5agigrZ8TG+2WgmoTd63OfvEcRnPKYWLeUQGaXNiK+dNn
-         Wuvlznw6r7U9/hFfJ4RUsREPjPDuRfMlS15pO+GdOvwl3tLHdPRdOqVmlmP2P+UPYdY1
-         NDhRvNFIZtEObbScuDyscHE32WeaOdZRNYwD30KmY+i2GylczUb+UT+kj+BodNNCS1pQ
-         c4sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758178423; x=1758783223;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kdY8CdA7D7v7QlqIXdHWhklcBLDBGklkP9F/ba8VEO0=;
-        b=oa8qXLCbAz/K1RXngEF2BeV7KpbzNHWKr0eUY2YXbMUqwnJKpE9APTlNKeuZBUnqMJ
-         UXi25Th8VjT5mlR2GaEkgCOzuSJdX+lua+0r6VXStJCNuk+uEvfLXzlWh/fGNVf2rizN
-         9zhRGDeEkLMDzSSvL1SZeS9mnPheQJ9KChLjkUdCSE19UJ1bDVXSx7/3lrtPzZKZQAQA
-         vkmwvnnRtHBQmJfGR2x0DoellK3TmzDHDsblkjjYrkIOhS2eeA9cAI0GzLUM7sM+z6Lq
-         wK3XaW40YCVkG49ps42/8oxnmi5uN2Urw49p3f0koUTwSxAWjx2BeNLCaCB7aIYOgYrp
-         k8rA==
-X-Forwarded-Encrypted: i=1; AJvYcCWclpQCmwx9wIJB+jRUdbQlvxN0jbxGqIs1231dRs5wTR9xTH7nt1Ng+gc7B45Out746h6HYQvnG6N7nec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpI9EyGIonvDsQzE5vQZlIqgPf5jY16dxzpwsYZdZ0jsddHr2V
-	qeuqsCCjpmWS2T39cxUcg92qpCMYiMwK/GmyrjX4eTJCeK/PjxbBX6RBz9JG0b/pWY/Suuji59m
-	PGYRxARhrasVK/F+Raf3TmsAu/w==
-X-Google-Smtp-Source: AGHT+IH4/xFas5qH9WkGtquuXdWcMilu78LEjzqF2BsDWfyKCYslt2SGwsXQ1h75MU0H2eQyEYDJZApNSPXmxa7tZQ==
-X-Received: from pjff12.prod.google.com ([2002:a17:90b:562c:b0:32e:ddac:6ea5])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ef0f:b0:24c:965a:f97e with SMTP id d9443c01a7336-26811ba541dmr70869245ad.2.1758178422688;
- Wed, 17 Sep 2025 23:53:42 -0700 (PDT)
-Date: Thu, 18 Sep 2025 06:53:41 +0000
-In-Reply-To: <20250916222801.dlew6mq7kog2q5ni@amd.com>
+	s=arc-20240116; t=1758178617; c=relaxed/simple;
+	bh=AUnggU8SIwRLVQWpvVp5rs+tK6mEbR8WSnsx2HPE3yk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ICeo4E72D0OYtZkS2J64xA2I+Nl+aUFxMKcq3qRIh1kRC8ZQKNBPgJxuPZk9UXYpSWzH66nbchNKGw/CwXM58eicYEuAZAiPwZy3S1If43pPNh78iBtIpWUNFR3Hm5Q21pI/gEPxB1m77oPDhTJJj+FnwNibadDrdfQQcS1NwfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jqFLCJum; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I5vad7012241;
+	Thu, 18 Sep 2025 06:56:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DchfFO
+	ibIA/BQXU5pOmwyka3D2iVlhZ/ewgmfO7fqmQ=; b=jqFLCJumqFYQwXRKysMlUD
+	WWS9B2Ht4KlSsQ7yRmuaxpmltQKg2I9lZJJ3wstXFwoMUfa3nefVFAn5OhqhsAWB
+	DfV3AnWg7W7sTgdXSA6xwmnPIOxNWyUTg0S5YFxy01/oKn427RPashdWjV/KUItp
+	yzOI8mc+WYfu0Tzy4YYjz678sd8bdbvm4m4p52JZ7ZKxt/LfXtMkf525mbLUG0ED
+	Xvcw3jfys1IR+wj2holSKEbYw/ob9R0W1tnRhwaXURdbFS+FY8gWV4f07anBmYle
+	R7qYSm6TBgCLCIHUJaInz6stfnKyIgLICRVLFBnVBgOkilGXU9roQG3KBWaobJyg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4j8jhe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 06:56:11 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58I6uAWV022879;
+	Thu, 18 Sep 2025 06:56:10 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4j8jhc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 06:56:10 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58I4lFpc005963;
+	Thu, 18 Sep 2025 06:56:09 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 495jxudjhq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 06:56:09 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58I6u5xD51052894
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Sep 2025 06:56:05 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4BA8A20043;
+	Thu, 18 Sep 2025 06:56:05 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12DBD20040;
+	Thu, 18 Sep 2025 06:55:57 +0000 (GMT)
+Received: from [9.109.209.61] (unknown [9.109.209.61])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 18 Sep 2025 06:55:56 +0000 (GMT)
+Message-ID: <6a6de5ca-d105-466b-b44a-8bf084f2a924@linux.ibm.com>
+Date: Thu, 18 Sep 2025 12:25:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <2ae41e0d80339da2b57011622ac2288fed65cd01.1747264138.git.ackerleytng@google.com>
- <20250916222801.dlew6mq7kog2q5ni@amd.com>
-Message-ID: <diqzh5x0p7yi.fsf@google.com>
-Subject: Re: [RFC PATCH v2 35/51] mm: guestmem_hugetlb: Add support for
- splitting and merging pages
-From: Ackerley Tng <ackerleytng@google.com>
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com, 
-	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
-	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
-	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC V2 7/8] powerpc: Enable IRQ generic entry/exit path.
+To: Shrikanth Hegde <sshegde@linux.ibm.com>,
+        Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>, maddy@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu
+Cc: oleg@redhat.com, kees@kernel.org, luto@amacapital.net, wad@chromium.org,
+        deller@gmx.de, ldv@strace.io, macro@orcam.me.uk, charlie@rivosinc.com,
+        akpm@linux-foundation.org, bigeasy@linutronix.de,
+        ankur.a.arora@oracle.com, naveen@kernel.org,
+        thomas.weissschuh@linutronix.de, Jason@zx2c4.com, peterz@infradead.org,
+        tglx@linutronix.de, namcao@linutronix.de, kan.liang@linux.intel.com,
+        mingo@kernel.org, oliver.upton@linux.dev, mark.barnett@arm.com,
+        atrajeev@linux.vnet.ibm.com, rppt@kernel.org, coltonlewis@google.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20250908210235.137300-2-mchauras@linux.ibm.com>
+ <20250908210235.137300-10-mchauras@linux.ibm.com>
+ <589f259e-1db9-4ec2-accc-b27966d09a3e@linux.ibm.com>
+Content-Language: en-US, en-IN, en-GB
+From: Mukesh Kumar Chaurasiya <mkchauras@linux.ibm.com>
+In-Reply-To: <589f259e-1db9-4ec2-accc-b27966d09a3e@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Qf5mvtbv c=1 sm=1 tr=0 ts=68cbad0b cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=q5CvZCToSJJqjgns3BoA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: IUAX_AP3EfalgYdLro8ulS_vbTnlZPn5
+X-Proofpoint-GUID: 2Okb0Q0M4TVWHetba6bcmpHlWN1t0k3g
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfXw1g9te6O2pOb
+ rUM9pLlvWVxarW8Kehn6rEjCE98eFiQWC/Mg3Vome2eofKa2DNEX3xl+RXdBkxV/eO6Q4/nfSky
+ bNHePQZHKxL/BtVKXhLUi5d7tFQUwqW3RM9kcwQKPb9ggqOjMG2qqfjyWLDku0TWQucfkIx23WI
+ jwMjgSfVGKiB3C3loyQgGvhJSQ5Rj2ciHnnNMpc3KDzJXOAyCdO72sCIl0s0ViZRK8ro0Nyhm80
+ /vq5Ju3iNzD/FRc/jv1ETdat/B82Jw1ZlJ6Agt5/+AGoowuBgaMHq7iIXcp+D91DVjQ7y8GgFAq
+ qgBg8CJQsImg7vSi8NRt4Kue11lkH6xSR2XMs/I4JRZncQGIeEU+FGEmadjcoUoVlVUAP3Ok2qf
+ EK9YCzrc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-18_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 phishscore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160204
 
-Michael Roth <michael.roth@amd.com> writes:
 
-> On Wed, May 14, 2025 at 04:42:14PM -0700, Ackerley Tng wrote:
->> 
->> [...snip...]
->> 
+On 9/16/25 9:46 AM, Shrikanth Hegde wrote:
 >
-> Hi Ackerley,
 >
-> We've been doing some testing with this series on top of David's
-> guestmemfd-preview branch with some SNP enablement[1][2] to exercise
-> this code along with the NUMA support from Shivank (BTW, I know you
-> have v3 in the works so let me know if we can help with testing that
-> as well).
+> On 9/9/25 2:32 AM, Mukesh Kumar Chaurasiya wrote:
+>> Enable generic entry/exit path for ppc irq.
+>>
+>> Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+>> ---
+>>   arch/powerpc/Kconfig                    |   1 +
+>>   arch/powerpc/include/asm/entry-common.h |  93 ++---
+>>   arch/powerpc/include/asm/interrupt.h    | 492 +++---------------------
+>>   arch/powerpc/kernel/interrupt.c         |   9 +-
+>>   arch/powerpc/kernel/interrupt_64.S      |   2 -
+>>   5 files changed, 92 insertions(+), 505 deletions(-)
+>>
+>                                 \
+>> diff --git a/arch/powerpc/kernel/interrupt.c 
+>> b/arch/powerpc/kernel/interrupt.c
+>> index f53d432f60870..7bb8a31b24ea7 100644
+>> --- a/arch/powerpc/kernel/interrupt.c
+>> +++ b/arch/powerpc/kernel/interrupt.c
+>> @@ -297,13 +297,8 @@ notrace unsigned long 
+>> interrupt_exit_kernel_prepare(struct pt_regs *regs)
+>>           /* Returning to a kernel context with local irqs enabled. */
+>>           WARN_ON_ONCE(!(regs->msr & MSR_EE));
+>>   again:
+>> -        if (need_irq_preemption()) {
+>> -            /* Return to preemptible kernel context */
+>> -            if (unlikely(read_thread_flags() & _TIF_NEED_RESCHED)) {
+>> -                if (preempt_count() == 0)
+>> -                    preempt_schedule_irq();
+>> -            }
+>> -        }
+>> +        if (need_irq_preemption())
+>> +            irqentry_exit_cond_resched();
 >
+> irqentry_exit_cond_resched is also called in irqentry_exit. It would 
+> be better if we can find ways to avoid calling it again.
+>
+> I see a loop here. But comment says it is not enabling irq again. so 
+> the loop is bounded. So might be okay to remove cond_resched here. do run
+> preemptirq, irq tracers to ensure that is case.
+>
+Sure.
+> Also, what is this "soft_interrupts"?
 
-Thank you for offering! I'm quite backed up now with some internal
-work. Will definitely appreciate all the help I can get once I manage to
-push out an RFCv3!
+You mean soft masked interrupts?
+It's a mechanism to buffer interrupts without disabling the ee bit so 
+that we can replay those interrupts later.
 
-> One issue we hit is if you do a split->merge sequence the unstash of the
-> private data will result in folio_test_hugetlb_vmemmap_optimized() reporting
-> true even though the hugetlb_vmemmap_optimize_folio() call hasn't been
-> performed yet, and when that does get called it will be skipped, so some HVO
-> optimization can be lost in this way.
+>>             check_return_regs_valid(regs);
+>>   diff --git a/arch/powerpc/kernel/interrupt_64.S 
+>> b/arch/powerpc/kernel/interrupt_64.S
+>> index 1ad059a9e2fef..6aa88fe91fb6a 100644
+>> --- a/arch/powerpc/kernel/interrupt_64.S
+>> +++ b/arch/powerpc/kernel/interrupt_64.S
+>> @@ -418,8 +418,6 @@ _ASM_NOKPROBE_SYMBOL(interrupt_return_\srr\())
+>>       beq    interrupt_return_\srr\()_kernel
+>>   interrupt_return_\srr\()_user: /* make backtraces match the _kernel 
+>> variant */
+>>   _ASM_NOKPROBE_SYMBOL(interrupt_return_\srr\()_user)
+>> -    addi    r3,r1,STACK_INT_FRAME_REGS
+>> -    bl    CFUNC(interrupt_exit_user_prepare)
+>>   #ifndef CONFIG_INTERRUPT_SANITIZE_REGISTERS
+>>       cmpdi    r3,0
+>>       bne-    .Lrestore_nvgprs_\srr
 >
-> More troublesome however is if you later split the folio again,
-> hugetlb_vmemmap_restore_folio() may cause a BUG_ON() since the flags are in a
-> state that's not consistent with the state of the folio/vmemmap.
->
-> The following patch seems to resolve the issue but I'm not sure what the
-> best approach would be:
->
->   https://github.com/AMDESE/linux/commit/b1f25956f18d32730b8d4ded6d77e980091eb4d3
->
-
-I saw your reply on the other thread. Thanks for informing me :)
-
-> Thanks,
->
-> Mike
->
-> [1] https://github.com/AMDESE/linux/commits/snp-hugetlb-v2-wip0/
-> [2] https://github.com/AMDESE/qemu/tree/snp-hugetlb-dev-wip0
 
