@@ -1,133 +1,139 @@
-Return-Path: <linux-kernel+bounces-821881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF37B828AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:45:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226B2B828C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11EE622EE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:44:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E0E2A3A73
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FE723958C;
-	Thu, 18 Sep 2025 01:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYjQJf2w"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977431A5B8A;
+	Thu, 18 Sep 2025 01:46:32 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8568A230D14
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC9915C158
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758159894; cv=none; b=gdFZNMm40Xb1y8Z2Mb+h3PhA+cuSpIJYwC7gWJWTNY9dyKIFe3zrk7z+dE4KonLbTL2PBIbfFimx3Y6oxci3E6kamPE+YniOtBp+yCCiOlla3elvOM1alEquTpTt/Bl+9pwvqFwPArGA6pjjVHq9bggmCah4wpRMHHYJDgUsUxA=
+	t=1758159992; cv=none; b=Nn3tR2Ev2LcQumLxEjefGqyFpg5ctN8N78VOR+0VWYUFrrEIMs4JmNgZ2YnBc3eTdzWnrAmwVEdNi/i7jFImGs7kADHpqd02hgDhbhOd78RWlPvXyutSrbNxTf82x/PXzS2ariO/AF1zzdKSCQvx4ML6w19yFGI0BMsJe3paxCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758159894; c=relaxed/simple;
-	bh=ckofcSJyVceBJiaHInKCfYw0lV6zDNQ56NxqvQs/lmk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CG7X/KwJhpijPtIQi84G1rYtvupIkEiCeGUtH8XrZvusq51zTYE0MOmw3oW7392CUc+0H0gH43AVOJZfhTM8LJbkGMR6CAgYNYi8pzPQqt+WXNTGKgcMt/1w8oR8v2ynRbFXtKBvJHn/lCiuqsDtSLPs18RirpIDPbGj+Al2cYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYjQJf2w; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3515a0bca13so17723051fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758159891; x=1758764691; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dz7+GW3tG6h1ZR0T3uG4mrds5eW7kOQK7SR5mlNPDFE=;
-        b=CYjQJf2w5nSfPM3bFzl03AJKDG3PD3aFvkZz3cMhcWVngb6mkKPbe/Psb9n1/PmYrv
-         SX9ruzNoXVTGja3upaudGFDknoS2APk0uBw9DRq+nNFRjLraiwiVGCjnUfpv9Nr5KLXM
-         dKeENMTLAEet3G14HsX2+/I8cTVJc6I0RJ7xqJ0UgLmo1vO+SrxETz6YAdpFp966qFzz
-         Dc4KpzI6g0hUmYIblQk46V0jJtJ+oG3QS0k9bFO2i7jn/oeuLQN2Qb5xPmHvnKsbRrhn
-         hEjjSidHeoW3UKbfZDcuYfBbtmUqCQw/dohG0A0J8LuSy4iDyYtzOs01PsOQ9E0PvYRh
-         n2Vw==
+	s=arc-20240116; t=1758159992; c=relaxed/simple;
+	bh=EcIm17rXLTyT6VggB8jdgilUv/GURJk+vhDCT+eHjtE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EfaOo/rDT/Og+3MSVV8skopqY2aAh44WlePCLlZxwYTNeYrD6iyUwotCT7702vOORBx3xmuDNJM1nbKJwBurPacWp59VFGC2lVkB8Ue1XyAxgoRsBnMG5ZCo7xl/RwWeImEdLEf0mnWgN8Q4oa9DHH5gKrU9kQKlE9BNmTCxSfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42408b5749aso23421075ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:46:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758159891; x=1758764691;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dz7+GW3tG6h1ZR0T3uG4mrds5eW7kOQK7SR5mlNPDFE=;
-        b=wJ654hArMsgEfTuslc9KLlTxjnwimJQApmOiixjZ3DzpSet2dOUiWTxJ1mzSWmTImp
-         HGGGqL8eO+ZaIAAaw1SNxIaXb5f1wE6Q5PAG2XrYWXgkrWdoeTOaepxnIr3VhL7WlW29
-         t7FBc+D+hi6Pli8pgOT54Z74visq3+yvckZr0XP/cllqz0jfzjtxnX4223d0iZxDdw7h
-         RC2pS2F0DFAajAZq8J0o6P7s6niLBooAn9RVp2NsTLsK8kMV/wCs/eNce3TeLk5p0dtv
-         RwOtmTXrPw+vBEm9UWl/X8zDobQnnSzXPsB0t32qQEcn99318zQONfzbBKFX0RVDbGJX
-         Clzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBoQ/AJDPnAxtGPze+XnKjvpp9K5cUbn4BQX+hzUB2l+gtxlavNzfxgTIMwcIjEYNFV3L3aaLbAHrMKhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvoVdhv0vzuHPKJUCIRqAMXNrhMW7/E5Z0YYGwq9U/qlIGyqHi
-	N7VPbM4sTOLTMkBi4QrfjseWjWAqWT85/3okAZij2QBRiyO/zqJs7bacFnav8X+jWfkNX4ClgKp
-	AA2n43eM8uQiZ8L7+F001yVMbNnSLXTI=
-X-Gm-Gg: ASbGnct2yRjj1Pxrq401NXNdZjgFGiqTqMKIGrGQ0KhCO0u7rEK3z+J5fY0whjTaqh7
-	dmbnLl78evn3BaWYLFx332V2CBL0PEOGZtTSpYptS77jHmKKTM22XBozf54JyQVePr3Ffo6M7E5
-	eeBwzuqEgvTKjtCHF+ae9JUavM7UNwcK+1yzRFtLlLAoPqmc1PFfo1VVwNdupIvYjH72ngrQO86
-	JGTTKLxqHvjwkIl5qOskLVVsAWAwyQRUS4SCGuHUNqcKcGG6ZNju4QQycyML2Pq0aNGCn3Ip2TF
-	9MwOUZo05GoPtoJKcTmeXA9k8/RDfzxW5Rl6mlBzStfaH0pcfF9pB2f92uC6hkWihEg=
-X-Google-Smtp-Source: AGHT+IGKY+1+g/lwbiYKvlfzeD60pboVHy/VushKXhZ9OREfWE89ojCi15z0JD4b0huoAPEOkCpfqDMpDym4MFAiCK8=
-X-Received: by 2002:a05:651c:31ca:10b0:336:e22d:804a with SMTP id
- 38308e7fff4ca-3617d39f44cmr3083251fa.17.1758159890386; Wed, 17 Sep 2025
- 18:44:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758159989; x=1758764789;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h+zf4uv5RriG06k13quUnb48BuEdN08q1RtC6J5Rl/Q=;
+        b=qMgOq7lFXbR6xmPSHThfnyqaOXEXO0DzS8uxoJw+9beS4NwKTF4qnVm1vtt0/FyAv8
+         5wZlfkR/T6IeISbRo5h1AnBQgiZycLrm23NRjrTwQOlWaRKsnQCvc0Ho3DU0+Lld2pgO
+         XpuePBBqhj6C3c7DnsfCGPigixp0PxhTlWAzhpoCFXwXo24obAX0iyf0+bM79zam4Ykn
+         HdCFet5qJglss9mGaoYWDFOj6qNcI4MYvKnCgjwGlXNsCHeU7rNoFB1WS2xpxVEeZ9qz
+         FdNu9dj/UBoGA8puKrkmq7Hpdf+Csd+CTCcsulGRTGakRGkXO7kFgdknz4Sy4aCkhsBp
+         qb6g==
+X-Gm-Message-State: AOJu0YwrTp8x/o+ZiU7CLKtcL1I+dTHDAJ16L8qfMFbvfklVgeSShPqm
+	yoFRtrfQfPIzThQbGPG7PSvNKwBdt0UeurBKd7ivwsp/NVyz5p35EiOpEM1gQgA9f6QX+cLs8jj
+	P6g31bi0BdhaNq7C5evQl8oPrFCvZzJ37ln96r07hkKbplPa/e6iE7zGK9bDHiQ==
+X-Google-Smtp-Source: AGHT+IFceJ1+o2gPB/SiAz4HbNXZXtPed2iLd3/IKy85zA3HuRbwALvEMdKIFAPybBnP27o5F+vfjOZyQ2bK0F2PId7RovZWfqKE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
- <20250916-judyln-dts-v2-3-5e16e60263af@postmarketos.org> <772be3c8-751b-4f96-8ed1-fc8033babe74@oss.qualcomm.com>
-In-Reply-To: <772be3c8-751b-4f96-8ed1-fc8033babe74@oss.qualcomm.com>
-From: Chris Brown <crispybrown@gmail.com>
-Date: Wed, 17 Sep 2025 21:44:38 -0400
-X-Gm-Features: AS18NWAao7zpfSXjjoiJ5q_TqFb4cFreK3KCd3ZLhmeDLmO-Gp6sqoEX-RaJuZg
-Message-ID: <CABN5=wHEGyCOc5XoON=oVFUJUPaAn3B1QQDvP+ZZPYi+ULitpg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/13] arm64: dts: qcom: sdm845-lg-judyln: Add battery
- and charger
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Paul Sajna <sajattack@postmarketos.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	David Heidelberg <david@ixit.cz>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
-	Amir Dahan <system64fumo@protonmail.com>
+X-Received: by 2002:a05:6e02:dc6:b0:3fa:9b12:9e3b with SMTP id
+ e9e14a558f8ab-424414d520bmr22551605ab.5.1758159989697; Wed, 17 Sep 2025
+ 18:46:29 -0700 (PDT)
+Date: Wed, 17 Sep 2025 18:46:29 -0700
+In-Reply-To: <68caec73.050a0220.2ff435.0595.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cb6475.050a0220.3c6139.0fab.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in __vhost_task_wake
+From: syzbot <syzbot+a1a3cefd6148c781117c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
 
-Source https://github.com/EmanuelCN/android_kernel_lge_sdm845/blob/U/arch/arm64/boot/dts/lge/sdm845-battery/LGE_BLT39_LGC_3000mAh.dtsi
-Small assumption on my part that "fg-cutoff-voltage" has the same
-meaning as "voltage-min-design-microvolt"
+syzbot has found a reproducer for the following issue on:
 
-On Wed, 17 Sept 2025 at 09:47, Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 9/17/25 3:09 AM, Paul Sajna wrote:
-> > From: Christopher Brown <crispybrown@gmail.com>
-> >
-> > Values based on lineageos kernel
->
-> A link for reference would be nice to see
->
-> >
-> > Signed-off-by: Christopher Brown <crispybrown@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-> > index 49225e4fa80e5f45a36964d5d733dc238e4413f8..be488891d0ab01c5bfd3762514fbf1c3bbf6845a 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
-> > @@ -37,6 +37,14 @@ key-thinq {
-> >                       interrupts = <89 IRQ_TYPE_LEVEL_LOW>;
-> >               };
-> >       };
-> > +
-> > +     battery: battery {
-> > +             compatible = "simple-battery";
-> > +
-> > +             charge-full-design-microamp-hours = <3000000>;
-> > +             voltage-min-design-microvolt = <3200000>;
->
-> 3.2 is rather low.. are you sure?
->
-> Konrad
+HEAD commit:    ae2d20002576 Add linux-next specific files for 20250917
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11678f62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d737cfaddae0058c
+dashboard link: https://syzkaller.appspot.com/bug?extid=a1a3cefd6148c781117c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1790ef62580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10242534580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/96197382e3c0/disk-ae2d2000.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/55a8a6ba3307/vmlinux-ae2d2000.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c1b4ed5d6e2c/bzImage-ae2d2000.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a1a3cefd6148c781117c@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: kernel/vhost_task.c:97 at __vhost_task_wake+0xbb/0xd0 kernel/vhost_task.c:97, CPU#0: syz.0.174/6507
+Modules linked in:
+CPU: 0 UID: 0 PID: 6507 Comm: syz.0.174 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:__vhost_task_wake+0xbb/0xd0 kernel/vhost_task.c:97
+Code: 38 00 74 08 48 89 df e8 93 81 95 00 48 8b 3b 5b 41 5e 41 5f e9 a6 45 01 00 e8 31 ef 30 00 90 0f 0b 90 eb 8b e8 26 ef 30 00 90 <0f> 0b 90 5b 41 5e 41 5f e9 18 c7 ff 09 cc 0f 1f 80 00 00 00 00 90
+RSP: 0018:ffffc90003b7f680 EFLAGS: 00010293
+RAX: ffffffff818f2d7a RBX: ffff888033c7c400 RCX: ffff88802bc85ac0
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+RBP: ffffc90003b7f750 R08: ffff888033c7c477 R09: 1ffff1100678f88e
+R10: dffffc0000000000 R11: ffffed100678f88f R12: 1ffff9200076fed8
+R13: dffffc0000000000 R14: 0000000000000002 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff88812579c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9942aa0f98 CR3: 0000000027bfc000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ vhost_worker_queue+0x194/0x260 drivers/vhost/vhost.c:253
+ __vhost_worker_flush+0x134/0x1e0 drivers/vhost/vhost.c:290
+ vhost_worker_flush drivers/vhost/vhost.c:303 [inline]
+ vhost_dev_flush+0xb2/0x130 drivers/vhost/vhost.c:313
+ vhost_vsock_flush drivers/vhost/vsock.c:698 [inline]
+ vhost_vsock_dev_release+0x1fb/0x3f0 drivers/vhost/vsock.c:750
+ __fput+0x44c/0xa70 fs/file_table.c:468
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0x6b5/0x2300 kernel/exit.c:966
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+ get_signal+0x1285/0x1340 kernel/signal.c:3034
+ arch_do_signal_or_restart+0xa0/0x790 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x72/0x130 kernel/entry/common.c:40
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9941b8eba9
+Code: Unable to access opcode bytes at 0x7f9941b8eb7f.
+RSP: 002b:00007f9942aa10e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007f9941dd5fa8 RCX: 00007f9941b8eba9
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f9941dd5fa8
+RBP: 00007f9941dd5fa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f9941dd6038 R14: 00007ffd2989c130 R15: 00007ffd2989c218
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
