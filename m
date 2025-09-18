@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-823558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B92B86D72
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:09:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE424B86E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33B81CC4346
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80B171C86677
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BA12D191E;
-	Thu, 18 Sep 2025 20:09:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0609731C583;
+	Thu, 18 Sep 2025 20:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GC/xuEH8"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B830DEDC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDE2275113
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758226145; cv=none; b=G8F7RBGVETQo0EJ2IVGPD5fE7Y9DESuE8szRT1D7skdARO+WRp506jDOkl61q5akKQjHq56GbuQ7WfqHl829BFRb0i+cbFqW+YB/l1N3QQUMrIMMj5yrhE8Zlx8U25BmIq0VtBapQQOW43AMaYxaMZSUmEEDMR8IyTFXT3sQZK4=
+	t=1758227113; cv=none; b=kWXv+rCm58CRl770mbWrOm/upEtWQTUc9htE5w5PbZUh4vs1Cw1wz4oxD26NOGtFG9B5n0caEAGp2eNOwGZ/GQM43Y4HHc3tCLxQAY2NUEXRS7NH9D/ORSw4U8+iFYUplpgiWIqLuBJuzsp7lFb8bIFqv+A34La65RWXFSOE2TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758226145; c=relaxed/simple;
-	bh=K/0RY+U//lNSiOUOsEZjBiDLkc7SGRjh8IM6gTefKVg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pbkhnO/YP8XChQp3eVS2q8Cgb4wzbTNGmcWuWjRmWZ/vvdb2gPOHd+TUcZ7q0gb3S7D156jwxqAfCc93SaL8Rn4+jhQ0gfEivmrA8/shOqfy8mJtVUBmLamdC3AjhmM0ionPvCy9x5OTy2cAgVehDbOCYyiRjDMo0FW0dm00n8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42408b5749aso35039505ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:09:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758226142; x=1758830942;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=voOjB2OWF6sLn5E5FBup+jJRLNg94HSD6qLWSkazTrM=;
-        b=VM+RRD1zZt2RVBj2E4xCZuErk1JiuioL5dAS9NBqs1tvo8xHrgCCSlg43InzreQEIp
-         7uyGld3/Us1UCIxiU1gZYxaZU6h08IZW/9xu6WeuXzEa2X5Z8mkPWXhHPKtVN+i8Mzfi
-         0ScI9OB5gjR1bs/T2vnTpsR/0mrwThhB19xryDFX8l2OlOpX5TVzou/Vf9XFopLBsvuD
-         fO+MxdS58NxKJi8UZQfmSJy9UUqoTDR6+TofbtzzLMI+s05PB6UTu+fP80m6ceLKeuxE
-         kHfDloVleh29UONsUSWIjRa1N3Boe8xh7CYpLyF8GGGLEoC8Oydp4ha0vanKhkWcTKHO
-         ffcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlRUMP/71CwXtSHQ2cGE22JHgqt/PGyZLrIOMTNgC7D922SzwCn5WI8cCWdX8YDfxAr5yj1Q+JFyXP7SU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy75toybBvd8F/O9kPaKdyFhTEtNyEbdp/BrOt90ty08n+5Ixct
-	wh+VKK3axV3OURoM0Ao3g2bGB7L/G6xpmLZ64Jo1eONFRz5AufMIfhG0FObl0aHKghxIWiul0XF
-	+q28WTJTx3cFmdGKR8PJnGgvvWNttXEo98AlcdSTItIwdHcnPl5zZaJ0QjWQ=
-X-Google-Smtp-Source: AGHT+IH3ZdFuIbjPRLldK4iEpnPMlB3ZUGt6lBPYBhiH+FqqHkTG/VwQqTMmqpKt+XPWTUGctUztPYcOiFDy6xCM4et1nFiZA2l3
+	s=arc-20240116; t=1758227113; c=relaxed/simple;
+	bh=V6fpCITFEhwyPfxcyqcnpSbV/gb5n3gRRVAciHZTQzk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M4RM/78rVuZWo2DlqtSxwvn8dOJbIftCH+vRb6rkTkKXsiWiKlZuNmb254r4sGsxECgl1fqyuqLLgPIugUYcaJCpV6wlKgYdaUHHe4E4OUT14sIuSDxhldEVUwJn/QRCSHJvHedDwAMXOs/ByL+3eldRWTOJqu0rPcZUfely5Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GC/xuEH8; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=KSWSMnfsKClm3CO88jw/F2wXZZE8FuFNwsBo3LfrVLE=; b=GC/xuEH8Z2NhexrDp/215Iw+4X
+	f1z996qAxQavumwdFkSFH3aG8BVR02CnMLnpCDz+7O81/pSHn5y+GWjpV+JBT+E5xsLMLo0BZL1C1
+	zv4EM0SECk6tHLGHdMMKrf3ApbBL8/GtCMZ0PxADGO1gAw5CSCWW5R1BjNuoc6Z+mJtiY6zWlpjis
+	vwD0bvxKj/heUoMW5uoRApfzxxQrSKButwethC4cVt4c+ZQ/T6ghpfmjH8qP3+M5ifMmmB21BltFs
+	LKYYGPAwZLeuN5Gwr7470UTUqbdR2bhLO68YgetNTzfBnx6NQA7QoyABc4VaDoc+4yZyJpboetIcm
+	T//wTLnA==;
+Received: from 179-125-87-227-dinamico.pombonet.net.br ([179.125.87.227] helo=[127.0.0.1])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uzLBf-00Dp3q-IW; Thu, 18 Sep 2025 22:25:03 +0200
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Subject: [PATCH RFC v2 0/3] drm/ttm: allow direct reclaim to be skipped
+Date: Thu, 18 Sep 2025 17:09:23 -0300
+Message-Id: <20250918-ttm_pool_no_direct_reclaim-v2-0-135294e1f8a2@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160d:b0:408:6044:8d1a with SMTP id
- e9e14a558f8ab-424817203d1mr16617685ab.5.1758226142635; Thu, 18 Sep 2025
- 13:09:02 -0700 (PDT)
-Date: Thu, 18 Sep 2025 13:09:02 -0700
-In-Reply-To: <CAL4kbRNSQxepAdHvkqS21qvRm2m1gtO1mKi90=QNsmetDB0jQA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cc66de.a00a0220.37dadf.0007.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] WARNING in gfs2_ri_update (2)
-From: syzbot <syzbot+7567dc5c8aa8f68bde74@syzkaller.appspotmail.com>
-To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPRmzGgC/32NwQqDMBBEf0X23JRNRNSeCoV+QK9FQqobXVAjS
+ ZAW8d8b7L2XgTcDbzYI5JkCXLINPK0c2M0J1CmDdjBzT4K7xKBQFVhjLWKc9OLcqGenO/bURp1
+ iNDwJIqywNKrLLUESLJ4svw/5Ex73GzSpHDhE5z/H4SqP6eeW+M+9SiFFkb/QmtJWKa/cm5HNu
+ XUTNPu+fwG+xEa0ygAAAA==
+X-Change-ID: 20250909-ttm_pool_no_direct_reclaim-ee0807a2d3fe
+To: Christian Koenig <christian.koenig@amd.com>, 
+ =?utf-8?q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>, 
+ Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
+ Matthew Brost <matthew.brost@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com, 
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+X-Mailer: b4 0.14.2
 
-Hello,
+On certain workloads, like on ChromeOS when opening multiple tabs and
+windows, and switching desktops, memory pressure can build up and latency
+is observed as high order allocations result in memory reclaim. This was
+observed when running on an amdgpu.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+This is caused by TTM pool allocations and turning off direct reclaim when
+doing those higher order allocations leads to lower memory pressure.
 
-failed to apply patch:
-checking file fs/gfs2/rgrp.c
-patch: **** unexpected end of file in patch
+Since turning direct reclaim off might also lead to lower throughput,
+make it tunable, both as a module parameter that can be changed in sysfs
+and as a flag when allocating a GEM object.
 
+A latency option will avoid direct reclaim for higher order allocations.
 
+The throughput option could be later used to more agressively compact pages
+or reclaim, by not using __GFP_NORETRY.
 
-Tested on:
+Other drivers can later opt to use this mechanism too.
 
-commit:         cbf658dd Merge tag 'net-6.17-rc7' of git://git.kernel...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2f00edef461175
-dashboard link: https://syzkaller.appspot.com/bug?extid=7567dc5c8aa8f68bde74
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c6cf62580000
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+---
+Changes in v2:
+- Make disabling direct reclaim an option.
+- Link to v1: https://lore.kernel.org/r/20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com
+
+---
+Thadeu Lima de Souza Cascardo (3):
+      ttm: pool: allow requests to prefer latency over throughput
+      ttm: pool: add a module parameter to set latency preference
+      drm/amdgpu: allow allocation preferences when creating GEM object
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c    |  3 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |  3 ++-
+ drivers/gpu/drm/ttm/ttm_pool.c             | 23 +++++++++++++++++------
+ drivers/gpu/drm/ttm/ttm_tt.c               |  2 +-
+ include/drm/ttm/ttm_bo.h                   |  5 +++++
+ include/drm/ttm/ttm_pool.h                 |  2 +-
+ include/drm/ttm/ttm_tt.h                   |  2 +-
+ include/uapi/drm/amdgpu_drm.h              |  9 +++++++++
+ 8 files changed, 38 insertions(+), 11 deletions(-)
+---
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+change-id: 20250909-ttm_pool_no_direct_reclaim-ee0807a2d3fe
+
+Best regards,
+-- 
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
 
 
