@@ -1,119 +1,148 @@
-Return-Path: <linux-kernel+bounces-822340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D45B83953
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:48:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D90B83977
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2957B1C02349
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5817E1C03BD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5FD2F531B;
-	Thu, 18 Sep 2025 08:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4392F9D82;
+	Thu, 18 Sep 2025 08:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UMJvnw7t";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rnUpVrH7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IXNY93mR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627582EE272
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DFA2FF141;
+	Thu, 18 Sep 2025 08:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185311; cv=none; b=pzkr/S/QY0NRO4sR8GYFsx82T1LXmZkF1+sJnfWJRiKDp/58phaoLLuWx8/qHEz44enZedDVJwI9P6F1Y+Z4obEVHIkaOpWDPM3DvjvWoq3OqbZwIlVVcUbIb8PLZHJtiaO3zbSVc4CPtgVprQM16jtmq+5YnJnfBfp9GVCOgXg=
+	t=1758185464; cv=none; b=N/6Xwz9COoTMGtKhokG5dQJ2c2bwxd6AaP9MxFX3fYiXMvISfHrRds1bwgu+9E1e3KKmDfh0Af9YEXrbalYPvzIdUCiZYPiIMqbSE03pu2EhHwLu4mo9w7UVxAGTko1Q/TxO72PpV8pY6w+b9Iq6gSPaU0BNwcCUPYIs3cwbbHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185311; c=relaxed/simple;
-	bh=JBZR2fZceeb3s9Njcr5qRf9u/YvbodzQnBlr4vIzFys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRII6hFrWAl2brQKsJ0tJbpC/sbOTOncmU860AGrLDQbK1mrOPadVuksH40rkDrBWDF3U7yH1rnMBpDlPNcfG6zF0SVvX5IB1paL5KJqApujddWh3h/Su41hwM8afFE9CKuWhF7+DuP3tfMtAUPEPwmlzl9/+VDTLPQSKG7ih6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UMJvnw7t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rnUpVrH7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 18 Sep 2025 10:48:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758185308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NovFkcDVYf3fWWfVdmD07cNejJYNvS+8SZukBGrwXpA=;
-	b=UMJvnw7tiZL+wh09yBToLHDtDL90kX13No0ExrtQl+3EY/ze8xgLAgMsERf4qS8jdOXkZ7
-	oxgp+16vwQNQ588n+AQOpNu/bvCaBpsHh2RrLRjqVvIDINfBe1ZrOi0oEgoa9r77kDtkN7
-	hdgbx6fAFRa9RwmYwrz+XLgewSHDKgjBj0VLc4puD5yGQMgZA2zeEvis492h3cOsYg+S3H
-	TZ//CW7P1vEa1qYJnBznmYll7XP9zBfA5ffYXF1EGvpl7FP2ZKvKkAplMxcyjYfh6U0+Vz
-	WV80UlDKKIheOU6PbJ0RpSc312vj49Xe+XTkwSLWVn9v2vvSpad8TmAUk0JdPQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758185308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NovFkcDVYf3fWWfVdmD07cNejJYNvS+8SZukBGrwXpA=;
-	b=rnUpVrH7VLqgqPHwqBZcw1/2erH1AKrwHgZd1huwdHAkcgbLyJnSRkZEPRrNCsbs46vuhb
-	OUG1H3/w667CjnAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: syzbot <syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com>,
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
-	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com,
-	juri.lelli@redhat.com, kees@kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com,
-	mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
-	rppt@kernel.org, surenb@google.com, syzkaller-bugs@googlegroups.com,
-	vincent.guittot@linaro.org, vschneid@redhat.com
-Subject: Re: [syzbot] [mm?] WARNING: bad unlock balance in copy_process
-Message-ID: <20250918084827.TWzT-hc4@linutronix.de>
-References: <68cb1cbd.050a0220.2ff435.0599.GAE@google.com>
- <867144d3-b05e-4ce2-8bb6-da01e10fbd73@suse.cz>
+	s=arc-20240116; t=1758185464; c=relaxed/simple;
+	bh=5YOyn+r75EASr5J9B8/mhrg6iM33iRQv6Vi25A5kHg4=;
+	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=WQZmlhbDfhbKvTGwCwTWLT+6/QrAZxrvhdzz1LtLIuTLOsQOpgyv4rjVneRnCNMn8WmvUKmIU0rjSzfyIdOZjyb9nqikoUZixOug/Mq8dmxfvUk9obK5pwXYh1POOfnTlBL+1aghmAcWD6bx3iDC7WxIoyco+HkKh2ZQwRWPJlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IXNY93mR; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758185463; x=1789721463;
+  h=from:to:cc:date:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5YOyn+r75EASr5J9B8/mhrg6iM33iRQv6Vi25A5kHg4=;
+  b=IXNY93mRf7Lnrtwuo0KUt0Ls7dgyqaTZj3iLwY32H7Kh7PmkYZD8szJD
+   DgxhYzFPtjkQRvOI/2F+EGNQ4LOhFhDVMH+AHmy/fYhW3d5E9ocfOsKn/
+   E5VYrUWjT/NHJhvmUQg1eXAK2+jNQsUsnXgfQcQ5F2qpAksGUYin6Ljgq
+   +r55L0aJ1XXkOUI7t5fERX7Sl980lmXOdd3tW7g0LyipqjuOJCZfnzklI
+   Z+fVBDTfmb4z0y+RKN04DVBcYNUo8o1cEgOUTvQ2pG3fol5N8Tg+vUQE/
+   fg9sr0KvU6Aj2NHJKAqJbAOMwbnEDamr3xKBT+nMGt+1aWY8mIrMKD1vI
+   g==;
+X-CSE-ConnectionGUID: k8uuS8cNSC+UAB7F2CcawQ==
+X-CSE-MsgGUID: BpLO0pMDQ1+EHSQXBGD3Xg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="77946924"
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="77946924"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 01:51:02 -0700
+X-CSE-ConnectionGUID: iqZZqgiHQaWu17Aii7rvrw==
+X-CSE-MsgGUID: eR5RytUtQFm+tc0oP2jrFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="179484659"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.224])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 01:51:00 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+Date: Thu, 18 Sep 2025 11:49:18 +0300
+Subject: [GIT PULL] platform-drivers-x86 for v6.17-4
+Message-ID: <pdx86-pr-20250918114918-1887020842@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <867144d3-b05e-4ce2-8bb6-da01e10fbd73@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2025-09-18 10:35:24 [+0200], Vlastimil Babka wrote:
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com
-> > 
-> > =====================================
-> > WARNING: bad unlock balance detected!
-> > syzkaller #0 Not tainted
-> > -------------------------------------
-> > syz.1.48/6865 is trying to release lock (&sighand->siglock) at:
-> > [<ffff8000803b8634>] spin_unlock include/linux/spinlock.h:391 [inline]
-> > [<ffff8000803b8634>] copy_process+0x22d4/0x31ec kernel/fork.c:2432
-> 
-> bad_fork_core_free:
->         sched_core_free(p);
->         spin_unlock(&current->sighand->siglock); <- here
-> 
-> Sebastian, I think it's your 7c4f75a21f63 ("futex: Allow automatic
-> allocation of process wide futex hash") adding a "goto bad_fork_core_free;"
-> from a place that doesn't yet have current->sighand->siglock locked?
+Hi Linus,
 
-Yes. Judging from -rc6, if futex_hash_allocate_default() fails we hold
-neither siglock nor tasklist_lock. sched_core_free() looks also bad as
-the cookie was allocated later in sched_core_fork(). sched_cgroup_fork()
-does nothing special. So it should be
+Here is a platform-drivers-x86 fixes PR for v6.17.
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index c4ada32598bd5..6ca8689a83b5b 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2295,7 +2295,7 @@ __latent_entropy struct task_struct *copy_process(
- 	if (need_futex_hash_allocate_default(clone_flags)) {
- 		retval = futex_hash_allocate_default();
- 		if (retval)
--			goto bad_fork_core_free;
-+			goto bad_fork_cancel_cgroup;
- 		/*
- 		 * If we fail beyond this point we don't free the allocated
- 		 * futex hash map. We assume that another thread will be created
+Fixes and New HW Support
 
-Sebastian
+- amd/pmc: Add MECHREVO Yilong15Pro to spurious_8042 list
+
+- amd/pmf: Support new ACPI ID AMDI0108
+
+- asus-wmi: Re-add extra keys to ignore_key_wlan quirk
+
+- oxpec: Add support for AOKZOE A1X and OneXPlayer X1Pro EVA-02
+
+Regards, i.
+
+
+The following changes since commit aa28991fd5dc4c01a40caab2bd9af8c5e06f9899:
+
+  platform/x86/intel: power-domains: Use topology_logical_package_id() for package ID (2025-08-29 16:15:19 +0300)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.17-4
+
+for you to fetch changes up to 225d1ee0f5ba3218d1814d36564fdb5f37b50474:
+
+  platform/x86: asus-wmi: Re-add extra keys to ignore_key_wlan quirk (2025-09-16 11:30:39 +0300)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v6.17-4
+
+Fixes and New HW Support
+
+- amd/pmc: Add MECHREVO Yilong15Pro to spurious_8042 list
+
+- amd/pmf: Support new ACPI ID AMDI0108
+
+- asus-wmi: Re-add extra keys to ignore_key_wlan quirk
+
+- oxpec: Add support for AOKZOE A1X and OneXPlayer X1Pro EVA-02
+
+The following is an automated shortlog grouped by driver:
+
+amd/pmc:
+ -  Add MECHREVO Yilong15Pro to spurious_8042 list
+
+amd/pmf:
+ -  Support new ACPI ID AMDI0108
+
+asus-wmi:
+ -  Re-add extra keys to ignore_key_wlan quirk
+
+oxpec:
+ -  Add support for AOKZOE A1X
+ -  Add support for OneXPlayer X1Pro EVA-02
+
+----------------------------------------------------------------
+Antheas Kapenekakis (3):
+      platform/x86: oxpec: Add support for OneXPlayer X1Pro EVA-02
+      platform/x86: oxpec: Add support for AOKZOE A1X
+      platform/x86: asus-wmi: Re-add extra keys to ignore_key_wlan quirk
+
+Shyam Sundar S K (1):
+      platform/x86/amd/pmf: Support new ACPI ID AMDI0108
+
+aprilgrimoire (1):
+      platform/x86/amd/pmc: Add MECHREVO Yilong15Pro to spurious_8042 list
+
+ drivers/platform/x86/amd/pmc/pmc-quirks.c |  8 ++++++++
+ drivers/platform/x86/amd/pmf/core.c       |  1 +
+ drivers/platform/x86/asus-nb-wmi.c        |  2 ++
+ drivers/platform/x86/oxpec.c              | 14 ++++++++++++++
+ 4 files changed, 25 insertions(+)
 
