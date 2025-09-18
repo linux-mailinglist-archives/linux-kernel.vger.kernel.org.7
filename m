@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-823127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C100B85978
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:29:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC03B85909
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA7A3B3455
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8201613DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6843830CDAE;
-	Thu, 18 Sep 2025 15:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA42430F80F;
+	Thu, 18 Sep 2025 15:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N2dtHXrd"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fEHCzXBX"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5939330CDB0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684A124467A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209169; cv=none; b=P0L4YlzLWfS05itBstsgVe6ScZh1QvF0ZnU17YhMPZv3zh3KIP6u8KZokvVGDwEQi8li9v1YXKVXdxHzBxwFY7N9xhcuhyM9Y/V/N0S43bN3nQ8cOpUo7u/treexHuUNpb1MiMlruAD6rS56NezwYhn9Lpatuxe6OqRE7PTKYao=
+	t=1758209170; cv=none; b=U9qP+pUX/FNZmHJiX9I+SAfH+2VI0JLGEzPNx4eXKx21a0HwZHLpo9coj3b0a/6ix/rfH+ukHV5ca06oZVyEbbUyWxdzGjzjpeA3wyqASWWJvZZ6b6bX/IVTg/KgkTNj6rRPPzA3JagWrfMT8OCQNHJKBmrsLWAL8u1W/fwzN60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209169; c=relaxed/simple;
-	bh=BgrkpQFFo5N6imSMfutDKuvd+pZs7IwFD2JEqY9Yim8=;
+	s=arc-20240116; t=1758209170; c=relaxed/simple;
+	bh=T/mWFe8NzS54YpnNNIjgGNosJ7quWk5Bo4FQETSjfQs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gpn8bgrJSyrwT7BaXyyVp3nustHTEGUf8bhkBSQxbAnl1HGtOX5cItjK1AZqngMfTnTG61U8BAOeKHrQSmibBrA1hNP7l503YwS59r1nM+jm93nhoTR4GzsXOifrE9hsUID7ec0yZRo/vPa/Elfw8MJaBb4ljvcl1sCy7CdJFPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N2dtHXrd; arc=none smtp.client-ip=209.85.221.41
+	 MIME-Version; b=oGd9fxYfRNBL5/icWu0kBglB9rilu5Q8qUBjKktxIGwbwgyn+eMr45bvBnF2UqwEGSSSN7O2tX4G7RrGJv7UVOOTX8d8g90yAbKaVHTNznpGNvbIhTOTXCG+JTcTvWk2fgXYVq5TKF3Lp5kGF9O2lm70Wr94RKpBPLWWvrPHUtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fEHCzXBX; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso118748f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:26:07 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45f2f7ae386so8155885e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758209165; x=1758813965; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1758209166; x=1758813966; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tArcWhUAVfKI1IR+L4EJJlA6CZw4Wq2C6U9y07jPVV4=;
-        b=N2dtHXrdUVvchRyDVFLaU1XPGW3iFN/G/2fo/vXUfOCMePH4bpsXPQ+iHujGkN10dI
-         WFKRijC218hZ88OOTJbSgZJcbtnegjIBCRimBQJle39Ba2V4J6MXoWRakDIPYFZGBCB1
-         6Ts+uEQ464nJfZXOf9LwTm6xB5kj2egktkov8FtujjjI1pLYaKNvL0d4tc/fPFMvjwyq
-         5UjoneqarkB/nAZT8VNyXNq1vllbej5yLUzkV7XjMFVLAveT4XryERmko1G3Wi3WvGqo
-         ZkEG+xQRJthllYHSOnNSfPMqP2URBbHD/gH3RitMfSX+vhJxYafcEqkxJRBSzpr4KDa1
-         IWBg==
+        bh=vPabrgJ3flhzfh3xzBI0TJyAcLG6lM4hGPw3JCTS0NM=;
+        b=fEHCzXBXDkYgV0HUjs24QqnAKGz2D7Iiys8h5rhQXH68nzY3xNqkxStYdGMbdmk9OM
+         suYRQpr6IWS7V/Buhfp8sUaWdjqyFGJqP+p47ricuZhW9mI8SBWif2fuRmCWCEd4IEjW
+         kDBTEbVqGdA/QyPgQWzipnNOWfwfF025xKUdSNtkykK0kK/ykjOY4Rhk3Kj/YSY6nS+6
+         C6Q4QHi5W1Sa2d5oywrW0hKvEqKYIyPdpR5BbFOdimj9JuTiEoNAff+wABw2R6j/gwBb
+         eTlZ/4den5MF1LDtQMegEJzKLg0i6sGopw/umRZ0aurYD+HyEzYyDtxQ6lTSsYarczJj
+         k1oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758209165; x=1758813965;
+        d=1e100.net; s=20230601; t=1758209166; x=1758813966;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tArcWhUAVfKI1IR+L4EJJlA6CZw4Wq2C6U9y07jPVV4=;
-        b=IfjH5WQgMT+pYe8wf4uT54lWqhpQNWVkqle/ZqP9QlTb1rGhSWr0Qbl9CKgy5hlCL/
-         74CtzZflFuQw1SemZO5HqCrBsxnogAgK+xfz+FGCpuGXU3Y3FABn+iu8AejF328IMQxZ
-         25TXD6qaIpSlLgHAqEfeBeoy+WNqRVFNwiEHj5gcJ3s8WhobjSR+e3ujrTe793uV1ZhY
-         abWmteLHOX7rhKnkMNkyU+lLO6njyYxjnDYpFLhQusXQD5ruMZ4XEYY0vL+P7nqX7Swp
-         kgmgRc3Xt2RGu9BwggW1rQsWNDGh6tqb1JBcVfdGnGk+8jUa8LcuEUaY2GL4v6TABMko
-         muxg==
-X-Gm-Message-State: AOJu0YzeP8+zm6Us9Ko7I6v6MqZHz2IQqV2/CVdHvIBxDTBpykFbhiAr
-	P5bqeHjhC0ScYLxpi4tPEWPmLUICvjE23XM29k4r/3tIHDmFP1DrlGM98CnksqsuEQrSkLQdtbx
-	QgCepcio=
-X-Gm-Gg: ASbGnctT1tBX6omf1Jdeb5wxYDRAn3GgdMoQv3XCKVuGeU+61kmzm3fKaUeWomILFkE
-	Y66GdULQw5SEIEqNAbVVNDcVG17zz0MOvxxrVP/YKsc8GF+PxqRs+pqe7tT0V5xGI+eJId9VorZ
-	HutYxTLLGpA7UsYMkddXqnOKTXkjJrB0HjO4/Re1YxlpvvvOJhfODamsdZkmwwbNshQx8/yyTWW
-	UeYEh41pccg7eRaxPOnpsPWz0Rp7S/rk0Q/s6N5MxaUQHlVqKQSAaISAsFNUF+BV/N4ouz3O9D4
-	QOTlONxnsj0zU9ZsvYEPw5/5ml4bHj+xTGxJgJFxGAeLz3dquu4IQKaFJRUr/DdB6MFO22kPtMr
-	lnDUdlKr4AVymm4kEFOReyUNTk/yXeE7YVpLx+4LJF2klUHJi7Wg79KlAwkVXyrBr
-X-Google-Smtp-Source: AGHT+IGvOFPQ1piai96hvU2hEjSeyPGIASHKtCRp0rLWzyrq8u4fJZ9ExADLpppLLF4E28tCe03f3g==
-X-Received: by 2002:a05:6000:1845:b0:3e7:4fda:fe0c with SMTP id ffacd0b85a97d-3ecdf9bfd16mr5945312f8f.15.1758209165310;
-        Thu, 18 Sep 2025 08:26:05 -0700 (PDT)
+        bh=vPabrgJ3flhzfh3xzBI0TJyAcLG6lM4hGPw3JCTS0NM=;
+        b=v++vT2E+M8s9zl4euoboThroQ0i1cPVHYkhEnN+aaFWV4FGxQDRBWkpOGwR8bNXU6P
+         7D8gV64GWXUEbNOQzGwF4WBSdFiTmOEasgl+Peio0++OAkbhK2d1I0s9R0VbDldclSyr
+         IUPVFsMdD9CeiI//6voDPBCe2DVHFyz3wLyjlmVElF8vNse0HeRlb8gLbRgPbw9kfW5T
+         PsRwziuMeWWqK6o4XWwid0btYyndsQ3u4IgLTf3+ki/RYy/E89rQ7qv1pK9MwKBHTLoD
+         HsoWdCidehJs/1my472JhwSOIbcUGhzINLBAVVn6e7+5teOAftmJilISBYaIiruVyS8N
+         RuNw==
+X-Gm-Message-State: AOJu0YxMThvnOHKjGtR7HWPTmgs0YAvvtN+OXcfUwCiF2HkpPpfBqSYo
+	YXRyJ9fPQ7pcj/MMeEWUI1/jZHZj06Nkv5F8zfo/C9aM48N4byTXtZQoP92BdEwU5M0OD9EyMs9
+	rtTj3Gos=
+X-Gm-Gg: ASbGncuYUcSjCojnTkeOynjEFPLLYp1TOzrQJ2Cj2fmrZ+NS1IyDzvpMprEaI24FWtm
+	CEjifpufbqo66ODRLo7WJss5U/vpb4NWYu1IkE2jdpgR94BuTY9SVhWnaAs6K4WnYd6+KFfabsp
+	EkxOAZ3k9U9jAOFtDDi2UJeb0pm2RQ1/F7D6GRdElNwWxFMP4fR4zXD0z5+b5IeWIG2zkbxnGlM
+	7cwPxEQpxdc77uzboKZ0fRLZZNjPwnyp5ideBe+0k/n/3uh89/WyTdBktWnaculFq6+eKp1cm2d
+	XrHEEcXcr+8zk/ZVZXkse1KA9N2r/RnBno9xlHe5MUa/LUDSWbTCpEmMlkNekhZ7sHV4xG0z3WN
+	THQWpX8rfebbn7PRi5mCroyQJEDwDUpQdiB4CCNqyAxsN5NlZVkVKo40gv4e56ANY
+X-Google-Smtp-Source: AGHT+IEpdSO5Kx2EqRZYU9Is6GMWXSSVjk1EzXFYF/z2X5WoUebXHk2UFL+J3lsvf5aGWoJdYiR8Xg==
+X-Received: by 2002:a05:6000:26c6:b0:3dc:eb5:51f6 with SMTP id ffacd0b85a97d-3ecdfa07bc5mr5332196f8f.39.1758209166322;
+        Thu, 18 Sep 2025 08:26:06 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f3d73sm4069815f8f.8.2025.09.18.08.26.04
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f3d73sm4069815f8f.8.2025.09.18.08.26.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 08:26:05 -0700 (PDT)
+        Thu, 18 Sep 2025 08:26:06 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
@@ -84,9 +84,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
 	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
 	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>
-Subject: [PATCH 1/2] wifi: iwlwifi: replace use of system_unbound_wq with system_dfl_wq
-Date: Thu, 18 Sep 2025 17:25:16 +0200
-Message-ID: <20250918152517.361773-2-marco.crivellari@suse.com>
+Subject: [PATCH 2/2] wifi: replace use of system_wq with system_percpu_wq
+Date: Thu, 18 Sep 2025 17:25:17 +0200
+Message-ID: <20250918152517.361773-3-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250918152517.361773-1-marco.crivellari@suse.com>
 References: <20250918152517.361773-1-marco.crivellari@suse.com>
@@ -106,55 +106,93 @@ again of WORK_CPU_UNBOUND.
 
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-system_unbound_wq should be the default workqueue so as not to enforce
-locality constraints for random work whenever it's not required.
+system_wq is a per-cpu workqueue, but its name is not clear. Because of
+that has been renamed in system_percpu_wq.
 
-Adding system_dfl_wq to encourage its use when unbound work should be used.
-
-The old system_unbound_wq will be kept for a few release cycles.
+The old system_wq will be kept for a few release cycles.
 
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c    | 4 ++--
- drivers/net/wireless/intel/iwlwifi/iwl-trans.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c  | 6 +++---
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c  | 2 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/tdls.c | 6 +++---
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index 2ce55859641c..e5f31b82339a 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -2933,7 +2933,7 @@ int iwl_fw_dbg_collect_desc(struct iwl_fw_runtime *fwrt,
- 	IWL_WARN(fwrt, "Collecting data: trigger %d fired.\n",
- 		 le32_to_cpu(desc->trig_desc.type));
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index 215814861cbd..c7c5bc0f1650 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -2143,7 +2143,7 @@ static void isr_indicate_rf_kill(struct ipw2100_priv *priv, u32 status)
  
--	queue_delayed_work(system_unbound_wq, &wk_data->wk,
-+	queue_delayed_work(system_dfl_wq, &wk_data->wk,
- 			   usecs_to_jiffies(delay));
- 
- 	return 0;
-@@ -3237,7 +3237,7 @@ int iwl_fw_dbg_ini_collect(struct iwl_fw_runtime *fwrt,
- 	if (sync)
- 		iwl_fw_dbg_collect_sync(fwrt, idx);
- 	else
--		queue_delayed_work(system_unbound_wq,
-+		queue_delayed_work(system_dfl_wq,
- 				   &fwrt->dump.wks[idx].wk,
- 				   usecs_to_jiffies(delay));
- 
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
-index a552669db6e2..2f24b639c133 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-trans.h
-@@ -1092,7 +1092,7 @@ static inline void iwl_trans_schedule_reset(struct iwl_trans *trans,
- 	 */
- 	trans->restart.during_reset = test_bit(STATUS_IN_SW_RESET,
- 					       &trans->status);
--	queue_delayed_work(system_unbound_wq, &trans->restart.wk, 0);
-+	queue_delayed_work(system_dfl_wq, &trans->restart.wk, 0);
+ 	/* Make sure the RF Kill check timer is running */
+ 	priv->stop_rf_kill = 0;
+-	mod_delayed_work(system_wq, &priv->rf_kill, round_jiffies_relative(HZ));
++	mod_delayed_work(system_percpu_wq, &priv->rf_kill, round_jiffies_relative(HZ));
  }
  
- static inline void iwl_trans_fw_error(struct iwl_trans *trans,
+ static void ipw2100_scan_event(struct work_struct *work)
+@@ -2170,7 +2170,7 @@ static void isr_scan_complete(struct ipw2100_priv *priv, u32 status)
+ 				      round_jiffies_relative(msecs_to_jiffies(4000)));
+ 	} else {
+ 		priv->user_requested_scan = 0;
+-		mod_delayed_work(system_wq, &priv->scan_event, 0);
++		mod_delayed_work(system_percpu_wq, &priv->scan_event, 0);
+ 	}
+ }
+ 
+@@ -4252,7 +4252,7 @@ static int ipw_radio_kill_sw(struct ipw2100_priv *priv, int disable_radio)
+ 					  "disabled by HW switch\n");
+ 			/* Make sure the RF_KILL check timer is running */
+ 			priv->stop_rf_kill = 0;
+-			mod_delayed_work(system_wq, &priv->rf_kill,
++			mod_delayed_work(system_percpu_wq, &priv->rf_kill,
+ 					 round_jiffies_relative(HZ));
+ 		} else
+ 			schedule_reset(priv);
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index 24a5624ef207..09035a77e775 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -4415,7 +4415,7 @@ static void handle_scan_event(struct ipw_priv *priv)
+ 				      round_jiffies_relative(msecs_to_jiffies(4000)));
+ 	} else {
+ 		priv->user_requested_scan = 0;
+-		mod_delayed_work(system_wq, &priv->scan_event, 0);
++		mod_delayed_work(system_percpu_wq, &priv->scan_event, 0);
+ 	}
+ }
+ 
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
+index 36379b738de1..0df31639fa5e 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
+@@ -234,7 +234,7 @@ void iwl_mvm_rx_tdls_notif(struct iwl_mvm *mvm, struct iwl_rx_cmd_buffer *rxb)
+ 	 * Also convert TU to msec.
+ 	 */
+ 	delay = TU_TO_MS(vif->bss_conf.dtim_period * vif->bss_conf.beacon_int);
+-	mod_delayed_work(system_wq, &mvm->tdls_cs.dwork,
++	mod_delayed_work(system_percpu_wq, &mvm->tdls_cs.dwork,
+ 			 msecs_to_jiffies(delay));
+ 
+ 	iwl_mvm_tdls_update_cs_state(mvm, IWL_MVM_TDLS_SW_ACTIVE);
+@@ -548,7 +548,7 @@ iwl_mvm_tdls_channel_switch(struct ieee80211_hw *hw,
+ 	 */
+ 	delay = 2 * TU_TO_MS(vif->bss_conf.dtim_period *
+ 			     vif->bss_conf.beacon_int);
+-	mod_delayed_work(system_wq, &mvm->tdls_cs.dwork,
++	mod_delayed_work(system_percpu_wq, &mvm->tdls_cs.dwork,
+ 			 msecs_to_jiffies(delay));
+ 	return 0;
+ }
+@@ -659,6 +659,6 @@ iwl_mvm_tdls_recv_channel_switch(struct ieee80211_hw *hw,
+ 	/* register a timeout in case we don't succeed in switching */
+ 	delay = vif->bss_conf.dtim_period * vif->bss_conf.beacon_int *
+ 		1024 / 1000;
+-	mod_delayed_work(system_wq, &mvm->tdls_cs.dwork,
++	mod_delayed_work(system_percpu_wq, &mvm->tdls_cs.dwork,
+ 			 msecs_to_jiffies(delay));
+ }
 -- 
 2.51.0
 
