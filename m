@@ -1,242 +1,170 @@
-Return-Path: <linux-kernel+bounces-822898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA40BB84EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 389D3B84ECD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C29C7B3E52
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B38E1B278E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AB01DF74F;
-	Thu, 18 Sep 2025 13:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFD82264A8;
+	Thu, 18 Sep 2025 13:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OlZpnHjh"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTCWsD6L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383E734BA33;
-	Thu, 18 Sep 2025 13:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA4A21171B;
+	Thu, 18 Sep 2025 13:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758203795; cv=none; b=Et/24KreGS1apXYr6VDN18I2vqsVgNKm5PcDps/sTJjsvOMMVjzYx+ig6R/1/jGMSecR31e8kkkIeevRu62ElIiDqEg5EPL0/ApF5JOT/dob0T7wCx1tMf00655CFayJuSzLt/5IYjC4NWkg/nmX7oqf3tEhfMp3oG0oAV7fkL8=
+	t=1758203757; cv=none; b=KdbF+DCsXF40SqnCGxhW3nbIM0OXSIeI2D9pVxSgGSwVq5MXK1Qjjj5jTVjNIEdu7U8iUDq7AcT6dpMzT4n01o9tmbo+UvpX9vTIEcEQBQL38k5e4qSq0efByTjhMguH0+qLVbzQ+iMDn6qlfUGq8r0E23L3WB9vVevIhYROhnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758203795; c=relaxed/simple;
-	bh=IcwikUMKVI674/Awn/O+0nUBM4X3XXiTzFOHJR7bTow=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A3pSaVCcjQdii3cc1bF1etowfN7NV8oDQhXjR+v0h3Mg97l1le9+rYp0ckdESeU/wLfVsTK9XdTUwYNeTTH+FUl2Szo/C53O6r+BH0pKyV+qchBxbTRBzeE12vK0y0rTtTGxqZ+FnXei4hiXAaiPqUmVN1qBnnDDNTEfyVfoN0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OlZpnHjh; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=V3
-	JP7qmGZxeuZjnZhKjY3T4O/Qv+zV8IFdlGJhwsyEQ=; b=OlZpnHjh1qYWRr5MjW
-	1MbxMncIIKedh5p4imrNGYGRruNWzQZnxLbahV++DQPM15RQeTWDp18tZsUXsCit
-	MuKcmRVtQG2lA69IWCNxUKIqD9rNxFsf+tsdwOk85kUQKCf3sIPMtwwK8XJc01/E
-	MxKh5aNJi8gIKoPFICBECbkk4=
-Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD3z91mD8xo2WenCA--.26380S2;
-	Thu, 18 Sep 2025 21:55:52 +0800 (CST)
-From: GuangFei Luo <luogf2025@163.com>
-To: rafael@kernel.org
-Cc: michal.wilczynski@intel.com,
-	dan.carpenter@linaro.org,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	lkp@intel.com,
-	luogf2025@163.com,
-	sre@kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on rapid events
-Date: Thu, 18 Sep 2025 21:55:49 +0800
-Message-ID: <20250918135549.1075-1-luogf2025@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758203757; c=relaxed/simple;
+	bh=G7/78i6RoQRQodPeKCJlvCChMtkjXdabJYnM8oOuRa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jPqQWYzNUsksm6ASQm+UYfsZ9HAqjS2xSgrTFhmfqnEv9V7QHKf4nXeUmsoX0kqhNw5CBWGsNBz3Z0w7btKXKTLwCc+acZBCxaV3BPIncvMcFQ7fWVm7vFAgu27BogzvaSpGboo5m9r+tzsEjt4/GJ0yhc4wMCZMkvZyJS2EqBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTCWsD6L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8938DC4CEE7;
+	Thu, 18 Sep 2025 13:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758203756;
+	bh=G7/78i6RoQRQodPeKCJlvCChMtkjXdabJYnM8oOuRa8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WTCWsD6L7/v5r0aazrPV4ecf3YGy+0V6OCMU84LAqsRbFvd4h07tCGJfl4JcB7Iex
+	 q0EOF4zuSUAEnYPpTCabSIrITdqQATMaexeXvPifNm6R/b/oh3GW4AZ4b6XHjAwSsd
+	 jIQ44AM12/V1Et0YlNXrJnWEQR7Q8/hmk0nZzetqn0kSk2lk0UFq5GGyRsth1je6gZ
+	 QOCbB5Z17UW0ZPfMdsktxJe0fkQS9MzQV4kbpBEx0N2mRhkIX92Irr3txGNA/zoKpN
+	 FF9t2GH/t0d7U7Sy0qh3WibSWz4BwNB5Of8FvdVkTh/dHRSHF7V3AxUAOTc0aQpH2U
+	 zx6OijYZr3/ZA==
+Date: Thu, 18 Sep 2025 08:55:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] of/irq: Add msi-parent check to of_msi_xlate()
+Message-ID: <20250918135555.GA1540012-robh@kernel.org>
+References: <20250916091858.257868-1-lpieralisi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3z91mD8xo2WenCA--.26380S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtFWkKr18JrW3ZFyxJFyfCrg_yoWxtw1Dpa
-	yrCayUKrW8JF48JwsF9F1UKryfursYqF9rWr95Cr92k3srur1DAr4xXFyUAF47Gry8Z3y8
-	ZFn5t3WYyr1xWw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UnBMtUUUUU=
-X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbiPRTImWjGkaTplgACse
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916091858.257868-1-lpieralisi@kernel.org>
 
-When removing and reinserting the laptop battery, ACPI can trigger
-two notifications in quick succession:
-  - ACPI_BATTERY_NOTIFY_STATUS (0x80)
-  - ACPI_BATTERY_NOTIFY_INFO   (0x81)
+On Tue, Sep 16, 2025 at 11:18:58AM +0200, Lorenzo Pieralisi wrote:
+> In some legacy platforms the MSI controller for a PCI host
+> bridge is identified by an msi-parent property whose phandle
+> points at an MSI controller node with no #msi-cells property,
+> that implicitly means #msi-cells == 0.
+> 
+> For such platforms, mapping a device ID and retrieving the
+> MSI controller node becomes simply a matter of checking
+> whether in the device hierarchy there is an msi-parent property
+> pointing at an MSI controller node with such characteristics.
+> 
+> Add a helper function to of_msi_xlate() to check the msi-parent
+> property in addition to msi-map and retrieve the MSI controller
+> node (with a 1:1 ID deviceID-IN<->deviceID-OUT mapping) to
+> provide support for deviceID mapping and MSI controller node
+> retrieval for such platforms.
 
-Both notifications call acpi_battery_update(). Because the events
-happen very close in time, sysfs_add_battery() can be re-entered
-before battery->bat is set, causing a duplicate sysfs entry error.
+Your line wrapping is a bit short.
 
-When the ACPI battery driver uses
-acpi_dev_install_notify_handler() to register acpi_battery_notify,
-the callback may be triggered twice in a very short period of time.
+I had a look at who is parsing "msi-parent" themselves as that's 
+typically a recipe for doing it incorrectly ('interrupt-map' anyone). 
+Can we make iproc_pcie_msi_enable() use this? It's quite ugly reaching 
+into the GICv3 node...
 
-This patch ensures that sysfs_add_battery() is not re-entered
-when battery->bat is already non-NULL, preventing the duplicate
-sysfs creation and stabilizing battery hotplug handling.
+And perhaps irq-gic-its-msi-parent.c could use this? 
 
-[  476.117945] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
-[  476.118896] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
-[  476.118903] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
-[  476.118906] Workqueue: kacpi_notify acpi_os_execute_deferred
-[  476.118917] Call Trace:
-[  476.118922]  <TASK>
-[  476.118929]  dump_stack_lvl+0x5d/0x80
-[  476.118938]  sysfs_warn_dup.cold+0x17/0x23
-[  476.118943]  sysfs_create_dir_ns+0xce/0xe0
-[  476.118952]  kobject_add_internal+0xba/0x250
-[  476.118959]  kobject_add+0x96/0xc0
-[  476.118964]  ? get_device_parent+0xde/0x1e0
-[  476.118970]  device_add+0xe2/0x870
-[  476.118975]  __power_supply_register.part.0+0x20f/0x3f0
-[  476.118981]  ? wake_up_q+0x4e/0x90
-[  476.118990]  sysfs_add_battery+0xa4/0x1d0 [battery]
-[  476.118998]  acpi_battery_update+0x19e/0x290 [battery]
-[  476.119002]  acpi_battery_notify+0x50/0x120 [battery]
-[  476.119006]  acpi_ev_notify_dispatch+0x49/0x70
-[  476.119012]  acpi_os_execute_deferred+0x1a/0x30
-[  476.119015]  process_one_work+0x177/0x330
-[  476.119022]  worker_thread+0x251/0x390
-[  476.119026]  ? __pfx_worker_thread+0x10/0x10
-[  476.119030]  kthread+0xd2/0x100
-[  476.119033]  ? __pfx_kthread+0x10/0x10
-[  476.119035]  ret_from_fork+0x34/0x50
-[  476.119040]  ? __pfx_kthread+0x10/0x10
-[  476.119042]  ret_from_fork_asm+0x1a/0x30
-[  476.119049]  </TASK>
-[  476.142552] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
-[  476.415022] ata1.00: unexpected _GTF length (8)
-[  476.428076] sd 0:0:0:0: [sda] Starting disk
-[  476.835035] ata1.00: unexpected _GTF length (8)
-[  476.839720] ata1.00: configured for UDMA/133
-[  491.328831] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
-[  491.329720] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
-[  491.329727] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
-[  491.329731] Workqueue: kacpi_notify acpi_os_execute_deferred
-[  491.329741] Call Trace:
-[  491.329745]  <TASK>
-[  491.329751]  dump_stack_lvl+0x5d/0x80
-[  491.329758]  sysfs_warn_dup.cold+0x17/0x23
-[  491.329762]  sysfs_create_dir_ns+0xce/0xe0
-[  491.329770]  kobject_add_internal+0xba/0x250
-[  491.329775]  kobject_add+0x96/0xc0
-[  491.329779]  ? get_device_parent+0xde/0x1e0
-[  491.329784]  device_add+0xe2/0x870
-[  491.329790]  __power_supply_register.part.0+0x20f/0x3f0
-[  491.329797]  sysfs_add_battery+0xa4/0x1d0 [battery]
-[  491.329805]  acpi_battery_update+0x19e/0x290 [battery]
-[  491.329809]  acpi_battery_notify+0x50/0x120 [battery]
-[  491.329812]  acpi_ev_notify_dispatch+0x49/0x70
-[  491.329817]  acpi_os_execute_deferred+0x1a/0x30
-[  491.329820]  process_one_work+0x177/0x330
-[  491.329826]  worker_thread+0x251/0x390
-[  491.329830]  ? __pfx_worker_thread+0x10/0x10
-[  491.329833]  kthread+0xd2/0x100
-[  491.329836]  ? __pfx_kthread+0x10/0x10
-[  491.329838]  ret_from_fork+0x34/0x50
-[  491.329842]  ? __pfx_kthread+0x10/0x10
-[  491.329844]  ret_from_fork_asm+0x1a/0x30
-[  491.329850]  </TASK>
-[  491.329855] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
+And looks like pcie-layerscape-gen4 is leaking a node reference...
 
-Fixes: 10666251554c ("ACPI: battery: Install Notify() handler directly")
-Signed-off-by: GuangFei Luo <luogf2025@163.com>
-Cc: stable@vger.kernel.org
----
-v6:
-  - Update Fixes tag: point to commit 10666251554c ("ACPI: battery: Install
-    Notify() handler directly"), which introduced the sysfs_add_battery()
-    re-entry issue when acpi_battery_notify is registered via
-    acpi_dev_install_notify_handler(). The problem does not occur with
-    acpi_bus_register_driver().
-
-v5:
-  - Move changelog above the '---' line as per submission guidelines.
-
-v4:
-  - Uses guard(mutex) for battery->sysfs_lock in sysfs_add_battery().
-  - Since sysfs_add_battery() now handles the battery->bat check with
-    proper locking,the extra if (!battery->bat) check at the call site
-    has become redundant.
-
-v3:
-  - Modified the earlier approach: since sysfs_add_battery() is invoked
-    from multiple places, the most reliable way is to add the lock inside
-    the function itself.
-  - sysfs_remove_battery() had a similar race issue in the past, which was
-    fixed by adding a lock as well. Reference:
-    https://lore.kernel.org/all/9c921c22a7f33397a6774d7fa076db9b6a0fd669
-        .1312318300.git.len.brown@intel.com/
-
-v2:
- - Fix missing mutex_unlock in acpi_battery_update()
-   (Reported-by: kernel test robot)
-
-v1:
- - Initial patch to handle race when hotplugging battery, preventing
-   duplicate sysfs entries.
----
- drivers/acpi/battery.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-index 6905b56bf3e4..20d68f3e881f 100644
---- a/drivers/acpi/battery.c
-+++ b/drivers/acpi/battery.c
-@@ -850,6 +850,10 @@ static void __exit battery_hook_exit(void)
- 
- static int sysfs_add_battery(struct acpi_battery *battery)
- {
-+	guard(mutex)(&battery->sysfs_lock);
-+	if (battery->bat)
-+		return 0;
-+
- 	struct power_supply_config psy_cfg = {
- 		.drv_data = battery,
- 		.attr_grp = acpi_battery_groups,
-@@ -1026,11 +1030,9 @@ static int acpi_battery_update(struct acpi_battery *battery, bool resume)
- 		return result;
- 	acpi_battery_quirks(battery);
- 
--	if (!battery->bat) {
--		result = sysfs_add_battery(battery);
--		if (result)
--			return result;
--	}
-+	result = sysfs_add_battery(battery);
-+	if (result)
-+		return result;
- 
- 	/*
- 	 * Wakeup the system if battery is critical low
-@@ -1112,12 +1114,12 @@ static int battery_notify(struct notifier_block *nb,
- 			result = acpi_battery_get_info(battery);
- 			if (result)
- 				return result;
--
--			result = sysfs_add_battery(battery);
--			if (result)
--				return result;
- 		}
- 
-+		result = sysfs_add_battery(battery);
-+		if (result)
-+			return result;
-+
- 		acpi_battery_init_alarm(battery);
- 		acpi_battery_get_state(battery);
- 		break;
--- 
-2.43.0
-
+> 
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Sascha Bischoff <sascha.bischoff@arm.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/of/irq.c | 38 +++++++++++++++++++++++++++++++++++---
+>  1 file changed, 35 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index e7c12abd10ab..d0e2dfd0ee28 100644
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -670,6 +670,35 @@ void __init of_irq_init(const struct of_device_id *matches)
+>  	}
+>  }
+>  
+> +static int of_check_msi_parent(struct device_node *dev_node, struct device_node **msi_node)
+> +{
+> +	struct of_phandle_args msi_spec;
+> +	int ret;
+> +
+> +	/*
+> +	 * An msi-parent phandle with a missing or == 0 #msi-cells
+> +	 * property identifies a 1:1 ID translation mapping.
+> +	 *
+> +	 * Set the msi controller node if the firmware matches this
+> +	 * condition.
+> +	 */
+> +	ret = of_parse_phandle_with_optional_args(dev_node, "msi-parent", "#msi-cells",
+> +						  0, &msi_spec);
+> +	if (!ret) {
+> +		if ((*msi_node && *msi_node != msi_spec.np) || msi_spec.args_count != 0)
+> +			ret = -EINVAL;
+> +
+> +		if (!ret) {
+> +			/* Return with a node reference held */
+> +			*msi_node = msi_spec.np;
+> +			return 0;
+> +		}
+> +		of_node_put(msi_spec.np);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  /**
+>   * of_msi_xlate - map a MSI ID and find relevant MSI controller node
+>   * @dev: device for which the mapping is to be done.
+> @@ -677,7 +706,7 @@ void __init of_irq_init(const struct of_device_id *matches)
+>   * @id_in: Device ID.
+>   *
+>   * Walk up the device hierarchy looking for devices with a "msi-map"
+> - * property. If found, apply the mapping to @id_in.
+> + * or "msi-parent" property. If found, apply the mapping to @id_in.
+>   * If @msi_np points to a non-NULL device node pointer, only entries targeting
+>   * that node will be matched; if it points to a NULL value, it will receive the
+>   * device node of the first matching target phandle, with a reference held.
+> @@ -691,12 +720,15 @@ u32 of_msi_xlate(struct device *dev, struct device_node **msi_np, u32 id_in)
+>  
+>  	/*
+>  	 * Walk up the device parent links looking for one with a
+> -	 * "msi-map" property.
+> +	 * "msi-map" or an "msi-parent" property.
+>  	 */
+> -	for (parent_dev = dev; parent_dev; parent_dev = parent_dev->parent)
+> +	for (parent_dev = dev; parent_dev; parent_dev = parent_dev->parent) {
+>  		if (!of_map_id(parent_dev->of_node, id_in, "msi-map",
+>  				"msi-map-mask", msi_np, &id_out))
+>  			break;
+> +		if (!of_check_msi_parent(parent_dev->of_node, msi_np))
+> +			break;
+> +	}
+>  	return id_out;
+>  }
+>  
+> -- 
+> 2.48.0
+> 
 
