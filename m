@@ -1,133 +1,137 @@
-Return-Path: <linux-kernel+bounces-822365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ECC9B83A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A55E0B83A2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6405167DAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:58:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5949217FE06
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02B52E7635;
-	Thu, 18 Sep 2025 08:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575092F7446;
+	Thu, 18 Sep 2025 08:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B0QcICyR"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCfzMNEC"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA662F8BD3
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472BA1E32D6
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185885; cv=none; b=loveRRO6oFji7C/Kp5KtDR2eJNgnBu/5BGr1BOM2BHBiabhxkzj2/EjicCwe/Hjl/dOLBR19H8TQCkWHuciDkTHSiU2TDDfjPg0aitlYmm4D6kviAMPEtqBnKikZCdSVG7lK7NKKoMeqgH3py+SWqbBd7SNagAExFUuR+zTRhU8=
+	t=1758185947; cv=none; b=Y5mkf7zaNRh+o2u1zTEJeJVQCkQnYxmX95yzuEiJsQXkeF93GpPgN6h/antAZoaRBp+riVVGzLwufABltPeFrD8xKhzdJgf2gpwvV8QceigF9X+rZFLSf11hihOXYAgJ192g8obpN0GSnaguLdDjDnICxvx7dvHil44yRMEeEzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185885; c=relaxed/simple;
-	bh=/PYnZTkZG30EJGZkQy0B+vpJnkbqnXRnk+m65H+ZaNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Am6+YPKUcwhUCvQVUuxAwRpe4d/e1wZpF89WJL7OrX650sNqCcF5xVdasoiqf9cbaDeuNeAb4Kg6ZX3U3TIp3pXSIATx2YdYt1GYXDahO0Li/TIgDuhZVINzNwn0fQrWqNI5G8baExHli7b5HHx8H5qLbdigQDoVPUIv/AS27ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B0QcICyR; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4619eb18311so4453795e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:58:01 -0700 (PDT)
+	s=arc-20240116; t=1758185947; c=relaxed/simple;
+	bh=3YBijHHPgjAyl07nG2F+4O+IZKa9So+D2+79Hhyhtjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fuxf45QXmCvd8lkzvkX+Cin+vLNxs/eN/r7YFn1g8M7q1CNz4nWz/iHb/RKFPHyLoSgp8ZMTIi9x/CzzlFEghgi2O0ljyxX0aSh2ppav5jfltpK2aEw7MeBErBI1A2mOj5xiOQ+tx+dPuNGpb2FsibCdiPMeT5/r2H6Ok6i5sPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCfzMNEC; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-54a30c66258so188986e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758185880; x=1758790680; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmEt68RRoB+wd57eSZ3i30ZBtY+HefiEC4Icljd4gvI=;
-        b=B0QcICyRH/l4XzZWHMeHrtTnt53GjpgN2HBxCWsLIQvlYouenlIwyxJdTrVOy6bX9p
-         IQPQo79kv20yaZk2Jp11gdwXzm7/eQiO75xDgmKFp85sphy+DWWGjd7qNGAhJzLruFwr
-         vpxfsN8FxfmNoJsqzdBnA5t2n+4U2lDUZA1r2de9Y1pM7Y7T9x9DUeKdgqvuFLgsTvrB
-         YdVkaqveeFL+++Zx60ujDfNzMlNwzzV0KoYlAVB6bc7lcoJRnkIuLw7UbV2Y4VTcBlQA
-         XXXBoHpiBB7DDY/tMkigLf2bTLeAwNKOJOXUkDo38ap1QcISfHzoRWelIgB/qSWnAixA
-         eZYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758185880; x=1758790680;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758185944; x=1758790744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pmEt68RRoB+wd57eSZ3i30ZBtY+HefiEC4Icljd4gvI=;
-        b=WrZXy/+BU3s8cy2TvDC28gFxn0fF1zS2s9xCeWk0OFZO4sD+1oXWCN250Q3XZ7KtRt
-         5D5dQigGAqt+0RGsa6IvxAtgeoy/FUixoqMxTyJ8KKP7I8tZ4T/zhKRrjpJE3Bj2kw2z
-         x5Oown1xxMAGj75dFaQtKTtAES+KTt9FIwmlDLMTln06fZ2T0NUnhav8/ehDqnG8a1oY
-         6FC/E8Ax+GzxvX9euGQ9vLKB6/L0UXTQKkSHK41FicXdDvoE02Y95rGua3MXjdwvZ+6D
-         BZxvf49Hv15VRGz7YvZk0tTWYh8YLP0c6s3IDyrtupx90UaCv5Yx5a7Js+G7+KS1IJRJ
-         Pc2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUTn4u2x1T28QDBMQdzGmc55Wm1c7NFKBUf0fKFvd2PiSTBPQJ0tU2c3kZJXvVkg+zDDXSYIsPC4+E7Gu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCy3+oX8jvXmOiVaF8kQKit1iO4wpiQeiA2sD0DAr7mMA+/iA5
-	/5OLHEsK41Wvmas1wLU47WsA/vbuCfgvwk+e5LDCjYz3rskPVsYTo/rNLwBzqY0kYQc=
-X-Gm-Gg: ASbGnctQiuzc6J9ncjdcNNcIezGdA+gkhkj6hOk+XqqJ8m27+m6Yll6lT+VIjxNWjSs
-	KDLxOdYeD/+lYdztrt3OqdjfkM/yqxdEhkwy1fLrdA5C76NAuePDDKzyKEmU3LJDFPnbs7HpUwK
-	eTKvIJGALfZ5tYtvQWgXTzdXYRvapQq7n+SqZhFmi16+ZIjg7tiN/NFsz5ogbRZazyLb7pGOoBe
-	IkFKXG4ooZfOuXudRl8HcZygqDpCeR+eUuKt936rwoJ6GRDEVUmiuXyqCdQFEsZojCLxlJb6YqZ
-	VGBzMrZ4AaojjX+jZ3/iopIwZm7iI5g8dyg4iKPOlqDBMUiSIPma3lGpNmtI48HHrzWlyNkVqXz
-	nf6ZMwGWwRk84SXlU5khvWXTpRXTO46pJxbtGleF+MrNyE5ZM593/FZG0d3Bw9CIEKgAu3IX9V0
-	ppoSHOPsA=
-X-Google-Smtp-Source: AGHT+IEPNIa6fkNRCUJ18lBtEgyz/AhKS+iFA/LDaNtIde2Og2VBavczJaF+qUErWN+CRoWjhTjEyA==
-X-Received: by 2002:a05:600c:470f:b0:45b:615c:cd2 with SMTP id 5b1f17b1804b1-46201f8a4b9mr55194505e9.8.1758185880114;
-        Thu, 18 Sep 2025 01:58:00 -0700 (PDT)
-Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee0fbefd5csm2895856f8f.51.2025.09.18.01.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 01:57:59 -0700 (PDT)
-Date: Thu, 18 Sep 2025 10:57:58 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Thorsten Sperber <lists+debian@aero2k.de>
-Cc: 1111027@bugs.debian.org, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: NMI: IOCK error (debug interrupt?) for reason 71 on CPU 0
-Message-ID: <2pdp3kq4qebdxizprbnaq6omh4dvxdlktokvr37b7nlkf4po3b@fxzmgmi47wxx>
-References: <tfwuhg7fxlvb3iix2k4qqh74dcmwgcipprlehy7zlaz3btmtym@2x2vsccw5yzs>
+        bh=3YBijHHPgjAyl07nG2F+4O+IZKa9So+D2+79Hhyhtjs=;
+        b=QCfzMNECjPUgyFa2EJtP3I9kskdycH6zpaKCRAvSJ/YbtadYpn7lKz5N976AZlpQeO
+         1kCNcwIuw3avw2O3+60arZWBCKfAJKitv4CEEMIRVJM1u8M0cGQGQq4Ll8y/rK+ZhW67
+         Tp1np4F0gLtIRs1G0EOg/IY1JEn3Qo/ruQyEmIT/tFD+flidgcuhzO4hiL9T0oafZtQm
+         W7AXQzTLgpq/8BeO9aftTLamuW13GLis3ZxpyJ3QWrZlkq9oY+mFbifBHC0GvitbcsmG
+         SH0tZDSVHN7BLwqO5G/7mwo2vbMXest30TyOaFQvpXxJadNZawqePXUNpaHInVcGLABN
+         9Thg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758185944; x=1758790744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3YBijHHPgjAyl07nG2F+4O+IZKa9So+D2+79Hhyhtjs=;
+        b=MqD7mnR53IQBpsqT8CKi5EXdAJ7cj1sZ0ZBtExOSibKYSynRdZMVKRSfNjnZXbDxkp
+         XoaRsiHD07jN8duPPpZT3qjaFJwBCJ3ln1mMFjUPyrGEqxlSlvJE/mvhskcywGYn+NKV
+         nhuar9CvgPADzQ1QBRujGglztobkCqSVecGJEqTJ2cRT2WyB1/rqY9Y7bXbqRqNlMLE4
+         07zWdk8Brz3LLt6wfBGTZMQgCduUtfxx7DiupjwzZJtfxvz/G03MMn3B5eBnZld8mRW7
+         X+zJt8J5GKgnEBdZas6BYLRul8Qjes6+h6cJS/5/Y9jpleZufBQWVtI0ZuwXd37gVLvw
+         K2fA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDwpZZV85r7V0g7w5C8ZEX9lzAQjW5Xe3h1stToAJ3piXjzXqmXxCHm+1Rrl22k0wyQGukTu5dVQR1as0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvMAVpwmaE6fw0Y9Nlcwfo86sMb0eWvxvOdx2L+SfqNDFetpEI
+	2hJmfv/0eMv3LerwjGYyyZsdE+nEHfSjB2QtV252qk7ofitvGN7LbCJE9sPak88oLHxWm5/HoaB
+	3+bBm18Oe5JekVZ3902s4rTndAPuDMj4=
+X-Gm-Gg: ASbGncssKjZjjQyt051gcjzvjqubdLQdJ2ZkrsMI3HX/Zq2ldYBLTt0pywefEuKdpIu
+	7BE3RuzIlgzMUZbHkWlCiCK3WI0zmX7fGY2g07w7ZEM5RBtlGgWbbstX3eIP2cseKW8I7pXKmRf
+	0uVQf6wv/SWJnO47P8Xn2qHcUJAcdSwS21bfhJw5t0OPy3mKOqF3543d6bg1TmEQgsEq1LUVaST
+	Tnsqe3uqxHt1XXzoffmzoXYTuWjtAxBhWMruMtRmMkN3CCzI/ArtOSFOKv8
+X-Google-Smtp-Source: AGHT+IG9PAZlU5wX6CfCuIPG52y8YmCpl5qUjiXZykbS1/b+bgq6fwmzpG5T/XrmW/++davGQcBL0s5sdx3isOtSuHA=
+X-Received: by 2002:a05:6122:2a16:b0:54a:71f6:900f with SMTP id
+ 71dfb90a1353d-54a71f6bfccmr745397e0c.0.1758185943888; Thu, 18 Sep 2025
+ 01:59:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wwf2na3ggz3ik3cv"
-Content-Disposition: inline
-In-Reply-To: <tfwuhg7fxlvb3iix2k4qqh74dcmwgcipprlehy7zlaz3btmtym@2x2vsccw5yzs>
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
+ <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+ <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+ <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
+ <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
+ <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
+ <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+ <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
+ <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com> <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
+In-Reply-To: <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 18 Sep 2025 16:58:52 +0800
+X-Gm-Features: AS18NWAo-ti9La1j-oEkjznzIVvUZ14li7XE3QDuXeP6to8aA2ac4MfnZt-xdbk
+Message-ID: <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
+To: Chris Li <chrisl@kernel.org>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 18, 2025 at 3:03=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+>
+> Hi Barry,
+>
+> How about this:
+>
+> A swap table stores one cluster worth of swap cache values, which is
+> exactly one page table page on most morden 64 bit systems. This is not
+> coincidental because the cluster size is determined by the huge page size=
+.
 
---wwf2na3ggz3ik3cv
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: NMI: IOCK error (debug interrupt?) for reason 71 on CPU 0
-MIME-Version: 1.0
+I=E2=80=99d phrase it as =E2=80=9CPMD huge page,=E2=80=9D since we also hav=
+e =E2=80=9CPUD huge page.=E2=80=9D
 
-Hello Thorsten,
+> The swap table is holding an array of pointers, which have the same
+> size as the PTE. The size of the swap table should match the page table
+> page.
+>
 
-after writing the mail to Rafael Thomas provided the idea on irc to test
-using
+I=E2=80=99m not entirely sure what you mean by =E2=80=9Cpage table page.=E2=
+=80=9D
+My understanding is that you=E2=80=99re saying:
+The swap table contains an array of pointers, each the same size as a PTE,
+so its total size typically matches a PTE page table=E2=80=94one page on mo=
+dern
+64-bit systems.
 
-	intel_idle.max_cstate=2
+> If that sounds OK, I will send an incremental patch to Andrew.
+>
+> Chris
 
-(or =1 or =0) on the kernel command line given that the splat hints at
-this happening for C3.
-
-Can you please add this (with =2) to your bootloader and if the problem
-happens again, tell us here and reduce the number further?
-
-Best regards
-Uwe
-
---wwf2na3ggz3ik3cv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjLyZMACgkQj4D7WH0S
-/k4Nlgf8CTeOR517VNnBhWurEM5MvPOVJA8+E7xY6D88IqaHQCZUI+noiuKO2pZF
-zNIAqWA2RM54RGqRe5f2xzw60CVnbUogYdxCj7hK+Zpkw4ovs7lBbhpUExVrHhsu
-H39uZcaQAuzmh7+L15BGeKD+oJBgaqT1/VSIIMu4vJftSe00ifUXgIWcblj31a2Y
-WPC9nVxE7w1Tj7p9GXM4bF+53jm+pIJH+G+4l1qws1xR8RF32F8o1n1Cf0ZkNAc0
-LpbUn1l+C9RPfBh+J2/49s+gpXRaOfEnjPa8zizfGtQqawcqENU1LHaemtQBQ9bp
-/d5DPDyilwgrolQNsQcihX6DT0dS3Q==
-=AKKo
------END PGP SIGNATURE-----
-
---wwf2na3ggz3ik3cv--
+Thanks
+Barry
 
