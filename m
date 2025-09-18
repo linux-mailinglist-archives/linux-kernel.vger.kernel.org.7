@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-823572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130F1B86DF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77628B86DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267BD1CC456D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330F93BABE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14E131CA73;
-	Thu, 18 Sep 2025 20:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605CF303A1D;
+	Thu, 18 Sep 2025 20:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxwccQKU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zv3FZA0T";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GZt8R2jZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD7C3128B8;
-	Thu, 18 Sep 2025 20:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3233A8248B;
+	Thu, 18 Sep 2025 20:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758226534; cv=none; b=uES4gAapVT3UoI+vp5kAZ1RRYkUc152jX6g/ja+M0NnD2SKU1QoDTeqvNhQ0UL9wEes2+JqeYNO3vHT+Q+i2in7SB4GNLaeJk2xMs9eEUflUOXud9yyWW8Uien/t/r30ZCkT6S8gIWJqnGYOJcs5SIy1EISnJzcnF9oDQhHE8iA=
+	t=1758226647; cv=none; b=tvJW9Y/MVSXCdS6OZeVRwnxxLamuA6kzWALcnsFh7DQF11b5eXqO1N6VKMQ3RGRokgUUBmFUoy90S4MBC475mGNOpqDO30Vmj7CJwfcqDwCDbMWGOoRT0a31tkCjEF0vQIUTYIFHU9dz9cd2pXN+QnzX0aZaQC74qjSXiXruWP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758226534; c=relaxed/simple;
-	bh=HQTm4CMW9+YUNyC28ifG6Tb9djwUQbuPlwyEg/Xqx4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KND9nKLbpCCm+0Xxw+nZtBQyqztnkjlduqwOVQXLscf9z7w4P2kseN4uT+cHC5CpkM5IVx3h7OywhK7mI0Nrx4rOt4GdkP1J1MAK1oCPpflxwKNfiYUUayUvN8ljjO3rysYIC9W6cPzNRSvDvRwm87TBKciDZS8fXXGAAgWrwNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxwccQKU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEDEC4CEE7;
-	Thu, 18 Sep 2025 20:15:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758226533;
-	bh=HQTm4CMW9+YUNyC28ifG6Tb9djwUQbuPlwyEg/Xqx4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lxwccQKUkKLfcHvCvYAlv/KeXhHwELTRsIYFouON5TvIu8Fv3fbKWwjm0i4JJd4cz
-	 y3ldXAx23PHn98MRchmSYsWdDttPtTVxnumr5hq/Lmj5VrSBkoaTrjZGRVoCbFXqns
-	 dfbldo6p9xrCIqkW0msjtU1YFhRaOG1lJCXby+HGCgQCLC0SUCbadrnIsJUNPxj/46
-	 O9tH6j3yF20q6naf6oKwlK3zqU8wtGP1puZWBFJCO18pleuoGXXq+y+8WzJP3VnHBy
-	 tlLDp2bGxnlacFHW/5n0nRwi+nBqu1qpi64VioVSbirOfUWF8k8t1Vys4J6kiMT5Hm
-	 w4Hxxv0KLfdLQ==
-Date: Thu, 18 Sep 2025 21:15:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.1 00/78] 6.1.153-rc1 review
-Message-ID: <095a7365-8c06-4854-ba71-2a65865d2e3a@sirena.org.uk>
-References: <20250917123329.576087662@linuxfoundation.org>
+	s=arc-20240116; t=1758226647; c=relaxed/simple;
+	bh=WuGHsnFI9eaeja/HU/Mvew+i+MRTn5XKGNImCCQx85M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XFjr375uovsErBhGwHrzuIpLEjBqf/E/B3M1odszRrYJrqHTsI0403tU5T7DciwOAUt4Wrw0Ebrukoggz6uwqWO65YnfM8WhuQiLThS0/vOPvTiybl/rAqsVaYE4GfX3H3j10RJQOgIpIRX/nAoUyrQEQCoK6HsFeOLpGytJ3Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zv3FZA0T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GZt8R2jZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758226644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WuGHsnFI9eaeja/HU/Mvew+i+MRTn5XKGNImCCQx85M=;
+	b=Zv3FZA0TLz+ouSaXKI1QsG0Xs/Akt1S/CuflT47iBsYPloxG5VFs5PUSj1PubucYMXYtFb
+	rALroA09gMyMoaxlMLKy+xNbvCNJTOJB+J8ofoX4OOTxTrjYVy5woO5QMSIJjdiJXLvsQ8
+	tfCP9Zext4k1GgIXF7lQG18Ci0PcrxQ2eJ10M5dGE24RUjka37fee9EA57yRfOcC1m6D23
+	nIb+T5/1iBnAeeK8vyZGV2Ffts1JQOGtobTsgri3ZfuqT0OnN4csQJGwLsxQ3xX6JEk1N4
+	/lQBilaWqJ+8Wes7TsKjh+wrQdE7moHnBgNJ+Q27ESD4CMtPwBAALLzOdLs0Hw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758226644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WuGHsnFI9eaeja/HU/Mvew+i+MRTn5XKGNImCCQx85M=;
+	b=GZt8R2jZNdqqfDTjq8fQqS7QOz2uGnQ6jFMBKxx9EG0BNs9V376HouuZ+3jPMQBh+UjgEb
+	+jUa1294/+ODK5Cg==
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+ Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v1] smp: Fix up and expand the smp_call_function_many()
+ kerneldoc
+In-Reply-To: <CAJZ5v0h1DgQ2xWSEXjbiwAUES4DMKL8S+B5+ed9muWTwsfeNsA@mail.gmail.com>
+References: <6191405.lOV4Wx5bFT@rafael.j.wysocki>
+ <CAJZ5v0gEh-xoKdgAgUvnGzPV6AO51=ZagHXNCrC4BfRZk6Oydw@mail.gmail.com>
+ <87h5x088mt.ffs@tglx>
+ <CAJZ5v0h1DgQ2xWSEXjbiwAUES4DMKL8S+B5+ed9muWTwsfeNsA@mail.gmail.com>
+Date: Thu, 18 Sep 2025 22:17:22 +0200
+Message-ID: <87ecs38qi5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OW6HTeUJpEW4Xj5W"
-Content-Disposition: inline
-In-Reply-To: <20250917123329.576087662@linuxfoundation.org>
-X-Cookie: Victory uber allies!
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 18 2025 at 12:05, Rafael J. Wysocki wrote:
+> On Thu, Sep 18, 2025 at 10:31=E2=80=AFAM Thomas Gleixner <tglx@linutronix=
+.de> wrote:
+>>
+>> On Tue, Sep 16 2025 at 16:13, Rafael J. Wysocki wrote:
+>>
+>> > On Tue, Sep 9, 2025 at 1:44=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+>> >>
+>> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> >>
+>> >> The smp_call_function_many() kerneldoc comment got out of sync with t=
+he
+>> >> function definition (bool parameter "wait" is incorrectly described a=
+s a
+>> >> bitmask in it), so fix it up by copying the "wait" description from t=
+he
+>> >> smp_call_function() kerneldoc and add information regarding the handl=
+ing
+>> >> of the local CPU to it.
+>> >>
+>> >> Fixes: 49b3bd213a9f ("smp: Fix all kernel-doc warnings")
+>> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> >
+>> > It's been a week and no feedback.
+>> >
+>> > Well, in the further absence of any, I'll assume no concerns and just
+>> > queue this up.
+>>
+>> Sorry, was distracted. No objections from my side. Did you queue it
+>> already?
+>
+> No, I didn't.
 
---OW6HTeUJpEW4Xj5W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Sep 17, 2025 at 02:34:21PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.153 release.
-> There are 78 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---OW6HTeUJpEW4Xj5W
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMaF0ACgkQJNaLcl1U
-h9D3UwgAg2Lzpw4vlid0Z4kZVDD9KnB/cWqzvQPiFI6gXsYvMNQcmw90/iMFXBFN
-IRbH7hPgaX0KE6QejBQwonXOGXe47PUbpmCZrXGNMieuX77tU6ZpU7hPfLJy2Wn4
-LbxqbOGh3106whyvPsfh1vEGH0stDaH0Fg2QcD+IqxPSPYW7z4d/QhHFA3KrTXPl
-mlp5sNjP1FChccOXTyMOBwkpw6TYO+a1/FiH6Z3dQpswbK2oXq0125D9t5fyz81v
-Zz42oO+S+0ktxztrVcf9DbKBlDWl7vdfywp8xjCqEUpDzMRxNyKwhdqqDjzYN0xg
-7YNyuJsGXSAB39lpOfcdbAIif8OtZw==
-=pJsT
------END PGP SIGNATURE-----
-
---OW6HTeUJpEW4Xj5W--
+I pick it up
 
