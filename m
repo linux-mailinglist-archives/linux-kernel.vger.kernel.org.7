@@ -1,225 +1,259 @@
-Return-Path: <linux-kernel+bounces-822198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A277B83466
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:10:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C39BB83469
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83711896671
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:11:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBDD175765
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1322E9ED7;
-	Thu, 18 Sep 2025 07:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41232E7F08;
+	Thu, 18 Sep 2025 07:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FKhgoygv"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012053.outbound.protection.outlook.com [40.107.209.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TwCal60E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EHCr+7k9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TwCal60E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EHCr+7k9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E880A2E7651;
-	Thu, 18 Sep 2025 07:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758179445; cv=fail; b=Ix6Rc18i1rojJ4vUs7D+GuY+N2NqP/FN8FqKhAoFO9j07X07M0QF9rOKgfvBULA3oHfafZNBiWMZYTpGVP/4paY24AsKRphICOjB9eiAv0WlitUadpl1xthRIiX3uoEjrY0Bw+KrPFsYoKqDJ1ec4S3bzTZ+UNreG4EuJ/H+hZw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758179445; c=relaxed/simple;
-	bh=L9kHUg/4FYSZMhNnu4hwx4DtyUL4l8ReMcUzYjIxO7k=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z9E9Cdm17UNagKrMNJMssceeuIjWyIrPIFoq6B3Vuwzm/P6rCcMrKFnalfcGC3VIBVDVgcLoHabKv4CgG8qopK/PAGLeJd9i4GBsouajUns5b4meo32Vel3GSRzTBGjginFYZ4Xu4N7eFRJ1Us8HsRhhAUlGTZWivXnBXw++jJs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FKhgoygv; arc=fail smtp.client-ip=40.107.209.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gia5OliiDm60rxBUBu8zB8avc2sCuoOFJ/s/GD/aQDcxdAlBUCPaAGibQk8gUVUD78EjGNl2biDlCgT2tTvAlyBwlMVZ6gz4ycZxJcXOlScUVRTzd0sXiN4peXYkBouS7Yv80bXLrhFbAUMGhg4Pa8IUgPY/pVeH2OT4N8buq/pVITq3CQ6q3JJXUbiFWqr2ZKF02MSoddkojIQQq14Z4EnwlO9TAUFZ9fMMT32YRGhI1UI7aI6jC8eRBgvwtC4sOWLN/ORPEcptFNi+jaTvNM5sjVqZLL3TBhvwCo8/u/V24KAWQwz+bhwveveAIjcxrhuB7V8XTZ7ZHVWMlJ2jVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ih7s1ocYU/PoA4a8cFHBkJd0yMnk1drI5I6UmwtrXMc=;
- b=J4EoT8NKuXZ86b9pelMo+AiC5DRnvQuY7pWjCUq29dNXAL/qDR/cUNh1n9uhTNCnxOUxX3tH6zZiaUkBYL97VYkoCaBY18MQWaFLJQUoXMl3rXU5QrfKd6F/aJ5Jjczl/+Qh8NErSxhKDjypmOGNiURIMIFKqEKPHbQZm5IWdoMLxj29MbVEM0ZGhZUoml9Hg/8RpGYFW8v1HdsOPTl8vOGJtZVvF7IvWAmjN02E1TDVHQtwZu1yngVmhYZ9iaMGkXu0f6z7+rRX1Q+3IgYvqi929huQmpTSeOVo5LY5b1Z7NO4kX9zRgl5bkar8PdTAOPUd7e017Y58GRMIrkiFIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ih7s1ocYU/PoA4a8cFHBkJd0yMnk1drI5I6UmwtrXMc=;
- b=FKhgoygvr7jmdTQkuxAU3lXqLNZ11AXVgC0gcCmzF6pjvvh8VB9zezvHpqIwMdCXB8jtQpBgoi1XnNdlJKP6qDr8YhNjodRGIaHlpODESlnUk3gc9RIiX5XsdwZph5roniEexZlpqqa+UrGQITEdUY9fCQ68bhtwUeCKqDxx+WLipSnY4rakakDYsOR0H8RBFKR4FMAY106HXtrds+h0sskemFWKalsXRNSruh0Olf0Q1USWhB2ZveQhsnyXKKDOPGlXwG4fZNUePb9cgfYf8IPjan0i6XltBfigK4P0290NgniV2GwFQl/yRWWcEcsRCTJ3bMAFJhEISdhn7xZUGA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com (2603:10b6:208:373::14)
- by MW4PR12MB6777.namprd12.prod.outlook.com (2603:10b6:303:1e9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
- 2025 07:10:40 +0000
-Received: from MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861]) by MN0PR12MB5716.namprd12.prod.outlook.com
- ([fe80::1770:161a:675f:7861%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 07:10:40 +0000
-Message-ID: <21f71c22-8957-43cc-a99b-158366467654@nvidia.com>
-Date: Thu, 18 Sep 2025 12:40:18 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/4] i2c: tegra: Do not configure DMA if not supported
-To: Jon Hunter <jonathanh@nvidia.com>, akhilrajeev@nvidia.com,
- andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
- digetx@gmail.com, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250917085650.594279-1-kkartik@nvidia.com>
- <20250917085650.594279-2-kkartik@nvidia.com>
- <d336ce08-4e35-4c14-9f5d-e777f7d91cc3@nvidia.com>
-Content-Language: en-US
-From: Kartik Rajput <kkartik@nvidia.com>
-In-Reply-To: <d336ce08-4e35-4c14-9f5d-e777f7d91cc3@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN4P287CA0043.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:271::6) To MN0PR12MB5716.namprd12.prod.outlook.com
- (2603:10b6:208:373::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7630A2EA726
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758179451; cv=none; b=nAnp1I5DoJjN7n44DZPHV2n9ZMJmWJc40lGrhoJ0cBimBE3of9bv7sKtFGIjTeXTT5NVbYToJvIK1wMpKEzOjQaOOiDAszIYwBBTkw/jU4XuDdaFJg64xaDi3eMtOE0Ag6vPAxYJu4d3se9Tc46mxiv4OXr+yifc84IgafezvC8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758179451; c=relaxed/simple;
+	bh=afbZiTITWiDPxpVDFuaq7hIxA4pu1Ma8IO/vh9BBM6w=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZAZU8aktp1Mmt4S9kPnSyKzuHJ4S63bgL+DKR97Av5IZfv7LDzUbX1k/auf/EmbHB84b/4TdZRaRWZWO6/plAjcTIPK0X6zLBD8/tlXd9KQpWLOiidCjjnM9cm1wvh4bcXi1soUin14pdW29fT8Cy33Q8cPW/wXdGZxAOyY8v2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TwCal60E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EHCr+7k9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TwCal60E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EHCr+7k9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2738B336B0;
+	Thu, 18 Sep 2025 07:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758179442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
+	b=TwCal60EKp1MDOYLxoKy6YjdPtPkSczXK7B7bK3rOpV76PRPfJMOkOowlhCljGbcUzP/cK
+	j+FfczXwY+wOCeTs+OU1fDqaqcgucBb5vw44Meu9+gu/i5sockbhOqxJlksJY5HslRufD5
+	vUGsrw4qdAW3MvT8hnOMyGi7qNeRQ/s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758179442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
+	b=EHCr+7k9hyySXBNOFAuI8v3Jc7tuniPCQowjRMA+7x2ERLpmAcF2dz/fMsMQuaNZy5iw8w
+	ovAJf6kyNBBOCyCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TwCal60E;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=EHCr+7k9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758179442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
+	b=TwCal60EKp1MDOYLxoKy6YjdPtPkSczXK7B7bK3rOpV76PRPfJMOkOowlhCljGbcUzP/cK
+	j+FfczXwY+wOCeTs+OU1fDqaqcgucBb5vw44Meu9+gu/i5sockbhOqxJlksJY5HslRufD5
+	vUGsrw4qdAW3MvT8hnOMyGi7qNeRQ/s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758179442;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
+	b=EHCr+7k9hyySXBNOFAuI8v3Jc7tuniPCQowjRMA+7x2ERLpmAcF2dz/fMsMQuaNZy5iw8w
+	ovAJf6kyNBBOCyCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F3BDE13A39;
+	Thu, 18 Sep 2025 07:10:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VzApOnGwy2irKQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 18 Sep 2025 07:10:41 +0000
+Date: Thu, 18 Sep 2025 09:10:41 +0200
+Message-ID: <87tt10b5hq.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: PM runtime auto-cleanup macros
+In-Reply-To: <CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com>
+References: <878qimv24u.wl-tiwai@suse.de>
+	<87ikhptpgm.wl-tiwai@suse.de>
+	<CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB5716:EE_|MW4PR12MB6777:EE_
-X-MS-Office365-Filtering-Correlation-Id: ffae81f3-a554-4239-9fca-08ddf6827936
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qm9CeFVobkZORUZDOWZRaU01ZjZ2MnZJVGpFNEZ4U2JKeWVMZ3h4Qk9Jc0lL?=
- =?utf-8?B?MVp6Nm5Nb2E4eTBNb0xCNTg4UzJiOEV2L3JoVEZVeW93SWZrSm81by9GT21w?=
- =?utf-8?B?VUdEaXVlUVBHR05hNkpmR0dMcFlycDgyUkxQbmh2ZnRUbmhTL1V1VUZOUVlU?=
- =?utf-8?B?VFRTZDZRQXRNMWEya2xlMGJmaUI0bEVDRnJjTkpXdFd3bHFmNFhjS3A3N1Zs?=
- =?utf-8?B?Z2d4WnBMTUJ6MWs3T1ZjNkRHRDZ3QXhIM1dXTFR2aVZiSStTR1Y5bTV0eDRF?=
- =?utf-8?B?SUR3a1JOcHpFTGRkMUhtNjFyK3YvWTVsNzh4MXRsSU5OeU1nSm5tU0t3emVt?=
- =?utf-8?B?UStnVGp4L1ZPRU9LWUcxcjAxd0gwQytUT1VwT21PalBSWTJVQkhUSEl3WlZM?=
- =?utf-8?B?TDJmZHNqQ3JLekFjbk9xODd0OC9zZEp2azhuTDhiMVQ2cTRPMzFDSU5QNklG?=
- =?utf-8?B?ZE5KZzVtQWVtUDUyTnVGMmVHWkUyb0FxMjQ4VEtyR21qanRxc3lFMk10TSt6?=
- =?utf-8?B?bzJtZEh3SVJoU3NGcWJpS25pamNvZXZNU3hFZk5CMmVRbmF6eFExbXZTRmpB?=
- =?utf-8?B?LzF6YW5QMGQrRHJZZmhZT1o0LzBOZkdIVkd6dCtOTEw4WktoZzAwQWF3ZlIy?=
- =?utf-8?B?blN1NnV5TTV1ZmZ4S2tVRUYzS0NwRXN3Ym0wSy9Lam9jWEJhS3h6NGEvTVNq?=
- =?utf-8?B?UEdIelEzUjE5SklQaW80dFpxcm9BVXdCdFFaV0NkamphNXRaVkVIa1VCNUJK?=
- =?utf-8?B?ejV1MHJTOXVtdFlhaTZaa0RUTkMyd2tzcHhCSmtnczl5ZmNoWXBrU0x6SFpL?=
- =?utf-8?B?dTU5V0ZHOENXZitRQ2xTSmVGL01oNGxaOGwvSzR6RzU4T1JRUkh1WGIwZnhF?=
- =?utf-8?B?c1o3d3M0bTFvYmNDdmZmekxZeXhyQktFcFpncEhCSUpNMHM2MUVXVkZMTDNP?=
- =?utf-8?B?Qk5MaFBsWUNlVDJiZzN4WVNVRXZuWHU5eHl6ZVhJOGRMcFdFOTVjdnNmWVQ2?=
- =?utf-8?B?RDJPUkhRYzdQMlZPZzRwUE5lbXVUampMS0ZkcDAzNTNVWEtUL2lJdmN1RDBD?=
- =?utf-8?B?MTM4b3F1SzZMVTI3N2MwdnVqb1RwREJkT0pSQndMQWdoRFRvRmoxT083WjBQ?=
- =?utf-8?B?Z2l3aEVjOXZzK05KWFh6SzNka05xKzJMekZuanh0TGFrQVNqTCtRSXlTZ2RB?=
- =?utf-8?B?akxEaCtlbFdsZXZvUWcveDhtV0RNVU4zTmpzL3RnKzJ1NkNhU3dyYVJpVlAx?=
- =?utf-8?B?QlFmUXlESUl1dmlOL3hpbXd4VVZEbXhZZEFTc1NtN0xZSk5uRExjYWJTWEEx?=
- =?utf-8?B?N2lpWWpmM0w0VExyeHZhVDBFTUE3YmpYRmJlOU5ac0pTTmQ5ODFmZFdUSENP?=
- =?utf-8?B?UEZWUlJ3OXUxai93YkNLakJyRis0a3U0bXFwQU9IU0JKSHk1bW1wTHZVOEJO?=
- =?utf-8?B?eXdTZXZRQ0YzRnBSWkVHMlVicml0ZlJrZzg4OG96N0xSbnc0NTdxdnpDbUZl?=
- =?utf-8?B?TDdLWEI4dEgxRm1SU2hNcS9lL3ExUFZHbFhYMjZYd1loVm95QWF5c1E2dmVC?=
- =?utf-8?B?ekFiS1FGc1JkTjArR0NUMmJOYTdVa0pZTUF3VjJzczZUZzRpY0hNbWZ6K3Ja?=
- =?utf-8?B?SFhucTVJSGxnQ0JoM0xrbW4rdHNuQkI1aFgxQmRoNHRRZG5KN3p6Zm5MTk93?=
- =?utf-8?B?Z29Fa1VEZDZRWkFsM0dxbk1heFpMWlRuT25NTG1Nbm50c3hXLytHOFN3TXZG?=
- =?utf-8?B?amVIaktaWHZ2Uy9McEdXbXM3THlhdnE3TVI3SDNnTmlYMUF4dDBwL2pHVERI?=
- =?utf-8?B?bXNxWEhlNURaWlJ3d0ZCaDZGK0RDb0htQ3JIdDF5MmJkOVJiYjUwNjFIck9N?=
- =?utf-8?B?ZXFraElHWkJrYmVjdFR2YlUzNnVjOUxYNVNvZ2xJTWtUTURGSjRQbGZPWTla?=
- =?utf-8?B?TFF5bHFzMnMwZ2pMT0tVSFJzTzVkVjFWKzVUSlZObS92T05WcEtoSnZlaDVv?=
- =?utf-8?B?R0w5RWhmSTV3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5716.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cnJMYXpzUktLcCsxdnhBVWl1eUViZC93VXc5UWJVZFBieWNRT0tjZGx6UkVz?=
- =?utf-8?B?Y0RMQkw1alNlZFJicHRFS3RmQzVwdm9PTUtySDVZOEtSeXp0WU5LcmIyOElt?=
- =?utf-8?B?bldZM2ZESGtLQ0U1end3bVFmeDB5ZVpsaXpkVjdSMGFBK3Z6dkpUUzkrTlB0?=
- =?utf-8?B?RUdEVCtib1I4d09NMERKUEU0U2R5YWdRdnlQTTBDZlVNWGNkZ3M1T3BuZUtP?=
- =?utf-8?B?U1U1ak45MkpPSVMzcElpY1ZKV2hNb0U0T3lHcVpuUENwNzM5UHM1VGE4WEpp?=
- =?utf-8?B?ZnVTZURzZVJvdU43NUsvL0V5VzR2U2J1L21ESDFqQWRScHhTaUJ1R1BTUnFG?=
- =?utf-8?B?Mkx6UmovbWpUMHVTalY3ZWdEU2taQ21zVm1aN0o2ZEcvZjRjSUFaT0phaWhs?=
- =?utf-8?B?Tmg5ZFhCNVVDMk8zNmVzQnExdEJ6Sy9lSXlkNG1pSTlpNzgxeXNBM2lFZHJs?=
- =?utf-8?B?Mkw5YzFRcWcwNmoyUUl3M0lOZDRDZGF4b2d2OHV0OXZOaXlrY0RmVWZ6NHdQ?=
- =?utf-8?B?MG1UcGF0VDlYMHBGL05rcFZoSXR4aHpJQm5pZEEvZ05RTkdkRWpHaHY0NzhF?=
- =?utf-8?B?U2M0amVOZEo4Q09LZzlEOUlpYmdlTHBvRVdoSGhQZW9oR01WeDFoOHpxb1VH?=
- =?utf-8?B?WExmbGpsWXg0N1VvckNaSHN3RDJpZEVNeDRLekpVZFpvbUdwbzdlbWFqZU0x?=
- =?utf-8?B?MDVQQVZ6QXVDNG5yL0Q1Y25JQ0s0NnhJdkxnSGtYQUwvVFJ6M0VYRUtaTEh1?=
- =?utf-8?B?K1N4WFd3Vmw4NkpVRG9rUERacCtNZ3FpZmtaYndwZnd5MVYvMW9URW0rMzRi?=
- =?utf-8?B?Uk1QTHp3Mk5RelMraDI3SGhtRytLMWtrUW1KMWc4Nitvb21SbFVHdG4wTHE1?=
- =?utf-8?B?QlpvTGNnZkRGMXlGNUVURnBKZlBoRVh4ckJqaGJjWkkrbGZ2SGYvaGdYY1M4?=
- =?utf-8?B?ZjR6cG5KamY1UWlnaVI4eUkxK0Fsb094QkZXR09lUG1CeXJzTEFBY2FaMHFS?=
- =?utf-8?B?MW1Sa1gyK2ZrSHFDQjlkb3A3SmZZWnFaRmZTVWpQRERaa0FLbVFrODVGSGw3?=
- =?utf-8?B?Vytoa0F5R3cycVpRU2tsRXJTMkh3R1k2aFlzRG9xMWVBK0Q1dXUvNmIvQnFZ?=
- =?utf-8?B?cVZVTWpQb3o2Q1FUSzN4VzRjOExtbEwvUGlrWVJmcEVPdHlQUVJrS1dmczkw?=
- =?utf-8?B?cnR2NS9LWVp1VFBEQkJxQnBxZ29rbENMSHFoREkyMmorTlVBZjY3eGhFYm1J?=
- =?utf-8?B?VnZWaEp1ODl1SklZVm1GNGt0b0tZb0s5UE5UYnZMampSdEFtMVR0MDNTbHFY?=
- =?utf-8?B?cnlpMG5KZzlmM1RPZDBLTk45L291WjVtdmdsVmVYY01LQ2E4ZWlxcDFhbS9a?=
- =?utf-8?B?UTlFSTVFVWNFVXliQzhjOU9tYWJKVDI5R1JoaVNWNC9aSmJla1ZyWXBIKzQ4?=
- =?utf-8?B?MmdremFkZTRESWdTOUtqVzYxa09mL0Y3bE5XelNid0xGbDlHVXA5aGZ0L29G?=
- =?utf-8?B?WHdCdzZqVHpHMDBnbjF0ZndLUnZqZlZWMFg4RWRCcElzcmVheGhLSEZOVzlv?=
- =?utf-8?B?MkR3S1Aya24rblJ1bS96MnpSNFRUbUt5b0RvNDE0Q0RRcDVQZkZQak9odXU0?=
- =?utf-8?B?dmt2SllmTjFpejdJR3dHRXgrVTZYckxiYnNTSklLd1psTG50OW1lTWtWemdz?=
- =?utf-8?B?QVFqZ2p6TlR5L21wL2RnTFV2WmM0bEg4dnlWSGVFQXF0YjM4YkVJK1ExSDRF?=
- =?utf-8?B?by9KSnNQRkdHa0xnZ0pnQXgwVFhzclkyNW9OS3hGbTlhcjR5WTk0Mm82MGw1?=
- =?utf-8?B?RDFHU3ZZUEhMd1RYRU5ZVUdzWCtkajcxdWZxZlUzR2xYSm1zZy83cDg2TmRP?=
- =?utf-8?B?WFlxcCtsdG9kaWFUUCtwSGRJeWNXQnd1MVloQU5vM3hlL1IyR2JUT1ZWZmx3?=
- =?utf-8?B?NnliK2w5bitzRzhCSzExbzI0RzMrUjAyelk1Q3BnKzFuSUFnTjc4dE4zZUtR?=
- =?utf-8?B?YmNZOHdEMFlRREhFbEUrQXNxNm8zZkZ6NWtIeVRDb3FkTmRNOXFVaDh1d0NU?=
- =?utf-8?B?YzhSSU9JcTVDeXduVUdaeUpBU3Bwa0Z4S2E3MFlNR1RyMG1QR2xPdmN6d2xR?=
- =?utf-8?Q?QZzonxL/Um0rUYfIKKpt/+LGc?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffae81f3-a554-4239-9fca-08ddf6827936
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5716.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 07:10:40.0187
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bIpvyHM4Wmjp3+PszG1ZXCKMvBUOMsqkA6IUD6EJjSBcIu4D97RCPb3QJZkgzfvZAhZ7pROhgbzDu5nXErMykg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6777
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 2738B336B0
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-On 17/09/25 19:38, Jon Hunter wrote:
+On Wed, 17 Sep 2025 20:58:36 +0200,
+Rafael J. Wysocki wrote:
 > 
-> On 17/09/2025 09:56, Kartik Rajput wrote:
->> On Tegra264, not all I2C controllers have the necessary interface to
->> GPC DMA, this causes failures when function tegra_i2c_init_dma()
->> is called.
->>
->> Ensure that "dmas" device-tree property is present before initializing
->> DMA in function tegra_i2c_init_dma().
->>
->> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
->> ---
->> v2 -> v4:
->>     * Add debug print if DMA is not supported by the I2C controller.
->> v1 -> v2:
->>     * Update commit message to clarify that some I2C controllers may
->>       not have the necessary interface to GPC DMA.
->> ---
->>   drivers/i2c/busses/i2c-tegra.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->> index e533460bccc3..d908e5e3f0af 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -446,6 +446,11 @@ static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
->>       u32 *dma_buf;
->>       int err;
->> +    if (!of_property_present(i2c_dev->dev->of_node, "dmas")) {
->> +        dev_dbg(i2c_dev->dev, "DMA not available, falling back to PIO\n");
->> +        return 0;
->> +    }
->> +
->>       if (IS_VI(i2c_dev))
->>           return 0;
+> Hi,
 > 
-> No issue with this change, but we have a few checks for DMA support in this function and so it would be nice to have them altogether.
+> Sorry for the delay.
 > 
-> Jon
+> On Thu, Sep 11, 2025 at 9:31 AM Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Wed, 10 Sep 2025 16:00:17 +0200,
+> > Takashi Iwai wrote:
+> > >
+> > > Hi,
+> > >
+> > > while I worked on the code cleanups in the drivers with the recent
+> > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*() can
+> > > be also managed with the auto-cleanup gracefully, too.  Actually we
+> > > already defined the __free(pm_runtime_put) in commit bfa4477751e9, and
+> > > there is a (single) user of it in pci-sysfs.c.
+> > >
+> > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
+> > >
+> > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
+> > >            if (_T) pm_runtime_put_autosuspend(_T))
+> > >
+> > > Then one can use it like
+> > >
+> > >       ret = pm_runtime_resume_and_get(dev);
+> > >       if (ret < 0)
+> > >               return ret;
+> > >       struct device *pmdev __free(pm_runtime_put_autosuspend) = dev;
+> > >
+> > > that is similar as done in pci-sysfs.c.  So far, so good.
+> > >
+> > > But, I find putting the line like above at each place a bit ugly.
+> > > So I'm wondering whether it'd be better to introduce some helper
+> > > macros, e.g.
+> > >
+> > > #define pm_runtime_auto_clean(dev, var) \
+> > >       struct device *var __free(pm_runtime_put) = (dev)
+> >
+> > It can be even simpler by assigning a temporary variable such as:
+> >
+> > #define pm_runtime_auto_clean(dev) \
+> >         struct device *__pm_runtime_var ## __LINE__ __free(pm_runtime_put) = (dev)
 > 
+> Well, if there's something like
+> 
+> struct device *pm_runtime_resume_and_get_dev(struct device *dev)
+> {
+>         int ret = pm_runtime_resume_and_get(dev);
+>         if (ret < 0)
+>                 return ERR_PTR(ret);
+> 
+>         return dev;
+> }
+> 
+> It would be a matter of redefining the FREE to also take error
+> pointers into account and you could do
+> 
+> struct device *__dev __free(pm_runtim_put) = pm_runtime_resume_and_get_dev(dev);
+> if (IS_ERR(__dev))
+>         return PTR_ERR(__dev);
 
-Ack.
+That'll work, too.  Though, I find the notion of __free() and a
+temporary variable __dev a bit too cumbersome; it's used only for
+auto-clean stuff, so it could be somewhat anonymous.
 
-Thanks,
-Kartik
+But it's all about a matter of taste, and I'd follow what you and
+other guys suggest.
 
+FWIW, there are lots of code doing like
+
+	pm_runtime_get_sync(dev);
+	mutex_lock(&foo);
+	....
+	mutex_unlock(&foo);
+	pm_runtime_put(dev);
+	return;
+
+or
+
+	ret = pm_runtime_resume_and_get(dev);
+	if (ret)
+		return ret;
+	mutex_lock(&foo);
+	....
+	mutex_unlock(&foo);
+	pm_runtime_put_autosuspend(dev);
+	return 0;
+
+and they can be converted nicely with guard() once when PM runtime can
+be automatically unreferenced.  With my proposed change, it would
+become like:
+
+	pm_runtime_get_sync(dev);
+	pm_runtime_auto_clean(dev);
+	guard(mutex)(&foo);
+	....
+	return;
+
+or
+
+	ret = pm_runtime_resume_and_get(dev);
+	if (ret)
+		return ret;
+	pm_runtime_auto_clean_autosuspend(dev);
+	guard(mutex)(&foo);
+	....
+	return 0;
+
+
+thanks,
+
+Takashi
 
