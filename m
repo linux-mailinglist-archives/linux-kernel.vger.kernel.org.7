@@ -1,116 +1,181 @@
-Return-Path: <linux-kernel+bounces-822640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F387B845FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:36:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2330CB8461A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5F421BC387E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:36:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09D04A81CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FC13043DA;
-	Thu, 18 Sep 2025 11:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D6F303A01;
+	Thu, 18 Sep 2025 11:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxRZA+7C"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yAbG/z53";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wEOWNzPt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yAbG/z53";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wEOWNzPt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA4F303A06
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82DC27A900
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758195356; cv=none; b=nYioEe5oKrUxSCYcIuGa6wjGnJIA7OMILuJH0JNk+r+V88j+mCMDsOCb1XHOgGHAjyXTOLxKaf/1ZpmIdePur/LeA3+x9eZd3IteeHWnE4eE0fDvd2K3HLlxS7x+Ej1HxKIQsMbGLJhAnbtt6DNcXV0f5+YT1WbfsyLhBSkwVnY=
+	t=1758195544; cv=none; b=CkNU/xJ5jxYblg6F/DLkDGxz+HwA4TosCx78HaAH1xtsFY07GzyYSlfXW4jALvrzx8e/obQFCXuXVMVmiY70scUL/DFcewYy1kj6arwLLpj1/Ddr6W5l9oO8KFq7EDev69lqPvi2Z93q4G6tDztsgTOrgWik2Gq0K0iTZ1fiDkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758195356; c=relaxed/simple;
-	bh=CH1PrPamLBcIL2akQUYxoj1jI5NyoHazD5PXsVbHZK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OCVj95CEr2mWSwwmjEElEfLsmrS7xNh6ZGw7zwC3n0IJ4Bjkiebsj8GWGkLmqcpENeHpTEEsute17sDey70O5lO4dcAryocPgq08rIoh6xLlhs64Kxts9RzzChTFnO5lsSD+z6/utbZyxhRNjT2vaF6Gx/he65ouUgla0vOiEjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HxRZA+7C; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b5500891f00so443364a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758195354; x=1758800154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CH1PrPamLBcIL2akQUYxoj1jI5NyoHazD5PXsVbHZK0=;
-        b=HxRZA+7C8cTiMcln5T+H8C+z3F8oif7sV4JrK+7+bTCTPUohOltquEACiw29uq2lFg
-         GwnIxeL5YOAlzqmJY7pXQh9sS8U4HkCXW6HYyqvPRC2fuj1nvBU22v3UrPw/M8hUnPmT
-         O2H8sz6jdoM7jJJUOW6dd7vp5D6GqfnrxBKLYGREu4XBK8Yi5j3MAZdNPvzqzM9znZvP
-         lyxgMV3uRZt7JgHkKZguEcjWIY5zKkdKH35Yk2cR34VztBJlGvduTV1l7DedbOSlRuw4
-         c3+c8HQHB0nED8l7X98KKa8xsNVwgrK5vgmg1kj3qCCoH8Wim1WJk3kVYLJPUSqkbpBw
-         j5KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758195354; x=1758800154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CH1PrPamLBcIL2akQUYxoj1jI5NyoHazD5PXsVbHZK0=;
-        b=iCYeEENJrdHB/5pv6Js2mGQzumuOuiP8d4sRbsywmy3W42bLRJuOEc03rdJ8F4v1QT
-         2rEpKLV7YJhf4krmuNJUADqK3LcrWPdY45IWMHnrK2V+rOq1J03YFYrgWTzkgpUsrC3l
-         EdKkY+rnaHSo7pdN731yZjQDnK6wGiQQiU2ftBsfwLCI9+aIGA5Pli+oc9SeY6UjIIqA
-         4uScv2R+zmYvF9suGXh1taWQ30RBG2iKN7+PmR4sRUdt+o3LhQxkXCshb9Ghdg46nKh4
-         lNVDL706+0qRUCL+f4WIAIsR5/Glctj4o6Dj+OdA/BCL36NSFfVcHiRcfnZK89lLKB5U
-         wi0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUzRM47SxuyRhPsIwrXCv2uUobZ7/HycwipB/XhLqvAblUzrCq7GTYd+853aPvyiAn1tki3Hais7f1LPwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0vAnM9nADOiwYlF4O2CI/LuTJdpVovbwi0eKnG9ummImMJ//N
-	SBkKJhmDmxLtWvIaJTWla+xXBMi8+GYMZ9yCxJELeGnWYbFyjngPKsqNpYHAt6W5Oe05BBSigvi
-	86CgVF0W6HTRZcloj1yCHV4PbBMy4r2M=
-X-Gm-Gg: ASbGncuLnIae6yf2+LAR86tv1Xl4q2AWggp1C1gxHF5ajqbhKKYPP2KeEXhaThY5Mks
-	EVjnUDsOGQ4nR1/vwD606Jh+gJxs6TB3zf2fSgYfQSckmxmGxKSXWe6vdFI5X+AIgKaBR57APz+
-	1U03dOkpyY+FtUs9qhCwJRu4wfaNftnFHa/n8EJwYaX9VqxvX3QdyaDtZLQJ1y0UqveLwPm30QK
-	jxtfbdcXOyJtPAl4fo8+WYjWtQIIB4QM2YvIEoQyhSQkpBrOrfu79E=
-X-Google-Smtp-Source: AGHT+IGj6a4sc19wyzd63Dixg/UySiquRPpGXq2m5G0nsVQ6YbTUTB+pMgEHhGrVA5tqjbsOrjjh+YB6F+lqKoiYvWE=
-X-Received: by 2002:a17:903:1b25:b0:266:d648:bf53 with SMTP id
- d9443c01a7336-268119b832bmr72456925ad.7.1758195354344; Thu, 18 Sep 2025
- 04:35:54 -0700 (PDT)
+	s=arc-20240116; t=1758195544; c=relaxed/simple;
+	bh=FiCYTYBmBwByIybftqCSpMtDVDCIhnvrAqqcqSn93Yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4dNnz+O53MRllj+Unc4/8E92LUtY6I5vlhv8vKa/WQiy02Cxp26tXzrYw0xYMN58vDgKSk6zQiHGyqwmYmu8cLAB6B/a1c587neJt0B75ek4bN+MWwMy5msvHZ3IjMY5BQi23hM8ML1cW/3gSB+0iJBSVAP04B0jyVW4SNJ25M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yAbG/z53; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wEOWNzPt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yAbG/z53; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wEOWNzPt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AA3D31F393;
+	Thu, 18 Sep 2025 11:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758195540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pXXknVDpmNYnLUtM1qz0zJi5d3AHN3Yxt2BrVK20pvY=;
+	b=yAbG/z53WbruUxX/3ies41/VNu2qWdBGFLaPMVRN80Cqe+oNynqfJXnyf+t56Cx0mM2SdW
+	+RVPmSGF6YFbQCt9A4UJ5/Jc4haI1+n43JilnK3sGxohsgBrAS2Jw3Ki3js3oL6P4rR15/
+	f5tG+7EqBS5TJH4OmQlCKzmqFbTeoe8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758195540;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pXXknVDpmNYnLUtM1qz0zJi5d3AHN3Yxt2BrVK20pvY=;
+	b=wEOWNzPth5hUlnK6FcdpsFJbnSHl9DOJAzXfjeo/GAewIY/wgz1P66A196GZT8LOd2sBZM
+	mNY8RzOOf0aePvAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758195540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pXXknVDpmNYnLUtM1qz0zJi5d3AHN3Yxt2BrVK20pvY=;
+	b=yAbG/z53WbruUxX/3ies41/VNu2qWdBGFLaPMVRN80Cqe+oNynqfJXnyf+t56Cx0mM2SdW
+	+RVPmSGF6YFbQCt9A4UJ5/Jc4haI1+n43JilnK3sGxohsgBrAS2Jw3Ki3js3oL6P4rR15/
+	f5tG+7EqBS5TJH4OmQlCKzmqFbTeoe8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758195540;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pXXknVDpmNYnLUtM1qz0zJi5d3AHN3Yxt2BrVK20pvY=;
+	b=wEOWNzPth5hUlnK6FcdpsFJbnSHl9DOJAzXfjeo/GAewIY/wgz1P66A196GZT8LOd2sBZM
+	mNY8RzOOf0aePvAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B186F13A51;
+	Thu, 18 Sep 2025 11:38:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id luEtKFLvy2i6BwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Thu, 18 Sep 2025 11:38:58 +0000
+Date: Thu, 18 Sep 2025 12:38:56 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kalesh Singh <kaleshsingh@google.com>, akpm@linux-foundation.org, 
+	minchan@kernel.org, lorenzo.stoakes@oracle.com, david@redhat.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, kernel-team@android.com, android-mm@google.com, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded
+ trace event
+Message-ID: <6x64jf7szyy52gug6qoixhhjq6vsrcqpozqj4ambsehh2jprj2@qeye6qevem4g>
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+ <20250915163838.631445-8-kaleshsingh@google.com>
+ <20250915194158.472edea5@gandalf.local.home>
+ <CAC_TJvconNNKPboAbsfXFBboiRCYgE2AN23ask1gdaj9=wuHAQ@mail.gmail.com>
+ <20250916115220.4a90c745@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918014053.696710-1-rpimentel.silva@gmail.com> <20250918014053.696710-2-rpimentel.silva@gmail.com>
-In-Reply-To: <20250918014053.696710-2-rpimentel.silva@gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 18 Sep 2025 14:38:12 +0300
-X-Gm-Features: AS18NWCUGtPgOgXzmXtowvoHWKNQHRraFSnJDD8RcxIe00cDqMMkAGlPM7jIMlk
-Message-ID: <CAEnQRZBb+FOah-owK2u4CM_ngLm675_tbrn5tdyUTnTSu-Mmbw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-To: Rogerio Pimentel <rpimentel.silva@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, alexander.stein@ew.tq-group.com, 
-	dario.binacchi@amarulasolutions.com, marex@denx.de, 
-	Markus.Niebel@tq-group.com, y.moog@phytec.de, joao.goncalves@toradex.com, 
-	frieder.schrempf@kontron.de, josua@solid-run.com, 
-	francesco.dolcini@toradex.com, primoz.fiser@norik.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Aisheng Dong <aisheng.dong@nxp.com>, xiaofeng.wei@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916115220.4a90c745@batman.local.home>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[34];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLtinr53e731m8tnofz4ju9k8y)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Thu, Sep 18, 2025 at 4:44=E2=80=AFAM Rogerio Pimentel
-<rpimentel.silva@gmail.com> wrote:
+On Tue, Sep 16, 2025 at 11:52:20AM -0400, Steven Rostedt wrote:
+> On Mon, 15 Sep 2025 18:19:53 -0700
+> Kalesh Singh <kaleshsingh@google.com> wrote:
+> 
+> 
+> > Hi Steve,
+> > 
+> > Thanks for the comments and suggestion you are right we can use bpf to
+> > get the comm. There is nothing special about this trace event.  I will
+> > drop comm in the next revision.
+> > 
+> > The reason I did the task_struct parameter (current): I believe there
+> > is a limitation that we must  specify at least 1 parameter to the
+> > TRACE_EVENT()  PROTO and ARGS macros.
+> 
+> OK, then this is another issue. We don't want tracepoint "markers".
+> Each tracepoint can take up to 5K in memory due to the code it
+> generates and the meta data to control it.
+> 
+> For something like that, we highly recommend dynamic probes (fprobes,
+> kprobes, etc).
+> 
+> The only purpose of a static tracepoint is to get data within a
+> function that is too difficult to get via a probe. It should never be
+> used as a trigger where its purpose is "we hit this path".
 >
-> The FRDM-i.MX8MP is an NXP development platform based on the i.MX8M Plus
-> SoC, featuring a quad Cortex-A53, Cortex-M7 co-processor, 4GB LPDDR4,
-> 32GB eMMC, Wi-Fi 6/Bluetooth 5.4/802.15.4 tri-radio, Ethernet, HDMI/MIPI
-> display interfaces, camera connectors, and standard expansion headers.
->
-> Based on the device tree found in the NXP repository at github
-> https://github.com/nxp-imx-support/meta-imx-frdm and on imx8mp-evk
-> board kernel mainline device tree.
 
-Hi Rogerio,
+Isn't the usual problem with that approach, that of static functions/static
+inline functions? I was tracing through a problem a few months ago, and man
+I really did think "wouldn't it be nice to have a tracepoint instead of fishing
+around for kprobe spots".
 
-Please keep the original Signed-off-by from NXP (DCO [1]) and also please k=
-eep
-the Copyright line from NXP.
+Not that I particularly think a tracepoint is super worth it in this case, but,
+y'know.
 
-Also, adding Xiaofeng for comments.
+-- 
+Pedro
 
