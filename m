@@ -1,143 +1,224 @@
-Return-Path: <linux-kernel+bounces-823165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D3AB85B61
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:43:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70329B85AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E085D1CC0D92
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB1AE5616E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDA2314D09;
-	Thu, 18 Sep 2025 15:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD040313D68;
+	Thu, 18 Sep 2025 15:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="nQCh3sjg"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b="nAlOkOgz";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="09oWvrPd"
+Received: from e234-55.smtp-out.ap-northeast-1.amazonses.com (e234-55.smtp-out.ap-northeast-1.amazonses.com [23.251.234.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E302E313E34
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7A23126C3;
+	Thu, 18 Sep 2025 15:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.234.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209803; cv=none; b=g5qR1HxtPeZU980NOLSJOu0vH/mdak0Yb7lKGroCr+1Tt4rBaSrnQ4KTg3UaH28/6O+X7uQq9R+/wGDz7GofZoB5pLfMZCVXYHge+sHQdksDiGS17OeFd4zRQpd72emtdk5V1RM5iY53yaB8k49En89db58l9w0pLaqI0t2XAUo=
+	t=1758209799; cv=none; b=Q7PX1zG5XomPIRAxKv6gee09EQmDlNmhN5j2mdQPbAcmLLKre0sfXadermyk3c6EDHJRzwoK3YJWP3bg4/PDTLoo/6sBc2LfPi6soURDZnUXOp721l//8F5rjmX1namSTcR9ZwxRammhYUOp1TUebptzl0eVGXntZv3yEZwVF+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209803; c=relaxed/simple;
-	bh=+49SRGaRIxmipz3ICarmrQvVbL7KzASPcS7C4Boj4ck=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JZ6LqjAlut+qMd4oo78xc1d/YVUGfS1+MdRNzmx0J3Z63IoAt/vzJGsbwyIpnhcZ07G6LRLlO3IJkBfLcB4XIO0D85as7LzrglEQPhXgyH8St4d2jjIQc0J7Ov5KTjg922iQUDJp27Y8G0glyQDcgAiekNs3aUDJzwOTeETZaBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=nQCh3sjg; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-62f0702ef0dso4248159a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1758209800; x=1758814600; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uNO/I2yItTXLiDSbQlltWztaUTi6rNx8Ylu9Dt/JXIk=;
-        b=nQCh3sjgMTF+hR9c9mSPdRxBkTXSzRYyUenWhRdAPG2b/9AkB7/+2hQQHPPBsSk7vY
-         CiQTYtwmpqRasZc7uFyeUaXH7a72F93SZn1/0oTHcI/YrHI8vgSkBd5in2rWH39VIUqT
-         gIf3vEdRVgjlcVJ7mUmrjp0hcj6M3AeAmtXH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758209800; x=1758814600;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uNO/I2yItTXLiDSbQlltWztaUTi6rNx8Ylu9Dt/JXIk=;
-        b=fXTTnU4jwAUOMpG3O5VvRmKDnyuxiKPJ1+rnJIrNi83naeeeQwG82sMjDzF3nKxn46
-         A/aR7X/hUvxEfWpuO/QiCiVo2DrjcGhn5yMIA+opfeVRhOhEPPDP1oSQi0Njs7WGXL5M
-         OYtiabsV3YRRXWxjwl+X3M8BejcbHNuS96hySRHwgUdNx0V8+eAqVaRFOwjobStpBegm
-         sWwVduD/w1UbXatWXL2cJEXcs2C5Szl/QstFyiI+ucwl22lcq88Cgbc2rteL/9LTq41y
-         fFCVu1IJZfhPj0iixRiGgrwqHK6AmuR/lMr5vDn113N7vDCLw24qYiw8ZGlWbFus6u17
-         cnaw==
-X-Gm-Message-State: AOJu0YyKXZtoI5kn+dOL6paGwAvkd0KIzcE4isewaf2zt66eVh7uMdM3
-	1mfv6HPcAkF7RFByj9v+mDpDGnzz5VDRxXix5V6hpxCA+8SzFW5T89ZpULng16TcuGGg3SrnNFf
-	bVRy1
-X-Gm-Gg: ASbGncs7VO+KMKQE3WG4Ckdj1f5683EXlAHWoqq6+FhQfMTOnj88jgQt6PTSPB114hx
-	q3bnZ9XljM+Zy2e9BGDs21mebf8vkNBH0EG8WgF+PYnadaEeOWHZV+kFN87z3hdFfktmoXhKy+M
-	w8dQBAYvEaPYIPk1Fcl5pIGPtah8dqkMGpTFUzHWXJr6Sz+7AC6XC3vkEWlGOZGrl3yE/Dr0bqy
-	5pcIY1MRYzwLMyM6+XwT8XBnPUFYEapPYLamDisGodIAtXyDhAbqovkeF4mJjhRIbScFMOwjrLq
-	/uHf8Vrkg2RxEHeHLtfjFjIUShBlBBCgO/3ANOZvb4sTPiWOWh5bkFWL/4iZ1hzi+L2MzW5qGkI
-	DqJl35dBMqT32ABb35sGtCc2EyhkH66qseDx7spEmQcddk/skIO+K/idOPZghv+o8p1JF4MC1jw
-	29wpOKJsYyxsKkXXTAHR9wGAEIRvBiWJdcci+TYqwIegSNUe4F1zAvxeVzj7pUF74W6koQivG9D
-	Y+V7euxwPRTLldChEBlEA==
-X-Google-Smtp-Source: AGHT+IHHoXU0i3krxfj/ayKHEAuFsB7LewUpC+X2Hw0TTk9jlaDxf33gzR19IirWjjXDnMMeOUQg5g==
-X-Received: by 2002:a17:907:60ca:b0:b0d:95cf:2eae with SMTP id a640c23a62f3a-b1fa8359440mr456702266b.5.1758209799966;
-        Thu, 18 Sep 2025 08:36:39 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-56-38-125.retail.telecomitalia.it. [82.56.38.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fd272026csm212430766b.102.2025.09.18.08.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 08:36:39 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: [PATCH v4 5/5] dt-bindings: touchscreen: remove touchscreen.txt
-Date: Thu, 18 Sep 2025 17:36:10 +0200
-Message-ID: <20250918153630.2535208-5-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250918153630.2535208-1-dario.binacchi@amarulasolutions.com>
-References: <20250918153630.2535208-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1758209799; c=relaxed/simple;
+	bh=s/JKEPOijzrK3G2+WSf5koAe/fa5BmAS2fZSLR0H1SA=;
+	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Date:MIME-Version:
+	 Content-Type; b=KhbPzFyuhfFHNY+mwjI8KHR2sAjI0uVtmGtvEMmh6/S/ViMy6hqFULiUNGyCpF7hCo40xdG79KR04Z6wpvsDdTuFWs0nfyI3UPW3aoBFNM71pc6ocava6PZHqJQskpUwExJRi9anbWkxvsupEeCpgLgNIAq29LaAfLM/bKOdJCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=send.mgml.me; dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b=nAlOkOgz; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=09oWvrPd; arc=none smtp.client-ip=23.251.234.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.mgml.me
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
+	d=mgml.me; t=1758209796;
+	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
+	bh=s/JKEPOijzrK3G2+WSf5koAe/fa5BmAS2fZSLR0H1SA=;
+	b=nAlOkOgzzjuK+kDsQE+bOSElebO7/pK829RnmWULxfG47zbEcccJDyEP3Ws19Aat
+	ZEAyJCBqF9dOpKqEQDmTvqXrCY2zE/D90tg3iOh3KVTws7JW6jCeNl5zpGpbhC4X7fW
+	kxNDFqHvMselI+6Pd9DV/AEGMN1jLoXWsdNFGclk=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=suwteswkahkjx5z3rgaujjw4zqymtlt2; d=amazonses.com; t=1758209796;
+	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
+	bh=s/JKEPOijzrK3G2+WSf5koAe/fa5BmAS2fZSLR0H1SA=;
+	b=09oWvrPdnJ/OSSv/yZlHQZZyVeQZfJyn3uqEL8yiA0QCqAM3GvRggTm1u5JLELO2
+	dr8zCgzfUy5dr7zu0SsxezddMDrniBKHVbs/+UlRc3CCY6Bz5w5ZuP+O9KYrrju49GY
+	pJiRpqvZyfQ/7gZjCilG4j/z5/cF1qf2E8D4Xlig=
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+In-Reply-To: <8136b746-50c9-51eb-483b-f2661e86d3eb@huaweicloud.com>
+From: Kenta Akagi <k@mgml.me>
+To: linan666@huaweicloud.com, song@kernel.org, yukuai3@huawei.com, 
+	mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, k@mgml.me
+Subject: Re: [PATCH v4 5/9] md/raid1,raid10: Set R{1,10}BIO_Uptodate when
+ successful retry of a failed bio
+Message-ID: <010601995d7867c6-b8e08c65-5db3-4616-abd3-ec03a92ec8bc-000000@ap-northeast-1.amazonses.com>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 18 Sep 2025 15:36:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Feedback-ID: ::1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
+X-SES-Outgoing: 2025.09.18-23.251.234.55
 
-With commit 1d6204e2f51f ("dt-bindings: touchscreen: Add touchscreen
-schema") touchscreen.txt is no longer needed, and since no other file
-refers to it, it can be safely removed.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
----
+On 2025/09/18 15:39, Li Nan wrote:
+>=20
+>=20
+> =E5=9C=A8 2025/9/17 21:20,=
+ Kenta Akagi =E5=86=99=E9=81=93:
+>=20
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!=
+narrow_write_error(r1_bio, m))
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_error(conf->mddev=
+,
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+conf->mirrors[m].rdev);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_error(conf->mddev, =
+rdev);
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* an I/O failed, we can't=
+ clear the bitmap */
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 rdev_dec_pending(conf->mirrors[m].rdev,
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 conf->mddev);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+else if (test_bit(In_sync, &rdev->flags) &&
+>>>> +=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 !test_bit(Faulty, &rdev->flags) &&
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+rdev_has_badblock(rdev,
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r1_bio->sector,
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 r1_bio->sectors) =3D=3D 0)
+>>>
+>>> Clear badblock and =
+set R10BIO_Uptodate if rdev has badblock.
+>>
+>> narrow_write_error returns =
+true when the write succeeds, or when the write
+>> fails but =
+rdev_set_badblocks succeeds. Here, it determines that the re-write
+>> succeeded if there is no badblock in the sector to be written by r1_bio.
+>> So we should not call rdev_clear_badblocks here.
+>>
+>=20
+> I am trying to cleanup narrow_write_error():
+>=20
+> https://lore.kernel.org/linux-raid/20250917093508.=
+456790-3-linan666@huaweicloud.com/T/#u
+>=20
+> It may be clearer if =
+narrow_write_error() returns true when all fix IO
+> succeeds.
+>=20
+> ```
+> @@ -2553,11 +2551,17 @@ static bool narrow_write_error(struct r1bio =
+*r1_bio, int i)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bio_trim(wbio, sector - r1_bio->sector=
+, sectors);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wbio->bi_iter.bi_sector +=3D =
+rdev->data_offset;
+>=20
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (submit_bio_wait(wbio) < 0)
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* =
+failure! */
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 ok =3D rdev_set_badblocks(rdev, sector,
+> -=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sectors, 0)
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 && ok;
+> =
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 if (submit_bio_wait(wbio) < 0) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ok =3D false;
+> =
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if =
+(rdev_set_badblocks(rdev, sector, sectors, 0)) {
+> +=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 /*
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * =
+Badblocks set failed, disk marked Faulty.
+> +=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 * No further operations needed.
+> =
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> +=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 bio_put(wbio);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 }
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bio_put(wbio);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 sect_to_write -=3D sectors;
+> ```
+>=20
+> We can clear badblocks and set R10BIO_Uptodate after it. What do you =
+think?
 
-Changes in v4:
-- For rohm,bu21013 bindings:
-  - Drop description from reset-gpios
-  - Simplify description of avdd-supply
-  - Rename bu21013.yaml to rohm,bu21013.yaml
-  - Add Reviewed-by tag of Krzysztof Kozlowski
-- For zeitec,zet6223
-  - Drop "Phandle to the" from vio-supply and vcc-supply dscription
-  - Rename zet6223.yaml to zeitec,zet6223.yaml
+Thanks for the detailed explanation.
+narrow_write_error now returns=
+ whether the retry write succeeded.
+If rdev_set_badblock fails, =
+narrow_write_error calls md_error. This looks good to me.
+And after narrow_write_error cleanup, rdev_clear_badblock should be called.
 
-Changes in v2:
-- Update the commit message
-- Add Acked-by tag of Rob Herring
-- Add patches:
-  - 1/5 dt-bindings: touchscreen: convert bu21013 bindings to json schema
-  - 2/5 dt-bindings: touchscreen: convert eeti bindings to json schema
-  - 3/5 dt-bindings: touchscreen: convert raspberrypi,firmware-ts bindings
-    to json schema
-  - 4/5 dt-bindings: touchscreen: convert zet6223 bindings to json schema
+BTW, I'm not familiar with the patch workflow. Should I submit my
+handle_write_finished patch separately after your cleanup patch merged?
 
- .../devicetree/bindings/input/touchscreen/touchscreen.txt        | 1 -
- 1 file changed, 1 deletion(-)
- delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+Thanks,
+Akagi
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-deleted file mode 100644
-index e1adb902d503..000000000000
---- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-+++ /dev/null
-@@ -1 +0,0 @@
--See touchscreen.yaml
--- 
-2.43.0
+> --=C2=A0
+> Thanks,
+> Nan
+>=20
+>=20
 
-base-commit: 8b789f2b7602a818e7c7488c74414fae21392b63
-branch: drop-touchscreen.txt
 
