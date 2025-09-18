@@ -1,288 +1,303 @@
-Return-Path: <linux-kernel+bounces-821865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7F4B827CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:26:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F0FB827DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1102C3BC3E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF2B466BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595B421A436;
-	Thu, 18 Sep 2025 01:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RSt9f5S8"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013066.outbound.protection.outlook.com [40.93.201.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF999217705;
+	Thu, 18 Sep 2025 01:26:47 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E18156C40;
-	Thu, 18 Sep 2025 01:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758158766; cv=fail; b=Oicbl6FcmmZCXzU18bV4Wbp7HYziFXe336OWFZDh9Wa9cSgNFgpJTQv7MI6z1xdMEGIrEnyBIDnaXlW90f95OMwUv8F38rsySm57nLoH4IH1Q6OE4fmxcetAIZmFtU7e2pAP4zynOlyvexVpLvt8FX5GljUKcfBY5KLjGtCwaNI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758158766; c=relaxed/simple;
-	bh=dB+g0WmD5lt0yryVsU/+0HadIJ+DIISuSTdZgGGxegw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ciRZeWHo0SZZenmsT0H3kqWLfPi/MwZ2FuRABs/aYw1fVYWdDi8h1/KqTKeTeAOR1M94UzjtEqXpqsZM8if6k5HfJefc+ks2GmR8lz/U4No1+3LTaMBRGpCkzlo61Bl+T0/0QtSyquSsKNLjF3/oqVHqhiM79IccoSPaedsogOc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RSt9f5S8; arc=fail smtp.client-ip=40.93.201.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qjuQVH/UKaI6St+x/ChzallmpOknzYRLwEAzBY+PagNxzUuUWMETCB74uYT/xtILiRcEd/GTLxJB7J1eS6P6CNdsf1s6cJzauKeowb5f/cLTVxKVPgH+jLTxUvREHOFa0mqpOqbu702ZVsNdGUop5fkUsX88fDFfw3jWNiixne020uWdqUG2DAQ6htBkPq8IOj7PD30DIpYQeygzAs2cedXBL8/d/TJ9HzMUVWYpty4hlejPnLzExYLzhKs/6Kv72BWVRNRe5Cp/8RaJFmIKYEUP46IlFkKpCT/Rr54xdblZLrN0D6eepZRuIpm8DmhIXF7PU/wYYEjTIfFC05qPIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GnWScUDA4s4rVubPM+54BkTeJ+Nh5g1razbUftE1TGc=;
- b=xL3fu/23VNjCMyqd0pestVQzeveuMdlGJhKeGA5pNjsYaM18bI3P75GB06pF9+uhcynGJAnkNqSdCCFiiTW3cFuw9H2fViPouPpyhzovtBJ7NmnKr1wCirpfz24Q/vJiNzw/CnLx9Rb0GEipWa6Q62d7k2ilalsmn5C55h2A4SzufqP8Ro5r0dgPgEshOtMlu3F3DnkVNRPQtGRMHUsol9lhVuXcwiVxrygNrpRBBb1zx7dgquaZhBqFRBaBD2BOUmj3Jp6FvoInCNxRTceSRUu8pxAMuYQCMgojtcKoqyYNBgKmHeJdAD9QYc2t6imc1VXMweDi8WDunNF78j+IkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GnWScUDA4s4rVubPM+54BkTeJ+Nh5g1razbUftE1TGc=;
- b=RSt9f5S89KJph9/nyI9PMa769bqcXlx13ZJYsff1aVzIiAHh+qpe1xYprM7KyoAsvqCge/TlgM+0aa2v7s8q7IgYz8hnlePdRYk7Z/UY0dwGPlgSuHTJ0GaTp9XUDFTBg/iFz26T/jz6H4xUvdWuY8b4m6NootLVmnrPpfecO4eK/216JxNNpnoX4PQ8rBUvgSraXhy2/GwuK1KpAT7LbBFdzFYC/NIY/B+wcPqQlWWqwrJ5/BmmVuw92/WP5j2Q9DD6+C2/aETORPW7CjLLkY55MmEGjHuRuS+keEjnbNt3d1WyGgm/W8/xKC7n1pKbceWaYSDddY4v9Ft7sXg/1A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- CY8PR12MB7124.namprd12.prod.outlook.com (2603:10b6:930:5f::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.13; Thu, 18 Sep 2025 01:26:01 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Thu, 18 Sep 2025
- 01:26:01 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- "open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>,
- "open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Subject:
- Re: [RFC v1 2/2] PCI: tegra: Use readl_poll_timeout() for link status polling
-Date: Thu, 18 Sep 2025 10:25:56 +0900
-Message-ID: <5148887.LvFx2qVVIh@senjougahara>
-In-Reply-To:
- <CANAwSgT615R32WTBzi2-8FYntmaxbmVRLmA3yi+=4ryH43aaWQ@mail.gmail.com>
-References:
- <20250831190055.7952-1-linux.amoon@gmail.com>
- <23013855.EfDdHjke4D@senjougahara>
- <CANAwSgT615R32WTBzi2-8FYntmaxbmVRLmA3yi+=4ryH43aaWQ@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP301CA0041.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:380::7) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E951DFD8B;
+	Thu, 18 Sep 2025 01:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758158807; cv=none; b=GENYaY+8u7IFg6OubGLxGGgA7QVCyaEA1NIJXePBqJ3Dv4SyUgq9cirgii5UwNLxOrIjscaouHm79mUZiGEPGmLnNFXKl1T9wpLWwekrkutLRbaewAsUUhkn7yNH7dKsIlWyPrt/egkIK0J5A+rzL/GaxJFtzEZEsjNvmU9l7VQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758158807; c=relaxed/simple;
+	bh=2CfXdtCbteURsx4aWzaClFfUCSgP3SL2Ji98atJXIyU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CJOOU9w2eS+nGCSkUWPsgKWM0eE32go1xBuByHBKGYTSlhhUV/zXsfFGNa3ESEVPzaTjFAztvBcJTQtIUpMxwPdi7gDJfjGXnGCzN1Tb0FAzaXhHTR9Udq0Dnv3KzIpFYl1qnDqoGGz2ZPoYBaJuWo1LrPPqXEQtq28ZAmVVNvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cRyfC65WwzYQtGr;
+	Thu, 18 Sep 2025 09:26:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 75F8C1A0FAB;
+	Thu, 18 Sep 2025 09:26:42 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY3QX8to_VSACw--.1184S3;
+	Thu, 18 Sep 2025 09:26:42 +0800 (CST)
+Subject: Re: [PATCH v4 4/9] md/raid1,raid10: Don't set MD_BROKEN on failfast
+ bio failure
+To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
+ Mariusz Tkaczyk <mtkaczyk@kernel.org>, Shaohua Li <shli@fb.com>,
+ Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250915034210.8533-1-k@mgml.me>
+ <20250915034210.8533-5-k@mgml.me>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <1c71d0c8-dc3a-9dbf-4e69-e444f94c7ab8@huaweicloud.com>
+Date: Thu, 18 Sep 2025 09:26:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|CY8PR12MB7124:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1ebdc353-dcda-4f7a-5a37-08ddf6525391
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ak5ZTy9acEpmamw4TXJtN1VFUm1Ia1RZcGtNMU50aVN1ZEdCQ1ZkeVRzZ056?=
- =?utf-8?B?RzdIQm9vV01MMkJvNzVPb0NZTU0zQXp6S3I2NVJjN1RiQVBlRk9aVFZaL3kw?=
- =?utf-8?B?eDVaU2Y4Ry9IUVpOY2F0UGczTW5DVEUxVnQ4YkFlSDVZZ3dNSmRUY2xjVXRI?=
- =?utf-8?B?UVFkWllTMndLem8reUpBdTNUK1Nyd0RXV3hLR2ZCMmpoeDZtVVFua2dPTnJr?=
- =?utf-8?B?a2UrY0FBNHJqS0FuRkFxTkxBYW5Ga0p3M3pQZ3JuZ1FkU09jNlQycGJRYURo?=
- =?utf-8?B?ZWFqdFdWRmdrS3FheUlwOW0yNzVrdVlzc2ptTytnU1U5YUM3ZXdWdWdHWHZP?=
- =?utf-8?B?YWFud01zWWpFalhBV0FzaGIyVUp6ZVYyZjZNc3cySmltbFZiQkJMRWwxS3Rq?=
- =?utf-8?B?L0phazFWWWRTRVJpV3RTOUlEcFJYUWhEalJVNnBCdy8xa2toWmlHSE5zYWZP?=
- =?utf-8?B?VFkrc1FDMjNDa2VRL2h1TDQvTUFLeTl6bFdVWUd2TkhwNGZOWDkzZDhCWVV0?=
- =?utf-8?B?L1FXcjBHRjcvSE9vM1FjMUVLRVcrVWJyT1ZiTmx0YWJ1ZUtVYTd1aFhvOHVn?=
- =?utf-8?B?WFRSbUFWR3UxMGZ4cEMyZDlmTnh5MUtOcFphaE5tZUF4NFM2UXpaWm1JcEkx?=
- =?utf-8?B?SXlOdWxQS3kvWGVZSkJpbzlNZStpMW9yemZsdkFSUGhNTzZ4T2hvbll1WDRF?=
- =?utf-8?B?K2FNT0RpYmc2NzJOaXBiUnJCMU52VEROY2FoUnhoRUhsYXpOU3dvTmV4NURF?=
- =?utf-8?B?RFVvemRKUk5nSld4N3hoVklZblk3cXJiNXRLY2xBZHhBZkp1eFdwK29qK0x1?=
- =?utf-8?B?dng0amk0RDdJbTF2cmoxbHA2NzE2bVhpQW1UMGdoaGpiTUVqMDVLUCtUSk01?=
- =?utf-8?B?QVhxNFJNWXNYYzJwMzUrenNCQXc2dGdhalc2STcvdTBFVDVYS3NmOWZNeHlO?=
- =?utf-8?B?OEJPQkRlWS9vdnVQWHErYVo3VUgxNGx2ZWx5bnJ6WGRpRkRBQVZpQUlwc0hh?=
- =?utf-8?B?KzU0bFBLV0xFL3FTM1NQT21vZDd3QkVVWnc5OVFYcHVnNDdFa1dIdVVPTGRM?=
- =?utf-8?B?bnB6MUp4MVkxekVFb1Q4VzVmY1FoQkZYUGNXSGo5bHgxVlFqdWJUbFlwTE9t?=
- =?utf-8?B?RTJWZzBsNUxuLzlxSWx4OWtvbWdCQkIzZElkdnJvT0hVbCtvUkExYi9PZmNR?=
- =?utf-8?B?ZlJkMFVNVTBCdnVpeDBJc0xFUGVvRHFjQ3J4TkN0VnI2NWZLd0dKWEV3ZEUz?=
- =?utf-8?B?YlgycjVIczRtN3QrRElIZnNwTjZ1NU9Oa2FpUTBGU242QUdjNTN1RkNyNmlB?=
- =?utf-8?B?VXZIdnY2MmdYZ09mbXdOd21MdUVKVUYrU1dmeXZqNzVqWHMvRmNkQUdUUG16?=
- =?utf-8?B?OGJwQUkyWHh4OXZlaml1bzdid2h3a01MZnh5Q1VEc3MwYUorbFcyUVM0VDZl?=
- =?utf-8?B?blhVcUt3ZDlDSEdqbnIrVHpBdjJhTzAzSEdocjArd3JhakYxNjN4QThMOWdI?=
- =?utf-8?B?WEpldlpKaVlGQ1RxZVJGSlVpVHorVDFBNGdWaW1ZL1ROVE50ZUxHM3hKM2Vv?=
- =?utf-8?B?UmNlQXhuVjZCdmozNVVGY2trT0FINkw4N3Z0VUxSVDJNMkFWOXNhWjZYc2Ji?=
- =?utf-8?B?by9uKzE1NmpWMHI5QUNhY1FGVHJNQUVIZTV2c2g4dWV3N2ltRWRLU0t3bzk4?=
- =?utf-8?B?TDdSYiswN3dRN0pqM1NUS05JQVZBNlFVbGFWNktndEVSUDk3TnFjT2VNbUtQ?=
- =?utf-8?B?M2t0cGFWYWl3bU12ejZwaktQeW55NUdMSEJLVnBYOEZ0MnZTdnJ3NGN6ek5D?=
- =?utf-8?B?UUljVldMZkF3V1czS25Ma3djQXNpRDJHUjBwb3ZNbU03Y0JXTm02YmVZei9I?=
- =?utf-8?B?Y0VaSTBEYzJHc2hKSVd2aUZocXRCendoM1ZFNlFkYmViNjdSSVI2Yi9GWHgr?=
- =?utf-8?Q?pg08p4B90Kg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(10070799003)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SkhBblcxMUhOT0VlRlJkei81R3NHYXBSNFJTZXB1TzQ3VEVnaDFHYklTZVQx?=
- =?utf-8?B?Y0JYa0NjcW1rVkRBRnp1bDJhMUJVejZhMmJRZEJDTUJTUXVrdXZuZjF5REdz?=
- =?utf-8?B?UlE5RVBqelJEN2dyUEVkb3h0QzF3Nk5FVUc4RXhQVjE5SkRmRm1kTEZ4b2RO?=
- =?utf-8?B?aTVDa0dVNnBqSHNoT0FYRGgwMEV2YXpCUGdqRDBFazZrZzFreXYrOTlaQ0M5?=
- =?utf-8?B?R2NuY3MwNXFuZnFrb3d0ai8ybmNTVnIzUWlObjVnUEV0ZkNKN05WYmFTMEh1?=
- =?utf-8?B?aUZWUlZ0dGt0TXYvclZEcTB3NGZneWI3YUlFb1hPazV5b0lkNGhyYXRKcW1J?=
- =?utf-8?B?K2ZCQlRBU2tLSGxJaTNENTFIeWZ0NnZlOXVIWWdtbzk0R0g4TnM4dDBWMThG?=
- =?utf-8?B?Q2pldGJyS3YwemUxSU95bkltTHpIUkY0Mk5CSTNUSkRDNGpTN1NidHdESURq?=
- =?utf-8?B?bERCNXlaaTByOUxXRXBNUUl6VGhsQk9xN3ZpN0RRZ3Q3eW1YaGpPd0dFcDI2?=
- =?utf-8?B?M3pFd3pHenJWTzNUdms3S0hhQ3NCSUh6RWRuRzJCWFdZQkRJUVJic2RTYytw?=
- =?utf-8?B?Y3FVR3VaME42V2YwVGVFNmJMTTNuZkJNblJiNmxRdkFHZ2hRRWIxeHh5ZTNo?=
- =?utf-8?B?MVEyWGFPL2NxVzlQRThlcVVLWExBQ0lwYlcyclRmVHpBRjhIalNad2kxTjBs?=
- =?utf-8?B?cHRqQWRNK1A4ZUJRbTFCZlZWZFdkVktLMlZsY1p4TEc3MlY0NzVWQU0rZnlQ?=
- =?utf-8?B?ZTlLWWFZbS9PdUFDdit5VTlpR2s1d0VhcVM5eGRVd3NFNGlaemlETTd1MHpO?=
- =?utf-8?B?d3B1U3ZSaHJ6L09IVXlvRjFVTGRPcnZNVmZQNnQzSzB5Z3ZVSDhhRW96YU9J?=
- =?utf-8?B?eXQwaGJacHhSQUVJU0x1cTRTdVJFS3psb0NQRGdacDVSbUhmYlhNTVl1UUc0?=
- =?utf-8?B?ZDRnY3BpVXFkZ1VsRWdaSHhxWFYrME9SNFFKUjBnQ1k2YXR3dFNzQU9mWE1O?=
- =?utf-8?B?TVZtK054RUcwenJITDBTMlArOFRJTmYrZHVQdXRxdEhWV0pwNDNMdGxTYXpR?=
- =?utf-8?B?MUNxOWZramdQdXI3NWErRVRqTW9NR2RoSVMrNktZZ2pxdFlYZC9OclVQaHpT?=
- =?utf-8?B?WG0xbkVSUmowTSt6WVlva2M0VmRmeE9HUTBzcXZJYXRwdkZzUTBGOVVxUXI2?=
- =?utf-8?B?YzJISm0vY1lvaklPRCtiNjlLM1ZVbjRsUlBTLzA2S2pYUnNDNEZFMnJpRElE?=
- =?utf-8?B?RjVFTFBRR240K3pvbHNBUGErRTlmdXR0elNDakZnRUZoTlNtU0U5TUo3ZzBQ?=
- =?utf-8?B?RmRWdkFKYlNpbldpWlNpZnhPbE1zZmw2ODRjWkZ2dXBvd040T3ZQdFRrQm9x?=
- =?utf-8?B?OVFyUnpUSTd1K0M0RjFkcFYxVGlXakw4dXBTYUU5eXdGM0dZL25oTTJNeUZu?=
- =?utf-8?B?NFNMM09xSmpBL0VTQ2xmS2pMd3BBQTd1R3k4RnhDZUFSYzJhWXkvOWozMzdM?=
- =?utf-8?B?a2l2REMzZ00rZlBlZzkvWFI0Q3ZZMVF5c0h3NXJJTmpFeHU3OEVabTQvamcw?=
- =?utf-8?B?Vy9YVDBVWWhZY2pJc2dRWjdtWENWSEl6SXhrekhHOHZhQUZ4cDhDT3AvdzZk?=
- =?utf-8?B?N1JLVWJkelMvWnltRFF5dUF4RTBHSUZkM3JkaFhEYlhLV05kWTd4cy8vQ0xX?=
- =?utf-8?B?cEZXcnpKeHgxRjNIQ0dIK01FV3RuRDhteVdPVkoyY0ZtbjZoWktNYnhpV01u?=
- =?utf-8?B?NVR4bmRnam1HTk9lOWk5QW1wQk1PZGdGTDR1NDZPa1JVczBtWGlqZjNPZFpv?=
- =?utf-8?B?emJLNzl6aSsvYk42Z2hmY2ZRVGk0cG1CampYc1A1MDNzS0NTQTNZU0Y1OXA5?=
- =?utf-8?B?S3hQRzVLR000b2xiZkVzZHdOWS9SNlFzcGFFN2RmNUxtMEV3UTdDOWsxZUVR?=
- =?utf-8?B?QitTMC8zbFpYWDdobEZIdm94QjhuRmxUVjU5RGpJbzFYQjBiaWpsYVFhYnI5?=
- =?utf-8?B?SEFGVElJTWRtNkVJQUxOaXhuWU5nZjVFeGJJVTl2VW9oQXRXYjNDcG5hM2ps?=
- =?utf-8?B?SnRKbFpnVmxTRklLMHl2a252UThOVnI2K0pwclFRRHd4MWhkRktoQnlNWTVj?=
- =?utf-8?B?QjZDUW5ITUFQS2ZwRVJTMnk1Rk14Sjl4amZ3OTR3L3pjZTdMWkJFbENNenpl?=
- =?utf-8?B?b0ZoMGpseE02Y3pDZGxyZDlpVHBja0t0ellmTTBtRnB0VDZPOXFLWXdrTldK?=
- =?utf-8?B?K0xCQkdrVGFYeHIzc294WHJJelZ3PT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ebdc353-dcda-4f7a-5a37-08ddf6525391
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 01:26:00.9019
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KxxSLcJ5aCf3ToV5ISsWZUnpd424WS+fwUxhliCSSYYmwPpHk6AbQq0Ieb63+t38uFNkU3AI5Nd6VhUigGT9Pw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7124
+In-Reply-To: <20250915034210.8533-5-k@mgml.me>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncY3QX8to_VSACw--.1184S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF4DJr48Cr1xGw15Kw18Grg_yoW3ZFWrpa
+	y3Ja9YyrZ8J345X3WUtFWDWa4F9w13KFWjkr1fAw1xZwn0qr93tF4UWryYgryDurZ5uw15
+	Xa98Jw4DAFsFgFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
+	hLUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wednesday, September 17, 2025 4:45=E2=80=AFPM Anand Moon wrote:
-> Hi Mikko,
->=20
-> Thanks for your review comments.
->=20
-> On Wed, 17 Sept 2025 at 08:51, Mikko Perttunen <mperttunen@nvidia.com> wr=
-ote:
-> >
-> > On Monday, September 1, 2025 4:00=E2=80=AFAM Anand Moon wrote:
-> > > Replace the manual `do-while` polling loops with the readl_poll_timeo=
-ut()
-> > > helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
-> > > during link bring-up. This simplifies the code by removing the open-c=
-oded
-> > > timeout logic in favor of the standard, more robust iopoll framework.
-> > > The change improves readability and reduces code duplication.
-> > >
-> > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > >  drivers/pci/controller/pci-tegra.c | 38 ++++++++++++----------------=
---
-> > >  1 file changed, 15 insertions(+), 23 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/control=
-ler/pci-tegra.c
-> > > index 3841489198b64..8e850f7c84e40 100644
-> > > --- a/drivers/pci/controller/pci-tegra.c
-> > > +++ b/drivers/pci/controller/pci-tegra.c
-> > > @@ -24,6 +24,7 @@
-> > >  #include <linux/irqchip/chained_irq.h>
-> > >  #include <linux/irqchip/irq-msi-lib.h>
-> > >  #include <linux/irqdomain.h>
-> > > +#include <linux/iopoll.h>
-> >
-> > There is already an iopoll.h include in this file, so this adds a dupli=
-cate.
-> >
-> Opps, I missed this in rebasing my code.
->=20
-> > >  #include <linux/kernel.h>
-> > >  #include <linux/init.h>
-> > >  #include <linux/module.h>
-> > > @@ -2157,37 +2158,28 @@ static bool tegra_pcie_port_check_link(struct=
- tegra_pcie_port *port)
-> > >       value |=3D RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
-> > >       writel(value, port->base + RP_PRIV_MISC);
-> > >
-> > > -     do {
-> > > -             unsigned int timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
-> > > -
-> > > -             do {
-> > > -                     value =3D readl(port->base + RP_VEND_XP);
-> > > -
-> > > -                     if (value & RP_VEND_XP_DL_UP)
-> > > -                             break;
-> > > -
-> > > -                     usleep_range(1000, 2000);
-> > > -             } while (--timeout);
-> > > +     while (retries--) {
-> > > +             int err;
-> > >
-> > > -             if (!timeout) {
-> > > +             err =3D readl_poll_timeout(port->base + RP_VEND_XP, val=
-ue,
-> > > +                                      value & RP_VEND_XP_DL_UP,
-> > > +                                      1000,
-> > > +                                      TEGRA_PCIE_LINKUP_TIMEOUT * 10=
-00);
-> >
-> > The logic change here looks OK to me. This makes the timeout 200ms (TEG=
-RA_PCIE_LINKUP_TIMEOUT is 200). Previously, the code looped 200 times with =
-a 1 to 2ms sleep on each iteration. So the timeout could have been longer t=
-han 200ms previously, but not in a way that could be relied on.
->=20
-> You're right; the original usleep_range(1000, 2000) had a variable sleep =
-time.
-> To replicate the worst-case behavior of the old loop, the
-> readl_poll_timeout should
-> use a delay_us of 1000 and a timeout_us that matches the original
-> maximum duration.
-> Since the previous code looped 200 times with a maximum 2ms sleep,
-> the correct timeout is 400ms, so update (TEGRA_PCIE_LINKUP_TIMEOUT * 2000=
-).
-> or increase TEGRA_PCIE_LINKUP_TIMEOUT to 400.
->=20
-> Are these changes ok with you?
+Hi,
 
-I think the code is fine as is. Before, the shortest the timeout could be w=
-as 200ms, i.e. there should be no situation where we need a timeout longer =
-than that, or otherwise that would fail randomly depending on the sleep dur=
-ation. So I think the 200ms is correct here and the only change necessary i=
-s the removal of the second iopoll.h
+ÔÚ 2025/09/15 11:42, Kenta Akagi Ð´µÀ:
+> Failfast is a feature implemented only for RAID1 and RAID10. It instructs
+> the block device providing the rdev to immediately return a bio error
+> without retrying if any issue occurs. This allows quickly detaching a
+> problematic rdev and minimizes IO latency.
+> 
+> Due to its nature, failfast bios can fail easily, and md must not mark
+> an essential rdev as Faulty or set MD_BROKEN on the array just because
+> a failfast bio failed.
+> 
+> When failfast was introduced, RAID1 and RAID10 were designed to continue
+> operating normally even if md_error was called for the last rdev. However,
+> with the introduction of MD_BROKEN in RAID1/RAID10
+> in commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"), calling
+> md_error for the last rdev now prevents further writes to the array.
+> Despite this, the current failfast error handler still assumes that
+> calling md_error will not break the array.
+> 
+> Normally, this is not an issue because MD_FAILFAST is not set when a bio
+> is issued to the last rdev. However, if the array is not degraded and a
+> bio with MD_FAILFAST has been issued, simultaneous failures could
+> potentially break the array. This is unusual but can happen; for example,
+> this can occur when using NVMe over TCP if all rdevs depend on
+> a single Ethernet link.
+> 
+> In other words, this becomes a problem under the following conditions:
+> Preconditions:
+> * Failfast is enabled on all rdevs.
+> * All rdevs are In_sync - This is a requirement for bio to be submit
+>    with MD_FAILFAST.
+> * At least one bio has been submitted but has not yet completed.
+> 
+> Trigger condition:
+> * All underlying devices of the rdevs return an error for their failfast
+>    bios.
+> 
+> Whether the bio is a read or a write makes little difference to the
+> outcome.
+> In the write case, md_error is invoked on each rdev through its bi_end_io
+> handler.
+> In the read case, losing the first rdev triggers a metadata
+> update. Next, md_super_write, unlike raid1_write_request, issues the bio
+> with MD_FAILFAST if the rdev supports it, causing the bio to fail
+> immediately - Before this patchset, LastDev was set only by the failure
+> path in super_written. Consequently, super_written calls md_error on the
+> remaining rdev.
+> 
+> Prior to this commit, the following changes were introduced:
+> * The helper function md_bio_failure_error() that skips the error handler
+>    if a failfast bio targets the last rdev.
+> * Serialization md_error() and md_bio_failure_error().
+> * Setting the LastDev flag for rdevs that must not be lost.
+> 
+> This commit uses md_bio_failure_error() instead of md_error() for failfast
+> bio failures, ensuring that failfast bios do not stop array operations.
+> 
+> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
+> Signed-off-by: Kenta Akagi <k@mgml.me>
+> ---
+>   drivers/md/md.c     |  5 +----
+>   drivers/md/raid1.c  | 37 ++++++++++++++++++-------------------
+>   drivers/md/raid10.c |  9 +++++----
+>   3 files changed, 24 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 65fdd9bae8f4..65814bbe9bad 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -1004,11 +1004,8 @@ static void super_written(struct bio *bio)
+>   	if (bio->bi_status) {
+>   		pr_err("md: %s gets error=%d\n", __func__,
+>   		       blk_status_to_errno(bio->bi_status));
+> -		md_error(mddev, rdev);
+> -		if (!test_bit(Faulty, &rdev->flags)
+> -		    && (bio->bi_opf & MD_FAILFAST)) {
+> +		if (!md_bio_failure_error(mddev, rdev, bio))
+>   			set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
+> -		}
+>   	}
+>   
+>   	bio_put(bio);
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 32ad6b102ff7..8fff9dacc6e0 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -470,7 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+>   		    (bio->bi_opf & MD_FAILFAST) &&
+>   		    /* We never try FailFast to WriteMostly devices */
+>   		    !test_bit(WriteMostly, &rdev->flags)) {
+> -			md_error(r1_bio->mddev, rdev);
+> +			md_bio_failure_error(r1_bio->mddev, rdev, bio);
+>   		}
 
-Cheers,
-Mikko
+Can following check of faulty replaced with return value?
+>   
+>   		/*
+> @@ -2178,8 +2178,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
+>   	if (test_bit(FailFast, &rdev->flags)) {
+>   		/* Don't try recovering from here - just fail it
+>   		 * ... unless it is the last working device of course */
+> -		md_error(mddev, rdev);
+> -		if (test_bit(Faulty, &rdev->flags))
+> +		if (md_bio_failure_error(mddev, rdev, bio))
+>   			/* Don't try to read from here, but make sure
+>   			 * put_buf does it's thing
+>   			 */
+> @@ -2657,9 +2656,8 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
+>   static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>   {
+>   	struct mddev *mddev = conf->mddev;
+> -	struct bio *bio;
+> +	struct bio *bio, *updated_bio;
+>   	struct md_rdev *rdev;
+> -	sector_t sector;
+>   
+>   	clear_bit(R1BIO_ReadError, &r1_bio->state);
+>   	/* we got a read error. Maybe the drive is bad.  Maybe just
+> @@ -2672,29 +2670,30 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>   	 */
+>   
+>   	bio = r1_bio->bios[r1_bio->read_disk];
+> -	bio_put(bio);
+> -	r1_bio->bios[r1_bio->read_disk] = NULL;
+> +	updated_bio = NULL;
+>   
+>   	rdev = conf->mirrors[r1_bio->read_disk].rdev;
+> -	if (mddev->ro == 0
+> -	    && !test_bit(FailFast, &rdev->flags)) {
+> -		freeze_array(conf, 1);
+> -		fix_read_error(conf, r1_bio);
+> -		unfreeze_array(conf);
+> -	} else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+> -		md_error(mddev, rdev);
+> +	if (mddev->ro == 0) {
+> +		if (!test_bit(FailFast, &rdev->flags)) {
+> +			freeze_array(conf, 1);
+> +			fix_read_error(conf, r1_bio);
+> +			unfreeze_array(conf);
+> +		} else {
+> +			md_bio_failure_error(mddev, rdev, bio);
+> +		}
+>   	} else {
+> -		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+> +		updated_bio = IO_BLOCKED;
+>   	}
 
->=20
-> Thank
-> -Anand
+I'll suggest a separate patch to cleanup the conditions first, it's
+better for code review.
 
+BTW, I'll prefer if else chain insted of nested if else, perhaps
+following is better:
 
+if (mddev->ro != 0) {
+  /* read-only */
+} else if (!test_bit(FailFast, &rdev->flags) {
+  /* read-write and failfast is not set */
+} else {
+  /* read-write and failfast is set */
+}
+>   
+> +	bio_put(bio);
+> +	r1_bio->bios[r1_bio->read_disk] = updated_bio;
+> +
+>   	rdev_dec_pending(rdev, conf->mddev);
+> -	sector = r1_bio->sector;
+> -	bio = r1_bio->master_bio;
+>   
+>   	/* Reuse the old r1_bio so that the IO_BLOCKED settings are preserved */
+>   	r1_bio->state = 0;
+> -	raid1_read_request(mddev, bio, r1_bio->sectors, r1_bio);
+> -	allow_barrier(conf, sector);
+> +	raid1_read_request(mddev, r1_bio->master_bio, r1_bio->sectors, r1_bio);
+> +	allow_barrier(conf, r1_bio->sector);
+>   }
+>   
+>   static void raid1d(struct md_thread *thread)
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index dc4edd4689f8..b73af94a88b0 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -488,7 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
+>   			dec_rdev = 0;
+>   			if (test_bit(FailFast, &rdev->flags) &&
+>   			    (bio->bi_opf & MD_FAILFAST)) {
+> -				md_error(rdev->mddev, rdev);
+> +				md_bio_failure_error(rdev->mddev, rdev, bio);
+>   			}
+>  
 
+Same as raid1, can following check of faulty replaced of return value.
+>   			/*
+> @@ -2443,7 +2443,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
+>   				continue;
+>   		} else if (test_bit(FailFast, &rdev->flags)) {
+>   			/* Just give up on this device */
+> -			md_error(rdev->mddev, rdev);
+> +			md_bio_failure_error(rdev->mddev, rdev, tbio);
+>   			continue;
+>   		}
+>   		/* Ok, we need to write this bio, either to correct an
+> @@ -2895,8 +2895,9 @@ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
+>   		freeze_array(conf, 1);
+>   		fix_read_error(conf, mddev, r10_bio);
+>   		unfreeze_array(conf);
+> -	} else
+> -		md_error(mddev, rdev);
+> +	} else {
+> +		md_bio_failure_error(mddev, rdev, bio);
+> +	}
+>   
+>   	rdev_dec_pending(rdev, mddev);
+>   	r10_bio->state = 0;
+> 
+
+And please split this patch for raid1 and raid10.
+
+Thanks
+Kuai
 
 
