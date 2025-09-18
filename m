@@ -1,93 +1,91 @@
-Return-Path: <linux-kernel+bounces-821885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A67B828CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE36B828D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53D31463DC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A151BC7A5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FABA1A5BB4;
-	Thu, 18 Sep 2025 01:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679B222425E;
+	Thu, 18 Sep 2025 01:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dFpqUEmQ"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YxFTJFKm"
+Received: from mail-oa1-f97.google.com (mail-oa1-f97.google.com [209.85.160.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249D123741
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC55323741
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758160121; cv=none; b=TppUTEDPPPnL1eCt5KhFiRr+XPRYhXk1CRJY5L/SH6Ug1vzJpfKPciyt1+oewI8L2jYpltJqBZdECzDxKFEAfoM+pVJlG3X1jNkL7VD5RD3NgvgOTqD4vvmyi4FTv1GUdWWq9qGOKNLJ9J7qHx/CZSKZ5clLhq5FrkmyBGYI6U8=
+	t=1758160234; cv=none; b=W7JGjF8KYJ0D4kWIoc0WMDzDR6a3CVLUUpAsVNEBpRUsG4soNNIvDiAVTQVgfInrWgAczzSSHZ8TML+uScEf8LWiAfqoo+O3ZmHPSEpZaCNb8f3IfCRgRz6lV5LolINjlrzfcrfQAPaPvO0P8/EUPrh/Gu5JRGWhKlCbim+8m+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758160121; c=relaxed/simple;
-	bh=1Hpo5hikSxYp78HojoyWbCu93PukrQYB9v0XFuphil4=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=P8Hlavfg9biT405IJfWDjue8w+lw7qUzJu74fupeUwUnyd6gg3YQFuttF5yEtcXB5O3LS0l7k3BVesYZTPZuF94BPYZNSOOr/p3GLg0ofQC02XUrviseYf1EF/bhs9FKUSeMqfKwuB6ILrUsl8NEGJNZJPGS6h1O7oADamcphds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dFpqUEmQ; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32e6f3ed54dso317486a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:48:38 -0700 (PDT)
+	s=arc-20240116; t=1758160234; c=relaxed/simple;
+	bh=YmbL8tWBk7PcWIy4d7codzBe7sqj3ogMoQ4DpsIfxTQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yq2MfGlAihaShmbyFD3cwtc0JBJlMzvLE5L3sHVW14VHh7yEYT98b3+oFHLe+4ApNG2pvsa6l2NgAWAYLtnbhjvs792gmi8+ib9AN9+QYzcbC0ztOC9uZNhtFFM8eKhkIs2MAgI+2IFnawXAKtYld/EDSI5fgr7nPhCI4xMgj7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YxFTJFKm; arc=none smtp.client-ip=209.85.160.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-oa1-f97.google.com with SMTP id 586e51a60fabf-329531bccccso124612fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:50:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758160118; x=1758764918; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7KHWyc6262iDZIkf7ifrzZ8+Zh6e+Z9ki+t6iKm7ek=;
-        b=dFpqUEmQEoGH6bmJ3JxaKF+XqT6NEo8YSh2QauH6n9eFQzGk2xwX7yITO+24mfeidl
-         8rH6Zvigak/z3PcC3bn2TihnsUDAkclzDy3LVIvR4jPmFskzDOapUwfUY2TDRd6RDXwJ
-         8gwjKpxitndnU2ZXFEodIAHnNupnwRhtKhaEu8PvV+9cwO/6eTdHFPpWTi4wDabi22kL
-         9NmHce3KWdPYByEbcccliQ1Fv0eDbU6x5O2HrAeS+kvVZUbE/YpdIpmWEcDscnzQtP5H
-         BoDw+rySBWqacB7vwa7SfBiWa91MECir9Tocs6jY/1m1Azn5nYlSthxHBlole96RN4tf
-         OIwg==
+        d=purestorage.com; s=google2022; t=1758160232; x=1758765032; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGIvktuNokMfEeQBYkw+feVubqH5mU5MNNf0kIjurc0=;
+        b=YxFTJFKm+GOwjfBoH9z85PSg9AUcAUd+cAdZAyQjPMkMXMWxLgNHkir8fXi1gWyh9P
+         +FSQPaCehaHpibVwkwYAIu8ZVgbt1xYOSE3poYZLc4zam18wM/rmZVJni2ZbLqNAl4hC
+         a+r6GkQVp3s3wYGpESdOxSbDDnNTFoI55PiMd9LsUzijzexfdVygJP4aLjsMFmWHgDpX
+         eCybjVCWctM1XtYCyeXoATmLPvSb/62SLe+pEEfhjgos8/+8bRtTgNFlTTK/XK/HHyfp
+         Mlk1r+U5owKENgfknsbChNNPvZ0EwDe4jtWV6vseMgg/lpvUSntpAAGfFl3Fykm92UQd
+         j0Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758160118; x=1758764918;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7KHWyc6262iDZIkf7ifrzZ8+Zh6e+Z9ki+t6iKm7ek=;
-        b=OlsXV7FJzzpG+XOXMCBfP8/8F6kvl7qQ/vbKWxEQlrw22/LwecfyNbmb4BU3EzCN15
-         tF6Z0Q+pssaRIr5VCVNQWbcBi0OWu8vmMlhTbGuf+ke2PWKtsdaF371C92voCKuKdrux
-         G50JjzhFl/cBh9UVw8B8CphRUlJqox+AnJhCPv6lWOb1k6vWf86/UuMWQagB5Y5JJn7M
-         5B0BA6xxXBvCZsnf0QURcMter7dyNLrQ1SYS3j2laQFaRln9iLZW4/jS2W/D8r0PLPRN
-         MZ7sF7arxZISIfJ8sOk7nRxyLg77dSH7m00khYW08xr4UrDkTrtNiHEsujq2u4w9mFl0
-         1tbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXD1qF5bBjnF0eomAwdu4fj5rQIaPNHOr0R6NXA5rf0xZm83ea+jPkf/YmY5LLq4AFQ/BwF50ZYm3tmVb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3wSooS5YFINix/y3PxIJaNkdwqiMwgUx6dgYGLKvIfRcsCjDL
-	6juxuFmpTxDoaUD+sRoqjJeI0cSaqjBDDGBoX/yFdzHV272TRQtmFxucNu9MWLZFizE=
-X-Gm-Gg: ASbGnct+MnIFIXRFFx3QuccYrUQkLDvaScHsMZgLVyHu7EGOsT5bmKZuDyiydnS8PkN
-	92WX3PF1EELamSedyhwOJUGv4zDiXJHq15Uyc99BaeiVDkBDRdBqysKMW1lopQe6vbLlzxwDkVw
-	jZmveaqROM9IFUWEyO6WuJ+Lwf26ORyY16/rCrX+Vqx/OTclHIKye9UB4yvSUcwzF3nac3jekxy
-	Y3fUYx/xEof741uy4Hacz5JGGhbcVV6vpKV99vKGOWMTKO3i9+hejzpx9eXheJ9T6Jaza/ms00t
-	55/Cmkw8e5fmVlK/0HszdKucVmNVM8rcBIkekhe91fn8MbLBwF4YIknpcZR0GUq2M3paxhaTlqC
-	5zQe0ODZkpbI+uXcl37iXOXZ9Cfxd8ApnAfoYQgwJO25GGpxr86FuvyxX0k82TzdABsVYsbmswN
-	pu/xQ=
-X-Google-Smtp-Source: AGHT+IHitHTC24KBfHvioQFUEarlC9ZUeEtoOdWrUlM1i6XbM+QfUC6SN4lioQsTedp7a4Oa06zZxQ==
-X-Received: by 2002:a17:90b:390a:b0:32e:3837:284e with SMTP id 98e67ed59e1d1-32ee3f0076emr4883683a91.10.1758160118154;
-        Wed, 17 Sep 2025 18:48:38 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([61.213.176.12])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfbb7a953sm686176b3a.20.2025.09.17.18.48.33
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 17 Sep 2025 18:48:37 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	sudeep.holla@arm.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	beata.michalska@arm.com,
-	sumitg@nvidia.com,
-	ptsm@linux.microsoft.com,
-	cuiyunhui@bytedance.com,
-	yangyicong@hisilicon.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arch_topology: move parse_acpi_topology() to common code
-Date: Thu, 18 Sep 2025 09:48:28 +0800
-Message-Id: <20250918014828.78383-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+        d=1e100.net; s=20230601; t=1758160232; x=1758765032;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TGIvktuNokMfEeQBYkw+feVubqH5mU5MNNf0kIjurc0=;
+        b=UJUruk3xOnf4ZuW4anxcbdQkPMbLVrv6LVV8WBiWGS/Xp43rpi2anZs9xIFiy7J+rj
+         1vtE9BQLfpgYPVIjE2YM8xBJEqWhob6dmMOsRwGd9dXnblQlugV9aAIBp7YjUgqpJ1cc
+         +1jxZf9xYCPG3klY2UONdB2ZRR/ZHHYfkOldLe0aA4cmAP3Uf1NwbDNYzgIpOGaaW17E
+         Ua9OxxAMJBepckuA0JStg8hzbG0qejn4cEYmWjUfYNwu6KKN2hnk44NxzdqYp6E4ujM/
+         Qi21yuPObAw6THyNfYEJEXuXUty4sZTYgfRctFPicPSWez6785R582IomuWkYJgwGS1f
+         NVqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXz2NfoZ7rg7MDXZ3VvO5P2B1I37+uRLAH77U9Tr1PnMAHCXpZ21szMFBOQGWKNmu9PB4Llpd0NAcZzTo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaPSYQ19tXHWtPPAj6jBJHDUktGrvHrrLkcWgdCXDJ3A6qHC/1
+	QWLwP3fC4gB60edHtCVc+Zc5lGS5ODANJkcd6mEJXiukBIJBLydMBCR3oxVBNthS/j/ZQEdyxQY
+	VTRjPgjrMXgjxTzuBXFBl7XW00oTvCIQ8l4UaKxVf6xo/aZn9jM3F
+X-Gm-Gg: ASbGnct47XyOETaiUw1pnHaIlLN16QAMmMBK14ETG4mlJm7dckirU1Sq60+exaPiTcD
+	BYKnvHaQEAdmlb1Pk7cAsJOzVCj8pah7BSVdCXv1rlXHDrdwrvrCCET5Qbz3Vv0fRnD5E7AuLur
+	gebSe6D62QCkw3rsTbn6tEs23R8PsjBPbj5e570kPVZB6XmIJpZ6lNi0HU7S70Q+vSOf5dk+S2f
+	8hBJlw50GfbtDrvi0SDCeLgIffGSwBwokLdUapqquFAAjanjymK41/N2bIG+YGXiQbHVoz3TcLw
+	RCe+ZJRnDmFKPsek6GxU9X1yXQiWDCNrSpNFPC5xk+vZYbA/B7YNXxgXSg==
+X-Google-Smtp-Source: AGHT+IFjlktqk/3nYPmb+CRYzX3NN7hHld95pMMXVz0WtXy5Y67cG3TeyxcLYDmSvHwYCTNNBsADk3KeahBe
+X-Received: by 2002:a05:6870:9a97:b0:31d:6420:8791 with SMTP id 586e51a60fabf-335bf6206demr1202085fac.7.1758160232119;
+        Wed, 17 Sep 2025 18:50:32 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 586e51a60fabf-336e6487e4asm123459fac.18.2025.09.17.18.50.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 18:50:32 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id A36D6340325;
+	Wed, 17 Sep 2025 19:50:31 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 9BC38E41B42; Wed, 17 Sep 2025 19:50:31 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Caleb Sander Mateos <csander@purestorage.com>
+Subject: [PATCH 00/17] ublk: avoid accessing ublk_queue to handle ublksrv_io_cmd
+Date: Wed, 17 Sep 2025 19:49:36 -0600
+Message-ID: <20250918014953.297897-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,240 +94,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, RISC-V lacks arch-specific registers for CPU topology
-properties and must get them from ACPI. Thus, parse_acpi_topology()
-is moved from arm64/ to drivers/ for RISC-V reuse.
+For ublk servers with many ublk queues, accessing the ublk_queue in
+ublk_ch_uring_cmd_local() and the functions it calls is a frequent cache miss.
+The ublk_queue is only accessed for its q_depth and flags, which are also
+available on ublk_device. And ublk_device is already accessed for nr_hw_queues,
+so it will already be cached. Unfortunately, the UBLK_IO_NEED_GET_DATA path
+still needs to access the ublk_queue for io_cmd_buf, so it's not possible to
+avoid accessing the ublk_queue there. (Allocating a single io_cmd_buf for all of
+a ublk_device's I/Os could be done in the future.) At least we can optimize
+UBLK_IO_FETCH_REQ, UBLK_IO_COMMIT_AND_FETCH_REQ, UBLK_IO_REGISTER_IO_BUF, and
+UBLK_IO_UNREGISTER_IO_BUF.
+Using only the ublk_device and not the ublk_queue in ublk_dispatch_req() is also
+possible, but left for a future change.
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- arch/arm64/kernel/topology.c  | 87 +---------------------------------
- drivers/base/arch_topology.c  | 89 ++++++++++++++++++++++++++++++++++-
- include/linux/arch_topology.h |  1 +
- 3 files changed, 90 insertions(+), 87 deletions(-)
+Caleb Sander Mateos (17):
+  ublk: remove ubq check in ublk_check_and_get_req()
+  ublk: don't pass q_id to ublk_queue_cmd_buf_size()
+  ublk: don't pass ublk_queue to __ublk_fail_req()
+  ublk: add helpers to check ublk_device flags
+  ublk: don't dereference ublk_queue in ublk_ch_uring_cmd_local()
+  ublk: don't dereference ublk_queue in ublk_check_and_get_req()
+  ublk: pass ublk_device to ublk_register_io_buf()
+  ublk: don't access ublk_queue in ublk_register_io_buf()
+  ublk: don't access ublk_queue in ublk_daemon_register_io_buf()
+  ublk: pass q_id and tag to __ublk_check_and_get_req()
+  ublk: don't access ublk_queue in ublk_check_fetch_buf()
+  ublk: don't access ublk_queue in ublk_config_io_buf()
+  ublk: don't pass ublk_queue to ublk_fetch()
+  ublk: don't access ublk_queue in ublk_check_commit_and_fetch()
+  ublk: don't access ublk_queue in ublk_need_complete_req()
+  ublk: pass ublk_io to __ublk_complete_rq()
+  ublk: don't access ublk_queue in ublk_unmap_io()
 
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 5d07ee85bdae4..55650db53b526 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -26,7 +26,7 @@
- #include <asm/topology.h>
- 
- #ifdef CONFIG_ACPI
--static bool __init acpi_cpu_is_threaded(int cpu)
-+bool __init acpi_cpu_is_threaded(int cpu)
- {
- 	int is_threaded = acpi_pptt_cpu_is_thread(cpu);
- 
-@@ -39,91 +39,6 @@ static bool __init acpi_cpu_is_threaded(int cpu)
- 
- 	return !!is_threaded;
- }
--
--struct cpu_smt_info {
--	unsigned int thread_num;
--	int core_id;
--};
--
--/*
-- * Propagate the topology information of the processor_topology_node tree to the
-- * cpu_topology array.
-- */
--int __init parse_acpi_topology(void)
--{
--	unsigned int max_smt_thread_num = 1;
--	struct cpu_smt_info *entry;
--	struct xarray hetero_cpu;
--	unsigned long hetero_id;
--	int cpu, topology_id;
--
--	if (acpi_disabled)
--		return 0;
--
--	xa_init(&hetero_cpu);
--
--	for_each_possible_cpu(cpu) {
--		topology_id = find_acpi_cpu_topology(cpu, 0);
--		if (topology_id < 0)
--			return topology_id;
--
--		if (acpi_cpu_is_threaded(cpu)) {
--			cpu_topology[cpu].thread_id = topology_id;
--			topology_id = find_acpi_cpu_topology(cpu, 1);
--			cpu_topology[cpu].core_id   = topology_id;
--
--			/*
--			 * In the PPTT, CPUs below a node with the 'identical
--			 * implementation' flag have the same number of threads.
--			 * Count the number of threads for only one CPU (i.e.
--			 * one core_id) among those with the same hetero_id.
--			 * See the comment of find_acpi_cpu_topology_hetero_id()
--			 * for more details.
--			 *
--			 * One entry is created for each node having:
--			 * - the 'identical implementation' flag
--			 * - its parent not having the flag
--			 */
--			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
--			entry = xa_load(&hetero_cpu, hetero_id);
--			if (!entry) {
--				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
--				WARN_ON_ONCE(!entry);
--
--				if (entry) {
--					entry->core_id = topology_id;
--					entry->thread_num = 1;
--					xa_store(&hetero_cpu, hetero_id,
--						 entry, GFP_KERNEL);
--				}
--			} else if (entry->core_id == topology_id) {
--				entry->thread_num++;
--			}
--		} else {
--			cpu_topology[cpu].thread_id  = -1;
--			cpu_topology[cpu].core_id    = topology_id;
--		}
--		topology_id = find_acpi_cpu_topology_cluster(cpu);
--		cpu_topology[cpu].cluster_id = topology_id;
--		topology_id = find_acpi_cpu_topology_package(cpu);
--		cpu_topology[cpu].package_id = topology_id;
--	}
--
--	/*
--	 * This is a short loop since the number of XArray elements is the
--	 * number of heterogeneous CPU clusters. On a homogeneous system
--	 * there's only one entry in the XArray.
--	 */
--	xa_for_each(&hetero_cpu, hetero_id, entry) {
--		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
--		xa_erase(&hetero_cpu, hetero_id);
--		kfree(entry);
--	}
--
--	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
--	xa_destroy(&hetero_cpu);
--	return 0;
--}
- #endif
- 
- #ifdef CONFIG_ARM64_AMU_EXTN
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 1037169abb459..c22746b45d57a 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -823,12 +823,99 @@ void remove_cpu_topology(unsigned int cpu)
- 	clear_cpu_topology(cpu);
- }
- 
-+__weak bool __init acpi_cpu_is_threaded(int cpu)
-+{
-+	int is_threaded = acpi_pptt_cpu_is_thread(cpu);
-+
-+	return !!is_threaded;
-+}
-+
-+#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
-+struct cpu_smt_info {
-+	unsigned int thread_num;
-+	int core_id;
-+};
-+
-+/*
-+ * Propagate the topology information of the processor_topology_node tree to the
-+ * cpu_topology array.
-+ */
- __weak int __init parse_acpi_topology(void)
- {
-+	unsigned int max_smt_thread_num = 1;
-+	struct cpu_smt_info *entry;
-+	struct xarray hetero_cpu;
-+	unsigned long hetero_id;
-+	int cpu, topology_id;
-+
-+	if (acpi_disabled)
-+		return 0;
-+
-+	xa_init(&hetero_cpu);
-+
-+	for_each_possible_cpu(cpu) {
-+		topology_id = find_acpi_cpu_topology(cpu, 0);
-+		if (topology_id < 0)
-+			return topology_id;
-+
-+		if (acpi_cpu_is_threaded(cpu)) {
-+			cpu_topology[cpu].thread_id = topology_id;
-+			topology_id = find_acpi_cpu_topology(cpu, 1);
-+			cpu_topology[cpu].core_id   = topology_id;
-+
-+			/*
-+			 * In the PPTT, CPUs below a node with the 'identical
-+			 * implementation' flag have the same number of threads.
-+			 * Count the number of threads for only one CPU (i.e.
-+			 * one core_id) among those with the same hetero_id.
-+			 * See the comment of find_acpi_cpu_topology_hetero_id()
-+			 * for more details.
-+			 *
-+			 * One entry is created for each node having:
-+			 * - the 'identical implementation' flag
-+			 * - its parent not having the flag
-+			 */
-+			hetero_id = find_acpi_cpu_topology_hetero_id(cpu);
-+			entry = xa_load(&hetero_cpu, hetero_id);
-+			if (!entry) {
-+				entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+				WARN_ON_ONCE(!entry);
-+
-+				if (entry) {
-+					entry->core_id = topology_id;
-+					entry->thread_num = 1;
-+					xa_store(&hetero_cpu, hetero_id,
-+						 entry, GFP_KERNEL);
-+				}
-+			} else if (entry->core_id == topology_id) {
-+				entry->thread_num++;
-+			}
-+		} else {
-+			cpu_topology[cpu].thread_id  = -1;
-+			cpu_topology[cpu].core_id    = topology_id;
-+		}
-+		topology_id = find_acpi_cpu_topology_cluster(cpu);
-+		cpu_topology[cpu].cluster_id = topology_id;
-+		topology_id = find_acpi_cpu_topology_package(cpu);
-+		cpu_topology[cpu].package_id = topology_id;
-+	}
-+
-+	/*
-+	 * This is a short loop since the number of XArray elements is the
-+	 * number of heterogeneous CPU clusters. On a homogeneous system
-+	 * there's only one entry in the XArray.
-+	 */
-+	xa_for_each(&hetero_cpu, hetero_id, entry) {
-+		max_smt_thread_num = max(max_smt_thread_num, entry->thread_num);
-+		xa_erase(&hetero_cpu, hetero_id);
-+		kfree(entry);
-+	}
-+
-+	cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
-+	xa_destroy(&hetero_cpu);
- 	return 0;
- }
- 
--#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
- void __init init_cpu_topology(void)
- {
- 	int cpu, ret;
-diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
-index d72d6e5aa2002..8cd8a9604f33f 100644
---- a/include/linux/arch_topology.h
-+++ b/include/linux/arch_topology.h
-@@ -88,6 +88,7 @@ void update_siblings_masks(unsigned int cpu);
- void remove_cpu_topology(unsigned int cpuid);
- void reset_cpu_topology(void);
- int parse_acpi_topology(void);
-+bool acpi_cpu_is_threaded(int cpu);
- void freq_inv_set_max_ratio(int cpu, u64 max_rate);
- #endif
- 
+ drivers/block/ublk_drv.c | 155 +++++++++++++++++++++++----------------
+ 1 file changed, 93 insertions(+), 62 deletions(-)
+
 -- 
-2.39.5
+2.45.2
 
 
