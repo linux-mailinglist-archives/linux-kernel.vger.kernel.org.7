@@ -1,197 +1,225 @@
-Return-Path: <linux-kernel+bounces-821994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8462B82CD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:49:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C01B82CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8F74A02ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05927485A99
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB7423C506;
-	Thu, 18 Sep 2025 03:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62124242D63;
+	Thu, 18 Sep 2025 03:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="f3OoL2YA"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azolkn19010000.outbound.protection.outlook.com [52.103.12.0])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X3y7Y/dJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A518213236;
-	Thu, 18 Sep 2025 03:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.12.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758167389; cv=fail; b=e2wF1bj9Kiu048ID/t+SDB8nqunT4tZJr0HWA+B9VaJqfGSVnTOLdJjpxl0ty2JVDSnT2DCwdc5/5sh3G6irdaaNtyqVruXVYc5K3gavkfeyP4mKu2VWSo7mOppXoRBdF4zjEJSYMhLFQv2fpxwljcIG2berWagPsYecPGUAMIQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758167389; c=relaxed/simple;
-	bh=aE4vgokQzIl4j7ie4s0Drsr9FelvX14O2PYyYuwCnME=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QULPjMGedrVfVHzemUI2fXsuEd0behyGzdhfioKSzse5AuJKVTPpxUqZsgGxgkvI89mJF9Mv8kSXsBwg6RbbSX5/O3dR3cQcOVYsDH0+BETdilNqp+XhmMiqAbUtV1Q7/NbFSgpNmQeMZvKu6ft4EwBCup0vriqQUqTGN7I8OR8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=f3OoL2YA; arc=fail smtp.client-ip=52.103.12.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qg4yriEddsX8piA6LxMPBhhvnNxbIYrzPhsAqhZI6B77Yq5STI5riFQblsBUcsOWmOLe3+DGiow0r03nFIMUnWqod0Q9fe4sd3ty1/1TnLPboJvrShQAZuUxHESH3QdAMqfXI6a4TjUxNRdmhQKb92dx6ZE55+SuidzXz6VaYuljHvTXGC/W4b9q3FirCwoNIeBoG1Mb5oqVU4J1mS81pFgkZp1YTB6NxViXc0YkKMQ33ii7z4Qrk6FH2HiRStuD0uGUOJl7TfpzERW6tdWbepq1AMgPil960ZFgtOqd3TkRruMNeH+h5PcpE+RIblIUF9G+FV9sqPqcWfhy9jE5OQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KIMNMR5AJf7k1ceIvU9e3DLh7S52Awjj/tCLvF6K2ls=;
- b=ju4VPipYtPcZXm3fhCmJ6NCUCeQuxHca4Z6cNTZGxXDGwwM7Fahpithu8qZPjLJbAzS2fpDiePNIMgH1jjwnBui0KJKet14SxHzD4/c8yYLvRZvz5Jz7TOc2OqJYZo7DGgysZPplnnUzABEtduJwSmWSPyoZJeQ/NxGYJWf+FYgvyxfmzIzzjKpMMetwrVp+09YSBL3ZN2trKiuz+ru1X+RZ65npObMt9nCYNHPe/2hLqojdBVTxwiSKq5qWQ3gC1vA/NKoh0p4965P+68EgNzut0sTXDK8aOHkKNoRqGXe4oiRZozK23sAQj8NDIph0b0V35zQ/NgjMwVrs0Duw0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KIMNMR5AJf7k1ceIvU9e3DLh7S52Awjj/tCLvF6K2ls=;
- b=f3OoL2YAp1W+Rp/IGA1Cacjc8nO+nHJjmvF5myR0loMeoig8QCwTf1e/YP/dyBv66yDCNCeSD2NswVy9BPBdA3BFGSP5pVagFY7Oqzsaavki6UvcMRJh05qeOgp6KTpRXX+zeG7LZqiK7DVZ+pa/9lerxRe9MqpKmD/rzf9OxTeidz154dEiYGo+sraF0dS5kyGuaKjf6Q40N6LqNXrXlPUj/DtK4FkfYGqNCW9eMWi+nnqnqhVgKq1/XLme19B2B/9ThOYziOE3N+7QJAXgPDfdTdVJjx3Je8qXjloiS/ak/ZDWASKKfbuQpPB4Sk0pvuikhVkTDcdxx5gRpVSzVA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by MW6PR02MB9862.namprd02.prod.outlook.com (2603:10b6:303:24c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Thu, 18 Sep
- 2025 03:49:43 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 03:49:43 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, "kys@microsoft.com"
-	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
-	<decui@microsoft.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/3] drivers: hv: vmbus: Fix sysfs output format for ring
- buffer index
-Thread-Topic: [PATCH 1/3] drivers: hv: vmbus: Fix sysfs output format for ring
- buffer index
-Thread-Index: AQHcJOQg0eWBZhOLMkWvpyK1bBqS7bSYVICg
-Date: Thu, 18 Sep 2025 03:49:43 +0000
-Message-ID:
- <SN6PR02MB41578F335B9C07322D70C723D416A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250913192450.4134957-1-alok.a.tiwari@oracle.com>
-In-Reply-To: <20250913192450.4134957-1-alok.a.tiwari@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|MW6PR02MB9862:EE_
-x-ms-office365-filtering-correlation-id: b26399ef-29d7-4047-b691-08ddf66666ff
-x-ms-exchange-slblob-mailprops:
- 5fu/r660v9MHSDx/iaeYuri4/Uqx8pWIAarGP15lKnrIBw9RmaJQv062sDYPljk7CNWdV7MVR5rHffJ/KfOmziWlwdtuBEj42+sINaEWla2jqVuJbifz15W+lz0eCpRvZe+2PTKC7axJ9ox+XSoRXIVS2ytPkj5qOj3mGHxqNne4XGJpMnwbKwLIXuPad2Q4m8uMG1yZzKRrcOm7NhRxrLk6BxdQK363Sf1a1gv6MUjq8pFwnWvt+EJtacxxTmyeQTYWmgCUVJhTHjKcgfD/DXhopIzPo4rV1Ue61p1Vlk3RoHp0SwskRpdOWp8FgGZtwz9NQ3+NKo9OCSEc42TqW2dv6kaRBBj96S4RulaGH4xdoWJIB8SAOZpVDtr/WbiCAQGk8OCgsbaccnf3b5WvWZtpxe0RUc42AEKF/HyMIuWGPc/2wlGkOdSbFulxydeCqVOYvcZ3UuLZ8iIK2HIvqx3Se9GgZqe2G9vOUbq1XCbOichxd/1RrESb1r+jrpdxtbQL05WDSAs+28TZDJ43sY3NKIhL6t+7l3tpfo9BfJ1TAL/IqtDAquzU7UIIg4KY0wSjE61hvJHTeqdL5Hp3m6gFg1Out5sXwuoYOgjJn+ep86eKefNwNu508eKd94LwYN7EjjJAHfEMgg38Tr5hCrsKqjG2dcYYv6JzmIHEsVlCQGq7HlVN/ntJTxMj2bl7rPJYr3+cN+xAIllXRXSxcoqyEwe53i56h+VRcuMzYCo=
-x-microsoft-antispam:
- BCL:0;ARA:14566002|41001999006|15080799012|461199028|19110799012|8062599012|8060799015|31061999003|13091999003|40105399003|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?rjS7zUARwVSVoJ0F2SIUSyKoVQOClqqcHzmbjZ+zy8aRD0xmUTt9EGibe2pE?=
- =?us-ascii?Q?vBE03XxgM7mLEchGkqlxH2wsDTgMo2ITLLVj+Xgk3rOYgxo7hDoeim+6TOqy?=
- =?us-ascii?Q?1ygxFsUaGa1HldI/jFF3dUrmJLWhQCb8hZ6T6XJlczRG+7kMLk7moUNBLWzO?=
- =?us-ascii?Q?7GLEjb76eY0CRrTA5tg0pyqmZK7WeuKjGp/uv96C4+KXn306EAv9wSgQPS37?=
- =?us-ascii?Q?iQXTgvupSXmT4MVkGNTYDSW71JwNSD3xBMOKi1j2NZ5D+2K72s2oZ4WXjYIa?=
- =?us-ascii?Q?FFyLjlUp4Vxswi/d8QHPBVd8RvcaN2TjvseQWaXaGru86Oe5Je6YA0rKmp9j?=
- =?us-ascii?Q?EAoVZmZ4+X+XLokC8u6EVN0js5cOLuaAhXorB7xe7w46spJ3ml11vyhREUCG?=
- =?us-ascii?Q?UClHFXtQBdnZSmBsef+XcuGn8S8OWZlmt6HRIINDvNbRbJe/EP6gDyrhV5a0?=
- =?us-ascii?Q?uZptQj8z0iwaI2af2kUpWgYbI/wowojlSJdF3FvRjtVLnKxeIFpfg+EmjyIR?=
- =?us-ascii?Q?6omWJpqDsylTyna7M1RYEMxPL+OUH3iIlYkRpJys/pO6J8Rwte5+h8lt/fjk?=
- =?us-ascii?Q?nlmhOmyLNr+9FmCuhaub531Y0WrKrjPQAc7caBSc13vEXokIL0CnSPZ4RAb/?=
- =?us-ascii?Q?bHV8BNfbeIvH1ZCiSyQcmHneWaUh41DqH2LT++BGfkZunT7aF7mNSecKlmtN?=
- =?us-ascii?Q?/Oca+kck+CcIOH2xtpPmNZSs9SasPI1TMAWAjeDZoUw1B3pLXTqjGVA6itSh?=
- =?us-ascii?Q?BeoTmoh22tMFy+qnFMmQQ+bks5K69sufdO5oGz/8ElQjoew/vWzJ8uXm0BsP?=
- =?us-ascii?Q?vzzNUrKW8W/KsiQn/411/q35IjVN/ZLX+a824THIByW9myuN2e9Gy5uEpKJS?=
- =?us-ascii?Q?u65beRZNYZznyAGZ2qfjR0t0s+/14NxptRJ9MReM1wVpyPFNs9t8y3Fy+3rf?=
- =?us-ascii?Q?KpWuC9/fpVkGZRL+HJSVXt62mb26cnct6s8kb+7fXYqB6cbxdJQSIBQdgE0s?=
- =?us-ascii?Q?j5A45RrbIvEE1SsmjMoC+4IDtI4xXrYWrjjxZE9EKqddp9qdR7jpIQCSx61x?=
- =?us-ascii?Q?oveld5PWDoCf56yQTctDjvQysDi3uMqXGl0Jvo/BQtHKCbpyY2bIan8TEtnG?=
- =?us-ascii?Q?Q617ZwJsUePsBfb619UjkIS8GvmemSDG23D7tJZdFULslb2xWcfSxUDcQPlA?=
- =?us-ascii?Q?NRCe3SLpClcO8J+6Dennmh1SQyp/rXN/usinjQ=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?x5d2GxxUVXb5kyoU2eMlpgWb7OjVAlAkBOYC3Y/gxNPEf9XGUwzlYmElwxmD?=
- =?us-ascii?Q?c2NQ5o/qm7Db/UFNfvlVZ2WCeYoR+PIY1efQNDehlF7cwQx84RO9CCs8BoGe?=
- =?us-ascii?Q?WYYYDmCXkbqrruyw7NVohfK1vDyyP8TPEBLppWREvEue2MDLjH3buZgAy/lh?=
- =?us-ascii?Q?m/JJ5GJZa3ZEwaJLuDaRX82BreKeEeWzns33kG+oHmU5u+kRGsNH6BxNtiTH?=
- =?us-ascii?Q?BUNxA7L6LWboe1+rQ+rSge8pPPypphPfim3Fm1S/hLgF62Td6czHSAhxC6HY?=
- =?us-ascii?Q?pTY7BGE2Lpxw7iK+0KAnb+qL7W4xHpmg0XK9cgrNayZKPlrLr7YpwUy3DHR0?=
- =?us-ascii?Q?QzYFYjrk7VOo5Yth7t1SHBBgJbJ9gj0WZGUx/kkp2o5LKtCNU9iz3qvhM7mw?=
- =?us-ascii?Q?YzCAMO4hhNYH66Q0Nd+K9R//sSlf3g27LUMmoXNf/9XMOIqZ/6f3bPAks2N3?=
- =?us-ascii?Q?0mUfYV3ZdMBL1Y1L4jGBi3d5hUc/IaWk/lYA1oXbEo8W0RsfpQb528YWUh7A?=
- =?us-ascii?Q?jAaUTUnsqtbhItjqthirHMxJogRUJu35IULW4QzBT7aXy8fQZP6Gq/m5/OW7?=
- =?us-ascii?Q?ucndrLBkDiOExSOgtyz+SGkGtgPuXI43T75y9ODGmPGrKNLhsKvWJXKQf02s?=
- =?us-ascii?Q?RuKzTaMy14ATTHb5yKJG40ntdY1mFfoTjh5iLur60lmzWCxAgxiBA1iZNsOw?=
- =?us-ascii?Q?DAgL7UyFaPI7hsCRuZ2X18SR4aC8Vnn7GeGK9kQKLqcFC/uAczLc5U+y0WSw?=
- =?us-ascii?Q?ajSTJXktHUsmP1wGIIA7SnOIuyojwlFw4vtlhHuRRAwtIEt//WtauJcNfw/K?=
- =?us-ascii?Q?CL50LYxtEIzWWAP+M00A+VJoaEOWjgeQRyGWO52Sm+6ZJQwW8qj1vH/5cdLn?=
- =?us-ascii?Q?Sw3UV2JCRWkiq1NbXBCSI8gjhWcP23SNSqdOOpCzG6yEVapRdn4femafuTcr?=
- =?us-ascii?Q?QcBLpTRyAmbxGoDm304uKajptBbb9cgQFBAV+AI966xf5AuoLK20pd27mrne?=
- =?us-ascii?Q?idWVDUsSs2+vUP/YiF9s4JUYMiQalwPTmmo1eNSVa5Fq5zpAAKW+oBHo008R?=
- =?us-ascii?Q?midZxTa1pVGlCRffyqASpheWqx0YRe/P01dhTaKlwwxjs+UApk+HbF4HjeqD?=
- =?us-ascii?Q?A5gX8yuXNZFqMyMqWXiiP2QZ5VHuxfsM12hShFjwzf5gXem87pTc7WJTZ342?=
- =?us-ascii?Q?EwLb5qyaSHRWd3qXoW/tqpl/TF3YD8FJE2heVnGazUudU3gIlAVP7f3XNQ4?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99E923B615
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758167478; cv=none; b=GiuKJEbzE0LY09Q5nJgsbTMs0tgqRCKXsTMtoGIzElKhoqFlnUAMBScwPIoSdC1A4/m4bBDGVCImsHd0HnX7LYXfyWsh25YZQ4drEZ+FV6tamkasdWkQnFuLvr4z4YlFXLKnqODZpN/7KmEKC8NTkAQKcKxZh1Bm2c2uEI0HKRE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758167478; c=relaxed/simple;
+	bh=N12mAH4AEAt7MmcqShE1P3CEHF675u7xLlRmXgGx5Xo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nuMkdJ6UE3vdtbQLbnnBrh2lrglkJCb2eraKtkXqnzDsmEoO8XAWdjz6mH4ElHa9d9NpLKa1r+ebRCFmzp7INlbMKgNtVJEzRGvaOEpSQz0W7uRNRIg91cxqUbYmXu3jqbRaqOQ3H5EfN9DoL1dGPSecfaALOVQB9dTFYUrbP/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X3y7Y/dJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I3j5BF032414
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=le3hcgVXjn8geHN7AQBsWT
+	xvYkhBX1Lcw++MHyY4VEk=; b=X3y7Y/dJmEZaNlp4uMoE94qP3P2nxCu4BepXJf
+	jfFi5ZXwIn+PxTpvLMGPRR8ChVjwwRK89iHg7gk/nbqo2V7DyZnzzfxDIaMIwrR8
+	Fi75ZKd/Wr3c6y18aHk68+dlqxa1dG8Ms/Jzw/sSHpmIFDC8Smeu+RCsZMAp+Edi
+	9zsbGXrXjpqkU/33HRcuQh0CUpGVihxATJXdYuWGdTMQN8KQK3S3yt38VPXExaSL
+	+GCg3M4QeBnT6/I+a19Yq/6AY8ajkWoKk4EScTshkYivX2pn2u8Dr9LOxQlR+Ug1
+	aOFmf6/cFd9hW802oVa+Rol2o3x9L+1p7U6eTVCUhkpmH9Vg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxymtg7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:15 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b7ad72bc9dso13921581cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:51:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758167474; x=1758772274;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=le3hcgVXjn8geHN7AQBsWTxvYkhBX1Lcw++MHyY4VEk=;
+        b=Ro17W2tPF5UREsHvQEUMrU6TT/ndRHrFzwgLH48MPo/YmGxHw1QNGYyf4jZAA7QfF8
+         jSUQru/KkIErZJSbx2xHlER8a/VW8kVtbtOZY1uR4QEkQ2fITyK01fRATjzX+y2ZxlTn
+         iKXf+oUaQeoidIS2cyCvp+1lAo3gE7Jr6r3yGe0rQ10O1P+kquBmQ4bl33L2NxRslG/f
+         jZFlNbQx7zKz9VTLX4vZSeztfXzuTgq9wcG+uN0CIeWSbBLLeBp5Xa+mp9QDxQzdLwCU
+         LYTr9NGQuZ0W/gc7/vlsrqFTyhiVT3+CQSoBsgG+0PL4CO7kDU+xVGSQL131ROTvLi2x
+         W8mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGLmzBWDt4Krd3GphIqiURzKvVW2wmd9imAOF8pM9w7qVQeTb+iWC59Ir0L6CXur0wZ3kcMgeNYgxAG3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWbA/i/wweGlTW/v12gDCbZ3jBamuZBtluKGW0CKPjvksVsbub
+	iK4tQJKJ+Fy/EkbLfK+4o6Ch+tIXqWI/gf2ocF0haQhCDvUzzYzWtJw3NuT1aGIby6TkHVjE/89
+	jdLlPPeet+2y111ZNTru8YlJokJVNtI9vCgmlfDRP2gl7gJJNsbLvXluiBj3lv79svjc=
+X-Gm-Gg: ASbGncvXV7+hhSNrgiiDE4nQVbZUqWclDKFlGgCJtEx6ou0FzhRljC1vYO8r6SfuCKA
+	uwwqeOJGv17yPtyRXHIIbpW6sAY4YLdVG6nb5ci00eK9vCzgDIDELBnNpKaNWhUcrHQjt+09mhc
+	uJNei1PDgHPuwDeSNmqzlatqI6l2MJzmtvVixfI+Wrl6iN+FdMIWfOXZv6HwbWw4ZztAFYOzABa
+	4uRNN6ALgCWxKPjNeohAPvqSiVNhPfKCjxQr6x/KePVmNSvK281JnqQXD42rUFoF7rXNNhPbnLH
+	hWxUCnM6b4kkaIKgtcUTq+t3OFd+wH36p+/vtcgZCkkHTSXOpJLJt5obi//11KPtMMbji35+gDU
+	TDdWGfRM8+epp8CjKfafNmmo9h4S5X0pYZjqo7hRgMLTb19HSeS/8
+X-Received: by 2002:a05:622a:410a:b0:4b7:aa31:3c54 with SMTP id d75a77b69052e-4ba6d819d77mr56422841cf.55.1758167474441;
+        Wed, 17 Sep 2025 20:51:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHk+JT0nmGXpYlGzcsiZnvebGGF+RyXL6mJsOObPCr7jEILfS/0AWa9sVdxR5sxI5O0qDmEZQ==
+X-Received: by 2002:a05:622a:410a:b0:4b7:aa31:3c54 with SMTP id d75a77b69052e-4ba6d819d77mr56422661cf.55.1758167474005;
+        Wed, 17 Sep 2025 20:51:14 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361aa38c4f7sm2799911fa.62.2025.09.17.20.51.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 20:51:11 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH v5 0/5] drm/msm: rework the ties between KMS and GPU parts
+ of the driver
+Date: Thu, 18 Sep 2025 06:50:21 +0300
+Message-Id: <20250918-msm-gpu-split-v5-0-44486f44d27d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: b26399ef-29d7-4047-b691-08ddf66666ff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2025 03:49:43.1328
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR02MB9862
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH2By2gC/3XPwQrCMAyA4VeRnq0kaWs3T76HeNhqqgXn5jqHI
+ nt3O0GUqZfAH8gHuYvIbeAoVrO7aLkPMdSnFGY+E+5QnPYswy61ICADGlFWsZL75iJjcwydJAv
+ IOmcNHkS6aVr24fr0NtvUhxC7ur09+R7H7UtSE6lHCRJRkdflEpfOrusYF+dLcXR1VS3SECPY0
+ xsx8IXQiFBOrizAm2L3B1EfCGZTRCUEOEfO2Fog9QfRb8SCmSI6Ib7UFpzO0lv4AxmG4QEbzZH
+ 1gAEAAA==
+X-Change-ID: 20250411-msm-gpu-split-2701e49e40f0
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3268;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=N12mAH4AEAt7MmcqShE1P3CEHF675u7xLlRmXgGx5Xo=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoy4GtJ5eB/xL4gUiMVxXXYJu5iL4TDfPX2/WvQ
+ AE2GvhevTqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaMuBrQAKCRCLPIo+Aiko
+ 1bGaCACrcfl54E/NPTAiqJJvaiIh87+3wEmrZe5uAs+zCxfSkb/1/O3vl7fIMGOxtOchxgYTAqi
+ cNlwfhGmodkeo+b5qM/8DyUuYNje1wRgr4VF1LosjPB1sV4b4V6Hju7/mTqEWi6sImMBFvw9BlD
+ ce7JM8BemdWIzrE5XQj/DSR4vFIyxU3nCTq54eOx5bz/uUgnm2jA9TxaSS8hBYyevK1Afifm3tO
+ MdYoYTOUQ+HZdQ5hNk0qGui7mAGxKRDkdvddYmBm8AgYLvWSwDL/0nUg2iJWiXAM6SRI8NCZQV0
+ J2WFGYHxG6s4TooNwqEc5jy2TQwwR2x4k/mFvVXYy/TEtp+h
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Authority-Analysis: v=2.4 cv=e50GSbp/ c=1 sm=1 tr=0 ts=68cb81b3 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=3aS5ecUQXdRO32CnfYUA:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-GUID: VTtNG7Cnxtzf-4a47j9qC-qsH3FH--M5
+X-Proofpoint-ORIG-GUID: VTtNG7Cnxtzf-4a47j9qC-qsH3FH--M5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX230q9VrJwmjh
+ SdhNYjrDOANrcI2tOmm/r1Nrhx7oHtA8OKdBwe6EZEZuS8GorkpKV/2R3oh/tj6IrBQ5PQjp0m2
+ n/W9rIZH/yp58WL97Md10ng3YyksswZ7gEjCY9GTlRu4fxmjK0Cv+CEVer5juxkocyP1fbGSO54
+ by2cbTPAlhv8iqm5kMDGn0KYG5ZwoNzkHww42AKkr4+JRZkUcs5H5G2eIe5m2Crmq/JMBa919PG
+ dXTrRFkwkUJoOXr15N0QRAwX0Q3xMY4HClst54Yp2FWitbz4F0KeXCMt9b20SBFV1OS8t4fpQvg
+ FFAhBG4SaRuxoRo/5Djc7EuFsj11AdQR21OdZEm/58wJLkLJ1H0g5KnbKYi3XhIR1vPo+5ruUYu
+ ht7vz68C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 priorityscore=1501
+ phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-From: Alok Tiwari <alok.a.tiwari@oracle.com> Sent: Saturday, September 13, =
-2025 12:25 PM
->=20
-> The sysfs attributes out_read_index and out_write_index in
-> vmbus_drv.c currently use %d to print outbound.current_read_index
-> and outbound.current_write_index.
->=20
-> These fields are u32 values, so printing them with %d (signed) is
-> not logically correct. Update the format specifier to %u to
-> correctly match their type.
->=20
-> No functional change, only fixes the sysfs output format.
->=20
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
->  drivers/hv/vmbus_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index 2ed5a1e89d69..8b58306cb140 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -322,7 +322,7 @@ static ssize_t out_read_index_show(struct device *dev=
-,
->  					  &outbound);
->  	if (ret < 0)
->  		return ret;
-> -	return sysfs_emit(buf, "%d\n", outbound.current_read_index);
-> +	return sysfs_emit(buf, "%u\n", outbound.current_read_index);
->  }
->  static DEVICE_ATTR_RO(out_read_index);
->=20
-> @@ -341,7 +341,7 @@ static ssize_t out_write_index_show(struct device *de=
-v,
->  					  &outbound);
->  	if (ret < 0)
->  		return ret;
-> -	return sysfs_emit(buf, "%d\n", outbound.current_write_index);
-> +	return sysfs_emit(buf, "%u\n", outbound.current_write_index);
->  }
->  static DEVICE_ATTR_RO(out_write_index);
->=20
-> --
-> 2.50.1
->=20
+Currently the KMS and GPU parts of the msm driver are pretty much
+intertwined. It is impossible to register a KMS-only device and
+registering a GPU-only DRM device requires modifying the DT.  Not to
+mention that binding the GPU-only device creates an interim platform
+devices, which complicates IOMMU setup.
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Rework the driver:
+- Make it possible to disable KMS parts (if MDP4, MDP5 and DPU drivers
+  are disabled).
+- Register GPU-only devices without an interim platform device.
+- Add module param that makes msm driver register GPU and KMS devices
+  separately.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+Changes in v5:
+- Rebased on msm-next, dropped applied patches, re-picked up no-GPU
+  patch
+- Rewored debugfs, GEM VM_BIND and ioctls code to reduce number of
+  #ifdef's
+- Link to v4: https://lore.kernel.org/r/20250705-msm-gpu-split-v4-0-fb470c481131@oss.qualcomm.com
+
+Changes in v4:
+- Rebased on msm-next(-robclark)
+- Temporarily dropped the "no-GPU" patch, it will be reposted later
+  (Rob)
+- Link to v3: https://lore.kernel.org/r/20250518-msm-gpu-split-v3-0-0e91e8e77023@oss.qualcomm.com
+
+Changes in v3:
+- Disabled SYNCOBJ / SYNCOBJ_TIMELINE for KMS-only driver (Rob Clark)
+- Further refine Kconfig dependencies
+- Link to v2: https://lore.kernel.org/r/20250503-msm-gpu-split-v2-0-1292cba0f5ad@oss.qualcomm.com
+
+Changes in v2:
+- Got rid of mdp4_crtc.id and msm_drm_private.num_crtcs
+- Moved msm_drm_private.wq and msm_drm_private.event_thread to struct
+  msm_kms (Rob Clark)
+- Moved HDMI / DSI / DP pointers to msm_kms (Abhinav)
+- Link to v1: https://lore.kernel.org/r/20250413-msm-gpu-split-v1-0-1132f4b616c7@oss.qualcomm.com
+
+---
+Dmitry Baryshkov (5):
+      drm/msm: correct separate_gpu_kms description
+      drm/msm: split VM_BIND from the rest of GEM VMA code
+      drm/msm: split away IOCTLs implementation
+      drm/msm: split debugfs implementation
+      drm/msm: make it possible to disable GPU support
+
+ drivers/gpu/drm/msm/Kconfig           |   27 +-
+ drivers/gpu/drm/msm/Makefile          |   21 +-
+ drivers/gpu/drm/msm/msm_debugfs.c     |  420 ------------
+ drivers/gpu/drm/msm/msm_debugfs.h     |   14 -
+ drivers/gpu/drm/msm/msm_drv.c         |  645 +++---------------
+ drivers/gpu/drm/msm/msm_drv.h         |   16 -
+ drivers/gpu/drm/msm/msm_gem.h         |   10 +
+ drivers/gpu/drm/msm/msm_gem_debugfs.c |   96 +++
+ drivers/gpu/drm/msm/msm_gem_vm_bind.c | 1116 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/msm/msm_gem_vma.c     | 1177 +--------------------------------
+ drivers/gpu/drm/msm/msm_gem_vma.h     |  119 ++++
+ drivers/gpu/drm/msm/msm_gpu.c         |   45 ++
+ drivers/gpu/drm/msm/msm_gpu.h         |  111 +++-
+ drivers/gpu/drm/msm/msm_gpu_debugfs.c |  213 ++++++
+ drivers/gpu/drm/msm/msm_ioctl.c       |  484 ++++++++++++++
+ drivers/gpu/drm/msm/msm_ioctl.h       |   37 ++
+ drivers/gpu/drm/msm/msm_kms.h         |    8 +
+ drivers/gpu/drm/msm/msm_kms_debugfs.c |  129 ++++
+ drivers/gpu/drm/msm/msm_submitqueue.c |   12 +-
+ 19 files changed, 2463 insertions(+), 2237 deletions(-)
+---
+base-commit: 05af764719214d6568adb55c8749dec295228da8
+change-id: 20250411-msm-gpu-split-2701e49e40f0
+
+Best regards,
+-- 
+With best wishes
+Dmitry
+
 
