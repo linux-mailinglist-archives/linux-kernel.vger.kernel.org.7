@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-822874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EF8B84D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F28AFB84DA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 429AF546F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 762184A7EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA8F30BBAC;
-	Thu, 18 Sep 2025 13:32:26 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4303093CA;
+	Thu, 18 Sep 2025 13:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9b85mSE"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B742306D58;
-	Thu, 18 Sep 2025 13:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00602D3752
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758202345; cv=none; b=Uh1AO0pjVg4Nrc0zUFU7PaQ61CLN4npLjs6GV7X1FWCf/ivXtCw1cjtnWPOeZiOENGuWeBvty7wsbPd5mCHpUfzrrb+y+AwtPRSj0LbNEMPn8nm4g7EwvhikSYetaUY518KRJwi1lnhMU9jnBXCSQkexzbxMQDU1YqXS93Cpqd4=
+	t=1758202361; cv=none; b=kHfdHPIY2dXac5ZexZMQrQrWQ1nAw7YPobAUeewdsX+LL9NGsF8Avv9aiohMiP2meh+L3PEcpQkB5mTzQRIeG9yW0mRMhWCAGzZzo1ggHXqU6hnd3D+j537L/hqf9uEDNYPnHwOTdxb2gOJ21gpywOdNSPFQEdGqeMzveSiJ980=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758202345; c=relaxed/simple;
-	bh=/Efvng1++KUoJ3QNb+mWNdxT0oifsZx/t2oDLWmjtYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzwFfORw9AMXl6iPXeXepaz6A2koKI47K63IljV4PikQlh0b6pMeM4FLgUoAWzdYpqrL7Ey36fhK26NPi4T0mjaYRFxVSfO6CBZmDktV7Y+7+bOBAG1ZNkuDsjtkn6e8b09tNSd1mvZF74dIXUE28FbjexcG48VAS03JGhzPuIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 30205341F29;
-	Thu, 18 Sep 2025 13:32:22 +0000 (UTC)
-Date: Thu, 18 Sep 2025 21:32:09 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] riscv: dts: spacemit: define a SPI controller node
-Message-ID: <20250918133209-GYB1273705@gentoo.org>
-References: <20250917220724.288127-1-elder@riscstar.com>
- <20250917220724.288127-4-elder@riscstar.com>
+	s=arc-20240116; t=1758202361; c=relaxed/simple;
+	bh=oxJiGbOc7aw1fHkiA7J0rf4ilEqD7BsiiYiwS7xl7ao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U+JtwGWmaaSW26EhK8Pjk3QIcuVG5r/f2gogpNMM+aJTPKKgYmzIHY5At1GgzHcU29RQu0wb1UJiIdQKjOakRjdvmRuENkI0hClQWHEz+CS1GadzC3Tf50VHUYkNCp5LFZkdKUc0ZhQ8gqp+GQqFD33u7PpHgX4ZH2SXx4bsdHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e9b85mSE; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e970acf352fso723767276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758202359; x=1758807159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lUE2gHe7YLhn4Tjh2XvbUIgWYcWs0P0Yu4OFl5btK+s=;
+        b=e9b85mSEB47sS0mS2GbuuQO1ayTgmwZYK3NBmGqGS7jT/5manA4HtHpOxRdRV8zLj+
+         z9EcVKd+fqcPamejFyryVzwCXGjPu4NamsdB7CSdT41b2KE4/07gcmBX8qS2jHLRK3s+
+         JSn7fA//iVqqkfTrGo8O7ebpLYO/AZwTdA8Aoag2iX72bwB4KAf2TEt35vKKMgYXLUpe
+         AcFbk/bQOLK7i1t1/szrdq6FPieJUILtOemL7mUMA9K/Ney3ABb3GUesQWdyVG74Lte2
+         llEctmqHKv2Hgwc1nxrxyHHv+crS5CRg/L77L7xWE59ntRt0Nd5KYvyaT5z5e3nbSyYZ
+         sqRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758202359; x=1758807159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lUE2gHe7YLhn4Tjh2XvbUIgWYcWs0P0Yu4OFl5btK+s=;
+        b=iA76/L8ZHv3Vcg0kqpCoflciOIICy6Qsst19IlgG0mwmV8DCt95D/OtamdjPVHvr1a
+         oGiHrRpFqiK4tjaJCqPV883AOc/GK8k17j49quSXwQ9PmjD3iJYnx7mA8otlNtinO/JV
+         6dHti8fFB2Z4YjQSmdHSEqMvCWcPZuQ0hFZGkaJAGoEXMHzwraXdLKiFNdfAU1hWf1xF
+         exIPQvkViz3LNZyEn4QsuuUAvTv9dpnanzDHofym4kEMeduHrNmklZRfo+BVzEkaRbIG
+         OT42Onwbd1gqdNKBPR8tiuruyLjyZDbnrt5aBuQreVFOAwYz3Z0hhL5jGLnb2aRR/qwm
+         U4FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0FQQ27ZDNxnJ8eLifGN61WmpHVV40FauG5g/2myw31rDbpWSS6ecWVsohj92zK+vwOliZ10gQHTRWmsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySvHC7dhnb+xrjsO/Z4156cdHzorGDPMvEIoi1BN/GyuexCsVa
+	o2tMuTPCRpRoo7Em6CE1VNKY7j+w7EQi60TuIhIF2EbZl4NnfCcPly4lR5ewPNsgjYiz1TockrU
+	5vzz1+2qJLCuuo04qPcmnGNuAc9nHm0Q=
+X-Gm-Gg: ASbGncsnZknsnbEGqXFhVLF4C07+Gp2RhQFz3i3pMJG/nhouCHBylH3f1fvG/MpeN4X
+	0rfNtkbY5CtO7+6fzF6+6eVOJ9680ShCLmGYCwXspbjnEgZDuQ+uG5Eeq4unZlZqBh7m74vG7ve
+	9XpvbjsOo4YNvrq7tdqnym15D1/VKSeRjVO85ReRdcfmz7n4Xwl5xZAkbwAGSMgvOe4LzGTZFZu
+	6lGvjji73Sn3BvZK2n+7sJgUQ==
+X-Google-Smtp-Source: AGHT+IGtqcAVAFdskQ3nvvg5tGb+wpuXkBl7+z9D1cZ5z+zV4plcRbO2+OWKDjgQB6MO9fLNyoHo4500LAblOC9RzIA=
+X-Received: by 2002:a05:6902:6203:b0:ea3:f114:75e7 with SMTP id
+ 3f1490d57ef6-ea5c0687159mr5679817276.28.1758202358485; Thu, 18 Sep 2025
+ 06:32:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917220724.288127-4-elder@riscstar.com>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn> <20250918130543.GM3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250918130543.GM3245006@noisy.programming.kicks-ass.net>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Thu, 18 Sep 2025 21:32:27 +0800
+X-Gm-Features: AS18NWBtunmHG653NSNG_FTMHgwxFNYu3n6X3_LSv7HnFAXelTzRmzVHNLLq10M
+Message-ID: <CADxym3ae8NGRt70rVO8ZyHa3BvWhczUkRs=dVn=rTRMVzrU9tA@mail.gmail.com>
+Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, kees@kernel.org, 
+	samitolvanen@google.com, rppt@kernel.org, luto@kernel.org, 
+	mhiramat@kernel.org, ast@kernel.org, andrii@kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+On Thu, Sep 18, 2025 at 9:05=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Thu, Sep 18, 2025 at 08:09:39PM +0800, Menglong Dong wrote:
+> > is_endbr() is called in __ftrace_return_to_handler -> fprobe_return ->
+> > kprobe_multi_link_exit_handler -> is_endbr.
+> >
+> > It is not protected by the "bpf_prog_active", so it can't be traced by
+> > kprobe-multi, which can cause recurring and panic the kernel. Fix it by
+> > make it notrace.
+>
+> This is very much a riddle wrapped in an enigma. Notably
+> kprobe_multi_link_exit_handler() does not call is_endbr(). Nor is that
+> cryptic next line sufficient to explain why its a problem.
+>
+> I suspect the is_endbr() you did mean is the one in
+> arch_ftrace_get_symaddr(), but who knows.
 
-On 17:07 Wed 17 Sep     , Alex Elder wrote:
-> Define a node for the fourth SoC SPI controller (number 3) on
-> the SpacemiT K1 SoC.
-> 
-> Enable it on the Banana Pi BPI-F3 board, which exposes this feature
-> via its GPIO block:
->   GPIO PIN 19:  MOSI
->   GPIO PIN 21:  MISO
->   GPIO PIN 23:  SCLK
->   GPIO PIN 24:  SS (inverted)
-> 
-> Define pincontrol configurations for the pins as used on that board.
-> 
-> (This was tested using a GigaDevice GD25Q64E SPI NOR chip.)
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  .../boot/dts/spacemit/k1-bananapi-f3.dts      |  6 ++++++
->  arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  | 20 +++++++++++++++++++
->  arch/riscv/boot/dts/spacemit/k1.dtsi          | 19 ++++++++++++++++++
->  3 files changed, 45 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> index 6013be2585428..380d475d2f3f3 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> @@ -44,6 +44,12 @@ &pdma {
->  	status = "okay";
->  };
->  
-> +&spi3 {
-..
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&ssp3_0_cfg>;
-Can you swap the order of these two pinctrl properties?
-Yes, we currently have some inconsistency in tree, I plan to fix during next cycle
+Yeah, I mean
+kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
+arch_ftrace_get_symaddr -> is_endbr
+actually. And CONFIG_X86_KERNEL_IBT is enabled of course.
 
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_2_cfg>;
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> index 3810557374228..16c953eca2aaa 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> @@ -28,4 +28,24 @@ pwm14-1-pins {
->  			drive-strength = <32>;
->  		};
->  	};
-> +
-> +	ssp3_0_cfg: ssp3-0-cfg {
-> +		ssp3-0-no-pull-pins {
-> +			pinmux = <K1_PADCONF(75, 2)>,	/* SCLK */
-> +				 <K1_PADCONF(77, 2)>,	/* MOSI  */
-> +				 <K1_PADCONF(78, 2)>;	/* MISO */
-> +
-> +			bias-disable;
-> +			drive-strength = <19>;
-> +			power-source = <3300>;
-> +		};
-> +
-> +		ssp3-0-frm-pins {
-> +			pinmux = <K1_PADCONF(76, 2)>;	/* FRM (frame) */
-> +
-> +			bias-pull-up = <0>;
-> +			drive-strength = <19>;
-> +			power-source = <3300>;
-> +		};
-> +	};
->  };
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> index 66b33a9110ccd..a826cc1ac83d5 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -834,6 +834,25 @@ storage-bus {
->  			#size-cells = <2>;
->  			dma-ranges = <0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>;
->  
-> +			spi3: spi@d401c000 {
-> +				compatible = "spacemit,k1-spi";
-> +				reg = <0x0 0xd401c000 0x0 0x30>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				clocks = <&syscon_apbc CLK_SSP3>,
-> +					 <&syscon_apbc CLK_SSP3_BUS>;
-..
-> +				clock-names = "core",
-> +					      "bus";
-can you simply put them together in one line? it's kind of tedious to split..
-> +				resets = <&syscon_apbc RESET_SSP3>;
-> +				interrupts-extended = <&plic 55>;
-why use interrupts-extended?
-> +				spacemit,k1-ssp-id = <3>;
-> +				dmas = <&pdma 20>,
-> +				       <&pdma 19>;
-.. em, so the SPI will use pdma, then probably you should also adjust Kconfig to
-select PDMA driver?
+>
+> Also, depending on compiler insanity, it is possible the thing
+> out-of-lines things like __is_endbr(), getting you yet another
+> __fentry__ site.
 
-> +				dma-names = "rx",
-> +					    "tx";
-> +				status = "disabled";
-> +			};
-> +
->  			emmc: mmc@d4281000 {
->  				compatible = "spacemit,k1-sdhci";
->  				reg = <0x0 0xd4281000 0x0 0x200>;
-> -- 
-> 2.48.1
-> 
-> 
+The panic happens when I run the bpf bench testing:
+  ./bench kretprobe-multi-all
 
--- 
-Yixun Lan (dlan)
+And skip the "is_endbr" fix this problem.
+
+__is_endbr should be marked with "notrace" too. I slacked off
+on it, as it didn't happen in my case :/
+
+>
+> Please try again.
 
