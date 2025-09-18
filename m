@@ -1,92 +1,106 @@
-Return-Path: <linux-kernel+bounces-822201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED8CB83478
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:14:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9AEB8347B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29543AB8B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725EB1C21FD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA5B2E8DF3;
-	Thu, 18 Sep 2025 07:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lp5ARCkt"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742F92EA49C;
+	Thu, 18 Sep 2025 07:14:22 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7EC482F2
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C16E2E9EDD;
+	Thu, 18 Sep 2025 07:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758179654; cv=none; b=dWu8UvqIFrdpukWgPDHKB7ZNn/ADCnaEq/wJuTZs+hl9k9viYhEixm3NxOzMrn2ItG17eXUmZIAFbhZ/pmE7krJ8H8kDk4lXvwZHg3XcPD59n7eiWg302lPN7Ph8HJW5V2QyRG4/1/3yuB4DUpXGI0JWtNOPchuJzdpqomC/oF8=
+	t=1758179662; cv=none; b=gYVeVKovamSBprNHjXYBfdrxbCrgcJZwY9a0wkAgpKjQ9agX3qg8Niue361+u91iBppguBfBQ1GKEekQuePXUjjE10Mzl1mXqPTgKJ48H0+RvNNeVv4ztdZ3C/ffVsR6wii+8OcJtE/Q8cBNT+MTB2G577d0GJLo/1WhYmN1TYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758179654; c=relaxed/simple;
-	bh=uzibiNHbNeixzQYTGnILwQCROnsqPXXQ6T3XoIpa4RI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bXdfz5zzHuS8qV7XUk8hoGDcQ2V2+Fs1m3EzJzNl0PcD7ye/4AZ355oiKuz463iTwnV9zACHTlKWZOr4J9mrG1KR6UrECYRapFwYsJnjWXRraASjFOZiVQVuWVyLIy3G6mvpdQK0ne26kqjQ+AUH8vXAxsEhed9p5hygGwZu0j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lp5ARCkt; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758179646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9+z70dx+Ys+DGH0o+4/KQ0fMwsGc/3SmvCzVQuHEWZI=;
-	b=lp5ARCktdLzAZBBUIvf93e3wQh9ep8dfE7eeWIf1IF8ekg/u6Rjs2K2jNQaL1ENmsDcWu2
-	cnzZX4jd03Ri6RYIOhyxRmwNr1hqu6Oe0TxSmYAYqrbiWvQ3FVs7b7lfotbeOCWIKxJFOB
-	UNOt5mB4Umu8CotN3rkEVFl8RGKkluU=
-From: Jackie Liu <liu.yun@linux.dev>
-To: kees@kernel.org
-Cc: pmladek@suse.com,
-	linux-kernel@vger.kernel.org,
-	liu.yun@linux.dev
-Subject: [PATCH] lib: kunit_iov_iter: fix NULL deref in iov_kunit_create_xarray()
-Date: Thu, 18 Sep 2025 15:13:16 +0800
-Message-ID: <20250918071316.1035-1-liu.yun@linux.dev>
+	s=arc-20240116; t=1758179662; c=relaxed/simple;
+	bh=H8+TQ8fpOavRr+SUvGo2D54Zmln8r2srjkYbcoSpEpM=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=fCciyJf+eRZwJ3EhaFO0YKQ756ekt4I2vviGQ2ODKNsDaQki1LvxOFxc6L3rUI5Quih3+/TsxcJn23Clg9MIMBder7riKa+kkKL+1NPuCGdZj6ct8EmvjFYAlJ6dmrClyaGeg1WLhbnaFTN1wKr9fVEazIye8Lt2L5wSMPmzzpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cS6M43qpsz5PM3V;
+	Thu, 18 Sep 2025 15:14:08 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 58I7DlLb032075;
+	Thu, 18 Sep 2025 15:13:47 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 18 Sep 2025 15:13:49 +0800 (CST)
+Date: Thu, 18 Sep 2025 15:13:49 +0800 (CST)
+X-Zmail-TransId: 2afa68cbb12d399-8809b
+X-Mailer: Zmail v1.0
+Message-ID: <20250918151349743KS4zJHQOoG-yPHSeAY3dv@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <alexs@kernel.org>
+Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.tao172@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHYyXSBEb2NzL3poX0NOOiBhZGQgZml4ZWQgZm9ybWF0IGZvciB0aGUgaGVhZGVyIG9mwqBnZnMyLWdsb2Nrcy5yc3Q=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 58I7DlLb032075
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Thu, 18 Sep 2025 15:14:08 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68CBB140.002/4cS6M43qpsz5PM3V
 
-From: Jackie Liu <liuyun01@kylinos.cn>
+From: shaomingyin <shao.mingyin@zte.com.cn>
 
-iov_kunit_create_xarray() allocates memory for an xarray using kzalloc()
-and then calls xa_init() on the result. However, xa_init() was invoked
-before checking the return value of kzalloc(). If kzalloc() fails, this
-would lead to a NULL pointer dereference.
+add fixed format for the header of gfs2-glocks.rst
 
-Move the KUNIT_ASSERT_NOT_ERR_OR_NULL() check before xa_init() to ensure
-the pointer is valid before initialization.
-
-Fixes: 2d71340ff1d4 ("iov_iter: Kunit tests for copying to/from an iterator")
-Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 ---
- lib/tests/kunit_iov_iter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+remove the "-" for only one proofreader
+ .../translations/zh_CN/filesystems/gfs2-glocks.rst   | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/lib/tests/kunit_iov_iter.c b/lib/tests/kunit_iov_iter.c
-index 48342736d016..a9d6db89247d 100644
---- a/lib/tests/kunit_iov_iter.c
-+++ b/lib/tests/kunit_iov_iter.c
-@@ -566,8 +566,8 @@ static struct xarray *iov_kunit_create_xarray(struct kunit *test)
- 	struct xarray *xarray;
- 
- 	xarray = kzalloc(sizeof(struct xarray), GFP_KERNEL);
--	xa_init(xarray);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xarray);
-+	xa_init(xarray);
- 	kunit_add_action_or_reset(test, iov_kunit_destroy_xarray, xarray);
- 	return xarray;
- }
+diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+index 7f094c5781ad..abfd2f2f94e9 100644
+--- a/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
++++ b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+@@ -1,5 +1,17 @@
+ .. SPDX-License-Identifier: GPL-2.0
+
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/filesystems/gfs2-glocks.rst
++
++:翻译:
++
++ 邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++ 杨涛 yang tao <yang.tao172@zte.com.cn>
++
+ ==================
+ Glock 内部加锁规则
+ ==================
 -- 
-2.51.0
-
+2.27.0
 
