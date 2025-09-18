@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-822956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC35DB85225
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:17:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137E3B852C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6395B7BDBF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368153BDE2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEB230F95A;
-	Thu, 18 Sep 2025 14:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAD330FC3B;
+	Thu, 18 Sep 2025 14:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3m9zWCDd"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UNoHM9uE"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72BB30F944
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F772D322C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204502; cv=none; b=j+xOiJQNEdrtz+X39N8oK/EqOZVlxi39qvqLCshOVnMsIbY+M5mAveecduzDRmLGs6A8gHbSPYYJ6vXJ272QGKMqLswUQQsqhP6kCInDh0yu09pFmCYdm2kXOWp5UBu/v9YtoQac8/t81OVaV8kj2Jzn5aCz1dBnkmZvYVpxOBQ=
+	t=1758204503; cv=none; b=CqziVRlbuzLAaNQK+LsRYITCjAuXBnwCwXFwkumk7TR9+q0lahMJ5Juwt12+jVs0GZp/Sani/oCwIcyuC8RwwTUhOLuRKEDIAwh/Ag5VMobsof6Ls8HNqj+0B9pW6Wc5dwo5serX5KTQA42DsFGy6bHEtFHw5maxp+idWSBQfDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204502; c=relaxed/simple;
-	bh=YSGrtfzAbZPKJsMm6ZbeS2bMB7Oz2V5ev45q3M2vX3k=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IDvgJeQeob1Kj9r4sl9B4fJij8eb2blbc8dkjau0G1YJVfuo3JFjaBQ5wiWo3D9kYu4m8eBDXphcO+2uW/yCD/GCIIy4Z2/j2fq29pYrszG5Bu6ND92qjdfwz7ttScQoO8GGNZNtPHDlj65z7lpqIOmOoqNxEKG0q8CxPuVnlJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3m9zWCDd; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1758204503; c=relaxed/simple;
+	bh=MhXlAlSwjJHmnnVBfV2DLAeEMickMPuNIqubf3bn9bk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=e9ZIhj9AaLFgJJk2+6TeHAdqPgo1LmBFUbj92ybFZJbdfHB15fAcCR9BslPS6zpYDn/TrdnPgZwTOYHGeLyydygob1heI7Gc0KcoQEySe5oQgAFx6ivACEGFZDEKSAbHxB2wn7C99FbrXRtUiccLiRuQ50hYjT9sb7b6DQDsDpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UNoHM9uE; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45f2c1556aeso3821765e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:08:20 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45f2c1556aeso3821835e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758204499; x=1758809299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zX8hRmCAzatzTP7W5f8Y/6xpy5/2V7FwxYbZWinrYv8=;
-        b=3m9zWCDdNqei8iEGscLSElHMnjjZ7ASn4QkqESbQuSfiq4UZqwUDEpB/PIxi4tzBEE
-         L9W559vgjR4op8ZtPjGUpgv/E+NbWcgEBG6Z+c9T4HOrpZBHYvc02yg/32BIPCcsy+mJ
-         4veBJCevj1Nw7t/VKXHAKMEaM18UfQKKDOC8GJrJJc4+7z19DDkrDHcTDo4ON3J9CIfA
-         OLzAfYqpSG1B9uXL5cIxp/qqa3FHHQBxyTVyjIMFunmrPcoIK/vd3+b7p9OA+RvAqPaE
-         Gv2qZ6u2gyP9FzU3D7csPhL3Z4Be9njwkkb/UaT4PrLR/wyY5YaJECmmqcwZruhWGIUf
-         SVLg==
+        d=google.com; s=20230601; t=1758204500; x=1758809300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QUFEtRr9W91r6F85WMRrAmbGHvzTF7sa9TKGHakTKgA=;
+        b=UNoHM9uEVKKtghCbpL/q/01kcemb/erPw3ztmRwkbZeYxtbsX3Cjq9odvYgyADaMiP
+         o26B5YYsHt0HYNDc0sZTVVsKP6bHbnVL3/6ai+23JQ+c/oxE1Vx6CRHEw0kXVnAdUmS0
+         rLTuVlDoPAj+HOKSEyuVLzR+KVEp4kXiC0BSXEIkN9ZOagfVzoAN9uK77TJ/HBHpe4IZ
+         F3fgPRmSvO/WHB/odO9PVYWUmvfIRJQ1oT/v1yK2gdXzbS7Pl3R8spsfC0HXsHk/eL0C
+         a9eL2VeKvoGatEbPzj44twAyvJV8JuGt8hErgoGoGaCqfBecltWO3QKCzMWV5/6EgpIR
+         PHvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758204499; x=1758809299;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zX8hRmCAzatzTP7W5f8Y/6xpy5/2V7FwxYbZWinrYv8=;
-        b=UQCCqSebkCpM/fNkpM4hBfp/8igT1SdusYdfHd3lgnjjighhPMT3MEqJCFD6m1lzTp
-         pDG8xDpL6nGOuQiPUzDBaFzLJaye86+tLefaQU0H1RAhBndGtvtYftPxDgGXwjcIvdC8
-         GJzsMhwhXILBAOPMVPTblDbNUBStsrgXUYCXJzyWKIIUAUuw9hXCzHw+jGB5fM179iJy
-         jiqNG/yjep5xJI2SywG1NVeCf/PERqEBhqHoNSWzxYgiQ7ZGs8XUrqBIu3NBlWfqL45I
-         EoYelWH0fQob5QzfXQLY4D8VDc7l0OQ382/6pvB1WWLgwbCQrskrKPWEh14ahkh5Fl0r
-         OP1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUiHV1R9vr9iTRE6nXQoWr9xrhfLylJPmGiYbS21RzkAQbk8i19x36Nzlg7XWsxlknLLMLfjsHHSi56rLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8ZLFn6oOVGLG/KmEU5mgh1WAW4AqEYpi9cV41ldf/Ht61QAQ2
-	PSCXw9a3ukN7XVVoJG9GZ47qrLxvE4JMbz9lCopB8r0ljaU18xsIfYOeV+qdupvDetIwoI98hwx
-	AbhXcJ6i5WA==
-X-Google-Smtp-Source: AGHT+IF1RQGSRNYZqdScgFD6eUa92ab9fa9/BqynjtzBd+gLQZAlGCMW8rWJZNptgVbcM6q8cADYm4uMJB3v
-X-Received: from wmbdp7.prod.google.com ([2002:a05:600c:6487:b0:45b:9acb:6940])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:470f:b0:45b:615c:cd2
- with SMTP id 5b1f17b1804b1-46201f8a4b9mr68058415e9.8.1758204499266; Thu, 18
- Sep 2025 07:08:19 -0700 (PDT)
-Date: Thu, 18 Sep 2025 14:08:14 +0000
+        d=1e100.net; s=20230601; t=1758204500; x=1758809300;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QUFEtRr9W91r6F85WMRrAmbGHvzTF7sa9TKGHakTKgA=;
+        b=YGJguuZK7CyvRhh+Foap93CR8uOkT4bbJ5KmDH6xffV4KRWb2w3OQCtxhJUsHOt4kx
+         nbWLOdpImBoZRE0dGw/kzq3Ghg6kNv0doHgFRRriFP4MlXhzW22z8CTHiYO0kjjVgPbt
+         7R7oLI4EV3aqWKOzjd3u9gJ/22NjK+8fJVnMSSB/UUL0KAbdOm6tEOSs/J+8yrJOltl2
+         hv+60Brl/Z8WJdlzxKHZAasIv42sn2HFEpWcTLRAWztsGRpzobwCaNr31WZ9wPGwe8fJ
+         1sKAWQEmACqsGSObv52M7kSxuqx8bSXd+2TnWG88TTwFZBwIedNe7tVd0o5/skZNI36d
+         Beuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKpo2xqJnGqrLt6bSd/o2esn8z8cQclLpiQezDbw5epBxlrjQ/lrKOhlbbPtdCOtyMZbLmpnirukc5CI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywTA3gZB1s29l8nMuW4FGj10zmt5IYxrg37dZw37EAHXcRRWB4
+	qV41ihaOG/kHqUY0xuxaGJkzcTPYzzSrvl9wsT15bUGLMbxuyw8f+8Nfp9/2GzfEiJ4yNps3KUQ
+	jk9mep32qkA==
+X-Google-Smtp-Source: AGHT+IGZDVm+OjJD6pDYCr4LcAR30jCSUr9yC+URoZtgIUA/r6LEJ5AHEpAIi6hdDt5PyOcQbxPbX0y6XYv6
+X-Received: from wmqe13.prod.google.com ([2002:a05:600c:4e4d:b0:45c:b618:4985])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4487:b0:465:a51d:ab
+ with SMTP id 5b1f17b1804b1-465a51d15d3mr17853305e9.15.1758204500688; Thu, 18
+ Sep 2025 07:08:20 -0700 (PDT)
+Date: Thu, 18 Sep 2025 14:08:15 +0000
+In-Reply-To: <20250918140816.335916-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250918140816.335916-1-abarnas@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250918140816.335916-1-abarnas@google.com>
-Subject: [PATCH 0/2] powerpc: pseries: making bus_type structures const
+Message-ID: <20250918140816.335916-2-abarnas@google.com>
+Subject: [PATCH 1/2] powerpc: pseries: make suspend_subsys const
 From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
 To: Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
 	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
@@ -82,18 +86,29 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Current driver core properly handle constant bus_type structures.
-Both changes are moving bus_type structures to be constant.
-It is a part of tree clean-up from non const bus_type structures
+Because driver core can properly handle constant struct bus_type,
+move the suspend_subsys to be a constant structure as well, placing it into
+read-only memory which can not be modified at runtime.
 
-Adrian Barna=C5=9B (2):
-  powerpc: pseries: make suspend_subsys const
-  powerpc: pseries: make cmm_subsys const
-
- arch/powerpc/platforms/pseries/cmm.c     | 2 +-
+Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
+---
  arch/powerpc/platforms/pseries/suspend.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/powerpc/platforms/pseries/suspend.c b/arch/powerpc/platfo=
+rms/pseries/suspend.c
+index 382003dfdb9a..c51db63d3e88 100644
+--- a/arch/powerpc/platforms/pseries/suspend.c
++++ b/arch/powerpc/platforms/pseries/suspend.c
+@@ -126,7 +126,7 @@ static ssize_t show_hibernate(struct device *dev,
+=20
+ static DEVICE_ATTR(hibernate, 0644, show_hibernate, store_hibernate);
+=20
+-static struct bus_type suspend_subsys =3D {
++static const struct bus_type suspend_subsys =3D {
+ 	.name =3D "power",
+ 	.dev_name =3D "power",
+ };
 --=20
 2.51.0.470.ga7dc726c21-goog
 
