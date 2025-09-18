@@ -1,100 +1,207 @@
-Return-Path: <linux-kernel+bounces-821936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4C0B82A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:23:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17299B82A5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5304C1BC439C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:23:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B836716FC58
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C22523D7F2;
-	Thu, 18 Sep 2025 02:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75AF20299B;
+	Thu, 18 Sep 2025 02:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxv4HU5c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="YuOgox6M"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724D723A9B1;
-	Thu, 18 Sep 2025 02:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F2E1E51E0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758162203; cv=none; b=XRp3LNF0rmiT2RGvOvY3Kk7tnpGGgTMq9zMoPwYTBbWukBmjBjpgzHTQztsSgct2x9Dqo5tXhojtxFI1pkqgKuZgwjwS2iGvJ0KCzF+iLKH6JX50+biYLp+pHPgAEl1niKCpn6hcAzcwhkxj2OA5O6qoo4WgrXh0jOjdRepLZfc=
+	t=1758162228; cv=none; b=pZNVrTCnYDX1tZlUakF8Yhp1ngV7f/XZl+/OyNfHHkKgLENlWijh+YZxZqiXMhyKWvXizrsxtHCMfLQA/GxwFG00lhSmnk4Mx8Viy4h3feRspY+TBFPA0q+nOQ30hlOqKhDymsTX4AcdBDOmfVkSSyw59ePFquipY3wpJWjDcc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758162203; c=relaxed/simple;
-	bh=VHNmO8j+KpvkJEvjZCkpSARV9wxlOL2R69WdLgdr1OU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cHVvoGDzoHRE90zPND5DxbhKdIo/v1ma4tIypy943xHw4oKLzFGZk4r7YZT11dyBaeUB+Az88741bpl0hTQQNav4EPiQ+ELrBNtWqX4rXHiCrQ5MqO8Juhes57gPd04ydhs640JsxnQ5eyA6JXTn7V5c+AF2onp5QeapegiiZ4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxv4HU5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECF9C4CEF5;
-	Thu, 18 Sep 2025 02:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758162202;
-	bh=VHNmO8j+KpvkJEvjZCkpSARV9wxlOL2R69WdLgdr1OU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jxv4HU5c3fX8xJszb8LUkYYVO47U38A1eEFtz1cxknKnBXQOEdHCaYPjoiU6UTh5M
-	 ik2ctq9cgiHtsaqYsfCW6lYh77kp8+C2GfUHxXZ3mjTl6IMtNsGgMcmGI10KJOxHGg
-	 n17X4t9Gb1VtkiTsvUhivvoldb0O9xYLVi/gjN0GmOjTtXEfyV7b0x2LWYbnlp4Xho
-	 eEa6A2Yu55V8WCkuxKpVZiBbnl3ODUHQC+SKhuoBcldRZbx/cjJCSdSZ2PXcjn5OGO
-	 IPS5jbWWIqztg1FQiVrfpNMd7/ZauZb/2g0Cq3fpfOWVqpnnsE1ZzR3JWPl4MQGcvl
-	 nZ1OTx7w5TfoQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Yijie Yang <yijie.yang@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v12 0/3] Initial support for Qualcomm Hamoa IOT EVK board
-Date: Wed, 17 Sep 2025 21:23:19 -0500
-Message-ID: <175816214779.142267.10336698605013738671.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250917-hamoa_initial-v12-0-4ed39d17dfc5@oss.qualcomm.com>
-References: <20250917-hamoa_initial-v12-0-4ed39d17dfc5@oss.qualcomm.com>
+	s=arc-20240116; t=1758162228; c=relaxed/simple;
+	bh=b8jHLyu7+DeSecQHQgQuk3PWa5n895wSIGN5b4/4Kj0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HzkinW/6tsZHbXkHyoTZhaZ9180GbIEs6PecZO1gwrkVKiO8z1ZjtYeLFJqrAnYhk70SVjqgG1hlx+oPCN/FexYNbzyvYfGStz7bDlMHa3SI0Nux3qeK125MUliexWKAGLby65yYTbgsJvfPTUW6RHed7UJ66EjDKj/8z+8iu7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=pass (2048-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=YuOgox6M; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=b8jHLyu7+DeSecQHQgQuk3PWa5n895wSIGN5b4/4Kj0=;
+  b=YuOgox6MaVSkbwjPtfGLVsuoOLZwhNBr17aiuTfKF/XN/WuhGyASydaz
+   bJrxFn9LPOZt9RN2dYojdIR+ztoGgn3lD/KOlsEHlpSFm4QOuQeJJpYEr
+   C532G26hoc8zdiCS3h1c6dlQx9dLXct81rJoOSecUj+1tjl0F2ebxsVjz
+   +5hmFMfNLcEmfamHF7Msx/7Jry3X5KyO2jmGGwbgIorWzS5sQ2V732QLT
+   m0BCMl2eWE0OYO8u9s3bPCcWXAvEFN4IhE1diMFpDCy0RxCFwE10M92FY
+   wMIyoT0mRV02yfIhZ3kdx8MEwIHJ8LFjH9A9wk7Bgi0bxgQyNJqiYNeRq
+   Q==;
+X-CSE-ConnectionGUID: 5dPrgNajQLyXfWU08ZNxUg==
+X-CSE-MsgGUID: goXb3l7KS3WKzU/4imCY8Q==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 18 Sep 2025 10:23:42 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 58I2Nbic058955;
+	Thu, 18 Sep 2025 10:23:37 +0800 (+08)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Thu, 18 Sep 2025 10:23:35 +0800
+Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
+ TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
+ 15.01.2507.057; Thu, 18 Sep 2025 10:23:35 +0800
+From: <Hermes.Wu@ite.com.tw>
+To: <dmitry.baryshkov@oss.qualcomm.com>
+CC: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+        <simona@ffwll.ch>, <Pet.Weng@ite.com.tw>, <Kenneth.Hung@ite.com.tw>,
+        <treapking@chromium.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH RESEND v3 3/5] drm/bridge: it6505: modify DP link auto
+ training
+Thread-Topic: [PATCH RESEND v3 3/5] drm/bridge: it6505: modify DP link auto
+ training
+Thread-Index: AQHcJvd5Bwy3giHvg0iNa1I4iaXApbSXBG2w///anwCAAVZIkA==
+Date: Thu, 18 Sep 2025 02:23:35 +0000
+Message-ID: <e25dfcb49f5949ab9952c46a2984bbf5@ite.com.tw>
+References: <20250916-fix-link-training-v3-0-0f55bfdb272a@ite.com.tw>
+ <20250916-fix-link-training-v3-3-0f55bfdb272a@ite.com.tw>
+ <2bk6t2uibhbqtreavimigffzp746rnui4ohqk6sxcpolf4skjh@ddyma4omo6k7>
+ <b1d7dcc0ad6e40309677058f8affa5a5@ite.com.tw>
+ <nh3mxefaqznbirhez4c5xtkvs756cjasmb5bdsxol7cai7u4da@3nmtq6figidw>
+In-Reply-To: <nh3mxefaqznbirhez4c5xtkvs756cjasmb5bdsxol7cai7u4da@3nmtq6figidw>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tm-snts-smtp: 3AAAF7F6538D7804FB9675EE00151E6803A1A0571D055AA4C555752FADE4B5372002:8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MAIL:mse.ite.com.tw 58I2Nbic058955
 
-
-On Wed, 17 Sep 2025 10:58:57 +0800, Yijie Yang wrote:
-> Introduce the device tree, DT bindings, and driver modifications required
-> to bring up the HAMOA-IOT-EVK evaluation board—based on the X1E80100 SoC—to
-> a UART shell.
-> This patch set focuses on two key hardware components: the HAMOA-IOT-SOM
-> and the HAMOA-IOT-EVK carrier board.
-> The HAMOA-IOT-SOM is a compact System on Module that integrates the SoC,
-> GPIOs, and PMICs. It is designed to be modular and can be paired with
-> various carrier boards to support different use cases.
-> The HAMOA-IOT-EVK is one such carrier board, designed for IoT scenarios.
-> It provides essential peripherals such as UART, on-board PMICs, and
-> USB-related components.
-> Together, these components form a flexible and scalable platform, and this
-> patch set enables their initial bring-up through proper device tree
-> configuration and driver support.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/3] dt-bindings: arm: qcom: Document HAMOA-IOT-EVK board
-      commit: 458bb855f274e227618acfa8c098b8e4894d9cd9
-[2/3] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
-      commit: 5098ae93ce44110a4d86574819b254fd126243af
-[3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
-      commit: c11645afb0e228546279ad1b74826fffbfebbc7f
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Pg0KPg0KPi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogRG1pdHJ5IEJhcnlzaGtv
+diA8ZG1pdHJ5LmJhcnlzaGtvdkBvc3MucXVhbGNvbW0uY29tPiANCj5TZW50OiBXZWRuZXNkYXks
+IFNlcHRlbWJlciAxNywgMjAyNSA5OjQ3IFBNDQo+VG86IEhlcm1lcyBXdSAo5ZCz5L2z5a6PKSA8
+SGVybWVzLld1QGl0ZS5jb20udHc+DQo+Q2M6IGFuZHJ6ZWouaGFqZGFAaW50ZWwuY29tOyBuZWls
+LmFybXN0cm9uZ0BsaW5hcm8ub3JnOyByZm9zc0BrZXJuZWwub3JnOyBMYXVyZW50LnBpbmNoYXJ0
+QGlkZWFzb25ib2FyZC5jb207IGpvbmFzQGt3aWJvby5zZTsgamVybmVqLnNrcmFiZWNAZ21haWwu
+Y29tOyBtYWFydGVuLmxhbmtob3JzdEBsaW51eC5pbnRlbC5jb207IG1yaXBhcmRAa2VybmVsLm9y
+ZzsgdHppbW1lcm1hbm5Ac3VzZS5kZTsgYWlybGllZEBnbWFpbC5jb207IHNpbW9uYUBmZndsbC5j
+aDsgUGV0IFdlbmcgKOe/geeOieiKrCkgPFBldC5XZW5nQGl0ZS5jb20udHc+OyBLZW5uZXRoIEh1
+bmcgKOa0quWutuWAqykgPEtlbm5ldGguSHVuZ0BpdGUuY29tLnR3PjsgdHJlYXBraW5nQGNocm9t
+aXVtLm9yZzsgZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsgbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZw0KPlN1YmplY3Q6IFJlOiBbUEFUQ0ggUkVTRU5EIHYzIDMvNV0gZHJtL2Jy
+aWRnZTogaXQ2NTA1OiBtb2RpZnkgRFAgbGluayBhdXRvIHRyYWluaW5nDQo+DQo+T24gV2VkLCBT
+ZXAgMTcsIDIwMjUgYXQgMDg6Mzc6MTBBTSArMDAwMCwgSGVybWVzLld1QGl0ZS5jb20udHcgd3Jv
+dGU6DQo+PiANCj4+ID4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4gPkZyb206IERtaXRy
+eSBCYXJ5c2hrb3YgPGRtaXRyeS5iYXJ5c2hrb3ZAb3NzLnF1YWxjb21tLmNvbT4gDQo+PiA+U2Vu
+dDogVHVlc2RheSwgU2VwdGVtYmVyIDE2LCAyMDI1IDY6NDkgUE0NCj4+ID5UbzogSGVybWVzIFd1
+ICjlkLPkvbPlro8pIDxIZXJtZXMuV3VAaXRlLmNvbS50dz4NCj4+ID5DYzogQW5kcnplaiBIYWpk
+YSA8YW5kcnplai5oYWpkYUBpbnRlbC5jb20+OyBOZWlsIEFybXN0cm9uZyA8bmVpbC5hcm1zdHJv
+bmdAbGluYXJvLm9yZz47IFJvYmVydCBGb3NzIDxyZm9zc0BrZXJuZWwub3JnPjsgTGF1cmVudCBQ
+aW5jaGFydCA8TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPjsgSm9uYXMgS2FybG1h
+biA8am9uYXNAa3dpYm9vLnNlPjsgSmVybmVqIFNrcmFiZWMgPGplcm5lai5za3JhYmVjQGdtYWls
+LmNvbT47IE1hYXJ0ZW4gTGFua2hvcnN0IDxtYWFydGVuLmxhbmtob3JzdEBsaW51eC5pbnRlbC5j
+b20+OyBNYXhpbWUgUmlwYXJkIDxtcmlwYXJkQGtlcm5lbC5vcmc+OyBUaG9tYXMgWmltbWVybWFu
+biA8dHppbW1lcm1hbm5Ac3VzZS5kZT47IERhdmlkIEFpcmxpZSA8YWlybGllZEBnbWFpbC5jb20+
+OyBTaW1vbmEgVmV0dGVyIDxzaW1vbmFAZmZ3bGwuY2g+OyBQZXQgV2VuZyAo57+B546J6IqsKSA8
+UGV0LldlbmdAaXRlLmNvbS50dz47IEtlbm5ldGggSHVuZyAo5rSq5a625YCrKSA8S2VubmV0aC5I
+dW5nQGl0ZS5jb20udHc+OyB0cmVhcGtpbmdAY2hyb21pdW0ub3JnOyBkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+PiA+U3ViamVj
+dDogUmU6IFtQQVRDSCBSRVNFTkQgdjMgMy81XSBkcm0vYnJpZGdlOiBpdDY1MDU6IG1vZGlmeSBE
+UCBsaW5rIGF1dG8gdHJhaW5pbmcNCj4+ID4NCj4+ID5PbiBUdWUsIFNlcCAxNiwgMjAyNSBhdCAx
+Mjo0Nzo0M1BNICswODAwLCBIZXJtZXMgV3UgdmlhIEI0IFJlbGF5IHdyb3RlOg0KPj4gPj4gRnJv
+bTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNvbS50dz4NCj4+ID4+IA0KPj4gPj4gSVQ2NTA1
+IHN1cHBvcnRzIEhXIGxpbmsgdHJhaW5pbmcgd2hpY2ggd2lsbCB3cml0ZSBEUENEIGFuZCBjaGVj
+aw0KPj4gPj4gdHJhaW5pbmcgc3RhdHVzIGF1dG9tYXRpY2FsbHkuDQo+PiA+PiANCj4+ID4+IElu
+IHRoZSBjYXNlIHRoYXQgZHJpdmVyIHNldCBsaW5rIHJhdGUgYXQgMi43RyBhbmQgSFcgZmFpbCB0
+byB0cmFpbmluZywNCj4+ID4+IGl0IHdpbGwgY2hhbmdlIGxpbmsgY29uZmlndXJhdGlvbiBhbmQg
+dHJ5IDEuNjVHLiBBbmQgdGhpcyB3aWxsIGNhdXNlDQo+PiA+PiBJTlRfVklEX0ZJRk9fRVJST1Ig
+dHJpZ2dlcmVkIHdoZW4gbGluayBjbG9jayBpcyBjaGFuZ2VkLg0KPj4gPj4gDQo+PiA+PiBXaGVu
+IHZpZGVvIGVycm9yIG9jY3VycywgdmlkZW8gbG9naWMgaXMgcmVzZXQgYW5kIGxpbmsgdHJhaW5p
+bmcgcmVzdGFydCwNCj4+ID4+IHRoaXMgd2lsbCBjYXVzZSBlbmRsZXNzIGF1dG8gbGluayB0cmFp
+bmluZy4NCj4+ID4+IA0KPj4gPj4gTW9kaWZ5IGxpbmsgYXV0byB0cmFpbmluZyB3aXRoIGRpc2Fi
+bGUgSU5UX1ZJRF9GSUZPX0VSUk9SIHRvIGF2b2lkIGxvb3ANCj4+ID4+IGFuZCBjaGVjayBJTlRf
+TElOS19UUkFJTl9GQUlMIGV2ZW50IHRvIGFib3J0IHdhaXQgdHJhaW5pbmcgZG9uZS4NCj4+ID4+
+IA0KPj4gPj4gU2lnbmVkLW9mZi1ieTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNvbS50dz4N
+Cj4+ID4+IC0tLQ0KPj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jIHwg
+MTQgKysrKysrKysrKysrKy0NCj4+ID4+ICAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQ0KPj4gPj4gDQo+PiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2JyaWRnZS9pdGUtaXQ2NTA1LmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDY1
+MDUuYw0KPj4gPj4gaW5kZXggN2Y2MjI3YzI3OGE1MTM1OGM3MGEzZGU5MzQ1NGFhZmVlZjY0ZjJi
+Yi4uZjliOTljNzA3ODllZWE2YmViM2M2NTEzMTU1YzlhNGNhMTAzZDIxOSAxMDA2NDQNCj4+ID4+
+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jDQo+PiA+PiArKysgYi9k
+cml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDY1MDUuYw0KPj4gPj4gQEAgLTE4MDYsNiArMTgw
+NiwxMyBAQCBzdGF0aWMgYm9vbCBpdDY1MDVfbGlua19zdGFydF9hdXRvX3RyYWluKHN0cnVjdCBp
+dDY1MDUgKml0NjUwNSkNCj4+ID4+ICAJc3RydWN0IGRldmljZSAqZGV2ID0gaXQ2NTA1LT5kZXY7
+DQo+PiA+PiAgDQo+PiA+PiAgCW11dGV4X2xvY2soJml0NjUwNS0+YXV4X2xvY2spOw0KPj4gPj4g
+Kw0KPj4gPj4gKwkvKiBEaXNhYmxlIEZJRk8gZXJyb3IgaW50ZXJydXB0IHRyaWdnZXIgICovDQo+
+PiA+PiArCS8qIHRvIHByZXZlbnQgdHJhaW5pbmcgZmFpbCBsb29wIGlzc3VlICAgKi8NCj4+ID4+
+ICsJaXQ2NTA1X3NldF9iaXRzKGl0NjUwNSwgSU5UX01BU0tfMDMsIEJJVChJTlRfVklEX0ZJRk9f
+RVJST1IpLCAwKTsNCj4+ID4+ICsNCj4+ID4+ICsJaXQ2NTA1X3dyaXRlKGl0NjUwNSwgSU5UX1NU
+QVRVU18wMywNCj4+ID4+ICsJCSAgICAgQklUKElOVF9MSU5LX1RSQUlOX0ZBSUwpIHwgQklUKElO
+VF9WSURfRklGT19FUlJPUikpOw0KPj4gPj4gIAlpdDY1MDVfc2V0X2JpdHMoaXQ2NTA1LCBSRUdf
+VFJBSU5fQ1RSTDAsDQo+PiA+PiAgCQkJRk9SQ0VfQ1JfRE9ORSB8IEZPUkNFX0VRX0RPTkUsIDB4
+MDApOw0KPj4gPj4gIAkvKiByZXNldCBsaW5rIHN0YXRlIG1hY2hpbmUgYW5kIHJlIHN0YXJ0IHRy
+YWluaW5nKi8NCj4+ID4+IEBAIC0xODE4LDggKzE4MjUsMTAgQEAgc3RhdGljIGJvb2wgaXQ2NTA1
+X2xpbmtfc3RhcnRfYXV0b190cmFpbihzdHJ1Y3QgaXQ2NTA1ICppdDY1MDUpDQo+PiA+PiAgCQls
+aW5rX3RyYWluaW5nX3N0YXRlID0gaXQ2NTA1X3JlYWQoaXQ2NTA1LCBSRUdfTElOS19UUkFJTl9T
+VFMpOw0KPj4gPj4gIAkJaW50MDMgPSBpdDY1MDVfcmVhZChpdDY1MDUsIElOVF9TVEFUVVNfMDMp
+Ow0KPj4gPj4gIAkJaWYgKGludDAzICYgQklUKElOVF9MSU5LX1RSQUlOX0ZBSUwpKSB7DQo+PiA+
+PiArCQkJLyogSWdub3JlIElOVF9WSURfRklGT19FUlJPUiB3aGVuIGF1dG8gdHJhaW5pbmcgZmFp
+bCovDQo+PiA+PiAgCQkJaXQ2NTA1X3dyaXRlKGl0NjUwNSwgSU5UX1NUQVRVU18wMywNCj4+ID4+
+IC0JCQkJICAgICBCSVQoSU5UX0xJTktfVFJBSU5fRkFJTCkpOw0KPj4gPj4gKwkJCQkgICAgIEJJ
+VChJTlRfTElOS19UUkFJTl9GQUlMKSB8DQo+PiA+PiArCQkJCSAgICAgQklUKElOVF9WSURfRklG
+T19FUlJPUikpOw0KPj4gPg0KPj4gPkknbSByZWFsbHkgdW51c3VyZSBhYm91dCB0aGlzIGNoYW5n
+ZS4gSnVkZ2luZyBieSB0aGUgZGVzY3JpcHRpb24gb2YgdGhlDQo+PiA+cHJvYmxlbSwgaXQncyBm
+aXggZm9yIHRoZSBpc3N1ZSwgYnV0IHRoZSBpc3N1ZSBnZXRzIGludHJvZHVjZWQgaW4gdGhlDQo+
+PiA+cHJldmlvdXMgcGF0Y2guDQo+PiBJbiB0aGlzIHBhdGNoIHNlcmlvdXM/DQo+PiANCj4+IFRo
+aXMgcGF0Y2ggc2VyaW91cyBmaXggdGhpcyBGSUZPIGVycm9yIGlzc3VlLCBpdCBjaGFuZ2UgbGlu
+ayB0cmFpbmluZyBhbGdvcml0aG0gZmlyc3QgdGhlbiBmaXggd3JvbmcgRklGTyBlcnJvciBzdGF0
+dXMuDQo+PiANCj4+IFRoZSBsaW5rIHRyYWluaW5nIHByb2Nlc3Mgc3RhcnQgYWZ0ZXIgdmlkZW8g
+c3RhdHVzIGlzIHN0YWJsZSwgYW5kIHdoZW4gdmlkZW8gRklGTyBlcnJvciBvY2N1cnMsDQo+PiB2
+aWRlbyBzdGFibGUgc3RhdHVzIHdpbGwgYWxzbyBsb3N0LCBsaW5rIHRyYWluaW5nIHdpbGwgcmVz
+ZXQgdG8gaWRsZSBhbmQgd2FpdCB1bnRpbCB2aWRlbyBzdGFibGUgYWdhaW4uDQo+PiANCj4+IElU
+NjUwNSBIVyBhdXRvIHRyYWluaW5nIHdpbGwgcHJvY2VzcyBsaW5rIHRyYWluaW5nIGF1dG9tYXRp
+Y2FsbHksIHdoaWNoIGluY2x1ZGUgQ1IvRVEgRFBDRCBzZXR0aW5nLCBsaW5rIHN0YXR1cyBjaGVj
+aywNCj4+IGFuZCB0cnkgbG93ZXIgbGluayByYXRlIGlzIHRoZSAyLjdHIGNhbm5vdCBwYXNzIHRy
+YWluaW5nLg0KPj4gDQo+PiBJbiBzb21lIGNhc2UsIERQIGNvbm5lY3QgdG8gYSBEUCBzaW5rIGRl
+dmljZSB3aGljaCBjYW5ub3QgcGFzcyBJVDY1MDUgSFcgYXV0byB0cmFpbmluZy4gDQo+PiB3aGVu
+IGxpbmsgYXV0byB0cmFpbmluZyBmYWlsIG9uIDIuN0cgYW5kIElUNjUwNSBIVyBjaGFuZ2UgbGlu
+ayByYXRlIHRvIDEuNjVHIGFuZCByZXRyeSB0cmFpbmluZyBhdXRvbWF0aWNhbGx5LA0KPj4gYXQg
+dGhpcyB0aW1lIHZpZGVvIEZJRk8gZXJyb3Igd2lsbCBvY2N1ciBiZWNhdXNlIG9mIHRoZSBsaW5r
+IHJhdGUgY2hhbmdlKGNoaXAgaXNzdWUpLCB0aGUgdmlkZW8gc2lnbmFsIGZyb20gU09DIGlzIG5v
+dCBsb3N0IGFjdHVhbGx5Lg0KPg0KPldlIHNlZW1zIHRvIGJlIG1pc3VuZGVyc3RhbmRpbmcgZWFj
+aCBvdGhlci4gSSBwb2ludGVkIG91dCB0aGF0IHlvdXIgYXJlDQo+Zml4aW5nIHRoZSBjb2RlIHRo
+YXQgd2FzIGludHJvZHVjZWQgaW4gdGhlIHByZXZpb3VzIHBhdGNoLiBXb3VsZCBpdCBtYWtlDQo+
+bW9yZSBzZW5zZSB0byByZW9kZXIgb3IgdG8gc3F1YXNoIHRoZSBwYXRjaGVzPw0KDQp0aGlzIHBh
+dGNoIGNhbiBzcXVhc2ggdG8gcHJldmlvdXMgb25lLiB0aGV5IGFyZSBwYXJ0IG9mIGF1dG8gbGlu
+ayB0cmFpbmluZyBmYWlsIGNoZWNrLg0KDQpJIHdpbGwgdXBkYXRlIGluIG5leHQgcGF0Y2ggc2Vy
+aW91cw0KDQo+PiANCj4+ID4+ICANCj4+ID4+ICAJCQlEUk1fREVWX0RFQlVHX0RSSVZFUihkZXYs
+DQo+PiA+PiAgCQkJCQkgICAgICJJTlRfTElOS19UUkFJTl9GQUlMKCV4KSEiLA0KPj4gPj4gQEAg
+LTE4MzcsNiArMTg0Niw5IEBAIHN0YXRpYyBib29sIGl0NjUwNV9saW5rX3N0YXJ0X2F1dG9fdHJh
+aW4oc3RydWN0IGl0NjUwNSAqaXQ2NTA1KQ0KPj4gPj4gIAkJdGltZW91dC0tOw0KPj4gPj4gIAl9
+DQo+PiA+PiAgdW5sb2NrOg0KPj4gPj4gKwkvKiByZWNvdmVyIGludGVycnVwdCB0cmlnZ2VyKi8N
+Cj4+ID4+ICsJaXQ2NTA1X3NldF9iaXRzKGl0NjUwNSwgSU5UX01BU0tfMDMsDQo+PiA+PiArCQkJ
+QklUKElOVF9WSURfRklGT19FUlJPUiksIEJJVChJTlRfVklEX0ZJRk9fRVJST1IpKTsNCj4+ID4+
+ICAJbXV0ZXhfdW5sb2NrKCZpdDY1MDUtPmF1eF9sb2NrKTsNCj4+ID4+ICANCj4+ID4+ICAJcmV0
+dXJuIHN0YXRlOw0KPj4gPj4gDQo+PiA+PiAtLSANCj4+ID4+IDIuMzQuMQ0KPj4gPj4gDQo+PiA+
+PiANCj4+ID4NCj4+ID4tLSANCj4+ID5XaXRoIGJlc3Qgd2lzaGVzDQo+PiA+RG1pdHJ5DQo+PiA+
+DQo+PiBCUi4NCj4+IEhlcm1lcyBXdQ0KPg0KPi0tIA0KPldpdGggYmVzdCB3aXNoZXMNCj5EbWl0
+cnkNCj4NCg==
 
