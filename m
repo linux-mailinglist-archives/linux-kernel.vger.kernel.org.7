@@ -1,299 +1,135 @@
-Return-Path: <linux-kernel+bounces-823580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005B8B86E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:22:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FC8B86E81
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C88582B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51A23B62A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16ADB31D371;
-	Thu, 18 Sep 2025 20:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703FD31E8BA;
+	Thu, 18 Sep 2025 20:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxI1kMrP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mxz9Zawq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JqDlXbjL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9D6303A1D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3364E31D371;
+	Thu, 18 Sep 2025 20:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758226950; cv=none; b=eYZ7YM8P41YPH3LQ1zty/LDxt1q8T1KYcXOt+HxiA0PRCPI97lL8zdv9+xkn4+vgbNUF6eZXCNYcuvS04v23M8vdqOCeKZsD7E00zfeaBNSMK9zlt/489hB0WOyONJ9aZYzZSrHVGHftmcJtMOF+9URG3W7jFImCsTrnSiwiXPw=
+	t=1758227131; cv=none; b=JgIZ06BVbhJlVncizvBxbhkjjc/LVD0ROUFwmw85pQ6SIvP9n++TZpFLM8GsHXg73sBtH7K7m91zccmFLmcWtTrUZunnz0MujnE4w82Wvn2haxdaMZJ73/wpqFrLC3cMJx1ATuZesB6Nxg/SUhnrnr8fpjzKTdmRG+RrNwFetvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758226950; c=relaxed/simple;
-	bh=QjNmDwrXMkVGE6227hZ98N5IIzCiYBnxH21RS1w/p04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HqYQuUsZ4H4N2b4hq4lJJ27kBYulW6zmemeFcctDocJVHwT98ZenKxjWvtmLM+PrAqx8Ffwsjernda/X94RyKJa6LsTTcjiN2E5csRhOlfn+nDclAuZSXPh2B4vMc2XOxlqk/muxuTRfqBVjd/l4zP/lB6I60mQbpmP/kjG9h/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxI1kMrP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84F9C4CEFF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758226949;
-	bh=QjNmDwrXMkVGE6227hZ98N5IIzCiYBnxH21RS1w/p04=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YxI1kMrPqsBOsfgCaLSTQ5RW3a7AoWfvsOwTpUcqmiXqf3R88GjJcd6BfSMY0bPOZ
-	 S3r/XpEKWhzMJX1y6DqZKlKf90zRoMcXStKcC6/jAQv/bwE7fZ+Co2YpPaAKbow/yq
-	 nPBjpG5soOwhHaQ1UTnDVuLC/VK3kSm1IUB+aRehFcKs9ceFMXUO95PqsNtSl9i0ds
-	 gMvnGF2TBTqeWMBUU7w47crXAxFccnSZl9TUqmDO0wnyEgldEn/rA2pc+qdPN1Yziw
-	 AouHPka3McJOvZ1Ol7IdmZLulIn3a+74NpR6bNZb+Rv0+DYjkDN4002aZi2Xld/Tz7
-	 hd/DiOUMRKseg==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62f4a8dfadcso1629569a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:22:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKmTsJ68v9VCTJZrtgwPJguzA79xnpZhdA6+1AoJiaUT7pBiCPG3uoHd5hoPsW2EkBzluP0bDDYVNnSxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl0KiQHGYVMqTBK1H9IMi2qdaTOjBWGjqHC1ExA8GbuHzdbszJ
-	vHakNEev/2yIdHA9g0CjynufJENP2XpE7o4KfrLiwfgANJdaC45Qb7vHzSRcKrZT9LejuzIAa9n
-	T2mbUKa4jUXj2jbtCyfP42guDwuNLfA==
-X-Google-Smtp-Source: AGHT+IFajxjcKFx3zWO77Gy/c7uJiTNdaDUhcRVQ1r7GoNy7DX8Ynp1ebJyWs8GOaL2Y1BaCBd9H5rnv7Pyyv/bZLi0=
-X-Received: by 2002:a05:6402:21c6:b0:62f:a51b:f839 with SMTP id
- 4fb4d7f45d1cf-62fc0a6e182mr518403a12.32.1758226948397; Thu, 18 Sep 2025
- 13:22:28 -0700 (PDT)
+	s=arc-20240116; t=1758227131; c=relaxed/simple;
+	bh=eovftIg+1hbkFUmKtdbfedihd5Xy9fKFb36JzuVuCg0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=q9XrLB34I1UCwXZzSYVZoUow720dse+J3nVM5cFc3Jotefa4twU63tjGAChBsjGqueFs0vQHyvjeNl475Lupl/oUVg2rOBRoFIkoUFnzbqqrjtb7TidjIN4xl7N5D7OyNukqT+XXUQe0fnPa4JzKkxmqKqK+4chp86tAvhvxycw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mxz9Zawq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JqDlXbjL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 18 Sep 2025 20:25:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758227128;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xNdasAameuEoTSW0ZPoaUG6eBRjtOAa4bdYSR51TChk=;
+	b=mxz9ZawqcuURV5V7PUjvN4uDsoWXkAcXZRvvCYQHxCd7DIeaF6/axL0r5TNfisrh1ozf5I
+	IXOnc7aV4uizuFoxRMZI61ffUfjP+Z7CVDr15JNxjbtlVy2f6xsKtoCI1IszAaT7O36+gA
+	4rUwiwEYRNZmTm8/qdQtrFgc3UGjLk9rQqCtqMkOM9oHhRoVv8LGsk9tFfPXt1ezEPKdpK
+	Lz752Uo1zBX5+NvN8pdcVlRZtKI8pp1H5Blfonss5jbIyL5WAI8vHvrAydx5kB9Yq+8pQs
+	h+JlhU0ryHXQ47XCAaHf+/i79rO12rNUnKNUUlxqbqidEvBX+d7tfXUgvgI1Gw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758227128;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xNdasAameuEoTSW0ZPoaUG6eBRjtOAa4bdYSR51TChk=;
+	b=JqDlXbjL36XrzAhHwLYPvJO7qAyOKhUmbKEVXAaqy3+JNbesw0vsNho/purpnShyT7BSpi
+	rxj2G6cOb/ak9sAA==
+From: "tip-bot2 for Rafael J. Wysocki" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: smp/core] smp: Fix up and expand the smp_call_function_many() kerneldoc
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <6191405.lOV4Wx5bFT@rafael.j.wysocki>
+References: <6191405.lOV4Wx5bFT@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813214949.897858-1-robh@kernel.org>
-In-Reply-To: <20250813214949.897858-1-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 18 Sep 2025 15:22:15 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+vUNtMw6JS0ac6a8LTdJBB+UepadpDxP_S8vr6QwUiNA@mail.gmail.com>
-X-Gm-Features: AS18NWDedZhOrWTNOyy1X1kKu1N_5AKCHYvPnHcoB1LsY8J75zpcDn2q59JgBhQ
-Message-ID: <CAL_Jsq+vUNtMw6JS0ac6a8LTdJBB+UepadpDxP_S8vr6QwUiNA@mail.gmail.com>
-Subject: Re: [PATCH v2] media: Use of_reserved_mem_region_to_resource() for "memory-region"
-To: Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Dikshita Agarwal <quic_dikshita@quicinc.com>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Ming Qian <ming.qian@oss.nxp.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175822712533.709179.8869554095732242608.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 4:50=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
-> Use the newly added of_reserved_mem_region_to_resource() function to
-> handle "memory-region" properties.
->
-> Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> Reviewed-by: Ming Qian <ming.qian@oss.nxp.com>
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> v2:
->  - Rebase on v6.17-rc1
-> ---
->  drivers/media/platform/amphion/vpu_core.c     | 40 +++++--------------
->  .../media/platform/qcom/iris/iris_firmware.c  | 18 +++------
->  drivers/media/platform/qcom/venus/firmware.c  | 19 +++------
->  3 files changed, 21 insertions(+), 56 deletions(-)
+The following commit has been merged into the smp/core branch of tip:
 
-Ping!
+Commit-ID:     ccf09357ffef2ab472369ab9cdf470c9bc9b821a
+Gitweb:        https://git.kernel.org/tip/ccf09357ffef2ab472369ab9cdf470c9bc9=
+b821a
+Author:        Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+AuthorDate:    Tue, 09 Sep 2025 13:44:14 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 18 Sep 2025 22:21:28 +02:00
 
->
-> diff --git a/drivers/media/platform/amphion/vpu_core.c b/drivers/media/pl=
-atform/amphion/vpu_core.c
-> index da00f5fc0e5d..168f0514851e 100644
-> --- a/drivers/media/platform/amphion/vpu_core.c
-> +++ b/drivers/media/platform/amphion/vpu_core.c
-> @@ -10,7 +10,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/of_address.h>
-> +#include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
-> @@ -542,47 +542,30 @@ const struct vpu_core_resources *vpu_get_resource(s=
-truct vpu_inst *inst)
->
->  static int vpu_core_parse_dt(struct vpu_core *core, struct device_node *=
-np)
->  {
-> -       struct device_node *node;
->         struct resource res;
->         int ret;
->
-> -       if (of_count_phandle_with_args(np, "memory-region", NULL) < 2) {
-> -               dev_err(core->dev, "need 2 memory-region for boot and rpc=
-\n");
-> -               return -ENODEV;
-> +       ret =3D of_reserved_mem_region_to_resource(np, 0, &res);
-> +       if (ret) {
-> +               dev_err(core->dev, "Cannot get boot-region\n");
-> +               return ret;
->         }
->
-> -       node =3D of_parse_phandle(np, "memory-region", 0);
-> -       if (!node) {
-> -               dev_err(core->dev, "boot-region of_parse_phandle error\n"=
-);
-> -               return -ENODEV;
-> -       }
-> -       if (of_address_to_resource(node, 0, &res)) {
-> -               dev_err(core->dev, "boot-region of_address_to_resource er=
-ror\n");
-> -               of_node_put(node);
-> -               return -EINVAL;
-> -       }
->         core->fw.phys =3D res.start;
->         core->fw.length =3D resource_size(&res);
->
-> -       of_node_put(node);
-> -
-> -       node =3D of_parse_phandle(np, "memory-region", 1);
-> -       if (!node) {
-> -               dev_err(core->dev, "rpc-region of_parse_phandle error\n")=
-;
-> -               return -ENODEV;
-> -       }
-> -       if (of_address_to_resource(node, 0, &res)) {
-> -               dev_err(core->dev, "rpc-region of_address_to_resource err=
-or\n");
-> -               of_node_put(node);
-> -               return -EINVAL;
-> +       ret =3D of_reserved_mem_region_to_resource(np, 1, &res);
-> +       if (ret) {
-> +               dev_err(core->dev, "Cannot get rpc-region\n");
-> +               return ret;
->         }
-> +
->         core->rpc.phys =3D res.start;
->         core->rpc.length =3D resource_size(&res);
->
->         if (core->rpc.length < core->res->rpc_size + core->res->fwlog_siz=
-e) {
->                 dev_err(core->dev, "the rpc-region <%pad, 0x%x> is not en=
-ough\n",
->                         &core->rpc.phys, core->rpc.length);
-> -               of_node_put(node);
->                 return -EINVAL;
->         }
->
-> @@ -594,7 +577,6 @@ static int vpu_core_parse_dt(struct vpu_core *core, s=
-truct device_node *np)
->         if (ret !=3D VPU_CORE_MEMORY_UNCACHED) {
->                 dev_err(core->dev, "rpc region<%pad, 0x%x> isn't uncached=
-\n",
->                         &core->rpc.phys, core->rpc.length);
-> -               of_node_put(node);
->                 return -EINVAL;
->         }
->
-> @@ -606,8 +588,6 @@ static int vpu_core_parse_dt(struct vpu_core *core, s=
-truct device_node *np)
->         core->act.length =3D core->rpc.length - core->res->rpc_size - cor=
-e->log.length;
->         core->rpc.length =3D core->res->rpc_size;
->
-> -       of_node_put(node);
-> -
->         return 0;
->  }
->
-> diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/m=
-edia/platform/qcom/iris/iris_firmware.c
-> index f1b5cd56db32..40448429ba97 100644
-> --- a/drivers/media/platform/qcom/iris/iris_firmware.c
-> +++ b/drivers/media/platform/qcom/iris/iris_firmware.c
-> @@ -19,8 +19,7 @@ static int iris_load_fw_to_memory(struct iris_core *cor=
-e, const char *fw_name)
->         u32 pas_id =3D core->iris_platform_data->pas_id;
->         const struct firmware *firmware =3D NULL;
->         struct device *dev =3D core->dev;
-> -       struct reserved_mem *rmem;
-> -       struct device_node *node;
-> +       struct resource res;
->         phys_addr_t mem_phys;
->         size_t res_size;
->         ssize_t fw_size;
-> @@ -30,17 +29,12 @@ static int iris_load_fw_to_memory(struct iris_core *c=
-ore, const char *fw_name)
->         if (strlen(fw_name) >=3D MAX_FIRMWARE_NAME_SIZE - 4)
->                 return -EINVAL;
->
-> -       node =3D of_parse_phandle(dev->of_node, "memory-region", 0);
-> -       if (!node)
-> -               return -EINVAL;
-> -
-> -       rmem =3D of_reserved_mem_lookup(node);
-> -       of_node_put(node);
-> -       if (!rmem)
-> -               return -EINVAL;
-> +       ret =3D of_reserved_mem_region_to_resource(dev->of_node, 0, &res)=
-;
-> +       if (ret)
-> +               return ret;
->
-> -       mem_phys =3D rmem->base;
-> -       res_size =3D rmem->size;
-> +       mem_phys =3D res.start;
-> +       res_size =3D resource_size(&res);
->
->         ret =3D request_firmware(&firmware, fw_name, dev);
->         if (ret)
-> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media=
-/platform/qcom/venus/firmware.c
-> index 66a18830e66d..37c0fd52333e 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.c
-> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -9,7 +9,6 @@
->  #include <linux/iommu.h>
->  #include <linux/io.h>
->  #include <linux/of.h>
-> -#include <linux/of_address.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/of_device.h>
-> @@ -83,8 +82,7 @@ static int venus_load_fw(struct venus_core *core, const=
- char *fwname,
->                          phys_addr_t *mem_phys, size_t *mem_size)
->  {
->         const struct firmware *mdt;
-> -       struct reserved_mem *rmem;
-> -       struct device_node *node;
-> +       struct resource res;
->         struct device *dev;
->         ssize_t fw_size;
->         void *mem_va;
-> @@ -94,15 +92,8 @@ static int venus_load_fw(struct venus_core *core, cons=
-t char *fwname,
->         *mem_size =3D 0;
->
->         dev =3D core->dev;
-> -       node =3D of_parse_phandle(dev->of_node, "memory-region", 0);
-> -       if (!node) {
-> -               dev_err(dev, "no memory-region specified\n");
-> -               return -EINVAL;
-> -       }
-> -
-> -       rmem =3D of_reserved_mem_lookup(node);
-> -       of_node_put(node);
-> -       if (!rmem) {
-> +       ret =3D of_reserved_mem_region_to_resource(dev->of_node, 0, &res)=
-;
-> +       if (ret) {
->                 dev_err(dev, "failed to lookup reserved memory-region\n")=
-;
->                 return -EINVAL;
->         }
-> @@ -117,8 +108,8 @@ static int venus_load_fw(struct venus_core *core, con=
-st char *fwname,
->                 goto err_release_fw;
->         }
->
-> -       *mem_phys =3D rmem->base;
-> -       *mem_size =3D rmem->size;
-> +       *mem_phys =3D res.start;
-> +       *mem_size =3D resource_size(&res);
->
->         if (*mem_size < fw_size || fw_size > VENUS_FW_MEM_SIZE) {
->                 ret =3D -EINVAL;
-> --
-> 2.47.2
->
+smp: Fix up and expand the smp_call_function_many() kerneldoc
+
+The smp_call_function_many() kerneldoc comment got out of sync with the
+function definition (bool parameter "wait" is incorrectly described as a
+bitmask in it), so fix it up by copying the "wait" description from the
+smp_call_function() kerneldoc and add information regarding the handling
+of the local CPU to it.
+
+Fixes: 49b3bd213a9f ("smp: Fix all kernel-doc warnings")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/smp.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 56f83aa..02f5229 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -884,16 +884,15 @@ static void smp_call_function_many_cond(const struct cp=
+umask *mask,
+  * @mask: The set of cpus to run on (only runs on online subset).
+  * @func: The function to run. This must be fast and non-blocking.
+  * @info: An arbitrary pointer to pass to the function.
+- * @wait: Bitmask that controls the operation. If %SCF_WAIT is set, wait
+- *        (atomically) until function has completed on other CPUs. If
+- *        %SCF_RUN_LOCAL is set, the function will also be run locally
+- *        if the local CPU is set in the @cpumask.
+- *
+- * If @wait is true, then returns once @func has returned.
++ * @wait: If true, wait (atomically) until function has completed
++ *        on other CPUs.
+  *
+  * You must not call this function with disabled interrupts or from a
+  * hardware interrupt handler or from a bottom half handler. Preemption
+  * must be disabled when calling this function.
++ *
++ * @func is not called on the local CPU even if @mask contains it.  Consider
++ * using on_each_cpu_cond_mask() instead if this is not desirable.
+  */
+ void smp_call_function_many(const struct cpumask *mask,
+ 			    smp_call_func_t func, void *info, bool wait)
 
