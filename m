@@ -1,341 +1,182 @@
-Return-Path: <linux-kernel+bounces-823475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF36B8699F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:59:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C16E9B869B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C6B5643D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381541C86E6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC7C2D322C;
-	Thu, 18 Sep 2025 18:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E272D7DEB;
+	Thu, 18 Sep 2025 19:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PF7fmHLZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE12C3C465;
-	Thu, 18 Sep 2025 18:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oowgo4YY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319EF23AE62;
+	Thu, 18 Sep 2025 19:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221943; cv=none; b=W9xuyjYSelOX1xiV9AsfAeAQTbuZYOk7mKmYoq+xGYBUo39qiRUkZ9qhpPlkNTAx5jZHYYp0Y6LBA6AhfNBUmpBNnoshlC2BQlJeNjVPyUm9MLDl64dzrh9y2tHQ6ZjE4snlba6wy246b3f2vMns/zSVDgm/9SKnf0ZbYX6A/84=
+	t=1758222042; cv=none; b=mhYvnbMUmmmXniQVRnbBa4T/BWHohi0oWLboS4ZcfgRx8wXXZ89fLEXGFC5n/m0fSTu9nOfIlRIKzBTC5HezBfOy6g+nsj8RqDWo924j+qK/0vqdNVebGk1gmLzfz9SBsIumXHcHrwaQpqxguk3A9Mh47zUg5avUILyCkFdf41k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221943; c=relaxed/simple;
-	bh=mQD7KtZqoZulnQWRYADH4PDyvC4Xtx2oM94pbGARnTY=;
+	s=arc-20240116; t=1758222042; c=relaxed/simple;
+	bh=ef0mTUC0aOMKx4QFCiLnqXP82GZHO1F+FgK59dzSrlg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XN33TbsOMWQJ2ltjbftRECPFwHCogUr0NuEF3iCOB+Qi01goZ8OlKSHhjng/IlgHQ80NZCMVj18bapQHmszMkuk8U+pIq6sI3hYp9Qr0EyB1Dhs62NS8YIZuKDjeoc5FMW4Q+K0r7KydVxvmbfrVSuC9aULlV2JCCtpLeBjcvyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PF7fmHLZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii.localdomain (unknown [131.107.8.20])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6B33D20143DC;
-	Thu, 18 Sep 2025 11:59:00 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6B33D20143DC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758221940;
-	bh=TLcUWnPlmsWq8/HhRl6gmbgFDW29Fkwl9mcq1MIy058=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PF7fmHLZH71YIqGlBaqw6zKv8yTZyDCIiMNqFRh1rxCXUrS7qVPNWj3FcZUm0WQHP
-	 AdyNSQV4Bv4ruv35AJpVn/Did34/r9nZn3RzMujBz8eUBhHq1u8Kl+2ax+dwPRy4WY
-	 H/4xX1xL8N9O6bSX2aq3DGEbq0+Bg2MSUQgqf2RI=
-Date: Thu, 18 Sep 2025 11:58:58 -0700
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
-	tiala@microsoft.com, anirudh@anirudhrb.com,
-	paekkaladevi@linux.microsoft.com, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	Jinank Jain <jinankjain@linux.microsoft.com>
-Subject: Re: [PATCH v3 4/5] mshv: Allocate vp state page for
- HVCALL_MAP_VP_STATE_PAGE on L1VH
-Message-ID: <aMxWcowj3o1eKkQw@skinsburskii.localdomain>
-References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1758066262-15477-5-git-send-email-nunodasneves@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fzQsMmob2TnVnILm+fCkYt6gwXUKS852rJtXt+U1VThTcMADRFf2OF2Nwqs9hYQSIzGS0ucsjdHVVzhvABeoTYPLWE3Q8ThoXkp6vMHWHFY6Wdbh7C33SN0MUQwp0ZsrqkEcqD1GwH9NYWDtVemAwb1691ZbCz+aIAe0s/q+GXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oowgo4YY; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758222040; x=1789758040;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ef0mTUC0aOMKx4QFCiLnqXP82GZHO1F+FgK59dzSrlg=;
+  b=Oowgo4YYfVh2MruJgeRr5276ZAaKB/9coD93mJZaDxDt8NQ/RmJtmRMs
+   x0N4MVKwwe7NNGPJnGvaprmb8akvEDgfeCZ1RIJlFpoubGbKdYw/EtcVy
+   QQUN9z1seEnYxZ/cis8TqNB6Ui4DMEpnLI5NXRaDTnLO9K3rDTxaPSa3S
+   YsSbMUkC7pe8y6DWYNkUvkpBxVYQkGrVaEvZtZ0egFG1TBKakAENpeKmv
+   jji2V/bwAqw+aS5T1BAFER5uTbkbyHb5HgzlNi5rL9zKvRKKrCOWSNLNb
+   Jh9/UqQ86ti9JAhT0soEbynQBDRaDe0QCWG+f16Shih9e+1ditd+jx5za
+   g==;
+X-CSE-ConnectionGUID: v50uP0dsTkGaSEkklLpPDQ==
+X-CSE-MsgGUID: XikY+1EBS+G3CYMKaV4mvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="59785092"
+X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
+   d="scan'208";a="59785092"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 12:00:40 -0700
+X-CSE-ConnectionGUID: lsksx+3EQUqb4vrXiQW2XA==
+X-CSE-MsgGUID: qfVbTbAJQF+iIHcpl+feOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
+   d="scan'208";a="174747856"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 12:00:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uzJrp-00000004Ad0-3os0;
+	Thu, 18 Sep 2025 22:00:29 +0300
+Date: Thu, 18 Sep 2025 22:00:29 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
+	gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
+	casey.connolly@linaro.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Message-ID: <aMxWzTxvMLsVWbDB@smile.fi.intel.com>
+References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
+ <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
+ <t3uk3k4h3l53yajoe3xog2njmdn3jhkmdphv3c4wnpvcqniz4n@opgigzazycot>
+ <aMlnp4x-1MUoModr@smile.fi.intel.com>
+ <mknxgesog6aghc6cjzm63g63zqbqvysxf6ktmnbrbtafervveg@uoiohk3yclso>
+ <CAHp75Vf7KrsN7Ec9zOvJoRuKvkbrJ5sMv7pVv6+88tPX-j_9ZA@mail.gmail.com>
+ <er7dkmzutsu3ooegeihjzngi6l3hol5iaohecr3n5bolfse3tj@xeedlx2utwym>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1758066262-15477-5-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <er7dkmzutsu3ooegeihjzngi6l3hol5iaohecr3n5bolfse3tj@xeedlx2utwym>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Sep 16, 2025 at 04:44:21PM -0700, Nuno Das Neves wrote:
-> From: Jinank Jain <jinankjain@linux.microsoft.com>
-> 
+On Wed, Sep 17, 2025 at 02:47:22PM +0200, Uwe Kleine-König wrote:
+> On Tue, Sep 16, 2025 at 07:20:20PM +0300, Andy Shevchenko wrote:
+> > On Tue, Sep 16, 2025 at 6:11 PM Uwe Kleine-König
+> > <u.kleine-koenig@baylibre.com> wrote:
+> > > On Tue, Sep 16, 2025 at 04:35:35PM +0300, Andy Shevchenko wrote:
+> > > > On Tue, Sep 16, 2025 at 03:24:56PM +0200, Uwe Kleine-König wrote:
+> > > > > On Tue, Sep 16, 2025 at 10:44:40AM +0200, AngeloGioacchino Del Regno wrote:
 
-Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+...
 
-> Introduce mshv_use_overlay_gpfn() to check if a page needs to be
-> allocated and passed to the hypervisor to map VP state pages. This is
-> only needed on L1VH, and only on some (newer) versions of the
-> hypervisor, hence the need to check vmm_capabilities.
+> > > > > > +MODULE_IMPORT_NS("SPMI");
+> > > > >
+> > > > > If it's exactly the files that #include <linux/spmi.h> should have that
+> > > > > namespace import, you can put the MODULE_IMPORT_NS into that header.
+> > > >
+> > > > Which makes anyone to import namespace even if they just want to use some types
+> > > > out of the header.
+> > >
+> > > Notice that I carefully formulated my suggestion to cope for this case.
+> > 
+> > And I carefully answered.
 > 
-> Introduce functions hv_map/unmap_vp_state_page() to handle the
-> allocation and freeing.
+> I tend to disagree. If that anyone only wants some type from the header
+> but not the namespace, the if part of my statement isn't given any more.
+> Still your reply felt like objection while logically it's not.
+
+You assumed that in case that the header that is *currently* included in the
+users, may be the one that used by the same users that needs an imported
+namespace. Okay, *now* (or today) it's not a problem, but *in the future* it
+might be *when* one wants to use *just* types from it.
+I don't think this is likely to happen, but in general including something
+"by default" is not a good idea. That's what I'm objecting to.
+
+> > Your proposal won't prevent _other_ files to
+> > use the same header in the future without needing a namespace to be
+> > imported.
 > 
-> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
-> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-> ---
->  drivers/hv/mshv_root.h         | 11 ++---
->  drivers/hv/mshv_root_hv_call.c | 61 ++++++++++++++++++++++++---
->  drivers/hv/mshv_root_main.c    | 76 +++++++++++++++++-----------------
->  3 files changed, 98 insertions(+), 50 deletions(-)
+> Oh yes. But that's true for every change: If you change it further you
+> have to cope for what is already there.
 > 
-> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
-> index 0cb1e2589fe1..dbe2d1d0b22f 100644
-> --- a/drivers/hv/mshv_root.h
-> +++ b/drivers/hv/mshv_root.h
-> @@ -279,11 +279,12 @@ int hv_call_set_vp_state(u32 vp_index, u64 partition_id,
->  			 /* Choose between pages and bytes */
->  			 struct hv_vp_state_data state_data, u64 page_count,
->  			 struct page **pages, u32 num_bytes, u8 *bytes);
-> -int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> -			      union hv_input_vtl input_vtl,
-> -			      struct page **state_page);
-> -int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> -				union hv_input_vtl input_vtl);
-> +int hv_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +			 union hv_input_vtl input_vtl,
-> +			 struct page **state_page);
-> +int hv_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +			   struct page *state_page,
-> +			   union hv_input_vtl input_vtl);
->  int hv_call_create_port(u64 port_partition_id, union hv_port_id port_id,
->  			u64 connection_partition_id, struct hv_port_info *port_info,
->  			u8 port_vtl, u8 min_connection_vtl, int node);
-> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
-> index 3fd3cce23f69..98c6278ff151 100644
-> --- a/drivers/hv/mshv_root_hv_call.c
-> +++ b/drivers/hv/mshv_root_hv_call.c
-> @@ -526,9 +526,9 @@ int hv_call_set_vp_state(u32 vp_index, u64 partition_id,
->  	return ret;
->  }
->  
-> -int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> -			      union hv_input_vtl input_vtl,
-> -			      struct page **state_page)
-> +static int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +				     union hv_input_vtl input_vtl,
-> +				     struct page **state_page)
->  {
->  	struct hv_input_map_vp_state_page *input;
->  	struct hv_output_map_vp_state_page *output;
-> @@ -547,7 +547,14 @@ int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
->  		input->type = type;
->  		input->input_vtl = input_vtl;
->  
-> -		status = hv_do_hypercall(HVCALL_MAP_VP_STATE_PAGE, input, output);
-> +		if (*state_page) {
-> +			input->flags.map_location_provided = 1;
-> +			input->requested_map_location =
-> +				page_to_pfn(*state_page);
-> +		}
-> +
-> +		status = hv_do_hypercall(HVCALL_MAP_VP_STATE_PAGE, input,
-> +					 output);
->  
->  		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
->  			if (hv_result_success(status))
-> @@ -565,8 +572,39 @@ int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
->  	return ret;
->  }
->  
-> -int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> -				union hv_input_vtl input_vtl)
-> +static bool mshv_use_overlay_gpfn(void)
-> +{
-> +	return hv_l1vh_partition() &&
-> +	       mshv_root.vmm_caps.vmm_can_provide_overlay_gpfn;
-> +}
-> +
-> +int hv_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +			 union hv_input_vtl input_vtl,
-> +			 struct page **state_page)
-> +{
-> +	int ret = 0;
-> +	struct page *allocated_page = NULL;
-> +
-> +	if (mshv_use_overlay_gpfn()) {
-> +		allocated_page = alloc_page(GFP_KERNEL);
-> +		if (!allocated_page)
-> +			return -ENOMEM;
-> +		*state_page = allocated_page;
-> +	} else {
-> +		*state_page = NULL;
-> +	}
-> +
-> +	ret = hv_call_map_vp_state_page(partition_id, vp_index, type, input_vtl,
-> +					state_page);
-> +
-> +	if (ret && allocated_page)
-> +		__free_page(allocated_page);
-> +
-> +	return ret;
-> +}
-> +
-> +static int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +				       union hv_input_vtl input_vtl)
->  {
->  	unsigned long flags;
->  	u64 status;
-> @@ -590,6 +628,17 @@ int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
->  	return hv_result_to_errno(status);
->  }
->  
-> +int hv_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
-> +			   struct page *state_page, union hv_input_vtl input_vtl)
-> +{
-> +	int ret = hv_call_unmap_vp_state_page(partition_id, vp_index, type, input_vtl);
-> +
-> +	if (mshv_use_overlay_gpfn() && state_page)
-> +		__free_page(state_page);
-> +
-> +	return ret;
-> +}
-> +
->  int hv_call_get_partition_property_ex(u64 partition_id, u64 property_code,
->  				      u64 arg, void *property_value,
->  				      size_t property_value_sz)
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index f7738cefbdf3..52f69eace9b9 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -890,7 +890,7 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
->  {
->  	struct mshv_create_vp args;
->  	struct mshv_vp *vp;
-> -	struct page *intercept_message_page, *register_page, *ghcb_page;
-> +	struct page *intercept_msg_page, *register_page, *ghcb_page;
->  	void *stats_pages[2];
->  	long ret;
->  
-> @@ -908,28 +908,25 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
->  	if (ret)
->  		return ret;
->  
-> -	ret = hv_call_map_vp_state_page(partition->pt_id, args.vp_index,
-> -					HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> -					input_vtl_zero,
-> -					&intercept_message_page);
-> +	ret = hv_map_vp_state_page(partition->pt_id, args.vp_index,
-> +				   HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> +				   input_vtl_zero, &intercept_msg_page);
->  	if (ret)
->  		goto destroy_vp;
->  
->  	if (!mshv_partition_encrypted(partition)) {
-> -		ret = hv_call_map_vp_state_page(partition->pt_id, args.vp_index,
-> -						HV_VP_STATE_PAGE_REGISTERS,
-> -						input_vtl_zero,
-> -						&register_page);
-> +		ret = hv_map_vp_state_page(partition->pt_id, args.vp_index,
-> +					   HV_VP_STATE_PAGE_REGISTERS,
-> +					   input_vtl_zero, &register_page);
->  		if (ret)
->  			goto unmap_intercept_message_page;
->  	}
->  
->  	if (mshv_partition_encrypted(partition) &&
->  	    is_ghcb_mapping_available()) {
-> -		ret = hv_call_map_vp_state_page(partition->pt_id, args.vp_index,
-> -						HV_VP_STATE_PAGE_GHCB,
-> -						input_vtl_normal,
-> -						&ghcb_page);
-> +		ret = hv_map_vp_state_page(partition->pt_id, args.vp_index,
-> +					   HV_VP_STATE_PAGE_GHCB,
-> +					   input_vtl_normal, &ghcb_page);
->  		if (ret)
->  			goto unmap_register_page;
->  	}
-> @@ -960,7 +957,7 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
->  	atomic64_set(&vp->run.vp_signaled_count, 0);
->  
->  	vp->vp_index = args.vp_index;
-> -	vp->vp_intercept_msg_page = page_to_virt(intercept_message_page);
-> +	vp->vp_intercept_msg_page = page_to_virt(intercept_msg_page);
->  	if (!mshv_partition_encrypted(partition))
->  		vp->vp_register_page = page_to_virt(register_page);
->  
-> @@ -993,21 +990,19 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
->  	if (hv_scheduler_type == HV_SCHEDULER_TYPE_ROOT)
->  		mshv_vp_stats_unmap(partition->pt_id, args.vp_index);
->  unmap_ghcb_page:
-> -	if (mshv_partition_encrypted(partition) && is_ghcb_mapping_available()) {
-> -		hv_call_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> -					    HV_VP_STATE_PAGE_GHCB,
-> -					    input_vtl_normal);
-> -	}
-> +	if (mshv_partition_encrypted(partition) && is_ghcb_mapping_available())
-> +		hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> +				       HV_VP_STATE_PAGE_GHCB, ghcb_page,
-> +				       input_vtl_normal);
->  unmap_register_page:
-> -	if (!mshv_partition_encrypted(partition)) {
-> -		hv_call_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> -					    HV_VP_STATE_PAGE_REGISTERS,
-> -					    input_vtl_zero);
-> -	}
-> +	if (!mshv_partition_encrypted(partition))
-> +		hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> +				       HV_VP_STATE_PAGE_REGISTERS,
-> +				       register_page, input_vtl_zero);
->  unmap_intercept_message_page:
-> -	hv_call_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> -				    HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> -				    input_vtl_zero);
-> +	hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
-> +			       HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> +			       intercept_msg_page, input_vtl_zero);
->  destroy_vp:
->  	hv_call_delete_vp(partition->pt_id, args.vp_index);
->  	return ret;
-> @@ -1748,24 +1743,27 @@ static void destroy_partition(struct mshv_partition *partition)
->  				mshv_vp_stats_unmap(partition->pt_id, vp->vp_index);
->  
->  			if (vp->vp_register_page) {
-> -				(void)hv_call_unmap_vp_state_page(partition->pt_id,
-> -								  vp->vp_index,
-> -								  HV_VP_STATE_PAGE_REGISTERS,
-> -								  input_vtl_zero);
-> +				(void)hv_unmap_vp_state_page(partition->pt_id,
-> +							     vp->vp_index,
-> +							     HV_VP_STATE_PAGE_REGISTERS,
-> +							     virt_to_page(vp->vp_register_page),
-> +							     input_vtl_zero);
->  				vp->vp_register_page = NULL;
->  			}
->  
-> -			(void)hv_call_unmap_vp_state_page(partition->pt_id,
-> -							  vp->vp_index,
-> -							  HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> -							  input_vtl_zero);
-> +			(void)hv_unmap_vp_state_page(partition->pt_id,
-> +						     vp->vp_index,
-> +						     HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
-> +						     virt_to_page(vp->vp_intercept_msg_page),
-> +						     input_vtl_zero);
->  			vp->vp_intercept_msg_page = NULL;
->  
->  			if (vp->vp_ghcb_page) {
-> -				(void)hv_call_unmap_vp_state_page(partition->pt_id,
-> -								  vp->vp_index,
-> -								  HV_VP_STATE_PAGE_GHCB,
-> -								  input_vtl_normal);
-> +				(void)hv_unmap_vp_state_page(partition->pt_id,
-> +							     vp->vp_index,
-> +							     HV_VP_STATE_PAGE_GHCB,
-> +							     virt_to_page(vp->vp_ghcb_page),
-> +							     input_vtl_normal);
->  				vp->vp_ghcb_page = NULL;
->  			}
->  
-> -- 
-> 2.34.1
+> > > > This is not good solution generally speaking. Also this will
+> > > > diminish one of the purposes of _NS variants of MODULE*/EXPORT*, i.e. make it
+> > > > invisible that some of the code may become an abuser of the API just by someone
+> > > > include the header (for a reason or by a mistake).
+> > >
+> > > Yeah, opinions differ. In my eyes it's quite elegant.
+> > 
+> > It's not a pure opinion,
 > 
+> That's your opinion :-)
+
+All we said is just set of opinions. Facts are provided by scientific
+experiments.
+
+> > it has a technical background that I
+> > explained. The explicit usage of MODULE_IMPORT_NS() is better than
+> > some header somewhere that might even be included by another and be
+> > proxied to the code that doesn't need / want to have this namespace to
+> > be present. Puting MODULE_IMPORT_NS() into a _header_ is a minefield
+> > for the future.
+> 
+> Well, for a deliberate abuser the hurdle to have to add the explicit
+> MODULE_IMPORT_NS() isn't that big. And a mistaken abuser won't explode,
+> just generate a few bytes overhead that can be fixed when noticed.
+> 
+> In my opinion that is an ok cost for the added elegance.
+
+I tend to disagree. The practice to include (be lazy) something just in case is
+a bad practice. Developer has to know what they are doing. We have already too
+much bad code in the kernel and opening new ways for more "vibe:ish" coding is
+a road to accumulated issues in the future.
+
+I,o.w. I principally disagree on putting MODULE_IMPORT_NS() into the header
+file.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
