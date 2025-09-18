@@ -1,127 +1,69 @@
-Return-Path: <linux-kernel+bounces-823355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D47B8630B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E86AB86319
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF83F172FA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FCB3A9D46
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D7B264A72;
-	Thu, 18 Sep 2025 17:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1A4314A6E;
+	Thu, 18 Sep 2025 17:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOxoy+fe"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="sj5M8gan"
+Received: from mail-24430.protonmail.ch (mail-24430.protonmail.ch [109.224.244.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A6025B301
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95965261388
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758216011; cv=none; b=EF+WoAFzLaxeraGn4YMX9sP+tAAHUWvkfWviGqXrUQ7L0Wd7acPHsrHExT3WFqenYNr75LdH9E2trfCpUEeGdFamQWjEsEGb0GurWoHshfUBS/KJxh4kTIKq5ctrLs20pWFYkti/XssY9ZwEYdj65TH7Q8xhvIprvzVx/tHe1vg=
+	t=1758216144; cv=none; b=AlsYTCCaepEO/p18Ow9heZRMIaWnf/mfdXeMAOsUrU9PG5gdNEiW/iM4V+9oum6mRQVdHBI2ZaP32314QLaY72Da++7A22KMTcKWp7UxAGWCcc/UxZ0RYw0gDWErYFLIV37zp+Vwo4Fk69tHX56L57DbEvcGi/tVPWuAjijEFKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758216011; c=relaxed/simple;
-	bh=nVGCJuiI7kWF9V3S5fkMQr27m9yi9NsvtbuKKTw2jCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PZ+iwyaLwun8j3QlxwxXC9H6qvEpA0uvqk5slwr0OBQASXZU8Dbtbfa26t4teeYuI+Nqca4E5ChfgCtXBLf9PKGGMGbsPQvrBtqGBnXzJCcb2oj2VoWU0ATXNCGXj2ytKo6VECL2FQeSHJho0DrAAKdyZn1/1WqL3/QtyAR5DXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOxoy+fe; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3515a0bca13so26236551fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758216008; x=1758820808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nVGCJuiI7kWF9V3S5fkMQr27m9yi9NsvtbuKKTw2jCw=;
-        b=fOxoy+feg4MoTyOy5LVonTifeT6b3V3bfqnweshtJnLhixTwNK2jsWoSmmoAxcm/ac
-         Fzj46Tic/BYVSKAf//6yfaRu9KjsEUKMmLB9nEuzy4QwxHRP5CyjFJXUiF1q/PFK5mwJ
-         owayB5snqLa3QhLB+ti8Nj7Qgh/W5c7V25f5hsK+t0K+McCccLRtf4n0pI/oTXXBKlm5
-         /62z1QtreBNAHUA9ZIeQhq5WV55ph78/hSD3HOBd6D7HrROIdbRyoWcrgvHPpz7qHy3n
-         o6bucDCM6GEAa0FplwwPSENUP04FJe9FOL2KEzzWuD1mi4MQBCAcl77vuY7P5hIo65YQ
-         Mh1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758216008; x=1758820808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nVGCJuiI7kWF9V3S5fkMQr27m9yi9NsvtbuKKTw2jCw=;
-        b=HWJJA1cEGMbGNvW354EqpMZRpMVGa6sgO+eXlFiRLHxkkHl+S4Ulw3M6P2rzDSZXhe
-         33HsDl3eXXcejkymF3QU2tkpRefo7fxXbiRGr0RweobQMu9iaz+i9LkVmjFECAfd/Ee4
-         RvDHZ3HKHT7Xx7cnl3PrxpZwXwlZIMfH8zZQ2s+yfe6iBrpppDveOblnuoqrwmImlU+j
-         2QqOxX/mlmb1yds570KwJGOg25hsAHnB2EntzDfgZajtAMuieTO8e/5GV2JjKWEVbwNL
-         1GeSOPP/GMS/o57LwvbcMbGH5faoTYyLae3MjIeuUdXosLWCUF+KxQ/+aCi22nv2d2bZ
-         SgFA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5zY+qcvHvNHuIt3hJ+OmrxF1oVSrmHSPNfTfg61Zc7jxV7f+1DqYIi6sLZUJYKjMfMTWmkdAIvk1L84k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytfOwILC4QPuf/5R+vmGMF82rxZu7f45oxBsmMlsbeHVNMKDSi
-	xSZGdxqVhHntFCcQIGfdAtVmt7kR8TBgrvNna5nHcbMOC/jFytySrZLGtQOtVg6kGvPyJaHppqC
-	q0VFok/XL2KsIg6jR5tJXYN+3xvHjZn8=
-X-Gm-Gg: ASbGncvn7hE+jvIdyibArlNa3o3jp+yQckcHm5o1riqS+azjcaILCWEdaT/YWCInm8j
-	hFDoOTPSIO0DVqgj6uGe6Nsrq6DeFpHACqgb+tBCGWLKOHcNTV3Z6dgtck4BycoFjZ56KSFojsZ
-	PpMwTaXWB3FLi/kywxZhodwD87EkmWGsD6KXQP0pU8eLqdiZItzh1tmaT5xGIYzj0ivYdpxj76F
-	W7kSrnm8MC6KYVWtIbNrsGNbQ==
-X-Google-Smtp-Source: AGHT+IGsIMA9swyx5/zWtjl/zZOSDGKe0YrS/kNvQp55Iis2DzEKSwclp889Q1ZA6XMNg9nE5KiyMXN2dgIaNVjYHas=
-X-Received: by 2002:a05:651c:41d5:b0:342:668:5ca9 with SMTP id
- 38308e7fff4ca-3616c674211mr12382181fa.13.1758216007545; Thu, 18 Sep 2025
- 10:20:07 -0700 (PDT)
+	s=arc-20240116; t=1758216144; c=relaxed/simple;
+	bh=jNT7NsEMRuj8wCXtxJyomrcmRAYdUu7xw3SsvTQHZ4I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ibn2MEizkxWE7u/kSgmg1rXr+FZG32HqNd2jipfSGGJJuJQ/4Zd3GUe9pEaJpvYI280BeihTErlBiQlKPs6w/CcpDmawVMCNENyQmS49yZGkl9t66JOUStE0S8SelD2xdkn5bGvA3tIDpV+6cr9PMLqP2HmAjnGl8+MJ3XvtuPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=sj5M8gan; arc=none smtp.client-ip=109.224.244.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1758216140; x=1758475340;
+	bh=jNT7NsEMRuj8wCXtxJyomrcmRAYdUu7xw3SsvTQHZ4I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=sj5M8gan1fuxkC0HR5kJhRA1bWT4D5YBPatPda/mnbfYCde3JGuqC8sFTZnFdR9Sf
+	 DtY9DncF24mG9xZiMb2wY2TwhXMS7YQ+VXBYXWGYY347ibtJnaXW2UI5+9p2NzTmeb
+	 yjcDXMpyLzkAxkruFCx0YUxke0fcAj6darY/OCwfzzctKeAyS8o0StOVY/AkJiBylP
+	 53Ff5v9J1u5g3cabyIwaonW071ePluev+OsDbimffG5/UtBOAMmIp06Ojyd+LQcQ2n
+	 Yc/iOTgfI/HvnvQt4m2DhJ9sApTxvxPZJQMkdyW4EnJydExZ2QGEpTmZN4tjYVy576
+	 VrKDjZ39dVt5w==
+Date: Thu, 18 Sep 2025 17:22:14 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: ManeraKai <manerakai@protonmail.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "arnd@arndb.de" <arnd@arndb.de>, "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] rust: miscdevice: Implemented `read` and `write`
+Message-ID: <d90b10f1-2634-481a-beec-ce9f31aadb74@protonmail.com>
+In-Reply-To: <CAH5fLgiDJbtqYHJFmt-2HNpDVENAvm+Cu82pTuuhUvgScgM0iw@mail.gmail.com>
+References: <20250918144356.28585-1-manerakai@protonmail.com> <20250918144356.28585-3-manerakai@protonmail.com> <CAH5fLgiDJbtqYHJFmt-2HNpDVENAvm+Cu82pTuuhUvgScgM0iw@mail.gmail.com>
+Feedback-ID: 38045798:user:proton
+X-Pm-Message-ID: e0c2ba71e39bfc9d433a41b48e14f54805f8b739
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com> <2334a545-9a06-42d9-8282-674b94fdcb2f@nvidia.com>
-In-Reply-To: <2334a545-9a06-42d9-8282-674b94fdcb2f@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 18 Sep 2025 12:19:55 -0500
-X-Gm-Features: AS18NWCY1imc6qMzII1HoMutNUeV-pu2L1O1O90Qvl84fUfbKYm-mB0fESR_s5g
-Message-ID: <CALHNRZ_gNzCEOzcYBY4o5Hz-efS5b52K4uZqmw5ps5zEfKoOEw@mail.gmail.com>
-Subject: Re: [PATCH v3] soc: tegra: fuse: speedo-tegra210: Update speedo ids
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 4:45=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 04/09/2025 02:58, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
-> > code supports 11 ids and nouveau supports 5. This aligns with what the
-> > downstream vendor kernel supports. Align skus with the downstream list.
->
-> Do you have a reference for the downstream kernel change you are
-> referring to? I have found this change [0]. However, this does not quite
-> align with what you have in this patch.
+ > We already merged read_iter / write_iter functions for miscdevice this
+ > cycle.
 
-This is based on L4T r32.7.6 [0], which builds up the list over
-several commits, so I can't link to just one. The first revision only
-added sku's that I had specifically verified. Mikko suggested to just
-import everything from downstream and to simplify the conditionals.
-And that's this revision.
+I couldn't find it. Can you send me a link please?
 
->
-> Jon
->
-> [0]
-> https://nv-tegra.nvidia.com/r/plugins/gitiles/linux-5.10/+/2a8660e3d1e4f7=
-5ba4390b72991744174237b025%5E%21/#F0
->
-> --
-> nvpublic
->
-
-Aaron
-
-[0] https://nv-tegra.nvidia.com/r/plugins/gitiles/linux-4.9/+/refs/tags/teg=
-ra-l4t-r32.7.6_good/drivers/soc/tegra/fuse/speedo-tegra210.c#72
 
