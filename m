@@ -1,408 +1,141 @@
-Return-Path: <linux-kernel+bounces-822296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482A2B837A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:11:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB7EB8379C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6636C724415
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:11:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F95E7B9589
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1722B2F39CD;
-	Thu, 18 Sep 2025 08:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5312F4A0A;
+	Thu, 18 Sep 2025 08:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DJm2/iAA"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hFIUlkbm"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4C82F3636
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14852F3C2B;
+	Thu, 18 Sep 2025 08:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758182858; cv=none; b=ZFxCtOFnFYMFPGF++k0UM1I8gKtPD4uR401BY0kryqF1tsKJ4dVg78n2BfpXp4JhKzX1Pntji1nIhw3XDpDQ8/6I1AZqaoYTmsbnii1hRCDd5nC+rI/bgj+uVavI22lslefHo/ymGYg/bC8pMNvHZZs0Yu2ueFjiuYUMMG40NDI=
+	t=1758182886; cv=none; b=RTP26Mda1BXwM9fktHuLrQ/Mvj9g+ZYauoZ1T14/8KbMGbaJuEPe75XPztPaKxBoGvrdoio/t7Z20Ek1Q6QBDG58RdSThrozeQrhntU9LTjdis1vCo1DLfvp9g9NQ5r2Uq6uw4GXmFvaKIARvgui0mBUciGorCFAkZzGXfBJjrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758182858; c=relaxed/simple;
-	bh=ZvVpHdTNTV/0K+H0W+enDpYpx6lx17ifuLy+Q8llxv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NotYdJDUX8zwCuRsI+RS1L6TJwxicgOhvc2Yei7gWERtOJQJ6IxKTWN3idC7wsOTCZyI3/ktWJlRAuUzuPhhrlL9tcSEidCv9PadUXWvzg4hKyh5dOd12nPzPm6lbDDEPUmwtF8deW0ec0xQYc7Bp0LUG43hgxakkGUrXO7f5BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DJm2/iAA; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 18 Sep 2025 10:07:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758182843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YUP/NkK0GHWfDSKZIN7VTqRLLitY3IGCdy2T4BgeoiA=;
-	b=DJm2/iAABEWV42oe58UHqXKT5511BKAwR/q799tzENa8Pdgrj40jlT6EhUdBdp9EDCwoaX
-	XhjBhtk4gr8ErR566gBLkzsoaz6J3kE4oc6UVfUIfPe+N8de3q6HOYhJdkIlHUoneHmYcs
-	T04/NAg1i+bVlyn6U19WDqXRZ9lHHws=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 04/10] Documentation: uAPI: media: add
- V4L2_CID_FLASH_{DURATION,HW_STROBE_SIGNAL}
-Message-ID: <ir2ye4y7bw3ot7nvp3wop2x5sf2etkuybtedrbfborqy2yuzmd@xjtow2puclbb>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-4-d58d5a694afc@linux.dev>
- <20250907194953.GA19568@pendragon.ideasonboard.com>
- <j337fpaqahmee3qutgtkavud6rbqyn4lpsj4yaha2xmvcvfhli@z67twdhybvqp>
- <20250908155917.GK26062@pendragon.ideasonboard.com>
- <mk77d6dn2qn6wrlgyu4sxpwufe7eupi4xcvx7yblo7bki4b5h6@brircux3j6ct>
- <aMrXNXexGBXCxbKd@kekkonen.localdomain>
+	s=arc-20240116; t=1758182886; c=relaxed/simple;
+	bh=1yC27wxXhKzjbkzZpZR3Ai96oSEiCjx7Z+SO0xTeWt0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J47W+a2LHYHIbWwyYDuR9bB3JK+vtH+znE0f/HpOlbSnm3Mkp8wlFFNBVU4ptwEQQmUPQvf2B89jWcU2OchiZLh6l4BpL74GZKj2lIsVIZEeI8pcqE/PEr9g7KLfjENV4DQrBTOYuTNS5x9Y+s58YlNzY2NukCM4WbH09v5MPdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hFIUlkbm; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 49CBDC007BB;
+	Thu, 18 Sep 2025 08:07:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D27D56062C;
+	Thu, 18 Sep 2025 08:08:02 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 13040102F1818;
+	Thu, 18 Sep 2025 10:07:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758182881; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=NUIQ6q5npgVP/axVpG0xCOPzetUw8W0RvK8A/nQzlw0=;
+	b=hFIUlkbmI55oIwEzk9k1G/kcOFNdJO/vkCWLWKCMLFiTXTvDSAFaicR8XxupBDsn/bSqgJ
+	foA0BdU1dlIzw2iUVOvM9GQvOuatXUEpWQNNVm0IILlA7dOpMcLPBkJ4RgEEvE6t8k+xH9
+	rT2wzVKuFajqOh+Fsb2nmUjogZhljUxwrHfcQbrxW0f/FXFEaovDHgP38HRsmCTnGPzHwr
+	fCaljv1gxc9UEMHoAK/KDxR9SDlUee+9nPRbIf88tzAnIaBR0HV8k+RNLvMc5laHI/0fK+
+	Wxlmnujl93gKe+jwBuViXKTn/oHsIy0cCnHGb9XEvkCvjytsoqPc3NU1nfOnOA==
+Message-ID: <9c96720e-091c-434e-9060-c47ea59ad91e@bootlin.com>
+Date: Thu, 18 Sep 2025 10:07:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMrXNXexGBXCxbKd@kekkonen.localdomain>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 03/14] selftests/bpf: test_xsk: Fix memory
+ leaks
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250904-xsk-v3-0-ce382e331485@bootlin.com>
+ <20250904-xsk-v3-3-ce382e331485@bootlin.com> <aMmlNc1z5ULnOjJY@boxer>
+ <6ac21f07-45ef-4e80-bedf-c0470df47bc7@bootlin.com> <aMr+/NDFQsGChdI4@boxer>
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <aMr+/NDFQsGChdI4@boxer>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Sakari,
-thanks for your feedback!
+On 9/17/25 8:33 PM, Maciej Fijalkowski wrote:
+> On Wed, Sep 17, 2025 at 05:32:55PM +0200, Bastien Curutchet wrote:
+>> Hi Maciej
+>>
+>> On 9/16/25 7:58 PM, Maciej Fijalkowski wrote:
+>>> On Thu, Sep 04, 2025 at 12:10:18PM +0200, Bastien Curutchet (eBPF Foundation) wrote:
+>>>> Some tests introduce memory leaks by not freeing all the pkt_stream
+>>>> objects they're creating.
+>>>>
+>>>> Fix these memory leaks.
+>>>
+>>> I would appreciate being more explicit here as I've been scratching my
+>>> head here.
+>>>
+>>
+>> Indeed it lacks details sorry. IIRC I spotted these with valgrind, maybe I
+>> can add valgrind's output to the commit log in next iteration.
+>>
+>>>   From what I see the problem is with testapp_stats_rx_dropped() as it's the
+>>> one case that uses replace and receive half of pkt streams, both of which
+>>> overwrite the default pkt stream. So we lose a pointer to one of pkt
+>>> streams and leak it eventually.
+>>>
+>>
+>> Exactly, we lose pointers in some cases when xsk->pkt_stream gets replaced
+>> by a new stream. testapp_stats_rx_dropped() is the most convoluted of these
+>> cases.
+> 
+> pkt_stream_restore_default() is supposed to delete overwritten pkt_stream
+> and set ::pkt_stream to default one, explicit pkt_stream_delete() in bunch
+> of tests is redundant IMHO.
+> 
+> Per my understanding testapp_stats_rx_dropped() and
+> testapp_xdp_shared_umem() need fixing. First generate pkt_stream twice and
+> second generates pkt_stream on each xsk from xsk_arr, where normally
+> xsk_arr[0] gets pkt_streams and xsk_arr[1] have them NULLed.
+> 
 
-On Wed, Sep 17, 2025 at 06:43:49PM +0300, Sakari Ailus wrote:
-> Hi Richard,
-> 
-> On Tue, Sep 09, 2025 at 12:29:55PM +0200, Richard Leitner wrote:
-> > Hi Laurent,
-> > 
-> > thanks for your great (and quick) feedback!
-> > 
-> > On Mon, Sep 08, 2025 at 05:59:17PM +0200, Laurent Pinchart wrote:
-> > > On Mon, Sep 08, 2025 at 02:37:15PM +0200, Richard Leitner wrote:
-> > > > On Sun, Sep 07, 2025 at 09:49:53PM +0200, Laurent Pinchart wrote:
-> > > > > On Mon, Sep 01, 2025 at 05:05:09PM +0200, Richard Leitner wrote:
-> > > > > > Add the new strobe duration and hardware strobe signal control to v4l
-> > > > > > uAPI documentation. Additionally add labels for cross-referencing v4l
-> > > > > > controls.
-> > > > > > 
-> > > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > > > ---
-> > > > > >  .../userspace-api/media/v4l/ext-ctrls-flash.rst    | 29 ++++++++++++++++++++++
-> > > > > >  1 file changed, 29 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > > > index d22c5efb806a183a3ad67ec3e6550b002a51659a..6254420a8ca95929d23ffdc65f40a6e53e30a635 100644
-> > > > > > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > > > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-> > > > > > @@ -57,6 +57,8 @@ Flash Control IDs
-> > > > > >  ``V4L2_CID_FLASH_CLASS (class)``
-> > > > > >      The FLASH class descriptor.
-> > > > > >  
-> > > > > > +.. _v4l2-cid-flash-led-mode:
-> > > > > > +
-> > > > > >  ``V4L2_CID_FLASH_LED_MODE (menu)``
-> > > > > >      Defines the mode of the flash LED, the high-power white LED attached
-> > > > > >      to the flash controller. Setting this control may not be possible in
-> > > > > > @@ -80,6 +82,8 @@ Flash Control IDs
-> > > > > >  
-> > > > > >  
-> > > > > >  
-> > > > > > +.. _v4l2-cid-flash-strobe-source:
-> > > > > > +
-> > > > > >  ``V4L2_CID_FLASH_STROBE_SOURCE (menu)``
-> > > > > >      Defines the source of the flash LED strobe.
-> > > > > >  
-> > > > > > @@ -186,3 +190,28 @@ Flash Control IDs
-> > > > > >      charged before strobing. LED flashes often require a cooldown period
-> > > > > >      after strobe during which another strobe will not be possible. This
-> > > > > >      is a read-only control.
-> > > > > > +
-> > > > > > +.. _v4l2-cid-flash-duration:
-> > > > > > +
-> > > > > > +``V4L2_CID_FLASH_DURATION (integer)``
-> > > > > > +    Duration of the flash strobe pulse generated by the strobe source,
-> > > > > > +    typically a camera sensor. This method of controlling flash LED strobe
-> > > > > > +    duration has three prerequisites: the strobe source's
-> > > > > > +    :ref:`hardware strobe signal <v4l2-cid-flash-hw-strobe-signal>` must be
-> > > > > > +    enabled, the flash LED driver's :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
-> > > > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH``, and the
-> > > > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be configured to
-> > > > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. The unit should be microseconds (µs)
-> > > > > > +    if possible.
-> > > > > 
-> > > > > As mentioned in the review of 01/10, I think this needs to be clarified.
-> > > > > Ideally we should add a new document in
-> > > > > Documentation/userspace-api/media/v4l/ to explain the flash API, but in
-> > > > > the meantime let's at lets improve the description of the duration
-> > > > > control. Here's a proposal.
-> > > > 
-> > > > Understood. Thank you for your proposal!
-> > > > 
-> > > > > ``V4L2_CID_FLASH_DURATION (integer)``
-> > > > >     Duration of the flash strobe pulse generated by the strobe source, when
-> > > > >     using external strobe. This control shall be implemented by the device
-> > > > >     generating the hardware flash strobe signal, typically a camera sensor,
-> > > > >     connected to a flash controller. It must not be implemented by the flash
-> > > > >     controller.
-> > > > > 
-> > > > >     This method of controlling flash LED strobe duration has three
-> > > > >     prerequisites: the strobe source's :ref:`hardware strobe signal
-> > > > >     <v4l2-cid-flash-hw-strobe-signal>` must be enabled, the flash controller's
-> > > > >     :ref:`flash LED mode <v4l2-cid-flash-led-mode>` must be set to
-> > > > >     ``V4L2_FLASH_LED_MODE_FLASH``, and its :ref:`strobe source
-> > > > >     <v4l2-cid-flash-strobe-source>` must be configured to
-> > > > >     ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``.
-> > > > > 
-> > > > >     The unit should be microseconds (µs) if possible.
-> > > > > 
-> > > > > 
-> > > > > The second paragraph may be better replaced by expanding the
-> > > > > documentation of V4L2_FLASH_STROBE_SOURCE_EXTERNAL, it seems a better
-> > > > > place to document how external strobe works.
-> > > > 
-> > > > That's fine for me. I will adapt the V4L2_CID_FLASH_DURATION and
-> > > > V4L2_FLASH_STROBE_SOURCE_EXTERNAL documentation accordingly and send in
-> > > > v9.
-> > > 
-> > > Sakari, could you please check if you agree with the above ? Let's avoid
-> > > going back and forth with reviews (and I'll try my best to review the
-> > > next version quickly).
-> > 
-> > My current proposal:
-> > 
-> >     * - ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``
-> >       - The flash strobe is triggered by an external source. Typically
-> >         this is a sensor, which makes it possible to synchronise the
-> >         flash strobe start to exposure start.
-> >         This method of controlling flash LED strobe has two additional
-> >         prerequisites: the strobe source's :ref:`flash strobe output
-> >         <v4l2-cid-flash-strobe-oe>` must be enabled (if available)
-> >         and the flash controller's :ref:`flash LED mode
-> >         <v4l2-cid-flash-led-mode>` must be set to
-> >         ``V4L2_FLASH_LED_MODE_FLASH``. Additionally the :ref:`flash duration
-> > 	<v4l2-cid-flash-duration>` may be adjusted by the strobe source.
-> > 
-> > 
-> > ``V4L2_CID_FLASH_DURATION (integer)``
-> >     Duration of the flash strobe pulse generated by the strobe source, when
-> >     using external strobe. This control shall be implemented by the device
-> >     generating the hardware flash strobe signal, typically a camera sensor,
-> >     connected to a flash controller. It must not be implemented by the flash
-> >     controller. Typically the flash strobe pulse needs to be activated by
-> 
-> I'd drop the sentence on flash controller as this is UAPI documentation.
+I took another look at it, and I agree with you: the pkt_stream_delete() 
+calls I added in testapp_stats_rx_full() and testapp_stats_fill_empty() 
+don't seem necessary.
+It still feels a bit strange to overwrite a pointer without freeing it 
+right away, but I don't have a strong opinion on this. I'm fine with 
+only fixing testapp_stats_rx_dropped() and testapp_xdp_shared_umem() in 
+the next iteration.
 
-Is there any other place where this can/should be documented. As this
-was suggested by Laurent: What's your opinion on this?
 
-> 
-> >     enabling the strobe source's :ref:`flash strobe output
-> >     <v4l2-cid-flash-strobe-oe>`.
-> > 
-> >     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
-> >     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
-> >     mode of operation.
-> > 
-> >     The unit should be number of lines if possible.
-> > 
-> > 
-> > ``V4L2_CID_FLASH_STROBE_OE (boolean)``
-> >     Enables the output of a hardware strobe signal from the strobe source,
-> >     when using external strobe. This control shall be implemented by the device
-> 
-> I'd remove the comma.
-> 
-> >     generating the hardware flash strobe signal, typically a camera sensor,
-> >     connected to a flash controller.
-> > 
-> >     Provided the signal generating device driver supports it, the length of the
-> >     strobe signal can be configured by adjusting its
-> >     :ref:`flash duration <v4l2-cid-flash-duration>`. In case the device has a
-> >     fixed strobe length, the flash duration control must not be implemented.
-> 
-> I don't see why the duration control wouldn't be implemented in this case:
-> it's still relevant for the user space to know how long the duration is.
-> I'd simply drop this sentence.
+Best regards,
+-- 
+Bastien Curutchet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Laurent and I were discussing this a few mails ago in this thread.
-
-He suggested to do not expose the control on fixed strobe length to keep
-the drivers simpler as this information is/should be available somewhere
-else. I.e. defined by the hardware.
-
-I suggested to add a read-only flash duration control for fixed strobe
-length devices. This makes drivers more complicated and may add some
-rounding issues when the control is given in (micro) seconds.
-
-As mentioned previously: I have no strong opinion on this. So how to
-proceed here?
-
-> 
-> > 
-> >     The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
-> >     must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
-> >     mode of operation.
-> > 
-> > > 
-> > > > > As for the unit, is microseconds really the best option ? I would expect
-> > > > > most sensors to express the strobe pulse width in unit of lines.
-> > > > 
-> > > > We had that discussion already somewhere during this series. Tbh for me
-> > > > microseconds seems fine. Most (professional) flashes are configured with
-> > > > s^-1, so that would also be an option, but as flash_timeout is
-> > > > configured in microseconds, i chose it for flash_duration too.
-> > > > 
-> > > > Nonetheless technically it shouldn't be a problem to express it as
-> > > > number of lines... Is there a reason to prefer this?
-> > > 
-> > > A few observations have confirmed my gut feeling that this is how
-> > > sensors typically express the pulse width. Expressing the value in its
-> > > hardware unit means we won't have rounding issues, and drivers will also
-> > > be simpler. We're missing data though, it would be nice to check a wider
-> > > variety of camera sensors.
-> > 
-> > I have done some more measurements and calculation on this for ov9281.
-> > It seems you are (somehow?) right. The strobe_frame_span (aka strobe
-> > duration) register value seems to represent the duration of the strobe in
-> > number of lines plus a constant and variable offset based on the hblank
-> > value. Other settings (e.g. vblank, exposure, ...) have no influence on
-> > the duration.
-> > 
-> > After about 50 measurements using different strobe_frame_span and hblank
-> > values and 1280x800 as resolution I came up with the following formulas:
-> > 
-> >    line_factor = active_width + hblank * 1,04 + 56
-> > 
-> >    t_strobe = strobe_frame_span * line_factor / pixel_rate
-> > 
-> > Which matches all tested cased nicely...
-> > 
-> > Nonetheless I'm still unsure on what unit to use for flash duration...
-> > 
-> > The exposure time for ov9282 is set as "number of row periods, where the
-> > low 4 bits are fraction bits" in the registers. The v4l2 control should
-> > on the other hand accept 100 µs units as value.
-> > 
-> > From a user perspective it would make sense to me to configure exposure
-> > time, flash duration and flash/strobe offset using the same base units.
-> > On the other hand we may have rounding issues and formulas based on
-> > assumptions or reverse-engineering when implementing this for a
-> > sensor...
-> > 
-> > What's your opinion on this, Sakari, Laurent, Dave?
-> 
-> I checked what CCS defines exposure time as a function of the external
-> clock frequency:
-> 
-> 	exposure time = tFlash_strobe_width_ctrl / ext_clk_freq *
-> 			flash_strobe_adjustment
-> 
-> The added accuracy is relevant for xenon (admittedly rare these days, but
-> depends on the device) flash but probably not so for LEDs.
-> 
-> So I'm fine with keeping this as-is and perhaps adding CCS specific private
-> controls separately.
-
-As mentioned previously I prefer (micro)seconds too for this control.
-Yes, it results in more complicated drivers, but makes live for
-userspace much easier IMHO.
-
-> 
-> > 
-> > > 
-> > > > > I think we also need to decide how to handle camera sensors whose flash
-> > > > > strobe pulse width can't be controlled. For instance, the AR0144 can
-> > > > > output a flash signal, and its width is always equal to the exposure
-> > > > > time. The most straightforward solution seems to implement
-> > > > > V4L2_CID_FLASH_HW_STROBE_SIGNAL but not V4L2_CID_FLASH_DURATION in the
-> > > > > sensor driver. Could this cause issues in any use case ? Is there a
-> > > > > better solution ? I would like this to be documented.
-> > > > 
-> > > > Sounds good to me. In this case the V4L2_CID_FLASH_DURATION could be
-> > > > provided as a read-only property too. So userspace is explicitely aware
-> > > > of the acutal value and doesn't have to make assumptions.
-> > > 
-> > > The value would change depending on the exposure time. Given how control
-> > > change events are implemented that would be difficult to use from
-> > > userspace at best. I think not exposing the control would be as useful
-> > > as exposing a read-only value, and it would be simpler to implement in
-> > > kernel drivers.
-> > 
-> > That's true. I guess keeping the drivers simple and moving this "logic"
-> > to a possible client/userspace application (if needed) is fine with me.
-> > 
-> > As you may have seen above, I've tried to integrate this in the
-> > documentation proposal already.
-> > 
-> > > 
-> > > > Should I add documentation on this topic to this patch?
-> > > 
-> > > That would be nice, thank you.
-> > > 
-> > > > > Finally, I think we also need to standardize the flash strobe offset.
-> > > > 
-> > > > I guess I somewhere mentioned this already: I have some patches for
-> > > > configuring the strobe offset of ov9282 and adding the corresponding
-> > > > v4l2 control. But to keep this series simple I'm planning to send them
-> > > > as soon as this one is "done".
-> > > > 
-> > > > IMHO the offset should then have the same unit as the flash_duration.
-> > > 
-> > > What's the unit for the OV9282 ? For AR0144, it's a 8-bit signed value
-> > > expressed in units of half a line.
-> > > 
-> > > > > > +
-> > > > > > +.. _v4l2-cid-flash-hw-strobe-signal:
-> > > > > > +
-> > > > > > +``V4L2_CID_FLASH_HW_STROBE_SIGNAL (boolean)``
-> > > > > 
-> > > > > Nitpicking a bit on the name, I would have called this
-> > > > > V4L2_CID_FLASH_STROBE_OUTPUT_ENABLE (or _OE).
-> > > > 
-> > > > I'm always open to name-nitpicking ;-)
-> > > > 
-> > > > V4L2_CID_FLASH_STROBE_OE sounds great to me... It's clear and even
-> > > > shorter than V4L2_CID_FLASH_HW_STROBE_SIGNAL.
-> > > 
-> > > Sakari, what's your opinion ?
-> 
-> I slightly prefer the former, too.
-
-Thanks. Fine with me!
-So I'll change the name to V4L2_CID_FLASH_STROBE_OE in the next version.
-
-> 
-> > > 
-> > > > > > +    Enables the output of a hardware strobe signal from the strobe source,
-> > > > > > +    typically a camera sensor. To control a flash LED driver connected to this
-> > > > > > +    hardware signal, the :ref:`flash LED mode <v4l2-cid-flash-led-mode>`
-> > > > > > +    must be set to ``V4L2_FLASH_LED_MODE_FLASH`` and the
-> > > > > > +    :ref:`strobe source <v4l2-cid-flash-strobe-source>` must be set to
-> > > > > > +    ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``. Provided the flash LED driver
-> > > > > > +    supports it, the length of the strobe signal can be configured by
-> > > > > > +    adjusting its :ref:`flash duration <v4l2-cid-flash-duration>`.
-> > > > > 
-> > > > > The V4L2_CID_FLASH_HW_STROBE_SIGNAL documentation needs to be clarified
-> > > > > in a similar way as V4L2_CID_FLASH_DURATION.
-> > > > 
-> > > > Sure. I will adapt this for v9.
-> > > 
-> > > -- 
-> > > Regards,
-> > > 
-> > > Laurent Pinchart
-> > 
-> > thanks & regards;rl
-> 
-> -- 
-> Kind regards,
-> 
-> Sakari Ailus
-
-regards;rl
 
