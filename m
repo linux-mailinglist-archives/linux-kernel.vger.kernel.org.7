@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-822294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03292B83799
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:11:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25517B8374E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19D31BC3057
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4911C82C2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D3C2FC898;
-	Thu, 18 Sep 2025 08:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A132F90C9;
+	Thu, 18 Sep 2025 08:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDrkSLdO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="XiEiyhxX"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1632FC87C;
-	Thu, 18 Sep 2025 08:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D4C2F7AA0;
+	Thu, 18 Sep 2025 08:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758182842; cv=none; b=T/8JCuk7IkdWBejhru2ju2FwZ8EUFrhu51wCsiyJjFbc+zOzESg3fRZJQ9IuPiCZNHwsF0RaxiaoRGr+lI+brQQgA/g5Fz4LtxOMOmW0mmvObHGUGvWxzaIESG4mgs+U+GLX3pjDK803CH9WORP7PIsk7rXnUdqjMgpiWsoPIN4=
+	t=1758182827; cv=none; b=HoZtZCWLJTQIjqLWPv4PoMqxPKht7wnbh3oJFDl/NcNoLXMFhaKaQwYhJMWJFDVnojMTeFP8U/LQ4twbYmxpDqdKfC8wUObpYZyjX1VNrWDshRf+/yVz2BDQ7UHB34LBsBWYSbcjyg1/VDhimdZ0U3scUChYs72sztnqzIUqpss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758182842; c=relaxed/simple;
-	bh=QftOzJsbNOGWTMHdJU6pkH/OLZmiw9UUKgy8+RhpRvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nmK7hFX3I469NVXTfQnW9p2AnKOhEnYQYne92Qi3kfdTygkhgs3Vep4M+Gv8L1M3kmhjibtfkQ35D3MkXep2qSfXoV8s8R57auPOoLwGFbrSlK1scdc/58HpgbTy4+Mkj1IvPxSbAj3wy99Ih4YBXDM7XSStTqYgQSaRAU085To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDrkSLdO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A7CAC4CEE7;
-	Thu, 18 Sep 2025 08:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758182841;
-	bh=QftOzJsbNOGWTMHdJU6pkH/OLZmiw9UUKgy8+RhpRvs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KDrkSLdOpwziaioIQhkPn36yJBjkb1sQMJDfr+3N8KOGlucHyx700fWl1qpb1/iaq
-	 4uoGX5Ih/WvX47AY2MZ6Bs8Snb56mlNrIH026q/AtW6OcqGAxmB28C0g6DCuvRC2vP
-	 lYtrSOPk6YxHerAo4aRsqIpltscRPHEqz/FeM3+H4FJ+YyhFJZfZR9Q/BRmGsGIZWX
-	 MZcOnzwLE92e0RezHHAnV6GAN+IHVgwJd3AzGM4aptxS5JS3aGviImiu3KCA2snVlk
-	 soRLAMgJXfkmBynDSr0vHteF+RLTeRMcypmF99K1UwLgsiV7AcCXNkPSSdWNz3itq/
-	 faMQ6xh3JknpQ==
-From: Alexey Gladkov <legion@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Alexey Gladkov <legion@kernel.org>
-Subject: [PATCH v8 8/8] kbuild: vmlinux.unstripped should always depend on .vmlinux.export.o
-Date: Thu, 18 Sep 2025 10:05:52 +0200
-Message-ID: <0e63a9c7741fe8217e4fd7c60afcf057ffa2ef5a.1758182101.git.legion@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1758182101.git.legion@kernel.org>
-References: <cover.1758182101.git.legion@kernel.org>
+	s=arc-20240116; t=1758182827; c=relaxed/simple;
+	bh=ClFvh0a6XVFxTs3aTf7ZnAV6BT767LS9PZiwjdEuS+Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=exDrqaXOpJVYN3axERSVwSj7XSSEcjLJF5mUNix1phkZdtd7ca0syZzio60Tc19aiHBhMF7N2SsdSBOpGsP0QlaH6v9Byqrf0koqdyk758+jXOEU2aN7aWuAtfMC5QcBve7ALsvsnpxtupECqsRahmRA1bF9c3LAfuu1eBDZtC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=XiEiyhxX; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=8d
+	AwrvZ0ngReEO9LbXxo4sA0RRfzQcPeOQ4JXyrALtQ=; b=XiEiyhxX+xfG9vyXT6
+	FpTlDsaGsEqUv7WVZ9OTb16dsE479QaJkEAYy1RVVvsBxZzrokISSPtAD4qm24tW
+	ArQhoXdYo07nP4Te7YFJ2XwWbowXaDwEK8++DB3oajKFNUqbV7WEOtoYFn+fH4i/
+	361sg5afr2XlNxRvfJLGFjMR4=
+Received: from mps-HP-EliteBook-840-G3.monolithicpower.com (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCHJdpuvcton1nLBA--.29488S2;
+	Thu, 18 Sep 2025 16:06:07 +0800 (CST)
+From: wenswang@yeah.net
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	corbet@lwn.net
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Wensheng Wang <wenswang@yeah.net>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: hwmon: Add MPS mp2925 and mp2929
+Date: Thu, 18 Sep 2025 16:06:02 +0800
+Message-Id: <20250918080603.1154497-1-wenswang@yeah.net>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250918080349.1154140-1-wenswang@yeah.net>
+References: <20250918080349.1154140-1-wenswang@yeah.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,62 +65,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Ms8vCgCHJdpuvcton1nLBA--.29488S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JryrXrW7CFWUZF1UGr4UJwb_yoWkWwc_uw
+	4xZ3WDCr4kAFySkan5AF48Jry5Gw17KrWUu34xtF4kXFnIgrWrCF9aq34a9ryxGay5ur15
+	urnaqrZ3ZrnIgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbeMKJUUUUU==
+X-CM-SenderInfo: 5zhq24xdqjq5hhdkh0dhw/1tbiCQPMpGjLoSZNMwAAs4
 
-Since .vmlinux.export.c is used to add generated by modpost modaliases
-for builtin modules the .vmlinux.export.o is no longer optional and
-should always be created. The generation of this file is not dependent
-on CONFIG_MODULES.
+From: Wensheng Wang <wenswang@yeah.net>
 
-Signed-off-by: Alexey Gladkov <legion@kernel.org>
+Add support for MPS mp2925 and mp2929 controller.
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Wensheng Wang <wenswang@yeah.net>
 ---
- scripts/Makefile.vmlinux | 9 ++-------
- scripts/link-vmlinux.sh  | 5 +----
- 2 files changed, 3 insertions(+), 11 deletions(-)
+V1 -> V2:
+    add Krzysztof's Acked-by
 
-diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-index 1e5e37aadcd05..7c6ae9886f8f7 100644
---- a/scripts/Makefile.vmlinux
-+++ b/scripts/Makefile.vmlinux
-@@ -53,11 +53,6 @@ endif
- # vmlinux.unstripped
- # ---------------------------------------------------------------------------
- 
--ifdef CONFIG_MODULES
--targets += .vmlinux.export.o
--vmlinux.unstripped: .vmlinux.export.o
--endif
--
- ifdef CONFIG_ARCH_WANTS_PRE_LINK_VMLINUX
- vmlinux.unstripped: arch/$(SRCARCH)/tools/vmlinux.arch.o
- 
-@@ -72,8 +67,8 @@ cmd_link_vmlinux =							\
- 	$< "$(LD)" "$(KBUILD_LDFLAGS)" "$(LDFLAGS_vmlinux)" "$@";	\
- 	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
- 
--targets += vmlinux.unstripped
--vmlinux.unstripped: scripts/link-vmlinux.sh vmlinux.o $(KBUILD_LDS) FORCE
-+targets += vmlinux.unstripped .vmlinux.export.o
-+vmlinux.unstripped: scripts/link-vmlinux.sh vmlinux.o .vmlinux.export.o $(KBUILD_LDS) FORCE
- 	+$(call if_changed_dep,link_vmlinux)
- ifdef CONFIG_DEBUG_INFO_BTF
- vmlinux.unstripped: $(RESOLVE_BTFIDS)
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 51367c2bfc21e..433849ff7529e 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -73,10 +73,7 @@ vmlinux_link()
- 		objs="${objs} .builtin-dtbs.o"
- 	fi
- 
--	if is_enabled CONFIG_MODULES; then
--		objs="${objs} .vmlinux.export.o"
--	fi
--
-+	objs="${objs} .vmlinux.export.o"
- 	objs="${objs} init/version-timestamp.o"
- 
- 	if [ "${SRCARCH}" = "um" ]; then
+ Documentation/devicetree/bindings/trivial-devices.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index f3dd18681aa6..eb617a6c50e5 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -297,6 +297,10 @@ properties:
+           - mps,mp2888
+             # Monolithic Power Systems Inc. multi-phase controller mp2891
+           - mps,mp2891
++            # Monolithic Power Systems Inc. multi-phase controller mp2925
++          - mps,mp2925
++            # Monolithic Power Systems Inc. multi-phase controller mp2929
++          - mps,mp2929
+             # Monolithic Power Systems Inc. multi-phase controller mp2993
+           - mps,mp2993
+             # Monolithic Power Systems Inc. hot-swap protection device
 -- 
-2.51.0
+2.25.1
 
 
