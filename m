@@ -1,284 +1,154 @@
-Return-Path: <linux-kernel+bounces-821812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14083B8258D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:10:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B039B82596
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35C96188BAD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80283B2322
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE8223741;
-	Thu, 18 Sep 2025 00:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4861D2D023;
+	Thu, 18 Sep 2025 00:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oFvFjUMO"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyJdYQkk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B45A11187
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98410E9;
+	Thu, 18 Sep 2025 00:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758154199; cv=none; b=FSKKfnHdpmvtGfyRQlnGFy8l+M/qeuDw7g3Abicpz4wZQ8Px+q4M2UTHrCKlbdRJLCExxGzfPxPFSY9Fho//nTEBn5Y0ixADNJVs4hcqUtDdL0yrnygy7Gq49O0plkUOsLlGsz+T2RL6K7JGEJ8k7ue14e/iSi0XwFpEvWo+FbM=
+	t=1758154252; cv=none; b=VtnET6PJTNdtq0klXL7GbL7dOs6XAb3IayoOAklrk9WMix+0kwIQaPLegsTjX3WJQKz9y7X7lupwkzEA1gO3NkrJUpPvIOOpBRKAi5acSxN/eQGk4VWqebYYzE4pMCbg+wbSsjosL+ySqiPqN6J/Kw5vMcO3CNbvz2lHgs9iefU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758154199; c=relaxed/simple;
-	bh=wXmVEes7R+HZhzrPevZN6QhmJWKaa1NAEkUnITk2JiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=htTMQa6HR26FvQf+7C/LGp36Jxv8uCkOrypBnJXzbP3zP4DyfvyOniQOlVGE0oKqOaWFS/sb9toi71CBTJ1gI/F8QPEgeEaObZtBDyjLOTsWuk7DuIEOSQu0a+qz0QAN0+CjdEfltDiRDWzDoiGkkk+pdkjNuDhq7R3HAEITFkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oFvFjUMO; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71d60504bf8so4458667b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758154196; x=1758758996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ugUY8fDSYAyjEj+60o61XHTDZs04gL4Ne5h3N5cFY+U=;
-        b=oFvFjUMOJt7NtRS/h4z7j9mPP16BLq+idOOwi/q/la5jGtW1OHYJbkC4yh7G7ScbZ8
-         XRGoaPpHPD/JEfsgD8t58QIyUe2ztJCRLp4vaKVohNZexeb8/DjXOWp6moE9CGAc4KCo
-         zGpCqu8K/hOzwW9m07RHdS5/HqC9mM1I0ZyoE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758154196; x=1758758996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ugUY8fDSYAyjEj+60o61XHTDZs04gL4Ne5h3N5cFY+U=;
-        b=U5LAT3roROyjLBHLaKl+HKTPtzAxCqH7QOSICoSERHSGTjXpLnJ7VvNViJVHktDjlP
-         bAGHNjcgb354BJpNT0WD5Bl9CjtbFUXMkqrZnSGOhJ/XI25hQ7Ems7IGjY/LHF7PJOYq
-         wE2CGfh39aGPmuUSSczR0Qc1IKt92+ZUSrfCA7HS4wGCexBWBZc3iVK63KmBuYm2Pp6t
-         BGbGT8F0DO15vTSGg4uGydoP92Ygbrm96HDc2xSPgTeIi4tjYNHMnP44vZGSzNtIWzwT
-         rdNcxWPjqQON9EpI09c2qJgnI9v6GKPl+nmHn08eqBzNuVefCzXCZXAN/4lIlbw1b9h8
-         0SSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjq0ZeKRInoF+kcbab2TJ5/p6PXCzdXql8qoCTc0PRxFnBag5uxLlfFNyYbnosaUeYkr+a2yuSwEYuHiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCJTPTCD4OQKkJXloXZmHH6sQwqMExBrvIX4ZfwIyJoTQRCgvW
-	5j/q0Z5ueVvtT5GAUYvEi66mJdMvlyBmIjBmg76G7J7O712o+dHPzHFaXpnEK3Sql8Fwp13JgQP
-	mA+mrdYRYQ6GMr5TtX0Uv821yDryT+n5IKizAOylC
-X-Gm-Gg: ASbGncuo6PsUf2FY+glmoDdYsE1cG/L4i98byG34KEeDTTaQcclJ5kAJVCfyUC/k2Zq
-	wOZkymQQQgjCvmdPF/9R4gmtc2q9d2jfOD2Zr8ja1JfDfe1LMJGU/OV9kgjACGb6LD8ZQlJBcG3
-	kwYfN1209VoPgldhzyYDy55vm8cRtNDJqZeIOeeR9E6d0TpOy86LC9KzmkfOlkWqE0q14I4u0Sa
-	nHg+lJXdbPvJ/T7MtX7Rtz01Q==
-X-Google-Smtp-Source: AGHT+IF1frXLALk7WSuqMqYwezb5DgqWLAUYnU3Oeq3dZu2d6eJcwsvSihmi/zwq6RojmrVWrWrazn/idl/1oNGv5Fc=
-X-Received: by 2002:a05:690c:6002:b0:72e:a82a:ab84 with SMTP id
- 00721157ae682-7389265e5a8mr33044617b3.51.1758154196107; Wed, 17 Sep 2025
- 17:09:56 -0700 (PDT)
+	s=arc-20240116; t=1758154252; c=relaxed/simple;
+	bh=8mtrXdMjzuzHAbOpsanLGbWf7gnLc5D1Foi3/VnOcgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RXCUwiY/VpSSKrGsVOf9wmInnyYDFWlBRxSGAvKl6Y15DcUgB/1xxPjaDmb6ou/UbUsdjbLh4FlnL26FkFxnHmRQY3WMijWWBTeodBk80sxetOdlivZhV/nj9f/oUuaPquMufS2wa2p1GS3Y23Fr3kPB6vTT8Tp8Y62OSF+5RFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyJdYQkk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C556CC4CEE7;
+	Thu, 18 Sep 2025 00:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758154252;
+	bh=8mtrXdMjzuzHAbOpsanLGbWf7gnLc5D1Foi3/VnOcgM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OyJdYQkkFpHHEcM9nT6ur2S750w/3F2tqMonFEN576RIpuDdF180SobzO6c01xrAG
+	 5mTH7Bhinw/iqB4GxWe6fzkRy+b3A0pY9rRC6BFmmTeJgmR2IVLSGt/S/LoPv6A5hQ
+	 yFvYrMINAcPLCaBYCtaEIUk/y9s5skLO2xJqPa7SBDUDFvDbcYxWOOcg+kLK0CoFbv
+	 sGjJW6y72/Xrylr8p+PCJMBXtHFVGD1RN7/xvXcOz1i2H3o6JA1K810vPe3UhqPTkD
+	 zLSmoqhLwH5kNdxo8+UQ7Pzh4SbJpJ/RqwBv8ciIFpNJQ9xIuuOBHQ7riYj8pp/J72
+	 aQdzs3S5D+kHw==
+Message-ID: <7585233a-a41d-45b0-b009-58b9dfb9a828@kernel.org>
+Date: Thu, 18 Sep 2025 09:10:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909123028.2127449-1-akuchynski@chromium.org>
- <aMliLCWFKy5Esl0-@kuha.fi.intel.com> <CANFp7mXvpNXr=01nQR54d+Z+vSiiwiDLB+3B+1eR6Ks7b37gtg@mail.gmail.com>
- <aMqpe68m3rhDYsCt@kuha.fi.intel.com> <CANFp7mWk_TuA6Gxbtc8OmB7eq_vT8wUg=xkPJsxLCBTrQwOd6A@mail.gmail.com>
-In-Reply-To: <CANFp7mWk_TuA6Gxbtc8OmB7eq_vT8wUg=xkPJsxLCBTrQwOd6A@mail.gmail.com>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Wed, 17 Sep 2025 17:09:44 -0700
-X-Gm-Features: AS18NWAyWH1DZmpewk_fLYk2Psq6ex0rOS5pigS50Ll2bt7BydEol9bZzR6p01Q
-Message-ID: <CANFp7mVwZksBYBOgPLDDYiynjFDh3jJqY1PFvvBWxtFd8MMYjw@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/5] USB Type-C alternate mode selection
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Andrei Kuchynski <akuchynski@chromium.org>, Benson Leung <bleung@chromium.org>, 
-	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V13 6/6] dt-bindings: riscv: Add Svrsw60t59b extension
+ description
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>,
+ Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+References: <20250917033703.1695933-1-zhangchunyan@iscas.ac.cn>
+ <20250917033703.1695933-7-zhangchunyan@iscas.ac.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250917033703.1695933-7-zhangchunyan@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 10:51=E2=80=AFAM Abhishek Pandit-Subedi
-<abhishekpandit@chromium.org> wrote:
->
-> On Wed, Sep 17, 2025 at 5:28=E2=80=AFAM Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> >
-> > On Tue, Sep 16, 2025 at 09:47:44AM -0700, Abhishek Pandit-Subedi wrote:
-> > > On Tue, Sep 16, 2025 at 6:12=E2=80=AFAM Heikki Krogerus
-> > > <heikki.krogerus@linux.intel.com> wrote:
-> > > >
-> > > > On Tue, Sep 09, 2025 at 12:30:23PM +0000, Andrei Kuchynski wrote:
-> > > > > This patch series introduces a flexible mechanism for USB Type-C =
-mode
-> > > > > selection, enabling into USB4 mode, Thunderbolt alternate mode, o=
-r
-> > > > > DisplayPort alternate mode.
-> > > > >
-> > > > > New sysfs `mode_selection` attribute is exposed to provide user c=
-ontrol
-> > > > > over mode selection. It triggers an alternate mode negotiation.
-> > > > > The mode selection logic attempts to enter prioritized modes sequ=
-entially.
-> > > > > A mode is considered successfully negotiated only when its altern=
-ate mode
-> > > > > driver explicitly reports a positive status. Alternate mode drive=
-rs are
-> > > > > required to report their mode entry status (either successful or =
-failed).
-> > > > > If the driver does not report its status within a defined timeout=
- period,
-> > > > > the system automatically proceeds to attempt entry into the next =
-preferred
-> > > > > mode.
-> > > >
-> > > > I'm still struggling to understand what is the benefit from this - =
-why
-> > > > would you want the user space to explicitly start the entry process
-> > > > like this? Instead why would you not just take full control over th=
-e
-> > > > alt modes in user space by enabling the them one by one in what eve=
-r
-> > > > order you want?
-> > >
-> > > I think after the many patch iterations we went through upstreaming,
-> > > we may have lost the point a little bit wrt/ the mode selection task.
-> > > We talked about this on the very first iteration of this patchset
-> > > here: https://lore.kernel.org/linux-usb/CANFp7mVWo4GhiYqfLcD_wFV34WMk=
-mXncMTOnmMfnKH4vm2X8Hg@mail.gmail.com/
-> > >
-> > > The motivation behind it was to allow the kernel driver to own mode
-> > > selection entirely and not need user space intervention. The current
-> > > alt-mode drivers attempt to own the mode entry process and this fails
-> > > when you have two or more altmode drivers loaded (i.e. displayport,
-> > > thunderbolt). The original goal of the mode selection task was to mov=
-e
-> > > the mode entry decision away from the alt-mode driver and to the port
-> > > driver instead.
-> > >
-> > > What's missing in the current patch series to show this is probably
-> > > actually calling mode_selection once all partner modes are added :)
-> > > Andrei should be adding that to this patch series in the next patch
-> > > version.
-> > >
-> > > Adding the mode_selection sysfs trigger is for another reason: to
-> > > re-run mode selection after priorities have been changed in userspace
-> > > and there is no partner hotplug. We specifically have some security
-> > > policies around PCI tunnels that result in the following need:
-> > > * When we enable pci tunneling, we PREFER tbt over dp and would like
-> > > to select the preferred mode. When we disable it, we PREFER dp over
-> > > TBT and would like to select the preferred mode.
-> > > * When users are logged out, we always prefer DP over TBT.
-> > > * When the system is locked, we prefer DP over TBT for new connection=
-s
-> > > (but existing connections can be left as TBT). When we unlock, we wan=
-t
-> > > to enter the most preferred mode (TBT > DP).
-> > >
-> > > While this is do-able with the alt-mode active sysfs field, we would
-> > > basically be re-creating the priority selection done in the kernel in
-> > > user space again. Hence why we want to expose the mode selection
-> > > trigger as done here.
-> >
-> > But this would be a step backwards. You want to keep the kernel in
-> > control of the mode selection, which is fine, but then you have these
-> > special cases where you have to give some of the control to the user
-> > space. So instead of taking complete control of the mode selection in
-> > user space, you want to create this partial control method of
-> > supporting your special cases while still leaving "most" of the
-> > control to kernel.
-> >
-> > I don't believe this will work in all cases. I'm fine with the
-> > priority as a way to tell the kernel the preferred entry order, but if
-> > the user space needs to take control of the actual mode selection, it
-> > has to take full control of it instead of like this, partially. This
-> > just looks incredibly fragile.
-> >
-> > So I'm still not convinced that there is any use for this. Either the
-> > user space takes over the mode selection completely with the active
-> > attribute files, or just leaves the selection completely to the kernel.
-> >
->
-> That's a fair stance to take. We CAN do our special cases via the
-> "active" sysfs node. I've had a bit more time to think about the
-> problem we are solving and I'd like to elaborate a little.
->
-> When we designed this mode selection task, there were two motivating fact=
-ors:
-> * The existing typec_displayport and typec_thunderbolt modules will
-> both automatically try to enter a mode when probing and that does not
-> work well. You want a deterministic entry order.
-> * There is no generic typec daemon for userspace on Linux and there
-> isn't always a need for one (i.e. UCSI systems). The kernel has the
-> most information about what any given system needs and should be able
-> to handle mode entry timing better.
->
-> For those motivating factors, I think an in-kernel mode selection as
-> designed in this series still makes sense. Let the kernel do the mode
-> selection, inform userspace when it is completed and userspace can
-> simply set priorities + report success/failure/errors.
-> One other change we will probably want to make is to turn the partner
-> altmode Kconfig options to boolean and roll it into the typec module.
-> Alt-mode module loading breaks mode selection ordering because you
-> can't be guaranteed the partner altmodes are loaded on the system when
-> you do partner altmode enumeration.
+On 17/09/2025 12:37, Chunyan Zhang wrote:
+> Add description for the Svrsw60t59b extension (PTE Reserved for SW
+> bits 60:59) extension which was ratified recently in
+> riscv-non-isa/riscv-iommu.
+> 
+> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> ---
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-After actually trying to do this today, I think a better approach
-might be to just add a MODULE_SOFTDEP for all the typec altmodes. That
-way, all the modules get loaded together and there's less of a chance
-of waiting for the altmode driver to load when enumerating partners on
-boot.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
->
-> Heikki, can you confirm we are on the same page up till this point at
-> least? The net effect here is we are moving partner altmodes
-> individually entering modes to centralizing mode entry in the typec
-> class itself.
->
-> Also, with respect to dropping the mode_selection sysfs node and
-> simply using the `active` fields to override:
-> * How can we ensure that user space does not race with the kernel mode en=
-try?
-> * Should we delay exposing "number_of_alternate_modes" until after
-> mode selection is done? Should we keep the mode_selection sysfs (or a
-> similarly named file) as a read-only indicator of current status?
->
-> Thanks,
-> Abhishek
->
-> > Br,
-> >
-> > > > I don't believe you can make this approach scale much if and when i=
-n
-> > > > the future the use cases change. Right now I don't feel comfortable
-> > > > with this at all.
-> > > >
-> > > > thanks,
-> > > >
-> > > > > This series was tested on an Android OS device with kernel 6.16.
-> > > > > This series depends on the 'USB Type-C alternate mode priorities'=
- series:
-> > > > > https://lore.kernel.org/all/20250905142206.4105351-1-akuchynski@c=
-hromium.org/
-> > > > >
-> > > > > Andrei Kuchynski (5):
-> > > > >   usb: typec: Implement mode selection
-> > > > >   usb: typec: Expose mode_selection attribute via sysfs
-> > > > >   usb: typec: Report altmode entry status via callback
-> > > > >   usb: typec: ucsi: displayport: Propagate DP altmode entry resul=
-t
-> > > > >   platform/chrome: cros_ec_typec: Propagate altmode entry result
-> > > > >
-> > > > >  Documentation/ABI/testing/sysfs-class-typec  |  11 +
-> > > > >  drivers/platform/chrome/cros_ec_typec.c      |   9 +
-> > > > >  drivers/platform/chrome/cros_typec_altmode.c |  32 +-
-> > > > >  drivers/platform/chrome/cros_typec_altmode.h |   6 +
-> > > > >  drivers/usb/typec/altmodes/displayport.c     |  19 +-
-> > > > >  drivers/usb/typec/altmodes/thunderbolt.c     |  10 +
-> > > > >  drivers/usb/typec/class.c                    |  37 ++
-> > > > >  drivers/usb/typec/class.h                    |   4 +
-> > > > >  drivers/usb/typec/mode_selection.c           | 345 +++++++++++++=
-++++++
-> > > > >  drivers/usb/typec/mode_selection.h           |  25 ++
-> > > > >  drivers/usb/typec/ucsi/displayport.c         |  10 +-
-> > > > >  include/linux/usb/typec_altmode.h            |  11 +
-> > > > >  include/linux/usb/typec_dp.h                 |   2 +
-> > > > >  include/linux/usb/typec_tbt.h                |   3 +
-> > > > >  14 files changed, 516 insertions(+), 8 deletions(-)
-> > > > >
-> > > > > --
-> > > > > 2.51.0.384.g4c02a37b29-goog
-> >
-> > --
-> > heikki
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+Best regards,
+Krzysztof
 
