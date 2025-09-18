@@ -1,105 +1,79 @@
-Return-Path: <linux-kernel+bounces-823333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC0FB8624D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:05:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BF9B86255
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF331CC0C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:05:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E81067AEF8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD5C2522B6;
-	Thu, 18 Sep 2025 17:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diFY3vQa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C454025A33F;
+	Thu, 18 Sep 2025 17:05:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C52246BB8;
-	Thu, 18 Sep 2025 17:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F61255E27;
+	Thu, 18 Sep 2025 17:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758215101; cv=none; b=VruVdiva8PH7MbQzMR7qnLAqT4+DhpHeYo+A4uVKWQTVdsNsPajGbyzx97rnoTy0OI1ci5xhFdSy8ypnu9Cq0CQNzkGrfiUq9giI52jWz/Yc54K7pN7d/DmSbItQsswOjKRBzhZy1AYn7WWSz8Bc8Zw2EhF025g9l+JM8T9cFKo=
+	t=1758215133; cv=none; b=GLB3uFgEVDBakFKqw8d2HkS/N6H3MA+S7OdSajM1OfcJODLUFxvusuU4A+tpYYxGeu9B0LQmv9srXIuJf6VKygocj38O9Uq54m22mCzovTJMWuMZz0t3iX6GiKkT1IoyULt8GKCxtOw1jB39Fn7XojvwbrqBzYsxEOLtMzcPsIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758215101; c=relaxed/simple;
-	bh=a2wSSef3Du0dV802ZRWP0K1ebOZ2r80wa7XHm8uoFPY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uvseEB7tB8WdeC4nwN6CwcY6t9yv27piVZqVzgruczfcq39zEnoSIHR4FAfMA4WS1MH396SEB9gVVZO5KjvOkdpD5iEh81BkMVpffLXHBzKw2TeD5CHpySvVBBRitorRHhw08qSvqgGwX74E0q7fSfD9wja2msunn/hj5j+dfB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diFY3vQa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B169C4CEE7;
-	Thu, 18 Sep 2025 17:04:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758215101;
-	bh=a2wSSef3Du0dV802ZRWP0K1ebOZ2r80wa7XHm8uoFPY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=diFY3vQavuiQRrhCNAu6iUYXj9I8H1JqETJeI/Akb9ajERj6Q65o/UpnlZsGB9rkF
-	 xcNbC1fXK1H9DtyoaQ8IlQah+TGK4dZJdBJ2SvU7Osr28nWZCyENuaODL9w3Dx3Q5a
-	 V1rPRNb67TiuJVEDDyxpFseFt8hrRtj5q+XiGsclBScvr3aHrS1w+egXswXLNwA5AI
-	 E7egT7+kNPmFotZGXGVuGLWJ4jCg/U3OCgS/FyGFsFhaMUm7N4xXRstHy9LRuaS3Bt
-	 sr2NkAIXGwo7VqkKOe2jeUVAJiW+amPjJqtmkfnqLX70CdkmuI+Y/em8M+pQrR1pme
-	 dgjuxyXaA1ITw==
-From: Mark Brown <broonie@kernel.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Tim Kuo <Tim.Kuo@mediatek.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Steven Liu <Steven.Liu@mediatek.com>, 
- Sky Huang <Skylake.Huang@mediatek.com>
-In-Reply-To: <20250917055839.500615-1-Tim.Kuo@mediatek.com>
-References: <20250917055839.500615-1-Tim.Kuo@mediatek.com>
-Subject: Re: [PATCH v2] spi: mt65xx: add dual and quad mode for standard
- spi device
-Message-Id: <175821509922.138184.639016042104046849.b4-ty@kernel.org>
-Date: Thu, 18 Sep 2025 18:04:59 +0100
+	s=arc-20240116; t=1758215133; c=relaxed/simple;
+	bh=X/POsIVTv8eNpfgINUCFzeDvZfWq0I5UrNuXSk5IxQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZnHFl2+MNGl7itLT8q6t7JoSFSw3D5T6YsajU7Os3UJ2nldOW7rFVD3NPQzCaIvQ7RBOXx+J3ho0iIpdW75QoRMvCrLK1NcNZ41WEgJjA/X16A+2nJ2KHpSprINiHpKiqRrad33KlHpOiofpqksbG54CU+lMXtHMwby9FxrrVUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 048B85830E;
+	Thu, 18 Sep 2025 17:05:22 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id D4E073F;
+	Thu, 18 Sep 2025 17:05:20 +0000 (UTC)
+Date: Thu, 18 Sep 2025 13:05:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>, Linux Kernel Tracing
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Tom Zanussi <zanussi@kernel.org>
+Subject: Re: [PATCH v2 0/5] Histogram docs formatting cleanup
+Message-ID: <20250918130519.06294a16@batman.local.home>
+In-Reply-To: <871po390m7.fsf@trenco.lwn.net>
+References: <20250916054202.582074-2-bagasdotme@gmail.com>
+	<871po390m7.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-56183
+X-Stat-Signature: 5jfb1czsre9tiux7xn8rq9sjan85h513
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: D4E073F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19fs3V881gWiGm8PDl6FigPUw9X2RlD9Ow=
+X-HE-Tag: 1758215120-677576
+X-HE-Meta: U2FsdGVkX18qAq/L8Rsa+fhxL5hEE9MCOF613M9C6KOdcg+eh7NXkpJcD1Dz53GMS8IF3nhmmD1hxfuBTtmNImt6BAxJBwTMieg2gmp8nvXSXivLKgogERpDuyH/EEbdA3b24vGEmb9fIdyBPINn6H2PPWRT6XJmvJnMLMHkO5N4+0Q2wSCc3bl68yIS/NO0U9k+GJPjTtkcL8Rv7/+g8RcM7sZzvz5jDlmZPsnzIqZ3SSMj4qxlIMBuHejwrZarBeWlgDgusWwAU1sxfOw12NLus9RwfazT1WMrTR7LlE5pooYrrW2SLSo5gd23CHLa7srK5+1MjyPBg899rmuXVo+Ep4pHuv2glM0l+jqTJ8+OGfFuh7RjwqFfckBX/dB6npzCj3vpHA+g5RFxHY75ErCtQ1dmB41LvZa0SbhSahkm7u5kJfG60dLMXEZ2hllf2uwzaURgjpq64AzLZY7ECA==
 
-On Wed, 17 Sep 2025 13:58:39 +0800, Tim Kuo wrote:
-> Mediatek SPI hardware natively supports dual and quad modes, and these
-> modes are already enabled for SPI flash devices under spi-mem framework
-> in MTK SPI controller spi-mt65xx. However, other SPI devices, such as
-> touch panels, are limited to single mode because spi-mt65xx lacks SPI
-> mode argument parsing from SPI framework for these SPI devices outside
-> spi-mem framework.
-> 
-> [...]
+On Thu, 18 Sep 2025 10:38:56 -0600
+Jonathan Corbet <corbet@lwn.net> wrote:
 
-Applied to
+> Steve, will you pick these up, or should I grab them?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Can you take them?
+
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
 Thanks!
 
-[1/1] spi: mt65xx: add dual and quad mode for standard spi device
-      commit: ab63e9910d2d3ea4b8e6c08812258a676defcb9c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- Steve
 
