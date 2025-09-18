@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-822375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67763B83AA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:02:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F21B83A73
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446174A7424
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:02:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC250721518
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350152F9D82;
-	Thu, 18 Sep 2025 09:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2992D94AC;
+	Thu, 18 Sep 2025 09:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxoH68x7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PqfpST/b"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8683002C4;
-	Thu, 18 Sep 2025 09:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B50F2D9491
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758186117; cv=none; b=ZD6FHIGPyncvDfugzh9bnHvzJkWRZzqS3KIyz9Cwf2mqPyeDC1o36ly9FEQhlcUsxB07vn0fhS6AYopAkNhVdGJ0GdJTadfG267MBvAjBmjvDxuhV/RtqZcPcI3lxvwOiC+SIeG41hC/buKq+fQ72yaHCGy17uwKTY8MG+blmB4=
+	t=1758186070; cv=none; b=fYWCev8/0yiGj7y12oILAr0AP9irJBNdn73Utnf3xRe57H98KyeZdAy8epzuzhuq2k3zoX+nfImdAGTzMB0LTk41SvzESmgxIQRv7b63UIjG5eauzUPWuFxKTJn8IGNXgq+oRqzDNUUfiFosr9cHo3LSZf6WLz/O8SFbh/XNlMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758186117; c=relaxed/simple;
-	bh=jwRTUoN54HeyKKOV4Dj4gsSdmsvGsDnd8DlVRGDSbDU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=unOPKE0FOUs3O1KRHCha4ReKxS2JJUcoxN+VpplYQwcthrQMYvPzW/59gJdDrjaWh9d84gkvcudS7sk99ZaqekI0P+VnWVYYSB1xDJz7fBTLQ5WRhmcZh3FKbGMOITOPs5eZnSeyUI6BI47GkpSz5PO0FZ8bKu164Hz2vkjYfZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxoH68x7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D35ECC4CEF0;
-	Thu, 18 Sep 2025 09:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758186117;
-	bh=jwRTUoN54HeyKKOV4Dj4gsSdmsvGsDnd8DlVRGDSbDU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GxoH68x7hQHtLVtLVFaUYb+D7yUzMQAZLIcgN2NuzCvOueygHkFoCIZpYVskFiuxX
-	 y1TATBou4FNIrB9zORxwf1WlGgQDx1qcA8PYE7mHvTFGHzVCicFJUwRQ+a2yCVmcvO
-	 rM8g62VcDBWqaVYPddsMgb5LImWZa41OdSK5Y0rqFxnQ4DbfrQBkXJyQikO8/kUFEp
-	 J9nM5mVxOGfBgnoghgHUUQdEXBs7MIiePFYyp53CuZVYCSEiXXaGD3RoP+Ki8t2Psg
-	 bX/+R5//IRXVQRwAD9i/v2Uu9b2i7Usb6raiG+75yt5mpXFkU/ye8HASukUJ+zEtDf
-	 RPELvjxDeOA6g==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Thu, 18 Sep 2025 18:00:27 +0900
-Subject: [PATCH 4/4] can: mcba_usb: populate ndo_change_mtu() to prevent
- buffer overflow
+	s=arc-20240116; t=1758186070; c=relaxed/simple;
+	bh=AqZM7AdYIKykOwepAJRBMw793BMf0ItIPyZAUrbjvEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QKZl/69Q0V4/haLQxb6aokoqm/w6GpS2mK/RUyhF+tDj3oNqSA0Pg9NC6c6R4OOs+oyvHSqmfWzXiQGO8/BFaTf649gu917ncIdjsCs5dkcXXsk88Hzu53uDv5trBV853USXmBoZP+O2KCVyR8RYL3pWoFLFlCemTlZ6zhv3FOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PqfpST/b; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b3e03ae3-36fb-455d-9f62-7e915e7bcd46@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758186066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y/wSaqH34v0KZoe6ggKel2oXiRC6toJfQY2vW/+tF20=;
+	b=PqfpST/bvj8Jq1kdP13n/p+IjwVELtyooR80qm0u87t239/kMFNHZafJIH8I1yOSbZOxOa
+	+RwNlf9y9pCVPxVrrBlTvGxQLFH90J6YckJ0hVeXCjzyrfwKqIUFiEZkIz4jy1wGpByyCU
+	+8iuXunakmoihq9Hpnss7zGvGkd23Oc=
+Date: Thu, 18 Sep 2025 17:00:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250918-can-fix-mtu-v1-4-0d1cada9393b@kernel.org>
-References: <20250918-can-fix-mtu-v1-0-0d1cada9393b@kernel.org>
-In-Reply-To: <20250918-can-fix-mtu-v1-0-0d1cada9393b@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Arunachalam Santhanam <arunachalam.santhanam@in.bosch.com>, 
- Akshay Bhat <akshay.bhat@timesys.com>, 
- Wolfgang Grandegger <wg@grandegger.com>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
- Gerhard Bertelsmann <info@gerhard-bertelsmann.de>, 
- Yasushi SHOJI <yashi@spacecubics.com>, 
- =?utf-8?q?Remigiusz_Ko=C5=82=C5=82=C4=85taj?= <remigiusz.kollataj@mobica.com>, 
- linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- Vincent Mailhol <mailhol@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2629; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=jwRTUoN54HeyKKOV4Dj4gsSdmsvGsDnd8DlVRGDSbDU=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBmnT5Wa/3W9fdJ1Pmfsm6Utj1ZGxk9zsm+6r7lgB+Pcm
- 5eDojZs7ChlYRDjYpAVU2RZVs7JrdBR6B126K8lzBxWJpAhDFycAjAR0WaG/wW/Ql+G9f/64zBv
- YUxp32L9bP/UrZ+OrlxjbPWX05p91n1Ghmdnr4fNte61cj9dc6HiXP0mz5MHYxaub63d7v08Qvr
- yE0YA
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Subject: Re: [PATCH] mm/vmstat: add header line to /proc/buddyinfo output
+To: Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Ye Liu <liuye@kylinos.cn>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250918071741.526280-1-ye.liu@linux.dev>
+ <aMu01xIkj-3hgW88@tiehlicka> <1a9f44a1-855c-450e-9dc4-415a29b90011@linux.dev>
+ <780aa9d6-a85c-4050-820e-c0ca9f5bb658@redhat.com>
+ <6d6e2e33-c221-4ab8-a29b-3d14fb1a592c@linux.dev> <aMvHt7Z2PMuZaned@tiehlicka>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <aMvHt7Z2PMuZaned@tiehlicka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Sending an PF_PACKET allows to bypass the CAN framework logic and to
-directly reach the xmit() function of a CAN driver. The only check
-which is performed by the PF_PACKET framework is to make sure that
-skb->len fits the interface's MTU.
 
-Unfortunately, because the mcba_usb driver does not populate its
-net_device_ops->ndo_change_mtu(), it is possible for an attacker to
-configure an invalid MTU by doing, for example:
 
-  $ ip link set can0 mtu 9999
+在 2025/9/18 16:49, Michal Hocko 写道:
+> On Thu 18-09-25 16:31:22, Ye Liu wrote:
+>>
+>>
+>> 在 2025/9/18 16:16, David Hildenbrand 写道:
+>>> On 18.09.25 10:11, Ye Liu wrote:
+>>>>
+>>>>
+>>>> 在 2025/9/18 15:29, Michal Hocko 写道:
+>>>>> On Thu 18-09-25 15:17:40, Ye Liu wrote:
+>>>>>> From: Ye Liu <liuye@kylinos.cn>
+>>>>>>
+>>>>>> Add a header line to /proc/buddyinfo that shows the order numbers
+>>>>>> for better readability and clarity.
+>>>>>>
+>>>>>> Before:
+>>>>>> Node 0, zone      DMA      0      0      0      0      0      0      0 ...
+>>>>>> Node 0, zone    DMA32      5      8      6      6      7      5      8 ...
+>>>>>> Node 0, zone   Normal   1113    351    138     65     38     31     25 ...
+>>>>>>
+>>>>>> After:
+>>>>>> Free pages per order       0      1      2      3      4      5      6 ...
+>>>>>> Node 0, zone      DMA      0      0      0      0      0      0      0 ...
+>>>>>> Node 0, zone    DMA32      5      8      6      6      7      5      8 ...
+>>>>>> Node 0, zone   Normal   1113    351    138     65     38     31     25 ...
+>>>>>
+>>>>> Why is this needed? And have you considered tha this might break
+>>>>> existing parsers of the file?
+>>>>>
+>>>>
+>>>> Thanks for the review.
+>>>>
+>>>> The reason for this change is simply to make /proc/buddyinfo self-describing.
+>>>> Right now you have to know which column is which order; with a header it’s
+>>>> obvious. This is similar to what /proc/pagetypeinfo already does, e.g.:
+>>>>
+>>>>    Page block order: 9
+>>>>    Pages per block: 512
+>>>>
+>>>>    Free pages count per migrate type at order   0 1 2 3 ...
+>>>>    Node 0, zone DMA, type Unmovable             0 0 0 ...
+>>>>
+>>>> Regarding existing parsers: the patch does not change any of the existing
+>>>> “Node … zone …” lines, it only adds a single header line before them. Most
+>>>> parsers match “Node” lines and ignore everything else, so the risk should be
+>>>> low. If you know of any existing parser that this would break, please let
+>>>> me know so I can address it.
+>>>
+>>> What if there is a single one out there that has hardcoded to skip the first line only?
+>>
+>> I understand there may be no way to be fully compatible with all existing
+>> parsers. However, /proc/buddyinfo is essentially raw data intended for
+>> human and tool consumption, and parsers are expected to be robust against
+>> format changes.
+> 
+> I am pretty sure you can create a trivial wrapper to print that header,
+> right?
+> 
+>> Adding a '#' prefix to the header would allow most parsers to skip it,
+>> but it still changes the file output and cannot fully guarantee that no
+>> external tool will be affected.                                          
+> 
+> That still assumes that they expect something like that.
+> We are trying really hard to not break existing userspace even if it is
+> not written in a robust way. That is simply how Linux kernel handles all
+> the existing interfaces. There must be a very serious reason to add a
+> change that might _theoretically_ breaker existing userspace. What you
+> are proposing here is not such a reason as it is trivial to achieve what
+> you want from the userspace.
+> 
+> NAK to the change.
 
-After doing so, the attacker could open a PF_PACKET socket using the
-ETH_P_CANXL protocol:
-
-	socket(PF_PACKET, SOCK_RAW, htons(ETH_P_CANXL))
-
-to inject a malicious CAN XL frames. For example:
-
-	struct canxl_frame frame = {
-		.flags = 0xff,
-		.len = 2048,
-	};
-
-The CAN drivers' xmit() function are calling can_dev_dropped_skb() to
-check that the skb is valid, unfortunately under above conditions, the
-malicious packet is able to go through can_dev_dropped_skb() checks:
-
-  1. the skb->protocol is set to ETH_P_CANXL which is valid (the
-     function does not check the actual device capabilities).
-
-  2. the length is a valid CAN XL length.
-
-And so, mcba_usb_start_xmit() receives a CAN XL frame which it is not
-able to correctly handle and will thus misinterpret it as a CAN frame.
-
-This can result in a buffer overflow. The driver will consume cf->len
-as-is with no further checks on these lines:
-
-	usb_msg.dlc = cf->len;
-
-	memcpy(usb_msg.data, cf->data, usb_msg.dlc);
-
-Here, cf->len corresponds to the flags field of the CAN XL frame. In
-our previous example, we set canxl_frame->flags to 0xff. Because the
-maximum expected length is 8, a buffer overflow of 247 bytes occurs!
-
-Populate net_device_ops->ndo_change_mtu() to ensure that the
-interface's MTU can not be set to anything bigger than CAN_MTU. By
-fixing the root cause, this prevents the buffer overflow.
-
-Fixes: 51f3baad7de9 ("can: mcba_usb: Add support for Microchip CAN BUS Analyzer")
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
- drivers/net/can/usb/mcba_usb.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/can/usb/mcba_usb.c b/drivers/net/can/usb/mcba_usb.c
-index 41c0a1c399bf36104fbf8991b537acdb01e7e950..1f9b915094e64de875adff35026e9cd3beb0410d 100644
---- a/drivers/net/can/usb/mcba_usb.c
-+++ b/drivers/net/can/usb/mcba_usb.c
-@@ -761,6 +761,7 @@ static const struct net_device_ops mcba_netdev_ops = {
- 	.ndo_open = mcba_usb_open,
- 	.ndo_stop = mcba_usb_close,
- 	.ndo_start_xmit = mcba_usb_start_xmit,
-+	.ndo_change_mtu = can_change_mtu,
- };
- 
- static const struct ethtool_ops mcba_ethtool_ops = {
+I’ll drop this change.
 
 -- 
-2.49.1
+Thanks,
+Ye Liu
 
 
