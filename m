@@ -1,220 +1,125 @@
-Return-Path: <linux-kernel+bounces-823001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E11B85441
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:34:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FF6B85447
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70372188F6A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1780E3A5796
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EAB30BF71;
-	Thu, 18 Sep 2025 14:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B71305061;
+	Thu, 18 Sep 2025 14:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I9QCy94D"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XXTV8oTV"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37C830C60C
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10922304985
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205825; cv=none; b=Qax2wLIXIBDQ387IjmoDjN0EPp1URLbf/zX10VKhyf/mYQVsT1MfJFXUzZYb/8AkugqGRFFYWW6tZdSFdvUCfQJAC+uEuwPCmvSzAwZ1FI2gG+e+d0TSXP6L508AKxZI8mmtKEX9c6s8HDC6p5QZeGhNaVW8Z8nsXBXLCwv7hKo=
+	t=1758205896; cv=none; b=WwbbSVJvnJuq/rlA0MhWTrAbODGLCPtQTxgHRmxUg3b5AHBdZ37cO6TjO6qC6J6t1YbTNAHYkuoPAckOe4LnzfURluBKsKgTBTvs3YTgCvep5gJ6l62aSwPC5PDW8QY1SfK3/xr89BFqXD8icjNrvywG7MSLIsnlvkW0+WzG8yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205825; c=relaxed/simple;
-	bh=GeaYUd1ph4vSEBD35eRX1HG2ODoim8Vu8j+apB+JjIw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=iy9lknsd2dT94g3qXzYByMV3qXkVjgN5Uf0HLWg2zBlmuuu9zxhZosp6vgPjLiESYQiJk8TyUamwKXm7ggKnxKOkVKEgzJwJLn3q2NGwQjY03KvLSX0FoOta7F/VrpCPuMeTKwDRorJ7VXRJ3cV9YFmwoAn4hLmoPYqrRsNHUCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I9QCy94D; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-76b8fd4ba2cso8593406d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:30:22 -0700 (PDT)
+	s=arc-20240116; t=1758205896; c=relaxed/simple;
+	bh=myP/sybN2zsJVXA5VSxoEq1YkiH03BHAZFTkykC2GiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q8QRf/PIZ0zbuevjjtJEFjR95Ux6qr0rzAdWd8vRWYYTQgtqWN0IMsweJVJqurb/0tu8GkuE/N8K5KX+PiDj+BJtQKKsxS1Hscwyv/bYbypfcrVvfyufueRxR0EFRMXw3PlClGs6dkamF0LGQu2SZcmVuesxR76n0/xRdpw+uEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XXTV8oTV; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-329b760080fso822720a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758205822; x=1758810622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8/l9erxsdcSr9+0YzCbf1buRKP1JbKApLHH5RwRYulY=;
-        b=I9QCy94Do+SLBCbmzIqhAhzI529VxWZDoxPtIuSsb189yr3Ac+UR+SA8EpeRx7nxYL
-         57jxXcNMUHlUiHIjxkRQIfjcjM5gOOogoG8HHYh1zwVWuyx/6s5CQHkyn5itU4mhwu2B
-         wi2q+ptE61l++Xy3kveXF2FrjaQJ7f798+8WxQwe6Jqa/VvWLDGSJlJDGBXBth6OR/r0
-         cVlsVK1T2zKipgJfbceHHWQQqRkjwEgPSUr5KAyPi3D6psLBHNTfPLyNkRKQrUOl2l/U
-         rYm2dZxi3/T54Fix2zbhAbqnhOizBMv6P7qdSfuq+2ey6Ykw22g1j/5hPmUkTA2hnUA/
-         KmOw==
+        d=google.com; s=20230601; t=1758205893; x=1758810693; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7wpgOqV2jwxbf7nUbBy2XlSiAc50BZhVeubzU1uvBU=;
+        b=XXTV8oTVX6+S8cB3egbJOi+r52l5pS2nTdxLCu3XgCnMJElQ4K7ATWx1gTLCprfKUK
+         nQgtAKfeTNowQfoDA+TJVUvxACXAU5g7SX5/YuHWRmZd4uYmfwWBNM+X1oPelM98XG13
+         XDyNcDd8MYiEllydXIvpI+V4DL/nH6v+LS0ZeRsSRuS1fy0zk5Z58LJJ8tbrCvvqfhyH
+         +/geSbKkYMYURYnyK3n7BJ3l6rnJ3C9Ct5wTV9KT7Eid1PubGWPxkh+2qVqQwpSwVuGd
+         dPVlvuTmODDqH3aYI72ZNNRPOE64uPlp5llb0m10owIyJ6NTZVte2z7IXU1vhv4o/YBR
+         VLsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758205822; x=1758810622;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8/l9erxsdcSr9+0YzCbf1buRKP1JbKApLHH5RwRYulY=;
-        b=TZWn9IV0ZH8TbaisDbzlXk2PMmBV2u7T9bPRXKjUFt90A9B40PT8SWE/9dXjKXN/A/
-         ftUCoaR2bqzZw2/6MZLAn7dLShXZdQZwjhGlu005FXZaJeMDYEm8N+GqYyoU6RmpvsuL
-         iu2iu7DnPsjLll1h2FbL/xC+MIRcE3F0HQyLcncjRP47G4quvWVvMWDjTOMwIFD0IdkL
-         Z0OJy5FbLoiWa0baFQ3sEqeRKqhR0kVxrkNTvvXNbMCfERuzJJV/of1qOjjzK/vrjV8v
-         uvjiZQRNqRO5P8zgfB3VwY8/liyI/ntrFAgqL0gYnbAL85LG5chs4MeWZef9cRYVuy/E
-         IntQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6QaNMew8qOw/qVG6qCinhNpUKvjEhagczbQaY9WgCGVZE8j4rlNsEi1YccIz8HsARH7KsMR0YSHtS0C4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNswgVi3DW0ruBtSB/qWFVR7/noXy/BnyeF1WmsKYVph3UV5Dr
-	PGNcMGHWem4MXU5z4NDSqHQkGDQsmVSN7KGpXkLUuYai2+MKW20uvRDt
-X-Gm-Gg: ASbGncuiKgvAHjbjtjfXaCDo4V2vpl/doancaXZuzYSrpS1kYxKSOrc6/tsiq2Hefij
-	SgNu3iByeVqdbbkUL6m7IiAf7raFYGX82ymCWDLJEVSCbIKeq/gt025iIJyEWDe7Bai9PPoAbOU
-	nLMzyvNHoGryjDJnq8ioLSuPP0gXOhEkbn9yqXzDgqt9emY5kuxlNAEILdsOkJFcAzbkhrz1uNm
-	U52HrnDy3vdtqeqOYSqMwfk8KsBUN8XUTGmXRl1GvkwqRDSiDVbedT3H/2e0lOCS0O3IdAmTY+q
-	QKJtovUJ/0OWGiIQJYrcU89mIcHzhhqpB7paKjDRqXqDjKmU4EzKl5ydkFAwEiWIHgKSQ364dBg
-	FdRxQUioajfWCtKPFrmLudHP8OvG6oCWE2a4RkoiaBGUr+QxQQfJoZBSY4wYEK7nPPO+pSHmPmW
-	zmrgYOkOddGQop4zGTrLrm
-X-Google-Smtp-Source: AGHT+IH6EN6B/8RH3mnO//gU+5krVawcCPmxHp5vIUrs67A6otL45HQmsf8S2szBQGwJ3sINej20ag==
-X-Received: by 2002:a05:6214:f23:b0:783:f54f:4187 with SMTP id 6a1803df08f44-78ecd6daa90mr71087456d6.28.1758205820473;
-        Thu, 18 Sep 2025 07:30:20 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-79356b3e5cesm13504216d6.73.2025.09.18.07.30.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 07:30:19 -0700 (PDT)
-Date: Thu, 18 Sep 2025 10:30:19 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Wang Liang <wangliang74@huawei.com>, 
- willemdebruijn.kernel@gmail.com, 
- jasowang@redhat.com, 
- andrew+netdev@lunn.ch, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- ast@kernel.org, 
- daniel@iogearbox.net, 
- hawk@kernel.org, 
- john.fastabend@gmail.com, 
- sdf@fomichev.me, 
- lorenzo@kernel.org, 
- toke@redhat.com
-Cc: yuehaibing@huawei.com, 
- zhangchangzhong@huawei.com, 
- wangliang74@huawei.com, 
- linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org
-Message-ID: <willemdebruijn.kernel.1aca4aa96eb20@gmail.com>
-In-Reply-To: <20250917113919.3991267-1-wangliang74@huawei.com>
-References: <20250917113919.3991267-1-wangliang74@huawei.com>
-Subject: Re: [PATCH net] net: tun: Update napi->skb after XDP process
+        d=1e100.net; s=20230601; t=1758205893; x=1758810693;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x7wpgOqV2jwxbf7nUbBy2XlSiAc50BZhVeubzU1uvBU=;
+        b=ri2CRvPj18YBvWASFq/7Digw7iGzh21In0ZQPxRPI7E51iI2LWDHIM5Z25YVC3LkXV
+         6VeycpAXbmsd4QWFf4cwOG02WBIEua74PYn6dr7jmonW6yClelgeMTcBU1HnoAqXyGZK
+         jTN2jmUsoY+4o6mbTpci1NUtxntBluhWBR9nx60r6KGiAVwzDAIqhfvrS/y/+h72VF6X
+         hpoq+S3tzANLV1KEsnFesh7GftX/bN48UnDUfZ7dU8W+J9TrX0qTF4SmkTCh6Vu+OOWX
+         /WWFWAj87O0jeww9eq3xwJPaERdqmIVtSlJH+uDXKQ+yGpfr5eXPjQpkcMPquQyDssXf
+         s1Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXW1jUNJJgzUQCpxC0kS1ZDx+U185wJkK80/jXG5n84fdBJcTNYGtYU3s4PP7FQpRXUaeFRNw92wLp2Y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb29twGQtN24dcZjLM5mjghR9ETmOwsmlg/84sMzIo8Bn6Q3j7
+	NP8/1YOT2Iok/iA3wYqqEfE1D7rIuMD1n8N5PX2svS+UhDsr3lxdCYD8bqTpDZsrv23F1sMWsjH
+	eCbgVWoZ1phDIZsJN4GV8lV+h/wA6668x9+XrLgmf
+X-Gm-Gg: ASbGncvyHBIji6jpKhAxVDDnXjvNJUYseW3bCjuz0LIY/fnobYMMO6G1kjz/l689KdA
+	JNtvXLdljVGgRdqYVfsueU6aGfWSu/tTgohJneBYqaTtmG4CNWa5BMD5gmJlOk/X54JDOp5otpA
+	CXr140kOtPSmFE+43yAX2hEhSrqDGR9lyueGBd4PUMcG9eH75dQd7yT0pHFyVgL1SjikyV2f1Eb
+	6tf11iqgVJoqg6JttgWxQ/TRljy2wJLfSfwnEpIgJCcrfyRxHtEv/WYpawDzg==
+X-Google-Smtp-Source: AGHT+IHYGUcixIR/dwWsgGEgFB1TOwlgrZ0O4FlqafV2iJGSlcEq1KnUzPyMPrhTBrvu1VqtuDJ2xHHxKwyBuVmjxY4=
+X-Received: by 2002:a17:90a:e184:b0:32e:b2f8:8dc1 with SMTP id
+ 98e67ed59e1d1-32ee3ee55c5mr7425841a91.10.1758205892532; Thu, 18 Sep 2025
+ 07:31:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250918140451.1289454-1-elver@google.com> <20250918141511.GA30263@lst.de>
+In-Reply-To: <20250918141511.GA30263@lst.de>
+From: Marco Elver <elver@google.com>
+Date: Thu, 18 Sep 2025 16:30:55 +0200
+X-Gm-Features: AS18NWD0SUeFqGV9WlY2IdwTn_KEVlrUb6EWkUXQGUd586AZF2O57bI6Ojf1TCc
+Message-ID: <CANpmjNN8Vx5p+0xZAjHA4s6HaGaEdMf_u1c1jiOf=ZKqYYz9Nw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+To: Christoph Hellwig <hch@lst.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Wang Liang wrote:
-> The syzbot report a UAF issue:
-> 
->   BUG: KASAN: slab-use-after-free in skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
->   BUG: KASAN: slab-use-after-free in napi_frags_skb net/core/gro.c:723 [inline]
->   BUG: KASAN: slab-use-after-free in napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
->   Read of size 8 at addr ffff88802ef22c18 by task syz.0.17/6079
->   CPU: 0 UID: 0 PID: 6079 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->    print_address_description mm/kasan/report.c:378 [inline]
->    print_report+0xca/0x240 mm/kasan/report.c:482
->    kasan_report+0x118/0x150 mm/kasan/report.c:595
->    skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
->    napi_frags_skb net/core/gro.c:723 [inline]
->    napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
->    tun_get_user+0x28cb/0x3e20 drivers/net/tun.c:1920
->    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->    new_sync_write fs/read_write.c:593 [inline]
->    vfs_write+0x5c9/0xb30 fs/read_write.c:686
->    ksys_write+0x145/0x250 fs/read_write.c:738
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->    </TASK>
-> 
->   Allocated by task 6079:
->    kasan_save_stack mm/kasan/common.c:47 [inline]
->    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
->    unpoison_slab_object mm/kasan/common.c:330 [inline]
->    __kasan_mempool_unpoison_object+0xa0/0x170 mm/kasan/common.c:558
->    kasan_mempool_unpoison_object include/linux/kasan.h:388 [inline]
->    napi_skb_cache_get+0x37b/0x6d0 net/core/skbuff.c:295
->    __alloc_skb+0x11e/0x2d0 net/core/skbuff.c:657
->    napi_alloc_skb+0x84/0x7d0 net/core/skbuff.c:811
->    napi_get_frags+0x69/0x140 net/core/gro.c:673
->    tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
->    tun_get_user+0x77c/0x3e20 drivers/net/tun.c:1784
->    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->    new_sync_write fs/read_write.c:593 [inline]
->    vfs_write+0x5c9/0xb30 fs/read_write.c:686
->    ksys_write+0x145/0x250 fs/read_write.c:738
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
->   Freed by task 6079:
->    kasan_save_stack mm/kasan/common.c:47 [inline]
->    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
->    kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
->    poison_slab_object mm/kasan/common.c:243 [inline]
->    __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
->    kasan_slab_free include/linux/kasan.h:233 [inline]
->    slab_free_hook mm/slub.c:2422 [inline]
->    slab_free mm/slub.c:4695 [inline]
->    kmem_cache_free+0x18f/0x400 mm/slub.c:4797
->    skb_pp_cow_data+0xdd8/0x13e0 net/core/skbuff.c:969
->    netif_skb_check_for_xdp net/core/dev.c:5390 [inline]
->    netif_receive_generic_xdp net/core/dev.c:5431 [inline]
->    do_xdp_generic+0x699/0x11a0 net/core/dev.c:5499
->    tun_get_user+0x2523/0x3e20 drivers/net/tun.c:1872
->    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->    new_sync_write fs/read_write.c:593 [inline]
->    vfs_write+0x5c9/0xb30 fs/read_write.c:686
->    ksys_write+0x145/0x250 fs/read_write.c:738
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> After commit e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in
-> generic mode"), the original skb may be freed in skb_pp_cow_data() when
-> XDP program was attached, which was allocated in tun_napi_alloc_frags().
-> However, the napi->skb still point to the original skb, update it after
-> XDP process.
-> 
-> Reported-by: syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
-> Fixes: e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in generic mode")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> ---
->  drivers/net/tun.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index cc6c50180663..47ddcb4b9a78 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1875,6 +1875,9 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
->  				local_bh_enable();
->  				goto unlock_frags;
->  			}
-> +
-> +			if (frags && skb != tfile->napi.skb)
-> +				tfile->napi.skb = skb;
+On Thu, 18 Sept 2025 at 16:15, Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Thu, Sep 18, 2025 at 03:59:11PM +0200, Marco Elver wrote:
+> > A Clang version that supports `-Wthread-safety-pointer` and the new
+> > alias-analysis of capability pointers is required (from this version
+> > onwards):
+> >
+> >       https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
+>
+> There's no chance to make say x86 pre-built binaries for that available?
 
-This is observed with tun because syzkaller can fuzz napi with that.
-That unfortunately added fuzz test coverage to a combination that is
-not intended for real use: XDP generic before napi frags.
-
-Tun is the only driver that calls do_xdp_generic on a napi.skb and
-later passes this napi to napi_gro_frags.
-
-But this is no longer a napi frags skb on which napi_gro_frags
-(and napi_frags_skb and gro_pull_from_frag0) should be called? As the
-skb now has a linear part. Not sure that the frag0 is still correct.
-
-
+Not officially, but I can try to build something to share if you prefer.
+Or a script that automatically pulls and builds clang for you - I have
+this old script I just updated to the above commit:
+https://gist.github.com/melver/fe8a5fd9e43e21fab569ee24fc9c6072
+Does that help?
 
