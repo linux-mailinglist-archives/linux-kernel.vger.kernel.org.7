@@ -1,152 +1,118 @@
-Return-Path: <linux-kernel+bounces-822939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8A9B851DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:15:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197D0B84F0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9DC480ADA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:12:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD53517CC91
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C27830CB5E;
-	Thu, 18 Sep 2025 14:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6372227F011;
+	Thu, 18 Sep 2025 13:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rA0CgK/n"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="aA8FTHCb"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B7231691D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19094234966
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204399; cv=none; b=hFzCjlPiVOv/TWJgRbxezchp7w8DyY6N/0KoKxc+Jzs7pzvIzsO46kc17fHVQGt1KfUvG4UIhCX8XJM/2wb6n5y0EEWMSSfY29j8R0qTahjwoCM5IdwAt55U6srwexJLE/kTQSuRbEulwD383HJWsb+uAFIuw9w4JFF5joGU2bw=
+	t=1758203983; cv=none; b=e1q+H3vvZZpK5+9vh1oD17y76Kv1Gdy6rh7qQ3Lss891+4G8wxCKuqgJcYF6SgdRCU7Seg22HD50FM48CoQ+zbY+bGLQst08bYnpF8cNhIpGsv8orJRh2uW3LJaE14xFq9zbqXDHkbsZF+VFUlkupzCROIezeaJTPptbScDSiAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204399; c=relaxed/simple;
-	bh=zoLiY2UcfrfuFf9/eJmfFwA3ddXeQm8aQATv6UNlqMA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ab8y16GQTPtJYJ5cfOwJJf/d0xTEhXOCnCYzCF9N0rCdhA+LmpiB84nKAvVVlZIEKQQV2ivfaHIm1i/XFq73CcBXgSE0Or/NCkXSrM+5pcBpzaCO7OfZqYC25y61sbXlXfSV5AIMaOJXfMCeEubeYw/EWKci3P5/xMl98Iqe7IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rA0CgK/n; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45ddbdb92dfso4707625e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:06:36 -0700 (PDT)
+	s=arc-20240116; t=1758203983; c=relaxed/simple;
+	bh=N7r1cHBrTftOK36ML9zP4d5ZUGLyxB2f5d/SCmZw5mM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYaHDPzQr8S6MwKmF+aVGd3He36V+Mm1Pe4h6sds9ACbmIX0De9bHgIrykOgBQmZvFJXViyPwF35Wym3/ImT/sicmehBXl8g6m0i4QnEE1EnVdo58xxmyi6fhx6I4gCDkNzLw1Diiww9v40JTy6+IL9rEUQm++Xd5GM+Mn5IMdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=aA8FTHCb; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-827906ef3aeso92475685a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:59:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758204395; x=1758809195; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rgYM57a4+YilIGK6iKKshTwAf6EJSKpu76VpXrklnPU=;
-        b=rA0CgK/nBD9BDdq9rID1XB8wPBhqUxDoK8e6TleJp4eoRuC+t26XqkM+Lphzpje/SH
-         nHsQFK48n9rmW1qb6dk9H0c2U0HDfz+6QXln6nUoWy4w35IMk8bs3wfwB/Gb2DMF2RDW
-         zi7hLDQ8KcTkzJKAnOQ9NPMCbJquIOwHucCkX6JH6bG/MVJFC7jY1ZepnH7jTlTbsohM
-         Fd4kGBHkUnfjEdHzHrNszPPjCPy5Q0MT5JkVAEVv+ZOdUZ+qH97XECiIc15WNvBBd6Z0
-         0KzzD+bly1UZxwZPL7MlxGoIX62G+9iXWmVoZYE2+x9hafmtUct6nkVV5p9FRfoevbTS
-         0PZQ==
+        d=gourry.net; s=google; t=1758203981; x=1758808781; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qW5naJpelAa/fHCeFC/F6GWx7z3AKGF3THG0OvJ/RBQ=;
+        b=aA8FTHCbDle2tc97WncHKeSCwpOCL05hcwK/qSyovwPliWJCj61Zgp2YtUKC0Dd6wg
+         vum+/jkZ0Jqz1lYIaqk5s9otCt5dEJtJVuBb1HSNS9YCLd4hgUkqowcdNjwUjrbuDPYA
+         e3OldE1cGkMovkBXwhEgn+NCIF6yI6/BXNNXc4p2kkCggUQz4LbrAlv1UXbnl2T1Cg7u
+         QCm8Ec49IZj6NvSKTtzyDj7KpeQmcy+6E2tXWHzVDZnUKhIqqszQds7bNKP8aWlZ6dMV
+         3arhfFCKiHxdVO4fXcSffdvSv3pbKFZHePRRPV82WP8k7ZEgqmqyIRl0tc8vCU0P13C7
+         SN+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758204395; x=1758809195;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rgYM57a4+YilIGK6iKKshTwAf6EJSKpu76VpXrklnPU=;
-        b=HjGZHnb7XVirGNJnlatZcmNEIMXkaU3JyluPcgIJhV29hOnXA9Yes+PHgYzFmfRHKL
-         sqoKzpoew6jdPLTo/8ddDNRujI/6c8h7GSTEcLyl1i8ACmPT8zOyfBqvIYrR8kiU5uO1
-         o35vJCJ4Equme0w3z4DU+QdAX/LMiW/xyeIBwcWE76kBhnBvC/gVMYZ4SjF28UaPULNR
-         3lkB5mtWnJHDntweQMcc3SSV5eYaNMyxXuxnDdNHu2p13rup+fTidhBZiUnhQiFZsAnS
-         pCl2A0gEFnbsBTxpH4uMaCUx4KLamZXKUm3GpB9JPOP8QXUhCJX1gTxmHPuUz9sjrCBN
-         eD6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVQyDuiaJw/Aqos1Us+zKXlp9EFLU8VsekUYL8SxqwFbz+CF80vyEjG6L8LpN7p/fcxsBY6sItZYMF8YVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ1uXE8aeIhfT+S8aXv8dTRNpg513+0Gez/Pmo4wO50WTpJizO
-	Bn4TnPReoCZ5yI/pcw3cl3wOFd35XGW7faVuyPCKd8wgmSDDEaV5AA+iQzurJRE5ua6vEiAE2y8
-	1yw==
-X-Google-Smtp-Source: AGHT+IGyq2ix4kSVUhNc102rzu/+pi5sWigmai5zeC1C+WvM8GfTqI/Oxr6AI/FM5MqgBjTC/NiJq7z9XA==
-X-Received: from wrbbs6.prod.google.com ([2002:a05:6000:706:b0:3ed:665b:ec9d])
- (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:adf:ce0c:0:b0:3ee:10b1:17bb
- with SMTP id ffacd0b85a97d-3ee10b11893mr1782304f8f.61.1758204394951; Thu, 18
- Sep 2025 07:06:34 -0700 (PDT)
-Date: Thu, 18 Sep 2025 15:59:36 +0200
-In-Reply-To: <20250918140451.1289454-1-elver@google.com>
+        d=1e100.net; s=20230601; t=1758203981; x=1758808781;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qW5naJpelAa/fHCeFC/F6GWx7z3AKGF3THG0OvJ/RBQ=;
+        b=ImY8USzpQ5BLKkE4grGKHKFGN7rEkLIYrIm/fej9zlqapbtLrmvIOvFM4hAhxknWTd
+         6KkoXURwAOlbJRyFDuM8ZC9Z967e8/nLJBnjh7BNv1PAsrj63dSOQnCV6eIwch86V5hK
+         +8cbTUPjKEf0ofnU+jP2zqdmK+IUn2+8z5YsvwEKb1JZ7CszJ2jTkv5YgAG9EmbzBeNW
+         zLUBQast/AJ4v/Z2+UN95GvPSCjAFPUcQEaVFSRNaJVIQfPEh7aO/82deqo4CkqXKRG1
+         XoJMZEfz/TpQLuA2itMhZR9ORf/pF4r+26K26HxaEsHPQ5JMf3dkq1kZqJevVymhypAw
+         dA8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXV6ECpTzTWuPgVbMy9p5B+8dDHTTNXyp4lCyfoOtT87aST/ZXYztAjGdXK9j6OGmNVBWVrRQYZNDN8AJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrJZHsx71LRngDRoND0N5N5Twp9R5vbAYHDmtFIWE2DwAViBWT
+	QpiRYyjwUBtG/ZjVNfibhqKsrGKunIm/nPmeZTVW6LfRY44V79fuMxUApEgyNx1N4fg=
+X-Gm-Gg: ASbGncswST/jy2JnNDlH+pbfauxHqfrnTaoUMpYgvOJRRHvWh6e/fM+WDiAQHwvPihA
+	25zRfHPKXasDTkEdmjHzZWTAvA4j0RTMn94WsYQng9SK2L3XzGzMe2lxO4g0JD8TW91VxIOAPgT
+	EzKvote4OtirrXlaNH/chIoHhSF1d9cgVYlodaJrtYbPksuir08DAQZdTipQN0u+o8dulKXsmnz
+	B7a1eassujn+C27pJEbmgHOSmRnqZjutV2Lbdu+BI6LH2uO7zYV1NbqkmXEvYA2RYIVsfWm6fvY
+	ZleZhPT4orauhTvSFx3ep10AjWo+KpXnd4SKJg0IzlspVoSm94OEvXm2OC/FdHBDyYGs6/Ox2FU
+	BfEt4K+7KiqZe0vQwTg5dxuQmqu8MYSpjORpjBkB9uredE6IkWioc3FU6
+X-Google-Smtp-Source: AGHT+IEwqImpRBrim40+l6qWMgI9cnm3yGnyzb/zaQbv9aJ8e0v5cQdRF87vMbOiP7dnVMILNYmQwg==
+X-Received: by 2002:a05:620a:471f:b0:7e8:2322:24b5 with SMTP id af79cd13be357-8310765993emr614510785a.3.1758203980771;
+        Thu, 18 Sep 2025 06:59:40 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F ([2607:fb91:141a:4eff:d16b:dca7:ed2c:70ff])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8363203a51bsm166257385a.48.2025.09.18.06.59.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 06:59:40 -0700 (PDT)
+Date: Thu, 18 Sep 2025 09:59:37 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Robert Richter <rrichter@amd.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v3 08/11] cxl/region: Implement endpoint decoder address
+ translation
+Message-ID: <aMwQSYUXHtZidrpY@gourry-fedora-PF4VCD3F>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-9-rrichter@amd.com>
+ <20250915114614.000053f1@huawei.com>
+ <aMsfWfwMhewTjHD3@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250918140451.1289454-1-elver@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250918140451.1289454-26-elver@google.com>
-Subject: [PATCH v3 25/35] compiler: Let data_race() imply disabled capability analysis
-From: Marco Elver <elver@google.com>
-To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
-	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
-	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
-	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMsfWfwMhewTjHD3@gourry-fedora-PF4VCD3F>
 
-Many patterns that involve data-racy accesses often deliberately ignore
-normal synchronization rules to avoid taking a lock.
+On Wed, Sep 17, 2025 at 04:51:37PM -0400, Gregory Price wrote:
+> You have to do the alignment because the translation function (may)
+> only work on granularity alignment.
+> 
+> Example:
+> endpoint1->to_hpa(0)         => 0x0
+> endpoint1->to_hpa(0xfffffff) => 0xffffe00
+                                  0x3ffffe00
+> endpoint2->to_hpa(0)         => 0x100
+> endpoint2->to_hpa(0xfffffff) => 0xfffff00
+                                  0x3fffff00
 
-If we have a lock-guarded variable on which we do a lock-less data-racy
-access, rather than having to write capability_unsafe(data_race(..)),
-simply make the data_race(..) macro imply capability-unsafety. The
-data_race() macro already denotes the intent that something subtly
-unsafe is about to happen, so it should be clear enough as-is.
-
-Signed-off-by: Marco Elver <elver@google.com>
----
-v2:
-* New patch.
----
- include/linux/compiler.h       | 2 ++
- lib/test_capability-analysis.c | 2 ++
- 2 files changed, 4 insertions(+)
-
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 64ff73c533e5..eee60adb3645 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -186,7 +186,9 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- #define data_race(expr)							\
- ({									\
- 	__kcsan_disable_current();					\
-+	disable_capability_analysis();					\
- 	__auto_type __v = (expr);					\
-+	enable_capability_analysis();					\
- 	__kcsan_enable_current();					\
- 	__v;								\
- })
-diff --git a/lib/test_capability-analysis.c b/lib/test_capability-analysis.c
-index 12fd9716f0a4..513ad28ed06c 100644
---- a/lib/test_capability-analysis.c
-+++ b/lib/test_capability-analysis.c
-@@ -92,6 +92,8 @@ static void __used test_raw_spinlock_trylock_extra(struct test_raw_spinlock_data
- {
- 	unsigned long flags;
- 
-+	data_race(d->counter++); /* no warning */
-+
- 	if (raw_spin_trylock_irq(&d->lock)) {
- 		d->counter++;
- 		raw_spin_unlock_irq(&d->lock);
--- 
-2.51.0.384.g4c02a37b29-goog
-
+minor corrections above if intending to use for documentation
 
