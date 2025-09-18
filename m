@@ -1,170 +1,159 @@
-Return-Path: <linux-kernel+bounces-821956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96425B82B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54723B82B15
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C4B4A231F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09ABC62191F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4946A1FECCD;
-	Thu, 18 Sep 2025 02:56:18 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF8123C4F1;
+	Thu, 18 Sep 2025 02:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CdwlPeqV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BE21C862F
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D350922D7A1
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758164177; cv=none; b=fdb+mLZFtBIH1Zq4BSMrzstXgd87s1OT/FXWxjrg9vTZLDvwDjah3nzJ02m/CLFXH2YKSE/0+IodgOoyDon4jBLqz9/5zdz6ALhhv4TY5tZw/11hHFettLkP0k+aVH0T/g//9F3kanWAv4e9tgW0EoWKTW+rPMvJhmnPztwO9aY=
+	t=1758164207; cv=none; b=mMDSMn+1gVqnw6uuB3+kYX5a6gLw4624BsD+VLhdLCDj3/wJt8N/1PCQ6D339DQkaoR7ytcNCwO6Re1G4xToIdopH6rGxYMzUGlQgbUHWZ8HvwZ5HuUKxu8S9DXmvSBt7jtL+8q/C1MamGHgFiVgOQD5XohyE1RdKAzlVXpcwk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758164177; c=relaxed/simple;
-	bh=t57XV+oDSQIhSHqqvkwL+G1BZ3UY+gEeEwhSKmYdfrM=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LFSKlTLdd9WNcr7A+LALAVbFaxPFG8DChHAQTJH9AsxfxfaEl/PI4pk+plV59CjbVppzRSWkZ9R0i3k90dYYCttIbpzm2ehFx+G0THRPgqyAUC4+EWKsxa4ZMJoKqWqKrxW5hryk4AObV58Av39SNILDHo9ZSxC5JtVkQLtA9f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cS0XW2bMKz13NhL;
-	Thu, 18 Sep 2025 10:51:55 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id E3FF3180B57;
-	Thu, 18 Sep 2025 10:56:05 +0800 (CST)
-Received: from kwepemq500001.china.huawei.com (7.202.195.224) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 10:56:05 +0800
-Received: from [10.67.146.137] (10.67.146.137) by
- kwepemq500001.china.huawei.com (7.202.195.224) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 10:56:05 +0800
-Subject: Re: [PATCH] irqchip/gic-v4.1:Check whether indirect table is
- supported in allocate_vpe_l1_table
-To: Marc Zyngier <maz@kernel.org>
-CC: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <guoyang2@huawei.com>,
-	<wangwudi@hisilicon.com>, jiangkunkun <jiangkunkun@huawei.com>,
-	<wangzhou1@hisilicon.com>, <guozicheng3@hisilicon.com>
-References: <20240122160607.1078960-1-tangnianyao@huawei.com>
- <86sf2p91zt.wl-maz@kernel.org>
- <5de3da53-9c0d-2a2d-876b-2181e540fa2f@huawei.com>
- <86r0i98o0a.wl-maz@kernel.org>
- <de3c10be-f4d4-75d0-bc70-0791e5217516@huawei.com>
- <86v83fmn9l.wl-maz@kernel.org>
-From: Tangnianyao <tangnianyao@huawei.com>
-Message-ID: <cae508d5-c846-5daf-a1b8-4014f14759e5@huawei.com>
-Date: Thu, 18 Sep 2025 10:56:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+	s=arc-20240116; t=1758164207; c=relaxed/simple;
+	bh=+EMiM4llLdOoJeufXmSX/4wSF3vMrKuTktW/zGv56CY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kx/jWJZzo9ZwYN+mTJNBDb8yw9H1Zbpjob9nH+JpoaTECqna9vDpL4gy3rpFsrXAr92XYGbpXtn1Uagt03GZIUV2gg6U4TguEZzq6Bkh5/5FQFck62F2W4iKFx+tsJTgxNTamT1P8BkpiyZyQD+FJQg69lRLiNBG15aoh7g6aH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CdwlPeqV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758164204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G+LtIQpgc290vPRQOhAQlDUbtf58jv7H8SakHmLcEEA=;
+	b=CdwlPeqV9DVNzYZw0Y9JI3AJb2IxzGaYpr+DaZlpcORLHJilVOyut+Za1zFWN9GRdcjVah
+	FRMi6QaFdBVa1pI7ptGqlglRYeJNYoQwh9dcQeM2WHt5gP9UdV7jmA8fWwaNZx3sY/exXt
+	YQlGKLr0wWxX71+TH0QsmsUZJtm36uA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-ZFTlBNNGPc-z9rkq6G2ROA-1; Wed,
+ 17 Sep 2025 22:56:42 -0400
+X-MC-Unique: ZFTlBNNGPc-z9rkq6G2ROA-1
+X-Mimecast-MFC-AGG-ID: ZFTlBNNGPc-z9rkq6G2ROA_1758164200
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 694F2180034C;
+	Thu, 18 Sep 2025 02:56:40 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.180])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C4E61800446;
+	Thu, 18 Sep 2025 02:56:38 +0000 (UTC)
+Date: Thu, 18 Sep 2025 10:56:35 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 03/10] mm/vmalloc: Support non-blocking GFP flags in
+ alloc_vmap_area()
+Message-ID: <aMt045ZaEma6qokF@MiWiFi-R3L-srv>
+References: <20250915134041.151462-1-urezki@gmail.com>
+ <20250915134041.151462-4-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <86v83fmn9l.wl-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemq500001.china.huawei.com (7.202.195.224)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915134041.151462-4-urezki@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+On 09/15/25 at 03:40pm, Uladzislau Rezki (Sony) wrote:
+> alloc_vmap_area() currently assumes that sleeping is allowed during
+> allocation. This is not true for callers which pass non-blocking
+> GFP flags, such as GFP_ATOMIC or GFP_NOWAIT.
+> 
+> This patch adds logic to detect whether the given gfp_mask permits
+> blocking. It avoids invoking might_sleep() or falling back to reclaim
+> path if blocking is not allowed.
+> 
+> This makes alloc_vmap_area() safer for use in non-sleeping contexts,
+> where previously it could hit unexpected sleeps, trigger warnings.
+> 
+> It is a preparation and adjustment step to later allow both GFP_ATOMIC
+> and GFP_NOWAIT allocations in this series.
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> ---
+>  mm/vmalloc.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
 
+LGTM,
 
-On 5/15/2024 17:34, Marc Zyngier wrote:
-> On Wed, 15 May 2024 09:56:10 +0100,
-> Tangnianyao <tangnianyao@huawei.com> wrote:
->>
->>
->> On 1/22/2024 22:02, Marc Zyngier wrote:
->>> On Mon, 22 Jan 2024 13:13:09 +0000,
->>> Tangnianyao <tangnianyao@huawei.com> wrote:
->>>> On 1/22/2024 17:00, Marc Zyngier wrote:
->>>>> [Fixing the LKML address, which has bits of Stephan's address embedded
->>>>> in it...]
->>>>>
->>>>> On Mon, 22 Jan 2024 16:06:07 +0000,
->>>>> Nianyao Tang <tangnianyao@huawei.com> wrote:
->>>>>> In allocate_vpe_l1_table, when we fail to inherit VPE table from other
->>>>>> redistributors or ITSs, and we allocate a new vpe table for current common 
->>>>>> affinity field without checking whether indirect table is supported.
->>>>>> Let's fix it.
->>>>> Is there an actual implementation that doesn't support the indirect
->>>>> property for the VPE table? I know this is allowed for consistency
->>>>> with the original revision of the architecture, but I never expected
->>>>> an actual GICv4.1 implementation to be *that* bad.
->>>>>
->>>>> If that's the case, I'm a bit puzzled/worried.
->>>> I met this problem in a developing implementation and find it's allowed by GIC spec.
->>>> In such environment,  in a common affinity field with only redistributors and without
->>>> any ITS in it, forcing its_vpe_id_alloc to allocate a large vpeid(like 65000), and there
->>>> comes an error message "VPE IRQ allocation failure". It originally comes from
->>>> allocate_vpe_l2_table, reading GICR_VPROPBASER with GICR_VPROPBASER_4_1_SIZE=1
->>>> and GICR_VPROPBASER_4_1_INDIRECT=0.
->>> Really, you should get your HW engineers to fix their GIC
->>> implementation.  I'm OK with working around this issue for
->>> completeness, but shipping such an implementation would be a mistake.
->>>
->>> [...]
->>>
->>>> I have another question here. The max number of pages  for GITS_BASER
->>>> and GICR_VPROPBASER is different here, while GITS_BASER.Size is
->>>> bit[7:0] with max 256, and GICR_4_1_VPROPBASER.Size is bit[6:0] with max 128.
->>>> Kernel usually probe ITS basers first and then probe GICR_4_1_VPROPBASER in
->>>> a common affinity group. Maybe we need to check this in "inherit_vpe_l1_table_from_its" ?
->>> This is because GITS_BASER[] is generic (also works for devices and
->>> collections), while GICR_VPROPBASER is tailored to the VPE table which
->>> is usually smaller.
->>>
->>> I would expect that GICD_TYPER2.VID reports something that cannot
->>> result in something going wrong (in this case, the L1 allocation
->>> cannot be more than 128 pages).
->>>
->>> Overall, the kernel isn't a validation suite for the HW, and we expect
->>> it to have some level of sanity. So if none of this is in shipping HW
->>> but only in some model with crazy parameters, I don't think we should
->>> go out of our way to support it.
->>>
->>> Thanks,
->>>
->>> 	M.
->>>
->> Hi Marc,
->> Friendly ping. Do we have plan to fix this problem on kernel, or any other plan ?
-> Hi Nianyao,
->
-> My earlier question still stand: is this something that affects a
-> shipping implementation? If not, then I don't think we should support
-> this upstream, as this doesn't seem like a realistic configuration.
->
-> If your employer has actually built this (which I still consider as a
-> mistake), then we can add the workaround I suggested.
->
-> Thanks,
->
-> 	M.
->
-Hi Marc,
+Reviewed-by: Baoquan He <bhe@redhat.com>
 
-For GIC4.1 of HIP09,HIP10,HIP10C, it only support one-level vcpu table and GITS_BASER<n>.Indirect
-is RAZ/WI. It implements page size 16KB and entry size 32B,  each page support 512 vpe, and our
-clients have requirement 1 or 2 pages at most, so it just supports flat page to simplify implementation.
-
-Our designer has confirmed with ARM architect that we can waive this rule:
-Quote from GIC spec 12.19.1 GITS_BASER<n> description, if the maximum width of the scaling factor
-that is identified by GITS_BASER<n>.Type and the smallest page size that is supported result in a single
-level table that requires multiple pages, then implementing this bit as RAZ/WI is DEPRECATED.
-
-We have actually built this in HIP09,HIP10,HIP10C and would like to fix this in kernel.
-Can we merge the above bug-fix patch to kernel?  Or we need to fix with errata for HIP09,HIP10,HIP10C?
-
-thanks for your opinions
-
-Nianyao Tang
-
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 5edd536ba9d2..49a0f81930a8 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2017,6 +2017,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  	unsigned long freed;
+>  	unsigned long addr;
+>  	unsigned int vn_id;
+> +	bool allow_block;
+>  	int purged = 0;
+>  	int ret;
+>  
+> @@ -2028,7 +2029,8 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  
+>  	/* Only reclaim behaviour flags are relevant. */
+>  	gfp_mask = gfp_mask & GFP_RECLAIM_MASK;
+> -	might_sleep();
+> +	allow_block = gfpflags_allow_blocking(gfp_mask);
+> +	might_sleep_if(allow_block);
+>  
+>  	/*
+>  	 * If a VA is obtained from a global heap(if it fails here)
+> @@ -2065,8 +2067,16 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  	 * If an allocation fails, the error value is
+>  	 * returned. Therefore trigger the overflow path.
+>  	 */
+> -	if (IS_ERR_VALUE(addr))
+> -		goto overflow;
+> +	if (IS_ERR_VALUE(addr)) {
+> +		if (allow_block)
+> +			goto overflow;
+> +
+> +		/*
+> +		 * We can not trigger any reclaim logic because
+> +		 * sleeping is not allowed, thus fail an allocation.
+> +		 */
+> +		goto out_free_va;
+> +	}
+>  
+>  	va->va_start = addr;
+>  	va->va_end = addr + size;
+> @@ -2116,6 +2126,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  		pr_warn("vmalloc_node_range for size %lu failed: Address range restricted to %#lx - %#lx\n",
+>  				size, vstart, vend);
+>  
+> +out_free_va:
+>  	kmem_cache_free(vmap_area_cachep, va);
+>  	return ERR_PTR(-EBUSY);
+>  }
+> -- 
+> 2.47.3
+> 
 
 
