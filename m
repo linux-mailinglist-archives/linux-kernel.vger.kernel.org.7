@@ -1,117 +1,180 @@
-Return-Path: <linux-kernel+bounces-822386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D12B83B8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:14:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215ECB83B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23FE5248D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:13:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8ACF4A7BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120642FFDC6;
-	Thu, 18 Sep 2025 09:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3DE2FE592;
+	Thu, 18 Sep 2025 09:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VwC2kYCD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kRC17PKP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDHTxIw7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECCD2FF16D;
-	Thu, 18 Sep 2025 09:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5342FF65A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758186826; cv=none; b=Ve2cYQFW5ypKT8sZwxqVG/Oucw4COn3wXADCu1KK8evbE0Y0To1atUfEuGxYAbkbqe41q1WyqGFAXuEA53LbNgpfEiJ3DFMlqNCRk4sxmBm8obHmEnOg9s2ZL3go3VDA+92nuPDfhvK9NNrMCeFG6tgk1NDhcOi9q1q4X0m4eMc=
+	t=1758186873; cv=none; b=EXPJ+UEA12MyT63qATkKAtQH1s3SKlCZPAtv95OmNWamnTi1vU2H6Xqxz4JC/8m7ynaGFMsNIkcB1ANBQ4xHMBPcfCOHms64TIpbEYiugIetE87dOH2+XhaJrG2HLDVwtjt87ZZz1NkF/+gVWeQPTnPgqwAWGL2V1+t6qYMrr6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758186826; c=relaxed/simple;
-	bh=v5M0KVbOs0+0BL/1Au1GWe2T0G2C337d/G6AKfJclMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DK2URKc6+0l2bV0MR/mbFpNYB0/VlOCl/9wmhV94drgOjxPMS5YR3Emzzun9Fg1/Pn4De9q36xMKS5KEvjRLdIYNs8uhGtjrieBQYgFeSh8rwjMXGKlAontDlVUj+wVCMOcNR3QMk9ldJpNGWbsENKukq7yyOgA4/cM8XXLKaeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VwC2kYCD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kRC17PKP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 18 Sep 2025 11:13:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758186822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4rI6MarwTjIECPHNDT6nYXfKNfdgGybieY2MAwuVSSU=;
-	b=VwC2kYCDnAmg7pqSUYgyWBaXT8jlTN+tC/5v2iKarJs6pN1KFhddN8J8PpMjDyfz3ooJpv
-	vZjzaSw7uW+bPNTipxB1bN3vnaF0hNbBwIF5jjNEM4Sp6pMRIoZ8umTBnSr4FiMaxZ7K9v
-	6NA+YTNS4rFP6sYbT4l9dhruFjVGmZsB1054tGZdqUA2cIlPa4tVAZtW+u0Rcqg7X7X+5M
-	j7ZGu5ZwvZY6LXfCV7+EsKAqjmj+12qjk+b1U933BgFwpHYkb3DpS92Ov/nrbKBR6mgltG
-	eofRjuOIXU0mBiVKNQTesPlEjeJkuB43yq9x1UKqOvY0CPCJ0cR8b6hSQsIY2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758186822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4rI6MarwTjIECPHNDT6nYXfKNfdgGybieY2MAwuVSSU=;
-	b=kRC17PKPNGrHDCN1JtgSeQoLHsDtQncZgecqJa9CX1g+vXf9/Nnh3VnRziDLfffITkhu9H
-	xkp6B6izdQGy/fAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org,
-	Tariq Toukan <tariqt@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH net-next] page_pool: add debug for release to cache from
- wrong CPU
-Message-ID: <20250918091341.n6_OgbOW@linutronix.de>
-References: <20250918084823.372000-1-dtatulea@nvidia.com>
+	s=arc-20240116; t=1758186873; c=relaxed/simple;
+	bh=GU5aVhSSXpMnY3Nj89JQ3GLJp6CGYNfWRvVTeDhHpyU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S3te0ncZGV96qchAxwQpid9G0cs3gZG+4hinbK9CTfd+ygRc6Kbut7CY71fPmST3YOLPsY4JnXv4wilsDYhxPHm0qpmImrwaMqCNh0r3qg3JhC3KxEcvu6w3yZMisLETotL2D9Asvuyh/kISgFcQdJASWy+Scdb+AZ08IWiSw2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDHTxIw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192B3C4AF09
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:14:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758186873;
+	bh=GU5aVhSSXpMnY3Nj89JQ3GLJp6CGYNfWRvVTeDhHpyU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XDHTxIw7akXSeCd/6giZZN/EAt0R0GTTlgV8enplzm7SaERhP1HEeN+pZ9tCCwJXx
+	 PZu7fwkAHzTwUVdL480d09AvH8gp+9ocf3kzauUZadgVa/AFh0I7wZJzm3L5La/weH
+	 cgIMoqkpQtBfUF1b3sYCDlpcavGJKijlHNbO5JLbMt1kOpVeP9mqKF7Y69Lxg0cCIT
+	 Xf7iJSWCK3696D7IFyWNLVEBQn2zc660kn4KuT6kYHnTZd91Z/UIBB8L/fDuoAFlJT
+	 +6k+q0PyY38TGXrIgdBXKCUV96pbf6IGYeNsHICIXaABgKJEv6tjqtlVA9FvXBVTyP
+	 UMt+ASqVOU/Rw==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b07d4d24d09so125635866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:14:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtHnfJZYzncK8FRaBo2k2HQMJ7rM4+ktZDaSdXBrXfilLvsk/rl1H09yfnwXQhuKH3aMOh3cGAxMKeDKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9VzZw6HsyEL41Q8zEwQhApqXIYHsUjlqve/04zlfTpQpgqN1y
+	Lw+lVoMlk3X24dAA7Wsss/n3oErmMv02tbGlywignpKbyftcFzDgIBM55duywa69RBac/UjA4xN
+	OVgOXjiHHJH998cKmtk/hgGwtmgF5fQI=
+X-Google-Smtp-Source: AGHT+IF1BjXj0ZvF7mFwzpXfamZnsfZVnnhQOoLa3JpgQAVAsKAIPCGthRx+T49FvQxBTK2pZaT9a6cJBVcJy9ub2no=
+X-Received: by 2002:a17:907:7ea0:b0:b04:3d7b:ad43 with SMTP id
+ a640c23a62f3a-b1bb8ca599amr612012266b.40.1758186871662; Thu, 18 Sep 2025
+ 02:14:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250918084823.372000-1-dtatulea@nvidia.com>
+References: <20250916093509.17306-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20250916093509.17306-1-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 18 Sep 2025 17:14:19 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5qBQyVX+h8is8w52Vi15EBcGfByrawPz6sGTkRELWZVw@mail.gmail.com>
+X-Gm-Features: AS18NWCF5A_ggky4Y36CkYbZfHI2uT8b9CtWO_QYbecJRYeJ8nY8o6Wj8hseLyE
+Message-ID: <CAAhV-H5qBQyVX+h8is8w52Vi15EBcGfByrawPz6sGTkRELWZVw@mail.gmail.com>
+Subject: Re: [PATCH v2] LoongArch: Fix unreliable stack for live patching
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Xi Zhang <zhangxi@kylinos.cn>, live-patching@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-09-18 11:48:21 [+0300], Dragos Tatulea wrote:
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index ba70569bd4b0..404064d893d6 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -768,6 +795,18 @@ static bool page_pool_recycle_in_cache(netmem_ref netmem,
->  		return false;
->  	}
->  
-> +#ifdef CONFIG_DEBUG_PAGE_POOL_CACHE_RELEASE
-> +	if (unlikely(!page_pool_napi_local(pool))) {
+Applied, thanks.
 
-if you do IS_ENABLED(CONFIG_DEBUG_PAGE_POOL_CACHE_RELEASE) you could
-avoid the ifdef.
+Huacai
 
-A quick question, where is this allow_direct argument supposed to come
-from? I just noticed that mlx5 does
-   page_pool_put_unrefed_netmem(, true);
-
-which then does not consider page_pool_napi_local(). But your proposed
-change here will complain as it should.
-
-> +		u32 pp_cpuid = READ_ONCE(pool->cpuid);
-> +		u32 cpuid = smp_processor_id();
-> +
-> +		WARN_RATELIMIT(1, "page_pool %d: direct page release from wrong CPU %d, expected CPU %d",
-> +			       pool->user.id, cpuid, pp_cpuid);
-> +
-> +		return false;
-> +	}
-> +#endif
-> +
->  	/* Caller MUST have verified/know (page_ref_count(page) == 1) */
->  	pool->alloc.cache[pool->alloc.count++] = netmem;
->  	recycle_stat_inc(pool, cached);
-
-Sebastian
+On Tue, Sep 16, 2025 at 5:35=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> When testing the kernel live patching with "modprobe livepatch-sample",
+> there is a timeout over 15 seconds from "starting patching transition"
+> to "patching complete", dmesg shows "unreliable stack" for user tasks
+> in debug mode, here is one of the messages:
+>
+>   livepatch: klp_try_switch_task: bash:1193 has an unreliable stack
+>
+> The "unreliable stack" is because it can not unwind from do_syscall()
+> to its previous frame handle_syscall(), it should use fp to find the
+> original stack top due to secondary stack in do_syscall(), but fp is
+> not used for some other functions, then fp can not be restored by the
+> next frame of do_syscall(), so it is necessary to save fp if task is
+> not current to get the stack top of do_syscall().
+>
+> Here are the call chains:
+>
+>   klp_enable_patch()
+>     klp_try_complete_transition()
+>       klp_try_switch_task()
+>         klp_check_and_switch_task()
+>           klp_check_stack()
+>             stack_trace_save_tsk_reliable()
+>               arch_stack_walk_reliable()
+>
+> When executing "rmmod livepatch-sample", there exists the similar issue.
+> With this patch, it takes a short time for patching and unpatching.
+>
+> Before:
+>
+>   # modprobe livepatch-sample
+>   # dmesg -T | tail -3
+>   [Sat Sep  6 11:00:20 2025] livepatch: 'livepatch_sample': starting patc=
+hing transition
+>   [Sat Sep  6 11:00:35 2025] livepatch: signaling remaining tasks
+>   [Sat Sep  6 11:00:36 2025] livepatch: 'livepatch_sample': patching comp=
+lete
+>
+>   # echo 0 > /sys/kernel/livepatch/livepatch_sample/enabled
+>   # rmmod livepatch_sample
+>   rmmod: ERROR: Module livepatch_sample is in use
+>   # rmmod livepatch_sample
+>   # dmesg -T | tail -3
+>   [Sat Sep  6 11:06:05 2025] livepatch: 'livepatch_sample': starting unpa=
+tching transition
+>   [Sat Sep  6 11:06:20 2025] livepatch: signaling remaining tasks
+>   [Sat Sep  6 11:06:21 2025] livepatch: 'livepatch_sample': unpatching co=
+mplete
+>
+> After:
+>
+>   # modprobe livepatch-sample
+>   # dmesg -T | tail -2
+>   [Tue Sep 16 16:19:30 2025] livepatch: 'livepatch_sample': starting patc=
+hing transition
+>   [Tue Sep 16 16:19:31 2025] livepatch: 'livepatch_sample': patching comp=
+lete
+>
+>   # echo 0 > /sys/kernel/livepatch/livepatch_sample/enabled
+>   # rmmod livepatch_sample
+>   # dmesg -T | tail -2
+>   [Tue Sep 16 16:19:36 2025] livepatch: 'livepatch_sample': starting unpa=
+tching transition
+>   [Tue Sep 16 16:19:37 2025] livepatch: 'livepatch_sample': unpatching co=
+mplete
+>
+> Cc: stable@vger.kernel.org # v6.9+
+> Fixes: 199cc14cb4f1 ("LoongArch: Add kernel livepatching support")
+> Reported-by: Xi Zhang <zhangxi@kylinos.cn>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>  arch/loongarch/kernel/stacktrace.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/kernel/stacktrace.c b/arch/loongarch/kernel/s=
+tacktrace.c
+> index 9a038d1070d7..387dc4d3c486 100644
+> --- a/arch/loongarch/kernel/stacktrace.c
+> +++ b/arch/loongarch/kernel/stacktrace.c
+> @@ -51,12 +51,13 @@ int arch_stack_walk_reliable(stack_trace_consume_fn c=
+onsume_entry,
+>         if (task =3D=3D current) {
+>                 regs->regs[3] =3D (unsigned long)__builtin_frame_address(=
+0);
+>                 regs->csr_era =3D (unsigned long)__builtin_return_address=
+(0);
+> +               regs->regs[22] =3D 0;
+>         } else {
+>                 regs->regs[3] =3D thread_saved_fp(task);
+>                 regs->csr_era =3D thread_saved_ra(task);
+> +               regs->regs[22] =3D task->thread.reg22;
+>         }
+>         regs->regs[1] =3D 0;
+> -       regs->regs[22] =3D 0;
+>
+>         for (unwind_start(&state, task, regs);
+>              !unwind_done(&state) && !unwind_error(&state); unwind_next_f=
+rame(&state)) {
+> --
+> 2.42.0
+>
 
