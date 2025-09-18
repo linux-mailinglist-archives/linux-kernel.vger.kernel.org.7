@@ -1,85 +1,94 @@
-Return-Path: <linux-kernel+bounces-823288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1887B860E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26488B860CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB93B1C05141
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:33:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D9C7C23C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B33128C5;
-	Thu, 18 Sep 2025 16:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C581A313D4E;
+	Thu, 18 Sep 2025 16:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivzsD39Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KoLiEW3a"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882132857C7;
-	Thu, 18 Sep 2025 16:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932482FABEB;
+	Thu, 18 Sep 2025 16:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758213155; cv=none; b=iUMCLqRUb+FKxN/gNrkbgK93NZi0CnCT1XiOv6ybF2osJuPa88GpKNt7s1xeGWfBFN/Yq4sS0bsFePr2a+12yT0QV1BcsTwzatrkWKdxzyDDXSSWVy41fPVXGcIeBGLv7rn9Fqr0Ufo6OSINFTucBQO0wsxdrGHedsnZ9yLdhl0=
+	t=1758213178; cv=none; b=BuFYeIxyn8GeZnS44NLNPXhuT7pzen7Cx4+spVdMKfNzhsmFnlFbyts4nmm50JmO73+g7kQ4wALgxzKmPUe8qosG1R4PWPMtnJqw2iNhjwDG4Z7Y2aSyOXykBxdWtX/iIIDe72+eqH70vMQ0YTEd/sg8WiKF3Y7ERB39U6df214=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758213155; c=relaxed/simple;
-	bh=jn+JH6LH9Wz2aiaW/mCQTihJ6exYp7EUuqN/5K7KMrc=;
+	s=arc-20240116; t=1758213178; c=relaxed/simple;
+	bh=E0d0p7FHQ7iasiKux1PPmhGP02qkAuNoAVkbkY/xVK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=caGm4oDUwpEcdbZlpMMkFQNlwhfcCNk5jHSsA6t4Lxm3uza0hasIfC6BvbX4xLhVGlyopQizDiqWCPAyO5wdQkEr33mFxkmMThx1WwsBFf5kHDHDkS/+tp+u27yiljZ4fLBo4eIVrj2E8U6yPvqx1O8X1yxOuTfUFS6RNIKP26M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivzsD39Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3821EC4CEE7;
-	Thu, 18 Sep 2025 16:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758213155;
-	bh=jn+JH6LH9Wz2aiaW/mCQTihJ6exYp7EUuqN/5K7KMrc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ivzsD39YXUGuXu9OGIwyNud7igh2en/gZCnt5jljXIPm9fgrFx50uUCDBaTxA6/bR
-	 gWennGN/qdUxGmIFou1LW9mjN4voJX4ypphbRhgcNF/0AodYjGTqHYvxJwV84n0CUi
-	 wXhIyMQ+Vj/FrBuPh7l4mGsu4C8Kp5cDFKB6JQ5hjx7qCbkZu6DBeZiqdRGk9pHgnb
-	 liwx7lt9YdZDvRyp0bT47zW6WfTvms8JkmEjXPiFladTgCOxSrm7PmYS3JHt+2Nfy5
-	 Ma9gxvI7661Ar7JaheuhK3RjVaCGkDdS7OMCMi1RsO9s3c+dJHKP9ya3SICwwqsLWB
-	 UfyB36N4OZavw==
-Date: Thu, 18 Sep 2025 09:32:32 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>, 
-	Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>, 
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, 
-	Jiri Kosina <jikos@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
-	Weinan Liu <wnliu@google.com>, Fazla Mehrab <a.mehrab@bytedance.com>, 
-	Chen Zhongjin <chenzhongjin@huawei.com>, Puranjay Mohan <puranjay@kernel.org>, 
-	Dylan Hatch <dylanbhatch@google.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 00/63] objtool,livepatch: klp-build livepatch module
- generation
-Message-ID: <qlstefzbrincl33pr73wnuas2hq6o5pj5kllnkzc2vz7xpuk6f@4ulqc57yo4t6>
-References: <cover.1758067942.git.jpoimboe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WaUpX4hFm++JEqG+5naf3vBDEUSNr5Re8Kq7vJeLoLs2uh5xh6HvrLkEenLp3faKJBxFEnW/83qCZ/sXKCNQfvAx27WP0J3A1o5LlQLwJReyPxkZa5AraKAxPGyXIkI1JJSnB5zsksV7T7r+z7eqW48q7Ab9onKLwBHeTsWCCuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=KoLiEW3a; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0ks/Dt/gG06zpcviyC2RmuMfALb4spkC/mj20Xhc7U4=; b=KoLiEW3a+FctGMCYTji6G0piKX
+	6+2sXpnGjpyCiB9GZ1aJLpE4MPYaT4SHrv8fw7rBSREmCDqF4nuUIBFZIIYmv+i3ReGtxZ8MGrp+s
+	j+YRd0HmYRcGKfIR/k6IHWq3t+jxGCnOm+ADllcYsPkFk37j3Kv81W5EGdi5YRAO43vk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uzHYr-008qze-89; Thu, 18 Sep 2025 18:32:45 +0200
+Date: Thu, 18 Sep 2025 18:32:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+	linux-mm@kvack.org, imx@lists.linux.dev,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Richard Weinberger <richard@nod.at>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ankur Arora <ankur.a.arora@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Andreas Larsson <andreas@gaisler.com>
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+Message-ID: <f4154621-be77-4c08-89d4-ab931ac3df30@lunn.ch>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+ <20250917125951.GA1390993@nvidia.com>
+ <02b0f383-1c43-4eeb-a76f-830c2970b833@app.fastmail.com>
+ <ca6fc8dc-d1ee-41a8-a1c9-11ed2907207f@lunn.ch>
+ <ea6562f4-ec8c-4e99-98ec-000c25c34a3e@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1758067942.git.jpoimboe@kernel.org>
+In-Reply-To: <ea6562f4-ec8c-4e99-98ec-000c25c34a3e@app.fastmail.com>
 
-On Wed, Sep 17, 2025 at 09:03:08AM -0700, Josh Poimboeuf wrote:
-> Changes since v3 (https://lore.kernel.org/cover.1750980516.git.jpoimboe@kernel.org):
-> 
-> - Get rid of the SHF_MERGE+SHF_WRITE toolchain shenanigans in favor of
->   simple .discard.annotate_data annotations
-> - Fix potential double free in elf_create_reloc()
-> - Sync interval_tree_generic.h (Peter)
-> - Refactor prefix symbol creation error handling
-> - Rebase on tip/master and fix new issue (--checksum getting added with --noabs)
-> 
-> (v3..v4 diff below)
+> Do you know of any kirkwood machines beside the OpenBlocks A7
+> that have more than 512MB of RAM?
 
-git branch:
+No.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-v4
-
--- 
-Josh
+	Andrew
 
