@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-823470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3404FB8695F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:53:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1D7B86978
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9DF169A3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:53:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E02F27A9210
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7532D77E2;
-	Thu, 18 Sep 2025 18:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B52D46B3;
+	Thu, 18 Sep 2025 18:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HXwS/xrA"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACE72D3EC7;
-	Thu, 18 Sep 2025 18:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggOo/wv6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF6127B357;
+	Thu, 18 Sep 2025 18:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221439; cv=none; b=U6VvsRexrwS0tZVctzwf14fz9JeiHnEnaBeqTE/VqTJKvGGLqrZac1WdCOeTq7HRPpaqENfACYAPbXjCPFWTp09YlWBkTvzaemjooZjDZ7hFRlb+fWy2ZkR6MHOcgv45a9I583Pn/eN9AvKTTESv7/1XV6OSIzhfMXBQZAdH1lo=
+	t=1758221638; cv=none; b=cEqnSh9dunaHECkyakMZcLX8enHnBA3iOP0mZ4Ttw4g32tk93nleVHaP3I6plBq4O3uF4WSdMCDu/eV5y9nNyMEo+0JgvaBKEYf5IL68XUMUtlRqSVwKGTGSNK4pEPgc0Roxz3j5ycEmPPfWKod2d+fPUG//wm9DdxoJ76fc5O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221439; c=relaxed/simple;
-	bh=gxz+eJCz0rokLGRT6TV7jyNmc/1TKTG7PL2bDriAILA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/DjlG9zqbhFmatJ5EPtbkO31Nwf0RrfyzfHcqA+BT90pRhU3CGt+/Qd7HELPzxC0zGsWtrBfRjDgKviMG0hJ94sUR7TSTkNoev7PuGQzJpSkHrwyT2vhkcWeZsJmakHVs/cjXcsZkHr4pxf+3dFJiMlXb9WaFeztHA/WkDISbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HXwS/xrA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii.localdomain (unknown [131.107.8.20])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 81A4120143DE;
-	Thu, 18 Sep 2025 11:50:37 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 81A4120143DE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758221437;
-	bh=nkckIRmNMbfy71XGeKeE26eRdwB4pFLivsPGAg37dxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HXwS/xrAi6lMcyEVQU4BYSx1OpvYjzWrZm7uKbhsqyP+BeotKSW1J8nWbS9VaUBhD
-	 6cJGG3rJmMU0eOjNyY3HZXXYeJj1GPFRjHnnCdoVDQxEXCWJJpFfsxJ/Ug7TudoSac
-	 P0bVUFfiVjt/fwvoiYOOjSebhNCJlr+qEa3DgbzU=
-Date: Thu, 18 Sep 2025 11:50:35 -0700
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
-	tiala@microsoft.com, anirudh@anirudhrb.com,
-	paekkaladevi@linux.microsoft.com, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com
-Subject: Re: [PATCH v3 3/5] mshv: Get the vmm capabilities offered by the
- hypervisor
-Message-ID: <aMxUe7WLzMXJY16c@skinsburskii.localdomain>
-References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1758066262-15477-4-git-send-email-nunodasneves@linux.microsoft.com>
+	s=arc-20240116; t=1758221638; c=relaxed/simple;
+	bh=8pFcwNdTRRXNyhxMg3EVbIUjIj9oGklWQFId1hTxeWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=WkDTKSUT7e6vZYBfwufMerreXl7Fv+gxvo1DEOfdH4MCs9emKgc5g8oB7SFkM32ZUqJm7KaATuoevAaMlSd7k3IMYQSrx0eLQRe7pUgQK4I8PuIjSYP5qRLiw0vjLlgtPjCk2w+ps93Ldcf2xkTZrwkF0frDu0n7n4qrEmpuEfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggOo/wv6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F161BC4CEE7;
+	Thu, 18 Sep 2025 18:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758221638;
+	bh=8pFcwNdTRRXNyhxMg3EVbIUjIj9oGklWQFId1hTxeWE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ggOo/wv6spysNgu8Zxg51el+9c+Z9BAXohzEw+5T15dJ+3eruutBRss9+oDCUC2vW
+	 PEeWGEyCt9dR8CEqji9p5mJLcd+FMZrCJNWWjjECY5+khLbKSIa9PoMxqUK4W/T1gu
+	 RoSutHlVDJuXpFBeL2IwrWkYFR9Fu0sH50+eZHDzCv6em8UCH6HmvAXQ+iv3EDTHCN
+	 dNBxRSIhbGYde6Njg+JNAphhQBxMFlvg/936HWE6jaV/2YoG6IQJkrCeYpXZLL2pqZ
+	 JdqFD+eXg8aoLS/s0W2Il8jmiuSOCoGjEPHxSbhwKd/sHAHXDGjgU3t6APcksbGCOH
+	 /ISDzYzl48cfg==
+Date: Thu, 18 Sep 2025 13:53:56 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v3 4/4] PCI: qcom: Allow pwrctrl core to control PERST#
+ if 'reset-gpios' property is available
+Message-ID: <20250918185356.GA1879416@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,94 +64,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1758066262-15477-4-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To: <gnaubphg6iyh23vtf2flsjxoot7psgla7cr2c5jpecaozh4vf3@mzcmg74g3ogk>
 
-On Tue, Sep 16, 2025 at 04:44:20PM -0700, Nuno Das Neves wrote:
-> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+On Wed, Sep 17, 2025 at 03:53:25PM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Sep 16, 2025 at 03:48:10PM GMT, Bjorn Helgaas wrote:
+> > On Fri, Sep 12, 2025 at 02:05:04PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > 
+> > > For historic reasons, the pcie-qcom driver was controlling the
+> > > power supply and PERST# GPIO of the PCIe slot.
+> > 
+> > > This turned out to be an issue as the power supply requirements
+> > > differ between components. For instance, some of the WLAN
+> > > chipsets used in Qualcomm systems were connected to the Root
+> > > Port in a non-standard way using their own connectors.
+> > 
+> > This is kind of hand-wavy.  I don't know what a non-standard
+> > connector has to do with this.  I assume there's still a PCIe link
+> > from Root Port to WLAN, and there's still a PERST# signal to the
+> > WLAN device and a Root Port GPIO that asserts/deasserts it.
 > 
-> Some hypervisor APIs are gated by feature bits in the
-> "vmm capabilities" partition property. Store the capabilities on
-> mshv_root module init, using HVCALL_GET_PARTITION_PROPERTY_EX.
+> If we have a non-standard connector, then the power supply
+> requirements change.  There is no longer the standard 3.3v, 3.3Vaux,
+> 1.8v supplies, but plenty more.  For instance, take a look at the
+> WCN6855 WiFi/BT combo chip in the Lenovo X13s laptop:
 > 
-> This is not supported on all hypervisors. In that case, just set the
-> capabilities to 0 and proceed as normal.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts#n414
 > 
-> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
-> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-> Reviewed-by: Tianyu Lan <tiala@microsoft.com>
-> ---
->  drivers/hv/mshv_root.h      |  1 +
->  drivers/hv/mshv_root_main.c | 22 ++++++++++++++++++++++
->  2 files changed, 23 insertions(+)
-> 
-> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
-> index 4aeb03bea6b6..0cb1e2589fe1 100644
-> --- a/drivers/hv/mshv_root.h
-> +++ b/drivers/hv/mshv_root.h
-> @@ -178,6 +178,7 @@ struct mshv_root {
->  	struct hv_synic_pages __percpu *synic_pages;
->  	spinlock_t pt_ht_lock;
->  	DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
-> +	struct hv_partition_property_vmm_capabilities vmm_caps;
->  };
->  
->  /*
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index 24df47726363..f7738cefbdf3 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -2201,6 +2201,26 @@ static int __init mshv_root_partition_init(struct device *dev)
->  	return err;
->  }
->  
-> +static void mshv_init_vmm_caps(struct device *dev)
-> +{
-> +	int ret;
+> These supplies directly go from the host PMIC to the WCN6855 chip
+> integrated in the PCB itself. And these supplies need to be turned
+> on/off in a sequence also, together with the EN/SWCTRL GPIOs, while
+> sharing with the Bluetooth driver.
 
-nit: this is void function so ret looks redundant.
+It sounds like the WCN6855 power supplies have nothing to do with the
+qcom PCIe controller, the Root Port, or any switches leading to the
+WCN6855.  And I guess the same for the wlan-enable, bt-enable, and
+swctrl GPIOs?
 
-> +
-> +	memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
+  wcn6855-pmu {
+          compatible = "qcom,wcn6855-pmu";
+          wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
+          bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
+          swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
+          regulators {
+                  vreg_pmu_rfa_cmn_0p8: ldo0 {
+                          regulator-name = "vreg_pmu_rfa_cmn_0p8";
+                  ...
 
-Zeroying is redundant as mshv_root is a statci variable.
+  &pcie4_port0 {
+          wifi@0 {
+                  compatible = "pci17cb,1103";
+                  vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
+                  ...
 
-> +	ret = hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
-> +						HV_PARTITION_PROPERTY_VMM_CAPABILITIES,
-> +						0, &mshv_root.vmm_caps,
+But I guess PERST# isn't described in the same place (not in
+wcn6855-pmu)?  Looks like maybe it's this, which IIUC is part of the
+pcie4 host bridge?
 
-Also, we align "slow" hypercalls by PAGE_SIZE. Why is it fine to not do
-it here?
+  &pcie4 {
+          max-link-speed = <2>;
+          perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
+          wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
 
-Thanks,
-Stanislav
-
-> +						sizeof(mshv_root.vmm_caps));
-> +
-> +	/*
-> +	 * HVCALL_GET_PARTITION_PROPERTY_EX or HV_PARTITION_PROPERTY_VMM_CAPABILITIES
-> +	 * may not be supported. Leave them as 0 in that case.
-> +	 */
-> +	if (ret)
-> +		dev_warn(dev, "Unable to get VMM capabilities\n");
-> +
-> +	dev_dbg(dev, "vmm_caps=0x%llx\n", mshv_root.vmm_caps.as_uint64[0]);
-> +}
-> +
->  static int __init mshv_parent_partition_init(void)
->  {
->  	int ret;
-> @@ -2253,6 +2273,8 @@ static int __init mshv_parent_partition_init(void)
->  	if (ret)
->  		goto remove_cpu_state;
->  
-> +	mshv_init_vmm_caps(dev);
-> +
->  	ret = mshv_irqfd_wq_init();
->  	if (ret)
->  		goto exit_partition;
-> -- 
-> 2.34.1
-> 
+Does that mean this PERST# signal is driven by a GPIO and routed
+directly to the WCN6855?  Seems like there's some affinity between the
+WCN6855 power supplies and the WCN6855 PERST# signal, and maybe they
+would be better described together?
 
