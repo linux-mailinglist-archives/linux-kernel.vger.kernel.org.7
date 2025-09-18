@@ -1,96 +1,101 @@
-Return-Path: <linux-kernel+bounces-822394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF32EB83BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D63B83C1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75964A799F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:18:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258B63AA4C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E183009D2;
-	Thu, 18 Sep 2025 09:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528152F9DB8;
+	Thu, 18 Sep 2025 09:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRa3I+6C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZUPqNwxf"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AAB2FE566
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78A02FDC31
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758187077; cv=none; b=b3tqc2EKkOy8tB+lTx+YbyzuyegIKsdqo/WFU8e1w1JRi2DUdy8XAZQlTpei6QhuR6jyByTxFuutl3aV7EBZrCXH19f5tYDVuljFk14EgtvJgttyRpVgeMyhctTY1TMyr3p5oq7E1KKUPzRNRPQtA4VEOLqlIs2eQhheKxGyqDU=
+	t=1758187256; cv=none; b=qGTdKPwen/Dqb+CHq6psCNe/jVamadlIm8Ps+QsicwBnHetuYDH8d6b+b90mCinhwsebThH+eDudQkteG8/NFkSVvRBstHbUyLawt4lBiA9324wFKxRJvZcZaoFwXLYeEOHa1CRRVXVuiGcfx8xjNrGjxOiMNjoQatJBiruHWIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758187077; c=relaxed/simple;
-	bh=rfHpVYsz+LrgOrP1QEgzaGMMnKQ4d6J/nCg6YanDA4U=;
+	s=arc-20240116; t=1758187256; c=relaxed/simple;
+	bh=TCE1d2/F9tKcuAnKIUgFTvGNx5UdIG1BrDoUsI/h1jU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uAPsEXLVIT5vSIZRFmp4z8nOzZmYttqda6XIKymQvEsOITNtWyLUI6oBHsoIoFcLgL+5f7X30vT/HrS2atkVRIGeBQLE4ra9iYgoZshXMK2kvSUPIP1Q7unsiyA3MwHcJKZfdTxKWFdgGmGLIeGqy8aB7pd+q37OTQK3cAXLrGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRa3I+6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A726C4CEFE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758187077;
-	bh=rfHpVYsz+LrgOrP1QEgzaGMMnKQ4d6J/nCg6YanDA4U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vRa3I+6CW+7IRBuSzDvAPNVFtQpcB8VOLC3NdBW2WgH28kXMh8Pyclaamq4qtmgMK
-	 Ce3OvTH2w9ZBCoJKWgnJ4G0vZslaeZ6ahmsYhniUTQ79iC/VFPJvJkcBraJISWtIxK
-	 cjbl3rVvcjwVKkPaZGpubf5W42MkdFR5koDzlrorLCoCs0o1IoQnqSJPcBNapTjqAF
-	 xbOlw8GFmS3fVwUAXjJUWV7vPBCjBedKcAZ2m3JooVaHD93fyTHZztVYcMxq9aalcF
-	 G5xT86ySHCxWMDyQznvpQFLdaRe76ZG8C32UQ2nFNykkJeHIBEJ50OnVSZ6h7/q2zs
-	 9mAHd6NHS5tLA==
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7ae31caso119386966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:17:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVn1f0A+l8mTQm1//GPIEgM7OBSCAO4JyGMiTCVvORa959CgI8tPby2aVxcNBC8uUH3dDOMKRgwjNsEyWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvJTrn2FHy9XVDptr2a+cVEeaRMkkhUsF3kyFv9VDsoZ/X0Bx2
-	7HM9zrxbDDvQqqDUWdhiV6Y0VcLJ8u4aaOld8NAIUeD4pffAGQGSWrNJNyNpAyR6GlfQbvtRCea
-	teQXXU2llsLChfiZtba7cDFa7iPbc9io=
-X-Google-Smtp-Source: AGHT+IEaO0AccnvsrVO5WQupeLcC91jL4HCApS2nshemafnNT7Lf9Pj4OuN9prp9mfMzZL4AiGFXW/M4xLq3pFGi5zM=
-X-Received: by 2002:a17:907:6ea7:b0:b04:2452:e267 with SMTP id
- a640c23a62f3a-b1bb99283d3mr560770266b.56.1758187075627; Thu, 18 Sep 2025
- 02:17:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=HjLJ3wLgc3WbHYwG7Mm1pgnFx3Z164PZF1bnSMTCK0+IuOT33VNQfcPgwBRFvZn/aJ4KeJekIiSa7q1emiIRLC0jy/AHp0jhT6Ape2bBowINTOcxTSUPtBwy/OJMlNOCX/rcaIdjno6nikvKCZG1F4iymwoaefthlFS4S03lLFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZUPqNwxf; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-336d84b58edso6209421fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758187253; x=1758792053; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TCE1d2/F9tKcuAnKIUgFTvGNx5UdIG1BrDoUsI/h1jU=;
+        b=ZUPqNwxfDc6wwdtqGTUE8x0SeZLguPWtUGFFdj0WKdU+pv0dcCHM+4TlygInyhYotF
+         wpDA3wNSZBjCqVtLwpwJO8QiGyOzzEXDJ7JB7VTSMVoOhCsISnBmCUTzM24oEUu89hrm
+         Ad2Ue9ICxW1erXjwIcJBePAH47OF6/REcC+P28XVPa3yhNsCuZquW0uYgMl3s+Eid6hV
+         /OvHWJ0zgnRWXVSOvpVEZQ8v9iPW/K4kpbT8Wefjv1yJI0iy2YZ6CqHw3WsILAmU0NQP
+         kmya2O64qlvvNyuGdbqAFNOF1t/yHF8RKziBwkTFfHbAEhkwa0OtlE/wWfD0nZaoohMq
+         yhLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758187253; x=1758792053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TCE1d2/F9tKcuAnKIUgFTvGNx5UdIG1BrDoUsI/h1jU=;
+        b=imuh8ZqVXTA9o1Zdd16TPLIGoY/fngLF7jgoqvwkjBQMYNQ7Ygks6EW5U0yif3faRS
+         3+WlHwQypr8bk9BXAVimQoc0r6CqikieMq1S4OtQJuQpBYZxupnoFuJPyA61G+pMQvjq
+         W6VZC1F6ZaXpLfY5HXd9FXJCUiyfxt4oi/eU4pUPZqX3zmoIqoZyER04Ccp6M8Y7ge+Q
+         seY4r7pTk69++l3o/LFPf9AIouj0/X6fYwleubKPJzBy2SyohiRLoaXR21Mmfv3YO+an
+         fydBePL+FaaRZGM1TDK+1XjfnkmVE+keVouaOn7YAEXxnl59RJDYU8KRqdsJBEOcudTP
+         hf6w==
+X-Gm-Message-State: AOJu0YzSKj5qIIEocT+dPE9ALix4/cz7KOCRVBjAVwD22208B7/hW1iU
+	c9JWUKvsurb6MZgJsP64UPpUWdeonqfObzB4YeUrtndc/VNHd6e0JGeHuMCb7sfqE+5pFQcVcsF
+	8HsOzBS8T8urK/LrnOO3g4jP2Lj4tfHRLLdPFADpUUR4v+DEKKnkn3Dc=
+X-Gm-Gg: ASbGnctm2FWU5IlvcRU3UtNCvoRH6d48daeao0fIcbXw5GZ4FaVU3qDMKdp7kM6h0wt
+	GJYWDBWMU5cpWKsljincBH3Mv20QJOARyVUlNoCTK8DnueIjI9Q9KtsPay+aAUop4gd7RN/MsYP
+	abnKwGXlBLVic44yAJoqZudvy5RhBh8ga2dvcwcSHqyumXhTnSm84ErHZQrZO2zSVnxsISozVcb
+	mh1vCqmauSTRB+NF2loXXe1Ttd2CBF1XSfb+auEADYLnwFtnunJT7IReE2oix+DOcQbYA==
+X-Google-Smtp-Source: AGHT+IG3lQwbjQoCWqhOZfFGtRxvks3XQvszM83wU/zGVXvaawKGcOSsxwDAFg5NJVNHdJ7v8aT4BhPuhrhJ6GsYH2w=
+X-Received: by 2002:a05:651c:2541:10b0:337:e4a0:cd11 with SMTP id
+ 38308e7fff4ca-35f63aaf1b9mr15519771fa.22.1758187252841; Thu, 18 Sep 2025
+ 02:20:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916122516.21013-1-yangtiezhu@loongson.cn>
-In-Reply-To: <20250916122516.21013-1-yangtiezhu@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 18 Sep 2025 17:17:43 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7XKZPUTzer_bOC8Ubf4hf=m+pddL_k6rfUX8LNdtgJeQ@mail.gmail.com>
-X-Gm-Features: AS18NWBd16WZo4XAAywSXYzNfr9INp6n_5Wv5tWpflmKGVarYk1SEgXYFkXMpHU
-Message-ID: <CAAhV-H7XKZPUTzer_bOC8Ubf4hf=m+pddL_k6rfUX8LNdtgJeQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] objtool/LoongArch: Decode more instructions
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, WANG Rui <wangrui@loongson.cn>, 
-	rust-for-linux@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
+References: <20250914134426.43269-1-marco.crivellari@suse.com>
+ <20250914134426.43269-2-marco.crivellari@suse.com> <aMnJ-7PKbo6Lf7h_@slm.duckdns.org>
+In-Reply-To: <aMnJ-7PKbo6Lf7h_@slm.duckdns.org>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Thu, 18 Sep 2025 11:20:42 +0200
+X-Gm-Features: AS18NWBhh41GmRa7CF6IyDOm7fm4HH9iqiqvryq1R-Nu87HZh8zWTMRIsLUuLS8
+Message-ID: <CAAofZF6-s3fObu5ybbbUF9t2ZOmUhDcRwm+Uxen6Yp1wJZWwbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] workqueue: WQ_PERCPU added to alloc_workqueue users
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Applied if no objections, thanks.
+On Tue, Sep 16, 2025 at 10:35=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+> Applied to wq/for-6.18.
 
-Huacai
+Many thanks, Tejun! :-)
 
-On Tue, Sep 16, 2025 at 8:25=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> v2: Add patch #2 suggested by WANG Rui.
->
-> Tiezhu Yang (2):
->   objtool/LoongArch: Mark special atomic instruction as INSN_BUG type
->   objtool/LoongArch: Mark types based on break immediate code
->
->  tools/arch/loongarch/include/asm/inst.h | 12 +++++++++
->  tools/objtool/arch/loongarch/decode.c   | 33 ++++++++++++++++++++++---
->  2 files changed, 42 insertions(+), 3 deletions(-)
->
-> --
-> 2.42.0
->
->
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
