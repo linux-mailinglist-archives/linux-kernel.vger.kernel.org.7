@@ -1,99 +1,307 @@
-Return-Path: <linux-kernel+bounces-823668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D90D0B871CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:24:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED3CB871D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D565583063
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:24:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C0A58307E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4622F3630;
-	Thu, 18 Sep 2025 21:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0612FA0ED;
+	Thu, 18 Sep 2025 21:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kD7PB1mr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gdQ/WlwV"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011007.outbound.protection.outlook.com [52.101.62.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7C52D94BD
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758230589; cv=none; b=bZIFTub4PPvEHjo0YwkIU6OPKTC0xQ+91AWVRTF51NhnFJZ87OVGbo6X7CVALVfky0DdiibGNjbG9kh3hc7xjoC5ykitySI2YXQs59gHbQ+RRqLSqRfF2+TvookUJeNaqb7sKUQko/BdKkXtmKrS0C70Q79Hs42seHZ2/Ns4D3w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758230589; c=relaxed/simple;
-	bh=VbZkG/v70rqi7z7N1pTVa6zRe4mCzIPmWrbfM/43Ga8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L24osg8EEfnXFJDgHliEz3hSHTMxl5WOidvWvh/EUWmKx3iqXY3rgE9jTb55RzAVQ7m4Xl3kEgJuLZLw0RIjP4TpMwDmQCTt3zSlht0Iul+tNIYWmS0xslKHV0bLGoWMQnpD5AuwMk0wZc0jSC8lz/yTjSpUvK7MOtQZWwJYTq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kD7PB1mr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 914BEC4CEFE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758230589;
-	bh=VbZkG/v70rqi7z7N1pTVa6zRe4mCzIPmWrbfM/43Ga8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kD7PB1mrg7Lj9Q/x6Ti3nSbl5JpNit+fFaNf0iUUnADKMg8mg1NpPZiNkYTwacwpM
-	 pnZhkZfSppkG0+B+cZ/MDVGpurtzHl+G+5QziXg9jHB2EKf1dMUs8VJX6VPgsDtSGo
-	 Im6rpb72KFYtVC8tgP/FvJ5DEFAuGCiKlmGrP9jHj3fMSOueHIDPcHayX03QutHP5A
-	 jJIER18oVP4EgGGv2ii6BUHZ9+7NYJR2AirmfuGO6zqq2JoT+7p2gGJny2j20ZQsau
-	 ghlpBjFXfTHvh5ty0lvkh7w02rq0T31hHEW9tcx97JANcvZ6+3n20Q1zYWVmi4eicG
-	 RekwjXjiHp1AQ==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-62189987b54so765921eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:23:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXfmrdBCvFQcqx1O+H4YSv8aQmxwq9t5hd3llJoaVg5tFc1gzd4yAsKJV8vhwGQpI1AU2aCaEO1KHriNfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHtqNtBe/PO4rvpwX5qst7Q2F24hjdFqm1wb5fobXGCQDw6Mjn
-	ZOdukTlNEa/X82o99svTk+5NxtjiJF0REz3v3a4w4Kr5vEeKPJdXcVroCgvkuxb54wCZ5KRtJ77
-	r17eUBYRXSeKzYdmBFC1t6VCXfT7rifo=
-X-Google-Smtp-Source: AGHT+IHGQ2i97wKX3gGqiDAvr3Z/2v5iTYlX3GIRgXjB46LU8qnsydsr7tA4O+HPeCIBF3QAZ1x9ll/9mdEUb463CA0=
-X-Received: by 2002:a05:6808:1803:b0:438:3b96:7cf9 with SMTP id
- 5614622812f47-43d6c178dc6mr407863b6e.15.1758230588842; Thu, 18 Sep 2025
- 14:23:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481DC2F7463;
+	Thu, 18 Sep 2025 21:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758230623; cv=fail; b=jqNkGjVZN9HhMMdCFkA32SDTvNLSjgy1dGRGaZxmDmraXJD3itJUvO8UHY5iMsnmWF6TpgOvnSDT9vTH7ij8Tr/u7AdEfZ0Z/6J2NDE+L1S8H/8osRq6TxuNnv4+Hhlxzp8nq+xAwNuWJpM/OOO8EYt5oaYWoIN3Vje/Tbqnoic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758230623; c=relaxed/simple;
+	bh=UcQBeAViy1fEd2eYuSrZOKAhLAR4CwObhvBRvSBlH7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XNb3F15Qa7anDHVZRwuM4/ScImDQQcLc8fwdLaPi8PX75KdM1JvBdsouCldGx4PCGvn+ZSf4XT6FTcnUvwSKwfHmb/FsaTzgI++3aK1rfkLULa10SFVj9GERSL3Qi1fLRL5JWpwhcgLHGWS3MKHLA1gWZ8rjbKLBtCHOJqDePIc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gdQ/WlwV; arc=fail smtp.client-ip=52.101.62.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a8y6O7lEBFAhEHTTwU9bAmO2RH+gRsS+LkTJzL+xZrbYtxHUd3dRFula3eIDyXCCPG8aDWrQliy5f3UZoHYcLU5P5/oy/gUK3g32cvvfJY0EIiZ748zIu+QSJytYhQin6tg1JoN7dQZVC3wyvRoqjsXmmDQooyaacPz84ecPfYKGILfF6Hs6Pcg8RisgVbboT8159iwkBOTmp5fJ3E+vbFWQNBUUMHVxV5XmF70lm9sUKob+aWq3mfhKWIMcnT2I7bQPBYvKFX9VrRP57OyD3OwVpprjs07dnba7wdq2wLITd4Xj/+SO9DrJadxtz25fEGZCL5z7ca9s9VdzHa2+xA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e44kzZjkoAnm6XDjmByCC+2Sr9OAS92mIFsjAe5cWbE=;
+ b=ae+ns+s8HJUFtghHFoj0uEj0QPUjZjr+t0rpulEhYsgrHrr7G0SEYL5UbVNBbYYqn9DiDa5LxjDaVAypSsOO1LtDW47DSL+U7l9LKyJ3QtHOHP1DB+EBkPWz6V+EOlx4Ktaun+Anr2csZJf/8ePXeAGxrLouSG8v3ogobSJr9G6D7YVKCzEgx/gaYDT3KnpFZiAvKw4gziIobOz/CZHiJB6UkY4JNUPOSfz8FAxQ8LbptVUBQhspoZnzFqykeXpmUtLFjCedcs66yYhwAXvvd8RWqlVj8svcGPEZpE+il5momD8GUlkwlX/UnsZ2BeExAXX0NvobT8a7SG6s29YzeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e44kzZjkoAnm6XDjmByCC+2Sr9OAS92mIFsjAe5cWbE=;
+ b=gdQ/WlwVUvfqjm948Dmd68h9tOn00LlXcqWOPBvvXdZKiyC1qk9BUpViOrkL5oNrztczwq8nIs3HbOXr6REBIXWmFgJJP0/fvepu7E8+7rnBse7VGoyogK3hxavtwFQuZ2+vnrNU225LE0OVkmSk1UyzFaAalPc37rEKK0eQzjE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20)
+ by DS0PR12MB8367.namprd12.prod.outlook.com (2603:10b6:8:fd::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
+ 2025 21:23:38 +0000
+Received: from BL1PR12MB5995.namprd12.prod.outlook.com
+ ([fe80::4c66:bb63:9a92:a69d]) by BL1PR12MB5995.namprd12.prod.outlook.com
+ ([fe80::4c66:bb63:9a92:a69d%3]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
+ 21:23:37 +0000
+Date: Thu, 18 Sep 2025 16:23:27 -0500
+From: John Allen <john.allen@amd.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Mathias Krause <minipli@grsecurity.net>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+	Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
+ GHCB when it's valid
+Message-ID: <aMx4TwOLS62ccHTQ@AUSJOHALLEN.amd.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-30-seanjc@google.com>
+ <aMmynhOnU/VkcXwI@AUSJOHALLEN.amd.com>
+ <aMnAVtWhxQipw9Er@google.com>
+ <aMnJYWKf63Ay+pIA@AUSJOHALLEN.amd.com>
+ <aMnY7NqhhnMYqu7m@google.com>
+ <aMnq5ceM3l340UPH@AUSJOHALLEN.amd.com>
+ <aMxiIRrDzIqNj2Do@AUSJOHALLEN.amd.com>
+ <aMxs2taghfiOQkTU@google.com>
+ <aMxvHbhsRn40x-4g@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMxvHbhsRn40x-4g@google.com>
+X-ClientProxiedBy: BY5PR20CA0013.namprd20.prod.outlook.com
+ (2603:10b6:a03:1f4::26) To BL1PR12MB5995.namprd12.prod.outlook.com
+ (2603:10b6:208:39b::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911112408.1668431-1-lihuisong@huawei.com>
- <20250911112408.1668431-4-lihuisong@huawei.com> <CAJZ5v0hb19Xy8dOP4itU-F5F7OjDXBVNGYiwoxAVc_yGuUv=Aw@mail.gmail.com>
- <1e55d104-9746-4b37-8663-12714cc00026@huawei.com>
-In-Reply-To: <1e55d104-9746-4b37-8663-12714cc00026@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 18 Sep 2025 23:22:57 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hAYpBWTpfJV6ZVX0tLiZZ-S5ABxpmqckxYcPyMyZrJfA@mail.gmail.com>
-X-Gm-Features: AS18NWCxfAR6ZAMzg47DHou5V_ImLvRX3FXur0VvcmlaJgffPfwtobWxuLqYeJk
-Message-ID: <CAJZ5v0hAYpBWTpfJV6ZVX0tLiZZ-S5ABxpmqckxYcPyMyZrJfA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] ACPI: processor: Do not expose the global
- acpi_idle_driver variable
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5995:EE_|DS0PR12MB8367:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28529ffa-f679-4561-81c4-08ddf6f9a12d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Fct38E3k30d1uQsS8gh/ogaVD5P1MVphXhmcWUvDBa2/aRNM5m6ASSBw8R56?=
+ =?us-ascii?Q?Y1AoyVkF+jHfnXRI4+fNqfwOGsUMiQLWTOuzzRNu6JT5zchkr92gpXwHau0R?=
+ =?us-ascii?Q?ywxhNs/nPKH6R7VKiEmE2EPndE1FeIeWPoFsFrEw4sM6oE59WeMmGUx7GEO9?=
+ =?us-ascii?Q?gdpN9V30ItV+x81eFs7HmwlNnu2YB6dnAYCS3QFtBU0vGCN5YPG3yNpTYdHS?=
+ =?us-ascii?Q?jo8hECHCNrix5s+afkEY7o0aRaJJUDsnuAfPo/BVGi53tTnWzsbhqwihF8hs?=
+ =?us-ascii?Q?8+k9qtalGnbyXHeOIUjagA6NBZajp5qrda6p2SPc9dd0092D9bhIGD9LN8xr?=
+ =?us-ascii?Q?DWuHCIfba/O69FsXIgMvX6IUdhpqpDPmGjh1j6jelckG1dgoC2x5DbTOUcNr?=
+ =?us-ascii?Q?lnLBL2Os2jcdRV4qZDmS9kNdxb4WrNJtv4oFphSXWbvjaLNl1/Y7zOcBrfOo?=
+ =?us-ascii?Q?8CdFRaw3l4bWAdP2R95q0NPdnMZ5GLBm9UUH2er0Kk11jbKGFh6zBLQ6re9A?=
+ =?us-ascii?Q?jdnj2gyRmyEnRTztL1NChVqi4zXFsoThCQZqSsJPUKJXqo4fhW092bi4s0I8?=
+ =?us-ascii?Q?meImyUF5siE+HP840/hzjQ2TfBcjY3HILeP30PhPddRISiYQeYdVjtX8cgOg?=
+ =?us-ascii?Q?YW7aVWUCM1bYmJGCC8Q4y48VcizA7uN2eiPoY01OTPV3NcrBF4Qv8MACAvI/?=
+ =?us-ascii?Q?sP3F2o0OQm26HkQeDeWmKab4e9/WfdS/cHWOJc3g6vmToH11dv8CzSCRYvSI?=
+ =?us-ascii?Q?UTY/H1g60Z6UV4k2sCr0JYlDvp3tW5VucS2OIvC3Zmd+M0ok1nZ2gaN38sxG?=
+ =?us-ascii?Q?CQTzgQH0Gjvw6/0m/oj6V9558P8YVxMa42kJ8HVqckWmG2EXaoH8ZKHZA8mQ?=
+ =?us-ascii?Q?Kh7tKaexnUDYjTtHAXWNyTQuCFBkP9q/8Vw2Wx3oXood06KwydKtqFtw1fKe?=
+ =?us-ascii?Q?+RcupAfRObu14GHsFgsMIBF6Feym5ua5s6uQ1J+WcV+MZ9/850K/hYpbfjEq?=
+ =?us-ascii?Q?2JNz4EhSkJxO0PeRRymfVOnVdM7CvR1Wsncx5LxhPyE18eXWHDTDSLO609RI?=
+ =?us-ascii?Q?noDpzOnVIIkWcy7gT8v899ZAFb4aQydfXEiAwz6nAk6vvcGw2IL62tjje/ix?=
+ =?us-ascii?Q?jchTcTTD6NeKZs7xd1G1GecpGZIti2dnuR2HpqMCxmbyMcwoGnQwx+wigytY?=
+ =?us-ascii?Q?ZMRDQfuOjYpkMPSNTDJMeKhP+marO3cJGS8wX1X9MiY7ZR+ZCCeEB2554wJ6?=
+ =?us-ascii?Q?Lpuv+vgt8H05s4FQXvny/jgFjzbJCIFlNG+iGM4gIwRoEaE7o60le9fVKlPq?=
+ =?us-ascii?Q?iE0ZsmJgV3nUZZXnyxNzuvaTpFAxM3aUkwQK/2ZxVIh868gXHlOiErDOBDgD?=
+ =?us-ascii?Q?KGYln/WwQn5Yd6KG3V70DyTQssVLIEWP5mHuHWsAHrgNpWgQT+8qi2hTVAcO?=
+ =?us-ascii?Q?GjPxBP6UtqU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5995.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eW6m4QyaBKpKJMPG7d8Sw0bOW/8fICD7AGhhRSnPHroKVvaqBjVBSterSi3e?=
+ =?us-ascii?Q?Mc/vrQXRHJqCPJB+OJ/p6hhX9LDUyXtzQZ896+RXc5fJCxJsIv4R4NAEO0P6?=
+ =?us-ascii?Q?jgC0rjr2F73B5O2SOrCarmteiWJKUzKXgUEpuH6FspKLloGw5iwHpxiV0mf/?=
+ =?us-ascii?Q?umF3wh2JPZKYyAdV4m27baLQu+H+x7mlvQ+tC+ddbytnrO2fql9wGQP3Vpjy?=
+ =?us-ascii?Q?CdTu7iPUmHesZelpCud890sLfDyPrR1ch5yhs3qqZaRNNCl/mJs01S4CkBDH?=
+ =?us-ascii?Q?GsteoIrrsLQ036RrgqZM8UZwEmcshEEYxOCHAMm9zaAJIs6g4FkBh10/870k?=
+ =?us-ascii?Q?2VYjkhGeucovZcYgJdfTEcEcSYGjpcaQhk2cr96JpBTZnNoyknXdlN0DsynG?=
+ =?us-ascii?Q?2jPxwRdVJwwJX/sllqLb+BKFGS/f202ntLSC00FKwNFcgUa+exNxDM3/WULX?=
+ =?us-ascii?Q?a8jSzaVuK+v0PfGleSmUnbFq7CE1JFP2OE8xFXbz8lsywDxW9C2RB+bHLUwV?=
+ =?us-ascii?Q?aUIklIjP/7pctd5vuyWPlTYG80BT1w7S3+fr5MUXnWypyvmB/fI+brntaGYI?=
+ =?us-ascii?Q?IaSGCBaPnJ9szDKX8al/CiDf6X33XlFImn3D6IX1cr/0rty3g1oayQoO+dsk?=
+ =?us-ascii?Q?aKnkCkCqwgVnXkRWVejL6/73hVJnSSRXtGmWJ/oAhfg0LEOKo3XZ2Mw/IgkL?=
+ =?us-ascii?Q?PQwNX/25UohecXeTn1MKrpsxzMSISt6JuvbXf/3b6GCB3HSza9ARcTMGxoDl?=
+ =?us-ascii?Q?a1fSvsiF7Cm/CRGOIVM4cyjP0F9zm9QvK7v45HYy0X8n2xSnfLQDbK8cJSTz?=
+ =?us-ascii?Q?CRmTTymcK6VcGA969OYJzy0ACNp38LX1F0qQLMkGuA4ZvZ2EJCc58XYuRhLe?=
+ =?us-ascii?Q?MgEISZFU1n3s/26q2SXJXt/3/R8AP2LCJ4MJ7I90cpeQjancbngXhqpaRqPx?=
+ =?us-ascii?Q?yQzxlfCXBqZ4Z6yN9b9mW4isobhAUMMOmA8uimya8inPuWcz3XzSD0Xi7JY2?=
+ =?us-ascii?Q?wN+NKSvT1JRfbyOACUQ5eBTYHOPb/BdYOrAtObEXZuIb9AsRuhfKAvjgipc4?=
+ =?us-ascii?Q?tiv5xWri66dtzlToKMsA2NFRL4GJO2U5kMU3Z0fFFoJgKM8/J9AlCPpeKMnw?=
+ =?us-ascii?Q?sV3lvBQU3o4BHr/xXFPI9ipTtZPteiV44WXFphAyfDeNvGLmHxTBIaOFa1AH?=
+ =?us-ascii?Q?U5bV7LGgK+wIofIq05jnQ/42qOCT5nuzCbL9YiBf4YpwaaMoqxErHevBG45N?=
+ =?us-ascii?Q?ezS54ZM7Y/4BNK7pekSWBhl/QXPrBxzcNJVR5L2rDvEEvNL+jAKqv2ueTAhZ?=
+ =?us-ascii?Q?FfPCZaZPKr8eVJqWxI9l6E/E6FMJQ1TSoABPjLUHEtaSguq4zciRHkl16USn?=
+ =?us-ascii?Q?3mEFxg6DUQIID0BmuxBCgUX5tOgJSpOZqiqfV4LWcO4YK5WdIaDJaqac2Blu?=
+ =?us-ascii?Q?yqDBpRO0yTIeO7DvqphOGYU9edhWHs9CbeRHIH0IK+UbvGgb4ParBEz2uU7x?=
+ =?us-ascii?Q?IzKY/nMlcAViotcSu/CLzxLFdpmxVEPQmYEj5pNmrf3RtsPBMybKTbUivat1?=
+ =?us-ascii?Q?izZDGidksUb6pwE8oUhxgFeulYq87gnTmo8aw2Qg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28529ffa-f679-4561-81c4-08ddf6f9a12d
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5995.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 21:23:37.0582
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q1VvN2/H18FZZS8fQWfUXsWy+eN1WZyHnVhFDtK0vHm+ytWC/6/haH7wKOkM4HnkPoYf5joFfBOdEW4u9th5fA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8367
 
-On Thu, Sep 18, 2025 at 2:23=E2=80=AFPM lihuisong (C) <lihuisong@huawei.com=
-> wrote:
->
->
-> =E5=9C=A8 2025/9/18 4:01, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > On Thu, Sep 11, 2025 at 1:24=E2=80=AFPM Huisong Li <lihuisong@huawei.co=
-m> wrote:
-> >> Currently, processor_driver just use the global acpi_idle_driver varia=
-ble
-> >> to check if the cpuidle driver is acpi_idle_driver. Actually, there is=
- no
-> >> need to expose this global variable defined in processor_idle.c to out=
-side.
-> >> So move the related logical to acpi_processor_power_init() and do not
-> >> expose it.
-> > And it can also be made static, can't it?
-> ok, will do it in next version. Thanks.
+On Thu, Sep 18, 2025 at 01:44:13PM -0700, Sean Christopherson wrote:
+> On Thu, Sep 18, 2025, Sean Christopherson wrote:
+> > On Thu, Sep 18, 2025, John Allen wrote:
+> > > On Tue, Sep 16, 2025 at 05:55:33PM -0500, John Allen wrote:
+> > > > Interesting, I see "Guest CPUID doesn't have XSAVES" times the number of
+> > > > cpus followed by "XSS already set to val = 0, eliding updates" times the
+> > > > number of cpus. This is with host tracing only. I can try with guest
+> > > > tracing too in the morning.
+> > > 
+> > > Ok, I think I see the problem. The cases above where we were seeing the
+> > > added print statements from kvm_set_msr_common were not situations where
+> > > we were going through the __kvm_emulate_msr_write via
+> > > sev_es_sync_from_ghcb. When we call __kvm_emulate_msr_write from this
+> > > context, we never end up getting to kvm_set_msr_common because we hit
+> > > the following statement at the top of svm_set_msr:
+> > > 
+> > > if (sev_es_prevent_msr_access(vcpu, msr))
+> > > 	return vcpu->kvm->arch.has_protected_state ? -EINVAL : 0;
+> > 
+> > Gah, I was looking for something like that but couldn't find it, obviously.
+> > 
+> > > So I'm not sure if this would force using the original method of
+> > > directly setting arch.ia32_xss or if there's some additional handling
+> > > here that we need in this scenario to allow the msr access.
+> > 
+> > Does this fix things?  If so, I'll slot in a patch to extract setting XSS to
+> > the helper, and then this patch can use that API.  I like the symmetry between
+> > __kvm_set_xcr() and __kvm_set_xss(), and I especially like not doing a generic
+> > end-around on svm_set_msr() by calling kvm_set_msr_common() directly.
+> 
+> Scratch that, KVM supports intra-host (and inter-host?) migration of SEV-ES
+> guests and so needs to allow the host to save/restore XSS, otherwise a guest
+> that *knows* its XSS hasn't change could get stale/bad CPUID emulation if the
+> guest doesn't provide XSS in the GHCB on every exit.
+> 
+> So while seemingly hacky, I'm pretty sure the right solution is actually:
+> 
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index cabe1950b160..d48bf20c865b 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -2721,8 +2721,8 @@ static int svm_get_feature_msr(u32 msr, u64 *data)
+>  static bool sev_es_prevent_msr_access(struct kvm_vcpu *vcpu,
+>                                       struct msr_data *msr_info)
+>  {
+> -       return sev_es_guest(vcpu->kvm) &&
+> -              vcpu->arch.guest_state_protected &&
+> +       return sev_es_guest(vcpu->kvm) && vcpu->arch.guest_state_protected &&
+> +              msr_info->index != MSR_IA32_XSS &&
+>                !msr_write_intercepted(vcpu, msr_info->index);
+>  }
 
-You may as well rebase it on top of this one:
+Yes, it looks like this fixes the regression. Thanks!
 
-https://lore.kernel.org/linux-acpi/5044465.31r3eYUQgx@rafael.j.wysocki/
+The 32bit selftest still doesn't work properly with sev-es, but that was
+a problem with the previous version too. I suspect there's some
+incompatibility between sev-es and the test, but I haven't been able to
+get a good answer on why that might be.
+
+Thanks,
+John
+
+>  
+> Side topic, checking msr_write_intercepted() is likely wrong.  It's a bad
+> heuristic for "managed in the VMSA".  MSRs that _KVM_ loads into hardware and
+> context switches should still be accessible.  I haven't looked to see if this is
+> a problem in practice.
+> 
+> > 
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > index 945f7da60107..ace9f321d2c9 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -2213,6 +2213,7 @@ unsigned long kvm_get_cr8(struct kvm_vcpu *vcpu);
+> >  void kvm_lmsw(struct kvm_vcpu *vcpu, unsigned long msw);
+> >  int __kvm_set_xcr(struct kvm_vcpu *vcpu, u32 index, u64 xcr);
+> >  int kvm_emulate_xsetbv(struct kvm_vcpu *vcpu);
+> > +int __kvm_set_xss(struct kvm_vcpu *vcpu, u64 xss);
+> >  
+> >  int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr);
+> >  int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr);
+> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> > index 94d9acc94c9a..462aebc54135 100644
+> > --- a/arch/x86/kvm/svm/sev.c
+> > +++ b/arch/x86/kvm/svm/sev.c
+> > @@ -3355,7 +3355,7 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
+> >                 __kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(svm));
+> >  
+> >         if (kvm_ghcb_xss_is_valid(svm))
+> > -               __kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(svm));
+> > +               __kvm_set_xss(vcpu, kvm_ghcb_get_xss(svm));
+> >  
+> >         /* Copy the GHCB exit information into the VMCB fields */
+> >         exit_code = kvm_ghcb_get_sw_exit_code(svm);
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 5bbc187ab428..9b81e92a8de5 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -1313,6 +1313,22 @@ int kvm_emulate_xsetbv(struct kvm_vcpu *vcpu)
+> >  }
+> >  EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_emulate_xsetbv);
+> >  
+> > +int __kvm_set_xss(struct kvm_vcpu *vcpu, u64 xss)
+> > +{
+> > +       if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> > +               return KVM_MSR_RET_UNSUPPORTED;
+> > +
+> > +       if (xss & ~vcpu->arch.guest_supported_xss)
+> > +               return 1;
+> > +       if (vcpu->arch.ia32_xss == xss)
+> > +               return 0;
+> > +
+> > +       vcpu->arch.ia32_xss = xss;
+> > +       vcpu->arch.cpuid_dynamic_bits_dirty = true;
+> > +       return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(__kvm_set_xss);
+> > +
+> >  static bool kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+> >  {
+> >         return __kvm_is_valid_cr4(vcpu, cr4) &&
+> > @@ -4119,16 +4135,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> >                 }
+> >                 break;
+> >         case MSR_IA32_XSS:
+> > -               if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> > -                       return KVM_MSR_RET_UNSUPPORTED;
+> > -
+> > -               if (data & ~vcpu->arch.guest_supported_xss)
+> > -                       return 1;
+> > -               if (vcpu->arch.ia32_xss == data)
+> > -                       break;
+> > -               vcpu->arch.ia32_xss = data;
+> > -               vcpu->arch.cpuid_dynamic_bits_dirty = true;
+> > -               break;
+> > +               return __kvm_set_xss(vcpu, data);
+> >         case MSR_SMI_COUNT:
+> >                 if (!msr_info->host_initiated)
+> >                         return 1;
 
