@@ -1,177 +1,140 @@
-Return-Path: <linux-kernel+bounces-822906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF0AB84F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:00:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66597B84F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5462546607
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB737C6A38
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F8A219A89;
-	Thu, 18 Sep 2025 14:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02E7224247;
+	Thu, 18 Sep 2025 14:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uJgbfhX6"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qos9mH/I"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70AA1F462C
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1351EEA49
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204051; cv=none; b=JqOMCVd8cJKKHzX9gV4wR9dIPROfoeZNwbCefZdxkm4cxjbXlvkgTOfO+ID+YvVpFrZPGXHKEXhFe/nOk/6IguHq1U3VqBbv4hRljplDtZUZZMQAjuQzXBHJ/kkp3EgrJA9cPaP4FZy+B60RMKVixZk4dZz2hwLw+7F0GwIzI6w=
+	t=1758204081; cv=none; b=BeTxTrnbs5fsBI4qCx2IY79SvlvMgj6LgxFppS907wHr/I6j/ao//pEN6YWlUHzxdkNyo+GaHxKKjz1W2C879smD+8QWH3g/pprSLWQDKmcYPro+LYZcjkM0isz4AwD+V121XWyyIUI1aCFC0MMIelXdDGdQVER5bT6UGm1yYoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204051; c=relaxed/simple;
-	bh=JNX/SslDgJI2zPP4a1GdXBRAxKhToRnRpTMWOCCQjEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YViG/zGtiB4bKK6OfvxW/loTHg7rHjE0btlGPGmkb1agqmmOWA6dZn3OxLDEhpJwTlnJ4Nr3qtQKN8UXqlOQEd+wqKVVcYVQ4XFT4m2XUi8jJKYmZzyy1gbywsUdW0jc1g8+NY7t2MLx+xEbSIToG2Yo8M4z3oOvOZWwLYTy6ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uJgbfhX6; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b2400dcc55eso23714466b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:00:47 -0700 (PDT)
+	s=arc-20240116; t=1758204081; c=relaxed/simple;
+	bh=nQXbNFRGteQ5sQcKTS+R+cIbFxjMYn75rSXxx/muXvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UYdGVuLUNQ65n9+W6UCxZSPqOzrmntczEhXnHP/5LguaOlnzlMMm6Gm1u2sBNmpBe+47eJ1SPcGrCL0NZrmGNe4jXhofmGI3q/jtsvi6v+a0uNohqDAQK7aZWfIew0KsKpSoVJYn7chE6Jzue9cReCPfkrGQf/3vHy9MxiyGja4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qos9mH/I; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dec026c78so9295765e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758204046; x=1758808846; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VZl1LbpajrcKcHCR4thQphAz5GFPtLa5N4YGaqlGRQM=;
-        b=uJgbfhX6oAUEw2vyzdbdblxWI7cB8wMDcUwZhH1RUzcNmXAe5yjlVV4xTiDiCKgqMW
-         fYvwKWvj50EHHixNFyJJ9T8EU+ratSP5apvaGaeXIzDxSNsRzbhHOUxxHrL5OeBH1zAt
-         Fpn9+nxmMiFH/RM9xbDm+OlMsngpi+lK9ZcjTd4I9sd3oEv3D6xx2AO+CslJgC3h9z+n
-         +7O78HQun5twfvxZEj9OlEuux0Boh7tsLSZ80IKPq+ayKksb9Jhvq9D3vW86Xejkqa/W
-         mVZixlWut7ddsKZm6XhRgLREm5cOQ51a0csDlgfmKCm1qL3C3tVmcgj5HCBaY8hpnf4T
-         9c2g==
+        d=gmail.com; s=20230601; t=1758204078; x=1758808878; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zaWUgxon+Xb6FrjH6O0C9Bi3oSkKAAwiP/2JQApbLis=;
+        b=Qos9mH/IU+BH3k+ZIMfXBfwRConV9XRfl+E7gVzH4+ozQZbLWTVqRiCP0xuiUOOZ8i
+         3N+++0buPi8GLVKe8ikVdECiGXIN5+MkF/ENgdGc9XhKVAtCeLIqnNUqiHy3E7w3ghDD
+         v+ezzJpLNKyelv6CXJJ/NFK/eeVTkLq17Ck4RIS44OKM+eWpqDmfEj6cOvalOsH/2/D1
+         +u1sRk1X6s5ND7dVoz1OHoXdv66NNlpW1+JpoZi1adrTEBgwkEFEH6gCT+a1Tqbs+3ZL
+         08L+d0RwkHUMakfdU52W6Cg0N7fkA2yqbMFbt2piEQ6EP/tG2mugESXigtRqGCSHyz3/
+         pKcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758204046; x=1758808846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VZl1LbpajrcKcHCR4thQphAz5GFPtLa5N4YGaqlGRQM=;
-        b=c33l38z7snrxQIUBCQxEPcDSa4R10fbL3MJZtOJ38GgVC5zJBy1r4D1JNK3lJZ7Qd7
-         UoXZM+WVeaNyM+wuc65mBxZnXol5d5+/j8Xx28e01rJ30I81ASoa56ma93O/2wgMuxAb
-         GkZq4EmMknQWFzLkYvBlCGWYR1qq7c/pJzqES7Vt5+UtN0nQrjqHOWQqPU/00AtSfCNJ
-         K1Qps4pYjU5gVQCOcNJ3g3Xq58TGg1y14NJzGl1D+CpI09+bDG2YRe6BMmdknRuSuCJF
-         xwgAsHH6dCc40KvJGz8EG3Bvo9gy7nKIP/y+2yfWCZmBu8k0rinK6JBy6heVjle/jq8R
-         FINw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcevF0Pcgqu2vRkuVabs84UNHG+iVtr+yQfnkVoM3r6X1NyYvXoCvjJR9mFuXeHiLXUuk5S9QahNdrva8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCYNbdNb3W9f0DD9rnZCwiweRdPMWaE1EOJV5meS8+//gUDHV7
-	tR1srPokagUIg7piDLjRs7lGtsXk8huHTChZhUjvnH20B8IalRy/UDpFKVpX0OdOas0g1dKc1Zd
-	BkrOb
-X-Gm-Gg: ASbGncuLNVlL5MssuE0RsSYqOdhmykg6ZFBC2TEG9/Xg7LKT1IzTIxd2v3mA4gr/s6w
-	IbM3DKHWYv0dpEzp2nEH3KNBj/ng589LYsde/Qti4senJBrnrETEA0OER5SUd5mXDVPIQkMqkyH
-	si12FUpqTLjl5wQPRymPs350FwbtjT1yiSGCMS5IWTA4EkmS0ZkuHbLT20esrIePEfNK0T11Y51
-	DzBbgg+PNWz1vB34gZCmASkroLlnlmmcctV9XQV014fTHE36LUTYEokEPRehAiQ75kKlU/z33Wc
-	c5IKhWThIW1wGnQ11eQ/zBYo71ORyqZ/SwJvprqQfRcZSIZ85vNHU+TIdDOKGmwVrzCc7nhXMj2
-	mdgJ7pXXFty2hWGYUPOvFv0mbHsE+4MqkQbrr+FRiFCM8Dw==
-X-Google-Smtp-Source: AGHT+IGs0sWM3AvmiVkBqksnbqDo+J8t3UXb9wWx/kLqUitBwBfi6rqqrviU2E01/4fvZyYO9G2bug==
-X-Received: by 2002:a17:907:3e9f:b0:b04:b55d:46f6 with SMTP id a640c23a62f3a-b1bb7f2a42amr655756266b.42.1758204045900;
-        Thu, 18 Sep 2025 07:00:45 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b1fc73bb6ebsm196419366b.29.2025.09.18.07.00.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 07:00:45 -0700 (PDT)
-Date: Thu, 18 Sep 2025 16:00:42 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Nicolas Pitre <nico@fluxnic.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v3 next 05/10] lib: Add tests for
- mul_u64_u64_div_u64_roundup()
-Message-ID: <tvv7kzky7wdpef2s27fpvav6a7sbkmt45v7j63y4jirgq4sf7e@znv4p7d4u7is>
-References: <20250614095346.69130-1-david.laight.linux@gmail.com>
- <20250614095346.69130-6-david.laight.linux@gmail.com>
- <q168q017-9p30-69p2-o4o5-s6q1s1385o27@syhkavp.arg>
+        d=1e100.net; s=20230601; t=1758204078; x=1758808878;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zaWUgxon+Xb6FrjH6O0C9Bi3oSkKAAwiP/2JQApbLis=;
+        b=NshCmeP11Bf7fbrpSRJHHkAOa3UwqkhydYdnFcGVZRe8p6gFcM1m/UwqwdL72hfpQI
+         2NVUEHeVImZr+JIn29jjiDjZSbqOZEwFq0pJm/fZxrpVtMBLWpTWYago/MbXCpvtu5x3
+         sCqMxZOfXsGQ6U4lHG5v1MTq+CwkR9vGrmeihhnOpDd9aPjtHcYfebx5NcHumzGMQPew
+         /ISvtogMasy+qvhEStYn/JXmJyD6YjhKH5zSAbGxF3PoA5huXn3ZbZZbiSprjSSZ8cGN
+         2s5eKozJeW9FmvFd3KOXgDrL9yXZz+o4I9sJG57PSHXa9+lTL7KZXm3MH4i6UVQHLrBu
+         xg5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/++OToJo6OQ1B1zAVax5favxC4vofPtQ8hWi/UbF0jX1QibE2o1Cmogj2JiSzy20Xgikn4aBhKi+x15g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtVA5PBI7Pyq6LoZJM9gAi2HJS4Thodm/f1crXANm+SC4bRNrR
+	86oeXJvONhOdeb7Im47/DFQ9594zE6E3jB+ovX9HHogaRK0Dw2WvI/sz
+X-Gm-Gg: ASbGncvj+HA82JwCrp1XI9MjHMG/rWbwlUTgVwdCc7CdbnL4O5DrkFFLnw5fbngdCRf
+	vFkTXzwJOwCk8RjstckVGU6RStkpul8/Tq7LVkBqdBAXBsABZbiOI8NubdtJ/KzG2wStEUdwqxo
+	y/OZsFLjLxYaYIrLs3A6xOUBPaEuxJTGdTV1Oor24VuJZO0ecScxMsjzZXYgbJHxPSFYijXMhpr
+	uMjMB9+7JA6MwMjxsvZXKCuvegjO8ho/EoGp4n1B2E4upOA9UBti1+w0Z1fHK1JpiNxIi5Z7yWk
+	pVZnojTmSSLpnMkX/ku0xTwsys3IcMU86QSyW5kOLJFGPhFSRO3q7vQy9hybj/7E4tlRYQrf8J+
+	AfgkwtN+i1HHHYFDDpGmirdev5VxmevLm+HOK9AfQxw==
+X-Google-Smtp-Source: AGHT+IERhi0ttbTQo7U5CDSJQlptbQTdHlo+lnabNgzEp0i9XMu8w6gt9JnH1CQDgn2GAUpwL99/Jw==
+X-Received: by 2002:a05:600c:350d:b0:45f:28ed:6e22 with SMTP id 5b1f17b1804b1-46202175f42mr59095015e9.3.1758204076009;
+        Thu, 18 Sep 2025 07:01:16 -0700 (PDT)
+Received: from localhost ([45.10.155.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-461eefee9f3sm77154855e9.1.2025.09.18.07.01.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 07:01:14 -0700 (PDT)
+Message-ID: <84aea541-7472-4b38-b58d-2e958bde4f98@gmail.com>
+Date: Thu, 18 Sep 2025 16:01:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sg2rnjthdlnb3kvc"
-Content-Disposition: inline
-In-Reply-To: <q168q017-9p30-69p2-o4o5-s6q1s1385o27@syhkavp.arg>
+Subject: Re: [PATCH net-next v6 4/5] net: gro: remove unnecessary df checks
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ ecree.xilinx@gmail.com, willemdebruijn.kernel@gmail.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com, tariqt@nvidia.com,
+ mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
+ ncardwell@google.com, kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
+ aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
+ alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
+ linux-net-drivers@amd.com
+References: <20250916144841.4884-1-richardbgobert@gmail.com>
+ <20250916144841.4884-5-richardbgobert@gmail.com>
+ <c557acda-ad4e-4f07-a210-99c3de5960e2@redhat.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <c557acda-ad4e-4f07-a210-99c3de5960e2@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Paolo Abeni wrote:
+> On 9/16/25 4:48 PM, Richard Gobert wrote:
+>> Currently, packets with fixed IDs will be merged only if their
+>> don't-fragment bit is set. This restriction is unnecessary since
+>> packets without the don't-fragment bit will be forwarded as-is even
+>> if they were merged together. The merged packets will be segmented
+>> into their original forms before being forwarded, either by GSO or
+>> by TSO. The IDs will also remain identical unless NETIF_F_TSO_MANGLEID
+>> is set, in which case the IDs can become incrementing, which is also fine.
+>>
+>> Note that IP fragmentation is not an issue here, since packets are
+>> segmented before being further fragmented. Fragmentation happens the
+>> same way regardless of whether the packets were first merged together.
+> 
+> I agree with Willem, that an explicit assertion somewhere (in
+> ip_do_fragmentation?!?) could be useful.
+> 
 
---sg2rnjthdlnb3kvc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 next 05/10] lib: Add tests for
- mul_u64_u64_div_u64_roundup()
-MIME-Version: 1.0
+As I replied to Willem, I'll mention ip_finish_output_gso explicitly in the
+commit message.
 
-Hello David,
+Or did you mean I should add some type of WARN_ON assertion that ip_do_fragment isn't
+called for GSO packets?
 
-On Tue, Jun 17, 2025 at 12:30:17AM -0400, Nicolas Pitre wrote:
-> On Sat, 14 Jun 2025, David Laight wrote:
->=20
-> > Replicate the existing mul_u64_u64_div_u64() test cases with round up.
-> > Update the shell script that verifies the table, remove the comment
-> > markers so that it can be directly pasted into a shell.
-> >=20
-> > Rename the divisor from 'c' to 'd' to match mul_u64_add_u64_div_u64().
-> >=20
-> > It any tests fail then fail the module load with -EINVAL.
-> >=20
-> > Signed-off-by: David Laight <david.laight.linux@gmail.com>
->=20
-> I must withdraw my Reviewed-by here.
->=20
-> >  /*
-> >   * The above table can be verified with the following shell script:
-> > - *
-> > - * #!/bin/sh
-> > - * sed -ne 's/^{ \+\(.*\), \+\(.*\), \+\(.*\), \+\(.*\) },$/\1 \2 \3 \=
-4/p' \
-> > - *     lib/math/test_mul_u64_u64_div_u64.c |
-> > - * while read a b c r; do
-> > - *   expected=3D$( printf "obase=3D16; ibase=3D16; %X * %X / %X\n" $a =
-$b $c | bc )
-> > - *   given=3D$( printf "%X\n" $r )
-> > - *   if [ "$expected" =3D "$given" ]; then
-> > - *     echo "$a * $b / $c =3D $r OK"
-> > - *   else
-> > - *     echo "$a * $b / $c =3D $r is wrong" >&2
-> > - *     echo "should be equivalent to 0x$expected" >&2
-> > - *     exit 1
-> > - *   fi
-> > - * done
-> > +
-> > +#!/bin/sh
-> > +sed -ne 's/^{ \+\(.*\), \+\(.*\), \+\(.*\), \+\(.*\), \+\(.*\) },$/\1 =
-\2 \3 \4 \5/p' \
-> > +    lib/math/test_mul_u64_u64_div_u64.c |
-> > +while read a b d r d; do
->=20
-> This "read a b d r d" is wrong and that breaks the script.
+> Also I'm not sure that "packets are segmented before being further
+> fragmented" is always true for the OVS forwarding scenario.
+> 
 
-I think apart from that problem the series is fine, isn't it? Given that
-I wait for some time to be able to use the mul_u64_u64_div_u64_roundup()
-variant, I would very appreciate your effort to end in this patch set
-going in. Do you plan to address this issue? If not, I offer to look
-into it and create the next revision for this series.
+If this is really the case, it is a bug in OVS. Segmentation is required before
+fragmentation as otherwise GRO isn't transparent and fragments will be forwarded
+that contain data from multiple different packets. It's also probably less efficient,
+if the segment size is smaller than the MTU. I think this should be addressed in a
+separate patch series.
 
-Best regards
-Uwe
+I'll also mention OVS in the commit message.
 
---sg2rnjthdlnb3kvc
-Content-Type: application/pgp-signature; name="signature.asc"
+> /P
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjMEIgACgkQj4D7WH0S
-/k4j6wf9GRHiFrIASf0J9p2XqcGuVVYkXMDtEfjlsrzaYnkdsbdTAUgtxVv1LJbm
-0gyk0cBZV57rJLHRUh2dZnshk5wfeKLhewHUgCT+dW3T2FcYgQrEypSAEVbCxxKe
-1ELmbgUVexN3OxWfyKThP7BwUEJaZaRBBJj8IP1NF+/QBSJim9wRuaVruCjYeyVi
-octBBXu6x4SN+2zSfp5AZWzGy1DyZj9RSiCY0tXAZreE8pr20fCdgYPiKw5kUPcA
-eXJSJliuNpQPxKxBBtQeOJUyvO4XYsAn3fiZTsIv+e+gxGQV+tAcVAvI2yRu8m9q
-8MeZEFmO6yoNv4+mWGSPJrFyx4Bt/g==
-=CKlj
------END PGP SIGNATURE-----
-
---sg2rnjthdlnb3kvc--
 
