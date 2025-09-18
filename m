@@ -1,208 +1,191 @@
-Return-Path: <linux-kernel+bounces-823626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28D1B87078
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:12:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31CA5B870A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A7FD1CC1771
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D973E169F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636742E0937;
-	Thu, 18 Sep 2025 21:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94B92ED853;
+	Thu, 18 Sep 2025 21:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PbvPYiH2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DpEwqNHW"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011056.outbound.protection.outlook.com [52.101.52.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D333229D297
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758229901; cv=none; b=KA1HsZUXZsICP9L/8m+QVSY/NEsr3kunf2kUop509pR4+tJDNDzLWI1yiDih5u8Uy2jYPbh7JcaGSjYM7bJsFVZ6CEiMP+AXtB/1PJZnJSGKTVtNmI6Q0BBJ/t7DdXe7p0Rw9G/IZMeFZpsJZD8FvbkYad2yTkDeX6GfTCILHDg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758229901; c=relaxed/simple;
-	bh=d/kW/HcYN9nla+sQrwTP7d7AwmwYKGAE1oAjjBx2IvE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=q1RvWNwek4rWz/JliWNbVZTrpyyxJFqLQXDD9JPQEEVc3Z0afkJw3HhUlfX2nr4tzCMNSopaRonQ9ydAbn1eWtcjryj6R8Nh3L/z8L8L+t+/X0Apx52cMnnBQa486e1qKoVRlVxqTw+ustNM9PBoERx71YewTNuMoe526CJmH0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PbvPYiH2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758229898;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=haj5Uj8dJJVDzLSrDajsILQl1ABk/7DJdOuc9K4PXFY=;
-	b=PbvPYiH2Q4Mc+g328ErgrLtAWPlbBA5H91OKzOU2/93loGl4vB4Gn1cQhrv78iaylgNnSY
-	AfHwzzuzbrom76+wttAXi4nixZh0nkaXd4UDXS8zN2tgNSZkkErR9/OaZKc+VTaIyorZ8o
-	TKN/g/s2rXpaqWJ5P3qFjDBgAV5HUu4=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-197-mAdwVQOGMpWidmvlfJU3ZA-1; Thu, 18 Sep 2025 17:11:37 -0400
-X-MC-Unique: mAdwVQOGMpWidmvlfJU3ZA-1
-X-Mimecast-MFC-AGG-ID: mAdwVQOGMpWidmvlfJU3ZA_1758229896
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-62f6b678424so1406439a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:11:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758229896; x=1758834696;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=haj5Uj8dJJVDzLSrDajsILQl1ABk/7DJdOuc9K4PXFY=;
-        b=kaeqF00kL3NRXX+PmsQuFsb93Xg1Pp0dJhcUVUMikbDs+g6xtcqbk+K8R5LKMoaUVt
-         iukHkqYfKHRv/z6C7p5VeBDpCyBO3oL9J8MOxsffr/CEpP+uoXIF6dRfH25g3/5xbq6J
-         NKXI4yc5+u7yge91ZHj6txwDVm9chkLKAykIWsYo2uj8f0nTE703L+3DUFeaOOXxfZ3I
-         jwQ00rrZCto3XbUuPCnONnhp9TdiPoy5xDzy2Y2mrlpAVGUpTpS8fotfzXGIUfHMgy7L
-         r5hapQbRBSSUKFgX/VCll0qFWFSnU6bKhTL9HaCkRhqBdCyvTKIrCGZq57DPbeDSziQh
-         Dxtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNthy+PEhOrEp8SdYgdCdr4qcAJIoSjM0IWqiXSn/+TvDOF/74Xl2vx3ukURe1MiAJBEjZOXAOiEbDgVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ9gtc+c9LLoVVSdyEsjQ53bjwTHiiomIMQK2gnmFC+lIg0+Ro
-	oBIxiwreYdZA61So65xVLyU5I6CwtxRxfOku3gRM2U3pbxcVUiIY+R76ay+/R0Sz8tL3QvJoxzk
-	wEFiPXVokFatjZQuhzDUxMZmqWrNi6J1KzmDTrCb9XmN8iQTNFYTKmhO1ogokUogTZ6+rlAPEzH
-	eyzRfBdYGWaruOJo3NRwzRk9KIQxzxEzUw6fDp9wpG
-X-Gm-Gg: ASbGncuVhJn3avyZ9pQGAP+/GIRiUheS+DdlgKC18Ill8oefIGMzSLUmAGf7ThjraXG
-	L3YiXaAR99kEshR3+3We2SjuQOy2XtnBpFd+BWd1luQ5TMb85k4wzsrRXhQbJ7Bo6qU4MuMslOz
-	LVRONm474aUnmtxzFFIks3k51VkXPpRrYRg94ibTgKDPdKDtvxYZ/zf68=
-X-Received: by 2002:a05:6402:4590:b0:62f:26f8:fea0 with SMTP id 4fb4d7f45d1cf-62fc0ae510bmr592310a12.33.1758229895969;
-        Thu, 18 Sep 2025 14:11:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVsf0wPfY2krtuiF6FtWzTWN+KTRh5W+pGyw46TzmZ5KI7bREpTcAjgqu3sARTuQvFocsVoOPXRV7Lhci+4OI=
-X-Received: by 2002:a05:6402:4590:b0:62f:26f8:fea0 with SMTP id
- 4fb4d7f45d1cf-62fc0ae510bmr592286a12.33.1758229895590; Thu, 18 Sep 2025
- 14:11:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8755829D297;
+	Thu, 18 Sep 2025 21:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758230056; cv=fail; b=nyVtdEBeiUHMynpiiXGn5ZkVKgvvKIVZXDl3l7R93R6DAN3x4vpxpg4hYjxkxLpcsceH8iHu1xCahme68FcfdMwEKdjgBX73eIpXXrdKIBgksG2MUK9ie1H9/shlkrp/ZTpukdCZahizMSY0lccp3CaeMysHBvxCou0iucRLUJA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758230056; c=relaxed/simple;
+	bh=oaalE50FVo1ehbYRJVkwduC63UAf87nN4QyTZPc/Tjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CWMUpFNW4dSv94AkRbYVFLGX1JrC+69MjsgJy5utF1+4PpIkpeFKfztOm91poGqKNlouFKFO9eXJoKwVL38c+0cs2mdW6sRaFFaNWOvpurkQuKVHSt3JCMSNdX0yeEhFr/0zLu5NTMzvVPKUco7EsVOV+HeEcHx7stivYyUDF1A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DpEwqNHW; arc=fail smtp.client-ip=52.101.52.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bpsf9U7xNfS5nD2eYXqSWR/OeF2yuQPk2HulPEor4NomCSyXxcAFubtP3omceSG4ap794bcmmjYlkg4mJmTBbFfi4M8loN7bqsBcT4vZAjEY7dCFtcjeT6Sjqs2/FG77ywBXNpoD8BCCp9vNf3SQK+Kw1MS3ApMv1D1qhQ5ZlCh2WVmtnJQakfaKsbvy4mEKWZDvtmdYm+sqi05xxgCSidUKdtuyVag6WXwgTuD0/elks3bC73WKAxSnbU75VT95KSaxzPo/IOgjtqblVFSORB3jcd33xlKESGHIhv8gKI2pajf6UoBzi/C7LS7KGtj6iUoquJXWlNrMjyOFzln9Fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d2NahqIcijTzBmKC4uXpwBGSXXWEzos+U+VQEkudw9I=;
+ b=PVKPcUjtCxvbFD769oPvuRPcYRavLdmEjC3z1XgebmzYImyggGKDd1uK2aLgdqeJspjzQ3Kx2c/XPio3yvab6nS4fX8oCZWBAKJTbLY6weva7t2i65XpR0I5KYTTKgIqjK5+MmTpgymVP0TBYfbs/m+ByyNlJ5D+IpcB3mrpqxQS9XHHOUaPQM+rXEdl7UFAgsAT+T/lVsbiwWulmgJgSAarD1URCQ79bFLWVIZE0Qv6KF/KnDFoQhRDVS9nBkGFu1aWP4pk9lhcn1/U7lLHnb3sUtq7ktNdVk45+OPHaT3AUmowoDqQ4c08mINdRlCeFZ9WOaBKXxfwhVfvzXyDnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d2NahqIcijTzBmKC4uXpwBGSXXWEzos+U+VQEkudw9I=;
+ b=DpEwqNHWiZ4mDTJStQ+bqhxIGyU5sH3+Z+TJ6wF5lpqB1ErtZVco05OKIFSBtp96y55r++G72g9GwPtUSza2qlzFHdEBTNX6Cdce/SYFaL5JRcF+ErJOlTtLg5nyvnpmXUjerWCih7vIzbRFjXWx5aIeAKioq6tH1J2+XIm/DXc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ DS0PR12MB6462.namprd12.prod.outlook.com (2603:10b6:8:c6::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.22; Thu, 18 Sep 2025 21:14:09 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
+ 21:14:09 +0000
+Date: Thu, 18 Sep 2025 17:14:05 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>,
+	Bert Karwatzki <spasswolf@web.de>, Borislav Petkov <bp@alien8.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+	"Smita.KoralahalliChannabasappa@amd.com" <Smita.KoralahalliChannabasappa@amd.com>
+Subject: Re: spurious mce Hardware Error messages in next-20250912
+Message-ID: <20250918211405.GA2180898@yaz-khff2.amd.com>
+References: <20250916091055.GAaMkpn72GrFnsueCF@fat_crate.local>
+ <20250916140744.GA1054485@yaz-khff2.amd.com>
+ <9488e4bf935aa1e50179019419dfee93d306ded9.camel@web.de>
+ <be9e2759c1c474364e78ef291c33bc0506942669.camel@web.de>
+ <20250917144148.GA1313380@yaz-khff2.amd.com>
+ <6e1eda7dd55f6fa30405edf7b0f75695cf55b237.camel@web.de>
+ <20250917192652.GA1610597@yaz-khff2.amd.com>
+ <5ba955fe-2b96-429e-b2e8-5e1bf19d8e8e@suse.com>
+ <20250918210005.GA2150610@yaz-khff2.amd.com>
+ <SJ1PR11MB608353C84F69E8EC0D6744ECFC16A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB608353C84F69E8EC0D6744ECFC16A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+X-ClientProxiedBy: SN7P222CA0009.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:124::34) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Anubhav Shelat <ashelat@redhat.com>
-Date: Thu, 18 Sep 2025 17:11:24 -0400
-X-Gm-Features: AS18NWCQhQ6_-HrdR_kCbVx74ouvilsy7PA-2w8NPyBaEQbcP4k4yjoRnUu5clI
-Message-ID: <CA+G8DhLzk-XbwoBbtvwnKZXXadWAqy0aApiOiS1-xPvkZb0sCA@mail.gmail.com>
-Subject: Re: [PATCH] perf/test: Skip leader sampling for s390
-To: eranian@google.com
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, agordeev@linux.ibm.com, ctshao@google.com, 
-	gor@linux.ibm.com, hca@linux.ibm.com, Ian Rogers <irogers@google.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-s390@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>, peterz@infradead.org, 
-	sumanthk@linux.ibm.com, tmricht@linux.ibm.com, 
-	Michael Petlan <mpetlan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DS0PR12MB6462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e7ff0ec-866d-4e27-ff60-08ddf6f84ee5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ED744L65BdE3+rMFXyKkbaiOof9wj5CP82sePtv1jl9PW7YwkHt3D/BtdePR?=
+ =?us-ascii?Q?lguqegBtNwnD8XptCOK9RzSrTApbHLjaJ6w0w56/yPH9tq+aT359A+dF6dfH?=
+ =?us-ascii?Q?s4nC+MUWeiCeslSDQJcBCuhquktO8YSaWnMVAIvD8vlkDYwB/4o552lPyvhO?=
+ =?us-ascii?Q?zBb6F6XUZn4E3X2n+LcAukppgkH1mejH+3KEMs63bc52q+oOOi93v5phiMom?=
+ =?us-ascii?Q?DfcuyVCWnhIawbPrMoKqDimH3eA4kxXUw+CKTDIIbE5JVlQwn+Ap5yeCiof0?=
+ =?us-ascii?Q?yVJio6znE/Qp1bhLAvDIzD9PxQNdP1ES7FfdWlHKadHnk0g2MGmqWCpOjHJ3?=
+ =?us-ascii?Q?wxuENaAW0rLUPqqKtEjWsToeJV+Vue9asKrJRGlpY9sr5pRpKzFo5XUXDLoN?=
+ =?us-ascii?Q?M41XKtfO+RpvwzuQ4G4MJOwj5xYLTXGRZjujX1Lsskx3Ls1g82b5gwsLVtoh?=
+ =?us-ascii?Q?WrWh+vVjBGyXiHHf4VYSnWbtRLRnWpAnc25WeU8QbqWO+FIRJIkq0OPegrDq?=
+ =?us-ascii?Q?U0PjId/SXe4tGlA5yYFkpcGqvP5DuELDljs2nyUhRbfFwRyXNGexoqRe9Lzn?=
+ =?us-ascii?Q?UWH/RR+ksvjcuFXMV/paaDluk8dOu0j0f8wZEyQVo3tPnAv6AIjkKjRLEISA?=
+ =?us-ascii?Q?Fe/scqL1GbwTNXT9sKCJBFw7sojj8XAsjQNQTJ0JC0iKqp8lHDhoSIOc8WFb?=
+ =?us-ascii?Q?77vLJjP7jljgFvb78ls7SkTFJWylFPZm6Mhw0u/m467L3utNb+1CfMUH1weP?=
+ =?us-ascii?Q?RMMFnHmhRF0UVW4CaRAzPtgj2/tmuxhUQCZKtHAHhYdaIHNyFZ21jmKPNC7r?=
+ =?us-ascii?Q?94SKw8GEkPjjxMLsLUoubFvJzHsBoSHplf+hiXpwo3IQzN2eOfbhegT9Ik+u?=
+ =?us-ascii?Q?o/nnkV3Oq8am8iOVoLCxH40lHrFHUTBGGNk/VpebyISSztTXcO2qQqPRlDmK?=
+ =?us-ascii?Q?vGda0easCRXFtKK3iMOvBJxgaUs/gl6W8ZN8KZ9ulUHd3SbWubn4wJryJbby?=
+ =?us-ascii?Q?YfKL/QHmNH06MVYs7lf2ULcImQ86hOV5RPYTurAEwZUOOFfyIXQVVI5lFkOq?=
+ =?us-ascii?Q?xvTs300MvyPcltu1dbrE6IkI4KYNKknfnhv4bco2CKCtinh/Ihufe+P+3fv/?=
+ =?us-ascii?Q?nnTKMMfoImpDqyxhO1kJHNFolBdryhhdKJTLYk9pQiH6SxayjyWTm54nIYF5?=
+ =?us-ascii?Q?p4YExnr+nHnGuJDS3QWcxH/+hDEIXHT4jQLdI/9aihxozrqlilMO3Xm5xrCq?=
+ =?us-ascii?Q?aYq1mlcIFXADuA9v4/ZyvNdadEGgiPjKhhIT00ygwifArjsI4DMrSoyUhy3t?=
+ =?us-ascii?Q?/JmKl0Ib0Xd78A3pcOzrAYpNBdlBUXZR5udKZIkPEdS7rrvq+uUzM5p2ezhZ?=
+ =?us-ascii?Q?ie4KpqvBdv3OwsehNp2x8fufjSiWlLyj4Vq3ADFrK7fEBAMkx2QB8uRjwqQB?=
+ =?us-ascii?Q?+s6u6GfQ+gM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?oB5+tN/hC7P6/OwuP7LmorFHyC0Zib+HKka+l+Zo5Uza0TiXDSz6cnZrLliP?=
+ =?us-ascii?Q?s8eFwSj2hB9te7Sk2rCm8dNhpJ2zEI4Wyzi93h8WBfr6dMAIs62bUCC7w+nT?=
+ =?us-ascii?Q?dyt4cNR06CJzEhPfZLNY3DM89kx4+KEk9NfwMq4DeRH9df5fkZRknSef55n0?=
+ =?us-ascii?Q?Tn3H6nltRWzrNODgwvQKzm51RsCx3KVGWh0QvMa8y9Yl46szEBOm3UIXht82?=
+ =?us-ascii?Q?mXqhj3cIIuQK1l6iHKZoK7UCnFx2INqJwePBYEPFPJeKDBZjPscUyWLxPmPS?=
+ =?us-ascii?Q?tXx2BSL4+E8xI3QMT9vYxExq85zmStm0813lFP02LQWpM8fVaYubM5dqo7ZT?=
+ =?us-ascii?Q?GZCILSBWyBLvZsWlMHCVDAYQlrcxJbc5XeQ5FGhrV3ve3wmS/RENdnmhubB0?=
+ =?us-ascii?Q?rJockCg7Iuuyd2JUjIUBRTZPLtSBB50Wg846JZKzO6bKdpw9gRJQSuAZ6/Uq?=
+ =?us-ascii?Q?s/LwvXpQCkucdPTu24PUQz0n7rs9LaeQBd8XjLwMg9YtaOsfKrtbiQgmj/an?=
+ =?us-ascii?Q?/tUFO1jz8bcJdGP8xtg1NV2xHQOGu77QpG39CHVD0qoBTW7eIG6rhXZb/S+s?=
+ =?us-ascii?Q?FxEmMrGtCwO2SHrfsMiYeW2BbtTcu2OstTUyyqAxov2QbTRRFGIpQAlxz4cx?=
+ =?us-ascii?Q?bR+/Tgfir2Jq8YD0gWe4qT62xLMuYXO7S4uW8VUlVasr/EQVlXFX2OcLhYtw?=
+ =?us-ascii?Q?kzSvSdt7mkO2LGB2FoBuvuYUFQugE9K13L7Febc7GP9Q8T2OLEjKgDaoi3ja?=
+ =?us-ascii?Q?WRIOXazOZdc1LgRlH1pitqZNmUVK583fBs+ZITVFP7m5mp3nF5A8Yq1xi0bj?=
+ =?us-ascii?Q?knZ3EmT99+5VPT50L+JmCl8YmUSuQhXi1Fw5UulbZRxBGMKLC3ax7gPatbY6?=
+ =?us-ascii?Q?7y8iWGk15V4EWGOuFHK9hW27rlIy6KDBOSxS6Ww7venvNgLNjmVxE4fgYeEi?=
+ =?us-ascii?Q?EYTRsNlkjn4fN9nYFjReE512sPFeaUPV+q9hPLHEI6WHZIXEWyvlRbeW8LAt?=
+ =?us-ascii?Q?VFC+DIkreczN2gPb4FAO3I3rBPLihJQ809bDpJ0j8bSaDP1FHyBueo0lI3sI?=
+ =?us-ascii?Q?N7SjpDpY1xkWjiQxsf4KbA1on6v4hacTvWuaHefk0AeXnHzNWFQ0/smAAil7?=
+ =?us-ascii?Q?2lywSdmgGuJ6Dn2gvDn9NzdUTKTbyYrmEEj3UiWHQZp9Xgyo3H9xui3o2lRl?=
+ =?us-ascii?Q?gV7Trza1G3hqgMbo4BjGVLNIlwyz3bhCUNhEEpm2iXOzJv3gCT2e8jzIRTdd?=
+ =?us-ascii?Q?t3DvSrQLWib8bemBd0JUau0qv4s7V+rQpWWLi7UajEvysFWk5X15GJIeAvsG?=
+ =?us-ascii?Q?NnW1oMSO4pKwDydbwMI0D7lSAXdg3k2qwFMFKtQSXnlPP7unq8j82W7O5qRt?=
+ =?us-ascii?Q?ZqjXq+rT4LwBVJSQsUPMO49UsX9HIifd+e+3hi2yKDn0i1qqs+OpqcVq8Qqd?=
+ =?us-ascii?Q?UVwPsdhm7QZhryVf2CvU1SPseZTTRVODAjeusYvYx7mrDWrc0MtMSlvOggtt?=
+ =?us-ascii?Q?wf1gf6FEy59eoGPYSdFsuFr/+rw5zedQIV0o6B6KUtZDAk+dwiW5U9lKKTZ6?=
+ =?us-ascii?Q?sQ8MG6dRrFLJjrkOr/B6mZnG3wxfNVXl09Wkwu0z?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e7ff0ec-866d-4e27-ff60-08ddf6f84ee5
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 21:14:09.3791
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gtxZyJSLmyphnWID9c7VQMx/9UOuo/Eg2RU50sEIzA88V2msKqZI6uPQnIYYtAEUwKzplkDowoVkrCjHADNcJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6462
 
-I believe this issue is causing perf record tests to fail leader
-samping on aarch64 machines. The important commands from the test:
+On Thu, Sep 18, 2025 at 09:04:53PM +0000, Luck, Tony wrote:
+> > For the current issue, it does seem that the registers contain junk
+> > values. And we are only now seeing this with the recent rework.
+> 
+> Do you try to clear these registers after logging? Or just rely on clearing
+> the MCi_STATUS register?
+> 
 
-# ./perf record -e "{cycles,cycles}:Su" -- ./perf test -w brstack
-Lowering default frequency rate from 4000 to 1400.
-Please consider tweaking /proc/sys/kernel/perf_event_max_sample_rate.
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.019 MB perf.data (210 samples) ]
-# ./perf script -i perf.data | grep brstack
-            perf   98281 184091.292956:     621736 cycles:
-53b844 brstack_bench+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.292956:     621765 cycles:
-53b844 brstack_bench+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.293346:     611236 cycles:
-53b784 brstack_bar+0x24 (/root/linux/tools/perf/perf)
-            perf   98281 184091.293346:     611266 cycles:
-53b784 brstack_bar+0x24 (/root/linux/tools/perf/perf)
-            perf   98281 184091.293734:     587649 cycles:
-53b844 brstack_bench+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.293734:     587678 cycles:
-53b844 brstack_bench+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.294155:     648439 cycles:
-53b780 brstack_bar+0x20 (/root/linux/tools/perf/perf)
-            perf   98281 184091.294155:     648469 cycles:
-53b780 brstack_bar+0x20 (/root/linux/tools/perf/perf)
-            perf   98281 184091.294588:     716679 cycles:
-53b844 brstack_bench+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.294588:     716709 cycles:
-53b844 brstack_bench+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.295050:     779147 cycles:
-53b814 brstack_bench+0x10 (/root/linux/tools/perf/perf)
-            perf   98281 184091.295050:     779177 cycles:
-53b814 brstack_bench+0x10 (/root/linux/tools/perf/perf)
-            perf   98281 184091.295545:     842413 cycles:
-53b8b8 brstack_bench+0xb4 (/root/linux/tools/perf/perf)
-            perf   98281 184091.295545:     842443 cycles:
-53b8b8 brstack_bench+0xb4 (/root/linux/tools/perf/perf)
-            perf   98281 184091.296191:     899736 cycles:
-53b77c brstack_bar+0x1c (/root/linux/tools/perf/perf)
-            perf   98281 184091.296191:     899766 cycles:
-53b77c brstack_bar+0x1c (/root/linux/tools/perf/perf)
-            perf   98281 184091.296721:     914623 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.296721:     914652 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.297255:     926741 cycles:
-53b7a8 brstack_bar+0x48 (/root/linux/tools/perf/perf)
-            perf   98281 184091.297255:     926770 cycles:
-53b7a8 brstack_bar+0x48 (/root/linux/tools/perf/perf)
-            perf   98281 184091.297813:     966974 cycles:
-53b778 brstack_bar+0x18 (/root/linux/tools/perf/perf)
-            perf   98281 184091.297813:     967003 cycles:
-53b778 brstack_bar+0x18 (/root/linux/tools/perf/perf)
-            perf   98281 184091.298394:    1007743 cycles:
-53b784 brstack_bar+0x24 (/root/linux/tools/perf/perf)
-            perf   98281 184091.298394:    1007772 cycles:
-53b784 brstack_bar+0x24 (/root/linux/tools/perf/perf)
-            perf   98281 184091.298991:    1043010 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.298991:    1043039 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.299604:    1072961 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.299604:    1072990 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.300234:    1099175 cycles:
-53b768 brstack_bar+0x8 (/root/linux/tools/perf/perf)
-            perf   98281 184091.300234:    1099204 cycles:
-53b768 brstack_bar+0x8 (/root/linux/tools/perf/perf)
-            perf   98281 184091.300870:    1121830 cycles:
-53b898 brstack_bench+0x94 (/root/linux/tools/perf/perf)
-            perf   98281 184091.300870:    1121860 cycles:
-53b898 brstack_bench+0x94 (/root/linux/tools/perf/perf)
-            perf   98281 184091.301515:    1140634 cycles:
-53b788 brstack_bar+0x28 (/root/linux/tools/perf/perf)
-            perf   98281 184091.301515:    1140664 cycles:
-53b788 brstack_bar+0x28 (/root/linux/tools/perf/perf)
-            perf   98281 184091.302174:    1158251 cycles:
-53b7f0 brstack_foo+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.302174:    1158281 cycles:
-53b7f0 brstack_foo+0x40 (/root/linux/tools/perf/perf)
-            perf   98281 184091.302838:    1173750 cycles:
-53b774 brstack_bar+0x14 (/root/linux/tools/perf/perf)
-            perf   98281 184091.302838:    1173780 cycles:
-53b774 brstack_bar+0x14 (/root/linux/tools/perf/perf)
-            perf   98281 184091.303504:    1186018 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.303504:    1186048 cycles:
-53b794 brstack_bar+0x34 (/root/linux/tools/perf/perf)
-            perf   98281 184091.304185:    1197272 cycles:
-53b7fc brstack_foo+0x4c (/root/linux/tools/perf/perf)
-            perf   98281 184091.304185:    1197302 cycles:
-53b7fc brstack_foo+0x4c (/root/linux/tools/perf/perf)
-            perf   98281 184091.304864:    1208165 cycles:
-53b768 brstack_bar+0x8 (/root/linux/tools/perf/perf)
-            perf   98281 184091.304864:    1208194 cycles:
-53b768 brstack_bar+0x8 (/root/linux/tools/perf/perf)
-            perf   98281 184091.306794:    1215537 cycles:
-53b914 brstack+0x58 (/root/linux/tools/perf/perf)
-            perf   98281 184091.306794:    3426542 cycles:
-53b914 brstack+0x58 (/root/linux/tools/perf/perf)
+Yes, the MCA_DESTAT register is cleared in a couple of places depending
+on the scenario.
 
-Usually the difference between the leader and sibling counts is about
-30 cycles, but occasionally there's a really big difference. When
-running the perf record with '-e "{cycles,cycles,cycles}:Su"' the two
-sibling events have the same cycle count.
-There is no difference between the leader and sibling when running on
-x86 systems using the cycles event, but when using the task-clock
-event, the results were similar to Thomas' on both x86 and aarch64.
+> If you are clearing, then it isn't working (or new junk values appear quickly).
 
-Any advice would be appreciated.
+Right, and MCi_STATUS has junk values in some of the affected banks.
+They just happen to be ignored because they don't have the Valid bit
+set.
+
+And MCi_STATUS is cleared at Linux init time, so the junk values stick
+or come back by the time Bert ran the script.
 
 Thanks,
-Anubhav
-
+Yazen
 
