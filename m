@@ -1,115 +1,116 @@
-Return-Path: <linux-kernel+bounces-822641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8F4B8460E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:37:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F387B845FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A682D623A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5F421BC387E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D3F303A06;
-	Thu, 18 Sep 2025 11:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FC13043DA;
+	Thu, 18 Sep 2025 11:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nXkpFoO6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxRZA+7C"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D98F27A900;
-	Thu, 18 Sep 2025 11:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA4F303A06
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758195461; cv=none; b=pdBpkt3/oozfOvK9XrM91EuOIAPBPud0EiETFXhmwYkz7h05SNUU6A/sexXO9mmAJqplFqHOJp9E0No9LHj0L1eihiOoHPtuCAdFT0oJB103OemWFTtg+09z/cVXrdkzffzHMVGch4DcJmuztO3wBWAwzlLjTOJq6Rhp2gz2N/8=
+	t=1758195356; cv=none; b=nYioEe5oKrUxSCYcIuGa6wjGnJIA7OMILuJH0JNk+r+V88j+mCMDsOCb1XHOgGHAjyXTOLxKaf/1ZpmIdePur/LeA3+x9eZd3IteeHWnE4eE0fDvd2K3HLlxS7x+Ej1HxKIQsMbGLJhAnbtt6DNcXV0f5+YT1WbfsyLhBSkwVnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758195461; c=relaxed/simple;
-	bh=knOqDMmCuYGf36S0XJkfDDNgqTE1JBx5Dzln83jT4MQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQr/D1dQ1raHQb3drI89bdFI/jzKpNWj+4kglOqeoAwTwEJSTpoLyXLgoAEPrdskGndnW08KZWhiEUP0YoNmozReldaIwlGqPHsHUUPNBdG+HxXdQVBKwZ34+GdCehjYelRZF9m6ock5yGZIu2BxYsKNklxSnCo7GelU/bZi4gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nXkpFoO6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758195455;
-	bh=knOqDMmCuYGf36S0XJkfDDNgqTE1JBx5Dzln83jT4MQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nXkpFoO6Jxar0bWX+EQ4QLJhk81Du0l8SBBjrEAJeXv5ryrQBJZA1hcimz0grfgiv
-	 +AmxfEmFyu6tuCK/TrTRWdBrBfrb2dRQ1qEZpM+Sj7DCfl7h4XkzA1unZDFvb2rCu8
-	 0nJN3Ce92B2MqSPDhU+Zjs+kRYH0gMO/h4lphzKexgfwo0BesSmtnmjEkB2SObR+No
-	 wm83pKSOrLeLad7DUJsv/+rJOdOsmOmHCMqMgJiJxRw4gFo+8L2HWzg+bpnoeTjlyn
-	 f28tlbN8VQqJCHQQKZU6U0g3sCQPb1JwBUvC4tQqPllmQAms/StwHsZ+SzJTtvdRyK
-	 n5uEKA7R527lA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 512F617E00B0;
-	Thu, 18 Sep 2025 13:37:35 +0200 (CEST)
-Message-ID: <b32f4afd-5683-4eec-8da7-a21a9a4950c1@collabora.com>
-Date: Thu, 18 Sep 2025 13:37:34 +0200
+	s=arc-20240116; t=1758195356; c=relaxed/simple;
+	bh=CH1PrPamLBcIL2akQUYxoj1jI5NyoHazD5PXsVbHZK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OCVj95CEr2mWSwwmjEElEfLsmrS7xNh6ZGw7zwC3n0IJ4Bjkiebsj8GWGkLmqcpENeHpTEEsute17sDey70O5lO4dcAryocPgq08rIoh6xLlhs64Kxts9RzzChTFnO5lsSD+z6/utbZyxhRNjT2vaF6Gx/he65ouUgla0vOiEjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HxRZA+7C; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b5500891f00so443364a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758195354; x=1758800154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CH1PrPamLBcIL2akQUYxoj1jI5NyoHazD5PXsVbHZK0=;
+        b=HxRZA+7C8cTiMcln5T+H8C+z3F8oif7sV4JrK+7+bTCTPUohOltquEACiw29uq2lFg
+         GwnIxeL5YOAlzqmJY7pXQh9sS8U4HkCXW6HYyqvPRC2fuj1nvBU22v3UrPw/M8hUnPmT
+         O2H8sz6jdoM7jJJUOW6dd7vp5D6GqfnrxBKLYGREu4XBK8Yi5j3MAZdNPvzqzM9znZvP
+         lyxgMV3uRZt7JgHkKZguEcjWIY5zKkdKH35Yk2cR34VztBJlGvduTV1l7DedbOSlRuw4
+         c3+c8HQHB0nED8l7X98KKa8xsNVwgrK5vgmg1kj3qCCoH8Wim1WJk3kVYLJPUSqkbpBw
+         j5KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758195354; x=1758800154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CH1PrPamLBcIL2akQUYxoj1jI5NyoHazD5PXsVbHZK0=;
+        b=iCYeEENJrdHB/5pv6Js2mGQzumuOuiP8d4sRbsywmy3W42bLRJuOEc03rdJ8F4v1QT
+         2rEpKLV7YJhf4krmuNJUADqK3LcrWPdY45IWMHnrK2V+rOq1J03YFYrgWTzkgpUsrC3l
+         EdKkY+rnaHSo7pdN731yZjQDnK6wGiQQiU2ftBsfwLCI9+aIGA5Pli+oc9SeY6UjIIqA
+         4uScv2R+zmYvF9suGXh1taWQ30RBG2iKN7+PmR4sRUdt+o3LhQxkXCshb9Ghdg46nKh4
+         lNVDL706+0qRUCL+f4WIAIsR5/Glctj4o6Dj+OdA/BCL36NSFfVcHiRcfnZK89lLKB5U
+         wi0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUzRM47SxuyRhPsIwrXCv2uUobZ7/HycwipB/XhLqvAblUzrCq7GTYd+853aPvyiAn1tki3Hais7f1LPwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0vAnM9nADOiwYlF4O2CI/LuTJdpVovbwi0eKnG9ummImMJ//N
+	SBkKJhmDmxLtWvIaJTWla+xXBMi8+GYMZ9yCxJELeGnWYbFyjngPKsqNpYHAt6W5Oe05BBSigvi
+	86CgVF0W6HTRZcloj1yCHV4PbBMy4r2M=
+X-Gm-Gg: ASbGncuLnIae6yf2+LAR86tv1Xl4q2AWggp1C1gxHF5ajqbhKKYPP2KeEXhaThY5Mks
+	EVjnUDsOGQ4nR1/vwD606Jh+gJxs6TB3zf2fSgYfQSckmxmGxKSXWe6vdFI5X+AIgKaBR57APz+
+	1U03dOkpyY+FtUs9qhCwJRu4wfaNftnFHa/n8EJwYaX9VqxvX3QdyaDtZLQJ1y0UqveLwPm30QK
+	jxtfbdcXOyJtPAl4fo8+WYjWtQIIB4QM2YvIEoQyhSQkpBrOrfu79E=
+X-Google-Smtp-Source: AGHT+IGj6a4sc19wyzd63Dixg/UySiquRPpGXq2m5G0nsVQ6YbTUTB+pMgEHhGrVA5tqjbsOrjjh+YB6F+lqKoiYvWE=
+X-Received: by 2002:a17:903:1b25:b0:266:d648:bf53 with SMTP id
+ d9443c01a7336-268119b832bmr72456925ad.7.1758195354344; Thu, 18 Sep 2025
+ 04:35:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/8] Add mt8196 SMMU support
-To: Xueqi Zhang <xueqi.zhang@mediatek.com>, Yong Wu <yong.wu@mediatek.com>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
- Ning li <ning.li@mediatek.com>, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, iommu@lists.linux.dev
-References: <20250616025628.25454-1-xueqi.zhang@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250616025628.25454-1-xueqi.zhang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250918014053.696710-1-rpimentel.silva@gmail.com> <20250918014053.696710-2-rpimentel.silva@gmail.com>
+In-Reply-To: <20250918014053.696710-2-rpimentel.silva@gmail.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Thu, 18 Sep 2025 14:38:12 +0300
+X-Gm-Features: AS18NWCUGtPgOgXzmXtowvoHWKNQHRraFSnJDD8RcxIe00cDqMMkAGlPM7jIMlk
+Message-ID: <CAEnQRZBb+FOah-owK2u4CM_ngLm675_tbrn5tdyUTnTSu-Mmbw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
+To: Rogerio Pimentel <rpimentel.silva@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, alexander.stein@ew.tq-group.com, 
+	dario.binacchi@amarulasolutions.com, marex@denx.de, 
+	Markus.Niebel@tq-group.com, y.moog@phytec.de, joao.goncalves@toradex.com, 
+	frieder.schrempf@kontron.de, josua@solid-run.com, 
+	francesco.dolcini@toradex.com, primoz.fiser@norik.com, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Aisheng Dong <aisheng.dong@nxp.com>, xiaofeng.wei@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 16/06/25 04:56, Xueqi Zhang ha scritto:
-> This patchset add mt8196 SMMU support.
-> 1. Mediatek SMMU interrupt is low level active rather than the
-> standard edge. Process Mediatek SMMU wrapper interrupt and dump
-> detailed information when a translation fault occurs.
-> 2. In some projects, Mediatek also have EL2 driver, so put the pm
-> operation in TFA(EL3), then all the kernel and EL2 could control
-> the pm. Thus implement rpm get/put function which send smc call to
-> TFA to get/put SMMU power.
-> 
-> Xueqi Zhang (8):
->    dt-bindings: iommu: mediatek: Add mt8196 support
->    iommu/arm-smmu-v3: Add SMMU implementation
->    iommu/arm-smmu-v3: Add implementation for MT8196 MM SMMU
->    iommu/arm-smmu-v3: Add implementation for MT8196 APU SMMU
->    iommu/arm-smmu-v3: Add IRQ handle for smmu impl
->    iommu/arm-smmu-v3: mediatek: Add wrapper handle for IRQ
->    iommu/arm-smmu-v3: Invoke rpm operation before accessing the hw
->    iommu/arm-smmu-v3: mediatek: Implement rpm get/put function
-> 
->   .../bindings/iommu/arm,smmu-v3.yaml           |  24 +-
->   drivers/iommu/arm/Kconfig                     |   7 +
->   drivers/iommu/arm/arm-smmu-v3/Makefile        |   3 +-
->   .../iommu/arm/arm-smmu-v3/arm-smmu-v3-impl.c  |  16 +
->   .../arm/arm-smmu-v3/arm-smmu-v3-mediatek.c    | 536 ++++++++++++++++++
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  96 +++-
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  14 +
->   7 files changed, 691 insertions(+), 5 deletions(-)
->   create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-impl.c
->   create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-mediatek.c
-> 
+On Thu, Sep 18, 2025 at 4:44=E2=80=AFAM Rogerio Pimentel
+<rpimentel.silva@gmail.com> wrote:
+>
+> The FRDM-i.MX8MP is an NXP development platform based on the i.MX8M Plus
+> SoC, featuring a quad Cortex-A53, Cortex-M7 co-processor, 4GB LPDDR4,
+> 32GB eMMC, Wi-Fi 6/Bluetooth 5.4/802.15.4 tri-radio, Ethernet, HDMI/MIPI
+> display interfaces, camera connectors, and standard expansion headers.
+>
+> Based on the device tree found in the NXP repository at github
+> https://github.com/nxp-imx-support/meta-imx-frdm and on imx8mp-evk
+> board kernel mainline device tree.
 
-Xueqi, any followup on this series?
+Hi Rogerio,
 
-All of the multimedia blocks (including display) become unusable without an IOMMU
-on MT8196, MT6991 and newer.
+Please keep the original Signed-off-by from NXP (DCO [1]) and also please k=
+eep
+the Copyright line from NXP.
 
-Regards,
-Angelo
+Also, adding Xiaofeng for comments.
 
