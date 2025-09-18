@@ -1,100 +1,99 @@
-Return-Path: <linux-kernel+bounces-823686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43404B87319
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D90D0B871CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0779B2A60C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:59:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D565583063
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764C42FA0C6;
-	Thu, 18 Sep 2025 21:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4622F3630;
+	Thu, 18 Sep 2025 21:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sk1hzzV1"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kD7PB1mr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2072124E4C3
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7C52D94BD
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758232755; cv=none; b=n5nrsaUXEciZTouE7789sZ35g6qg4hg+SL8AvF9tS90pQ648vOEHpgrZR7OpwYodOHCc/JWSWxGBjDdqbqzngxc5CGoKMLZ4cHr4Fsmz1v4odSfB1FpphS5uo7x92PrbbKkCtau9Py2xU67c9OlTfiFdpJeqG9WeCP8aqos5zW4=
+	t=1758230589; cv=none; b=bZIFTub4PPvEHjo0YwkIU6OPKTC0xQ+91AWVRTF51NhnFJZ87OVGbo6X7CVALVfky0DdiibGNjbG9kh3hc7xjoC5ykitySI2YXQs59gHbQ+RRqLSqRfF2+TvookUJeNaqb7sKUQko/BdKkXtmKrS0C70Q79Hs42seHZ2/Ns4D3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758232755; c=relaxed/simple;
-	bh=2OiKmYY2Mab94kFiYXTmD/Tj7kOjaE6vWvMUuO7bYkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhPPhCL0cOuVWJKT4KSQFDZR7/t3H5OWZCuSJ87XA8JzHnFA0fRcGjwYQxOMCFV+NdNq0ZrbS6oI9PkvOVZgm4zQXyB6zTRU5XUFeJiI04y/C9ZL3z8sxPOw4wwUhdVS3dPStMeExsqoJQrWTGgaSQx0jGc1A1MFVYd7s0BpWDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sk1hzzV1; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 18 Sep 2025 14:21:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758232740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6yV2xHUADIUVgzf3tVjzFgnathlyFhibAgpCijuTGhQ=;
-	b=sk1hzzV1vpw6seiRIzauAmhjW9Wv6WImdrBjKPjkWSHvd0sCttC6o/4qulnF+/TLMfXiSs
-	ilhFLgfEqC+Eozqf9GcAAHh2nnqg4/mAeKxJSXv3Fp0ufGnacyuEV5atDFYhyAAfgZxO32
-	6sVM4RfVhqUJ1aA47p11qdnJrY9z1m8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	qperret@google.com, sebastianene@google.com, keirf@google.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH] KVM: arm64: Validate input range for pKVM mem transitions
-Message-ID: <aMx351jkCPIv_j61@linux.dev>
-References: <20250918180050.2000445-1-vdonnefort@google.com>
+	s=arc-20240116; t=1758230589; c=relaxed/simple;
+	bh=VbZkG/v70rqi7z7N1pTVa6zRe4mCzIPmWrbfM/43Ga8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L24osg8EEfnXFJDgHliEz3hSHTMxl5WOidvWvh/EUWmKx3iqXY3rgE9jTb55RzAVQ7m4Xl3kEgJuLZLw0RIjP4TpMwDmQCTt3zSlht0Iul+tNIYWmS0xslKHV0bLGoWMQnpD5AuwMk0wZc0jSC8lz/yTjSpUvK7MOtQZWwJYTq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kD7PB1mr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 914BEC4CEFE
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758230589;
+	bh=VbZkG/v70rqi7z7N1pTVa6zRe4mCzIPmWrbfM/43Ga8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kD7PB1mrg7Lj9Q/x6Ti3nSbl5JpNit+fFaNf0iUUnADKMg8mg1NpPZiNkYTwacwpM
+	 pnZhkZfSppkG0+B+cZ/MDVGpurtzHl+G+5QziXg9jHB2EKf1dMUs8VJX6VPgsDtSGo
+	 Im6rpb72KFYtVC8tgP/FvJ5DEFAuGCiKlmGrP9jHj3fMSOueHIDPcHayX03QutHP5A
+	 jJIER18oVP4EgGGv2ii6BUHZ9+7NYJR2AirmfuGO6zqq2JoT+7p2gGJny2j20ZQsau
+	 ghlpBjFXfTHvh5ty0lvkh7w02rq0T31hHEW9tcx97JANcvZ6+3n20Q1zYWVmi4eicG
+	 RekwjXjiHp1AQ==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-62189987b54so765921eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:23:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXfmrdBCvFQcqx1O+H4YSv8aQmxwq9t5hd3llJoaVg5tFc1gzd4yAsKJV8vhwGQpI1AU2aCaEO1KHriNfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHtqNtBe/PO4rvpwX5qst7Q2F24hjdFqm1wb5fobXGCQDw6Mjn
+	ZOdukTlNEa/X82o99svTk+5NxtjiJF0REz3v3a4w4Kr5vEeKPJdXcVroCgvkuxb54wCZ5KRtJ77
+	r17eUBYRXSeKzYdmBFC1t6VCXfT7rifo=
+X-Google-Smtp-Source: AGHT+IHGQ2i97wKX3gGqiDAvr3Z/2v5iTYlX3GIRgXjB46LU8qnsydsr7tA4O+HPeCIBF3QAZ1x9ll/9mdEUb463CA0=
+X-Received: by 2002:a05:6808:1803:b0:438:3b96:7cf9 with SMTP id
+ 5614622812f47-43d6c178dc6mr407863b6e.15.1758230588842; Thu, 18 Sep 2025
+ 14:23:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918180050.2000445-1-vdonnefort@google.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250911112408.1668431-1-lihuisong@huawei.com>
+ <20250911112408.1668431-4-lihuisong@huawei.com> <CAJZ5v0hb19Xy8dOP4itU-F5F7OjDXBVNGYiwoxAVc_yGuUv=Aw@mail.gmail.com>
+ <1e55d104-9746-4b37-8663-12714cc00026@huawei.com>
+In-Reply-To: <1e55d104-9746-4b37-8663-12714cc00026@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 18 Sep 2025 23:22:57 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hAYpBWTpfJV6ZVX0tLiZZ-S5ABxpmqckxYcPyMyZrJfA@mail.gmail.com>
+X-Gm-Features: AS18NWCxfAR6ZAMzg47DHou5V_ImLvRX3FXur0VvcmlaJgffPfwtobWxuLqYeJk
+Message-ID: <CAJZ5v0hAYpBWTpfJV6ZVX0tLiZZ-S5ABxpmqckxYcPyMyZrJfA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] ACPI: processor: Do not expose the global
+ acpi_idle_driver variable
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 07:00:49PM +0100, Vincent Donnefort wrote:
-> There's currently no verification for host issued ranges in most of the
-> pKVM memory transitions. The subsequent end boundary might therefore be
-> subject to overflow and could evade the later checks.
-> 
-> Close this loophole with an additional range_is_valid() check on a per
-> public function basis.
-> 
-> host_unshare_guest transition is already protected via
-> __check_host_shared_guest(), while assert_host_shared_guest() callers
-> are already ignoring host checks.
-> 
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index 8957734d6183..b156fb0bad0f 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -443,6 +443,11 @@ static bool range_is_memory(u64 start, u64 end)
->  	return is_in_mem_range(end - 1, &r);
->  }
->  
-> +static bool range_is_valid(u64 start, u64 end)
-> +{
-> +	return start < end;
-> +}
-> +
+On Thu, Sep 18, 2025 at 2:23=E2=80=AFPM lihuisong (C) <lihuisong@huawei.com=
+> wrote:
+>
+>
+> =E5=9C=A8 2025/9/18 4:01, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> > On Thu, Sep 11, 2025 at 1:24=E2=80=AFPM Huisong Li <lihuisong@huawei.co=
+m> wrote:
+> >> Currently, processor_driver just use the global acpi_idle_driver varia=
+ble
+> >> to check if the cpuidle driver is acpi_idle_driver. Actually, there is=
+ no
+> >> need to expose this global variable defined in processor_idle.c to out=
+side.
+> >> So move the related logical to acpi_processor_power_init() and do not
+> >> expose it.
+> > And it can also be made static, can't it?
+> ok, will do it in next version. Thanks.
 
-I'm being unnecessarily pedantic but isn't something like [-2MiB, 0) a
-legal range if we had 64 bits of PA? Looks correct though so:
+You may as well rebase it on top of this one:
 
-Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
-
-Thanks,
-Oliver
+https://lore.kernel.org/linux-acpi/5044465.31r3eYUQgx@rafael.j.wysocki/
 
