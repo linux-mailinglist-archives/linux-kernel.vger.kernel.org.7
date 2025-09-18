@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-823133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD7CB8597E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A9CB85A65
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E90CA4A1C22
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8C57C0A20
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5924A30DEC8;
-	Thu, 18 Sep 2025 15:29:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2349730F953;
+	Thu, 18 Sep 2025 15:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dFi9e74j"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E261927F728
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B0D30E0C7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209364; cv=none; b=ffK3PdFxAS7gzT2a2oH0FRQRac3TnJSLaXvHavK9fqaRfgGARPP3rLoGyVS0/BMNfVMaaPJ2ZwG/8oxZJFNKYBHsicY0WXdJRntXKtCGNM/oTVXra4Zlat8msSJDwS2/QoFOzzWeSESYiPZEJxcI26rufOeN4t6ZeyGAvq7/ml8=
+	t=1758209444; cv=none; b=eBoZbaF2s3mhsAe904uWa1zJ8MOxBrW92iL3fUsSAybY71c8TRdrTs2gtobNb6BKMYV50symxs06B+VuLTQIRgrRQV7rlJl0dwqtolLxb94RqNoT2AgL8eJfnKjQ52nWsEzQLV4ZFH03bkCy+O9f1tMN8m7jJGm9etl0hCn1EEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209364; c=relaxed/simple;
-	bh=sDMDXNY1hWb9fsZOcN2pIaFGdr46kYiycsZq7EIn0Wo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fo635qRoSvedLAcENH4Ib4m4NfyjnOuoWMxuC9Sb7EhbdDOY7W7BvOZfJgXc7C9qlJmanUwdZJ6i4DGfmgbs0hCosm1mayVuf+I9zkvLwGuEwYVFHC6B6eDwaU+1Z4kj8ojvUxQO/3vqNqGdW4xaYW48gYILndEody1uDw77mbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 159DB57397;
-	Thu, 18 Sep 2025 15:29:19 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 8923330;
-	Thu, 18 Sep 2025 15:29:14 +0000 (UTC)
-Date: Thu, 18 Sep 2025 11:30:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Thomas Gleixner <tglx@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>, syzbot
- <syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com>,
- Liam.Howlett@oracle.com, akpm@linux-foundation.org, bsegall@google.com,
- david@redhat.com, dietmar.eggemann@arm.com, juri.lelli@redhat.com,
- kees@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com,
- mingo@redhat.com, rppt@kernel.org, surenb@google.com,
- syzkaller-bugs@googlegroups.com, vincent.guittot@linaro.org,
- vschneid@redhat.com
-Subject: Re: [PATCH] futex: Use correct exit on failure from
- futex_hash_allocate_default()
-Message-ID: <20250918113022.1b97d977@gandalf.local.home>
-In-Reply-To: <20250918130945.-7SIRk8Z@linutronix.de>
-References: <68cb1cbd.050a0220.2ff435.0599.GAE@google.com>
-	<867144d3-b05e-4ce2-8bb6-da01e10fbd73@suse.cz>
-	<20250918130945.-7SIRk8Z@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758209444; c=relaxed/simple;
+	bh=eHexsjWST8Mpsyps31lBz0UT880fxViH3NiR6TxIE44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FyzcYn1YQdw/CI44xawHksT5mWOJNjU4GknT1d2GCn70cH1rfFHzdnzupB2UL6OgNJqO/CATgSmdFych7F3rNQHFD4qxBkimiVTR3E/phVPiCDRPVKxo2sy/DRAG4jpxpT9TdzUb4drL9WMa1Q1tzwJ+7worwuBSEXond4lbEQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dFi9e74j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58IAW9HD001743
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:30:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bhSX98HuJMkyrMaoMiSuQu57olFpyJn5Wru3dPmWuJo=; b=dFi9e74jPDRlKBq9
+	wyuv/FewfFCifXgDzVQNKatQxQ/gGqnQVf0D51B/j4e0LDOgDPm6FB9Pf1wHg26Y
+	7XtX047T9jmYvLYORZjmXPWzDIuvE/WEAptzPhFj+lxn2J6av7XgMAtof0ThpoSR
+	XUC/dPUpYXnV5hI+wCoHNetm43pcvQOKHH/9obHjSYCi+pCBUKFpR+JT73vW85TR
+	Vy3XQOpFCKmRxk+ZwVjxLsP58ib2qr8yMc8F98JVXGTvEYNXleDneff21Bv+w9EP
+	tQf0BueKnMnV4owOWYel4dgxDEqxKZUGfe+BDnBSscIFwOTFJrkRjXPe1u+NAngh
+	Rn26sA==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxypxmf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:30:42 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32eb18b5529so1023120a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:30:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758209441; x=1758814241;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bhSX98HuJMkyrMaoMiSuQu57olFpyJn5Wru3dPmWuJo=;
+        b=v+FdKNpODWQAxa1EltS9zCQnnxTCuPSCof+JV2kvTNkOTcugdJdf7tX2tnPPGnQYaG
+         l73QnkaIWEFtUiT0cro8tLRQtnJLQ44OZxRfnPNPOqTAs3Nrb2grM4G+wIFGS5ldJWXq
+         P7/6sBTM5OA5I8NDL0A2yIAIbjh9z8E7QSkOemGBnvfhGEyILpOoxL0O+lBPjGcn6wP1
+         seepTz3mCPsIOQSRZtMSsLqHGWU5vMCZmt4/BzcUH4oaSw/gAEi9YRGEPL3ai3RnSYJY
+         9TDFa+S/H6vcrQv70arwjLEv3uI8o19QUey71JPh/zPPA+POq04ApxJLHoE5yxbzwXbk
+         c2Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUVwOCPLBnMD4NylYJri1L5nrQdyYRPFGAwsfFbkC6+eC8SfMlRyD84RqIkdDtH0f5ea5TzquO10tW7sU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGCwpOxW5bxCGtkCeust/shdCBmqEoQMaET1QYeceL2liWIBMz
+	orDhc2IUhGESGga5QnmOhDlcV2LDbRaWk4PvXj9U5nx7lVFU+IM7BVGs+LIGO7agXzYDvnps4TK
+	NJPDEH798GIlzWDsuUd0zK6exEGILyHlj5mM9kB0lYp5b+83KwbGAIlj9fna8jpmI5bA=
+X-Gm-Gg: ASbGncu+2AuecZYN0Rn2TWj0ms5CyegAg1aXy8leKZDko/Hu5KgiwbyJKra4jSeekaI
+	t/KtC1P4qfeTIesdv4aw2E9p8zkTBZYLVFswJDijhleBoulBqyuTGGry59A1yCoNrbdAYYxPMCb
+	SrsQkqTqhhR4re+0pntqrWSfL8iYqULcA4YI1oOCkm3XGzpTQ0Vj4b7gnRVclLb/wc9tfseZLTX
+	AV7kDokxhsRFAVSN9QI9SSKAuDiX4gWUQyu9zoTjIPvuthS08BxXDPRrBfPubQI7c9DA1BUOcTG
+	303u397gOVrJkfQ8cBxK8saD8oxn31tfXhAwvQOU22h6iyoCK++5nr6BG0OcceHKeFxc2dzMAhk
+	CwXtYyp62PVs=
+X-Received: by 2002:a17:90b:5590:b0:32e:d282:3672 with SMTP id 98e67ed59e1d1-32ee3f68353mr7443679a91.23.1758209440729;
+        Thu, 18 Sep 2025 08:30:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJtZalFVe+kGAbPWvX/SFNLY4dbFllQVIHjbFGW3Gqec+5jAn3kcNmX6T2JYXIMtSPBWimIQ==
+X-Received: by 2002:a17:90b:5590:b0:32e:d282:3672 with SMTP id 98e67ed59e1d1-32ee3f68353mr7443610a91.23.1758209440202;
+        Thu, 18 Sep 2025 08:30:40 -0700 (PDT)
+Received: from [192.168.225.142] ([157.49.98.120])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3306061925esm2937000a91.2.2025.09.18.08.30.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 08:30:39 -0700 (PDT)
+Message-ID: <3ecf5010-7480-c780-1bf7-b0e762bf293d@oss.qualcomm.com>
+Date: Thu, 18 Sep 2025 21:00:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3] wifi: ath: Use of_reserved_mem_region_to_resource()
+ for "memory-region"
+Content-Language: en-US
+To: "Rob Herring (Arm)" <robh@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ath11k@lists.infradead.org
+References: <20250813214933.897486-1-robh@kernel.org>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <20250813214933.897486-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 5k3m8kciftd13nqeeizubc5uj35nansc
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 8923330
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+TTPLGd6WX6aq3rap/uZBpfrnji4VecK0=
-X-HE-Tag: 1758209354-859747
-X-HE-Meta: U2FsdGVkX1/urWqjcd2GFQknJ54dZpoXNJwoQqbuoC0perxLalFSrYy7kgiLvkmLA8YVWi6aGxg4bBNLTzGZ8BkLZKhgn9VtkWHRwcN81nmT7hUTth99wPdPbHq7dUSpNOz+uBYU2BNyfLKGy1dXqjXZOEVcOyod3Tr3ctFjSjm3MW3hmYF5b+bl4i5c0vn9qdPhJKlKV2i0Ye/HVqkXMEOf66vD1KSjP8pdk4bbLvaVSpLGYPTmtofZnOoGL+yjgmBQznEKfyXoRbdo9ewufM62EB/SNVcAYkZnlp3lEgQAkB0JHKhXkJu/EtzJc187JPtT99aGZfZ8/EgOZVKW3odD+3YZZo2ZFvlrRcPHinZFtq/qKaBaW7r5dgdn4v7AV9j9nqKyiVpRW5LhzEibPOnyGCg/Va5B0PpgX//V24mdY22wZpJiDkhxalHzhvS2JJ+qs9MiKKSt8xQDs0kDWGDyLzEjOZJPumDQxRLTGbw=
+X-Authority-Analysis: v=2.4 cv=e50GSbp/ c=1 sm=1 tr=0 ts=68cc25a2 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=31WDjHDmXr0yx5AvGNnQTg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=VjuCZWrZiTeoWwOd-AYA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-GUID: uzaML0UfFSiunPDGdYVhsiJcjiD9cFIU
+X-Proofpoint-ORIG-GUID: uzaML0UfFSiunPDGdYVhsiJcjiD9cFIU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXyFDgYL7VE3uI
+ RHxTHEvoK9hi47auAMffTmYRtyhMj1E2bY80w+BDXaUSr7ITnhc2QDAIDzwvjih9mxMyzhh2psx
+ uQGbC0+pe29I0qbZdTfQdbEt9ADYUdEwqu0TvWcqlF5iE6VL8JILt6Dz5Ks9FRgPyRQgCGkPMAn
+ Amz84iM/Plk0I8VKxwcE2GG3/tcd0AHFqehkYGvsa3OsYDQufPsM2EceOKYoxpiGHuCBuDPYFV0
+ 929wQvrBbWKfZxEonhui8WPfJRFveORoOjO0sXtoc4SzeyH8kK9cTTbzEiI/s7dNWzLXmkoWAha
+ Te6a7xq/Ika/uWGI+13mL9ybIJvbOGJtLcggu4wD3MVrblgcjKHa7yA4MfZjuY3BKSOjPiSNMZY
+ KWsofdYq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_01,2025-09-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 priorityscore=1501
+ phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On Thu, 18 Sep 2025 15:09:45 +0200
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-> copy_process() uses the wrong error exit path from
-> futex_hash_allocate_default().
-> After exiting from futex_hash_allocate_default(), neither tasklist_lock
-> nor siglock has been acquired. The exit label bad_fork_core_free unlocks
-> both of these locks which is wrong.
+
+On 8/14/2025 3:19 AM, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() function to
+> handle "memory-region" properties.
 > 
-> The previous label, bad_fork_cancel_cgroup, is the correct exit.
-> sched_cgroup_fork() did not allocate any resources that need to freed.
+> The error handling is a bit different for ath10k. "memory-region" is
+> optional, so failed lookup is not an error. But then an error in
+> of_address_to_resource() is treated as an error. However, that
+> distinction is not really important. Either the region is available
+> and usable or it is not. So now, it is just
+> of_reserved_mem_region_to_resource() which is checked for an error.
 > 
-> Use bad_fork_cancel_cgroup on error exit from
-> futex_hash_allocate_default().
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-	if (need_futex_hash_allocate_default(clone_flags)) {
-		retval = futex_hash_allocate_default();
-		if (retval)
-			goto bad_fork_core_free;
-		[..]
-	}
-	[..]
-	write_lock_irq(&tasklist_lock);
-	[..]
-	klp_copy_process(p);
-
-	sched_core_fork(p);
-
-	spin_lock(&current->sighand->siglock);
-
-	[..]
-
- bad_fork_core_free:
-	sched_core_free(p);
-	spin_unlock(&current->sighand->siglock);
-	write_unlock_irq(&tasklist_lock);
- bad_fork_cancel_cgroup:
-	cgroup_cancel_fork(p, args);
-
-Yep, looks bad to me!
-
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
-
-
-> 
-> Fixes: 7c4f75a21f636 ("futex: Allow automatic allocation of process wide futex hash")
-> Reported-by: syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68cb1cbd.050a0220.2ff435.0599.GAE@google.com
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
