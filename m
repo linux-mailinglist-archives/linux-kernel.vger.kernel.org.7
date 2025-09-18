@@ -1,224 +1,208 @@
-Return-Path: <linux-kernel+bounces-823588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4337AB86EA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E00B86EB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E4E7C68AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:34:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD623B226C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AA42EFD9E;
-	Thu, 18 Sep 2025 20:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ugo19fez"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B622F2607;
+	Thu, 18 Sep 2025 20:35:59 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D567722A4F8
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0997A2D63FF
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758227678; cv=none; b=MI7WfCjGVxpE+igVQvwNohzEnJyGqreudhXsvvgTsl4O4IHOOtj3XG1aEO31mH65JsdfrtRwrwjBvvLtQJHh9BV/zPGU8WQrkfeGQ3CjPKtZD7XOhigWCYCzrBvL39s6CvHRAkrkeNRZzRkx3qB3dGJpBbvuvMDE5H+c/yHSRJI=
+	t=1758227758; cv=none; b=HZNAEO+xQjWqEP0zLWtUDUn+ATNfFh88zrTO2dIvubExZBTcSvePyzZTXyTWje+tvN1u3Y0YWkp6dsE0YmpYOx5gISO1LG6NVmPoHjDmI/K//dYRPN0uzC8Q+K0kRGwfMIeRqf+Bw1lUNKV/qB6uiKYFdDPZaZ2+Ap0Zuw5bvRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758227678; c=relaxed/simple;
-	bh=TNlRLl4c9UDfjC84aA8G4KJ4ljf2HUpu3dv4ZBWDSDo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XuXX47P9F39RlGV7q+laB4LN67IXrlQqUSIlvT/tCEpnNtp7iIzCh9+LMzwA1JAUmxpuIFP2HC9O0/cGqsWuuG2ouYT9OVvxv4Xid5t3vxx1twoftBT/JhsaIi5hoorv3ytKHtNgZbGYVAalsttDWL8qm2mhMkkSojZmbGcC6Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ugo19fez; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec69d22b2so1428566a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758227676; x=1758832476; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBODMdbQGpyv3o1i/C7a9yrUe2tedQBqvCU7igvUACQ=;
-        b=ugo19fezcS05F1sa4Gdb4bUJmMsyB+r7GowBGWFuHWnHlHC339NBIMmjVN/yUt8zwn
-         i9ErNkSKj4ubjF0DdJICGKPRbly27rhqkTliz32Ahhs3sbPY6d+oRIcaPOF+WSp8aEBW
-         KTV1GxyIPzKHVHHQi7PgVPliBg1o2RM/r4V0miaA9Fa8Dhip6aOAXVkI5KRObW6IBSL1
-         feEK5XBGHH4r5nSm5hhXLdkcA9G4wqDEYKT5KmLll5PyRL20FyIFI3fViNPFtNBZ8XcI
-         WuyfM+CVld31MPFXXltv8sZTDtEevNnMwn03lvN/geUMcsFIO52PkmC9puLbh2KNNP6m
-         ohWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758227676; x=1758832476;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBODMdbQGpyv3o1i/C7a9yrUe2tedQBqvCU7igvUACQ=;
-        b=Q6eqWD80YG/Lf63EofGd162MyN8qLbrnvZg3YJtF7IctDksnp9cLemzWPcdisanjA8
-         raWRWExN4Nh/Lq7Ss0iXXcJFjtMTeiHT/p3qnFS4hLPzA1S8FVZRNhxUJbaZ3zUqFmGY
-         SESuDQKTo2Ewo95y9ZOTEBu5DViIUZDMk4j9fAFL1F2n3JVWAjbRcM9RhKBoMvLk7JZy
-         QiXTfS+1oa5SbNCT1ednxc2zZjwVmsB+2bwVlDcbQO2GUkcQLj9VAc2unrL2ixQpPVjl
-         7hNCGACTCLNzcwdljjZvRzT4hM+NNtxaa6drRsgEPrcWbxdy/JkeIiFpD8he3wtkHru5
-         UzoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrz82qkI7hO7JPetQ0HmMYLNeAbM3SFCEC512RJZN5mgoIgq1MGERs62QzQBKkAjWH/lmN1as4YbcdFGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3YWJAvw3VHjxgJHDiWlYHcHJsxwhjaGuzh9kb/I53vZP6RShk
-	aEdEFLoZguNnoYJX2S/7mjAfZIsneCn8i8IKuDmqxu8Q7Xose7cxP097WZQVdVZjFsKbSV8EMde
-	K1aYXHw==
-X-Google-Smtp-Source: AGHT+IERMigXNRqnLSigGWkoYGfo80aGu0GfE+30vipr87ezRtoiMl4FHd/dkvILTWnAeCpXl1EhKp58i6w=
-X-Received: from pjyf8.prod.google.com ([2002:a17:90a:ec88:b0:330:429d:b28c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4cd1:b0:32e:e18a:3691
- with SMTP id 98e67ed59e1d1-33098386c95mr936918a91.35.1758227676194; Thu, 18
- Sep 2025 13:34:36 -0700 (PDT)
-Date: Thu, 18 Sep 2025 13:34:34 -0700
-In-Reply-To: <aMxiIRrDzIqNj2Do@AUSJOHALLEN.amd.com>
+	s=arc-20240116; t=1758227758; c=relaxed/simple;
+	bh=6+gwOstLAb+z3XgkGf5uMWSysG2PM5RQMJisVfTXFWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FRtAMZbjhmZiJI3CjvhiTBxxS4pg/L07Ko7oOV4RJQvm7pbOv21lG/Se8T1IAwgGVQrqubvx2ZQScZqW6E+Cri0dFq6cn48MkbGnKl1yKomV1QHX4L5oPAnNvDIl/uLdLZl9VMi4gEdmaBltzveEDIKlpPaZW8gQUcqcUsTxjwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 7E42386CA9;
+	Thu, 18 Sep 2025 20:35:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 9FFCC20025;
+	Thu, 18 Sep 2025 20:35:52 +0000 (UTC)
+Date: Thu, 18 Sep 2025 16:35:51 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Akhilesh Patil <akhilesh@ee.iitb.ac.in>, Nam Cao
+ <namcao@linutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Zhen Ni
+ <zhen.ni@easystack.cn>
+Subject: [GIT PULL] rv: Fixes for v6.17
+Message-ID: <20250918163551.3e4254ef@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-30-seanjc@google.com>
- <aMmynhOnU/VkcXwI@AUSJOHALLEN.amd.com> <aMnAVtWhxQipw9Er@google.com>
- <aMnJYWKf63Ay+pIA@AUSJOHALLEN.amd.com> <aMnY7NqhhnMYqu7m@google.com>
- <aMnq5ceM3l340UPH@AUSJOHALLEN.amd.com> <aMxiIRrDzIqNj2Do@AUSJOHALLEN.amd.com>
-Message-ID: <aMxs2taghfiOQkTU@google.com>
-Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
- GHCB when it's valid
-From: Sean Christopherson <seanjc@google.com>
-To: John Allen <john.allen@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 9FFCC20025
+X-Stat-Signature: apddioo4hy84g6s8ohary56eyordu65m
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19OYEb2vFQC7wvvIBqTS3jJDiHrc4Mf/Zw=
+X-HE-Tag: 1758227752-58823
+X-HE-Meta: U2FsdGVkX1/sZks2+1UiW7e4+rzbBgBmUG3hOsy5NciFScq7lg8LyaKxqDwHyGTZCIreFaibDlgfQjtFN7GR6G5C3jO5WO9z0A/PsdrzDPQBJicwNTEyZYjgwE9tZTLOrCmP7NG8rU/z1X5Vexxd0w1FC/8hePiqOBNI2bYkjcUlStcAavtZg9XhS2CnAVKnnlAIDy085W+Y2DtvCArqp0ZkfaknwcUy1KbfTpykMAqcaxNpP0WihSGMqJoqsj153hYezHfo3uzM62x2fJxMuFp5KROOGTxSR7nhGHmzhYY8HgIV6KtiD7Rf6KxBjloqonWTSoQipZLTJgGW8uguX9oUAgfugv5CveNdU5BH82SgDO+eJzCAfBxQeWDvFDEAQA2JXhP05m9PNBwzeP/l4gR5UWjoJ+09UDTAM3ixiXg=
 
-On Thu, Sep 18, 2025, John Allen wrote:
-> On Tue, Sep 16, 2025 at 05:55:33PM -0500, John Allen wrote:
-> > On Tue, Sep 16, 2025 at 02:38:52PM -0700, Sean Christopherson wrote:
-> > > On Tue, Sep 16, 2025, John Allen wrote:
-> > > > On Tue, Sep 16, 2025 at 12:53:58PM -0700, Sean Christopherson wrote:
-> > > > > On Tue, Sep 16, 2025, John Allen wrote:
-> > > > > > On Fri, Sep 12, 2025 at 04:23:07PM -0700, Sean Christopherson wrote:
-> > > > > > > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > > > > > > index 0cd77a87dd84..0cd32df7b9b6 100644
-> > > > > > > --- a/arch/x86/kvm/svm/sev.c
-> > > > > > > +++ b/arch/x86/kvm/svm/sev.c
-> > > > > > > @@ -3306,6 +3306,9 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
-> > > > > > >  	if (kvm_ghcb_xcr0_is_valid(svm))
-> > > > > > >  		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
-> > > > > > >  
-> > > > > > > +	if (kvm_ghcb_xss_is_valid(svm))
-> > > > > > > +		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
-> > > > > > > +
-> > > > > > 
-> > > > > > It looks like this is the change that caused the selftest regression
-> > > > > > with sev-es. It's not yet clear to me what the problem is though.
-> > > > > 
-> > > > > Do you see any WARNs in the guest kernel log?
-> > > > > 
-> > > > > The most obvious potential bug is that KVM is missing a CPUID update, e.g. due
-> > > > > to dropping an XSS write, consuming stale data, not setting cpuid_dynamic_bits_dirty,
-> > > > > etc.  But AFAICT, CPUID.0xD.1.EBX (only thing that consumes the current XSS) is
-> > > > > only used by init_xstate_size(), and I would expect the guest kernel's sanity
-> > > > > checks in paranoid_xstate_size_valid() to yell if KVM botches CPUID emulation.
-> > > > 
-> > > > Yes, actually that looks to be the case:
-> > > > 
-> > > > [    0.463504] ------------[ cut here ]------------
-> > > > [    0.464443] XSAVE consistency problem: size 880 != kernel_size 840
-> > > > [    0.465445] WARNING: CPU: 0 PID: 0 at arch/x86/kernel/fpu/xstate.c:638 paranoid_xstate_size_valid+0x101/0x140
-> > > 
-> > > Can you run with the below printk tracing in the host (and optionally tracing in
-> > > the guest for its updates)?  Compile tested only.
-> > 
-> > Interesting, I see "Guest CPUID doesn't have XSAVES" times the number of
-> > cpus followed by "XSS already set to val = 0, eliding updates" times the
-> > number of cpus. This is with host tracing only. I can try with guest
-> > tracing too in the morning.
-> 
-> Ok, I think I see the problem. The cases above where we were seeing the
-> added print statements from kvm_set_msr_common were not situations where
-> we were going through the __kvm_emulate_msr_write via
-> sev_es_sync_from_ghcb. When we call __kvm_emulate_msr_write from this
-> context, we never end up getting to kvm_set_msr_common because we hit
-> the following statement at the top of svm_set_msr:
-> 
-> if (sev_es_prevent_msr_access(vcpu, msr))
-> 	return vcpu->kvm->arch.has_protected_state ? -EINVAL : 0;
 
-Gah, I was looking for something like that but couldn't find it, obviously.
+Linus,
 
-> So I'm not sure if this would force using the original method of
-> directly setting arch.ia32_xss or if there's some additional handling
-> here that we need in this scenario to allow the msr access.
+Runtime Verifier fixes for v6.17
 
-Does this fix things?  If so, I'll slot in a patch to extract setting XSS to
-the helper, and then this patch can use that API.  I like the symmetry between
-__kvm_set_xcr() and __kvm_set_xss(), and I especially like not doing a generic
-end-around on svm_set_msr() by calling kvm_set_msr_common() directly.
+- Fix build in some RISC-V flavours
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 945f7da60107..ace9f321d2c9 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2213,6 +2213,7 @@ unsigned long kvm_get_cr8(struct kvm_vcpu *vcpu);
- void kvm_lmsw(struct kvm_vcpu *vcpu, unsigned long msw);
- int __kvm_set_xcr(struct kvm_vcpu *vcpu, u32 index, u64 xcr);
- int kvm_emulate_xsetbv(struct kvm_vcpu *vcpu);
-+int __kvm_set_xss(struct kvm_vcpu *vcpu, u64 xss);
+  Some system calls only are available for the 64bit RISC-V machines.
+  #ifdef out the cases of clock_nanosleep and futex in the sleep monitor
+  if they are not supported by the architecture.
+
+- Fix wrong cast, obsolete after refactoring
+
+  Use container_of() to get to the rv_monitor structure from the
+  enable_monitors_next() 'p' pointer. The assignment worked only because
+  the list field used happened to be the first field of the structure.
+
+- Remove redundant include files
+
+  Some include files were listed twice. Remove the extra ones and sort
+  the includes.
+
+- Fix missing unlock on failure
+
+  There was an error path that exited the rv_register_monitor() function
+  without releasing a lock. Change that to goto the lock release.
+
+- Add Gabriele Monaco to be Runtime Verifier maintainer
+
+  Gabriele is doing most of the work on RV as well as collecting patches.
+  Add him to the maintainers file for Runtime Verification.
+
+
+Please pull the latest trace-rv-v6.17-rc5 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-rv-v6.17-rc5
+
+Tag SHA1: ecf198bd883bc43654e237c91bb2964f4b89dab6
+Head SHA1: ef442fc5c1a9a2a232de85a0e6967f388b6c0c8e
+
+
+Akhilesh Patil (1):
+      include/linux/rv.h: remove redundant include file
+
+Nam Cao (1):
+      rv: Fix wrong type cast in enabled_monitors_next()
+
+Palmer Dabbelt (1):
+      rv: Support systems with time64-only syscalls
+
+Steven Rostedt (1):
+      rv: Add Gabriele Monaco as maintainer for Runtime Verification
+
+Zhen Ni (1):
+      rv: Fix missing mutex unlock in rv_register_monitor()
+
+----
+ MAINTAINERS                            | 1 +
+ include/linux/rv.h                     | 6 ++----
+ kernel/trace/rv/monitors/sleep/sleep.c | 4 ++++
+ kernel/trace/rv/rv.c                   | 4 ++--
+ 4 files changed, 9 insertions(+), 6 deletions(-)
+---------------------------
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cd7ff55b5d32..17073c075bf7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22048,6 +22048,7 @@ F:	drivers/infiniband/ulp/rtrs/
  
- int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr);
- int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr);
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 94d9acc94c9a..462aebc54135 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -3355,7 +3355,7 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
-                __kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(svm));
+ RUNTIME VERIFICATION (RV)
+ M:	Steven Rostedt <rostedt@goodmis.org>
++M:	Gabriele Monaco <gmonaco@redhat.com>
+ L:	linux-trace-kernel@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/trace/rv/
+diff --git a/include/linux/rv.h b/include/linux/rv.h
+index 14410a42faef..9520aab34bcb 100644
+--- a/include/linux/rv.h
++++ b/include/linux/rv.h
+@@ -7,16 +7,14 @@
+ #ifndef _LINUX_RV_H
+ #define _LINUX_RV_H
  
-        if (kvm_ghcb_xss_is_valid(svm))
--               __kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(svm));
-+               __kvm_set_xss(vcpu, kvm_ghcb_get_xss(svm));
- 
-        /* Copy the GHCB exit information into the VMCB fields */
-        exit_code = kvm_ghcb_get_sw_exit_code(svm);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 5bbc187ab428..9b81e92a8de5 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1313,6 +1313,22 @@ int kvm_emulate_xsetbv(struct kvm_vcpu *vcpu)
- }
- EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_emulate_xsetbv);
- 
-+int __kvm_set_xss(struct kvm_vcpu *vcpu, u64 xss)
-+{
-+       if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
-+               return KVM_MSR_RET_UNSUPPORTED;
-+
-+       if (xss & ~vcpu->arch.guest_supported_xss)
-+               return 1;
-+       if (vcpu->arch.ia32_xss == xss)
-+               return 0;
-+
-+       vcpu->arch.ia32_xss = xss;
-+       vcpu->arch.cpuid_dynamic_bits_dirty = true;
-+       return 0;
-+}
-+EXPORT_SYMBOL_GPL(__kvm_set_xss);
-+
- static bool kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
- {
-        return __kvm_is_valid_cr4(vcpu, cr4) &&
-@@ -4119,16 +4135,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-                }
-                break;
-        case MSR_IA32_XSS:
--               if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
--                       return KVM_MSR_RET_UNSUPPORTED;
+-#include <linux/types.h>
+-#include <linux/list.h>
 -
--               if (data & ~vcpu->arch.guest_supported_xss)
--                       return 1;
--               if (vcpu->arch.ia32_xss == data)
--                       break;
--               vcpu->arch.ia32_xss = data;
--               vcpu->arch.cpuid_dynamic_bits_dirty = true;
--               break;
-+               return __kvm_set_xss(vcpu, data);
-        case MSR_SMI_COUNT:
-                if (!msr_info->host_initiated)
-                        return 1;
+ #define MAX_DA_NAME_LEN			32
+ #define MAX_DA_RETRY_RACING_EVENTS	3
+ 
+ #ifdef CONFIG_RV
++#include <linux/array_size.h>
+ #include <linux/bitops.h>
++#include <linux/list.h>
+ #include <linux/types.h>
+-#include <linux/array_size.h>
+ 
+ /*
+  * Deterministic automaton per-object variables.
+diff --git a/kernel/trace/rv/monitors/sleep/sleep.c b/kernel/trace/rv/monitors/sleep/sleep.c
+index eea447b06907..c1347da69e9d 100644
+--- a/kernel/trace/rv/monitors/sleep/sleep.c
++++ b/kernel/trace/rv/monitors/sleep/sleep.c
+@@ -127,7 +127,9 @@ static void handle_sys_enter(void *data, struct pt_regs *regs, long id)
+ 	mon = ltl_get_monitor(current);
+ 
+ 	switch (id) {
++#ifdef __NR_clock_nanosleep
+ 	case __NR_clock_nanosleep:
++#endif
+ #ifdef __NR_clock_nanosleep_time64
+ 	case __NR_clock_nanosleep_time64:
+ #endif
+@@ -138,7 +140,9 @@ static void handle_sys_enter(void *data, struct pt_regs *regs, long id)
+ 		ltl_atom_update(current, LTL_CLOCK_NANOSLEEP, true);
+ 		break;
+ 
++#ifdef __NR_futex
+ 	case __NR_futex:
++#endif
+ #ifdef __NR_futex_time64
+ 	case __NR_futex_time64:
+ #endif
+diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+index 1482e91c39f4..48338520376f 100644
+--- a/kernel/trace/rv/rv.c
++++ b/kernel/trace/rv/rv.c
+@@ -495,7 +495,7 @@ static void *available_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+  */
+ static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+ {
+-	struct rv_monitor *mon = p;
++	struct rv_monitor *mon = container_of(p, struct rv_monitor, list);
+ 
+ 	(*pos)++;
+ 
+@@ -805,7 +805,7 @@ int rv_register_monitor(struct rv_monitor *monitor, struct rv_monitor *parent)
+ 
+ 	retval = create_monitor_dir(monitor, parent);
+ 	if (retval)
+-		return retval;
++		goto out_unlock;
+ 
+ 	/* keep children close to the parent for easier visualisation */
+ 	if (parent)
+	
 
