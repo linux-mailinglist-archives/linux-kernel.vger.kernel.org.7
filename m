@@ -1,237 +1,171 @@
-Return-Path: <linux-kernel+bounces-823681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7189EB872CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:45:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7097CB872F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305D22A228A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DD11C87D90
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C14D277C8B;
-	Thu, 18 Sep 2025 21:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20422F2910;
+	Thu, 18 Sep 2025 21:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="zBQb7SCY"
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D3r6g0zO"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F102BEC2A;
-	Thu, 18 Sep 2025 21:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D349A2222B4
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758231931; cv=none; b=iiN//OVtaPX0XB0znb0F5et61FJoxkSqtM1vNp+/aaOR7d7G9AYb3miRuQtQMloHC688UR5Z4BGaoqP/bIPWckB/+67SORT+AYSt36hZFW29KcBdkNOVCjpRGEWDd4gHEDAgTRyvMDuRCG4blKF68neLGyGFJfjdWEJdM004AWE=
+	t=1758232484; cv=none; b=eXA9NJ/660TMQqQ7k0Cz1RjgdQhIF1eazQpOFNDdM/uM/4ogoQ8m+fNw6Dp8fiDtnZifGxUgsxov191y4aCOHUuWsvB/yvX+MOjg+eZ8P4MgrRitJUODIOUXsjaGm8rn4SJFDi1Wpg1XJ5/lKfAc71PLK2QdzHgiFt9Kfg+QIWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758231931; c=relaxed/simple;
-	bh=UdenWNTPD8z38LLdeVYNODy2qm2sB45jEaWygA5uVnk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TNRKinAMtg4GQDROyAyoXoFuD0MDpL7cOnqUIp6S6cryWxg49rJQOaALRSqtgIG7X+kOFmrY+kSIocewKbKe697PjgIW8XuwkaBRqlkn1eTWPgxsGQ3O0tyeSJOnmEhZpuJBn8nKZjrQ3zH0m0mBQtiVI/z2N3YxUZX+0Zvlcqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=zBQb7SCY; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 58ILEuwp407805;
-	Thu, 18 Sep 2025 14:45:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=s2048-2025-q2; bh=bMo3hezyytSvwDq2dx
-	t0/0pQ5nUHXn3qBtN4ZaZSRXw=; b=zBQb7SCY+4tbpwPT0f5CqxY1yaSKQWfd/p
-	MHbjnQY9szlTiCybfYxRBrJhTwBKhmtvIIDhvkZI+xD+QchOG3RCtflnkVdMGrTf
-	ebwsq7JQzILNYmJby9oEuzGzv8Nu2L+soqdp1l4jinlWOu1U9cxFe0w65Kxs8sXq
-	eduorASnpDBTJsoNkxah5xOAuC8R+Xqvy0iIHWMTX/E/xyYOcGzf//3HEmcKSKg/
-	MdwUrUTI+lPV/cAkSrpSJcNlQmiJGibTUpVC0osIvyy6IzEn06STG91OAK/RHbE2
-	4SAISObSiB6rXKJHNTQIWI7x5hM1GirYLAkW0DN1ulkdOeXCiBZQ==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by m0001303.ppops.net (PPS) with ESMTPS id 498q90smej-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 18 Sep 2025 14:45:01 -0700 (PDT)
-Received: from devgpu015.cco6.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Thu, 18 Sep 2025 21:44:59 +0000
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Jason Gunthorpe
-	<jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>, David Reiss <dreiss@meta.com>,
-        "Joerg
- Roedel" <joro@8bytes.org>, Keith Busch <kbusch@kernel.org>,
-        Leon Romanovsky
-	<leon@kernel.org>, Li Zhe <lizhe.67@bytedance.com>,
-        Mahmoud Adam
-	<mngyadam@amazon.de>,
-        Philipp Stanner <pstanner@redhat.com>,
-        Robin Murphy
-	<robin.murphy@arm.com>,
-        Vivek Kasireddy <vivek.kasireddy@intel.com>,
-        "Will
- Deacon" <will@kernel.org>, Yunxiang Li <Yunxiang.Li@amd.com>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-        <kvm@vger.kernel.org>
-Subject: [TECH TOPIC] vfio, iommufd: Enabling user space drivers to vend more granular access to client processes
-Date: Thu, 18 Sep 2025 14:44:07 -0700
-Message-ID: <20250918214425.2677057-1-amastro@fb.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758232484; c=relaxed/simple;
+	bh=OBdCMGeWv7G/tkOmZiDbcUQKLH/CnWF06gVEbnVu89c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sgBHA58j2Y9vY4jKOwaNt9G3WQ1gmPNT1zvFACNjlauRzZnrPcRGt21kZeGnr/Y3UtNx34O5KiXybmTl1TX369HFQNneUmgJfU+ZSfxiANDFQEyM8/9pB/vwB3VLLhzGUhIWl67IbIM8Llt7jiLbH/26k2/lyMX2+Jh9QRdKq7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D3r6g0zO; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f7039aa1eso1638723e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:54:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1758232481; x=1758837281; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLiszfQw8YctXWgw7Rv1CzeIAYsEhv/enJDimwborHo=;
+        b=D3r6g0zO0172INQvfoenu5QSashNR7n7NEicMp1eGk6G0yXtB4hSyKqDJ09IfGhBEJ
+         fC8wmYo28ywGI4sR2DfXvyIwyqeP+mFTHCidXEyAsnJiDSZeW1cD+DthE8e7C6CrN1FA
+         BFQBJGXI6F5CHxk9oVZoOCc0MZ9dAkARXms9U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758232481; x=1758837281;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mLiszfQw8YctXWgw7Rv1CzeIAYsEhv/enJDimwborHo=;
+        b=Vz8ILx2qmm6VwDurlhnmPJlbcl13wUAe4tVokoDtqGx1DXiqWdAj7+i82qoGNwv6J1
+         euu7ZJreBIWlDIw+pJ9VZ7rhYHmJxQGSlkmL35hpJB7d+gTeA1nFEtuQ9mN5WuZMZb6U
+         xHi1jiYi1tV2LwhkTR5NciLK54/0TV/bL+LXjqJ7l9QNsV7eZ7aK9DQZCBdGW7lGVFGZ
+         1ZKYLUPBLlIp+02R4oO83ng/ri3oNKkuo39sDETMr1CPSZdnO4PKqbLjzf8Rrti4p+u4
+         qbPXJaUVJH79ig5ggxCXgkwFKwEozKBwKqSftP2Eax+ji1jq0BQhiXLTZxsJFzaAYbeY
+         CBcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPxgvoL4OkhnVCfkCd3Js5oaI6aClbQXSgyhUFPfR0Ay+cipp+l75ROOBnFsAHQvIS0ttP5PmtvxovycU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPSWX7ZoI+N+XJChCPcn8vgtPsp83GwogZUOKLY530rf0cmRJQ
+	Ys1MHJ4H/XmLVQI05KTqq5K8oy7h/4HOs4RxG/uPwxTF/vuvz/4TxGj5tNtXHMNcYEpSs4P8VT0
+	q+QazaP6Gbg==
+X-Gm-Gg: ASbGncvgg1mBH4vHbd0si0szMgT+LLHRppVMJIqiLwTO72THnriMulo+Bcs5ubmmykq
+	mgG0n6u8T1SZ02tM6CXz0Hb3O6rkceLXq+yej7JlJHSZXSCGzDIc4PbxSUVD85RWQyFGwqAUwAD
+	pPXaB8YHsLowOatGM4djlDCJVvhMx+vWMPDxd6Z9UYet45FH7Bgzjrr5Ajp4IZXaEc3oM/B2j7s
+	NGkIxU8kodflzT+X7ynhC/YZZ4qvPKO6g/CQf/gpeiZjoO2iQYyoJNN2bSzCGlq2SbtJ0rFe4ZP
+	8gANA+dfzr3E+lkeeaZcd5TD30yl5AqMtGSjlAWiRZGlFtzj9e2OfkxAhqaEUYynZfG4DCT713/
+	ZJ7nJqO/m+K2wxWmxB7HGdBNc1tjDe4GxeJt4r8fHzkfPNLPQAY+rn8rA+sWV1SpAbyOTJz82Cm
+	3v5pjiSR6VZJhF6Fw=
+X-Google-Smtp-Source: AGHT+IECUKdSKp9czMJLUMDNUj723vuGAgoBUcCiRTw+JiBPjyzmZ0gfsV0gtC+GJrzMxt1x/Qp8Sw==
+X-Received: by 2002:a05:6512:2288:b0:579:f4b3:bc3c with SMTP id 2adb3069b0e04-579f4b3bc58mr277810e87.55.1758232480702;
+        Thu, 18 Sep 2025 14:54:40 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a8fadb2dsm961021e87.90.2025.09.18.14.54.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 14:54:40 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5607a240c75so1525517e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:54:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmyyYSmjCXALhvjDQofzjQL9yIsrqtGRgg4T9RhWxt0q3QXwnKITjZtdX7uO18uFx9XiLbUG7QJt5/DOI=@vger.kernel.org
+X-Received: by 2002:a17:906:dc89:b0:b0f:a22a:4c30 with SMTP id
+ a640c23a62f3a-b24f5685fdemr62738866b.47.1758232077501; Thu, 18 Sep 2025
+ 14:47:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250918140451.1289454-1-elver@google.com> <CAHk-=wgd-Wcp0GpYaQnU7S9ci+FvFmaNw1gm75mzf0ZWdNLxvw@mail.gmail.com>
+ <aMx4-B_WAtX2aiKx@elver.google.com>
+In-Reply-To: <aMx4-B_WAtX2aiKx@elver.google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 18 Sep 2025 14:47:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgQO7c0zc8_VwaVSzG3fEVFFcjWzVBKM4jYjv8UiD2dkg@mail.gmail.com>
+X-Gm-Features: AS18NWBxHuMwwtU-EoNbPFA3uJ1YRJkAKqdurj12n-PWNJgH6ecKwZ8QZrX3P28
+Message-ID: <CAHk-=wgQO7c0zc8_VwaVSzG3fEVFFcjWzVBKM4jYjv8UiD2dkg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+To: Marco Elver <elver@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE4MDE5NSBTYWx0ZWRfX6AAYxKQMwZLw
- aZViUqQxptfvd13AUHO0wDgCyvEEG4g3l09hqrAHyDxcQ+EU4slwZk5HPlBQ3+P9+Wm6uxqo3zs
- ipT/D/u8UDONUD/4MUiiJgarCqdu5Hbh/0yHvgo1BnrkJ68GK5hLHFzBOpf7PyTkVeYuEF0hMv7
- Iy5LjglKeQ2mFiHC9j3T7eRJG4ELOqNwGtCxyfVmTF8k+TTOAE+5XO4MgQmywQaI8CxLlXrpJ5p
- z+CyQUqpc+ensulQmQ3/Y70ur7i/1cpB6CQeZgY7TWeVkaImen/RYMaGaZL044/eZDUfFficXa/
- 8j5vcthb3AamomjDsMT4ZS2X3iavkRjfFEpLcNyKSbuS1cONIEc1NvZGUcnh08=
-X-Proofpoint-ORIG-GUID: xbXU6eezAkjiegZWUCOl0aCn3m571zgk
-X-Proofpoint-GUID: xbXU6eezAkjiegZWUCOl0aCn3m571zgk
-X-Authority-Analysis: v=2.4 cv=YZC95xRf c=1 sm=1 tr=0 ts=68cc7d5d cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=968KyxNXAAAA:8
- a=rDkzsZ3yvGrXTgFfqF4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-18_03,2025-09-18_02,2025-03-28_01
 
-Hello,
+On Thu, 18 Sept 2025 at 14:26, Marco Elver <elver@google.com> wrote:
+>
+> Fair points. "Context Analysis" makes sense, but it makes the thing
+> (e.g. lock) used to establish that context a little awkward to refer to
+> -- see half-baked attempt at reworking the documentation below.
 
-We've been running user space drivers (USD) in production built on top of VFIO,
-and have come to value the operational and development benefits of being able to
-deploy updates to device policy by simply shipping user space binaries.
+Yeah, I agree that some of that reads more than a bit oddly.
 
-In our architecture, a long-running USD process bootstraps and manages
-background device operations related to supporting client process workloads.
-Client processes communicate with the USD over Unix domain sockets to acquire
-the device resources necessary to dispatch work to the device.
+I wonder if we could talk about "context analysis", but then when
+discussing what is *held* for a particular context, call that a
+"context token" or something like that?
 
-We anticipate a growing need to provide more granular access to device resources
-beyond what the kernel currently affords to user space drivers similar to our
-model.
+But I don't mind your "Context guard" notion either. I'm not loving
+it, but it's not offensive to me either.
 
-The purpose of this email is to:
-- Gauge the extent to which ongoing work in VFIO and IOMMUFD can meet those
-  needs.
-- Seek guidance from VFIO and IOMMUFD maintainers about whether there is a path
-  to supporting the remaining pieces across the VFIO and IOMMUFD UAPIs.
-- Describe our current approach and get feedback on whether there are existing
-  solutions that we've missed.
-- Figure out the most useful places we can help contribute.
+Then the language would be feel fairly straightforward,
 
-Inter-process communication latency (between client processes and USD) is
-prohibitively slow to support hot-path communication between the client and
-device, which targets round-trip times on the order of microseconds. To address
-this, we need to allow client processes and the device to access each other's
-memory directly, bypassing IPC with the USD and kernel syscalls.
-a) For host-initiated access into device memory, this means mmap-ing BAR
-   sub-regions into the client process.
-b) For device-initiated access into host memory, it means establishing IOMMU
-   mappings to memory underlying the client process address space.
+Eg:
 
-Such things are more straightforward for in-kernel device drivers to accomplish:
-they are free to define customized semantics for their associated fds and
-syscall handlers. Today, user space driver processes have fewer tools at their
-disposal for controlling these types of access.
+> +Context analysis is a way to specify permissibility of operations to depend on
+> +contexts being held (or not held).
 
-----------
-BAR Access
-----------
+That "contexts being held" sounds odd, but talking about "context
+markers", or "context tokens" would seem natural.
 
-To achieve (a), the USD sends the VFIO device fd to the client over Unix domain
-sockets using SCM_RIGHTS, along with descriptions of which device regions are
-for what. While this allows the client to mmap BARs into its address space,
-it comes at the cost of exposing more access to device BAR regions than is
-necessary or appropriate. In our use case, we don't need to contend with
-adversarial client processes, so the current situation is tenable, but not
-ideal.
+An alternative would be to not talk about markers / tokens / guards at
+all, but simply about a context being *active*.
 
-Ongoing efforts to add dma-buf exporting to VFIO [1] seem relevant here. Though
-its current intent is around enabling peer-to-peer access, the fact that only
-a subset of device regions are bound to this fd could be useful for controlling
-access granularity to device regions.
+IOW, instead of wording it like this:
 
-Instead of vending the VFIO device fd to the client process, the USD could bind
-the necessary BAR regions to a dma-buf fd and share that with the client. If
-VFIO supported dma_buf_ops.mmap, the client could mmap those into its address
-space.
+> +The set of contexts that are actually held by a given thread at a given point
+> +in program execution is a run-time concept.
 
-Adding such capability would mean that there would be two paths for mmap-ing
-device regions: VFIO device fd and dma-buf fd. I imagine this could be
-contentious; people may not like that there are two ways to achieve the same
-thing. It also seems complicated by the fact that there are ongoing discussions
-about how to extend the VFIO device fd UAPI to support features like write
-combining [2]. It would feel incomplete for such features to be available
-through one mmap-ing modality but not the other. This would have implications
-for how the “special regions” should be communicated across the UAPI.
+that talks about "being held", you could just state it in the sense of
+the "set of contexts being active", and that immediately reads fairly
+naturally, doesn't it?
 
-The VFIO dma-buf UAPI currently being proposed [3] takes a region_index and an
-array of (offset, length) intervals within the region to assign to the dma-buf.
-From what I can tell, that seems coherent with the latest direction from [2],
-which will enable the creation of new region indices with special properties,
-which are aliases to the default BAR regions. The USD could theoretically create
-a dma-buf backed by "the region index corresponding to write-combined BAR 4" to
-share with the client.
+Because a context is a *state* you are in, it's not something you hold on to.
 
-Given some of the considerations above, would there be line of sight for adding
-support for dma_buf_ops.mmap to VFIO?
+The tokens - or whatever - would be only some internal implementation
+detail of how the compiler keeps track of which state is active, not
+the conceptual idea itself.
 
--------------
-IOMMU Mapping
--------------
+So you name states, and you have functions to mark those context
+states as being entered or exited, but you don't really even have to
+talk about "holding" anything.
 
-To achieve (b), we have been using the (now legacy) VFIO container interface
-to manage access to the IOMMU. We understand that new feature development has
-moved to IOMMUFD, and intend to migrate to using it when it's ready (we have
-some use cases that require P2P). We are not expecting to add features to VFIO
-containers. I will describe what we are doing today first.
+No?
 
-In order to enable a device to access memory in multiple processes, we also
-share the VFIO container fd using SCM_RIGHTS between the USD and client
-processes. In this scheme, we partition the I/O address space (IOAS) for a
-given device's container to be used cooperatively amongst each process. The
-only enforcement of the partitioning convention is that each process only
-VFIO_IOMMU_{MAP,UNMAP}_DMA's to the IOVA ranges which have been assigned to it.
-
-When the USD detects that the client process has exited, it is able to unmap any
-leftover dirty mappings with VFIO_IOMMU_UNMAP_DMA. This became possible after
-[4], which allowed one process to free the mappings created by another process.
-That patch's intent was to enable QEMU live update use cases, but benefited our
-use case as well.
-
-Again, we don't have to contend with adversarial client processes, so this has
-been OK, but not ideal for now.
-
-We are interested in the following incremental capabilities:
-- We want the USD to be able to create and vend fds which provide restricted
-  mapping access to the device's IOAS to the client, while preserving
-  the ability of the USD to revoke device access to client memory via
-  VFIO_IOMMU_UNMAP_DMA (or IOMMUFD_CMD_IOAS_UNMAP for IOMMUFD). Alternatively,
-  to forcefully invalidate the entire restricted IOMMU fd, including mappings.
-- It would be nice if mappings created with the restricted IOMMU fd were
-  automatically freed when the underlying kernel object was freed (if the client
-  process were to exit ungracefully without explicitly performing unmap cleanup
-  after itself).
-
-Some of those things sound very similar to the direction of vIOMMU, but it is
-difficult to tell if that could meet our needs exactly. The kinds of features
-I think we want should be achievable purely in software without any dedicated
-hardware support.
-
-This is an area we are less familiar with, since we haven't been living on the
-IOMMUFD UAPI or following its development as closely yet. Perhaps we have missed
-something more obvious?
-
-Overall, I'm curious to hear feedback on this. Allowing user space drivers
-to vend more granular device access would certainly benefit our use case, and
-perhaps others as well.
-
-[1] https://lore.kernel.org/all/cover.1754311439.git.leon@kernel.org/
-[2] https://lore.kernel.org/all/20250804104012.87915-1-mngyadam@amazon.de/
-[3] https://lore.kernel.org/all/5e043d8b95627441db6156e7f15e6e1658e9d537.1754311439.git.leon@kernel.org/
-[4] https://lore.kernel.org/all/20220627035109.73745-1-lizhe.67@bytedance.com/
-
-Thanks,
-Alex
+               Linus
 
