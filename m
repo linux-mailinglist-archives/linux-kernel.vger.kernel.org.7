@@ -1,192 +1,146 @@
-Return-Path: <linux-kernel+bounces-822988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D69CB853ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:31:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739F9B853FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9172716DF7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4F4F54687E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80823128BA;
-	Thu, 18 Sep 2025 14:20:03 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E678313299;
+	Thu, 18 Sep 2025 14:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="V+vDhMpn"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DB130CDB1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A68D24887E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205203; cv=none; b=QXWiDtEVBYEzKv1sYpcE6RDvVAt4/QIeLzxUVI0pzBLqkZifc8fwgII6fAGc1VxYA98goDL9vh695z3OD2NSjwof5PiSAmzImOTmVK5aqrhts66gJ23X4YNOzEexPosGrqAneN1Mq/jigKajPUtWtZ3pNqfjvbo3qtMQ8cjeqXc=
+	t=1758205239; cv=none; b=SOPu2jxi/Ie2/ycREZm4sWgQL7UB2mnbNBoWjYvZ7linBV6QOh5cLMU+Mx3SwAaOymBOX9ZLPFNw+WwMAfxrN4MbspbMltziwhNz4kiSRHgE6ULd4lRokKD/ECxpTCiLEYrtcyQZaCJsLgeTiWTEqqaobEqudjJEAfQJovdpqPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205203; c=relaxed/simple;
-	bh=D9Y8Bt/owQ1FynHSVP9fIaoI5MEzStCl0tka+CC3snE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=p1B1UhKfdRMAVWFWfGuHFg1ofBr77mGghYk8HVoihlvG9ZqeAocG0yG9TUgjRaTyIDqHnt9woTo3iJr2G95e7vfZ0QmLRAkXQJmxsv2r/609Yl4bWSOarDgT2s8+fqTFpvNVIvuqksBYXtaWD0ESdj7FpsCfxAYdME1wAW3/OKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cSHjZ34hkz13NNP;
-	Thu, 18 Sep 2025 22:15:46 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9BBAB1402CC;
-	Thu, 18 Sep 2025 22:19:57 +0800 (CST)
-Received: from kwepemq500001.china.huawei.com (7.202.195.224) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 22:19:57 +0800
-Received: from [10.67.146.137] (10.67.146.137) by
- kwepemq500001.china.huawei.com (7.202.195.224) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 22:19:56 +0800
-Subject: Re: [PATCH] irqchip/gic-v4.1:Check whether indirect table is
- supported in allocate_vpe_l1_table
-To: Marc Zyngier <maz@kernel.org>
-CC: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <guoyang2@huawei.com>,
-	<wangwudi@hisilicon.com>, jiangkunkun <jiangkunkun@huawei.com>,
-	<wangzhou1@hisilicon.com>, <guozicheng3@hisilicon.com>
-References: <20240122160607.1078960-1-tangnianyao@huawei.com>
- <86sf2p91zt.wl-maz@kernel.org>
- <5de3da53-9c0d-2a2d-876b-2181e540fa2f@huawei.com>
- <86r0i98o0a.wl-maz@kernel.org>
- <de3c10be-f4d4-75d0-bc70-0791e5217516@huawei.com>
- <86v83fmn9l.wl-maz@kernel.org>
- <cae508d5-c846-5daf-a1b8-4014f14759e5@huawei.com>
- <86ldmc144o.wl-maz@kernel.org>
-From: Tangnianyao <tangnianyao@huawei.com>
-Message-ID: <4a17190d-3d02-9c8c-699e-62e5aff63f08@huawei.com>
-Date: Thu, 18 Sep 2025 22:19:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+	s=arc-20240116; t=1758205239; c=relaxed/simple;
+	bh=aLT8EU4W6ZT2ILFHMoAHb95Gaq0GYb01rVMThh8lhs0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U+dXZBkLcV2pj9wTCqI6QYUnHcCeSvKx1s5Q5INVurc0MOViMmf3SHet6PMBWLgcygfYQ9jeMIWrASiPbVbgrcAaBmqmDyRXbnaTibCVMlAzSGxjUSW2x2t6amHAuzHicskCRPo3jG2hMpZ9VoKyrEV9VyyQFqnpGlhzGJEzVbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=V+vDhMpn; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-42480cb4127so1491695ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758205237; x=1758810037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CGUyDQ28gbrezc/y2GGrwAvmT1nNgBRAv5nk0GUCrzs=;
+        b=V+vDhMpnXJNVVf26RHVVrKscFcj47AuuA7K4ZlqmdyyMpTKkLFdvCJ7hzumlVR7waf
+         vCwUbIq/Xz3SuA6YGfBZVpe+FNwYkg46S1clYwQ9KoNXwt2TfBqC3jArMRVG6m1mFEv5
+         9miGwz1A1xNdITGPSTzTfkQLxcjuJ380HbK1XP1Q9UTmtK/C9h+A0Dbfr6bu0Z+QEzp2
+         2rb2sC17TTS2Mct6J79kt/KiwEOzZkM4NBMS6v8iRf7Et4fdaqQPkZ09c5xexzDohjKq
+         eoGxe0YgEkcFIKKaYh5PdoblpopoCKkGgLCK+1v6vpK38gArZ3vaNxBnfVXoXTa+qL0R
+         uD6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758205237; x=1758810037;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CGUyDQ28gbrezc/y2GGrwAvmT1nNgBRAv5nk0GUCrzs=;
+        b=MzElxYpJwlfoiZmzAbbtBj21yQYaU4zAhcug2S96hRZ5M6l6CPSwGiWxdDLWjuZ03h
+         7cpSIetDkPnco5H+y02jjwxE5LdEXCLj+8oBDBlM8pZFyh3+Si/WtgF3lszm6yqgEFXB
+         jrl+0M+KDPxEq96FRJdEx0gfKO5J8a0EQQpgxH6GC1pHud64zEeh9vnusrgZsshJFwC6
+         mUcDYuDlQUD3SEHX5WBmugE9S9arJ0vuLktqcWjD4g2R671xhvBNBmSy3zz0WNTuIhnE
+         CWWh9F57saRF7b+YhY/USJhwWOtsnn0b9BSnbym8uMWuJn09ITkelmuC8Z+kWfOKHrTg
+         z2RA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHrIHVcM1LIaCMZK2eaElALt89Fwe/8SD67Du95O0CACKTJnYAqTnpTRXUvI27fKEt4uampPocxCit36M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyme4pcWBSZDFzkGFkYsJFB0RFl/1+t2IRoEEFwRApXjIw9oem8
+	Ty6uZiWqcmG9KoSmUFPk+W4ZL9d4OfYZlcH/pwoS4ea6W3DwIwzffXHTYk+irZCBbNI=
+X-Gm-Gg: ASbGncvMut9D1NvUclEsuKJsahKA/wuRIMIZYTjGxPADzh80isiKkdBIdfnSTkCFSId
+	YgSuB9W2zccKtFo45kv/ur6OKLTM+nQGZsvNyyAlrc6PQOXQKGWrQc44Yt3y/SywnV8Yh/ppR7u
+	tdeOOI1/AMtySUK1j3evTnFjW9AeQoKLqvCmkne8v9rReND0+perBfPxmgwMcWbU8QGf3zz/cKs
+	R2azJIo/sTeTV1Ro9Q3HVu8l0sPK3v6bO1jA/Xhvpmvt6ps207aN6Z3yUbO1gRH3EOcxaC33pXb
+	KmNcKQNmXcrRh42G+kPE+WSqSbL8fnqaXvWYraV8KOcdKzHh9Ii1C3DOrQakxVEob2GVdY/PNOW
+	4njc+EsRFBmoddZ1fm9/BbFGrHvgWvKeUmQjxTq2lO3FiMwwH6LLAsBRKX0tm+0jgNttYBdlOzs
+	R/Bc3/nA==
+X-Google-Smtp-Source: AGHT+IFYve4EQ3dvEX4MzZuxtP/eJg9hkH/7xZ8/C/iLPdxKPkoWIGurBe2rCvRfKygvBsgv23fk9g==
+X-Received: by 2002:a92:cda2:0:b0:424:6c1:a778 with SMTP id e9e14a558f8ab-4241a52851fmr78183445ab.20.1758205237057;
+        Thu, 18 Sep 2025 07:20:37 -0700 (PDT)
+Received: from [172.22.22.234] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4244afaa351sm10679535ab.29.2025.09.18.07.20.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 07:20:35 -0700 (PDT)
+Message-ID: <0053c0ca-340f-46fd-adb1-6af6928717ee@riscstar.com>
+Date: Thu, 18 Sep 2025 09:20:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <86ldmc144o.wl-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] riscv: dts: spacemit: define a SPI controller node
+To: Yixun Lan <dlan@gentoo.org>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, p.zabel@pengutronix.de, spacemit@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250917220724.288127-1-elder@riscstar.com>
+ <20250917220724.288127-4-elder@riscstar.com>
+ <20250918133209-GYB1273705@gentoo.org>
+ <5956e320-7cbb-4d9a-95a7-720cfa6b9654@riscstar.com>
+ <20250918140633-GYA1274501@gentoo.org>
 Content-Language: en-US
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemq500001.china.huawei.com (7.202.195.224)
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250918140633-GYA1274501@gentoo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 9/18/2025 17:50, Marc Zyngier wrote:
-> On Thu, 18 Sep 2025 03:56:04 +0100,
-> Tangnianyao <tangnianyao@huawei.com> wrote:
+On 9/18/25 9:06 AM, Yixun Lan wrote:
+> Hi Alex,
+> 
+> On 08:51 Thu 18 Sep     , Alex Elder wrote:
+>> On 9/18/25 8:32 AM, Yixun Lan wrote:
+>>>> +			spi3: spi@d401c000 {
+>>>> +				compatible = "spacemit,k1-spi";
+>>>> +				reg = <0x0 0xd401c000 0x0 0x30>;
+>>>> +				#address-cells = <1>;
+>>>> +				#size-cells = <0>;
+>>>> +				clocks = <&syscon_apbc CLK_SSP3>,
+>>>> +					 <&syscon_apbc CLK_SSP3_BUS>;
+>>> ..
+>>>> +				clock-names = "core",
+>>>> +					      "bus";
+>>> can you simply put them together in one line? it's kind of tedious to split..
 >>
+>> Sure I can do that.  I've seen it both ways.
 >>
->> On 5/15/2024 17:34, Marc Zyngier wrote:
->>> On Wed, 15 May 2024 09:56:10 +0100,
->>> Tangnianyao <tangnianyao@huawei.com> wrote:
->>>>
->>>> On 1/22/2024 22:02, Marc Zyngier wrote:
->>>>> On Mon, 22 Jan 2024 13:13:09 +0000,
->>>>> Tangnianyao <tangnianyao@huawei.com> wrote:
->>>>>> On 1/22/2024 17:00, Marc Zyngier wrote:
->>>>>>> [Fixing the LKML address, which has bits of Stephan's address embedded
->>>>>>> in it...]
->>>>>>>
->>>>>>> On Mon, 22 Jan 2024 16:06:07 +0000,
->>>>>>> Nianyao Tang <tangnianyao@huawei.com> wrote:
->>>>>>>> In allocate_vpe_l1_table, when we fail to inherit VPE table from other
->>>>>>>> redistributors or ITSs, and we allocate a new vpe table for current common 
->>>>>>>> affinity field without checking whether indirect table is supported.
->>>>>>>> Let's fix it.
->>>>>>> Is there an actual implementation that doesn't support the indirect
->>>>>>> property for the VPE table? I know this is allowed for consistency
->>>>>>> with the original revision of the architecture, but I never expected
->>>>>>> an actual GICv4.1 implementation to be *that* bad.
->>>>>>>
->>>>>>> If that's the case, I'm a bit puzzled/worried.
->>>>>> I met this problem in a developing implementation and find it's allowed by GIC spec.
->>>>>> In such environment,  in a common affinity field with only redistributors and without
->>>>>> any ITS in it, forcing its_vpe_id_alloc to allocate a large vpeid(like 65000), and there
->>>>>> comes an error message "VPE IRQ allocation failure". It originally comes from
->>>>>> allocate_vpe_l2_table, reading GICR_VPROPBASER with GICR_VPROPBASER_4_1_SIZE=1
->>>>>> and GICR_VPROPBASER_4_1_INDIRECT=0.
->>>>> Really, you should get your HW engineers to fix their GIC
->>>>> implementation.  I'm OK with working around this issue for
->>>>> completeness, but shipping such an implementation would be a mistake.
->>>>>
->>>>> [...]
->>>>>
->>>>>> I have another question here. The max number of pages  for GITS_BASER
->>>>>> and GICR_VPROPBASER is different here, while GITS_BASER.Size is
->>>>>> bit[7:0] with max 256, and GICR_4_1_VPROPBASER.Size is bit[6:0] with max 128.
->>>>>> Kernel usually probe ITS basers first and then probe GICR_4_1_VPROPBASER in
->>>>>> a common affinity group. Maybe we need to check this in "inherit_vpe_l1_table_from_its" ?
->>>>> This is because GITS_BASER[] is generic (also works for devices and
->>>>> collections), while GICR_VPROPBASER is tailored to the VPE table which
->>>>> is usually smaller.
->>>>>
->>>>> I would expect that GICD_TYPER2.VID reports something that cannot
->>>>> result in something going wrong (in this case, the L1 allocation
->>>>> cannot be more than 128 pages).
->>>>>
->>>>> Overall, the kernel isn't a validation suite for the HW, and we expect
->>>>> it to have some level of sanity. So if none of this is in shipping HW
->>>>> but only in some model with crazy parameters, I don't think we should
->>>>> go out of our way to support it.
->>>>>
->>>>> Thanks,
->>>>>
->>>>> 	M.
->>>>>
->>>> Hi Marc,
->>>> Friendly ping. Do we have plan to fix this problem on kernel, or any other plan ?
->>> Hi Nianyao,
->>>
->>> My earlier question still stand: is this something that affects a
->>> shipping implementation? If not, then I don't think we should support
->>> this upstream, as this doesn't seem like a realistic configuration.
->>>
->>> If your employer has actually built this (which I still consider as a
->>> mistake), then we can add the workaround I suggested.
->>>
->>> Thanks,
->>>
->>> 	M.
->>>
->> Hi Marc,
+> right, it's merely a coding style I want to enforce, to make it slightly consistent
+> 
+>>>> +				resets = <&syscon_apbc RESET_SSP3>;
+>>>> +				interrupts-extended = <&plic 55>;
+>>> why use interrupts-extended?
 >>
->> For GIC4.1 of HIP09,HIP10,HIP10C, it only support one-level vcpu table and GITS_BASER<n>.Indirect
->> is RAZ/WI. It implements page size 16KB and entry size 32B,  each page support 512 vpe, and our
->> clients have requirement 1 or 2 pages at most, so it just supports flat page to simplify implementation.
+>> Because it specifies both the controller and interrupt number
+>> explicitly.  Why *not* use interrupts-extended?
 >>
->> Our designer has confirmed with ARM architect that we can waive this rule:
->> Quote from GIC spec 12.19.1 GITS_BASER<n> description, if the maximum width of the scaling factor
->> that is identified by GITS_BASER<n>.Type and the smallest page size that is supported result in a single
->> level table that requires multiple pages, then implementing this bit
->> as RAZ/WI is DEPRECATED.
-> I can read the spec just as well. Doesn't make it a good option.
-It maybe a good option for clients that do not use many vpe?
-So we try to convinced ARM to waive this rule and received a positive response.
+> It's just unnecessary, the SPI node will fall back to find parent node's interrupt
+> which already specific as &plic, brings no benefits
 
->> We have actually built this in HIP09,HIP10,HIP10C and would like to
->> fix this in kernel.
-> Isn't that the broken systems that can't even do vSGIs properly?
->
->> Can we merge the above bug-fix patch to kernel?  Or we need to fix with errata for HIP09,HIP10,HIP10C?
-> Frankly, I've completely lost track of what this patch is doing. This
-> has been going on for over 18 months, and you have been silent on the
-> subject for over a year. What do you expect?
->
-> If you want anything to be done on this front, please repost a patch,
-> and we'll review it again.
->
-> 	M.
->
-We have tested the last patch in our internal build and now aim to fix the open-source
-kernel to support our SoC. We hope to address this either through a community patch or an errata fix.
+The benefit it brings is that I don't have to search backward to
+see what the interrupt controller is.  I realize it's redundant
+but I do prefer interrupts-extended over just interrupts.
 
-I will repost the patch shortly. Thanks for your review.
+					-Alex
 
-Nianyao Tang
+> 
+>>>> +				spacemit,k1-ssp-id = <3>;
+>>>> +				dmas = <&pdma 20>,
+>>>> +				       <&pdma 19>;
+> 
+
 
