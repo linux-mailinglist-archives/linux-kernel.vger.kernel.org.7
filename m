@@ -1,145 +1,171 @@
-Return-Path: <linux-kernel+bounces-822043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE02B82ECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF5DB82ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA9D1C027E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 362B41C0332D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154251A3166;
-	Thu, 18 Sep 2025 05:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2454A245014;
+	Thu, 18 Sep 2025 05:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izUyabaY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIq8H4S5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6782334BA43
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6998D34BA43;
+	Thu, 18 Sep 2025 05:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758171806; cv=none; b=WCcFjhElkf1Idz4nDUdvFdL9ysdb1nymvUuKj24ahedhJrZFV4+JYt5MOlph7U2El0hPiYjFXv9ZC29/x9eSTgF9TrLjDkTe9eTNpro4aE1F5EN0gc0b2rzrCCtLk0jB9aDf+Cs8/Dx4bUUTjpG7FH9rHTjOiA1d2HvapvDDUBs=
+	t=1758171840; cv=none; b=LjP0Jz9bK6lEmdg7yBgUSBjRyW/emsHCxvlBkJNl9OGmRiHNzwiWkHBz0FTh4+zMi4+6UUe+C1KM0CBSlw4zkla/8Ex97D4b094Yqps/1oXgSJXOWDlXwRoVmiRr1dHQzfR9m3wITRrKNfpBCqdq5rarKM2gDdx3gHVXh7BO4Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758171806; c=relaxed/simple;
-	bh=7W2lyROUGHdP3dsbt+IeiIDj0Na9XdzQYQpgVUVsyN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rm6aeMbQZTQry7ZoM9e1KWSC/fBk9Pnx9KKEHZNZbqxdm3TY0XI07cQiJeGQZyBH37gVIdGQVZJjXX1VWUKWwSu26OoF46m5DDd3c/59prLZwwkbgChygOUy+BkQCaOUumV8U834vsXGHiMtizjLNhN1y8v6j36UAqoxf4milq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izUyabaY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC6A7C116C6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:03:25 +0000 (UTC)
+	s=arc-20240116; t=1758171840; c=relaxed/simple;
+	bh=xEw7pIOEI0A+4r0NalC4RyzD0RTXdu8oCCdB5ILHM7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kl1kQ6OLI5Gy4WVzrfuvJq0GPWxpKJ2LNFN1fJs/FsKjT8krZou25hqzXMG1KouDxg2WB4L8uDDoWqxE0kkJm3CND/Y80wjx3BaKe2ueJqVXXRx71C8AuMEmClTQbwngVEgP1cWMRd0/CjIjRSWoSCUFLOKeRJf/ueNkW7AWBxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIq8H4S5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EB9C4CEE7;
+	Thu, 18 Sep 2025 05:03:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758171806;
-	bh=7W2lyROUGHdP3dsbt+IeiIDj0Na9XdzQYQpgVUVsyN0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=izUyabaYS7grO/2feGgm4ifhXXubscrYpOhrSWJPSPAPh9GNyU0RSxAHRKYqAZNn+
-	 h2QD6dVImkGjyaT38IHQnZ2USYxggw0keMChQpMYW7qydowgmQdIzK9zAsk5FpGqr2
-	 l8eIPHa2TSS+t4HpCyb0/zSJIhJr6bCDB1kAvDN7FUBsqZ5afVCCZpwyzsM9wANL2I
-	 UHew6ZhWygly0Fn11FaKu9lkm/FxKDrGlii/1ausztBtCBnfSdiCzMLO/HCGGog0u8
-	 vpmjdUNF3pp8rFrlOncb4XbwoiyheubejLenzaT/LRRgkImGIkxaKPEhKvBuHmgjVX
-	 ga7b+Xc5uB4Ig==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f98e7782bso701251e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:03:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXV3HctvqLFXroXRko1OH7GzAQxTPftBz4lNgaPSbmyr84udRvdfFq+Tp2lEhGFaJPWz6OPqqilDw17oU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmkpRbg8lxbzAWQZDLzlFhGVQQqc6may+CA39hAB+2tK7cp23o
-	1KHKazOENQuChVnlsmFZBYJK5vWjxm1Mc7+VDE/4FpzYR9/uvIJ7C+VPX/UOZa3Q+ixnbQjt5fT
-	UhFeyhMbLEHrQfQ2noepGMnIUxfdu7g==
-X-Google-Smtp-Source: AGHT+IGD1CQLqGySmhrkzQzsiSL90znsRrvPLPTc7vfVtF4Ow+HKYTydxL79tCPmKxbplpuM3Gthu0dxw6cuB/nL9SI=
-X-Received: by 2002:a05:6512:ea1:b0:576:59cd:ffb1 with SMTP id
- 2adb3069b0e04-57894ebf20cmr648428e87.22.1758171804455; Wed, 17 Sep 2025
- 22:03:24 -0700 (PDT)
+	s=k20201202; t=1758171840;
+	bh=xEw7pIOEI0A+4r0NalC4RyzD0RTXdu8oCCdB5ILHM7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GIq8H4S5iX5eQavz4HsElGAnb6U1OegTvbPlPdlOwJLaYCxc/tv63xoHv7iHYmSDS
+	 piGCD1/BG7CHtI+NtBVvgsa0YO2LUE5nd8jpL3oD77RkbXLY7XUfGI70bCQLvgvddO
+	 u4v37IeYHJbRw7OBjVUCyj51MajmfeHl5+N6XOJDRKf5WRC/9TPZJZLjaQ8WSmP33u
+	 +F2N6CPF1g7Z+FJLUGJ6560MfhK8VH8Ugs23mOyw+a6j66YSG+rzwU5+HOd52SGrXz
+	 k+oCY+a242uZf2WEG6KGAjXu+sUupKmYNpXEUNvDfjpLhYisNfPOLY+g07C4UNALBp
+	 T9z2j9nmf3+Qg==
+Date: Thu, 18 Sep 2025 08:03:56 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com, James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-crypto@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	open list <linux-kernel@vger.kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v7 4/5] keys: asymmetric: Add tpm2_key_rsa
+Message-ID: <aMuSvJNt2KdVBIOA@kernel.org>
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-5-jarkko@kernel.org>
+ <ZmLnyp9j_QoPgj7W@gondor.apana.org.au>
+ <D24EZPFV6DBS.1LZVHIVPITE83@kernel.org>
+ <aK1vdEcuN_xjhjyY@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
- <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
- <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
- <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
- <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
- <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
- <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com> <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 17 Sep 2025 22:03:12 -0700
-X-Gmail-Original-Message-ID: <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
-X-Gm-Features: AS18NWB6V52_xqiX64XXMAqy3-yf52xEFlsm6O0XCWcfwFVru9CDfSCEY0zMNRc
-Message-ID: <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
-To: Barry Song <21cnbao@gmail.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK1vdEcuN_xjhjyY@kernel.org>
 
-On Wed, Sep 17, 2025 at 4:38=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> > > This approach still seems to work, so the 32-bit system appears to be
-> > > the only exception. However, I=E2=80=99m not entirely sure that your =
-description
-> > > of =E2=80=9Cthe second last level=E2=80=9D is correct. I believe it r=
-efers to the PTE,
-> > > which corresponds to the last level, not the second-to-last.
-> > > In other words, how do you define the second-to-last level page table=
-?
-> >
-> > The second-to-last level page table page holds the PMD. The last level
-> > page table holds PTE.
-> > Cluster size is HPAGE_PMD_NR =3D 1<<HPAGE_PMD_ORDER
-> > I was thinking of a PMD entry but the actual page table page it points
-> > to is the last level.
-> > That is a good catch. Let me see how to fix it.
-> >
-> > What I am trying to say is that, swap table size should match to the
-> > PTE page table page size which determines the cluster size. An
-> > alternative to understanding the swap table is that swap table is a
-> > shadow PTE page table containing the shadow PTE matching to the page
-> > that gets swapped out to the swapfile. It is arranged in the swapfile
-> > swap offset order. The intuition is simple once you find the right
-> > angle to view it. However it might be a mouthful to explain.
-> >
-> > I am fine with removing it, on the other hand it removes the only bit
-> > of secret sauce which I try to give the reader a glimpse of my
-> > intuition of the swap table.
->
-> Perhaps you could describe the swap table as similar to a PTE page table
-> representing the swap cache mapping.
+On Tue, Aug 26, 2025 at 11:25:24AM +0300, Jarkko Sakkinen wrote:
+> On Thu, Jun 20, 2024 at 03:23:20AM +0300, Jarkko Sakkinen wrote:
+> > On Fri Jun 7, 2024 at 1:58 PM EEST, Herbert Xu wrote:
+> > > On Wed, May 29, 2024 at 12:08:09AM +0300, Jarkko Sakkinen wrote:
+> > > >
+> > > > +/*
+> > > > + * Sign operation is an encryption using the TPM's private key. With RSA the
+> > > > + * only difference between encryption and decryption is where the padding goes.
+> > > > + * Since own padding can be used, TPM2_RSA_Decrypt can be repurposed to do
+> > > > + * encryption.
+> > > > + */
+> > > > +static int tpm2_key_rsa_sign(struct tpm_chip *chip, struct tpm2_key *key,
+> > > > +			     struct kernel_pkey_params *params,
+> > > > +			     const void *in, void *out)
+> > > > +{
+> > > > +	const off_t o = key->priv_len + 2 + sizeof(*key->desc);
+> > > > +	const struct tpm2_rsa_parms *p =
+> > > > +		(const struct tpm2_rsa_parms *)&key->data[o];
+> > > > +	const u16 mod_size = be16_to_cpu(p->modulus_size);
+> > > > +	const struct rsa_asn1_template *asn1;
+> > > > +	u32 in_len = params->in_len;
+> > > > +	void *asn1_wrapped = NULL;
+> > > > +	u8 *padded;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (strcmp(params->encoding, "pkcs1") != 0) {
+> > > > +		ret = -ENOPKG;
+> > > > +		goto err;
+> > > > +	}
+> > > > +
+> > > > +	if (params->hash_algo) {
+> > > > +		asn1 = rsa_lookup_asn1(params->hash_algo);
+> > >
+> > > Could you please explain why this can't be done through pkcs1pad
+> > > instead of going to raw RSA?
+> > 
+> > Sorry was away couple of weeks from here. I replace this with TPM2_Sign
+> > as is done already in the ECDSA module, so I guess that is a "yes".
+> 
+> Time travelling back to 2024 ;-)
+> 
+> I can't recall what I was thining here butI'm glad that I did not put
+> the patch set further as now I have much more sane angle to this.
+> 
+> I realized while working on [1] that I'm better of making this to work
+> as API on rsapubkey.asn1 and rsaprivkey.asn1 and matching files for
+> ECC and do all steps inside kernel from this:
+> 
+> tpm2_createprimary --hierarchy o -G rsa2048 -c owner.txt
+> tpm2_evictcontrol -c owner.txt 0x81000001
+> tpm2_getcap handles-persistent
+> openssl genrsa -out private.pem 2048
+> tpm2_import -C 0x81000001 -G rsa -i private.pem -u key.pub -r key.priv
+> tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+> openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
+> 
+> I.e. my test tool does everything else except
+> 
+> openssl genrsa -out private.pem 2048
+> 
+> Im now pretty familiar with import procedure and how to prepare data
+> for TPM2_Import and is like the "spirit" of it i.e., take external
+> key and store it inside TPM2. That as side effect removes all the
+> use of tpm2key.asn1 from the patch set and simplifies flows
+> greatly.
+> 
+> And my Rust works help to get the preparation procedure exactly
+> right and none of those crazy tools and commands will be needed.
+> 
+> The matching C code following TCG Architecture spec  I'll first write in
+> user space and then port that kernel crypto APIs
+> 
+> That spans a question tho: should it be its own key type (as it is
+> right now or would it be better idea to have parameter/option for
+> hardware pre-existing RSA key types, or what would be the best
+> direction API wise to approach this?
 
-Hard to qualify what is "similar", in what way it is similar.
-Different readers will have different interpretations of what similar
-means to them.
+This response was filled wrong conclusions. The current
+separate key types is the correct path. It's best to use TpmKey ASN.1
+import as the keys might also source from TPM2_Create command, not
+necessarily necessarily from external source, or at least it would be
+stupid to limit it to only external keys.
 
-> That is correct for most 32-bit and 64-bit systems,
-> but not for every machine.
+So yeah two options to get this finally somehere are either pkcs1pad
+route or more likely to change this to use TPM2_Sign, which should
+be able to address padding internally at the chip.
 
-I think I will leave it as for most 64 bit systems, the swap table
-size is exactly one page table page size and that is not coincidental.
+Also I think RSA key should only expose here signinig operation for
+the time being and encryption should be something reconsidered later
+(if ever).
 
-> The only exception is a 32-bit system with a 64-bit physical address
-> (Large Physical Address Extension, LPAE), which uses a 4 KB PTE table
-> but a 2 KB swap table because the pointer is 32 bit while each page
-> table entry is 64 bit.
+Just had a such a long pause since I've revisited this that did not
+recall the reasoning why it was implemeted like it was.
 
-I feel that is a very corner case. I will leave it out of the
-document. I want to present a simplified abstracted view. There is
-always more detail to distract the simple abstracted view. That is why
-we have physics.
 
-> Maybe we can simply say that the number of entries in the swap table
-> is the same as in a PTE page table?
-
-Yes, that is what I want to say, for most modern 64 bit systems.
-
-Chris
+BR, Jarkko
 
