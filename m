@@ -1,265 +1,341 @@
-Return-Path: <linux-kernel+bounces-823474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9A8B86996
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF36B8699F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766891C865B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C6B5643D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21022D46B3;
-	Thu, 18 Sep 2025 18:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC7C2D322C;
+	Thu, 18 Sep 2025 18:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwfjXqhs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2802D24B2;
-	Thu, 18 Sep 2025 18:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PF7fmHLZ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE12C3C465;
+	Thu, 18 Sep 2025 18:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221861; cv=none; b=rp0Qia5moD9huFxCGxjmE/JgLheE+FfTQAmor93ADwmYkljqjQG5saNVWmxtvUV5zaEQJvCVxd5gWDTiR4zLqowkob0CRqM7a6+CE2IN/7BoBMpiv4Yw0ZRHQh08ATxBV1g88GDrfGQbROOG3I09mQmPROOJh6Qg6RbWcfM3PeI=
+	t=1758221943; cv=none; b=W9xuyjYSelOX1xiV9AsfAeAQTbuZYOk7mKmYoq+xGYBUo39qiRUkZ9qhpPlkNTAx5jZHYYp0Y6LBA6AhfNBUmpBNnoshlC2BQlJeNjVPyUm9MLDl64dzrh9y2tHQ6ZjE4snlba6wy246b3f2vMns/zSVDgm/9SKnf0ZbYX6A/84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221861; c=relaxed/simple;
-	bh=eo62sjvEW4m0PbQoyK5Dmy0ck/Z0ZRa8jx0aupoWN9w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=F2oVagHTm5ZrdkeSz98ZxWj2/NKHB2ST7G/l1eYMx/75gnD6uvp8tp+v1nrrxzckOvpmetflE4DRaYxOZqc9NOcoNtAuV+AedgYuydaRm+3H7LsYRg9Mh5/YMDMyp6bqn8NlRpYRQAAHgZo/lutaVdQiYOZabc/MJozszzktvqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwfjXqhs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0036C4CEE7;
-	Thu, 18 Sep 2025 18:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758221861;
-	bh=eo62sjvEW4m0PbQoyK5Dmy0ck/Z0ZRa8jx0aupoWN9w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TwfjXqhs6GWjpSKHXCVEbSMrAF9uXoBYY8EgrY3lHvRSgeDktbzWE1yv6A9Vd8ciL
-	 7m+nA+OQpskMkUUnvPRdLah+5wACMS4yKr6flUWk7qVOin/29IieiMGt+1dajF0PGI
-	 Q9ofJuwVnih9Hu8QqDFqZtbvzRbtGLdMIlKE3TC9JNOCub2S+3tWRjmseFdcBSP8kG
-	 aGNFzlcNUN7j4CdjpExpzJdJAnxmsArSlY/AN8jPokKfYNR8rVa1OVHbS4+rclNBv6
-	 ro37XiImEpujfBLNnT0OQiWJGmOgqzmB//IGcL0iLvRwKHz7zdQmRAsdNAZ6OClM1B
-	 jnHBi3RUwvNQg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	=?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Jouen?= <fjouen@sealsq.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH] tpm: use a map for tpm2_calc_ordinal_duration()
-Date: Thu, 18 Sep 2025 21:57:30 +0300
-Message-Id: <20250918185730.3529317-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1758221943; c=relaxed/simple;
+	bh=mQD7KtZqoZulnQWRYADH4PDyvC4Xtx2oM94pbGARnTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XN33TbsOMWQJ2ltjbftRECPFwHCogUr0NuEF3iCOB+Qi01goZ8OlKSHhjng/IlgHQ80NZCMVj18bapQHmszMkuk8U+pIq6sI3hYp9Qr0EyB1Dhs62NS8YIZuKDjeoc5FMW4Q+K0r7KydVxvmbfrVSuC9aULlV2JCCtpLeBjcvyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PF7fmHLZ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii.localdomain (unknown [131.107.8.20])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6B33D20143DC;
+	Thu, 18 Sep 2025 11:59:00 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6B33D20143DC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758221940;
+	bh=TLcUWnPlmsWq8/HhRl6gmbgFDW29Fkwl9mcq1MIy058=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PF7fmHLZH71YIqGlBaqw6zKv8yTZyDCIiMNqFRh1rxCXUrS7qVPNWj3FcZUm0WQHP
+	 AdyNSQV4Bv4ruv35AJpVn/Did34/r9nZn3RzMujBz8eUBhHq1u8Kl+2ax+dwPRy4WY
+	 H/4xX1xL8N9O6bSX2aq3DGEbq0+Bg2MSUQgqf2RI=
+Date: Thu, 18 Sep 2025 11:58:58 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
+	tiala@microsoft.com, anirudh@anirudhrb.com,
+	paekkaladevi@linux.microsoft.com, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	Jinank Jain <jinankjain@linux.microsoft.com>
+Subject: Re: [PATCH v3 4/5] mshv: Allocate vp state page for
+ HVCALL_MAP_VP_STATE_PAGE on L1VH
+Message-ID: <aMxWcowj3o1eKkQw@skinsburskii.localdomain>
+References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1758066262-15477-5-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758066262-15477-5-git-send-email-nunodasneves@linux.microsoft.com>
 
-The current shenanigans for duration calculation introduce too much
-complexity for a trivial problem, and further the code is hard to patch and
-maintain.
+On Tue, Sep 16, 2025 at 04:44:21PM -0700, Nuno Das Neves wrote:
+> From: Jinank Jain <jinankjain@linux.microsoft.com>
+> 
 
-Address these issues with a flat look-up table, which is easy to understand
-and patch. If leaf driver specific patching is required in future, it is
-easy enough to make a copy of this table during driver initialization and
-add the chip parameter back.
+Reviewed-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
 
-'chip->duration' is retained for TPM 1.x.
-
-As the first entry for this new behavior address TCG spec update mentioned
-in this issue:
-
-https://github.com/raspberrypi/linux/issues/7054
-
-Therefore, for TPM_SelfTest the duration is set to 3000 ms.
-
-This does not categorize a as bug, given that this is introduced to the
-spec after the feature was originally made.
-
-Cc: Frédéric Jouen <fjouen@sealsq.com>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- drivers/char/tpm/tpm-interface.c |   2 +-
- drivers/char/tpm/tpm.h           |   2 +-
- drivers/char/tpm/tpm2-cmd.c      | 115 +++++++++----------------------
- 3 files changed, 34 insertions(+), 85 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index b71725827743..c9f173001d0e 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -52,7 +52,7 @@ MODULE_PARM_DESC(suspend_pcr,
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- {
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
--		return tpm2_calc_ordinal_duration(chip, ordinal);
-+		return tpm2_calc_ordinal_duration(ordinal);
- 	else
- 		return tpm1_calc_ordinal_duration(chip, ordinal);
- }
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 7bb87fa5f7a1..2726bd38e5ac 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -299,7 +299,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
- ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
- int tpm2_auto_startup(struct tpm_chip *chip);
- void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
--unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-+unsigned long tpm2_calc_ordinal_duration(u32 ordinal);
- int tpm2_probe(struct tpm_chip *chip);
- int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);
- int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 524d802ede26..29c0d6a8ec20 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -48,100 +48,49 @@ int tpm2_get_timeouts(struct tpm_chip *chip)
- 	return 0;
- }
- 
--/**
-- * tpm2_ordinal_duration_index() - returns an index to the chip duration table
-- * @ordinal: TPM command ordinal.
-- *
-- * The function returns an index to the chip duration table
-- * (enum tpm_duration), that describes the maximum amount of
-- * time the chip could take to return the result for a  particular ordinal.
-- *
-- * The values of the MEDIUM, and LONG durations are taken
-- * from the PC Client Profile (PTP) specification (750, 2000 msec)
-- *
-- * LONG_LONG is for commands that generates keys which empirically takes
-- * a longer time on some systems.
-- *
-- * Return:
-- * * TPM_MEDIUM
-- * * TPM_LONG
-- * * TPM_LONG_LONG
-- * * TPM_UNDEFINED
-+/*
-+ * Contains the maximum durations in milliseconds for TPM2 commands.
-  */
--static u8 tpm2_ordinal_duration_index(u32 ordinal)
--{
--	switch (ordinal) {
--	/* Startup */
--	case TPM2_CC_STARTUP:                 /* 144 */
--		return TPM_MEDIUM;
--
--	case TPM2_CC_SELF_TEST:               /* 143 */
--		return TPM_LONG;
--
--	case TPM2_CC_GET_RANDOM:              /* 17B */
--		return TPM_LONG;
--
--	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
--		return TPM_MEDIUM;
--	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
--		return TPM_MEDIUM;
--	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
--		return TPM_MEDIUM;
--	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
--		return TPM_MEDIUM;
--
--	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
--		return TPM_LONG_LONG;
--
--	case TPM2_CC_PCR_EXTEND:              /* 182 */
--		return TPM_MEDIUM;
--
--	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
--		return TPM_LONG;
--	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
--		return TPM_LONG;
--
--	case TPM2_CC_GET_CAPABILITY:          /* 17A */
--		return TPM_MEDIUM;
--
--	case TPM2_CC_NV_READ:                 /* 14E */
--		return TPM_LONG;
--
--	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
--		return TPM_LONG_LONG;
--	case TPM2_CC_CREATE:                  /* 153 */
--		return TPM_LONG_LONG;
--	case TPM2_CC_CREATE_LOADED:           /* 191 */
--		return TPM_LONG_LONG;
--
--	default:
--		return TPM_UNDEFINED;
--	}
--}
-+static const struct {
-+	unsigned long ordinal;
-+	unsigned long duration;
-+} tpm2_ordinal_duration_map[] = {
-+	{TPM2_CC_STARTUP, 750},
-+	{TPM2_CC_SELF_TEST, 3000},
-+	{TPM2_CC_GET_RANDOM, 2000},
-+	{TPM2_CC_SEQUENCE_UPDATE, 750},
-+	{TPM2_CC_SEQUENCE_COMPLETE, 750},
-+	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
-+	{TPM2_CC_HASH_SEQUENCE_START, 750},
-+	{TPM2_CC_VERIFY_SIGNATURE, 30000},
-+	{TPM2_CC_PCR_EXTEND, 750},
-+	{TPM2_CC_HIERARCHY_CONTROL, 2000},
-+	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
-+	{TPM2_CC_GET_CAPABILITY, 750},
-+	{TPM2_CC_NV_READ, 2000},
-+	{TPM2_CC_CREATE_PRIMARY, 30000},
-+	{TPM2_CC_CREATE, 30000},
-+	{TPM2_CC_CREATE_LOADED, 30000},
-+};
- 
- /**
-- * tpm2_calc_ordinal_duration() - calculate the maximum command duration
-- * @chip:    TPM chip to use.
-+ * tpm2_calc_ordinal_duration() - Calculate the maximum command duration
-  * @ordinal: TPM command ordinal.
-  *
-- * The function returns the maximum amount of time the chip could take
-- * to return the result for a particular ordinal in jiffies.
-- *
-- * Return: A maximal duration time for an ordinal in jiffies.
-+ * Returns the maximum amount of time the chip is expected by kernel to
-+ * take in jiffies.
-  */
--unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
-+unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
- {
--	unsigned int index;
-+	int i;
- 
--	index = tpm2_ordinal_duration_index(ordinal);
-+	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
-+		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
-+			return tpm2_ordinal_duration_map[i].duration;
- 
--	if (index != TPM_UNDEFINED)
--		return chip->duration[index];
--	else
--		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-+	return TPM2_DURATION_DEFAULT;
- }
- 
--
- struct tpm2_pcr_read_out {
- 	__be32	update_cnt;
- 	__be32	pcr_selects_cnt;
--- 
-2.39.5
-
+> Introduce mshv_use_overlay_gpfn() to check if a page needs to be
+> allocated and passed to the hypervisor to map VP state pages. This is
+> only needed on L1VH, and only on some (newer) versions of the
+> hypervisor, hence the need to check vmm_capabilities.
+> 
+> Introduce functions hv_map/unmap_vp_state_page() to handle the
+> allocation and freeing.
+> 
+> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
+> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+> ---
+>  drivers/hv/mshv_root.h         | 11 ++---
+>  drivers/hv/mshv_root_hv_call.c | 61 ++++++++++++++++++++++++---
+>  drivers/hv/mshv_root_main.c    | 76 +++++++++++++++++-----------------
+>  3 files changed, 98 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> index 0cb1e2589fe1..dbe2d1d0b22f 100644
+> --- a/drivers/hv/mshv_root.h
+> +++ b/drivers/hv/mshv_root.h
+> @@ -279,11 +279,12 @@ int hv_call_set_vp_state(u32 vp_index, u64 partition_id,
+>  			 /* Choose between pages and bytes */
+>  			 struct hv_vp_state_data state_data, u64 page_count,
+>  			 struct page **pages, u32 num_bytes, u8 *bytes);
+> -int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> -			      union hv_input_vtl input_vtl,
+> -			      struct page **state_page);
+> -int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> -				union hv_input_vtl input_vtl);
+> +int hv_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> +			 union hv_input_vtl input_vtl,
+> +			 struct page **state_page);
+> +int hv_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> +			   struct page *state_page,
+> +			   union hv_input_vtl input_vtl);
+>  int hv_call_create_port(u64 port_partition_id, union hv_port_id port_id,
+>  			u64 connection_partition_id, struct hv_port_info *port_info,
+>  			u8 port_vtl, u8 min_connection_vtl, int node);
+> diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+> index 3fd3cce23f69..98c6278ff151 100644
+> --- a/drivers/hv/mshv_root_hv_call.c
+> +++ b/drivers/hv/mshv_root_hv_call.c
+> @@ -526,9 +526,9 @@ int hv_call_set_vp_state(u32 vp_index, u64 partition_id,
+>  	return ret;
+>  }
+>  
+> -int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> -			      union hv_input_vtl input_vtl,
+> -			      struct page **state_page)
+> +static int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> +				     union hv_input_vtl input_vtl,
+> +				     struct page **state_page)
+>  {
+>  	struct hv_input_map_vp_state_page *input;
+>  	struct hv_output_map_vp_state_page *output;
+> @@ -547,7 +547,14 @@ int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+>  		input->type = type;
+>  		input->input_vtl = input_vtl;
+>  
+> -		status = hv_do_hypercall(HVCALL_MAP_VP_STATE_PAGE, input, output);
+> +		if (*state_page) {
+> +			input->flags.map_location_provided = 1;
+> +			input->requested_map_location =
+> +				page_to_pfn(*state_page);
+> +		}
+> +
+> +		status = hv_do_hypercall(HVCALL_MAP_VP_STATE_PAGE, input,
+> +					 output);
+>  
+>  		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
+>  			if (hv_result_success(status))
+> @@ -565,8 +572,39 @@ int hv_call_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+>  	return ret;
+>  }
+>  
+> -int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> -				union hv_input_vtl input_vtl)
+> +static bool mshv_use_overlay_gpfn(void)
+> +{
+> +	return hv_l1vh_partition() &&
+> +	       mshv_root.vmm_caps.vmm_can_provide_overlay_gpfn;
+> +}
+> +
+> +int hv_map_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> +			 union hv_input_vtl input_vtl,
+> +			 struct page **state_page)
+> +{
+> +	int ret = 0;
+> +	struct page *allocated_page = NULL;
+> +
+> +	if (mshv_use_overlay_gpfn()) {
+> +		allocated_page = alloc_page(GFP_KERNEL);
+> +		if (!allocated_page)
+> +			return -ENOMEM;
+> +		*state_page = allocated_page;
+> +	} else {
+> +		*state_page = NULL;
+> +	}
+> +
+> +	ret = hv_call_map_vp_state_page(partition_id, vp_index, type, input_vtl,
+> +					state_page);
+> +
+> +	if (ret && allocated_page)
+> +		__free_page(allocated_page);
+> +
+> +	return ret;
+> +}
+> +
+> +static int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> +				       union hv_input_vtl input_vtl)
+>  {
+>  	unsigned long flags;
+>  	u64 status;
+> @@ -590,6 +628,17 @@ int hv_call_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+>  	return hv_result_to_errno(status);
+>  }
+>  
+> +int hv_unmap_vp_state_page(u64 partition_id, u32 vp_index, u32 type,
+> +			   struct page *state_page, union hv_input_vtl input_vtl)
+> +{
+> +	int ret = hv_call_unmap_vp_state_page(partition_id, vp_index, type, input_vtl);
+> +
+> +	if (mshv_use_overlay_gpfn() && state_page)
+> +		__free_page(state_page);
+> +
+> +	return ret;
+> +}
+> +
+>  int hv_call_get_partition_property_ex(u64 partition_id, u64 property_code,
+>  				      u64 arg, void *property_value,
+>  				      size_t property_value_sz)
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index f7738cefbdf3..52f69eace9b9 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -890,7 +890,7 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
+>  {
+>  	struct mshv_create_vp args;
+>  	struct mshv_vp *vp;
+> -	struct page *intercept_message_page, *register_page, *ghcb_page;
+> +	struct page *intercept_msg_page, *register_page, *ghcb_page;
+>  	void *stats_pages[2];
+>  	long ret;
+>  
+> @@ -908,28 +908,25 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = hv_call_map_vp_state_page(partition->pt_id, args.vp_index,
+> -					HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
+> -					input_vtl_zero,
+> -					&intercept_message_page);
+> +	ret = hv_map_vp_state_page(partition->pt_id, args.vp_index,
+> +				   HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
+> +				   input_vtl_zero, &intercept_msg_page);
+>  	if (ret)
+>  		goto destroy_vp;
+>  
+>  	if (!mshv_partition_encrypted(partition)) {
+> -		ret = hv_call_map_vp_state_page(partition->pt_id, args.vp_index,
+> -						HV_VP_STATE_PAGE_REGISTERS,
+> -						input_vtl_zero,
+> -						&register_page);
+> +		ret = hv_map_vp_state_page(partition->pt_id, args.vp_index,
+> +					   HV_VP_STATE_PAGE_REGISTERS,
+> +					   input_vtl_zero, &register_page);
+>  		if (ret)
+>  			goto unmap_intercept_message_page;
+>  	}
+>  
+>  	if (mshv_partition_encrypted(partition) &&
+>  	    is_ghcb_mapping_available()) {
+> -		ret = hv_call_map_vp_state_page(partition->pt_id, args.vp_index,
+> -						HV_VP_STATE_PAGE_GHCB,
+> -						input_vtl_normal,
+> -						&ghcb_page);
+> +		ret = hv_map_vp_state_page(partition->pt_id, args.vp_index,
+> +					   HV_VP_STATE_PAGE_GHCB,
+> +					   input_vtl_normal, &ghcb_page);
+>  		if (ret)
+>  			goto unmap_register_page;
+>  	}
+> @@ -960,7 +957,7 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
+>  	atomic64_set(&vp->run.vp_signaled_count, 0);
+>  
+>  	vp->vp_index = args.vp_index;
+> -	vp->vp_intercept_msg_page = page_to_virt(intercept_message_page);
+> +	vp->vp_intercept_msg_page = page_to_virt(intercept_msg_page);
+>  	if (!mshv_partition_encrypted(partition))
+>  		vp->vp_register_page = page_to_virt(register_page);
+>  
+> @@ -993,21 +990,19 @@ mshv_partition_ioctl_create_vp(struct mshv_partition *partition,
+>  	if (hv_scheduler_type == HV_SCHEDULER_TYPE_ROOT)
+>  		mshv_vp_stats_unmap(partition->pt_id, args.vp_index);
+>  unmap_ghcb_page:
+> -	if (mshv_partition_encrypted(partition) && is_ghcb_mapping_available()) {
+> -		hv_call_unmap_vp_state_page(partition->pt_id, args.vp_index,
+> -					    HV_VP_STATE_PAGE_GHCB,
+> -					    input_vtl_normal);
+> -	}
+> +	if (mshv_partition_encrypted(partition) && is_ghcb_mapping_available())
+> +		hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
+> +				       HV_VP_STATE_PAGE_GHCB, ghcb_page,
+> +				       input_vtl_normal);
+>  unmap_register_page:
+> -	if (!mshv_partition_encrypted(partition)) {
+> -		hv_call_unmap_vp_state_page(partition->pt_id, args.vp_index,
+> -					    HV_VP_STATE_PAGE_REGISTERS,
+> -					    input_vtl_zero);
+> -	}
+> +	if (!mshv_partition_encrypted(partition))
+> +		hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
+> +				       HV_VP_STATE_PAGE_REGISTERS,
+> +				       register_page, input_vtl_zero);
+>  unmap_intercept_message_page:
+> -	hv_call_unmap_vp_state_page(partition->pt_id, args.vp_index,
+> -				    HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
+> -				    input_vtl_zero);
+> +	hv_unmap_vp_state_page(partition->pt_id, args.vp_index,
+> +			       HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
+> +			       intercept_msg_page, input_vtl_zero);
+>  destroy_vp:
+>  	hv_call_delete_vp(partition->pt_id, args.vp_index);
+>  	return ret;
+> @@ -1748,24 +1743,27 @@ static void destroy_partition(struct mshv_partition *partition)
+>  				mshv_vp_stats_unmap(partition->pt_id, vp->vp_index);
+>  
+>  			if (vp->vp_register_page) {
+> -				(void)hv_call_unmap_vp_state_page(partition->pt_id,
+> -								  vp->vp_index,
+> -								  HV_VP_STATE_PAGE_REGISTERS,
+> -								  input_vtl_zero);
+> +				(void)hv_unmap_vp_state_page(partition->pt_id,
+> +							     vp->vp_index,
+> +							     HV_VP_STATE_PAGE_REGISTERS,
+> +							     virt_to_page(vp->vp_register_page),
+> +							     input_vtl_zero);
+>  				vp->vp_register_page = NULL;
+>  			}
+>  
+> -			(void)hv_call_unmap_vp_state_page(partition->pt_id,
+> -							  vp->vp_index,
+> -							  HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
+> -							  input_vtl_zero);
+> +			(void)hv_unmap_vp_state_page(partition->pt_id,
+> +						     vp->vp_index,
+> +						     HV_VP_STATE_PAGE_INTERCEPT_MESSAGE,
+> +						     virt_to_page(vp->vp_intercept_msg_page),
+> +						     input_vtl_zero);
+>  			vp->vp_intercept_msg_page = NULL;
+>  
+>  			if (vp->vp_ghcb_page) {
+> -				(void)hv_call_unmap_vp_state_page(partition->pt_id,
+> -								  vp->vp_index,
+> -								  HV_VP_STATE_PAGE_GHCB,
+> -								  input_vtl_normal);
+> +				(void)hv_unmap_vp_state_page(partition->pt_id,
+> +							     vp->vp_index,
+> +							     HV_VP_STATE_PAGE_GHCB,
+> +							     virt_to_page(vp->vp_ghcb_page),
+> +							     input_vtl_normal);
+>  				vp->vp_ghcb_page = NULL;
+>  			}
+>  
+> -- 
+> 2.34.1
+> 
 
