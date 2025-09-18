@@ -1,141 +1,140 @@
-Return-Path: <linux-kernel+bounces-823006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EACAB8543C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:34:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B85B854B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 026DEB610B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:32:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF1C1686CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7F230BB85;
-	Thu, 18 Sep 2025 14:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A987F2D7DFC;
+	Thu, 18 Sep 2025 14:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="g0SBWDS3"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CMShhjfV"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4892930B531
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4DC21FF23
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758206050; cv=none; b=QZhG/yH7sWk448hrAMrpmc4uT2vxBzfH+qkGFxLQn898Vi8aaZDXzxJYVspw1O6mCOpvPVX3k35+VP5PQ3TobD6DGaRTtLT4RilhThX8+bnIhKgU7H7DzU/d+VFvWkc1qkTOqsAVew9nETNlD3GvWIjt/8n+9ivsIST0K5sS3Qw=
+	t=1758206214; cv=none; b=AEJJnngldRF2CP69ti6fnWhRFl8kZJ2HrprEDuI2+zUX+VmYQhvfIUYWT8vshoi5tEC1Byb0vASvo3lqNjN+oeFDbGTdqPAUmxPkaq0tHWKbMCfXZa4qfAsK0X4OQxyWBkz8neMU7Yk2H7bYQBtvdTiOdI3bcsADlgrV3ILCIik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758206050; c=relaxed/simple;
-	bh=MBfiJfn6GCPk8lGYQ1D2ow124fRDtcVPcMxVyyku0+E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jkceFp6KgE4nRh3X26dtIWfzoY2q5MABunTTRVyzlNJW9cm1AFHwNLYbhVy+LwftcE9LuSFN7RP2K99YMGZRSR0ZZj67SqCLXwcTsZDdNWXqFjGPBRuOU1aggxeSrupTqaHtCHcXBrzmLGn0NsQoBRt//MmApkslwQ7c5X7VdpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=g0SBWDS3; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-72e565bf2f0so9383907b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:34:08 -0700 (PDT)
+	s=arc-20240116; t=1758206214; c=relaxed/simple;
+	bh=5IK6dxmlUx1MjIUb26gztFgKXFnJCShruWZFcwG3LWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qoPSkv1xKLdCGEdWeeg/M/X8sCu2z6Z5GHE3KJV97H25I1fMUgmOZSp9S5rcCxm2QlkUEIso7e0qRSSJbv4hftTXy9hxjorPkDOxtrQ603tJuuyCQRJWMFz+P7TIk5SnxZBL5p9dkyyuvQPhcOlYC5cjE24qHq+8Z3Sqvjh2QhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CMShhjfV; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-80a6937c8c6so124363785a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758206047; x=1758810847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GsFstqf0aPKFXQULvb/QA1W20AW77hE7rNx0BoX95nc=;
-        b=g0SBWDS3KNE3knQzwDADEy3vy1KeVHCheOOeHyRfNx9LEKnhLmqBR079sM8IKiWu8X
-         xsMcRxsaI2RIp25zYHvy3Xk3oKADObmG5M9cGbv3lEp9qJWT8f9joOxcJGX8AzUK7YxZ
-         /1n5z58JuaUscSSn4YPSwtAJPCRP8SAvtEdfaj1bNt+Vm9r0k9wfj8DV9xZvR0rU4Gjp
-         JPHBvuqDYzI9VbRgX/UfOdX6wNpmz6vYCuVzrCD0gRgTPptFYsAztc8q12A6rwtokY+W
-         sROHRmSqmQmMtMMuK6RKx1HxElOhQV7U2X5mUWomefRlStzD78BzVSxTalJA1mhFs1qO
-         mSTw==
+        d=ziepe.ca; s=google; t=1758206211; x=1758811011; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zrVmh9WioYbmEoq4Y4G7QBMqeKPDVKPWX4R50WAG25o=;
+        b=CMShhjfVNp9kSpIX9rW9KdF0yczTckBHGjFTwVf/tNXMLZUJEa+Q7KdGxVRz+nuPxX
+         yeFDml5n8N103ba2j7Il3RPBwc4rlAxwqyQ3jHHjhMdKtuysM/1GskEJu7HE+vkpXKED
+         WtKotS/6OOken9cIh+wGBuiFycGYGSQZ9e2xr0Lb2bHHun1MFJO8O3OJlJBZGeHG/qhW
+         BgJxdEaE7LVr/dnugKty11vQRD/HaOcOxMjUkJnBZlwn5MGxahhEXdJrCqZ86rxZDrDw
+         uOe7KIfYu3+VMATMhRBcYIh9vdJMAnsuHlpRjqDhsP4YRdM+SlGrEo3PJetsB/Gu7No9
+         eAiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758206047; x=1758810847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GsFstqf0aPKFXQULvb/QA1W20AW77hE7rNx0BoX95nc=;
-        b=C1WGvzDylbpmJrJC1kJHU/yhBoFu2Pt+8Qg6c1VWOLmrTTGXdfZqWgIcC4a/BJSk24
-         Jt+qpocEw9cV9kvm7EiC7DK8q1OKPyKrvvT0uhLr4ilv37I/AXfXn3keunoRQM0Fz4iC
-         NGMCzYVO8UQn5Qfngjy9FAPmzmqK+oA7iCqf0wxW/s5phdhHQ1N+xbxdaELfSMC9eS+S
-         L0Mej5OigealWN5qJoeLe3+Xp1Oa7c0p4gHYjIhzM9NzJx9kg6M278pqk/fFFCDVxpMN
-         DDo2ep5ZLydA/tiIo6lBwP11exMEgKYUm/Lg/KNUyASHcoJU5WE/HDnUaUbksYs65V+M
-         VRiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQffTyDJyDqAKtqmoeEwnJKw/mthN877EdXjpCQboyGHRGbt9WftNawJ+8kmD6RfgnCt0dHDOM1PRU6kI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAwamAb6ByEx7a9jkyAzUKL9ONgpLjA+ry3uBuZRKfky4rOKh2
-	os9RnCSquJZgtghoIB+8i7YgInmL76uq85dUpFMWjar5D+S46SoIlSTQOSl5dnG38XT//0sRhdT
-	dYCPofzJLHqi7ucbmW7NzTAw6P7H0qYQDU0CtTTEM2Q==
-X-Gm-Gg: ASbGncu9AhytLV6p0wTGgPBImzYTH3Nc3gh99bB80kUiDDuw9y12fhaG1qYnmA5U1g7
-	L6V+UnGbYmPcPUbX0mHJ+8J1LmPsLR1f/AJ2QC46DJ8rzKrFwr3jhmDXlSRwz1fOBHeCMtDL8pJ
-	8PR5EFZ86OIGAAoT9y6qxvFdPSCZDlTIRbjfqFP4JHj2maG5GzEHiKLEjwcX2/SIcrWCD18NxhH
-	yJuQkF+9VCCaL2NTfo4nHtmbLi/zaw2r/HY5HuOS1/a8dd6edmQmOYUOQ==
-X-Google-Smtp-Source: AGHT+IGGhIn8dGYcj5LaqtXCIoUBSX4wr/dd3ZmyZUAtSU0U2kK8GOGIRyt8aZK/8AqwjvXVn4MdC5tlBbzTORZV76A=
-X-Received: by 2002:a05:690c:9:b0:721:64ec:bc65 with SMTP id
- 00721157ae682-73892852d3bmr54486027b3.44.1758206047207; Thu, 18 Sep 2025
- 07:34:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758206211; x=1758811011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zrVmh9WioYbmEoq4Y4G7QBMqeKPDVKPWX4R50WAG25o=;
+        b=Dv+/KJKYbRn4R9JyNOTRUQTCtU811pkR+lstqQnLul2Ke0fIOO604XyWgP9WVg8O6A
+         KqIxlmxnTAuiJxxtFptyQLzk1VfEFUNAd5FLue5/X58Ao4c1XUUavxMZGRxZ6Rn9GRkJ
+         /HnWj0fbtjyQOoDywU7IETyB9JktaTwVrTQffXXlSv2SXZKdK8azdpG1Zds0RpLIAj+q
+         zG5/E3/IyXNENdXLlbPjWTKX3dLMJQr32cPENXEMcm4YG5wmILncRQvlJx135ylGPUg+
+         DdCaoXJKHQpoiqZNfjBh+5BVFOALRx6FKPhTqlPPQUhK8Q8ZsMElXgSWq2FzELrcuVK5
+         YCmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVggzeXwl9/TJhMHuAUmdSB/4tOdevARIBuxcuZB1FpNAZ49Ni8y2+eogwXQuFB1LCfWMqsmQOIy3a6osM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdhsq1kpKwBSYkrbCS2CJrq6sWYwCwCNB5P5Z1FVyeLbaDkGf8
+	NKYPBAh4fNycQFgVJ89ZHQdW42QRTatCHNbu4AOVCqmYy5VJJbBFimLqo7AKqnKRdj4=
+X-Gm-Gg: ASbGncv2FA6BSAFVYqueJl0pCsGDXhLuW0i8FS1++36jbZH2XUsAkDAOfD7dM7vRN7U
+	ydVZJ9jbbgrVlcQ+5IdumYpZj34vaYk9NHmWEzgwAn/h/b0sHuMx1bahPO60Z/Kb6bb+l55tl0y
+	qkJDJJ4PnQYMm7rVlDfpjp6Vw/HoQvGGPMGoTrm9HhL/PTr4sO9yOAoRiyATQaDPjwhwKAsJ9rH
+	yy2SnfAS8IoqoqT7DJ3FKVfvPns9wRXeIhwhr5V6EzECH0QLDlF7vh1Wcs+dARTdwzyL3hTeOBG
+	li2CmeTvpOe28evvAuCngFLi6sJYuP7JY6d1KRr/PWmyAC9pWbjj44OwNFDlT2x22Rmq6yGSQno
+	07zbmib3dbZgBr7y0KdXTbGwG/DrY8ap7ieHAMuMqrrs2r5zVhtaKyAQfMCanxYrUp8jfpIOLiS
+	gnBoOBnrvH4wg=
+X-Google-Smtp-Source: AGHT+IE8/5Ud/i8k8I1bre3zwyW5lDIdJBqEnB52NPRTieNqwTGZ6V2Ab0vPLtj2VgmwLHtb5fpg9w==
+X-Received: by 2002:a05:620a:4152:b0:806:a07:9fc5 with SMTP id af79cd13be357-831085ab77fmr631920785a.24.1758206211361;
+        Thu, 18 Sep 2025 07:36:51 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-83633b04dadsm168450785a.64.2025.09.18.07.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 07:36:50 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uzFkg-00000008wHU-1PaB;
+	Thu, 18 Sep 2025 11:36:50 -0300
+Date: Thu, 18 Sep 2025 11:36:50 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Will Deacon <will@kernel.org>
+Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 22/28] iommu/arm-smmu-v3-kvm: Emulate CMDQ for host
+Message-ID: <20250918143650.GQ1326709@ziepe.ca>
+References: <20250819215156.2494305-23-smostafa@google.com>
+ <aMQroI4NDu74PDGT@willie-the-truck>
+ <20250915163858.GK882933@ziepe.ca>
+ <aMl_5j8G3IGulAC6@google.com>
+ <20250917123601.GA1326709@ziepe.ca>
+ <aMrNTny9jgZJd_Ef@willie-the-truck>
+ <20250917151612.GH1326709@ziepe.ca>
+ <aMrS71vQ_MaVonzi@willie-the-truck>
+ <20250917155931.GI1326709@ziepe.ca>
+ <aMveas3QWXUk6xpm@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com>
- <a07b0ebf-25e7-48ba-a1da-2c04fc0e027f@app.fastmail.com> <20250903165931.GA3288670@ax162>
- <CAH1PCMYWWkThMosDMW=wZZWZ8d_c4_zQWhJOJPKe354LPiV1bA@mail.gmail.com> <20250917182512.GA98086@ax162>
-In-Reply-To: <20250917182512.GA98086@ax162>
-From: Guodong Xu <guodong@riscstar.com>
-Date: Thu, 18 Sep 2025 22:33:54 +0800
-X-Gm-Features: AS18NWCkRCx-c09DhKbRjdrZJ83GwTW6_TUdgmfU5HjKCCFZgVCqB9ZOIxiAf5U
-Message-ID: <CAH1PCMYoo_AqCXOH7--omBbmOyo6DSNgbF3DY-oPJHaYO4GaNQ@mail.gmail.com>
-Subject: Re: next-20250903 x86_64 clang-20 allyesconfig mmp_pdma.c:1188:14:
- error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
-	dmaengine@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Vinod Koul <vkoul@kernel.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Benjamin Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMveas3QWXUk6xpm@willie-the-truck>
 
-On Thu, Sep 18, 2025 at 2:25=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> Hi Guodong,
->
-> On Thu, Sep 04, 2025 at 03:38:21PM +0800, Guodong Xu wrote:
-> > On Thu, Sep 4, 2025 at 12:59=E2=80=AFAM Nathan Chancellor <nathan@kerne=
-l.org> wrote:
-> > >
-> > > On Wed, Sep 03, 2025 at 02:04:10PM +0200, Arnd Bergmann wrote:
-> > > > On Wed, Sep 3, 2025, at 12:08, Naresh Kamboju wrote:
-> > > >
-> > > > > Build error:
-> > > > > drivers/dma/mmp_pdma.c:1188:14: error: shift count >=3D width of =
-type
-> > > > > [-Werror,-Wshift-count-overflow]
-> > > > >  1188 |         .dma_mask =3D DMA_BIT_MASK(64),   /* force 64-bit=
- DMA
-> > > > > addr capability */
-> > > > >       |                     ^~~~~~~~~~~~~~~~
-> > > > > include/linux/dma-mapping.h:73:54: note: expanded from macro 'DMA=
-_BIT_MASK'
-> > > > >    73 | #define DMA_BIT_MASK(n) (((n) =3D=3D 64) ? ~0ULL : ((1ULL=
-<<(n))-1))
-> > > > >       |                                                      ^ ~~=
-~
-> ...
-> > Thanks, Arnd. I'll send a patch to clean up and simplify the logic.
->
-> This error continues to break our -next builds. Have you submitted this
-> patch yet? I searched lore.kernel.org and I did not find anything but I
-> wanted to make sure I had not missed anything.
->
-> Cheers,
-> Nathan
+On Thu, Sep 18, 2025 at 11:26:50AM +0100, Will Deacon wrote:
+> On Wed, Sep 17, 2025 at 12:59:31PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Sep 17, 2025 at 04:25:35PM +0100, Will Deacon wrote:
+> > 
+> > > Ah right, so the driver would unnecessarily issue CMOs for the structures
+> > > that are just shared with the hypervisor. At least it's _functional_ that
+> > > way, but I'm sure people will complain!
+> > 
+> > Yes, functional, why would anyone complain? STE and CD manipulation is
+> > not fast path for anything?
+> 
+> Won't it also apply to cmdq insertion?
 
-Hi, Nathan
+Oh, changing CMDQ wasn't on my mind..
 
-Yes, I just sent it out. Here is the link to the submission:
-https://lore.kernel.org/all/20250918-mmp-pdma-simplify-dma-addressing-v1-1-=
-5c2be2b85696@riscstar.com/
+Yeah, OK I don't know what the performance delta would be like there.
 
-BR,
-Guodong
+However, to get peak performance out of pkvm we really do want the
+SMMU driver to write CMDQ as cachable, pkvm to read it as cachable and
+then copy it to a non-cachable HW queue.
+
+Otherwise pkvm will be issuing CMOs on fast paths :\
+
+If we convert the slow speed stuff, STE, CD, Fault to do CMOs then we
+could make a fairly small change for pkvm mode to force the guest CMDQ
+to be cachable without CMO. Some special feature triggered by pkvm
+detection during probe.
+
+Jason
 
