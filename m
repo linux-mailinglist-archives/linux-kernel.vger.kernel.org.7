@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-822270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D554B836D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:05:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C61B836DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6D23A593C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:05:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE762A1815
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7428C2EFDBE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988EE2F067E;
 	Thu, 18 Sep 2025 08:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="XDnrHYkw"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35BB221265;
-	Thu, 18 Sep 2025 08:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hvLKUexk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3552BE65C;
+	Thu, 18 Sep 2025 08:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758182701; cv=none; b=h57X2CYwq41gnAkd28GOxpi58zmn+x7IdjLGjqJJ+GK9oAAisUqxFlXxJDz1iaE8uIHlJ7QDtUOC24FNJYcP0lHXAT8rIHYKDD9RUEItMK5pBbXpl1ggrYaqvSJwpRgHiMEaV1sD2vHc3eN1MwqdOrnkRrOONBdKLDCv5y7m4VI=
+	t=1758182701; cv=none; b=aelqFQIvpvMYC0ZmfB1cswyKXAAHueN8aiLXHzcPfHNqN0ChIOD6biHVHEMpU2Dbfdx8a89TlWpRjb4TB7fTSh9LAN6ejPQfyBwPeTb0AAHz9I+8k+jSHWtYvokEKir3FGmj0gIKa+eEDlp6EjI9VylnrtRi15mYac5IaKey9KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758182701; c=relaxed/simple;
-	bh=E9qm+Sxn0Q/YmM7Ik3UwApGlTfQ+ELCuukT5Rsf7PJs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HOb9GVktRVceWPKxTfTr5QBQar97fss57zqAcv7DMMUNEb4dgxZHF1IpHhNdagyhbZwO9OnBwa+rCFGQy8jcenLg2Qx2vpH95Rznn7JZXF/vEfz/+13SoOreRCDj3o2dbN1+K5+mKL/ZixgsaXV1yj7uE7UauzCRMc5DQdlus6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=XDnrHYkw; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=mj
-	Q3QJ+Fs+nA/I8gfkukX+TgwxN0n2N2A3SiOVEoz44=; b=XDnrHYkwIPBth38kbn
-	ujyBOMIbjr7ninLZ20/Nlc0gZb09CmWR/RMGUVTI2vZPr9WKHyhBwB6/1nernSNJ
-	um9I3ER2LrKTMn0+sYSZ5ziKC4HVpLyrFa9kBkulbiVRl89P91rNsApcxKjO2g+a
-	Eg96YqKXGCaXbEclg9izj7R5Q=
-Received: from mps-HP-EliteBook-840-G3.monolithicpower.com (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCHnwPzvMtoRFLLBA--.60510S2;
-	Thu, 18 Sep 2025 16:04:04 +0800 (CST)
-From: wenswang@yeah.net
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Wensheng Wang <wenswang@yeah.net>
-Subject: [PATCH v2 0/2] hwmon: Add support for MPS mp2925 and mp2929 chip
-Date: Thu, 18 Sep 2025 16:03:49 +0800
-Message-Id: <20250918080349.1154140-1-wenswang@yeah.net>
-X-Mailer: git-send-email 2.25.1
+	bh=JWQmjkJVqasXSEL3jknfHp+w+Yg/68tfM4ww+QZFNg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ytw+j1FJe0XN64t7MN0AZlfG2r7y45mjvQSfo+RkGdwEseVzxG2JOvrzoERn5EwS5ApWmqPqxkRNA4SbbSfAy8Tr7DyYJ7Cdfv9YT8FERdW/dp5r2ujHd3Vsd3z5hZuLw/fA/fz6/coIJnYaJkQW+7gGgBkP4SB3ity751uOQ5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hvLKUexk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 2AEC820143D2; Thu, 18 Sep 2025 01:04:53 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2AEC820143D2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758182693;
+	bh=MOUqalofeahNoTixGAy7MlIUq0vm6rw3ZxM2+iKViC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hvLKUexkKhhudfDgCiJR9/sOFaWVEWKPP9hEWMRAtraYvzA0RCdCpXdnHFHXNyUYu
+	 gu8D8WyxWtIydi1/se18PBKm06RsicKFzjP0HEE8ei+uEeKox77APir+hjQCflT2Yv
+	 zEtlryxBuxLW7CPYUP/xsoyah5edP4SPU3g3P+fM=
+Date: Thu, 18 Sep 2025 01:04:53 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+Cc: dri-devel@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mhklinux@outlook.com, rdunlap@infradead.org,
+	bartosz.golaszewski@linaro.org, gonzalo.silvalde@gmail.com,
+	arnd@arndb.de, tzimmermann@suse.de, decui@microsoft.com,
+	wei.liu@kernel.org, deller@gmx.de, kys@microsoft.com,
+	haiyangz@microsoft.com
+Subject: Re: [PATCH 1/2] fbdev/hyperv_fb: deprecate this in favor of Hyper-V
+ DRM driver
+Message-ID: <20250918080453.GA17773@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <E5C2A201B1BD>
+ <1758117785-20653-1-git-send-email-ptsm@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Ms8vCgCHnwPzvMtoRFLLBA--.60510S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jry7tr17Kw4UGFWkCr1fXrb_yoW3XFbEkr
-	4Iga9Fvr1UJFs3WayDCr1rXryUGr4YgFy7G3W3tFZ8ZayaqrnxXrykZw17ta4UGrW7CF17
-	uFW8A393AF17KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbYFAPUUUUU==
-X-CM-SenderInfo: 5zhq24xdqjq5hhdkh0dhw/1tbiIRR5HmjLvPRY1wAA32
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1758117785-20653-1-git-send-email-ptsm@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-From: Wensheng Wang <wenswang@yeah.net>
+On Wed, Sep 17, 2025 at 07:03:05AM -0700, Prasanna Kumar T S M wrote:
+> The Hyper-V DRM driver is available since kernel version 5.14 and it
+> provides full KMS support and fbdev emulation via the DRM fbdev helpers.
+> Deprecate this driver in favor of Hyper-V DRM driver.
+> 
+> Signed-off-by: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+> ---
+>  drivers/video/fbdev/Kconfig     | 5 ++++-
+>  drivers/video/fbdev/hyperv_fb.c | 2 ++
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+> index c21484d15f0c..48c1c7417f6d 100644
+> --- a/drivers/video/fbdev/Kconfig
+> +++ b/drivers/video/fbdev/Kconfig
+> @@ -1773,13 +1773,16 @@ config FB_BROADSHEET
+>  	  a bridge adapter.
+>  
+>  config FB_HYPERV
+> -	tristate "Microsoft Hyper-V Synthetic Video support"
+> +	tristate "Microsoft Hyper-V Synthetic Video support (DEPRECATED)"
+>  	depends on FB && HYPERV
+>  	select DMA_CMA if HAVE_DMA_CONTIGUOUS && CMA
+>  	select FB_IOMEM_HELPERS_DEFERRED
+>  	help
+>  	  This framebuffer driver supports Microsoft Hyper-V Synthetic Video.
+>  
+> +	  This driver is deprecated, please use the Hyper-V DRM driver at
+> +	  drivers/gpu/drm/hyperv (CONFIG_DRM_HYPERV) instead.
+> +
+>  config FB_SIMPLE
+>  	tristate "Simple framebuffer support"
+>  	depends on FB
+> diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv_fb.c
+> index 75338ffc703f..c99e2ea4b3de 100644
+> --- a/drivers/video/fbdev/hyperv_fb.c
+> +++ b/drivers/video/fbdev/hyperv_fb.c
+> @@ -1357,6 +1357,8 @@ static int __init hvfb_drv_init(void)
+>  {
+>  	int ret;
+>  
+> +	pr_warn("Deprecated: use Hyper-V DRM driver instead\n");
+> +
+>  	if (fb_modesetting_disabled("hyper_fb"))
+>  		return -ENODEV;
+>  
+> -- 
+> 2.49.0
 
-Add mp2925,mp292 driver in hwmon and add dt-bindings for them.
+Thanks for the patch. I hope it makes to the next LTS as planned.
 
-V1 -> V2:
-    1. add Krzysztof's Acked-by
-    2. pass 0 for i2c_device_id and of_device_id struct
-
-Wensheng Wang (2):
-  dt-bindings: hwmon: Add MPS mp2925 and mp2929
-  hwmon: add MP2925 and MP2929 driver
-
- .../devicetree/bindings/trivial-devices.yaml  |   4 +
- Documentation/hwmon/index.rst                 |   1 +
- Documentation/hwmon/mp2925.rst                | 151 +++++++++
- MAINTAINERS                                   |   7 +
- drivers/hwmon/pmbus/Kconfig                   |   9 +
- drivers/hwmon/pmbus/Makefile                  |   1 +
- drivers/hwmon/pmbus/mp2925.c                  | 312 ++++++++++++++++++
- 7 files changed, 485 insertions(+)
- create mode 100644 Documentation/hwmon/mp2925.rst
- create mode 100644 drivers/hwmon/pmbus/mp2925.c
-
--- 
-2.25.1
-
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
