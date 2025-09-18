@@ -1,189 +1,226 @@
-Return-Path: <linux-kernel+bounces-823120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE916B85967
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:28:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749BBB8592D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864441B25678
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C18A3AEF22
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179E630CDB4;
-	Thu, 18 Sep 2025 15:22:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D2225390
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B88830DEDC;
+	Thu, 18 Sep 2025 15:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ybga3xc7"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4881D5CE8;
+	Thu, 18 Sep 2025 15:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758208969; cv=none; b=kb6u0s0o1vouX8J1ip1aJTFGa1kJ5yR2kcO78QLhWVxa2Yecl+HPWPtXNVu14RvA7UuDYITqTLPzz+EJ1+VTZk70rTh8uWVuIrFF3YRqW3d63+BgMdYD1Tb704K0dpHPVcSQ4vmsg1AZGlaTRyTXBoCoHtXh485q5DNNqMqHQ78=
+	t=1758208976; cv=none; b=UKBHtJABUODuBfz9yomzU1TnbLxj81keDEkhpV6EWUY/SRNBVgmCfqMUvS9GpbAVP/iyLbn+8wPHxiEJjW4zdhP7A/A/3Y6/Xkpmyc275Z34vt7cesGf19hBLCXnleVZYwp8LYYbRqYgm3JUh5pxObIN/SXbxBeUCPykIcrMnCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758208969; c=relaxed/simple;
-	bh=3zI9dntSj7tod/rpTd2Z/DAlKMAh3TVV3G+4wh7ddSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YEHI596Gb703BoHsLAQWcLIrCSHaTkbZZ+avWtF/xEMvGtupnRoYKKUglHtrcHGmcxp3nao24/h9gI+fFcEDGlmqInWgrXfkoA1Gt22okMhhw4dae78SXbsvmxrTmpgJOUszQpTUXrALcbnQbg3TQs9WZnIZReAqLV31viBjZLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE3CE1764;
-	Thu, 18 Sep 2025 08:22:38 -0700 (PDT)
-Received: from [10.1.33.171] (XHFQ2J9959.cambridge.arm.com [10.1.33.171])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67A913F66E;
-	Thu, 18 Sep 2025 08:22:45 -0700 (PDT)
-Message-ID: <4b27bb1a-8279-416b-b84c-0b9ab7430a48@arm.com>
-Date: Thu, 18 Sep 2025 16:22:43 +0100
+	s=arc-20240116; t=1758208976; c=relaxed/simple;
+	bh=GKkYmmR++BxIKlgEMM3q6UhznVoJrmD++tiTiNw8cpA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=pdQ/2dXZlCpWnkGkf6BBB7GNDdi6VdMJOUZzMpc9JKuQ0lZxRifJoMBlFiKH47Vy8bH9z06OkQjf1jrhwM2VV8kl/Hf4zqidqsvUtiPZvgixepnthU91glY4B6tIcVtmv+4UYtyItom/S/uVsx8qTdr7yilZ7KbcAoqE8yRYN7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ybga3xc7; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 093FA50A;
+	Thu, 18 Sep 2025 17:21:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758208892;
+	bh=GKkYmmR++BxIKlgEMM3q6UhznVoJrmD++tiTiNw8cpA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Ybga3xc7FMzy65hN5/59YAUSDmXg8YsVTcCIbnVdDEpD9Ef/9+hPNm3GMuh7wGO9J
+	 FgaKQ69CvBpbgiJfZCMoNjcCNnG/CI8EkjBOtYOkdrrn3LIArrN42IHUiOkMRXhvSK
+	 Rsmy+K0zZXIbQYOy74/V7BAMQdxQmMylSM5PWN2Y=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Elide TLB flush in certain pte protection
- transitions
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
-Cc: anshuman.khandual@arm.com, wangkefeng.wang@huawei.com, baohua@kernel.org,
- pjaroszynski@nvidia.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250918103638.77282-1-dev.jain@arm.com>
- <fb5818ec-dde9-4d53-ab0f-e28e5c2cab33@arm.com>
- <5f4037e3-7aaa-4919-9220-8989790c333b@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <5f4037e3-7aaa-4919-9220-8989790c333b@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250918145504.111428-2-stefan.klug@ideasonboard.com>
+References: <20250918145504.111428-2-stefan.klug@ideasonboard.com>
+Subject: Re: [PATCH v2] media: rkisp1: Improve frame sequence correctness on stats and params buffers
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Stefan Klug <stefan.klug@ideasonboard.com>, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Dafna Hirschfeld <dafna@fastmail.com>, Heiko Stuebner <heiko@sntech.de>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stefan Klug <stefan.klug@ideasonboard.com>, linux-media@vger.kernel.org
+Date: Thu, 18 Sep 2025 16:22:48 +0100
+Message-ID: <175820896821.1246375.16035780810428204673@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On 18/09/2025 16:04, Dev Jain wrote:
-> 
-> On 18/09/25 6:19 pm, Ryan Roberts wrote:
->> On 18/09/2025 11:36, Dev Jain wrote:
->>> Currently arm64 does an unconditional TLB flush in mprotect(). This is not
->>> required for some cases, for example, when changing from PROT_NONE to
->>> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
->>> growing into the non-main heaps), and unsetting uffd-wp in a range.
->>>
->>> Therefore, implement pte_needs_flush() for arm64, which is already
->>> implemented by some other arches as well.
->>>
->>> Running a userspace program changing permissions back and forth between
->>> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
->>> for the none->rw transition, I get a reduction from 3.2 microseconds to
->>> 2.95 microseconds, giving an 8.5% improvement.
->>>
->>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>> ---
->>> mm-selftests pass. Based on 6.17-rc6.
->>>
->>>   arch/arm64/include/asm/tlbflush.h | 29 +++++++++++++++++++++++++++++
->>>   1 file changed, 29 insertions(+)
->>>
->>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/
->>> tlbflush.h
->>> index 18a5dc0c9a54..4a566d589100 100644
->>> --- a/arch/arm64/include/asm/tlbflush.h
->>> +++ b/arch/arm64/include/asm/tlbflush.h
->>> @@ -524,6 +524,35 @@ static inline void arch_tlbbatch_add_pending(struct
->>> arch_tlbflush_unmap_batch *b
->>>   {
->>>       __flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
->>>   }
->>> +
->>> +static inline bool __pte_flags_need_flush(pteval_t oldval, pteval_t newval)
->> ptdesc_t is the preferred any-level type.
-> 
-> I keep forgetting this :)
-> 
->>
->>> +{
->>> +    pteval_t diff = oldval ^ newval;
->>> +
->>> +    /* invalid to valid transition requires no flush */
->>> +    if (!(oldval & PTE_VALID) || (oldval & PTE_PRESENT_INVALID))
->> Is the PTE_PRESENT_INVALID really required? If the oldval was invalid, there
->> can't be a TLB entry for it, so no flush is required; that's it, I think?
->>
->> In fact, PTE_PRESENT_INVALID is overlaid with PTE_NG; it only means
->> PTE_PRESENT_INVALID when PTE_INVALID=0, so I think this is broken as is. Valid
->> user-space PTEs always have PTE_NG set, so you will never flush.
-> 
-> Not sure I get you. The condition as I wrote means
-> 
-> 1. If PTE_VALID is not set, then do not flush.
-> 2. If PTE_VALID is set, *and* PTE_PRESENT_INVALID is set, then do not flush.
-> 
-> So when you say "it only means PTE_PRESENT_INVALID when PTE_INVALID=0", the
-> second condition meets that.
+Quoting Stefan Klug (2025-09-18 15:54:33)
+> On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
+> handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
+> and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
+> commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
+> debugfs var for irq delay") a warning was added for that. There are two
+> cases where this condition can occur:
+>=20
+> 1. The v-sync and the frame-end belong to the same frame. This means,
+>    the irq was heavily delayed and the warning is likely appropriate.
+>=20
+> 2. The v-sync belongs to the next frame. This can happen if the vertical
+>    blanking between two frames is very short.
+>=20
+> The current code always handles case 1 although case 2 is in my
+> experience the more common case and happens in regular usage. This leads
+> to incorrect sequence numbers on stats and params buffers which in turn
+> breaks the regulation in user space. Fix that by adding a frame_active
+> flag to distinguish between these cases and handle the start of frame
+> either at the beginning or at the end of the rkisp1_isp_isr().
+>=20
+> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+>=20
+> ---
+>=20
+> Hi all,
+>=20
+> Here is an updated version of the patch with some fixes from the review.
+>=20
+> Changes in v2:
+> - Removed test for !frame_active in second v_start handler
+> - Improved comments
+>=20
+> Best regards,
+> Stefan
+>=20
+> ---
+>  .../platform/rockchip/rkisp1/rkisp1-common.h  |  1 +
+>  .../platform/rockchip/rkisp1/rkisp1-isp.c     | 27 +++++++++++++++----
+>  2 files changed, 23 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/dri=
+vers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> index ca952fd0829b..adf23416de9a 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> @@ -222,6 +222,7 @@ struct rkisp1_isp {
+>         struct media_pad pads[RKISP1_ISP_PAD_MAX];
+>         const struct rkisp1_mbus_info *sink_fmt;
+>         __u32 frame_sequence;
+> +       bool frame_active;
+>  };
+> =20
+>  /*
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/driver=
+s/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> index 8c29a1c9309a..2e49764d6262 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> @@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd=
+, int enable)
+>         }
+> =20
+>         isp->frame_sequence =3D -1;
+> +       isp->frame_active =3D false;
+> =20
+>         sd_state =3D v4l2_subdev_lock_and_get_active_state(sd);
+> =20
+> @@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *=
+rkisp1)
+>   * Interrupt handlers
+>   */
+> =20
+> -static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
+> +static void rkisp1_isp_sof(struct rkisp1_isp *isp)
+>  {
+>         struct v4l2_event event =3D {
+>                 .type =3D V4L2_EVENT_FRAME_SYNC,
+>         };
+> =20
+> +       isp->frame_sequence++;
+> +       isp->frame_active =3D true;
+> +
+>         event.u.frame_sync.frame_sequence =3D isp->frame_sequence;
+>         v4l2_event_queue(isp->sd.devnode, &event);
+>  }
+> @@ -1111,15 +1115,20 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+> =20
+>         rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
+> =20
+> -       /* Vertical sync signal, starting generating new frame */
+> -       if (status & RKISP1_CIF_ISP_V_START) {
+> -               rkisp1->isp.frame_sequence++;
+> -               rkisp1_isp_queue_event_sof(&rkisp1->isp);
+> +       /*
+> +        * Vertical sync signal, starting new frame. Defer handling of vs=
+ync
+> +        * after RKISP1_CIF_ISP_FRAME if the previous frame was not compl=
+eted
+> +        * yet.
+> +        */
+> +       if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active)=
+ {
+> +               status &=3D ~RKISP1_CIF_ISP_V_START;
+> +               rkisp1_isp_sof(&rkisp1->isp);
+>                 if (status & RKISP1_CIF_ISP_FRAME) {
+>                         WARN_ONCE(1, "irq delay is too long, buffers migh=
+t not be in sync\n");
 
-Sorry I meant PTE_VALID=0. Your second condition is wrong; PTE_PRESENT_INVALID
-is only defined when PTE_VALID=0.
+Now I've read below - I see how in here we've had both a frame start and
+a frame end without processing an IRQ at all.
 
-Think about it; the PTE is valid from the HW's perspective if and only if
-PTE_VALID=1. So that's the only condition that needs to be checked.
-
-
-See this comment in the code for more info:
-
-/*
- * PTE_PRESENT_INVALID=1 & PTE_VALID=0 indicates that the pte's fields should be
- * interpreted according to the HW layout by SW but any attempted HW access to
- * the address will result in a fault. pte_present() returns true.
- */
-#define PTE_PRESENT_INVALID	(PTE_NG)     /* only when !PTE_VALID */
+I'm trying to figure out if the ISR should always just process frame end
+events before frame starts ... but then i think we wouldn't catch this
+case so I suspect this is fine keeping it how things are now.
 
 
-> 
->>
->>> +        return false;
->>> +
->>> +    /* Transition in the SW bits and access flag requires no flush */
->>> +    diff &= ~(PTE_SWBITS_MASK | PTE_AF);
->> Could you explain your thinking on why PTE_AF changes don't need a flush? I
->> would have thought if we want to clear the access flag, that would definitely
->> require a flush? Otherwise how would the MMU know to set the acccess bit on next
->> access if it already has a TLB entry?
-> 
-> You are correct, but AFAIK losing access bit information is not fatal, it will only
-> mess with page aging. So potentially reclaim will lose some accuracy.
+>                         rkisp1->debug.irq_delay++;
+>                 }
+>         }
+> +
+>         if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
+>                 /* Clear pic_size_error */
+>                 isp_err =3D rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
+> @@ -1138,6 +1147,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+>         if (status & RKISP1_CIF_ISP_FRAME) {
+>                 u32 isp_ris;
+> =20
+> +               rkisp1->isp.frame_active =3D false;
+>                 rkisp1->debug.complete_frames++;
+> =20
+>                 /* New frame from the sensor received */
+> @@ -1152,5 +1162,12 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+>                 rkisp1_params_isr(rkisp1);
+>         }
+> =20
+> +       /*
+> +        * Deferred handling of vsync if RKISP1_CIF_ISP_V_START and
+> +        * RKISP1_CIF_ISP_FRAME occurrend in the same irq.
 
-Sure, but it means that your change has a cost; reduced page aging accuracy.
-That part of the change should at least be separated into its own commit and
-probably backed up with performance numbers. Otherwise, I think we should retain
-the original behaviour.
+s/occurend/occured/
 
 
-> 
->>
->>> +
->>> +    if (!diff)
->>> +        return false;
->>> +    return true;
->> Perhaps just "return !!diff;" here?
-> 
-> Sure.
-> 
->>
->> Thanks,
->> Ryan
->>
->>
->>> +}
->>> +
->>> +static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
->>> +{
->>> +    return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
->>> +}
->>> +#define pte_needs_flush pte_needs_flush
->>> +
->>> +static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
->>> +{
->>> +    return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
->>> +}
->>> +#define huge_pmd_needs_flush huge_pmd_needs_flush
->>> +
->>>   #endif
->>>     #endif
 
+> +        */
+> +       if (status & RKISP1_CIF_ISP_V_START)
+> +               rkisp1_isp_sof(&rkisp1->isp);
+
+Aha I see - so this makes sure we /complete/ the frame before we start
+another one.
+
+That definitely sounds like a very good thing.
+
+I'd be curuious to add a counter for how often we process a frame start
+and frame end in the same ISR too. That likely still means we've got
+some undesirable delays?
+
+
+
+> +
+>         return IRQ_HANDLED;
+>  }
+> --=20
+> 2.48.1
+>
 
