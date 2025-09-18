@@ -1,117 +1,174 @@
-Return-Path: <linux-kernel+bounces-822615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FD1B84522
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:18:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB0BB84623
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4380517E66C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8723B9C2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E412F3C1A;
-	Thu, 18 Sep 2025 11:18:46 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC85303A01;
+	Thu, 18 Sep 2025 11:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5uwumjL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20DB34BA40;
-	Thu, 18 Sep 2025 11:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFEA2582
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758194326; cv=none; b=XWXWdLNSt8V4OTxxdHcbPAXrvlJByc544SvLR/9slAHWhMTb/ond+OV6UCwuUsTh1inQBTrGbwCZM2pG/Zmt0MdwPAAZ0mxpyMFaxrSrXokeF7MBwS8fao1P99TVLa1zwLvm2/RYOuae3ytauBzm7CuvGHLbs9pNPDyYD23Icdk=
+	t=1758195617; cv=none; b=CdimfmxtFaQy9/xr9oCr2KP4fZ6Ew2VQAStMY3+b4+tsa8kKm+tzO4HFKc553kmxFPHcVF6jkFzoI69X67/zjgZunFxtePIdL/O0J17NyJcJn72ZSfgivix5vrfSWJO/y89RY3jHg2HDkXzpzeFIE0+T1R4Dyd/mwwNbwP+9WG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758194326; c=relaxed/simple;
-	bh=M8OutrhX6i0XRNgR9xeSTB1Jl2VwiaubAtm4cFYZj9Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=isqIBcPmn2697r000n6pnWJCNVQ5zjFR2aQx3oX1hVKWdvSmt/0YfsKBiibf5JfJs91sDV7HLlI8bv2dt+xqknHDy44eyhhdQ3TVk7DO0B0BpXMDJSnssCCd0tUBejZc5EauJOtRg0KxHbdMYm11b3P1fON04+R+9wXx03gLDzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cSCjH3ch4z2VRxL;
-	Thu, 18 Sep 2025 19:15:15 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id C3A9F1A016C;
-	Thu, 18 Sep 2025 19:18:41 +0800 (CST)
-Received: from huawei.com (10.50.159.234) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 18 Sep
- 2025 19:18:40 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <wsa+renesas@sang-engineering.com>, <dhowells@redhat.com>,
-	<rostedt@goodmis.org>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>
-Subject: [PATCH] i2c: dev: Fix field-spanning write in __do_trace_smbus_write()
-Date: Thu, 18 Sep 2025 19:39:56 +0800
-Message-ID: <20250918113956.169348-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758195617; c=relaxed/simple;
+	bh=dQtfU+0WY2OOQFd+daG8wlVyguap+S9ukLR8d2rPA9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XwnsKsVEs8bWvKaXTvPpTcWorjzAuW+zea9BQ8aHlbOyrmgLPWA944KAXqHvJLpjLDK1V/MIje13bZld5UVzFIlppT5ZdnI/Y2fvt6etvWQ2kjeuxR1UQBRqaqZszbZQKHXqLEI8P4AMyI5+WLUO5yQykdhBRS0Oh25Ek5ZfbGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5uwumjL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24D5C4CEE7;
+	Thu, 18 Sep 2025 11:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758195616;
+	bh=dQtfU+0WY2OOQFd+daG8wlVyguap+S9ukLR8d2rPA9c=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=X5uwumjLoZi/9cRZf5qxtNG/cDxmIveicAdVj/wy/8arkY61vLt1wiVeiVHtB0i1t
+	 AOo911TD8JxsyP4Ge5Oj5Kpt+N9diRTLkSd0HMv01TWpS5DI58Ki6wUFdvlwonebGN
+	 +kQZhlbfOMcIGYnODGi4G+Kfr3DeSwJHV1WgM+NHHFUQW/jOmtPTcwVd0Be3lt5pVU
+	 JUaMstblLJUmfUDobzhXBdpHEdI8f18DkmHDXg73M2wldkfohZHSxVCQbQnUxWAvFu
+	 mDpPpS7GFfr3wVSUbKaSStP3EOsfYtqtiq/SyEgI2txZjajwsXGkEL/IX6eU1FjKy0
+	 K+Md7a2o3FaTw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 38BDFCE0B32; Thu, 18 Sep 2025 04:40:16 -0700 (PDT)
+Date: Thu, 18 Sep 2025 04:40:16 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: Zhang Changzhong <zhangchangzhong@huawei.com>, dave@stgolabs.net,
+	josh@joshtriplett.org, frederic@kernel.org, yuehaibing@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locktorture: Fix memory leak in param_set_cpumask()
+Message-ID: <33613004-3bad-4847-ae7b-2b85cb01b502@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250912015737.1209143-1-wangliang74@huawei.com>
+ <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
+ <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
+ <679d81f3-2610-44b9-bc9a-30ef0f70fa36@paulmck-laptop>
+ <2cc0b052-c464-44e2-9341-5eaf9858b24f@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+In-Reply-To: <2cc0b052-c464-44e2-9341-5eaf9858b24f@huawei.com>
 
-A field-spanning write warning was observed with following output:
+On Thu, Sep 18, 2025 at 07:17:41PM +0800, Wang Liang wrote:
+> 
+> 在 2025/9/18 17:03, Paul E. McKenney 写道:
+> > On Mon, Sep 15, 2025 at 10:13:33AM +0800, Wang Liang wrote:
+> > > 在 2025/9/12 10:16, Zhang Changzhong 写道:
+> > > > 在 2025/9/12 9:57, Wang Liang 写道:
+> > > > > When setting the locktorture module parameter 'bind_writers', the variable
+> > > > > 'cpumask_var_t bind_writers' is allocated in param_set_cpumask(). But it
+> > > > > is not freed, when removing module or setting the parameter again.
+> > > > > 
+> > > > > Below kmemleak trace is seen for this issue:
+> > > > > 
+> > > > > unreferenced object 0xffff888100aabff8 (size 8):
+> > > > >     comm "bash", pid 323, jiffies 4295059233
+> > > > >     hex dump (first 8 bytes):
+> > > > >       07 00 00 00 00 00 00 00                          ........
+> > > > >     backtrace (crc ac50919):
+> > > > >       __kmalloc_node_noprof+0x2e5/0x420
+> > > > >       alloc_cpumask_var_node+0x1f/0x30
+> > > > >       param_set_cpumask+0x26/0xb0 [locktorture]
+> > > > >       param_attr_store+0x93/0x100
+> > > > >       module_attr_store+0x1b/0x30
+> > > > >       kernfs_fop_write_iter+0x114/0x1b0
+> > > > >       vfs_write+0x300/0x410
+> > > > >       ksys_write+0x60/0xd0
+> > > > >       do_syscall_64+0xa4/0x260
+> > > > >       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > 
+> > > > > This issue can be reproduced by:
+> > > > >     insmod locktorture.ko
+> > > > >     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+> > > > >     rmmod locktorture
+> > > > > 
+> > > > > or:
+> > > > >     insmod locktorture.ko
+> > > > >     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+> > > > >     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+> > > > > 
+> > > > > The parameter 'bind_readers' also has the same problem. Free the memory
+> > > > > when removing module or setting the parameter.
+> > > > > 
+> > > > > Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
+> > > > > Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> > > > > ---
+> > > > >    kernel/locking/locktorture.c | 9 +++++++++
+> > > > >    1 file changed, 9 insertions(+)
+> > > > > 
+> > > > > diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+> > > > > index ce0362f0a871..cad80c050502 100644
+> > > > > --- a/kernel/locking/locktorture.c
+> > > > > +++ b/kernel/locking/locktorture.c
+> > > > > @@ -70,6 +70,9 @@ static int param_set_cpumask(const char *val, const struct kernel_param *kp)
+> > > > >    	int ret;
+> > > > >    	char *s;
+> > > > > +	free_cpumask_var(*cm_bind);
+> > > > > +	*cm_bind = NULL;
+> > > > 这个NULL没必要吧
+> > Assuming this translates to "This NULL is unnecessary", I have to
+> > agree with Zhang Changzhong.  I would go further and argue that the
+> > free_cpumask_var() is also unnecessary here.
+> 
+> Thanks for your replies!
+> 
+> The free_cpumask_var() in param_set_cpumask() may be necessary(). If user
+> set the parameter for two times, the pointer will point to a new memory,
+> and no one hold the old memory, which trigger a memory leak.
 
-  ------------[ cut here ]------------
-  memcpy: detected field-spanning write (size 86) of single field "entry->buf" at ./include/trace/events/smbus.h:60 (size 34)
-  WARNING: CPU: 1 PID: 2646 at ./include/trace/events/smbus.h:60
-  CPU: 1 UID: 0 PID: 2646 Comm: syz.0.310 Not tainted 6.17.0-rc5+ #5 PREEMPT(none)
-  RIP: 0010:do_trace_event_raw_event_smbus_write.constprop.0+0x37a/0x520 include/trace/events/smbus.h:23
-  Call Trace:
-   <TASK>
-   __do_trace_smbus_write include/trace/events/smbus.h:23 [inline]
-   trace_smbus_write include/trace/events/smbus.h:23 [inline]
-   __i2c_smbus_xfer.part.0+0x5ce/0x9a0 drivers/i2c/i2c-core-smbus.c:572
-   __i2c_smbus_xfer+0xa3/0x1a0 drivers/i2c/i2c-core-smbus.c:566
-   i2c_smbus_xfer drivers/i2c/i2c-core-smbus.c:546 [inline]
-   i2c_smbus_xfer+0x208/0x3c0 drivers/i2c/i2c-core-smbus.c:536
-   i2cdev_ioctl_smbus+0x2cd/0x850 drivers/i2c/i2c-dev.c:389
-   i2cdev_ioctl+0x3bb/0x800 drivers/i2c/i2c-dev.c:478
-   vfs_ioctl fs/ioctl.c:51 [inline]
-   __do_sys_ioctl fs/ioctl.c:598 [inline]
-   __se_sys_ioctl fs/ioctl.c:584 [inline]
-   __x64_sys_ioctl+0x191/0x210 fs/ioctl.c:584
-   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-   do_syscall_64+0x5d/0x2d0 arch/x86/entry/syscall_64.c:94
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-   </TASK>
+Why wouldn't the free_cpumask_var() you are adding to
+lock_torture_cleanup() cover that case?
 
-Similar to previous commit 57f312b95593 ("i2c: rtl9300: Fix out-of-bounds
-bug in rtl9300_i2c_smbus_xfer"), the data->block[0] is used for length and
-it comes from user. Add check for the variable to avoid out-of-bounds bug.
+> > > Setting global pointer to NULL after free may be more safe. ^-^
+> > In lock_torture_cleanup(), you mean?  I would agree with that.
+> > 
+> > > > > +
+> > > > >    	if (!alloc_cpumask_var(cm_bind, GFP_KERNEL)) {
+> > > > >    		s = "Out of memory";
+> > > > >    		ret = -ENOMEM;
+> > > > > @@ -1211,6 +1214,12 @@ static void lock_torture_cleanup(void)
+> > > > >    			cxt.cur_ops->exit();
+> > > > >    		cxt.init_called = false;
+> > > > >    	}
+> > > > > +
+> > > > > +	free_cpumask_var(bind_readers);
+> > > > > +	free_cpumask_var(bind_writers);
+> > > > > +	bind_readers = NULL;
+> > > > > +	bind_writers = NULL;
+> > > > 同上
+> > But here I agree with Wang Liang, as it helps people running debuggers
+> > on the kernel.  Instead of a dangling pointer, they see a NULL pointer.
+> > 
+> > Except...  Is this NULLing really the right thing to do for
+> > CONFIG_CPUMASK_OFFSTACK=n kernels?
+> 
+> For CONFIG_CPUMASK_OFFSTACK=n, the NULLing may be not appropriate. I will
+> remove it.
 
-Fixes: 8a325997d95d ("i2c: Add message transfer tracepoints for SMBUS [ver #2]")
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- drivers/i2c/i2c-dev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+But if you remove the NULLing entirely, mightn't that inconvenience
+people debugging?
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index e9577f920286..b00961561134 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -386,6 +386,12 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_client *client,
- 		if (read_write == I2C_SMBUS_READ)
- 			temp.block[0] = I2C_SMBUS_BLOCK_MAX;
- 	}
-+
-+	if (temp.block[0] > I2C_SMBUS_BLOCK_MAX) {
-+		dev_dbg(&client->adapter->dev, "block[0] out of range in ioctl I2C_SMBUS.\n");
-+		return -EINVAL;
-+	}
-+
- 	res = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
- 	      read_write, command, size, &temp);
- 	if (!res && ((size == I2C_SMBUS_PROC_CALL) ||
--- 
-2.34.1
+							Thanx, Paul
 
+> > > > > +
+> > > > >    	torture_cleanup_end();
+> > > > >    }
 
