@@ -1,115 +1,96 @@
-Return-Path: <linux-kernel+bounces-823396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C58B86503
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:46:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338F8B8650F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 436C11CC4649
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:46:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7DBB60876
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D492A248883;
-	Thu, 18 Sep 2025 17:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAFB25DCEC;
+	Thu, 18 Sep 2025 17:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6Kqz0C2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="YW6Tz8wp"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7792459CF;
-	Thu, 18 Sep 2025 17:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AA01E3DE5;
+	Thu, 18 Sep 2025 17:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758217569; cv=none; b=d20HE+H2OoF3+mZC/WJyIG+iCIWlj5qwTgt8GyWAL3zEASxUkG1tLVGHBAjEC4OWFCoSSDApC7SIyF68jwhcVGdnuRG+e/ExQcU/PMHFIIZeMg1rKZT49COJaxdRmjVYnIsAeLpA9Kx92MOox7uMN6TtSI0/iWlb6ZAKdYckFA8=
+	t=1758217682; cv=none; b=I2xpqShKWJnFHcVLIkSDV8V28KHcaazHmt/kbE3CZetlp0uGSVmFDduzwbLoBsKWqEUbxuc6PxZvbijFwqP4ddOBnroeplf+dbOckSLheyQmfVAmx/fPcajgRqzl1KW9FcUrE1xzO/HKXSzmd4gGNCOXVluEtTiq4thWmqLcIz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758217569; c=relaxed/simple;
-	bh=ZNTo/Y9EyxZmz/6UCc4XPFi8e1W38Mv8YYcq4WlZegE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dN5BlQwWq+yJ6icdhqmDLNLiu9vxKwpYFc1gxHeliavwFjnh/FCAIzd+FkGq7jC8sYdTTY4gTE6fBaQkwB6jH2s3uObXKUouK6BNoDW7bmFAtGua+HZAtLFufnDdKN13HyIMGNGcf9rKdJEbchbBGpHutizw7TiPKFvvkd55mCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6Kqz0C2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6C0AC4CEE7;
-	Thu, 18 Sep 2025 17:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758217568;
-	bh=ZNTo/Y9EyxZmz/6UCc4XPFi8e1W38Mv8YYcq4WlZegE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i6Kqz0C2bMyTxFSdnUrmZXomQZUKN6PrE+wxZtJczj7QbrNhByTVlq1eR7IvDe3Jy
-	 Rb0EVjsKlu7+xQR8iunNSXY3VfqUgyGCab6xsnZgBZl67tyBH/axKezDiuJ1cjPL/B
-	 9kfaRoWNLZ5V3wySAKqhDPOxfQhGSa1lzggNioVkRAcTy+hqrrr0X7H9JoiHVLVFUo
-	 mnNYoLhoteQ9EMMAi0FpYEfUzAKGMHcgiX/jB/qz83MmJDJnFzCuWf1/aH0MsAzimV
-	 sIMfY4OB0F6qYHUWlI8mz6IPqJvhYJpjwfv9gUvj1AZPTM7hciQh+uiQLZarv96/8X
-	 3zcI3CRc9uH8g==
-Date: Thu, 18 Sep 2025 10:45:55 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, llvm@lists.linux.dev,
-	rcu@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
-Message-ID: <20250918174555.GA3366400@ax162>
-References: <20250918140451.1289454-1-elver@google.com>
- <20250918141511.GA30263@lst.de>
+	s=arc-20240116; t=1758217682; c=relaxed/simple;
+	bh=DfSwm2ER3Yj4uK2QlEa60/GiAXDirNZ6AIe8oxVcEpM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rz8yd7EwFMOoPXv0CNW2RN/wKyKsTOv1IQJUa4FglZRTPQtCylMGUTQCQQ6o9PNxVvo6F8SSWMR1DkzNRCjAg6LD00EpkNO826krEV8/5X7LpUazjyqLj+3vj/Ugo3KolHIEIxdBJRKQRliifNrCuHKaFAwwlEApBWwi9ZZZJqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=YW6Tz8wp; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E92BF40B15
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758217680; bh=y3mcXDZuUDAj85GwNusgpkA9hwg+p7xvaXbhlKIF80o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YW6Tz8wp4paCDN8pyX13DknoPv6/ibT9tTj9X42Un7pJsm0P0VSP6HkL1yqk5KBkr
+	 4XFCeHP5BVcwLdATKpw6wDYV6lX+y2pKcaslekL9Gvjh3DF4fmSNwLPKoZIyRC94dS
+	 8AvStsA3/tRiHIFo2iPrUyorNcWEsz9wHlvZvisbkXbr2FykUHXS41kXxXHzX8sXu/
+	 awWHXh6CGD6eG8558M9cARDtDsDXhy4gtJh+lEUCtM8XavTCm9Sf3byj7/rmP1Sg/r
+	 cjhH68b7IifFgPHBNgXis48DTQBWvNrdCrRVl3HMvC+9DvauZtVxoC0U2yxJXKZlZL
+	 Ba7auOBtcwXAg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id E92BF40B15;
+	Thu, 18 Sep 2025 17:47:59 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH v8 00/24] Split sphinx call logic from docs Makefile
+In-Reply-To: <cover.1758196090.git.mchehab+huawei@kernel.org>
+References: <cover.1758196090.git.mchehab+huawei@kernel.org>
+Date: Thu, 18 Sep 2025 11:47:59 -0600
+Message-ID: <87ldmb7iuo.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918141511.GA30263@lst.de>
+Content-Type: text/plain
 
-On Thu, Sep 18, 2025 at 04:15:11PM +0200, Christoph Hellwig wrote:
-> On Thu, Sep 18, 2025 at 03:59:11PM +0200, Marco Elver wrote:
-> > A Clang version that supports `-Wthread-safety-pointer` and the new
-> > alias-analysis of capability pointers is required (from this version
-> > onwards):
-> > 
-> > 	https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
-> 
-> There's no chance to make say x86 pre-built binaries for that available?
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-I can use my existing kernel.org LLVM [1] build infrastructure to
-generate prebuilt x86 binaries. Just give me a bit to build and upload
-them. You may not be the only developer or maintainer who may want to
-play with this.
+> Hi Jon,
+>
+> v8 contains a bug fix for ./tools/docs/check-variable-fonts.py command
+> line together with a new --deny-vf argument to it, plus addresses
+> a couple checkpatch warnings. Only 4 patches changed: patches 1, 2, 4
+> and 5.
 
-[1]: https://kernel.org/pub/tools/llvm/
+OK.  I have applied this to a branch called build-script in my tree.
+Applying it to current docs-mw (or docs-next) was a bit of a challenge,
+due to merge conflicts with the makefiles, but I got there.
 
-Cheers,
-Nathan
+This work is now merged in docs-next (and will thus show in linux-next),
+but it's not yet in docs-mw, so we're not committed to putting it into
+6.18.  My current thinking, if all goes well, is to shift it to docs-mw
+just after the merge window.
+
+It all seems to work for me, with one little oddity: the "Indices"
+section in Documentation/rust/index.rst (which is protected by the usual
+".. only::" block) is being included in the htmldocs build, leading to a
+spurious "Indices" entry in the left column.  Something about the way
+the rust directory is being build sets "subproject" maybe?  I haven't
+had the time to figure it out.
+
+Thanks,
+
+jon
 
