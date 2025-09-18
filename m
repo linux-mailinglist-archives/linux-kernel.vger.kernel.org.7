@@ -1,137 +1,130 @@
-Return-Path: <linux-kernel+bounces-823723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323EDB87525
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:08:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EB9B87528
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336847E3AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B44816FD93
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A680E287242;
-	Thu, 18 Sep 2025 23:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBEB28B407;
+	Thu, 18 Sep 2025 23:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="he+EI4wa"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="KlIEIrC0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jmXjB2xF"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF482F2E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156992F2E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758236881; cv=none; b=JzpKayIOi3oe/UA9QFdzK5mtvJy/CHD8r3fhaq2+bicBMayEw5duy7HyjsccHHpTNq3HbUZ+x1669yqQ7EyBMMqbPRPXeX+gn4W1gfla2uqo0EE3mVepwqHmPzp948jBM/0CQmnIXLW6Y1X4J86lRt7g323LrggRki8BKoEY3iY=
+	t=1758236947; cv=none; b=DOES8Qv01oub0RNnZmStUEB+MAF4xpWb3rXmcFZgAP+0PNswyYrPCHb7ZABlGgjnfaetie0IUeNdG8JhlnWvxbJow+lbc3o/qJM3/uOvdtbOKw4it3gbBUf4HaiS32F9GtSFb6lMlClhFv2cEQ0w3DZfmtkzZXbvCBlfpcUrqc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758236881; c=relaxed/simple;
-	bh=nxNZ1jszvpwyKEJO/gMw9sqK8SGTDAxwNv9VlpMrWA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E+26/N54D5BfrI6/9TZqH/R+FpzmJpYCzzoTDEYI76s5XPqeiaccMB+qIPUO7U3KifHlAyGjTsaz8keYqR9IXm/z+KvFO8Fhb8T/f8F2dEkN+SHBGYgUR9TncEh0khqwlZb3DT3owuAdglMDv8BuDWAz7y/giVwQQdddmK55+2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=he+EI4wa; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-33ca74c62acso12556691fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758236878; x=1758841678; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=msjXtBYzUMS0IY0PtTudbUDMEzPS2Wtn39rOSMPfvZg=;
-        b=he+EI4waL5LZRq6aHDFYvVnwosZ36PlX978iepDSdfFP4itE4ZUHzCf2jyVGUImUY8
-         52ztcRtGyun9rOAy0O2XtkXY88Zwny5QEGujjmYI+5bzcCniiCtdyRN+5yn3pGVJ9mVv
-         /QKELcJYYda/OiNsieYc6fjkrWLQR3dlwqm4t0azyvp3Jvoy88gN8bpS9AXQJo2YbCiK
-         rrt6oZY6ybJAS2GCG7kbcEoj5+oq2wCZhVG+36Rg+S8RUu2Ln4AjCpxCdNui39CvxtOe
-         VQ8KkHVzfLAGh18kUXG5Vfxc208F3FWihdNkIeQ5isXUjZ55PyL1qwNxrArtKWtp/OoJ
-         Rl9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758236878; x=1758841678;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=msjXtBYzUMS0IY0PtTudbUDMEzPS2Wtn39rOSMPfvZg=;
-        b=t9yu9FXuxVbQVTr+esHJNyDZ65Q3TvZWO0neUxE0/qqiWQzfFI+Bht++dCYaJnkiPi
-         Fri4vfv3MbNpsmHlJQFNGpHToFrRQCgejkeEVQDKXDB80ihPoqaxk5Xh8Vf9/I0psgRV
-         3GTxUvKIniCjBvylpdMxYFJ3TqKMN79m3gPFvD+MD3gmjWimsvyu1I9Cv/cfv8gwmgg8
-         sD2cSm6DamkwcsHICZXbdjDIu510ivkQiFBwymS/89EPwYfK2ya2QAwBkSpholMMNnXJ
-         GkXjFAj2iEDpvBdJPkJzskBllAQ74n/9JP6aLk0wapjrpFvfmPWUxA2JkydC5aq4lBaF
-         yZBg==
-X-Gm-Message-State: AOJu0YzSUKfVf0i7GZfhyimak4YDL6dPvXINfBO4E63DIKdaNaBfSD+N
-	tW+cd6BCzBa+oCgndwM5Mv1zRlBhukleewnmyCKp7u782kD/VBRROPga2/hncsTXHA+W2AB6aEf
-	GWM4lGcHuGV6SQFEdQtL1bajUbW+k+zQQcXa8HoQ=
-X-Gm-Gg: ASbGncu3SLezKjRznzWDiZsk00tC3q9zGMIvyGY58K7p+l/cJIcdYeLcsoE+iyQQU8m
-	gqLrIkLPDbW5o+OEpxJXJ3Cy7g/t9i3EL4iwt3yvb/WCq2YxIXR4Dd47OqJ1y67j7mAm3Wigroj
-	um+/1ZxsVDKRV6TJ6R0/nNwKo0mIa+6VNuJnGy2By611MtswmgAaJtwFXvDhaOPDlXdEiEwZN4x
-	qv11LLKapBNnMWRT0EKCFJ4P7gA5qmFLVfYXXsGaGKs36YQyEFhV4vObuvvICGMEz1WQhLU
-X-Google-Smtp-Source: AGHT+IGr0YWkNMzv8ekfAMfh1qAyzT6eWjOVB6UcIbfEr4lqXcwdyY6mvAlt09ARaLGmNoApOnMLxuvekk+GfEJyqyg=
-X-Received: by 2002:a05:651c:23db:10b0:356:25da:89df with SMTP id
- 38308e7fff4ca-3641afb9598mr3524091fa.20.1758236877391; Thu, 18 Sep 2025
- 16:07:57 -0700 (PDT)
+	s=arc-20240116; t=1758236947; c=relaxed/simple;
+	bh=s3gpeQXk8VvfaQY05VhkeXl+XmvRSReYT8IfETDQo9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OxPAh0PVPWB/Blvq5eBwct5SF8j7Bl1BlL7ClTIYsDO/VsJEhq5bf/O9R6ZEtbLmWDu25IOBQl78IPoAuvDCxUuqniQ6FkAIV0DWV0z7BfVINn9Oj3aZGAmZq6bnqS/0sjR75HwJ2/sH5RWCHO7oK601Y2cY14aTydZo3qUiXc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=KlIEIrC0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jmXjB2xF; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id F30DF1D002C4;
+	Thu, 18 Sep 2025 19:09:02 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Thu, 18 Sep 2025 19:09:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1758236942; x=1758323342; bh=cGSw325zHX
+	BQsfMZxMaicImFWwWh5SwcKbn7vbwwNvQ=; b=KlIEIrC0Yvrn2fITpO0lJyk8pH
+	I5KyDr3pmggrE+4IDk3h+NX8dJFpqBp25t1bRDGtHXrAe6yxHLfpwT/Mtad7WNP2
+	7X6zq3kV2H/VyjPL34dGqqpJmeROeNRcSbvLwg/rXY/Rn4PQ0aolxdk4qahawG3K
+	cVfs0lbHxnWZlyZXTpNehShteJ5rrmK6dVpyK8hz7qGV7OzJwcfpCO+v/smW2dj+
+	MstY1fG+KjTT9gyNUctKYviha1pScOOJfA514OXsl7B6OgnqT4aGRHo8k4TVvwd9
+	Pcc68rsOEKeYuBdJZrqO/8Y99wtautGGETEaffKPVgdgQXSdoQDXlAdlbFcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758236942; x=1758323342; bh=cGSw325zHXBQsfMZxMaicImFWwWh5SwcKbn
+	7vbwwNvQ=; b=jmXjB2xF2NljPwTeXjotE3y2HUp4XwtayeEqjTmXiCPGQ+ORbIh
+	14t/HfK+fGairjHCbvlZZuDHLUkQnuYoNXJ2aZXrxkTbXrkNFDztCOVmyiXCZFJW
+	8rNfYFUlgMyEIFliGo8GYZecfLCY9weqnbEILkRVDKCMvzTtsM1xita+EDo+m6Ei
+	Nz6qPZ0Vhwl0uXc0NfS8yk1HMVgOuMxffLNhA4n/RsSas+n0WCVkFhaXbXaXQ2by
+	MvFlOnn9X3rX6liQ0DoKeL30BjCbcsO2Z1TqRSfrOeL+kGekLl4fJUv7W3CkkpnY
+	aCHSTH5qT7n1TYWHiVPOSNNgkic3XkrCqpQ==
+X-ME-Sender: <xms:DpHMaGb9dul8WbKfY2HFiR78zS_mRnPJfNrcdrXv4dckiIEknMGVDw>
+    <xme:DpHMaCUGIkdwNVupOQ3VKXgjLzZEC9hAr_x6faa5OFw6HJtwQakl-uIhKT6VhJK7r
+    BJfwF2pbh7qODGuLDU>
+X-ME-Received: <xmr:DpHMaC7HtTji4WKkWOD5sb9i6E433tTYkqUcKFDxRIMZ-9zQuOKmYylbn2UJWMQTyMbG7pZqnDlJ-of-273eN7SlpP_pATB85iPRdx2dcCJsbdc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegjeeiudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
+    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
+    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhf
+    etjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
+    hotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
+    horhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:DpHMaFjVVdT_Uu9V1jgFsbWmVpBBMnbi4KsKj1HIbGnxm1iWdjHceA>
+    <xmx:DpHMaBfeKjVxRS8fnzVNU0_BW4Y8QAyq-WY2VclxO8xt-efCkamxFQ>
+    <xmx:DpHMaCdCewpdcvp9Jgn64r22gu7RHozHe_yyU1P6Z_71q-XGFcIrFw>
+    <xmx:DpHMaD-4qOowbFYvXPIVNEmik3_iv3okm55wJlVovuD2n0FSfIFejg>
+    <xmx:DpHMaEckQJMEozEHWXv_B-0L0ZJ3Zf_cQJpAhTzfdKNYQiLhrMu_nICW>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 18 Sep 2025 19:09:01 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] firewire: core: code refactoring for work item of bus manager
+Date: Fri, 19 Sep 2025 08:08:51 +0900
+Message-ID: <20250918230857.127400-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904002201.971268-1-jstultz@google.com> <20250904002201.971268-3-jstultz@google.com>
- <7bead244-f366-48dd-aae4-380d32de173b@amd.com>
-In-Reply-To: <7bead244-f366-48dd-aae4-380d32de173b@amd.com>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 18 Sep 2025 16:07:45 -0700
-X-Gm-Features: AS18NWA8gMpFxyBTIgUlDeUL39iskoGeGewmsNTyZnR3aaTVboCfLkz8HrUKDyY
-Message-ID: <CANDhNCo87Xq1-5vhVCyZ3780J+_tGVAjT4d=Z13WsfyQh3oaYw@mail.gmail.com>
-Subject: Re: [RESEND][PATCH v21 2/6] sched/locking: Add blocked_on_state to
- provide necessary tri-state for proxy return-migration
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 15, 2025 at 2:05=E2=80=AFAM K Prateek Nayak <kprateek.nayak@amd=
-.com> wrote:
-> On 9/4/2025 5:51 AM, John Stultz wrote:
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -815,6 +815,12 @@ struct kmap_ctrl {
-> >  #endif
-> >  };
-> >
-> > +enum blocked_on_state {
-> > +     BO_RUNNABLE,
-> > +     BO_BLOCKED,
-> > +     BO_WAKING,
-> > +};
-> > +
-> >  struct task_struct {
-> >  #ifdef CONFIG_THREAD_INFO_IN_TASK
-> >       /*
-> > @@ -1234,6 +1240,7 @@ struct task_struct {
-> >       struct rt_mutex_waiter          *pi_blocked_on;
-> >  #endif
-> >
-> > +     enum blocked_on_state           blocked_on_state;
->
-> Is there any use of the "blocked_on_state" outside of CONFIG_PROXY_EXEC?
-> If not, should we start thinking about putting the proxy exec specific
-> members behind CONFIG_PROXY_EXEC to avoid bloating the task_struct?
+Hi,
 
-So yeah, your suggestion is a decent one, though it gets a little
-messy in a few spots. I'm working on integrating this and propagating
-it through the full series, and hopefully I can clean it up further.
-There are a few spots where this and other proxy related values do get
-checked, so wrapping those up so they can be ifdef'ed out will require
-some extra logic.
+The implementation of bus manager work, bm_work() function, has many
+lines for the procedure to contend for bus manager as well as to
+transfer phy configuration packet for root node selection and gap count
+optimization.
 
-Thanks for the review and suggestion!
--john
+This patchset is to refactor the code for the procedure. A new helper
+function is added to contend for bus manager. The outcome of contention
+is evaluated as a return code of the helper function, then the root node
+at next generation is decided. The phy configuration packet is
+transferred and generate bus reset lastly.
+
+Takashi Sakamoto (6):
+  firewire: core: remove useless generation check
+  firewire: core: use switch statement to evaluate transaction result to
+    CSR_BUS_MANAGER_ID
+  firewire: core: code refactoring for the case of generation mismatch
+  firewire: core: code refactoring to split contention procedure for bus
+    manager
+  firewire: core; eliminate pick_me goto label
+  firewire: core: minor code refactoring to delete useless local
+    variable
+
+ drivers/firewire/core-card.c | 336 +++++++++++++++++++----------------
+ 1 file changed, 178 insertions(+), 158 deletions(-)
+
+
+base-commit: e6d2338b6f3e522872f3a14fcc5e5de2f58bf23b
+-- 
+2.48.1
+
 
