@@ -1,177 +1,97 @@
-Return-Path: <linux-kernel+bounces-822343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899EAB83968
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E35B8396E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4393E2A7DC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6A72A7D41
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05EA2F8BD3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E637D2FF141;
 	Thu, 18 Sep 2025 08:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YprNN1z3"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWzYt53A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF4C80B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435892FDC31;
+	Thu, 18 Sep 2025 08:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185405; cv=none; b=AflLA3FTbTqRLbvFssak6fU31LysbnWsCn6ybA18xwDlJUCVYkwlaiNDNv3e8Y2HaXHiI+MzB3l93nB6Odv+CiP7iubKDyRYGr18xys8OOa+bUOqHNb7IQnAerjF5uJXpTp4LW0aFFdJqlk2Y9px3L+r3uEoNVJ5UCfRHD9N+Tg=
+	t=1758185406; cv=none; b=Vvc79GlWF95xcDry9Y0xjxoDrYMT0pCjDOsnc2m3QiAKkkjhiRmdTnp904igIwAfwtDlzEeOLVZmJRJE6pB+x7Dd1N35P86EkI2bj5j9SebFZOoK9ZqfE79ItrQ9v55WqA3O3xHQCoyo7WHx0V+wBYBad6NISRvL6bEr3KAyY8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185405; c=relaxed/simple;
-	bh=OtYeX22g9/+XJ0SIiCXG6aaSoiPRTOD8Qa/Iimf3XUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhbSER0U8uwk1QTLQbYdlkki7sQ23ca+blsp4ds87uvbykke2sFnQElw5bpRPRSocCi3YoLmsvElM7AIfnFfQyOrb2AheVUiEioiNoDzGsITBuHzrMejfa+Edwzb3gGAr0apaKanUYhVpClbJsiYbeRnLtdXtQGJLiVBYQsktOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YprNN1z3; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62f0411577aso1398788a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758185401; x=1758790201; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hDS1lqd8rZbXZbUYB/FWM+UPwaXwxFfwGYspDhm+zY0=;
-        b=YprNN1z3wt6y45n39aYd6h2GpGfmgja6JLBQw673B1IIdd+pgGtyFlXfQ011RpijUl
-         h9BuL0+O/OjGmkDpzoygp93E2twefrpuCFx9M3ejVWaBa5PEYWql3Okk6WXVdXKrvSva
-         25MGMyMi0cqSzZ14SZtTBGHm4wfsJpnIwNfwOX8oQxrSE5Cxv0W2TqaX32SzvVeOn/d+
-         xBRGdG0NDc03ZUGIwee1j3bYVGaVhcaeOguepJh0yvtFBs03RU1hJFlbaLfCLr3XdWsq
-         ArrFSO6kmoGpTgt6wKnJQvDCgBEEFmr9OAPdl0S4V9teYXDvz4ViBUN8cEhKBIwj4Rf7
-         GYlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758185401; x=1758790201;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDS1lqd8rZbXZbUYB/FWM+UPwaXwxFfwGYspDhm+zY0=;
-        b=EkaEw2w/LDID/2mS4i4ivaCRVOqYOu6Ag++k3jk53Vxryh2j+HfRhmMwJu3/W11vi5
-         Vs5f0rdb8sz3Gats9HwW67Vr4Xi0IftrVozZpx8Xr84wxaQnxip2O7WwxMwFBRpWAK7e
-         kqwl2FbFozREiBwVRqYjEt8TthRuWwy7VEp/Z+ILM2m7a5wOtnKxhW5y1kb5ZVinLvLz
-         Jk60wsursMwWFPbMqPwoFPNMzW+9vltoUnf5htcRgHwYL645XYExR93V9wbpRfUAXAfI
-         VyjlSOmYDuydROM/dw8b9jEgamNDzYPfk788iAG0yCD5n1Ftph7Iz4m5CJ6QKAQSk16q
-         WVnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkzMILXjf39rJUAg2iWUuC6K9iOgNa15arqkiXoODC985u29e1XWvlp5oeF2tk2a2oklpSEzZ6MjMI2Vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzznhFsb84hmg5ZhOmB7PeETDV3AEFeWR2TWk7HjdDQrUy2oEF0
-	bFJG2EUO1BWUYdwMbkwuVgxuZ4KncJMXrmuwlNCuO/+bLEULpsL/VgPkiIa94k8V28o=
-X-Gm-Gg: ASbGnctkE5UQGqqwPgcnRP3EW2o9pubxMVcBBvUXHR85pWi2iXUa2NtYc8dKEXKeoI0
-	Y/i0h3OLDGYn7S74d06LwyD1iqCCbDDQIrZXAL83tqwcIdAy+FFphB1oflznrWaq8N5UyC6Dvbg
-	n2BQ8NaIGhPHQDru20zdTFWBiDfBtHTfcyYG4fRLmNPB2Mgko/+PRJ7v7CF7SBzZXrg4NW+BHdo
-	v2oeY4mWmY3UPneyrFIS36agwhF+S/bbOghT1cHutQcYibrUTOphckdjKjTeUeXtMal5f668Sac
-	KNISGHqFJBUSEBWzvmQ+IOszldW3i8SXLGJ2SLG9Con4i8vcP/Q2xg3cNTKRSt2MARmJTEiu9q3
-	HubVp6EXgI2VHS6l4RVqUHcjnZgxYhuafR4cYjtzf2RpJuF281WmG
-X-Google-Smtp-Source: AGHT+IHJ6xSlvwBJIDdm09ENnEV7apeA12zqjKVNjvrbj9aWgSqDk9GVscCBVpWo2sK3SG+bEj7tEg==
-X-Received: by 2002:a17:907:dac:b0:b04:4975:e648 with SMTP id a640c23a62f3a-b1bbd49ae49mr599268466b.35.1758185400841;
-        Thu, 18 Sep 2025 01:50:00 -0700 (PDT)
-Received: from localhost (109-81-31-43.rct.o2.cz. [109.81.31.43])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b1fc73ba1e8sm148009566b.31.2025.09.18.01.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 01:50:00 -0700 (PDT)
-Date: Thu, 18 Sep 2025 10:49:59 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ye Liu <liuye@kylinos.cn>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmstat: add header line to /proc/buddyinfo output
-Message-ID: <aMvHt7Z2PMuZaned@tiehlicka>
-References: <20250918071741.526280-1-ye.liu@linux.dev>
- <aMu01xIkj-3hgW88@tiehlicka>
- <1a9f44a1-855c-450e-9dc4-415a29b90011@linux.dev>
- <780aa9d6-a85c-4050-820e-c0ca9f5bb658@redhat.com>
- <6d6e2e33-c221-4ab8-a29b-3d14fb1a592c@linux.dev>
+	s=arc-20240116; t=1758185406; c=relaxed/simple;
+	bh=G1GCeshk4QsyKNSYTqiJ/79uKcB4QREhZTsb19sHev8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bt/J5v7LOh3qIhgwLv3Bmpt0whV0T4kZwaGHskhnT20CADoIHAHyj8I+Def9lzrnr2MidPrYc6ZhXLFf7tTO6NbAK3dHvd+5ekZqOw8fYLEPLipGB9FAAoV2ezALnk0jN1FVFXkGNBGjM1lYebGMR9xjk2IHU6SpHT2jJaIuq80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWzYt53A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C151BC4CEE7;
+	Thu, 18 Sep 2025 08:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758185405;
+	bh=G1GCeshk4QsyKNSYTqiJ/79uKcB4QREhZTsb19sHev8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=OWzYt53AKXcVhAAcWIIkBnuz3UyDHmYsUOsxbzQm/4R5dqDCINVI5bw1GaA6aEBsF
+	 2osTHHDUcY9FWrplKoBLPjC6QEcejo+wjis5KA/R/jdxZ+GKEm72W4txsT8dD65tll
+	 EwIMmNNbjOhhagRsFE1w8N9gQQ94ozT1N3d63s8F3S/lcZHPTCtMZbvZe12msCz8gw
+	 j/7ammcOEuawuITOq3m9S0rI7JELC5OBhG9PhXjUgFuZaDMMCq6JxtFheeiL7ytK2k
+	 XhMx0kv2qYvd9RuFMF5RBhHR/xOs4tlgQ+rDvOptVbBaIvkq5rXwrUeXcSEo5d4UAj
+	 C6QhqE9gaayKg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E9639D0C28;
+	Thu, 18 Sep 2025 08:50:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6d6e2e33-c221-4ab8-a29b-3d14fb1a592c@linux.dev>
+Subject: Re: [PATCH RESEND net-next v2] net: renesas: rswitch: simplify
+ rswitch_stop()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175818540600.2325622.11829783040903406814.git-patchwork-notify@kernel.org>
+Date: Thu, 18 Sep 2025 08:50:06 +0000
+References: <20250916163516.486827-1-yury.norov@gmail.com>
+In-Reply-To: <20250916163516.486827-1-yury.norov@gmail.com>
+To: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+Cc: yoshihiro.shimoda.uh@renesas.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ nikita.yoush@cogentembedded.com, michal.swiatkowski@linux.intel.com,
+ geert+renesas@glider.be, u.kleine-koenig@baylibre.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu 18-09-25 16:31:22, Ye Liu wrote:
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Tue, 16 Sep 2025 12:35:16 -0400 you wrote:
+> rswitch_stop() opencodes for_each_set_bit().
 > 
+> CC: Simon Horman <horms@kernel.org>
+> Reviewed-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> ---
+> v1: https://lore.kernel.org/all/20250913181345.204344-1-yury.norov@gmail.com/
+> v2: Rebase on top of net-next/main
 > 
-> 在 2025/9/18 16:16, David Hildenbrand 写道:
-> > On 18.09.25 10:11, Ye Liu wrote:
-> >>
-> >>
-> >> 在 2025/9/18 15:29, Michal Hocko 写道:
-> >>> On Thu 18-09-25 15:17:40, Ye Liu wrote:
-> >>>> From: Ye Liu <liuye@kylinos.cn>
-> >>>>
-> >>>> Add a header line to /proc/buddyinfo that shows the order numbers
-> >>>> for better readability and clarity.
-> >>>>
-> >>>> Before:
-> >>>> Node 0, zone      DMA      0      0      0      0      0      0      0 ...
-> >>>> Node 0, zone    DMA32      5      8      6      6      7      5      8 ...
-> >>>> Node 0, zone   Normal   1113    351    138     65     38     31     25 ...
-> >>>>
-> >>>> After:
-> >>>> Free pages per order       0      1      2      3      4      5      6 ...
-> >>>> Node 0, zone      DMA      0      0      0      0      0      0      0 ...
-> >>>> Node 0, zone    DMA32      5      8      6      6      7      5      8 ...
-> >>>> Node 0, zone   Normal   1113    351    138     65     38     31     25 ...
-> >>>
-> >>> Why is this needed? And have you considered tha this might break
-> >>> existing parsers of the file?
-> >>>
-> >>
-> >> Thanks for the review.
-> >>
-> >> The reason for this change is simply to make /proc/buddyinfo self-describing.
-> >> Right now you have to know which column is which order; with a header it’s
-> >> obvious. This is similar to what /proc/pagetypeinfo already does, e.g.:
-> >>
-> >>    Page block order: 9
-> >>    Pages per block: 512
-> >>
-> >>    Free pages count per migrate type at order   0 1 2 3 ...
-> >>    Node 0, zone DMA, type Unmovable             0 0 0 ...
-> >>
-> >> Regarding existing parsers: the patch does not change any of the existing
-> >> “Node … zone …” lines, it only adds a single header line before them. Most
-> >> parsers match “Node” lines and ignore everything else, so the risk should be
-> >> low. If you know of any existing parser that this would break, please let
-> >> me know so I can address it.
-> > 
-> > What if there is a single one out there that has hardcoded to skip the first line only?
-> 
-> I understand there may be no way to be fully compatible with all existing
-> parsers. However, /proc/buddyinfo is essentially raw data intended for
-> human and tool consumption, and parsers are expected to be robust against
-> format changes.
+> [...]
 
-I am pretty sure you can create a trivial wrapper to print that header,
-right?
+Here is the summary with links:
+  - [RESEND,net-next,v2] net: renesas: rswitch: simplify rswitch_stop()
+    https://git.kernel.org/netdev/net-next/c/18cfe3c1a121
 
-> Adding a '#' prefix to the header would allow most parsers to skip it,
-> but it still changes the file output and cannot fully guarantee that no
-> external tool will be affected.                                          
-
-That still assumes that they expect something like that.
-We are trying really hard to not break existing userspace even if it is
-not written in a robust way. That is simply how Linux kernel handles all
-the existing interfaces. There must be a very serious reason to add a
-change that might _theoretically_ breaker existing userspace. What you
-are proposing here is not such a reason as it is trivial to achieve what
-you want from the userspace.
-
-NAK to the change.
+You are awesome, thank you!
 -- 
-Michal Hocko
-SUSE Labs
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
