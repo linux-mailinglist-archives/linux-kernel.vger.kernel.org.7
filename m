@@ -1,184 +1,140 @@
-Return-Path: <linux-kernel+bounces-822637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7D8B845D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EAEB845E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A274D7B1EB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:30:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650984A1C87
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CCE2F9DA5;
-	Thu, 18 Sep 2025 11:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813D42FFF86;
+	Thu, 18 Sep 2025 11:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lhdT2L1t";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RiyRI2no";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mZ/uXFCm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F4mpeiMA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVb35xF2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9017823B61E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60AE2EF660
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758195103; cv=none; b=PNREe4d3Ly8hoR6IewwmWZbcUzPp144dnYbovVsT+eSezSuBQU/XZSR9w2hI3Uk0R2oLRSYOhpMAfpllaVZHpZnTQOjBcKbLu1yKBAmnPK3sgObiR3b4s++bZHGcP+Ud5v7ITmYAHhS1P0SE2zvfV21XG/RjVwtnQiGBZFHPXsU=
+	t=1758195241; cv=none; b=A5qpLzbi1xlw+WsXpYF7eM5aadZ2MZd2gbj8CpL8Z104N1kbYnXIY0LXIdnYHIdoTITcb3eAme8go7KxlptqYV0bDUo9LTBY0Hw+t2kQmedZIFzDsc1IrHAnoQfSmqSeKUj5KpZZ4UPBtyXs+b45oKGHUBBP0Em92dREXEUes/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758195103; c=relaxed/simple;
-	bh=MLl6OKx32oF/mUyZeLnKIVTtA/C1JJP+sSJUZhdTOM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DsHYk137fjRthZN9lsxiY99LBnKHPYKxPn+VVYJQMlzv+TSoa/LjtB/A88JGhJUu3opLX2U2SPy38cBgyyQEDIy5COJtNPyYbQ0Y3yrQVYP3cnxf1bVboFto+j2FXcauovHQqhloidtJfRXgFqvsmh6FSy5030BofwXZ3Px+Smw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lhdT2L1t; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RiyRI2no; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mZ/uXFCm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F4mpeiMA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8AE0233791;
-	Thu, 18 Sep 2025 11:31:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758195099; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=lhdT2L1tZ/eU01dAvv55m+bCEsqSXn9IA/5PI3U3FxpNs0aIVG5VXdU/1hy0iSeEN7Pw79
-	Bofhd8h+Lu/NUDQgTx+DFJ2rfruf0Ez7PC6X5J22of1d6Wb9cAQUAzeg5iFC2cXxYAzxBy
-	JAGOlD4SlPjr6tEiifhJG8ab/O4KClw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758195099;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=RiyRI2nob+MF0STXidJ4xVHvz+Hvs6a7btnXjChpqptOZmH1OMRuQau6ztX6QilOsI19tM
-	mWjgrlV4vqR3/4AQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="mZ/uXFCm";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=F4mpeiMA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758195098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=mZ/uXFCm/LcB68G+Pulz+vmUd3OkOcAShB69OktBNN3CDzNOUlingOy/CvYD7qdUPgI1pD
-	SIT86IppWhAFXzD3Adv0o6HXgCYSPrRAOiK85uI5+GizLBu7dT+PSMZDf/D257u/Ah4LNl
-	j2rcNCxlLRaGLIFjVQ9W0ZkBFdbN/vw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758195098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F0jk5pHWcSpilbLxJaV/z4FUuxkpZfccsNZuNA2Q9Bo=;
-	b=F4mpeiMAiFwgKtIBR86KL8f7OjWr7aG5rnz8aOXCA4LWMC1X5SXu1uiugKiTYOreT33gH6
-	4P4VfZBx5MQ+j7Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80F0C13A51;
-	Thu, 18 Sep 2025 11:31:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r3swHJjty2gJBQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 18 Sep 2025 11:31:36 +0000
-Date: Thu, 18 Sep 2025 12:31:30 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	kernel-team@android.com, android-mm@google.com, stable@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] mm: fix off-by-one error in VMA count limit checks
-Message-ID: <zol3d77dnwgrkbwc7lui3qm2mkwqftzifr6gn7smtbg4jo4bte@y4dzwfvt2xtj>
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-2-kaleshsingh@google.com>
+	s=arc-20240116; t=1758195241; c=relaxed/simple;
+	bh=sDruQ31RQWcxA9NQ6hpfjci9hEglxsgsiVScqoGOvCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VHVkjzx2RYZMaSe6rkpSK9S+/o6r6L+SdwnJvb5eGrlX2pogsZz2MJIERxv1pR2ocjO1tR6Zm6Cd0HHaO+4Gf4+gbxsOP+wyTPp8ObaCyT0gZmH7MbtnDYWGjYkbA3ueFldx3QbRGYd+zxnf0cTy8A7/qxscrQ34o9tM+WStwdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVb35xF2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660FBC4CEF7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758195241;
+	bh=sDruQ31RQWcxA9NQ6hpfjci9hEglxsgsiVScqoGOvCk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fVb35xF2JnZ5CrcL5/xgfPf9AAWIxH9atnakVT9ETUtGv74gLCtZtnmRc2CFvdQw8
+	 aUgH50kHDXv2DxukpJPGzpWnGsxsotjbpf77+vzvp9Ml1/agLX8heoCSGQA/X4p6+0
+	 hVm5ihb7yVv+f6Cs9MB8pseDN0FPgRfbuJyb4nt2fPYZEKJowWIsRAr/VzSvObLkKv
+	 qpebeKGfjakNjnjXqXxevqoxRIICnPWVk0rknnanpUzvzVGauE1RKnauSxnWVs+Ijk
+	 N4tJXCLmWLzMSAg1B1CEwueddeV/T38INbpCwLAgJlrtTgZw6AAp0D1FXJwwDoavZB
+	 ifGpjE3RZhqjg==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f7a34fb35so839599e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:34:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWRs+dkJkk+kDkCg11t4ANYkRpWg6c0dQgbtZrOLWnZfQUFRXJ3AGJD/uZMzIKTOz0tIKjGwHwialVXKVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMWWAWq6rRluNKbW+c2wPX6Yp0BDvNmk2XVb4P8yMIZMdQkud/
+	IkSpxamElqwZ0R2GwwcSeSKI70dQzhxt+jXXqqfhqYqGdZGnb/ZME3XcX/M72VOL2wi5YfJcySq
+	JWX9F2tXh9KLqQUzXDpjkuNAyP5F98vA=
+X-Google-Smtp-Source: AGHT+IHRO51P1kh8hrccEQ8EhjnKuluFz4Bw+DY0+jrlyrxJs/osMNkIFLqBmkEhBzI+UI7ewRamktzcJNUv/x12ltM=
+X-Received: by 2002:a05:6512:224b:b0:572:9791:203d with SMTP id
+ 2adb3069b0e04-577982850e7mr1582931e87.21.1758195239718; Thu, 18 Sep 2025
+ 04:33:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915163838.631445-2-kaleshsingh@google.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 8AE0233791
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLg31yqq1xypujqsbh8raoa6zf)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux-foundation.org:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,oracle.com:email,suse.de:dkim,suse.de:email]
-X-Spam-Score: -4.01
+References: <20250918103010.2973462-10-ardb+git@google.com>
+In-Reply-To: <20250918103010.2973462-10-ardb+git@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 18 Sep 2025 13:33:48 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGndZxxe+u3st6FCebrdutUibspA7tJUpqGMgpj9UTFnA@mail.gmail.com>
+X-Gm-Features: AS18NWBpKR-TPvng9fbMt92bDXPkedcwInqj0GFfa3493ydSnUglQQw7-ggQlLY
+Message-ID: <CAMj1kXGndZxxe+u3st6FCebrdutUibspA7tJUpqGMgpj9UTFnA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] arm64: Make EFI calls preemptible
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 15, 2025 at 09:36:32AM -0700, Kalesh Singh wrote:
-> The VMA count limit check in do_mmap() and do_brk_flags() uses a
-> strict inequality (>), which allows a process's VMA count to exceed
-> the configured sysctl_max_map_count limit by one.
-> 
-> A process with mm->map_count == sysctl_max_map_count will incorrectly
-> pass this check and then exceed the limit upon allocation of a new VMA
-> when its map_count is incremented.
-> 
-> Other VMA allocation paths, such as split_vma(), already use the
-> correct, inclusive (>=) comparison.
-> 
-> Fix this bug by changing the comparison to be inclusive in do_mmap()
-> and do_brk_flags(), bringing them in line with the correct behavior
-> of other allocation paths.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: <stable@vger.kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Pedro Falcato <pfalcato@suse.de>
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+On Thu, 18 Sept 2025 at 12:30, Ard Biesheuvel <ardb+git@google.com> wrote:
+>
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> The arm64 port permits the use of the baseline FP/SIMD register file in
+> kernel mode, and no longer requires preemption to be disabled. Now that
+> the EFI spec is being clarified to state that EFI runtime services may
+> only use baseline FP/SIMD, the fact that EFI may code may use FP/SIMD
+> registers (while executing at the same privilege level as the kernel) is
+> no longer a reason to disable preemption when invoking them.
+>
+> This means that the only remaining reason for disabling preemption is
+> the fact that the active mm is swapped out and replaced with efi_mm in a
+> way that is hidden from the scheduler, and so scheduling is not
+> supported currently. However, given that virtually all (*) EFI runtime
+> calls are made from the efi_rts_wq workqueue, the efi_mm can simply be
+> loaded into the workqueue worker kthread while the call is in progress,
+> and this does not require preemption to be disabled.
+>
+> Note that this is only a partial solution in terms of RT guarantees,
+> given that the runtime services execute at the same privilege level as
+> the kernel, and can therefore disable interrupts (and therefore
+> preemption) directly. But it should prevent scheduling latency spikes
+> for EFI calls that simply take a long time to run to completion.
+>
+> Changes since v2:
+> - Permit ordinary kernel mode FP/SIMD with IRQs disabled, so that the
+>   special EFI case only deals with invocations in hardirq or NMI context
+> - Disallow EFI runtime calls in hardirq or NMI context, so that the
+>   special FP/SIMD handling for EFI can be dropped entirely
+> - Use a mutex rather than a semaphore for the arm64 EFI runtime lock,
+>   now that it is never trylock()ed in IRQ or NMI context.
+>
+> Changes since v1/RFC:
+> - Disable uaccess for SWPAN before updating the preserved TTBR0 value
+> - Document why disabling migration is needed
+> - Rebase onto v6.17-rc1
+>
+> (*) only efi_reset_system() and EFI pstore invoke EFI runtime services
+>     without going through the workqueue, and the latter only when saving
+>     a kernel oops log to the EFI varstore
+>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Mark Brown <broonie@kernel.org>
+>
+> Ard Biesheuvel (8):
+>   efi: Add missing static initializer for efi_mm::cpus_allowed_lock
+>   efi/runtime: Return success/failure from arch_efi_call_virt_setup()
+>   efi/runtime: Deal with arch_efi_call_virt_setup() returning failure
 
+Unless anyone objects, I am going to queue up these 3 patches ^^^ via
+the EFI tree.
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+>   arm64/fpsimd: Permit kernel mode NEON with IRQs off
+>   arm64/fpsimd: Drop special handling for EFI runtime services
+>   arm64/efi: Use a mutex to protect the EFI stack and FP/SIMD state
+>   arm64/efi: Move uaccess en/disable out of efi_set_pgd()
+>   arm64/efi: Call EFI runtime services without disabling preemption
+>
 
--- 
-Pedro
+... so the rest can go in via the arm64 tree in the next cycle.
 
