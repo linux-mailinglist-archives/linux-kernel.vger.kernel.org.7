@@ -1,386 +1,195 @@
-Return-Path: <linux-kernel+bounces-822437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43626B83E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 831EEB83E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CEF46053D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 493AB542F92
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B6F2EF660;
-	Thu, 18 Sep 2025 09:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18A329992B;
+	Thu, 18 Sep 2025 09:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y6bA7e/p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="27bfigr9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y6bA7e/p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="27bfigr9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="c9uPSBoh"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012028.outbound.protection.outlook.com [40.107.200.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147242BE04D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758188728; cv=none; b=NzTU1awm+kh66XJUupfVJgJJP6kjzPfJqOyechlI/fGGdJahW/lNVYQAVh73/UaNGNjelXkPKzMfT3qqwhvT1B2BcPc1j/vOGekmig1KH0VEk0nYp+bZTrzdoPbemua8ijgsdcMhvHHicGa08j6UoRkt8ROJyznfRmtPViK2hi4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758188728; c=relaxed/simple;
-	bh=gPkIfztTZi0y6LE6Qd/+NfHWDHdqF3VndcKeLbxtUXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjNKMHDU9J5aponBJo8x7g4cTQjl+Ecc1HJV5N5CyCseOGLB5TukU5TEr2Rco6iIBYe7L4v5nY3pK/IFIft1GqWo4DuFW+YcTByscy42trqnkXX9qguZ8Iik/9JhYG830H+QT7splV+BJBoJJFGrHdV1OciNgNe05/JMdygVbyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y6bA7e/p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=27bfigr9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y6bA7e/p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=27bfigr9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1894A3370E;
-	Thu, 18 Sep 2025 09:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758188725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYVbT4f0JlXgqhMfqXCIC/MlW/e2h+FcYF+y8Dmeb+M=;
-	b=Y6bA7e/pIkASQEcFdIfJt1WPX+tzhydEbJM85/qsqRgloJewgyUhZrYb77ylEy/GV4P0zr
-	kUDBjWYxubMYEB9iVhX+26ubAE4TCPoamLDJG8GjVrzy5WgpsKh5vhyxMJXo2uPAjwJogL
-	Kk5nTosowWltIhA8V3hf723eEib+l7c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758188725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYVbT4f0JlXgqhMfqXCIC/MlW/e2h+FcYF+y8Dmeb+M=;
-	b=27bfigr9Bdp1FsrfQ785y9KDj8Voo8LDsecB7BAfcxNnYRdZ0MVsDNTAV3UcRrnGT6mGkh
-	bmS93rYP9yUPhaCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Y6bA7e/p";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=27bfigr9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758188725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYVbT4f0JlXgqhMfqXCIC/MlW/e2h+FcYF+y8Dmeb+M=;
-	b=Y6bA7e/pIkASQEcFdIfJt1WPX+tzhydEbJM85/qsqRgloJewgyUhZrYb77ylEy/GV4P0zr
-	kUDBjWYxubMYEB9iVhX+26ubAE4TCPoamLDJG8GjVrzy5WgpsKh5vhyxMJXo2uPAjwJogL
-	Kk5nTosowWltIhA8V3hf723eEib+l7c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758188725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jYVbT4f0JlXgqhMfqXCIC/MlW/e2h+FcYF+y8Dmeb+M=;
-	b=27bfigr9Bdp1FsrfQ785y9KDj8Voo8LDsecB7BAfcxNnYRdZ0MVsDNTAV3UcRrnGT6mGkh
-	bmS93rYP9yUPhaCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 060C213A51;
-	Thu, 18 Sep 2025 09:45:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e1l4AbXUy2jUYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 18 Sep 2025 09:45:25 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 44F67A09B1; Thu, 18 Sep 2025 11:45:20 +0200 (CEST)
-Date: Thu, 18 Sep 2025 11:45:20 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 8/9] nscommon: simplify initialization
-Message-ID: <so6gpy2udirre26cghfchiayvaxzhtnhq3y3j2mndzkkosxpcv@2dnlcxurzbjo>
-References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
- <20250917-work-namespace-ns_common-v1-8-1b3bda8ef8f2@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C5E34BA50;
+	Thu, 18 Sep 2025 09:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758188746; cv=fail; b=pQfWKBCVIzsesgvBrwAXLgnvVVZq84Ljk+5Fvtbb7ir/m+eVcIcsG4iKNtfHnSZno3aRTYWesYb/rxqsbPi4Grjc3ADGsJdC1r5oyfmhAQE607vfwAOYuOQMdiVc1PN6LHjB9qZIsKExuE2Y6OEB2JcUDB07CUOfSR8cYG55QGo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758188746; c=relaxed/simple;
+	bh=S+85kAg4PKtsWt+0zbU4fNlWcFVvAhbMr5uUJ79IZlU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jF16EFePw314IwZPvMG8nT6Hr0lAZKeA8QXG0UwJWQLKpdVaLTvjc5oZUfQp4YrV+exI7oAyHrjLSi/Hd5FtT7Hy9HsAh/5FZ8UYnVaewNriH8VN5mOe+5thHprK2QHGicL/d7tW2D6spSLs1SZZeX2v9iXgHOB6Ixf6voR8Gtk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=c9uPSBoh; arc=fail smtp.client-ip=40.107.200.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=idQQKAeuOgmg1SkJeJRTa5LgX8+Mcpcd5wJ3PGyWSZG3iVDfoUZAXy9Ginsc2rSt+lDTOpB0/gTHj+/qo1DkfZUIqPTAN5AgOJQZ2EfvKI1CuM2lUY7T01PEihJL79mnCaT3OIG5ZV+bVu/NCo3Ng1PFFBi4ytO6Z9d6nIFziu1wbSaRaK+IxxOlQPMlhCj+5QkdEC6C7bAFyoZRyh1QPEpQ4ShkYOS5CVew2QsqDSCWbHbN24AqF6BHzu+dLzIjc0GZeWoxkQ2DSnOqBATbcBKD/QkRgx0mHCCo8NYdwlEafdzZGDMYkTRxTWzu5hTUm70Lvx90gvDcaBhzjR2HMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3LbkSFUduJJ3zC8UkhPjkHTBKdAxoZ20euTYbilETOw=;
+ b=X7B1kXR6hSLEElZwz/0V/5EwXwYXIHcJUSU1QgKfj1q3bTmvRyZxTdocrxC51mWCg5MliVWu2MSZ9EKi9vdQi2BhzShI3KccpVF8y86iSGz+Xg3tH/nHlMc2zA+pxdFtXsK9QjA+Fjogc0sS7j86KeV63Loe3p/wTBUMoPWiwUd3tnvC9xqzojPIs8z+SchbOeOYadWK9cBRkL0Xe6bVWEpCL7BJV9TO7I8ETnXeSNdIq/2FU6JOG7aHjTm0AZ/3B4by6VLuIIQkICPpmkNTfydqkbLBTyeb3eBN12LA0MlpbKe22jnBj8lfQnYDb1PBOoD2DZYwUALWhWtzCM45TQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3LbkSFUduJJ3zC8UkhPjkHTBKdAxoZ20euTYbilETOw=;
+ b=c9uPSBoheP+imTjU6oRf9f4qbt1+ONWDUJJIzHD8bfVcWSvCS2cRCwzYrzC2A66fOAZJjKTQ+qq1bYRJ5rqWHxWAaXx1M7dBy3SPAqDiePmsXrEPmuqX8zChai+1lKD6vPH1wPpGZSGL1M65zx/yd7qS196J/j92zl7WtUtJIw+JqwCwBpf6p+LSeHR/9aXrO7vYRhBiyWaN48s6oQac6TSbPMipZva4hNge+MbrM9Ae4RNDwBX9IfUVi2xIKId/oZXc0tHFXlyRSJfCX+vXmBfWWkeNg+KFjS/luDhdM/ax8uHJd3gYSMDm8XqIx1gNHH2bOnU5wKzotLXXAqgeYQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SA3PR12MB9108.namprd12.prod.outlook.com (2603:10b6:806:37d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 18 Sep
+ 2025 09:45:41 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.9115.022; Thu, 18 Sep 2025
+ 09:45:41 +0000
+Message-ID: <2334a545-9a06-42d9-8282-674b94fdcb2f@nvidia.com>
+Date: Thu, 18 Sep 2025 10:45:37 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] soc: tegra: fuse: speedo-tegra210: Update speedo ids
+To: webgeek1234@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+ Joseph Lo <josephl@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20250903-tegra210-speedo-v3-1-73e09e0fbb36@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0155.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9::23) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917-work-namespace-ns_common-v1-8-1b3bda8ef8f2@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1894A3370E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,suse.cz,cmpxchg.org,suse.com,linutronix.de];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email]
-X-Spam-Score: -2.51
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA3PR12MB9108:EE_
+X-MS-Office365-Filtering-Correlation-Id: 611caeac-82c7-42d4-6117-08ddf698219f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RWRiSlhxRDdWSURYbTFKYUNnbVU5YldTeGlybXMvaExhblM0T1lNNVdBcitO?=
+ =?utf-8?B?aDhWOGVyUDZVMmhReGZ5emJua0JTVlNNWXhLKzJQRU8rMU1YL1lmekp3OHYx?=
+ =?utf-8?B?QitFb2p6d1owWTRkVHRLRDRVZkhWYlpaa3FiMmNwcWpuQVJFU0JGSVUwR2d1?=
+ =?utf-8?B?QzNHQjR2Y2hSaEl4SXJtUmRFUWU1MjdqTlFiOHI1OTZZN0pLUnNMbXZjYXY3?=
+ =?utf-8?B?dmFPVi8wUnZoMXQyT2M0WXd0WVh2dVBVNGZZWUFzQmJ3UHMxZ2lRbGxzYzhO?=
+ =?utf-8?B?eDlyd2RQOUszbVVRTlZrNEh3V1pPNHJMQk5XQk9VY0JDWlllZ0syb1UrMWQ3?=
+ =?utf-8?B?NXlnenQyNko0TDA1Q3RkempxREQrSEVpZkU0aE5DWmI2WTJDZzRNVDdLZ2pY?=
+ =?utf-8?B?d0xLM3l0WXkzYm9kNjdCY1VnL1BwN0FZT2doRGZCRmtNYnZTd2JWbm5icjcy?=
+ =?utf-8?B?M0hiUzBIbW5Vc1VSUDF6SkpxbXZ4aHJ3b3JTRi80SE44dzFrUWR2bGgvdXZu?=
+ =?utf-8?B?bTRMVGR4UDREVG5tQmdmdnhBTWxhSzRBcGpyc0xURFZEMjB6eG9LZEVwWlF0?=
+ =?utf-8?B?SXF2RzFPU3I0bS9zaTNRUkxkeFpqQTVURWszWERCY0gxeXJja0hWMkordG1L?=
+ =?utf-8?B?UUdQU0x3RlB4V2ZHUTd4MFdaMFN0RGc2Y1VWTlpyT05tTGlMQ21KcDcvNjJM?=
+ =?utf-8?B?VnRXYWxWR3p5YVFWMXV4RDBOU1hlWDljTEx1UDU0MGEzcEVvbEJkNXRnUTRB?=
+ =?utf-8?B?Q2pUVTNaQnJwSEJOY1N5VzVraUFoZnQ0MXpMK1A2UEJYVmRwTzJkWGRoN3c1?=
+ =?utf-8?B?Yy9DemNTNUo5MzdvclpYbUk5T01zL0YxRDFCUkpBZjlpQ3pVUm1qcktqSU1V?=
+ =?utf-8?B?MzZqQ21pWmR0YnRWb1ZnSklHb2R5WVpXeWlZYkRNSW9SS0h1MDh1SXlRaFdZ?=
+ =?utf-8?B?RDcvMm8weldKc1ZVSXZjRXNYZFF2ZVhqZ3d5eXpaWW5wa3crN2crSVRoTkll?=
+ =?utf-8?B?akhKY2IremFGOWdCc3Z3Sy9SSG5SRzh4OXZGYTNBeW0vOU5QRjdrK3VtUVJE?=
+ =?utf-8?B?QjlRdmZOKzFDYzlYU295d3ZITW1YME12WWdvUkNFR0ZnTkNhYUw0U1M5Lzcz?=
+ =?utf-8?B?Tk0wM0p2MWdpcTFrdVorcEw2QzdZL0tpODRSdyt5SzJEdDk0Tm5CZWhYQnA4?=
+ =?utf-8?B?QkIxRk5vTTVJU1IvdE8yaE1lL3pSTnZuN0Nrd1NQbk5KWVpwcDI0Q25lQjVP?=
+ =?utf-8?B?SGQ3d2JtZWZrdDdlOForam83bHd6UnM1dDFPT3hjSHM3aHBzd3V3ZVF3WUlw?=
+ =?utf-8?B?Q1RiR2RnbktSZXFCc2JEMFlxbG50Tk5vaHFIWkF1Q2xwQTI0VVRhSE9RVExp?=
+ =?utf-8?B?UXNWRFNBTzIvNEYybWsvRzd3dEhMcU01T2pLaU5KS3BOODZnMjZNVFpPOXda?=
+ =?utf-8?B?cmdCUDRDUlNCUUJSK1Z6VEVQN2JUUlBrOFhnaGJHVVQyaGZUZnFLeEgvcmZy?=
+ =?utf-8?B?eE1IYTJOZzhOdi8yVEtJTTFVdjZEOXlzTUhTSkJUd1QxbWppcXJrSFc2YUU4?=
+ =?utf-8?B?aERmWXZNcVJOS1RsT2g4L0lrZFlLNFFOdWRBS29HOWIySTFnM29WN0I3Qjl0?=
+ =?utf-8?B?bHFieW9kQUlZSmMyN3VBZFdvVlFuNmxMVjlXMVI1d3YzSXhiTmh6d3dPdkRO?=
+ =?utf-8?B?NUVmZzBGWHlHRkZyMS9PWkZwYnk2Sm9WR1hYUTgya0IxRTNsaHdIb2Fqekhy?=
+ =?utf-8?B?MHU3TUZyUjdXOU4xcUVZemQyRkVrdXJYN3VEc1JYbUNPQzFBQmhiU3NWRyt0?=
+ =?utf-8?B?T3VOS3VYM3EwTlJwUExObW55S0x2RkpNTnNUNzBURjNlZ3c1SWRlYjhOY2Jo?=
+ =?utf-8?B?TXNkUFAvMjBLTlJ6N1A1UzVlbW41UFJuK1ZGcHRqWVhtaDlYUTRaOC84T1FV?=
+ =?utf-8?Q?7nf0ZY8ZLF0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bElRd3VxaitvbjNrSVF3Q21xdjhFUS82T0Y3ZDVVb05IdmtnVTdNUFY5b200?=
+ =?utf-8?B?dnVNUE1TcXpzWGF0TXltaWZBemZISEl1VU84VWVVUmMzNWlEajdPT3hoMHhq?=
+ =?utf-8?B?L1lzRC9mQWRhUUhqeFpuVDAzMDVWN3BGTTV1dEZVNkN4WVlnSlo1azQrODBv?=
+ =?utf-8?B?OE5ja1ZnSnRZWkp0ME8zcnlRRTgzTTNhUWZrRC96NEF0azNvTGhXMXlqWWYx?=
+ =?utf-8?B?ZHVWQUJiWHlEUWJHemxNbHAzRFlQc3c1U0dRMHlEKy9ETVEyUktTQ0x6UmZD?=
+ =?utf-8?B?aDIyMkIzc2I5UGNFSFpSTHVLOGRRU3B2MTVWaGpnY2dCQVpXR0dneklZOXh2?=
+ =?utf-8?B?c3ZsRVYzSkg5S0JQVGZZYUdxUExwMjhCM2hxbzVCU1M2YzhrYVJ0N1FNWWV2?=
+ =?utf-8?B?MDk0SnFGc0pjZEpGaTd2cWh1NjBiajhvN0k0aWM4Q1Irck5tNjN0cm5xa2Fl?=
+ =?utf-8?B?MWJ5WGdORENZR1l0Q2JCbnNoNnByNnVtMXFRVUhVNnprWlhJTE9KVzhJR1pm?=
+ =?utf-8?B?U2FobEZiQ295STBrM0NpOWZpR3NxcDJRd090VjNKVkYrbnlMM0lkVmFhMmFi?=
+ =?utf-8?B?OG1FWTVJNmczY0l5R0p6NjJ2SHBFd0MyWXF0UWo3aXErZzNCVFFDd3ZxMm5t?=
+ =?utf-8?B?ckNtUSt2RGk2WUlRWDc0U3lNOEppcmUvdFVqTzloOXQxZ2R0clJJRlN4Q0NF?=
+ =?utf-8?B?ak8valZ6R25wNWd2L2szdk1hWkh0WExETklHaWYrZVVtbTJrVkRuQ3NWeUtE?=
+ =?utf-8?B?TFZPYVJTcU8wWldlbnlzdFp2YkVlSUdWMU1janVCT3pLeUVuNHdyWjdZK0lm?=
+ =?utf-8?B?Z2U5T1Z2MDBSQnlBUEIzYkNBTGZRVStRdkR0YjVOdmVxakFYV1c3aDBPbnNm?=
+ =?utf-8?B?akcvNmNiNzZpVVd1KzZFVE5zaVhkcGtHdmk1YjVJWFVlbDl0bmQzZXhiVDdS?=
+ =?utf-8?B?M21VQXpkK2Rsbys5YUppbG9rL0JnQ0p3amNxZnU5d0FhYmZoeGlHTm1yeU5y?=
+ =?utf-8?B?SE42T3pwQ2g0c04rUlhpU0NGUzJ2OUMzUmdRNlJuZG5iOFhCclJiWW9WeW9Z?=
+ =?utf-8?B?K1FxZUhDclpxYjlKYTFKdHRMSEJ4dHhoUTVrOTRrRjk2TEJQV3BSSU4zNXNS?=
+ =?utf-8?B?K25GYk1UWjhaYnpob1VGN2pEbmpZNWMzWllHRGZ6NG9xVUk1d1V1dTAraXow?=
+ =?utf-8?B?VHJrMXZ3SUcxVnUxM2dkcGxYVWpmeGRhTmZNQXU4YXNhY0laK3FUTFhsaCtT?=
+ =?utf-8?B?c29ycHFKQUNJQmo3WGZDSncyV1lOVTFxbGhCSS9sZWJwSCsrUWNWUlRWek9r?=
+ =?utf-8?B?Q3NMSEZUY29JRG9xK2MvQjJaa00xbTF6TGdRV1ArU0RySkFlTnRLR2hYRTRl?=
+ =?utf-8?B?M0Z1MmpFRDkyOFRHNGU1c2FPNTFGZkVqL2YwTERsWGdQanFQeEJxaENOb21l?=
+ =?utf-8?B?Tkg2RUlEWTJBS2g4Q0pJajAxU0NoVDYzUlpNdlEwdUdyY3NTcktsQkExbW9p?=
+ =?utf-8?B?WmFIY2pLMXF2MHFVTytSdXNyYVJ0c2p5ZjZSUUFHK253MzRST2RmSXJBQ2hC?=
+ =?utf-8?B?eEEyMUJoekpwSEJodHNLZFZpL20wL1NTbUlvRDFIWlNzalhNVGh0L25UZGNX?=
+ =?utf-8?B?cVZIdXdNcStlRnZSWGZoZzFvQlFSbU1tejRTcFhoenVYUGs3NEZkT1U0VGV2?=
+ =?utf-8?B?dC9aeDdlVlYvNUxkOXZidlVNdnlwTE12d1ZxTVpBaGJuR2MvNXFuNGpIRlR1?=
+ =?utf-8?B?UDExR2VDelhrYkhBWVZCSnBHdHRNOEcwdlRlRW5BU1JtdUVxZTZheEJUeFBN?=
+ =?utf-8?B?a0cxbWkwMTJqTXNqdFgxcFN5Y0UyRUt2T2d5WEtKeUFBQllJUitpOEk2cVBX?=
+ =?utf-8?B?VDFncGFLbUZNankvcHVUNnpZcHUrQlIzNU9rWStWT3FVeStxeFpJNnAwOVBv?=
+ =?utf-8?B?a2thZi85YjhvNDVvVElWb0d4anArdnYrVmdwUTk2WVpudFI1UEhBbnVZTlhl?=
+ =?utf-8?B?cFB5em50YTdnSVNYNFBzZE1JNEt4WUM0YVo1eHJ6WFlUWGIxby9VWWRCZFdz?=
+ =?utf-8?B?cThEWExlU012aVdITHlrYXM1SzdMMjJFN2syWEw0TnlIZm1aNmQwYTNyVWlC?=
+ =?utf-8?B?WUFrTS9YWU1kblBFdVFxRkZqMTZiRU81ekhpNFZhZE80NmZpbnlVL3kxcUc5?=
+ =?utf-8?B?Zmc9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 611caeac-82c7-42d4-6117-08ddf698219f
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 09:45:41.8532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ksm6Kd3n3HhG4Yaj7Ytse7xeWW8qGs0Xd8I1en9s4xZmSzqxEDBsgAXl15StBNbbyP98STWmvWSMlXzKfqC2QQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9108
 
-On Wed 17-09-25 12:28:07, Christian Brauner wrote:
-> There's a lot of information that namespace implementers don't need to
-> know about at all. Encapsulate this all in the initialization helper.
+
+On 04/09/2025 02:58, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Existing code only sets cpu and gpu speedo ids 0 and 1. The cpu dvfs
+> code supports 11 ids and nouveau supports 5. This aligns with what the
+> downstream vendor kernel supports. Align skus with the downstream list.
 
-Looks good. Feel free to add:
+Do you have a reference for the downstream kernel change you are 
+referring to? I have found this change [0]. However, this does not quite 
+align with what you have in this patch.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Jon
 
-								Honza
+[0] 
+https://nv-tegra.nvidia.com/r/plugins/gitiles/linux-5.10/+/2a8660e3d1e4f75ba4390b72991744174237b025%5E%21/#F0
 
-> ---
->  fs/namespace.c            |  5 +++--
->  include/linux/ns_common.h | 41 +++++++++++++++++++++++++++++++++++++++--
->  ipc/namespace.c           |  2 +-
->  kernel/cgroup/namespace.c |  2 +-
->  kernel/nscommon.c         | 17 ++++++++---------
->  kernel/pid_namespace.c    |  2 +-
->  kernel/time/namespace.c   |  2 +-
->  kernel/user_namespace.c   |  2 +-
->  kernel/utsname.c          |  2 +-
->  net/core/net_namespace.c  |  2 +-
->  10 files changed, 57 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 09e4ecd44972..31eb0e8f21eb 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4105,8 +4105,9 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool a
->  	}
->  
->  	if (anon)
-> -		new_ns->ns.inum = MNT_NS_ANON_INO;
-> -	ret = ns_common_init(&new_ns->ns, &mntns_operations, !anon);
-> +		ret = ns_common_init_inum(new_ns, &mntns_operations, MNT_NS_ANON_INO);
-> +	else
-> +		ret = ns_common_init(new_ns, &mntns_operations);
->  	if (ret) {
->  		kfree(new_ns);
->  		dec_mnt_namespaces(ucounts);
-> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-> index 78b17fe80b62..284bba2b7c43 100644
-> --- a/include/linux/ns_common.h
-> +++ b/include/linux/ns_common.h
-> @@ -16,6 +16,15 @@ struct time_namespace;
->  struct user_namespace;
->  struct uts_namespace;
->  
-> +extern struct cgroup_namespace init_cgroup_ns;
-> +extern struct ipc_namespace init_ipc_ns;
-> +extern struct mnt_namespace *init_mnt_ns;
-> +extern struct net init_net;
-> +extern struct pid_namespace init_pid_ns;
-> +extern struct time_namespace init_time_ns;
-> +extern struct user_namespace init_user_ns;
-> +extern struct uts_namespace init_uts_ns;
-> +
->  struct ns_common {
->  	struct dentry *stashed;
->  	const struct proc_ns_operations *ops;
-> @@ -31,8 +40,7 @@ struct ns_common {
->  	};
->  };
->  
-> -int ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops,
-> -		   bool alloc_inum);
-> +int __ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops, int inum);
->  
->  #define to_ns_common(__ns)                              \
->  	_Generic((__ns),                                \
-> @@ -45,4 +53,33 @@ int ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops,
->  		struct user_namespace *:   &(__ns)->ns, \
->  		struct uts_namespace *:    &(__ns)->ns)
->  
-> +#define ns_init_inum(__ns)                                     \
-> +	_Generic((__ns),                                       \
-> +		struct cgroup_namespace *: CGROUP_NS_INIT_INO, \
-> +		struct ipc_namespace *:    IPC_NS_INIT_INO,    \
-> +		struct mnt_namespace *:    MNT_NS_INIT_INO,    \
-> +		struct net *:              NET_NS_INIT_INO,    \
-> +		struct pid_namespace *:    PID_NS_INIT_INO,    \
-> +		struct time_namespace *:   TIME_NS_INIT_INO,   \
-> +		struct user_namespace *:   USER_NS_INIT_INO,   \
-> +		struct uts_namespace *:    UTS_NS_INIT_INO)
-> +
-> +#define ns_init_ns(__ns)                                    \
-> +	_Generic((__ns),                                    \
-> +		struct cgroup_namespace *: &init_cgroup_ns, \
-> +		struct ipc_namespace *:    &init_ipc_ns,    \
-> +		struct mnt_namespace *:    init_mnt_ns,     \
-> +		struct net *:              &init_net,       \
-> +		struct pid_namespace *:    &init_pid_ns,    \
-> +		struct time_namespace *:   &init_time_ns,   \
-> +		struct user_namespace *:   &init_user_ns,   \
-> +		struct uts_namespace *:    &init_uts_ns)
-> +
-> +#define ns_common_init(__ns, __ops) \
-> +	__ns_common_init(&(__ns)->ns, __ops, \
-> +		         (((__ns) == ns_init_ns(__ns)) ? ns_init_inum(__ns) : 0))
-> +
-> +#define ns_common_init_inum(__ns, __ops, __inum) \
-> +	__ns_common_init(&(__ns)->ns, __ops, __inum)
-> +
->  #endif
-> diff --git a/ipc/namespace.c b/ipc/namespace.c
-> index 89588819956b..0f8bbd18a475 100644
-> --- a/ipc/namespace.c
-> +++ b/ipc/namespace.c
-> @@ -62,7 +62,7 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
->  	if (ns == NULL)
->  		goto fail_dec;
->  
-> -	err = ns_common_init(&ns->ns, &ipcns_operations, true);
-> +	err = ns_common_init(ns, &ipcns_operations);
->  	if (err)
->  		goto fail_free;
->  
-> diff --git a/kernel/cgroup/namespace.c b/kernel/cgroup/namespace.c
-> index 5a327914b565..d928c557e28b 100644
-> --- a/kernel/cgroup/namespace.c
-> +++ b/kernel/cgroup/namespace.c
-> @@ -27,7 +27,7 @@ static struct cgroup_namespace *alloc_cgroup_ns(void)
->  	new_ns = kzalloc(sizeof(struct cgroup_namespace), GFP_KERNEL_ACCOUNT);
->  	if (!new_ns)
->  		return ERR_PTR(-ENOMEM);
-> -	ret = ns_common_init(&new_ns->ns, &cgroupns_operations, true);
-> +	ret = ns_common_init(new_ns, &cgroupns_operations);
->  	if (ret)
->  		return ERR_PTR(ret);
->  	ns_tree_add(new_ns);
-> diff --git a/kernel/nscommon.c b/kernel/nscommon.c
-> index e10fad8afe61..c3a90bb665ad 100644
-> --- a/kernel/nscommon.c
-> +++ b/kernel/nscommon.c
-> @@ -1,21 +1,20 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  
->  #include <linux/ns_common.h>
-> +#include <linux/proc_ns.h>
->  
-> -int ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops,
-> -		   bool alloc_inum)
-> +int __ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops, int inum)
->  {
-> -	if (alloc_inum && !ns->inum) {
-> -		int ret;
-> -		ret = proc_alloc_inum(&ns->inum);
-> -		if (ret)
-> -			return ret;
-> -	}
->  	refcount_set(&ns->count, 1);
->  	ns->stashed = NULL;
->  	ns->ops = ops;
->  	ns->ns_id = 0;
->  	RB_CLEAR_NODE(&ns->ns_tree_node);
->  	INIT_LIST_HEAD(&ns->ns_list_node);
-> -	return 0;
-> +
-> +	if (inum) {
-> +		ns->inum = inum;
-> +		return 0;
-> +	}
-> +	return proc_alloc_inum(&ns->inum);
->  }
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 9b327420309e..170757c265c2 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -103,7 +103,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->  	if (ns->pid_cachep == NULL)
->  		goto out_free_idr;
->  
-> -	err = ns_common_init(&ns->ns, &pidns_operations, true);
-> +	err = ns_common_init(ns, &pidns_operations);
->  	if (err)
->  		goto out_free_idr;
->  
-> diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
-> index 20b65f90549e..ce8e952104a7 100644
-> --- a/kernel/time/namespace.c
-> +++ b/kernel/time/namespace.c
-> @@ -97,7 +97,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
->  	if (!ns->vvar_page)
->  		goto fail_free;
->  
-> -	err = ns_common_init(&ns->ns, &timens_operations, true);
-> +	err = ns_common_init(ns, &timens_operations);
->  	if (err)
->  		goto fail_free_page;
->  
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index cfb0e28f2779..db9f0463219c 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -126,7 +126,7 @@ int create_user_ns(struct cred *new)
->  
->  	ns->parent_could_setfcap = cap_raised(new->cap_effective, CAP_SETFCAP);
->  
-> -	ret = ns_common_init(&ns->ns, &userns_operations, true);
-> +	ret = ns_common_init(ns, &userns_operations);
->  	if (ret)
->  		goto fail_free;
->  
-> diff --git a/kernel/utsname.c b/kernel/utsname.c
-> index a682830742d3..399888be66bd 100644
-> --- a/kernel/utsname.c
-> +++ b/kernel/utsname.c
-> @@ -50,7 +50,7 @@ static struct uts_namespace *clone_uts_ns(struct user_namespace *user_ns,
->  	if (!ns)
->  		goto fail_dec;
->  
-> -	err = ns_common_init(&ns->ns, &utsns_operations, true);
-> +	err = ns_common_init(ns, &utsns_operations);
->  	if (err)
->  		goto fail_free;
->  
-> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> index 897f4927df9e..fdb266bbdf93 100644
-> --- a/net/core/net_namespace.c
-> +++ b/net/core/net_namespace.c
-> @@ -409,7 +409,7 @@ static __net_init int preinit_net(struct net *net, struct user_namespace *user_n
->  	ns_ops = NULL;
->  #endif
->  
-> -	ret = ns_common_init(&net->ns, ns_ops, true);
-> +	ret = ns_common_init(net, ns_ops);
->  	if (ret)
->  		return ret;
->  
-> 
-> -- 
-> 2.47.3
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+nvpublic
+
 
