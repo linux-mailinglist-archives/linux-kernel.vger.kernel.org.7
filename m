@@ -1,165 +1,143 @@
-Return-Path: <linux-kernel+bounces-822312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEA5B8383C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:26:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F957B83842
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CAD4189DAF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD12A4627BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE9B2F3C39;
-	Thu, 18 Sep 2025 08:26:52 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27782F39C1;
+	Thu, 18 Sep 2025 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Q4rfbp7r"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745C62253A1;
-	Thu, 18 Sep 2025 08:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD26C2F3639
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758184011; cv=none; b=jZAh2D/BUksA2ihsAvUZW/aizE/94qQYXB8AdiHuUsCAsn34iL1QuvmpwLYWOHiH5HsTI38W7n2k7aLezFh3TtxyxXppOiNZpyxXc5kGPtGCYS+KWTLVQfhNdD5VPtwbPrEJmBrmm88dfOdWIlZLihalLVQ5CBzXdp3OwuhVno4=
+	t=1758184037; cv=none; b=mjTQWwH/kEWmKQE3u/MhGuAO1UYyIOzkXrTZcFcFJuaA+MyVrHZAeWGE0PxCvh4OxZbWtgi/cheYsKQY+R7rNWjy+JWHruJJCNuSML6eEqw33dpmsrpA1k8wOXZQo5LNofWEyz9m4iyeSl9aaPfKmbBeJiQuJAfSKerFRMB8JYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758184011; c=relaxed/simple;
-	bh=jgxXsUVeX1P4B4g2XsORYY6Jl9Iyca8HlIGfYT9R2/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S8ex31vGRSC8/eiSHWGu84glWqaIYWRbVyMNI4JyHWh0WbznqAq/V3LSv0qa9900Y0x/YVqk+9NRb551IO80oOAmNDvZdR7FIFDC0lkGk9OmyB9VIpM4UJXDcKh16biC8VaQLQCaMfbaOXuCVSizACRwMT1CkZpiWe/p/vZ90hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cS7yl6RM7zKHN6j;
-	Thu, 18 Sep 2025 16:26:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id ADA8F1A1A85;
-	Thu, 18 Sep 2025 16:26:40 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgD3QY4+wstoaGihCw--.7655S3;
-	Thu, 18 Sep 2025 16:26:40 +0800 (CST)
-Message-ID: <9281d56a-c4ef-9a2b-e06b-12b00e9dccba@huaweicloud.com>
-Date: Thu, 18 Sep 2025 16:26:38 +0800
+	s=arc-20240116; t=1758184037; c=relaxed/simple;
+	bh=5BWdCUVhgMl54mdDP/xU+5XGP400mdjKqPLvJzTg2ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=T/MV8HTUgRILenxXUt1P5n3uaWl/XcEyORT46wx0N8kFUQJAJqN6Zx9U1qV0GacXXlKqdEV3fQ/2GHdsrliFD8imH/L8+B0v/3k9PN1sMmdX+e4KWLuACcC3yBE5IhWsWFiLXhQXyk9KaZCJYSzXq6S931z9+2WH4rb9Lhj8NnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Q4rfbp7r; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b04770a25f2so106168166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758184033; x=1758788833; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7sa9z20neKjSSRk4U1fV14+UBBimkf5dA7E4Cvonwog=;
+        b=Q4rfbp7rure673IKimj//Q7ph3MNqAQ0rfbJMCcQ4fexJdiCW92B2gESic1QTkl3LK
+         sUzRBf+b3Maz5TwL68uEX7pJE8yS2cl3TJsmKax+NhN8AMLtmY47AFTP/feg5DKSDYzb
+         2BdyHMc7SQnTaxPySOc27wY5lvvfr1qhsGdKv/WSZQGUDOWsc94z1ukRtSrg7n5WBlv2
+         I7VXxFjxa3zG7SDC129vFNdwtlN4Fhf49leMUsP25rtHCrKZi7bh7LDQwI1QtMqnl1ge
+         b8fqeAwQK9ZJU0l6siYXMSttH5C6PaXEwYMKl/MWoYKuyyexFVV7u2scE6lyTwcUjml4
+         HILw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758184033; x=1758788833;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7sa9z20neKjSSRk4U1fV14+UBBimkf5dA7E4Cvonwog=;
+        b=pA6788SKB5g3WkyyyprUjSQObr87zjpLMWH1UdRrknS+5mruuP7m5bYn8+B6kGenPl
+         3T7i9M2V+DKI8ox5fQZXPHw0l1afeCvTXp53nwGuXK8fYf30/bcacYRyDjl1g0PyK0LN
+         dmtu+tx2XbY2oYl3z5fL3FF10JD0TvQh4npMNZDv9re/mGddUcPGIuXLvo/qITg3Z3v+
+         wY2t4qacti3gnChaXz3cOhl6sx0/+3ZVqtE1YpkuQUHuO78PjUMEOA7f+K+NAD7ez/wn
+         Goj/ufP+tUWX9u4zFI79IKiMN80/cYh6Goz1kyCPKsk5/UYS7dUJ3i0laBfGcaZFLvz1
+         KaEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSDSGYnh9VXD5bFqwlacKyEs2t5Yh6iA7FhcV5amZKq7APtusWBqMi5SNh6mISISNIBeJTZ1/W9UD17nk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9OEYp1YAaG2172kLStAwuObf6eLlZkpov/P8VpBQgDuIFWzRv
+	S3m2FLOOr8IjFPBRJ8mmqsOreeZNcomBMRdkLaQMv8GBvMEmNUDzqYS+9VAcrFTOFjo=
+X-Gm-Gg: ASbGnct7V5fb/syunEpwlG8Blgp9haK5BNTPnAqbC60isdzF9J+NLoFnaGrFahnmWdD
+	ACkxziv+XwOpA/b20FjNQVk34xnTNujRIf4pND/jr6eDFG0IogWZwRcsGsT3l798PqFZTi9kckQ
+	E/u/c8MeX30/BkG5imtgiXx1kEsHRngbx7FCxTAj+EOj06/ul7FRrYp9Gk83Zfm+DNP+C9+AUia
+	mUlayWstwEujyqlTuET1k7vmmqGlAJMD3frOGApLw+a7os+g63Bij481If7UYOgGz1dJimHmcGl
+	S7LgDhl2huUSzONSe30WFaWRw2DkAX0yiyFFcSZ6hjrG8XUhSbsn1Jv2xYPDmbkA+XyRmrzUcOV
+	sYkhdnmHbx/H1b8oup+0OW+biXxanN8v0gOgkh/SHWwP3ASAUUkO0ksHbmlPYsLdIZxWG406pQ0
+	yG+8zDdSo=
+X-Google-Smtp-Source: AGHT+IGBnD2D8NLypf0OnsVNbKwGHn+3LRsv5dy4NEtczgezIqLvFSmW8jLC63+HTC6WqjazqvdD0g==
+X-Received: by 2002:a17:907:1c1e:b0:b07:e207:152a with SMTP id a640c23a62f3a-b1bb5599653mr545737666b.19.1758184032960;
+        Thu, 18 Sep 2025 01:27:12 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-62fa5f2702csm1016410a12.38.2025.09.18.01.27.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 01:27:12 -0700 (PDT)
+Date: Thu, 18 Sep 2025 10:27:11 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: 1111027@bugs.debian.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Thorsten Sperber <lists+debian@aero2k.de>, linux-kernel@vger.kernel.org
+Subject: NMI: IOCK error (debug interrupt?) for reason 71 on CPU 0
+Message-ID: <tfwuhg7fxlvb3iix2k4qqh74dcmwgcipprlehy7zlaz3btmtym@2x2vsccw5yzs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] md/raid1: skip recovery of already synced areas
-To: John Stoffel <john@stoffel.org>, linan666@huaweicloud.com
-Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
-References: <20250910082544.271923-1-linan666@huaweicloud.com>
- <26827.5265.32245.268569@quad.stoffel.home>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <26827.5265.32245.268569@quad.stoffel.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3QY4+wstoaGihCw--.7655S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF4DWFy8Zr4fAF47Ww45Wrg_yoW5Xw1UpF
-	43Ja4akryDGF13Ga4kXryUGa4Fya4xGrWfGr13W347W3s8CF90gFW0gFyYgFyDAF43Xr4j
-	qw4kZ3y3uF1YqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUvg4fUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y6foxrfmz5qwgfvx"
+Content-Disposition: inline
 
 
+--y6foxrfmz5qwgfvx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: NMI: IOCK error (debug interrupt?) for reason 71 on CPU 0
+MIME-Version: 1.0
 
-在 2025/9/18 4:05, John Stoffel 写道:
->>>>>> "linan666" == linan666  <linan666@huaweicloud.com> writes:
-> 
->> From: Li Nan <linan122@huawei.com>
->> When a new disk is added during running recovery, the kernel may
->> restart recovery from the beginning of the device and submit write
->> io to ranges that have already been synchronized.
-> 
-> Isn't it beter to be safe than sorry?  If the resync fails for some
-> reason, how can we be sure the devices really are in sync if you don't
-> force the re-write?
-> 
->> Reproduce:
->>    mdadm -CR /dev/md0 -l1 -n3 /dev/sda missing missing
->>    mdadm --add /dev/md0 /dev/sdb
->>    sleep 10
->>    cat /proc/mdstat	# partially synchronized
->>    mdadm --add /dev/md0 /dev/sdc
->>    cat /proc/mdstat	# start from 0
->>    iostat 1 sdb sdc	# sdb has io, too
-> 
->> If 'rdev->recovery_offset' is ahead of the current recovery sector,
->> read from that device instead of issuing a write. It prevents
->> unnecessary writes while still preserving the chance to back up data
->> if it is the last copy.
-> 
-> 
-> Are you saying that sdb here can continute writing from block N, but
-> that your change will only force sdc to start writing from block 0?
-> Your description of the problem isn't really clear.
-> 
-Thanks for your review. You're right, I will describe it more accurately
-in the next patch.
+Control: forwarded 1111027 https://lore.kernel.org/lkml/tfwuhg7fxlvb3iix2k4qqh74dcmwgcipprlehy7zlaz3btmtym@2x2vsccw5yzs
 
-> I think it's because you're using the word device for both the MD
-> device itself, as well as the underlying device(s) or component(s) of
-> the MD device.
-> 
-> 
-> 
->> Signed-off-by: Li Nan <linan122@huawei.com>
->> ---
->>   drivers/md/raid1.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index 3e422854cafb..ac5a9b73157a 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -2894,7 +2894,8 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
->>   		    test_bit(Faulty, &rdev->flags)) {
->>   			if (i < conf->raid_disks)
->>   				still_degraded = true;
->> -		} else if (!test_bit(In_sync, &rdev->flags)) {
->> +		} else if (!test_bit(In_sync, &rdev->flags) &&
->> +			   rdev->recovery_offset <= sector_nr) {
-> bio-> bi_opf = REQ_OP_WRITE;
-> bio-> bi_end_io = end_sync_write;
+Hello Rafael,
 
-As Yu Kuai mentioned, I will refactor this part of the code later.
-This patch will be dropped.
+Thorsten (on Cc:) reported a bug against the 6.12.38 Debian kernel
+running on an HP Microserver Gen8 after upgrading from an older Debian
+release (which uses a kernel based on 6.1.y).
 
->>   			write_targets ++;
->> @@ -2903,6 +2904,9 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
->>   			sector_t first_bad = MaxSector;
->>   			sector_t bad_sectors;
->   
->> +			if (!test_bit(In_sync, &rdev->flags))
->> +				good_sectors = min(rdev->recovery_offset - sector_nr,
->> +						   (u64)good_sectors);
->>   			if (is_badblock(rdev, sector_nr, good_sectors,
->>   					&first_bad, &bad_sectors)) {
->>   				if (first_bad > sector_nr)
->> -- 
->> 2.39.2
-> 
-> 
-> 
-> .
+The problem is that the machine sometimes just hangs, requiring to
+unplug the PSU to revive it.
 
--- 
-Thanks,
-Nan
+A key hint seems to me a kernel message:
 
+	[Fr Sep  5 21:12:34 2025] NMI: IOCK error (debug interrupt?) for reason 71 on CPU 0.
+
+(sometimes also "reason 61") that happens just before the hang. See
+https://bugs.debian.org/1111027 for all the details.
+
+I asked Thomas on irc if that rings a bell for him and he forwarded me
+to you. Do you have an idea for a reason for this message and the
+corresponding(?) machine hang? The bug reporter up to now was very
+cooperative for debug measures (e.g. a BIOS update). I would expect him
+to be open to support you if questions should arise or a patch should be
+tested. A complication however is that the trigger for the problem is
+unknown and it takes up to several days to happen.
+
+Thanks in advance for your feedback,
+Uwe
+
+--y6foxrfmz5qwgfvx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjLwlsACgkQj4D7WH0S
+/k57awf/Wmve+7p/h7927XGe072ghLuke+nOHrHDrFC4gg7tkUiuSNdJSsMF3ySy
+viQM9p0H9YqvXHNKvr8MpmzMfmD5w822fnodheu5V1iO2tVJFx29xuuaXJIxV4ir
+XPaBFrVgxEw3jBjHM8e1bBi1Dn4vp2eVSzJljqyGaa0Sg+aGaDfusqHG9ilFe/2n
+t9fI3tbEKES2TMAuOMPv/T1eDYk91NQ6x9uQgpCCWc+QK2QfMrEdS2gC36tR1Qnm
+mgngWVSxM8FNvLMjBEexo8ggmCUyOmPHWLVoyubLWj4RdNYCEBOIny17vJlvnKoK
+Ww+I9Pqk6Ee/NO9BZfKyM0iGAJHNqQ==
+=Uq43
+-----END PGP SIGNATURE-----
+
+--y6foxrfmz5qwgfvx--
 
