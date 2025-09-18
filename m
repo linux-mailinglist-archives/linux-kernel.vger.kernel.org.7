@@ -1,141 +1,80 @@
-Return-Path: <linux-kernel+bounces-823473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDEEB8698D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:57:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC32BB86981
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B0AA7BE0BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3E11C86435
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ACE2D3EC7;
-	Thu, 18 Sep 2025 18:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1668A2D322C;
+	Thu, 18 Sep 2025 18:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="q4ZxZa03"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+WsXM75"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19603C465;
-	Thu, 18 Sep 2025 18:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1993C465;
+	Thu, 18 Sep 2025 18:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221839; cv=none; b=G9SbmFJEvI94Vu0JAU37l7yrBgt4TJwwcmoCZG80dcyPtL9gVlzIwwI+JdShnHgABQ6RKESTfh+LNjmzQYhBgBhL3eLFomA/g4hVypr5OILubaNzscrGamk6vGGydncKa4ByYdplLUdrzKmg6YMMSjbpEzZE5hYxFvPtLtIjpgg=
+	t=1758221828; cv=none; b=TPfrM/bTvuN9pFjcs6KKZiwocikqrVcULFQ6+jmo5pmy001aIQ7DhamaZM0wKbfw9UON9PYkcYd8J3P/FtAw7dHH83+ildhkwX2AEKWB6iJrOGmUW/CPN/QVvj6x8Mo7hhZIKvuFDI5huBSqXB01Lr3pNbZPrRikLpvGkvvXzSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221839; c=relaxed/simple;
-	bh=n3lbOBSHHN6qjgd0ZGik8Gxu1EjlZkYg8FEfJYQxmjg=;
+	s=arc-20240116; t=1758221828; c=relaxed/simple;
+	bh=N+Mvh62o0AvBb7Y/WJc8zLNQ1YcEIvI6uDSo3975hIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jAQ3VI3Rz67TZNkXY0i1fzzKS7MFyhmGqZAgD675W/J8vdwrDj2/kjjDxSulwUqVTSrq+mkirXWTcQkp6zEUkvpb4iLH14O/KXeBX2EI30hQcDvuajQqobCeXBiwA0Rzp5oZjqShXoFabmK94xwPMgtQrYjJ1L6wi+Yt+fAiE+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=q4ZxZa03; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Dq+1iSG82r9yQIVHmumBoetFqjeDWLapJ2V4N8waYYE=; b=q4ZxZa03qHI68xQGdp1+HoucWC
-	A6UKcRRoF7upoBx+/JQDcOnmpTpM+Gei1qTcmgUadALtWTjpfnhzEAzVt/x7MW/pYZLd14Aq1LvrW
-	N0aDiWpJ0VKi8lOSIwAq4ngUjO1vknuFPaaCNjj6b86XUj1Pv7vaGObohPsiS1Xo+PlqNhCKtAemf
-	RvZcobPmZv6pLKkD8DB0nZmNXQDeMj5+YmQB13tVTxPaU4nmzrjcjOfH8LKguncAqW6GoDEpdjNkP
-	1/CCJsWoIb8Dvk7Nwdj1cpdAijA7x2xeZLqKwZRQW+ThWmXa1aAs46Y60v2xEpJ/E/a1aVVEExdWR
-	GDrxP/0Q==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1uzJoL-00Fya0-13;
-	Thu, 18 Sep 2025 19:56:53 +0100
-Date: Thu, 18 Sep 2025 19:56:53 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, stable@vger.kernel.or,
-	Chris Fenner <cfenn@google.com>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Disable TPM2_TCG_HMAC by default
-Message-ID: <aMxV9fB0E72QQY2G@earth.li>
-References: <20250825203223.629515-1-jarkko@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dKeB2tqnHdP9WWlvc7zIPK9unW21CfnShPyHM/tMw7APWppencOSixiEH4cqvZwTOdZVwEhjentuGjSjmO/zkMtao5Z3LLZRQAgxDqL3wglPtERbuBWQGRCnCl66m8y6k2KcMSaYr2ZZ+rs/5yBEDqV47IBwqlo0yUI2BXwdQv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+WsXM75; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCB6C4CEE7;
+	Thu, 18 Sep 2025 18:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758221827;
+	bh=N+Mvh62o0AvBb7Y/WJc8zLNQ1YcEIvI6uDSo3975hIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N+WsXM75BzpAbWZlo8YHArFtUwoaRp6A2G4Qt74QMzV3a7654GKLZPoFRY4Zo5DgR
+	 d9wpLtwxuzFJq5/4pHF1hjvuzCSW6WVK35DP5v+8qL2RUazvCpNMg5sHCtcvWOf79/
+	 B0RtoAiii78JjWHuMXMp1TXDhdZXcp3Cq601rateu0LXZD9dqWm16B38UD0sjRFfbu
+	 y5S/g3LGMKIdoIqBV+HfLvMnPcHcHW+qTsk0NkPp6KEFRnGmAoLKaKm6i94w/3SYgU
+	 EUGHWjy9o4my7KVahnDV89aKFMeMWax0uXuaPktKDRXvh5pL29M7d/bp5ME4ZpujRn
+	 HA5v5gM+Ar+FQ==
+Date: Thu, 18 Sep 2025 08:57:06 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 sched_ext/for-6.18] sched_ext: Add migration-disabled
+ counter to error state dump
+Message-ID: <aMxWAhJlE2Ah-f8t@slm.duckdns.org>
+References: <20250918170602.2441024-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825203223.629515-1-jarkko@kernel.org>
+In-Reply-To: <20250918170602.2441024-1-arighi@nvidia.com>
 
-On Mon, Aug 25, 2025 at 11:32:23PM +0300, Jarkko Sakkinen wrote:
->After reading all the feedback, right now disabling the TPM2_TCG_HMAC
->is the right call.
->
->Other views discussed:
->
->A. Having a kernel command-line parameter or refining the feature
->   otherwise. This goes to the area of improvements.  E.g., one
->   example is my own idea where the null key specific code would be
->   replaced with a persistent handle parameter (which can be
->   *unambigously* defined as part of attestation process when
->   done correctly).
->
->B. Removing the code. I don't buy this because that is same as saying
->   that HMAC encryption cannot work at all (if really nitpicking) in
->   any form. Also I disagree on the view that the feature could not
->   be refined to something more reasoable.
->
->Also, both A and B are worst options in terms of backporting.
->
->Thus, this is the best possible choice.
+On Thu, Sep 18, 2025 at 07:06:02PM +0200, Andrea Righi wrote:
+> Include the task's migration-disabled counter when dumping task state
+> during an error exit.
+> 
+> This can help diagnose cases where tasks can get stuck, because they're
+> unable to migrate elsewhere.
+> 
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-I think this is reasonable; it's adding runtime overhead and not adding 
-enough benefit to be the default upstream.
+I did s/nomig/no_mig/ for a bit better readability and because other keys
+are using _ as word separators (e.g. dsq_id).
 
-Reviewed-By: Jonathan McDowell <noodles@earth.li>
+Applied to sched_ext/for-6.18.
 
->Cc: stable@vger.kernel.or # v6.10+
->Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
->Suggested-by: Chris Fenner <cfenn@google.com>
->Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->---
->PS. I did not post this last week because that would have been most
->likely the most counter-productive action to taken. It's better
->sometimes to take a bit of time to think (which can be seen that
->I've given also more reasonable weight to my own eaerlier
->proposals).
->
->I also accept further changes, if there is e.g., inconsistency
->with TCG_TPM_HMAC setting or similar (obviously).
->---
-> drivers/char/tpm/Kconfig | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
->index dddd702b2454..3e4684f6b4af 100644
->--- a/drivers/char/tpm/Kconfig
->+++ b/drivers/char/tpm/Kconfig
->@@ -29,7 +29,7 @@ if TCG_TPM
->
-> config TCG_TPM2_HMAC
-> 	bool "Use HMAC and encrypted transactions on the TPM bus"
->-	default X86_64
->+	default n
-> 	select CRYPTO_ECDH
-> 	select CRYPTO_LIB_AESCFB
-> 	select CRYPTO_LIB_SHA256
->-- 
->2.39.5
-
-J.
+Thanks.
 
 -- 
-] https://www.earth.li/~noodles/ []  Is this real - that's the first   [
-]  PGP/GPG Key @ the.earth.li    []    thing I think every morning.    [
-] via keyserver, web or email.   []                                    [
-] RSA: 4096/0x94FA372B2DA8B985   []                                    [
+tejun
 
