@@ -1,128 +1,159 @@
-Return-Path: <linux-kernel+bounces-822877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F254B84DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:35:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC421B84DE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0181B23E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:35:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9BC480608
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14101308F3B;
-	Thu, 18 Sep 2025 13:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BB630BB82;
+	Thu, 18 Sep 2025 13:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="qftKroqJ"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Uxz/gRGB"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5AF27B50F;
-	Thu, 18 Sep 2025 13:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE69C2FFFB3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758202492; cv=none; b=kolVlpaV/fywF+bC6orjGDPfOYtcir8R9bHCaQaR7IW1sVPrIcCr0TckZBJc4EnvV7UT1tWJTKBjQlggIQvllRZ9J3hEdMQeaNJIsz62eNjeNIiAtw3xxsdmBFCqrjFrHo/nRJAOThgsOysaZs2vw8qUSk9rawtfRnk3mqN/Sz0=
+	t=1758202521; cv=none; b=K+/2YJJC1VL6267HoCofWfl7Vq1tMG80YyzjyefIiR0v5ShiiWqF4dIb2znp+HOcrxgfTPeYV6Y7BcGB8gB8DyATmcLGnyAMX1NoLQ6n6VE7eiiI/6l5oZc+mHFrfT+bM2GQ8AccS37Zt23Wl4ricDHrfeyrtbTsvg0jJtK2CqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758202492; c=relaxed/simple;
-	bh=rpW181wMRqA5xXxmymujUQqBYeDMid78JkqEPlXMZos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoWq+jFzCylkuE/T7AYKtjQw3w7qmI9LglAsQ+28GESeWoMZafourmJYly32aLL4icC9NShA3KrM3OKBP735f8Wcr7PiJQw2uZwxsLwwmIvj9qmA8KedUReeQDS67YJUSWPnoz3Mw+CCQsJ48KUSiG/RGQ+5yIGi3kYSPyaDLKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=qftKroqJ; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.2])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 41D5D4076196;
-	Thu, 18 Sep 2025 13:34:40 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 41D5D4076196
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1758202480;
-	bh=RsEnDelXhwexWPRMPI1SOUhAveMwp5CkDUq3pIyl9uI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qftKroqJ13FflO+D5gOlDa2jps8HfLsIFo/wSPQDa9QH7oeujl5kan6arGfloa1mR
-	 B6ZyYpP9gwisr+PbU07JUIS3153Fsze6KQozZr6+aF36SsTgTZDREyJKTPFqNCX6K7
-	 FXBU3/NcXYm3YmmcEFVzAwhczbfKkSOXh09k0Tpg=
-Date: Thu, 18 Sep 2025 16:34:40 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Zong-Zhe Yang <kevin_yang@realtek.com>, 
-	Bitterblue Smith <rtl8821cerfe2@gmail.com>, Bernie Huang <phhuang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH rtw v4 1/4] wifi: rtw89: fix use-after-free in
- rtw89_core_tx_kick_off_and_wait()
-Message-ID: <20250918160829-9fbf03ca95d5c4a93143afef-pchelkin@ispras>
-References: <20250917095302.2908617-1-pchelkin@ispras.ru>
- <20250917095302.2908617-2-pchelkin@ispras.ru>
- <391e7cc762a549b7826e72090b61ebb2@realtek.com>
- <5d1be8c759c243f9a331c672cc301bbc@realtek.com>
- <8aa1fe0b49dd49408dc26ad48ba9a605@realtek.com>
+	s=arc-20240116; t=1758202521; c=relaxed/simple;
+	bh=fAwbvtxv0yxYzUyTrUPBthDj0WzMiVdnsl4hRpevSc8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYRmf3COu6qZSw+BhjE6jYg5xJ4xK6pc4jnV/29K0TSeQ4oQSIENi4pbkMs96fb6rgKL+ROlRhBsRj6xpESfjVZ6AMJHGATMB4KVzyNDtJKOUhQEMgRZIkxSW5cF1kIuKeztaWv4vHPhEn/WlQMTot22z4NxAQj9L1Jr8c4wjO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Uxz/gRGB; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <457b805f-ea5c-460e-b93f-b7b63f3358af@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758202507;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A7h5hhwXpE9R2dmZ7dBQ21qFNe8mjOdRa/SiXX2IBDE=;
+	b=Uxz/gRGBDZxwobYS6mlhBBRauctYIuXKvgfOWeST0WwcDqeQFHaW6tnOtRszG72tBYD1Zh
+	DBTiR23NdRRWYJx2IfWis78YnfGeEBUd8cmS3JGNRs2f6xD+V9YxBn72PEtp1+Yil0OkIN
+	gxh3iYv9LPPSM5Vd1yNLdMt14Jl/q78=
+Date: Thu, 18 Sep 2025 21:34:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8aa1fe0b49dd49408dc26ad48ba9a605@realtek.com>
+Subject: Re: [PATCH bpf-next v2 1/2] bpf: Add lookup_and_delete_elem for
+ BPF_MAP_STACK_TRACE
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20250909163223.864120-1-chen.dylane@linux.dev>
+ <CAEf4BzZ2Fg+AmFA-K3YODE27br+e0-rLJwn0M5XEwfEHqpPKgQ@mail.gmail.com>
+ <CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 18. Sep 05:23, Ping-Ke Shih wrote:
-> Zong-Zhe Yang <kevin_yang@realtek.com> wrote:
-> > Ping-Ke Shih <pkshih@realtek.com> wrote:
-> > >
-> > > Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > >
-> > > [...]
-> > >
-> > > > @@ -6181,6 +6187,27 @@ rtw89_assoc_link_rcu_dereference(struct rtw89_dev *rtwdev,
-> > > u8 macid)
-> > > >         list_first_entry_or_null(&p->dlink_pool,
-> > > > typeof(*p->links_inst), dlink_schd); \
-> > > >  })
-> > > >
-> > > > +static inline void rtw89_tx_wait_release(struct rtw89_tx_wait_info
-> > > > +*wait) {
-> > > > +       dev_kfree_skb_any(wait->skb);
-> > > > +       kfree_rcu(wait, rcu_head);
-> > > > +}
-> > > > +
-> > > > +static inline void rtw89_tx_wait_list_clear(struct rtw89_dev *rtwdev)
-> > > > +{
-> > > > +       struct rtw89_tx_wait_info *wait, *tmp;
-> > > > +
-> > > > +       lockdep_assert_wiphy(rtwdev->hw->wiphy);
-> > > > +
-> > > > +       list_for_each_entry_safe(wait, tmp, &rtwdev->tx_waits, list) {
-> > > > +               if (!wait_for_completion_timeout(&wait->completion,
-> > > > +
-> > > RTW89_TX_WAIT_DEFAULT_TIMEOUT))
-> > > > +                       continue;
-> > >
-> > >
-> > > Why should we wait 10ms? Just try_wait_for_completion()?
-> > >
-> > > Since TX completion might be missing (rtw89_core_stop(), for example), shouldn't we
-> > > unconditionally free all in wait list for that case?
-> > >
-> > 
-> > In hci reset (when we release pending skb), the condition will become true.
-> > So, all left will be freed at that time. Before that, there is no logic to ensure no
-> > more completing side, so it cannot be unconditionally freed unless we don't
-> > want to double check if those, which timed out, are done at some moment.
-> > 
-> > (e.g. core stop will do hci reset)
+在 2025/9/18 09:35, Alexei Starovoitov 写道:
+> On Wed, Sep 17, 2025 at 3:16 PM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+>>
+>>
+>> P.S. It seems like a good idea to switch STACKMAP to open addressing
+>> instead of the current kind-of-bucket-chain-but-not-really
+>> implementation. It's fixed size and pre-allocated already, so open
+>> addressing seems like a great approach here, IMO.
 > 
-> Thanks for the explanation. 
+> That makes sense. It won't have backward compat issues.
+> Just more reliable stack_id.
 > 
-> Just consider try_wait_for_completion() then.
+> Fixed value_size is another footgun there.
+> Especially for collecting user stack traces.
+> We can switch the whole stackmap to bpf_mem_alloc()
+> or wait for kmalloc_nolock().
+> But it's probably a diminishing return.
+> 
+> bpf_get_stack() also isn't great with a copy into
+> perf_callchain_entry, then 2nd copy into on stack/percpu buf/ringbuf,
+> and 3rd copy of correct size into ringbuf (optional).
+> 
+> Also, I just realized we have another nasty race there.
+> In the past bpf progs were run in preempt disabled context,
+> but we forgot to adjust bpf_get_stack[id]() helpers when everything
+> switched to migrate disable.
+> 
+> The return value from get_perf_callchain() may be reused
+> if another task preempts and requests the stack.
+> We have partially incorrect comment in __bpf_get_stack() too:
+>          if (may_fault)
+>                  rcu_read_lock(); /* need RCU for perf's callchain below */
+> 
+> rcu can be preemptable. so rcu_read_lock() makes
+> trace = get_perf_callchain(...)
+> accessible, but that per-cpu trace buffer can be overwritten.
+> It's not an issue for CONFIG_PREEMPT_NONE=y, but that doesn't
+> give much comfort.
 
-OK.  completion_done() looks appropriate here as well.
+Hi Alexei,
+
+Can we fix it like this?
+
+-       if (may_fault)
+-               rcu_read_lock(); /* need RCU for perf's callchain below */
++       preempt_diable();
+
+         if (trace_in)
+                 trace = trace_in;
+@@ -455,8 +454,7 @@ static long __bpf_get_stack(struct pt_regs *regs, 
+struct task_struct *task,
+                                            crosstask, false);
+
+         if (unlikely(!trace) || trace->nr < skip) {
+-               if (may_fault)
+-                       rcu_read_unlock();
++               preempt_enable();
+                 goto err_fault;
+         }
+
+@@ -475,9 +473,7 @@ static long __bpf_get_stack(struct pt_regs *regs, 
+struct task_struct *task,
+                 memcpy(buf, ips, copy_len);
+         }
+
+-       /* trace/ips should not be dereferenced after this point */
+-       if (may_fault)
+-               rcu_read_unlock();
++       preempt_enable();
 
 > 
-> By the way, if want a delay for timeout case, use delayed work for tx_wait_work
-> instead.
+> Modern day bpf api would probably be
+> - get_callchain_entry()/put() kfuncs to expose low level mechanism
+> with safe acq/rel of temp buffer.
+> - then another kfuncs to perf_callchain_kernel/user into that buffer.
+> 
+> and with bpf_mem_alloc and hash kfuncs the bpf prog can
+> implement either bpf_get_stack() equivalent or much better
+> bpf_get_stackid() with variable length stack traces and so on.
 
-That makes sense, thanks.  So the next time I'll go with delayed
-tx_wait_work performing completion_done(): work delay 500 ms, looks
-neither too small nor too big for freeing potentially timed out items.
+
+-- 
+Best Regards
+Tao Chen
 
