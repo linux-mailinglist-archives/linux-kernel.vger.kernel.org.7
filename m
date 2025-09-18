@@ -1,63 +1,81 @@
-Return-Path: <linux-kernel+bounces-822290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAC9B83763
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:09:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D03B83703
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F2A7239AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24CC71C8208B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131742FBDF8;
-	Thu, 18 Sep 2025 08:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E412F0C4D;
+	Thu, 18 Sep 2025 08:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="PiT1u/Hi"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QpmsbjQZ"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DE52F90CD;
-	Thu, 18 Sep 2025 08:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097B714286;
+	Thu, 18 Sep 2025 08:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758182831; cv=none; b=Ja3pz7J7aF5txb1BjF3886yMZAh1V26tVL0opNuENExxpJ1y0jbzvyvQJemUE+0itCHJvf3wU04C5wbdfXs+oImtUO5yVHs04noWuV8Jes1v5Oqr41X4rF8Aw1kd/Zig1diJcBSPOpng0oAa3MxbrvO+lz2SiVcngXvBiUmt5eE=
+	t=1758182796; cv=none; b=jB0sUcfHvVe7LGl2EN9BE6bXbH7BBUEAUU0RDXvIOmfK/mYOOcLSO7nrlN3LW1kxFc9Bw0ZmHnilwF58uFVViloWvJJBalcN7E1w51Bkjq+BtUzCT1Qf3DLeyxi/k6iOh079Y0hxomL54s6+GocAaPg4PsjAAlhTdKFitY9H35s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758182831; c=relaxed/simple;
-	bh=EugVo4O9/mefZkh+qLAMa2cIfnkUtjTBK4Nd47FcNco=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=My3ThL02VGJVXrl2mBul9JksFMx2srIbNFqfrfDehmxQjc1YeBCwsfcTq6N8HYWBJHMqwJKsrJgbV9v3tZVNvKJ8vHSGTyZDXrcPE3b6e5XeZ69p+CGaj2u5p3UKoML5FyGDBJVt5KKPXLwGZdz7sCTUjAA1kwu6rYNTMg7Jmbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=PiT1u/Hi; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=kCMMVhHNV2MZGMsID6irfYFZI5GGCNWGY624JmsR7f4=;
-	b=PiT1u/Hi7pGJf9ZGiuSG8i9NYplUmLqcZGaC6tzojpxbUOUxQuuTOuEwgbqsPS
-	t9hHqTapUQn79fESPfMVKrUuseGyLSVtwPxQmE6JTzJT7+gWoL7+xSSX4ohZECUW
-	YVKD9arNJmfqiHp/edd6CujiBe8CXoRANxUm23oQ1ipuQ=
-Received: from mps-HP-EliteBook-840-G3.monolithicpower.com (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCHJdpuvcton1nLBA--.29488S3;
-	Thu, 18 Sep 2025 16:06:10 +0800 (CST)
-From: wenswang@yeah.net
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Wensheng Wang <wenswang@yeah.net>
-Subject: [PATCH v2 2/2] hwmon: add MP2925 and MP2929 driver
-Date: Thu, 18 Sep 2025 16:06:03 +0800
-Message-Id: <20250918080603.1154497-2-wenswang@yeah.net>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250918080603.1154497-1-wenswang@yeah.net>
-References: <20250918080349.1154140-1-wenswang@yeah.net>
- <20250918080603.1154497-1-wenswang@yeah.net>
+	s=arc-20240116; t=1758182796; c=relaxed/simple;
+	bh=AaP8jAwu3COBFa+1gSHxgZ9i6K0l+bR8enetNlwbgvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N278TEXytRyKL4r8N5mNSTyf5qFt3vB7cgG/zoscw1ojT38+qglyjTTBTp0/D0XX8Hk4eEGZOt0u49dOeE0dilfkALZ/ZHZOrynwHlyKcldFn7cjCM3HVkkbCw02bry3rGFqkHwkg90sdUFF46Ovk9VkVej2lBtOuP8EOMP7mu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QpmsbjQZ; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id BD22BC007BB;
+	Thu, 18 Sep 2025 08:06:14 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4CD186062C;
+	Thu, 18 Sep 2025 08:06:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 35358102F1CAC;
+	Thu, 18 Sep 2025 10:06:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758182790; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=D5MVBHmkN7cjqswXDZGFFyBJdqaJ0IPaIn8c9D4XbvE=;
+	b=QpmsbjQZk7EKG2VQ7y1F2SgzqGNWnVmMWJtehA4cjFRiE5+EupoUhVQukYsxRHahFjHFQh
+	sFeblOgUEugoS3R3nojXegLhyTgCv55IkwGPmZeBlDQLgaqosXyM2AN4+M4AdOsnyCrC6l
+	18ptj9zXWS3nDNhpxHQMrSS8XxZfKt9o/Lr+kHI4W3HRcX+U7bbGRkAl0lhmVf10kapLKk
+	WUZMhA5UUkakzZcf3/y0DLXxfEXyrTh5Q1ac2svEe+ZX+/yqe6J+PKB26ZRVtDficQMt4i
+	EOh4gpDwNn5JVpN0jcRVXbRvNeXmTv3K6KXDtHrzVYaXan04r/5qLYmI3rbbYQ==
+Date: Thu, 18 Sep 2025 10:06:19 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: David Gibson <david@gibson.dropbear.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Andrew Davis
+ <afd@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ayush Singh <ayush@beagleboard.org>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, devicetree@vger.kernel.org, Jason Kridner
+ <jkridner@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <20250918100619.08501259@bootlin.com>
+In-Reply-To: <20250918094409.0d5f92ec@bootlin.com>
+References: <aLkiNdGIXsogC6Rr@zatzit>
+	<337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
+	<aL5dNtzwiinq_geg@zatzit>
+	<20250908145155.4f130aec@bootlin.com>
+	<aL-2fmYsbexEtpNp@zatzit>
+	<20250909114126.219c57b8@bootlin.com>
+	<aMD_qYx4ZEASD9A1@zatzit>
+	<20250911104828.48ef2c0e@bootlin.com>
+	<aMebXe-yJy34kST8@zatzit>
+	<20250916084631.77127e29@bootlin.com>
+	<aMt5kEI_WRDOf-Hw@zatzit>
+	<20250918094409.0d5f92ec@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,571 +84,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Ms8vCgCHJdpuvcton1nLBA--.29488S3
-X-Coremail-Antispam: 1Uf129KBjvAXoW3tw1DCFWkJr1rCrWkXFW8Zwb_yoW8Gry7Ao
-	Z3uFWrZwn8Jr18uFZYkF4IgF93Xa4kCrWFy3W2yFs8WFy3trn5ta47Zw4ag3W7tw4rXw48
-	u3y8A3s3tFW7Zr97n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUODGOUUUUU
-X-CM-SenderInfo: 5zhq24xdqjq5hhdkh0dhw/1tbiNxKYPWjLvXIdlAAA3l
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Wensheng Wang <wenswang@yeah.net>
+On Thu, 18 Sep 2025 09:44:09 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-Add support for MPS VR mp2925 and mp2929 controller. This driver exposes
-telemetry and limit value readings and writtings.
+> Hi David,
+> 
+> On Thu, 18 Sep 2025 13:16:32 +1000
+> David Gibson <david@gibson.dropbear.id.au> wrote:
+> 
+> ...
+> 
+> > > > Thoughts above suggest a different direction, but here's what I was
+> > > > thinking before:
+> > > > 
+> > > > base board:
+> > > > 
+> > > > 	connector {
+> > > > 		/export/ "i2c" &i2c0;
+> > > > 	};
+> > > > 
+> > > > addon:
+> > > > 	eeprom@10 {
+> > > > 		compatible = "foo,eeprom";
+> > > > 		bus-reg = <&i2c 0x10>;
+> > > > 	}
+> > > > 
+> > > > Or, if the addon had multiple i2c devices, maybe something like:
+> > > > 
+> > > > 	board-i2c {
+> > > > 		compatible = "i2c-simple-bridge";
+> > > > 		bus-ranges = <&i2c 0 0x3ff>; /* Whole addr space */
+> > > > 		eeprom@10 {
+> > > > 			compatible = "foo,eeprom";
+> > > > 			reg = <0x10>;
+> > > > 		}
+> > > > 		widget@20 {
+> > > > 			compatible = "vendor,widget";
+> > > > 			reg = <0x20>;
+> > > > 		}
+> > > > 	}
+> > > > 
+> > > > Writing that, I realise I2C introduces some complications for this.
+> > > > Because it has #size-cells = <0>, ranges doesn't really work (without
+> > > > listing every single address to be translated).  Likewise, because we
+> > > > always need the parent bus phandle, we can't use the trick of an empty
+> > > > 'ranges' to mean an identity mapping.
+> > > > 
+> > > > We could invent encodings to address those, but given the addon with
+> > > > multiple connectors case provides another incentive for a single
+> > > > connector to allow adding nodes in multiple (but strictly enumerated)
+> > > > places in the base device tree provides a better approach.    
+> > > 
+> > > and the "place in base device tree" is the goal of the extension bus.
+> > > 
+> > > The strict enumeration of nodes enumerated is done by two means:
+> > >  - extension busses at connector level
+> > >    Those extensions are described as connector sub-nodes.
+> > >    The addon DT can only add nodes in those sub-nodes to describe devices
+> > >    connected to the relared extension bus.
+> > >  - export symbols
+> > >    An addon DT can only use symbols exported to reference symbols outside
+> > >    the addon DT itself.
+> > > 
+> > > Can I assume that bus extensions we proposed (i2c-bus-extension and
+> > > spi-bus-extension) could be a correct solution ?    
+> > 
+> > Maybe?  I prefer the idea of a universal mechanism, not one that's
+> > defined per-bus-type.
+> > 
+> > 
+> > Also, IIUC the way bus extension operates is a bit different - nodes
+> > would be "physically" added under the bus extension node, but treated
+> > logically as if they go under the main bus.  What I'm proposing here
+> > is something at the actualy overlay application layer that allows
+> > nodes to be added to different parts of the base device tree - so you
+> > could add your i2c device under the main i2c bus.  
+> 
+> I think we should avoid this kind of node dispatching here and there in
+> the base DT.
+> 
+> We work on decoupling busses wired to a connector and dispatching nodes
+> looks like this decoupling is ignored.
+> 
+> IMHO, keeping devices available on an addon board as nodes under the
+> connector is a real hardware representation.
+> 
+> Also, at runtime, once an addon board DT is applied, when you look at
+> your current DT either using /proc/device-tree or some links such as
+> /sys/bus/devices/.../of_node, the connector and extension bus appear
+> and clearly identify devices behind the connector.
+> 
+> > 
+> > That approach does complicate removal, but its not as bad as overlays
+> > at the moment, because a) it could be limited to adding new nodes, not
+> > modifying existing ones and b) the connector would specify exactly the
+> > places that additions are allowed.
+> >   
+> 
+> I think bus extensions comply with a) and b).
+> 
+> Yes, bus extensions need to be handled per-bus types but they have the
+> advantage of keeping the hardware reality well described and visible at
+> runtime in term of "wiring" topology.
+> 
+> Whatever the solution, this will already be handled per-bus types.
+> Only busses that support runtime DT node addition/removal (OF_RECONFIG_*
+> notifications in the kernel implementation) will support adding or
+> removing nodes.
+> 
+> Your approach is more complex, dispatch node here and there and actually
+> is also a per-bus types solution.
+> 
+> I think, in order to choose between both solutions, the main question is:
+> Do we want to dispatch nodes provided by an addon DT everywhere in the base
+> DT ?
+> 
+> IMHO, the answer is no.
+> 
+> Rob, others, any opinion ?
+> 
 
-Signed-off-by: Wensheng Wang <wenswang@yeah.net>
----
-V1 -> V2:
-    pass 0 for i2c_device_id and of_device_id struct
+The base DT describes the base board hardware.
 
- Documentation/hwmon/index.rst  |   1 +
- Documentation/hwmon/mp2925.rst | 151 ++++++++++++++++
- MAINTAINERS                    |   7 +
- drivers/hwmon/pmbus/Kconfig    |   9 +
- drivers/hwmon/pmbus/Makefile   |   1 +
- drivers/hwmon/pmbus/mp2925.c   | 312 +++++++++++++++++++++++++++++++++
- 6 files changed, 481 insertions(+)
- create mode 100644 Documentation/hwmon/mp2925.rst
- create mode 100644 drivers/hwmon/pmbus/mp2925.c
+With this in mind, adding a node at some location other than behind a
+connector node means that you add a new device on this board and not on
+something behind a connector. In other words this describes a physical
+modification of the base board itself.
 
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index d292a86ac5da..95bcf71ff6d9 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -175,6 +175,7 @@ Hardware Monitoring Kernel Drivers
-    mp2856
-    mp2888
-    mp2891
-+   mp2925
-    mp2975
-    mp2993
-    mp5023
-diff --git a/Documentation/hwmon/mp2925.rst b/Documentation/hwmon/mp2925.rst
-new file mode 100644
-index 000000000000..63eda215b6cb
---- /dev/null
-+++ b/Documentation/hwmon/mp2925.rst
-@@ -0,0 +1,151 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Kernel driver mp2925
-+====================
-+
-+Supported chips:
-+
-+  * MPS mp2925
-+
-+    Prefix: 'mp2925'
-+
-+  * MPS mp2929
-+
-+    Prefix: 'mp2929'
-+
-+Author:
-+
-+	Wensheng Wang <wenswang@yeah.net>
-+
-+Description
-+-----------
-+
-+This driver implements support for Monolithic Power Systems, Inc. (MPS)
-+MP2925 Dual Loop Digital Multi-phase Controller.
-+
-+Device compliant with:
-+
-+- PMBus rev 1.3 interface.
-+
-+The driver exports the following attributes via the 'sysfs' files
-+for input voltage:
-+
-+**in1_input**
-+
-+**in1_label**
-+
-+**in1_crit**
-+
-+**in1_crit_alarm**
-+
-+**in1_lcrit**
-+
-+**in1_lcrit_alarm**
-+
-+**in1_max**
-+
-+**in1_max_alarm**
-+
-+**in1_min**
-+
-+**in1_min_alarm**
-+
-+The driver provides the following attributes for output voltage:
-+
-+**in2_input**
-+
-+**in2_label**
-+
-+**in2_crit**
-+
-+**in2_crit_alarm**
-+
-+**in2_lcrit**
-+
-+**in2_lcrit_alarm**
-+
-+**in3_input**
-+
-+**in3_label**
-+
-+**in3_crit**
-+
-+**in3_crit_alarm**
-+
-+**in3_lcrit**
-+
-+**in3_lcrit_alarm**
-+
-+The driver provides the following attributes for input current:
-+
-+**curr1_input**
-+
-+**curr1_label**
-+
-+The driver provides the following attributes for output current:
-+
-+**curr2_input**
-+
-+**curr2_label**
-+
-+**curr2_crit**
-+
-+**curr2_crit_alarm**
-+
-+**curr2_max**
-+
-+**curr2_max_alarm**
-+
-+**curr3_input**
-+
-+**curr3_label**
-+
-+**curr3_crit**
-+
-+**curr3_crit_alarm**
-+
-+**curr3_max**
-+
-+**curr3_max_alarm**
-+
-+The driver provides the following attributes for input power:
-+
-+**power1_input**
-+
-+**power1_label**
-+
-+**power2_input**
-+
-+**power2_label**
-+
-+The driver provides the following attributes for output power:
-+
-+**power3_input**
-+
-+**power3_label**
-+
-+**power4_input**
-+
-+**power4_label**
-+
-+The driver provides the following attributes for temperature:
-+
-+**temp1_input**
-+
-+**temp1_crit**
-+
-+**temp1_crit_alarm**
-+
-+**temp1_max**
-+
-+**temp1_max_alarm**
-+
-+**temp2_input**
-+
-+**temp2_crit**
-+
-+**temp2_crit_alarm**
-+
-+**temp2_max**
-+
-+**temp2_max_alarm**
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f6206963efbf..247f70db92bd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17185,6 +17185,13 @@ S:	Maintained
- F:	Documentation/hwmon/mp2891.rst
- F:	drivers/hwmon/pmbus/mp2891.c
- 
-+MPS MP2925 DRIVER
-+M:	Noah Wang <wenswang@yeah.net>
-+L:	linux-hwmon@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/hwmon/mp2925.rst
-+F:	drivers/hwmon/pmbus/mp2925.c
-+
- MPS MP2993 DRIVER
- M:	Noah Wang <noahwang.wang@outlook.com>
- L:	linux-hwmon@vger.kernel.org
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index 55e492452ce8..d0e1eb500215 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -391,6 +391,15 @@ config SENSORS_MP2891
-       This driver can also be built as a module. If so, the module will
-       be called mp2891.
- 
-+config SENSORS_MP2925
-+    tristate "MPS MP2925"
-+    help
-+      If you say yes here you get hardware monitoring support for MPS
-+      MP2925 Dual Loop Digital Multi-Phase Controller.
-+
-+      This driver can also be built as a module. If so, the module will
-+      be called mp2925.
-+
- config SENSORS_MP2975
- 	tristate "MPS MP2975"
- 	help
-diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-index 29cd8a3317d2..64c1b03bf47b 100644
---- a/drivers/hwmon/pmbus/Makefile
-+++ b/drivers/hwmon/pmbus/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
- obj-$(CONFIG_SENSORS_MP2856)	+= mp2856.o
- obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
- obj-$(CONFIG_SENSORS_MP2891)	+= mp2891.o
-+obj-$(CONFIG_SENSORS_MP2925)	+= mp2925.o
- obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
- obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
- obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
-diff --git a/drivers/hwmon/pmbus/mp2925.c b/drivers/hwmon/pmbus/mp2925.c
-new file mode 100644
-index 000000000000..d7703ce55c5b
---- /dev/null
-+++ b/drivers/hwmon/pmbus/mp2925.c
-@@ -0,0 +1,312 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Hardware monitoring driver for MPS Multi-phase Digital VR Controllers(MP2925)
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include "pmbus.h"
-+
-+/*
-+ * Vender specific register MFR_VR_MULTI_CONFIG(0x08).
-+ * This register is used to obtain vid scale.
-+ */
-+#define MFR_VR_MULTI_CONFIG	0x08
-+
-+#define MP2925_VOUT_DIV	512
-+#define MP2925_VOUT_OVUV_UINT	195
-+#define MP2925_VOUT_OVUV_DIV	100
-+
-+#define MP2925_PAGE_NUM	2
-+
-+#define MP2925_RAIL1_FUNC	(PMBUS_HAVE_VIN | PMBUS_HAVE_PIN | \
-+							 PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT | \
-+							 PMBUS_HAVE_POUT | PMBUS_HAVE_TEMP | \
-+							 PMBUS_HAVE_STATUS_VOUT | \
-+							 PMBUS_HAVE_STATUS_IOUT | \
-+							 PMBUS_HAVE_STATUS_TEMP | \
-+							 PMBUS_HAVE_STATUS_INPUT)
-+
-+#define MP2925_RAIL2_FUNC	(PMBUS_HAVE_PIN | PMBUS_HAVE_VOUT | \
-+							 PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT | \
-+							 PMBUS_HAVE_TEMP | PMBUS_HAVE_IIN | \
-+							 PMBUS_HAVE_STATUS_VOUT | \
-+							 PMBUS_HAVE_STATUS_IOUT | \
-+							 PMBUS_HAVE_STATUS_TEMP | \
-+							 PMBUS_HAVE_STATUS_INPUT)
-+
-+struct mp2925_data {
-+	struct pmbus_driver_info info;
-+	int vout_scale[MP2925_PAGE_NUM];
-+};
-+
-+#define to_mp2925_data(x) container_of(x, struct mp2925_data, info)
-+
-+static u16 mp2925_linear_exp_transfer(u16 word, u16 expect_exponent)
-+{
-+	s16 exponent, mantissa, target_exponent;
-+
-+	exponent = ((s16)word) >> 11;
-+	mantissa = ((s16)((word & 0x7ff) << 5)) >> 5;
-+	target_exponent = (s16)((expect_exponent & 0x1f) << 11) >> 11;
-+
-+	if (exponent > target_exponent)
-+		mantissa = mantissa << (exponent - target_exponent);
-+	else
-+		mantissa = mantissa >> (target_exponent - exponent);
-+
-+	return (mantissa & 0x7ff) | ((expect_exponent << 11) & 0xf800);
-+}
-+
-+static int mp2925_read_byte_data(struct i2c_client *client, int page, int reg)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_VOUT_MODE:
-+		/*
-+		 * The MP2925 does not follow standard PMBus protocol completely,
-+		 * and the calculation of vout in this driver is based on direct
-+		 * format. As a result, the format of vout is enforced to direct.
-+		 */
-+		ret = PB_VOUT_MODE_DIRECT;
-+		break;
-+	default:
-+		ret = -ENODATA;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int mp2925_read_word_data(struct i2c_client *client, int page, int phase,
-+				 int reg)
-+{
-+	const struct pmbus_driver_info *info = pmbus_get_driver_info(client);
-+	struct mp2925_data *data = to_mp2925_data(info);
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_READ_VOUT:
-+		ret = pmbus_read_word_data(client, page, phase, reg);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = DIV_ROUND_CLOSEST((ret & GENMASK(11, 0)) * data->vout_scale[page],
-+					MP2925_VOUT_DIV);
-+		break;
-+	case PMBUS_VOUT_OV_FAULT_LIMIT:
-+	case PMBUS_VOUT_UV_FAULT_LIMIT:
-+		ret = pmbus_read_word_data(client, page, phase, reg);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = DIV_ROUND_CLOSEST((ret & GENMASK(11, 0)) * MP2925_VOUT_OVUV_UINT,
-+					MP2925_VOUT_OVUV_DIV);
-+		break;
-+	case PMBUS_STATUS_WORD:
-+	case PMBUS_READ_VIN:
-+	case PMBUS_READ_IOUT:
-+	case PMBUS_READ_POUT:
-+	case PMBUS_READ_PIN:
-+	case PMBUS_READ_IIN:
-+	case PMBUS_READ_TEMPERATURE_1:
-+	case PMBUS_VIN_OV_FAULT_LIMIT:
-+	case PMBUS_VIN_OV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_FAULT_LIMIT:
-+	case PMBUS_IOUT_OC_FAULT_LIMIT:
-+	case PMBUS_IOUT_OC_WARN_LIMIT:
-+	case PMBUS_OT_FAULT_LIMIT:
-+	case PMBUS_OT_WARN_LIMIT:
-+		ret = -ENODATA;
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int mp2925_write_word_data(struct i2c_client *client, int page, int reg,
-+				  u16 word)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_VIN_OV_FAULT_LIMIT:
-+	case PMBUS_VIN_OV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_FAULT_LIMIT:
-+		/*
-+		 * The PMBUS_VIN_OV_FAULT_LIMIT, PMBUS_VIN_OV_WARN_LIMIT,
-+		 * PMBUS_VIN_UV_WARN_LIMIT and PMBUS_VIN_UV_FAULT_LIMIT
-+		 * of MP2925 is linear11 format, and the exponent is a
-+		 * constant value(5'b11100)， so the exponent of word
-+		 * parameter should be converted to 5'b11100(0x1C).
-+		 */
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    mp2925_linear_exp_transfer(word, 0x1C));
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	case PMBUS_VOUT_OV_FAULT_LIMIT:
-+	case PMBUS_VOUT_UV_FAULT_LIMIT:
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    (ret & ~GENMASK(11, 0)) |
-+				FIELD_PREP(GENMASK(11, 0),
-+					   DIV_ROUND_CLOSEST(word * MP2925_VOUT_OVUV_DIV,
-+							     MP2925_VOUT_OVUV_UINT)));
-+		break;
-+	case PMBUS_OT_FAULT_LIMIT:
-+	case PMBUS_OT_WARN_LIMIT:
-+		/*
-+		 * The PMBUS_OT_FAULT_LIMIT and PMBUS_OT_WARN_LIMIT of
-+		 * MP2925 is linear11 format, and the exponent is a
-+		 * constant value(5'b00000), so the exponent of word
-+		 * parameter should be converted to 5'b00000.
-+		 */
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    mp2925_linear_exp_transfer(word, 0x00));
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	case PMBUS_IOUT_OC_FAULT_LIMIT:
-+	case PMBUS_IOUT_OC_WARN_LIMIT:
-+		/*
-+		 * The PMBUS_IOUT_OC_FAULT_LIMIT and PMBUS_IOUT_OC_WARN_LIMIT
-+		 * of MP2925 is linear11 format, and the exponent is a
-+		 * can not be changed.
-+		 */
-+		ret = pmbus_read_word_data(client, page, 0xff, reg);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = pmbus_write_word_data(client, page, reg,
-+					    mp2925_linear_exp_transfer(word,
-+								       FIELD_GET(GENMASK(15, 11),
-+										 ret)));
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int
-+mp2925_identify_vout_scale(struct i2c_client *client, struct pmbus_driver_info *info,
-+			   int page)
-+{
-+	struct mp2925_data *data = to_mp2925_data(info);
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte_data(client, PMBUS_PAGE, page);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = i2c_smbus_read_byte_data(client, PMBUS_VOUT_MODE);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (FIELD_GET(GENMASK(5, 5), ret)) {
-+		ret = i2c_smbus_write_byte_data(client, PMBUS_PAGE,
-+						page == 0 ? 3 : 4);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = i2c_smbus_read_word_data(client, MFR_VR_MULTI_CONFIG);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (FIELD_GET(GENMASK(5, 5), ret))
-+			data->vout_scale[page] = 2560;
-+		else
-+			data->vout_scale[page] = 5120;
-+	} else if (FIELD_GET(GENMASK(4, 4), ret)) {
-+		data->vout_scale[page] = 1;
-+	} else {
-+		data->vout_scale[page] = 512;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mp2925_identify(struct i2c_client *client, struct pmbus_driver_info *info)
-+{
-+	int ret;
-+
-+	ret = mp2925_identify_vout_scale(client, info, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	return mp2925_identify_vout_scale(client, info, 1);
-+}
-+
-+static const struct pmbus_driver_info mp2925_info = {
-+	.pages = MP2925_PAGE_NUM,
-+	.format[PSC_VOLTAGE_IN] = linear,
-+	.format[PSC_CURRENT_IN] = linear,
-+	.format[PSC_CURRENT_OUT] = linear,
-+	.format[PSC_POWER] = linear,
-+	.format[PSC_TEMPERATURE] = linear,
-+	.format[PSC_VOLTAGE_OUT] = direct,
-+
-+	.m[PSC_VOLTAGE_OUT] = 1,
-+	.R[PSC_VOLTAGE_OUT] = 3,
-+	.b[PSC_VOLTAGE_OUT] = 0,
-+
-+	.func[0] = MP2925_RAIL1_FUNC,
-+	.func[1] = MP2925_RAIL2_FUNC,
-+	.read_word_data = mp2925_read_word_data,
-+	.read_byte_data = mp2925_read_byte_data,
-+	.write_word_data = mp2925_write_word_data,
-+	.identify = mp2925_identify,
-+};
-+
-+static int mp2925_probe(struct i2c_client *client)
-+{
-+	struct mp2925_data *data;
-+
-+	data = devm_kzalloc(&client->dev, sizeof(struct mp2925_data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	memcpy(&data->info, &mp2925_info, sizeof(mp2925_info));
-+
-+	return pmbus_do_probe(client, &data->info);
-+}
-+
-+static const struct i2c_device_id mp2925_id[] = {
-+	{"mp2925"},
-+	{"mp2929"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, mp2925_id);
-+
-+static const struct of_device_id __maybe_unused mp2925_of_match[] = {
-+	{.compatible = "mps,mp2925"},
-+	{.compatible = "mps,mp2929"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mp2925_of_match);
-+
-+static struct i2c_driver mp2925_driver = {
-+	.driver = {
-+		.name = "mp2925",
-+		.of_match_table = mp2925_of_match,
-+	},
-+	.probe = mp2925_probe,
-+	.id_table = mp2925_id,
-+};
-+
-+module_i2c_driver(mp2925_driver);
-+
-+MODULE_AUTHOR("Wensheng Wang <wenswang@yeah.net>");
-+MODULE_DESCRIPTION("PMBus driver for MPS MP2925");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("PMBUS");
--- 
-2.25.1
+Best regards,
+Hervé
 
 
