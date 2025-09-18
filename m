@@ -1,103 +1,105 @@
-Return-Path: <linux-kernel+bounces-822160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70591B83301
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:47:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB05AB83307
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEBE51C802A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:48:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F8C7A4A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345722D9EE2;
-	Thu, 18 Sep 2025 06:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sEzj5eZ4"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AA21C2DB2;
-	Thu, 18 Sep 2025 06:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89387275AF6;
+	Thu, 18 Sep 2025 06:49:08 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F58014286;
+	Thu, 18 Sep 2025 06:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758178055; cv=none; b=QEm4EkPWWwvXtA6zuGzikfAAc5cU/+mw8Tw82/g1KDNrek2H+huRZVQRLAi2B44y/AIWF68pog75vEAtmZEEptdRw99xXrLlEzo1CyFj6xfXR0/vAU6O7vpXfabIbimzyJr8YDvmpWL+PiEfz9hjX3i4bvYKi8OHl+zmf6/TpBw=
+	t=1758178148; cv=none; b=aPdAh0xOEoMYku9VLoZdrQJIq02gVfBjThymTfOLt4f2wX4+CXs7vApIEl+qNy2fAvCgFFUd4Ld7Ykd3aLhJlMZl+rBUcovYLWGkQgyYyF/+4endXVcRS9UkjjdqWTll/jtU+Fd6+o+/cXWXYrFnUG8wSZVHSG72F7fAnsCNMUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758178055; c=relaxed/simple;
-	bh=YaKhVgDvwr9JPKuc3hZI+6/bsb98qd15/IffmqaG3iA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7mmqi7x45vh6PPwJjIuFOm0Ytld7P1RyUzo0M7/0AwkfYebIJjkCjW8isz5J/BxcjaRCm5kup3aHnSddPeF0avNJtCpllPpuMb4ZSeO/X3v+J5j0oqvUryhZ3v5IwN/RC2I8F9Dkjz8zH0yfSlklcLoorTsRfMGVBdSZJtZ5ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sEzj5eZ4; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CposgJXI3x1arAtU/+MtP6/ScCDf4pgQyvJTMsCWetg=; b=sEzj5eZ4Iq66+wDHvCOa2ezHNN
-	dhUt98bwlhiW6QUoD9o4YtIAUFGMOySJGjHxhvubm8EFeo+mTq7QZMdFUvmkaVCUV1EaIGFwb8AOr
-	ve2prDuso+70mzmB/Ap4IefSiwQeMuwFcU16plrRtu04DE3XDcWM9y8yINtaW1mnR3d4H2UgYlSFH
-	tzZDFJM0brYaTYaZ5VZXzQFyXEMQM2/b7DqzDeCTWFFYoYLSlAizydE843z0aoA/V6X1mzpL1uqJH
-	ZU8wLW4HDRwdI/YPP/1unbW2AVFvI4r3COf1VHC4J9LaEy/VnaBFT0QOve3B3l9srKwCPNPsWFjea
-	VQEpuBJQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uz8QE-0000000EAZv-1kLv;
-	Thu, 18 Sep 2025 06:47:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F2EC0300328; Thu, 18 Sep 2025 08:47:13 +0200 (CEST)
-Date: Thu, 18 Sep 2025 08:47:13 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Roman Kisel <romank@linux.microsoft.com>,
-	"K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhklinux@outlook.com
-Subject: Re: [PATCH] x86/hyperv: Export hv_hypercall_pg unconditionally
-Message-ID: <20250918064713.GW3419281@noisy.programming.kicks-ass.net>
-References: <20250825055208.238729-1-namjain@linux.microsoft.com>
- <20250825094247.GU3245006@noisy.programming.kicks-ass.net>
- <f154d997-f7a6-4379-b7e8-ac4ba990425c@linux.microsoft.com>
- <20250826120752.GW4067720@noisy.programming.kicks-ass.net>
- <efc06827-e938-42b5-bb45-705b880d11d9@linux.microsoft.com>
- <27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com>
- <aMl5ulY1K7cKcMfo@google.com>
- <56521d85-1da5-4d25-b100-7dbe62e34d1d@linux.microsoft.com>
+	s=arc-20240116; t=1758178148; c=relaxed/simple;
+	bh=iN07TlijF7X0XxRjt3t1RcNAfh6X8YuurUaWn0yXl3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uTcgf5G5WOO1QVi49fTMFa9WHeGAIFwm3WwAEd6n4twsh5A4hQwDcU4P4MMBGZ7gMYJQbSHiGRHl68Xv4rs/H5jcO0q5b8xzV3tLL1OSBbd8TxSfLp7n1ia/fdlAnr7eZmvAPBpgzKW5GsIMyXXl0SKn1rahgNEB8YLmzF8rAQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=13.76.142.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app2 (Coremail) with SMTP id HwEQrACHjqYpq8tomTZ7AA--.36831S2;
+	Thu, 18 Sep 2025 14:48:09 +0800 (CST)
+Received: from [10.12.170.88] (unknown [10.12.170.88])
+	by gateway (Coremail) with SMTP id _____wDHX1Mnq8tons6nAg--.6346S2;
+	Thu, 18 Sep 2025 14:48:08 +0800 (CST)
+Message-ID: <5631b0e1-03e4-43a2-9586-77bb20690520@hust.edu.cn>
+Date: Thu, 18 Sep 2025 14:48:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56521d85-1da5-4d25-b100-7dbe62e34d1d@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Docs/zh_CN: align title underline for ubifs.rst
+To: shao.mingyin@zte.com.cn, alexs@kernel.org
+Cc: si.yanteng@linux.dev, corbet@lwn.net, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yang.yang29@zte.com.cn, xu.xin16@zte.com.cn,
+ yang.tao172@zte.com.cn
+References: <20250918143643417OPRH_RjCXkCa3aCtQEX3Y@zte.com.cn>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <20250918143643417OPRH_RjCXkCa3aCtQEX3Y@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrACHjqYpq8tomTZ7AA--.36831S2
+Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvdXoWrur4UZFW5ZF13Ary8Cr1kGrg_yoWDAFg_A3
+	s7Xa1vvF4UZryIqFn5JF15Xr17AFWS9348XFsFyFykAw1UWFWDXa4DX3s5uaykZr47ury3
+	Ww4kZr9YgF1aqjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbkxYjsxI4VWxJwAYFVCjjxCrM7CY07I20VC2zVCF04k26cxKx2IY
+	s7xG6rWj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI
+	8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jr
+	v_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxAIw28IcV
+	Cjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWU
+	XVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
+	6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
+	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kfnx
+	nUUI43ZEXa7IU0X_-JUUUUU==
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On Thu, Sep 18, 2025 at 11:33:18AM +0530, Naman Jain wrote:
 
-> Thank you so much Sean and Paolo for your valuable inputs. I will try
-> out these things. Summarizing the suggestions here:
-> * Use noinstr (no instrumentation)
-> * Have separate .S file
-> * Don't use "register asm".
-> * Use static calls for solving IBT problems
-> * RAX:RCX is probably ok to be used, considering ABI. Whether we would still
-> need to use STACK_FRAME_NON_STANDARD, I am not sure, but I will see based on
-> how it goes.
-> 
-> I hope this addresses the concerns Peter raised. If there's anything I might
-> have missed, I'm happy to make further adjustments if needed.
+On 9/18/25 2:36 PM, shao.mingyin@zte.com.cn wrote:
+> From: shaomingyin <shao.mingyin@zte.com.cn>
+>
+> align title underline for ubifs.rst
+>
+> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-It would be a definite improvement. I'm just *really* sad people still
-create interfaces like this, even though we've known for years how bad
-they are.
 
-At some point we've really have to push back and say enough is enough.
+Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+
+
+> ---
+>   Documentation/translations/zh_CN/filesystems/ubifs.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/translations/zh_CN/filesystems/ubifs.rst b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+> index 16c28bfd6fc3..2491c059ec25 100644
+> --- a/Documentation/translations/zh_CN/filesystems/ubifs.rst
+> +++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+> @@ -17,7 +17,7 @@ UBI 文件系统
+>   ============
+>
+>   简介
+> -============
+> +====
+>
+>   UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 代表无序块镜
+>   像（Unsorted Block Images）。UBIFS 是一种闪存文件系统，这意味着它专为闪
+
 
