@@ -1,137 +1,109 @@
-Return-Path: <linux-kernel+bounces-822366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55E0B83A2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:59:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E1AB83A31
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5949217FE06
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6454A2822
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575092F7446;
-	Thu, 18 Sep 2025 08:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9E82FE592;
+	Thu, 18 Sep 2025 08:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCfzMNEC"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mmz+ItoE"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472BA1E32D6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72CC2D77ED
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185947; cv=none; b=Y5mkf7zaNRh+o2u1zTEJeJVQCkQnYxmX95yzuEiJsQXkeF93GpPgN6h/antAZoaRBp+riVVGzLwufABltPeFrD8xKhzdJgf2gpwvV8QceigF9X+rZFLSf11hihOXYAgJ192g8obpN0GSnaguLdDjDnICxvx7dvHil44yRMEeEzI=
+	t=1758185959; cv=none; b=o9Q9Q0pgtt5bvX0CozvpmixrWA76s8sg8tBj3J/H4o5Bm018u2BQ+OjeXBZYZorzUeV6hkZdOjiV7MWZkvtzVNmaEbVGV+5E8Qserbm7cbutvmMGfItg0kxC5/BWhvfkn9fb/UEUFkNOhEcvK1y09OYI6mHxV6JJphxFKZUXfow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185947; c=relaxed/simple;
-	bh=3YBijHHPgjAyl07nG2F+4O+IZKa9So+D2+79Hhyhtjs=;
+	s=arc-20240116; t=1758185959; c=relaxed/simple;
+	bh=unL9Ce+kEywQKcq5iWYa3vbSFUfdn9EBm190tWDHYvY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fuxf45QXmCvd8lkzvkX+Cin+vLNxs/eN/r7YFn1g8M7q1CNz4nWz/iHb/RKFPHyLoSgp8ZMTIi9x/CzzlFEghgi2O0ljyxX0aSh2ppav5jfltpK2aEw7MeBErBI1A2mOj5xiOQ+tx+dPuNGpb2FsibCdiPMeT5/r2H6Ok6i5sPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCfzMNEC; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-54a30c66258so188986e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:59:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=IjVm9WVR9BR/q4aRVYj6wCoKURLTW8wol696H/RkfNCDj4ViG4I8I9iIf5R/CuRBL5rC8tKETWqkk6Lhf7mtdEp8H3XdlOx2r5vh94bvtJRviqAxgAWW9Zt7uZY2eo+sSyB0YTVbpdlNDFyvxk4l+IBM2jqB69B8lK84sDiOpfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mmz+ItoE; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33c9efd65eeso6237821fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758185944; x=1758790744; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1758185954; x=1758790754; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3YBijHHPgjAyl07nG2F+4O+IZKa9So+D2+79Hhyhtjs=;
-        b=QCfzMNECjPUgyFa2EJtP3I9kskdycH6zpaKCRAvSJ/YbtadYpn7lKz5N976AZlpQeO
-         1kCNcwIuw3avw2O3+60arZWBCKfAJKitv4CEEMIRVJM1u8M0cGQGQq4Ll8y/rK+ZhW67
-         Tp1np4F0gLtIRs1G0EOg/IY1JEn3Qo/ruQyEmIT/tFD+flidgcuhzO4hiL9T0oafZtQm
-         W7AXQzTLgpq/8BeO9aftTLamuW13GLis3ZxpyJ3QWrZlkq9oY+mFbifBHC0GvitbcsmG
-         SH0tZDSVHN7BLwqO5G/7mwo2vbMXest30TyOaFQvpXxJadNZawqePXUNpaHInVcGLABN
-         9Thg==
+        bh=oZmPfoqG0iiG2NY0syO47mgLNSYwy8f5A2cvO3evi8k=;
+        b=Mmz+ItoEJ8Z5FZjMt2jY/aSr7oj7aThqxij0DZGgtkpV51YMDfs+oOc9pN7riJusai
+         008GZweo55Nm685yDy89CgCNv9YeDOKh+QxA5J18FyL18fVpVMpf0hr84bY9bkv0QdXe
+         jjk4S4w4u6AfRVBW7q3oYYHG1kTCA1RWpnXQBY/i+Gj3LC/M4fQ8I5eA0o6zDg9qOyya
+         q88vhmkHR/nb5sXWLjHy35L4KKFutVNJuW1f48ojOQByMKnT/6ArYiu2YP+fF/KGIaYL
+         MyGPQYCycEFTZ1m7wzspDMSqLBtc90IJsbX8WtVlT/2JJrqCFRa5Oxw925bubOrqktIW
+         /tFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758185944; x=1758790744;
+        d=1e100.net; s=20230601; t=1758185954; x=1758790754;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3YBijHHPgjAyl07nG2F+4O+IZKa9So+D2+79Hhyhtjs=;
-        b=MqD7mnR53IQBpsqT8CKi5EXdAJ7cj1sZ0ZBtExOSibKYSynRdZMVKRSfNjnZXbDxkp
-         XoaRsiHD07jN8duPPpZT3qjaFJwBCJ3ln1mMFjUPyrGEqxlSlvJE/mvhskcywGYn+NKV
-         nhuar9CvgPADzQ1QBRujGglztobkCqSVecGJEqTJ2cRT2WyB1/rqY9Y7bXbqRqNlMLE4
-         07zWdk8Brz3LLt6wfBGTZMQgCduUtfxx7DiupjwzZJtfxvz/G03MMn3B5eBnZld8mRW7
-         X+zJt8J5GKgnEBdZas6BYLRul8Qjes6+h6cJS/5/Y9jpleZufBQWVtI0ZuwXd37gVLvw
-         K2fA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDwpZZV85r7V0g7w5C8ZEX9lzAQjW5Xe3h1stToAJ3piXjzXqmXxCHm+1Rrl22k0wyQGukTu5dVQR1as0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvMAVpwmaE6fw0Y9Nlcwfo86sMb0eWvxvOdx2L+SfqNDFetpEI
-	2hJmfv/0eMv3LerwjGYyyZsdE+nEHfSjB2QtV252qk7ofitvGN7LbCJE9sPak88oLHxWm5/HoaB
-	3+bBm18Oe5JekVZ3902s4rTndAPuDMj4=
-X-Gm-Gg: ASbGncssKjZjjQyt051gcjzvjqubdLQdJ2ZkrsMI3HX/Zq2ldYBLTt0pywefEuKdpIu
-	7BE3RuzIlgzMUZbHkWlCiCK3WI0zmX7fGY2g07w7ZEM5RBtlGgWbbstX3eIP2cseKW8I7pXKmRf
-	0uVQf6wv/SWJnO47P8Xn2qHcUJAcdSwS21bfhJw5t0OPy3mKOqF3543d6bg1TmEQgsEq1LUVaST
-	Tnsqe3uqxHt1XXzoffmzoXYTuWjtAxBhWMruMtRmMkN3CCzI/ArtOSFOKv8
-X-Google-Smtp-Source: AGHT+IG9PAZlU5wX6CfCuIPG52y8YmCpl5qUjiXZykbS1/b+bgq6fwmzpG5T/XrmW/++davGQcBL0s5sdx3isOtSuHA=
-X-Received: by 2002:a05:6122:2a16:b0:54a:71f6:900f with SMTP id
- 71dfb90a1353d-54a71f6bfccmr745397e0c.0.1758185943888; Thu, 18 Sep 2025
- 01:59:03 -0700 (PDT)
+        bh=oZmPfoqG0iiG2NY0syO47mgLNSYwy8f5A2cvO3evi8k=;
+        b=SKlLGcYSSCQPbCAEqlfZ/9iCElIKu7Gk/m9h6VTWCCgrJeEi/HWvgkbWx7n+ISP/QF
+         22sMW3XEhamMSbOqQXvmrcRVQrbOsIy4BANg9ox7dw1O2YM81ah2otuW2Z0s4ufYq8Tq
+         Ebtw3tnfM6hArJIYVOCMHtMbMy9rhI2EIhUP+8IQFlm4dA38/7yPxkdXmHkIgSaQA3mh
+         4Dr5uPb5XZ3XaNtyzzyjJXO7kBG/2tcypaNekpCDCiE43xt0TllDktPhrxA2ru/hw2PL
+         wAigQ0rdDNP0X0jFlEtXunjr4C0XZnZc76ysNC+tN731q4PJPNRQWfcoWg6VqXd0kUvt
+         Wnww==
+X-Gm-Message-State: AOJu0YycXpTTnuzFrjUC5veOfb1SuhenNQc42hnbfvwJCzy7KiZa4N8Z
+	IT3rbfiL6hDYkGfSLpyX1V0OeOO0n3CcT1kVimHZKKxjymEN0M24nTsy0W974wI61IjEupU0dtg
+	9URaZr6XGGn1RRBMacX9iISgywmQu2YYUaWN1/AqXKA==
+X-Gm-Gg: ASbGncv6pO9WRR8+q6rKXfZ5Xh/xsRD8rtIC6b9VB0AqpL1oZ8E73Ijj3p2sfdqcA95
+	d6svpEpZeCRfswGleq/zWZzHn1xBOZW4bxzXy1vqjyEhGCXBraHDmX//TPIa4KHI/uVI6ePB4Xu
+	bpocNLxz7EH7WUqHAiiUs5k3CS34RAXBx0mheOqX9loTqShWJdHb0w/qBKq0kcwxzR35sgN9ez6
+	puyWdqNLfLqQGL1Dse389uncyIZ/Wwoss9eT/f+mL8VXlZiCllosfiQJBA=
+X-Google-Smtp-Source: AGHT+IE82AqZgCsTk+PY/JWZbreeNfzQ9NGfzRX+YkofNIG1aunevV+FhkpoCPJrFrn6mDCYgSk9k8Ijxcn1IEQSyeI=
+X-Received: by 2002:a05:651c:19a9:b0:362:75fc:4681 with SMTP id
+ 38308e7fff4ca-36275fc4983mr4139801fa.29.1758185953688; Thu, 18 Sep 2025
+ 01:59:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
- <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
- <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
- <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
- <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
- <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
- <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
- <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
- <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com> <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
-In-Reply-To: <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 18 Sep 2025 16:58:52 +0800
-X-Gm-Features: AS18NWAo-ti9La1j-oEkjznzIVvUZ14li7XE3QDuXeP6to8aA2ac4MfnZt-xdbk
-Message-ID: <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
-To: Chris Li <chrisl@kernel.org>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+References: <20250905085141.93357-1-marco.crivellari@suse.com> <175743072839.109608.9014903338772554601.b4-ty@kernel.dk>
+In-Reply-To: <175743072839.109608.9014903338772554601.b4-ty@kernel.dk>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Thu, 18 Sep 2025 10:59:02 +0200
+X-Gm-Features: AS18NWDpfZjLQbuUq82kSpsqAhb5CTGCYTAr0k0mPYelJg4h9GAlfvANjno1wMM
+Message-ID: <CAAofZF4ysVOA05j3NeieeyPgXjJ_43SEKD=mHPrCz6eF4qXhTw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] block: replace wq users and add WQ_PERCPU to
+ alloc_workqueue() users
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 3:03=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+On Tue, Sep 9, 2025 at 5:12=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+> Applied, thanks!
 >
-> Hi Barry,
->
-> How about this:
->
-> A swap table stores one cluster worth of swap cache values, which is
-> exactly one page table page on most morden 64 bit systems. This is not
-> coincidental because the cluster size is determined by the huge page size=
-.
+> [1/3] drivers/block: replace use of system_wq with system_percpu_wq
+>       commit: 51723bf92679427bba09a76fc13e1b0a93b680bc
+> [2/3] drivers/block: replace use of system_unbound_wq with system_dfl_wq
+>       commit: 456cefcb312d90d12dbcf7eaf6b3f7cfae6f622b
+> [3/3] drivers/block: WQ_PERCPU added to alloc_workqueue users
+>       commit: d7b1cdc9108f46f47a0899597d6fa270f64dd98c
 
-I=E2=80=99d phrase it as =E2=80=9CPMD huge page,=E2=80=9D since we also hav=
-e =E2=80=9CPUD huge page.=E2=80=9D
+Many thanks, Jens!
 
-> The swap table is holding an array of pointers, which have the same
-> size as the PTE. The size of the swap table should match the page table
-> page.
->
+--=20
 
-I=E2=80=99m not entirely sure what you mean by =E2=80=9Cpage table page.=E2=
-=80=9D
-My understanding is that you=E2=80=99re saying:
-The swap table contains an array of pointers, each the same size as a PTE,
-so its total size typically matches a PTE page table=E2=80=94one page on mo=
-dern
-64-bit systems.
+Marco Crivellari
 
-> If that sounds OK, I will send an incremental patch to Andrew.
->
-> Chris
-
-Thanks
-Barry
+L3 Support Engineer, Technology & Product
 
