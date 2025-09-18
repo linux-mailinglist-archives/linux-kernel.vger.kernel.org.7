@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-822545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E989B84180
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:31:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40993B8419B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D6547A343E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:29:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68995627459
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120522FFDF4;
-	Thu, 18 Sep 2025 10:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EFB2FFDE3;
+	Thu, 18 Sep 2025 10:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4IOeRJd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ovpzRpnd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2632F5A1B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0912F5A15;
 	Thu, 18 Sep 2025 10:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758191395; cv=none; b=ioeElDPtZ3an/0vlk/MiM5D7bIlSbnO2a1PuZA/o2+a6tcWf2wzJgRHGCNbdAmoyD8wYnMxGB7RlD8/A6xN3Ve76AwYTFDfuycnqGyAXA33CMeqyDlp9XOaEwQhqWE9AkD7eJU5kROyOGGSmKZV82gorZqEDUjH6WGkKOKusbeM=
+	t=1758191395; cv=none; b=soq6LoTvLZA5zdWeOfjBGdSpCq4ixpq7vy+VAKCrX0k0BVG0v86+ocEuqkTLOQBFGh2xmX3Ucl3c+bXt3DzNd89IlPkh+HBKTCQFyBH/MqEaZf//OR7EncsQnYKwCjY2ovbpaVpVsZcubSvwYyEjvDTaOdXSAjQMX3Zmg8WVioU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758191395; c=relaxed/simple;
-	bh=9Jy/9m0bPK9FNxxaGVhSCzbgUZMydSumdbycYxZ2g4s=;
+	bh=Ojqjdl0xYa7AVJyJ5wv5zQIWfqAIqiKEl8ukMG3AfY0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hmsYpYjyZhzFqkPJ6D6ses/PrJHvtH5ov7Wlh+WD3EHTo4Rw4djMKnjbLk6PDbG5jSsseS3TwTxSNdA1ESahrDaAIO4MeudujaPviAhA3F+O+3qGeaxHFWq6TL369zaDXJuJ/4NMGpL4N03ZcgsqgeokUIOWt0XCib4LaWeJwCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4IOeRJd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5CEC4CEFB;
+	 MIME-Version; b=YvW4aKlzN4gjEKwSJ5Eg7pE4LhJoqeWZ/lnMBWuWta82/NuYYy5LQ9Ubfj8wfnDP0+lwF8F/0INnZIOe5RPJGtGV5yI1Lemch7kQSI7JlDB6KUd0BvQM9jWeez0uGGOnKTnGL7te7qRbNYwa0cbAhvQotwZO4zv7o3Rb/fH8puE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ovpzRpnd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ABCEC4AF0B;
 	Thu, 18 Sep 2025 10:29:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758191395;
-	bh=9Jy/9m0bPK9FNxxaGVhSCzbgUZMydSumdbycYxZ2g4s=;
+	bh=Ojqjdl0xYa7AVJyJ5wv5zQIWfqAIqiKEl8ukMG3AfY0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d4IOeRJd5V9eHONhdRFOfQztG9mW41OYOPzDlhnLQpBacT41BfwHdBY5Efa3W6WVu
-	 5+DCpMfUuwMoDVYmiq1UXoP6TzDGTPOzGRJBDW6W1aruZHc97GpxoLvYsPOHXhqlXb
-	 ayNYzwBOzXkPbP8II2FzVb9xBkwez3GShiig5EGk+0ap7A9I4+UsN5cfejhChBOAGY
-	 aKVQ2mxVvFyNbyNFL1/qkMQJM4pm4wlEymqYcZlul4QWDrsEXGaHG8prT5VGC+27PY
-	 8lk/eGPA/2Y41xiufIAud6DWoGCHTf4lGF97P2Z7r1gmhB2GMncUaoihSjxhuY+VMT
-	 537F8tDj5gw3w==
+	b=ovpzRpnd3iqgvMkrIcyIJ7iD6j9tdkuJFrMmoWCxBY/KjqxgndrfLDrc5ZzpWGoTM
+	 n5XPPiB3Eq5A6feGiDRwCsSmFpI3TQ4338H2iYyOzsoRJREGfAfJbu354TwoBl4AKn
+	 xVvfuHrlpadn1kzuUl3Y0sz6p0qgaTIbSLR0eCwI/iNTi4MM1i0TVlKnAqyzl1G/f5
+	 cmDfxFvXdxa3DhKzzRTPk2wFQAvb94TRTX+Ya/eF7qjmPwzSh3MWeO3AwzVvaWxfpF
+	 kuoEUvbpTN2KlJq21GnmoV28QT/bCqhkJ33KJ3pTviKMaBzopXxqC93JqdxPVMEPSn
+	 JzaPas0UMMEcA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E15A3CE112C; Thu, 18 Sep 2025 03:29:53 -0700 (PDT)
+	id E3B6ECE11BD; Thu, 18 Sep 2025 03:29:53 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
+	Kaushlendra Kumar <kaushlendra.kumar@intel.com>,
 	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 09/11] refscale: Use kcalloc() instead of kzalloc()
-Date: Thu, 18 Sep 2025 03:29:50 -0700
-Message-Id: <20250918102952.2593045-9-paulmck@kernel.org>
+Subject: [PATCH v2 10/11] refperf: Remove redundant kfree() after torture_stop_kthread()
+Date: Thu, 18 Sep 2025 03:29:51 -0700
+Message-Id: <20250918102952.2593045-10-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <c0edd79a-f988-432c-b08a-18793b2e15d9@paulmck-laptop>
 References: <c0edd79a-f988-432c-b08a-18793b2e15d9@paulmck-laptop>
@@ -63,31 +63,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Qianfeng Rong <rongqianfeng@vivo.com>
+From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
 
-Use kcalloc() in main_func() to gain built-in overflow protection, making
-memory allocation safer when calculating allocation size compared to
-explicit multiplication.
+Remove unnecessary kfree(main_task) call in ref_scale_cleanup() as
+torture_stop_kthread() already handles the memory cleanup for the
+task structure internally.
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+The additional kfree(main_task) call after torture_stop_kthread()
+is redundant and confusing since torture_stop_kthread() sets the
+pointer to NULL, making this a no-op.
+
+This pattern is consistent with other torture test modules where
+torture_stop_kthread() is called without explicit kfree() of the
+task pointer, as the torture framework manages the task lifecycle
+internally.
+
+Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/refscale.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/rcu/refscale.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index df646e0694a8cc..5840fac06feb7d 100644
+index 5840fac06feb7d..7f3d23762ef7c7 100644
 --- a/kernel/rcu/refscale.c
 +++ b/kernel/rcu/refscale.c
-@@ -1021,7 +1021,7 @@ static int main_func(void *arg)
- 	set_user_nice(current, MAX_NICE);
+@@ -1135,7 +1135,6 @@ ref_scale_cleanup(void)
+ 	kfree(reader_tasks);
  
- 	VERBOSE_SCALEOUT("main_func task started");
--	result_avg = kzalloc(nruns * sizeof(*result_avg), GFP_KERNEL);
-+	result_avg = kcalloc(nruns, sizeof(*result_avg), GFP_KERNEL);
- 	buf = kzalloc(800 + 64, GFP_KERNEL);
- 	if (!result_avg || !buf) {
- 		SCALEOUT_ERRSTRING("out of memory");
+ 	torture_stop_kthread("main_task", main_task);
+-	kfree(main_task);
+ 
+ 	// Do scale-type-specific cleanup operations.
+ 	if (cur_ops->cleanup != NULL)
 -- 
 2.40.1
 
