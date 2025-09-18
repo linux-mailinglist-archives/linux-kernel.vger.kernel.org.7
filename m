@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-823499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E19B86A98
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C02B86AA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FC617009F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82DB11BC451B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209362D29C4;
-	Thu, 18 Sep 2025 19:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B132D373F;
+	Thu, 18 Sep 2025 19:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PZWWIhYu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="To/7T9mY"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E897E221F29;
-	Thu, 18 Sep 2025 19:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C26288C35;
+	Thu, 18 Sep 2025 19:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758223308; cv=none; b=mikTJ4k1KhtwRoasvzpj6KbgMf4n/CtDlrEZSgT2gpof0VNAbso5x4fjUFHJueWvyJgehp6plL3z8RwpBqlhhU4kZ7ckuYrZHX0BI6SjC/BBbyl9i+ybbdq4bKNEd0vSh3W5fnVmxdaFMJvVhHuLGwFlM3+64jpa8bGxaSBd4DY=
+	t=1758223324; cv=none; b=u7ZRWVe6EWBSZ1QdXb3HnVvs5jxuBopRiXApn/h9txn5i/5lJmXT4KOWkfm0aCCe3IcB9Ngc6QLOqgwDmSpqNXWn5zU2A2qpEI1XApzWsYx0iUDauCmfhpT8PW8jxU/wKtyps/2wybKplPpzHrmMuwD6NC0IqZEoRpv7lrB6qs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758223308; c=relaxed/simple;
-	bh=lqJ18xE2y3F/YfAM/Qm9xmLBB9T+ctDSiiZLF5pgWhA=;
+	s=arc-20240116; t=1758223324; c=relaxed/simple;
+	bh=/se16em7MEbgp0NbbT5daWyrol6E2zVVrMfkjzkIapQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4xx0kgooUmI+f1UB911LOycNit+Z2NsfDcie+NdVUDU1ezpEKqBdl4ZhPlhk8+NRV14m44+/bOmhjoyaks4mzzRJvo7ZaP33YT0GuVMgz/J4GYaeXFgCiM9pHFdpb42ec0AI3Bzxvg4tVK3ggkJDnaUbQecew0Kg+c8wQUJnSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PZWWIhYu; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758223307; x=1789759307;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lqJ18xE2y3F/YfAM/Qm9xmLBB9T+ctDSiiZLF5pgWhA=;
-  b=PZWWIhYunm8rh/NYTjF+2wEHfqksjmVRRBw784gAjVrqtRsirCTtyLmg
-   sokjoI7hYPB485BQ7YbCSj+OgrPrCqV7C/bTDZhMiWgZHHLje7Q8rfJVi
-   2cSw6rA3lr8kDDJuZR9+xsudgLpL3WFCWmWTkSbJy3WhzjtxfNp3IK5Ui
-   BQuz4gY7GIRP+lBbR6LQUmyn7BJDCGHg7IKYPNXDekIspgD0pD8vwp//O
-   U9LCDbeagaD7ki2X2fh6/GbN+gDcudoFFlByPW8VBoLcv3AcWGqE0NHRs
-   3KfA9XjME+lVD3jPWKhdVvTj+CoFSENDOg9fxqRX31mLfg4xpgRVt7LjQ
-   w==;
-X-CSE-ConnectionGUID: 801M4g+iQamfGdKYNxdCmA==
-X-CSE-MsgGUID: BurhPm8iR7uHsHzAFWE6Eg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64371019"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64371019"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 12:21:46 -0700
-X-CSE-ConnectionGUID: 6OyAYguYQo6DMoCZmP64tg==
-X-CSE-MsgGUID: 0Hi9TU8KSLGA4rO2/of8QQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="199342826"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 12:21:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uzKCK-00000004Avx-2rCM;
-	Thu, 18 Sep 2025 22:21:40 +0300
-Date: Thu, 18 Sep 2025 22:21:40 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: dan.j.williams@intel.com
-Cc: Andrew Morton <akpm@linux-foundation.org>, peterz@infradead.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: Re: [PATCH v2] cleanup: Fix "unused function" warnings with
- conditional guards
-Message-ID: <aMxbxAGjoKWmVXLc@smile.fi.intel.com>
-References: <20250904225010.1804783-1-dan.j.williams@intel.com>
- <20250917160644.6f85ca40b1e352fa117dabf9@linux-foundation.org>
- <68cb426324810_10520100fa@dwillia2-mobl4.notmuch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxQYvcrTAiIJ2lWylUpH3HJu3m56sv/Wd5JecwRNJ6mxyq8T4trzd/dOrGhZtXsnjXBcRfxJnvHcfySk6OZIC2a/NvJGdg08xZ4r0sRxrKAZny9PeO3VrZ67RzQmRmrYCsFMlIb6mmEOoxHPwpe0BIhAEiXbn4dQ1c25BpkgC2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=To/7T9mY; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0DA771038C109;
+	Thu, 18 Sep 2025 21:21:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1758223318; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=iJuBXPG2Bh9NERc9QDLFVrPeqpcwJx8dyCLyIq/kXC4=;
+	b=To/7T9mYv3z8GFyc5I/EjBnhiyDjPVOVY8oA9NyOSh57ljRJ+A7vpte6epIya+6We3HKlx
+	dVNPjmE+7i33CIuqFrOSOOHhhu20SiBFfgFWTXFR3bVxuYud7CZjji6gh/hQxDAcZNXRnx
+	OZ8gJiA01Trrv2eHS+mf16JcZE/Exu/1U+IG1B1ns2IOoMAE+m0nfRGLxetXatCOf/p6x7
+	BnJngAsBRLn1Pr58TmVWj0cs3EBYJ1ilzhEXjBSyudHWEa7Te6mYgZzaSpSTvqht1S9n9f
+	7o/RGojeoLSwWSZyt3BBi9PPKqhrqwT6sESEXEQ4eWwJNIlBDDVErE9fPOhy3w==
+Date: Thu, 18 Sep 2025 21:21:52 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.16 000/189] 6.16.8-rc1 review
+Message-ID: <aMxb0EbmbJ9tiZdX@duo.ucw.cz>
+References: <20250917123351.839989757@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FjvO7hMn5uzHW2qG"
+Content-Disposition: inline
+In-Reply-To: <20250917123351.839989757@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--FjvO7hMn5uzHW2qG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68cb426324810_10520100fa@dwillia2-mobl4.notmuch>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 04:21:07PM -0700, dan.j.williams@intel.com wrote:
-> Andrew Morton wrote:
+Hi!
 
-[..]
+> This is the start of the stable review cycle for the 6.16.8 release.
+> There are 189 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> > > Alternatively just merge the suggestion in [1], and call it a day.
-> > > 
-> > > Link: http://lore.kernel.org/20250813152142.GP4067720@noisy.programming.kicks-ass.net [1]
-> > 
-> > lgtm, unless we think this (your) patch improves the code for other reasons?
-> 
-> The tl;dr above is that the warning could have small value, but probably
-> not greater than the overall benefit to Linux to stop bothering folks
-> with this low-value warning by default at W=1.
-> 
-> So I am over the sunk costs, and moving this warning to W=2 is the way
-> to go.
+CIP testing did not find any problems here:
 
-Can somebody add a fix so, we have v6.17 able to be built with `make W=1`, please?
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.16.y
 
--- 
-With Best Regards,
-Andy Shevchenko
+6.6 passes our testing, too.
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
 
 
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--FjvO7hMn5uzHW2qG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaMxb0AAKCRAw5/Bqldv6
+8tZpAJ9+mjG+Ve1qZtPiw25GZvCRQ3UvRACgjCRf9BQyVHXpeVJA99VNuuVpxDw=
+=/rUR
+-----END PGP SIGNATURE-----
+
+--FjvO7hMn5uzHW2qG--
 
