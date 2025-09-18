@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-823110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF68AB858E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:24:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F823B858C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4309F1C84324
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887757C1715
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DE930E0F8;
-	Thu, 18 Sep 2025 15:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLi4AGnf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A98030CD8D;
+	Thu, 18 Sep 2025 15:18:53 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC2922425E;
-	Thu, 18 Sep 2025 15:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DB0241664
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758208713; cv=none; b=pqezMrWMYN1QBq5RoPsCoOMXE2RJTuduOM+vmclmFdHW8SUe224ap6Ht1vYXcGoefISHJtT3TMWoxzNfQEGQvFYYKJLUtwHhPsaX0LLELaFMakhkfuxsjN6P32uHjv73VYji5G8YLR2wOeQbPGSQ1DOZoXZ2GHxq7Y6ptEy9IAo=
+	t=1758208733; cv=none; b=ZR1yIRgcu0/jZpYDMS9/gba2FgbngXBYw1alcLkqRmtZM+SCEu0BzLItHK5gdokFy/w7fptjij1u7QIxnupbMr4oSQ9b/j/z7fYhUkUbx7K1epRS7QYhbNzhUc+C02gYDNTCEuF7yPIyn6NHDGuo3yHoGgtY1JMtlkCFzsrguqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758208713; c=relaxed/simple;
-	bh=T4wS9mTXcpSpv5NeMblAj4UwyO9r3doA7Bdhw2LH3VI=;
+	s=arc-20240116; t=1758208733; c=relaxed/simple;
+	bh=kXjuFca2JVNLJSZmRetnImSHpmW7eJSiNdlnLfXoDNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBjcA+hLzwamDR8Qxz+zW+D3gPYuOxjy8ibUzhcRM6kwKBd4UesaVHrTwhZpN/EquqkCqdrUTi4AjHD8GI/Pgq2yVpLR0FqUCKj00QAF4iUIaWipgYBjbtudckA3B5+HcoTXf1SfTN2YTGYjVy1sB266xn0B6jxwR3/0BLgcS50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLi4AGnf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECAE5C4CEE7;
-	Thu, 18 Sep 2025 15:18:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758208712;
-	bh=T4wS9mTXcpSpv5NeMblAj4UwyO9r3doA7Bdhw2LH3VI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uLi4AGnfRF6V6De0JAQgyez9xlUDmOFx461zVUm3XCG3sP4T0+DSxdMQyyFkuOUhV
-	 +Vh0+IHpwVsE1AZMdCz4UjHMuDlwhMrk39tlWhDcGgoEsf0H6LULv5ssc1b5PCpbhd
-	 JdIa4NK88xzdm/0CBrNg88tIE/Fx13gh/UUhVDeR2zvkFOqfwIosu0udNELsXGdBkl
-	 Js0qFWwQZgoA63M3jyhl2eCC8j64ckbBPtWR2RrV6aeDGgTIOkwrsNNEzkg2vc6zCf
-	 TfonVsjS25GolhGQGXBUZ0rgcw0cK/3wgOdylL6W6s1718xsH2XOddKjhMSuq6sr/2
-	 Gdq9xsJAzr/NA==
-Date: Thu, 18 Sep 2025 16:18:25 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dang Huynh <dang.huynh@mainlining.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 05/25] dt-bindings: rtc: Add RDA Micro RDA8810PL RTC
-Message-ID: <20250918-unharmed-bloating-8b573513fce6@spud>
-References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
- <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
- <20250917-contort-sassy-df07fd7515a0@spud>
- <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=maqA4p/iV8K6QoH1pVhlaTcJVX4kPMBT5Ec5P+YD9Uk7VceTPmikRsZ6mgtc7UkOT6+6kRJmJLXjCeiEdfghuOT7iek2cbwWvSGuEmTHI09gw/27u1YBbjDxYyYdlvWOjjzH2TEzqZwi0eczZWkMNznOqfNlCYqzGoRk98nywJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C602CC4CEE7;
+	Thu, 18 Sep 2025 15:18:51 +0000 (UTC)
+Date: Thu, 18 Sep 2025 16:18:49 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	James Morse <james.morse@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 2/2] arm64: tlbflush: Don't broadcast if mm was
+ only active on local cpu
+Message-ID: <aMwi2TwPIut5Lr4Z@arm.com>
+References: <20250829153510.2401161-1-ryan.roberts@arm.com>
+ <20250829153510.2401161-3-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qnPPSzmWE/KqIUbp"
-Content-Disposition: inline
-In-Reply-To: <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
-
-
---qnPPSzmWE/KqIUbp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250829153510.2401161-3-ryan.roberts@arm.com>
 
-On Thu, Sep 18, 2025 at 11:11:10AM +0700, Dang Huynh wrote:
-> On 2025-09-18 03:46, Conor Dooley wrote:
-> > On Wed, Sep 17, 2025 at 03:07:22AM +0700, Dang Huynh wrote:
-> > > Add documentation describing the RTC found in RDA8810PL SoC.
-> > >=20
-> > > Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
-> > > ---
-> > >  .../devicetree/bindings/rtc/rda,8810pl-rtc.yaml    | 30
-> > > ++++++++++++++++++++++
-> > >  1 file changed, 30 insertions(+)
-> > >=20
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> > > b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> > > new file mode 100644
-> > > index 0000000000000000000000000000000000000000..3ceae294921cc3211cd77=
-5d9b3890393196faf82
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
-> > > @@ -0,0 +1,30 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/rtc/rda,8810pl-rtc.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: RDA Micro RDA8810PL Real Time Clock
-> > > +
-> > > +maintainers:
-> > > +  - Dang Huynh <dang.huynh@mainlining.org>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: rda,8810pl-rtc
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> >=20
-> > Your driver implements functions that turn on an alarm irq, but there is
-> > none mentioned here. What's going on there?
-> The RTC doesn't seem to have an AP IRQ associated. I can't find any
-> reference to it on downstream kernel and the docs.
->=20
-> >=20
-> > Additionally, there's no clocks property? For an onboard RTC I'd have
-> > expected there to be a clock sourced outside of the block.
+On Fri, Aug 29, 2025 at 04:35:08PM +0100, Ryan Roberts wrote:
+> diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
+> index b2ac06246327..adf4fc26ddb6 100644
+> --- a/arch/arm64/mm/context.c
+> +++ b/arch/arm64/mm/context.c
+> @@ -214,9 +214,10 @@ static u64 new_context(struct mm_struct *mm)
+>  
+>  void check_and_switch_context(struct mm_struct *mm)
+>  {
+> -	unsigned long flags;
+> -	unsigned int cpu;
+> +	unsigned int cpu = smp_processor_id();
+>  	u64 asid, old_active_asid;
+> +	unsigned int active;
+> +	unsigned long flags;
+>  
+>  	if (system_supports_cnp())
+>  		cpu_set_reserved_ttbr0();
+> @@ -251,7 +252,6 @@ void check_and_switch_context(struct mm_struct *mm)
+>  		atomic64_set(&mm->context.id, asid);
+>  	}
+>  
+> -	cpu = smp_processor_id();
+>  	if (cpumask_test_and_clear_cpu(cpu, &tlb_flush_pending))
+>  		local_flush_tlb_all();
+>  
+> @@ -262,6 +262,30 @@ void check_and_switch_context(struct mm_struct *mm)
+>  
+>  	arm64_apply_bp_hardening();
+>  
+> +	/*
+> +	 * Update mm->context.active_cpu in such a manner that we avoid cmpxchg
+> +	 * and dsb unless we definitely need it. If initially ACTIVE_CPU_NONE
+> +	 * then we are the first cpu to run so set it to our id. If initially
+> +	 * any id other than ours, we are the second cpu to run so set it to
+> +	 * ACTIVE_CPU_MULTIPLE. If we update the value then we must issue
+> +	 * dsb(ishst) to ensure stores to mm->context.active_cpu are ordered
+> +	 * against the TTBR0 write in cpu_switch_mm()/uaccess_enable(); the
+> +	 * store must be visible to another cpu before this cpu could have
+> +	 * populated any TLB entries based on the pgtables that will be
+> +	 * installed.
+> +	 */
+> +	active = READ_ONCE(mm->context.active_cpu);
+> +	if (active != cpu && active != ACTIVE_CPU_MULTIPLE) {
+> +		if (active == ACTIVE_CPU_NONE)
+> +			active = cmpxchg_relaxed(&mm->context.active_cpu,
+> +						 ACTIVE_CPU_NONE, cpu);
+> +
+> +		if (active != ACTIVE_CPU_NONE)
+> +			WRITE_ONCE(mm->context.active_cpu, ACTIVE_CPU_MULTIPLE);
+> +
+> +		dsb(ishst);
+> +	}
 
-What about the clock?
+I realised when we talked earlier that we can reset active_cpu on the
+slow path if we got a new ASID. I think it's best to do it in
+new_context().
 
-> >=20
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    rtc@1a06000 {
-> > > +      compatible =3D "rda,8810pl-rtc";
-> > > +      reg =3D <0x1a06000 0x1000>;
-> > > +    };
-> > >=20
-> > > --
-> > > 2.51.0
+The fork() case where the child may unnecessarily inherit the parent's
+active_cpu is already handled by init_new_context() in this patch.
 
---qnPPSzmWE/KqIUbp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMwiwQAKCRB4tDGHoIJi
-0mfkAP9yS2bi4VD6hutTCOIeT3qJB84qFVZONJYP1wnhQwLGeAD8CFxZvCN6Jv4e
-UC/tOu6vHervFswpc7sqlf9k4hh+qQs=
-=wDJV
------END PGP SIGNATURE-----
-
---qnPPSzmWE/KqIUbp--
+-- 
+Catalin
 
