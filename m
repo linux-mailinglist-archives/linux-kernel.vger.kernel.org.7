@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-823441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87EAB86719
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:44:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03ACB8671C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4184A6E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E33F5887A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90F42D3A98;
-	Thu, 18 Sep 2025 18:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15BA296BB3;
+	Thu, 18 Sep 2025 18:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Y8e+hL/O"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B648B2C08A2;
-	Thu, 18 Sep 2025 18:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/eFFjXC"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED481643B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221042; cv=none; b=GVp+wx3BwjonIt/y1GGkVgjdZVWpQDTD1Mx255CvJVFy6d6nYxdmsS5SBu7yOqmSLaBLij+nXp9yrJlxNu/zKqeQ68PbiYZyULWiEXpGQdKW2rrAA73nOhRRkcBRHa1WNPn2YLqZE9Jiz+88GAwHnYi9Q5xjQXicTcc8jhdH52c=
+	t=1758221070; cv=none; b=Y4rg/I+qneIKH8lKqk8fyNMHh6bTIwJBUoJvaqr1FKI7Fb67Jpy5jnda2nk4vnYZPkFPatq22xJ5xdPYD2yOkFE/DobQKhcGntZ/j4AIX3aRm88HM49r7cPTnPeW2BD1eSOAuA7NZ3TCFW2CJtjlP5SV6ROvUqhKSeEmMncltxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221042; c=relaxed/simple;
-	bh=nZAFkjB3WBw4tEItV/bS+V374WYPiZNl/ReOtdai188=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aoURGuG0GJ4ANB23/9sJHJPJVOHujXbNyLhRCRdD3pNoQh7GCGLw1YmeFjW/AT9B2B5PkLGOucJrOAEqresOfWJRQYxkyfOnwQqxi9lRRt+kv3rJRtaW4BLNy3+Ipfr83kyJjEgbbKsGUcmxPsEFiZokOTty38IcoI0vzQuu1rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Y8e+hL/O; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii.localdomain (unknown [131.107.8.20])
-	by linux.microsoft.com (Postfix) with ESMTPSA id ED73320143E2;
-	Thu, 18 Sep 2025 11:43:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ED73320143E2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758221040;
-	bh=c+5fBAyJiHvKjHvkljnNidXFiWFLeagh5Zok8uZDKFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y8e+hL/OWJ2uAF39Al/GO3MtyY/yumrK4YNGEHnscXrrB+xBNly5C/Y/KdzOQPRRC
-	 chAtcbg64gfzqWibRNO2gSbrcIqXaLYL177faDNXC69/4bzkqWxzFKzwoj48my0/F+
-	 g1qekGxzkLTcduzXLzgs/0kOdCxNfjRXD4VaGepY=
-Date: Thu, 18 Sep 2025 11:43:57 -0700
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
-	tiala@microsoft.com, anirudh@anirudhrb.com,
-	paekkaladevi@linux.microsoft.com, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com
-Subject: Re: [PATCH v3 2/5] mshv: Add the HVCALL_GET_PARTITION_PROPERTY_EX
- hypercall
-Message-ID: <aMxS7Wh67SuF4LV2@skinsburskii.localdomain>
-References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1758066262-15477-3-git-send-email-nunodasneves@linux.microsoft.com>
+	s=arc-20240116; t=1758221070; c=relaxed/simple;
+	bh=fe3A6MnHA+kBcuSKcXPhgzXX8sc6RtnqsVbVSSBzilk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=paKLwulleDno41tNRLT3/IN4J5fDg5B7U4AkutQRycudv0sD3G2JQkwx+ijjTqptt1zjUgKosnIpYE9vtbOnSDBEvRlWuQudmW4AM0khb293Gx0tEXA5NDpyPGCxM2F3Y7lmYpRHXO1TfmmkDo7Fpt4zozP5GoUISYISzAxS/+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/eFFjXC; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so1330803b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758221068; x=1758825868; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A8zgmbahM1VfgP+dW3KRwovtdnR9tCk8bO4aKfh2zws=;
+        b=Z/eFFjXCWXG4mqtbYjWIwr50SFPpLpuwGi4wn7h4nT3cFteeuykG6vCIj0JFcaVZ+j
+         c0dfoQ3Y429LpT30XwJSyXHmLwSUzpc+6FN/v+991tPxthgOQ+85K+ZhWAl1c1IuI6Y+
+         y1NHLOn5RSQd1YI6euWyosNxLSDwKGkTyzYRGaD83qiPWjVU7xmdUkuhMuTTdmmYGche
+         DrCw3ORT1LTk5x3Ztx1uRj8n4z/6FOlIQfClQDrYj0V7VtkGVltWOMA4SZo8HsftbUQ/
+         jCyPxh2eypc00n+8cHNaMwC0zsKTMyKllGsP2qIiLw6fzEmMJLx3N8NTGlMA3QzVSIDJ
+         zHqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758221068; x=1758825868;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A8zgmbahM1VfgP+dW3KRwovtdnR9tCk8bO4aKfh2zws=;
+        b=oU45rgZryDdPV0NLjdjwJ7j3ZTuiv2E7g5Fk/mMWV7wTe/WjZ791AVKWHCmkPuVQ5b
+         Vs8ciKar1SUaWAIYDlpV7+evtXeeJYIASMywgDNmt8Rw8hZr/FV6o/OirLjavIwlgtA3
+         cXVyhGZdjMrtq2WpasHgIasA56KCUSKnX0ER2Qq5BhVF/d8u/qmx36HePCjSsZ4VK4ZN
+         s/WnJk/hKUGyEUkEoKLAdZCfwiLAqpcXMaSgTbJMvCWa6oGN/lOa/Flg9pWngP4wGWLv
+         HBVoZxlZi0fmyLZQR0enwf/Qoc/K5BnXhCASlNX1qGxHHZKP07mkG2z+0B+k2WkgMSXn
+         hxLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOyW7zxsFd/TUR3jF+Z9X5m1gD1gjzS9d6Vr6UVuS97KHhGldMZerGYr7RoDlgWWlVMIsCgNk0ShdkYuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2riv2raxSUUJcpYyANt5FBWH640NFw1Y14qlyy4bemQ/v3kQR
+	cJNKJseJZRATt3Fm+d0SbwWkMeNJKp4074V1dVrShpw+RUgYYCy7p1rv
+X-Gm-Gg: ASbGncu9PN1ZCppZzdDWwqNhERgb/sq8gjoThSX8y0sv5fb2Tpc8+Ycck4jvzYUniZs
+	1YjApVHHa7MwgmKY7DETNfSdBEbGpxEj9OgPUS/We1/cHpwoXnPM/ivb0GW1eCMJw8eNExl6tKV
+	Mzeh5MCEdWjThWHov5DQ3jwGiHhfjm07YOry3OHzPDlVtMf4vCX8i0hCe1fRR3H4SdGKl9p7hQH
+	y+CvEqShNYVDDbhPm/gKbJ5YvexbPs8mSvgQiK2Ad6UtQSeJerEOQ6SUz2mGZIe/cH5UzCtgy8E
+	2yOTUrtpUaVYeK5ri4L9IXcbQhbQhHZcY3zDzTJFJEtuPXI8tfyF+DUHZI00kAySJXCbHJy5ov7
+	qUTciWM6cQg8Q3vwHDHuKHTJYYEESWssQjEmujbaE+AgqAwHoDHQ1tWHcYaee
+X-Google-Smtp-Source: AGHT+IES0nh3YJZduE+bzFAmjo4n9/IGmSy36TfhXM3u3Sd6MomrUkG0ZxjN3Mi9LkDFwohHkOZtBQ==
+X-Received: by 2002:a05:6a20:3d1c:b0:245:ffe1:5609 with SMTP id adf61e73a8af0-29270503242mr768026637.44.1758221068102;
+        Thu, 18 Sep 2025 11:44:28 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cff22bdb5sm3051926b3a.94.2025.09.18.11.44.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 11:44:27 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH] mtd: cfi: use struct_size() helper for cfiq allocation
+Date: Fri, 19 Sep 2025 00:14:14 +0530
+Message-ID: <20250918184420.76047-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1758066262-15477-3-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 04:44:19PM -0700, Nuno Das Neves wrote:
+Documentation/process/deprecated.rst recommends against performing
+dynamic size calculations in the arguments of memory allocator
+function due to the risk of overflow. Such calculations can
+wrap around and result in a smaller allocation than what the caller
+was expecting.
 
-<snip>
+Replace the size calculation in cfiq allocation with struct_size()
+helper to make the code clearer and handle the overflows correctly.
 
-> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
-> index b4067ada02cf..b91358b9c929 100644
-> --- a/include/hyperv/hvhdk.h
-> +++ b/include/hyperv/hvhdk.h
-> @@ -376,6 +376,46 @@ struct hv_input_set_partition_property {
->  	u64 property_value;
->  } __packed;
->  
-> +union hv_partition_property_arg {
-> +	u64 as_uint64;
-> +	struct {
-> +		union {
-> +			u32 arg;
-> +			u32 vp_index;
-> +		};
-> +		u16 reserved0;
-> +		u8 reserved1;
-> +		u8 object_type;
-> +	};
-> +} __packed;
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+---
+ drivers/mtd/chips/cfi_probe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Shouldn't the struct be "packed" instead?
-
-> +
-> +struct hv_input_get_partition_property_ex {
-> +	u64 partition_id;
-> +	u32 property_code; /* enum hv_partition_property_code */
-> +	u32 padding;
-> +	union {
-> +		union hv_partition_property_arg arg_data;
-> +		u64 arg;
-> +	};
-> +} __packed;
-> +
-> +/*
-> + * NOTE: Should use hv_input_set_partition_property_ex_header to compute this
-> + * size, but hv_input_get_partition_property_ex is identical so it suffices
-> + */
-> +#define HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE \
-> +	(HV_HYP_PAGE_SIZE - sizeof(struct hv_input_get_partition_property_ex))
-> +
-> +union hv_partition_property_ex {
-> +	u8 buffer[HV_PARTITION_PROPERTY_EX_MAX_VAR_SIZE];
-> +	struct hv_partition_property_vmm_capabilities vmm_capabilities;
-> +	/* More fields to be filled in when needed */
-> +} __packed;
-
-Packing a union is redundant.
-
-Thanks,
-Stanislav
+diff --git a/drivers/mtd/chips/cfi_probe.c b/drivers/mtd/chips/cfi_probe.c
+index a04b6174181c..e254f9cd2796 100644
+--- a/drivers/mtd/chips/cfi_probe.c
++++ b/drivers/mtd/chips/cfi_probe.c
+@@ -208,7 +208,7 @@ static int __xipram cfi_chip_setup(struct map_info *map,
+ 	if (!num_erase_regions)
+ 		return 0;
+ 
+-	cfi->cfiq = kmalloc(sizeof(struct cfi_ident) + num_erase_regions * 4, GFP_KERNEL);
++	cfi->cfiq = kmalloc(struct_size(cfi->cfiq, EraseRegionInfo, num_erase_regions), GFP_KERNEL);
+ 	if (!cfi->cfiq)
+ 		return 0;
+ 
+-- 
+2.43.0
 
 
