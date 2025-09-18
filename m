@@ -1,229 +1,357 @@
-Return-Path: <linux-kernel+bounces-823195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A523BB85C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6411B85C4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424B917ABD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:47:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F88562A00
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AD231329C;
-	Thu, 18 Sep 2025 15:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8540D312830;
+	Thu, 18 Sep 2025 15:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MuP88hFn"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010014.outbound.protection.outlook.com [52.101.84.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f+sQUIc9"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E03313290;
-	Thu, 18 Sep 2025 15:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758210334; cv=fail; b=lRLeFp0tM7tFc1O+SYaeAIbhfcnje34mldD/bfN/zO4P8EylzuNT0haTUYvQrZZJr40szMMxrBXhAaRISx727uRtdFK9lU7lt4gQVDErTfsxW0uDD6iZDRlyy2FVAneJPibo/VIZYARugi5pVBEbzXf8O7wfckV2sKdPK83h+qI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758210334; c=relaxed/simple;
-	bh=l4SIkvU9B+Cqh5WLgGxf2dP+OqHNEXqDsja7NlgfdII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TkRzkeHNXzIqZDmmswKmqKypO5jl8osUFRtB38an73KrCjfH86GJrzj+wzMuTngWWpT8ONiNUuV7ShbTzfc9r6fWcQh+F5BYk9wn6vL4UryQEMMYtmbta8gUXdGXJMGmlmMDe54vNz5Ek08KFkMmATbEBk7yghNdhe99BCf/XSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MuP88hFn; arc=fail smtp.client-ip=52.101.84.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x1eUlBev4e2PknXirNpYDGoDzU0GpG/pxbsMrX/38aNc2Kq1kWwyMLwqdPKhEkzy4BtPZpKUc0q9xULfNy6lVqOpLCgCXbAV2obobTO1dMc2GNoJsPoXKE+4X/OsN62pWq1pboUigGaiPozbWQnBG1p77LQdDPzritu2KSTIWCbdCRwW9KDzeclINfg+9p9AxAylI7hG3ohmrlSPJ9gbYcXEJ/62i6ETm32mGqMUjmw3VhoF6Mi0LXw2RwuBjDV3zFbMfAB9ZFc5uw62kK3blgU3Vr5+Z5iavRLg+o2JjWga7w9Mt241VsvzoE0awd98DZrgNyfCy16KIpxRGis/Ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=knUlNp0D2q5yGo/1Gw9UK5QJKBQp5IMnKA/Gmn7VU0U=;
- b=xDErsK2sWZ6K0Up0UivcglKXWOLkN6gs4NGgzQ+bRfBDw1lkauqw291ESj+cdJ9H8NwcnKo/SbxwLxoezct4iUI4IPF79zlOK6zmFpRmMGoFsFnT3sM63Q+USAFSdKI1lEyDxWUP+sxEG3qNmwg0y82rNwr8i0yKXQ2tRK3bVvf/d8VUMYjLdFRc4RFQfgs5eYPz7OSvXgkoZK/X2y3r7i9gN4SM8IT+WacHhny3rcJmKV2qjN+a+L4thoj2xJqJBFabHYnhQqgQ9HFZBP5THiFbn6SLIc8kRBFGUxlHz+9g96Qoxw4+z994IfsZvqwP4IP7NhNjOcjeHK7wJZaz8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=knUlNp0D2q5yGo/1Gw9UK5QJKBQp5IMnKA/Gmn7VU0U=;
- b=MuP88hFnCXGIfNAHTxbhLM/gWl7iQckPOZdrZJsolrJAiTeJQuDVn040ZWJIXl1NjHv0t4gQS9+D3tHJ6wejsv+bI2G6EuUwLsKQK4Czr5GJgcJxnjmgMG13mx97VWv/x6j2alvrA6Xx/IAnwm+LcXOP8kg7jm50EHItL32B1G5sKLfZ1DEPSv+4QmahRJWY9G2ZPFo16W59+Z6DfiGnMAHFCNtLMrS7iAUpGIS8CqtGomBS5c/upgGniHANEHyUK6jDJWdfassjeiXT71ysf2LzkJ7OHy1nhGlRAR9KZkQYCsXic7RfD5i/rBgT/e3eK+olwsxU0elJV53KM0SKfw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by AS5PR04MB11417.eurprd04.prod.outlook.com (2603:10a6:20b:6c8::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
- 2025 15:45:28 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 15:45:28 +0000
-Date: Thu, 18 Sep 2025 18:45:24 +0300
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] gpio: regmap: add the .fixed_direction_output
- configuration parameter
-Message-ID: <7xzabghtgro7wv4mbx7zywm5tnquttthdzrc2duiwvejm4knn7@b4fp7u6jmaia>
-References: <20250917090422.870033-1-ioana.ciornei@nxp.com>
- <20250917090422.870033-6-ioana.ciornei@nxp.com>
- <CAMRc=MdxE-qsthHot7+iA8yqg1ZEASzGh7dmR=ucfxg_JQipxQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdxE-qsthHot7+iA8yqg1ZEASzGh7dmR=ucfxg_JQipxQ@mail.gmail.com>
-X-ClientProxiedBy: AM0PR10CA0002.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:17c::12) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4303112D1
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758210504; cv=none; b=O/GHEWPIw2Xi/IatSq3N21gyRU0GE+M9375zcwJsBeYASDc1e2JXL+5T0ZafTSe3AzwquUAtNBuWcwqpFVq3Gyc6NCmOJY6HeVEMJeZVsZ6lBlbRe4BXVI72+MI5LJNm1x28Vv9T0T4+yXWFlDpapVgL7Xv8+Wn2SACDa4wBTOU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758210504; c=relaxed/simple;
+	bh=OVohnyVhLf5T24J1Y7oEnLoDBfMrF00Ecfqof2AUM6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hS2FYBwfP5U1urhJ+T/ITx6G4LNe3WTCqfN8ahJvwZAMj8frAQgLLkWGUgiC2ugQftVq79/Cde9YKlZC5wIEVO4XIyPW5unafK1nYto9j5/karefel1tm4YGWdM4gWNNwJ+TW/azMBAzCXA4pNH3rg7uSyDmZtIE4NgisrpVXHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f+sQUIc9; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-265f460ae7bso188055ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:48:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758210502; x=1758815302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ABbWXtLT9Tem//sob+wqU2AgqkC5UZMRqd7mBmeRtRg=;
+        b=f+sQUIc9rGbEipPLc+iMwsYMD3rz9IsHPbey+mU128a+R/PC2aX62O/pZkcmfxHzFt
+         Go3XXuj/fVJXEYtcV2XS9ARNFD+FJAJxBqpaLGLfWj/LtKbnIJ1k+OG8hIiM8NjnZS20
+         QL6BXKES4ttZR9e5TYu1qaDwVrmqATSrioWyOVbkZmdIH8MKI86RBUJa+Nuuqu56J1JZ
+         LPrjNbGLtih8Mxe9xSa0skD8Qza6nG8iS2QGpViKJtj5dAk8ZTXZ0cRdewAppK0a7BJ2
+         JljkOn/e4Tx+EDwLy3CMqPai35WnOOeOg+KkQ5MBzgO7tBaLR/CRW0dVZFOxQge/GSBy
+         +VHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758210502; x=1758815302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ABbWXtLT9Tem//sob+wqU2AgqkC5UZMRqd7mBmeRtRg=;
+        b=N9SUjqH0nJLrNPXu/U9HyLkha2zaE/uzZRyGgkBgNgp3cR6ogJOYJ9e/lTLt91jwdw
+         GocdoSPrQo23M63WIIF7yCzkhVXce3JvV1BYhc7Q8Ltl0Sog1bdBiD7dSEMHtYtVsH5d
+         gZmbeEHIioJ5iv+/0VZyDz6bE7YC+HmiTudqDoOwUSERqfgkXet+f1SmSaXmECsDoM9K
+         VulUiAkDc7N0UmEKmjP4dddwIMUrWy3R180Tikt76c11/tyduiA8i6kktNrssoTBvx8T
+         G9/hlRccs7qQu/ms6bEFnCoqhFQWtO6RyjZR2jK1g3giqk87kyeFcbWcIvOwdztpn7Oj
+         JKzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXr9Jn81tNz4Wi28o19u9APrVmT2AYj0FKxbsmRP2Xp3htNKDu+csWX7JBKiG3he30X3Tjz1xubFN2s6eU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD1SdNljhz0hymjl8Oj9C6gp9NXm7ygiFd99NgW0G3H6KzHJ0t
+	MDwVyqvAxbEUh5sPixPCddH46hO3nBq8HbR7Q8jyCsN1Fo1ZXrFqpW1HkJ+w4Eq17JQ+x9rl6zu
+	xhG2+5iEC/wL0jD9hSDiePFF/CcOlc+k+FCaVDw2G
+X-Gm-Gg: ASbGncvFV9WbbFoyc47tnD2czC9nuEBQnpJuql2ofY9WVIFa10NFJ/evmo4KpfzMOrP
+	YC+Ns7jh0JVQmmTcDfqlfdPJMygHQBLTzfBETXMP6lLHPlO9pD2PR/XS7ubHtefI0RM2P6K829j
+	BcshNUag7D3KHagJK21Wz4dZhIc9jqqUWmKM8pGsIp7DMKS6VHwnXOXhZtji87oqnC1wmL/AvOs
+	ogXeZLejRuxYmH8MTNTnx1lHaI89PiLP+3m6NdRWYlzLMpmsagyMBvmoGV0J7s=
+X-Google-Smtp-Source: AGHT+IHkWZBD4+AiHBE92/4cPg/M+NS/l+PSxeUW1OKZMMEvW+vuOX9xQoB1feOy5BmVf8ra4h0LeutC6OOYCfiJr6M=
+X-Received: by 2002:a17:902:c40d:b0:25b:fba3:afb5 with SMTP id
+ d9443c01a7336-26808ad1016mr10519905ad.11.1758210501905; Thu, 18 Sep 2025
+ 08:48:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|AS5PR04MB11417:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6bbfe77-a1d8-4a50-c306-08ddf6ca63f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|19092799006;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?w2Kv6XyY2u/IdxqZFOWM+S3OiwVBbRAeROosSGcGFSNfoBW2nkYOcW0N9bbW?=
- =?us-ascii?Q?QFjYYd1m3k6VjGlXJz6A6ydpPaVrUSWDzKMeMtyimXAOMl+v4J7GoOdmrhSE?=
- =?us-ascii?Q?+Nlz+67CPkv1TXKm+5r8aE8nTPYC22NKgNzA9vLA6Ezv4V17AMPhNAeTNGaq?=
- =?us-ascii?Q?r2hb8G/gbq5VF5IhCjYmY9yZhqWxjsDir2YBaONgZKSf//WOW2OklLzea47p?=
- =?us-ascii?Q?cBqSj+YeN5ckwtyr32khpgLJ881+YyTca/rPPx48x7NLAD+7bt2TcK+i1IiF?=
- =?us-ascii?Q?xhesJbs3IG4afE8JjoRf4sP4h2GOHQ6R0Mr+GwE9EvcUUWTpJQhVtzurp0xY?=
- =?us-ascii?Q?Q3isRpaHaH/T9ke3Eh/P6UhZUpiCO3ja6ImByOJ6jV1S6QjiC9y3aZD9Mn0B?=
- =?us-ascii?Q?cn3rIJaTM0c3iwS2l3QzORc1qyBdQ3l9zt6xc8nq3IWoGFZnU1uQ3bbqB+S5?=
- =?us-ascii?Q?ANtOgQ5E4AAS88J6yydsHhY9BEeD0/mKEPvwbm7kRcKwNyPst7YZp/47JWNd?=
- =?us-ascii?Q?q2ZlziIZQXpexNQZ2qTjAiCjSEXSWYfPv/G0iGehWOxvk2lsL7L+qC/sUsph?=
- =?us-ascii?Q?SombK/gEW5SW0lVF0tuepLKrEBqwtHF8UqkSW0GOKmOoq8JTgbYVlIBEObON?=
- =?us-ascii?Q?99FJruq6dXNx4hEJjtZUtXVITXIDObtvg6bES1wGK8Gf87XTmhafaiJMOW3R?=
- =?us-ascii?Q?yWPeAXGjfoJSPkR1lGOJUsoz5svtSrEvJaV8XNOkZ0KLWJ+gxdZ9Xh/A5MnN?=
- =?us-ascii?Q?B2SxeO41R2uEek+zzZq6Ey6lOw47IgM15TRWFR3/tR29FJXRy2G40F7wKu2i?=
- =?us-ascii?Q?njO+S9vUeU9ojo54jyjcVZDpG02kazMvNAyIHwrGg8it5NXx3w3J1ZmILxDc?=
- =?us-ascii?Q?fa4CDVgfzbR0Y49b6oi5nFzkbFAUgUxiI+9H45mAALiA+CgugbuOJN/wosu1?=
- =?us-ascii?Q?Az5oJjiXVnGsQiSFi8CI4LVhbKK4BH1cG7HPi0m8Sk7PmyydeNA7kkb42iZ1?=
- =?us-ascii?Q?pzVllHIEBTBZrB12qvBogb/kEhOlZlH7T19a9PmCE28beP2Yq/HNbbeFVfij?=
- =?us-ascii?Q?svK1qzc5bFYSEqfyMX4n60cTHmEhFpHTAzYrzjpk96B7JtmFEdZBOmj1acfw?=
- =?us-ascii?Q?NO1TiDniqBBolN2rWOsDG62sg/i5T88RuxvdNAwsCCWSptcJr/Z2zC1kC6yG?=
- =?us-ascii?Q?RicAJPlM7c+MF0XlOi33W5zKzb+KfDrgGtTOB9yGBRoc1vNKRMORHL5dUT6B?=
- =?us-ascii?Q?/hXYR34zEJe0i0wYmdXQlTgLi3Bl1CK+JxQ6AHMFY6NcAwD9qQNjfgjoSnMi?=
- =?us-ascii?Q?uroj7C3HdyC6jD+ED3MoDniC47rkjqDL8ZbTfkS5XuRafPzpe1BCC8zFwmFs?=
- =?us-ascii?Q?zL5Dt2pzvWJhSzxGTWacvsXOkWtTywKB5f+wzWmf/D/eb1AcO0C+egVRNZSn?=
- =?us-ascii?Q?iDVbSJZtjRY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(19092799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HLa1tjOfenNzdCb3O2W74vS+jgoFVrMCgdPdVUgGTkdm+Z3auyBanHyo0/Ag?=
- =?us-ascii?Q?bwu/JvrL1aEl8yARo+X9x5TKRu/YYEDyak3Af0dC3aUJCaot88/sOpXih8Xa?=
- =?us-ascii?Q?XdGgr49Fv9LA/BzSzSMkjco1lx0vTmxs5MuwTkyGxkpX1KYeZXnNcW4MnZq4?=
- =?us-ascii?Q?DtimYiuQBR0QggN2bknLr12xDEfEue0ockE2R4/ApJVHmg2EXrvA4qd2ooeQ?=
- =?us-ascii?Q?SE6URIFD+wL+AXsgTrn31JnDllm59cTFgmwrFYqNZjDRM2MRnV8r5/LW6bNy?=
- =?us-ascii?Q?N6fXoJNtsMFKwQ0NoAGxYyA5CL7dhY3H9OrSdZGHm6ic4n8AHW4PbfZqtHlj?=
- =?us-ascii?Q?CQ5TLEUBM/R784iqixBOGbUmF4Lk85ElnBeVJqa6j34It1rKcEKAO/FcWbRq?=
- =?us-ascii?Q?tGSpNdPl+h5NuFmGrwFUHaTwit1yKbAWtKfiFHL4jAoR3XACrDjYZa+XNeel?=
- =?us-ascii?Q?xvX1PstBBw4eYYVdzQqDGij9RH3N34FDCaKXq6JkDANcbuWzLOORThYIj/Yw?=
- =?us-ascii?Q?twTcxwRhwyw1+8zXvS2afNneecNIE/4Pe25MUY3oRYD49V7pk5mAPZNNVcE7?=
- =?us-ascii?Q?8vbRBYQxVHu/wdIqNIkfQStvElYEcQ+e2+O5rtWx3bZt9+1YAZVGWumOxE79?=
- =?us-ascii?Q?7Qb667LStUe2WrcMiLwNhqWBW0J7ZKp+L+YGzKTYyOHJ+2fx2GNzzDyQC2Ir?=
- =?us-ascii?Q?Df9VF9p8HxKR2lOGwc2L/IcfOBjmHgKlZNsmsPaj8FK9hEquZYz3LdhKi20Y?=
- =?us-ascii?Q?+1m+cy2DmjUfu/D/+IRzwfR5ZzEG9WawJ8J3Xw0erfziaZgOrNWjq+qHmwDT?=
- =?us-ascii?Q?WKUQNa0RT59SG6mdyQyKk1IhwAKnVTgubC0x22Qh6HK/Y8PPM6qG9oEeroHo?=
- =?us-ascii?Q?gKUR++pOrkXkx7OGkrPp2Q1kvivwdt6eIIFgnxQ8S+amCFfTEqQl9Q03YvOE?=
- =?us-ascii?Q?rCi6HiSTDtz1GiXTa/byv6hsuB7rNXNZxKSQ2eMx0yO8sT1PLvDMcAlj6J5G?=
- =?us-ascii?Q?u3SnEM3L0NZP4nzWZMzn+f10nreJvo9F/59JaFmgiRc1cFmeUrOAcUU5R6Oh?=
- =?us-ascii?Q?csrs4QuZVFWooZQBo96gM/XAD1ABuGTuDw6uieEgZ7YInB2B63UanzPCcY0N?=
- =?us-ascii?Q?D/EqlTrMUqeYA4PjyToJM1jRUWbYuEL5hJaBMkAsHG9BRv7BAx7ccLW5lrVW?=
- =?us-ascii?Q?DrY8mihA4oMtGyrInCCN3D0QEE0ndnH2TygQwkqNqVW7UK6+cDTApOcf0ZMb?=
- =?us-ascii?Q?iDhKiBpzBnnBPRC7skYA51hX+jp05qD4sd6L5PlYic/bfQwioKP0SdtwYrGI?=
- =?us-ascii?Q?yyS/X02WCGEB19HziYwUAWL7L1dTtkmpraAbVO70XXtCkD7hXxEtXBj7qj7g?=
- =?us-ascii?Q?8lVgMs1jD2+IpJM68pf4BkYiWMk81VqgC89oqJfB0MmDD3SYsOCn7JINVvvt?=
- =?us-ascii?Q?pne0NB6Xe2rPD1u5eCTGnmRHc8eA1jefBBvAJUEB79Xg+nNDxENlvkXTlRN7?=
- =?us-ascii?Q?ihTwZdZrt/95etThhHw/tIwkeOMmdQOSFIB1nQcQrB8wTFTM+N5jci5EVVOn?=
- =?us-ascii?Q?v0+sIGBrEKD/dNWdDgqds2pdXu6IKjJVl2lP2ZXW?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6bbfe77-a1d8-4a50-c306-08ddf6ca63f5
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 15:45:27.9655
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gxi1OTGIg+mmNM8lBPo0K5KmIBW3tXEXxEElC6iM3uZnlAQJdbKWd1cUHlrd7JIvsXMr2XchzDVc2S7oBDVvIw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB11417
+References: <20250918063944.16331-1-namhyung@kernel.org>
+In-Reply-To: <20250918063944.16331-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 18 Sep 2025 08:48:10 -0700
+X-Gm-Features: AS18NWDFNFct_ayl7wcaTDAYADbAh50UJmqwghs2NJlhzGiI6bfhvidN4bJNIng
+Message-ID: <CAP-5=fVAsDN50X07zpnxikS_tA2cw92YJwHR2f9RVs0fc8j-Ng@mail.gmail.com>
+Subject: Re: [RFC/PATCH 1/2] perf check: Add 'system' subcommand
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 03:55:16AM -0700, Bartosz Golaszewski wrote:
-> On Wed, 17 Sep 2025 11:04:17 +0200, Ioana Ciornei <ioana.ciornei@nxp.com> said:
-> > There are GPIO controllers such as the one present in the LX2160ARDB
-> > QIXIS FPGA which have fixed-direction input and output GPIO lines mixed
-> > together in a single register. This cannot be modeled using the
-> > gpio-regmap as-is since there is no way to present the true direction of
-> > a GPIO line.
-> >
-> > In order to make this use case possible, add a new configuration
-> > parameter - fixed_direction_output - into the gpio_regmap_config
-> > structure. This will enable user drivers to provide a bitmap that
-> > represents the fixed direction of the GPIO lines.
-> >
-> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> > ---
-> > Changes in v2:
-> > - Add the fixed_direction_output bitmap to the gpio_regmap_config
-> > Changes in v3:
-> > - Make a deep copy of the new bitmap.
-> > - Remove the offset check against the ngpio.
-> > - Added documentation for the new config field.
-> >
-> >  drivers/gpio/gpio-regmap.c  | 18 ++++++++++++++++++
-> >  include/linux/gpio/regmap.h |  6 ++++++
-> >  2 files changed, 24 insertions(+)
-> >
-> > diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> > index e8a32dfebdcb..9edd79b5c10e 100644
-> > --- a/drivers/gpio/gpio-regmap.c
-> > +++ b/drivers/gpio/gpio-regmap.c
-> > @@ -31,6 +31,7 @@ struct gpio_regmap {
-> >  	unsigned int reg_clr_base;
-> >  	unsigned int reg_dir_in_base;
-> >  	unsigned int reg_dir_out_base;
-> > +	unsigned long *fixed_direction_output;
-> >
-> >  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
-> >  			      unsigned int offset, unsigned int *reg,
-> > @@ -129,6 +130,13 @@ static int gpio_regmap_get_direction(struct gpio_chip *chip,
-> >  	unsigned int base, val, reg, mask;
-> >  	int invert, ret;
-> >
-> > +	if (gpio->fixed_direction_output) {
-> > +		if (test_bit(offset, gpio->fixed_direction_output))
-> > +			return GPIO_LINE_DIRECTION_OUT;
-> > +		else
-> > +			return GPIO_LINE_DIRECTION_IN;
-> > +	}
-> > +
-> >  	if (gpio->reg_dat_base && !gpio->reg_set_base)
-> >  		return GPIO_LINE_DIRECTION_IN;
-> >  	if (gpio->reg_set_base && !gpio->reg_dat_base)
-> > @@ -277,6 +285,16 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
-> >  			return ERR_PTR(ret);
-> >  	}
-> >
-> > +	if (config->fixed_direction_output) {
-> > +		gpio->fixed_direction_output = devm_bitmap_alloc(config->parent,
-> > +								 chip->ngpio,
-> > +								 GFP_KERNEL);
-> 
-> Please don't use devres hidden in what is effectively a library function for
-> drivers. You have no guarantee this will always be used in probe or that the
-> life-time of this will end with the associated device's detach. Just use
-> a regular bitmap_alloc().
+On Wed, Sep 17, 2025 at 11:39=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> The 'perf check system' is to check sysctl settings related to perf.
+> By default it'd print the following output.
+>
+>   $ perf check system
+>   perf_event_paranoid  =3D 2      # non-root can profile user code only
+>   perf_event_max_stack =3D 127    # maximum callchain length
+>   perf_event_mlock_kb  =3D 516    # maximum ring buffer size (including a=
+ header page) for non-root
+>   nmi_watchdog         =3D 1      # a hardware PMU counter may be used by=
+ the kernel
+>   kptr_restrict        =3D 0      # kernel pointers are printed as-is
+>
+> The -q option suppresses the description.  It can also take command line
+> argument to match specific items.
+>
+>   $ perf check system -q nmi
+>   nmi_watchdog         =3D 1
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/Documentation/perf-check.txt |  20 ++++
+>  tools/perf/builtin-check.c              | 116 +++++++++++++++++++++++-
+>  2 files changed, 135 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documen=
+tation/perf-check.txt
+> index ee92042082f73121..34dccc29d90d2fdf 100644
+> --- a/tools/perf/Documentation/perf-check.txt
+> +++ b/tools/perf/Documentation/perf-check.txt
+> @@ -10,6 +10,7 @@ SYNOPSIS
+>  [verse]
+>  'perf check' [<options>]
+>  'perf check' {feature <feature_list>} [<options>]
+> +'perf check' {system <setting_list>} [<options>]
+>
+>  DESCRIPTION
+>  -----------
+> @@ -22,6 +23,9 @@ compiled-in/built-in or not.
+>  Also, 'perf check feature' returns with exit status 0 if the feature
+>  is built-in, otherwise returns with exit status 1.
+>
+> +If the subcommand 'system' is used, then system settins are printed on
+> +the standard output with explanation.
+> +
+>  SUBCOMMANDS
+>  -----------
+>
+> @@ -69,6 +73,22 @@ SUBCOMMANDS
+>                  zlib                    /  HAVE_ZLIB_SUPPORT
+>                  zstd                    /  HAVE_ZSTD_SUPPORT
+>
+> +system::
+> +
+> +       Print system settings (sysctl) that affect perf behaviors.
+> +
+> +       Example Usage:
+> +               perf check system
+> +               perf check system watchdog
+> +
+> +       Supported settings:
+> +               perf_event_paranoid
+> +               perf_event_max_stack
+> +               perf_event_mlock_kb
+> +               nmi_watchdog
+> +               kptr_restrict
+> +
+> +
+>  OPTIONS
+>  -------
+>  -q::
+> diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+> index b1e205871ab17a77..1c7c6bb5da5ccbf2 100644
+> --- a/tools/perf/builtin-check.c
+> +++ b/tools/perf/builtin-check.c
+> @@ -3,24 +3,30 @@
+>  #include "color.h"
+>  #include "util/debug.h"
+>  #include "util/header.h"
+> +#include <api/fs/fs.h>
+>  #include <tools/config.h>
+>  #include <stdbool.h>
+>  #include <stdio.h>
+>  #include <string.h>
+>  #include <subcmd/parse-options.h>
+>
+> -static const char * const check_subcommands[] =3D { "feature", NULL };
+> +static const char * const check_subcommands[] =3D { "feature", "system",=
+ NULL };
+>  static struct option check_options[] =3D {
+>         OPT_BOOLEAN('q', "quiet", &quiet, "do not show any warnings or me=
+ssages"),
+>         OPT_END()
+>  };
+>  static struct option check_feature_options[] =3D { OPT_PARENT(check_opti=
+ons) };
+> +static struct option check_system_options[] =3D { OPT_PARENT(check_optio=
+ns) };
+>
+>  static const char *check_usage[] =3D { NULL, NULL };
+>  static const char *check_feature_usage[] =3D {
+>         "perf check feature <feature_list>",
+>         NULL
+>  };
+> +static const char *check_system_usage[] =3D {
+> +       "perf check system",
+> +       NULL
+> +};
+>
+>  #define FEATURE_STATUS(name_, macro_) {    \
+>         .name =3D name_,                     \
+> @@ -166,6 +172,112 @@ static int subcommand_feature(int argc, const char =
+**argv)
+>         return !feature_enabled;
+>  }
+>
+> +static int read_sysctl_kernel_int(const char *name)
+> +{
+> +       char path[128];
+> +       int value;
+> +
+> +       scnprintf(path, sizeof(path), "kernel/%s", name);
+> +       if (sysctl__read_int(path, &value))
+> +               return INT_MAX;
+> +
+> +       return value;
+> +}
+> +
+> +static const char *system_help_perf_event_paranoid(int value)
+> +{
+> +       if (value =3D=3D 2)
+> +               return "non-root can profile user code only";
+> +       if (value =3D=3D 1)
+> +               return "non-root can profile kernel and user code";
+> +       if (value =3D=3D 0)
+> +               return "non-root can profile system-wide w/o tracepoints =
+data";
+> +       if (value < 0)
+> +               return "no restrictions";
+> +
+> +       return "non-root cannot use perf event";
+> +}
+> +
+> +static const char *system_help_perf_event_max_stack(int value __maybe_un=
+used)
+> +{
+> +       return "maximum callchain length";
+> +}
+> +
+> +static const char *system_help_perf_event_mlock_kb(int value __maybe_unu=
+sed)
+> +{
+> +       return "maximum ring buffer size (including a header page) for no=
+n-root";
+> +}
+> +
+> +static const char *system_help_nmi_watchdog(int value)
+> +{
+> +       if (value)
+> +               return "a hardware PMU counter may be used by the kernel"=
+;
+> +
+> +       return "perf can use full PMU counters";
+> +}
+> +
+> +static const char *system_help_kptr_restrict(int value)
+> +{
+> +       if (value =3D=3D 0)
+> +               return "kernel pointers are printed as-is";
+> +       if (value =3D=3D 1)
+> +               return "non-root cannot see the kernel pointers";
+> +       if (value =3D=3D 2)
+> +               return "root may not see some kernel pointers";
+> +
+> +       return "unknown value";
+> +}
+> +
+> +/**
+> + * Usage: 'perf check system <settings>'
+> + *
+> + * Show system settings that affect perf behavior.
+> + */
+> +static int subcommand_system(int argc, const char **argv)
+> +{
+> +#define PERF_SYSCTL(name) { #name, system_help_##name }
+> +       struct {
+> +               const char *name;
+> +               const char *(*help)(int value);
+> +       } sysctls[] =3D {
+> +               PERF_SYSCTL(perf_event_paranoid),
+> +               PERF_SYSCTL(perf_event_max_stack),
+> +               PERF_SYSCTL(perf_event_mlock_kb),
+> +               PERF_SYSCTL(nmi_watchdog),
+> +               PERF_SYSCTL(kptr_restrict),
+> +       };
+> +#undef PERF_SYSCTL
+> +
+> +       argc =3D parse_options(argc, argv, check_system_options,
+> +                            check_system_usage, 0);
+> +
+> +       for (size_t i =3D 0; i < ARRAY_SIZE(sysctls); i++) {
+> +               int value;
+> +
+> +               if (argc) {
+> +                       bool found =3D false;
+> +
+> +                       /* only show entries match to command line argume=
+nts */
+> +                       for (int k =3D 0; k < argc; k++) {
+> +                               if (strstr(sysctls[i].name, argv[k])) {
+> +                                       found =3D true;
+> +                                       break;
+> +                               }
+> +                       }
+> +                       if (!found)
+> +                               continue;
+> +               }
+> +
+> +               value =3D read_sysctl_kernel_int(sysctls[i].name);
+> +               printf("%-20s =3D %d", sysctls[i].name, value);
+> +               if (!quiet)
+> +                       printf("\t# %s", sysctls[i].help(value));
+> +               printf("\n");
+> +       }
+> +
+> +       return 0;
 
-Ok, sure. I will switch to bitmap_alloc() and bitmap_free().
+This looks useful! Rather than returning 0 should this return
+something indicating whether perf does or doesn't have the permission?
+In that case, what about root? We have this pattern in our shell
+tests:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/tests/shell/lib/stat_output.sh?h=3Dperf-tools-next
+```
+function ParanoidAndNotRoot()
+{
+[ "$(id -u)" !=3D 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -g=
+t $1 ]
+}
+```
+I wonder things like this can use these values instead.
 
-Ioana
+Thanks,
+Ian
+
+
+> +}
+> +
+>  int cmd_check(int argc, const char **argv)
+>  {
+>         argc =3D parse_options_subcommand(argc, argv, check_options,
+> @@ -176,6 +288,8 @@ int cmd_check(int argc, const char **argv)
+>
+>         if (strcmp(argv[0], "feature") =3D=3D 0)
+>                 return subcommand_feature(argc, argv);
+> +       if (strcmp(argv[0], "system") =3D=3D 0)
+> +               return subcommand_system(argc, argv);
+>
+>         /* If no subcommand matched above, print usage help */
+>         pr_err("Unknown subcommand: %s\n", argv[0]);
+> --
+> 2.51.0
+>
 
