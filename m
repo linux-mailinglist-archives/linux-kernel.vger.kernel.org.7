@@ -1,474 +1,191 @@
-Return-Path: <linux-kernel+bounces-823483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FBEB869ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:08:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5427B869E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05AA626501
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A8533BFFFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C022D3ED2;
-	Thu, 18 Sep 2025 19:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2122D1905;
+	Thu, 18 Sep 2025 19:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLyH5h/M"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EqYM8Wnl"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013021.outbound.protection.outlook.com [40.93.201.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39824280CC8
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758222472; cv=none; b=Vtd8r/looqm4vUOh5M56helI8SIpsC6Aohf+B02/7dBQ3vBXD/TZqqYtyMDyJRCLVQw5HQHEOvehQ2Ch3N5o7Z0BiyiLOBBZ+7CbnPNDt8FjEX4npWaMQY4Fp0S85ECdXMtXCEPkR1lpApeKSbvPly0xXylbbFemwubB84hXvn4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758222472; c=relaxed/simple;
-	bh=jrIvI+w6CK9otr03Fn28JkgZC0RCwPVB7AkcnRP1j40=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1Hqkh1CxlvPbpr1xWpnkQYM6YQzHRzIqCIChmiCMUmaH9vHdme2Tw1bR0PWZVhAcpJf0lHbbWcB5mGd7OHpeRs5ThPc32Q//Y9KFLsgFCww5R+SVd+5tHbtJcp8+oU4mvmYjoZmrJSRNcFq9k/MS+gQ8vjhuiQLG09vixezgfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLyH5h/M; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2570bf605b1so18017025ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:07:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758222469; x=1758827269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MB2jfHSKSzLMOVGGO7AnFq090fGDv2evBNxwEJ6iueg=;
-        b=DLyH5h/Mi/B1i63bJJKvk5L2MfmMlq/e+x5JAkJgZpgc0hsCohFEGMBS+j1/x2H/Fd
-         2Wyk2vcScV9vBzfP8MrIc4OclwJoL96lCOgbJ9nRKmC+oyNzV76oYl8KyOa+9psPtRAI
-         gKxQEEgU47+ZR4DKoUY6DkT51+RVqKE0O3apCAn07PA5F8OPE1FtzOLZm6w9ce9Z21ra
-         A6uJ7bgjyWyIU4m6+RK7AC/ECdDFfSME4izQW2b/zj3IljisY0pS678aKcc1T/Ls1md8
-         BiDRcGKL6j4/IkaTYgQaDXltRFLsWYEgFZiswAwFVWP5HQYqjKgdSqYn0l800BLNG9V9
-         vuFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758222469; x=1758827269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MB2jfHSKSzLMOVGGO7AnFq090fGDv2evBNxwEJ6iueg=;
-        b=YTVm3Y2528jJB+Oe6JH9eKvhf9SfrkzeiO1YQOFoB8rBH/CqJwNoim6Ob9CIIAtI0X
-         JY7uch/cIaJ4wDYr0LGgKwohMm7a7b/PyO9+/pZGOWAYaw1N+tltOUvBwk/7ZvTWVaMU
-         M2Zi6upuRQ/mayp4wHSYHWqLIdMmJ1USMZnSww+fQfkNjr+hO8Y4JSwsTJ2fXK0TGOFI
-         HbXdFh4yWVOfjPr1kSwebP1rVD7eM71zfHp/CcUfnd6fjx7BiT2/nbv+BP/yAbstl6Gp
-         S7k4gwo1hnvOEOlj8V+prVoRe8wQz58SjCI/eD0q2eqPf3xhNjFeHowYfUL+pCPAJ9PS
-         M10Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0IWi4xbrJo3kHoSPMoezsg312Tt7wRRjcEGAjiLL5ciwfaBbF6YMfUIRpJ5xWu5/640ItDLp8TswErsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzzNO20fNhtoP8fn6rE28C9enjUa+mglD1wA+8JBbKtHo+FGsv
-	xM4wSHmaHf+vdv5jlAaXzOy2vZz67kyCjKQ3Dy7RN7qbEivaFSVZr0Om
-X-Gm-Gg: ASbGncud5/2/ByBM+zTiC6XAjzp0bGaC2jH74Zi6YymK6ZCe9ROFQEHY5+iBTvxS1W6
-	6fNVAnH3ofYworFLV6Wa1JQyFcfLqsu1Fwzqc9AmSg5WIGbo+EAVxYO4HMsbvXxRgo2lPT1Ka9M
-	XyWJ1+YvdR8ABKXYLzXojcPHZcuo+F4ZDqVCiPfcAwei7EyMMYNEKyg119f0FJxrR5dUUkXb9Vc
-	7VVSAFuB+j4A7y9rHzvIHqEycTV9pPckPIq7x5EwDzO/raayHe2ku5RfHvcforoGEM4oIpBLLKN
-	9PEbzH4WSEIxUPTzniFXhtsi9tZbSI5tJm52K9kMOSNPhlEkpuCfn7wpMnXwnBP/h2KEU8GWRA+
-	aHjcsneMmLkTIk9wld4V9tUGcCEbM6YG63vgxJ9NlL9EvP3n1wWg=
-X-Google-Smtp-Source: AGHT+IEtuI2s8Fy98EzG7d6EdEZGY4CPQNtcHrHxMNfvblBRQK9roCHaxPBCYJ3HUAC/EffzpLZtPQ==
-X-Received: by 2002:a17:903:380d:b0:246:de71:1839 with SMTP id d9443c01a7336-269ba5512ddmr8012325ad.50.1758222469506;
-        Thu, 18 Sep 2025 12:07:49 -0700 (PDT)
-Received: from akshayaj-lenovo.. ([223.233.78.39])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802de635sm32989235ad.82.2025.09.18.12.07.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 12:07:48 -0700 (PDT)
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-To: dan@dlrobertson.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org
-Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
-	shuah@kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: accel: bma400: Refactor generic interrupt configuration
-Date: Fri, 19 Sep 2025 00:37:21 +0530
-Message-ID: <20250918190729.387117-1-akshayaj.lkd@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C374A2D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758222471; cv=fail; b=F0+ap/UnCRO9enTbi/9p7Y9RRkMVikdxhH9mPnb1qsIKk6IyY7+C8AUkKdcKKwOyG23sp2tuoHkkoYrw63i/WbMzFvcQlo0T/iIuebfijsf1d+c2wfaoBGhJrjuQzOVT8FOcsLrjgSm3DkW4hsgqPFxSYHXPUApviw3u1YpfpVU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758222471; c=relaxed/simple;
+	bh=6efY2+Qvoc7tMYE9MZrL2BRIuPMq3TWikzIcQ5jxYyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X+orfheLWAyzymNlnaG8lrSFZa/rdG5567q5e9+uGlnFtVfIVZijhyAHIQakNidYCCpoiJl8oN+LmYacJArvr3M5k41oh4/MzSEppZ8QmQ0zwrv8QSEXzLrhOxTGEcxLb5qRj+wTbltovwwFt7cngkBoBC7B9BG7Te95fXkrXOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EqYM8Wnl; arc=fail smtp.client-ip=40.93.201.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dfIZPUWC9wZltFoq7Ckv0gDtGRJHebPIJogDWJhqVV6Z29RW5tXuYQVCttPh0p9vQVHaIq3KbMcVy8DxAao0L4kW4pOuH4PcK6Sp8Nizg5bxqxauyGonyOgqk93FclDzSfpQjc44Wx2pZvkh55mscAHQg8hbVHRwJtXsM9+5/kKvhn9eRqIY+u7Y3ZjpynUUPFreSdQAXkuWLYoZ03m4lrr4AK8/VkcoyAqj13w7P7P/AhhuQgkBrUpB7oBOuXZpMOx4VI/karLeEKQAn0+IGxFL8O5/5Ep/zktu8lEEIUXyMgXjZFkpCN4lcpWKbNx5C3xo5rUcwJ3QKMEjK+AsQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LHQ1GsJyq37ZK5GSdbMI0I3uZiYr1KlJwQp2czvbGPM=;
+ b=WJi5xfuanz8qcgGnqPpJsuqTm7RObP0HoQmMJoPuU4R8oR7HR8QrC/txwYtk3i/N+dxRLhGsKpaixXNszUDj89twRITALiwy0gyXdYfxDkanGIV0Cfv8jx5eZ0nSx8zLCOjBpLm4/Trm82qcjaAD+wLHKN5t+esf0VzgWnNTWen//AzvA4loKnpN0hXF3K8il11tyHbrcFM+wUOedeOsqfeVriaN81Y6e/YyeSGzYGjtRmutL7ONkegz60Zvf6MjGBEeId89S8IOZ2buosYyH7hiZH+8x2TLIBv3QY0vwispK7Z16E3JdqZs296nJcJQrN9mvmbp4h7dQHBBxUa7+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LHQ1GsJyq37ZK5GSdbMI0I3uZiYr1KlJwQp2czvbGPM=;
+ b=EqYM8Wnl6TparRrGsu1HtVAzNd+gFiIR8JQEHobTYQ5qOV2B0gBRv6SHkXwwWQnMD6MoUFdVFepi1ZHOyYu8KtlfRqtvEMO+GcKkHZGNfDSjPp6YACY5CjFJent7IdRM64v+rDLxOHiFOWQwWYg9RJs4wL2uQFZbQe7lY0NHiiN0G1zh1+N2aiN7mww5oTJqmSzww03g+hw5Dvr+5N6hpqlxg0IEoCtSVzgHv30ZBQaTZX/9tIw83chGvXQnepiNlK5+seuaUKkVKLtd11fSnTEa+i8ezdY0+7n7MtINcyUCXA+0sV10aFTD+MkernIzJY790xbOEspxdnyPxrW0YQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ BY5PR12MB4209.namprd12.prod.outlook.com (2603:10b6:a03:20d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 18 Sep
+ 2025 19:07:44 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
+ 19:07:44 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, kirill@shutemov.name, hughd@google.com,
+ mpenttil@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH mm-new v2 1/2] mm: make is_guard_pte_marker() available
+ for hugepage collapse
+Date: Thu, 18 Sep 2025 15:07:42 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <E6C0F9F8-B024-45DB-BD53-2BB964EC7703@nvidia.com>
+In-Reply-To: <20250918050431.36855-2-lance.yang@linux.dev>
+References: <20250918050431.36855-1-lance.yang@linux.dev>
+ <20250918050431.36855-2-lance.yang@linux.dev>
+Content-Type: text/plain
+X-ClientProxiedBy: BL1P223CA0044.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:208:5b6::17) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BY5PR12MB4209:EE_
+X-MS-Office365-Filtering-Correlation-Id: d54abd97-fd5e-4ffa-54ef-08ddf6e6a607
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NeiCL+SWIip1DeH/2C4RfTnJGuZssLli4fBKy+XtYvCnb6wsLF7UcoadTOrl?=
+ =?us-ascii?Q?Yqmsk0k3SIlof5LtlK8XWl8kWdVRUW98+aD8DleOmkjkQ9axMafk11HgN402?=
+ =?us-ascii?Q?3EMNNugrMDjLQVyj1r2cE4G5f1TwW99t45CHEoMv8fyq7CNE2kYkIlbC0i2B?=
+ =?us-ascii?Q?nPjHsCXd4wz5/Lx4Dsq8fEB6GLTEXypv8fG2lZV+ScChzTBfQ6BTVacrUEOn?=
+ =?us-ascii?Q?w/ZtBYEO7o+HXGH9UhCNPBaV9nGtpDUlWLg5dP5S8qYQy1fDxyQ/UO8Q9XhN?=
+ =?us-ascii?Q?vqGsbt+kDu759kvBi/XRZzT/nOerYv728Ai6KX7w0HQel7nr5dRF9jeG7gT0?=
+ =?us-ascii?Q?p0FoI6nDKgM1uSgEia2M1rHWnjOGqHsrnM/gtpOcaZa+FrKOF+uWjBysiyOB?=
+ =?us-ascii?Q?HLNuYX2YeHptod6cUtg6GpUqz6Y2B4IooVW8u3AxSU3ImRgNfIF0wrn4l5kN?=
+ =?us-ascii?Q?f7hDRb/sMsSQXp0maAq7gZXedYBs8lozAGGYau1nxGwcprcDNnNC3WReIL23?=
+ =?us-ascii?Q?iyXC00Lb+yl4w8n/5L2cRbtT+b1f6oaOHIAFmqgds9o/LTW6cy+pGe0dA8gq?=
+ =?us-ascii?Q?1ebyqUxYzNrh8kVre6uIZA0jaPc4fZT1IEmphAav+CIdqNWZ3HW9QZXqWjMo?=
+ =?us-ascii?Q?ZrDl2S2M4VjNUDKK1yflxxhfXqng/UyvVL83iPrvi0g9fpBOzLjcjgqvO4qI?=
+ =?us-ascii?Q?Dz0MO7htuu1XDdFcLjnip5ED4zGQxrlmi+onZjV8hkin8iO1tO6kLFYf3jr4?=
+ =?us-ascii?Q?KGsZa8GJzkA3dAaqajLAuqc3InfK7lZrt9QFjpVQ0ozG0ey31YGYDg6iMKCs?=
+ =?us-ascii?Q?3YdhG/njJHXHUKHobBmQtluG9Uhbi5/uQvrkz+woGf7VJlbqbYMeOVaveuXY?=
+ =?us-ascii?Q?tKNjGW+DLg+QfGebXhyT5v+7703PPnX//KEoU+GBHQEEi7nRXNhH3/D2Ges2?=
+ =?us-ascii?Q?AIKlLHbAhYlgOFQwFo2A+uMVva2czPVIztBDZef5721Q15VN8yyo6HnGMPUS?=
+ =?us-ascii?Q?SNcco7jnZkZrDT29kS6MG856SwxI875rJNVZ8+Zksn0mkS/YqDDHgaeynfxQ?=
+ =?us-ascii?Q?rWj3pYjmUxHT5+UZ8niSNQ7NEFHfJlQRRsCBCSjQDoKbVNmFwSokFnmH4ApP?=
+ =?us-ascii?Q?Tt8aXYJH9S+/GZmxavyKPe0ATlNgI2EIHshPKaw3gQSh7CTmIUCBi9mD4iqI?=
+ =?us-ascii?Q?3vpbZ3h8+iJVXQyC0VejhiLfnHp834hg8iY+pm+2OuAlZ2fFx+M+80Qgv90X?=
+ =?us-ascii?Q?lRrUhXctJf20qZKHBFpFwQGMYi9CLt0UOZas/XP9Yeh6Sg4msq7a/xm4d3Ca?=
+ =?us-ascii?Q?UkmjufpIRqoL76g2dkkF1TRhyHSPfGY71Hzw8D5qua02g0hwH4fhVgUjYBBy?=
+ =?us-ascii?Q?RZ5gXDu2Vwq6mSbF/qh3LrMdBZNgt2u47hXknd6A/goAMKexCg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?syBBEoadb2CN8nQfevmzADrsR3iWaQp13urih29wIXVlO4WhaSLo3ZhoY2Jq?=
+ =?us-ascii?Q?mbuw/ke9bp+EeLqRzcZtJr+EAeyi/kkLedpsI6AJyBgHoOHsW/tXOLLnbE+p?=
+ =?us-ascii?Q?KFppw1E3PRZHP/61p7fHN5vmC+arswNdZYFxUro9Vg5m7GdNn/hfUG+LjdN/?=
+ =?us-ascii?Q?QFPXdQfUr/UmeHp/wHVL0kdydc9lUU8MGO0Q0Fq0nriCQRbEsZTCUOLeus/4?=
+ =?us-ascii?Q?KZ7rhsTMzwZheY14kHu39dzjrG7NPC/ehtdfLIcYNP1bVJQk3mvyWtlj6xbC?=
+ =?us-ascii?Q?RoFOiLlPrK98vMADWypeDVLU+23j9bY22yZPOVXXSCNCT1aJKJxNfrtiWYNO?=
+ =?us-ascii?Q?3qEWXmdRzHQeo6y7miI6UBLa1dK0BhuL4Vi8+qOPRNJSnhQaP1ihdjGfGcz3?=
+ =?us-ascii?Q?+jhIse76Zdfi0g7ubqF3h8YHwdWU/2z0qB4G/P2VskYASLS//oRywdqbYboO?=
+ =?us-ascii?Q?SPYG4xW6Gm6xwLhD7Xj7EFMZvDkNqubI7mWSxpAliUi9HICgPfu/e9BDhPD+?=
+ =?us-ascii?Q?7tkWQ2PDFXP79WLWpcg2LJ0jdO9ZbnFsg2UP/ZnCEH9Q5uxQq9TmnMhVu5rN?=
+ =?us-ascii?Q?4Q0XuQLzxH7hDU5OXZv450xTNOirzU68rKPksvs6fxqdnQ3nEuFqApmNG+ZR?=
+ =?us-ascii?Q?olDpF7KR1JkyBtTq6/GSERQ36IePbUFS8Ik3L6R4kMw/ey9APRe09dumsY7M?=
+ =?us-ascii?Q?ovCkziBSl41RO+DInLJe02z8Tev42cEzT1M0g6GQyPbrTEoBf3Q/xcWY1scG?=
+ =?us-ascii?Q?EhDBYbpvXgFePlpHcQ+h/fZhN7Vz80NP3e3gsLVvKP3/ZLFOXcnZgG5+WaUG?=
+ =?us-ascii?Q?Xc7a0rSgl04vNtTUMkatM1aLZBjphpfT3nqinsB/QoApA/YjpcjFvAJR5SKK?=
+ =?us-ascii?Q?gKxUqQOjCUCcv9OQNS/zaYBoLbd1sEvNXl/r4imPNh2qj8ozflkIzWDnX8R6?=
+ =?us-ascii?Q?othHn+gfXzxq6XeMFTs8DCeijuOufvKVq0pbwXHTFAgudnTJllKiVu2xS8hb?=
+ =?us-ascii?Q?NcW8M+Kv9Ylr1DEtB/OCtBOp0Y8QAJNNyHUMFBuVhirVLnb+Vvvesnr+c4BE?=
+ =?us-ascii?Q?zTmdsu/J/GcEQ6PfhJNZgA6KXZZEDawTNyDxWEQKJer6il1EmwaxSQ+he82s?=
+ =?us-ascii?Q?Rt7A6V4ougYuKLURbbb+HXD5Thnfc2zSeUwrLQijHREQ091ECY09E7rcW9FW?=
+ =?us-ascii?Q?yT3584eAg3RtV73IAd989vzODbO4y+aP//RNMHEmSxVqMTTn52i2ncrXubsy?=
+ =?us-ascii?Q?QkBFEJd/ZvxiJhxBuSBhORAIlzncAqFpN47ANP0RFgaLzfsu26og1z1WN9Bh?=
+ =?us-ascii?Q?jGIqKDpw/HplAeaz8DtED7AfB/GHc/7PbkLLkX4HRDIPZ1EnDqgJVGRnOf9+?=
+ =?us-ascii?Q?wlZUnIozaamOhouMdORiTwR5yGotVgJULBddRudrAEFeZI5YefGtiR/d7l3T?=
+ =?us-ascii?Q?irCFQtZIIan962yO9H8YNeqDKAFM/qfV0Cebcf4B6RFRr6CcknKjXBZ00OQa?=
+ =?us-ascii?Q?bbw/3d+NXw8sLyPdpYjVBdk4gLpO5fA2447Yav86pv9OLD8eafhzhxZAAJK7?=
+ =?us-ascii?Q?shGJ3+Ykbi7GFDmihQmXcwTcKnR8TQon29snm9OD?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d54abd97-fd5e-4ffa-54ef-08ddf6e6a607
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 19:07:44.6295
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xeZzO9h7hkKwQV0N7Y6A7eoaAuktJaL1FM4a9bISIrLGQfs+eYp+y3O1euFFnz1q
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4209
 
-Refactor the generic interrupt configuration logic to improve readability
-and reduce repetitive code. Replace hard-coded register values with macros
-and enums, making it clearer what configuration is written to hardware.
+On 18 Sep 2025, at 1:04, Lance Yang wrote:
 
-Introduce a const struct to map event direction to the corresponding
-generic interrupt. This removes the need for switch statements in multiple
-callbacks, including activity event setup, read_event_value, and
-write_event_value, while still performing the selection at runtime.
+> From: Lance Yang <lance.yang@linux.dev>
+>
+> The hugepage collapsing code needs is_guard_pte_marker() to correctly
+> handle PTE guard markers. Move the helper to a shared header and expose
+> it.
+>
+> While at it, simplify the implementation. The current code is redundant
+> as it effectively expands to:
+>
+>   is_swap_pte(pte) &&
+>   is_pte_marker_entry(...) && // from is_pte_marker()
+>   is_pte_marker_entry(...)    // from is_guard_swp_entry()
+>
+> While a modern compiler could likely optimize this away, let's have clean
+> code and not rely on it.
+>
+> Cc: Kairui Song <kasong@tencent.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+>  include/linux/swapops.h | 6 ++++++
+>  mm/madvise.c            | 6 ------
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
 
-This change has no functional impact but simplifies the code and makes it
-easier to maintain and extend in future updates.
-
-Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
----
- drivers/iio/accel/bma400.h      |  71 +++++++++++++++---
- drivers/iio/accel/bma400_core.c | 128 ++++++++++++++++----------------
- 2 files changed, 125 insertions(+), 74 deletions(-)
-
-diff --git a/drivers/iio/accel/bma400.h b/drivers/iio/accel/bma400.h
-index 932358b45f17..ab7d1d139b66 100644
---- a/drivers/iio/accel/bma400.h
-+++ b/drivers/iio/accel/bma400.h
-@@ -68,7 +68,19 @@
- #define BMA400_CMD_REG              0x7e
- 
- /* Interrupt registers */
--#define BMA400_INT_CONFIG0_REG	    0x1f
-+#define BMA400_INT_CONFIG0_REG			0x1f
-+#define BMA400_INT_CONFIG0_ORTN_CHG_MASK	BIT(1)
-+#define BMA400_INT_CONFIG0_GEN1_MASK		BIT(2)
-+#define BMA400_INT_CONFIG0_GEN2_MASK		BIT(3)
-+#define BMA400_INT_CONFIG0_FIFO_FULL_MASK	BIT(5)
-+#define BMA400_INT_CONFIG0_FIFO_WTRMRK_MASK	BIT(6)
-+#define BMA400_INT_CONFIG0_DRDY_MASK		BIT(7)
-+
-+enum generic_intr {
-+	GEN1_INTR,
-+	GEN2_INTR
-+};
-+
- #define BMA400_INT_CONFIG1_REG	    0x20
- #define BMA400_INT1_MAP_REG	    0x21
- #define BMA400_INT_IO_CTRL_REG	    0x24
-@@ -96,15 +108,53 @@
- #define BMA400_ACC_ODR_MIN_HZ       12
- 
- /* Generic interrupts register */
--#define BMA400_GEN1INT_CONFIG0      0x3f
--#define BMA400_GEN2INT_CONFIG0      0x4A
--#define BMA400_GEN_CONFIG1_OFF      0x01
--#define BMA400_GEN_CONFIG2_OFF      0x02
--#define BMA400_GEN_CONFIG3_OFF      0x03
--#define BMA400_GEN_CONFIG31_OFF     0x04
--#define BMA400_INT_GEN1_MSK         BIT(2)
--#define BMA400_INT_GEN2_MSK         BIT(3)
--#define BMA400_GEN_HYST_MSK         GENMASK(1, 0)
-+#define BMA400_GENINT_CONFIG_REG_BASE	0x3f
-+#define BMA400_NUM_GENINT_CONFIG_REGS	11
-+#define BMA400_GENINT_CONFIG_REG(gen_intr, config_idx)	\
-+	(BMA400_GENINT_CONFIG_REG_BASE +		\
-+	(gen_intr) * BMA400_NUM_GENINT_CONFIG_REGS +	\
-+	(config_idx))
-+
-+/* Generic Interrupt Config0 register */
-+#define BMA400_GENINT_CONFIG0_HYST_MASK			GENMASK(1, 0)
-+#define BMA400_GENINT_CONFIG0_REF_UPD_MODE_MASK		GENMASK(3, 2)
-+#define BMA400_GENINT_CONFIG0_DATA_SRC_MASK		BIT(4)
-+#define BMA400_GENINT_CONFIG0_X_EN_MASK			BIT(5)
-+#define BMA400_GENINT_CONFIG0_Y_EN_MASK			BIT(6)
-+#define BMA400_GENINT_CONFIG0_Z_EN_MASK			BIT(7)
-+
-+enum bma400_hysteresis_config {
-+	NO_HYSTERESIS,
-+	HYSTERESIS_24MG,
-+	HYSTERESIS_48MG,
-+	HYSTERESIS_96MG
-+};
-+
-+enum bma400_accel_data_src {
-+	ACCEL_FILT1,
-+	ACCEL_FILT2
-+};
-+
-+enum bma400_ref_updt_mode {
-+	BMA400_REF_MANUAL_UPDT_MODE,
-+	BMA400_REF_ONETIME_UPDT_MODE,
-+	BMA400_REF_EVERYTIME_UPDT_MODE,
-+	BMA400_REF_EVERYTIME_LP_UPDT_MODE
-+};
-+
-+/* Generic Interrupt Config1 register */
-+#define BMA400_GENINT_CONFIG1_AXES_COMB_MASK		BIT(0)
-+#define BMA400_GENINT_CONFIG1_DETCT_CRIT_MASK		BIT(1)
-+
-+enum bma400_genintr_acceleval_axescomb {
-+	BMA400_EVAL_X_OR_Y_OR_Z,
-+	BMA400_EVAL_X_AND_Y_AND_Z,
-+};
-+
-+enum bma400_detect_criterion {
-+	BMA400_DETECT_INACTIVITY,
-+	BMA400_DETECT_ACTIVITY,
-+};
- 
- /* TAP config registers */
- #define BMA400_TAP_CONFIG           0x57
-@@ -119,6 +169,7 @@
- #define BMA400_TAP_QUIETDT_MSK      GENMASK(5, 4)
- #define BMA400_TAP_TIM_LIST_LEN     4
- 
-+
- /*
-  * BMA400_SCALE_MIN macro value represents m/s^2 for 1 LSB before
-  * converting to micro values for +-2g range.
-diff --git a/drivers/iio/accel/bma400_core.c b/drivers/iio/accel/bma400_core.c
-index 85e23badf733..d59c26b8a57f 100644
---- a/drivers/iio/accel/bma400_core.c
-+++ b/drivers/iio/accel/bma400_core.c
-@@ -121,6 +121,29 @@ struct bma400_data {
- 	__be16 duration;
- };
- 
-+struct bma400_genintr_info {
-+	u8 genintr;
-+	unsigned int intrmask;
-+	enum iio_event_direction dir;
-+	enum bma400_detect_criterion detect_mode;
-+};
-+
-+/* Lookup struct for determining GEN1/GEN2 based on dir */
-+static const struct bma400_genintr_info bma400_genintrs[] = {
-+	[IIO_EV_DIR_RISING] = {
-+		.genintr = GEN1_INTR,	/* 0 for GEN1 */
-+		.intrmask = BMA400_INT_CONFIG0_GEN1_MASK,
-+		.dir = IIO_EV_DIR_RISING,
-+		.detect_mode = BMA400_DETECT_ACTIVITY,
-+	},
-+	[IIO_EV_DIR_FALLING] = {
-+		.genintr = GEN2_INTR,	/* 1 for GEN2 */
-+		.intrmask = BMA400_INT_CONFIG0_GEN2_MASK,
-+		.dir = IIO_EV_DIR_FALLING,
-+		.detect_mode = BMA400_DETECT_INACTIVITY,
-+	}
-+};
-+
- static bool bma400_is_writable_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-@@ -1114,10 +1137,10 @@ static int bma400_read_event_config(struct iio_dev *indio_dev,
- 	case IIO_ACCEL:
- 		switch (dir) {
- 		case IIO_EV_DIR_RISING:
--			return FIELD_GET(BMA400_INT_GEN1_MSK,
-+			return FIELD_GET(BMA400_INT_CONFIG0_GEN1_MASK,
- 					 data->generic_event_en);
- 		case IIO_EV_DIR_FALLING:
--			return FIELD_GET(BMA400_INT_GEN2_MSK,
-+			return FIELD_GET(BMA400_INT_CONFIG0_GEN2_MASK,
- 					 data->generic_event_en);
- 		case IIO_EV_DIR_SINGLETAP:
- 			return FIELD_GET(BMA400_S_TAP_MSK,
-@@ -1159,59 +1182,50 @@ static int bma400_activity_event_en(struct bma400_data *data,
- 				    enum iio_event_direction dir,
- 				    int state)
- {
--	int ret, reg, msk, value;
--	int field_value = 0;
--
--	switch (dir) {
--	case IIO_EV_DIR_RISING:
--		reg = BMA400_GEN1INT_CONFIG0;
--		msk = BMA400_INT_GEN1_MSK;
--		value = 2;
--		set_mask_bits(&field_value, BMA400_INT_GEN1_MSK,
--			      FIELD_PREP(BMA400_INT_GEN1_MSK, state));
--		break;
--	case IIO_EV_DIR_FALLING:
--		reg = BMA400_GEN2INT_CONFIG0;
--		msk = BMA400_INT_GEN2_MSK;
--		value = 0;
--		set_mask_bits(&field_value, BMA400_INT_GEN2_MSK,
--			      FIELD_PREP(BMA400_INT_GEN2_MSK, state));
--		break;
--	default:
--		return -EINVAL;
--	}
-+	int ret, regval;
-+	u8 genintr = bma400_genintrs[dir].genintr;
-+	u8 detect_criterion = bma400_genintrs[dir].detect_mode;
-+	unsigned int intrmask = bma400_genintrs[dir].intrmask;
- 
- 	/* Enabling all axis for interrupt evaluation */
--	ret = regmap_write(data->regmap, reg, 0xF8);
-+	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 0),
-+			   BMA400_GENINT_CONFIG0_X_EN_MASK |
-+			   BMA400_GENINT_CONFIG0_Y_EN_MASK |
-+			   BMA400_GENINT_CONFIG0_Z_EN_MASK|
-+			   BMA400_REF_EVERYTIME_UPDT_MODE);
- 	if (ret)
- 		return ret;
- 
- 	/* OR combination of all axis for interrupt evaluation */
--	ret = regmap_write(data->regmap, reg + BMA400_GEN_CONFIG1_OFF, value);
-+	regval = FIELD_PREP(BMA400_GENINT_CONFIG1_AXES_COMB_MASK, BMA400_EVAL_X_OR_Y_OR_Z) |
-+		 FIELD_PREP(BMA400_GENINT_CONFIG1_DETCT_CRIT_MASK, detect_criterion);
-+	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 1), regval);
- 	if (ret)
- 		return ret;
- 
- 	/* Initial value to avoid interrupts while enabling*/
--	ret = regmap_write(data->regmap, reg + BMA400_GEN_CONFIG2_OFF, 0x0A);
-+	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 2), 0x0A);
- 	if (ret)
- 		return ret;
- 
- 	/* Initial duration value to avoid interrupts while enabling*/
--	ret = regmap_write(data->regmap, reg + BMA400_GEN_CONFIG31_OFF, 0x0F);
-+	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 4), 0x0F);
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_update_bits(data->regmap, BMA400_INT1_MAP_REG, msk,
--				 field_value);
-+	regval = FIELD_PREP(BMA400_INT_CONFIG0_GEN1_MASK, state);
-+	if (genintr)
-+		regval = FIELD_PREP(BMA400_INT_CONFIG0_GEN2_MASK, state);
-+
-+	ret = regmap_update_bits(data->regmap, BMA400_INT1_MAP_REG, intrmask, regval);
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_update_bits(data->regmap, BMA400_INT_CONFIG0_REG, msk,
--				 field_value);
-+	ret = regmap_update_bits(data->regmap, BMA400_INT_CONFIG0_REG, intrmask, regval);
- 	if (ret)
- 		return ret;
- 
--	set_mask_bits(&data->generic_event_en, msk, field_value);
-+	set_mask_bits(&data->generic_event_en, intrmask, regval);
- 	return 0;
- }
- 
-@@ -1336,18 +1350,6 @@ static int bma400_write_event_config(struct iio_dev *indio_dev,
- 	}
- }
- 
--static int get_gen_config_reg(enum iio_event_direction dir)
--{
--	switch (dir) {
--	case IIO_EV_DIR_FALLING:
--		return BMA400_GEN2INT_CONFIG0;
--	case IIO_EV_DIR_RISING:
--		return BMA400_GEN1INT_CONFIG0;
--	default:
--		return -EINVAL;
--	}
--}
--
- static int bma400_read_event_value(struct iio_dev *indio_dev,
- 				   const struct iio_chan_spec *chan,
- 				   enum iio_event_type type,
-@@ -1356,22 +1358,20 @@ static int bma400_read_event_value(struct iio_dev *indio_dev,
- 				   int *val, int *val2)
- {
- 	struct bma400_data *data = iio_priv(indio_dev);
--	int ret, reg, reg_val, raw;
-+	int ret, genintr, reg_val, raw;
- 
- 	if (chan->type != IIO_ACCEL)
- 		return -EINVAL;
- 
- 	switch (type) {
- 	case IIO_EV_TYPE_MAG:
--		reg = get_gen_config_reg(dir);
--		if (reg < 0)
--			return -EINVAL;
-+		genintr = bma400_genintrs[dir].genintr;
- 
- 		*val2 = 0;
- 		switch (info) {
- 		case IIO_EV_INFO_VALUE:
- 			ret = regmap_read(data->regmap,
--					  reg + BMA400_GEN_CONFIG2_OFF,
-+					  BMA400_GENINT_CONFIG_REG(genintr, 2),
- 					  val);
- 			if (ret)
- 				return ret;
-@@ -1379,7 +1379,7 @@ static int bma400_read_event_value(struct iio_dev *indio_dev,
- 		case IIO_EV_INFO_PERIOD:
- 			mutex_lock(&data->mutex);
- 			ret = regmap_bulk_read(data->regmap,
--					       reg + BMA400_GEN_CONFIG3_OFF,
-+					       BMA400_GENINT_CONFIG_REG(genintr, 3),
- 					       &data->duration,
- 					       sizeof(data->duration));
- 			if (ret) {
-@@ -1390,10 +1390,12 @@ static int bma400_read_event_value(struct iio_dev *indio_dev,
- 			mutex_unlock(&data->mutex);
- 			return IIO_VAL_INT;
- 		case IIO_EV_INFO_HYSTERESIS:
--			ret = regmap_read(data->regmap, reg, val);
-+			ret = regmap_read(data->regmap,
-+					  BMA400_GENINT_CONFIG_REG(genintr, 0),
-+					  val);
- 			if (ret)
- 				return ret;
--			*val = FIELD_GET(BMA400_GEN_HYST_MSK, *val);
-+			*val = FIELD_GET(BMA400_GENINT_CONFIG0_HYST_MASK, *val);
- 			return IIO_VAL_INT;
- 		default:
- 			return -EINVAL;
-@@ -1444,16 +1446,14 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
- 				    int val, int val2)
- {
- 	struct bma400_data *data = iio_priv(indio_dev);
--	int reg, ret, raw;
-+	int genintr, ret, raw;
- 
- 	if (chan->type != IIO_ACCEL)
- 		return -EINVAL;
- 
- 	switch (type) {
- 	case IIO_EV_TYPE_MAG:
--		reg = get_gen_config_reg(dir);
--		if (reg < 0)
--			return -EINVAL;
-+		genintr = bma400_genintrs[dir].genintr;
- 
- 		switch (info) {
- 		case IIO_EV_INFO_VALUE:
-@@ -1461,7 +1461,7 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
- 				return -EINVAL;
- 
- 			return regmap_write(data->regmap,
--					    reg + BMA400_GEN_CONFIG2_OFF,
-+					    BMA400_GENINT_CONFIG_REG(genintr, 2),
- 					    val);
- 		case IIO_EV_INFO_PERIOD:
- 			if (val < 1 || val > 65535)
-@@ -1470,7 +1470,7 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
- 			mutex_lock(&data->mutex);
- 			put_unaligned_be16(val, &data->duration);
- 			ret = regmap_bulk_write(data->regmap,
--						reg + BMA400_GEN_CONFIG3_OFF,
-+						BMA400_GENINT_CONFIG_REG(genintr, 3),
- 						&data->duration,
- 						sizeof(data->duration));
- 			mutex_unlock(&data->mutex);
-@@ -1479,10 +1479,10 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
- 			if (val < 0 || val > 3)
- 				return -EINVAL;
- 
--			return regmap_update_bits(data->regmap, reg,
--						  BMA400_GEN_HYST_MSK,
--						  FIELD_PREP(BMA400_GEN_HYST_MSK,
--							     val));
-+			return regmap_update_bits(data->regmap,
-+						  BMA400_GENINT_CONFIG_REG(genintr, 0),
-+						  BMA400_GENINT_CONFIG0_HYST_MASK,
-+						  FIELD_PREP(BMA400_GENINT_CONFIG0_HYST_MASK, val));
- 		default:
- 			return -EINVAL;
- 		}
-@@ -1650,10 +1650,10 @@ static irqreturn_t bma400_interrupt(int irq, void *private)
- 						  IIO_EV_DIR_DOUBLETAP),
- 			       timestamp);
- 
--	if (FIELD_GET(BMA400_INT_GEN1_MSK, le16_to_cpu(data->status)))
-+	if (FIELD_GET(BMA400_INT_CONFIG0_GEN1_MASK, le16_to_cpu(data->status)))
- 		ev_dir = IIO_EV_DIR_RISING;
- 
--	if (FIELD_GET(BMA400_INT_GEN2_MSK, le16_to_cpu(data->status)))
-+	if (FIELD_GET(BMA400_INT_CONFIG0_GEN2_MASK, le16_to_cpu(data->status)))
- 		ev_dir = IIO_EV_DIR_FALLING;
- 
- 	if (ev_dir != IIO_EV_DIR_NONE) {
--- 
-2.43.0
-
+Best Regards,
+Yan, Zi
 
