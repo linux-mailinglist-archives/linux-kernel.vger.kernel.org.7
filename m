@@ -1,123 +1,97 @@
-Return-Path: <linux-kernel+bounces-823145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3D2B859F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:32:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC299B85A6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C95547350
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39465857D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB73831159A;
-	Thu, 18 Sep 2025 15:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401AC30F946;
+	Thu, 18 Sep 2025 15:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IeA521fU"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLZHl+z5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED68221D9E;
-	Thu, 18 Sep 2025 15:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E55630F92E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209556; cv=none; b=RKf0NOMsb2W8OV1Nu8RdGO2QIrF/SXYsEK1rsGWRbQrgoadbHUy9rsUr4ANHLqga51IEq1kw7CsFe59FIZyi4vOvaC+yynpSHVNsYoSfrpyAChaulOpFa/qxjrEWUWz3OXkqbC2oK/lmjNhdB0NM6PXOfz8ob/y9LGGm8uKyhHM=
+	t=1758209475; cv=none; b=VLke8EFNYyEP4hc0K/DxrtYR5cKmB0KF2bRg2FSBcMO45rZmgQGLJD24KOzm4LRBAn9zznHZUEgXMfnCtSpAdcIhGRpPF8cfmVJuHwCDhdqdJrBBgokkb1rwvzV5ko1F237UBu1mSzjdUwvCPYLsY0y7a8b2iLRqTXTSo2ktpmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209556; c=relaxed/simple;
-	bh=sHDVtuH4++8ryiRLH7XMcszZN3f5qzA2Cv1Z4Rnzrrw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VpQqmGf/jShXIef3doETYcanjfEMWmcm5tCCEj/p9pRMkNTu2NCyQWOC+7S61XCyw93Z/bdcTolt5bQ+Ms2nYqQi5IgOxwYMJ0W9tDyCavVAGYkhfyjocNy9+dZMuptbJOe9+/55Z7ykGGS2J6ClrJPHVG+Jrqrhd48otSNTkvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IeA521fU; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 4C39B261A3;
-	Thu, 18 Sep 2025 17:32:33 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 1OFj74AdZKf4; Thu, 18 Sep 2025 17:32:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1758209552; bh=sHDVtuH4++8ryiRLH7XMcszZN3f5qzA2Cv1Z4Rnzrrw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=IeA521fUUF+ISMT4xLkvU4EKmMZVqsgvseTkPxd3TEwWFIvTd9gBLEgHW0aoEPWUT
-	 UTBwCrKeCNXg3vtnbUPz1y8ydJlk6FVtiPTfV8EAiixvbPE8kFX4Sxm4sBjdPKR2To
-	 e/lzfP9LbgiLH8rpxZ//EmeEl2bN/jxpwI8vZGSwh+QzmYEtN+1lZ9MbcpDMuQyojG
-	 xWEfrRh213XE2x6D5gaDeHTiaUS+l5eh1W3kg7axcQQbvS8efkxb716pyMrQfyUUKa
-	 ZMVTpu8lOZ41k1g84G5sgE+Da6wGiU96Du4HmlF/fgm04KqW0nVoSeGQqrq/sLIyTE
-	 vHzxhZWnkkHMg==
-From: Yao Zi <ziyao@disroot.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Simon Xue <xxm@rock-chips.com>
-Cc: linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v2 3/3] arm64: dts: rockchip: Enable PCIe controller on Radxa E20C
-Date: Thu, 18 Sep 2025 15:30:57 +0000
-Message-ID: <20250918153057.56023-4-ziyao@disroot.org>
-In-Reply-To: <20250918153057.56023-1-ziyao@disroot.org>
-References: <20250918153057.56023-1-ziyao@disroot.org>
+	s=arc-20240116; t=1758209475; c=relaxed/simple;
+	bh=S1v+q/P4cQWTdz964LEDsaZ0Tp9i4slYArkAdfNE5n0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=e4+a2I+Hb+XgTeNGz5Uk6X5hCJbmCroldgZrCL7X3WrzblSXJvmfly/Wq64JogvIZx91OgMxEAYOO8rDKfjFmDmvklTlwORliZVvf/TH/5nc758VTNzPQm6O2avQ9+iV0ITLvAy8SQ3vcTMZrIDhrcPflDcH4/dhj6fc2qrOSyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLZHl+z5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39A4EC4CEE7;
+	Thu, 18 Sep 2025 15:31:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758209475;
+	bh=S1v+q/P4cQWTdz964LEDsaZ0Tp9i4slYArkAdfNE5n0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=iLZHl+z5sYvTxdG5Gz4KFFo/dxNWwa+2RkDwMl1FLJ1CDkyXnYmml6iVRGbDlwuqJ
+	 QucFB9DmQ6bxXoTF0vSXoL2mxIvmAk7OHhECYB1DCmq/LaaZCf9bSn58NTlO+kB2oG
+	 oDkC+UY8c3ZZC52wsO5G2ye2s55SRQLWCFQe0zizRNfGdTf1OhuLwGoy8gXZMzgBYz
+	 8LL6lsv1yQHAf1dfKtbRjJ8TCHG5bkUofbpb4d5tdcNtRS3OETYHPZxgk6DZO32p4x
+	 YjoBt8rxnzkYDt+x82wNgReYF/t8X3zlGT+7YrmVEesmwSnZFaXuLhoJ3K+zcCybc2
+	 AYH8+5zv1dSNA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
+In-Reply-To: <20250917-maxreg-kconfig-fix-v1-1-1369f88d6272@mentallysanemainliners.org>
+References: <20250917-maxreg-kconfig-fix-v1-1-1369f88d6272@mentallysanemainliners.org>
+Subject: Re: [PATCH] regulator: Fix MAX77838 selection
+Message-Id: <175820947396.118308.9417897799910178332.b4-ty@kernel.org>
+Date: Thu, 18 Sep 2025 16:31:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-56183
 
-Radxa E20C provides one of its GbE ports through RTL8111H connected to
-SoC's PCIe controller. Let's enable the controller and the PHY used by
-it to allow usage of the port.
+On Wed, 17 Sep 2025 16:58:28 +0200, Igor Belwon wrote:
+> The current entry for the MAX77838 regulator is unselectable (as it
+> depended on a non-user-selectable config - REGMAP_I2C). Fix this by
+> making it select the config, and not depending on it.
+> 
+> 
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Applied to
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index 12eec2c1db22..b32452756155 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -171,6 +171,10 @@ vdd_logic: regulator-vdd-logic {
- 	};
- };
- 
-+&combphy {
-+	status = "okay";
-+};
-+
- &cpu0 {
- 	cpu-supply = <&vdd_arm>;
- };
-@@ -229,6 +233,14 @@ rgmii_phy: ethernet-phy@1 {
- 	};
- };
- 
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pciem1_pins>;
-+	reset-gpios = <&gpio1 RK_PA2 GPIO_ACTIVE_HIGH>;
-+	vpcie3v3-supply = <&vcc_3v3>;
-+	status = "okay";
-+};
-+
- &pinctrl {
- 	ethernet {
- 		gmac1_rstn_l: gmac1-rstn-l {
--- 
-2.50.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: Fix MAX77838 selection
+      commit: abe962346ef420998d47ba1c2fe591582f69e92e
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
