@@ -1,333 +1,260 @@
-Return-Path: <linux-kernel+bounces-822064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96539B82F64
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:13:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84971B82F73
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56D484E0553
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE781BC5584
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADE127BF6C;
-	Thu, 18 Sep 2025 05:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2B0280A5F;
+	Thu, 18 Sep 2025 05:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kVdicM2A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UOhbqKko"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17EB288DA;
-	Thu, 18 Sep 2025 05:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758172373; cv=none; b=odfQxPJndPmKdInoqdKCehvTeRk3sJLQcplS3pqRnFK/qeRmdLbD5UnioaXjlTzBCTC8oqFVB3EDvNMCJptw1wehMsG46oaswFWu3VYTfeUIRYLXenV9Qe4fcphUKr/pb6yeXmdLhx/5HHhpToE4WzF0Y5I+puXcNr2hnEoea7I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758172373; c=relaxed/simple;
-	bh=HFdqpdCVK4K8kf2it97XPQ/2ZzONliQ/Awo5whsmuUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IyLDSNE4P8T9tDFgF5O1nHjLI1FuJt+S5imjbNC++UUT/6fodW6z4w0S8Xe7y+p5q86AG7GXbLRgdphaBJsWh6cZQqXFiyiJodeKffg7Fn7FnsW/Eu3l4vDJu0ox+f6uaE8BW1CdAg/8xc0GLCq/VQ8lnts0Bc5Kd/mABA9meOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kVdicM2A; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBE627F012;
+	Thu, 18 Sep 2025 05:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758172516; cv=fail; b=diBMBbJhFqtu5iFFHXymtYLZndQm5kbGekpTZKRVy+5tXpAfSGIR5xGz3pIx0s5wGR72QvRksu0LRFzogRe6qJWyquFtzKAHRdl1YDAIhEq5Lvf+apiiiiyZ5uXoTaECEPMRP5tjjBYwYg0zcJLHxa7a3dPyueBElFqxBB+cMUY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758172516; c=relaxed/simple;
+	bh=p+D8geXYJrUxKEye/eKZBtue0d5PA9CUm88TVJ0H1ZM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JY3ifzqDR9HIgYJ36FOdOmpOy4wBwObbei7Ov5qSfCVnbyULds89I8RBRZ88WM6wc/HirgmcGdMZCZyH1ELyE8CnOTOGj+AH46BojILS79ze6gVZCVgwKvFy28evlSAC3F3+J57L68+Wiohu94cMqpVBaN+5v1eGOuIZJc5trCE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UOhbqKko; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758172371; x=1789708371;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HFdqpdCVK4K8kf2it97XPQ/2ZzONliQ/Awo5whsmuUE=;
-  b=kVdicM2A84ZoYd6efUBP4D7eIehhGvlb+Hydjw6zRlbRTNdQMS/nj2oD
-   2BCHACaYvRW4yYZuq0+g6F0uoMGUxhsU4RGZCqASoIXi7nz1TNujewybP
-   bGT3hkF0FtvZ8y4LFvBcF5V+dYf1r4ROdofpq7sK79PMrGS52YFvJyZHS
-   kwJQ9frKlxv3BNtrDc2DNU/kE8SyWrSgZ8XDy73+M4qlJY8zR47J+T2z4
-   gWubyX3rVk++67sPu6nkZbETpEVEGqTP53Q58/YeorbhcFCbw174rJjNB
-   3ngQ7Tx6yd7eO7gyQUy7gPG89YbjaVb+VKRtcFskBTOs+c4CkJ2LPbonz
-   Q==;
-X-CSE-ConnectionGUID: 86iFbsvPTa2NwRamuQCzrA==
-X-CSE-MsgGUID: uA4E2NlrTeySC+ZMui1toQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="71858355"
+  t=1758172515; x=1789708515;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=p+D8geXYJrUxKEye/eKZBtue0d5PA9CUm88TVJ0H1ZM=;
+  b=UOhbqKkoYFQra6AsOaa4Xvh3YW4gfdvSDI15Ad4ovLkGmOO65L49JfGc
+   DTUb51kqPFNlqYwTHINkzx3hDsb76UUjiV+9to9XUJYB108r3BMyDFadV
+   nm/tYY2BiBToVKRNLSi5zhxGdJKnH4scGPyeltdwSFdayhCY+9yqQYDwq
+   wxx/6bwdKtv937GOBCUWO8pxGeE7iS6oIf0eigm45bxg95roD64yoC5kV
+   oRPnTriw972563UEa3mf5BYkgk0vsy6Bz/8azxiRGhQaiM8H+qtHwodCw
+   wJRdZnraz9BVW/FU21zX6lZcXOaimVoY/bH2mbp2D4RbJNiaUqlask/hW
+   g==;
+X-CSE-ConnectionGUID: GIDwiN4ASLCgWpwXc1NXtg==
+X-CSE-MsgGUID: 8UvD/KYzT6KEtocE/ffGbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="71122905"
 X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="71858355"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 22:12:50 -0700
-X-CSE-ConnectionGUID: xmoM/zq4RwGkiiLdcsJZ6A==
-X-CSE-MsgGUID: 6Rs0zsyfR6WDdwNAxkDL6w==
+   d="scan'208";a="71122905"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 22:15:14 -0700
+X-CSE-ConnectionGUID: wG13LADlQter8myqOGnvhA==
+X-CSE-MsgGUID: FfBLrEnPS0SNK8GOcDTwtA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="175832723"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa008.fm.intel.com with ESMTP; 17 Sep 2025 22:12:46 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id AF47C95; Thu, 18 Sep 2025 07:12:44 +0200 (CEST)
-Date: Thu, 18 Sep 2025 07:12:44 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Jack Pham <quic_jackp@quicinc.com>,
-	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Mayank Rana <mayank.rana@oss.qualcomm.com>,
-	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
- Router
-Message-ID: <20250918051244.GJ2912318@black.igk.intel.com>
-References: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
- <20250917061236.GF2912318@black.igk.intel.com>
- <e648a71f-a642-4f5d-bcf8-893484cfe601@oss.qualcomm.com>
+   d="scan'208";a="176230381"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 22:15:12 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 17 Sep 2025 22:15:11 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 17 Sep 2025 22:15:11 -0700
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.28) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 17 Sep 2025 22:15:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gyZdCWC90qKiyn6jBIcR306YuVS1ByIDq9WDUi7gTdjCI2YBlxDSZrV/wtWlNC16LNr/cov4rxyS2vuI2TRDOckS3Pz0wbvnwVps8V03B7XNdVXjsJIayQ54IujtPfcQLn+3h/3ougzesECrqqJneIMThsuH8/l81zWy9VgiySGZ1MNTs5KCZVfGMsim6RZmyHQeOafIr72ismNIJ6kaXfkBdnPxjN5YhP0Naz4Sn/t+arhIx6qcf+2MXyTyk8KuoGHSnzOTWpHAwl920eszgreXUyhMs4p4TeG3+k9UNGq6vJncTPvLqkLCBvt7Gk41WRUSnDvDwaKhdEt1mVF90A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QcNl3Jqb6rydoiAH/G0nNvMdcJWM7EzzUWqJ+c4rB2A=;
+ b=bu4ClTUbSvLJHtFI9RDpNP5TCPfXTi8993C4fAE4hv9ea9qgDIN9I5iJnMYVCrcpEmH1ANnduH+GX/C1XJOFnHy3aJocMvKzetbyvhb8rBu4yiiLWWLDwVAR0FzjbY2KDDwBl4B3QsYLjtghkYCsbZoSuQwDBXMh59scyDm3CRH9ql6vUkqEnXJBOCIV5x30Yfnj3dey0OX4g6Wo2L+FNG51t5JARk9LnBWXdzVzZor382kCzC7kALmliMF9Ieogft2V51BX7rHIZDw5wgS69psumAOpOWOx2C3SLKCe6eMpObIga/EfM+QVbvL3V66towDp5CuQrHjx2PqT5ZLuSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by IA0PR11MB8336.namprd11.prod.outlook.com (2603:10b6:208:490::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Thu, 18 Sep
+ 2025 05:15:07 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
+ 05:15:07 +0000
+Message-ID: <13a1d78b-4bcd-4216-93cd-b95961a12369@intel.com>
+Date: Wed, 17 Sep 2025 22:15:04 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 03/10] x86,fs/resctrl: Detect io_alloc feature
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
+	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <kas@kernel.org>,
+	<rick.p.edgecombe@intel.com>, <akpm@linux-foundation.org>,
+	<paulmck@kernel.org>, <pmladek@suse.com>,
+	<pawan.kumar.gupta@linux.intel.com>, <rostedt@goodmis.org>,
+	<kees@kernel.org>, <arnd@arndb.de>, <fvdl@google.com>, <seanjc@google.com>,
+	<thomas.lendacky@amd.com>, <manali.shukla@amd.com>, <perry.yuan@amd.com>,
+	<sohil.mehta@intel.com>, <xin@zytor.com>, <peterz@infradead.org>,
+	<mario.limonciello@amd.com>, <gautham.shenoy@amd.com>, <nikunj@amd.com>,
+	<dapeng1.mi@linux.intel.com>, <ak@linux.intel.com>,
+	<chang.seok.bae@intel.com>, <ebiggers@google.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <kvm@vger.kernel.org>
+References: <cover.1756851697.git.babu.moger@amd.com>
+ <c9c594dddd02b53498a184db0fda4377bcef5e89.1756851697.git.babu.moger@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <c9c594dddd02b53498a184db0fda4377bcef5e89.1756851697.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR03CA0029.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::39) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e648a71f-a642-4f5d-bcf8-893484cfe601@oss.qualcomm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA0PR11MB8336:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16bae5f8-494d-4807-d9f9-08ddf6725539
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WFRJYzhycGpTUkJvdG1XTDFNZmNEUTd4S0NzRm81Nkh1SG11a2N5aGNFbGta?=
+ =?utf-8?B?cVNKZDhZVGlUdUpwTXFnOERseWROS25pZUllSVRock9iNUppam04d2Z6eGh6?=
+ =?utf-8?B?clI1SHJiK3RFOUo3K0tBdEQzRkhUaXN3N1NsQjlMWnRYOWM2RWxIM28wRlFF?=
+ =?utf-8?B?MG5NalBBZi9GU3N1azNVLzd2eDdieUJJSFZVZm9XS2FQMXY0cHAvYTJpbGFo?=
+ =?utf-8?B?MEtISjRXbS82cy83RFEwUmR3dDBTMFVONWxlK2w0bVdsR0dJVUtKZUtFT2Jv?=
+ =?utf-8?B?V2o2UVFONWVjK2ZGRFlMR3hJUE45ZXprV1ltQlNxUlA1SkVGckxVZy81Y0Rv?=
+ =?utf-8?B?NzlmVlBlcnN0RExnblZucDRtUlZHZU45K0VPUVpvRU05MWZZK2ZJTTM0U21X?=
+ =?utf-8?B?UlMwZ0RYbVZkdk9OWUdNSU1Lam9jMGYvblN0aXFFR25sUVREYlE4UEVKTjl0?=
+ =?utf-8?B?T2RhQjFuSDk2NnFzNEQyZmVsVGVKQ1c1eXF3Z1JjSHVkdFk5M1BoelBGQVVR?=
+ =?utf-8?B?ZktnNmcya0pmKzZJSXcvYjl2dUxmalo4OGhtUm5uV0JaOFdSUTZydmZwZnAv?=
+ =?utf-8?B?VWpqSHNBcFlYenJJUWVFM2x6b3VIU2JoRm9yLzZGS0todktETFhSTkVINFlQ?=
+ =?utf-8?B?TnVIVzZ1MzNubkRkRWE1cnd2S25tZ1NTcCsydWt1Uy9zTXdNajUyY1c5V1hT?=
+ =?utf-8?B?dnRmcUJ0ZzZqQVZMclNYYTVXT1pZV3BzdmJLTnJkS2hac1Vpc3hiQzZKSHhV?=
+ =?utf-8?B?azhjTndMRkZ4RGpMMGViRnJKQTFFS01TNHptbU5GTEcvdjlvL1hRYnpITHZk?=
+ =?utf-8?B?M3NlM1k1K1NvTzlWQWZFNUhCQ3dRc1Nvd2dteDdmR0MzZk9meG4zNUwwY1hR?=
+ =?utf-8?B?QlJjQWJxS0IvTzRZbjhVOVdnSWVvM0J4UEdlTlUwdFY2SUVmVGtrcFRTeXR6?=
+ =?utf-8?B?ZFVPaGZqT2RNWnQwblA0YkpQY05iSGVTbFY2cXd6bURBdWV5U25uVEdLblFR?=
+ =?utf-8?B?c0piT0JkNWJKL1hFeFV1MXo1V3NKaVFab1dyZjFGR0diRVNJb1RlREE0bFpP?=
+ =?utf-8?B?ZG5sWjc1ZFp2d29Sam9YYVlIV2hSVFYxS1pTNUowaVFYTEN3S3RwSTZMTk5K?=
+ =?utf-8?B?bTlkTUY1VDUxblNrRFdGUXJsNU9VNlp1U25KRjc1UHZpZmJEQnNHUGdBNkdH?=
+ =?utf-8?B?YlBpNEtzTnNYZjIrQVJMWUtNaUppS29vbE9maURCZ2kxQjhwT2JJb0ZieTBI?=
+ =?utf-8?B?a0dUVDYwK1AyT1FUdEhoZW8xb1c1NUlmckx3dWpzUG1IUjNsNDVzOHB4Vm9M?=
+ =?utf-8?B?WUhmdGh5TWJFRFcwSGFYVVR4SjREZXQxZzE4ZTE0UFl3Njk2YjRvSDRvSmcv?=
+ =?utf-8?B?dTdDWm9NeFZQVC9iaEFiZGxGbVdiVXgzcWkxaXFmTk9pSW93NWY0Tjk2Nm9t?=
+ =?utf-8?B?bkhjRisxcXNBQW55dStnR010WDBCWWtoQ3Z1bGVpTnZRWGZvbWw4b2w2bHM5?=
+ =?utf-8?B?eTdKY2k3eStwa05CcDF4Rmg1Y3g2STlzcW4wRXZVY0NGUkJEcXRWVDlZdzU1?=
+ =?utf-8?B?bHlNRE0zWHpDdndUd1ZjTE9hQm9ZanJJME5xVjlOcWZ1WGtPNGJxa0hXKzlQ?=
+ =?utf-8?B?TUtXMTVWMmZLdGE1NllzMXVDUXdON205bW1BbzltYjVxa3U2emlqRU91WmFI?=
+ =?utf-8?B?VG1ZOWFPVEt1S211TE1DaWJndTRtT0dIMU05Q21FZjZGKzNwRkF5dHYvblRl?=
+ =?utf-8?B?dm80OVBCbXRMUlBHQjdEZDdldWN5SmVSU3laQk90M2lKby9hbnRjWjBrZGFI?=
+ =?utf-8?Q?x29SwJuZDpUupMj+2kfHDwIs9XRrYKYTvJgzo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QWRZcjFrVU1ZZXFHRHA2SzJOMzRIYXA4amdYY00xVFFqTDg3L0FFYzk4TmZm?=
+ =?utf-8?B?cTBhc3JlYkpkMDNBSWQwR1pyOEJHcXFCazZPdXdpaVJ6ajBIU0svYWJ5b3Vw?=
+ =?utf-8?B?czFnZnpUSTdBWFNXd3hRNlI3bWI1L0R0dmZ1WmlHL29uM3dIZzI1Q3ZaMUtF?=
+ =?utf-8?B?UGI1UkxCZERCNEdFSG5rL2c2R1c0MjlXSitHMERFemxkZkg1Rm9RSnc1c1lW?=
+ =?utf-8?B?eFY0SkFrR28wMTRISVZ1Wi9laGpmSmhTT1pHNnRhTzc4TTdzbzU0dXZjaXlu?=
+ =?utf-8?B?Z1pEV0VqemNNeFdnWVR1NEF1QXlvR3UxZXpXK3BwQUhoZFZzYlhmNVVPZGJW?=
+ =?utf-8?B?QWk5TVNxYmRVYWM0RDVMQVRiMmRWUXJzdmFaOU94SnhaZDlrL3JNMGZJV0h0?=
+ =?utf-8?B?eHd4Z3BGVkRsdUxidXhha3lQRzZIS0pIdVM2Qm8wWmd0clhFc3QzOVFUT2E5?=
+ =?utf-8?B?SUlBNzFwNlE1KzVqdHp4WGlYbldaaEZoMldKMkgrM0RYdEEzOU5uQXBRUEVp?=
+ =?utf-8?B?eTdsMDVzaUhtQ0R1enJQcDN3dVVxSDJ2WU8ySzdHVEwxamF5OGo1OGF5WkM4?=
+ =?utf-8?B?RHdDeGRWZGNTV0VFem95NE10Vm5aMi9lY2dTTWlxMGtRV1V0QjBLZ2Qxd1VO?=
+ =?utf-8?B?WmU1VmJRNitrOE5OMjRHRTJ6UUV2Z1UyaDE5dGVqM052QnFVaWk1VkJhUS80?=
+ =?utf-8?B?MUdUTURUM1lWSGVUSkNMbGdnWTZIQ0FjM0J4akQ3Nk1CUHFsOGt4OVJhQWVT?=
+ =?utf-8?B?c0hqMkp4aEYyZGtLNlZQem5SOEFoTVpaVVVzdHRzcVdNS1JFQzVsKzhHOWZm?=
+ =?utf-8?B?RWVub2pKMzNnYzdxdmZZdTRGTmFaR205V3ZYREc1TjE2ekVDNUowRUtKMk5C?=
+ =?utf-8?B?ZXhRS1N3L3AzeWVmZDV3cHB0RDNDRCtWQmZNUWJXQmVzTFlJSXJtUEFqZEkw?=
+ =?utf-8?B?YnNESTEvOUVKemRnSEFGQkxXaDNkVUgxaTY1cy9takwvNFplUmIzdjRyR0ow?=
+ =?utf-8?B?VjBaYUdMT2NobU4vWWpTZktlbVNHaVBKQU9oU0VnUEl2TDZxcTVHdjVKUDg0?=
+ =?utf-8?B?S2orWlI4cnd1ZHA3ZXJqNmxQVGljRmxTQ3JXVG84aldkMWZDMFBiRERIQXBB?=
+ =?utf-8?B?bVduY0IxWEZQeVJnbkMvUmJodWlxKzR0bkZ2Ym9XNVRKT3hkVDkrMTg3WFJQ?=
+ =?utf-8?B?ck9aOWdjZk0yRGtXS3IwRXBFZW5YL1M4UHZxMmhEaGRkN2lna2d4cWNkcWNq?=
+ =?utf-8?B?MnZrSXZaSDZJOWtuMncrelpLSDlnQ3pmeEEweGlHOHVVTGlXdUcyT1F3eHJZ?=
+ =?utf-8?B?emV4d1NFcFk3TG50aEtpTWsrVFdsMHhxbHdDcmRrRmFJWU1LejlNekx2ZVkw?=
+ =?utf-8?B?M2lnci84TGhvc0pmWEFkS2k2ZmFKWVEybWNlcVRnVGtEVFlXeFA1WW1nQXJU?=
+ =?utf-8?B?RXJzSXRPVVBpSHF6RUV0cEVYNXBYZGd5VmNUWnNwZUVydmhRWGNTVHR6QmpG?=
+ =?utf-8?B?SlFDUy9rWVlZcVdmWFFuOThVTEYrMDlDdUo3RmJZSWJMcytlWGtqQVQ1aGRl?=
+ =?utf-8?B?bHN0M3R6UU8vdURoZ2ZXN0tML3BmWFZTZWQ1SXgzM2E4emFQVkRpMlNBcnNm?=
+ =?utf-8?B?R2h4SlZEaUZ2K2F2Nm1MR25lbUlISnNETjlXM2cxRU1QYzdZQitjUlJLNzVB?=
+ =?utf-8?B?UjR5S05IYU9uODNQSE1NYVdJNU15ZENwTlVUMXJyanpCamczeG5KWXpaSDlt?=
+ =?utf-8?B?RXhDU1dZTVR5cWVWTnNONkp4eHZDbWdQUUx5YWc5cS9sQXJlL1ZvODV5THJ0?=
+ =?utf-8?B?RWVpMytweUV5d1VBVUREU0ZxQXVBQW9vOE5FcEo1ZklZencvbFhxMkN1M2pz?=
+ =?utf-8?B?alREM0xKbnRoVDE4VzFXellXZTJOZTkwL0FyUDc0U3cvdTZlNFZ4V3F2ZmFu?=
+ =?utf-8?B?L1JtZGU3OXRNWC9vQ2xleHFIb2l6dmpTeXNEcGJKa2JFV2NtVTNYWW15TDg5?=
+ =?utf-8?B?aVpWdU5YYXZIU20yNE11SVd0M0QyUzY4RVdDSjdiU0RPajUwOGhLWDd4Z1c1?=
+ =?utf-8?B?eDltT2l2UG5aRCtQc2Zua1hidC8zSjV1QkNoelFCMW5XTWxZTEVQMHlLL2lT?=
+ =?utf-8?B?N1ByQkIrcE9USHJOUnpXUzErTVNLRVc0Z01kVFlHYnBXb1U4b3JRY2VIY2dP?=
+ =?utf-8?B?anc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16bae5f8-494d-4807-d9f9-08ddf6725539
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 05:15:07.4178
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qCiGf6glleiSIQfOT3gJukW6sKE4QutKlgXUDgS0mvXS+/BIydtFpLSRMgmq9hAZzXfg9Va66CMOpfFAS+eSwDKpZEb/aD3hACBy62HCF6Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8336
+X-OriginatorOrg: intel.com
 
-Hi,
+Hi Babu,
 
-On Wed, Sep 17, 2025 at 08:36:19PM +0200, Konrad Dybcio wrote:
-> On 9/17/25 8:12 AM, Mika Westerberg wrote:
-> > Hi Konrad,
-> > 
-> > On Tue, Sep 16, 2025 at 10:06:01PM +0200, Konrad Dybcio wrote:
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> [...]
-> 
-> >> P.S.
-> >> The driver part (which has quite some dependencies) is not yet 100%
-> >> ready to share and will be published at a later date.
-> > 
-> > Okay, I think it is beter to submit the bindings with the driver changes so
-> > that we can see the big picture.
-> 
-> We're not going to do that just yet, but I'll give you the gist of it
-> (partially also responding to Dmitry's other reply to this email):
+On 9/2/25 3:41 PM, Babu Moger wrote:
+> Smart Data Cache Injection (SDCI) is a mechanism that enables direct
+> insertion of data from I/O devices into the L3 cache. It can reduce the
+> demands on DRAM bandwidth and reduces latency to the processor consuming
+> the I/O data.
 
-Fair enough.
+This copy&pasted text found in cover letter and patch 1 and now here seems to be the
+type of annoying repetitive text that Boris referred to [1]. Looking at this changelog
+again it may also be confusing to start with introduction of one feature (SDCI), but
+end with another SDCIAE.
 
-> - The current thunderbolt implementation is almost entirely reused
-> 
-> - Our HR is MMIO-mapped and always present (i.e. it's not a PCIe device).
->   Since the NHI code already uses I/O accessors, we simply ioremap() the
->   NHI region and feed the existing code the __iomem ptr (really cool)
-> 
-> - Because it's not a PCIe device, all the places where the code assumes
->   it can freehand dereference nhi->pdev are altered to instead consume
->   a struct device *, i.e.:
-> 
-> diff --git a/include/linux/thunderbolt.h b/include/linux/thunderbolt.h
-> index 75247486616b..d05f8d6896e7 100644
-> --- a/include/linux/thunderbolt.h
-> +++ b/include/linux/thunderbolt.h
-> @@ -493,22 +493,37 @@ static inline struct tb_xdomain *tb_service_parent(struct tb_service *svc)
->   *                 MSI-X is used.
->   * @hop_count: Number of rings (end point hops) supported by NHI.
->   * @quirks: NHI specific quirks if any
-> + * @is_pci: Whether the NHI is a PCI device
->   */
->  struct tb_nhi {
->         spinlock_t lock;
-> -       struct pci_dev *pdev;
-> +       struct device *dev;
->         const struct tb_nhi_ops *ops;
->         void __iomem *iobase;
->         struct tb_ring **tx_rings;
->         struct tb_ring **rx_rings;
-> -       struct ida msix_ida;
->         bool going_away;
->         bool iommu_dma_protection;
->         struct work_struct interrupt_work;
->         u32 hop_count;
->         unsigned long quirks;
-> +       bool is_pcie;
->  };
->  
-> +struct tb_nhi_pci {
-> +       struct pci_dev *pdev;
-> +       struct ida msix_ida;
-> +       struct tb_nhi nhi;
-> +};
-> +
-> +static inline struct tb_nhi_pci *nhi_to_pci(struct tb_nhi *nhi)
-> +{
-> +       if (WARN_ON(!nhi->is_pcie))
-> +               return NULL;
-> +
-> +       return container_of(nhi, struct tb_nhi_pci, nhi);
-> +}
-> 
-> I suppose I can probably get this decoupling sent in advance of the rest..
-> It's quite delicate so I'm hoping I won't cause any random nullptrs for you
+Here is a changelog that attempts to address issues, please feel free to improve:
 
-Instead of the above is_pcie thing, can you split it so that the PCI parts
-live in pci.c and the "platform" parts live in platform.c (or perhaps this
-is fauxbus now). Then the core part of the NHI code (nhi.c) just works
-regardless of how the controller is wired to the SoC.
+	AMD's SDCIAE (SDCI Allocation Enforcement) PQE feature enables system software  
+	to control the portions of L3 cache used for direct insertion of data from   
+	I/O devices into the L3 cache.                                                  
+                                                                                
+	Introduce a generic resctrl cache resource property "io_alloc_capable" as the
+	first part of the new "io_alloc" resctrl feature that will support AMD's
+	SDCIAE.	Any architecture can set a cache resource as "io_alloc_capable" if a
+	portion	of the cache can be allocated for I/O traffic.  
+                                                                                
+	Set the "io_alloc_capable" property for the L3 cache resource on x86       
+	(AMD) systems that support SDCIAE.                          
 
-There are plenty of examples in the kernel how to do this.
+ 
+> Introduce cache resource property "io_alloc_capable" that an architecture
+> can set if a portion of the cache can be allocated for I/O traffic.
+> 
+> Set this property on x86 systems that support SDCIAE (L3 Smart Data Cache
+> Injection Allocation Enforcement). This property is set only for the L3
+> cache resource on systems that support SDCIAE.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
 
-> - Additional steps are necessary to take the hardware out of reset, set
->   some magic values here and there, load the firmware (i.e. memcpy_toio())
->   wake up the MCU and perform Type-C magic (more on that below), all of
->   which is handled in a new qcom_usb4.c, which does that and ends its probe
->   function with a nhi_probe_common(). PM of the hardware and its providers
->   also takes place in Linux, just like with any other IP block on embedded
->   systems
+Reinette
 
-Call it qcom.c. But please try to move all the non-PCI generic parts into
-platform.c and then only the Qualcomm specific things live in qcom.c. Idea
-is that we can re-use all that when for example Apple Silicon support is
-added and so on.
 
-> - Because the Type-C pipeline varies wildly across Qualcomm SoCs and even
->   devices using the same SoC, we need to register a typec_mux to receive
->   generic (alt)mode notifications. The is more or less:
-> 
-> pmic_glink_altmode/ucsi (altmode notification provider)
-> |-> QMPPHY (Qualcomm proprietary USB4/TBT3/USB3/DP mode switchable PHY)
->   |-> (optionally) Onboard switch (e.g. FSA4480)
->     |-> (optionally) Onboard retimer (e.g. Parade PS883x)
->       |-> USB4 HR (pinging the MCU with some mode/cable info)
-> 
-> The actual entry logic (sanity checking, magic VDMs, SOP/'/'' comms)
-> happen on a remote processor - Audio DSP (yes) in the case of X1E and
-> the OS is graciously presented with a trimmed-down notification that
-> the altmode has been entered and it better cooperate
+[1] https://lore.kernel.org/lkml/20250911150850.GAaMLmAoi5fTIznQzY@fat_crate.local/
 
-Okay.
-
-> [...]
-> 
-> >> +  reg-names:
-> >> +    items:
-> >> +      - const: router
-> >> +      - const: router_config
-> >> +      - const: tmu_config
-> >> +      - const: port_group
-> >> +      - const: sideband
-> >> +      - const: uc_ram
-> >> +      - const: uc_per
-> >> +      - const: uc_mbox
-> >> +      - const: nhi
-> >> +      - const: cfg
-> >> +      - const: debug
-> >> +      - const: usbap_config
-> >> +      - const: pcieap_config
-> >> +      - const: dpap0_aux
-> >> +      - const: dpap0_config
-> >> +      - const: dpap1_aux
-> >> +      - const: dpap1_config
-> > 
-> > Are these the specific to the host controller? I mean route_config sounds
-> > pretty much like Router Config space and that is available through the USB4
-> > fabric so not sure why this is listed?
-> > 
-> > Also this does not list the standard Host Interface registers, is that on
-> > purpose?
-> 
-> The 'nhi' region contains the entire spec-standardized set of registers,
-> everything else is qc-specific. The host router has internal connections
-> to the native protocol controllers, so the XXXap_config regions include some
-> tunables related to that.
-> 
-> The uc_ regions relate to the block's MCU.
-> 
-> router/router_config refer to top-level tunables or control/state registers.
-> 
-> tmu_config is the same, for the internal timing management unit.
-> 
-> debug/cfg are self-explanatory
-> 
-> Most of those will be left unused, but the binding has to be forward
-> looking, in case some sort of a software workaround is required down
-> the line
-
-Got it, thanks for the explanation.
-
-> >> +
-> >> +  interrupts:
-> >> +    items:
-> >> +      - description: Combined event interrupt for all three rings
-> >> +      - description: OOB Firmware interrupt
-> > 
-> > No MSI? If not then at least I suggest to support it in the DT description.
-> 
-> No, it seems like across the SoC we only have MSIs on the PCIe RCs
-> 
-> Because I don't know what a valid MSI setup would look like, I'd like
-> to defer adding that description to when a platform with them pops up
-
-I it hard to change these DT bindings later on? If yes then I would
-definitely think forward and make this support MSI from the get-go.
-
-> [...]
-> 
-> >> +  wakeup-source: true
-> > 
-> > What about the "power contract"? Are you using the existing we have for
-> > ACPI:
-> > 
-> > https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#map-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
-> > 
-> > It was designed DT in mind but I don't think we have DT bindings for it.
-> > This is needed to make sure the driver (Connection Manager) creates the
-> > tunnels before the native protocol stacks get enumerated (e.g during power
-> > transitions).
-> 
-> I added a custom entry to drivers/of/property.c, matching that name.
-> Seems to work fine (tm) so far, but then we haven't yet tested sus/res
-> much.. 
-> 
-> Just to make sure - are we expected to ensure that the NHI device is
-> resumed before any protocol controller drivers (at runtime), or do the
-> latter have to *probe* only after they're necessary? I firmly believe
-> the former, but doesn't hurt to ask..
-
-The former. The TB driver needs to setup tunnels before native protocol
-stacks and their drivers (e.g PCIe and the like) resume. We have the
-device_link from the native "port" / device to the NHI that deals with it
-but it expects the property to be there.
-
-> [...]
-> >> +            port {
-> >> +                usb4_0_mode_in: endpoint {
-> >> +                };
-> > 
-> > This describes the Downstream Facing Port (e.g USB4 port), right? We have
-> > something similar used in Chromebooks so it would be good if we can make
-> > the bindings close to each other if possible. This allows binding firmware
-> > description to retimers (and also to "fixed/embedded" device routers as
-> > recent changes to the USB4 spec makes possible).
-> > 
-> > See drivers/thunderbolt/acpi.c::tb_acpi_find_companion().
-> 
-> Yes, this binding assumes the Host Router has precisely 1 DFP (Linux
-> Type-C infra isn't ready for anything more, at least not on the DT side
-> to my knowledge) and this port (which isn't necessarily the same as a
-> connector, i.e. a physical receptacle in DT speak, it simply refers to
-> an abstract data connection between two devices)
-
-Okay I'm not too familiar with the current DT bindings.
-
-> Notably, I don't think we currently describe the USB4 port (as in, the
-> usb4_port.c meaning of it) at all, but for on-SoC HRs we know all about
-> them, so perhaps a subnode description could make sense. This way we
-> could also point them to the compatible = "usb-c-connector" node
-
-It should be something (eventually at least :-)) that allows us to describe the
-USB4 ports and on-board retimers (to make it possible to upgrade firmwares
-on those even if there is no link). But also if there is "embedded link"
-device router.
 
