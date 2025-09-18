@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-822884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A232B84E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:43:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F79B84E52
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201C45463C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF0B1C83BAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BF130C620;
-	Thu, 18 Sep 2025 13:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6829530C0E8;
+	Thu, 18 Sep 2025 13:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M0G3tWW8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U+DD5T6X"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5BA30C11A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E002D3752
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758202977; cv=none; b=OU7tKSiL3ppmhnjOgfaj+dtkfh1tNp7JPmtUg0/FhO806EmdXJQ/79c2v/G3jQOhpAD6LOS9uU43az3EEjkbIyUUuEkyLGBoVE5B2OJqyeOssYMhdwO7H8N8+yUpJNGfiJqXxtKOoLYUKu+hftmuCmf89FvRKjvtWCjl+dkZeAc=
+	t=1758203074; cv=none; b=i0+I+62N9zoyAc7++jXM+njZDqfK/Zsnvejx+tZ3O79C+VBeXSwWguy5bfu7cYfK3glYJ1CbySG9GYTayz3xKAHtw6iOWjAg6x1CKgt0X8R2kB16JU+jb2g7/I6oYb7VA63fUGUgbZtj0NcFf08WfwiAq9Iq/IEBflhMzDZ9lk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758202977; c=relaxed/simple;
-	bh=qd3hXY9XgHiw8cjge13Lf6hOHRKSXKhDH3/3yP9EWrc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tXiSALfaN6DTxYlecTAEnimXrxCREIpKfXtYOrP0nKTt8JAap+GwLwuFitcPQz21iVlxIzvPr/7TRLyFz2bH69DGxWlZp00l+j8d8dhzhSP3Kg2Jjz5HisU8C1xjS3Y29cssJR1KO3BtKXO5DUq3cYoiT5GQ4uvBw8LudqjUUrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M0G3tWW8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758202975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OO/zlqFI4HAQySVPIlojxj20+66UlyKTQ9bnhnA2hwE=;
-	b=M0G3tWW8YqxBeRh/7s6A1s7dUu6ZH0ZnTFPXldxXBuLg+dFUlpTP99Q9lGvP0tw8bOUt18
-	GDCG7J2lkRcI0nmavVfb54ffmOBEQmBG3W9GOYQolBQliDubfEuVy6UcmTNtPSbKcBweiI
-	0qQUv5sDyXLm5f6dLwV8aCMbeSS3q/I=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-55-O7FC1pkoMbGJIt_TjXyPxw-1; Thu,
- 18 Sep 2025 09:42:50 -0400
-X-MC-Unique: O7FC1pkoMbGJIt_TjXyPxw-1
-X-Mimecast-MFC-AGG-ID: O7FC1pkoMbGJIt_TjXyPxw_1758202970
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D55A2180057E;
-	Thu, 18 Sep 2025 13:42:49 +0000 (UTC)
-Received: from o.redhat.com (unknown [10.45.225.144])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A95A819560B8;
-	Thu, 18 Sep 2025 13:42:47 +0000 (UTC)
-From: Heinz Mauelshagen <heinzm@redhat.com>
-To: song@kernel.org
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Heinz Mauelshagen <heinzm@redhat.com>
-Subject: [PATCH] md raid: fix hang when stopping arrays with metadata through dm-raid
-Date: Thu, 18 Sep 2025 15:42:42 +0200
-Message-ID: <b58dddf537d5aa7519670a4df5838e7056a37c2a.1758201368.git.heinzm@redhat.com>
-In-Reply-To: <cover.1758201368.git.heinzm@redhat.com>
-References: <cover.1758201368.git.heinzm@redhat.com>
+	s=arc-20240116; t=1758203074; c=relaxed/simple;
+	bh=XuOF4oo2GinDw6nta1GzB5BT0iZEdEiCzVd7lTzDV3Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qhM+GSzRR9JFr/bvr7P2i9z2b1KtymNpi6e+EQc6icDO8wZA/GEKRmv99T/h0OMJzbW1+YTZK/ApC8NsRpC82UFs+G/W+Uv2JK2igbKdUNOAuzS3mfRFVTEkACR2v27zuscXhwnQwSPj0YCg63s4xrkB3XxBVa4+TdzEWV+3ZpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U+DD5T6X; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45dd9a66c3fso3566295e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:44:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758203071; x=1758807871; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ui5tTWxJ24mYLV11DTjF2SiOWTz6D5IXHniLYM1RLCw=;
+        b=U+DD5T6XA8hU+MDmTcKRZO3F+mZqEGMy9Eim7N79a1PpRPFCfe3dWMxbX+g47MHZq3
+         qwVQv8WoiIS5nz10fpq4E0vsL/r/mSpvSiQL0qQJWTIB2a4be2Rmn+rerG567togsoBD
+         MlLI9LEsht9K6P3cDPe8tggrL1CviABJYDvsjFRrWFrdQ5DjOf/ZFOHTdE/5MpwUvPy4
+         v6AAeIILM/IZz/hsVNoaOtNtQEbJ5rtUPV2l0ba6ML14yUTURNl254in3bsemqhhINfH
+         TKMOGUpEJrlfUoAae0D8dHeTzNdsYmRHxCL6KTf/E9TK6ioh3zs5gS84U87kUcxa1e7u
+         VAHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758203071; x=1758807871;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ui5tTWxJ24mYLV11DTjF2SiOWTz6D5IXHniLYM1RLCw=;
+        b=XhhPFywVe4THb+QetVBseLqf86pLe7l9YB22GNlPysamLEivAvf69EauruY+R+7Nc4
+         MSzURnq52RyDlU7ta1eVZzrio4Gm6rntZmyhZRiDVj+bWlokKrqgMUKjFAgAYPhEuOkx
+         pgGFCym3za16p853iLb7YWDRp4YNngbO4BNGtnY/tJrj+4p+kendqCAfsUjJrUkLXlwk
+         9+6LaDryQL8R2eFu+utqsSpb2MAPabkgnloJDj4YjtzkIGkA0LCKUq3+KTlXoU2YlUdJ
+         RHQA6npGESEUoIRjtCyrHq2+2TmBP8C+/lLpRgl3CUqEV0QzxIp77sq+y35U8npTl9aT
+         invw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW/BoakSMkdUqY/I2/z8sdM/+diJGxrcDKwEXwlR19cRYHeMbC69vWBhEgfcJJ64NslN0Hmb360EpIRe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuPmsgZrveBjjcMrRxzexmvm8cXIVXyjnH2hwxLAW/tm5xIBN2
+	MDnwygLfCSX4J78XGF8qU3+vneD6euPSx0nCZK4b3nnvoJbBCCbleIupYQxflWyjdJSuHThyrNo
+	g5CNWVQDu9g==
+X-Google-Smtp-Source: AGHT+IEkBbKrfoI0H8uPH3QdEl5PEuuy96uXEpRRSsfVmacTDuWG5tsTGBzmx1eB6WxtriqBAzOrNhmtQrjf
+X-Received: from wmbeo3.prod.google.com ([2002:a05:600c:82c3:b0:45b:6337:ab6b])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4511:b0:45d:e326:96fb
+ with SMTP id 5b1f17b1804b1-462066563e4mr65848755e9.30.1758203071419; Thu, 18
+ Sep 2025 06:44:31 -0700 (PDT)
+Date: Thu, 18 Sep 2025 13:44:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250918134429.270814-1-abarnas@google.com>
+Subject: [PATCH] arm: make sa1111_bus_type const
+From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+To: Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When using device-mapper's dm-raid target, stopping a RAID array can cause the
-system to hang under specific conditions.
+Because driver core can properly handle constant struct bus_type,
+move the sa1111_bus_type to be a constant structure as well,
+placing it into read-only memory which can not be modified at runtime.
 
-This occurs when:
-
--  A dm-raid managed device tree is suspended from top to bottom
-   (the top-level RAID device is suspended first, followed by its
-    underlying metadata and data devices)
-
--  The top-level RAID device is then removed
-
-The hang happens because removing the top-level device triggers md_stop() from the
-dm-raid destructor.  This function attempts to flush the write-intent bitmap, which
-requires writing bitmap superblocks to the metadata sub-devices.  However, since
-these metadata devices are already suspended, the write operations cannot complete,
-causing the system to hang.
-
-Fix:
-
--  Prevent bitmap flushing when md_stop() is called from dm-raid contexts
-   and avoid a quiescing/unquescing cycle which could also cause I/O
-
--  Avoid any I/O operations that might occur during the quiesce/unquiesce process in md_stop()
-
-This ensures that RAID array teardown can complete successfully even when the
-underlying devices are in a suspended state.
-
-Signed-off-by: Heinz Mauelshagen <heinzm@redhat.com>
+Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
 ---
- drivers/md/md.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/arm/common/sa1111.c               | 2 +-
+ arch/arm/include/asm/hardware/sa1111.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 4e033c26fdd4..53e15bdd9ab2 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -6541,12 +6541,14 @@ static void __md_stop_writes(struct mddev *mddev)
- {
- 	timer_delete_sync(&mddev->safemode_timer);
- 
--	if (mddev->pers && mddev->pers->quiesce) {
--		mddev->pers->quiesce(mddev, 1);
--		mddev->pers->quiesce(mddev, 0);
--	}
-+	if (!mddev_is_dm(mddev)) {
-+		if (mddev->pers && mddev->pers->quiesce) {
-+			mddev->pers->quiesce(mddev, 1);
-+			mddev->pers->quiesce(mddev, 0);
-+		}
- 
--	mddev->bitmap_ops->flush(mddev);
-+		mddev->bitmap_ops->flush(mddev);
-+	}
- 
- 	if (md_is_rdwr(mddev) &&
- 	    ((!mddev->in_sync && !mddev_is_clustered(mddev)) ||
--- 
-2.51.0
+diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+index 3389a70e4d49..04ff75dcc20e 100644
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -1371,7 +1371,7 @@ static void sa1111_bus_remove(struct device *dev)
+ 		drv->remove(sadev);
+ }
+=20
+-struct bus_type sa1111_bus_type =3D {
++const struct bus_type sa1111_bus_type =3D {
+ 	.name		=3D "sa1111-rab",
+ 	.match		=3D sa1111_match,
+ 	.probe		=3D sa1111_bus_probe,
+diff --git a/arch/arm/include/asm/hardware/sa1111.h b/arch/arm/include/asm/=
+hardware/sa1111.h
+index a815f39b4243..90b6a832108d 100644
+--- a/arch/arm/include/asm/hardware/sa1111.h
++++ b/arch/arm/include/asm/hardware/sa1111.h
+@@ -368,7 +368,7 @@
+=20
+=20
+=20
+-extern struct bus_type sa1111_bus_type;
++extern const struct bus_type sa1111_bus_type;
+=20
+ #define SA1111_DEVID_SBI	(1 << 0)
+ #define SA1111_DEVID_SK		(1 << 1)
+--=20
+2.51.0.470.ga7dc726c21-goog
 
 
