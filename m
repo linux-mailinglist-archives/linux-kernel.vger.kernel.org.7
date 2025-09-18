@@ -1,208 +1,111 @@
-Return-Path: <linux-kernel+bounces-823589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E00B86EB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:36:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757C1B86ED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD623B226C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:36:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40667E4501
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B622F2607;
-	Thu, 18 Sep 2025 20:35:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331592F3606;
+	Thu, 18 Sep 2025 20:37:14 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0997A2D63FF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284092D63FF;
+	Thu, 18 Sep 2025 20:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758227758; cv=none; b=HZNAEO+xQjWqEP0zLWtUDUn+ATNfFh88zrTO2dIvubExZBTcSvePyzZTXyTWje+tvN1u3Y0YWkp6dsE0YmpYOx5gISO1LG6NVmPoHjDmI/K//dYRPN0uzC8Q+K0kRGwfMIeRqf+Bw1lUNKV/qB6uiKYFdDPZaZ2+Ap0Zuw5bvRU=
+	t=1758227833; cv=none; b=tiDxDeFl/yy+KmiA8Wh9a7c7KJjQOt1TSdLZiZ0sxvaLJ3TJtOSDCqrFR5RFK2gDMYzZuHnVNYOpgfxObY4KLN+tS2dY7dvYb8UsqbzMeTpH9j7EKRAcd+VAqH+Aqhgtsni1o/Z05QEsr8unXo4B0DskdfveUXSQ7ElG3iL1FjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758227758; c=relaxed/simple;
-	bh=6+gwOstLAb+z3XgkGf5uMWSysG2PM5RQMJisVfTXFWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FRtAMZbjhmZiJI3CjvhiTBxxS4pg/L07Ko7oOV4RJQvm7pbOv21lG/Se8T1IAwgGVQrqubvx2ZQScZqW6E+Cri0dFq6cn48MkbGnKl1yKomV1QHX4L5oPAnNvDIl/uLdLZl9VMi4gEdmaBltzveEDIKlpPaZW8gQUcqcUsTxjwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 7E42386CA9;
-	Thu, 18 Sep 2025 20:35:54 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 9FFCC20025;
-	Thu, 18 Sep 2025 20:35:52 +0000 (UTC)
-Date: Thu, 18 Sep 2025 16:35:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
- <gmonaco@redhat.com>, Akhilesh Patil <akhilesh@ee.iitb.ac.in>, Nam Cao
- <namcao@linutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Zhen Ni
- <zhen.ni@easystack.cn>
-Subject: [GIT PULL] rv: Fixes for v6.17
-Message-ID: <20250918163551.3e4254ef@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758227833; c=relaxed/simple;
+	bh=K4mBwSrBNcKyhAm8gbEHryo4PTBkpR7Q30/ZWeXHl1I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V+UIXSbqTa16v04yCupiVXIUlIwsc1ePqF6QmiyG1QlhxnYlV7zG1a+Of9PDn8PfFKsuVjbBS2iSaDn56T2YZ3TD3VvKJbywK/2IgFPA9IfvAB5Ef8Ns/heq8pFizo9ZmRtJ7vwL8JmIuwVhJi8N/80y5Fk4fIrxoxxHAuuoyVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 8E6D31604ED;
+	Thu, 18 Sep 2025 20:37:01 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id 9D9BE6000D;
+	Thu, 18 Sep 2025 20:36:44 +0000 (UTC)
+Message-ID: <13389786a2a121c21a6f4940b4acf09fad53a3d9.camel@perches.com>
+Subject: Re: [PATCH v3 05/35] checkpatch: Warn about capability_unsafe()
+ without comment
+From: Joe Perches <joe@perches.com>
+To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will
+ Deacon <will@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck	
+ <luc.vanoostenryck@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+ Alexander Potapenko	 <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bart Van Assche	 <bvanassche@acm.org>, Bill Wendling <morbo@google.com>,
+ Christoph Hellwig	 <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>, Eric
+ Dumazet	 <edumazet@google.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Ian Rogers	 <irogers@google.com>, Jann Horn
+ <jannh@google.com>, Joel Fernandes	 <joelagnelf@nvidia.com>, Jonathan
+ Corbet <corbet@lwn.net>, Josh Triplett	 <josh@joshtriplett.org>, Justin
+ Stitt <justinstitt@google.com>, Kees Cook	 <kees@kernel.org>, Kentaro
+ Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn	 <lukas.bulwahn@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, Nathan
+ Chancellor	 <nathan@kernel.org>, Neeraj Upadhyay
+ <neeraj.upadhyay@kernel.org>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa	 <penguin-kernel@I-love.SAKURA.ne.jp>, Thomas Gleixner
+ <tglx@linutronix.de>,  Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki
+ <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Date: Thu, 18 Sep 2025 13:36:43 -0700
+In-Reply-To: <20250918140451.1289454-6-elver@google.com>
+References: <20250918140451.1289454-1-elver@google.com>
+	 <20250918140451.1289454-6-elver@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 9FFCC20025
-X-Stat-Signature: apddioo4hy84g6s8ohary56eyordu65m
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19OYEb2vFQC7wvvIBqTS3jJDiHrc4Mf/Zw=
-X-HE-Tag: 1758227752-58823
-X-HE-Meta: U2FsdGVkX1/sZks2+1UiW7e4+rzbBgBmUG3hOsy5NciFScq7lg8LyaKxqDwHyGTZCIreFaibDlgfQjtFN7GR6G5C3jO5WO9z0A/PsdrzDPQBJicwNTEyZYjgwE9tZTLOrCmP7NG8rU/z1X5Vexxd0w1FC/8hePiqOBNI2bYkjcUlStcAavtZg9XhS2CnAVKnnlAIDy085W+Y2DtvCArqp0ZkfaknwcUy1KbfTpykMAqcaxNpP0WihSGMqJoqsj153hYezHfo3uzM62x2fJxMuFp5KROOGTxSR7nhGHmzhYY8HgIV6KtiD7Rf6KxBjloqonWTSoQipZLTJgGW8uguX9oUAgfugv5CveNdU5BH82SgDO+eJzCAfBxQeWDvFDEAQA2JXhP05m9PNBwzeP/l4gR5UWjoJ+09UDTAM3ixiXg=
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 9D9BE6000D
+X-Stat-Signature: py53mcfac346e64tk9rcf8ugswnwrn9n
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+Psz6mclmN7I07c5jPtb/CcemQyIEeoMA=
+X-HE-Tag: 1758227804-881299
+X-HE-Meta: U2FsdGVkX1+3ZResTrAAf9g9L6dJTCgmeXzyM4kYyOanBXCbxLPKLUzexU279fp4Uk1s32nIlGL7ALFntG4iQsakleJTeVRQim4oreS1teDe2c1v+Yr3chddZziKPoDc++AISXJQPhyq2w3G+YXN9VlSwrMnsmWf2JBDP+6EKscCwfkdUqEPS2c1jIOhGC9JFL5oLKZVp7yaxDYTVOVvcxJD81BMXbf5A4qGtQvLNkMWZnMoJtyHKmlojlv7i6K2T4g5I4c9AZ5UYsKsHO+RYQ2ZU++uSS7Q3j7El4OW8jbzA/Y7Pj1Sh8vbE9tWV5T5
 
+On Thu, 2025-09-18 at 15:59 +0200, Marco Elver wrote:
+> Warn about applications of capability_unsafe() without a comment, to
+> encourage documenting the reasoning behind why it was deemed safe.
+[]
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -6717,6 +6717,14 @@ sub process {
+>  			}
+>  		}
+> =20
+> +# check for capability_unsafe without a comment.
+> +		if ($line =3D~ /\bcapability_unsafe\b/) {
+> +			if (!ctx_has_comment($first_line, $linenr)) {
+> +				WARN("CAPABILITY_UNSAFE",
+> +				     "capability_unsafe without comment\n" . $herecurr);
 
-Linus,
+while most of these are using the same multi-line style
+I'd prefer combining and reducing indentation
 
-Runtime Verifier fixes for v6.17
-
-- Fix build in some RISC-V flavours
-
-  Some system calls only are available for the 64bit RISC-V machines.
-  #ifdef out the cases of clock_nanosleep and futex in the sleep monitor
-  if they are not supported by the architecture.
-
-- Fix wrong cast, obsolete after refactoring
-
-  Use container_of() to get to the rv_monitor structure from the
-  enable_monitors_next() 'p' pointer. The assignment worked only because
-  the list field used happened to be the first field of the structure.
-
-- Remove redundant include files
-
-  Some include files were listed twice. Remove the extra ones and sort
-  the includes.
-
-- Fix missing unlock on failure
-
-  There was an error path that exited the rv_register_monitor() function
-  without releasing a lock. Change that to goto the lock release.
-
-- Add Gabriele Monaco to be Runtime Verifier maintainer
-
-  Gabriele is doing most of the work on RV as well as collecting patches.
-  Add him to the maintainers file for Runtime Verification.
-
-
-Please pull the latest trace-rv-v6.17-rc5 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-rv-v6.17-rc5
-
-Tag SHA1: ecf198bd883bc43654e237c91bb2964f4b89dab6
-Head SHA1: ef442fc5c1a9a2a232de85a0e6967f388b6c0c8e
-
-
-Akhilesh Patil (1):
-      include/linux/rv.h: remove redundant include file
-
-Nam Cao (1):
-      rv: Fix wrong type cast in enabled_monitors_next()
-
-Palmer Dabbelt (1):
-      rv: Support systems with time64-only syscalls
-
-Steven Rostedt (1):
-      rv: Add Gabriele Monaco as maintainer for Runtime Verification
-
-Zhen Ni (1):
-      rv: Fix missing mutex unlock in rv_register_monitor()
-
-----
- MAINTAINERS                            | 1 +
- include/linux/rv.h                     | 6 ++----
- kernel/trace/rv/monitors/sleep/sleep.c | 4 ++++
- kernel/trace/rv/rv.c                   | 4 ++--
- 4 files changed, 9 insertions(+), 6 deletions(-)
----------------------------
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cd7ff55b5d32..17073c075bf7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22048,6 +22048,7 @@ F:	drivers/infiniband/ulp/rtrs/
- 
- RUNTIME VERIFICATION (RV)
- M:	Steven Rostedt <rostedt@goodmis.org>
-+M:	Gabriele Monaco <gmonaco@redhat.com>
- L:	linux-trace-kernel@vger.kernel.org
- S:	Maintained
- F:	Documentation/trace/rv/
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 14410a42faef..9520aab34bcb 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -7,16 +7,14 @@
- #ifndef _LINUX_RV_H
- #define _LINUX_RV_H
- 
--#include <linux/types.h>
--#include <linux/list.h>
--
- #define MAX_DA_NAME_LEN			32
- #define MAX_DA_RETRY_RACING_EVENTS	3
- 
- #ifdef CONFIG_RV
-+#include <linux/array_size.h>
- #include <linux/bitops.h>
-+#include <linux/list.h>
- #include <linux/types.h>
--#include <linux/array_size.h>
- 
- /*
-  * Deterministic automaton per-object variables.
-diff --git a/kernel/trace/rv/monitors/sleep/sleep.c b/kernel/trace/rv/monitors/sleep/sleep.c
-index eea447b06907..c1347da69e9d 100644
---- a/kernel/trace/rv/monitors/sleep/sleep.c
-+++ b/kernel/trace/rv/monitors/sleep/sleep.c
-@@ -127,7 +127,9 @@ static void handle_sys_enter(void *data, struct pt_regs *regs, long id)
- 	mon = ltl_get_monitor(current);
- 
- 	switch (id) {
-+#ifdef __NR_clock_nanosleep
- 	case __NR_clock_nanosleep:
-+#endif
- #ifdef __NR_clock_nanosleep_time64
- 	case __NR_clock_nanosleep_time64:
- #endif
-@@ -138,7 +140,9 @@ static void handle_sys_enter(void *data, struct pt_regs *regs, long id)
- 		ltl_atom_update(current, LTL_CLOCK_NANOSLEEP, true);
- 		break;
- 
-+#ifdef __NR_futex
- 	case __NR_futex:
-+#endif
- #ifdef __NR_futex_time64
- 	case __NR_futex_time64:
- #endif
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index 1482e91c39f4..48338520376f 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -495,7 +495,7 @@ static void *available_monitors_next(struct seq_file *m, void *p, loff_t *pos)
-  */
- static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
- {
--	struct rv_monitor *mon = p;
-+	struct rv_monitor *mon = container_of(p, struct rv_monitor, list);
- 
- 	(*pos)++;
- 
-@@ -805,7 +805,7 @@ int rv_register_monitor(struct rv_monitor *monitor, struct rv_monitor *parent)
- 
- 	retval = create_monitor_dir(monitor, parent);
- 	if (retval)
--		return retval;
-+		goto out_unlock;
- 
- 	/* keep children close to the parent for easier visualisation */
- 	if (parent)
-	
+		if ($line =3D~ /\bcapability_unsafe\b/ &&
+		    !ctx_has_comment($first_line, $linenr)) {
+			WARN(etc...
 
