@@ -1,161 +1,117 @@
-Return-Path: <linux-kernel+bounces-822643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90FBB84620
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FD1B84522
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C70B623D31
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4380517E66C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DDB303A1E;
-	Thu, 18 Sep 2025 11:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T2kZpdxN"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E412F3C1A;
+	Thu, 18 Sep 2025 11:18:46 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E5F2582
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20DB34BA40;
+	Thu, 18 Sep 2025 11:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758195597; cv=none; b=sBkGPmv92YkoH7pdsGyWo7LxoJAyh3dUERIkH1ZR0rTyp3wHBukbNyhBNGDO+zZ5zsNnnP7NGdVIUihx6koNfRsygomSqACLCF1jhioxk761A3DtNBlHgyIDbRHi9tORh7IqhuwevcKnOyxYjwESON3cnDisVIUe/wRbTXK0LLA=
+	t=1758194326; cv=none; b=XWXWdLNSt8V4OTxxdHcbPAXrvlJByc544SvLR/9slAHWhMTb/ond+OV6UCwuUsTh1inQBTrGbwCZM2pG/Zmt0MdwPAAZ0mxpyMFaxrSrXokeF7MBwS8fao1P99TVLa1zwLvm2/RYOuae3ytauBzm7CuvGHLbs9pNPDyYD23Icdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758195597; c=relaxed/simple;
-	bh=uFxlB2R+ZAYSRcEYlTPVQyhSU7uzPWXjKHbWDaZJTTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AqBFRJCA+pjq0TL1F2vjVISmJfATd5lzHb7gK5QhAlT2ufbCAQXynr2P2omkHr9osF6poy1XfJjT63OMFVGOtiaiEjZCWObANqN8lwbDQT0VcgJIuUYsx1+kzAMn3e5ne/J4IRh0KcT3MP9U3aaa3TKcRxiG5dSWzFFhM5zReGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T2kZpdxN; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-726fbc53376so100206d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758195594; x=1758800394; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5vUxrIL/IBc7jEhkf1uGzLd2PnG5mi3zNkUmu0ufRfg=;
-        b=T2kZpdxNfMQtbgeexpIY8UHjBFOlky/mRWMBcXEClIVPPib/QsZMJbshRo0loinT/V
-         ysYeZjU86GCAHspAityKO0hZN3HFWxWmbHnV205AhZC/G/cgjWzLl7LPw+uuv2swS6Ax
-         uIEjTxhqxI959GMj62FXeBoDeFVaMWR20xCRt7h9TRS32+NFJZwWQp2gAtwtDD9Hlstw
-         NVq/tkBYddVoZVDKmIhUcZShk7HXeJDqs+6AvYFx+0WPRcffwo27n8JJaRCUa9MzoHMt
-         QVsNIT5l+N/IdZiF9esHZqfRfKLnYCg/SVASAYqs6YIoe2t22V7zamGR5Z5wZYcLEmqK
-         83hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758195594; x=1758800394;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5vUxrIL/IBc7jEhkf1uGzLd2PnG5mi3zNkUmu0ufRfg=;
-        b=Ls2p3vFZ8SkxW2WDoHklCGT6lB9J/iKlsAtyQFGrIO/6u93774+PvoxtX8aTY6gBx5
-         NDHm/3h3i5JFloXBxLdDxGS6TM42yRyd1pU9mi0RACJKZkIaWdy7FLVQaCRwHgzE9cXd
-         7cENZCdCrWWcCnnhwJPMo1zc7fYjOtD7e/Dgs8h1ZjJzwQzXDC9JMGhxBCrSeQAuqWIF
-         P+QJ6i2PBsWi3zpKpYiHW5LDwQq8WAJjpX3dQdYUsdSGW6sG8Vhz+/vlWK7gk1Jy5bcg
-         bDeVDEaK+M/9RnGY98qnkQpu+J6guAvhSn54+k6Le2MATNdKme5Frq7TmRx4fsMRr0Vr
-         xVPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3psGhIhY+G2xWL3Rbd2idYoeqBfmbY9xem8IWHahp3IuPKrng7hAqKj6VQoFR+4dzG2AJtkbjrnaoby8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvqEQMtVP22rDkY+UTKUtIsqCxazDeN7Mv9++LumUvrd/mqiTT
-	Uk4nFaxQVjwc+9Xv3LptUChKLDkA4dSqetUPqE4Wae/nUkNfY3/qO9dCwNHZkBrgPZ6yRQIjxzH
-	Z4JMeKdWA1UcCJlh/plJMk1f7wAKwvHLEK/vu+daPySVTjuuB4cLZ2eum8g==
-X-Gm-Gg: ASbGncuj/LGpEp4iwlUD8EjVCpiHeP5bNSPz3Io3u7YnWrKZ4AXHllTJCjgbB0GC1Fl
-	aTANrXohTICr5/iFnjwfOzIWpWJFUwTdEzmIaVYqgSM2lNdWaHyfBH9kbmVi7RKEJWDWEV2F8zp
-	ZXmKZsL4I5RItBeaTALiyeSJKYuuCVouFto1pCsLvt2dETnmVjwBvjgQ8/1WryyO4wI2JqJVo0s
-	cAukDK7ey7vV+i5aV5BgHiS
-X-Google-Smtp-Source: AGHT+IH48ivQXtWG6C+0ln0hXjbS+q797BMP5NkKk70x0e10WLGtjHZ+0cOJrQylQsmByXrESmf6BwG/gWAUyqH0+oU=
-X-Received: by 2002:a05:6214:519b:b0:795:c55c:87de with SMTP id
- 6a1803df08f44-795c55c8cffmr5136256d6.5.1758195594483; Thu, 18 Sep 2025
- 04:39:54 -0700 (PDT)
+	s=arc-20240116; t=1758194326; c=relaxed/simple;
+	bh=M8OutrhX6i0XRNgR9xeSTB1Jl2VwiaubAtm4cFYZj9Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=isqIBcPmn2697r000n6pnWJCNVQ5zjFR2aQx3oX1hVKWdvSmt/0YfsKBiibf5JfJs91sDV7HLlI8bv2dt+xqknHDy44eyhhdQ3TVk7DO0B0BpXMDJSnssCCd0tUBejZc5EauJOtRg0KxHbdMYm11b3P1fON04+R+9wXx03gLDzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cSCjH3ch4z2VRxL;
+	Thu, 18 Sep 2025 19:15:15 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id C3A9F1A016C;
+	Thu, 18 Sep 2025 19:18:41 +0800 (CST)
+Received: from huawei.com (10.50.159.234) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 18 Sep
+ 2025 19:18:40 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <wsa+renesas@sang-engineering.com>, <dhowells@redhat.com>,
+	<rostedt@goodmis.org>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linux-i2c@vger.kernel.org>
+Subject: [PATCH] i2c: dev: Fix field-spanning write in __do_trace_smbus_write()
+Date: Thu, 18 Sep 2025 19:39:56 +0800
+Message-ID: <20250918113956.169348-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917123344.315037637@linuxfoundation.org>
-In-Reply-To: <20250917123344.315037637@linuxfoundation.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Thu, 18 Sep 2025 13:39:43 +0200
-X-Gm-Features: AS18NWBNNFTT46ohA_9aWzCCmFKj0hhU1Nz5FCTOq6VyCT2bqNOYD0vIURq0WvA
-Message-ID: <CADYN=9+vrKOAkyqp69eG785TXoqbw2QdORoFOJWz=fXeEmGz1g@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/140] 6.12.48-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Wed, 17 Sept 2025 at 14:48, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.48 release.
-> There are 140 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.48-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+A field-spanning write warning was observed with following output:
 
-While building Linux stable-rc 6.12.48-rc1 the powerpc allmodconfig and x86_64
-allyesconfig build fails.
+  ------------[ cut here ]------------
+  memcpy: detected field-spanning write (size 86) of single field "entry->buf" at ./include/trace/events/smbus.h:60 (size 34)
+  WARNING: CPU: 1 PID: 2646 at ./include/trace/events/smbus.h:60
+  CPU: 1 UID: 0 PID: 2646 Comm: syz.0.310 Not tainted 6.17.0-rc5+ #5 PREEMPT(none)
+  RIP: 0010:do_trace_event_raw_event_smbus_write.constprop.0+0x37a/0x520 include/trace/events/smbus.h:23
+  Call Trace:
+   <TASK>
+   __do_trace_smbus_write include/trace/events/smbus.h:23 [inline]
+   trace_smbus_write include/trace/events/smbus.h:23 [inline]
+   __i2c_smbus_xfer.part.0+0x5ce/0x9a0 drivers/i2c/i2c-core-smbus.c:572
+   __i2c_smbus_xfer+0xa3/0x1a0 drivers/i2c/i2c-core-smbus.c:566
+   i2c_smbus_xfer drivers/i2c/i2c-core-smbus.c:546 [inline]
+   i2c_smbus_xfer+0x208/0x3c0 drivers/i2c/i2c-core-smbus.c:536
+   i2cdev_ioctl_smbus+0x2cd/0x850 drivers/i2c/i2c-dev.c:389
+   i2cdev_ioctl+0x3bb/0x800 drivers/i2c/i2c-dev.c:478
+   vfs_ioctl fs/ioctl.c:51 [inline]
+   __do_sys_ioctl fs/ioctl.c:598 [inline]
+   __se_sys_ioctl fs/ioctl.c:584 [inline]
+   __x64_sys_ioctl+0x191/0x210 fs/ioctl.c:584
+   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+   do_syscall_64+0x5d/0x2d0 arch/x86/entry/syscall_64.c:94
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+   </TASK>
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+Similar to previous commit 57f312b95593 ("i2c: rtl9300: Fix out-of-bounds
+bug in rtl9300_i2c_smbus_xfer"), the data->block[0] is used for length and
+it comes from user. Add check for the variable to avoid out-of-bounds bug.
 
-Build regression: powerpc clang-20-allmodconfig
+Fixes: 8a325997d95d ("i2c: Add message transfer tracepoints for SMBUS [ver #2]")
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ drivers/i2c/i2c-dev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Powerpc allmodconfig build error  :
-/builds/linux/drivers/net/ethernet/ibm/ibmvnic.c:6134:13: error: stack
-frame size (2080) exceeds limit (2048) in 'ibmvnic_tasklet'
-[-Werror,-Wframe-larger-than]
- 6134 | static void ibmvnic_tasklet(struct tasklet_struct *t)
-       |             ^
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index e9577f920286..b00961561134 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -386,6 +386,12 @@ static noinline int i2cdev_ioctl_smbus(struct i2c_client *client,
+ 		if (read_write == I2C_SMBUS_READ)
+ 			temp.block[0] = I2C_SMBUS_BLOCK_MAX;
+ 	}
++
++	if (temp.block[0] > I2C_SMBUS_BLOCK_MAX) {
++		dev_dbg(&client->adapter->dev, "block[0] out of range in ioctl I2C_SMBUS.\n");
++		return -EINVAL;
++	}
++
+ 	res = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
+ 	      read_write, command, size, &temp);
+ 	if (!res && ((size == I2C_SMBUS_PROC_CALL) ||
+-- 
+2.34.1
 
-Build log: https://qa-reports.linaro.org/api/testruns/29918282/log_file/
-Build details: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.46-149-g6281f90c1450/log-parser-build-clang/clang-compiler-drivers_net_ethernet_ibm_ibmvnic_c-error-stack-frame-size-exceeds-limit-in-ibmvnic_tasklet/
-
-Bisection in progress.
-
-
-Build regression: x86_64 gcc-13-allyesconfig
-
-2025/09/17 13:43:43 socat-external[1252] W waitpid(-1, {}, WNOHANG):
-no child has exited
-x86_64-linux-gnu-ld: kernel image bigger than KERNEL_IMAGE_SIZE
-
-Build log: https://qa-reports.linaro.org/api/testruns/29919415/log_file/
-Build details: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.46-149-g6281f90c1450/build/gcc-13-allyesconfig/
-
-Bisection in progress.
-
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.12.48-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: 6281f90c1450c5ee21a0f42e3dff4654f395d963
-* git describe: v6.12.46-149-g6281f90c1450
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12.46-149-g6281f90c1450
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
