@@ -1,161 +1,196 @@
-Return-Path: <linux-kernel+bounces-823039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99AEB855F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:54:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE78DB85665
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34FAE1C84100
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA11622ACC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF9630CD83;
-	Thu, 18 Sep 2025 14:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B5420DD72;
+	Thu, 18 Sep 2025 14:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aG5BEIEQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EWbX6Wut"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4945730C637
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C1AA31;
+	Thu, 18 Sep 2025 14:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207153; cv=none; b=lCh4odzhDMezbuZZNAg/QKL5FE8e0Hh3jzYBXXZCWIFcZl236xaOnI2vUI4BEP02WmfZSeqI2tPV4xyNGYy4ABdLSXF2zx5ByYVSGnUJmQblpdfvYXM02sK35s9njvH+E1Og0yi8S4N5tMqzLIp6wXHkUb4NJD4yAW9R7sCePd0=
+	t=1758207532; cv=none; b=Ph0ZUMkREubHa2Hh9VVTZybRR/YYQsXQp1ZengqCamsWk0LzB60BM9TPfKZ8BDn+SMm+JHOaqzNeKFEF541dN10ZAkBVD0hQ+o6i7xBv1U0goGByIfXNjxcZIw3afOaYzhyvkCczNVViteIKOHPzRmonQ8edOtPOdG0EAVs4jms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207153; c=relaxed/simple;
-	bh=877fy4JwCj6Yt7dwkYYuI8E/1ziIUPjIl8VIeeaY+04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FV9ILYsZT7DCLPqqlkce5na2UTS4iuWV1yGRVZi5oP7gyvA9e0Zc3ldKs5cK4nH+b9k0GEz7vOZt4i5zu50m9poI0n3kfQWHufvVAMySGaZzJ6xdtSvpGDWdcnsJBQt+bbGR3AMd3trJC9LBoqlkQ4a8joApsciBa9LBn9uPlhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aG5BEIEQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758207151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o4xuHLo8yzB0A9DafNx4LR5vIcuDhtQe+LRGJvMc0Qw=;
-	b=aG5BEIEQROVfBVBkRun5Np22UmXKjkOb7semsa5Lp25vGmHzc93sMaI8HA25VIdVyyvjVu
-	VdB8X/QM1bT+bzZ1iKfOiTCLu5v5WJRrFDZ9w2kPnS3wH5JRGHzpCd9/VpcY/OVMnkwgk1
-	sJW1LVn2/X5qKxBACNcA6UpPXimQRwI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-UnUbATGHN2mrL46dZjM-ow-1; Thu, 18 Sep 2025 10:52:28 -0400
-X-MC-Unique: UnUbATGHN2mrL46dZjM-ow-1
-X-Mimecast-MFC-AGG-ID: UnUbATGHN2mrL46dZjM-ow_1758207147
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45f2a1660fcso9795115e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:52:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758207147; x=1758811947;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4xuHLo8yzB0A9DafNx4LR5vIcuDhtQe+LRGJvMc0Qw=;
-        b=sbkzxAf9tx2JJ2MBHgV8XliIJb1Eqyuje/FDfDARWVII0qdRcf1eETRE1PX/BoFAOd
-         10a/deHgteZFkztRg/8cuumikWOrrJLmlpbPVFt92whu0xd5I8NGKiEA4pqvewc5XQK2
-         SZi2I3fEQkZwqqJdsxOSqVFuEldsrufk/C0GnFA5QuGSf9PXnTcx+TdB0SpQHFksSiB0
-         cYtrpKZOQ6m6q/LaMR0ZBePzoCA6AF60hvcs3Oy9xdxoh57uO9KdpRE/khHeANFfqnTP
-         H9jBBYkKzr6ptPSDRhnIkQuRvs+SltdDqRGuGyyNctXASG3y5wTrGviRq4r5SiLbuKJs
-         VeOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQyPW1iGeKMdegsuUNvKLaThkZ55EmI96NFjkIswd/zeR7tp0YQ+CSigVvr3KAD6zNx6JTf+ti4dQBqjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoJ/Twvo70GcJw+rwJToMgUHEd1aBB7bsZmvlsS7+Yjjufnz1f
-	oLsbMYlS4cEc7gQndECxTygxqzT1+KICIXfYkLhgJoxnn3KgQ3jDZ4Jm95P2x1RCPu50G4GITVy
-	V4t+Oe2oYfNTppuPeQ6wgx3z5MhbAHF5qvqmbR4GBnl8/GlnCAXn33vlOQa1qfIC7Ug==
-X-Gm-Gg: ASbGnctL+NUtN0pu0XrZSmpXo2k8PWBc4ZWUy7QtxX7dSf+K6ALXjnckxbIXbuVrN4e
-	YAX9UysKjIv8vx32Ag7fKBln+9LJQTQc4ObzmnH3/aOjdNaA40H4YQJPwi05gU58/oxwUuC4Ttf
-	pF1QRtznaRdBzJf6lhgJmbAn68VQU3/pwOkTydPZ2/H0a7b5JDOlMoxiErCls7ty40jtMocuvEy
-	UrYZuwlpNAskvupYZm08gn3JHriQDcJBIbUjvUsE7xf1d10Mcu0j/HlISD3RlsrG4GDJfTOOZod
-	3Cy3uEB3E47mknEkfIVKPcf1WyPq+/O+gww=
-X-Received: by 2002:a05:6000:430c:b0:3e2:4a3e:d3e5 with SMTP id ffacd0b85a97d-3ecdf9bbb14mr6283929f8f.22.1758207146770;
-        Thu, 18 Sep 2025 07:52:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFqwMRBHuFFqMWYMrzOGs/Y1LvHSUdwEyMMdSeQZSTNEKri6ViSDAyQsaqS+nlL7xHwrs2MhA==
-X-Received: by 2002:a05:6000:430c:b0:3e2:4a3e:d3e5 with SMTP id ffacd0b85a97d-3ecdf9bbb14mr6283908f8f.22.1758207146339;
-        Thu, 18 Sep 2025 07:52:26 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73e7:4d00:2294:2331:c6cf:2fde])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f32083729sm61479685e9.0.2025.09.18.07.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 07:52:25 -0700 (PDT)
-Date: Thu, 18 Sep 2025 10:52:23 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: eperezma@redhat.com, jonah.palmer@oracle.com, kuba@kernel.org,
-	jon@nutanix.com, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH vhost 1/3] vhost-net: unbreak busy polling
-Message-ID: <20250918105037-mutt-send-email-mst@kernel.org>
-References: <20250917063045.2042-1-jasowang@redhat.com>
+	s=arc-20240116; t=1758207532; c=relaxed/simple;
+	bh=cPGO1N9WZ9kh/g+Cn2Z/DFMLIdDurxeSbmeWGZt6UBI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n6/uTl4ZAh6yjr2mCPtu0W2qgjfN9/5wbBIu2w30JX8ogtO082v/0+6wM+1cD9s04Jf5EWMjsi9c5LtUIlObrZ/vWo8znq2U0oQFGulKxBZ94249qbYL8KhETUAHruLGSCTHPpUSC8pcPA3S8N+hpCb2belJ+8lI5nF9i/8j2Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EWbX6Wut; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:ace3:d2c2:5eff:9cc5])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 251B9842;
+	Thu, 18 Sep 2025 16:57:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758207449;
+	bh=cPGO1N9WZ9kh/g+Cn2Z/DFMLIdDurxeSbmeWGZt6UBI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EWbX6WutkR6zJM6u6Jpw5XmGbWKE6MV4icwXgi/M2KYPL/mpxSRD87/VDB/edeNv/
+	 QlukMfq8c11HZZpo+9k9tII6fNDjJ1Xovy1UY54MAmSZfXDoEricVIPedtfVLIq0im
+	 stsxKpxCzTLtz8lGTRRb6M4hXgE8qfZvYTRJBx8E=
+From: Stefan Klug <stefan.klug@ideasonboard.com>
+To: linux-media@vger.kernel.org,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Stefan Klug <stefan.klug@ideasonboard.com>,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] media: rkisp1: Improve frame sequence correctness on stats and params buffers
+Date: Thu, 18 Sep 2025 16:54:33 +0200
+Message-ID: <20250918145504.111428-2-stefan.klug@ideasonboard.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917063045.2042-1-jasowang@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 17, 2025 at 02:30:43PM +0800, Jason Wang wrote:
-> Commit 67a873df0c41 ("vhost: basic in order support") pass the number
-> of used elem to vhost_net_rx_peek_head_len() to make sure it can
-> signal the used correctly before trying to do busy polling. But it
-> forgets to clear the count, this would cause the count run out of sync
-> with handle_rx() and break the busy polling.
-> 
-> Fixing this by passing the pointer of the count and clearing it after
-> the signaling the used.
-> 
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 67a873df0c41 ("vhost: basic in order support")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
+handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
+and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
+commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
+debugfs var for irq delay") a warning was added for that. There are two
+cases where this condition can occur:
 
-I queued this but no promises this gets into this release - depending
-on whether there is another rc or no. I had the console revert which
-I wanted in this release and don't want it to be held up.
+1. The v-sync and the frame-end belong to the same frame. This means,
+   the irq was heavily delayed and the warning is likely appropriate.
 
-for the future, I expect either a cover letter explaining
-what unites the patchset, or just separate patches.
+2. The v-sync belongs to the next frame. This can happen if the vertical
+   blanking between two frames is very short.
 
-> ---
->  drivers/vhost/net.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index c6508fe0d5c8..16e39f3ab956 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -1014,7 +1014,7 @@ static int peek_head_len(struct vhost_net_virtqueue *rvq, struct sock *sk)
->  }
->  
->  static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
-> -				      bool *busyloop_intr, unsigned int count)
-> +				      bool *busyloop_intr, unsigned int *count)
->  {
->  	struct vhost_net_virtqueue *rnvq = &net->vqs[VHOST_NET_VQ_RX];
->  	struct vhost_net_virtqueue *tnvq = &net->vqs[VHOST_NET_VQ_TX];
-> @@ -1024,7 +1024,8 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
->  
->  	if (!len && rvq->busyloop_timeout) {
->  		/* Flush batched heads first */
-> -		vhost_net_signal_used(rnvq, count);
-> +		vhost_net_signal_used(rnvq, *count);
-> +		*count = 0;
->  		/* Both tx vq and rx socket were polled here */
->  		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, true);
->  
-> @@ -1180,7 +1181,7 @@ static void handle_rx(struct vhost_net *net)
->  
->  	do {
->  		sock_len = vhost_net_rx_peek_head_len(net, sock->sk,
-> -						      &busyloop_intr, count);
-> +						      &busyloop_intr, &count);
->  		if (!sock_len)
->  			break;
->  		sock_len += sock_hlen;
-> -- 
-> 2.34.1
+The current code always handles case 1 although case 2 is in my
+experience the more common case and happens in regular usage. This leads
+to incorrect sequence numbers on stats and params buffers which in turn
+breaks the regulation in user space. Fix that by adding a frame_active
+flag to distinguish between these cases and handle the start of frame
+either at the beginning or at the end of the rkisp1_isp_isr().
+
+Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+
+---
+
+Hi all,
+
+Here is an updated version of the patch with some fixes from the review.
+
+Changes in v2:
+- Removed test for !frame_active in second v_start handler
+- Improved comments
+
+Best regards,
+Stefan
+
+---
+ .../platform/rockchip/rkisp1/rkisp1-common.h  |  1 +
+ .../platform/rockchip/rkisp1/rkisp1-isp.c     | 27 +++++++++++++++----
+ 2 files changed, 23 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+index ca952fd0829b..adf23416de9a 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+@@ -222,6 +222,7 @@ struct rkisp1_isp {
+ 	struct media_pad pads[RKISP1_ISP_PAD_MAX];
+ 	const struct rkisp1_mbus_info *sink_fmt;
+ 	__u32 frame_sequence;
++	bool frame_active;
+ };
+ 
+ /*
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+index 8c29a1c9309a..2e49764d6262 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+@@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd, int enable)
+ 	}
+ 
+ 	isp->frame_sequence = -1;
++	isp->frame_active = false;
+ 
+ 	sd_state = v4l2_subdev_lock_and_get_active_state(sd);
+ 
+@@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *rkisp1)
+  * Interrupt handlers
+  */
+ 
+-static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
++static void rkisp1_isp_sof(struct rkisp1_isp *isp)
+ {
+ 	struct v4l2_event event = {
+ 		.type = V4L2_EVENT_FRAME_SYNC,
+ 	};
+ 
++	isp->frame_sequence++;
++	isp->frame_active = true;
++
+ 	event.u.frame_sync.frame_sequence = isp->frame_sequence;
+ 	v4l2_event_queue(isp->sd.devnode, &event);
+ }
+@@ -1111,15 +1115,20 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+ 
+ 	rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
+ 
+-	/* Vertical sync signal, starting generating new frame */
+-	if (status & RKISP1_CIF_ISP_V_START) {
+-		rkisp1->isp.frame_sequence++;
+-		rkisp1_isp_queue_event_sof(&rkisp1->isp);
++	/*
++	 * Vertical sync signal, starting new frame. Defer handling of vsync
++	 * after RKISP1_CIF_ISP_FRAME if the previous frame was not completed
++	 * yet.
++	 */
++	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
++		status &= ~RKISP1_CIF_ISP_V_START;
++		rkisp1_isp_sof(&rkisp1->isp);
+ 		if (status & RKISP1_CIF_ISP_FRAME) {
+ 			WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
+ 			rkisp1->debug.irq_delay++;
+ 		}
+ 	}
++
+ 	if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
+ 		/* Clear pic_size_error */
+ 		isp_err = rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
+@@ -1138,6 +1147,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+ 	if (status & RKISP1_CIF_ISP_FRAME) {
+ 		u32 isp_ris;
+ 
++		rkisp1->isp.frame_active = false;
+ 		rkisp1->debug.complete_frames++;
+ 
+ 		/* New frame from the sensor received */
+@@ -1152,5 +1162,12 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+ 		rkisp1_params_isr(rkisp1);
+ 	}
+ 
++	/*
++	 * Deferred handling of vsync if RKISP1_CIF_ISP_V_START and
++	 * RKISP1_CIF_ISP_FRAME occurrend in the same irq.
++	 */
++	if (status & RKISP1_CIF_ISP_V_START)
++		rkisp1_isp_sof(&rkisp1->isp);
++
+ 	return IRQ_HANDLED;
+ }
+-- 
+2.48.1
 
 
