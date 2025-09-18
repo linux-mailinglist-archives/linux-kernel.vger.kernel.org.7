@@ -1,108 +1,176 @@
-Return-Path: <linux-kernel+bounces-822271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4A2B836E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:05:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 561D7B83706
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1215E3B6AC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:05:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF971C8213E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4232EFDBE;
-	Thu, 18 Sep 2025 08:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705FE2F0688;
+	Thu, 18 Sep 2025 08:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bB8r9c7k"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656B32EFD8A;
-	Thu, 18 Sep 2025 08:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIOYQOd4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A445D2EFD88;
+	Thu, 18 Sep 2025 08:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758182720; cv=none; b=I4g8qhWC0ATlSzB9BiyrfKQx8TKMDfC2dkxEPrhjJguLTEJ/r/b1e+s7htcj3B9eQLBbNCqAK5mPAyawQqvzD/JKvE1DCjaQpk7N6JdY30TxqoqS4lByfLAY+SiCOIDpYDNyoo28353AXIgaM1wFPXLWdRNSH2s9eGuScL+7pR8=
+	t=1758182816; cv=none; b=i9kKSPEu1XAqYlJcq9whzanHby3nOLKWPrqA1Ov9E3qRRAbs2E2ccqzMuKqx+ffTu/9bqAk8wwn6/EnpMq87pK4TGvZ4ryDmyfA6hVsWfmfMMkK/4ZMF5Rdg+NOabn87wzybaE8TPmuTzJ43OE4nSpbZD+AGXrwk4wGiNTEqtmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758182720; c=relaxed/simple;
-	bh=3hIYTT1ZcNliMeoFx5ijfiEzeNg3UJdkWLLfOB2jAYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4cgQr0jcQ/vkW9ZVDKMMBl+slI4TVuDBXQdInHEO4x+pQMU/DY1KA9v9EeQotfON2Bi+cdeICFSncS57v+7zhpoPMFBG/gXztpl4a/6UM8eXytO7Cu30A06Dxyism+NdEVhE1OPhZSKYHa+KO5V3l5z/RssBBQNmwYcqI8wceA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bB8r9c7k; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 1068720143C5; Thu, 18 Sep 2025 01:05:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1068720143C5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758182719;
-	bh=f6Xq/qzmkWBxkjsonhrjIu+AIDazg4cml5u/EGCUwPU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bB8r9c7kBJIUWPHkehFORLxOvLjCwkQvqm41saev5ohf3b+kUXL/Gx4VuOq6LMbuy
-	 yS1ADesr3o3mUX/a+66BzjrpR4rzSdtPCFJWm5xOnSWgmQxUNtob0h9Hi6QaoGqPZ8
-	 81O13NsLhzqA+eU/+wzr0zOawJT+t5vR3k4zt7go=
-Date: Thu, 18 Sep 2025 01:05:19 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
-Cc: dri-devel@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mhklinux@outlook.com, rdunlap@infradead.org,
-	bartosz.golaszewski@linaro.org, gonzalo.silvalde@gmail.com,
-	arnd@arndb.de, tzimmermann@suse.de, decui@microsoft.com,
-	wei.liu@kernel.org, deller@gmx.de, kys@microsoft.com,
-	haiyangz@microsoft.com
-Subject: Re: [PATCH 2/2] MAINTAINERS: Mark hyperv_fb driver Obsolete
-Message-ID: <20250918080519.GB17773@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <E5C2A201B1BD>
- <1758117804-20798-1-git-send-email-ptsm@linux.microsoft.com>
+	s=arc-20240116; t=1758182816; c=relaxed/simple;
+	bh=Ns1mKExqRXm12zo1+ws58dTagf2ok6afaTxISy8NecA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lCgyZ3mfFq14ChDgkxPmtEr25ZXYYQZGrizVUBhEnRDsvhl/wL9RHDxVPbjdWHo6dCIpSiHou79Aujhoh9vERMoKoDt5GdgmzlLwyu7Wng/7Y9hLUvHGW6xjMwiQrO5fsZGMgJ3APyZkASKJf6ucPzB4IanfqNi+Rtwj2mpfu+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIOYQOd4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240C2C4AF0B;
+	Thu, 18 Sep 2025 08:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758182816;
+	bh=Ns1mKExqRXm12zo1+ws58dTagf2ok6afaTxISy8NecA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OIOYQOd4V92yHglEPqiPlQh+qWfgkNX0u2K9J+Le13Q7rfGnaZa3l1DerzpjFCpUz
+	 05WYvOd4BoHnnuLoelKVxDbcQpcQEjM66Zy3Oq15HbObnTBSSxidVkX341Xfug10KV
+	 nB15ytBjll/8cDJIgzB/DqKJGyBUspwCMrlCTrwlE+BCs0UqtvxuW+G4Bza2pZeSfv
+	 IC8oLHCYw9WYVDklI4ttYIr8T7tOuk/CHX5aMFmZE22i6H8vsCJYDMge1CZWWs/28F
+	 RxLFXsEkmgTEoFgYkiF8G/mLr8CtHRNmkQvaekp0h9IbbJxrSyud1p+PHPM7+EY08B
+	 SWRIV9JI6dUjg==
+From: Alexey Gladkov <legion@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Alexey Gladkov <legion@kernel.org>
+Subject: [PATCH v8 0/8] Add generated modalias to modules.builtin.modinfo
+Date: Thu, 18 Sep 2025 10:05:44 +0200
+Message-ID: <cover.1758182101.git.legion@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1758117804-20798-1-git-send-email-ptsm@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 17, 2025 at 07:03:24AM -0700, Prasanna Kumar T S M wrote:
-> The hyperv_fb driver is deprecated in favor of Hyper-V DRM driver. Split
-> the hyperv_fb entry from the hyperv drivers list, mark it obsolete.
-> 
-> Signed-off-by: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
-> ---
->  MAINTAINERS | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f6206963efbf..aa9d0fa6020b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11424,7 +11424,6 @@ F:	drivers/pci/controller/pci-hyperv-intf.c
->  F:	drivers/pci/controller/pci-hyperv.c
->  F:	drivers/scsi/storvsc_drv.c
->  F:	drivers/uio/uio_hv_generic.c
-> -F:	drivers/video/fbdev/hyperv_fb.c
->  F:	include/asm-generic/mshyperv.h
->  F:	include/clocksource/hyperv_timer.h
->  F:	include/hyperv/hvgdk.h
-> @@ -11438,6 +11437,16 @@ F:	include/uapi/linux/hyperv.h
->  F:	net/vmw_vsock/hyperv_transport.c
->  F:	tools/hv/
->  
-> +HYPER-V FRAMEBUFFER DRIVER
-> +M:	"K. Y. Srinivasan" <kys@microsoft.com>
-> +M:	Haiyang Zhang <haiyangz@microsoft.com>
-> +M:	Wei Liu <wei.liu@kernel.org>
-> +M:	Dexuan Cui <decui@microsoft.com>
-> +L:	linux-hyperv@vger.kernel.org
-> +S:	Obsolete
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git
-> +F:	drivers/video/fbdev/hyperv_fb.c
-> +
->  HYPERBUS SUPPORT
->  M:	Vignesh Raghavendra <vigneshr@ti.com>
->  R:	Tudor Ambarus <tudor.ambarus@linaro.org>
-> -- 
-> 2.49.0
+The modules.builtin.modinfo file is used by userspace (kmod to be specific) to
+get information about builtin modules. Among other information about the module,
+information about module aliases is stored. This is very important to determine
+that a particular modalias will be handled by a module that is inside the
+kernel.
 
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+There are several mechanisms for creating modalias for modules:
+
+The first is to explicitly specify the MODULE_ALIAS of the macro. In this case,
+the aliases go into the '.modinfo' section of the module if it is compiled
+separately or into vmlinux.o if it is builtin into the kernel.
+
+The second is the use of MODULE_DEVICE_TABLE followed by the use of the
+modpost utility. In this case, vmlinux.o no longer has this information and
+does not get it into modules.builtin.modinfo.
+
+For example:
+
+$ modinfo pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
+modinfo: ERROR: Module pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30 not found.
+
+$ modinfo xhci_pci
+name:           xhci_pci
+filename:       (builtin)
+license:        GPL
+file:           drivers/usb/host/xhci-pci
+description:    xHCI PCI Host Controller Driver
+
+The builtin module is missing alias "pci:v*d*sv*sd*bc0Csc03i30*" which will be
+generated by modpost if the module is built separately.
+
+To fix this it is necessary to add the generated by modpost modalias to
+modules.builtin.modinfo. Fortunately modpost already generates .vmlinux.export.c
+for exported symbols. It is possible to add `.modinfo` for builtin modules and
+modify the build system so that `.modinfo` section is extracted from the
+intermediate vmlinux after modpost is executed.
+
+---
+Notes:
+- v8:
+  * Fix build warnings about unused variable.
+  * Fix objcopy "warning: empty loadable segment detected ...".
+  * v7: https://lore.kernel.org/all/cover.1755535876.git.legion@kernel.org/
+
+- v7:
+  * Reorder patches to avoid unnecessary linker warnings on s390.
+  * Drop the patch for pinctrl since it's already been applied.
+  * v6: https://lore.kernel.org/all/cover.1755170493.git.legion@kernel.org/
+
+- v6:
+  * Rebase to v6.17-rc1-16-g8742b2d8935f to pick up the fixes made by Masahiro Yamada.
+  * Fix an issue on i386 configs caused by the use of string_32.h.
+  * v5: https://lore.kernel.org/all/cover.1753354215.git.legion@kernel.org/
+
+- v5:
+  * Rebase to v6.16-rc6-281-gf4a40a4282f4 to pick up the fixes made by Masahiro Yamada.
+  * Attempt to fix linker warning on s390.
+  * Fix typo in pinctrl/meson found by the kernel test robot.
+  * v4: https://lore.kernel.org/all/cover.1750511018.git.legion@kernel.org/
+
+- v4:
+  * Rework the patchset based on top of Masahiro Yamada's patches.
+  * Add removal of unnecessary __mod_device_table__* symbols to avoid symbol
+    table growth in vmlinux.
+  * rust code takes into account changes in __mod_device_table__*.
+  * v3: https://lore.kernel.org/all/cover.1748335606.git.legion@kernel.org/
+
+- v3:
+  * Add `Reviewed-by` tag to patches from Petr Pavlu.
+  * Rebase to v6.15.
+  * v2: https://lore.kernel.org/all/20250509164237.2886508-1-legion@kernel.org/
+
+- v2:
+  * Drop patch for mfd because it was already applied and is in linux-next.
+  * The generation of aliases for builtin modules has been redone as
+    suggested by Masahiro Yamada.
+  * Rebase to v6.15-rc5-136-g9c69f8884904
+  * v1: https://lore.kernel.org/all/cover.1745591072.git.legion@kernel.org/
+
+
+Alexey Gladkov (5):
+  s390: vmlinux.lds.S: Reorder sections
+  scsi: Always define blogic_pci_tbl structure
+  modpost: Add modname to mod_device_table alias
+  modpost: Create modalias for builtin modules
+  kbuild: vmlinux.unstripped should always depend on .vmlinux.export.o
+
+Masahiro Yamada (3):
+  kbuild: always create intermediate vmlinux.unstripped
+  kbuild: keep .modinfo section in vmlinux.unstripped
+  kbuild: extract modules.builtin.modinfo from vmlinux.unstripped
+
+ arch/s390/kernel/vmlinux.lds.S    | 10 ++--
+ drivers/scsi/BusLogic.c           |  4 +-
+ include/asm-generic/vmlinux.lds.h |  2 +-
+ include/linux/module.h            | 18 +++++--
+ rust/kernel/device_id.rs          |  8 ++--
+ scripts/Makefile.vmlinux          | 79 ++++++++++++++++++++-----------
+ scripts/Makefile.vmlinux_o        | 26 +---------
+ scripts/link-vmlinux.sh           |  5 +-
+ scripts/mksysmap                  |  6 +++
+ scripts/mod/file2alias.c          | 34 +++++++++++--
+ scripts/mod/modpost.c             | 15 ++++++
+ scripts/mod/modpost.h             |  2 +
+ 12 files changed, 131 insertions(+), 78 deletions(-)
+
+
+base-commit: aa943a280e88e3585ed5a06d55e78c4123fcead3
+-- 
+2.51.0
+
 
