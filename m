@@ -1,142 +1,192 @@
-Return-Path: <linux-kernel+bounces-822989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6953FB853A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:28:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D69CB853ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35393A40C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9172716DF7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C96313280;
-	Thu, 18 Sep 2025 14:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGZFAI/w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80823128BA;
+	Thu, 18 Sep 2025 14:20:03 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E7F313269
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DB130CDB1
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205205; cv=none; b=Yx/EajhHtGK0NZZn3uUYoxr6QlWNaZew3RpaCyL+lfnAgA4dC1hYT2EJUQcllqnQY+54jg9DLpENyv6VvHSEVvSBj5rKjB4Vn9oItPhbp4rBiC+3GipZQ1g8SMVzVeQBkhb0yFX6GzoCGbYkBzswSaJyM1IwygzfKTlbAxBgdAU=
+	t=1758205203; cv=none; b=QXWiDtEVBYEzKv1sYpcE6RDvVAt4/QIeLzxUVI0pzBLqkZifc8fwgII6fAGc1VxYA98goDL9vh695z3OD2NSjwof5PiSAmzImOTmVK5aqrhts66gJ23X4YNOzEexPosGrqAneN1Mq/jigKajPUtWtZ3pNqfjvbo3qtMQ8cjeqXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205205; c=relaxed/simple;
-	bh=OWZhryAvRQtDyjeStvoQhj1ITDFDPTCq/irqjRsFVR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uC1u4VC2wDQcIvd78FCYdhjH1oarLJmtVu2nbCs77ONnimQtnirYVMKDtYjMnlpBPKaLtdvrRj5Gy5mloQS4QbBtnZRMlYjMquV/3QBdoN5eA/LD4OXB8ukvf5CJXSuo84Wi/fgdTMWQprRq1yn62I+KdwWOG+9A79GfMDZiHFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGZFAI/w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6BADC4CEFA
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:20:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758205204;
-	bh=OWZhryAvRQtDyjeStvoQhj1ITDFDPTCq/irqjRsFVR8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AGZFAI/w3PnQAru63me4ay9jcaUlh2xe9SKRc+AnrbhbOSWIHnJULSpTHXF8mBdH2
-	 g1CCR4xfum6T5US/0VPAFJg9rWMbHWRhVxHwdWRD8/lTly0KGojQ7dCoAlHOa/FzxO
-	 gGAGahj1CzvbfPpzYutFt3Ll+KLdEaJ1U4/8WyjBgtsrtRQuzew+MswdAHxkqW91H0
-	 f+YEdfxz3vDTr8sBecc5GQN1oBiJPLbed4JAiRiI5tLUxpMzCguyaDqgi+1WU4RPR/
-	 wSamAdiZcSXghDtYJgSpz4sAY9J2XDizVueMNCzf8uasuTaiVDFzECHmYBGJQXg7Mc
-	 w9AU5drGotPPw==
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d6051aeafso8042967b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:20:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIm+79SKU7Y5Mxh2hh23n1m1jObKiEGbVl2md8zkL3OaGm3G5e/mw/OugS/CcaNhSS+nB+1BHnLdUAPGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysMLtEz9JHnbP1BLnM7wJIjlrawBN2iHZzENeaPttSb7eVMWBY
-	YWjaJ9i3Iy5uLMngDwypU9qgkIABf5Pj1N4TEouvteknEvRrn906UbPoXLzOpMS4OGFNA8tPdwk
-	kvQYRLbDKJiW0H4/epBKNmhJKpry52+RoxNpeCmwCTQ==
-X-Google-Smtp-Source: AGHT+IHJ5VJ815IdenFpro8uYXEfzkWvkvnL+QTGV/q4zXxuxIvJR5FbvI/qS7bEiRnQ3lj33uFOCWbw2B2cpQMqPjE=
-X-Received: by 2002:a05:690c:18:b0:71f:e430:666b with SMTP id
- 00721157ae682-73892a49056mr46759697b3.32.1758205203651; Thu, 18 Sep 2025
- 07:20:03 -0700 (PDT)
+	s=arc-20240116; t=1758205203; c=relaxed/simple;
+	bh=D9Y8Bt/owQ1FynHSVP9fIaoI5MEzStCl0tka+CC3snE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=p1B1UhKfdRMAVWFWfGuHFg1ofBr77mGghYk8HVoihlvG9ZqeAocG0yG9TUgjRaTyIDqHnt9woTo3iJr2G95e7vfZ0QmLRAkXQJmxsv2r/609Yl4bWSOarDgT2s8+fqTFpvNVIvuqksBYXtaWD0ESdj7FpsCfxAYdME1wAW3/OKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cSHjZ34hkz13NNP;
+	Thu, 18 Sep 2025 22:15:46 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9BBAB1402CC;
+	Thu, 18 Sep 2025 22:19:57 +0800 (CST)
+Received: from kwepemq500001.china.huawei.com (7.202.195.224) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 18 Sep 2025 22:19:57 +0800
+Received: from [10.67.146.137] (10.67.146.137) by
+ kwepemq500001.china.huawei.com (7.202.195.224) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 18 Sep 2025 22:19:56 +0800
+Subject: Re: [PATCH] irqchip/gic-v4.1:Check whether indirect table is
+ supported in allocate_vpe_l1_table
+To: Marc Zyngier <maz@kernel.org>
+CC: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <guoyang2@huawei.com>,
+	<wangwudi@hisilicon.com>, jiangkunkun <jiangkunkun@huawei.com>,
+	<wangzhou1@hisilicon.com>, <guozicheng3@hisilicon.com>
+References: <20240122160607.1078960-1-tangnianyao@huawei.com>
+ <86sf2p91zt.wl-maz@kernel.org>
+ <5de3da53-9c0d-2a2d-876b-2181e540fa2f@huawei.com>
+ <86r0i98o0a.wl-maz@kernel.org>
+ <de3c10be-f4d4-75d0-bc70-0791e5217516@huawei.com>
+ <86v83fmn9l.wl-maz@kernel.org>
+ <cae508d5-c846-5daf-a1b8-4014f14759e5@huawei.com>
+ <86ldmc144o.wl-maz@kernel.org>
+From: Tangnianyao <tangnianyao@huawei.com>
+Message-ID: <4a17190d-3d02-9c8c-699e-62e5aff63f08@huawei.com>
+Date: Thu, 18 Sep 2025 22:19:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
- <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
- <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
- <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
- <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
- <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
- <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
- <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
- <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
- <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com> <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 18 Sep 2025 07:19:52 -0700
-X-Gmail-Original-Message-ID: <CACePvbXae0zymE_BHydXtA_pjZ2NqabVyqxu1xKxLjLKmeYH9g@mail.gmail.com>
-X-Gm-Features: AS18NWAMcE25uboInmnLpD0pUJ78wF8y-VpV56txG6Fyry-vKnC2XHT05OGiLaE
-Message-ID: <CACePvbXae0zymE_BHydXtA_pjZ2NqabVyqxu1xKxLjLKmeYH9g@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
-To: Barry Song <21cnbao@gmail.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <86ldmc144o.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq500001.china.huawei.com (7.202.195.224)
 
-On Thu, Sep 18, 2025 at 1:59=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
+
+
+On 9/18/2025 17:50, Marc Zyngier wrote:
+> On Thu, 18 Sep 2025 03:56:04 +0100,
+> Tangnianyao <tangnianyao@huawei.com> wrote:
+>>
+>>
+>> On 5/15/2024 17:34, Marc Zyngier wrote:
+>>> On Wed, 15 May 2024 09:56:10 +0100,
+>>> Tangnianyao <tangnianyao@huawei.com> wrote:
+>>>>
+>>>> On 1/22/2024 22:02, Marc Zyngier wrote:
+>>>>> On Mon, 22 Jan 2024 13:13:09 +0000,
+>>>>> Tangnianyao <tangnianyao@huawei.com> wrote:
+>>>>>> On 1/22/2024 17:00, Marc Zyngier wrote:
+>>>>>>> [Fixing the LKML address, which has bits of Stephan's address embedded
+>>>>>>> in it...]
+>>>>>>>
+>>>>>>> On Mon, 22 Jan 2024 16:06:07 +0000,
+>>>>>>> Nianyao Tang <tangnianyao@huawei.com> wrote:
+>>>>>>>> In allocate_vpe_l1_table, when we fail to inherit VPE table from other
+>>>>>>>> redistributors or ITSs, and we allocate a new vpe table for current common 
+>>>>>>>> affinity field without checking whether indirect table is supported.
+>>>>>>>> Let's fix it.
+>>>>>>> Is there an actual implementation that doesn't support the indirect
+>>>>>>> property for the VPE table? I know this is allowed for consistency
+>>>>>>> with the original revision of the architecture, but I never expected
+>>>>>>> an actual GICv4.1 implementation to be *that* bad.
+>>>>>>>
+>>>>>>> If that's the case, I'm a bit puzzled/worried.
+>>>>>> I met this problem in a developing implementation and find it's allowed by GIC spec.
+>>>>>> In such environment,  in a common affinity field with only redistributors and without
+>>>>>> any ITS in it, forcing its_vpe_id_alloc to allocate a large vpeid(like 65000), and there
+>>>>>> comes an error message "VPE IRQ allocation failure". It originally comes from
+>>>>>> allocate_vpe_l2_table, reading GICR_VPROPBASER with GICR_VPROPBASER_4_1_SIZE=1
+>>>>>> and GICR_VPROPBASER_4_1_INDIRECT=0.
+>>>>> Really, you should get your HW engineers to fix their GIC
+>>>>> implementation.  I'm OK with working around this issue for
+>>>>> completeness, but shipping such an implementation would be a mistake.
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>> I have another question here. The max number of pages  for GITS_BASER
+>>>>>> and GICR_VPROPBASER is different here, while GITS_BASER.Size is
+>>>>>> bit[7:0] with max 256, and GICR_4_1_VPROPBASER.Size is bit[6:0] with max 128.
+>>>>>> Kernel usually probe ITS basers first and then probe GICR_4_1_VPROPBASER in
+>>>>>> a common affinity group. Maybe we need to check this in "inherit_vpe_l1_table_from_its" ?
+>>>>> This is because GITS_BASER[] is generic (also works for devices and
+>>>>> collections), while GICR_VPROPBASER is tailored to the VPE table which
+>>>>> is usually smaller.
+>>>>>
+>>>>> I would expect that GICD_TYPER2.VID reports something that cannot
+>>>>> result in something going wrong (in this case, the L1 allocation
+>>>>> cannot be more than 128 pages).
+>>>>>
+>>>>> Overall, the kernel isn't a validation suite for the HW, and we expect
+>>>>> it to have some level of sanity. So if none of this is in shipping HW
+>>>>> but only in some model with crazy parameters, I don't think we should
+>>>>> go out of our way to support it.
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>> 	M.
+>>>>>
+>>>> Hi Marc,
+>>>> Friendly ping. Do we have plan to fix this problem on kernel, or any other plan ?
+>>> Hi Nianyao,
+>>>
+>>> My earlier question still stand: is this something that affects a
+>>> shipping implementation? If not, then I don't think we should support
+>>> this upstream, as this doesn't seem like a realistic configuration.
+>>>
+>>> If your employer has actually built this (which I still consider as a
+>>> mistake), then we can add the workaround I suggested.
+>>>
+>>> Thanks,
+>>>
+>>> 	M.
+>>>
+>> Hi Marc,
+>>
+>> For GIC4.1 of HIP09,HIP10,HIP10C, it only support one-level vcpu table and GITS_BASER<n>.Indirect
+>> is RAZ/WI. It implements page size 16KB and entry size 32B,  each page support 512 vpe, and our
+>> clients have requirement 1 or 2 pages at most, so it just supports flat page to simplify implementation.
+>>
+>> Our designer has confirmed with ARM architect that we can waive this rule:
+>> Quote from GIC spec 12.19.1 GITS_BASER<n> description, if the maximum width of the scaling factor
+>> that is identified by GITS_BASER<n>.Type and the smallest page size that is supported result in a single
+>> level table that requires multiple pages, then implementing this bit
+>> as RAZ/WI is DEPRECATED.
+> I can read the spec just as well. Doesn't make it a good option.
+It maybe a good option for clients that do not use many vpe?
+So we try to convinced ARM to waive this rule and received a positive response.
+
+>> We have actually built this in HIP09,HIP10,HIP10C and would like to
+>> fix this in kernel.
+> Isn't that the broken systems that can't even do vSGIs properly?
 >
-> On Thu, Sep 18, 2025 at 3:03=E2=80=AFPM Chris Li <chrisl@kernel.org> wrot=
-e:
-> >
-> > Hi Barry,
-> >
-> > How about this:
-> >
-> > A swap table stores one cluster worth of swap cache values, which is
-> > exactly one page table page on most morden 64 bit systems. This is not
-> > coincidental because the cluster size is determined by the huge page si=
-ze.
+>> Can we merge the above bug-fix patch to kernel?  Or we need to fix with errata for HIP09,HIP10,HIP10C?
+> Frankly, I've completely lost track of what this patch is doing. This
+> has been going on for over 18 months, and you have been silent on the
+> subject for over a year. What do you expect?
 >
-> I=E2=80=99d phrase it as =E2=80=9CPMD huge page,=E2=80=9D since we also h=
-ave =E2=80=9CPUD huge page.=E2=80=9D
-
-Good point. Will do.
-
+> If you want anything to be done on this front, please repost a patch,
+> and we'll review it again.
 >
-> > The swap table is holding an array of pointers, which have the same
-> > size as the PTE. The size of the swap table should match the page table
-> > page.
-> >
+> 	M.
 >
-> I=E2=80=99m not entirely sure what you mean by =E2=80=9Cpage table page.=
-=E2=80=9D
+We have tested the last patch in our internal build and now aim to fix the open-source
+kernel to support our SoC. We hope to address this either through a community patch or an errata fix.
 
-The page that gets pointed by the page table, or the page that holds the PT=
-E.
+I will repost the patch shortly. Thanks for your review.
 
-> My understanding is that you=E2=80=99re saying:
-> The swap table contains an array of pointers, each the same size as a PTE=
-,
-> so its total size typically matches a PTE page table=E2=80=94one page on =
-modern
-> 64-bit systems.
-
-That sounds good. Thanks for the suggestion.
-I take your suggestion with some small modifications, mostly to
-clarify the total size is the total size of one cluster of swap
-tables. The total size of all swap tables in a swap file is much
-bigger.
-
-How about this:
-
-A swap table is an array of pointers. Each pointer is the same size as a PT=
-E.
-The size of a swap table for one swap cluster typically matches a PTE
-page table,
-which is one page on modern 64-bit systems.
-
-Chris
+Nianyao Tang
 
