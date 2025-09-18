@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-822054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84249B82EF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFCD2B82EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46DFB4A26A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:05:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58CB4A26A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F95427B339;
-	Thu, 18 Sep 2025 05:04:49 +0000 (UTC)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B5E27FD71;
+	Thu, 18 Sep 2025 05:04:53 +0000 (UTC)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374EA21D3C0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0266921D3C0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758171888; cv=none; b=a43XGbhPkySNPREFvqKiikepii2/mgsDHFYW/rjoLISks8UoDf5znqeNvlwy892IScmTKKo4HN7cqKp4s3nsIz9FUGuaBP1Zpx/wAEvFmGkXG0A9KGYHIFpc3+cBJgpLgAu21VrjhPlfbHLUstBQj+2S+3rRLTFqi08kBYiQ8dw=
+	t=1758171892; cv=none; b=jyumIlK8uKgLWu4SCyRs7COMpCgoOrAR50ZyjWZqmV173HRPmQzOJZ8sfeYc8pQ2io71afsY2PXhqVTIAQfhmFXUMm7Xgq+bAAe+HhZC91Zrb9xq9sKNG2mTwNSZ2WyE/XGNolb3Vme+KWyXjVBLnjO+kW6chZayG2rGWLdK6VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758171888; c=relaxed/simple;
-	bh=aK3MdwjW2lXWQsbk0cMf5dnNfF4C6zN66ifWi95faas=;
+	s=arc-20240116; t=1758171892; c=relaxed/simple;
+	bh=KYmdvRUHDcevlfn07rnh5hYBCV/BniJ3XvgTxEcd6bs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gjoUSY9WQ1fcvSwX4MFuRA7d5yw0HUhxoa52LbNY5J44E13MyLAJvwdPGDOoKe2MlSWU+8+b1yOrXUxu3OkQJL0EWjzSormNyKqZ5qBuwS4FoTsJV+RbrcJIGAseUIFobpPzzdn/OrR7s4aYzywac2FGbOBVsJXtVxHWQaxgd6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=gJ7BsBXk1Uc1mdrGttAdVN2w7z81s+A59hs0cUZTz5NrF759yU/UTXLsfxaeb0ym0tk39d2MRZU2iQlLsX++erHBVrSYEJbgcuiVG9SWbtLD/OyD54hqopifLQGxRjt9/n2KoIqXZghOGf/8mHLcE6uqnVnnfpmlBNeHuprcx8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45f2313dd86so4131305e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:04:46 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso78954f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:04:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758171885; x=1758776685;
+        d=1e100.net; s=20230601; t=1758171889; x=1758776689;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aO4ZLiBPFlHh7Ygo8g3PnYlJq/wmpc5eSQsMTQaitaI=;
-        b=kLLOr5f0kWQ1Mlf7WdFxeUL2LzS+YJ3N5NOH9e9s22Qu/HfLXlIJnEjwDURg6A1cBY
-         z0kGv3PW95nkWI0T0BzmyI+vofkpjgpAJ7YGCD3fnePbZhsvdUTVISKF9M59O4H+oxBn
-         UCY9U8TS1FunGDhLLiX1qrHj+OhRCH1HR948bQl6RIohXIHXeR7gRqTPKy19ssc6TwjI
-         v/9tlakNQb3I6vjyLTgBcxhdo/js8zLL8yxzJv4SH240bUzEBJ8FEuwjPjZ6i6LyVfqm
-         E+xxz/XSqKsYrKbQCYs9AWXgkB0PTuUGi5GcG1hn+X37M59yOgWpCL3HH0v75Y7uCMq+
-         uPSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtivs7mkMJfF3Ko3bvHsbR7gEST7AB+dHNwXiPijgDr8uJKtlBDI5wM+EJBnZqgsoyRAeOQYQ+xe67+HU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTa8FvcM7P8kuk9fWYSRfMYzF4TuaksA6cXnlr1LVH15PHbm8S
-	M76Ji5XiRY1BH3aY+X7dM9wGfPvGnanfY/Dy4oAPQ4C8Z/clm2zeNixO
-X-Gm-Gg: ASbGncvGzRUnmCrNn4BDqQdNAj+CX9UxRbPxrf6+cpjsIsqV9Npy3M7i7pRiqOr5X0E
-	5LKxw72GJ2t+3AuhEn55u65Qsgajq/FxchaYimr9WLJMZ+7PuX5LE7JSe04IeTIf4zltONNYj3m
-	10cuNORL+5xKKp6AHbuFVQY1jzfzmrQ88cpxVjdPennRHKF3szQ/483ScgQObKCnEyd1eOvt+6N
-	VtaSKKQ9zwUdoSC5TXuYy7XamRd+00ls4q6cJmz9URUph0YVRt7blv2ijNgME44pejkcJp5Jg7R
-	l6EVEMqwf34Oy0uZeNE59cPK8hT72faXnphYJ2P/PzW7ABY3WHCvASto7II7t39aTdcydF6PnpG
-	/xug+sivbr8awJNb4LtGvJk+4nkX7qDPlRrg/dA==
-X-Google-Smtp-Source: AGHT+IFdC514onBUMagLeO2d/t3qyVfivw2gBfhVFamlNKWcdrfcQDzJVUxOlBsSi0KZGLvniYQVcw==
-X-Received: by 2002:a05:6000:26cf:b0:3e7:45c7:828e with SMTP id ffacd0b85a97d-3ecdfa079f7mr4188775f8f.33.1758171885260;
-        Wed, 17 Sep 2025 22:04:45 -0700 (PDT)
+        bh=haDiPSY51WpyxaPZb1knOMrIoT8o6NHcAH5Q6EVWoj0=;
+        b=hwAX9Ioj5Et0XaxQHcrRZ43qwak8KcSz+Hkm85ia1N61YLkOL+jDNypsz2AM/WB0jn
+         PGxWR9jLBp56ptMJrT5f9WpX/qNM0XYhsVQnG6dIdGqv+3PFcHyVl5Sr8N3ZwvonK9wR
+         IsjipOyeFX3t0aGNtGRFXzWWrXBsZmNjoMrUgzNeimwqxhCCTglurmq0TMayi/tU1rf1
+         fKuNIEYdDJ2XmxUUqPNomSY43MRo+yFFFQdRRhsUNeE3K3lknQQLbu1er1EepVlkEapI
+         yVPrCTBDAnCod1uV+uviXKckUNio0gyukP6h6WhDgKiRr3hebDarqG6Vu2Y9R1NpsLA3
+         oBJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj6h4wWjmGaVvxtYkP3x7uu/uV9gQEQ4NTBfYoGpo7dMDYI8fXm88n4LX/oURzxgE7QHE1SjEXWula5yA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymsUUgoPFYZewD5ZdGGNlYNKaeUNrSlAy/W8G8oGgH+EUc4c4I
+	lv4myI1UsL+FSRzzBzniv4zPuniULpqm6dmiK3yoVVQf6lJ/1l1FyM8i
+X-Gm-Gg: ASbGncuRL9oy60iuVtNU5mF2agpSN5woBT1HpW457+1TJ1/7pTXbNVlq3CJ2PBXBGtt
+	YEe/qcYbtExsEDN8s76/TY/lQBcrkyeq1tJKztpajJVCPyWYNGJunhyJ5ZZ+D6S41iyvXU5BUrV
+	EQmZRYwpa1TT26UJbU94wnaQdJzAad86MmltNzZmsraivOVWeK+mnycGvR5UZLyB95Or0LOzBjN
+	XMnnf2QT8D7QRfKHMRHTQ4UF+20tEmGCduf0GOGQFpCByvTcWdCCdXIqJHejtj8WfoeGlQWHcOA
+	jeXok8O0Pmn3VAPe3IJ+LlNzDdBMcnyD7c/9NII7UEuIxRn31LNIIW40QSx1A45MlvzxS6IiQHq
+	YUToL+ZQgK07M2alWBU5r8hqF8p8=
+X-Google-Smtp-Source: AGHT+IGKPgASo0zj6nOd7C1PVcpDYMiRoBAUkpl4xN92bmh7D2grzC8f307rD3nF/krqA7stBkuhXw==
+X-Received: by 2002:a05:6000:200c:b0:3ec:d789:b35e with SMTP id ffacd0b85a97d-3ecdf9f3e2bmr2809812f8f.8.1758171889281;
+        Wed, 17 Sep 2025 22:04:49 -0700 (PDT)
 Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::3086])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407aebsm1994409f8f.14.2025.09.17.22.04.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407aebsm1994409f8f.14.2025.09.17.22.04.45
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 17 Sep 2025 22:04:45 -0700 (PDT)
+        Wed, 17 Sep 2025 22:04:49 -0700 (PDT)
 From: Lance Yang <lance.yang@linux.dev>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -75,11 +75,10 @@ Cc: ziy@nvidia.com,
 	mpenttil@redhat.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
-	Kairui Song <kasong@tencent.com>,
 	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH mm-new v2 1/2] mm: make is_guard_pte_marker() available for hugepage collapse
-Date: Thu, 18 Sep 2025 13:04:30 +0800
-Message-ID: <20250918050431.36855-2-lance.yang@linux.dev>
+Subject: [PATCH mm-new v2 2/2] mm/khugepaged: abort collapse scan on guard PTEs
+Date: Thu, 18 Sep 2025 13:04:31 +0800
+Message-ID: <20250918050431.36855-3-lance.yang@linux.dev>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250918050431.36855-1-lance.yang@linux.dev>
 References: <20250918050431.36855-1-lance.yang@linux.dev>
@@ -93,63 +92,56 @@ Content-Transfer-Encoding: 8bit
 
 From: Lance Yang <lance.yang@linux.dev>
 
-The hugepage collapsing code needs is_guard_pte_marker() to correctly
-handle PTE guard markers. Move the helper to a shared header and expose
-it.
+Guard PTE markers are installed via MADV_GUARD_INSTALL to create
+lightweight guard regions.
 
-While at it, simplify the implementation. The current code is redundant
-as it effectively expands to:
+Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail when
+encountering such a range.
 
-  is_swap_pte(pte) &&
-  is_pte_marker_entry(...) && // from is_pte_marker()
-  is_pte_marker_entry(...)    // from is_guard_swp_entry()
+MADV_COLLAPSE fails deep inside the collapse logic when trying to swap-in
+the special marker in __collapse_huge_page_swapin().
 
-While a modern compiler could likely optimize this away, let's have clean
-code and not rely on it.
+hpage_collapse_scan_pmd()
+ `- collapse_huge_page()
+     `- __collapse_huge_page_swapin() -> fails!
 
-Cc: Kairui Song <kasong@tencent.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+khugepaged's behavior is slightly different due to its max_ptes_swap limit
+(default 64). It won't fail as deep, but it will still needlessly scan up
+to 64 swap entries before bailing out.
+
+IMHO, we can and should detect this much earlier.
+
+This patch adds a check directly inside the PTE scan loop. If a guard
+marker is found, the scan is aborted immediately with SCAN_PTE_NON_PRESENT,
+avoiding wasted work.
+
+Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Signed-off-by: Lance Yang <lance.yang@linux.dev>
 ---
- include/linux/swapops.h | 6 ++++++
- mm/madvise.c            | 6 ------
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ mm/khugepaged.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-index 64ea151a7ae3..7475324c7757 100644
---- a/include/linux/swapops.h
-+++ b/include/linux/swapops.h
-@@ -469,6 +469,12 @@ static inline int is_guard_swp_entry(swp_entry_t entry)
- 		(pte_marker_get(entry) & PTE_MARKER_GUARD);
- }
- 
-+static inline bool is_guard_pte_marker(pte_t ptent)
-+{
-+	return is_swap_pte(ptent) &&
-+	       is_guard_swp_entry(pte_to_swp_entry(ptent));
-+}
-+
- /*
-  * This is a special version to check pte_none() just to cover the case when
-  * the pte is a pte marker.  It existed because in many cases the pte marker
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 35ed4ab0d7c5..bd46e6788fac 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1069,12 +1069,6 @@ static bool is_valid_guard_vma(struct vm_area_struct *vma, bool allow_locked)
- 	return !(vma->vm_flags & disallowed);
- }
- 
--static bool is_guard_pte_marker(pte_t ptent)
--{
--	return is_pte_marker(ptent) &&
--		is_guard_swp_entry(pte_to_swp_entry(ptent));
--}
--
- static int guard_install_pud_entry(pud_t *pud, unsigned long addr,
- 				   unsigned long next, struct mm_walk *walk)
- {
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 9ed1af2b5c38..70ebfc7c1f3e 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1306,6 +1306,16 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 					result = SCAN_PTE_UFFD_WP;
+ 					goto out_unmap;
+ 				}
++				/*
++				 * Guard PTE markers are installed by
++				 * MADV_GUARD_INSTALL. Any collapse path must
++				 * not touch them, so abort the scan immediately
++				 * if one is found.
++				 */
++				if (is_guard_pte_marker(pteval)) {
++					result = SCAN_PTE_NON_PRESENT;
++					goto out_unmap;
++				}
+ 				continue;
+ 			} else {
+ 				result = SCAN_EXCEED_SWAP_PTE;
 -- 
 2.49.0
 
