@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-822217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81164B8350C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D553CB83521
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EEC11C2460C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 093351C24ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405702EA154;
-	Thu, 18 Sep 2025 07:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14BC2EA494;
+	Thu, 18 Sep 2025 07:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A7ZeV5br"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kGWXTilh"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DB51F1921
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD57189F5C;
+	Thu, 18 Sep 2025 07:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758180573; cv=none; b=KUA2uKNTlBvtg46YaUTUhbfOE+ayCDwzHJ9TWCha1GE+av7SrQvaqixNuvT8TIADzasv+B6u+PuHplKjOVZ0uWbO6m8SR9obHol+/6e18I1spD+nPxMW/E1U3ZbeDBKS+1qmH+yxn631rUIJfm6gPA8z8S0N5lrYsuIR9qwNebk=
+	t=1758180651; cv=none; b=HK/LJJKXCZeHTxG7ezJrdgOncQh03yCTDmZwVaeYxbKDiHP2rtSV1+v1a4Yv9VT9Sr00iANYtWh+13Niq7JiP7NdvWd0UVI21Ze1AdPr8bW4q16mCR0IzZLj22oMZHNQ8QCzFYKx7qTeqh/ySVQVKLWpLuC8EzAN/eTKeGiDbNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758180573; c=relaxed/simple;
-	bh=2pW0yDiHX7ou3AyxWw9aSJCvyruA4rRZ4+1BSHBN45A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CXUnq2Qh+RgIwbnaXwYiDCpG3df43IabDMWDvT2kEmU0atDvD+iKJQS+NsZ3O/h2Rg+Dn3DMhigctJItKtkeK8IA98QmzEYhweKhFdDoDgy0yR1bsYBjtok+qlVdFg1e/KxAAdc0R+HqYF1zq3Q5/CNYumxoA+zUNd8fEnREb8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A7ZeV5br; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b07c28f390eso107495366b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758180569; x=1758785369; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4TeUhfPwflpH8IcvEZqVCAI1Ffw6zpYGf0YbylPJd+s=;
-        b=A7ZeV5br1IUFTMVLfY2ofKJNYCw9/Svo8qSGBySsoWGEQz+IOoNOWZYw13ER/emxAh
-         ym2nABZWXHVXiPDiBgBzXdqUJRS+KQG2FwdCu2BSr5X6hmSRuq9OlmnrH6lqLCW+h6s9
-         yKdKdvnl5ERK2j6S12fxVFl61KBp5tptF/MCXYeRW+Mmv0IZrGYy/tOsNze+GBFElnYK
-         +jYHGK7ckjUVz0D2MKyUzjRjx5zFrRf4koeODIGO8rvr6ppSFF6EHEZlbvgR2ApM1l8E
-         lbZU0uC6r8TuKuI94Bok1M2Dg2JKD2y6EFqaHYlajhq42IFBTlShty5bwUqQsEjf12VP
-         O/ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758180569; x=1758785369;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4TeUhfPwflpH8IcvEZqVCAI1Ffw6zpYGf0YbylPJd+s=;
-        b=HEb8QuOMouUir2c6pytQpsM1cahYSfa+UDRoRod5mwWhpGovLzGn4/qQAuqtptj1/7
-         z6uG5ZUufqtf9Ms5GODtfeM+E9nSyGjTed7A3W/OBtUSJgq9T7eHkKtG7TPdR/mJF6ZU
-         njInB2kOuCLX/c/8LmA2wTLrZ1SNidnTEdxqprW8qJYxspgqKbNDUzcotMBpKBVqzYpV
-         VcGgSdN9ZngUWqQpmFaeSAvfrbexKkpOpG830ub2Z+6wV3X6jZTGb8+xMkDWV46+EZOS
-         dyiRv4mc5PCUtr7PevFl32GanQBkP5VaJTMnCo9EyfuDFSneZ6qv9JT+Asm7asIkSf57
-         xlzw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5HyAbbgCTubZjN+SMZb/l9+VCjowANW5qMfWJ9VMhxNpXpe/h1CCUbnyyS656l5vXh9Oa6pVJfAaJCQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGXkSk3+xaMf8Z/s/BdgQd9K7vn+pSKKHBt4FhjdDmBNXkN1d3
-	FEsLQBUigdCLtQnNCwEmfr/OIQEYBuGwS3hYp06ya6t2Igho3SJ7xgMZF+3TekwFoPXuy7qCCDu
-	+8/QkUF4=
-X-Gm-Gg: ASbGnctmBQcktLvbxVx5+GcwTc4RqyiOyWw9RoauLWZQ2WcMV9DEltu+GfpzpDSPfIs
-	xO3hvuvtE0p/bj8Ikoo+Z4iLKMu4GZ3C/iy8YH9WYJ7Z9F+CDNbil4X077ghCefggSlJs/Z+jY5
-	FNzZoArjqHMHOkKGgWjEE/jE7pVgDUT7PPRzD34mBmotIe/T3ko7SmVIMvBkZvvRrq/uXhSEoTc
-	JudC8tG2fqoTZwYXKcTmx9zNfLKMMHX4NAWHzo0EWRSgjOFwRY7D1btE1vSBHqwHeUgDJqwpi2m
-	M4mxu7pwEvopUnaH/w4fMhfSbQLXEBL5+DWSfKfA0PeYxelmB8yQRpsTzBUp9GZgQ+0yZJ0jjId
-	LXIfkNViFTSP6x0i93xd+eNjWYfyF732/PnzSKH9bOteIy5PBtD2q
-X-Google-Smtp-Source: AGHT+IFBM4C92jB9g5WYIgyFSfK4VqX6ptPMI+JV4FUWTBO8gbXhFHISPMW3943ATw/hCv+jIjxXgA==
-X-Received: by 2002:a17:907:7e93:b0:b04:392e:7168 with SMTP id a640c23a62f3a-b1bbd3a6724mr532626766b.42.1758180569540;
-        Thu, 18 Sep 2025 00:29:29 -0700 (PDT)
-Received: from localhost (109-81-31-43.rct.o2.cz. [109.81.31.43])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b1fc74af9d6sm135689666b.33.2025.09.18.00.29.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 00:29:28 -0700 (PDT)
-Date: Thu, 18 Sep 2025 09:29:27 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Ye Liu <ye.liu@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>, Ye Liu <liuye@kylinos.cn>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmstat: add header line to /proc/buddyinfo output
-Message-ID: <aMu01xIkj-3hgW88@tiehlicka>
-References: <20250918071741.526280-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1758180651; c=relaxed/simple;
+	bh=MHnx+O7UTUM0+Qgvg+zW8i93qn3/EnGXsPh4/sTxWdw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cZf/AGwCxP2Zt6jUApsGHjARkxr9xWMnQpH5cTHTflQGF822Yk6/wTo0n8o6IFoKuuZtkTBRQwv7yDJAdxDgcRdbvNLG1r3P6aEd5OIyW+m8H0zl9e2IgNbzgncAcst3+9qDSOWTLIMZ+eaYk2WkXMojkKyeco0hjl77bPBqD1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kGWXTilh; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B7DF343A97;
+	Thu, 18 Sep 2025 07:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1758180643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O4F/RbCRhR45zS5/1p8N4VggT1zjMH4kZIX9ts8WeRo=;
+	b=kGWXTilhH4TtdjeVJJebweGHw8Tg2+1DIrRp63aiXH8qyX0SuDv0pkX5btEfORsJIlgGvW
+	Wkd3vrCNoMcNGTEv5FiZa+ENW8TiYZNeaS4hlVLOq9BX02mlFbzrgWBDrKsZ8GjZYvG9k3
+	0pQPYH53Zb0pFQix0LKlZvigdocLQs3VHFJCykV9pDZ1m1VtxbQoc6mfrYLx0RXiDue6DJ
+	U1LATn9b7zvaLrsPCsIQNKGGMWwXVd4nUMmROjACPeY+P7QqlPYMEcDrockDcCge0Q9eOS
+	7jLSTaJSq0eKdhuITHHykuP2CjBOnVHO+IFNAzQ7+qgpk7GvOuSzZux+6ZSaXQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject:
+ Re: [PATCH 1/4] regulator: dt-bindings: Add Linear Technology LTM8054
+ regulator
+Date: Thu, 18 Sep 2025 09:30:37 +0200
+Message-ID: <12743863.O9o76ZdvQC@fw-rgant>
+In-Reply-To: <5135820.31r3eYUQgx@fw-rgant>
+References:
+ <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <936e16dd-d11f-4452-8942-64366f173d6f@baylibre.com>
+ <5135820.31r3eYUQgx@fw-rgant>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918071741.526280-1-ye.liu@linux.dev>
+Content-Type: multipart/signed; boundary="nextPart5923224.DvuYhMxLoT";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheejgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemkeegvdegmeektdekvdemhegrtddumegrtdegvgemfhejieehmeelhegrmegufhekieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeegvdegmeektdekvdemhegrtddumegrtdegvgemfhejieehmeelhegrmegufhekiedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehlghhirhgufihoohgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhitgdvfeeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhunhhordhsrgesrghnrghlohhgrdgtohhmpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Thu 18-09-25 15:17:40, Ye Liu wrote:
-> From: Ye Liu <liuye@kylinos.cn>
-> 
-> Add a header line to /proc/buddyinfo that shows the order numbers
-> for better readability and clarity.
-> 
-> Before:
-> Node 0, zone      DMA      0      0      0      0      0      0      0 ...
-> Node 0, zone    DMA32      5      8      6      6      7      5      8 ...
-> Node 0, zone   Normal   1113    351    138     65     38     31     25 ...
-> 
-> After:
-> Free pages per order       0      1      2      3      4      5      6 ...
-> Node 0, zone      DMA      0      0      0      0      0      0      0 ...
-> Node 0, zone    DMA32      5      8      6      6      7      5      8 ...
-> Node 0, zone   Normal   1113    351    138     65     38     31     25 ...
+--nextPart5923224.DvuYhMxLoT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Thu, 18 Sep 2025 09:30:37 +0200
+Message-ID: <12743863.O9o76ZdvQC@fw-rgant>
+In-Reply-To: <5135820.31r3eYUQgx@fw-rgant>
+MIME-Version: 1.0
 
-Why is this needed? And have you considered tha this might break
-existing parsers of the file?
+On Wednesday, 17 September 2025 17:51:05 CEST Romain Gantois wrote:
+> On Tuesday, 16 September 2025 21:24:42 CEST David Lechner wrote:
+> > On 9/16/25 5:24 AM, Romain Gantois wrote:
+...
+> > 
+> > Examples usually don't have a root node. Probably explains
+> > the bot errors. (but you should have seen the same errors
+> > locally with make dt_binding_check.)
+> 
+> I didn't see the errors but I'm guessing that's due to an out-of-date
+> dtschema dependency on my system, thanks for pointing it out.
 
-> 
-> Signed-off-by: Ye Liu <liuye@kylinos.cn>
-> ---
->  mm/vmstat.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index bb09c032eecf..e9606457ab91 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1574,7 +1574,14 @@ static void frag_show_print(struct seq_file *m, pg_data_t *pgdat,
->   */
->  static int frag_show(struct seq_file *m, void *arg)
->  {
-> +	int order;
->  	pg_data_t *pgdat = (pg_data_t *)arg;
-> +	/* Print header */
-> +	seq_printf(m, "%-21s ", "Free pages per order");
-> +	for (order = 0; order < NR_PAGE_ORDERS; ++order)
-> +		seq_printf(m, "%6d ", order);
-> +	seq_putc(m, '\n');
-> +
->  	walk_zones_in_node(m, pgdat, true, false, frag_show_print);
->  	return 0;
->  }
-> -- 
-> 2.43.0
-> 
+Just a quick update: turns out this wasn't due to an out-of-date dependency, 
+it was because I was missing "DT_CHECKER_FLAGS=-m"
+
+Thanks,
 
 -- 
-Michal Hocko
-SUSE Labs
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart5923224.DvuYhMxLoT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjLtR0ACgkQKCYAIARz
+eA6zYg//SpcEEDWVYymOTmBH8skAMdw8D4lEZcgSxweNQSvdYJ64NcK5aJKHCqZX
+Iz7Tx+EAaofDaokVQMVoY6E2OFwAhXvgUt/nAhp1mIYnuDDcRHHiP+APC/RqFfPG
+zpabha7++EtNbd/UCzInFf7WcS1ZPKowf3KHm8aOMQWtO8YGSIBSDylp810XqmTy
+/odm6s0RUvcPXSOoT9/jmf42DquFOLPb9qQxmOZulfWzTJqyf2HD9A1LcpnpAEK3
+U0XpEN/p1xaqR+lu6zQwQdGdZvm+8WUnRHVbdQyqb+sDvN3PZxVh/mLlQrvBFN51
+eZv1Wh4HTK2kVwAI+exFgX8eULJOgjFwcZ6GVv9z7E99xNwq8qS/6i3TZvw6VaSm
+6hQ/UhIwqSUUQ1mEDChYkwc87su1Nk/Vg3G8cF6k9/GE/qWL7PCCw5+V1+fqiK56
+nSbYQpPPrkyE5+tkj64Oheg8j+mcPPyXnbpJ6CgNGLK+qIFzjVn43GPkWrtxDj85
+9HH1dmDa5KPrhX5KxmRPA377ERSJny8RCxotV+tHhXZdW+1u5I9w2YUfp77e6WcY
+hlm127OoCDCfuTw5Y0oqYNP0QlEsg1ZnBzzIVtFu74/n824njqFwYV9g61BqyLB6
+Sj0ytJPkJgHzTls8zcO9jhfMMKLmhppywrqiCQsyzvHeqMc0tRU=
+=FJAI
+-----END PGP SIGNATURE-----
+
+--nextPart5923224.DvuYhMxLoT--
+
+
+
 
