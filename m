@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-823406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816B4B8655A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FE4B86550
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9003AE590
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:56:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9ABB5476D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E5B285073;
-	Thu, 18 Sep 2025 17:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EF7284888;
+	Thu, 18 Sep 2025 17:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5aUatVN"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="soMw9Xnj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80555283FE6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568B014B06C;
+	Thu, 18 Sep 2025 17:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758218207; cv=none; b=luwSd4tcnLA7ozTC1xa1V652Sta3myfUOrxgUgymhU9UgyrPpwu5b16HjNay6r0K8cfeb7661IUZ1ho8Biq3PlfVP2qgAqrmy/xYf+N9RYyXvP2Zd7Z7862dDffRBIxRuf6zUY8KC5/4qgaSFcbU2E731eZX2B16j05mEqYBC0M=
+	t=1758218171; cv=none; b=dA53Rrty9dNcgiKUeRAojChBdx34kAPsT3wz+HzggCc84wSBGn9CnG34ulrFVoJJKd7lDB5DtBDrYZU7qo8rdqYspIEoeHEAq171eAT2Al/HEGGQNrdov92w2LCPDdifPUUado/jg2FoLC6cA6eB70yZVPjU3svh/6TRnwkIkY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758218207; c=relaxed/simple;
-	bh=U8iHdE1DU42lSzhiPs8MNTQ6En/hzji2xtgp/3h/Nak=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=PyAkCIGoSkkMqd13WDEyS7LNnjqfR2un4HPgjghy3npv24CqzYWIoRXhUimixDK+z4OCPgLa6NJ/qgRsB1Eec86CSWTMwuKyju7bOtBHUxErqq8W2sTbA7NnTkdT65T0CFeE6YPU9mf2gp/RBFgRKFe1QpU183WaeCqFHqy+tW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z5aUatVN; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e9042021faso889612f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758218204; x=1758823004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UdvxtgG+W0bP4h9lSXAZ6eBdnNjpx+XRSyEW/uzBUNU=;
-        b=Z5aUatVNbXaEGRGtBpVop6/YYuJH6Xv/hHN262iv+e/E8ktbggZ/1FDXDqNUaxhPnS
-         +q6HY5x1KOxC0Uqt8j8LrZEQE4O292RRD0QsRjSsVQzhQxrusWMed8u/xN1oovzZQfCZ
-         djA+DoVnjYZzZCr3O0kGrKPJ51cFtLT/n8X/mAApErXYPmI/hquVF1NtodKit+M2/3om
-         HoDJpJWT3ZfQmJi2DcO87kQFEJwqiPoYMRQTnieQT3ZdfmG60x7AQPfC9f1W+GLfIHFx
-         8PeRUbhH2GSeMyFyu2MSTMS0ypjDpzViRvny2TE9cb2/rEy0vHfO7Tf+3NqiNGf0ASjR
-         S+QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758218204; x=1758823004;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UdvxtgG+W0bP4h9lSXAZ6eBdnNjpx+XRSyEW/uzBUNU=;
-        b=kqGzDoeTGuhBS9CE+Xzr2W6Q52r9q5qMmAEE21UBVmlCMFa0sfE7w36pCjYlO0PYo2
-         vW5ry9M9oYrUjBOZSsGjPMPzoxT36JeWxmZ3iH6HC6dVfYq5NNpG33Kd7+kiWiPpelpm
-         MshGe260/hmjga4KQsdP6xHPZaZ54vy9hNjTX1VgDYyC1UIMjAbyU8fdLmFFyMox3YLa
-         GYZIaCRhcEx0T9zj7jzbNu3K3wm7AQl61wYJ4fgl2J6o4WCIjVOWuwInuEltehV57cYG
-         28IBpxuHpk2ApA0s35ATLok85d7YbkVf1J6fi6889IoEKu/RAashBEguyrl1alP9IGSN
-         6MPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqemrjW749fbRZ1lnobQ3hbGqLa8eyhVPG2d3qyDAirIjYRtHUOXaYbLxe3At6X8UHGG16gehKDQrj7ew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLmFYk3DVHEssZ1Lpwq+8ziw58R0rbFArPVF2T/nbomwevWMk7
-	PaHtf57q8RyQ1KPqfkk0klPi4w7pzOricqydQQbbJNJ7/ym/j7Pm7eVp4gev6u8U0AM=
-X-Gm-Gg: ASbGncv8VXg7xsXXcvpGVJjz7uz9+pu34+3lVa9YUngv03c38sx8TOGC0Djm4cM4M8j
-	1lQviULSlpCqV9/KA4nAYz+IuXinM/ju0cGOxigshZBQe70ozrIRuiwx2x5d2FD11P+9AmJoVw7
-	2+0uRDYHkAhyJJjdcUYp8eXg7WIBGOCFswK5BW6M3/u6x0ivyvqzFSrDesTgdJhesDZOTtCVlmW
-	P5pOMwPyxC6k2p7bE6KwCKphr2xONF5XbhluAWwA7Zq/OlynF9bfsOySSCb11327yMthho04XZY
-	wy1CLrkuEyV6/IxWlwpgyMXNeaO8g1v9xBeBJCEbthJaGSmpdeT6QdgBpazeBu1v4qI5rz5TG0U
-	rJ9aZcdeWNfYXte40CVF+3vfWF9HDK8SHoIr4soMTNobV
-X-Google-Smtp-Source: AGHT+IG+LlafBp1zHMJXHSQ3atVCRalq4bFvAwyFj+H8A+XPdD7ZEb4MccJq0WgSxA9gQ0ZMkg+RYQ==
-X-Received: by 2002:a05:6000:1885:b0:3d1:c805:81e with SMTP id ffacd0b85a97d-3ee7c925550mr136862f8f.4.1758218203390;
-        Thu, 18 Sep 2025 10:56:43 -0700 (PDT)
-Received: from eray-kasa.local ([88.233.220.67])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7300sm4369752f8f.34.2025.09.18.10.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 10:56:43 -0700 (PDT)
-From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ahmet Eray Karadag <eraykrdg1@gmail.com>,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: [PATCH] Fix: ext4: guard against EA inode refcount underflow in xattr update 
-Date: Thu, 18 Sep 2025 20:55:46 +0300
-Message-Id: <20250918175545.48297-1-eraykrdg1@gmail.com>
+	s=arc-20240116; t=1758218171; c=relaxed/simple;
+	bh=mEfVkBpEmX4LqDSdnh5MGlyopQoeHAPLnvqvAtXytRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJb6cXPcpkaMuzjhp8dUbdWlGoyq2J9FcqOhGMFvyJyRDn/XmVpmieMEhvFi313SzpKGRF7z2JE4wr3IpTjnrGueFzV7iMmlZBIdU7lOOwzW5Wq1y6ldQorrH9Chxc6Z2jiTY1AT7kGNvcPnPqp2ujYqrn/UnXaJtAHSoWtTFkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=soMw9Xnj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD01C4CEE7;
+	Thu, 18 Sep 2025 17:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758218171;
+	bh=mEfVkBpEmX4LqDSdnh5MGlyopQoeHAPLnvqvAtXytRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=soMw9Xnj+exAZ2k8HgMA91ndd6uOHczKxaGV9dhZx9DL3fmpsG3RkkqOQKF8Dgo0m
+	 ou2AY8VcM8wE7AqAa5ioL45ieaVEOapn85yGQRf+EiIUv8hTFsXNgwcTCwu1y2O6Zp
+	 IeMOKHjRkHg0LNc6PhPP7lu+n2iiX3HCw4E/uvFrO74qag4qYtUb3G9ZdqmKsC9DX4
+	 3pxZ2+ipeB+WyBXaOvrqoMK92Cbn8IxcWyBBXesgf32AP9SuvuzKarbTlkp8EOGcTl
+	 UyDbvx6rrmuLhWCkAHvQeQXluiGnULUCyDrjnZzJ6+jwbD98sg2pstQGE4de9eOpqb
+	 9jHtxj2T2gtEw==
+Date: Thu, 18 Sep 2025 18:56:02 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: brauner@kernel.org, "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>, jannh@google.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+Subject: Re: [PATCH v21 4/8] fork: Add shadow stack support to clone3()
+Message-ID: <21954e72-94e9-433a-a155-222c9052d4c6@sirena.org.uk>
+References: <20250916-clone3-shadow-stack-v21-0-910493527013@kernel.org>
+ <20250916-clone3-shadow-stack-v21-4-910493527013@kernel.org>
+ <aMv9XRq_sAQbQwjI@willie-the-truck>
+ <aMwtdtRHT7oHhYLf@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XiyciUMuZFVOfLZH"
+Content-Disposition: inline
+In-Reply-To: <aMwtdtRHT7oHhYLf@willie-the-truck>
+X-Cookie: Victory uber allies!
 
-syzkaller found a path where ext4_xattr_inode_update_ref() reads an EA
-inode refcount that is already <= 0 and then applies ref_change (often
--1). That lets the refcount underflow and we proceed with a bogus value,
-triggering errors like:
 
-  EXT4-fs error: EA inode <n> ref underflow: ref_count=-1 ref_change=-1
-  EXT4-fs warning: ea_inode dec ref err=-117
+--XiyciUMuZFVOfLZH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Make the invariant explicit: if the current refcount is non-positive,
-treat this as on-disk corruption, emit EXT4_ERROR_INODE(), and fail the
-operation with -EFSCORRUPTED instead of updating the refcount. Delete the
-WARN_ONCE() as negative refcounts are now impossible; keep error reporting
-in ext4_error_inode().
+On Thu, Sep 18, 2025 at 05:04:06PM +0100, Will Deacon wrote:
+> On Thu, Sep 18, 2025 at 01:38:53PM +0100, Will Deacon wrote:
 
-This prevents the underflow and the follow-on orphan/cleanup churn.
+> > It would be great if Christian could give this the thumbs up, given that
+> > it changes clone3(). I think the architecture parts are all ready at this
+> > point.
 
-Fixes: https://syzbot.org/bug?extid=0be4f339a8218d2a5bb1
-Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
----
- fs/ext4/xattr.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> ah, I may have spoken too soon :/
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 5a6fe1513fd2..a056f98579c3 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1030,6 +1030,13 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 
- 	ref_count = ext4_xattr_inode_get_ref(ea_inode);
- 	ref_count += ref_change;
-+	if (ref_count < 0) {
-+		ext4_error_inode(ea_inode, __func__, __LINE__, 0,
-+				"EA inode %lu ref underflow: ref_count=%lld ref_change=%d",
-+				ea_inode->i_ino, ref_count, ref_change);
-+		ret = -EFSCORRUPTED;
-+		goto out;
-+	}
- 	ext4_xattr_inode_set_ref(ea_inode, ref_count);
- 
- 	if (ref_change > 0) {
-@@ -1044,9 +1051,6 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 			ext4_orphan_del(handle, ea_inode);
- 		}
- 	} else {
--		WARN_ONCE(ref_count < 0, "EA inode %lu ref_count=%lld",
--			  ea_inode->i_ino, ref_count);
--
- 		if (ref_count == 0) {
- 			WARN_ONCE(ea_inode->i_nlink != 1,
- 				  "EA inode %lu i_nlink=%u",
--- 
-2.34.1
+Well, there's also the fact that this is based on the vfs tree (or would
+have conflicts with it).
 
+> Catalin pointed me at this glibc thread:
+
+> https://marc.info/?l=glibc-alpha&m=175811917427562
+
+> which sounds like they're not entirely on board with the new ABI.
+
+I think we're getting there on that one, and the main thing they're
+asking for is the ability to reuse the GCS after the thread has exited
+which would be orthogonal to this stuff.  I see Catalin replied on the
+glibc side so I'll direct most of my reply there.
+
+It would be really helpful to get a clear idea of where we're going with
+this series, it's been almost landed for an incredibly long time and
+having it in that state is getting disruptive to doing cleanup to try to
+factor code out of the arches especially with the RISC-V stuff also up
+in the air.  I do think the issues glibc have with this are orthogonal
+to the changes here so hopefully this can go as is.
+
+--XiyciUMuZFVOfLZH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMR7EACgkQJNaLcl1U
+h9D1nQf/S4za9m0EXxhhOOufFtQwWatoF5T4w9ZO30g2u5/wuQAFZeTtARtrFj4I
+Xm26dM7BBBElSdWXIWVxzROT10yXZTN0Hl50o6jhgohNXiV+Bf0dpAR+rGHp7sDh
+0/TpMZMKikrTMhN89mQoHzvIktHJW1v14t3eUTrE/GZaPMdoIg1hIGY00tEVSArg
+nraXjUQMb4uSswTMGJWAzMIiQWQfJ7A+7Yj7Zu14xD+cY55s+xVeAQ2HmRufGpkB
+k7LBGaC7bzkqn7QkqMbwF558gcSC3Nl0WEvzndmxg4i9aN+Xafl4+kQVogguI39S
+UfARm8uNUebl5zS2zY71r5esgHQCXA==
+=Qji3
+-----END PGP SIGNATURE-----
+
+--XiyciUMuZFVOfLZH--
 
