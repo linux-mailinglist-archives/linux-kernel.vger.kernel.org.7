@@ -1,241 +1,113 @@
-Return-Path: <linux-kernel+bounces-823149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3458BB85AE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:39:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AE1B85B0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D11E1884FA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9381894AE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFD730F954;
-	Thu, 18 Sep 2025 15:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A059312801;
+	Thu, 18 Sep 2025 15:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="se7FEJ9P"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="QQemO7m4"
+Received: from smtp16.bhosted.nl (smtp16.bhosted.nl [94.124.121.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1921930CB41
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D7C3126BD
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209656; cv=none; b=OuMnuIRA6/kkTTSuP9REMQi/dHlCWyobo1RBw1p45J4h0AN+W2mL82dbYhyx3gG/27wDkZwUDnhsqvwqLLvT7znGwlzdiLzRY+AI48Q/UZTjyLh7pUC1TkifBoEu/tsC/GEI47B8MVq30IlipEjXTTbzAjey5VggeoywIa5j3Po=
+	t=1758209702; cv=none; b=owJN3Nlxp9mHjmvzSEfV63GdYdOc+be30hHlISt3uxpWdIWjzq1B+TJDstPRCKdvnWFSQGtY6MijEha3Uuze20QXpXVhgg350yWE8liLS2pn7exHJ6T12WBLLdzrK0JEd/17PpWk0VreMwpQ7o8Vb0TIk2byhnWcVcxcVnA51iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209656; c=relaxed/simple;
-	bh=HhJhrf90L28wa74pdl1F4jFPVstYvBIwJvD/uW5OlPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WonvzhBGd6lHNcznDR3eqmynL+x7Gs7YNfXHHfRAPd0gJZTZFNMP+RFOcyFCuTBpd1HaPUZtcCDtVv31Z8eKoaArh/WBmA6E/9Kir7hvBOkSWGHL9v6jT6NpsJ0YXpxGGF8BFDK3CK+hFfYxHHgJYBNVXp+XC9C970B0Pzre7do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=se7FEJ9P; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-ea7cdf867cbso318468276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:34:13 -0700 (PDT)
+	s=arc-20240116; t=1758209702; c=relaxed/simple;
+	bh=1L4ztzZI21TGZatF3aNWfrnQCTgXQdveVEOhyL3fA0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VP/cSWUM3PQCKXLyYBrFDFfHaYkC9ZuAlUYTSN/v+kKeAiFbmrIZUB3PgszslLEMADyf3PQ7diI6uJeFAa2cP3/eSHrZEAUmkcsn1lGlDo5BdymYSGoh1RRMBhiEKjTzSdI8x1BVvWqa25uCvZ4ENlmE86IwC1Sw9CaH/JTUFHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=QQemO7m4; arc=none smtp.client-ip=94.124.121.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758209653; x=1758814453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Vk5OzhmzjQyEyUwesG5AV+nLCa2F2V1S0oZe6mof9Q=;
-        b=se7FEJ9Pxjpq6bhuHknAbO7nhrexe5lhupqx9e6y2QJTHYzZFntzVtYmcFQU57hNyW
-         snLkVyBI3ORcWd1E/j2rUbp7YQ/FbIugsNrxtNx2zX/HYboIuQgBDTAWEbz9dYHiiaHU
-         FgioBa5+tzVXOCdd9Xi09UQNXwJXRyfn0tKvkiXmMhxD9gG71pZ4lR6QFD/161i/tIyv
-         FLcpYqKeEbRcZsfgCY1wirj61FRRy88P9M9QG+gQFlt4qaOEAY4ST8kR+ZUdplsh49t0
-         D9y+79KiFuwnMjBX9ULeEs9hhn90v+vhwdi5XvoBc8HAH5FgbKPHLJkBQWROqyT+2sKb
-         vAQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758209653; x=1758814453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Vk5OzhmzjQyEyUwesG5AV+nLCa2F2V1S0oZe6mof9Q=;
-        b=YGLFaQFdcC3xD5/qSEGLzwcN9No2OKsZJB6OyRMVrbMqeh9SpGP2t6cGAMg+9DVpjt
-         Jqw2onXYjRkhnN6OE5eb/WD+MEoUd+u3jemBde+2Qg+iQhnA76+V3XuM9CFbEW/s4qHc
-         Y+sM0aJImhJABD9mRIN/EVVyz0XyEp7NBrTm/R3c1J9U5LGkIKQdtz1CNSUJqyk7BSeP
-         KjZSgB/mK427uj3ARmeuqZ85Ii11geWkyU3nHAIglB9cE5Jwajn/ArgdLa5mhCJQMt6p
-         sL1HRUdHC6qsfJ7S1ODSPwgsh+82HRLmmy0Z/zzMhYY86h5mj5pOodDYcfTXWP3dq06E
-         dqsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQKhfA+4GLmg9Imm/qJsXVNmuvIoej3d3Poveuebu33/n2N/Kio+bpjEUf9erVKgXd8tdPrVG4toZqCnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtFhMTYEfuOAWv+crv+HzAiVhSaQWroVuCmKOmYbM18tkmqUCZ
-	BOQdvQJqNHOpkEqvstfVCa4kGug+amMABMw7IiEUd74Cr10jBBdDoRDLx+FacmefVxHu7h9I7aS
-	GjTxtq7oCsWdPsqh8a/E+XFkQ1Q7doTDHLpSOYMLzwJdExaWANncJt70=
-X-Gm-Gg: ASbGnctpew9pzss6mNXBsaAFLJEeZD2Ex+0gqK9qBV/U6uK/V/V2qDOcbuMS5+ir7fW
-	NPcGmu4YpyGYaIG5ruMPc/o/U+s1Y0Ge5jnXTmPLc+5iodw4VNLQX7xzTQZ8ZwCXN+94je0u4PG
-	+10AshyG2Z6HqAfcMsT2BkIVQXd/gewS2UAzK+LYCGjg8OKipf6Q1T2xVlV7Tf1wkaew8g6CfB+
-	bcUKGEYtOf2SpjR7zFGD9hmJ5UdBGV0jInvJQ==
-X-Google-Smtp-Source: AGHT+IGa0RA/E833vhE2XgwToDc/b4w+5n2jV9ffCYdAghAwqJL3MsnBQ6fNuuH8VSHrQU7cl/A2Q5pxUvEgD81+h0I=
-X-Received: by 2002:a53:d603:0:b0:625:2f9:475e with SMTP id
- 956f58d0204a3-633b064c7d5mr4436729d50.13.1758209652773; Thu, 18 Sep 2025
- 08:34:12 -0700 (PDT)
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=SqjdATjfjZTk7QANAggTs1mW/P13EV6a+Izt0r+agQ0=;
+	b=QQemO7m4x6zCxk4M9laZ90eCIBZvlHRq/VuixCptBB7zzwo7W14mF7GpiYLDE2KravDs5mWr5Fe32
+	 YI5vbPnjY8XchNI9DA2VxwqrhGOoXIMDArJfiLqW1D+YRL2YnyHQ4WHp2jj+Z3dwdLVow44GMCxb0b
+	 S6ozX0oObc8Pf1HBbvovaxNrs8/iL/hnZAJYohUXXEqDuxD0E+wq2MS2PgcGQeAqkHwHgbtE3szPdO
+	 LY51aW6TvUu1QOAIlIzGxXruryI8IjrqSj/QbUYXHmCSZMbUySBHPD6UI6terkJcLsOTJupcY0AuoB
+	 JpIpBWXwmgF0fXl9CqpcwJtEM9ZcoKQ==
+X-MSG-ID: df093cf2-94a4-11f0-858c-005056817704
+Date: Thu, 18 Sep 2025 17:33:47 +0200
+From: David Jander <david@protonic.nl>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jonas Rebmann <jre@pengutronix.de>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Lucas Stach <l.stach@pengutronix.de>,
+ Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [PATCH v2 3/3] arm64: dts: add Protonic PRT8ML board
+Message-ID: <20250918173347.28db5569@erd003.prtnl>
+In-Reply-To: <7f1d9289-4102-4db9-a2bb-ff270e8871b7@lunn.ch>
+References: <20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de>
+	<20250918-imx8mp-prt8ml-v2-3-3d84b4fe53de@pengutronix.de>
+	<af554442-aeec-40d2-a35a-c7ee5bfcb99a@lunn.ch>
+	<20250918165156.10e55b85@erd003.prtnl>
+	<7f1d9289-4102-4db9-a2bb-ff270e8871b7@lunn.ch>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123323.65441-1-ulf.hansson@linaro.org>
- <20250716123323.65441-2-ulf.hansson@linaro.org> <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
- <7hldnp6apf.fsf@baylibre.com> <CAJZ5v0j=9RXHrcVEBp0yy1Ae4_kC1y-WFQyBf89r3NtoL-tYQw@mail.gmail.com>
- <CAPDyKFpeVF_EHJDQ9u=LDuJ56g7ykYUQWHXV2WXTYLa-mYahVA@mail.gmail.com>
- <CAPDyKFpc-PHC1QhoSrNt9KnaGov749H1AwFZUwnDDzG7RDYBRw@mail.gmail.com> <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hC=sEcC-mU8jArwVN3EA6+U=EmCa2e7TKO0sg6LJiz7g@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 18 Sep 2025 17:33:36 +0200
-X-Gm-Features: AS18NWBAhRhBnrK1Wvs4hJmM1vScVNz_Nd4F3UZ7ZOmwsgUk5SQAfL930OHxaL0
-Message-ID: <CAPDyKFqG=bFSP2rJ3PXt5=6_nLdpJ+ir80krU1DrRCCMhwKQng@mail.gmail.com>
-Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-pm@vger.kernel.org, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 17 Sept 2025 at 21:24, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> Hi,
->
-> Sorry for the delay.
->
-> On Fri, Sep 12, 2025 at 3:58=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Tue, 12 Aug 2025 at 11:26, Ulf Hansson <ulf.hansson@linaro.org> wrot=
-e:
-> > >
-> > > On Mon, 11 Aug 2025 at 21:16, Rafael J. Wysocki <rafael@kernel.org> w=
-rote:
-> > > >
-> > > > On Mon, Aug 11, 2025 at 7:16=E2=80=AFPM Kevin Hilman <khilman@bayli=
-bre.com> wrote:
-> > > > >
-> > > > > "Rafael J. Wysocki" <rafael@kernel.org> writes:
-> > > > >
-> > > > > > On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.hansso=
-n@linaro.org> wrote:
-> > > > > >>
-> > > > > >> Some platforms and devices supports multiple low-power-states =
-than can be
-> > > > > >> used for system-wide suspend. Today these states are selected =
-on per
-> > > > > >> subsystem basis and in most cases it's the deepest possible st=
-ate that
-> > > > > >> becomes selected.
-> > > > > >>
-> > > > > >> For some use-cases this is a problem as it isn't suitable or e=
-ven breaks
-> > > > > >> the system-wakeup latency constraint, when we decide to enter =
-these deeper
-> > > > > >> states during system-wide suspend.
-> > > > > >>
-> > > > > >> Therefore, let's introduce an interface for user-space, allowi=
-ng us to
-> > > > > >> specify the system-wakeup QoS limit. Subsequent changes will s=
-tart taking
-> > > > > >> into account the QoS limit.
-> > > > > >
-> > > > > > Well, this is not really a system-wakeup limit, but a CPU idle =
-state
-> > > > > > latency limit for states entered in the last step of suspend-to=
--idle.
-> > > > > >
-> > > > > > It looks like the problem is that the existing CPU latency QoS =
-is not
-> > > > > > taken into account by suspend-to-idle, so instead of adding an
-> > > > > > entirely new interface to overcome this, would it make sense to=
- add an
-> > > > > > ioctl() to the existing one that would allow the user of it to
-> > > > > > indicate that the given request should also be respected by
-> > > > > > suspend-to-idle?
-> > > > > >
-> > > > > > There are two basic reasons why I think so:
-> > > > > > (1) The requests that you want to be respected by suspend-to-id=
-le
-> > > > > > should also be respected by the regular "runtime" idle, or at l=
-east I
-> > > > > > don't see a reason why it wouldn't be the case.
-> > > > > > (2) The new interface introduced by this patch basically duplic=
-ates
-> > > > > > the existing one.
-> > > > >
-> > > > > I also think that just using the existing /dev/cpu_dma_latency is=
- the
-> > > > > right approach here, and simply teaching s2idle to respect this v=
-alue.
-> > > > >
-> > > > > I'm curious about the need for a new ioctl() though.  Under what
-> > > > > conditions do you want normal/runtime CPUidle to respect this val=
-ue and
-> > > > > s2idle to not respect this value?
-> > > >
-> > > > In a typical PC environment s2idle is a replacement for ACPI S3 whi=
-ch
-> > > > does not take any QoS constraints into account, so users may want t=
-o
-> > > > set QoS limits for run-time and then suspend with the expectation t=
-hat
-> > > > QoS will not affect it.
-> > >
-> > > Yes, I agree. To me, these are orthogonal use-cases which could have
-> > > different wakeup latency constraints.
-> > >
-> > > Adding an ioctl for /dev/cpu_dma_latency, as suggested by Rafael woul=
-d
-> > > allow this to be managed, I think.
-> > >
-> > > Although, I am not fully convinced yet that re-using
-> > > /dev/cpu_dma_latency is the right path. The main reason is that I
-> > > don't want us to limit the use-case to CPU latencies, but rather allo=
-w
-> > > the QoS constraint to be system-wide for any type of device. For
-> > > example, it could be used by storage drivers too (like NVMe, UFS,
-> > > eMMC), as a way to understand what low power state to pick as system
-> > > wide suspend. If you have a closer look at patch2 [1] , I suggest we
-> > > extend the genpd-governor for *both* CPU-cluster-PM-domains and for
-> > > other PM-domains too.
-> > >
-> > > Interested to hear your thoughts around this.
-> >
-> > Hey, just wanted to see if you have managed to digest this and have
-> > any possible further comment?
->
-> The reason why I thought about reusing /dev/cpu_dma_latency is because
-> I think that the s2idle limit should also apply to cpuidle.  Of
-> course, cpuidle may be limited further, but IMV it should observe the
-> limit set on system suspend (it would be kind of inconsistent to allow
-> cpuidle to use deeper idle states than can be used by s2idle).
+On Thu, 18 Sep 2025 17:04:55 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-Agreed!
-
+> > Yes, unfortunately the SJA1105Q does not support PAUSE frames, and the i.MX8MP
+> > FEC isn't able to sustain 1000Mbps (only about 400ish) due to insufficient
+> > internal bus bandwidth. It will generate PAUSE frames, but the SJA1105Q
+> > ignores these, leading to packet loss, which is obviously worse than
+> > restricting this link to 100Mbps. Ironically both chips are from the same
+> > manufacturer, yet are incompatible in this regard.  
+> 
+> Thanks for the explanation. Maybe add a comment that the bandwidth is
+> limited due to the lack of flow control resulting in packet loss in
+> the FEC.
 >
-> I also don't think that having a per-CPU s2idle limit would be
-> particularly useful (and it might be problematic).
->
-> Now, it is not as straightforward as I thought because someone may
-> want to set a more restrictive limit on cpuidle, in which case they
-> would need to open the same special device file twice etc and that
-> would be quite cumbersome.
->
-> So in the end I think that what you did in the $subject patch is
-> better, but I still would like it to also affect cpuidle.
+> Anything which looks odd deserves a comment, otherwise somebody will
+> question it....
 
-Okay. I will update the patches according to your suggestions!
+Yes! This is a golden tip. Ironically what I said above is incorrect. Sorry
+for the noise.
 
->
-> And it needs to be made clear that this is a limit on the resume
-> latency of one device.  Worst case, the system wakeup latency may be a
-> sum of those limits if the devices in question are resumed
-> sequentially, so in fact this is a limit on the contribution of a
-> given device to the system wakeup latency.
+Ftr: I wrote this DT about 4 years ago, so my memory failed me, and a comment
+in the code would have saved me this embarrassment ;-)
 
-Indeed, that's a very good point! I will keep this in mind when
-working on adding the documentation part.
+The comment above applies to the i.MX6 SoC's which had this limitation. On the
+i.MX8MP we had a different problem that also caused the SJA1105Q not to work
+reliably at 1000Mbps either. We haven't been able to find the issue, but so far
+this switch hasn't been able to work at 1000Mbps reliable on any platform,
+possibly for different reasons in each case.
 
-Again, thanks a lot for your feedback!
+Best regards,
 
-Kind regards
-Uffe
+-- 
+David Jander
 
