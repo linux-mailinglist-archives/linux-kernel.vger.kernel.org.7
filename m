@@ -1,125 +1,166 @@
-Return-Path: <linux-kernel+bounces-822796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083F5B84B2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:55:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC19B84B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E681C216B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:56:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735005423BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566A43043C6;
-	Thu, 18 Sep 2025 12:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA23303C9F;
+	Thu, 18 Sep 2025 12:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fuhjaPrb"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ilbaT5s5"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7E9303A31
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB772D3207
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758200144; cv=none; b=gW2wqaysyx8KIoUKs9m6WOCFClUsoDnV/K2coapS21XDd8YffGE/Q+Dd7uWm4yA3705L+SETJ1EzREDO3a1eAinUYeMWV12s6h9dii9NayEwmJDdaTeyPsuIJIu6J6TBCHuq8FM4TlC41AFHiBpVoEAOkZX4iAoIwRcThE9gE5s=
+	t=1758200160; cv=none; b=UegdcoyCbHRFs0khVmLQvaAseT4DCZ13iGYZgCjmCXmhcbgyO9oGf9ntB2Q2qpIkgLCJq0ySFR8ECXdHseZSBk7eUcQP9Z6S5q+BA8AY3EHasPlfeziOJvGmOWWWw17egwC3gJerbbgSfDtdEY/2U1zzeytjGJRZtdk/VjCzJ5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758200144; c=relaxed/simple;
-	bh=SId3DB5hqfnfahVT0z34tvWymLGz7H03e4wdeT2fwQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YNZlKQkinG56aCGr1HAfIc0t5PVC2iv93C5T8EuXLSN5/J8NwL3paAieHTCV5ZuygVXQz9d3okXP3E/NqYbOTM5wWRC6mcjYbLLE7fsLQEOCxlLrAAkYpwWpmqPzwNJiUzBQoT8rqbO/ADK//fM/74U8k2PbmJUqVbzGUyJwGBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fuhjaPrb; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-267fac63459so8431715ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:55:43 -0700 (PDT)
+	s=arc-20240116; t=1758200160; c=relaxed/simple;
+	bh=XR6Yjezpbu2Iu/8Sj/hrWpqtAsKti68tXObL7pMnNwo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ebyi2aebhDoVzBgW07Hw2gYjzKK8mrejsfan3zzvdLLbWiNBSeHrdniFDRYOpPXlQ0AVGBEbK5tSpasQhkWYKNpzFybXsmR6DSFY+2Es2zEWDpN+UAQenk1MFqUdhgC3xOiDuYxKitaLbMsHWgNzBAVQn5ROHnoytxKECQ4GIFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ilbaT5s5; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269af520712so1354515ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:55:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758200142; x=1758804942; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1PMaQk64QLYvKLuvrIkNRq4RT2wpYqM3eFsm/MQrmOQ=;
-        b=fuhjaPrbuoIv45XY64mm9g32pBv/ambHaaS5mOj+rNyjBG3dRHCuS+peMpVtcHwaST
-         SLZCqefArI120NYYln/AEzKiQACWkN6OwINyPYQr8QT+WeLvldNHmDFPkXkPl564bCud
-         jzSugu0a3EXhNMpAIZs1aDvProQQftvS/qE86jzuQEAgd2bKwfkqROH6MDxYE6ajH08S
-         34o9fqu1StPte21yqKQnni1dGoRcAAeEGDwqwrJ0626APmOkujdIbh8/NNdegW9rcMP9
-         u7Tg096Izi40mw4GG7jDEAOasxiVAM488zgNUsoFu1dVVh0lYYB5MEzrRjdOrgmj/Gz9
-         y/0w==
+        d=google.com; s=20230601; t=1758200158; x=1758804958; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=a17M9AJtW8sYIaQgAVR9YA+SUDk6kYciylAWtglEbis=;
+        b=ilbaT5s5MSo6AStOJZfc4HbwNJ/mgHh8R85UzRpeuYeBVygFwbTwwFJ0LagcX+PVui
+         LIyAAHxmkfMdwjIfJTDo2qSvHp1ZuYxd8Isxx9bSB1HLV55AwjGLXS6J5ZFyuqmzMCLh
+         pA3FCn+IvTulMDuBADyFJ/SLeFll/iLJxPoMYYlA7uV47UF4HGRhvSyzW7802odoO359
+         Ju/xqmtKbCUVLjc24GIOVsGPBPqAEL2viCK5QLFnYwgYnwWgwcNYtSZu3Ql5FNBPDgID
+         0QhFBxxt5p28rjVUXgw/Rwe6DE9JlO7AMpNG3qofDqAFr1RsJf11ManfGPDDqX+rsVyS
+         kpig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758200142; x=1758804942;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1PMaQk64QLYvKLuvrIkNRq4RT2wpYqM3eFsm/MQrmOQ=;
-        b=rhBF0lqWFEq3KUbrNtOquAKnZkBOvdljYLqHnMrSjssMo2C8vZbx6QcP6/koqxJuYC
-         xFwQ9LZa8cQoH+QwZjCIal25/O5J48PP1pO1pnHYOB3jCi7pd/hHUqx+yd6wbxxX9z6i
-         ZlsgFDaGaEZgIz4COqgtuSZRCQKbcr4nHmMKZPrdPMDL/z+vusjzDeNaUyTQkdGclubz
-         nLkl0uMboFUhY5KBEvUpzMLGAXRKIlREzTeaPP+BloA4gO+AaOI+dfbUGp+tr27l05Qq
-         JxW/1IQ/iBRwxhc0XUa3KfQFsGbZx2mtZzhD0Y+MGAtb7GGpGIE+sRk0IbWBPB/2poWF
-         jd/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHeyZGaLALC3TguQUMbyZw/6Twok+LnZaz9FRv5a7IXvHpoQn+R9QL121FX0D7LHTu8Mp5sjIgHNihJsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweQk/vNYPILkId+GALqz5NmbUrAG+ZnIB7XQ4+p8g0Cro7ANjb
-	2YiVd6iq6s1OmNA7HEOATNglXR7y5ZrdMrwYq70NqKlj2Xc0GiFpYh5e
-X-Gm-Gg: ASbGncuvzBC4BVkQd2qLT8vLy4x21nPHuaWY4zvWY2R1zBAHefBxeqQ7CKqQ2edI+Gw
-	uK8jy7fkAMula1hq9Ql6qN/YyU6NEkc8pKHHGznRoVC9MEX9WpegfhYVTaOl8l2t3boGEgdwjQH
-	74tSSsI7CFeP/6aUviGa2PaYvExurij82RtRV85TZwj2aoox22wlZZa6HOkrKmTlFqeayUZHN0T
-	jup8E940+4dnc0SM2bW9QBmMnRpIhBpaSPKE0LaldLukbw9b9JP/HO4u9EFNaKI/yvwAlsudd3J
-	u/o9uJk8YWfjW0fQ3pxQ3mZrjU0dfTvDma28sZlcVLQipKNST/nmjKXHrQypZmhUC3xnT5rJryd
-	ztgdf9L+GyduT4rPXRRgucgtoriPoO3xMkVbKe8Eu7XM=
-X-Google-Smtp-Source: AGHT+IE4Evwn4n7oEvkfL06fZNeaCExpJfqe2hcm3yPgDmXEurhEs6dJZklynFlriLWZbAPRGw8rVg==
-X-Received: by 2002:a17:902:d4cd:b0:246:d70e:ea82 with SMTP id d9443c01a7336-268119b2be6mr84670615ad.5.1758200142591;
-        Thu, 18 Sep 2025 05:55:42 -0700 (PDT)
-Received: from lgs.. ([2408:8417:e00:1e5d:c81b:8d5e:98f2:8322])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016c076sm25939065ad.42.2025.09.18.05.55.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 05:55:42 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
-	Dan Douglass <dan.douglass@nxp.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Guangshuo Li <lgs201920130244@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] crypto: caam: Add check for kcalloc() in test_len()
-Date: Thu, 18 Sep 2025 20:55:21 +0800
-Message-ID: <20250918125521.3539255-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1758200158; x=1758804958;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a17M9AJtW8sYIaQgAVR9YA+SUDk6kYciylAWtglEbis=;
+        b=HzTPjk7rMiSrk6MllFtqkUQXYWQCIz0jHL9FgnyXBzz3a3PTbO5g2hJTNqhEb8FdEn
+         kH5QAlZV36OUZi5IhdPPujlv7jcRWYfDhcW1aqstmAuJRzEKxYwbPPwEakIiukfwFzCR
+         HSvtFzuQCWkJVNNCxpMCiYWK2RziwNe4BS/lFk7FnXSrVt/KWf0DIIHfsghxL/j9aEb1
+         C2RX+PSYS9QD1m/cPiJqJI9rqvjbgSfTC0rMeYAr1y39/qpAR10lJUJgVeT9fvsrklle
+         rqMlhRR0G0kULcp4qDZenurG0YwMQ6RbdHAMYGXTgph7phl/H3DjEXrpIj4RV7jXov/s
+         UnnA==
+X-Gm-Message-State: AOJu0YzJGIP3gj8VlfFD72QX3jbcRwn1ysBuOPwJn1x/xpxcr8MUwfJE
+	UDKc0J0tBEwr60bnI1gsJzj7+PlpJ22EgLjixS2OfEfZoUKaeMBBmwjQkufsp29zvmtD5BgAuqk
+	/FB9KKut+6FCzAimSeiWXQhPY6w==
+X-Google-Smtp-Source: AGHT+IF7UxkrwWs5SBZRLXWN/b0pLNjU1dxOsBC1jq3TJVXfb5p1mZ7A0UYkUYl0U/QNMKkvgJn5JJkzs3KQflez7w==
+X-Received: from plbjz6.prod.google.com ([2002:a17:903:4306:b0:269:7076:8c40])
+ (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:fa4:b0:24a:8e36:420a with SMTP id d9443c01a7336-2698aa45676mr33810075ad.40.1758200158457;
+ Thu, 18 Sep 2025 05:55:58 -0700 (PDT)
+Date: Thu, 18 Sep 2025 12:55:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250918125547.380088-1-joonwonkang@google.com>
+Subject: [PATCH v2] mailbox: Prevent out-of-bounds access in of_mbox_index_xlate()
+From: Joonwon Kang <joonwonkang@google.com>
+To: peng.fan@oss.nxp.com, jassisinghbrar@gmail.com
+Cc: linux-kernel@vger.kernel.org, Joonwon Kang <joonwonkang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-As kcalloc() may fail, check its return value to avoid a NULL pointer
-dereference when passing the buffer to rng->read() and
-print_hex_dump_debug().
+Although it is guided that `#mbox-cells` must be at least 1, there are
+many instances of `#mbox-cells = <0>;` in the device tree. If that is
+the case and the corresponding mailbox controller does not provide
+`of_xlate` function pointer, `of_mbox_index_xlate()` will be used by
+default and out-of-bounds accesses could occur due to lack of bounds
+check in that function.
 
-Fixes: 2be0d806e25e ("crypto: caam - add a test for the RNG")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+Below is a problematic control flow when `#mbox-cells = <0>;`.
+
+```
+static struct mbox_chan *
+of_mbox_index_xlate(struct mbox_controller *mbox,
+                    const struct of_phandle_args *sp)
+{
+    int ind = sp->args[0];                                      // (4)
+
+    if (ind >= mbox->num_chans)                                 // (5)
+        return ERR_PTR(-EINVAL);
+
+    return &mbox->chans[ind];                                   // (6)
+}
+
+struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
+{
+    struct of_phandle_args spec;                                // (1)
+
+    if (of_parse_phandle_with_args(dev->of_node, "mboxes",      // (2)
+        "#mbox-cells", index, &spec)) {
+        ...
+    }
+
+    list_for_each_entry(mbox, &mbox_cons, node)
+        if (mbox->dev->of_node == spec.np) {
+            chan = mbox->of_xlate(mbox, &spec);                 // (3)
+            if (!IS_ERR(chan))
+                break;
+        }
+    ...
+    ret = __mbox_bind_client(chan, cl);                         // (7)
+    ...
+}
+
+static int __mbox_bind_client(struct mbox_chan *chan,
+                              struct mbox_client *cl)
+{
+    if (chan->cl || ...) {                                      // (8)
+}
+```
+
+(1) `spec.args[]` is filled with arbitrary leftover values in the stack.
+    Let's say that `spec.args[0] == 0xffffffff`.
+(2) Since `#mbox-cells = <0>;`, `spec.args_count` is assigned 0 and
+    `spec.args[]` are untouched.
+(3) Since the controller does not provide `of_xlate`,
+    `of_mbox_index_xlate()` is used instead.
+(4) `idx` is assigned -1 due to the value of `spec.args[0]`.
+(5) Since `mbox->num_chans >= 0` and `idx == -1`, this condition does
+    not filter out this case.
+(6) Out-of-bounds address is returned. Depending on what was left in
+    `spec.args[0]`, it could be an arbitrary(but confined to a specific
+    range) address.
+(7) A function is called with the out-of-bounds address.
+(8) The out-of-bounds address is accessed.
+
+This commit prevents the issue by checking the array bounds.
+
+Signed-off-by: Joonwon Kang <joonwonkang@google.com>
 ---
- drivers/crypto/caam/caamrng.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mailbox/mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/caam/caamrng.c b/drivers/crypto/caam/caamrng.c
-index b3d14a7f4dd1..003c5e37acbe 100644
---- a/drivers/crypto/caam/caamrng.c
-+++ b/drivers/crypto/caam/caamrng.c
-@@ -181,7 +181,8 @@ static inline void test_len(struct hwrng *rng, size_t len, bool wait)
- 	struct device *dev = ctx->ctrldev;
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 5cd8ae222073..5bccdf27d6ab 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -476,7 +476,7 @@ of_mbox_index_xlate(struct mbox_controller *mbox,
+ {
+ 	int ind = sp->args[0];
  
- 	buf = kcalloc(CAAM_RNG_MAX_FIFO_STORE_SIZE, sizeof(u8), GFP_KERNEL);
--
-+	if (!buf)
-+		return;
- 	while (len > 0) {
- 		read_len = rng->read(rng, buf, len, wait);
+-	if (ind >= mbox->num_chans)
++	if (sp->args_count < 1 || ind >= mbox->num_chans)
+ 		return ERR_PTR(-EINVAL);
  
+ 	return &mbox->chans[ind];
 -- 
-2.43.0
+2.51.0.384.g4c02a37b29-goog
 
 
