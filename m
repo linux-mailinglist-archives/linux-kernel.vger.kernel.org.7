@@ -1,119 +1,138 @@
-Return-Path: <linux-kernel+bounces-822448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A437B83E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EECBCB83E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB4E1BC3840
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0190C1C07326
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B3629B8EF;
-	Thu, 18 Sep 2025 09:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3DD2EAB61;
+	Thu, 18 Sep 2025 09:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pcEVHo+b"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KM21fzvV"
+Received: from mail-qv1-f98.google.com (mail-qv1-f98.google.com [209.85.219.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5E9279DA1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597CA2D593D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758188995; cv=none; b=iwWOQ41cjUMtN90v07QgYPwGhv2NPCsd1nHw07RCm12oRdT3J2XsKtwP2g7c1TJEWM3Y8xkmNQDEG4AioPSa2creQTY70w2AKEw+k57zXkqooQG3h7tB0zBllXjTciAwdbYLtvLlNaQzynvucV9Wd9JerfW+/on3mnkubdr2rxo=
+	t=1758189025; cv=none; b=ld1ik5ye6uHmhtsrnEqp9udHQIk1WnPY3YiaVb+ctpExHeNTeVayQ65KEua4e6fhGlBiNbhBsck5NwMjDnbbm2tlVP4FY22KWzA9co5rd17EdkbV0u2kbMtdhhvAnQYAssDEEXosjOWfMwJmhE0MVjSOi1SsXlW8wwfHe4OTDpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758188995; c=relaxed/simple;
-	bh=pmKMdMwREhDVJrJVVTTvY6Y6Gzyv37bc8Q/TErqBVNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ueOZCt53ryasNWUuPh9ggS7AGNzyb4pdqjKh0iwAc5gG0x9j91sRMgv+madgPLYdxEUMudNCzLjsNS56AqMwLMm+qff8+kQjxPIw5lbVl+ZwyRl87BzQg+Y8IQ+QpHlGtatlZeMhHKNNR0n1j9j2rT5smC/p+B7/s9paGEbhT7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pcEVHo+b; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so193183f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758188992; x=1758793792; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I/gbtAHMr2GW0/OahgiAYUZjpkj23jMbWY9WrggA8X0=;
-        b=pcEVHo+b5EGJhi6LpZy5k7N10TOe/7p96AWo3+WvaPa0+y9oMMDTYGdvZXdCtM1sZj
-         ofoctBLYOCgCoN4W3vzL8yPM/sDbuyKByQhFfZXe+UDE9BLUPERp8jU2EG3nuYoL2z6G
-         +fvqucKVpv2hqDgo/b4q+4GAPswY4r0HCXL1eykuImDxxiiYMlH/0TOmuCbd84dWyuGI
-         otX/AVLoCb5ayqtLP9mCbY/mpZWP3TIwtaZ/F1W8ifGKJlL/ieSRue1NTVFWMEeFzFVD
-         qTiyR5CnbzIKe7DqJ70NHjXXsTUJkAqzxPJmqrozedifiNSspc4ivqex+YoNscP2gGBI
-         O8xQ==
+	s=arc-20240116; t=1758189025; c=relaxed/simple;
+	bh=sb+/Rw8sIjYpdBKb6sxmFtn4/XkCevzzUuk49q+M4u8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hKBJGHGxvw9GVddfIG1mD0voT8whEJKoX/pDuVpvgzMmQBsxfvZA9AY58yBnrwBg/LlbLMt/quERVYkqBxaazNF+I8bf8g/mLMAHp8EvrIaQ4nCm9C/TDnFYaIjeLxqnkVkEmRC6zP7f20BT+OuXIqyWJugTAywXjglSpKSHQ7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KM21fzvV; arc=none smtp.client-ip=209.85.219.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f98.google.com with SMTP id 6a1803df08f44-78f15d58576so7220486d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:50:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758188992; x=1758793792;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1758189023; x=1758793823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sb+/Rw8sIjYpdBKb6sxmFtn4/XkCevzzUuk49q+M4u8=;
+        b=CbushXQZPTdGbRDQxoE/2SbhAWO3xn43homASQhTThX0pqg6LW0XdNhQGL2kR5o8pL
+         IjMgEXIcI3i+Pq/OcHW0dwb3OXxPO1XwqoHGRwtxOYxF8FXZlLVCtcfCvIM22ro4oI2I
+         m6CI+CrDr8nBJ5NxVLB6cD4Q3GA425kDXbUsDgYWV4R484991KQOOOlTrD8VbOSi1Ps7
+         sey7zMqWsENBHy/5gAqrYzqHX7ZnJp9/xqCS+Hwp8YanQ+mXQMTVwxaczx69n91ALS+z
+         l9aIdKKJrPkFcgV6jZ3WS3jB0FGCWHbrBESrulOGasAK4rmNsPrHsH19EAWDSupf95ro
+         yM4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVcQPTBsWhTri/1UaHGmPQtuu8C08/lKz3iTo1susySkcSkRX25BC8YlpTvvOgllUB3XnfkNZQJyDcm3WM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUaHqRsicLceq578scieF34nSVhxzDIN7vEdIH+uCbW3UIk5CS
+	ZMTDZZNQwlcEDuy+fT55cAwYfghJh8w/h/eKrbHYqu6H4O233Njk1NYA0YCyabqwF2XyyRR8EGQ
+	2BUcAFPMWLTtotPEOhL1Rkd8LQYnX0rINCE9QXtXqk3PK72rX8rnWtKRo8DpxIWvQ7zXq+NffO2
+	zm6awI3QarwBbZovpk/q7MLWtl2RGYj0c6m6SNCvkuT9QzpJYNLJfw46GBOcljUZFqUG5dkpRFQ
+	V3k8vAS/OR5T+tAnqZuiK5g8A==
+X-Gm-Gg: ASbGncsYih6stW+CszEJa7r+A3EKad1rQEsvxJeaY9vyTFMSJOMSy0pgSAcPQDrMFWZ
+	R+BfA08WuwVNyYYUMbJgwSzH0L/quwtM/XSyjsdVedKxDV3jTEGYz/iEfM9QN/rjq3OJhmJ+xrR
+	4HTEZ3ERV8pVqHskZvQU/m05HWROzNFaB6FmyhT4lh62A9/mfNGzVyN15aiBUznJr69NMBK+ETi
+	TZwFEQ0M7LOjnXu6Nt2DtmUfFktOWsVpIKn3xA1+BwrxpRbVhMiOTY7eTd+LAQd4ulNy4G+0SO6
+	jOvmnLpYfSROF0P7HucBeOIRe8svKtnlE8c7GKV0NiXTIz6hJ/iQVakc+Gza8+oVjnbt951Kd5U
+	b7TuMOvP2qq4AN9Xil1AxyJpjauxiW0+qwwoZJXOd78YH+WwdUZwOq6q7jQcu1ezf/qxJg3ZhrQ
+	HvzTayJ7r7
+X-Google-Smtp-Source: AGHT+IHOVNXLSfkVWRN+ByTEG6h7DLMy0JPXDF9xk5Ye2cYVOABE5U9IF9b1yzJygmW7+YgcwbdzwiVg69Vn
+X-Received: by 2002:a05:6214:1943:b0:78d:592d:fd03 with SMTP id 6a1803df08f44-7926a5f662fmr28446316d6.25.1758189022825;
+        Thu, 18 Sep 2025 02:50:22 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-793456fee29sm1302476d6.13.2025.09.18.02.50.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Sep 2025 02:50:22 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2697c4e7354so8480185ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:50:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1758189022; x=1758793822; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I/gbtAHMr2GW0/OahgiAYUZjpkj23jMbWY9WrggA8X0=;
-        b=IHmuPtzbyGtZF/fsBmCqHRjnaZTDVdVD9LbvxlSXfRf2eQrk3ecYfmtvs7xajkVIxc
-         3y9V6q3vYaFoJV62QYmIM7Q5Sx/JvsyiHDtikRu1ST7h7QyBhLdrGSaBksYyDzBBGKaz
-         r3nLwaeTzYQJ+h7xwmPvX4j9ODXcAuqv6zOMFh5iCFDjqLkw64XEQFigzsq2PS1Q2mwI
-         lzsu0qeyUngvePTVO0ZJUKTcXJtDZmhzvkI54DN4dgNnM7cZGQtTJuLlwyKjO9AyxyuK
-         N500oZ2LxmJIqgVkeEqpNyFdIkB7hCaF3P4a6QmSL4hHwl+PVGNxXZj41o99ifG5b3xf
-         7J1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUmZvM/AmojJG7oLdXKmRKvexWz9UVuL9yLoVXi+PfAHSFocj6mP9M0r7WW8J0oV33HKa4cgkYVE5svcyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9IGTfAC9eGefj53Gyzp4DqCCibDJjnyJXvSVjyCKkgnMJ5Ecc
-	pLx0rc8JGBZKfBDc3TwpByQzRJor9xUB1Xa4cwEL6JJuKvo3EsmVqqQtg6Qpx8DOR8z5mo1jByR
-	lbUDV
-X-Gm-Gg: ASbGncvlu/Ce4HWW4wGnUZ4RMIlhDHLhDX5/E//P3kfPXzdlTDlQw5oLwRoNmDqLSo3
-	CIx42esPnXg7TDXASg7uRPTnTOgrDlLw0Kj9Rni7InPg8jjb54KwM+skzYi965magzrTdgPmfng
-	jAyG7sb5JVcC/lrXeKNgqKvKErZaecCozu4EqIiF2XdD46b05hPVw1ZQVesynaRK020Jitk0qMc
-	N6rMeviDe4naIAXnEBr4p7jh2fwOkiwUODEs6qmmqVeHYvNGG655lwfCyrU3/d6CoB3rWeHAG9o
-	pqoUVS/MZkrAPooHdpyObsJrSLuI9XlPNTXfKwsR+lxP+HDFgEX7vhsfIrvJrlLAau3pRtc2oVF
-	vcAFKtUmOvjh7/Fx9yTZLyldMuSBiXEgmAkAqW5pVzIm8sg==
-X-Google-Smtp-Source: AGHT+IGxQiegj2o4mPFmZMrmoIXlBv9b1w/nkqkoOE8IISbZ7wbuT9+6TsbLyb+3Ro80AXibobzQxQ==
-X-Received: by 2002:a05:6000:2284:b0:3ec:de3c:c56 with SMTP id ffacd0b85a97d-3ecdf9ffa65mr4464540f8f.16.1758188991925;
-        Thu, 18 Sep 2025 02:49:51 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee0fbc72e6sm2816898f8f.29.2025.09.18.02.49.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 02:49:51 -0700 (PDT)
-Date: Thu, 18 Sep 2025 12:49:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] rtc: optee: Fix error code in optee_rtc_read_alarm()
-Message-ID: <9e3718fe1128964907619ad325c0c5f5c1354ace.1758182509.git.dan.carpenter@linaro.org>
-References: <cover.1758182509.git.dan.carpenter@linaro.org>
+        bh=sb+/Rw8sIjYpdBKb6sxmFtn4/XkCevzzUuk49q+M4u8=;
+        b=KM21fzvVVwHg2duGzac7XDvOFaAxLbGjNPwMu6V+M4hFrrK6T9FgdHrJ1k1hymYQnx
+         q7W3KCGRvqv9xN4R7FIZpweJIJPbnNNiCl4QtfKKq7JLvoQOm/vp7zkcxoF5jASdf2qp
+         4ebLoHs7xfWoeCi2ipK22+3FI32+sZuefb/Xk=
+X-Forwarded-Encrypted: i=1; AJvYcCXufuhh4GIU+g5ptEDo91rACP+vTYPPD0vmgBih6jzWlyfmtMOoLnOuT3nmMuNWpMoWcQyViLMAOICllbY=@vger.kernel.org
+X-Received: by 2002:a17:903:1211:b0:267:8049:7c87 with SMTP id d9443c01a7336-2697c854cafmr35711845ad.14.1758189021693;
+        Thu, 18 Sep 2025 02:50:21 -0700 (PDT)
+X-Received: by 2002:a17:903:1211:b0:267:8049:7c87 with SMTP id
+ d9443c01a7336-2697c854cafmr35711605ad.14.1758189021293; Thu, 18 Sep 2025
+ 02:50:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1758182509.git.dan.carpenter@linaro.org>
+References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
+ <20250911193505.24068-2-bhargava.marreddy@broadcom.com> <20250916151257.GI224143@horms.kernel.org>
+In-Reply-To: <20250916151257.GI224143@horms.kernel.org>
+From: Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>
+Date: Thu, 18 Sep 2025 15:20:09 +0530
+X-Gm-Features: AS18NWAGZjI9AOoElZ1PqbtOBjTR_Wkcn8OAuWFBln13azhgXSnyquR6Rl4ZLWk
+Message-ID: <CANXQDtbXG2XjBa2ja1LY7gdALg-PnEyvQBWPAiXQqD0hvtwp=g@mail.gmail.com>
+Subject: Re: [v7, net-next 01/10] bng_en: make bnge_alloc_ring() self-unwind
+ on failure
+To: Simon Horman <horms@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, andrew+netdev@lunn.ch, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, michael.chan@broadcom.com, 
+	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com, 
+	vikas.gupta@broadcom.com, 
+	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Return "optee_alarm" instead of "alarm".  The "alarm" pointer is a valid
-pointer and not an error pointer.
+On Tue, Sep 16, 2025 at 8:43=E2=80=AFPM Simon Horman <horms@kernel.org> wro=
+te:
+>
+> On Fri, Sep 12, 2025 at 01:04:56AM +0530, Bhargava Marreddy wrote:
+> > Ensure bnge_alloc_ring() frees any intermediate allocations
+> > when it fails. This enables later patches to rely on this
+> > self-unwinding behavior.
+> >
+> > Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+> > Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
+> > Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+>
+> Without this patch(set), does the code correctly release resources on err=
+or?
+>
+> If not, I think this should be considered a fix for net with appropriate
+> Fixes tag(s).
 
-Fixes: 6266aea864fa ("rtc: optee: add alarm related rtc ops to optee rtc driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/rtc/rtc-optee.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your feedback, Simon. This patch doesn't introduce a fix;
+the code already frees resources correctly.
+Instead, it modifies error handling by changing from caller-unwind to
+self-unwind within this function
 
-diff --git a/drivers/rtc/rtc-optee.c b/drivers/rtc/rtc-optee.c
-index 7b44d7723cae..3d5662aa1bd8 100644
---- a/drivers/rtc/rtc-optee.c
-+++ b/drivers/rtc/rtc-optee.c
-@@ -299,7 +299,7 @@ static int optee_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 
- 	optee_alarm = tee_shm_get_va(priv->shm, 0);
- 	if (IS_ERR(optee_alarm))
--		return PTR_ERR(alarm);
-+		return PTR_ERR(optee_alarm);
- 
- 	if (param[0].u.memref.size != sizeof(*optee_alarm))
- 		return -EPROTO;
--- 
-2.51.0
-
+>
+> ...
 
