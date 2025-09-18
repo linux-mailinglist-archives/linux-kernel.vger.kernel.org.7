@@ -1,223 +1,170 @@
-Return-Path: <linux-kernel+bounces-823230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE90B85DB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:02:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2029B85DCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D4F17A9BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1396762712C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BD3314A83;
-	Thu, 18 Sep 2025 15:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B99313299;
+	Thu, 18 Sep 2025 15:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XTniQnn1"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XE2F37dI"
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F786313D7E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC1C1B87C0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758210925; cv=none; b=ivoPo2M29RXhqG27a8c3UiIFX26mnuRszgcIhpr1NQw37MrxKEq+wwaDgRQ+Rm10RyX5DInUqddwPYQHYA2v1G6rGq1ibqK/Z9mDqTDNO5dIIfngxoZPVqvdUzCNzKo1qnnvUGedDv6CWmnz1ql7P6qftBQ5GQ15BkRd7I6pMe8=
+	t=1758210964; cv=none; b=Vem9y7XpyD96mPk6xQt0iNpHcTsym0SFxW50AJ62T9jlSmPGaRUvTcCc87zLejL4xAFn0lqmnzxpdzG11C+X7Yx2Rb1aWbBaEri8GyLtDUGdBCUTmVQ0gPngk4VKzJq8n3RYiPvuqhuiD/IqQoGJgwzFUirlIQ3ZXjABbieH8AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758210925; c=relaxed/simple;
-	bh=MjopfM6zKfXfv97zUg4k3gKM2XwfKig6ByXDbihgQ2A=;
+	s=arc-20240116; t=1758210964; c=relaxed/simple;
+	bh=UeZq0pHTduP+iZFoeFnOKXM6Oxja1vWxpxZAhP3BxT4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d21MFb69UO5g/BVtlRB8aR9woY+wB0KYhMzJw/havfp6R1LUjQ28E8e/8qiHqTc38xJMsfPuk1ggT1R1kZntmq+kJU5TOLVKVcWtLKgG75KBXisaqqFwS+zsIvWnOSlO+dO96XbKkfBFu6Ek1FbHOu+CC6ztfOB0nlWe/VGFP58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XTniQnn1; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2681645b7b6so193225ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:55:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=ttyDsFc7Typyotjvreg0ij9XUWGnhtOA6LGdODw1wrjHHxhojALSEktCRdSjCBKp/Qd0LsgKmxe84QRW0JALir+GcZC9rnr8UE9E74SpSNsVr038cNSG/AVZ9mKrbzuPlagM4jQuA9nTlahV8tZmFy2db5N23Atz/SL/hwNIJ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XE2F37dI; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-62a35c99b9fso471469d50.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:56:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758210923; x=1758815723; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758210960; x=1758815760; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fB56UEO0mNP2hRYBRO1UDnRhREYhvCPXWZ0EMOooGbY=;
-        b=XTniQnn1LQUeVXVkXCIo3LNLGbS+G9UgXGsPMp4lZMx4cWk1CLhNGiG+461rdJ7kWu
-         xJyJYa9c+4+doCrf6YeIW4V/vC3QunuOfshrh0p1ZdD739EMYwZO/RSXAUVx/Y2ROe/W
-         NuLtYM3FGfRlgIzQBcPuoqWioSDJ6k0EMTlomW2CLtEWdAcVWpSpJIXjMyzhHnnYukCW
-         OJgNFaSgVmSYXzfGpe/fsSuALyDoGM2wPUmsE6Kf/bSzdkRnIBi6Yt+cltuytQg4nFph
-         xGGNA15ZXKlhJ8D1GLawQgIyQVf1hBS8rTQvZvH5m7TkWLJ5lFrcGdmfcgVD8UwaFcsL
-         vmlw==
+        bh=EdfK/q+Pwfof78/WFiIzEJbNGwk57mdR4QjuAR4qnWM=;
+        b=XE2F37dIX2AnItBOkWF2X8l4MTBSpb916/0bPK1aVh0+24FL22SKy+YpsDrjiiZ+g1
+         pmyhULYGE2jtjowr67HFz6ZeAaS4Bw+3sMQlaCZiuoG0QalJtctIuuPgg8oclytYzCpC
+         n5e+mEjMvEEEpITHeQP926DV9raNPSm/5sx3RFwWYI0Qtgj8LvRqYo4tsIKs22t1zq9G
+         GGp+ruIu6HVKWAphx5qkrVGi+xdrGbHjkjrfAO8FYi2RMUs6HGTvDFKZlLg40g4QokFy
+         tmiGcSRpjzQ0pKYpRkJy4h2yFB9HUpJIipwECTuZ+2EcmLQuUwmddkoSy55twkJo5ZMS
+         ZXqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758210923; x=1758815723;
+        d=1e100.net; s=20230601; t=1758210960; x=1758815760;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fB56UEO0mNP2hRYBRO1UDnRhREYhvCPXWZ0EMOooGbY=;
-        b=DKbIStjme+akGx2xOjOBuAL5qLdrAhLAnpkaVFwpgG6o6ODIFaee1TlN4FbjsfzlfP
-         NGXRv424AjBeQitSNqkhtTuFHtGV+m/PPYGoZg8gXr85IoVbpGwy4zYKAr+wFD6560Rh
-         JKrNVhMTAojqZIR/TOxdZFuTVXc4vz+5S5cQgGHCqrGBebDSTFKjWm0vSxWGpZnOXBgQ
-         oq42oS2vTTH/o+NMgClk7TdfEF4+kHmmF8jSuqvEUV+bl6bMjNuvSMhyaBtJN1KLfm5Z
-         QQRt+P7e3lExhC6xm/s82aJl5NYjknouAHynj8A3MUxv4vdvFNSGeoNt9Kvbye/QM5o2
-         Clnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTN1aKZc+tXfno7apYP+lliPh9NO/MvNrumvMRMViIDmVlwhi+YTM+cfE6VVfct4S+ViRbhchuGxsc+Vo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxASOuzgBN4sc4WNzLqhtqOD1O5t0smrJBWq0tuSQIip/35xMIL
-	rEg+P7OhwxodhhVedwjzrIEz/0ovmwxLnfhvripOzOupJenexLPjBaeJUz9YMyh1WeoEqDTo9W6
-	Oal44L15CBnkVFUaOkF5dQRFnuuREATr7PI30tFSm
-X-Gm-Gg: ASbGncuE4stxlEYHVGvYpm9jB/ueSjUR1bvtox7fEFpbt2Cq4+yUGoxhZ+fsJXRXWT/
-	tfQngVRmPA4p70fIaxroV+JwwV3MJCS2fRBkaLreVz6Qr8dyUf2X4p9vmLhUxgupUS65OQD/5lb
-	hs6RJhR9nhBmfnZXfeUbTcTM/amUsynfQU1R+KBzph3kVBMTaB01YyZiK9aRCTSU96EkERypk/j
-	r4KypWBFNRjlvoNoMgxQavnsIiU+JnCk5Hrm67LeNox/MOYKD+0EYXOgtvpcpI=
-X-Google-Smtp-Source: AGHT+IHtle2Bol/8iJ1CI7SONgmRyw+7KDNF3rjHCoT0hB77tatWLPJOO/VLwsIgvGtPKBGy3m8lRqkiHkO7GeZDCgQ=
-X-Received: by 2002:a17:902:ea06:b0:265:cb5f:3a66 with SMTP id
- d9443c01a7336-26808aeb835mr11034625ad.13.1758210922376; Thu, 18 Sep 2025
- 08:55:22 -0700 (PDT)
+        bh=EdfK/q+Pwfof78/WFiIzEJbNGwk57mdR4QjuAR4qnWM=;
+        b=n7s+LsS5A+/1zP24ba2iTdyIbPsDsq2arlbRWW9o6+RxBGXOV+7P9fNJfeDxOvmS3S
+         IQXuYW6kU4q5a5uya1h+y41J7WrYDJrU31mrjdfpT8UC8wHrzuY50JQQYaBxD7c/sBwv
+         otA2Wj7+OaIB9ij7AUNRLo8PRBRc2GESXDlyC1N7YI5kjzqTz1TROlPhILLerqxsN/sg
+         UxP9MatF2k7trh8D0SHLABDUFi0R1Es3/C/Cw/GQ5pNCWIFV5KE5GRDhbWU9l+xRiAM1
+         6HQMxjRw3RP3Igdq8juSTogMp6Uedcm+XaE0a5TWSzzYj09/O9YdWJogpoHUtKM0U/oY
+         +pLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkqM3BzF1/9VrB7xp+d3dL77IB/oxgci7gDufB8VbctOiI6zbOrnMbGlfamVEejZYSmKPZlFOEvS05r08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiwyrUOCMnbMnEHdBOwlUJQ4lm3PqPlSilgYm4PS1k39Ug/qEO
+	m6lU9DsisXtxBKFZhzvm4VzuDP4N43x6anrcqyoZPsucBRP7Wfk2AiRFYgb5J7N5Gk8YgOwu2WV
+	+eLwacuoW6IUjiu+Q2Gb/qGfriWL4z4dBYVMpCsHnxA==
+X-Gm-Gg: ASbGncu8Cn7EqtLi5Alf0xrmXC1rqcljvivdorOpBtiyNOBWBkTonBb/MTRdcNbGfMH
+	QV8VkUbG+HP5LKNgDzY+3edX/dqW0dwopYUMKSAdHfgAsNGGsq6kYU5HkZ4qV9tbTXvRYZLRGwL
+	I2xnfnMIBS/i8JZ3LL8xD+iKl3WisEyXJagq+cVSN0qMhFKT1SzgqB40b4BT/SIgFs78Wau8/5t
+	oJrKbVFYWwYia8l5ovlIOq3GYs=
+X-Google-Smtp-Source: AGHT+IEECGH2G8e/CDH9F0qac/7FZa5yDye+HQmQVSLPgRHzbQeecfKUO0vMmnt8GIhKDbVRf8GMagQg2WceGWP5ZzQ=
+X-Received: by 2002:a05:690e:1559:20b0:628:9b45:5e29 with SMTP id
+ 956f58d0204a3-6347f544d01mr24918d50.15.1758210958918; Thu, 18 Sep 2025
+ 08:55:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-8-kaleshsingh@google.com> <385df771-961c-4fc1-971c-81314c231f5d@lucifer.local>
- <53ade9bf-5cdb-49b6-b8c9-1f653c861bde@lucifer.local>
-In-Reply-To: <53ade9bf-5cdb-49b6-b8c9-1f653c861bde@lucifer.local>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Thu, 18 Sep 2025 08:55:10 -0700
-X-Gm-Features: AS18NWDy23QFicFxq7eonAAZapCtI7hAuF1vOI9oXz3unSnA7mgzsm9MtU96rN4
-Message-ID: <CAC_TJvdRf3xJg7FgTzAxa-ZrHkGA0G3dEDVWWWttg3ri2B-FNw@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded trace event
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, david@redhat.com, 
-	Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
-	kernel-team@android.com, android-mm@google.com, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
-	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250818074906.2907277-1-uwu@icenowy.me> <20250818074906.2907277-3-uwu@icenowy.me>
+ <CAPDyKFombYNFvTsChewQ6cFY2woS+vSb1YUV0Bp_+DcigrFFXA@mail.gmail.com> <89ed15328b73b191fe152cf8559b92239b5596bd.camel@icenowy.me>
+In-Reply-To: <89ed15328b73b191fe152cf8559b92239b5596bd.camel@icenowy.me>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 18 Sep 2025 17:55:23 +0200
+X-Gm-Features: AS18NWAOrRn2SPBMcr_jo91dsxsIlLlmmb44l-SPKPjXdyTcSw8dHOMtiv-1B0s
+Message-ID: <CAPDyKFoQuLKwf69YK7ynj-HeWXsMzguYBtbOy8HE5X_jb1dUpQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pmdomain: thead: create auxiliary device for rebooting
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Michal Wilczynski <m.wilczynski@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
+	Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 6:52=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Thu, 18 Sept 2025 at 17:44, Icenowy Zheng <uwu@icenowy.me> wrote:
 >
->
-> On Thu, Sep 18, 2025 at 02:42:16PM +0100, Lorenzo Stoakes wrote:
-> > On Mon, Sep 15, 2025 at 09:36:38AM -0700, Kalesh Singh wrote:
-> > > Needed observability on in field devices can be collected with minima=
-l
-> > > overhead and can be toggled on and off. Event driven telemetry can be
-> > > done with tracepoint BPF programs.
+> =E5=9C=A8 2025-09-04=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 12:14 +0200=EF=
+=BC=8CUlf Hansson=E5=86=99=E9=81=93=EF=BC=9A
+> > On Mon, 18 Aug 2025 at 09:49, Icenowy Zheng <uwu@icenowy.me> wrote:
 > > >
-> > > The process comm is provided for aggregation across devices and tgid =
-is
-> > > to enable per-process aggregation per device.
+> > > The reboot / power off operations require communication with the
+> > > AON
+> > > firmware too.
 > > >
-> > > This allows for observing the distribution of such problems in the
-> > > field, to deduce if there are legitimate bugs or if a bump to the lim=
-it is
-> > > warranted.
-> >
-> > It's not really a bug though is it? It's somebody running out of resour=
-ces.
-> >
-> > I'm not sure how useful this is really. But I'm open to being convinced=
-!
-> >
-> > I also wonder if this is better as a statistic? You'd figure out it was=
- a
-> > problem that way too right?
-> >
+> > > As the driver is already present, create an auxiliary device with
+> > > name
+> > > "reboot" to match that driver, and pass the AON channel by using
+> > > platform_data.
 > > >
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: David Hildenbrand <david@redhat.com>
-> > > Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> > > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > Cc: Mike Rapoport <rppt@kernel.org>
-> > > Cc: Minchan Kim <minchan@kernel.org>
-> > > Cc: Pedro Falcato <pfalcato@suse.de>
-> > > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> > > ---
+> > >  drivers/pmdomain/thead/th1520-pm-domains.c | 35
+> > > ++++++++++++++++++++--
+> > >  1 file changed, 33 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c
+> > > b/drivers/pmdomain/thead/th1520-pm-domains.c
+> > > index 9040b698e7f7f..8285f552897b0 100644
+> > > --- a/drivers/pmdomain/thead/th1520-pm-domains.c
+> > > +++ b/drivers/pmdomain/thead/th1520-pm-domains.c
+> > > @@ -129,12 +129,39 @@ static void th1520_pd_init_all_off(struct
+> > > generic_pm_domain **domains,
+> > >         }
+> > >  }
+> > >
+> > > -static void th1520_pd_pwrseq_unregister_adev(void *adev)
+> > > +static void th1520_pd_unregister_adev(void *adev)
+> > >  {
+> > >         auxiliary_device_delete(adev);
+> > >         auxiliary_device_uninit(adev);
+> > >  }
+> > >
+> > > +static int th1520_pd_reboot_init(struct device *dev, struct
+> > > th1520_aon_chan *aon_chan)
+> > > +{
+> > > +       struct auxiliary_device *adev;
+> > > +       int ret;
+> > > +
+> > > +       adev =3D devm_kzalloc(dev, sizeof(*adev), GFP_KERNEL);
+> > > +       if (!adev)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       adev->name =3D "reboot";
+> > > +       adev->dev.parent =3D dev;
+> > > +       adev->dev.platform_data =3D aon_chan;
+> > > +
+> > > +       ret =3D auxiliary_device_init(adev);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       ret =3D auxiliary_device_add(adev);
+> > > +       if (ret) {
+> > > +               auxiliary_device_uninit(adev);
+> > > +               return ret;
+> > > +       }
+> > > +
+> > > +       return devm_add_action_or_reset(dev,
+> > > th1520_pd_unregister_adev,
+> > > +                                       adev);
 > >
-> > This breaks the VMA tests, please make sure to always check them:
-> >
-> > cc -I../shared -I. -I../../include -I../../arch/x86/include -I../../../=
-lib -g -Og -Wall -D_LGPL_SOURCE -fsanitize=3Daddress -fsanitize=3Dundefined=
-    -c -o vma.o vma.c
-> > In file included from vma.c:33:
-> > ../../../mm/vma.c:10:10: fatal error: trace/events/vma.h: No such file =
-or directory
-> >    10 | #include <trace/events/vma.h>
-> >       |          ^~~~~~~~~~~~~~~~~~~~
-> > compilation terminated.
-> > make: *** [<builtin>: vma.o] Error 1
+> > We have devm_auxiliary_device_create() now, I suggest we use that
+> > instead.
 >
-> Trivial build fix:
->
-> ----8<----
-> From fe4c30abbd302ccc628ec92381ac10cea31c6d85 Mon Sep 17 00:00:00 2001
-> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Date: Thu, 18 Sep 2025 14:47:10 +0100
-> Subject: [PATCH] fix
->
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  mm/vma.c                         | 2 --
->  mm/vma_internal.h                | 2 ++
->  tools/testing/vma/vma_internal.h | 4 ++++
->  3 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/vma.c b/mm/vma.c
-> index 26046b28cdda..a11d29a2ddc0 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -7,8 +7,6 @@
->  #include "vma_internal.h"
->  #include "vma.h"
->
-> -#include <trace/events/vma.h>
-> -
->  struct mmap_state {
->         struct mm_struct *mm;
->         struct vma_iterator *vmi;
-> diff --git a/mm/vma_internal.h b/mm/vma_internal.h
-> index 2f05735ff190..2f5ba679f43d 100644
-> --- a/mm/vma_internal.h
-> +++ b/mm/vma_internal.h
-> @@ -47,6 +47,8 @@
->  #include <linux/uprobes.h>
->  #include <linux/userfaultfd_k.h>
->
-> +#include <trace/events/vma.h>
-> +
->  #include <asm/current.h>
->  #include <asm/tlb.h>
->
-> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_int=
-ernal.h
-> index 07f4108c5e4c..c08c91861b9a 100644
-> --- a/tools/testing/vma/vma_internal.h
-> +++ b/tools/testing/vma/vma_internal.h
-> @@ -1661,4 +1661,8 @@ static inline void vma_count_dec(struct mm_struct *=
-mm)
->         vma_count_sub(mm, 1);
->  }
->
-> +static void trace_max_vma_count_exceeded(struct task_struct *task)
-> +{
-> +}
-> +
->  #endif /* __MM_VMA_INTERNAL_H */
+> Should I send a v2 to convert to use this?
 
-I made a point to build and run your tests, seems I forgot to actually
-test it with this last patch.
+Please do, then I am ready to pick up the series.
 
-Thanks for the fix.
+[...]
 
---Kalesh
-
-> --
-> 2.51.0
+Kind regards
+Uffe
 
