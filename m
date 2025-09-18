@@ -1,373 +1,288 @@
-Return-Path: <linux-kernel+bounces-821864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A24CB827C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7F4B827CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6020584C7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:24:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1102C3BC3E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AB91FF1B5;
-	Thu, 18 Sep 2025 01:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595B421A436;
+	Thu, 18 Sep 2025 01:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="IQ/kfl/1"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RSt9f5S8"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013066.outbound.protection.outlook.com [40.93.201.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F417482F2
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758158677; cv=none; b=ccmjGr0mId1nhFrFIEm5EJ33dZa780T1wYkiaoLYkAIB/82mqAz1vb2QQ9kiuX38FzWJuhYH9P664CdusY5jmGmVfMF3yfM2rmiiSjd3JwWiPDRX7LL91nQiUS16EYYxEe/910wzDsF/M5IOPpePmHF4ERNjlAQPTD18s9wEs3s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758158677; c=relaxed/simple;
-	bh=susPy4sTX/CQWTXn/0dwj3NtG6X+6SXoqzqlJFxhIwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJA85DcUn75wlCIVrq5kVKmlTYY7FnKC2hJk3tu98mgh8j6nv/+AXxd19SBTi8TXQQnn2LPgQkq/koZ74XneB896QrX4GDfrrLOoyZvaw7oYFFV+m+gaCtr5RGAiKcROW/tfWkf7JwIZvWNG2RB0bLHfgdgSTUOi/VlkQDzxSwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=IQ/kfl/1; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30ccea94438so296398fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758158674; x=1758763474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IKNvdhWHFBO2LxeGbbJQCVnxFSJKdVJYeGTN3QpPNOg=;
-        b=IQ/kfl/1ccuKGJJ9tsLycCqtN9xwQ+Je6O8U2ljYwEGJJ6TXFZ6FYkt3Wp0VMMf7LK
-         zQMDCgg//7EP5QOmjf5Odn+JYDKYARkJ9zF2F1sgrlyfEqlViCIZRgZbln5GV0mqywAl
-         fWC0aBwensMWEiUoexnUXMie525f29MaQn70awJQf8nHAbxoUhFU2L9IDZ0z/iXxec19
-         BVYEKSoakFydpYYKYtcZk9fIEWGYYaj36ib32BpETa+OGUBYj7H/VgDZ/JgGwAZ7fSVv
-         tbbbLMPGGmOPXIXa8QH4uiZitCnqvZs9mhKEKKGk+tZWPislcftlvXZ3Ddslg30ZMYdi
-         yJvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758158674; x=1758763474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IKNvdhWHFBO2LxeGbbJQCVnxFSJKdVJYeGTN3QpPNOg=;
-        b=hq4KH/RiOgF9QAVTVTiqKwZTBr1FqRP4jvoXZUAr3wBJ/2zCWRnnTM8QjzUzHj5X/7
-         l8WFrNugz8zHCxXdHvysVA6xmyuMwFM1scLgXYYDwdLpjROlNKkgugcs9pVmND51W/4i
-         SM3jUoR1OSpAjEjxVW1iBn0LHZl7FqJwpjJUM6jIn7PXxz5xgg11+z4HibLryD3ceL5E
-         Nba1WXpwJiR5/VHx1GMMqqKjpVlk67Go7E2q1urr1J2rkBZTBnLKN3B5Qr29DjLpBBBL
-         NibFYfIGv2TV9eWfqOFe/krHMb3b+uojVsH5v/gZtL9E5T8tcdvarKmZ5eebV1RsyuCp
-         Isnw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6i1sYHVXPrYfN0njjDMWl0gx8l5bAgCreYHEq4VMlNMHStyP6qe3TQKA2sWmibcJoetzrJKD+i/GvEuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG5gLADVj20nmP04TKvsrmifYyFSD5vqGDGj7a2cz2sO11ZCe6
-	9GTLRG7gHLtmfr/27BFJrsaBTUOnJZO0m9bbcLSr4RB+iVllmcNe12MNZTLePMXB/jLIvthJB9J
-	PR5gWKzzSrwnBkCKguWigDhoIHG0yGBVd0L5RRjxXkw==
-X-Gm-Gg: ASbGnct6nDZbBikrt0XqYLPETbtoSwEPNV8zYzRRSCsexcNYBdnxjCVtrRTDLPWEPVK
-	XfYExSoSTDKDmianroeKLV1ScU2TSj4YPjjF8DioNbDE0hgOHnRp90Xnz51rllIrkNcUfGLc4Sg
-	3aDzKshbltu15h+nlWrFvlV2BdjV9RyGpZx+CC3JnE1oUOKZb6ExpkLLz6mA0fI3QjNeYZBC+rP
-	FonETKm00eGIc1ZhBuhlQsp3cE4dSaogmp55lna7frbyMHVSV35XWRGkvS4
-X-Google-Smtp-Source: AGHT+IF7Jz86Ss5xUsOAka6ZfidlIbp3iI6MRj0U1kuwvACRXQMFNLJnzIbP5GFFnb6wKl3sDJlW0BNwASJHgNKIss4=
-X-Received: by 2002:a05:6871:7b85:b0:319:c3d3:21da with SMTP id
- 586e51a60fabf-335be3b7fb8mr2433435fac.16.1758158674397; Wed, 17 Sep 2025
- 18:24:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E18156C40;
+	Thu, 18 Sep 2025 01:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758158766; cv=fail; b=Oicbl6FcmmZCXzU18bV4Wbp7HYziFXe336OWFZDh9Wa9cSgNFgpJTQv7MI6z1xdMEGIrEnyBIDnaXlW90f95OMwUv8F38rsySm57nLoH4IH1Q6OE4fmxcetAIZmFtU7e2pAP4zynOlyvexVpLvt8FX5GljUKcfBY5KLjGtCwaNI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758158766; c=relaxed/simple;
+	bh=dB+g0WmD5lt0yryVsU/+0HadIJ+DIISuSTdZgGGxegw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ciRZeWHo0SZZenmsT0H3kqWLfPi/MwZ2FuRABs/aYw1fVYWdDi8h1/KqTKeTeAOR1M94UzjtEqXpqsZM8if6k5HfJefc+ks2GmR8lz/U4No1+3LTaMBRGpCkzlo61Bl+T0/0QtSyquSsKNLjF3/oqVHqhiM79IccoSPaedsogOc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RSt9f5S8; arc=fail smtp.client-ip=40.93.201.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qjuQVH/UKaI6St+x/ChzallmpOknzYRLwEAzBY+PagNxzUuUWMETCB74uYT/xtILiRcEd/GTLxJB7J1eS6P6CNdsf1s6cJzauKeowb5f/cLTVxKVPgH+jLTxUvREHOFa0mqpOqbu702ZVsNdGUop5fkUsX88fDFfw3jWNiixne020uWdqUG2DAQ6htBkPq8IOj7PD30DIpYQeygzAs2cedXBL8/d/TJ9HzMUVWYpty4hlejPnLzExYLzhKs/6Kv72BWVRNRe5Cp/8RaJFmIKYEUP46IlFkKpCT/Rr54xdblZLrN0D6eepZRuIpm8DmhIXF7PU/wYYEjTIfFC05qPIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GnWScUDA4s4rVubPM+54BkTeJ+Nh5g1razbUftE1TGc=;
+ b=xL3fu/23VNjCMyqd0pestVQzeveuMdlGJhKeGA5pNjsYaM18bI3P75GB06pF9+uhcynGJAnkNqSdCCFiiTW3cFuw9H2fViPouPpyhzovtBJ7NmnKr1wCirpfz24Q/vJiNzw/CnLx9Rb0GEipWa6Q62d7k2ilalsmn5C55h2A4SzufqP8Ro5r0dgPgEshOtMlu3F3DnkVNRPQtGRMHUsol9lhVuXcwiVxrygNrpRBBb1zx7dgquaZhBqFRBaBD2BOUmj3Jp6FvoInCNxRTceSRUu8pxAMuYQCMgojtcKoqyYNBgKmHeJdAD9QYc2t6imc1VXMweDi8WDunNF78j+IkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GnWScUDA4s4rVubPM+54BkTeJ+Nh5g1razbUftE1TGc=;
+ b=RSt9f5S89KJph9/nyI9PMa769bqcXlx13ZJYsff1aVzIiAHh+qpe1xYprM7KyoAsvqCge/TlgM+0aa2v7s8q7IgYz8hnlePdRYk7Z/UY0dwGPlgSuHTJ0GaTp9XUDFTBg/iFz26T/jz6H4xUvdWuY8b4m6NootLVmnrPpfecO4eK/216JxNNpnoX4PQ8rBUvgSraXhy2/GwuK1KpAT7LbBFdzFYC/NIY/B+wcPqQlWWqwrJ5/BmmVuw92/WP5j2Q9DD6+C2/aETORPW7CjLLkY55MmEGjHuRuS+keEjnbNt3d1WyGgm/W8/xKC7n1pKbceWaYSDddY4v9Ft7sXg/1A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ CY8PR12MB7124.namprd12.prod.outlook.com (2603:10b6:930:5f::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.13; Thu, 18 Sep 2025 01:26:01 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Thu, 18 Sep 2025
+ 01:26:01 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ "open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>,
+ "open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Subject:
+ Re: [RFC v1 2/2] PCI: tegra: Use readl_poll_timeout() for link status polling
+Date: Thu, 18 Sep 2025 10:25:56 +0900
+Message-ID: <5148887.LvFx2qVVIh@senjougahara>
+In-Reply-To:
+ <CANAwSgT615R32WTBzi2-8FYntmaxbmVRLmA3yi+=4ryH43aaWQ@mail.gmail.com>
+References:
+ <20250831190055.7952-1-linux.amoon@gmail.com>
+ <23013855.EfDdHjke4D@senjougahara>
+ <CANAwSgT615R32WTBzi2-8FYntmaxbmVRLmA3yi+=4ryH43aaWQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP301CA0041.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:380::7) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917023007.97637-1-cuiyunhui@bytedance.com> <8863bbfb-326e-1914-4f97-0cc59558a602@huawei.com>
-In-Reply-To: <8863bbfb-326e-1914-4f97-0cc59558a602@huawei.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Thu, 18 Sep 2025 09:24:23 +0800
-X-Gm-Features: AS18NWC8xXQe0_3214vs8m1XMLOxfuglWltR5fxGmhMSH4Oe6OQuLiSS7oHdd1E
-Message-ID: <CAEEQ3wmbHuyVMpiU_zaxjgS-Tm8Ve=rDVLgY7qoA-ZBZjx_hJg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] arch_topology: move parse_acpi_topology()
- to common code
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, 
-	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	beata.michalska@arm.com, sumitg@nvidia.com, ptsm@linux.microsoft.com, 
-	yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|CY8PR12MB7124:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ebdc353-dcda-4f7a-5a37-08ddf6525391
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ak5ZTy9acEpmamw4TXJtN1VFUm1Ia1RZcGtNMU50aVN1ZEdCQ1ZkeVRzZ056?=
+ =?utf-8?B?RzdIQm9vV01MMkJvNzVPb0NZTU0zQXp6S3I2NVJjN1RiQVBlRk9aVFZaL3kw?=
+ =?utf-8?B?eDVaU2Y4Ry9IUVpOY2F0UGczTW5DVEUxVnQ4YkFlSDVZZ3dNSmRUY2xjVXRI?=
+ =?utf-8?B?UVFkWllTMndLem8reUpBdTNUK1Nyd0RXV3hLR2ZCMmpoeDZtVVFua2dPTnJr?=
+ =?utf-8?B?a2UrY0FBNHJqS0FuRkFxTkxBYW5Ga0p3M3pQZ3JuZ1FkU09jNlQycGJRYURo?=
+ =?utf-8?B?ZWFqdFdWRmdrS3FheUlwOW0yNzVrdVlzc2ptTytnU1U5YUM3ZXdWdWdHWHZP?=
+ =?utf-8?B?YWFud01zWWpFalhBV0FzaGIyVUp6ZVYyZjZNc3cySmltbFZiQkJMRWwxS3Rq?=
+ =?utf-8?B?L0phazFWWWRTRVJpV3RTOUlEcFJYUWhEalJVNnBCdy8xa2toWmlHSE5zYWZP?=
+ =?utf-8?B?VFkrc1FDMjNDa2VRL2h1TDQvTUFLeTl6bFdVWUd2TkhwNGZOWDkzZDhCWVV0?=
+ =?utf-8?B?L1FXcjBHRjcvSE9vM1FjMUVLRVcrVWJyT1ZiTmx0YWJ1ZUtVYTd1aFhvOHVn?=
+ =?utf-8?B?WFRSbUFWR3UxMGZ4cEMyZDlmTnh5MUtOcFphaE5tZUF4NFM2UXpaWm1JcEkx?=
+ =?utf-8?B?SXlOdWxQS3kvWGVZSkJpbzlNZStpMW9yemZsdkFSUGhNTzZ4T2hvbll1WDRF?=
+ =?utf-8?B?K2FNT0RpYmc2NzJOaXBiUnJCMU52VEROY2FoUnhoRUhsYXpOU3dvTmV4NURF?=
+ =?utf-8?B?RFVvemRKUk5nSld4N3hoVklZblk3cXJiNXRLY2xBZHhBZkp1eFdwK29qK0x1?=
+ =?utf-8?B?dng0amk0RDdJbTF2cmoxbHA2NzE2bVhpQW1UMGdoaGpiTUVqMDVLUCtUSk01?=
+ =?utf-8?B?QVhxNFJNWXNYYzJwMzUrenNCQXc2dGdhalc2STcvdTBFVDVYS3NmOWZNeHlO?=
+ =?utf-8?B?OEJPQkRlWS9vdnVQWHErYVo3VUgxNGx2ZWx5bnJ6WGRpRkRBQVZpQUlwc0hh?=
+ =?utf-8?B?KzU0bFBLV0xFL3FTM1NQT21vZDd3QkVVWnc5OVFYcHVnNDdFa1dIdVVPTGRM?=
+ =?utf-8?B?bnB6MUp4MVkxekVFb1Q4VzVmY1FoQkZYUGNXSGo5bHgxVlFqdWJUbFlwTE9t?=
+ =?utf-8?B?RTJWZzBsNUxuLzlxSWx4OWtvbWdCQkIzZElkdnJvT0hVbCtvUkExYi9PZmNR?=
+ =?utf-8?B?ZlJkMFVNVTBCdnVpeDBJc0xFUGVvRHFjQ3J4TkN0VnI2NWZLd0dKWEV3ZEUz?=
+ =?utf-8?B?YlgycjVIczRtN3QrRElIZnNwTjZ1NU9Oa2FpUTBGU242QUdjNTN1RkNyNmlB?=
+ =?utf-8?B?VXZIdnY2MmdYZ09mbXdOd21MdUVKVUYrU1dmeXZqNzVqWHMvRmNkQUdUUG16?=
+ =?utf-8?B?OGJwQUkyWHh4OXZlaml1bzdid2h3a01MZnh5Q1VEc3MwYUorbFcyUVM0VDZl?=
+ =?utf-8?B?blhVcUt3ZDlDSEdqbnIrVHpBdjJhTzAzSEdocjArd3JhakYxNjN4QThMOWdI?=
+ =?utf-8?B?WEpldlpKaVlGQ1RxZVJGSlVpVHorVDFBNGdWaW1ZL1ROVE50ZUxHM3hKM2Vv?=
+ =?utf-8?B?UmNlQXhuVjZCdmozNVVGY2trT0FINkw4N3Z0VUxSVDJNMkFWOXNhWjZYc2Ji?=
+ =?utf-8?B?by9uKzE1NmpWMHI5QUNhY1FGVHJNQUVIZTV2c2g4dWV3N2ltRWRLU0t3bzk4?=
+ =?utf-8?B?TDdSYiswN3dRN0pqM1NUS05JQVZBNlFVbGFWNktndEVSUDk3TnFjT2VNbUtQ?=
+ =?utf-8?B?M2t0cGFWYWl3bU12ejZwaktQeW55NUdMSEJLVnBYOEZ0MnZTdnJ3NGN6ek5D?=
+ =?utf-8?B?UUljVldMZkF3V1czS25Ma3djQXNpRDJHUjBwb3ZNbU03Y0JXTm02YmVZei9I?=
+ =?utf-8?B?Y0VaSTBEYzJHc2hKSVd2aUZocXRCendoM1ZFNlFkYmViNjdSSVI2Yi9GWHgr?=
+ =?utf-8?Q?pg08p4B90Kg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(10070799003)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SkhBblcxMUhOT0VlRlJkei81R3NHYXBSNFJTZXB1TzQ3VEVnaDFHYklTZVQx?=
+ =?utf-8?B?Y0JYa0NjcW1rVkRBRnp1bDJhMUJVejZhMmJRZEJDTUJTUXVrdXZuZjF5REdz?=
+ =?utf-8?B?UlE5RVBqelJEN2dyUEVkb3h0QzF3Nk5FVUc4RXhQVjE5SkRmRm1kTEZ4b2RO?=
+ =?utf-8?B?aTVDa0dVNnBqSHNoT0FYRGgwMEV2YXpCUGdqRDBFazZrZzFreXYrOTlaQ0M5?=
+ =?utf-8?B?R2NuY3MwNXFuZnFrb3d0ai8ybmNTVnIzUWlObjVnUEV0ZkNKN05WYmFTMEh1?=
+ =?utf-8?B?aUZWUlZ0dGt0TXYvclZEcTB3NGZneWI3YUlFb1hPazV5b0lkNGhyYXRKcW1J?=
+ =?utf-8?B?K2ZCQlRBU2tLSGxJaTNENTFIeWZ0NnZlOXVIWWdtbzk0R0g4TnM4dDBWMThG?=
+ =?utf-8?B?Q2pldGJyS3YwemUxSU95bkltTHpIUkY0Mk5CSTNUSkRDNGpTN1NidHdESURq?=
+ =?utf-8?B?bERCNXlaaTByOUxXRXBNUUl6VGhsQk9xN3ZpN0RRZ3Q3eW1YaGpPd0dFcDI2?=
+ =?utf-8?B?M3pFd3pHenJWTzNUdms3S0hhQ3NCSUh6RWRuRzJCWFdZQkRJUVJic2RTYytw?=
+ =?utf-8?B?Y3FVR3VaME42V2YwVGVFNmJMTTNuZkJNblJiNmxRdkFHZ2hRRWIxeHh5ZTNo?=
+ =?utf-8?B?MVEyWGFPL2NxVzlQRThlcVVLWExBQ0lwYlcyclRmVHpBRjhIalNad2kxTjBs?=
+ =?utf-8?B?cHRqQWRNK1A4ZUJRbTFCZlZWZFdkVktLMlZsY1p4TEc3MlY0NzVWQU0rZnlQ?=
+ =?utf-8?B?ZTlLWWFZbS9PdUFDdit5VTlpR2s1d0VhcVM5eGRVd3NFNGlaemlETTd1MHpO?=
+ =?utf-8?B?d3B1U3ZSaHJ6L09IVXlvRjFVTGRPcnZNVmZQNnQzSzB5Z3ZVSDhhRW96YU9J?=
+ =?utf-8?B?eXQwaGJacHhSQUVJU0x1cTRTdVJFS3psb0NQRGdacDVSbUhmYlhNTVl1UUc0?=
+ =?utf-8?B?ZDRnY3BpVXFkZ1VsRWdaSHhxWFYrME9SNFFKUjBnQ1k2YXR3dFNzQU9mWE1O?=
+ =?utf-8?B?TVZtK054RUcwenJITDBTMlArOFRJTmYrZHVQdXRxdEhWV0pwNDNMdGxTYXpR?=
+ =?utf-8?B?MUNxOWZramdQdXI3NWErRVRqTW9NR2RoSVMrNktZZ2pxdFlYZC9OclVQaHpT?=
+ =?utf-8?B?WG0xbkVSUmowTSt6WVlva2M0VmRmeE9HUTBzcXZJYXRwdkZzUTBGOVVxUXI2?=
+ =?utf-8?B?YzJISm0vY1lvaklPRCtiNjlLM1ZVbjRsUlBTLzA2S2pYUnNDNEZFMnJpRElE?=
+ =?utf-8?B?RjVFTFBRR240K3pvbHNBUGErRTlmdXR0elNDakZnRUZoTlNtU0U5TUo3ZzBQ?=
+ =?utf-8?B?RmRWdkFKYlNpbldpWlNpZnhPbE1zZmw2ODRjWkZ2dXBvd040T3ZQdFRrQm9x?=
+ =?utf-8?B?OVFyUnpUSTd1K0M0RjFkcFYxVGlXakw4dXBTYUU5eXdGM0dZL25oTTJNeUZu?=
+ =?utf-8?B?NFNMM09xSmpBL0VTQ2xmS2pMd3BBQTd1R3k4RnhDZUFSYzJhWXkvOWozMzdM?=
+ =?utf-8?B?a2l2REMzZ00rZlBlZzkvWFI0Q3ZZMVF5c0h3NXJJTmpFeHU3OEVabTQvamcw?=
+ =?utf-8?B?Vy9YVDBVWWhZY2pJc2dRWjdtWENWSEl6SXhrekhHOHZhQUZ4cDhDT3AvdzZk?=
+ =?utf-8?B?N1JLVWJkelMvWnltRFF5dUF4RTBHSUZkM3JkaFhEYlhLV05kWTd4cy8vQ0xX?=
+ =?utf-8?B?cEZXcnpKeHgxRjNIQ0dIK01FV3RuRDhteVdPVkoyY0ZtbjZoWktNYnhpV01u?=
+ =?utf-8?B?NVR4bmRnam1HTk9lOWk5QW1wQk1PZGdGTDR1NDZPa1JVczBtWGlqZjNPZFpv?=
+ =?utf-8?B?emJLNzl6aSsvYk42Z2hmY2ZRVGk0cG1CampYc1A1MDNzS0NTQTNZU0Y1OXA5?=
+ =?utf-8?B?S3hQRzVLR000b2xiZkVzZHdOWS9SNlFzcGFFN2RmNUxtMEV3UTdDOWsxZUVR?=
+ =?utf-8?B?QitTMC8zbFpYWDdobEZIdm94QjhuRmxUVjU5RGpJbzFYQjBiaWpsYVFhYnI5?=
+ =?utf-8?B?SEFGVElJTWRtNkVJQUxOaXhuWU5nZjVFeGJJVTl2VW9oQXRXYjNDcG5hM2ps?=
+ =?utf-8?B?SnRKbFpnVmxTRklLMHl2a252UThOVnI2K0pwclFRRHd4MWhkRktoQnlNWTVj?=
+ =?utf-8?B?QjZDUW5ITUFQS2ZwRVJTMnk1Rk14Sjl4amZ3OTR3L3pjZTdMWkJFbENNenpl?=
+ =?utf-8?B?b0ZoMGpseE02Y3pDZGxyZDlpVHBja0t0ellmTTBtRnB0VDZPOXFLWXdrTldK?=
+ =?utf-8?B?K0xCQkdrVGFYeHIzc294WHJJelZ3PT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ebdc353-dcda-4f7a-5a37-08ddf6525391
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 01:26:00.9019
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KxxSLcJ5aCf3ToV5ISsWZUnpd424WS+fwUxhliCSSYYmwPpHk6AbQq0Ieb63+t38uFNkU3AI5Nd6VhUigGT9Pw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7124
 
-Hi Yicong,
+On Wednesday, September 17, 2025 4:45=E2=80=AFPM Anand Moon wrote:
+> Hi Mikko,
+>=20
+> Thanks for your review comments.
+>=20
+> On Wed, 17 Sept 2025 at 08:51, Mikko Perttunen <mperttunen@nvidia.com> wr=
+ote:
+> >
+> > On Monday, September 1, 2025 4:00=E2=80=AFAM Anand Moon wrote:
+> > > Replace the manual `do-while` polling loops with the readl_poll_timeo=
+ut()
+> > > helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
+> > > during link bring-up. This simplifies the code by removing the open-c=
+oded
+> > > timeout logic in favor of the standard, more robust iopoll framework.
+> > > The change improves readability and reduces code duplication.
+> > >
+> > > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > ---
+> > >  drivers/pci/controller/pci-tegra.c | 38 ++++++++++++----------------=
+--
+> > >  1 file changed, 15 insertions(+), 23 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/control=
+ler/pci-tegra.c
+> > > index 3841489198b64..8e850f7c84e40 100644
+> > > --- a/drivers/pci/controller/pci-tegra.c
+> > > +++ b/drivers/pci/controller/pci-tegra.c
+> > > @@ -24,6 +24,7 @@
+> > >  #include <linux/irqchip/chained_irq.h>
+> > >  #include <linux/irqchip/irq-msi-lib.h>
+> > >  #include <linux/irqdomain.h>
+> > > +#include <linux/iopoll.h>
+> >
+> > There is already an iopoll.h include in this file, so this adds a dupli=
+cate.
+> >
+> Opps, I missed this in rebasing my code.
+>=20
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/init.h>
+> > >  #include <linux/module.h>
+> > > @@ -2157,37 +2158,28 @@ static bool tegra_pcie_port_check_link(struct=
+ tegra_pcie_port *port)
+> > >       value |=3D RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
+> > >       writel(value, port->base + RP_PRIV_MISC);
+> > >
+> > > -     do {
+> > > -             unsigned int timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
+> > > -
+> > > -             do {
+> > > -                     value =3D readl(port->base + RP_VEND_XP);
+> > > -
+> > > -                     if (value & RP_VEND_XP_DL_UP)
+> > > -                             break;
+> > > -
+> > > -                     usleep_range(1000, 2000);
+> > > -             } while (--timeout);
+> > > +     while (retries--) {
+> > > +             int err;
+> > >
+> > > -             if (!timeout) {
+> > > +             err =3D readl_poll_timeout(port->base + RP_VEND_XP, val=
+ue,
+> > > +                                      value & RP_VEND_XP_DL_UP,
+> > > +                                      1000,
+> > > +                                      TEGRA_PCIE_LINKUP_TIMEOUT * 10=
+00);
+> >
+> > The logic change here looks OK to me. This makes the timeout 200ms (TEG=
+RA_PCIE_LINKUP_TIMEOUT is 200). Previously, the code looped 200 times with =
+a 1 to 2ms sleep on each iteration. So the timeout could have been longer t=
+han 200ms previously, but not in a way that could be relied on.
+>=20
+> You're right; the original usleep_range(1000, 2000) had a variable sleep =
+time.
+> To replicate the worst-case behavior of the old loop, the
+> readl_poll_timeout should
+> use a delay_us of 1000 and a timeout_us that matches the original
+> maximum duration.
+> Since the previous code looped 200 times with a maximum 2ms sleep,
+> the correct timeout is 400ms, so update (TEGRA_PCIE_LINKUP_TIMEOUT * 2000=
+).
+> or increase TEGRA_PCIE_LINKUP_TIMEOUT to 400.
+>=20
+> Are these changes ok with you?
 
-On Wed, Sep 17, 2025 at 2:43=E2=80=AFPM Yicong Yang <yangyicong@huawei.com>=
- wrote:
->
-> On 2025/9/17 10:30, Yunhui Cui wrote:
-> > Currently, RISC-V lacks arch-specific registers for CPU topology
-> > properties and must get them from ACPI. Thus, parse_acpi_topology()
-> > is moved from arm64/ to drivers/ for RISC-V reuse.
-> >
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > ---
-> >  arch/arm64/kernel/topology.c  | 87 +----------------------------------
-> >  drivers/base/arch_topology.c  | 85 +++++++++++++++++++++++++++++++++-
-> >  include/linux/arch_topology.h |  6 +++
-> >  3 files changed, 91 insertions(+), 87 deletions(-)
-> >
-> > diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.=
-c
-> > index 5d07ee85bdae4..55650db53b526 100644
-> > --- a/arch/arm64/kernel/topology.c
-> > +++ b/arch/arm64/kernel/topology.c
-> > @@ -26,7 +26,7 @@
-> >  #include <asm/topology.h>
-> >
-> >  #ifdef CONFIG_ACPI
-> > -static bool __init acpi_cpu_is_threaded(int cpu)
-> > +bool __init acpi_cpu_is_threaded(int cpu)
-> >  {
-> >       int is_threaded =3D acpi_pptt_cpu_is_thread(cpu);
-> >
-> > @@ -39,91 +39,6 @@ static bool __init acpi_cpu_is_threaded(int cpu)
-> >
-> >       return !!is_threaded;
-> >  }
-> > -
-> > -struct cpu_smt_info {
-> > -     unsigned int thread_num;
-> > -     int core_id;
-> > -};
-> > -
-> > -/*
-> > - * Propagate the topology information of the processor_topology_node t=
-ree to the
-> > - * cpu_topology array.
-> > - */
-> > -int __init parse_acpi_topology(void)
-> > -{
-> > -     unsigned int max_smt_thread_num =3D 1;
-> > -     struct cpu_smt_info *entry;
-> > -     struct xarray hetero_cpu;
-> > -     unsigned long hetero_id;
-> > -     int cpu, topology_id;
-> > -
-> > -     if (acpi_disabled)
-> > -             return 0;
-> > -
-> > -     xa_init(&hetero_cpu);
-> > -
-> > -     for_each_possible_cpu(cpu) {
-> > -             topology_id =3D find_acpi_cpu_topology(cpu, 0);
-> > -             if (topology_id < 0)
-> > -                     return topology_id;
-> > -
-> > -             if (acpi_cpu_is_threaded(cpu)) {
-> > -                     cpu_topology[cpu].thread_id =3D topology_id;
-> > -                     topology_id =3D find_acpi_cpu_topology(cpu, 1);
-> > -                     cpu_topology[cpu].core_id   =3D topology_id;
-> > -
-> > -                     /*
-> > -                      * In the PPTT, CPUs below a node with the 'ident=
-ical
-> > -                      * implementation' flag have the same number of t=
-hreads.
-> > -                      * Count the number of threads for only one CPU (=
-i.e.
-> > -                      * one core_id) among those with the same hetero_=
-id.
-> > -                      * See the comment of find_acpi_cpu_topology_hete=
-ro_id()
-> > -                      * for more details.
-> > -                      *
-> > -                      * One entry is created for each node having:
-> > -                      * - the 'identical implementation' flag
-> > -                      * - its parent not having the flag
-> > -                      */
-> > -                     hetero_id =3D find_acpi_cpu_topology_hetero_id(cp=
-u);
-> > -                     entry =3D xa_load(&hetero_cpu, hetero_id);
-> > -                     if (!entry) {
-> > -                             entry =3D kzalloc(sizeof(*entry), GFP_KER=
-NEL);
-> > -                             WARN_ON_ONCE(!entry);
-> > -
-> > -                             if (entry) {
-> > -                                     entry->core_id =3D topology_id;
-> > -                                     entry->thread_num =3D 1;
-> > -                                     xa_store(&hetero_cpu, hetero_id,
-> > -                                              entry, GFP_KERNEL);
-> > -                             }
-> > -                     } else if (entry->core_id =3D=3D topology_id) {
-> > -                             entry->thread_num++;
-> > -                     }
-> > -             } else {
-> > -                     cpu_topology[cpu].thread_id  =3D -1;
-> > -                     cpu_topology[cpu].core_id    =3D topology_id;
-> > -             }
-> > -             topology_id =3D find_acpi_cpu_topology_cluster(cpu);
-> > -             cpu_topology[cpu].cluster_id =3D topology_id;
-> > -             topology_id =3D find_acpi_cpu_topology_package(cpu);
-> > -             cpu_topology[cpu].package_id =3D topology_id;
-> > -     }
-> > -
-> > -     /*
-> > -      * This is a short loop since the number of XArray elements is th=
-e
-> > -      * number of heterogeneous CPU clusters. On a homogeneous system
-> > -      * there's only one entry in the XArray.
-> > -      */
-> > -     xa_for_each(&hetero_cpu, hetero_id, entry) {
-> > -             max_smt_thread_num =3D max(max_smt_thread_num, entry->thr=
-ead_num);
-> > -             xa_erase(&hetero_cpu, hetero_id);
-> > -             kfree(entry);
-> > -     }
-> > -
-> > -     cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
-> > -     xa_destroy(&hetero_cpu);
-> > -     return 0;
-> > -}
-> >  #endif
-> >
-> >  #ifdef CONFIG_ARM64_AMU_EXTN
-> > diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.=
-c
-> > index 1037169abb459..65ec1f3d2bd28 100644
-> > --- a/drivers/base/arch_topology.c
-> > +++ b/drivers/base/arch_topology.c
-> > @@ -823,12 +823,95 @@ void remove_cpu_topology(unsigned int cpu)
-> >       clear_cpu_topology(cpu);
-> >  }
-> >
-> > +__weak bool __init acpi_cpu_is_threaded(int cpu)
-> > +{
-> > +     int is_threaded =3D acpi_pptt_cpu_is_thread(cpu);
-> > +
-> > +     return !!is_threaded;
-> > +
->
-> acpi_pptt_cpu_is_thread() could return an error which shouldn't be
-> regarded as a threaded cpu.
->
-> > +}
-> > +
-> > +#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
-> > +/*
-> > + * Propagate the topology information of the processor_topology_node t=
-ree to the
-> > + * cpu_topology array.
-> > + */
-> >  __weak int __init parse_acpi_topology(void)
-> >  {
-> > +     unsigned int max_smt_thread_num =3D 1;
-> > +     struct cpu_smt_info *entry;
-> > +     struct xarray hetero_cpu;
-> > +     unsigned long hetero_id;
-> > +     int cpu, topology_id;
-> > +
-> > +     if (acpi_disabled)
-> > +             return 0;
-> > +
-> > +     xa_init(&hetero_cpu);
-> > +
-> > +     for_each_possible_cpu(cpu) {
-> > +             topology_id =3D find_acpi_cpu_topology(cpu, 0);
-> > +             if (topology_id < 0)
-> > +                     return topology_id;
-> > +
-> > +             if (acpi_cpu_is_threaded(cpu)) {
-> > +                     cpu_topology[cpu].thread_id =3D topology_id;
-> > +                     topology_id =3D find_acpi_cpu_topology(cpu, 1);
-> > +                     cpu_topology[cpu].core_id   =3D topology_id;
-> > +
-> > +                     /*
-> > +                      * In the PPTT, CPUs below a node with the 'ident=
-ical
-> > +                      * implementation' flag have the same number of t=
-hreads.
-> > +                      * Count the number of threads for only one CPU (=
-i.e.
-> > +                      * one core_id) among those with the same hetero_=
-id.
-> > +                      * See the comment of find_acpi_cpu_topology_hete=
-ro_id()
-> > +                      * for more details.
-> > +                      *
-> > +                      * One entry is created for each node having:
-> > +                      * - the 'identical implementation' flag
-> > +                      * - its parent not having the flag
-> > +                      */
-> > +                     hetero_id =3D find_acpi_cpu_topology_hetero_id(cp=
-u);
-> > +                     entry =3D xa_load(&hetero_cpu, hetero_id);
-> > +                     if (!entry) {
-> > +                             entry =3D kzalloc(sizeof(*entry), GFP_KER=
-NEL);
-> > +                             WARN_ON_ONCE(!entry);
-> > +
-> > +                             if (entry) {
-> > +                                     entry->core_id =3D topology_id;
-> > +                                     entry->thread_num =3D 1;
-> > +                                     xa_store(&hetero_cpu, hetero_id,
-> > +                                              entry, GFP_KERNEL);
-> > +                             }
-> > +                     } else if (entry->core_id =3D=3D topology_id) {
-> > +                             entry->thread_num++;
-> > +                     }
-> > +             } else {
-> > +                     cpu_topology[cpu].thread_id  =3D -1;
-> > +                     cpu_topology[cpu].core_id    =3D topology_id;
-> > +             }
-> > +             topology_id =3D find_acpi_cpu_topology_cluster(cpu);
-> > +             cpu_topology[cpu].cluster_id =3D topology_id;
-> > +             topology_id =3D find_acpi_cpu_topology_package(cpu);
-> > +             cpu_topology[cpu].package_id =3D topology_id;
-> > +     }
-> > +
-> > +     /*
-> > +      * This is a short loop since the number of XArray elements is th=
-e
-> > +      * number of heterogeneous CPU clusters. On a homogeneous system
-> > +      * there's only one entry in the XArray.
-> > +      */
-> > +     xa_for_each(&hetero_cpu, hetero_id, entry) {
-> > +             max_smt_thread_num =3D max(max_smt_thread_num, entry->thr=
-ead_num);
-> > +             xa_erase(&hetero_cpu, hetero_id);
-> > +             kfree(entry);
-> > +     }
-> > +
-> > +     cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
-> > +     xa_destroy(&hetero_cpu);
-> >       return 0;
-> >  }
-> >
-> > -#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
-> >  void __init init_cpu_topology(void)
-> >  {
-> >       int cpu, ret;
-> > diff --git a/include/linux/arch_topology.h b/include/linux/arch_topolog=
-y.h
-> > index d72d6e5aa2002..50d33b5a78ccd 100644
-> > --- a/include/linux/arch_topology.h
-> > +++ b/include/linux/arch_topology.h
-> > @@ -70,6 +70,11 @@ struct cpu_topology {
-> >       cpumask_t llc_sibling;
-> >  };
-> >
-> > +struct cpu_smt_info {
-> > +     unsigned int thread_num;
-> > +     int core_id;
-> > +};
-> > +
->
-> this is only used in parse_acpi_topology() and seems no reason to make it=
- into
-> the header.
+I think the code is fine as is. Before, the shortest the timeout could be w=
+as 200ms, i.e. there should be no situation where we need a timeout longer =
+than that, or otherwise that would fail randomly depending on the sleep dur=
+ation. So I think the 200ms is correct here and the only change necessary i=
+s the removal of the second iopoll.h
 
-Okay, I'll update it in v2.
+Cheers,
+Mikko
 
->
-> otherwise looks good to me. most acpi topology building code is not arm64
-> specific and make sense to make it common.
->
-> thanks.
->
+>=20
+> Thank
+> -Anand
 
-Thanks,
-Yunhui
+
+
+
 
