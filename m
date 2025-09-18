@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-823661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96465B87186
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:22:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D56B8718C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B175827F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D42C625708
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483632FA0C7;
-	Thu, 18 Sep 2025 21:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F662F6563;
+	Thu, 18 Sep 2025 21:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PY+bDWTr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEpdzMxg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F25517BB21;
-	Thu, 18 Sep 2025 21:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4736D2E0905;
+	Thu, 18 Sep 2025 21:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758230272; cv=none; b=sz3mtpcjktOPlKvKotDhLoOmaa8WgrReqRXznGY380phvS7w3LVB9QRpUjIt8YSUyDbmb65i+cpojS0rk7wJ6DxoX3CLSGFmS0x+NEzCUCQpIllQS7UGs1YVgqAe2g53isHkcwzkPR2PVkZK51J2xOFBD8c3C5159esrLKhxxeE=
+	t=1758230364; cv=none; b=IvZGwLkvqlJ+PS5BpvVDYdHUOrS0Op2EnGPHW3nSxsU0kTJAmxvRR9NUtBMzdMUVBmtD+pDD/2X+Dv2ubO1kEeW7+RSqjR8rFVzDZsG6chIEbELQ3ciBUfkgYcN9/ZiyfyHZy7Ik8GyXTnUsg4qfh1ZbqlGB4jGlQ9yQnF3dlt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758230272; c=relaxed/simple;
-	bh=fc6zzd2NFbc4n0qZ3WrDFi+otpxyFwSPEnO3pb1g+o8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fh1oU7z+P/M7IhElBptaSNXAhP8VGP/qEIUYsKbJpsLnjQt+RSwhskkdJggOSiLTO+nHFIm1Y2K0f7ygkyWUvzq2PO+vDmFaAtkvvIQvCmLSIW838iEcr080xlIZpDqTvCp48QpCR3ZNYG/dySgVDPvvzfqCm7mTMwpFrq7XZ7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PY+bDWTr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899B9C4CEE7;
-	Thu, 18 Sep 2025 21:17:49 +0000 (UTC)
+	s=arc-20240116; t=1758230364; c=relaxed/simple;
+	bh=iTkv4/jd5yTn1fHHuhHFJZgChsiArWlObzMiZKolph8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ufmv7w+qmE6/vAsVCNdOgN1283gmzsgpi5aSerGaXgsJdRroppU5jdV7XdQ8vQ/UmgV6kRIbOjdq3AB9dGKAopfJeMtVXgUz9YGSmRl0nE6E7PLCDOoRwbvWFzILaTUDa+BPq1turd+tmg08wnWGaITSGHYD2DkPDWLWY8A+b3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEpdzMxg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFECC4CEE7;
+	Thu, 18 Sep 2025 21:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758230272;
-	bh=fc6zzd2NFbc4n0qZ3WrDFi+otpxyFwSPEnO3pb1g+o8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PY+bDWTr3DHO8nXieZf7iFs+OlX+1OdO/LjogJt2uyongtZKaWYKtvMf37vFbv6jO
-	 ONZG9F1bL4q2lmipxPt0jzliKbOuqqt1Y7ThT+p97VIYyv1h0gbb3xLfC/8tf3nhuY
-	 7rUKlSQhxSoYz+2/auX1e/Ubhwzi8/AXoR4D1u8OutCN9vQwd4wz1ab9TaSj5euXXA
-	 /sge3cSgDJbOmtUDy1HERQwSefZ4qH0p01fvFyQKNhta5HriRc1pI8F9mxRWbvZby0
-	 N0R6f+iEI4LfrbBV7BxwUOkr2m3N1lvRkfYo9HVh9hKW8WXBSOuD6CfLBdGgQWZkac
-	 BdVuDEq5NmjaA==
-Date: Thu, 18 Sep 2025 22:17:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] KVM: arm64: Expose FEAT_LSFE to guests
-Message-ID: <19b5816d-2720-4535-becd-18a3468051d6@sirena.org.uk>
-References: <20250918-arm64-lsfe-v4-0-0abc712101c7@kernel.org>
- <20250918-arm64-lsfe-v4-1-0abc712101c7@kernel.org>
- <aMxyKbnVjS35YuQi@linux.dev>
+	s=k20201202; t=1758230363;
+	bh=iTkv4/jd5yTn1fHHuhHFJZgChsiArWlObzMiZKolph8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jEpdzMxgjcpf2Ds7XVlFkbFyRu83CKD+Bo5MdQiQIh1FE84EgJ3+JjpFGmxoLb3BJ
+	 QFkqqSVVZbimerKNTXQd6bo30FtYUyLFRuHoNyuO5NyIluhkBu/3ZAoPpttkFOMrTw
+	 S5IuVK86nhPezZc0km0xQKfK3tR6pH/DeYnlBi2Q61b9NhTixG2OcXhnx218x8qKrc
+	 pokmC9WDjhOWcaR0beBmtyQPznLn6maPaGLtAQPxAINkvPXo8V/v5+6Lxwj52AWKLL
+	 8+fy1JtousTenOntUmx0jublh0Utljoit+46p1aemZ7KQKyTfFF5LIFI3Ud3QNLUpe
+	 iHSrMyLEWqhrA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject:
+ [PATCH v1] cpuidle: Fail cpuidle device registration if there is one already
+Date: Thu, 18 Sep 2025 23:19:20 +0200
+Message-ID: <3374815.aeNJFYEL58@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="16gKMbNZJBY0LNnH"
-Content-Disposition: inline
-In-Reply-To: <aMxyKbnVjS35YuQi@linux.dev>
-X-Cookie: Victory uber allies!
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Refuse to register a cpuidle device if the given CPU has a cpuidle
+device already and print a message regarding it.
+
+Without this, an attempt to register a new cpuidle device without
+unregistering the existing one leads to the removal of the existing
+cpuidle device without removing its sysfs interface.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/cpuidle.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -635,11 +635,17 @@ static void __cpuidle_device_init(struct
+ static int __cpuidle_register_device(struct cpuidle_device *dev)
+ {
+ 	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
++	unsigned int cpu = dev->cpu;
+ 	int i, ret;
+ 
+ 	if (!try_module_get(drv->owner))
+ 		return -EINVAL;
+ 
++	if (per_cpu(cpuidle_devices, cpu)) {
++		pr_info("CPU%d: cpuidle device already registered\n", cpu);
++		return -EEXIST;
++	}
++
+ 	for (i = 0; i < drv->state_count; i++) {
+ 		if (drv->states[i].flags & CPUIDLE_FLAG_UNUSABLE)
+ 			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_DRIVER;
+@@ -648,7 +654,7 @@ static int __cpuidle_register_device(str
+ 			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_USER;
+ 	}
+ 
+-	per_cpu(cpuidle_devices, dev->cpu) = dev;
++	per_cpu(cpuidle_devices, cpu) = dev;
+ 	list_add(&dev->device_list, &cpuidle_detected_devices);
+ 
+ 	ret = cpuidle_coupled_register_device(dev);
 
 
---16gKMbNZJBY0LNnH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Sep 18, 2025 at 01:57:13PM -0700, Oliver Upton wrote:
-
-> We also need a test in set_id_regs.c selftest for the writability of
-> this new feature field.
-
-Sure.  We seem to be missing some existing fields from that register
-too.
-
---16gKMbNZJBY0LNnH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMdvoACgkQJNaLcl1U
-h9Be6Af/TBs9wrBxy+VeK23RJ2+hMChN440Xk5kJc9GEu2ERR6D0ResdZGBMfhkP
-2vHJxdn6RhX32+PhTi0WsUkRirE6+K79mrVjcWu2EWpl7QYcTSTs80pKORPTwe2t
-6amYPm7ZUWuPf3Wk8yWex2ZFqeq+CEFQDBc3jJy3f9pyXRe2e8wNU72uE6eXiALm
-jicbhS7kKd4AosMPjWwjlNjHgNxpJGS2lOF/ikcGc5Ayx5OQGRh+DzplmZsvexeN
-yprP0TiVzHciGa5Xqm/7Wo7/ussYeXilx3O+mpSDs0jePKAHkidDAafz78dIKcsK
-yMXMy2stYabVPmm6DTdh48Dz/t/7MA==
-=/Bpf
------END PGP SIGNATURE-----
-
---16gKMbNZJBY0LNnH--
 
