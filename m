@@ -1,106 +1,128 @@
-Return-Path: <linux-kernel+bounces-822534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42962B84165
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:29:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29157B84175
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04711884C57
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E394620ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3EC280330;
-	Thu, 18 Sep 2025 10:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C2B2F6586;
+	Thu, 18 Sep 2025 10:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J94LKr8u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyvYsFVF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12EF226D04;
-	Thu, 18 Sep 2025 10:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8472EB5BF;
+	Thu, 18 Sep 2025 10:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758191380; cv=none; b=ZUHmVZ+yVXxILixjTLVeVC9UJaz07iYdpPFATAIY1lqJOYFUsn1/AV8ZhbYuTUWRRXaDf+iurbnEHcAxukjlBIQjTho5iQCatnZAs7VIQFMgYFAdkxsEhKIKfn37b4RDlnZR63XzwdaSSN2ng+adUhsh75/lKszlqvZnCYmTbi0=
+	t=1758191394; cv=none; b=k/OhEoQlMlT+WLfpm2WCMJEk+MK5MMSofWGPhoIL/fq+s8nUbsjUiJ9J7plU+Kw8szu64dpq8J5SZmfLWr+c8FmFza+z1tsPqk6ClwcrQxpG1Kc7LsNmo0GJcAMAoA3S917syJWaIygOS2lBghnxr6JArLpJYGyuTh68nJ6/HMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758191380; c=relaxed/simple;
-	bh=AlkVX+a/HTI+sqM2IbRhIUn6Vy6tXX7E7Jxr8FIOEqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=q+IC/DmddtXW4e8OiNeN+5d5+swbHUa92QQB8o1NCNNl0VFUQWl5lfEHN8EDxQN8mtXGmxjmuG+LsGoHJvPUCSUbULqvSqICqHMCuZVRYS8/WEm761y8/OmLoagy5t2Lf5AvLYjBLkT8oyhU69Bmakk5B4F0xuH0l3gG0HQ55fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J94LKr8u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B818C4CEE7;
-	Thu, 18 Sep 2025 10:29:39 +0000 (UTC)
+	s=arc-20240116; t=1758191394; c=relaxed/simple;
+	bh=Mp9NGrJWUWVhDqtHZIZvK7J6EzBqIIE/DcFZ0dsLmlI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cWK6SO19Y8czUnhDdRW7390zRI5l0uMmHVnEVqXbXyYpZ6qR62JvZ9AIg1tl3/w051X0D2nmXONNPz/gX7akwI65nheV2asdJPajvQQb4CSVx9B/AE3vDcweHO++vJuKl65Uu9G0dtZHqJSjW+cQ655O0CSXgMR/D9Gp4qETPq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyvYsFVF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840CAC4CEFB;
+	Thu, 18 Sep 2025 10:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758191379;
-	bh=AlkVX+a/HTI+sqM2IbRhIUn6Vy6tXX7E7Jxr8FIOEqA=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=J94LKr8u+A+dALxJdumKx6pF1sxRiJ6/bbSu9hRQ9pdWxSplHGrd0UaaJqGzFEs8B
-	 39jt6Gwrl8hFmaqQt0qYyuGSyCKyfufIVKutYfK8fVnsWaTycMpykb3IpdXgaDcGY6
-	 a+Kc8/+2fjy4jA7kHZp2dVkG6yPbt45yK71tmJqTDIlU8xhqSsm6pW0XyGUXTpguhp
-	 a4P3F3sE27qmmSri0MMF2xTtNB77IJeRaZyomwIDVd2w8oMXaea7YzyNdg1pxH9A/y
-	 xempjtBlXamjilH/EwVQpbREIkGONkzFQ6CzvBCn+Dy+PHUjTYvZoYJn3+b4FrU0R3
-	 0Q5oSnCvvKExA==
+	s=k20201202; t=1758191394;
+	bh=Mp9NGrJWUWVhDqtHZIZvK7J6EzBqIIE/DcFZ0dsLmlI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MyvYsFVF++doDfDmql4rI45Ly/L4C6sSTlPhwMehw3YmWvFJxJ/BhN+uKI+7b51Ao
+	 ouhcbmsQQvbjDsAmP1FUTyIoANwHI4wrUG0qPSfG9ZOHnzHgcZAkap3SQi4pOqg4fC
+	 yS47Di4SMEkXElmAB0GPq9VNafK2lKv8MV9Ju+fgArO0h62zYyFwuCa/9owN+sEWxU
+	 /2ORzpAE3i1bm728Bf4H2m4IYlN1c4WGcI0cDSo5Yp5GTqrrevwQVexvhlNMzAqcmc
+	 kJADyuO7ZH3hP/KuIScc2oh2bVV/ppdndc4EuH3v/ZIc74k5fEoTVs+xoSXsUrN3wt
+	 72bTFrO6VS48A==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id DAA92CE0B32; Thu, 18 Sep 2025 03:29:38 -0700 (PDT)
-Date: Thu, 18 Sep 2025 03:29:38 -0700
+	id CD70CCE0B32; Thu, 18 Sep 2025 03:29:53 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH v2 0/11] RCU torture-test updates for v6.18
-Message-ID: <c0edd79a-f988-432c-b08a-18793b2e15d9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH v2 01/11] rcutorture: Fix jitter.sh spin time
+Date: Thu, 18 Sep 2025 03:29:42 -0700
+Message-Id: <20250918102952.2593045-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <c0edd79a-f988-432c-b08a-18793b2e15d9@paulmck-laptop>
+References: <c0edd79a-f988-432c-b08a-18793b2e15d9@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+An embarrassing syntax error in jitter.sh makes for fixed spin time.
+This commit therefore makes it be variable, as intended, albeit with
+very coarse-grained adjustment.
 
-This series contains torture-test updates for v6.18:
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ .../selftests/rcutorture/bin/jitter.sh        | 27 ++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-1.	Fix jitter.sh spin time.
+diff --git a/tools/testing/selftests/rcutorture/bin/jitter.sh b/tools/testing/selftests/rcutorture/bin/jitter.sh
+index fd1ffaa5a1358e..3c1e5d3f88058c 100755
+--- a/tools/testing/selftests/rcutorture/bin/jitter.sh
++++ b/tools/testing/selftests/rcutorture/bin/jitter.sh
+@@ -39,6 +39,22 @@ do
+ 	fi
+ done
+ 
++# Uses global variables startsecs, startns, endsecs, endns, and limit.
++# Exit code is success for time not yet elapsed and failure otherwise.
++function timecheck {
++	local done=`awk -v limit=$limit \
++			-v startsecs=$startsecs \
++			-v startns=$startns \
++			-v endsecs=$endsecs \
++			-v endns=$endns < /dev/null '
++		BEGIN {
++			delta = (endsecs - startsecs) * 1000 * 1000;
++			delta += int((endns - startns) / 1000);
++			print delta >= limit;
++		}'`
++	return $done
++}
++
+ while :
+ do
+ 	# Check for done.
+@@ -85,15 +101,20 @@ do
+ 	n=$(($n+1))
+ 	sleep .$sleeptime
+ 
+-	# Spin a random duration
++	# Spin a random duration, but with rather coarse granularity.
+ 	limit=`awk -v me=$me -v n=$n -v spinmax=$spinmax 'BEGIN {
+ 		srand(n + me + systime());
+ 		printf("%06d", int(rand() * spinmax));
+ 	}' < /dev/null`
+ 	n=$(($n+1))
+-	for i in {1..$limit}
++	startsecs=`date +%s`
++	startns=`date +%N`
++	endsecs=$startns
++	endns=$endns
++	while timecheck
+ 	do
+-		echo > /dev/null
++		endsecs=`date +%s`
++		endns=`date +%N`
+ 	done
+ done
+ 
+-- 
+2.40.1
 
-2.	Add --do-normal parameter to torture.sh help text.
-
-3.	Announce kernel boot status at torture-test startup.
-
-4.	Suppress "Writer stall state" reports during boot.
-
-5.	Delay rcutorture readers and writers until boot completes.
-
-6.	Delay CPU-hotplug operations until boot completes.
-
-7.	Delay forward-progress testing until boot completes.
-
-8.	Use kcalloc() instead of kzalloc(), courtesy of Qianfeng Rong.
-
-9.	Use kcalloc() instead of kzalloc(), courtesy of Qianfeng Rong.
-
-10.	Remove redundant kfree() after torture_stop_kthread(), courtesy
-	of Kaushlendra Kumar.
-
-11.	Set reader_tasks to NULL after kfree(), courtesy of Kaushlendra
-	Kumar.
-
-Changes since v1:
-
-o	Add patches 8-11.
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/kernel/rcu/rcutorture.c                           |    3 +-
- b/kernel/rcu/refscale.c                             |    2 -
- b/kernel/torture.c                                  |    5 ++-
- b/tools/testing/selftests/rcutorture/bin/jitter.sh  |   27 +++++++++++++++++---
- b/tools/testing/selftests/rcutorture/bin/torture.sh |    1 
- kernel/rcu/rcutorture.c                             |   24 +++++++++++++----
- kernel/rcu/refscale.c                               |    2 -
- kernel/torture.c                                    |    2 +
- 8 files changed, 52 insertions(+), 14 deletions(-)
 
