@@ -1,180 +1,179 @@
-Return-Path: <linux-kernel+bounces-822015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D557FB82DA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:06:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DA6B82DAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D9CE586467
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA883320AF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D0924418F;
-	Thu, 18 Sep 2025 04:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE682242D8C;
+	Thu, 18 Sep 2025 04:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Silt2gfT"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazolkn19010022.outbound.protection.outlook.com [52.103.2.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeE1FzUU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A06623D7F4;
-	Thu, 18 Sep 2025 04:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758168390; cv=fail; b=FHZNdcSRiI/TKzz0sq9nVUo8z0ikpoVL982+pT8gQV6Qe4qh1DhvvcyxgyUfyw4vtpvkf+05Ltv3lXWg+XL24MDM0PTNGgSXRTfBwnvCPds9Sx0TfycDPNU9zwqV9D6G9Uo5SO+RbCk17b9v3j07cjv/hWJIdwsGx0ecrPJtp3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758168390; c=relaxed/simple;
-	bh=EpwiVef/I7PKKn7hNx3czYhKJIUQ4fIQAWEQLYfT+YQ=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZwyDBGt+14/6mzkIfJ2QoYDaqakUt+EZZ+9CWEtLvnAySKJi0pMK1VUkRO7WY024kP/p69+TQPeH15wCXdwCrxeaD1LJ6BbILH3ePQQ16g6z1RD9DypR1fbprYlSG5AHzuDZEN2yfV85mGhD2v6gU6VXviQ1fExTEtomcVlzgaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Silt2gfT; arc=fail smtp.client-ip=52.103.2.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WjisDr6aQ/RLSVmAk0HNVSh6zjcB3yb0WGFPWFA/yXO/6putNFE7wzojTvBPkZJYuCZDm2vDNWad4v/BEarzPfQKlOFXd+4IvWajWtRHzR7puZsznrIxpJJIDCv+KvOFDskZfbU0OSp4bHRjNxNg0ND1ypO7IVqEAitNgNMeQQ/zjyv0korA69Fgq0Fn8h+1ycqqsnovcauZViQ/4mzroSyxWwV4nTjkwDDjWZ4C/R5cgtyO4d+McMLgBzUWxMmS64+emo+iFOMWqlwpeEH5xKZuYFkRuJe68IzcP2o6yhAp76OVbvdi21J2XAp7YifRpQXHB4h9WgcayA8uacBMOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T+s2jHrJFLB0KRNKC0cA/pRTdreBpbe1iL0Mu/cP41w=;
- b=WJRwHzFrCxdHLh0n+28SItzpsVSSRo9pSOzdUwbiEifGSSt2hjCOHTmvw21tI6X1v+hkp/oqpZLh74P8Hnitw22M5Qtokhll4du4cOP8zQ6Vlu6wHeifZwD7+075DluDcgi80sB8s5dTUv0mqCYmgjtWj5n93/RmCMuOpkH60AMm2t6Tj/0S3twhtYFKgW48sjz/LKaCH5CL+8zdXvgnx17s56Cn6TtlLcYCFLXeW/dLlwhxOIP6Mv7+JgGjnbQ4DjP6xkIbKiEjWZ9SU5M8RbWucPX3j1po7pxz/nuF3pWMFrWO6omxNcP7ZvEWfoqBpiGFt1v4IzWHyYd80uWhuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T+s2jHrJFLB0KRNKC0cA/pRTdreBpbe1iL0Mu/cP41w=;
- b=Silt2gfTed+oAWWsAIbPu6XLRLc6PZ+7YkMqhG49MheSAmsQnEwLKtiSw1TcmxHE5Ezmuqe0R2bym+0mf5jKzB1qpRdcPtgOeMFDNw+6WRCWfXyUPVVhVr6f6T+UosLztYea7nPCefkDi6pbabUoT6KrBx/4VoJ/KeQcSkPRzS+RBaOfIRp6TgU08s4tMK2LTN3VZOsg1d1347nnUrv2V6F7hg9YPRBABcpdcFn7+5ZviTNWsafKLYZvTb5WNmzZ8A+b9F7PAH+43dHh9aQOQHndE2T9pG93Dei9xo0CESRKXFjqbeneiRYITBIEN1tvGZhzgv1ZC0cUdAb/2MoJVQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH7PR02MB9409.namprd02.prod.outlook.com (2603:10b6:510:277::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
- 2025 04:06:24 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 04:06:24 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, "K. Y. Srinivasan"
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, "open list:Hyper-V/Azure CORE AND DRIVERS"
-	<linux-hyperv@vger.kernel.org>, "open list:SCSI SUBSYSTEM"
-	<linux-scsi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 6/6] scsi: storvsc: Remove redundant ternary operators
-Thread-Topic: [PATCH 6/6] scsi: storvsc: Remove redundant ternary operators
-Thread-Index: AQHcHA2/vwdzqAU/Z0mah1c2BU2c8rSYauYg
-Date: Thu, 18 Sep 2025 04:06:24 +0000
-Message-ID:
- <SN6PR02MB4157A1DF13DB4C28AAD47DA6D416A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250902132359.83059-1-liaoyuanhong@vivo.com>
- <20250902132359.83059-7-liaoyuanhong@vivo.com>
-In-Reply-To: <20250902132359.83059-7-liaoyuanhong@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH7PR02MB9409:EE_
-x-ms-office365-filtering-correlation-id: a3ae2de1-666a-4792-db5a-08ddf668bbf5
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|31061999003|8062599012|19110799012|8060799015|13091999003|15080799012|440099028|40105399003|52005399003|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?EXFP9rMybUooURTDutAZc9ajCqq1mcau0wEUGtij+pjBfAvq3UDFtSffFdLm?=
- =?us-ascii?Q?He6wxkXo4LLzlyskjQm1tcFjkpwyjcywsPKTpDAGSdhPIXcEHR6bXh/NPuFv?=
- =?us-ascii?Q?yvC7BZcr8lDIb/G77v0T75w5at+sapGApG6rubJvwvVa6AXi2u3qtQFXrQAI?=
- =?us-ascii?Q?37gJGp7FMeMZLnCiEZ663zN+MJ/p1HWYrMHI64xOBB9oCJ0st70JWpqPa2Q4?=
- =?us-ascii?Q?8Qyp71OXPDBlyxdYshLNf/YvuwTfA5xfmnRd/X01YfkZZoo+okwuXh+53UGX?=
- =?us-ascii?Q?PJYEVgH19LV0R87QDYGqKmpJqegXjDAX25VDvaGnUJntMaETzPaJVXYxQ3l7?=
- =?us-ascii?Q?15lT0bG9iMr79Ni5vZ8F3inugPoJMliP8hfccQy8zD+B6k7CXQQUl7QfPupI?=
- =?us-ascii?Q?GKB6VtyiumFiClzpDWHiGc/aLu+iSTI8bBLjojpu70FhISeYs2FdH8A1xXy8?=
- =?us-ascii?Q?O2fIRR695/b53lgyGxuJYDvP4vminADaoHeqsqV96ZKuyWxFdo+lntZkCRpe?=
- =?us-ascii?Q?jz0oDeyBLGILfC0BU8bbwDX8Ce6G/3YBB3fr6G9h8GPF1yZhko8pU4v3dzp3?=
- =?us-ascii?Q?v7Qjeg0eHYiw0NilFCjonwuSMyrOBFk63NdH7RqVJ0G0TjFSRF4yXvm3/VwZ?=
- =?us-ascii?Q?fNZO3DLC2KSnp5pP0QzZsbueO+ksuFRftGP9OtKTvGMMliFjYQFL6Ef05VXa?=
- =?us-ascii?Q?4qG4GFw4gpftGhaWPHFPVg/OgQk0hqPVYmiEN6T5Wu/p9n8oJiN/4GIMq1ES?=
- =?us-ascii?Q?eadjKoGRTDU0WBp3CnaHEkkSqQ5HsCSEUifp+R9atiO6xFBbdXtuAhoFvxWW?=
- =?us-ascii?Q?9YCvfgz4bed28jgKNoTw/Qi8tsgwwV0xdiRUnGDSSBgLZA68tmpHoY1YZo/Y?=
- =?us-ascii?Q?uGFJL/C8LJOpbn4fwVUjFIi/qRqAykBeagYBbSh+lmjhD56EC1/u44GLoJmn?=
- =?us-ascii?Q?JefdlQ7iwcilVgn0/33+5zAp37LGyHfBg1URl761NhyYtbK1rh2QkZZcgp8v?=
- =?us-ascii?Q?lEQ8F9p0JK6FTKHwK/NskNghxIZ/ELC3kXSHqidsZjMIq9Z81Klo0S1g1PK9?=
- =?us-ascii?Q?Gf3tSUGELKXQ8oD3uYWYJmz5BzfQ3nlh6ufItc6iKs7+v2kAlFwBRIYxjK2Z?=
- =?us-ascii?Q?hElx2BmhGHdClwV8UgRIViHWTcAwcNshfsJGi+2/3hsat9aoSdGpkF14K4To?=
- =?us-ascii?Q?fsXFwXSL/GZW4E1vZ6NlV2bAD0ht/8MkUkaKJw=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?S1aEv4UcCkOKx5EGxXjfJWQa94TrKD372NWqVf+02K60Sj1wIC0fh8DHTFWy?=
- =?us-ascii?Q?d6cyGwa2+7cjIGPvTeCP1ZOe/hi9VMWQlLDNakktVoUrRVF4DHBbjsecmlRA?=
- =?us-ascii?Q?PXPZeAOjoomYHH3+hSnj1lylSIOlFKpaB3XHCtm+It7Z3V6U7AnBD3Fbb7Dl?=
- =?us-ascii?Q?/OdvdviaPR5qrBtbBXki4Uy6KewW02IixWGiRtQyMZbhtNVLH1Xck23XNV3x?=
- =?us-ascii?Q?nSTHmUGYil3SPZVYrrIjAT1e+KWPmG6O6CKwdpMfkq/qJWJPBMbnWtxAQHvt?=
- =?us-ascii?Q?wslrQ5IK6rhqjiv9IT8MN5MOq+pLIBKiaB/sp4/wng0FiXz7LOj6p7AkST60?=
- =?us-ascii?Q?xUK24ntJA5NVlCjzedoz8JmuoevRT3H4vr+ydHjuLnkAZoqQ+cqfV73gluvz?=
- =?us-ascii?Q?iYyQTHgVCdBaDdkGq/uut1n10Vmizebvs02BMJXJvBEEmkyicJ1HghWCFr6B?=
- =?us-ascii?Q?rKWf9LMHIn40KrE5aFzIkkHsYqjLnq64CSncyk9ZvLhBcutq4SCZVbSO3oab?=
- =?us-ascii?Q?f0iV2WFJjn7YcWEv5MB7g8FUNm2EwY8G9PxAZMxbOycwhBTMb17DO5ce+7aN?=
- =?us-ascii?Q?pQimT/mywOS3JSgjzh1xTHGUV3db2mbC6+zKuSkOsDmjaB/2IGSk6NhU0aCp?=
- =?us-ascii?Q?+nQuIOL/h4ft4+7Qx86J6Y7Pr7vYWHe8UTPro6Be4D4omDskEMqUvJOKL7pU?=
- =?us-ascii?Q?Q7SuTNePsQdDBYpkfk5CLV5sp7Ds13Nop6NdIdJ+n8l7oY1YtmBKbk82+yTg?=
- =?us-ascii?Q?vsB8V51wxUXOcm88zpSIse7sg3T4+M1Cxzq3WTaVW6QdNWBif8wgodjE5Vhy?=
- =?us-ascii?Q?QyLNTsV8SBFFPhh6dSNXKslHQGHBBAPOCzZmZRVgtv+BVsH+U4Nv3I3/MCWU?=
- =?us-ascii?Q?oNzWwUQR+w7HTBjvvSjMCCMVjBiYdqjiHY5xFDjaUPBJ/1K4HVTSYXrD9Ljs?=
- =?us-ascii?Q?ctBE/tsQ4YKGZboIql20pW0xFoPSgZCr5G9u+HWzrXDmFQXCbjN/HoTNHMjJ?=
- =?us-ascii?Q?wdgqKhKyiOenpYJfmtwXOKmKmu+UdpmGHrtHgd/OsnhOqE5lafgYYpb4//ZN?=
- =?us-ascii?Q?zcHMfLp2CD+BKS8QJKg+uc990tZwwtTXOqn3OvbIlOrDMsuYFYDNIZoEn7ra?=
- =?us-ascii?Q?CzYkq/kBEXZH4aCU3/mzTD0M+1GyfapuUX14uJgfGKdP0AYj/ZIcJYbA2ITy?=
- =?us-ascii?Q?1/Tfz536Lcts9Zs40Au2WTufMHT1vA5oKKalJtQ0x2BQ3opdMya48d9yNiQ?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30EA1F4181;
+	Thu, 18 Sep 2025 04:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758168552; cv=none; b=NUHywVy/+94y7L/NFn6FdNd6TvvirjD3rGxVbuInGnE13E7HciYy05gQNtLS4dtKL912udd32L6uIKbpJpZBD3HoULpWRTVwtaOLHKkNRK2P6+VMyZIaBhAKjsVc8tF3/qWjmQF04DsqoAUP21dvyLUhEapQKx3G9O0VGodnnmM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758168552; c=relaxed/simple;
+	bh=DWbSGaeUDI+94RjG4nVLjU8+xda9a6RkuDCPS0NFvYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fStaQ5MjH98QJzcTNYf66ijrBM7cnrMLgRy7OFiqmHHAYk1nMCsFK/K7Jzqn+PSC760psJX6NzGxH9aFk+HpmXRPtqw8ia17rWJPRcgDdkCwgWjqo9Bz6+hNj6/WMA3lAa7Oo5DhOiRIsJXr4haHCwcTHWU4Yh977jmfOohnCFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeE1FzUU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC85C4CEE7;
+	Thu, 18 Sep 2025 04:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758168551;
+	bh=DWbSGaeUDI+94RjG4nVLjU8+xda9a6RkuDCPS0NFvYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CeE1FzUUm9Gp0s0l9dMYuEkT1qY9+hNwzO0zKMfnauL5MIxSYxRxRkQsMcnDF4+eB
+	 4+byZ7+cqmfE8LibXGsNEr1hXDyDnki3WkCPWY2zvwp5AOX+K9+FFXuMQVpdI8ILVB
+	 Elo3pDQHPobx5Jgnda8HvFzD5x1EE/mVL5HQ4NXc7emlRYALVJalPxTOJpQCpkx7cA
+	 /POob3n1wYHJnxF4wqrNErMCrc6QngfIh9jh4F39f+Hbx3lo6gGxAT5x0hLBr1RbqF
+	 T35D94prSMKkEabxTk75EP2UUtxTxGcb5id5V0r3ROuzUPkfrbjbn2381nX15coArj
+	 4I358aDxRP9ww==
+Date: Thu, 18 Sep 2025 06:08:51 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
+ vmlinux.unstripped
+Message-ID: <aMuF0zY_3gusK1nz@levanger>
+References: <cover.1755535876.git.legion@kernel.org>
+ <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
+ <aMeqgPVfJcjBLhl8@levanger>
+ <aMkN1m55vejTii_H@example.org>
+ <aMkvtg55F1gJ5feM@levanger>
+ <aMlKTPpNXrRW6v_7@example.org>
+ <aMlbSEnwGOPM39Op@levanger>
+ <aMqhuFQGAGtYFbRV@levanger>
+ <aMqrrjXZxYXN0zdY@example.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3ae2de1-666a-4792-db5a-08ddf668bbf5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2025 04:06:24.6517
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR02MB9409
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMqrrjXZxYXN0zdY@example.org>
 
-From: Liao Yuanhong <liaoyuanhong@vivo.com> Sent: Tuesday, September 2, 202=
-5 6:24 AM
->=20
-> Remove redundant ternary operators to clean up the code.
->=20
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  drivers/scsi/storvsc_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-> index d9e59204a9c3..7449743930d2 100644
-> --- a/drivers/scsi/storvsc_drv.c
-> +++ b/drivers/scsi/storvsc_drv.c
-> @@ -1941,8 +1941,8 @@ static int storvsc_probe(struct hv_device *device,
->  	int num_present_cpus =3D num_present_cpus();
->  	struct Scsi_Host *host;
->  	struct hv_host_device *host_dev;
-> -	bool dev_is_ide =3D ((dev_id->driver_data =3D=3D IDE_GUID) ? true : fal=
-se);
-> -	bool is_fc =3D ((dev_id->driver_data =3D=3D SFC_GUID) ? true : false);
-> +	bool dev_is_ide =3D dev_id->driver_data =3D=3D IDE_GUID;
-> +	bool is_fc =3D dev_id->driver_data =3D=3D SFC_GUID;
->  	int target =3D 0;
->  	struct storvsc_device *stor_device;
->  	int max_sub_channels =3D 0;
-> --
-> 2.34.1
->=20
+On Wed, Sep 17, 2025 at 02:38:06PM +0200, Alexey Gladkov wrote:
+> On Wed, Sep 17, 2025 at 01:55:36PM +0200, Nicolas Schier wrote:
+> > On Tue, Sep 16, 2025 at 02:42:48PM +0200, Nicolas Schier wrote:
+> > > On Tue, Sep 16, 2025 at 01:30:20PM +0200, Alexey Gladkov wrote:
+> > ...
+> > > > I think in the case of .modinfo, we can change the flag in the section
+> > > > since we are going to delete it anyway.
+> > > > 
+> > > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > > > index dbbe3bf0cf23..9a118b31d0dc 100644
+> > > > --- a/scripts/Makefile.vmlinux
+> > > > +++ b/scripts/Makefile.vmlinux
+> > > > @@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> > > >  remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> > > >  
+> > > >  quiet_cmd_strip_relocs = OBJCOPY $@
+> > > > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+> > > > +      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< && \
+> > > > +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+> > > >                           $(remove-symbols) $< $@
+> > > >  
+> > > >  targets += vmlinux
+> > > 
+> > > Ah, great!  I thought we had to fiddle around with linker scripts et al.
+> > > I needed to use an intermediate file:
+> > > 
+> > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > > index e2ceeb9e168d..516d51ca634b 100644
+> > > --- a/scripts/Makefile.vmlinux
+> > > +++ b/scripts/Makefile.vmlinux
+> > > @@ -90,6 +90,9 @@ remove-section-y                                   := .modinfo
+> > >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> > >  
+> > >  quiet_cmd_strip_relocs = OBJCOPY $@
+> > > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $< $@
+> > > +      cmd_strip_relocs = set -e; \
+> > > +                        trap 'rm $<.noload' EXIT HUP INT; \
+> > > +                        $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $<.noload && \
+> > > +                        $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $<.noload $@
+> > >  
+> > >  targets += vmlinux
+> > 
+> > I'd like to suggest another version closer to yours, as mine has several flaws:
+> > 
+> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > index dbbe3bf0cf23..9a118b31d0dc 100644
+> > --- a/scripts/Makefile.vmlinux
+> > +++ b/scripts/Makefile.vmlinux
+> > @@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> >  remove-symbols := -w --strip-symbol='__mod_device_table__*'
+> >  
+> >  quiet_cmd_strip_relocs = OBJCOPY $@
+> > -      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+> > +      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
+> > +                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+> >                           $(remove-symbols) $@
+> >  
+> >  targets += vmlinux
+> > 
+> > 
+> > 
+> > Rationale (mainly for myself to not walk into that trap too often again):
+> > 
+> >   * Use ';' instead of '&&' as 'cmd_' is evaluated in a 'set -e'
+> >     environment ('cmd') and thus '&&' may hide a possible error exit
+> >     code.
+> 
+> No, it can't hide exit code. The exit code will be correct even if
+> ‘set -e’ is not used.
+> 
+> $ (exit 0) && (exit 2) && (exit 3); echo $?
+> 2
+> 
+> Actually ‘&&’ is protection against the absence of ‘set -e’.
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+That is correct for such a simple command sequence.
 
+Putting a compound 'command1 && command2' sequence in a cmd_* macro leads to a
+mixture of non-comound and compound statements:
+
+    ( set -e; (exit 0) && (exit 2) && (exit 3); printf 'bye\n' ); echo $?
+
+thus we have a case as described in [1, "-e"], so that the exit code 2
+gets lost due to the following successful 'printf'.
+
+[1]: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_26
+
+
+> 
+> >   * Create 'vmlinux' already with the first objcopy and let the second
+> >     one modify it in order to not need a temporary file; iff one or the
+> >     other objcopy exists with an error exit code, the 'set -e + trap'
+> >     ('delete-on-interrupt') shell will remove a possibly existing
+> >     vmlinux file.
+> 
+> That makes totally sense. This will avoid a temporary file. I will use it
+> in the new version.
+> 
+> -- 
+> Rgrds, legion
+> 
+
+-- 
+Nicolas
 
