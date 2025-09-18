@@ -1,172 +1,320 @@
-Return-Path: <linux-kernel+bounces-823478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04999B869B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:03:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5D3B869CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A245E1C86E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:03:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E31D54E358B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBAC27F4D5;
-	Thu, 18 Sep 2025 19:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C572D3745;
+	Thu, 18 Sep 2025 19:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="exmwFH77"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010027.outbound.protection.outlook.com [52.101.56.27])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ERQ0hiWd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6682E4A2D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758222183; cv=fail; b=uvAAnX6iDaEPwVegXhvO0hNGGSmBcRHfWTWlnwwwe2507EtcoFRg6q4I4pMAylHKvAOMqYRLW9dR/p14BN2nT4VB8fjSsnz4Jg6H2DRB4xi9LDRYz8PIM1aFnmmj/MtK+3iQMKUGRp4Tmc23OcJhCxRMJuWbE0/aEVrEj5U1x3o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758222183; c=relaxed/simple;
-	bh=VnCNNyyYjRtv/rCAGznlvQ7ArD1L8rvADjX21SkwyYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eoT9xmuoNvuWum1fcnxqHo9TH1YR6tELYISQNPZK84+evEs3v7ii+BSd1IKopbrwflsEnERJownM/2+aZ9t9j+HwDeWO+7Awpw1YTKcjOTmtBzMit5plCpxTs8T8fhhGHs7tLn/9HTjslPn/ISRSYU6HmzLlrYLl+GwbZFtkrhM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=exmwFH77; arc=fail smtp.client-ip=52.101.56.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QMHsRrbV74zn1D+DhvRAKaeO02X/Ro0B7nw2uqoNi9Zv6EtNbhXu6m/M0JxFgt3tZuFUn7IAJZTkFAJU/5/FWsjrkjbfB6HEJz08/mhspwswtVacS/DBWO3b0tgMYDCsz1e6E1c3E5GivSHOpo9QZc4TEE0Oj2S5CejfdLgHeRTlBD0dzeDWYwz/iH1nzHr2X92+xUPvSqYo3BV8+eTpZ1cCK0JBByGfpmn7Oy/tEKwwXZd++FJgP6FvdUfyAqjLo3IbkYU9B6UOk/JBycm4c0ojTqKC8hTYRBGrjKljzHKf7XqVk91UQ+szy4/0Tq+6PDNMmjhyGzPWub9MzUGUdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BEcuv+XDy7/hET3myIMfpdjcxotlOan4GELnUKtIBQU=;
- b=XyEGcL/0Wn4bswHFW/NFYBPMlfNgrYQFBaXhCYZiExC4CScDGzREykZevvunGEyj5a3qjq78DQom89nt+gy49YG+eqX2AWT7puPsUC/BrexV4cu3oXukOmiBd3Ub7jeK+Ip0ig2CXtLE6+MIfPEd/BEPD1lUXxhclLcARaoTaHD55acPsfWE/XQoE7ZlW7WQWPL6EjjZE0+4TIYCJJpf46DRrsY5Tq5HGmiH/TrOQ3PVz6Ttptn5nD0v4wDaoso9sTXBFmVWqobFlYJCz+9Mr2tGMooJrRK3qsPkKcs7vN/9677xTunBQkgxHanVLOqQBQ/JW/eM0YWdF7CopiZy4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BEcuv+XDy7/hET3myIMfpdjcxotlOan4GELnUKtIBQU=;
- b=exmwFH77mA5gH4rmIMLuFLp21H29/7HT66gz5CrQ9Ok227nAIgpK6SKnepUCPXGuV37u2QO79xxtuBnqhM1LoLXqIY1t9eu6xyI2t7s9PVN7JUyW8Q+YXND+/z5z3+aC0txnNe86YzgVfJla8OZ4KU1jjB+AM2br0tJERkYxwU2weX9yN2cyBunkY64HJOUFxrVLQsn5QT1a5t1iLPXnfWRFGa5p5ZRrfW7LU2q4O+xCeSeiqpk9NQAmws1U3WyOh8xnofbIx6EQ4Z3v8qSprZwE2Gq3xVT9zi5wKSLan98pzl5NDxVOurCd3+e8RwOXOyV2YGLOIzeYXD3Aj/EDCA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SN7PR12MB7956.namprd12.prod.outlook.com (2603:10b6:806:328::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Thu, 18 Sep
- 2025 19:02:58 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 19:02:58 +0000
-Date: Thu, 18 Sep 2025 21:02:43 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 sched_ext/for-6.18] sched_ext: Add migration-disabled
- counter to error state dump
-Message-ID: <aMxXUwulcGrLdTFl@gpd4>
-References: <20250918170602.2441024-1-arighi@nvidia.com>
- <aMxWAhJlE2Ah-f8t@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMxWAhJlE2Ah-f8t@slm.duckdns.org>
-X-ClientProxiedBy: MI2P293CA0004.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::15) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3E934BA3C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758222330; cv=none; b=FFWcL9vnybTcoCVSLwhttxW3QysPGFxK8X8tnaUP3MDkMAuEsk10LaDxG9aWl6DVVX9xARp5X81HafLJwJ6IGGzCcuXJynn/GgFNhMiDRMipSfK6nssHmLzseIJ42oV27w9y4FNISqDHX1I2KNO/88O5wBqksj2Dh0f7XRfiX9s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758222330; c=relaxed/simple;
+	bh=L8Q4kES265N0bPdrK3OJGb8b/G8wOrKW6p4eJ1orclo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0MQHxc9pGTEXe4Es+bgxRtcy6dZSsb5F3dMwtPTzh/lDfW6jTVOx20XoRQj0eT1Wa2xDj6hRh4vh9WYChNPrLznjlpjmlIb+CrAiFznNrUo5a5cIoeGyoDFOI0T2Z4tkWpIfWhG14VG/UcEpU8Y1GfiolA/SuIyS7MJKlWPewM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ERQ0hiWd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58IIL107009777
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:05:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yTnlkubgXN3pvYwP0kv0Ntpu3yy4hFj+2++sr6eyVII=; b=ERQ0hiWdhED1+hVs
+	J0/MeEEi0+IZV8Upbxj1WTjsAlPdz02EhLlQiC1Kl11q1uYZjkrutpYzbQHqQGGm
+	SSz+DkfXX/RFrDyl8BMDgncFh0Sevew1eS0zCiAsoyPTKK9WuVh+w9AfC8d3eSWg
+	ZDA8T4i/nFfFt+miKxjqGJ/Tkh/f5PJBqEniqygBvWhhpoX5zNd794bLRNaP33CT
+	1M7muhKKCGGe2XdJyPCyPLO2hqha4UmKpOzF551pkQJObmMNZBzXTGKkMuN502Ez
+	dAE7HPAkyvV9ozsenswUZj0uF+JMFusBjOlMj2no4JKU/+i5vK04bHD452chchWQ
+	XnuGEg==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 498q9d859u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:05:26 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-718cb6230afso23452696d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:05:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758222326; x=1758827126;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yTnlkubgXN3pvYwP0kv0Ntpu3yy4hFj+2++sr6eyVII=;
+        b=GQz/6OV0kIaPbiuKRqQRhagxNXi8RGfWhB2IqWtHSNY/EvozYwlkeThHrqnnROVk+X
+         WcD65G/LQDzWe6nG52+OUAUXzK5Q6dztfbxgg+m2FHTVs+ggRmTifa/Cllj+5vGadhkT
+         OWmRfyTV5RPcx1/xi8T2Y2qOwPrFqwZtxFatYs6+CXzrw2hA4s+ckrrH6xCdbo3ORSDm
+         isFqPsq/qHj/yCQOBJNPHPN9pcrvQtAoEu0uYnLD2SaRH973Za/tkqoT4U0RkAid35IU
+         uc85BfZCz44gILfxlsnwDsAB0lSq+e2hwbgElwtX3NRcE9RYCZiVu+6FcV8gZAnksrw7
+         efpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfH7/xjKa9gK9x2QkuITAOodV/9kZdVSIiW+4VAKgz2pR0+AGYUX0EZNBYTHC6dgzFpTNPmeLWHEZNgJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz2QToK1pErjwzkxvWcOfbdciz8YBd/EYlli5kp3QGGjyn+XPx
+	ntbna7YJLjkj7H9jZMR5JiurFknllSDIoewvLmb1PNk/wqXgJy2dyfXDVsnTFk5NAhYI/5wErfG
+	SEGG6Wg+4AmGdoqRGiT8pgBwWdwTjM6/rK1tbWZSe6eogvR+qxBsFxycWSDqszp7W+H4=
+X-Gm-Gg: ASbGnctM9OX1qb+nIlWIpoNzYqp6lQhIlZ/PQs4+4TxQBAHSS52S4WquQ+hOERT6PI/
+	zubKChOEQkj+8s3EayYXMW855+adYkz9pqOwbs0SbLxssPQOFSU0UjZTUkFfUqQ84cMkaJdpn1S
+	cyXqXurZ9sCBaxqbn1KocqaLsNL94Ki207PsdP19NnzWG+wwCLTPewibhwg+1uLtT5MDiEqNUi5
+	5EM9iKoLkMi+S5ToorsP7Ta+BofZFMMeJvW4NCPzqwKPkQpInkzB3atchAMt+Wd7M1Wmj9xpHAG
+	9kd6Ao79snWr7CtQTLkKOvg2QAQHh3DZzeRPP5SR4i8+Dho8hCYRzmkMUh+qMMM1yxsA+Vl1E6l
+	oqjRjPYcZeEcLbW+bHaYb8s2M73ki3k01QAwDnXt9hkTafXzmDjqf
+X-Received: by 2002:a05:6214:2482:b0:780:6e19:8ed with SMTP id 6a1803df08f44-7991e49eb72mr7161886d6.65.1758222325861;
+        Thu, 18 Sep 2025 12:05:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEm4oJ0+aXHSlFoCgy0RIeo++8o8ouiSBaRi8HkPi1nbfIvBuioYVVK0oJj5NFbUoBqHtRQEg==
+X-Received: by 2002:a05:6214:2482:b0:780:6e19:8ed with SMTP id 6a1803df08f44-7991e49eb72mr7161156d6.65.1758222325187;
+        Thu, 18 Sep 2025 12:05:25 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a26cb93bsm7775931fa.16.2025.09.18.12.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 12:05:24 -0700 (PDT)
+Date: Thu, 18 Sep 2025 22:05:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Rob Clark <rob.clark@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 2/5] drm/msm: split VM_BIND from the rest of GEM VMA
+ code
+Message-ID: <oepspnsohjueyafzk6c2qp2o7vhh4eax73po4byejacujyoiam@7avjrl6alhq2>
+References: <20250918-msm-gpu-split-v5-0-44486f44d27d@oss.qualcomm.com>
+ <20250918-msm-gpu-split-v5-2-44486f44d27d@oss.qualcomm.com>
+ <CACSVV036k+VwtLEvX4ATG7h7fTpXAzUuOZr9AY4WzwJWFvw0zQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SN7PR12MB7956:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f56eba5-9b7e-4674-58b0-08ddf6e5fb36
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jYCyYKU2yt4Pr964d5pXKF8e40Q4qpjqFjL1Z9DJ3lEAzqh1rNNajX87xS1q?=
- =?us-ascii?Q?niVcOvrUPArQkObsT1ZjSMkrGWZE3qTfcGhZRoGgd78wKlBFy72DGdNsXIyq?=
- =?us-ascii?Q?Rx4ywr2XNxzPmGJGBKQhsjCLrlYaYsV4TAKHtb7ndFoQzO8A+FaPNQLijH8d?=
- =?us-ascii?Q?hzpX8dJGZUwLtyMYgn/6eI5NUaxgGbmcAjJmkPGGoLLN1wVwt4mr1Urbsw0w?=
- =?us-ascii?Q?KBP/Lod7gnFNdpZ7tWB3+uzjBVLdnqqKOEdyRQRE4qOIyGzVZHC4br+VktUZ?=
- =?us-ascii?Q?Ff6TgOdMLpAY5rXEAfOCxci9/Cb6goCzf/uVuDgerQeRIY1vC+4WzKlRs/rB?=
- =?us-ascii?Q?YB6VlAEilw2H/lH42S/2kMuoF3SGRPaL7uhcKzCgxGbmZ93q0O6vg0XGQEU0?=
- =?us-ascii?Q?sGRDYJwD6eKICODMdPicyuJ5W2RgCjP4Z8oq3itPzrDYCEKAzNAeBr9AoSrT?=
- =?us-ascii?Q?8ue3WUkUqfg6mZJ1DlRPxzakqPw8bO0IauX7LmK1rtlXLVk9Hf2ixeu3rcPm?=
- =?us-ascii?Q?e55vSj1OdtDY0zLrMflk3na6NdE7o5M7nTJ7lnzTn6Vn0cQeg+qd48CMmXBx?=
- =?us-ascii?Q?kM5uo+d0mJuoEudyqbDYSjWROzHhvJr6xAJYCZhWpDwH4Q9nVAnnoa6Ubies?=
- =?us-ascii?Q?HtMM4vxG54LqHtpSbNjoWALjuvxsBBVfQekxG/UqGtCb8z0PgvbP6kfbqday?=
- =?us-ascii?Q?ybNmr8OBpvnEWbh94iqrPi8if5DL2LN/M9rz9AeyT7DQZya4IvUpDDkgrU8J?=
- =?us-ascii?Q?ltenPwkAR2tuzSS0HAFcUJevDATOWqAtrSkm0o4HwPcIUUObOArl3eNmSuSM?=
- =?us-ascii?Q?f+YMKrqBlZsaSyYeX1he4D2Nvf2+U/sWuTOMs4l5pJ1/9a1ZxAp10v1QAFUh?=
- =?us-ascii?Q?C732dYlugz5HzqzM33tdBNjkPrQI8q9K108SNnUhTKQUfKezrYXC5MxMpN4J?=
- =?us-ascii?Q?ZbNyY55vUDjwDpdAU/dcDm5219TldGh49aEPlC6bPHIlIF+aRAXznC5YAHY4?=
- =?us-ascii?Q?H7P8HwWfumOYoY662PKZfH8zKWAGQ75bhbR5b5LZyOWiaCeSyeGVLaMDQcVW?=
- =?us-ascii?Q?OGvDuDthmyRu45ERJaSs+OxfCcCsre/EQt+xEMfQCrt6M/zP2kUnPopfZ1FF?=
- =?us-ascii?Q?t1jTWT9h7cx4BVceQcJGRtu3WTovvIWgqozZ4BtpjR0uuWQ1vV1FQx2G7LY5?=
- =?us-ascii?Q?+NNMOf6+R+QwyJ+3oaabm8lFMhr3my8S8gvIpMPAHq5UeAyb3wQDDQL0POPj?=
- =?us-ascii?Q?KEQj0uV+VKqZCwo0nY38I+fHYZ/xlBQ/U2gM8EFTLsOWSlYgOtvrP6bOQUY2?=
- =?us-ascii?Q?mtyRXqo81g8XOGzNmImlP+Hu0ZMH9gE7uTYnktQ2ChdZ55erkZYykZ8Hg0R9?=
- =?us-ascii?Q?MbSAHCHv2N+S7mCa7fQJ/s3vqioKnmYJkdwBZyJ3HrvnJA9Qdg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2nLPuPjI+v97yY0sb24g8zbZd6G+jMqaS4XfemhVNRzplvfHYDKSTpcm/SRy?=
- =?us-ascii?Q?UY0RTH7bHHYOxbpJGfyHAbRrtElY4M65TYnGFTxqOMP/2RvuboqFq0H8azft?=
- =?us-ascii?Q?LtQIwLSliswGM8a+du2kA4GF/HP1lhtXoHFYiC45iL/ABtNu5prRXmIesq//?=
- =?us-ascii?Q?58RB8eo8s2mnLH0c1kWhfkopF41rMin64BWr09jivKfBYHnfhKxLCu+8325W?=
- =?us-ascii?Q?el9tl39l1XJrTooKdfY8xexroLseHyW0Ar/qI2APT2o7zBRjD8eaNuqeBRkJ?=
- =?us-ascii?Q?vrWi2TFucXbOdaxFk+4N0aCXYRaxjMmLhrFQqcEfcklNFXeDf9XMIU+89sju?=
- =?us-ascii?Q?OxY5StzIRQceP9ZpTdQe7vbZk7/DlvA2E+yIcATeyscxoZMxrWlfYZMUMEFO?=
- =?us-ascii?Q?SWuxZJy8l6qmGPZ0+kjINfcXTUWoVOi+6Ykk/kOUyxETBLO7QCq4xWHrNeRZ?=
- =?us-ascii?Q?USs2OFcAIqWErjaWMVS/gqZVaagvNiXzM018C05d2Ik4uzY7+H5DvOjec/2J?=
- =?us-ascii?Q?maEPFaDirFrQfkiQCgx3ts78j5c9TgK9MYDaExsIV/CRqSaQ9kRCr2lrKErD?=
- =?us-ascii?Q?ycTZjim06+C9PORKU9kOkTSygDWeVekY9SQV9XZXd2AQkziFbt+rYDII0CUL?=
- =?us-ascii?Q?qb8MUjdf417id9wdh6H+AsZ/MhDqUXou6B1odOfY6JS1jDAzF0b7OHK3gUxn?=
- =?us-ascii?Q?m4uFPjx+DnH1PNNeXolLpS0/M7x1Yxj82c2eYumysoMyhZhulYOHHTT3KrmU?=
- =?us-ascii?Q?HHayzbTOQmtqfGEVLnouIC6quZK7/8HIJqVZH5vRED5dKLTMnXIYqM1BGT0D?=
- =?us-ascii?Q?ILt/cXRg+iGh4HD7veM5Emv4+Eluoplrd85eMUzpU0v290yLAYQkoSsu+XkD?=
- =?us-ascii?Q?6Uz7H/ejsqwNFXx82HTX/8Q75c58egR5DnLZlm3uF3I4ejACZ5/xRUqKcW7Z?=
- =?us-ascii?Q?22WJX+Z6wMoCN/qpLZlGCu0jQ4AXN49kUrp7VPVVfJrz5MlE8NaDsNWnZfGt?=
- =?us-ascii?Q?Ze5wv5DHXUtI8of/j0GetPLIt65aLQTrxBkRZ4xCm/6piBNrtWlviihuINGe?=
- =?us-ascii?Q?6dQiP7cKdULNSlL/Hcpy+bjP4asgH7MbUsnX1K/QZX2l7uTLaLQc0mLbefg2?=
- =?us-ascii?Q?R5cQPm6Cf2Vpmt0pWs9Ui/6B2FIcEgI2skkDB07XyXKuOihfzrJO11xIwNpn?=
- =?us-ascii?Q?WIpnDcrDC7wA8ZrS9xHjIH0R3OBw+oxO+sQ6D3ZiI7b2TK2XLBHOxkv1dV6W?=
- =?us-ascii?Q?Okkt2Vq50wGfuH+CezSJSPmvLNcL86/x9tTddVtFZFvCRKCYvrrn9CeExovO?=
- =?us-ascii?Q?Vh644cCYK6oB9/DwF0PcJJF7QwC2yZ5fok6FczMYfa9oKhULmQkmqnPEYLeG?=
- =?us-ascii?Q?xnydxVyFA4o4tIvOG7g37DAtD7V4Jy6CdC+gSUAR1UAyNQw/2uQ9+679e99k?=
- =?us-ascii?Q?gskoznIIVs2g6QWxzVcsX4avablmyRrKfktQXTQ+TgemgfdXOfQyDF64HDY9?=
- =?us-ascii?Q?Reafwvqjxw42exAV9gfHVGR2VTwOdVLpy/f4lf6KGzOIP+JSD3AL/7z5saV2?=
- =?us-ascii?Q?TwXeEEe9cnt3I2QV3TXIg2+YCK4OazvyKfYStv9S?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f56eba5-9b7e-4674-58b0-08ddf6e5fb36
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 19:02:58.4896
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2sFa9729kchEDPpZkPBdm8taEt1oHZJtmkGis4xKDop1XoAzpw+XCFNJECWQS2eHR1LtmArzgNOidmfldAio9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7956
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACSVV036k+VwtLEvX4ATG7h7fTpXAzUuOZr9AY4WzwJWFvw0zQ@mail.gmail.com>
+X-Authority-Analysis: v=2.4 cv=YsAPR5YX c=1 sm=1 tr=0 ts=68cc57f6 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=YIf0c4_oue8ogryinRwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-GUID: jMKiGplj7uK8JFWNqxqIqk_sGvAP0zhZ
+X-Proofpoint-ORIG-GUID: jMKiGplj7uK8JFWNqxqIqk_sGvAP0zhZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE4MDE2MyBTYWx0ZWRfX55Or9ZOVQIIt
+ PUpQr6KylSukD+ufPT3xQQ++7M52S9sNMZ12isr39GcgTEPAk3uffNjEAfjVetC+pcPGs1ElWTU
+ exqIH5LaaWzfuH+X7Ublzrh5XSvjEd23BZwsQDMg1/A75kfx7SxqW4XqZBq55lw8qk4pVHXwLjA
+ QUv+4F/v6OzEMiqRyh50dMF50z80ApR1jXIHr9kmNN/1Nn2ElYVbU4D/VUS3j7W0no1/EE6FW+C
+ mWZNGvVywPJEMYmlE7hjQKcCXjLrUAOTEyRg4cRESRqICf5LIdakVT2eHyphamct0ERpv8z97nO
+ RTTW2y/N9mIkKrxX1+BN8d6jnIxFCZ5zZubuc0BWQxqR48srGOb1Aw0sEUXQIMkc5yJsSZj87IZ
+ m5ewuLuK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_02,2025-09-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 spamscore=0 clxscore=1015 phishscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509180163
 
-On Thu, Sep 18, 2025 at 08:57:06AM -1000, Tejun Heo wrote:
-> On Thu, Sep 18, 2025 at 07:06:02PM +0200, Andrea Righi wrote:
-> > Include the task's migration-disabled counter when dumping task state
-> > during an error exit.
-> > 
-> > This can help diagnose cases where tasks can get stuck, because they're
-> > unable to migrate elsewhere.
-> > 
-> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+On Thu, Sep 18, 2025 at 07:46:32AM -0700, Rob Clark wrote:
+> On Wed, Sep 17, 2025 at 8:51 PM Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> >
+> > In preparation to disabling GPU functionality split VM_BIND-related
+> > functions (which are used only for the GPU) from the rest of the GEM VMA
+> > implementation.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > ---
+> >  drivers/gpu/drm/msm/Makefile          |    1 +
+> >  drivers/gpu/drm/msm/msm_gem_vm_bind.c | 1116 +++++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/msm/msm_gem_vma.c     | 1177 +--------------------------------
+> >  drivers/gpu/drm/msm/msm_gem_vma.h     |  105 +++
+> >  4 files changed, 1225 insertions(+), 1174 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
+> > index 0c0dfb25f01b193b10946fae20138caf32cf0ed2..d7876c154b0aa2cb0164c4b1fb7900b1a42db46b 100644
+> > --- a/drivers/gpu/drm/msm/Makefile
+> > +++ b/drivers/gpu/drm/msm/Makefile
+> > @@ -115,6 +115,7 @@ msm-y += \
+> >         msm_gem_shrinker.o \
+> >         msm_gem_submit.o \
+> >         msm_gem_vma.o \
+> > +       msm_gem_vm_bind.o \
+> >         msm_gpu.o \
+> >         msm_gpu_devfreq.o \
+> >         msm_io_utils.o \
 > 
-> I did s/nomig/no_mig/ for a bit better readability and because other keys
-> are using _ as word separators (e.g. dsq_id).
+> [snip]
+> 
+> > diff --git a/drivers/gpu/drm/msm/msm_gem_vma.h b/drivers/gpu/drm/msm/msm_gem_vma.h
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..f702f81529e72b86bffb4960408f1912bc65851a
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/msm/msm_gem_vma.h
+> > @@ -0,0 +1,105 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copyright (C) 2016 Red Hat
+> > + * Author: Rob Clark <robdclark@gmail.com>
+> > + */
+> > +
+> > +#ifndef _MSM_GEM_VMA_H_
+> > +#define _MSM_GEM_VMA_H_
+> > +
+> > +#define vm_dbg(fmt, ...) pr_debug("%s:%d: "fmt"\n", __func__, __LINE__, ##__VA_ARGS__)
+> > +
+> > +/**
+> > + * struct msm_vm_map_op - create new pgtable mapping
+> > + */
+> > +struct msm_vm_map_op {
+> > +       /** @iova: start address for mapping */
+> > +       uint64_t iova;
+> > +       /** @range: size of the region to map */
+> > +       uint64_t range;
+> > +       /** @offset: offset into @sgt to map */
+> > +       uint64_t offset;
+> > +       /** @sgt: pages to map, or NULL for a PRR mapping */
+> > +       struct sg_table *sgt;
+> > +       /** @prot: the mapping protection flags */
+> > +       int prot;
+> > +
+> > +       /**
+> > +        * @queue_id: The id of the submitqueue the operation is performed
+> > +        * on, or zero for (in particular) UNMAP ops triggered outside of
+> > +        * a submitqueue (ie. process cleanup)
+> > +        */
+> > +       int queue_id;
+> > +};
+> > +
+> > +/**
+> > + * struct msm_vm_unmap_op - unmap a range of pages from pgtable
+> > + */
+> > +struct msm_vm_unmap_op {
+> > +       /** @iova: start address for unmap */
+> > +       uint64_t iova;
+> > +       /** @range: size of region to unmap */
+> > +       uint64_t range;
+> > +
+> > +       /** @reason: The reason for the unmap */
+> > +       const char *reason;
+> > +
+> > +       /**
+> > +        * @queue_id: The id of the submitqueue the operation is performed
+> > +        * on, or zero for (in particular) UNMAP ops triggered outside of
+> > +        * a submitqueue (ie. process cleanup)
+> > +        */
+> > +       int queue_id;
+> > +};
+> > +
+> > +static void
+> > +vm_log(struct msm_gem_vm *vm, const char *op, uint64_t iova, uint64_t range, int queue_id)
+> 
+> These would have to be static-inline
+> 
+> But overall I'm not sure how I feel about this.. I guess the goal is
+> to reduce the size of a kms-only driver?  If so, I think you could do
+> better with some ugly ifdef (for ex, you could also remove scheduler
+> and other fields not used by kernel managed VMs from msm_gem_vm).
 
-Ack, looks good to me.
+More or less so. I also wanted to separate the complicated parts from
+the simple GEM parts, but I see your point too.
 
-Thanks!
--Andrea
+I was also trying to trim the dependencies, but this can be #ifdef'd.
+
+> I'm not sure how much the savings would be, or if it is worth the pain
+> (ie. extra build configurations to test going forward, etc).  Having
+> no GPU doesn't seem like a case worth optimizing for, tbh.  You could
+> still have a single driver which binds to multiple different devices,
+> ie. if # of GPUs != # of DPUs without this with no change in
+> footprint.
+
+Counting GPUs and DPUs isn't that easy, because this also makes things
+assymmetric: some of the GPU/DPU pairs can be handled natively, some of
+them need to have buffers exported and then imported. We also have a
+usecase of splitting the GPU driver because for some of the workloads it
+would be better to load just the GPU driver or just the display driver
+(possibly replacing the other one with the proprietary driver).
+
+> 
+> BR,
+> -R
+> 
+> 
+> 
+> 
+> > +{
+> > +       int idx;
+> > +
+> > +       if (!vm->managed)
+> > +               lockdep_assert_held(&vm->mmu_lock);
+> > +
+> > +       vm_dbg("%s:%p:%d: %016llx %016llx", op, vm, queue_id, iova, iova + range);
+> > +
+> > +       if (!vm->log)
+> > +               return;
+> > +
+> > +       idx = vm->log_idx;
+> > +       vm->log[idx].op = op;
+> > +       vm->log[idx].iova = iova;
+> > +       vm->log[idx].range = range;
+> > +       vm->log[idx].queue_id = queue_id;
+> > +       vm->log_idx = (vm->log_idx + 1) & ((1 << vm->log_shift) - 1);
+> > +}
+> > +
+> > +static void
+> > +vm_unmap_op(struct msm_gem_vm *vm, const struct msm_vm_unmap_op *op)
+> > +{
+> > +       const char *reason = op->reason;
+> > +
+> > +       if (!reason)
+> > +               reason = "unmap";
+> > +
+> > +       vm_log(vm, reason, op->iova, op->range, op->queue_id);
+> > +
+> > +       vm->mmu->funcs->unmap(vm->mmu, op->iova, op->range);
+> > +}
+> > +
+> > +static int
+> > +vm_map_op(struct msm_gem_vm *vm, const struct msm_vm_map_op *op)
+> > +{
+> > +       vm_log(vm, "map", op->iova, op->range, op->queue_id);
+> > +
+> > +       return vm->mmu->funcs->map(vm->mmu, op->iova, op->sgt, op->offset,
+> > +                                  op->range, op->prot);
+> > +}
+> > +
+> > +int msm_gem_vm_sm_step_map(struct drm_gpuva_op *op, void *_arg);
+> > +int msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *arg);
+> > +int msm_gem_vm_sm_step_unmap(struct drm_gpuva_op *op, void *_arg);
+> > +
+> > +int msm_gem_vm_sched_init(struct msm_gem_vm *vm, struct drm_device *drm);
+> > +void msm_gem_vm_sched_fini(struct msm_gem_vm *vm);
+> > +
+> > +#endif
+> >
+> > --
+> > 2.47.3
+> >
+
+-- 
+With best wishes
+Dmitry
 
