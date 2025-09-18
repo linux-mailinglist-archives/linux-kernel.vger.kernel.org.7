@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-822734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42669B848C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:19:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C364B848CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F52620F53
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6734D544475
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D58C245022;
-	Thu, 18 Sep 2025 12:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZdcrRiYG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A17A2DEA74;
+	Thu, 18 Sep 2025 12:20:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB6818BBB9
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A96B262D27
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758197977; cv=none; b=Nop3uTYx4mSY9Lfi/ZmzF0MRjoIv5w74V46lBTzTzxbfJgsswvQWLJM2FouPZSPKYxktDTKeLBOI7CA/eN14mmoehhZJU7ZAW8peuc430Nnt3VJXyEIbBXGo8VwpZkMtgeupdyP/n2RQG/5Xd2mqbxQH2xenJxlTBZARm+mRmSc=
+	t=1758198000; cv=none; b=L9zlfXiSrn837CGK88HI3hiIzgg4tvkNwavcXMnjLg02g3bOaXwetnw96VE+Cs09VeyZ7AkcTaDyWdH0VfBH7Uk6827xIbXn76ISWwfgPVJGvMoGt4Fl3Y/QvW0ed+vY1USg9U9U4aSRkzf49EDFBAIM2sjyun1j9BedqBJx2OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758197977; c=relaxed/simple;
-	bh=OaCB53Z5SxqHSpEbGWruf27ccEnxMfEFjrfpUpX4zs8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T2K0CYQl9JZj7DZ0j7cPidrvUc8vUZtaf+FHndUCDHDrstxiEZttLgWpiq/zagGW3BJ//x06ZtKfQTT3ush54XF5ARlCM4APYWUNloi47Nxa5hKyFD0+wJylokwR6bU5R4Ae39IP9Gy3D6N2pH7+3YXkUcjYrsLbY06ef58zFQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZdcrRiYG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758197974;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oLHeVQ1V5+rlFvLH0NK0a8N3VCQk3wWRUgjhebQLwJ0=;
-	b=ZdcrRiYGVlaQHYQBqqqoxOA5ipdHdMg/89+pftET9IRE6Z7n/w7WHNi1+kr/0A4JAFD0Rb
-	mCZB1XpmBcHH2id0PpFsdNTwkooHVmP+B51UtaHWU7/RONSB1XEKci/U1bfXHmBvrwPQX4
-	yS+gxrVLhaxvWF2PJlWUC+tzF/Q9XKo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-496-GLAfXEgDNni5Jft2awUMDw-1; Thu,
- 18 Sep 2025 08:19:33 -0400
-X-MC-Unique: GLAfXEgDNni5Jft2awUMDw-1
-X-Mimecast-MFC-AGG-ID: GLAfXEgDNni5Jft2awUMDw_1758197972
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 64ADD1955F0E;
-	Thu, 18 Sep 2025 12:19:32 +0000 (UTC)
-Received: from corto.redhat.com (unknown [10.45.224.90])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B75711955F19;
-	Thu, 18 Sep 2025 12:19:30 +0000 (UTC)
-From: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@redhat.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@redhat.com>
-Subject: [PATCH] vfio: Dump migration features under debugfs
-Date: Thu, 18 Sep 2025 14:19:28 +0200
-Message-ID: <20250918121928.1921871-1-clg@redhat.com>
+	s=arc-20240116; t=1758198000; c=relaxed/simple;
+	bh=FsXTDizrH/4gfOwdWNseCJsGuPazREdG9eV/96rDM88=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VZkbXCXBX3g1G8h5flRc0wNEsQU53vTV2Hiet5GOcHOYEcY2LyIRsZlSdmz5u4VUG97cVq88AdJSp5K8RqBImpO6XqQSHFQT/OTldlfG7eLcLvK8noy5zShAv5PZk69oXDna3Q2ce9u9ZT17GKchr5/BrKw5bmCISrAXAdvSFAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1uzDc7-0006mw-9i; Thu, 18 Sep 2025 14:19:51 +0200
+From: Jonas Rebmann <jre@pengutronix.de>
+Subject: [PATCH v2 0/3] Mainline Protonic PRT8ML board
+Date: Thu, 18 Sep 2025 14:19:43 +0200
+Message-Id: <20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN/4y2gC/13Myw6CMBCF4Vchs7ZmiuW68j0MC7QDTCKlabHBk
+ L67FXcu/5OcbwdPjslDm+3gKLDnxaTITxk8pt6MJFinhhzzAiuUguetnq2wbq3np0B5p4sqa1U
+ WDaSPdTTwdni3LvXEfl3c++CD/K4/qZH4JwUpUAwaVU9aFmWFV0tmfK1uMbydNUEXY/wAhrRJo
+ a8AAAA=
+X-Change-ID: 20250701-imx8mp-prt8ml-01be34684659
+To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, Jonas Rebmann <jre@pengutronix.de>, 
+ David Jander <david@protonic.nl>, Lucas Stach <l.stach@pengutronix.de>, 
+ Oleksij Rempel <o.rempel@pengutronix.de>
+X-Mailer: b4 0.15-dev-7abec
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1358; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=FsXTDizrH/4gfOwdWNseCJsGuPazREdG9eV/96rDM88=;
+ b=owGbwMvMwCV2ZcYT3onnbjcwnlZLYsg4/ePJl6u3r7nvYpst9cU93nbZa5ffJtw/uvyt7Nh36
+ BY3X3AK6ihlYRDjYpAVU2SJVZNTEDL2v25WaRcLM4eVCWQIAxenAEwk5Tsjw/r7Lp/mLmf7tWZP
+ ZMrkzXf8ZI6bZe1b+Pi6Bktm3uaipbwM/0zyi2/dZIx5e6Xqa+Oi4tdTiyqde4LFl2t/z2DWO66
+ 3lhkA
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-A debugfs directory was recently added for VFIO devices. Add a new
-"features" file under the migration sub-directory to expose which
-features the device supports.
+This series adds the Protonic PRT8ML device tree as well as some minor
+corrections to the devicetree bindings used.
 
-Signed-off-by: Cédric Le Goater <clg@redhat.com>
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 ---
- drivers/vfio/debugfs.c                 | 19 +++++++++++++++++++
- Documentation/ABI/testing/debugfs-vfio |  6 ++++++
- 2 files changed, 25 insertions(+)
+Changes in v2:
+- Dropped "ASoC: dt-bindings: asahi-kasei,ak4458: Reference common DAI
+  properties", applied to broonie/sound for-next (Thanks, Mark)
+- Updated description of the reset-gpios property in sja1105 binding to
+  address the issues of connecting this pin to GPIO (Thanks, Vladimir)
+- Added the fec, switch and phy for RJ45 onboard ethernet after
+  successful testing
+- Consistently use interrupts-extended
+- Link to v1: https://lore.kernel.org/r/20250910-imx8mp-prt8ml-v1-0-fd04aed15670@pengutronix.de
 
-diff --git a/drivers/vfio/debugfs.c b/drivers/vfio/debugfs.c
-index 298bd866f15766b50e342511d8a83f0621cb4f55..8b0ca7a09064072b3d489dab8072dbb1a2871d10 100644
---- a/drivers/vfio/debugfs.c
-+++ b/drivers/vfio/debugfs.c
-@@ -58,6 +58,23 @@ static int vfio_device_state_read(struct seq_file *seq, void *data)
- 	return 0;
- }
- 
-+static int vfio_device_features_read(struct seq_file *seq, void *data)
-+{
-+	struct device *vf_dev = seq->private;
-+	struct vfio_device *vdev = container_of(vf_dev, struct vfio_device, device);
-+
-+	if (vdev->migration_flags & VFIO_MIGRATION_STOP_COPY)
-+		seq_puts(seq, "stop-copy\n");
-+	if (vdev->migration_flags & VFIO_MIGRATION_P2P)
-+		seq_puts(seq, "p2p\n");
-+	if (vdev->migration_flags & VFIO_MIGRATION_PRE_COPY)
-+		seq_puts(seq, "pre-copy\n");
-+	if (vdev->log_ops)
-+		seq_puts(seq, "dirty-tracking\n");
-+
-+	return 0;
-+}
-+
- void vfio_device_debugfs_init(struct vfio_device *vdev)
- {
- 	struct device *dev = &vdev->device;
-@@ -72,6 +89,8 @@ void vfio_device_debugfs_init(struct vfio_device *vdev)
- 							vdev->debug_root);
- 		debugfs_create_devm_seqfile(dev, "state", vfio_dev_migration,
- 					    vfio_device_state_read);
-+		debugfs_create_devm_seqfile(dev, "features", vfio_dev_migration,
-+					    vfio_device_features_read);
- 	}
- }
- 
-diff --git a/Documentation/ABI/testing/debugfs-vfio b/Documentation/ABI/testing/debugfs-vfio
-index 90f7c262f591306bdb99295ab4e857ca0e0b537a..70ec2d454686290e13380340dfd6a5a67a642533 100644
---- a/Documentation/ABI/testing/debugfs-vfio
-+++ b/Documentation/ABI/testing/debugfs-vfio
-@@ -23,3 +23,9 @@ Contact:	Longfang Liu <liulongfang@huawei.com>
- Description:	Read the live migration status of the vfio device.
- 		The contents of the state file reflects the migration state
- 		relative to those defined in the vfio_device_mig_state enum
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/features
-+Date:		Oct 2025
-+KernelVersion:	6.18
-+Contact:	Cédric Le Goater <clg@redhat.com>
-+Description:	Read the migration features of the vfio device.
--- 
-2.51.0
+---
+Jonas Rebmann (3):
+      dt-bindings: net: dsa: nxp,sja1105: Add reset-gpios property
+      dt-bindings: arm: fsl: Add Protonic PRT8ML
+      arm64: dts: add Protonic PRT8ML board
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+ .../devicetree/bindings/net/dsa/nxp,sja1105.yaml   |   9 +
+ arch/arm64/boot/dts/freescale/Makefile             |   1 +
+ arch/arm64/boot/dts/freescale/imx8mp-prt8ml.dts    | 500 +++++++++++++++++++++
+ 4 files changed, 511 insertions(+)
+---
+base-commit: ea21fa34164c9ea0a2a5b8714c7e36f54c7fb46e
+change-id: 20250701-imx8mp-prt8ml-01be34684659
+
+Best regards,
+--  
+Jonas Rebmann <jre@pengutronix.de>
 
 
