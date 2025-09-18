@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-822508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED235B8408C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:21:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976C6B8409B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6DC161490
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:21:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF6817BDF1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A31302CB6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AA9302CD1;
 	Thu, 18 Sep 2025 10:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIPylFx9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJISAZut"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC80630216D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E371E30215C;
 	Thu, 18 Sep 2025 10:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758190674; cv=none; b=itai4g0MUG8qUk3eX/lfxrmfOJzp+qc+9eEroSihuimimnpjRaSoFZR9d+e3VkE/cy4WqKB3dfUgqR37sGRGCjxrEZkBKDHeAp6RNVOU/ebvHB6fVrA2uP1MVYN2xOPTfE18gAdyf4WKmfghzE4ObXzd6r12DDt+FhG0wurgewE=
+	t=1758190675; cv=none; b=sS8Wo8Vpr389XZeIx4FevNC2FvbkhJiwUgpGZ4ntWB8tF3p6NtTtx0NRN6QeDW5oF4vbCNqNeuOVs3drWx0g8qMnZD4yAX0hv0KcPuMMpHzRdqXG32Jatp0IQKEUyUWzc10bUx+fw2MVczH2nyt7IkzW/a+/RWPsbm1HcM47k0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758190674; c=relaxed/simple;
-	bh=tt2fnvxyKHuxMWduq2G5iWtwAxgOUA1tzVmzIKN+kzc=;
+	s=arc-20240116; t=1758190675; c=relaxed/simple;
+	bh=rq+Ub4PUmYMUmVVmwp0dloL83Muh245hgWWFkowVhoc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HfLVCandQuN4vIoufp8TWjyeS77+l26EATyGucuOHUTb1MVveqSF5u1eZ/VUkHGibQ13PW5AlUydSCv0gN3ZCWp7KYzNXV/x985JfOwpuvvuXhXn4dGX0vMZfD05MmJDkQuhomOTOWKWbEYMP/sPgA14mSnCwehi4Ud5/l0wS6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIPylFx9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BCEBC4CEE7;
+	 MIME-Version; b=S0+jl+YGVW+gOmQY728qdxPGYZvsdoYkdTNwNkl/e7RLo0wbEATxLdOnX/Wl6xxSMd+PNNC+YsQSWRRZRuvqa7Jje4hoKe0Q2UTycudP00W6Kko0IFHDSDhwaOuAqy0Cr87b9uC1e+M7BgcOKjzBe2C6NDzu6ftT9DKjj0S+g/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJISAZut; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90283C4CEF7;
 	Thu, 18 Sep 2025 10:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758190674;
-	bh=tt2fnvxyKHuxMWduq2G5iWtwAxgOUA1tzVmzIKN+kzc=;
+	bh=rq+Ub4PUmYMUmVVmwp0dloL83Muh245hgWWFkowVhoc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UIPylFx9ChvcXM7wjTxfr4qUJQo/k9aqvgOr3xgTCMA4EYzaNxzibcmUyUz6oGiso
-	 Ltj5RIOX83KZpjI8IckALIVdER+Swnyzbtd3cXwFAMbIvaWAu8M8Mp33JILJKdqel5
-	 Of3UD3LnODF3O2zLZu2V6hq7F39/+f7KHx835Yrr08G6kOTUf46UvVkKtayTB7C9HM
-	 WdLyraTGZr5/ku1efz2XxrmFjSj//O5lm233tT57feIsIM+ZkgKvTx/rP+Ubir++4H
-	 S1+eNngmWLx4oGogohgn9ImjJYD3A/wzbGcUNpSTkUhCqFVne2A8/Vx8ECmupkZKW+
-	 f0MC9s+ZL8CaQ==
+	b=rJISAZutESJCuvWl0KKfu9OQ2JV04oaraSTyjAud3PkdnU7nqKzW/8kGxl7YmakUS
+	 dPEFe+Ajj+5ywh7ZSSzpNRupqEiy63T+9/5Tlu4EGVq6xHJ1PnfOy05bpBWtMBfTbP
+	 4C5jvxT6rGBuDSz85m43OQ8MnGeCIxtfePR/Cszth/BYJP1utxfyYr737Yp5n51qEG
+	 p3Lnl/0kbC9ejhNa4E6vz2igf6rs9XTr3wUFspvqhaE3XygJpebVgNASshjV1ea0oJ
+	 WrAnKYKSsdgfqjzv96jcyq1PKhXfHS6287P0+hINnQQ79UDkXRwdHGGNkqsOX/dYwC
+	 Tj+IxYWz1YgLA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 116BFCE0B32; Thu, 18 Sep 2025 03:17:54 -0700 (PDT)
+	id 14972CE0D66; Thu, 18 Sep 2025 03:17:54 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 1/5] rcu: Document that rcu_barrier() hurries lazy callbacks
-Date: Thu, 18 Sep 2025 03:17:48 -0700
-Message-Id: <20250918101752.2592512-1-paulmck@kernel.org>
+	Zqiang <qiang.zhang@linux.dev>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH v2 2/5] rcu: Remove local_irq_save/restore() in rcu_preempt_deferred_qs_handler()
+Date: Thu, 18 Sep 2025 03:17:49 -0700
+Message-Id: <20250918101752.2592512-2-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <3773a6e3-8ec8-48c5-9277-264cd8ccbb10@paulmck-laptop>
 References: <3773a6e3-8ec8-48c5-9277-264cd8ccbb10@paulmck-laptop>
@@ -62,31 +63,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds to the rcu_barrier() kerneldoc header stating that this
-function hurries lazy callbacks and that it does not normally result in
-additional RCU grace periods.
+From: Zqiang <qiang.zhang@linux.dev>
 
+The per-CPU rcu_data structure's ->defer_qs_iw field is initialized
+by IRQ_WORK_INIT_HARD(), which means that the subsequent invocation of
+rcu_preempt_deferred_qs_handler() will always be executed with interrupts
+disabled.  This commit therefore removes the local_irq_save/restore()
+operations from rcu_preempt_deferred_qs_handler() and adds a call to
+lockdep_assert_irqs_disabled() in order to enable lockdep to diagnose
+mistaken invocations of this function from interrupts-enabled code.
+
+Signed-off-by: Zqiang <qiang.zhang@linux.dev>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/rcu/tree_plugin.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 8eff357b0436be..1291e0761d70ab 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3800,6 +3800,11 @@ static void rcu_barrier_handler(void *cpu_in)
-  * to complete.  For example, if there are no RCU callbacks queued anywhere
-  * in the system, then rcu_barrier() is within its rights to return
-  * immediately, without waiting for anything, much less an RCU grace period.
-+ * In fact, rcu_barrier() will normally not result in any RCU grace periods
-+ * beyond those that were already destined to be executed.
-+ *
-+ * In kernels built with CONFIG_RCU_LAZY=y, this function also hurries all
-+ * pending lazy RCU callbacks.
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 4cd170b2d6551d..d85763336b3c0f 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -626,11 +626,10 @@ notrace void rcu_preempt_deferred_qs(struct task_struct *t)
   */
- void rcu_barrier(void)
+ static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
  {
+-	unsigned long flags;
+ 	struct rcu_data *rdp;
+ 
++	lockdep_assert_irqs_disabled();
+ 	rdp = container_of(iwp, struct rcu_data, defer_qs_iw);
+-	local_irq_save(flags);
+ 
+ 	/*
+ 	 * If the IRQ work handler happens to run in the middle of RCU read-side
+@@ -647,8 +646,6 @@ static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
+ 	 */
+ 	if (rcu_preempt_depth() > 0)
+ 		WRITE_ONCE(rdp->defer_qs_iw_pending, DEFER_QS_IDLE);
+-
+-	local_irq_restore(flags);
+ }
+ 
+ /*
 -- 
 2.40.1
 
