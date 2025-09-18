@@ -1,303 +1,87 @@
-Return-Path: <linux-kernel+bounces-821866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F0FB827DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:26:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C06B827DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF2B466BC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868D33BC5BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF999217705;
-	Thu, 18 Sep 2025 01:26:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269C721E0BE;
+	Thu, 18 Sep 2025 01:28:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E951DFD8B;
-	Thu, 18 Sep 2025 01:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9CF21ABC9
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758158807; cv=none; b=GENYaY+8u7IFg6OubGLxGGgA7QVCyaEA1NIJXePBqJ3Dv4SyUgq9cirgii5UwNLxOrIjscaouHm79mUZiGEPGmLnNFXKl1T9wpLWwekrkutLRbaewAsUUhkn7yNH7dKsIlWyPrt/egkIK0J5A+rzL/GaxJFtzEZEsjNvmU9l7VQ=
+	t=1758158884; cv=none; b=nfFrwpUMc/JKH1qkJrQbcbWXqsJracD8PifWmzOhIX6kEScEfwcBAHZc+NKgNiZKeVyMYtBfczE91H9a7Kr9emJi3pf5gK6nkuaMRxsNg1H/8KJ/C7TJCcmUo6GJDi3Tq7C0OqUlNj8ibyCnirVquZVfHkUhUx2mo966DllNV0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758158807; c=relaxed/simple;
-	bh=2CfXdtCbteURsx4aWzaClFfUCSgP3SL2Ji98atJXIyU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CJOOU9w2eS+nGCSkUWPsgKWM0eE32go1xBuByHBKGYTSlhhUV/zXsfFGNa3ESEVPzaTjFAztvBcJTQtIUpMxwPdi7gDJfjGXnGCzN1Tb0FAzaXhHTR9Udq0Dnv3KzIpFYl1qnDqoGGz2ZPoYBaJuWo1LrPPqXEQtq28ZAmVVNvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cRyfC65WwzYQtGr;
-	Thu, 18 Sep 2025 09:26:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 75F8C1A0FAB;
-	Thu, 18 Sep 2025 09:26:42 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAncY3QX8to_VSACw--.1184S3;
-	Thu, 18 Sep 2025 09:26:42 +0800 (CST)
-Subject: Re: [PATCH v4 4/9] md/raid1,raid10: Don't set MD_BROKEN on failfast
- bio failure
-To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
- Mariusz Tkaczyk <mtkaczyk@kernel.org>, Shaohua Li <shli@fb.com>,
- Guoqing Jiang <jgq516@gmail.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250915034210.8533-1-k@mgml.me>
- <20250915034210.8533-5-k@mgml.me>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <1c71d0c8-dc3a-9dbf-4e69-e444f94c7ab8@huaweicloud.com>
-Date: Thu, 18 Sep 2025 09:26:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1758158884; c=relaxed/simple;
+	bh=19IbYtW8l+TypAV5lX/tgnlVaKNS2anF502EuvTXCAw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=as2ArfBscW1Q4bVDfDZZl9B/ebGQbDQCDRDYw4JN96cdLa01sIwozB2PXtzWuTGys/Yadi/UKn1qMs1kiy3eSrtgCbgm9lHt00/2qPaS87b9B34iSX9MnUX3j1CiqU+kRUzAD11fu2cV8x1/CV3JInZOSncHIJsFfcI0+fDOIi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-424122ae369so8937425ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758158882; x=1758763682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PLvdiujQ7v4S0pAY/paFyDPgfHdT0VEAh38g71bQSM4=;
+        b=S63oB+aCCgyPVY7vIDTPOIEc5XJipZdTJapnhI8nxbrQdjBnCIojrdbDCoAlx+pD4v
+         T74QE4RpXM1QneGZ2ESFP1FpCVURjYuXLWzLvv+5elS1yxYWMTBGi3lRhldEFE39wOim
+         DVM3iYFPSgZ89vU+mGNWDBazlDoNq9SRWGQpBu1BcQLK2UbryNQ0zUjapFzAycVmj3CV
+         yXKPZdAEnLP+AEjPOQEcNX3VW3x4J6z5kJqCoHVhgvzdOaifgbFE7YceUuFmijr1wn8q
+         FsGkwwNfzyjaQtIyEpEaaNV3cYi6m1m6OXTck7ZYLav0N4TDX+KvSfR+374watt4b6i/
+         Pw3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWEPirR59hYlQATQrUCAWqvxDyW3qfMTd3q/xp1QytW1pdwlPTDUVV/AbnjffalAyarvZeXRcO3Ep3C8Zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpktpBVTBMoCeYVgSHMp17syRYv7sULZ99rJYYgaTpQTBYqVen
+	VjbjWyT/Fw+IdrZYGs97mj6Ww3RgKm+kdG4LUq7PiSL+jho2qmz/0siXE5TqKuMJQ9lrsUmU5Ym
+	NrqNxCznxjdLZAhRThngRV+BP9IkmYEc0G/Mg7A6Dhdvs5yLlq+332hM3ztY=
+X-Google-Smtp-Source: AGHT+IHKShbO4O6X39J7xMx6G3aRzTJdlYafJ5BzIVrHr+2GZldLbFCYtNNF9QYliJO3GX1vkT2xKxFYjFac1Dk+BKV6Zh3Z7vQ7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250915034210.8533-5-k@mgml.me>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncY3QX8to_VSACw--.1184S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3WF4DJr48Cr1xGw15Kw18Grg_yoW3ZFWrpa
-	y3Ja9YyrZ8J345X3WUtFWDWa4F9w13KFWjkr1fAw1xZwn0qr93tF4UWryYgryDurZ5uw15
-	Xa98Jw4DAFsFgFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
-	hLUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-Received: by 2002:a05:6e02:1a43:b0:424:61f:acda with SMTP id
+ e9e14a558f8ab-4241a5380bemr59603465ab.18.1758158882294; Wed, 17 Sep 2025
+ 18:28:02 -0700 (PDT)
+Date: Wed, 17 Sep 2025 18:28:02 -0700
+In-Reply-To: <CAHxJ8O_F5ssDpCPi48eHRY=q29odqrjnOxfvdoOd5xppdhht7A@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cb6022.050a0220.2ff435.059d.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref
+From: syzbot <syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com>
+To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-ÔÚ 2025/09/15 11:42, Kenta Akagi Ð´µÀ:
-> Failfast is a feature implemented only for RAID1 and RAID10. It instructs
-> the block device providing the rdev to immediately return a bio error
-> without retrying if any issue occurs. This allows quickly detaching a
-> problematic rdev and minimizes IO latency.
-> 
-> Due to its nature, failfast bios can fail easily, and md must not mark
-> an essential rdev as Faulty or set MD_BROKEN on the array just because
-> a failfast bio failed.
-> 
-> When failfast was introduced, RAID1 and RAID10 were designed to continue
-> operating normally even if md_error was called for the last rdev. However,
-> with the introduction of MD_BROKEN in RAID1/RAID10
-> in commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"), calling
-> md_error for the last rdev now prevents further writes to the array.
-> Despite this, the current failfast error handler still assumes that
-> calling md_error will not break the array.
-> 
-> Normally, this is not an issue because MD_FAILFAST is not set when a bio
-> is issued to the last rdev. However, if the array is not degraded and a
-> bio with MD_FAILFAST has been issued, simultaneous failures could
-> potentially break the array. This is unusual but can happen; for example,
-> this can occur when using NVMe over TCP if all rdevs depend on
-> a single Ethernet link.
-> 
-> In other words, this becomes a problem under the following conditions:
-> Preconditions:
-> * Failfast is enabled on all rdevs.
-> * All rdevs are In_sync - This is a requirement for bio to be submit
->    with MD_FAILFAST.
-> * At least one bio has been submitted but has not yet completed.
-> 
-> Trigger condition:
-> * All underlying devices of the rdevs return an error for their failfast
->    bios.
-> 
-> Whether the bio is a read or a write makes little difference to the
-> outcome.
-> In the write case, md_error is invoked on each rdev through its bi_end_io
-> handler.
-> In the read case, losing the first rdev triggers a metadata
-> update. Next, md_super_write, unlike raid1_write_request, issues the bio
-> with MD_FAILFAST if the rdev supports it, causing the bio to fail
-> immediately - Before this patchset, LastDev was set only by the failure
-> path in super_written. Consequently, super_written calls md_error on the
-> remaining rdev.
-> 
-> Prior to this commit, the following changes were introduced:
-> * The helper function md_bio_failure_error() that skips the error handler
->    if a failfast bio targets the last rdev.
-> * Serialization md_error() and md_bio_failure_error().
-> * Setting the LastDev flag for rdevs that must not be lost.
-> 
-> This commit uses md_bio_failure_error() instead of md_error() for failfast
-> bio failures, ensuring that failfast bios do not stop array operations.
-> 
-> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
-> Signed-off-by: Kenta Akagi <k@mgml.me>
-> ---
->   drivers/md/md.c     |  5 +----
->   drivers/md/raid1.c  | 37 ++++++++++++++++++-------------------
->   drivers/md/raid10.c |  9 +++++----
->   3 files changed, 24 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 65fdd9bae8f4..65814bbe9bad 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -1004,11 +1004,8 @@ static void super_written(struct bio *bio)
->   	if (bio->bi_status) {
->   		pr_err("md: %s gets error=%d\n", __func__,
->   		       blk_status_to_errno(bio->bi_status));
-> -		md_error(mddev, rdev);
-> -		if (!test_bit(Faulty, &rdev->flags)
-> -		    && (bio->bi_opf & MD_FAILFAST)) {
-> +		if (!md_bio_failure_error(mddev, rdev, bio))
->   			set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
-> -		}
->   	}
->   
->   	bio_put(bio);
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 32ad6b102ff7..8fff9dacc6e0 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -470,7 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
->   		    (bio->bi_opf & MD_FAILFAST) &&
->   		    /* We never try FailFast to WriteMostly devices */
->   		    !test_bit(WriteMostly, &rdev->flags)) {
-> -			md_error(r1_bio->mddev, rdev);
-> +			md_bio_failure_error(r1_bio->mddev, rdev, bio);
->   		}
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Can following check of faulty replaced with return value?
->   
->   		/*
-> @@ -2178,8 +2178,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
->   	if (test_bit(FailFast, &rdev->flags)) {
->   		/* Don't try recovering from here - just fail it
->   		 * ... unless it is the last working device of course */
-> -		md_error(mddev, rdev);
-> -		if (test_bit(Faulty, &rdev->flags))
-> +		if (md_bio_failure_error(mddev, rdev, bio))
->   			/* Don't try to read from here, but make sure
->   			 * put_buf does it's thing
->   			 */
-> @@ -2657,9 +2656,8 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
->   static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->   {
->   	struct mddev *mddev = conf->mddev;
-> -	struct bio *bio;
-> +	struct bio *bio, *updated_bio;
->   	struct md_rdev *rdev;
-> -	sector_t sector;
->   
->   	clear_bit(R1BIO_ReadError, &r1_bio->state);
->   	/* we got a read error. Maybe the drive is bad.  Maybe just
-> @@ -2672,29 +2670,30 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->   	 */
->   
->   	bio = r1_bio->bios[r1_bio->read_disk];
-> -	bio_put(bio);
-> -	r1_bio->bios[r1_bio->read_disk] = NULL;
-> +	updated_bio = NULL;
->   
->   	rdev = conf->mirrors[r1_bio->read_disk].rdev;
-> -	if (mddev->ro == 0
-> -	    && !test_bit(FailFast, &rdev->flags)) {
-> -		freeze_array(conf, 1);
-> -		fix_read_error(conf, r1_bio);
-> -		unfreeze_array(conf);
-> -	} else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
-> -		md_error(mddev, rdev);
-> +	if (mddev->ro == 0) {
-> +		if (!test_bit(FailFast, &rdev->flags)) {
-> +			freeze_array(conf, 1);
-> +			fix_read_error(conf, r1_bio);
-> +			unfreeze_array(conf);
-> +		} else {
-> +			md_bio_failure_error(mddev, rdev, bio);
-> +		}
->   	} else {
-> -		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
-> +		updated_bio = IO_BLOCKED;
->   	}
+Reported-by: syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com
+Tested-by: syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com
 
-I'll suggest a separate patch to cleanup the conditions first, it's
-better for code review.
+Tested on:
 
-BTW, I'll prefer if else chain insted of nested if else, perhaps
-following is better:
+commit:         992d4e48 Merge tag 'probes-fixes-v6.17-rc6' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=102e8712580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=0be4f339a8218d2a5bb1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b0ae42580000
 
-if (mddev->ro != 0) {
-  /* read-only */
-} else if (!test_bit(FailFast, &rdev->flags) {
-  /* read-write and failfast is not set */
-} else {
-  /* read-write and failfast is set */
-}
->   
-> +	bio_put(bio);
-> +	r1_bio->bios[r1_bio->read_disk] = updated_bio;
-> +
->   	rdev_dec_pending(rdev, conf->mddev);
-> -	sector = r1_bio->sector;
-> -	bio = r1_bio->master_bio;
->   
->   	/* Reuse the old r1_bio so that the IO_BLOCKED settings are preserved */
->   	r1_bio->state = 0;
-> -	raid1_read_request(mddev, bio, r1_bio->sectors, r1_bio);
-> -	allow_barrier(conf, sector);
-> +	raid1_read_request(mddev, r1_bio->master_bio, r1_bio->sectors, r1_bio);
-> +	allow_barrier(conf, r1_bio->sector);
->   }
->   
->   static void raid1d(struct md_thread *thread)
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index dc4edd4689f8..b73af94a88b0 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -488,7 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
->   			dec_rdev = 0;
->   			if (test_bit(FailFast, &rdev->flags) &&
->   			    (bio->bi_opf & MD_FAILFAST)) {
-> -				md_error(rdev->mddev, rdev);
-> +				md_bio_failure_error(rdev->mddev, rdev, bio);
->   			}
->  
-
-Same as raid1, can following check of faulty replaced of return value.
->   			/*
-> @@ -2443,7 +2443,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
->   				continue;
->   		} else if (test_bit(FailFast, &rdev->flags)) {
->   			/* Just give up on this device */
-> -			md_error(rdev->mddev, rdev);
-> +			md_bio_failure_error(rdev->mddev, rdev, tbio);
->   			continue;
->   		}
->   		/* Ok, we need to write this bio, either to correct an
-> @@ -2895,8 +2895,9 @@ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
->   		freeze_array(conf, 1);
->   		fix_read_error(conf, mddev, r10_bio);
->   		unfreeze_array(conf);
-> -	} else
-> -		md_error(mddev, rdev);
-> +	} else {
-> +		md_bio_failure_error(mddev, rdev, bio);
-> +	}
->   
->   	rdev_dec_pending(rdev, mddev);
->   	r10_bio->state = 0;
-> 
-
-And please split this patch for raid1 and raid10.
-
-Thanks
-Kuai
-
+Note: testing is done by a robot and is best-effort only.
 
