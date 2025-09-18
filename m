@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-821847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F999B826F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454B4B826F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BB31C232ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:47:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED52C17B68A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6263F21B9C0;
-	Thu, 18 Sep 2025 00:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212CD1E130F;
+	Thu, 18 Sep 2025 00:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XSJV6IB0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzGvJlF3"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2757C2236E0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846091DFD96
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758156351; cv=none; b=denZRNXsmr9oJ0wZfVVPVW33Aq+lWvM05nzJjoim0hn5ysVFeiHfTOaXw4KKJmJ4DGh5g5n+8ZoOFM3KeGasf+uE7HzzAb0PK5jdMqvDVolPMSEGC+4H4zE3bxt08fdFIEJicvzMSC5T/Auvcu9x7D8ga/U+VdwNvmtxDyEcIA0=
+	t=1758156378; cv=none; b=nuN2fG5/pHEWUVmjnKufqsQrwqbCC97/5CypUzdYcNRPeV0/ixQWkKIw662HwpYEhBKkCMPIkxtiVtNBEZaVdSreVMdpaIxx0/LYl+AOU/WWK7geVvQxxcLcw+H/rpLILMi5ltmvTBlHLZj+5Ae3KSxYJZGJc9xn45XTE+mi/EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758156351; c=relaxed/simple;
-	bh=sqX5poYuBDuieqUSU013OH1LEJKefqNyHLAHWCY+yJw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DDGJo/04c/Uiy6Z8s5cGr0urTugLmB8ya250BmDt4sdSioAUFWgn+fVFMfweMswiZoRJnjNesQC0cgOQuoL/DINiq6ROLrzfiHRDRmwYlswmfl99w5J64Y5ZN/Wi2glDh9GbDAlbmM6vgNmvFoUKn4CTZBuf3wBkmwAs9aJsNVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XSJV6IB0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758156348;
-	bh=sqX5poYuBDuieqUSU013OH1LEJKefqNyHLAHWCY+yJw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XSJV6IB05RrqByozzoHqQHKp0Q6dZXA6RQlRx2GysJ7CiC+NuhaUEQ0kwaF834GIY
-	 67AQe1bV4OlH8WwYlZNUxngiN3MwpCH4h+FNdg1hQFAIxFybjOT8332Q19/4rNGh91
-	 ilSrZCE4liaTmH97TceN1kSyFSyEkL9uTZNHlVoecvqOPEN4AXUTLOZb3+4Uuef6kg
-	 hwMw5M9wZWUDVJqJOVfFEbarDmJVkPgYGGn3cQ6duv9FRaL4AzhCuubV2OwF45DVLt
-	 pBNyCJDDkVIHIcf1CmMP/PcJC+yPm2hEPlCtAJ099vEtP4UMUcCY4OmBw02NcUJhfk
-	 h8wbsEwl2sK6w==
-Received: from [127.0.1.1] (unknown [IPv6:2600:4041:5b1a:9400:62f0:406e:ac79:4a96])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 844C517E1389;
-	Thu, 18 Sep 2025 02:45:41 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Wed, 17 Sep 2025 20:43:29 -0400
-Subject: [PATCH RFC v2 20/20] drm/vkms: Set post-blend color pipeline
- driver cap
+	s=arc-20240116; t=1758156378; c=relaxed/simple;
+	bh=UIo7RA/G/xDD02JBTiyBlQlJJd9IfyisvvvnbSKMNJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=grCnLt8nKCotH9VNFhkVqvbE5oWwy/FQi08dlaTLUecIRnflIezQPfjMVAw8FK3bCTB00+Y3ihjsl8VI+msY0wMo/opN4J1ZrR298kamuVu/SLY18hJe1Wso3nuFYvZ4QSQDd8cXzRsCTBlf2ty33o5J+J0fzCutDQ92F+dsZZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzGvJlF3; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b0787fa12e2so61758166b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:46:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758156375; x=1758761175; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ScdSoNWwYp7Lx1FqF0sJinLc5HuMMzMbeEOteqLeKGY=;
+        b=KzGvJlF3KPV470aj9p2+WGc+dHQyYumQ/n1JBBocmuZJA49YLeiUqmwy+/yYPZgQZj
+         ssXCb7z6YgYiOutrT3AfsrRikN0B83+7ruvziWNhCwsz2ELTIiizmfls7PvsFdkvcJLT
+         qpJdXp6xZhBTLS5nekg+F1LDSdhm19EysHMtk07fabj1P6oLuOyCMfvOGen6jT1eBwbP
+         6pMnjF6KJT+0XEj91pCTwQujjt7F6ghOtnCnJ+EU2+tXugoJTsFgk+QsjwfhKOKRRjgu
+         d9FePQZs61kpvgUTD0qeflLnFiVK5p7eAvAv3yf1sOrJiE6TsrG+zJ2UIlYBCl4PmRtc
+         hKkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758156375; x=1758761175;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ScdSoNWwYp7Lx1FqF0sJinLc5HuMMzMbeEOteqLeKGY=;
+        b=LIDYzfUX+UGIYpb/GKsgS74NW4nR1b8U2kVJkQzdkN81GMrwLBnankwAlwJ8Ap9ndC
+         sW7eizJNikjbtmEf+voT3CXdwMvAqDXgQcspy1Ebvli9sUfDEJ6xSziLJC8CzMNNo7W3
+         xutchoofX10D7yxNhne+mEkqHHMaf7gHqunOuVadSPcFco3BjtpExhFSVR9AEWFjcb77
+         xy3UvnQL2SOIy/lnFURQPhwod7D6+CwUU0nFlOWGyK6+03xcEDGrmRAgQ4DW0NjW/w4s
+         pUjusfHXLG1yT4OXrc/iOs2cAO5t5LziXy6auxAf82Z85bSTcbtGbH1fN6EVjYCFJNPU
+         DnrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDdJoa55paCC2zfglCoa7ZPwTnwMA+7YxYy2NBu0jCxIyH3yFTq1fqyvBCCz2WFvCT1Dqx8TVEt5egkuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB8KskLm9n5mEbkbrMNDt836rdRgs6oRZQjCuQaztKV2csaTm2
+	hrpn8YmZSP4tBvPDdzqRpzT5+QIf2APM9uJ5Yz9H69ikFcQHO3SGgp/J
+X-Gm-Gg: ASbGncvRxE6sfHmHg5PbQ5CpF11cspX1Aqr9sBHa5NdE+b4P8bWrt49j4JwZ9FYzUB1
+	VwhPeKmZLTQITnqo3phhtpamBOe5IKNaNOc2EXKMgRfKrBV1vPtCYw+NtmdnZ1MTty25m5myYph
+	Oige0dL8ajjzcbZ6fhbk5DaCfT9Kfsr4Re1i8eJ5+SXD0lu1tYcSd1c0hgP9KqnBgeDxQTOtOmv
+	yLDOHV9mNW9j44EwvIQM83+XrMnMGz+8zgkPqcjlajzmhIbaUnXazAPG+qtMSq3JN2SCTnOlWl9
+	cEIJlVAxUKEWZFvGy2z9CZWcVWBr5+bDTbT6ydP3TMqfBzg8c6ny1fMogQx980RZJw6eFwd+E9D
+	w/R+TMsEJ3L2Oa0a7t3qnXyjYkGAIK5i9n33Vyg==
+X-Google-Smtp-Source: AGHT+IGtolM3WpmMOfPkC5aQN2+QGXojyD9zctBgGDhejOP10KXv+fVObxP+zNTcUHL0l2vGVmYa+w==
+X-Received: by 2002:a17:907:7291:b0:b07:c28f:19c8 with SMTP id a640c23a62f3a-b1bb7d419c3mr514517266b.30.1758156374473;
+        Wed, 17 Sep 2025 17:46:14 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b1fd271ead3sm73266366b.101.2025.09.17.17.46.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 17:46:14 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: brauner@kernel.org
+Cc: amir73il@gmail.com,
+	axboe@kernel.dk,
+	cgroups@vger.kernel.org,
+	chuck.lever@oracle.com,
+	cyphar@cyphar.com,
+	daan.j.demeyer@gmail.com,
+	edumazet@google.com,
+	hannes@cmpxchg.org,
+	horms@kernel.org,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	kuba@kernel.org,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	me@yhndnzj.com,
+	mkoutny@suse.com,
+	mzxreary@0pointer.de,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	tj@kernel.org,
+	viro@zeniv.linux.org.uk,
+	zbyszek@in.waw.pl
+Subject: Re: [PATCH 17/32] mnt: support iterator
+Date: Thu, 18 Sep 2025 03:46:06 +0300
+Message-ID: <20250918004606.1081264-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250910-work-namespace-v1-17-4dd56e7359d8@kernel.org>
+References: <20250910-work-namespace-v1-17-4dd56e7359d8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250917-mtk-post-blend-color-pipeline-v2-20-ac4471b44758@collabora.com>
-References: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
-In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>
-Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org, 
- harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com, 
- pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com, 
- jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com, 
- agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org, 
- xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com, 
- quic_naseer@quicinc.com, quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, 
- marcan@marcan.st, Liviu.Dudau@arm.com, sashamcintosh@google.com, 
- chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com, 
- mcanal@igalia.com, kernel@collabora.com, daniels@collabora.com, 
- leandro.ribeiro@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-X-Mailer: b4 0.14.2
 
-Now that the driver implements post-blend color pipelines, set the
-driver cap so they can be used from userspace.
+> Move the mount namespace to the generic iterator.
+> This allows us to drop a bunch of members from struct mnt_namespace.
+>                                                                       t
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/gpu/drm/vkms/vkms_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index e8472d9b6e3b2b5d6d497763288bf3dc6fde5987..4cc67a789d28288575235b7efc87bc5e45d668cc 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -80,7 +80,8 @@ static void vkms_atomic_commit_tail(struct drm_atomic_state *old_state)
- }
- 
- static const struct drm_driver vkms_driver = {
--	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM,
-+	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM |
-+				  DRIVER_POST_BLEND_COLOR_PIPELINE,
- 	.fops			= &vkms_driver_fops,
- 	DRM_GEM_SHMEM_DRIVER_OPS,
- 	DRM_FBDEV_SHMEM_DRIVER_OPS,
+There is weird "t" here floating at the right
 
 -- 
-2.50.1
-
+Askar Safin
 
