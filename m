@@ -1,165 +1,259 @@
-Return-Path: <linux-kernel+bounces-822613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E653B84515
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:18:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC32B8453C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E517E1C03776
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:18:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E101A3ADF0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C45D2D59E3;
-	Thu, 18 Sep 2025 11:17:54 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77E4301032;
+	Thu, 18 Sep 2025 11:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="WVb1TQGh"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F69F34BA40
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2020713C8FF;
+	Thu, 18 Sep 2025 11:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758194274; cv=none; b=JMxRumcGyOC0l6yNEkI4HESK6AsxWogHFt0UN1i8h0zhhlZoHG8GEwYBgzlt19KTX3mliGKA6KA3Pz2OtDnscTFH3tYAwtBqlIpOP5BGZo6x+A7rF3bXzv1RRfmPhxn4IccQ73qoyVNNjnOnkdckNWLZHvkiPtSJx59eqQrQjls=
+	t=1758194504; cv=none; b=VggXu0YHpPM3EFyEPzYWbgZTHpn1Aw0HBOrrfTTjn9JaflRSnauoiu2HyNMCDXEY6Y+MgA1uCRvUj2m7QTqjcDin2sOdTVj/zLxTXO6i3OmnCSWh49ZaERf8DIo11ZivZ096gpdyaHYfccbsftcaBzejnzbf619/lPTrXNovEUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758194274; c=relaxed/simple;
-	bh=HR223lTGxZbzO2t/uqV2T8rUThTDsiJuXlnMeX3oZik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pQAS3Hk7C+oFsA3o2v7twXUh8zENZEj7hwdLA7uezd171e0P2qcR+1QOpHqHWa5X/ivqmba56D3rn3G77X7UoSOwPsCJKIdN+XIjflOP/qeUX6aV4m3zLxoN8QvLsC+UWtFzJuNyuXDSCQoRgeH4HFTta3c/RqYTrd5GPHIHmPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cSCh85lBbz2VRr7;
-	Thu, 18 Sep 2025 19:14:16 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1822F1A0188;
-	Thu, 18 Sep 2025 19:17:43 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 19:17:42 +0800
-Message-ID: <2cc0b052-c464-44e2-9341-5eaf9858b24f@huawei.com>
-Date: Thu, 18 Sep 2025 19:17:41 +0800
+	s=arc-20240116; t=1758194504; c=relaxed/simple;
+	bh=hsuWnCI2Tw81ePkMSzBd/6aUApXDYJH5axeJjG9QiSY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PW7PWxDkFIJ0W3heA4065PT7Zw4r4hv6WmxhHreSfOIgzlsHQ0/ckbDY5PPZj2+AnkmmEQo1vz8mAKUXOBAOciWp6B4MSHEBGePTX9UrV/ikMNK8Y7eg86M3FRJTiC1PZE2pCi6YCp/kP9wlB54uTlB7WVT7gB0g6VRGkUgtuEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=WVb1TQGh; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758194503; x=1789730503;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hsuWnCI2Tw81ePkMSzBd/6aUApXDYJH5axeJjG9QiSY=;
+  b=WVb1TQGhcmlpAmwOgoeHLAY02wCYGDZpy0aMhdGntsCTODTwUTxUYVQ3
+   Ra+UnHCFc+6xUEIRdXOy8BFuQdrXmxUbeQVxKrpUZFVbPNBQrTbP5rGWc
+   VyO8wZibW2MOiCon53fHaYoOXygfN87xkopVWW8AjFQgUHSG/3rr7rfNQ
+   rbSTTDTAy9AN5iAnwdZZ3f+iLA8lyOZFOkWVmScYTWZVBmN9NurNkJKHM
+   TK5S70NYtAVm8xMw5V4vi92mM7wWlS7e5rIufBQyFl56MXw/YTu8av8QL
+   Of1JWqgIbuv+1+n4KGRwEY8WRFaOJBkE3cuOgESClR7XOGJTGAg6ARlje
+   Q==;
+X-CSE-ConnectionGUID: MK9Bjv+SSfyA+tPYDT8xQg==
+X-CSE-MsgGUID: 9BExUEiDSomaq1CncY4/Rg==
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="278045452"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2025 04:21:42 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 18 Sep 2025 04:21:03 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 18 Sep 2025 04:21:00 -0700
+From: <victor.duicu@microchip.com>
+To: <jic23@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+	<andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <marius.cristea@microchip.com>,
+	<victor.duicu@microchip.com>
+Subject: [PATCH v5 0/2] add support for MCP998X
+Date: Thu, 18 Sep 2025 14:19:35 +0300
+Message-ID: <20250918111937.5150-1-victor.duicu@microchip.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] locktorture: Fix memory leak in param_set_cpumask()
-To: <paulmck@kernel.org>
-CC: Zhang Changzhong <zhangchangzhong@huawei.com>, <dave@stgolabs.net>,
-	<josh@joshtriplett.org>, <frederic@kernel.org>, <yuehaibing@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20250912015737.1209143-1-wangliang74@huawei.com>
- <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
- <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
- <679d81f3-2610-44b9-bc9a-30ef0f70fa36@paulmck-laptop>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <679d81f3-2610-44b9-bc9a-30ef0f70fa36@paulmck-laptop>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Content-Type: text/plain
+
+From: Victor Duicu <victor.duicu@microchip.com>
+
+Add support for Microchip MCP998X/33 and MCP998XD/33D Multichannel Automotive Temperature Monitor Family.
+
+The chips in the family have different numbers of external channels, ranging from 1 (MCP9982) to 4 channels (MCP9985).
+Reading diodes in anti-parallel connection is supported by MCP9984/85/33 and MCP9984D/85D/33D.
+Dedicated hardware shutdown circuitry is present only in MCP998XD and MCP9933D.
+
+Current version of driver does not support interrupts, events and data buffering.
+
+Differences related to previous patch:
+v5:
+- in yaml edit description of interrupts.
+- add min and maxItems to reg.
+- remove ideality parameter.
+- use pattern recognition in conditionals.
+- group conditions based on the chip.
+- correct microchip,parasitic-res-on-channel3-4 to true.
+- in driver include bitops.h.
+- change name of some variables.
+- rename mcp9982_parse_of_config() to mcp9982_parse_fw_config().
+- implement bulk reading of temp registers.
+- lock ideality parameter to default value.
+- implement bit flags.
+- add compound literal to MCP9982_CHAN.
+- remove hysteresis parameter.
+- edit comments.
+- change values from int to bool in mcp9982_features.
+- remove mcp9982_calc_all_3db_values() and hardcode values.
+  When filter is OFF the 3db value is equal to frequency.
+- add .max_register to regmap_config.
+- remove devm_kcalloc().
+- in mcp9982_read_avail() add an else branch to hw_thermal_shutdown
+  check.
+- in mcp9982_read_raw use USEC_PER_MSEC and set regmap_read_poll_timeout
+  to never timeout.
+  Replace switch with bitmap_weight.
+- in mcp9982_read_label() remove unnecessary if.
+- in mcp9982_write_raw() remove duplicated code.
+- in mcp9982_init add error messages when APDD and RECD are incorrectly
+  set.
+- in mcp9982_parse_fw_config() add default for reg_nr.
+
+v4:
+- lock beta parameters to default value of beta-autodetect.
+  Remove beta parameters and checks from devicetree.
+- lock temperature range to extended.
+  This change avoids the issue of the average filter using raw values
+  with different scales when changing the range.
+- change driver to wait an amount of time before reading a raw value
+  to ensure it is valid.
+- change driver to stop calculating the physical temp when reading
+  in_tempx_raw. Reading from in_tempx_raw will return the raw value.
+  The physical temp will be calculated with in_tempx_raw, scale and
+  offset parameters.
+- add scale parameter to channel definition.
+- initialise chips with "D" to work in Run state and those without
+  in Standby state.
+- when activating the low pass filter for chips without "D",
+  set the power state to RUN to ensure fresh values for the average.
+- add minimum and maximum to microchip,beta1 and microchip,beta2 in yaml.
+- rename microchip,resistance-comp-ch1-2-enable and
+  microchip,resistance-comp-ch3-4-enable to
+  microchip,parasitic-res-on-channel1-2
+  and microchip,parasitic-res-on-channel3-4
+  and edit description in yaml.
+- add conditional logic to check if the chip supports APDD
+  and force default values where necessary in yaml.
+- edit comments and coding style.
+- replace asm/div64.h with linux/math64.h.
+- add delay.h to includes.
+- redefine mcp9982_sampl_fr with new structure division.
+- in mcp9982_priv remove dev_name,extended_temp_range and beta_values.
+  Add run_state, wait_before_read, time_limit and pointer to chip
+  structure to remove all instances of matching strings.
+  Reorder parameters for memory optimization.
+- in mcp9982_features add flags to know if the chip has thermal shutdown
+  circuitry and supports APDD.
+- in mcp9982_read_avail() rework verification of chip type in sampling
+  frequency case.
+- in mcp9982_read_raw() rework switch in low pass filter case.
+- in mcp9982_parse_of_config() replace generic -EINVAL code
+  with -E2BIG and -EOVERFLOW. 
+
+v3:
+- move beta parameters to devicetree.
+- change the name of the interrupts and add
+  check to match them to the device in yaml.
+- remove label for device and remove "0x" from
+  channel registers in example in yaml.
+- edit comments in yaml and driver.
+- add minItems to interrupts in yaml.
+- rename microchip,recd12 and microchip,recd34 to
+  microchip,resistance-comp-ch1-2-enable
+  and microchip,resistance-comp-ch3-4-enable.
+- rename microchip,apdd-state to microchip,enable-anti-parallel.
+- add static to mcp9982_3db_values_map_tbl to fix
+  kernel test robot warning.
+- in mcp9982_init() add check to ensure that hardware
+  shutdown feature can't be overridden.
+- replace div_u64_rem with do_div and add
+  asm/div64.h to includes.
+- remove unused includes.
+- add iio_chan_spec in the macro definition of MCP9982_CHAN.
+- remove MCP9982_EXT_BETA_ENBL.
+- in mcp9982_init() replace regmap_assign_bits
+  with regmap_write when setting beta compensation.
+- remove custom attribute enable_extended_temp_range and
+  map it to IIO_CHAN_INFO_OFFSET.
+- add unsigned to int variables that allow it.
+- reorder parameters in mcp9982_priv, change some
+  from int to bool, add const to labels and add dev_name.
+- add check for chips with "D" in the name to not
+  allow sampling frequencies lower than 1 to
+  prevent overriding of hardware shutdown.
+- remove mcp9982_attributes.
+- move mcp9982_calc_all_3db_values() to before
+  mcp9982_init().
+- use MICRO instead of number constant.
+- in mcp9982_write_raw replace ">=" with "==".
+- rename index2 to idx in mcp9982_read_raw().
+- remove i2c_set_clientdata() in mcp9982_probe().
+- since there are no more custom ABI attributes
+  the testing file was removed.
+
+v2:
+- move hysteresis, extended temperature range and beta parameters
+  from devicetree into user space.
+- edit comments in yaml and driver.
+- remove "|" in descpriptions, remove "+" from PatternProperties in yaml.
+- add default to microchip,ideality-factor, delete blank lines and wrap to
+  80 chars in yaml.
+- remove variables with upper case.
+- add check for microchip,apdd-state and microchip,recd34 in yaml.
+- improve coding style in driver code.
+- add includes for all functions used.
+- rename MCP9982_INT_HIGH_BYTE_ADDR to MCP9982_INT_VALUE_ADDR and
+  MCP9982_INT_LOW_BYTE_ADDR to MCP9982_FRAC_VALUE_ADDR.
+- remove custom attribute running_average_window and
+  running_average_window_available and map them to a low pass filter.
+- update sysfs-bus-iio-temperature-mcp9982 to reflect current
+  driver attributes and point to next kernel version (6.17).
+- use compound literal to define driver channels.
+- replace device_property_read_string() with i2c_get_match_data() to read
+  chip name from devicetree.
+- remove MCP9982_DEV_ATTR and mcp9982_prep_custom_attributes().
+- remove client, chip_name, iio_info from mcp9982_priv.
+- replace sprintf() with sysfs_emit().
+- remove error messages which are triggered by keyboard input.
+- replace devm_kzalloc() with devm_kcalloc(), array mcp9982_chip_config[] with
+  individual structures, device_property_present() with device_property_read_bool().
+- reordered parameters in mcp9982_features and mcp9982_priv to optimize memory
+  allocation.
+- remove .endianness from channel properties.
+- change name of some parameters in mcp9982_priv.
+- add check for reg value 0 from devicetree (channel 0 is for internal temperature
+  and can't be disabled).
+
+v1:
+- inital version.
 
 
-在 2025/9/18 17:03, Paul E. McKenney 写道:
-> On Mon, Sep 15, 2025 at 10:13:33AM +0800, Wang Liang wrote:
->> 在 2025/9/12 10:16, Zhang Changzhong 写道:
->>> 在 2025/9/12 9:57, Wang Liang 写道:
->>>> When setting the locktorture module parameter 'bind_writers', the variable
->>>> 'cpumask_var_t bind_writers' is allocated in param_set_cpumask(). But it
->>>> is not freed, when removing module or setting the parameter again.
->>>>
->>>> Below kmemleak trace is seen for this issue:
->>>>
->>>> unreferenced object 0xffff888100aabff8 (size 8):
->>>>     comm "bash", pid 323, jiffies 4295059233
->>>>     hex dump (first 8 bytes):
->>>>       07 00 00 00 00 00 00 00                          ........
->>>>     backtrace (crc ac50919):
->>>>       __kmalloc_node_noprof+0x2e5/0x420
->>>>       alloc_cpumask_var_node+0x1f/0x30
->>>>       param_set_cpumask+0x26/0xb0 [locktorture]
->>>>       param_attr_store+0x93/0x100
->>>>       module_attr_store+0x1b/0x30
->>>>       kernfs_fop_write_iter+0x114/0x1b0
->>>>       vfs_write+0x300/0x410
->>>>       ksys_write+0x60/0xd0
->>>>       do_syscall_64+0xa4/0x260
->>>>       entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>>
->>>> This issue can be reproduced by:
->>>>     insmod locktorture.ko
->>>>     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
->>>>     rmmod locktorture
->>>>
->>>> or:
->>>>     insmod locktorture.ko
->>>>     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
->>>>     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
->>>>
->>>> The parameter 'bind_readers' also has the same problem. Free the memory
->>>> when removing module or setting the parameter.
->>>>
->>>> Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
->>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->>>> ---
->>>>    kernel/locking/locktorture.c | 9 +++++++++
->>>>    1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
->>>> index ce0362f0a871..cad80c050502 100644
->>>> --- a/kernel/locking/locktorture.c
->>>> +++ b/kernel/locking/locktorture.c
->>>> @@ -70,6 +70,9 @@ static int param_set_cpumask(const char *val, const struct kernel_param *kp)
->>>>    	int ret;
->>>>    	char *s;
->>>> +	free_cpumask_var(*cm_bind);
->>>> +	*cm_bind = NULL;
->>> 这个NULL没必要吧
-> Assuming this translates to "This NULL is unnecessary", I have to
-> agree with Zhang Changzhong.  I would go further and argue that the
-> free_cpumask_var() is also unnecessary here.
+Victor Duicu (2):
+  dt-bindings: iio: temperature: add support for MCP998X
+  iio: temperature: add support for MCP998X
+
+ .../iio/temperature/microchip,mcp9982.yaml    | 186 ++++
+ MAINTAINERS                                   |   7 +
+ drivers/iio/temperature/Kconfig               |  10 +
+ drivers/iio/temperature/Makefile              |   1 +
+ drivers/iio/temperature/mcp9982.c             | 871 ++++++++++++++++++
+ 5 files changed, 1075 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+ create mode 100644 drivers/iio/temperature/mcp9982.c
 
 
-Thanks for your replies!
+base-commit: 671b9b6d7f4fe17a174c410397e72253877ca64e
+-- 
+2.48.1
 
-The free_cpumask_var() in param_set_cpumask() may be necessary(). If user
-set the parameter for two times, the pointer will point to a new memory,
-and no one hold the old memory, which trigger a memory leak.
-
->> Setting global pointer to NULL after free may be more safe. ^-^
-> In lock_torture_cleanup(), you mean?  I would agree with that.
->
->>>> +
->>>>    	if (!alloc_cpumask_var(cm_bind, GFP_KERNEL)) {
->>>>    		s = "Out of memory";
->>>>    		ret = -ENOMEM;
->>>> @@ -1211,6 +1214,12 @@ static void lock_torture_cleanup(void)
->>>>    			cxt.cur_ops->exit();
->>>>    		cxt.init_called = false;
->>>>    	}
->>>> +
->>>> +	free_cpumask_var(bind_readers);
->>>> +	free_cpumask_var(bind_writers);
->>>> +	bind_readers = NULL;
->>>> +	bind_writers = NULL;
->>> 同上
-> But here I agree with Wang Liang, as it helps people running debuggers
-> on the kernel.  Instead of a dangling pointer, they see a NULL pointer.
->
-> Except...  Is this NULLing really the right thing to do for
-> CONFIG_CPUMASK_OFFSTACK=n kernels?
->
-> 							Thanx, Paul
-
-
-For CONFIG_CPUMASK_OFFSTACK=n, the NULLing may be not appropriate. I 
-will remove it.
-
->>>> +
->>>>    	torture_cleanup_end();
->>>>    }
 
