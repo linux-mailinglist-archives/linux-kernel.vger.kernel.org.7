@@ -1,130 +1,155 @@
-Return-Path: <linux-kernel+bounces-823168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E011DB85B8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:45:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF9BB85B0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E701C23A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:40:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A28417EF9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985CC3126CD;
-	Thu, 18 Sep 2025 15:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4A921B9C8;
+	Thu, 18 Sep 2025 15:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AIT4b7dj"
-Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E20hbPfr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA0C243951
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCD630FC2C;
+	Thu, 18 Sep 2025 15:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209868; cv=none; b=QG/mzQM1V+CoRx0oHpDpa7lrAEYmZf1zPk0eRGIr9ieYrVOT/54pRG1jMVPWqMiNs8KJHUl+4qB66xOFO7VY0p06r16BpH/h+ArhYtDfINP0sHpDJ2WBXtwrZwo6K8VUWkBAEin6aZx3xBaa7yt3qNbpfU/ME/1SS4BZi8wyu1s=
+	t=1758209866; cv=none; b=k+Hj3+6BmhbRTZXesxOqvJogkqyjXT5vC2S0fxjxKzh6UU8hn/0ALO6A2tv+ECW7pfBCbpLcWCgZyaUwVo5hDcG9X9dtn4bRkmMqX1maTA+Rjj1luOr6njoNg5Mu3UHRSMXyhms4+FFE/q0rIwxPeRHZqeKJ6nE/WzGDa7xFRBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209868; c=relaxed/simple;
-	bh=7xlUHVUZs+o/rLsFgTFSWQv5sonPIDCOjuBaYxKvxdQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GGnPPYHQWghRydJMRR80/3Un7QZV0FdiFpacglfQzJpQudhEBN+mW2oya/0h2rnPz/YCclumBbuXcptGIec0Bvk3BdqsIX6BawseZoogP8l+KuJIe3nw+7i9zvlzSPYfEVLYr/KGyuBH1OnxH/MeMPG3hOit2TFGBt/WX0v18II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AIT4b7dj; arc=none smtp.client-ip=74.125.224.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-606b375eeb3so534698d50.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758209866; x=1758814666; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7xlUHVUZs+o/rLsFgTFSWQv5sonPIDCOjuBaYxKvxdQ=;
-        b=AIT4b7djpj5oKY36lDBlURHuW4Pwz6DEj9Xvr/xUzyIdPtAo2gTF6tW9zJ7R/ltaKJ
-         XpQpNQaL4OULHzFOO7vBX3rCFqHECASl5eg+9Sog6OeNUHwYy6jeon7RYrA834YQeCTL
-         LU03cyCuRx16wjDIASvxZuV7oksUAZA9LhH2q7uk2cXqpcORLDwm7XODvvTIfYCLidGp
-         NKwrp83ZxQlTIIYElC0/Kbf7msPmOAquuo3sZxAPB0DaXuathkkWfYwgDvP9viNzg9Sw
-         vmNLov0A8oYVxQDhbVVWRiCREfmmaoKTT0LIbtAQEHBxmaE6vMqUVjwvXJtaWb0CFerI
-         hhRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758209866; x=1758814666;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7xlUHVUZs+o/rLsFgTFSWQv5sonPIDCOjuBaYxKvxdQ=;
-        b=UGfTWJ9FLOoV9+Lj419Y0uGbAbuBX8BO8/MyOonLSjyX/LdH0WMVekN6eD/fQyUxd5
-         RmURP6QFe0bo2f0AnktS/qpZHRZu8Zbqp68S+BlcMWvUKwvwJaWw6noY1/XctKgbVC23
-         Kbc+mW72gKzJeDJWrG/iKafBpEOribPt4ix0+z3I9OakG/N9iVENouLjgQ6Jz3CJkvKd
-         Osw65IWwi/HLCfOlhTaKOtEcABhIps0kYr8uP8hwGs5IEFVUH+JLVIhFaXxLWBMP7UBW
-         5yFMlGWrAdtNNw7LXyKlyL2xnaaSt4Bsck3CGpbd+sBU42uD1DnfEI2LLiwUr8qFGF+t
-         bwsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUWvHfg3xrD6wRJHNzmkz30NaGiMQTfkc3cSsLCEZ9q5/H1H4PPPz79OzueIKh1Eqlc83r7jZZmHfcm6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHNEazFpVBKyFkISeoUhn1CgAL7tUPkYN48u2TO8VTW6JmoBaw
-	tNuOAVD3zMtNtsz7uOUMtDQ484Vn3LNV+u3+31KzXmmKLShDAcU6JXNFJi8IYMeLqCfJOaSJHcv
-	3uy3nTBEVHtf0e78PPVonxrhPFx+MztDQIYGJ0UYgpg==
-X-Gm-Gg: ASbGncvy2MdBWcZJgUS9rg0HKWEP1G3P/0DD9kNhuXuYRZ/aSKer8BwrJfsv5Ua5or4
-	sdVN5ePMO7eQfm0jXiO1Kpdgls5YnodVvKFoTJidU624+iiz2GTbjRqv088Y1Wl+0AP0BhfkwbR
-	zDNkaaY1REE1pC6NMScXeSxk3RkyN+dzb0xOjKOJ3JQAuuumPv8ndk3HEaOAwtipBgSR3ZdMf/h
-	g1pIk34aEjO5GZNPFN6HhPLvU0=
-X-Google-Smtp-Source: AGHT+IGtqJvo4MVxS472kzqGxtAHHh0rdIn7sRNAQ4ViXkzVaniJnHWJAGXpjD7HDhokIclkvH7bXIC8ZMqw3sAEmsY=
-X-Received: by 2002:a05:690e:15da:b0:62c:bb1d:5694 with SMTP id
- 956f58d0204a3-633b074bd1cmr3510380d50.35.1758209866010; Thu, 18 Sep 2025
- 08:37:46 -0700 (PDT)
+	s=arc-20240116; t=1758209866; c=relaxed/simple;
+	bh=OediWH/XA9a/MvBEFV1pPkqzahcgcSoJbDioj8i6TiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hEeh1RJw3YayVXZxvQV4opsf+u8drTQ1RGcAi7vFrcqp9LSva0JRGGXvqH0ArWOFHyVXSiiLoYyCRLB4SP4fXCJ8t1yqknud+psAi7LXnumUL/sdL6YrxAtKy7k9Z0CkDqBSUdNdAOose8y+e4NMTY5Nhx+CRKRQVA+LH3YUH2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E20hbPfr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0371C4CEE7;
+	Thu, 18 Sep 2025 15:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758209865;
+	bh=OediWH/XA9a/MvBEFV1pPkqzahcgcSoJbDioj8i6TiE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E20hbPfr0XSQmhtjd7h+D82bTG8EroeVLd3jxx1V6b6b50Ao7xD322TqypCpajZBG
+	 njMOmDrvmG/5cywM+BlS2WwCnkhLrYMX/ScKvuAtrrX65AC9tMI2b0vBMTNSb9I9PS
+	 tIjNrF7YHvcJqfGIvKChvURWnMT8V4MaSZxxAnrXmLIoddQbHXosBuIdHsdyQQ1259
+	 B1bKYOPUYXddNiodvoxOb5NhbMGxgMG0VW0dpW4xBeFaxOJYbW3LTaBN8PbIATbSdf
+	 Nn1I4IVBpjnNkdBQ7J9KnX9a1Tft81xq97wtCi60hm1ant1k2xL5PeZS+cpYbrAeIg
+	 repNm9GJxT3Ng==
+Date: Thu, 18 Sep 2025 16:37:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+Message-ID: <20250918-sterilize-malt-b0f182256617@spud>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818074906.2907277-1-uwu@icenowy.me> <20250818074906.2907277-2-uwu@icenowy.me>
- <i6slr5csro54ys5g7diqyacq4deidwm6f2nhpm2uwmgjlu6tyn@otrbpij4vdya>
- <aMm6UIMTFOH0Z3Ug@x1> <7ru5tunm3vlmtuulkbc7kpunyim3ks3he4ielc77ivm7vxieqk@iw6xmwmsn3lk>
-In-Reply-To: <7ru5tunm3vlmtuulkbc7kpunyim3ks3he4ielc77ivm7vxieqk@iw6xmwmsn3lk>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 18 Sep 2025 17:37:10 +0200
-X-Gm-Features: AS18NWCLe6oh-uLn8GnYoZwHpnz9EAYCU-8ecy6whZL-NO0kp3ol_7PTuu2q400
-Message-ID: <CAPDyKFp221d_RQmqoLDVxKOuphqASKK57UB4FzndKJFT5VBnHg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] driver: reset: th1520-aon: add driver for
- poweroff/reboot via AON FW
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Drew Fustini <fustini@kernel.org>, Icenowy Zheng <uwu@icenowy.me>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tzSyCJd6sK53Da2+"
+Content-Disposition: inline
+In-Reply-To: <20250918104009.94754-1-herve.codina@bootlin.com>
 
-On Thu, 18 Sept 2025 at 00:18, Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
+
+--tzSyCJd6sK53Da2+
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 18, 2025 at 12:39:58PM +0200, Herve Codina (Schneider Electric)=
+ wrote:
 > Hi,
->
-> On Tue, Sep 16, 2025 at 12:28:16PM -0700, Drew Fustini wrote:
-> > On Tue, Sep 16, 2025 at 08:22:02PM +0200, Sebastian Reichel wrote:
-> > > On Mon, Aug 18, 2025 at 03:49:05PM +0800, Icenowy Zheng wrote:
-> > > > This driver implements poweroff/reboot support for T-Head TH1520 SoCs
-> > > > running the AON firmware by sending a message to the AON firmware's WDG
-> > > > part.
-> > > >
-> > > > This is a auxiliary device driver, and expects the AON channel to be
-> > > > passed via the platform_data of the auxiliary device.
-> > > >
-> > > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> > > > ---
-> > >
-> > > Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > >
-> > > Greetings,
-> > >
-> > > -- Sebastian
-> >
-> > Thanks for looking at this patch.
-> >
-> > What tree do you think it should go through?
->
-> I'm fine with Uffe taking this together with the second patch or I
-> can take it and provide an immutable branch once the second patch is
-> ready.
+>=20
+> This series adds support for GPIO and GPIO IRQ mux available in the
+> RZ/N1 SoCs.
+>=20
+> The first patches in this series are related to a new helper introduced
+> to parse an interrupt-map property.
+>   - patch 1: Introduce the helper (for_each_of_imap_item)
+>   - patch 2: Add a unittest for the new helper
+>   - patch 3 and 4: convert existing drivers to use this new helper
+>=20
+> Patch 4 will conflicts with commit 40c26230a1bf ("irqchip: Use int type
+> to store negative error codes") available in linux-next.
+>=20
+> Patch 5 adds support for GPIO (device-tree description)
+>=20
+> The last patches (6, 7 and 8) of the series are related to GPIO
+> interrupts and GPIO IRQ multiplexer.
+>=20
+> In the RZ/N1 SoCs, GPIO interrupts are wired to a GPIO IRQ multiplexer.
+>=20
+> This multiplexer does nothing but select 8 GPIO IRQ lines out of the 96
+> available to wire them to the GIC input lines.
+>=20
+> One upstreaming attempt have been done previously by Phil Edworthy [1]
+> but the series has never been applied.
+>=20
+> Based on my understanding, I have fully reworked the driver proposed by
+> Phil and removed the IRQ domain. Indeed, the device doesn't handle
+> interrupts. It just routes signals.
+>=20
+> Also, as an interrupt-map property is used, the driver cannot be
+> involved as an interrupt controller itself. It is a nexus node.
+>=20
+> With that in mind,
+>   - Patch 6 is related to the irq-mux binding.
+>=20
+>   - Patch 7 introduces the irq-mux driver.
+>     This driver uses the 'for_each_of_imap_item' helper introduced
+>     previously. Indeed, the lines routing is defined by the
+>     interrupt-map property and the driver needs to set registers to
+>     apply this routing.
+>=20
+>   - Patch 8 is the RZ/N1 device-tree description update to have the
+>     support for the GPIO interrupts.
+>=20
+> [1] https://lore.kernel.org/all/20190219155511.28507-1-phil.edworthy@rene=
+sas.com/
+>=20
+> Best regards,
+> Herv=E9
 
-Okay, when patch2 is good to go, I will pick up both patches (no need
-for an immutable branch then), np!
+This whole thing is super interesting to me. I have a gpio irq mux of my
+own with a driver that is massively more complex than what you have here
+(it's a full on irqchip driver). I'm definitely gonna have to see if I
+can ape what you have done here and simplify what I have.
 
-Kind regards
-Uffe
+--tzSyCJd6sK53Da2+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMwnQwAKCRB4tDGHoIJi
+0j34AQC3P0PuxZC2SxFiex/qr+Yf8kgGuHRjI8JYavUXsV5SGQEA1yVu2nM9t/8F
+CEKEQSi23yuWnP9bmfB6IKEfvv/rlww=
+=q8VI
+-----END PGP SIGNATURE-----
+
+--tzSyCJd6sK53Da2+--
 
