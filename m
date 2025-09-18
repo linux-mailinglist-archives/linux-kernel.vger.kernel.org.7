@@ -1,193 +1,380 @@
-Return-Path: <linux-kernel+bounces-822593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C76B8438C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:49:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7E3B843BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06511188764D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45955175422
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC6D2FFF89;
-	Thu, 18 Sep 2025 10:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37F02F7456;
+	Thu, 18 Sep 2025 10:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bTecXaQ4"
-Received: from mail-io1-f99.google.com (mail-io1-f99.google.com [209.85.166.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxztcsO6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B597A2F546C
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A972D9ECD
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758192571; cv=none; b=R7gdl3FCJzOApNCO0jtjVkjhe2vpepgOOvQ50OcRYZeqf5E+CIlaRJkDGHRRRIMDGsG/k0JkcA5XzZceumuFdrb1JcLyc6bGJSC2tWOePsXhkF18J3Id3xgKUsQ+M9zXTHb6taZ8TEfEp+gA+NMI1XwaqaTrCuJM6xlrKA//E90=
+	t=1758192886; cv=none; b=ICEhYdYWj4lgmu0hvCWO7vQR1bEDrOA1hnhGj6U+iO6ZOkMYIstXFt/tRUzekE/AoTGKoJ/NfvAuSvKL9dqeZ9CStttforxbgohNe1LbOb0KLk6QWUAgbYW7blbOjMGkT9GXnOc5sSDmQONVeKnMVmTntPaamh28EU3mHgqEydU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758192571; c=relaxed/simple;
-	bh=ZUBtVHvkTAY4+B4crK786K2DWksiRXcDIQfYXHLK7oY=;
+	s=arc-20240116; t=1758192886; c=relaxed/simple;
+	bh=k2ASZVr05LW1WBbf71NbgtR7vTPfPePngtU5VfeZDO8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c+R/qnZmaPqGuwz6mApCsQ4JpdD1ZoDCfvLpRzAvB5eNR93rWAHXSsgMXxQ+fW2sAZw9X6JLfeC6Cpdxw+e1Od6NjoPThnkU8QRVXF6h/GTm1/UlikHink60SxnOg59+o8OHZiDEIRZa/NzKUoA4HTiCjor7EXmBLfQ/6Zu4Y+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bTecXaQ4; arc=none smtp.client-ip=209.85.166.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-io1-f99.google.com with SMTP id ca18e2360f4ac-88c3944558bso17186839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758192569; x=1758797369;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2tKzXKJ86WWAjRz6O6r+1bHqtyZjWimokstHRSdS6Mg=;
-        b=NhO5aBIYl+fcLwcFG+bS53EVgpZdFDzh+NMaCqEdCiRkhIQB9Q/X4gbwO57bKDZ0dF
-         8iRDA/Jnu3hKOYwqO5sUYR2Q0coJzVkgY3BYdnqi2QPDx32Q2w7Gk+GJXFQQGu/h7jWV
-         8fWmG05F3SsCSqsjPUE4O67pJbD4WnvsSUE0GJbuv2Fg3lDNo3GEi5RVvd2XraplEuW1
-         0Ff/Jj8hfRLFvK9KYiQq8RoAb9hYehbFNiOR6IFv2F4KCCxjwbxmUXn3Zu6wF6K78qz5
-         rlu7A6mIM2HAjTM3QnxvtsKDeojvAgv3NLEOTFKggtp8BbHVZ62I6AuWWcLi9Bn7QpnO
-         yRyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyE40RC5iLFzcs1UZlUyfJIUe+HTQfI9eUGpJsf8TUJGC350fHRkprA+Em3lD4GitVTQ/PIgW9Jlcs4V0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8KOTzT8gYCNy1xVyvC16lEknZf8PEDMdysx+2zY3bYuHXDlZe
-	GHjF9b4wf+QF2iE6cGV3wfQgMUyudsdtXIsTqVOR5RVwZ1PVhy7GOJN0e254KdPvhBiuwacnqxb
-	EGZA1xnZ2BwWRQSn7dTZFTQ7tqWe9hKJWW6OjyFFbnQg1GV0eJ4owGAfR77r3AGxiGbVc5MWQi2
-	UicyB8cExxyPHnr/M/1g9TmoBgRFQxFxQ/WB/qeCm7N2iyVEJQEwZ5pbJ/03FILKZbf4OgJgS8S
-	eiPPFAzWqui1BsOZvba0GuKrQ==
-X-Gm-Gg: ASbGnctz0kWoeSflkuLfLka1C0qTWS/PXGNHQn3iXBlQZtjt4KDslOocKlBUH9FIlF6
-	ClH6GUR7YJGfJgzU9+hmS25Juc29rIp5IOv7g1YHApgB6jJJ8WDMzckcMbNoLTe64wD9mgcMuhB
-	/6n/IHIr/FLfLqi+xZ49B6znSuYqG+gpbCJOFQHwWfQGH61KGcIyweUKQBYRGJYc57uYmpRKWjQ
-	0m9eeB+4KeyTKgafhJMu98RxWowtOZGDPfQ79MhnTN0V7jXIOlm0wRg7tbxMPxkYvOJxIaes87g
-	DcSxFCzoC3zEr9kbqoTZHuZ+pV7kRci06j+8EneDJrNeEVuC6QfiYat+/fZ+IkHx9ObyveUd+Bn
-	KShGobS1TkieJk+AFwIfokaDc5/Tm0hAAion46CWjdicohRSrflSnztkjMElx2nh4U6EnfKovMA
-	G5C5Q1ETCT
-X-Google-Smtp-Source: AGHT+IH7ImIOWpjn4GUyMSAU4Gs7G7KsdXIwtLvyuDLy9N7UngLpTgV/c+/ueB1GfyJGpH+LHHXOIYNalOeo
-X-Received: by 2002:a05:6e02:1847:b0:412:c994:db15 with SMTP id e9e14a558f8ab-4241a4b908cmr89348715ab.14.1758192566678;
-        Thu, 18 Sep 2025 03:49:26 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-121.dlp.protect.broadcom.com. [144.49.247.121])
-        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-53d3cb1a22dsm140042173.14.2025.09.18.03.49.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Sep 2025 03:49:26 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-26983c4d708so7839685ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1758192565; x=1758797365; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2tKzXKJ86WWAjRz6O6r+1bHqtyZjWimokstHRSdS6Mg=;
-        b=bTecXaQ4p6DMIlbjqQfhKH3UGDFLfdw+H8C29OdvMBJubc365E+2zEpjZQj66gtRmh
-         iCweaicd6S1MW1wuu6+mlRFWPYyqvRdS+leOPgAEv7n2x8sG1T8T6ozHv9js9Yw2GYl3
-         xMU+/ABgCILkrj6SUfNmA6WPORHS/pc3AhrQc=
-X-Forwarded-Encrypted: i=1; AJvYcCVS7II3kHv2KIGAQalimifBJH0bpdDasivjhAyc5m0faYnilDEimyR1BEKzmj+oxlsYp8WAEb8kt1HnEhI=@vger.kernel.org
-X-Received: by 2002:a17:902:e54a:b0:269:6e73:b90a with SMTP id d9443c01a7336-2696e82fe56mr46280525ad.15.1758192565258;
-        Thu, 18 Sep 2025 03:49:25 -0700 (PDT)
-X-Received: by 2002:a17:902:e54a:b0:269:6e73:b90a with SMTP id
- d9443c01a7336-2696e82fe56mr46280315ad.15.1758192564881; Thu, 18 Sep 2025
- 03:49:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=Q36JNYJOgZiwxSqvxhEEk/UHjj1UqwCOWfbqrhDVdk1Hvdp/CvGr6pgAoN2EkCdm/WvnTxmKd2QlMfzGyHN5NZYhbqp8g8CGuQa/RS69QiMChLqWYaWavfBYaMarKtZdrHPkGTGfy052u37X0JASCUCSmDIyjApJQTqCSZmxGpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxztcsO6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 463FFC4CEFB
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758192886;
+	bh=k2ASZVr05LW1WBbf71NbgtR7vTPfPePngtU5VfeZDO8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VxztcsO6jbSYStnxrqULNQ0wUptjkY7o1HkK4N7WvROL2CTnBdFFRX7JCT+XA+qz7
+	 p+mx0j+fiK7PipFT1RTor2+zRTwfo5jwvNV+ib4IShiA9YX18xZSBgnZmW37LUAc4D
+	 1kweIqmXxBqx56AYojyOLu1BgTEYXD93lyofP1JywaG7zyJr5D2ddq+45XVmpQYL0M
+	 6htdUYe8zBB1e1wO+Gxz+HPKx8szSS94/zuMqnu3F3bM1N46GpUjMHKMN0rCKxnuyL
+	 ehooQZL+ZSkOooQ2GpmtuQEiOPrGmAPErb8OgxbXOZ/BBvh30hA18NUTwuW5lbCUhd
+	 QWur76L/p99vg==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so117980366b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:54:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzDUga8mpLQfBpkE648UYK3XFXB4u3PVoCOq+Ieym9XcG7FOcQ0itACXmjQmmNjODXPe8v4Sh/53n5vEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqbs1CIJbPe11sEPhdVYkivgV3NdGpm8jAUkLGLEA4bZMUktpd
+	dTrnKSptw+PQS0n278KuBQvqEUPp15qI41mbrf9ORgKM3eRrdLBwSMUONY6tp2b5oQfnfLgYCsS
+	Be1kXDJiER6ZYucCKogCzK3B0Cp0ZCNw=
+X-Google-Smtp-Source: AGHT+IEwYM+SsguLP9WE94m8pZ+ESbFpNR6hzuBrMSj45TkgJFbhd2aYOB6dLmhp86ztV2jUtUH3o3wezWViL5/a5Q0=
+X-Received: by 2002:a17:907:60cf:b0:b04:8358:7d96 with SMTP id
+ a640c23a62f3a-b1bb935d92dmr659001066b.51.1758192884648; Thu, 18 Sep 2025
+ 03:54:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
- <20250911193505.24068-6-bhargava.marreddy@broadcom.com> <20250916154501.GJ224143@horms.kernel.org>
-In-Reply-To: <20250916154501.GJ224143@horms.kernel.org>
-From: Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>
-Date: Thu, 18 Sep 2025 16:19:13 +0530
-X-Gm-Features: AS18NWCa_g0UmRvKmRME9ja7yGUskmCB6KsNTvDnDhoSWvGcPCrazrGLA1CN6r8
-Message-ID: <CANXQDtanjs=VEMP8Mq+Bq5D_vT=zH3xbo2kc-EBaNkuWJ8T-8A@mail.gmail.com>
-Subject: Re: [v7, net-next 05/10] bng_en: Initialise core resources
-To: Simon Horman <horms@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, andrew+netdev@lunn.ch, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, michael.chan@broadcom.com, 
-	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com, 
-	vikas.gupta@broadcom.com, 
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+References: <20250910071429.3925025-1-maobibo@loongson.cn> <CAAhV-H65H_iREuETGU_v9oZdaPFoQj1VZV46XSNTC8ppENXzuQ@mail.gmail.com>
+ <3d3a72c2-7c91-7640-5f0b-7b95bd5f0d2e@loongson.cn> <CAAhV-H4bEyeV7WkfSNBJnicMhhnSwj3PEr9K4ZpXwto1=JyWUw@mail.gmail.com>
+ <ff12ec30-b0df-aedd-a713-4fb77a4e092a@loongson.cn>
+In-Reply-To: <ff12ec30-b0df-aedd-a713-4fb77a4e092a@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 18 Sep 2025 18:54:29 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7AhUijxaW5oS6s4hCtWyEOgx8iaku2KhbK_6mZbRHYHQ@mail.gmail.com>
+X-Gm-Features: AS18NWAHCY3XIcsMOxrKzimbMXi0_bnNV7f7D5EuQM_0abl4FsluSSfxiqbpD6E
+Message-ID: <CAAhV-H7AhUijxaW5oS6s4hCtWyEOgx8iaku2KhbK_6mZbRHYHQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: KVM: Fix VM migration failure with PTW enabled
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Tue, Sep 16, 2025 at 9:15=E2=80=AFPM Simon Horman <horms@kernel.org> wro=
-te:
+On Wed, Sep 17, 2025 at 9:11=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
 >
-> On Fri, Sep 12, 2025 at 01:05:00AM +0530, Bhargava Marreddy wrote:
-> > Add initial settings to all core resources, such as
-> > the RX, AGG, TX, CQ, and NQ rings, as well as the VNIC.
-> > This will help enable these resources in future patches.
+>
+>
+> On 2025/9/16 =E4=B8=8B=E5=8D=8810:21, Huacai Chen wrote:
+> > On Mon, Sep 15, 2025 at 9:22=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> =
+wrote:
+> >>
+> >>
+> >>
+> >> On 2025/9/14 =E4=B8=8A=E5=8D=889:57, Huacai Chen wrote:
+> >>> Hi, Bibo,
+> >>>
+> >>> On Wed, Sep 10, 2025 at 3:14=E2=80=AFPM Bibo Mao <maobibo@loongson.cn=
+> wrote:
+> >>>>
+> >>>> With PTW disabled system, bit Dirty is HW bit for page writing, howe=
+ver
+> >>>> with PTW enabled system, bit Write is HW bit for page writing. Previ=
+ously
+> >>>> bit Write is treated as SW bit to record page writable attribute for=
+ fast
+> >>>> page fault handling in the secondary MMU, however with PTW enabled m=
+achine,
+> >>>> this bit is used by HW already.
+> >>>>
+> >>>> Here define KVM_PAGE_SOFT_WRITE with SW bit _PAGE_MODIFIED, so that =
+it can
+> >>>> work on both PTW disabled and enabled machines. And with HW write bi=
+t, both
+> >>>> bit Dirty and Write is set or clear.
+> >>>>
+> >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >>>> ---
+> >>>>    arch/loongarch/include/asm/kvm_mmu.h | 20 ++++++++++++++++----
+> >>>>    arch/loongarch/kvm/mmu.c             |  8 ++++----
+> >>>>    2 files changed, 20 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/arch/loongarch/include/asm/kvm_mmu.h b/arch/loongarch/i=
+nclude/asm/kvm_mmu.h
+> >>>> index 099bafc6f797..efcd593c42b1 100644
+> >>>> --- a/arch/loongarch/include/asm/kvm_mmu.h
+> >>>> +++ b/arch/loongarch/include/asm/kvm_mmu.h
+> >>>> @@ -16,6 +16,13 @@
+> >>>>     */
+> >>>>    #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1=
+)
+> >>>>
+> >>>> +/*
+> >>>> + * _PAGE_MODIFIED is SW pte bit, it records page ever written on ho=
+st
+> >>>> + * kernel, on secondary MMU it records page writable in order to fa=
+st
+> >>>> + * path handling
+> >>>> + */
+> >>>> +#define KVM_PAGE_SOFT_WRITE    _PAGE_MODIFIED
+> >>> KVM_PAGE_WRITEABLE is more suitable.
+> >> both are ok for me.
+> >>>
+> >>>> +
+> >>>>    #define _KVM_FLUSH_PGTABLE     0x1
+> >>>>    #define _KVM_HAS_PGMASK                0x2
+> >>>>    #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) | pgprot=
+_val(prot))
+> >>>> @@ -52,11 +59,16 @@ static inline void kvm_set_pte(kvm_pte_t *ptep, =
+kvm_pte_t val)
+> >>>>           WRITE_ONCE(*ptep, val);
+> >>>>    }
+> >>>>
+> >>>> -static inline int kvm_pte_write(kvm_pte_t pte) { return pte & _PAGE=
+_WRITE; }
+> >>>> -static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & _PAGE=
+_DIRTY; }
+> >>>> +static inline int kvm_pte_soft_write(kvm_pte_t pte) { return pte & =
+KVM_PAGE_SOFT_WRITE; }
+> >>> The same, kvm_pte_mkwriteable() is more suitable.
+> >> kvm_pte_writable()  here ?  and kvm_pte_mkwriteable() for the bellowin=
+g
+> >> sentense.
+> >>
+> >> If so, that is ok, both are ok for me.
+> > Yes.
 > >
-> > Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-> > Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
-> > Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-> > ---
-> >  .../net/ethernet/broadcom/bnge/bnge_netdev.c  | 213 ++++++++++++++++++
-> >  .../net/ethernet/broadcom/bnge/bnge_netdev.h  |  50 ++++
-> >  .../net/ethernet/broadcom/bnge/bnge_rmem.h    |   1 +
-> >  3 files changed, 264 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c b/drivers=
-/net/ethernet/broadcom/bnge/bnge_netdev.c
+> >>>
+> >>>> +static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & __WRI=
+TEABLE; }
+> >>> _PAGE_DIRTY and _PAGE_WRITE are always set/cleared at the same time,
+> >>> so the old version still works.
+> >> Although it is workable, I still want to remove single bit _PAGE_DIRTY
+> >> checking here.
+> > I want to check a single bit because "kvm_pte_write() return
+> > _PAGE_WRITE and kvm_pte_dirty() return _PAGE_DIRTY" looks more
+> > natural.
+> kvm_pte_write() is not needed any more and removed here. This is only
+> kvm_pte_writable() to check software writable bit, kvm_pte_dirty() to
+> check HW write bit.
 >
-> ...
->
-> > +static int bnge_init_tx_rings(struct bnge_net *bn)
-> > +{
-> > +     int i;
-> > +
-> > +     bn->tx_wake_thresh =3D max_t(int, bn->tx_ring_size / 2,
-> > +                                BNGE_MIN_TX_DESC_CNT);
->
-> The use of max_t caught my eye.
->
-> And I'm curious to know why tx_wake_thresh is signed.
-> I don't see it used in this patchset other than
-> being set on the line above.
->
-> In any case, I expect that max() can be used instead of max_t() here.
+> There is no reason to check single bit with _PAGE_WRITE or _PAGE_DIRTY,
+> since there is different meaning on machines with/without HW PTW.
+Applied together with other patches, you can test it.
+https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.g=
+it/log/?h=3Dloongarch-next
 
-Thanks, I'll address this in the next patch.
+Huacai
 
 >
-> > +
-> > +     for (i =3D 0; i < bn->bd->tx_nr_rings; i++) {
-> > +             struct bnge_tx_ring_info *txr =3D &bn->tx_ring[i];
-> > +             struct bnge_ring_struct *ring =3D &txr->tx_ring_struct;
-> > +
-> > +             ring->fw_ring_id =3D INVALID_HW_RING_ID;
-> > +
-> > +             netif_queue_set_napi(bn->netdev, i, NETDEV_QUEUE_TYPE_TX,
-> > +                                  &txr->bnapi->napi);
-> > +     }
-> > +
-> > +     return 0;
-> > +}
->
-> ...
->
-> > diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h b/drivers=
-/net/ethernet/broadcom/bnge/bnge_netdev.h
->
-> ...
->
-> > @@ -176,9 +212,19 @@ struct bnge_net {
-> >       u16                             *tx_ring_map;
-> >       enum dma_data_direction         rx_dir;
+> Regards
+> Bibo Mao
 > >
-> > +     /* grp_info indexed by napi/nq index */
-> > +     struct bnge_ring_grp_info       *grp_info;
-> >       struct bnge_vnic_info           *vnic_info;
-> >       int                             nr_vnics;
-> >       int                             total_irqs;
-> > +
-> > +     int                     tx_wake_thresh;
-> > +     u16                     rx_offset;
-> > +     u16                     rx_dma_offset;
-> > +
-> > +     u8                      rss_hash_key[HW_HASH_KEY_SIZE];
-> > +     u8                      rss_hash_key_valid:1;
-> > +     u8                      rss_hash_key_updated:1;
-> >  };
+> > You may argue that kvm_pte_mkdirty() set both _PAGE_WRITE and
+> > _PAGE_DIRTY so kvm_pte_dirty() should also return both. But I think
+> > kvm_pte_mkdirty() in this patch is just a "reasonable optimization".
+> > Because strictly speaking, we need both kvm_pte_mkdirty() and
+> > kvm_pte_mkwrite() and call the pair when needed.
+> >
+> > Huacai
+> >
+> >>
+> >> Regards
+> >> Bibo Mao
+> >>>
+> >>>>    static inline int kvm_pte_young(kvm_pte_t pte) { return pte & _PA=
+GE_ACCESSED; }
+> >>>>    static inline int kvm_pte_huge(kvm_pte_t pte) { return pte & _PAG=
+E_HUGE; }
+> >>>>
+> >>>> +static inline kvm_pte_t kvm_pte_mksoft_write(kvm_pte_t pte)
+> >>>> +{
+> >>>> +       return pte | KVM_PAGE_SOFT_WRITE;
+> >>>> +}
+> >>>> +
+> >>>>    static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
+> >>>>    {
+> >>>>           return pte | _PAGE_ACCESSED;
+> >>>> @@ -69,12 +81,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t =
+pte)
+> >>>>
+> >>>>    static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
+> >>>>    {
+> >>>> -       return pte | _PAGE_DIRTY;
+> >>>> +       return pte | __WRITEABLE;
+> >>>>    }
+> >>>>
+> >>>>    static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
+> >>>>    {
+> >>>> -       return pte & ~_PAGE_DIRTY;
+> >>>> +       return pte & ~__WRITEABLE;
+> >>>>    }
+> >>>>
+> >>>>    static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
+> >>>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> >>>> index ed956c5cf2cc..68749069290f 100644
+> >>>> --- a/arch/loongarch/kvm/mmu.c
+> >>>> +++ b/arch/loongarch/kvm/mmu.c
+> >>>> @@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu *vc=
+pu, unsigned long gpa, bool writ
+> >>>>           /* Track access to pages marked old */
+> >>>>           new =3D kvm_pte_mkyoung(*ptep);
+> >>>>           if (write && !kvm_pte_dirty(new)) {
+> >>>> -               if (!kvm_pte_write(new)) {
+> >>>> +               if (!kvm_pte_soft_write(new)) {
+> >>>>                           ret =3D -EFAULT;
+> >>>>                           goto out;
+> >>>>                   }
+> >>>> @@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, u=
+nsigned long gpa, bool write)
+> >>>>                   prot_bits |=3D _CACHE_SUC;
+> >>>>
+> >>>>           if (writeable) {
+> >>>> -               prot_bits |=3D _PAGE_WRITE;
+> >>>> +               prot_bits =3D kvm_pte_mksoft_write(prot_bits);
+> >>>>                   if (write)
+> >>>> -                       prot_bits |=3D __WRITEABLE;
+> >>>> +                       prot_bits =3D kvm_pte_mkdirty(prot_bits);
+> >>>>           }
+> >>>>
+> >>>>           /* Disable dirty logging on HugePages */
+> >>>> @@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, u=
+nsigned long gpa, bool write)
+> >>>>           kvm_release_faultin_page(kvm, page, false, writeable);
+> >>>>           spin_unlock(&kvm->mmu_lock);
+> >>>>
+> >>>> -       if (prot_bits & _PAGE_DIRTY)
+> >>>> +       if (kvm_pte_dirty(prot_bits))
+> >>>>                   mark_page_dirty_in_slot(kvm, memslot, gfn);
+> >>>>
+> >>>>    out:
+> >>> To save time, I just change the whole patch like this, you can confir=
+m
+> >>> whether it woks:
+> >>>
+> >>> diff --git a/arch/loongarch/include/asm/kvm_mmu.h
+> >>> b/arch/loongarch/include/asm/kvm_mmu.h
+> >>> index 099bafc6f797..882f60c72b46 100644
+> >>> --- a/arch/loongarch/include/asm/kvm_mmu.h
+> >>> +++ b/arch/loongarch/include/asm/kvm_mmu.h
+> >>> @@ -16,6 +16,13 @@
+> >>>     */
+> >>>    #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1)
+> >>>
+> >>> +/*
+> >>> + * _PAGE_MODIFIED is SW pte bit, it records page ever written on hos=
+t
+> >>> + * kernel, on secondary MMU it records page writable in order to fas=
+t
+> >>> + * path handling
+> >>> + */
+> >>> +#define KVM_PAGE_WRITEABLE     _PAGE_MODIFIED
+> >>> +
+> >>>    #define _KVM_FLUSH_PGTABLE     0x1
+> >>>    #define _KVM_HAS_PGMASK                0x2
+> >>>    #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) |
+> >>> pgprot_val(prot))
+> >>> @@ -56,6 +63,7 @@ static inline int kvm_pte_write(kvm_pte_t pte) {
+> >>> return pte & _PAGE_WRITE; }
+> >>>    static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte &
+> >>> _PAGE_DIRTY; }
+> >>>    static inline int kvm_pte_young(kvm_pte_t pte) { return pte &
+> >>> _PAGE_ACCESSED; }
+> >>>    static inline int kvm_pte_huge(kvm_pte_t pte) { return pte &
+> >>> _PAGE_HUGE; }
+> >>> +static inline int kvm_pte_writeable(kvm_pte_t pte) { return pte &
+> >>> KVM_PAGE_WRITEABLE; }
+> >>>
+> >>>    static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
+> >>>    {
+> >>> @@ -69,12 +77,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t
+> >>> pte)
+> >>>
+> >>>    static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
+> >>>    {
+> >>> -       return pte | _PAGE_DIRTY;
+> >>> +       return pte | __WRITEABLE;
+> >>>    }
+> >>>
+> >>>    static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
+> >>>    {
+> >>> -       return pte & ~_PAGE_DIRTY;
+> >>> +       return pte & ~__WRITEABLE;
+> >>>    }
+> >>>
+> >>>    static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
+> >>> @@ -87,6 +95,11 @@ static inline kvm_pte_t kvm_pte_mksmall(kvm_pte_t
+> >>> pte)
+> >>>           return pte & ~_PAGE_HUGE;
+> >>>    }
+> >>>
+> >>> +static inline kvm_pte_t kvm_pte_mkwriteable(kvm_pte_t pte)
+> >>> +{
+> >>> +       return pte | KVM_PAGE_WRITEABLE;
+> >>> +}
+> >>> +
+> >>>    static inline int kvm_need_flush(kvm_ptw_ctx *ctx)
+> >>>    {
+> >>>           return ctx->flag & _KVM_FLUSH_PGTABLE;
+> >>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> >>> index ed956c5cf2cc..7c8143e79c12 100644
+> >>> --- a/arch/loongarch/kvm/mmu.c
+> >>> +++ b/arch/loongarch/kvm/mmu.c
+> >>> @@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu
+> >>> *vcpu, unsigned long gpa, bool writ
+> >>>           /* Track access to pages marked old */
+> >>>           new =3D kvm_pte_mkyoung(*ptep);
+> >>>           if (write && !kvm_pte_dirty(new)) {
+> >>> -               if (!kvm_pte_write(new)) {
+> >>> +               if (!kvm_pte_writeable(new)) {
+> >>>                           ret =3D -EFAULT;
+> >>>                           goto out;
+> >>>                   }
+> >>> @@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
+> >>> unsigned long gpa, bool write)
+> >>>                   prot_bits |=3D _CACHE_SUC;
+> >>>
+> >>>           if (writeable) {
+> >>> -               prot_bits |=3D _PAGE_WRITE;
+> >>> +               prot_bits =3D kvm_pte_mkwriteable(prot_bits);
+> >>>                   if (write)
+> >>> -                       prot_bits |=3D __WRITEABLE;
+> >>> +                       prot_bits =3D kvm_pte_mkdirty(prot_bits);
+> >>>           }
+> >>>
+> >>>           /* Disable dirty logging on HugePages */
+> >>> @@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
+> >>> unsigned long gpa, bool write)
+> >>>           kvm_release_faultin_page(kvm, page, false, writeable);
+> >>>           spin_unlock(&kvm->mmu_lock);
+> >>>
+> >>> -       if (prot_bits & _PAGE_DIRTY)
+> >>> +       if (kvm_pte_dirty(prot_bits))
+> >>>                   mark_page_dirty_in_slot(kvm, memslot, gfn);
+> >>>
+> >>>    out:
+> >>>
+> >>> Huacai
+> >>>
+> >>>>
+> >>>> base-commit: 9dd1835ecda5b96ac88c166f4a87386f3e727bd9
+> >>>> --
+> >>>> 2.39.3
+> >>>>
+> >>>>
+> >>
 >
-> ...
+>
 
