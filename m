@@ -1,174 +1,142 @@
-Return-Path: <linux-kernel+bounces-822323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21838B8388D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:35:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F86B838A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5602A4CCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3C61C00193
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA822FB096;
-	Thu, 18 Sep 2025 08:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD0E2FB62B;
+	Thu, 18 Sep 2025 08:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ACt1tF6s"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NAzFNn9G"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCEB2F9C32;
-	Thu, 18 Sep 2025 08:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550D52F8BD2;
+	Thu, 18 Sep 2025 08:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758184452; cv=none; b=kecL2fUaRiPftmx2N7bUTVHO2q6ja2MyoDgBMp0rIXdRcxmpWPDA1iNGi5Po/tALRTu3/LvuD5yikVf1k+gg3HMQdCIKOu1yG5vL7uJdSv3Gfpt7ypg/jafgpJmkMUC7BGtPKgsY7wXKGuoM+BfOxpH6/HbWTGidUFiBdP+8R8M=
+	t=1758184453; cv=none; b=DMaf32GSbO27flT/3acj9/8l8S7lyQqX1IKtBqjw6urljvK/vwUyazqk+oDp57oGorVkpj1S96B4FxP4Hqzn1ncaM1tN6hBSNtMIxSy0OqULWZ+2/o8aswMBetHZzxQa9f5bXl/5Byy4ytG3TabXPoMJ884xflXcu+6Rh5QCevA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758184452; c=relaxed/simple;
-	bh=+Ahr5oNqxXsasI3EQWXo7mCLrNIvdckTiHF6ZxjDajA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I4YjsgS4LVrXMJRFm4E1Bpd+4q/xeYkXE8cUVN3D/2SchlCTTyu5qFknLxM7xmeyc9wVhfNE1DuqC/1AOM/7IGPAl02XPPmUjASveAt4TTRs9yhmYhGCSQS3Q1F1hWoYdoMmg8EZuDN7H+ESQxqJLWOy78BnYqL+S9hYhK4+Hfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ACt1tF6s; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id BFA864E40D09;
-	Thu, 18 Sep 2025 08:34:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 969506062C;
-	Thu, 18 Sep 2025 08:34:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A9F17102F1CBF;
-	Thu, 18 Sep 2025 10:34:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758184447; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=EY6yVymLZMeFS52uP2yzPDRoqRTf9+mNLzBhVGM2Bzs=;
-	b=ACt1tF6s5DtutmaB8W/6DxpovK/rpF/26Te+HqVmJULQzZ2S7K3LWQDMeQ+NJpSrVucIZG
-	5fOVi9vjbsBuoqIYvWUnBZCO5j1JFQlUqTSW+0D5ZngqmWGctN11H3YqWoeWSQohv1zuLj
-	7Z/qEeNIMwkmqD+QwLYdEdekFcAsKHY78adlEjwg8+Wrx2Dw0OUTAeOY2wRdcqKJx5uVTV
-	8XBS0Q8xglxsnSp6/t2FsWc41SYs7NlY53o3DopcUV8SXI4q4YP+MiJb7PXQBvaBre6IRd
-	nQnrCZ8KxrBIONpaMbvurn/yUd1iFZTaPtPlyu/B53HxmAQn0HKRZKLT3J71Kg==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Date: Thu, 18 Sep 2025 10:33:52 +0200
-Subject: [PATCH net-next v3 3/3] net: dsa: microchip: Set SPI as bus
- interface during reset for KSZ8463
+	s=arc-20240116; t=1758184453; c=relaxed/simple;
+	bh=YUyJj+AOLpQZ16qQcLa96qh1A9RBn/gEjHPtLkjTIFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4OPLVDun7BBava3Zt5BBY7Wen4P8yWiaQqvkwU98a/C2zH6wAwRe5eQGIb9noMi0L7OPr3di5aPXdhrHjcwKYFfPqEwIfCzB3mlQCdk9MVokHTGHiDY+2biRC2RofMQ8+8Zj0iIo9CkCFxg2w8Evot+z8DvIPIUPhF9j1eVRFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NAzFNn9G; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758184447; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=iHPyCqwaIE53kfvtOqEjL6h4xRme2WCE41tGRMbg4OA=;
+	b=NAzFNn9GOVJAkfAMVdrcB07/dc9Ms6BXy74/eleljuE18J5xeCe+MSNCWI7mIBMNSKnAqNLzjwLm6kSAz8lYe1mcIwN/wPqqqWp2scY/NlMqRt6OvyP2fdTyiQYDDC+xHtbgB7ivv075GdoONkKJHKPWItxHsyJUsKpC8Jrumlc=
+Received: from 30.246.178.33(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WoFHDqY_1758184444 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 18 Sep 2025 16:34:05 +0800
+Message-ID: <1211fd9a-93e6-4ebe-a80d-083601138b70@linux.alibaba.com>
+Date: Thu, 18 Sep 2025 16:34:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250918-ksz-strap-pins-v3-3-16662e881728@bootlin.com>
-References: <20250918-ksz-strap-pins-v3-0-16662e881728@bootlin.com>
-In-Reply-To: <20250918-ksz-strap-pins-v3-0-16662e881728@bootlin.com>
-To: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- Pascal Eberhard <pascal.eberhard@se.com>, 
- Woojung Huh <Woojung.Huh@microchip.com>, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (Schneider Electric)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
+ HugeTLB pages
+To: Kyle Meyer <kyle.meyer@hpe.com>, "Fan, Shawn" <shawn.fan@intel.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>, "corbet@lwn.net"
+ <corbet@lwn.net>, "david@redhat.com" <david@redhat.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "shuah@kernel.org" <shuah@kernel.org>,
+ "jane.chu@oracle.com" <jane.chu@oracle.com>,
+ "jiaqiyan@google.com" <jiaqiyan@google.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "bp@alien8.de" <bp@alien8.de>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+ "jack@suse.cz" <jack@suse.cz>,
+ "joel.granados@kernel.org" <joel.granados@kernel.org>,
+ "laoar.shao@gmail.com" <laoar.shao@gmail.com>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "mclapinski@google.com" <mclapinski@google.com>,
+ "mhocko@suse.com" <mhocko@suse.com>,
+ "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+ "osalvador@suse.de" <osalvador@suse.de>,
+ "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+ "rppt@kernel.org" <rppt@kernel.org>, "Anderson, Russ"
+ <russ.anderson@hpe.com>, "surenb@google.com" <surenb@google.com>,
+ "vbabka@suse.cz" <vbabka@suse.cz>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <aMiu_Uku6Y5ZbuhM@hpe.com>
+ <20250915201618.7d9d294a6b22e0f71540884b@linux-foundation.org>
+ <aMkOCmGBhZKhKPrI@hpe.com>
+ <SJ1PR11MB60831F028E2FEB6B5A3390D9FC14A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <aMmlhPghbpnlCZ09@hpe.com>
+ <SJ1PR11MB60833884799B6AA2BC18ECE7FC14A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <LV4PR11MB9513A6EFA88B082E554CB8D6EB17A@LV4PR11MB9513.namprd11.prod.outlook.com>
+ <aMsE9XjWKEYTIQyV@hpe.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <aMsE9XjWKEYTIQyV@hpe.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-At reset, the KSZ8463 uses a strap-based configuration to set SPI as
-bus interface. SPI is the only bus supported by the driver. If the
-required pull-ups/pull-downs are missing (by mistake or by design to
-save power) the pins may float and the configuration can go wrong
-preventing any communication with the switch.
 
-Introduce a ksz8463_configure_straps_spi() function called during the
-device reset. It relies on the 'straps-rxd-gpios' OF property and the
-'reset' pinmux configuration to enforce SPI as bus interface.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Bastien Curutchet (Schneider Electric) <bastien.curutchet@bootlin.com>
----
- drivers/net/dsa/microchip/ksz_common.c | 45 ++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+在 2025/9/18 02:59, Kyle Meyer 写道:
+> On Wed, Sep 17, 2025 at 06:35:14AM +0000, Fan, Shawn wrote:
+>>>> My original patch for this just skipped the GHES->offline process
+>>>> for huge pages. But I wasn't aware of the sysctl control. That provides
+>>>> a better solution.
+>>>
+>>> Tony, does that mean you're OK with using the existing sysctl interface? If
+>>> so, I'll just send a separate patch to update the sysfs-memory-page-offline
+>>> documentation and drop the rest.
+>>
+>> Kyle,
+>>
+>> It depends on which camp the external customer that reported this
+>> falls into:
+>>
+>> 1) "I'm OK disabling all soft offline requests".
+>>
+>> or the:
+>>
+>> 2) "I'd like 4K pages to still go offline if the BIOS asks, just not any huge pages".
+>>
+>> Shawn: Can you please find out?
+>>
+>>
+>> -> Prefer the 2nd option,  "4K pages still go offline if the BIOS asks, just not any huge pages."
+> 
+> OK, thank you.
+> 
+> Does that mean they want to avoid offlining transparent huge pages as well?
+> 
+> Thanks,
+> Kyle Meyer
 
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index 7292bfe2f7cac3a0d88bb51339cc287f56ca1d1f..3bfa894d62eecc08dc45b25225e1122fe30b8f99 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -23,6 +23,7 @@
- #include <linux/of_mdio.h>
- #include <linux/of_net.h>
- #include <linux/micrel_phy.h>
-+#include <linux/pinctrl/consumer.h>
- #include <net/dsa.h>
- #include <net/ieee8021q.h>
- #include <net/pkt_cls.h>
-@@ -5338,6 +5339,38 @@ static int ksz_parse_drive_strength(struct ksz_device *dev)
- 	return 0;
- }
- 
-+static int ksz8463_configure_straps_spi(struct ksz_device *dev)
-+{
-+	struct pinctrl *pinctrl;
-+	struct gpio_desc *rxd0;
-+	struct gpio_desc *rxd1;
-+
-+	rxd0 = devm_gpiod_get_index_optional(dev->dev, "straps-rxd", 0, GPIOD_OUT_LOW);
-+	if (IS_ERR(rxd0))
-+		return PTR_ERR(rxd0);
-+
-+	rxd1 = devm_gpiod_get_index_optional(dev->dev, "straps-rxd", 1, GPIOD_OUT_HIGH);
-+	if (IS_ERR(rxd1))
-+		return PTR_ERR(rxd1);
-+
-+	if (!rxd0 && !rxd1)
-+		return 0;
-+
-+	if ((rxd0 && !rxd1) || (rxd1 && !rxd0))
-+		return -EINVAL;
-+
-+	pinctrl = devm_pinctrl_get_select(dev->dev, "reset");
-+	if (IS_ERR(pinctrl))
-+		return PTR_ERR(pinctrl);
-+
-+	return 0;
-+}
-+
-+static int ksz8463_release_straps_spi(struct ksz_device *dev)
-+{
-+	return pinctrl_select_default_state(dev->dev);
-+}
-+
- int ksz_switch_register(struct ksz_device *dev)
- {
- 	const struct ksz_chip_data *info;
-@@ -5353,10 +5386,22 @@ int ksz_switch_register(struct ksz_device *dev)
- 		return PTR_ERR(dev->reset_gpio);
- 
- 	if (dev->reset_gpio) {
-+		if (of_device_is_compatible(dev->dev->of_node, "microchip,ksz8463")) {
-+			ret = ksz8463_configure_straps_spi(dev);
-+			if (ret)
-+				return ret;
-+		}
-+
- 		gpiod_set_value_cansleep(dev->reset_gpio, 1);
- 		usleep_range(10000, 12000);
- 		gpiod_set_value_cansleep(dev->reset_gpio, 0);
- 		msleep(100);
-+
-+		if (of_device_is_compatible(dev->dev->of_node, "microchip,ksz8463")) {
-+			ret = ksz8463_release_straps_spi(dev);
-+			if (ret)
-+				return ret;
-+		}
- 	}
- 
- 	mutex_init(&dev->dev_mutex);
 
--- 
-2.51.0
+Hi, Shawn,
 
+As memory access is typically interleaved between channels. When the
+per-rank threshold is exceeded, soft-offlining the last accessed address
+seems unreasonable - regardless of whether it's a 4KB page or a huge
+page. The error accumulation happens at the rank level, but the action
+is taken on a specific page that happened to trigger the threshold,
+which doesn't address the underlying issue.
+
+I prefer the first option that disabling all soft offline requests from
+GHES driver.
+
+Thanks.
+Shuai
 
