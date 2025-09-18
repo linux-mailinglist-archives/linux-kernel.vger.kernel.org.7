@@ -1,145 +1,93 @@
-Return-Path: <linux-kernel+bounces-822604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88036B84428
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:04:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6C0B844AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4386C5822EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496481C00447
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4AA2F5A15;
-	Thu, 18 Sep 2025 11:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CEC302769;
+	Thu, 18 Sep 2025 11:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQM8OClx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxDjo7Dl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA89F23ABA0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE7323ABA0;
+	Thu, 18 Sep 2025 11:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758193475; cv=none; b=CHFzlEpvqEQbmS5orwZyVlE92MiwC+0nPlwFe8HlPm9j7VsWjVrK3OJ8jukdOxuW6+X5Gly/4US6AscEOrLvhjNDABuweSfr8BN3yRHsR4wvScaa2Nlp4hbqYQBufKY3sluhMhat8rep7d93VDk9bPe6IrxTDeyWaBcIlnuFmJ8=
+	t=1758193616; cv=none; b=dxGJv0PkD97WUg8CEg4ORA1u2F0k3Kc+/PBOkJRAmDJWDV0K0HRP90Omr7naP08pwVAc1ePk7+yv8gq9cO6FzT00QXdldh1BUj5qqFrHIbg6VRi3GYowKwtI4U+5lPLwG+DXgh/5iqOCtnkbv1TmzFi17vWTdsivkTx0jxiLu1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758193475; c=relaxed/simple;
-	bh=NojJZ78hZ55rnnC8I9+5CwqPB0jcr195D5wT3H9zTxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G6khX6a3MDk8E8plX6FZoppLYpW6tiEsYAvs7k4H5pnn7HWNU3mxqEZfOx6XyHPSouHrB8rkpuei+06gNB846I+1KCwTfP+7gcPJ+ncP7hKe4lGopVWw5GtKofwLeEnCtXMBHm6X8XkcGtZqKPsm7MFajPy1LuIoJ+fEfJDMb80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQM8OClx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F35C4CEE7;
-	Thu, 18 Sep 2025 11:04:31 +0000 (UTC)
+	s=arc-20240116; t=1758193616; c=relaxed/simple;
+	bh=NpAPPFF/yuRMT+fZ+lNvZK5IuyxseW1m/ZM8WE7yyA4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eGtZf3ALZGICIm60d2GwUafasOVHLWjEmTJUGaC9lxejQN9pssTZhakK4mlJAnjthqwW/dLHiNJmJSQZHLLkXocbmvPj9h16XRKJkQ+Kfcbz/Sdz6bDYlSQQlg3IYbTxKvnWLZ5xdg/VggVjho6W7i9fXC6LSOWK0GvtLOTtHms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxDjo7Dl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C330FC4CEEB;
+	Thu, 18 Sep 2025 11:06:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758193475;
-	bh=NojJZ78hZ55rnnC8I9+5CwqPB0jcr195D5wT3H9zTxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nQM8OClx5HgL5ZvYw9JdwnDSMBMqgop7DN5U1oBDH5u7NKxtvBIRZrHZpC+mii0VM
-	 A/WZhFzpYbLjlUdWUz0QgklN1gUYyyKtJJASgRdpa3UzIDbMdRvFpsmopVfchHdbBt
-	 Dxp7GO0SprZwOYRJYkiy7eNVYWs4EYt7Y3Mu2LDKcf1MXYmdPZZXKTWannvjeIarQV
-	 /OqDRIzFlRBTEK7bSqw62VusRiNY5MASWXVeHcJWbPs+jqBMVuSt51gOluj5arU3zw
-	 meNAbq1dRLWQ2kM9d5yXEXYJFe8kEWBQe8wpNRwE7pPjMEQ8+RvQgZZOfwWDd1yxDI
-	 owCfxJVMadMPA==
-Date: Thu, 18 Sep 2025 14:04:27 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	kexec@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] kho: replace kho_preserve_phys() with
- kho_preserve_pages()
-Message-ID: <aMvnO2FH-cYzNPGl@kernel.org>
-References: <20250917174033.3810435-1-rppt@kernel.org>
- <20250917174033.3810435-3-rppt@kernel.org>
- <mafs05xdggifr.fsf@kernel.org>
+	s=k20201202; t=1758193615;
+	bh=NpAPPFF/yuRMT+fZ+lNvZK5IuyxseW1m/ZM8WE7yyA4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jxDjo7Dlh4cat8V+DFX0tGwOab5YO0Mq5EbhkpwO8jTQm6fF0LCFC4v+NZspjwsXp
+	 G4FQUB6OOg+LGgkFU65eRPlJ4/xm41JkDMkBcQQMOSHgVLsckbToTS6L1PeOjYnfsw
+	 mxqtfoYVA2YqYapAih3FT4fR6g5/zOeVsRWEOEa5BlFA/V4Fp15MMg9UjGrkbllJw4
+	 pydcRWePrPjMSXj2uupkY4lZcJpYkeweVSi0LWDo/kh5V/chKnv0xFuSOiIT+V9ZYV
+	 MIGfrTt4ZV8+8cic9+L5iPB0FpeFOkCsOgqWa+T9Hyb0MaqJgsM7bicBBOMYxI+SfW
+	 rrQN+cHXmZelw==
+From: Will Deacon <will@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] kselftest/arm64/gcs/basic-gcs: Respect parent directory CFLAGS
+Date: Thu, 18 Sep 2025 12:06:36 +0100
+Message-Id: <175812312276.1711921.12702494152718461208.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250916-arm64-gcs-nolibc-v1-1-ee54aa65fc26@weissschuh.net>
+References: <20250916-arm64-gcs-nolibc-v1-1-ee54aa65fc26@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mafs05xdggifr.fsf@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Pratyush,
+On Tue, 16 Sep 2025 18:51:35 +0200, Thomas Weißschuh wrote:
+> basic-gcs has it's own make rule to handle the special compiler
+> invocation to build against nolibc. This rule does not respect the
+> $(CFLAGS) passed by the Makefile from the parent directory.
+> However these $(CFLAGS) set up the include path to include the UAPI
+> headers from the current kernel.
+> Due to this the asm/hwcap.h header is used from the toolchain instead of
+> the UAPI and the definition of HWCAP_GCS is not found.
+> 
+> [...]
 
-On Thu, Sep 18, 2025 at 12:32:08PM +0200, Pratyush Yadav wrote:
-> Hi Mike,
-> 
-> On Wed, Sep 17 2025, Mike Rapoport wrote:
-> 
-> >  /**
-> > - * kho_preserve_phys - preserve a physically contiguous range across kexec.
-> > - * @phys: physical address of the range.
-> > - * @size: size of the range.
-> > + * kho_preserve_pages - preserve contiguous pages across kexec
-> > + * @page: first page in the list.
-> > + * @nr_pages: number of pages.
-> >   *
-> > - * Instructs KHO to preserve the memory range from @phys to @phys + @size
-> > - * across kexec.
-> > + * Preserve a contiguous list of order 0 pages. Must be restored using
-> > + * kho_restore_page() on each order 0 page.
-> 
-> This is not true. The pages are preserved with the maximum order
-> possible.
-> 
-> 	while (pfn < end_pfn) {
-> 		const unsigned int order =
-> 			min(count_trailing_zeros(pfn), ilog2(end_pfn - pfn));
-> 
-> 		err = __kho_preserve_order(track, pfn, order);
-> 		[...]
-> 
-> So four 0-order pages will be preserved as one 2-order page. Restoring
-> them as four 0-order pages is wrong. And my proposed patch for checking
-> the magic [0] will uncover this exact bug.
-> 
-> I think you should either change the logic to always preserve at order
-> 0, or maybe add a kho_restore_pages() that replicates the same order
-> calculation.
+Applied to arm64 (for-next/selftests), thanks!
 
-Heh, it seems I shot myself in the foot when I suggested to move the sanity
-checks to kho_restore_page() :-D
+[1/1] kselftest/arm64/gcs/basic-gcs: Respect parent directory CFLAGS
+      https://git.kernel.org/arm64/c/5b7bdc4402b1
 
-We surely don't want to preserve contiguous chunks of order-0 pages as
-order 0, so kho_restore_pages() it is.
- 
-> [0] https://lore.kernel.org/lkml/20250917125725.665-2-pratyush@kernel.org/
-> 
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index 117d963e677c..6ec3eaa4e8d1 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -2516,8 +2516,10 @@ static int reserve_mem_kho_finalize(struct kho_serialization *ser)
-> >  
-> >  	for (i = 0; i < reserved_mem_count; i++) {
-> >  		struct reserve_mem_table *map = &reserved_mem_table[i];
-> > +		struct page *page = phys_to_page(map->start);
-> > +		unsigned int nr_pages = map->size >> PAGE_SHIFT;
-> >  
-> > -		err |= kho_preserve_phys(map->start, map->size);
-> > +		err |= kho_preserve_pages(page, nr_pages);
-> 
-> Unrelated to this patch, but since there is no
-> kho_restore_{phys,pages}(), won't the reserve_mem memory end up with
-> uninitialized struct pages, since preserved pages are
-> memblock_reserved_mark_noinit()?
-
-True, this is something we need to fix.
- 
-> That would also be a case for kho_restore_pages() I suppose?
-
-Yes, just need to find the right place to stick it.
-We cannot call kho_restore_pages() in reserve_mem_kho_revive() because at
-that point there's still no memory map.
-
+Cheers,
 -- 
-Sincerely yours,
-Mike.
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
