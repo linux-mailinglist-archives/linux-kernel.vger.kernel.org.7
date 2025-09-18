@@ -1,210 +1,332 @@
-Return-Path: <linux-kernel+bounces-822038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FFAB82EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:56:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4DEB82EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0A91BC6FA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F9F93BA6D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52AE274641;
-	Thu, 18 Sep 2025 04:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A492750E3;
+	Thu, 18 Sep 2025 04:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CSIr6b7F"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQ9NBvNz"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76D217A310
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCD6259CAB
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758171354; cv=none; b=Xn91WOibSBveeSYZYPHpEJ/aMrenemqku/VvfOa3ospPbaSeEudCdGHyr7aLv+b/ArC50HJlVcprOyry6oTkMh1nPG8UjFtSdG73VnWeyqxZ64H7CWzMzWLkw182fFvq2URxJlrxk0nrCPQnfq/+R745qDZ6bkj1aKNZ91+iy14=
+	t=1758171439; cv=none; b=MzZGkoeuEiBiyv/YQTOhL6GF1qP7zOh8h/kyiBqCy9PNVigziGTl32fMTZj85tRgmQBX12pwYns1/0wfHb/lh02vpqrN/0WmygOjVqj9fcAVMQ3N0epVupCkCMO103vbIpTF6IDh35IUdjNTT4dOgD9HZYjj9d2Mx6ZL9uO235g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758171354; c=relaxed/simple;
-	bh=6glWsPn+/Z8BQ0j7MY6JIDYXrf9ocQQxhqphGuoxQbg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=BJVWOA8EM3kWXHQNNT88zqtyhGZqL71wHRY5RHVe0mR9hZqwnAsYQlhZGS1xGtqavtiqct1gppLOx79+7+Flfsor5f1ZqNB0L/LQm3Gy/ynv4N8pYLJnC5iqG8mJjqi9Zp9t9ZaqGBV+sXFX2UHWWHWFM2Fr0Ms9Ch2kkZdL0oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CSIr6b7F; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250918045546epoutp02455343bd23e23c96c26437959a09db54~mR4ZI9VTT0060200602epoutp02o
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:55:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250918045546epoutp02455343bd23e23c96c26437959a09db54~mR4ZI9VTT0060200602epoutp02o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758171346;
-	bh=Zefas1JuGiUdEFTbKhZnv+ZVIOySC9g42o1FgVXKi8U=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=CSIr6b7Fi9L/y3bWgOaOXCyXlH0zCSLmyBuhcWL6TA2EJmmwuLHl/slfF80k5VFlv
-	 UfLNJ4DCYyuooTJGtTpte4C6JcWFU73xqvO3XDiuAx/MBPTfVjtg0QKSxwHz1lagwE
-	 lWe+T1ZAyoNx5CoxCjKLlRpAI8Lxv4TKqJs7+CPk=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250918045546epcas1p378af9aae47cab22e9f998f4efd2254b6~mR4Y2dbiW2531025310epcas1p3s;
-	Thu, 18 Sep 2025 04:55:46 +0000 (GMT)
-Received: from epcas1p4.samsung.com (unknown [182.195.38.247]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cS3HQ1WX0z2SSKX; Thu, 18 Sep
-	2025 04:55:46 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250918045545epcas1p4c45f2104438d05dbb02f9cfb92cae8c6~mR4YMpbGq0638406384epcas1p4a;
-	Thu, 18 Sep 2025 04:55:45 +0000 (GMT)
-Received: from yunji0kang01 (unknown [10.253.100.171]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250918045545epsmtip13d05c5d1c33b18a3a7bef7a56b69ab42~mR4YJVSxw0616806168epsmtip1P;
-	Thu, 18 Sep 2025 04:55:45 +0000 (GMT)
-From: "Yunji Kang" <yunji0.kang@samsung.com>
-To: "'Chao Yu'" <chao@kernel.org>, <jaegeuk@kernel.org>
-Cc: <linux-f2fs-devel@lists.sourceforge.net>,
-	<linux-kernel@vger.kernel.org>, "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-	"'Sunmin	Jeong'" <s_min.jeong@samsung.com>
-In-Reply-To: <de32bc26-6424-4750-83f7-17956e6727cd@kernel.org>
-Subject: RE: [PATCH] f2fs: readahead node block in F2FS_GET_BLOCK_PRECACHE
- mode
-Date: Thu, 18 Sep 2025 13:55:45 +0900
-Message-ID: <000a01dc2858$7e50f460$7af2dd20$@samsung.com>
+	s=arc-20240116; t=1758171439; c=relaxed/simple;
+	bh=lkgMkw6Ydhe03adnRNAoBFKTwIQAJm/t0sG+KGJwiIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tzkdh8eAvFQJHmLK6kFBNF8jGdZ27WEg6iC6hIzE/oASFrmVL/P7/wSmCMcijiD+lN6TwIy+MxHQKfwnFZ62LvQCHYPzW5MI+aLBlGsD47QI9AvB3ZsAVDxXbyPcq2Tx2vX+Mjsucy3jIaOACyB1QbblXwGTNCLIwVLAKWB+Bqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQ9NBvNz; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24cde6c65d1so4923495ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758171435; x=1758776235; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WGymaOnCc4o9eO/QJxcY/8uIl/0McYtbmQsOfMiDvkQ=;
+        b=lQ9NBvNzNgd1jRsKWzn5mlDa/s5sf41Uymscr5CNYTNjMtabZVUGOG81RtUrwSvHw6
+         9j6waqZIsmUOIFM3UMVPiNknNlkxBeU2v2OWHWumk/QyRsTDuSV2vFA3f+AEs5PR7S5m
+         yHvdlkMhqK0NGYklwuUVtEbdWUmErWUSiskRRi6RFN68pWhQRcdTJssr6Ylh5AsmygRG
+         7tItkMVc2ab2orSefa+mrBZxv9mpFS1cBkstCndUeexqUsBjpXqsWlc91UxMYnY5b3g9
+         wyQNcnncrR3Z5RHJ70r1j9Y96nTBElrQfdBXS1YmXkOD5RX+xBZfhwXQmsAFl8unmvpS
+         U57g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758171435; x=1758776235;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WGymaOnCc4o9eO/QJxcY/8uIl/0McYtbmQsOfMiDvkQ=;
+        b=Z79XM9sxMQaXLG9U7O6If2Sq7XIQX93K6QzxzqspsnLYlx+EgNilMlkQDRFE7oTP91
+         9veQGvh4ip4NnUBCCN3A8SlnFF/cs97W8/QmMCoE99N440nseX4m+Gb8DY3PIgdhfiXo
+         e+WOiUBFqap+j/gWcT5fexkNOuIKTAhznp8ab+DpkPGw9Wh1x3JkFhBl5PkvDOR4Kewx
+         vNOPKPix83JvTg1vRvwRkcnyfKSrsdvWK3hodI59wbTS9GRq2w3qxV3z+kdHHt8/h95D
+         4GWoPEZYehvEAHKFI6bpdvRfeuOvBHlEeWa9uzn3SpvMp5oZlRLZEm/iX2JOR8wqnF/P
+         0eSw==
+X-Forwarded-Encrypted: i=1; AJvYcCULDMeY5tJEdZ4KOPr59LEaxhL+PbUcRKpCgterWHv7KSWKE+w2eJFS5LtpErmy2xXsC2piYCNrhNOXzSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFQx+pd99fpmcXUY5nSlxrgeEZ575Nt+ZQc/HDYYnYyAiyV/Kx
+	46GJNkqh4MP+etIQCTuFf7TsiGaznShB2jt+lbAG0hBtqAXUQjq0qVN8
+X-Gm-Gg: ASbGncv6DdEMhOTu3VY9f1UWuKNIrqzLJUdYxd7+mw9e3PuuA0KmJw22XZaXXuX84N2
+	7FRCsR/z4D9tesOS7UMlv9hqdNAZ/ZoW1FzGh9vtHZlZpN2c9ovRG+1izk+DPyBSBU13lKoP02m
+	XbrnYDxQ8tGmFiWurOG2HtD0OWrTco6IJH/SOFaPcnV2VJl0BlN1tgqXZ/OiWEnpfj7Mq8MmSVR
+	8B7q4r612Jb7vp8kd+dClF60BWpfog3oftyOBejQruGNHBt+TU2KCUhGLsXrH9ov8VwqkzHElWp
+	tCrjesyljlWE61M4g4qii9Ucqi3gB6DeQnRbVCeQCxIfmcm4sQkzdq4ab40gmRJWpKKgIzj4aSh
+	U8nSSMAew1yyFjae8q4uZsD/wShICX4MAHZLtj+B3Pzhwcf8ekQfH
+X-Google-Smtp-Source: AGHT+IF+Aq/tQGZ2xe55EOY/2o43Lc1MLCWnLjxi4HUvMhJ5KCylwUxEphTLkETS8bUOBSE9459K6w==
+X-Received: by 2002:a17:903:2312:b0:269:603f:41e2 with SMTP id d9443c01a7336-269603f4366mr45706565ad.21.1758171434394;
+        Wed, 17 Sep 2025 21:57:14 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:194b:8358:5c91:3d3d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016c081sm12493815ad.41.2025.09.17.21.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 21:57:14 -0700 (PDT)
+Date: Wed, 17 Sep 2025 21:57:11 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Vishnu Sankar <vishnuocv@gmail.com>
+Cc: hmh@hmh.eng.br, hansg@kernel.org, ilpo.jarvinen@linux.intel.com, 
+	derekjohn.clark@gmail.com, mpearson-lenovo@squebb.ca, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
+	platform-driver-x86@vger.kernel.org, vsankar@lenovo.com
+Subject: Re: [PATCH v3 1/3] input: mouse: trackpoint: Add doubletap
+ enable/disable support
+Message-ID: <cr7jgtztf65balwxu6cpu6hqzzzluitrwu2f66o75kcip5k2zd@sxixvhotead5>
+References: <20250901135308.52340-1-vishnuocv@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHGlTO1sK2WH87Ru+8OHbgyt7E/JwJw0GzGAYBuEl+0o/nd0A==
-Content-Language: ko
-X-CMS-MailID: 20250918045545epcas1p4c45f2104438d05dbb02f9cfb92cae8c6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250917055237epcas1p2faa1b3d6555ffc5179c700e7a2afd448
-References: <CGME20250917055237epcas1p2faa1b3d6555ffc5179c700e7a2afd448@epcas1p2.samsung.com>
-	<20250917055217.39960-1-yunji0.kang@samsung.com>
-	<de32bc26-6424-4750-83f7-17956e6727cd@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250901135308.52340-1-vishnuocv@gmail.com>
 
-> > In f2fs_precache_extents(), For large files, It requires reading many
-> > node blocks. Instead of reading each node block with synchronous I/O,
-> > this patch applies readahead so that node blocks can be fetched in
-> > advance.
-> >
-> > It reduces the overhead of repeated sync reads and improves efficiency
-> > when precaching extents of large files.
-> >
-> > I created a file with the same largest extent and executed the test.
-> > For this experiment, I set the file's largest extent with an offset of
-> > 0 and a size of 1GB. I configured the remaining area with 100MB extents=
-.
-> >
-> > 5GB test file:
-> > dd if=3D/dev/urandom of=3Dtest1 bs=3D1m count=3D5120 cp test1 test2 fsy=
-nc
-> > test1 dd if=3Dtest1 of=3Dtest2 bs=3D1m skip=3D1024 seek=3D1024 count=3D=
-100
-> > conv=3Dnotrunc dd if=3Dtest1 of=3Dtest2 bs=3D1m skip=3D1224 seek=3D1224=
- count=3D100
-> > conv=3Dnotrunc ...
-> > dd if=3Dtest1 of=3Dtest2 bs=3D1m skip=3D5024 seek=3D5024 count=3D100 co=
-nv=3Dnotrunc
-> > reboot
-> >
-> > I also created 10GB and 20GB files with large extents using the same
-> > method.
-> >
-> > ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
-> >   +-----------+---------+---------+-----------+
-> >   =7C File size =7C Before  =7C After   =7C Reduction =7C
-> >   +-----------+---------+---------+-----------+
-> >   =7C 5GB       =7C 101.8ms =7C 72.1ms  =7C 29.2%     =7C
-> >   =7C 10GB      =7C 222.9ms =7C 149.5ms =7C 32.9%     =7C
-> >   =7C 20GB      =7C 446.2ms =7C 276.3ms =7C 38.1%     =7C
-> >   +-----------+---------+---------+-----------+
-> > Tested on a 256GB mobile device with an SM8750 chipset.
-> >
-> > Reviewed-by: Sungjong Seo <sj1557.seo=40samsung.com>
-> > Reviewed-by: Sunmin Jeong <s_min.jeong=40samsung.com>
-> > Signed-off-by: Yunji Kang <yunji0.kang=40samsung.com>
-> > ---
-> >  fs/f2fs/data.c =7C 3 +++
-> >  fs/f2fs/f2fs.h =7C 1 +
-> >  fs/f2fs/node.c =7C 4 +++-
-> >  3 files changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
-> > 7961e0ddfca3..ab3117e3b24a 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > =40=40 -1572,6 +1572,9 =40=40 int f2fs_map_blocks(struct inode *inode, =
-struct
-> f2fs_map_blocks *map, int flag)
-> >  	pgofs =3D	(pgoff_t)map->m_lblk;
-> >  	end =3D pgofs + maxblocks;
-> >
-> > +	if (flag =3D=3D F2FS_GET_BLOCK_PRECACHE)
-> > +		mode =3D LOOKUP_NODE_PRECACHE;
-> > +
-> >  next_dnode:
-> >  	if (map->m_may_create) =7B
-> >  		if (f2fs_lfs_mode(sbi))
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h index
-> > 9d3bc9633c1d..3ce41528d48e 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > =40=40 -651,6 +651,7 =40=40 enum =7B
-> >  					 * look up a node with readahead called
-> >  					 * by get_data_block.
-> >  					 */
-> > +	LOOKUP_NODE_PRECACHE,		/* look up a node for
-> F2FS_GET_BLOCK_PRECACHE */
-> >  =7D;
-> >
-> >  =23define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush
-> count */
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c index
-> > 4254db453b2d..50be167e5c59 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > =40=40 -860,7 +860,9 =40=40 int f2fs_get_dnode_of_data(struct dnode_of_=
-data *dn,
-> pgoff_t index, int mode)
-> >  			set_nid(parent, offset=5Bi - 1=5D, nids=5Bi=5D, i =3D=3D 1);
-> >  			f2fs_alloc_nid_done(sbi, nids=5Bi=5D);
-> >  			done =3D true;
-> > -		=7D else if (mode =3D=3D LOOKUP_NODE_RA && i =3D=3D level && level >=
- 1)
-> =7B
-> > +		=7D else if ((mode =3D=3D LOOKUP_NODE_RA =7C=7C
->=20
-> Does this change the logic for mode =3D LOOKUP_NODE_RA?
->=20
-> Not sure, do you mean this?
->=20
-> 	if ((i =3D=3D level && level > 1) &&
-> 		(mode =3D=3D LOOKUP_NODE_RA =7C=7C
-> 		(mode =3D=3D LOOKUP_NODE_PRECACHE &&
-> 		offset=5Bi - 1=5D % MAX_RA_NODE =3D=3D 0)))
->=20
-> Thanks,
->=20
-> > +				(mode =3D=3D LOOKUP_NODE_PRECACHE && offset=5Bi - 1=5D %
-> MAX_RA_NODE =3D=3D 0))
-> > +				&& i =3D=3D level && level > 1) =7B
-> >  			nfolio=5Bi=5D =3D f2fs_get_node_folio_ra(parent, offset=5Bi -
-> 1=5D);
-> >  			if (IS_ERR(nfolio=5Bi=5D)) =7B
-> >  				err =3D PTR_ERR(nfolio=5Bi=5D);
+Hi Vishnu,
 
-I think the code has the same meaning.
-The version you wrote looks more readable, so would it be okay if I change =
-the patch with your code?
+On Mon, Sep 01, 2025 at 10:53:05PM +0900, Vishnu Sankar wrote:
+> Add support for enabling and disabling doubletap on TrackPoint devices
+> that support this functionality. The feature is detected using firmware
+> ID and exposed via sysfs as `doubletap_enabled`.
+> 
+> The feature is only available on newer ThinkPads (2023 and later).The driver
+> exposes this capability via a new sysfs attribute:
+> "/sys/bus/serio/devices/seriox/doubletap_enabled".
+> 
+> The attribute is only created if the device is detected to be capable of
+> doubletap via firmware and variant ID checks. This functionality will be
+> used by platform drivers such as thinkpad_acpi to expose and control doubletap
+> via user interfaces.
+> 
+> Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
+> Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+> Changes in v2:
+> - Improve commit messages
+> - Sysfs attributes moved to trackpoint.c
+> - Removed unnecessary comments
+> - Removed unnecessary debug messages
+> - Using strstarts() instead of strcmp()
+> - is_trackpoint_dt_capable() modified
+> - Removed _BIT suffix and used BIT() define.
+> - Reverse the trackpoint_doubletap_status() logic to return error first.
+> - Removed export functions as a result of the design change
+> - Changed trackpoint_dev->psmouse to parent_psmouse
+> - The path of trackpoint.h is not changed.
+> Changes in v3:
+> - No changes.
+> ---
+>  drivers/input/mouse/trackpoint.c | 149 +++++++++++++++++++++++++++++++
+>  drivers/input/mouse/trackpoint.h |  15 ++++
+>  2 files changed, 164 insertions(+)
+> 
+> diff --git a/drivers/input/mouse/trackpoint.c b/drivers/input/mouse/trackpoint.c
+> index 5f6643b69a2c..c6f17b0dec3a 100644
+> --- a/drivers/input/mouse/trackpoint.c
+> +++ b/drivers/input/mouse/trackpoint.c
+> @@ -16,6 +16,8 @@
+>  #include "psmouse.h"
+>  #include "trackpoint.h"
+>  
+> +static struct trackpoint_data *trackpoint_dev;
 
-Also, I did not change the logic for mode =3D LOOKUP_NODE_RA; I only added =
-a condition for when readahead is performed.
+Please do not use globals.
+
+> +
+>  static const char * const trackpoint_variants[] = {
+>  	[TP_VARIANT_IBM]		= "IBM",
+>  	[TP_VARIANT_ALPS]		= "ALPS",
+> @@ -63,6 +65,21 @@ static int trackpoint_write(struct ps2dev *ps2dev, u8 loc, u8 val)
+>  	return ps2_command(ps2dev, param, MAKE_PS2_CMD(3, 0, TP_COMMAND));
+>  }
+>  
+> +/* Read function for TrackPoint extended registers */
+> +static int trackpoint_extended_read(struct ps2dev *ps2dev, u8 loc, u8 *val)
+> +{
+> +	u8 ext_param[2] = {TP_READ_MEM, loc};
+> +	int error;
+> +
+> +	error = ps2_command(ps2dev,
+> +			    ext_param, MAKE_PS2_CMD(2, 1, TP_COMMAND));
+> +
+> +	if (!error)
+> +		*val = ext_param[0];
+> +
+> +	return error;
+> +}
+> +
+>  static int trackpoint_toggle_bit(struct ps2dev *ps2dev, u8 loc, u8 mask)
+>  {
+>  	u8 param[3] = { TP_TOGGLE, loc, mask };
+> @@ -393,6 +410,131 @@ static int trackpoint_reconnect(struct psmouse *psmouse)
+>  	return 0;
+>  }
+>  
+> +/* List of known incapable device PNP IDs */
+> +static const char * const dt_incompatible_devices[] = {
+> +	"LEN0304",
+> +	"LEN0306",
+> +	"LEN0317",
+> +	"LEN031A",
+> +	"LEN031B",
+> +	"LEN031C",
+> +	"LEN031D",
+> +};
+> +
+> +/*
+> + * checks if it’s a doubletap capable device
+> + * The PNP ID format eg: is "PNP: LEN030d PNP0f13".
+> + */
+> +static bool is_trackpoint_dt_capable(const char *pnp_id)
+> +{
+> +	const char *id_start;
+> +	char id[8];
+> +
+> +	if (!strstarts(pnp_id, "PNP: LEN03"))
+> +		return false;
+> +
+> +	/* Points to "LEN03xxxx" */
+> +	id_start = pnp_id + 5;
+> +	if (sscanf(id_start, "%7s", id) != 1)
+> +		return false;
+> +
+> +	/* Check if it's blacklisted */
+> +	for (size_t i = 0; i < ARRAY_SIZE(dt_incompatible_devices); ++i) {
+> +		if (strcmp(id, dt_incompatible_devices[i]) == 0)
+> +			return false;
+> +	}
+> +	return true;
+> +}
+> +
+> +/* Trackpoint doubletap status function */
+> +static int trackpoint_doubletap_status(bool *status)
+> +{
+> +	struct trackpoint_data *tp = trackpoint_dev;
+> +	struct ps2dev *ps2dev = &tp->parent_psmouse->ps2dev;
+> +	u8 reg_val;
+> +	int rc;
+> +
+> +	/* Reading the Doubletap register using extended read */
+> +	rc = trackpoint_extended_read(ps2dev, TP_DOUBLETAP, &reg_val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	*status = reg_val & TP_DOUBLETAP_STATUS ? true : false;
+> +
+> +	return 0;
+> +}
+> +
+> +/* Trackpoint doubletap enable/disable function */
+> +static int trackpoint_set_doubletap(bool enable)
+> +{
+> +	struct trackpoint_data *tp = trackpoint_dev;
+> +	struct ps2dev *ps2dev = &tp->parent_psmouse->ps2dev;
+> +	static u8 doubletap_state;
+> +	u8 new_val;
+> +
+> +	if (!tp)
+> +		return -ENODEV;
+> +
+> +	new_val = enable ? TP_DOUBLETAP_ENABLE : TP_DOUBLETAP_DISABLE;
+> +
+> +	if (doubletap_state == new_val)
+> +		return 0;
+> +
+> +	doubletap_state = new_val;
+> +
+> +	return trackpoint_write(ps2dev, TP_DOUBLETAP, new_val);
+> +}
+> +
+> +/*
+> + * Trackpoint Doubletap Interface
+> + * Control/Monitoring of Trackpoint Doubletap from:
+> + * /sys/bus/serio/devices/seriox/doubletap_enabled
+> + */
+> +static ssize_t doubletap_enabled_show(struct device *dev,
+> +				struct device_attribute *attr, char *buf)
+> +{
+> +	struct serio *serio = to_serio_port(dev);
+> +	struct psmouse *psmouse = psmouse_from_serio(serio);
+> +	struct trackpoint_data *tp = psmouse->private;
+> +	bool status;
+> +	int rc;
+> +
+> +	if (!tp || !tp->doubletap_capable)
+> +		return -ENODEV;
+> +
+> +	rc = trackpoint_doubletap_status(&status);
+> +	if (rc)
+> +		return rc;
+> +
+> +	return sysfs_emit(buf, "%d\n", status ? 1 : 0);
+> +}
+> +
+> +static ssize_t doubletap_enabled_store(struct device *dev,
+> +					struct device_attribute *attr,
+> +					const char *buf, size_t count)
+> +{
+> +	struct serio *serio = to_serio_port(dev);
+> +	struct psmouse *psmouse = psmouse_from_serio(serio);
+> +	struct trackpoint_data *tp = psmouse->private;
+> +	bool enable;
+> +	int err;
+> +
+> +	if (!tp || !tp->doubletap_capable)
+> +		return -ENODEV;
+> +
+> +	err = kstrtobool(buf, &enable);
+> +	if (err)
+> +		return err;
+> +
+> +	err = trackpoint_set_doubletap(enable);
+> +	if (err)
+> +		return err;
+> +
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(doubletap_enabled);
+> +
+>  int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
+>  {
+>  	struct ps2dev *ps2dev = &psmouse->ps2dev;
+> @@ -425,6 +567,9 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
+>  	psmouse->reconnect = trackpoint_reconnect;
+>  	psmouse->disconnect = trackpoint_disconnect;
+>  
+> +	trackpoint_dev = psmouse->private;
+> +	trackpoint_dev->parent_psmouse = psmouse;
+> +
+>  	if (variant_id != TP_VARIANT_IBM) {
+>  		/* Newer variants do not support extended button query. */
+>  		button_info = 0x33;
+> @@ -470,6 +615,10 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
+>  		     psmouse->vendor, firmware_id,
+>  		     (button_info & 0xf0) >> 4, button_info & 0x0f);
+>  
+> +	tp->doubletap_capable = is_trackpoint_dt_capable(ps2dev->serio->firmware_id);
+> +	if (tp->doubletap_capable)
+> +		device_create_file(&psmouse->ps2dev.serio->dev, &dev_attr_doubletap_enabled);
+
+Please use existing facilities in psmouse driver to define and register
+protocol-specific attributes. Use is_visible() to control whether the
+attribute is accessible or not.
 
 Thanks.
 
+-- 
+Dmitry
 
