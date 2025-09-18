@@ -1,62 +1,80 @@
-Return-Path: <linux-kernel+bounces-822667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54567B846FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:55:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87FFB84405
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07E17460414
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:55:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B7B189C4C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB785305076;
-	Thu, 18 Sep 2025 11:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E032FFFA3;
+	Thu, 18 Sep 2025 10:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxHhn/GM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aos9blcv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2129E221F29;
-	Thu, 18 Sep 2025 11:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA15C18A6DB;
+	Thu, 18 Sep 2025 10:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758196506; cv=none; b=PhD8AOCHW8MjDEebM9Jz9Sph+wwsZ5rXilDP9CExAZXnvs4lwh/+v7FRyIq3tODTT1RZrvvLp3h8D7WtiG0njTbkw0Wpgq4hCZCCPo1OP11gSHAqOAN/jVKMY+VzKOHMOFkunPPF7a13GFGlfBxydtFTjVAGIM+PgwZoKYgsaio=
+	t=1758193187; cv=none; b=jDhW0rTj7PaCXdg6noTyRpxU+ehbYBxbKbcVCUCCM0VWer8HO9PzDkjeQG907cqSxRxUjSVvo+tiaEwYJMXfgyKylYx0X1izkgIvcC/FyrOY446lbnEqeT2NXkPzQRShE3mX63fr4uW6jiv9eF75xbX8TardZzzofD+zQ53o84Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758196506; c=relaxed/simple;
-	bh=fJpsAtJ92MxZvD5oc+zobQhN2JKwDEF9zPLyP1fCyLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b9nY3aIQyG4cPDMExpsS+DGZ/Im6gKanU3o62HOJrnwqLgqCESq7gTfITcR7Er5MKSLhs4LXgLjaVNtTmMNcsK8Yawc3r3zBTqLQJanyOCM7b06XGtEftNCcgG3kFmPUQcK1YkJEQLsaba9dMaw2Q+VSkc7I1UM/HKFKzJ1k1xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxHhn/GM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B832EC4AF09;
-	Thu, 18 Sep 2025 11:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758196505;
-	bh=fJpsAtJ92MxZvD5oc+zobQhN2JKwDEF9zPLyP1fCyLQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MxHhn/GMdKawhvKBilWREK7SzxI9E/gmHlQ5j0punTXANvW5i2dAMFgVSlCwKEDI4
-	 D3OpMA1rrVqwG+w5+98l7VYi/PBOTjH2vunSMsNrMaK2UfVVLOV/yyhO+ViQm7Gjhq
-	 E2LA8RYfkojG07Dhw/+Rnof/7yraKMyWfep0ir5VyDh+X/WdtixRwZgyE5pN1Jf+SV
-	 FRlheAdgCymEAwPmf6YvgG0+HNMekeoiv1plvCNESVTf3dVd7Ib2qtpsf4qSi148SF
-	 mrnDjW15k+DV+wAMJibKb9gTTweanZucv6X1S8pBMEDkma1M/al8kn8waLgKp0V5bI
-	 tMOG8QDRzhXDA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uzDE7-0000000Crlw-3QCk;
-	Thu, 18 Sep 2025 13:55:03 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v8 04/24] scripts: check-variable-fonts.sh: convert to Python
-Date: Thu, 18 Sep 2025 13:54:38 +0200
-Message-ID: <d438fb01d2c00e2c2b4ac16f999d9a8ce848251b.1758196090.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1758196090.git.mchehab+huawei@kernel.org>
-References: <cover.1758196090.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1758193187; c=relaxed/simple;
+	bh=k7WjdxD1akUFMFsnjD+igZOq30uLF23C9JuX5ROO/Wk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aXuWS+8z6uU4RyDOTKgtP3hPEoKgoEn8UH+wh2K9PMxqVIkxRtp2q9chqzde6aHm42+5XsOIFDQazotMO40d/WxFNF/d+jRO06P1p0SC1PrqDT13hUpz0uO0YMfWLUoKKRpiv3JwPz5vW5VjlLbs5d+ciNHkFXRSR7BkjjxUeiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aos9blcv; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758193186; x=1789729186;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=k7WjdxD1akUFMFsnjD+igZOq30uLF23C9JuX5ROO/Wk=;
+  b=Aos9blcvkrt9eop+nKgdyLCxd9Yd0+/NoT2gWYrKdTZ7C2/snZM32qY2
+   1oiJT5nx77MJqkiqnPDncmDlB+g9KQ8qmaEEwNBxcOVICPD+hY7+t3rUv
+   fmd0rYmCPv7/znvKASeknMpXwD7vSyKCN6Pca6GTXWBubbpyRy6Gf9TTZ
+   3/AyBXgOI37an1t9xgH0Tln6tn5IjqQjCpbrv9I761eFKmwMKciX3BdSi
+   9ut7GAon0GeDNpPK6K+4Skby1y3r2Y8pFZegaCEmZuQoUgqL8VL+579TA
+   pkw/9F58KAkfYZfqSrvT36h+R/Of6QC/z79EA+01VPRFvQmERi/d/E1jH
+   A==;
+X-CSE-ConnectionGUID: q+Jmw2+kSUC45AaKVqZlsw==
+X-CSE-MsgGUID: QejdNk/gQqeNz3yxS6Kd1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="64336083"
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="64336083"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 03:59:45 -0700
+X-CSE-ConnectionGUID: TW+Q+WYtS32lblmpHmpoQw==
+X-CSE-MsgGUID: ZVBunwrSQee44Q89CHxReQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="180627016"
+Received: from p2dy149cchoong.png.intel.com ([10.107.243.50])
+  by orviesa005.jf.intel.com with ESMTP; 18 Sep 2025 03:59:41 -0700
+From: Chwee-Lin Choong <chwee.lin.choong@intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Avi Shalev <avi.shalev@intel.com>,
+	Song Yoong Siang <yoong.siang.song@intel.com>
+Subject: [PATCH iwl-net v1] igc: fix race condition in TX timestamp read for register 0
+Date: Fri, 19 Sep 2025 02:38:11 +0800
+Message-ID: <20250918183811.31270-1-chwee.lin.choong@intel.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,172 +82,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-This script handle errors when trying to build translations
-with make pdfdocs.
+The current HW bug workaround checks the TXTT_0 ready bit first,
+then reads LOW -> HIGH -> LOW from register 0 to detect if a
+timestamp was captured.
 
-As part of our cleanup work to remove hacks from docs Makefile,
-convert this to python, preparing it to be part of a library
-to be called by sphinx-build-wrapper.
+This sequence has a race: if a new timestamp is latched after
+reading the TXTT mask but before the first LOW read, both old
+and new timestamp match, causing the driver to drop a valid
+timestamp.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Fix by reading the LOW register first, then the TXTT mask,
+so a newly latched timestamp will always be detected.
+
+This fix also prevents TX unit hangs observed under heavy
+timestamping load.
+
+Fixes: c789ad7cbebc ("igc: Work around HW bug causing missing timestamps")
+Suggested-by: Avi Shalev <avi.shalev@intel.com>
+Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+Signed-off-by: Chwee-Lin Choong <chwee.lin.choong@intel.com>
 ---
- Documentation/Makefile                        |   2 +-
- MAINTAINERS                                   |   2 +-
- ...iable-fonts.sh => check-variable-fonts.py} | 104 +++++++++++++-----
- 3 files changed, 79 insertions(+), 29 deletions(-)
- rename scripts/{check-variable-fonts.sh => check-variable-fonts.py} (61%)
+ drivers/net/ethernet/intel/igc/igc_ptp.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 5c20c68be89a..d5e436435eab 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -146,7 +146,7 @@ pdfdocs: DENY_VF = XDG_CONFIG_HOME=$(FONTS_CONF_DENY_VF)
- pdfdocs: latexdocs
- 	@$(srctree)/scripts/sphinx-pre-install --version-check
- 	$(foreach var,$(SPHINXDIRS), \
--	   $(MAKE) PDFLATEX="$(PDFLATEX)" LATEXOPTS="$(LATEXOPTS)" $(DENY_VF) -C $(BUILDDIR)/$(var)/latex || sh $(srctree)/scripts/check-variable-fonts.sh || exit; \
-+	   $(MAKE) PDFLATEX="$(PDFLATEX)" LATEXOPTS="$(LATEXOPTS)" $(DENY_VF) -C $(BUILDDIR)/$(var)/latex || $(PYTHON3) $(srctree)/scripts/check-variable-fonts.py || exit; \
- 	   mkdir -p $(BUILDDIR)/$(var)/pdf; \
- 	   mv $(subst .tex,.pdf,$(wildcard $(BUILDDIR)/$(var)/latex/*.tex)) $(BUILDDIR)/$(var)/pdf/; \
- 	)
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ef87548b8f88..88d8f7435e6d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7301,7 +7301,7 @@ S:	Maintained
- P:	Documentation/doc-guide/maintainer-profile.rst
- T:	git git://git.lwn.net/linux.git docs-next
- F:	Documentation/
--F:	scripts/check-variable-fonts.sh
-+F:	scripts/check-variable-fonts.py
- F:	scripts/checktransupdate.py
- F:	scripts/documentation-file-ref-check
- F:	scripts/get_abi.py
-diff --git a/scripts/check-variable-fonts.sh b/scripts/check-variable-fonts.py
-similarity index 61%
-rename from scripts/check-variable-fonts.sh
-rename to scripts/check-variable-fonts.py
-index ce63f0acea5f..8be1c0f39588 100755
---- a/scripts/check-variable-fonts.sh
-+++ b/scripts/check-variable-fonts.py
-@@ -1,7 +1,9 @@
--#!/bin/sh
-+#!/usr/bin/env python3
- # SPDX-License-Identifier: GPL-2.0-only
- # Copyright (C) Akira Yokosawa, 2024
- #
-+# Ported to Python by (c) Mauro Carvalho Chehab, 2025
-+#
- # For "make pdfdocs", reports of build errors of translations.pdf started
- # arriving early 2024 [1, 2].  It turned out that Fedora and openSUSE
- # tumbleweed have started deploying variable-font [3] format of "Noto CJK"
-@@ -87,29 +89,77 @@
- #     Denylisting should be less invasive, as it is effective only while
- #     XeLaTeX runs in "make pdfdocs".
+diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
+index b7b46d863bee..930486b02fc1 100644
+--- a/drivers/net/ethernet/intel/igc/igc_ptp.c
++++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
+@@ -774,10 +774,17 @@ static void igc_ptp_tx_reg_to_stamp(struct igc_adapter *adapter,
+ static void igc_ptp_tx_hwtstamp(struct igc_adapter *adapter)
+ {
+ 	struct igc_hw *hw = &adapter->hw;
++	u32 txstmpl_old;
+ 	u64 regval;
+ 	u32 mask;
+ 	int i;
  
--# Default per-user fontconfig path (overridden by env variable)
--: ${FONTS_CONF_DENY_VF:=$HOME/deny-vf}
--
--export XDG_CONFIG_HOME=${FONTS_CONF_DENY_VF}
--
--notocjkvffonts=`fc-list : file family variable | \
--		grep 'variable=True' | \
--		grep -E -e 'Noto (Sans|Sans Mono|Serif) CJK' | \
--		sed -e 's/^/    /' -e 's/: Noto S.*$//' | sort | uniq`
--
--if [ "x$notocjkvffonts" != "x" ] ; then
--	echo '============================================================================='
--	echo 'XeTeX is confused by "variable font" files listed below:'
--	echo "$notocjkvffonts"
--	echo
--	echo 'For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.'
--	echo 'Or, CJK pages can be skipped by uninstalling texlive-xecjk.'
--	echo
--	echo 'For more info on denylisting, other options, and variable font, see header'
--	echo 'comments of scripts/check-variable-fonts.sh.'
--	echo '============================================================================='
--fi
--
--# As this script is invoked from Makefile's error path, always error exit
--# regardless of whether any variable font is discovered or not.
--exit 1
-+import os
-+import re
-+import subprocess
-+import sys
-+import textwrap
++	/* Read the "low" register 0 first to establish a baseline value.
++	 * This avoids a race where a new timestamp could be latched
++	 * after checking the TXTT mask.
++	 */
++	txstmpl_old = rd32(IGC_TXSTMPL);
 +
-+class LatexFontChecker:
-+    """
-+    Detect problems with CJK variable fonts that affect PDF builds for
-+    translations.
-+    """
-+
-+    def __init__(self):
-+        deny_vf = os.environ.get('FONTS_CONF_DENY_VF', "~/deny-vf")
-+
-+        self.environ = os.environ.copy()
-+        self.environ['XDG_CONFIG_HOME'] = os.path.expanduser(deny_vf)
-+
-+        self.re_cjk = re.compile(r"([^:]+):\s*Noto\s+(Sans|Sans Mono|Serif) CJK")
-+
-+    def get_noto_cjk_vf_fonts(self):
-+        """Get Noto CJK fonts"""
-+
-+        cjk_fonts = set()
-+        cmd = ["fc-list", ":", "file", "family", "variable"]
-+        try:
-+            result = subprocess.run(cmd,stdout=subprocess.PIPE,
-+                                    stderr=subprocess.PIPE,
-+                                    universal_newlines=True,
-+                                    env=self.environ,
-+                                    check=True)
-+
-+        except subprocess.CalledProcessError as exc:
-+            sys.exit(f"Error running fc-list: {repr(exc)}")
-+
-+        for line in result.stdout.splitlines():
-+            if 'variable=True' not in line:
-+                continue
-+
-+            match = self.re_cjk.search(line)
-+            if match:
-+                cjk_fonts.add(match.group(1))
-+
-+        return sorted(cjk_fonts)
-+
-+    def check(self):
-+        """Check for problems with CJK fonts"""
-+
-+        fonts = textwrap.indent("\n".join(self.get_noto_cjk_vf_fonts()), "    ")
-+        if not fonts:
-+            return None
-+
-+        rel_file = os.path.relpath(__file__, os.getcwd())
-+
-+        msg = "=" * 77 + "\n"
-+        msg += 'XeTeX is confused by "variable font" files listed below:\n'
-+        msg += fonts + "\n"
-+        msg += textwrap.dedent(f"""
-+                For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
-+                Or, CJK pages can be skipped by uninstalling texlive-xecjk.
-+
-+                For more info on denylisting, other options, and variable font, see header
-+                comments of {rel_file}.
-+            """)
-+        msg += "=" * 77
-+
-+        return msg
-+
-+if __name__ == "__main__":
-+    msg = LatexFontChecker().check()
-+    if msg:
-+        print(msg)
-+
-+    sys.exit(1)
+ 	mask = rd32(IGC_TSYNCTXCTL) & IGC_TSYNCTXCTL_TXTT_ANY;
+ 	if (mask & IGC_TSYNCTXCTL_TXTT_0) {
+ 		regval = rd32(IGC_TXSTMPL);
+@@ -801,9 +808,8 @@ static void igc_ptp_tx_hwtstamp(struct igc_adapter *adapter)
+ 		 * timestamp was captured, we can read the "high"
+ 		 * register again.
+ 		 */
+-		u32 txstmpl_old, txstmpl_new;
++		u32 txstmpl_new;
+ 
+-		txstmpl_old = rd32(IGC_TXSTMPL);
+ 		rd32(IGC_TXSTMPH);
+ 		txstmpl_new = rd32(IGC_TXSTMPL);
+ 
 -- 
-2.51.0
+2.42.0
 
 
