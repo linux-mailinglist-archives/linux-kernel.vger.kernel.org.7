@@ -1,118 +1,157 @@
-Return-Path: <linux-kernel+bounces-822034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D266B82E80
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792CDB82E8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D4A84E0421
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:51:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382821BC0569
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82D9258EEA;
-	Thu, 18 Sep 2025 04:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5472777F3;
+	Thu, 18 Sep 2025 04:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvi6M7kP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="idI6twVp"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E1F218580
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35011172A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758171067; cv=none; b=T0J83Q0pIC09Qm29UpN9WHrR2tq0ehiVjV4qCfy7J2duDuXfUM/XpB9HZ3NWbSP92zVyLDOe2yBOh26QibErre/oDXMJzWs0tCJMu5nIK+k/mOrDEAdXGnOh9HDMZe6MNKim77096FvLK2jRe3UdUmCII4FAXyEplmqJ9juGCWk=
+	t=1758171157; cv=none; b=cwjxzxMbhbOaZn/Pvv4MlTETkkybsv/om6h9V39IVUKKXwdVxAR0yudQQdCtc5z7DuPZWZpL2ZJw2DzYj0/u9JLBdGkZp5/3xPf9nNu01ERdwjlID4jTPS0+9ZyRZbzlwF9zuTHXWpoN+7gIyppzqDi1kpEahuH0PXkJoxrjZfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758171067; c=relaxed/simple;
-	bh=hSCbFYdol4gwU++b+q+6eG54SBwRB29n9V4ZoQ3yoqw=;
+	s=arc-20240116; t=1758171157; c=relaxed/simple;
+	bh=roMRSfTHwvWbIYHIw5SlvXsbEkqQ/myQD+bxde55/zk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=biXxkdZy1yDxMyFLMZrAQf0k0g7qlLe7ur4+uP+v6PYvKYNLzCb5rQIzZnwy8rwJgWUAYadrnvLwwnBsMex7oyGnEsryAiKkC5JYLk4H6Ctp7WL4tCGVC/JTaZjnBfZdvM6FnMfE1pGc3A83byrMN520C1Je2JmJShKJfykRPVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvi6M7kP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF48C4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758171066;
-	bh=hSCbFYdol4gwU++b+q+6eG54SBwRB29n9V4ZoQ3yoqw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rvi6M7kPzwgDwjRR+dHs6GZB2dtkrFpkcxSA6qk76jbky4SiLIY4pLQVCJPXuY1/Y
-	 GHG8b+x7L4NAIjfZ9t5HDBcW9XRV1GA8pM7nBa0ipTV8J+/Ksk4VOavSbOrFjczFAB
-	 PUtZywW+ZEohs4JPkXmLMA6TnDBnMCjvzdBuxYPDp49HBKKMxEQP852MR2NW22mw7W
-	 kqN6ssGE1ynd5z7Ju0732sLq1Dd52OqW/3W29MrKGn2YR2M4MVnvb6o0hagQiweTou
-	 htPgAzW7z73LZTXqtcfOi8HwfQ61ApdJSuZ0aAW4iqao2Jn6CBLxuVUieR3Y0JLNg/
-	 +QaJAfSGT6gFw==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5688ac2f39dso672553e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:51:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWWm5JC8e1vxY0224SXVTesbd+2gc1Pt4BmxYKdgy5LROyCOIojyxSjyh21XU53VcVf+DZ+09acRKJYeLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQL0PE995nbzmpan75zY9nNuUWBrKAnz6aNf5o/5N5td2N2F7w
-	OmdQ9DA0Yey8JcCorfqQr4JDuoQDIYO0AFvtaeRPq8b+F01Tnt2DRA0G+ZbtsZ4F94xG/svbczj
-	TJIQfBD2cQxTEk3wXNloLnhbEToP/fQ==
-X-Google-Smtp-Source: AGHT+IGgmr35+M05vhNol35FnfvJZhXDPXXRR6AIoJkQcdnzfAX1KrKgvXwk0v6y57+pEk1zXQlQA9r/6aTx3Dz3NtE=
-X-Received: by 2002:a05:6512:2903:b0:55f:486b:7e5b with SMTP id
- 2adb3069b0e04-57799405777mr1451888e87.41.1758171065295; Wed, 17 Sep 2025
- 21:51:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=HNTswbvfDpCiCqj5JSre2imgm3vZLEyzvpqscfFkm3byt3Js7bw2bTG0AcrJb1RU2jJ6Vh+tTwt42pUjj/JkABiwazPlFG/8ifzsQx8CTMDSwFPRsQvs7/e3IsBvjxKIUFkY1n2IRzaLjZneFUqYPD717pdT363P+rh6ykHlJMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=idI6twVp; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b07dac96d1eso245655466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1758171154; x=1758775954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A9QRU1VKJtdE0ZocHMFrYMEWDnZZ/HDzFw4qL2PHiIk=;
+        b=idI6twVp7T8x/SEXiTdGr76RIW/PQHsBT9ZgX7wHMdhcQriS/6tAHinzSMFwEXrkhJ
+         zd6LHHTSr2P3h8YjXbj8yiCmrZzQycEN7zaIYG1sZP+SxkaG0rh0uSPavCn5678DDtvP
+         qbKmMP4yZ/JgKinx0SWgpQi+ysvzHZyfp7ClW3vZNGn4QXs15wwcrM3dMLfsQcOz+aie
+         10fc0LE2geYsqA0D9afY7OwhLlJ6olB/AWxap93eyCKwT18WhN0XP1H0a2M/aAwbdTFE
+         9Sq56lwclcSKDvksOkFNl6XRO4MF098SdY8gN49GKESi09nKIBwodaWppKrEM815B4gz
+         q9sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758171154; x=1758775954;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A9QRU1VKJtdE0ZocHMFrYMEWDnZZ/HDzFw4qL2PHiIk=;
+        b=oR1vF863h/uNv+A+BLcW+s7ywFRWMXzEHiMfTz2RBbDtfr/cI4sz0jQuKIFL/8mti9
+         Jh7FtMHFEjmGih5nZaLY3D18JGmbcQdSUCmYr29yISwVducPNiq9ay2g5zO839aaSXAW
+         CR7kn1c0zoJnRHrtakZe31UDP1lcBag7xrVVrTEOOamw8ka0VxxoFPZaYkq0lBZ/DQp/
+         rR6Q4qM3cvk1vIaPpK9Hat2BOO1hrf1NMUfTGuqd1Vilx5N1Ec/nvMjmynTs1BNn3J5Y
+         RXKkYOA9A4m5mLnDtV3hwn9IqeUCmhxy+LNAl8ZzLZacdlFFdVWjYHp5pAjS8+lNCHXE
+         3N0w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Yqg7dh+CTu3rZIGnX8CQJcun1GoeEg1uQvEOXvh9xOAXFJqoAJAs66LJCnb9dU/YCam5esMSp7G9Ko8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+mBX5laCvCQXMgFBUKv96qPXCtkjmHQb3371KeFkB75mdv8rl
+	cUxG4s2wMjlAD3JQTCFSZc+zNwmzvJJMMQT/oHDZ46TzLAw9P4u04h731KlzZjWly1wuE5Af2CY
+	5Q2vcUFIPDDixKR3rddK52tDuPZDYaigBRsEJ7jKUGg==
+X-Gm-Gg: ASbGncta4IlnMmBQ3ozj9S15UD6bTlq23uavaKrGyKYszNjvEO+yLJR2QW0jRjgNvq9
+	cgDza4ugWP26GZ0SRnj2ZYUFIjtwflyfYHvl7MJetS1oBilXbDrORRGypV058vydxBoQqOnAvQG
+	XLcQZvAzXBrx9RDzgmADzB19/wCr7vFlYx9rJw3LBvmjnCpGv7/6MM8eXYRRbX8hrfCKxwoyx++
+	ugSJFv8LNtA9PhQHgiyupnCDcwSwUzsDYkqhR8CL4XQEPIjsdUzAXE=
+X-Google-Smtp-Source: AGHT+IH78/YwtfdEEvgvHSMTlAUPH/eYqgNUZ9char1Npv5jG23ahXW8pg2svda031uaJNRKWZjE53pxWARfwi2BnY0=
+X-Received: by 2002:a17:906:9fc5:b0:b19:f444:5bc8 with SMTP id
+ a640c23a62f3a-b1faef71aa1mr223957466b.31.1758171154075; Wed, 17 Sep 2025
+ 21:52:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
- <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
- <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
- <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
- <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
- <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
- <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
- <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com> <CAGsJ_4xTPJo7+kCkkiZhn8b7xjH7yXeJ2XPoXeoJm+XwJB_o9A@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xTPJo7+kCkkiZhn8b7xjH7yXeJ2XPoXeoJm+XwJB_o9A@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 17 Sep 2025 21:50:53 -0700
-X-Gmail-Original-Message-ID: <CANeU7QkKS+1TvCRkJUcWQo_emyDJ-q261SfjKoPuEfPG3Pbifw@mail.gmail.com>
-X-Gm-Features: AS18NWBUHzf4JRxxpGz4NBNi-ZdFJXllMYmFHXL-HaEBN1mSBaZpw2RCXXPZ-ak
-Message-ID: <CANeU7QkKS+1TvCRkJUcWQo_emyDJ-q261SfjKoPuEfPG3Pbifw@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
-To: Barry Song <21cnbao@gmail.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+References: <20250917135907.2218073-1-max.kellermann@ionos.com>
+In-Reply-To: <20250917135907.2218073-1-max.kellermann@ionos.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 18 Sep 2025 06:52:23 +0200
+X-Gm-Features: AS18NWAZzXNs77ONQtxSPqI0-tNgs2QxD25qWiDPS307ZO8zwzS3_Wc3r2CSBy0
+Message-ID: <CAKPOu+9o4FfXQU5O=iEhi=aFWfTUZ-mJVD6qqVi3UTSsy44agA@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: xiubli@redhat.com, idryomov@gmail.com, amarkuze@redhat.com, 
+	ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Dave Chinner <david@fromorbit.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 4:50=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> > Perhaps you could describe the swap table as similar to a PTE page tabl=
-e
-> > representing the swap cache mapping.
-> > That is correct for most 32-bit and 64-bit systems,
-> > but not for every machine.
-> >
-> > The only exception is a 32-bit system with a 64-bit physical address
-> > (Large Physical Address Extension, LPAE), which uses a 4 KB PTE table
-> > but a 2 KB swap table because the pointer is 32 bit while each page
-> > table entry is 64 bit.
-> >
-> > Maybe we can simply say that the number of entries in the swap table
-> > is the same as in a PTE page table?
->
-> BTW, as Kairui mentioned, you plan to store the PFN instead of a
-> pointer in phase 2.
+On Wed, Sep 17, 2025 at 3:59=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+> +void ceph_iput_async(struct inode *inode)
+> +{
+> +       if (unlikely(!inode))
+> +               return;
+> +
+> +       if (likely(atomic_add_unless(&inode->i_count, -1, 1)))
+> +               /* somebody else is holding another reference -
+> +                * nothing left to do for us
+> +                */
+> +               return;
+> +
+> +       doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", i=
+node, ceph_vinop(inode));
+> +
+> +       /* simply queue a ceph_inode_work() (donating the remaining
+> +        * reference) without setting i_work_mask bit; other than
+> +        * putting the reference, there is nothing to do
+> +        */
+> +       WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq=
+,
+> +                                &ceph_inode(inode)->i_work));
+> +
+> +       /* note: queue_work() cannot fail; it i_work were already
+> +        * queued, then it would be holding another reference, but no
+> +        * such reference exists
+> +        */
+> +}
 
-Yes, let's update the document then and only then. Otherwise the
-document will be mismatching the code and confuse the reader.
+Folks! Guess what I just found in Linux 5.13: commit 23c2c76ead54
+("ceph: eliminate ceph_async_iput()")
 
->
-> I wonder whether we need to switch to atomic64_t on systems where the
-> physical address is 64 bit but the virtual address is 32 bit :-)
+-/*
+- * Put reference to inode, but avoid calling iput_final() in current threa=
+d.
+- * iput_final() may wait for reahahead pages. The wait can cause deadlock =
+in
+- * some contexts.
+- */
+-void ceph_async_iput(struct inode *inode)
+-{
+-       if (!inode)
+-               return;
+-       for (;;) {
+-               if (atomic_add_unless(&inode->i_count, -1, 1))
+-                       break;
+-               if (queue_work(ceph_inode_to_client(inode)->inode_wq,
+-                              &ceph_inode(inode)->i_work))
+-                       break;
+-               /* queue work failed, i_count must be at least 2 */
+-       }
+-}
 
-It is possible we need 64 bit for the swap cache anyway for other
-reasons when we get into the later phases. Again, let's deal with it
-later.
+This looks very much like the code I wrote - only with a loop for
+queue_work() failures that cannot happen here.
 
-Chris
+Jeff Layton removed this because "Now that we don't need to hold
+session->s_mutex or the snap_rwsem when calling ceph_check_caps, we
+can eliminate ceph_async_iput and just use normal iput calls."
+Our servers proved this assessment wrong. Calling iput() while holding
+a lock is obviously bad, but there are more reasons why iput() calls
+can be dangerous and inappropriate.
+I guess I can add a "Fixes" tag, after all.
 
