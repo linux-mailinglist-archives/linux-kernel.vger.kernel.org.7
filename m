@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-822224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB30B83560
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:37:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AC8B83570
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 508C94A50CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908AE623EA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5532EA73C;
-	Thu, 18 Sep 2025 07:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="NU0u7pVj"
-Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8902E41E;
-	Thu, 18 Sep 2025 07:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025172EA476;
+	Thu, 18 Sep 2025 07:37:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCFB2E7186
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758181021; cv=none; b=J7vYVMLsf0s0k9kBI8Jz41vnRUlNx58kmgGe1d7rdz00j9DbV+MGoDIUd+r6e8xu7z4k2gQdKVcPOzz0JoSqX1DTMfEFizKM0EC9feuKvXlRVh07Rs+Sx6LI40VsEo4GYCEwe1Vcqi0YHfv4BLXUKbSxF3JVMMAD16/DYTBt0Us=
+	t=1758181076; cv=none; b=cW9RJxYjrM0kbEozv2l8MgQ5d9QQ9u8v+4ATEsokGlLBEIgbflzn+5fkI+BTTvho4obwtXSy7ESkqaueJnTqyRJ1M21DRtL6HZnXm0UQaM4L5AqY+wSuH3XkqRHH6P4wA5bFHhh+QpAt/2mCVkfSwcVN/i5hrd074VQEvALM3Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758181021; c=relaxed/simple;
-	bh=w5HW0BpCLTD8OrwMkFN+e0qjESMJICYUfRbSTLJROfs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=ksReHx8u84q0TKrKYuCide6MUGMad+2vMX43gE/Cbj5DX2G5yxFSfHBtSEpo/fHbWU3nPyt6fDNUdgIDF6Mevg+Ncg2INu8fLITwrzLUnGkXnODpisRxl7UkvBMJCPsHyUl2ATb9UrROfNA/wJPR6cMtJqL1b0PKH5F+mU/dMqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=NU0u7pVj; arc=none smtp.client-ip=195.201.215.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=folker-schwesinger.de; s=default2212; h=In-Reply-To:References:Subject:To:
-	From:Cc:Message-Id:Date:Content-Type:Content-Transfer-Encoding:Mime-Version:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=EF2JvwMr4g7DRklqifcz4XumYYnybiwSa2gvTXwheOk=; b=NU0u7pVj07uFgNnYUttHqC2iLY
-	l4Z8cQobu1E9+hD2ES9xr30AAkAIIglxfNfvtCKbClB1u3KA+gHH/tgn+RKKTLX3fFnnOUG4QvXNX
-	NkV/emb0upMEJZYkYYVgDGgnqvSH0A3BTN50wg+KQ4FUO2dnM7kcxnUqbg0XS6eFM8Hg7aTzertJQ
-	iinODO0UOcpYjqGeERhLz0Y5lAoplCOMHh9vOU5KTQMl8FqkDgkkdDs72w6rQN3+xtBK80OrbDXDm
-	YiVBQY3IaUV5pGw5VhYJiYyTEn/oeNWYR2m1qKS1KFMBvy3dssDkrof9hfRjj+RJXU2mFdqKvN6/H
-	t2n5xyoA==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <dev@folker-schwesinger.de>)
-	id 1uz9CM-000DN7-0F;
-	Thu, 18 Sep 2025 09:36:58 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <dev@folker-schwesinger.de>)
-	id 1uz9CL-0006j2-0t;
-	Thu, 18 Sep 2025 09:36:57 +0200
+	s=arc-20240116; t=1758181076; c=relaxed/simple;
+	bh=zQLf+BaYOhlij8LvcdFDaViqL1SNEov0oWdvXy9Q8qQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uftuOjO9fHJaPyKmldQffB0Bng5V3WutMIJelWTo0IHxBF/Pf6MYhfNKQIXKlr/r2Y+net2iNLS/8cyNEj1dEPmGzEnR5TmdW/jmuZR9JYxwNxhUp5rd4JAGRTvyh3Emf1AIgRUQDFbr1Y64a07UOx17fuWxgkhJhtd+uLlhw4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E00DD1A25;
+	Thu, 18 Sep 2025 00:37:45 -0700 (PDT)
+Received: from [10.164.18.52] (MacBook-Pro.blr.arm.com [10.164.18.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71EAE3F66E;
+	Thu, 18 Sep 2025 00:37:49 -0700 (PDT)
+Message-ID: <f6073afe-a604-485a-8cea-7aa08e46a0cf@arm.com>
+Date: Thu, 18 Sep 2025 13:07:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 18 Sep 2025 07:36:56 +0000
-Message-Id: <DCVR5KLTP8SD.1K7YIKXC08TWX@folker-schwesinger.de>
-Cc: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-From: "Folker Schwesinger" <dev@folker-schwesinger.de>
-To: "Suraj Gupta" <suraj.gupta2@amd.com>, <vkoul@kernel.org>,
- <radhey.shyam.pandey@amd.com>, <michal.simek@amd.com>
-Subject: Re: [PATCH 1/3] dmaengine: xilinx_dma: Fix channel idle state
- management in interrupt handler
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250917133609.231316-1-suraj.gupta2@amd.com>
- <20250917133609.231316-2-suraj.gupta2@amd.com>
-In-Reply-To: <20250917133609.231316-2-suraj.gupta2@amd.com>
-X-Virus-Scanned: Clear (ClamAV 1.0.9/27765/Tue Sep 16 10:26:41 2025)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm-new v2 2/2] mm/khugepaged: abort collapse scan on guard
+ PTEs
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
+ david@redhat.com, lorenzo.stoakes@oracle.com
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, kirill@shutemov.name, hughd@google.com,
+ mpenttil@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250918050431.36855-1-lance.yang@linux.dev>
+ <20250918050431.36855-3-lance.yang@linux.dev>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20250918050431.36855-3-lance.yang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed Sep 17, 2025 at 3:36 PM CEST, Suraj Gupta wrote:
-> Only mark the channel as idle and start new transfers when the active lis=
-t
-> is actually empty, ensuring proper channel state management and avoiding
-> spurious transfer attempts.
+
+On 18/09/25 10:34 am, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
 >
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> Fixes: c0bba3a99f07 ("dmaengine: vdma: Add Support for Xilinx AXI Direct =
-Memory Access Engine")
-
-Tested-by: Folker Schwesinger <dev@folker-schwesinger.de>
-
+> Guard PTE markers are installed via MADV_GUARD_INSTALL to create
+> lightweight guard regions.
+>
+> Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail when
+> encountering such a range.
+>
+> MADV_COLLAPSE fails deep inside the collapse logic when trying to swap-in
+> the special marker in __collapse_huge_page_swapin().
+>
+> hpage_collapse_scan_pmd()
+>   `- collapse_huge_page()
+>       `- __collapse_huge_page_swapin() -> fails!
+>
+> khugepaged's behavior is slightly different due to its max_ptes_swap limit
+> (default 64). It won't fail as deep, but it will still needlessly scan up
+> to 64 swap entries before bailing out.
+>
+> IMHO, we can and should detect this much earlier.
+>
+> This patch adds a check directly inside the PTE scan loop. If a guard
+> marker is found, the scan is aborted immediately with SCAN_PTE_NON_PRESENT,
+> avoiding wasted work.
+>
+> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
 > ---
->  drivers/dma/xilinx/xilinx_dma.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>   mm/khugepaged.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 >
-> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
-dma.c
-> index a34d8f0ceed8..9f416eae33d0 100644
-> --- a/drivers/dma/xilinx/xilinx_dma.c
-> +++ b/drivers/dma/xilinx/xilinx_dma.c
-> @@ -1914,8 +1914,10 @@ static irqreturn_t xilinx_dma_irq_handler(int irq,=
- void *data)
->  		      XILINX_DMA_DMASR_DLY_CNT_IRQ)) {
->  		spin_lock(&chan->lock);
->  		xilinx_dma_complete_descriptor(chan);
-> -		chan->idle =3D true;
-> -		chan->start_transfer(chan);
-> +		if (list_empty(&chan->active_list)) {
-> +			chan->idle =3D true;
-> +			chan->start_transfer(chan);
-> +		}
->  		spin_unlock(&chan->lock);
->  	}
-> =20
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 9ed1af2b5c38..70ebfc7c1f3e 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1306,6 +1306,16 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>   					result = SCAN_PTE_UFFD_WP;
+>   					goto out_unmap;
+>   				}
+> +				/*
+> +				 * Guard PTE markers are installed by
+> +				 * MADV_GUARD_INSTALL. Any collapse path must
+> +				 * not touch them, so abort the scan immediately
+> +				 * if one is found.
+> +				 */
+> +				if (is_guard_pte_marker(pteval)) {
+> +					result = SCAN_PTE_NON_PRESENT;
+> +					goto out_unmap;
+> +				}
+>   				continue;
+>   			} else {
+>   				result = SCAN_EXCEED_SWAP_PTE;
+>
+>
+
+I would like to hear everyone else's thoughts on
+https://lore.kernel.org/linux-mm/750a06dc-db3d-43c6-b234-95efb393a9df@arm.com/
+wherein I suggest that we should not continue to try collapsing other regions
+but immediately exit. The SCAN_PTE_NON_PRESENT case does not exit.
 
 
