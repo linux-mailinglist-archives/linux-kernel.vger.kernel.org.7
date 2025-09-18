@@ -1,156 +1,149 @@
-Return-Path: <linux-kernel+bounces-822977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3B0B85387
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:27:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0E6B8534E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D4116538D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A35C4825FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697133164AF;
-	Thu, 18 Sep 2025 14:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHO7PII1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B87314D28;
-	Thu, 18 Sep 2025 14:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBED31690F;
+	Thu, 18 Sep 2025 14:16:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EEE308F2B;
+	Thu, 18 Sep 2025 14:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204950; cv=none; b=pDh90ijOzMneTd0dfrNgWT4gwBMQhQnTsvACLtFJIRwOHq1CZ4UNlMNZatmXJeARHvJmqVLEeZ+1B62hE/yj7P7gPcD8KVCtTZg2CS/7GJVhkyNqAVx1sz1aJuGt48738Kw3oUc6JrjtOcYA3MWb9yNZVkFSZq3kOUCFlWI2AyM=
+	t=1758204963; cv=none; b=BImUt5UPHWX5yb4K4UCnW2/NGINiQyJzM3g6KbN/iPM9Ma+q37e4Ul6e8Gy+WciSOWgjR8Pztq6R0SXzu+pjKr3eRVQdqKUNz42/kxtZlpaT0JkvLl4Pa2j1miS0j67bfyk0uPjLaw8vKDbbwfdT9r3Q003diVrWdxrR0cHu1gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204950; c=relaxed/simple;
-	bh=MBjb3dNG3tkBuBacJDOOMyqs0vjIlyjvFY8EUa5pvX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C9QFRD199c1GY2tiNJUMzkSD/dkMHLSZjVoVU6R66jU9X4tI5RpWNgSyM6xIbozUaCwPYxfSsz/reFMQVOf/evuu0UXnT8A2B1V39lQiemE//USu4OfORibEU48OjMwjYocW4C/kS+gIpTDmmjgTBHrdgKF8h43UpkaRXvMIDqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHO7PII1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9752FC4CEE7;
-	Thu, 18 Sep 2025 14:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758204950;
-	bh=MBjb3dNG3tkBuBacJDOOMyqs0vjIlyjvFY8EUa5pvX4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MHO7PII1MmiBquTUz1ni8U+YKzkdedbpjjU/j8sr26+vZ6THi+ZZRnMu949QjVBXU
-	 o11BxieZf0WqmQsIMSHLKoO9L/ZT5+JZzoSbcFI/4dwq44NluBAK6DSRmWQYEOkIEN
-	 S0SKDHY0P+yAeLh6fQT1GRb/o7rZodYtoQ6CtDwFaP/IKEM5h62pZgbZ1RPwC/qOOR
-	 8IUjoGF0ISX2QHVCZ+wpiVpfD0ZnCBP/Xjre7bqwdS4nMlXYFZiQ67Uyu3VhIF2BpA
-	 g4WFXRo3WCr7wTv/wNoZpGV3XUc6756koA3jQ0afeI5iZv2ehbl7a20osbQloUvHRE
-	 37mh5CEGEKO7Q==
-Date: Thu, 18 Sep 2025 15:15:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Lee Jones <lee@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ming Yu <a0282524688@gmail.com>
-Subject: linux-next: manual merge of the gpio-brgl tree with the usb tree
-Message-ID: <aMwUEV6nY4AaJT8X@sirena.org.uk>
+	s=arc-20240116; t=1758204963; c=relaxed/simple;
+	bh=IDKOmDGdu4sjB+ajHbqv5oUDzo9Irz8OQyk6bFWkfJU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W2qvRjmEfQ/QYVELIoMP596olztz9xbe670qwEYQgqsqZj7pMwGDKAS/bBAP9kzIwNyrdTsjFqOatUe2tpvIaoSD0jfdbAzFRpLg/oI0n1gATA/gHUekrJ9qQ5D79XPx3cBluGZbKFPHVZF7mEE0hDZjGqqswwGVgGu643pC8V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A88C1A25;
+	Thu, 18 Sep 2025 07:15:52 -0700 (PDT)
+Received: from [10.57.71.56] (unknown [10.57.71.56])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D05013F673;
+	Thu, 18 Sep 2025 07:15:54 -0700 (PDT)
+Message-ID: <8f7b3f4e-bf56-4030-952f-962291e53ccc@arm.com>
+Date: Thu, 18 Sep 2025 16:15:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f1cBj7XY7g+wQXvZ"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>, linux-hardening@vger.kernel.org,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+ Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
+ Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Pierre Langlois <pierre.langlois@arm.com>,
+ Quentin Perret <qperret@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-mm@kvack.org, x86@kernel.org
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
+ <8e4e5648-9b70-4257-92c5-14c60928e240@arm.com>
+Content-Language: en-GB
+In-Reply-To: <8e4e5648-9b70-4257-92c5-14c60928e240@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 25/08/2025 09:31, Kevin Brodsky wrote:
+>>> Note: the performance impact of set_memory_pkey() is likely to be
+>>> relatively low on arm64 because the linear mapping uses PTE-level
+>>> descriptors only. This means that set_memory_pkey() simply changes the
+>>> attributes of some PTE descriptors. However, some systems may be able to
+>>> use higher-level descriptors in the future [5], meaning that
+>>> set_memory_pkey() may have to split mappings. Allocating page tables
+>> I'm supposed the page table hardening feature will be opt-in due to
+>> its overhead? If so I think you can just keep kernel linear mapping
+>> using PTE, just like debug page alloc.
+> Indeed, I don't expect it to be turned on by default (in defconfig). If
+> the overhead proves too large when block mappings are used, it seems
+> reasonable to force PTE mappings when kpkeys_hardened_pgtables is enabled.
 
---f1cBj7XY7g+wQXvZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I had a closer look at what happens when the linear map uses block
+mappings, rebasing this series on top of [1]. Unfortunately, this is
+worse than I thought: it does not work at all as things stand.
 
-Hi all,
+The main issue is that calling set_memory_pkey() in pagetable_*_ctor()
+can cause the linear map to be split, which requires new PTP(s) to be
+allocated, which means more nested call(s) to set_memory_pkey(). This
+explodes as a non-recursive lock is taken on that path.
 
-Today's linux-next merge of the gpio-brgl tree got a conflict in:
+More fundamentally, this cannot work unless we can explicitly allocate
+PTPs from either:
+1. A pool of PTE-mapped pages
+2. A pool of memory that is already mapped with the right pkey (at any
+level)
 
-  drivers/i2c/busses/Kconfig
+This is where I have to apologise to Rick for not having studied his
+series more thoroughly, as patch 17 [2] covers this issue very well in
+the commit message.
 
-between commit:
+It seems fair to say there is no ideal or simple solution, though.
+Rick's patch reserves enough (PTE-mapped) memory for fully splitting the
+linear map, which is relatively simple but not very pleasant. Chatting
+with Ryan Roberts, we figured another approach, improving on solution 1
+mentioned in [2]. It would rely on allocating all PTPs from a special
+pool (without using set_memory_pkey() in pagetable_*_ctor), along those
+lines:
 
-  daf161343a390 ("i2c: Add Intel USBIO I2C driver")
+1. 2 pages are reserved at all times (with the appropriate pkey)
+2. Try to allocate a 2M block. If needed, use a reserved page as PMD to
+split a PUD. If successful, set its pkey - the entire block can now be
+used for PTPs. Replenish the reserve from the block if needed.
+3. If no block is available, make an order-2 allocation (4 pages). If
+needed, use 1-2 reserved pages to split PUD/PMD. Set the pkey of the 4
+pages, take 1-2 pages to replenish the reserve if needed.
 
-=66rom the usb tree and commit:
+This ensures that we never run out of PTPs for splitting. We may get
+into an OOM situation more easily due to the order-2 requirement, but
+the risk remains low compared to requiring a 2M block. A bigger concern
+is concurrency - do we need a per-CPU cache? Reserving a 2M block per
+CPU could be very much overkill.
 
-  c5cf27dbaeb6e ("i2c: Add Nuvoton NCT6694 I2C support")
+No matter which solution is used, this clearly increases the complexity
+of kpkeys_hardened_pgtables. Mike Rapoport has posted a number of RFCs
+[3][4] that aim at addressing this problem more generally, but no
+consensus seems to have emerged and I'm not sure they would completely
+solve this specific problem either.
 
-=66rom the gpio-brgl tree.
+For now, my plan is to stick to solution 3 from [2], i.e. force the
+linear map to be PTE-mapped. This is easily done on arm64 as it is the
+default, and is required for rodata=full, unless [1] is applied and the
+system supports BBML2_NOABORT. See [1] for the potential performance
+improvements we'd be missing out on (~5% ballpark). I'm not quite sure
+what the picture looks like on x86 - it may well be more significant as
+Rick suggested.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+- Kevin
 
-diff --cc drivers/i2c/busses/Kconfig
-index 9921fd9ea0983,63a2b5a9abc39..0000000000000
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@@ -1357,17 -1357,16 +1357,27 @@@ config I2C_LJC
-  	  This driver can also be built as a module.  If so, the module
-  	  will be called i2c-ljca.
- =20
-+ config I2C_NCT6694
-+ 	tristate "Nuvoton NCT6694 I2C adapter support"
-+ 	depends on MFD_NCT6694
-+ 	help
-+ 	  If you say yes to this option, support will be included for Nuvoton
-+ 	  NCT6694, a USB to I2C interface.
-+=20
-+ 	  This driver can also be built as a module. If so, the module will
-+ 	  be called i2c-nct6694.
-+=20
- +config I2C_USBIO
- +	tristate "Intel USBIO I2C Adapter support"
- +	depends on USB_USBIO
- +	default USB_USBIO
- +	help
- +	  Select this option to enable I2C driver for the INTEL
- +	  USBIO driver stack.
- +
- +	  This driver can also be built as a module.  If so, the module
- +	  will be called i2c_usbio.
- +
-  config I2C_CP2615
-  	tristate "Silicon Labs CP2615 USB sound card and I2C adapter"
-  	depends on USB
-diff --cc drivers/i2c/busses/Makefile
-index 401a79c9767e6,fe8cf6325fc98..0000000000000
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@@ -135,7 -135,7 +135,8 @@@ obj-$(CONFIG_I2C_GXP)		+=3D i2c-gxp.
-  obj-$(CONFIG_I2C_DIOLAN_U2C)	+=3D i2c-diolan-u2c.o
-  obj-$(CONFIG_I2C_DLN2)		+=3D i2c-dln2.o
-  obj-$(CONFIG_I2C_LJCA)		+=3D i2c-ljca.o
-+ obj-$(CONFIG_I2C_NCT6694)	+=3D i2c-nct6694.o
- +obj-$(CONFIG_I2C_USBIO)		+=3D i2c-usbio.o
-  obj-$(CONFIG_I2C_CP2615) +=3D i2c-cp2615.o
-  obj-$(CONFIG_I2C_PARPORT)	+=3D i2c-parport.o
-  obj-$(CONFIG_I2C_PCI1XXXX)	+=3D i2c-mchp-pci1xxxx.o
-
---f1cBj7XY7g+wQXvZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMFBEACgkQJNaLcl1U
-h9Aa2wf8CT743rTsxr1EZVGbNF/Pp+0WO+VJoOkU4atIrIMnmtHy3IZTadUqK+zj
-szb7jhwkGUCx1VYOzaPR6Uh9794aG/go8iYA2rdehtDijd8A4JZSp1kBFEYtPYwi
-Xbnl/Uz+T+o8EffPVjtVJVHAxmEMcjgLbi6jJRnjlDvXuOVkWkImafklJwAHt7h4
-xUE+A1yyAvuRlMvfVnT6qFIWSkaf9iYCqYGgdYpWmK/hrn3Xg9tkut511rMW01rL
-DwE+dZFWKGb+b6mbaqMxTO0sOeMFpRGO//jacGptdcZGF4bAF7xY7jApVXjA4W7Q
-Lk2UrVh8/pllgVmNYNo8uVGOoGHhFA==
-=+den
------END PGP SIGNATURE-----
-
---f1cBj7XY7g+wQXvZ--
+[1]
+https://lore.kernel.org/all/20250829115250.2395585-1-ryan.roberts@arm.com/
+[2]
+https://lore.kernel.org/all/20210830235927.6443-18-rick.p.edgecombe@intel.com/
+[3] https://lore.kernel.org/lkml/20210823132513.15836-1-rppt@kernel.org/
+[4] https://lore.kernel.org/all/20230308094106.227365-1-rppt@kernel.org/
 
