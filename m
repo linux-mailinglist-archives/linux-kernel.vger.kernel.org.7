@@ -1,283 +1,161 @@
-Return-Path: <linux-kernel+bounces-823070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B7BB8571C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:07:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7874AB856F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B021F1C84E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:04:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6AF82A4612
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B83F224B09;
-	Thu, 18 Sep 2025 15:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCC01CDFD5;
+	Thu, 18 Sep 2025 15:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x9O0XxUF"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JOLUq1p4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903BE1CDFD5
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720A626AF3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207745; cv=none; b=iCeTWzTXTPJyOTRJuncLOyPlx7oWy+A5NohziP+gPevtEkzVnW+je88mFzmxgFTz6RARRYy8qcIs2TafjcHxYBEfqQi5sIdDfOOlMarkQPm6/ZJYq6L32PqLiAGy/RTYaEvSkuX+fdCuK1X+2duuRMpvxu1OtCoAt43ZJEe8yv4=
+	t=1758207808; cv=none; b=tp9qQWm255DEXWlmblJsuNvdfgGnLcJJwmimjqs+rlOGg0AnzaWgJND47gfbWl1gLWPpXzV+6FGXjn7EH1bqwE+tY8MJOvHUdW+/F6w1NYu0zBaetDdP4fL98S1l52MuydhJXV6YJNJo81WA8nxigRfyrfK5Wluv05XDLpYNeN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207745; c=relaxed/simple;
-	bh=vJ54JE6+riZlcAldU+0faKQxu82OqxHqyvNXkYI5oGI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IqWDWOHS6gkdwmww64Z+KBEBt/EPVepSWn5kgiLV2EnQlhIvXHafqCb+xK999X3iNQywySfdc1bX0dJj+5rEngp89feXsOXEWPxQuuhRA3WsSRWXlp6y9nN8ewTOUhW3NxFhZrKcksAck2La/zIb8fYqpLhtLHLnTigtjrsbKdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x9O0XxUF; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45b467f5173so9410285e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758207742; x=1758812542; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=l7zJnB3yDJu54j7XDPcUHBWHQ2xjhdYOpr3OUldWhZI=;
-        b=x9O0XxUFO7N4ZtNhcCOB7pynd1FZ5QJDaTtXr/WiVlQTD45f0sWeZjhqtrWVjMrc40
-         ZYp0MdtR54boZEwb6ECU0f9OKqFAzQZ1xBIWXUO6V8EtEd9ac1YWkBCZh13FF2ImyvIt
-         XhDoJo4yxBUwJZOD71VDNcwa8T9MB/O8wXvqPIWrw76tuR+6G/hFnf0KHv8hyAXR/gaF
-         /HiYUR+gF9Rbmf5zgbw4Si8R3bzpwQ9w7kZOm4xj9hy1hsOclSL2kYAivyQSa/HfQh6n
-         ICgE2N9yIcP7q9WjqnYkaZF9Jbulsc3eun/yZQyJmYS6mNO1rY4+VkIQAtkKh0ZjWbxZ
-         T7dg==
+	s=arc-20240116; t=1758207808; c=relaxed/simple;
+	bh=EkExrjB1v+E3308pb6pdcKo1s1yc3WIbaOoY/+f5qXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i45n5dj3q3aKFqh0XhOJ3LdeGIM5XWBWlzGSZ9t+dDTjiLT/7fK3ElvgL1kmpk7wTup4/yhlkC9zkgSinUhWb/8LXnPyMJgUbCrdX0XN3uZidO00ViZS7svxE/3S7cLr+C+jqqiPMZkbSsRUKOr74U2dvY91km5ebsXje5YVYyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JOLUq1p4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758207805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHuroaDALPzA9ek/TZGAIvvuwoq2PBaqEYZO83mgbI0=;
+	b=JOLUq1p4cHteaOzoUSEwPNJgt7wYW0Hzsow15lDRy1YX1AUuyHUKhhSihc97VpKNnr9vuV
+	2eL6Wio4dtO4Cu8lhVQUfqYnA531USOui3UdN9RXEDYnUMLRkApd/Dk2ocoa3aho0UTH1f
+	vPblG5MiS0fyxAFGwT3PF6AoC2G5skw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-626-OAoywvbGMm6d7Z-V209WRw-1; Thu, 18 Sep 2025 11:03:23 -0400
+X-MC-Unique: OAoywvbGMm6d7Z-V209WRw-1
+X-Mimecast-MFC-AGG-ID: OAoywvbGMm6d7Z-V209WRw_1758207803
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45f2f1a650dso7624395e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:03:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758207742; x=1758812542;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l7zJnB3yDJu54j7XDPcUHBWHQ2xjhdYOpr3OUldWhZI=;
-        b=iJIEJMzOjgxgFKYtW25RkLFegXIQMlMTSR7FkaEnGWUFLC3O3Y2+QjLHeyeY2SfKF8
-         4jDwWhj06LQZVDXBNm3waD5aytca0G+jaerEMFjjXOkHGiJsQ2l79yWeiLgmQu+C1yYl
-         QXASI20+NO0GTIrJh0X5GR6F8lvVC6JA69ju00xmuJ0OyAt4ZjePhX4J27XrEFA2ae3f
-         /FmDlI9umJ/9M96iRG9aB1g3tlJ6sHsuu4OnHtAks5DrmGjxjKGmGYgb94Ezub0bRTNb
-         uqpUULf6K4gH8cRyfwS2yt1qbEfXu1NYipY5yCYp03+zpWxMAJU2z9z2azKQbWNdEIep
-         z+ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUh/9SRWob3Nvuc+OFhrS4iLyTGp2Z+fYg28/BRVKD/skjzWgalmCK7qyMft0UvIQgpTb+8BvUP2RKGnt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybyjWLdEbusR2UBWwAR9wm05SQ0Y2nOGdeQz5mgPvnTgjXbRoi
-	DLfBpmBdPRTJm7qHnzED8wnmT6Gl3njIf1Pk8eya1C6pMiXGgy5bFx+QjLx0VMV7MZS0idB0HIR
-	q6E9NY9yLB4CXOMkt2A==
-X-Google-Smtp-Source: AGHT+IGPi4MZRXFcoOWPdUNlDZJMVbEdW8oLBAH+1jAR+Diom6ppak8B/S5RDukjmv+fduoTwCEAHE4877UjRK8=
-X-Received: from wmbay25.prod.google.com ([2002:a05:600c:1e19:b0:464:f7d9:6b0])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e93:b0:45f:2d21:cb36 with SMTP id 5b1f17b1804b1-462074c576amr51491305e9.35.1758207742039;
- Thu, 18 Sep 2025 08:02:22 -0700 (PDT)
-Date: Thu, 18 Sep 2025 15:02:11 +0000
+        d=1e100.net; s=20230601; t=1758207802; x=1758812602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jHuroaDALPzA9ek/TZGAIvvuwoq2PBaqEYZO83mgbI0=;
+        b=A865EjmWmTJnw1pcYV9lU9BlJ3Y+qYn1ZzuxjsVq5W3wZzTGGXNKvsgJoIw2Vg+BeD
+         BIp4n+vRw/rVRPeGRRGisxSA6UhCeQIeLIok7fCpFu1qAoSt1hwHwc4L+z8M67Ryd3gk
+         lSanZt2Ug8QXPbQnwWNkxHjEeCqOuXO6JUy9W94OMYi82JiH07y61rMtHlFLWPZ4c+Ct
+         VIwxPKt6QeDVzftsSlo7RpWczOGJAmWnQj0GcGQHB6TAMTo2xjI8Ldq+nKPUuFO7RM01
+         tFkzcWgVjRacPPQmQUKVZcJ9cRQKlMBZuPZcRf3Lboz9rUdMQaw2VkCe1jyO8UvpVbdi
+         vpGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdthHax+EgIChmNVNcroF1FFe9wYWD18TR0ueIvZuJNuYqWNPfTwz+jbeQyZWPMjdXnFz+tFH/VKBD9F0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz7PEWIPo2263pXxXJWlsIjrxo8kBOkwIKVaLOk0xfpvgHt0wU
+	VETg9AFriOJfttQc7VAEFpPGQuqZA23IBSK8aQ8o41gSu2WAEG2pcmqqzvOPtsSf02sA5uDdrcc
+	avw3W7K/W6kTPZYpLzyBcexhGPiPby8XCzulUL9e4dT3heIlM6+iQ4s2hoBqXPROAbPgsXlmSyg
+	==
+X-Gm-Gg: ASbGncv/Jv9mewuBD4QFD7ERnFTwDRqGOQ9QrXLIQSyet9APT5CE8oNoxcgmdDfz5rI
+	UZWYEZ9AMT62sCuR/iIdu2TwdA0mhZ5neP0WCt79KXJT0cC885udquuukIh6/prxcej/kPiEzBC
+	SOasG8ZXaLnzLbx5I4rlNMhRjv4UoJ+mnVOxPdk0t1IatkCSsSv4U1wCTqzKWDOIabVqwAlN+9Z
+	vIPQ7WuSyX93Y2RgFO9pWvQyxvq2zz6h0a0XFirfWQyVPJLvYeFrqWsFGZKaK80U224lncOxS25
+	YSQV0KYD/W1C+0Bi+5N89gB7tOWGEQ4Rbko=
+X-Received: by 2002:a05:600c:3111:b0:45d:d287:d339 with SMTP id 5b1f17b1804b1-4620683f1e4mr63892265e9.25.1758207802083;
+        Thu, 18 Sep 2025 08:03:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzXMO/8xWkfvQqlitTmfPRvJ7wLVF0bHaOOs2wJAFpxqVjxaTdhQB7sp9EBt86tb48mNkwbQ==
+X-Received: by 2002:a05:600c:3111:b0:45d:d287:d339 with SMTP id 5b1f17b1804b1-4620683f1e4mr63891665e9.25.1758207801215;
+        Thu, 18 Sep 2025 08:03:21 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73e7:4d00:2294:2331:c6cf:2fde])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f6695a9dsm45758515e9.24.2025.09.18.08.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 08:03:20 -0700 (PDT)
+Date: Thu, 18 Sep 2025 11:03:17 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alok.a.tiwari@oracle.com, ashwini@wisig.com, filip.hejsek@gmail.com,
+	hi@alyssa.is, leiyang@redhat.com, maxbr@linux.ibm.com,
+	seanjc@google.com, stable@vger.kernel.org,
+	zhangjiao2@cmss.chinamobile.com
+Subject: Re: [GIT PULL] virtio,vhost: last minute fixes
+Message-ID: <20250918110237-mutt-send-email-mst@kernel.org>
+References: <20250918104144-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAPIezGgC/x3MQQqEMAxA0atI1gbaqKBeRVw4NdVsWmmKDoh3t
- 7h8i/9vUE7CCmN1Q+JTVGIosHUFbl/CxihrMZChzgy2xytJZozeK2d0MWhG86PGupZ64gVKeCT 28v+m0/w8L+9hGf9kAAAA
-X-Change-Id: 20250918-write-offset-const-0b231c4282ea
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7310; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=vJ54JE6+riZlcAldU+0faKQxu82OqxHqyvNXkYI5oGI=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBozB748rOfzrnjjSiHKGsX0n/x0Z3PtJbpWHfqq
- gTHB11OZYyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaMwe+AAKCRAEWL7uWMY5
- Rl4RD/4t8Nbnz6TBtCmQoNUw/ZfJv6wR1kk4pmCvIL62u/kkC7XWhfJGvi1fvuVUZNAsyCukNOb
- S0+2aa463z8u2qomYAZNc8ronaonyjtPh8NNcdI3G0b73niWeexkLA7J619ZUlfMxHddicnVACb
- 387tj0pEiWOqKBTAm4dxcr/+IyglGnhIgMkSsJdgzjpOODll2GE5zwJJnuQTzw+HxtNM5sxIPPa
- DIUAG71t3yxrqpQBxUBIkD4f8Z+QgNAy+eBzjWMRQXz+nrLve/UcrY9Tbmg8v1qMutTTsrLLVCM
- ghZhVL/Gy0QXTPzEOQBZ2FFHh4Y6LkoRWOn6X90gwyEfoFLn7P00LIxKU9RXwW4tRN9HwSWLqAE
- /r4ftVa79WR5/TiYyB4eMmiYcsCmxbqv3GEwdnIihYn/ioNDllGczIlZ5MzbsRaOB6c4z1E8X1Y
- V+V/fZ9VITnZggfsta5SeDYXrsN5/krxJ/EkD2717cEvfHgLxI45/7ruAiL/+WJ7WvXjGBwytIf
- QtvHPOljIsnugLwZHCGwpAbQQCZXLHKOxsV/dutoOFxODJ8NITd4vurbhyMu21T43/h0HyamWQE
- qCdE4RhoFXxy4z06spZHRF2O6KU8EnLuiQLMetP37LiyVQ+P3wd45B1WGHm6iOREbrDSN0pCWvO OENwPwQjM3fbOLA==
-X-Mailer: b4 0.14.2
-Message-ID: <20250918-write-offset-const-v1-1-eb51120d4117@google.com>
-Subject: [PATCH] rust: io: use const generics for read/write offsets
-From: Alice Ryhl <aliceryhl@google.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	"=?utf-8?q?Krzysztof_Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-pci@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918104144-mutt-send-email-mst@kernel.org>
 
-Using build_assert! to assert that offsets are in bounds is really
-fragile and likely to result in spurious and hard-to-debug build
-failures. Therefore, build_assert! should be avoided for this case.
-Thus, update the code to perform the check in const evaluation instead.
+On Thu, Sep 18, 2025 at 10:41:44AM -0400, Michael S. Tsirkin wrote:
+> The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
+> 
+>   Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+> 
+> for you to fetch changes up to 549db78d951726646ae9468e86c92cbd1fe73595:
+> 
+>   virtio_config: clarify output parameters (2025-09-16 05:37:03 -0400)
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/gpu/drm/tyr/regs.rs     |  4 ++--
- rust/kernel/devres.rs           |  4 ++--
- rust/kernel/io.rs               | 18 ++++++++++--------
- rust/kernel/io/mem.rs           |  6 +++---
- samples/rust/rust_driver_pci.rs | 10 +++++-----
- 5 files changed, 22 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/tyr/regs.rs b/drivers/gpu/drm/tyr/regs.rs
-index f46933aaa2214ee0ac58b1ea2a6aa99506a35b70..e3c306e48e86d1d6047cab7944e0fe000901d48b 100644
---- a/drivers/gpu/drm/tyr/regs.rs
-+++ b/drivers/gpu/drm/tyr/regs.rs
-@@ -25,13 +25,13 @@
- impl<const OFFSET: usize> Register<OFFSET> {
-     #[inline]
-     pub(crate) fn read(&self, dev: &Device<Bound>, iomem: &Devres<IoMem>) -> Result<u32> {
--        let value = (*iomem).access(dev)?.read32(OFFSET);
-+        let value = (*iomem).access(dev)?.read32::<OFFSET>();
-         Ok(value)
-     }
- 
-     #[inline]
-     pub(crate) fn write(&self, dev: &Device<Bound>, iomem: &Devres<IoMem>, value: u32) -> Result {
--        (*iomem).access(dev)?.write32(value, OFFSET);
-+        (*iomem).access(dev)?.write32::<OFFSET>(value);
-         Ok(())
-     }
- }
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index da18091143a67fcfbb247e7cb4f59f5a4932cac5..3e66e10c05fa078e42162c7a367161fbf735a07f 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -96,7 +96,7 @@ struct Inner<T: Send> {
- /// let devres = KBox::pin_init(Devres::new(dev, iomem), GFP_KERNEL)?;
- ///
- /// let res = devres.try_access().ok_or(ENXIO)?;
--/// res.write8(0x42, 0x0);
-+/// res.write8::<0x0>(0x42);
- /// # Ok(())
- /// # }
- /// ```
-@@ -232,7 +232,7 @@ pub fn device(&self) -> &Device {
-     ///
-     ///     // might_sleep()
-     ///
--    ///     bar.write32(0x42, 0x0);
-+    ///     bar.write32::<0x0>(0x42);
-     ///
-     ///     Ok(())
-     /// }
-diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-index 03b467722b8651ebecd660ac0e2d849cf88dc915..563ff8488100d9e07a7f4bffeb085db7bd7e9d6a 100644
---- a/rust/kernel/io.rs
-+++ b/rust/kernel/io.rs
-@@ -103,7 +103,7 @@ pub fn maxsize(&self) -> usize {
- ///# fn no_run() -> Result<(), Error> {
- /// // SAFETY: Invalid usage for example purposes.
- /// let iomem = unsafe { IoMem::<{ core::mem::size_of::<u32>() }>::new(0xBAAAAAAD)? };
--/// iomem.write32(0x42, 0x0);
-+/// iomem.write32::<0x0>(0x42);
- /// assert!(iomem.try_write32(0x42, 0x0).is_ok());
- /// assert!(iomem.try_write32(0x42, 0x4).is_err());
- /// # Ok(())
-@@ -120,8 +120,8 @@ macro_rules! define_read {
-         /// time, the build will fail.
-         $(#[$attr])*
-         #[inline]
--        pub fn $name(&self, offset: usize) -> $type_name {
--            let addr = self.io_addr_assert::<$type_name>(offset);
-+        pub fn $name<const OFF: usize>(&self) -> $type_name {
-+            let addr = self.io_addr_assert::<$type_name, OFF>();
- 
-             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
-             unsafe { bindings::$c_fn(addr as *const c_void) }
-@@ -149,8 +149,8 @@ macro_rules! define_write {
-         /// time, the build will fail.
-         $(#[$attr])*
-         #[inline]
--        pub fn $name(&self, value: $type_name, offset: usize) {
--            let addr = self.io_addr_assert::<$type_name>(offset);
-+        pub fn $name<const OFF: usize>(&self, value: $type_name) {
-+            let addr = self.io_addr_assert::<$type_name, OFF>();
- 
-             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
-             unsafe { bindings::$c_fn(value, addr as *mut c_void) }
-@@ -217,10 +217,12 @@ fn io_addr<U>(&self, offset: usize) -> Result<usize> {
-     }
- 
-     #[inline]
--    fn io_addr_assert<U>(&self, offset: usize) -> usize {
--        build_assert!(Self::offset_valid::<U>(offset, SIZE));
-+    fn io_addr_assert<U, const OFF: usize>(&self) -> usize {
-+        const {
-+            build_assert!(Self::offset_valid::<U>(OFF, SIZE));
-+        }
- 
--        self.addr() + offset
-+        self.addr() + OFF
-     }
- 
-     define_read!(read8, try_read8, readb -> u8);
-diff --git a/rust/kernel/io/mem.rs b/rust/kernel/io/mem.rs
-index 6f99510bfc3a63dd72c1d47dc661dcd48fa7f54e..b73557f5f57c955ac251a46c9bdd6df0687411e2 100644
---- a/rust/kernel/io/mem.rs
-+++ b/rust/kernel/io/mem.rs
-@@ -54,7 +54,7 @@ pub(crate) unsafe fn new(device: &'a Device<Bound>, resource: &'a Resource) -> S
-     ///       pdev: &platform::Device<Core>,
-     ///       info: Option<&Self::IdInfo>,
-     ///    ) -> Result<Pin<KBox<Self>>> {
--    ///       let offset = 0; // Some offset.
-+    ///       const OFFSET: usize = 0; // Some offset.
-     ///
-     ///       // If the size is known at compile time, use [`Self::iomap_sized`].
-     ///       //
-@@ -66,9 +66,9 @@ pub(crate) unsafe fn new(device: &'a Device<Bound>, resource: &'a Resource) -> S
-     ///       let io = iomem.access(pdev.as_ref())?;
-     ///
-     ///       // Read and write a 32-bit value at `offset`.
--    ///       let data = io.read32_relaxed(offset);
-+    ///       let data = io.read32_relaxed::<OFFSET>();
-     ///
--    ///       io.write32_relaxed(data, offset);
-+    ///       io.write32_relaxed::<OFFSET>(data);
-     ///
-     ///       # Ok(KBox::new(SampleDriver, GFP_KERNEL)?.into())
-     ///     }
-diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-index 606946ff4d7fd98e206ee6420a620d1c44eb0377..6f0388853e2b36e0800df5125a5dd8b20a6d5912 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -46,17 +46,17 @@ struct SampleDriver {
- impl SampleDriver {
-     fn testdev(index: &TestIndex, bar: &Bar0) -> Result<u32> {
-         // Select the test.
--        bar.write8(index.0, Regs::TEST);
-+        bar.write8::<{ Regs::TEST }>(index.0);
- 
--        let offset = u32::from_le(bar.read32(Regs::OFFSET)) as usize;
--        let data = bar.read8(Regs::DATA);
-+        let offset = u32::from_le(bar.read32::<{ Regs::OFFSET }>()) as usize;
-+        let data = bar.read8::<{ Regs::DATA }>();
- 
-         // Write `data` to `offset` to increase `count` by one.
-         //
-         // Note that we need `try_write8`, since `offset` can't be checked at compile-time.
-         bar.try_write8(data, offset)?;
- 
--        Ok(bar.read32(Regs::COUNT))
-+        Ok(bar.read32::<{ Regs::COUNT }>())
-     }
- }
- 
-@@ -98,7 +98,7 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -> Result<Pin<KBox<Self>
-     fn unbind(pdev: &pci::Device<Core>, this: Pin<&Self>) {
-         if let Ok(bar) = this.bar.access(pdev.as_ref()) {
-             // Reset pci-testdev by writing a new test index.
--            bar.write8(this.index.0, Regs::TEST);
-+            bar.write8::<{ Regs::TEST }>(this.index.0);
-         }
-     }
- }
+Sorry, pls ignore, Sean Christopherson requested I drop his patches.
+Will send v2 without.
 
----
-base-commit: cf4fd52e323604ccfa8390917593e1fb965653ee
-change-id: 20250918-write-offset-const-0b231c4282ea
-
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+> ----------------------------------------------------------------
+> virtio,vhost: last minute fixes
+> 
+> More small fixes. Most notably this reverts a virtio console
+> change since we made it without considering compatibility
+> sufficiently.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Alok Tiwari (1):
+>       vhost-scsi: fix argument order in tport allocation error message
+> 
+> Alyssa Ross (1):
+>       virtio_config: clarify output parameters
+> 
+> Ashwini Sahu (1):
+>       uapi: vduse: fix typo in comment
+> 
+> Michael S. Tsirkin (1):
+>       Revert "virtio_console: fix order of fields cols and rows"
+> 
+> Sean Christopherson (3):
+>       vhost_task: Don't wake KVM x86's recovery thread if vhost task was killed
+>       vhost_task: Allow caller to omit handle_sigkill() callback
+>       KVM: x86/mmu: Don't register a sigkill callback for NX hugepage recovery tasks
+> 
+> zhang jiao (1):
+>       vhost: vringh: Modify the return value check
+> 
+>  arch/x86/kvm/mmu/mmu.c           |  7 +-----
+>  drivers/char/virtio_console.c    |  2 +-
+>  drivers/vhost/scsi.c             |  2 +-
+>  drivers/vhost/vhost.c            |  2 +-
+>  drivers/vhost/vringh.c           |  7 +++---
+>  include/linux/sched/vhost_task.h |  1 +
+>  include/linux/virtio_config.h    | 11 ++++----
+>  include/uapi/linux/vduse.h       |  2 +-
+>  kernel/vhost_task.c              | 54 ++++++++++++++++++++++++++++++++++++----
+>  9 files changed, 65 insertions(+), 23 deletions(-)
 
 
