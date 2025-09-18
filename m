@@ -1,76 +1,160 @@
-Return-Path: <linux-kernel+bounces-822033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B42FB82E7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B70B82EAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E94317DC7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:49:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B70E4A1265
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D5A258ECC;
-	Thu, 18 Sep 2025 04:49:36 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3A42749C5;
+	Thu, 18 Sep 2025 04:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HzqxFbJJ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C16218580
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BC8259CAB
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758170975; cv=none; b=s/mYawCDwUSyl0lymmOfVVdz2tw77TEOIiubXAdkaB/lqkMqev2OcEc0niLrnz6mZ40Q9rfk9RborkBJiwRChXjD2Ir7292OReVrlfYtBZYH5yNLVc2jpz6otdHb2mr0D2r9G6xwikzu3fFqvXQGKI9C0CrK6NNdY2Q6WXajNPM=
+	t=1758171379; cv=none; b=WPKax7o3GTPpGkLjirUdJMNBBXtlysaX7/ZicTy+86gj4Ff8FrzRzg/VZfgWFBkb2au21XQtO8u4aeMXfoX6jdaJkHFpWdQIHK5hVOUpog+b4yPcja3/FZ2x3R7RhgxbagcRB7G/vfIWqErfvLBA2zgFv3plkr3T+1c9y2YtsVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758170975; c=relaxed/simple;
-	bh=uoo9bzN76YjjWaHl+/q269lKlZCz9XHJVttTIWhwvoE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=d6VTBgugj7v4afPrE/ksqDgZX5zMOLh7TakbXp+YUP+8UQCxpijB65wDfPYlqVzzpc/9PuZCfyan6osiz0x9vGISbkCOnVbTfyZ+kzK+htL48mQeMNMNbWXMQYhnKlQFRyeN5mMdjd37HwLB98SX1WRfxL0Y+hi2rvZilw8Qc/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4240a41d2caso5835325ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 21:49:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758170972; x=1758775772;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uoo9bzN76YjjWaHl+/q269lKlZCz9XHJVttTIWhwvoE=;
-        b=B1iGUcgQDNphf+x4eA2t2aT1gCQ2sYXP58wV0pPgxRScnyIAtuKoXpbsGSkAEXhQKq
-         rStd2W53+nRvFv65Cu7n7d60nMpMQSPGgFSZ3Dh988VPzn0u8PF81/dyPxWrOxlJ+wJZ
-         4x7D+1PtnTK/hT2JqhkeFdSB1jNT7IlKpN7cPxZpKXHOO6f6UmrRpcpZvrdKz615zO9R
-         Byy66XfoCCkpI8oZlDu72Fgafd11vZhMJ6lo4Jc4vnMAx8r5hrVwcM/p29mxj0xpDcVZ
-         fxlulLhoYHvQ7slpXTuwn+n5v4R4Pqkkfsn+EPnoi/6Qi/eCjIB0FnSdsR8uMpNJBiAY
-         CxWw==
-X-Gm-Message-State: AOJu0Yzm1AXWU2btl9SfmeZafQ4WyN8behC7VSsBwROt3h1JACHBxPM3
-	Kno7x1bqe3uykxbHVOEa156PDzzLbKHwHr6el79unqILWDFxxheo5DDL8jBqL1M5FyD5UU9xERA
-	Ll4KcNHR94xXl044WIZo4kMhbGIDrfnFp3MkhR4wuI7/4PnIoiIS33tfeCLI=
-X-Google-Smtp-Source: AGHT+IFQ9AbzWsHuArqVpSmj11gxd7XMsMB6klhuQDy9EQQ4AK487dhKsbfMymD8x7Ll+cMburdIodZRY9NtVwIrRJs1Ak0rEKO9
+	s=arc-20240116; t=1758171379; c=relaxed/simple;
+	bh=G8wmUt6omdKOr/GsALiLLbhKcZvQkjTo+mX02enj4Rs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h8Y9X++I/ZXzUv2csmSxHFR6DoUsf7alBTUL02O+nzI2hRK28IbXyV+TP6abopytC2gpjsab2uBPM/QDSM7U8L6mvdWAxWBKKZwwAhCHpXw2D3U2yN85HlbJIETIobiuq6UZ6HyllGNL1m0GlyegSl7maeWbJlzy8HKo1dJFHEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HzqxFbJJ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HIWI3b027152;
+	Thu, 18 Sep 2025 04:50:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NotAuU
+	ShrSCvXvm4Q5gT+Oz5+LaDyGv2IOTdAjj1U5k=; b=HzqxFbJJhi3a4bB9d4Tv/A
+	UHuVpokOUbsJGvmP1S6linVLxCE/k3Th5TTXlJT1y+pPAutk3FJFp8WAjMSQzbMP
+	kfYaMMWD45UI5GzfJlsefrn4xOOlMY70GBvj6FEUBwU5og6lpzOrv7u0YBIpudPU
+	ISxJAkL5PTSxGKAEj/KulSlgwlqZC4m/fg2JSO5Q4GigGqwmLiRBIW0mUspqDhnp
+	6ZeCl6pwH4qwxHjr/+1+YhLspRRC462bK3QAF5PywDquLOkRIUgRCyJg8rbqyqjA
+	r/ke/duC3yZEJr+dUkWmSA6V2b6BDYRloBdA9cDHbCq18bByrU3D+uFpsXKxdGyQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4p816e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 04:50:51 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58I4oouS010353;
+	Thu, 18 Sep 2025 04:50:50 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4p816b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 04:50:50 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58I2Vlkr018629;
+	Thu, 18 Sep 2025 04:50:49 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 495n5mmq8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 04:50:49 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58I4ondT54264216
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Sep 2025 04:50:49 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 285AA5805A;
+	Thu, 18 Sep 2025 04:50:49 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 73B0958056;
+	Thu, 18 Sep 2025 04:49:46 +0000 (GMT)
+Received: from [9.109.215.183] (unknown [9.109.215.183])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 18 Sep 2025 04:49:43 +0000 (GMT)
+Message-ID: <e6f5d1e6-afe5-4225-a672-7523d04c6504@linux.ibm.com>
+Date: Thu, 18 Sep 2025 10:19:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda5:0:b0:424:cf7:7d04 with SMTP id
- e9e14a558f8ab-4241a4cfcf6mr61804355ab.4.1758170972096; Wed, 17 Sep 2025
- 21:49:32 -0700 (PDT)
-Date: Wed, 17 Sep 2025 21:49:32 -0700
-In-Reply-To: <68c21301.050a0220.3c6139.0031.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cb8f5c.050a0220.2ff435.05a4.GAE@google.com>
-Subject: Forwarded: WARNING in ext4_xattr_inode_update_ref
-From: syzbot <syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drivers/base/node: Handle error properly in
+ register_one_node()
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Chris Mason <clm@meta.com>, David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
+        Danilo Krummrich <dakr@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+References: <20250917134604.2149316-1-clm@meta.com>
+ <676712d1-7b4f-4614-bd82-5b0c43881865@linux.ibm.com>
+ <20250917144844.e8d9b9593aac9f3a4b52a0cb@linux-foundation.org>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <20250917144844.e8d9b9593aac9f3a4b52a0cb@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX9n+UdE8F3voc
+ Zb8tlE4PplCfB8r+8NIxpOSKoyGDzgNY5l3sNA7MFra6V7pCaIMB4byySaUp5ftHOvcmXlCD27B
+ KXbGFXTnUDkFz5HGfXz6C5LEd5pmVQgubArmmSximt6pZBL7wqv+PcMyBlQ96M/OuENiV1ODBzq
+ vWLHNijjFY+SA+A9YcwkibOuIM2DgKAlTtiV0ggmF0DiwKF529bU9jpkxpCEZs/UhZefX7EE3Vf
+ LnX5fbAGaAct+XwQw+L/4GZs+LK4sZ4Ddu669qvZdaOR2IapjXmW6Yn6rBpPc0BUedGKj+6uA9M
+ OlCGpT2m6yHJzQny3bqansd9ZOcmkHW+9Hmka3jzfupUflO4SdUY3XiJr31vzrtU3ceMtZbUfAD
+ z7zhT7+v
+X-Proofpoint-ORIG-GUID: lbaNMzgAgeoT0IXfYsWgEKGFdMi2SmhZ
+X-Proofpoint-GUID: m6WOCbN5gXP7WPh1-QjaVSYAsLzyPdmd
+X-Authority-Analysis: v=2.4 cv=cNzgskeN c=1 sm=1 tr=0 ts=68cb8fab cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=AYsY0RiJbjKyjbCzuxQA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 spamscore=0 bulkscore=0 malwarescore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160204
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+On 9/18/25 3:18 AM, Andrew Morton wrote:
+> On Wed, 17 Sep 2025 20:25:48 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
+>
+>>> Can this cause a double-free? Looking at register_node(), when
+>>> device_register() fails, it calls put_device(&node->dev). The put_device()
+>>> call triggers node_device_release() which does kfree(to_node(dev)), freeing
+>>> the entire node structure. So when register_node() returns an error, the
+>>> node memory is already freed, but this code calls kfree(node) again on the
+>>> same memory.
+>>>
+>>> The call chain is: register_node()->device_register() fails->
+>>> put_device()->node_device_release()->kfree(to_node(dev)).
+>>
+>> Thank you for pointing this out. I will address it and send a v3.
+> This patch is now in mm.git's non-rebasing mm-stable branch, so no
+> replacements, please.
+>
+> A standalone patch with
+>
+> 	Fixes: 786eb990cfb7 ("drivers/base/node: handle error properly in register_one_node()")
+>
+> is the way to go.
 
-Subject: WARNING in ext4_xattr_inode_update_ref
-Author: albinbabuvarghese20@gmail.com
 
-#syz test
+Sure Andrew .I will send it today.
+
+
+>
+>
 
