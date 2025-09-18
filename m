@@ -1,109 +1,178 @@
-Return-Path: <linux-kernel+bounces-823621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0E2B87054
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:11:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEAAB87065
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B84E57BCED1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:09:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 947427BD4E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DADC2F744C;
-	Thu, 18 Sep 2025 21:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1029F2F0C76;
+	Thu, 18 Sep 2025 21:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdoP1WsY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUk00Vbw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E682F39D7
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C50824501B;
+	Thu, 18 Sep 2025 21:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758229825; cv=none; b=C+cFYkRfHue9K4TCHL+3wbw4RKaR1eybusKbBj3jXSEPvsmv5BPMH+oiBwUGB6TTIs1a3ooKoSG8P1AH3tHLTidM++GOAxyVW6/xONssf1e7pxqGyEjAjAElHzLfYu3h3wnRwaEvDwr5lOpST8M5/31Ywq6WMHwTw0S9zN2cJz8=
+	t=1758229850; cv=none; b=kD4jlA1tLAAxz7cCvwf7wmsfsXcxgsonuOWWPQ2/rSWWGMTMo+t4xoMpI0uu9rSE+XCbODPC2StEYHsF8lUgBerCgbzYFUTZge9WVJ5qE7lOJNgB2lHlA4DGBtKTWzUZafxXUNXC1SksIjkfY4Lf+I7hdNi3igQCfyydF105MpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758229825; c=relaxed/simple;
-	bh=jKkcmf3MDfbgYuwWGn6u6Q37sQo63v9wUZb8rTdwbcQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lE9W1qoQ9wHDQaXp1ly2FNcssbvrF8xNFy1B9q6rx3IaVtQ3NKYQq6pU5X8xQurpO9kugVVHtK7mSB7ZFVno3XdSBLL+yXc9oalzkBMTH90tx+NSvme74EHdtvZw6NODjlssoMrBKKWMgZbgCKQ+suCrXW/XTjnBhEH2T7TKH+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdoP1WsY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A8B7C4CEE7;
-	Thu, 18 Sep 2025 21:10:22 +0000 (UTC)
+	s=arc-20240116; t=1758229850; c=relaxed/simple;
+	bh=wlNjaTZImKf2AeG6/odvaHilnkAGYMvkVffoJRmrn70=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KM9UxOi4BaYDHj5fOLDZI8pMvko6SUnPHiF+rpkOGqhR/VZnlT86ilCYp30IaOCv1dOkGY6UHgaC96qt7t4VfvhxqqNtQQlPH21wevOgvPHJGic44uC0GTvLRh3neV+7U8aAvNwB+fSysW/rzv/eh8cCTcyLvVWVUczm9ybgPIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUk00Vbw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58984C4CEE7;
+	Thu, 18 Sep 2025 21:10:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758229825;
-	bh=jKkcmf3MDfbgYuwWGn6u6Q37sQo63v9wUZb8rTdwbcQ=;
+	s=k20201202; t=1758229849;
+	bh=wlNjaTZImKf2AeG6/odvaHilnkAGYMvkVffoJRmrn70=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kdoP1WsYZzMmLUBAA/L36XxB9IEcVc4Z3/ChXrxWDhNsJZJzU3SIc6TS2LkVInryU
-	 tVochwRrdRZdIIdxdorpyqRVl+mGLXr55YDmTdu95nHE/JWnwHuxD+/fVTdWmvhm2i
-	 6LDGQnf6YW+KYWmnCOFrMmX3GvFaPoTYiFMkhDRmYJ5Ozf+V44WmhS24veu9DGogg7
-	 UK14SwgRtDoiHI8l/XXxGjxXg/JvpNDz6zCXDE5S/s93DO+Sw0bsAbP/nSEjlkwS/+
-	 Ccmvj9xhlgLfoch+tRE/ZqhgwmP39qNFB/c2K8tAJB5QkzUaekiVd5CNy9Gldhfi92
-	 qsolnw97+XVpg==
-From: Will Deacon <will@kernel.org>
-To: catalin.marinas@arm.com,
-	ryan.roberts@arm.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	ardb@kernel.org,
-	dev.jain@arm.com,
-	scott@os.amperecomputing.com,
-	cl@gentwo.org,
-	Yang Shi <yang@os.amperecomputing.com>
-Cc: kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v8 0/5] arm64: support FEAT_BBM level 2 and large block mapping when rodata=full
-Date: Thu, 18 Sep 2025 22:10:08 +0100
-Message-Id: <175822779944.710258.10028837182267037801.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250917190323.3828347-1-yang@os.amperecomputing.com>
-References: <20250917190323.3828347-1-yang@os.amperecomputing.com>
+	b=aUk00Vbwlm/AgYDloeJEF0n1g05Ksb4/qtHx8wCKS/Wh+DyVnJwXG4q+xUw1tbJEY
+	 d47PTPbffMdIuVmHoikcrvZHyGs3p46TFO2GgJkaZy6pbmEiB/hRULt4To6ZZXwDKp
+	 aR0PnxehpjIx0zH6Yfi03LygrpQpF1O6QtGE3cfV4oQkfMTMr3oeyr6tTiDpCZ8qb4
+	 X66/RvzHnWK4zqESNRUtyVKZ/2k05Tq3KyiyQbGGo/NrYCbANloJxqzynxozOqatvn
+	 fvf6CJ57d+XjF0Uz1Idb65Bc128JEsLRR3N4DWGUAG62eS2pIrXDdt9/T11tzegY9l
+	 oGtiBcbX4eYKg==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: Huisong Li <lihuisong@huawei.com>, LKML <linux-kernel@vger.kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>
+Subject: [PATCH v1 2/2] ACPI: processor: idle: Redefine two functions as void
+Date: Thu, 18 Sep 2025 23:10:31 +0200
+Message-ID: <2385759.ElGaqSPkdT@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5926523.DvuYhMxLoT@rafael.j.wysocki>
+References: <5926523.DvuYhMxLoT@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 17 Sep 2025 12:02:06 -0700, Yang Shi wrote:
-> On systems with BBML2_NOABORT support, it causes the linear map to be mapped
-> with large blocks, even when rodata=full, and leads to some nice performance
-> improvements.
-> 
-> Ryan tested v7 on an AmpereOne system (a VM with 12G RAM) in all 3 possible
-> modes by hacking the BBML2 feature detection code:
-> 
-> [...]
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Applied patches 1 and 3 to arm64 (for-next/mm), thanks!
+Notice that acpi_processor_power_init() and acpi_processor_power_exit()
+don't need to return any values because their callers don't check them
+anyway, so redefine those functions as void.
 
-[1/5] arm64: Enable permission change on arm64 kernel block mappings
-      https://git.kernel.org/arm64/c/a660194dd101
-[3/5] arm64: mm: support large block mapping when rodata=full
-      https://git.kernel.org/arm64/c/a166563e7ec3
+While at it, rearrange the code in acpi_processor_power_init() to
+reduce the indentation level, get rid of a redundant local variable
+in that function, and rephrase a code comment in it.
 
-I also picked up the BBML allow-list addition (second patch) on
-for-next/cpufeature.
+No intentional functional impact.
 
-The fourth patch ("arm64: mm: split linear mapping if BBML2 unsupported
-on secondary CPUs") has some really horrible conflicts. These are partly
-due to some of the type cleanups on for-next/mm but I think mainly due
-to Kevin's kpti rework that landed after -rc1.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/processor_idle.c |   47 +++++++++++++++++++-----------------------
+ include/acpi/processor.h      |    4 +--
+ 2 files changed, 24 insertions(+), 27 deletions(-)
 
-So I think the best bet might be to leave that one for next time, if
-that's ok?
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -1137,47 +1137,45 @@ void acpi_processor_unregister_idle_driv
+ 	cpuidle_unregister_driver(&acpi_idle_driver);
+ }
+ 
+-int acpi_processor_power_init(struct acpi_processor *pr)
++void acpi_processor_power_init(struct acpi_processor *pr)
+ {
+-	int retval;
+ 	struct cpuidle_device *dev;
+ 
+ 	if (disabled_by_idle_boot_param())
+-		return 0;
++		return;
+ 
+ 	acpi_processor_cstate_first_run_checks();
+ 
+ 	if (!acpi_processor_get_power_info(pr))
+ 		pr->flags.power_setup_done = 1;
+ 
+-	if (pr->flags.power) {
+-		dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+-		if (!dev)
+-			return -ENOMEM;
+-		per_cpu(acpi_cpuidle_device, pr->id) = dev;
+-
+-		acpi_processor_setup_cpuidle_dev(pr, dev);
+-
+-		/* Register per-cpu cpuidle_device. Cpuidle driver
+-		 * must already be registered before registering device
+-		 */
+-		retval = cpuidle_register_device(dev);
+-		if (retval) {
+-
+-			per_cpu(acpi_cpuidle_device, pr->id) = NULL;
+-			kfree(dev);
+-			return retval;
+-		}
++	if (!pr->flags.power)
++		return;
++
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return;
++
++	per_cpu(acpi_cpuidle_device, pr->id) = dev;
++
++	acpi_processor_setup_cpuidle_dev(pr, dev);
++
++	/*
++	 * Register a cpuidle device for this CPU.  The cpuidle driver using
++	 * this device is expected to be registered.
++	 */
++	if (cpuidle_register_device(dev)) {
++		per_cpu(acpi_cpuidle_device, pr->id) = NULL;
++		kfree(dev);
+ 	}
+-	return 0;
+ }
+ 
+-int acpi_processor_power_exit(struct acpi_processor *pr)
++void acpi_processor_power_exit(struct acpi_processor *pr)
+ {
+ 	struct cpuidle_device *dev = per_cpu(acpi_cpuidle_device, pr->id);
+ 
+ 	if (disabled_by_idle_boot_param())
+-		return 0;
++		return;
+ 
+ 	if (pr->flags.power) {
+ 		cpuidle_unregister_device(dev);
+@@ -1185,7 +1183,6 @@ int acpi_processor_power_exit(struct acp
+ 	}
+ 
+ 	pr->flags.power_setup_done = 0;
+-	return 0;
+ }
+ 
+ MODULE_IMPORT_NS("ACPI_PROCESSOR_IDLE");
+--- a/include/acpi/processor.h
++++ b/include/acpi/processor.h
+@@ -419,8 +419,8 @@ static inline void acpi_processor_thrott
+ /* in processor_idle.c */
+ extern struct cpuidle_driver acpi_idle_driver;
+ #ifdef CONFIG_ACPI_PROCESSOR_IDLE
+-int acpi_processor_power_init(struct acpi_processor *pr);
+-int acpi_processor_power_exit(struct acpi_processor *pr);
++void acpi_processor_power_init(struct acpi_processor *pr);
++void acpi_processor_power_exit(struct acpi_processor *pr);
+ int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
+ int acpi_processor_hotplug(struct acpi_processor *pr);
+ void acpi_processor_register_idle_driver(void);
 
-Cheers,
--- 
-Will
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+
 
