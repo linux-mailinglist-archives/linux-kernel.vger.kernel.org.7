@@ -1,109 +1,88 @@
-Return-Path: <linux-kernel+bounces-822531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76EC3B8414D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:27:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA91B84153
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10F857BF1FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEAD81B20349
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDA92FE582;
-	Thu, 18 Sep 2025 10:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C7D2EB5BF;
+	Thu, 18 Sep 2025 10:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwImpqaX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1zzuGQ1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE8D2F5A19;
-	Thu, 18 Sep 2025 10:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ECB2DA757;
+	Thu, 18 Sep 2025 10:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758191208; cv=none; b=CNe5ntobzOuefElkR0W0YKPXT1lOYV9po6Qq+qH7Vlp6oS5mbmG6HbErH5uoAhh8V0nf7mYFC/kA1pg7jWf5DMnhHNurYzmXpvk+LstemdiYTLChvKTZhhsCFbRXPUr6iHJypyYx3oaDBNvGhO5Uqwj3KjlpB4Mp9GvoTkc1qgY=
+	t=1758191217; cv=none; b=eej1eX8L5T5JHJELR+A4wLRWCILWRLKoz9di1+3Za5dB2gbkV7YufEWJBi0luuwhwYtTfdCNoQX/NLhdRKn4vQg2fFvXPo+XAnK/hWQb5G1bDGuORmcaMurlh2SsiEet6/26sOc5/y/i5jPjvOTPvJZNtW0jc1/YtW17wFHGL9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758191208; c=relaxed/simple;
-	bh=2O4JbyeyNOFGCtQWseGjahocWyWME/uonyjbz+Ok46w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bVUBtAN/dEeHVllGazfAZsPUQce4bhIZ345QbCF7QKIBTwF0XAw+9n32h7YTVtc6misfokhJlV5SRMYInAoFaLlJ8YR2qNvNb3LrVGTptX/ybU8Tbsz2SKL+iZlEyGJ6rhiqlGtbGhYxYKkqDZoaR2kkYmhbi+8+68ntXGK4GtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwImpqaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EF7C4CEFB;
-	Thu, 18 Sep 2025 10:26:47 +0000 (UTC)
+	s=arc-20240116; t=1758191217; c=relaxed/simple;
+	bh=sF1A73VvtGB9XaGt3W5JSsV7eemrEK6rpb1l1Er5U4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sAGZsLU0Gz+kysFMQ6+Mk3U2n9Y4uHjjek9xj6njaR8fnIiUqyz1/S0Ts9s7LYMExrRilSy406/uY7YPJG8cZGXVBRS9Q17TITkTFtaa6lg+ILGjz/+mYPONXpNJSef8jUXC3Zu/DcwXwlL8/tgRb4t4OWzsCm8yn1YGWgMtguo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1zzuGQ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E21C4CEEB;
+	Thu, 18 Sep 2025 10:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758191208;
-	bh=2O4JbyeyNOFGCtQWseGjahocWyWME/uonyjbz+Ok46w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VwImpqaXeSqK7RNRa7Xs5c/p1sbAcyEksae+NZZqwBK7/ed5JP33ZZDjt9u7OU8C5
-	 hnGl9vaK4zdFvuwyolTM3Yi1uxg7HhaLuKZCDxAuHx+aZiOxEAvhTo8bCy6XLtZ/1p
-	 wXxvvoO7qREp+kc9Y+VBWmXGN2nY6C4pQt9NtiF1+cf90CCVx1Ve9BVJv78JHRvGDZ
-	 Nc23trUlBcASrsMUBZtCcEc4fZkWc/SgGeP7No+6RsH8Ez4MP9EBh+D/giw5TCncTD
-	 VpDFl0S3ymeJ7XIdfXuoQIZcgFid2wewM9EvOTGqapryy7bcGUAhcm9Emf8Q4tRpRG
-	 6IZ7t3bySBCvA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id F169CCE10DB; Thu, 18 Sep 2025 03:26:46 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	Zqiang <qiang.zhang@linux.dev>,
-	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 6/6] srcu/tiny: Remove preempt_disable/enable() in srcu_gp_start_if_needed()
-Date: Thu, 18 Sep 2025 03:26:46 -0700
-Message-Id: <20250918102646.2592821-6-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <89b6f92e-2aa6-4869-ad4f-47bb3fbadfbb@paulmck-laptop>
-References: <89b6f92e-2aa6-4869-ad4f-47bb3fbadfbb@paulmck-laptop>
+	s=k20201202; t=1758191217;
+	bh=sF1A73VvtGB9XaGt3W5JSsV7eemrEK6rpb1l1Er5U4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K1zzuGQ1IyAP7rN8bAjxPCKuWxBOVPFyVgQbmSYdk2+6ldtbIGKD37s5zjPh0ka59
+	 aFbSJKmPtZdoKfRTA0mKqVi1GpzqDCRJOtfiydL6CrKEQIXbFVD70NoxxUXh5QPl+b
+	 4mcyZJtPnH7kqeP2PHfd2cs6QK+BNXP/BPIZnpE/7cUoCcbt9oSF7/xL9MBfdXbs39
+	 7kmLXBYxcUJ3IopLad4+yYTRKQSf+rofLzeNxr0I7KjCbyk9u9uAmB99gdwheRKMGZ
+	 yK5RkO33GDEah89sfUAcURR/s2QkRm48D/+zOMCB5D3J6c4BF0xNkuAafrnSuWY7lc
+	 zZAN3WiY8ghZg==
+Date: Thu, 18 Sep 2025 11:26:50 +0100
+From: Will Deacon <will@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 22/28] iommu/arm-smmu-v3-kvm: Emulate CMDQ for host
+Message-ID: <aMveas3QWXUk6xpm@willie-the-truck>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-23-smostafa@google.com>
+ <aMQroI4NDu74PDGT@willie-the-truck>
+ <20250915163858.GK882933@ziepe.ca>
+ <aMl_5j8G3IGulAC6@google.com>
+ <20250917123601.GA1326709@ziepe.ca>
+ <aMrNTny9jgZJd_Ef@willie-the-truck>
+ <20250917151612.GH1326709@ziepe.ca>
+ <aMrS71vQ_MaVonzi@willie-the-truck>
+ <20250917155931.GI1326709@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917155931.GI1326709@ziepe.ca>
 
-From: Zqiang <qiang.zhang@linux.dev>
+On Wed, Sep 17, 2025 at 12:59:31PM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 17, 2025 at 04:25:35PM +0100, Will Deacon wrote:
+> 
+> > Ah right, so the driver would unnecessarily issue CMOs for the structures
+> > that are just shared with the hypervisor. At least it's _functional_ that
+> > way, but I'm sure people will complain!
+> 
+> Yes, functional, why would anyone complain? STE and CD manipulation is
+> not fast path for anything?
 
-Currently, the srcu_gp_start_if_needed() is always be invoked in
-preempt disable's critical section, this commit therefore remove
-redundant preempt_disable/enable() in srcu_gp_start_if_needed()
-and adds a call to lockdep_assert_preemption_disabled() in order
-to enable lockdep to diagnose mistaken invocations of this function
-from preempts-enabled code.
+Won't it also apply to cmdq insertion?
 
-Fixes: 65b4a59557f6 ("srcu: Make Tiny SRCU explicitly disable preemption")
-Signed-off-by: Zqiang <qiang.zhang@linux.dev>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/srcutiny.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-index 6e9fe2ce1075d5..e3b64a5e0ec7e1 100644
---- a/kernel/rcu/srcutiny.c
-+++ b/kernel/rcu/srcutiny.c
-@@ -176,10 +176,9 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
- {
- 	unsigned long cookie;
- 
--	preempt_disable();  // Needed for PREEMPT_LAZY
-+	lockdep_assert_preemption_disabled(); // Needed for PREEMPT_LAZY
- 	cookie = get_state_synchronize_srcu(ssp);
- 	if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
--		preempt_enable();
- 		return;
- 	}
- 	WRITE_ONCE(ssp->srcu_idx_max, cookie);
-@@ -189,7 +188,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
- 		else if (list_empty(&ssp->srcu_work.entry))
- 			list_add(&ssp->srcu_work.entry, &srcu_boot_list);
- 	}
--	preempt_enable();
- }
- 
- /*
--- 
-2.40.1
-
+Will
 
