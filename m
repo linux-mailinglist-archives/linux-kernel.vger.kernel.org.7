@@ -1,234 +1,95 @@
-Return-Path: <linux-kernel+bounces-822147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9435B8329B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:37:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0382BB832A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FA25160A52
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD62C1C803DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B042E1731;
-	Thu, 18 Sep 2025 06:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gCdRHsIt"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4092DA762;
+	Thu, 18 Sep 2025 06:37:07 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5DD2D97B6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9652DA755;
+	Thu, 18 Sep 2025 06:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758177376; cv=none; b=LXCrF13qsfnZv/k5761UZZEbGvXBMkFJcEIdxx3vOffEiB1UKDJNyParvW0hiFqDEnQe3urUv4VlUdCDv1JSl5xnGw4gBZkQVLV6k3vTEqTREbvXjHn06DBexdV1RdzrpK46p+zZgF4leyX3dK+y1lQkMCWSJpom+lIV70Tqdh8=
+	t=1758177427; cv=none; b=m8RETRPuuKhnSL255lix1nHgq8hpH1HO1u5RifdSpEKL0rmnBMxnysBOrlnyIDJjT7h7iHatpqSOiATacykdftvn2a+VeQJPjsRtZSaF4yDfmu70J8UL8oHSOnLtqhvreoE6zRm9KKIj0pmW9zouirxom1R7lItnHePf96yodzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758177376; c=relaxed/simple;
-	bh=yZilTx72GF8qqKvNUbLyRsBvojfMOoic5NxQVYR1doQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=h78E27mXPpJrT53JEgIamyz7EMKD0BLhIRht5XmkikD7R+kBa4mB/kdZwImyCFGcVnfTVMfbxkV2NgyrTTkdYFbn/GWLwLAm8QsGOV3OROGX1cltVOvNwSIwvnLiQw/MLhy93QIPJDYLoN6tt01BOzK8Prpuw7/4DrXAHCMQt98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gCdRHsIt; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b990eb77cso4265025e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758177373; x=1758782173; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1ta9KttEF8sJmGrgUmmN67wbPwjz6EsYqXVUKnq6iI=;
-        b=gCdRHsItTVNUcyqQGCJDAlulH7ER5iVlFUaZTwNwI4eMZ2XDpV1v4GCbIoTT5G0qGt
-         R6bNas8vIzA2zVfnuHKk0s8JwBM1G5wIMRhkHpZpA3JIGSR3PCw+qMbMjAVnXC9CYQSO
-         zpPvkP72QHOImC5H2/wcIqjsRLz9Z/CSHM8Wvuyj/CCWHF6tPnSGM9sbkis76GFW4D0n
-         c6F7Yf1U3+aMygwyBY67Hk/ZyrXNMzW0/OMq16xHUOgv/MMuo3QkelOxPuupKgttarGv
-         js5/vmTnJgmC1jg9014BSiC9YTyNaYfx0sEw1Gs3NlgUCJcOGxMKq+m4D38rYZn6aSCj
-         KawQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758177373; x=1758782173;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1ta9KttEF8sJmGrgUmmN67wbPwjz6EsYqXVUKnq6iI=;
-        b=THmX1osgbpbiEFE0z04o0vCFtElATVPFkVrbz+gM1FQIkTymGBGum0Zm/saeYgVYB3
-         /z0ei5WrIAW8r5GOezAl/JONTwe9CdgBEXaPoODGZT754sZp6Ahs7BDwoZ/gZymdR0AB
-         Jec0y5jFgoBtlGA9u1fhR/gBQtuwl6tVXsyALUYOoMt2R0F/n4RnNIDTwTszYu9+cvZR
-         RneZaU5M/8soQ+HZzNo3HhntkhtnNFP/xtzzda5jz7ZNCOG5TMckKOnnkqNLnTdTjQv9
-         1qHDA6DAaQHmVW2EKd8o7gzf8iLQrop7ptONql1gnMiqOGMqyx9PyGxfMIjVtX5kt9DV
-         ezeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+GKbP0hkLy90yO48YzAGytEAnpmo9rC/9Vxds+iE4i15xC0xBTJwRQIrZKK9zZiSjVrQz6EXaN+mFe2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKbEvyBiaMcU/3Us2II5MrVz2s0US4JPxTqgogXqHyumysZ56T
-	fIIp3ttMcY1lespPSTKFCboh4QKzLdDhCZ4V2dKFKCp3tCdaN4N0ijtlXCiXVJN9IjG0gwbYKw=
-	=
-X-Google-Smtp-Source: AGHT+IHwDdNQKSpulh2BKmpGNYTuQzvpQWSRjIlrRJfiSKNGg3YFQhrNwINDqw6AqWcxEWBgOnrglZXe
-X-Received: from wmbhc26.prod.google.com ([2002:a05:600c:871a:b0:45f:2859:5428])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:c0d7:b0:45b:9b9f:88cb
- with SMTP id 5b1f17b1804b1-464fdf4425emr15559625e9.16.1758177372848; Wed, 17
- Sep 2025 23:36:12 -0700 (PDT)
-Date: Thu, 18 Sep 2025 08:35:45 +0200
-In-Reply-To: <20250918063539.2640512-7-ardb+git@google.com>
+	s=arc-20240116; t=1758177427; c=relaxed/simple;
+	bh=dB2D5X2TaDzSzcQxd72RVX4GNj0RdIORusioHfUXCgQ=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=iggVJRFHGnSxC9sC1Ui5TvoU3XNJajChV5Ff/795Skac3OBDa0T7qP7Wk+s5KFmrI75WGKwPehhQV0HI5ppUfr1XWX/8m8w3MApD8aXqgkoSB4Hb9Vmzaaalh/bQzL9T4hWM3by9LouG+NpeW3w31M/izGezjNXhm0UO2oX5500=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cS5X45Jtlz4xPS7;
+	Thu, 18 Sep 2025 14:36:52 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 58I6afdC068792;
+	Thu, 18 Sep 2025 14:36:41 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 18 Sep 2025 14:36:43 +0800 (CST)
+Date: Thu, 18 Sep 2025 14:36:43 +0800 (CST)
+X-Zmail-TransId: 2af968cba87b807-5753a
+X-Mailer: Zmail v1.0
+Message-ID: <20250918143643417OPRH_RjCXkCa3aCtQEX3Y@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250918063539.2640512-7-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5265; i=ardb@kernel.org;
- h=from:subject; bh=Dk5FXoMF39rDUZtpDj8iIP76qecw7z+7kErWyEtMPzo=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeP0CufThftPBJ5ss7Q590bVUEs2Ter/i0lV+lcLvH5sO
- OEvxvmxo5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAExE8A0jQ1dfScM10ctyTn+n
- ty7RPK65fneCi7xyrPjMkFVnk3OWVDH8r2H2uPotW6BoL8e7uzOTizP+SbnZ3nFqrFr5/s6HEP6 VLAA=
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250918063539.2640512-12-ardb+git@google.com>
-Subject: [PATCH 5/5] arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	herbert@gondor.apana.org.au, ebiggers@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: <shao.mingyin@zte.com.cn>
+To: <alexs@kernel.org>
+Cc: <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <yang.tao172@zte.com.cn>, <shao.mingyin@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBEb2NzL3poX0NOOiBhbGlnbiB0aXRsZSB1bmRlcmxpbmUgZm9yIHViaWZzLnJzdA==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 58I6afdC068792
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Thu, 18 Sep 2025 14:36:52 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68CBA884.000/4cS5X45Jtlz4xPS7
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: shaomingyin <shao.mingyin@zte.com.cn>
 
-Commit aefbab8e77eb16b5
+align title underline for ubifs.rst
 
-  ("arm64: fpsimd: Preserve/restore kernel mode NEON at context switch")
-
-added a 'kernel_fpsimd_state' field to struct thread_struct, which is
-the arch-specific portion of struct task_struct, and is allocated for
-each task in the system. The size of this field is 528 bytes, resulting
-in non-trivial bloat of task_struct, and the resulting memory overhead
-may impact performance on systems with many processes.
-
-This allocation is only used if the task is scheduled out or interrupted
-by a softirq while using the FP/SIMD unit in kernel mode, and given that
-calls to kernel_neon_begin() and kernel_neon_end() are now guaranteed to
-originate from the same lexical scope, it is possible to transparently
-allocate this buffer on the caller's stack instead.
-
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 ---
- arch/arm64/include/asm/neon.h      |  4 +--
- arch/arm64/include/asm/processor.h |  2 +-
- arch/arm64/kernel/fpsimd.c         | 26 ++++++++++++++------
- 3 files changed, 21 insertions(+), 11 deletions(-)
+ Documentation/translations/zh_CN/filesystems/ubifs.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/neon.h b/arch/arm64/include/asm/neon.h
-index 4e24f1058b55..acaac98ff449 100644
---- a/arch/arm64/include/asm/neon.h
-+++ b/arch/arm64/include/asm/neon.h
-@@ -13,10 +13,10 @@
- 
- #define cpu_has_neon()		system_supports_fpsimd()
- 
--void __kernel_neon_begin(void);
-+void __kernel_neon_begin(struct user_fpsimd_state *);
- void __kernel_neon_end(void);
- 
--#define kernel_neon_begin()	do { __kernel_neon_begin()
-+#define kernel_neon_begin()	do { __kernel_neon_begin(&(struct user_fpsimd_state){})
- #define kernel_neon_end()	__kernel_neon_end(); } while (0)
- 
- #endif /* ! __ASM_NEON_H */
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 61d62bfd5a7b..226e635c53d9 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -172,7 +172,7 @@ struct thread_struct {
- 	unsigned long		fault_code;	/* ESR_EL1 value */
- 	struct debug_info	debug;		/* debugging */
- 
--	struct user_fpsimd_state	kernel_fpsimd_state;
-+	struct user_fpsimd_state	*kernel_fpsimd_state;
- 	unsigned int			kernel_fpsimd_cpu;
- #ifdef CONFIG_ARM64_PTR_AUTH
- 	struct ptrauth_keys_user	keys_user;
-diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index d7eb073d1366..919c53a26484 100644
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -1488,21 +1488,23 @@ static void fpsimd_load_kernel_state(struct task_struct *task)
- 	 * Elide the load if this CPU holds the most recent kernel mode
- 	 * FPSIMD context of the current task.
- 	 */
--	if (last->st == &task->thread.kernel_fpsimd_state &&
-+	if (last->st == task->thread.kernel_fpsimd_state &&
- 	    task->thread.kernel_fpsimd_cpu == smp_processor_id())
- 		return;
- 
--	fpsimd_load_state(&task->thread.kernel_fpsimd_state);
-+	fpsimd_load_state(task->thread.kernel_fpsimd_state);
- }
- 
- static void fpsimd_save_kernel_state(struct task_struct *task)
- {
- 	struct cpu_fp_state cpu_fp_state = {
--		.st		= &task->thread.kernel_fpsimd_state,
-+		.st		= task->thread.kernel_fpsimd_state,
- 		.to_save	= FP_STATE_FPSIMD,
- 	};
- 
--	fpsimd_save_state(&task->thread.kernel_fpsimd_state);
-+	BUG_ON(!cpu_fp_state.st);
-+
-+	fpsimd_save_state(task->thread.kernel_fpsimd_state);
- 	fpsimd_bind_state_to_cpu(&cpu_fp_state);
- 
- 	task->thread.kernel_fpsimd_cpu = smp_processor_id();
-@@ -1773,6 +1775,7 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
- void fpsimd_flush_task_state(struct task_struct *t)
- {
- 	t->thread.fpsimd_cpu = NR_CPUS;
-+	t->thread.kernel_fpsimd_state = NULL;
- 	/*
- 	 * If we don't support fpsimd, bail out after we have
- 	 * reset the fpsimd_cpu for this task and clear the
-@@ -1833,7 +1836,7 @@ void fpsimd_save_and_flush_cpu_state(void)
-  * The caller may freely use the FPSIMD registers until kernel_neon_end() is
-  * called.
-  */
--void __kernel_neon_begin(void)
-+void __kernel_neon_begin(struct user_fpsimd_state *s)
- {
- 	if (WARN_ON(!system_supports_fpsimd()))
- 		return;
-@@ -1849,6 +1852,13 @@ void __kernel_neon_begin(void)
- 	} else {
- 		fpsimd_save_user_state();
- 
-+		/*
-+		 * Record the caller provided buffer as the kernel mode FP/SIMD
-+		 * buffer for this task, so that the state can be preserved and
-+		 * restored on a context switch.
-+		 */
-+		current->thread.kernel_fpsimd_state = s;
-+
- 		/*
- 		 * Set the thread flag so that the kernel mode FPSIMD state
- 		 * will be context switched along with the rest of the task
-@@ -1899,8 +1909,8 @@ void __kernel_neon_end(void)
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && in_serving_softirq() &&
- 	    test_thread_flag(TIF_KERNEL_FPSTATE))
- 		fpsimd_load_kernel_state(current);
--	else
--		clear_thread_flag(TIF_KERNEL_FPSTATE);
-+	else if (test_and_clear_thread_flag(TIF_KERNEL_FPSTATE))
-+		current->thread.kernel_fpsimd_state = NULL;
- }
- EXPORT_SYMBOL_GPL(__kernel_neon_end);
- 
-@@ -1936,7 +1946,7 @@ void __efi_fpsimd_begin(void)
- 	WARN_ON(preemptible());
- 
- 	if (may_use_simd()) {
--		__kernel_neon_begin();
-+		__kernel_neon_begin(&efi_fpsimd_state);
- 	} else {
- 		/*
- 		 * If !efi_sve_state, SVE can't be in use yet and doesn't need
+diff --git a/Documentation/translations/zh_CN/filesystems/ubifs.rst b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+index 16c28bfd6fc3..2491c059ec25 100644
+--- a/Documentation/translations/zh_CN/filesystems/ubifs.rst
++++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
+@@ -17,7 +17,7 @@ UBI 文件系统
+ ============
+
+ 简介
+-============
++====
+
+ UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 代表无序块镜
+ 像（Unsorted Block Images）。UBIFS 是一种闪存文件系统，这意味着它专为闪
 -- 
-2.51.0.384.g4c02a37b29-goog
-
+2.27.0
 
