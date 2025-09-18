@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-823615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731CAB87035
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A29B8704D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF6B166227
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 804D7626AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C03F2EFD81;
-	Thu, 18 Sep 2025 21:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FE12EA47E;
+	Thu, 18 Sep 2025 21:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="mqdAqbuM"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frNq7MEs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7925F2DAFA5;
-	Thu, 18 Sep 2025 21:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6FA2D594D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758229779; cv=none; b=MOqxf3YLe88RKX2N5ZV2n7maHFDCZn1m5xSVNucP1da+8unmIAc8qNo2gEiCG8zlbzL1BB9Ytv4SLimb1LZHwxFAmf9QcD4nUAzzA26BLN4u9nvE0dU17I65KWQeHrGoTIwLRodTyD9O/wCOgqTtNKBy/KMOkjb5Dr8EOdznEI0=
+	t=1758229817; cv=none; b=UQX2to1WmyA3m3TlDQuHNZza80qkU4/6xuUoM+6yW4QhIUrdJOyb+Lr+ls4/Dp1xmTUlvJGQ7m+Yraq7ivxJGETbCmhml1YPKfkYWUozxyFgJo0BWm+0AyUhuDYzL9YtFEgd4nvG5vu7SkbKeK0/u++57og0yGI/yJAaIjnkpJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758229779; c=relaxed/simple;
-	bh=6ksAn3H91O94k8DweiUh/m3t93Gdss8WZmDpjPojFDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QCYMv+Vv0c+OeT0vKExre+igyJpp52/IjmU9qZBYSEW/Kbffn5IOd1P5wRVn+AQlxxUhOuBEAEn3NACnsbcOTV/CHaWqdC2D6d8wxC+LtQGbKjbeekglDWALWQ20qPxPZnbgtI80+OKWTeTdg3d/qxNN5XK8hhYhbtEiG/2xx0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=mqdAqbuM; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=IhRFq4UtJ1FWApnkqY6mEgaYN11X3Y0mXj4sL73koYk=; b=mqdAqbuMhaX05+AVwIxaxZi0TB
-	htLdqDt30MiAqnjBZnHKqLauhIC1vFJ+3unudCP6cWxJr9zFi2uNnUxSjVHjRiReiT3/TK7EHOdZb
-	f0z5+XPJNg2kx3+N0nPkjjpB5UyoQYVk57Vsznj70YGQ8zUghwV9+k4KhQKblO/RtbXoEKg82aDRD
-	LhmYH4cqRM7qXCOwP6ce+fFgjd/Czsns7wf5zWvyw2eLT+PvRwVjbtb3Hb4goFS+ia5d+0WNrJgjC
-	saPGLtXUnj7S098virm7a0VhHbtt5BYjO+E4uEbZZr4EI3hHfE8zY8rQhQn93hP+/9h38SEy5elCX
-	mUaTg40g==;
-Received: from i53875b0a.versanet.de ([83.135.91.10] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uzLsk-0003SC-3D; Thu, 18 Sep 2025 23:09:34 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	Mikko Rapeli <mikko.rapeli@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: (subset) [PATCH v4 0/4] enable ROCKCHIP_PM_DOMAINS
-Date: Thu, 18 Sep 2025 23:09:22 +0200
-Message-ID: <175822973681.1568500.10556154418854538683.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250915083317.2885761-1-mikko.rapeli@linaro.org>
-References: <20250915083317.2885761-1-mikko.rapeli@linaro.org>
+	s=arc-20240116; t=1758229817; c=relaxed/simple;
+	bh=j1CTtjGm+jrGFTPTDIMFfFXN9BLb03q1Mg0JiJ+5ylc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z7JN2Ilgc5vsV2utRwd15zI3Tp9c+tnR5++E1z+pVeL8GLObhQL+Sv8Cwr+w0kZnjQcr7YVWVwwGvEJpUfMCQVpENQlOhSPzYVh3FHxBFOY5tpXZClYNSpFGZ2PBb852g7Y54h5fyFFZU9vCMFDy4M/AjQdNkYCUTmegkLjI2e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frNq7MEs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53681C4CEE7;
+	Thu, 18 Sep 2025 21:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758229816;
+	bh=j1CTtjGm+jrGFTPTDIMFfFXN9BLb03q1Mg0JiJ+5ylc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=frNq7MEs8uQvQ2H6fiYsY+ZDphflomx42JRFqskCtNqck+vRIZHnG0HeO5e3edclL
+	 BbjLsGqD3TmXcp4xuL9pycdqzOrdVFx4Np0+M2273Gclce9P+b56R5M87FkMgeYAyZ
+	 WcLAsHPQhGnmSUGpFsB7ekKcI5im9O1ylWtlqw0f1M/BVC9gwDYqKUG7ZIGGepCGsU
+	 ycboPC6UDpEfTmLRtfco6Ow3IHqI00tXQru9V1Y40hzuDgfvZF4e4A7j6yzgusDfeX
+	 /qW06qAbIZ0wEejIqPywsj8PEc6dlobSOn8sNnOFPbgoRO1KjTDnUx9NTCKYwOHJgd
+	 OTMaqzDMlbHuw==
+From: Will Deacon <will@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
+	Jeremy Linton <jeremy.linton@arm.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	mark.rutland@arm.com,
+	liaochang1@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: probes: Fix incorrect bl/blr address and register usage
+Date: Thu, 18 Sep 2025 22:10:04 +0100
+Message-Id: <175822602063.703125.494053900347788765.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250918175424.3483164-1-jeremy.linton@arm.com>
+References: <20250918175424.3483164-1-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,23 +64,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-
-On Mon, 15 Sep 2025 11:33:13 +0300, Mikko Rapeli wrote:
-> MMC_DW_ROCKCHIP needs ROCKCHIP_PM_DOMAINS before MMC is detected
-> on Rockchip rk3399 rockpi4b and similar devices. Make this dependency
-> more visible, or the default with ARCH_ROCKCHIP if possible.
+On Thu, 18 Sep 2025 12:54:24 -0500, Jeremy Linton wrote:
+> The pt_regs registers are 64-bit on arm64, and should be u64 when
+> manipulated. Correct this so that we aren't truncating the address
+> during br/blr sequences.
 > 
-> v4: fixed Kconfig whitespace, added select REGMAP_MMIO to MMC_LOONGSON2
->     instead of disabling COMPILE_TEST
 > 
-> [...]
 
-Applied, thanks!
+Applied to arm64 (for-next/uprobes), thanks!
 
-[4/4] ARM: rockchip: remove REGULATOR conditional to PM
-      commit: a1b20e062245571c128ec521c4df56ad1bff9bd0
+[1/1] arm64: probes: Fix incorrect bl/blr address and register usage
+      https://git.kernel.org/arm64/c/ea87c5536aa8
 
-Best regards,
+Cheers,
 -- 
-Heiko Stuebner <heiko@sntech.de>
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
