@@ -1,235 +1,217 @@
-Return-Path: <linux-kernel+bounces-823698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C13CB87389
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:22:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3EABB87392
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48237C85AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8717B7E08A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EBB314B74;
-	Thu, 18 Sep 2025 22:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790192FB62F;
+	Thu, 18 Sep 2025 22:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mlpREUlv"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCe0vWIF"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1BD30C0FA
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 22:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3765C2288D5
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 22:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758234134; cv=none; b=USpe4bbnd39IfgEtSONq64EwwxynZa/dr5h/r68uEkdzz4JMiWs4V/dd9tSTvKTNaCl1hmFtVllp1nLuGM8yCKPUXOBcXZeOYib6ZOetF5AYlrZN1ESMkIUiHfbMg670f/9TQ4OX87TIzRKcB+MjNv37gDRx5at5WK6Wuk+wTz8=
+	t=1758234383; cv=none; b=PJxVWzZ8Uvk188Qu2hy8W8VMSl//l8jWcf0oB+Dv4pK0gB0LJwPmIPALp6mrT2RQ4TUexyYsfZYs75Vgwr/YHRVPdZ79o4GrEsdijAIgbKn2F65T9wA99qkLxGVR7ISxJMDnTA7U/aQxipvO/eM+ljElsvzvwvu4Dh2d4cDLChk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758234134; c=relaxed/simple;
-	bh=TwqoMqLQHjUxI2rkeJmleYPOhZn3UgjHTrrdcI1tvtg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=bVH8CKS2PbFw6lB88X7s/brk3KrA0RSd35G3XG4xJV49sChEnyvlrEuVXbuodXhl9FDxUMIQtu1AjHaNwpfVPLKHVcotpicApdWDPezkUpQDe1xL+E5j9FuWKkCCl0Z8SPcxXOCDV8+zjVtKtTbK8HN+ID9xDkb2q+2TPrekZiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mlpREUlv; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269a2b255aaso14467105ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:22:12 -0700 (PDT)
+	s=arc-20240116; t=1758234383; c=relaxed/simple;
+	bh=CrDDzKJgIhpKNCJQHnN/NwhER/rUFlHEqMizJicBMv8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JN29++d8mvaB57yrSx8PkoeUuIKjgqlyDQIm2BXcSD9Dr/kqdJtAQ+ILlnIE5fiQJQ1oh/khLn49LkJV/Vf7MIco9w0brjgehkqTS3AhK8I2sqBpftnXN+sXA+atsdMDRQlPsj2skSSZ6QDPHsG67ApoUAMF7V1JFHBOEux3LOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCe0vWIF; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so1528910b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:26:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758234132; x=1758838932; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rxusbh2pXscDQhVlXFTi2xaqfqmPjhhvMWLhfAOar+Y=;
-        b=mlpREUlvP6e6n7GOUsRf0ozKfZih0ZW3SnZMpMfcDw8FVQ3Q7ixTXjjKvhzQFvS760
-         9/gQXa5ca44XjHNNLjx/QqjSWDVo/PRTvotjnbAyjodzCyLHmPwBpatm9B+ZxbcjGq2y
-         9yY/v4pfwY2sLFkCjIcyHgH27YHw3vi2QYTT/NBMOjVC1y5qHMhKxaTXN13qLqxv3LDn
-         gYwXYuZ1wOq0JnE9IDJDXvDBeNbu7UKJLhZaOpEYwPoYxuHmFzmhbsig8xP7x8Pu7oJ6
-         LnTfzTR7qgRBsUA2SIOSkZdo22FYMqHWuDTHc4boV+LzAAxNmo22OidCT0E6X0DFLZBb
-         vJQw==
+        d=gmail.com; s=20230601; t=1758234380; x=1758839180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DbEPHi/FBJoBntQoKxRmObfSjuVxaXboS80M9e4IQLM=;
+        b=dCe0vWIFh4fJodsvno2eLxzT7M51S1bsyGzy0cJsZ/QxctDmggNBPXThELh9MIjZAz
+         95f2OhZck/FTajOZky15Yf/wX5OdH1UC6p025OSVX7gaMj/9sR52xp63Jj5cVZDUC3DB
+         qbelBCT+/Pws+YR9edOtzfdacmAoMlGSE2wJEF3sOdck5g1+qe+UZ7qUCd2m7vky1rFK
+         fbDcjoNPc5TjAesd1uKdupd4b3P3zEqv3G4hgNz0ceNKP06VltB1/5cUp3Cl1YxqO0dN
+         SWUU658JQWO8IghF/sJB3+1RX9y4EtzWP9KifCwHfLA5e67avW3hBpbkXge7/8cv5Z/8
+         bmoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758234132; x=1758838932;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxusbh2pXscDQhVlXFTi2xaqfqmPjhhvMWLhfAOar+Y=;
-        b=oiNRgADY8p9Mi9Azz/HIWp6NC/9Vpl+NdKsxzKzxCERNfM/dA7kc3avPAjOJqCtzHc
-         zFZ9+X+2JdkGfkpV1ZHIKd5jvu0KFS3zVUTniPHupNNsu8CBsBBctnJDFBT760DFHT89
-         MenLzwGS1NJ/fgUCSfyBFTwMYG7qCKCfevbN06X/4NvGolyf0V2EDNnDbANZLYljS0Ef
-         o81nB4ibCyMO8MDW1sURelARvOZGHfawpbGGnDW+XTxSr/vPkNFMONyTWXan+I+Z+r0P
-         KeLmDcGbTAhB+8vlappp5RcHnau0pbMHG/tvYYsHtFPOrd0Mz2c5vh0y1Pd7LKxCDlxR
-         8Icw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2U03EQM1c1CXNQC3fNkkG38o0JFN8X5849jkbClui+rdC0uArzv4L4n2qjHbAZjvTLREohp7etYIw/94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEDLSuSslRz9i1Wg+4kYvwGel9EszYE7Twth4+R0SA4scgJkAB
-	k0SqEpyaBPjXk0Rv+JQ9qcKqmnEPnJbLXe7nWTYm5kAMV6RS7UGc4OG/I9Moa63SD9wgZZfBR8y
-	w0n1/cTkVoA==
-X-Google-Smtp-Source: AGHT+IF1i3RQ5YoxqBTNWNiUwo8wn69WpweQEoJjE2pE6tp3kNd89jJ6Dl20BgOSosjGWmWOoivuP5joC6Lb
-X-Received: from pjbsv6.prod.google.com ([2002:a17:90b:5386:b0:330:8c66:4984])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:246:b0:269:a8a8:4029
- with SMTP id d9443c01a7336-269ba3ea13bmr18290485ad.5.1758234131690; Thu, 18
- Sep 2025 15:22:11 -0700 (PDT)
-Date: Thu, 18 Sep 2025 15:22:02 -0700
-In-Reply-To: <20250918222202.1353854-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1758234380; x=1758839180;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DbEPHi/FBJoBntQoKxRmObfSjuVxaXboS80M9e4IQLM=;
+        b=uRydA3j/nOWhNdWpwn8f7+qzNrDS7Knxw99Jy52ZsXyEgirq9cShYYmElTjSUj0RzL
+         mHwZ/MhiNfb/0c+GdEhmRa+2F5Mh1MhTZE0D/SLDC2K5F09GLLg2pwYq8r4GsOFC+k5U
+         4QEQoad9gF+FJJpgYrMDw27b7/qVETu6BCPNGpJ//XBB19kneZCR9IjvoCVGKbSZRiTh
+         pdkJ9d243D2W6rrLwL+5HZumOSM7DbH2tbQQ4pyiX/FoQEGo2XVuhdXUPlb3CyBuyod8
+         BFDD3b3fPahrxDGu5I65UhRML4B6tidB1x6eevLMisEBSrMbfiSl3rLzvppK+vsDK5vu
+         mFoQ==
+X-Gm-Message-State: AOJu0Yx53jaf7P/FrNqMIQ+vca8Vb2bzlQ+3DCBEJ/QEG+N3/3syMezA
+	WX9upGiWYQYoccwi+9VFTQVYd0ztNmk2smvYiAW55FpQlDMRmxa7nvTcYBzYpA==
+X-Gm-Gg: ASbGncsVKx0Zkn8V4AsKal6jcvzHDc4vO6Ls/OB60jl6wy76ydtqxLKFHdECcNzM1ib
+	0JWhzrwFBmC11QXkFkRmNt5AW5tK1OXOcCXxKvKf9tvdINdH9u7dNUXQcoOwSaPmJd8XGhWS2BF
+	FrSSkq3JvA8kb/nQjAzO5mmMHUlolUeteL6QdiW0ZdsjqZo2Q+F3qb4i+WnuLvi0pJAxjhGu0kV
+	ihcn6n59GhxJEO8RNrFTXdy64U2sy7BxksHpKszxCX8v/O0tES9HjCOQAfmB6zFeMLDnob+iY0U
+	+hwHSUTi+DmOxgNqlzIAYLZxZ/YMSWCIhxolRtbIS+2J2nwAaVhoGc24D2Ad7bd2Lq3Ejhgoi8O
+	AHoKzqVeThquF+b78AMrHJw2Kj3gbYXz9kqQc4TP3tt61OUk=
+X-Google-Smtp-Source: AGHT+IG6nLv83h+1eeTVl7MZ7TPHJ+9naz9tMMEQEalz0Qo1qnLahXUNQcADDPcryvTTLERYOekvXA==
+X-Received: by 2002:a05:6a00:190a:b0:76b:ec81:bcc9 with SMTP id d2e1a72fcca58-77e4eaad25amr1209704b3a.21.1758234379999;
+        Thu, 18 Sep 2025 15:26:19 -0700 (PDT)
+Received: from pop-os.. ([2601:647:6881:9060:c5c1:2e33:6cf2:beed])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77e5fe6de75sm407542b3a.19.2025.09.18.15.26.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 15:26:19 -0700 (PDT)
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: pasha.tatashin@soleen.com,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Cong Wang <cwang@multikernel.io>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Alexander Graf <graf@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>,
+	kexec@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
+Date: Thu, 18 Sep 2025 15:25:59 -0700
+Message-Id: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250918222202.1353854-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250918222202.1353854-4-irogers@google.com>
-Subject: [PATCH v2 3/3] perf test: Avoid uncore_imc/clockticks in
- uniquification test
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
-	Chun-Tse Shao <ctshao@google.com>, James Clark <james.clark@linaro.org>, 
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The detection of uncore_imc may happen for free running PMUs and the
-clockticks event may be present on uncore_clock. Rewrite the test to
-detect duplicated/deduplicated events from perf list, not hardcoded to
-uncore_imc.
+This patch series introduces multikernel architecture support, enabling
+multiple independent kernel instances to coexist and communicate on a
+single physical machine. Each kernel instance can run on dedicated CPU
+cores while sharing the underlying hardware resources.
 
-If perf stat fails then assume it is permissions and skip the test.
+The multikernel architecture provides several key benefits:
+- Improved fault isolation between different workloads
+- Enhanced security through kernel-level separation
+- Better resource utilization than traditional VM (KVM, Xen etc.)
+- Potential zero-down kernel update with KHO (Kernel Hand Over)
 
-Fixes: 070b315333ee ("perf test: Restrict uniquifying test to machines with 'uncore_imc'")
-Signed-off-by: Ian Rogers <irogers@google.com>
+Architecture Overview:
+The implementation leverages kexec infrastructure to load and manage
+multiple kernel images, with each kernel instance assigned to specific
+CPU cores. Inter-kernel communication is facilitated through a dedicated
+IPI framework that allows kernels to coordinate and share information
+when necessary.
+
+Key Components:
+1. Enhanced kexec subsystem with dynamic kimage tracking
+2. Generic IPI communication framework for inter-kernel messaging
+3. Architecture-specific CPU bootstrap mechanisms (only x86 so far)
+4. Proc interface for monitoring loaded kernel instances
+
+Patch Summary:
+
+Patch 1/7: Introduces basic multikernel support via kexec, allowing
+           multiple kernel images to be loaded simultaneously.
+
+Patch 2/7: Adds x86-specific SMP INIT trampoline for bootstrapping
+           CPUs with different kernel instances.
+
+Patch 3/7: Introduces dedicated MULTIKERNEL_VECTOR for x86 inter-kernel
+           communication.
+
+Patch 4/7: Implements generic multikernel IPI communication framework
+           for cross-kernel messaging and coordination.
+
+Patch 5/7: Adds arch_cpu_physical_id() function to obtain physical CPU
+           identifiers for proper CPU management.
+
+Patch 6/7: Replaces static kimage globals with dynamic linked list
+           infrastructure to support multiple kernel images.
+
+Patch 7/7: Adds /proc/multikernel interface for monitoring and debugging
+           loaded kernel instances.
+
+The implementation maintains full backward compatibility with existing
+kexec functionality while adding the new multikernel capabilities.
+
+IMPORTANT NOTES:
+
+1) This is a Request for Comments (RFC) submission. While the core
+   architecture is functional, there are numerous implementation details
+   that need improvement. The primary goal is to gather feedback on the
+   high-level design and overall approach rather than focus on specific
+   coding details at this stage.
+
+2) This patch series represents only the foundational framework for
+   multikernel support. It establishes the basic infrastructure and
+   communication mechanisms. We welcome the community to build upon
+   this foundation and develop their own solutions based on this
+   framework.
+
+3) Testing has been limited to the author's development machine using
+   hard-coded boot parameters and specific hardware configurations.
+   Community testing across different hardware platforms, configurations,
+   and use cases would be greatly appreciated to identify potential
+   issues and improve robustness. Obviously, don't use this code beyond
+   testing.
+
+This work enables new use cases such as running real-time kernels
+alongside general-purpose kernels, isolating security-critical
+applications, and providing dedicated kernel instances for specific
+workloads etc..
+
+Signed-off-by: Cong Wang <cwang@multikernel.io>
+
 ---
- .../tests/shell/stat+event_uniquifying.sh     | 109 ++++++++----------
- 1 file changed, 49 insertions(+), 60 deletions(-)
 
-diff --git a/tools/perf/tests/shell/stat+event_uniquifying.sh b/tools/perf/tests/shell/stat+event_uniquifying.sh
-index bf54bd6c3e2e..b5dec6b6da36 100755
---- a/tools/perf/tests/shell/stat+event_uniquifying.sh
-+++ b/tools/perf/tests/shell/stat+event_uniquifying.sh
-@@ -4,74 +4,63 @@
- 
- set -e
- 
--stat_output=$(mktemp /tmp/__perf_test.stat_output.XXXXX)
--perf_tool=perf
- err=0
-+stat_output=$(mktemp /tmp/__perf_test.stat_output.XXXXX)
- 
--test_event_uniquifying() {
--  # We use `clockticks` in `uncore_imc` to verify the uniquify behavior.
--  pmu="uncore_imc"
--  event="clockticks"
--
--  # If the `-A` option is added, the event should be uniquified.
--  #
--  # $perf list -v clockticks
--  #
--  # List of pre-defined events (to be used in -e or -M):
--  #
--  #   uncore_imc_0/clockticks/                           [Kernel PMU event]
--  #   uncore_imc_1/clockticks/                           [Kernel PMU event]
--  #   uncore_imc_2/clockticks/                           [Kernel PMU event]
--  #   uncore_imc_3/clockticks/                           [Kernel PMU event]
--  #   uncore_imc_4/clockticks/                           [Kernel PMU event]
--  #   uncore_imc_5/clockticks/                           [Kernel PMU event]
--  #
--  #   ...
--  #
--  # $perf stat -e clockticks -A -- true
--  #
--  #  Performance counter stats for 'system wide':
--  #
--  # CPU0            3,773,018      uncore_imc_0/clockticks/
--  # CPU0            3,609,025      uncore_imc_1/clockticks/
--  # CPU0                    0      uncore_imc_2/clockticks/
--  # CPU0            3,230,009      uncore_imc_3/clockticks/
--  # CPU0            3,049,897      uncore_imc_4/clockticks/
--  # CPU0                    0      uncore_imc_5/clockticks/
--  #
--  #        0.002029828 seconds time elapsed
--
--  echo "stat event uniquifying test"
--  uniquified_event_array=()
-+cleanup() {
-+  rm -f "${stat_output}"
- 
--  # Skip if the machine does not have `uncore_imc` device.
--  if ! ${perf_tool} list pmu | grep -q ${pmu}; then
--    echo "Target does not support PMU ${pmu} [Skipped]"
--    err=2
--    return
--  fi
-+  trap - EXIT TERM INT
-+}
- 
--  # Check how many uniquified events.
--  while IFS= read -r line; do
--    uniquified_event=$(echo "$line" | awk '{print $1}')
--    uniquified_event_array+=("${uniquified_event}")
--  done < <(${perf_tool} list -v ${event} | grep ${pmu})
-+trap_cleanup() {
-+  echo "Unexpected signal in ${FUNCNAME[1]}"
-+  cleanup
-+  exit 1
-+}
-+trap trap_cleanup EXIT TERM INT
- 
--  perf_command="${perf_tool} stat -e $event -A -o ${stat_output} -- true"
--  $perf_command
-+test_event_uniquifying() {
-+  echo "Uniquification of PMU sysfs events test"
- 
--  # Check the output contains all uniquified events.
--  for uniquified_event in "${uniquified_event_array[@]}"; do
--    if ! cat "${stat_output}" | grep -q "${uniquified_event}"; then
--      echo "Event is not uniquified [Failed]"
--      echo "${perf_command}"
--      cat "${stat_output}"
--      err=1
--      break
--    fi
-+  # Read events from perf list with and without -v. With -v the duplicate PMUs
-+  # aren't deduplicated. Note, json events are listed by perf list without a
-+  # PMU.
-+  read -ra pmu_events <<< "$(perf list --raw pmu)"
-+  read -ra pmu_v_events <<< "$(perf list -v --raw pmu)"
-+  # For all non-deduplicated events.
-+  for pmu_v_event in "${pmu_v_events[@]}"; do
-+    # If the event matches an event in the deduplicated events then it musn't
-+    # be an event with duplicate PMUs, continue the outer loop.
-+    for pmu_event in "${pmu_events[@]}"; do
-+      if [[ "$pmu_v_event" == "$pmu_event" ]]; then
-+        continue 2
-+      fi
-+    done
-+    # Strip the suffix from the non-deduplicated event's PMU.
-+    event=$(echo "$pmu_v_event" | sed -E 's/_[0-9]+//')
-+    for pmu_event in "${pmu_events[@]}"; do
-+      if [[ "$event" == "$pmu_event" ]]; then
-+        echo "Testing event ${event} is uniquified to ${pmu_v_event}"
-+        if ! perf stat -e "$event" -A -o ${stat_output} -- true; then
-+          echo "Error running perf stat for event '$event'  [Skip]"
-+          if [ $err = 0 ]; then
-+            err=2
-+          fi
-+          continue
-+        fi
-+        # Ensure the non-deduplicated event appears in the output.
-+        if ! grep -q "${pmu_v_event}" "${stat_output}"; then
-+          echo "Uniquification of PMU sysfs events test [Failed]"
-+          cat "${stat_output}"
-+          err=1
-+        fi
-+        break
-+      fi
-+    done
-   done
- }
- 
- test_event_uniquifying
--rm -f "${stat_output}"
-+cleanup
- exit $err
+Cong Wang (7):
+  kexec: Introduce multikernel support via kexec
+  x86: Introduce SMP INIT trampoline for multikernel CPU bootstrap
+  x86: Introduce MULTIKERNEL_VECTOR for inter-kernel communication
+  kernel: Introduce generic multikernel IPI communication framework
+  x86: Introduce arch_cpu_physical_id() to obtain physical CPU ID
+  kexec: Implement dynamic kimage tracking
+  kexec: Add /proc/multikernel interface for kimage tracking
+
+ arch/powerpc/kexec/crash.c          |   8 +-
+ arch/x86/include/asm/idtentry.h     |   1 +
+ arch/x86/include/asm/irq_vectors.h  |   1 +
+ arch/x86/include/asm/smp.h          |   7 +
+ arch/x86/kernel/Makefile            |   1 +
+ arch/x86/kernel/crash.c             |   4 +-
+ arch/x86/kernel/head64.c            |   5 +
+ arch/x86/kernel/idt.c               |   1 +
+ arch/x86/kernel/setup.c             |   3 +
+ arch/x86/kernel/smp.c               |  15 ++
+ arch/x86/kernel/smpboot.c           | 161 +++++++++++++
+ arch/x86/kernel/trampoline_64_bsp.S | 288 ++++++++++++++++++++++
+ arch/x86/kernel/vmlinux.lds.S       |   6 +
+ include/linux/kexec.h               |  22 +-
+ include/linux/multikernel.h         |  81 +++++++
+ include/uapi/linux/kexec.h          |   1 +
+ include/uapi/linux/reboot.h         |   2 +-
+ init/main.c                         |   2 +
+ kernel/Makefile                     |   2 +-
+ kernel/kexec.c                      | 103 +++++++-
+ kernel/kexec_core.c                 | 359 ++++++++++++++++++++++++++++
+ kernel/kexec_file.c                 |  33 ++-
+ kernel/multikernel.c                | 314 ++++++++++++++++++++++++
+ kernel/reboot.c                     |  10 +
+ 24 files changed, 1411 insertions(+), 19 deletions(-)
+ create mode 100644 arch/x86/kernel/trampoline_64_bsp.S
+ create mode 100644 include/linux/multikernel.h
+ create mode 100644 kernel/multikernel.c
+
 -- 
-2.51.0.470.ga7dc726c21-goog
+2.34.1
 
 
