@@ -1,228 +1,238 @@
-Return-Path: <linux-kernel+bounces-823707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2DBB873B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28173B873D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD357E10F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D706A56413A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE552D7DDE;
-	Thu, 18 Sep 2025 22:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272282F5499;
+	Thu, 18 Sep 2025 22:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TgOCNshM"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="G3fT7X0q"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A202FCC04
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 22:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758234466; cv=none; b=DSl7ZAhhJkNTn66G3dSycBB5cVdey+0qtkCXVrRtq0mf79A3eCJDeigMV8GlqhGUuP89jeyKR9fFjEli7BlhvUbdjLWYU1QmSR11omYu13srO0g/FpHAfRkGl4Uk9g83jaWyMkZ13L06tUXDDc881PFRBnJfrFBnH/VsUgoD2v8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758234466; c=relaxed/simple;
-	bh=iQzxw2nr1UXF/2GaTZxJcYVt0zlFp+HsQqELsno4nu4=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=RUsXpS5yKwBxV5Ls1evOp384ciromhTvaKpnLsNj3NEsP8L9mVXW+R93o4VoyMUr0IGMOCQCVo+yBOsoRrIEYV8FZnjX+dnM+uiuGJFYZQSWLA+SlJmu8d0/11fA1SriUCtezMdilrxVMq8le1m6siM5x95k8Oqii3ffm462mqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TgOCNshM; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-55d9f5d5f4dso601845137.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:27:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758234463; x=1758839263; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22BCh/EGgWrorFUesyhrdAs73eyMH4/x+XC3Efyz2og=;
-        b=TgOCNshMhKgGrFBaZ9RsqYzoJ0sEQREwoEfIpKEVlW04XcOMMu04PWwbdoHY32zZ2j
-         aw3ysq0OaIQONniwrRk79LHxMH7aOY0WzvXvRxJuE/j0yjf5aNLTRixRr1+5xS0L2cJh
-         LjRbRUv8QPyF4NqjvjP71l2CZ8iqzgbc86li6LJwpZggR9ZMe3+p6vmvgn9nh/ggl7XI
-         2XOYUdk7MbG5gVCOC1D2pTSG29sU2kSIaQ3ApRImPWTVCgtBIjMMQqelXn9Nvhq7/0Sa
-         W86w02GWUKAOqLqR9WJy6Fi1lyXsSWLUT0CeXuPXiu7L/qjjnrfy+6WhA8ka9ZfTvTo/
-         +VxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758234463; x=1758839263;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=22BCh/EGgWrorFUesyhrdAs73eyMH4/x+XC3Efyz2og=;
-        b=l82lUnpMrT7ywXYbNdu0dKvM/Sy4twqpm9WeLFuhzj0+uv1YfYBYC9KrNGNvCLqHIq
-         6+gdgIlgxs8qHJmueCghKzHsCkK6CtFVzJ0kezolfTWK7P7kcZk/pS/7mUiVECQOetlC
-         l13/uPPGiiGMkItG0B5DXZUA5wMIA5Cm+ewHb83G4qTB/w0UtXmRONJDYAM0WfAFFIYh
-         O7P1fVY+lC3PhEF3wiXChTjWbIV0ecPXbYJPKkCIGZJshz7LmmFfG0QW7HZRoNeXSTNC
-         hd0yUAC5idW1e8RmaUBuGE0axUC9nCTz43wUCsmVKsOMXDjUZfEddGWTNdYBf3xV4OoT
-         F+4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVAJvs7ZVJOkStpzuZoaxGFrogk3M+YLF4g4DAw89tqY6jWCInYEIUG1MSAhCD+khggmEudL1rUae9ro5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynfZMAetk9FZm0pzjUI2nEz4ONWi1FvpjoQjM6cFpUJFWCVZiz
-	SXS9pFXiBDh16eU4qHIC1NoDXPw2PdWnl8kvHeXKav322piA2g+GTEezvl/qwA==
-X-Gm-Gg: ASbGncsiR0dr9+/eCykNkmONJ8XdomBp/G1PcX16JCZe0XGDOMxNOndPDyNF9ff0p7y
-	o4V+dtdUimIToasqqkJdSMNzrVVdBF0Ij+UXi7wY0dszcObYcmff8SKN8+c34ie66CID8fN6Uat
-	C6Kiz4bivm+i/PHBnEGzNh78JuP323zgwBGeoSb3NajXyJP0ztTzv5jltpKi8ZkIhlgHucnMS1V
-	uoWz5zdK8dq1OXS8L2ajmw0IxnHivvInNXDlJ0gVzoLqKrTvtAUk6C1gbSEQWv3ptDM6gshcMP7
-	cnKeMM5Bk+LUcvGzYsGIVQ6VLsSe/BnlLMqtnhDrNfTuRtOkPr4D4vWgU77xyxsaGExgc911vp0
-	VSg2JZIG5BRyPUKZjURsDqBr4P/NCfdDArnZgrjLrzKQbxrGAsaell6wEVv3I9acysEaIOVpTF6
-	OWv+PBbj4wMTnpK6QScfCG
-X-Google-Smtp-Source: AGHT+IHnNttxmPrN/xXEoA585RIs678A0lvbhqBhfmmK6kfMIXME8Hx9mmul0SzShpzzAyskByNGBw==
-X-Received: by 2002:a05:6102:1627:b0:4ec:c548:e10e with SMTP id ada2fe7eead31-588d76ebbc2mr417749137.3.1758234463399;
-        Thu, 18 Sep 2025 15:27:43 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id a1e0cc1a2514c-8e3e5dc22cdsm620977241.6.2025.09.18.15.27.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 15:27:42 -0700 (PDT)
-Date: Thu, 18 Sep 2025 18:27:42 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Wang Liang <wangliang74@huawei.com>, 
- willemdebruijn.kernel@gmail.com, 
- jasowang@redhat.com, 
- andrew+netdev@lunn.ch, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- ast@kernel.org, 
- daniel@iogearbox.net, 
- hawk@kernel.org, 
- john.fastabend@gmail.com, 
- sdf@fomichev.me, 
- lorenzo@kernel.org, 
- toke@redhat.com
-Cc: yuehaibing@huawei.com, 
- zhangchangzhong@huawei.com, 
- wangliang74@huawei.com, 
- linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org
-Message-ID: <willemdebruijn.kernel.548f5be689dc@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.1aca4aa96eb20@gmail.com>
-References: <20250917113919.3991267-1-wangliang74@huawei.com>
- <willemdebruijn.kernel.1aca4aa96eb20@gmail.com>
-Subject: Re: [PATCH net] net: tun: Update napi->skb after XDP process
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8229C8BEE;
+	Thu, 18 Sep 2025 22:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758234760; cv=pass; b=DDn/n87uQYWWGZHFrRhJebjV5rpDM8uj00Y3aRgTL+Df6ApNGcEN05KqaPEPqycFl1ZZAKAGuem62pBC5u7hTggnJ3j9+9XUNPEZRuRzxb4Kh8XBeXERdq4t0hhNIof8XDM92AyICQObJVTdmyt+ilfIjkkX14RyahwnfP6y2C0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758234760; c=relaxed/simple;
+	bh=LKfd7YhgqVodO+ohQnk7rPcRh/t7chZtCCpRejy960A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MzriTKaqAGoos4DCXfoFLxK2pNUYAyRmTrebc1/k+Yk2Qi4PPMXqFbG68xICqquLP1ajHc/sI1FC9qRlXz+35kV6xIYamTEOAZCAZSpt/lQhePcqcLbhwn5BZmWZKBk0p6WBhe8+wf7++o/OIfguDiSwxRIEUkgXXh+ydQXyg9k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=G3fT7X0q; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758234752; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jOMTxLBaV/5FveAwFspfWOOfSMg+weuKkPzL+a51cYqaltJyNvaLDsJcGxriWK3+hVdpoYrpI5rR06YUtHoY9bsHL20q7l+/wG0kuuL1WDTH5rtyDGm9lawp6gXUN2IyF7/SFTOAP8D2dmFK8qmQRuc8nXdGtPujYn/maTT0/RE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758234752; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mDwItCB03abiRLXZLyNzwDEO1gPTRSnyb/2++XuyMts=; 
+	b=d6loXg6iYRsZNBM9ICnnqk8/qTdMGs++mYo66E3AZsoGYrEuUjTrahb9idqoxHnI68boNDW3rTjfQqRxD6wi+8fbHhStV0wSCgZAoZtqBWM//6yKYIKrzay+JKXd6fSoq8Bg34+BmcV+acz1oM3mF+ouaYJn9SgbXqJwBPukee0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758234752;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=mDwItCB03abiRLXZLyNzwDEO1gPTRSnyb/2++XuyMts=;
+	b=G3fT7X0qqAwWeTr9zOezSwLPeh4CMr5I0IdoD05TF7JioykPPuOlPQmuWaVmsHNU
+	bZDgojnRXvwIpUz9umuBTKjSIf5WR95vXeKeUIA6FwjrSdRWcvHZDtRG2vuvazA+lQf
+	RAeIImgVzkOCJLy20BKiyBpEs3WC+ZOp31KB4hBQ=
+Received: by mx.zohomail.com with SMTPS id 1758234750741977.6413015849289;
+	Thu, 18 Sep 2025 15:32:30 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 1186A180517; Fri, 19 Sep 2025 00:32:18 +0200 (CEST)
+Date: Fri, 19 Sep 2025 00:32:18 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Thomas Antoine <t.antoine@uclouvain.be>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] dt-bindings: power: supply: add support for
+ MAX77759 fuel gauge
+Message-ID: <65xrumpt7ug5mqd7mkcknwyqmljrn4sofrqymg46bwvcmjoarr@wmt5fhsj3viz>
+References: <20250915-b4-gs101_max77759_fg-v6-0-31d08581500f@uclouvain.be>
+ <20250915-b4-gs101_max77759_fg-v6-2-31d08581500f@uclouvain.be>
+ <20250915-presoak-answering-2df6fca532ad@spud>
+ <c5f2e6e8-2ada-476a-8557-85273b9a93b7@uclouvain.be>
+ <a55d7e6e6d9515293ca735f25ffd5c925a6ec617.camel@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
-
-Willem de Bruijn wrote:
-> Wang Liang wrote:
-> > The syzbot report a UAF issue:
-> > 
-> >   BUG: KASAN: slab-use-after-free in skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
-> >   BUG: KASAN: slab-use-after-free in napi_frags_skb net/core/gro.c:723 [inline]
-> >   BUG: KASAN: slab-use-after-free in napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
-> >   Read of size 8 at addr ffff88802ef22c18 by task syz.0.17/6079
-> >   CPU: 0 UID: 0 PID: 6079 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
-> >   Call Trace:
-> >    <TASK>
-> >    dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
-> >    print_address_description mm/kasan/report.c:378 [inline]
-> >    print_report+0xca/0x240 mm/kasan/report.c:482
-> >    kasan_report+0x118/0x150 mm/kasan/report.c:595
-> >    skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
-> >    napi_frags_skb net/core/gro.c:723 [inline]
-> >    napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
-> >    tun_get_user+0x28cb/0x3e20 drivers/net/tun.c:1920
-> >    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
-> >    new_sync_write fs/read_write.c:593 [inline]
-> >    vfs_write+0x5c9/0xb30 fs/read_write.c:686
-> >    ksys_write+0x145/0x250 fs/read_write.c:738
-> >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-> >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >    </TASK>
-> > 
-> >   Allocated by task 6079:
-> >    kasan_save_stack mm/kasan/common.c:47 [inline]
-> >    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
-> >    unpoison_slab_object mm/kasan/common.c:330 [inline]
-> >    __kasan_mempool_unpoison_object+0xa0/0x170 mm/kasan/common.c:558
-> >    kasan_mempool_unpoison_object include/linux/kasan.h:388 [inline]
-> >    napi_skb_cache_get+0x37b/0x6d0 net/core/skbuff.c:295
-> >    __alloc_skb+0x11e/0x2d0 net/core/skbuff.c:657
-> >    napi_alloc_skb+0x84/0x7d0 net/core/skbuff.c:811
-> >    napi_get_frags+0x69/0x140 net/core/gro.c:673
-> >    tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
-> >    tun_get_user+0x77c/0x3e20 drivers/net/tun.c:1784
-> >    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
-> >    new_sync_write fs/read_write.c:593 [inline]
-> >    vfs_write+0x5c9/0xb30 fs/read_write.c:686
-> >    ksys_write+0x145/0x250 fs/read_write.c:738
-> >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-> >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > 
-> >   Freed by task 6079:
-> >    kasan_save_stack mm/kasan/common.c:47 [inline]
-> >    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
-> >    kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
-> >    poison_slab_object mm/kasan/common.c:243 [inline]
-> >    __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
-> >    kasan_slab_free include/linux/kasan.h:233 [inline]
-> >    slab_free_hook mm/slub.c:2422 [inline]
-> >    slab_free mm/slub.c:4695 [inline]
-> >    kmem_cache_free+0x18f/0x400 mm/slub.c:4797
-> >    skb_pp_cow_data+0xdd8/0x13e0 net/core/skbuff.c:969
-> >    netif_skb_check_for_xdp net/core/dev.c:5390 [inline]
-> >    netif_receive_generic_xdp net/core/dev.c:5431 [inline]
-> >    do_xdp_generic+0x699/0x11a0 net/core/dev.c:5499
-> >    tun_get_user+0x2523/0x3e20 drivers/net/tun.c:1872
-> >    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
-> >    new_sync_write fs/read_write.c:593 [inline]
-> >    vfs_write+0x5c9/0xb30 fs/read_write.c:686
-> >    ksys_write+0x145/0x250 fs/read_write.c:738
-> >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-> >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > 
-> > After commit e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in
-> > generic mode"), the original skb may be freed in skb_pp_cow_data() when
-> > XDP program was attached, which was allocated in tun_napi_alloc_frags().
-> > However, the napi->skb still point to the original skb, update it after
-> > XDP process.
-> > 
-> > Reported-by: syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
-> > Fixes: e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in generic mode")
-> > Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> > ---
-> >  drivers/net/tun.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> > index cc6c50180663..47ddcb4b9a78 100644
-> > --- a/drivers/net/tun.c
-> > +++ b/drivers/net/tun.c
-> > @@ -1875,6 +1875,9 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
-> >  				local_bh_enable();
-> >  				goto unlock_frags;
-> >  			}
-> > +
-> > +			if (frags && skb != tfile->napi.skb)
-> > +				tfile->napi.skb = skb;
-> 
-> This is observed with tun because syzkaller can fuzz napi with that.
-> That unfortunately added fuzz test coverage to a combination that is
-> not intended for real use: XDP generic before napi frags.
-> 
-> Tun is the only driver that calls do_xdp_generic on a napi.skb and
-> later passes this napi to napi_gro_frags.
-> 
-> But this is no longer a napi frags skb on which napi_gro_frags
-> (and napi_frags_skb and gro_pull_from_frag0) should be called? As the
-> skb now has a linear part. Not sure that the frag0 is still correct.
-
-Never mind this. napi_alloc_skb may also fall back to a regular
-__skb_alloc and pass that a napi.skb to napi_gro_frags. Which
-reinitializes the NAPI_GRO_CB and with that frag0 accordingly.
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uby4qznfm6t46loa"
+Content-Disposition: inline
+In-Reply-To: <a55d7e6e6d9515293ca735f25ffd5c925a6ec617.camel@linaro.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/258.211.62
+X-ZohoMailClient: External
 
 
+--uby4qznfm6t46loa
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 2/2] dt-bindings: power: supply: add support for
+ MAX77759 fuel gauge
+MIME-Version: 1.0
 
+Hi,
+
+On Thu, Sep 18, 2025 at 02:02:55PM +0100, Andr=E9 Draszik wrote:
+> > On 9/15/25 7:31 PM, Conor Dooley wrote:
+> > > On Mon, Sep 15, 2025 at 12:14:11PM +0200, Thomas Antoine via B4 Relay=
+ wrote:
+> > > > From: Thomas Antoine <t.antoine@uclouvain.be>
+> > > >=20
+> > > > The Maxim MAX77759 is a companion PMIC for USB Type-C. It contains
+> > > > Battery Charger, Fuel Gauge, temperature sensors, USB Type-C Port
+> > > > Controller (TCPC), NVMEM, and additional GPIO interfaces
+> > > >=20
+> > > > Use max77759-fg compatible to avoid conflict with drivers for other
+> > > > functions.
+> > > >=20
+> > > > The battery node is used to pass the REPCAP and ICHGTERM values
+> > > > needed for the initialization of the fuel gauge.
+> > > >=20
+> > > > The nvmem cells are used to get initialization values and to backup
+> > > > the learning and the number of cycles. It should work out of the box
+> > > > with gs101-oriole and gs101-raven which were previously running
+> > > > Android.
+> > > >=20
+> > > > Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> > > > ---
+> > > > =A0.../bindings/power/supply/maxim,max77759.yaml=A0=A0=A0=A0=A0 | 7=
+8 ++++++++++++++++++++++
+> > > > =A01 file changed, 78 insertions(+)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/power/supply/maxim,m=
+ax77759.yaml
+> > > > b/Documentation/devicetree/bindings/power/supply/maxim,max77759.yaml
+> > > > new file mode 100644
+> > > > index 0000000000000000000000000000000000000000..4d45739fcaf26273ec5=
+7b60049d6d0421df38efb
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/power/supply/maxim,max77759=
+=2Eyaml
+> > > > @@ -0,0 +1,78 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/power/supply/maxim,max77759.yam=
+l#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Maxim Integrated MAX77759 fuel gauge
+> > > > +
+> > > > +maintainers:
+> > > > +=A0 - Thomas Antoine <t.antoine@uclouvain.be>
+> > > > +
+> > > > +allOf:
+> > > > +=A0 - $ref: power-supply.yaml#
+> > > > +
+> > > > +properties:
+> > > > +=A0 compatible:
+> > > > +=A0=A0=A0 const: maxim,max77759-fg
+> > >=20
+> > > Compatible doesn't match the filename, why?
+> > > I assume the "fg" is fuel-gauge, but can this device be anything else?
+> >=20
+> > The max77759 is a multifunction chip.
+> > The following compatibles are already used for some of those functions:
+> > - maxim,max77759 (for the pmic)
+> > - maxim,max77759-gpio
+> > - maxim,max77759-nvmem
+> > - maxim,max77759-tcpci
+> >=20
+> > The fuel gauge functionality that is added with this patch is very simi=
+lar
+> > to the functionality of the max1720x which is why the filename was chos=
+en
+> > to fit other maxim fuel gauge chips pattern.
+> >=20
+> > Maybe it would be better to use the maxim,max77759-battery compatible to
+> > match the filename? It would also fit with the already existing
+> > maxim,max77705-battery and maxim,max77849-battery compatibles.
+>=20
+> It also has a (battery) charger, a -battery compatible could be misleadin=
+g.
+> The datasheet refers to these subblocks as FG (for fuelgauge) and CHARGER.
+> I'd suggest keeping those terms.
+>=20
+> Additionally, the FG block can also measure temperature and battery ID. F=
+or
+> those, a combination of (top-level) PMIC and FG registers are needed
+> unfortunately. Which means that the FG should probably be an MFD child
+> device, even though the FG itself doesn't depend on the top-level. Otherw=
+ise
+> it'd be hard to access the top-level PMIC register.
+
+My understanding is, that the FG has a dedicated I2C device address
+and thus cannot be a simple MFD child of the PMIC. Did I misunderstood
+that part?
+
+Assuming I understood things correctly, I think I suggest to model
+things like this for the battery temperature/ID:
+
+i2c {
+    pmic: pmic@42 {
+        compatible =3D "maxim,max77759";
+        ...
+
+        pmic_adc: adc {
+            compatible =3D "maxim,max77759-adc";
+            ...
+        };
+    };
+
+    fuel-gauge@43 {
+        compatible =3D "maxim,max77759-fg";
+        ...
+        io-channels =3D <&pmic_adc MAX77759_ADC_BAT_TEMP>, <&pmic_adc MAX77=
+759_ADC_BAT_ID>;
+        io-channel-names =3D "temperature", "ID";
+    };
+};
+
+Greetings,
+
+-- Sebastian
+
+--uby4qznfm6t46loa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjMiGcACgkQ2O7X88g7
++prggxAAgXz3uekzgfRqZwrErlIsVJbozFo1uNIETUzLbK2Ad+oLrGZBMHGbeAdF
+VFS01udeF7SjmEap8qQ7DqjJ64iaP6KxkqnblPIgHPH7FV8kgS7CzdSTrgQofSFg
++TbCovtw9xDJKZ9QY5DUmckMhCGkklpj8NDsr6EMn9JgPkhd7zqdxOt24KDMgCJ7
+DlGnIaU4ickaFQ/fpSkhoUaf7eRi1svFE2BTfUX3Qygrp0JR67J2UJR5iLSDRi39
+EO+LKwr1vRQjcSbnGZ2ubHf6f9AjAG7N7CKty1IQejuz0Mn9vQ7MVHwJueLOGgh1
+kgVIlTZvddNhPJVUxMjrgit0EAVt2j24YNgFTRd18DxpZyP5I9WHk8JPpEcoT8EW
+eKis2G7A47KadR2wXDJwSQUjDWN8ED5pjSfu8wRQ/+B3oRUiG14gqTIhPoU4WlD7
+5nU+l69jmqakkg+XxFcbkl4nHgy53v5/O0mupikPnofX4m24AXPcdPy8MxMM8HcD
+ChiKkOZDnOEd9XFVF0zTXCnXke4VsaUU2B993x279joRTzyC6llvcTlJSmjnjr61
+6ExxVSxk2SV7dgY+cY7cucEf3yEcX6u6e9ZUmOSW8HM2CMOUwG29UTMBMsI6KTdg
+EN/KQQSmvzYrI2NdLEpHkD3Cpcb04/JoicfMKLuf3i2O74LVc0M=
+=xT0I
+-----END PGP SIGNATURE-----
+
+--uby4qznfm6t46loa--
 
