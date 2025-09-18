@@ -1,62 +1,42 @@
-Return-Path: <linux-kernel+bounces-823245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E1BB85E58
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:08:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA57B85E37
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5E41898DA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:04:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA9C87B544E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1FF314D29;
-	Thu, 18 Sep 2025 16:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Mf0M1J8U"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D752731618C;
+	Thu, 18 Sep 2025 16:05:12 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5D0314A62;
-	Thu, 18 Sep 2025 16:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78D0315D42;
+	Thu, 18 Sep 2025 16:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758211452; cv=none; b=Il9QWpas0opsMNgnmb6D5FyB1mHH3CPUuEarokZXOB/7dOOPhxbaNRXDmWvc0l/nSYqIHy+Zn+4FBAIY3LqUc26iafRmowjlTxeFB5AX30rRuOptFdXf/YBfSACu02GNUNjARAFOg8nXz8GZNXLM/ZG7hazxZfiqjTtUOv3I3ro=
+	t=1758211512; cv=none; b=bola+sh/JjUeEKfSQB/+ZUt3CQ/BRYaOAhVyDQ+yuInzzd8Wrt9OP+6WJA7VviwsqinRwOv2r8w4C3ml/s99S9MlNDZoPU8yFFiM+aZxGktjJAeZzAnpoSyKnbsp3BxCHQbbU6/aTDStWAwea6a40zUaqDe6jRbL6CPZllXmNIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758211452; c=relaxed/simple;
-	bh=3LE35nZGZq8MyMAMqGFXGW2TSB7AmNx1a4aDe+qCZPU=;
+	s=arc-20240116; t=1758211512; c=relaxed/simple;
+	bh=iY4LeQULomcpam8kh1OA82zPLoZNxtvKGtjBX/0HVnw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yx/BqS4a3nqufeBCoPbtCI6602xVlH3cPMcRGyxiHV0suKtumXreyfcb1b52+Yg2E77Z5Y6xXH/a5mxF7rGIucqd3NXeFffoxwKkR3p7J0HdyfWcao0/5thJ73AQ5SaVe/W4AnoqBYujYu9eH+YIFPbyxNWTBboEDhYEV8jCO9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Mf0M1J8U; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cSL6c3snqzlgn8k;
-	Thu, 18 Sep 2025 16:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1758211439; x=1760803440; bh=4wzWm6RSRc1tNocFJFpFoox7
-	GYZLGguM76hcy5QnMFw=; b=Mf0M1J8U6wTLeu2gHoc5SUiGtJ7IvGYk8UZ6fQtQ
-	F2HzXxFsv2wJKVo3E3itBcK5M7HBPy7vs16rMQdZNtkdtlpHUdAB6gp5zElM1tQv
-	X44SkYoj7S3blZaRVlzHiogKzJP7RsYrM9zFM9RqFriOFHgBvgFNCVmVWHjXbnfj
-	BCNxjhZ/nIKCSqWA5KRGlBXCj8ouY534Wu4SFzXm9YsWLm1w6mkQLx3XVjEv5N0J
-	qYICjPTqTk8g9G9tSYHje0mRJLCaVRl0Qo98o58MrF9E6yTEcWnwOiMsYBacC9iZ
-	WV8PxWTT8jpLUWJ3lpx2TSzx7JNYmCOfRmR8oXeNulu1CA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 6L6n7UbPW0mK; Thu, 18 Sep 2025 16:03:59 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 In-Reply-To:Content-Type; b=t+Y/SmWDWhRfIjAor8+hbIzV5YBS/J0y2sgTh0vDu3HLjUGyIqNlVz0scQCqrhvcXP1GpyYRW2p0p2VVAnhXSctMriAinui9svWIl9ATvO/Fjrqvtyzxoq6jeju4vEucvqpWSENbFZIuvZ6d4iWCr6LJ6R+PshpSMXNWtb1gzmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cSL5g10BTzltKG9;
-	Thu, 18 Sep 2025 16:03:18 +0000 (UTC)
-Message-ID: <1ca90ba0-7bdc-43d1-af12-bba73dd3234a@acm.org>
-Date: Thu, 18 Sep 2025 09:03:17 -0700
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 0478060213C91;
+	Thu, 18 Sep 2025 18:03:28 +0200 (CEST)
+Message-ID: <11e02598-3fc8-4350-91b7-5fc587a8cf6b@molgen.mpg.de>
+Date: Thu, 18 Sep 2025 18:03:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,73 +44,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/35] compiler-capability-analysis: Add infrastructure
- for Clang's capability analysis
-To: Ian Rogers <irogers@google.com>, Marco Elver <elver@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
- "David S. Miller" <davem@davemloft.net>,
- Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
- Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>,
- Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>, Jann Horn <jannh@google.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Jonathan Corbet <corbet@lwn.net>,
- Josh Triplett <josh@joshtriplett.org>, Justin Stitt
- <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
- Kentaro Takeda <takedakn@nttdata.co.jp>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
- Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>,
- kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org,
- llvm@lists.linux.dev, rcu@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>
-References: <20250918140451.1289454-1-elver@google.com>
- <20250918140451.1289454-3-elver@google.com>
- <CAP-5=fUfbMAKrLC_z04o9r0kGZ02tpHfv8cOecQAQaYPx44awA@mail.gmail.com>
+Subject: Re: [Intel-wired-lan] [PATCH iwl-net v1] igc: fix race condition in
+ TX timestamp read for register 0
+To: Chwee-Lin Choong <chwee.lin.choong@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Avi Shalev <avi.shalev@intel.com>,
+ Song Yoong Siang <yoong.siang.song@intel.com>
+References: <20250918183811.31270-1-chwee.lin.choong@intel.com>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <CAP-5=fUfbMAKrLC_z04o9r0kGZ02tpHfv8cOecQAQaYPx44awA@mail.gmail.com>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250918183811.31270-1-chwee.lin.choong@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 9/18/25 8:58 AM, Ian Rogers wrote:
-> On Thu, Sep 18, 2025 at 7:05=E2=80=AFAM Marco Elver <elver@google.com> =
-wrote:
->> +config WARN_CAPABILITY_ANALYSIS
->> +       bool "Compiler capability-analysis warnings"
->> +       depends on CC_IS_CLANG && CLANG_VERSION >=3D 220000
->> +       # Branch profiling re-defines "if", which messes with the comp=
-iler's
->> +       # ability to analyze __cond_acquires(..), resulting in false p=
-ositives.
->> +       depends on !TRACE_BRANCH_PROFILING
->=20
-> Err, wow! What and huh, and why? Crikes. I'm amazed you found such an
-> option exists. I must be very naive to have never heard of it and now
-> I wonder if it is needed and load bearing?
+Dear Chwee-Lin,
 
-(+Steven)
 
-This is an old option. I think this commit introduced it:
+Thank you for your patch.
 
-commit 52f232cb720a7babb752849cbc2cab2d24021209
-Author: Steven Rostedt <rostedt@goodmis.org>
-Date:   Wed Nov 12 00:14:40 2008 -0500
+Am 18.09.25 um 20:38 schrieb Chwee-Lin Choong:
+> The current HW bug workaround checks the TXTT_0 ready bit first,
+> then reads LOW -> HIGH -> LOW from register 0 to detect if a
+> timestamp was captured.
+> 
+> This sequence has a race: if a new timestamp is latched after
+> reading the TXTT mask but before the first LOW read, both old
+> and new timestamp match, causing the driver to drop a valid
+> timestamp.
 
-     tracing: likely/unlikely branch annotation tracer
+Reading the TXTT mask is `rd32(IGC_TSYNCTXCTL)`, correct?
 
-Bart.
+> Fix by reading the LOW register first, then the TXTT mask,
+> so a newly latched timestamp will always be detected.
+> 
+> This fix also prevents TX unit hangs observed under heavy
+> timestamping load.
+
+The unit shouldn’t hang, even if valid timestamps are dropped?
+
+Do you have a reproducer?
+
+> Fixes: c789ad7cbebc ("igc: Work around HW bug causing missing timestamps")
+> Suggested-by: Avi Shalev <avi.shalev@intel.com>
+> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+> Signed-off-by: Chwee-Lin Choong <chwee.lin.choong@intel.com>
+> ---
+>   drivers/net/ethernet/intel/igc/igc_ptp.c | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
+> index b7b46d863bee..930486b02fc1 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_ptp.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
+> @@ -774,10 +774,17 @@ static void igc_ptp_tx_reg_to_stamp(struct igc_adapter *adapter,
+>   static void igc_ptp_tx_hwtstamp(struct igc_adapter *adapter)
+>   {
+>   	struct igc_hw *hw = &adapter->hw;
+> +	u32 txstmpl_old;
+>   	u64 regval;
+>   	u32 mask;
+>   	int i;
+>   
+> +	/* Read the "low" register 0 first to establish a baseline value.
+> +	 * This avoids a race where a new timestamp could be latched
+> +	 * after checking the TXTT mask.
+> +	 */
+> +	txstmpl_old = rd32(IGC_TXSTMPL);
+> +
+>   	mask = rd32(IGC_TSYNCTXCTL) & IGC_TSYNCTXCTL_TXTT_ANY;
+>   	if (mask & IGC_TSYNCTXCTL_TXTT_0) {
+>   		regval = rd32(IGC_TXSTMPL);
+> @@ -801,9 +808,8 @@ static void igc_ptp_tx_hwtstamp(struct igc_adapter *adapter)
+>   		 * timestamp was captured, we can read the "high"
+>   		 * register again.
+>   		 */
+> -		u32 txstmpl_old, txstmpl_new;
+> +		u32 txstmpl_new;
+>   
+> -		txstmpl_old = rd32(IGC_TXSTMPL);
+>   		rd32(IGC_TXSTMPH);
+>   		txstmpl_new = rd32(IGC_TXSTMPL);
+>   
+
+Kind regards,
+
+Paul
 
