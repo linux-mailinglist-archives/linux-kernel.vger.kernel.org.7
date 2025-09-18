@@ -1,203 +1,119 @@
-Return-Path: <linux-kernel+bounces-823521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F87DB86BA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:41:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6600B86BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1173A2036
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811803B997E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE87F275B04;
-	Thu, 18 Sep 2025 19:41:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109452E3AE6;
+	Thu, 18 Sep 2025 19:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PW3c6aFV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C422DCC13
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD412E2EF3;
+	Thu, 18 Sep 2025 19:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758224490; cv=none; b=rAoQ8/zUg+vGq1aYWV7ag49K4DtEnwiaKk2Ki6vQd55Djucv+jTjkWA7aelJBMk7xnFEs0XP+hZDcQLwefKQxoJSiQL4dRE+iT/E880DGdGCZGdkztFIJYyUXH/dCbYpZNwWY8FtrVNxexVvKH+hCI612gjB32FXG5hp3GVr0OA=
+	t=1758224669; cv=none; b=NxJcGjMG45mAwWGJv1HeTOxAB9JgNcYkPGFsm5FdmQu6lIOcFXhjyJUMDh+69oZvK9vnul6TA4lmwLItq0E69HMXfGg/AH7MonmaBHaV3mHRaCGZoMmV5bc76ttbbP5bdRmTclZOLRdZE3ldC3xvviBVtQf4Ii+ssimCrVdX6VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758224490; c=relaxed/simple;
-	bh=T/vMTlrI2wJvYyocljij2z38BbG6i8y7B8tVboZ9r2c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=MNf3qeRxhmiqdCy4mrJNXYo8VoY0+DcMJ7dH9rRrmIXEp3roUVj5vzKzVVOawj3m42FRGWsomvPwJzFNdo9a5K5t5fFi0KBUL20pF2f40PLzu3649IwusdGVG5z8AYqCuihyrfgdsy0qVDKl9OlSLyW8WlCNwzkFChiidFZS3bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-401eba8efecso15757655ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:41:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758224487; x=1758829287;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jFuQa+Y4FpaQQeM/M6InReVDIhcGmsMw+atLDwBDLk8=;
-        b=k1oQodAgeSg6C3IOa8Mvcdek3baac0kBgiQyYBwO000kNdXboJrwhZm1jghbIXlYy+
-         MrJ6KGU3aFv+w5i9arYAZ4Lie281LTfP1WZm8RdPfyb9rBhmSAOlcPZl4vdpAHW+YUFx
-         qVIK3X01M/4grAZrbliSo9ZK5axsjuBwlHcRkY7qy8INw1gVO8ExP4ohV5cUkSiQ8x9F
-         a4zJrMSGrzDn6Q8rCUDhg09236x5OXVlfifAuDfxzI/vDdfKa5yPDtcsbjVoEEHHtxkx
-         MsV5BO8jJ28GOn6pLvYXvuH2yrl0uqKj0QOFgINorhgy8lRhcFYH4j5FTPESGyQljLiZ
-         9gwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOAqO0E83+OU+riNtVFg291ZuZwpqqI3fFPHubD9RJpCGG0V6+TYipXWvkGxnQt4rVVlfYuWchZr59x3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyKwkKmpid1n7+wCSY7/DBZJkdbImfo21OqQ3trgerD2loOKnK
-	WLawtRNmkL5+VZcH49Ug9wtgkSuDNGZGLwkK2Hr3LAUllFI8xAfr/4pNV0ilydcHYLQVs0Cj8wn
-	/Iopz2WQajTJ6i1ZhSKCnOEhbZqroFQfL9sElhl2VjoLgkanGhhepbC0jKFQ=
-X-Google-Smtp-Source: AGHT+IHp+WmIL2IJ68tyFld/0nIXw957th39hMRbu6ab9TAjY+iGCLjCAkmJaJtBL9BpNCxThFERyAxXTWPP+JGSPca9tDNIDuO7
+	s=arc-20240116; t=1758224669; c=relaxed/simple;
+	bh=/fyRtjX7Acq7Ib/RG2oDrAdMcjvCIkWa8I5Em83Gg64=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l22oLb+luEjUYKHLD0PHPkW1sT3Q97wOfvuz0QFvWbdZwWh3uCpTka34IxV8ye2ild64uTuqkvBJgo9zbM/xTiIS2EMB2lwtXF1ZNMzmiqxJO8J6UtCHHvgqfau4ws3x3gzjMInaua3OSDODOYmTkdSOZ2+CRBM1n9qKnxAesJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PW3c6aFV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD07C4CEE7;
+	Thu, 18 Sep 2025 19:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758224668;
+	bh=/fyRtjX7Acq7Ib/RG2oDrAdMcjvCIkWa8I5Em83Gg64=;
+	h=From:Subject:Date:To:Cc:From;
+	b=PW3c6aFVxiQWITh6uQ/YoOHRKxxI3L9bEFBR6TwvzK3VAt9z2AzpTVgc/j+W6yO6W
+	 nkn16qJAv7CO+ycRjZIgiq+cT46fXqA5py/CN5FasGMgCtDWP9Ps4sN+6SGurZtyJN
+	 xNF3Y85SGQUlejYbaLp40z1mSwsmA+knuaFXPUdyrEWgfkJ5LhhC88g3FDGPObVPvr
+	 8E3GsSL1dOri2YE0qVPyK4iP+0LE/h7Au+Jx09CpfN2jouhrIOqyt+YanXECchgfrZ
+	 +p1NDzYH5oNYrJV48B1umx3nLZudUkiSvgwiP/atuE79dnBYbRmpjgH1tPaEwk1p44
+	 6uK4LkE1X7s7Q==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v4 0/2] arm64: Support FEAT_LSFE (Large System Float
+ Extension)
+Date: Thu, 18 Sep 2025 20:42:05 +0100
+Message-Id: <20250918-arm64-lsfe-v4-0-0abc712101c7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184d:b0:40c:cf06:ea2a with SMTP id
- e9e14a558f8ab-424816f2c45mr17310755ab.2.1758224487064; Thu, 18 Sep 2025
- 12:41:27 -0700 (PDT)
-Date: Thu, 18 Sep 2025 12:41:27 -0700
-In-Reply-To: <20250918140451.1289454-1-elver@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cc6067.a00a0220.37dadf.0003.GAE@google.com>
-Subject: [syzbot ci] Re: Compiler-Based Capability- and Locking-Analysis
-From: syzbot ci <syzbot+ciac51bb7578ba7c59@syzkaller.appspotmail.com>
-To: arnd@arndb.de, boqun.feng@gmail.com, bvanassche@acm.org, corbet@lwn.net, 
-	davem@davemloft.net, dvyukov@google.com, edumazet@google.com, 
-	elver@google.com, frederic@kernel.org, glider@google.com, 
-	gregkh@linuxfoundation.org, hch@lst.de, herbert@gondor.apana.org.au, 
-	irogers@google.com, jannh@google.com, joelagnelf@nvidia.com, 
-	josh@joshtriplett.org, justinstitt@google.com, kasan-dev@googlegroups.com, 
-	kees@kernel.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, llvm@lists.linux.dev, longman@redhat.com, 
-	luc.vanoostenryck@gmail.com, lukas.bulwahn@gmail.com, mark.rutland@arm.com, 
-	mathieu.desnoyers@efficios.com, mingo@kernel.org, mingo@redhat.com, 
-	morbo@google.com, nathan@kernel.org, neeraj.upadhyay@kernel.org, 
-	nick.desaulniers@gmail.com, ojeda@kernel.org, paulmck@kernel.org, 
-	penguin-kernel@i-love.sakura.ne.jp, peterz@infradead.org, rcu@vger.kernel.org, 
-	rostedt@goodmis.org, takedakn@nttdata.co.jp, tglx@linutronix.de, 
-	tgraf@suug.ch, urezki@gmail.com, will@kernel.org
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI5gzGgC/2XM3wqCMByG4VuRHbfYP+fWUfcRHej2m45MY4tRi
+ PfeFMKkw++D551QhOAholMxoQDJRz8OeYhDgUxXDy1gb/NGjLCSSFbiOtylwH10gImixDitams
+ YyuARwPnXGrtc8+58fI7hvbYTXd5vpvrNJIoJloqX1IjGVYKebxAG6I9jaNHSSWyzFeE7y7IFA
+ 1YRrbVpxJ/lm1VU7SzPtnbSCSslNFzv7DzPH9T48Y0dAQAA
+X-Change-ID: 20250625-arm64-lsfe-0810cf98adc2
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-56183
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1367; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=/fyRtjX7Acq7Ib/RG2oDrAdMcjvCIkWa8I5Em83Gg64=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBozGEW5FyWseaqc8/F+wIiqySykyyfiEMwETJHD
+ 3x47bVLit6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaMxhFgAKCRAk1otyXVSH
+ 0MnLB/sEOZMOHVacNMWbkkwuSaxy58fOnDcDG3q5SSd4PYa/uO6lM9ZG4SYsH1bv7w0L350Oml5
+ /05e0opT3uGxlCmhQL2AcdMQF8bEw45kMI6pe7XDKC0oNu5sL0D1PSUP9psLPM82dsK5FszB87U
+ gkisjR3K77ju9UxZbtP2bQJbRBg0FW1PeIv6K1gD9dwfEkEoVyqnKblRP6eQ4jyDHFwdqmHSbJF
+ vMQ5uXgp+3m0gAibiPJuhNUt4umwF2ktg6gC/4y0SXM/0jEMC/rSycbv4smm0hAXYqvWGc6l2TR
+ 8/IsnwQrH8X7xO1FsCqOpRQlONJtdgwaTwvbqLTp63iIfltT
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-syzbot ci has tested the following series
+FEAT_LSFE is optional from v9.5, it adds new instructions for atomic
+memory operations with floating point values.  We have no immediate use
+for it in kernel, provide a hwcap so userspace can discover it and allow
+the ID register field to be exposed to KVM guests.
 
-[v3] Compiler-Based Capability- and Locking-Analysis
-https://lore.kernel.org/all/20250918140451.1289454-1-elver@google.com
-* [PATCH v3 01/35] compiler_types: Move lock checking attributes to compiler-capability-analysis.h
-* [PATCH v3 02/35] compiler-capability-analysis: Add infrastructure for Clang's capability analysis
-* [PATCH v3 03/35] compiler-capability-analysis: Add test stub
-* [PATCH v3 04/35] Documentation: Add documentation for Compiler-Based Capability Analysis
-* [PATCH v3 05/35] checkpatch: Warn about capability_unsafe() without comment
-* [PATCH v3 06/35] cleanup: Basic compatibility with capability analysis
-* [PATCH v3 07/35] lockdep: Annotate lockdep assertions for capability analysis
-* [PATCH v3 08/35] locking/rwlock, spinlock: Support Clang's capability analysis
-* [PATCH v3 09/35] compiler-capability-analysis: Change __cond_acquires to take return value
-* [PATCH v3 10/35] locking/mutex: Support Clang's capability analysis
-* [PATCH v3 11/35] locking/seqlock: Support Clang's capability analysis
-* [PATCH v3 12/35] bit_spinlock: Include missing <asm/processor.h>
-* [PATCH v3 13/35] bit_spinlock: Support Clang's capability analysis
-* [PATCH v3 14/35] rcu: Support Clang's capability analysis
-* [PATCH v3 15/35] srcu: Support Clang's capability analysis
-* [PATCH v3 16/35] kref: Add capability-analysis annotations
-* [PATCH v3 17/35] locking/rwsem: Support Clang's capability analysis
-* [PATCH v3 18/35] locking/local_lock: Include missing headers
-* [PATCH v3 19/35] locking/local_lock: Support Clang's capability analysis
-* [PATCH v3 20/35] locking/ww_mutex: Support Clang's capability analysis
-* [PATCH v3 21/35] debugfs: Make debugfs_cancellation a capability struct
-* [PATCH v3 22/35] compiler-capability-analysis: Remove Sparse support
-* [PATCH v3 23/35] compiler-capability-analysis: Remove __cond_lock() function-like helper
-* [PATCH v3 24/35] compiler-capability-analysis: Introduce header suppressions
-* [PATCH v3 25/35] compiler: Let data_race() imply disabled capability analysis
-* [PATCH v3 26/35] MAINTAINERS: Add entry for Capability Analysis
-* [PATCH v3 27/35] kfence: Enable capability analysis
-* [PATCH v3 28/35] kcov: Enable capability analysis
-* [PATCH v3 29/35] kcsan: Enable capability analysis
-* [PATCH v3 30/35] stackdepot: Enable capability analysis
-* [PATCH v3 31/35] rhashtable: Enable capability analysis
-* [PATCH v3 32/35] printk: Move locking annotation to printk.c
-* [PATCH v3 33/35] security/tomoyo: Enable capability analysis
-* [PATCH v3 34/35] crypto: Enable capability analysis
-* [PATCH v3 35/35] sched: Enable capability analysis for core.c and fair.c
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v4:
+- Rebase onto arm64/for-next/cpufeature, note that both patches have
+  build dependencies on this.
+- Drop unneeded cc clobber in hwcap.
+- Use STRFADD as the instruction probed in hwcap.
+- Link to v3: https://lore.kernel.org/r/20250818-arm64-lsfe-v3-0-af6f4d66eb39@kernel.org
 
-and found the following issue:
-general protection fault in validate_page_before_insert
+Changes in v3:
+- Rebase onto v6.17-rc1.
+- Link to v2: https://lore.kernel.org/r/20250703-arm64-lsfe-v2-0-eced80999cb4@kernel.org
 
-Full report is available here:
-https://ci.syzbot.org/series/81182522-74c0-4494-bcf8-976133df7dc7
-
-***
-
-general protection fault in validate_page_before_insert
-
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      f83ec76bf285bea5727f478a68b894f5543ca76e
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/8f7ff868-4cf7-40da-b62b-45ebfec4e994/config
-
-cgroup: Unknown subsys name 'net'
-cgroup: Unknown subsys name 'cpuset'
-cgroup: Unknown subsys name 'rlimit'
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 UID: 0 PID: 5775 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:validate_page_before_insert+0x2a/0x300
-Code: 55 41 57 41 56 41 55 41 54 53 48 89 f3 49 89 fe 49 bd 00 00 00 00 00 fc ff df e8 f1 3f b3 ff 4c 8d 7b 08 4c 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 ff e8 17 b3 16 00 4d 8b 3f 4c 89 fe 48
-RSP: 0018:ffffc90002a5f608 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff888022891cc0
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888028c71200
-RBP: ffffc90002a5f720 R08: 0000000000000000 R09: 1ffff11021cf81e0
-R10: dffffc0000000000 R11: ffffed1021cf81e1 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff888028c71200 R15: 0000000000000008
-FS:  00005555815ad500(0000) GS:ffff8880b8615000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1788fd20b8 CR3: 000000010d8a4000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- insert_page+0x90/0x2c0
- kcov_mmap+0xc3/0x130
- mmap_region+0x18ae/0x20c0
- do_mmap+0xc45/0x10d0
- vm_mmap_pgoff+0x2a6/0x4d0
- ksys_mmap_pgoff+0x51f/0x760
- do_syscall_64+0xfa/0x3b0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1788d8ebe3
-Code: f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 41 89 ca 41 f7 c1 ff 0f 00 00 75 14 b8 09 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 25 c3 0f 1f 40 00 48 c7 c0 a8 ff ff ff 64 c7
-RSP: 002b:00007ffc8a37e638 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007ffc8a37e670 RCX: 00007f1788d8ebe3
-RDX: 0000000000000003 RSI: 0000000000400000 RDI: 00007f17867ff000
-RBP: 00007ffc8a37e940 R08: 00000000000000d8 R09: 0000000000000000
-R10: 0000000000000011 R11: 0000000000000246 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f1788fa11c0 R15: 00007f1788e2e478
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:validate_page_before_insert+0x2a/0x300
-Code: 55 41 57 41 56 41 55 41 54 53 48 89 f3 49 89 fe 49 bd 00 00 00 00 00 fc ff df e8 f1 3f b3 ff 4c 8d 7b 08 4c 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 ff e8 17 b3 16 00 4d 8b 3f 4c 89 fe 48
-RSP: 0018:ffffc90002a5f608 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffff888022891cc0
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888028c71200
-RBP: ffffc90002a5f720 R08: 0000000000000000 R09: 1ffff11021cf81e0
-R10: dffffc0000000000 R11: ffffed1021cf81e1 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff888028c71200 R15: 0000000000000008
-FS:  00005555815ad500(0000) GS:ffff8880b8615000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1788fd20b8 CR3: 000000010d8a4000 CR4: 00000000000006f0
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
+Changes in v2:
+- Fix result of vi dropping in hwcap test.
+- Link to v1: https://lore.kernel.org/r/20250627-arm64-lsfe-v1-0-68351c4bf741@kernel.org
 
 ---
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+Mark Brown (2):
+      KVM: arm64: Expose FEAT_LSFE to guests
+      kselftest/arm64: Add lsfe to the hwcaps test
+
+ arch/arm64/kvm/sys_regs.c                 |  4 +++-
+ tools/testing/selftests/arm64/abi/hwcap.c | 21 +++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+---
+base-commit: 220928e52cb03d223b3acad3888baf0687486d21
+change-id: 20250625-arm64-lsfe-0810cf98adc2
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
+
 
