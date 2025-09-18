@@ -1,270 +1,158 @@
-Return-Path: <linux-kernel+bounces-822612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59F8B8450E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:17:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58392B84518
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BFAB4E03AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8873BCC0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1007427F16A;
-	Thu, 18 Sep 2025 11:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0182FF144;
+	Thu, 18 Sep 2025 11:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a/nuax2c";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h7voNygG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a/nuax2c";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h7voNygG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tW+tHfab"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECD62940B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E6734BA5A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758194241; cv=none; b=NcyJlCe3350fZ8HEuIzkBz0kgM18n51g7+3NlOqXA9jYfmzc0roSrfy2pQyCKZi9rG6rDiCTWDoRljJyNWNb3Bl2MXKVNC5/uhujBZxl/iXHALaMTtJsicAZvi31JUDBaiI6kglfSccoEx3DjGGsrT8yIOCD6U4iUl1h8Kn7Vhs=
+	t=1758194274; cv=none; b=cUCsaaEsWpKXWyN1ZCtAKqutV3r/kU9W8uzg/y3SPUPJFq9DoUxQbk6yl3iVfMlHjxOfSSWntdL6uYLwgo5xi/9QciNkc4C1Bb0RS8W5EIpR8a3xm2XXtCG5a6hosLNfR2vxj2QBpjWSQjDPrP8fiYEUA3lB1uFxw3fXo3vzCNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758194241; c=relaxed/simple;
-	bh=5xd+NGV+lAIDMPSigypEJ6Q/N7yFLwkU6bsnytLdDtE=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=h6VgBxuWNUId3+pt6udj7XMTGpUsS9oIT5T7Wequwj5C6t8ltMTdUBuFIrjOnUfZxyeEMblDqNMGDdU37WPaCQjoTB/a6UetYni0A7fLZUu9jRaRNb+FVsXnWgCCfkSU3jhflK1/YznNYcNBT2LvZfr069bJ/esFuOC4OAjcPmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a/nuax2c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h7voNygG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a/nuax2c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h7voNygG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 72056336E7;
-	Thu, 18 Sep 2025 11:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758194237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mut0b748Hi+Q5LznaSKN6uCnTAhEVcZK4pYNYVoEwis=;
-	b=a/nuax2cmfkhubJeAoLVxVYHr1ojN7o1zNQdKLihxDkWJdbjL01R3vNH5pyqeovt/8GHZO
-	uiNHzqUmO+tdiJldMIl8yMs4DlCBaoSQAXnDWW2ONwtnIekR2lW+zlz//3bz2pd/6u3K8C
-	Xi8oQGWpcJ6tYZiYhiKFtRHlzD+eQIM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758194237;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mut0b748Hi+Q5LznaSKN6uCnTAhEVcZK4pYNYVoEwis=;
-	b=h7voNygGEVSiJ/N3Lq0JGbSTVvoEn6yC6rakBXAHgfjMBg1ks4frCqDuCjDz85L5ocNSG1
-	53cYHqaRZbBJFpCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="a/nuax2c";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=h7voNygG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758194237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mut0b748Hi+Q5LznaSKN6uCnTAhEVcZK4pYNYVoEwis=;
-	b=a/nuax2cmfkhubJeAoLVxVYHr1ojN7o1zNQdKLihxDkWJdbjL01R3vNH5pyqeovt/8GHZO
-	uiNHzqUmO+tdiJldMIl8yMs4DlCBaoSQAXnDWW2ONwtnIekR2lW+zlz//3bz2pd/6u3K8C
-	Xi8oQGWpcJ6tYZiYhiKFtRHlzD+eQIM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758194237;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mut0b748Hi+Q5LznaSKN6uCnTAhEVcZK4pYNYVoEwis=;
-	b=h7voNygGEVSiJ/N3Lq0JGbSTVvoEn6yC6rakBXAHgfjMBg1ks4frCqDuCjDz85L5ocNSG1
-	53cYHqaRZbBJFpCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4106F13A39;
-	Thu, 18 Sep 2025 11:17:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VuMxDj3qy2hzfgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 18 Sep 2025 11:17:17 +0000
-Content-Type: multipart/mixed; boundary="------------vupL6B6jOl0dl79XEW8C83jg"
-Message-ID: <f1de37ae-2ae4-4513-98fd-18617016704a@suse.de>
-Date: Thu, 18 Sep 2025 13:17:16 +0200
+	s=arc-20240116; t=1758194274; c=relaxed/simple;
+	bh=LCcC386iayVF7Lf5/meg6Ya5puUCR8PvXWTPl4T7+JI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=blvvwI2fcPFS26FO7sk4ryB7AtsSCc/rlbZdmeA0NXYD66uYfIRlI4CSnb8FizYor1B5SOC0LH8jObYNhSDTrZjTE5nHnFGBd3H5k5v8t8r8rsYl0eYVJJ7CJ1LlF6HFz+GsJ0mDYLrJNmqsnd4fqURp/qyTEtzwZtEEXroKuqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tW+tHfab; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <63eae916-a404-4fae-b870-203b7e376363@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758194269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4OFedFFNeXU0WU9ck/G/uCK0A/60b5qhANqkwW6ZQg=;
+	b=tW+tHfabVK0YQcY995tTi9c0umnMIcH/Yq2xOC4Mh4V3I5s6g7RYl6zkqZqEDbzhoFYwvt
+	okrlwfw7h0Tg1or5/Kdt87ZEvbwTIKx2kQnHXXzjBR7A62pM2CjMZymbQH3jfj3YAvPygd
+	uxXQHgHk1DBkLr+0i23xoVjGSvDEI98=
+Date: Thu, 18 Sep 2025 19:17:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: PROBLEM: AST2500 BMC video output disabled by reboot (regression)
-To: Nick Bowler <nbowler@draconx.ca>
-Cc: Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, regressions@lists.linux.dev
-References: <wpwd7rit6t4mnu6kdqbtsnk5bhftgslio6e2jgkz6kgw6cuvvr@xbfswsczfqsi>
- <CAD=FV=Xp7zOQ2iEVf896P074RW911F-e2Qa36deD0e8fWksFBA@mail.gmail.com>
- <u7ek3ccya4c3c4rteliskjjfczpmrt4vmqo5c6kjdotxdgitn7@ko24dpb35pq4>
- <ef6558a9-c44a-4c66-967c-187f260f73e1@suse.de>
- <xeipdyk2i2lpkg4rrvz4cl2l3ch62sl4zoa73qvlms3ek3zkci@y7xqbgjulaet>
- <cox6kpackepnunrlhpsssvgdmjd24477cc7mide52xptmmoxyr@ijjotb3xju3v>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <cox6kpackepnunrlhpsssvgdmjd24477cc7mide52xptmmoxyr@ijjotb3xju3v>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 72056336E7
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.41 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_BASE64_TEXT(0.10)[];
-	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-patch];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:+];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,bootlin.com:url,suse.de:dkim,suse.de:mid,suse.de:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	HAS_ATTACHMENT(0.00)[]
-X-Spam-Score: -3.41
-
-This is a multi-part message in MIME format.
---------------vupL6B6jOl0dl79XEW8C83jg
+Subject: Re: [PATCH bpf-next v2 2/2] bpftool: Fix UAF in get_delegate_value
+To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250917034732.1185429-1-chen.dylane@linux.dev>
+ <20250917034732.1185429-2-chen.dylane@linux.dev>
+ <523d8d6c-de99-435f-a01b-1bac72810d53@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <523d8d6c-de99-435f-a01b-1bac72810d53@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi
+在 2025/9/18 00:30, Quentin Monnet 写道:
+> 2025-09-17 11:47 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
+>> The return value ret pointer is pointing opts_copy, but opts_copy
+>> gets freed in get_delegate_value before return, fix this by free
+>> the mntent->mnt_opts strdup memory after show delegate value.
+>>
+>> Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   tools/bpf/bpftool/token.c | 75 +++++++++++++++++----------------------
+>>   1 file changed, 33 insertions(+), 42 deletions(-)
+>>
+>> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+>> index 82b829e44c8..05bc76c7276 100644
+>> --- a/tools/bpf/bpftool/token.c
+>> +++ b/tools/bpf/bpftool/token.c
+>> @@ -28,15 +28,14 @@ static bool has_delegate_options(const char *mnt_ops)
+>>   	       strstr(mnt_ops, "delegate_attachs");
+>>   }
+>>   
+>> -static char *get_delegate_value(const char *opts, const char *key)
+>> +static char *get_delegate_value(char *opts, const char *key)
+>>   {
+>>   	char *token, *rest, *ret = NULL;
+>> -	char *opts_copy = strdup(opts);
+>>   
+>> -	if (!opts_copy)
+>> +	if (!opts)
+>>   		return NULL;
+>>   
+>> -	for (token = strtok_r(opts_copy, ",", &rest); token;
+>> +	for (token = strtok_r(opts, ",", &rest); token;
+>>   			token = strtok_r(NULL, ",", &rest)) {
+>>   		if (strncmp(token, key, strlen(key)) == 0 &&
+>>   		    token[strlen(key)] == '=') {
+>> @@ -44,24 +43,19 @@ static char *get_delegate_value(const char *opts, const char *key)
+>>   			break;
+>>   		}
+>>   	}
+>> -	free(opts_copy);
+>>   
+>>   	return ret;
+>>   }
+>>   
+>> -static void print_items_per_line(const char *input, int items_per_line)
+>> +static void print_items_per_line(char *input, int items_per_line)
+>>   {
+>> -	char *str, *rest, *strs;
+>> +	char *str, *rest;
+>>   	int cnt = 0;
+>>   
+>>   	if (!input)
+>>   		return;
+>>   
+>> -	strs = strdup(input);
+>> -	if (!strs)
+>> -		return;
+>> -
+>> -	for (str = strtok_r(strs, ":", &rest); str;
+>> +	for (str = strtok_r(input, ":", &rest); str;
+>>   			str = strtok_r(NULL, ":", &rest)) {
+>>   		if (cnt % items_per_line == 0)
+>>   			printf("\n\t  ");
+>> @@ -69,38 +63,39 @@ static void print_items_per_line(const char *input, int items_per_line)
+>>   		printf("%-20s", str);
+>>   		cnt++;
+>>   	}
+>> -
+>> -	free(strs);
+>>   }
+>>   
+>> +#define PRINT_DELEGATE_OPT(opt_name) do {		\
+>> +	char *opts, *value;				\
+>> +	opts = strdup(mntent->mnt_opts);		\
+>> +	value = get_delegate_value(opts, opt_name);	\
+>> +	print_items_per_line(value, ITEMS_PER_LINE);	\
+>> +	free(opts);					\
+>> +} while (0)
+> 
+> 
+> Thanks! The fix looks OK to me, but why do you need to have
+> PRINT_DELEGATE_OPT*() as macros? Can't you just use functions instead?
+> 
+> Quentin
 
-Am 18.09.25 um 04:04 schrieb Nick Bowler:
-> On Wed, Sep 17, 2025 at 11:14:45AM -0400, Nick Bowler wrote:
->> On Fri, Aug 29, 2025 at 03:07:14PM +0200, Thomas Zimmermann wrote:
->>> The ast driver doesn't do much during shutdown. Could you please out-comment
->>> the lines at either [2] xor [3] and report on either effect? These calls
->>> turn of the video chip's memory access and sync pulses. Not doing that might
->>> resolve the problem.
->>>
->>> [2] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L835
->>> [3] https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L839
->> I can try this.
-> OK, I tested 6.17-rc6 and reproduced the problem on this version.  Then:
->
->    - Deleting [2] (only) appears to make no difference whatsoever. That
->      is, deleting the following line in ast_mode.c:
->
->        ast_set_index_reg_mask(ast, AST_IO_VGASRI, 0x01, 0xdf, AST_IO_VGASR1_SD);
->
->    - Deleting [3] (only) appears sufficient to make things work again,
->      that is, deleting the following line in ast_mode.c:
->
->        ast_set_index_reg_mask(ast, AST_IO_VGACRI, 0xb6, 0xfc, vgacrb6);
-
-Please test if the attached patch fixes the problem for you.
-
-Best regards
-Thomas
-
->
-> Thanks,
->    Nick
+Well, actually, there is no special purpose about using macros, i will
+use functions as you and Andrri suggested, thanks.
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
---------------vupL6B6jOl0dl79XEW8C83jg
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-ast-Use-VGACR17-sync-enable.patch"
-Content-Disposition: attachment;
- filename="0001-ast-Use-VGACR17-sync-enable.patch"
-Content-Transfer-Encoding: base64
-
-RnJvbSA1MWViYjU3M2EwOTA0OTRkZTc5Y2JiNzFlOWIyOTI1NWUxMzY0ZTFjIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5A
-c3VzZS5kZT4KRGF0ZTogVGh1LCAxOCBTZXAgMjAyNSAwOTo1MDoyOCArMDIwMApTdWJqZWN0
-OiBbUEFUQ0hdIGFzdDogVXNlIFZHQUNSMTcgc3luYyBlbmFibGUKCkJsYW5rIHRoZSBkaXNw
-bGF5IGJ5IGRpc2FibGluZyBzeW5jIHB1bHNlcyB3aXRoIFZHQUNSMTc8Nz4uIFNvbWUKQk1D
-J3MgZG9uJ3QgaGFuZGxlIFZHQUNSQjYgY29ycmVjdGx5LiBBbmQgZG9uJ3QgbW9kaWZ5IFZH
-QVNSMSdzIFNECmJpdCwgd2hpY2ggb25seSBkaXNhYmxlcyBHUFUgYWNjZXNzIHRvIFZSQU0u
-Ci0tLQogZHJpdmVycy9ncHUvZHJtL2FzdC9hc3RfbW9kZS5jIHwgMTQgKysrKysrLS0tLS0t
-LS0KIGRyaXZlcnMvZ3B1L2RybS9hc3QvYXN0X3JlZy5oICB8ICAxICsKIDIgZmlsZXMgY2hh
-bmdlZCwgNyBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9hc3QvYXN0X21vZGUuYyBiL2RyaXZlcnMvZ3B1L2RybS9hc3QvYXN0
-X21vZGUuYwppbmRleCBiNGU4ZWRjN2M3NjcuLjBkZjA2ZGU5YjY0NCAxMDA2NDQKLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2FzdC9hc3RfbW9kZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9h
-c3QvYXN0X21vZGUuYwpAQCAtODM2LDIyICs4MzYsMjAgQEAgYXN0X2NydGNfaGVscGVyX2F0
-b21pY19mbHVzaChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCiBzdGF0aWMgdm9pZCBhc3RfY3J0
-Y19oZWxwZXJfYXRvbWljX2VuYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVjdCBk
-cm1fYXRvbWljX3N0YXRlICpzdGF0ZSkKIHsKIAlzdHJ1Y3QgYXN0X2RldmljZSAqYXN0ID0g
-dG9fYXN0X2RldmljZShjcnRjLT5kZXYpOworCXU4IHZnYWNyMTcgPSAweDAwOwogCi0JYXN0
-X3NldF9pbmRleF9yZWdfbWFzayhhc3QsIEFTVF9JT19WR0FDUkksIDB4YjYsIDB4ZmMsIDB4
-MDApOwotCWFzdF9zZXRfaW5kZXhfcmVnX21hc2soYXN0LCBBU1RfSU9fVkdBU1JJLCAweDAx
-LCAweGRmLCAweDAwKTsKKwl2Z2FjcjE3IHw9IEFTVF9JT19WR0FDUjE3X1NZTkNfRU5BQkxF
-OworCWFzdF9zZXRfaW5kZXhfcmVnX21hc2soYXN0LCBBU1RfSU9fVkdBQ1JJLCAweDE3LCAw
-eDdmLCB2Z2FjcjE3KTsKIH0KIAogc3RhdGljIHZvaWQgYXN0X2NydGNfaGVscGVyX2F0b21p
-Y19kaXNhYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0Yywgc3RydWN0IGRybV9hdG9taWNfc3Rh
-dGUgKnN0YXRlKQogewogCXN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqb2xkX2NydGNfc3RhdGUg
-PSBkcm1fYXRvbWljX2dldF9vbGRfY3J0Y19zdGF0ZShzdGF0ZSwgY3J0Yyk7CiAJc3RydWN0
-IGFzdF9kZXZpY2UgKmFzdCA9IHRvX2FzdF9kZXZpY2UoY3J0Yy0+ZGV2KTsKLQl1OCB2Z2Fj
-cmI2OworCXU4IHZnYWNyMTcgPSAweGZmOwogCi0JYXN0X3NldF9pbmRleF9yZWdfbWFzayhh
-c3QsIEFTVF9JT19WR0FTUkksIDB4MDEsIDB4ZGYsIEFTVF9JT19WR0FTUjFfU0QpOwotCi0J
-dmdhY3JiNiA9IEFTVF9JT19WR0FDUkI2X1ZTWU5DX09GRiB8Ci0JCSAgQVNUX0lPX1ZHQUNS
-QjZfSFNZTkNfT0ZGOwotCWFzdF9zZXRfaW5kZXhfcmVnX21hc2soYXN0LCBBU1RfSU9fVkdB
-Q1JJLCAweGI2LCAweGZjLCB2Z2FjcmI2KTsKKwl2Z2FjcjE3ICY9IH5BU1RfSU9fVkdBQ1Ix
-N19TWU5DX0VOQUJMRTsKKwlhc3Rfc2V0X2luZGV4X3JlZ19tYXNrKGFzdCwgQVNUX0lPX1ZH
-QUNSSSwgMHgxNywgMHg3ZiwgdmdhY3IxNyk7CiAKIAkvKgogCSAqIEhXIGN1cnNvcnMgcmVx
-dWlyZSB0aGUgdW5kZXJseWluZyBwcmltYXJ5IHBsYW5lIGFuZCBDUlRDIHRvCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vYXN0L2FzdF9yZWcuaCBiL2RyaXZlcnMvZ3B1L2RybS9h
-c3QvYXN0X3JlZy5oCmluZGV4IGUxNWFkYWYzYTgwZS4uMzA1NzhlM2IwN2U0IDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vYXN0L2FzdF9yZWcuaAorKysgYi9kcml2ZXJzL2dwdS9k
-cm0vYXN0L2FzdF9yZWcuaApAQCAtMjksNiArMjksNyBAQAogI2RlZmluZSBBU1RfSU9fVkdB
-R1JJCQkJKDB4NEUpCiAKICNkZWZpbmUgQVNUX0lPX1ZHQUNSSQkJCSgweDU0KQorI2RlZmlu
-ZSBBU1RfSU9fVkdBQ1IxN19TWU5DX0VOQUJMRQlCSVQoNykgLyogY2FsbGVkICJIYXJkd2Fy
-ZSByZXNldCIgaW4gZG9jcyAqLwogI2RlZmluZSBBU1RfSU9fVkdBQ1I4MF9QQVNTV09SRAkJ
-KDB4YTgpCiAjZGVmaW5lIEFTVF9JT19WR0FDUjk5X1ZHQU1FTV9SU1JWX01BU0sJR0VOTUFT
-SygxLCAwKQogI2RlZmluZSBBU1RfSU9fVkdBQ1JBMV9WR0FJT19ESVNBQkxFRAlCSVQoMSkK
-LS0gCjIuNTEuMAoK
-
---------------vupL6B6jOl0dl79XEW8C83jg--
+Best Regards
+Tao Chen
 
