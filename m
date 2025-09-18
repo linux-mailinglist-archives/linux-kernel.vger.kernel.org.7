@@ -1,191 +1,157 @@
-Return-Path: <linux-kernel+bounces-821913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3278EB82999
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:01:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D929B82A02
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CCF6327902
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:01:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDBDD2A7F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB76C22E406;
-	Thu, 18 Sep 2025 02:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="brPPoXq0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85475374D1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87D2235345;
+	Thu, 18 Sep 2025 02:14:09 +0000 (UTC)
+Received: from chinatelecom.cn (smtpnm6-05.21cn.com [182.42.157.213])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7312A2629D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.157.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758160899; cv=none; b=MUd/VxnkdvrwzgAgvIFXh9iFrkTL7chzeFu9yoqyhEPqsISfWFFM/aKeIcWhZCWBIOPDTEJDJiOdcyk5LNOBexwbZH0d6p0PZI2llzXBdQzWpIHZGTiMrD0XOTEqibgoRxaz6pfhWXvQ1ZUn8O/ABXr0+mzBfC/cquAE5wCUGcw=
+	t=1758161649; cv=none; b=L3l3cAiLG+2aSFbkggedr4gZdH8pzfaw5n+6zFI/RDNKkoSWWR2gBm0j6cpYDc6D13jwan07W5Hes5JKgCj7DjeoOlYga3OVPUa2Ar/fq30KyGQPzT+PGGeX1hIw9+Cy/M1O8djqXlEVs6WmrRrkPlxQkBR4GHwK0pxIbab/8hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758160899; c=relaxed/simple;
-	bh=SBfy2aw9l6QAYSPL+WFnY56ROXf3Voafn/xHOw0URfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uDH3iWc3D62nW3zpduRkOwepkPlZzlcoi95v2nr1qtgNzNuULO4cea4DMJ4rPJyBSneEJx2rIDm1PhFihyiY6xnbwIwKZR8MnNaRkDT918v5xhEsLRErZhs/UXMHuWGxIvc8RCAw5emUlnzKeK9uRD3EXAWeeDPFbV5iekAQI9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=brPPoXq0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HGR8e0032429
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:01:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eb6fb+UFN97UGMhPu3oieNOs4MieyvfsC2uXdQt5UHU=; b=brPPoXq011Xz7v0W
-	Z7MEOuMLXKxd7tIuEU8x7Hsy2PVC9+ToyER8DPumFqmbYCl8hIAcPPJczRWb6+90
-	6lXn9cnrIOwhPFsUpXkRwiR8oJ1gYki1NnqrYekjCeeDeNkrfrKcwrXdTlGpzgVn
-	ABb46/ZaHVbrCEsPDE+PhmWGjdtuKr7zv080lBNLS6X/3/x6SiwtLop5reKOXmQM
-	4TEhevZWhLy0rGfwm/ZH/FUWrZbRvR1lSSi+vXKRgtp71RgFmyUNUDyZPTM9Vggi
-	L9ZofDgB8tXTCBIJknApxw2HnFnuciLYF2hbP14yTvyOmYNxnDcfTNz9wr7Dtpz4
-	SmPJXA==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxymhwm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:01:33 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77cd58a9939so419682b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:01:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758160893; x=1758765693;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eb6fb+UFN97UGMhPu3oieNOs4MieyvfsC2uXdQt5UHU=;
-        b=buVbhvtIU/zjFmMtk46VhUEfUB5vtv0bkfwaGySHDjoZB9UI/IXQC1IEcbqZlx/B04
-         MJfw9i5FtNsHdR2UcbxzH9jBRmf8B0Puz5Oa0uuRZUYw93l286/nTI8ElDZp8673PQBu
-         vk5MKnOyibPuwK0M+uys1/IRqqD2DIq4mycSvwFi2+LKua0gn8swnB2EyEsJYmOM6w70
-         ka7CPBa3UQow55u6nuWXdpufg3u+lGNK+zl85L5lVNizpomaDLQBTeadhlFi42bmXFX5
-         xx/HP/p/bfLcP+3/eSGSQ/wVjAHJxibgVKIjMYecTtz70yyJxtmFU2PKEiXuzBJ82FDZ
-         7ZTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzdM47vq48LVF/1+15SCNyof1wAA5cjPz7UHTHEoDQWjisGXfMbQL4hcR7h9YsIv8x64I0z2XMqla7Aso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOBiIx/0/rjpQNIA1xrtO56tR9SpBzixhdPM0z1pdg66x8yMhn
-	W1pXULLmWcN0SmZ9FUPsTamkAn8u2y3yDf69YFiuIcT2wYDPBT5t/ZpE8UMt150TsXPo1WgoEGF
-	f0C9lq2aP/EBY9UqJKs1TbCte5eBVdU/jrraoxGlhzLKRmmMWroyixPMtWmi5tE7z1x4=
-X-Gm-Gg: ASbGncvWC5iIFKaJQ9tPWcq480EeHlvDxnDaUWM00faGmCEaUCV6Dxiwr0NDCWB5lof
-	lEsr+B74dqkJNo/Xioio+xOx5SIKadWmHCRVIGbV1aOU5uUKmJPizQw/J82QTYNnZUOFTvrKSzZ
-	V86LBHxXTMXD46kVLWU/kwhoKtbf+1GMjV9XW1ULXH+jnNaFGMyzyKs7DYshJ3LHquov5JU1R7v
-	ccAQ5XQGwkN2ZgkpvRMPGSkOAz6kkdqcjMuksVUSVputHuU6SG3G4/0SJb0y/ZyOMK7lUD1SpSX
-	+Gz/likd4qW+fOSAWiqb632siAye5B3TQ2RyNnKObtul8QDgboP6W1JUUZH4PylK/g==
-X-Received: by 2002:a05:6a00:3a1d:b0:736:5969:2b6f with SMTP id d2e1a72fcca58-77ce08f3559mr2056184b3a.6.1758160892855;
-        Wed, 17 Sep 2025 19:01:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzPSMD+5HGPO/cxrBCgCsxRrR2tgIDSepWt3elrwuhXweOPyoaFCCEh+2YZA14TET9o4YWpg==
-X-Received: by 2002:a05:6a00:3a1d:b0:736:5969:2b6f with SMTP id d2e1a72fcca58-77ce08f3559mr2056145b3a.6.1758160892313;
-        Wed, 17 Sep 2025 19:01:32 -0700 (PDT)
-Received: from [10.239.30.180] ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfc24b4f6sm703065b3a.37.2025.09.17.19.01.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 19:01:31 -0700 (PDT)
-Message-ID: <d9db8b82-9000-478b-a7b5-93792f1e1bea@oss.qualcomm.com>
-Date: Thu, 18 Sep 2025 10:01:24 +0800
+	s=arc-20240116; t=1758161649; c=relaxed/simple;
+	bh=NYHVWlaikyhJ3HFqcuJ5HfcLPA/vodqi51GMqd1DGyw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TMs8FoAJ0fH84qqK6ZleAcmZInr2RJTCM5O271ivzgmH7Ek6eRfXXse/k0Pyrzcib99Gy1+E3uOIzP9RcpdTtqdVJl+9hQw7MPWJ3DbQ98i2APRcJ5dgesktpgWKambvzx+OjJpr15uYKg3ssc2Sb9FZfNEATSMUHUIkA+3eY1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=182.42.157.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
+HMM_SOURCE_IP:192.168.137.232:0.327950909
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-36.111.64.84 (unknown [192.168.137.232])
+	by chinatelecom.cn (HERMES) with SMTP id DDA228F76B;
+	Thu, 18 Sep 2025 10:01:54 +0800 (CST)
+X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
+Received: from  ([36.111.64.84])
+	by gateway-ssl-dep-79cdd9d55b-2nzwx with ESMTP id 4b77ef25a71d4dfe9862587ba7f658a7 for pawan.kumar.gupta@linux.intel.com;
+	Thu, 18 Sep 2025 10:02:23 CST
+X-Transaction-ID: 4b77ef25a71d4dfe9862587ba7f658a7
+X-Real-From: liuq131@chinatelecom.cn
+X-Receive-IP: 36.111.64.84
+X-MEDUSA-Status: 0
+Sender: liuq131@chinatelecom.cn
+From: Qiang Liu <liuq131@chinatelecom.cn>
+To: pawan.kumar.gupta@linux.intel.com
+Cc: tglx@linutronix.de,
+	bp@alien8.de,
+	peterz@infradead.org,
+	jpoimboe@kernel.org,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Qiang Liu <liuq131@chinatelecom.cn>
+Subject: Re: Re: [PATCH] x86/bugs: Rate-limit the SPECTRE_V2 messages
+Date: Thu, 18 Sep 2025 10:01:28 +0800
+Message-Id: <20250918020128.40658-1-liuq131@chinatelecom.cn>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 9/9] power: supply: qcom_battmgr: handle charging state
- change notifications
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250917-qcom_battmgr_update-v5-0-270ade9ffe13@oss.qualcomm.com>
- <20250917-qcom_battmgr_update-v5-9-270ade9ffe13@oss.qualcomm.com>
- <fa258ad4-1efa-4fe8-9636-d70c5ea9c8e1@oss.qualcomm.com>
-Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <fa258ad4-1efa-4fe8-9636-d70c5ea9c8e1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=e50GSbp/ c=1 sm=1 tr=0 ts=68cb67fe cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=QX4gbG5DAAAA:8
- a=0T6ucZLnF1w6DCYMrR4A:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
- a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-GUID: GAY-LGCN4z3ltXZjI51wgkUwv1YkrGrx
-X-Proofpoint-ORIG-GUID: GAY-LGCN4z3ltXZjI51wgkUwv1YkrGrx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX0gJP7skrPJVw
- LbESCBWp4HCs07BEnovfRQb5BiLgyPMEI5Myf+BeZwlhCZy2Sz0vWLJ1GgSTov23KPwNRHcG/PB
- Y5/hOqVWZ274nmGwRPlIUJg57R/ODh5v43JXth/UZR6b9BGpmGvsH0znL95PULBIIo0wkvXSFSN
- 1OaVxRTP7XhJ24ihOxgJOrNfNkZEznSi/qWgUlDrlEzJ0e3VcQMf97O443+gSwRoF4mX3slvjGM
- dxzvVh5X2m5yhLwdNx5QUjzZcYofq629GgdqcvfT55O8BD3l5Nu1kif+AAZA/iE0N3hN33jVZmo
- uwY33RoitzydmbPHu4PrmPaOJWnohNkMXEGJU4tQu+RV14NJNeekxSeDILeXTl31rE7+S/NX+Iv
- 3T2vDRPM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Transfer-Encoding: 8bit
 
+On Tue, 16 Sep 2025 22:11:54 -0700, Pawan Gupta wrote:
+>> During stress-ng testing, excessive SPECTRE_V2 messages overwhelmed the
+>> low-speed serial device, causing system soft lockup. This issue can be
+>> resolved by implementing rate-limiting for the relevant log outputs.
+>> 
+>> The log as below:
+>> [121017.083236] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.098606] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.102398] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.102421] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.102532] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.102550] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.102569] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.133670] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.148497] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.163674] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.185720] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.287675] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.300205] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.335075] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.346428] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.428517] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.450328] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.592131] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121017.592865] Spectre V2 : WARNING: Unprivileged eBPF is enabled with eIBRS on, data leaks possible via Spectre v2 BHB attacks!
+>> [121037.642577] watchdog: BUG: soft lockup - CPU#68 stuck for 23s! [stress-ng-procf:2483051]
+>> [121037.642578] Modules linked in: ...
+>> [121037.642697] CPU: 68 PID: 2483051 Comm: stress-ng-procf Kdump: loaded Tainted: ...
+>> [121037.642698] Hardware name: XFUSION 2288H V6/BC13MBSBC, BIOS 1.29 11/25/2022
+>> [121037.642706] RIP: 0010:console_unlock+0x283/0x350
+>> [121037.642709] Code: 00 e8 01 15 00 00 55 9d 45 84 f6 0f 84 46 ff ff ff e8 71 f8 ff ff 85 c0 0f 85 e8 fd ff ff e9 34 ff ff ff e8 df 14 00 00 55 9d <8b> 44 24 04 85 c0 0f 84 f8 fd ff ff e8 9c 84 99 00 e9 ee fd ff ff
+>> [121037.642710] RSP: 0018:ff607726b60abc00 EFLAGS: 00000246
+>> [121037.642711] RAX: 0000000000000000 RBX: ffffffffaef699cc RCX: 0000000000000008
+>> [121037.642712] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffffaef6c228
+>> [121037.642713] RBP: 0000000000000246 R08: ffffffffadabd540 R09: 0000000000aaaaaa
+>> [121037.642713] R10: 0000000000000001 R11: ff2cf962c6a5b550 R12: ff2cf962c2700000
+>> [121037.642714] R13: 0000000000000000 R14: ffffffffaef6c228 R15: 000000000000008c
+>> [121037.642715] FS:  00007f2021c07640(0000) GS:ff2cf9e0be700000(0000) knlGS:0000000000000000
+>> [121037.642715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [121037.642716] CR2: 0000000000e3b7a0 CR3: 0000003f41266005 CR4: 0000000000771ee0
+>> [121037.642716] PKRU: 55555554
+>> [121037.642717] Call Trace:
+>> [121037.642722]  vprintk_emit+0x118/0x120
+>> [121037.642727]  printk+0x58/0x73
+>> [121037.642731]  bpf_unpriv_handler+0xbf/0x180
+>> [121037.642733]  ? proc_taint+0x1d0/0x1d0
+>> [121037.642738]  proc_sys_call_handler+0x13e/0x250
+>> [121037.642742]  new_sync_read+0x10d/0x1b0
+>> [121037.642745]  vfs_read+0x14e/0x1b0
+>> [121037.642747]  ksys_read+0x5f/0xe0
+>> [121037.642750]  do_syscall_64+0x3d/0x80
+>> [121037.642753]  entry_SYSCALL_64_after_hwframe+0x61/0xc6
+>> 
+>> Fixes: 0de05d056afd ("x86/speculation: Warn about eIBRS + LFENCE + Unprivileged eBPF + SMT")
+>> Fixes: 44a3918c8245 ("x86/speculation: Include unprivileged eBPF status in Spectre v2 mitigation reporting")
+>> Signed-off-by: Qiang Liu <liuq131@chinatelecom.cn>
+>> ---
+>>  arch/x86/kernel/cpu/bugs.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+>> index 36dcfc5105be..22fb2113cbe6 100644
+>> --- a/arch/x86/kernel/cpu/bugs.c
+>> +++ b/arch/x86/kernel/cpu/bugs.c
+>> @@ -1809,11 +1809,11 @@ void unpriv_ebpf_notify(int new_state)
+>>  
+>>  	switch (spectre_v2_enabled) {
+>>  	case SPECTRE_V2_EIBRS:
+>> -		pr_err(SPECTRE_V2_EIBRS_EBPF_MSG);
+>> +		pr_err_ratelimited(SPECTRE_V2_EIBRS_EBPF_MSG);
+>>  		break;
+>>  	case SPECTRE_V2_EIBRS_LFENCE:
+>>  		if (sched_smt_active())
+>> -			pr_err(SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG);
+>> +			pr_err_ratelimited(SPECTRE_V2_EIBRS_LFENCE_EBPF_SMT_MSG);
+>
+>Just a thought, pr_err_once() might be sufficient, repeated warnings
+>doesn't add much value.
+>
+Thank you for your valuable suggestion. However, I still believe pr_err_ratelimited
+would be better, as it ensures relevant error messages are printed during each test
+execution, preventing the test tool from incorrectly assuming the test passed.
 
-On 9/17/2025 7:14 PM, Konrad Dybcio wrote:
-> On 9/17/25 12:15 PM, Fenglin Wu via B4 Relay wrote:
->> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->>
->> The X1E80100 battery management firmware sends a notification with
->> code 0x83 when the battery charging state changes, such as switching
->> between fast charge, taper charge, end of charge, or any other error
->> charging states. The same notification code is used with bit[16] set
->> if charging stops due to reaching the charge control end threshold.
->> Additionally, a 2-bit value is added in bit[18:17] with the same code
->> and used to indicate the charging source capability: a value of 2
->> represents a strong charger, 1 is a weak charger, and 0 is no charging
->> source. The 3-MSB [18:16] in the notification code is not much useful
->> for now, hence just ignore them and trigger a power supply change event
->> whenever 0x83 notification code is received. This helps to eliminate the
->> unknown notification error messages.
-> Thank you for explaining the technical background.
->
-> Please hit enter somewhere in your commit message, this is a very
-> long paragraph, making it difficult to read.
-I just realized I made a mistake on the bit position, it should be 
-bit[8] for reaching to the charge control threshold, bit[10:9] for 
-charging source capability. I don't know what I was thinking when 
-writing the commit text :(. I will correct them in the next patch.
->
-> I believe this maps to:
->
-> 0 -> POWER_SUPPLY_CHARGE_TYPE_NONE
-> 1 -> POWER_SUPPLY_CHARGE_TYPE_TRICKLE
-> 2 -> POWER_SUPPLY_CHARGE_TYPE_FAST (or _STANDARD, I see battmgr code
-> reports them both as 2)
->
-> However, we already set it to none/trickle/standard(taper) based on
-> the usual notifications, so I'm not sure if these are more common or
-> arrive outside the normal state changes - if so, perhaps we can take
-> them into account as well?
+>>  		break;
+>>  	default:
+>>  		break;
+>> -- 
+>> 2.46.0
+>> 
 
-This is not related with the real charging status. I double checked in 
-the battery management firmware, it is checking the charging source 
-power capability by multiplying maximum voltage and current reading from 
-the PDOs. Any charger adapter with a maximum power below 60W is 
-identified as a slow/weak charger.
-
->
-> I think it also warrants a:
->
-> Reported-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-ACK
-> Konrad
 
