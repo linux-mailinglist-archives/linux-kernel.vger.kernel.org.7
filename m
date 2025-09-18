@@ -1,143 +1,155 @@
-Return-Path: <linux-kernel+bounces-821948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4E1B82ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:44:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1C4B82AD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4B934A2267
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F0F3BBFE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3D6231A3B;
-	Thu, 18 Sep 2025 02:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC55225416;
+	Thu, 18 Sep 2025 02:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2kXPmj0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYMIp0ty"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868232F32;
-	Thu, 18 Sep 2025 02:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5838B23D7C9
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758163492; cv=none; b=CVD3NBciK833zFKQX8ajC9V2H9lfbxC24gvudHIHOs5Ei+UFX2hdu6YwTiifwQ+laj/6EymQgfvdnByDAY1WNdEwe8YF05lilxmnXaIB9QKp7V6rbX3EaMMkQNAijPTv48Ov8qMvTNM0dOoVBdC5ZgCdnZ1FD/M0Lb7lQcDtQx0=
+	t=1758163514; cv=none; b=nJYcpmMPC2gA3cWkMHNK7EOvDOQ4cIFTw51WuJ9npLbasjUxXlgVdbKVy+jQEDfKcmrLDK2BQu1WgCQr1yQZPo84SiE8xrQflLhCPgPl298iPLvI1xhq0kP9IqFK/MTiGICDcLmko8KYG6dsH2gXWcglnp/1aPKfslxX4VCEW94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758163492; c=relaxed/simple;
-	bh=gmkiK3s1/gLcqV4k8w9r+YtSB/LyO/zQX9W9hOf0los=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=druPidqcl/oyo38xGnF2tLhrb3+9qKiuICWdfGnqtZhLI+gFF8M9C6AIOk236vxDT3x+PwAST7rsP0jxEU9+Yz3zNQAHmU/DHwN7n8TmpGVzvX1zmHiHVaFLRUPud+4Dgx3rI6L+OlxTgC/lgXw/82kTBmFTWjf6iwqIqKO3BhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2kXPmj0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F557C4CEE7;
-	Thu, 18 Sep 2025 02:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758163492;
-	bh=gmkiK3s1/gLcqV4k8w9r+YtSB/LyO/zQX9W9hOf0los=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N2kXPmj0CU+pY7oq2tH3jpZk6nA6BfZZ+dkhuIbwPKzSk5RIDlY6s28+b3u4Oft+z
-	 /tprtT3Qf7ZrcKYGPmsXZiQXyLDdQxUuOD/ckkGHMRGsg3HbW9m2O8lIT5Jl/GuuUL
-	 NhhmxonIrjN8PONoKz08jqhbFPygPUNELjMQXfG9rAXn2U9gY5YO/11cdXJF2NiJFm
-	 ILi3/w2mvyPhwcWXIRCQiBD89GwUKDIi68zbx896yGFYAO+Am4Mm+gBb66O44XMkpr
-	 szTGvO5lLW+4kIKIrCQqde6gOz9Wwiw+y9I9mwtrRifFxzPhjWRACYfPyqWuHxN8lI
-	 TrqpUqOaKizWA==
-Message-ID: <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
-Date: Thu, 18 Sep 2025 11:44:46 +0900
+	s=arc-20240116; t=1758163514; c=relaxed/simple;
+	bh=J+MWoUKVfhh0snrSUTiNn9K7NIDSM7/SRpkDLL+TJX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FYoAQqH6RLj3lZdej8vdCgfWyXJAul35NQY9JP95cFYo1x4Ra+sWorRemrOfILwVrb9HtKUW32O3D6dolT7MDs63rBNV2ZnaMrjv47EkvqcdHZ1+Kn3OnXfCBwpkwGGhQLPob/rHXOivGhaY471/pc68Y9WIkTZxBd1mRuLvd7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYMIp0ty; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b7abed161bso5701771cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:45:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758163512; x=1758768312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cuZ9j3HCJ3WAla06YidRhhDL/e63d/UFWpY4b514TQs=;
+        b=HYMIp0tynfaKfCYFDPp6STBICdjH96aBD6nJnjjirO8zklW746dnQEU8ufMm87D6gN
+         dxT0rnX1y5CzGTWixkVLjDq9qABx2LDksva9YK9cGuTpAPdbUK4+CUMDK/IEcbYn6SNB
+         w2iglbPiaDQDTzYhZ5v+wlhN9v9hHqIugsgtp39C1/pk5Prcwfpnom6HDKDPXKIA83RY
+         n0C7Q5KHxPU5AaGrHD5+JQbrwm6xWMGBDc8Fn3BbTbHTfhmT2vBdZxFQk/srFYMMv+jX
+         Yy+id4SXQ2bGP7a3VXZlK+MUa1wLveChTbM+OvpIn7dFW3fFyFTC2jK0B6A+uqFom+S+
+         ND6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758163512; x=1758768312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cuZ9j3HCJ3WAla06YidRhhDL/e63d/UFWpY4b514TQs=;
+        b=PppmXsPnmnd/huGRd60/aZ2RRpZrELl3NnQoAh27Jj2TCI4UsyxODb7gsslCbdFnRA
+         B8S13iNOAm8P/bTbwaDox5XRlka+z89n4oDcz9D2CwRUepB9NAuS9LkgTDH9p7cwzJGY
+         xN1TXzKDVN4ArdvC731S8nfZlje5M356zTYCQNl+PtUWX6vlzTk1Kv+jBSgHmsNKrYZ0
+         gxL3+zgaehyND3GlFxEbrJ1i4/CZ7gXmceQ2mbRukuTx6XFRmAFzI9pXqs0izvUnGIYd
+         +/UK0ZcvccbtdQoGUxOlohikjMK+tD0pSmhCHlzIFJeDo2y5J4TuaUr4UwaFwPUaggtO
+         ahwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCUvaJm+iTk+oMeju3NeYIWuFvBFL1DCo5CeEP7Vm+XF6knGv678W43vG7YyRe6H4LnIQ1EthGX+TN7TU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0c8A0MlQx4JS9/hNwr1XQmGaUrC5gd9H7WEKAXUvoxqGHKkD/
+	oMHhcl/RtjJPVVwuiQIM/1N9DgGTdBHx2EFsxgIbnsLbH/12Vx8YAGMlqRHBB8oVNL4bIarBvzT
+	/XLKCkzKnv8iytDtB/JMzdG4tXqwzvc4=
+X-Gm-Gg: ASbGncvttxUnajVCfMlMm3O0oSxtjEB2ghajUyta+jHtQ3LBniCZ8RFnle21FV2qFol
+	Sior3x8ukEtQQQR8LufSGINBUcteVV8GxZMIktboJ/SL3ICX1oLCnSs0bpWduwUjKyDzoDlb/+E
+	JzbIZw5wnLLiv2P43Z2gCyiW/TMbeoYxlhEq0wsdJjtq+vg+7taG3VAkin5dBLpYH8ug8VPFd5w
+	P4jsc8eddVU2GtXCxMzvshs3yw=
+X-Google-Smtp-Source: AGHT+IEFTcSdZt1DQsLSH8OADTsF1wOtd767iT4GImK3n6wMmQ/SMPr3tSRNKQNgO9DkEQdsO9Ae0+IGNU5FqH9fwT0=
+X-Received: by 2002:a05:622a:4814:b0:4b5:d932:15c2 with SMTP id
+ d75a77b69052e-4ba68fbba88mr56521591cf.34.1758163512136; Wed, 17 Sep 2025
+ 19:45:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
- igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
- <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
- <20250903073827.3015662-2-pritam.sutar@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250903073827.3015662-2-pritam.sutar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250911095113.203439-1-sieberf@amazon.com> <20250916140228.452231-1-sieberf@amazon.com>
+In-Reply-To: <20250916140228.452231-1-sieberf@amazon.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Thu, 18 Sep 2025 10:45:00 +0800
+X-Gm-Features: AS18NWBAWJwd4iL7mK8PlM424T162DHKQTcoBeRQzdewRb2hCmxlwKPY2wU34Gw
+Message-ID: <CAB8ipk-zK+T+8NTnQzYex+CFpA3vaeLuPLJ_vyJpKi4MSem+rA@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/fair: Forfeit vruntime on yield
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, bsegall@google.com, 
+	graf@amazon.com, jschoenh@amazon.de, dwmw@amazon.co.uk, wangtao554@huawei.com, 
+	tanghui20@huawei.com, zhangqiao22@huawei.com, linux-kernel@vger.kernel.org, 
+	vineethr@linux.ibm.com, Xuewen Yan <xuewen.yan@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/09/2025 16:38, Pritam Manohar Sutar wrote:
-> diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> index e906403208c0..8d8114eb5660 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> @@ -34,6 +34,7 @@ properties:
->        - samsung,exynos7870-usbdrd-phy
->        - samsung,exynos850-usbdrd-phy
->        - samsung,exynos990-usbdrd-phy
-> +      - samsung,exynosautov920-usbdrd-phy
->  
->    clocks:
->      minItems: 1
-> @@ -110,6 +111,15 @@ properties:
->    vddh-usbdp-supply:
->      description: VDDh power supply for the USB DP phy.
->  
-> +  dvdd-supply:
-> +    description: 0.75V power supply for the USB phy.
+On Tue, Sep 16, 2025 at 10:33=E2=80=AFPM Fernand Sieber <sieberf@amazon.com=
+> wrote:
+>
+> If a task yields, the scheduler may decide to pick it again. The task in
+> turn may decide to yield immediately or shortly after, leading to a tight
+> loop of yields.
+>
+> If there's another runnable task as this point, the deadline will be
+> increased by the slice at each loop. This can cause the deadline to runaw=
+ay
+> pretty quickly, and subsequent elevated run delays later on as the task
+> doesn't get picked again. The reason the scheduler can pick the same task
+> again and again despite its deadline increasing is because it may be the
+> only eligible task at that point.
+>
+> Fix this by making the task forfeiting its remaining vruntime and pushing
+> the deadline one slice ahead. This implements yield behavior more
+> authentically.
+>
+> Fixes: 147f3efaa24182 ("sched/fair: Implement an EEVDF-like scheduling  p=
+olicy")
+> Link: https://lore.kernel.org/r/20250401123622.584018-1-sieberf@amazon.co=
+m
+> Link: https://lore.kernel.org/r/20250911095113.203439-1-sieberf@amazon.co=
+m
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+>
+> Changes in v2:
+> - Implement vruntime forfeiting approach suggested by Peter Zijlstra
+> - Updated commit name
+> - Previous Reviewed-by tags removed due to algorithm change
+> ---
+>  kernel/sched/fair.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7a14da5396fb..cc4ef7213d43 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9036,6 +9036,7 @@ static void yield_task_fair(struct rq *rq)
+>          */
+>         rq_clock_skip_update(rq);
+>
+> +       se->vruntime =3D se->deadline;
+>         se->deadline +=3D calc_delta_fair(se->slice, se);
 
-So this is existing dvdd-usb20-supply.
+Need we update_min_vruntime here?
 
-Same for all of the rest.
-
-Best regards,
-Krzysztof
+>  }
+>
+> --
+> 2.34.1
+>
+>
+>
+>
+> Amazon Development Centre (South Africa) (Proprietary) Limited
+> 29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Afri=
+ca
+> Registration Number: 2004 / 034463 / 07
+>
+>
 
