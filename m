@@ -1,239 +1,191 @@
-Return-Path: <linux-kernel+bounces-821912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68D0B8298D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3278EB82999
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19074A52D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CCF6327902
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0FB23A562;
-	Thu, 18 Sep 2025 01:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB76C22E406;
+	Thu, 18 Sep 2025 02:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RjlmcPNi"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012035.outbound.protection.outlook.com [40.107.200.35])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="brPPoXq0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456B76F53E;
-	Thu, 18 Sep 2025 01:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758160790; cv=fail; b=E4SDaxrJMC6pRmD4rdoUebvdk1gGfFG0q0NQrHMU1wTUrfqXkNtvnEZyLIfid/9gkRPKNpIRaALsZa2FoVJgsWK/OsRifjFI7ALuPm7/tjL6KqgFkrs5maO+o359wC7k9+ddum9eqzqO2Y2Ca5En6w0MczBgOm4y9x9ksfbD7eQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758160790; c=relaxed/simple;
-	bh=+eEb5A8yta8v1Wf0Wrgwe2ia7VxQCWro6LsVwasfzac=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bFI4AC2ykBOhVtig9Cp8gQUqdz0vsurZX4OJVFD0RHAiRM91X2eD3toFMfJB8gO49acS7z3EFmufrxXsa1B/pRDmjE73rpYruhEKQyTFZ3pqgAaK/zw1SOh++ekDRkU+lZkbhcsE4atDOSIkAeSaKvLsQwL+rTvPTsIyUZCRFH4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RjlmcPNi; arc=fail smtp.client-ip=40.107.200.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JqGksk5PJlsDAFbj22VBzvE0ZZLoXeCR4UvPyueIMEiXrN56m26XfEWiHCJ87sNzrmiDJM0wxr4a+QqrdfdT1D6CPm1hhFZLsFY+kBb99E4gBZIwphzwqBs5peTx86utoqItJAt7vhwLOWJtcTLEszD+yDO1rKsBraZD0NsJOUi27Nse3zser10z/diOSspXeg29x8DyjDkfd0b5fQzcuHx6zuy/PxVZh6OMqSoWvD1KWlDcAv7/tHHYcmlexiH9EIDIAJD8yu7cvWKrRbui76ZHZ5vp9t+RzfSopDY2M5F+SmwjR6xnaGCpe50tSpv0/mJ6dtI/DYeB37F/s8WFdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NVTXkokgjlwvvMFbzlBRm+WL9Wdy6qhsUzQpiAxm5PU=;
- b=bred1YmPnouGn5CEE1rMwzRk51c8dkdbnd1pc00GKEX55ge/W8GAqQ6P3Hs24zINyFACIVe/yRggdkP3y8w/rJGTx1y7MrlOMDsbo3+5iNjreZlNt+lJ7ES5OQHNg9zf04E6IqoAXXPfBd2vTD2exUE0wJudPI4eXkjlMjbrpU+s4UPxTtpPXKPa3GXMdQg0BiBfrXVvSzYr0dwgTXWpoWLVg+o2q4R69ANKwTQahOfQrK4PVSCbNvwmFkk3J1TqBrKzeIfh2XPPSHE2VgMM//UnCHSX8PhBzwVxk7H1XUhARt/zzKe/xjR4e9bsDzQfY7jygFXaH/EYcS48zTr+Gg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NVTXkokgjlwvvMFbzlBRm+WL9Wdy6qhsUzQpiAxm5PU=;
- b=RjlmcPNiqXA89qDlwg8qC16D1K69hGH7mOQq3GQixC65EqThi1wzHUTsz7U54lYmqvIrR14gabQsuJKcpAFBI1kjHOrb0AZ1OyBc5M60ea6UTPvoTQemuWA9KzBRgu4g8lHFQU4Fztdxy68IY/6l1tfJTBLzeXMc1xQGel9GYAYQCHJfkBMNS5klncKNjImBg4X1eUHVBroTbOJI0K6RHzizYy2RWbqletfRh3DdsMxPiAkCl2Jf4cNmG6HcjnQi4XkVAGgP1c6OHWp9/ubLLxKnbTFgNdwLesn+TvgEXTvUTRwjSmJeJ4PEfgNAOHAs5i5GJ+XW/4tdBFAcRslDmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- SJ1PR12MB6313.namprd12.prod.outlook.com (2603:10b6:a03:458::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
- 2025 01:59:45 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Thu, 18 Sep 2025
- 01:59:45 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: sboyd@kernel.org, thierry.reding@gmail.com, linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pei Xiao <xiaopei01@kylinos.cn>
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject:
- Re: [PATCH] clk: tegra: super: Fix error handling and resolve unsigned
- compare warning
-Date: Thu, 18 Sep 2025 10:59:42 +0900
-Message-ID: <2792406.iZASKD2KPV@senjougahara>
-In-Reply-To: <3841056.aeNJFYEL58@senjougahara>
-References:
- <03d0c47832c7a0fdc19733d15077197ad2c54946.1756430095.git.xiaopei01@kylinos.cn>
- <3841056.aeNJFYEL58@senjougahara>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY4PR01CA0040.jpnprd01.prod.outlook.com
- (2603:1096:405:2bd::15) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85475374D1
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758160899; cv=none; b=MUd/VxnkdvrwzgAgvIFXh9iFrkTL7chzeFu9yoqyhEPqsISfWFFM/aKeIcWhZCWBIOPDTEJDJiOdcyk5LNOBexwbZH0d6p0PZI2llzXBdQzWpIHZGTiMrD0XOTEqibgoRxaz6pfhWXvQ1ZUn8O/ABXr0+mzBfC/cquAE5wCUGcw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758160899; c=relaxed/simple;
+	bh=SBfy2aw9l6QAYSPL+WFnY56ROXf3Voafn/xHOw0URfg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uDH3iWc3D62nW3zpduRkOwepkPlZzlcoi95v2nr1qtgNzNuULO4cea4DMJ4rPJyBSneEJx2rIDm1PhFihyiY6xnbwIwKZR8MnNaRkDT918v5xhEsLRErZhs/UXMHuWGxIvc8RCAw5emUlnzKeK9uRD3EXAWeeDPFbV5iekAQI9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=brPPoXq0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HGR8e0032429
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:01:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eb6fb+UFN97UGMhPu3oieNOs4MieyvfsC2uXdQt5UHU=; b=brPPoXq011Xz7v0W
+	Z7MEOuMLXKxd7tIuEU8x7Hsy2PVC9+ToyER8DPumFqmbYCl8hIAcPPJczRWb6+90
+	6lXn9cnrIOwhPFsUpXkRwiR8oJ1gYki1NnqrYekjCeeDeNkrfrKcwrXdTlGpzgVn
+	ABb46/ZaHVbrCEsPDE+PhmWGjdtuKr7zv080lBNLS6X/3/x6SiwtLop5reKOXmQM
+	4TEhevZWhLy0rGfwm/ZH/FUWrZbRvR1lSSi+vXKRgtp71RgFmyUNUDyZPTM9Vggi
+	L9ZofDgB8tXTCBIJknApxw2HnFnuciLYF2hbP14yTvyOmYNxnDcfTNz9wr7Dtpz4
+	SmPJXA==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxymhwm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:01:33 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77cd58a9939so419682b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 19:01:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758160893; x=1758765693;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eb6fb+UFN97UGMhPu3oieNOs4MieyvfsC2uXdQt5UHU=;
+        b=buVbhvtIU/zjFmMtk46VhUEfUB5vtv0bkfwaGySHDjoZB9UI/IXQC1IEcbqZlx/B04
+         MJfw9i5FtNsHdR2UcbxzH9jBRmf8B0Puz5Oa0uuRZUYw93l286/nTI8ElDZp8673PQBu
+         vk5MKnOyibPuwK0M+uys1/IRqqD2DIq4mycSvwFi2+LKua0gn8swnB2EyEsJYmOM6w70
+         ka7CPBa3UQow55u6nuWXdpufg3u+lGNK+zl85L5lVNizpomaDLQBTeadhlFi42bmXFX5
+         xx/HP/p/bfLcP+3/eSGSQ/wVjAHJxibgVKIjMYecTtz70yyJxtmFU2PKEiXuzBJ82FDZ
+         7ZTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzdM47vq48LVF/1+15SCNyof1wAA5cjPz7UHTHEoDQWjisGXfMbQL4hcR7h9YsIv8x64I0z2XMqla7Aso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOBiIx/0/rjpQNIA1xrtO56tR9SpBzixhdPM0z1pdg66x8yMhn
+	W1pXULLmWcN0SmZ9FUPsTamkAn8u2y3yDf69YFiuIcT2wYDPBT5t/ZpE8UMt150TsXPo1WgoEGF
+	f0C9lq2aP/EBY9UqJKs1TbCte5eBVdU/jrraoxGlhzLKRmmMWroyixPMtWmi5tE7z1x4=
+X-Gm-Gg: ASbGncvWC5iIFKaJQ9tPWcq480EeHlvDxnDaUWM00faGmCEaUCV6Dxiwr0NDCWB5lof
+	lEsr+B74dqkJNo/Xioio+xOx5SIKadWmHCRVIGbV1aOU5uUKmJPizQw/J82QTYNnZUOFTvrKSzZ
+	V86LBHxXTMXD46kVLWU/kwhoKtbf+1GMjV9XW1ULXH+jnNaFGMyzyKs7DYshJ3LHquov5JU1R7v
+	ccAQ5XQGwkN2ZgkpvRMPGSkOAz6kkdqcjMuksVUSVputHuU6SG3G4/0SJb0y/ZyOMK7lUD1SpSX
+	+Gz/likd4qW+fOSAWiqb632siAye5B3TQ2RyNnKObtul8QDgboP6W1JUUZH4PylK/g==
+X-Received: by 2002:a05:6a00:3a1d:b0:736:5969:2b6f with SMTP id d2e1a72fcca58-77ce08f3559mr2056184b3a.6.1758160892855;
+        Wed, 17 Sep 2025 19:01:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEzPSMD+5HGPO/cxrBCgCsxRrR2tgIDSepWt3elrwuhXweOPyoaFCCEh+2YZA14TET9o4YWpg==
+X-Received: by 2002:a05:6a00:3a1d:b0:736:5969:2b6f with SMTP id d2e1a72fcca58-77ce08f3559mr2056145b3a.6.1758160892313;
+        Wed, 17 Sep 2025 19:01:32 -0700 (PDT)
+Received: from [10.239.30.180] ([114.94.8.21])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfc24b4f6sm703065b3a.37.2025.09.17.19.01.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Sep 2025 19:01:31 -0700 (PDT)
+Message-ID: <d9db8b82-9000-478b-a7b5-93792f1e1bea@oss.qualcomm.com>
+Date: Thu, 18 Sep 2025 10:01:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SJ1PR12MB6313:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7be91a6d-5a08-4dd9-9f4e-08ddf6570a7d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y3Vxb0t4VTYxOTAwVnlmeTd4aXo3KzV6bWJ1bW9nVzNGVjhpaHpHaUN1S0Ur?=
- =?utf-8?B?dWNERHRld1VwazlzQkN1TUFDMWRNNEMwZjFYOFVKNEx5aTNnY2U1UE1UdEZ3?=
- =?utf-8?B?c01ZNG1TNmJwekdrU0NOMDM2RlA0Q0JhVHpmblhaZGVZb3FTbmdTN1g0VVZV?=
- =?utf-8?B?WDdJcTVwaExhTCtxaHRoUmw4UUVXZVlBSzloMDBvRzNkZGExODQ1dE9GVm00?=
- =?utf-8?B?a1lpdllmOW5FeCsyNHBuaXFHRjdWVDBNWkpqUE1BaWxqaHhnbXhqNTBYbmhM?=
- =?utf-8?B?dDNBTDRjRUZpYWpTNEpxY1hxdVFuWGMxU3JKeHpKL0dsTG9DNWVyVDg2dDR2?=
- =?utf-8?B?VXVodmEvUUhuZ0dxcUpIUjMwbCsxRC91UmwyaFliK0R0MThFWnlFUVlUWUVR?=
- =?utf-8?B?RUkvdzhIUTE0Yk4rSGFQMSt6MGdwRGs2OXZ5QzhOK1FKNXpuTHhCcXc3djRh?=
- =?utf-8?B?ZmdDblRGZmk5TWlsL3ZTQnhONUhzS3JlbDN1NXBvYUt5QzY2L1ErRWJFVU5S?=
- =?utf-8?B?QzRncW8xY2Z2bm1KS2MwVDdUUlVwTG5WR2k5cEJkTWFGZXJQU0FvczBjOWZq?=
- =?utf-8?B?bzVuWjhiQWZhYzRCaDlvaUsxdExlV1EwMnR0NUpwNHpHcUpXc2FaN013ZjdV?=
- =?utf-8?B?U21sUmhsTmVrT3NlL3BLS3ZIQTN2M3JQT05YQ0JrTkwxcHhWUDAxWStXU0dj?=
- =?utf-8?B?UXU3Ti9mZk05TjhqOTJ0Q3JtamFETTVOellxbHY4KzFFSm9MNWpnSjN1TjNW?=
- =?utf-8?B?eFdKVmFWZ0xrc211T0F2Szl2U0lrUkVxWmFXZEdtUkhpNHByOU9mUGhRUFZU?=
- =?utf-8?B?NDFmNlhuby9YVXFRZS9jWWdoY2dzS2VBMTY2MnZ3QUVidjFMSTJIS08xRmtj?=
- =?utf-8?B?Mm9Eemp2cjliRDZBTkI0NENLaUZBaUJzWUxWUDZaTTVFN0lZZTRyT21QVmJC?=
- =?utf-8?B?TGI2YmFVN1dhNzdnN3ZaRTFmcklrZGUxVWZ6TEI2YjZ2SndDM1BsQ1k5R1dm?=
- =?utf-8?B?M1d2L1RMRmV2YXRQaWtZQUVhc3ZSbEtEbmVwd09VbjJ4UTAvc0RlZHBwT1lt?=
- =?utf-8?B?QUVPWEJzZmV5Z21XMnFRcVI5cWdpc1k5bjN6RzEyQnRJVDZrSlR1bit5eGxn?=
- =?utf-8?B?MElaVHVCTzF2UTFEWmZ1aEZHdVpiRWNINTlzaWkrMDZQNUlYak5IY0ZqWDNk?=
- =?utf-8?B?Zk0vcytVcHZicnZZOUlaZFN2Tytsb3RiYUpLcEh2eXFydDBqS3RpSmM0WjdQ?=
- =?utf-8?B?L0JhU2ZCbDFoQkVxVEcrVmZvZEtYaHAxTFNFbWwyWjdFUTBLaFZhcnY4cnZT?=
- =?utf-8?B?L2dPTFZSalFBTy82NGoyaGVwWDVmOEg3K1RzK2pvZFdFV2VEY3RGMW01VDRB?=
- =?utf-8?B?L3Zybys4VDZ6S2tMOFB4VW9RWnNXYWFNRnpuaGN2MmsrVVRBcm8vOXlIVVd6?=
- =?utf-8?B?V3NnWk0rQ1BocmthR3J3WkZtbUxGRnBPSytVZUtzNFR3MkNlT2JlK1I1dWJN?=
- =?utf-8?B?Q1pSR0xKU0NIS1p5ZHo2YlJlbnFpZlkzMEV6QlFUb1J3bmR3Z2FuZ2Q1YnZx?=
- =?utf-8?B?THlBZUNOSFp1clpBS2xtL2NtNlVGYU5sVWRrc0ZiUVlENDhSeXRpYWFxRmc3?=
- =?utf-8?B?NVFZaXZjUWNyRW1XYkFubTR0eDIvT3hBaE1VUkNtZWI5V0VIN015YStadWhx?=
- =?utf-8?B?aURwYnJlcThKbE1ac016N2J6OGZ6ZHJvZ29qaHVqT3p5Q0NVR2RtNmlkaUpG?=
- =?utf-8?B?NUhVYU1tcFBKWVJjWC9tRE5lNVB3RkI1S21ERWNoc2xLR1pSeVdRVUFxeFJH?=
- =?utf-8?B?aG1aejUvQmxlYkNqWHNhcVlET3REVTArTk4xYTVKYU5tOGxoWmYweU9jQ09L?=
- =?utf-8?B?ODdtUEQwbmNUM08zNFNUTE9haDFLYjEvMWxCOUU3SlpycWhFVTBxaGlvYS9z?=
- =?utf-8?Q?Hq8/wWTvvvI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S0JrY2hTWlcwdzVhSGQ5dklvUXVaTEZtbWpDZWJaM25udFpHcHludyt6NWlV?=
- =?utf-8?B?Skxvc09rRWJzZUhGVVJheXVPTGY2RmZpVTJPTkpyNmoxVVZ5RzQveGQybGl1?=
- =?utf-8?B?QmFwZ1k2bVEwZ2JjYTV3RkVVWGNCQ0I1OEVHb0FPdnJ5U3NvSElTcmpLMlFO?=
- =?utf-8?B?ckpzeWU2T1loaFAwcVhab3htQ3QrWmdkZWVLMG5aclkxRzE1Q2E0V2hIZDlq?=
- =?utf-8?B?ODVjYVlPVlVUMkJNdFN3TG11YklHZmsvSldzRmR0ajB0d3lNbFRYeThmVVky?=
- =?utf-8?B?K2pvVVJobkxST1ZJbFAyek5TVEk2TTVjSHFmN3dSaUhtL1BTY2dpbnlWajBw?=
- =?utf-8?B?RitDUDNBTmdsTk1GdUtCMHZFOFBpejJEOHdWS1JDblZmL3JHYVJOSXFQN2Rw?=
- =?utf-8?B?VFJlekdlWDRmTHd5Tjh2aDF6d0ZNc1cydThuZEFQSHNwK1NoSXpIazAzVVlz?=
- =?utf-8?B?ZDJvUStPMVh0ekhSU1JTc3RsV2lkUzAzeDhTTzBLWGEyd2pYTGE5YUdoUUc4?=
- =?utf-8?B?YzBjL0V5N0dFQWhyS0VEdTlqanRRUnJabWk0dFplS3R6azZOZWVCR1BlY0lT?=
- =?utf-8?B?RERGdEp4Tk43aEsvdzhsZXZqSXdIM3R3NzBqTlZXeWZnUWxXbjUvN25FRWtV?=
- =?utf-8?B?ZE5KTHl1VzhoZmtQWGphWWg4Z0dNNEM2L0xYbkNGQzE1S3UxeklsYXVPWit5?=
- =?utf-8?B?ejJjdTNXUWhWWDFGTktLcThLdmVHWk9jM1I1bkZ4UDQzckVXcExiakkwcWxj?=
- =?utf-8?B?a21UWDFxSGxyQ01aVnZqcHFQeEFHajNCeDBKenc3aVgxSmRDT2JEanBDM0RE?=
- =?utf-8?B?S05rOXIrQmdXYWpuT3pZQ0pDMTYwVVc1ZXJISUhyY3V4a1lJYnVEMUkvV2hv?=
- =?utf-8?B?dWJJb3N0bGVkVDBRUTc1b21kNnN4aDRzRG1wZHlJK051cmNSb2I0UVpOZHRm?=
- =?utf-8?B?bzRRRFkwY0FjdUEvdWFna0xrNUhad3N5dkNlYTBUNmJEZndZQWdxOHR2M05O?=
- =?utf-8?B?ZEVRNG1PaUthMCtxS0xjWXVaWnNRM1BlaFdjalFYaGQ2OWNSQjdkSmJ1NzQ1?=
- =?utf-8?B?OWdwUDJjamJ1dUdpM3g2OWJmMW1ETm5TUDVIVk1aZTNuZDNnajFiYkI0NWp6?=
- =?utf-8?B?eGk5c2FZM2pZK2d6MkNVeVFwUVg2QWJpYmk4Z000NDFRb3dTNkh0YVhvR095?=
- =?utf-8?B?b0dGMStNZ0k2a2puM1dpZUpXcXhEbUZvYWRaNGxUUi9xWWJvUFpEdzc2USsw?=
- =?utf-8?B?eUxUQ3NLalRoOUVLc0FSWTJMYUk3Qy85TnF0RllaaXRyZHRLK2s0MHBhYi9H?=
- =?utf-8?B?dUlVb05yNnk3SHVLZEp3MnZSRlFLTVQxMXlDS005WWwvUFNuWGNGd2wzRy9U?=
- =?utf-8?B?SVFnK1pKYklUQnZpUElKOE9RakJpdUtKRXJHS1FqOXowQlFtSnk2VGp5S1Fs?=
- =?utf-8?B?N1NoVTIydUErQWlKcUR3aitReGNMMklHK0ZqVVhWZUxPMjR0V1pBZER4UTdR?=
- =?utf-8?B?ci9CR1dMVmV6eU5McGhLSlJGcHczZm85ekJFeVVTOWsrc2xOc2lINC8zMzQx?=
- =?utf-8?B?RVczRTNKeXVUU0ZxSFF2RVh0S2E3UHdiODdGck1FbUNvYmFxOUEyek44bXM2?=
- =?utf-8?B?d2FRVHMrbEs5NWw0ZTVDLzhCWllYQkEyZFA2LzdudTJ6SldjUTRmUlFnTUo0?=
- =?utf-8?B?TEZJdUtzZldaS09SM2tOQ2ZCZXFpVkpvZGpvcTJZdWxsdDluZ08yUzF5QUo0?=
- =?utf-8?B?MXpPSy9kRmhocUZlNVR2SjYvbVRXYzhBWUxuVDEvYnBrY3BzUmZIbHBQWUtr?=
- =?utf-8?B?cDR6TlAvS3VhSVdJdkY5UTRzU0g5WnhkZUNwK2FFQmxvcDRrQ3Y3UFQrRTFl?=
- =?utf-8?B?b3pmRGlQUWdVeDVsc0J6VzAvOWZkd1VNeFJSMEJRR3V0cGVMc2xUOGtUVWI0?=
- =?utf-8?B?c2gvUVJLdHBYNWd0cTQ3V2p1WEwwbjZtT3dYUnV2dk1Qb1cvYXU2OXhwcDFS?=
- =?utf-8?B?enRCV1RtUHRDdVB0VDNacktlZmc5TUM0TW9wMzFvOXRDRDFEd2pyWEIvZVRZ?=
- =?utf-8?B?RHg4TnZoaVVpeEM5NGRzVXBld25rd0hCcnE3cWEvbkZXOGZwUjlFOFlDZExQ?=
- =?utf-8?B?VVBNTEdudmowcXNHWTVEaU9VNi8xNkFRKzlYNFFUMmptQUR3K2hyZW9SOU9B?=
- =?utf-8?B?dnRqeVUraG5sdzhnNTJJREMvbDZWdTFKSWJ4anRBL1YxL1c4Q0dYc0JLN3hy?=
- =?utf-8?B?Vm13QlZXWVhTUGJjd0JJNnFLcWtBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7be91a6d-5a08-4dd9-9f4e-08ddf6570a7d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 01:59:45.6312
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7mpf4Rmqov2GUPv0MZ5H18yFG68EI+wv71PDVuY+ictLDjDCAqyYzcIB80wZrZQpKw6woqjiBTe+TedM9WOScQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6313
-
-On Thursday, September 18, 2025 10:55=E2=80=AFAM Mikko Perttunen wrote:
-> On Friday, August 29, 2025 10:16=E2=80=AFAM Pei Xiao wrote:
-> > ./drivers/clk/tegra/clk-super.c:156:5-9: WARNING:
-> >         Unsigned expression compared with zero: rate < 0
-> >=20
-> > The unsigned long 'rate' variable caused:
-> > - Incorrect handling of negative errors
-> > - Compile warning: "Unsigned expression compared with zero"
-> >=20
-> > Fix by changing to long type and adding req->rate cast.
-> >=20
-> > Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> > ---
-> >  drivers/clk/tegra/clk-super.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-supe=
-r.c
-> > index 7ec47942720c..643b3cb83cd0 100644
-> > --- a/drivers/clk/tegra/clk-super.c
-> > +++ b/drivers/clk/tegra/clk-super.c
-> > @@ -147,7 +147,7 @@ static int clk_super_determine_rate(struct clk_hw *=
-hw,
-> >  {
-> >  	struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw);
-> >  	struct clk_hw *div_hw =3D &super->frac_div.hw;
-> > -	unsigned long rate;
-> > +	long rate;
-> > =20
-> >  	__clk_hw_set_clk(div_hw, hw);
-> > =20
-> > @@ -156,7 +156,7 @@ static int clk_super_determine_rate(struct clk_hw *=
-hw,
-> >  	if (rate < 0)
-> >  		return rate;
-> > =20
-> > -	req->rate =3D rate;
-> > +	req->rate =3D (unsigned long)rate;
-> >  	return 0;
-> >  }
-> > =20
-> >=20
->=20
-> The proper fix for this would be to implement and call div_ops->determine=
-_rate instead of round_rate. With the cast-to-long approach, rates above 21=
-47MHz will incorrectly show as errors. While for this clock in particular I=
- don't think we can reach those rates, I don't think this improves the situ=
-ation either, as the round_rate implementation invoked here never returns e=
-rrors.
->=20
-> Mikko
->=20
->=20
-
-Looking up the list, looks like Brian Masney already got to it.
-
-Cheers,
-Mikko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 9/9] power: supply: qcom_battmgr: handle charging state
+ change notifications
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+        David Collins <david.collins@oss.qualcomm.com>,
+        =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250917-qcom_battmgr_update-v5-0-270ade9ffe13@oss.qualcomm.com>
+ <20250917-qcom_battmgr_update-v5-9-270ade9ffe13@oss.qualcomm.com>
+ <fa258ad4-1efa-4fe8-9636-d70c5ea9c8e1@oss.qualcomm.com>
+Content-Language: en-US
+From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+In-Reply-To: <fa258ad4-1efa-4fe8-9636-d70c5ea9c8e1@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=e50GSbp/ c=1 sm=1 tr=0 ts=68cb67fe cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=QX4gbG5DAAAA:8
+ a=0T6ucZLnF1w6DCYMrR4A:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+ a=AbAUZ8qAyYyZVLSsDulk:22
+X-Proofpoint-GUID: GAY-LGCN4z3ltXZjI51wgkUwv1YkrGrx
+X-Proofpoint-ORIG-GUID: GAY-LGCN4z3ltXZjI51wgkUwv1YkrGrx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX0gJP7skrPJVw
+ LbESCBWp4HCs07BEnovfRQb5BiLgyPMEI5Myf+BeZwlhCZy2Sz0vWLJ1GgSTov23KPwNRHcG/PB
+ Y5/hOqVWZ274nmGwRPlIUJg57R/ODh5v43JXth/UZR6b9BGpmGvsH0znL95PULBIIo0wkvXSFSN
+ 1OaVxRTP7XhJ24ihOxgJOrNfNkZEznSi/qWgUlDrlEzJ0e3VcQMf97O443+gSwRoF4mX3slvjGM
+ dxzvVh5X2m5yhLwdNx5QUjzZcYofq629GgdqcvfT55O8BD3l5Nu1kif+AAZA/iE0N3hN33jVZmo
+ uwY33RoitzydmbPHu4PrmPaOJWnohNkMXEGJU4tQu+RV14NJNeekxSeDILeXTl31rE7+S/NX+Iv
+ 3T2vDRPM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 priorityscore=1501
+ phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
 
+On 9/17/2025 7:14 PM, Konrad Dybcio wrote:
+> On 9/17/25 12:15 PM, Fenglin Wu via B4 Relay wrote:
+>> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+>>
+>> The X1E80100 battery management firmware sends a notification with
+>> code 0x83 when the battery charging state changes, such as switching
+>> between fast charge, taper charge, end of charge, or any other error
+>> charging states. The same notification code is used with bit[16] set
+>> if charging stops due to reaching the charge control end threshold.
+>> Additionally, a 2-bit value is added in bit[18:17] with the same code
+>> and used to indicate the charging source capability: a value of 2
+>> represents a strong charger, 1 is a weak charger, and 0 is no charging
+>> source. The 3-MSB [18:16] in the notification code is not much useful
+>> for now, hence just ignore them and trigger a power supply change event
+>> whenever 0x83 notification code is received. This helps to eliminate the
+>> unknown notification error messages.
+> Thank you for explaining the technical background.
+>
+> Please hit enter somewhere in your commit message, this is a very
+> long paragraph, making it difficult to read.
+I just realized I made a mistake on the bit position, it should be 
+bit[8] for reaching to the charge control threshold, bit[10:9] for 
+charging source capability. I don't know what I was thinking when 
+writing the commit text :(. I will correct them in the next patch.
+>
+> I believe this maps to:
+>
+> 0 -> POWER_SUPPLY_CHARGE_TYPE_NONE
+> 1 -> POWER_SUPPLY_CHARGE_TYPE_TRICKLE
+> 2 -> POWER_SUPPLY_CHARGE_TYPE_FAST (or _STANDARD, I see battmgr code
+> reports them both as 2)
+>
+> However, we already set it to none/trickle/standard(taper) based on
+> the usual notifications, so I'm not sure if these are more common or
+> arrive outside the normal state changes - if so, perhaps we can take
+> them into account as well?
 
+This is not related with the real charging status. I double checked in 
+the battery management firmware, it is checking the charging source 
+power capability by multiplying maximum voltage and current reading from 
+the PDOs. Any charger adapter with a maximum power below 60W is 
+identified as a slow/weak charger.
+
+>
+> I think it also warrants a:
+>
+> Reported-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+ACK
+> Konrad
 
