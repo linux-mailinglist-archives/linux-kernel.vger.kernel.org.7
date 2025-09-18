@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-822495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B45B84050
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD313B84065
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1EC6268FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:18:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6813B1397
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D32FD1BE;
-	Thu, 18 Sep 2025 10:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216B83081AB;
+	Thu, 18 Sep 2025 10:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHVRGnpP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebNkBCJb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5CA2F3614;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015B52FB0BE;
 	Thu, 18 Sep 2025 10:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758190472; cv=none; b=JmE472zdA05E/q6pxZKCOcHhQG0dtG77mnty1Lkbep+GXoR8BADvtSUo/Pz3xL3Fsbtr2OdK/J7vsT/oC+AKyuC1Tg3327ACdixv7WgJ6mhxi/ai4QmfgCfsEmcIyfPbWeiYhlyl67TZB0fYYL6t5IQ+nz1y4wIPtmady/eDT3I=
+	t=1758190473; cv=none; b=BTNaun2xxIJTFokpHd3x7qcxXeFKbn7ce5zTcEXfI9VNbF3oXsAIRbgBJqalHBjAAqh9LSzjJBUUHhPkPL9ERnTprYN6o8fy7ez6jkrlkXaDnK4aIjY0UKGztdNY/StCPBccxmxcyn8+Z3XQgpIvBEbSmOFuhw/JuSrl9a1CN6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758190472; c=relaxed/simple;
-	bh=JJKodAU25WQC1/F+p/J3EvT5HdwuhzjolMioXz0TpPg=;
+	s=arc-20240116; t=1758190473; c=relaxed/simple;
+	bh=4cPXhN+QWntHKUlZlbENageTOLIy+prm5bNBCxP4Zmo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kQov+2QeJq1XGdCnKuGmtSHQ87k3Xi11Pw96f/s6AuG36xz0EuXZOLwaaB86M6Am4jo9/ksXgbnnVdPIRne+lsAf4Y0CO1vVOTEeWgVOChp24+Hd5PXkxfEHU2PZJtA9eQGuqdtosT9WOlrtM8favpq2tRNo0AX3ZLTZAFtILCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHVRGnpP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 579DEC4CEFC;
+	 MIME-Version; b=n62JSxWwkO2QyGF1bQzkugDQ7iETYDVj14R6Fl1zHzvIcYe/a/nxEi0Jo8xbVNplj8iCtvKT2bUEucfXtJJD9TTYdG8P+/UWHTpH0tXw/sq3EDfDAR5S0o6rM77hYT0T/HOY5WI4pjggO7sKG/eaTHVKhnK+nJpOn3snr7JcfPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebNkBCJb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF06C4CEF0;
 	Thu, 18 Sep 2025 10:14:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758190472;
-	bh=JJKodAU25WQC1/F+p/J3EvT5HdwuhzjolMioXz0TpPg=;
+	bh=4cPXhN+QWntHKUlZlbENageTOLIy+prm5bNBCxP4Zmo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RHVRGnpPyQDEIpJU7q99ktHi/6yllVybXJXOSLkGp9kw2qtPZrMtkKTbUQIUXbpBc
-	 hzw+v3W2NDIWTfKN6SHIG2d7rgtPGRLHDv5kolOh8dzJ3KdK5RpjuHsMtc99Kc8NWI
-	 BP9VKmw7IZZ5x+fzxtnkCEHT8XUbr6Vgdfh3kPMH2SjJh8HKaDieJ+gBt2YLPZgjEj
-	 Csax6DnJXKRbmdFyPY5W48NvXeO3xcUkvTFySDH+tdZeR/sRGRVO7Ak34tO1MfP9fl
-	 RSN9GnGL8zR4C/5miSkp3zBzQEhCHKf8Ewi2ykTbnAIB2G7+VTesxqJBzLHjdbJ6zi
-	 aaSLxKpXmBapQ==
+	b=ebNkBCJbWzTviQv6xncPH4R5uQcf/9aJaR4QNACgp6R/NGTo6aWax2A7ZSrcYi7mM
+	 paG2GLltTQti/1QhQLwhqvGSoDvbvaAT0V/nrxNHDtD3xFlgKSkhjgCEOn9eAGWUjD
+	 E4ye5wNJ9iLlyCxy5gqVwYC7cAKbpB0RqyMmNnai6+ZZbJfkxnPK8DEfYBn7QuQ7Sh
+	 ns9DtlyCGmfWsWoHR0++rQrrFIQ0shnJtq6LotQkO/ZyYurfFpdC8GEft4x43hTk10
+	 TFwlTnV0U5v8TRdtqjRffPhejGzr4YwV/K4lhSxVUZ7LC931dojMpfjr8+YzgbPSrA
+	 G5XghrJQXKzjw==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C5A18CE10B6; Thu, 18 Sep 2025 03:14:31 -0700 (PDT)
+	id C815BCE10DB; Thu, 18 Sep 2025 03:14:31 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	rostedt@goodmis.org,
 	Bagas Sanjaya <bagasdotme@gmail.com>,
 	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 5/8] Documentation: RCU: Reduce toctree depth
-Date: Thu, 18 Sep 2025 03:14:27 -0700
-Message-Id: <20250918101430.2592294-5-paulmck@kernel.org>
+Subject: [PATCH v2 6/8] Documentation: RCU: Retitle toctree index
+Date: Thu, 18 Sep 2025 03:14:28 -0700
+Message-Id: <20250918101430.2592294-6-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <921eb978-5f39-4480-bcf6-c735f859c694@paulmck-laptop>
 References: <921eb978-5f39-4480-bcf6-c735f859c694@paulmck-laptop>
@@ -65,32 +65,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 
-toctree index for RCU currently has maximum depth of 3. Since no docs
-currently use more than 3 section heading levels, this effectively spills
-the entire docs hierarchy.
+toctree index title ("RCU concepts") is rather a misnomer: RCU concepts
+is already described in rcu.rst, whereas the toctree suggests that
+the docs themes about handbook on RCU subsystem instead.
 
-Tidy up by reducing toctree depth to 2 (only showing docs title and
-second-level sections).
+Edit the title to reflect the fact.
 
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- Documentation/RCU/index.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/RCU/index.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/RCU/index.rst b/Documentation/RCU/index.rst
-index 84a79903f6a883..e1be5b3c2c6773 100644
+index e1be5b3c2c6773..ef26c78507d369 100644
 --- a/Documentation/RCU/index.rst
 +++ b/Documentation/RCU/index.rst
-@@ -7,7 +7,7 @@ RCU concepts
+@@ -1,9 +1,9 @@
+ .. SPDX-License-Identifier: GPL-2.0
+ 
+-.. _rcu_concepts:
++.. _rcu_handbook:
+ 
+ ============
+-RCU concepts
++RCU Handbook
  ============
  
  .. toctree::
--   :maxdepth: 3
-+   :maxdepth: 2
- 
-    checklist
-    lockdep
 -- 
 2.40.1
 
